@@ -1,0 +1,17 @@
+^CODE_OF_CONDUCT\.md$
+^LICENSE\.md$
+^.*\.Rproj$
+^\.Rproj\.user$
+^working$
+^\.github$
+^data-raw$
+vignettes/*\.Rmd\.orig
+vignettes/precompile\.R
+^docs$
+^pkgdown$
+^cran-comments\.md$
+^CRAN-RELEASE$
+^doc$
+^Meta$
+^CRAN-SUBMISSION$
+^README\.Rmd$
