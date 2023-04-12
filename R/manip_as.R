@@ -1,5 +1,5 @@
-#' Coercion between manynet-compatible object classes 
-#' 
+#' Coercion between manynet-compatible object classes
+#'
 #' @description
 #' The `as_` functions in `{manynet}` coerce objects
 #' between several common classes of social network objects.
@@ -9,7 +9,7 @@
 #' - `{igraph}` `graph` objects
 #' - `{tidygraph}` `tbl_graph` objects
 #' - `{network}` `network` objects
-#' 
+#'
 #' An effort is made for all of these coercion routines to be as lossless
 #' as possible, though some object classes are better at retaining certain
 #' kinds of information than others.
@@ -18,9 +18,9 @@
 #' @name as
 #' @family manipulations
 #' @inheritParams is
-#' @param twomode Logical option used to override heuristics for 
-#'   distinguishing incidence (two-mode/bipartite) from 
-#'   adjacency (one-mode/unipartite) networks. 
+#' @param twomode Logical option used to override heuristics for
+#'   distinguishing incidence (two-mode/bipartite) from
+#'   adjacency (one-mode/unipartite) networks.
 #'   By default FALSE.
 #' @details 
 #' Edgelists are expected to be held in data.frame or tibble class objects.
@@ -32,14 +32,14 @@
 #' If the sets of senders and receivers overlap, a one-mode network is inferred.
 #' If the sets contain no overlap, a two-mode network is inferred.
 #' If a third, numeric column is present, a weighted network will be created.
-#' 
+#'
 #' Matrices can be either adjacency (one-mode) or incidence (two-mode) matrices.
 #' Incidence matrices are typically inferred from unequal dimensions,
 #' but since in rare cases a matrix with equal dimensions may still
 #' be an incidence matrix, an additional argument `twomode` can be
 #' specified to override this heuristic.
-#' 
-#' This information is usually already embedded in `{igraph}`, 
+#'
+#' This information is usually already embedded in `{igraph}`,
 #' `{tidygraph}`, and `{network}` objects.
 #' @importFrom tidygraph as_tbl_graph is.tbl_graph
 #' @importFrom network is.network as.network
@@ -58,7 +58,7 @@
 #' as_graphAM(test)
 #' @return
 #' The currently implemented coercions or translations are:
-#' 
+#'
 #' |  to/from  | edgelists  | matrices  |igraph  |tidygraph  |network  | siena | goldfish
 #' | ------------- |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
 #' | edgelists (data frames)  | X | X | X | X | X | X | X |
@@ -80,21 +80,21 @@ as_edgelist <- function(.data,
 
 #' @export
 as_edgelist.igraph <- function(.data,
-                               twomode = FALSE){
+                               twomode = FALSE) {
   igraph::as_data_frame(.data, what = "edges") %>% 
     dplyr::as_tibble()
 }
 
 #' @export
 as_edgelist.tbl_graph <- function(.data,
-                                  twomode = FALSE){
+                                  twomode = FALSE) {
   igraph::as_data_frame(.data, what = "edges") %>% 
     dplyr::as_tibble()
 }
 
 #' @export
 as_edgelist.network <- function(.data,
-                                twomode = FALSE){
+                                twomode = FALSE) {
   out <- sna::as.edgelist.sna(.data)
   edges <- as.data.frame(out)
   if (is_twomode(.data)) {
@@ -119,20 +119,20 @@ as_edgelist.network <- function(.data,
 
 #' @export
 as_edgelist.matrix <- function(.data,
-                               twomode = FALSE){
+                               twomode = FALSE) {
   as_edgelist(as_igraph(.data,
                         twomode = FALSE))
 }
 
 #' @export
 as_edgelist.data.frame <- function(.data,
-                                   twomode = FALSE){
-  if(ncol(.data) == 2 && any(names(.data) != c("from", "to"))){
+                                   twomode = FALSE) {
+  if (ncol(.data) == 2 && any(names(.data) != c("from", "to"))) {
     names(.data) <- c("from", "to")
     .data
   } else if(ncol(.data) == 3 && 
             (any(names(.data) != c("from", "to", "weight")) | 
-            any(names(.data) != c("from", "to", "sign")))){
+            any(names(.data) != c("from", "to", "sign")))) {
     names(.data) <- c("from", "to", "weight")
     .data
   } else .data
@@ -159,7 +159,7 @@ as_matrix <- function(.data,
 
 #' @export
 as_matrix.data.frame <- function(.data,
-                                 twomode = NULL){
+                                 twomode = NULL) {
   if ("tbl_df" %in% class(.data)) .data <- as.data.frame(.data)
   
   if (ncol(.data) == 2 | !is_weighted(.data)) {
@@ -314,11 +314,11 @@ as_igraph.data.frame <- function(.data,
     names(.data)[3] <- "weight"
     # stop("Please rename the weight column of your dataframe to 'weight'")
   }
-  if(!is_labelled(.data)){
+  if (!is_labelled(.data)) {
     graph <- igraph::graph_from_data_frame(.data, 
                       vertices = data.frame(name = 1:max(c(.data$from, .data$to))))
   } else graph <- igraph::graph_from_data_frame(.data)
-  if(!is_labelled(.data)){
+  if (!is_labelled(.data)) {
     graph <- igraph::delete_vertex_attr(graph, "name")
   }
   # length(intersect(c(.data[,1]), c(.data[,2]))) == 0 && length(.data[,1])>1
@@ -545,7 +545,7 @@ as_igraph.siena <- function(.data, twomode = NULL) {
                                  name = paste0(names(.data$dyvCovars)[k]))
   }
   # Add any behavioral depvars
-  if(length(which(dvs == FALSE)) > 0){
+  if(length(which(dvs == FALSE)) > 0) {
     bdvs <- names(which(dvs == FALSE))
     for (b in seq_len(length(bdvs))) {
       out <- .get_attributes(.data$depvars[[bdvs[b]]], out,
@@ -584,11 +584,11 @@ as_tidygraph.data.frame <- function(.data, twomode = FALSE) {
 #' @importFrom tidygraph tbl_graph
 #' @export
 as_tidygraph.list <- function(.data, twomode = FALSE) {
-  if(!is.null(names(.data))){
-    if("nodes" %in% names(.data) & "ties" %in% names(.data)){
+  if (!is.null(names(.data))){
+    if ("nodes" %in% names(.data) & "ties" %in% names(.data)) {
       tidygraph::tbl_graph(nodes = .data[["nodes"]],
                            edges = .data[["ties"]])
-    } else if ("nodes" %in% names(.data) & "edges" %in% names(.data)){
+    } else if ("nodes" %in% names(.data) & "edges" %in% names(.data)) {
       tidygraph::tbl_graph(nodes = .data[["nodes"]],
                            edges = .data[["edges"]])
     } else stop("Please name the list elements 'nodes' and 'ties'.")
@@ -632,7 +632,7 @@ as_tidygraph.network.goldfish <- function(.data,
   #                                classes = classesToKeep), 
   #                   FUN.VALUE = logical(length(classesToKeep)))
 
-  if(sum(.data)==0){
+  if (sum(.data)==0) {
     out <- igraph::graph_from_data_frame(d = get(attr(.data, "events"))[,2:4],
                                          directed = attr(.data, "directed"),
                                          vertices = get(attr(.data, "nodes")))
@@ -743,8 +743,8 @@ as_siena <- function(.data,
                       twomode = FALSE) UseMethod("as_siena")
 
 #' @export
-as_siena.igraph <- function(.data, twomode = FALSE){
-  if(!requireNamespace("RSiena", quietly = TRUE)){
+as_siena.igraph <- function(.data, twomode = FALSE) {
+  if (!requireNamespace("RSiena", quietly = TRUE)) {
     stop("Please install `RSiena` from CRAN to coerce into RSiena data objects.")
   } else {
     # First separate out the dependent ties
@@ -806,37 +806,37 @@ setClass("graphAM", contains="graph",
          slots = c(adjMat="matrix", edgemode="character"))
 
 #' @export
-as_graphAM.matrix <- function(.data, twomode = NULL){
+as_graphAM.matrix <- function(.data, twomode = NULL) {
   methods::new("graphAM", adjMat = migraph::to_onemode(.data), 
                edgemode = ifelse(is_directed(.data), "directed", "undirected"))
 }
 
 #' @export
-as_graphAM.igraph <- function(.data, twomode = NULL){
+as_graphAM.igraph <- function(.data, twomode = NULL) {
   as_graphAM(as_matrix(.data), twomode)
 }
 
 #' @export
-as_graphAM.tbl_graph <- function(.data, twomode = NULL){
+as_graphAM.tbl_graph <- function(.data, twomode = NULL) {
   as_graphAM(as_matrix(.data), twomode)
 }
 
 #' @export
-as_graphAM.network <- function(.data, twomode = NULL){
+as_graphAM.network <- function(.data, twomode = NULL) {
   as_graphAM(as_matrix(.data), twomode)
 }
 
 #' @export
-as_graphAM.data.frame <- function(.data, twomode = NULL){
+as_graphAM.data.frame <- function(.data, twomode = NULL) {
   as_graphAM(as_matrix(.data), twomode)
 }
 
 #' @export
-as_graphAM.siena <- function(.data, twomode = NULL){
+as_graphAM.siena <- function(.data, twomode = NULL) {
   as_graphAM(as_matrix(.data), twomode)
 }
 
 #' @export
-as_graphAM.network.goldfish <- function(.data, twomode = NULL){
+as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
   as_graphAM(as_matrix(.data), twomode)
 }

@@ -1,5 +1,5 @@
 #' Marking networks based on their properties
-#' 
+#'
 #' These functions implement logical tests for various network
 #' properties.
 #' @param .data An object of a manynet-consistent class:
@@ -24,7 +24,7 @@ NULL
 #' @examples
 #' is_migraph(create_filled(2))
 #' @export
-is_migraph <- function(.data){
+is_migraph <- function(.data) {
   tidygraph::is.tbl_graph(.data) |
     network::is.network(.data) |
     igraph::is.igraph(.data) |
@@ -65,7 +65,7 @@ is_graph.network <- function(.data) FALSE
 is_edgelist <- function(.data) UseMethod("is_edgelist")
   
 #' @export
-is_edgelist.data.frame <- function(.data){
+is_edgelist.data.frame <- function(.data) {
   ncol(.data) >= 2 & "from" %in% names(.data) & "to" %in% names(.data)
 }
 
@@ -298,48 +298,48 @@ is_complex.network <- function(.data) {
 is_multiplex <- function(.data) UseMethod("is_multiplex")
 
 #' @export
-is_multiplex.matrix <- function(.data){
+is_multiplex.matrix <- function(.data) {
   FALSE
 }
 
 #' @export
-is_multiplex.tbl_graph <- function(.data){
+is_multiplex.tbl_graph <- function(.data) {
   igraph::any_multiple(.data) |
     length(migraph::network_tie_attributes(.data)) > 1
 }
 
 #' @export
-is_multiplex.igraph <- function(.data){
+is_multiplex.igraph <- function(.data) {
   igraph::any_multiple(.data) |
     length(migraph::network_tie_attributes(.data)) > 1
 }
 
 #' @export
-is_multiplex.network <- function(.data){
+is_multiplex.network <- function(.data) {
   network::is.multiplex(.data)
 }
 
 #' @export
-is_multiplex.data.frame <- function(.data){
+is_multiplex.data.frame <- function(.data) {
   ncol(.data) > 3
 }
 
 #' @describeIn is Tests whether network is simple (both uniplex and simplex)
 #' @importFrom igraph is.simple
-#' @examples 
+#' @examples
 #' is_uniplex(create_star(3))
 #' @export
-is_uniplex <- function(.data){
+is_uniplex <- function(.data) {
   obj <- as_igraph(.data)
   igraph::is.simple(obj)
 }
 
 #' @describeIn is Tests whether network is longitudinal, panel data
 #' @importFrom migraph network_tie_attributes
-#' @examples 
+#' @examples
 #' is_longitudinal(create_tree(5, 3))
 #' @export
-is_longitudinal <- function(.data){
+is_longitudinal <- function(.data) {
   atts <- migraph::network_tie_attributes(.data)
   "wave" %in% atts | "panel" %in% atts
 }
@@ -349,7 +349,7 @@ is_longitudinal <- function(.data){
 #' @examples 
 #' is_dynamic(create_tree(3))
 #' @export
-is_dynamic <- function(.data){
+is_dynamic <- function(.data) {
   atts <- migraph::network_tie_attributes(.data)
   "time" %in% atts | "beg" %in% atts | "begin" %in% atts | "start" %in% atts
 }
@@ -378,7 +378,7 @@ is_connected <- function(.data) {
 #' @examples
 #' is_perfect_matching(migraph::ison_bb)
 #' @export
-is_perfect_matching <- function(.data, mark = "type"){
+is_perfect_matching <- function(.data, mark = "type") {
   matches <- migraph::to_matching(.data, mark = mark)
   migraph::network_ties(matches)*2 == migraph::network_nodes(matches)
 }
@@ -389,7 +389,7 @@ is_perfect_matching <- function(.data, mark = "type"){
 #' @examples
 #' is_eulerian(migraph::ison_brandes)
 #' @export
-is_eulerian <- function(.data){
+is_eulerian <- function(.data) {
   igraph::has_eulerian_path(as_igraph(.data))
 }
 
@@ -398,7 +398,7 @@ is_eulerian <- function(.data){
 #' @examples 
 #' is_acyclic(migraph::ison_algebra)
 #' @export
-is_acyclic <- function(.data){
+is_acyclic <- function(.data) {
   obj <- as_igraph(.data)
   igraph::is_dag(obj)
 }
@@ -411,10 +411,10 @@ is_acyclic <- function(.data){
 #' @examples 
 #' is_aperiodic(migraph::ison_algebra)
 #' @export
-is_aperiodic <- function(.data, max_path_length = 4){
+is_aperiodic <- function(.data, max_path_length = 4) {
   g <- as_igraph(.data)
   out <- NULL
-  for(v1 in igraph::V(g)) {
+  for (v1 in igraph::V(g)) {
     if(igraph::degree(g, v1, mode="in") == 0) {next}
     goodNeighbors <- igraph::neighbors(g, v1, mode="out")
     goodNeighbors <- goodNeighbors[goodNeighbors > v1]
