@@ -45,10 +45,11 @@
 #' @importFrom network is.network as.network
 #'  as.matrix.network.incidence as.matrix.network.adjacency
 #' @importFrom migraph network_tie_attributes is_weighted to_multilevel
-#'  activate to_uniplex to_onemode 
+#'  activate to_uniplex to_onemode network_nodes add_node_attribute join_ties
+#'  add_tie_attribute tie_attribute
+#' @importFrom dplyr %>%
 #' @examples
-#' test <- data.frame(from = c("A","B","B","C","C"),
-#'                    to = c("I","G","I","G","H"))
+#' test <- data.frame(from = c("A","B","B","C","C"), to = c("I","G","I","G","H"))
 #' as_edgelist(test)
 #' as_matrix(test)
 #' as_igraph(test)
@@ -128,7 +129,7 @@ as_edgelist.data.frame <- function(.data,
                                    twomode = FALSE){
   if(ncol(.data) == 2 && any(names(.data) != c("from", "to"))){
     names(.data) <- c("from", "to")
-    object
+    .data
   } else if(ncol(.data) == 3 && 
             (any(names(.data) != c("from", "to", "weight")) | 
             any(names(.data) != c("from", "to", "sign")))){
@@ -153,42 +154,41 @@ as_edgelist.siena <- function(.data,
 
 #' @rdname as
 #' @export
-as_matrix <- function(object,
+as_matrix <- function(.data,
                       twomode = NULL) UseMethod("as_matrix")
 
 #' @export
-as_matrix.data.frame <- function(object,
+as_matrix.data.frame <- function(.data,
                                  twomode = NULL){
-  if ("tbl_df" %in% class(object)) object <- as.data.frame(object)
+  if ("tbl_df" %in% class(.data)) .data <- as.data.frame(.data)
   
-  if (ncol(object) == 2 | !is_weighted(object)) {
-    object <- data.frame(object) # in case it's a tibble
-    object <- as.data.frame(table(c(object[,1]),
-                                  c(object[,2])))
-    names(object) <- c("from","to","weight")
+  if (ncol(.data) == 2 | !is_weighted(.data)) {
+    .data <- data.frame(.data) # in case it's a tibble
+    .data <- as.data.frame(table(c(.data[,1]), c(.data[,2])))
+    names(.data) <- c("from","to","weight")
   }
-  if (ncol(object) == 3) {
+  if (ncol(.data) == 3) {
     # Adds a third (weight) column to a two-column edgelist
-    # object <- object[order(object[,1], object[,2]),]
-    nodes1 <- as.character(unique(object[,1]))
+    # .data <- .data[order(.data[,1], .data[,2]),]
+    nodes1 <- as.character(unique(.data[,1]))
     nodes1 <- sort(nodes1)
-    nodes2 <- as.character(unique(object[,2]))
+    nodes2 <- as.character(unique(.data[,2]))
     nodes2 <- sort(nodes2)
     if(length(intersect(nodes1, nodes2)) > 0 &
        !setequal(nodes1, nodes2))
       nodes1 <- nodes2 <- sort(unique(c(nodes1,nodes2)))
-    if (nrow(object) != length(nodes1)*length(nodes2)) {
+    if (nrow(.data) != length(nodes1)*length(nodes2)) {
       allcombs <- expand.grid(nodes1, nodes2, stringsAsFactors = FALSE)
       allcombs <- subset(allcombs, !duplicated(allcombs))
       names(allcombs) <- c("from","to")
-      object <- merge(allcombs, object, all.x = TRUE)
-      object <- object[order(object[,2], object[,1]),]
-      object[is.na(object)] <- 0
+      .data <- merge(allcombs, .data, all.x = TRUE)
+      .data <- .data[order(.data[,2], .data[,1]),]
+      .data[is.na(.data)] <- 0
     }
-    object <- dplyr::arrange(object, 
+    .data <- dplyr::arrange(.data, 
                              as.character(.data$to), 
                              as.character(.data$from))
-    out <- structure(as.numeric(object[,3]),
+    out <- structure(as.numeric(.data[,3]),
                      .Dim = c(as.integer(length(nodes1)),
                               as.integer(length(nodes2))),
                      .Dimnames = list(nodes1, nodes2))
@@ -197,28 +197,28 @@ as_matrix.data.frame <- function(object,
 }
 
 #' @export
-as_matrix.matrix <- function(object,
+as_matrix.matrix <- function(.data,
                              twomode = NULL) {
-  object
+  .data
 }
 
 #' @export
-as_matrix.igraph <- function(object,
+as_matrix.igraph <- function(.data,
                              twomode = NULL) {
-  if ((!is.null(twomode) && twomode) | (is.null(twomode) & is_twomode(object))) {
-    if (is_weighted(object) | is_signed(object)) {
-      mat <- igraph::as_incidence_matrix(object, sparse = FALSE,
-                                         attr = igraph::edge_attr_names(object)[[1]])
+  if ((!is.null(twomode) && twomode) | (is.null(twomode) & is_twomode(.data))) {
+    if (is_weighted(.data) | is_signed(.data)) {
+      mat <- igraph::as_incidence_matrix(.data, sparse = FALSE,
+                                         attr = igraph::edge_attr_names(.data)[[1]])
     } else {
-      mat <- igraph::as_incidence_matrix(object, sparse = FALSE,
+      mat <- igraph::as_incidence_matrix(.data, sparse = FALSE,
                                          attr = NULL)
     }
   } else {
-    if (is_weighted(object) | is_signed(object)) {
-      mat <- igraph::as_adjacency_matrix(object, sparse = FALSE,
-                                         attr = igraph::edge_attr_names(object)[[1]])
+    if (is_weighted(.data) | is_signed(.data)) {
+      mat <- igraph::as_adjacency_matrix(.data, sparse = FALSE,
+                                         attr = igraph::edge_attr_names(.data)[[1]])
     } else {
-      mat <- igraph::as_adjacency_matrix(object, sparse = FALSE,
+      mat <- igraph::as_adjacency_matrix(.data, sparse = FALSE,
                                          attr = NULL)
     }
   }
@@ -226,70 +226,70 @@ as_matrix.igraph <- function(object,
 }
 
 #' @export
-as_matrix.tbl_graph <- function(object,
+as_matrix.tbl_graph <- function(.data,
                                 twomode = NULL) {
-  as_matrix(as_igraph(object), twomode = twomode)
+  as_matrix(as_igraph(.data), twomode = twomode)
 }
 
 #' @export
-as_matrix.network <- function(object,
+as_matrix.network <- function(.data,
                               twomode = NULL) {
-  if (network::is.bipartite(object)) {
-    if ("weight" %in% network::list.edge.attributes(object)) {
-      network::as.matrix.network(object,
+  if (network::is.bipartite(.data)) {
+    if ("weight" %in% network::list.edge.attributes(.data)) {
+      network::as.matrix.network(.data,
                                  attrname = "weight",
                                  expand.bipartite = FALSE)
       # Note: if expand.bipartite is true it returns the adjacency matrix. If
       # false it returns the incidence matrix that we want. Use
       # to_multilevel(mat) on the resulting matrix to do the conversion if needed.
     } else {
-      network::as.matrix.network(object,
+      network::as.matrix.network(.data,
                                  expand.bipartite = FALSE)
     }
   } else {
-    if ("weight" %in% network::list.edge.attributes(object)) {
-      network::as.matrix.network(object, attrname = "weight")
+    if ("weight" %in% network::list.edge.attributes(.data)) {
+      network::as.matrix.network(.data, attrname = "weight")
     } else {
-      network::as.matrix.network(object)
+      network::as.matrix.network(.data)
     }
   }
 }
 
 #' @export
-as_matrix.network.goldfish <- function(object,
+as_matrix.network.goldfish <- function(.data,
                                        twomode = FALSE) {
-  as_matrix(as_igraph(object, twomode = twomode))
+  as_matrix(as_igraph(.data, twomode = twomode))
 }
 
 #' @export
-as_matrix.siena <- function(object,
+as_matrix.siena <- function(.data,
                             twomode = NULL) {
   # Get the dependent network(s) first
   # Identify all dyadic depvars
-  dvs <- lapply(object$depvars, function(x) is.matrix(x[,,1]) )
+  dvs <- lapply(.data$depvars, function(x) is.matrix(x[,,1]) )
   ddvs <- names(which(dvs == TRUE))
   # Add in first wave of first DV network
-  out <- object$depvars[[ddvs[1]]][,,1]
+  out <- .data$depvars[[ddvs[1]]][,,1]
   # Add remaining waves
-  for(d in 2:dim(object$depvars[[ddvs[1]]])[3]) {
-    out <- object$depvars[[ddvs[1]]][,,d] + out
+  for(d in 2:dim(.data$depvars[[ddvs[1]]])[3]) {
+    out <- .data$depvars[[ddvs[1]]][,,d] + out
   }
   # Add other dyadic depvars
   if (length(ddvs) > 1) {
     for (l in 2:length(ddvs)) {
-      for (d in seq_len(dim(object$depvars[[ddvs[l]]])[3])) {
-        out <- object$depvars[[ddvs[l]]][,,d] + out
+      for (d in seq_len(dim(.data$depvars[[ddvs[l]]])[3])) {
+        out <- .data$depvars[[ddvs[l]]][,,d] + out
       }
     }
   }
   # Add dycCovars
-  for (k in seq_len(length(object$dycCovars))) {
-    out <- object$dycCovars[[ddvs[k]]] + out
+  for (k in seq_len(length(.data$dycCovars))) {
+    out <- .data$dycCovars[[ddvs[k]]] + out
   }
   # Add dyvCovars
-  for (k in seq_len(length(object$dyvCovars))) {
-    for (d in seq_len(dim(object$dyvCovars[[k]])[3])) {
-      out <- object$dyvCovars[[k]][,,d] + out
+  for (k in seq_len(length(.data$dyvCovars))) {
+    for (d in seq_len(dim(.data$dyvCovars[[k]])[3])) {
+      out <- .data$dyvCovars[[k]][,,d] + out
     }
   }
   out
@@ -329,26 +329,26 @@ as_igraph.data.frame <- function(.data,
 }
 
 #' @export
-as_igraph.matrix <- function(object,
+as_igraph.matrix <- function(.data,
                              twomode = FALSE) {
-  if (nrow(object) != ncol(object) | twomode) {
-    if (!(all(object %in% c(0, 1)))) {
-      graph <- igraph::graph_from_incidence_matrix(object, 
+  if (nrow(.data) != ncol(.data) | twomode) {
+    if (!(all(.data %in% c(0, 1)))) {
+      graph <- igraph::graph_from_incidence_matrix(.data, 
                                                    weighted = TRUE, 
                                                    directed = FALSE)
     } else {
-      graph <- igraph::graph_from_incidence_matrix(object, 
+      graph <- igraph::graph_from_incidence_matrix(.data, 
                                                    directed = FALSE)
     }
   } else {
-    if (!(all(object %in% c(0, 1)))) {
-      graph <- igraph::graph_from_adjacency_matrix(object, 
-                                                   mode = ifelse(all(object == t(object)),
+    if (!(all(.data %in% c(0, 1)))) {
+      graph <- igraph::graph_from_adjacency_matrix(.data, 
+                                                   mode = ifelse(all(.data == t(.data)),
                                                                  "undirected", "directed"),
                                                    weighted = TRUE)
     } else {
-      graph <- igraph::graph_from_adjacency_matrix(object, 
-                                                   mode = ifelse(all(object == t(object)),
+      graph <- igraph::graph_from_adjacency_matrix(.data, 
+                                                   mode = ifelse(all(.data == t(.data)),
                                                                  "undirected", "directed"))
     }
   }
@@ -356,53 +356,53 @@ as_igraph.matrix <- function(object,
 }
 
 #' @export
-as_igraph.igraph <- function(object,
+as_igraph.igraph <- function(.data,
                              twomode = FALSE) {
-  class(object) <- "igraph"
-  object
+  class(.data) <- "igraph"
+  .data
 }
 
 #' @export
-as_igraph.tbl_graph <- function(object,
+as_igraph.tbl_graph <- function(.data,
                                 twomode = FALSE) {
-  class(object) <- "igraph"
-  object
+  class(.data) <- "igraph"
+  .data
 }
 
 #' @export
-as_igraph.network <- function(object, 
+as_igraph.network <- function(.data, 
                               twomode = FALSE) {
   # Extract node attributes
-  attr <- names(object[[3]][[1]])
+  attr <- names(.data[[3]][[1]])
   # Convert to igraph
-  if (network::is.bipartite(object)) {
-    if ("weight" %in% network::list.edge.attributes(object)) {
-      graph <- sna::as.sociomatrix.sna(object, attrname = "weight")
+  if (network::is.bipartite(.data)) {
+    if ("weight" %in% network::list.edge.attributes(.data)) {
+      graph <- sna::as.sociomatrix.sna(.data, attrname = "weight")
       graph <- igraph::graph_from_incidence_matrix(graph, weighted = TRUE)
     } else {
-      graph <- sna::as.sociomatrix.sna(object)
+      graph <- sna::as.sociomatrix.sna(.data)
       graph <- igraph::graph_from_incidence_matrix(graph) 
     }
   } else {
-    if ("weight" %in% network::list.edge.attributes(object)) {
-      graph <- sna::as.sociomatrix.sna(object, attrname = "weight")
+    if ("weight" %in% network::list.edge.attributes(.data)) {
+      graph <- sna::as.sociomatrix.sna(.data, attrname = "weight")
       graph <- igraph::graph_from_adjacency_matrix(graph,
                                                    weighted = TRUE,
-                                                   mode = ifelse(object$gal$directed,
+                                                   mode = ifelse(.data$gal$directed,
                                                                  "directed",
                                                                  "undirected"))
-    } else if (length(network::list.edge.attributes(object)) > 1) {
-      object$gal$multiple <- FALSE
-      graph <- sna::as.sociomatrix.sna(object, attrname = network::list.edge.attributes(object)[1])
+    } else if (length(network::list.edge.attributes(.data)) > 1) {
+      .data$gal$multiple <- FALSE
+      graph <- sna::as.sociomatrix.sna(.data, attrname = network::list.edge.attributes(.data)[1])
       graph <- igraph::graph_from_adjacency_matrix(graph,
                                                    weighted = TRUE,
-                                                   mode = ifelse(object$gal$directed,
+                                                   mode = ifelse(.data$gal$directed,
                                                                  "directed",
                                                                  "undirected"))
     } else {
-      graph <- sna::as.sociomatrix.sna(object)
+      graph <- sna::as.sociomatrix.sna(.data)
       graph <- igraph::graph_from_adjacency_matrix(graph,
-                                                   mode = ifelse(object$gal$directed,
+                                                   mode = ifelse(.data$gal$directed,
                                                                  "directed",
                                                                  "undirected"))
     }
@@ -410,44 +410,41 @@ as_igraph.network <- function(object,
   # Add remaining node level attributes
   if (length(attr) > 2) {
     for (a in attr[2:length(attr)]) {
-      graph <- add_node_attribute(graph,
-                                  attr_name = a,
-                                  vector = sapply(object[[3]], "[[", a))
+      graph <- migraph::add_node_attribute(graph, attr_name = a,
+                                           vector = sapply(.data[[3]], "[[", a))
     }
   }
   graph
 }
 
 #' @export
-as_igraph.network.goldfish <- function(object,
+as_igraph.network.goldfish <- function(.data,
                                        twomode = FALSE) {
 
-  # orig <- deparse(substitute(object))
+  # orig <- deparse(substitute(.data))
   # y <- ls(envir = .GlobalEnv)
   # envir  <- .GlobalEnv
   # 
   # classesToKeep <- c("nodes.goldfish", "network.goldfish")
-  # checkClasses <- function(object, classes) vapply(classes, 
-  #                                                  function(x) methods::is(object, x), logical(1))
+  # checkClasses <- function(.data, classes) vapply(classes, 
+  #                                                  function(x) methods::is(.data, x), logical(1))
   # ClassFilter <- function(x) any(checkClasses(get(x), classes = classesToKeep))
   # gfobjs <- Filter(ClassFilter, y)
   # classes <- vapply(gfobjs, FUN = function(x) checkClasses(get(x), 
   #                                                          classes = classesToKeep), 
   #                   FUN.VALUE = logical(length(classesToKeep)))
 
-  if(sum(object)==0){
-    out <- igraph::graph_from_data_frame(d = get(attr(object, "events"))[,2:4],
-                                         directed = attr(object, "directed"),
-                                         vertices = get(attr(object, "nodes")))
+  if(sum(.data)==0){
+    out <- igraph::graph_from_data_frame(d = get(attr(.data, "events"))[,2:4],
+                                         directed = attr(.data, "directed"),
+                                         vertices = get(attr(.data, "nodes")))
   } else stop("Non-empty starts are not yet supported by this function.")
   out
 }
 
 #' @export
-as_igraph.siena <- function(object, twomode = NULL) {
-  edges <- NULL
-  orig <- NULL
-
+as_igraph.siena <- function(.data, twomode = NULL) {
+  edges <- orig <- .get_rem_time_periods <- .get_all_time_periods <- NULL
   ## Helper functions for as_igraph.siena
   .get_rem_time_periods <- function(g, x, name = NULL) {
     for(d in 2:dim(g)[3]){
@@ -475,14 +472,15 @@ as_igraph.siena <- function(object, twomode = NULL) {
             dplyr::mutate(weight = 1)
           x <- dplyr::bind_rows(y, as_edgelist(x)) %>%
             as_igraph()
-          x <- add_tie_attribute(x, paste0(name, "_", "t", d),
-                                 tie_attribute(x, "weight")) %>%
+          x <- migraph::add_tie_attribute(x, paste0(name, "_", "t", d),
+                                          migraph::tie_attribute(x,
+                                                                 "weight")) %>%
             igraph::delete_edge_attr("weight")
         }
       } else {
         # add names for one-mode y
-        y <- add_node_attribute(y, "name",
-                                as.character(seq_len(network_nodes(y))))
+        y <- migraph::add_node_attribute(y, "name", 
+                                         as.character(seq_len(migraph::network_nodes(y))))
         # join ties
         if (isTRUE(is_twomode(x))) { # x is twomode but y is onemode
           y <- as_edgelist(y)
@@ -490,8 +488,8 @@ as_igraph.siena <- function(object, twomode = NULL) {
             dplyr::mutate(weight = 1)
           x <- dplyr::bind_rows(y, as_edgelist(x)) %>%
             as_igraph()
-          x <- add_tie_attribute(x, paste0(name, "_", "t", d),
-                                 tie_attribute(x, "weight")) %>%
+          x <- migraph::add_tie_attribute(x, paste0(name, "_", "t", d),
+                                          migraph::tie_attribute(x, "weight")) %>%
             igraph::delete_edge_attr("weight")
         } else { # x and y are onemode
           x <- join_ties(x, as_igraph(y), 
@@ -504,70 +502,70 @@ as_igraph.siena <- function(object, twomode = NULL) {
 
   .get_attributes <- function(ndy, x, name = NULL) {
     for(d in seq_len(dim(ndy)[2])) {
-      x <- add_node_attribute(x,
-                              attr_name = paste0(name, "_", "t", d),
-                              as.vector(ndy[,d]))
+      x <- migraph::add_node_attribute(x, attr_name = paste0(name, "_", "t", d),
+                                       as.vector(ndy[,d]))
     }
     x
   }
 
   # We always get the dependent network(s) first
   # Identify all dyadic and non-dyadic depvars
-  dvs <- lapply(object$depvars, function(x) is.matrix(x[,,1]) )
+  dvs <- lapply(.data$depvars, function(x) is.matrix(x[,,1]) )
   ddvs <- names(which(dvs == TRUE))
   # Add in first network as base and add names
-  out <- object$depvars[[ddvs[1]]][,,1] # first wave
+  out <- .data$depvars[[ddvs[1]]][,,1] # first wave
   if (is_twomode(out) == FALSE) {
-    out <- add_node_attribute(out, "name", as.character(seq_len(network_nodes(out))))
+    out <- migraph::add_node_attribute(out, "name",
+                                       as.character(seq_len(migraph::network_nodes(out))))
   } else {
     rownames(out) <- as.character(seq_len(nrow(out)))
     colnames(out) <- as.character(paste0("N", seq_len(ncol(out))))
   }
   # Add ties from rest of time periods
-  out <- .get_rem_time_periods(object$depvars[[ddvs[1]]], out,
+  out <- .get_rem_time_periods(.data$depvars[[ddvs[1]]], out,
                                name = ddvs[1])
-  out <- add_tie_attribute(out, paste0(ddvs[1], "_", "t1"),
-                           tie_attribute(out, "orig")) %>%
+  out <- migraph::add_tie_attribute(out, paste0(ddvs[1], "_", "t1"),
+                                    migraph::tie_attribute(out, "orig")) %>%
     igraph::delete_edge_attr("orig")
   # Add rest of the dyadic depvars
   if (length(ddvs) > 1) {
     for (l in 2:length(ddvs)) {
-      out <- .get_all_time_periods(object$depvars[[ddvs[l]]], out,
+      out <- .get_all_time_periods(.data$depvars[[ddvs[l]]], out,
                                    name = ddvs[l])
     }
   }
   # Add dycCovar
-  for (k in seq_len(length(object$dycCovars))) {
-    out <- join_ties(out, as_igraph(object$dycCovars[k]), 
-                     attr_name = paste0(names(object$dycCovars)[k]))
+  for (k in seq_len(length(.data$dycCovars))) {
+    out <- join_ties(out, as_igraph(.data$dycCovars[k]), 
+                     attr_name = paste0(names(.data$dycCovars)[k]))
   }
   # Add dyvCovars
-  for (k in seq_len(length(object$dyvCovars))) {
-    out <- .get_all_time_periods(object$dyvCovars[[k]], out,
-                                 name = paste0(names(object$dyvCovars)[k]))
+  for (k in seq_len(length(.data$dyvCovars))) {
+    out <- .get_all_time_periods(.data$dyvCovars[[k]], out,
+                                 name = paste0(names(.data$dyvCovars)[k]))
   }
   # Add any behavioral depvars
   if(length(which(dvs == FALSE)) > 0){
     bdvs <- names(which(dvs == FALSE))
     for (b in seq_len(length(bdvs))) {
-      out <- .get_attributes(object$depvars[[bdvs[b]]], out,
+      out <- .get_attributes(.data$depvars[[bdvs[b]]], out,
                              name = bdvs[b])
     }
   }
   # Add composition change
-  for (k in seq_len(length(object$compositionChange))) {
-    out <- add_node_attribute(out, paste0(names(object$compositionChange)[k]),
-                              as.vector(object$compositionChange[[k]]))
+  for (k in seq_len(length(.data$compositionChange))) {
+    out <- migraph::add_node_attribute(out, paste0(names(.data$compositionChange)[k]),
+                                       as.vector(.data$compositionChange[[k]]))
   }
   # Add cCovar
-  for (k in seq_len(length(object$cCovars))) {
-    out <- add_node_attribute(out, paste0(names(object$cCovars)[k]),
-                              as.vector(object$cCovars[[k]]))
+  for (k in seq_len(length(.data$cCovars))) {
+    out <- migraph::add_node_attribute(out, paste0(names(.data$cCovars)[k]),
+                                       as.vector(.data$cCovars[[k]]))
   }
   # Add vCovar
-  for (k in seq_len(length(object$vCovars))) {
-    out <- .get_attributes(object$vCovars[[k]], out,
-                          name = paste0(names(object$vCovars)[k]))
+  for (k in seq_len(length(.data$vCovars))) {
+    out <- .get_attributes(.data$vCovars[[k]], out,
+                          name = paste0(names(.data$vCovars)[k]))
   }
   out
 }
@@ -576,68 +574,68 @@ as_igraph.siena <- function(object, twomode = NULL) {
 
 #' @rdname as
 #' @export
-as_tidygraph <- function(object, twomode = FALSE) UseMethod("as_tidygraph")
+as_tidygraph <- function(.data, twomode = FALSE) UseMethod("as_tidygraph")
 
 #' @export
-as_tidygraph.data.frame <- function(object, twomode = FALSE) {
-  tidygraph::as_tbl_graph(as_igraph(object))
+as_tidygraph.data.frame <- function(.data, twomode = FALSE) {
+  tidygraph::as_tbl_graph(as_igraph(.data))
 }
 
 #' @importFrom tidygraph tbl_graph
 #' @export
-as_tidygraph.list <- function(object, twomode = FALSE) {
-  if(!is.null(names(object))){
-    if("nodes" %in% names(object) & "ties" %in% names(object)){
-      tidygraph::tbl_graph(nodes = object[["nodes"]],
-                           edges = object[["ties"]])
-    } else if ("nodes" %in% names(object) & "edges" %in% names(object)){
-      tidygraph::tbl_graph(nodes = object[["nodes"]],
-                           edges = object[["edges"]])
+as_tidygraph.list <- function(.data, twomode = FALSE) {
+  if(!is.null(names(.data))){
+    if("nodes" %in% names(.data) & "ties" %in% names(.data)){
+      tidygraph::tbl_graph(nodes = .data[["nodes"]],
+                           edges = .data[["ties"]])
+    } else if ("nodes" %in% names(.data) & "edges" %in% names(.data)){
+      tidygraph::tbl_graph(nodes = .data[["nodes"]],
+                           edges = .data[["edges"]])
     } else stop("Please name the list elements 'nodes' and 'ties'.")
   } else stop("Please name the list elements 'nodes' and 'ties'.")
 }
   
 #' @export
-as_tidygraph.matrix <- function(object, twomode = FALSE) {
-  tidygraph::as_tbl_graph(as_igraph(object))
+as_tidygraph.matrix <- function(.data, twomode = FALSE) {
+  tidygraph::as_tbl_graph(as_igraph(.data))
 }
 
 #' @export
-as_tidygraph.igraph <- function(object, twomode = FALSE) {
-  tidygraph::as_tbl_graph(object)
+as_tidygraph.igraph <- function(.data, twomode = FALSE) {
+  tidygraph::as_tbl_graph(.data)
 }
 
 #' @export
-as_tidygraph.tbl_graph <- function(object, twomode = FALSE) {
-  object
+as_tidygraph.tbl_graph <- function(.data, twomode = FALSE) {
+  .data
 }
 
 #' @export
-as_tidygraph.network <- function(object, twomode = FALSE) {
-  tidygraph::as_tbl_graph(as_igraph(object))
+as_tidygraph.network <- function(.data, twomode = FALSE) {
+  tidygraph::as_tbl_graph(as_igraph(.data))
 }
 
 #' @export
-as_tidygraph.network.goldfish <- function(object,
+as_tidygraph.network.goldfish <- function(.data,
                                           twomode = FALSE) {
 
-  # orig <- deparse(substitute(object))
+  # orig <- deparse(substitute(.data))
   # y <- ls(envir = .GlobalEnv)
   # envir  <- .GlobalEnv
   # 
   # classesToKeep <- c("nodes.goldfish", "network.goldfish")
-  # checkClasses <- function(object, classes) vapply(classes, 
-  #                               function(x) methods::is(object, x), logical(1))
+  # checkClasses <- function(.data, classes) vapply(classes, 
+  #                               function(x) methods::is(.data, x), logical(1))
   # ClassFilter <- function(x) any(checkClasses(get(x), classes = classesToKeep))
   # gfobjs <- Filter(ClassFilter, y)
   # classes <- vapply(gfobjs, FUN = function(x) checkClasses(get(x), 
   #                                classes = classesToKeep), 
   #                   FUN.VALUE = logical(length(classesToKeep)))
 
-  if(sum(object)==0){
-    out <- igraph::graph_from_data_frame(d = get(attr(object, "events"))[,2:4],
-                                         directed = attr(object, "directed"),
-                                         vertices = get(attr(object, "nodes")))
+  if(sum(.data)==0){
+    out <- igraph::graph_from_data_frame(d = get(attr(.data, "events"))[,2:4],
+                                         directed = attr(.data, "directed"),
+                                         vertices = get(attr(.data, "nodes")))
     out <- as_tidygraph(out)
   } else stop("Non-empty starts are not yet supported by this function.")
 
@@ -657,50 +655,50 @@ as_tidygraph.network.goldfish <- function(object,
 }
 
 #' @export
-as_tidygraph.siena <- function(object, twomode = FALSE) {
-  as_tidygraph(as_igraph.siena(object, twomode = FALSE))
+as_tidygraph.siena <- function(.data, twomode = FALSE) {
+  as_tidygraph(as_igraph.siena(.data, twomode = FALSE))
 }
 
 # Network ####
 
 #' @rdname as
 #' @export
-as_network <- function(object,
+as_network <- function(.data,
                        twomode = FALSE) UseMethod("as_network")
 
 #' @export
-as_network.network <- function(object,
+as_network.network <- function(.data,
                                twomode = FALSE) {
-  object
+  .data
 }
 
 #' @export
-as_network.matrix <- function(object,
+as_network.matrix <- function(.data,
                               twomode = FALSE) {
   # Convert to adjacency matrix if not square already
-  if (is_twomode(object)) {
-    out <- migraph::to_multilevel(object)
-  } else out <- object
+  if (is_twomode(.data)) {
+    out <- migraph::to_multilevel(.data)
+  } else out <- .data
   network::as.network(out, 
-                      directed = is_directed(object),
-                      bipartite   = ifelse(is_twomode(object),
-                                           nrow(object),
+                      directed = is_directed(.data),
+                      bipartite   = ifelse(is_twomode(.data),
+                                           nrow(.data),
                                            FALSE),
                       loops = ifelse(sum(diag(out)) > 0, TRUE, FALSE),
-                      ignore.eval = ifelse(is_weighted(object),
+                      ignore.eval = ifelse(is_weighted(.data),
                                            FALSE, TRUE),
-                      names.eval  = ifelse(is_weighted(object),
+                      names.eval  = ifelse(is_weighted(.data),
                                            "weight", NULL))
 }
 
 #' @export
-as_network.igraph <- function(object,
+as_network.igraph <- function(.data,
                               twomode = FALSE) {
   name <- type <- NULL
-  attr <- as.data.frame(igraph::get.vertex.attribute(object))
+  attr <- as.data.frame(igraph::get.vertex.attribute(.data))
   if ("name" %in% colnames(attr)) attr <- subset(attr, select = c(-name))
   if ("type" %in% colnames(attr)) attr <- subset(attr, select = c(-type))
-  out <- as_network(as_matrix(object))
+  out <- as_network(as_matrix(.data))
   if (length(attr) > 0) {
     out <- network::set.vertex.attribute(out, names(attr), attr)
   }
@@ -708,11 +706,11 @@ as_network.igraph <- function(object,
 }
 
 #' @export
-as_network.tbl_graph <- function(object,
+as_network.tbl_graph <- function(.data,
                                  twomode = FALSE) {
   nodes <- NULL
-  attr <- as.data.frame(migraph::activate(object, nodes))[-1]
-  out <- as_network(as_matrix(object))
+  attr <- as.data.frame(migraph::activate(.data, nodes))[-1]
+  out <- as_network(as_matrix(.data))
   if (length(attr) > 0) {
     out <- network::set.vertex.attribute(out, names(attr), attr)
   }
@@ -720,53 +718,53 @@ as_network.tbl_graph <- function(object,
 }
 
 #' @export
-as_network.data.frame <- function(object,
+as_network.data.frame <- function(.data,
                                   twomode = NULL) {
-  if ("tbl_df" %in% class(object)) object <- as.data.frame(object)
-  as_network(as_matrix(object, twomode))
+  if ("tbl_df" %in% class(.data)) .data <- as.data.frame(.data)
+  as_network(as_matrix(.data, twomode))
 }
 
 #' @export
-as_network.network.goldfish <- function(object,
+as_network.network.goldfish <- function(.data,
                                         twomode = FALSE) {
-  as_network(as_igraph(object, twomode = twomode))
+  as_network(as_igraph(.data, twomode = twomode))
 }
 
 #' @export
-as_network.siena <- function(object, twomode = FALSE) {
-  as_network(as_igraph.siena(object, twomode = FALSE))
+as_network.siena <- function(.data, twomode = FALSE) {
+  as_network(as_igraph.siena(.data, twomode = FALSE))
 }
 
 # RSiena ####
 
 #' @rdname as
 #' @export
-as_siena <- function(object,
+as_siena <- function(.data,
                       twomode = FALSE) UseMethod("as_siena")
 
 #' @export
-as_siena.igraph <- function(object, twomode = FALSE){
+as_siena.igraph <- function(.data, twomode = FALSE){
   if(!requireNamespace("RSiena", quietly = TRUE)){
     stop("Please install `RSiena` from CRAN to coerce into RSiena data objects.")
   } else {
     # First separate out the dependent ties
-    nets <- migraph::network_tie_attributes(object)
+    nets <- migraph::network_tie_attributes(.data)
     ties <- unique(gsub("_t[0-9]","", nets))
     waves <- max(vapply(strsplit(nets, "_t"), function(t)
       as.numeric(t[2]), numeric(1)))
     depnet <- ties[1]
     depnetArray <- simplify2array(lapply(1:waves, function(t)
-      as_matrix(migraph::to_uniplex(object, paste0(depnet, "_t", t)))))
+      as_matrix(migraph::to_uniplex(.data, paste0(depnet, "_t", t)))))
     depnet <- RSiena::sienaDependent(depnetArray, 
-                           type = ifelse(is_twomode(object) | twomode,
+                           type = ifelse(is_twomode(.data) | twomode,
                                          "bipartite", "oneMode"))
 
-    # nodeatts <- network_node_attributes(object)
+    # nodeatts <- network_node_attributes(.data)
     # nodeatts <- nodeatts[nodeatts != "name"]
     # # Add constant covariates
     # consatts <- nodeatts[!grepl("_t[0-9]",nodeatts)]
     # consvars <- lapply(consatts, function(cons) 
-    #   RSiena::coCovar(node_attribute(object, cons)))
+    #   RSiena::coCovar(node_attribute(.data, cons)))
     # names(consvars) <- consatts
     # .newEnv <- new.env(parent=globalenv())
     # list2env(consvars, envir = .newEnv)
@@ -781,7 +779,7 @@ as_siena.igraph <- function(object, twomode = FALSE){
 #' @rdname as
 #' @importFrom methods new
 #' @export
-as_graphAM <- function(object, twomode = NULL) UseMethod("as_graphAM")
+as_graphAM <- function(.data, twomode = NULL) UseMethod("as_graphAM")
 
 setClass("attrData", representation(data="list",
                                     defaults="list"))
@@ -808,37 +806,37 @@ setClass("graphAM", contains="graph",
          slots = c(adjMat="matrix", edgemode="character"))
 
 #' @export
-as_graphAM.matrix <- function(object, twomode = NULL){
-  methods::new("graphAM", adjMat = migraph::to_onemode(object), 
-               edgemode = ifelse(is_directed(object), "directed", "undirected"))
+as_graphAM.matrix <- function(.data, twomode = NULL){
+  methods::new("graphAM", adjMat = migraph::to_onemode(.data), 
+               edgemode = ifelse(is_directed(.data), "directed", "undirected"))
 }
 
 #' @export
-as_graphAM.igraph <- function(object, twomode = NULL){
-  as_graphAM(as_matrix(object), twomode)
+as_graphAM.igraph <- function(.data, twomode = NULL){
+  as_graphAM(as_matrix(.data), twomode)
 }
 
 #' @export
-as_graphAM.tbl_graph <- function(object, twomode = NULL){
-  as_graphAM(as_matrix(object), twomode)
+as_graphAM.tbl_graph <- function(.data, twomode = NULL){
+  as_graphAM(as_matrix(.data), twomode)
 }
 
 #' @export
-as_graphAM.network <- function(object, twomode = NULL){
-  as_graphAM(as_matrix(object), twomode)
+as_graphAM.network <- function(.data, twomode = NULL){
+  as_graphAM(as_matrix(.data), twomode)
 }
 
 #' @export
-as_graphAM.data.frame <- function(object, twomode = NULL){
-  as_graphAM(as_matrix(object), twomode)
+as_graphAM.data.frame <- function(.data, twomode = NULL){
+  as_graphAM(as_matrix(.data), twomode)
 }
 
 #' @export
-as_graphAM.siena <- function(object, twomode = NULL){
-  as_graphAM(as_matrix(object), twomode)
+as_graphAM.siena <- function(.data, twomode = NULL){
+  as_graphAM(as_matrix(.data), twomode)
 }
 
 #' @export
-as_graphAM.network.goldfish <- function(object, twomode = NULL){
-  as_graphAM(as_matrix(object), twomode)
+as_graphAM.network.goldfish <- function(.data, twomode = NULL){
+  as_graphAM(as_matrix(.data), twomode)
 }
