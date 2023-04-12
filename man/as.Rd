@@ -76,11 +76,9 @@ senders and receivers of a tie, respectively, and are typically
 named "from" and "to" (even in the case of an undirected network).
 These columns can contain integers to identify nodes or character
 strings/factors if the network is labelled.
-If the sets of senders and receivers overlap, a one-mode network
-is inferred. If the sets contain no overlap, a two-mode network
-is inferred.
-If a third, numeric column is present, a weighted network
-will be created.
+If the sets of senders and receivers overlap, a one-mode network is inferred.
+If the sets contain no overlap, a two-mode network is inferred.
+If a third, numeric column is present, a weighted network will be created.
 
 Matrices can be either adjacency (one-mode) or incidence (two-mode) matrices.
 Incidence matrices are typically inferred from unequal dimensions,
