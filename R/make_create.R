@@ -15,7 +15,7 @@
 #'   This can be overruled with the argument `directed = TRUE`.
 #'   This will return a directed network in which the arcs are
 #'   out-facing or equivalent.
-#'   This direction can be swapped using `to_redirected()`.
+#'   This direction can be swapped using `migraph::to_redirected()`.
 #'   In two-mode networks, this is ignored.
 #' @name create
 #' @family makes
@@ -26,12 +26,12 @@
 #'   a one-mode network will be created.
 #'   \item A vector of two integers, e.g. `n = c(5,10)`,
 #'   a two-mode network will be created.
-#'   \item A migraph-compatible object,
+#'   \item A manynet-compatible object,
 #'   a network of the same dimensions will be created.
 #'   }
 #' @param directed Logical whether the graph should be directed.
 #'   By default `directed = FALSE`.
-#'   If the opposite direction is desired, use `to_redirected()`.
+#'   If the opposite direction is desired, use `migraph::to_redirected()`.
 #' @param width Integer specifying the width of the ring,
 #'   breadth of the branches, or maximum extent of the neighbourbood.
 #' @param membership A vector of partition membership as integers.
@@ -239,7 +239,7 @@ create_lattice <- function(n,
     divs <- divisors(n)
     if((length(divs) %% 2) == 0){
       dims <- c(divs[length(divs)/2], divs[length(divs)/2+1])
-    } else dims <- c(median(divs), median(divs))
+    } else dims <- c(stats::median(divs), stats::median(divs))
     if(width == 8){
       nei1.5 <- as_matrix(igraph::make_lattice(dims, nei = 2, 
                                                directed = directed))
@@ -295,7 +295,7 @@ create_lattice <- function(n,
   #   divs <- offset_divisors(n)
     # if((length(divs) %% 2) == 0){
     #   dims <- c(divs[length(divs)/2], divs[length(divs)/2+1])
-    # } else dims <- c(median(divs), median(divs))
+    # } else dims <- c(stats::median(divs), stats::median(divs))
     # if(width == 8){
     #   nei1.5 <- as_matrix(igraph::make_lattice(dims, nei = 2, 
     #                                            directed = directed))
@@ -401,7 +401,7 @@ create_core <- function(n, directed = FALSE, membership = NULL) {
 # Helper functions ------------------
 
 infer_n <- function(n) {
-  if (is_migraph(n)) n <- network_dims(n)
+  if (is_migraph(n)) n <- migraph::network_dims(n)
   if (length(n) > 2) stop(paste("`n` should be a single integer for a one-mode network or",
                              "a vector of two integers for a two-mode network."))
   n

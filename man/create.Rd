@@ -35,13 +35,13 @@ create_core(n, directed = FALSE, membership = NULL)
 a one-mode network will be created.
 \item A vector of two integers, e.g. \code{n = c(5,10)},
 a two-mode network will be created.
-\item A migraph-compatible object,
+\item A manynet-compatible object,
 a network of the same dimensions will be created.
 }}
 
 \item{directed}{Logical whether the graph should be directed.
 By default \code{directed = FALSE}.
-If the opposite direction is desired, use \code{to_redirected()}.}
+If the opposite direction is desired, use \code{migraph::to_redirected()}.}
 
 \item{width}{Integer specifying the width of the ring,
 breadth of the branches, or maximum extent of the neighbourbood.}
@@ -73,7 +73,7 @@ By default, all networks are created as undirected.
 This can be overruled with the argument \code{directed = TRUE}.
 This will return a directed network in which the arcs are
 out-facing or equivalent.
-This direction can be swapped using \code{to_redirected()}.
+This direction can be swapped using \code{migraph::to_redirected()}.
 In two-mode networks, this is ignored.
 }
 \section{Functions}{
