@@ -13,20 +13,20 @@
 \usage{
 as_edgelist(.data, twomode = FALSE)
 
-as_matrix(object, twomode = NULL)
+as_matrix(.data, twomode = NULL)
 
 as_igraph(.data, twomode = FALSE)
 
-as_tidygraph(object, twomode = FALSE)
+as_tidygraph(.data, twomode = FALSE)
 
-as_network(object, twomode = FALSE)
+as_network(.data, twomode = FALSE)
 
-as_siena(object, twomode = FALSE)
+as_siena(.data, twomode = FALSE)
 
-as_graphAM(object, twomode = NULL)
+as_graphAM(.data, twomode = NULL)
 }
 \arguments{
-\item{.data}{An object of a migraph-consistent class:
+\item{.data}{An object of a manynet-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
 \item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
@@ -95,8 +95,7 @@ This information is usually already embedded in \code{{igraph}},
 
 }}
 \examples{
-test <- data.frame(from = c("A","B","B","C","C"),
-                   to = c("I","G","I","G","H"))
+test <- data.frame(from = c("A","B","B","C","C"), to = c("I","G","I","G","H"))
 as_edgelist(test)
 as_matrix(test)
 as_igraph(test)

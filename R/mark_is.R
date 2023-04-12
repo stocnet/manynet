@@ -2,7 +2,7 @@
 #' 
 #' These functions implement logical tests for various network
 #' properties.
-#' @param .data An object of a migraph-consistent class:
+#' @param .data An object of a manynet-consistent class:
 #'   \itemize{
 #'   \item matrix (adjacency or incidence) from `{base}` R
 #'   \item edgelist, a data frame from `{base}` R or tibble from `{tibble}`
@@ -17,10 +17,12 @@ NULL
 
 # Classes ####
 
-#' @describeIn is Tests whether network is migraph-compatible
+#' @describeIn is Tests whether network is manynet-compatible
 #' @importFrom igraph is.igraph
 #' @importFrom tidygraph is.tbl_graph
 #' @importFrom network is.network
+#' @examples
+#' is_migraph(create_filled(2))
 #' @export
 is_migraph <- function(.data){
   tidygraph::is.tbl_graph(.data) |
@@ -35,6 +37,8 @@ is_migraph <- function(.data){
 #' @importFrom igraph is.igraph
 #' @importFrom tidygraph is.tbl_graph
 #' @importFrom network is.network
+#' @examples
+#' is_graph(create_star(2))
 #' @export
 is_graph <- function(.data) UseMethod("is_graph")
 
@@ -54,6 +58,9 @@ is_graph.igraph <- function(.data) TRUE
 is_graph.network <- function(.data) FALSE
 
 #' @describeIn is Tests whether data frame is an edgelist
+#' @examples
+#' is_edgelist(matrix(c(2,2), 1, 2))
+#' is_edgelist(as_edgelist(matrix(c(2,2), 1, 2)))
 #' @export
 is_edgelist <- function(.data) UseMethod("is_edgelist")
   
@@ -79,7 +86,7 @@ is_edgelist.tbl_graph <- function(.data) FALSE
 #' @describeIn is Tests whether network is a two-mode network
 #' @importFrom igraph is.bipartite
 #' @examples
-#' is_twomode(ison_southern_women)
+#' is_twomode(create_filled(c(2,2)))
 #' @export
 is_twomode <- function(.data) UseMethod("is_twomode")
 
@@ -116,7 +123,7 @@ is_twomode.data.frame <- function(.data) {
 #' @describeIn is Tests whether network is weighted
 #' @importFrom igraph is.weighted
 #' @examples
-#' is_weighted(ison_southern_women)
+#' is_weighted(create_tree(3))
 #' @export
 is_weighted <- function(.data) UseMethod("is_weighted")
 
@@ -148,15 +155,17 @@ is_weighted.data.frame <- function(.data) {
 
 #' @describeIn is Tests whether network is directed
 #' @importFrom igraph is.directed
+#' @importFrom migraph network_reciprocity
 #' @examples
-#' is_directed(ison_algebra)
+#' is_directed(create_tree(2))
+#' is_directed(create_tree(2, directed = TRUE))
 #' @export
 is_directed <- function(.data) UseMethod("is_directed")
 
 #' @export
 is_directed.data.frame <- function(.data) {
-  !(network_reciprocity(.data) == 0 |
-    network_reciprocity(.data) == 1)
+  !(migraph::network_reciprocity(.data) == 0 |
+      migraph::network_reciprocity(.data) == 1)
 }
 
 #' @export
@@ -182,7 +191,7 @@ is_directed.matrix <- function(.data) {
 #' @describeIn is Tests whether network includes names for the nodes
 #' @importFrom igraph is.named
 #' @examples
-#' is_labelled(ison_southern_women)
+#' is_labelled(create_empty(3))
 #' @export
 is_labelled <- function(.data) UseMethod("is_labelled")
 
@@ -214,7 +223,7 @@ is_labelled.data.frame <- function(.data) {
 #' @describeIn is Tests whether network is signed positive/negative
 #' @importFrom igraph edge_attr_names
 #' @examples
-#' is_signed(ison_southern_women)
+#' is_signed(create_lattice(3))
 #' @export
 is_signed <- function(.data) UseMethod("is_signed")
 
@@ -249,7 +258,7 @@ is_signed.network <- function(.data) {
 #' @describeIn is Tests whether network contains any loops
 #' @importFrom igraph is.loop
 #' @examples
-#' is_complex(ison_southern_women)
+#' is_complex(create_lattice(4))
 #' @export
 is_complex <- function(.data) UseMethod("is_complex")
 
@@ -282,6 +291,9 @@ is_complex.network <- function(.data) {
 #'   either from multiple rows with the same sender and receiver,
 #'   or multiple columns to the edgelist.
 #' @importFrom igraph any_multiple
+#' @importFrom migraph network_tie_attributes
+#' @examples
+#' is_multiplex(create_filled(c(3,3)))
 #' @export
 is_multiplex <- function(.data) UseMethod("is_multiplex")
 
@@ -293,13 +305,13 @@ is_multiplex.matrix <- function(.data){
 #' @export
 is_multiplex.tbl_graph <- function(.data){
   igraph::any_multiple(.data) |
-    length(network_tie_attributes(.data)) > 1
+    length(migraph::network_tie_attributes(.data)) > 1
 }
 
 #' @export
 is_multiplex.igraph <- function(.data){
   igraph::any_multiple(.data) |
-    length(network_tie_attributes(.data)) > 1
+    length(migraph::network_tie_attributes(.data)) > 1
 }
 
 #' @export
@@ -315,7 +327,7 @@ is_multiplex.data.frame <- function(.data){
 #' @describeIn is Tests whether network is simple (both uniplex and simplex)
 #' @importFrom igraph is.simple
 #' @examples 
-#' is_uniplex(ison_algebra)
+#' is_uniplex(create_star(3))
 #' @export
 is_uniplex <- function(.data){
   obj <- as_igraph(.data)
@@ -323,20 +335,22 @@ is_uniplex <- function(.data){
 }
 
 #' @describeIn is Tests whether network is longitudinal, panel data
+#' @importFrom migraph network_tie_attributes
 #' @examples 
-#' is_longitudinal(ison_algebra)
+#' is_longitudinal(create_tree(5, 3))
 #' @export
 is_longitudinal <- function(.data){
-  atts <- network_tie_attributes(.data)
+  atts <- migraph::network_tie_attributes(.data)
   "wave" %in% atts | "panel" %in% atts
 }
 
 #' @describeIn is Tests whether network is dynamic, time-stamped data
+#' @importFrom migraph network_tie_attributes
 #' @examples 
-#' is_dynamic(ison_algebra)
+#' is_dynamic(create_tree(3))
 #' @export
 is_dynamic <- function(.data){
-  atts <- network_tie_attributes(.data)
+  atts <- migraph::network_tie_attributes(.data)
   "time" %in% atts | "beg" %in% atts | "begin" %in% atts | "start" %in% atts
 }
 
@@ -345,10 +359,10 @@ is_dynamic <- function(.data){
 #' @describeIn is Tests whether network is weakly connected if
 #'   the network is undirected or strongly connected if directed.
 #'   To test weak connection on a directed network,
-#'   please see `to_undirected()`.
+#'   please see `migraph::to_undirected()`.
 #' @importFrom igraph is.connected
 #' @examples
-#' is_connected(ison_southern_women)
+#' is_connected(create_filled(5))
 #' @export
 is_connected <- function(.data) {
   igraph::is.connected(as_igraph(.data), 
@@ -360,19 +374,20 @@ is_connected <- function(.data) {
 #'   that covers every node in the network
 #' @param mark A logical vector marking two types or modes.
 #'   By default "type".
+#' @importFrom migraph to_matching network_ties network_nodes
 #' @examples
-#' is_perfect_matching(ison_southern_women)
+#' is_perfect_matching(migraph::ison_bb)
 #' @export
 is_perfect_matching <- function(.data, mark = "type"){
-  matches <- to_matching(.data, mark = mark)
-  network_ties(matches)*2 == network_nodes(matches)
+  matches <- migraph::to_matching(.data, mark = mark)
+  migraph::network_ties(matches)*2 == migraph::network_nodes(matches)
 }
 
 #' @describeIn is Tests whether there is a Eulerian path for a network
 #'   where that path passes through every tie exactly once
 #'   @importFrom igraph has_eulerian_path
 #' @examples
-#' is_eulerian(ison_brandes)
+#' is_eulerian(migraph::ison_brandes)
 #' @export
 is_eulerian <- function(.data){
   igraph::has_eulerian_path(as_igraph(.data))
@@ -381,7 +396,7 @@ is_eulerian <- function(.data){
 #' @describeIn is Tests whether network is a directed acyclic graph
 #' @importFrom igraph is_dag
 #' @examples 
-#' is_acyclic(ison_algebra)
+#' is_acyclic(migraph::ison_algebra)
 #' @export
 is_acyclic <- function(.data){
   obj <- as_igraph(.data)
@@ -394,7 +409,7 @@ is_acyclic <- function(.data){
 #'   By default 4, to avoid potentially very long computation times.
 #' @source https://stackoverflow.com/questions/55091438/r-igraph-find-all-cycles
 #' @examples 
-#' is_aperiodic(ison_algebra)
+#' is_aperiodic(migraph::ison_algebra)
 #' @export
 is_aperiodic <- function(.data, max_path_length = 4){
   g <- as_igraph(.data)

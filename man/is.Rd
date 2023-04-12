@@ -62,7 +62,7 @@ is_acyclic(.data)
 is_aperiodic(.data, max_path_length = 4)
 }
 \arguments{
-\item{.data}{An object of a migraph-consistent class:
+\item{.data}{An object of a manynet-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
 \item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
@@ -87,7 +87,7 @@ properties.
 }
 \section{Functions}{
 \itemize{
-\item \code{is_migraph()}: Tests whether network is migraph-compatible
+\item \code{is_migraph()}: Tests whether network is manynet-compatible
 
 \item \code{is_graph()}: Tests whether network contains graph-level information
 
@@ -118,7 +118,7 @@ or multiple columns to the edgelist.
 \item \code{is_connected()}: Tests whether network is weakly connected if
 the network is undirected or strongly connected if directed.
 To test weak connection on a directed network,
-please see \code{to_undirected()}.
+please see \code{migraph::to_undirected()}.
 
 \item \code{is_perfect_matching()}: Tests whether there is a matching for a network
 that covers every node in the network
@@ -133,19 +133,25 @@ where that path passes through every tie exactly once
 
 }}
 \examples{
-is_twomode(ison_southern_women)
-is_weighted(ison_southern_women)
-is_directed(ison_algebra)
-is_labelled(ison_southern_women)
-is_signed(ison_southern_women)
-is_complex(ison_southern_women)
-is_uniplex(ison_algebra)
-is_longitudinal(ison_algebra)
-is_dynamic(ison_algebra)
-is_connected(ison_southern_women)
-is_perfect_matching(ison_southern_women)
-is_eulerian(ison_brandes)
-is_acyclic(ison_algebra)
-is_aperiodic(ison_algebra)
+is_migraph(create_filled(2))
+is_graph(create_star(2))
+is_edgelist(matrix(c(2,2), 1, 2))
+is_edgelist(as_edgelist(matrix(c(2,2), 1, 2)))
+is_twomode(create_filled(c(2,2)))
+is_weighted(create_tree(3))
+is_directed(create_tree(2))
+is_directed(create_tree(2, directed = TRUE))
+is_labelled(create_empty(3))
+is_signed(create_lattice(3))
+is_complex(create_lattice(4))
+is_multiplex(create_filled(c(3,3)))
+is_uniplex(create_star(3))
+is_longitudinal(create_tree(5, 3))
+is_dynamic(create_tree(3))
+is_connected(create_filled(5))
+is_perfect_matching(migraph::ison_bb)
+is_eulerian(migraph::ison_brandes)
+is_acyclic(migraph::ison_algebra)
+is_aperiodic(migraph::ison_algebra)
 }
 \concept{marks}
