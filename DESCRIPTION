@@ -27,7 +27,8 @@ Imports:
     rlang,
     sna,
     tidygraph,
-    tidyr
+    tidyr,
+    migraph
 Suggests: 
     covr,
     knitr,
