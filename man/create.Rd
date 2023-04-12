@@ -80,18 +80,20 @@ In two-mode networks, this is ignored.
 \itemize{
 \item \code{create_empty()}: Creates an empty graph of the given dimensions.
 
-\item \code{create_filled()}: Creates a complete graph of the given dimensions,
+\item \code{create_filled()}: Creates a filled graph of the given dimensions,
 with every possible tie realised.
 
 \item \code{create_ring()}: Creates a ring or chord graph of the given dimensions
 that loops around is of a certain width or thickness.
 
 \item \code{create_star()}: Creates a graph of the given dimensions
-that has a maximally central node
+that has a maximally central node.
 
-\item \code{create_tree()}: Creates a graph of the given dimensions with successive branches.
+\item \code{create_tree()}: Creates a graph of the given dimensions with
+successive branches.
 
-\item \code{create_lattice()}: Creates a lattice graph of the given dimensions with ties to all neighbouring nodes
+\item \code{create_lattice()}: Creates a lattice graph of the given dimensions with ties
+to all neighbouring nodes.
 
 \item \code{create_components()}: Creates a graph in which the nodes are clustered
 into separate components.
@@ -103,39 +105,46 @@ and the rest peripheral, tied only to the core.
 }}
 \section{Lattice graphs}{
 
-\code{create_lattice()} creates both two-dimensional grid and triangular lattices with as even dimensions
-as possible.
-When the \code{width} parameter is set to 4, nodes cannot have (in or out) degrees larger than 4.
+\code{create_lattice()} creates both two-dimensional grid and triangular
+lattices with as even dimensions as possible.
+When the \code{width} parameter is set to 4, nodes cannot have (in or out)
+degrees larger than 4.
 This creates regular square grid lattices where possible.
-Such a network is bipartite, that is partitionable into two types that are not adjacent to any
-of their own type.
-If the number of nodes is a prime number, it will only return a chain (a single dimensional lattice).
+Such a network is bipartite, that is partitionable into two types that are
+not adjacent to any of their own type.
+If the number of nodes is a prime number, it will only return a chain
+(a single dimensional lattice).
 
-A \code{width} parameter of 8 creates a network where the maximum degree of any nodes is 8.
-This can create a triangular mesh lattice or a Queen's move lattice, depending on the dimensions.
-A \code{width} parameter of 12 creates a network where the maximum degree of any nodes is 12.
+A \code{width} parameter of 8 creates a network where the maximum degree of any
+nodes is 8.
+This can create a triangular mesh lattice or a Queen's move lattice,
+depending on the dimensions.
+A \code{width} parameter of 12 creates a network where the maximum degree of
+any nodes is 12.
 Prime numbers of nodes will return a chain.
 }
 
 \examples{
-autographr(create_empty(10)) + autographr(create_filled(10))
-autographr(create_empty(c(8,6))) + autographr(create_filled(c(8,6)))
-autographr(create_ring(8, width = 2)) +
-autographr(create_ring(c(8,6), width = 2))
-autographr(create_star(12)) +
-autographr(create_star(12, directed = TRUE)) +
-autographr(create_star(c(12,1)))
-autographr(create_tree(c(7,8), directed = TRUE)) +
-autographr(create_tree(15, directed = TRUE), "tree") +
-autographr(create_tree(15, directed = TRUE, width = 3), "tree")
-autographr(create_lattice(12, width = 4), layout = "kk") +
-autographr(create_lattice(12, width = 8), layout = "kk") +
-autographr(create_lattice(12, width = 12), layout = "kk")
-autographr(create_components(10, membership = c(1,1,1,2,2,2,3,3,3,3)))
-autographr(create_components(c(10, 12)))
-autographr(create_core(6)) +
-autographr(create_core(6, membership = c(1,1,1,1,2,2))) +
-autographr(create_core(c(6,6)))
+create_empty(10)
+migraph::autographr(create_empty(c(8,6)))
+create_filled(10)
+migraph::autographr(create_filled(c(8,6)))
+create_ring(8, width = 2)
+migraph::autographr(create_ring(c(8,6), width = 2))
+create_star(12)
+migraph::autographr(create_star(12, directed = TRUE)) +
+  migraph::autographr(create_star(c(12,1)))
+create_tree(c(7,8))
+migraph::autographr(create_tree(15, directed = TRUE), "tree") +
+  migraph::autographr(create_tree(15, directed = TRUE, width = 3), "tree")
+create_lattice(12, width = 4)
+migraph::autographr(create_lattice(12, width = 8), layout = "kk") +
+  migraph::autographr(create_lattice(12, width = 12), layout = "kk")
+create_components(10, membership = c(1,1,1,2,2,2,3,3,3,3))
+migraph::autographr(create_components(c(10, 12)))
+create_core(6)
+migraph::autographr(create_core(6, membership = c(1,1,1,1,2,2))) +
+  migraph::autographr(create_core(c(6,6)))
 }
 \seealso{
 \link{as}
