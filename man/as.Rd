@@ -103,4 +103,8 @@ as_tidygraph(test)
 as_network(test)
 as_graphAM(test)
 }
+\seealso{
+Other manipulations: 
+\code{\link{reformat}}
+}
 \concept{manipulations}
