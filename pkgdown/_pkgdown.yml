@@ -1,0 +1,62 @@
+url: https://snlab-ch.github.io/manynet/
+development:
+    mode: auto
+template:
+  bootswatch: superhero
+authors:
+  James Hollway:
+    href: https://jameshollway.com
+navbar:
+  structure:
+    left:
+    - home
+    - intro
+    - reference
+    - news
+    right:
+    - search
+    - github
+  components:
+    home:
+      icon: fa-home fa-lg
+      href: index.html
+    reference:
+      text: Function Overview
+      href: reference/index.html
+    news:
+      text: News
+      href: news/index.html
+    github:
+      icon: "fab fa-github fa-lg"
+      href: https://github.com/snlab-ch/manynet
+reference:
+  - title: "Making"
+    desc: |
+      Functions for constructing, simulating, and importing
+      one-mode and two-mode networks:
+    contents:
+      - starts_with("create_")
+      # - starts_with("generate_")
+      # - starts_with("read")
+      # - starts_with("write")
+  - title: "Manipulation"
+    desc: |
+      Functions for coercing objects between different classes, 
+      reformatting or transforming the type of network,
+      or adding information to or retrieving information from the network.
+    contents:
+      - starts_with("as_")
+      - starts_with("to_")
+      # - add
+      # - grab
+      # - na
+  - title: "Marks"
+    desc: |
+      Functions for identifying properties of graphs, nodes or ties,
+      all returning logical scalars or vectors.
+      Note that all `node_` and `tie_` measures return a single vector
+      so that they can be added directly to graph objects.
+      `network_` measures return one or, in some cases of two-mode measures,
+      two values.
+    contents:
+      - contains("is_")
