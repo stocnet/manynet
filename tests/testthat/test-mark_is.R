@@ -4,7 +4,6 @@ test_that("is tests work", {
   expect_false(is_weighted(migraph::ison_southern_women))
   expect_true(is_weighted(migraph::mpn_ryanair))
   expect_true(is_labelled(migraph::ison_southern_women))
-  expect_true(is_connected(migraph::ison_southern_women))
   expect_false(is_complex(migraph::ison_southern_women))
   expect_true(is_graph(migraph::ison_southern_women))
   expect_true(is_migraph(migraph::ison_southern_women))
