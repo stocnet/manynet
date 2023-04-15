@@ -148,5 +148,8 @@ migraph::autographr(create_core(6, membership = c(1,1,1,1,2,2))) +
 }
 \seealso{
 \link{as}
+
+Other makes: 
+\code{\link{read}}
 }
 \concept{makes}
