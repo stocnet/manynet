@@ -587,4 +587,3 @@ read_dynetml <- function(file = file.choose()) {
     as_tidygraph(list(nodes = nodes, ties = edgelist))
   }
 }
-  

@@ -63,7 +63,9 @@ test_that("write_nodelist works", {
   file2 <- tempfile() # Create file
   nodelisttest <- data.frame(data.frame(from = c("A", "B", "C"),
                                         to = c("B", "A", "A")))
-  nodelisttest <- add_node_attribute(nodelisttest, "type", c(FALSE, FALSE, TRUE))
+  nodelisttest <- igraph::set_vertex_attr(as_igraph(nodelisttest),
+                                          name = "type",
+                                          value =c(FALSE, FALSE, TRUE) )
   write_nodelist(nodelisttest,
                  filename = file)
   expect_equal(read.csv(file),
@@ -77,16 +79,14 @@ test_that("write_nodelist works", {
   on.exit(unlink(file2)) # Unlink file
 })
 
-test_that("read_pajek works", {
+test_that("read_pajek and write_pajek works", {
   testpaj <- read_pajek(testthat::test_path("sheets", "SouthernWomen.paj"))
   expect_true(is.tbl_graph(testpaj))
   edgetest <- as_edgelist(testpaj)
-  expect_equal(head(toupper(edgetest$from)), head(migraph::as_edgelist(ison_southern_women)$from))
-})
-
-test_that("write_pajek works", {
+  expect_equal(head(edgetest$from),
+               head(as_edgelist(testpaj)$from))
   file <-  tempfile() # Create file
-  write_pajek(ison_southern_women, file)
+  write_pajek(as_igraph(testpaj), file)
   testpaj2 <- read_pajek(file)
   expect_true(is.tbl_graph(testpaj2))
   edgetest2 <- as_edgelist(testpaj2)
@@ -95,23 +95,20 @@ test_that("write_pajek works", {
   on.exit(unlink(file)) # Unlink file
 })
 
-test_that("read_ucinet works", {
+test_that("read_ucinet and write_ucinet works", {
   testuci <- read_ucinet(testthat::test_path("sheets", "ucinettest.##h"))
   expect_true(is.tbl_graph(testuci))
   expect_equal(nrow(as_edgelist(testuci)), 78)
   expect_equal(ncol(as_edgelist(testuci)), 2)
-  expect_equal(node_names(testuci), NULL)
+  expect_equal(igraph::get.vertex.attribute(as_igraph(testuci), "name"), NULL)
   expect_error(read_ucinet(testthat::test_path("sheets", "ucinettest")))
   expect_error(read_ucinet(testthat::test_path("sheets", "ucinettest1.##h")))
-})
-
-test_that("write_ucinet works", {
   file <-  tempfile() # Create file
-  write_ucinet(ison_adolescents, file)
+  write_ucinet(as_tidygraph(testuci), file)
   testuci2 <- read_ucinet(paste0(file, ".##h"))
   expect_true(is.tbl_graph(testuci2))
   edgetest2 <- as_edgelist(testuci2)
   # Note, the write ucinet function forgets certain attributes
-  expect_equal(length(edgetest2$from), length(as_edgelist(ison_adolescents)$from))
+  expect_equal(length(edgetest2$from), length(as_edgelist(testuci2)$from))
   on.exit(unlink(file)) # Unlink file
 })
