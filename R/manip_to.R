@@ -41,7 +41,7 @@ NULL
 
 #' @describeIn reformat Returns an object that includes only a single type of tie
 #' @importFrom igraph delete_edges edge_attr_names delete_edge_attr
-#' E get.edge.attribute edge_attr_names
+#' E edge_attr_names
 #' @examples
 #' a <- to_uniplex(ison_algebra, "friends")
 #' to_giant(a)
@@ -53,14 +53,14 @@ to_uniplex <- function(object, edge) UseMethod("to_uniplex")
 #' @export
 to_uniplex.igraph <- function(object, edge){
   out <- igraph::delete_edges(object,
-                              igraph::E(object)[igraph::get.edge.attribute(object, edge) == 0])
+                              igraph::E(object)[igraph::edge_attr(object, edge) == 0])
   edge_names <- igraph::edge_attr_names(object)
   if (length(edge_names) > 1) {
     for (e in setdiff(edge_names, edge)) {
       out <- igraph::delete_edge_attr(out, e) 
     }
   }
-  if (is.numeric(igraph::get.edge.attribute(object, edge))) 
+  if (is.numeric(igraph::edge_attr(object, edge))) 
     names(igraph::edge_attr(out)) <- "weight"
   out
 }

@@ -297,7 +297,7 @@ as_matrix.siena <- function(.data,
 #' @rdname as
 #' @importFrom igraph graph_from_data_frame graph_from_incidence_matrix
 #'  graph_from_adjacency_matrix delete_vertex_attr V vertex_attr
-#'  edge_attr delete_edge_attr
+#'  edge_attr delete_edge_attr set_edge_attr
 #' @importFrom network list.edge.attributes
 #' @importFrom sna as.sociomatrix.sna
 #' @export
@@ -470,9 +470,9 @@ as_igraph.siena <- function(.data, twomode = NULL) {
             dplyr::mutate(weight = 1)
           x <- dplyr::bind_rows(y, as_edgelist(x)) %>%
             as_igraph()
-          x <- igraph::edge_attr(x, name = paste0(name, "_", "t", d),
-                                 value = igraph::get.edge.attribute(as_igraph(x),
-                                                                    "weight")) %>%
+          x <- igraph::set_edge_attr(x, name = paste0(name, "_", "t", d),
+                                     value = igraph::edge_attr(as_igraph(x),
+                                                               "weight")) %>%
             igraph::delete_edge_attr("weight")
         }
       } else {
@@ -486,9 +486,9 @@ as_igraph.siena <- function(.data, twomode = NULL) {
             dplyr::mutate(weight = 1)
           x <- dplyr::bind_rows(y, as_edgelist(x)) %>%
             as_igraph()
-          x <- igraph::edge_attr(x, name = paste0(name, "_", "t", d),
-                                 value = igraph::get.edge.attribute(as_igraph(x),
-                                                                    "weight")) %>%
+          x <- igraph::set_edge_attr(x, name = paste0(name, "_", "t", d),
+                                     value = igraph::edge_attr(as_igraph(x),
+                                                               "weight")) %>%
             igraph::delete_edge_attr("weight")
         } else { # x and y are onemode
           x <- join_ties(x, as_igraph(y), 
@@ -521,9 +521,9 @@ as_igraph.siena <- function(.data, twomode = NULL) {
   # Add ties from rest of time periods
   out <- .get_rem_time_periods(.data$depvars[[ddvs[1]]], out,
                                name = ddvs[1])
-  out <- igraph::edge_attr(out, name = paste0(ddvs[1], "_", "t1"),
-                           value = igraph::get.edge.attribute(as_igraph(out),
-                                                              "orig")) %>%
+  out <- igraph::set_edge_attr(out, name = paste0(ddvs[1], "_", "t1"),
+                               value = igraph::edge_attr(as_igraph(out),
+                                                         "orig")) %>%
     igraph::delete_edge_attr("orig")
   # Add rest of the dyadic depvars
   if (length(ddvs) > 1) {

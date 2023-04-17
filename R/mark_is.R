@@ -84,7 +84,7 @@ is_edgelist.tbl_graph <- function(.data) FALSE
 # Formats ####
 
 #' @describeIn is Tests whether network is a two-mode network
-#' @importFrom igraph is.bipartite
+#' @importFrom igraph is_bipartite
 #' @examples
 #' is_twomode(create_filled(c(2,2)))
 #' @export
@@ -92,12 +92,12 @@ is_twomode <- function(.data) UseMethod("is_twomode")
 
 #' @export
 is_twomode.igraph <- function(.data) {
-  igraph::is.bipartite(.data)
+  igraph::is_bipartite(.data)
 }
 
 #' @export
 is_twomode.tbl_graph <- function(.data) {
-  igraph::is.bipartite(.data)
+  igraph::is_bipartite(.data)
 }
 
 #' @export

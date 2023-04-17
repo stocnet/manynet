@@ -142,15 +142,10 @@ but embeds two or more modes into a multimodal network structure.
 
 }}
 \examples{
-autographr(ison_algebra)
 a <- to_uniplex(ison_algebra, "friends")
-autographr(a)
-a <- to_giant(a)
-autographr(a)
-a <- to_undirected(a)
-autographr(a)
-a <- to_unweighted(a)
-autographr(a)
+to_giant(a)
+to_undirected(a)
+to_unweighted(a)
 }
 \seealso{
 Other manipulations: 
