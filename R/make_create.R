@@ -15,7 +15,7 @@
 #'   This can be overruled with the argument `directed = TRUE`.
 #'   This will return a directed network in which the arcs are
 #'   out-facing or equivalent.
-#'   This direction can be swapped using `migraph::to_redirected()`.
+#'   This direction can be swapped using `to_redirected()`.
 #'   In two-mode networks, this is ignored.
 #' @name create
 #' @family makes
@@ -31,7 +31,7 @@
 #'   }
 #' @param directed Logical whether the graph should be directed.
 #'   By default `directed = FALSE`.
-#'   If the opposite direction is desired, use `migraph::to_redirected()`.
+#'   If the opposite direction is desired, use `to_redirected()`.
 #' @param width Integer specifying the width of the ring,
 #'   breadth of the branches, or maximum extent of the neighbourbood.
 #' @param membership A vector of partition membership as integers.
@@ -43,14 +43,12 @@
 #'   using `as_edgelist()`, `as_matrix()`,
 #'   `as_tidygraph()`, or `as_network()`.
 #' @importFrom tidygraph as_tbl_graph
-#' @importFrom migraph to_undirected
 #' @importFrom igraph graph_from_incidence_matrix
 NULL
 
 #' @describeIn create Creates an empty graph of the given dimensions.
 #' @examples
 #' create_empty(10)
-#' migraph::autographr(create_empty(c(8,6)))
 #' @export
 create_empty <- function(n, directed = FALSE) {
   directed <- infer_directed(n, directed)
@@ -62,7 +60,7 @@ create_empty <- function(n, directed = FALSE) {
     out <- matrix(0, n[1], n[2])
     out <- as_igraph(out, twomode = TRUE)
   }
-  if (!directed) out <- migraph::to_undirected(out)
+  if (!directed) out <- to_undirected(out)
   out
 }
 
@@ -70,7 +68,6 @@ create_empty <- function(n, directed = FALSE) {
 #'   with every possible tie realised.
 #' @examples
 #' create_filled(10)
-#' migraph::autographr(create_filled(c(8,6)))
 #' @export
 create_filled <- function(n, directed = FALSE) {
   directed <- infer_directed(n, directed)
@@ -91,7 +88,6 @@ create_filled <- function(n, directed = FALSE) {
 #'  that loops around is of a certain width or thickness.
 #' @examples
 #' create_ring(8, width = 2)
-#' migraph::autographr(create_ring(c(8,6), width = 2))
 #' @export
 create_ring <- function(n, directed = FALSE, width = 1, ...) {
   directed <- infer_directed(n, directed)
@@ -142,8 +138,6 @@ create_ring <- function(n, directed = FALSE, width = 1, ...) {
 #'   make_star
 #' @examples
 #' create_star(12)
-#' migraph::autographr(create_star(12, directed = TRUE)) +
-#'   migraph::autographr(create_star(c(12,1)))
 #' @export
 create_star <- function(n,
                         directed = FALSE) {
@@ -168,8 +162,6 @@ create_star <- function(n,
 #' @importFrom igraph make_tree
 #' @examples
 #' create_tree(c(7,8))
-#' migraph::autographr(create_tree(15, directed = TRUE), "tree") +
-#'   migraph::autographr(create_tree(15, directed = TRUE, width = 3), "tree")
 #' @export
 create_tree <- function(n,
                         directed = FALSE,
@@ -226,8 +218,6 @@ create_tree <- function(n,
 #' @importFrom igraph make_lattice
 #' @examples
 #' create_lattice(12, width = 4)
-#' migraph::autographr(create_lattice(12, width = 8), layout = "kk") +
-#'   migraph::autographr(create_lattice(12, width = 12), layout = "kk")
 #' @export
 create_lattice <- function(n,
                            directed = FALSE,
@@ -280,7 +270,7 @@ create_lattice <- function(n,
 # #'   to a maximum width.
 # #' @importFrom igraph make_lattice
 # #' @examples
-# #' migraph::autographr(create_mesh(5), layout = "kk")
+# #' reate_mesh(5)
 # #' @export
 # create_mesh <- function(n,
 #                         directed = FALSE, 
@@ -318,7 +308,6 @@ create_lattice <- function(n,
 #'   into separate components.
 #' @examples
 #' create_components(10, membership = c(1,1,1,2,2,2,3,3,3,3))
-#' migraph::autographr(create_components(c(10, 12)))
 #' @export
 create_components <- function(n, directed = FALSE, membership = NULL) {
   directed <- infer_directed(n, directed)
@@ -345,8 +334,6 @@ create_components <- function(n, directed = FALSE, membership = NULL) {
 #'   and the rest peripheral, tied only to the core.
 #' @examples
 #' create_core(6)
-#' migraph::autographr(create_core(6, membership = c(1,1,1,1,2,2))) +
-#'   migraph::autographr(create_core(c(6,6)))
 #' @export
 create_core <- function(n, directed = FALSE, membership = NULL) {
   directed <- infer_directed(n, directed)
@@ -400,7 +387,7 @@ create_core <- function(n, directed = FALSE, membership = NULL) {
 # Helper functions ------------------
 
 infer_n <- function(n) {
-  if (is_migraph(n)) n <- migraph::network_dims(n)
+  if (is_migraph(n)) n <- infer_dims(n)
   if (length(n) > 2) stop(paste("`n` should be a single integer for a one-mode network or",
                              "a vector of two integers for a two-mode network."))
   n
@@ -428,4 +415,13 @@ divisors <- function(x) {
 
 roll_over <- function(w) {
   cbind(w[, ncol(w)], w[, 1:(ncol(w) - 1)])
+}
+
+infer_dims <- function(object) {
+  if(is_twomode(object)){
+    c(sum(!igraph::V(as_igraph(object))$type),
+      sum(igraph::V(as_igraph(object))$type))
+  } else {
+    igraph::vcount(as_igraph(object))
+  }
 }
