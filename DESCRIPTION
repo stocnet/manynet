@@ -19,17 +19,16 @@ RoxygenNote: 7.2.3
 Imports: 
     dplyr (>= 1.1.0),
     igraph,
-    minMSE,
     methods,
     network,
     sna,
     tidygraph,
-    migraph
+    RSiena,
+    xml2
 Suggests: 
     covr,
     knitr,
     readxl,
-    RSiena,
     rmarkdown,
     roxygen2,
     testthat,
