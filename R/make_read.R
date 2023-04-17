@@ -3,13 +3,13 @@
 #' @description 
 #' Researchers regularly need to work with a variety of external data formats.
 #' The following functions offer ways to import from some common external
-#' file formats into objects that `{migraph}` and other graph/network packages
+#' file formats into objects that `{manynet}` and other graph/network packages
 #' in R can work with.
 #' 
 #' Note that these functions are not as actively maintained as others
 #' in the package, so please let us know if any are not currently working
 #' for you or if there are missing import routines 
-#' by [raising an issue on Github](https://github.com/snlab-ch/migraph/issues).
+#' by [raising an issue on Github](https://github.com/snlab-ch/manynet/issues).
 #' @param file A character string with the system path to the file to import.
 #' If left unspecified, an OS-specific file picker is opened to help users select it.
 #' Note that in `read_ucinet()` the file path should be to the header file (.##h),
@@ -27,7 +27,7 @@
 #' a tidygraph format, since they already contain both edge and attribute data.
 #' `read_matrix()` will import into tidygraph format too.
 #' Note that all graphs can be easily coerced into other formats
-#' with `{migraph}`'s `as_` methods.
+#' with `{manynet}`'s `as_` methods.
 #'
 #' The `write_`functions export to different file formats,
 #' depending on the function.
@@ -196,9 +196,8 @@ read_pajek <- function(file = file.choose(),
     out <- paj[[1]][[ties]]
     if("partitions" %in% names(paj)){
       for(x in names(paj$partitions)){
-        out <- add_node_attribute(out, 
-                                  attr_name = gsub(".clu","",x),
-                                  vector = paj$partitions[,x])
+        out <- igraph::set_vertex_attr(out, name = gsub(".clu","",x),
+                                       value = paj$partitions[,x])
       }
     }
     out <- as_tidygraph(out)
@@ -217,9 +216,8 @@ read_pajek <- function(file = file.choose(),
   #     vct <- gsub(" ", "", vct, fixed = TRUE)
   #     vct <- vct[!grepl("^$", vct)]
   #     if(all(grepl("^-?[0-9.]+$", vct))) vct <- as.numeric(vct)
-  #     out <- add_node_attribute(out, 
-  #                               attr_name = strsplit(namo[i], " |\\.")[[1]][2],
-  #                               vector = vct)
+  #     out <- set_vertex_attr(out, name = strsplit(namo[i], " |\\.")[[1]][2], 
+  #                            value = vct)
   #   }
   # } 
   out
@@ -530,6 +528,8 @@ write_ucinet <- function(.data,
 }
 
 #' @describeIn read Reading DynetML files
+#' @importFrom xml2 read_xml as_list xml_attrs xml_find_all
+#' @importFrom dplyr bind_rows coalesce filter mutate select everything
 #' @export
 read_dynetml <- function(file = file.choose()) {
   if(!requireNamespace("xml2", quietly = TRUE)){
