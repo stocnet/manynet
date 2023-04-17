@@ -155,7 +155,6 @@ is_weighted.data.frame <- function(.data) {
 
 #' @describeIn is Tests whether network is directed
 #' @importFrom igraph is.directed
-#' @importFrom migraph network_reciprocity
 #' @examples
 #' is_directed(create_tree(2))
 #' is_directed(create_tree(2, directed = TRUE))
@@ -164,8 +163,8 @@ is_directed <- function(.data) UseMethod("is_directed")
 
 #' @export
 is_directed.data.frame <- function(.data) {
-  !(migraph::network_reciprocity(.data) == 0 |
-      migraph::network_reciprocity(.data) == 1)
+  !(infer_network_reciprocity(.data) == 0 |
+      infer_network_reciprocity(.data) == 1)
 }
 
 #' @export
@@ -291,7 +290,6 @@ is_complex.network <- function(.data) {
 #'   either from multiple rows with the same sender and receiver,
 #'   or multiple columns to the edgelist.
 #' @importFrom igraph any_multiple
-#' @importFrom migraph network_tie_attributes
 #' @examples
 #' is_multiplex(create_filled(c(3,3)))
 #' @export
@@ -305,13 +303,13 @@ is_multiplex.matrix <- function(.data) {
 #' @export
 is_multiplex.tbl_graph <- function(.data) {
   igraph::any_multiple(.data) |
-    length(migraph::network_tie_attributes(.data)) > 1
+    length(igraph::list.edge.attributes(as_igraph(.data))) > 1
 }
 
 #' @export
 is_multiplex.igraph <- function(.data) {
   igraph::any_multiple(.data) |
-    length(migraph::network_tie_attributes(.data)) > 1
+    length(igraph::list.edge.attributes(as_igraph(.data))) > 1
 }
 
 #' @export
@@ -335,21 +333,27 @@ is_uniplex <- function(.data) {
 }
 
 #' @describeIn is Tests whether network is longitudinal, panel data
-#' @importFrom migraph network_tie_attributes
 #' @examples
 #' is_longitudinal(create_tree(5, 3))
 #' @export
 is_longitudinal <- function(.data) {
-  atts <- migraph::network_tie_attributes(.data)
+  atts <- igraph::list.edge.attributes(as_igraph(.data))
   "wave" %in% atts | "panel" %in% atts
 }
 
 #' @describeIn is Tests whether network is dynamic, time-stamped data
-#' @importFrom migraph network_tie_attributes
 #' @examples 
 #' is_dynamic(create_tree(3))
 #' @export
 is_dynamic <- function(.data) {
-  atts <- migraph::network_tie_attributes(.data)
+  atts <- igraph::list.edge.attributes(as_igraph(.data))
   "time" %in% atts | "beg" %in% atts | "begin" %in% atts | "start" %in% atts
+}
+
+# Helper functions
+infer_network_reciprocity <- function(.data, method = "default") {
+  out <- igraph::reciprocity(as_igraph(.data), mode = method)
+  class(out) <- c("network_measure", class(out))
+  attr(out, "mode") <- infer_dims(.data)
+  out
 }
