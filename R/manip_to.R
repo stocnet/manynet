@@ -41,17 +41,12 @@ NULL
 
 #' @describeIn reformat Returns an object that includes only a single type of tie
 #' @importFrom igraph delete_edges edge_attr_names delete_edge_attr
-#' @importFrom igraph E get.edge.attribute edge_attr_names
+#' E get.edge.attribute edge_attr_names
 #' @examples
-#' autographr(ison_algebra)
 #' a <- to_uniplex(ison_algebra, "friends")
-#' autographr(a)
-#' a <- to_giant(a)
-#' autographr(a)
-#' a <- to_undirected(a)
-#' autographr(a)
-#' a <- to_unweighted(a)
-#' autographr(a)
+#' to_giant(a)
+#' to_undirected(a)
+#' to_unweighted(a)
 #' @export
 to_uniplex <- function(object, edge) UseMethod("to_uniplex")
 
@@ -94,6 +89,7 @@ to_uniplex.matrix <- function(object, edge){
 #'   so that any pair of nodes with at least one directed edge will be
 #'   connected by an undirected edge in the new network.
 #'   This is equivalent to the "collapse" mode in `{igraph}`.
+#' @importFrom igraph as.undirected
 #' @export
 to_undirected <- function(object) UseMethod("to_undirected")
 
@@ -130,6 +126,7 @@ to_undirected.data.frame <- function(object) {
 #'   Note that ties' direction will be randomly assigned.
 #'   To flip the direction, use `to_redirected()`.
 #'   To match the direction, use `to_reciprocated()`.
+#' @importFrom igraph as.directed
 #' @export
 to_directed <- function(.data) UseMethod("to_directed")
 
@@ -143,6 +140,7 @@ to_directed.igraph <- function(.data) {
 #' @describeIn reformat Returns an object that has any edge direction transposed,
 #'   or flipped, so that senders become receivers and receivers become senders.
 #'   This essentially has no effect on undirected networks or reciprocated ties.
+#' @importFrom igraph reverse_edges
 #' @export
 to_redirected <- function(.data) UseMethod("to_redirected")
 
@@ -180,6 +178,7 @@ to_redirected.network <- function(.data) {
 }
 
 #' @describeIn reformat Returns an object where all ties are reciprocated.
+#' @importFrom igraph as.directed
 #' @export
 to_reciprocated <- function(.data) UseMethod("to_reciprocated")
 
@@ -189,6 +188,7 @@ to_reciprocated.igraph <- function(.data) {
 }
 
 #' @describeIn reformat Returns an object where all ties are acyclic.
+#' @importFrom igraph as.directed
 #' @export
 to_acyclic <- function(.data) UseMethod("to_acyclic")
 
@@ -198,6 +198,7 @@ to_acyclic.igraph <- function(.data) {
 }
 
 #' @describeIn reformat Returns an object that has all edge weights removed.
+#' @importFrom dplyr filter select
 #' @export
 to_unweighted <- function(object, threshold = 1) UseMethod("to_unweighted")
 
@@ -206,8 +207,8 @@ to_unweighted.tbl_graph <- function(object, threshold = 1) {
   edges <- NULL
   weight <- NULL
   object %>% activate(edges) %>% 
-    filter(weight >= threshold) %>% 
-    select(-c(weight))
+    dplyr::filter(weight >= threshold) %>% 
+    dplyr::select(-c(weight))
 }
 
 #' @export
@@ -233,6 +234,7 @@ to_unweighted.data.frame <- function(object, threshold = 1) {
 
 #' @describeIn reformat Returns a network with either just the "positive" ties
 #'   or just the "negative" ties
+#' @importFrom igraph delete_edges E delete_edge_attr
 #' @export
 to_unsigned <- function(object, 
                         keep = c("positive", "negative")) UseMethod("to_unsigned")
@@ -299,6 +301,10 @@ to_unsigned.network <- function(object,
 }
 
 #' @describeIn reformat Returns an object with all vertex names removed
+#' @importFrom igraph delete_vertex_attr
+#' @importFrom tidygraph as_tbl_graph
+#' @importFrom network delete.vertex.attribute
+#' @importFrom dplyr as_tibble
 #' @export
 to_unnamed <- function(object) UseMethod("to_unnamed")
 
@@ -339,6 +345,8 @@ to_unnamed.data.frame <- function(object) {
 }
 
 #' @describeIn reformat Returns an object that has random vertex names added
+#' @importFrom dplyr mutate
+#' @importFrom igraph vcount V
 #' @export
 to_named <- function(object, names = NULL) UseMethod("to_named")
 
@@ -347,8 +355,8 @@ to_named.tbl_graph <- function(object, names = NULL) {
   if (!is.null(names)) {
     object <- object %>% mutate(name = names)
   } else {
-    object <- object %>% mutate(name = sample(baby_names,
-                                              network_nodes(object)))
+    object <- object %>%
+      mutate(name = sample(baby_names, igraph::vcount(as_igraph(object))))
   }
   object
 }
@@ -359,7 +367,7 @@ to_named.igraph <- function(object, names = NULL) {
     igraph::V(object)$name  <- names
   } else {
     igraph::V(object)$name  <- sample(baby_names,
-                                      network_nodes(object))
+                                      igraph::vcount(as_igraph(object)))
   }
   object
 }
@@ -371,17 +379,17 @@ to_named.data.frame <- function(object, names = NULL) {
     object[,2]  <- names[as.numeric(object[,2])]
   } else {
     object[,1]  <- sample(baby_names, 
-                          network_nodes(object))[as.numeric(object[,1])]
+                          igraph::vcount(as_igraph(object)))[as.numeric(object[,1])]
     object[,2]  <- sample(baby_names, 
-                          network_nodes(object))[as.numeric(object[,2])]
+                          igraph::vcount(as_igraph(object)))[as.numeric(object[,2])]
   }
   object
 }
 
 #' @export
 to_named.matrix <- function(object, names = NULL) {
-  if(is.null(names)) names <- sample(baby_names, 
-                                     network_nodes(object))
+  if(is.null(names)) names <- sample(baby_names,
+                                     igraph::vcount(as_igraph(object)))
   if(is_twomode(object)){
     rownames(object)  <- names[seq_len(nrow(object))]
     colnames(object)  <- names[(nrow(object)+1):length(names)]
@@ -423,7 +431,7 @@ to_simplex.matrix <- function(object) {
 #'   but otherwise includes all the same nodes and ties.
 #'   Note that this is not the same as `to_mode1()` or `to_mode2()`,
 #'   which return only some of the nodes and new ties established by coincidence.
-#' @importFrom igraph delete_vertex_attr
+#' @importFrom igraph delete_vertex_attr vertex_attr_names
 #' @export
 to_onemode <- function(object) UseMethod("to_onemode")
 
@@ -451,6 +459,7 @@ to_onemode.igraph <- function(object) {
 
 #' @describeIn reformat Returns a network that is not divided into two mode types
 #'   but embeds two or more modes into a multimodal network structure.
+#' @importFrom igraph V delete_vertex_attr
 #' @export
 to_multilevel <- function(object) UseMethod("to_multilevel")
 
@@ -480,6 +489,7 @@ to_multilevel.matrix <- function(object) {
 #' @describeIn reformat Returns a network that divides the nodes into two mode types.
 #' @param mark A logical vector marking two types or modes.
 #'   By default "type".
+#' @importFrom igraph V
 #' @export
 to_twomode <- function(object, mark) UseMethod("to_twomode")
 
