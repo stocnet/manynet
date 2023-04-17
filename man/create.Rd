@@ -41,7 +41,7 @@ a network of the same dimensions will be created.
 
 \item{directed}{Logical whether the graph should be directed.
 By default \code{directed = FALSE}.
-If the opposite direction is desired, use \code{migraph::to_redirected()}.}
+If the opposite direction is desired, use \code{to_redirected()}.}
 
 \item{width}{Integer specifying the width of the ring,
 breadth of the branches, or maximum extent of the neighbourbood.}
@@ -73,7 +73,7 @@ By default, all networks are created as undirected.
 This can be overruled with the argument \code{directed = TRUE}.
 This will return a directed network in which the arcs are
 out-facing or equivalent.
-This direction can be swapped using \code{migraph::to_redirected()}.
+This direction can be swapped using \code{to_redirected()}.
 In two-mode networks, this is ignored.
 }
 \section{Functions}{
@@ -126,25 +126,13 @@ Prime numbers of nodes will return a chain.
 
 \examples{
 create_empty(10)
-migraph::autographr(create_empty(c(8,6)))
 create_filled(10)
-migraph::autographr(create_filled(c(8,6)))
 create_ring(8, width = 2)
-migraph::autographr(create_ring(c(8,6), width = 2))
 create_star(12)
-migraph::autographr(create_star(12, directed = TRUE)) +
-  migraph::autographr(create_star(c(12,1)))
 create_tree(c(7,8))
-migraph::autographr(create_tree(15, directed = TRUE), "tree") +
-  migraph::autographr(create_tree(15, directed = TRUE, width = 3), "tree")
 create_lattice(12, width = 4)
-migraph::autographr(create_lattice(12, width = 8), layout = "kk") +
-  migraph::autographr(create_lattice(12, width = 12), layout = "kk")
 create_components(10, membership = c(1,1,1,2,2,2,3,3,3,3))
-migraph::autographr(create_components(c(10, 12)))
 create_core(6)
-migraph::autographr(create_core(6, membership = c(1,1,1,1,2,2))) +
-  migraph::autographr(create_core(c(6,6)))
 }
 \seealso{
 \link{as}

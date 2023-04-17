@@ -77,7 +77,7 @@ different graph objects from there.
 a tidygraph format, since they already contain both edge and attribute data.
 \code{read_matrix()} will import into tidygraph format too.
 Note that all graphs can be easily coerced into other formats
-with \code{{migraph}}'s \code{as_} methods.
+with \code{{manynet}}'s \code{as_} methods.
 
 The \code{write_}functions export to different file formats,
 depending on the function.
@@ -87,13 +87,13 @@ A pair of UCINET files in V6404 file format (.##h, .##d)
 \description{
 Researchers regularly need to work with a variety of external data formats.
 The following functions offer ways to import from some common external
-file formats into objects that \code{{migraph}} and other graph/network packages
+file formats into objects that \code{{manynet}} and other graph/network packages
 in R can work with.
 
 Note that these functions are not as actively maintained as others
 in the package, so please let us know if any are not currently working
 for you or if there are missing import routines
-by \href{https://github.com/snlab-ch/migraph/issues}{raising an issue on Github}.
+by \href{https://github.com/snlab-ch/manynet/issues}{raising an issue on Github}.
 }
 \details{
 There are a number of repositories for network data

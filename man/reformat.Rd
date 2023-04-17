@@ -18,9 +18,9 @@
 \alias{to_twomode}
 \title{Tools for reformatting networks, graphs, and matrices}
 \usage{
-to_uniplex(object, edge)
+to_uniplex(.data, edge)
 
-to_undirected(object)
+to_undirected(.data)
 
 to_directed(.data)
 
@@ -30,25 +30,23 @@ to_reciprocated(.data)
 
 to_acyclic(.data)
 
-to_unweighted(object, threshold = 1)
+to_unweighted(.data, threshold = 1)
 
-to_unsigned(object, keep = c("positive", "negative"))
+to_unsigned(.data, keep = c("positive", "negative"))
 
-to_unnamed(object)
+to_unnamed(.data)
 
-to_named(object, names = NULL)
+to_named(.data, names = NULL)
 
-to_simplex(object)
+to_simplex(.data)
 
-to_onemode(object)
+to_onemode(.data)
 
-to_multilevel(object)
+to_multilevel(.data)
 
-to_twomode(object, mark)
+to_twomode(.data, mark)
 }
 \arguments{
-\item{edge}{Character string naming an edge attribute to retain from a graph.}
-
 \item{.data}{An object of a manynet-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
@@ -57,6 +55,8 @@ to_twomode(object, mark)
 \item network, from the \code{{network}} package
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
+
+\item{edge}{Character string naming an edge attribute to retain from a graph.}
 
 \item{threshold}{For a matrix, the threshold to binarise/dichotomise at.}
 
@@ -142,10 +142,10 @@ but embeds two or more modes into a multimodal network structure.
 
 }}
 \examples{
-a <- to_uniplex(ison_algebra, "friends")
-to_giant(a)
-to_undirected(a)
-to_unweighted(a)
+as_tidygraph(create_filled(5)) \%>\%
+  activate(edges) \%>\%
+  mutate(type = sample(1:2, 10, replace = TRUE)) \%>\%
+  to_uniplex("type")
 }
 \seealso{
 Other manipulations: 
