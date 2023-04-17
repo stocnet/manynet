@@ -409,8 +409,8 @@ as_igraph.network <- function(.data,
   # Add remaining node level attributes
   if (length(attr) > 2) {
     for (a in attr[2:length(attr)]) {
-      graph <- igraph::vertex_attr(graph, name = a,
-                                   value = sapply(.data[[3]], "[[", a))
+      graph <- igraph::set_vertex_attr(graph, name = a,
+                                       value = sapply(.data[[3]], "[[", a))
     }
   }
   graph
@@ -846,9 +846,7 @@ as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
 
 # Helper funtion to join ties
 join_ties <- function(object, object2, attr_name){
-  edges <- NULL
-  from <- NULL
-  to <- NULL
+  edges <- from <- to <- ':=' <- NULL
   el <- c(t(as.matrix(as_edgelist(object2))))
   obj <- as_tidygraph(object) %>% 
     activate(edges)
@@ -860,19 +858,19 @@ join_ties <- function(object, object2, attr_name){
     as_tidygraph()
   if(!missing(attr_name)){
     out <- out %>% activate(edges) %>% 
-      rename(!!attr_name := "object2")
+      dplyr::rename(!!attr_name := "object2")
   }
   edges <- out %>%
     activate(edges) %>%
     as.data.frame() %>% 
     dplyr::group_by(from, to) %>%
-    dplyr::summarise(across(everything(), 
+    dplyr::summarise(dplyr::across(dplyr::everything(), 
                             function(x){
                               out <- suppressWarnings(max(x, na.rm = TRUE))
                               if(is.infinite(out)) out <- 0
                               out
                             }), 
-                     .groups = "keep") %>% ungroup()
+                     .groups = "keep") %>% dplyr::ungroup()
   nodes <- out %>% activate(nodes) %>% as.data.frame()
   tidygraph::tbl_graph(nodes, edges, 
                        directed = is_directed(object))
