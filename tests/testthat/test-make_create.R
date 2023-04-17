@@ -44,7 +44,7 @@ test_that("tree creation works", {
 
 test_that("create lattice works", {
   expect_s3_class(create_lattice(4), "igraph")
-  expect_equal(migraph::network_nodes(create_lattice(5)), 5)
+  expect_equal(igraph::vcount(create_lattice(5)), 5)
   expect_false(is_directed(create_lattice(6)))
   expect_true(is_directed(create_lattice(6, directed = TRUE)))
 })
@@ -61,7 +61,7 @@ test_that("component creation works", {
 test_that("core-periphery creation works", {
   expect_false(is_twomode(create_core(6)))
   expect_true(is_twomode(create_core(c(6,6))))
-  expect_equal(migraph::network_nodes(create_core(c(10,4))), 14)
+  expect_equal(igraph::vcount(create_core(c(10,4))), 14)
 })
 
 # test_that("nest creation works", {
