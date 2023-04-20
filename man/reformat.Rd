@@ -149,6 +149,7 @@ as_tidygraph(create_filled(5)) \%>\%
 }
 \seealso{
 Other manipulations: 
+\code{\link{add}},
 \code{\link{as}()}
 }
 \concept{manipulations}

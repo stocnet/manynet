@@ -37,8 +37,8 @@ reference:
     contents:
       - starts_with("create_")
       # - starts_with("generate_")
-      # - starts_with("read")
-      # - starts_with("write")
+      - starts_with("read")
+      - starts_with("write")
   - title: "Manipulation"
     desc: |
       Functions for coercing objects between different classes, 
@@ -47,7 +47,7 @@ reference:
     contents:
       - starts_with("as_")
       - starts_with("to_")
-      # - add
+      - add
       # - grab
       # - na
   - title: "Marks"

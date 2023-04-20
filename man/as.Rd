@@ -105,6 +105,7 @@ as_graphAM(test)
 }
 \seealso{
 Other manipulations: 
+\code{\link{add}},
 \code{\link{reformat}}
 }
 \concept{manipulations}
