@@ -1,3 +1,5 @@
+southern_women <- readRDS(testthat::test_path("sheets", "southern_women.Rds"))
+
 # object without nodal attributes
 net_node1 <- as_tidygraph(data.frame(
   from = c("A", "B", "C", "D","E"),
@@ -19,27 +21,29 @@ test_that("add_node_attribute works", {
                net_node2)
   # On two mode network
   # First nodeset
-  south1 <- add_node_attribute(ison_southern_women, "Age", rep(25, 18))
-  expect_equal(node_attribute(south1, "Age"), c(rep(25, 18), rep(NA, 14)))
+  south1 <- add_node_attribute(southern_women, "Age", rep(25, 18))
+  expect_equal(igraph::vertex_attr(south1, "Age"),
+               c(rep(25, 18), rep(NA, 14)))
   # Second nodeset
-  south2 <- add_node_attribute(ison_southern_women, "Budget", rep(100, 14))
-  expect_equal(node_attribute(south2, "Budget"), c(rep(NA, 18), rep(100, 14)))
+  south2 <- add_node_attribute(southern_women, "Budget", rep(100, 14))
+  expect_equal(igraph::get.vertex.attribute(as_igraph(south2),  "Budget"),
+               c(rep(NA, 18), rep(100, 14)))
   # Test error when wrong number of attributes
-  expect_error(add_node_attribute(ison_southern_women, "Budget", rep(100, 15)))
+  expect_error(add_node_attribute(southern_women, "Budget", rep(100, 15)))
 })
 
-test_that("copy_node_attributes works", {
-  expect_equal(as_tidygraph(copy_node_attributes(net_node1, net_node2)), 
+test_that("bind_node_attributes works", {
+  expect_equal(as_tidygraph(bind_node_attributes(net_node1, net_node2)), 
                net_node2)
   # Test error when different number of dimensions
   net_node3 <- as_tidygraph(data.frame(
     from = c("A", "B", "C"),
     to = c("B", "C", "D")))
-  expect_error(copy_node_attributes(net_node1, net_node3))
+  expect_error(bind_node_attributes(net_node1, net_node3))
 })
 
 test_that("add_tie_attribute works", {
-  expect_equal(tie_attribute(add_tie_attribute(net_edge1, "weight", 
+  expect_equal(igraph::edge_attr(add_tie_attribute(net_edge1, "weight", 
                                                   c(1,2,1,2,1)), 
                               "weight"), 
                c(1,2,1,2,1))
@@ -48,23 +52,24 @@ test_that("add_tie_attribute works", {
 })
 
 test_that("join_ties works", {
-  testmutateedges <- join_ties(mpn_elite_mex, generate_random(mpn_elite_mex), "random")
+  testmutateedges <- join_ties(southern_women, create_filled(c(3,4)))
   expect_equal(class(testmutateedges), c("tbl_graph", "igraph"))
 })
 
 test_that("mutate_ties and filter_ties works", {
-  orig <- ison_adolescents %>% mutate_ties(year = 1:10)
+  orig <- southern_women %>% mutate_ties(year = 1:93)
   filt <- orig %>% activate(edges) %>% dplyr::filter(year > 5) %>% activate(nodes)
   filt1 <- filter_ties(orig, year > 5)
-  expect_equal(1:10, tie_attribute(orig, "year"))
-  expect_equal(tie_attribute(filt, "year"), tie_attribute(filt1, "year"))
+  expect_equal(1:93, igraph::edge_attr(as_igraph(orig), "year"))
+  expect_equal(igraph::edge_attr(as_igraph(filt), "year"),
+               igraph::edge_attr(as_igraph(filt1), "year"))
 })
 
 test_that("summarise_ties works", {
   set.seed(1234)
-  orig <- ison_adolescents %>%
-    tidygraph::graph_join(ison_adolescents) %>%
-    mutate_ties(year = sample(1:3, 20, replace = TRUE))
+  orig <- as_tidygraph(southern_women) %>%
+    tidygraph::graph_join(as_tidygraph(southern_women)) %>%
+    mutate_ties(year = sample(1:3, 186, replace = TRUE))
   sum <- summarise_ties(orig, mean = mean(year))
-  expect_length(tie_attribute(sum, "weight"), 10)
+  expect_length(igraph::edge_attr(sum, "weight"), 93)
 })
