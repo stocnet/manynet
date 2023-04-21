@@ -843,35 +843,3 @@ as_graphAM.siena <- function(.data, twomode = NULL) {
 as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
   as_graphAM(as_matrix(.data), twomode)
 }
-
-# Helper funtion to join ties
-join_ties <- function(object, object2, attr_name){
-  edges <- from <- to <- ':=' <- NULL
-  el <- c(t(as.matrix(as_edgelist(object2))))
-  obj <- as_tidygraph(object) %>% 
-    activate(edges)
-  if(ncol(as.data.frame(obj)) < 3){
-    obj <- obj %>% igraph::set_edge_attr("orig", value = 1)
-  } 
-  out <- igraph::add_edges(as_igraph(obj),
-                           el, object2 = 1) %>% 
-    as_tidygraph()
-  if(!missing(attr_name)){
-    out <- out %>% activate(edges) %>% 
-      dplyr::rename(!!attr_name := "object2")
-  }
-  edges <- out %>%
-    activate(edges) %>%
-    as.data.frame() %>% 
-    dplyr::group_by(from, to) %>%
-    dplyr::summarise(dplyr::across(dplyr::everything(), 
-                            function(x){
-                              out <- suppressWarnings(max(x, na.rm = TRUE))
-                              if(is.infinite(out)) out <- 0
-                              out
-                            }), 
-                     .groups = "keep") %>% dplyr::ungroup()
-  nodes <- out %>% activate(nodes) %>% as.data.frame()
-  tidygraph::tbl_graph(nodes, edges, 
-                       directed = is_directed(object))
-}
