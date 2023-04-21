@@ -24,7 +24,8 @@ Imports:
     sna,
     tidygraph,
     RSiena,
-    xml2
+    xml2,
+    rlang
 Suggests: 
     covr,
     knitr,
