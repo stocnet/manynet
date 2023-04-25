@@ -9,47 +9,57 @@
 #' @family manipulations
 #' @inheritParams is
 #' @param object2 A second object to copy nodes or edges from.
+#' @param attribute A named list to be added as tie or node attributes.
 #' @param attr_name Name of the new attribute in the resulting object.
 #' @param vector A vector of values for the new attribute.
+#' @param ... Additional arguments.
 #' @name add
 NULL
 
 #' @describeIn add Copies node attributes from a given graph into specified graph
-#' @examples 
-#'   other <- create_empty(4) %>% mutate(name = c("Sue", "Tim", "Pam", "Mark"))
-#'   join_nodes(ison_adolescents, other)
+#' @param join_type A type of join to be used.
+#' Options are "full","left", "right", "inner".
+#' @param by An attribute name to join objects by.
+#' By default, NULL.
+#' @examples
+#'   other <- create_empty(4) %>% mutate(name = c("A", "B", "C", "D"))
+#'   another <- create_empty(3) %>% mutate(name = c("E", "F", "G"))
+#'   join_nodes(another, other)
 #' @export
-join_nodes <- function(.data, source, by = NULL,
+join_nodes <- function(.data, object2, by = NULL,
                        join_type = c("full","left", "right", "inner")){
   join_type <- match.arg(join_type)
   out <- as_tidygraph(.data)
-  source <- as_tidygraph(source)
+  object2 <- as_tidygraph(object2)
   switch(join_type,
-         "full" = dplyr::full_join(out, source, by = by, copy = TRUE),
-         "left" = dplyr::left_join(out, source, by = by, copy = TRUE),
-         "right" = dplyr::right_join(out, source, by = by, copy = TRUE),
-         "inner" = dplyr::inner_join(out, source, by = by, copy = TRUE))
+         "full" = dplyr::full_join(out, object2, by = by, copy = TRUE),
+         "left" = dplyr::left_join(out, object2, by = by, copy = TRUE),
+         "right" = dplyr::right_join(out, object2, by = by, copy = TRUE),
+         "inner" = dplyr::inner_join(out, object2, by = by, copy = TRUE))
 }
 
 #' @describeIn add Copies ties from another graph to specified graph and 
 #' adds a tie attribute identifying the ties that were newly added
 #' @importFrom igraph add_edges
 #' @importFrom rlang :=
-#' @importFrom dplyr mutate summarise across group_by everything
-#' @examples 
-#'   autographr(mpn_elite_mex)
-#'   both <- join_ties(mpn_elite_mex, generate_random(mpn_elite_mex), "random")
-#'   autographr(both)
-#'   random <- to_uniplex(both, "random")
-#'   autographr(random)
-#'   autographr(to_uniplex(both, "orig"))
+#' @importFrom dplyr mutate summarise across group_by everything ungroup rename
+#' @examples
+#'   other <- as_tidygraph(create_filled(4)) %>%
+#'   mutate(name = c("A", "B", "C", "D")) %>%
+#'   activate(edges) %>%
+#'   mutate_ties(type = c("a", "b", "c", "d", "e", "f"))
+#'   another <- as_tidygraph(create_empty(3)) %>%
+#'   mutate(name = c("E", "F", "G")) %>%
+#'   activate(edges) %>%
+#'   mutate_ties(type = c("g"))
+#'   join_ties(other, another, "random")
 #' @export
-join_ties <- function(object, object2, attr_name){
+join_ties <- function(.data, object2, attr_name){
   edges <- NULL
   from <- NULL
   to <- NULL
   el <- c(t(as.matrix(as_edgelist(object2))))
-  obj <- as_tidygraph(object) %>% 
+  obj <- as_tidygraph(.data) %>% 
     activate(edges)
   if(ncol(as.data.frame(obj)) < 3){
     obj <- obj %>% igraph::set_edge_attr("orig", value = 1)
@@ -60,30 +70,33 @@ join_ties <- function(object, object2, attr_name){
   
   if(!missing(attr_name)){
     out <- out %>% activate(edges) %>% 
-      rename(!!attr_name := "object2")
+      dplyr::rename(!!attr_name := "object2")
   }
   
   edges <- out %>%
     activate(edges) %>%
     as.data.frame() %>% 
     dplyr::group_by(from, to) %>%
-    dplyr::summarise(across(everything(), 
+    dplyr::summarise(dplyr::across(dplyr::everything(), 
                             function(x){
                               out <- suppressWarnings(max(x, na.rm = TRUE))
                               if(is.infinite(out)) out <- 0
                               out
                             }), 
-                     .groups = "keep") %>% ungroup()
+                     .groups = "keep") %>% dplyr::ungroup()
   nodes <- out %>% activate(nodes) %>% as.data.frame()
   tidygraph::tbl_graph(nodes, edges, 
-                       directed = is_directed(object))
+                       directed = is_directed(.data))
   
 }
 
 #' @describeIn add Add additional ties to a network
+#' @param nodes The number of nodes to be added.
 #' @importFrom igraph add_edges
 #' @examples
-#'   add_nodes(ison_adolescents, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))
+#'   other <- as_tidygraph(create_empty(4)) %>%
+#'   mutate(name = c("A", "B", "C", "D"))
+#'   add_nodes(other, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))
 #' @export
 add_nodes <- function(.data, nodes, attribute = NULL) UseMethod("add_nodes")
 
@@ -103,9 +116,12 @@ add_nodes.network <- function(.data, nodes, attribute = NULL){
 }
 
 #' @describeIn add Add additional ties to a network
+#' @param ties The number of ties to be added or an even list of ties.
 #' @importFrom igraph add_edges
 #' @examples
-#'   add_ties(ison_adolescents, c(1,2), list(time = 2, increment = -1))
+#'   other <- as_tidygraph(create_empty(4)) %>%
+#'   mutate(name = c("A", "B", "C", "D"))
+#'   add_ties(other, c(1,2), list(time = 2, increment = -1))
 #' @export
 add_ties <- function(.data, ties, attribute = NULL) UseMethod("add_ties")
 
@@ -127,17 +143,18 @@ add_ties.network <- function(.data, ties, attribute = NULL){
 #' @describeIn add Insert specified values from a vector into the graph 
 #' as node attributes
 #' @importFrom igraph vertex_attr<-
-#' @examples 
-#' add_node_attribute(mpn_elite_mex, "wealth", 1:35)
-#' add_node_attribute(mpn_elite_usa_advice, "wealth", 1:14)
+#' @examples
+#'   other <- as_tidygraph(create_empty(4)) %>%
+#'   mutate(name = c("A", "B", "C", "D"))
+#'   add_node_attribute(other, "wealth", 1:4)
 #' @export
 add_node_attribute <- function(.data, attr_name, vector){
-  if(length(vector)!=network_nodes(.data)){
-    if(is_twomode(.data) && any(length(vector) == network_dims(.data))){
-      if(length(vector) == network_dims(.data)[1]){
-        vector <- c(vector, rep(NA, network_dims(.data)[2]))
-      } else if (length(vector) == network_dims(.data)[2]){
-        vector <- c(rep(NA, network_dims(.data)[1]), vector)
+  if(length(vector)!=igraph::vcount(as_igraph(.data))){
+    if(is_twomode(.data) && any(length(vector) == infer_dims(.data))){
+      if(length(vector) == infer_dims(.data)[1]){
+        vector <- c(vector, rep(NA, infer_dims(.data)[2]))
+      } else if (length(vector) == infer_dims(.data)[2]){
+        vector <- c(rep(NA, infer_dims(.data)[1]), vector)
       }
     } else 
       stop("Attribute vector must be same length as nodes in object.")
@@ -151,7 +168,9 @@ add_node_attribute <- function(.data, attr_name, vector){
 #'   as tie attributes
 #' @importFrom igraph edge_attr
 #' @examples
-#' add_tie_attribute(ison_adolescents, "weight", c(1,2,1,1,1,3,2,2,3,1))
+#'   other <- as_tidygraph(create_filled(4)) %>%
+#'   mutate(name = c("A", "B", "C", "D"))
+#'   add_tie_attribute(other, "weight", c(1, 2, 2, 2, 1, 2))
 #' @export
 add_tie_attribute <- function(.data, attr_name, vector){
   out <- as_igraph(.data)
@@ -166,6 +185,11 @@ mutate.igraph <- function(.data, ...){
 }
 
 #' @describeIn add Tidy way to add vector as tie attributes.
+#' @examples
+#'   as_tidygraph(create_filled(4)) %>%
+#'   mutate(name = c("A", "B", "C", "D")) %>%
+#'   activate(edges) %>%
+#'   mutate_ties(type = c("a", "b", "c", "d", "e", "f"))
 #' @export
 mutate_ties <- function(.data, ...){
   nodes <- edges <- NULL
@@ -174,6 +198,13 @@ mutate_ties <- function(.data, ...){
 }
 
 #' @describeIn add Tidy way to select tie attributes.
+#' @importFrom dplyr select
+#' @examples
+#'   as_tidygraph(create_filled(4)) %>%
+#'   mutate(name = c("A", "B", "C", "D")) %>%
+#'   activate(edges) %>%
+#'   mutate_ties(type = 1:6, form = 1:6) %>%
+#'   select_ties(form)
 #' @export
 select_ties <- function(.data, ...){
   nodes <- edges <- NULL
@@ -183,6 +214,13 @@ select_ties <- function(.data, ...){
 
 #' @describeIn add Tidy way to filter ties based on a logical statement with
 #'   relation to some tie attribute.
+#' @importFrom dplyr filter
+#' @examples
+#'   as_tidygraph(create_filled(4)) %>%
+#'   mutate(name = c("A", "B", "C", "D")) %>%
+#'   activate(edges) %>%
+#'   mutate_ties(form = 1:6) %>%
+#'   filter_ties(form < 4)
 #' @export
 filter_ties <- function(.data, ...){
   nodes <- edges <- NULL
@@ -191,6 +229,13 @@ filter_ties <- function(.data, ...){
 }
 
 #' @describeIn add Tidy way to rename tie attributes.
+#' @importFrom dplyr rename
+#' @examples
+#'   as_tidygraph(create_filled(4)) %>%
+#'   mutate(name = c("A", "B", "C", "D")) %>%
+#'   activate(edges) %>%
+#'   mutate_ties(form = 1:6) %>%
+#'   rename_ties(type = form)
 #' @export
 rename_ties <- function(.data, ...){
   nodes <- edges <- NULL
@@ -200,9 +245,15 @@ rename_ties <- function(.data, ...){
 
 #' @describeIn add Tidy way to summarise tie attributes.
 #' @importFrom dplyr summarise
+#' @examples
+#'   as_tidygraph(create_filled(4)) %>%
+#'   mutate(name = c("A", "B", "C", "D")) %>%
+#'   activate(edges) %>%
+#'   mutate_ties(type = c("a", "b", "a", "b", "a", "b")) %>%
+#'   summarise_ties(type)
 #' @export
 summarise_ties <- function(.data, ...){
-  out <- migraph::as_edgelist(.data) %>% 
+  out <- as_edgelist(.data) %>% 
     dplyr::summarise(..., .by = c("from","to")) %>% 
     as_tidygraph(twomode = is_twomode(.data))
   out <- as_tidygraph(bind_node_attributes(out, .data))
@@ -211,17 +262,23 @@ summarise_ties <- function(.data, ...){
 }
 
 #' @describeIn add Copying all nodal attributes from one network to another
+#' @examples
+#'   other <- as_tidygraph(create_filled(4)) %>%
+#'   mutate(name = c("A", "B", "C", "D"))
+#'   another <- as_tidygraph(create_filled(4)) %>%
+#'   mutate(type = c("a", "b", "c", "d"))
+#'   bind_node_attributes(other, another)
 #' @export
-bind_node_attributes <- function(.data, source){
+bind_node_attributes <- function(.data, object2){
   out <- as_igraph(.data)
-  source <- as_igraph(source)
-  if(network_nodes(.data) != network_nodes(source)){
+  object2 <- as_igraph(object2)
+  if(igraph::vcount(as_igraph(.data)) != igraph::vcount(as_igraph(object2))){
     # warning("Not the same dimensions. Coercing to same.")
-    out <- add_nodes(out, network_nodes(source) - network_nodes(out))
+    out <- add_nodes(out, igraph::vcount(as_igraph(object2)) - igraph::vcount(as_igraph(out)))
   }
-  for(a in igraph::vertex_attr_names(source)){
+  for(a in igraph::vertex_attr_names(object2)){
     out <- igraph::set.vertex.attribute(out, a, 
-                                        value = igraph::get.vertex.attribute(source, a))
+                                        value = igraph::get.vertex.attribute(object2, a))
   }
   out
 }

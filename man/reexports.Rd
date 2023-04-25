@@ -26,7 +26,7 @@ below to see their documentation.
 \describe{
   \item{dplyr}{\code{\link[dplyr:reexports]{\%>\%}}}
 
-  \item{igraph}{\code{\link[igraph:is_igraph]{is.igraph}}, \code{\link[igraph:make_bipartite_graph]{is_bipartite}}}
+  \item{igraph}{\code{\link[igraph:make_bipartite_graph]{is_bipartite}}, \code{\link[igraph:is_igraph]{is.igraph}}}
 
   \item{network}{\code{\link[network:network]{as.network}}, \code{\link[network:network]{is.network}}}
 

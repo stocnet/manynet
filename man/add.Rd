@@ -18,12 +18,12 @@
 \usage{
 join_nodes(
   .data,
-  source,
+  object2,
   by = NULL,
   join_type = c("full", "left", "right", "inner")
 )
 
-join_ties(object, object2, attr_name)
+join_ties(.data, object2, attr_name)
 
 add_nodes(.data, nodes, attribute = NULL)
 
@@ -43,7 +43,7 @@ rename_ties(.data, ...)
 
 summarise_ties(.data, ...)
 
-bind_node_attributes(.data, source)
+bind_node_attributes(.data, object2)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -57,9 +57,23 @@ bind_node_attributes(.data, source)
 
 \item{object2}{A second object to copy nodes or edges from.}
 
+\item{by}{An attribute name to join objects by.
+By default, NULL.}
+
+\item{join_type}{A type of join to be used.
+Options are "full","left", "right", "inner".}
+
 \item{attr_name}{Name of the new attribute in the resulting object.}
 
+\item{nodes}{The number of nodes to be added.}
+
+\item{attribute}{A named list to be added as tie or node attributes.}
+
+\item{ties}{The number of ties to be added or an even list of ties.}
+
 \item{vector}{A vector of values for the new attribute.}
+
+\item{...}{Additional arguments.}
 }
 \description{
 These functions allow users to add nodes, ties, or attributes to the nodes or ties
@@ -100,19 +114,59 @@ relation to some tie attribute.
 
 }}
 \examples{
-  other <- create_empty(4) \%>\% mutate(name = c("Sue", "Tim", "Pam", "Mark"))
-  join_nodes(ison_adolescents, other)
-  autographr(mpn_elite_mex)
-  both <- join_ties(mpn_elite_mex, generate_random(mpn_elite_mex), "random")
-  autographr(both)
-  random <- to_uniplex(both, "random")
-  autographr(random)
-  autographr(to_uniplex(both, "orig"))
-  add_nodes(ison_adolescents, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))
-  add_ties(ison_adolescents, c(1,2), list(time = 2, increment = -1))
-add_node_attribute(mpn_elite_mex, "wealth", 1:35)
-add_node_attribute(mpn_elite_usa_advice, "wealth", 1:14)
-add_tie_attribute(ison_adolescents, "weight", c(1,2,1,1,1,3,2,2,3,1))
+  other <- create_empty(4) \%>\% mutate(name = c("A", "B", "C", "D"))
+  another <- create_empty(3) \%>\% mutate(name = c("E", "F", "G"))
+  join_nodes(another, other)
+  other <- as_tidygraph(create_filled(4)) \%>\%
+  mutate(name = c("A", "B", "C", "D")) \%>\%
+  activate(edges) \%>\%
+  mutate_ties(type = c("a", "b", "c", "d", "e", "f"))
+  another <- as_tidygraph(create_empty(3)) \%>\%
+  mutate(name = c("E", "F", "G")) \%>\%
+  activate(edges) \%>\%
+  mutate_ties(type = c("g"))
+  join_ties(other, another, "random")
+  other <- as_tidygraph(create_empty(4)) \%>\%
+  mutate(name = c("A", "B", "C", "D"))
+  add_nodes(other, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))
+  other <- as_tidygraph(create_empty(4)) \%>\%
+  mutate(name = c("A", "B", "C", "D"))
+  add_ties(other, c(1,2), list(time = 2, increment = -1))
+  other <- as_tidygraph(create_empty(4)) \%>\%
+  mutate(name = c("A", "B", "C", "D"))
+  add_node_attribute(other, "wealth", 1:4)
+  other <- as_tidygraph(create_filled(4)) \%>\%
+  mutate(name = c("A", "B", "C", "D"))
+  add_tie_attribute(other, "weight", c(1, 2, 2, 2, 1, 2))
+  as_tidygraph(create_filled(4)) \%>\%
+  mutate(name = c("A", "B", "C", "D")) \%>\%
+  activate(edges) \%>\%
+  mutate_ties(type = c("a", "b", "c", "d", "e", "f"))
+  as_tidygraph(create_filled(4)) \%>\%
+  mutate(name = c("A", "B", "C", "D")) \%>\%
+  activate(edges) \%>\%
+  mutate_ties(type = 1:6, form = 1:6) \%>\%
+  select_ties(form)
+  as_tidygraph(create_filled(4)) \%>\%
+  mutate(name = c("A", "B", "C", "D")) \%>\%
+  activate(edges) \%>\%
+  mutate_ties(form = 1:6) \%>\%
+  filter_ties(form < 4)
+  as_tidygraph(create_filled(4)) \%>\%
+  mutate(name = c("A", "B", "C", "D")) \%>\%
+  activate(edges) \%>\%
+  mutate_ties(form = 1:6) \%>\%
+  rename_ties(type = form)
+  as_tidygraph(create_filled(4)) \%>\%
+  mutate(name = c("A", "B", "C", "D")) \%>\%
+  activate(edges) \%>\%
+  mutate_ties(type = c("a", "b", "a", "b", "a", "b")) \%>\%
+  summarise_ties(type)
+  other <- as_tidygraph(create_filled(4)) \%>\%
+  mutate(name = c("A", "B", "C", "D"))
+  another <- as_tidygraph(create_filled(4)) \%>\%
+  mutate(type = c("a", "b", "c", "d"))
+  bind_node_attributes(other, another)
 }
 \seealso{
 Other manipulations: 
