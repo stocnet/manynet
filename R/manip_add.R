@@ -67,12 +67,10 @@ join_ties <- function(.data, object2, attr_name){
   out <- igraph::add_edges(as_igraph(obj),
                            el, object2 = 1) %>% 
     as_tidygraph()
-  
   if(!missing(attr_name)){
     out <- out %>% activate(edges) %>% 
       dplyr::rename(!!attr_name := "object2")
   }
-  
   edges <- out %>%
     activate(edges) %>%
     as.data.frame() %>% 
@@ -87,7 +85,6 @@ join_ties <- function(.data, object2, attr_name){
   nodes <- out %>% activate(nodes) %>% as.data.frame()
   tidygraph::tbl_graph(nodes, edges, 
                        directed = is_directed(.data))
-  
 }
 
 #' @describeIn add Add additional ties to a network
@@ -161,7 +158,7 @@ add_node_attribute <- function(.data, attr_name, vector){
   }
   out <- as_igraph(.data)
   igraph::vertex_attr(out, name = attr_name) <- vector
-  out
+  as_tidygraph(out)
 }
 
 #' @describeIn add Insert specified values from a vector into the network.
@@ -175,7 +172,7 @@ add_node_attribute <- function(.data, attr_name, vector){
 add_tie_attribute <- function(.data, attr_name, vector){
   out <- as_igraph(.data)
   igraph::edge_attr(out, name = attr_name) <- vector
-  out
+  as_tidygraph(out)
 }
 
 #' @export
@@ -280,5 +277,5 @@ bind_node_attributes <- function(.data, object2){
     out <- igraph::set.vertex.attribute(out, a, 
                                         value = igraph::get.vertex.attribute(object2, a))
   }
-  out
+  as_tidygraph(out)
 }

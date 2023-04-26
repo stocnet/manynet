@@ -61,7 +61,7 @@ create_empty <- function(n, directed = FALSE) {
     out <- as_igraph(out, twomode = TRUE)
   }
   if (!directed) out <- to_undirected(out)
-  out
+  as_tidygraph(out)
 }
 
 #' @describeIn create Creates a filled graph of the given dimensions,
@@ -81,7 +81,7 @@ create_filled <- function(n, directed = FALSE) {
     out <- matrix(1, n[1], n[2])
     out <- as_igraph(out, twomode = TRUE)
   }
-  out
+  as_tidygraph(out)
 }
 
 #' @describeIn create Creates a ring or chord graph of the given dimensions
@@ -129,7 +129,7 @@ create_ring <- function(n, directed = FALSE, width = 1, ...) {
     mat[mat > 1] <- 1
     out <- as_igraph(mat, twomode = TRUE)
   }
-  out
+  as_tidygraph(out)
 }
 
 #' @describeIn create Creates a graph of the given dimensions
@@ -154,7 +154,7 @@ create_star <- function(n,
     }
     out <- as_igraph(out, twomode = TRUE)
   }
-  out
+  as_tidygraph(out)
 }
 
 #' @describeIn create Creates a graph of the given dimensions with
@@ -190,9 +190,10 @@ create_tree <- function(n,
         suppressWarnings(avail1 <- avail1[avail1 != matches])
       }
     }
-    as_igraph(out, twomode = TRUE)
-  } else igraph::make_tree(sum(n), children = width,
-                           mode = ifelse(directed, "out", "undirected"))
+    as_tidygraph(out, twomode = TRUE)
+  } else as_tidygraph(igraph::make_tree(sum(n), children = width,
+                                        mode = ifelse(directed, "out",
+                                                      "undirected")))
 }
 
 #' @describeIn create Creates a lattice graph of the given dimensions with ties
@@ -239,11 +240,11 @@ create_lattice <- function(n,
       }
       if (!directed)
         nei1.5[lower.tri(nei1.5)] <- t(nei1.5)[lower.tri(nei1.5)]
-      as_igraph(nei1.5)
+      as_tidygraph(nei1.5)
     } else if (width == 12) {
-      igraph::make_lattice(dims, nei = 2, directed = directed)
+      as_tidygraph(igraph::make_lattice(dims, nei = 2, directed = directed))
     } else if (width == 4) {
-      igraph::make_lattice(dims, nei = 1, directed = directed)
+      as_tidygraph(igraph::make_lattice(dims, nei = 1, directed = directed))
     } else stop("`max_neighbourhood` expected to be 4, 8, or 12")
   } else {
     divs1 <- divisors(n[1])
@@ -261,7 +262,7 @@ create_lattice <- function(n,
     mat[lower.tri(mat)] <- 0
     out <- mat[rowSums(mat) ==2,]
     out <- do.call(rbind, replicate(nrow(mat)/nrow(out), out, simplify=FALSE))
-    as_igraph(out)
+    as_tidygraph(out)
   }
 }
 
@@ -326,7 +327,7 @@ create_components <- function(n, directed = FALSE, membership = NULL) {
                                        x] <- 1
     out <- as_igraph(out, twomode = TRUE)
   }
-  out
+  as_tidygraph(out)
 }
 
 #' @describeIn create Creates a graph with a certain proportion of nodes
@@ -343,14 +344,14 @@ create_core <- function(n, directed = FALSE, membership = NULL) {
     mat <- matrix(0, n[1], n[2])
     mat[membership[1:n[1]] == 1,] <- 1
     mat[, membership[(n[1] + 1):length(membership)] == 1] <- 1
-    as_igraph(mat, twomode = TRUE)
+    as_tidygraph(mat, twomode = TRUE)
   } else {
     mat <- matrix(0, n, n)
     mat[membership == 1,] <- 1
     mat[, membership == 1] <- 1
     diag(mat) <- 0
     if(directed) mat[lower.tri(mat)] <- 0
-    as_igraph(mat)
+    as_tidygraph(mat)
   }
 }
 
