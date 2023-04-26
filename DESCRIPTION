@@ -25,7 +25,9 @@ Imports:
     tidygraph,
     RSiena,
     xml2,
-    rlang
+    rlang,
+    pillar,
+    tibble
 Suggests: 
     covr,
     knitr,
