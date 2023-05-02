@@ -191,9 +191,11 @@ create_tree <- function(n,
       }
     }
     as_tidygraph(out, twomode = TRUE)
-  } else as_tidygraph(igraph::make_tree(sum(n), children = width,
-                                        mode = ifelse(directed, "out",
-                                                      "undirected")))
+  } else {
+    as_tidygraph(igraph::make_tree(sum(n), children = width,
+                                   mode = ifelse(directed, "out",
+                                                 "undirected")))
+  }
 }
 
 #' @describeIn create Creates a lattice graph of the given dimensions with ties
