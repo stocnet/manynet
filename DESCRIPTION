@@ -26,7 +26,6 @@ Imports:
     RSiena,
     xml2,
     rlang,
-    pillar,
     tibble
 Suggests: 
     covr,
