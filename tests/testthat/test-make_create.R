@@ -60,7 +60,7 @@ test_that("component creation works", {
 
 test_that("core-periphery creation works", {
   expect_false(is_twomode(create_core(6)))
-  expect_true(is_twomode(create_core(c(6,6))))
+  expect_true(is_twomode(create_core(c(6,7))))
   expect_equal(igraph::vcount(create_core(c(10,4))), 14)
 })
 

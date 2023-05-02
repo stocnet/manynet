@@ -47,8 +47,8 @@ test_that("add_tie_attribute works", {
                                                   c(1,2,1,2,1)), 
                               "weight"), 
                c(1,2,1,2,1))
-  expect_equal(class(add_tie_attribute(net_edge1, "weight", c(1,2,1,2,1))), 
-               "igraph")
+  expect_equal(class(add_tie_attribute(net_edge1, "weight", c(1,2,1,2,1)))[1], 
+               "tbl_graph")
 })
 
 test_that("join_ties works", {
