@@ -91,33 +91,27 @@ print.tbl_graph <- function(x, ...) {
                                                          n = 3))))
   names(bottom$summary)[1] <- tools::toTitleCase(paste0(substr(not_active, 1, 4),
                                                         ' data'))
-  cat_subtle('# A tbl_graph: ', igraph::gorder(x), ' nodes and ',
-             igraph::gsize(x), ' edges\n', sep = '')
-  cat_subtle('#\n')
-  cat_subtle('# ', graph_desc, '\n', sep = '')
-  cat_subtle('#\n')
+  cat('# ', graph_desc, 'tbl_graph with ', igraph::gorder(x), ' nodes and ',
+      igraph::gsize(x), ' edges\n', sep = '')
   print(top)
-  cat_subtle('#\n')
   print(bottom)
   invisible(x)
 }
 
 describe_graph <- function(x) {
   if (igraph::gorder(x) == 0) {
-    return('An empty graph')
+    return('An empty')
   } else if (is_directed(x)) {
     if (is_twomode(x)) {
-      return('A two mode directed graph') 
+      return('A two mode directed') 
     } else {
-      return('A directed graph')
+      return('A directed')
     }
   } else {
     if (!is_directed(x) & is_twomode(x)) {
-      return('A two mode undirected graph')
+      return('A two mode undirected')
     } else {
-      return('An undirected graph')
+      return('An undirected')
     }
   }
 }
-
-cat_subtle <- function(...) cat(pillar::style_subtle(paste0(...)))
