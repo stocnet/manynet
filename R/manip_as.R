@@ -185,12 +185,12 @@ as_matrix.data.frame <- function(.data,
     .data <- dplyr::arrange(.data, 
                              as.character(.data$to), 
                              as.character(.data$from))
-    out <- structure(as.numeric(.data[,3]),
+    .data <- structure(as.numeric(.data[,3]),
                      .Dim = c(as.integer(length(nodes1)),
                               as.integer(length(nodes2))),
                      .Dimnames = list(nodes1, nodes2))
   }
-  out
+  .data
 }
 
 #' @export
