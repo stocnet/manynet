@@ -3,6 +3,7 @@
 \name{read}
 \alias{read}
 \alias{read_matrix}
+\alias{write_matrix}
 \alias{read_edgelist}
 \alias{write_edgelist}
 \alias{read_nodelist}
@@ -19,6 +20,8 @@ constructed on 18 June 2015.
 }
 \usage{
 read_matrix(file = file.choose(), sv = c("comma", "semi-colon"), ...)
+
+write_matrix(.data, filename, name, ...)
 
 read_edgelist(file = file.choose(), sv = c("comma", "semi-colon"), ...)
 
@@ -124,6 +127,8 @@ you will need to unpack them and convert them one by one.
 \section{Functions}{
 \itemize{
 \item \code{read_matrix()}: Reading adjacency matrices from Excel/csv files
+
+\item \code{write_matrix()}: Writing matrix to csv files
 
 \item \code{read_edgelist()}: Reading edgelists from Excel/csv files
 

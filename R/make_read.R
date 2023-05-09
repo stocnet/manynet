@@ -95,6 +95,31 @@ read_matrix <- function(file = file.choose(),
   as_tidygraph(as.matrix(out))
 }
 
+#' @describeIn read Writing matrix to csv files
+#' @export
+write_matrix <- function(.data,
+                         filename,
+                         name,
+                         ...) {
+  if (missing(.data)) {
+    Abruzzo <- Campania <- Calabria <- Puglia <- NULL
+    Abruzzo <- c(1, 0.76, 0.8, 0.90)
+    Campania <- c(0.76, 1, 0.62, 0.69)
+    Calabria <- c(0.80, 0.62, 1, 0.85)
+    Puglia <- c(0.90, 0.69, 0.85, 1)
+    out <- data.frame(Abruzzo, Campania, Calabria, Puglia)
+    row.names(out)<- c('Abruzzo','Campania', 'Calabria', 'Puglia')
+    out <- as_matrix(out)
+    object_name <- "test"
+  } else {
+    object_name <- deparse(substitute(.data))
+    out <- as_matrix(.data)
+  }
+  if (missing(filename)) filename <- paste0(getwd(), "/", object_name, ".csv")
+  if (missing(name)) name <- object_name
+  write.csv(out, file = filename, row.names = FALSE)
+}
+
 #' @describeIn read Reading edgelists from Excel/csv files
 #' @export
 read_edgelist <- function(file = file.choose(),

@@ -5,6 +5,7 @@ inst/doc
 .Ruserdata
 .DS_Store
 data-raw/*
+data.csv/*
 docs/
 working/*
 /doc/

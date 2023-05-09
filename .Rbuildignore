@@ -5,6 +5,7 @@
 ^working$
 ^\.github$
 ^data-raw$
+data.csv
 vignettes/*\.Rmd\.orig
 vignettes/precompile\.R
 ^docs$
