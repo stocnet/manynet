@@ -5,7 +5,6 @@ inst/doc
 .Ruserdata
 .DS_Store
 data-raw/*
-data.csv/*
 docs/
 working/*
 /doc/
@@ -19,3 +18,4 @@ inst/tutorials/equivalence/equivalence_data/*
 inst/tutorials/tutorial4/community_data/*
 inst/tutorials/tutorial5/equivalence_data/*
 toadd/*
+.data.csv
