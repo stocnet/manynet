@@ -112,3 +112,20 @@ test_that("read_ucinet and write_ucinet works", {
   expect_equal(length(edgetest2$from), length(as_edgelist(testuci2)$from))
   on.exit(unlink(file)) # Unlink file
 })
+
+test_that("read_ and write_ matrix works", {
+  Abruzzo <- Campania <- Calabria <- Puglia <- NULL
+  Abruzzo <- c(1, 0.76, 0.8, 0.90)
+  Campania <- c(0.76, 1, 0.62, 0.69)
+  Calabria <- c(0.80, 0.62, 1, 0.85)
+  Puglia <- c(0.90, 0.69, 0.85, 1)
+  out <-data.frame(Abruzzo, Campania, Calabria, Puglia)
+  row.names(out) <- c('Abruzzo','Campania', 'Calabria', 'Puglia')
+  expect_equal(as_matrix(read_matrix(testthat::test_path("sheets", "test_matrix.csv"))),
+               as.matrix(out))
+  # file <-  tempfile() # Create file
+  # write_matrix(out, filename = file)
+  # expect_equal(as_matrix(read_matrix(file)),
+  #              as.matrix(out))
+  # on.exit(unlink(file)) # Unlink file
+})
