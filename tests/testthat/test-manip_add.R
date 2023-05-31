@@ -1,5 +1,3 @@
-southern_women <- readRDS(testthat::test_path("sheets", "southern_women.Rds"))
-
 # object without nodal attributes
 net_node1 <- as_tidygraph(data.frame(
   from = c("A", "B", "C", "D","E"),
@@ -21,15 +19,15 @@ test_that("add_node_attribute works", {
                net_node2)
   # On two mode network
   # First nodeset
-  south1 <- add_node_attribute(southern_women, "Age", rep(25, 18))
+  south1 <- add_node_attribute(ison_southern_women, "Age", rep(25, 18))
   expect_equal(igraph::vertex_attr(south1, "Age"),
                c(rep(25, 18), rep(NA, 14)))
   # Second nodeset
-  south2 <- add_node_attribute(southern_women, "Budget", rep(100, 14))
+  south2 <- add_node_attribute(ison_southern_women, "Budget", rep(100, 14))
   expect_equal(igraph::get.vertex.attribute(as_igraph(south2),  "Budget"),
                c(rep(NA, 18), rep(100, 14)))
   # Test error when wrong number of attributes
-  expect_error(add_node_attribute(southern_women, "Budget", rep(100, 15)))
+  expect_error(add_node_attribute(ison_southern_women, "Budget", rep(100, 15)))
 })
 
 test_that("bind_node_attributes works", {
@@ -52,12 +50,12 @@ test_that("add_tie_attribute works", {
 })
 
 test_that("join_ties works", {
-  testmutateedges <- join_ties(southern_women, create_filled(c(3,4)))
+  testmutateedges <- join_ties(ison_southern_women, create_filled(c(3,4)))
   expect_equal(class(testmutateedges), c("tbl_graph", "igraph"))
 })
 
 test_that("mutate_ties and filter_ties works", {
-  orig <- southern_women %>% mutate_ties(year = 1:93)
+  orig <- ison_southern_women %>% mutate_ties(year = 1:93)
   filt <- orig %>% activate(edges) %>% dplyr::filter(year > 5) %>% activate(nodes)
   filt1 <- filter_ties(orig, year > 5)
   expect_equal(1:93, igraph::edge_attr(as_igraph(orig), "year"))
@@ -67,8 +65,8 @@ test_that("mutate_ties and filter_ties works", {
 
 test_that("summarise_ties works", {
   set.seed(1234)
-  orig <- as_tidygraph(southern_women) %>%
-    tidygraph::graph_join(as_tidygraph(southern_women)) %>%
+  orig <- as_tidygraph(ison_southern_women) %>%
+    tidygraph::graph_join(as_tidygraph(ison_southern_women)) %>%
     mutate_ties(year = sample(1:3, 186, replace = TRUE))
   sum <- summarise_ties(orig, mean = mean(year))
   expect_length(igraph::edge_attr(sum, "weight"), 93)
