@@ -3,15 +3,37 @@
 \docType{data}
 \name{ison_lotr}
 \alias{ison_lotr}
-\title{One-mode interaction network of Lord of the Rings (book) character interactions}
+\title{One-mode network of Lord of the Rings character interactions}
 \format{
-One-mode tidygraph of 36 Lord of the Rings book characters and
-66 interactions
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, complex, undirected tbl_graph with 36 nodes and 66 ties
+#> # A tibble: 36 x 2
+#>   name     Race  
+#>   <chr>    <chr> 
+#> 1 Aragorn  Human 
+#> 2 Beregond Human 
+#> 3 Bilbo    Hobbit
+#> 4 Celeborn Elf   
+#> 5 Denethor Human 
+#> 6 Elladan  Elf   
+#> # i 30 more rows
+#> # A tibble: 66 x 2
+#>    from    to
+#>   <int> <int>
+#> 1     1     7
+#> 2     1     8
+#> 3     5     9
+#> 4     1    10
+#> 5     3    10
+#> 6     9    10
+#> # i 60 more rows
+}\if{html}{\out{</div>}}
 }
 \usage{
 data(ison_lotr)
 }
 \description{
-One-mode interaction network of Lord of the Rings (book) character interactions
+A network of 36 Lord of the Rings book characters and 66 interactional relationships.
+The ties are unweighted and concern only interaction.
+Interaction can be cooperative or conflictual.
 }
 \keyword{datasets}

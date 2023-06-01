@@ -6,7 +6,7 @@
 \alias{ison_brandes2}
 \title{One-mode and two-mode centrality demonstration networks}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A undirected,  tbl_graph with 11 nodes and 12 ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A undirected tbl_graph with 11 nodes and 12 ties
 #> # A tibble: 12 x 2
 #>    from    to
 #>   <int> <int>

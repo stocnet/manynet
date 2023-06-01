@@ -5,18 +5,27 @@
 \alias{ison_southern_women}
 \title{Two-mode southern women (Davis, Gardner and Gardner 1941)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> IGRAPH f8d9f5f UN-B 32 93 -- 
-#> + attr: type (v/l), name (v/c)
-#> + edges from f8d9f5f (vertex names):
-#>  [1] EVELYN   --E1 EVELYN   --E2 EVELYN   --E3 EVELYN   --E4 EVELYN   --E5
-#>  [6] EVELYN   --E6 EVELYN   --E8 EVELYN   --E9 LAURA    --E1 LAURA    --E2
-#> [11] LAURA    --E3 LAURA    --E5 LAURA    --E6 LAURA    --E7 LAURA    --E8
-#> [16] THERESA  --E2 THERESA  --E3 THERESA  --E4 THERESA  --E5 THERESA  --E6
-#> [21] THERESA  --E7 THERESA  --E8 THERESA  --E9 BRENDA   --E1 BRENDA   --E3
-#> [26] BRENDA   --E4 BRENDA   --E5 BRENDA   --E6 BRENDA   --E7 BRENDA   --E8
-#> [31] CHARLOTTE--E3 CHARLOTTE--E4 CHARLOTTE--E5 CHARLOTTE--E7 FRANCES  --E3
-#> [36] FRANCES  --E5 FRANCES  --E6 FRANCES  --E8 ELEANOR  --E5 ELEANOR  --E6
-#> + ... omitted several edges
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, two-mode tbl_graph with 32 nodes and 93 ties
+#> # A tibble: 32 x 2
+#>   type  name     
+#>   <lgl> <chr>    
+#> 1 FALSE EVELYN   
+#> 2 FALSE LAURA    
+#> 3 FALSE THERESA  
+#> 4 FALSE BRENDA   
+#> 5 FALSE CHARLOTTE
+#> 6 FALSE FRANCES  
+#> # i 26 more rows
+#> # A tibble: 93 x 2
+#>    from    to
+#>   <int> <int>
+#> 1     1    19
+#> 2     1    20
+#> 3     1    21
+#> 4     1    22
+#> 5     1    23
+#> 6     1    24
+#> # i 87 more rows
 }\if{html}{\out{</div>}}
 }
 \usage{

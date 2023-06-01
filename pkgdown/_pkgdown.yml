@@ -62,7 +62,7 @@ reference:
       - contains("is_")
   - title: "Data"
     desc: |
-      The package contains some common and some less common networks 
-      for the course 'Social Networks Theories and Methods' (`ison_`).
+      The package contains a variety of networks useful for pedagogical purposes
+      and used in the course 'Social Networks Theories and Methods'.
     contents:
       - starts_with("ison_")

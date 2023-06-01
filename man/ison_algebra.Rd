@@ -5,7 +5,7 @@
 \alias{ison_algebra}
 \title{Multiplex graph object of friends, social, and task ties (McFarland 2001)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, multiplex, directed,  tbl_graph with 16 nodes and 144 arcs
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, multiplex, directed tbl_graph with 16 nodes and 144 arcs
 #> # A tibble: 16 x 1
 #>   name    
 #>   <chr>   
@@ -36,9 +36,6 @@ Larger comprehensive data set publicly available, contact Daniel A. McFarland fo
 data(ison_algebra)
 }
 \description{
-Multiplex graph object of friends, social, and task ties (McFarland 2001)
-}
-\details{
 Multiplex graph object of friends, social, and task ties between 16 anonymous students.
 M182 was an honors algebra class where researchers
 collected friendship, social, and task ties between 16 students.

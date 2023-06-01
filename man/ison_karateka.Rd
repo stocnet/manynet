@@ -5,15 +5,27 @@
 \alias{ison_karateka}
 \title{One-mode karateka network (Zachary 1977)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> IGRAPH a87bb9f UN-- 34 78 -- 
-#> + attr: name (v/c), obc (v/n)
-#> + edges from a87bb9f (vertex names):
-#>  [1] Mr Hi-- Mr Hi-- Mr Hi-- Mr Hi-- Mr Hi-- Mr Hi-- Mr Hi-- Mr Hi-- Mr Hi--
-#> [10] Mr Hi-- Mr Hi-- Mr Hi-- Mr Hi-- Mr Hi-- Mr Hi-- Mr Hi--      --      --
-#> [19]      --      --      --      --      --      --      --      --      --
-#> [28]      --      --      --      --      --      --      --      --      --
-#> [37]      --      --      --      --      --      --      --
-#> + ... omitted several edges
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, undirected tbl_graph with 34 nodes and 78 ties
+#> # A tibble: 34 x 2
+#>   name      obc
+#>   <chr>   <dbl>
+#> 1 "Mr Hi"     1
+#> 2 ""          1
+#> 3 ""          1
+#> 4 ""          1
+#> 5 ""          1
+#> 6 ""          1
+#> # i 28 more rows
+#> # A tibble: 78 x 2
+#>    from    to
+#>   <int> <int>
+#> 1     1     2
+#> 2     1     3
+#> 3     1     4
+#> 4     1     5
+#> 5     1     6
+#> 6     1     7
+#> # i 72 more rows
 }\if{html}{\out{</div>}}
 }
 \usage{

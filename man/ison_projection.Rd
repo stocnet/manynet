@@ -9,13 +9,95 @@
 \alias{ison_bb}
 \title{Two-mode projection examples (Hollway 2021)}
 \format{
-Directed two-mode \code{{igraph}} object with 6 nodes and 6 edges
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, two-mode tbl_graph with 6 nodes and 6 ties
+#> # A tibble: 6 x 2
+#>   name  type 
+#>   <chr> <lgl>
+#> 1 A     FALSE
+#> 2 M     TRUE 
+#> 3 B     FALSE
+#> 4 C     FALSE
+#> 5 N     TRUE 
+#> 6 D     FALSE
+#> # A tibble: 6 x 2
+#>    from    to
+#>   <int> <int>
+#> 1     1     2
+#> 2     3     2
+#> 3     3     5
+#> 4     4     2
+#> 5     4     5
+#> 6     6     5
+}\if{html}{\out{</div>}}
 
-Directed two-mode \code{{igraph}} object with 8 nodes and 9 edges
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, two-mode tbl_graph with 8 nodes and 9 ties
+#> # A tibble: 8 x 2
+#>   name  type 
+#>   <chr> <lgl>
+#> 1 A     FALSE
+#> 2 U     TRUE 
+#> 3 B     FALSE
+#> 4 V     TRUE 
+#> 5 C     FALSE
+#> 6 W     TRUE 
+#> # i 2 more rows
+#> # A tibble: 9 x 2
+#>    from    to
+#>   <int> <int>
+#> 1     1     2
+#> 2     1     4
+#> 3     3     2
+#> 4     3     6
+#> 5     3     7
+#> 6     5     4
+#> # i 3 more rows
+}\if{html}{\out{</div>}}
 
-Directed two-mode \code{{igraph}} object with 8 nodes and 9 edges
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, two-mode tbl_graph with 8 nodes and 9 ties
+#> # A tibble: 8 x 2
+#>   name  type 
+#>   <chr> <lgl>
+#> 1 A     FALSE
+#> 2 M     TRUE 
+#> 3 B     FALSE
+#> 4 C     FALSE
+#> 5 X     TRUE 
+#> 6 Y     TRUE 
+#> # i 2 more rows
+#> # A tibble: 9 x 2
+#>    from    to
+#>   <int> <int>
+#> 1     1     2
+#> 2     3     2
+#> 3     3     5
+#> 4     3     6
+#> 5     4     2
+#> 6     4     5
+#> # i 3 more rows
+}\if{html}{\out{</div>}}
 
-Directed two-mode \code{{igraph}} object with 10 nodes and 12 edges
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, two-mode tbl_graph with 10 nodes and 12 ties
+#> # A tibble: 10 x 2
+#>   name  type 
+#>   <chr> <lgl>
+#> 1 A     FALSE
+#> 2 U     TRUE 
+#> 3 B     FALSE
+#> 4 V     TRUE 
+#> 5 C     FALSE
+#> 6 W     TRUE 
+#> # i 4 more rows
+#> # A tibble: 12 x 2
+#>    from    to
+#>   <int> <int>
+#> 1     1     2
+#> 2     1     4
+#> 3     3     2
+#> 4     3     6
+#> 5     3     7
+#> 6     3     8
+#> # i 6 more rows
+}\if{html}{\out{</div>}}
 }
 \usage{
 data(ison_mm)
@@ -27,11 +109,7 @@ data(ison_mb)
 data(ison_bb)
 }
 \description{
-Two-mode projection examples (Hollway 2021)
-}
-\details{
-These datasets should only be used
-for demonstration purposes as they do not describe a real world network.
+These datasets are for demonstration purposes and do not describe any real world network.
 All examples contain named nodes.
 }
 \keyword{datasets}

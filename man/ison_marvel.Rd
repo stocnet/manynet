@@ -8,11 +8,52 @@
 \title{Multilevel two-mode affiliation, signed one-mode networks of Marvel comic
 book characters (Yüksel 2017)}
 \format{
-Two-mode igraph of 53 Marvel comic book characters and 141 team-ups,
-with 683 team affiliations between them
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, two-mode tbl_graph with 194 nodes and 683 ties
+#> # A tibble: 194 x 2
+#>   type  name         
+#>   <lgl> <chr>        
+#> 1 FALSE Abomination  
+#> 2 FALSE Ant-Man      
+#> 3 FALSE Apocalypse   
+#> 4 FALSE Beast        
+#> 5 FALSE Black Panther
+#> 6 FALSE Black Widow  
+#> # i 188 more rows
+#> # A tibble: 683 x 2
+#>    from    to
+#>   <int> <int>
+#> 1     1   120
+#> 2     1   152
+#> 3     1   160
+#> 4     1   162
+#> 5     1   179
+#> 6     2    56
+#> # i 677 more rows
+}\if{html}{\out{</div>}}
 
-One-mode igraph of 53 Marvel comic book characters and
-558 signed (\code{1} = friends, \code{-1} = enemies) undirected ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, complex, multiplex, signed, undirected tbl_graph with 53 nodes and 558 ties
+#> # A tibble: 53 x 10
+#>   name     Gender Appearances Attractive  Rich Intellect Omnilingual PowerOrigin
+#>   <chr>    <chr>        <int>      <int> <int>     <int>       <int> <chr>      
+#> 1 Abomina~ Male           427          0     0         1           1 Radiation  
+#> 2 Ant-Man  Male           589          1     0         1           0 Human      
+#> 3 Apocaly~ Male          1207          0     0         1           1 Mutant     
+#> 4 Beast    Male          7609          1     0         1           0 Mutant     
+#> 5 Black P~ Male          2189          1     1         1           0 Human      
+#> 6 Black W~ Female        2907          1     0         1           0 Human      
+#> # i 47 more rows
+#> # i 2 more variables: UnarmedCombat <int>, ArmedCombat <int>
+#> # A tibble: 558 x 3
+#>    from    to  sign
+#>   <int> <int> <dbl>
+#> 1     1     4    -1
+#> 2     1    11    -1
+#> 3     1    12    -1
+#> 4     1    23    -1
+#> 5     1    24    -1
+#> 6     1    25    -1
+#> # i 552 more rows
+}\if{html}{\out{</div>}}
 }
 \source{
 Umut Yüksel, 31 March 2017
@@ -23,10 +64,6 @@ data(ison_marvel_teams)
 data(ison_marvel_relationships)
 }
 \description{
-Multilevel two-mode affiliation, signed one-mode networks of Marvel comic
-book characters (Yüksel 2017)
-}
-\details{
 This package includes two datasets related to the Marvel \emph{comic book} universe.
 The first, \code{ison_marvel_teams},  is a two-mode affiliation network of 53
 Marvel comic book characters and their affiliations to 141 different teams.
@@ -35,8 +72,10 @@ but additional nodal data can be taken from the other Marvel dataset here.
 
 The second network, \code{ison_marvel_relationships}, is a one-mode signed network
 of friendships and enmities between the 53 Marvel comic book characters.
-Friendships are indicated by a positive sign in the edge \code{sign} attribute,
+Friendships are indicated by a positive sign in the tie \code{sign} attribute,
 whereas enmities are indicated by a negative sign in this edge attribute.
+}
+\details{
 Additional nodal variables have been coded and included by Dr Umut Yüksel:
 \itemize{
 \item \strong{Gender}: binary character, 43 "Male" and 10 "Female"

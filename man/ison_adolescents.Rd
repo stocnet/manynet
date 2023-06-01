@@ -3,9 +3,9 @@
 \docType{data}
 \name{ison_adolescents}
 \alias{ison_adolescents}
-\title{One-mode subset (8 individuals) of the adolescent society (Coleman 1961).}
+\title{One-mode subset of the adolescent society network (Coleman 1961)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, undirected,  tbl_graph with 8 nodes and 10 ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, undirected tbl_graph with 8 nodes and 10 ties
 #> # A tibble: 8 x 1
 #>   name 
 #>   <chr>
@@ -32,10 +32,14 @@
 data(ison_adolescents)
 }
 \description{
-One-mode subset (8 individuals) of the adolescent society (Coleman 1961).
+One-mode subset of Coleman's adolescent society network (Coleman 1961),
+as used in Feld's (1991) "Why your friends have more friends than you do".
+Coleman collected data on friendships among students in 12 U.S. high schools.
+Feld explored a subset of 8 girls from one of these schools, "Marketville",
+and gave them fictitious names, which are retained here.
 }
 \references{
-Coleman, James S. 1961. The Adolescent Society.
+Coleman, James S. 1961. \emph{The Adolescent Society}.
 New York: Free Press.
 
 Feld, Scott. 1991. “Why your friends have more friends than you do”

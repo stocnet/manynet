@@ -3,7 +3,7 @@
 #' Multilevel two-mode affiliation, signed one-mode networks of Marvel comic 
 #' book characters (Yüksel 2017)
 #'
-#' @details
+#' @description
 #' This package includes two datasets related to the Marvel _comic book_ universe.
 #' The first, `ison_marvel_teams`,  is a two-mode affiliation network of 53
 #' Marvel comic book characters and their affiliations to 141 different teams.
@@ -12,8 +12,9 @@
 #' 
 #' The second network, `ison_marvel_relationships`, is a one-mode signed network
 #' of friendships and enmities between the 53 Marvel comic book characters.
-#' Friendships are indicated by a positive sign in the edge `sign` attribute,
+#' Friendships are indicated by a positive sign in the tie `sign` attribute,
 #' whereas enmities are indicated by a negative sign in this edge attribute.
+#' @details
 #' Additional nodal variables have been coded and included by Dr Umut Yüksel:
 #' 
 #' - **Gender**: binary character, 43 "Male" and 10 "Female"
@@ -31,68 +32,91 @@
 #' @name ison_marvel
 #' @usage data(ison_marvel_teams)
 #' @source Umut Yüksel, 31 March 2017
-#' @format Two-mode igraph of 53 Marvel comic book characters and 141 team-ups,
-#' with 683 team affiliations between them
+#' @format
+#'   ```{r, echo = FALSE}
+#'   as_tidygraph(ison_marvel_teams)
+#'   ```
 "ison_marvel_teams"
 
 #' @rdname ison_marvel
 #' @usage data(ison_marvel_relationships)
-#' @format One-mode igraph of 53 Marvel comic book characters and
-#' 558 signed (`1` = friends, `-1` = enemies) undirected ties
+#' @format
+#'   ```{r, echo = FALSE}
+#'   as_tidygraph(ison_marvel_relationships)
+#'   ```
 "ison_marvel_relationships"
 
 # Lord of the Rings ####
 
-#' One-mode interaction network of Lord of the Rings (book) character interactions
+#' One-mode network of Lord of the Rings character interactions
 #'
+#' @description 
+#'   A network of 36 Lord of the Rings book characters and 66 interactional relationships.
+#'   The ties are unweighted and concern only interaction.
+#'   Interaction can be cooperative or conflictual.
 #' @docType data
 #' @keywords datasets
 #' @name ison_lotr
 #' @usage data(ison_lotr)
-#' @format One-mode tidygraph of 36 Lord of the Rings book characters and 
-#'   66 interactions
+#' @format
+#'   ```{r, echo = FALSE}
+#'   as_tidygraph(ison_lotr)
+#'   ```
 "ison_lotr"
 
 # Projection ####
 
 #' Two-mode projection examples (Hollway 2021)
 #' 
-#' @details These datasets should only be used
-#' for demonstration purposes as they do not describe a real world network.
-#' All examples contain named nodes.
+#' @description 
+#'  These datasets are for demonstration purposes and do not describe any real world network.
+#'  All examples contain named nodes.
 #' @docType data
 #' @keywords datasets
 #' @name ison_projection
 #' @usage data(ison_mm)
-#' @format Directed two-mode `{igraph}` object with 6 nodes and 6 edges
+#' @format 
+#'   ```{r, echo = FALSE}
+#'   as_tidygraph(ison_mm)
+#'   ```
 "ison_mm"
 
 #' @rdname ison_projection
 #' @usage data(ison_bm)
-#' @format Directed two-mode `{igraph}` object with 8 nodes and 9 edges
+#' @format 
+#'   ```{r, echo = FALSE}
+#'   as_tidygraph(ison_bm)
+#'   ```
 "ison_bm"
 
 #' @rdname ison_projection
 #' @usage data(ison_mb)
-#' @format Directed two-mode `{igraph}` object with 8 nodes and 9 edges
+#' @format 
+#'   ```{r, echo = FALSE}
+#'   as_tidygraph(ison_mb)
+#'   ```
 "ison_mb"
 
 #' @rdname ison_projection
 #' @usage data(ison_bb)
-#' @format Directed two-mode `{igraph}` object with 10 nodes and 12 edges
+#' @format 
+#'   ```{r, echo = FALSE}
+#'   as_tidygraph(ison_bb)
+#'   ```
 "ison_bb"
 
 # Algebra ####
 
 #' Multiplex graph object of friends, social, and task ties (McFarland 2001)
 #' 
-#' @details Multiplex graph object of friends, social, and task ties between 16 anonymous students. 
-#' M182 was an honors algebra class where researchers
-#' collected friendship, social, and task ties between 16 students.
-#' The edge attribute `friends` contains friendship ties,
-#' where `2` = best friends, `1` = friend, and `0` is not a friend.
-#' `social` consists of social interactions per hour,
-#' and `tasks` consists of task interactions per hour.
+#' @description 
+#'  Multiplex graph object of friends, social, and task ties between 16 anonymous students. 
+#'  M182 was an honors algebra class where researchers
+#'  collected friendship, social, and task ties between 16 students.
+#'  The edge attribute `friends` contains friendship ties,
+#'  where `2` = best friends, `1` = friend, and `0` is not a friend.
+#'  `social` consists of social interactions per hour,
+#'  and `tasks` consists of task interactions per hour.
 #' @docType data
 #' @keywords datasets
 #' @name ison_algebra
@@ -111,13 +135,20 @@
 
 # Adolescents ####
 
-#' One-mode subset (8 individuals) of the adolescent society (Coleman 1961).
+#' One-mode subset of the adolescent society network (Coleman 1961)
+#' 
+#' @description 
+#'  One-mode subset of Coleman's adolescent society network (Coleman 1961),
+#'  as used in Feld's (1991) "Why your friends have more friends than you do".
+#'  Coleman collected data on friendships among students in 12 U.S. high schools.
+#'  Feld explored a subset of 8 girls from one of these schools, "Marketville",
+#'  and gave them fictitious names, which are retained here.
 #' @docType data
 #' @keywords datasets
 #' @name ison_adolescents
 #' @usage data(ison_adolescents)
 #' @references
-#'   Coleman, James S. 1961. The Adolescent Society.
+#'   Coleman, James S. 1961. _The Adolescent Society_.
 #'   New York: Free Press.
 #' 
 #'   Feld, Scott. 1991. “Why your friends have more friends than you do”
@@ -152,7 +183,7 @@
 #'   \doi{10.1086/jar.33.4.3629752}.
 #' @format 
 #'   ```{r, echo = FALSE}
-#'   ison_karateka
+#'   as_tidygraph(ison_karateka)
 #'   ```
 "ison_karateka"
 
@@ -227,6 +258,6 @@
 #'   Chicago: University of Chicago Press.
 #' @format 
 #'   ```{r, echo = FALSE}
-#'   ison_southern_women
+#'   as_tidygraph(ison_southern_women)
 #'   ```
 "ison_southern_women"

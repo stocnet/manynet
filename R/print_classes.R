@@ -32,6 +32,6 @@ describe_graph <- function(x) {
          ifelse(is_signed(x), "signed, ", ""),
          ifelse(is_weighted(x), "weighted, ", ""),
          ifelse(is_twomode(x), "two-mode", 
-                ifelse(is_directed(x), "directed, ", "undirected, "))
+                ifelse(is_directed(x), "directed", "undirected"))
   )
 }
