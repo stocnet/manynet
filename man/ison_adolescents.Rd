@@ -5,7 +5,7 @@
 \alias{ison_adolescents}
 \title{One-mode subset (8 individuals) of the adolescent society (Coleman 1961).}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # An undirectedtbl_graph with 8 nodes and 10 edges
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, undirected,  tbl_graph with 8 nodes and 10 ties
 #> # A tibble: 8 x 1
 #>   name 
 #>   <chr>
@@ -22,7 +22,10 @@
 #> 1     1     2
 #> 2     2     3
 #> 3     3     4
-#> # i 7 more rows
+#> 4     2     5
+#> 5     3     5
+#> 6     4     5
+#> # i 4 more rows
 }\if{html}{\out{</div>}}
 }
 \usage{

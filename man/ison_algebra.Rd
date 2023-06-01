@@ -5,7 +5,7 @@
 \alias{ison_algebra}
 \title{Multiplex graph object of friends, social, and task ties (McFarland 2001)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A directedtbl_graph with 16 nodes and 144 edges
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, multiplex, directed,  tbl_graph with 16 nodes and 144 arcs
 #> # A tibble: 16 x 1
 #>   name    
 #>   <chr>   
@@ -19,10 +19,13 @@
 #> # A tibble: 144 x 5
 #>    from    to friends social tasks
 #>   <int> <int>   <dbl>  <dbl> <dbl>
-#> 1     1     5       0   1.2    0.3
-#> 2     1     8       0   0.15   0  
-#> 3     1     9       0   2.85   0.3
-#> # i 141 more rows
+#> 1     1     5       0   1.2   0.3 
+#> 2     1     8       0   0.15  0   
+#> 3     1     9       0   2.85  0.3 
+#> 4     1    10       0   6.45  0.3 
+#> 5     1    11       0   0.3   0   
+#> 6     1    12       0   1.95  0.15
+#> # i 138 more rows
 }\if{html}{\out{</div>}}
 }
 \source{

@@ -6,18 +6,20 @@
 \alias{ison_brandes2}
 \title{One-mode and two-mode centrality demonstration networks}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # An undirectedtbl_graph with 11 nodes and 12 edges
-#> # A tibble: 11 x 0
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A undirected,  tbl_graph with 11 nodes and 12 ties
 #> # A tibble: 12 x 2
 #>    from    to
 #>   <int> <int>
 #> 1     1     3
 #> 2     2     3
 #> 3     3     4
-#> # i 9 more rows
+#> 4     4     5
+#> 5     4     6
+#> 6     5     7
+#> # i 6 more rows
 }\if{html}{\out{</div>}}
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A two mode undirectedtbl_graph with 11 nodes and 12 edges
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A two-mode tbl_graph with 11 nodes and 12 ties
 #> # A tibble: 11 x 1
 #>   type 
 #>   <lgl>
@@ -34,7 +36,10 @@
 #> 1     1     3
 #> 2     2     3
 #> 3     3     4
-#> # i 9 more rows
+#> 4     4     5
+#> 5     4     6
+#> 6     5     7
+#> # i 6 more rows
 }\if{html}{\out{</div>}}
 }
 \usage{

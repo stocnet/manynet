@@ -60,3 +60,9 @@ reference:
       two values.
     contents:
       - contains("is_")
+  - title: "Data"
+    desc: |
+      The package contains some common and some less common networks 
+      for the course 'Social Networks Theories and Methods' (`ison_`).
+    contents:
+      - starts_with("ison_")

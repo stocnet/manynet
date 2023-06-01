@@ -5,7 +5,7 @@
 \alias{ison_networkers}
 \title{One-mode EIES dataset (Freeman and Freeman 1979)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A directedtbl_graph with 32 nodes and 440 edges
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, weighted, directed,  tbl_graph with 32 nodes and 440 arcs
 #> # A tibble: 32 x 3
 #>   name               Discipline   Citations
 #>   <chr>              <chr>            <dbl>
@@ -22,7 +22,10 @@
 #> 1     1     2    488
 #> 2     1     3     28
 #> 3     1     4     65
-#> # i 437 more rows
+#> 4     1     5     20
+#> 5     1     6     65
+#> 6     1     7     45
+#> # i 434 more rows
 }\if{html}{\out{</div>}}
 }
 \source{
