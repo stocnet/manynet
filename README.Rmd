@@ -216,13 +216,8 @@ please install the `{remotes}` or `{devtools}` package from CRAN and then:
 
 ## Relationship to other packages
 
-It draws together, updates, and builds upon many functions currently available in
-other excellent R packages such as 
-[`{bipartite}`](https://github.com/biometry/bipartite), 
-[`{multinet}`](https://CRAN.R-project.org/package=multinet), 
-and [`{tnet}`](https://toreopsahl.com/tnet/),
-and implements many additional features currently only available outside the R ecosystem
-in packages such as [**UCINET**](https://sites.google.com/site/ucinetsoftware/download?authuser=0).
+This package aims to provide an updated, and more comprehensive replacement for `{intergraph}`.
+It also builds upon but makes some different decisions to the excellent `{tidygraph}` package.
 
 ## Funding details
 
