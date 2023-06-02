@@ -13,25 +13,34 @@
 \alias{to_no_isolates}
 \title{Tools for transforming networks, graphs, and matrices}
 \usage{
-to_mode1(object, similarity = c("count", "jaccard", "rand", "pearson", "yule"))
+to_mode1(.data, similarity = c("count", "jaccard", "rand", "pearson", "yule"))
 
-to_mode2(object, similarity = c("count", "jaccard", "rand", "pearson", "yule"))
+to_mode2(.data, similarity = c("count", "jaccard", "rand", "pearson", "yule"))
 
-to_giant(object)
+to_giant(.data)
 
-to_subgraph(object, ...)
+to_subgraph(.data, ...)
 
-to_ties(object)
+to_ties(.data)
 
-to_blocks(object, membership, FUN = mean)
+to_blocks(.data, membership, FUN = mean)
 
-to_matching(object, mark = "type")
+to_matching(.data, mark = "type")
 
-to_anti(object)
+to_anti(.data)
 
 to_no_isolates(.data)
 }
 \arguments{
+\item{.data}{An object of a manynet-consistent class:
+\itemize{
+\item matrix (adjacency or incidence) from \code{{base}} R
+\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
+\item igraph, from the \code{{igraph}} package
+\item network, from the \code{{network}} package
+\item tbl_graph, from the \code{{tidygraph}} package
+}}
+
 \item{similarity}{Method for establishing ties,
 currently "count" (default), "jaccard", or "rand".
 "count" calculates the number of coinciding ties,
@@ -61,15 +70,6 @@ Other recommended options include \code{median}, \code{sum},
 
 \item{mark}{A logical vector marking two types or modes.
 By default "type".}
-
-\item{.data}{An object of a manynet-consistent class:
-\itemize{
-\item matrix (adjacency or incidence) from \code{{base}} R
-\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
-\item igraph, from the \code{{igraph}} package
-\item network, from the \code{{network}} package
-\item tbl_graph, from the \code{{tidygraph}} package
-}}
 }
 \description{
 These functions offer tools for transforming migraph-consistent objects
