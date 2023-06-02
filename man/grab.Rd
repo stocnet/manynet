@@ -15,29 +15,38 @@
 \alias{network_tie_attributes}
 \title{Grab various node or edge attributes from a network}
 \usage{
-node_names(object)
+node_names(.data)
 
-node_mode(object)
+node_mode(.data)
 
-node_attribute(object, attribute)
+node_attribute(.data, attribute)
 
-tie_attribute(object, attribute)
+tie_attribute(.data, attribute)
 
-tie_weights(object)
+tie_weights(.data)
 
-tie_signs(object)
+tie_signs(.data)
 
-network_nodes(object)
+network_nodes(.data)
 
-network_ties(object)
+network_ties(.data)
 
-network_dims(object)
+network_dims(.data)
 
-network_node_attributes(object)
+network_node_attributes(.data)
 
-network_tie_attributes(object)
+network_tie_attributes(.data)
 }
 \arguments{
+\item{.data}{An object of a manynet-consistent class:
+\itemize{
+\item matrix (adjacency or incidence) from \code{{base}} R
+\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
+\item igraph, from the \code{{igraph}} package
+\item network, from the \code{{network}} package
+\item tbl_graph, from the \code{{tidygraph}} package
+}}
+
 \item{attribute}{Character string naming an attribute in the object.}
 }
 \description{

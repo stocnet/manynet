@@ -108,4 +108,9 @@ is_uniplex(create_star(3))
 is_longitudinal(create_tree(5, 3))
 is_dynamic(create_tree(3))
 }
+\seealso{
+Other marks: 
+\code{\link{mark_nodes}},
+\code{\link{mark_ties}}
+}
 \concept{marks}
