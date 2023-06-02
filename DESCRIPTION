@@ -22,6 +22,7 @@ Imports:
     tidygraph,
     xml2,
     rlang,
+    RSiena,
     tibble
 Suggests: 
     covr,
@@ -29,9 +30,7 @@ Suggests:
     readxl,
     rmarkdown,
     roxygen2,
-    RSiena,
-    testthat,
-    manydata
+    testthat
 Authors@R: 
     c(person(given = "James",
              family = "Hollway",

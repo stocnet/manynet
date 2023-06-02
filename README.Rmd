@@ -20,7 +20,8 @@ list_data <- function(string){
 }
 ```
 
-# manynet <img src="man/figures/logo.png" align="right" width="150"/>
+# manynet 
+<!-- <img src="man/figures/logo.png" align="right" width="150"/> -->
 
 <!-- badges: start -->
 [![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html#maturing)

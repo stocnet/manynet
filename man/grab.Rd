@@ -94,7 +94,7 @@ network_tie_attributes(ison_algebra)
 Other manipulations: 
 \code{\link{add}},
 \code{\link{as}()},
-\code{\link{missing}},
+\code{\link{miss}},
 \code{\link{reformat}},
 \code{\link{split}()},
 \code{\link{transform}()}

@@ -138,6 +138,7 @@ create_core(6)
 \link{as}
 
 Other makes: 
+\code{\link{generate}},
 \code{\link{read}}
 }
 \concept{makes}

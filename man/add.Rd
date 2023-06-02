@@ -172,7 +172,7 @@ relation to some tie attribute.
 Other manipulations: 
 \code{\link{as}()},
 \code{\link{grab}},
-\code{\link{missing}},
+\code{\link{miss}},
 \code{\link{reformat}},
 \code{\link{split}()},
 \code{\link{transform}()}

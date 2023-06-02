@@ -147,7 +147,7 @@ Other manipulations:
 \code{\link{add}},
 \code{\link{as}()},
 \code{\link{grab}},
-\code{\link{missing}},
+\code{\link{miss}},
 \code{\link{reformat}},
 \code{\link{transform}()}
 }

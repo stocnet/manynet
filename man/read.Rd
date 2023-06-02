@@ -163,6 +163,7 @@ write_ucinet(horseplay, "R&D-horseplay")
 \link{as}
 
 Other makes: 
-\code{\link{create}}
+\code{\link{create}},
+\code{\link{generate}}
 }
 \concept{makes}
