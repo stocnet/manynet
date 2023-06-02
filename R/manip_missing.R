@@ -7,7 +7,7 @@
 #' replacing the missing values with zeros, 
 #' which are the modal value in sparse social networks,
 #' and replacing the missing values with the average non-missing value for that vector.
-#' @name missing
+#' @name miss
 #' @family manipulations
 #' @references 
 #'   Krause, Robert, Mark Huisman, Christian Steglich, and Tom A.B. Snijders. 2020. 
@@ -15,7 +15,7 @@
 #'   _Social Networks_, 62, 99-112.
 NULL
 
-#' @describeIn missing Impute missing tie data as zero,
+#' @describeIn miss Impute missing tie data as zero,
 #'   the modal value in sparse social networks.
 #' @examples 
 #' missTest <- ison_adolescents %>% 
@@ -56,7 +56,7 @@ na_to_zero.data.frame <- function(object){
   object
 }
 
-#' @describeIn missing Impute missing tie data as
+#' @describeIn miss Impute missing tie data as
 #'   the mean value in the network.
 #' @export
 na_to_mean <- function(object) UseMethod("na_to_mean")
