@@ -22,8 +22,7 @@ Imports:
     methods,
     network,
     patchwork,
-    tidygraph,
-    rlang
+    tidygraph
 Suggests: 
     covr,
     knitr,

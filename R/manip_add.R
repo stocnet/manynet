@@ -40,9 +40,8 @@ join_nodes <- function(.data, object2, by = NULL,
 
 #' @describeIn add Copies ties from another graph to specified graph and 
 #' adds a tie attribute identifying the ties that were newly added
-#' @importFrom igraph add_edges
-#' @importFrom rlang :=
-#' @importFrom dplyr mutate summarise across group_by everything ungroup rename
+#' @importFrom igraph add_edges set_edge_attr E
+#' @importFrom dplyr mutate summarise across group_by everything ungroup %>%
 #' @examples
 #'   other <- as_tidygraph(create_filled(4)) %>%
 #'   mutate(name = c("A", "B", "C", "D")) %>%
@@ -54,10 +53,8 @@ join_nodes <- function(.data, object2, by = NULL,
 #'   mutate_ties(type = c("g"))
 #'   join_ties(other, another, "random")
 #' @export
-join_ties <- function(.data, object2, attr_name){
-  edges <- NULL
-  from <- NULL
-  to <- NULL
+join_ties <- function(.data, object2, attr_name) {
+  edges <- from <- to <- NULL
   el <- c(t(as.matrix(as_edgelist(object2))))
   obj <- as_tidygraph(.data) %>% 
     activate(edges)
@@ -68,8 +65,9 @@ join_ties <- function(.data, object2, attr_name){
                            el, object2 = 1) %>% 
     as_tidygraph()
   if(!missing(attr_name)){
-    out <- out %>% activate(edges) %>% 
-      dplyr::rename(!!attr_name := "object2")
+    out <- igraph::set_edge_attr(out, attr_name,
+                                 value = igraph::E(out)$object2) %>%
+      select_ties(-object2)
   }
   edges <- out %>%
     activate(edges) %>%
