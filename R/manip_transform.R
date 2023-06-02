@@ -168,7 +168,7 @@ to_giant.igraph <- function(.data) {
 to_giant.network <- function(.data) {
   comps <- igraph::components(as_igraph(.data))
   network::delete.vertices(.data, 
-                           !which.max(comps$csize))
+                           which(comps$membership != which.max(comps$csize)))
 }
 
 #' @export
