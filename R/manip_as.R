@@ -745,31 +745,35 @@ as_siena <- function(.data,
 #' @export
 as_siena.igraph <- function(.data, twomode = FALSE) {
   if (!requireNamespace("RSiena", quietly = TRUE)) {
-    stop("Please install `RSiena` from CRAN to coerce into RSiena data objects.")
-  } else {
-    # First separate out the dependent ties
-    nets <- igraph::edge_attr_names(as_igraph(.data))
-    ties <- unique(gsub("_t[0-9]","", nets))
-    waves <- max(vapply(strsplit(nets, "_t"), function(t)
-      as.numeric(t[2]), numeric(1)))
-    depnet <- ties[1]
-    depnetArray <- simplify2array(lapply(1:waves, function(t)
-      as_matrix(to_uniplex(.data, paste0(depnet, "_t", t)))))
-    depnet <- RSiena::sienaDependent(depnetArray, 
-                           type = ifelse(is_twomode(.data) | twomode,
-                                         "bipartite", "oneMode"))
-    # nodeatts <- network_node_attributes(.data)
-    # nodeatts <- nodeatts[nodeatts != "name"]
-    # # Add constant covariates
-    # consatts <- nodeatts[!grepl("_t[0-9]",nodeatts)]
-    # consvars <- lapply(consatts, function(cons) 
-    #   RSiena::coCovar(node_attribute(.data, cons)))
-    # names(consvars) <- consatts
-    # .newEnv <- new.env(parent=globalenv())
-    # list2env(consvars, envir = .newEnv)
-    # RSiena::varCovar()
-    RSiena::sienaDataCreate(list("depnet" = depnet))
+    if(utils::askYesNo(msg = "The `RSiena` package is required.
+                       Would you like to install `RSiena` from CRAN?")) {
+      utils::install.packages('RSiena')
+    } else {
+      stop("Please install `RSiena` from CRAN to coerce into RSiena data objects.")
+    }
   }
+  # First separate out the dependent ties
+  nets <- igraph::edge_attr_names(as_igraph(.data))
+  ties <- unique(gsub("_t[0-9]","", nets))
+  waves <- max(vapply(strsplit(nets, "_t"), function(t)
+    as.numeric(t[2]), numeric(1)))
+  depnet <- ties[1]
+  depnetArray <- simplify2array(lapply(1:waves, function(t)
+    as_matrix(to_uniplex(.data, paste0(depnet, "_t", t)))))
+  depnet <- RSiena::sienaDependent(depnetArray, 
+                                   type = ifelse(is_twomode(.data) | twomode,
+                                                 "bipartite", "oneMode"))
+  # nodeatts <- network_node_attributes(.data)
+  # nodeatts <- nodeatts[nodeatts != "name"]
+  # # Add constant covariates
+  # consatts <- nodeatts[!grepl("_t[0-9]",nodeatts)]
+  # consvars <- lapply(consatts, function(cons) 
+  #   RSiena::coCovar(node_attribute(.data, cons)))
+  # names(consvars) <- consatts
+  # .newEnv <- new.env(parent=globalenv())
+  # list2env(consvars, envir = .newEnv)
+  # RSiena::varCovar()
+  RSiena::sienaDataCreate(list("depnet" = depnet))
 }
 
 # graphAM ####
@@ -805,11 +809,15 @@ setClass("graphAM", contains="graph",
 #' @export
 as_graphAM.matrix <- function(.data, twomode = NULL) {
   if (!requireNamespace("RSiena", quietly = TRUE)) {
-    stop("Please install `methods` from CRAN to animate network plots.")
-  } else {
+    if(utils::askYesNo(msg = "The `RSiena` package is required.
+                       Would you like to install `RSiena` from CRAN?")) {
+      utils::install.packages('RSiena')
+    } else {
+      stop("Please install `RSiena` from CRAN to coerce into RSiena data objects.")
+    }
+  }
   methods::new("graphAM", adjMat = to_onemode(.data), 
                edgemode = ifelse(is_directed(.data), "directed", "undirected"))
-  }
 }
 
 #' @export

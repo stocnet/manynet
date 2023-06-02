@@ -350,4 +350,3 @@ getCoordinates <- function(x, r){
   rownames(tmp) <- x
   tmp
 }
-

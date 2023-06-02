@@ -80,9 +80,15 @@ read_matrix <- function(file = file.choose(),
       out <- read.csv2(file, ...) # For EU
     }
   } else if (grepl("xlsx$|xls$", file)) {
-    if(requireNamespace("readxl", quietly = TRUE)){
-      out <- readxl::read_excel(file, ...)  
-    } else stop("Please install `readxl` from CRAN to import Excel files.")
+    if (!requireNamespace("readxl", quietly = TRUE)) {
+      if(utils::askYesNo(msg = "The `readxl` package is required.
+                       Would you like to install `readxl` from CRAN?")) {
+        utils::install.packages('readxl')
+      } else {
+        stop("Please install `readxl` from CRAN to read excel files.")
+      }
+    }
+    out <- readxl::read_excel(file, ...)
   }
   if((dim(out)[1]+1) == dim(out)[2])
     out <- out[,-1]
@@ -133,10 +139,16 @@ read_edgelist <- function(file = file.choose(),
       out <- read.csv2(file, header = TRUE, ...) # For EU
     }
   } else if (grepl("xlsx$|xls$", file)) {
-    if(requireNamespace("readxl", quietly = TRUE)){
-      out <- readxl::read_excel(file, ...)  
-    } else stop("Please install `readxl` from CRAN to import Excel files.")
-  }
+    if (!requireNamespace("readxl", quietly = TRUE)) {
+      if(utils::askYesNo(msg = "The `readxl` package is required.
+                       Would you like to install `readxl` from CRAN?")) {
+        utils::install.packages('readxl')
+      } else {
+        stop("Please install `readxl` from CRAN to read excel files.")
+      }
+    }
+    out <- readxl::read_excel(file, ...)
+    }
   out
 }
 
@@ -175,9 +187,15 @@ read_nodelist <- function(file = file.choose(),
       out <- read.csv2(file, header = TRUE, ...) # For EU
     }
   } else if (grepl("xlsx$|xls$", file)) {
-    if(requireNamespace("readxl", quietly = TRUE)){
-      out <- readxl::read_excel(file, ...)  
-    } else stop("Please install `readxl` from CRAN to import Excel files.")
+    if (!requireNamespace("readxl", quietly = TRUE)) {
+      if(utils::askYesNo(msg = "The `readxl` package is required.
+                       Would you like to install `readxl` from CRAN?")) {
+        utils::install.packages('readxl')
+      } else {
+        stop("Please install `readxl` from CRAN to read excel files.")
+      }
+    }
+    out <- readxl::read_excel(file, ...)
   }
   out
 }
@@ -556,55 +574,58 @@ write_ucinet <- function(.data,
 #' @importFrom dplyr bind_rows coalesce filter mutate select everything
 #' @export
 read_dynetml <- function(file = file.choose()) {
-  if(!requireNamespace("xml2", quietly = TRUE)){
-    stop("Please install `xml2` from CRAN to import DynetML files.")
-  } else {
-    name <- type <- nodeset <- target <- value <- NULL
-    xmlfile <- xml2::read_xml(file)
-    xmllist <- xml2::as_list(xmlfile)
-    # Getting nodeset
-    # to deal with legacy constructions:
-    if("MetaMatrix" %in% names(xmllist$DynamicNetwork))
-      nodesets <- xmllist$DynamicNetwork$MetaMatrix$nodes else
-        nodesets <- xmllist$DynamicNetwork$MetaNetwork$nodes
-    nodesets <- dplyr::coalesce(unlist(lapply(nodesets, 
-                                              function(x) ifelse(is.null(attr(x, "id")),
-                                                                 NA_character_, attr(x, "id")))),
-                                unlist(lapply(nodesets, 
-                                              function(x) ifelse(is.null(attr(x, "type")),
-                                                                 NA_character_, attr(x, "type")))))
-    # to deal with legacy constructions:
-    if("MetaMatrix" %in% names(xmllist$DynamicNetwork)){
-      nodesets <- unname(rep(nodesets, vapply(xmllist$DynamicNetwork$MetaMatrix$nodes,
-                                              function(x) length(x), numeric(1))))
-    } else
-      nodesets <- unname(rep(nodesets, vapply(xmllist$DynamicNetwork$MetaNetwork$nodes,
-                                              function(x) length(x), numeric(1)))) 
-    
-    # Getting nodes
-    nodes <- xml2::as_list(xml2::xml_find_all(xmlfile, ".//node"))
-    nodes <- dplyr::bind_rows(lapply(nodes, function(x){
-      values <- sapply(x$properties, function(y) attr(y, "value"))
-      attrs <- sapply(x$properties, function(y) attr(y, "name"))
-      names(values) <- attrs
-      c(name = attr(x, "id"), values)
-    }))
-    # Add nodeset information if necessary
-    if(length(unique(nodesets))==2)
-      nodes <- nodes %>% dplyr::mutate(type = nodesets == unique(nodesets)[2]) %>% 
-      dplyr::select(name, type, dplyr::everything()) else if (length(unique(nodesets))>2)
-        nodes <- nodes %>% dplyr::mutate(nodeset = nodesets) %>% 
-      dplyr::select(name, nodeset, dplyr::everything())
-    
-    # Getting edges
-    edgelist <- xml2::xml_attrs(xml2::xml_find_all(xmlfile, ".//edge"))
-    # to deal with legacy constructions:
-    if(length(edgelist)==0) edgelist <- xml2::xml_attrs(xml2::xml_find_all(xmlfile, ".//link"))
-    edgelist <- as.data.frame(t(sapply(edgelist, function(x) x, simplify = TRUE)))
-    edgelist$type <- NULL
-    edgelist$value <- as.numeric(edgelist$value)
-    edgelist <- dplyr::filter(edgelist, source %in% nodes$name & target %in% nodes$name)
-    edgelist <- dplyr::filter(edgelist, value != 0)
-    as_tidygraph(list(nodes = nodes, ties = edgelist))
+  if (!requireNamespace("xml2", quietly = TRUE)) {
+    if(utils::askYesNo(msg = "The `xml2` package is required.
+                       Would you like to install `xml2` from CRAN?")) {
+      utils::install.packages('xml2')
+    } else {
+      stop("Please install `xml2` from CRAN to import DynetML files.")
+    }
   }
+  name <- type <- nodeset <- target <- value <- NULL
+  xmlfile <- xml2::read_xml(file)
+  xmllist <- xml2::as_list(xmlfile)
+  # Getting nodeset
+  # to deal with legacy constructions:
+  if("MetaMatrix" %in% names(xmllist$DynamicNetwork))
+    nodesets <- xmllist$DynamicNetwork$MetaMatrix$nodes else
+      nodesets <- xmllist$DynamicNetwork$MetaNetwork$nodes
+  nodesets <- dplyr::coalesce(unlist(lapply(nodesets, 
+                                            function(x) ifelse(is.null(attr(x, "id")),
+                                                               NA_character_, attr(x, "id")))),
+                              unlist(lapply(nodesets, 
+                                            function(x) ifelse(is.null(attr(x, "type")),
+                                                               NA_character_, attr(x, "type")))))
+  # to deal with legacy constructions:
+  if("MetaMatrix" %in% names(xmllist$DynamicNetwork)){
+    nodesets <- unname(rep(nodesets, vapply(xmllist$DynamicNetwork$MetaMatrix$nodes,
+                                            function(x) length(x), numeric(1))))
+  } else
+    nodesets <- unname(rep(nodesets, vapply(xmllist$DynamicNetwork$MetaNetwork$nodes,
+                                            function(x) length(x), numeric(1)))) 
+  # Getting nodes
+  nodes <- xml2::as_list(xml2::xml_find_all(xmlfile, ".//node"))
+  nodes <- dplyr::bind_rows(lapply(nodes, function(x){
+    values <- sapply(x$properties, function(y) attr(y, "value"))
+    attrs <- sapply(x$properties, function(y) attr(y, "name"))
+    names(values) <- attrs
+    c(name = attr(x, "id"), values)
+  }))
+  # Add nodeset information if necessary
+  if(length(unique(nodesets))==2)
+    nodes <- nodes %>% dplyr::mutate(type = nodesets == unique(nodesets)[2]) %>% 
+    dplyr::select(name, type, dplyr::everything()) else if (length(unique(nodesets))>2)
+      nodes <- nodes %>% dplyr::mutate(nodeset = nodesets) %>% 
+    dplyr::select(name, nodeset, dplyr::everything())
+  
+  # Getting edges
+  edgelist <- xml2::xml_attrs(xml2::xml_find_all(xmlfile, ".//edge"))
+  # to deal with legacy constructions:
+  if(length(edgelist)==0) edgelist <- xml2::xml_attrs(xml2::xml_find_all(xmlfile, ".//link"))
+  edgelist <- as.data.frame(t(sapply(edgelist, function(x) x, simplify = TRUE)))
+  edgelist$type <- NULL
+  edgelist$value <- as.numeric(edgelist$value)
+  edgelist <- dplyr::filter(edgelist, source %in% nodes$name & target %in% nodes$name)
+  edgelist <- dplyr::filter(edgelist, value != 0)
+  as_tidygraph(list(nodes = nodes, ties = edgelist))
 }

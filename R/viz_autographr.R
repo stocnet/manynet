@@ -79,12 +79,19 @@ autographr <- function(object,
 #' @describeIn auto_graph Graphs a list of networks 
 #'   with sensible defaults
 #' @param netlist A list of migraph-compatible networks.
-#' @importFrom patchwork wrap_plots
 #' @source http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
 #' @examples
 #'   autographs(to_egos(ison_adolescents))
 #' @export
 autographs <- function(netlist, ...) {
+  if (!requireNamespace("patchwork", quietly = TRUE)) {
+    if(utils::askYesNo(msg = "The `patchwork` package is required.
+                       Would you like to install `patchwork` from CRAN?")) {
+      utils::install.packages('patchwork')
+    } else {
+      stop("Please install `patchwork` from CRAN to graph multiple plots.")
+    }
+  }
   if(!is.null(names(netlist))){
     gs <- lapply(1:length(netlist), function(x)
       autographr(netlist[[x]], ...) +
@@ -134,9 +141,14 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
                        label = TRUE, node_color = NULL, node_shape = NULL,
                        node_size = NULL, edge_color = NULL) {
   # Todo: add (...) arguments passed on to `ggraph()`/`ggplot()`/`gganimate()`
-  if (!requireNamespace("RSiena", quietly = TRUE)) {
-    stop("Please install `gganimate` from CRAN to animate network plots.")
-  } else {
+  if (!requireNamespace("gganimate", quietly = TRUE)) {
+    if(utils::askYesNo(msg = "The `gganimate` package is required.
+                       Would you like to install `gganimate` from CRAN?")) {
+      utils::install.packages('gganimate')
+    } else {
+      stop("Please install `gganimate` from CRAN to animate plots.")
+    }
+  }
   x <- y <- name <- status <- frame <- NULL
   # Check if object is a list of lists
   if (!is.list(tlist[[1]])) {
@@ -195,7 +207,6 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
     gganimate::transition_states(frame, state_length = 1) +
     ggplot2::labs(title = "{closest_state}") +
     ggplot2::theme_void()
-  }
 }
 
 #' @importFrom ggraph create_layout ggraph
@@ -602,7 +613,7 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
     # Remove NAs in edge color, if declared
     edge_color <- ifelse(is.na(edges_out[[edge_color]]), "black",
                          edges_out[[edge_color]])
-    color <- colors()
+    color <- grDevices::colors()
     color <- color[!color %in% "black"]
     if(!any(grepl(paste(color, collapse = "|"), edge_color)) |
        any(grepl("#", edge_color))) {
@@ -628,7 +639,7 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
   }
   if (!is.null(node_color)) {
     node_color <- nodes_out[[node_color]]
-    color <- colors()
+    color <- grDevices::colors()
     color <- color[!color %in% "black"]
     if(!any(grepl(paste(color, collapse = "|"), node_color)) |
        any(grepl("#", node_color))) {

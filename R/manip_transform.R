@@ -47,6 +47,7 @@ NULL
 #'   produce correlations for valued and binary data, respectively.
 #'   Note that Yule's Q has a straightforward interpretation related to the odds ratio.
 #' @importFrom igraph bipartite.projection
+#' @importFrom stats cor
 #' @examples
 #' autographr(ison_southern_women) /
 #' (autographr(to_mode1(ison_southern_women)) |
