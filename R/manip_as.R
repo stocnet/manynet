@@ -95,7 +95,6 @@ as_edgelist.network <- function(.data,
     edges <- edges[((nrow(edges)/2) + 1):nrow(edges),]
   }
   from <- to <- NULL
-  names(edges) <- c("from", "to", "weight")
   # Handle node names
   if (is_labelled(.data)) {
     names <- attr(out, "vnames")
@@ -104,6 +103,7 @@ as_edgelist.network <- function(.data,
   }
   # Handle edge weights
   if (is_weighted(.data)) {
+    names(edges) <- c("from", "to", "weight")
     edges[,3] <- network::get.edge.attribute(.data, "weight")
   }
   # Remove weight column if only unity weights.
