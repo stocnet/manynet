@@ -171,6 +171,10 @@ relation to some tie attribute.
 \seealso{
 Other manipulations: 
 \code{\link{as}()},
-\code{\link{reformat}}
+\code{\link{grab}},
+\code{\link{missing}},
+\code{\link{reformat}},
+\code{\link{split}()},
+\code{\link{transform}()}
 }
 \concept{manipulations}

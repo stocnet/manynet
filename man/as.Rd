@@ -106,6 +106,10 @@ as_graphAM(test)
 \seealso{
 Other manipulations: 
 \code{\link{add}},
-\code{\link{reformat}}
+\code{\link{grab}},
+\code{\link{missing}},
+\code{\link{reformat}},
+\code{\link{split}()},
+\code{\link{transform}()}
 }
 \concept{manipulations}
