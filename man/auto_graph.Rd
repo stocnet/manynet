@@ -102,12 +102,6 @@ ison_adolescents \%>\%
   mutate(color = rep(c("blue", "red"), times = 4)) \%>\%
   autographr(node_shape = "shape", node_color = "color")
 autographr(ison_karateka, node_size = 8)
-ison_adolescents \%>\% 
-  mutate(high_degree = node_is_max(node_degree())) \%>\% 
-  activate(edges) \%>\% 
-  mutate(high_betweenness = tie_is_max(tie_betweenness(ison_adolescents))) \%>\% 
-  autographr(node_color = "high_degree", edge_color = "high_betweenness")
-autographr(mpn_elite_usa_advice, "concentric")
   autographs(to_egos(ison_adolescents))
 \donttest{
 ison_adolescents \%>\%

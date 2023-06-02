@@ -150,13 +150,13 @@ you will need to unpack them and convert them one by one.
 
 }}
 \examples{
-\dontrun{
+\donttest{
 # import Roethlisberger & Dickson's horseplay game data set:
-horseplay <- read_ucinet("WIRING-RDGAM.##h")
+#horseplay <- read_ucinet("WIRING-RDGAM.##h")
 }
-\dontrun{
+\donttest{
 # export it again to UCINET under a different name:
-write_ucinet(horseplay, "R&D-horseplay")
+#write_ucinet(horseplay, "R&D-horseplay")
 }
 }
 \seealso{

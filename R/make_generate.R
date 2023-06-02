@@ -137,8 +137,8 @@ generate_scalefree <- function(n, p = 1, directed = FALSE) {
 #'   should be retained. 
 #'   By default TRUE. 
 #' @examples
-#' autographr(mpn_elite_usa_advice) +
-#' autographr(generate_permutation(mpn_elite_usa_advice))
+#' autographr(ison_adolescents) +
+#' autographr(generate_permutation(ison_adolescents))
 #' @export
 generate_permutation <- function(.data, with_attr = TRUE) {
   out <- as_matrix(.data)

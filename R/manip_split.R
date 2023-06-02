@@ -263,8 +263,7 @@ to_slices.igraph <- function(.data, attribute = "time", slice = NULL) {
 #' @examples
 #' ison_adolescents %>%
 #'   activate(nodes) %>%
-#'   mutate(unicorn = sample(c("yes", "no"), 8,
-#'   replace = TRUE)) %>%
+#'   mutate(unicorn = sample(c("yes", "no"), 8, replace = TRUE)) %>%
 #'   to_subgraphs(attribute = "unicorn") %>%
 #'   from_subgraphs()
 #' @export
@@ -284,7 +283,7 @@ from_subgraphs <- function(.data) {
   out <- igraph::graph_from_data_frame(edges)
   for (i in names(vertex)) {
     out <- suppressWarnings(igraph::set_vertex_attr(out, name = i,
-                                                         value = unlist(vertex[i])))
+                                                    value = unlist(vertex[i])))
   }
   out
 }

@@ -55,9 +55,9 @@
 #' To import multiple matrices packed into a single UCINET file,
 #' you will need to unpack them and convert them one by one.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # import Roethlisberger & Dickson's horseplay game data set:
-#' horseplay <- read_ucinet("WIRING-RDGAM.##h")
+#' #horseplay <- read_ucinet("WIRING-RDGAM.##h")
 #' }
 #' @source 
 #' `read_ucinet()` and `write_ucinet()` kindly supplied by Christian Steglich, 
@@ -457,9 +457,9 @@ read_ucinet <- function(file = file.choose()) {
 #' @importFrom utils askYesNo
 #' @return A pair of UCINET files in V6404 file format (.##h, .##d)
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # export it again to UCINET under a different name:
-#' write_ucinet(horseplay, "R&D-horseplay")
+#' #write_ucinet(horseplay, "R&D-horseplay")
 #' }
 #' @export
 write_ucinet <- function(.data,

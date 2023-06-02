@@ -104,8 +104,8 @@ autographr(generate_scalefree(12, 0.25)) +
 autographr(generate_scalefree(12, 1.25))
 autographr(generate_scalefree(c(12,6), 0.25)) /
 autographr(generate_scalefree(c(12,6), 1.25))
-autographr(mpn_elite_usa_advice) +
-autographr(generate_permutation(mpn_elite_usa_advice))
+autographr(ison_adolescents) +
+autographr(generate_permutation(ison_adolescents))
 }
 \references{
 Erdős, Paul, and Alfréd Rényi. (1959).
