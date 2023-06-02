@@ -738,7 +738,6 @@ as_network.siena <- function(.data, twomode = FALSE) {
 # RSiena ####
 
 #' @rdname as
-#' @importFrom RSiena sienaDependent sienaDataCreate
 #' @export
 as_siena <- function(.data,
                       twomode = FALSE) UseMethod("as_siena")
@@ -759,7 +758,6 @@ as_siena.igraph <- function(.data, twomode = FALSE) {
     depnet <- RSiena::sienaDependent(depnetArray, 
                            type = ifelse(is_twomode(.data) | twomode,
                                          "bipartite", "oneMode"))
-
     # nodeatts <- network_node_attributes(.data)
     # nodeatts <- nodeatts[nodeatts != "name"]
     # # Add constant covariates
@@ -770,7 +768,6 @@ as_siena.igraph <- function(.data, twomode = FALSE) {
     # .newEnv <- new.env(parent=globalenv())
     # list2env(consvars, envir = .newEnv)
     # RSiena::varCovar()
-
     RSiena::sienaDataCreate(list("depnet" = depnet))
   }
 }
