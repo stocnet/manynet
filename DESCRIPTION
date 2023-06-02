@@ -31,9 +31,7 @@ Suggests:
     Rgraphviz,
     RSiena,
     testthat,
-    gganimate,
     xml2,
-    methods,
     patchwork
 Authors@R: 
     c(person(given = "James",
