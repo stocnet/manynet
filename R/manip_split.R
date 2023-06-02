@@ -2,7 +2,7 @@
 #' Tools for splitting and joining networks, graphs, and matrices
 #' 
 #' @description
-#'   These functions offer tools for splitting migraph-consistent objects
+#'   These functions offer tools for splitting manynet-consistent objects
 #'   (matrices, igraph, tidygraph, or network objects).
 #'   Splitting means that the returned object will be a list of objects.
 #'   Joining expects a list of objects and returns a network object.
@@ -24,58 +24,58 @@ NULL
 #' autographs(to_egos(ison_adolescents))
 #' autographs(to_egos(ison_adolescents,2))
 #' @export
-to_egos <- function(object, 
+to_egos <- function(.data, 
                     max_dist = 1, 
                     min_dist = 0) UseMethod("to_egos")
 
 #' @export
-to_egos.igraph <- function(object, 
+to_egos.igraph <- function(.data, 
                            max_dist = 1, 
                            min_dist = 0){
-  if(is_twomode(object)) max_dist <- max_dist*2
-  out <- igraph::make_ego_graph(object,
+  if(is_twomode(.data)) max_dist <- max_dist*2
+  out <- igraph::make_ego_graph(.data,
                                 order = max_dist,
                                 mindist = min_dist)
-  if(is_labelled(object)) 
-    names(out) <- node_names(object)
+  if(is_labelled(.data)) 
+    names(out) <- node_names(.data)
   out
 }
 
 #' @export
-to_egos.tbl_graph <- function(object, 
+to_egos.tbl_graph <- function(.data, 
                            max_dist = 1, 
                            min_dist = 0){
-  out <- to_egos(as_igraph(object), 
+  out <- to_egos(as_igraph(.data), 
                        max_dist, 
                        min_dist)
   lapply(out, function(x) as_tidygraph(x))
 }
 
 #' @export
-to_egos.network <- function(object, 
+to_egos.network <- function(.data, 
                               max_dist = 1, 
                               min_dist = 0){
-  out <- to_egos(as_igraph(object), 
+  out <- to_egos(as_igraph(.data), 
                        max_dist, 
                        min_dist)
   lapply(out, function(x) as_network(x))
 }
 
 #' @export
-to_egos.matrix <- function(object, 
+to_egos.matrix <- function(.data, 
                               max_dist = 1, 
                               min_dist = 0){
-  out <- to_egos(as_igraph(object), 
+  out <- to_egos(as_igraph(.data), 
                        max_dist, 
                        min_dist)
   lapply(out, function(x) as_matrix(x))
 }
 
 #' @export
-to_egos.data.frame <- function(object, 
+to_egos.data.frame <- function(.data, 
                               max_dist = 1, 
                               min_dist = 0){
-  out <- to_egos(as_igraph(object), 
+  out <- to_egos(as_igraph(.data), 
                        max_dist, 
                        min_dist)
   lapply(out, function(x) as_edgelist(x))
@@ -93,23 +93,23 @@ to_egos.data.frame <- function(object,
 #'   replace = TRUE)) %>%
 #'   to_subgraphs(attribute = "unicorn")
 #' @export
-to_subgraphs <- function(object, attribute) UseMethod("to_subgraphs")
+to_subgraphs <- function(.data, attribute) UseMethod("to_subgraphs")
 
 #' @export
-to_subgraphs.igraph <- function(object, attribute){
-  types <- unique(node_attribute(object, attribute))
-  lapply(types, function(x) igraph::induced_subgraph(object, 
-                              node_attribute(object, attribute) == x))
+to_subgraphs.igraph <- function(.data, attribute){
+  types <- unique(node_attribute(.data, attribute))
+  lapply(types, function(x) igraph::induced_subgraph(.data, 
+                              node_attribute(.data, attribute) == x))
 }
 
 #' @export
-to_subgraphs.tbl_graph <- function(object, attribute){
-  lapply(to_subgraphs(as_igraph(object), attribute), as_tidygraph)
+to_subgraphs.tbl_graph <- function(.data, attribute){
+  lapply(to_subgraphs(as_igraph(.data), attribute), as_tidygraph)
 }
 
 #' @export
-to_subgraphs.network <- function(object, attribute){
-  lapply(to_subgraphs(as_igraph(object), attribute), as_network)
+to_subgraphs.network <- function(.data, attribute){
+  lapply(to_subgraphs(as_igraph(.data), attribute), as_network)
 }
 
 #' @describeIn split Returns a list of the components
@@ -117,35 +117,35 @@ to_subgraphs.network <- function(object, attribute){
 #' @examples 
 #' to_components(ison_marvel_relationships)
 #' @export
-to_components <- function(object) UseMethod("to_components")
+to_components <- function(.data) UseMethod("to_components")
 
 #' @importFrom igraph decompose
 #' @export
-to_components.igraph <- function(object){
-  igraph::decompose(object)
+to_components.igraph <- function(.data){
+  igraph::decompose(.data)
 }
 
 #' @export
-to_components.tbl_graph <- function(object){
-  out <- to_components.igraph(as_igraph(object))
+to_components.tbl_graph <- function(.data){
+  out <- to_components.igraph(as_igraph(.data))
   lapply(out, function(x) as_tidygraph(x))
 }
 
 #' @export
-to_components.network <- function(object){
-  out <- to_components.igraph(as_igraph(object))
+to_components.network <- function(.data){
+  out <- to_components.igraph(as_igraph(.data))
   lapply(out, function(x) as_network(x))
 }
 
 #' @export
-to_components.matrix <- function(object){
-  out <- to_components.igraph(as_igraph(object))
+to_components.matrix <- function(.data){
+  out <- to_components.igraph(as_igraph(.data))
   lapply(out, function(x) as_matrix(x))
 }
 
 #' @export
-to_components.data.frame <- function(object){
-  out <- to_components.igraph(as_igraph(object))
+to_components.data.frame <- function(.data){
+  out <- to_components.igraph(as_igraph(.data))
   lapply(out, function(x) as_edgelist(x))
 }
 
@@ -225,7 +225,7 @@ to_slices <- function(.data, attribute = "time", slice = NULL) UseMethod("to_sli
 
 #' @export
 to_slices.tbl_graph <- function(.data, attribute = "time", slice = NULL) {
-
+  increment <- weight <- NULL
   incremented <- "increment" %in% network_tie_attributes(.data)
   updated <- "replace" %in% network_tie_attributes(.data)
   if(!is.null(slice))

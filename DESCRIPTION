@@ -23,17 +23,16 @@ Imports:
     patchwork,
     tidygraph
 Suggests: 
-    covr,
     knitr,
+    gganimate,
+    methods,
     readxl,
     rmarkdown,
     roxygen2,
     Rgraphviz,
     RSiena,
     testthat,
-    gganimate,
-    xml2,
-    methods
+    xml2
 Authors@R: 
     c(person(given = "James",
              family = "Hollway",

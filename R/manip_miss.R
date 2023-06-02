@@ -29,9 +29,8 @@ na_to_zero <- function(object) UseMethod("na_to_zero")
 
 #' @export
 na_to_zero.tbl_graph <- function(object){
-  object %>% activate(edges) %>% 
-    dplyr::filter(!is.na(weight)) %>% 
-    activate(nodes)
+  weight <- NULL
+  object %>% filter_ties(!is.na(weight))
 }
 
 #' @export

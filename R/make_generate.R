@@ -155,7 +155,7 @@ generate_permutation <- function(.data, with_attr = TRUE) {
 #' @export
 generate_utilities <- function(n, steps = 1, volatility = 0, threshold = 0){
   
-  utilities <- matrix(rnorm(n*n, 0, 1), n, n) 
+  utilities <- matrix(stats::rnorm(n*n, 0, 1), n, n) 
   diag(utilities) <- 0
   utilities <- utilities / rowSums(utilities)
   

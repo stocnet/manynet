@@ -13,11 +13,11 @@
 \alias{from_slices}
 \title{Tools for splitting and joining networks, graphs, and matrices}
 \usage{
-to_egos(object, max_dist = 1, min_dist = 0)
+to_egos(.data, max_dist = 1, min_dist = 0)
 
-to_subgraphs(object, attribute)
+to_subgraphs(.data, attribute)
 
-to_components(object)
+to_components(.data)
 
 to_waves(.data, attribute = "wave", panels = NULL)
 
@@ -32,6 +32,15 @@ from_waves(.data, directed = FALSE)
 from_slices(.data, remove.duplicates = FALSE)
 }
 \arguments{
+\item{.data}{An object of a manynet-consistent class:
+\itemize{
+\item matrix (adjacency or incidence) from \code{{base}} R
+\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
+\item igraph, from the \code{{igraph}} package
+\item network, from the \code{{network}} package
+\item tbl_graph, from the \code{{tidygraph}} package
+}}
+
 \item{max_dist}{The maximum breadth of the neighbourhood.
 By default 1.}
 
@@ -41,15 +50,6 @@ Increasing this to 1 excludes the ego,
 and 2 excludes ego's direct alters.}
 
 \item{attribute}{One or two attributes used to slice data.}
-
-\item{.data}{An object of a manynet-consistent class:
-\itemize{
-\item matrix (adjacency or incidence) from \code{{base}} R
-\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
-\item igraph, from the \code{{igraph}} package
-\item network, from the \code{{network}} package
-\item tbl_graph, from the \code{{tidygraph}} package
-}}
 
 \item{panels}{Would you like to select certain waves?
 NULL by default.
@@ -64,7 +64,7 @@ By default FALSE.
 If TRUE, duplicated edges are removed.}
 }
 \description{
-These functions offer tools for splitting migraph-consistent objects
+These functions offer tools for splitting manynet-consistent objects
 (matrices, igraph, tidygraph, or network objects).
 Splitting means that the returned object will be a list of objects.
 Joining expects a list of objects and returns a network object.

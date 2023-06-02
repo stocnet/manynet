@@ -72,7 +72,7 @@ to_mode1.matrix <- function(.data,
          "rogerstanimoto" = (a + d)/(a + 2 * (b + c) + d),
          "czekanowski" = 2*a/(2 * a + b + c),
          "ochiai" = a/sqrt((a+b)*(a+c)),
-         "pearson" = cor(t(.data)),
+         "pearson" = stats::cor(t(.data)),
          "yule" = (a*d - b*c)/(a*d + b*c))
   diag(out) <- 0
   out
@@ -124,7 +124,7 @@ to_mode2.matrix <- function(.data, similarity = c("count","jaccard","rand","pear
                 "rogerstanimoto" = (a + d)/(a + 2 * (b + c) + d),
                 "czekanowski" = 2*a/(2 * a + b + c),
                 "ochiai" = a/sqrt((a+b)*(a+c)),
-                "pearson" = cor(.data),
+                "pearson" = stats::cor(.data),
                 "yule" = (a*d - b*c)/(a*d + b*c))
   diag(out) <- 0
   out
@@ -444,6 +444,7 @@ to_anti.network <- function(.data){
 #'   to_no_isolates()
 #' @export
 to_no_isolates <- function(.data) {
+  nodes <- NULL
   # Check if .data is a list of lists
   if (is.list(.data[1])) {
     # Delete edges not present vertices in each list

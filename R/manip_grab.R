@@ -18,24 +18,24 @@ NULL
 #' @examples 
 #' node_names(ison_southern_women)
 #' @export
-node_names <- function(object){
-  igraph::get.vertex.attribute(as_igraph(object), "name")
+node_names <- function(.data){
+  igraph::get.vertex.attribute(as_igraph(.data), "name")
 }
 
 #' @describeIn grab Extracts the mode of the nodes in a network.
 #' @examples 
 #' node_mode(ison_southern_women)
 #' @export
-node_mode <- function(object){
-  if(is_twomode(object)){
-    out <- igraph::get.vertex.attribute(as_igraph(object), "type")
+node_mode <- function(.data){
+  if(is_twomode(.data)){
+    out <- igraph::get.vertex.attribute(as_igraph(.data), "type")
   } else{
-    out <- rep(FALSE, network_nodes(object))
+    out <- rep(FALSE, network_nodes(.data))
   }
   # cannot use make_node_mark here because then eternal loop
   class(out) <- c("node_mark", class(out))
-  if(is.null(names(out)) & is_labelled(object))
-    names(out) <- node_names(object)
+  if(is.null(names(out)) & is_labelled(.data))
+    names(out) <- node_names(.data)
   attr(out, "mode") <- out
   out
 }
@@ -44,26 +44,26 @@ node_mode <- function(object){
 #' @examples
 #' node_attribute(ison_lotr, "Race")
 #' @export
-node_attribute <- function(object, attribute){
-  igraph::get.vertex.attribute(as_igraph(object), attribute)
+node_attribute <- function(.data, attribute){
+  igraph::get.vertex.attribute(as_igraph(.data), attribute)
 }
 
 #' @describeIn grab Extracts an attribute's values for the edges in a network.
 #' @examples
 #' tie_attribute(ison_algebra, "task_tie")
 #' @export
-tie_attribute <- function(object, attribute){
-  igraph::get.edge.attribute(as_igraph(object), attribute)
+tie_attribute <- function(.data, attribute){
+  igraph::get.edge.attribute(as_igraph(.data), attribute)
 }
 
 #' @describeIn grab Extracts the weights of the edges in a network.
 #' @examples
 #' tie_weights(to_mode1(ison_southern_women))
 #' @export
-tie_weights <- function(object){
-  object <- as_igraph(object)
-  out <- igraph::get.edge.attribute(object, "weight")
-  if(is.null(out)) out <- rep(1, network_ties(object))
+tie_weights <- function(.data){
+  .data <- as_igraph(.data)
+  out <- igraph::get.edge.attribute(.data, "weight")
+  if(is.null(out)) out <- rep(1, network_ties(.data))
   out
 }
 
@@ -71,10 +71,10 @@ tie_weights <- function(object){
 #' @examples 
 #' tie_signs(ison_marvel_relationships)
 #' @export
-tie_signs <- function(object){
-  object <- as_igraph(object)
-  out <- igraph::get.edge.attribute(object, "sign")
-  if(is.null(out)) out <- rep(1, network_ties(object))
+tie_signs <- function(.data){
+  .data <- as_igraph(.data)
+  out <- igraph::get.edge.attribute(.data, "sign")
+  if(is.null(out)) out <- rep(1, network_ties(.data))
   out
 }
 
@@ -82,16 +82,16 @@ tie_signs <- function(object){
 #' @examples
 #' network_nodes(ison_southern_women)
 #' @export
-network_nodes <- function(object){
-  igraph::vcount(as_igraph(object))
+network_nodes <- function(.data){
+  igraph::vcount(as_igraph(.data))
 }
 
 #' @describeIn grab Returns the number of edges in a network.
 #' @examples
 #' network_ties(ison_southern_women)
 #' @export
-network_ties <- function(object){
-  igraph::ecount(as_igraph(object))
+network_ties <- function(.data){
+  igraph::ecount(as_igraph(.data))
 }
 
 #' @describeIn grab Returns the dimensions of a network in a vector
@@ -100,12 +100,12 @@ network_ties <- function(object){
 #' network_dims(ison_southern_women)
 #' network_dims(to_mode1(ison_southern_women))
 #' @export
-network_dims <- function(object){
-  if(is_twomode(object)){
-    c(sum(!igraph::V(as_igraph(object))$type),
-      sum(igraph::V(as_igraph(object))$type))
+network_dims <- function(.data){
+  if(is_twomode(.data)){
+    c(sum(!igraph::V(as_igraph(.data))$type),
+      sum(igraph::V(as_igraph(.data))$type))
   } else {
-    igraph::vcount(as_igraph(object))
+    igraph::vcount(as_igraph(.data))
   }
 }
 
@@ -114,8 +114,8 @@ network_dims <- function(object){
 #' @examples
 #' network_node_attributes(ison_lotr)
 #' @export
-network_node_attributes <- function(object){
-  igraph::list.vertex.attributes(as_igraph(object))
+network_node_attributes <- function(.data){
+  igraph::list.vertex.attributes(as_igraph(.data))
 }
 
 #' @describeIn grab Returns a vector of edge attributes in a network
@@ -123,6 +123,6 @@ network_node_attributes <- function(object){
 #' @examples
 #' network_tie_attributes(ison_algebra)
 #' @export
-network_tie_attributes <- function(object){
-  igraph::edge_attr_names(as_igraph(object))
+network_tie_attributes <- function(.data){
+  igraph::edge_attr_names(as_igraph(.data))
 }

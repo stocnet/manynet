@@ -305,7 +305,7 @@ to_list <- function(members){
 
 getNNvec <- function(object, members){
   lapply(members, function(circle){
-    diss <- 1 - cor(to_multilevel(as_matrix(object))[, circle])
+    diss <- 1 - stats::cor(to_multilevel(as_matrix(object))[, circle])
     diag(diss) <- NA
     if(is_labelled(object))
       starts <- names(sort(node_degree(object)[circle], decreasing = TRUE)[1])
