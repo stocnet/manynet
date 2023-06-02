@@ -19,7 +19,6 @@ Imports:
     ggplot2,
     ggraph,
     igraph,
-    methods,
     network,
     patchwork,
     tidygraph
@@ -33,7 +32,8 @@ Suggests:
     RSiena,
     testthat,
     gganimate,
-    xml2
+    xml2,
+    methods
 Authors@R: 
     c(person(given = "James",
              family = "Hollway",

@@ -775,7 +775,6 @@ as_siena.igraph <- function(.data, twomode = FALSE) {
 # graphAM ####
 
 #' @rdname as
-#' @importFrom methods new
 #' @export
 as_graphAM <- function(.data, twomode = NULL) UseMethod("as_graphAM")
 
@@ -805,8 +804,12 @@ setClass("graphAM", contains="graph",
 
 #' @export
 as_graphAM.matrix <- function(.data, twomode = NULL) {
+  if (!requireNamespace("RSiena", quietly = TRUE)) {
+    stop("Please install `methods` from CRAN to animate network plots.")
+  } else {
   methods::new("graphAM", adjMat = to_onemode(.data), 
                edgemode = ifelse(is_directed(.data), "directed", "undirected"))
+  }
 }
 
 #' @export
