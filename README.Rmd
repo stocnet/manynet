@@ -80,8 +80,7 @@ imports <- igraph::graph_from_literal(ucinet:pajek+--+tidygraph,
                                       matrix:dynetml--+tidygraph,
                                       edgelist:nodelist+--+tibble)
 imports <- imports %>% mutate(type = ifelse(node_names(imports)%in% c("tidygraph","tibble"), TRUE, FALSE))
-autographr(imports,
-           "hierarchy", node_size = 2)
+migraph::autographr(imports, node_size = 2)
 ```
 
 - `r list_functions("^read_")`
@@ -115,7 +114,7 @@ Once network data is in R,
 from one of the above classes into any other, and include:
 
 ```{r coercion-graph, echo = FALSE, dpi = 300}
-autographr(igraph::graph_from_literal(edgelist:matrix:igraph:network:tidygraph+--+edgelist:matrix:igraph:network:tidygraph,
+migraph::autographr(igraph::graph_from_literal(edgelist:matrix:igraph:network:tidygraph+--+edgelist:matrix:igraph:network:tidygraph,
                                       edgelist:matrix:igraph:network:tidygraph--+graphAM,
                                       igraph--+siena,
                                       siena:goldfish--+edgelist:matrix:igraph:network:tidygraph:graphAM),
