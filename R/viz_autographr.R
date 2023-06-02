@@ -107,7 +107,6 @@ autographs <- function(netlist, ...) {
 #' @importFrom igraph gsize as_data_frame get.edgelist
 #' @importFrom ggplot2 ggplot geom_segment geom_point geom_text
 #' scale_alpha_manual theme_void
-#' @importFrom gganimate transition_states ease_aes
 #' @importFrom ggraph create_layout
 #' @importFrom dplyr mutate select distinct left_join %>%
 #' @source http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
@@ -135,6 +134,9 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
                        label = TRUE, node_color = NULL, node_shape = NULL,
                        node_size = NULL, edge_color = NULL) {
   # Todo: add (...) arguments passed on to `ggraph()`/`ggplot()`/`gganimate()`
+  if (!requireNamespace("RSiena", quietly = TRUE)) {
+    stop("Please install `gganimate` from CRAN to animate network plots.")
+  } else {
   x <- y <- name <- status <- frame <- NULL
   # Check if object is a list of lists
   if (!is.list(tlist[[1]])) {
@@ -193,6 +195,7 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
     gganimate::transition_states(frame, state_length = 1) +
     ggplot2::labs(title = "{closest_state}") +
     ggplot2::theme_void()
+  }
 }
 
 #' @importFrom ggraph create_layout ggraph

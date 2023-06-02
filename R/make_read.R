@@ -553,19 +553,15 @@ write_ucinet <- function(.data,
 }
 
 #' @describeIn read Reading DynetML files
-#' @importFrom xml2 read_xml as_list xml_attrs xml_find_all
 #' @importFrom dplyr bind_rows coalesce filter mutate select everything
 #' @export
 read_dynetml <- function(file = file.choose()) {
   if(!requireNamespace("xml2", quietly = TRUE)){
     stop("Please install `xml2` from CRAN to import DynetML files.")
   } else {
-    
     name <- type <- nodeset <- target <- value <- NULL
-    
     xmlfile <- xml2::read_xml(file)
     xmllist <- xml2::as_list(xmlfile)
-    
     # Getting nodeset
     # to deal with legacy constructions:
     if("MetaMatrix" %in% names(xmllist$DynamicNetwork))

@@ -16,7 +16,6 @@ RoxygenNote: 7.2.3
 Imports: 
     BiocManager,
     dplyr (>= 1.1.0),
-    gganimate,
     ggplot2,
     ggraph,
     igraph,
@@ -24,7 +23,6 @@ Imports:
     network,
     patchwork,
     tidygraph,
-    xml2,
     rlang
 Suggests: 
     covr,
@@ -33,7 +31,9 @@ Suggests:
     rmarkdown,
     roxygen2,
     RSiena,
-    testthat
+    testthat,
+    gganimate,
+    xml2
 Authors@R: 
     c(person(given = "James",
              family = "Hollway",
