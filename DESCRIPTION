@@ -23,7 +23,6 @@ Imports:
     methods,
     network,
     patchwork,
-    sna,
     tidygraph,
     xml2,
     rlang

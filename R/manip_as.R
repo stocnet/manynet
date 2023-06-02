@@ -67,8 +67,7 @@ NULL
 #' @describeIn as Coercing various network objects into an edgelist
 #' @importFrom igraph as_data_frame
 #' @importFrom dplyr as_tibble arrange
-#' @importFrom sna as.edgelist.sna
-#' @importFrom network get.edge.attribute
+#' @importFrom network get.edge.attribute as.edgelist
 #' @export
 as_edgelist <- function(.data,
                         twomode = FALSE) UseMethod("as_edgelist")
@@ -90,7 +89,7 @@ as_edgelist.tbl_graph <- function(.data,
 #' @export
 as_edgelist.network <- function(.data,
                                 twomode = FALSE) {
-  out <- sna::as.edgelist.sna(.data)
+  out <- network::as.edgelist(.data)
   edges <- as.data.frame(out)
   if (is_twomode(.data)) {
     edges <- edges[((nrow(edges)/2) + 1):nrow(edges),]
@@ -298,8 +297,7 @@ as_matrix.siena <- function(.data,
 #' @importFrom igraph graph_from_data_frame graph_from_incidence_matrix
 #'  graph_from_adjacency_matrix delete_vertex_attr V vertex_attr
 #'  edge_attr delete_edge_attr set_edge_attr
-#' @importFrom network list.edge.attributes
-#' @importFrom sna as.sociomatrix.sna
+#' @importFrom network list.edge.attributes as.sociomatrix
 #' @export
 as_igraph <- function(.data,
                       twomode = FALSE) UseMethod("as_igraph")
@@ -376,15 +374,15 @@ as_igraph.network <- function(.data,
   # Convert to igraph
   if (network::is.bipartite(.data)) {
     if ("weight" %in% network::list.edge.attributes(.data)) {
-      graph <- sna::as.sociomatrix.sna(.data, attrname = "weight")
+      graph <- network::as.sociomatrix(.data, attrname = "weight")
       graph <- igraph::graph_from_incidence_matrix(graph, weighted = TRUE)
     } else {
-      graph <- sna::as.sociomatrix.sna(.data)
+      graph <- network::as.sociomatrix(.data)
       graph <- igraph::graph_from_incidence_matrix(graph) 
     }
   } else {
     if ("weight" %in% network::list.edge.attributes(.data)) {
-      graph <- sna::as.sociomatrix.sna(.data, attrname = "weight")
+      graph <- network::as.sociomatrix(.data, attrname = "weight")
       graph <- igraph::graph_from_adjacency_matrix(graph,
                                                    weighted = TRUE,
                                                    mode = ifelse(.data$gal$directed,
@@ -392,14 +390,14 @@ as_igraph.network <- function(.data,
                                                                  "undirected"))
     } else if (length(network::list.edge.attributes(.data)) > 1) {
       .data$gal$multiple <- FALSE
-      graph <- sna::as.sociomatrix.sna(.data, attrname = network::list.edge.attributes(.data)[1])
+      graph <- network::as.sociomatrix(.data, attrname = network::list.edge.attributes(.data)[1])
       graph <- igraph::graph_from_adjacency_matrix(graph,
                                                    weighted = TRUE,
                                                    mode = ifelse(.data$gal$directed,
                                                                  "directed",
                                                                  "undirected"))
     } else {
-      graph <- sna::as.sociomatrix.sna(.data)
+      graph <- network::as.sociomatrix(.data)
       graph <- igraph::graph_from_adjacency_matrix(graph,
                                                    mode = ifelse(.data$gal$directed,
                                                                  "directed",
