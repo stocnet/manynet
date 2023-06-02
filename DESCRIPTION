@@ -14,22 +14,26 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
 Imports: 
+    BiocManager,
     dplyr (>= 1.1.0),
+    gganimate,
+    ggplot2,
+    ggraph,
     igraph,
     methods,
     network,
+    patchwork,
     sna,
     tidygraph,
     xml2,
-    rlang,
-    RSiena,
-    tibble
+    rlang
 Suggests: 
     covr,
     knitr,
     readxl,
     rmarkdown,
     roxygen2,
+    RSiena,
     testthat
 Authors@R: 
     c(person(given = "James",

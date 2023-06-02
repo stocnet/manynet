@@ -8,8 +8,8 @@ print.tbl_graph <- function(x, ..., n = 6) {
   arg_list <- list(...)
   arg_list[['useS4']] <- NULL
   graph_desc <- describe_graph(x)
-  top <- tibble::as_tibble(tidygraph::activate(x, "nodes"))
-  bottom <- tibble::as_tibble(tidygraph::activate(x, "edges"))
+  top <- dplyr::as_tibble(tidygraph::activate(x, "nodes"))
+  bottom <- dplyr::as_tibble(tidygraph::activate(x, "edges"))
   if(is_directed(x)){
     cat('#', graph_desc, 'tbl_graph with', igraph::gorder(x), 'nodes and',
         igraph::gsize(x), 'arcs\n', sep = ' ')  

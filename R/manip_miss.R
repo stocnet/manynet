@@ -36,12 +36,12 @@ na_to_zero.tbl_graph <- function(object){
 
 #' @export
 na_to_zero.igraph <- function(object){
-  as_igraph(na_to_null(as_tidygraph(object)))
+  as_igraph(na_to_zero(as_tidygraph(object)))
 }
 
 #' @export
 na_to_zero.network <- function(object){
-  as_network(na_to_null(as_tidygraph(object)))
+  as_network(na_to_zero(as_tidygraph(object)))
 }
 
 #' @export
@@ -75,7 +75,7 @@ na_to_mean.tbl_graph <- function(object){
     object %>% activate(edges) %>% 
       mutate(weight = vapply(seq_len(weight),
                               function(x) ifelse(is.na(x),
-                                             rbinom(1,1,prob),
+                                                 stats::rbinom(1,1,prob),
                                              x),
                             numeric(1))) %>% 
       activate(nodes)
@@ -98,7 +98,7 @@ na_to_mean.matrix <- function(object){
     object[is.na(object)] <- mean(object, na.rm = TRUE)
     object
   } else {
-    object[is.na(object)] <- rbinom(sum(is.na(object)), 
+    object[is.na(object)] <- stats::rbinom(sum(is.na(object)), 
                                     1, mean(object, na.rm = TRUE))
     object
   }
