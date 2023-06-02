@@ -77,9 +77,9 @@ as long as the number of modes in the network.
 
 }}
 \examples{
-node_names(mpn_elite_usa_advice)
-node_mode(mpn_elite_usa_advice)
-node_attribute(mpn_elite_mex, "full_name")
+node_names(ison_southern_women)
+node_mode(ison_southern_women)
+node_attribute(ison_lotr, "Race")
 tie_attribute(ison_algebra, "task_tie")
 tie_weights(to_mode1(ison_southern_women))
 tie_signs(ison_marvel_relationships)
@@ -87,8 +87,8 @@ network_nodes(ison_southern_women)
 network_ties(ison_southern_women)
 network_dims(ison_southern_women)
 network_dims(to_mode1(ison_southern_women))
-network_node_attributes(mpn_elite_mex)
-network_tie_attributes(mpn_elite_mex)
+network_node_attributes(ison_lotr)
+network_tie_attributes(ison_algebra)
 }
 \seealso{
 Other manipulations: 

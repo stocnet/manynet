@@ -222,7 +222,12 @@ and then:
 
 This package aims to provide an updated, and more comprehensive
 replacement for `{intergraph}`. It also builds upon but makes some
-different decisions to the excellent `{tidygraph}` package.
+different decisions to the excellent `{tidygraph}` package. It builds
+upon `{igraph}` especially, as well as `{network}`, but works equally
+well with basic edgelists and matrices.
+
+`{manynet}` inherits core functionality from the `{migraph}` package.
+For more analytic and modelling functions, please see `{migraph}`.
 
 ## Funding details
 

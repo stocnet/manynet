@@ -16,7 +16,7 @@ NULL
 
 #' @describeIn grab Extracts the names of the nodes in a network.
 #' @examples 
-#' node_names(mpn_elite_usa_advice)
+#' node_names(ison_southern_women)
 #' @export
 node_names <- function(object){
   igraph::get.vertex.attribute(as_igraph(object), "name")
@@ -24,7 +24,7 @@ node_names <- function(object){
 
 #' @describeIn grab Extracts the mode of the nodes in a network.
 #' @examples 
-#' node_mode(mpn_elite_usa_advice)
+#' node_mode(ison_southern_women)
 #' @export
 node_mode <- function(object){
   if(is_twomode(object)){
@@ -42,7 +42,7 @@ node_mode <- function(object){
 
 #' @describeIn grab Extracts an attribute's values for the nodes in a network.
 #' @examples
-#' node_attribute(mpn_elite_mex, "full_name")
+#' node_attribute(ison_lotr, "Race")
 #' @export
 node_attribute <- function(object, attribute){
   igraph::get.vertex.attribute(as_igraph(object), attribute)
@@ -112,7 +112,7 @@ network_dims <- function(object){
 #' @describeIn grab Returns a vector of nodal attributes in a network
 #' @importFrom igraph list.vertex.attributes
 #' @examples
-#' network_node_attributes(mpn_elite_mex)
+#' network_node_attributes(ison_lotr)
 #' @export
 network_node_attributes <- function(object){
   igraph::list.vertex.attributes(as_igraph(object))
@@ -121,7 +121,7 @@ network_node_attributes <- function(object){
 #' @describeIn grab Returns a vector of edge attributes in a network
 #' @importFrom igraph edge_attr_names
 #' @examples
-#' network_tie_attributes(mpn_elite_mex)
+#' network_tie_attributes(ison_algebra)
 #' @export
 network_tie_attributes <- function(object){
   igraph::edge_attr_names(as_igraph(object))
