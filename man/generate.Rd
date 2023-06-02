@@ -50,6 +50,21 @@ breadth of the branches, or maximum extent of the neighbourbood.}
 \item network, from the \code{{network}} package
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
+
+\item{steps}{Number of simulation steps to run.
+By default 1: a single, one-shot simulation.
+If more than 1, further iterations will update the utilities
+depending on the values of the volatility and threshold parameters.}
+
+\item{volatility}{How much change there is between steps.
+Only if volatility is more than 1 do further simulation steps make sense.
+This is passed on to \code{stats::rnorm} as the \code{sd} or standard deviation
+parameter.}
+
+\item{threshold}{This parameter can be used to mute or disregard stepwise
+changes in utility that are minor.
+The default 0 will recognise all changes in utility,
+but raising the threshold will mute any changes less than this threshold.}
 }
 \value{
 By default an \code{igraph} object is returned,

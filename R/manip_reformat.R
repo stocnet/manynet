@@ -41,11 +41,10 @@ NULL
 
 #' @describeIn reformat Returns an object that includes only a single type of tie
 #' @importFrom igraph delete_edges edge_attr_names delete_edge_attr
-#' E edge_attr_names
+#'   E edge_attr_names
 #' @examples
 #' as_tidygraph(create_filled(5)) %>%
-#'   activate(edges) %>%
-#'   mutate(type = sample(1:2, 10, replace = TRUE)) %>%
+#'   mutate_ties(type = sample(1:2, 10, replace = TRUE)) %>%
 #'   to_uniplex("type")
 #' @export
 to_uniplex <- function(.data, edge) UseMethod("to_uniplex")

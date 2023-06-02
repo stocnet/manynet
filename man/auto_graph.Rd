@@ -29,7 +29,7 @@ autographd(
   tlist,
   keep_isolates = TRUE,
   layout = "stress",
-  label = TRUE,
+  labels = TRUE,
   node_color = NULL,
   node_shape = NULL,
   node_size = NULL,

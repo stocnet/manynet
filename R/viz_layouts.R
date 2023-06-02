@@ -135,8 +135,9 @@ plot_gl <- function(x, tmax, tmin, rmin, fmin, ne, rc, p) {
   diag(dists) <- NA
   rsep <- l * sum(ifelse(colMax(a / dists - 1) > 0, colMax(a / dists - 1), 0))
   ggraph::ggraph(x, graph = lo) +
-    geom_edge_link(aes(alpha = stat(index)), show.legend = FALSE) +
-    geom_node_point()
+    ggraph::geom_edge_link(ggplot2::aes(alpha = ggplot2::stat(index)), 
+                           show.legend = FALSE) +
+    ggraph::geom_node_point()
 }
 
 # Partition layouts ####
@@ -303,13 +304,14 @@ to_list <- function(members){
   out
 }
 
+#' @importFrom igraph degree
 getNNvec <- function(object, members){
   lapply(members, function(circle){
     diss <- 1 - stats::cor(to_multilevel(as_matrix(object))[, circle])
     diag(diss) <- NA
     if(is_labelled(object))
-      starts <- names(sort(node_degree(object)[circle], decreasing = TRUE)[1])
-    else starts <- paste0("V",1:network_nodes(object))[sort(node_degree(object)[circle], 
+      starts <- names(sort(igraph::degree(object)[circle], decreasing = TRUE)[1])
+    else starts <- paste0("V",1:network_nodes(object))[sort(igraph::degree(object)[circle], 
                                                             decreasing = TRUE)[1]]
     if(length(circle)>1)
       starts <- c(starts, names(which.min(diss[starts,])))

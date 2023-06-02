@@ -138,7 +138,7 @@ autographs <- function(netlist, ...) {
 #' }
 #' @export
 autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
-                       label = TRUE, node_color = NULL, node_shape = NULL,
+                       labels = TRUE, node_color = NULL, node_shape = NULL,
                        node_size = NULL, edge_color = NULL) {
   # Todo: add (...) arguments passed on to `ggraph()`/`ggplot()`/`gganimate()`
   if (!requireNamespace("gganimate", quietly = TRUE)) {
@@ -196,7 +196,7 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
   p <- map_dynamic(edges_out, nodes_out, edge_color, node_shape,
                    node_color, node_size)
   # Add labels, if declared
-  if (isTRUE(label)) {
+  if (isTRUE(labels)) {
     p <- p +  ggplot2::geom_text(data = nodes_out,
                                  aes(x, y, label =  name, alpha = status),
                                  hjust = -0.2, vjust = -0.2,

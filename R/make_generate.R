@@ -152,6 +152,18 @@ generate_permutation <- function(.data, with_attr = TRUE) {
 }
 
 #' @describeIn generate Generates a utility matrix
+#' @param steps Number of simulation steps to run.
+#'   By default 1: a single, one-shot simulation.
+#'   If more than 1, further iterations will update the utilities
+#'   depending on the values of the volatility and threshold parameters.
+#' @param volatility How much change there is between steps.
+#'   Only if volatility is more than 1 do further simulation steps make sense.
+#'   This is passed on to `stats::rnorm` as the `sd` or standard deviation
+#'   parameter.
+#' @param threshold This parameter can be used to mute or disregard stepwise
+#'   changes in utility that are minor.
+#'   The default 0 will recognise all changes in utility, 
+#'   but raising the threshold will mute any changes less than this threshold.
 #' @export
 generate_utilities <- function(n, steps = 1, volatility = 0, threshold = 0){
   

@@ -143,8 +143,7 @@ but embeds two or more modes into a multimodal network structure.
 }}
 \examples{
 as_tidygraph(create_filled(5)) \%>\%
-  activate(edges) \%>\%
-  mutate(type = sample(1:2, 10, replace = TRUE)) \%>\%
+  mutate_ties(type = sample(1:2, 10, replace = TRUE)) \%>\%
   to_uniplex("type")
 }
 \seealso{
