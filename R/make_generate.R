@@ -162,7 +162,7 @@ generate_utilities <- function(n, steps = 1, volatility = 0, threshold = 0){
   if(steps > 1 && volatility > 0){
     iter <- 1
     while (iter < steps){
-      utility_update <- matrix(rnorm(n*n, 0, volatility), n, n)
+      utility_update <- matrix(stats::rnorm(n*n, 0, volatility), n, n)
       diag(utility_update) <- 0
       utility_update[abs(utility_update) < threshold] <- 0
       utilities <- utilities + utility_update

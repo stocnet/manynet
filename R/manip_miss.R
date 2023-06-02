@@ -63,22 +63,19 @@ na_to_mean <- function(object) UseMethod("na_to_mean")
 
 #' @export
 na_to_mean.tbl_graph <- function(object){
+  weight <- NULL
   if(is_weighted(object) & any(tie_weights(object)>1)){
-    object %>% activate(edges) %>% 
-      mutate(weight = ifelse(is.na(weight), 
+    object %>% mutate_ties(weight = ifelse(is.na(weight), 
                              mean(weight, na.rm = TRUE), 
-                             weight)) %>% 
-      activate(nodes)
+                             weight))
   } else {
     prob <- sum(tie_attribute(object, "weight"), na.rm = TRUE)/
       sum(!is.na(tie_attribute(object, "weight")))
-    object %>% activate(edges) %>% 
-      mutate(weight = vapply(seq_len(weight),
+    object %>% mutate_ties(weight = vapply(seq_len(weight),
                               function(x) ifelse(is.na(x),
                                                  stats::rbinom(1,1,prob),
                                              x),
-                            numeric(1))) %>% 
-      activate(nodes)
+                            numeric(1)))
   }
 }
 
