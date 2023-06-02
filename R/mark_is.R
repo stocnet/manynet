@@ -303,13 +303,13 @@ is_multiplex.matrix <- function(.data) {
 #' @export
 is_multiplex.tbl_graph <- function(.data) {
   igraph::any_multiple(.data) |
-    length(igraph::list.edge.attributes(as_igraph(.data))) > 1
+    length(igraph::edge_attr_names(as_igraph(.data))) > 1
 }
 
 #' @export
 is_multiplex.igraph <- function(.data) {
   igraph::any_multiple(.data) |
-    length(igraph::list.edge.attributes(as_igraph(.data))) > 1
+    length(igraph::edge_attr_names(as_igraph(.data))) > 1
 }
 
 #' @export
@@ -337,7 +337,7 @@ is_uniplex <- function(.data) {
 #' is_longitudinal(create_tree(5, 3))
 #' @export
 is_longitudinal <- function(.data) {
-  atts <- igraph::list.edge.attributes(as_igraph(.data))
+  atts <- igraph::edge_attr_names(as_igraph(.data))
   "wave" %in% atts | "panel" %in% atts
 }
 
@@ -346,7 +346,7 @@ is_longitudinal <- function(.data) {
 #' is_dynamic(create_tree(3))
 #' @export
 is_dynamic <- function(.data) {
-  atts <- igraph::list.edge.attributes(as_igraph(.data))
+  atts <- igraph::edge_attr_names(as_igraph(.data))
   "time" %in% atts | "beg" %in% atts | "begin" %in% atts | "start" %in% atts
 }
 

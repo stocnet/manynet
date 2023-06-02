@@ -751,7 +751,7 @@ as_siena.igraph <- function(.data, twomode = FALSE) {
     stop("Please install `RSiena` from CRAN to coerce into RSiena data objects.")
   } else {
     # First separate out the dependent ties
-    nets <- igraph::list.edge.attributes(as_igraph(.data))
+    nets <- igraph::edge_attr_names(as_igraph(.data))
     ties <- unique(gsub("_t[0-9]","", nets))
     waves <- max(vapply(strsplit(nets, "_t"), function(t)
       as.numeric(t[2]), numeric(1)))

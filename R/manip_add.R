@@ -274,7 +274,7 @@ bind_node_attributes <- function(.data, object2){
     out <- add_nodes(out, igraph::vcount(as_igraph(object2)) - igraph::vcount(as_igraph(out)))
   }
   for(a in igraph::vertex_attr_names(object2)){
-    out <- igraph::set.vertex.attribute(out, a, 
+    out <- igraph::set_vertex_attr(out, a, 
                                         value = igraph::get.vertex.attribute(object2, a))
   }
   as_tidygraph(out)
