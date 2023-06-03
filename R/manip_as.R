@@ -103,9 +103,9 @@ as_edgelist.network <- function(.data,
   }
   # Handle edge weights
   if (is_weighted(.data)) {
-    names(edges) <- c("from", "to", "weight")
     edges[,3] <- network::get.edge.attribute(.data, "weight")
-  }
+    names(edges) <- c("from", "to", "weight")
+  } else names(edges) <- c("from", "to")
   # Remove weight column if only unity weights.
   if (all(edges$weight == 1)) edges <- edges[, -3]
   dplyr::arrange(dplyr::as_tibble(edges), from, to)
@@ -721,7 +721,11 @@ as_network.tbl_graph <- function(.data,
 as_network.data.frame <- function(.data,
                                   twomode = NULL) {
   if ("tbl_df" %in% class(.data)) .data <- as.data.frame(.data)
-  as_network(as_matrix(.data, twomode))
+  network::as.network.data.frame(.data, directed = is_directed(.data),
+                                 bipartite = ifelse(is_twomode(.data),
+                                                network_dims(.data)[1],
+                                                FALSE)
+                                  )
 }
 
 #' @export
