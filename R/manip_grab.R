@@ -100,12 +100,35 @@ network_ties <- function(.data){
 #' network_dims(ison_southern_women)
 #' network_dims(to_mode1(ison_southern_women))
 #' @export
-network_dims <- function(.data){
+network_dims <- function(.data) UseMethod("network_dims")
+
+#' @export
+network_dims.data.frame <- function(.data){
   if(is_twomode(.data)){
-    c(sum(!igraph::V(as_igraph(.data))$type),
-      sum(igraph::V(as_igraph(.data))$type))
+    c(length(unique(.data[,1])),
+      length(unique(.data[,2])))
   } else {
-    igraph::vcount(as_igraph(.data))
+    length(unique(c(.data[,1], .data[,2])))
+  }
+}
+
+#' @export
+network_dims.matrix <- function(.data){
+  if(is_twomode(.data)){
+    c(nrow(.data),
+      ncol(.data))
+  } else {
+    nrow(.data)
+  }
+}
+
+#' @export
+network_dims.igraph <- function(.data){
+  if(is_twomode(.data)){
+    c(sum(!igraph::V(.data)$type),
+      sum(igraph::V(.data)$type))
+  } else {
+    igraph::vcount(.data)
   }
 }
 

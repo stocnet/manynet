@@ -262,7 +262,6 @@ to_slices.igraph <- function(.data, attribute = "time", slice = NULL) {
 #' @importFrom igraph graph_from_data_frame as_data_frame set_vertex_attr
 #' @examples
 #' ison_adolescents %>%
-#'   activate(nodes) %>%
 #'   mutate(unicorn = sample(c("yes", "no"), 8, replace = TRUE)) %>%
 #'   to_subgraphs(attribute = "unicorn") %>%
 #'   from_subgraphs()

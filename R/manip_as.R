@@ -48,7 +48,6 @@
 #' as_igraph(test)
 #' as_tidygraph(test)
 #' as_network(test)
-#' as_graphAM(test)
 #' @return
 #' The currently implemented coercions or translations are:
 #'
@@ -720,11 +719,12 @@ as_network.tbl_graph <- function(.data,
 #' @export
 as_network.data.frame <- function(.data,
                                   twomode = NULL) {
-  if ("tbl_df" %in% class(.data)) .data <- as.data.frame(.data)
-  network::as.network.data.frame(.data, directed = is_directed(.data),
-                                 bipartite = ifelse(is_twomode(.data),
-                                                network_dims(.data)[1],
-                                                FALSE)
+  if (inherits(.data, "tbl_df")) .data <- as.data.frame(.data)
+  network::as.network.data.frame(.data, 
+                                 directed = ifelse(is_twomode(.data),
+                                                   FALSE,
+                                                   is_directed(.data)),
+                                 bipartite = is_twomode(.data)
                                   )
 }
 

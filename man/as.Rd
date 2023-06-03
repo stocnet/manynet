@@ -101,7 +101,6 @@ as_matrix(test)
 as_igraph(test)
 as_tidygraph(test)
 as_network(test)
-as_graphAM(test)
 }
 \seealso{
 Other manipulations: 
