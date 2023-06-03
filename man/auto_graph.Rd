@@ -103,18 +103,16 @@ ison_adolescents \%>\%
   autographr(node_shape = "shape", node_color = "color")
 autographr(ison_karateka, node_size = 8)
   autographs(to_egos(ison_adolescents))
-\donttest{
+\dontrun{
 ison_adolescents \%>\%
-  activate(edges) \%>\%
-  mutate(year = sample(1995:1998, 10, replace = TRUE)) \%>\%
+  mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%
   to_waves(attribute = "year") \%>\%
   autographd()
 ison_adolescents \%>\%
   mutate(shape = rep(c("circle", "square"), times = 4),
          color = rep(c("blue", "red"), times = 4),
          size = sample(4:16, 8, replace = TRUE)) \%>\%
-  activate(edges) \%>\%
-  mutate(year = sample(1995:1998, 10, replace = TRUE),
+  mutate_ties(year = sample(1995:1998, 10, replace = TRUE),
          e_color = sample(c("yellow", "green"), 10, replace = TRUE)) \%>\%
   to_waves(attribute = "year") \%>\% 
   autographd(keep_isolates = FALSE, layout = "circle", node_shape = "shape",

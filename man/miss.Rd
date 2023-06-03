@@ -6,9 +6,19 @@
 \alias{na_to_mean}
 \title{Tools for imputing missing tie data}
 \usage{
-na_to_zero(object)
+na_to_zero(.data)
 
-na_to_mean(object)
+na_to_mean(.data)
+}
+\arguments{
+\item{.data}{An object of a manynet-consistent class:
+\itemize{
+\item matrix (adjacency or incidence) from \code{{base}} R
+\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
+\item igraph, from the \code{{igraph}} package
+\item network, from the \code{{network}} package
+\item tbl_graph, from the \code{{tidygraph}} package
+}}
 }
 \description{
 These functions offer tools for imputing missing tie data.

@@ -9,6 +9,7 @@
 #' and replacing the missing values with the average non-missing value for that vector.
 #' @name miss
 #' @family manipulations
+#' @inheritParams is
 #' @references 
 #'   Krause, Robert, Mark Huisman, Christian Steglich, and Tom A.B. Snijders. 2020. 
 #'   "Missing data in cross-sectional networks–An extensive comparison of missing data treatment methods". 
@@ -25,52 +26,52 @@ NULL
 #' na_to_zero(missTest)
 #' na_to_mean(missTest)
 #' @export
-na_to_zero <- function(object) UseMethod("na_to_zero")
+na_to_zero <- function(.data) UseMethod("na_to_zero")
 
 #' @export
-na_to_zero.tbl_graph <- function(object){
+na_to_zero.tbl_graph <- function(.data){
   weight <- NULL
-  object %>% filter_ties(!is.na(weight))
+  .data %>% filter_ties(!is.na(weight))
 }
 
 #' @export
-na_to_zero.igraph <- function(object){
-  as_igraph(na_to_zero(as_tidygraph(object)))
+na_to_zero.igraph <- function(.data){
+  as_igraph(na_to_zero(as_tidygraph(.data)))
 }
 
 #' @export
-na_to_zero.network <- function(object){
-  as_network(na_to_zero(as_tidygraph(object)))
+na_to_zero.network <- function(.data){
+  as_network(na_to_zero(as_tidygraph(.data)))
 }
 
 #' @export
-na_to_zero.matrix <- function(object){
-  object[is.na(object)] <- 0
-  object
+na_to_zero.matrix <- function(.data){
+  .data[is.na(.data)] <- 0
+  .data
 }
 
 #' @export
-na_to_zero.data.frame <- function(object){
-  object[is.na(object[,3]),3] <- 0
-  object
+na_to_zero.data.frame <- function(.data){
+  .data[is.na(.data[,3]),3] <- 0
+  .data
 }
 
 #' @describeIn miss Impute missing tie data as
 #'   the mean value in the network.
 #' @export
-na_to_mean <- function(object) UseMethod("na_to_mean")
+na_to_mean <- function(.data) UseMethod("na_to_mean")
 
 #' @export
-na_to_mean.tbl_graph <- function(object){
+na_to_mean.tbl_graph <- function(.data){
   weight <- NULL
-  if(is_weighted(object) & any(tie_weights(object)>1)){
-    object %>% mutate_ties(weight = ifelse(is.na(weight), 
+  if(is_weighted(.data) & any(tie_weights(.data)>1)){
+    .data %>% mutate_ties(weight = ifelse(is.na(weight), 
                              mean(weight, na.rm = TRUE), 
                              weight))
   } else {
-    prob <- sum(tie_attribute(object, "weight"), na.rm = TRUE)/
-      sum(!is.na(tie_attribute(object, "weight")))
-    object %>% mutate_ties(weight = vapply(seq_len(weight),
+    prob <- sum(tie_attribute(.data, "weight"), na.rm = TRUE)/
+      sum(!is.na(tie_attribute(.data, "weight")))
+    .data %>% mutate_ties(weight = vapply(seq_len(weight),
                               function(x) ifelse(is.na(x),
                                                  stats::rbinom(1,1,prob),
                                              x),
@@ -79,24 +80,24 @@ na_to_mean.tbl_graph <- function(object){
 }
 
 #' @export
-na_to_mean.igraph <- function(object){
-  as_igraph(na_to_mean(as_tidygraph(object)))
+na_to_mean.igraph <- function(.data){
+  as_igraph(na_to_mean(as_tidygraph(.data)))
 }
 
 #' @export
-na_to_mean.network <- function(object){
-  as_network(na_to_mean(as_tidygraph(object)))
+na_to_mean.network <- function(.data){
+  as_network(na_to_mean(as_tidygraph(.data)))
 }
 
 #' @export
-na_to_mean.matrix <- function(object){
-  if(any(object>1, na.rm = TRUE)){
-    object[is.na(object)] <- mean(object, na.rm = TRUE)
-    object
+na_to_mean.matrix <- function(.data){
+  if(any(.data>1, na.rm = TRUE)){
+    .data[is.na(.data)] <- mean(.data, na.rm = TRUE)
+    .data
   } else {
-    object[is.na(object)] <- stats::rbinom(sum(is.na(object)), 
-                                    1, mean(object, na.rm = TRUE))
-    object
+    .data[is.na(.data)] <- stats::rbinom(sum(is.na(.data)), 
+                                    1, mean(.data, na.rm = TRUE))
+    .data
   }
 }
 

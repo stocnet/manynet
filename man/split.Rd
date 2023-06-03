@@ -27,7 +27,7 @@ from_subgraphs(.data)
 
 from_egos(.data)
 
-from_waves(.data, directed = FALSE)
+from_waves(.data)
 
 from_slices(.data, remove.duplicates = FALSE)
 }
@@ -131,8 +131,7 @@ ison_adolescents \%>\%
   to_egos() \%>\%
   from_egos()
 ison_adolescents \%>\%
-  activate(edges) \%>\%
-  mutate(wave = sample(1:4, 10, replace = TRUE)) \%>\%
+  mutate_ties(wave = sample(1:4, 10, replace = TRUE)) \%>\%
   to_waves(attribute = "wave") \%>\%
   from_waves()
 ison_adolescents \%>\%

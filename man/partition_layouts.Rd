@@ -15,16 +15,16 @@ protein-protein interaction networks".
 \emph{Nucleic Acids Research}, 42 (1) e6.
 }
 \usage{
-layout_tbl_graph_hierarchy(object, circular = FALSE, times = 1000)
+layout_tbl_graph_hierarchy(.data, circular = FALSE, times = 1000)
 
-layout_tbl_graph_alluvial(object, circular = FALSE, times = 1000)
+layout_tbl_graph_alluvial(.data, circular = FALSE, times = 1000)
 
-layout_tbl_graph_railway(object, circular = FALSE, times = 1000)
+layout_tbl_graph_railway(.data, circular = FALSE, times = 1000)
 
-layout_tbl_graph_ladder(object, circular = FALSE, times = 1000)
+layout_tbl_graph_ladder(.data, circular = FALSE, times = 1000)
 
 layout_tbl_graph_concentric(
-  object,
+  .data,
   membership = NULL,
   radius = NULL,
   order.by = NULL,
@@ -33,6 +33,15 @@ layout_tbl_graph_concentric(
 )
 }
 \arguments{
+\item{.data}{An object of a manynet-consistent class:
+\itemize{
+\item matrix (adjacency or incidence) from \code{{base}} R
+\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
+\item igraph, from the \code{{igraph}} package
+\item network, from the \code{{network}} package
+\item tbl_graph, from the \code{{tidygraph}} package
+}}
+
 \item{circular}{Should the layout be transformed into a radial representation.
 Only possible for some layouts. Defaults to FALSE}
 

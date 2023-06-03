@@ -315,12 +315,11 @@ from_egos <- function(.data) {
 #' @importFrom igraph graph_from_data_frame as_data_frame
 #' @examples
 #' ison_adolescents %>%
-#'   activate(edges) %>%
-#'   mutate(wave = sample(1:4, 10, replace = TRUE)) %>%
+#'   mutate_ties(wave = sample(1:4, 10, replace = TRUE)) %>%
 #'   to_waves(attribute = "wave") %>%
 #'   from_waves()
 #' @export
-from_waves <- function(.data, directed = FALSE) {
+from_waves <- function(.data) {
   if (!is.list(.data[1])) {
     stop("Please declare a list of waves.")
   }

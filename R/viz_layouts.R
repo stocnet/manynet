@@ -23,41 +23,41 @@ NULL
 
 #' @rdname grid_layouts
 #' @export
-layout_tbl_graph_frgrid <- function(object, circular = FALSE, times = 1000){
-  xy <- as.data.frame(igraph::layout_with_fr(object, maxiter = times))
+layout_tbl_graph_frgrid <- function(.data, circular = FALSE, times = 1000){
+  xy <- as.data.frame(igraph::layout_with_fr(.data, maxiter = times))
   colnames(xy) <- c("x","y")
   xy <- depth_first_recursive_search(xy)
-  attr(xy, 'graph') <- as_tidygraph(object)
+  attr(xy, 'graph') <- as_tidygraph(.data)
   xy
 }
 
 #' @rdname grid_layouts
 #' @export
-layout_tbl_graph_kkgrid <- function(object, circular = FALSE, times = 1000){
-  xy <- as.data.frame(igraph::layout_with_kk(object, maxiter = times))
+layout_tbl_graph_kkgrid <- function(.data, circular = FALSE, times = 1000){
+  xy <- as.data.frame(igraph::layout_with_kk(.data, maxiter = times))
   colnames(xy) <- c("x","y")
   xy <- depth_first_recursive_search(xy)
-  attr(xy, 'graph') <- as_tidygraph(object)
+  attr(xy, 'graph') <- as_tidygraph(.data)
   xy
 }
 
 #' @rdname grid_layouts
 #' @export
-layout_tbl_graph_gogrid <- function(object, circular = FALSE, times = 1000){
-  xy <- as.data.frame(igraph::layout_with_graphopt(object, niter = times))
+layout_tbl_graph_gogrid <- function(.data, circular = FALSE, times = 1000){
+  xy <- as.data.frame(igraph::layout_with_graphopt(.data, niter = times))
   colnames(xy) <- c("x","y")
   xy <- depth_first_recursive_search(xy)
-  attr(xy, 'graph') <- as_tidygraph(object)
+  attr(xy, 'graph') <- as_tidygraph(.data)
   xy
 }
 
 #' @rdname grid_layouts
 #' @export
-layout_tbl_graph_stressgrid <- function(object, circular = FALSE, times = 1000){
-  xy <- as.data.frame(ggraph::create_layout(object, "stress")[,1:2])
+layout_tbl_graph_stressgrid <- function(.data, circular = FALSE, times = 1000){
+  xy <- as.data.frame(ggraph::create_layout(.data, "stress")[,1:2])
   colnames(xy) <- c("x","y")
   xy <- depth_first_recursive_search(xy)
-  attr(xy, 'graph') <- as_tidygraph(object)
+  attr(xy, 'graph') <- as_tidygraph(.data)
   xy
 }
 
@@ -168,14 +168,14 @@ plot_gl <- function(x, tmax, tmin, rmin, fmin, ne, rc, p) {
 #' autographr(ison_southern_women, "concentric")
 #' autographr(ison_karateka, "hierarchy") 
 #' @export
-layout_tbl_graph_hierarchy <- function(object,
+layout_tbl_graph_hierarchy <- function(.data,
                                        circular = FALSE, times = 1000){
   
   if (!requireNamespace("Rgraphviz", quietly = TRUE)){
     BiocManager::install("Rgraphviz")
   }
   
-  prep <- as_matrix(object, twomode = FALSE)
+  prep <- as_matrix(.data, twomode = FALSE)
   if(anyDuplicated(rownames(prep))){
     rownames(prep) <- seq_len(nrow(prep))
     colnames(prep) <- seq_len(ncol(prep))
@@ -192,13 +192,13 @@ layout_tbl_graph_hierarchy <- function(object,
 
 #' @rdname partition_layouts
 #' @export
-layout_tbl_graph_alluvial <- function(object,
+layout_tbl_graph_alluvial <- function(.data,
                                       circular = FALSE, times = 1000){
   if (!requireNamespace("Rgraphviz", quietly = TRUE)){
     BiocManager::install("Rgraphviz")
   }
   
-  prep <- as_matrix(object, twomode = FALSE)
+  prep <- as_matrix(.data, twomode = FALSE)
   if(anyDuplicated(rownames(prep))){
     rownames(prep) <- seq_len(nrow(prep))
     colnames(prep) <- seq_len(ncol(prep))
@@ -215,9 +215,9 @@ layout_tbl_graph_alluvial <- function(object,
 
 #' @rdname partition_layouts
 #' @export
-layout_tbl_graph_railway <- function(object,
+layout_tbl_graph_railway <- function(.data,
                                      circular = FALSE, times = 1000){
-  res <- layout_tbl_graph_hierarchy(as_igraph(object))
+  res <- layout_tbl_graph_hierarchy(as_igraph(.data))
   res$x <- c(match(res[res[,2]==0,1], sort(res[res[,2]==0,1])),
              match(res[res[,2]==1,1], sort(res[res[,2]==1,1])))
   res
@@ -225,9 +225,9 @@ layout_tbl_graph_railway <- function(object,
 
 #' @rdname partition_layouts
 #' @export
-layout_tbl_graph_ladder <- function(object,
+layout_tbl_graph_ladder <- function(.data,
                                     circular = FALSE, times = 1000){
-  res <- layout_tbl_graph_alluvial(as_igraph(object))
+  res <- layout_tbl_graph_alluvial(as_igraph(.data))
   res$y <- c(match(res[res[,2]==1,1], sort(res[res[,2]==1,1])),
              match(res[res[,2]==0,1], sort(res[res[,2]==0,1])))
   res
@@ -235,20 +235,20 @@ layout_tbl_graph_ladder <- function(object,
 
 #' @rdname partition_layouts
 #' @export
-layout_tbl_graph_concentric <- function(object, membership = NULL, radius = NULL, 
+layout_tbl_graph_concentric <- function(.data, membership = NULL, radius = NULL, 
                                         order.by = NULL, 
                                         circular = FALSE, times = 1000){
   if (is.null(membership)){
-    if(!is_twomode(object)) 
-      membership <- to_list(node_core(object))
-    else membership <- to_list(node_mode(object))
+    if(!is_twomode(.data)) 
+      membership <- to_list(node_core(.data))
+    else membership <- to_list(node_mode(.data))
   }
   all_c  <- unlist(membership, use.names = FALSE)
   if (any(table(all_c) > 1)) 
     stop("Duplicated nodes in layers!")
-  if(is_labelled(object))
-    all_n <- node_names(object) else
-      all_n <- 1:network_nodes(object)
+  if(is_labelled(.data))
+    all_n <- node_names(.data) else
+      all_n <- 1:network_nodes(.data)
   sel_other  <- all_n[!all_n %in% all_c]
   if (length(sel_other) > 0) 
     membership[[length(membership) + 1]] <- sel_other
@@ -260,26 +260,26 @@ layout_tbl_graph_concentric <- function(object, membership = NULL, radius = NULL
   }
   if (!is.null(order.by)){
     order.values <- lapply(order.by, 
-                           function(b) node_attribute(object, b))
+                           function(b) node_attribute(.data, b))
   } else {
     for(k in 2:length(membership)){
-      xnet <- as_matrix(to_multilevel(object))[membership[[k-1]], 
+      xnet <- as_matrix(to_multilevel(.data))[membership[[k-1]], 
                                                membership[[k]]]
       lo <- layout_tbl_graph_hierarchy(as_igraph(xnet, twomode = TRUE))
-      lo$names <- node_names(object)
+      lo$names <- node_names(.data)
       if(ncol(lo)==2) lo[,1] <- seq_len(lo)
       order.values <- lapply(1:0, function(x)
         if(ncol(lo)>=3) sort(lo[lo[,2]==x,])[,3] 
         else sort(lo[lo[,2]==x,1]) ) 
     }
-    # order.values <- getNNvec(object, members)
+    # order.values <- getNNvec(.data, members)
   }
   res <- matrix(NA, nrow = length(all_n), ncol = 2)
   for (k in seq_along(membership)) {
     r <- radius[k]
     l <- order.values[[k]]
-    if(is_labelled(object))
-      l <- match(l, node_names(object))
+    if(is_labelled(.data))
+      l <- match(l, node_names(.data))
     res[l, ] <- getCoordinates(l, r)
   }
   .to_lo(res)
@@ -305,13 +305,13 @@ to_list <- function(members){
 }
 
 #' @importFrom igraph degree
-getNNvec <- function(object, members){
+getNNvec <- function(.data, members){
   lapply(members, function(circle){
-    diss <- 1 - stats::cor(to_multilevel(as_matrix(object))[, circle])
+    diss <- 1 - stats::cor(to_multilevel(as_matrix(.data))[, circle])
     diag(diss) <- NA
-    if(is_labelled(object))
-      starts <- names(sort(igraph::degree(object)[circle], decreasing = TRUE)[1])
-    else starts <- paste0("V",1:network_nodes(object))[sort(igraph::degree(object)[circle], 
+    if(is_labelled(.data))
+      starts <- names(sort(igraph::degree(.data)[circle], decreasing = TRUE)[1])
+    else starts <- paste0("V",1:network_nodes(.data))[sort(igraph::degree(.data)[circle], 
                                                             decreasing = TRUE)[1]]
     if(length(circle)>1)
       starts <- c(starts, names(which.min(diss[starts,])))
