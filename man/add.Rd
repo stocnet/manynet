@@ -140,26 +140,21 @@ relation to some tie attribute.
   add_tie_attribute(other, "weight", c(1, 2, 2, 2, 1, 2))
   as_tidygraph(create_filled(4)) \%>\%
   mutate(name = c("A", "B", "C", "D")) \%>\%
-  activate(edges) \%>\%
   mutate_ties(type = c("a", "b", "c", "d", "e", "f"))
   as_tidygraph(create_filled(4)) \%>\%
   mutate(name = c("A", "B", "C", "D")) \%>\%
-  activate(edges) \%>\%
   mutate_ties(type = 1:6, form = 1:6) \%>\%
   select_ties(form)
   as_tidygraph(create_filled(4)) \%>\%
   mutate(name = c("A", "B", "C", "D")) \%>\%
-  activate(edges) \%>\%
   mutate_ties(form = 1:6) \%>\%
   filter_ties(form < 4)
   as_tidygraph(create_filled(4)) \%>\%
   mutate(name = c("A", "B", "C", "D")) \%>\%
-  activate(edges) \%>\%
   mutate_ties(form = 1:6) \%>\%
   rename_ties(type = form)
   as_tidygraph(create_filled(4)) \%>\%
   mutate(name = c("A", "B", "C", "D")) \%>\%
-  activate(edges) \%>\%
   mutate_ties(type = c("a", "b", "a", "b", "a", "b")) \%>\%
   summarise_ties(type)
   other <- as_tidygraph(create_filled(4)) \%>\%

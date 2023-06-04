@@ -148,9 +148,6 @@ autographr(ison_southern_women) /
 autographr(to_mode2(ison_southern_women)))
 autographr(ison_adolescents) +  
 autographr(to_ties(ison_adolescents))
-(adolblock <- to_blocks(ison_adolescents, 
-  node_regular_equivalence(ison_adolescents, k = 3)))
-autographr(adolblock)
 autographr(to_matching(ison_southern_women), "hierarchy")
 autographr(to_anti(ison_southern_women), "hierarchy")
 ison_adolescents \%>\%

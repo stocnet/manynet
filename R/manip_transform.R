@@ -267,10 +267,6 @@ to_ties.matrix <- function(.data){
 #'   By default `mean`.
 #'   Other recommended options include `median`, `sum`,
 #'   `min` or `max`.
-#' @examples 
-#' (adolblock <- to_blocks(ison_adolescents, 
-#'   node_regular_equivalence(ison_adolescents, k = 3)))
-#' autographr(adolblock)
 #' @export
 to_blocks <- function(.data, membership, FUN = mean) UseMethod("to_blocks")
 

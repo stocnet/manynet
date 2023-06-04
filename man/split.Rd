@@ -122,7 +122,6 @@ ison_adolescents \%>\%
   add_ties(c(1,2), list(time = 3, increment = -1)) \%>\% 
   to_slices(slice = 7)
 ison_adolescents \%>\%
-  activate(nodes) \%>\%
   mutate(unicorn = sample(c("yes", "no"), 8, replace = TRUE)) \%>\%
   to_subgraphs(attribute = "unicorn") \%>\%
   from_subgraphs()

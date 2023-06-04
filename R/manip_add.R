@@ -183,7 +183,6 @@ mutate.igraph <- function(.data, ...){
 #' @examples
 #'   as_tidygraph(create_filled(4)) %>%
 #'   mutate(name = c("A", "B", "C", "D")) %>%
-#'   activate(edges) %>%
 #'   mutate_ties(type = c("a", "b", "c", "d", "e", "f"))
 #' @export
 mutate_ties <- function(.data, ...){
@@ -197,7 +196,6 @@ mutate_ties <- function(.data, ...){
 #' @examples
 #'   as_tidygraph(create_filled(4)) %>%
 #'   mutate(name = c("A", "B", "C", "D")) %>%
-#'   activate(edges) %>%
 #'   mutate_ties(type = 1:6, form = 1:6) %>%
 #'   select_ties(form)
 #' @export
@@ -213,7 +211,6 @@ select_ties <- function(.data, ...){
 #' @examples
 #'   as_tidygraph(create_filled(4)) %>%
 #'   mutate(name = c("A", "B", "C", "D")) %>%
-#'   activate(edges) %>%
 #'   mutate_ties(form = 1:6) %>%
 #'   filter_ties(form < 4)
 #' @export
@@ -228,7 +225,6 @@ filter_ties <- function(.data, ...){
 #' @examples
 #'   as_tidygraph(create_filled(4)) %>%
 #'   mutate(name = c("A", "B", "C", "D")) %>%
-#'   activate(edges) %>%
 #'   mutate_ties(form = 1:6) %>%
 #'   rename_ties(type = form)
 #' @export
@@ -243,7 +239,6 @@ rename_ties <- function(.data, ...){
 #' @examples
 #'   as_tidygraph(create_filled(4)) %>%
 #'   mutate(name = c("A", "B", "C", "D")) %>%
-#'   activate(edges) %>%
 #'   mutate_ties(type = c("a", "b", "a", "b", "a", "b")) %>%
 #'   summarise_ties(type)
 #' @export

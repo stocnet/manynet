@@ -271,19 +271,15 @@ from_subgraphs <- function(.data) {
     stop("Please declare a list of subgraphs. ")
   }
   ann <- lapply(.data, as_igraph)
-  edges <- igraph::as_data_frame(ann[[1]], what = "edges")
+  out <- ann[[1]]
   for (i in seq_along(ann)[-1]) {
-    edges <- rbind(edges, igraph::as_data_frame(ann[[i]], what = "edges"))
+    out <- join_nodes(out, ann[[i]])
   }
-  vertex <- igraph::as_data_frame(ann[[1]], what = "vertices")
   for (i in seq_along(ann)[-1]) {
-    vertex <- rbind(vertex, igraph::as_data_frame(ann[[i]], what = "vertices"))
+    out <- join_ties(out, ann[[i]])
   }
-  out <- igraph::graph_from_data_frame(edges)
-  for (i in names(vertex)) {
-    out <- suppressWarnings(igraph::set_vertex_attr(out, name = i,
-                                                    value = unlist(vertex[i])))
-  }
+  orig <- object2 <- NULL
+  out <- select_ties(out, -c(orig, object2))
   out
 }
 
