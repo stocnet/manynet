@@ -110,8 +110,9 @@ is_twomode.matrix <- function(.data) {
 
 #' @export
 is_twomode.network <- function(.data) {
-  .data <- as_matrix(.data)
-  dim(.data)[1] != dim(.data)[2]
+  network::is.bipartite(.data)
+  # .data <- as_matrix(.data)
+  # dim(.data)[1] != dim(.data)[2]
 }
 
 #' @export

@@ -709,6 +709,8 @@ as_network.tbl_graph <- function(.data,
                                  twomode = FALSE) {
   nodes <- NULL
   attr <- as.data.frame(activate(.data, nodes))[-1]
+  if ("name" %in% colnames(attr)) attr <- subset(attr, select = c(-name))
+  if ("type" %in% colnames(attr)) attr <- subset(attr, select = c(-type))
   out <- as_network(as_matrix(.data))
   if (length(attr) > 0) {
     out <- network::set.vertex.attribute(out, names(attr), attr)
