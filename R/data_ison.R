@@ -34,7 +34,7 @@
 #' @source Umut Yüksel, 31 March 2017
 #' @format
 #'   ```{r, echo = FALSE}
-#'   as_tidygraph(ison_marvel_teams)
+#'   ison_marvel_teams
 #'   ```
 "ison_marvel_teams"
 
@@ -42,7 +42,7 @@
 #' @usage data(ison_marvel_relationships)
 #' @format
 #'   ```{r, echo = FALSE}
-#'   as_tidygraph(ison_marvel_relationships)
+#'   ison_marvel_relationships
 #'   ```
 "ison_marvel_relationships"
 
@@ -60,7 +60,7 @@
 #' @usage data(ison_lotr)
 #' @format
 #'   ```{r, echo = FALSE}
-#'   as_tidygraph(ison_lotr)
+#'   ison_lotr
 #'   ```
 "ison_lotr"
 
@@ -77,7 +77,7 @@
 #' @usage data(ison_mm)
 #' @format 
 #'   ```{r, echo = FALSE}
-#'   as_tidygraph(ison_mm)
+#'   ison_mm
 #'   ```
 "ison_mm"
 
@@ -85,7 +85,7 @@
 #' @usage data(ison_bm)
 #' @format 
 #'   ```{r, echo = FALSE}
-#'   as_tidygraph(ison_bm)
+#'   ison_bm
 #'   ```
 "ison_bm"
 
@@ -93,7 +93,7 @@
 #' @usage data(ison_mb)
 #' @format 
 #'   ```{r, echo = FALSE}
-#'   as_tidygraph(ison_mb)
+#'   ison_mb
 #'   ```
 "ison_mb"
 
@@ -101,7 +101,7 @@
 #' @usage data(ison_bb)
 #' @format 
 #'   ```{r, echo = FALSE}
-#'   as_tidygraph(ison_bb)
+#'   ison_bb
 #'   ```
 "ison_bb"
 
@@ -183,7 +183,7 @@
 #'   \doi{10.1086/jar.33.4.3629752}.
 #' @format 
 #'   ```{r, echo = FALSE}
-#'   as_tidygraph(ison_karateka)
+#'   ison_karateka
 #'   ```
 "ison_karateka"
 
@@ -258,6 +258,6 @@
 #'   Chicago: University of Chicago Press.
 #' @format 
 #'   ```{r, echo = FALSE}
-#'   as_tidygraph(ison_southern_women)
+#'   ison_southern_women
 #'   ```
 "ison_southern_women"
