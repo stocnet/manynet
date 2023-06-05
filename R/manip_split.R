@@ -302,7 +302,7 @@ from_egos <- function(.data) {
   for (i in seq_along(ann)[-1]){
     out <- rbind(out, igraph::as_data_frame(ann[[i]]))
   }
-  igraph::graph_from_data_frame(dplyr::distinct(out))
+  as_tidygraph(igraph::graph_from_data_frame(dplyr::distinct(out)))
 }
 
 #' @describeIn split Returns a single network object
@@ -323,7 +323,7 @@ from_waves <- function(.data) {
   for (i in seq_along(ann)[-1]){
     out <- rbind(out, igraph::as_data_frame(ann[[i]]))
   }
-  igraph::graph_from_data_frame(out)
+  as_tidygraph(igraph::graph_from_data_frame(out))
 }
 
 #' @describeIn split Returns a single network object
@@ -350,7 +350,7 @@ from_slices <- function(.data, remove.duplicates = FALSE) {
     if (isTRUE(remove.duplicates)) {
       out <- dplyr::distinct(out)
     }
-    igraph::graph_from_data_frame(out)
+    as_tidygraph(igraph::graph_from_data_frame(out))
   } else {
     message("Only one slice is available, cannot be joined.")
   }
