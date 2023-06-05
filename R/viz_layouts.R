@@ -238,11 +238,14 @@ layout_tbl_graph_ladder <- function(.data,
 layout_tbl_graph_concentric <- function(.data, membership = NULL, radius = NULL, 
                                         order.by = NULL, 
                                         circular = FALSE, times = 1000){
-  if (is.null(membership)){
-    if(!is_twomode(.data)) 
-      membership <- to_list(node_core(.data))
-    else membership <- to_list(node_mode(.data))
-  }
+  if (is.null(membership)){ 
+    if(is_twomode(.data))
+      membership <- node_mode(.data) else 
+        stop("Please pass the function a `membership` vector.")
+  } 
+  if(is.null(names(membership)) & is_labelled(.data))
+    names(membership) <- node_names(.data)
+  membership <- to_list(membership)
   all_c  <- unlist(membership, use.names = FALSE)
   if (any(table(all_c) > 1)) 
     stop("Duplicated nodes in layers!")

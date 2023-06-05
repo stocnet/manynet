@@ -61,5 +61,6 @@ test_that("concentric layout works", {
   expect_equal(length(x)/4, length(unique(abs(x))))
   expect_equal(length(y)/4, length(unique(abs(y))))
   expect_length(layout_tbl_graph_concentric(ison_southern_women), 2)
-  expect_length(layout_tbl_graph_concentric(ison_adolescents), 2)
+  expect_length(layout_tbl_graph_concentric(ison_adolescents, 
+                                            membership = c(rep(1,4),rep(2,4))), 2)
 })
