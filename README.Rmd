@@ -21,17 +21,17 @@ list_data <- function(string){
 ```
 
 # manynet 
-<!-- <img src="man/figures/logo.png" align="right" width="150"/> -->
+<img src="man/figures/logo.png" align="right" width="150"/>
 
 <!-- badges: start -->
 [![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html#maturing)
-![CRAN/METACRAN](https://img.shields.io/cran/v/manynet)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/snlab-ch/manynet)
+<!-- ![CRAN/METACRAN](https://img.shields.io/cran/v/manynet) -->
+<!-- ![GitHub release (latest by date)](https://img.shields.io/github/v/release/snlab-ch/manynet) -->
 ![GitHub Release Date](https://img.shields.io/github/release-date/snlab-ch/manynet)
-[![Codecov test coverage](https://codecov.io/gh/snlab-ch/manynet/branch/main/graph/badge.svg)](https://app.codecov.io/gh/snlab-ch/manynet?branch=main)
-[![CodeFactor](https://www.codefactor.io/repository/github/snlab-ch/manynet/badge)](https://www.codefactor.io/repository/github/snlab-ch/manynet)
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4559/badge)](https://bestpractices.coreinfrastructure.org/projects/4559)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7076396.svg)](https://doi.org/10.5281/zenodo.7076396)
+<!-- [![Codecov test coverage](https://codecov.io/gh/snlab-ch/manynet/branch/main/graph/badge.svg)](https://app.codecov.io/gh/snlab-ch/manynet?branch=main) -->
+<!-- [![CodeFactor](https://www.codefactor.io/repository/github/snlab-ch/manynet/badge)](https://www.codefactor.io/repository/github/snlab-ch/manynet) -->
+<!-- [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4559/badge)](https://bestpractices.coreinfrastructure.org/projects/4559) -->
+<!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7076396.svg)](https://doi.org/10.5281/zenodo.7076396) -->
 <!-- see https://zenodo.org/record/7076396 -->
 <!-- ![GitHub All Releases](https://img.shields.io/github/downloads/snlab-ch/migraph/total) -->
 <!-- badges: end -->
@@ -45,21 +45,9 @@ It offers a broad range of functions to make, manipulate, map, measure, and mode
 - undirected, directed, and sometimes complex networks
 - unweighted, weighted, and sometimes signed networks
 
-<img style="border:10px solid white;" src="https://jameshollway.com/media/9781108833509pvs01.jpg" align="left" width="125"/>
+## How does manynet help?
 
-The package is intended as a software companion to the book:
-
-> David Knoke, Mario Diani, James Hollway, and Dimitris Christopoulos (2021) [*Multimodal Political Networks*](https://www.cambridge.org/core/books/multimodal-political-networks/43EE8C192A1B0DCD65B4D9B9A7842128).
-Cambridge University Press: Cambridge.
-
-Most datasets used in the book are included in this package,
-and the package implements most methods discussed in the book.
-Since many of theses datasets and routines are discussed and analysed more there,
-if you like the package please check out the book, and vice versa.
-
-## How does migraph help?
-
-`{migraph}` can help with many network analytic tasks,
+`{manynet}` can help with many network analytic tasks,
 including Making and Manipulating network data,
 Marking and Measuring nodes, ties, and networks,
 calculating Motifs and identifying Memberships,
@@ -81,7 +69,7 @@ imports <- igraph::graph_from_literal(ucinet:pajek+--+tidygraph,
                                       matrix:dynetml--+tidygraph,
                                       edgelist:nodelist+--+tibble)
 imports <- imports %>% mutate(type = ifelse(node_names(imports)%in% c("tidygraph","tibble"), TRUE, FALSE))
-migraph::autographr(imports, node_size = 2)
+autographr(imports, node_size = 2, layout = "hierarchy")
 ```
 
 - `r list_functions("^read_")`

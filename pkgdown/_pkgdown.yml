@@ -36,7 +36,7 @@ reference:
       one-mode and two-mode networks:
     contents:
       - starts_with("create_")
-      # - starts_with("generate_")
+      - starts_with("generate_")
       - starts_with("read")
       - starts_with("write")
   - title: "Manipulation"
@@ -48,8 +48,8 @@ reference:
       - starts_with("as_")
       - starts_with("to_")
       - add
-      # - grab
-      # - na
+      - grab
+      - miss
   - title: "Marks"
     desc: |
       Functions for identifying properties of graphs, nodes or ties,
@@ -60,6 +60,11 @@ reference:
       two values.
     contents:
       - contains("is_")
+  - title: "Mapping"
+    desc: "Functions for plotting and visualising graphs of different types:"
+    contents:
+      - auto_graph
+      - starts_with("layout_")
   - title: "Data"
     desc: |
       The package contains a variety of networks useful for pedagogical purposes

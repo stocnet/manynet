@@ -3,22 +3,20 @@
 
 # manynet
 
-<!-- <img src="man/figures/logo.png" align="right" width="150"/> -->
+<img src="man/figures/logo.png" align="right" width="150"/>
+
 <!-- badges: start -->
 
 [![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html#maturing)
-![CRAN/METACRAN](https://img.shields.io/cran/v/manynet) ![GitHub release
-(latest by
-date)](https://img.shields.io/github/v/release/snlab-ch/manynet)
+<!-- ![CRAN/METACRAN](https://img.shields.io/cran/v/manynet) -->
+<!-- ![GitHub release (latest by date)](https://img.shields.io/github/v/release/snlab-ch/manynet) -->
 ![GitHub Release
 Date](https://img.shields.io/github/release-date/snlab-ch/manynet)
-[![Codecov test
-coverage](https://codecov.io/gh/snlab-ch/manynet/branch/main/graph/badge.svg)](https://app.codecov.io/gh/snlab-ch/manynet?branch=main)
-[![CodeFactor](https://www.codefactor.io/repository/github/snlab-ch/manynet/badge)](https://www.codefactor.io/repository/github/snlab-ch/manynet)
-[![CII Best
-Practices](https://bestpractices.coreinfrastructure.org/projects/4559/badge)](https://bestpractices.coreinfrastructure.org/projects/4559)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7076396.svg)](https://doi.org/10.5281/zenodo.7076396)
+<!-- [![Codecov test coverage](https://codecov.io/gh/snlab-ch/manynet/branch/main/graph/badge.svg)](https://app.codecov.io/gh/snlab-ch/manynet?branch=main) -->
+<!-- [![CodeFactor](https://www.codefactor.io/repository/github/snlab-ch/manynet/badge)](https://www.codefactor.io/repository/github/snlab-ch/manynet) -->
+<!-- [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4559/badge)](https://bestpractices.coreinfrastructure.org/projects/4559) -->
+<!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7076396.svg)](https://doi.org/10.5281/zenodo.7076396) -->
 <!-- see https://zenodo.org/record/7076396 -->
 <!-- ![GitHub All Releases](https://img.shields.io/github/downloads/snlab-ch/migraph/total) -->
 <!-- badges: end -->
@@ -33,23 +31,9 @@ functions to make, manipulate, map, measure, and model:
 - undirected, directed, and sometimes complex networks
 - unweighted, weighted, and sometimes signed networks
 
-<img style="border:10px solid white;" src="https://jameshollway.com/media/9781108833509pvs01.jpg" align="left" width="125"/>
+## How does manynet help?
 
-The package is intended as a software companion to the book:
-
-> David Knoke, Mario Diani, James Hollway, and Dimitris Christopoulos
-> (2021) [*Multimodal Political
-> Networks*](https://www.cambridge.org/core/books/multimodal-political-networks/43EE8C192A1B0DCD65B4D9B9A7842128).
-> Cambridge University Press: Cambridge.
-
-Most datasets used in the book are included in this package, and the
-package implements most methods discussed in the book. Since many of
-theses datasets and routines are discussed and analysed more there, if
-you like the package please check out the book, and vice versa.
-
-## How does migraph help?
-
-`{migraph}` can help with many network analytic tasks, including Making
+`{manynet}` can help with many network analytic tasks, including Making
 and Manipulating network data, Marking and Measuring nodes, ties, and
 networks, calculating Motifs and identifying Memberships, as well as
 Modelling and Mapping.
@@ -64,10 +48,6 @@ edgelists and nodelists,
 [UCINET](http://www.analytictech.com/archive/ucinet.htm),
 [Pajek](http://mrvar.fdv.uni-lj.si/pajek/), and
 [DynetML](http://casos.cs.cmu.edu/projects/dynetml/) files, e.g.:
-
-    #> Registered S3 method overwritten by 'migraph':
-    #>   method        from   
-    #>   mutate.igraph manynet
 
 <img src="man/figures/README-import-graph-1.png" width="100%" />
 
@@ -89,9 +69,8 @@ particular structure, e.g.:
 The `generate_*` group of functions generate networks from particular
 generative mechanisms, e.g.:
 
-- `generate_dynam()`, `generate_permutation()`, `generate_random()`,
-  `generate_scalefree()`, `generate_smallworld()`,
-  `generate_utilities()`
+- `generate_permutation()`, `generate_random()`, `generate_scalefree()`,
+  `generate_smallworld()`, `generate_utilities()`
 
 Note that all these functions work to create two-mode networks as well
 as one-mode versions.
@@ -107,6 +86,10 @@ changing network data.
 Once network data is in R, `{manynet}`’s `as_*()` functions can be used
 to translate objects from one of the above classes into any other, and
 include:
+
+    #> Registered S3 method overwritten by 'migraph':
+    #>   method        from   
+    #>   mutate.igraph manynet
 
 <img src="man/figures/README-coercion-graph-1.png" width="100%" />
 
