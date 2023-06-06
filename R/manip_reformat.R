@@ -139,7 +139,7 @@ to_directed.igraph <- function(.data) {
 
 #' @export
 to_directed.tbl_graph <- function(.data) {
-  as_tidygraph(to_directed(as_igraph(a)))
+  as_tidygraph(to_directed(as_igraph(.data)))
 }
 
 #' @export
@@ -207,6 +207,26 @@ to_reciprocated.igraph <- function(.data) {
   igraph::as.directed(.data, mode = "mutual")
 }
 
+#' @export
+to_reciprocated.tbl_graph <- function(.data) {
+  as_tidygraph(to_reciprocated(as_igraph(.data)))
+}
+
+#' @export
+to_reciprocated.matrix <- function(.data) {
+  as_matrix(to_reciprocated(as_igraph(.data)))
+}
+
+#' @export
+to_reciprocated.network <- function(.data) {
+  as_network(to_reciprocated(as_igraph(.data)))
+}
+
+#' @export
+to_reciprocated.matrix <- function(.data) {
+  as_matrix(to_reciprocated(as_igraph(.data)))
+}
+
 #' @describeIn reformat Returns an object where all ties are acyclic.
 #' @importFrom igraph as.directed
 #' @export
@@ -215,6 +235,21 @@ to_acyclic <- function(.data) UseMethod("to_acyclic")
 #' @export
 to_acyclic.igraph <- function(.data) {
   igraph::as.directed(.data, mode = "acyclic")
+}
+
+#' @export
+to_acyclic.tbl_graph <- function(.data) {
+  as_tidygraph(to_acyclic(as_igraph(.data)))
+}
+
+#' @export
+to_acyclic.matrix <- function(.data) {
+  as_matrix(to_acyclic(as_igraph(.data)))
+}
+
+#' @export
+to_acyclic.network <- function(.data) {
+  as_network(to_acyclic(as_igraph(.data)))
 }
 
 #' @describeIn reformat Returns an object that has all edge weights removed.
@@ -526,5 +561,5 @@ to_twomode.tbl_graph <- function(.data, mark){
 
 #' @export
 to_twomode.network <- function(.data, mark){
-  as_network(to_twomode(as_igraph(.data, mark)))
+  as_network(to_twomode(as_igraph(.data), mark), twomode = TRUE)
 }
