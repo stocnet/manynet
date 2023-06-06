@@ -707,7 +707,7 @@ as_network.igraph <- function(.data,
 #' @export
 as_network.tbl_graph <- function(.data,
                                  twomode = FALSE) {
-  nodes <- NULL
+  nodes <- name <- type <- NULL
   attr <- as.data.frame(activate(.data, nodes))[-1]
   if ("name" %in% colnames(attr)) attr <- subset(attr, select = c(-name))
   if ("type" %in% colnames(attr)) attr <- subset(attr, select = c(-type))
