@@ -49,9 +49,9 @@ NULL
 #' @importFrom igraph bipartite.projection
 #' @importFrom stats cor
 #' @examples
-#' autographr(ison_southern_women) /
-#' (autographr(to_mode1(ison_southern_women)) |
-#' autographr(to_mode2(ison_southern_women)))
+#' autographr(ison_southern_women)
+#' autographr(to_mode1(ison_southern_women))
+#' autographr(to_mode2(ison_southern_women))
 #' @export
 to_mode1 <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) UseMethod("to_mode1")
 
@@ -224,7 +224,7 @@ to_subgraph.matrix <- function(.data, ...){
 #'   where the edges are the nodes
 #' @importFrom igraph make_line_graph E
 #' @examples
-#' autographr(ison_adolescents) +  
+#' autographr(ison_adolescents)  
 #' autographr(to_ties(ison_adolescents))
 #' @export
 to_ties <- function(.data) UseMethod("to_ties")
@@ -345,7 +345,7 @@ to_blocks.tbl_graph <- function(.data, membership, FUN = mean){
 #'   By default "type".
 #' @importFrom igraph max_bipartite_match
 #' @examples 
-#' autographr(to_matching(ison_southern_women), "hierarchy")
+#' autographr(to_matching(ison_southern_women))
 #' @export
 to_matching <- function(.data, mark = "type") UseMethod("to_matching")
 
@@ -430,10 +430,6 @@ to_anti.network <- function(.data){
 #' @importFrom tidygraph node_is_isolated
 #' @importFrom dplyr filter
 #' @examples
-#' ison_adolescents %>%
-#'   activate(edges) %>%
-#'   to_subgraph(from == 1:5) %>%
-#'   to_no_isolates()
 #' ison_adolescents %>%
 #'   activate(edges) %>%
 #'   mutate(wave = sample(1995:1998, 10, replace = TRUE)) %>%

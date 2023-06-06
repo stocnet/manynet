@@ -143,17 +143,13 @@ where \eqn{n} is the number of nodes in the network.
 }
 
 \examples{
-autographr(ison_southern_women) /
-(autographr(to_mode1(ison_southern_women)) |
-autographr(to_mode2(ison_southern_women)))
-autographr(ison_adolescents) +  
+autographr(ison_southern_women)
+autographr(to_mode1(ison_southern_women))
+autographr(to_mode2(ison_southern_women))
+autographr(ison_adolescents)  
 autographr(to_ties(ison_adolescents))
-autographr(to_matching(ison_southern_women), "hierarchy")
-autographr(to_anti(ison_southern_women), "hierarchy")
-ison_adolescents \%>\%
-  activate(edges) \%>\%
-  to_subgraph(from == 1:5) \%>\%
-  to_no_isolates()
+autographr(to_matching(ison_southern_women))
+autographr(to_anti(ison_southern_women))
 ison_adolescents \%>\%
   activate(edges) \%>\%
   mutate(wave = sample(1995:1998, 10, replace = TRUE)) \%>\%
