@@ -137,6 +137,26 @@ to_directed.igraph <- function(.data) {
   else .data
 }
 
+#' @export
+to_directed.tbl_graph <- function(.data) {
+  as_tidygraph(to_directed(as_igraph(a)))
+}
+
+#' @export
+to_directed.matrix <- function(.data) {
+  as_matrix(to_directed(as_igraph(.data)))
+}
+
+#' @export
+to_directed.network <- function(.data) {
+  as_network(to_directed(as_igraph(.data)))
+}
+
+#' @export
+to_directed.data.frame <- function(.data) {
+  as_edgelist(to_directed(as_igraph(.data)))
+}
+
 #' @describeIn reformat Returns an object that has any edge direction transposed,
 #'   or flipped, so that senders become receivers and receivers become senders.
 #'   This essentially has no effect on undirected networks or reciprocated ties.
