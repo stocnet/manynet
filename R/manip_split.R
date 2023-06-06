@@ -20,9 +20,9 @@ NULL
 #'   Increasing this to 1 excludes the ego,
 #'   and 2 excludes ego's direct alters.
 #' @importFrom igraph make_ego_graph
-#' @examples 
-#' autographs(to_egos(ison_adolescents))
-#' autographs(to_egos(ison_adolescents,2))
+#' @examples
+#' to_egos(ison_adolescents)
+#' #autographs(to_egos(ison_adolescents,2))
 #' @export
 to_egos <- function(.data, 
                     max_dist = 1, 
