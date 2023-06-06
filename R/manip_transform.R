@@ -387,7 +387,7 @@ to_matching.matrix <- function(.data, mark = "type"){
 #'   are included in the new network.
 #' @importFrom igraph complementer
 #' @examples 
-#' autographr(to_anti(ison_southern_women), "hierarchy")
+#' autographr(to_anti(ison_southern_women))
 #' @export
 to_anti <- function(.data) UseMethod("to_anti")
 
