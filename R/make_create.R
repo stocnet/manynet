@@ -421,7 +421,8 @@ roll_over <- function(w) {
 }
 
 infer_dims <- function(object) {
-  if(is_twomode(object)){
+  if(is_twomode(object) &
+     any(grepl("type", igraph::vertex_attr_names(as_igraph(object))))) {
     c(sum(!igraph::V(as_igraph(object))$type),
       sum(igraph::V(as_igraph(object))$type))
   } else {
