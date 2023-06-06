@@ -207,12 +207,12 @@ is_labelled.tbl_graph <- function(.data) {
 
 #' @export
 is_labelled.matrix <- function(.data) {
-  !is.null(dimnames(.data))
+  any(c(!is.null(dimnames(.data)[[1]]), !is.null(dimnames(.data)[[2]])))
 }
 
 #' @export
 is_labelled.network <- function(.data) {
-  !is.null(dimnames(as_matrix(.data)))
+  !all(is.na(network::get.vertex.attribute(.data, "vertex.names")))
 }
 
 #' @export
