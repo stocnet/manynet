@@ -163,10 +163,8 @@ plot_gl <- function(x, tmax, tmin, rmin, fmin, ne, rc, p) {
 #' _Nucleic Acids Research_, 42 (1) e6.
 #' @importFrom BiocManager install
 #' @examples 
-#' (autographr(ison_southern_women, "hierarchy") /
-#' autographr(ison_southern_women, "railway")) |
+#' autographr(ison_southern_women, "railway")
 #' autographr(ison_southern_women, "concentric")
-#' autographr(ison_karateka, "hierarchy") 
 #' @export
 layout_tbl_graph_hierarchy <- function(.data,
                                        circular = FALSE, times = 1000){

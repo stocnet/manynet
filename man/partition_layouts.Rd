@@ -64,10 +64,8 @@ the number of edge crossings.}
 Layout algorithms based on bi- or other partitions
 }
 \examples{
-(autographr(ison_southern_women, "hierarchy") /
-autographr(ison_southern_women, "railway")) |
+autographr(ison_southern_women, "railway")
 autographr(ison_southern_women, "concentric")
-autographr(ison_karateka, "hierarchy") 
 }
 \seealso{
 Other mapping: 
