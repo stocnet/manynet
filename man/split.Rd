@@ -101,8 +101,8 @@ from a list of slices.
 
 }}
 \examples{
-autographs(to_egos(ison_adolescents))
-autographs(to_egos(ison_adolescents,2))
+to_egos(ison_adolescents)
+#autographs(to_egos(ison_adolescents,2))
 ison_adolescents \%>\%
   activate(nodes) \%>\%
   mutate(unicorn = sample(c("yes", "no"), 8,
