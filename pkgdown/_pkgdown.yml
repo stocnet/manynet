@@ -65,12 +65,13 @@ reference:
       two values.
       The `is_*()` family all return logical scalars (TRUE or FALSE).
     contents:
-      - grab
       - contains("is_")
   - title: "Mapping"
     desc: "Functions for plotting and visualising graphs of different types:"
     contents:
-      - auto_graph
+      - starts_with("network_")
+      - starts_with("node_")
+      - starts_with("autograph")
       - starts_with("layout_")
   - title: "Data"
     desc: |
