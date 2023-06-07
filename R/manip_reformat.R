@@ -223,8 +223,8 @@ to_reciprocated.network <- function(.data) {
 }
 
 #' @export
-to_reciprocated.matrix <- function(.data) {
-  as_matrix(to_reciprocated(as_igraph(.data)))
+to_reciprocated.data.frame <- function(.data) {
+  as_edgelist(to_reciprocated(as_igraph(.data)))
 }
 
 #' @describeIn reformat Returns an object where all ties are acyclic.
