@@ -2,29 +2,12 @@
 % Please edit documentation in R/manip_add.R
 \name{add}
 \alias{add}
-\alias{join_nodes}
-\alias{join_ties}
 \alias{add_nodes}
 \alias{add_ties}
 \alias{add_node_attribute}
 \alias{add_tie_attribute}
-\alias{mutate_ties}
-\alias{select_ties}
-\alias{filter_ties}
-\alias{rename_ties}
-\alias{summarise_ties}
-\alias{bind_node_attributes}
-\title{Adding and copying attributes from one network to another}
+\title{Adding nodes and ties and their attributes}
 \usage{
-join_nodes(
-  .data,
-  object2,
-  by = NULL,
-  join_type = c("full", "left", "right", "inner")
-)
-
-join_ties(.data, object2, attr_name)
-
 add_nodes(.data, nodes, attribute = NULL)
 
 add_ties(.data, ties, attribute = NULL)
@@ -32,18 +15,6 @@ add_ties(.data, ties, attribute = NULL)
 add_node_attribute(.data, attr_name, vector)
 
 add_tie_attribute(.data, attr_name, vector)
-
-mutate_ties(.data, ...)
-
-select_ties(.data, ...)
-
-filter_ties(.data, ...)
-
-rename_ties(.data, ...)
-
-summarise_ties(.data, ...)
-
-bind_node_attributes(.data, object2)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -55,40 +26,23 @@ bind_node_attributes(.data, object2)
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
 
-\item{object2}{A second object to copy nodes or edges from.}
-
-\item{by}{An attribute name to join objects by.
-By default, NULL.}
-
-\item{join_type}{A type of join to be used.
-Options are "full","left", "right", "inner".}
-
-\item{attr_name}{Name of the new attribute in the resulting object.}
-
 \item{nodes}{The number of nodes to be added.}
 
 \item{attribute}{A named list to be added as tie or node attributes.}
 
 \item{ties}{The number of ties to be added or an even list of ties.}
 
-\item{vector}{A vector of values for the new attribute.}
+\item{attr_name}{Name of the new attribute in the resulting object.}
 
-\item{...}{Additional arguments.}
+\item{vector}{A vector of values for the new attribute.}
 }
 \description{
 These functions allow users to add nodes, ties, or attributes to the nodes or ties
 of a network.
-The \verb{join_*()}, \verb{mutate_*()}, \verb{select_*()}, \verb{filter_*()}, \verb{rename_*()}, and \verb{summarise_*()}
-functions adapt the \code{{dplyr}}-type syntax to work with networks of any type.
 The \verb{add_*()} functions operate similarly to in \code{{igraph}}.
 }
 \section{Functions}{
 \itemize{
-\item \code{join_nodes()}: Copies node attributes from a given graph into specified graph
-
-\item \code{join_ties()}: Copies ties from another graph to specified graph and
-adds a tie attribute identifying the ties that were newly added
-
 \item \code{add_nodes()}: Add additional ties to a network
 
 \item \code{add_ties()}: Add additional ties to a network
@@ -99,44 +53,19 @@ as node attributes
 \item \code{add_tie_attribute()}: Insert specified values from a vector into the network.
 as tie attributes
 
-\item \code{mutate_ties()}: Tidy way to add vector as tie attributes.
-
-\item \code{select_ties()}: Tidy way to select tie attributes.
-
-\item \code{filter_ties()}: Tidy way to filter ties based on a logical statement with
-relation to some tie attribute.
-
-\item \code{rename_ties()}: Tidy way to rename tie attributes.
-
-\item \code{summarise_ties()}: Tidy way to summarise tie attributes.
-
-\item \code{bind_node_attributes()}: Copying all nodal attributes from one network to another
-
 }}
 \examples{
-\donttest{
   other <- create_filled(4) \%>\% mutate(name = c("A", "B", "C", "D"))
-  another <- create_filled(3) \%>\% mutate(name = c("E", "F", "G"))
-  other2 <- other \%>\% mutate_ties(type = c("a"))
-  join_nodes(another, other)
   add_nodes(other, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))
-  add_ties(other, c(1,2), list(time = 2, increment = -1))
-  add_node_attribute(other, "wealth", 1:4)
-  bind_node_attributes(other, other2)
-  summarise_ties(other2, type)
-  rename_ties(other2, form = type)
-  mutate_ties(other, form = 1:6) \%>\% filter_ties(form < 4)
-  select_ties(other2, type)
   add_tie_attribute(other, "weight", c(1, 2, 2, 2, 1, 2))
-}
 }
 \seealso{
 Other manipulations: 
-\code{\link{as}()},
-\code{\link{grab}},
+\code{\link{from}},
 \code{\link{miss}},
 \code{\link{reformat}},
 \code{\link{split}()},
+\code{\link{tidy}},
 \code{\link{transform}()}
 }
 \concept{manipulations}

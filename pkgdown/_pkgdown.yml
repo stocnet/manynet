@@ -40,18 +40,24 @@ reference:
       - starts_with("generate_")
       - starts_with("read")
       - starts_with("write")
-  - title: "Manipulation"
       - starts_with("as_")
+  - title: "Molding"
     desc: |
-      Functions for coercing objects between different classes, 
-      reformatting or transforming the type of network,
-      or adding information to or retrieving information from the network.
+      Functions for manipulating networks into useful formats.
+      This includes functions for reformatting networks into networks
+      of the same dimensions but a different type, e.g. from directed to undirected.
+      It also includes functions for transforming networks into networks
+      with other dimensions, such as from a two-mode network into a one-mode network.
+      There are also functions for splitting networks, e.g. into a list of ego networks,
+      and rejoining them from such lists.
+      There are also tidy-style and igraph-style functions for adding or joining
+      new data on nodes or ties to networks.
     contents:
       - starts_with("to_")
-      - add
-      - miss
-  - title: "Properties"
       - starts_with("from_")
+      - starts_with("na_to_")
+      - starts_with("add_")
+      - starts_with("join_")
     desc: |
       Functions for identifying properties of networks, nodes, or ties.
       All `node_` and `tie_` measures return a single vector.

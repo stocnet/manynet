@@ -16,7 +16,7 @@
 #'   This will return a directed network in which the arcs are
 #'   out-facing or equivalent.
 #'   This direction can be swapped using `to_redirected()`.
-#'   In two-mode networks, this is ignored.
+#'   In two-mode networks, the directed argument is ignored.
 #' @name create
 #' @family makes
 #' @seealso [as]
@@ -31,14 +31,15 @@
 #'   }
 #' @param directed Logical whether the graph should be directed.
 #'   By default `directed = FALSE`.
-#'   If the opposite direction is desired, use `to_redirected()`.
+#'   If the opposite direction is desired, 
+#'   use `to_redirected()` on the output of these functions.
 #' @param width Integer specifying the width of the ring,
 #'   breadth of the branches, or maximum extent of the neighbourbood.
 #' @param membership A vector of partition membership as integers.
 #'   If left as `NULL` (the default), nodes in each mode will be
 #'   assigned to two, equally sized partitions.
 #' @param ... Additional arguments passed on to `{igraph}`.
-#' @return By default an `igraph` object is returned,
+#' @return By default a `tbl_graph` object is returned,
 #'   but this can be coerced into other types of objects
 #'   using `as_edgelist()`, `as_matrix()`,
 #'   `as_tidygraph()`, or `as_network()`.

@@ -32,8 +32,8 @@ undirected networks); if you have a different type of network, a
 different package is needed. Lastly, even packages with excellent
 graphical capabilities can make visualising networks slow and cumbersome
 by using poor defaults and many, incomprehensible options to change
-them. `{manynet}` aims to help researchers with Making, Manipulating,
-and Mapping networks.
+them. `{manynet}` aims to help researchers with Making, Molding, and
+Mapping networks.
 
 ## Making
 
@@ -107,7 +107,7 @@ edgelists as data frames, [`{igraph}`](https://igraph.org/r/),
 [`{tidygraph}`](https://tidygraph.data-imaginist.com/index.html), and
 extensible by developments in those other packages too.
 
-## Manipulating
+## Molding
 
 `{manynet}`’s `to_*()` functions can be used on any class object to
 reformat, transform, or split networks into networks with other
@@ -157,7 +157,7 @@ network properties. These can be used to create new
 
 - `is_bipartite()`, `is_complex()`, `is_directed()`, `is_dynamic()`,
   `is_edgelist()`, `is_graph()`, `is_labelled()`, `is_longitudinal()`,
-  `is_migraph()`, `is_multiplex()`, `is_signed()`, `is_twomode()`,
+  `is_manynet()`, `is_multiplex()`, `is_signed()`, `is_twomode()`,
   `is_uniplex()`, `is_weighted()`
 
 ## Mapping

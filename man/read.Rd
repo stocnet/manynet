@@ -163,6 +163,7 @@ you will need to unpack them and convert them one by one.
 \link{as}
 
 Other makes: 
+\code{\link{as}()},
 \code{\link{create}},
 \code{\link{generate}}
 }

@@ -149,10 +149,10 @@ as_tidygraph(create_filled(5)) \%>\%
 \seealso{
 Other manipulations: 
 \code{\link{add}},
-\code{\link{as}()},
-\code{\link{grab}},
+\code{\link{from}},
 \code{\link{miss}},
 \code{\link{split}()},
+\code{\link{tidy}},
 \code{\link{transform}()}
 }
 \concept{manipulations}

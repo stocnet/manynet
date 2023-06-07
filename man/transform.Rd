@@ -165,10 +165,10 @@ Goldberg, A V; Tarjan, R E (1986).
 \seealso{
 Other manipulations: 
 \code{\link{add}},
-\code{\link{as}()},
-\code{\link{grab}},
+\code{\link{from}},
 \code{\link{miss}},
 \code{\link{reformat}},
-\code{\link{split}()}
+\code{\link{split}()},
+\code{\link{tidy}}
 }
 \concept{manipulations}

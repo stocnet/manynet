@@ -52,10 +52,10 @@ Krause, Robert, Mark Huisman, Christian Steglich, and Tom A.B. Snijders. 2020.
 \seealso{
 Other manipulations: 
 \code{\link{add}},
-\code{\link{as}()},
-\code{\link{grab}},
+\code{\link{from}},
 \code{\link{reformat}},
 \code{\link{split}()},
+\code{\link{tidy}},
 \code{\link{transform}()}
 }
 \concept{manipulations}

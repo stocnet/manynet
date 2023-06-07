@@ -126,6 +126,7 @@ Barabási, Albert-László, and Réka Albert. 1999.
 \link{as}
 
 Other makes: 
+\code{\link{as}()},
 \code{\link{create}},
 \code{\link{read}}
 }
