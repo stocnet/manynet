@@ -1,4 +1,4 @@
-#' Grab various node or edge attributes from a network
+#' Grab various node or tie attributes from a network
 #' 
 #' @description These functions operate to help extract certain attributes
 #'   from given network data.
@@ -7,7 +7,7 @@
 #'   `network_*()` functions always relate to the overall graph or network,
 #'   usually returning a scalar.
 #'   `node_*()` and `tie_*()` always return vectors the same length
-#'   as the number of nodes or edges in the network, respectively.
+#'   as the number of nodes or ties in the network, respectively.
 #' @name grab
 #' @family manipulations
 #' @inheritParams is

@@ -22,9 +22,9 @@ NULL
 #' @importFrom tidygraph is.tbl_graph
 #' @importFrom network is.network
 #' @examples
-#' is_migraph(create_filled(2))
+#' is_manynet(create_filled(2))
 #' @export
-is_migraph <- function(.data) {
+is_manynet <- function(.data) {
   tidygraph::is.tbl_graph(.data) |
     network::is.network(.data) |
     igraph::is.igraph(.data) |
