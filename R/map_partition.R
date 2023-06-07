@@ -32,7 +32,7 @@ layout_tbl_graph_hierarchy <- function(.data,
   if (!requireNamespace("Rgraphviz", quietly = TRUE)){
     BiocManager::install("Rgraphviz")
   }
-  
+  if (requireNamespace("Rgraphviz", quietly = TRUE)){
   prep <- as_matrix(.data, twomode = FALSE)
   if(anyDuplicated(rownames(prep))){
     rownames(prep) <- seq_len(nrow(prep))
@@ -46,6 +46,9 @@ layout_tbl_graph_hierarchy <- function(.data,
   nodeY <- .rescale(out@renderInfo@nodes$nodeY)
   # nodeY <- abs(nodeY - max(nodeY))
   .to_lo(cbind(nodeX, nodeY))
+  } else stop(paste(c("Please install BiocManager from CRAN,",
+                       "and then run `BiocManager::install('Rgraphviz')`",
+                       "to access this functionality.")))
 }
 
 #' @rdname partition_layouts
@@ -56,7 +59,8 @@ layout_tbl_graph_alluvial <- function(.data,
     BiocManager::install("Rgraphviz")
   }
   
-  prep <- as_matrix(.data, twomode = FALSE)
+  if (requireNamespace("Rgraphviz", quietly = TRUE)){
+    prep <- as_matrix(.data, twomode = FALSE)
   if(anyDuplicated(rownames(prep))){
     rownames(prep) <- seq_len(nrow(prep))
     colnames(prep) <- seq_len(ncol(prep))
@@ -69,6 +73,9 @@ layout_tbl_graph_alluvial <- function(.data,
   nodeY <- .rescale(out@renderInfo@nodes$nodeY)
   # nodeY <- abs(nodeY - max(nodeY))
   .to_lo(cbind(nodeX, nodeY))  
+  } else stop(paste(c("Please install BiocManager from CRAN,",
+                      "and then run `BiocManager::install('Rgraphviz')`",
+                      "to access this functionality.")))
 }
 
 #' @rdname partition_layouts
