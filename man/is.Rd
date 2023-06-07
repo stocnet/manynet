@@ -2,7 +2,7 @@
 % Please edit documentation in R/mark_is.R
 \name{is}
 \alias{is}
-\alias{is_migraph}
+\alias{is_manynet}
 \alias{is_graph}
 \alias{is_edgelist}
 \alias{is_twomode}
@@ -17,7 +17,7 @@
 \alias{is_dynamic}
 \title{Marking networks based on their properties}
 \usage{
-is_migraph(.data)
+is_manynet(.data)
 
 is_graph(.data)
 
@@ -62,7 +62,7 @@ properties.
 }
 \section{Functions}{
 \itemize{
-\item \code{is_migraph()}: Tests whether network is manynet-compatible
+\item \code{is_manynet()}: Tests whether network is manynet-compatible
 
 \item \code{is_graph()}: Tests whether network contains graph-level information
 
@@ -92,7 +92,7 @@ or multiple columns to the edgelist.
 
 }}
 \examples{
-is_migraph(create_filled(2))
+is_manynet(create_filled(2))
 is_graph(create_star(2))
 is_edgelist(matrix(c(2,2), 1, 2))
 is_edgelist(as_edgelist(matrix(c(2,2), 1, 2)))

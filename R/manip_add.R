@@ -17,7 +17,7 @@
 #' \donttest{
 #'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
 #'   another <- create_filled(3) %>% mutate(name = c("E", "F", "G"))
-#'   other2 <- other %>% activate(edges) %>% mutate_ties(type = c("a"))
+#'   other2 <- other %>% mutate_ties(type = c("a"))
 #'   join_nodes(another, other)
 #'   add_nodes(other, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))
 #'   add_ties(other, c(1,2), list(time = 2, increment = -1))

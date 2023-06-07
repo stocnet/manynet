@@ -13,7 +13,7 @@
 \alias{network_dims}
 \alias{network_node_attributes}
 \alias{network_tie_attributes}
-\title{Grab various node or edge attributes from a network}
+\title{Grab various node or tie attributes from a network}
 \usage{
 node_names(.data)
 
@@ -57,7 +57,7 @@ They are also useful as helpers within other functions.
 \verb{network_*()} functions always relate to the overall graph or network,
 usually returning a scalar.
 \verb{node_*()} and \verb{tie_*()} always return vectors the same length
-as the number of nodes or edges in the network, respectively.
+as the number of nodes or ties in the network, respectively.
 }
 \section{Functions}{
 \itemize{
