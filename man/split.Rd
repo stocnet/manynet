@@ -7,11 +7,7 @@
 \alias{to_components}
 \alias{to_waves}
 \alias{to_slices}
-\alias{from_subgraphs}
-\alias{from_egos}
-\alias{from_waves}
-\alias{from_slices}
-\title{Tools for splitting and joining networks, graphs, and matrices}
+\title{Tools for splitting networks, graphs, and matrices into lists}
 \usage{
 to_egos(.data, max_dist = 1, min_dist = 0)
 
@@ -22,14 +18,6 @@ to_components(.data)
 to_waves(.data, attribute = "wave", panels = NULL)
 
 to_slices(.data, attribute = "time", slice = NULL)
-
-from_subgraphs(.data)
-
-from_egos(.data)
-
-from_waves(.data)
-
-from_slices(.data, remove.duplicates = FALSE)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -58,16 +46,11 @@ Users can also list specific waves they want to select.}
 
 \item{slice}{Character string or character list indicating the date(s)
 or integer(s) range used to slice data (e.g slice = c(1:2, 3:4)).}
-
-\item{remove.duplicates}{Should duplicates be removed?
-By default FALSE.
-If TRUE, duplicated edges are removed.}
 }
 \description{
 These functions offer tools for splitting manynet-consistent objects
 (matrices, igraph, tidygraph, or network objects).
 Splitting means that the returned object will be a list of objects.
-Joining expects a list of objects and returns a network object.
 }
 \section{Functions}{
 \itemize{
@@ -86,18 +69,6 @@ into a list of those observations.
 
 \item \code{to_slices()}: Returns a list of a network
 with some continuous time variable at some time slice(s).
-
-\item \code{from_subgraphs()}: Returns a single network object
-from a list of subgraphs.
-
-\item \code{from_egos()}: Returns a single network object
-from a list of egos.
-
-\item \code{from_waves()}: Returns a single network object
-from a list of waves.
-
-\item \code{from_slices()}: Returns a single network object
-from a list of slices.
 
 }}
 \examples{
@@ -121,31 +92,14 @@ ison_adolescents \%>\%
   mutate_ties(time = 1:10, increment = 1) \%>\% 
   add_ties(c(1,2), list(time = 3, increment = -1)) \%>\% 
   to_slices(slice = 7)
-ison_adolescents \%>\%
-  mutate(unicorn = sample(c("yes", "no"), 8, replace = TRUE)) \%>\%
-  to_subgraphs(attribute = "unicorn") \%>\%
-  from_subgraphs()
-ison_adolescents \%>\%
-  activate(edges) \%>\%
-  to_egos() \%>\%
-  from_egos()
-ison_adolescents \%>\%
-  mutate_ties(wave = sample(1:4, 10, replace = TRUE)) \%>\%
-  to_waves(attribute = "wave") \%>\%
-  from_waves()
-ison_adolescents \%>\%
-  mutate_ties(time = 1:10, increment = 1) \%>\% 
-  add_ties(c(1,2), list(time = 3, increment = -1)) \%>\% 
-  to_slices(slice = c(5,7)) \%>\%
-  from_slices()
 }
 \seealso{
 Other manipulations: 
 \code{\link{add}},
-\code{\link{as}()},
-\code{\link{grab}},
+\code{\link{from}},
 \code{\link{miss}},
 \code{\link{reformat}},
+\code{\link{tidy}},
 \code{\link{transform}()}
 }
 \concept{manipulations}
