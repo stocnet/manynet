@@ -32,16 +32,18 @@ test_that("to_components works", {
   expect_s3_class(to_components(ison_adolescents)[[1]], "tbl_graph")
 })
 
+set.seed(1234)
 wave <- ison_adolescents %>%
     activate(edges) %>%
     mutate(wave = sample(1995:1998, 10, replace = TRUE))
 
 test_that("to_waves works", {
-    expect_length(to_waves(wave), 4)
-    expect_length(to_waves(wave, panels = c(1995, 1996)), 2)
-    expect_length(from_waves(to_waves(wave)), 8)
-    expect_s3_class(to_waves(wave)[[1]], "tbl_graph")
-    expect_s3_class(from_waves(to_waves(wave)), "tbl_graph")
+  expect_equal(class(to_waves(wave)), "list")
+  expect_length(to_waves(wave), 4)
+  expect_length(to_waves(wave, panels = c(1995, 1996)), 2)
+  expect_length(from_waves(to_waves(wave)), 8)
+  expect_s3_class(to_waves(wave)[[1]], "tbl_graph")
+  expect_s3_class(from_waves(to_waves(wave)), "tbl_graph")
 })  
 
 slice <- ison_adolescents %>%
