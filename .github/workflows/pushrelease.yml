@@ -16,7 +16,7 @@ jobs:
         config:
           - {os: macOS-latest,   r: 'release', artifact_name: '*.tar.gz', asset_name: macOS}
           - {os: windows-latest, r: 'release', artifact_name: '*.zip', asset_name: winOS}
-          - {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest", artifact_name: '*.tar.gz', asset_name: linuxOS}
+          - {os: ubuntu-latest, r: 'release', artifact_name: '*.tar.gz', asset_name: linuxOS}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -104,7 +104,7 @@ jobs:
         run: ls -R
 
       - name: Rename Mac release
-        run: mv ./macOS/*.tgz migraph_macOS.tgz
+        run: mv ./macOS/*.tgz manynet_macOS.tgz
 
       - name: Upload Mac binary
         id: upload-mac
@@ -113,12 +113,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: migraph_macOS.tgz
-          asset_name: migraph_macOS.tgz
+          asset_path: manynet_macOS.tgz
+          asset_name: manynet_macOS.tgz
           asset_content_type: application/zip
 
       - name: Rename Linux release
-        run: mv ./linuxOS/*.tar.gz migraph_linuxOS.tar.gz
+        run: mv ./linuxOS/*.tar.gz manynet_linuxOS.tar.gz
 
       - name: Upload Linux binary
         id: upload-lin
@@ -127,12 +127,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: migraph_linuxOS.tar.gz
-          asset_name: migraph_linuxOS.tar.gz
+          asset_path: manynet_linuxOS.tar.gz
+          asset_name: manynet_linuxOS.tar.gz
           asset_content_type: application/zip
 
       - name: Rename Windows release
-        run: mv ./winOS/*.zip migraph_winOS.zip
+        run: mv ./winOS/*.zip manynet_winOS.zip
 
       - name: Upload Windows binary
         id: upload-win
@@ -141,8 +141,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: migraph_winOS.zip
-          asset_name: migraph_winOS.zip
+          asset_path: manynet_winOS.zip
+          asset_name: manynet_winOS.zip
           asset_content_type: application/zip
 
   pkgdown:
