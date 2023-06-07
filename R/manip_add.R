@@ -13,6 +13,22 @@
 #' @param attr_name Name of the new attribute in the resulting object.
 #' @param vector A vector of values for the new attribute.
 #' @param ... Additional arguments.
+#' @examples
+#' \donttest{
+#'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
+#'   another <- create_filled(3) %>% mutate(name = c("E", "F", "G"))
+#'   other2 <- other %>% activate(edges) %>% mutate_ties(type = c("a"))
+#'   join_nodes(another, other)
+#'   add_nodes(other, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))
+#'   add_ties(other, c(1,2), list(time = 2, increment = -1))
+#'   add_node_attribute(other, "wealth", 1:4)
+#'   bind_node_attributes(other, other2)
+#'   summarise_ties(other2, type)
+#'   rename_ties(other2, form = type)
+#'   mutate_ties(other, form = 1:6) %>% filter_ties(form < 4)
+#'   select_ties(other2, type)
+#'   add_tie_attribute(other, "weight", c(1, 2, 2, 2, 1, 2))
+#' }
 #' @name add
 NULL
 
@@ -21,10 +37,6 @@ NULL
 #' Options are "full","left", "right", "inner".
 #' @param by An attribute name to join objects by.
 #' By default, NULL.
-#' @examples
-#'   other <- create_empty(4) %>% mutate(name = c("A", "B", "C", "D"))
-#'   another <- create_empty(3) %>% mutate(name = c("E", "F", "G"))
-#'   join_nodes(another, other)
 #' @export
 join_nodes <- function(.data, object2, by = NULL,
                        join_type = c("full","left", "right", "inner")){
@@ -42,16 +54,6 @@ join_nodes <- function(.data, object2, by = NULL,
 #' adds a tie attribute identifying the ties that were newly added
 #' @importFrom igraph add_edges set_edge_attr E
 #' @importFrom dplyr mutate summarise across group_by everything ungroup %>%
-#' @examples
-#'   other <- as_tidygraph(create_filled(4)) %>%
-#'   mutate(name = c("A", "B", "C", "D")) %>%
-#'   activate(edges) %>%
-#'   mutate_ties(type = c("a", "b", "c", "d", "e", "f"))
-#'   another <- as_tidygraph(create_empty(3)) %>%
-#'   mutate(name = c("E", "F", "G")) %>%
-#'   activate(edges) %>%
-#'   mutate_ties(type = c("g"))
-#'   join_ties(other, another, "random")
 #' @export
 join_ties <- function(.data, object2, attr_name) {
   edges <- from <- to <- NULL
@@ -88,10 +90,6 @@ join_ties <- function(.data, object2, attr_name) {
 #' @describeIn add Add additional ties to a network
 #' @param nodes The number of nodes to be added.
 #' @importFrom igraph add_edges
-#' @examples
-#'   other <- as_tidygraph(create_empty(4)) %>%
-#'   mutate(name = c("A", "B", "C", "D"))
-#'   add_nodes(other, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))
 #' @export
 add_nodes <- function(.data, nodes, attribute = NULL) UseMethod("add_nodes")
 
@@ -113,10 +111,6 @@ add_nodes.network <- function(.data, nodes, attribute = NULL){
 #' @describeIn add Add additional ties to a network
 #' @param ties The number of ties to be added or an even list of ties.
 #' @importFrom igraph add_edges
-#' @examples
-#'   other <- as_tidygraph(create_empty(4)) %>%
-#'   mutate(name = c("A", "B", "C", "D"))
-#'   add_ties(other, c(1,2), list(time = 2, increment = -1))
 #' @export
 add_ties <- function(.data, ties, attribute = NULL) UseMethod("add_ties")
 
@@ -137,11 +131,7 @@ add_ties.network <- function(.data, ties, attribute = NULL){
 
 #' @describeIn add Insert specified values from a vector into the graph 
 #' as node attributes
-#' @importFrom igraph vertex_attr<-
-#' @examples
-#'   other <- as_tidygraph(create_empty(4)) %>%
-#'   mutate(name = c("A", "B", "C", "D"))
-#'   add_node_attribute(other, "wealth", 1:4)
+#' @importFrom igraph vertex_attr
 #' @export
 add_node_attribute <- function(.data, attr_name, vector){
   if(length(vector)!=igraph::vcount(as_igraph(.data))){
@@ -162,10 +152,6 @@ add_node_attribute <- function(.data, attr_name, vector){
 #' @describeIn add Insert specified values from a vector into the network.
 #'   as tie attributes
 #' @importFrom igraph edge_attr
-#' @examples
-#'   other <- as_tidygraph(create_filled(4)) %>%
-#'   mutate(name = c("A", "B", "C", "D"))
-#'   add_tie_attribute(other, "weight", c(1, 2, 2, 2, 1, 2))
 #' @export
 add_tie_attribute <- function(.data, attr_name, vector){
   out <- as_igraph(.data)
@@ -180,10 +166,6 @@ mutate.igraph <- function(.data, ...){
 }
 
 #' @describeIn add Tidy way to add vector as tie attributes.
-#' @examples
-#'   as_tidygraph(create_filled(4)) %>%
-#'   mutate(name = c("A", "B", "C", "D")) %>%
-#'   mutate_ties(type = c("a", "b", "c", "d", "e", "f"))
 #' @export
 mutate_ties <- function(.data, ...){
   nodes <- edges <- NULL
@@ -193,11 +175,6 @@ mutate_ties <- function(.data, ...){
 
 #' @describeIn add Tidy way to select tie attributes.
 #' @importFrom dplyr select
-#' @examples
-#'   as_tidygraph(create_filled(4)) %>%
-#'   mutate(name = c("A", "B", "C", "D")) %>%
-#'   mutate_ties(type = 1:6, form = 1:6) %>%
-#'   select_ties(form)
 #' @export
 select_ties <- function(.data, ...){
   nodes <- edges <- NULL
@@ -208,11 +185,6 @@ select_ties <- function(.data, ...){
 #' @describeIn add Tidy way to filter ties based on a logical statement with
 #'   relation to some tie attribute.
 #' @importFrom dplyr filter
-#' @examples
-#'   as_tidygraph(create_filled(4)) %>%
-#'   mutate(name = c("A", "B", "C", "D")) %>%
-#'   mutate_ties(form = 1:6) %>%
-#'   filter_ties(form < 4)
 #' @export
 filter_ties <- function(.data, ...){
   nodes <- edges <- NULL
@@ -222,11 +194,6 @@ filter_ties <- function(.data, ...){
 
 #' @describeIn add Tidy way to rename tie attributes.
 #' @importFrom dplyr rename
-#' @examples
-#'   as_tidygraph(create_filled(4)) %>%
-#'   mutate(name = c("A", "B", "C", "D")) %>%
-#'   mutate_ties(form = 1:6) %>%
-#'   rename_ties(type = form)
 #' @export
 rename_ties <- function(.data, ...){
   nodes <- edges <- NULL
@@ -236,11 +203,6 @@ rename_ties <- function(.data, ...){
 
 #' @describeIn add Tidy way to summarise tie attributes.
 #' @importFrom dplyr summarise
-#' @examples
-#'   as_tidygraph(create_filled(4)) %>%
-#'   mutate(name = c("A", "B", "C", "D")) %>%
-#'   mutate_ties(type = c("a", "b", "a", "b", "a", "b")) %>%
-#'   summarise_ties(type)
 #' @export
 summarise_ties <- function(.data, ...){
   out <- as_edgelist(.data) %>% 
@@ -252,12 +214,6 @@ summarise_ties <- function(.data, ...){
 }
 
 #' @describeIn add Copying all nodal attributes from one network to another
-#' @examples
-#'   other <- as_tidygraph(create_filled(4)) %>%
-#'   mutate(name = c("A", "B", "C", "D"))
-#'   another <- as_tidygraph(create_filled(4)) %>%
-#'   mutate(type = c("a", "b", "c", "d"))
-#'   bind_node_attributes(other, another)
 #' @export
 bind_node_attributes <- function(.data, object2){
   out <- as_igraph(.data)

@@ -114,54 +114,21 @@ relation to some tie attribute.
 
 }}
 \examples{
-  other <- create_empty(4) \%>\% mutate(name = c("A", "B", "C", "D"))
-  another <- create_empty(3) \%>\% mutate(name = c("E", "F", "G"))
+\donttest{
+  other <- create_filled(4) \%>\% mutate(name = c("A", "B", "C", "D"))
+  another <- create_filled(3) \%>\% mutate(name = c("E", "F", "G"))
+  other2 <- other \%>\% activate(edges) \%>\% mutate_ties(type = c("a"))
   join_nodes(another, other)
-  other <- as_tidygraph(create_filled(4)) \%>\%
-  mutate(name = c("A", "B", "C", "D")) \%>\%
-  activate(edges) \%>\%
-  mutate_ties(type = c("a", "b", "c", "d", "e", "f"))
-  another <- as_tidygraph(create_empty(3)) \%>\%
-  mutate(name = c("E", "F", "G")) \%>\%
-  activate(edges) \%>\%
-  mutate_ties(type = c("g"))
-  join_ties(other, another, "random")
-  other <- as_tidygraph(create_empty(4)) \%>\%
-  mutate(name = c("A", "B", "C", "D"))
   add_nodes(other, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))
-  other <- as_tidygraph(create_empty(4)) \%>\%
-  mutate(name = c("A", "B", "C", "D"))
   add_ties(other, c(1,2), list(time = 2, increment = -1))
-  other <- as_tidygraph(create_empty(4)) \%>\%
-  mutate(name = c("A", "B", "C", "D"))
   add_node_attribute(other, "wealth", 1:4)
-  other <- as_tidygraph(create_filled(4)) \%>\%
-  mutate(name = c("A", "B", "C", "D"))
+  bind_node_attributes(other, other2)
+  summarise_ties(other2, type)
+  rename_ties(other2, form = type)
+  mutate_ties(other, form = 1:6) \%>\% filter_ties(form < 4)
+  select_ties(other2, type)
   add_tie_attribute(other, "weight", c(1, 2, 2, 2, 1, 2))
-  as_tidygraph(create_filled(4)) \%>\%
-  mutate(name = c("A", "B", "C", "D")) \%>\%
-  mutate_ties(type = c("a", "b", "c", "d", "e", "f"))
-  as_tidygraph(create_filled(4)) \%>\%
-  mutate(name = c("A", "B", "C", "D")) \%>\%
-  mutate_ties(type = 1:6, form = 1:6) \%>\%
-  select_ties(form)
-  as_tidygraph(create_filled(4)) \%>\%
-  mutate(name = c("A", "B", "C", "D")) \%>\%
-  mutate_ties(form = 1:6) \%>\%
-  filter_ties(form < 4)
-  as_tidygraph(create_filled(4)) \%>\%
-  mutate(name = c("A", "B", "C", "D")) \%>\%
-  mutate_ties(form = 1:6) \%>\%
-  rename_ties(type = form)
-  as_tidygraph(create_filled(4)) \%>\%
-  mutate(name = c("A", "B", "C", "D")) \%>\%
-  mutate_ties(type = c("a", "b", "a", "b", "a", "b")) \%>\%
-  summarise_ties(type)
-  other <- as_tidygraph(create_filled(4)) \%>\%
-  mutate(name = c("A", "B", "C", "D"))
-  another <- as_tidygraph(create_filled(4)) \%>\%
-  mutate(type = c("a", "b", "c", "d"))
-  bind_node_attributes(other, another)
+}
 }
 \seealso{
 Other manipulations: 

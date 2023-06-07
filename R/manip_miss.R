@@ -14,10 +14,6 @@
 #'   Krause, Robert, Mark Huisman, Christian Steglich, and Tom A.B. Snijders. 2020. 
 #'   "Missing data in cross-sectional networks–An extensive comparison of missing data treatment methods". 
 #'   _Social Networks_, 62, 99-112.
-NULL
-
-#' @describeIn miss Impute missing tie data as zero,
-#'   the modal value in sparse social networks.
 #' @examples 
 #' missTest <- ison_adolescents %>% 
 #'    add_tie_attribute("weight", c(1,NA,NA,1,1,1,NA,NA,1,1)) %>% 
@@ -25,6 +21,10 @@ NULL
 #' missTest
 #' na_to_zero(missTest)
 #' na_to_mean(missTest)
+NULL
+
+#' @describeIn miss Impute missing tie data as zero,
+#'   the modal value in sparse social networks.
 #' @export
 na_to_zero <- function(.data) UseMethod("na_to_zero")
 
