@@ -92,7 +92,7 @@ imports <- igraph::graph_from_literal(ucinet:pajek+--+tidygraph,
                                       matrix:dynetml--+tidygraph,
                                       edgelist:nodelist+--+tibble)
 imports <- imports %>% mutate(type = ifelse(node_names(imports)%in% c("tidygraph","tibble"), TRUE, FALSE))
-autographr(imports, node_size = 2, layout = "hierarchy")
+autographr(imports, node_size = 4, layout = "hierarchy")
 ```
 
 - `r list_functions("^read_")`
@@ -110,7 +110,7 @@ autographr(igraph::graph_from_literal(edgelist:matrix:igraph:network:tidygraph+-
                                       edgelist:matrix:igraph:network:tidygraph--+graphAM,
                                       igraph--+siena,
                                       siena:goldfish--+edgelist:matrix:igraph:network:tidygraph:graphAM),
-           "circle", node_size = 2)
+           "circle", node_size = 4)
 ```
 
 These functions are designed to be as intuitive and lossless as possible,

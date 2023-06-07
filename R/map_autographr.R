@@ -7,8 +7,8 @@
 #' preferences regarding node size, colour, and shape. The function also supports
 #' visualisation of network measures such as centrality.
 #' @family mapping
-#' @param object A migraph-consistent object.
-#' @param layout An igraph layout algorithm,
+#' @param .data A manynet-consistent object.
+#' @param layout An igraph, ggraph, or manynet layout algorithm,
 #'   currently defaults to 'stress'.
 #' @param labels Logical, whether to print node names
 #'   as labels if present.
@@ -44,7 +44,7 @@ NULL
 #'   autographr(node_shape = "shape", node_color = "color")
 #' autographr(ison_karateka, node_size = 8)
 #' @export
-autographr <- function(object,
+autographr <- function(.data,
                        layout = "stress",
                        labels = TRUE,
                        node_color = NULL,
@@ -53,7 +53,7 @@ autographr <- function(object,
                        edge_color = NULL,
                        ...) {
   name <- weight <- nodes <- label <- NULL # avoid CMD check notes
-  g <- as_tidygraph(object)
+  g <- as_tidygraph(.data)
   # if(!is.null(node_group)) {
   #   node_group <- as.factor(node_attribute(g, node_group))
   #   g <- as_tidygraph(g) %>% 
