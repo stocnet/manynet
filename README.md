@@ -23,28 +23,54 @@ Date](https://img.shields.io/github/release-date/snlab-ch/manynet)
 
 ## About the package
 
-`{manynet}` provides a common set of tools and a standard syntax for
-analysing many different types of networks. It offers a broad range of
-functions to make, manipulate, map, measure, and model:
+Learning and using network analysis tools in R can be challenging. There
+are so many great packages, all with their own offerings and advantages,
+but also all with their own vocabulary, syntax, and expected formats for
+data inputs and analytic outputs. Moreover, many of these packages only
+work on *some* types of networks (usually one-mode, simple, directed or
+undirected networks); if you have a different type of network, a
+different package is needed. Lastly, even packages with excellent
+graphical capabilities can make visualising networks slow and cumbersome
+by using poor defaults and many, incomprehensible options to change
+them. `{manynet}` aims to help researchers with Making, Manipulating,
+and Mapping networks.
 
-- one-, two-, and sometimes three-mode networks
-- undirected, directed, and sometimes complex networks
-- unweighted, weighted, and sometimes signed networks
+## Making
 
-## How does manynet help?
+First, `{manynet}` provides a set of tools that can be used to make
+networks in any number of common formats. Networks can come from many
+sources, some can be imported from outside R, some can be found in this
+or other packages and coerced into some common format, and many types of
+networks can be created or generated using functions in this package.
 
-`{manynet}` can help with many network analytic tasks, including Making
-and Manipulating network data, Marking and Measuring nodes, ties, and
-networks, calculating Motifs and identifying Memberships, as well as
-Modelling and Mapping.
+#### Inventing network data
 
-### Making network data
+`{manynet}` includes algorithms for making networks with particular
+properties. The `create_*` group of functions create networks with a
+particular structure, and will always create the same format from the
+same inputs, e.g.:
+
+- `create_components()`, `create_core()`, `create_empty()`,
+  `create_filled()`, `create_lattice()`, `create_ring()`,
+  `create_star()`, `create_tree()`
+
+The `generate_*` group of functions generate networks from generative
+mechanisms that may include some random aspect, and so will return a
+different output each time they are run, e.g.:
+
+- `generate_permutation()`, `generate_random()`, `generate_scalefree()`,
+  `generate_smallworld()`, `generate_utilities()`
+
+Note that all these functions can create directed or undirected,
+one-mode or two-mode networks. Some of these wrap existing algorithms in
+other packages, while others are unique offerings or only offered for
+particular formats of network data, e.g. two-mode networks, here.
 
 #### Importing network data
 
 `{manynet}` offers a number of options for importing network data found
-in other repositories. `{manynet}` can import and export to Excel
-edgelists and nodelists,
+in other repositories. Besides importing and exporting to Excel
+edgelists and nodelists, there are specific routines included for
 [UCINET](http://www.analytictech.com/archive/ucinet.htm),
 [Pajek](http://mrvar.fdv.uni-lj.si/pajek/), and
 [DynetML](http://casos.cs.cmu.edu/projects/dynetml/) files, e.g.:
@@ -56,40 +82,12 @@ edgelists and nodelists,
 - `write_edgelist()`, `write_matrix()`, `write_nodelist()`,
   `write_pajek()`, `write_ucinet()`
 
-#### Inventing network data
-
-`{manynet}` includes algorithms for making networks with particular
-properties. The `create_*` group of functions create networks with a
-particular structure, e.g.:
-
-- `create_components()`, `create_core()`, `create_empty()`,
-  `create_filled()`, `create_lattice()`, `create_ring()`,
-  `create_star()`, `create_tree()`
-
-The `generate_*` group of functions generate networks from particular
-generative mechanisms, e.g.:
-
-- `generate_permutation()`, `generate_random()`, `generate_scalefree()`,
-  `generate_smallworld()`, `generate_utilities()`
-
-Note that all these functions work to create two-mode networks as well
-as one-mode versions.
-
-### Manipulating network data
-
-In addition to functions that help add elements to or extract elements
-from a network, `{manynet}` also includes functions for coercing and
-changing network data.
-
 #### Coercing network data
 
-Once network data is in R, `{manynet}`’s `as_*()` functions can be used
-to translate objects from one of the above classes into any other, and
-include:
-
-    #> Registered S3 method overwritten by 'migraph':
-    #>   method        from   
-    #>   mutate.igraph manynet
+There is also a lot of network data in addition to analytic functions
+that already reside in various packages in R. Once network data is in R,
+`{manynet}`’s `as_*()` functions can be used to translate objects from
+one of the above classes into any other, and include:
 
 <img src="man/figures/README-coercion-graph-1.png" width="100%" />
 
@@ -105,7 +103,7 @@ edgelists as data frames, [`{igraph}`](https://igraph.org/r/),
 [`{tidygraph}`](https://tidygraph.data-imaginist.com/index.html), and
 extensible by developments in those other packages too.
 
-#### Changing network data
+## Manipulating
 
 `{manynet}`’s `to_*()` functions can be used on any class object to
 reformat, transform, or split networks into networks with other
@@ -120,16 +118,28 @@ properties, e.g.:
   `to_uniplex()`, `to_unnamed()`, `to_unsigned()`, `to_unweighted()`,
   `to_waves()`
 
-Reformatting means changing the format of the network, e.g. from
-directed to undirected via `to_undirected()`. Transforming means
-changing the dimensions of the network, e.g. from a two-mode network to
-a one-mode projection via `to_mode1()`. Splitting means separating a
-network, e.g. from a whole network to the various ego networks via
-`to_egos()`. Those functions that split a network into a list of
-networks are distinguishable as those `to_*()` functions that are named
-in the plural.
+### Reformatting
 
-### Marks
+Reformatting means changing the format of the network, e.g. from
+directed to undirected via `to_undirected()`.
+
+### Transforming
+
+Transforming means changing the dimensions of the network, e.g. from a
+two-mode network to a one-mode projection via `to_mode1()`.
+
+### Splitting and Joining
+
+Splitting means separating a network, e.g. from a whole network to the
+various ego networks via `to_egos()`.
+
+#### Changing network data
+
+Those functions that split a network into a list of networks are
+distinguishable as those `to_*()` functions that are named in the
+plural.
+
+### Extracting
 
 `{manynet}` offers a range of measures and models with sensible
 defaults. Many wrap existing functions in common packages for use with
@@ -139,21 +149,50 @@ given intuitive and succinct names that avoid conflicts with existing
 function names wherever possible.
 
 `{manynet}`’s `*is_*()` functions offer fast logical tests of various
-properties. Whereas `is_*()` returns a single logical value for the
-network, `node_is_*()` returns a logical vector the length of the number
-of nodes in the network, and `tie_is_*()` returns a logical vector the
-length of the number of ties in the network.
+network properties. These can be used to create new
 
 - `is_bipartite()`, `is_complex()`, `is_directed()`, `is_dynamic()`,
   `is_edgelist()`, `is_graph()`, `is_labelled()`, `is_longitudinal()`,
   `is_migraph()`, `is_multiplex()`, `is_signed()`, `is_twomode()`,
   `is_uniplex()`, `is_weighted()`
-- `()`
-- `()`
 
-The `*is_max()` and `*is_min()` functions are used to identify the
-maximum or minimum, respectively, node or tie according to some measure
-(see below).
+## Mapping
+
+`{manynet}` includes three one-line graphing functions with sensible
+defaults based on the network’s properties. `autographr()` is used to
+graph networks in any of the `{manynet}` formats. It includes sensible
+defaults so that researchers can view their network’s structure or
+distribution with a minimum of fuss. `{manynet}` uses the excellent
+`{ggraph}` package (and thus `{ggplot2}`) as a plotting engine. This
+also makes extending and theming default output easy, and `{patchwork}`
+is used to help arrange individual plots together.
+
+There are two other graphing functions too. `autographs()` is used to
+graph multiple networks together, which can be useful for ego networks
+or network panels. `autographd()` is used to graph dynamic networks.
+
+In addition, `{manynet}` offers some additional layout algorithms for
+snapping layouts to a grid or visualising partitions horizontally,
+vertically, or concentrically. The following figures illustrate the
+difference in results over `{igraph}`:
+
+<img src="man/figures/README-layout-comparison-1.png" width="100%" />
+
+provide a common set of tools that can be used to import, export,
+create, and manipulate network data in a wide variety of formats, and
+obtain a good first visualisation quickly. This can be useful for
+pedagogical purposes, initial description, or checking something part
+way through the modelling process. Through the most comprehensive
+network class-coercion available, users can access routines not
+available in their chosen package or even in `{manynet}`.
+
+`{manynet}` provides a common set of tools and a standard syntax for
+analysing many different types of networks. It offers a broad range of
+functions to make, manipulate, map, measure, and model:
+
+- one-, two-, and sometimes three-mode networks
+- undirected, directed, and sometimes complex networks
+- unweighted, weighted, and sometimes signed networks
 
 ## Installation
 
@@ -210,12 +249,15 @@ different decisions to the excellent `{tidygraph}` package. It builds
 upon `{igraph}` especially, as well as `{network}`, but works equally
 well with basic edgelists and matrices.
 
+It works with and builds upon many popular network analytic packages,
+such as `{igraph}` and `{network}`.
+
 `{manynet}` inherits core functionality from the `{migraph}` package.
 For more analytic and modelling functions, please see `{migraph}`.
 
 ## Funding details
 
-Subsequent work on this package has been funded by the Swiss National
+Development on this package has been funded by the Swiss National
 Science Foundation (SNSF) [Grant Number
 188976](https://data.snf.ch/grants/grant/188976): “Power and Networks
 and the Rate of Change in Institutional Complexes” (PANARCHIC).

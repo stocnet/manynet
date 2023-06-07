@@ -48,17 +48,16 @@ reference:
       - starts_with("as_")
       - starts_with("to_")
       - add
-      - grab
       - miss
-  - title: "Marks"
+  - title: "Properties"
     desc: |
-      Functions for identifying properties of graphs, nodes or ties,
-      all returning logical scalars or vectors.
-      Note that all `node_` and `tie_` measures return a single vector
-      so that they can be added directly to graph objects.
+      Functions for identifying properties of networks, nodes, or ties.
+      All `node_` and `tie_` measures return a single vector.
       `network_` measures return one or, in some cases of two-mode measures,
       two values.
+      The `is_*()` family all return logical scalars (TRUE or FALSE).
     contents:
+      - grab
       - contains("is_")
   - title: "Mapping"
     desc: "Functions for plotting and visualising graphs of different types:"
