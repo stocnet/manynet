@@ -390,14 +390,14 @@ create_core <- function(n, directed = FALSE, membership = NULL) {
 # Helper functions ------------------
 
 infer_n <- function(n) {
-  if (is_migraph(n)) n <- infer_dims(n)
+  if (is_manynet(n)) n <- infer_dims(n)
   if (length(n) > 2) stop(paste("`n` should be a single integer for a one-mode network or",
                              "a vector of two integers for a two-mode network."))
   n
 }
 
 infer_directed <- function(n, directed) {
-  if(is_migraph(n)) directed <- is_directed(n)
+  if(is_manynet(n)) directed <- is_directed(n)
   directed
 }
 
