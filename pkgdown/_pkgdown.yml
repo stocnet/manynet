@@ -58,17 +58,21 @@ reference:
       - starts_with("na_to_")
       - starts_with("add_")
       - starts_with("join_")
+  - title: "Mapping"
     desc: |
-      Functions for identifying properties of networks, nodes, or ties.
-      All `node_` and `tie_` measures return a single vector.
+      Functions for informatively describing networks.
+      This includes identifying properties of networks, nodes, or ties
+      as well as plotting and visualising graphs of different types.
+      The `is_*()` family all return logical scalars (TRUE or FALSE).
       `network_` measures return one or, in some cases of two-mode measures,
       two values.
-      The `is_*()` family all return logical scalars (TRUE or FALSE).
+      All `node_` and `tie_` measures return a single vector,
+      the length of the nodes or ties in the network, respectively.
+      `autographr()` graphs any manynet-compatible class object automagically.
+      `autographs()` and `autographd()` do the same for multiple networks
+      and dynamic networks, respectively.
     contents:
-      - contains("is_")
-  - title: "Mapping"
-    desc: "Functions for plotting and visualising graphs of different types:"
-    contents:
+      - starts_with("is_")
       - starts_with("network_")
       - starts_with("node_")
       - starts_with("autograph")

@@ -1,7 +1,8 @@
-#' Marking networks based on their properties
+#' Describing network formats
 #'
-#' These functions implement logical tests for various network
-#' properties.
+#' @description
+#'   These functions implement logical tests for various network properties.
+#'   All `is_*()` functions return a logical scalar (TRUE or FALSE).
 #' @param .data An object of a manynet-consistent class:
 #'   \itemize{
 #'   \item matrix (adjacency or incidence) from `{base}` R
@@ -11,7 +12,7 @@
 #'   \item tbl_graph, from the `{tidygraph}` package
 #'   }
 #' @return TRUE if the condition is met, or FALSE otherwise.
-#' @family marks
+#' @family mapping
 #' @name is
 NULL
 
