@@ -6,7 +6,7 @@ test_that("is tests work", {
   expect_true(is_labelled(ison_southern_women))
   expect_false(is_complex(ison_southern_women))
   expect_true(is_graph(ison_southern_women))
-  expect_true(is_migraph(ison_southern_women))
+  expect_true(is_manynet(ison_southern_women))
   expect_true(is_graph(ison_southern_women))
   expect_false(is_directed(as_network(ison_southern_women)))
 })
