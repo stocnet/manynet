@@ -24,7 +24,7 @@ Date](https://img.shields.io/github/release-date/snlab-ch/manynet)
 ## About the package
 
 Learning and using network analysis tools in R can be challenging. There
-are so many great packages, all with their own offerings and advantages,
+are many great packages, all with their own offerings and advantages,
 but also all with their own vocabulary, syntax, and expected formats for
 data inputs and analytic outputs. Moreover, many of these packages only
 work on *some* types of networks (usually one-mode, simple, directed or
@@ -62,9 +62,13 @@ different output each time they are run, e.g.:
   `generate_smallworld()`, `generate_utilities()`
 
 Note that all these functions can create directed or undirected,
-one-mode or two-mode networks. Some of these wrap existing algorithms in
-other packages, while others are unique offerings or only offered for
-particular formats of network data, e.g. two-mode networks, here.
+one-mode or two-mode networks. Creating two-mode networks is as easy as
+passing the first argument (`n`) a vector of two integers instead of
+one. For example, `n = 10` will create a one-mode network of 10 nodes,
+whereas `n = c(10,5)` will create a two-mode network of 10 nodes in the
+first mode, and 5 nodes in the second mode. Some of these functions wrap
+existing algorithms in other packages, while others are unique offerings
+or add additional formats, e.g. two-mode networks.
 
 #### Importing network data
 

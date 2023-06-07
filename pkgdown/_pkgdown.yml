@@ -33,23 +33,25 @@ reference:
   - title: "Making"
     desc: |
       Functions for constructing, simulating, and importing
-      one-mode and two-mode networks:
+      directed and undirected, one-mode and two-mode networks
+      into whichever class of object is desired for further analysis.
     contents:
       - starts_with("create_")
       - starts_with("generate_")
       - starts_with("read")
       - starts_with("write")
   - title: "Manipulation"
+      - starts_with("as_")
     desc: |
       Functions for coercing objects between different classes, 
       reformatting or transforming the type of network,
       or adding information to or retrieving information from the network.
     contents:
-      - starts_with("as_")
       - starts_with("to_")
       - add
       - miss
   - title: "Properties"
+      - starts_with("from_")
     desc: |
       Functions for identifying properties of networks, nodes, or ties.
       All `node_` and `tie_` measures return a single vector.
@@ -67,6 +69,8 @@ reference:
   - title: "Data"
     desc: |
       The package contains a variety of networks useful for pedagogical purposes
-      and used in the course 'Social Networks Theories and Methods'.
+      and used in the course 'Social Networks Theories and Methods' and other workshops.
+      Each page documents the source of the data and its format.
+      References are provided for further reading and citation.
     contents:
       - starts_with("ison_")

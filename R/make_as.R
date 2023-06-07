@@ -1,4 +1,4 @@
-#' Coercion between manynet-compatible object classes
+#' Making networks into other classes
 #'
 #' @description
 #' The `as_` functions in `{manynet}` coerce objects
@@ -16,7 +16,7 @@
 #' Note also that there are some reserved column names in one or more
 #' object classes, which could otherwise lead to some unexpected results.
 #' @name as
-#' @family manipulations
+#' @family makes
 #' @inheritParams is
 #' @param twomode Logical option used to override heuristics for
 #'   distinguishing incidence (two-mode/bipartite) from
