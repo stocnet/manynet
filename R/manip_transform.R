@@ -49,7 +49,6 @@ NULL
 #' @importFrom igraph bipartite.projection
 #' @importFrom stats cor
 #' @examples
-#' autographr(ison_southern_women)
 #' autographr(to_mode1(ison_southern_women))
 #' autographr(to_mode2(ison_southern_women))
 #' @export
@@ -224,7 +223,6 @@ to_subgraph.matrix <- function(.data, ...){
 #'   where the edges are the nodes
 #' @importFrom igraph make_line_graph E
 #' @examples
-#' autographr(ison_adolescents)  
 #' autographr(to_ties(ison_adolescents))
 #' @export
 to_ties <- function(.data) UseMethod("to_ties")
@@ -424,28 +422,4 @@ to_anti.tbl_graph <- function(.data){
 #' @export
 to_anti.network <- function(.data){
   as_network(to_anti(as_igraph(.data)))
-}
-
-#' @describeIn transform Removes all nodes without ties
-#' @importFrom tidygraph node_is_isolated
-#' @importFrom dplyr filter
-#' @examples
-#' ison_adolescents %>%
-#'   activate(edges) %>%
-#'   mutate(wave = sample(1995:1998, 10, replace = TRUE)) %>%
-#'   to_waves(attribute = "wave") %>%
-#'   to_no_isolates()
-#' @export
-to_no_isolates <- function(.data) {
-  nodes <- NULL
-  # Check if .data is a list of lists
-  if (is.list(.data[1])) {
-    # Delete edges not present vertices in each list
-    lapply(.data, function(x) {
-      x %>% activate(nodes) %>% dplyr::filter(!tidygraph::node_is_isolated())
-    })
-  } else {
-    # Delete edges not present vertices
-    .data %>% activate(nodes) %>% dplyr::filter(!tidygraph::node_is_isolated())
-  }
 }
