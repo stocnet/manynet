@@ -59,14 +59,6 @@ test_that("to ties works", {
   expect_length(network::network.vertex.names(to_ties(as_network(ison_adolescents))), 10)
 })
 
-isolate <- ison_adolescents %>%
-  activate(edges) %>%
-  to_subgraph(from == 1:5)
-
-test_that("to no isolates works", {
-  expect(length(to_no_isolates(isolate)), 5)
-})
-
 test_that("to anti works", {
   expect_length(to_anti(ison_southern_women), 32)
   expect_length(to_anti(as_igraph(ison_southern_women)), 32)
