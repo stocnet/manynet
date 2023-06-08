@@ -4,7 +4,7 @@
 
 ## Package
 
-- Split up the `{migraph}` package, adding the Make, Mold, and Map functions to this package
+- Split up the `{migraph}` package, adding the Make, Manipulate, and Map functions to this package
 - Added package documentation
   - Added .github files
   - Added README structured around the problems the package solves
@@ -27,7 +27,7 @@
 - Added `generate_*()` functions, e.g. `generate_smallworld()`
 - Added `ison_*` network data, e.g. `ison_southern_women`
 
-## Molds
+## Manipulates
 
 - Added `as_*()` functions, e.g. `as_igraph()`
   - Fixed `as_edgelist.network()`

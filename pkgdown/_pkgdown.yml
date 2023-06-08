@@ -41,7 +41,7 @@ reference:
       - starts_with("read")
       - starts_with("write")
       - starts_with("as_")
-  - title: "Molding"
+  - title: "Manipulating"
     desc: |
       Functions for manipulating networks into useful formats.
       This includes functions for reformatting networks into networks
