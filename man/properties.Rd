@@ -61,7 +61,6 @@ network_tie_attributes(ison_algebra)
 Other mapping: 
 \code{\link{attributes}()},
 \code{\link{auto_graph}},
-\code{\link{is}()},
-\code{\link{partition_layouts}}
+\code{\link{is}()}
 }
 \concept{mapping}

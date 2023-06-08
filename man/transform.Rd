@@ -10,7 +10,6 @@
 \alias{to_blocks}
 \alias{to_matching}
 \alias{to_anti}
-\alias{to_no_isolates}
 \title{Tools for transforming networks, graphs, and matrices}
 \usage{
 to_mode1(.data, similarity = c("count", "jaccard", "rand", "pearson", "yule"))
@@ -28,8 +27,6 @@ to_blocks(.data, membership, FUN = mean)
 to_matching(.data, mark = "type")
 
 to_anti(.data)
-
-to_no_isolates(.data)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -124,8 +121,6 @@ matching ties
 where only ties \emph{not} present in the original network
 are included in the new network.
 
-\item \code{to_no_isolates()}: Removes all nodes without ties
-
 }}
 \section{to_matching}{
 
@@ -143,18 +138,11 @@ where \eqn{n} is the number of nodes in the network.
 }
 
 \examples{
-autographr(ison_southern_women)
 autographr(to_mode1(ison_southern_women))
 autographr(to_mode2(ison_southern_women))
-autographr(ison_adolescents)  
 autographr(to_ties(ison_adolescents))
 autographr(to_matching(ison_southern_women))
 autographr(to_anti(ison_southern_women))
-ison_adolescents \%>\%
-  activate(edges) \%>\%
-  mutate(wave = sample(1995:1998, 10, replace = TRUE)) \%>\%
-  to_waves(attribute = "wave") \%>\%
-  to_no_isolates()
 }
 \references{
 Goldberg, A V; Tarjan, R E (1986).

@@ -112,7 +112,6 @@ is_dynamic(create_tree(3))
 Other mapping: 
 \code{\link{attributes}()},
 \code{\link{auto_graph}},
-\code{\link{partition_layouts}},
 \code{\link{properties}}
 }
 \concept{mapping}
