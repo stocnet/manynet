@@ -116,11 +116,10 @@ properties, e.g.:
 - `to_acyclic()`, `to_anti()`, `to_blocks()`, `to_components()`,
   `to_directed()`, `to_egos()`, `to_giant()`, `to_matching()`,
   `to_mode1()`, `to_mode2()`, `to_multilevel()`, `to_named()`,
-  `to_no_isolates()`, `to_onemode()`, `to_reciprocated()`,
-  `to_redirected()`, `to_simplex()`, `to_slices()`, `to_subgraph()`,
-  `to_subgraphs()`, `to_ties()`, `to_twomode()`, `to_undirected()`,
-  `to_uniplex()`, `to_unnamed()`, `to_unsigned()`, `to_unweighted()`,
-  `to_waves()`
+  `to_onemode()`, `to_reciprocated()`, `to_redirected()`,
+  `to_simplex()`, `to_slices()`, `to_subgraph()`, `to_subgraphs()`,
+  `to_ties()`, `to_twomode()`, `to_undirected()`, `to_uniplex()`,
+  `to_unnamed()`, `to_unsigned()`, `to_unweighted()`, `to_waves()`
 
 ### Reformatting
 

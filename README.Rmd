@@ -99,7 +99,7 @@ imports <- igraph::graph_from_literal(ucinet:pajek+--+tidygraph,
                                       matrix:dynetml--+tidygraph,
                                       edgelist:nodelist+--+tibble)
 imports <- imports %>% mutate(type = ifelse(node_names(imports)%in% c("tidygraph","tibble"), TRUE, FALSE))
-autographr(imports, node_size = 4, layout = "hierarchy")
+autographr(imports, node_size = 4)
 ```
 
 - `r list_functions("^read_")`
@@ -209,7 +209,7 @@ plot.new()              ## suggested by @Josh
 vps <- baseViewports()
 pushViewport(vps$figure) ##   I am in the space of the autocorrelation plot
 vp1 <-plotViewport(c(1.8,1,0,1)) ## create new vp with margins, you play with this values 
-p <- autographr(ison_southern_women, "hierarchy") + ggtitle("{manynet} layout")
+p <- autographr(ison_southern_women) + ggtitle("{manynet} layout")
 print(p,vp = vp1) 
 ```
 
