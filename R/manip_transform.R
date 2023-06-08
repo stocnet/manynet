@@ -423,3 +423,51 @@ to_anti.tbl_graph <- function(.data){
 to_anti.network <- function(.data){
   as_network(to_anti(as_igraph(.data)))
 }
+
+#' @describeIn transform Removes all nodes without ties
+#' @importFrom tidygraph node_is_isolated
+#' @importFrom dplyr filter
+#' @examples
+#' ison_adolescents %>%
+#'   activate(edges) %>%
+#'   mutate(wave = sample(1995:1998, 10, replace = TRUE)) %>%
+#'   to_waves(attribute = "wave") %>%
+#'   to_no_isolates()
+#' @export
+to_no_isolates <- function(.data) UseMethod("to_no_isolates")
+
+#' @export
+to_no_isolates.tbl_graph <- function(.data) {
+  nodes <- NULL
+  # Delete edges not present vertices
+  .data %>% activate(nodes) %>% dplyr::filter(!tidygraph::node_is_isolated())
+}
+
+#' @export
+to_no_isolates.list <- function(.data) {
+  nodes <- NULL
+  # Delete edges not present vertices in each list
+  lapply(.data, function(x) {
+    x %>% activate(nodes) %>% dplyr::filter(!tidygraph::node_is_isolated())
+  })
+}
+
+#' @export
+to_no_isolates.igraph <- function(.data) {
+  as_igraph(to_no_isolates(as_tidygraph(.data)))
+}
+
+#' @export
+to_no_isolates.matrix <- function(.data) {
+  as_matrix(to_no_isolates(as_tidygraph(.data)))
+}
+
+#' @export
+to_no_isolates.network <- function(.data) {
+  as_network(to_no_isolates(as_tidygraph(.data)))
+}
+
+#' @export
+to_no_isolates.data.frame <- function(.data) {
+  as_edgelist(to_no_isolates(as_tidygraph(.data)))
+}

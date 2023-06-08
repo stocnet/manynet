@@ -87,3 +87,15 @@ test_that("to and from slices work", {
     to_slices(slice = c(5,8))
   expect_length(slices, 2)
 })
+
+isolate <- ison_adolescents %>%
+  activate(edges) %>%
+  to_subgraph(from == 1:5)
+
+test_that("to no isolates works", {
+  expect_length(to_no_isolates(isolate), 5)
+  expect_length(to_no_isolates(as_igraph(isolate)), 5)
+  expect_true(all(rowSums(to_no_isolates(as_matrix(isolate))) >= 1))
+  expect_length(to_no_isolates(as_network(isolate)), 5)
+  expect_equal(nrow(to_no_isolates(as_edgelist(isolate))), 5)
+})
