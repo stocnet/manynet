@@ -1,6 +1,23 @@
-# Partition layouts ####
-
 #' Layout algorithms based on bi- or other partitions
+#' 
+#' @description
+#'   These algorithms layout networks based on two or more partitions,
+#'   and are recommended for use with `autographr()` or `{ggraph}`.
+#'   Note that these layout algorithms use `{Rgraphviz}`, 
+#'   a package that is only available on Bioconductor.
+#'   It will first need to be downloaded using `BiocManager::install("Rgraphviz")`.
+#'
+#'   The "hierarchy" layout layers the first node set along the bottom,
+#'   and the second node set along the top, 
+#'   sequenced and spaced as necessary to minimise edge overlap. 
+#'   The "alluvial" layout is similar to "hierarchy", 
+#'   but places successive layers horizontally rather than vertically.
+#'   The "railway" layout is similar to "hierarchy",
+#'   but nodes are aligned across the layers.
+#'   The "ladder" layout is similar to "railway",
+#'   but places successive layers horizontally rather than vertically.
+#'   The "concentric" layout places a "hierarchy" layout
+#'   around a circle, with successive layers appearing as concentric circles.
 #' @name partition_layouts
 #' @inheritParams transform
 #' @param circular Should the layout be transformed into a radial representation. 
@@ -17,14 +34,14 @@
 #'   the number of edge crossings.
 #' @family mapping
 #' @source
-#' Diego Diez, Andrew P. Hutchins and Diego Miranda-Saavedra. 2014.
-#' "Systematic identification of transcriptional regulatory modules from
-#' protein-protein interaction networks". 
-#' _Nucleic Acids Research_, 42 (1) e6.
+#'   Diego Diez, Andrew P. Hutchins and Diego Miranda-Saavedra. 2014.
+#'   "Systematic identification of transcriptional regulatory modules from
+#'   protein-protein interaction networks". 
+#'   _Nucleic Acids Research_, 42 (1) e6.
 #' @importFrom BiocManager install
-#' @examples 
-#' autographr(ison_southern_women, "railway")
-#' autographr(ison_southern_women, "concentric")
+NULL
+
+#' @rdname partition_layouts
 #' @export
 layout_tbl_graph_hierarchy <- function(.data,
                                        circular = FALSE, times = 1000){

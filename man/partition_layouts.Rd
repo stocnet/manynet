@@ -61,11 +61,23 @@ By default ordering is given by a bipartite placement that reduces
 the number of edge crossings.}
 }
 \description{
-Layout algorithms based on bi- or other partitions
-}
-\examples{
-autographr(ison_southern_women, "railway")
-autographr(ison_southern_women, "concentric")
+These algorithms layout networks based on two or more partitions,
+and are recommended for use with \code{autographr()} or \code{{ggraph}}.
+Note that these layout algorithms use \code{{Rgraphviz}},
+a package that is only available on Bioconductor.
+It will first need to be downloaded using \code{BiocManager::install("Rgraphviz")}.
+
+The "hierarchy" layout layers the first node set along the bottom,
+and the second node set along the top,
+sequenced and spaced as necessary to minimise edge overlap.
+The "alluvial" layout is similar to "hierarchy",
+but places successive layers horizontally rather than vertically.
+The "railway" layout is similar to "hierarchy",
+but nodes are aligned across the layers.
+The "ladder" layout is similar to "railway",
+but places successive layers horizontally rather than vertically.
+The "concentric" layout places a "hierarchy" layout
+around a circle, with successive layers appearing as concentric circles.
 }
 \seealso{
 Other mapping: 
