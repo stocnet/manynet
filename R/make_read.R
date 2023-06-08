@@ -42,7 +42,7 @@
 #'
 #' - [networkdata](http://networkdata.schochastics.net/)
 #' - [GML datasets](http://www-personal.umich.edu/~mejn/netdata/)
-#' - [UCIrvine Network Data Repository](http://networkdata.ics.uci.edu/)
+#' - UCIrvine Network Data Repository
 #' - [KONECT project](http://konect.cc/)
 #' - [SNAP Stanford Large Network Dataset Collection](http://snap.stanford.edu/data/)
 #'

@@ -110,7 +110,7 @@ See also:
 \itemize{
 \item \href{http://networkdata.schochastics.net/}{networkdata}
 \item \href{http://www-personal.umich.edu/~mejn/netdata/}{GML datasets}
-\item \href{http://networkdata.ics.uci.edu/}{UCIrvine Network Data Repository}
+\item UCIrvine Network Data Repository
 \item \href{http://konect.cc/}{KONECT project}
 \item \href{http://snap.stanford.edu/data/}{SNAP Stanford Large Network Dataset Collection}
 }

@@ -22,7 +22,7 @@
 #'   distinguishing incidence (two-mode/bipartite) from
 #'   adjacency (one-mode/unipartite) networks.
 #'   By default FALSE.
-#' @details 
+#' @details
 #' Edgelists are expected to be held in data.frame or tibble class objects.
 #' The first two columns of such an object are expected to be the
 #' senders and receivers of a tie, respectively, and are typically
@@ -74,7 +74,7 @@ as_edgelist <- function(.data,
 #' @export
 as_edgelist.igraph <- function(.data,
                                twomode = FALSE) {
-  igraph::as_data_frame(.data, what = "edges") %>% 
+  igraph::as_data_frame(.data, what = "edges") %>%
     dplyr::as_tibble()
 }
 
@@ -124,7 +124,7 @@ as_edgelist.data.frame <- function(.data,
     names(.data) <- c("from", "to")
     .data
   } else if(ncol(.data) == 3 && 
-            (any(names(.data) != c("from", "to", "weight")) | 
+            (any(names(.data) != c("from", "to", "weight")) |
             any(names(.data) != c("from", "to", "sign")))) {
     names(.data) <- c("from", "to", "weight")
     .data
@@ -180,8 +180,8 @@ as_matrix.data.frame <- function(.data,
       .data <- .data[order(.data[,2], .data[,1]),]
       .data[is.na(.data)] <- 0
     }
-    .data <- dplyr::arrange(.data, 
-                             as.character(.data$to), 
+    .data <- dplyr::arrange(.data,
+                             as.character(.data$to),
                              as.character(.data$from))
     .data <- structure(as.numeric(.data[,3]),
                      .Dim = c(as.integer(length(nodes1)),
@@ -311,8 +311,8 @@ as_igraph.data.frame <- function(.data,
     # stop("Please rename the weight column of your dataframe to 'weight'")
   }
   if (!is_labelled(.data)) {
-    graph <- igraph::graph_from_data_frame(.data, 
-                      vertices = data.frame(name = 1:max(c(.data$from, .data$to))))
+    graph <- igraph::graph_from_data_frame(.data,
+                                           vertices = data.frame(name = 1:max(c(.data$from, .data$to))))
   } else graph <- igraph::graph_from_data_frame(.data)
   if (!is_labelled(.data)) {
     graph <- igraph::delete_vertex_attr(graph, "name")
@@ -329,11 +329,11 @@ as_igraph.matrix <- function(.data,
                              twomode = FALSE) {
   if (nrow(.data) != ncol(.data) | twomode) {
     if (!(all(.data %in% c(0, 1)))) {
-      graph <- igraph::graph_from_incidence_matrix(.data, 
-                                                   weighted = TRUE, 
+      graph <- igraph::graph_from_incidence_matrix(.data,
+                                                   weighted = TRUE,
                                                    directed = FALSE)
     } else {
-      graph <- igraph::graph_from_incidence_matrix(.data, 
+      graph <- igraph::graph_from_incidence_matrix(.data,
                                                    directed = FALSE)
     }
   } else {
@@ -343,7 +343,7 @@ as_igraph.matrix <- function(.data,
                                                                  "undirected", "directed"),
                                                    weighted = TRUE)
     } else {
-      graph <- igraph::graph_from_adjacency_matrix(.data, 
+      graph <- igraph::graph_from_adjacency_matrix(.data,
                                                    mode = ifelse(all(.data == t(.data)),
                                                                  "undirected", "directed"))
     }
@@ -366,7 +366,7 @@ as_igraph.tbl_graph <- function(.data,
 }
 
 #' @export
-as_igraph.network <- function(.data, 
+as_igraph.network <- function(.data,
                               twomode = FALSE) {
   # Extract node attributes
   attr <- names(.data[[3]][[1]])
@@ -377,7 +377,7 @@ as_igraph.network <- function(.data,
       graph <- igraph::graph_from_incidence_matrix(graph, weighted = TRUE)
     } else {
       graph <- network::as.sociomatrix(.data)
-      graph <- igraph::graph_from_incidence_matrix(graph) 
+      graph <- igraph::graph_from_incidence_matrix(graph)
     }
   } else {
     if ("weight" %in% network::list.edge.attributes(.data)) {
@@ -420,7 +420,7 @@ as_igraph.network.goldfish <- function(.data,
   # orig <- deparse(substitute(.data))
   # y <- ls(envir = .GlobalEnv)
   # envir  <- .GlobalEnv
-  # 
+  #
   # classesToKeep <- c("nodes.goldfish", "network.goldfish")
   # checkClasses <- function(.data, classes) vapply(classes, 
   #                                                  function(x) methods::is(.data, x), logical(1))
@@ -459,7 +459,7 @@ as_igraph.siena <- function(.data, twomode = NULL) {
         colnames(y) <- as.character(paste0("N", seq_len(ncol(y))))
         # join ties
         if (isTRUE(is_twomode(x))) { # x and y are twomode
-          x <- join_ties(x, as_igraph(y), 
+          x <- join_ties(x, as_igraph(y),
                          attr_name = paste0(name, "_", "t", d))
         } else { # x is onemode but y is twomode
           y <- as_edgelist(y)
@@ -531,7 +531,7 @@ as_igraph.siena <- function(.data, twomode = NULL) {
   }
   # Add dycCovar
   for (k in seq_len(length(.data$dycCovars))) {
-    out <- join_ties(out, as_igraph(.data$dycCovars[k]), 
+    out <- join_ties(out, as_igraph(.data$dycCovars[k]),
                      attr_name = paste0(names(.data$dycCovars)[k]))
   }
   # Add dyvCovars
@@ -619,14 +619,14 @@ as_tidygraph.network.goldfish <- function(.data,
   # orig <- deparse(substitute(.data))
   # y <- ls(envir = .GlobalEnv)
   # envir  <- .GlobalEnv
-  # 
+  #
   # classesToKeep <- c("nodes.goldfish", "network.goldfish")
   # checkClasses <- function(.data, classes) vapply(classes, 
   #                               function(x) methods::is(.data, x), logical(1))
   # ClassFilter <- function(x) any(checkClasses(get(x), classes = classesToKeep))
   # gfobjs <- Filter(ClassFilter, y)
-  # classes <- vapply(gfobjs, FUN = function(x) checkClasses(get(x), 
-  #                                classes = classesToKeep), 
+  # classes <- vapply(gfobjs, FUN = function(x) checkClasses(get(x),
+  #                                classes = classesToKeep),
   #                   FUN.VALUE = logical(length(classesToKeep)))
 
   if (sum(.data)==0) {
@@ -678,7 +678,7 @@ as_network.matrix <- function(.data,
   if (is_twomode(.data)) {
     out <- to_multilevel(.data)
   } else out <- .data
-  network::as.network(out, 
+  network::as.network(out,
                       directed = is_directed(.data),
                       bipartite   = ifelse(is_twomode(.data),
                                            nrow(.data),
@@ -722,7 +722,7 @@ as_network.tbl_graph <- function(.data,
 as_network.data.frame <- function(.data,
                                   twomode = NULL) {
   if (inherits(.data, "tbl_df")) .data <- as.data.frame(.data)
-  network::as.network.data.frame(.data, 
+  network::as.network.data.frame(.data,
                                  directed = ifelse(is_twomode(.data),
                                                    FALSE,
                                                    is_directed(.data)),
