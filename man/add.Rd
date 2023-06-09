@@ -36,6 +36,9 @@ add_tie_attribute(.data, attr_name, vector)
 
 \item{vector}{A vector of values for the new attribute.}
 }
+\value{
+A data object of the same class as the function was given.
+}
 \description{
 These functions allow users to add nodes, ties, or attributes to the nodes or ties
 of a network.
@@ -47,11 +50,9 @@ The \verb{add_*()} functions operate similarly to in \code{{igraph}}.
 
 \item \code{add_ties()}: Add additional ties to a network
 
-\item \code{add_node_attribute()}: Insert specified values from a vector into the graph
-as node attributes
+\item \code{add_node_attribute()}: Add a vector of values to a network as a nodal attribute.
 
-\item \code{add_tie_attribute()}: Insert specified values from a vector into the network.
-as tie attributes
+\item \code{add_tie_attribute()}: Add a vector of values to a network as a tie attribute.
 
 }}
 \examples{

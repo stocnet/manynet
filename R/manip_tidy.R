@@ -10,6 +10,7 @@
 #' @param object2 A second object to copy nodes or edges from.
 #' @param attr_name Name of the new attribute in the resulting object.
 #' @param ... Additional arguments.
+#' @return A tidygraph (`tbl_graph`) data object.
 #' @examples
 #'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
 #'   another <- create_filled(3) %>% mutate(name = c("E", "F", "G"))

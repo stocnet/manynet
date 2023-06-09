@@ -7,6 +7,7 @@
 #' @name from
 #' @family manipulations
 #' @inheritParams reformat
+#' @return A tidygraph object combining the list of network data.
 NULL
 
 #' @describeIn from Returns a single network object
@@ -32,7 +33,7 @@ from_subgraphs <- function(.data) {
   }
   orig <- object2 <- NULL
   out <- select_ties(out, -c(orig, object2))
-  out
+  as_tidygraph(out)
 }
 
 #' @describeIn from Returns a single network object

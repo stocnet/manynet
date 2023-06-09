@@ -1,4 +1,21 @@
-# manynet 1.0.0
+# manynet 0.1.1
+
+2023-06-09
+
+## Package
+
+- Removed commented out examples
+- Added more detail on what various functions return
+
+## Manipulates
+
+- Added `na_to_mean.data.frame()`
+
+## Maps
+
+- Added `network_dims.network()`
+
+# manynet 0.1.0
 
 2023-06-07
 

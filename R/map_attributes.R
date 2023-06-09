@@ -2,7 +2,7 @@
 #' 
 #' @description These functions extract certain attributes from given network data.
 #'   They are also useful as helpers within other functions.
-#'   `node_*()` and `tie_*()` always return vectors the same length
+#' @return `node_*()` and `tie_*()` always return vectors the same length
 #'   as the number of nodes or ties in the network, respectively.
 #' @name attributes
 #' @family mapping

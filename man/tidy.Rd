@@ -55,6 +55,9 @@ Options are "full","left", "right", "inner".}
 
 \item{...}{Additional arguments.}
 }
+\value{
+A tidygraph (\code{tbl_graph}) data object.
+}
 \description{
 These functions allow users to add nodes, ties, or attributes to the nodes or ties
 of a network.

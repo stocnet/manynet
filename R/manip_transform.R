@@ -23,6 +23,11 @@
 #' @name transform
 #' @family manipulations
 #' @inheritParams reformat
+#' @returns
+#' All `to_` functions return an object of the same class as that provided. 
+#' So passing it an igraph object will return an igraph object
+#' and passing it a network object will return a network object,
+#' with certain modifications as outlined for each function.
 NULL
 
 #' @describeIn transform Results in a weighted one-mode object

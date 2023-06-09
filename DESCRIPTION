@@ -1,7 +1,7 @@
 Package: manynet
 Title: Many Ways to Make, Manipulate, and Map Myriad Networks
-Version: 0.1.0
-Date: 2023-06-07
+Version: 0.1.1
+Date: 2023-06-09
 Description: A set of tools for making, manipulating, and mapping many different types of networks.
    All functions operate with matrices, edge lists, and 'igraph', 'network', and 'tidygraph' objects,
    and on one-mode, two-mode (bipartite), and sometimes three-mode networks.
