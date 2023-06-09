@@ -30,6 +30,7 @@
 #'   coloring the nodes. It is easiest if this is added as an edge or tie attribute 
 #'   to the graph before plotting.
 #' @param ... Extra arguments to pass on to `autographr()`/`ggraph()`/`ggplot()`.
+#' @return A ggplot2::ggplot() object.
 #' @importFrom ggraph geom_edge_link geom_node_text geom_conn_bundle
 #' get_con geom_node_point scale_edge_width_continuous geom_node_label
 #' @importFrom ggplot2 aes arrow unit scale_color_brewer scale_fill_brewer
@@ -39,8 +40,8 @@ NULL
 #' @describeIn auto_graph Graphs a network with sensible defaults
 #' @examples
 #' ison_adolescents %>% 
-#'   mutate(shape = rep(c("circle", "square"), times = 4)) %>%
-#'   mutate(color = rep(c("blue", "red"), times = 4)) %>%
+#'   mutate(shape = rep(c("circle", "square"), times = 4),
+#'          color = rep(c("blue", "red"), times = 4)) %>%
 #'   autographr(node_shape = "shape", node_color = "color")
 #' autographr(ison_karateka, node_size = 8)
 #' @export
@@ -74,7 +75,7 @@ autographr <- function(.data,
 #' @param netlist A list of migraph-compatible networks.
 #' @source http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
 #' @examples
-#'   #autographs(to_egos(ison_adolescents))
+#'   autographs(to_egos(ison_adolescents))
 #' @export
 autographs <- function(netlist, ...) {
   if (!requireNamespace("patchwork", quietly = TRUE)) {
@@ -110,23 +111,6 @@ autographs <- function(netlist, ...) {
 #' @importFrom ggraph create_layout
 #' @importFrom dplyr mutate select distinct left_join %>%
 #' @source http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
-#' @examples
-#' \donttest{
-# #ison_adolescents %>%
-# #  mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %>%
-# #  to_waves(attribute = "year") %>%
-# #  autographd()
-# #ison_adolescents %>%
-# #  mutate(shape = rep(c("circle", "square"), times = 4),
-# #         color = rep(c("blue", "red"), times = 4),
-# #         size = sample(4:16, 8, replace = TRUE)) %>%
-# #  mutate_ties(year = sample(1995:1998, 10, replace = TRUE),
-# #         e_color = sample(c("yellow", "green"), 10, replace = TRUE)) %>%
-# #  to_waves(attribute = "year") %>%
-# #  autographd(keep_isolates = FALSE, layout = "circle", node_shape = "shape",
-# #             node_color = "color", node_size =  "size",
-# #             edge_color = "e_color")
-#' }
 #' @export
 autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
                        labels = TRUE, node_color = NULL, node_shape = NULL,

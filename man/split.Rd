@@ -47,10 +47,12 @@ Users can also list specific waves they want to select.}
 \item{slice}{Character string or character list indicating the date(s)
 or integer(s) range used to slice data (e.g slice = c(1:2, 3:4)).}
 }
+\value{
+The returned object will be a list of network objects.
+}
 \description{
 These functions offer tools for splitting manynet-consistent objects
 (matrices, igraph, tidygraph, or network objects).
-Splitting means that the returned object will be a list of objects.
 }
 \section{Functions}{
 \itemize{
@@ -72,21 +74,18 @@ with some continuous time variable at some time slice(s).
 
 }}
 \examples{
-to_egos(ison_adolescents)
-#autographs(to_egos(ison_adolescents,2))
+  to_egos(ison_adolescents)
+  autographs(to_egos(ison_adolescents,2))
 ison_adolescents \%>\%
-  activate(nodes) \%>\%
   mutate(unicorn = sample(c("yes", "no"), 8,
-  replace = TRUE)) \%>\%
+                          replace = TRUE)) \%>\%
   to_subgraphs(attribute = "unicorn")
-to_components(ison_marvel_relationships)
+  to_components(ison_marvel_relationships)
 ison_adolescents \%>\%
-  activate(edges) \%>\%
-  mutate(wave = sample(1995:1998, 10, replace = TRUE)) \%>\%
+  mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) \%>\%
   to_waves(attribute = "wave")
 ison_adolescents \%>\%
-  activate(edges) \%>\%
-  mutate(wave = sample(1995:1998, 10, replace = TRUE)) \%>\%
+  mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) \%>\%
   to_waves(attribute = "wave", panels = c(1995, 1996))
 ison_adolescents \%>\%
   mutate_ties(time = 1:10, increment = 1) \%>\% 

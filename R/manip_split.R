@@ -3,10 +3,10 @@
 #' @description
 #'   These functions offer tools for splitting manynet-consistent objects
 #'   (matrices, igraph, tidygraph, or network objects).
-#'   Splitting means that the returned object will be a list of objects.
 #' @name split
 #' @family manipulations
 #' @inheritParams reformat
+#' @return The returned object will be a list of network objects.
 NULL
 
 #' @describeIn split Returns a list of ego (or focal)
@@ -19,8 +19,8 @@ NULL
 #'   and 2 excludes ego's direct alters.
 #' @importFrom igraph make_ego_graph
 #' @examples
-#' to_egos(ison_adolescents)
-#' #autographs(to_egos(ison_adolescents,2))
+#'   to_egos(ison_adolescents)
+#'   autographs(to_egos(ison_adolescents,2))
 #' @export
 to_egos <- function(.data, 
                     max_dist = 1, 
@@ -86,9 +86,8 @@ to_egos.data.frame <- function(.data,
 #' @importFrom igraph induced_subgraph
 #' @examples
 #' ison_adolescents %>%
-#'   activate(nodes) %>%
 #'   mutate(unicorn = sample(c("yes", "no"), 8,
-#'   replace = TRUE)) %>%
+#'                           replace = TRUE)) %>%
 #'   to_subgraphs(attribute = "unicorn")
 #' @export
 to_subgraphs <- function(.data, attribute) UseMethod("to_subgraphs")
@@ -113,7 +112,7 @@ to_subgraphs.network <- function(.data, attribute){
 #' @describeIn split Returns a list of the components
 #'   in a network.
 #' @examples 
-#' to_components(ison_marvel_relationships)
+#'   to_components(ison_marvel_relationships)
 #' @export
 to_components <- function(.data) UseMethod("to_components")
 
@@ -158,12 +157,10 @@ to_components.data.frame <- function(.data){
 #'   Users can also list specific waves they want to select.
 #' @examples
 #' ison_adolescents %>%
-#'   activate(edges) %>%
-#'   mutate(wave = sample(1995:1998, 10, replace = TRUE)) %>%
+#'   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) %>%
 #'   to_waves(attribute = "wave")
 #' ison_adolescents %>%
-#'   activate(edges) %>%
-#'   mutate(wave = sample(1995:1998, 10, replace = TRUE)) %>%
+#'   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) %>%
 #'   to_waves(attribute = "wave", panels = c(1995, 1996))
 #' @export
 to_waves <- function(.data, attribute = "wave", panels = NULL) UseMethod("to_waves")

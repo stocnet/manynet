@@ -149,16 +149,6 @@ you will need to unpack them and convert them one by one.
 \item \code{read_dynetml()}: Reading DynetML files
 
 }}
-\examples{
-\donttest{
-# import Roethlisberger & Dickson's horseplay game data set:
-#horseplay <- read_ucinet("WIRING-RDGAM.##h")
-}
-\donttest{
-# export it again to UCINET under a different name:
-#write_ucinet(horseplay, "R&D-horseplay")
-}
-}
 \seealso{
 \link{as}
 
