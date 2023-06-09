@@ -30,6 +30,9 @@ from_slices(.data, remove.duplicates = FALSE)
 By default FALSE.
 If TRUE, duplicated edges are removed.}
 }
+\value{
+A tidygraph object combining the list of network data.
+}
 \description{
 These functions offer tools for joining lists of manynet-consistent objects
 (matrices, igraph, tidygraph, or network objects).

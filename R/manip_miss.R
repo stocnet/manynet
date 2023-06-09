@@ -10,6 +10,7 @@
 #' @name miss
 #' @family manipulations
 #' @inheritParams is
+#' @return A data object of the same class as the function was given.
 #' @references 
 #'   Krause, Robert, Mark Huisman, Christian Steglich, and Tom A.B. Snijders. 2020. 
 #'   "Missing data in cross-sectional networks–An extensive comparison of missing data treatment methods". 
@@ -99,5 +100,11 @@ na_to_mean.matrix <- function(.data){
                                     1, mean(.data, na.rm = TRUE))
     .data
   }
+}
+
+#' @export
+na_to_mean.data.frame <- function(.data){
+  .data[is.na(.data[,3]),3] <- mean(.data[,3], na.rm = TRUE)
+  .data
 }
 

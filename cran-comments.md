@@ -35,3 +35,12 @@
 ## R CMD check results
 
 0 errors | 0 warnings | 0 notes
+
+Since original submission and in response to CRAN requests:
+- There are no specific references at the package level at present;
+methods underlying functions are referenced in the respective documentation.
+- All missing \value tags have now been added.
+- Commented out examples have been uncommented or deleted.
+- In the make_read.R tests, we are using tempfile() to create a temporary file paths
+for testing purposes. 
+We understand that tempfile() calls tempdir(), so the effect should be the same?

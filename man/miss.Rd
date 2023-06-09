@@ -20,6 +20,9 @@ na_to_mean(.data)
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
 }
+\value{
+A data object of the same class as the function was given.
+}
 \description{
 These functions offer tools for imputing missing tie data.
 Currently two options are available:

@@ -34,11 +34,13 @@ tie_signs(.data)
 
 \item{attribute}{Character string naming an attribute in the object.}
 }
+\value{
+\verb{node_*()} and \verb{tie_*()} always return vectors the same length
+as the number of nodes or ties in the network, respectively.
+}
 \description{
 These functions extract certain attributes from given network data.
 They are also useful as helpers within other functions.
-\verb{node_*()} and \verb{tie_*()} always return vectors the same length
-as the number of nodes or ties in the network, respectively.
 }
 \section{Functions}{
 \itemize{

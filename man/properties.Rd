@@ -29,11 +29,18 @@ network_tie_attributes(.data)
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
 }
+\value{
+\verb{network_*()} functions always relate to the overall graph or network,
+usually returning a scalar.
+\code{network_dims()} returns an integer of the number of nodes in a one-mode network,
+or two integers representing the number of nodes in each nodeset
+in the case of a two-mode network.
+\verb{network_*_attributes()} returns a string vector with the names
+of all node or tie attributes in the network.
+}
 \description{
 These functions extract certain attributes from given network data.
 They are also useful as helpers within other functions.
-\verb{network_*()} functions always relate to the overall graph or network,
-usually returning a scalar.
 }
 \section{Functions}{
 \itemize{
@@ -54,8 +61,8 @@ network_nodes(ison_southern_women)
 network_ties(ison_southern_women)
 network_dims(ison_southern_women)
 network_dims(to_mode1(ison_southern_women))
-network_node_attributes(ison_lotr)
-network_tie_attributes(ison_algebra)
+  network_node_attributes(ison_lotr)
+  network_tie_attributes(ison_algebra)
 }
 \seealso{
 Other mapping: 

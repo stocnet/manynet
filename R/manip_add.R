@@ -9,6 +9,7 @@
 #' @param attribute A named list to be added as tie or node attributes.
 #' @param attr_name Name of the new attribute in the resulting object.
 #' @param vector A vector of values for the new attribute.
+#' @return A data object of the same class as the function was given.
 #' @examples
 #'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
 #'   add_nodes(other, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))
@@ -58,8 +59,7 @@ add_ties.network <- function(.data, ties, attribute = NULL){
   as_network(add_ties(as_igraph(.data), ties, attribute))
 }
 
-#' @describeIn add Insert specified values from a vector into the graph 
-#' as node attributes
+#' @describeIn add Add a vector of values to a network as a nodal attribute.
 #' @importFrom igraph vertex_attr
 #' @export
 add_node_attribute <- function(.data, attr_name, vector){
@@ -75,15 +75,22 @@ add_node_attribute <- function(.data, attr_name, vector){
   }
   out <- as_igraph(.data)
   igraph::vertex_attr(out, name = attr_name) <- vector
-  as_tidygraph(out)
+  if(inherits(.data, "tbl_graph")) as_tidygraph(out) else
+    if(inherits(.data, "igraph")) as_igraph(out) else
+      if(inherits(.data, "igraph")) as_network(out) else
+          message("This function only works for igraph, tidygraph, or network objects.")
 }
 
-#' @describeIn add Insert specified values from a vector into the network.
-#'   as tie attributes
+#' @describeIn add Add a vector of values to a network as a tie attribute.
 #' @importFrom igraph edge_attr
 #' @export
 add_tie_attribute <- function(.data, attr_name, vector){
   out <- as_igraph(.data)
   igraph::edge_attr(out, name = attr_name) <- vector
-  as_tidygraph(out)
+  if(inherits(.data, "tbl_graph")) as_tidygraph(out) else
+    if(inherits(.data, "igraph")) as_igraph(out) else
+      if(inherits(.data, "igraph")) as_network(out) else
+        if(inherits(.data, "data.frame")) as_edgelist(out) else
+          message(paste("This function only works for",
+          "igraph, tidygraph, or network objects or data frame edgelists."))
 }

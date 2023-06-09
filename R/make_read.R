@@ -54,11 +54,6 @@
 #' To import earlier UCINET file types, you will need to update them first.
 #' To import multiple matrices packed into a single UCINET file,
 #' you will need to unpack them and convert them one by one.
-#' @examples
-#' \donttest{
-#' # import Roethlisberger & Dickson's horseplay game data set:
-#' #horseplay <- read_ucinet("WIRING-RDGAM.##h")
-#' }
 #' @source 
 #' `read_ucinet()` and `write_ucinet()` kindly supplied by Christian Steglich, 
 #' constructed on 18 June 2015.
@@ -283,8 +278,6 @@ write_pajek <- function(.data,
   )
 }
 
-# igraph::write_graph(graph = object, file = path, ...)
-
 #' @describeIn read Reading UCINET files
 #' @export
 read_ucinet <- function(file = file.choose()) {
@@ -456,11 +449,6 @@ read_ucinet <- function(file = file.choose()) {
 #' By default the name will be the same as the object.
 #' @importFrom utils askYesNo
 #' @return A pair of UCINET files in V6404 file format (.##h, .##d)
-#' @examples
-#' \donttest{
-#' # export it again to UCINET under a different name:
-#' #write_ucinet(horseplay, "R&D-horseplay")
-#' }
 #' @export
 write_ucinet <- function(.data,
                          filename,

@@ -78,6 +78,9 @@ any adjacent edges in each frame?
 TRUE by default.
 If FALSE, deletes isolated vertices in each frame.}
 }
+\value{
+A ggplot2::ggplot() object.
+}
 \description{
 The aim of this function is to provide users with a quick and easy
 graphing function that makes best use of the data,
@@ -98,13 +101,11 @@ with sensible defaults
 }}
 \examples{
 ison_adolescents \%>\% 
-  mutate(shape = rep(c("circle", "square"), times = 4)) \%>\%
-  mutate(color = rep(c("blue", "red"), times = 4)) \%>\%
+  mutate(shape = rep(c("circle", "square"), times = 4),
+         color = rep(c("blue", "red"), times = 4)) \%>\%
   autographr(node_shape = "shape", node_color = "color")
 autographr(ison_karateka, node_size = 8)
-  #autographs(to_egos(ison_adolescents))
-\donttest{
-}
+  autographs(to_egos(ison_adolescents))
 }
 \seealso{
 Other mapping: 

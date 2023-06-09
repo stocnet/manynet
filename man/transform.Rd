@@ -71,6 +71,12 @@ Other recommended options include \code{median}, \code{sum},
 \item{mark}{A logical vector marking two types or modes.
 By default "type".}
 }
+\value{
+All \code{to_} functions return an object of the same class as that provided.
+So passing it an igraph object will return an igraph object
+and passing it a network object will return a network object,
+with certain modifications as outlined for each function.
+}
 \description{
 These functions offer tools for transforming migraph-consistent objects
 (matrices, igraph, tidygraph, or network objects).

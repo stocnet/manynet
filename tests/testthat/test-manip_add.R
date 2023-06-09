@@ -41,12 +41,9 @@ test_that("bind_node_attributes works", {
 })
 
 test_that("add_tie_attribute works", {
-  expect_equal(igraph::edge_attr(add_tie_attribute(net_edge1, "weight", 
-                                                  c(1,2,1,2,1)), 
-                              "weight"), 
+  expect_equal(unname(unlist(add_tie_attribute(net_edge1, "weight", c(1,2,1,2,1))[,"weight"])), 
                c(1,2,1,2,1))
-  expect_equal(class(add_tie_attribute(net_edge1, "weight", c(1,2,1,2,1)))[1], 
-               "tbl_graph")
+  expect_s3_class(add_tie_attribute(net_edge1, "weight", c(1,2,1,2,1)), "data.frame")
 })
 
 test_that("join_ties works", {
