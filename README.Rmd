@@ -269,6 +269,22 @@ please install the `{remotes}` or `{devtools}` package from CRAN and then:
 - For latest development version: 
 `remotes::install_github("snlab-ch/manynet@develop", build_vignettes = TRUE)`
 
+### Tutorials
+
+This package includes a couple of tutorials to help new and experienced users
+learn how they can conduct social network analysis using the package.
+To access the tutorials, you will need to have the additional package `{learnr}` installed:
+`install.packages("learnr")`.
+For more details on the `{learnr}` package, see [here](https://rstudio.github.io/learnr/).
+Then we suggest that you check to see which vignettes are currently available:
+
+```{r learnr-tutes}
+learnr::available_tutorials("manynet")
+```
+
+You can then choose to begin a tutorial using the following command: e.g.
+`learnr::run_tutorial("tutorial2", "manynet")`.
+
 ## Relationship to other packages
 
 This package aims to provide an updated, and more comprehensive replacement for `{intergraph}`.
