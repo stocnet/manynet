@@ -9,12 +9,14 @@
 
 [![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html#maturing)
-<!-- ![CRAN/METACRAN](https://img.shields.io/cran/v/manynet) -->
-<!-- ![GitHub release (latest by date)](https://img.shields.io/github/v/release/snlab-ch/manynet) -->
+![CRAN/METACRAN](https://img.shields.io/cran/v/manynet) ![GitHub release
+(latest by
+date)](https://img.shields.io/github/v/release/snlab-ch/manynet)
 ![GitHub Release
 Date](https://img.shields.io/github/release-date/snlab-ch/manynet)
-<!-- [![Codecov test coverage](https://codecov.io/gh/snlab-ch/manynet/branch/main/graph/badge.svg)](https://app.codecov.io/gh/snlab-ch/manynet?branch=main) -->
-<!-- [![CodeFactor](https://www.codefactor.io/repository/github/snlab-ch/manynet/badge)](https://www.codefactor.io/repository/github/snlab-ch/manynet) -->
+[![Codecov test
+coverage](https://codecov.io/gh/snlab-ch/manynet/branch/main/graph/badge.svg)](https://app.codecov.io/gh/snlab-ch/manynet?branch=main)
+[![CodeFactor](https://www.codefactor.io/repository/github/snlab-ch/manynet/badge)](https://www.codefactor.io/repository/github/snlab-ch/manynet)
 <!-- [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4559/badge)](https://bestpractices.coreinfrastructure.org/projects/4559) -->
 <!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7076396.svg)](https://doi.org/10.5281/zenodo.7076396) -->
 <!-- see https://zenodo.org/record/7076396 -->
@@ -116,10 +118,11 @@ properties, e.g.:
 - `to_acyclic()`, `to_anti()`, `to_blocks()`, `to_components()`,
   `to_directed()`, `to_egos()`, `to_giant()`, `to_matching()`,
   `to_mode1()`, `to_mode2()`, `to_multilevel()`, `to_named()`,
-  `to_onemode()`, `to_reciprocated()`, `to_redirected()`,
-  `to_simplex()`, `to_slices()`, `to_subgraph()`, `to_subgraphs()`,
-  `to_ties()`, `to_twomode()`, `to_undirected()`, `to_uniplex()`,
-  `to_unnamed()`, `to_unsigned()`, `to_unweighted()`, `to_waves()`
+  `to_no_isolates()`, `to_onemode()`, `to_reciprocated()`,
+  `to_redirected()`, `to_simplex()`, `to_slices()`, `to_subgraph()`,
+  `to_subgraphs()`, `to_ties()`, `to_twomode()`, `to_undirected()`,
+  `to_uniplex()`, `to_unnamed()`, `to_unsigned()`, `to_unweighted()`,
+  `to_waves()`
 
 ### Reformatting
 
@@ -243,6 +246,27 @@ and then:
   `remotes::install_github("snlab-ch/manynet", build_vignettes = TRUE)`
 - For latest development version:
   `remotes::install_github("snlab-ch/manynet@develop", build_vignettes = TRUE)`
+
+### Tutorials
+
+This package includes a couple of tutorials to help new and experienced
+users learn how they can conduct social network analysis using the
+package. To access the tutorials, you will need to have the additional
+package `{learnr}` installed: `install.packages("learnr")`. For more
+details on the `{learnr}` package, see
+[here](https://rstudio.github.io/learnr/). Then we suggest that you
+check to see which vignettes are currently available:
+
+``` r
+learnr::available_tutorials("manynet")
+#> Available tutorials:
+#> * manynet
+#>   - tutorial1 : "Data"
+#>   - tutorial2 : "Visualisation"
+```
+
+You can then choose to begin a tutorial using the following command:
+e.g. `learnr::run_tutorial("tutorial2", "manynet")`.
 
 ## Relationship to other packages
 
