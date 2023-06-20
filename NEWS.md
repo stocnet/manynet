@@ -1,3 +1,13 @@
+# manynet 0.1.2
+
+2023-06-20
+
+## Package
+
+- Added tutorials for package
+  - Moved and updated "data" tutorial from `{migraph}` 
+  - Moved and updated "visualisations" tutorial from `{migraph}`
+
 # manynet 0.1.1
 
 2023-06-09
