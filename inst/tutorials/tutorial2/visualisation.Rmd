@@ -10,6 +10,8 @@ runtime: shiny_prerendered
 ```{r setup, include=FALSE}
 library(learnr)
 library(manynet)
+library(migraph)
+library(patchwork)
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
@@ -171,9 +173,7 @@ that can be used together with `autographr()`.
 
 ```{r layoutseg-solution}
 (autographr(ison_southern_women, layout = "bipartite") + ggtitle("bipartite") |
-autographr(ison_southern_women, layout = "hierarchy") + ggtitle("hierarchy")) /
-(autographr(ison_southern_women, layout = "concentric") + ggtitle("concentric") |
-   autographr(ison_southern_women, layout = "railway") + ggtitle("railway"))
+autographr(ison_southern_women, layout = "kk") + ggtitle("kk"))
 ```
 
 ### Using different colours
