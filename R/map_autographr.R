@@ -78,14 +78,7 @@ autographr <- function(.data,
 #'   autographs(to_egos(ison_adolescents))
 #' @export
 autographs <- function(netlist, ...) {
-  if (!requireNamespace("patchwork", quietly = TRUE)) {
-    if(utils::askYesNo(msg = "The `patchwork` package is required.
-                       Would you like to install `patchwork` from CRAN?")) {
-      utils::install.packages('patchwork')
-    } else {
-      stop("Please install `patchwork` from CRAN to graph multiple plots.")
-    }
-  }
+  thisRequires("patchwork")
   if(!is.null(names(netlist))){
     gs <- lapply(1:length(netlist), function(x)
       autographr(netlist[[x]], ...) +
@@ -116,14 +109,7 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
                        labels = TRUE, node_color = NULL, node_shape = NULL,
                        node_size = NULL, edge_color = NULL) {
   # Todo: add (...) arguments passed on to `ggraph()`/`ggplot()`/`gganimate()`
-  if (!requireNamespace("gganimate", quietly = TRUE)) {
-    if(utils::askYesNo(msg = "The `gganimate` package is required.
-                       Would you like to install `gganimate` from CRAN?")) {
-      utils::install.packages('gganimate')
-    } else {
-      stop("Please install `gganimate` from CRAN to animate plots.")
-    }
-  }
+  thisRequires("gganimate")
   x <- y <- name <- status <- frame <- NULL
   # Check if object is a list of lists
   if (!is.list(tlist[[1]])) {
