@@ -853,3 +853,9 @@ thisRequires <- function(pkgname){
     }
   }
 }
+
+thisRequiresBio <- function(pkgname) {
+  install <- NULL
+  thisRequires("BiocManager")
+  install("Rgraphviz")
+}
