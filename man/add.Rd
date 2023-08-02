@@ -3,12 +3,15 @@
 \name{add}
 \alias{add}
 \alias{add_nodes}
+\alias{delete_nodes}
 \alias{add_ties}
 \alias{add_node_attribute}
 \alias{add_tie_attribute}
 \title{Adding nodes and ties and their attributes}
 \usage{
 add_nodes(.data, nodes, attribute = NULL)
+
+delete_nodes(.data, nodes)
 
 add_ties(.data, ties, attribute = NULL)
 
@@ -46,7 +49,9 @@ The \verb{add_*()} functions operate similarly to in \code{{igraph}}.
 }
 \section{Functions}{
 \itemize{
-\item \code{add_nodes()}: Add additional ties to a network
+\item \code{add_nodes()}: Add additional nodes to a network
+
+\item \code{delete_nodes()}: Delete nodes in a network
 
 \item \code{add_ties()}: Add additional ties to a network
 
