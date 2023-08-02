@@ -187,6 +187,23 @@
 #'   ```
 "ison_karateka"
 
+# Konigsberg ####
+
+#' One-mode Seven Bridges of Konigsberg network (Euler 1741)
+#'
+#' @docType data
+#' @keywords datasets
+#' @name ison_konigsberg
+#' @usage data(ison_konigsberg)
+#' @references
+#'   Euler, Leonard. 1741. “Solutio problematis ad geometriam situs pertinentis.”
+#'   _Commentarii academiae scientiarum Petropolitanae_.
+#' @format
+#'   ```{r, echo = FALSE}
+#'   ison_konigsberg
+#'   ```
+"ison_konigsberg"
+
 # Networkers ####
 
 #' One-mode EIES dataset (Freeman and Freeman 1979)
