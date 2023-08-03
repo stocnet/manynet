@@ -9,6 +9,7 @@
 \alias{to_ties}
 \alias{to_blocks}
 \alias{to_matching}
+\alias{to_eulerian}
 \alias{to_anti}
 \alias{to_no_isolates}
 \title{Tools for transforming networks, graphs, and matrices}
@@ -27,12 +28,14 @@ to_blocks(.data, membership, FUN = mean)
 
 to_matching(.data, mark = "type")
 
+to_eulerian(.data)
+
 to_anti(.data)
 
 to_no_isolates(.data)
 }
 \arguments{
-\item{.data}{An object of a manynet-consistent class:
+\item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
 \item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
@@ -126,6 +129,9 @@ while preserving the topology of the original structures.
 \item \code{to_matching()}: Returns a network with only
 matching ties
 
+\item \code{to_eulerian()}: Returns a network with only
+the Eulerian path
+
 \item \code{to_anti()}: Returns the complement of a network
 where only ties \emph{not} present in the original network
 are included in the new network.
@@ -153,6 +159,7 @@ autographr(to_mode1(ison_southern_women))
 autographr(to_mode2(ison_southern_women))
 autographr(to_ties(ison_adolescents))
 autographr(to_matching(ison_southern_women))
+  autographr(to_eulerian(delete_nodes(ison_konigsberg, "Lomse")))
 autographr(to_anti(ison_southern_women))
 ison_adolescents \%>\%
   activate(edges) \%>\%

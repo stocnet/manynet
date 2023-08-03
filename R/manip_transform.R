@@ -385,6 +385,34 @@ to_matching.matrix <- function(.data, mark = "type"){
   as_matrix(to_matching(as_igraph(.data), mark))
 }
 
+#' @describeIn transform Returns a network with only
+#'   the Eulerian path
+#' @importFrom igraph eulerian_path
+#' @examples 
+#'   autographr(to_eulerian(delete_nodes(ison_konigsberg, "Lomse")))
+#' @export
+to_eulerian <- function(.data) UseMethod("to_eulerian")
+
+#' @export
+to_eulerian.igraph <- function(.data){
+  if(!is_eulerian(.data))
+    stop("This is not a Eulerian graph.")
+  out <- paste(attr(igraph::eulerian_path(.data)$vpath, "names"), 
+               collapse = "-+")
+  out <- create_explicit(out)
+  as_igraph(out)
+}
+
+#' @export
+to_eulerian.tbl_graph <- function(.data){
+  if(!is_eulerian(.data))
+    stop("This is not a Eulerian graph.")
+  out <- paste(attr(igraph::eulerian_path(.data)$vpath, "names"), 
+               collapse = "-+")
+  out <- create_explicit(out)
+  out
+}
+
 #' @describeIn transform Returns the complement of a network
 #'   where only ties _not_ present in the original network
 #'   are included in the new network.
