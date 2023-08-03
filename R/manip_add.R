@@ -4,6 +4,13 @@
 #'   These functions allow users to add nodes, ties, or attributes to the nodes or ties
 #'   of a network.
 #'   The `add_*()` functions operate similarly to in `{igraph}`.
+#'   
+#'   Not all functions have methods available for all object classes.
+#'   Below are the currently implemented S3 methods:
+#'  
+#'    ```{r, echo = FALSE, cache = TRUE} 
+#'  knitr::kable(available_methods(c("add_nodes", "delete_nodes", "add_ties", "add_node_attribute", "add_tie_attribute")))
+#'  ```
 #' @family manipulations
 #' @inheritParams is
 #' @param attribute A named list to be added as tie or node attributes.

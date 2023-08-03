@@ -46,6 +46,14 @@ A data object of the same class as the function was given.
 These functions allow users to add nodes, ties, or attributes to the nodes or ties
 of a network.
 The \verb{add_*()} functions operate similarly to in \code{{igraph}}.
+
+Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods:\tabular{lrrr}{
+    \tab igraph \tab network \tab tbl_graph \cr
+   add_nodes \tab 1 \tab 1 \tab 1 \cr
+   add_ties \tab 1 \tab 1 \tab 1 \cr
+   delete_nodes \tab 1 \tab 0 \tab 0 \cr
+}
 }
 \section{Functions}{
 \itemize{

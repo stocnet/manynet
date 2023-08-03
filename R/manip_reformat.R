@@ -3,27 +3,20 @@
 #' Tools for reformatting networks, graphs, and matrices
 #' 
 #' @description
-#' These functions offer tools for reformatting migraph-consistent objects
-#' (matrices, igraph, tidygraph, or network objects).
-#' Unlike the `as_*()` group of functions,
-#' these functions always return the same object type as they are given,
-#' only transforming these objects' properties.
-#' @details
-#' Since some modifications are easier to implement for some objects than others,
-#' here are the currently implemented modifications:
+#'   These functions offer tools for reformatting migraph-consistent objects
+#'   (matrices, igraph, tidygraph, or network objects).
+#'   Unlike the `as_*()` group of functions,
+#'   these functions always return the same object type as they are given,
+#'   only transforming these objects' properties.
 #' 
-#' |  to_      | edgelists | matrices  |igraph  |tidygraph  |network  |
-#' | ------------- |:-----:|:-----:|:-----:|:-----:|:-----:|
-#' | unweighted  | X | X | X | X | X |
-#' | undirected  |  | X | X | X | X |
-#' | redirected  | X | X | X | X |  |
-#' | unsigned  | X | X | X | X |   |
-#' | uniplex  |  |   | X | X |   |
-#' | unnamed  | X | X | X | X | X |
-#' | named  | X | X | X | X | X |
-#' | simplex  |  | X | X | X |   |
-#' | onemode  |  |   | X | X |   |
-#' | multilevel  |  | X | X | X |   |
+#'   Not all functions have methods available for all object classes.
+#'   Below are the currently implemented S3 methods:
+#'  
+#'    ```{r, echo = FALSE, cache = TRUE} 
+#'  knitr::kable(available_methods(c("to_uniplex", "to_undirected", "to_directed", "to_redirected", 
+#'  "to_reciprocated", "to_acyclic", "to_unweighted", "to_unsigned", "to_unnamed", "to_named", 
+#'  "to_simplex", "to_onemode", "to_multilevel", "to_twomode")))
+#'  ```
 #' @name reformat
 #' @family manipulations
 #' @inheritParams is

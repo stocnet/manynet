@@ -3,23 +3,19 @@
 #' Tools for transforming networks, graphs, and matrices
 #' 
 #' @description
-#' These functions offer tools for transforming migraph-consistent objects
-#' (matrices, igraph, tidygraph, or network objects).
-#' Transforming means that the returned object may have different dimensions
-#' than the original object.
-#' @details
-#' Since some modifications are easier to implement for some objects than others,
-#' here are the currently implemented modifications:
+#'   These functions offer tools for transforming migraph-consistent objects
+#'   (matrices, igraph, tidygraph, or network objects).
+#'   Transforming means that the returned object may have different dimensions
+#'   than the original object.
 #' 
-#' |  to_      | edgelists | matrices  |igraph  |tidygraph  |network  |
-#' | ------------- |:-----:|:-----:|:-----:|:-----:|:-----:|
-#' | mode1 | X | X | X | X | X |
-#' | mode2 | X | X | X | X | X |
-#' | giant  | X | X | X | X | X |
-#' | subgraph  | X | X | X | X | X |
-#' | ties  | X | X | X | X | X |
-#' | blocks  | X | X | X | X | X |
-#' | matching | X | X | X | X | X |
+#'   Not all functions have methods available for all object classes.
+#'   Below are the currently implemented S3 methods:
+#'  
+#'    ```{r, echo = FALSE, cache = TRUE} 
+#'  knitr::kable(available_methods(c("to_mode1", "to_mode2", 
+#'     "to_giant", "to_subgraph", "to_ties", "to_blocks", 
+#'     "to_matching", "to_eulerian", "to_anti", "to_no_isolates")))
+#'  ```
 #' @name transform
 #' @family manipulations
 #' @inheritParams reformat

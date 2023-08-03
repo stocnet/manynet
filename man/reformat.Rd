@@ -80,21 +80,24 @@ These functions offer tools for reformatting migraph-consistent objects
 Unlike the \verb{as_*()} group of functions,
 these functions always return the same object type as they are given,
 only transforming these objects' properties.
-}
-\details{
-Since some modifications are easier to implement for some objects than others,
-here are the currently implemented modifications:\tabular{lccccc}{
-   to_ \tab edgelists \tab matrices \tab igraph \tab tidygraph \tab network \cr
-   unweighted \tab X \tab X \tab X \tab X \tab X \cr
-   undirected \tab  \tab X \tab X \tab X \tab X \cr
-   redirected \tab X \tab X \tab X \tab X \tab  \cr
-   unsigned \tab X \tab X \tab X \tab X \tab  \cr
-   uniplex \tab  \tab  \tab X \tab X \tab  \cr
-   unnamed \tab X \tab X \tab X \tab X \tab X \cr
-   named \tab X \tab X \tab X \tab X \tab X \cr
-   simplex \tab  \tab X \tab X \tab X \tab  \cr
-   onemode \tab  \tab  \tab X \tab X \tab  \cr
-   multilevel \tab  \tab X \tab X \tab X \tab  \cr
+
+Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods:\tabular{lrrrrr}{
+    \tab data.frame \tab igraph \tab matrix \tab network \tab tbl_graph \cr
+   to_acyclic \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_directed \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_multilevel \tab 0 \tab 1 \tab 1 \tab 0 \tab 1 \cr
+   to_named \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_onemode \tab 0 \tab 1 \tab 1 \tab 0 \tab 1 \cr
+   to_reciprocated \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_redirected \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_simplex \tab 0 \tab 1 \tab 1 \tab 0 \tab 1 \cr
+   to_twomode \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \cr
+   to_undirected \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_uniplex \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_unnamed \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_unsigned \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_unweighted \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
 }
 }
 \section{Functions}{

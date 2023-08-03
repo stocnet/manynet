@@ -85,18 +85,20 @@ These functions offer tools for transforming migraph-consistent objects
 (matrices, igraph, tidygraph, or network objects).
 Transforming means that the returned object may have different dimensions
 than the original object.
-}
-\details{
-Since some modifications are easier to implement for some objects than others,
-here are the currently implemented modifications:\tabular{lccccc}{
-   to_ \tab edgelists \tab matrices \tab igraph \tab tidygraph \tab network \cr
-   mode1 \tab X \tab X \tab X \tab X \tab X \cr
-   mode2 \tab X \tab X \tab X \tab X \tab X \cr
-   giant \tab X \tab X \tab X \tab X \tab X \cr
-   subgraph \tab X \tab X \tab X \tab X \tab X \cr
-   ties \tab X \tab X \tab X \tab X \tab X \cr
-   blocks \tab X \tab X \tab X \tab X \tab X \cr
-   matching \tab X \tab X \tab X \tab X \tab X \cr
+
+Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods:\tabular{lrrrrrr}{
+    \tab data.frame \tab igraph \tab list \tab matrix \tab network \tab tbl_graph \cr
+   to_anti \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
+   to_blocks \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
+   to_eulerian \tab 0 \tab 1 \tab 0 \tab 0 \tab 0 \tab 1 \cr
+   to_giant \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
+   to_matching \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
+   to_mode1 \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
+   to_mode2 \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
+   to_no_isolates \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_subgraph \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
+   to_ties \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
 }
 }
 \section{Functions}{

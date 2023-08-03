@@ -2,7 +2,14 @@
 #' 
 #' @description
 #'   These functions offer tools for splitting manynet-consistent objects
-#'   (matrices, igraph, tidygraph, or network objects).
+#'   (matrices, igraph, tidygraph, or network objects) into lists of networks.
+#' 
+#'   Not all functions have methods available for all object classes.
+#'   Below are the currently implemented S3 methods:
+#'  
+#'    ```{r, echo = FALSE, cache = TRUE} 
+#'    knitr::kable(available_methods(c("to_egos", "to_subgraphs", "to_components", "to_waves", "to_slices")))
+#'    ```
 #' @name split
 #' @family manipulations
 #' @inheritParams reformat
