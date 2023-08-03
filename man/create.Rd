@@ -10,6 +10,7 @@
 \alias{create_lattice}
 \alias{create_components}
 \alias{create_core}
+\alias{create_explicit}
 \title{Make networks with defined structures}
 \usage{
 create_empty(n, directed = FALSE)
@@ -27,6 +28,8 @@ create_lattice(n, directed = FALSE, width = 8)
 create_components(n, directed = FALSE, membership = NULL)
 
 create_core(n, directed = FALSE, membership = NULL)
+
+create_explicit(...)
 }
 \arguments{
 \item{n}{Given:
@@ -103,6 +106,11 @@ into separate components.
 being core nodes, densely tied to each other and peripheral nodes,
 and the rest peripheral, tied only to the core.
 
+\item \code{create_explicit()}: Creates a network based on explicitly
+named nodes and ties between them.
+Wraps \code{igraph::graph_from_literal()},
+but never simplifies the result.
+
 }}
 \section{Lattice graphs}{
 
@@ -134,6 +142,7 @@ create_tree(c(7,8))
 create_lattice(12, width = 4)
 create_components(10, membership = c(1,1,1,2,2,2,3,3,3,3))
 create_core(6)
+  create_explicit(A -+ B, B -+ C, A +-+ C, D)
 }
 \seealso{
 \link{as}
