@@ -360,8 +360,9 @@ create_core <- function(n, directed = FALSE, membership = NULL) {
 
 #' @describeIn create Creates a network based on explicitly
 #'   named nodes and ties between them.
-#'   Wraps `igraph::graph_from_literal()`,
-#'   but never simplifies the result.
+#' @seealso [igraph::graph_from_literal()] which `create_explicit()` mostly just wraps.
+#'   `create_explicit()` will also accept character input and not just a formula though,
+#'   and will never simplify the result.
 #' @examples
 #'   create_explicit(A -+ B, B -+ C, A +-+ C, D)
 #' @export

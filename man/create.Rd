@@ -108,8 +108,6 @@ and the rest peripheral, tied only to the core.
 
 \item \code{create_explicit()}: Creates a network based on explicitly
 named nodes and ties between them.
-Wraps \code{igraph::graph_from_literal()},
-but never simplifies the result.
 
 }}
 \section{Lattice graphs}{
@@ -146,6 +144,10 @@ create_core(6)
 }
 \seealso{
 \link{as}
+
+\code{\link[igraph:graph_from_literal]{igraph::graph_from_literal()}} which \code{create_explicit()} mostly just wraps.
+\code{create_explicit()} will also accept character input and not just a formula though,
+and will never simplify the result.
 
 Other makes: 
 \code{\link{as}()},
