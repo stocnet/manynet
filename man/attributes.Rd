@@ -69,6 +69,7 @@ tie_signs(ison_marvel_relationships)
 Other mapping: 
 \code{\link{auto_graph}},
 \code{\link{is}()},
+\code{\link{partition_layouts}},
 \code{\link{properties}}
 }
 \concept{mapping}

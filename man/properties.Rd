@@ -68,6 +68,7 @@ network_dims(to_mode1(ison_southern_women))
 Other mapping: 
 \code{\link{attributes}()},
 \code{\link{auto_graph}},
-\code{\link{is}()}
+\code{\link{is}()},
+\code{\link{partition_layouts}}
 }
 \concept{mapping}

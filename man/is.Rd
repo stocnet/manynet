@@ -163,6 +163,7 @@ is_aperiodic(ison_algebra)
 Other mapping: 
 \code{\link{attributes}()},
 \code{\link{auto_graph}},
+\code{\link{partition_layouts}},
 \code{\link{properties}}
 }
 \concept{mapping}

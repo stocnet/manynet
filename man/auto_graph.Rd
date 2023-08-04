@@ -111,6 +111,7 @@ autographr(ison_karateka, node_size = 8)
 Other mapping: 
 \code{\link{attributes}()},
 \code{\link{is}()},
+\code{\link{partition_layouts}},
 \code{\link{properties}}
 }
 \concept{mapping}
