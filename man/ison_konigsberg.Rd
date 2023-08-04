@@ -6,13 +6,13 @@
 \title{One-mode Seven Bridges of Konigsberg network (Euler 1741)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, multiplex, undirected tbl_graph with 4 nodes and 7 ties
-#> # A tibble: 4 x 1
-#>   name    
-#>   <chr>   
-#> 1 Altstadt
-#> 2 Kneiphof
-#> 3 Lomse   
-#> 4 Vorstadt
+#> # A tibble: 4 x 3
+#>   name       lat   lon
+#>   <chr>    <dbl> <dbl>
+#> 1 Altstadt  54.7  20.5
+#> 2 Kneiphof  54.7  20.5
+#> 3 Lomse     54.7  20.5
+#> 4 Vorstadt  54.7  20.5
 #> # A tibble: 7 x 2
 #>    from    to
 #>   <int> <int>
