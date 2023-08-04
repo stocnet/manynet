@@ -14,7 +14,7 @@ http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
 \usage{
 autographr(
   .data,
-  layout = "stress",
+  layout = NULL,
   labels = TRUE,
   node_color = NULL,
   node_shape = NULL,

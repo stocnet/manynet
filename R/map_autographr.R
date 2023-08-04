@@ -46,7 +46,7 @@ NULL
 #' autographr(ison_karateka, node_size = 8)
 #' @export
 autographr <- function(.data,
-                       layout = "stress",
+                       layout = NULL,
                        labels = TRUE,
                        node_color = NULL,
                        node_shape = NULL,
@@ -62,7 +62,8 @@ autographr <- function(.data,
   #     mutate(node_group = node_group)
   # }
   # Add layout ----
-  p <- .graph_layout(g, layout, labels)
+  layout <- .infer_layout(g, layout)
+  p <- .graph_layout(g, layout, labels, ...)
   # Add edges ----
   p <- .graph_edges(p, g, edge_color)
   # Add nodes ----
@@ -170,12 +171,20 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
     ggplot2::theme_void()
 }
 
+.infer_layout <- function(g, layout){
+  if(is.null(layout)){
+      if (is_twomode(g)) layout <- "hierarchy" else 
+      layout <- "stress"
+  }
+  layout
+}
+
 #' @importFrom ggraph create_layout ggraph
 #' @importFrom igraph get.vertex.attribute
 #' @importFrom ggplot2 theme_void
-.graph_layout <- function(g, layout, labels){
+.graph_layout <- function(g, layout, labels, ...){
   name <- NULL
-  lo <- ggraph::create_layout(g, layout)
+  lo <- ggraph::create_layout(g, layout, ...)
   if ("graph" %in% names(attributes(lo))) {
     if (!setequal(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
       for (n in setdiff(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
