@@ -217,6 +217,8 @@
 #'
 #' This network should solely be used
 #' for demonstration purposes as it does not describe a real network.
+#' To convert into the two-mode version, 
+#' assign `ison_brandes %>% rename(type = twomode_type)`.
 #' @docType data
 #' @keywords datasets
 #' @name ison_brandes
@@ -226,15 +228,6 @@
 #'   ison_brandes
 #'   ```
 "ison_brandes"
-
-#' @rdname ison_brandes
-#' @usage data(ison_brandes2)
-#' @format
-#'   ```{r, echo = FALSE}
-#'   ison_brandes2
-#'   ```
-"ison_brandes2"
-
 
 # Southern Women ####
 
