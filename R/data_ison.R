@@ -64,46 +64,24 @@
 #'   ```
 "ison_lotr"
 
-# Projection ####
+# Laterals ####
 
 #' Two-mode projection examples (Hollway 2021)
 #'
 #' @description
-#'  These datasets are for demonstration purposes and do not describe any real world network.
+#'  These networks are for demonstration purposes and do not describe any real world network.
 #'  All examples contain named nodes.
+#'  The networks are gathered together as a list and can be retrieved simply by plucking 
+#'  the desired network.
 #' @docType data
 #' @keywords datasets
-#' @name ison_projection
+#' @name ison_laterals
 #' @usage data(ison_mm)
 #' @format
 #'   ```{r, echo = FALSE}
-#'   ison_mm
+#'   ison_laterals
 #'   ```
-"ison_mm"
-
-#' @rdname ison_projection
-#' @usage data(ison_bm)
-#' @format
-#'   ```{r, echo = FALSE}
-#'   ison_bm
-#'   ```
-"ison_bm"
-
-#' @rdname ison_projection
-#' @usage data(ison_mb)
-#' @format
-#'   ```{r, echo = FALSE}
-#'   ison_mb
-#'   ```
-"ison_mb"
-
-#' @rdname ison_projection
-#' @usage data(ison_bb)
-#' @format
-#'   ```{r, echo = FALSE}
-#'   ison_bb
-#'   ```
-"ison_bb"
+"ison_laterals"
 
 # Algebra ####
 
