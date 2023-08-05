@@ -406,6 +406,7 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
   } else {
     node_shape <- "circle"
   }
+  
   if (is_twomode(g)) {
     if (!is.null(node_color)) {
       color_factor_node <- as.factor(node_attribute(g, node_color))
