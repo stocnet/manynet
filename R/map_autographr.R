@@ -179,6 +179,21 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
   layout
 }
 
+.infer_nsize <- function(g, node_size){
+  if (!is.null(node_size)) {
+    if (is.character(node_size)) {
+      nsize <- node_attribute(g, node_size)
+    } else if (is.numeric(node_size)) {
+      nsize <- node_size
+    } else {
+      nsize <- node_size(g)
+    }
+    if(all(nsize<=1 & nsize >=0)) nsize <- nsize*10
+  } else {
+    nsize <- ifelse(network_nodes(g) <= 10, 5, (100 / network_nodes(g)) / 2)
+  }
+}
+
 #' @importFrom ggraph create_layout ggraph
 #' @importFrom igraph get.vertex.attribute
 #' @importFrom ggplot2 theme_void
@@ -384,17 +399,8 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
 }
 
 .graph_nodes <- function(p, g, node_color, node_shape, node_size){
-  if (!is.null(node_size)) {
-    if (is.character(node_size)) {
-      nsize <- node_attribute(g, node_size)
-    } else if (is.numeric(node_size)) {
-      nsize <- node_size
-    } else {
-      nsize <- node_size(g)
-    }
-  } else {
-    nsize <- ifelse(network_nodes(g) <= 10, 5, (100 / network_nodes(g)) / 2)
-  }
+
+  nsize <- .infer_nsize(g, node_size)
   
   if (!is.null(node_shape)) {
     node_shape <- as.factor(node_attribute(g, node_shape))
