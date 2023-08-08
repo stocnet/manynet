@@ -3,12 +3,9 @@
 \name{themes}
 \alias{themes}
 \alias{theme_iheid}
-\alias{theme_circle}
 \title{Theming ggraph}
 \usage{
 theme_iheid(ggraph)
-
-theme_circle(ggraph)
 }
 \arguments{
 \item{ggraph}{A ggraph object, e.g. created using \code{autographr()}}

@@ -97,7 +97,7 @@
 }\if{html}{\out{</div>}}
 }
 \usage{
-data(ison_mm)
+data(ison_laterals)
 }
 \description{
 These networks are for demonstration purposes and do not describe any real world network.
