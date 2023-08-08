@@ -69,3 +69,13 @@ test_that("core-periphery creation works", {
 #   expect_s3_class(create_nest(2,4, as = "igraph"), "igraph")
 #   expect_s3_class(create_nest(2,4, as = "tidygraph"), "tbl_graph")
 # })
+
+test_that("nest creation works", {
+  expect_true(is_directed(create_explicit(A -+ B, B -+ C, A +-+ C, D)))
+  expect_false(manynet::is_weighted(create_explicit(A -+ B, B -+ C, A +-+ C, D)))
+  expect_length(create_explicit(A -+ B, B -+ C, A +-+ C, D), 4)
+  expect_s3_class(create_explicit(A -+ B, B -+ C, A +-+ C, D, as = "igraph"),
+                  "igraph")
+  expect_s3_class(create_explicit(A -+ B, B -+ C, A +-+ C, D, as = "tidygraph"),
+                  "tbl_graph")
+})
