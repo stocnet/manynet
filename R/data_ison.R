@@ -76,7 +76,7 @@
 #' @docType data
 #' @keywords datasets
 #' @name ison_laterals
-#' @usage data(ison_mm)
+#' @usage data(ison_laterals)
 #' @format
 #'   ```{r, echo = FALSE}
 #'   ison_laterals
