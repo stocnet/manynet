@@ -368,7 +368,7 @@ create_core <- function(n, directed = FALSE, membership = NULL) {
 #' @export
 create_explicit <- function(...){
   if(is.symbol(as.list(match.call())[-1][[1]])){
-    mf <- reformulate(...)
+    mf <- stats::reformulate(...)
     mf[[1]] <- NULL
   } else mf <- as.list(match.call())[-1]
   f <- function(x) {
