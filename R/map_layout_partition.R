@@ -53,7 +53,7 @@ layout_tbl_graph_hierarchy <- function(.data,
   }
   if(any(prep<0)) prep[prep<0] <- 0
   out <- as_graphAM(prep)
-  out <- suppressMessages(Rgraphviz::layoutGraph(out, layoutType = 'dot', 
+  out <- suppressMessages(Rgraphviz::layoutGraph(out, layoutType = 'dot',
                                                  attrs = list(graph = list(rankdir = "BT"))))
   nodeX <- .rescale(out@renderInfo@nodes$nodeX)
   nodeY <- .rescale(out@renderInfo@nodes$nodeY)
@@ -73,7 +73,7 @@ layout_tbl_graph_alluvial <- function(.data,
     }
     if(any(prep<0)) prep[prep<0] <- 0
     out <- as_graphAM(prep)
-    out <- suppressMessages(Rgraphviz::layoutGraph(out, layoutType = 'dot', 
+    out <- suppressMessages(Rgraphviz::layoutGraph(out, layoutType = 'dot',
                                                    attrs = list(graph = list(rankdir = "LR"))))
     nodeX <- .rescale(out@renderInfo@nodes$nodeX)
     nodeY <- .rescale(out@renderInfo@nodes$nodeY)

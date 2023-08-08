@@ -52,15 +52,15 @@ iheid_palettes <- list("IHEID" = c("IHEIDRed" = "#E20020",
 #' @export
 #' @keywords colors
 #' @examples
-#' iheid_palette("IHEID")
-#' iheid_palette("Centres")
-#' iheid_palette("SDGs")
-#'
+#' \donttest{
+#' #iheid_palette("IHEID")
+#' #iheid_palette("Centres")
+#' #iheid_palette("SDGs")
 #' # If you need more colours than normally found in a palette, you
-#' # can use a continuous palette to interpolate between existing
-#' # colours
-#' pal <- iheid_palette(21, name = "Centres", type = "continuous")
-#' image(volcano, col = pal)
+#' # can use a continuous palette to interpolate between existing colours
+#' #pal <- iheid_palette(21, name = "Centres", type = "continuous")
+#' #image(volcano, col = pal)
+#' }
 iheid_palette <- function(name, n, type = c("discrete", "continuous")) {
   type <- match.arg(type)
   pal <- iheid_palettes[[name]]
@@ -72,6 +72,7 @@ iheid_palette <- function(name, n, type = c("discrete", "continuous")) {
   if (type == "discrete" && n > length(pal)) {
     stop("Number of requested colors greater than what palette can offer")
   }
+  thisRequires("grDevices")
   out <- switch(type,
                 continuous = grDevices::colorRampPalette(pal)(n),
                 discrete = pal[1:n]
