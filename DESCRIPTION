@@ -20,7 +20,7 @@ Imports:
     dplyr (>= 1.1.0),
     ggplot2,
     ggraph,
-    igraph,
+    igraph (>= 1.5.0.1),
     network,
     tidygraph
 Suggests: 
@@ -34,7 +34,11 @@ Suggests:
     patchwork,
     knitr,
     rmarkdown,
-    learnr
+    learnr,
+    grDevices,
+    BiocManager,
+    Rgraphviz,
+    minMSE
 Authors@R: 
     c(person(given = "James",
              family = "Hollway",
