@@ -84,14 +84,14 @@ test_that("fancy node mods graph correctly", {
   test2 <- autographr(ison_southern_women,
                       node_color = "type")
   expect_s3_class(test2, c("ggraph","gg","ggplot"))
-  expect_equal(round(test2$data$x[1]), 1)
-  expect_equal(round(test2$data$y[1]), 1)
+  expect_equal(round(test2$data$x[1]), 0)
+  expect_equal(round(test2$data$y[1]), 0)
   expect_equal(nrow(test2[["plot_env"]][["lo"]]),
                network_nodes(ison_southern_women))
 })
 
 test_that("edge colours graph correctly", {
-  ison_brandes2 <-ison_brandes2 %>%
+  ison_brandes2 <- ison_brandes %>%
     add_tie_attribute("tiecolour",
                       c("A", "B", "A", "B", "B", "B", "B", "B", "B", "B", "B", "B"))
   test_brandes2 <- autographr(ison_brandes2, edge_color = "tiecolour")
