@@ -34,8 +34,11 @@ book characters (Yüksel 2017)}
 #> # i 677 more rows
 }\if{html}{\out{</div>}}
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, complex, multiplex, signed, undirected tbl_graph with 53 nodes and 558 ties
-#> # A tibble: 53 x 11
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> This graph was created by an old(er) igraph version.
+#>   Call upgrade_graph() on it to use with the current igraph version
+#>   For now we convert it on the fly...
+#> # A labelled, complex, multiplex, signed, undirected tbl_graph with 53 nodes and 558 ties
+#> # A tibble: 53 x 10
 #>   name     Gender Appearances Attractive  Rich Intellect Omnilingual PowerOrigin
 #>   <chr>    <chr>        <int>      <int> <int>     <int>       <int> <chr>      
 #> 1 Abomina~ Male           427          0     0         1           1 Radiation  
@@ -45,7 +48,7 @@ book characters (Yüksel 2017)}
 #> 5 Black P~ Male          2189          1     1         1           0 Human      
 #> 6 Black W~ Female        2907          1     0         1           0 Human      
 #> # i 47 more rows
-#> # i 3 more variables: UnarmedCombat <int>, ArmedCombat <int>, nodesize <dbl>
+#> # i 2 more variables: UnarmedCombat <int>, ArmedCombat <int>
 #> # A tibble: 558 x 3
 #>    from    to  sign
 #>   <int> <int> <dbl>

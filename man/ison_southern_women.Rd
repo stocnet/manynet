@@ -6,15 +6,15 @@
 \title{Two-mode southern women (Davis, Gardner and Gardner 1941)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, two-mode tbl_graph with 32 nodes and 93 ties
-#> # A tibble: 32 x 3
-#>   type  name      group
-#>   <lgl> <chr>     <chr>
-#> 1 FALSE EVELYN    a    
-#> 2 FALSE LAURA     b    
-#> 3 FALSE THERESA   b    
-#> 4 FALSE BRENDA    b    
-#> 5 FALSE CHARLOTTE b    
-#> 6 FALSE FRANCES   a    
+#> # A tibble: 32 x 2
+#>   type  name     
+#>   <lgl> <chr>    
+#> 1 FALSE EVELYN   
+#> 2 FALSE LAURA    
+#> 3 FALSE THERESA  
+#> 4 FALSE BRENDA   
+#> 5 FALSE CHARLOTTE
+#> 6 FALSE FRANCES  
 #> # i 26 more rows
 #> # A tibble: 93 x 2
 #>    from    to
