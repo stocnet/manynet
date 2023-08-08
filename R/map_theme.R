@@ -16,4 +16,3 @@ theme_iheid <- function(ggraph) {
   gg[[2]][[3]]$geom$default_aes$colour <- iheid_palette("IHEID")["IHEIDRed"] # Vertex colour
   gg
 }
-
