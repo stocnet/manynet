@@ -265,12 +265,12 @@ is_complex <- function(.data) UseMethod("is_complex")
 
 #' @export
 is_complex.igraph <- function(.data) {
-  any(igraph::which_loop(.data))
+  igraph::any_loop(.data)
 }
 
 #' @export
 is_complex.tbl_graph <- function(.data) {
-  any(igraph::which_loop(.data))
+  igraph::any_loop(.data)
 }
 
 #' @export
@@ -437,13 +437,9 @@ is_aperiodic <- function(.data, max_path_length = 4){
                                       cutoff = max_path_length), length, FUN.VALUE = numeric(1))
     })))
   }
-  if (!("minMSE" %in% rownames(utils::installed.packages()))) {
-    message("Please install package `{minMSE}` from CRAN.")
-  } else {
-    minMSE::vector_gcd(out)==1
-  }
+  thisRequires("minMSE")
+  minMSE::vector_gcd(out)==1
 }
-
 
 # Helper functions
 infer_network_reciprocity <- function(.data, method = "default") {
