@@ -99,3 +99,11 @@ test_that("to no isolates works", {
   expect_length(to_no_isolates(as_network(isolate)), 5)
   expect_equal(nrow(to_no_isolates(as_edgelist(isolate))), 5)
 })
+
+test_that("to eulerian works", {
+  expect_true(is_eulerian(delete_nodes(ison_konigsberg, "Lomse")))
+  expect_error(to_eulerian(ison_konigsberg), "This is not a Eulerian graph.")
+  expect_true(length(delete_nodes(ison_konigsberg, "Lomse")) ==
+                length(to_eulerian(delete_nodes(ison_konigsberg, "Lomse"))))
+  expect_true(is_connected(to_eulerian(delete_nodes(ison_konigsberg, "Lomse"))))
+})
