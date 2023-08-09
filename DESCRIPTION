@@ -37,7 +37,6 @@ Suggests:
     learnr,
     grDevices,
     BiocManager,
-    Rgraphviz,
     minMSE
 Enhances:
     Rgraphviz
