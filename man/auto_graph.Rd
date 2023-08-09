@@ -105,7 +105,7 @@ ison_adolescents \%>\%
          color = rep(c("blue", "red"), times = 4)) \%>\%
   autographr(node_shape = "shape", node_color = "color")
 autographr(ison_karateka, node_size = 8)
-  autographs(to_egos(ison_adolescents))
+#autographs(to_egos(ison_adolescents))
 #ison_adolescents \%>\%
 # mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%
 # to_waves(attribute = "year") \%>\%
