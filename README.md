@@ -53,8 +53,8 @@ particular structure, and will always create the same format from the
 same inputs, e.g.:
 
 - `create_components()`, `create_core()`, `create_empty()`,
-  `create_filled()`, `create_lattice()`, `create_ring()`,
-  `create_star()`, `create_tree()`
+  `create_explicit()`, `create_filled()`, `create_lattice()`,
+  `create_ring()`, `create_star()`, `create_tree()`
 
 The `generate_*` group of functions generate networks from generative
 mechanisms that may include some random aspect, and so will return a
@@ -116,9 +116,9 @@ reformat, transform, or split networks into networks with other
 properties, e.g.:
 
 - `to_acyclic()`, `to_anti()`, `to_blocks()`, `to_components()`,
-  `to_directed()`, `to_egos()`, `to_giant()`, `to_matching()`,
-  `to_mode1()`, `to_mode2()`, `to_multilevel()`, `to_named()`,
-  `to_no_isolates()`, `to_onemode()`, `to_reciprocated()`,
+  `to_directed()`, `to_egos()`, `to_eulerian()`, `to_giant()`,
+  `to_matching()`, `to_mode1()`, `to_mode2()`, `to_multilevel()`,
+  `to_named()`, `to_no_isolates()`, `to_onemode()`, `to_reciprocated()`,
   `to_redirected()`, `to_simplex()`, `to_slices()`, `to_subgraph()`,
   `to_subgraphs()`, `to_ties()`, `to_twomode()`, `to_undirected()`,
   `to_uniplex()`, `to_unnamed()`, `to_unsigned()`, `to_unweighted()`,
@@ -157,10 +157,11 @@ function names wherever possible.
 `{manynet}`’s `*is_*()` functions offer fast logical tests of various
 network properties. These can be used to create new
 
-- `is_bipartite()`, `is_complex()`, `is_directed()`, `is_dynamic()`,
-  `is_edgelist()`, `is_graph()`, `is_labelled()`, `is_longitudinal()`,
-  `is_manynet()`, `is_multiplex()`, `is_signed()`, `is_twomode()`,
-  `is_uniplex()`, `is_weighted()`
+- `is_acyclic()`, `is_aperiodic()`, `is_bipartite()`, `is_complex()`,
+  `is_connected()`, `is_directed()`, `is_dynamic()`, `is_edgelist()`,
+  `is_eulerian()`, `is_graph()`, `is_labelled()`, `is_longitudinal()`,
+  `is_manynet()`, `is_multiplex()`, `is_perfect_matching()`,
+  `is_signed()`, `is_twomode()`, `is_uniplex()`, `is_weighted()`
 
 ## Mapping
 
