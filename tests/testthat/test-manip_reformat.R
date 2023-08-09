@@ -34,7 +34,7 @@ test_that("to_directed works",{
   expect_true(is_directed(to_directed(as_igraph(ison_brandes))))
   expect_true(is_directed(to_directed(as_matrix(ison_brandes))))
   expect_true(is_directed(to_directed(as_network(ison_brandes))))
-  # expect_true(is_directed(to_directed(ison_southern_women))) # twomode?
+  #expect_true(is_directed(to_directed(ison_southern_women))) # twomode?
 })
 
 test_that("to_redirected works",{
@@ -88,7 +88,7 @@ test_that("to_onemode works",{
 })
 
 test_that("to_simplex works", {
-  #expect_true(is_complex(ison_lotr))
+  expect_true(is_complex(ison_lotr))
   expect_false(is_complex(to_simplex(ison_lotr)))
   expect_false(is_complex(to_simplex(as_igraph(ison_lotr))))
   expect_false(is_complex(to_simplex(as_matrix(ison_lotr))))
@@ -100,7 +100,7 @@ test_that("to_unsigned works", {
   expect_false(is_signed(to_unsigned(ison_southern_women)))
   expect_false(is_signed(to_unsigned(as_igraph(ison_southern_women))))
   expect_false(is_signed(to_unsigned(as_matrix(ison_southern_women))))
-  #expect_false(is_signed(to_unsigned(as_network(ison_southern_women))))
+  expect_false(is_signed(to_unsigned(as_network(ison_southern_women))))
   expect_false(all(as_matrix(to_unsigned(ison_southern_women, "positive")) != 
                  as_matrix(to_unsigned(ison_southern_women, "negative"))))
 })
