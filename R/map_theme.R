@@ -4,7 +4,7 @@
 #' @param ggraph A ggraph object, e.g. created using `autographr()`
 #' @return Themes the current ggraph to current IHEID guidelines.
 #' @examples
-#' autographr(ison_konigsberg) %>% theme_iheid()
+#' #autographr(ison_konigsberg) %>% theme_iheid()
 NULL
 
 #' @rdname themes

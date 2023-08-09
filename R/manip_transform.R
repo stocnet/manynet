@@ -50,8 +50,10 @@ NULL
 #' @importFrom igraph bipartite.projection
 #' @importFrom stats cor
 #' @examples
-#' autographr(to_mode1(ison_southern_women))
-#' autographr(to_mode2(ison_southern_women))
+#' to_mode1(ison_southern_women)
+#' to_mode2(ison_southern_women)
+#' #autographr(to_mode1(ison_southern_women))
+#' #autographr(to_mode2(ison_southern_women))
 #' @export
 to_mode1 <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) UseMethod("to_mode1")
 
@@ -224,7 +226,8 @@ to_subgraph.matrix <- function(.data, ...){
 #'   where the edges are the nodes
 #' @importFrom igraph make_line_graph E
 #' @examples
-#' autographr(to_ties(ison_adolescents))
+#' to_ties(ison_adolescents)
+#' #autographr(to_ties(ison_adolescents))
 #' @export
 to_ties <- function(.data) UseMethod("to_ties")
 
@@ -344,7 +347,8 @@ to_blocks.tbl_graph <- function(.data, membership, FUN = mean){
 #'   By default "type".
 #' @importFrom igraph max_bipartite_match
 #' @examples 
-#' autographr(to_matching(ison_southern_women))
+#' to_matching(ison_southern_women)
+#' #autographr(to_matching(ison_southern_women))
 #' @export
 to_matching <- function(.data, mark = "type") UseMethod("to_matching")
 
@@ -384,8 +388,9 @@ to_matching.matrix <- function(.data, mark = "type"){
 #' @describeIn transform Returns a network with only
 #'   the Eulerian path
 #' @importFrom igraph eulerian_path
-#' @examples 
-#'   autographr(to_eulerian(delete_nodes(ison_konigsberg, "Lomse")))
+#' @examples
+#'   to_eulerian(delete_nodes(ison_konigsberg, "Lomse"))
+#'   #autographr(to_eulerian(delete_nodes(ison_konigsberg, "Lomse")))
 #' @export
 to_eulerian <- function(.data) UseMethod("to_eulerian")
 
@@ -413,8 +418,9 @@ to_eulerian.tbl_graph <- function(.data){
 #'   where only ties _not_ present in the original network
 #'   are included in the new network.
 #' @importFrom igraph complementer
-#' @examples 
-#' autographr(to_anti(ison_southern_women))
+#' @examples
+#' to_anti(ison_southern_women)
+#' #autographr(to_anti(ison_southern_women))
 #' @export
 to_anti <- function(.data) UseMethod("to_anti")
 

@@ -100,11 +100,11 @@ with sensible defaults
 
 }}
 \examples{
-ison_adolescents \%>\% 
-  mutate(shape = rep(c("circle", "square"), times = 4),
-         color = rep(c("blue", "red"), times = 4)) \%>\%
-  autographr(node_shape = "shape", node_color = "color")
-autographr(ison_karateka, node_size = 8)
+#ison_adolescents \%>\% 
+#   mutate(shape = rep(c("circle", "square"), times = 4),
+#          color = rep(c("blue", "red"), times = 4)) \%>\%
+#  autographr(node_shape = "shape", node_color = "color")
+#autographr(ison_karateka, node_size = 8)
 #autographs(to_egos(ison_adolescents))
 #ison_adolescents \%>\%
 # mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%

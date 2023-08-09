@@ -17,5 +17,5 @@ Themes the current ggraph to current IHEID guidelines.
 Theming ggraph
 }
 \examples{
-autographr(ison_konigsberg) \%>\% theme_iheid()
+#autographr(ison_konigsberg) \%>\% theme_iheid()
 }

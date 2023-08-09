@@ -157,12 +157,18 @@ where \eqn{n} is the number of nodes in the network.
 }
 
 \examples{
-autographr(to_mode1(ison_southern_women))
-autographr(to_mode2(ison_southern_women))
-autographr(to_ties(ison_adolescents))
-autographr(to_matching(ison_southern_women))
-  autographr(to_eulerian(delete_nodes(ison_konigsberg, "Lomse")))
-autographr(to_anti(ison_southern_women))
+to_mode1(ison_southern_women)
+to_mode2(ison_southern_women)
+#autographr(to_mode1(ison_southern_women))
+#autographr(to_mode2(ison_southern_women))
+to_ties(ison_adolescents)
+#autographr(to_ties(ison_adolescents))
+to_matching(ison_southern_women)
+#autographr(to_matching(ison_southern_women))
+  to_eulerian(delete_nodes(ison_konigsberg, "Lomse"))
+  #autographr(to_eulerian(delete_nodes(ison_konigsberg, "Lomse")))
+to_anti(ison_southern_women)
+#autographr(to_anti(ison_southern_women))
 ison_adolescents \%>\%
   activate(edges) \%>\%
   mutate(wave = sample(1995:1998, 10, replace = TRUE)) \%>\%

@@ -39,11 +39,11 @@ NULL
 
 #' @describeIn auto_graph Graphs a network with sensible defaults
 #' @examples
-#' ison_adolescents %>% 
-#'   mutate(shape = rep(c("circle", "square"), times = 4),
-#'          color = rep(c("blue", "red"), times = 4)) %>%
-#'   autographr(node_shape = "shape", node_color = "color")
-#' autographr(ison_karateka, node_size = 8)
+#' #ison_adolescents %>% 
+#' #   mutate(shape = rep(c("circle", "square"), times = 4),
+#' #          color = rep(c("blue", "red"), times = 4)) %>%
+#' #  autographr(node_shape = "shape", node_color = "color")
+#' #autographr(ison_karateka, node_size = 8)
 #' @export
 autographr <- function(.data,
                        layout = NULL,

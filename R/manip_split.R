@@ -27,7 +27,7 @@ NULL
 #' @importFrom igraph make_ego_graph
 #' @examples
 #'   to_egos(ison_adolescents)
-#'   autographs(to_egos(ison_adolescents,2))
+#'   #autographs(to_egos(ison_adolescents,2))
 #' @export
 to_egos <- function(.data, 
                     max_dist = 1, 
