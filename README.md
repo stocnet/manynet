@@ -34,8 +34,10 @@ undirected networks); if you have a different type of network, a
 different package is needed. Lastly, even packages with excellent
 graphical capabilities can make visualising networks slow and cumbersome
 by using poor defaults and many, incomprehensible options to change
-them. `{manynet}` aims to help researchers with Making, Manipulating,
-and Mapping networks.
+them.
+
+*That’s why `{manynet}` aims to help researchers with Making,
+Manipulating, and Mapping networks.*
 
 ## Making
 
@@ -185,21 +187,16 @@ difference in results over `{igraph}`:
 
 <img src="man/figures/README-layout-comparison-1.png" width="100%" />
 
-provide a common set of tools that can be used to import, export,
-create, and manipulate network data in a wide variety of formats, and
-obtain a good first visualisation quickly. This can be useful for
-pedagogical purposes, initial description, or checking something part
-way through the modelling process. Through the most comprehensive
-network class-coercion available, users can access routines not
-available in their chosen package or even in `{manynet}`.
-
-`{manynet}` provides a common set of tools and a standard syntax for
-analysing many different types of networks. It offers a broad range of
-functions to make, manipulate, map, measure, and model:
-
-- one-, two-, and sometimes three-mode networks
-- undirected, directed, and sometimes complex networks
-- unweighted, weighted, and sometimes signed networks
+<!-- provide a common set of tools that can be used to import, export, create, and manipulate network data in a wide variety of formats, -->
+<!-- and obtain a good first visualisation quickly. -->
+<!-- This can be useful for pedagogical purposes, initial description, or checking something part way through the modelling process. -->
+<!-- Through the most comprehensive network class-coercion available, -->
+<!-- users can access routines not available in their chosen package or even in `{manynet}`. -->
+<!-- `{manynet}` provides a common set of tools and a standard syntax for analysing many different types of networks. -->
+<!-- It offers a broad range of functions to make, manipulate, map, measure, and model: -->
+<!-- - one-, two-, and sometimes three-mode networks -->
+<!-- - undirected, directed, and sometimes complex networks -->
+<!-- - unweighted, weighted, and sometimes signed networks -->
 
 ## Installation
 
@@ -271,17 +268,24 @@ e.g. `learnr::run_tutorial("tutorial2", "manynet")`.
 
 ## Relationship to other packages
 
-This package aims to provide an updated, and more comprehensive
-replacement for `{intergraph}`. It also builds upon but makes some
-different decisions to the excellent `{tidygraph}` package. It builds
-upon `{igraph}` especially, as well as `{network}`, but works equally
-well with basic edgelists and matrices.
+This package stands on the shoulders of several incredible packages.
 
-It works with and builds upon many popular network analytic packages,
-such as `{igraph}` and `{network}`.
+In terms of the objects it works with, this package aims to provide an
+updated, more comprehensive replacement for `{intergraph}`. As such it
+works with objects in `{igraph}` and `{network}` formats, but also
+equally well with base matrices and edgelists (data frames), and formats
+from several other packages.
 
-`{manynet}` inherits core functionality from the `{migraph}` package.
-For more analytic and modelling functions, please see `{migraph}`.
+The user interface is inspired in some ways by Thomas Lin Pedersen’s
+excellent `{tidygraph}` package, though makes some different decisions,
+and uses the quickest `{igraph}` or `{network}` routines where
+available.
+
+`{manynet}` has inherited most of its core functionality from its
+maternal package, `{migraph}`. `{migraph}` continues to offer more
+analytic and modelling functions that builds upon the architecture
+provided by `{manynet}`. For more, please check out `{migraph}`
+directly.
 
 ## Funding details
 
