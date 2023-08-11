@@ -1,3 +1,11 @@
+# manynet 0.2.1
+
+2023-08-11
+
+## Map
+
+* Fixed documentation issues with map_palettes
+
 # manynet 0.2.0
 
 2023-08-11
