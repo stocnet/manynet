@@ -18,7 +18,7 @@ They are also useful as helpers within other functions."><meta property="og:imag
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -77,7 +77,7 @@ They are also useful as helpers within other functions.</p>
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>.data</dt>
-<dd><p>An object of a manynet-consistent class:</p><ul><li><p>matrix (adjacency or incidence) from <code>{base}</code> R</p></li>
+<dd><p>An object of a <code>{manynet}</code>-consistent class:</p><ul><li><p>matrix (adjacency or incidence) from <code>{base}</code> R</p></li>
 <li><p>edgelist, a data frame from <code>{base}</code> R or tibble from <code>{tibble}</code></p></li>
 <li><p>igraph, from the <code>{igraph}</code> package</p></li>
 <li><p>network, from the <code>{network}</code> package</p></li>
@@ -111,15 +111,13 @@ as the number of nodes or ties in the network, respectively.</p>
     <div class="dont-index"><p>Other mapping: 
 <code><a href="auto_graph.html">auto_graph</a></code>,
 <code><a href="is.html">is</a>()</code>,
+<code><a href="partition_layouts.html">partition_layouts</a></code>,
 <code><a href="properties.html">properties</a></code></p></div>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">node_names</span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> This graph was created by an old(er) igraph version.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   Call upgrade_graph() on it to use with the current igraph version</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   For now we convert it on the fly...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "EVELYN"    "LAURA"     "THERESA"   "BRENDA"    "CHARLOTTE" "FRANCES"  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "ELEANOR"   "PEARL"     "RUTH"      "VERNE"     "MYRA"      "KATHERINE"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [13] "SYLVIA"    "NORA"      "HELEN"     "DOROTHY"   "OLIVIA"    "FLORA"    </span>
@@ -149,18 +147,12 @@ as the number of nodes or ties in the network, respectively.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "node_mark" "logical"  </span>
 <span class="r-in"><span><span class="fu">node_attribute</span><span class="op">(</span><span class="va">ison_lotr</span>, <span class="st">"Race"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> This graph was created by an old(er) igraph version.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   Call upgrade_graph() on it to use with the current igraph version</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   For now we convert it on the fly...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "Human"  "Human"  "Hobbit" "Elf"    "Human"  "Elf"    "Elf"    "Human" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "Human"  "Hobbit" "Elf"    "Maiar"  "Dwarf"  "Elf"    "Hobbit" "Hobbit"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [17] "Hobbit" "Hobbit" "Maiar"  "Human"  "Maiar"  "Elf"    "Ent"    "Human" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [25] "Maiar"  "Human"  "Elf"    "Human"  "Elf"    "Human"  "Elf"    "Elf"   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [33] "Hobbit" "Human"  "Maiar"  "Human" </span>
 <span class="r-in"><span><span class="fu">tie_attribute</span><span class="op">(</span><span class="va">ison_algebra</span>, <span class="st">"task_tie"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> This graph was created by an old(er) igraph version.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   Call upgrade_graph() on it to use with the current igraph version</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   For now we convert it on the fly...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-in"><span><span class="fu">tie_weights</span><span class="op">(</span><span class="fu"><a href="transform.html">to_mode1</a></span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [1] 6 6 7 3 4 3 3 3 2 2 2 2 2 1 2 1 1 6 6 3 4 4 3 2 2 2 2 2 1 1 1 6 4 4 4 4 3</span>

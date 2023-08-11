@@ -31,7 +31,7 @@ In two-mode networks, the directed argument is ignored."><meta property="og:imag
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -101,7 +101,9 @@ In two-mode networks, the directed argument is ignored.</p>
 <span></span>
 <span><span class="fu">create_components</span><span class="op">(</span><span class="va">n</span>, directed <span class="op">=</span> <span class="cn">FALSE</span>, membership <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">create_core</span><span class="op">(</span><span class="va">n</span>, directed <span class="op">=</span> <span class="cn">FALSE</span>, membership <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">create_core</span><span class="op">(</span><span class="va">n</span>, directed <span class="op">=</span> <span class="cn">FALSE</span>, membership <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">create_explicit</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -166,6 +168,8 @@ into separate components.</p></li>
 <li><p><code>create_core()</code>: Creates a graph with a certain proportion of nodes
 being core nodes, densely tied to each other and peripheral nodes,
 and the rest peripheral, tied only to the core.</p></li>
+<li><p><code>create_explicit()</code>: Creates a network based on explicitly
+named nodes and ties between them.</p></li>
 </ul></div>
     <div id="lattice-graphs">
     <h2>Lattice graphs</h2>
@@ -191,6 +195,9 @@ Prime numbers of nodes will return a chain.</p>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><a href="as.html">as</a></p>
+<p><code><a href="https://r.igraph.org/reference/graph_from_literal.html" class="external-link">igraph::graph_from_literal()</a></code> which <code>create_explicit()</code> mostly just wraps.
+<code>create_explicit()</code> will also accept character input and not just a formula though,
+and will never simplify the result.</p>
 <p>Other makes: 
 <code><a href="as.html">as</a>()</code>,
 <code><a href="generate.html">generate</a></code>,
@@ -297,6 +304,22 @@ Prime numbers of nodes will return a chain.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     1     6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2     3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 6 more rows</span></span>
+<span class="r-in"><span>  <span class="fu">create_explicit</span><span class="op">(</span><span class="va">A</span> <span class="op">-</span><span class="op">+</span> <span class="va">B</span>, <span class="va">B</span> <span class="op">-</span><span class="op">+</span> <span class="va">C</span>, <span class="va">A</span> <span class="op">+</span><span class="op">-</span><span class="op">+</span> <span class="va">C</span>, <span class="va">D</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # A labelled, directed tbl_graph with 4 nodes and 4 arcs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   name </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> B    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> C    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> D    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     3     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     1     3</span>
 </code></pre></div>
     </div>
   </div>

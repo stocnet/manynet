@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -57,7 +57,7 @@
           <p class="section-desc"></p><p>Functions for constructing, simulating, and importing directed and undirected, one-mode and two-mode networks into whichever class of object is desired for further analysis.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="create.html">create_empty()</a></code> <code><a href="create.html">create_filled()</a></code> <code><a href="create.html">create_ring()</a></code> <code><a href="create.html">create_star()</a></code> <code><a href="create.html">create_tree()</a></code> <code><a href="create.html">create_lattice()</a></code> <code><a href="create.html">create_components()</a></code> <code><a href="create.html">create_core()</a></code> </p>
+          <p><code><a href="create.html">create_empty()</a></code> <code><a href="create.html">create_filled()</a></code> <code><a href="create.html">create_ring()</a></code> <code><a href="create.html">create_star()</a></code> <code><a href="create.html">create_tree()</a></code> <code><a href="create.html">create_lattice()</a></code> <code><a href="create.html">create_components()</a></code> <code><a href="create.html">create_core()</a></code> <code><a href="create.html">create_explicit()</a></code> </p>
         </td>
         <td><p>Make networks with defined structures</p></td>
       </tr><tr><td>
@@ -85,7 +85,7 @@
         </td>
         <td><p>Tools for splitting networks, graphs, and matrices into lists</p></td>
       </tr><tr><td>
-          <p><code><a href="transform.html">to_mode1()</a></code> <code><a href="transform.html">to_mode2()</a></code> <code><a href="transform.html">to_giant()</a></code> <code><a href="transform.html">to_subgraph()</a></code> <code><a href="transform.html">to_ties()</a></code> <code><a href="transform.html">to_blocks()</a></code> <code><a href="transform.html">to_matching()</a></code> <code><a href="transform.html">to_anti()</a></code> <code><a href="transform.html">to_no_isolates()</a></code> </p>
+          <p><code><a href="transform.html">to_mode1()</a></code> <code><a href="transform.html">to_mode2()</a></code> <code><a href="transform.html">to_giant()</a></code> <code><a href="transform.html">to_subgraph()</a></code> <code><a href="transform.html">to_ties()</a></code> <code><a href="transform.html">to_blocks()</a></code> <code><a href="transform.html">to_matching()</a></code> <code><a href="transform.html">to_eulerian()</a></code> <code><a href="transform.html">to_anti()</a></code> <code><a href="transform.html">to_no_isolates()</a></code> </p>
         </td>
         <td><p>Tools for transforming networks, graphs, and matrices</p></td>
       </tr><tr><td>
@@ -97,7 +97,7 @@
         </td>
         <td><p>Tools for imputing missing tie data</p></td>
       </tr><tr><td>
-          <p><code><a href="add.html">add_nodes()</a></code> <code><a href="add.html">add_ties()</a></code> <code><a href="add.html">add_node_attribute()</a></code> <code><a href="add.html">add_tie_attribute()</a></code> </p>
+          <p><code><a href="add.html">add_nodes()</a></code> <code><a href="add.html">delete_nodes()</a></code> <code><a href="add.html">add_ties()</a></code> <code><a href="add.html">add_node_attribute()</a></code> <code><a href="add.html">add_tie_attribute()</a></code> </p>
         </td>
         <td><p>Adding nodes and ties and their attributes</p></td>
       </tr><tr><td>
@@ -109,7 +109,7 @@
           <p class="section-desc"></p><p>Functions for informatively describing networks. This includes identifying properties of networks, nodes, or ties as well as plotting and visualising graphs of different types. The <code>is_*()</code> family all return logical scalars (TRUE or FALSE). <code>network_</code> measures return one or, in some cases of two-mode measures, two values. All <code>node_</code> and <code>tie_</code> measures return a single vector, the length of the nodes or ties in the network, respectively. <code><a href="../reference/auto_graph.html">autographr()</a></code> graphs any manynet-compatible class object automagically. <code><a href="../reference/auto_graph.html">autographs()</a></code> and <code><a href="../reference/auto_graph.html">autographd()</a></code> do the same for multiple networks and dynamic networks, respectively.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="is.html">is_manynet()</a></code> <code><a href="is.html">is_graph()</a></code> <code><a href="is.html">is_edgelist()</a></code> <code><a href="is.html">is_twomode()</a></code> <code><a href="is.html">is_weighted()</a></code> <code><a href="is.html">is_directed()</a></code> <code><a href="is.html">is_labelled()</a></code> <code><a href="is.html">is_signed()</a></code> <code><a href="is.html">is_complex()</a></code> <code><a href="is.html">is_multiplex()</a></code> <code><a href="is.html">is_uniplex()</a></code> <code><a href="is.html">is_longitudinal()</a></code> <code><a href="is.html">is_dynamic()</a></code> </p>
+          <p><code><a href="is.html">is_manynet()</a></code> <code><a href="is.html">is_graph()</a></code> <code><a href="is.html">is_edgelist()</a></code> <code><a href="is.html">is_twomode()</a></code> <code><a href="is.html">is_weighted()</a></code> <code><a href="is.html">is_directed()</a></code> <code><a href="is.html">is_labelled()</a></code> <code><a href="is.html">is_signed()</a></code> <code><a href="is.html">is_complex()</a></code> <code><a href="is.html">is_multiplex()</a></code> <code><a href="is.html">is_uniplex()</a></code> <code><a href="is.html">is_longitudinal()</a></code> <code><a href="is.html">is_dynamic()</a></code> <code><a href="is.html">is_connected()</a></code> <code><a href="is.html">is_perfect_matching()</a></code> <code><a href="is.html">is_eulerian()</a></code> <code><a href="is.html">is_acyclic()</a></code> <code><a href="is.html">is_aperiodic()</a></code> </p>
         </td>
         <td><p>Describing network formats</p></td>
       </tr><tr><td>
@@ -124,6 +124,14 @@
           <p><code><a href="auto_graph.html">autographr()</a></code> <code><a href="auto_graph.html">autographs()</a></code> <code><a href="auto_graph.html">autographd()</a></code> </p>
         </td>
         <td><p>Quickly graph networks with sensible defaults</p></td>
+      </tr><tr><td>
+          <p><code><a href="partition_layouts.html">layout_tbl_graph_hierarchy()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_alluvial()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_railway()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_ladder()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_concentric()</a></code> </p>
+        </td>
+        <td><p>Layout algorithms based on bi- or other partitions</p></td>
+      </tr><tr><td>
+          <p><code><a href="themes.html">theme_iheid()</a></code> </p>
+        </td>
+        <td><p>Theming ggraph</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="data">Data <a href="#data" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>The package contains a variety of networks useful for pedagogical purposes and used in the course ‘Social Networks Theories and Methods’ and other workshops. Each page documents the source of the data and its format. References are provided for further reading and citation.</p>
@@ -137,13 +145,21 @@
         </td>
         <td><p>Multiplex graph object of friends, social, and task ties (McFarland 2001)</p></td>
       </tr><tr><td>
-          <p><code><a href="ison_brandes.html">ison_brandes</a></code> <code><a href="ison_brandes.html">ison_brandes2</a></code> </p>
+          <p><code><a href="ison_brandes.html">ison_brandes</a></code> </p>
         </td>
         <td><p>One-mode and two-mode centrality demonstration networks</p></td>
       </tr><tr><td>
           <p><code><a href="ison_karateka.html">ison_karateka</a></code> </p>
         </td>
         <td><p>One-mode karateka network (Zachary 1977)</p></td>
+      </tr><tr><td>
+          <p><code><a href="ison_konigsberg.html">ison_konigsberg</a></code> </p>
+        </td>
+        <td><p>One-mode Seven Bridges of Konigsberg network (Euler 1741)</p></td>
+      </tr><tr><td>
+          <p><code><a href="ison_laterals.html">ison_laterals</a></code> </p>
+        </td>
+        <td><p>Two-mode projection examples (Hollway 2021)</p></td>
       </tr><tr><td>
           <p><code><a href="ison_lotr.html">ison_lotr</a></code> </p>
         </td>
@@ -157,10 +173,6 @@ book characters (Yüksel 2017)</p></td>
           <p><code><a href="ison_networkers.html">ison_networkers</a></code> </p>
         </td>
         <td><p>One-mode EIES dataset (Freeman and Freeman 1979)</p></td>
-      </tr><tr><td>
-          <p><code><a href="ison_projection.html">ison_mm</a></code> <code><a href="ison_projection.html">ison_bm</a></code> <code><a href="ison_projection.html">ison_mb</a></code> <code><a href="ison_projection.html">ison_bb</a></code> </p>
-        </td>
-        <td><p>Two-mode projection examples (Hollway 2021)</p></td>
       </tr><tr><td>
           <p><code><a href="ison_southern_women.html">ison_southern_women</a></code> </p>
         </td>

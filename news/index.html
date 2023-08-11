@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -53,6 +53,44 @@
       <small>Source: <a href="https://github.com/snlab-ch/manynet/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.2.0" id="manynet-020">manynet 0.2.0<a class="anchor" aria-label="anchor" href="#manynet-020"></a></h2>
+<p>2023-08-11</p>
+<div class="section level3">
+<h3 id="package-0-2-0">Package<a class="anchor" aria-label="anchor" href="#package-0-2-0"></a></h3>
+<ul><li>Closed <a href="https://github.com/snlab-ch/manynet/issues/4" class="external-link">#4</a> by adding <code>thisRequiresBio()</code> helper function to download Bioconductor packages</li>
+<li>Upgraded ison data to latest igraph specification<ul><li>Added <code>ison_konigsberg</code> for illustrating Seven Bridges of Konigsberg</li>
+<li>Removed <code>ison_brandes2</code> and added potential modal type as extra variable to <code>ison_brandes</code>
+</li>
+<li>Consolidated <code>ison_bb</code>, <code>ison_bm</code>, <code>ison_mb</code>, and <code>ison_mm</code> into a list of networks called <code>ison_laterals</code>
+</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="make-0-2-0">Make<a class="anchor" aria-label="anchor" href="#make-0-2-0"></a></h3>
+<ul><li>Added <code><a href="../reference/create.html">create_explicit()</a></code> for creating networks based on explicit nodes and ties</li></ul></div>
+<div class="section level3">
+<h3 id="manip-0-2-0">Manip<a class="anchor" aria-label="anchor" href="#manip-0-2-0"></a></h3>
+<ul><li>Added <code><a href="../reference/add.html">delete_nodes()</a></code> for deleting specific nodes</li>
+<li>Added <code><a href="../reference/transform.html">to_eulerian()</a></code> function that returns a Eulerian path network, if available, from a given network</li>
+</ul></div>
+<div class="section level3">
+<h3 id="map-0-2-0">Map<a class="anchor" aria-label="anchor" href="#map-0-2-0"></a></h3>
+<ul><li>Moved additional <code>is_</code> functions from <a href="https://github.com/snlab-ch/migraph" class="external-link">migraph</a><ul><li>Added <code><a href="../reference/is.html">is_connected()</a></code> to test if network is strongly connected</li>
+<li>Added <code><a href="../reference/is.html">is_perfect_matching()</a></code> to test if there is a matching for every node in the network</li>
+<li>Added <code><a href="../reference/is.html">is_eulerian()</a></code> to test whether there is a Eulerian path for a network</li>
+<li>Added <code>is_acyclic</code> to test whether network is a directed acyclic graph</li>
+<li>Added <code>is_aperiodic</code> to test whether network is aperiodic</li>
+</ul></li>
+<li>Added partition layouts<ul><li>Added <code><a href="../reference/partition_layouts.html">layout_tbl_graph_alluvial()</a></code> that places successive layers horizontally</li>
+<li>Added <code><a href="../reference/partition_layouts.html">layout_tbl_graph_concentric()</a></code>that places a “hierarchy” layout around a circle</li>
+<li>Added <code><a href="../reference/partition_layouts.html">layout_tbl_graph_hierarchy()</a></code> that layers the nodes along the top and bottom sequenced to minimise overlap</li>
+<li>Added <code><a href="../reference/partition_layouts.html">layout_tbl_graph_ladder()</a></code>that aligns nodes across successive layers horizontally</li>
+<li>Added <code>layout_tbl_graph_railway</code> that aligns nodes across successive layers vertically</li>
+</ul></li>
+<li>Added <code><a href="../reference/themes.html">theme_iheid()</a></code> function that themes graphs with colors based on the Geneva Graduate Institute</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.1.2" id="manynet-012">manynet 0.1.2<a class="anchor" aria-label="anchor" href="#manynet-012"></a></h2>
 <p>2023-06-20</p>
@@ -149,7 +187,7 @@
 <h3 id="maps-0-1-0">Maps<a class="anchor" aria-label="anchor" href="#maps-0-1-0"></a></h3>
 <ul><li>Added <code><a href="../reference/auto_graph.html">autographr()</a></code>, <code><a href="../reference/auto_graph.html">autographs()</a></code>, and <code><a href="../reference/auto_graph.html">autographd()</a></code>
 </li>
-<li>Added layout functions<ul><li>Fixed <code>layout_tbl_graph_concentric()</code>
+<li>Added layout functions<ul><li>Fixed <code><a href="../reference/partition_layouts.html">layout_tbl_graph_concentric()</a></code>
 </li></ul></li>
 </ul></div>
 </div>

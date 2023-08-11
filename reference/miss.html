@@ -21,7 +21,7 @@ and replacing the missing values with the average non-missing value for that vec
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -75,7 +75,7 @@ and replacing the missing values with the average non-missing value for that vec
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>.data</dt>
-<dd><p>An object of a manynet-consistent class:</p><ul><li><p>matrix (adjacency or incidence) from <code>{base}</code> R</p></li>
+<dd><p>An object of a <code>{manynet}</code>-consistent class:</p><ul><li><p>matrix (adjacency or incidence) from <code>{base}</code> R</p></li>
 <li><p>edgelist, a data frame from <code>{base}</code> R or tibble from <code>{tibble}</code></p></li>
 <li><p>igraph, from the <code>{igraph}</code> package</p></li>
 <li><p>network, from the <code>{network}</code> package</p></li>
@@ -142,9 +142,9 @@ the mean value in the network.</p></li>
 <span class="r-in"><span><span class="fu">na_to_mean</span><span class="op">(</span><span class="va">missTest</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       Betty Sue Alice Jane Dale Pam Carol Tina</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Betty     0   1     0    0    0   0     0    0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Sue       1   0     0    0    1   0     0    0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Alice     0   0     0    0    1   0     0    0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Jane      0   0     0    0    1   0     0    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sue       1   0     1    0    1   0     0    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Alice     0   1     0    0    1   0     0    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Jane      0   0     1    0    1   0     0    0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dale      0   1     1    1    0   0     0    0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Pam       0   0     0    0    0   0     1    0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Carol     0   0     0    0    0   1     0    1</span>

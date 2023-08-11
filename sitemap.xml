@@ -67,6 +67,12 @@
     <loc>https://snlab-ch.github.io/manynet/reference/ison_karateka.html</loc>
   </url>
   <url>
+    <loc>https://snlab-ch.github.io/manynet/reference/ison_konigsberg.html</loc>
+  </url>
+  <url>
+    <loc>https://snlab-ch.github.io/manynet/reference/ison_laterals.html</loc>
+  </url>
+  <url>
     <loc>https://snlab-ch.github.io/manynet/reference/ison_lotr.html</loc>
   </url>
   <url>
@@ -76,13 +82,13 @@
     <loc>https://snlab-ch.github.io/manynet/reference/ison_networkers.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/ison_projection.html</loc>
-  </url>
-  <url>
     <loc>https://snlab-ch.github.io/manynet/reference/ison_southern_women.html</loc>
   </url>
   <url>
     <loc>https://snlab-ch.github.io/manynet/reference/miss.html</loc>
+  </url>
+  <url>
+    <loc>https://snlab-ch.github.io/manynet/reference/partition_layouts.html</loc>
   </url>
   <url>
     <loc>https://snlab-ch.github.io/manynet/reference/properties.html</loc>
@@ -98,6 +104,9 @@
   </url>
   <url>
     <loc>https://snlab-ch.github.io/manynet/reference/split.html</loc>
+  </url>
+  <url>
+    <loc>https://snlab-ch.github.io/manynet/reference/themes.html</loc>
   </url>
   <url>
     <loc>https://snlab-ch.github.io/manynet/reference/tidy.html</loc>

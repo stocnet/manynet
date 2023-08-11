@@ -21,7 +21,7 @@ visualisation of network measures such as centrality."><meta property="og:image"
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -69,7 +69,7 @@ visualisation of network measures such as centrality.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">autographr</span><span class="op">(</span></span>
 <span>  <span class="va">.data</span>,</span>
-<span>  layout <span class="op">=</span> <span class="st">"stress"</span>,</span>
+<span>  layout <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  node_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  node_shape <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -182,26 +182,33 @@ with sensible defaults</p></li>
     <div class="dont-index"><p>Other mapping: 
 <code><a href="attributes.html">attributes</a>()</code>,
 <code><a href="is.html">is</a>()</code>,
+<code><a href="partition_layouts.html">partition_layouts</a></code>,
 <code><a href="properties.html">properties</a></code></p></div>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">ison_adolescents</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"circle"</span>, <span class="st">"square"</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>         color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blue"</span>, <span class="st">"red"</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">autographr</span><span class="op">(</span>node_shape <span class="op">=</span> <span class="st">"shape"</span>, node_color <span class="op">=</span> <span class="st">"color"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> This graph was created by an old(er) igraph version.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   Call upgrade_graph() on it to use with the current igraph version</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   For now we convert it on the fly...</span>
-<span class="r-plt img"><img src="auto_graph-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu">autographr</span><span class="op">(</span><span class="va">ison_karateka</span>, node_size <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> This graph was created by an old(er) igraph version.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   Call upgrade_graph() on it to use with the current igraph version</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   For now we convert it on the fly...</span>
-<span class="r-plt img"><img src="auto_graph-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span>  <span class="fu">autographs</span><span class="op">(</span><span class="fu"><a href="split.html">to_egos</a></span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="auto_graph-3.png" alt="" width="700" height="433"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">#ison_adolescents %&gt;% </span></span></span>
+<span class="r-in"><span><span class="co">#   mutate(shape = rep(c("circle", "square"), times = 4),</span></span></span>
+<span class="r-in"><span><span class="co">#          color = rep(c("blue", "red"), times = 4)) %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co">#  autographr(node_shape = "shape", node_color = "color")</span></span></span>
+<span class="r-in"><span><span class="co">#autographr(ison_karateka, node_size = 8)</span></span></span>
+<span class="r-in"><span><span class="co">#autographs(to_egos(ison_adolescents))</span></span></span>
+<span class="r-in"><span><span class="co">#ison_adolescents %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co"># mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co"># to_waves(attribute = "year") %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co"># autographd()</span></span></span>
+<span class="r-in"><span><span class="co">#ison_adolescents %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co"># mutate(shape = rep(c("circle", "square"), times = 4),</span></span></span>
+<span class="r-in"><span><span class="co">#        color = rep(c("blue", "red"), times = 4),</span></span></span>
+<span class="r-in"><span><span class="co">#        size = sample(4:16, 8, replace = TRUE)) %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co"># mutate_ties(year = sample(1995:1998, 10, replace = TRUE),</span></span></span>
+<span class="r-in"><span><span class="co">#        e_color = sample(c("yellow", "green"), 10, replace = TRUE)) %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co"># to_waves(attribute = "year") %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co"># autographd(keep_isolates = FALSE, layout = "circle", node_shape = "shape",</span></span></span>
+<span class="r-in"><span><span class="co">#            node_color = "color", node_size =  "size",</span></span></span>
+<span class="r-in"><span><span class="co">#            edge_color = "e_color")</span></span></span>
+<span class="r-in"></span>
 </code></pre></div>
     </div>
   </div>
