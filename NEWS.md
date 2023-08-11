@@ -1,24 +1,23 @@
 # manynet 0.1.3
 
-2023-08-08
+2023-08-11
 
 ## Package 
 
 * Closed #4 by adding `thisRequiresBio()` helper function to download Bioconductor packages
-* Added `available_methods()` helper function for declaring methods available for packages
-* Updated ison data
-  * Added `ison_konigsberg`
-  * Removed `ison_brandes2`
-  * Updated `ison_laterals` to be a list of previously separated network projections
+* Upgraded ison data to latest igraph specification
+  * Added `ison_konigsberg` for illustrating Seven Bridges of Konigsberg
+  * Removed `ison_brandes2` and added potential modal type as extra variable to `ison_brandes`
+  * Consolidated `ison_bb`, `ison_bm`, `ison_mb`, and `ison_mm` into a list of networks called `ison_laterals`
 
 ## Make
 
-* Added `create_explicit()` function for creating networks based on explicit names and ties
+* Added `create_explicit()` for creating networks based on explicit nodes and ties
 
 ## Manip
 
-* Added `delete_nodes()` function to delete nodes
-* Added `to_eulerian` function that returns a network with only the Eulerian path
+* Added `delete_nodes()` for deleting specific nodes
+* Added `to_eulerian()` function that returns a Eulerian path network, if available, from a given network
 
 ## Map
 
@@ -34,7 +33,7 @@
   * Added `layout_tbl_graph_hierarchy()` that layers the nodes along the top and bottom sequenced to minimise overlap
   * Added `layout_tbl_graph_ladder()`that aligns nodes across successive layers horizontally
   * Added `layout_tbl_graph_railway`  that aligns nodes across successive layers vertically
-* Added `theme_iheid()` function that themes visualisations to colors based on the Geneva Graduate Institute and members
+* Added `theme_iheid()` function that themes graphs with colors based on the Geneva Graduate Institute
 
 # manynet 0.1.2
 
