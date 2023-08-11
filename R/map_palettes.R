@@ -77,9 +77,8 @@ iheid_palette <- function(name, n, type = c("discrete", "continuous")) {
   structure(out, class = "palette", name = name)
 }
 
-#' @export
-#' @importFrom graphics rect par image text
-#' @importFrom grDevices rgb
+# #' @importFrom graphics rect par image text
+# #' @importFrom grDevices rgb
 print.palette <- function(x, ...) {
   n <- length(x)
   old <- par(mar = c(0.5, 0.5, 0.5, 0.5))
@@ -89,3 +88,11 @@ print.palette <- function(x, ...) {
   rect(0, 0.9, n + 1, 1.1, col = rgb(1, 1, 1, 0.8), border = NA)
   text((n + 1) / 2, 1, labels = attr(x, "name"), cex = 1, family = "serif")
 }
+
+colorsafe_palette <- c("#1B9E77","#D95F02","#7570B3","#E7298A",
+                       "#66A61E","#E6AB02","#A6761D","#666666")
+# colorsafe_palette <- c('#000000','#d73027','#4575b4',
+#                            '#f46d43','#74add1','#fee090','#e0f3f8',
+#                            '#a50026','#313695',
+#                            '#fdae61','#abd9e9')
+
