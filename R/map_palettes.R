@@ -1,8 +1,6 @@
-#' Complete list of palettes
-#'
-#' Use \code{\link{iheid_palette}} to construct palettes of desired length.
-#'
-#' @export
+# #' Complete list of palettes
+# #'
+# #' Use \code{\link{iheid_palette}} to construct palettes of desired length.
 iheid_palettes <- list("IHEID" = c("IHEIDRed" = "#E20020",
                                    "IHEIDBlack" = "#5c666f",
                                    "IHEIDGrey" = "#6f7072"),
@@ -33,34 +31,33 @@ iheid_palettes <- list("IHEID" = c("IHEIDRed" = "#E20020",
                                   "StrongInstitutions" = "#00689D",
                                   "GoalPartnerships" = "#19486A"))
 
-#' An IHEID palette generator
-#'
-#' These are a few color palettes useful for members of the  Geneva Graduate Institute.
-#' This function calls one of three official palettes in
-#' \code{\link{iheid_palette}}: for the Institute, for the Centres, and for the
-#' SDGs.
-#'
-#' @param n Number of colors desired. If omitted, uses all colours.
-#' @param name Name of desired palette. Current choices are:
-#'   \code{IHEID}, \code{Centres}, and \code{SDGs}.
-#' @param type Either "continuous" or "discrete". Use continuous if you want
-#'   to automatically interpolate between colours.
-#' @importFrom graphics rect par image text
-#' @return A vector of colours.
-#' @source Adapted from
-#' \url{https://github.com/karthik/wesanderson/blob/master/R/colors.R}
-#' @export
-#' @keywords colors
-#' @examples
-#' \donttest{
-#' #iheid_palette("IHEID")
-#' #iheid_palette("Centres")
-#' #iheid_palette("SDGs")
-#' # If you need more colours than normally found in a palette, you
-#' # can use a continuous palette to interpolate between existing colours
-#' #pal <- iheid_palette(21, name = "Centres", type = "continuous")
-#' #image(volcano, col = pal)
-#' }
+# An IHEID palette generator
+
+# These are a few color palettes useful for members of the  Geneva Graduate Institute.
+# This function calls one of three official palettes in
+# \code{\link{iheid_palette}}: for the Institute, for the Centres, and for the
+# SDGs.
+
+# #' @param n Number of colors desired. If omitted, uses all colours.
+# #' @param name Name of desired palette. Current choices are:
+# #'   \code{IHEID}, \code{Centres}, and \code{SDGs}.
+# #' @param type Either "continuous" or "discrete". Use continuous if you want
+# #'   to automatically interpolate between colours.
+# #' @importFrom graphics rect par image text
+# #' @return A vector of colours.
+# #' @source Adapted from
+# \url{https://github.com/karthik/wesanderson/blob/master/R/colors.R}
+# #' @keywords colors
+# #' @examples
+# \donttest{
+#iheid_palette("IHEID")
+#iheid_palette("Centres")
+#iheid_palette("SDGs")
+# If you need more colours than normally found in a palette, you
+# can use a continuous palette to interpolate between existing colours
+#pal <- iheid_palette(21, name = "Centres", type = "continuous")
+#image(volcano, col = pal)
+# }
 iheid_palette <- function(name, n, type = c("discrete", "continuous")) {
   type <- match.arg(type)
   pal <- iheid_palettes[[name]]
