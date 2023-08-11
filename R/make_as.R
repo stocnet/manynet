@@ -750,14 +750,7 @@ as_siena <- function(.data,
 
 #' @export
 as_siena.igraph <- function(.data, twomode = FALSE) {
-  if (!requireNamespace("RSiena", quietly = TRUE)) {
-    if(utils::askYesNo(msg = "The `RSiena` package is required.
-                       Would you like to install `RSiena` from CRAN?")) {
-      utils::install.packages('RSiena')
-    } else {
-      stop("Please install `RSiena` from CRAN to coerce into RSiena data objects.")
-    }
-  }
+  thisRequires("RSiena")
   # First separate out the dependent ties
   nets <- igraph::edge_attr_names(as_igraph(.data))
   ties <- unique(gsub("_t[0-9]","", nets))
@@ -814,14 +807,7 @@ setClass("graphAM", contains="graph",
 
 #' @export
 as_graphAM.matrix <- function(.data, twomode = NULL) {
-  if (!requireNamespace("RSiena", quietly = TRUE)) {
-    if(utils::askYesNo(msg = "The `RSiena` package is required.
-                       Would you like to install `RSiena` from CRAN?")) {
-      utils::install.packages('RSiena')
-    } else {
-      stop("Please install `RSiena` from CRAN to coerce into RSiena data objects.")
-    }
-  }
+  thisRequires("RSiena")
   methods::new("graphAM", adjMat = to_onemode(.data), 
                edgemode = ifelse(is_directed(.data), "directed", "undirected"))
 }

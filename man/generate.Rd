@@ -42,7 +42,7 @@ By default TRUE.}
 \item{width}{Integer specifying the width of the ring,
 breadth of the branches, or maximum extent of the neighbourbood.}
 
-\item{.data}{An object of a manynet-consistent class:
+\item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
 \item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
@@ -95,15 +95,24 @@ or on each of the rows and columns (for a two-mode network).
 
 }}
 \examples{
-autographr(generate_random(12, 0.4))
-autographr(generate_random(c(6, 6), 0.4))
-autographr(generate_smallworld(12, 0.025))
-autographr(generate_smallworld(12, 0.25))
-autographr(generate_smallworld(c(6,6), 0.025))
-autographr(generate_scalefree(12, 0.25))
-autographr(generate_scalefree(12, 1.25))
-autographr(generate_scalefree(c(12,6), 0.25))
-autographr(generate_scalefree(c(12,6), 1.25))
+generate_random(12, 0.4)
+generate_random(c(6, 6), 0.4)
+#autographr(generate_random(12, 0.4))
+#autographr(generate_random(c(6, 6), 0.4))
+generate_smallworld(12, 0.025)
+generate_smallworld(12, 0.25)
+generate_smallworld(c(6,6), 0.025)
+#autographr(generate_smallworld(12, 0.025))
+#autographr(generate_smallworld(12, 0.25))
+#autographr(generate_smallworld(c(6,6), 0.025))
+generate_scalefree(12, 0.25)
+generate_scalefree(12, 1.25)
+generate_scalefree(c(12,6), 0.25)
+generate_scalefree(c(12,6), 1.25)
+#autographr(generate_scalefree(12, 0.25))
+#autographr(generate_scalefree(12, 1.25))
+#autographr(generate_scalefree(c(12,6), 0.25))
+#autographr(generate_scalefree(c(12,6), 1.25))
 autographr(ison_adolescents)
 autographr(generate_permutation(ison_adolescents))
 }

@@ -3,12 +3,15 @@
 \name{add}
 \alias{add}
 \alias{add_nodes}
+\alias{delete_nodes}
 \alias{add_ties}
 \alias{add_node_attribute}
 \alias{add_tie_attribute}
 \title{Adding nodes and ties and their attributes}
 \usage{
 add_nodes(.data, nodes, attribute = NULL)
+
+delete_nodes(.data, nodes)
 
 add_ties(.data, ties, attribute = NULL)
 
@@ -17,7 +20,7 @@ add_node_attribute(.data, attr_name, vector)
 add_tie_attribute(.data, attr_name, vector)
 }
 \arguments{
-\item{.data}{An object of a manynet-consistent class:
+\item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
 \item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
@@ -43,10 +46,20 @@ A data object of the same class as the function was given.
 These functions allow users to add nodes, ties, or attributes to the nodes or ties
 of a network.
 The \verb{add_*()} functions operate similarly to in \code{{igraph}}.
+
+Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods:\tabular{lrrr}{
+    \tab igraph \tab network \tab tbl_graph \cr
+   add_nodes \tab 1 \tab 1 \tab 1 \cr
+   add_ties \tab 1 \tab 1 \tab 1 \cr
+   delete_nodes \tab 1 \tab 0 \tab 0 \cr
+}
 }
 \section{Functions}{
 \itemize{
-\item \code{add_nodes()}: Add additional ties to a network
+\item \code{add_nodes()}: Add additional nodes to a network
+
+\item \code{delete_nodes()}: Delete nodes in a network
 
 \item \code{add_ties()}: Add additional ties to a network
 

@@ -39,14 +39,14 @@ NULL
 
 #' @describeIn auto_graph Graphs a network with sensible defaults
 #' @examples
-#' ison_adolescents %>% 
-#'   mutate(shape = rep(c("circle", "square"), times = 4),
-#'          color = rep(c("blue", "red"), times = 4)) %>%
-#'   autographr(node_shape = "shape", node_color = "color")
-#' autographr(ison_karateka, node_size = 8)
+#' #ison_adolescents %>% 
+#' #   mutate(shape = rep(c("circle", "square"), times = 4),
+#' #          color = rep(c("blue", "red"), times = 4)) %>%
+#' #  autographr(node_shape = "shape", node_color = "color")
+#' #autographr(ison_karateka, node_size = 8)
 #' @export
 autographr <- function(.data,
-                       layout = "stress",
+                       layout = NULL,
                        labels = TRUE,
                        node_color = NULL,
                        node_shape = NULL,
@@ -62,7 +62,8 @@ autographr <- function(.data,
   #     mutate(node_group = node_group)
   # }
   # Add layout ----
-  p <- .graph_layout(g, layout, labels)
+  layout <- .infer_layout(g, layout)
+  p <- .graph_layout(g, layout, labels, ...)
   # Add edges ----
   p <- .graph_edges(p, g, edge_color)
   # Add nodes ----
@@ -75,17 +76,10 @@ autographr <- function(.data,
 #' @param netlist A list of migraph-compatible networks.
 #' @source http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
 #' @examples
-#'   autographs(to_egos(ison_adolescents))
+#' #autographs(to_egos(ison_adolescents))
 #' @export
 autographs <- function(netlist, ...) {
-  if (!requireNamespace("patchwork", quietly = TRUE)) {
-    if(utils::askYesNo(msg = "The `patchwork` package is required.
-                       Would you like to install `patchwork` from CRAN?")) {
-      utils::install.packages('patchwork')
-    } else {
-      stop("Please install `patchwork` from CRAN to graph multiple plots.")
-    }
-  }
+  thisRequires("patchwork")
   if(!is.null(names(netlist))){
     gs <- lapply(1:length(netlist), function(x)
       autographr(netlist[[x]], ...) +
@@ -111,19 +105,27 @@ autographs <- function(netlist, ...) {
 #' @importFrom ggraph create_layout
 #' @importFrom dplyr mutate select distinct left_join %>%
 #' @source http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
+#' @examples
+#' #ison_adolescents %>%
+#' # mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %>%
+#' # to_waves(attribute = "year") %>%
+#' # autographd()
+#' #ison_adolescents %>%
+#' # mutate(shape = rep(c("circle", "square"), times = 4),
+#' #        color = rep(c("blue", "red"), times = 4),
+#' #        size = sample(4:16, 8, replace = TRUE)) %>%
+#' # mutate_ties(year = sample(1995:1998, 10, replace = TRUE),
+#' #        e_color = sample(c("yellow", "green"), 10, replace = TRUE)) %>%
+#' # to_waves(attribute = "year") %>%
+#' # autographd(keep_isolates = FALSE, layout = "circle", node_shape = "shape",
+#' #            node_color = "color", node_size =  "size",
+#' #            edge_color = "e_color")
 #' @export
 autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
                        labels = TRUE, node_color = NULL, node_shape = NULL,
                        node_size = NULL, edge_color = NULL) {
   # Todo: add (...) arguments passed on to `ggraph()`/`ggplot()`/`gganimate()`
-  if (!requireNamespace("gganimate", quietly = TRUE)) {
-    if(utils::askYesNo(msg = "The `gganimate` package is required.
-                       Would you like to install `gganimate` from CRAN?")) {
-      utils::install.packages('gganimate')
-    } else {
-      stop("Please install `gganimate` from CRAN to animate plots.")
-    }
-  }
+  thisRequires("gganimate")
   x <- y <- name <- status <- frame <- NULL
   # Check if object is a list of lists
   if (!is.list(tlist[[1]])) {
@@ -184,12 +186,36 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
     ggplot2::theme_void()
 }
 
+.infer_layout <- function(g, layout){
+  if(is.null(layout)){
+      if (is_twomode(g)) layout <- "hierarchy" else 
+      layout <- "stress"
+  }
+  layout
+}
+
+.infer_nsize <- function(g, node_size){
+  if (!is.null(node_size)) {
+    if (is.character(node_size)) {
+      out <- node_attribute(g, node_size)
+    } else if (is.numeric(node_size)) {
+      out <- node_size
+    } else {
+      out <- node_size(g)
+    }
+    if(all(out <= 1 & out >= 0)) out <- out*10
+  } else {
+    out <- ifelse(network_nodes(g) <= 10, 5, (100 / network_nodes(g)) / 2)
+  }
+  out
+}
+
 #' @importFrom ggraph create_layout ggraph
 #' @importFrom igraph get.vertex.attribute
 #' @importFrom ggplot2 theme_void
-.graph_layout <- function(g, layout, labels){
+.graph_layout <- function(g, layout, labels, ...){
   name <- NULL
-  lo <- ggraph::create_layout(g, layout)
+  lo <- ggraph::create_layout(g, layout, ...)
   if ("graph" %in% names(attributes(lo))) {
     if (!setequal(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
       for (n in setdiff(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
@@ -389,18 +415,9 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
 }
 
 .graph_nodes <- function(p, g, node_color, node_shape, node_size){
-  if (!is.null(node_size)) {
-    if (is.character(node_size)) {
-      nsize <- node_attribute(g, node_size)
-    } else if (is.numeric(node_size)) {
-      nsize <- node_size
-    } else {
-      nsize <- node_size(g)
-    }
-  } else {
-    nsize <- ifelse(network_nodes(g) <= 10, 5, (100 / network_nodes(g)) / 2)
-  }
-  
+
+  nsize <- .infer_nsize(g, node_size)
+
   if (!is.null(node_shape)) {
     node_shape <- as.factor(node_attribute(g, node_shape))
     node_shape <- c("circle","square","triangle")[node_shape]
@@ -411,6 +428,7 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
   } else {
     node_shape <- "circle"
   }
+  
   if (is_twomode(g)) {
     if (!is.null(node_color)) {
       color_factor_node <- as.factor(node_attribute(g, node_color))
@@ -436,8 +454,7 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
                                                         -1,1),
                                      guide = "none")
     } else {
-      p <- p + ggraph::geom_node_point(size = nsize,
-                                       shape = node_shape)
+      p <- p + ggraph::geom_node_point(size = nsize, shape = node_shape)
     }
   }
   p

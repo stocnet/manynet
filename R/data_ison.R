@@ -64,46 +64,24 @@
 #'   ```
 "ison_lotr"
 
-# Projection ####
+# Laterals ####
 
 #' Two-mode projection examples (Hollway 2021)
 #'
 #' @description
-#'  These datasets are for demonstration purposes and do not describe any real world network.
+#'  These networks are for demonstration purposes and do not describe any real world network.
 #'  All examples contain named nodes.
+#'  The networks are gathered together as a list and can be retrieved simply by plucking 
+#'  the desired network.
 #' @docType data
 #' @keywords datasets
-#' @name ison_projection
-#' @usage data(ison_mm)
+#' @name ison_laterals
+#' @usage data(ison_laterals)
 #' @format
 #'   ```{r, echo = FALSE}
-#'   ison_mm
+#'   ison_laterals
 #'   ```
-"ison_mm"
-
-#' @rdname ison_projection
-#' @usage data(ison_bm)
-#' @format
-#'   ```{r, echo = FALSE}
-#'   ison_bm
-#'   ```
-"ison_bm"
-
-#' @rdname ison_projection
-#' @usage data(ison_mb)
-#' @format
-#'   ```{r, echo = FALSE}
-#'   ison_mb
-#'   ```
-"ison_mb"
-
-#' @rdname ison_projection
-#' @usage data(ison_bb)
-#' @format
-#'   ```{r, echo = FALSE}
-#'   ison_bb
-#'   ```
-"ison_bb"
+"ison_laterals"
 
 # Algebra ####
 
@@ -187,6 +165,23 @@
 #'   ```
 "ison_karateka"
 
+# Konigsberg ####
+
+#' One-mode Seven Bridges of Konigsberg network (Euler 1741)
+#'
+#' @docType data
+#' @keywords datasets
+#' @name ison_konigsberg
+#' @usage data(ison_konigsberg)
+#' @references
+#'   Euler, Leonard. 1741. “Solutio problematis ad geometriam situs pertinentis.”
+#'   _Commentarii academiae scientiarum Petropolitanae_.
+#' @format
+#'   ```{r, echo = FALSE}
+#'   ison_konigsberg
+#'   ```
+"ison_konigsberg"
+
 # Networkers ####
 
 #' One-mode EIES dataset (Freeman and Freeman 1979)
@@ -222,6 +217,8 @@
 #'
 #' This network should solely be used
 #' for demonstration purposes as it does not describe a real network.
+#' To convert into the two-mode version, 
+#' assign `ison_brandes %>% rename(type = twomode_type)`.
 #' @docType data
 #' @keywords datasets
 #' @name ison_brandes
@@ -231,15 +228,6 @@
 #'   ison_brandes
 #'   ```
 "ison_brandes"
-
-#' @rdname ison_brandes
-#' @usage data(ison_brandes2)
-#' @format
-#'   ```{r, echo = FALSE}
-#'   ison_brandes2
-#'   ```
-"ison_brandes2"
-
 
 # Southern Women ####
 

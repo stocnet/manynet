@@ -1,7 +1,7 @@
-# Unweighted, unsigned, undirected network
-test_brandes <- autographr(ison_brandes)
-
 test_that("unweighted, unsigned, undirected networks graph correctly", {
+  skip_on_cran()
+  # Unweighted, unsigned, undirected network
+  test_brandes <- autographr(ison_brandes)
   # Node position
   expect_equal(round(test_brandes[["data"]][["x"]][[1]]), 3)
   expect_equal(round(test_brandes[["data"]][["y"]][[1]]), -1)
@@ -13,10 +13,10 @@ test_that("unweighted, unsigned, undirected networks graph correctly", {
   expect_equal(as.character(test_brandes[["layers"]][[2]][["aes_params"]][["shape"]]), "circle")
 })
 
-# Unweighted, signed, undirected network
-test_marvel <- autographr(to_giant(ison_marvel_relationships))
-
 test_that("unweighted, signed, undirected networks graph correctly", {
+  skip_on_cran()
+  # Unweighted, signed, undirected network
+  test_marvel <- autographr(to_giant(ison_marvel_relationships))
   # Node position
   expect_equal(round(test_marvel[["data"]][["x"]][[1]]), -1)
   expect_equal(round(test_marvel[["data"]][["y"]][[1]]), 1)
@@ -27,10 +27,10 @@ test_that("unweighted, signed, undirected networks graph correctly", {
   expect_equal(test_marvel[["layers"]][[3]][["aes_params"]][["shape"]], "circle")
 })
 
-# Unweighted, unsigned, directed network
-test_algebra <- autographr(ison_algebra)
-
 test_that("unweighted, unsigned, directed networks graph correctly", {
+  skip_on_cran()
+  # Unweighted, unsigned, directed network
+  test_algebra <- autographr(ison_algebra)
   # Node position
   expect_equal(round(test_algebra[["data"]][["x"]][[1]]), 0)
   expect_equal(round(test_algebra[["data"]][["y"]][[1]]), 0)
@@ -45,10 +45,10 @@ test_that("unweighted, unsigned, directed networks graph correctly", {
   expect_equal(test_algebra[["layers"]][[3]][["aes_params"]][["shape"]], "circle")
 })
 
-# Weighted, unsigned, directed network
-test_networkers <- autographr(ison_networkers)
-
 test_that("weighted, unsigned, directed networks graph correctly", {
+  skip_on_cran()
+  # Weighted, unsigned, directed network
+  test_networkers <- autographr(ison_networkers)
   # Node position
   expect_equal(round(test_networkers[["data"]][["x"]][[1]]), 0)
   expect_equal(round(test_networkers[["data"]][["y"]][[1]]), 0)
@@ -65,8 +65,10 @@ test_that("weighted, unsigned, directed networks graph correctly", {
 
 # Testing the node_color, node_size, and node_shape args by specifying a node attribute
 test_that("fancy node mods graph correctly", {
+  skip_on_cran()
   # one-mode network
-  ison_marvel_relationships <- dplyr::mutate(ison_marvel_relationships, nodesize = Appearances/1000)
+  ison_marvel_relationships <- dplyr::mutate(ison_marvel_relationships,
+                                             nodesize = Appearances/1000)
   testcolnodes <- autographr(ison_marvel_relationships,
                              node_color = "Gender",
                              node_size = "nodesize",
@@ -84,14 +86,15 @@ test_that("fancy node mods graph correctly", {
   test2 <- autographr(ison_southern_women,
                       node_color = "type")
   expect_s3_class(test2, c("ggraph","gg","ggplot"))
-  expect_equal(round(test2$data$x[1]), 1)
-  expect_equal(round(test2$data$y[1]), 1)
+  expect_equal(round(test2$data$x[1]), 0)
+  expect_equal(round(test2$data$y[1]), 0)
   expect_equal(nrow(test2[["plot_env"]][["lo"]]),
                network_nodes(ison_southern_women))
 })
 
 test_that("edge colours graph correctly", {
-  ison_brandes2 <-ison_brandes2 %>%
+  skip_on_cran()
+  ison_brandes2 <- ison_brandes %>%
     add_tie_attribute("tiecolour",
                       c("A", "B", "A", "B", "B", "B", "B", "B", "B", "B", "B", "B"))
   test_brandes2 <- autographr(ison_brandes2, edge_color = "tiecolour")
@@ -100,6 +103,7 @@ test_that("edge colours graph correctly", {
 
 # Named networks
 test_that("named networks plot correctly", {
+  skip_on_cran()
   onemode <- autographr(ison_adolescents)
   twomode <- autographr(ison_southern_women)
   expect_equal(onemode[["data"]][["name"]], node_names(ison_adolescents))

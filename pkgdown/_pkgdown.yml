@@ -76,6 +76,8 @@ reference:
       - starts_with("network_")
       - starts_with("node_")
       - starts_with("autograph")
+      - starts_with("layout")
+      - starts_with("theme")
   - title: "Data"
     desc: |
       The package contains a variety of networks useful for pedagogical purposes

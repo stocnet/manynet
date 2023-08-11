@@ -75,14 +75,7 @@ read_matrix <- function(file = file.choose(),
       out <- read.csv2(file, ...) # For EU
     }
   } else if (grepl("xlsx$|xls$", file)) {
-    if (!requireNamespace("readxl", quietly = TRUE)) {
-      if(utils::askYesNo(msg = "The `readxl` package is required.
-                       Would you like to install `readxl` from CRAN?")) {
-        utils::install.packages('readxl')
-      } else {
-        stop("Please install `readxl` from CRAN to read excel files.")
-      }
-    }
+    thisRequires("readxl")
     out <- readxl::read_excel(file, ...)
   }
   if((dim(out)[1]+1) == dim(out)[2])
@@ -134,14 +127,7 @@ read_edgelist <- function(file = file.choose(),
       out <- read.csv2(file, header = TRUE, ...) # For EU
     }
   } else if (grepl("xlsx$|xls$", file)) {
-    if (!requireNamespace("readxl", quietly = TRUE)) {
-      if(utils::askYesNo(msg = "The `readxl` package is required.
-                       Would you like to install `readxl` from CRAN?")) {
-        utils::install.packages('readxl')
-      } else {
-        stop("Please install `readxl` from CRAN to read excel files.")
-      }
-    }
+    thisRequires("readxl")
     out <- readxl::read_excel(file, ...)
     }
   out
@@ -182,14 +168,7 @@ read_nodelist <- function(file = file.choose(),
       out <- read.csv2(file, header = TRUE, ...) # For EU
     }
   } else if (grepl("xlsx$|xls$", file)) {
-    if (!requireNamespace("readxl", quietly = TRUE)) {
-      if(utils::askYesNo(msg = "The `readxl` package is required.
-                       Would you like to install `readxl` from CRAN?")) {
-        utils::install.packages('readxl')
-      } else {
-        stop("Please install `readxl` from CRAN to read excel files.")
-      }
-    }
+    thisRequires("readxl")
     out <- readxl::read_excel(file, ...)
   }
   out
@@ -562,14 +541,7 @@ write_ucinet <- function(.data,
 #' @importFrom dplyr bind_rows coalesce filter mutate select everything
 #' @export
 read_dynetml <- function(file = file.choose()) {
-  if (!requireNamespace("xml2", quietly = TRUE)) {
-    if(utils::askYesNo(msg = "The `xml2` package is required.
-                       Would you like to install `xml2` from CRAN?")) {
-      utils::install.packages('xml2')
-    } else {
-      stop("Please install `xml2` from CRAN to import DynetML files.")
-    }
-  }
+  thisRequires("readxl")
   name <- type <- nodeset <- target <- value <- NULL
   xmlfile <- xml2::read_xml(file)
   xmllist <- xml2::as_list(xmlfile)

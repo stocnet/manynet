@@ -20,7 +20,7 @@ to_waves(.data, attribute = "wave", panels = NULL)
 to_slices(.data, attribute = "time", slice = NULL)
 }
 \arguments{
-\item{.data}{An object of a manynet-consistent class:
+\item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
 \item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
@@ -52,7 +52,17 @@ The returned object will be a list of network objects.
 }
 \description{
 These functions offer tools for splitting manynet-consistent objects
-(matrices, igraph, tidygraph, or network objects).
+(matrices, igraph, tidygraph, or network objects) into lists of networks.
+
+Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods:\tabular{lrrrrr}{
+    \tab data.frame \tab igraph \tab matrix \tab network \tab tbl_graph \cr
+   to_components \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_egos \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_slices \tab 0 \tab 1 \tab 0 \tab 0 \tab 1 \cr
+   to_subgraphs \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \cr
+   to_waves \tab 1 \tab 1 \tab 0 \tab 0 \tab 1 \cr
+}
 }
 \section{Functions}{
 \itemize{
@@ -75,7 +85,7 @@ with some continuous time variable at some time slice(s).
 }}
 \examples{
   to_egos(ison_adolescents)
-  autographs(to_egos(ison_adolescents,2))
+  #autographs(to_egos(ison_adolescents,2))
 ison_adolescents \%>\%
   mutate(unicorn = sample(c("yes", "no"), 8,
                           replace = TRUE)) \%>\%

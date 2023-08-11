@@ -9,6 +9,7 @@ data.csv
 vignettes/*\.Rmd\.orig
 vignettes/precompile\.R
 ^docs$
+^cache$
 ^pkgdown$
 ^cran-comments\.md$
 ^CRAN-RELEASE$

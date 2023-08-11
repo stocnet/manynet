@@ -15,7 +15,15 @@
 \alias{is_uniplex}
 \alias{is_longitudinal}
 \alias{is_dynamic}
+\alias{is_connected}
+\alias{is_perfect_matching}
+\alias{is_eulerian}
+\alias{is_acyclic}
+\alias{is_aperiodic}
 \title{Describing network formats}
+\source{
+https://stackoverflow.com/questions/55091438/r-igraph-find-all-cycles
+}
 \usage{
 is_manynet(.data)
 
@@ -42,9 +50,19 @@ is_uniplex(.data)
 is_longitudinal(.data)
 
 is_dynamic(.data)
+
+is_connected(.data)
+
+is_perfect_matching(.data, mark = "type")
+
+is_eulerian(.data)
+
+is_acyclic(.data)
+
+is_aperiodic(.data, max_path_length = 4)
 }
 \arguments{
-\item{.data}{An object of a manynet-consistent class:
+\item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
 \item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
@@ -52,13 +70,25 @@ is_dynamic(.data)
 \item network, from the \code{{network}} package
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
+
+\item{mark}{A logical vector marking two types or modes.
+By default "type".}
+
+\item{max_path_length}{Maximum path length considered.
+If negative, paths of all lengths are considered.
+By default 4, to avoid potentially very long computation times.}
 }
 \value{
+TRUE if the condition is met, or FALSE otherwise.
+
 TRUE if the condition is met, or FALSE otherwise.
 }
 \description{
 These functions implement logical tests for various network properties.
 All \verb{is_*()} functions return a logical scalar (TRUE or FALSE).
+
+These functions implement logical tests for various network
+properties.
 }
 \section{Functions}{
 \itemize{
@@ -90,6 +120,22 @@ or multiple columns to the edgelist.
 
 \item \code{is_dynamic()}: Tests whether network is dynamic, time-stamped data
 
+\item \code{is_connected()}: Tests whether network is weakly connected if
+the network is undirected or strongly connected if directed.
+To test weak connection on a directed network,
+please see \code{to_undirected()}.
+
+\item \code{is_perfect_matching()}: Tests whether there is a matching for a network
+that covers every node in the network
+
+\item \code{is_eulerian()}: Tests whether there is a Eulerian path for a network
+where that path passes through every tie exactly once
+@importFrom igraph has_eulerian_path
+
+\item \code{is_acyclic()}: Tests whether network is a directed acyclic graph
+
+\item \code{is_aperiodic()}: Tests whether network is aperiodic
+
 }}
 \examples{
 is_manynet(create_filled(2))
@@ -107,11 +153,18 @@ is_multiplex(create_filled(c(3,3)))
 is_uniplex(create_star(3))
 is_longitudinal(create_tree(5, 3))
 is_dynamic(create_tree(3))
+is_connected(ison_southern_women)
+is_perfect_matching(ison_southern_women)
+is_eulerian(ison_brandes)
+is_acyclic(ison_algebra)
+is_aperiodic(ison_algebra)
 }
 \seealso{
 Other mapping: 
 \code{\link{attributes}()},
 \code{\link{auto_graph}},
+\code{\link{partition_layouts}},
 \code{\link{properties}}
 }
 \concept{mapping}
+\concept{marks}

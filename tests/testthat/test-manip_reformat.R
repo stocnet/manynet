@@ -34,7 +34,7 @@ test_that("to_directed works",{
   expect_true(is_directed(to_directed(as_igraph(ison_brandes))))
   expect_true(is_directed(to_directed(as_matrix(ison_brandes))))
   expect_true(is_directed(to_directed(as_network(ison_brandes))))
-  # expect_true(is_directed(to_directed(ison_southern_women))) # twomode?
+  #expect_true(is_directed(to_directed(ison_southern_women))) # twomode?
 })
 
 test_that("to_redirected works",{
@@ -79,7 +79,7 @@ test_that("to_reciprocated works",{
 })
 
 test_that("to_onemode works",{
-  expect_false(is_twomode(to_onemode(ison_bm)))
+  expect_false(is_twomode(to_onemode(ison_southern_women)))
   expect_equal(c(to_onemode(ison_southern_women))[3],
                c(igraph::delete_vertex_attr(ison_southern_women, "type"))[3])
   expect_equal(as_matrix(to_onemode(as_tidygraph(ison_southern_women))),

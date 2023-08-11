@@ -1,3 +1,40 @@
+# manynet 0.2.0
+
+2023-08-11
+
+## Package 
+
+* Closed #4 by adding `thisRequiresBio()` helper function to download Bioconductor packages
+* Upgraded ison data to latest igraph specification
+  * Added `ison_konigsberg` for illustrating Seven Bridges of Konigsberg
+  * Removed `ison_brandes2` and added potential modal type as extra variable to `ison_brandes`
+  * Consolidated `ison_bb`, `ison_bm`, `ison_mb`, and `ison_mm` into a list of networks called `ison_laterals`
+
+## Make
+
+* Added `create_explicit()` for creating networks based on explicit nodes and ties
+
+## Manip
+
+* Added `delete_nodes()` for deleting specific nodes
+* Added `to_eulerian()` function that returns a Eulerian path network, if available, from a given network
+
+## Map
+
+* Moved additional `is_` functions from `{migraph}`
+  * Added `is_connected()` to test if network is strongly connected
+  * Added `is_perfect_matching()` to test if there is a matching for every node in the network
+  * Added `is_eulerian()` to test whether there is a Eulerian path for a network
+  * Added `is_acyclic` to test whether network is a directed acyclic graph
+  * Added `is_aperiodic` to test whether network is aperiodic
+* Added partition layouts
+  * Added `layout_tbl_graph_alluvial()` that places successive layers horizontally
+  * Added `layout_tbl_graph_concentric()`that places a "hierarchy" layout around a circle
+  * Added `layout_tbl_graph_hierarchy()` that layers the nodes along the top and bottom sequenced to minimise overlap
+  * Added `layout_tbl_graph_ladder()`that aligns nodes across successive layers horizontally
+  * Added `layout_tbl_graph_railway`  that aligns nodes across successive layers vertically
+* Added `theme_iheid()` function that themes graphs with colors based on the Geneva Graduate Institute
+
 # manynet 0.1.2
 
 2023-06-20

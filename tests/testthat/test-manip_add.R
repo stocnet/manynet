@@ -68,3 +68,8 @@ test_that("summarise_ties works", {
   sum <- summarise_ties(orig, mean = mean(year))
   expect_length(igraph::edge_attr(sum, "weight"), 93)
 })
+
+test_that("delete_nodes works", {
+  expect_length(ison_adolescents, 8)
+  expect_length(delete_nodes(ison_adolescents, "Betty"), 7)
+})

@@ -9,6 +9,7 @@
 \alias{to_ties}
 \alias{to_blocks}
 \alias{to_matching}
+\alias{to_eulerian}
 \alias{to_anti}
 \alias{to_no_isolates}
 \title{Tools for transforming networks, graphs, and matrices}
@@ -27,12 +28,14 @@ to_blocks(.data, membership, FUN = mean)
 
 to_matching(.data, mark = "type")
 
+to_eulerian(.data)
+
 to_anti(.data)
 
 to_no_isolates(.data)
 }
 \arguments{
-\item{.data}{An object of a manynet-consistent class:
+\item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
 \item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
@@ -82,18 +85,20 @@ These functions offer tools for transforming migraph-consistent objects
 (matrices, igraph, tidygraph, or network objects).
 Transforming means that the returned object may have different dimensions
 than the original object.
-}
-\details{
-Since some modifications are easier to implement for some objects than others,
-here are the currently implemented modifications:\tabular{lccccc}{
-   to_ \tab edgelists \tab matrices \tab igraph \tab tidygraph \tab network \cr
-   mode1 \tab X \tab X \tab X \tab X \tab X \cr
-   mode2 \tab X \tab X \tab X \tab X \tab X \cr
-   giant \tab X \tab X \tab X \tab X \tab X \cr
-   subgraph \tab X \tab X \tab X \tab X \tab X \cr
-   ties \tab X \tab X \tab X \tab X \tab X \cr
-   blocks \tab X \tab X \tab X \tab X \tab X \cr
-   matching \tab X \tab X \tab X \tab X \tab X \cr
+
+Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods:\tabular{lrrrrrr}{
+    \tab data.frame \tab igraph \tab list \tab matrix \tab network \tab tbl_graph \cr
+   to_anti \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
+   to_blocks \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
+   to_eulerian \tab 0 \tab 1 \tab 0 \tab 0 \tab 0 \tab 1 \cr
+   to_giant \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
+   to_matching \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
+   to_mode1 \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
+   to_mode2 \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
+   to_no_isolates \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_subgraph \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
+   to_ties \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
 }
 }
 \section{Functions}{
@@ -126,6 +131,9 @@ while preserving the topology of the original structures.
 \item \code{to_matching()}: Returns a network with only
 matching ties
 
+\item \code{to_eulerian()}: Returns a network with only
+the Eulerian path
+
 \item \code{to_anti()}: Returns the complement of a network
 where only ties \emph{not} present in the original network
 are included in the new network.
@@ -149,11 +157,18 @@ where \eqn{n} is the number of nodes in the network.
 }
 
 \examples{
-autographr(to_mode1(ison_southern_women))
-autographr(to_mode2(ison_southern_women))
-autographr(to_ties(ison_adolescents))
-autographr(to_matching(ison_southern_women))
-autographr(to_anti(ison_southern_women))
+to_mode1(ison_southern_women)
+to_mode2(ison_southern_women)
+#autographr(to_mode1(ison_southern_women))
+#autographr(to_mode2(ison_southern_women))
+to_ties(ison_adolescents)
+#autographr(to_ties(ison_adolescents))
+to_matching(ison_southern_women)
+#autographr(to_matching(ison_southern_women))
+  to_eulerian(delete_nodes(ison_konigsberg, "Lomse"))
+  #autographr(to_eulerian(delete_nodes(ison_konigsberg, "Lomse")))
+to_anti(ison_southern_women)
+#autographr(to_anti(ison_southern_women))
 ison_adolescents \%>\%
   activate(edges) \%>\%
   mutate(wave = sample(1995:1998, 10, replace = TRUE)) \%>\%

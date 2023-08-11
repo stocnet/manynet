@@ -9,12 +9,14 @@
 
 [![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html#maturing)
-<!-- ![CRAN/METACRAN](https://img.shields.io/cran/v/manynet) -->
-<!-- ![GitHub release (latest by date)](https://img.shields.io/github/v/release/snlab-ch/manynet) -->
+![CRAN/METACRAN](https://img.shields.io/cran/v/manynet) ![GitHub release
+(latest by
+date)](https://img.shields.io/github/v/release/snlab-ch/manynet)
 ![GitHub Release
 Date](https://img.shields.io/github/release-date/snlab-ch/manynet)
-<!-- [![Codecov test coverage](https://codecov.io/gh/snlab-ch/manynet/branch/main/graph/badge.svg)](https://app.codecov.io/gh/snlab-ch/manynet?branch=main) -->
-<!-- [![CodeFactor](https://www.codefactor.io/repository/github/snlab-ch/manynet/badge)](https://www.codefactor.io/repository/github/snlab-ch/manynet) -->
+[![Codecov test
+coverage](https://codecov.io/gh/snlab-ch/manynet/branch/main/graph/badge.svg)](https://app.codecov.io/gh/snlab-ch/manynet?branch=main)
+[![CodeFactor](https://www.codefactor.io/repository/github/snlab-ch/manynet/badge)](https://www.codefactor.io/repository/github/snlab-ch/manynet)
 <!-- [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4559/badge)](https://bestpractices.coreinfrastructure.org/projects/4559) -->
 <!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7076396.svg)](https://doi.org/10.5281/zenodo.7076396) -->
 <!-- see https://zenodo.org/record/7076396 -->
@@ -32,8 +34,10 @@ undirected networks); if you have a different type of network, a
 different package is needed. Lastly, even packages with excellent
 graphical capabilities can make visualising networks slow and cumbersome
 by using poor defaults and many, incomprehensible options to change
-them. `{manynet}` aims to help researchers with Making, Manipulating,
-and Mapping networks.
+them.
+
+*That’s why `{manynet}` aims to help researchers with Making,
+Manipulating, and Mapping networks.*
 
 ## Making
 
@@ -51,8 +55,8 @@ particular structure, and will always create the same format from the
 same inputs, e.g.:
 
 - `create_components()`, `create_core()`, `create_empty()`,
-  `create_filled()`, `create_lattice()`, `create_ring()`,
-  `create_star()`, `create_tree()`
+  `create_explicit()`, `create_filled()`, `create_lattice()`,
+  `create_ring()`, `create_star()`, `create_tree()`
 
 The `generate_*` group of functions generate networks from generative
 mechanisms that may include some random aspect, and so will return a
@@ -114,12 +118,13 @@ reformat, transform, or split networks into networks with other
 properties, e.g.:
 
 - `to_acyclic()`, `to_anti()`, `to_blocks()`, `to_components()`,
-  `to_directed()`, `to_egos()`, `to_giant()`, `to_matching()`,
-  `to_mode1()`, `to_mode2()`, `to_multilevel()`, `to_named()`,
-  `to_onemode()`, `to_reciprocated()`, `to_redirected()`,
-  `to_simplex()`, `to_slices()`, `to_subgraph()`, `to_subgraphs()`,
-  `to_ties()`, `to_twomode()`, `to_undirected()`, `to_uniplex()`,
-  `to_unnamed()`, `to_unsigned()`, `to_unweighted()`, `to_waves()`
+  `to_directed()`, `to_egos()`, `to_eulerian()`, `to_giant()`,
+  `to_matching()`, `to_mode1()`, `to_mode2()`, `to_multilevel()`,
+  `to_named()`, `to_no_isolates()`, `to_onemode()`, `to_reciprocated()`,
+  `to_redirected()`, `to_simplex()`, `to_slices()`, `to_subgraph()`,
+  `to_subgraphs()`, `to_ties()`, `to_twomode()`, `to_undirected()`,
+  `to_uniplex()`, `to_unnamed()`, `to_unsigned()`, `to_unweighted()`,
+  `to_waves()`
 
 ### Reformatting
 
@@ -154,10 +159,11 @@ function names wherever possible.
 `{manynet}`’s `*is_*()` functions offer fast logical tests of various
 network properties. These can be used to create new
 
-- `is_bipartite()`, `is_complex()`, `is_directed()`, `is_dynamic()`,
-  `is_edgelist()`, `is_graph()`, `is_labelled()`, `is_longitudinal()`,
-  `is_manynet()`, `is_multiplex()`, `is_signed()`, `is_twomode()`,
-  `is_uniplex()`, `is_weighted()`
+- `is_acyclic()`, `is_aperiodic()`, `is_bipartite()`, `is_complex()`,
+  `is_connected()`, `is_directed()`, `is_dynamic()`, `is_edgelist()`,
+  `is_eulerian()`, `is_graph()`, `is_labelled()`, `is_longitudinal()`,
+  `is_manynet()`, `is_multiplex()`, `is_perfect_matching()`,
+  `is_signed()`, `is_twomode()`, `is_uniplex()`, `is_weighted()`
 
 ## Mapping
 
@@ -181,21 +187,16 @@ difference in results over `{igraph}`:
 
 <img src="man/figures/README-layout-comparison-1.png" width="100%" />
 
-provide a common set of tools that can be used to import, export,
-create, and manipulate network data in a wide variety of formats, and
-obtain a good first visualisation quickly. This can be useful for
-pedagogical purposes, initial description, or checking something part
-way through the modelling process. Through the most comprehensive
-network class-coercion available, users can access routines not
-available in their chosen package or even in `{manynet}`.
-
-`{manynet}` provides a common set of tools and a standard syntax for
-analysing many different types of networks. It offers a broad range of
-functions to make, manipulate, map, measure, and model:
-
-- one-, two-, and sometimes three-mode networks
-- undirected, directed, and sometimes complex networks
-- unweighted, weighted, and sometimes signed networks
+<!-- provide a common set of tools that can be used to import, export, create, and manipulate network data in a wide variety of formats, -->
+<!-- and obtain a good first visualisation quickly. -->
+<!-- This can be useful for pedagogical purposes, initial description, or checking something part way through the modelling process. -->
+<!-- Through the most comprehensive network class-coercion available, -->
+<!-- users can access routines not available in their chosen package or even in `{manynet}`. -->
+<!-- `{manynet}` provides a common set of tools and a standard syntax for analysing many different types of networks. -->
+<!-- It offers a broad range of functions to make, manipulate, map, measure, and model: -->
+<!-- - one-, two-, and sometimes three-mode networks -->
+<!-- - undirected, directed, and sometimes complex networks -->
+<!-- - unweighted, weighted, and sometimes signed networks -->
 
 ## Installation
 
@@ -244,19 +245,47 @@ and then:
 - For latest development version:
   `remotes::install_github("snlab-ch/manynet@develop", build_vignettes = TRUE)`
 
+### Tutorials
+
+This package includes a couple of tutorials to help new and experienced
+users learn how they can conduct social network analysis using the
+package. To access the tutorials, you will need to have the additional
+package `{learnr}` installed: `install.packages("learnr")`. For more
+details on the `{learnr}` package, see
+[here](https://rstudio.github.io/learnr/). Then we suggest that you
+check to see which vignettes are currently available:
+
+``` r
+learnr::available_tutorials("manynet")
+#> Available tutorials:
+#> * manynet
+#>   - tutorial1 : "Data"
+#>   - tutorial2 : "Visualisation"
+```
+
+You can then choose to begin a tutorial using the following command:
+e.g. `learnr::run_tutorial("tutorial2", "manynet")`.
+
 ## Relationship to other packages
 
-This package aims to provide an updated, and more comprehensive
-replacement for `{intergraph}`. It also builds upon but makes some
-different decisions to the excellent `{tidygraph}` package. It builds
-upon `{igraph}` especially, as well as `{network}`, but works equally
-well with basic edgelists and matrices.
+This package stands on the shoulders of several incredible packages.
 
-It works with and builds upon many popular network analytic packages,
-such as `{igraph}` and `{network}`.
+In terms of the objects it works with, this package aims to provide an
+updated, more comprehensive replacement for `{intergraph}`. As such it
+works with objects in `{igraph}` and `{network}` formats, but also
+equally well with base matrices and edgelists (data frames), and formats
+from several other packages.
 
-`{manynet}` inherits core functionality from the `{migraph}` package.
-For more analytic and modelling functions, please see `{migraph}`.
+The user interface is inspired in some ways by Thomas Lin Pedersen’s
+excellent `{tidygraph}` package, though makes some different decisions,
+and uses the quickest `{igraph}` or `{network}` routines where
+available.
+
+`{manynet}` has inherited most of its core functionality from its
+maternal package, `{migraph}`. `{migraph}` continues to offer more
+analytic and modelling functions that builds upon the architecture
+provided by `{manynet}`. For more, please check out `{migraph}`
+directly.
 
 ## Funding details
 

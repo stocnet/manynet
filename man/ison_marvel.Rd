@@ -8,7 +8,10 @@
 \title{Multilevel two-mode affiliation, signed one-mode networks of Marvel comic
 book characters (Yüksel 2017)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, two-mode tbl_graph with 194 nodes and 683 ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> This graph was created by an old(er) igraph version.
+#>   Call upgrade_graph() on it to use with the current igraph version
+#>   For now we convert it on the fly...
+#> # A labelled, two-mode tbl_graph with 194 nodes and 683 ties
 #> # A tibble: 194 x 2
 #>   type  name         
 #>   <lgl> <chr>        
@@ -31,7 +34,10 @@ book characters (Yüksel 2017)}
 #> # i 677 more rows
 }\if{html}{\out{</div>}}
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, complex, multiplex, signed, undirected tbl_graph with 53 nodes and 558 ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> This graph was created by an old(er) igraph version.
+#>   Call upgrade_graph() on it to use with the current igraph version
+#>   For now we convert it on the fly...
+#> # A labelled, complex, multiplex, signed, undirected tbl_graph with 53 nodes and 558 ties
 #> # A tibble: 53 x 10
 #>   name     Gender Appearances Attractive  Rich Intellect Omnilingual PowerOrigin
 #>   <chr>    <chr>        <int>      <int> <int>     <int>       <int> <chr>      

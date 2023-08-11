@@ -4,6 +4,13 @@
 #'   These functions allow users to add nodes, ties, or attributes to the nodes or ties
 #'   of a network.
 #'   The `add_*()` functions operate similarly to in `{igraph}`.
+#'   
+#'   Not all functions have methods available for all object classes.
+#'   Below are the currently implemented S3 methods:
+#'  
+#'    ```{r, echo = FALSE, cache = TRUE} 
+#'  knitr::kable(available_methods(c("add_nodes", "delete_nodes", "add_ties", "add_node_attribute", "add_tie_attribute")))
+#'  ```
 #' @family manipulations
 #' @inheritParams is
 #' @param attribute A named list to be added as tie or node attributes.
@@ -17,9 +24,9 @@
 #' @name add
 NULL
 
-#' @describeIn add Add additional ties to a network
+#' @describeIn add Add additional nodes to a network
 #' @param nodes The number of nodes to be added.
-#' @importFrom igraph add_edges
+#' @importFrom igraph add_vertices
 #' @export
 add_nodes <- function(.data, nodes, attribute = NULL) UseMethod("add_nodes")
 
@@ -36,6 +43,16 @@ add_nodes.tbl_graph <- function(.data, nodes, attribute = NULL){
 #' @export
 add_nodes.network <- function(.data, nodes, attribute = NULL){
   as_network(add_nodes(as_igraph(.data), nodes, attribute))
+}
+
+#' @describeIn add Delete nodes in a network
+#' @importFrom igraph delete_vertices
+#' @export
+delete_nodes <- function(.data, nodes) UseMethod("delete_nodes")
+
+#' @export
+delete_nodes.igraph <- function(.data, nodes){
+  igraph::delete_vertices(.data, v = nodes)
 }
 
 #' @describeIn add Add additional ties to a network

@@ -3,23 +3,19 @@
 #' Tools for transforming networks, graphs, and matrices
 #' 
 #' @description
-#' These functions offer tools for transforming migraph-consistent objects
-#' (matrices, igraph, tidygraph, or network objects).
-#' Transforming means that the returned object may have different dimensions
-#' than the original object.
-#' @details
-#' Since some modifications are easier to implement for some objects than others,
-#' here are the currently implemented modifications:
+#'   These functions offer tools for transforming migraph-consistent objects
+#'   (matrices, igraph, tidygraph, or network objects).
+#'   Transforming means that the returned object may have different dimensions
+#'   than the original object.
 #' 
-#' |  to_      | edgelists | matrices  |igraph  |tidygraph  |network  |
-#' | ------------- |:-----:|:-----:|:-----:|:-----:|:-----:|
-#' | mode1 | X | X | X | X | X |
-#' | mode2 | X | X | X | X | X |
-#' | giant  | X | X | X | X | X |
-#' | subgraph  | X | X | X | X | X |
-#' | ties  | X | X | X | X | X |
-#' | blocks  | X | X | X | X | X |
-#' | matching | X | X | X | X | X |
+#'   Not all functions have methods available for all object classes.
+#'   Below are the currently implemented S3 methods:
+#'  
+#'    ```{r, echo = FALSE, cache = TRUE} 
+#'  knitr::kable(available_methods(c("to_mode1", "to_mode2", 
+#'     "to_giant", "to_subgraph", "to_ties", "to_blocks", 
+#'     "to_matching", "to_eulerian", "to_anti", "to_no_isolates")))
+#'  ```
 #' @name transform
 #' @family manipulations
 #' @inheritParams reformat
@@ -54,8 +50,10 @@ NULL
 #' @importFrom igraph bipartite.projection
 #' @importFrom stats cor
 #' @examples
-#' autographr(to_mode1(ison_southern_women))
-#' autographr(to_mode2(ison_southern_women))
+#' to_mode1(ison_southern_women)
+#' to_mode2(ison_southern_women)
+#' #autographr(to_mode1(ison_southern_women))
+#' #autographr(to_mode2(ison_southern_women))
 #' @export
 to_mode1 <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) UseMethod("to_mode1")
 
@@ -228,7 +226,8 @@ to_subgraph.matrix <- function(.data, ...){
 #'   where the edges are the nodes
 #' @importFrom igraph make_line_graph E
 #' @examples
-#' autographr(to_ties(ison_adolescents))
+#' to_ties(ison_adolescents)
+#' #autographr(to_ties(ison_adolescents))
 #' @export
 to_ties <- function(.data) UseMethod("to_ties")
 
@@ -348,7 +347,8 @@ to_blocks.tbl_graph <- function(.data, membership, FUN = mean){
 #'   By default "type".
 #' @importFrom igraph max_bipartite_match
 #' @examples 
-#' autographr(to_matching(ison_southern_women))
+#' to_matching(ison_southern_women)
+#' #autographr(to_matching(ison_southern_women))
 #' @export
 to_matching <- function(.data, mark = "type") UseMethod("to_matching")
 
@@ -385,12 +385,42 @@ to_matching.matrix <- function(.data, mark = "type"){
   as_matrix(to_matching(as_igraph(.data), mark))
 }
 
+#' @describeIn transform Returns a network with only
+#'   the Eulerian path
+#' @importFrom igraph eulerian_path
+#' @examples
+#'   to_eulerian(delete_nodes(ison_konigsberg, "Lomse"))
+#'   #autographr(to_eulerian(delete_nodes(ison_konigsberg, "Lomse")))
+#' @export
+to_eulerian <- function(.data) UseMethod("to_eulerian")
+
+#' @export
+to_eulerian.igraph <- function(.data){
+  if(!is_eulerian(.data))
+    stop("This is not a Eulerian graph.")
+  out <- paste(attr(igraph::eulerian_path(.data)$vpath, "names"), 
+               collapse = "-+")
+  out <- create_explicit(out)
+  as_igraph(out)
+}
+
+#' @export
+to_eulerian.tbl_graph <- function(.data){
+  if(!is_eulerian(.data))
+    stop("This is not a Eulerian graph.")
+  out <- paste(attr(igraph::eulerian_path(.data)$vpath, "names"), 
+               collapse = "-+")
+  out <- create_explicit(out)
+  out
+}
+
 #' @describeIn transform Returns the complement of a network
 #'   where only ties _not_ present in the original network
 #'   are included in the new network.
 #' @importFrom igraph complementer
-#' @examples 
-#' autographr(to_anti(ison_southern_women))
+#' @examples
+#' to_anti(ison_southern_women)
+#' #autographr(to_anti(ison_southern_women))
 #' @export
 to_anti <- function(.data) UseMethod("to_anti")
 
