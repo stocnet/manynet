@@ -1,10 +1,14 @@
 #' Theming ggraph
 #' 
+#' @description
+#'   These functions enable graphs to be easily and quickly themed, 
+#'   e.g. changing the default colour of the graph's vertices and edges.
+#'   Note that, unlike typical `{ggplot2}` theming, these functions
+#'   are passed the current plot with `%>%` rather than `+`.
+#'   For example, `autographr(ison_konigsberg) %>% theme_iheid()`.
 #' @name themes
 #' @param ggraph A ggraph object, e.g. created using `autographr()`
 #' @return Themes the current ggraph to current IHEID guidelines.
-#' @examples
-#' #autographr(ison_konigsberg) %>% theme_iheid()
 NULL
 
 #' @rdname themes

@@ -14,8 +14,9 @@ theme_iheid(ggraph)
 Themes the current ggraph to current IHEID guidelines.
 }
 \description{
-Theming ggraph
-}
-\examples{
-#autographr(ison_konigsberg) \%>\% theme_iheid()
+These functions enable graphs to be easily and quickly themed,
+e.g. changing the default colour of the graph's vertices and edges.
+Note that, unlike typical \code{{ggplot2}} theming, these functions
+are passed the current plot with \verb{\%>\%} rather than \code{+}.
+For example, \code{autographr(ison_konigsberg) \%>\% theme_iheid()}.
 }
