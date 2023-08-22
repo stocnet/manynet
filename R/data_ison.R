@@ -249,3 +249,31 @@
 #'   ison_southern_women
 #'   ```
 "ison_southern_women"
+
+# Lawfirm ####
+
+#' One-mode lawfirm (Lazega 2001)
+#'
+#' @description
+#' One-mode network dataset collected by Lazega (2001)
+#' on the relations between partners in a corporate law firm called SG&R in New England 1988-1991.
+#' This particular subset includes the 36 partners among the 71 attorneys of this firm.
+#' Nodal attributes include seniority, formal status, office in which they work, gender, lawschool they attended,
+#' their age, and how many years they had been at the firm.
+#' @details
+#' The larger data from which this subset comes includes also individual performance measurements (hours worked, fees brought in)
+#' and attitudes concerning various management policy options (see also `{sand}`),
+#' their strong-coworker network, advice network, friendship network, and indirect control network.
+#' @docType data
+#' @keywords datasets
+#' @name ison_lawfirm
+#' @usage data(ison_lawfirm)
+#' @references
+#'   Lazega, Emmanuel. 2001.
+#'   \emph{The Collegial Phenomenon: The Social Mechanisms of Cooperation Among Peers in a Corporate Law Partnership}.
+#'   Oxford: Oxford University Press.
+#' @format
+#'   ```{r, echo = FALSE}
+#'   ison_lawfirm
+#'   ```
+"ison_lawfirm"

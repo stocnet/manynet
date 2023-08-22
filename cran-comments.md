@@ -10,5 +10,3 @@
 ## R CMD check results
 
 0 errors | 0 warnings | 0 notes
-
-* Some functions use parts of the BioConductor package 'Rgraphviz'; we have created a helper function for users to download 'BiocManager' and 'Rgraphviz' if necessary and not already installed, and all tests pass on e.g. R-hub, but we wanted to flag our solution here.
