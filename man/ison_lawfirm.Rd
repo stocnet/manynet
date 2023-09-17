@@ -5,16 +5,16 @@
 \alias{ison_lawfirm}
 \title{One-mode lawfirm (Lazega 2001)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, undirected tbl_graph with 36 nodes and 115 ties
-#> # A tibble: 36 x 9
-#>   name  Seniority Status Gender Office Years   Age Practice School
-#>   <chr>     <int>  <int>  <int>  <int> <int> <int>    <int>  <int>
-#> 1 V1            1      1      1      1    31    64        1      1
-#> 2 V2            2      1      1      1    32    62        2      1
-#> 3 V3            3      1      1      2    13    67        1      1
-#> 4 V4            4      1      1      1    31    59        2      3
-#> 5 V5            5      1      1      2    31    59        1      2
-#> 6 V6            6      1      1      2    29    55        1      1
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A undirected tbl_graph with 36 nodes and 115 ties
+#> # A tibble: 36 x 8
+#>   Seniority Status  Gender Office   Years   Age Practice   School      
+#>       <int> <chr>   <chr>  <chr>    <int> <int> <chr>      <chr>       
+#> 1         1 Partner Man    Boston      31    64 Litigation Harvard/Yale
+#> 2         2 Partner Man    Boston      32    62 Corporate  Harvard/Yale
+#> 3         3 Partner Man    Hartford    13    67 Litigation Harvard/Yale
+#> 4         4 Partner Man    Boston      31    59 Corporate  Other       
+#> 5         5 Partner Man    Hartford    31    59 Litigation Connecticut 
+#> 6         6 Partner Man    Hartford    29    55 Litigation Harvard/Yale
 #> # i 30 more rows
 #> # A tibble: 115 x 2
 #>    from    to
