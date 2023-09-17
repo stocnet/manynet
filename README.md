@@ -39,6 +39,9 @@ them.
 *That’s why `{manynet}` aims to help researchers with Making,
 Manipulating, and Mapping networks.*
 
+For Measures, Memberships, or Models, see
+[`{migraph}`](https://snlab-ch.github.io/migraph/).
+
 ## Making
 
 First, `{manynet}` provides a set of tools that can be used to make
