@@ -34,10 +34,10 @@
 #' @importFrom ggraph geom_edge_link geom_node_text geom_conn_bundle
 #' get_con geom_node_point scale_edge_width_continuous geom_node_label
 #' @importFrom ggplot2 aes arrow unit scale_color_brewer scale_fill_brewer
-#' @name auto_graph
+#' @name autographing
 NULL
 
-#' @describeIn auto_graph Graphs a network with sensible defaults
+#' @describeIn autographing Graphs a network with sensible defaults
 #' @examples
 #' #ison_adolescents %>% 
 #' #   mutate(shape = rep(c("circle", "square"), times = 4),
@@ -62,8 +62,8 @@ autographr <- function(.data,
   #     mutate(node_group = node_group)
   # }
   # Add layout ----
-  layout <- .infer_layout(g, layout)
-  p <- .graph_layout(g, layout, labels, ...)
+  g_layout <- .infer_layout(g, layout)
+  p <- .graph_layout(g, g_layout, labels, ...)
   # Add edges ----
   p <- .graph_edges(p, g, edge_color)
   # Add nodes ----
@@ -71,9 +71,9 @@ autographr <- function(.data,
   p
 }
 
-#' @describeIn auto_graph Graphs a list of networks 
+#' @describeIn autographing Graphs a list of networks 
 #'   with sensible defaults
-#' @param netlist A list of migraph-compatible networks.
+#' @param netlist A list of manynet-compatible networks.
 #' @source http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
 #' @examples
 #' #autographs(to_egos(ison_adolescents))
@@ -91,7 +91,7 @@ autographs <- function(netlist, ...) {
   do.call(patchwork::wrap_plots, gs)
 }
 
-#' @describeIn auto_graph Graphs an dynamic (animated) network
+#' @describeIn autographing Graphs an dynamic (animated) network
 #'   with sensible defaults
 #' @param tlist The same migraph-compatible network listed according to
 #'   a time attribute, waves, or slices.
@@ -186,12 +186,12 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
     ggplot2::theme_void()
 }
 
-.infer_layout <- function(g, layout){
-  if(is.null(layout)){
-      if (is_twomode(g)) layout <- "hierarchy" else 
-      layout <- "stress"
+.infer_layout <- function(g, g_layout){
+  if(is.null(g_layout)){
+      if (is_twomode(g)) g_layout <- "hierarchy" else 
+        g_layout <- "stress"
   }
-  layout
+  g_layout
 }
 
 .infer_nsize <- function(g, node_size){
@@ -419,8 +419,10 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
   nsize <- .infer_nsize(g, node_size)
 
   if (!is.null(node_shape)) {
-    node_shape <- as.factor(node_attribute(g, node_shape))
-    node_shape <- c("circle","square","triangle")[node_shape]
+    if(length(node_shape) == 1) node_shape <- rep(node_shape, network_nodes(g)) else {
+      node_shape <- as.factor(node_attribute(g, node_shape))
+      node_shape <- c("circle","square","triangle")[node_shape]
+    }
   } else if (is_twomode(g)) {
     node_shape <- ifelse(igraph::V(g)$type,
                          "square",
