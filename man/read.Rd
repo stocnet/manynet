@@ -108,7 +108,7 @@ that hold various datasets in different formats. See for example:
 
 See also:
 \itemize{
-\item \href{http://networkdata.schochastics.net/}{networkdata}
+\item \href{https://schochastics.github.io/networkdata/}{networkdata}
 \item \href{http://www-personal.umich.edu/~mejn/netdata/}{GML datasets}
 \item UCIrvine Network Data Repository
 \item \href{http://konect.cc/}{KONECT project}
