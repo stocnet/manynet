@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2</span>
       </span>
     </div>
 
@@ -106,7 +106,7 @@
         <td><p>Tidy manipulations of node or tie data</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="mapping">Mapping <a href="#mapping" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p><p>Functions for informatively describing networks. This includes identifying properties of networks, nodes, or ties as well as plotting and visualising graphs of different types. The <code>is_*()</code> family all return logical scalars (TRUE or FALSE). <code>network_</code> measures return one or, in some cases of two-mode measures, two values. All <code>node_</code> and <code>tie_</code> measures return a single vector, the length of the nodes or ties in the network, respectively. <code><a href="../reference/auto_graph.html">autographr()</a></code> graphs any manynet-compatible class object automagically. <code><a href="../reference/auto_graph.html">autographs()</a></code> and <code><a href="../reference/auto_graph.html">autographd()</a></code> do the same for multiple networks and dynamic networks, respectively.</p>
+          <p class="section-desc"></p><p>Functions for informatively describing networks. This includes identifying properties of networks, nodes, or ties as well as plotting and visualising graphs of different types. The <code>is_*()</code> family all return logical scalars (TRUE or FALSE). <code>network_</code> measures return one or, in some cases of two-mode measures, two values. All <code>node_</code> and <code>tie_</code> measures return a single vector, the length of the nodes or ties in the network, respectively. <code><a href="../reference/autographing.html">autographr()</a></code> graphs any manynet-compatible class object automagically. <code><a href="../reference/autographing.html">autographs()</a></code> and <code><a href="../reference/autographing.html">autographd()</a></code> do the same for multiple networks and dynamic networks, respectively.</p>
         </th>
       </tr></tbody><tbody><tr><td>
           <p><code><a href="is.html">is_manynet()</a></code> <code><a href="is.html">is_graph()</a></code> <code><a href="is.html">is_edgelist()</a></code> <code><a href="is.html">is_twomode()</a></code> <code><a href="is.html">is_weighted()</a></code> <code><a href="is.html">is_directed()</a></code> <code><a href="is.html">is_labelled()</a></code> <code><a href="is.html">is_signed()</a></code> <code><a href="is.html">is_complex()</a></code> <code><a href="is.html">is_multiplex()</a></code> <code><a href="is.html">is_uniplex()</a></code> <code><a href="is.html">is_longitudinal()</a></code> <code><a href="is.html">is_dynamic()</a></code> <code><a href="is.html">is_connected()</a></code> <code><a href="is.html">is_perfect_matching()</a></code> <code><a href="is.html">is_eulerian()</a></code> <code><a href="is.html">is_acyclic()</a></code> <code><a href="is.html">is_aperiodic()</a></code> </p>
@@ -121,7 +121,7 @@
         </td>
         <td><p>Describing attributes of nodes or ties in a network</p></td>
       </tr><tr><td>
-          <p><code><a href="auto_graph.html">autographr()</a></code> <code><a href="auto_graph.html">autographs()</a></code> <code><a href="auto_graph.html">autographd()</a></code> </p>
+          <p><code><a href="autographing.html">autographr()</a></code> <code><a href="autographing.html">autographs()</a></code> <code><a href="autographing.html">autographd()</a></code> </p>
         </td>
         <td><p>Quickly graph networks with sensible defaults</p></td>
       </tr><tr><td>
@@ -160,6 +160,10 @@
           <p><code><a href="ison_laterals.html">ison_laterals</a></code> </p>
         </td>
         <td><p>Two-mode projection examples (Hollway 2021)</p></td>
+      </tr><tr><td>
+          <p><code><a href="ison_lawfirm.html">ison_lawfirm</a></code> </p>
+        </td>
+        <td><p>One-mode lawfirm (Lazega 2001)</p></td>
       </tr><tr><td>
           <p><code><a href="ison_lotr.html">ison_lotr</a></code> </p>
         </td>

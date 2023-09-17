@@ -45,7 +45,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2</span>
       </span>
     </div>
 
@@ -92,16 +92,17 @@
 <h2 id="about-the-package">About the package<a class="anchor" aria-label="anchor" href="#about-the-package"></a>
 </h2>
 <p>Learning and using network analysis tools in R can be challenging. There are many great packages, all with their own offerings and advantages, but also all with their own vocabulary, syntax, and expected formats for data inputs and analytic outputs. Moreover, many of these packages only work on <em>some</em> types of networks (usually one-mode, simple, directed or undirected networks); if you have a different type of network, a different package is needed. Lastly, even packages with excellent graphical capabilities can make visualising networks slow and cumbersome by using poor defaults and many, incomprehensible options to change them.</p>
-<p><em>That’s why <a href="https://github.com/snlab-ch/manynet" class="external-link">manynet</a> aims to help researchers with Making, Manipulating, and Mapping networks.</em></p>
+<p><em>That’s why <a href="https://snlab-ch.github.io/manynet/">manynet</a> aims to help researchers with Making, Manipulating, and Mapping networks.</em></p>
+<p>For Measures, Memberships, or Models, see <a href="https://snlab-ch.github.io/migraph/" class="external-link"><code>{migraph}</code></a>.</p>
 </div>
 <div class="section level2">
 <h2 id="making">Making<a class="anchor" aria-label="anchor" href="#making"></a>
 </h2>
-<p>First, <a href="https://github.com/snlab-ch/manynet" class="external-link">manynet</a> provides a set of tools that can be used to make networks in any number of common formats. Networks can come from many sources, some can be imported from outside R, some can be found in this or other packages and coerced into some common format, and many types of networks can be created or generated using functions in this package.</p>
+<p>First, <a href="https://snlab-ch.github.io/manynet/">manynet</a> provides a set of tools that can be used to make networks in any number of common formats. Networks can come from many sources, some can be imported from outside R, some can be found in this or other packages and coerced into some common format, and many types of networks can be created or generated using functions in this package.</p>
 <div class="section level4">
 <h4 id="inventing-network-data">Inventing network data<a class="anchor" aria-label="anchor" href="#inventing-network-data"></a>
 </h4>
-<p><a href="https://github.com/snlab-ch/manynet" class="external-link">manynet</a> includes algorithms for making networks with particular properties. The <code>create_*</code> group of functions create networks with a particular structure, and will always create the same format from the same inputs, e.g.:</p>
+<p><a href="https://snlab-ch.github.io/manynet/">manynet</a> includes algorithms for making networks with particular properties. The <code>create_*</code> group of functions create networks with a particular structure, and will always create the same format from the same inputs, e.g.:</p>
 <ul><li>
 <code><a href="reference/create.html">create_components()</a></code>, <code><a href="reference/create.html">create_core()</a></code>, <code><a href="reference/create.html">create_empty()</a></code>, <code><a href="reference/create.html">create_explicit()</a></code>, <code><a href="reference/create.html">create_filled()</a></code>, <code><a href="reference/create.html">create_lattice()</a></code>, <code><a href="reference/create.html">create_ring()</a></code>, <code><a href="reference/create.html">create_star()</a></code>, <code><a href="reference/create.html">create_tree()</a></code>
 </li></ul>
@@ -114,7 +115,7 @@
 <div class="section level4">
 <h4 id="importing-network-data">Importing network data<a class="anchor" aria-label="anchor" href="#importing-network-data"></a>
 </h4>
-<p><a href="https://github.com/snlab-ch/manynet" class="external-link">manynet</a> offers a number of options for importing network data found in other repositories. Besides importing and exporting to Excel edgelists and nodelists, there are specific routines included for <a href="http://www.analytictech.com/archive/ucinet.htm" class="external-link">UCINET</a>, <a href="http://mrvar.fdv.uni-lj.si/pajek/" class="external-link">Pajek</a>, and <a href="http://casos.cs.cmu.edu/projects/dynetml/" class="external-link">DynetML</a> files, e.g.:</p>
+<p><a href="https://snlab-ch.github.io/manynet/">manynet</a> offers a number of options for importing network data found in other repositories. Besides importing and exporting to Excel edgelists and nodelists, there are specific routines included for <a href="http://www.analytictech.com/archive/ucinet.htm" class="external-link">UCINET</a>, <a href="http://mrvar.fdv.uni-lj.si/pajek/" class="external-link">Pajek</a>, and <a href="http://casos.cs.cmu.edu/projects/dynetml/" class="external-link">DynetML</a> files, e.g.:</p>
 <p><img src="reference/figures/README-import-graph-1.png" width="100%"></p>
 <ul>
 <li>
@@ -128,16 +129,16 @@
 <div class="section level4">
 <h4 id="coercing-network-data">Coercing network data<a class="anchor" aria-label="anchor" href="#coercing-network-data"></a>
 </h4>
-<p>There is also a lot of network data in addition to analytic functions that already reside in various packages in R. Once network data is in R, <a href="https://github.com/snlab-ch/manynet" class="external-link">manynet</a>’s <code>as_*()</code> functions can be used to translate objects from one of the above classes into any other, and include:</p>
+<p>There is also a lot of network data in addition to analytic functions that already reside in various packages in R. Once network data is in R, <a href="https://snlab-ch.github.io/manynet/">manynet</a>’s <code>as_*()</code> functions can be used to translate objects from one of the above classes into any other, and include:</p>
 <p><img src="reference/figures/README-coercion-graph-1.png" width="100%"></p>
 <p>These functions are designed to be as intuitive and lossless as possible, outperforming many other class-coercion packages.</p>
-<p>We use these functions internally in every <a href="https://github.com/snlab-ch/manynet" class="external-link">manynet</a> function to (1) allow them to be run on any compatible network format and (2) use the most efficient algorithm available. This makes <a href="https://github.com/snlab-ch/manynet" class="external-link">manynet</a> compatible with your existing workflow, whether you use base R matrices or edgelists as data frames, <a href="https://igraph.org/r/" class="external-link"><code>{igraph}</code></a>, <a href="https://statnet.org" class="external-link"><code>{network}</code></a>, or <a href="https://tidygraph.data-imaginist.com/index.html" class="external-link"><code>{tidygraph}</code></a>, and extensible by developments in those other packages too.</p>
+<p>We use these functions internally in every <a href="https://snlab-ch.github.io/manynet/">manynet</a> function to (1) allow them to be run on any compatible network format and (2) use the most efficient algorithm available. This makes <a href="https://snlab-ch.github.io/manynet/">manynet</a> compatible with your existing workflow, whether you use base R matrices or edgelists as data frames, <a href="https://igraph.org/r/" class="external-link"><code>{igraph}</code></a>, <a href="https://statnet.org" class="external-link"><code>{network}</code></a>, or <a href="https://tidygraph.data-imaginist.com/index.html" class="external-link"><code>{tidygraph}</code></a>, and extensible by developments in those other packages too.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="manipulating">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating"></a>
 </h2>
-<p><a href="https://github.com/snlab-ch/manynet" class="external-link">manynet</a>’s <code>to_*()</code> functions can be used on any class object to reformat, transform, or split networks into networks with other properties, e.g.:</p>
+<p><a href="https://snlab-ch.github.io/manynet/">manynet</a>’s <code>to_*()</code> functions can be used on any class object to reformat, transform, or split networks into networks with other properties, e.g.:</p>
 <ul><li>
 <code><a href="reference/reformat.html">to_acyclic()</a></code>, <code><a href="reference/transform.html">to_anti()</a></code>, <code><a href="reference/transform.html">to_blocks()</a></code>, <code><a href="reference/split.html">to_components()</a></code>, <code><a href="reference/reformat.html">to_directed()</a></code>, <code><a href="reference/split.html">to_egos()</a></code>, <code><a href="reference/transform.html">to_eulerian()</a></code>, <code><a href="reference/transform.html">to_giant()</a></code>, <code><a href="reference/transform.html">to_matching()</a></code>, <code><a href="reference/transform.html">to_mode1()</a></code>, <code><a href="reference/transform.html">to_mode2()</a></code>, <code><a href="reference/reformat.html">to_multilevel()</a></code>, <code><a href="reference/reformat.html">to_named()</a></code>, <code><a href="reference/transform.html">to_no_isolates()</a></code>, <code><a href="reference/reformat.html">to_onemode()</a></code>, <code><a href="reference/reformat.html">to_reciprocated()</a></code>, <code><a href="reference/reformat.html">to_redirected()</a></code>, <code><a href="reference/reformat.html">to_simplex()</a></code>, <code><a href="reference/split.html">to_slices()</a></code>, <code><a href="reference/transform.html">to_subgraph()</a></code>, <code><a href="reference/split.html">to_subgraphs()</a></code>, <code><a href="reference/transform.html">to_ties()</a></code>, <code><a href="reference/reformat.html">to_twomode()</a></code>, <code><a href="reference/reformat.html">to_undirected()</a></code>, <code><a href="reference/reformat.html">to_uniplex()</a></code>, <code><a href="reference/reformat.html">to_unnamed()</a></code>, <code><a href="reference/reformat.html">to_unsigned()</a></code>, <code><a href="reference/reformat.html">to_unweighted()</a></code>, <code><a href="reference/split.html">to_waves()</a></code>
 </li></ul>
@@ -164,8 +165,8 @@
 <div class="section level3">
 <h3 id="extracting">Extracting<a class="anchor" aria-label="anchor" href="#extracting"></a>
 </h3>
-<p><a href="https://github.com/snlab-ch/manynet" class="external-link">manynet</a> offers a range of measures and models with sensible defaults. Many wrap existing functions in common packages for use with one-mode networks, but extend these to treat and/or normalise for two-mode (and sometimes three-mode) networks correctly. Functions are given intuitive and succinct names that avoid conflicts with existing function names wherever possible.</p>
-<p><a href="https://github.com/snlab-ch/manynet" class="external-link">manynet</a>’s <code>*is_*()</code> functions offer fast logical tests of various network properties. These can be used to create new</p>
+<p><a href="https://snlab-ch.github.io/manynet/">manynet</a> offers a range of measures and models with sensible defaults. Many wrap existing functions in common packages for use with one-mode networks, but extend these to treat and/or normalise for two-mode (and sometimes three-mode) networks correctly. Functions are given intuitive and succinct names that avoid conflicts with existing function names wherever possible.</p>
+<p><a href="https://snlab-ch.github.io/manynet/">manynet</a>’s <code>*is_*()</code> functions offer fast logical tests of various network properties. These can be used to create new</p>
 <ul><li>
 <code><a href="reference/is.html">is_acyclic()</a></code>, <code><a href="reference/is.html">is_aperiodic()</a></code>, <code><a href="https://r.igraph.org/reference/make_bipartite_graph.html" class="external-link">is_bipartite()</a></code>, <code><a href="reference/is.html">is_complex()</a></code>, <code><a href="reference/is.html">is_connected()</a></code>, <code><a href="reference/is.html">is_directed()</a></code>, <code><a href="reference/is.html">is_dynamic()</a></code>, <code><a href="reference/is.html">is_edgelist()</a></code>, <code><a href="reference/is.html">is_eulerian()</a></code>, <code><a href="reference/is.html">is_graph()</a></code>, <code><a href="reference/is.html">is_labelled()</a></code>, <code><a href="reference/is.html">is_longitudinal()</a></code>, <code><a href="reference/is.html">is_manynet()</a></code>, <code><a href="reference/is.html">is_multiplex()</a></code>, <code><a href="reference/is.html">is_perfect_matching()</a></code>, <code><a href="reference/is.html">is_signed()</a></code>, <code><a href="reference/is.html">is_twomode()</a></code>, <code><a href="reference/is.html">is_uniplex()</a></code>, <code><a href="reference/is.html">is_weighted()</a></code>
 </li></ul>
@@ -174,9 +175,9 @@
 <div class="section level2">
 <h2 id="mapping">Mapping<a class="anchor" aria-label="anchor" href="#mapping"></a>
 </h2>
-<p><a href="https://github.com/snlab-ch/manynet" class="external-link">manynet</a> includes three one-line graphing functions with sensible defaults based on the network’s properties. <code><a href="reference/auto_graph.html">autographr()</a></code> is used to graph networks in any of the <a href="https://github.com/snlab-ch/manynet" class="external-link">manynet</a> formats. It includes sensible defaults so that researchers can view their network’s structure or distribution with a minimum of fuss. <a href="https://github.com/snlab-ch/manynet" class="external-link">manynet</a> uses the excellent <a href="https://ggraph.data-imaginist.com" class="external-link">ggraph</a> package (and thus <a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a>) as a plotting engine. This also makes extending and theming default output easy, and <a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a> is used to help arrange individual plots together.</p>
-<p>There are two other graphing functions too. <code><a href="reference/auto_graph.html">autographs()</a></code> is used to graph multiple networks together, which can be useful for ego networks or network panels. <code><a href="reference/auto_graph.html">autographd()</a></code> is used to graph dynamic networks.</p>
-<p>In addition, <a href="https://github.com/snlab-ch/manynet" class="external-link">manynet</a> offers some additional layout algorithms for snapping layouts to a grid or visualising partitions horizontally, vertically, or concentrically. The following figures illustrate the difference in results over <a href="https://r.igraph.org/" class="external-link">igraph</a>:</p>
+<p><a href="https://snlab-ch.github.io/manynet/">manynet</a> includes three one-line graphing functions with sensible defaults based on the network’s properties. <code><a href="reference/autographing.html">autographr()</a></code> is used to graph networks in any of the <a href="https://snlab-ch.github.io/manynet/">manynet</a> formats. It includes sensible defaults so that researchers can view their network’s structure or distribution with a minimum of fuss. <a href="https://snlab-ch.github.io/manynet/">manynet</a> uses the excellent <a href="https://ggraph.data-imaginist.com" class="external-link">ggraph</a> package (and thus <a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a>) as a plotting engine. This also makes extending and theming default output easy, and <a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a> is used to help arrange individual plots together.</p>
+<p>There are two other graphing functions too. <code><a href="reference/autographing.html">autographs()</a></code> is used to graph multiple networks together, which can be useful for ego networks or network panels. <code><a href="reference/autographing.html">autographd()</a></code> is used to graph dynamic networks.</p>
+<p>In addition, <a href="https://snlab-ch.github.io/manynet/">manynet</a> offers some additional layout algorithms for snapping layouts to a grid or visualising partitions horizontally, vertically, or concentrically. The following figures illustrate the difference in results over <a href="https://r.igraph.org/" class="external-link">igraph</a>:</p>
 <p><img src="reference/figures/README-layout-comparison-1.png" width="100%"></p>
 <!-- provide a common set of tools that can be used to import, export, create, and manipulate network data in a wide variety of formats, --><!-- and obtain a good first visualisation quickly. --><!-- This can be useful for pedagogical purposes, initial description, or checking something part way through the modelling process. --><!-- Through the most comprehensive network class-coercion available, --><!-- users can access routines not available in their chosen package or even in `{manynet}`. --><!-- `{manynet}` provides a common set of tools and a standard syntax for analysing many different types of networks. --><!-- It offers a broad range of functions to make, manipulate, map, measure, and model: --><!-- - one-, two-, and sometimes three-mode networks --><!-- - undirected, directed, and sometimes complex networks --><!-- - unweighted, weighted, and sometimes signed networks -->
 </div>
@@ -186,10 +187,10 @@
 <div class="section level3">
 <h3 id="stable">Stable<a class="anchor" aria-label="anchor" href="#stable"></a>
 </h3>
-<p>The easiest way to install the latest stable version of <a href="https://github.com/snlab-ch/manynet" class="external-link">manynet</a> is via CRAN. Simply open the R console and enter:</p>
+<p>The easiest way to install the latest stable version of <a href="https://snlab-ch.github.io/manynet/">manynet</a> is via CRAN. Simply open the R console and enter:</p>
 <p><code>install.packages('manynet')</code></p>
-<p>You can then begin to use <a href="https://github.com/snlab-ch/manynet" class="external-link">manynet</a> by loading the package:</p>
-<p><code><a href="https://github.com/snlab-ch/manynet" class="external-link">library(manynet)</a></code></p>
+<p>You can then begin to use <a href="https://snlab-ch.github.io/manynet/">manynet</a> by loading the package:</p>
+<p><code><a href="https://snlab-ch.github.io/manynet/">library(manynet)</a></code></p>
 <p>This will load any required packages and make the data contained within the package available. The version from CRAN also has all the vignettes built and included. You can check them out with:</p>
 <p><code>vignettes(package = "manynet")</code></p>
 </div>
@@ -206,7 +207,7 @@
 <li>For Unix: <code>install.packages("~/Downloads/manynet_linuxOS.tar.gz", repos = NULL)</code>
 </li>
 </ul>
-<p>To install from source the latest main version of <a href="https://github.com/snlab-ch/manynet" class="external-link">manynet</a> from Github, please install the <a href="https://remotes.r-lib.org" class="external-link">remotes</a> or <a href="https://devtools.r-lib.org/" class="external-link">devtools</a> package from CRAN and then:</p>
+<p>To install from source the latest main version of <a href="https://snlab-ch.github.io/manynet/">manynet</a> from Github, please install the <a href="https://remotes.r-lib.org" class="external-link">remotes</a> or <a href="https://devtools.r-lib.org/" class="external-link">devtools</a> package from CRAN and then:</p>
 <ul>
 <li>For latest stable version: <code>remotes::install_github("snlab-ch/manynet", build_vignettes = TRUE)</code>
 </li>
@@ -231,9 +232,9 @@
 <h2 id="relationship-to-other-packages">Relationship to other packages<a class="anchor" aria-label="anchor" href="#relationship-to-other-packages"></a>
 </h2>
 <p>This package stands on the shoulders of several incredible packages.</p>
-<p>In terms of the objects it works with, this package aims to provide an updated, more comprehensive replacement for <a href="http://mbojan.github.io/intergraph" class="external-link">intergraph</a>. As such it works with objects in <a href="https://r.igraph.org/" class="external-link">igraph</a> and <a href="https://statnet.org/" class="external-link">network</a> formats, but also equally well with base matrices and edgelists (data frames), and formats from several other packages.</p>
+<p>In terms of the objects it works with, this package aims to provide an updated, more comprehensive replacement for <a href="https://mbojan.github.io/intergraph/" class="external-link">intergraph</a>. As such it works with objects in <a href="https://r.igraph.org/" class="external-link">igraph</a> and <a href="https://statnet.org/" class="external-link">network</a> formats, but also equally well with base matrices and edgelists (data frames), and formats from several other packages.</p>
 <p>The user interface is inspired in some ways by Thomas Lin Pedersen’s excellent <a href="https://tidygraph.data-imaginist.com" class="external-link">tidygraph</a> package, though makes some different decisions, and uses the quickest <a href="https://r.igraph.org/" class="external-link">igraph</a> or <a href="https://statnet.org/" class="external-link">network</a> routines where available.</p>
-<p><a href="https://github.com/snlab-ch/manynet" class="external-link">manynet</a> has inherited most of its core functionality from its maternal package, <a href="https://github.com/snlab-ch/migraph" class="external-link">migraph</a>. <a href="https://github.com/snlab-ch/migraph" class="external-link">migraph</a> continues to offer more analytic and modelling functions that builds upon the architecture provided by <a href="https://github.com/snlab-ch/manynet" class="external-link">manynet</a>. For more, please check out <a href="https://github.com/snlab-ch/migraph" class="external-link">migraph</a> directly.</p>
+<p><a href="https://snlab-ch.github.io/manynet/">manynet</a> has inherited most of its core functionality from its maternal package, <a href="https://github.com/snlab-ch/migraph" class="external-link">migraph</a>. <a href="https://github.com/snlab-ch/migraph" class="external-link">migraph</a> continues to offer more analytic and modelling functions that builds upon the architecture provided by <a href="https://snlab-ch.github.io/manynet/">manynet</a>. For more, please check out <a href="https://github.com/snlab-ch/migraph" class="external-link">migraph</a> directly.</p>
 </div>
 <div class="section level2">
 <h2 id="funding-details">Funding details<a class="anchor" aria-label="anchor" href="#funding-details"></a>
