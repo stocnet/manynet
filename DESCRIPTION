@@ -1,14 +1,14 @@
 Package: manynet
 Title: Many Ways to Make, Manipulate, and Map Myriad Networks
-Version: 0.2.1
-Date: 2023-08-11
+Version: 0.2.2
+Date: 2023-09-17
 Description: A set of tools for making, manipulating, and mapping many different types of networks.
    All functions operate with matrices, edge lists, and 'igraph', 'network', and 'tidygraph' objects,
    and on one-mode, two-mode (bipartite), and sometimes three-mode networks.
    The package includes functions for importing and exporting, creating and generating networks,
    molding and manipulating networks and node and tie attributes,
    and describing and visualizing networks with sensible defaults.
-URL: https://github.com/snlab-ch/manynet
+URL: https://snlab-ch.github.io/manynet/
 BugReports: https://github.com/snlab-ch/manynet/issues
 Depends: R (>= 3.6.0)
 License: MIT + file LICENSE

@@ -67,7 +67,7 @@ tie_signs(ison_marvel_relationships)
 }
 \seealso{
 Other mapping: 
-\code{\link{auto_graph}},
+\code{\link{autographing}},
 \code{\link{is}()},
 \code{\link{partition_layouts}},
 \code{\link{properties}}

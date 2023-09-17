@@ -82,7 +82,7 @@ around a circle, with successive layers appearing as concentric circles.
 \seealso{
 Other mapping: 
 \code{\link{attributes}()},
-\code{\link{auto_graph}},
+\code{\link{autographing}},
 \code{\link{is}()},
 \code{\link{properties}}
 }

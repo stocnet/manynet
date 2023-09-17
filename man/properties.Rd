@@ -67,7 +67,7 @@ network_dims(to_mode1(ison_southern_women))
 \seealso{
 Other mapping: 
 \code{\link{attributes}()},
-\code{\link{auto_graph}},
+\code{\link{autographing}},
 \code{\link{is}()},
 \code{\link{partition_layouts}}
 }

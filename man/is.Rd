@@ -162,7 +162,7 @@ is_aperiodic(ison_algebra)
 \seealso{
 Other mapping: 
 \code{\link{attributes}()},
-\code{\link{auto_graph}},
+\code{\link{autographing}},
 \code{\link{partition_layouts}},
 \code{\link{properties}}
 }
