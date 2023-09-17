@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 # Introduction
 
-Network analysis is best with actual networks.
+Most network analysts want to use network analysis to better understand empirical networks.
 `{manynet}` offers several options for creating or generating,
 importing or coercing networks into formats that you can use.
 This tutorial is going to cover several ways to get data into the package:
@@ -116,7 +116,7 @@ question("How many nodes does this network have?",
 ```{r tblgraph-ties, echo = FALSE}
 question("How many ties does this network have?",
   answer(4,
-         message = "There are four more ties beyond what is listed."),
+         message = "There are four more ties beyond the six that are listed."),
   answer(10,
          correct = TRUE,
          message = "There are 10 ties."),
@@ -132,7 +132,7 @@ question("How many ties does this network have?",
 ```
 
 ```{r tblgraph-type, echo = FALSE}
-question("From what is stated here, what kind of network is this?",
+question("What kind of network is this? Choose all that apply.",
   answer("Undirected",
          correct = TRUE),
   answer("Labelled",
@@ -395,12 +395,12 @@ To assign and immediately print the result, wrap the line in parentheses.
 
 ```{r southproj-solution}
 ison_southern_women
-(women <- to_mode1(ison_southern_women))
-(events <- to_mode2(ison_southern_women))
+(s_women <- to_mode1(ison_southern_women))
+(s_events <- to_mode2(ison_southern_women))
 ```
 
 ```{r namemode1}
-question("The first mode consists of...",
+question("The first mode of the two-mode network consists of...",
   answer("women named Evelyn, Laura, Theresa, etc",
          correct = TRUE),
   answer("events called E1, E2, E3, etc"),
@@ -454,17 +454,22 @@ to find out a) how many nodes there are in each of these networks,
 b) what the names of the nodes are,
 and c) what tie attributes there are in the networks.
 
-```{r projprop, exercise = TRUE, exercise.setup = "southproj"}
+```{r projprop-setup}
+s_women <- to_mode1(ison_southern_women)
+s_events <- to_mode2(ison_southern_women)
+```
+
+```{r projprop, exercise = TRUE}
 
 ```
 
 ```{r projprop-solution}
-network_nodes(women)
-node_names(women)
-network_tie_attributes(women)
-network_nodes(events)
-node_names(events)
-network_tie_attributes(events)
+network_nodes(s_women)
+network_nodes(s_events)
+node_names(s_women)
+node_names(s_events)
+network_tie_attributes(s_women)
+network_tie_attributes(s_events)
 ```
 
 So we can see that the `to_mode*()` functions have created a network of only one of the modes in the network.
@@ -484,7 +489,7 @@ Retrieve the tie weights from your women projection.
 Find the average (mean) of this vector of tie weights,
 and the average (mean) tie weight overall.
 
-```{r womenweights, exercise = TRUE}
+```{r womenweights, exercise = TRUE, exercise.setup = "projprop-setup"}
 
 ```
 
@@ -501,9 +506,9 @@ mean(as_matrix(_____))
 ```
 
 ```{r womenweights-solution}
-tie_weights(women)
-mean(tie_weights(women))
-mean(as_matrix(women))
+tie_weights(s_women)
+mean(tie_weights(s_women))
+mean(as_matrix(s_women))
 ```
 
 ```{r womenweightsq}
