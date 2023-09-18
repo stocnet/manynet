@@ -1,3 +1,11 @@
+# manynet 0.2.3
+
+2023-09-17
+
+## Package
+
+* Fixed URL in read_
+
 # manynet 0.2.2
 
 2023-09-17

@@ -40,7 +40,7 @@
 #'
 #' See also:
 #'
-#' - [networkdata](http://networkdata.schochastics.net/)
+#' - [networkdata](https://schochastics.github.io/networkdata/)
 #' - [GML datasets](http://www-personal.umich.edu/~mejn/netdata/)
 #' - UCIrvine Network Data Repository
 #' - [KONECT project](http://konect.cc/)
