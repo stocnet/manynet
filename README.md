@@ -206,7 +206,7 @@ difference in results over `{igraph}`:
 ### Stable
 
 The easiest way to install the latest stable version of `{manynet}` is
-via CRAN. Simply open the R console and enter:
+via CRAN. Simply open the R console and enter:[^1]
 
 `install.packages('manynet')`
 
@@ -214,11 +214,8 @@ You can then begin to use `{manynet}` by loading the package:
 
 `library(manynet)`
 
-This will load any required packages and make the data contained within
-the package available. The version from CRAN also has all the vignettes
-built and included. You can check them out with:
-
-`vignettes(package = "manynet")`
+This will load any required packages and make the data and tutorials
+(see below) contained within the package available.
 
 ### Development
 
@@ -296,3 +293,6 @@ Development on this package has been funded by the Swiss National
 Science Foundation (SNSF) [Grant Number
 188976](https://data.snf.ch/grants/grant/188976): “Power and Networks
 and the Rate of Change in Institutional Complexes” (PANARCHIC).
+
+[^1]: Macs with Macports installed may also install from the command
+    line [using Macports](https://ports.macports.org/port/R-manynet/).
