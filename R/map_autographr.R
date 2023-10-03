@@ -233,9 +233,9 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
                                  lo[,2] < 0 & lo[,1] > 0 ~ angles$degree,
                                  lo[,1] == 1 ~angles$degree,
                                  TRUE ~ angles$degree - 180)
-      hj <- ifelse(lo[,1] > 0, -0.2, 1.2)
+      hj <- ifelse(lo[,1] > 0, -0.4, 1.4)
       p <- p + ggraph::geom_node_text(ggplot2::aes(label = name),
-                                      size = 2,
+                                      size = 3,
                                       hjust = hj,
                                       angle = angles) +
         ggplot2::coord_cartesian(xlim=c(-1.2,1.2), ylim=c(-1.2,1.2))
