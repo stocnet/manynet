@@ -415,13 +415,15 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
 }
 
 .graph_nodes <- function(p, g, node_color, node_shape, node_size){
-
   nsize <- .infer_nsize(g, node_size)
-
   if (!is.null(node_shape)) {
-    if(length(node_shape) == 1) node_shape <- rep(node_shape, network_nodes(g)) else {
+    if (any(grepl(node_shape, names(node_attribute(g))))) {
+      node_shape <- node_attribute(g, node_shape)
+    } else if (length(node_shape) == 1) {
+      node_shape <- rep(node_shape, network_nodes(g)) 
+    } else {
       node_shape <- as.factor(node_attribute(g, node_shape))
-      node_shape <- c("circle","square","triangle")[node_shape]
+      node_shape <- c("circle", "square", "triangle")[node_shape]
     }
   } else if (is_twomode(g)) {
     node_shape <- ifelse(igraph::V(g)$type,
@@ -430,7 +432,6 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
   } else {
     node_shape <- "circle"
   }
-  
   if (is_twomode(g)) {
     if (!is.null(node_color)) {
       color_factor_node <- as.factor(node_attribute(g, node_color))
