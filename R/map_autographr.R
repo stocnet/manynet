@@ -286,12 +286,18 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
   weight <- NULL
   # Begin plotting edges in various cases
   if (is_directed(g)) {
+    if (length(igraph::E(g)) > 100) {
+      bend <- 0
+    } else {
+      bend <- ifelse(igraph::is.mutual(g), 0.2, 0)
+    }
     if (is_weighted(g)) {
       if (!is.null(edge_color)) {
         edge_color <- as.factor(tie_attribute(g, edge_color))
-        p <- p + ggraph::geom_edge_link(ggplot2::aes(width = weight,
+        p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = weight,
                                                      colour = edge_color),
                                         edge_alpha = 0.4,
+                                       strength = bend,
                                         edge_linetype = "solid",
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(2, 'mm'),
@@ -305,10 +311,11 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
       } else if (is_signed(g)) {
         edge_color <- ifelse(igraph::E(g)$sign >= 0, "#0072B2", "#E20020")
         edge_linetype <- ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")
-        p <- p + ggraph::geom_edge_link(ggplot2::aes(width = weight,
+        p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = weight,
                                                      colour = edge_color,
                                                      linetype = edge_linetype),
                                         edge_alpha = 0.4,
+                                       strength = bend,
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(2, 'mm'),
                                                                type = "closed"), 
@@ -316,9 +323,10 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
           ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), 
                                               guide = "none")
       } else {
-        p <- p + ggraph::geom_edge_link(ggplot2::aes(width = weight),
+        p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = weight),
                                         edge_colour = "black",
                                         edge_alpha = 0.4,
+                                       strength = bend,
                                         edge_linetype = "solid",
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(2, 'mm'),
@@ -330,8 +338,9 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
     } else {
       if (!is.null(edge_color)) {
         edge_color <- as.factor(tie_attribute(g, edge_color))
-        p <- p + ggraph::geom_edge_link(ggplot2::aes(colour = edge_color),
+        p <- p + ggraph::geom_edge_arc(ggplot2::aes(colour = edge_color),
                                         edge_alpha = 0.4,
+                                       strength = bend,
                                         edge_linetype = "solid",
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(3, "mm"),
@@ -343,16 +352,18 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
       } else if (is_signed(g)) {
         edge_color <- ifelse(igraph::E(g)$sign >= 0, "#0072B2", "#E20020")
         edge_linetype <- ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")
-        p <- p + ggraph::geom_edge_link(ggplot2::aes(colour = edge_color,
+        p <- p + ggraph::geom_edge_arc(ggplot2::aes(colour = edge_color,
                                                      linetype = edge_linetype),
                                         edge_alpha = 0.4,
+                                       strength = bend,
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(3, "mm"),
                                                                type = "closed"),
                                         end_cap = ggraph::circle(3, "mm"))
       } else {
-        p <- p + ggraph::geom_edge_link(edge_colour = "black",
+        p <- p + ggraph::geom_edge_arc(edge_colour = "black",
                                         edge_alpha = 0.4,
+                                       strength = bend,
                                         edge_linetype = "solid",
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(3, "mm"),
