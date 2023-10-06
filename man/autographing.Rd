@@ -20,6 +20,7 @@ autographr(
   node_shape = NULL,
   node_size = NULL,
   edge_color = NULL,
+  level = NULL,
   ...
 )
 
@@ -66,6 +67,10 @@ to using this function.}
 coloring the nodes. It is easiest if this is added as an edge or tie attribute
 to the graph before plotting.}
 
+\item{level}{For "multilevel" layout algorithm only,
+please declare the level attribute.
+If NULL, function will look for attribute 'lvl'.}
+
 \item{...}{Extra arguments to pass on to \code{autographr()}/\code{ggraph()}/\code{ggplot()}.}
 
 \item{netlist}{A list of manynet-compatible networks.}
@@ -105,6 +110,8 @@ with sensible defaults
 #          color = rep(c("blue", "red"), times = 4)) \%>\%
 #  autographr(node_shape = "shape", node_color = "color")
 #autographr(ison_karateka, node_size = 8)
+#autographr(ison_karateka, layout = "multilevel", node_size = 8,
+#           node_shape = "obc", node_color = "obc", level = "obc")
 #autographs(to_egos(ison_adolescents))
 #ison_adolescents \%>\%
 # mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%

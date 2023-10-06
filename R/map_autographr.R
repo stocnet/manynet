@@ -29,6 +29,9 @@
 #' @param edge_color Tie variable in quotation marks to be used for 
 #'   coloring the nodes. It is easiest if this is added as an edge or tie attribute 
 #'   to the graph before plotting.
+#' @param level For "multilevel" layout algorithm only,
+#' please declare the level attribute.
+#' If NULL, function will look for attribute 'lvl'.
 #' @param ... Extra arguments to pass on to `autographr()`/`ggraph()`/`ggplot()`.
 #' @return A ggplot2::ggplot() object.
 #' @importFrom ggraph geom_edge_link geom_node_text geom_conn_bundle
@@ -44,6 +47,8 @@ NULL
 #' #          color = rep(c("blue", "red"), times = 4)) %>%
 #' #  autographr(node_shape = "shape", node_color = "color")
 #' #autographr(ison_karateka, node_size = 8)
+#' #autographr(ison_karateka, layout = "multilevel", node_size = 8,
+#' #           node_shape = "obc", node_color = "obc", level = "obc")
 #' @export
 autographr <- function(.data,
                        layout = NULL,
@@ -52,6 +57,7 @@ autographr <- function(.data,
                        node_shape = NULL,
                        node_size = NULL,
                        edge_color = NULL,
+                       level = NULL,
                        ...) {
   name <- weight <- nodes <- label <- NULL # avoid CMD check notes
   g <- as_tidygraph(.data)
@@ -63,7 +69,7 @@ autographr <- function(.data,
   # }
   # Add layout ----
   g_layout <- .infer_layout(g, layout)
-  p <- .graph_layout(g, g_layout, labels, ...)
+  p <- .graph_layout(g, g_layout, labels, level, ...)
   # Add edges ----
   p <- .graph_edges(p, g, edge_color)
   # Add nodes ----
@@ -213,17 +219,31 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
 #' @importFrom ggraph create_layout ggraph
 #' @importFrom igraph get.vertex.attribute
 #' @importFrom ggplot2 theme_void
-.graph_layout <- function(g, layout, labels, ...){
+.graph_layout <- function(g, layout, labels, level, ...){
   name <- NULL
-  lo <- ggraph::create_layout(g, layout, ...)
-  if ("graph" %in% names(attributes(lo))) {
-    if (!setequal(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
-      for (n in setdiff(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
-        lo[n] <- igraph::get.vertex.attribute(g, n)
+  if (layout == "multilevel") {
+    thisRequires("graphlayouts")
+    if (!is.null(level)) {
+      g <- igraph::set_vertex_attr(g, "lvl", value= node_attribute(g, level))
+    } else if (any(grepl("lvl", names(node_attribute(g))))) {
+      message("Level attribute 'lvl' found in data.")
+    } else {
+      stop("Please declare a level attribute.")
+    }
+    lo <- graphlayouts::layout_as_multilevel(g, alpha = 25)
+    p <- ggraph::ggraph(g, layout = "manual", x = lo[, 1], y = lo[, 2]) + 
+      ggplot2::theme_void()
+  } else {
+    lo <- ggraph::create_layout(g, layout, ...)
+    if ("graph" %in% names(attributes(lo))) {
+      if (!setequal(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
+        for (n in setdiff(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
+          lo[n] <- igraph::get.vertex.attribute(g, n)
+        }
       }
-    } 
+    }
+    p <- ggraph::ggraph(lo) + ggplot2::theme_void()
   }
-  p <- ggraph::ggraph(lo) + ggplot2::theme_void()
   if (labels & is_labelled(g)){
     if(layout %in% c("concentric", "circle")){
       # https://stackoverflow.com/questions/57000414/ggraph-node-labels-truncated?rq=1
