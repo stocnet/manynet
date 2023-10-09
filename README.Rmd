@@ -282,7 +282,7 @@ learnr::available_tutorials("manynet")
 ```
 
 You can then choose to begin a tutorial using the following command: e.g.
-`learnr::run_tutorial("tutorial2", "manynet")`.
+`learnr::run_tutorial("tutorial1", "manynet")`.
 
 ## Relationship to other packages
 

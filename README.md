@@ -121,13 +121,13 @@ reformat, transform, or split networks into networks with other
 properties, e.g.:
 
 - `to_acyclic()`, `to_anti()`, `to_blocks()`, `to_components()`,
-  `to_directed()`, `to_egos()`, `to_eulerian()`, `to_giant()`,
-  `to_matching()`, `to_mode1()`, `to_mode2()`, `to_multilevel()`,
-  `to_named()`, `to_no_isolates()`, `to_onemode()`, `to_reciprocated()`,
-  `to_redirected()`, `to_simplex()`, `to_slices()`, `to_subgraph()`,
-  `to_subgraphs()`, `to_ties()`, `to_twomode()`, `to_undirected()`,
-  `to_uniplex()`, `to_unnamed()`, `to_unsigned()`, `to_unweighted()`,
-  `to_waves()`
+  `to_directed()`, `to_egos()`, `to_eulerian()`, `to_galois()`,
+  `to_giant()`, `to_matching()`, `to_mode1()`, `to_mode2()`,
+  `to_multilevel()`, `to_named()`, `to_no_isolates()`, `to_onemode()`,
+  `to_reciprocated()`, `to_redirected()`, `to_simplex()`, `to_slices()`,
+  `to_subgraph()`, `to_subgraphs()`, `to_ties()`, `to_twomode()`,
+  `to_undirected()`, `to_uniplex()`, `to_unnamed()`, `to_unsigned()`,
+  `to_unweighted()`, `to_waves()`
 
 ### Reformatting
 
@@ -264,7 +264,7 @@ learnr::available_tutorials("manynet")
 ```
 
 You can then choose to begin a tutorial using the following command:
-e.g. `learnr::run_tutorial("tutorial2", "manynet")`.
+e.g. `learnr::run_tutorial("tutorial1", "manynet")`.
 
 ## Relationship to other packages
 

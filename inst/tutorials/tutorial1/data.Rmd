@@ -181,7 +181,7 @@ flo
 ```
 
 This data uses quite a different class to what we encountered above.
-It prints out the full adjacency list of the Florentine network,
+It prints out the full adjacency matrix of the Florentine network,
 but as a `network`-class object (i.e. from the `{network}` package).
 This is no problem for `{manynet}` (or `{migraph}`),
 since every included function works the same on any of the compatible classes,
@@ -241,10 +241,10 @@ Into a matrix? Into an edgelist?
 ### Finding data
 
 Researchers will regularly find themselves needing to import and work
-with network data from outside of R though.
+with network data from outside of R.
 There are a great number of networks datasets and data resources available online.
-^[Here we keep just a necessarily partial list,
-but we are happy to update it whenever additional datasets are suggested.]
+^[Here we keep a necessarily partial list,
+but we are happy to update it with additional suggestions.]
 See for example:
 
 - [UCINET data](https://sites.google.com/site/ucinetsoftware/datasets?authuser=0)
@@ -377,7 +377,7 @@ For example:
 ### Transforming network data
   
 These functions are similar to the reformatting functions, and are also named `to_*()`,
-but their operation always changes the order (number of nodes) in the network.
+but their operation always changes the network's 'order' (number of nodes).
 Good examples of this are `to_mode1()` and `to_mode2()` for transforming a two-mode network
 into one of its one-mode projections.
 `to_mode1()` will transform (project) the network to a one-mode network of shared ties among its first set of nodes,
