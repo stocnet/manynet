@@ -507,7 +507,7 @@ to_no_isolates.data.frame <- function(.data) {
   as_edgelist(to_no_isolates(as_tidygraph(.data)))
 }
 
-
+#' @describeIn transform Galois derivations
 #' @export
 to_galois <- function(.data) {
   x <- as_matrix(.data)
