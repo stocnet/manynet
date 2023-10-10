@@ -109,3 +109,22 @@ test_that("named networks plot correctly", {
   expect_equal(onemode[["data"]][["name"]], node_names(ison_adolescents))
   expect_equal(twomode[["data"]][["name"]], node_names(ison_southern_women))
 })
+
+# Test that autographr() works with arguments without quotes
+test_that("node_group works correctly", {
+  skip_on_cran()
+  expect_equal(autographr(ison_lawfirm, node_group = Gender),
+               autographr(ison_lawfirm, node_group = "Gender"))
+})
+
+test_that("unquoted arguments plot correctly", {
+  skip_on_cran()
+  expect_equal(autographr(ison_lawfirm, node_color = Gender,
+                          node_size = Age),
+               autographr(ison_lawfirm, node_color = "Gender",
+                          node_size = "Age"))
+  expect_equal(autographr(ison_lawfirm, node_color = "Gender",
+                          node_size = 5),
+               autographr(ison_lawfirm, node_color = Gender,
+                          node_size = "5"))
+})
