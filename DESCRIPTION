@@ -38,7 +38,9 @@ Suggests:
     grDevices,
     BiocManager,
     minMSE,
-    graphlayouts
+    graphlayouts,
+    ggforce,
+    multiplex
 Enhances:
     Rgraphviz
 Authors@R: 
