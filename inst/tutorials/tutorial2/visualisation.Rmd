@@ -90,6 +90,7 @@ We can also specify the colours, groups, shapes, and sizes of nodes in
 the `autographr()` function using the following parameters:
   
 * `node_colour`
+* `node_group`
 * `node_shape`
 * `node_size`
 
@@ -162,6 +163,20 @@ question("What discipline is Charles Kadushin in according to this graph?",
         allow_retry = TRUE, random_answer_order = TRUE)
 ```
 
+### Hull over groups
+
+`{manynet}` also helps to quickly visualise groups in a network with the 'node_group' argument.
+
+```{r groups, exercise = TRUE}
+
+```
+
+```{r groups-solution}
+ison_networkers %>% 
+  autographr(node_group = "Discipline") +
+  labs(color = "Discipline")
+```
+
 ### Layouts
 
 A range of graph layouts are available across the `{igraph}`, `{graphlayouts}`, and `{manynet}` packages 
@@ -205,7 +220,8 @@ autographr(mpn_elite_mex,
   ggplot2::scale_colour_manual(
     values = c("1" = "red",
                "3" = "blue",
-               "2" = "green"))
+               "2" = "green")) +
+  labs(color = "Color")
 ```
 
 ## Using `{ggraph}` for more flexibility
