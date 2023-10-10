@@ -20,6 +20,7 @@ autographr(
   node_shape = NULL,
   node_size = NULL,
   edge_color = NULL,
+  node_group = NULL,
   level = NULL,
   ...
 )
@@ -67,6 +68,13 @@ to using this function.}
 coloring the nodes. It is easiest if this is added as an edge or tie attribute
 to the graph before plotting.}
 
+\item{node_group}{Tie variable in quotation marks to be used for grouping
+the nodes. It is easiest if this is added as a hull over
+groups before plotting.
+Group variables can have a maximum of 4 categories,
+if more than 4 categories, number groups will be reduced by
+merging categories with lower counts into one called "other".}
+
 \item{level}{For "multilevel" layout algorithm only,
 please declare the level attribute.
 If NULL, function will look for attribute 'lvl'.}
@@ -112,6 +120,7 @@ with sensible defaults
 #autographr(ison_karateka, node_size = 8)
 #autographr(ison_karateka, layout = "multilevel", node_size = 8,
 #           node_shape = "obc", node_color = "obc", level = "obc")
+#autographr(ison_lawfirm, node_group = "School")
 #autographs(to_egos(ison_adolescents))
 #ison_adolescents \%>\%
 # mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%

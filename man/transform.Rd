@@ -12,6 +12,7 @@
 \alias{to_eulerian}
 \alias{to_anti}
 \alias{to_no_isolates}
+\alias{to_galois}
 \title{Tools for transforming networks, graphs, and matrices}
 \usage{
 to_mode1(.data, similarity = c("count", "jaccard", "rand", "pearson", "yule"))
@@ -33,6 +34,8 @@ to_eulerian(.data)
 to_anti(.data)
 
 to_no_isolates(.data)
+
+to_galois(.data)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -87,19 +90,12 @@ Transforming means that the returned object may have different dimensions
 than the original object.
 
 Not all functions have methods available for all object classes.
-Below are the currently implemented S3 methods:\tabular{lrrrrrr}{
-    \tab data.frame \tab igraph \tab list \tab matrix \tab network \tab tbl_graph \cr
-   to_anti \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-   to_blocks \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-   to_eulerian \tab 0 \tab 1 \tab 0 \tab 0 \tab 0 \tab 1 \cr
-   to_giant \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-   to_matching \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-   to_mode1 \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-   to_mode2 \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-   to_no_isolates \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
-   to_subgraph \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-   to_ties \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-}
+Below are the currently implemented S3 methods:
+
+\if{html}{\out{<div class="sourceCode {r, echo = FALSE, cache = TRUE}">}}\preformatted{knitr::kable(available_methods(c("to_mode1", "to_mode2", 
+ "to_giant", "to_subgraph", "to_ties", "to_blocks", 
+ "to_matching", "to_eulerian", "to_anti", "to_no_isolates")))
+}\if{html}{\out{</div>}}
 }
 \section{Functions}{
 \itemize{
@@ -139,6 +135,8 @@ where only ties \emph{not} present in the original network
 are included in the new network.
 
 \item \code{to_no_isolates()}: Removes all nodes without ties
+
+\item \code{to_galois()}: Galois derivations
 
 }}
 \section{to_matching}{

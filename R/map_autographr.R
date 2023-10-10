@@ -29,9 +29,15 @@
 #' @param edge_color Tie variable in quotation marks to be used for 
 #'   coloring the nodes. It is easiest if this is added as an edge or tie attribute 
 #'   to the graph before plotting.
+#' @param node_group Tie variable in quotation marks to be used for grouping
+#'   the nodes. It is easiest if this is added as a hull over
+#'   groups before plotting.
+#'   Group variables can have a maximum of 4 categories,
+#'   if more than 4 categories, number groups will be reduced by
+#'   merging categories with lower counts into one called "other".
 #' @param level For "multilevel" layout algorithm only,
-#' please declare the level attribute.
-#' If NULL, function will look for attribute 'lvl'.
+#'   please declare the level attribute.
+#'   If NULL, function will look for attribute 'lvl'.
 #' @param ... Extra arguments to pass on to `autographr()`/`ggraph()`/`ggplot()`.
 #' @return A ggplot2::ggplot() object.
 #' @importFrom ggraph geom_edge_link geom_node_text geom_conn_bundle
@@ -49,6 +55,7 @@ NULL
 #' #autographr(ison_karateka, node_size = 8)
 #' #autographr(ison_karateka, layout = "multilevel", node_size = 8,
 #' #           node_shape = "obc", node_color = "obc", level = "obc")
+#' #autographr(ison_lawfirm, node_group = "School")
 #' @export
 autographr <- function(.data,
                        layout = NULL,
@@ -57,19 +64,23 @@ autographr <- function(.data,
                        node_shape = NULL,
                        node_size = NULL,
                        edge_color = NULL,
+                       node_group = NULL,
                        level = NULL,
                        ...) {
   name <- weight <- nodes <- label <- NULL # avoid CMD check notes
   g <- as_tidygraph(.data)
-  # if(!is.null(node_group)) {
-  #   node_group <- as.factor(node_attribute(g, node_group))
-  #   g <- as_tidygraph(g) %>% 
-  #     activate(nodes) %>%
-  #     mutate(node_group = node_group)
-  # }
+  if (!is.null(node_group)) {
+    if (length(unique(node_attribute(g, node_group))) > 4) {
+      g <- activate(g, nodes) %>%
+        mutate(node_group = reduce_categories(g, node_group))
+    } else {
+      g <- activate(g, nodes) %>%
+        mutate(node_group = as.factor(node_attribute(g, node_group)))
+    }
+  }
   # Add layout ----
   g_layout <- .infer_layout(g, layout)
-  p <- .graph_layout(g, g_layout, labels, level, ...)
+  p <- .graph_layout(g, g_layout, labels, node_group, level, ...)
   # Add edges ----
   p <- .graph_edges(p, g, edge_color)
   # Add nodes ----
@@ -192,6 +203,26 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
     ggplot2::theme_void()
 }
 
+reduce_categories <- function(g, node_group) {
+  limit <- toCondense <- NULL
+  limit <- stats::reorder(node_attribute(g, node_group),
+                          node_attribute(g, node_group),
+                          FUN = length, decreasing = TRUE)
+  if (sum(table(node_attribute(g, node_group)) <
+             as.numeric(attr(limit, "scores")[levels(limit)[3]])) > 3) {
+    toCondense <- names(which(table(node_attribute(g, node_group)) < 
+                                as.numeric(attr(limit, "scores")[levels(limit)[2]])))
+  } else {
+    toCondense <- names(which(table(node_attribute(g, node_group)) < 
+                                as.numeric(attr(limit, "scores")[levels(limit)[3]])))
+  }
+  out <- ifelse(node_attribute(g, node_group) %in% toCondense,
+                       "Other", node_attribute(g, node_group))
+  message("The number of groups was reduced, 
+          'node_group' argument can handle a maximum of 4 groups.")
+  out
+}
+
 .infer_layout <- function(g, g_layout){
   if(is.null(g_layout)){
       if (is_twomode(g)) g_layout <- "hierarchy" else 
@@ -219,7 +250,7 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
 #' @importFrom ggraph create_layout ggraph
 #' @importFrom igraph get.vertex.attribute
 #' @importFrom ggplot2 theme_void
-.graph_layout <- function(g, layout, labels, level, ...){
+.graph_layout <- function(g, layout, labels, node_group, level, ...){
   name <- NULL
   if (layout == "multilevel") {
     thisRequires("graphlayouts")
@@ -283,7 +314,14 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
                                       seed = 1234)
     }
   }
-  # if (!is.null(node_group)) p <- .graph_groups(p, g, node_group, lo)
+  if (!is.null(node_group)) {
+    x <- y <- NULL
+    thisRequires("ggforce")
+    p <- p + 
+      ggforce::geom_mark_hull(ggplot2::aes(x, y, fill = node_group,
+                                           label = node_group), data = lo) +
+      ggplot2::scale_fill_brewer(palette = "Set1", guide = "none")
+  }
   p
 }
 
@@ -493,19 +531,6 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
   }
   p
 }
-
-# .graph_groups <- function(p, g, node_group, lo){
-#   if (!("concaveman" %in% rownames(utils::installed.packages()))) {
-#     message("Please install package `{concaveman}`.")
-#   } else {
-#     p <- p +
-#       ggforce::geom_mark_ellipse(ggplot2::aes(x, y,
-#                                               fill = node_group,
-#                                               label = node_group),
-#                                  data = lo) +
-#       ggplot2::scale_fill_brewer(palette = "Set1", guide = "none")
-#   }
-# }
 
 cart2pol <- function(xyz){
   stopifnot(is.numeric(xyz))
