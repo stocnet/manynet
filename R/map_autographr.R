@@ -55,19 +55,29 @@ NULL
 #' #autographr(ison_karateka, node_size = 8)
 #' #autographr(ison_karateka, layout = "multilevel", node_size = 8,
 #' #           node_shape = "obc", node_color = "obc", level = "obc")
-#' #autographr(ison_lawfirm, node_group = "School")
+#' #autographr(ison_lotr, node_group = Race)
 #' @export
 autographr <- function(.data,
-                       layout = NULL,
+                       layout,
                        labels = TRUE,
-                       node_color = NULL,
-                       node_shape = NULL,
-                       node_size = NULL,
-                       edge_color = NULL,
-                       node_group = NULL,
-                       level = NULL,
+                       node_color,
+                       node_shape,
+                       node_size,
+                       edge_color,
+                       node_group,
+                       level,
                        ...) {
   name <- weight <- nodes <- label <- NULL # avoid CMD check notes
+  if(!missing(layout)) layout <- as.character(substitute(layout)) else layout <- NULL
+  if(!missing(node_color)) node_color <- as.character(substitute(node_color)) else node_color <- NULL
+  if(!missing(node_shape)) node_shape <- as.character(substitute(node_shape)) else node_shape <- NULL
+  if(!missing(node_size)) {
+    node_size <- as.character(substitute(node_size))
+    if (grepl("[-]?[0-9]+[.]?[0-9]*", node_size)) node_size <- as.numeric(node_size)
+  } else node_size <- NULL
+  if(!missing(edge_color)) edge_color <- as.character(substitute(edge_color)) else edge_color <- NULL
+  if(!missing(node_group)) node_group <- as.character(substitute(node_group)) else node_group <- NULL
+  if(!missing(level)) level <- as.character(substitute(level)) else level <- NULL
   g <- as_tidygraph(.data)
   if (!is.null(node_group)) {
     if (length(unique(node_attribute(g, node_group))) > 4) {
@@ -265,7 +275,7 @@ reduce_categories <- function(g, node_group) {
     p <- ggraph::ggraph(g, layout = "manual", x = lo[, 1], y = lo[, 2]) + 
       ggplot2::theme_void()
   } else {
-    lo <- ggraph::create_layout(g, layout, ...)
+    lo <- ggraph::create_layout(g, layout)
     if ("graph" %in% names(attributes(lo))) {
       if (!setequal(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
         for (n in setdiff(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
@@ -319,7 +329,7 @@ reduce_categories <- function(g, node_group) {
     thisRequires("ggforce")
     p <- p + 
       ggforce::geom_mark_hull(ggplot2::aes(x, y, fill = node_group,
-                                           label = node_group), data = lo) +
+                                             label = node_group), data = lo) +
       ggplot2::scale_fill_brewer(palette = "Set1", guide = "none")
   }
   p

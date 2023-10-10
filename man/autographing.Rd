@@ -14,14 +14,14 @@ http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
 \usage{
 autographr(
   .data,
-  layout = NULL,
+  layout,
   labels = TRUE,
-  node_color = NULL,
-  node_shape = NULL,
-  node_size = NULL,
-  edge_color = NULL,
-  node_group = NULL,
-  level = NULL,
+  node_color,
+  node_shape,
+  node_size,
+  edge_color,
+  node_group,
+  level,
   ...
 )
 
@@ -120,7 +120,7 @@ with sensible defaults
 #autographr(ison_karateka, node_size = 8)
 #autographr(ison_karateka, layout = "multilevel", node_size = 8,
 #           node_shape = "obc", node_color = "obc", level = "obc")
-#autographr(ison_lawfirm, node_group = "School")
+#autographr(ison_lotr, node_group = Race)
 #autographs(to_egos(ison_adolescents))
 #ison_adolescents \%>\%
 # mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%
