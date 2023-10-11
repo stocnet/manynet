@@ -41,6 +41,7 @@ Suggests:
     graphlayouts,
     ggforce,
     multiplex
+    concaveman
 Enhances:
     Rgraphviz
 Authors@R: 
