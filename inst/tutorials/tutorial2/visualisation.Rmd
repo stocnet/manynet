@@ -137,7 +137,7 @@ ison_adolescents %>%
   autographr(node_color = "maxbet")
 ```
 
-Alternatively, group labels are added to visualisation when using the 'node_group' argument to hull over groups in a network.
+Alternatively, group labels are added automatically when using the 'node_group' argument to highlight groups in a network.
 
 ```{r group, exercise = TRUE}
 
