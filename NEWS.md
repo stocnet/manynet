@@ -21,6 +21,10 @@
 * `autographr()` now uses `graphlayouts::layout_igraph_multilevel` where appropriate
 * Default node labelling now larger and further from nodes in circular layout
 
+## Data
+
+- `ison_algebra` now an anonymised network (again)
+
 # manynet 0.2.3
 
 2023-09-17
