@@ -34,15 +34,15 @@ test_that("unweighted, unsigned, directed networks graph correctly", {
   # Node position
   expect_equal(round(test_algebra[["data"]][["x"]][[1]]), 0)
   expect_equal(round(test_algebra[["data"]][["y"]][[1]]), 0)
-  # # Edge parameters
-  # expect_equal(test_algebra[["layers"]][[2]][["aes_params"]][["edge_alpha"]], 0.4)
-  # expect_equal(test_algebra[["layers"]][[2]][["aes_params"]][["edge_linetype"]], "solid")
-  # expect_equal(test_algebra[["layers"]][[2]][["aes_params"]][["edge_colour"]], "black")
-  # expect_equal(as.character(test_algebra[["layers"]][[2]][["aes_params"]][["end_cap"]]), "circle")
-  # #expect_s3_class(test_algebra[["layers"]][[2]][["aes_params"]][["end_cap"]], "ggraph_geometry")
-  # # Node parameters
-  # expect_equal(round(test_algebra[["layers"]][[3]][["aes_params"]][["size"]]), 3)
-  # expect_equal(test_algebra[["layers"]][[3]][["aes_params"]][["shape"]], "circle")
+  # Edge parameters
+  expect_equal(test_algebra[["layers"]][[1]][["aes_params"]][["edge_alpha"]], 0.4)
+  expect_equal(test_algebra[["layers"]][[1]][["aes_params"]][["edge_linetype"]], "solid")
+  expect_equal(test_algebra[["layers"]][[1]][["aes_params"]][["edge_colour"]], "black")
+  expect_equal(as.character(test_algebra[["layers"]][[1]][["aes_params"]][["end_cap"]]), "circle")
+  #expect_s3_class(test_algebra[["layers"]][[2]][["aes_params"]][["end_cap"]], "ggraph_geometry")
+  # Node parameters
+  expect_equal(round(test_algebra[["layers"]][[2]][["aes_params"]][["size"]]), 3)
+  expect_equal(test_algebra[["layers"]][[2]][["aes_params"]][["shape"]], "circle")
 })
 
 test_that("weighted, unsigned, directed networks graph correctly", {
