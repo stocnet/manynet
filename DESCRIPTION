@@ -40,7 +40,8 @@ Suggests:
     minMSE,
     graphlayouts,
     ggforce,
-    multiplex
+    multiplex,
+    concaveman
 Enhances:
     Rgraphviz
 Authors@R: 
