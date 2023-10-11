@@ -1,3 +1,30 @@
+# manynet 0.2.4
+
+2023-10-11
+
+## Package
+
+* README now includes Macports installation instructions
+* Added `{graphlayouts}`, `{ggforce}`, and `{multiplex}` to Suggested
+
+## Manipulating
+
+* Added `to_galois()` for transforming networks into partially ordered Galois lattices
+
+## Mapping
+
+* Fixed bug in node_shape argument in `autographr()`
+* Fixed bug in node_group argument in `autographr()`, closes #11
+* Fixed bug in inconsistent default colour scheme for node_color and node_group in `autographr()`
+* `autographr()` now automatically bends arcs for reciprocated ties when directed network is not too large/dense
+* `autographr()` now accepts unquoted variables as arguments
+* `autographr()` now uses `graphlayouts::layout_igraph_multilevel` where appropriate
+* Default node labelling now larger and further from nodes in circular layout
+
+## Data
+
+- `ison_algebra` now an anonymised network (again)
+
 # manynet 0.2.3
 
 2023-09-17

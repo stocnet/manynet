@@ -29,6 +29,15 @@
 #' @param edge_color Tie variable in quotation marks to be used for 
 #'   coloring the nodes. It is easiest if this is added as an edge or tie attribute 
 #'   to the graph before plotting.
+#' @param node_group Tie variable in quotation marks to be used for grouping
+#'   the nodes. It is easiest if this is added as a hull over
+#'   groups before plotting.
+#'   Group variables can have a maximum of 4 categories,
+#'   if more than 4 categories, number groups will be reduced by
+#'   merging categories with lower counts into one called "other".
+#' @param level For "multilevel" layout algorithm only,
+#'   please declare the level attribute.
+#'   If NULL, function will look for attribute 'lvl'.
 #' @param ... Extra arguments to pass on to `autographr()`/`ggraph()`/`ggplot()`.
 #' @return A ggplot2::ggplot() object.
 #' @importFrom ggraph geom_edge_link geom_node_text geom_conn_bundle
@@ -44,26 +53,44 @@ NULL
 #' #          color = rep(c("blue", "red"), times = 4)) %>%
 #' #  autographr(node_shape = "shape", node_color = "color")
 #' #autographr(ison_karateka, node_size = 8)
+#' #autographr(ison_karateka, layout = "multilevel", node_size = 8,
+#' #           node_shape = "obc", node_color = "obc", level = "obc")
+#' #autographr(ison_lotr, node_group = Race)
 #' @export
 autographr <- function(.data,
-                       layout = NULL,
+                       layout,
                        labels = TRUE,
-                       node_color = NULL,
-                       node_shape = NULL,
-                       node_size = NULL,
-                       edge_color = NULL,
+                       node_color,
+                       node_shape,
+                       node_size,
+                       edge_color,
+                       node_group,
+                       level,
                        ...) {
   name <- weight <- nodes <- label <- NULL # avoid CMD check notes
+  if(!missing(layout)) layout <- as.character(substitute(layout)) else layout <- NULL
+  if(!missing(node_color)) node_color <- as.character(substitute(node_color)) else node_color <- NULL
+  if(!missing(node_shape)) node_shape <- as.character(substitute(node_shape)) else node_shape <- NULL
+  if(!missing(node_size)) {
+    node_size <- as.character(substitute(node_size))
+    if (grepl("[-]?[0-9]+[.]?[0-9]*", node_size)) node_size <- as.numeric(node_size)
+  } else node_size <- NULL
+  if(!missing(edge_color)) edge_color <- as.character(substitute(edge_color)) else edge_color <- NULL
+  if(!missing(node_group)) node_group <- as.character(substitute(node_group)) else node_group <- NULL
+  if(!missing(level)) level <- as.character(substitute(level)) else level <- NULL
   g <- as_tidygraph(.data)
-  # if(!is.null(node_group)) {
-  #   node_group <- as.factor(node_attribute(g, node_group))
-  #   g <- as_tidygraph(g) %>% 
-  #     activate(nodes) %>%
-  #     mutate(node_group = node_group)
-  # }
+  if (!is.null(node_group)) {
+    if (length(unique(node_attribute(g, node_group))) > 4) {
+      g <- activate(g, nodes) %>%
+        mutate(node_group = reduce_categories(g, node_group))
+    } else {
+      g <- activate(g, nodes) %>%
+        mutate(node_group = as.factor(node_attribute(g, node_group)))
+    }
+  }
   # Add layout ----
   g_layout <- .infer_layout(g, layout)
-  p <- .graph_layout(g, g_layout, labels, ...)
+  p <- .graph_layout(g, g_layout, labels, node_group, level, ...)
   # Add edges ----
   p <- .graph_edges(p, g, edge_color)
   # Add nodes ----
@@ -186,6 +213,26 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
     ggplot2::theme_void()
 }
 
+reduce_categories <- function(g, node_group) {
+  limit <- toCondense <- NULL
+  limit <- stats::reorder(node_attribute(g, node_group),
+                          node_attribute(g, node_group),
+                          FUN = length, decreasing = TRUE)
+  if (sum(table(node_attribute(g, node_group)) <
+             as.numeric(attr(limit, "scores")[levels(limit)[3]])) > 3) {
+    toCondense <- names(which(table(node_attribute(g, node_group)) < 
+                                as.numeric(attr(limit, "scores")[levels(limit)[2]])))
+  } else {
+    toCondense <- names(which(table(node_attribute(g, node_group)) < 
+                                as.numeric(attr(limit, "scores")[levels(limit)[3]])))
+  }
+  out <- ifelse(node_attribute(g, node_group) %in% toCondense,
+                       "Other", node_attribute(g, node_group))
+  message("The number of groups was reduced, 
+          'node_group' argument can handle a maximum of 4 groups.")
+  out
+}
+
 .infer_layout <- function(g, g_layout){
   if(is.null(g_layout)){
       if (is_twomode(g)) g_layout <- "hierarchy" else 
@@ -213,17 +260,31 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
 #' @importFrom ggraph create_layout ggraph
 #' @importFrom igraph get.vertex.attribute
 #' @importFrom ggplot2 theme_void
-.graph_layout <- function(g, layout, labels, ...){
+.graph_layout <- function(g, layout, labels, node_group, level, ...){
   name <- NULL
-  lo <- ggraph::create_layout(g, layout, ...)
-  if ("graph" %in% names(attributes(lo))) {
-    if (!setequal(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
-      for (n in setdiff(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
-        lo[n] <- igraph::get.vertex.attribute(g, n)
+  if (layout == "multilevel") {
+    thisRequires("graphlayouts")
+    if (!is.null(level)) {
+      g <- igraph::set_vertex_attr(g, "lvl", value= node_attribute(g, level))
+    } else if (any(grepl("lvl", names(node_attribute(g))))) {
+      message("Level attribute 'lvl' found in data.")
+    } else {
+      stop("Please declare a level attribute.")
+    }
+    lo <- graphlayouts::layout_as_multilevel(g, alpha = 25)
+    p <- ggraph::ggraph(g, layout = "manual", x = lo[, 1], y = lo[, 2]) + 
+      ggplot2::theme_void()
+  } else {
+    lo <- ggraph::create_layout(g, layout)
+    if ("graph" %in% names(attributes(lo))) {
+      if (!setequal(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
+        for (n in setdiff(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
+          lo[n] <- igraph::get.vertex.attribute(g, n)
+        }
       }
-    } 
+    }
+    p <- ggraph::ggraph(lo) + ggplot2::theme_void()
   }
-  p <- ggraph::ggraph(lo) + ggplot2::theme_void()
   if (labels & is_labelled(g)){
     if(layout %in% c("concentric", "circle")){
       # https://stackoverflow.com/questions/57000414/ggraph-node-labels-truncated?rq=1
@@ -233,9 +294,9 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
                                  lo[,2] < 0 & lo[,1] > 0 ~ angles$degree,
                                  lo[,1] == 1 ~angles$degree,
                                  TRUE ~ angles$degree - 180)
-      hj <- ifelse(lo[,1] > 0, -0.2, 1.2)
+      hj <- ifelse(lo[,1] > 0, -0.4, 1.4)
       p <- p + ggraph::geom_node_text(ggplot2::aes(label = name),
-                                      size = 2,
+                                      size = 3,
                                       hjust = hj,
                                       angle = angles) +
         ggplot2::coord_cartesian(xlim=c(-1.2,1.2), ylim=c(-1.2,1.2))
@@ -263,7 +324,15 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
                                       seed = 1234)
     }
   }
-  # if (!is.null(node_group)) p <- .graph_groups(p, g, node_group, lo)
+  if (!is.null(node_group)) {
+    x <- y <- NULL
+    thisRequires("ggforce")
+    p <- p + 
+      ggforce::geom_mark_hull(ggplot2::aes(x, y, fill = node_group,
+                                           label = node_group), data = lo) +
+      ggplot2::scale_fill_brewer(palette = "Set1", direction = ifelse(length(
+        unique(node_attribute(g, node_group))) == 2, -1, 1), guide = "none")
+  }
   p
 }
 
@@ -286,12 +355,18 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
   weight <- NULL
   # Begin plotting edges in various cases
   if (is_directed(g)) {
+    if (length(igraph::E(g)) > 100) {
+      bend <- 0
+    } else {
+      bend <- ifelse(igraph::is.mutual(g), 0.2, 0)
+    }
     if (is_weighted(g)) {
       if (!is.null(edge_color)) {
         edge_color <- as.factor(tie_attribute(g, edge_color))
-        p <- p + ggraph::geom_edge_link(ggplot2::aes(width = weight,
+        p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = weight,
                                                      colour = edge_color),
                                         edge_alpha = 0.4,
+                                       strength = bend,
                                         edge_linetype = "solid",
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(2, 'mm'),
@@ -305,10 +380,11 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
       } else if (is_signed(g)) {
         edge_color <- ifelse(igraph::E(g)$sign >= 0, "#0072B2", "#E20020")
         edge_linetype <- ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")
-        p <- p + ggraph::geom_edge_link(ggplot2::aes(width = weight,
+        p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = weight,
                                                      colour = edge_color,
                                                      linetype = edge_linetype),
                                         edge_alpha = 0.4,
+                                       strength = bend,
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(2, 'mm'),
                                                                type = "closed"), 
@@ -316,9 +392,10 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
           ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), 
                                               guide = "none")
       } else {
-        p <- p + ggraph::geom_edge_link(ggplot2::aes(width = weight),
+        p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = weight),
                                         edge_colour = "black",
                                         edge_alpha = 0.4,
+                                       strength = bend,
                                         edge_linetype = "solid",
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(2, 'mm'),
@@ -330,8 +407,9 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
     } else {
       if (!is.null(edge_color)) {
         edge_color <- as.factor(tie_attribute(g, edge_color))
-        p <- p + ggraph::geom_edge_link(ggplot2::aes(colour = edge_color),
+        p <- p + ggraph::geom_edge_arc(ggplot2::aes(colour = edge_color),
                                         edge_alpha = 0.4,
+                                       strength = bend,
                                         edge_linetype = "solid",
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(3, "mm"),
@@ -343,16 +421,18 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
       } else if (is_signed(g)) {
         edge_color <- ifelse(igraph::E(g)$sign >= 0, "#0072B2", "#E20020")
         edge_linetype <- ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")
-        p <- p + ggraph::geom_edge_link(ggplot2::aes(colour = edge_color,
+        p <- p + ggraph::geom_edge_arc(ggplot2::aes(colour = edge_color,
                                                      linetype = edge_linetype),
                                         edge_alpha = 0.4,
+                                       strength = bend,
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(3, "mm"),
                                                                type = "closed"),
                                         end_cap = ggraph::circle(3, "mm"))
       } else {
-        p <- p + ggraph::geom_edge_link(edge_colour = "black",
+        p <- p + ggraph::geom_edge_arc(edge_colour = "black",
                                         edge_alpha = 0.4,
+                                       strength = bend,
                                         edge_linetype = "solid",
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(3, "mm"),
@@ -415,13 +495,15 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
 }
 
 .graph_nodes <- function(p, g, node_color, node_shape, node_size){
-
   nsize <- .infer_nsize(g, node_size)
-
   if (!is.null(node_shape)) {
-    if(length(node_shape) == 1) node_shape <- rep(node_shape, network_nodes(g)) else {
+    if (any(grepl(node_shape, names(node_attribute(g))))) {
+      node_shape <- node_attribute(g, node_shape)
+    } else if (length(node_shape) == 1) {
+      node_shape <- rep(node_shape, network_nodes(g)) 
+    } else {
       node_shape <- as.factor(node_attribute(g, node_shape))
-      node_shape <- c("circle","square","triangle")[node_shape]
+      node_shape <- c("circle", "square", "triangle")[node_shape]
     }
   } else if (is_twomode(g)) {
     node_shape <- ifelse(igraph::V(g)$type,
@@ -430,7 +512,6 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
   } else {
     node_shape <- "circle"
   }
-  
   if (is_twomode(g)) {
     if (!is.null(node_color)) {
       color_factor_node <- as.factor(node_attribute(g, node_color))
@@ -461,19 +542,6 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
   }
   p
 }
-
-# .graph_groups <- function(p, g, node_group, lo){
-#   if (!("concaveman" %in% rownames(utils::installed.packages()))) {
-#     message("Please install package `{concaveman}`.")
-#   } else {
-#     p <- p +
-#       ggforce::geom_mark_ellipse(ggplot2::aes(x, y,
-#                                               fill = node_group,
-#                                               label = node_group),
-#                                  data = lo) +
-#       ggplot2::scale_fill_brewer(palette = "Set1", guide = "none")
-#   }
-# }
 
 cart2pol <- function(xyz){
   stopifnot(is.numeric(xyz))

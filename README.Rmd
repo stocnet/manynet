@@ -234,7 +234,7 @@ print(p,vp = vp1)
 ### Stable
 
 The easiest way to install the latest stable version of `{manynet}` is via CRAN.
-Simply open the R console and enter:
+Simply open the R console and enter:^[Macs with Macports installed may also install from the command line [using Macports](https://ports.macports.org/port/R-manynet/).]
 
 `install.packages('manynet')`
 
@@ -242,11 +242,7 @@ You can then begin to use `{manynet}` by loading the package:
 
 `library(manynet)`
 
-This will load any required packages and make the data contained within the package available.
-The version from CRAN also has all the vignettes built and included.
-You can check them out with:
-
-`vignettes(package = "manynet")`
+This will load any required packages and make the data and tutorials (see below) contained within the package available.
 
 ### Development
 
@@ -286,7 +282,7 @@ learnr::available_tutorials("manynet")
 ```
 
 You can then choose to begin a tutorial using the following command: e.g.
-`learnr::run_tutorial("tutorial2", "manynet")`.
+`learnr::run_tutorial("tutorial1", "manynet")`.
 
 ## Relationship to other packages
 

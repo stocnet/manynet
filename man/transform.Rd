@@ -12,6 +12,7 @@
 \alias{to_eulerian}
 \alias{to_anti}
 \alias{to_no_isolates}
+\alias{to_galois}
 \title{Tools for transforming networks, graphs, and matrices}
 \usage{
 to_mode1(.data, similarity = c("count", "jaccard", "rand", "pearson", "yule"))
@@ -33,6 +34,8 @@ to_eulerian(.data)
 to_anti(.data)
 
 to_no_isolates(.data)
+
+to_galois(.data)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -139,6 +142,8 @@ where only ties \emph{not} present in the original network
 are included in the new network.
 
 \item \code{to_no_isolates()}: Removes all nodes without ties
+
+\item \code{to_galois()}: Galois derivations
 
 }}
 \section{to_matching}{

@@ -35,14 +35,14 @@ test_that("unweighted, unsigned, directed networks graph correctly", {
   expect_equal(round(test_algebra[["data"]][["x"]][[1]]), 0)
   expect_equal(round(test_algebra[["data"]][["y"]][[1]]), 0)
   # Edge parameters
-  expect_equal(test_algebra[["layers"]][[2]][["aes_params"]][["edge_alpha"]], 0.4)
-  expect_equal(test_algebra[["layers"]][[2]][["aes_params"]][["edge_linetype"]], "solid")
-  expect_equal(test_algebra[["layers"]][[2]][["aes_params"]][["edge_colour"]], "black")
-  expect_equal(as.character(test_algebra[["layers"]][[2]][["aes_params"]][["end_cap"]]), "circle")
+  expect_equal(test_algebra[["layers"]][[1]][["aes_params"]][["edge_alpha"]], 0.4)
+  expect_equal(test_algebra[["layers"]][[1]][["aes_params"]][["edge_linetype"]], "solid")
+  expect_equal(test_algebra[["layers"]][[1]][["aes_params"]][["edge_colour"]], "black")
+  expect_equal(as.character(test_algebra[["layers"]][[1]][["aes_params"]][["end_cap"]]), "circle")
   #expect_s3_class(test_algebra[["layers"]][[2]][["aes_params"]][["end_cap"]], "ggraph_geometry")
   # Node parameters
-  expect_equal(round(test_algebra[["layers"]][[3]][["aes_params"]][["size"]]), 3)
-  expect_equal(test_algebra[["layers"]][[3]][["aes_params"]][["shape"]], "circle")
+  expect_equal(round(test_algebra[["layers"]][[2]][["aes_params"]][["size"]]), 3)
+  expect_equal(test_algebra[["layers"]][[2]][["aes_params"]][["shape"]], "circle")
 })
 
 test_that("weighted, unsigned, directed networks graph correctly", {
@@ -108,4 +108,23 @@ test_that("named networks plot correctly", {
   twomode <- autographr(ison_southern_women)
   expect_equal(onemode[["data"]][["name"]], node_names(ison_adolescents))
   expect_equal(twomode[["data"]][["name"]], node_names(ison_southern_women))
+})
+
+# Test that autographr() works with arguments without quotes
+test_that("node_group works correctly", {
+  skip_on_cran()
+  expect_equal(autographr(ison_lawfirm, node_group = Gender),
+               autographr(ison_lawfirm, node_group = "Gender"))
+})
+
+test_that("unquoted arguments plot correctly", {
+  skip_on_cran()
+  expect_equal(autographr(ison_lawfirm, node_color = Gender,
+                          node_size = Age),
+               autographr(ison_lawfirm, node_color = "Gender",
+                          node_size = "Age"))
+  expect_equal(autographr(ison_lawfirm, node_color = "Gender",
+                          node_size = 5),
+               autographr(ison_lawfirm, node_color = Gender,
+                          node_size = "5"))
 })
