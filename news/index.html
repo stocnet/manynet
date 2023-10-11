@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.4</span>
       </span>
     </div>
 
@@ -53,6 +53,37 @@
       <small>Source: <a href="https://github.com/snlab-ch/manynet/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.2.4" id="manynet-024">manynet 0.2.4<a class="anchor" aria-label="anchor" href="#manynet-024"></a></h2>
+<p>2023-10-11</p>
+<div class="section level3">
+<h3 id="package-0-2-4">Package<a class="anchor" aria-label="anchor" href="#package-0-2-4"></a></h3>
+<ul><li>README now includes Macports installation instructions</li>
+<li>Added <a href="https://github.com/schochastics/graphlayouts" class="external-link">graphlayouts</a>, <a href="https://ggforce.data-imaginist.com" class="external-link">ggforce</a>, and <a href="https://github.com/mplex/multiplex/" class="external-link">multiplex</a> to Suggested</li>
+</ul></div>
+<div class="section level3">
+<h3 id="manipulating-0-2-4">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-0-2-4"></a></h3>
+<ul><li>Added <code><a href="../reference/transform.html">to_galois()</a></code> for transforming networks into partially ordered Galois lattices</li></ul></div>
+<div class="section level3">
+<h3 id="mapping-0-2-4">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-2-4"></a></h3>
+<ul><li>Fixed bug in node_shape argument in <code><a href="../reference/autographing.html">autographr()</a></code>
+</li>
+<li>Fixed bug in node_group argument in <code><a href="../reference/autographing.html">autographr()</a></code>, closes <a href="https://github.com/snlab-ch/manynet/issues/11" class="external-link">#11</a></li>
+<li>Fixed bug in inconsistent default colour scheme for node_color and node_group in <code><a href="../reference/autographing.html">autographr()</a></code>
+</li>
+<li>
+<code><a href="../reference/autographing.html">autographr()</a></code> now automatically bends arcs for reciprocated ties when directed network is not too large/dense</li>
+<li>
+<code><a href="../reference/autographing.html">autographr()</a></code> now accepts unquoted variables as arguments</li>
+<li>
+<code><a href="../reference/autographing.html">autographr()</a></code> now uses <code><a href="https://schochastics.github.io/graphlayouts/reference/layout_multilevel.html" class="external-link">graphlayouts::layout_igraph_multilevel</a></code> where appropriate</li>
+<li>Default node labelling now larger and further from nodes in circular layout</li>
+</ul></div>
+<div class="section level3">
+<h3 id="data-0-2-4">Data<a class="anchor" aria-label="anchor" href="#data-0-2-4"></a></h3>
+<ul><li>
+<code>ison_algebra</code> now an anonymised network (again)</li></ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.3" id="manynet-023">manynet 0.2.3<small>2023-09-17</small><a class="anchor" aria-label="anchor" href="#manynet-023"></a></h2>
 <p>2023-09-17</p>

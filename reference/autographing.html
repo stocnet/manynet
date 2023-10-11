@@ -21,7 +21,7 @@ visualisation of network measures such as centrality."><meta property="og:image"
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.4</span>
       </span>
     </div>
 
@@ -69,12 +69,14 @@ visualisation of network measures such as centrality.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">autographr</span><span class="op">(</span></span>
 <span>  <span class="va">.data</span>,</span>
-<span>  layout <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">layout</span>,</span>
 <span>  labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  node_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  node_shape <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  node_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  edge_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">node_color</span>,</span>
+<span>  <span class="va">node_shape</span>,</span>
+<span>  <span class="va">node_size</span>,</span>
+<span>  <span class="va">edge_color</span>,</span>
+<span>  <span class="va">node_group</span>,</span>
+<span>  <span class="va">level</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -142,6 +144,21 @@ coloring the nodes. It is easiest if this is added as an edge or tie attribute
 to the graph before plotting.</p></dd>
 
 
+<dt>node_group</dt>
+<dd><p>Tie variable in quotation marks to be used for grouping
+the nodes. It is easiest if this is added as a hull over
+groups before plotting.
+Group variables can have a maximum of 4 categories,
+if more than 4 categories, number groups will be reduced by
+merging categories with lower counts into one called "other".</p></dd>
+
+
+<dt>level</dt>
+<dd><p>For "multilevel" layout algorithm only,
+please declare the level attribute.
+If NULL, function will look for attribute 'lvl'.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Extra arguments to pass on to <code>autographr()</code>/<code>ggraph()</code>/<code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot()</a></code>.</p></dd>
 
@@ -193,6 +210,9 @@ with sensible defaults</p></li>
 <span class="r-in"><span><span class="co">#          color = rep(c("blue", "red"), times = 4)) %&gt;%</span></span></span>
 <span class="r-in"><span><span class="co">#  autographr(node_shape = "shape", node_color = "color")</span></span></span>
 <span class="r-in"><span><span class="co">#autographr(ison_karateka, node_size = 8)</span></span></span>
+<span class="r-in"><span><span class="co">#autographr(ison_karateka, layout = "multilevel", node_size = 8,</span></span></span>
+<span class="r-in"><span><span class="co">#           node_shape = "obc", node_color = "obc", level = "obc")</span></span></span>
+<span class="r-in"><span><span class="co">#autographr(ison_lotr, node_group = Race)</span></span></span>
 <span class="r-in"><span><span class="co">#autographs(to_egos(ison_adolescents))</span></span></span>
 <span class="r-in"><span><span class="co">#ison_adolescents %&gt;%</span></span></span>
 <span class="r-in"><span><span class="co"># mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %&gt;%</span></span></span>

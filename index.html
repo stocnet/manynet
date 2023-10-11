@@ -45,7 +45,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.4</span>
       </span>
     </div>
 
@@ -83,6 +83,7 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
+
 <div class="section level1">
 <div class="page-header"><h1 id="manynet">manynet<a class="anchor" aria-label="anchor" href="#manynet"></a>
 </h1></div>
@@ -140,7 +141,7 @@
 </h2>
 <p><a href="https://snlab-ch.github.io/manynet/">manynet</a>’s <code>to_*()</code> functions can be used on any class object to reformat, transform, or split networks into networks with other properties, e.g.:</p>
 <ul><li>
-<code><a href="reference/reformat.html">to_acyclic()</a></code>, <code><a href="reference/transform.html">to_anti()</a></code>, <code><a href="reference/transform.html">to_blocks()</a></code>, <code><a href="reference/split.html">to_components()</a></code>, <code><a href="reference/reformat.html">to_directed()</a></code>, <code><a href="reference/split.html">to_egos()</a></code>, <code><a href="reference/transform.html">to_eulerian()</a></code>, <code><a href="reference/transform.html">to_giant()</a></code>, <code><a href="reference/transform.html">to_matching()</a></code>, <code><a href="reference/transform.html">to_mode1()</a></code>, <code><a href="reference/transform.html">to_mode2()</a></code>, <code><a href="reference/reformat.html">to_multilevel()</a></code>, <code><a href="reference/reformat.html">to_named()</a></code>, <code><a href="reference/transform.html">to_no_isolates()</a></code>, <code><a href="reference/reformat.html">to_onemode()</a></code>, <code><a href="reference/reformat.html">to_reciprocated()</a></code>, <code><a href="reference/reformat.html">to_redirected()</a></code>, <code><a href="reference/reformat.html">to_simplex()</a></code>, <code><a href="reference/split.html">to_slices()</a></code>, <code><a href="reference/transform.html">to_subgraph()</a></code>, <code><a href="reference/split.html">to_subgraphs()</a></code>, <code><a href="reference/transform.html">to_ties()</a></code>, <code><a href="reference/reformat.html">to_twomode()</a></code>, <code><a href="reference/reformat.html">to_undirected()</a></code>, <code><a href="reference/reformat.html">to_uniplex()</a></code>, <code><a href="reference/reformat.html">to_unnamed()</a></code>, <code><a href="reference/reformat.html">to_unsigned()</a></code>, <code><a href="reference/reformat.html">to_unweighted()</a></code>, <code><a href="reference/split.html">to_waves()</a></code>
+<code><a href="reference/reformat.html">to_acyclic()</a></code>, <code><a href="reference/transform.html">to_anti()</a></code>, <code><a href="reference/transform.html">to_blocks()</a></code>, <code><a href="reference/split.html">to_components()</a></code>, <code><a href="reference/reformat.html">to_directed()</a></code>, <code><a href="reference/split.html">to_egos()</a></code>, <code><a href="reference/transform.html">to_eulerian()</a></code>, <code><a href="reference/transform.html">to_galois()</a></code>, <code><a href="reference/transform.html">to_giant()</a></code>, <code><a href="reference/transform.html">to_matching()</a></code>, <code><a href="reference/transform.html">to_mode1()</a></code>, <code><a href="reference/transform.html">to_mode2()</a></code>, <code><a href="reference/reformat.html">to_multilevel()</a></code>, <code><a href="reference/reformat.html">to_named()</a></code>, <code><a href="reference/transform.html">to_no_isolates()</a></code>, <code><a href="reference/reformat.html">to_onemode()</a></code>, <code><a href="reference/reformat.html">to_reciprocated()</a></code>, <code><a href="reference/reformat.html">to_redirected()</a></code>, <code><a href="reference/reformat.html">to_simplex()</a></code>, <code><a href="reference/split.html">to_slices()</a></code>, <code><a href="reference/transform.html">to_subgraph()</a></code>, <code><a href="reference/split.html">to_subgraphs()</a></code>, <code><a href="reference/transform.html">to_ties()</a></code>, <code><a href="reference/reformat.html">to_twomode()</a></code>, <code><a href="reference/reformat.html">to_undirected()</a></code>, <code><a href="reference/reformat.html">to_uniplex()</a></code>, <code><a href="reference/reformat.html">to_unnamed()</a></code>, <code><a href="reference/reformat.html">to_unsigned()</a></code>, <code><a href="reference/reformat.html">to_unweighted()</a></code>, <code><a href="reference/split.html">to_waves()</a></code>
 </li></ul>
 <div class="section level3">
 <h3 id="reformatting">Reformatting<a class="anchor" aria-label="anchor" href="#reformatting"></a>
@@ -187,12 +188,11 @@
 <div class="section level3">
 <h3 id="stable">Stable<a class="anchor" aria-label="anchor" href="#stable"></a>
 </h3>
-<p>The easiest way to install the latest stable version of <a href="https://snlab-ch.github.io/manynet/">manynet</a> is via CRAN. Simply open the R console and enter:</p>
+<p>The easiest way to install the latest stable version of <a href="https://snlab-ch.github.io/manynet/">manynet</a> is via CRAN. Simply open the R console and enter:<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
 <p><code>install.packages('manynet')</code></p>
 <p>You can then begin to use <a href="https://snlab-ch.github.io/manynet/">manynet</a> by loading the package:</p>
 <p><code><a href="https://snlab-ch.github.io/manynet/">library(manynet)</a></code></p>
-<p>This will load any required packages and make the data contained within the package available. The version from CRAN also has all the vignettes built and included. You can check them out with:</p>
-<p><code>vignettes(package = "manynet")</code></p>
+<p>This will load any required packages and make the data and tutorials (see below) contained within the package available.</p>
 </div>
 <div class="section level3">
 <h3 id="development">Development<a class="anchor" aria-label="anchor" href="#development"></a>
@@ -225,7 +225,7 @@
 <span><span class="co">#&gt; * manynet</span></span>
 <span><span class="co">#&gt;   - tutorial1 : "Data"</span></span>
 <span><span class="co">#&gt;   - tutorial2 : "Visualisation"</span></span></code></pre></div>
-<p>You can then choose to begin a tutorial using the following command: e.g. <code>learnr::run_tutorial("tutorial2", "manynet")</code>.</p>
+<p>You can then choose to begin a tutorial using the following command: e.g. <code>learnr::run_tutorial("tutorial1", "manynet")</code>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -242,6 +242,11 @@
 <p>Development on this package has been funded by the Swiss National Science Foundation (SNSF) <a href="https://data.snf.ch/grants/grant/188976" class="external-link">Grant Number 188976</a>: “Power and Networks and the Rate of Change in Institutional Complexes” (PANARCHIC).</p>
 </div>
 </div>
+<div class="footnotes">
+<hr>
+<ol><li id="fn1"><p>Macs with Macports installed may also install from the command line <a href="https://ports.macports.org/port/R-manynet/" class="external-link">using Macports</a>.<a href="#fnref1" class="footnote-back">↩︎</a></p></li></ol>
+</div>
+
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
