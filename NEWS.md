@@ -9,12 +9,12 @@
 
 ## Manipulating
 
-* Added `to_galois()`
+* Added `to_galois()` for transforming networks into partially ordered Galois lattices
 
 ## Mapping
 
 * Fixed bug in node_shape argument in `autographr()`
-* Fixed bug in node_group argument in `autographr()`
+* Fixed bug in node_group argument in `autographr()`, closes #11
 * Fixed bug in inconsistent default colour scheme for node_color and node_group in `autographr()`
 * `autographr()` now automatically bends arcs for reciprocated ties when directed network is not too large/dense
 * `autographr()` now accepts unquoted variables as arguments
