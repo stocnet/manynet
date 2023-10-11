@@ -195,7 +195,8 @@ class="section level2">
 specifications, the <code>autographr()</code> function in
 <code>{manynet}</code> is a quick and easy way to obtain a clear first
 look of the network for preliminary investigations and understanding of
-the network.</p>
+the network. Let’s quickly visualise one of the <code>ison_</code>
+datasets included in the package.</p>
 <div class="tutorial-exercise" data-label="manyneteg"
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
@@ -258,6 +259,19 @@ autographr(ison_adolescents) / autographr(ison_algebra)</code></pre>
 as often the colours are pretty self-explanatory, for example in the
 following figure.</p>
 <p><img src="visualisation_files/figure-html/maxbet-1.png" width="624" /></p>
+<p>Alternatively, group labels are added to visualisation when using the
+‘node_group’ argument to hull over groups in a network.</p>
+<div class="tutorial-exercise" data-label="group" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="group-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>ison_networkers %&gt;% 
+  autographr(node_group = &quot;Discipline&quot;)</code></pre>
+</div>
 <p>But other times it is important to add in a legend.
 <code>{manynet}</code> supports the <code>{ggplot2}</code> way of adding
 legends after the main plot has been constructed, using
@@ -285,23 +299,6 @@ data-lines="0" data-pipe="|&gt;">
 </div>
 </div>
 </div>
-<div id="section-hull-over-groups" class="section level3">
-<h3>Hull over groups</h3>
-<p><code>{manynet}</code> also helps to quickly visualise groups in a
-network with the ‘node_group’ argument.</p>
-<div class="tutorial-exercise" data-label="groups" data-completion="1"
-data-diagnostics="1" data-startover="1" data-lines="0"
-data-pipe="|&gt;">
-<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
-</div>
-<div class="tutorial-exercise-support" data-label="groups-solution"
-data-completion="1" data-diagnostics="1" data-startover="1"
-data-lines="0" data-pipe="|&gt;">
-<pre class="text"><code>ison_networkers %&gt;% 
-  autographr(node_group = &quot;Discipline&quot;) +
-  labs(color = &quot;Discipline&quot;)</code></pre>
-</div>
-</div>
 <div id="section-layouts" class="section level3">
 <h3>Layouts</h3>
 <p>A range of graph layouts are available across the
@@ -322,10 +319,10 @@ autographr(ison_southern_women, layout = &quot;kk&quot;) + ggtitle(&quot;kk&quot
 </div>
 <div id="section-using-different-colours" class="section level3">
 <h3>Using different colours</h3>
-<p>Because the autographr function is based on the grammar of graphics,
-it’s easy to extend or alter aesthetic aspects. Here let’s try and
-change the colors assigned to the different regions in the
-<code>mpn_elite_mex</code> dataset.</p>
+<p>Because the <code>autographr()</code> function is based on the
+grammar of graphics, it’s easy to extend or alter aesthetic aspects.
+Here let’s try and change the colors assigned to the different regions
+in the <code>mpn_elite_mex</code> dataset.</p>
 <div class="tutorial-exercise" data-label="colorch" data-completion="1"
 data-diagnostics="1" data-startover="1" data-lines="0"
 data-pipe="|&gt;">
@@ -600,6 +597,46 @@ learnr:::store_exercise_cache(structure(list(label = "patchwork", global_setup =
 </script>
  
 <script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-group-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-group-code-editor`)), session)
+output$`tutorial-exercise-group-output` <- renderUI({
+  `tutorial-exercise-group-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "group", global_setup = structure(c("library(learnr)", 
+"library(manynet)", "library(migraph)", "library(patchwork)", 
+"knitr::opts_chunk$set(echo = FALSE)"), chunk_opts = list(label = "setup", 
+    include = FALSE)), setup = NULL, chunks = list(list(label = "group", 
+    code = "", opts = list(label = "\"group\"", exercise = "TRUE"), 
+    engine = "r")), code_check = NULL, error_check = NULL, check = NULL, 
+    solution = structure(c("ison_networkers %>% ", "  autographr(node_group = \"Discipline\")"
+    ), chunk_opts = list(label = "group-solution")), tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "visualisation_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "visualisation_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, label = "group", exercise = TRUE, code = "", 
+        out.width.px = 624, out.height.px = 384, params.src = "group, exercise = TRUE", 
+        fig.num = 0L, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
 `tutorial-exercise-discipline-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-discipline-code-editor`)), session)
 output$`tutorial-exercise-discipline-output` <- renderUI({
   `tutorial-exercise-discipline-result`()
@@ -642,17 +679,17 @@ learnr:::store_exercise_cache(structure(list(label = "discipline", global_setup 
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "discq", question = structure("What discipline is Charles Kadushin in according to this graph?", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_54282ed", 
+"character")), answers = list(structure(list(id = "lnr_ans_6e594dc", 
     option = "Anthropology", value = "Anthropology", label = structure("Anthropology", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_a9113fe", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_d418ddf", 
     option = "Mathematics/Statistics", value = "Mathematics/Statistics", 
     label = structure("Mathematics/Statistics", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_c46c651", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_374e5de", 
     option = "Other", value = "Other", label = structure("Other", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_887f393", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_52c558b", 
     option = "Sociology", value = "Sociology", label = structure("Sociology", html = TRUE, class = c("html", 
     "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
 "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
@@ -662,49 +699,9 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "discq-answer", question = "discq"), loading = NULL, 
-    random_answer_order = TRUE, allow_retry = TRUE, seed = 30700138.4857041, 
+    random_answer_order = TRUE, allow_retry = TRUE, seed = 986885507.540446, 
     options = list()), class = c("learnr_radio", "tutorial_question"
 )), session = session)
-</script>
-
-
-<script type="application/shiny-prerendered" data-context="server">
-`tutorial-exercise-groups-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-groups-code-editor`)), session)
-output$`tutorial-exercise-groups-output` <- renderUI({
-  `tutorial-exercise-groups-result`()
-})
-</script>
- 
-<script type="application/shiny-prerendered" data-context="server">
-learnr:::store_exercise_cache(structure(list(label = "groups", global_setup = structure(c("library(learnr)", 
-"library(manynet)", "library(migraph)", "library(patchwork)", 
-"knitr::opts_chunk$set(echo = FALSE)"), chunk_opts = list(label = "setup", 
-    include = FALSE)), setup = NULL, chunks = list(list(label = "groups", 
-    code = "", opts = list(label = "\"groups\"", exercise = "TRUE"), 
-    engine = "r")), code_check = NULL, error_check = NULL, check = NULL, 
-    solution = structure(c("ison_networkers %>% ", "  autographr(node_group = \"Discipline\") +", 
-    "  labs(color = \"Discipline\")"), chunk_opts = list(label = "groups-solution")), 
-    tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
-        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
-        comment = NA, highlight = FALSE, size = "normalsize", 
-        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
-        cache.path = "visualisation_cache/html/", cache.vars = NULL, 
-        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
-        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
-        fig.align = "default", fig.path = "visualisation_files/figure-html/", 
-        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
-        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
-        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
-        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
-        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
-        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
-        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
-        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
-        max.print = 1000, label = "groups", exercise = TRUE, 
-        code = "", out.width.px = 624, out.height.px = 384, params.src = "groups, exercise = TRUE", 
-        fig.num = 0L, exercise.df_print = "paged", exercise.checker = "NULL"), 
-    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
-)))
 </script>
 
 

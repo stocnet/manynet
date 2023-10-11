@@ -75,7 +75,7 @@ visualising network data.
 To get a basic visualisation of the network before adding various specifications,
 the `autographr()` function in `{manynet}` is a quick and easy way 
 to obtain a clear first look of the network 
-for preliminary investigations and understanding of the network.
+for preliminary investigations and understanding of the network. Let's quickly visualise one of the `ison_` datasets included in the package.
 
 ```{r manyneteg, exercise=TRUE}
 
@@ -137,6 +137,17 @@ ison_adolescents %>%
   autographr(node_color = "maxbet")
 ```
 
+Alternatively, group labels are added to visualisation when using the 'node_group' argument to hull over groups in a network.
+
+```{r group, exercise = TRUE}
+
+```
+
+```{r group-solution}
+ison_networkers %>% 
+  autographr(node_group = "Discipline")
+```
+
 But other times it is important to add in a legend.
 `{manynet}` supports the `{ggplot2}` way of adding legends
 after the main plot has been constructed,
@@ -163,20 +174,6 @@ question("What discipline is Charles Kadushin in according to this graph?",
         allow_retry = TRUE, random_answer_order = TRUE)
 ```
 
-### Hull over groups
-
-`{manynet}` also helps to quickly visualise groups in a network with the 'node_group' argument.
-
-```{r groups, exercise = TRUE}
-
-```
-
-```{r groups-solution}
-ison_networkers %>% 
-  autographr(node_group = "Discipline") +
-  labs(color = "Discipline")
-```
-
 ### Layouts
 
 A range of graph layouts are available across the `{igraph}`, `{graphlayouts}`, and `{manynet}` packages 
@@ -193,7 +190,7 @@ autographr(ison_southern_women, layout = "kk") + ggtitle("kk"))
 
 ### Using different colours
 
-Because the autographr function is based on
+Because the `autographr()` function is based on
 the grammar of graphics,
 it's easy to extend or alter aesthetic aspects.
 Here let's try and change the colors
