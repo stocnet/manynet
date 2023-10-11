@@ -329,8 +329,9 @@ reduce_categories <- function(g, node_group) {
     thisRequires("ggforce")
     p <- p + 
       ggforce::geom_mark_hull(ggplot2::aes(x, y, fill = node_group,
-                                             label = node_group), data = lo) +
-      ggplot2::scale_fill_brewer(palette = "Set1", guide = "none")
+                                           label = node_group), data = lo) +
+      ggplot2::scale_fill_brewer(palette = "Set1", direction = ifelse(length(
+        unique(node_attribute(g, node_group))) == 2, -1, 1), guide = "none")
   }
   p
 }
