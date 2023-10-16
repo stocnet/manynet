@@ -210,7 +210,7 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
 
 reduce_categories <- function(g, node_group) {
   limit <- toCondense <- NULL
-  if (length(unique(node_attribute(g, node_group))) > 3) {
+  if (length(unique(node_attribute(g, node_group))) > 4) {
     limit <- stats::reorder(node_attribute(g, node_group),
                             node_attribute(g, node_group),
                             FUN = length, decreasing = TRUE)
@@ -218,7 +218,21 @@ reduce_categories <- function(g, node_group) {
     out <- ifelse(node_attribute(g, node_group) %in% toCondense,
                   node_attribute(g, node_group), "Other")
     message("The number of groups was reduced, 
-          'node_group' argument can handle a maximum of 3 groups.")
+          'node_group' argument can handle a maximum of 4 groups.")
+  } else if (sum(table(node_attribute(g, node_group)) == 1) > 1) {
+      toCondense <- names(which(table(node_attribute(g, node_group)) == 1))
+      out <- ifelse(node_attribute(g, node_group) %in% toCondense,
+                    "Other", node_attribute(g, node_group))
+      message("Groups with 1 node only were grouped together under 'Other'.")
+  } else if (sum(table(node_attribute(g, node_group)) == 1) &
+             length(unique(node_attribute(g, node_group))) > 2) {
+    limit <- stats::reorder(node_attribute(g, node_group),
+                            node_attribute(g, node_group),
+                            FUN = length, decreasing = TRUE)
+    toCondense <- utils::tail(levels(limit), 2)
+    out <- ifelse(node_attribute(g, node_group) %in% toCondense,
+                  "Other", node_attribute(g, node_group))
+    message("The number of groups was reduced since there were groups with 1 node only.")
   } else out <- as.factor(node_attribute(g, node_group))
   out
 }
