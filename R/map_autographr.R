@@ -68,6 +68,7 @@ autographr <- function(.data,
                        level,
                        ...) {
   name <- weight <- nodes <- label <- NULL # avoid CMD check notes
+  g <- as_tidygraph(.data)
   if(!missing(layout)) layout <- as.character(substitute(layout)) else layout <- NULL
   if(!missing(node_color)) node_color <- as.character(substitute(node_color)) else node_color <- NULL
   if(!missing(node_shape)) node_shape <- as.character(substitute(node_shape)) else node_shape <- NULL
@@ -76,18 +77,12 @@ autographr <- function(.data,
     if (grepl("[-]?[0-9]+[.]?[0-9]*", node_size)) node_size <- as.numeric(node_size)
   } else node_size <- NULL
   if(!missing(edge_color)) edge_color <- as.character(substitute(edge_color)) else edge_color <- NULL
-  if(!missing(node_group)) node_group <- as.character(substitute(node_group)) else node_group <- NULL
+  if(!missing(node_group)) {
+    node_group <- as.character(substitute(node_group))
+    g <- activate(g, nodes) %>%
+      mutate(node_group = reduce_categories(g, node_group))
+  } else node_group <- NULL
   if(!missing(level)) level <- as.character(substitute(level)) else level <- NULL
-  g <- as_tidygraph(.data)
-  if (!is.null(node_group)) {
-    if (length(unique(node_attribute(g, node_group))) > 4) {
-      g <- activate(g, nodes) %>%
-        mutate(node_group = reduce_categories(g, node_group))
-    } else {
-      g <- activate(g, nodes) %>%
-        mutate(node_group = as.factor(node_attribute(g, node_group)))
-    }
-  }
   # Add layout ----
   g_layout <- .infer_layout(g, layout)
   p <- .graph_layout(g, g_layout, labels, node_group, level, ...)
@@ -215,21 +210,16 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
 
 reduce_categories <- function(g, node_group) {
   limit <- toCondense <- NULL
-  limit <- stats::reorder(node_attribute(g, node_group),
-                          node_attribute(g, node_group),
-                          FUN = length, decreasing = TRUE)
-  if (sum(table(node_attribute(g, node_group)) <
-             as.numeric(attr(limit, "scores")[levels(limit)[3]])) > 3) {
-    toCondense <- names(which(table(node_attribute(g, node_group)) < 
-                                as.numeric(attr(limit, "scores")[levels(limit)[2]])))
-  } else {
-    toCondense <- names(which(table(node_attribute(g, node_group)) < 
-                                as.numeric(attr(limit, "scores")[levels(limit)[3]])))
-  }
-  out <- ifelse(node_attribute(g, node_group) %in% toCondense,
-                       "Other", node_attribute(g, node_group))
-  message("The number of groups was reduced, 
-          'node_group' argument can handle a maximum of 4 groups.")
+  if (length(unique(node_attribute(g, node_group))) > 3) {
+    limit <- stats::reorder(node_attribute(g, node_group),
+                            node_attribute(g, node_group),
+                            FUN = length, decreasing = TRUE)
+    toCondense <- utils::head(levels(limit), 2)
+    out <- ifelse(node_attribute(g, node_group) %in% toCondense,
+                  node_attribute(g, node_group), "Other")
+    message("The number of groups was reduced, 
+          'node_group' argument can handle a maximum of 3 groups.")
+  } else out <- as.factor(node_attribute(g, node_group))
   out
 }
 
