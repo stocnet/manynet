@@ -69,23 +69,24 @@ autographr <- function(.data,
                        ...) {
   name <- weight <- nodes <- label <- NULL # avoid CMD check notes
   g <- as_tidygraph(.data)
-  if(!missing(layout)) layout <- as.character(substitute(layout)) else layout <- NULL
-  if(!missing(node_color)) node_color <- as.character(substitute(node_color)) else node_color <- NULL
-  if(!missing(node_shape)) node_shape <- as.character(substitute(node_shape)) else node_shape <- NULL
-  if(!missing(node_size)) {
+  if(missing(layout)) {
+    if (is_twomode(g)) layout <- "hierarchy" else layout <- "stress"
+  }
+  if(missing(node_color))  node_color <- NULL else node_color <- as.character(substitute(node_color))
+  if(missing(node_shape)) node_shape <- NULL else node_shape <- as.character(substitute(node_shape))
+  if(missing(node_size)) node_size <- NULL else {
     node_size <- as.character(substitute(node_size))
     if (grepl("[-]?[0-9]+[.]?[0-9]*", node_size)) node_size <- as.numeric(node_size)
-  } else node_size <- NULL
-  if(!missing(edge_color)) edge_color <- as.character(substitute(edge_color)) else edge_color <- NULL
-  if(!missing(node_group)) {
+  }
+  if(missing(edge_color)) edge_color <- NULL else edge_color <- as.character(substitute(edge_color))
+  if(missing(node_group)) node_group <- NULL else {
     node_group <- as.character(substitute(node_group))
     g <- activate(g, nodes) %>%
       mutate(node_group = reduce_categories(g, node_group))
-  } else node_group <- NULL
-  if(!missing(level)) level <- as.character(substitute(level)) else level <- NULL
+  }
+  if(missing(level)) level <- NULL else level <- as.character(substitute(level))
   # Add layout ----
-  g_layout <- .infer_layout(g, layout)
-  p <- .graph_layout(g, g_layout, labels, node_group, level, ...)
+  p <- .graph_layout(g, layout, labels, node_group, level, ...)
   # Add edges ----
   p <- .graph_edges(p, g, edge_color)
   # Add nodes ----
@@ -210,39 +211,40 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
 
 reduce_categories <- function(g, node_group) {
   limit <- toCondense <- NULL
-  if (length(unique(node_attribute(g, node_group))) > 4) {
+  if (sum(table(node_attribute(g, node_group)) <= 2) > 2 &
+      length(unique(node_attribute(g, node_group))) > 2) {
+    toCondense <- names(which(table(node_attribute(g, node_group)) <= 2))
+    out <- ifelse(node_attribute(g, node_group) %in% toCondense,
+                  "Other", node_attribute(g, node_group))
+    message("The number of groups was reduced since there were groups with less than 2 nodes.")
+  } else if (sum(table(node_attribute(g, node_group)) <= 2) == 2 &
+             length(unique(node_attribute(g, node_group))) > 2) {
     limit <- stats::reorder(node_attribute(g, node_group),
                             node_attribute(g, node_group),
                             FUN = length, decreasing = TRUE)
-    toCondense <- utils::head(levels(limit), 2)
-    out <- ifelse(node_attribute(g, node_group) %in% toCondense,
-                  node_attribute(g, node_group), "Other")
-    message("The number of groups was reduced, 
-          'node_group' argument can handle a maximum of 4 groups.")
-  } else if (sum(table(node_attribute(g, node_group)) == 1) > 1) {
-      toCondense <- names(which(table(node_attribute(g, node_group)) == 1))
-      out <- ifelse(node_attribute(g, node_group) %in% toCondense,
-                    "Other", node_attribute(g, node_group))
-      message("Groups with 1 node only were grouped together under 'Other'.")
-  } else if (sum(table(node_attribute(g, node_group)) == 1) &
+    if (sum(utils::tail(attr(limit, "scores"), 2))) {
+      toCondense <- utils::tail(levels(limit), 3)
+    } else {
+      toCondense <- utils::tail(levels(limit), 2)
+    }
+    out <- ifelse(node_attribute(g, node_group) %in% toCondense, "Other",
+                  node_attribute(g, node_group))
+    message("The number of groups was reduced since there were groups with less than 2 nodes.")
+  } else if (sum(table(node_attribute(g, node_group)) <= 2) == 1 &
              length(unique(node_attribute(g, node_group))) > 2) {
     limit <- stats::reorder(node_attribute(g, node_group),
                             node_attribute(g, node_group),
                             FUN = length, decreasing = TRUE)
     toCondense <- utils::tail(levels(limit), 2)
-    out <- ifelse(node_attribute(g, node_group) %in% toCondense,
-                  "Other", node_attribute(g, node_group))
-    message("The number of groups was reduced since there were groups with 1 node only.")
+    out <- ifelse(node_attribute(g, node_group) %in% toCondense, "Other",
+                  node_attribute(g, node_group))
+    message("The number of groups was reduced since there were groups with less than 2 nodes.")
+  } else if (sum(table(node_attribute(g, node_group)) <= 2) == 1 &
+             length(unique(node_attribute(g, node_group))) == 2) {
+    out <- as.factor(node_attribute(g, node_group))
+    message("Node groups with 2 nodes or less can be cause issues for plotting ...")
   } else out <- as.factor(node_attribute(g, node_group))
   out
-}
-
-.infer_layout <- function(g, g_layout){
-  if(is.null(g_layout)){
-      if (is_twomode(g)) g_layout <- "hierarchy" else 
-        g_layout <- "stress"
-  }
-  g_layout
 }
 
 .infer_nsize <- function(g, node_size){
