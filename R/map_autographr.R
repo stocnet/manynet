@@ -26,17 +26,17 @@
 #' @param node_color Node variable in quotation marks to be used for 
 #'   coloring the nodes. It is easiest if this is added as a node attribute to
 #'   the graph before plotting.
+#' @param node_group Node variable in quotation marks to be used for grouping
+#'   the nodes. It is easiest if this is added as a hull over
+#'   groups before plotting.
+#'   Group variables should have a minimum of 3 nodes,
+#'   if less, number groups will be reduced by
+#'   merging categories with lower counts into one called "other".
 #' @param edge_color Tie variable in quotation marks to be used for 
 #'   coloring the nodes. It is easiest if this is added as an edge or tie attribute 
 #'   to the graph before plotting.
-#' @param node_group Tie variable in quotation marks to be used for grouping
-#'   the nodes. It is easiest if this is added as a hull over
-#'   groups before plotting.
-#'   Group variables can have a maximum of 4 categories,
-#'   if more than 4 categories, number groups will be reduced by
-#'   merging categories with lower counts into one called "other".
 #' @param level For "multilevel" layout algorithm only,
-#'   please declare the level attribute.
+#'   please declare the level node attribute.
 #'   If NULL, function will look for attribute 'lvl'.
 #' @param ... Extra arguments to pass on to `autographr()`/`ggraph()`/`ggplot()`.
 #' @return A ggplot2::ggplot() object.
@@ -63,8 +63,8 @@ autographr <- function(.data,
                        node_color,
                        node_shape,
                        node_size,
-                       edge_color,
                        node_group,
+                       edge_color,
                        level,
                        ...) {
   name <- weight <- nodes <- label <- NULL # avoid CMD check notes
@@ -78,12 +78,12 @@ autographr <- function(.data,
     node_size <- as.character(substitute(node_size))
     if (grepl("[-]?[0-9]+[.]?[0-9]*", node_size)) node_size <- as.numeric(node_size)
   }
-  if(missing(edge_color)) edge_color <- NULL else edge_color <- as.character(substitute(edge_color))
   if(missing(node_group)) node_group <- NULL else {
     node_group <- as.character(substitute(node_group))
     g <- activate(g, nodes) %>%
       mutate(node_group = reduce_categories(g, node_group))
   }
+  if(missing(edge_color)) edge_color <- NULL else edge_color <- as.character(substitute(edge_color))
   if(missing(level)) level <- NULL else level <- as.character(substitute(level))
   # Add layout ----
   p <- .graph_layout(g, layout, labels, node_group, level, ...)
