@@ -12,13 +12,12 @@ library(learnr)
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-
 ## Aims
 
-The aim of this tutorial is to offer a very, very short introduction to R including:  
+The aim of this tutorial is to offer a very, very short introduction to R including:
 - objects in R  
 - functions in R  
-- wd and working with saved data  
+- data structures in R
 
 Note: This is not a course to learn R. 
 This is just a very, very brief introduction so that you have a basic introduction as we move forward.
@@ -49,7 +48,7 @@ and graphical techniques, and is highly extensible.
 R is available as Free Software under the terms of the Free Software Foundation's 
 GNU General Public License in source code form.
 
-This means that anybody can write extensions to R and make them publically 
+This means that anybody can write extensions to R and make them publicly 
 available, e.g. sna, igraph, statnet, RSiena, netsim, goldfish...
 
 ## The R environment (Console + Script) and getting help!
@@ -64,7 +63,7 @@ in an R script, like this one above the console, and then run it.
 There are basically three reasons for using a script: editing, repetition, sharing.
 
 You can run a command in RStudio by moving the cursor to the line you want to run
-and then press Cmd-Enter (Mac) or Ctrl-Enter (Windows, also Mac?).
+and then press Cmd-Enter (Mac) or Ctrl-Enter (Windows).
 You can try this with the following lines:
 
 ```{r printing-results, exercise = TRUE}
@@ -98,6 +97,8 @@ In R, we can write such logical statements as:
 
 ```{r equivalence, exercise = TRUE}
 "James"=="james" # Try also "James"!="james"
+# Other logical statements include: ">", ">=", "<=", "<".
+# 1 < 5 # Try also "1 <= 5"
 ```
 
 Why do we have to use two equals signs and quotation marks?
@@ -133,7 +134,7 @@ siblings*3
 We can also concatenate multiple values together using the function `c()`:
 
 ```{r concatenation, exercise = TRUE}
-lived <- c("New Zealand","UK","New Zealand","Germany","UK","Switzerland")
+lived <- c("New Zealand", "UK", "New Zealand", "Germany", "UK", "Switzerland")
 ```
 
 And recall them. Where was the fourth place I lived?
@@ -148,11 +149,10 @@ For example, consecutive numbers can be produced with:
 
 ```{r series, exercise = TRUE}
 teenageyrs <- 13:19
-teenageqrtrs <- seq(13, 19, by=0.25)
+teenageqrtrs <- seq(13, 19, by = 0.25)
 # We can recall every third value from this object using a repeating vector 
-teenageqrtrs[c(FALSE,FALSE,TRUE)]
-# While the following also works, it is best practice to write out the logic:
-# teenageqrtrs[c(F,F,T)]
+teenageqrtrs[c(FALSE, FALSE, TRUE)]
+# teenageqrtrs[c(F, F, T)] # Also works but it is best practice to write out the logic.
 ```
 
 Data can be aggregated in R into different formats, such as data frames and lists
@@ -161,12 +161,12 @@ Matrices are created by populating a given number of rows and columns with data
 Assigning, `<-`, doesn't print any output unless you wrap the line in parentheses:
 
 ```{r assign-print, exercise = TRUE}
-(my.matrix <- matrix(data=1:9, nrow=6, ncol=6))
+(my.matrix <- matrix(data = 1:9, nrow = 6, ncol = 6))
 ```
 
 If you look in the help file, 
 which you can access by putting a `?` before the command/function name,
-you will see matrix sets `byrow=F` by default.
+you will see matrix sets `byrow = F` by default.
 
 ```{r help, exercise = TRUE}
 ?matrix # Forgot the exact name of the function? Use ?? for search...
@@ -182,14 +182,14 @@ but we can populate it by row instead by adding an extra 'argument':
 We can index cells of a matrix using square brackets with a comma `[ , ]`
 
 ```{r index-cells, exercise = TRUE}
-my.2nd.matrix[2,2] 
+my.2nd.matrix[2, 2] 
 ```
 
 Left of the comma is the row, right of the comma is the column.
 We can even overwrite particular cells of the matrix by assigning a new value:
 
 ```{r cell-assign, exercise = TRUE}
-(my.2nd.matrix[my.2nd.matrix==6] <- 600)
+(my.2nd.matrix[my.2nd.matrix == 6] <- 600)
 ```
 
 Data frames are like matrices, but can hold different types of variables at once.
@@ -220,7 +220,7 @@ mydf$Surname
 This can be very handy when "subsetting" the data:
 
 ```{r df-subset, exercise = TRUE}
-james <- mydf[ mydf$Surname=="Hollway", ]
+james <- mydf[mydf$Surname == "Hollway", ]
 ```
 
 Note, however, that data frames must have variables of equal length.
@@ -240,8 +240,7 @@ mylist$Siblings <- c(1, NA) # Now you can add the others from above
 You can also add lists to a list:
 
 ```{r list-nest, exercise = TRUE}
-mylist$Lived <- list(c("New Zealand","UK","New Zealand","Germany","UK","Switzerland"),
-                     NA)
+mylist$Lived <- list(c("New Zealand", "UK", "New Zealand", "Germany", "UK", "Switzerland"), NA)
 ```
 
 Parentheses `()` are usually used for functions.
@@ -275,7 +274,8 @@ we can use pipe operators `%>%` or `|>` to chain consecutive functions,
 so that we avoid nesting multiple functions in the code.
 
 `%>%` or `|>` take the result of the code on the left of the pipe operator
-and uses it in whatever function is on the right or next line of the pipw operator.
+and uses it in whatever function is on the right or next line of the pipe operator.
+
 ```{r pipes, exercise = TRUE}
 mean <- c(1, 5, 8, 7, 6, 4, 22, 1, 0.9) %>%
   mean()
