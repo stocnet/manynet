@@ -31,3 +31,27 @@ thisRequiresBio <- function(pkgname) {
   BiocManager::install(pkgname)
   }}
 }
+
+# #' @export
+# available_tutes <- function(){
+#   mess <- "Available tutorials in `{manynet}`"
+#   if(requireNamespace("migraph", quietly = TRUE)) mess <- paste(mess, "and `{migraph}`")
+#   message(mess)
+#   learnr::available_tutorials(package = "manynet")
+#   if(requireNamespace("migraph", quietly = TRUE)) learnr::available_tutorials(package = "migraph")
+# }
+
+#' @export
+run_tute <- function(tute){
+  try(learnr::run_tutorial(tute, "manynet"), silent = TRUE)
+  try(learnr::run_tutorial(tute, "migraph"), silent = TRUE)
+}
+
+#' @export
+extract_tute <- function(tute){
+  try(pth <- file.path(path.package("manynet"), "tutorials", tute), silent = TRUE)
+  try(pth <- file.path(path.package("migraph"), "tutorials", tute), silent = TRUE)
+  knitr::purl(file.path(pth, list.files(pth, pattern = "*.Rmd")), documentation = 1)
+  file.edit(gsub(".Rmd", ".R", list.files(pth, pattern = "*.Rmd")))
+}
+
