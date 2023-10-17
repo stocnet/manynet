@@ -15,6 +15,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ## Aims
 
 The aim of this tutorial is to offer a very, very short introduction to R including:
+
 - objects in R  
 - functions in R  
 - data structures in R
@@ -24,7 +25,8 @@ This is just a very, very brief introduction so that you have a basic introducti
 If you would like to develop your skills further (not such a bad idea)
 there are lots of excellent online courses and resources available.
 
-Recommended elsewhere are the following:  
+Recommended elsewhere are the following:
+
 - https://cran.r-project.org/doc/manuals/R-intro.html#Introduction-and-preliminaries  
 - https://www.datacamp.com/community/open-courses/r-programming-with-swirl  
 - http://www.burns-stat.com/pages/Tutor/hints_R_begin.html  
