@@ -155,7 +155,7 @@ Other manipulations:
 \code{\link{from}},
 \code{\link{miss}},
 \code{\link{split}()},
-\code{\link{tidy}},
+\code{\link{tidy}()},
 \code{\link{transform}()}
 }
 \concept{manipulations}

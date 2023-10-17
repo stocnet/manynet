@@ -193,6 +193,6 @@ Other manipulations:
 \code{\link{miss}},
 \code{\link{reformat}},
 \code{\link{split}()},
-\code{\link{tidy}}
+\code{\link{tidy}()}
 }
 \concept{manipulations}
