@@ -22,7 +22,8 @@ Imports:
     ggraph,
     igraph (>= 1.5.0.1),
     network,
-    tidygraph
+    tidygraph,
+    knitr
 Suggests: 
     gganimate,
     methods,
@@ -32,7 +33,6 @@ Suggests:
     testthat,
     xml2,
     patchwork,
-    knitr,
     rmarkdown,
     learnr,
     grDevices,
@@ -41,7 +41,8 @@ Suggests:
     graphlayouts,
     ggforce,
     multiplex,
-    concaveman
+    concaveman,
+    migraph
 Enhances:
     Rgraphviz
 Authors@R: 
