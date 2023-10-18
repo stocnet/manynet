@@ -49,8 +49,11 @@ run_tute <- function(tute){
 
 #' @export
 extract_tute <- function(tute){
-  try(pth <- file.path(path.package("manynet"), "tutorials", tute), silent = TRUE)
-  try(pth <- file.path(path.package("migraph"), "tutorials", tute), silent = TRUE)
+  pth <- file.path(path.package("manynet"), "tutorials", tute)
+  if(!dir.exists(pth) && requireNamespace("migraph", quietly = TRUE)){
+    require("migraph", quietly = TRUE)
+    pth <- file.path(path.package("migraph"), "tutorials", tute)
+  } 
   knitr::purl(file.path(pth, list.files(pth, pattern = "*.Rmd")), documentation = 1)
   file.edit(gsub(".Rmd", ".R", list.files(pth, pattern = "*.Rmd")))
 }
