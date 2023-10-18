@@ -77,7 +77,7 @@ the `autographr()` function in `{manynet}` is a quick and easy way
 to obtain a clear first look of the network 
 for preliminary investigations and understanding of the network. Let's quickly visualise one of the `ison_` datasets included in the package.
 
-```{r manyneteg, exercise=TRUE}
+```{r manyneteg, exercise=TRUE, purl = FALSE}
 
 ```
   
@@ -101,7 +101,7 @@ Append `ggtitle()` to add a title.
 that can be appended to create more tailored visualisations 
 of the network.
 
-```{r manynetexample2, exercise=TRUE}
+```{r manynetexample2, exercise=TRUE, purl = FALSE}
 
 ```
   
@@ -116,7 +116,7 @@ autographr(ison_adolescents,
 graphs together, e.g. side-by-side or above one another.
 The syntax is quite straight forward and is used throughout these vignettes.
 
-```{r patchwork, exercise=TRUE}
+```{r patchwork, exercise=TRUE, purl = FALSE}
 
 ```
 
@@ -139,7 +139,7 @@ ison_adolescents %>%
 
 Alternatively, group labels are added automatically when using the 'node_group' argument to highlight groups in a network.
 
-```{r group, exercise = TRUE}
+```{r group, exercise = TRUE, purl = FALSE}
 
 ```
 
@@ -154,7 +154,7 @@ after the main plot has been constructed,
 using `guides()` to add in the legends,
 and `labs()` for giving those legends particular titles.
 
-```{r discipline, exercise = TRUE}
+```{r discipline, exercise = TRUE, purl = FALSE}
 
 ```
 
@@ -165,7 +165,7 @@ ison_networkers %>%
   labs(color = "Discipline")
 ```
 
-```{r discq}
+```{r discq, purl = FALSE}
 question("What discipline is Charles Kadushin in according to this graph?",
          answer("Anthropology"),
          answer("Mathematics/Statistics"),
@@ -179,7 +179,7 @@ question("What discipline is Charles Kadushin in according to this graph?",
 A range of graph layouts are available across the `{igraph}`, `{graphlayouts}`, and `{manynet}` packages 
 that can be used together with `autographr()`.
 
-```{r layoutseg, exercise=TRUE}
+```{r layoutseg, exercise=TRUE, purl = FALSE}
 
 ```
 
@@ -196,7 +196,7 @@ it's easy to extend or alter aesthetic aspects.
 Here let's try and change the colors
 assigned to the different regions in the `mpn_elite_mex` dataset.
 
-```{r colorch, exercise=TRUE}
+```{r colorch, exercise=TRUE, purl = FALSE}
 
 ```
 
@@ -231,7 +231,7 @@ As with `{ggplot2}`, `{ggraph}` users are expected to build
 a particular plot from the ground up,
 adding explicit layers to visualise the nodes and edges.
 
-```{r ggrapheg, exercise=TRUE}
+```{r ggrapheg, exercise=TRUE, purl = FALSE}
 
 ```
 
