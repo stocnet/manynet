@@ -1,3 +1,18 @@
+# manynet 0.2.5
+
+2023-10-11
+
+## Package
+
+- Added 'tutorial0' for those less comfortable with R
+- Added `run_tute()` helper for quicker access to `{manynet}` and `{migraph}` tutorials
+- Added `extract_tute()` for extracting the main code examples from `{manynet}` and `{migraph}` tutorials
+- Added `purl = FALSE` to tutorial chunks that are not needed for extraction (thanks @JaelTan)
+
+## Mapping
+
+- Fixed remaining issues with `node_group` and updated documentation
+
 # manynet 0.2.4
 
 2023-10-11

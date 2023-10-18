@@ -259,8 +259,8 @@ autographr(ison_adolescents) / autographr(ison_algebra)</code></pre>
 as often the colours are pretty self-explanatory, for example in the
 following figure.</p>
 <p><img src="visualisation_files/figure-html/maxbet-1.png" width="624" /></p>
-<p>Alternatively, group labels are added to visualisation when using the
-‘node_group’ argument to hull over groups in a network.</p>
+<p>Alternatively, group labels are added automatically when using the
+‘node_group’ argument to highlight groups in a network.</p>
 <div class="tutorial-exercise" data-label="group" data-completion="1"
 data-diagnostics="1" data-startover="1" data-lines="0"
 data-pipe="|&gt;">
@@ -487,11 +487,11 @@ learnr:::store_exercise_cache(structure(list(label = "manyneteg", global_setup =
 "library(manynet)", "library(migraph)", "library(patchwork)", 
 "knitr::opts_chunk$set(echo = FALSE)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "manyneteg", 
-    code = "", opts = list(label = "\"manyneteg\"", exercise = "TRUE"), 
-    engine = "r")), code_check = NULL, error_check = NULL, check = NULL, 
-    solution = structure(c("library(manynet)", "autographr(ison_brandes)"
-    ), chunk_opts = list(label = "manyneteg-solution")), tests = NULL, 
-    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+    code = "", opts = list(label = "\"manyneteg\"", exercise = "TRUE", 
+        purl = "FALSE"), engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = structure(c("library(manynet)", 
+    "autographr(ison_brandes)"), chunk_opts = list(label = "manyneteg-solution")), 
+    tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
         tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
         comment = NA, highlight = FALSE, size = "normalsize", 
         background = "#F7F7F7", strip.white = TRUE, cache = 0, 
@@ -506,9 +506,9 @@ learnr:::store_exercise_cache(structure(list(label = "manyneteg", global_setup =
         fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
         aniopts = "controls,loop", warning = TRUE, error = FALSE, 
         message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
-        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        engine = "r", split = FALSE, include = TRUE, purl = FALSE, 
         max.print = 1000, label = "manyneteg", exercise = TRUE, 
-        code = "", out.width.px = 624, out.height.px = 384, params.src = "manyneteg, exercise=TRUE", 
+        code = "", out.width.px = 624, out.height.px = 384, params.src = "manyneteg, exercise=TRUE, purl = FALSE", 
         fig.num = 0L, exercise.df_print = "paged", exercise.checker = "NULL"), 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
@@ -527,11 +527,11 @@ learnr:::store_exercise_cache(structure(list(label = "manynetexample2", global_s
 "library(manynet)", "library(migraph)", "library(patchwork)", 
 "knitr::opts_chunk$set(echo = FALSE)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "manynetexample2", 
-    code = "", opts = list(label = "\"manynetexample2\"", exercise = "TRUE"), 
-    engine = "r")), code_check = NULL, error_check = NULL, check = NULL, 
-    solution = structure(c("autographr(ison_adolescents,", "           labels = TRUE,", 
-    "           node_size = 1.5) + ", "  ggtitle(\"Visualisation\")"
-    ), chunk_opts = list(label = "manynetexample2-solution")), 
+    code = "", opts = list(label = "\"manynetexample2\"", exercise = "TRUE", 
+        purl = "FALSE"), engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = structure(c("autographr(ison_adolescents,", 
+    "           labels = TRUE,", "           node_size = 1.5) + ", 
+    "  ggtitle(\"Visualisation\")"), chunk_opts = list(label = "manynetexample2-solution")), 
     tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
         tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
         comment = NA, highlight = FALSE, size = "normalsize", 
@@ -547,9 +547,9 @@ learnr:::store_exercise_cache(structure(list(label = "manynetexample2", global_s
         fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
         aniopts = "controls,loop", warning = TRUE, error = FALSE, 
         message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
-        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        engine = "r", split = FALSE, include = TRUE, purl = FALSE, 
         max.print = 1000, label = "manynetexample2", exercise = TRUE, 
-        code = "", out.width.px = 624, out.height.px = 384, params.src = "manynetexample2, exercise=TRUE", 
+        code = "", out.width.px = 624, out.height.px = 384, params.src = "manynetexample2, exercise=TRUE, purl = FALSE", 
         fig.num = 0L, exercise.df_print = "paged", exercise.checker = "NULL"), 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
@@ -568,9 +568,9 @@ learnr:::store_exercise_cache(structure(list(label = "patchwork", global_setup =
 "library(manynet)", "library(migraph)", "library(patchwork)", 
 "knitr::opts_chunk$set(echo = FALSE)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "patchwork", 
-    code = "", opts = list(label = "\"patchwork\"", exercise = "TRUE"), 
-    engine = "r")), code_check = NULL, error_check = NULL, check = NULL, 
-    solution = structure(c("autographr(ison_adolescents) + autographr(ison_algebra)", 
+    code = "", opts = list(label = "\"patchwork\"", exercise = "TRUE", 
+        purl = "FALSE"), engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = structure(c("autographr(ison_adolescents) + autographr(ison_algebra)", 
     "autographr(ison_adolescents) / autographr(ison_algebra)"
     ), chunk_opts = list(label = "patchwork-solution")), tests = NULL, 
     options = list(eval = FALSE, echo = TRUE, results = "markup", 
@@ -588,9 +588,9 @@ learnr:::store_exercise_cache(structure(list(label = "patchwork", global_setup =
         fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
         aniopts = "controls,loop", warning = TRUE, error = FALSE, 
         message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
-        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        engine = "r", split = FALSE, include = TRUE, purl = FALSE, 
         max.print = 1000, label = "patchwork", exercise = TRUE, 
-        code = "", out.width.px = 624, out.height.px = 384, params.src = "patchwork, exercise=TRUE", 
+        code = "", out.width.px = 624, out.height.px = 384, params.src = "patchwork, exercise=TRUE, purl = FALSE", 
         fig.num = 0L, exercise.df_print = "paged", exercise.checker = "NULL"), 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
@@ -609,18 +609,18 @@ learnr:::store_exercise_cache(structure(list(label = "group", global_setup = str
 "library(manynet)", "library(migraph)", "library(patchwork)", 
 "knitr::opts_chunk$set(echo = FALSE)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "group", 
-    code = "", opts = list(label = "\"group\"", exercise = "TRUE"), 
-    engine = "r")), code_check = NULL, error_check = NULL, check = NULL, 
-    solution = structure(c("ison_networkers %>% ", "  autographr(node_group = \"Discipline\")"
-    ), chunk_opts = list(label = "group-solution")), tests = NULL, 
-    options = list(eval = FALSE, echo = TRUE, results = "markup", 
-        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
-        comment = NA, highlight = FALSE, size = "normalsize", 
-        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
-        cache.path = "visualisation_cache/html/", cache.vars = NULL, 
-        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
-        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
-        fig.align = "default", fig.path = "visualisation_files/figure-html/", 
+    code = "", opts = list(label = "\"group\"", exercise = "TRUE", 
+        purl = "FALSE"), engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = structure(c("ison_networkers %>% ", 
+    "  autographr(node_group = \"Discipline\")"), chunk_opts = list(
+        label = "group-solution")), tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "visualisation_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "visualisation_files/figure-html/", 
         dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
         fig.width = 6.5, fig.height = 4, fig.env = "figure", 
         fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
@@ -628,9 +628,9 @@ learnr:::store_exercise_cache(structure(list(label = "group", global_setup = str
         fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
         aniopts = "controls,loop", warning = TRUE, error = FALSE, 
         message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
-        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        engine = "r", split = FALSE, include = TRUE, purl = FALSE, 
         max.print = 1000, label = "group", exercise = TRUE, code = "", 
-        out.width.px = 624, out.height.px = 384, params.src = "group, exercise = TRUE", 
+        out.width.px = 624, out.height.px = 384, params.src = "group, exercise = TRUE, purl = FALSE", 
         fig.num = 0L, exercise.df_print = "paged", exercise.checker = "NULL"), 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
@@ -649,12 +649,12 @@ learnr:::store_exercise_cache(structure(list(label = "discipline", global_setup 
 "library(manynet)", "library(migraph)", "library(patchwork)", 
 "knitr::opts_chunk$set(echo = FALSE)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "discipline", 
-    code = "", opts = list(label = "\"discipline\"", exercise = "TRUE"), 
-    engine = "r")), code_check = NULL, error_check = NULL, check = NULL, 
-    solution = structure(c("ison_networkers %>% ", "  autographr(node_color = \"Discipline\") +", 
-    "  guides(color = \"legend\") + ", "  labs(color = \"Discipline\")"
-    ), chunk_opts = list(label = "discipline-solution")), tests = NULL, 
-    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+    code = "", opts = list(label = "\"discipline\"", exercise = "TRUE", 
+        purl = "FALSE"), engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = structure(c("ison_networkers %>% ", 
+    "  autographr(node_color = \"Discipline\") +", "  guides(color = \"legend\") + ", 
+    "  labs(color = \"Discipline\")"), chunk_opts = list(label = "discipline-solution")), 
+    tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
         tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
         comment = NA, highlight = FALSE, size = "normalsize", 
         background = "#F7F7F7", strip.white = TRUE, cache = 0, 
@@ -669,9 +669,9 @@ learnr:::store_exercise_cache(structure(list(label = "discipline", global_setup 
         fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
         aniopts = "controls,loop", warning = TRUE, error = FALSE, 
         message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
-        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        engine = "r", split = FALSE, include = TRUE, purl = FALSE, 
         max.print = 1000, label = "discipline", exercise = TRUE, 
-        code = "", out.width.px = 624, out.height.px = 384, params.src = "discipline, exercise = TRUE", 
+        code = "", out.width.px = 624, out.height.px = 384, params.src = "discipline, exercise = TRUE, purl = FALSE", 
         fig.num = 0L, exercise.df_print = "paged", exercise.checker = "NULL"), 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
@@ -679,17 +679,17 @@ learnr:::store_exercise_cache(structure(list(label = "discipline", global_setup 
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "discq", question = structure("What discipline is Charles Kadushin in according to this graph?", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_6e594dc", 
+"character")), answers = list(structure(list(id = "lnr_ans_fa7aac2", 
     option = "Anthropology", value = "Anthropology", label = structure("Anthropology", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_d418ddf", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_c63ee30", 
     option = "Mathematics/Statistics", value = "Mathematics/Statistics", 
     label = structure("Mathematics/Statistics", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_374e5de", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_7231505", 
     option = "Other", value = "Other", label = structure("Other", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_52c558b", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_3ef8a20", 
     option = "Sociology", value = "Sociology", label = structure("Sociology", html = TRUE, class = c("html", 
     "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
 "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
@@ -699,7 +699,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "discq-answer", question = "discq"), loading = NULL, 
-    random_answer_order = TRUE, allow_retry = TRUE, seed = 986885507.540446, 
+    random_answer_order = TRUE, allow_retry = TRUE, seed = 1724232798.69709, 
     options = list()), class = c("learnr_radio", "tutorial_question"
 )), session = session)
 </script>
@@ -717,9 +717,9 @@ learnr:::store_exercise_cache(structure(list(label = "layoutseg", global_setup =
 "library(manynet)", "library(migraph)", "library(patchwork)", 
 "knitr::opts_chunk$set(echo = FALSE)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "layoutseg", 
-    code = "", opts = list(label = "\"layoutseg\"", exercise = "TRUE"), 
-    engine = "r")), code_check = NULL, error_check = NULL, check = NULL, 
-    solution = structure(c("(autographr(ison_southern_women, layout = \"bipartite\") + ggtitle(\"bipartite\") |", 
+    code = "", opts = list(label = "\"layoutseg\"", exercise = "TRUE", 
+        purl = "FALSE"), engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = structure(c("(autographr(ison_southern_women, layout = \"bipartite\") + ggtitle(\"bipartite\") |", 
     "autographr(ison_southern_women, layout = \"kk\") + ggtitle(\"kk\"))"
     ), chunk_opts = list(label = "layoutseg-solution")), tests = NULL, 
     options = list(eval = FALSE, echo = TRUE, results = "markup", 
@@ -737,9 +737,9 @@ learnr:::store_exercise_cache(structure(list(label = "layoutseg", global_setup =
         fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
         aniopts = "controls,loop", warning = TRUE, error = FALSE, 
         message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
-        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        engine = "r", split = FALSE, include = TRUE, purl = FALSE, 
         max.print = 1000, label = "layoutseg", exercise = TRUE, 
-        code = "", out.width.px = 624, out.height.px = 384, params.src = "layoutseg, exercise=TRUE", 
+        code = "", out.width.px = 624, out.height.px = 384, params.src = "layoutseg, exercise=TRUE, purl = FALSE", 
         fig.num = 0L, exercise.df_print = "paged", exercise.checker = "NULL"), 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
@@ -758,17 +758,18 @@ learnr:::store_exercise_cache(structure(list(label = "colorch", global_setup = s
 "library(manynet)", "library(migraph)", "library(patchwork)", 
 "knitr::opts_chunk$set(echo = FALSE)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "colorch", 
-    code = "", opts = list(label = "\"colorch\"", exercise = "TRUE"), 
-    engine = "r")), code_check = NULL, error_check = NULL, check = NULL, 
-    solution = structure(c("autographr(mpn_elite_mex,", "           node_color = \"region\")", 
+    code = "", opts = list(label = "\"colorch\"", exercise = "TRUE", 
+        purl = "FALSE"), engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = structure(c("autographr(mpn_elite_mex,", 
+    "           node_color = \"region\")", "", "autographr(mpn_elite_mex,", 
+    "           node_color = \"region\") +", "  ggplot2::scale_colour_hue()", 
     "", "autographr(mpn_elite_mex,", "           node_color = \"region\") +", 
-    "  ggplot2::scale_colour_hue()", "", "autographr(mpn_elite_mex,", 
-    "           node_color = \"region\") +", "  ggplot2::scale_colour_grey()", 
-    "", "autographr(mpn_elite_mex,", "           node_color = \"region\") +", 
-    "  ggplot2::scale_colour_manual(", "    values = c(\"1\" = \"red\",", 
-    "               \"3\" = \"blue\",", "               \"2\" = \"green\")) +", 
-    "  labs(color = \"Color\")"), chunk_opts = list(label = "colorch-solution")), 
-    tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
+    "  ggplot2::scale_colour_grey()", "", "autographr(mpn_elite_mex,", 
+    "           node_color = \"region\") +", "  ggplot2::scale_colour_manual(", 
+    "    values = c(\"1\" = \"red\",", "               \"3\" = \"blue\",", 
+    "               \"2\" = \"green\")) +", "  labs(color = \"Color\")"
+    ), chunk_opts = list(label = "colorch-solution")), tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
         tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
         comment = NA, highlight = FALSE, size = "normalsize", 
         background = "#F7F7F7", strip.white = TRUE, cache = 0, 
@@ -783,9 +784,9 @@ learnr:::store_exercise_cache(structure(list(label = "colorch", global_setup = s
         fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
         aniopts = "controls,loop", warning = TRUE, error = FALSE, 
         message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
-        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        engine = "r", split = FALSE, include = TRUE, purl = FALSE, 
         max.print = 1000, label = "colorch", exercise = TRUE, 
-        code = "", out.width.px = 624, out.height.px = 384, params.src = "colorch, exercise=TRUE", 
+        code = "", out.width.px = 624, out.height.px = 384, params.src = "colorch, exercise=TRUE, purl = FALSE", 
         fig.num = 0L, exercise.df_print = "paged", exercise.checker = "NULL"), 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
@@ -804,9 +805,9 @@ learnr:::store_exercise_cache(structure(list(label = "ggrapheg", global_setup = 
 "library(manynet)", "library(migraph)", "library(patchwork)", 
 "knitr::opts_chunk$set(echo = FALSE)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "ggrapheg", 
-    code = "", opts = list(label = "\"ggrapheg\"", exercise = "TRUE"), 
-    engine = "r")), code_check = NULL, error_check = NULL, check = NULL, 
-    solution = structure(c("library(ggraph)", "ggraph(mpn_elite_mex, layout = \"fr\") + ", 
+    code = "", opts = list(label = "\"ggrapheg\"", exercise = "TRUE", 
+        purl = "FALSE"), engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = structure(c("library(ggraph)", "ggraph(mpn_elite_mex, layout = \"fr\") + ", 
     "  geom_edge_link(edge_colour = \"dark grey\", ", "                  arrow = arrow(angle = 45,", 
     "                                length = unit(2, \"mm\"),", 
     "                                type = \"closed\"),", "                  end_cap = circle(3, \"mm\")) +", 
@@ -829,9 +830,9 @@ learnr:::store_exercise_cache(structure(list(label = "ggrapheg", global_setup = 
         fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
         aniopts = "controls,loop", warning = TRUE, error = FALSE, 
         message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
-        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        engine = "r", split = FALSE, include = TRUE, purl = FALSE, 
         max.print = 1000, label = "ggrapheg", exercise = TRUE, 
-        code = "", out.width.px = 624, out.height.px = 384, params.src = "ggrapheg, exercise=TRUE", 
+        code = "", out.width.px = 624, out.height.px = 384, params.src = "ggrapheg, exercise=TRUE, purl = FALSE", 
         fig.num = 0L, exercise.df_print = "paged", exercise.checker = "NULL"), 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
@@ -844,7 +845,7 @@ learnr:::store_exercise_cache(structure(list(label = "ggrapheg", global_setup = 
 <!--/html_preserve-->
 <!--html_preserve-->
 <script type="application/shiny-prerendered" data-context="execution_dependencies">
-{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93]}},"value":[{"type":"character","attributes":{},"value":["backports","base","bslib","cachem","checkmate","cli","coda","codetools","colorspace","commonmark","compiler","datasets","digest","dplyr","ellipsis","evaluate","fansi","farver","fastmap","fontawesome","furrr","future","generics","ggforce","ggplot2","ggraph","ggrepel","globals","glue","graphics","graphlayouts","grDevices","grid","gridExtra","gtable","htmltools","htmlwidgets","httpuv","igraph","jquerylib","jsonlite","knitr","labeling","later","lattice","learnr","lifecycle","listenv","magrittr","manynet","markdown","MASS","methods","migraph","mime","munsell","network","parallel","parallelly","patchwork","pillar","pkgconfig","polyclip","promises","purrr","R6","RColorBrewer","Rcpp","rlang","rmarkdown","rprojroot","rstudioapi","sass","scales","shiny","sna","statnet.common","stats","tibble","tidygraph","tidyr","tidyselect","tools","tweenr","utf8","utils","vctrs","viridis","viridisLite","withr","xfun","xtable","yaml"]},{"type":"character","attributes":{},"value":["1.4.1","4.2.2","0.5.1","1.0.8","2.2.0","3.6.1","0.19-4","0.2-19","2.1-0","1.9.0","4.2.2","4.2.2","0.6.33","1.1.3","0.3.2","0.22","1.0.4","2.1.1","1.1.1","0.5.2","0.3.1","1.33.0","0.1.3","0.4.1","3.4.3","2.1.0","0.9.3","0.16.2","1.6.2","4.2.2","1.0.1","4.2.2","4.2.2","2.3","0.3.4","0.5.6","1.6.2","1.6.11","1.5.1","0.1.4","1.8.7","1.44","0.4.3","1.3.1","0.21-9","0.11.5","1.0.3","0.9.0","2.0.3","0.2.3","1.9","7.3-60","4.2.2","1.1.0","0.12","0.5.0","1.18.1","4.2.2","1.36.0","1.1.3","1.9.0","2.0.3","1.10-6","1.2.1","1.0.2","2.5.1","1.1-3","1.0.11","1.1.1","2.25","2.0.3","0.15.0","0.4.7","1.2.1","1.7.5","2.7-1","4.9.0","4.2.2","3.2.1","1.2.3","1.3.0","1.2.0","4.2.2","2.0.2","1.2.3","4.2.2","0.6.3","0.6.4","0.4.2","2.5.1","0.40","1.8-4","2.3.7"]}]}]}
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93]}},"value":[{"type":"character","attributes":{},"value":["backports","base","bslib","cachem","checkmate","cli","coda","codetools","colorspace","commonmark","compiler","datasets","digest","dplyr","ellipsis","evaluate","fansi","farver","fastmap","fontawesome","furrr","future","generics","ggforce","ggplot2","ggraph","ggrepel","globals","glue","graphics","graphlayouts","grDevices","grid","gridExtra","gtable","htmltools","htmlwidgets","httpuv","igraph","jquerylib","jsonlite","knitr","labeling","later","lattice","learnr","lifecycle","listenv","magrittr","manynet","markdown","MASS","methods","migraph","mime","munsell","network","parallel","parallelly","patchwork","pillar","pkgconfig","polyclip","promises","purrr","R6","RColorBrewer","Rcpp","rlang","rmarkdown","rprojroot","rstudioapi","sass","scales","shiny","sna","statnet.common","stats","tibble","tidygraph","tidyr","tidyselect","tools","tweenr","utf8","utils","vctrs","viridis","viridisLite","withr","xfun","xtable","yaml"]},{"type":"character","attributes":{},"value":["1.4.1","4.3.1","0.5.1","1.0.8","2.2.0","3.6.1","0.19-4","0.2-19","2.1-0","1.9.0","4.3.1","4.3.1","0.6.33","1.1.3","0.3.2","0.22","1.0.5","2.1.1","1.1.1","0.5.2","0.3.1","1.33.0","0.1.3","0.4.1","3.4.4","2.1.0","0.9.4","0.16.2","1.6.2","4.3.1","1.0.1","4.3.1","4.3.1","2.3","0.3.4","0.5.6.1","1.6.2","1.6.11","1.5.1","0.1.4","1.8.7","1.44","0.4.3","1.3.1","0.21-9","0.11.5","1.0.3","0.9.0","2.0.3","0.2.4","1.10","7.3-60","4.3.1","1.1.2","0.12","0.5.0","1.18.1","4.3.1","1.36.0","1.1.3","1.9.0","2.0.3","1.10-6","1.2.1","1.0.2","2.5.1","1.1-3","1.0.11","1.1.1","2.25","2.0.3","0.15.0","0.4.7","1.2.1","1.7.5.1","2.7-1","4.9.0","4.3.1","3.2.1","1.2.3","1.3.0","1.2.0","4.3.1","2.0.2","1.2.3","4.3.1","0.6.4","0.6.4","0.4.2","2.5.1","0.40","1.8-4","2.3.7"]}]}]}
 </script>
 <!--/html_preserve-->
 </div>

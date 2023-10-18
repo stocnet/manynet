@@ -1,0 +1,315 @@
+---
+title: "Very short introduction to R"
+author: "by James Hollway"
+output: 
+  learnr::tutorial:
+    theme: journal
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Aims
+
+The aim of this tutorial is to offer a very, very short introduction to R including:
+
+- objects in R  
+- functions in R  
+- data structures in R
+
+Note: This is not a course to learn R. 
+This is just a very, very brief introduction so that you have a basic introduction as we move forward.
+If you would like to develop your skills further (not such a bad idea)
+there are lots of excellent online courses and resources available.
+
+Recommended elsewhere are the following:
+
+- https://cran.r-project.org/doc/manuals/R-intro.html#Introduction-and-preliminaries  
+- https://www.datacamp.com/community/open-courses/r-programming-with-swirl  
+- http://www.burns-stat.com/pages/Tutor/hints_R_begin.html  
+- http://data.princeton.edu/R/gettingStarted.html  
+- http://www.ats.ucla.edu/stat/R/sk/  
+- http://www.statmethods.net/  
+
+These sites will help you learn or refresh your memory.
+But you can also expect to return to Google often as you go and type "R ..." as a query.
+That's fine, and totally normal.
+You will find as you do so that answers to most questions are available
+on fora pages such as StackOverflow and CrossValidated.
+
+## What is R?
+
+From the project web-site http://www.r-project.org/:
+R is a language and environment for statistical computing and graphics. 
+R provides a wide variety of statistical (linear and nonlinear modelling, 
+classical statistical tests, time-series analysis, classification, ...) 
+and graphical techniques, and is highly extensible. 
+R is available as Free Software under the terms of the Free Software Foundation's 
+GNU General Public License in source code form.
+
+This means that anybody can write extensions to R and make them publicly 
+available, e.g. sna, igraph, statnet, RSiena, netsim, goldfish...
+
+## The R environment (Console + Script) and getting help!
+
+Let's take a look around RStudio.
+There should be 4 panes open in the window.
+There should be a console: this is where RStudio runs the commands you send it in R.
+By default, the console is beneath the window where you are reading this.
+
+You can write these commands into the console directly, but we usually write code
+in an R script, like this one above the console, and then run it.
+There are basically three reasons for using a script: editing, repetition, sharing.
+
+You can run a command in RStudio by moving the cursor to the line you want to run
+and then press Cmd-Enter (Mac) or Ctrl-Enter (Windows).
+You can try this with the following lines:
+
+```{r printing-results, exercise = TRUE}
+1+5 # This will print the result
+105*99+6 # An asterisk is used for multiplication
+# Note that R won't execute anything after a comment (#)
+# If you try to run a commented out line, it will continue until it finds the next command.
+# 1/5 # Remove the hash symbol at the start of this line to run it.
+# You can remove the hash symbol manually or toggle it on/off using Cmd-Shift-C/Ctrl-Shift-C.
+```
+
+Ok, wow, R is a calculator! But it is also much, much more than that.
+Try the following command
+
+```{r hello-world, exercise = TRUE}
+print("Hello World")
+```
+
+You've told R to print a string of text (identified by the quotation marks) to the console.
+Much more flexible than a high school calculator!
+
+Note that R is case-sensitive, 
+i.e. Print("Hello World") does not work (Capital P). Try it!
+
+```{r Print-hello-world, exercise = TRUE}
+Print("Hello World")
+```
+
+So Hollway is not the same as james or JAMES (and not the same as Holloway...). 
+In R, we can write such logical statements as:
+
+```{r equivalence, exercise = TRUE}
+"James"=="james" # Try also "James"!="james"
+# Other logical statements include: ">", ">=", "<=", "<".
+# 1 < 5 # Try also "1 <= 5"
+```
+
+Why do we have to use two equals signs and quotation marks?
+Quotation marks tells R you are referring to a string of text and not a named object.
+An object is a placeholder R uses for one or more numbers, strings, or other things.
+You can assign such things to an object using one `=` sign, 
+but it's better to use `<-` to avoid mistakes
+
+```{r assignment, exercise = TRUE}
+surname <- "Hollway"
+y.chromosome <- T # or TRUE
+siblings <- 1
+age <- NA # This is used for missing information
+# Note that these objects then appear in the environment pane on the top right
+```
+
+You can then recover this information by simply calling these objects:
+
+```{r calling, exercise = TRUE}
+surname
+y.chromosome
+siblings
+age
+```
+
+And even operate on them:
+
+```{r mult, exercise = TRUE}
+siblings*3
+# Try multiplying the other objects by 3
+```
+
+We can also concatenate multiple values together using the function `c()`:
+
+```{r concatenation, exercise = TRUE}
+lived <- c("New Zealand", "UK", "New Zealand", "Germany", "UK", "Switzerland")
+```
+
+And recall them. Where was the fourth place I lived?
+We use square brackets `[ ]` for indexing:
+
+```{r indexing, exercise = TRUE}
+lived[4]
+```
+
+There are several shortcuts for making a series of values.
+For example, consecutive numbers can be produced with:
+
+```{r series, exercise = TRUE}
+teenageyrs <- 13:19
+teenageqrtrs <- seq(13, 19, by = 0.25)
+# We can recall every third value from this object using a repeating vector 
+teenageqrtrs[c(FALSE, FALSE, TRUE)]
+# teenageqrtrs[c(F, F, T)] # Also works but it is best practice to write out the logic.
+```
+
+Data can be aggregated in R into different formats, such as data frames and lists
+but the most common one used for network research is the matrix format.
+Matrices are created by populating a given number of rows and columns with data
+Assigning, `<-`, doesn't print any output unless you wrap the line in parentheses:
+
+```{r assign-print, exercise = TRUE}
+(my.matrix <- matrix(data = 1:9, nrow = 6, ncol = 6))
+```
+
+If you look in the help file, 
+which you can access by putting a `?` before the command/function name,
+you will see matrix sets `byrow = F` by default.
+
+```{r help, exercise = TRUE}
+?matrix # Forgot the exact name of the function? Use ?? for search...
+```
+
+This means that it populates the matrix with the data by column by default,
+but we can populate it by row instead by adding an extra 'argument': 
+
+```{r byrow, exercise = TRUE}
+(my.2nd.matrix <- matrix(1:9, 6, 6, byrow = T))
+```
+
+We can index cells of a matrix using square brackets with a comma `[ , ]`
+
+```{r index-cells, exercise = TRUE}
+my.2nd.matrix[2, 2] 
+```
+
+Left of the comma is the row, right of the comma is the column.
+We can even overwrite particular cells of the matrix by assigning a new value:
+
+```{r cell-assign, exercise = TRUE}
+(my.2nd.matrix[my.2nd.matrix == 6] <- 600)
+```
+
+Data frames are like matrices, but can hold different types of variables at once.
+Replace the missing data (the NAs) with your details:
+
+```{r df-own-values, exercise = TRUE}
+mydf <- data.frame(Surname = c("Hollway", NA),
+                   Born = c("New Zealand", NA),
+                   Siblings = c(1, NA))
+```
+
+You can even add new variables by simply writing a new variable name:
+
+```{r df-add-variable, exercise =  TRUE}
+mydf$Dept <- c("IRPS", NA)
+```
+
+Can you call the data frame and print to the console?
+
+We can recall an observation (row) or variable (column) of the data frame
+in the same way that we indexed the matrix above, e.g. `mydf[2,2]`,
+but we can also call a named variable using the `$` sign:
+
+```{r df-call-var, exercise = TRUE}
+mydf$Surname
+```
+
+This can be very handy when "subsetting" the data:
+
+```{r df-subset, exercise = TRUE}
+james <- mydf[mydf$Surname == "Hollway", ]
+```
+
+Note, however, that data frames must have variables of equal length.
+Lists are a more flexible generalisation of data frames.
+
+```{r list-init, exercise = TRUE}
+mylist <- list() # Here we are initialising an empty list
+```
+
+List items can also be named, like data frame variables, but don't have to be:
+
+```{r list-names, exercise = TRUE}
+mylist$Surname <- c("Hollway", NA)
+mylist$Siblings <- c(1, NA) # Now you can add the others from above
+```
+
+You can also add lists to a list:
+
+```{r list-nest, exercise = TRUE}
+mylist$Lived <- list(c("New Zealand", "UK", "New Zealand", "Germany", "UK", "Switzerland"), NA)
+```
+
+Parentheses `()` are usually used for functions.
+Functions are sets of actions or algorithms that are applied,
+often to values or objects.
+
+```{r functions, exercise = TRUE}
+exp(0.09855)
+mean(c(1, 5, 8, 7, 6, 4, 22, 1, 0.9))
+```
+
+Indeed, every function must be followed by (), even if empty
+
+```{r functions-empty, exercise = TRUE}
+ls() # This tells you what objects are in your environment
+getwd() # This tells you the directory on your computer R is working in/on
+list.files() # This tells you what files are in your working directory 
+setwd("...") # You can set the working directory with this function 
+# (or under session in RStudio)
+```
+
+Finally, functions such as the following allow you to write an object 
+out of R to somewhere on your harddrive that you specify:
+
+```{r function-write, exercise = TRUE}
+write.csv(mydf, file = "~/Desktop/jamesdf.csv")
+```
+
+When working with multiple functions on the same object,
+we can use pipe operators `%>%` or `|>` to chain consecutive functions,
+so that we avoid nesting multiple functions in the code.
+
+`%>%` or `|>` take the result of the code on the left of the pipe operator
+and uses it in whatever function is on the right or next line of the pipe operator.
+
+```{r pipes, exercise = TRUE}
+mean <- c(1, 5, 8, 7, 6, 4, 22, 1, 0.9) %>%
+  mean()
+# this applies the mean() function to the vector c(1, 5, 8, 7, 6, 4, 22, 1, 0.9)
+mean
+
+mean <- c(1, 5, 8, 7, 6, 4, 22, 1, 0.9) |>
+  mean()
+mean
+# both pipe operators give the same result 
+```
+
+Note that `|>`is now the native pipe operator,
+and will be available if you have an version of R later than v4.
+`%>%` is from a separate package called `{magrittr}`
+and can be used if you have the `{magrittr}` or `{dplyr}` package loaded.
+Both pipe operators work the same way and either can be used.
+
+## Tasks
+
+1. Create and fill in a matrix of "whom you already know" in the class:
+There are other ways to do this, 
+but for this unit test I'd like you to do it in R.
+You can follow my example below (copy to a new script and uncomment):
+
+```{r egonet-eg, exercise = TRUE}
+mynetwork <- matrix(0,2,2) # this creates an empty network of 2 people
+# Next I'm going to name the matrix rows and columns:
+rownames(mynetwork) <- c("James Hollway","Jael Tan")
+colnames(mynetwork) <- c("James Hollway","Jael Tan")
+mynetwork[1,2] <- 1 # this means I know Jael already
+mynetwork[2,1] <- 1 # I think I can say Jael knows me already too...
+mynetwork["James Hollway","Jael Tan"] <- 1 # I could also do this by name
+# mynetwork[mynetwork > 0] <- 0 # Just in case you make a mistake, this wipes it!
+```

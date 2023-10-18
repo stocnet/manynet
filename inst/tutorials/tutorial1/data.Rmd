@@ -7,7 +7,7 @@ output:
 runtime: shiny_prerendered
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, purl=FALSE}
 library(learnr)
 library(manynet)
 knitr::opts_chunk$set(echo = FALSE)
@@ -43,11 +43,11 @@ There are buttons to start over, receive any hints/solutions available,
 as well as to run the code you have entered to discover its effects.
 Try it out now!
 
-```{r pkgdata, exercise = TRUE}
+```{r pkgdata, exercise = TRUE, purl=FALSE}
 
 ```
 
-```{r pkgdata-hint}
+```{r pkgdata-hint, purl=FALSE}
 data(package = "_____")
 ```
 
@@ -71,11 +71,11 @@ at your disposal, you may as well just load the package entirely.]
 Let's try calling `ison_adolescents` by first loading the `{manynet}` 'library'
 and then just typing `ison_adolescents` to see what happens.
 
-```{r calldata, exercise = TRUE}
+```{r calldata, exercise = TRUE, purl=FALSE}
 
 ```
 
-```{r calldata-hint}
+```{r calldata-hint, purl=FALSE}
 library(______)
 ison______
 ```
@@ -96,7 +96,7 @@ That's so that we can make some different choices about what and how networks
 are described.]
 Let's see whether we can make sense of the main features of this network?
 
-```{r tblgraph-nodes, echo = FALSE}
+```{r tblgraph-nodes, echo = FALSE, purl=FALSE}
 question("How many nodes does this network have?",
   answer(8,
          correct = TRUE),
@@ -113,7 +113,7 @@ question("How many nodes does this network have?",
 )
 ```
 
-```{r tblgraph-ties, echo = FALSE}
+```{r tblgraph-ties, echo = FALSE, purl=FALSE}
 question("How many ties does this network have?",
   answer(4,
          message = "There are four more ties beyond the six that are listed."),
@@ -131,7 +131,7 @@ question("How many ties does this network have?",
 )
 ```
 
-```{r tblgraph-type, echo = FALSE}
+```{r tblgraph-type, echo = FALSE, purl=FALSE}
 question("What kind of network is this? Choose all that apply.",
   answer("Undirected",
          correct = TRUE),
@@ -157,17 +157,17 @@ A commonly used package is `{network}`, which also includes a few example datase
 Can you remember how to find out which data are available in this package,
 and call the last one in the list?
 
-```{r netdata, exercise = TRUE}
+```{r netdata, exercise = TRUE, purl=FALSE}
 
 ```
 
-```{r netdata-hint-1}
+```{r netdata-hint-1, purl=FALSE}
 # You may need to call the data out of this package directly,
 # such as:
 data(flo, package = "network")
 ```
 
-```{r netdata-hint-2}
+```{r netdata-hint-2, purl=FALSE}
 data(package = "_____")
 library(_____)
 data(_____)
@@ -200,15 +200,15 @@ Still, we aim for these functions to be as lossless as possible and welcome feed
 that highlights how these translations can be improved.
 Let's see whether we can coerce our 'flo' network into a `tbl_graph` ('tidygraph') class object.
 
-```{r nettotbl, exercise = TRUE, exercise.setup = "netdata"}
+```{r nettotbl, exercise = TRUE, exercise.setup = "netdata", purl=FALSE}
 
 ```
 
-```{r nettotbl-hint-1}
+```{r nettotbl-hint-1, purl=FALSE}
 _____ <- as_t_____(_____)
 ```
 
-```{r nettotbl-hint-2}
+```{r nettotbl-hint-2, purl=FALSE}
 flo <- as_tidygraph(_____)
 ```
 
@@ -216,7 +216,7 @@ flo <- as_tidygraph(_____)
 flo <- as_tidygraph(flo)
 ```
 
-```{r nettotblquest, echo = FALSE}
+```{r nettotblquest, echo = FALSE, purl=FALSE}
 question("What are there 16 of in this network?",
   answer("Nodes",
          correct = TRUE),
@@ -293,11 +293,11 @@ If this is potentially complex,
 calling `write_edgelist()` without any arguments will export a test
 file with a barebones structure that you can overwrite with your own data.
 
-```{r exportdata, exercise=TRUE}
+```{r exportdata, exercise=TRUE, purl=FALSE}
 
 ```
 
-```{r exportdata-hint}
+```{r exportdata-hint, purl=FALSE}
 write______(ison_marvel_relationships, "_____/marvedges.xlsx")
 write______(ison_marvel_relationships, "_____/marvnodes.xlsx")
 ```
@@ -354,7 +354,7 @@ This was a consequence of a heuristic used during the import,
 but gives us a good occasion to try out `to_undirected()`.
 Reimport the `data/adols.csv` file, make it an igraph-class object, and then make it undirected.
 
-```{r adolsundir, exercise = TRUE}
+```{r adolsundir, exercise = TRUE, purl=FALSE}
 
 ```
 
@@ -389,7 +389,7 @@ Assign and name the transformed networks something sensible using e.g.
 `women <- to_mode...` so that we can continue working with this data afterwards.
 To assign and immediately print the result, wrap the line in parentheses.
 
-```{r southproj, exercise = TRUE}
+```{r southproj, exercise = TRUE, purl=FALSE}
 
 ```
 
@@ -399,7 +399,7 @@ ison_southern_women
 (s_events <- to_mode2(ison_southern_women))
 ```
 
-```{r namemode1}
+```{r namemode1, purl=FALSE}
 question("The first mode of the two-mode network consists of...",
   answer("women named Evelyn, Laura, Theresa, etc",
          correct = TRUE),
@@ -437,7 +437,7 @@ b) how many ties are in the network
 d) what nodal attributes there are in the network
 c) what the names of the nodes are
 
-```{r properties, exercise = TRUE}
+```{r properties, exercise = TRUE, purl=FALSE}
 
 ```
 
@@ -454,12 +454,12 @@ to find out a) how many nodes there are in each of these networks,
 b) what the names of the nodes are,
 and c) what tie attributes there are in the networks.
 
-```{r projprop-setup}
+```{r projprop-setup, purl=FALSE}
 s_women <- to_mode1(ison_southern_women)
 s_events <- to_mode2(ison_southern_women)
 ```
 
-```{r projprop, exercise = TRUE}
+```{r projprop, exercise = TRUE, purl=FALSE}
 
 ```
 
@@ -489,19 +489,19 @@ Retrieve the tie weights from your women projection.
 Find the average (mean) of this vector of tie weights,
 and the average (mean) tie weight overall.
 
-```{r womenweights, exercise = TRUE, exercise.setup = "projprop-setup"}
+```{r womenweights, exercise = TRUE, exercise.setup = "projprop-setup", purl=FALSE}
 
 ```
 
-```{r womenweights-hint-1}
+```{r womenweights-hint-1, purl=FALSE}
 tie_weights(_____)
 ```
 
-```{r womenweights-hint-2}
+```{r womenweights-hint-2, purl=FALSE}
 mean(tie_weights(_____))
 ```
 
-```{r womenweights-hint-3}
+```{r womenweights-hint-3, purl=FALSE}
 mean(as_matrix(_____))
 ```
 
@@ -511,7 +511,7 @@ mean(tie_weights(s_women))
 mean(as_matrix(s_women))
 ```
 
-```{r womenweightsq}
+```{r womenweightsq, purl=FALSE}
 question("2.438849 is...",
   answer("the average frequency of events shared by women who shared any events.",
          correct = TRUE),

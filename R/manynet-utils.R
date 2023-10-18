@@ -31,3 +31,43 @@ thisRequiresBio <- function(pkgname) {
   BiocManager::install(pkgname)
   }}
 }
+
+# #' @export
+# available_tutes <- function(){
+#   mess <- "Available tutorials in `{manynet}`"
+#   if(requireNamespace("migraph", quietly = TRUE)) mess <- paste(mess, "and `{migraph}`")
+#   message(mess)
+#   learnr::available_tutorials(package = "manynet")
+#   if(requireNamespace("migraph", quietly = TRUE)) learnr::available_tutorials(package = "migraph")
+# }
+
+#' Open tutorials
+#' 
+#' @description This function is a wrapper function for learnr::run_tutorial.
+#' @param tute character string of the tutorial eg. "tutorial3"
+#'
+#' @export
+run_tute <- function(tute){
+  try(learnr::run_tutorial(tute, "manynet"), silent = TRUE)
+  try(learnr::run_tutorial(tute, "migraph"), silent = TRUE)
+}
+
+#' Extract code only from tutorials
+#' 
+#' @description This function extracts code chunks from the tutorials.
+#' The code is then saved in an R script in the working directory.
+#' 
+#' @param tute character string of the tutorial eg. "tutorial3"
+#' @importFrom knitr purl
+#' 
+#' @export
+extract_tute <- function(tute){
+  pth <- file.path(path.package("manynet"), "tutorials", tute)
+  if(!dir.exists(pth) && requireNamespace("migraph", quietly = TRUE)){
+    require("migraph", quietly = TRUE)
+    pth <- file.path(path.package("migraph"), "tutorials", tute)
+  } 
+  knitr::purl(file.path(pth, list.files(pth, pattern = "*.Rmd")), documentation = 1)
+  file.edit(gsub(".Rmd", ".R", list.files(pth, pattern = "*.Rmd")))
+}
+

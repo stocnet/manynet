@@ -1,7 +1,7 @@
 Package: manynet
 Title: Many Ways to Make, Manipulate, and Map Myriad Networks
-Version: 0.2.4
-Date: 2023-10-11
+Version: 0.2.5
+Date: 2023-10-18
 Description: A set of tools for making, manipulating, and mapping many different types of networks.
    All functions operate with matrices, edge lists, and 'igraph', 'network', and 'tidygraph' objects,
    and on one-mode, two-mode (bipartite), and sometimes three-mode networks.
@@ -22,7 +22,8 @@ Imports:
     ggraph,
     igraph (>= 1.5.0.1),
     network,
-    tidygraph
+    tidygraph,
+    knitr
 Suggests: 
     gganimate,
     methods,
@@ -32,7 +33,6 @@ Suggests:
     testthat,
     xml2,
     patchwork,
-    knitr,
     rmarkdown,
     learnr,
     grDevices,
@@ -41,7 +41,8 @@ Suggests:
     graphlayouts,
     ggforce,
     multiplex,
-    concaveman
+    concaveman,
+    migraph
 Enhances:
     Rgraphviz
 Authors@R: 
