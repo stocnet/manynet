@@ -7,7 +7,7 @@
 extract_tute(tute)
 }
 \arguments{
-\item{tute}{character string of the tutorial eg. "tutorial3"}
+\item{tute}{Name of the tutorial (e.g. "tutorial2").}
 }
 \description{
 This function extracts code chunks from the tutorials.
@@ -15,4 +15,7 @@ The code is then saved in an R script in the working directory.
 }
 \details{
 If no argument is declared, function lists the available tutorials.
+}
+\examples{
+#extract_tute("tutorial2")
 }

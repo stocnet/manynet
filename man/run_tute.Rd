@@ -7,11 +7,14 @@
 run_tute(tute)
 }
 \arguments{
-\item{tute}{character string of the tutorial eg. "tutorial3"}
+\item{tute}{Name of the tutorial (e.g. "tutorial2").}
 }
 \description{
 This function is a wrapper function for learnr::run_tutorial.
 }
 \details{
 If no argument is declared, function lists the available tutorials.
+}
+\examples{
+#run_tute("tutorial2")
 }
