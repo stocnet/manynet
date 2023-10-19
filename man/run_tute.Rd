@@ -12,3 +12,6 @@ run_tute(tute)
 \description{
 This function is a wrapper function for learnr::run_tutorial.
 }
+\details{
+If no argument is declared, function lists the available tutorials.
+}

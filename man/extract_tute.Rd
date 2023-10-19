@@ -13,3 +13,6 @@ extract_tute(tute)
 This function extracts code chunks from the tutorials.
 The code is then saved in an R script in the working directory.
 }
+\details{
+If no argument is declared, function lists the available tutorials.
+}

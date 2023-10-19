@@ -35,6 +35,7 @@ thisRequiresBio <- function(pkgname) {
 #' Open tutorials
 #' 
 #' @description This function is a wrapper function for learnr::run_tutorial.
+#' @details If no argument is declared, function lists the available tutorials.
 #' @param tute character string of the tutorial eg. "tutorial3"
 #' @export
 run_tute <- function(tute) {
@@ -52,6 +53,7 @@ run_tute <- function(tute) {
 #' 
 #' @description This function extracts code chunks from the tutorials.
 #' The code is then saved in an R script in the working directory.
+#' @details If no argument is declared, function lists the available tutorials.
 #' @param tute character string of the tutorial eg. "tutorial3"
 #' @export
 extract_tute <- function(tute) {
