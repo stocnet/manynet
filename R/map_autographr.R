@@ -35,9 +35,9 @@
 #' @param edge_color Tie variable in quotation marks to be used for 
 #'   coloring the nodes. It is easiest if this is added as an edge or tie attribute 
 #'   to the graph before plotting.
-#' @param level For "multilevel" layout algorithm only,
-#'   please declare the level node attribute.
-#'   If NULL, function will look for attribute 'lvl'.
+#' @param level For "multilevel" layout algorithm.
+#'   Level refers to node attribute used to hierarchically order categories.
+#'   If NULL, function will look for 'lvl' node attribute in data.
 #' @param ... Extra arguments to pass on to `autographr()`/`ggraph()`/`ggplot()`.
 #' @return A ggplot2::ggplot() object.
 #' @importFrom ggraph geom_edge_link geom_node_text geom_conn_bundle

@@ -107,8 +107,13 @@ layout_tbl_graph_ladder <- function(.data,
 #' @export
 layout_tbl_graph_concentric <- function(.data, membership = NULL, radius = NULL, 
                                         order.by = NULL, 
-                                        circular = FALSE, times = 1000){
-  membership <- node_attribute(.data, membership)
+                                        circular = FALSE, times = 1000) {
+  if (is.null(membership)) { 
+    if (is_twomode(.data)) membership <- node_mode(.data) else 
+      stop("Please pass the function a `membership` node attribute.")
+  } else {
+    membership <- node_attribute(.data, membership)
+  }
   names(membership) <- node_names(.data)
   membership <- to_list(membership)
   all_c  <- unlist(membership, use.names = FALSE)

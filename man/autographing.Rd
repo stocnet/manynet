@@ -75,9 +75,9 @@ merging categories with lower counts into one called "other".}
 coloring the nodes. It is easiest if this is added as an edge or tie attribute
 to the graph before plotting.}
 
-\item{level}{For "multilevel" layout algorithm only,
-please declare the level node attribute.
-If NULL, function will look for attribute 'lvl'.}
+\item{level}{For "multilevel" layout algorithm.
+Level refers to node attribute used to hierarchically order categories.
+If NULL, function will look for 'lvl' node attribute in data.}
 
 \item{...}{Extra arguments to pass on to \code{autographr()}/\code{ggraph()}/\code{ggplot()}.}
 
