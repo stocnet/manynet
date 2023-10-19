@@ -2,7 +2,7 @@
 % Please edit documentation in R/manynet-utils.R
 \name{extract_tute}
 \alias{extract_tute}
-\title{Extract code only from tutorials}
+\title{Extract code from tutorials}
 \usage{
 extract_tute(tute)
 }
