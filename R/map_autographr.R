@@ -281,7 +281,7 @@ reduce_categories <- function(g, node_group) {
     p <- ggraph::ggraph(g, layout = "manual", x = lo[, 1], y = lo[, 2]) + 
       ggplot2::theme_void()
   } else {
-    lo <- ggraph::create_layout(g, layout)
+    lo <- ggraph::create_layout(g, layout, ...)
     if ("graph" %in% names(attributes(lo))) {
       if (!setequal(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
         for (n in setdiff(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
