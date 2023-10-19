@@ -108,43 +108,35 @@ layout_tbl_graph_ladder <- function(.data,
 layout_tbl_graph_concentric <- function(.data, membership = NULL, radius = NULL, 
                                         order.by = NULL, 
                                         circular = FALSE, times = 1000){
-  if (is.null(membership)){ 
-    if(is_twomode(.data))
-      membership <- node_mode(.data) else 
-        stop("Please pass the function a `membership` vector.")
-  } 
-  if(is.null(names(membership)) & is_labelled(.data))
-    names(membership) <- node_names(.data)
+  membership <- node_attribute(.data, membership)
+  names(membership) <- node_names(.data)
   membership <- to_list(membership)
   all_c  <- unlist(membership, use.names = FALSE)
-  if (any(table(all_c) > 1)) 
-    stop("Duplicated nodes in layers!")
-  if(is_labelled(.data))
-    all_n <- node_names(.data) else
-      all_n <- 1:network_nodes(.data)
+  if (any(table(all_c) > 1)) stop("Duplicated nodes in layers!")
+  if (is_labelled(.data)) all_n <- node_names(.data) else all_n <- 1:network_nodes(.data)
   sel_other  <- all_n[!all_n %in% all_c]
-  if (length(sel_other) > 0) 
-    membership[[length(membership) + 1]] <- sel_other
+  if (length(sel_other) > 0) membership[[length(membership) + 1]] <- sel_other
   if (is.null(radius)) {
     radius <- seq(0, 1, 1/(length(membership)))
     if (length(membership[[1]]) == 1) 
-      radius <- radius[-length(radius)] else 
-        radius <- radius[-1]
+      radius <- radius[-length(radius)] else radius <- radius[-1]
   }
-  if (!is.null(order.by)){
+  if (!is.null(order.by)) {
     order.values <- lapply(order.by, 
                            function(b) node_attribute(.data, b))
   } else {
-    for(k in 2:length(membership)){
+    if (is_twomode(.data)) {
+      for(k in 2:length(membership)) {
       xnet <- as_matrix(to_multilevel(.data))[membership[[k-1]], 
                                               membership[[k]]]
       lo <- layout_tbl_graph_hierarchy(as_igraph(xnet, twomode = TRUE))
       lo$names <- node_names(.data)
-      if(ncol(lo)==2) lo[,1] <- seq_len(lo)
+      if (ncol(lo) == 2) lo[,1] <- seq_len(lo)
       order.values <- lapply(1:0, function(x)
-        if(ncol(lo)>=3) sort(lo[lo[,2]==x,])[,3] 
-        else sort(lo[lo[,2]==x,1]) ) 
-    }
+        if(ncol(lo) >= 3) sort(lo[lo[,2] == x,])[,3] 
+        else sort(lo[lo[,2] == x,1]) ) 
+      } 
+    } else order.values <- membership
     # order.values <- getNNvec(.data, members)
   }
   res <- matrix(NA, nrow = length(all_n), ncol = 2)

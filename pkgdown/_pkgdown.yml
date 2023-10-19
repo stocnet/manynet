@@ -86,3 +86,10 @@ reference:
       References are provided for further reading and citation.
     contents:
       - starts_with("ison_")
+  - title: "Tutorials"
+    desc: |
+      Functions for loading and extracting code from tutorials.
+    contents:
+      - run_tute()
+      - extract_tute()
+  

@@ -1,6 +1,6 @@
 # manynet 0.2.5
 
-2023-10-11
+2023-10-19
 
 ## Package
 
@@ -8,6 +8,7 @@
 - Added `run_tute()` helper for quicker access to `{manynet}` and `{migraph}` tutorials
 - Added `extract_tute()` for extracting the main code examples from `{manynet}` and `{migraph}` tutorials
 - Added `purl = FALSE` to tutorial chunks that are not needed for extraction (thanks @JaelTan)
+- Updated website with new functions `run_tute()` and `extract_tute()`
 
 ## Mapping
 
