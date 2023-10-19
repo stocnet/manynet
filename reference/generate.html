@@ -20,7 +20,7 @@ for exploring or testing network properties."><meta property="og:image" content=
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.5</span>
       </span>
     </div>
 
@@ -187,69 +187,70 @@ or on each of the rows and columns (for a two-mode network).</p></li>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">generate_random</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">0.4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 122866f U--- 12 27 -- Erdos-Renyi (gnp) graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 3f7105d U--- 12 32 -- Erdos-Renyi (gnp) graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), type (g/c), loops (g/l), p (g/n)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 122866f:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1-- 2 1-- 3 2-- 4 3-- 4 4-- 5 2-- 6 3-- 6 2-- 7 3-- 7 5-- 7 6-- 7 5-- 8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] 6-- 8 7-- 8 1-- 9 5-- 9 6-- 9 7-- 9 2--10 4--10 8--10 5--11 6--11 2--12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] 3--12 5--12 6--12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 3f7105d:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 4  2-- 5  3-- 5  2-- 6  3-- 6  1-- 7  4-- 7  5-- 7  6-- 7  2-- 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11]  3-- 8  4-- 8  1-- 9  4-- 9  6-- 9  7-- 9  8-- 9  1--10  3--10  5--10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21]  6--10  8--10  9--10  2--11  3--11  5--11  6--11  7--11  1--12  5--12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [31]  9--12 11--12</span>
 <span class="r-in"><span><span class="fu">generate_random</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">6</span><span class="op">)</span>, <span class="fl">0.4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 9546bfd U--B 12 14 -- Bipartite Gnp random graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 8ba6af5 U--B 12 15 -- Bipartite Gnp random graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), p (g/n), type (v/l)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 9546bfd:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 4-- 7 6-- 7 1-- 8 3-- 8 4-- 8 6-- 8 2-- 9 3-- 9 3--10 6--10 2--11 3--11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] 5--11 5--12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 8ba6af5:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 3-- 7 4-- 7 5-- 7 2-- 8 6-- 8 2-- 9 3-- 9 4-- 9 6-- 9 2--10 3--10 5--11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] 2--12 3--12 6--12</span>
 <span class="r-in"><span><span class="co">#autographr(generate_random(12, 0.4))</span></span></span>
 <span class="r-in"><span><span class="co">#autographr(generate_random(c(6, 6), 0.4))</span></span></span>
 <span class="r-in"><span><span class="fu">generate_smallworld</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">0.025</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH b32207c U--- 12 24 -- Watts-Strogatz random graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH d96c704 U--- 12 24 -- Watts-Strogatz random graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), dim (g/n), size (g/n), nei (g/n), p (g/n), loops</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | (g/l), multiple (g/l)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from b32207c:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 2  2-- 3  3-- 4  4-- 9  5-- 6  6-- 7  7-- 8  8-- 9  9--10 10--11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from d96c704:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 2  2-- 3  3-- 4  4-- 5  5-- 6  6-- 7  7-- 8  8-- 9  9--10 10--11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11] 11--12  1--12  1-- 3  1--11  2--12  2-- 4  3-- 5  4-- 6  5-- 7  6-- 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [21]  7-- 9  8--10  9--11 10--12</span>
 <span class="r-in"><span><span class="fu">generate_smallworld</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">0.25</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH c98864b U--- 12 24 -- Watts-Strogatz random graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH b743c00 U--- 12 24 -- Watts-Strogatz random graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), dim (g/n), size (g/n), nei (g/n), p (g/n), loops</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | (g/l), multiple (g/l)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from c98864b:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 2  2-- 3  4-- 6  4-- 5  5-- 6  1-- 8  8--11  8-- 9  9--10 10--11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11]  4--11  1--12  3--12  1--11 11--12  2-- 4  3-- 5  4-- 7  5--12  6-- 8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21]  7-- 9  8--10  6--11 10--12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from b743c00:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 2  2-- 3  3-- 4  4-- 5  5-- 9  2-- 6  7-- 8  8-- 9  3--10  4--10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] 11--12  1--10  3--12  1--11  2-- 9  2-- 4  3-- 5  4-- 6  5-- 7  6-- 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21]  6-- 9 10--12  9--11  7--10</span>
 <span class="r-in"><span><span class="fu">generate_smallworld</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span>,<span class="fl">6</span><span class="op">)</span>, <span class="fl">0.025</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH e4d66be U--B 12 18 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH bce13a9 U--B 12 18 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: type (v/l)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from e4d66be:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1-- 7 1-- 8 1-- 9 2-- 8 2-- 9 2--10 3-- 9 3--10 3--11 4--10 4--11 4--12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] 5-- 7 5--11 5--12 6-- 7 6-- 8 6--11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from bce13a9:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1-- 7 1-- 8 1-- 9 2-- 8 2-- 9 2--10 3-- 9 3--10 3--11 4--10 3-- 4 4--12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] 5-- 7 5--11 8--12 6-- 7 6-- 8 6--12</span>
 <span class="r-in"><span><span class="co">#autographr(generate_smallworld(12, 0.025))</span></span></span>
 <span class="r-in"><span><span class="co">#autographr(generate_smallworld(12, 0.25))</span></span></span>
 <span class="r-in"><span><span class="co">#autographr(generate_smallworld(c(6,6), 0.025))</span></span></span>
 <span class="r-in"><span><span class="fu">generate_scalefree</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">0.25</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 8a532b4 U--- 12 11 -- Barabasi graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH d541c37 U--- 12 11 -- Barabasi graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), power (g/n), m (g/n), zero.appeal (g/n), algorithm</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | (g/c)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 8a532b4:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1-- 2 2-- 3 3-- 4 1-- 5 2-- 6 2-- 7 6-- 8 8-- 9 2--10 7--11 4--12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from d541c37:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1-- 2 2-- 3 1-- 4 1-- 5 3-- 6 5-- 7 4-- 8 4-- 9 9--10 9--11 7--12</span>
 <span class="r-in"><span><span class="fu">generate_scalefree</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">1.25</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 13d452d U--- 12 11 -- Barabasi graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 9a7b6ca U--- 12 11 -- Barabasi graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), power (g/n), m (g/n), zero.appeal (g/n), algorithm</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | (g/c)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 13d452d:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1-- 2 2-- 3 2-- 4 1-- 5 4-- 6 4-- 7 2-- 8 6-- 9 1--10 6--11 1--12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 9a7b6ca:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1-- 2 1-- 3 3-- 4 3-- 5 1-- 6 1-- 7 1-- 8 3-- 9 5--10 4--11 1--12</span>
 <span class="r-in"><span><span class="fu">generate_scalefree</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">12</span>,<span class="fl">6</span><span class="op">)</span>, <span class="fl">0.25</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH d491a03 U--B 18 12 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 5fa14d6 U--B 18 12 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: type (v/l)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from d491a03:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1--13  2--15  3--13  4--18  5--14  6--14  7--16  8--16  9--16 10--15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11] 11--13 12--13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 5fa14d6:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1--13  2--17  3--17  4--14  5--17  6--14  7--17  8--17  9--15 10--13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] 11--17 12--17</span>
 <span class="r-in"><span><span class="fu">generate_scalefree</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">12</span>,<span class="fl">6</span><span class="op">)</span>, <span class="fl">1.25</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 7568e93 U--B 18 12 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 10ff198 U--B 18 12 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: type (v/l)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 7568e93:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1--13  2--18  3--16  4--18  5--15  6--14  7--13  8--14  9--16 10--16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11] 11--16 12--15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 10ff198:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1--13  2--13  3--17  4--13  5--16  6--13  7--16  8--14  9--16 10--16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] 11--14 12--13</span>
 <span class="r-in"><span><span class="co">#autographr(generate_scalefree(12, 0.25))</span></span></span>
 <span class="r-in"><span><span class="co">#autographr(generate_scalefree(12, 1.25))</span></span></span>
 <span class="r-in"><span><span class="co">#autographr(generate_scalefree(c(12,6), 0.25))</span></span></span>

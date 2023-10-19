@@ -43,6 +43,9 @@
     <loc>https://snlab-ch.github.io/manynet/reference/create.html</loc>
   </url>
   <url>
+    <loc>https://snlab-ch.github.io/manynet/reference/extract_tute.html</loc>
+  </url>
+  <url>
     <loc>https://snlab-ch.github.io/manynet/reference/from.html</loc>
   </url>
   <url>
@@ -104,6 +107,9 @@
   </url>
   <url>
     <loc>https://snlab-ch.github.io/manynet/reference/reformat.html</loc>
+  </url>
+  <url>
+    <loc>https://snlab-ch.github.io/manynet/reference/run_tute.html</loc>
   </url>
   <url>
     <loc>https://snlab-ch.github.io/manynet/reference/split.html</loc>
