@@ -90,6 +90,5 @@ reference:
     desc: |
       Functions for loading and extracting code from tutorials.
     contents:
-      - run_tute()
-      - extract_tute()
+      - ends_with("_tute")
   
