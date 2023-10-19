@@ -22,8 +22,7 @@ Imports:
     ggraph,
     igraph (>= 1.5.0.1),
     network,
-    tidygraph,
-    knitr
+    tidygraph
 Suggests: 
     gganimate,
     methods,
@@ -42,7 +41,8 @@ Suggests:
     ggforce,
     multiplex,
     concaveman,
-    migraph
+    migraph,
+    knitr
 Enhances:
     Rgraphviz
 Authors@R: 
