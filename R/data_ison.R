@@ -286,14 +286,18 @@
 #' One-mode network dataset collected by Gabasova (2016)
 #' on the interactions between Star Wars characters in each movie from
 #' Episode 1 (The Phantom Menace) to Episode 7 (The Force Awakens).
-#' Data is listed in order from episode 1 to 7.
-#' @details
-#' The data contains separate networks for each episode with varying number of nodes and ties.
-#' Characters are named and the following node attributes are available for each network in the data:
+#' There is a separate network for each episode,
+#' and the data is listed in order from episode 1 to 7.
+#' The network for each episode varies in the number of nodes and ties.
+#' For all networks, characters are named (eg. R2-D2, Anakin, Chewbacca)
+#' and the following node attributes are available for each character in the data:
 #' height, mass, hair color, skin color, eye color, birth year, sex, homeworld, and species.
 #' Ties represent the interactions between characters,
-#' defined as the characters speaking within the same scene,
-#' and are weighted by the number of times the characters speak.
+#' which is defined as the characters speaking within the same scene.
+#' Each tie is weighted by the number of times two characters speak within the same scene.
+#' @details
+#' The network for each episode may be extracted and used separately,
+#' eg. `ison_starwars[[1]]` for episode 1.
 #' @docType data
 #' @keywords datasets
 #' @name ison_starwars
@@ -301,7 +305,7 @@
 #' @references
 #'   Gabasova, E. (2016).
 #'   \emph{Star Wars social network.}.
-#'   \doi{10.5281/zenodo.1411479}
+#'   \url{https://doi.org/10.5281/zenodo.1411479}.
 #' @format
 #'   ```{r, echo = FALSE}
 #'   ison_starwars
