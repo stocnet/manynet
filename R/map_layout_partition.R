@@ -110,9 +110,13 @@ layout_tbl_graph_concentric <- function(.data, membership = NULL, radius = NULL,
                                         circular = FALSE, times = 1000) {
   if (is.null(membership)) { 
     if (is_twomode(.data)) membership <- node_mode(.data) else 
-      stop("Please pass the function a `membership` node attribute.")
+      stop("Please pass the function a `membership` node attribute or a vector.")
   } else {
-    membership <- node_attribute(.data, membership)
+    if (length(membership) > 1 & length(membership) != length(.data)) {
+      stop("Please pass the function a `membership` node attribute or a vector.")
+    } else if (length(membership) != length(.data)) {
+      membership <- node_attribute(.data, membership)
+    }
   }
   names(membership) <- node_names(.data)
   membership <- to_list(membership)
