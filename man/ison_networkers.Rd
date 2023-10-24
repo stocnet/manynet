@@ -9,12 +9,12 @@
 #> # A tibble: 32 x 3
 #>   name               Discipline   Citations
 #>   <chr>              <chr>            <dbl>
-#> 1 LIN FREEMAN        Sociology           19
-#> 2 DOUG WHITE         Anthropology         3
-#> 3 EV ROGERS          Other              170
-#> 4 RICHARD ALBA       Sociology           23
-#> 5 PHIPPS ARABIE      Other               16
-#> 6 CAROL BARNER-BARRY Other                6
+#> 1 Lin Freeman        Sociology           19
+#> 2 Doug White         Anthropology         3
+#> 3 Ev Rogers          Other              170
+#> 4 Richard Alba       Sociology           23
+#> 5 Phipps Arabie      Other               16
+#> 6 Carol Barner-Barry Other                6
 #> # i 26 more rows
 #> # A tibble: 440 x 3
 #>    from    to weight
