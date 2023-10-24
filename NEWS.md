@@ -1,3 +1,31 @@
+# manynet 0.2.6
+
+2023-10-24
+
+## Package
+
+- Added documentation for tutorial helper functions
+
+## Making
+
+- `generate` examples leverage `autographr()` again
+
+## Manipulating
+
+- Fixed bug in `to_redirected.tbl_graph()`
+- `print.tbl_graph()` no longer mentions the object class
+
+## Mapping
+
+- `layout_tbl_graph_concentric()` now works with two-mode networks, multiple levels for one-mode networks, and accepts new vectors
+- Added `layout_tbl_graph_multilevel()` for laying out multilevel networks
+- Added `layout_tbl_graph_triad()` and `layout_tbl_graph_quad()` configurational layouts
+
+## Data
+
+- Added `ison_starwars`, a collection of seven weighted interaction networks on a popular film franchise
+- `ison_networkers` names are now in title case, not all caps
+
 # manynet 0.2.5
 
 2023-10-19
