@@ -160,12 +160,7 @@ to_redirected <- function(.data) UseMethod("to_redirected")
 
 #' @export
 to_redirected.tbl_graph <- function(.data) {
-  nodes <- NULL
-  edges <- NULL
-  out <- .data %>%
-    activate(edges) %>%
-    tidygraph::reroute(from = .data$to, to = .data$from)
-  out %>% activate(nodes)
+  as_tidygraph(to_redirected.igraph(.data))
 }
 
 #' @export
