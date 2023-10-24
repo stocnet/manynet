@@ -5,7 +5,7 @@
 \alias{ison_adolescents}
 \title{One-mode subset of the adolescent society network (Coleman 1961)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, undirected tbl_graph with 8 nodes and 10 ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, undirected network with 8 nodes and 10 ties
 #> # A tibble: 8 x 1
 #>   name 
 #>   <chr>

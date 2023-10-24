@@ -5,7 +5,7 @@
 \alias{ison_lawfirm}
 \title{One-mode lawfirm (Lazega 2001)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A undirected tbl_graph with 36 nodes and 115 ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A undirected network with 36 nodes and 115 ties
 #> # A tibble: 36 x 8
 #>   Seniority Status  Gender Office   Years   Age Practice   School      
 #>       <int> <chr>   <chr>  <chr>    <int> <int> <chr>      <chr>       

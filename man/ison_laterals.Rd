@@ -6,7 +6,7 @@
 \title{Two-mode projection examples (Hollway 2021)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> $ison_bb
-#> # A labelled, two-mode tbl_graph with 10 nodes and 12 ties
+#> # A labelled, two-mode network with 10 nodes and 12 ties
 #> # A tibble: 10 x 2
 #>   name  type 
 #>   <chr> <lgl>
@@ -29,7 +29,7 @@
 #> # i 6 more rows
 #> 
 #> $ison_bm
-#> # A labelled, two-mode tbl_graph with 8 nodes and 9 ties
+#> # A labelled, two-mode network with 8 nodes and 9 ties
 #> # A tibble: 8 x 2
 #>   name  type 
 #>   <chr> <lgl>
@@ -52,7 +52,7 @@
 #> # i 3 more rows
 #> 
 #> $ison_mb
-#> # A labelled, two-mode tbl_graph with 8 nodes and 9 ties
+#> # A labelled, two-mode network with 8 nodes and 9 ties
 #> # A tibble: 8 x 2
 #>   name  type 
 #>   <chr> <lgl>
@@ -75,7 +75,7 @@
 #> # i 3 more rows
 #> 
 #> $ison_mm
-#> # A labelled, two-mode tbl_graph with 6 nodes and 6 ties
+#> # A labelled, two-mode network with 6 nodes and 6 ties
 #> # A tibble: 6 x 2
 #>   name  type 
 #>   <chr> <lgl>

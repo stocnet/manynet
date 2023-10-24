@@ -11,10 +11,10 @@ print.tbl_graph <- function(x, ..., n = 6) {
   top <- dplyr::as_tibble(tidygraph::activate(x, "nodes"))
   bottom <- dplyr::as_tibble(tidygraph::activate(x, "edges"))
   if(is_directed(x)){
-    cat('#', graph_desc, 'tbl_graph with', igraph::gorder(x), 'nodes and',
+    cat('#', graph_desc, 'network with', igraph::gorder(x), 'nodes and',
         igraph::gsize(x), 'arcs\n', sep = ' ')  
   } else {
-    cat('#', graph_desc, 'tbl_graph with', igraph::gorder(x), 'nodes and',
+    cat('#', graph_desc, 'network with', igraph::gorder(x), 'nodes and',
         igraph::gsize(x), 'ties\n', sep = ' ')
   }
   if (ncol(top)>0) print(top, n = n)
