@@ -123,14 +123,14 @@ with sensible defaults
 }}
 \examples{
 #autographr(ison_brandes)
-#autographr(ison_algebra, node_size = 8, node_color = "orange")
+#autographr(ison_algebra, node_size = 8, node_color = "orange",
+#           edge_color = "blue")
 #ison_adolescents \%>\% 
 #   mutate(shape = rep(c("circle", "square"), times = 4),
 #          color = rep(c("blue", "red"), times = 4)) \%>\%
 #  autographr(node_shape = "shape", node_color = "color")
+#autographr(ison_algebra, edge_color = "friends")
 #autographr(ison_lotr, node_group = Race)
-#autographr(ison_lawfirm, node_size =  migraph::node_closeness(ison_lawfirm),
-#           node_color = migraph::node_core(ison_lawfrim))
 #autographr(ison_southern_women, layout = "concentric", 
 #           node_color = "type", membership = "type")
 #autographr(ison_karateka, layout = "multilevel",
