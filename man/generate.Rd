@@ -76,6 +76,8 @@ These functions are similar to the \verb{create_*} functions,
 but include some element of randomisation.
 They are particularly useful for creating a distribution of networks
 for exploring or testing network properties.
+Note that passing the first argument an empirical network
+will prompt these functions to generate a network with the same dimensions.
 }
 \section{Functions}{
 \itemize{
@@ -95,24 +97,15 @@ or on each of the rows and columns (for a two-mode network).
 
 }}
 \examples{
-generate_random(12, 0.4)
-generate_random(c(6, 6), 0.4)
-#autographr(generate_random(12, 0.4))
-#autographr(generate_random(c(6, 6), 0.4))
-generate_smallworld(12, 0.025)
-generate_smallworld(12, 0.25)
-generate_smallworld(c(6,6), 0.025)
-#autographr(generate_smallworld(12, 0.025))
-#autographr(generate_smallworld(12, 0.25))
-#autographr(generate_smallworld(c(6,6), 0.025))
-generate_scalefree(12, 0.25)
-generate_scalefree(12, 1.25)
-generate_scalefree(c(12,6), 0.25)
-generate_scalefree(c(12,6), 1.25)
-#autographr(generate_scalefree(12, 0.25))
-#autographr(generate_scalefree(12, 1.25))
-#autographr(generate_scalefree(c(12,6), 0.25))
-#autographr(generate_scalefree(c(12,6), 1.25))
+autographr(generate_random(12, 0.4))
+autographr(generate_random(c(6, 6), 0.4))
+autographr(generate_smallworld(12, 0.025))
+autographr(generate_smallworld(12, 0.25))
+autographr(generate_smallworld(c(6,6), 0.025))
+autographr(generate_scalefree(12, 0.25))
+autographr(generate_scalefree(12, 1.25))
+autographr(generate_scalefree(c(12,6), 0.25))
+autographr(generate_scalefree(c(12,6), 1.25))
 autographr(ison_adolescents)
 autographr(generate_permutation(ison_adolescents))
 }
@@ -132,8 +125,6 @@ Barabási, Albert-László, and Réka Albert. 1999.
 \doi{10.1126/science.286.5439.509}.
 }
 \seealso{
-\link{as}
-
 Other makes: 
 \code{\link{as}()},
 \code{\link{create}},
