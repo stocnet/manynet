@@ -163,6 +163,7 @@ is_aperiodic(ison_algebra)
 Other mapping: 
 \code{\link{attributes}()},
 \code{\link{autographing}},
+\code{\link{configuration_layouts}},
 \code{\link{partition_layouts}},
 \code{\link{properties}}
 }

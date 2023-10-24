@@ -92,6 +92,7 @@ The "multilevel" layout places successive layers as multiple levels.
 Other mapping: 
 \code{\link{attributes}()},
 \code{\link{autographing}},
+\code{\link{configuration_layouts}},
 \code{\link{is}()},
 \code{\link{properties}}
 }

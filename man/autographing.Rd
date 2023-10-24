@@ -154,6 +154,7 @@ with sensible defaults
 \seealso{
 Other mapping: 
 \code{\link{attributes}()},
+\code{\link{configuration_layouts}},
 \code{\link{is}()},
 \code{\link{partition_layouts}},
 \code{\link{properties}}
