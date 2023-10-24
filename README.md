@@ -210,21 +210,15 @@ via CRAN. Simply open the R console and enter:[^1]
 
 `install.packages('manynet')`
 
-You can then begin to use `{manynet}` by loading the package:
-
-`library(manynet)`
-
-This will load any required packages and make the data and tutorials
-(see below) contained within the package available.
+`library(manynet)` will then load the package and make the data and
+tutorials (see below) contained within the package available.
 
 ### Development
 
 For the latest development version, for slightly earlier access to new
 features or for testing, you may wish to download and install the
-binaries from Github or install from source locally.
-
-The latest binary releases for all major OSes – Windows, Mac, and Linux
-– can be found
+binaries from Github or install from source locally. The latest binary
+releases for all major OSes – Windows, Mac, and Linux – can be found
 [here](https://github.com/snlab-ch/manynet/releases/latest). Download
 the appropriate binary for your operating system, and install using an
 adapted version of the following commands:
@@ -237,34 +231,37 @@ adapted version of the following commands:
   `install.packages("~/Downloads/manynet_linuxOS.tar.gz", repos = NULL)`
 
 To install from source the latest main version of `{manynet}` from
-Github, please install the `{remotes}` or `{devtools}` package from CRAN
-and then:
+Github, please install the `{remotes}` package from CRAN and then:
 
 - For latest stable version:
-  `remotes::install_github("snlab-ch/manynet", build_vignettes = TRUE)`
+  `remotes::install_github("snlab-ch/manynet")`
 - For latest development version:
-  `remotes::install_github("snlab-ch/manynet@develop", build_vignettes = TRUE)`
+  `remotes::install_github("snlab-ch/manynet@develop")`
 
 ### Tutorials
 
-This package includes a couple of tutorials to help new and experienced
-users learn how they can conduct social network analysis using the
-package. To access the tutorials, you will need to have the additional
-package `{learnr}` installed: `install.packages("learnr")`. For more
-details on the `{learnr}` package, see
-[here](https://rstudio.github.io/learnr/). Then we suggest that you
-check to see which vignettes are currently available:
+This package includes tutorials to help new and experienced users learn
+how they can conduct social network analysis using the package. These
+tutorials leverage the additional package `{learnr}` (see
+[here](https://rstudio.github.io/learnr/)), but we have made it easy to
+use `{manynet}` or `{migraph}` tutorials right out of the box:
 
 ``` r
-learnr::available_tutorials("manynet")
-#> Available tutorials:
-#> * manynet
-#>   - tutorial1 : "Data"
-#>   - tutorial2 : "Visualisation"
+run_tute()
+#> # A tibble: 9 × 3
+#>   package name      title        
+#>   <chr>   <chr>     <chr>        
+#> 1 manynet tutorial0 Intro to R   
+#> 2 manynet tutorial1 Data         
+#> 3 manynet tutorial2 Visualisation
+#> 4 migraph tutorial3 Centrality   
+#> 5 migraph tutorial4 Community    
+#> 6 migraph tutorial5 Position     
+#> 7 migraph tutorial6 Topology     
+#> 8 migraph tutorial7 Diffusion    
+#> 9 migraph tutorial8 Regression
+# run_tute("tutorial1")
 ```
-
-You can then choose to begin a tutorial using the following command:
-e.g. `learnr::run_tutorial("tutorial1", "manynet")`.
 
 ## Relationship to other packages
 
