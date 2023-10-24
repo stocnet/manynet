@@ -21,7 +21,6 @@ autographr(
   node_size,
   node_group,
   edge_color,
-  level,
   ...
 )
 
@@ -42,7 +41,19 @@ autographd(
 \item{.data}{A manynet-consistent object.}
 
 \item{layout}{An igraph, ggraph, or manynet layout algorithm,
-currently defaults to 'stress'.}
+currently defaults to 'stress'.
+For "concentric" layout algorithm please declare the "membership" as an
+extra argument.
+The "membership" argument expects either a quoted node attribute present
+in data or vector with the same length as nodes.
+Membership is used to draw concentric circles and, if missing but network
+is tow mode, function will use network mode to infer layout.
+For "multilevel" layout algorithm please declare the "level"
+as extra argument.
+The "level" argument expects either a quoted node attribute present
+in data or vector with the same length as nodes.
+Level is used to hierarchically order categories and, if missing,
+function will look for 'lvl' node attribute in data.}
 
 \item{labels}{Logical, whether to print node names
 as labels if present.}
@@ -75,10 +86,6 @@ merging categories with lower counts into one called "other".}
 coloring the nodes. It is easiest if this is added as an edge or tie attribute
 to the graph before plotting.}
 
-\item{level}{For "multilevel" layout algorithm.
-Level refers to node attribute used to hierarchically order categories.
-If NULL, function will look for 'lvl' node attribute in data.}
-
 \item{...}{Extra arguments to pass on to \code{autographr()}/\code{ggraph()}/\code{ggplot()}.}
 
 \item{netlist}{A list of manynet-compatible networks.}
@@ -97,9 +104,11 @@ A ggplot2::ggplot() object.
 \description{
 The aim of this function is to provide users with a quick and easy
 graphing function that makes best use of the data,
-whatever its composition. Users can also tailor the plot according to their
-preferences regarding node size, colour, and shape. The function also supports
-visualisation of network measures such as centrality.
+whatever its composition.
+Users can also tailor the plot according to their
+preferences regarding node size, colour, and shape.
+The function also supports visualisation
+of network measures such as centrality.
 }
 \section{Functions}{
 \itemize{
@@ -113,14 +122,19 @@ with sensible defaults
 
 }}
 \examples{
+#autographr(ison_brandes)
+#autographr(ison_algebra, node_size = 8, node_color = "orange")
 #ison_adolescents \%>\% 
 #   mutate(shape = rep(c("circle", "square"), times = 4),
 #          color = rep(c("blue", "red"), times = 4)) \%>\%
 #  autographr(node_shape = "shape", node_color = "color")
-#autographr(ison_karateka, node_size = 8)
-#autographr(ison_karateka, layout = "multilevel", node_size = 8,
-#           node_shape = "obc", node_color = "obc", level = "obc")
 #autographr(ison_lotr, node_group = Race)
+#autographr(ison_lawfirm, node_size =  migraph::node_closeness(ison_lawfirm),
+#           node_color = migraph::node_core(ison_lawfrim))
+#autographr(ison_southern_women, layout = "concentric", 
+#           node_color = "type", membership = "type")
+#autographr(ison_karateka, layout = "multilevel",
+#           node_color = "obc", level = "obc")
 #autographs(to_egos(ison_adolescents))
 #ison_adolescents \%>\%
 # mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%
