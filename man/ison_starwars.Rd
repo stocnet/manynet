@@ -3,10 +3,10 @@
 \docType{data}
 \name{ison_starwars}
 \alias{ison_starwars}
-\title{One-mode Star Wars character interactions}
+\title{Seven one-mode Star Wars character interactions (Gabasova 2016)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> [[1]]
-#> # A labelled, weighted, undirected tbl_graph with 38 nodes and 135 ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> $`Episode I`
+#> # A labelled, weighted, undirected network with 38 nodes and 135 ties
 #> # A tibble: 38 x 10
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
@@ -29,8 +29,8 @@
 #> 6     1    25      2
 #> # i 129 more rows
 #> 
-#> [[2]]
-#> # A labelled, weighted, undirected tbl_graph with 33 nodes and 101 ties
+#> $`Episode II`
+#> # A labelled, weighted, undirected network with 33 nodes and 101 ties
 #> # A tibble: 33 x 10
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
@@ -53,8 +53,8 @@
 #> 6     4     5      1
 #> # i 95 more rows
 #> 
-#> [[3]]
-#> # A labelled, weighted, undirected tbl_graph with 24 nodes and 65 ties
+#> $`Episode III`
+#> # A labelled, weighted, undirected network with 24 nodes and 65 ties
 #> # A tibble: 24 x 10
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
@@ -77,8 +77,8 @@
 #> 6     1    10      4
 #> # i 59 more rows
 #> 
-#> [[4]]
-#> # A labelled, weighted, undirected tbl_graph with 21 nodes and 60 ties
+#> $`Episode IV`
+#> # A labelled, weighted, undirected network with 21 nodes and 60 ties
 #> # A tibble: 21 x 10
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
@@ -101,8 +101,8 @@
 #> 6     1    11      4
 #> # i 54 more rows
 #> 
-#> [[5]]
-#> # A labelled, weighted, undirected tbl_graph with 21 nodes and 55 ties
+#> $`Episode V`
+#> # A labelled, weighted, undirected network with 21 nodes and 55 ties
 #> # A tibble: 21 x 10
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
@@ -125,8 +125,8 @@
 #> 6     1    21      1
 #> # i 49 more rows
 #> 
-#> [[6]]
-#> # A labelled, weighted, undirected tbl_graph with 20 nodes and 55 ties
+#> $`Episode VI`
+#> # A labelled, weighted, undirected network with 20 nodes and 55 ties
 #> # A tibble: 20 x 10
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
@@ -149,8 +149,8 @@
 #> 6     1    10      9
 #> # i 49 more rows
 #> 
-#> [[7]]
-#> # A labelled, weighted, undirected tbl_graph with 27 nodes and 92 ties
+#> $`Episode VII`
+#> # A labelled, weighted, undirected network with 27 nodes and 92 ties
 #> # A tibble: 27 x 10
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
@@ -185,11 +185,10 @@ There is a separate network for each episode,
 and the data is listed in order from episode 1 to 7.
 The network for each episode varies in the number of nodes and ties.
 For all networks, characters are named (eg. R2-D2, Anakin, Chewbacca)
-and the following node attributes are available for each character in the data:
+and the following node attributes are provided where available:
 height, mass, hair color, skin color, eye color, birth year, sex, homeworld, and species.
-Ties represent the interactions between characters,
-which is defined as the characters speaking within the same scene.
-Each tie is weighted by the number of times two characters speak within the same scene.
+Weighted ties represent the number of times characters speak
+within the same scene of the film.
 }
 \details{
 The network for each episode may be extracted and used separately,
@@ -198,6 +197,6 @@ eg. \code{ison_starwars[[1]]} for episode 1.
 \references{
 Gabasova, E. (2016).
 \emph{Star Wars social network.}.
-\url{https://doi.org/10.5281/zenodo.1411479}.
+\doi{10.5281/zenodo.1411479}
 }
 \keyword{datasets}

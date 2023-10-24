@@ -280,7 +280,7 @@
 
 # Star Wars ####
 
-#' One-mode Star Wars character interactions
+#' Seven one-mode Star Wars character interactions (Gabasova 2016)
 #'
 #' @description
 #' One-mode network dataset collected by Gabasova (2016)
@@ -290,11 +290,10 @@
 #' and the data is listed in order from episode 1 to 7.
 #' The network for each episode varies in the number of nodes and ties.
 #' For all networks, characters are named (eg. R2-D2, Anakin, Chewbacca)
-#' and the following node attributes are available for each character in the data:
+#' and the following node attributes are provided where available:
 #' height, mass, hair color, skin color, eye color, birth year, sex, homeworld, and species.
-#' Ties represent the interactions between characters,
-#' which is defined as the characters speaking within the same scene.
-#' Each tie is weighted by the number of times two characters speak within the same scene.
+#' Weighted ties represent the number of times characters speak 
+#' within the same scene of the film.
 #' @details
 #' The network for each episode may be extracted and used separately,
 #' eg. `ison_starwars[[1]]` for episode 1.
@@ -305,7 +304,7 @@
 #' @references
 #'   Gabasova, E. (2016).
 #'   \emph{Star Wars social network.}.
-#'   \url{https://doi.org/10.5281/zenodo.1411479}.
+#'   \doi{10.5281/zenodo.1411479}
 #' @format
 #'   ```{r, echo = FALSE}
 #'   ison_starwars
