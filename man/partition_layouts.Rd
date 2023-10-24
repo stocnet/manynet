@@ -7,6 +7,7 @@
 \alias{layout_tbl_graph_railway}
 \alias{layout_tbl_graph_ladder}
 \alias{layout_tbl_graph_concentric}
+\alias{layout_tbl_graph_multilevel}
 \title{Layout algorithms based on bi- or other partitions}
 \source{
 Diego Diez, Andrew P. Hutchins and Diego Miranda-Saavedra. 2014.
@@ -31,6 +32,8 @@ layout_tbl_graph_concentric(
   circular = FALSE,
   times = 1000
 )
+
+layout_tbl_graph_multilevel(.data, level = NULL, circular = FALSE)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -59,6 +62,9 @@ in which case this node occupies the centre of the graph.}
 for the nodes around the circles.
 By default ordering is given by a bipartite placement that reduces
 the number of edge crossings.}
+
+\item{level}{A node attribute or a vector to hierarchically order levels for
+"multilevel" layout.}
 }
 \description{
 These algorithms layout networks based on two or more partitions,
@@ -80,6 +86,7 @@ The "ladder" layout is similar to "railway",
 but places successive layers horizontally rather than vertically.
 The "concentric" layout places a "hierarchy" layout
 around a circle, with successive layers appearing as concentric circles.
+The "multilevel" layout places successive layers as multiple levels.
 }
 \seealso{
 Other mapping: 
