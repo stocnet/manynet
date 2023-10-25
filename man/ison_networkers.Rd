@@ -5,16 +5,16 @@
 \alias{ison_networkers}
 \title{One-mode EIES dataset (Freeman and Freeman 1979)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, weighted, directed tbl_graph with 32 nodes and 440 arcs
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, weighted, directed network with 32 nodes and 440 arcs
 #> # A tibble: 32 x 3
 #>   name               Discipline   Citations
 #>   <chr>              <chr>            <dbl>
-#> 1 LIN FREEMAN        Sociology           19
-#> 2 DOUG WHITE         Anthropology         3
-#> 3 EV ROGERS          Other              170
-#> 4 RICHARD ALBA       Sociology           23
-#> 5 PHIPPS ARABIE      Other               16
-#> 6 CAROL BARNER-BARRY Other                6
+#> 1 Lin Freeman        Sociology           19
+#> 2 Doug White         Anthropology         3
+#> 3 Ev Rogers          Other              170
+#> 4 Richard Alba       Sociology           23
+#> 5 Phipps Arabie      Other               16
+#> 6 Carol Barner-Barry Other                6
 #> # i 26 more rows
 #> # A tibble: 440 x 3
 #>    from    to weight

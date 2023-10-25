@@ -4,13 +4,12 @@
 #'   but include some element of randomisation. 
 #'   They are particularly useful for creating a distribution of networks 
 #'   for exploring or testing network properties.
+#'   Note that passing the first argument an empirical network
+#'   will prompt these functions to generate a network with the same dimensions.
 #' @name generate
 #' @family makes
-#' @seealso [as]
 #' @inheritParams create
 #' @inheritParams is
-#' @param p Proportion of possible ties in the network that are realised or,
-#'   if integer greater than 1, the number of ties in the network.
 #' @param directed Whether to generate network as directed. By default FALSE.
 #' @return By default an `igraph` object is returned,
 #'   but this can be coerced into other types of objects
@@ -18,16 +17,16 @@
 NULL
 
 #' @describeIn generate Generates a random network with a particular probability.
+#' @param p Proportion of possible ties in the network that are realised or,
+#'   if integer greater than 1, the number of ties in the network.
 #' @references 
 #' Erdős, Paul, and Alfréd Rényi. (1959). 
 #' "\href{https://www.renyi.hu/~p_erdos/1959-11.pdf}{On Random Graphs I}" 
 #' _Publicationes Mathematicae_. 6: 290–297.
 #' @importFrom igraph sample_bipartite sample_gnp sample_gnm
 #' @examples
-#' generate_random(12, 0.4)
-#' generate_random(c(6, 6), 0.4)
-#' #autographr(generate_random(12, 0.4))
-#' #autographr(generate_random(c(6, 6), 0.4))
+#' autographr(generate_random(12, 0.4))
+#' # autographr(generate_random(c(6, 6), 0.4))
 #' @export
 generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
   if(is_manynet(n)){
@@ -76,6 +75,8 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
 
 #' @describeIn generate Generates a small-world structure
 #'   following the lattice rewiring model.
+#' @param p Proportion of possible ties in the network that are realised or,
+#'   if integer greater than 1, the number of ties in the network.
 #' @references 
 #' Watts, Duncan J., and Steven H. Strogatz. 1998. 
 #' “Collective Dynamics of ‘Small-World’ Networks.” 
@@ -83,12 +84,8 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
 #' \doi{10.1038/30918}.
 #' @importFrom igraph sample_smallworld
 #' @examples
-#' generate_smallworld(12, 0.025)
-#' generate_smallworld(12, 0.25)
-#' generate_smallworld(c(6,6), 0.025)
-#' #autographr(generate_smallworld(12, 0.025))
-#' #autographr(generate_smallworld(12, 0.25))
-#' #autographr(generate_smallworld(c(6,6), 0.025))
+#' autographr(generate_smallworld(12, 0.025))
+#' autographr(generate_smallworld(12, 0.25))
 #' @export
 generate_smallworld <- function(n, p = 0.05, directed = FALSE, width = 2) {
   directed <- infer_directed(n, directed)
@@ -106,6 +103,7 @@ generate_smallworld <- function(n, p = 0.05, directed = FALSE, width = 2) {
 
 #' @describeIn generate Generates a scale-free structure
 #'   following the preferential attachment model.
+#' @param p Power of the preferential attachment, default is 1.
 #' @importFrom igraph sample_pa
 #' @references 
 #' Barabási, Albert-László, and Réka Albert. 1999. 
@@ -113,14 +111,8 @@ generate_smallworld <- function(n, p = 0.05, directed = FALSE, width = 2) {
 #' _Science_ 286(5439):509–12. 
 #' \doi{10.1126/science.286.5439.509}.
 #' @examples
-#' generate_scalefree(12, 0.25)
-#' generate_scalefree(12, 1.25)
-#' generate_scalefree(c(12,6), 0.25)
-#' generate_scalefree(c(12,6), 1.25)
-#' #autographr(generate_scalefree(12, 0.25))
-#' #autographr(generate_scalefree(12, 1.25))
-#' #autographr(generate_scalefree(c(12,6), 0.25))
-#' #autographr(generate_scalefree(c(12,6), 1.25))
+#' autographr(generate_scalefree(12, 0.25))
+#' autographr(generate_scalefree(12, 1.25))
 #' @export
 generate_scalefree <- function(n, p = 1, directed = FALSE) {
   directed <- infer_directed(n, directed)
@@ -190,6 +182,7 @@ generate_utilities <- function(n, steps = 1, volatility = 0, threshold = 0){
       iter <- iter + 1
     }
   }
+  as_igraph(utilities)
 }
 
 # Helper functions ------------------

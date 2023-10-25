@@ -154,17 +154,13 @@ to_directed.data.frame <- function(.data) {
 #'   or flipped, so that senders become receivers and receivers become senders.
 #'   This essentially has no effect on undirected networks or reciprocated ties.
 #' @importFrom igraph reverse_edges
+#' @importFrom tidygraph reroute
 #' @export
 to_redirected <- function(.data) UseMethod("to_redirected")
 
 #' @export
 to_redirected.tbl_graph <- function(.data) {
-  nodes <- NULL
-  edges <- NULL
-  out <- .data %>% activate(edges)
-  out$from <- .data$to
-  out$to <- .data$from
-  out %>% activate(nodes)
+  as_tidygraph(to_redirected.igraph(.data))
 }
 
 #' @export

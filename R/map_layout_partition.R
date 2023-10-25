@@ -20,6 +20,7 @@
 #'   but places successive layers horizontally rather than vertically.
 #'   The "concentric" layout places a "hierarchy" layout
 #'   around a circle, with successive layers appearing as concentric circles.
+#'   The "multilevel" layout places successive layers as multiple levels.
 #' @name partition_layouts
 #' @inheritParams transform
 #' @param circular Should the layout be transformed into a radial representation. 
@@ -34,6 +35,8 @@
 #'   for the nodes around the circles. 
 #'   By default ordering is given by a bipartite placement that reduces
 #'   the number of edge crossings.
+#' @param level A node attribute or a vector to hierarchically order levels for
+#'   "multilevel" layout.
 #' @family mapping
 #' @source
 #'   Diego Diez, Andrew P. Hutchins and Diego Miranda-Saavedra. 2014.
@@ -107,8 +110,17 @@ layout_tbl_graph_ladder <- function(.data,
 #' @export
 layout_tbl_graph_concentric <- function(.data, membership = NULL, radius = NULL, 
                                         order.by = NULL, 
-                                        circular = FALSE, times = 1000){
-  membership <- node_attribute(.data, membership)
+                                        circular = FALSE, times = 1000) {
+  if (is.null(membership)) { 
+    if (is_twomode(.data)) membership <- node_mode(.data) else 
+      stop("Please pass the function a `membership` node attribute or a vector.")
+  } else {
+    if (length(membership) > 1 & length(membership) != length(.data)) {
+      stop("Please pass the function a `membership` node attribute or a vector.")
+    } else if (length(membership) != length(.data)) {
+      membership <- node_attribute(.data, membership)
+    }
+  }
   names(membership) <- node_names(.data)
   membership <- to_list(membership)
   all_c  <- unlist(membership, use.names = FALSE)
@@ -148,6 +160,28 @@ layout_tbl_graph_concentric <- function(.data, membership = NULL, radius = NULL,
     res[l, ] <- getCoordinates(l, r)
   }
   .to_lo(res)
+}
+
+#' @rdname partition_layouts
+#' @export
+layout_tbl_graph_multilevel <- function(.data, level = NULL, circular = FALSE) {
+  if (is.null(level)) { 
+    if (any(grepl("lvl", names(node_attribute(.data))))) {
+      message("Level attribute 'lvl' found in data.")
+      } else {
+        stop("Please pass the function a `level` node attribute or a vector.")
+      }
+  } else {
+    if (length(level) > 1 & length(level) != length(.data)) {
+      stop("Please pass the function a `level` node attribute or a vector.")
+    } else if (length(level) != length(.data)) {
+      level <- node_attribute(.data, level)
+    }
+  }
+  out <- igraph::set_vertex_attr(.data, "lvl", value = level)
+  thisRequires("graphlayouts")
+  out <- graphlayouts::layout_as_multilevel(out, alpha = 25)
+  .to_lo(out)
 }
 
 .rescale <- function(vector){
