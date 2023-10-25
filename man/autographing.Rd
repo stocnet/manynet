@@ -86,7 +86,7 @@ merging categories with lower counts into one called "other".}
 coloring the nodes. It is easiest if this is added as an edge or tie attribute
 to the graph before plotting.}
 
-\item{...}{Extra arguments to pass on to \code{autographr()}/\code{ggraph()}/\code{ggplot()}.}
+\item{...}{Extra arguments to pass on to layout.}
 
 \item{netlist}{A list of manynet-compatible networks.}
 
@@ -122,19 +122,15 @@ with sensible defaults
 
 }}
 \examples{
-#autographr(ison_brandes)
-#autographr(ison_algebra, node_size = 8, node_color = "orange",
-#           edge_color = "blue")
-#ison_adolescents \%>\% 
-#   mutate(shape = rep(c("circle", "square"), times = 4),
-#          color = rep(c("blue", "red"), times = 4)) \%>\%
-#  autographr(node_shape = "shape", node_color = "color")
+#autographr(ison_adolescents)
+#autographr(ison_algebra, node_size = 8,
+#           node_color = "orange", edge_color = "blue")
 #autographr(ison_algebra, edge_color = "friends")
-#autographr(ison_lotr, node_group = Race)
+#autographr(ison_karateka, node_group = obc)
 #autographr(ison_southern_women, layout = "concentric", 
 #           node_color = "type", membership = "type")
-#autographr(ison_karateka, layout = "multilevel",
-#           node_color = "obc", level = "obc")
+#autographr(ison_lotr, layout = "multilevel",
+#           node_color = "Race", node_shape = 6, level = "Race")
 #autographs(to_egos(ison_adolescents))
 #ison_adolescents \%>\%
 # mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%
