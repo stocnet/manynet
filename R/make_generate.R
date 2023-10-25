@@ -10,8 +10,6 @@
 #' @family makes
 #' @inheritParams create
 #' @inheritParams is
-#' @param p Proportion of possible ties in the network that are realised or,
-#'   if integer greater than 1, the number of ties in the network.
 #' @param directed Whether to generate network as directed. By default FALSE.
 #' @return By default an `igraph` object is returned,
 #'   but this can be coerced into other types of objects
@@ -19,6 +17,8 @@
 NULL
 
 #' @describeIn generate Generates a random network with a particular probability.
+#' @param p Proportion of possible ties in the network that are realised or,
+#'   if integer greater than 1, the number of ties in the network.
 #' @references 
 #' Erdős, Paul, and Alfréd Rényi. (1959). 
 #' "\href{https://www.renyi.hu/~p_erdos/1959-11.pdf}{On Random Graphs I}" 
@@ -75,6 +75,8 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
 
 #' @describeIn generate Generates a small-world structure
 #'   following the lattice rewiring model.
+#' @param p Proportion of possible ties in the network that are realised or,
+#'   if integer greater than 1, the number of ties in the network.
 #' @references 
 #' Watts, Duncan J., and Steven H. Strogatz. 1998. 
 #' “Collective Dynamics of ‘Small-World’ Networks.” 
@@ -102,6 +104,7 @@ generate_smallworld <- function(n, p = 0.05, directed = FALSE, width = 2) {
 
 #' @describeIn generate Generates a scale-free structure
 #'   following the preferential attachment model.
+#' @param p Power of the preferential attachment, default is 1.
 #' @importFrom igraph sample_pa
 #' @references 
 #' Barabási, Albert-László, and Réka Albert. 1999. 

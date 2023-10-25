@@ -30,8 +30,7 @@ a two-mode network will be created.
 a network of the same dimensions will be created.
 }}
 
-\item{p}{Proportion of possible ties in the network that are realised or,
-if integer greater than 1, the number of ties in the network.}
+\item{p}{Power of the preferential attachment, default is 1.}
 
 \item{directed}{Whether to generate network as directed. By default FALSE.}
 
