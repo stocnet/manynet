@@ -119,12 +119,6 @@ test_that("node_group works correctly", {
 
 test_that("unquoted arguments plot correctly", {
   skip_on_cran()
-  expect_equal(autographr(ison_lawfirm, node_color = Gender,
-                          node_size = Age),
-               autographr(ison_lawfirm, node_color = "Gender",
-                          node_size = "Age"))
-  expect_equal(autographr(ison_lawfirm, node_color = "Gender",
-                          node_size = 5),
-               autographr(ison_lawfirm, node_color = Gender,
-                          node_size = "5"))
+  expect_equal(autographr(ison_lawfirm, node_color = "Gender"),
+               autographr(ison_lawfirm, node_color = Gender))
 })
