@@ -192,7 +192,7 @@ within the same scene of the film.
 }
 \details{
 The network for each episode may be extracted and used separately,
-eg. \code{ison_starwars[[1]]} for episode 1.
+eg. \code{ison_starwars[[1]]} or \verb{ison_starwars$Episode I} for Episode 1.
 }
 \references{
 Gabasova, E. (2016).

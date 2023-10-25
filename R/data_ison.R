@@ -296,7 +296,7 @@
 #' within the same scene of the film.
 #' @details
 #' The network for each episode may be extracted and used separately,
-#' eg. `ison_starwars[[1]]` for episode 1.
+#' eg. `ison_starwars[[1]]` or `ison_starwars$Episode I` for Episode 1.
 #' @docType data
 #' @keywords datasets
 #' @name ison_starwars
