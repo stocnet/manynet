@@ -16,7 +16,8 @@ but nodes are aligned across the layers.
 The "ladder" layout is similar to "railway",
 but places successive layers horizontally rather than vertically.
 The "concentric" layout places a "hierarchy" layout
-around a circle, with successive layers appearing as concentric circles.'><meta property="og:image" content="https://snlab-ch.github.io/manynet/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+around a circle, with successive layers appearing as concentric circles.
+The "multilevel" layout places successive layers as multiple levels.'><meta property="og:image" content="https://snlab-ch.github.io/manynet/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
@@ -34,7 +35,7 @@ around a circle, with successive layers appearing as concentric circles.'><meta 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.6</span>
       </span>
     </div>
 
@@ -89,7 +90,8 @@ but nodes are aligned across the layers.
 The "ladder" layout is similar to "railway",
 but places successive layers horizontally rather than vertically.
 The "concentric" layout places a "hierarchy" layout
-around a circle, with successive layers appearing as concentric circles.</p>
+around a circle, with successive layers appearing as concentric circles.
+The "multilevel" layout places successive layers as multiple levels.</p>
     </div>
 
     <div id="ref-usage">
@@ -108,7 +110,9 @@ around a circle, with successive layers appearing as concentric circles.</p>
 <span>  order.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  circular <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  times <span class="op">=</span> <span class="fl">1000</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">layout_tbl_graph_multilevel</span><span class="op">(</span><span class="va">.data</span>, level <span class="op">=</span> <span class="cn">NULL</span>, circular <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="source">
@@ -156,12 +160,18 @@ for the nodes around the circles.
 By default ordering is given by a bipartite placement that reduces
 the number of edge crossings.</p></dd>
 
+
+<dt>level</dt>
+<dd><p>A node attribute or a vector to hierarchically order levels for
+"multilevel" layout.</p></dd>
+
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other mapping: 
 <code><a href="attributes.html">attributes</a>()</code>,
 <code><a href="autographing.html">autographing</a></code>,
+<code><a href="configuration_layouts.html">configuration_layouts</a></code>,
 <code><a href="is.html">is</a>()</code>,
 <code><a href="properties.html">properties</a></code></p></div>
     </div>

@@ -28,7 +28,7 @@ delete_nodes100
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.6</span>
       </span>
     </div>
 
@@ -137,7 +137,7 @@ Below are the currently implemented S3 methods:</p><table class="table table"><t
 <code><a href="miss.html">miss</a></code>,
 <code><a href="reformat.html">reformat</a></code>,
 <code><a href="split.html">split</a>()</code>,
-<code><a href="tidy.html">tidy</a>()</code>,
+<code><a href="tidy.html">tidy</a></code>,
 <code><a href="transform.html">transform</a>()</code></p></div>
     </div>
 
@@ -145,7 +145,7 @@ Below are the currently implemented S3 methods:</p><table class="table table"><t
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span>  <span class="va">other</span> <span class="op">&lt;-</span> <span class="fu"><a href="create.html">create_filled</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>, <span class="st">"D"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">add_nodes</span><span class="op">(</span><span class="va">other</span>, <span class="fl">4</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Matthew"</span>, <span class="st">"Mark"</span>, <span class="st">"Luke"</span>, <span class="st">"Tim"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A labelled, undirected tbl_graph with 8 nodes and 6 ties</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # A labelled, undirected network with 8 nodes and 6 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 8 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   name   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
@@ -166,7 +166,7 @@ Below are the currently implemented S3 methods:</p><table class="table table"><t
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     2     4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     3     4</span>
 <span class="r-in"><span>  <span class="fu">add_tie_attribute</span><span class="op">(</span><span class="va">other</span>, <span class="st">"weight"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A labelled, weighted, undirected tbl_graph with 4 nodes and 6 ties</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # A labelled, weighted, undirected network with 4 nodes and 6 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   name </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>

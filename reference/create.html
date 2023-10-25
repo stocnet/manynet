@@ -31,7 +31,7 @@ In two-mode networks, the directed argument is ignored."><meta property="og:imag
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.6</span>
       </span>
     </div>
 
@@ -207,11 +207,11 @@ and will never simplify the result.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">create_empty</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected tbl_graph with 10 nodes and 0 ties</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected network with 10 nodes and 0 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 variables: from &lt;int&gt;, to &lt;int&gt;</span></span>
 <span class="r-in"><span><span class="fu">create_filled</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected tbl_graph with 10 nodes and 45 ties</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected network with 10 nodes and 45 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 45 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
@@ -223,7 +223,7 @@ and will never simplify the result.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     1     7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 39 more rows</span></span>
 <span class="r-in"><span><span class="fu">create_ring</span><span class="op">(</span><span class="fl">8</span>, width <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected tbl_graph with 8 nodes and 16 ties</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected network with 8 nodes and 16 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 16 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
@@ -235,7 +235,7 @@ and will never simplify the result.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2     4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 10 more rows</span></span>
 <span class="r-in"><span><span class="fu">create_star</span><span class="op">(</span><span class="fl">12</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected tbl_graph with 12 nodes and 11 ties</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected network with 12 nodes and 11 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 11 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
@@ -247,7 +247,7 @@ and will never simplify the result.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     1     7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 5 more rows</span></span>
 <span class="r-in"><span><span class="fu">create_tree</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">7</span>,<span class="fl">8</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A two-mode tbl_graph with 15 nodes and 14 ties</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # A two-mode network with 15 nodes and 14 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 15 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   type </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span></span>
@@ -269,7 +269,7 @@ and will never simplify the result.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     3     8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 8 more rows</span></span>
 <span class="r-in"><span><span class="fu">create_lattice</span><span class="op">(</span><span class="fl">12</span>, width <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected tbl_graph with 12 nodes and 17 ties</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected network with 12 nodes and 17 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 17 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
@@ -281,7 +281,7 @@ and will never simplify the result.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     4     5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 11 more rows</span></span>
 <span class="r-in"><span><span class="fu">create_components</span><span class="op">(</span><span class="fl">10</span>, membership <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">2</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">3</span>,<span class="fl">3</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected tbl_graph with 10 nodes and 12 ties</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected network with 10 nodes and 12 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 12 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
@@ -293,7 +293,7 @@ and will never simplify the result.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     5     6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 6 more rows</span></span>
 <span class="r-in"><span><span class="fu">create_core</span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected tbl_graph with 6 nodes and 12 ties</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected network with 6 nodes and 12 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 12 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
@@ -305,7 +305,7 @@ and will never simplify the result.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2     3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 6 more rows</span></span>
 <span class="r-in"><span>  <span class="fu">create_explicit</span><span class="op">(</span><span class="va">A</span> <span class="op">-</span><span class="op">+</span> <span class="va">B</span>, <span class="va">B</span> <span class="op">-</span><span class="op">+</span> <span class="va">C</span>, <span class="va">A</span> <span class="op">+</span><span class="op">-</span><span class="op">+</span> <span class="va">C</span>, <span class="va">D</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A labelled, directed tbl_graph with 4 nodes and 4 arcs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # A labelled, directed network with 4 nodes and 4 arcs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   name </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>

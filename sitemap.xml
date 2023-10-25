@@ -40,10 +40,10 @@
     <loc>https://snlab-ch.github.io/manynet/reference/autographing.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/create.html</loc>
+    <loc>https://snlab-ch.github.io/manynet/reference/configuration_layouts.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/extract_tute.html</loc>
+    <loc>https://snlab-ch.github.io/manynet/reference/create.html</loc>
   </url>
   <url>
     <loc>https://snlab-ch.github.io/manynet/reference/from.html</loc>
@@ -91,6 +91,9 @@
     <loc>https://snlab-ch.github.io/manynet/reference/ison_southern_women.html</loc>
   </url>
   <url>
+    <loc>https://snlab-ch.github.io/manynet/reference/ison_starwars.html</loc>
+  </url>
+  <url>
     <loc>https://snlab-ch.github.io/manynet/reference/miss.html</loc>
   </url>
   <url>
@@ -109,9 +112,6 @@
     <loc>https://snlab-ch.github.io/manynet/reference/reformat.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/run_tute.html</loc>
-  </url>
-  <url>
     <loc>https://snlab-ch.github.io/manynet/reference/split.html</loc>
   </url>
   <url>
@@ -122,5 +122,8 @@
   </url>
   <url>
     <loc>https://snlab-ch.github.io/manynet/reference/transform.html</loc>
+  </url>
+  <url>
+    <loc>https://snlab-ch.github.io/manynet/reference/tutorials.html</loc>
   </url>
 </urlset>
