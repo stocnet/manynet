@@ -41,9 +41,11 @@ autographd(
 \arguments{
 \item{.data}{A manynet-consistent object.}
 
-\item{layout}{An igraph, ggraph, or manynet layout algorithm,
-currently defaults to "stress" for one mode networks or
-"concentric" for two mode networks if not declared.
+\item{layout}{An igraph, ggraph, or manynet layout algorithm.
+If not declared, defaults to "triad" for networks with 3 nodes,
+"quad" for networks with 4 nodes,
+"stress" for all other one mode networks,
+or "hierarchy" for two mode networks.
 For "concentric" layout algorithm please declare the "membership" as an
 extra argument.
 The "membership" argument expects either a quoted node attribute present
@@ -52,7 +54,8 @@ For "multilevel" layout algorithm please declare the "level"
 as extra argument.
 The "level" argument expects either a quoted node attribute present
 in data or vector with the same length as nodes to hierarchically
-order categories. If missing, function will look for 'lvl' node attribute in data.}
+order categories.
+If "level" is missing, function will look for 'lvl' node attribute in data.}
 
 \item{labels}{Logical, whether to print node names
 as labels if present.}
