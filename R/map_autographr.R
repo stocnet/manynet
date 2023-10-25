@@ -11,44 +11,49 @@
 #' @family mapping
 #' @param .data A manynet-consistent object.
 #' @param layout An igraph, ggraph, or manynet layout algorithm,
-#'   currently defaults to 'stress'.
+#'   currently defaults to "stress" for one mode networks or
+#'   "concentric" for two mode networks if not declared.
 #'   For "concentric" layout algorithm please declare the "membership" as an 
 #'   extra argument.
 #'   The "membership" argument expects either a quoted node attribute present
-#'   in data or vector with the same length as nodes.
-#'   Membership is used to draw concentric circles and, if missing but network
-#'   is tow mode, function will use network mode to infer layout.
+#'   in data or vector with the same length as nodes to draw concentric circles.
 #'   For "multilevel" layout algorithm please declare the "level"
 #'   as extra argument.
 #'   The "level" argument expects either a quoted node attribute present
-#'   in data or vector with the same length as nodes.
-#'   Level is used to hierarchically order categories and, if missing,
-#'   function will look for 'lvl' node attribute in data.
+#'   in data or vector with the same length as nodes to hierarchically
+#'   order categories. If missing, function will look for 'lvl' node attribute in data.
 #' @param labels Logical, whether to print node names
 #'   as labels if present.
-#' @param node_shape Character string in quotation marks referring to the name 
-#'   of a node attribute already present in the graph to be used for the shapes 
-#'   of the nodes. 
-#'   Shapes follow the ordering "circle", "square", "triangle",
-#'   so this aesthetic should be used for a variable with only a few categories.
-#' @param node_size Node variable in quotation marks to be used for 
-#'   the size of the nodes.
+#' @param node_shape Node variable to be used for shaping the nodes.
+#'   It is easiest if this is added as a node attribute to
+#'   the graph before plotting.
+#'   Nodes can also be shaped by declaring a shape instead.
+#' @param node_size Node variable to be used for sizing the nodes.
 #'   This can be any continuous variable on the nodes of the network.
 #'   Since this function expects this to be an existing variable,
 #'   it is recommended to calculate all node-related statistics prior
 #'   to using this function.
-#' @param node_color Node variable in quotation marks to be used for 
-#'   coloring the nodes. It is easiest if this is added as a node attribute to
+#'   Nodes can also be sized by declaring a numeric size or vector instead.
+#' @param node_color Node variable to be used for coloring the nodes.
+#'   It is easiest if this is added as a node attribute to
 #'   the graph before plotting.
-#' @param node_group Node variable in quotation marks to be used for grouping
-#'   the nodes. It is easiest if this is added as a hull over
+#'   Nodes can also be colored by declaring a color instead.
+#' @param node_group Node variable to be used for grouping the nodes.
+#'   It is easiest if this is added as a hull over
 #'   groups before plotting.
 #'   Group variables should have a minimum of 3 nodes,
 #'   if less, number groups will be reduced by
 #'   merging categories with lower counts into one called "other".
-#' @param edge_color Tie variable in quotation marks to be used for 
-#'   coloring the nodes. It is easiest if this is added as an edge or tie attribute 
+#' @param edge_color Tie variable to be used for coloring the nodes.
+#'   It is easiest if this is added as an edge or tie attribute 
 #'   to the graph before plotting.
+#'   Edges can also be colored by declaring a color instead.
+#' @param edge_size Edge variable to be used for sizing the edges.
+#'   This can be any continuous variable on the nodes of the network.
+#'   Since this function expects this to be an existing variable,
+#'   it is recommended to calculate all edge-related statistics prior
+#'   to using this function.
+#'   Edges can also be sized by declaring a numeric size or vector instead.
 #' @param ... Extra arguments to pass on to layout.
 #' @return A ggplot2::ggplot() object.
 #' @importFrom ggraph geom_edge_link geom_node_text geom_conn_bundle
@@ -60,14 +65,24 @@ NULL
 #' @describeIn autographing Graphs a network with sensible defaults
 #' @examples
 #' #autographr(ison_adolescents)
-#' #autographr(ison_algebra, node_size = 8,
-#' #           node_color = "orange", edge_color = "blue")
-#' #autographr(ison_algebra, edge_color = "friends")
-#' #autographr(ison_karateka, node_group = obc)
+#' #autographr(ison_algebra, layout = "circle", 
+#' #           node_size = 8, node_color = "orange", node_shape = "square",
+#' #           edge_color = "blue", edge_size = 2)
+#' #autographr(ison_algebra, edge_color = "friends",
+#' #           node_size = migraph::node_betweenness(ison_algebra)*100)
+#' #ison_adolescents |> 
+#' #  mutate(cut = migraph::node_is_cutpoint(ison_adolescents)) |> 
+#' #  autographr(node_color = "cut", node_shape = "cut")
+#' #autographr(ison_lotr, node_color = Race, 
+#' #           node_size = migraph::node_degree(ison_lotr)*2,
+#' #           edge_color = "darkgreen",
+#' #           edge_size = migraph::tie_degree(ison_lotr))
+#' #autographr(ison_karateka, node_group = obc,
+#' #           edge_size = migraph::tie_closeness(ison_karateka))
 #' #autographr(ison_southern_women, layout = "concentric", 
 #' #           node_color = "type", membership = "type")
 #' #autographr(ison_lotr, layout = "multilevel",
-#' #           node_color = "Race", node_shape = 6, level = "Race")
+#' #           node_color = "Race", node_shape = , level = "Race")
 #' @export
 autographr <- function(.data,
                        layout,
@@ -77,6 +92,7 @@ autographr <- function(.data,
                        node_size,
                        node_group,
                        edge_color,
+                       edge_size,
                        ...) {
   name <- weight <- nodes <- label <- NULL # avoid CMD check notes
   g <- as_tidygraph(.data)
@@ -87,10 +103,8 @@ autographr <- function(.data,
     node_color <- as.character(substitute(node_color))
   if(missing(node_shape)) node_shape <- NULL else
     node_shape <- as.character(substitute(node_shape))
-  if(missing(node_size)) node_size <- NULL else {
+  if(missing(node_size)) node_size <- NULL else if (!is.numeric(node_size)) {
     node_size <- as.character(substitute(node_size))
-    if (grepl("[-]?[0-9]+[.]?[0-9]*", node_size))
-      node_size <- as.numeric(node_size)
   }
   if(missing(node_group)) node_group <- NULL else {
     node_group <- as.character(substitute(node_group))
@@ -99,10 +113,13 @@ autographr <- function(.data,
     }
   if(missing(edge_color)) edge_color <- NULL else
     edge_color <- as.character(substitute(edge_color))
+  if(missing(edge_size)) edge_size <- NULL else if (!is.numeric(edge_size)) {
+    edge_size <- as.character(substitute(edge_size))
+  }
   # Add layout ----
   p <- .graph_layout(g, layout, labels, node_group, ...)
   # Add edges ----
-  p <- .graph_edges(p, g, edge_color)
+  p <- .graph_edges(p, g, edge_color, edge_size)
   # Add nodes ----
   p <- .graph_nodes(p, g, node_color, node_shape, node_size)
   p
@@ -319,7 +336,7 @@ reduce_categories <- function(g, node_group) {
   p
 }
 
-.graph_edges <- function(p, g, edge_color) {
+.graph_edges <- function(p, g, edge_color, edge_size) {
   # if (is_signed(g)) {
   #   edge_linetype <- ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")
   #   edge_color <- ifelse(igraph::E(g)$sign >= 0, "#d73027", "#4575b4")
@@ -336,13 +353,10 @@ reduce_categories <- function(g, node_group) {
   #     edge_color <- "black"
   # }
   weight <- NULL
+  esize <- .infer_esize(g, edge_size)
   # Begin plotting edges in various cases
   if (is_directed(g)) {
-    if (length(igraph::E(g)) > 100) {
-      bend <- 0
-    } else {
-      bend <- ifelse(igraph::is.mutual(g), 0.2, 0)
-    }
+    bend <- .infer_bend(g)
     if (is_weighted(g)) {
       if (!is.null(edge_color)) {
         if (edge_color %in% names(tie_attribute(g))) {
@@ -351,6 +365,7 @@ reduce_categories <- function(g, node_group) {
                                                       colour = edge_color),
                                          edge_alpha = 0.4, strength = bend,
                                          edge_linetype = "solid",
+                                         edge_width = esize,
                                          arrow = ggplot2::arrow(angle = 15,
                                                                 length = ggplot2::unit(2, 'mm'),
                                                                 type = "closed"), 
@@ -358,10 +373,11 @@ reduce_categories <- function(g, node_group) {
             ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "none") +
             ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = "none")
         } else {
-          p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = weight,
-                                                      colour = edge_color),
+          p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = weight),
+                                         colour = edge_color,
                                          edge_alpha = 0.4, strength = bend,
                                          edge_linetype = "solid",
+                                         edge_width = esize,
                                          arrow = ggplot2::arrow(angle = 15,
                                                                 length = ggplot2::unit(2, 'mm'),
                                                                 type = "closed"), 
@@ -374,8 +390,8 @@ reduce_categories <- function(g, node_group) {
         p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = weight,
                                                      colour = edge_color,
                                                      linetype = edge_linetype),
-                                        edge_alpha = 0.4,
-                                       strength = bend,
+                                        edge_alpha = 0.4, strength = bend,
+                                        edge_width = esize,
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(2, 'mm'),
                                                                type = "closed"), 
@@ -386,6 +402,7 @@ reduce_categories <- function(g, node_group) {
                                         edge_colour = "black",
                                         edge_alpha = 0.4, strength = bend,
                                         edge_linetype = "solid",
+                                        edge_width = esize,
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(2, 'mm'),
                                                                type = "closed"), 
@@ -399,15 +416,17 @@ reduce_categories <- function(g, node_group) {
         p <- p + ggraph::geom_edge_arc(ggplot2::aes(colour = edge_color),
                                         edge_alpha = 0.4, strength = bend,
                                         edge_linetype = "solid",
+                                        edge_width = esize,
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(3, "mm"),
                                                                type = "closed"),
                                         end_cap = ggraph::circle(3, "mm")) +
           ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = "none")
         } else {
-          p <- p + ggraph::geom_edge_arc(ggplot2::aes(colour = edge_color),
+          p <- p + ggraph::geom_edge_arc(colour = edge_color,
                                          edge_alpha = 0.4, strength = bend,
                                          edge_linetype = "solid",
+                                         edge_width = esize,
                                          arrow = ggplot2::arrow(angle = 15,
                                                                 length = ggplot2::unit(3, "mm"),
                                                                 type = "closed"),
@@ -419,6 +438,7 @@ reduce_categories <- function(g, node_group) {
         p <- p + ggraph::geom_edge_arc(ggplot2::aes(colour = edge_color,
                                                      linetype = edge_linetype),
                                         edge_alpha = 0.4, strength = bend,
+                                        edge_width = esize,
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(3, "mm"),
                                                                type = "closed"),
@@ -427,6 +447,7 @@ reduce_categories <- function(g, node_group) {
         p <- p + ggraph::geom_edge_arc(edge_colour = "black",
                                         edge_alpha = 0.4, strength = bend,
                                         edge_linetype = "solid",
+                                        edge_width = esize,
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(3, "mm"),
                                                                type = "closed"),
@@ -440,13 +461,14 @@ reduce_categories <- function(g, node_group) {
         edge_color <- as.factor(tie_attribute(g, edge_color))
         p <- p + ggraph::geom_edge_link(ggplot2::aes(width = weight,
                                                      colour = edge_color),
-                                        edge_alpha = 0.4, edge_linetype = "solid") +
+                                        edge_alpha = 0.4, edge_linetype = "solid",
+                                        edge_width = esize) +
           ggraph::scale_edge_width_continuous(range = c(0.2, 1), guide = "none") +
           ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = "none")
         } else {
-          p <- p + ggraph::geom_edge_link(ggplot2::aes(width = weight,
-                                                       colour = edge_color),
-                                          edge_alpha = 0.4,
+          p <- p + ggraph::geom_edge_link(ggplot2::aes(width = weight),
+                                          colour = edge_color,
+                                          edge_alpha = 0.4, edge_width = esize,
                                           edge_linetype = "solid") +
             ggraph::scale_edge_width_continuous(range = c(0.2, 1), guide = "none")
         }
@@ -456,13 +478,13 @@ reduce_categories <- function(g, node_group) {
         p <- p + ggraph::geom_edge_link(ggplot2::aes(width = weight,
                                                      colour = edge_color,
                                                      linetype = edge_linetype),
-                                        edge_alpha = 0.4) +
+                                        edge_alpha = 0.4, edge_width = esize) +
           ggraph::scale_edge_width_continuous(range = c(0.2, 1), guide = "none")
       } else {
         p <- p + ggraph::geom_edge_link0(ggplot2::aes(width = weight),
                                          edge_colour = "black",
                                          edge_linetype = "solid",
-                                         edge_alpha = 0.4) + 
+                                         edge_alpha = 0.4, edge_width = esize) + 
           ggraph::scale_edge_width_continuous(range = c(.2, 1), guide = "none")
       }
     } else { # unweighted and undirected
@@ -471,21 +493,26 @@ reduce_categories <- function(g, node_group) {
         edge_color <- as.factor(tie_attribute(g, edge_color))
         p <- p + ggraph::geom_edge_link0(ggplot2::aes(colour = edge_color),
                                          edge_linetype = "solid",
-                                         edge_alpha = 0.4) +
+                                         edge_alpha = 0.4, edge_width = esize) +
           ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = "none")
         } else {
-          
+          p <- p + ggraph::geom_edge_link0(colour = edge_color,
+                                           edge_linetype = "solid",
+                                           edge_alpha = 0.4,
+                                           edge_width = esize) +
+            ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = "none")
         }
       } else if (is_signed(g)) {
         edge_color <- ifelse(igraph::E(g)$sign >= 0,  "#d73027", "#4575b4")
         edge_linetype <- ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")
         p <- p + ggraph::geom_edge_link(ggplot2::aes(colour = edge_color,
                                                      linetype = edge_linetype),
-                                        edge_alpha = 0.4)
+                                        edge_alpha = 0.4, edge_width = esize)
       } else {
-        p <- p + ggraph::geom_edge_link0(ggplot2::aes(colour = edge_color),
+        p <- p + ggraph::geom_edge_link0(edge_colour = "black",
                                          edge_linetype = "solid",
-                                         edge_alpha = 0.4) 
+                                         edge_alpha = 0.4,
+                                         edge_width = esize) 
       }
     }
   }
@@ -493,47 +520,46 @@ reduce_categories <- function(g, node_group) {
 
 .graph_nodes <- function(p, g, node_color, node_shape, node_size){
   nsize <- .infer_nsize(g, node_size)
-  if (!is.null(node_shape)) {
-    if (node_shape %in% names(node_attribute(g))) {
-      node_shape <- as.factor(node_attribute(g, node_shape))
-    } else if (length(node_shape) == 1) {
-      node_shape <- rep(node_shape, network_nodes(g)) 
-    }
-  } else if (is_twomode(g)) {
-    node_shape <- ifelse(igraph::V(g)$type, "square", "circle")
-  } else {
-    node_shape <- "circle"
-  }
+  nshape <- .infer_shape(g, node_shape)
   if (is_twomode(g)) {
     if (!is.null(node_color)) {
       if (node_color %in% names(node_attribute(g))) {
         node_color <- as.factor(node_attribute(g, node_color))
         p <- p + ggraph::geom_node_point(ggplot2::aes(color = node_color),
-                                         size = nsize, shape = node_shape) +
+                                         size = nsize, shape = nshape) +
           ggplot2::scale_colour_manual(values = colorsafe_palette, guide = "none")
       } else {
         p <- p + ggraph::geom_node_point(color = node_color,
-                                         size = nsize, shape = node_shape) 
+                                         size = nsize, shape = nshape) 
       }
     } else {
-      p <- p + ggraph::geom_node_point(size = nsize, shape = node_shape)
+      p <- p + ggraph::geom_node_point(size = nsize, shape = nshape)
     }
   } else {
     if (!is.null(node_color)) {
       if (node_color %in% names(node_attribute(g))) {
         node_color <- as.factor(node_attribute(g, node_color))
         p <- p + ggraph::geom_node_point(aes(color = node_color),
-                                         size = nsize, shape = node_shape) +
+                                         size = nsize, shape = nshape) +
         ggplot2::scale_colour_manual(values = colorsafe_palette, guide = "none")
       } else {
         p <- p + ggraph::geom_node_point(color = node_color,
-                                         size = nsize, shape = node_shape)
+                                         size = nsize, shape = nshape)
       }
     } else {
-      p <- p + ggraph::geom_node_point(size = nsize, shape = node_shape)
+      p <- p + ggraph::geom_node_point(size = nsize, shape = nshape)
     }
   }
   p
+}
+
+.infer_bend <- function(g) {
+  if (length(igraph::E(g)) > 100) {
+    out <- 0
+  } else {
+    out <- ifelse(igraph::is.mutual(g), 0.2, 0)
+  }
+  out
 }
 
 .infer_nsize <- function(g, node_size){
@@ -545,9 +571,40 @@ reduce_categories <- function(g, node_group) {
     } else {
       out <- node_size(g)
     }
-    if(all(out <= 1 & out >= 0)) out <- out*10
+    if(length(node_size > 1) & all(out <= 1 & out >= 0)) out <- out*10
   } else {
     out <- ifelse(network_nodes(g) <= 10, 5, (100 / network_nodes(g)) / 2)
+  }
+  out
+}
+
+.infer_shape <- function(g, node_shape) {
+  if (!is.null(node_shape)) {
+    if (node_shape %in% names(node_attribute(g))) {
+      out <- as.factor(node_attribute(g, node_shape))
+    } else if (length(node_shape) == 1) {
+      out <- rep(node_shape, network_nodes(g)) 
+    }
+  } else if (is_twomode(g)) {
+    out <- ifelse(igraph::V(g)$type, "square", "circle")
+  } else {
+    out <- "circle"
+  }
+  out
+}
+
+.infer_esize <- function(g, edge_size) {
+  if (!is.null(edge_size)) {
+    if (is.character(edge_size)) {
+      out <- node_attribute(g, edge_size)
+    } else if (is.numeric(edge_size)) {
+      out <- edge_size
+    } else {
+      out <- edge_size(g)
+    }
+    if (length(edge_size > 1) & all(out <= 1 & out >= 0)) out <- out*10
+  } else {
+    out <- 1
   }
   out
 }

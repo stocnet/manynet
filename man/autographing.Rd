@@ -21,6 +21,7 @@ autographr(
   node_size,
   node_group,
   edge_color,
+  edge_size,
   ...
 )
 
@@ -41,50 +42,56 @@ autographd(
 \item{.data}{A manynet-consistent object.}
 
 \item{layout}{An igraph, ggraph, or manynet layout algorithm,
-currently defaults to 'stress'.
+currently defaults to "stress" for one mode networks or
+"concentric" for two mode networks if not declared.
 For "concentric" layout algorithm please declare the "membership" as an
 extra argument.
 The "membership" argument expects either a quoted node attribute present
-in data or vector with the same length as nodes.
-Membership is used to draw concentric circles and, if missing but network
-is tow mode, function will use network mode to infer layout.
+in data or vector with the same length as nodes to draw concentric circles.
 For "multilevel" layout algorithm please declare the "level"
 as extra argument.
 The "level" argument expects either a quoted node attribute present
-in data or vector with the same length as nodes.
-Level is used to hierarchically order categories and, if missing,
-function will look for 'lvl' node attribute in data.}
+in data or vector with the same length as nodes to hierarchically
+order categories. If missing, function will look for 'lvl' node attribute in data.}
 
 \item{labels}{Logical, whether to print node names
 as labels if present.}
 
-\item{node_color}{Node variable in quotation marks to be used for
-coloring the nodes. It is easiest if this is added as a node attribute to
-the graph before plotting.}
+\item{node_color}{Node variable to be used for coloring the nodes.
+It is easiest if this is added as a node attribute to
+the graph before plotting.
+Nodes can also be colored by declaring a color instead.}
 
-\item{node_shape}{Character string in quotation marks referring to the name
-of a node attribute already present in the graph to be used for the shapes
-of the nodes.
-Shapes follow the ordering "circle", "square", "triangle",
-so this aesthetic should be used for a variable with only a few categories.}
+\item{node_shape}{Node variable to be used for shaping the nodes.
+It is easiest if this is added as a node attribute to
+the graph before plotting.
+Nodes can also be shaped by declaring a shape instead.}
 
-\item{node_size}{Node variable in quotation marks to be used for
-the size of the nodes.
+\item{node_size}{Node variable to be used for sizing the nodes.
 This can be any continuous variable on the nodes of the network.
 Since this function expects this to be an existing variable,
 it is recommended to calculate all node-related statistics prior
-to using this function.}
+to using this function.
+Nodes can also be sized by declaring a numeric size or vector instead.}
 
-\item{node_group}{Node variable in quotation marks to be used for grouping
-the nodes. It is easiest if this is added as a hull over
+\item{node_group}{Node variable to be used for grouping the nodes.
+It is easiest if this is added as a hull over
 groups before plotting.
 Group variables should have a minimum of 3 nodes,
 if less, number groups will be reduced by
 merging categories with lower counts into one called "other".}
 
-\item{edge_color}{Tie variable in quotation marks to be used for
-coloring the nodes. It is easiest if this is added as an edge or tie attribute
-to the graph before plotting.}
+\item{edge_color}{Tie variable to be used for coloring the nodes.
+It is easiest if this is added as an edge or tie attribute
+to the graph before plotting.
+Edges can also be colored by declaring a color instead.}
+
+\item{edge_size}{Edge variable to be used for sizing the edges.
+This can be any continuous variable on the nodes of the network.
+Since this function expects this to be an existing variable,
+it is recommended to calculate all edge-related statistics prior
+to using this function.
+Edges can also be sized by declaring a numeric size or vector instead.}
 
 \item{...}{Extra arguments to pass on to layout.}
 
@@ -123,14 +130,24 @@ with sensible defaults
 }}
 \examples{
 #autographr(ison_adolescents)
-#autographr(ison_algebra, node_size = 8,
-#           node_color = "orange", edge_color = "blue")
-#autographr(ison_algebra, edge_color = "friends")
-#autographr(ison_karateka, node_group = obc)
+#autographr(ison_algebra, layout = "circle", 
+#           node_size = 8, node_color = "orange", node_shape = "square",
+#           edge_color = "blue", edge_size = 2)
+#autographr(ison_algebra, edge_color = "friends",
+#           node_size = migraph::node_betweenness(ison_algebra)*100)
+#ison_adolescents |> 
+#  mutate(cut = migraph::node_is_cutpoint(ison_adolescents)) |> 
+#  autographr(node_color = "cut", node_shape = "cut")
+#autographr(ison_lotr, node_color = Race, 
+#           node_size = migraph::node_degree(ison_lotr)*2,
+#           edge_color = "darkgreen",
+#           edge_size = migraph::tie_degree(ison_lotr))
+#autographr(ison_karateka, node_group = obc,
+#           edge_size = migraph::tie_closeness(ison_karateka))
 #autographr(ison_southern_women, layout = "concentric", 
 #           node_color = "type", membership = "type")
 #autographr(ison_lotr, layout = "multilevel",
-#           node_color = "Race", node_shape = 6, level = "Race")
+#           node_color = "Race", node_shape = , level = "Race")
 #autographs(to_egos(ison_adolescents))
 #ison_adolescents \%>\%
 # mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%
