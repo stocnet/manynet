@@ -55,10 +55,14 @@ These functions offer tools for splitting manynet-consistent objects
 (matrices, igraph, tidygraph, or network objects) into lists of networks.
 
 Not all functions have methods available for all object classes.
-Below are the currently implemented S3 methods:
-
-\if{html}{\out{<div class="sourceCode {r, echo = FALSE, cache = TRUE}">}}\preformatted{knitr::kable(available_methods(c("to_egos", "to_subgraphs", "to_components", "to_waves", "to_slices")))
-}\if{html}{\out{</div>}}
+Below are the currently implemented S3 methods:\tabular{lrrrrr}{
+    \tab data.frame \tab igraph \tab matrix \tab network \tab tbl_graph \cr
+   to_components \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_egos \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_slices \tab 0 \tab 1 \tab 0 \tab 0 \tab 1 \cr
+   to_subgraphs \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \cr
+   to_waves \tab 1 \tab 1 \tab 0 \tab 0 \tab 1 \cr
+}
 }
 \section{Functions}{
 \itemize{
@@ -104,7 +108,7 @@ Other manipulations:
 \code{\link{from}},
 \code{\link{miss}},
 \code{\link{reformat}},
-\code{\link{tidy}()},
+\code{\link{tidy}},
 \code{\link{transform}()}
 }
 \concept{manipulations}
