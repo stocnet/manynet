@@ -613,7 +613,7 @@ reduce_categories <- function(g, node_group) {
     }
     if (length(edge_size > 1) & all(out <= 1 & out >= 0)) out <- out*10
   } else {
-    out <- 1
+    out <- 0.5
   }
   out
 }
