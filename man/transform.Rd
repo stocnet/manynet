@@ -9,6 +9,7 @@
 \alias{to_ties}
 \alias{to_blocks}
 \alias{to_matching}
+\alias{to_mentoring}
 \alias{to_eulerian}
 \alias{to_anti}
 \alias{to_no_isolates}
@@ -28,6 +29,8 @@ to_ties(.data)
 to_blocks(.data, membership, FUN = mean)
 
 to_matching(.data, mark = "type")
+
+to_mentoring(.data, p = 0.1)
 
 to_eulerian(.data)
 
@@ -134,6 +137,9 @@ while preserving the topology of the original structures.
 \item \code{to_matching()}: Returns a network with only
 matching ties
 
+\item \code{to_mentoring()}: Returns a network where each node is
+connected only to their closest mentor
+
 \item \code{to_eulerian()}: Returns a network with only
 the Eulerian path
 
@@ -170,6 +176,7 @@ to_ties(ison_adolescents)
 #autographr(to_ties(ison_adolescents))
 to_matching(ison_southern_women)
 #autographr(to_matching(ison_southern_women))
+autographr(to_mentoring(ison_adolescents))
   to_eulerian(delete_nodes(ison_konigsberg, "Lomse"))
   #autographr(to_eulerian(delete_nodes(ison_konigsberg, "Lomse")))
 to_anti(ison_southern_women)
@@ -185,6 +192,10 @@ Goldberg, A V; Tarjan, R E (1986).
 "A new approach to the maximum flow problem".
 \emph{Proceedings of the eighteenth annual ACM symposium on Theory of computing – STOC '86}. p. 136.
 \doi{10.1145/12130.12144}
+
+Valente, Thomas, and Rebecca Davis. 1999.
+"Accelerating the Diffusion of Innovations Using Opinion Leaders",
+\emph{Annals of the American Academy of Political and Social Science} 566: 56-67.
 }
 \seealso{
 Other manipulations: 
