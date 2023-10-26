@@ -20,3 +20,4 @@ inst/tutorials/tutorial5/equivalence_data/*
 toadd/*
 .data.csv
 cache/*
+man/reexports.Rd
