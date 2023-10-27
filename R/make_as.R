@@ -340,12 +340,12 @@ as_igraph.matrix <- function(.data,
     if (!(all(.data %in% c(0, 1)))) {
       graph <- igraph::graph_from_adjacency_matrix(.data, 
                                                    mode = ifelse(all(.data == t(.data)),
-                                                                 "undirected", "directed"),
+                                                                 "max", "directed"),
                                                    weighted = TRUE)
     } else {
       graph <- igraph::graph_from_adjacency_matrix(.data,
                                                    mode = ifelse(all(.data == t(.data)),
-                                                                 "undirected", "directed"))
+                                                                 "max", "directed"))
     }
   }
   graph
