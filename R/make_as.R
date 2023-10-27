@@ -386,7 +386,7 @@ as_igraph.network <- function(.data,
                                                    weighted = TRUE,
                                                    mode = ifelse(.data$gal$directed,
                                                                  "directed",
-                                                                 "undirected"))
+                                                                 "max"))
     } else if (length(network::list.edge.attributes(.data)) > 1) {
       .data$gal$multiple <- FALSE
       graph <- network::as.sociomatrix(.data, attrname = network::list.edge.attributes(.data)[1])
@@ -394,13 +394,13 @@ as_igraph.network <- function(.data,
                                                    weighted = TRUE,
                                                    mode = ifelse(.data$gal$directed,
                                                                  "directed",
-                                                                 "undirected"))
+                                                                 "max"))
     } else {
       graph <- network::as.sociomatrix(.data)
       graph <- igraph::graph_from_adjacency_matrix(graph,
                                                    mode = ifelse(.data$gal$directed,
                                                                  "directed",
-                                                                 "undirected"))
+                                                                 "max"))
     }
   }
   # Add remaining node level attributes
