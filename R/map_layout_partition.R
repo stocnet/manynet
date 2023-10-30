@@ -49,7 +49,6 @@ NULL
 #' @export
 layout_tbl_graph_hierarchy <- function(.data,
                                        circular = FALSE, times = 1000){
-  
   thisRequiresBio("Rgraphviz")
   prep <- as_matrix(.data, twomode = FALSE)
   if(anyDuplicated(rownames(prep))){
