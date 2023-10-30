@@ -461,21 +461,21 @@ reduce_categories <- function(g, node_group) {
     if (is_weighted(g)) { # weighted and undirected
       if (!is.null(edge_color)) {
         if (edge_color %in% names(tie_attribute(g))) {
-        p <- p + ggraph::geom_edge_link(ggplot2::aes(
+        p <- p + ggraph::geom_edge_link0(ggplot2::aes(
           width = weight, colour = as.factor(tie_attribute(g, edge_color))),
                                         edge_alpha = 0.4, edge_linetype = "solid",
                                         edge_width = esize) +
           ggraph::scale_edge_width_continuous(range = c(0.2, 1), guide = "none") +
           ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = "none")
         } else {
-          p <- p + ggraph::geom_edge_link(ggplot2::aes(width = weight),
+          p <- p + ggraph::geom_edge_link0(ggplot2::aes(width = weight),
                                           colour = edge_color,
                                           edge_alpha = 0.4, edge_width = esize,
                                           edge_linetype = "solid") +
             ggraph::scale_edge_width_continuous(range = c(0.2, 1), guide = "none")
         }
       } else if (is_signed(g)) {
-        p <- p + ggraph::geom_edge_link(
+        p <- p + ggraph::geom_edge_link0(
           ggplot2::aes(width = weight,
                        colour = ifelse(igraph::E(g)$sign >= 0, "#d73027", "#4575b4"),
                        linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")),
@@ -502,7 +502,7 @@ reduce_categories <- function(g, node_group) {
                                            edge_alpha = 0.4, edge_width = esize)
         }
       } else if (is_signed(g)) {
-        p <- p + ggraph::geom_edge_link(
+        p <- p + ggraph::geom_edge_link0(
           ggplot2::aes(colour = ifelse(igraph::E(g)$sign >= 0,  "#d73027", "#4575b4"),
                        linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")),
           edge_alpha = 0.4, edge_width = esize)
@@ -621,7 +621,7 @@ reduce_categories <- function(g, node_group) {
 .infer_esize <- function(g, edge_size) {
   if (!is.null(edge_size)) {
     if (is.character(edge_size)) {
-      out <- node_attribute(g, edge_size)
+      out <- tie_attribute(g, edge_size)
     } else {
       out <- edge_size
     }
@@ -635,7 +635,7 @@ reduce_categories <- function(g, node_group) {
 .infer_lsize <- function(g, edge_size) {
   if (!is.null(edge_size)) {
     if (is.character(edge_size)) {
-      out <- node_attribute(g, edge_size)
+      out <- tie_attribute(g, edge_size)
     } else {
       out <- edge_size
     }
