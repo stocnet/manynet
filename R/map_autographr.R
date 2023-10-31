@@ -306,13 +306,15 @@ reduce_categories <- function(g, node_group) {
       # https://stackoverflow.com/questions/57000414/ggraph-node-labels-truncated?rq=1
       angles <- as.data.frame(cart2pol(as.matrix(lo[,1:2])))
       angles$degree <- angles$phi * 180/pi
-      angles <- dplyr::case_when(lo[,2] >= 0 & lo[,1] > 0 ~ angles$degree, 
+      angles <- dplyr::case_when(lo[,2] == 0 & lo[,1] == 0 ~ 0.1,
+                                 lo[,2] >= 0 & lo[,1] > 0 ~ angles$degree, 
                                  lo[,2] < 0 & lo[,1] > 0 ~ angles$degree,
-                                 lo[,1] == 1 ~angles$degree,
+                                 lo[,1] == 1 ~ angles$degree,
                                  TRUE ~ angles$degree - 180)
-      hj <- ifelse(lo[,1] > 0, -0.4, 1.4)
+      hj <- ifelse(lo[,1] >= 0, -0.5, 1.5)
       p <- p + ggraph::geom_node_text(ggplot2::aes(label = name),
-                                      size = 3, hjust = hj, angle = angles) +
+                                      size = 3, hjust = hj,
+                                      vjust = -0.3, angle = angles) +
         ggplot2::coord_cartesian(xlim=c(-1.2,1.2), ylim=c(-1.2,1.2))
     } else if (layout %in% c("bipartite", "railway") |
                (layout == "hierarchy" & length(unique(lo[,2])) <= 2)) {
