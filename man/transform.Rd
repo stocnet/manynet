@@ -79,6 +79,8 @@ Other recommended options include \code{median}, \code{sum},
 
 \item{mark}{A logical vector marking two types or modes.
 By default "type".}
+
+\item{p}{Threshold to identify mentors.}
 }
 \value{
 All \code{to_} functions return an object of the same class as that provided.
@@ -93,19 +95,12 @@ Transforming means that the returned object may have different dimensions
 than the original object.
 
 Not all functions have methods available for all object classes.
-Below are the currently implemented S3 methods:\tabular{lrrrrrr}{
-    \tab data.frame \tab igraph \tab list \tab matrix \tab network \tab tbl_graph \cr
-   to_anti \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-   to_blocks \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-   to_eulerian \tab 0 \tab 1 \tab 0 \tab 0 \tab 0 \tab 1 \cr
-   to_giant \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-   to_matching \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-   to_mode1 \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-   to_mode2 \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-   to_no_isolates \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
-   to_subgraph \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-   to_ties \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-}
+Below are the currently implemented S3 methods:
+
+\if{html}{\out{<div class="sourceCode {r, echo = FALSE, cache = TRUE}">}}\preformatted{knitr::kable(available_methods(c("to_mode1", "to_mode2", 
+ "to_giant", "to_subgraph", "to_ties", "to_blocks", 
+ "to_matching", "to_eulerian", "to_anti", "to_no_isolates")))
+}\if{html}{\out{</div>}}
 }
 \section{Functions}{
 \itemize{

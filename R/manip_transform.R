@@ -387,6 +387,7 @@ to_matching.matrix <- function(.data, mark = "type"){
 
 #' @describeIn transform Returns a network where each node is
 #'   connected only to their closest mentor
+#' @param p Threshold to identify mentors.
 #' @references
 #' Valente, Thomas, and Rebecca Davis. 1999.
 #' "Accelerating the Diffusion of Innovations Using Opinion Leaders",
