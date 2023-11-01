@@ -2,13 +2,9 @@
 
 2023-11-01
 
-## Package
-
-- Added documentation for `to_mentoring()`
-
 ## Making
 
-- Closed #27 by updating treatment of adjacency matrices in `as_igraph()` in accordance with upcoming updates to `{igraph}` package
+- Updated treatment of adjacency matrices in `as_igraph()` in accordance with upcoming updates to `{igraph}` package (closing #27)
 
 ## Manipulating
 
