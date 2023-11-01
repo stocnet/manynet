@@ -421,7 +421,7 @@ to_mentoring.igraph <- function(.data, elites = 0.1){
   ranks <- sort(colSums(md), decreasing = TRUE) # get rank order of indegrees
   mentors <- ranks[ranks == max(ranks)]
   if(length(mentors) < length(ranks)*elites)
-    mentors <- ranks[1:(length(ranks)*elites)]
+    mentors <- ranks[seq_len(length(ranks)*elites)]
   dists <- igraph::distances(.data) # compute geodesic matrix
   if(!is_labelled(.data)) rownames(dists) <- colnames(dists) <- 1:nrow(dists)
   dists <- dists[!rownames(dists) %in% names(mentors),
