@@ -387,7 +387,19 @@ to_matching.matrix <- function(.data, mark = "type"){
 
 #' @describeIn transform Returns a network where each node is
 #'   connected only to their closest mentor
-#' @param p Threshold to identify mentors.
+#' @param elites The proportion of nodes to be selected as mentors.
+#'   By default this is set at 0.1.
+#'   This means that the top 10% of nodes in terms of degree,
+#'   or those equal to the highest rank degree in the network,
+#'   whichever is the higher, will be used to select the mentors.
+#'   
+#'   Note that if nodes are equidistant from two mentors,
+#'   they will choose one at random.
+#'   If a node is without a path to a mentor,
+#'   for example because they are an isolate,
+#'   a tie to themselves (a loop) will be created instead.
+#'   Note that this is a different default behaviour than that
+#'   described in Valente and Davis (1999).
 #' @references
 #' Valente, Thomas, and Rebecca Davis. 1999.
 #' "Accelerating the Diffusion of Innovations Using Opinion Leaders",
@@ -395,21 +407,21 @@ to_matching.matrix <- function(.data, mark = "type"){
 #' @examples
 #' autographr(to_mentoring(ison_adolescents))
 #' @export
-to_mentoring <- function(.data, p = 0.1) UseMethod("to_mentoring")
+to_mentoring <- function(.data, elites = 0.1) UseMethod("to_mentoring")
 
 #' @export
-to_mentoring.tbl_graph <- function(.data, p = 0.1){
-  as_tidygraph(to_mentoring.igraph(.data, p = p))
+to_mentoring.tbl_graph <- function(.data, elites = 0.1){
+  as_tidygraph(to_mentoring.igraph(.data, elites = elites))
 }
 
 #' @export
-to_mentoring.igraph <- function(.data, p = 0.1){
+to_mentoring.igraph <- function(.data, elites = 0.1){
   md <- as_matrix(.data)
   if(!is_labelled(.data)) rownames(md) <- colnames(md) <- 1:nrow(md)
   ranks <- sort(colSums(md), decreasing = TRUE) # get rank order of indegrees
   mentors <- ranks[ranks == max(ranks)]
-  if(length(mentors) < length(ranks)*p)
-    mentors <- ranks[1:(length(ranks)*p)]
+  if(length(mentors) < length(ranks)*elites)
+    mentors <- ranks[1:(length(ranks)*elites)]
   dists <- igraph::distances(.data) # compute geodesic matrix
   if(!is_labelled(.data)) rownames(dists) <- colnames(dists) <- 1:nrow(dists)
   dists <- dists[!rownames(dists) %in% names(mentors),

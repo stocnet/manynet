@@ -82,12 +82,23 @@ these functions always return the same object type as they are given,
 only transforming these objects' properties.
 
 Not all functions have methods available for all object classes.
-Below are the currently implemented S3 methods:
-
-\if{html}{\out{<div class="sourceCode {r, echo = FALSE, cache = TRUE}">}}\preformatted{knitr::kable(available_methods(c("to_uniplex", "to_undirected", "to_directed", "to_redirected", 
-"to_reciprocated", "to_acyclic", "to_unweighted", "to_unsigned", "to_unnamed", "to_named", 
-"to_simplex", "to_onemode", "to_multilevel", "to_twomode")))
-}\if{html}{\out{</div>}}
+Below are the currently implemented S3 methods:\tabular{lrrrrr}{
+    \tab data.frame \tab igraph \tab matrix \tab network \tab tbl_graph \cr
+   to_acyclic \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_directed \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_multilevel \tab 0 \tab 1 \tab 1 \tab 0 \tab 1 \cr
+   to_named \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_onemode \tab 0 \tab 1 \tab 1 \tab 0 \tab 1 \cr
+   to_reciprocated \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_redirected \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_simplex \tab 0 \tab 1 \tab 1 \tab 0 \tab 1 \cr
+   to_twomode \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \cr
+   to_undirected \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_uniplex \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_unnamed \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_unsigned \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_unweighted \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+}
 }
 \section{Functions}{
 \itemize{

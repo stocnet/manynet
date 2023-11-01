@@ -48,10 +48,12 @@ of a network.
 The \verb{add_*()} functions operate similarly to in \code{{igraph}}.
 
 Not all functions have methods available for all object classes.
-Below are the currently implemented S3 methods:
-
-\if{html}{\out{<div class="sourceCode {r, echo = FALSE, cache = TRUE}">}}\preformatted{knitr::kable(available_methods(c("add_nodes", "delete_nodes", "add_ties", "add_node_attribute", "add_tie_attribute")))
-}\if{html}{\out{</div>}}
+Below are the currently implemented S3 methods:\tabular{lrrr}{
+    \tab igraph \tab network \tab tbl_graph \cr
+   add_nodes \tab 1 \tab 1 \tab 1 \cr
+   add_ties \tab 1 \tab 1 \tab 1 \cr
+   delete_nodes \tab 1 \tab 0 \tab 0 \cr
+}
 }
 \section{Functions}{
 \itemize{
