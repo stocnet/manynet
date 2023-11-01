@@ -9,6 +9,7 @@
 \alias{to_ties}
 \alias{to_blocks}
 \alias{to_matching}
+\alias{to_mentoring}
 \alias{to_eulerian}
 \alias{to_anti}
 \alias{to_no_isolates}
@@ -28,6 +29,8 @@ to_ties(.data)
 to_blocks(.data, membership, FUN = mean)
 
 to_matching(.data, mark = "type")
+
+to_mentoring(.data, elites = 0.1)
 
 to_eulerian(.data)
 
@@ -76,6 +79,20 @@ Other recommended options include \code{median}, \code{sum},
 
 \item{mark}{A logical vector marking two types or modes.
 By default "type".}
+
+\item{elites}{The proportion of nodes to be selected as mentors.
+By default this is set at 0.1.
+This means that the top 10\% of nodes in terms of degree,
+or those equal to the highest rank degree in the network,
+whichever is the higher, will be used to select the mentors.
+
+Note that if nodes are equidistant from two mentors,
+they will choose one at random.
+If a node is without a path to a mentor,
+for example because they are an isolate,
+a tie to themselves (a loop) will be created instead.
+Note that this is a different default behaviour than that
+described in Valente and Davis (1999).}
 }
 \value{
 All \code{to_} functions return an object of the same class as that provided.
@@ -134,6 +151,9 @@ while preserving the topology of the original structures.
 \item \code{to_matching()}: Returns a network with only
 matching ties
 
+\item \code{to_mentoring()}: Returns a network where each node is
+connected only to their closest mentor
+
 \item \code{to_eulerian()}: Returns a network with only
 the Eulerian path
 
@@ -170,6 +190,7 @@ to_ties(ison_adolescents)
 #autographr(to_ties(ison_adolescents))
 to_matching(ison_southern_women)
 #autographr(to_matching(ison_southern_women))
+autographr(to_mentoring(ison_adolescents))
   to_eulerian(delete_nodes(ison_konigsberg, "Lomse"))
   #autographr(to_eulerian(delete_nodes(ison_konigsberg, "Lomse")))
 to_anti(ison_southern_women)
@@ -185,6 +206,10 @@ Goldberg, A V; Tarjan, R E (1986).
 "A new approach to the maximum flow problem".
 \emph{Proceedings of the eighteenth annual ACM symposium on Theory of computing – STOC '86}. p. 136.
 \doi{10.1145/12130.12144}
+
+Valente, Thomas, and Rebecca Davis. 1999.
+"Accelerating the Diffusion of Innovations Using Opinion Leaders",
+\emph{Annals of the American Academy of Political and Social Science} 566: 56-67.
 }
 \seealso{
 Other manipulations: 

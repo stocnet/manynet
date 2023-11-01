@@ -3,12 +3,14 @@
 \name{themes}
 \alias{themes}
 \alias{theme_iheid}
-\title{Theming ggraph}
+\title{Many themes}
 \usage{
-theme_iheid(ggraph)
+theme_iheid(base_size = 12, base_family = "sans")
 }
 \arguments{
-\item{ggraph}{A ggraph object, e.g. created using \code{autographr()}}
+\item{base_size}{Font size, by default 12.}
+
+\item{base_family}{Font family, by default "sans".}
 }
 \value{
 Themes the current ggraph to current IHEID guidelines.
@@ -16,7 +18,9 @@ Themes the current ggraph to current IHEID guidelines.
 \description{
 These functions enable graphs to be easily and quickly themed,
 e.g. changing the default colour of the graph's vertices and edges.
-Note that, unlike typical \code{{ggplot2}} theming, these functions
-are passed the current plot with \verb{\%>\%} rather than \code{+}.
-For example, \code{autographr(ison_konigsberg) \%>\% theme_iheid()}.
+}
+\examples{
+# autographr(to_mentoring(ison_brandes)) + 
+# labs(title = "Who leads and who follows?") +
+# theme_iheid()
 }

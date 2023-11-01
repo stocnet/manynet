@@ -367,7 +367,7 @@ to_matching.igraph <- function(.data, mark = "type"){
 
 #' @export
 to_matching.tbl_graph <- function(.data, mark = "type"){
-  as_tidygraph(to_matching(as_igraph(.data), mark))
+  as_tidygraph(to_matching.igraph(.data), mark)
 }
 
 #' @export
@@ -383,6 +383,71 @@ to_matching.data.frame <- function(.data, mark = "type"){
 #' @export
 to_matching.matrix <- function(.data, mark = "type"){
   as_matrix(to_matching(as_igraph(.data), mark))
+}
+
+#' @describeIn transform Returns a network where each node is
+#'   connected only to their closest mentor
+#' @param elites The proportion of nodes to be selected as mentors.
+#'   By default this is set at 0.1.
+#'   This means that the top 10% of nodes in terms of degree,
+#'   or those equal to the highest rank degree in the network,
+#'   whichever is the higher, will be used to select the mentors.
+#'   
+#'   Note that if nodes are equidistant from two mentors,
+#'   they will choose one at random.
+#'   If a node is without a path to a mentor,
+#'   for example because they are an isolate,
+#'   a tie to themselves (a loop) will be created instead.
+#'   Note that this is a different default behaviour than that
+#'   described in Valente and Davis (1999).
+#' @references
+#' Valente, Thomas, and Rebecca Davis. 1999.
+#' "Accelerating the Diffusion of Innovations Using Opinion Leaders",
+#' _Annals of the American Academy of Political and Social Science_ 566: 56-67.
+#' @examples
+#' autographr(to_mentoring(ison_adolescents))
+#' @export
+to_mentoring <- function(.data, elites = 0.1) UseMethod("to_mentoring")
+
+#' @export
+to_mentoring.tbl_graph <- function(.data, elites = 0.1){
+  as_tidygraph(to_mentoring.igraph(.data, elites = elites))
+}
+
+#' @export
+to_mentoring.igraph <- function(.data, elites = 0.1){
+  md <- as_matrix(.data)
+  if(!is_labelled(.data)) rownames(md) <- colnames(md) <- seq_len(nrow(md))
+  ranks <- sort(colSums(md), decreasing = TRUE) # get rank order of indegrees
+  mentors <- ranks[ranks == max(ranks)]
+  if(length(mentors) < length(ranks)*elites)
+    mentors <- ranks[seq_len(length(ranks)*elites)]
+  dists <- igraph::distances(.data) # compute geodesic matrix
+  if(!is_labelled(.data)) rownames(dists) <- colnames(dists) <- seq_len(nrow(dists))
+  dists <- dists[!rownames(dists) %in% names(mentors),
+                 colnames(dists) %in% names(mentors)]
+  if(!is.matrix(dists)){ # if only one mentor available
+    out <- dists
+    out[is.infinite(out)] <- names(out[is.infinite(out)])
+    # Note that unlike Valente & Davis, we do not assign an isolate a random
+    # mentor, but instead assign themselves as their own mentor.
+    # This results in a complex network.
+    if(is.numeric(as.numeric(out))){
+      names <- names(out)
+      out <- as.numeric(out)
+      names(out) <- names
+    } 
+  } else {
+    out <- apply(dists, 1, # for each node, find mentor
+                 function(x){
+                   if(all(x == Inf)) "Self" else
+                     sample(names(mentors[x == min(x)]), 1)
+                 })
+    out[out == "Self"] <- names(out[out == "Self"])
+  }
+  out <- data.frame(from = names(out),
+                    to = as.character(out), row.names = NULL)
+  as_igraph(out)
 }
 
 #' @describeIn transform Returns a network with only

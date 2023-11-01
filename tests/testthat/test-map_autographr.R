@@ -23,8 +23,8 @@ test_that("unweighted, signed, undirected networks graph correctly", {
   # Edge parameters
   expect_equal(test_marvel[["layers"]][[2]][["aes_params"]][["edge_alpha"]], 0.4)
   # Node parameters
-  expect_equal(test_marvel[["layers"]][[3]][["aes_params"]][["size"]], 1)
-  expect_equal(test_marvel[["layers"]][[3]][["aes_params"]][["shape"]], "circle")
+  expect_equal(test_marvel[["layers"]][[4]][["aes_params"]][["size"]], 1)
+  expect_equal(test_marvel[["layers"]][[4]][["aes_params"]][["shape"]], "circle")
 })
 
 test_that("unweighted, unsigned, directed networks graph correctly", {
@@ -39,7 +39,7 @@ test_that("unweighted, unsigned, directed networks graph correctly", {
   expect_equal(test_algebra[["layers"]][[1]][["aes_params"]][["edge_linetype"]], "solid")
   expect_equal(test_algebra[["layers"]][[1]][["aes_params"]][["edge_colour"]], "black")
   expect_equal(as.character(test_algebra[["layers"]][[1]][["aes_params"]][["end_cap"]]), "circle")
-  #expect_s3_class(test_algebra[["layers"]][[2]][["aes_params"]][["end_cap"]], "ggraph_geometry")
+  expect_s3_class(test_algebra[["layers"]][[1]][["aes_params"]][["end_cap"]], "ggraph_geometry")
   # Node parameters
   expect_equal(round(test_algebra[["layers"]][[2]][["aes_params"]][["size"]]), 3)
   expect_equal(test_algebra[["layers"]][[2]][["aes_params"]][["shape"]], "circle")
@@ -57,7 +57,6 @@ test_that("weighted, unsigned, directed networks graph correctly", {
   expect_equal(test_networkers[["layers"]][[2]][["aes_params"]][["edge_linetype"]], "solid")
   expect_equal(test_networkers[["layers"]][[2]][["aes_params"]][["edge_colour"]], "black")
   expect_equal(as.character(test_networkers[["layers"]][[2]][["aes_params"]][["end_cap"]]), "circle")
-  #expect_s3_class(test_networkers[["layers"]][[2]][["aes_params"]][["end_cap"]], "ggraph_geometry")
   # Node parameters
   expect_equal(round(test_networkers[["layers"]][[3]][["aes_params"]][["size"]]), 2)
   expect_equal(test_networkers[["layers"]][[3]][["aes_params"]][["shape"]], "circle")
@@ -92,13 +91,15 @@ test_that("fancy node mods graph correctly", {
                network_nodes(ison_southern_women))
 })
 
-test_that("edge colours graph correctly", {
+test_that("edge colours and edge size graph correctly", {
   skip_on_cran()
   ison_brandes2 <- ison_brandes %>%
     add_tie_attribute("tiecolour",
-                      c("A", "B", "A", "B", "B", "B", "B", "B", "B", "B", "B", "B"))
-  test_brandes2 <- autographr(ison_brandes2, edge_color = "tiecolour")
+                      c("A", "B", "A", "B", "B", "B", "B", "B", "B", "B", "B", "B")) %>%
+    add_tie_attribute("weight", c(rep(1:6, 2)))
+  test_brandes2 <- autographr(ison_brandes2, edge_color = "tiecolour", edge_size = "weight")
   expect_false(is.null(test_brandes2$layers[[1]]$mapping$edge_colour))
+  expect_false(is.null(test_brandes2$layers[[1]]$mapping$edge_width))
 })
 
 # Named networks
@@ -121,4 +122,18 @@ test_that("unquoted arguments plot correctly", {
   skip_on_cran()
   expect_equal(autographr(ison_lawfirm, node_color = "Gender"),
                autographr(ison_lawfirm, node_color = Gender))
+})
+
+# Layouts
+test_that("concentric and circular layouts graph correctly", {
+  skip_on_cran()
+  test_circle <- autographr(to_giant(ison_marvel_relationships),
+                            layout = "circle")
+  test_conc <- autographr(to_giant(ison_marvel_relationships),
+                          layout = "concentric", membership = "Gender")
+  expect_equal(test_circle$plot_env$layout, "circle")
+  expect_equal(test_conc$plot_env$layout, "concentric")
+  expect_equal(eval(quote(pairlist(...)),
+                    envir = test_conc$plot_env)$membership,
+               "Gender")
 })
