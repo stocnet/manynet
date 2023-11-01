@@ -1,3 +1,30 @@
+# manynet 0.2.7
+
+2023-11-01
+
+## Package
+
+- Added documentation for `to_mentoring()`
+
+## Making
+
+- Closed #27 by updating treatment of adjacency matrices in `as_igraph()` in accordance with upcoming updates to `{igraph}` package
+
+## Manipulating
+
+- Added `to_mentoring` function
+
+## Mapping
+
+- Fixed bugs in `autographr()` related to `edge_size` and `edge_color`
+- Fixed bugs and updated label placements for "circular" and "concentric" layouts for `autographr()`
+- Fixed issues with self-ties in `autographr()`
+- Updated tests for `autographr()`
+
+## Data
+
+- Added `ison_friends`, a one-mode network on character connections of a popular TV series
+
 # manynet 0.2.6
 
 2023-10-25
