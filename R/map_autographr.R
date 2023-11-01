@@ -302,7 +302,7 @@ reduce_categories <- function(g, node_group) {
   }
   p <- ggraph::ggraph(lo) + ggplot2::theme_void()
   if (labels & is_labelled(g)) {
-    if (layout %in% c("concentric", "circle")) {
+    if (layout == "circle") {
       # https://stackoverflow.com/questions/57000414/ggraph-node-labels-truncated?rq=1
       angles <- as.data.frame(cart2pol(as.matrix(lo[,1:2])))
       angles$degree <- angles$phi * 180/pi
@@ -311,10 +311,30 @@ reduce_categories <- function(g, node_group) {
                                  lo[,2] < 0 & lo[,1] > 0 ~ angles$degree,
                                  lo[,1] == 1 ~ angles$degree,
                                  TRUE ~ angles$degree - 180)
-      hj <- ifelse(lo[,1] >= 0, -0.5, 1.5)
+      if (network_nodes(g) < 20) {
+        hj <- ifelse(lo[,1] >= 0, -0.4, 1.4)
+        vj <- ifelse(lo[,2] >= 0, -0.4, 1.4)
+      } else {
+        hj <- ifelse(lo[,1] >= 0, -0.2, 1.2)
+        vj <- ifelse(lo[,2] >= 0, -0.2, 1.2)
+      }
+      p <- p + ggraph::geom_node_text(ggplot2::aes(label = name),
+                                      size = 3, hjust = hj, angle = angles) +
+        ggplot2::coord_cartesian(xlim=c(-1.2,1.2), ylim=c(-1.2,1.2))
+    } else if (layout == "concentric") {
+      if (network_nodes(g) < 20) {
+        hj <- ifelse(lo[,1] >= 0, -0.8, 1.8)
+        vj <- ifelse(lo[,2] >= 0, -0.8, 1.8)
+      } else if (network_nodes(g) > 20 & network_nodes(g) < 30) {
+        hj <- ifelse(lo[,1] >= 0, -0.4, 1.4)
+        vj <- ifelse(lo[,2] >= 0, -0.4, 1.4)
+      } else {
+        hj <- ifelse(lo[,1] >= 0, -0.2, 1.2)
+        vj <- ifelse(lo[,2] >= 0, -0.2, 1.2)
+      }
       p <- p + ggraph::geom_node_text(ggplot2::aes(label = name),
                                       size = 3, hjust = hj,
-                                      vjust = -0.3, angle = angles) +
+                                      vjust = vj) +
         ggplot2::coord_cartesian(xlim=c(-1.2,1.2), ylim=c(-1.2,1.2))
     } else if (layout %in% c("bipartite", "railway") |
                (layout == "hierarchy" & length(unique(lo[,2])) <= 2)) {
