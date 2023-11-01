@@ -91,13 +91,15 @@ test_that("fancy node mods graph correctly", {
                network_nodes(ison_southern_women))
 })
 
-test_that("edge colours graph correctly", {
+test_that("edge colours and edge size graph correctly", {
   skip_on_cran()
   ison_brandes2 <- ison_brandes %>%
     add_tie_attribute("tiecolour",
-                      c("A", "B", "A", "B", "B", "B", "B", "B", "B", "B", "B", "B"))
-  test_brandes2 <- autographr(ison_brandes2, edge_color = "tiecolour")
+                      c("A", "B", "A", "B", "B", "B", "B", "B", "B", "B", "B", "B")) %>%
+    add_tie_attribute("weight", c(rep(1:6, 2)))
+  test_brandes2 <- autographr(ison_brandes2, edge_color = "tiecolour", edge_size = "weight")
   expect_false(is.null(test_brandes2$layers[[1]]$mapping$edge_colour))
+  expect_false(is.null(test_brandes2$layers[[1]]$mapping$edge_width))
 })
 
 # Named networks
@@ -120,4 +122,18 @@ test_that("unquoted arguments plot correctly", {
   skip_on_cran()
   expect_equal(autographr(ison_lawfirm, node_color = "Gender"),
                autographr(ison_lawfirm, node_color = Gender))
+})
+
+# Layouts
+test_that("concentric and circular layouts graph correctly", {
+  skip_on_cran()
+  test_circle <- autographr(to_giant(ison_marvel_relationships),
+                            layout = "circle")
+  test_conc <- autographr(to_giant(ison_marvel_relationships),
+                          layout = "concentric", membership = "Gender")
+  expect_equal(test_circle$plot_env$layout, "circle")
+  expect_equal(test_conc$plot_env$layout, "concentric")
+  expect_equal(eval(quote(pairlist(...)),
+                    envir = test_conc$plot_env)$membership,
+               "Gender")
 })
