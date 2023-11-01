@@ -417,13 +417,13 @@ to_mentoring.tbl_graph <- function(.data, elites = 0.1){
 #' @export
 to_mentoring.igraph <- function(.data, elites = 0.1){
   md <- as_matrix(.data)
-  if(!is_labelled(.data)) rownames(md) <- colnames(md) <- 1:nrow(md)
+  if(!is_labelled(.data)) rownames(md) <- colnames(md) <- seq_len(nrow(md))
   ranks <- sort(colSums(md), decreasing = TRUE) # get rank order of indegrees
   mentors <- ranks[ranks == max(ranks)]
   if(length(mentors) < length(ranks)*elites)
     mentors <- ranks[seq_len(length(ranks)*elites)]
   dists <- igraph::distances(.data) # compute geodesic matrix
-  if(!is_labelled(.data)) rownames(dists) <- colnames(dists) <- 1:nrow(dists)
+  if(!is_labelled(.data)) rownames(dists) <- colnames(dists) <- seq_len(nrow(dists))
   dists <- dists[!rownames(dists) %in% names(mentors),
                  colnames(dists) %in% names(mentors)]
   if(!is.matrix(dists)){ # if only one mentor available
