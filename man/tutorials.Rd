@@ -15,7 +15,7 @@ extract_tute(tute)
 }
 \description{
 These functions make it easy to use the tutorials
-in the {manynet} and {migraph} packages.
+in the \code{{manynet}} and \code{{migraph}} packages.
 }
 \section{Functions}{
 \itemize{
