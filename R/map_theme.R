@@ -112,8 +112,7 @@ palette_gen <- function(palette = "IHEID", direction = 1) {
   }
 }
 
-#' IHEID color scales
-#' @name scales
+#' @rdname themes
 #' @param palette Name of the palette. Current choices are:
 #'   \code{IHEID}, \code{Centres}, and \code{SDGs}.
 #' @param direction Direction for using palette colors.
@@ -123,62 +122,59 @@ palette_gen <- function(palette = "IHEID", direction = 1) {
 #' #mutate(core = migraph::node_is_core(ison_brandes)) %>%
 #' #autographr(node_color = "core") +
 #' #scale_color_iheid()
-NULL
-
-#' @rdname scales
 #' @export
 scale_fill_iheid <- function(palette = "IHEID", direction = 1, ...) {
   ggplot2::discrete_scale("fill", "IHEID",
                           palette_gen(palette, direction), ...)
 }
 
-#' @rdname scales
+#' @rdname themes
 #' @export
 scale_colour_iheid <- function(palette = "IHEID", direction = 1, ...) {
   ggplot2::discrete_scale("colour", "IHEID",
                           palette_gen(palette, direction), ...)
 }
 
-#' @rdname scales
+#' @rdname themes
 #' @export
 scale_color_iheid <- scale_colour_iheid
 
 #' Centres color scales
 #' 
-#' @rdname scales
+#' @rdname themes
 #' @export
 scale_fill_centres <- function(palette = "Centres", direction = 1, ...) {
   ggplot2::discrete_scale("fill", "Centres",
                           palette_gen(palette, direction), ...)
 }
 
-#' @rdname scales
+#' @rdname themes
 #' @export
 scale_colour_centres <- function(palette = "Centres", direction = 1, ...) {
   ggplot2::discrete_scale("colour", "Centres",
                           palette_gen(palette, direction), ...)
 }
 
-#' @rdname scales
+#' @rdname themes
 #' @export
 scale_color_centres <- scale_colour_centres
 
 #' SDGs color scales
 #' 
-#' @rdname scales
+#' @rdname themes
 #' @export
 scale_fill_sdgs <- function(palette = "SDGs", direction = 1, ...) {
   ggplot2::discrete_scale("fill", "SDGs",
                           palette_gen(palette, direction), ...)
 }
 
-#' @rdname scales
+#' @rdname themes
 #' @export
 scale_colour_sdgs <- function(palette = "SDGs", direction = 1, ...) {
   ggplot2::discrete_scale("colour", "SDGs",
                           palette_gen(palette, direction), ...)
 }
 
-#' @rdname scales
+#' @rdname themes
 #' @export
 scale_color_sdgs <- scale_colour_sdgs
