@@ -36,7 +36,7 @@ to_ties110111
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.8</span>
       </span>
     </div>
 
@@ -95,6 +95,8 @@ Below are the currently implemented S3 methods:</p><table class="table table"><t
 <span><span class="fu">to_blocks</span><span class="op">(</span><span class="va">.data</span>, <span class="va">membership</span>, FUN <span class="op">=</span> <span class="va">mean</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">to_matching</span><span class="op">(</span><span class="va">.data</span>, mark <span class="op">=</span> <span class="st">"type"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">to_mentoring</span><span class="op">(</span><span class="va">.data</span>, elites <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">to_eulerian</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
@@ -155,6 +157,21 @@ Other recommended options include <code>median</code>, <code>sum</code>,
 <dd><p>A logical vector marking two types or modes.
 By default "type".</p></dd>
 
+
+<dt>elites</dt>
+<dd><p>The proportion of nodes to be selected as mentors.
+By default this is set at 0.1.
+This means that the top 10% of nodes in terms of degree,
+or those equal to the highest rank degree in the network,
+whichever is the higher, will be used to select the mentors.</p>
+<p>Note that if nodes are equidistant from two mentors,
+they will choose one at random.
+If a node is without a path to a mentor,
+for example because they are an isolate,
+a tie to themselves (a loop) will be created instead.
+Note that this is a different default behaviour than that
+described in Valente and Davis (1999).</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -189,6 +206,8 @@ by collapsing groups of connected nodes into single nodes
 while preserving the topology of the original structures.</p></li>
 <li><p><code>to_matching()</code>: Returns a network with only
 matching ties</p></li>
+<li><p><code>to_mentoring()</code>: Returns a network where each node is
+connected only to their closest mentor</p></li>
 <li><p><code>to_eulerian()</code>: Returns a network with only
 the Eulerian path</p></li>
 <li><p><code>to_anti()</code>: Returns the complement of a network
@@ -219,6 +238,9 @@ where \(n\) is the number of nodes in the network.</p>
 "A new approach to the maximum flow problem".
 <em>Proceedings of the eighteenth annual ACM symposium on Theory of computing – STOC '86</em>. p. 136.
 <a href="https://doi.org/10.1145/12130.12144" class="external-link">doi:10.1145/12130.12144</a></p>
+<p>Valente, Thomas, and Rebecca Davis. 1999.
+"Accelerating the Diffusion of Innovations Using Opinion Leaders",
+<em>Annals of the American Academy of Political and Social Science</em> 566: 56-67.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -325,10 +347,12 @@ where \(n\) is the number of nodes in the network.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     6    24</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 8 more rows</span></span>
 <span class="r-in"><span><span class="co">#autographr(to_matching(ison_southern_women))</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="autographing.html">autographr</a></span><span class="op">(</span><span class="fu">to_mentoring</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="transform-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span>  <span class="fu">to_eulerian</span><span class="op">(</span><span class="fu"><a href="add.html">delete_nodes</a></span><span class="op">(</span><span class="va">ison_konigsberg</span>, <span class="st">"Lomse"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH e1971ad DN-- 3 4 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 054886c DN-- 3 4 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (v/c)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from e1971ad (vertex names):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 054886c (vertex names):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] Altstadt-&gt;Kneiphof Kneiphof-&gt;Vorstadt Vorstadt-&gt;Kneiphof Kneiphof-&gt;Altstadt</span>
 <span class="r-in"><span>  <span class="co">#autographr(to_eulerian(delete_nodes(ison_konigsberg, "Lomse")))</span></span></span>
 <span class="r-in"><span><span class="fu">to_anti</span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span></span></span>
@@ -359,66 +383,56 @@ where \(n\) is the number of nodes in the network.</p>
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>wave <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1995</span><span class="op">:</span><span class="fl">1998</span>, <span class="fl">10</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="split.html">to_waves</a></span><span class="op">(</span>attribute <span class="op">=</span> <span class="st">"wave"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu">to_no_isolates</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $`1995`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A longitudinal, labelled, undirected network with 4 nodes and 3 ties</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $`1998`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # A longitudinal, labelled, undirected network with 4 nodes and 2 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   name </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Betty</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Sue  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Jane </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Dale </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Pam  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Carol</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to  wave</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2  <span style="text-decoration: underline;">1</span>995</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     4  <span style="text-decoration: underline;">1</span>995</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     3     4  <span style="text-decoration: underline;">1</span>995</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2  <span style="text-decoration: underline;">1</span>998</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     3     4  <span style="text-decoration: underline;">1</span>998</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`1996`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A longitudinal, labelled, undirected network with 4 nodes and 3 ties</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # A longitudinal, labelled, undirected network with 4 nodes and 4 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   name </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Sue  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Alice</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Dale </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Jane </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Pam  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to  wave</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2  <span style="text-decoration: underline;">1</span>996</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     3  <span style="text-decoration: underline;">1</span>996</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1     4  <span style="text-decoration: underline;">1</span>996</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     2     4  <span style="text-decoration: underline;">1</span>996</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`1997`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A longitudinal, labelled, undirected network with 5 nodes and 3 ties</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # A longitudinal, labelled, undirected network with 6 nodes and 4 ties</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   name </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Alice</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Jane </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Pam  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Carol</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Tina </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Sue  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Alice</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Jane </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Dale </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Carol</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Tina </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to  wave</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2  <span style="text-decoration: underline;">1</span>997</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     3  <span style="text-decoration: underline;">1</span>997</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     4     5  <span style="text-decoration: underline;">1</span>997</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $`1998`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A longitudinal, labelled, undirected network with 2 nodes and 1 ties</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   name </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Pam  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Carol</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to  wave</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2  <span style="text-decoration: underline;">1</span>998</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     4  <span style="text-decoration: underline;">1</span>997</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     4  <span style="text-decoration: underline;">1</span>997</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     3     4  <span style="text-decoration: underline;">1</span>997</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     5     6  <span style="text-decoration: underline;">1</span>997</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
