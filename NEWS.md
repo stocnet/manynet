@@ -1,3 +1,11 @@
+# manynet 0.2.8
+
+2023-11-02
+
+## Package
+
+- Fixed tutorials documentation issue for CRAN
+
 # manynet 0.2.7
 
 2023-11-01

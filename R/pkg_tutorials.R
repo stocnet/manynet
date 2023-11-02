@@ -1,7 +1,8 @@
 #' Open and extract code from tutorials
 #' 
-#' @description These functions make it easy to use the tutorials
-#' in the {manynet} and {migraph} packages.
+#' @description 
+#'   These functions make it easy to use the tutorials
+#'   in the `{manynet}` and `{migraph}` packages.
 #' @param tute String, name of the tutorial (e.g. "tutorial2").
 #' @importFrom dplyr %>% as_tibble select
 #' @name tutorials
