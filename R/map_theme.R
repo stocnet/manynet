@@ -16,32 +16,31 @@ NULL
 #' # theme_iheid()
 #' @export
 theme_iheid <- function(base_size = 12, base_family = "sans") {
-  element_blank <- element_line <- element_rect <- element_text <- rel <- NULL
   colors <-  iheid_corp_palette("IHEID")
   (ggplot2::theme_minimal(base_size = base_size, base_family = base_family)
     + ggplot2::theme(
-      line = element_line(colors["IHEIDBlack"]),
-      rect = element_rect(fill = colors["IHEIDGrey"],
+      line = ggplot2::element_line(colors["IHEIDBlack"]),
+      rect = ggplot2::element_rect(fill = colors["IHEIDGrey"],
                           linetype = 0, colour = NA),
-      text = element_text(colour = colors["IHEIDRed"]),
-      axis.title = element_blank(),
-      axis.text = element_text(),
-      axis.ticks = element_blank(),
-      axis.line = element_blank(),
-      axis.title.x = element_blank(),
-      axis.text.x = element_blank(),
-      axis.ticks.x = element_blank(),
-      axis.title.y = element_blank(),
-      axis.text.y = element_blank(),
-      axis.ticks.y = element_blank(),
-      panel.grid.major = element_blank(),
-      panel.grid.minor = element_blank(),
-      legend.background = element_rect(),
+      text = ggplot2::element_text(colour = colors["IHEIDRed"]),
+      axis.title = ggplot2::element_blank(),
+      axis.text = ggplot2::element_text(),
+      axis.ticks = ggplot2::element_blank(),
+      axis.line = ggplot2::element_blank(),
+      axis.title.x = ggplot2::element_blank(),
+      axis.text.x = ggplot2::element_blank(),
+      axis.ticks.x = ggplot2::element_blank(),
+      axis.title.y = ggplot2::element_blank(),
+      axis.text.y = ggplot2::element_blank(),
+      axis.ticks.y = ggplot2::element_blank(),
+      panel.grid.major = ggplot2::element_blank(),
+      panel.grid.minor = ggplot2::element_blank(),
+      legend.background = ggplot2::element_rect(),
       legend.position = "bottom",
       legend.direction = "horizontal",
       legend.box = "vertical",
-      plot.title = element_text(hjust = 0, size = rel(1.5), face = "bold"),
-      strip.background = element_rect()))
+      plot.title = ggplot2::element_text(hjust = 0, size = ggplot2::rel(1.5), face = "bold"),
+      strip.background = ggplot2::element_rect()))
 }
 
 iheid_corp_color <- function(...) {
