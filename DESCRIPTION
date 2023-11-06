@@ -42,6 +42,7 @@ Suggests:
     multiplex,
     concaveman,
     migraph,
+    multigraph,
     knitr
 Enhances:
     Rgraphviz
