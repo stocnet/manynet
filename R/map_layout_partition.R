@@ -11,7 +11,7 @@
 #'
 #'   The "hierarchy" layout layers the first node set along the bottom,
 #'   and the second node set along the top, 
-#'   sequenced and spaced as necessary to minimise edge overlap. 
+#'   sequenced and spaced as necessary to minimise edge overlap.
 #'   The "alluvial" layout is similar to "hierarchy", 
 #'   but places successive layers horizontally rather than vertically.
 #'   The "railway" layout is similar to "hierarchy",
@@ -24,7 +24,10 @@
 #' @name partition_layouts
 #' @inheritParams transform
 #' @param circular Should the layout be transformed into a radial representation. 
-#' Only possible for some layouts. Defaults to FALSE
+#' Only possible for some layouts. Defaults to FALSE.
+#' @param center Further split "hierarchical" layouts by
+#'   declaring the "center" argument as either the "events" or "actors".
+#'   Defaults to NULL.
 #' @param times Maximum number of iterations, where appropriate
 #' @param radius A vector of radii at which the concentric circles
 #'   should be located.
@@ -47,22 +50,69 @@ NULL
 
 #' @rdname partition_layouts
 #' @export
-layout_tbl_graph_hierarchy <- function(.data,
-                                       circular = FALSE, times = 1000){
-  thisRequiresBio("Rgraphviz")
-  prep <- as_matrix(.data, twomode = FALSE)
-  if(anyDuplicated(rownames(prep))){
-    rownames(prep) <- seq_len(nrow(prep))
-    colnames(prep) <- seq_len(ncol(prep))
+layout_tbl_graph_hierarchy <- function(.data, center = NULL,
+                                       circular = FALSE, times = 1000) {
+  if (is.null(center)) {
+    thisRequiresBio("Rgraphviz")
+    prep <- as_matrix(.data, twomode = FALSE)
+    if(anyDuplicated(rownames(prep))){
+      rownames(prep) <- seq_len(nrow(prep))
+      colnames(prep) <- seq_len(ncol(prep))
+    }
+    if(any(prep<0)) prep[prep<0] <- 0
+    out <- as_graphAM(prep)
+    out <- suppressMessages(Rgraphviz::layoutGraph(out, layoutType = 'dot',
+                                                   attrs = list(graph = list(rankdir = "BT"))))
+    nodeX <- .rescale(out@renderInfo@nodes$nodeX)
+    nodeY <- .rescale(out@renderInfo@nodes$nodeY)
+    # nodeY <- abs(nodeY - max(nodeY))
+    out <- .to_lo(cbind(nodeX, nodeY))
+  } else {
+    thisRequires("multiplex")
+    thisRequires("multigraph")
+    net <- as_matrix(.data)
+    tnet <- t(net)
+    dimnames(tnet)[[2]] <- dimnames(net)[[1]]
+    nn <- dim(net)[1]
+    mm <- dim(net)[2]
+    bmnet <- (rbind(cbind(matrix(0, ncol = nn, nrow = nn, 
+                                 dimnames = list(rownames(net), rownames(net))),
+                          net), cbind(tnet, matrix(0, ncol = mm, nrow = mm,
+                                                   dimnames = list(colnames(net),
+                                                                   colnames(net))))))
+    crd <- multigraph::frcd(as.matrix(multiplex::mnplx(bmnet)), seed = NULL)
+    n <- dim(bmnet)[1]
+    ffds <- ifelse(n > 20, 0.2, 0)
+    fds <- 140L - (n * ffds)
+    nlbs <- dimnames(net)[[1]]
+    mlbs <- dimnames(net)[[2]]
+    lbs <- dimnames(bmnet)[[1]] <- dimnames(bmnet)[[2]] <- c(nlbs, mlbs)
+    if (center == "actors") {
+      act <- multigraph::nrm(multigraph::rng(nn))
+      Act <- cbind(rep(1, nrow(net)), act)
+      evt1 <- multigraph::nrm(multigraph::rng(ceiling(mm/2)))
+      evt2 <- multigraph::nrm(multigraph::rng(floor(mm/2)))
+      Evt1 <- cbind(rep(0, ceiling(ncol(net)/2)), evt1)
+      Evt2 <- cbind(rep(2, floor(ncol(net)/2)), evt2)
+      crd <- rbind(Act, Evt1, Evt2)
+      crd[which(is.nan(crd))] <- 0.5
+      crd[, 2] <- crd[, 2] * cos(pi) - crd[, 1] * sin(pi)
+      rownames(crd) <- lbs
+    } else {
+      act1 <- multigraph::nrm(multigraph::rng(ceiling(nn/2)))
+      act2 <- multigraph::nrm(multigraph::rng(floor(nn/2)))
+      evt <- multigraph::nrm(multigraph::rng(mm))
+      Act1 <- cbind(rep(0, ceiling(nrow(net)/2)), act1)
+      Act2 <- cbind(rep(2, floor(nrow(net)/2)), act2)
+      Evt <- cbind(rep(1, ncol(net)), evt)
+      crd <- rbind(Act1, Act2, Evt)
+      crd[which(is.nan(crd))] <- 0.5
+      crd[, 2] <- crd[, 2] * cos(pi) - crd[, 1] * sin(pi)
+      rownames(crd) <- lbs
+    }
+    out <- .to_lo(crd)
   }
-  if(any(prep<0)) prep[prep<0] <- 0
-  out <- as_graphAM(prep)
-  out <- suppressMessages(Rgraphviz::layoutGraph(out, layoutType = 'dot',
-                                                 attrs = list(graph = list(rankdir = "BT"))))
-  nodeX <- .rescale(out@renderInfo@nodes$nodeX)
-  nodeY <- .rescale(out@renderInfo@nodes$nodeY)
-  # nodeY <- abs(nodeY - max(nodeY))
-  .to_lo(cbind(nodeX, nodeY))
+  out
 }
 
 #' @rdname partition_layouts
@@ -237,7 +287,7 @@ getNNvec <- function(.data, members){
   })
 }
 
-getCoordinates <- function(x, r){
+getCoordinates <- function(x, r) {
   l <- length(x)
   d <- 360/l
   c1 <- seq(0, 360, d)

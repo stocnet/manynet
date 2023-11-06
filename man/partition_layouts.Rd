@@ -16,7 +16,12 @@ protein-protein interaction networks".
 \emph{Nucleic Acids Research}, 42 (1) e6.
 }
 \usage{
-layout_tbl_graph_hierarchy(.data, circular = FALSE, times = 1000)
+layout_tbl_graph_hierarchy(
+  .data,
+  center = NULL,
+  circular = FALSE,
+  times = 1000
+)
 
 layout_tbl_graph_alluvial(.data, circular = FALSE, times = 1000)
 
@@ -45,8 +50,12 @@ layout_tbl_graph_multilevel(.data, level = NULL, circular = FALSE)
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
 
+\item{center}{Further split "hierarchical" layouts by
+declaring the "center" argument as either the "events" or "actors".
+Defaults to NULL.}
+
 \item{circular}{Should the layout be transformed into a radial representation.
-Only possible for some layouts. Defaults to FALSE}
+Only possible for some layouts. Defaults to FALSE.}
 
 \item{times}{Maximum number of iterations, where appropriate}
 

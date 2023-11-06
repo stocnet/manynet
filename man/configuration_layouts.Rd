@@ -21,7 +21,7 @@ layout_tbl_graph_quad(.data, circular = FALSE, times = 1000)
 }}
 
 \item{circular}{Should the layout be transformed into a radial representation.
-Only possible for some layouts. Defaults to FALSE}
+Only possible for some layouts. Defaults to FALSE.}
 
 \item{times}{Maximum number of iterations, where appropriate}
 }
