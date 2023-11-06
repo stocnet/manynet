@@ -46,6 +46,8 @@ If not declared, defaults to "triad" for networks with 3 nodes,
 "quad" for networks with 4 nodes,
 "stress" for all other one mode networks,
 or "hierarchy" for two mode networks.
+For "hierarchy" layout, one can further split graph by
+declaring the "center" argument as either the "events" or "actors".
 For "concentric" layout algorithm please declare the "membership" as an
 extra argument.
 The "membership" argument expects either a quoted node attribute present
