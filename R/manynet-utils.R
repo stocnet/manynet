@@ -31,3 +31,9 @@ thisRequiresBio <- function(pkgname) {
   BiocManager::install(pkgname)
   }}
 }
+
+#' @export
+`+.ggplot` <- function(e1, e2, ...) {
+  thisRequires("patchwork")
+  patchwork::wrap_plots(e1, e2, ...)
+}

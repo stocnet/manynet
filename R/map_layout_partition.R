@@ -68,6 +68,7 @@ layout_tbl_graph_hierarchy <- function(.data, center = NULL,
     # nodeY <- abs(nodeY - max(nodeY))
     out <- .to_lo(cbind(nodeX, nodeY))
   } else {
+    if (!is_twomode(.data)) stop("Please declare a two-mode network.")
     thisRequires("multiplex")
     thisRequires("multigraph")
     net <- as_matrix(.data)
