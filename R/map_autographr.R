@@ -27,6 +27,11 @@
 #'   in data or vector with the same length as nodes to hierarchically
 #'   order categories.
 #'   If "level" is missing, function will look for 'lvl' node attribute in data.
+#'   The "lineage" layout ranks nodes in Y axis according to values.
+#'   For "lineage" layout algorithm please declare the "rank"
+#'   as extra argument.
+#'   The "rank" argument expects either a quoted node attribute present
+#'   in data or vector with the same length as nodes.
 #' @param labels Logical, whether to print node names
 #'   as labels if present.
 #' @param node_shape Node variable to be used for shaping the nodes.
@@ -70,6 +75,9 @@ NULL
 #' @describeIn autographing Graphs a network with sensible defaults
 #' @examples
 #' #autographr(ison_adolescents)
+#' #ison_adolescents %>% 
+#' #  mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2)) %>%
+#' #  autographr(layout = "lineage", rank = "year")
 #' #autographr(ison_algebra, layout = "circle", 
 #' #           node_size = 8, node_color = "orange", node_shape = "square",
 #' #           edge_color = "blue", edge_size = 2)
@@ -86,6 +94,7 @@ NULL
 #' #           edge_size = migraph::tie_closeness(ison_karateka))
 #' #autographr(ison_southern_women, layout = "concentric", 
 #' #           node_color = "type", membership = "type")
+#' #autographr(ison_southern_women, layout = "hierarchy", center = "events")
 #' #autographr(ison_lotr, layout = "multilevel",
 #' #           node_color = "Race", node_shape = , level = "Race")
 #' @export

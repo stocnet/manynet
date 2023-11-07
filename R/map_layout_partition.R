@@ -21,6 +21,7 @@
 #'   The "concentric" layout places a "hierarchy" layout
 #'   around a circle, with successive layers appearing as concentric circles.
 #'   The "multilevel" layout places successive layers as multiple levels.
+#'   The "lineage" layout ranks nodes in Y axis according to values.
 #' @name partition_layouts
 #' @inheritParams transform
 #' @param circular Should the layout be transformed into a radial representation. 
@@ -40,6 +41,8 @@
 #'   the number of edge crossings.
 #' @param level A node attribute or a vector to hierarchically order levels for
 #'   "multilevel" layout.
+#' @param rank A numerical node attribute to place nodes in Y axis
+#'   according to values.
 #' @family mapping
 #' @source
 #'   Diego Diez, Andrew P. Hutchins and Diego Miranda-Saavedra. 2014.
@@ -232,6 +235,33 @@ layout_tbl_graph_multilevel <- function(.data, level = NULL, circular = FALSE) {
   thisRequires("graphlayouts")
   out <- graphlayouts::layout_as_multilevel(out, alpha = 25)
   .to_lo(out)
+}
+
+#' @rdname partition_layouts
+#' @export
+layout_tbl_graph_lineage <- function(.data, rank, circular = FALSE) {
+  if (length(rank) > 1 & length(rank) != length(.data)) {
+    stop("Please pass the function a `rank` node attribute or a vector.")
+  } else if (length(rank) != length(.data)) {
+    rank <- node_attribute(.data, rank)
+    if (!is.numeric(rank))
+      stop("Please declare a numeric attribute to `rank` nodes.")
+  }
+  out <- igraph::set_vertex_attr(.data, "rank", value = rank)
+  thisRequiresBio("Rgraphviz")
+  prep <- as_matrix(.data, twomode = FALSE)
+  if (anyDuplicated(rownames(prep))) {
+    rownames(prep) <- seq_len(nrow(prep))
+    colnames(prep) <- seq_len(ncol(prep))
+  }
+  if (any(prep<0)) prep[prep<0] <- 0
+  out <- as_graphAM(prep)
+  out <- suppressMessages(Rgraphviz::layoutGraph(out, layoutType = 'dot',
+                                                 attrs = list(graph = list(rankdir = "BT"))))
+  nodeX <- .rescale(out@renderInfo@nodes$nodeX)
+  nodeY <- .rescale(rank)*(-1)
+  # nodeY <- abs(nodeY - max(nodeY))
+  .to_lo(cbind(nodeX, nodeY))
 }
 
 .rescale <- function(vector){
