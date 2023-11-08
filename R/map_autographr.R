@@ -96,7 +96,7 @@ NULL
 #' #           node_color = "type", membership = "type")
 #' #autographr(ison_southern_women, layout = "hierarchy", center = "events")
 #' #autographr(ison_lotr, layout = "multilevel",
-#' #           node_color = "Race", node_shape = , level = "Race")
+#' #           node_color = "Race", level = "Race")
 #' @export
 autographr <- function(.data,
                        layout,
