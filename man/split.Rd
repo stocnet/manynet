@@ -104,7 +104,7 @@ Other manipulations:
 \code{\link{from}},
 \code{\link{miss}},
 \code{\link{reformat}},
-\code{\link{tidy}},
+\code{\link{tidy}()},
 \code{\link{transform}()}
 }
 \concept{manipulations}

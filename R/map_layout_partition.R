@@ -225,18 +225,8 @@ layout_tbl_graph_lineage <- function(.data, rank, circular = FALSE) {
     if (!is.numeric(rank))
       stop("Please declare a numeric attribute to `rank` nodes.")
   }
-  out <- igraph::set_vertex_attr(.data, "rank", value = rank)
-  thisRequiresBio("Rgraphviz")
-  prep <- as_matrix(.data, twomode = FALSE)
-  if (anyDuplicated(rownames(prep))) {
-    rownames(prep) <- seq_len(nrow(prep))
-    colnames(prep) <- seq_len(ncol(prep))
-  }
-  if (any(prep<0)) prep[prep<0] <- 0
-  out <- as_graphAM(prep)
-  out <- suppressMessages(Rgraphviz::layoutGraph(out, layoutType = 'dot',
-                                                 attrs = list(graph = list(rankdir = "TB"))))
-  nodeX <- out@renderInfo@nodes$nodeX
+  out <- ggraph::create_layout(.data, "stress")
+  nodeX <- out$x
   nodeY <- .rescale(rank*(-1))
   # nodeY <- abs(nodeY - max(nodeY))
   .to_lo(.adjust(nodeX, nodeY))

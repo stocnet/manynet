@@ -161,7 +161,7 @@ with sensible defaults
 #           node_color = "type", membership = "type")
 #autographr(ison_southern_women, layout = "hierarchy", center = "events")
 #autographr(ison_lotr, layout = "multilevel",
-#           node_color = "Race", node_shape = , level = "Race")
+#           node_color = "Race", level = "Race")
 #autographs(to_egos(ison_adolescents))
 #ison_adolescents \%>\%
 # mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%
