@@ -72,47 +72,25 @@ layout_tbl_graph_hierarchy <- function(.data, center = NULL,
     out <- .to_lo(cbind(nodeX, nodeY))
   } else {
     if (!is_twomode(.data)) stop("Please declare a two-mode network.")
-    thisRequires("multiplex")
-    thisRequires("multigraph")
     net <- as_matrix(.data)
-    tnet <- t(net)
-    dimnames(tnet)[[2]] <- dimnames(net)[[1]]
     nn <- dim(net)[1]
     mm <- dim(net)[2]
-    bmnet <- (rbind(cbind(matrix(0, ncol = nn, nrow = nn, 
-                                 dimnames = list(rownames(net), rownames(net))),
-                          net), cbind(tnet, matrix(0, ncol = mm, nrow = mm,
-                                                   dimnames = list(colnames(net),
-                                                                   colnames(net))))))
-    crd <- multigraph::frcd(as.matrix(multiplex::mnplx(bmnet)), seed = NULL)
-    n <- dim(bmnet)[1]
-    ffds <- ifelse(n > 20, 0.2, 0)
-    fds <- 140L - (n * ffds)
-    nlbs <- dimnames(net)[[1]]
-    mlbs <- dimnames(net)[[2]]
-    lbs <- dimnames(bmnet)[[1]] <- dimnames(bmnet)[[2]] <- c(nlbs, mlbs)
     if (center == "actors") {
-      act <- multigraph::nrm(multigraph::rng(nn))
-      Act <- cbind(rep(1, nrow(net)), act)
-      evt1 <- multigraph::nrm(multigraph::rng(ceiling(mm/2)))
-      evt2 <- multigraph::nrm(multigraph::rng(floor(mm/2)))
-      Evt1 <- cbind(rep(0, ceiling(ncol(net)/2)), evt1)
-      Evt2 <- cbind(rep(2, floor(ncol(net)/2)), evt2)
+      Act <- cbind(rep(1, nrow(net)), nrm(rng(nn)))
+      Evt1 <- cbind(rep(0, ceiling(ncol(net)/2)), nrm(rng(ceiling(mm/2))))
+      Evt2 <- cbind(rep(2, floor(ncol(net)/2)), nrm(rng(floor(mm/2))))
       crd <- rbind(Act, Evt1, Evt2)
       crd[which(is.nan(crd))] <- 0.5
       crd[, 2] <- crd[, 2] * cos(pi) - crd[, 1] * sin(pi)
-      rownames(crd) <- lbs
+      rownames(crd) <- c(dimnames(net)[[1]], dimnames(net)[[2]])
     } else {
-      act1 <- multigraph::nrm(multigraph::rng(ceiling(nn/2)))
-      act2 <- multigraph::nrm(multigraph::rng(floor(nn/2)))
-      evt <- multigraph::nrm(multigraph::rng(mm))
-      Act1 <- cbind(rep(0, ceiling(nrow(net)/2)), act1)
-      Act2 <- cbind(rep(2, floor(nrow(net)/2)), act2)
-      Evt <- cbind(rep(1, ncol(net)), evt)
+      Act1 <- cbind(rep(0, ceiling(nrow(net)/2)), nrm(rng(ceiling(nn/2))))
+      Act2 <- cbind(rep(2, floor(nrow(net)/2)), nrm(rng(floor(nn/2))))
+      Evt <- cbind(rep(1, ncol(net)), nrm(rng(mm)))
       crd <- rbind(Act1, Act2, Evt)
       crd[which(is.nan(crd))] <- 0.5
       crd[, 2] <- crd[, 2] * cos(pi) - crd[, 1] * sin(pi)
-      rownames(crd) <- lbs
+      rownames(crd) <- c(dimnames(net)[[1]], dimnames(net)[[2]])
     }
     out <- .to_lo(crd)
   }
@@ -330,4 +308,30 @@ getCoordinates <- function(x, r) {
                   FUN.VALUE = numeric(2)))
   rownames(tmp) <- x
   tmp
+}
+
+rng <- function(r) {
+  if (r == 1L) return(0)
+  if (r > 1L) {
+    x <- vector()
+    x <- append(x, (-1))
+    for (i in 1:(r - 1)) x <- append(x, ((-1) + (2L/(r - 1L)) * i))
+    return(x * (r/50L))
+  } else stop("no negative values")
+}
+
+nrm <- function(x, digits = 3) {
+  if (isTRUE(length(x) == 1L) == TRUE) return(x)
+  if (is.array(x) == TRUE) {
+    xnorm <- (x[, 1] - min(x[, 1]))/(max(x[, 1]) - min(x[, 1]))
+    rat <- (max(x[, 1]) - min(x[, 1]))/(max(x[, 2]) - min(x[, 2]))
+    ynorm <- ((x[, 2] - min(x[, 2]))/(max(x[, 2]) - min(x[, 2]))) * (rat)
+    ifelse(isTRUE(rat > 0) == FALSE,
+           ynorm <- ((x[, 2] - min(x[, 2]))/(max(x[, 2]) -
+                                               min(x[, 2]))) * (1L/rat), NA)
+    return(round(data.frame(X = xnorm, Y = ynorm), digits))
+  }
+  else if (is.vector(x) == TRUE) {
+    return(round((x - min(x))/(max(x) - min(x)), digits))
+  }
 }
