@@ -235,15 +235,32 @@ layout_tbl_graph_lineage <- function(.data, rank, circular = FALSE) {
   if (any(prep<0)) prep[prep<0] <- 0
   out <- as_graphAM(prep)
   out <- suppressMessages(Rgraphviz::layoutGraph(out, layoutType = 'dot',
-                                                 attrs = list(graph = list(rankdir = "BT"))))
-  nodeX <- .rescale(out@renderInfo@nodes$nodeX)
-  nodeY <- .rescale(rank)*(-1)
+                                                 attrs = list(graph = list(rankdir = "TB"))))
+  nodeX <- out@renderInfo@nodes$nodeX
+  nodeY <- .rescale(rank*(-1))
   # nodeY <- abs(nodeY - max(nodeY))
-  .to_lo(cbind(nodeX, nodeY))
+  .to_lo(.adjust(nodeX, nodeY))
 }
 
 .rescale <- function(vector){
   (vector - min(vector)) / (max(vector) - min(vector))
+}
+
+.adjust <- function(x, y) {
+  out <- data.frame(cbind(x, y))
+  out$name <- rownames(out)
+  adj <- data.frame()
+  for (k in levels(as.factor(y))) {
+    a <- subset(out, y == k)
+    a <- a[order(a[,1]),]
+    a[,1] <- seq(0, 1, len = length(a[,1]))
+    adj <- rbind(adj, a)
+  }
+  name <- data.frame(name = out[,3])
+  out <- dplyr::left_join(name, adj, by = "name")
+  rownames(out) <- out$name
+  out <- out[,2:3]
+  out
 }
 
 .to_lo <- function(mat){
