@@ -206,7 +206,7 @@ layout_tbl_graph_multilevel <- function(.data, level = NULL, circular = FALSE) {
     if (length(level) > 1 & length(level) != length(.data)) {
       stop("Please pass the function a `level` node attribute or a vector.")
     } else if (length(level) != length(.data)) {
-      level <- node_attribute(.data, level)
+      level <- as.factor(node_attribute(.data, level))
     }
   }
   out <- igraph::set_vertex_attr(.data, "lvl", value = level)
@@ -226,30 +226,36 @@ layout_tbl_graph_lineage <- function(.data, rank, circular = FALSE) {
       stop("Please declare a numeric attribute to `rank` nodes.")
   }
   out <- ggraph::create_layout(.data, "stress")
+  names <- out$name
   nodeX <- out$x
   nodeY <- .rescale(rank*(-1))
   # nodeY <- abs(nodeY - max(nodeY))
-  .to_lo(.adjust(nodeX, nodeY))
+  .to_lo(.adjust(nodeX, nodeY, names))
 }
 
 .rescale <- function(vector){
   (vector - min(vector)) / (max(vector) - min(vector))
 }
 
-.adjust <- function(x, y) {
-  out <- data.frame(cbind(x, y))
-  out$name <- rownames(out)
+.adjust <- function(x, y, names) {
+  out <- data.frame(cbind(x, y, names))
   adj <- data.frame()
   for (k in levels(as.factor(y))) {
     a <- subset(out, y == k)
     a <- a[order(a[,1]),]
-    a[,1] <- seq(0, 1, len = length(a[,1]))
+    if (length(a[,1]) == 1)  {
+      a[,1] <- sample(c(0.4, 0.5, 0.6), 1)
+    } else if (length(a[,1]) == 2) {
+      a[,1] <- c(sample(c(0.2, 0.25, 0.3), 1), sample(c(0.7, 0.75, 0.8), 1))
+    } else {
+      a[,1] <- seq(0, 1, len = length(a[,1]))
+    }
     adj <- rbind(adj, a)
   }
-  name <- data.frame(name = out[,3])
-  out <- dplyr::left_join(name, adj, by = "name")
-  rownames(out) <- out$name
-  out <- out[,2:3]
+  name <- data.frame(names = out[,3])
+  out <- dplyr::left_join(name, adj, by = "names")
+  out <- apply(out[,2:3], 2, as.numeric)
+  rownames(out) <- name$names
   out
 }
 

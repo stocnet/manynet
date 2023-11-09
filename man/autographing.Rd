@@ -32,10 +32,12 @@ autographd(
   keep_isolates = TRUE,
   layout = "stress",
   labels = TRUE,
-  node_color = NULL,
-  node_shape = NULL,
-  node_size = NULL,
-  edge_color = NULL
+  node_color,
+  node_shape,
+  node_size,
+  edge_color,
+  edge_size,
+  ...
 )
 }
 \arguments{
