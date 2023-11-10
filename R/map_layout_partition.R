@@ -225,11 +225,19 @@ layout_tbl_graph_lineage <- function(.data, rank, circular = FALSE) {
     if (!is.numeric(rank))
       stop("Please declare a numeric attribute to `rank` nodes.")
   }
-  out <- ggraph::create_layout(.data, "stress")
-  names <- out$name
-  nodeX <- out$x
+  thisRequiresBio("Rgraphviz")
+  prep <- as_matrix(.data, twomode = FALSE)
+  if(anyDuplicated(rownames(prep))){
+    rownames(prep) <- seq_len(nrow(prep))
+    colnames(prep) <- seq_len(ncol(prep))
+  }
+  if(any(prep<0)) prep[prep<0] <- 0
+  out <- as_graphAM(prep)
+  out <- suppressMessages(Rgraphviz::layoutGraph(out, layoutType = 'dot',
+                                                 attrs = list(graph = list(rankdir = "BT"))))
+  nodeX <- .rescale(out@renderInfo@nodes$nodeX)
+  names <- names(nodeX)
   nodeY <- .rescale(rank*(-1))
-  # nodeY <- abs(nodeY - max(nodeY))
   .to_lo(.adjust(nodeX, nodeY, names))
 }
 
@@ -242,13 +250,12 @@ layout_tbl_graph_lineage <- function(.data, rank, circular = FALSE) {
   adj <- data.frame()
   for (k in levels(as.factor(y))) {
     a <- subset(out, y == k)
-    a <- a[order(a[,1]),]
-    if (length(a[,1]) == 1)  {
-      a[,1] <- sample(c(0.4, 0.5, 0.6), 1)
-    } else if (length(a[,1]) == 2) {
-      a[,1] <- c(sample(c(0.2, 0.25, 0.3), 1), sample(c(0.7, 0.75, 0.8), 1))
-    } else {
-      a[,1] <- seq(0, 1, len = length(a[,1]))
+    if (length(a[,1]) == 1) {
+      a[,1] <- ifelse(a[,1] > 0.8, as.numeric(a[,1])*0.8,
+                      ifelse(a[,1] < 0.2, as.numeric(a[,1])*1.2,
+                             as.numeric(a[,1])))
+    } else if (length(a[,1]) > 2) {
+      a[,1] <- seq(min(a[,1]), max(a[,1]), len = length(a[,1]))
     }
     adj <- rbind(adj, a)
   }
