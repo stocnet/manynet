@@ -25,6 +25,14 @@ run_tute <- function(tute) {
   } else {
     try(learnr::run_tutorial(tute, "manynet"), silent = TRUE)
     try(learnr::run_tutorial(tute, "migraph"), silent = TRUE)
+    t1 <- dplyr::as_tibble(learnr::available_tutorials(package = "manynet"),
+                           silent = TRUE) %>% dplyr::select(1:3)
+    t2 <- dplyr::as_tibble(learnr::available_tutorials(package = "migraph"),
+                           silent = TRUE) %>% dplyr::select(1:3)
+    avails <- rbind(t1, t2)
+    inftit <- which.min(adist(tute, avails$title, ignore.case = TRUE))
+    try(learnr::run_tutorial(avails$name[inftit], avails$package[inftit]), silent = TRUE)
+    try(cat("Please try one of these titles"))
   }
 }
 
