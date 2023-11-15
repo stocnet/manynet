@@ -58,7 +58,7 @@
 #'   It is easiest if this is added as an edge or tie attribute 
 #'   to the graph before plotting.
 #'   Edges can also be colored by declaring a color instead.
-#' @param edge_size Edge variable to be used for sizing the edges.
+#' @param edge_size Tie variable to be used for sizing the edges.
 #'   This can be any continuous variable on the nodes of the network.
 #'   Since this function expects this to be an existing variable,
 #'   it is recommended to calculate all edge-related statistics prior
