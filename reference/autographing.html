@@ -23,7 +23,7 @@ of network measures such as centrality."><meta property="og:image" content="http
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.9</span>
       </span>
     </div>
 
@@ -91,10 +91,12 @@ of network measures such as centrality.</p>
 <span>  keep_isolates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  layout <span class="op">=</span> <span class="st">"stress"</span>,</span>
 <span>  labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  node_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  node_shape <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  node_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  edge_color <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  <span class="va">node_color</span>,</span>
+<span>  <span class="va">node_shape</span>,</span>
+<span>  <span class="va">node_size</span>,</span>
+<span>  <span class="va">edge_color</span>,</span>
+<span>  <span class="va">edge_size</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -115,6 +117,8 @@ If not declared, defaults to "triad" for networks with 3 nodes,
 "quad" for networks with 4 nodes,
 "stress" for all other one mode networks,
 or "hierarchy" for two mode networks.
+For "hierarchy" layout, one can further split graph by
+declaring the "center" argument as either the "events" or "actors".
 For "concentric" layout algorithm please declare the "membership" as an
 extra argument.
 The "membership" argument expects either a quoted node attribute present
@@ -124,7 +128,12 @@ as extra argument.
 The "level" argument expects either a quoted node attribute present
 in data or vector with the same length as nodes to hierarchically
 order categories.
-If "level" is missing, function will look for 'lvl' node attribute in data.</p></dd>
+If "level" is missing, function will look for 'lvl' node attribute in data.
+The "lineage" layout ranks nodes in Y axis according to values.
+For "lineage" layout algorithm please declare the "rank"
+as extra argument.
+The "rank" argument expects either a quoted node attribute present
+in data or vector with the same length as nodes.</p></dd>
 
 
 <dt>labels</dt>
@@ -172,7 +181,7 @@ Edges can also be colored by declaring a color instead.</p></dd>
 
 
 <dt>edge_size</dt>
-<dd><p>Edge variable to be used for sizing the edges.
+<dd><p>Tie variable to be used for sizing the edges.
 This can be any continuous variable on the nodes of the network.
 Since this function expects this to be an existing variable,
 it is recommended to calculate all edge-related statistics prior
@@ -228,6 +237,9 @@ with sensible defaults</p></li>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">#autographr(ison_adolescents)</span></span></span>
+<span class="r-in"><span><span class="co">#ison_adolescents %&gt;% </span></span></span>
+<span class="r-in"><span><span class="co">#  mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2)) %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co">#  autographr(layout = "lineage", rank = "year")</span></span></span>
 <span class="r-in"><span><span class="co">#autographr(ison_algebra, layout = "circle", </span></span></span>
 <span class="r-in"><span><span class="co">#           node_size = 8, node_color = "orange", node_shape = "square",</span></span></span>
 <span class="r-in"><span><span class="co">#           edge_color = "blue", edge_size = 2)</span></span></span>
@@ -244,8 +256,9 @@ with sensible defaults</p></li>
 <span class="r-in"><span><span class="co">#           edge_size = migraph::tie_closeness(ison_karateka))</span></span></span>
 <span class="r-in"><span><span class="co">#autographr(ison_southern_women, layout = "concentric", </span></span></span>
 <span class="r-in"><span><span class="co">#           node_color = "type", membership = "type")</span></span></span>
+<span class="r-in"><span><span class="co">#autographr(ison_southern_women, layout = "hierarchy", center = "events")</span></span></span>
 <span class="r-in"><span><span class="co">#autographr(ison_lotr, layout = "multilevel",</span></span></span>
-<span class="r-in"><span><span class="co">#           node_color = "Race", node_shape = , level = "Race")</span></span></span>
+<span class="r-in"><span><span class="co">#           node_color = "Race", level = "Race")</span></span></span>
 <span class="r-in"><span><span class="co">#autographs(to_egos(ison_adolescents))</span></span></span>
 <span class="r-in"><span><span class="co">#ison_adolescents %&gt;%</span></span></span>
 <span class="r-in"><span><span class="co"># mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %&gt;%</span></span></span>

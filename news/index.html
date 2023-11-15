@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.9</span>
       </span>
     </div>
 
@@ -54,7 +54,24 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.2.8" id="manynet-028">manynet 0.2.8<a class="anchor" aria-label="anchor" href="#manynet-028"></a></h2>
+<h2 class="page-header" data-toc-text="0.2.9" id="manynet-029">manynet 0.2.9<a class="anchor" aria-label="anchor" href="#manynet-029"></a></h2>
+<p>2023-11-15</p>
+<div class="section level3">
+<h3 id="package-0-2-9">Package<a class="anchor" aria-label="anchor" href="#package-0-2-9"></a></h3>
+<ul><li>Updated <code><a href="../reference/tutorials.html">run_tute()</a></code>function to “fuzzy” match tutorial names</li></ul></div>
+<div class="section level3">
+<h3 id="map-0-2-9">Map<a class="anchor" aria-label="anchor" href="#map-0-2-9"></a></h3>
+<ul><li>Added <code>+.ggplot()</code> method for visualising multiple plots in the same pane</li>
+<li>Added custom theme <code>theme_iheid</code> for plots</li>
+<li>Added custom <code>scale_</code> family of functions for changing colour scales in plots</li>
+<li>Updated <code><a href="../reference/autographing.html">autographr()</a></code>:<ul><li>Added “center” option for hierarchy layout that places events or actors in the middle alike “bip” and “bip3” layouts</li>
+<li>Added “lineage” layout that fixes node positions according to values in y axis</li>
+</ul></li>
+<li>Fixed bugs with <code><a href="../reference/autographing.html">autographd()</a></code> function</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.2.8" id="manynet-028">manynet 0.2.8<small>2023-11-02</small><a class="anchor" aria-label="anchor" href="#manynet-028"></a></h2>
 <p>2023-11-02</p>
 <div class="section level3">
 <h3 id="package-0-2-8">Package<a class="anchor" aria-label="anchor" href="#package-0-2-8"></a></h3>
@@ -121,8 +138,8 @@
 <div class="section level3">
 <h3 id="package-0-2-5">Package<a class="anchor" aria-label="anchor" href="#package-0-2-5"></a></h3>
 <ul><li>Added ‘tutorial0’ for those less comfortable with R</li>
-<li>Added <code><a href="../reference/tutorials.html">run_tute()</a></code> helper for quicker access to <a href="https://snlab-ch.github.io/manynet/">manynet</a> and <a href="https://github.com/snlab-ch/migraph" class="external-link">migraph</a> tutorials</li>
-<li>Added <code><a href="../reference/tutorials.html">extract_tute()</a></code> for extracting the main code examples from <a href="https://snlab-ch.github.io/manynet/">manynet</a> and <a href="https://github.com/snlab-ch/migraph" class="external-link">migraph</a> tutorials</li>
+<li>Added <code><a href="../reference/tutorials.html">run_tute()</a></code> helper for quicker access to <a href="https://snlab-ch.github.io/manynet/">manynet</a> and <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a> tutorials</li>
+<li>Added <code><a href="../reference/tutorials.html">extract_tute()</a></code> for extracting the main code examples from <a href="https://snlab-ch.github.io/manynet/">manynet</a> and <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a> tutorials</li>
 <li>Added <code>purl = FALSE</code> to tutorial chunks that are not needed for extraction (thanks <a href="https://github.com/JaelTan" class="external-link">@JaelTan</a>)</li>
 <li>Updated website with new functions <code><a href="../reference/tutorials.html">run_tute()</a></code> and <code><a href="../reference/tutorials.html">extract_tute()</a></code>
 </li>
@@ -174,7 +191,7 @@
 <p>2023-09-17</p>
 <div class="section level3">
 <h3 id="package-0-2-2">Package<a class="anchor" aria-label="anchor" href="#package-0-2-2"></a></h3>
-<ul><li>README now points to <a href="https://github.com/snlab-ch/migraph" class="external-link">migraph</a> earlier</li></ul></div>
+<ul><li>README now points to <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a> earlier</li></ul></div>
 <div class="section level3">
 <h3 id="tutorials-0-2-2">Tutorials<a class="anchor" aria-label="anchor" href="#tutorials-0-2-2"></a></h3>
 <ul><li>Fixed various bugs in first (data) tutorial</li></ul></div>
@@ -217,7 +234,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="map-0-2-0">Map<a class="anchor" aria-label="anchor" href="#map-0-2-0"></a></h3>
-<ul><li>Moved additional <code>is_</code> functions from <a href="https://github.com/snlab-ch/migraph" class="external-link">migraph</a><ul><li>Added <code><a href="../reference/is.html">is_connected()</a></code> to test if network is strongly connected</li>
+<ul><li>Moved additional <code>is_</code> functions from <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a><ul><li>Added <code><a href="../reference/is.html">is_connected()</a></code> to test if network is strongly connected</li>
 <li>Added <code><a href="../reference/is.html">is_perfect_matching()</a></code> to test if there is a matching for every node in the network</li>
 <li>Added <code><a href="../reference/is.html">is_eulerian()</a></code> to test whether there is a Eulerian path for a network</li>
 <li>Added <code>is_acyclic</code> to test whether network is a directed acyclic graph</li>
@@ -237,9 +254,9 @@
 <p>2023-06-20</p>
 <div class="section level3">
 <h3 id="package-0-1-2">Package<a class="anchor" aria-label="anchor" href="#package-0-1-2"></a></h3>
-<ul><li>Added tutorials for package<ul><li>Moved and updated “data” tutorial from <a href="https://github.com/snlab-ch/migraph" class="external-link">migraph</a>
+<ul><li>Added tutorials for package<ul><li>Moved and updated “data” tutorial from <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a>
 </li>
-<li>Moved and updated “visualisations” tutorial from <a href="https://github.com/snlab-ch/migraph" class="external-link">migraph</a>
+<li>Moved and updated “visualisations” tutorial from <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a>
 </li>
 </ul></li></ul></div>
 </div>
@@ -265,7 +282,7 @@
 <p>2023-06-07</p>
 <div class="section level3">
 <h3 id="package-0-1-0">Package<a class="anchor" aria-label="anchor" href="#package-0-1-0"></a></h3>
-<ul><li>Split up the <a href="https://github.com/snlab-ch/migraph" class="external-link">migraph</a> package, adding the Make, Manipulate, and Map functions to this package</li>
+<ul><li>Split up the <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a> package, adding the Make, Manipulate, and Map functions to this package</li>
 <li>Added package documentation<ul><li>Added .github files</li>
 <li>Added README structured around the problems the package solves</li>
 </ul></li>

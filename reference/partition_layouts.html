@@ -9,6 +9,7 @@ these functions are used though.
 The "hierarchy" layout layers the first node set along the bottom,
 and the second node set along the top,
 sequenced and spaced as necessary to minimise edge overlap.
+These node sets can be arranged using the "center" argument.
 The "alluvial" layout is similar to "hierarchy",
 but places successive layers horizontally rather than vertically.
 The "railway" layout is similar to "hierarchy",
@@ -17,7 +18,10 @@ The "ladder" layout is similar to "railway",
 but places successive layers horizontally rather than vertically.
 The "concentric" layout places a "hierarchy" layout
 around a circle, with successive layers appearing as concentric circles.
-The "multilevel" layout places successive layers as multiple levels.'><meta property="og:image" content="https://snlab-ch.github.io/manynet/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+The "multilevel" layout places successive layers as multiple levels.
+The "lineage" layout ranks nodes in Y axis according to values.
+These values for ranking the nodes should be declared as a node attribute
+in the "rank" argument.'><meta property="og:image" content="https://snlab-ch.github.io/manynet/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
@@ -35,7 +39,7 @@ The "multilevel" layout places successive layers as multiple levels.'><meta prop
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.9</span>
       </span>
     </div>
 
@@ -83,6 +87,7 @@ these functions are used though.</p>
 <p>The "hierarchy" layout layers the first node set along the bottom,
 and the second node set along the top,
 sequenced and spaced as necessary to minimise edge overlap.
+These node sets can be arranged using the "center" argument.
 The "alluvial" layout is similar to "hierarchy",
 but places successive layers horizontally rather than vertically.
 The "railway" layout is similar to "hierarchy",
@@ -91,11 +96,19 @@ The "ladder" layout is similar to "railway",
 but places successive layers horizontally rather than vertically.
 The "concentric" layout places a "hierarchy" layout
 around a circle, with successive layers appearing as concentric circles.
-The "multilevel" layout places successive layers as multiple levels.</p>
+The "multilevel" layout places successive layers as multiple levels.
+The "lineage" layout ranks nodes in Y axis according to values.
+These values for ranking the nodes should be declared as a node attribute
+in the "rank" argument.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">layout_tbl_graph_hierarchy</span><span class="op">(</span><span class="va">.data</span>, circular <span class="op">=</span> <span class="cn">FALSE</span>, times <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">layout_tbl_graph_hierarchy</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  center <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  circular <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  times <span class="op">=</span> <span class="fl">1000</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">layout_tbl_graph_alluvial</span><span class="op">(</span><span class="va">.data</span>, circular <span class="op">=</span> <span class="cn">FALSE</span>, times <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span></span>
@@ -112,7 +125,9 @@ The "multilevel" layout places successive layers as multiple levels.</p>
 <span>  times <span class="op">=</span> <span class="fl">1000</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">layout_tbl_graph_multilevel</span><span class="op">(</span><span class="va">.data</span>, level <span class="op">=</span> <span class="cn">NULL</span>, circular <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">layout_tbl_graph_multilevel</span><span class="op">(</span><span class="va">.data</span>, level <span class="op">=</span> <span class="cn">NULL</span>, circular <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">layout_tbl_graph_lineage</span><span class="op">(</span><span class="va">.data</span>, <span class="va">rank</span>, circular <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="source">
@@ -133,9 +148,15 @@ protein-protein interaction networks".
 </ul></dd>
 
 
+<dt>center</dt>
+<dd><p>Further split "hierarchical" layouts by
+declaring the "center" argument as either the "events" or "actors".
+Defaults to NULL.</p></dd>
+
+
 <dt>circular</dt>
 <dd><p>Should the layout be transformed into a radial representation.
-Only possible for some layouts. Defaults to FALSE</p></dd>
+Only possible for some layouts. Defaults to FALSE.</p></dd>
 
 
 <dt>times</dt>
@@ -164,6 +185,11 @@ the number of edge crossings.</p></dd>
 <dt>level</dt>
 <dd><p>A node attribute or a vector to hierarchically order levels for
 "multilevel" layout.</p></dd>
+
+
+<dt>rank</dt>
+<dd><p>A numerical node attribute to place nodes in Y axis
+according to values.</p></dd>
 
 </dl></div>
     <div id="see-also">
