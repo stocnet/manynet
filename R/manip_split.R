@@ -175,7 +175,6 @@ to_waves <- function(.data, attribute = "wave", panels = NULL) UseMethod("to_wav
 #' @importFrom tidygraph to_subgraph as_tbl_graph
 #' @export
 to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL) {
-  
   wp <- unique(tie_attribute(.data, attribute))
   if(!is.null(panels))
     wp <- intersect(panels, wp)

@@ -8,6 +8,7 @@
 \alias{layout_tbl_graph_ladder}
 \alias{layout_tbl_graph_concentric}
 \alias{layout_tbl_graph_multilevel}
+\alias{layout_tbl_graph_lineage}
 \title{Layout algorithms based on bi- or other partitions}
 \source{
 Diego Diez, Andrew P. Hutchins and Diego Miranda-Saavedra. 2014.
@@ -16,7 +17,12 @@ protein-protein interaction networks".
 \emph{Nucleic Acids Research}, 42 (1) e6.
 }
 \usage{
-layout_tbl_graph_hierarchy(.data, circular = FALSE, times = 1000)
+layout_tbl_graph_hierarchy(
+  .data,
+  center = NULL,
+  circular = FALSE,
+  times = 1000
+)
 
 layout_tbl_graph_alluvial(.data, circular = FALSE, times = 1000)
 
@@ -34,6 +40,8 @@ layout_tbl_graph_concentric(
 )
 
 layout_tbl_graph_multilevel(.data, level = NULL, circular = FALSE)
+
+layout_tbl_graph_lineage(.data, rank, circular = FALSE)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -45,8 +53,12 @@ layout_tbl_graph_multilevel(.data, level = NULL, circular = FALSE)
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
 
+\item{center}{Further split "hierarchical" layouts by
+declaring the "center" argument as either the "events" or "actors".
+Defaults to NULL.}
+
 \item{circular}{Should the layout be transformed into a radial representation.
-Only possible for some layouts. Defaults to FALSE}
+Only possible for some layouts. Defaults to FALSE.}
 
 \item{times}{Maximum number of iterations, where appropriate}
 
@@ -65,6 +77,9 @@ the number of edge crossings.}
 
 \item{level}{A node attribute or a vector to hierarchically order levels for
 "multilevel" layout.}
+
+\item{rank}{A numerical node attribute to place nodes in Y axis
+according to values.}
 }
 \description{
 These algorithms layout networks based on two or more partitions,
@@ -78,6 +93,7 @@ these functions are used though.
 The "hierarchy" layout layers the first node set along the bottom,
 and the second node set along the top,
 sequenced and spaced as necessary to minimise edge overlap.
+These node sets can be arranged using the "center" argument.
 The "alluvial" layout is similar to "hierarchy",
 but places successive layers horizontally rather than vertically.
 The "railway" layout is similar to "hierarchy",
@@ -87,6 +103,9 @@ but places successive layers horizontally rather than vertically.
 The "concentric" layout places a "hierarchy" layout
 around a circle, with successive layers appearing as concentric circles.
 The "multilevel" layout places successive layers as multiple levels.
+The "lineage" layout ranks nodes in Y axis according to values.
+These values for ranking the nodes should be declared as a node attribute
+in the "rank" argument.
 }
 \seealso{
 Other mapping: 

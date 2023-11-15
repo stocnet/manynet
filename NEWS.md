@@ -1,3 +1,21 @@
+# manynet 0.2.9
+
+2023-11-15
+
+## Package 
+
+* Updated `run_tute()`function to "fuzzy" match tutorial names
+
+## Map
+
+* Added `+.ggplot()` method for visualising multiple plots in the same pane
+* Added custom theme `theme_iheid` for plots
+* Added custom `scale_` family of functions for changing colour scales in plots 
+* Updated `autographr()`:
+  * Added "center" option for hierarchy layout that places events or actors in the middle alike "bip" and "bip3" layouts
+  * Added "lineage" layout that fixes node positions according to values in y axis
+* Fixed bugs with `autographd()` function
+
 # manynet 0.2.8
 
 2023-11-02

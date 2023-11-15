@@ -32,10 +32,12 @@ autographd(
   keep_isolates = TRUE,
   layout = "stress",
   labels = TRUE,
-  node_color = NULL,
-  node_shape = NULL,
-  node_size = NULL,
-  edge_color = NULL
+  node_color,
+  node_shape,
+  node_size,
+  edge_color,
+  edge_size,
+  ...
 )
 }
 \arguments{
@@ -46,6 +48,8 @@ If not declared, defaults to "triad" for networks with 3 nodes,
 "quad" for networks with 4 nodes,
 "stress" for all other one mode networks,
 or "hierarchy" for two mode networks.
+For "hierarchy" layout, one can further split graph by
+declaring the "center" argument as either the "events" or "actors".
 For "concentric" layout algorithm please declare the "membership" as an
 extra argument.
 The "membership" argument expects either a quoted node attribute present
@@ -55,7 +59,12 @@ as extra argument.
 The "level" argument expects either a quoted node attribute present
 in data or vector with the same length as nodes to hierarchically
 order categories.
-If "level" is missing, function will look for 'lvl' node attribute in data.}
+If "level" is missing, function will look for 'lvl' node attribute in data.
+The "lineage" layout ranks nodes in Y axis according to values.
+For "lineage" layout algorithm please declare the "rank"
+as extra argument.
+The "rank" argument expects either a quoted node attribute present
+in data or vector with the same length as nodes.}
 
 \item{labels}{Logical, whether to print node names
 as labels if present.}
@@ -89,7 +98,7 @@ It is easiest if this is added as an edge or tie attribute
 to the graph before plotting.
 Edges can also be colored by declaring a color instead.}
 
-\item{edge_size}{Edge variable to be used for sizing the edges.
+\item{edge_size}{Tie variable to be used for sizing the edges.
 This can be any continuous variable on the nodes of the network.
 Since this function expects this to be an existing variable,
 it is recommended to calculate all edge-related statistics prior
@@ -133,6 +142,9 @@ with sensible defaults
 }}
 \examples{
 #autographr(ison_adolescents)
+#ison_adolescents \%>\% 
+#  mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2)) \%>\%
+#  autographr(layout = "lineage", rank = "year")
 #autographr(ison_algebra, layout = "circle", 
 #           node_size = 8, node_color = "orange", node_shape = "square",
 #           edge_color = "blue", edge_size = 2)
@@ -149,8 +161,9 @@ with sensible defaults
 #           edge_size = migraph::tie_closeness(ison_karateka))
 #autographr(ison_southern_women, layout = "concentric", 
 #           node_color = "type", membership = "type")
+#autographr(ison_southern_women, layout = "hierarchy", center = "events")
 #autographr(ison_lotr, layout = "multilevel",
-#           node_color = "Race", node_shape = , level = "Race")
+#           node_color = "Race", level = "Race")
 #autographs(to_egos(ison_adolescents))
 #ison_adolescents \%>\%
 # mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%
