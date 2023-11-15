@@ -93,6 +93,7 @@ these functions are used though.
 The "hierarchy" layout layers the first node set along the bottom,
 and the second node set along the top,
 sequenced and spaced as necessary to minimise edge overlap.
+These node sets can be arranged using the "center" argument.
 The "alluvial" layout is similar to "hierarchy",
 but places successive layers horizontally rather than vertically.
 The "railway" layout is similar to "hierarchy",
@@ -103,6 +104,8 @@ The "concentric" layout places a "hierarchy" layout
 around a circle, with successive layers appearing as concentric circles.
 The "multilevel" layout places successive layers as multiple levels.
 The "lineage" layout ranks nodes in Y axis according to values.
+These values for ranking the nodes should be declared as a node attribute
+in the "rank" argument.
 }
 \seealso{
 Other mapping: 
