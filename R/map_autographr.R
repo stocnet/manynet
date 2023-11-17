@@ -58,7 +58,7 @@
 #'   It is easiest if this is added as an edge or tie attribute 
 #'   to the graph before plotting.
 #'   Edges can also be colored by declaring a color instead.
-#' @param edge_size Tie variable to be used for sizing the edges.
+#' @param edge_size Edge variable to be used for sizing the edges.
 #'   This can be any continuous variable on the nodes of the network.
 #'   Since this function expects this to be an existing variable,
 #'   it is recommended to calculate all edge-related statistics prior
@@ -318,6 +318,10 @@ reduce_categories <- function(g, node_group) {
       }
     }
   }
+  # if (is_diamond(g)) {
+  #   lo[,1] <- lo[,1]*(pi/3)
+  #   lo[,2] <- lo[,2]*(pi/3)
+  # }
   p <- ggraph::ggraph(lo) + ggplot2::theme_void()
   if (labels & is_labelled(g)) {
     if (layout == "circle") {
@@ -352,7 +356,7 @@ reduce_categories <- function(g, node_group) {
       }
       p <- p + ggraph::geom_node_text(ggplot2::aes(label = name),
                                       size = 3, hjust = hj,
-                                      vjust = vj) +
+                                      vjust = vj, check_overlap = TRUE) +
         ggplot2::coord_cartesian(xlim=c(-1.2,1.2), ylim=c(-1.2,1.2))
     } else if (layout %in% c("bipartite", "railway") |
                (layout == "hierarchy" & length(unique(lo[,2])) <= 2)) {
@@ -692,6 +696,13 @@ reduce_categories <- function(g, node_group) {
   }
   out
 }
+
+# is_diamond <- function(x) {
+#   if (length(rowSums(x)) == length(colSums(x)) &
+#       all(unique(rowSums(x)) == unique(colSums(x)))) {
+#     return(TRUE)
+#   } else return(FALSE)
+# }
 
 cart2pol <- function(xyz){
   stopifnot(is.numeric(xyz))
