@@ -16,7 +16,8 @@
 #'   "stress" for all other one mode networks,
 #'   or "hierarchy" for two mode networks.
 #'   For "hierarchy" layout, one can further split graph by
-#'   declaring the "center" argument as either the "events" or "actors".
+#'   declaring the "center" argument as the "events", "actors",
+#'   or by declaring a node name.
 #'   For "concentric" layout algorithm please declare the "membership" as an 
 #'   extra argument.
 #'   The "membership" argument expects either a quoted node attribute present

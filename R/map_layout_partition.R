@@ -30,7 +30,8 @@
 #' @param circular Should the layout be transformed into a radial representation. 
 #' Only possible for some layouts. Defaults to FALSE.
 #' @param center Further split "hierarchical" layouts by
-#'   declaring the "center" argument as either the "events" or "actors".
+#'   declaring the "center" argument as the "events", "actors",
+#'   or by declaring a node name.
 #'   Defaults to NULL.
 #' @param times Maximum number of iterations, where appropriate
 #' @param radius A vector of radii at which the concentric circles

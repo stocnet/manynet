@@ -54,7 +54,8 @@ layout_tbl_graph_lineage(.data, rank, circular = FALSE)
 }}
 
 \item{center}{Further split "hierarchical" layouts by
-declaring the "center" argument as either the "events" or "actors".
+declaring the "center" argument as the "events", "actors",
+or by declaring a node name.
 Defaults to NULL.}
 
 \item{circular}{Should the layout be transformed into a radial representation.
