@@ -605,8 +605,8 @@ write_graphml <- function(.data,
                           name,
                           ...) {
   if (missing(name)) name <- deparse(substitute(.data))
-  if (missing(filename)) filename <- paste0(getwd(), "/", name, ".csv")
-  as_tidygraph(igraph::write_graph(.data, 
-                                   filename, 
-                                   format = "graphml"))
+  if (missing(filename)) filename <- paste0(getwd(), "/", name, ".graphml")
+  igraph::write_graph(.data,
+                      filename,
+                      format = "graphml")
 }
