@@ -589,3 +589,24 @@ read_dynetml <- function(file = file.choose()) {
   edgelist <- dplyr::filter(edgelist, value != 0)
   as_tidygraph(list(nodes = nodes, ties = edgelist))
 }
+
+#' @describeIn read Reading GraphML files
+#' @importFrom igraph read_graph
+#' @export
+read_graphml <- function(file = file.choose()) {
+  as_tidygraph(igraph::read_graph(file, format = "graphml"))
+}
+
+#' @describeIn read Writing GraphML files
+#' @importFrom igraph write_graph
+#' @export
+write_graphml <- function(.data,
+                          filename,
+                          name,
+                          ...) {
+  if (missing(name)) name <- deparse(substitute(.data))
+  if (missing(filename)) filename <- paste0(getwd(), "/", name, ".csv")
+  as_tidygraph(igraph::write_graph(.data, 
+                                   filename, 
+                                   format = "graphml"))
+}

@@ -13,6 +13,8 @@
 \alias{read_ucinet}
 \alias{write_ucinet}
 \alias{read_dynetml}
+\alias{read_graphml}
+\alias{write_graphml}
 \title{Make networks from/to external formats}
 \source{
 \code{read_ucinet()} and \code{write_ucinet()} kindly supplied by Christian Steglich,
@@ -40,6 +42,10 @@ read_ucinet(file = file.choose())
 write_ucinet(.data, filename, name)
 
 read_dynetml(file = file.choose())
+
+read_graphml(file = file.choose())
+
+write_graphml(.data, filename, name, ...)
 }
 \arguments{
 \item{file}{A character string with the system path to the file to import.
@@ -147,6 +153,10 @@ you will need to unpack them and convert them one by one.
 \item \code{write_ucinet()}: Writing UCINET files
 
 \item \code{read_dynetml()}: Reading DynetML files
+
+\item \code{read_graphml()}: Reading GraphML files
+
+\item \code{write_graphml()}: Writing GraphML files
 
 }}
 \seealso{
