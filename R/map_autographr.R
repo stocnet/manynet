@@ -99,17 +99,9 @@ NULL
 #' #autographr(ison_lotr, layout = "multilevel",
 #' #           node_color = "Race", level = "Race")
 #' @export
-autographr <- function(.data,
-                       layout,
-                       labels = TRUE,
-                       node_color,
-                       node_shape,
-                       node_size,
-                       node_group,
-                       edge_color,
-                       edge_size,
-                       ...) {
-  name <- weight <- nodes <- label <- NULL # avoid CMD check notes
+autographr <- function(.data, layout, labels = TRUE,
+                       node_color, node_shape, node_size, node_group,
+                       edge_color, edge_size, ...) {
   g <- as_tidygraph(.data)
   if (missing(layout)) {
     if (length(g) == 3) {
@@ -129,7 +121,7 @@ autographr <- function(.data,
   }
   if (missing(node_group)) node_group <- NULL else {
     node_group <- as.character(substitute(node_group))
-    g <- activate(g, nodes) %>%
+    g <- activate(g, "nodes") %>%
       mutate(node_group = reduce_categories(g, node_group))
     }
   if (missing(edge_color)) edge_color <- NULL else
@@ -196,12 +188,26 @@ autographs <- function(netlist, ...) {
 #' #            node_color = "color", node_size =  "size",
 #' #            edge_color = "e_color")
 #' @export
-autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
-                       labels = TRUE, node_color, node_shape,
-                       node_size, edge_color, edge_size, ...) {
+autographd <- function(tlist, layout, labels = TRUE,
+                       node_color, node_shape, node_size,
+                       edge_color, edge_size, keep_isolates = TRUE, ...) {
+  # Check if object is a list of lists
+  if (!is.list(tlist[[1]])) {
+    stop("Please declare a migraph-compatible network listed according
+         to a time attribute, waves, or slices.")
+  }
   thisRequires("gganimate")
   x <- y <- name <- status <- frame <- NULL
   # Check arguments
+  if (missing(layout)) {
+    if (length(tlist[[1]]) == 3) {
+      layout <- "triad" 
+    } else if (length(tlist[[1]]) == 4) {
+      layout <- "quad" 
+    } else if (is_twomode(tlist[[1]])) {
+      layout <- "hierarchy"
+    } else layout <- "stress"
+  }
   if (missing(node_color)) node_color <- NULL else
     node_color <- as.character(substitute(node_color))
   if (missing(node_shape)) node_shape <- NULL else
@@ -214,11 +220,6 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
   if (missing(edge_size)) edge_size <- NULL else if (!is.numeric(edge_size)) {
     edge_size <- as.character(substitute(edge_size))
   }
-  # Check if object is a list of lists
-  if (!is.list(tlist[[1]])) {
-    stop("Please declare a migraph-compatible network listed according
-         to a time attribute, waves, or slices.")
-  }
   # Remove lists without edges
   tlist <- Filter(function(x) igraph::gsize(x) > 0, tlist)
   # Create an edge list
@@ -226,11 +227,12 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
     cbind(igraph::as_data_frame(tlist[[i]], "edges"), frame = i))
   # Check if all names are present in all lists
   if (length(unique(unlist(unname(lapply(tlist, length))))) != 1) {
-    tlist <- to_waves(as_tidygraph(do.call("rbind", edges_lst)), attribute = "frame")
+    tlist <- to_waves(as_tidygraph(do.call("rbind", edges_lst)),
+                      attribute = "frame")
   }
   # Add separate layouts for each time point
   lay <- lapply(1:length(tlist), function(i)
-    ggraph::create_layout(tlist[[i]], layout))
+    ggraph::create_layout(tlist[[i]], layout, ...))
   # Create a node list for each time point
   nodes_lst <- lapply(1:length(tlist), function(i) {
     cbind(igraph::as_data_frame(tlist[[i]], "vertices"),
@@ -319,10 +321,12 @@ reduce_categories <- function(g, node_group) {
       }
     }
   }
-  # if (is_diamond(g)) {
-  #   lo[,1] <- lo[,1]*(pi/3)
-  #   lo[,2] <- lo[,2]*(pi/3)
-  # }
+  if (layout == "stress" & is_diamond(g)) {
+    turn <- matrix(c(cos(0.71), -sin(0.71), sin(0.71), cos(0.71)), 2, 2)
+    coord <- matrix(cbind(lo[,1], lo[,2]), ncol = 2) %*% turn
+    lo[,1] <- coord[,1]
+    lo[,2] <- coord[,2]
+  }
   p <- ggraph::ggraph(lo) + ggplot2::theme_void()
   if (labels & is_labelled(g)) {
     if (layout == "circle") {
@@ -698,12 +702,15 @@ reduce_categories <- function(g, node_group) {
   out
 }
 
-# is_diamond <- function(x) {
-#   if (length(rowSums(x)) == length(colSums(x)) &
-#       all(unique(rowSums(x)) == unique(colSums(x)))) {
-#     return(TRUE)
-#   } else return(FALSE)
-# }
+is_diamond <- function(x) {
+  x <- as_matrix(x)
+  if (is.numeric(x)) {
+    if (length(x) == 100 | length(x) == 10000 &
+        all(unique(rowSums(x)) == c(3, 5, 8))) {
+      TRUE
+    } else FALSE 
+  } else FALSE
+}
 
 cart2pol <- function(xyz){
   stopifnot(is.numeric(xyz))
