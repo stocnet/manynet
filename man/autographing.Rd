@@ -29,14 +29,14 @@ autographs(netlist, ...)
 
 autographd(
   tlist,
-  keep_isolates = TRUE,
-  layout = "stress",
+  layout,
   labels = TRUE,
   node_color,
   node_shape,
   node_size,
   edge_color,
   edge_size,
+  keep_isolates = TRUE,
   ...
 )
 }

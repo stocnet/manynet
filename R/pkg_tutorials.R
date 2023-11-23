@@ -33,7 +33,7 @@ run_tute <- function(tute) {
     avails <- rbind(t1, t2)
     inftit <- grepl(tute, avails$title, ignore.case = TRUE)
     if(!any(inftit) | sum(inftit)>1)
-      inftit <- which.min(adist(tute, avails$title, ignore.case = TRUE))
+      inftit <- which.min(utils::adist(tute, avails$title, ignore.case = TRUE))
     if(any(inftit) & sum(inftit)==1){
       cat(" and found one!")
       try(learnr::run_tutorial(avails$name[inftit], avails$package[inftit]), silent = TRUE)
