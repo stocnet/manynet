@@ -147,6 +147,10 @@ autographr <- function(.data, layout, labels = TRUE,
 #' @export
 autographs <- function(netlist, ...) {
   thisRequires("patchwork")
+  if (any(class(netlist) == "diff_model")) {
+    netlist <- to_waves(netlist)
+    names(netlist) <- seq_len(length(netlist))
+  }
   if(!is.null(names(netlist))){
     gs <- lapply(1:length(netlist), function(x)
       autographr(netlist[[x]], ...) +
