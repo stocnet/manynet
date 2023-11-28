@@ -214,7 +214,7 @@ to_waves.data.frame <- function(.data, attribute = "wave", panels = NULL) {
 to_waves.diff_model <- function(.data, attribute = "t", panels = NULL) {
   if(!is.null(panels)) .data <- .data[.data[[attribute]] %in% panels,]
   # todo: add metadata to diff_model objects for names/network properties
-  diffusion <- generate_random(max(.data[[attribute]]))
+  diffusion <- create_empty(max(.data[[attribute]]))
   out <- list()
   for (k in .data[[attribute]]) {
     out[[k + 1]] <- diffusion %>% add_node_attribute("Infected",

@@ -180,6 +180,7 @@ with sensible defaults
 # autographd(keep_isolates = FALSE, layout = "circle", node_shape = "shape",
 #            node_color = "color", node_size =  "size",
 #            edge_color = "e_color")
+#autographd(migraph::play_diffusion(ison_adolescents, seeds = 4), layout = "circle")
 }
 \seealso{
 Other mapping: 
