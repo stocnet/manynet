@@ -216,12 +216,24 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL) {
   # todo: add metadata to diff_model objects for names/network properties
   diffusion <- create_empty(max(.data[[attribute]]))
   out <- list()
-  for (k in .data[[attribute]]) {
-    out[[k + 1]] <- diffusion %>% add_node_attribute("Infected",
-                                                     c(rep("Infected",
-                                                           .data$I[k + 1]),
-                                                       rep("Susceptible",
-                                                           .data$S[k + 1])))
+  if ("R" %in% names(.data)) {
+    for (k in .data[[attribute]]) {
+      out[[k + 1]] <- diffusion %>% add_node_attribute("Infected",
+                                                       c(rep("Infected",
+                                                             .data$I[k + 1]),
+                                                         rep("Susceptible",
+                                                             .data$S[k + 1]),
+                                                         rep("Recovered",
+                                                             .data$R[k + 1])))
+    }
+  } else {
+    for (k in .data[[attribute]]) {
+      out[[k + 1]] <- diffusion %>% add_node_attribute("Infected",
+                                                       c(rep("Infected",
+                                                             .data$I[k + 1]),
+                                                         rep("Susceptible",
+                                                             .data$S[k + 1])))
+    }
   }
   out
 }

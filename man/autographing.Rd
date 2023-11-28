@@ -175,12 +175,14 @@ with sensible defaults
 #        color = rep(c("blue", "red"), times = 4),
 #        size = sample(4:16, 8, replace = TRUE)) \%>\%
 # mutate_ties(year = sample(1995:1998, 10, replace = TRUE),
-#        e_color = sample(c("yellow", "green"), 10, replace = TRUE)) \%>\%
+#             e_color = sample(c("yellow", "green"), 10, replace = TRUE)) \%>\%
 # to_waves(attribute = "year") \%>\%
 # autographd(keep_isolates = FALSE, layout = "circle", node_shape = "shape",
-#            node_color = "color", node_size =  "size",
-#            edge_color = "e_color")
-#autographd(migraph::play_diffusion(ison_adolescents, seeds = 4), layout = "circle")
+#            node_color = "color", node_size =  "size", edge_color = "e_color")
+#autographd(play_diffusion(ison_adolescents, seeds = 4), layout = "circle")
+#autographd(play_diffusion(ison_adolescents, seeds = 4, recovery = 0.2),
+#.          layout = "circle")
+
 }
 \seealso{
 Other mapping: 

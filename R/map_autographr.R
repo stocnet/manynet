@@ -182,12 +182,14 @@ autographs <- function(netlist, ...) {
 #' #        color = rep(c("blue", "red"), times = 4),
 #' #        size = sample(4:16, 8, replace = TRUE)) %>%
 #' # mutate_ties(year = sample(1995:1998, 10, replace = TRUE),
-#' #        e_color = sample(c("yellow", "green"), 10, replace = TRUE)) %>%
+#' #             e_color = sample(c("yellow", "green"), 10, replace = TRUE)) %>%
 #' # to_waves(attribute = "year") %>%
 #' # autographd(keep_isolates = FALSE, layout = "circle", node_shape = "shape",
-#' #            node_color = "color", node_size =  "size",
-#' #            edge_color = "e_color")
-#' #autographd(migraph::play_diffusion(ison_adolescents, seeds = 4), layout = "circle")
+#' #            node_color = "color", node_size =  "size", edge_color = "e_color")
+#' #autographd(play_diffusion(ison_adolescents, seeds = 4), layout = "circle")
+#' #autographd(play_diffusion(ison_adolescents, seeds = 4, recovery = 0.2),
+#' #.          layout = "circle")
+#'
 #' @export
 autographd <- function(tlist, layout, labels = TRUE,
                        node_color, node_shape, node_size,
@@ -238,7 +240,8 @@ autographd <- function(tlist, layout, labels = TRUE,
       gganimate::enter_fade() +
       gganimate::exit_fade() +
       ggplot2::labs(title = "{closest_state}") +
-      ggplot2::theme_void()
+      ggplot2::theme_void() +
+      ggplot2::theme(legend.position = "bottom")
   } else {
     # Check if object is a list of lists
     if (!is.list(tlist[[1]])) {
@@ -929,7 +932,7 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
 }
 
 map_diffusion <- function(nodes_out, node_size, node_shape, node_color, labels) {
-  x <- xend <- y <- yend <- id <- status <- name <- NULL
+  x <- xend <- y <- yend <- id <- status <- name <- Infected <- NULL
   if (!"name" %in% names(nodes_out)) {
     nodes_out$name <- rep(seq_len(length(unique(nodes_out$x))),
                           max(nodes_out$frame))
@@ -952,7 +955,9 @@ map_diffusion <- function(nodes_out, node_size, node_shape, node_color, labels) 
       }
     }
   } else {
-    node_color <- ifelse(nodes_out[["Infected"]] == "Infected", "red", "blue")
+    node_color <- ifelse(nodes_out[["Infected"]] == "Infected", "#D55E00",
+                         ifelse(nodes_out[["Infected"]] == "Susceptible",
+                                "#0072B2", "#F0E442"))
   }
   if (!is.null(node_size)) {
     node_size <- as.numeric(nodes_out[[node_size]])
@@ -960,11 +965,15 @@ map_diffusion <- function(nodes_out, node_size, node_shape, node_color, labels) 
     node_size <- 3
   } else node_size <- rep(nrow(nodes_out)/length(unique(nodes_out$frame)), nrow(nodes_out))
   # Plot nodes
+ if (length(unique(node_color)) == 2) {
+   cols <- c("Infected" = "#D55E00", "Susceptible" = "#0072B2")
+ } else cols <- c("Infected" = "#D55E00", "Susceptible" = "#0072B2", "Recovered" = "#F0E442")
   p <- ggplot2::ggplot() + 
     ggplot2::geom_point(data = nodes_out,
-                        aes(x, y, group = name),
-                        size = node_size, color = node_color,
-                        shape = node_shape, show.legend = FALSE)
+                        aes(x, y, group = name, color = Infected),
+                        size = node_size,
+                        shape = node_shape) +
+    ggplot2::scale_color_manual(name = NULL, values = cols)
   # Add labels
   if (isTRUE(labels)) {
     p <- p + ggplot2::geom_text(data = nodes_out,
