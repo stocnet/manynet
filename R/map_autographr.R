@@ -302,7 +302,7 @@ autographd <- function(tlist, layout, labels = TRUE,
       ggplot2::labs(title = "{closest_state}") +
       ggplot2::theme_void()
   }
-  gganimate::animate(p, nframes = 500, fps = 50,
+  gganimate::animate(p, duration = 2*length(tlist),
                      start_pause = 5, end_pause = 10)
 }
 
@@ -742,7 +742,7 @@ is_diamond <- function(x) {
   x <- as_matrix(x)
   if (is.numeric(x)) {
     if (length(x) == 100 | length(x) == 10000 &
-        all(unique(rowSums(x)) == c(3, 5, 8))) {
+        suppressWarnings(all(unique(rowSums(x)) == c(3, 5, 8)))) {
       TRUE
     } else FALSE 
   } else FALSE
@@ -940,7 +940,7 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
 map_diffusion <- function(nodes_out, node_size, node_shape, node_color, labels) {
   x <- xend <- y <- yend <- id <- status <- name <- Infected <- NULL
   if (!"name" %in% names(nodes_out)) {
-    nodes_out$name <- rep(seq_len(length(unique(nodes_out$x))),
+    nodes_out$name <- rep(seq_len(sum(nodes_out$frame == "1")),
                           max(nodes_out$frame))
   }
   # Set node shape, color, and size
@@ -971,9 +971,7 @@ map_diffusion <- function(nodes_out, node_size, node_shape, node_color, labels) 
     node_size <- 3
   } else node_size <- rep(nrow(nodes_out)/length(unique(nodes_out$frame)), nrow(nodes_out))
   # Plot nodes
- if (length(unique(node_color)) == 2) {
-   cols <- c("Infected" = "#D55E00", "Susceptible" = "#0072B2")
- } else cols <- c("Infected" = "#D55E00", "Susceptible" = "#0072B2", "Recovered" = "#F0E442")
+  cols <- c("Infected" = "#D55E00", "Susceptible" = "#0072B2", "Recovered" = "#F0E442")
   p <- ggplot2::ggplot() + 
     ggplot2::geom_point(data = nodes_out,
                         aes(x, y, group = name, color = Infected),
