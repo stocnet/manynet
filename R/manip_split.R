@@ -214,26 +214,18 @@ to_waves.data.frame <- function(.data, attribute = "wave", panels = NULL) {
 to_waves.diff_model <- function(.data, attribute = "t", panels = NULL) {
   if(!is.null(panels)) .data <- .data[.data[[attribute]] %in% panels,]
   # todo: add metadata to diff_model objects for names/network properties
-  diffusion <- create_empty(max(.data[[attribute]]))
+  if (length(unique(.data[["n"]])) > 1)
+    stop("Please make sure diffusion has the same numebr of nodes for all time points.")
+  diffusion <- create_empty(unique(.data[["n"]]))
   out <- list()
-  if ("R" %in% names(.data)) {
-    for (k in .data[[attribute]]) {
-      out[[k + 1]] <- diffusion %>% add_node_attribute("Infected",
-                                                       c(rep("Infected",
-                                                             .data$I[k + 1]),
-                                                         rep("Susceptible",
-                                                             .data$S[k + 1]),
-                                                         rep("Recovered",
-                                                             .data$R[k + 1])))
-    }
-  } else {
-    for (k in .data[[attribute]]) {
-      out[[k + 1]] <- diffusion %>% add_node_attribute("Infected",
-                                                       c(rep("Infected",
-                                                             .data$I[k + 1]),
-                                                         rep("Susceptible",
-                                                             .data$S[k + 1])))
-    }
+  for (k in .data[[attribute]]) {
+    out[[k + 1]] <- diffusion %>% add_node_attribute("Infected",
+                                                     c(rep("Recovered",
+                                                           .data$R[k + 1]),
+                                                       rep("Infected",
+                                                           .data$I[k + 1]),
+                                                       rep("Susceptible",
+                                                           .data$S[k + 1])))
   }
   out
 }
