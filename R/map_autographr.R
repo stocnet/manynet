@@ -199,6 +199,8 @@ autographd <- function(tlist, layout, labels = TRUE,
                        node_color, node_shape, node_size,
                        edge_color, edge_size, keep_isolates = TRUE, ...) {
   thisRequires("gganimate")
+  thisRequires("av")
+  thisRequires("gifski")
   x <- y <- name <- status <- frame <- NULL
   # Check arguments
   if (missing(layout)) {
