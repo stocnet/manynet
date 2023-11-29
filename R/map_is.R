@@ -122,6 +122,11 @@ is_twomode.data.frame <- function(.data) {
     length(intersect(.data[,1], .data[,2])) == 0
 }
 
+#' @export
+is_twomode.numeric <- function(.data) {
+  return(FALSE)
+}
+
 #' @describeIn is Tests whether network is weighted
 #' @importFrom igraph is.weighted
 #' @examples
