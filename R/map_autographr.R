@@ -227,6 +227,8 @@ autographd <- function(tlist, layout, labels = TRUE,
   # Check if diffusion model
   if (any(class(tlist) == "diff_model")) {
     tlist <- to_waves(tlist)
+    if (unique(lapply(tlist, function(x) igraph::ecount(x))) == 0 & 
+        layout == "stress") layout = "star"
     # Add separate layouts for each time point
     lay <- lapply(1:length(tlist), function(i)
       ggraph::create_layout(tlist[[i]], layout, ...))
