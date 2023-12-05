@@ -962,8 +962,8 @@ map_diffusion <- function(nodes_out, node_size, node_shape, node_color, labels) 
     }
   } else {
     node_color <- ifelse(nodes_out[["Infected"]] == "Infected", "#D55E00",
-                         ifelse(nodes_out[["Infected"]] == "Susceptible",
-                                "#0072B2", "#F0E442"))
+                         ifelse(nodes_out[["Infected"]] == "Susceptible", "#0072B2",
+                                ifelse(nodes_out[["Infected"]] == "Exposed", "#F0E442", "#66c2a5")))
   }
   if (!is.null(node_size)) {
     node_size <- as.numeric(nodes_out[[node_size]])
@@ -971,7 +971,8 @@ map_diffusion <- function(nodes_out, node_size, node_shape, node_color, labels) 
     node_size <- 3
   } else node_size <- rep(nrow(nodes_out)/length(unique(nodes_out$frame)), nrow(nodes_out))
   # Plot nodes
-  cols <- c("Infected" = "#D55E00", "Susceptible" = "#0072B2", "Recovered" = "#F0E442")
+  cols <- c("Infected" = "#D55E00", "Susceptible" = "#0072B2",
+            "Exposed" = "#F0E442", "Recovered" = "#66c2a5")
   p <- ggplot2::ggplot() + 
     ggplot2::geom_point(data = nodes_out,
                         aes(x, y, group = name, color = Infected),

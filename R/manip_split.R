@@ -224,6 +224,8 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL) {
                                                            .data$R[k + 1]),
                                                        rep("Infected",
                                                            .data$I[k + 1]),
+                                                       rep("Exposed",
+                                                           .data$E[k + 1]),
                                                        rep("Susceptible",
                                                            .data$S[k + 1])))
   }
