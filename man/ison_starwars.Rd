@@ -7,7 +7,7 @@
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> $`Episode I`
 #> # A labelled, weighted, undirected network with 38 nodes and 135 ties
-#> # A tibble: 38 x 10
+#> # A tibble: 38 x 11
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
 #> 1 R2-D2      96    32 <NA>       white, bl~ red               33 none  Naboo    
@@ -17,7 +17,7 @@
 #> 5 TC-14      NA    NA <NA>       <NA>       <NA>              NA <NA>  <NA>     
 #> 6 OBI-W~    182    77 auburn, w~ fair       blue-gray         57 male  Stewjon  
 #> # i 32 more rows
-#> # i 1 more variable: species <chr>
+#> # i 2 more variables: species <chr>, faction <chr>
 #> # A tibble: 135 x 3
 #>    from    to weight
 #>   <int> <int>  <int>
@@ -31,7 +31,7 @@
 #> 
 #> $`Episode II`
 #> # A labelled, weighted, undirected network with 33 nodes and 101 ties
-#> # A tibble: 33 x 10
+#> # A tibble: 33 x 11
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
 #> 1 R2-D2      96    32 <NA>       white, bl~ red               33 none  Naboo    
@@ -41,7 +41,7 @@
 #> 5 ORN F~     NA    NA <NA>       <NA>       <NA>              NA <NA>  <NA>     
 #> 6 MACE ~    188    84 none       dark       brown             72 male  Haruun K~
 #> # i 27 more rows
-#> # i 1 more variable: species <chr>
+#> # i 2 more variables: species <chr>, faction <chr>
 #> # A tibble: 101 x 3
 #>    from    to weight
 #>   <int> <int>  <int>
@@ -55,7 +55,7 @@
 #> 
 #> $`Episode III`
 #> # A labelled, weighted, undirected network with 24 nodes and 65 ties
-#> # A tibble: 24 x 10
+#> # A tibble: 24 x 11
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
 #> 1 R2-D2      96    32 <NA>       white, bl~ red             33   none  Naboo    
@@ -65,7 +65,7 @@
 #> 5 GENER~    216   159 none       brown, wh~ green, y~       NA   male  Kalee    
 #> 6 EMPER~    170    75 grey       pale       yellow          82   male  Naboo    
 #> # i 18 more rows
-#> # i 1 more variable: species <chr>
+#> # i 2 more variables: species <chr>, faction <chr>
 #> # A tibble: 65 x 3
 #>    from    to weight
 #>   <int> <int>  <int>
@@ -79,7 +79,7 @@
 #> 
 #> $`Episode IV`
 #> # A labelled, weighted, undirected network with 21 nodes and 60 ties
-#> # A tibble: 21 x 10
+#> # A tibble: 21 x 11
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
 #> 1 R2-D2      96    32 <NA>       white, bl~ red             33   none  Naboo    
@@ -89,7 +89,7 @@
 #> 5 DARTH~    202   136 none       white      yellow          41.9 male  Tatooine 
 #> 6 CAMIE      NA    NA <NA>       <NA>       <NA>            NA   <NA>  <NA>     
 #> # i 15 more rows
-#> # i 1 more variable: species <chr>
+#> # i 2 more variables: species <chr>, faction <chr>
 #> # A tibble: 60 x 3
 #>    from    to weight
 #>   <int> <int>  <int>
@@ -103,7 +103,7 @@
 #> 
 #> $`Episode V`
 #> # A labelled, weighted, undirected network with 21 nodes and 55 ties
-#> # A tibble: 21 x 10
+#> # A tibble: 21 x 11
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
 #> 1 R2-D2      96    32 <NA>       white, bl~ red               33 none  Naboo    
@@ -113,7 +113,7 @@
 #> 5 RIEEK~     NA    NA <NA>       <NA>       <NA>              NA <NA>  <NA>     
 #> 6 LEIA      150    49 brown      light      brown             19 fema~ Alderaan 
 #> # i 15 more rows
-#> # i 1 more variable: species <chr>
+#> # i 2 more variables: species <chr>, faction <chr>
 #> # A tibble: 55 x 3
 #>    from    to weight
 #>   <int> <int>  <int>
@@ -127,7 +127,7 @@
 #> 
 #> $`Episode VI`
 #> # A labelled, weighted, undirected network with 20 nodes and 55 ties
-#> # A tibble: 20 x 10
+#> # A tibble: 20 x 11
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
 #> 1 R2-D2      96    32 <NA>       white, bl~ red             33   none  Naboo    
@@ -137,7 +137,7 @@
 #> 5 C-3PO     167    75 <NA>       gold       yellow         112   none  Tatooine 
 #> 6 BIB F~    180    NA none       pale       pink            NA   male  Ryloth   
 #> # i 14 more rows
-#> # i 1 more variable: species <chr>
+#> # i 2 more variables: species <chr>, faction <chr>
 #> # A tibble: 55 x 3
 #>    from    to weight
 #>   <int> <int>  <int>
@@ -151,7 +151,7 @@
 #> 
 #> $`Episode VII`
 #> # A labelled, weighted, undirected network with 27 nodes and 92 ties
-#> # A tibble: 27 x 10
+#> # A tibble: 27 x 11
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
 #> 1 LUKE      172    77 blond      fair       blue              19 male  Tatooine 
@@ -161,7 +161,7 @@
 #> 5 LOR S~     NA    NA <NA>       <NA>       <NA>              NA <NA>  <NA>     
 #> 6 POE        NA    NA brown      light      brown             NA male  <NA>     
 #> # i 21 more rows
-#> # i 1 more variable: species <chr>
+#> # i 2 more variables: species <chr>, faction <chr>
 #> # A tibble: 92 x 3
 #>    from    to weight
 #>   <int> <int>  <int>
@@ -187,6 +187,9 @@ The network for each episode varies in the number of nodes and ties.
 For all networks, characters are named (eg. R2-D2, Anakin, Chewbacca)
 and the following node attributes are provided where available:
 height, mass, hair color, skin color, eye color, birth year, sex, homeworld, and species.
+The node attribute 'faction' (coded by Yichen Shen and Tiphaine Aeby)
+has also been added denoting the faction that Star Wars characters
+belong to in each episode (eg. Jedi, Rebel Alliance, etc).
 Weighted ties represent the number of times characters speak
 within the same scene of the film.
 }
