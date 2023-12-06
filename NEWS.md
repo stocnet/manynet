@@ -1,3 +1,27 @@
+# manynet 0.2.10
+
+2023-12-06
+
+## Package
+
+* Fixed documentation issues with `run_tute()`
+
+## Making
+
+* Added `read_graphml()` and `write_graphml()` for importing and exporting graphml objects, mostly wrappers for igraph functions.
+
+## Mapping
+
+* `autographd()` and `autographs()` can now be used for plotting diffusion models.
+  * Updates to `to_waves()` and `autographd()` to account for 'exposed' nodes in diffusion models.
+* Updates to layouts
+  * Updates to `hierarchical` layout so that node name can be specified for centering the layout
+  * Updated `theme_heid()` layout
+
+## Data
+
+* Added faction attribute to `ison_starwars` data, thanks to coding by Yichen Shen and Tiphaine Aeby
+
 # manynet 0.2.9
 
 2023-11-15
@@ -6,7 +30,7 @@
 
 * Updated `run_tute()`function to "fuzzy" match tutorial names
 
-## Map
+## Mapping
 
 * Added `+.ggplot()` method for visualising multiple plots in the same pane
 * Added custom theme `theme_iheid` for plots
