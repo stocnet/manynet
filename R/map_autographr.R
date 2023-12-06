@@ -199,8 +199,8 @@ autographd <- function(tlist, layout, labels = TRUE,
                        node_color, node_shape, node_size,
                        edge_color, edge_size, keep_isolates = TRUE, ...) {
   thisRequires("gganimate")
-  thisRequires("av")
   thisRequires("gifski")
+  thisRequires("png")
   x <- y <- name <- status <- frame <- NULL
   # Check arguments
   if (missing(layout)) {
@@ -305,7 +305,8 @@ autographd <- function(tlist, layout, labels = TRUE,
       ggplot2::theme_void()
   }
   gganimate::animate(p, duration = 2*length(tlist),
-                     start_pause = 5, end_pause = 10)
+                     start_pause = 5, end_pause = 10,
+                     renderer = gganimate::gifski_renderer())
 }
 
 reduce_categories <- function(g, node_group) {

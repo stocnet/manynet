@@ -42,7 +42,9 @@ Suggests:
     multiplex,
     concaveman,
     migraph,
-    knitr
+    knitr,
+    gifski,
+    png
 Enhances:
     Rgraphviz
 Authors@R: 
