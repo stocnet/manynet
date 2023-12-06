@@ -187,9 +187,9 @@ The network for each episode varies in the number of nodes and ties.
 For all networks, characters are named (eg. R2-D2, Anakin, Chewbacca)
 and the following node attributes are provided where available:
 height, mass, hair color, skin color, eye color, birth year, sex, homeworld, and species.
-The node attribute 'faction' (coded by Yichen Shen and Tiphaine Aeby)
-has also been added denoting the faction that Star Wars characters
-belong to in each episode (eg. Jedi, Rebel Alliance, etc).
+The node attribute 'faction' has also been added,
+denoting the faction that Star Wars characters belong to in each episode
+(eg. Jedi, Rebel Alliance, etc).
 Weighted ties represent the number of times characters speak
 within the same scene of the film.
 }
