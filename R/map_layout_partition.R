@@ -30,7 +30,8 @@
 #' @param circular Should the layout be transformed into a radial representation. 
 #' Only possible for some layouts. Defaults to FALSE.
 #' @param center Further split "hierarchical" layouts by
-#'   declaring the "center" argument as either the "events" or "actors".
+#'   declaring the "center" argument as the "events", "actors",
+#'   or by declaring a node name.
 #'   Defaults to NULL.
 #' @param times Maximum number of iterations, where appropriate
 #' @param radius A vector of radii at which the concentric circles
@@ -86,7 +87,7 @@ layout_tbl_graph_hierarchy <- function(.data, center = NULL,
       crd[which(is.nan(crd))] <- 0.5
       crd[, 2] <- crd[, 2] * cos(pi) - crd[, 1] * sin(pi)
       rownames(crd) <- c(dimnames(net)[[1]], dimnames(net)[[2]])
-    } else {
+    } else if (center == "events") {
       Act1 <- cbind(rep(0, ceiling(nrow(net)/2)), nrm(rng(ceiling(nn/2))))
       Act2 <- cbind(rep(2, floor(nrow(net)/2)), nrm(rng(floor(nn/2))))
       Evt <- cbind(rep(1, ncol(net)), nrm(rng(mm)))
@@ -94,6 +95,22 @@ layout_tbl_graph_hierarchy <- function(.data, center = NULL,
       crd[which(is.nan(crd))] <- 0.5
       crd[, 2] <- crd[, 2] * cos(pi) - crd[, 1] * sin(pi)
       rownames(crd) <- c(dimnames(net)[[1]], dimnames(net)[[2]])
+    } else {
+      if (center %in% node_names(.data)) {
+        side1 <- suppressWarnings(cbind(rep(0, nrow(net)), nrm(rng(nn))))
+        side2 <- suppressWarnings(cbind(rep(2, ncol(net)), nrm(rng(mm))))
+        if (any(rownames(net) == center)) {
+          side1[,1] <- ifelse(rownames(net) == center, 1, side1[,1])
+          side1[,2] <- ifelse(rownames(net) == center, 0.5, side1[,2])
+        } else {
+          side2[,1] <- ifelse(rownames(net) == center, 1, side2[,1])
+          side2[,2] <- ifelse(rownames(net) == center, 0.5, side2[,2])
+        }
+        crd <- rbind(side1, side2)
+        crd[which(is.nan(crd))] <- 0.5
+        crd[, 2] <- crd[, 2] * cos(pi) - crd[, 1] * sin(pi)
+        rownames(crd) <- c(dimnames(net)[[1]], dimnames(net)[[2]])
+      } else stop("Please declare actors, events, or a node name as center.")
     }
     out <- .to_lo(crd)
   }
@@ -171,7 +188,7 @@ layout_tbl_graph_concentric <- function(.data, membership = NULL, radius = NULL,
     order.values <- lapply(order.by, 
                            function(b) node_attribute(.data, b))
   } else {
-    if (is_twomode(.data)) {
+    if (is_twomode(.data) & length(membership) == 2) {
       for(k in 2:length(membership)) {
       xnet <- as_matrix(to_multilevel(.data))[membership[[k-1]], 
                                               membership[[k]]]

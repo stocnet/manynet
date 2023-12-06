@@ -29,14 +29,14 @@ autographs(netlist, ...)
 
 autographd(
   tlist,
-  keep_isolates = TRUE,
-  layout = "stress",
+  layout,
   labels = TRUE,
   node_color,
   node_shape,
   node_size,
   edge_color,
   edge_size,
+  keep_isolates = TRUE,
   ...
 )
 }
@@ -49,7 +49,8 @@ If not declared, defaults to "triad" for networks with 3 nodes,
 "stress" for all other one mode networks,
 or "hierarchy" for two mode networks.
 For "hierarchy" layout, one can further split graph by
-declaring the "center" argument as either the "events" or "actors".
+declaring the "center" argument as the "events", "actors",
+or by declaring a node name.
 For "concentric" layout algorithm please declare the "membership" as an
 extra argument.
 The "membership" argument expects either a quoted node attribute present
@@ -98,7 +99,7 @@ It is easiest if this is added as an edge or tie attribute
 to the graph before plotting.
 Edges can also be colored by declaring a color instead.}
 
-\item{edge_size}{Tie variable to be used for sizing the edges.
+\item{edge_size}{Edge variable to be used for sizing the edges.
 This can be any continuous variable on the nodes of the network.
 Since this function expects this to be an existing variable,
 it is recommended to calculate all edge-related statistics prior
@@ -174,11 +175,14 @@ with sensible defaults
 #        color = rep(c("blue", "red"), times = 4),
 #        size = sample(4:16, 8, replace = TRUE)) \%>\%
 # mutate_ties(year = sample(1995:1998, 10, replace = TRUE),
-#        e_color = sample(c("yellow", "green"), 10, replace = TRUE)) \%>\%
+#             e_color = sample(c("yellow", "green"), 10, replace = TRUE)) \%>\%
 # to_waves(attribute = "year") \%>\%
 # autographd(keep_isolates = FALSE, layout = "circle", node_shape = "shape",
-#            node_color = "color", node_size =  "size",
-#            edge_color = "e_color")
+#            node_color = "color", node_size =  "size", edge_color = "e_color")
+#autographd(play_diffusion(ison_adolescents, seeds = 4), layout = "circle")
+#autographd(play_diffusion(ison_adolescents, seeds = 4, recovery = 0.2),
+#.          layout = "circle")
+
 }
 \seealso{
 Other mapping: 

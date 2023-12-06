@@ -16,7 +16,8 @@
 #'   "stress" for all other one mode networks,
 #'   or "hierarchy" for two mode networks.
 #'   For "hierarchy" layout, one can further split graph by
-#'   declaring the "center" argument as either the "events" or "actors".
+#'   declaring the "center" argument as the "events", "actors",
+#'   or by declaring a node name.
 #'   For "concentric" layout algorithm please declare the "membership" as an 
 #'   extra argument.
 #'   The "membership" argument expects either a quoted node attribute present
@@ -58,7 +59,7 @@
 #'   It is easiest if this is added as an edge or tie attribute 
 #'   to the graph before plotting.
 #'   Edges can also be colored by declaring a color instead.
-#' @param edge_size Tie variable to be used for sizing the edges.
+#' @param edge_size Edge variable to be used for sizing the edges.
 #'   This can be any continuous variable on the nodes of the network.
 #'   Since this function expects this to be an existing variable,
 #'   it is recommended to calculate all edge-related statistics prior
@@ -98,17 +99,9 @@ NULL
 #' #autographr(ison_lotr, layout = "multilevel",
 #' #           node_color = "Race", level = "Race")
 #' @export
-autographr <- function(.data,
-                       layout,
-                       labels = TRUE,
-                       node_color,
-                       node_shape,
-                       node_size,
-                       node_group,
-                       edge_color,
-                       edge_size,
-                       ...) {
-  name <- weight <- nodes <- label <- NULL # avoid CMD check notes
+autographr <- function(.data, layout, labels = TRUE,
+                       node_color, node_shape, node_size, node_group,
+                       edge_color, edge_size, ...) {
   g <- as_tidygraph(.data)
   if (missing(layout)) {
     if (length(g) == 3) {
@@ -128,7 +121,7 @@ autographr <- function(.data,
   }
   if (missing(node_group)) node_group <- NULL else {
     node_group <- as.character(substitute(node_group))
-    g <- activate(g, nodes) %>%
+    g <- activate(g, "nodes") %>%
       mutate(node_group = reduce_categories(g, node_group))
     }
   if (missing(edge_color)) edge_color <- NULL else
@@ -154,6 +147,10 @@ autographr <- function(.data,
 #' @export
 autographs <- function(netlist, ...) {
   thisRequires("patchwork")
+  if (any(class(netlist) == "diff_model")) {
+    netlist <- to_waves(netlist)
+    names(netlist) <- seq_len(length(netlist))
+  }
   if(!is.null(names(netlist))){
     gs <- lapply(1:length(netlist), function(x)
       autographr(netlist[[x]], ...) +
@@ -189,18 +186,32 @@ autographs <- function(netlist, ...) {
 #' #        color = rep(c("blue", "red"), times = 4),
 #' #        size = sample(4:16, 8, replace = TRUE)) %>%
 #' # mutate_ties(year = sample(1995:1998, 10, replace = TRUE),
-#' #        e_color = sample(c("yellow", "green"), 10, replace = TRUE)) %>%
+#' #             e_color = sample(c("yellow", "green"), 10, replace = TRUE)) %>%
 #' # to_waves(attribute = "year") %>%
 #' # autographd(keep_isolates = FALSE, layout = "circle", node_shape = "shape",
-#' #            node_color = "color", node_size =  "size",
-#' #            edge_color = "e_color")
+#' #            node_color = "color", node_size =  "size", edge_color = "e_color")
+#' #autographd(play_diffusion(ison_adolescents, seeds = 4), layout = "circle")
+#' #autographd(play_diffusion(ison_adolescents, seeds = 4, recovery = 0.2),
+#' #.          layout = "circle")
+#'
 #' @export
-autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
-                       labels = TRUE, node_color, node_shape,
-                       node_size, edge_color, edge_size, ...) {
+autographd <- function(tlist, layout, labels = TRUE,
+                       node_color, node_shape, node_size,
+                       edge_color, edge_size, keep_isolates = TRUE, ...) {
   thisRequires("gganimate")
+  thisRequires("gifski")
+  thisRequires("png")
   x <- y <- name <- status <- frame <- NULL
   # Check arguments
+  if (missing(layout)) {
+    if (length(tlist[[1]]) == 3) {
+      layout <- "triad" 
+    } else if (length(tlist[[1]]) == 4) {
+      layout <- "quad" 
+    } else if (is_twomode(tlist[[1]])) {
+      layout <- "hierarchy"
+    } else layout <- "stress"
+  }
   if (missing(node_color)) node_color <- NULL else
     node_color <- as.character(substitute(node_color))
   if (missing(node_shape)) node_shape <- NULL else
@@ -213,58 +224,89 @@ autographd <- function(tlist, keep_isolates = TRUE, layout = "stress",
   if (missing(edge_size)) edge_size <- NULL else if (!is.numeric(edge_size)) {
     edge_size <- as.character(substitute(edge_size))
   }
-  # Check if object is a list of lists
-  if (!is.list(tlist[[1]])) {
-    stop("Please declare a migraph-compatible network listed according
-         to a time attribute, waves, or slices.")
-  }
-  # Remove lists without edges
-  tlist <- Filter(function(x) igraph::gsize(x) > 0, tlist)
-  # Create an edge list
-  edges_lst <- lapply(1:length(tlist), function(i)
-    cbind(igraph::as_data_frame(tlist[[i]], "edges"), frame = i))
-  # Check if all names are present in all lists
-  if (length(unique(unlist(unname(lapply(tlist, length))))) != 1) {
-    tlist <- to_waves(as_tidygraph(do.call("rbind", edges_lst)), attribute = "frame")
-  }
-  # Add separate layouts for each time point
-  lay <- lapply(1:length(tlist), function(i)
-    ggraph::create_layout(tlist[[i]], layout))
-  # Create a node list for each time point
-  nodes_lst <- lapply(1:length(tlist), function(i) {
-    cbind(igraph::as_data_frame(tlist[[i]], "vertices"),
-          x = lay[[i]][, 1], y = lay[[i]][, 2], frame = i)
-  })
-  # Create an edge list for each time point
-  edges_lst <- time_edges_lst(tlist, edges_lst, nodes_lst, edge_color)
-  # Get edge IDs for all edges
-  all_edges <- do.call("rbind", lapply(tlist, igraph::get.edgelist))
-  all_edges <- all_edges[!duplicated(all_edges), ]
-  all_edges <- cbind(all_edges, paste0(all_edges[, 1], "-", all_edges[, 2]))
-  # Add edges level information for edge transitions
-  edges_lst <- transition_edge_lst(tlist, edges_lst, nodes_lst, all_edges)
-  # Bind nodes and edges list
-  edges_out <- do.call("rbind", edges_lst)
-  nodes_out <- do.call("rbind", nodes_lst)
-  # Delete nodes for each frame if isolate
-  if (isFALSE(keep_isolates)) {
-    nodes_out <- remove_isolates(edges_out, nodes_out)
+  # Check if diffusion model
+  if (any(class(tlist) == "diff_model")) {
+    tlist <- to_waves(tlist)
+    if (unique(lapply(tlist, function(x) igraph::ecount(x))) == 0 & 
+        layout == "stress") layout = "star"
+    # Add separate layouts for each time point
+    lay <- lapply(1:length(tlist), function(i)
+      ggraph::create_layout(tlist[[i]], layout, ...))
+    # Create a node list for each time point
+    nodes_out <- do.call("rbind",
+                         lapply(1:length(tlist),
+                                function(i) {
+                                  cbind(igraph::as_data_frame(tlist[[i]],
+                                                              "vertices"),
+                                        x = lay[[i]][, 1], y = lay[[i]][, 2],
+                                        frame = i)
+                                  }))
+    # Plot with ggplot2/ggraph and animate with gganimate
+    p <-  map_diffusion(nodes_out, node_size, node_shape, node_color, labels) +
+      gganimate::transition_states(states = frame, transition_length = 5,
+                                   state_length = 10, wrap = FALSE) +
+      gganimate::enter_fade() +
+      gganimate::exit_fade() +
+      ggplot2::labs(title = "{closest_state}") +
+      ggplot2::theme_void() +
+      ggplot2::theme(legend.position = "bottom")
   } else {
-    if(nrow(nodes_out)/length(unique(nodes_out$frame)) > 20) {
-      message("Please considering deleting isolates to improve visualisation.")
-    } 
-    nodes_out$status <- TRUE
+    # Check if object is a list of lists
+    if (!is.list(tlist[[1]])) {
+      stop("Please declare a migraph-compatible network listed according
+         to a time attribute, waves, or slices.")
+    }
+    # Remove lists without edges
+    tlist <- Filter(function(x) igraph::gsize(x) > 0, tlist)
+    # Create an edge list
+    edges_lst <- lapply(1:length(tlist), function(i)
+      cbind(igraph::as_data_frame(tlist[[i]], "edges"), frame = i))
+    # Check if all names are present in all lists
+    if (length(unique(unlist(unname(lapply(tlist, length))))) != 1) {
+      tlist <- to_waves(as_tidygraph(do.call("rbind", edges_lst)), attribute = "frame")
+    }
+    # Add separate layouts for each time point
+    lay <- lapply(1:length(tlist), function(i)
+      ggraph::create_layout(tlist[[i]], layout))
+    # Create a node list for each time point
+    nodes_lst <- lapply(1:length(tlist), function(i) {
+      cbind(igraph::as_data_frame(tlist[[i]], "vertices"),
+            x = lay[[i]][, 1], y = lay[[i]][, 2], frame = i)
+    })
+    # Create an edge list for each time point
+    edges_lst <- time_edges_lst(tlist, edges_lst, nodes_lst, edge_color)
+    # Get edge IDs for all edges
+    all_edges <- do.call("rbind", lapply(tlist, igraph::get.edgelist))
+    all_edges <- all_edges[!duplicated(all_edges), ]
+    all_edges <- cbind(all_edges, paste0(all_edges[, 1], "-", all_edges[, 2]))
+    # Add edges level information for edge transitions
+    edges_lst <- transition_edge_lst(tlist, edges_lst, nodes_lst, all_edges)
+    # Bind nodes and edges list
+    edges_out <- do.call("rbind", edges_lst)
+    nodes_out <- do.call("rbind", nodes_lst)
+    # Delete nodes for each frame if isolate
+    if (isFALSE(keep_isolates)) {
+      nodes_out <- remove_isolates(edges_out, nodes_out)
+    } else {
+      if(nrow(nodes_out)/length(unique(nodes_out$frame)) > 20) {
+        message("Please considering deleting isolates to improve visualisation.")
+      } 
+      nodes_out$status <- TRUE
+    }
+    # Plot with ggplot2/ggraph and animate with gganimate
+    p <- map_dynamic(edges_out, nodes_out, edge_color, node_shape,
+                     node_color, node_size, edge_size, labels) + 
+      ggplot2::scale_alpha_manual(values = c(0, 1)) +
+      gganimate::transition_states(states = frame, transition_length = 5,
+                                   state_length = 10, wrap = FALSE) +
+      gganimate::enter_fade() +
+      gganimate::exit_fade() +
+      ggplot2::labs(title = "{closest_state}") +
+      ggplot2::theme_void()
   }
-  # Plot with ggplot2 and gganimate
-  p <- map_dynamic(edges_out, nodes_out, edge_color, node_shape,
-                   node_color, node_size, edge_size, labels)
-  # Animate
-  p + ggplot2::scale_alpha_manual(values = c(0, 1)) +
-    gganimate::transition_states(frame) +
-    gganimate::enter_fade() +
-    gganimate::exit_fade() +
-    ggplot2::labs(title = "{closest_state}") +
-    ggplot2::theme_void()
+  gganimate::animate(p, duration = 2*length(tlist),
+                     start_pause = 5, end_pause = 10,
+                     renderer = gganimate::gifski_renderer())
 }
 
 reduce_categories <- function(g, node_group) {
@@ -318,6 +360,12 @@ reduce_categories <- function(g, node_group) {
       }
     }
   }
+  if (layout == "stress" & is_diamond(g)) {
+    turn <- matrix(c(cos(0.71), -sin(0.71), sin(0.71), cos(0.71)), 2, 2)
+    coord <- matrix(cbind(lo[,1], lo[,2]), ncol = 2) %*% turn
+    lo[,1] <- coord[,1]
+    lo[,2] <- coord[,2]
+  }
   p <- ggraph::ggraph(lo) + ggplot2::theme_void()
   if (labels & is_labelled(g)) {
     if (layout == "circle") {
@@ -352,7 +400,7 @@ reduce_categories <- function(g, node_group) {
       }
       p <- p + ggraph::geom_node_text(ggplot2::aes(label = name),
                                       size = 3, hjust = hj,
-                                      vjust = vj) +
+                                      vjust = vj, check_overlap = TRUE) +
         ggplot2::coord_cartesian(xlim=c(-1.2,1.2), ylim=c(-1.2,1.2))
     } else if (layout %in% c("bipartite", "railway") |
                (layout == "hierarchy" & length(unique(lo[,2])) <= 2)) {
@@ -693,6 +741,16 @@ reduce_categories <- function(g, node_group) {
   out
 }
 
+is_diamond <- function(x) {
+  x <- as_matrix(x)
+  if (is.numeric(x)) {
+    if (length(x) == 100 | length(x) == 10000 &
+        suppressWarnings(all(unique(rowSums(x)) == c(3, 5, 8)))) {
+      TRUE
+    } else FALSE 
+  } else FALSE
+}
+
 cart2pol <- function(xyz){
   stopifnot(is.numeric(xyz))
   if (is.vector(xyz) && (length(xyz) == 2 || length(xyz) == 
@@ -854,7 +912,7 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
     node_color <- nodes_out[[node_color]]
     color <- grDevices::colors()
     color <- color[!color %in% "black"]
-    if(!any(grepl(paste(color, collapse = "|"), node_color)) |
+    if (!any(grepl(paste(color, collapse = "|"), node_color)) |
        any(grepl("#", node_color))) {
       for(i in unique(node_color)) {
         if (i != "black") {
@@ -875,10 +933,60 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
                                shape = node_shape, show.legend = FALSE)
   # Add labels
   if (isTRUE(labels)) {
-    p <- p +  ggplot2::geom_text(data = nodes_out,
-                                 aes(x, y, label =  name, alpha = status),
-                                 hjust = -0.2, vjust = -0.2,
-                                 show.legend = FALSE)
+    p <- p + ggplot2::geom_text(data = nodes_out,
+                                aes(x, y, label =  name, alpha = status),
+                                hjust = -0.2, vjust = -0.2, show.legend = FALSE)
+  }
+  p
+}
+
+map_diffusion <- function(nodes_out, node_size, node_shape, node_color, labels) {
+  x <- xend <- y <- yend <- id <- status <- name <- Infected <- NULL
+  if (!"name" %in% names(nodes_out)) {
+    nodes_out$name <- rep(seq_len(sum(nodes_out$frame == "1")),
+                          max(nodes_out$frame))
+  }
+  # Set node shape, color, and size
+  if (!is.null(node_shape)) {
+    node_shape <- as.factor(nodes_out[[node_shape]])
+    node_shape <- c("circle","square","triangle")[node_shape]
+  } else node_shape <- rep("circle", nrow(nodes_out))
+  if (!is.null(node_color)) {
+    node_color <- nodes_out[[node_color]]
+    color <- grDevices::colors()
+    color <- color[!color %in% "black"]
+    if(!any(grepl(paste(color, collapse = "|"), node_color)) |
+       any(grepl("#", node_color))) {
+      for(i in unique(node_color)) {
+        if (i != "black") {
+          node_color[node_color == i] <- sample(color, 1)
+        }
+      }
+    }
+  } else {
+    node_color <- ifelse(nodes_out[["Infected"]] == "Infected", "#D55E00",
+                         ifelse(nodes_out[["Infected"]] == "Susceptible", "#0072B2",
+                                ifelse(nodes_out[["Infected"]] == "Exposed", "#F0E442", "#66c2a5")))
+  }
+  if (!is.null(node_size)) {
+    node_size <- as.numeric(nodes_out[[node_size]])
+  } else if (nrow(nodes_out) > 100) {
+    node_size <- 3
+  } else node_size <- rep(nrow(nodes_out)/length(unique(nodes_out$frame)), nrow(nodes_out))
+  # Plot nodes
+  cols <- c("Infected" = "#D55E00", "Susceptible" = "#0072B2",
+            "Exposed" = "#F0E442", "Recovered" = "#66c2a5")
+  p <- ggplot2::ggplot() + 
+    ggplot2::geom_point(data = nodes_out,
+                        aes(x, y, group = name, color = Infected),
+                        size = node_size,
+                        shape = node_shape) +
+    ggplot2::scale_color_manual(name = NULL, values = cols)
+  # Add labels
+  if (isTRUE(labels)) {
+    p <- p + ggplot2::geom_text(data = nodes_out,
+                                aes(x, y, label =  name),
+                                hjust = -0.2, vjust = -0.2, show.legend = FALSE)
   }
   p
 }
