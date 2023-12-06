@@ -898,9 +898,9 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
       }
     }
   } else if (is.null(node_color) & "Infected" %in% names(nodes_out)) {
-    node_color <- ifelse(nodes_out[["Infected"]] == "Infected", "#D55E00",
-                         ifelse(nodes_out[["Infected"]] == "Susceptible", "#0072B2",
-                                ifelse(nodes_out[["Infected"]] == "Exposed", "#F0E442", "#66c2a5")))
+    node_color <- ifelse(nodes_out[["Infected"]] == "Infected", "red",
+                         ifelse(nodes_out[["Infected"]] == "Susceptible", "blue",
+                                ifelse(nodes_out[["Infected"]] == "Exposed", "orange", "darkgreen")))
   } else node_color <- rep("darkgray", nrow(nodes_out))
   if (!is.null(node_size)) {
     node_size <- as.numeric(nodes_out[[node_size]])
@@ -918,10 +918,10 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
   if ("Infected" %in% names(nodes_out)) {
     p <- p + ggplot2::geom_point(aes(x, y, group = name, color = Infected),
                                  size = node_size, shape = node_shape, data = nodes_out) +
-      ggplot2::scale_color_manual(name = NULL, values = c("Infected" = "#D55E00",
-                                                          "Susceptible" = "#0072B2",
-                                                          "Exposed" = "#F0E442",
-                                                          "Recovered" = "#66c2a5")) +
+      ggplot2::scale_color_manual(name = NULL, values = c("Infected" = "red",
+                                                          "Susceptible" = "blue",
+                                                          "Exposed" = "orange",
+                                                          "Recovered" = "darkgreen")) +
       ggplot2::theme_void() +
       ggplot2::theme(legend.position = "bottom")
   } else {
