@@ -181,8 +181,7 @@ with sensible defaults
 #            node_color = "color", node_size =  "size", edge_color = "e_color")
 #autographd(play_diffusion(ison_adolescents, seeds = 4), layout = "circle")
 #autographd(play_diffusion(ison_adolescents, seeds = 4, recovery = 0.2),
-#.          layout = "circle")
-
+#           layout = "circle")
 }
 \seealso{
 Other mapping: 
