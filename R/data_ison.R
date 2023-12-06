@@ -293,8 +293,9 @@
 #' and the following node attributes are provided where available:
 #' height, mass, hair color, skin color, eye color, birth year, sex, homeworld, and species.
 #' The node attribute 'faction' has also been added,
-#' denoting the faction that Star Wars characters belong to in each episode
-#' (eg. Jedi, Rebel Alliance, etc).
+#' denoting the faction (eg. Jedi, Rebel Alliance, etc) 
+#' that Star Wars characters belong to in each episode
+#' (coding completed with help of Yichen Shen and Tiphaine Aeby).
 #' Weighted ties represent the number of times characters speak 
 #' within the same scene of the film.
 #' @details
