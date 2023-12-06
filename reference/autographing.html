@@ -23,7 +23,7 @@ of network measures such as centrality."><meta property="og:image" content="http
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.10</span>
       </span>
     </div>
 
@@ -88,14 +88,14 @@ of network measures such as centrality.</p>
 <span></span>
 <span><span class="fu">autographd</span><span class="op">(</span></span>
 <span>  <span class="va">tlist</span>,</span>
-<span>  keep_isolates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  layout <span class="op">=</span> <span class="st">"stress"</span>,</span>
+<span>  <span class="va">layout</span>,</span>
 <span>  labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">node_color</span>,</span>
 <span>  <span class="va">node_shape</span>,</span>
 <span>  <span class="va">node_size</span>,</span>
 <span>  <span class="va">edge_color</span>,</span>
 <span>  <span class="va">edge_size</span>,</span>
+<span>  keep_isolates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -118,7 +118,8 @@ If not declared, defaults to "triad" for networks with 3 nodes,
 "stress" for all other one mode networks,
 or "hierarchy" for two mode networks.
 For "hierarchy" layout, one can further split graph by
-declaring the "center" argument as either the "events" or "actors".
+declaring the "center" argument as the "events", "actors",
+or by declaring a node name.
 For "concentric" layout algorithm please declare the "membership" as an
 extra argument.
 The "membership" argument expects either a quoted node attribute present
@@ -181,7 +182,7 @@ Edges can also be colored by declaring a color instead.</p></dd>
 
 
 <dt>edge_size</dt>
-<dd><p>Tie variable to be used for sizing the edges.
+<dd><p>Edge variable to be used for sizing the edges.
 This can be any continuous variable on the nodes of the network.
 Since this function expects this to be an existing variable,
 it is recommended to calculate all edge-related statistics prior
@@ -269,11 +270,14 @@ with sensible defaults</p></li>
 <span class="r-in"><span><span class="co">#        color = rep(c("blue", "red"), times = 4),</span></span></span>
 <span class="r-in"><span><span class="co">#        size = sample(4:16, 8, replace = TRUE)) %&gt;%</span></span></span>
 <span class="r-in"><span><span class="co"># mutate_ties(year = sample(1995:1998, 10, replace = TRUE),</span></span></span>
-<span class="r-in"><span><span class="co">#        e_color = sample(c("yellow", "green"), 10, replace = TRUE)) %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co">#             e_color = sample(c("yellow", "green"), 10, replace = TRUE)) %&gt;%</span></span></span>
 <span class="r-in"><span><span class="co"># to_waves(attribute = "year") %&gt;%</span></span></span>
 <span class="r-in"><span><span class="co"># autographd(keep_isolates = FALSE, layout = "circle", node_shape = "shape",</span></span></span>
-<span class="r-in"><span><span class="co">#            node_color = "color", node_size =  "size",</span></span></span>
-<span class="r-in"><span><span class="co">#            edge_color = "e_color")</span></span></span>
+<span class="r-in"><span><span class="co">#            node_color = "color", node_size =  "size", edge_color = "e_color")</span></span></span>
+<span class="r-in"><span><span class="co">#autographd(play_diffusion(ison_adolescents, seeds = 4), layout = "circle")</span></span></span>
+<span class="r-in"><span><span class="co">#autographd(play_diffusion(ison_adolescents, seeds = 4, recovery = 0.2),</span></span></span>
+<span class="r-in"><span><span class="co">#.          layout = "circle")</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>
