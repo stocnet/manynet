@@ -166,6 +166,7 @@ with sensible defaults
 #autographr(ison_lotr, layout = "multilevel",
 #           node_color = "Race", level = "Race")
 #autographs(to_egos(ison_adolescents))
+#autographs(migraph::play_diffusion(ison_adolescents))
 #ison_adolescents \%>\%
 # mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%
 # to_waves(attribute = "year") \%>\%
