@@ -59,7 +59,6 @@ ison_adolescents \%>\%
   to_subgraphs(attribute = "unicorn") \%>\%
   from_subgraphs()
 ison_adolescents \%>\%
-  activate(edges) \%>\%
   to_egos() \%>\%
   from_egos()
 ison_adolescents \%>\%

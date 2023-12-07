@@ -42,7 +42,6 @@ from_subgraphs <- function(.data) {
 #' @importFrom dplyr distinct
 #' @examples
 #' ison_adolescents %>%
-#'   activate(edges) %>%
 #'   to_egos() %>%
 #'   from_egos()
 #' @export
