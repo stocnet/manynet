@@ -891,10 +891,12 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
   # Set node shape, color, and size
   if (!is.null(node_shape)) {
     node_shape <- as.factor(nodes_out[[node_shape]])
-    node_shape <- c("circle","square","triangle")[node_shape]
+    node_shape <- c("circle", "square", "triangle")[node_shape]
   } else node_shape <- rep("circle", nrow(nodes_out))
   if (!is.null(node_color)) {
-    node_color <- nodes_out[[node_color]]
+    if (node_color %in% names(nodes_out)) {
+      node_color <- nodes_out[[node_color]]
+    }
     color <- grDevices::colors()
     color <- color[!color %in% "black"]
     if (!any(grepl(paste(color, collapse = "|"), node_color)) |
@@ -909,12 +911,14 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
     node_color <- ifelse(nodes_out[["Infected"]] == "Infected", "red",
                          ifelse(nodes_out[["Infected"]] == "Susceptible", "blue",
                                 ifelse(nodes_out[["Infected"]] == "Exposed", "orange", "darkgreen")))
-  } else node_color <- rep("darkgray", nrow(nodes_out))
+  } else node_color <- "darkgray"
   if (!is.null(node_size)) {
-    node_size <- as.numeric(nodes_out[[node_size]])
+    if (node_size %in% names(nodes_out)) {
+      node_size <- nodes_out[[node_size]]
+    }
   } else if (nrow(nodes_out) > 100) {
     node_size <- 3
-  } else node_size <- rep(nrow(nodes_out)/length(unique(nodes_out$frame)), nrow(nodes_out))
+  } else node_size <- nrow(nodes_out)/length(unique(nodes_out$frame))
   # Add labels
   if (isTRUE(labels)) {
     p <- p + ggplot2::geom_text(aes(x, y, label = name),
