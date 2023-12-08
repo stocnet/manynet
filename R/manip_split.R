@@ -218,18 +218,14 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL) {
   diffusion <- as_tidygraph(attr(.data, "network"))
   out <- list()
   for (k in .data[[attribute]]) {
-    out[[k + 1]] <- diffusion %>% add_node_attribute("Infected",
-                                                     c(rep("Recovered",
-                                                           .data$R[k + 1]),
-                                                       rep("Infected",
-                                                           .data$I[k + 1]),
-                                                       rep("Exposed",
-                                                           .data$E[k + 1]),
-                                                       rep("Susceptible",
-                                                           .data$S[k + 1])))
+    out[[paste0("Time: ", k)]] <- diffusion %>%
+      add_node_attribute("Infected", c(rep("Recovered", .data$R[k + 1]),
+                                       rep("Infected", .data$I[k + 1]),
+                                       rep("Exposed", .data$E[k + 1]),
+                                       rep("Susceptible", .data$S[k + 1])))
   }
   if (!"name" %in% names(node_attribute(out[[1]]))) {
-    diff_model <- lapply(1:length(out), function(i) {
+    out <- lapply(1:length(out), function(i) {
       igraph::set_vertex_attr(out[[i]], name = "name",
                               value = as.character(seq_len(igraph::vcount(out[[i]]))))
     })
