@@ -237,7 +237,8 @@ autographd <- function(tlist, layout, labels = TRUE,
   tlist <- Filter(function(x) igraph::gsize(x) > 0, tlist)
   # Create an edge list
   edges_lst <- lapply(1:length(tlist), function(i)
-    cbind(igraph::as_data_frame(tlist[[i]], "edges"), frame = names(tlist)[i]))
+    cbind(igraph::as_data_frame(tlist[[i]], "edges"),
+          frame = ifelse(is.null(names(tlist)), i, names(tlist)[i])))
   # Check if all names are present in all lists
   if (length(unique(unlist(unname(lapply(tlist, length))))) != 1) {
     tlist <- to_waves(as_tidygraph(do.call("rbind", edges_lst)),
@@ -249,7 +250,8 @@ autographd <- function(tlist, layout, labels = TRUE,
   # Create a node list for each time point
   nodes_lst <- lapply(1:length(tlist), function(i) {
     cbind(igraph::as_data_frame(tlist[[i]], "vertices"),
-          x = lay[[i]][, 1], y = lay[[i]][, 2], frame = names(tlist)[i])
+          x = lay[[i]][, 1], y = lay[[i]][, 2],
+          frame = ifelse(is.null(names(tlist)), i, names(tlist)[i]))
   })
   # Create an edge list for each time point
   edges_lst <- time_edges_lst(tlist, edges_lst, nodes_lst, edge_color)
@@ -829,7 +831,7 @@ transition_edge_lst <- function(tlist, edges_lst, nodes_lst, all_edges) {
       tmp$y <- nodes_lst[[i]]$y[match(tmp$from, nodes_lst[[i]]$name)]
       tmp$xend <- nodes_lst[[i]]$x[match(tmp$to, nodes_lst[[i]]$name)]
       tmp$yend <- nodes_lst[[i]]$y[match(tmp$to, nodes_lst[[i]]$name)]
-      tmp$frame <- names(tlist)[i]
+      tmp$frame <- ifelse(is.null(names(tlist)), i, names(tlist)[i])
       tmp$status <- FALSE
       edges_lst[[i]] <- dplyr::bind_rows(edges_lst[[i]], tmp)
     }
@@ -838,7 +840,7 @@ transition_edge_lst <- function(tlist, edges_lst, nodes_lst, all_edges) {
 }
 
 remove_isolates <- function(edges_out, nodes_out) {
-  status <- frame <- from <- to <- fremen <- NULL
+  status <- frame <- from <- to <- framen <- NULL
   # Create node metadata for node presence in certain frame
   meta <- edges_out %>%
     dplyr::filter(status == TRUE) %>%
