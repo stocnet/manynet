@@ -237,7 +237,7 @@ autographd <- function(tlist, layout, labels = TRUE,
   tlist <- Filter(function(x) igraph::gsize(x) > 0, tlist)
   # Create an edge list
   edges_lst <- lapply(1:length(tlist), function(i)
-    cbind(igraph::as_data_frame(tlist[[i]], "edges"), frame = i))
+    cbind(igraph::as_data_frame(tlist[[i]], "edges"), frame = names(tlist)[i]))
   # Check if all names are present in all lists
   if (length(unique(unlist(unname(lapply(tlist, length))))) != 1) {
     tlist <- to_waves(as_tidygraph(do.call("rbind", edges_lst)),
@@ -249,7 +249,7 @@ autographd <- function(tlist, layout, labels = TRUE,
   # Create a node list for each time point
   nodes_lst <- lapply(1:length(tlist), function(i) {
     cbind(igraph::as_data_frame(tlist[[i]], "vertices"),
-          x = lay[[i]][, 1], y = lay[[i]][, 2], frame = i)
+          x = lay[[i]][, 1], y = lay[[i]][, 2], frame = names(tlist)[i])
   })
   # Create an edge list for each time point
   edges_lst <- time_edges_lst(tlist, edges_lst, nodes_lst, edge_color)
@@ -822,14 +822,14 @@ time_edges_lst <- function(tlist, edges_lst, nodes_lst, edge_color) {
 transition_edge_lst <- function(tlist, edges_lst, nodes_lst, all_edges) {
   x <- lapply(1:length(tlist), function(i) {
     idx <- which(!all_edges[, 3] %in% edges_lst[[i]]$id)
-    if (length(idx != 0)) {
+    if (length(idx) != 0) {
       tmp <- data.frame(from = all_edges[idx, 1], to = all_edges[idx, 2],
                         id = all_edges[idx, 3])
       tmp$x <- nodes_lst[[i]]$x[match(tmp$from, nodes_lst[[i]]$name)]
       tmp$y <- nodes_lst[[i]]$y[match(tmp$from, nodes_lst[[i]]$name)]
       tmp$xend <- nodes_lst[[i]]$x[match(tmp$to, nodes_lst[[i]]$name)]
       tmp$yend <- nodes_lst[[i]]$y[match(tmp$to, nodes_lst[[i]]$name)]
-      tmp$frame <- i
+      tmp$frame <- names(tlist)[i]
       tmp$status <- FALSE
       edges_lst[[i]] <- dplyr::bind_rows(edges_lst[[i]], tmp)
     }
@@ -838,17 +838,18 @@ transition_edge_lst <- function(tlist, edges_lst, nodes_lst, all_edges) {
 }
 
 remove_isolates <- function(edges_out, nodes_out) {
-  status <- frame <- from <- to <- NULL
+  status <- frame <- from <- to <- fremen <- NULL
   # Create node metadata for node presence in certain frame
   meta <- edges_out %>%
     dplyr::filter(status == TRUE) %>%
-    dplyr::mutate(meta = ifelse(frame > 1,
-                                paste0(from, (frame - 1)), from)) %>%
+    dplyr::mutate(framen = match(frame, unique(frame)),
+                  meta = ifelse(framen > 1, paste0(from, (framen - 1)), from)) %>%
     dplyr::select(meta, status) %>%
     dplyr::distinct()
   metab <- edges_out %>%
     dplyr::filter(status == TRUE) %>%
-    dplyr::mutate(meta = ifelse(frame > 1, paste0(to, (frame - 1)), to)) %>%
+    dplyr::mutate(framen = match(frame, unique(frame)),
+                  meta = ifelse(framen > 1, paste0(to, (framen - 1)), to)) %>%
     dplyr::select(meta, status) %>%
     rbind(meta) %>%
     dplyr::distinct()
