@@ -25,19 +25,19 @@ coverage](https://codecov.io/gh/snlab-ch/manynet/branch/main/graph/badge.svg)](h
 
 ## About the package
 
-Learning and using network analysis tools in R can be challenging. There
-are many great packages, all with their own offerings and advantages,
-but also all with their own vocabulary, syntax, and expected formats for
-data inputs and analytic outputs. Moreover, many of these packages only
-work on *some* types of networks (usually one-mode, simple, directed or
-undirected networks); if you have a different type of network, a
-different package is needed. Lastly, even packages with excellent
-graphical capabilities can make visualising networks slow and cumbersome
-by using poor defaults and many, incomprehensible options to change
-them.
+While many great packages for network analysis exist for R, all with
+their own offerings and advantages, they also all have their own
+vocabulary, syntax, and expected formats for data inputs and analytic
+outputs. Many of these packages only work on *some* types of networks
+(usually one-mode, simple, directed or undirected networks) for *some*
+types of analysis; if you want to analyse a different type of network, a
+different package is needed. And they can rely on a very different
+visual language (and sometimes plotting engine), which can mess up your
+pretty presentation or paper. This can make learning and using network
+analysis tools in R challenging.
 
-*That’s why `{manynet}` aims to help researchers with Making,
-Manipulating, and Mapping networks.*
+*That’s why `{manynet}` helps researchers with Making, Manipulating, and
+Mapping networks.*
 
 For Measures, Memberships, or Models, see
 [`{migraph}`](https://snlab-ch.github.io/migraph/).
@@ -88,10 +88,10 @@ edgelists and nodelists, there are specific routines included for
 
 <img src="man/figures/README-import-graph-1.png" width="100%" />
 
-- `read_dynetml()`, `read_edgelist()`, `read_matrix()`,
-  `read_nodelist()`, `read_pajek()`, `read_ucinet()`
-- `write_edgelist()`, `write_matrix()`, `write_nodelist()`,
-  `write_pajek()`, `write_ucinet()`
+- `read_dynetml()`, `read_edgelist()`, `read_graphml()`,
+  `read_matrix()`, `read_nodelist()`, `read_pajek()`, `read_ucinet()`
+- `write_edgelist()`, `write_graphml()`, `write_matrix()`,
+  `write_nodelist()`, `write_pajek()`, `write_ucinet()`
 
 #### Coercing network data
 
@@ -122,12 +122,12 @@ properties, e.g.:
 
 - `to_acyclic()`, `to_anti()`, `to_blocks()`, `to_components()`,
   `to_directed()`, `to_egos()`, `to_eulerian()`, `to_galois()`,
-  `to_giant()`, `to_matching()`, `to_mode1()`, `to_mode2()`,
-  `to_multilevel()`, `to_named()`, `to_no_isolates()`, `to_onemode()`,
-  `to_reciprocated()`, `to_redirected()`, `to_simplex()`, `to_slices()`,
-  `to_subgraph()`, `to_subgraphs()`, `to_ties()`, `to_twomode()`,
-  `to_undirected()`, `to_uniplex()`, `to_unnamed()`, `to_unsigned()`,
-  `to_unweighted()`, `to_waves()`
+  `to_giant()`, `to_matching()`, `to_mentoring()`, `to_mode1()`,
+  `to_mode2()`, `to_multilevel()`, `to_named()`, `to_no_isolates()`,
+  `to_onemode()`, `to_reciprocated()`, `to_redirected()`,
+  `to_simplex()`, `to_slices()`, `to_subgraph()`, `to_subgraphs()`,
+  `to_ties()`, `to_twomode()`, `to_undirected()`, `to_uniplex()`,
+  `to_unnamed()`, `to_unsigned()`, `to_unweighted()`, `to_waves()`
 
 ### Reformatting
 
@@ -162,11 +162,11 @@ function names wherever possible.
 `{manynet}`’s `*is_*()` functions offer fast logical tests of various
 network properties. These can be used to create new
 
-- `is_acyclic()`, `is_aperiodic()`, `is_bipartite()`, `is_complex()`,
-  `is_connected()`, `is_directed()`, `is_dynamic()`, `is_edgelist()`,
-  `is_eulerian()`, `is_graph()`, `is_labelled()`, `is_longitudinal()`,
-  `is_manynet()`, `is_multiplex()`, `is_perfect_matching()`,
-  `is_signed()`, `is_twomode()`, `is_uniplex()`, `is_weighted()`
+- `is_acyclic()`, `is_aperiodic()`, `is_complex()`, `is_connected()`,
+  `is_directed()`, `is_dynamic()`, `is_edgelist()`, `is_eulerian()`,
+  `is_graph()`, `is_labelled()`, `is_longitudinal()`, `is_manynet()`,
+  `is_multiplex()`, `is_perfect_matching()`, `is_signed()`,
+  `is_twomode()`, `is_uniplex()`, `is_weighted()`
 
 ## Mapping
 

@@ -38,24 +38,25 @@ list_data <- function(string){
 
 ## About the package
 
-Learning and using network analysis tools in R can be challenging.
-There are many great packages, all with their own offerings and advantages, 
-but also all with their own vocabulary, syntax, 
+While many great packages for network analysis exist for R, 
+all with their own offerings and advantages, 
+they also all have their own vocabulary, syntax, 
 and expected formats for data inputs and analytic outputs.
-Moreover, many of these packages only work on _some_ types of networks
-(usually one-mode, simple, directed or undirected networks);
-if you have a different type of network, a different package is needed.
-Lastly, even packages with excellent graphical capabilities
-can make visualising networks slow and cumbersome by using poor defaults
-and many, incomprehensible options to change them.
+Many of these packages only work on _some_ types of networks
+(usually one-mode, simple, directed or undirected networks) for _some_ types of analysis;
+if you want to analyse a different type of network or try a different analysis,
+a different package is needed.
+And they can rely on a very different visual language (and sometimes plotting engine),
+which can mess up your pretty presentation or paper.
+This can make learning and using network analysis tools in R challenging.
 
-_That's why `{manynet}` aims to help researchers with Making, Manipulating, and Mapping networks._
+_That's why `{manynet}` helps researchers with Making, Manipulating, and Mapping networks._
 
 For Measures, Memberships, or Models, see [`{migraph}`](https://snlab-ch.github.io/migraph/).
 
 ## Making
 
-First, `{manynet}` provides a set of tools that can be used to make networks in any number of common formats.
+First, `{manynet}` provides tools to make networks in any number of common formats.
 Networks can come from many sources, some can be imported from outside R, 
 some can be found in this or other packages and coerced into some common format, 
 and many types of networks can be created or generated using functions in this package.
@@ -181,18 +182,28 @@ These can be used to create new
 
 `{manynet}` includes three one-line graphing functions with sensible defaults based on 
 the network's properties.
-`autographr()` is used to graph networks in any of the `{manynet}` formats.
+
+First, `autographr()` is used to graph networks in any of the `{manynet}` formats.
 It includes sensible defaults so that researchers can view their network's structure
-or distribution with a minimum of fuss.
-`{manynet}` uses the excellent `{ggraph}` package (and thus `{ggplot2}`)
-as a plotting engine.
+or distribution quickly with a minimum of fuss.
+
+```{r autographs-ego, echo = FALSE, dpi = 300}
+autographs(ison_adolescents)
+```
+
+Second, `autographs()` is used to graph multiple networks together,
+which can be useful for ego networks or network panels.
+
+```{r autographs-ego, echo = FALSE, dpi = 300}
+autographs(to_egos(ison_adolescents))
+```
+
+- `autographd()` is used to graph dynamic networks.
+
 This also makes extending and theming default output easy,
 and `{patchwork}` is used to help arrange individual plots together.
 
-There are two other graphing functions too.
-`autographs()` is used to graph multiple networks together,
-which can be useful for ego networks or network panels.
-`autographd()` is used to graph dynamic networks.
+### Layouts
 
 In addition, `{manynet}` offers some additional layout algorithms for
 snapping layouts to a grid or 
@@ -228,6 +239,19 @@ print(p,vp = vp1)
 <!-- - one-, two-, and sometimes three-mode networks -->
 <!-- - undirected, directed, and sometimes complex networks -->
 <!-- - unweighted, weighted, and sometimes signed networks -->
+
+### Themes and Scales
+
+Lastly, `{manynet}` includes a number of themes and scales for quickly tailoring your graphs.
+`{manynet}` uses the excellent `{ggraph}` package (and thus `{ggplot2}`)
+as a plotting engine.
+
+```{r ggthemes, echo = FALSE, message=FALSE, dpi = 300}
+autographr(ison_adolescents, node_color = "turquoise") +
+  (autographr(ison_adolescents, node_color = "orange") + theme_iheid())
+```
+
+More themes are on their way, and we're happy to take suggestions.
 
 ## Installation
 
