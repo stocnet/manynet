@@ -656,6 +656,13 @@ as_tidygraph.siena <- function(.data, twomode = FALSE) {
   as_tidygraph(as_igraph.siena(.data, twomode = FALSE))
 }
 
+#' @export
+as_tidygraph.diff_model <- function(.data, twomode = FALSE) {
+  out <- as_tidygraph(attr(.data, "network"))
+  attr(out, "diff_model") <- .data
+  out
+}
+
 # Network ####
 
 #' @rdname as
