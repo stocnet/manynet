@@ -623,6 +623,14 @@ reduce_categories <- function(g, node_group) {
                                              "Susceptible" = "blue",
                                              "Exposed" = "orange",
                                              "Recovered" = "darkgreen"))
+  } else if (any("diff_model" %in% names(attributes(g)))) {
+    node_color <- infection_rate(attr(g, "diff_model"))
+    p <- p + ggraph::geom_node_point(ggplot2::aes(color = node_color),
+                                     size = nsize, shape = nshape) +
+      ggplot2::scale_colour_gradient(low = "blue", high = "red",
+                                     breaks=c(0, max(node_color)),
+                                     labels=c("Susceptible", "Infected"),
+                                     name = "Time of Infection")
   } else {
     if (is_twomode(g)) {
       if (!is.null(node_color)) {
@@ -737,6 +745,17 @@ is_diamond <- function(x) {
       TRUE
     } else FALSE 
   } else FALSE
+}
+
+infection_rate <- function(x) {
+  out <- c(x$I[1], x$I_new[-1])
+  a <- list()
+  for (k in seq_len(length(out))) {
+    a[[k]] <- rep(x$t[k], out[k])
+  }
+  out <- unlist(a)
+  if (length(out) < unique(x$n)) out <- c(out, rep(0, (unique(x$n)-length(out))))
+  out
 }
 
 cart2pol <- function(xyz){
