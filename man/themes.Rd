@@ -3,51 +3,23 @@
 \name{themes}
 \alias{themes}
 \alias{theme_iheid}
-\alias{scale_fill_iheid}
-\alias{scale_colour_iheid}
-\alias{scale_color_iheid}
-\alias{scale_fill_centres}
-\alias{scale_colour_centres}
-\alias{scale_color_centres}
-\alias{scale_fill_sdgs}
-\alias{scale_colour_sdgs}
-\alias{scale_color_sdgs}
+\alias{theme_eth}
+\alias{theme_uzh}
+\alias{theme_ug}
 \title{Many themes}
 \usage{
-theme_iheid(base_size = 12, base_family = "sans")
+theme_iheid(base_size = 12, base_family = "Times")
 
-scale_fill_iheid(palette = "IHEID", direction = 1, ...)
+theme_eth(base_size = 12, base_family = "serif")
 
-scale_colour_iheid(palette = "IHEID", direction = 1, ...)
+theme_uzh(base_size = 12, base_family = "sans")
 
-scale_color_iheid(palette = "IHEID", direction = 1, ...)
-
-scale_fill_centres(palette = "Centres", direction = 1, ...)
-
-scale_colour_centres(palette = "Centres", direction = 1, ...)
-
-scale_color_centres(palette = "Centres", direction = 1, ...)
-
-scale_fill_sdgs(palette = "SDGs", direction = 1, ...)
-
-scale_colour_sdgs(palette = "SDGs", direction = 1, ...)
-
-scale_color_sdgs(palette = "SDGs", direction = 1, ...)
+theme_ug(base_size = 12, base_family = "mono")
 }
 \arguments{
 \item{base_size}{Font size, by default 12.}
 
 \item{base_family}{Font family, by default "sans".}
-
-\item{palette}{Name of the palette. Current choices are:
-\code{IHEID}, \code{Centres}, and \code{SDGs}.}
-
-\item{direction}{Direction for using palette colors.}
-
-\item{...}{Extra arguments passed to \code{ggplot2::discrete_scale()}.}
-}
-\value{
-Themes the current ggraph to current IHEID guidelines.
 }
 \description{
 These functions enable graphs to be easily and quickly themed,
@@ -57,8 +29,4 @@ e.g. changing the default colour of the graph's vertices and edges.
 # autographr(to_mentoring(ison_brandes)) + 
 # labs(title = "Who leads and who follows?") +
 # theme_iheid()
-#ison_brandes \%>\%
-#mutate(core = migraph::node_is_core(ison_brandes)) \%>\%
-#autographr(node_color = "core") +
-#scale_color_iheid()
 }

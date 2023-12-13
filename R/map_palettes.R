@@ -16,7 +16,7 @@
 #' @export
 iheid_palette <- function(palette, n, type = c("discrete", "continuous")) {
   type <- match.arg(type)
-  pal <- iheid_corp_palette(palette)
+  pal <- corp_palette(palette)
   if (is.null(pal))
     stop("Palette not found.")
   if (missing(n)) {
