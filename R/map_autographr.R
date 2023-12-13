@@ -625,12 +625,22 @@ reduce_categories <- function(g, node_group) {
                                              "Recovered" = "darkgreen"))
   } else if (any("diff_model" %in% names(attributes(g)))) {
     node_color <- infection_rate(attr(g, "diff_model"))
-    p <- p + ggraph::geom_node_point(ggplot2::aes(color = node_color),
-                                     size = nsize, shape = nshape) +
-      ggplot2::scale_colour_gradient(low = "blue", high = "red",
-                                     breaks=c(0, max(node_color)),
-                                     labels=c("Susceptible", "Infected"),
-                                     name = "Time of Infection")
+    nshape <- ifelse(node_color == max(node_color), "Not Infected",
+                     ifelse(node_color == min(node_color), "Seed", "Infected"))
+    p <- p + ggraph::geom_node_point(ggplot2::aes(shape = nshape,
+                                                  color = node_color),
+                                     size = nsize) +
+      ggplot2::scale_color_gradient(low = "red", high = "blue",
+                                    breaks=c(1, max(node_color)),
+                                    labels=c("Infected", "Not Infected"),
+                                    name = "Time of\nAdoption") +
+      ggplot2::scale_shape_manual(name = "",
+                                  breaks = c("Seed", "Infected", "Not Infected"),
+                                  values = c("Seed" = "triangle",
+                                             "Infected" = "circle",
+                                             "Not Infected" = "square")) +
+      ggplot2::guides(color = ggplot2::guide_colorbar(order = 1, reverse = TRUE),
+                      shape = ggplot2::guide_legend(order = 2))
   } else {
     if (is_twomode(g)) {
       if (!is.null(node_color)) {
@@ -755,6 +765,7 @@ infection_rate <- function(x) {
   }
   out <- unlist(a)
   if (length(out) < unique(x$n)) out <- c(out, rep(0, (unique(x$n)-length(out))))
+  out <- ifelse(out == 0, max(out) + 1, out)
   out
 }
 
