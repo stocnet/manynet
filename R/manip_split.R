@@ -215,7 +215,7 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL) {
   if(!is.null(panels)) .data <- .data[.data[[attribute]] %in% panels,]
   if (length(unique(.data[["n"]])) > 1)
     stop("Please make sure diffusion has the same number of nodes for all time points.")
-  diffusion <- as_tidygraph(attr(.data, "network"))
+  diffusion <- as_tidygraph(.data)
   out <- list()
   for (k in .data[[attribute]]) {
     out[[paste0("Time: ", k)]] <- diffusion %>%
