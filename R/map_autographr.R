@@ -625,20 +625,21 @@ reduce_categories <- function(g, node_group) {
                                              "Recovered" = "darkgreen"))
   } else if (any("diff_model" %in% names(attributes(g)))) {
     node_color <- infection_rate(attr(g, "diff_model"))
-    nshape <- ifelse(node_color == max(node_color), "Not Infected",
-                     ifelse(node_color == min(node_color), "Seed", "Infected"))
+    nshape <- ifelse(node_color == 0, "Not Adopted",
+                     ifelse(node_color == 1, "Seed(s)", "Adopted"))
+    node_color <- ifelse(node_color == 0, max(node_color) + 1, node_color)
     p <- p + ggraph::geom_node_point(ggplot2::aes(shape = nshape,
                                                   color = node_color),
                                      size = nsize) +
       ggplot2::scale_color_gradient(low = "red", high = "blue",
                                     breaks=c(1, max(node_color)),
-                                    labels=c("Infected", "Not Infected"),
+                                    labels=c("Early adoption", "Late adoption"),
                                     name = "Time of\nAdoption") +
       ggplot2::scale_shape_manual(name = "",
-                                  breaks = c("Seed", "Infected", "Not Infected"),
-                                  values = c("Seed" = "triangle",
-                                             "Infected" = "circle",
-                                             "Not Infected" = "square")) +
+                                  breaks = c("Seed(s)", "Adopted", "Not Adopted"),
+                                  values = c("Seed(s)" = "triangle",
+                                             "Adopted" = "circle",
+                                             "Not Adopted" = "square")) +
       ggplot2::guides(color = ggplot2::guide_colorbar(order = 1, reverse = TRUE),
                       shape = ggplot2::guide_legend(order = 2))
   } else {
@@ -758,14 +759,18 @@ is_diamond <- function(x) {
 }
 
 infection_rate <- function(x) {
-  out <- c(x$I[1], x$I_new[-1])
+  if ("I_new" %in% names(x)) {
+    out <- c(x$I[1], x$I_new[-1])
+  } else {
+    out <- c(x$I[1], diff(x$I)[-(length(x$I))])
+    out <- ifelse(out < 0, 0, out)
+  }
   a <- list()
   for (k in seq_len(length(out))) {
     a[[k]] <- rep(x$t[k], out[k])
   }
   out <- unlist(a)
   if (length(out) < unique(x$n)) out <- c(out, rep(0, (unique(x$n)-length(out))))
-  out <- ifelse(out == 0, max(out) + 1, out)
   out
 }
 
