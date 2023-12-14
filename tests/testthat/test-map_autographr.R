@@ -154,3 +154,10 @@ test_that("hierarchy and lineage layouts graph correctly", {
                      envir = test_hie[["plot_env"]])[["center"]]),
                "events")
 })
+
+test_that("autographr works for diff_model objects", {
+  skip_on_cran()
+  test_diff <- autographr(migraph::play_diffusion(ison_brandes))
+  expect_equal(test_diff[["guides"]][["shape"]][["name"]], "legend")
+  expect_equal(test_diff[["guides"]][["colour"]][["name"]], "colorbar")
+})
