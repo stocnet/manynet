@@ -187,8 +187,8 @@ First, `autographr()` is used to graph networks in any of the `{manynet}` format
 It includes sensible defaults so that researchers can view their network's structure
 or distribution quickly with a minimum of fuss.
 
-```{r autographs-ego, echo = FALSE, dpi = 300}
-autographs(ison_adolescents)
+```{r autographs, echo = FALSE, dpi = 300}
+autographr(ison_adolescents)
 ```
 
 Second, `autographs()` is used to graph multiple networks together,

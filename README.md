@@ -30,11 +30,11 @@ their own offerings and advantages, they also all have their own
 vocabulary, syntax, and expected formats for data inputs and analytic
 outputs. Many of these packages only work on *some* types of networks
 (usually one-mode, simple, directed or undirected networks) for *some*
-types of analysis; if you want to analyse a different type of network, a
-different package is needed. And they can rely on a very different
-visual language (and sometimes plotting engine), which can mess up your
-pretty presentation or paper. This can make learning and using network
-analysis tools in R challenging.
+types of analysis; if you want to analyse a different type of network or
+try a different analysis, a different package is needed. And they can
+rely on a very different visual language (and sometimes plotting
+engine), which can mess up your pretty presentation or paper. This can
+make learning and using network analysis tools in R challenging.
 
 *That’s why `{manynet}` helps researchers with Making, Manipulating, and
 Mapping networks.*
@@ -44,11 +44,11 @@ For Measures, Memberships, or Models, see
 
 ## Making
 
-First, `{manynet}` provides a set of tools that can be used to make
-networks in any number of common formats. Networks can come from many
-sources, some can be imported from outside R, some can be found in this
-or other packages and coerced into some common format, and many types of
-networks can be created or generated using functions in this package.
+First, `{manynet}` provides tools to make networks in any number of
+common formats. Networks can come from many sources, some can be
+imported from outside R, some can be found in this or other packages and
+coerced into some common format, and many types of networks can be
+created or generated using functions in this package.
 
 #### Inventing network data
 
@@ -171,22 +171,33 @@ network properties. These can be used to create new
 ## Mapping
 
 `{manynet}` includes three one-line graphing functions with sensible
-defaults based on the network’s properties. `autographr()` is used to
-graph networks in any of the `{manynet}` formats. It includes sensible
-defaults so that researchers can view their network’s structure or
-distribution with a minimum of fuss. `{manynet}` uses the excellent
-`{ggraph}` package (and thus `{ggplot2}`) as a plotting engine. This
-also makes extending and theming default output easy, and `{patchwork}`
-is used to help arrange individual plots together.
+defaults based on the network’s properties.
 
-There are two other graphing functions too. `autographs()` is used to
-graph multiple networks together, which can be useful for ego networks
-or network panels. `autographd()` is used to graph dynamic networks.
+First, `autographr()` is used to graph networks in any of the
+`{manynet}` formats. It includes sensible defaults so that researchers
+can view their network’s structure or distribution quickly with a
+minimum of fuss.
+
+<img src="man/figures/README-autographs-1.png" width="100%" />
+
+Second, `autographs()` is used to graph multiple networks together,
+which can be useful for ego networks or network panels.
+
+<img src="man/figures/README-autographs-ego-1.png" width="100%" />
+
+- `autographd()` is used to graph dynamic networks.
+
+This also makes extending and theming default output easy, and
+`{patchwork}` is used to help arrange individual plots together.
+
+### Layouts
 
 In addition, `{manynet}` offers some additional layout algorithms for
 snapping layouts to a grid or visualising partitions horizontally,
 vertically, or concentrically. The following figures illustrate the
 difference in results over `{igraph}`:
+
+    #> Warning: package 'igraph' was built under R version 4.2.3
 
 <img src="man/figures/README-layout-comparison-1.png" width="100%" />
 
@@ -200,6 +211,16 @@ difference in results over `{igraph}`:
 <!-- - one-, two-, and sometimes three-mode networks -->
 <!-- - undirected, directed, and sometimes complex networks -->
 <!-- - unweighted, weighted, and sometimes signed networks -->
+
+### Themes and Scales
+
+Lastly, `{manynet}` includes a number of themes and scales for quickly
+tailoring your graphs. `{manynet}` uses the excellent `{ggraph}` package
+(and thus `{ggplot2}`) as a plotting engine.
+
+<img src="man/figures/README-ggthemes-1.png" width="100%" />
+
+More themes are on their way, and we’re happy to take suggestions.
 
 ## Installation
 
