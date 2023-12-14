@@ -44,7 +44,7 @@
 #'   using `as_edgelist()`, `as_matrix()`,
 #'   `as_tidygraph()`, or `as_network()`.
 #' @importFrom tidygraph as_tbl_graph
-#' @importFrom igraph graph_from_incidence_matrix
+#' @importFrom igraph graph_from_biadjacency_matrix
 NULL
 
 #' @describeIn create Creates an empty graph of the given dimensions.
@@ -135,7 +135,7 @@ create_ring <- function(n, directed = FALSE, width = 1, ...) {
 
 #' @describeIn create Creates a graph of the given dimensions
 #'   that has a maximally central node.
-#' @importFrom igraph graph_from_adjacency_matrix graph_from_incidence_matrix
+#' @importFrom igraph graph_from_adjacency_matrix graph_from_biadjacency_matrix
 #'   make_star
 #' @examples
 #' create_star(12)
@@ -464,7 +464,7 @@ create_explicit <- function(...){
 # #' Will construct an affiliation matrix,
 # #' with decreasing fill across n2.
 # #' @importFrom tidygraph as_tbl_graph
-# #' @importFrom igraph graph_from_incidence_matrix
+# #' @importFrom igraph graph_from_biadjacency_matrix
 # #' @examples
 # #' create_nest(10, 12)
 # #' @export
@@ -474,7 +474,7 @@ create_explicit <- function(...){
 #   out <- matrix(0, n1, n2)
 #   out[(row(out) - col(out)) >= 0] <- 1
 #   if(as == "tidygraph") out <- tidygraph::as_tbl_graph(out)
-#   if(as == "igraph") out <- igraph::graph_from_incidence_matrix(out)
+#   if(as == "igraph") out <- igraph::graph_from_biadjacency_matrix(out)
 #   out
 # }
 # 
