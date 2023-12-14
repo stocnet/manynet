@@ -1,3 +1,30 @@
+# manynet 0.2.11
+
+2023-12-14
+
+## Package
+
+* Added `scale_` family of functions to website.
+
+## Making
+
+* Added `as_tidygraph()` method for diff_model objects.
+
+## Manipulating
+
+* Updated `to_waves()` to work on diff_model objects, add attributes and names.
+
+## Mapping
+
+* Added functionality for plotting diff_model objects with better layouts using `autographr()`, `autographs()`, and `autographd()`.
+* Added more custom themes (ETHZ, UZH, and RUG palettes) for plots.
+* Added more custom `scale_` functions (ETHZ, UZH, and RUG palettes) for changing colour scales in plots.
+* Fixed bug with specifying `node_size` in `autographd()`.
+
+## Data
+
+* Added first version of `ison_physicians` data.
+
 # manynet 0.2.10
 
 2023-12-06
