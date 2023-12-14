@@ -36,6 +36,7 @@ set.seed(1234)
 wave <- ison_adolescents %>%
     activate(edges) %>%
     mutate(wave = sample(1995:1998, 10, replace = TRUE))
+wave_diff <- migraph::play_diffusion(ison_brandes)
 
 test_that("to_waves works", {
   expect_equal(class(to_waves(wave)), "list")
@@ -45,6 +46,20 @@ test_that("to_waves works", {
   expect_s3_class(to_waves(wave)[[1]], "tbl_graph")
   expect_s3_class(from_waves(to_waves(wave)), "tbl_graph")
 })  
+
+test_that("to_waves works for diff_model objects", {
+  expect_length(to_waves(wave_diff), length(wave_diff$t))
+  expect_equal(network_nodes(to_waves(wave_diff)[[1]]),
+               network_nodes(to_waves(wave_diff)[[12]]))
+  expect_equal(network_ties(to_waves(wave_diff)[[1]]),
+               network_ties(to_waves(wave_diff)[[12]]))
+  expect_equal(network_nodes(to_waves(wave_diff)[[1]]),
+               network_nodes(ison_brandes))
+  expect_equal(node_attribute(to_waves(wave_diff)[[11]], "Infected"),
+               c(rep("Infected", 11)))
+  expect_equal(node_attribute(to_waves(wave_diff)[[1]], "Infected"),
+               c("Infected", rep("Susceptible", 10)))
+})
 
 slice <- ison_adolescents %>%
     mutate_ties(time = 1:10, increment = 1) %>%
