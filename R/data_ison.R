@@ -369,19 +369,20 @@
 #'   whom you see most often socially?"
 #'   
 #'   Additional questions and records of prescriptions provided additional information: 
-#'   - `city` of practice
 #'   - recorded date of tetracycline `adoption` date
-#'   - years in `practice`
-#'   - `meetings` attended
-#'   - `journal` subscriptions
-#'   - `free time` activities
-#'   - `discussions`
-#'   - `club` memberships
-#'   - `friends`
-#'   - time in the `community`
-#'   - `patients` load
-#'   - physical `proximity` to other physicians
-#'   - medical `specialty`
+#'   - years in `practice` 
+#'   (note that these are `{messydates}`-compatible dates)
+#'   - `conferences` attended 
+#'   (those that attended "Specialty" conferences presumably also attended "General" conferences)
+#'   - regular subscriptions to medical `journals`
+#'   - `free_time` spent associating with doctors
+#'   - `discussions` on medical matters when with other doctors sociallyy
+#'   - memberships in `clubs` with other doctores
+#'   - number of top 3 `friends` that are doctors
+#'   - time practicing in current `community`
+#'   - `patients` load (ordinal)
+#'   - physical `proximity` to other physicians (in building/sharing office)
+#'   - medical `specialty` (GP/Internist/Pediatrician/Other)
 #' @docType data
 #' @keywords datasets
 #' @name ison_physicians

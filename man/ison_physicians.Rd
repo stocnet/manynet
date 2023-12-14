@@ -7,18 +7,18 @@
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> $Peoria
 #> # A directed network with 117 nodes and 543 arcs
-#> # A tibble: 117 x 13
-#>    city `adoption date` med_sch_yr meetings jours free_time discuss clubs
-#>   <dbl>           <dbl>      <dbl>    <dbl> <dbl>     <dbl>   <dbl> <dbl>
-#> 1     1               1          2        2     8         1       1     0
-#> 2     1              12          6        0     4         3       2     0
-#> 3     1               8          4        1     6         3       1     0
-#> 4     1               9          5        1     5         1       1     0
-#> 5     1               9          4        1     3         1       2     0
-#> 6     1              10          3        0     6         2       2     0
+#> # A tibble: 117 x 12
+#>   adoption specialty    conferences journals practice   community patients
+#>      <dbl> <chr>        <chr>          <dbl> <chr>      <chr>     <chr>   
+#> 1        1 Pediatrician Specialty          9 1920..1929 20+yrs    101-150 
+#> 2       12 GP           None               5 1945..     -1yr      76-100  
+#> 3        8 Internist    General            7 1935..1939 10-20yrs  76-100  
+#> 4        9 GP           General            6 1940..1944 5-10yrs   51-75   
+#> 5        9 GP           General            4 1935..1939 10-20yrs  51-75   
+#> 6       10 Internist    None               7 1930..1934 10-20yrs  101-150 
 #> # i 111 more rows
-#> # i 5 more variables: friends <dbl>, community <dbl>, patients <dbl>,
-#> #   proximity <dbl>, specialty <dbl>
+#> # i 5 more variables: doc_freetime <dbl>, doc_discuss <dbl>, doc_friends <dbl>,
+#> #   doc_club <dbl>, doc_proximity <chr>
 #> # A tibble: 543 x 3
 #>    from    to type      
 #>   <int> <int> <chr>     
@@ -32,18 +32,18 @@
 #> 
 #> $Bloomington
 #> # A directed network with 50 nodes and 211 arcs
-#> # A tibble: 50 x 13
-#>    city `adoption date` med_sch_yr meetings jours free_time discuss clubs
-#>   <dbl>           <dbl>      <dbl>    <dbl> <dbl>     <dbl>   <dbl> <dbl>
-#> 1     2              98          3        2     7         1       2     0
-#> 2     2               1          6        1     2         1       2     0
-#> 3     2              98          3        2     3         1       1     0
-#> 4     2               7          6        0     2         1       2     0
-#> 5     2               6          4        1     8         1       2     0
-#> 6     2               1          4        2     4         3       2     0
+#> # A tibble: 50 x 12
+#>   adoption specialty conferences journals practice   community patients
+#>      <dbl> <chr>     <chr>          <dbl> <chr>      <chr>     <chr>   
+#> 1       98 Internist Specialty          8 1930..1934 10-20yrs  101-150 
+#> 2        1 GP        General            3 1945..     5-10yrs   76-100  
+#> 3       98 GP        Specialty          4 1930..1934 10-20yrs  101-150 
+#> 4        7 Internist None               3 1945..     -1yr      26-50   
+#> 5        6 Internist General            9 1935..1939 5-10yrs   76-100  
+#> 6        1 GP        Specialty          5 1935..1939 10-20yrs  101-150 
 #> # i 44 more rows
-#> # i 5 more variables: friends <dbl>, community <dbl>, patients <dbl>,
-#> #   proximity <dbl>, specialty <dbl>
+#> # i 5 more variables: doc_freetime <dbl>, doc_discuss <dbl>, doc_friends <dbl>,
+#> #   doc_club <dbl>, doc_proximity <chr>
 #> # A tibble: 211 x 3
 #>    from    to type      
 #>   <int> <int> <chr>     
@@ -57,18 +57,18 @@
 #> 
 #> $Quincy
 #> # A directed network with 44 nodes and 174 arcs
-#> # A tibble: 44 x 13
-#>    city `adoption date` med_sch_yr meetings jours free_time discuss clubs
-#>   <dbl>           <dbl>      <dbl>    <dbl> <dbl>     <dbl>   <dbl> <dbl>
-#> 1     3               2          4        0     5         2       2     0
-#> 2     3              18          2        1     2         1       1     0
-#> 3     3              18          6        0     4         3       2     0
-#> 4     3               4          3        1     2         1       1     0
-#> 5     3              18          4        2     3         1       2     0
-#> 6     3               5          1        1     4         1       1     0
+#> # A tibble: 44 x 12
+#>   adoption specialty conferences journals practice   community patients
+#>      <dbl> <chr>     <chr>          <dbl> <chr>      <chr>     <chr>   
+#> 1        2 Internist None               6 1935..1939 10-20yrs  151+    
+#> 2       18 GP        General            3 1920..1929 20+yrs    151+    
+#> 3       18 Internist None               5 1945..     -1yr      -25     
+#> 4        4 GP        General            3 1930..1934 20+yrs    151+    
+#> 5       18 GP        Specialty          4 1935..1939 10-20yrs  151+    
+#> 6        5 Internist General            5 ..1919     20+yrs    51-75   
 #> # i 38 more rows
-#> # i 5 more variables: friends <dbl>, community <dbl>, patients <dbl>,
-#> #   proximity <dbl>, specialty <dbl>
+#> # i 5 more variables: doc_freetime <dbl>, doc_discuss <dbl>, doc_friends <dbl>,
+#> #   doc_club <dbl>, doc_proximity <chr>
 #> # A tibble: 174 x 3
 #>    from    to type      
 #>   <int> <int> <chr>     
@@ -82,18 +82,18 @@
 #> 
 #> $Galesburg
 #> # A directed network with 35 nodes and 171 arcs
-#> # A tibble: 35 x 13
-#>    city `adoption date` med_sch_yr meetings jours free_time discuss clubs
-#>   <dbl>           <dbl>      <dbl>    <dbl> <dbl>     <dbl>   <dbl> <dbl>
-#> 1     4              18          4        1     3         1       1     0
-#> 2     4              18          4        0     3         1       1     0
-#> 3     4               4          6        1     5         2       2     1
-#> 4     4               5          4        0     3         1       1     1
-#> 5     4               8          4        1     5         3       2     0
-#> 6     4               4          1        2     7         1       2     0
+#> # A tibble: 35 x 12
+#>   adoption specialty conferences journals practice   community patients
+#>      <dbl> <chr>     <chr>          <dbl> <chr>      <chr>     <chr>   
+#> 1       18 GP        General            4 1935..1939 5-10yrs   101-150 
+#> 2       18 GP        None               4 1935..1939 -1yr      151+    
+#> 3        4 GP        General            6 1945..     2-5yrs    51-75   
+#> 4        5 GP        None               4 1935..1939 10-20yrs  101-150 
+#> 5        8 Internist General            6 1935..1939 5-10yrs   151+    
+#> 6        4 Internist Specialty          8 ..1919     20+yrs    76-100  
 #> # i 29 more rows
-#> # i 5 more variables: friends <dbl>, community <dbl>, patients <dbl>,
-#> #   proximity <dbl>, specialty <dbl>
+#> # i 5 more variables: doc_freetime <dbl>, doc_discuss <dbl>, doc_friends <dbl>,
+#> #   doc_club <dbl>, doc_proximity <chr>
 #> # A tibble: 171 x 3
 #>    from    to type      
 #>   <int> <int> <chr>     
@@ -133,19 +133,20 @@ whom you see most often socially?"
 
 Additional questions and records of prescriptions provided additional information:
 \itemize{
-\item \code{city} of practice
 \item recorded date of tetracycline \code{adoption} date
 \item years in \code{practice}
-\item \code{meetings} attended
-\item \code{journal} subscriptions
-\item \verb{free time} activities
-\item \code{discussions}
-\item \code{club} memberships
-\item \code{friends}
-\item time in the \code{community}
-\item \code{patients} load
-\item physical \code{proximity} to other physicians
-\item medical \code{specialty}
+(note that these are \code{{messydates}}-compatible dates)
+\item \code{conferences} attended
+(those that attended "Specialty" conferences presumably also attended "General" conferences)
+\item regular subscriptions to medical \code{journals}
+\item \code{free_time} spent associating with doctors
+\item \code{discussions} on medical matters when with other doctors sociallyy
+\item memberships in \code{clubs} with other doctores
+\item number of top 3 \code{friends} that are doctors
+\item time practicing in current \code{community}
+\item \code{patients} load (ordinal)
+\item physical \code{proximity} to other physicians (in building/sharing office)
+\item medical \code{specialty} (GP/Internist/Pediatrician/Other)
 }
 }
 \references{
