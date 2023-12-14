@@ -55,20 +55,20 @@ theme_iheid <- function(base_size = 12, base_family = "Times") {
 #' @rdname themes
 #' @export
 theme_ethz <- function(base_size = 12, base_family = "serif") {
-  colors <-  corp_palette("ETH")
+  colors <-  corp_palette("ETHZ")
   (ggplot2::theme_minimal(base_size = base_size, base_family = base_family)
     + ggplot2::theme(
-      line = ggplot2::element_line(colors["ETH_Blue"]),
-      rect = ggplot2::element_rect(fill = colors["ETH_Petrol"],
+      line = ggplot2::element_line(colors["ETHZ_Blue"]),
+      rect = ggplot2::element_rect(fill = colors["ETHZ_Petrol"],
                                    linetype = 0, colour = NA),
-      title = ggplot2::element_text(colour = colors["ETH_Green"],
+      title = ggplot2::element_text(colour = colors["ETHZ_Green"],
                                     size = base_size,
                                     face = "bold"),
-      plot.subtitle = ggplot2::element_text(colors["ETH_Bronze"],
+      plot.subtitle = ggplot2::element_text(colors["ETHZ_Bronze"],
                                             size = base_size*0.85,
                                             family = "serif",
                                             face = "bold"),
-      plot.caption = ggplot2::element_text(colors["ETH_Red"],
+      plot.caption = ggplot2::element_text(colors["ETHZ_Red"],
                                            size = base_size*0.75,
                                            family = "serif",
                                            face = "italic"),
@@ -137,20 +137,20 @@ theme_uzh <- function(base_size = 12, base_family = "sans") {
 #' @rdname themes
 #' @export
 theme_rug <- function(base_size = 12, base_family = "mono") {
-  colors <-  corp_palette("UG")
+  colors <-  corp_palette("RUG")
   (ggplot2::theme_minimal(base_size = base_size, base_family = base_family)
     + ggplot2::theme(
-      line = ggplot2::element_line(colors["UG_Red"]),
-      rect = ggplot2::element_rect(fill = colors["UG_Black"],
+      line = ggplot2::element_line(colors["RUG_Red"]),
+      rect = ggplot2::element_rect(fill = colors["RUG_Black"],
                                    linetype = 0, colour = NA),
-      title = ggplot2::element_text(colour = colors["UG_Red"],
+      title = ggplot2::element_text(colour = colors["RUG_Red"],
                                     size = base_size,
                                     face = "bold"),
-      plot.subtitle = ggplot2::element_text(colors["UG_Black"],
+      plot.subtitle = ggplot2::element_text(colors["RUG_Black"],
                                             size = base_size*0.85,
                                             family = "mono",
                                             face = "bold"),
-      plot.caption = ggplot2::element_text(colors["UG_Red"],
+      plot.caption = ggplot2::element_text(colors["RUG_Red"],
                                            size = base_size*0.75,
                                            family = "mono",
                                            face = "italic"),
@@ -246,20 +246,20 @@ scale_colour_sdgs <- function(direction = 1, ...) {
 #' @export
 scale_color_sdgs <- scale_colour_sdgs
 
-#' ETH color scales
+#' ETHZ color scales
 #' 
 #' @rdname scales
 #' @export
 scale_fill_ethz <- function(direction = 1, ...) {
-  ggplot2::discrete_scale("fill", "ETH",
-                          palette_gen(palette = "ETH", direction), ...)
+  ggplot2::discrete_scale("fill", "ETHZ",
+                          palette_gen(palette = "ETHZ", direction), ...)
 }
 
 #' @rdname scales
 #' @export
 scale_colour_ethz <- function(direction = 1, ...) {
-  ggplot2::discrete_scale("colour", "ETH",
-                          palette_gen(palette = "ETH", direction), ...)
+  ggplot2::discrete_scale("colour", "ETHZ",
+                          palette_gen(palette = "ETHZ", direction), ...)
 }
 
 #' @rdname scales
@@ -286,20 +286,20 @@ scale_colour_uzh <- function(direction = 1, ...) {
 #' @export
 scale_color_uzh <- scale_colour_uzh
 
-#' UG color scales
+#' RUG color scales
 #' 
 #' @rdname scales
 #' @export
 scale_fill_rug <- function(direction = 1, ...) {
-  ggplot2::discrete_scale("fill", "UG",
-                          palette_gen(palette = "UG", direction), ...)
+  ggplot2::discrete_scale("fill", "RUG",
+                          palette_gen(palette = "RUG", direction), ...)
 }
 
 #' @rdname scales
 #' @export
 scale_colour_rug <- function(direction = 1, ...) {
-  ggplot2::discrete_scale("colour", "UG",
-                          palette_gen(palette = "UG", direction), ...)
+  ggplot2::discrete_scale("colour", "RUG",
+                          palette_gen(palette = "RUG", direction), ...)
 }
 
 #' @rdname scales
@@ -327,13 +327,13 @@ corp_color <- function(...) {
                    `ClimateAction` = "#3F7E44", `BelowWater` = "#0A97D9",
                    `OnLand` = "#56C02B", `StrongInstitutions` = "#00689D",
                    `GoalPartnerships` = "#19486A",
-                   `ETH_Blue` = "#215CAF", `ETH_Petrol` = "#007894",
-                   `ETH_Green` = "#627313", `ETH_Bronze` = "#8E6713",
-                   `ETH_Red`=	"#B7352D", `ETH_Purple` = "#A7117A",
-                   `ETH_Grey`	= "#6F6F6F", `UZH_Blue` = "#0028a5",
+                   `ETHZ_Blue` = "#215CAF", `ETHZ_Petrol` = "#007894",
+                   `ETHZ_Green` = "#627313", `ETHZ_Bronze` = "#8E6713",
+                   `ETHZ_Red`=	"#B7352D", `ETHZ_Purple` = "#A7117A",
+                   `ETHZ_Grey`	= "#6F6F6F", `UZH_Blue` = "#0028a5",
                    `UZH_Grey` = "#a3adb7", `UZH_Orange` = "#dc6027",
-                   `UG_Red` = "#dc002d", `UG_White` = "#FFFFFF",
-                   `UG_Black` = "#000000")
+                   `RUG_Red` = "#dc002d", `RUG_White` = "#FFFFFF",
+                   `RUG_Black` = "#000000")
   cols <- c(...)
   if (is.null(cols))
     return (corp_colors)
@@ -366,11 +366,11 @@ corp_palette <- function(palette, ...) {
                                             "OnLand",
                                             "StrongInstitutions",
                                             "GoalPartnerships"),
-                        `ETH` = corp_color("ETH_Blue", "ETH_Petrol",
-                                           "ETH_Green", "ETH_Bronze",
-                                           "ETH_Red", "ETH_Purple", "ETH_Grey"),
+                        `ETHZ` = corp_color("ETHZ_Blue", "ETHZ_Petrol",
+                                           "ETHZ_Green", "ETHZ_Bronze",
+                                           "ETHZ_Red", "ETHZ_Purple", "ETHZ_Grey"),
                         `UZH` = corp_color("UZH_Blue", "UZH_Grey", "UZH_Orange"),
-                        `UG` = corp_color("UG_Red", "UG_White", "UG_Black"))
+                        `RUG` = corp_color("RUG_Red", "RUG_White", "RUG_Black"))
   corp_palettes[[palette]]
 }
 
