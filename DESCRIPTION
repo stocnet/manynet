@@ -20,7 +20,7 @@ Imports:
     dplyr (>= 1.1.0),
     ggplot2,
     ggraph,
-    igraph (>= 1.5.0.1),
+    igraph (>= 1.6.0),
     network,
     tidygraph
 Suggests: 
