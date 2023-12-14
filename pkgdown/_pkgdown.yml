@@ -78,6 +78,7 @@ reference:
       - starts_with("autograph")
       - starts_with("layout")
       - starts_with("theme")
+      - starts with("scale")
       - ends_with("palette")
   - title: "Data"
     desc: |
