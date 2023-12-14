@@ -3,18 +3,18 @@
 \name{themes}
 \alias{themes}
 \alias{theme_iheid}
-\alias{theme_eth}
+\alias{theme_ethz}
 \alias{theme_uzh}
-\alias{theme_ug}
+\alias{theme_rug}
 \title{Many themes}
 \usage{
 theme_iheid(base_size = 12, base_family = "Times")
 
-theme_eth(base_size = 12, base_family = "serif")
+theme_ethz(base_size = 12, base_family = "serif")
 
 theme_uzh(base_size = 12, base_family = "sans")
 
-theme_ug(base_size = 12, base_family = "mono")
+theme_rug(base_size = 12, base_family = "mono")
 }
 \arguments{
 \item{base_size}{Font size, by default 12.}

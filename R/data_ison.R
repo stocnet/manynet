@@ -344,3 +344,55 @@
 #'   ison_friends
 #'   ```
 "ison_friends"
+
+
+# Physicians ####
+
+#' Four multiplex one-mode physician diffusion data (Coleman, Katz, and Menzel, 1966)
+#'
+#' @description
+#'   Ron Burt prepared this data from 
+#'   Coleman, Katz and Menzel's 1966 study on medical innovation. 
+#'   They had collected data from physicians in four towns in Illinois: 
+#'   Peoria, Bloomington, Quincy and Galesburg.
+#'   These four networks are held as separate networks in a list.
+#'   
+#'   Coleman, Katz and Menzel were concerned with the impact of network ties 
+#'   on the physicians' adoption of a new drug, tetracycline. 
+#'   Data on three types of ties were collected in response to three questions:
+#'   
+#'   - advice: "When you need information or advice about questions of therapy 
+#'   where do you usually turn?" 
+#'   - discussion: "And who are the three or four physicians with whom you most often find yourself 
+#'   discussing cases or therapy in the course of an ordinary week – last week for instance?" 
+#'   - friendship: "Would you tell me the first names of your three friends 
+#'   whom you see most often socially?"
+#'   
+#'   Additional questions and records of prescriptions provided additional information: 
+#'   - `city` of practice
+#'   - recorded date of tetracycline `adoption` date
+#'   - years in `practice`
+#'   - `meetings` attended
+#'   - `journal` subscriptions
+#'   - `free time` activities
+#'   - `discussions`
+#'   - `club` memberships
+#'   - `friends`
+#'   - time in the `community`
+#'   - `patients` load
+#'   - physical `proximity` to other physicians
+#'   - medical `specialty`
+#' @docType data
+#' @keywords datasets
+#' @name ison_physicians
+#' @usage data(ison_physicians)
+#' @references
+#'   Coleman, James, Elihu Katz, and Herbert Menzel. 1966.
+#'   \emph{Medical innovation: A diffusion study}.
+#'   Indianapolis: The Bobbs-Merrill Company.
+#' @source `{networkdata}`
+#' @format
+#'   ```{r, echo = FALSE}
+#'   ison_physicians
+#'   ```
+"ison_physicians"
