@@ -54,7 +54,7 @@ theme_iheid <- function(base_size = 12, base_family = "Times") {
 
 #' @rdname themes
 #' @export
-theme_eth <- function(base_size = 12, base_family = "serif") {
+theme_ethz <- function(base_size = 12, base_family = "serif") {
   colors <-  corp_palette("ETH")
   (ggplot2::theme_minimal(base_size = base_size, base_family = base_family)
     + ggplot2::theme(
@@ -136,7 +136,7 @@ theme_uzh <- function(base_size = 12, base_family = "sans") {
 
 #' @rdname themes
 #' @export
-theme_ug <- function(base_size = 12, base_family = "mono") {
+theme_rug <- function(base_size = 12, base_family = "mono") {
   colors <-  corp_palette("UG")
   (ggplot2::theme_minimal(base_size = base_size, base_family = base_family)
     + ggplot2::theme(
@@ -250,21 +250,21 @@ scale_color_sdgs <- scale_colour_sdgs
 #' 
 #' @rdname scales
 #' @export
-scale_fill_eth <- function(direction = 1, ...) {
+scale_fill_ethz <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "ETH",
                           palette_gen(palette = "ETH", direction), ...)
 }
 
 #' @rdname scales
 #' @export
-scale_colour_eth <- function(direction = 1, ...) {
+scale_colour_ethz <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "ETH",
                           palette_gen(palette = "ETH", direction), ...)
 }
 
 #' @rdname scales
 #' @export
-scale_color_eth <- scale_colour_eth
+scale_color_ethz <- scale_colour_ethz
 
 #' UZH color scales
 #' 
@@ -290,21 +290,21 @@ scale_color_uzh <- scale_colour_uzh
 #' 
 #' @rdname scales
 #' @export
-scale_fill_ug <- function(direction = 1, ...) {
+scale_fill_rug <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "UG",
                           palette_gen(palette = "UG", direction), ...)
 }
 
 #' @rdname scales
 #' @export
-scale_colour_ug <- function(direction = 1, ...) {
+scale_colour_rug <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "UG",
                           palette_gen(palette = "UG", direction), ...)
 }
 
 #' @rdname scales
 #' @export
-scale_color_ug <- scale_colour_ug
+scale_color_rug <- scale_colour_rug
 
 # Helper functions
 corp_color <- function(...) {
