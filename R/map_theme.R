@@ -96,7 +96,7 @@ theme_eth <- function(base_size = 12, base_family = "serif") {
 #' @rdname themes
 #' @export
 theme_uzh <- function(base_size = 12, base_family = "sans") {
-  colors <-  corp_palette("EZH")
+  colors <-  corp_palette("UZH")
   (ggplot2::theme_minimal(base_size = base_size, base_family = base_family)
     + ggplot2::theme(
       line = ggplot2::element_line(colors["UZH_Blue"]),
