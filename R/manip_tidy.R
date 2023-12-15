@@ -46,7 +46,7 @@ join_ties <- function(.data, object2, attr_name) {
   edges <- from <- to <- NULL
   el <- c(t(as.matrix(as_edgelist(object2))))
   obj <- as_tidygraph(.data) %>% 
-    activate(edges)
+    tidygraph::activate(edges)
   if(ncol(as.data.frame(obj)) < 3){
     obj <- obj %>% igraph::set_edge_attr("orig", value = 1)
   } 
@@ -59,7 +59,7 @@ join_ties <- function(.data, object2, attr_name) {
       select_ties(-object2)
   }
   edges <- out %>%
-    activate(edges) %>%
+    tidygraph::activate(edges) %>%
     as.data.frame() %>% 
     dplyr::group_by(from, to) %>%
     dplyr::summarise(dplyr::across(dplyr::everything(), 
@@ -69,7 +69,7 @@ join_ties <- function(.data, object2, attr_name) {
                                      out
                                    }), 
                      .groups = "keep") %>% dplyr::ungroup()
-  nodes <- out %>% activate(nodes) %>% as.data.frame()
+  nodes <- out %>% tidygraph::activate(nodes) %>% as.data.frame()
   tidygraph::tbl_graph(nodes, edges, 
                        directed = is_directed(.data))
 }
@@ -81,11 +81,12 @@ mutate.igraph <- function(.data, ...){
 }
 
 #' @describeIn tidy Tidy way to add vector as tie attributes.
+#' @importFrom tidygraph activate
 #' @export
 mutate_ties <- function(.data, ...){
   nodes <- edges <- NULL
   out <- as_tidygraph(.data)
-  out %>% activate(edges) %>% mutate(...) %>% activate(nodes)
+  out %>% tidygraph::activate(edges) %>% mutate(...) %>% activate(nodes)
 }
 
 #' @describeIn tidy Tidy way to select tie attributes.
@@ -94,7 +95,7 @@ mutate_ties <- function(.data, ...){
 select_ties <- function(.data, ...){
   nodes <- edges <- NULL
   out <- as_tidygraph(.data)
-  out %>% activate(edges) %>% dplyr::select(...) %>% activate(nodes)
+  out %>% tidygraph::activate(edges) %>% dplyr::select(...) %>% activate(nodes)
 }
 
 #' @describeIn tidy Tidy way to filter ties based on a logical statement with
@@ -104,7 +105,7 @@ select_ties <- function(.data, ...){
 filter_ties <- function(.data, ...){
   nodes <- edges <- NULL
   out <- as_tidygraph(.data)
-  out %>% activate(edges) %>% dplyr::filter(...) %>% activate(nodes)
+  out %>% tidygraph::activate(edges) %>% dplyr::filter(...) %>% activate(nodes)
 }
 
 #' @describeIn tidy Tidy way to rename tie attributes.
@@ -113,7 +114,7 @@ filter_ties <- function(.data, ...){
 rename_ties <- function(.data, ...){
   nodes <- edges <- NULL
   out <- as_tidygraph(.data)
-  out %>% activate(edges) %>% dplyr::rename(...) %>% activate(nodes)
+  out %>% tidygraph::activate(edges) %>% dplyr::rename(...) %>% activate(nodes)
 }
 
 #' @describeIn tidy Tidy way to summarise tie attributes.

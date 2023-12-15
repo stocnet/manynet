@@ -78,7 +78,8 @@ reference:
       - starts_with("autograph")
       - starts_with("layout")
       - starts_with("theme")
-      - ends_with("palette")
+      - starts_with("scale")
+      - ends_with("palettes")
   - title: "Data"
     desc: |
       The package contains a variety of networks useful for pedagogical purposes

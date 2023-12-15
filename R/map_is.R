@@ -310,13 +310,15 @@ is_multiplex.matrix <- function(.data) {
 #' @export
 is_multiplex.tbl_graph <- function(.data) {
   igraph::any_multiple(.data) |
-    length(igraph::edge_attr_names(as_igraph(.data))) > 1
+    length(igraph::edge_attr_names(as_igraph(.data))) > 1 |
+    "type" %in% igraph::edge_attr_names(.data)
 }
 
 #' @export
 is_multiplex.igraph <- function(.data) {
   igraph::any_multiple(.data) |
-    length(igraph::edge_attr_names(as_igraph(.data))) > 1
+    length(igraph::edge_attr_names(.data)) > 1 |
+    "type" %in% igraph::edge_attr_names(.data)
 }
 
 #' @export

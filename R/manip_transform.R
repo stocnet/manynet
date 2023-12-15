@@ -529,8 +529,7 @@ to_anti.network <- function(.data){
 #' @importFrom dplyr filter
 #' @examples
 #' ison_adolescents %>%
-#'   activate(edges) %>%
-#'   mutate(wave = sample(1995:1998, 10, replace = TRUE)) %>%
+#'   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) %>%
 #'   to_waves(attribute = "wave") %>%
 #'   to_no_isolates()
 #' @export
@@ -540,7 +539,7 @@ to_no_isolates <- function(.data) UseMethod("to_no_isolates")
 to_no_isolates.tbl_graph <- function(.data) {
   nodes <- NULL
   # Delete edges not present vertices
-  .data %>% activate(nodes) %>% dplyr::filter(!tidygraph::node_is_isolated())
+  .data %>% tidygraph::activate(nodes) %>% dplyr::filter(!tidygraph::node_is_isolated())
 }
 
 #' @export
@@ -548,7 +547,7 @@ to_no_isolates.list <- function(.data) {
   nodes <- NULL
   # Delete edges not present vertices in each list
   lapply(.data, function(x) {
-    x %>% activate(nodes) %>% dplyr::filter(!tidygraph::node_is_isolated())
+    x %>% tidygraph::activate(nodes) %>% dplyr::filter(!tidygraph::node_is_isolated())
   })
 }
 

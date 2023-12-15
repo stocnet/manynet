@@ -144,12 +144,12 @@ autographr <- function(.data, layout, labels = TRUE,
 #' @source http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
 #' @examples
 #' #autographs(to_egos(ison_adolescents))
+#' #autographs(migraph::play_diffusion(ison_adolescents))
 #' @export
 autographs <- function(netlist, ...) {
   thisRequires("patchwork")
   if (any(class(netlist) == "diff_model")) {
     netlist <- to_waves(netlist)
-    names(netlist) <- seq_len(length(netlist))
   }
   if(!is.null(names(netlist))){
     gs <- lapply(1:length(netlist), function(x)
@@ -192,8 +192,7 @@ autographs <- function(netlist, ...) {
 #' #            node_color = "color", node_size =  "size", edge_color = "e_color")
 #' #autographd(play_diffusion(ison_adolescents, seeds = 4), layout = "circle")
 #' #autographd(play_diffusion(ison_adolescents, seeds = 4, recovery = 0.2),
-#' #.          layout = "circle")
-#'
+#' #           layout = "circle")
 #' @export
 autographd <- function(tlist, layout, labels = TRUE,
                        node_color, node_shape, node_size,
@@ -201,6 +200,7 @@ autographd <- function(tlist, layout, labels = TRUE,
   thisRequires("gganimate")
   thisRequires("gifski")
   thisRequires("png")
+  thisRequires("migraph")
   x <- y <- name <- status <- frame <- NULL
   # Check arguments
   if (missing(layout)) {
@@ -227,86 +227,63 @@ autographd <- function(tlist, layout, labels = TRUE,
   # Check if diffusion model
   if (any(class(tlist) == "diff_model")) {
     tlist <- to_waves(tlist)
-    if (unique(lapply(tlist, function(x) igraph::ecount(x))) == 0 & 
-        layout == "stress") layout = "star"
-    # Add separate layouts for each time point
-    lay <- lapply(1:length(tlist), function(i)
-      ggraph::create_layout(tlist[[i]], layout, ...))
-    # Create a node list for each time point
-    nodes_out <- do.call("rbind",
-                         lapply(1:length(tlist),
-                                function(i) {
-                                  cbind(igraph::as_data_frame(tlist[[i]],
-                                                              "vertices"),
-                                        x = lay[[i]][, 1], y = lay[[i]][, 2],
-                                        frame = i)
-                                  }))
-    # Plot with ggplot2/ggraph and animate with gganimate
-    p <-  map_diffusion(nodes_out, node_size, node_shape, node_color, labels) +
-      gganimate::transition_states(states = frame, transition_length = 5,
-                                   state_length = 10, wrap = FALSE) +
-      gganimate::enter_fade() +
-      gganimate::exit_fade() +
-      ggplot2::labs(title = "{closest_state}") +
-      ggplot2::theme_void() +
-      ggplot2::theme(legend.position = "bottom")
-  } else {
-    # Check if object is a list of lists
-    if (!is.list(tlist[[1]])) {
-      stop("Please declare a migraph-compatible network listed according
-         to a time attribute, waves, or slices.")
-    }
-    # Remove lists without edges
-    tlist <- Filter(function(x) igraph::gsize(x) > 0, tlist)
-    # Create an edge list
-    edges_lst <- lapply(1:length(tlist), function(i)
-      cbind(igraph::as_data_frame(tlist[[i]], "edges"), frame = i))
-    # Check if all names are present in all lists
-    if (length(unique(unlist(unname(lapply(tlist, length))))) != 1) {
-      tlist <- to_waves(as_tidygraph(do.call("rbind", edges_lst)), attribute = "frame")
-    }
-    # Add separate layouts for each time point
-    lay <- lapply(1:length(tlist), function(i)
-      ggraph::create_layout(tlist[[i]], layout))
-    # Create a node list for each time point
-    nodes_lst <- lapply(1:length(tlist), function(i) {
-      cbind(igraph::as_data_frame(tlist[[i]], "vertices"),
-            x = lay[[i]][, 1], y = lay[[i]][, 2], frame = i)
-    })
-    # Create an edge list for each time point
-    edges_lst <- time_edges_lst(tlist, edges_lst, nodes_lst, edge_color)
-    # Get edge IDs for all edges
-    all_edges <- do.call("rbind", lapply(tlist, igraph::get.edgelist))
-    all_edges <- all_edges[!duplicated(all_edges), ]
-    all_edges <- cbind(all_edges, paste0(all_edges[, 1], "-", all_edges[, 2]))
-    # Add edges level information for edge transitions
-    edges_lst <- transition_edge_lst(tlist, edges_lst, nodes_lst, all_edges)
-    # Bind nodes and edges list
-    edges_out <- do.call("rbind", edges_lst)
-    nodes_out <- do.call("rbind", nodes_lst)
-    # Delete nodes for each frame if isolate
-    if (isFALSE(keep_isolates)) {
-      nodes_out <- remove_isolates(edges_out, nodes_out)
-    } else {
-      if(nrow(nodes_out)/length(unique(nodes_out$frame)) > 20) {
-        message("Please considering deleting isolates to improve visualisation.")
-      } 
-      nodes_out$status <- TRUE
-    }
-    # Plot with ggplot2/ggraph and animate with gganimate
-    p <- map_dynamic(edges_out, nodes_out, edge_color, node_shape,
-                     node_color, node_size, edge_size, labels) + 
-      ggplot2::scale_alpha_manual(values = c(0, 1)) +
-      gganimate::transition_states(states = frame, transition_length = 5,
-                                   state_length = 10, wrap = FALSE) +
-      gganimate::enter_fade() +
-      gganimate::exit_fade() +
-      ggplot2::labs(title = "{closest_state}") +
-      ggplot2::theme_void()
   }
-  gganimate::animate(p, duration = 2*length(tlist),
-                     start_pause = 5, end_pause = 10,
-                     renderer = gganimate::gifski_renderer())
+  # Check if object is a list of lists
+  if (!is.list(tlist[[1]])) {
+    stop("Please declare a migraph-compatible network listed according
+         to a time attribute, waves, or slices.")
+  }
+  # Remove lists without edges
+  tlist <- Filter(function(x) igraph::gsize(x) > 0, tlist)
+  # Create an edge list
+  edges_lst <- lapply(1:length(tlist), function(i)
+    cbind(igraph::as_data_frame(tlist[[i]], "edges"),
+          frame = ifelse(is.null(names(tlist)), i, names(tlist)[i])))
+  # Check if all names are present in all lists
+  if (length(unique(unlist(unname(lapply(tlist, length))))) != 1) {
+    tlist <- to_waves(as_tidygraph(do.call("rbind", edges_lst)),
+                      attribute = "frame")
+  }
+  # Add separate layouts for each time point
+  lay <- lapply(1:length(tlist), function(i)
+    ggraph::create_layout(tlist[[i]], layout, ...))
+  # Create a node list for each time point
+  nodes_lst <- lapply(1:length(tlist), function(i) {
+    cbind(igraph::as_data_frame(tlist[[i]], "vertices"),
+          x = lay[[i]][, 1], y = lay[[i]][, 2],
+          frame = ifelse(is.null(names(tlist)), i, names(tlist)[i]))
+  })
+  # Create an edge list for each time point
+  edges_lst <- time_edges_lst(tlist, edges_lst, nodes_lst, edge_color)
+  # Get edge IDs for all edges
+  all_edges <- do.call("rbind", lapply(tlist, igraph::get.edgelist))
+  all_edges <- all_edges[!duplicated(all_edges), ]
+  all_edges <- cbind(all_edges, paste0(all_edges[, 1], "-", all_edges[, 2]))
+  # Add edges level information for edge transitions
+  edges_lst <- transition_edge_lst(tlist, edges_lst, nodes_lst, all_edges)
+  # Bind nodes and edges list
+  edges_out <- do.call("rbind", edges_lst)
+  nodes_out <- do.call("rbind", nodes_lst)
+  # Delete nodes for each frame if isolate
+  if (isFALSE(keep_isolates)) {
+    nodes_out <- remove_isolates(edges_out, nodes_out)
+  } else {
+    if(nrow(nodes_out)/length(unique(nodes_out$frame)) > 30 &
+       any(unlist(lapply(tlist, migraph::node_is_isolate)) == TRUE)) {
+      message("Please considering deleting isolates to improve visualisation.")
+    } 
+    nodes_out$status <- TRUE
+  }
+  # Plot with ggplot2/ggraph and animate with gganimate
+  p <- map_dynamic(edges_out, nodes_out, edge_color, node_shape,
+                   node_color, node_size, edge_size, labels) +
+    gganimate::transition_states(states = frame, transition_length = 5,
+                                 state_length = 10, wrap = FALSE) +
+    gganimate::enter_fade() +
+    gganimate::exit_fade() +
+    ggplot2::labs(title = "{closest_state}")
+  gganimate::animate(p, duration = 2*length(tlist), start_pause = 5,
+                     end_pause = 10, renderer = gganimate::gifski_renderer())
 }
 
 reduce_categories <- function(g, node_group) {
@@ -637,33 +614,63 @@ reduce_categories <- function(g, node_group) {
 .graph_nodes <- function(p, g, node_color, node_shape, node_size){
   nsize <- .infer_nsize(g, node_size)
   nshape <- .infer_shape(g, node_shape)
-  if (is_twomode(g)) {
-    if (!is.null(node_color)) {
-      if (node_color %in% names(node_attribute(g))) {
-        node_color <- as.factor(node_attribute(g, node_color))
-        p <- p + ggraph::geom_node_point(ggplot2::aes(color = node_color),
-                                         size = nsize, shape = nshape) +
-          ggplot2::scale_colour_manual(values = colorsafe_palette, guide = "none")
-      } else {
-        p <- p + ggraph::geom_node_point(color = node_color,
-                                         size = nsize, shape = nshape) 
-      }
-    } else {
-      p <- p + ggraph::geom_node_point(size = nsize, shape = nshape)
-    }
+  if ("Infected" %in% names(node_attribute(g))) {
+    node_color <- as.factor(node_attribute(g, "Infected"))
+    p <- p + ggraph::geom_node_point(ggplot2::aes(color = node_color),
+                                     size = nsize, shape = nshape) +
+      ggplot2::scale_color_manual(name = NULL, guide = "none",
+                                  values = c("Infected" = "red",
+                                             "Susceptible" = "blue",
+                                             "Exposed" = "orange",
+                                             "Recovered" = "darkgreen"))
+  } else if (any("diff_model" %in% names(attributes(g)))) {
+    node_color <- infection_rate(attr(g, "diff_model"))
+    nshape <- ifelse(node_color == 0, "Not Adopted",
+                     ifelse(node_color == 1, "Seed(s)", "Adopted"))
+    node_color <- ifelse(node_color == 0, max(node_color) + 1, node_color)
+    p <- p + ggraph::geom_node_point(ggplot2::aes(shape = nshape,
+                                                  color = node_color),
+                                     size = nsize) +
+      ggplot2::scale_color_gradient(low = "red", high = "blue",
+                                    breaks=c(1, max(node_color)),
+                                    labels=c("Early adoption", "Late adoption"),
+                                    name = "Time of\nAdoption") +
+      ggplot2::scale_shape_manual(name = "",
+                                  breaks = c("Seed(s)", "Adopted", "Not Adopted"),
+                                  values = c("Seed(s)" = "triangle",
+                                             "Adopted" = "circle",
+                                             "Not Adopted" = "square")) +
+      ggplot2::guides(color = ggplot2::guide_colorbar(order = 1, reverse = TRUE),
+                      shape = ggplot2::guide_legend(order = 2))
   } else {
-    if (!is.null(node_color)) {
-      if (node_color %in% names(node_attribute(g))) {
-        node_color <- as.factor(node_attribute(g, node_color))
-        p <- p + ggraph::geom_node_point(aes(color = node_color),
-                                         size = nsize, shape = nshape) +
-        ggplot2::scale_colour_manual(values = colorsafe_palette, guide = "none")
+    if (is_twomode(g)) {
+      if (!is.null(node_color)) {
+        if (node_color %in% names(node_attribute(g))) {
+          node_color <- as.factor(node_attribute(g, node_color))
+          p <- p + ggraph::geom_node_point(ggplot2::aes(color = node_color),
+                                           size = nsize, shape = nshape) +
+            ggplot2::scale_colour_manual(values = colorsafe_palette, guide = "none")
+        } else {
+          p <- p + ggraph::geom_node_point(color = node_color,
+                                           size = nsize, shape = nshape) 
+        }
       } else {
-        p <- p + ggraph::geom_node_point(color = node_color,
-                                         size = nsize, shape = nshape)
+        p <- p + ggraph::geom_node_point(size = nsize, shape = nshape)
       }
     } else {
-      p <- p + ggraph::geom_node_point(size = nsize, shape = nshape)
+      if (!is.null(node_color)) {
+        if (node_color %in% names(node_attribute(g))) {
+          node_color <- as.factor(node_attribute(g, node_color))
+          p <- p + ggraph::geom_node_point(aes(color = node_color),
+                                           size = nsize, shape = nshape) +
+            ggplot2::scale_colour_manual(values = colorsafe_palette, guide = "none")
+        } else {
+          p <- p + ggraph::geom_node_point(color = node_color,
+                                           size = nsize, shape = nshape)
+        }
+      } else {
+        p <- p + ggraph::geom_node_point(size = nsize, shape = nshape)
+      }
     }
   }
   p
@@ -751,6 +758,22 @@ is_diamond <- function(x) {
   } else FALSE
 }
 
+infection_rate <- function(x) {
+  if ("I_new" %in% names(x)) {
+    out <- c(x$I[1], x$I_new[-1])
+  } else {
+    out <- c(x$I[1], diff(x$I)[-(length(x$I))])
+    out <- ifelse(out < 0, 0, out)
+  }
+  a <- list()
+  for (k in seq_len(length(out))) {
+    a[[k]] <- rep(x$t[k], out[k])
+  }
+  out <- unlist(a)
+  if (length(out) < unique(x$n)) out <- c(out, rep(0, (unique(x$n)-length(out))))
+  out
+}
+
 cart2pol <- function(xyz){
   stopifnot(is.numeric(xyz))
   if (is.vector(xyz) && (length(xyz) == 2 || length(xyz) == 
@@ -836,14 +859,14 @@ time_edges_lst <- function(tlist, edges_lst, nodes_lst, edge_color) {
 transition_edge_lst <- function(tlist, edges_lst, nodes_lst, all_edges) {
   x <- lapply(1:length(tlist), function(i) {
     idx <- which(!all_edges[, 3] %in% edges_lst[[i]]$id)
-    if (length(idx != 0)) {
+    if (length(idx) != 0) {
       tmp <- data.frame(from = all_edges[idx, 1], to = all_edges[idx, 2],
                         id = all_edges[idx, 3])
       tmp$x <- nodes_lst[[i]]$x[match(tmp$from, nodes_lst[[i]]$name)]
       tmp$y <- nodes_lst[[i]]$y[match(tmp$from, nodes_lst[[i]]$name)]
       tmp$xend <- nodes_lst[[i]]$x[match(tmp$to, nodes_lst[[i]]$name)]
       tmp$yend <- nodes_lst[[i]]$y[match(tmp$to, nodes_lst[[i]]$name)]
-      tmp$frame <- i
+      tmp$frame <- ifelse(is.null(names(tlist)), i, names(tlist)[i])
       tmp$status <- FALSE
       edges_lst[[i]] <- dplyr::bind_rows(edges_lst[[i]], tmp)
     }
@@ -852,17 +875,18 @@ transition_edge_lst <- function(tlist, edges_lst, nodes_lst, all_edges) {
 }
 
 remove_isolates <- function(edges_out, nodes_out) {
-  status <- frame <- from <- to <- NULL
+  status <- frame <- from <- to <- framen <- NULL
   # Create node metadata for node presence in certain frame
   meta <- edges_out %>%
     dplyr::filter(status == TRUE) %>%
-    dplyr::mutate(meta = ifelse(frame > 1,
-                                paste0(from, (frame - 1)), from)) %>%
+    dplyr::mutate(framen = match(frame, unique(frame)),
+                  meta = ifelse(framen > 1, paste0(from, (framen - 1)), from)) %>%
     dplyr::select(meta, status) %>%
     dplyr::distinct()
   metab <- edges_out %>%
     dplyr::filter(status == TRUE) %>%
-    dplyr::mutate(meta = ifelse(frame > 1, paste0(to, (frame - 1)), to)) %>%
+    dplyr::mutate(framen = match(frame, unique(frame)),
+                  meta = ifelse(framen > 1, paste0(to, (framen - 1)), to)) %>%
     dplyr::select(meta, status) %>%
     rbind(meta) %>%
     dplyr::distinct()
@@ -876,12 +900,14 @@ remove_isolates <- function(edges_out, nodes_out) {
 
 map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
                         node_color, node_size, edge_size, labels) {
-  x <- xend <- y <- yend <- id <- status <- name <- NULL
+  x <- xend <- y <- yend <- id <- status <- Infected <- name <- NULL
+  alphad <- ifelse(nodes_out$status == TRUE, 1, 0)
+  alphae <- ifelse(edges_out$status == TRUE, 1, 0)
+  if (all(unique(alphae) == 1)) alphae <- 0.8
   # Plot edges
   if (!is.null(edge_color)) {
     # Remove NAs in edge color, if declared
-    edge_color <- ifelse(is.na(edges_out[[edge_color]]), "black",
-                         edges_out[[edge_color]])
+    edge_color <- ifelse(is.na(edges_out[[edge_color]]), "black", edges_out[[edge_color]])
     color <- grDevices::colors()
     color <- color[!color %in% "black"]
     if(!any(grepl(paste(color, collapse = "|"), edge_color)) |
@@ -896,20 +922,19 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
   if (!is.null(edge_size)) {
     edge_size <- as.numeric(edges_out[[edge_size]])
   } else edge_size <- 0.5
-  p <- ggplot2::ggplot() + ggplot2::geom_segment(data = edges_out,
-                                                 aes(x = x, xend = xend,
-                                                     y = y, yend = yend,
-                                                     group = id, alpha = status),
-                                                 color = edge_color,
-                                                 linewidth = edge_size,
-                                                 show.legend = FALSE)
+  p <- ggplot2::ggplot() + 
+    ggplot2::geom_segment(aes(x = x, xend = xend, y = y, yend = yend, group = id),
+                          alpha = alphae, data = edges_out, color = edge_color,
+                          linewidth = edge_size, show.legend = FALSE)
   # Set node shape, color, and size
   if (!is.null(node_shape)) {
     node_shape <- as.factor(nodes_out[[node_shape]])
-    node_shape <- c("circle","square","triangle")[node_shape]
+    node_shape <- c("circle", "square", "triangle")[node_shape]
   } else node_shape <- rep("circle", nrow(nodes_out))
   if (!is.null(node_color)) {
-    node_color <- nodes_out[[node_color]]
+    if (node_color %in% names(nodes_out)) {
+      node_color <- nodes_out[[node_color]]
+    }
     color <- grDevices::colors()
     color <- color[!color %in% "black"]
     if (!any(grepl(paste(color, collapse = "|"), node_color)) |
@@ -920,73 +945,41 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
         }
       }
     }
-  } else node_color <- rep("darkgray", nrow(nodes_out))
+  } else if (is.null(node_color) & "Infected" %in% names(nodes_out)) {
+    node_color <- ifelse(nodes_out[["Infected"]] == "Infected", "red",
+                         ifelse(nodes_out[["Infected"]] == "Susceptible", "blue",
+                                ifelse(nodes_out[["Infected"]] == "Exposed", "orange", "darkgreen")))
+  } else node_color <- "darkgray"
   if (!is.null(node_size)) {
-    node_size <- as.numeric(nodes_out[[node_size]])
-  } else if (nrow(nodes_out) > 100) {
-    node_size <- 3
-  } else node_size <- rep(nrow(nodes_out)/length(unique(nodes_out$frame)), nrow(nodes_out))
-  # Plot nodes
-  p <- p + ggplot2::geom_point(data = nodes_out,
-                               aes(x, y, group = name, alpha = status),
-                               size = node_size, color = node_color,
-                               shape = node_shape, show.legend = FALSE)
-  # Add labels
-  if (isTRUE(labels)) {
-    p <- p + ggplot2::geom_text(data = nodes_out,
-                                aes(x, y, label =  name, alpha = status),
-                                hjust = -0.2, vjust = -0.2, show.legend = FALSE)
-  }
-  p
-}
-
-map_diffusion <- function(nodes_out, node_size, node_shape, node_color, labels) {
-  x <- xend <- y <- yend <- id <- status <- name <- Infected <- NULL
-  if (!"name" %in% names(nodes_out)) {
-    nodes_out$name <- rep(seq_len(sum(nodes_out$frame == "1")),
-                          max(nodes_out$frame))
-  }
-  # Set node shape, color, and size
-  if (!is.null(node_shape)) {
-    node_shape <- as.factor(nodes_out[[node_shape]])
-    node_shape <- c("circle","square","triangle")[node_shape]
-  } else node_shape <- rep("circle", nrow(nodes_out))
-  if (!is.null(node_color)) {
-    node_color <- nodes_out[[node_color]]
-    color <- grDevices::colors()
-    color <- color[!color %in% "black"]
-    if(!any(grepl(paste(color, collapse = "|"), node_color)) |
-       any(grepl("#", node_color))) {
-      for(i in unique(node_color)) {
-        if (i != "black") {
-          node_color[node_color == i] <- sample(color, 1)
-        }
-      }
+    if (node_size %in% names(nodes_out)) {
+      node_size <- nodes_out[[node_size]]
     }
-  } else {
-    node_color <- ifelse(nodes_out[["Infected"]] == "Infected", "#D55E00",
-                         ifelse(nodes_out[["Infected"]] == "Susceptible", "#0072B2",
-                                ifelse(nodes_out[["Infected"]] == "Exposed", "#F0E442", "#66c2a5")))
-  }
-  if (!is.null(node_size)) {
-    node_size <- as.numeric(nodes_out[[node_size]])
   } else if (nrow(nodes_out) > 100) {
     node_size <- 3
-  } else node_size <- rep(nrow(nodes_out)/length(unique(nodes_out$frame)), nrow(nodes_out))
-  # Plot nodes
-  cols <- c("Infected" = "#D55E00", "Susceptible" = "#0072B2",
-            "Exposed" = "#F0E442", "Recovered" = "#66c2a5")
-  p <- ggplot2::ggplot() + 
-    ggplot2::geom_point(data = nodes_out,
-                        aes(x, y, group = name, color = Infected),
-                        size = node_size,
-                        shape = node_shape) +
-    ggplot2::scale_color_manual(name = NULL, values = cols)
+  } else node_size <- nrow(nodes_out)/length(unique(nodes_out$frame))
   # Add labels
   if (isTRUE(labels)) {
-    p <- p + ggplot2::geom_text(data = nodes_out,
-                                aes(x, y, label =  name),
+    p <- p + ggplot2::geom_text(aes(x, y, label = name),
+                                alpha = alphad,
+                                data = nodes_out, color = "black",
                                 hjust = -0.2, vjust = -0.2, show.legend = FALSE)
+  }
+  # Plot nodes
+  if ("Infected" %in% names(nodes_out)) {
+    p <- p + ggplot2::geom_point(aes(x, y, group = name, color = Infected),
+                                 size = node_size, shape = node_shape, data = nodes_out) +
+      ggplot2::scale_color_manual(name = NULL, values = c("Infected" = "red",
+                                                          "Susceptible" = "blue",
+                                                          "Exposed" = "orange",
+                                                          "Recovered" = "darkgreen")) +
+      ggplot2::theme_void() +
+      ggplot2::theme(legend.position = "bottom")
+  } else {
+    p <- p + ggplot2::geom_point(aes(x, y, group = name), alpha = alphad,
+                                 size = node_size, data = nodes_out,
+                                 color = node_color, shape = node_shape,
+                                 show.legend = FALSE) +
+      ggplot2::theme_void()
   }
   p
 }

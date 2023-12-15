@@ -196,8 +196,7 @@ autographr(to_mentoring(ison_adolescents))
 to_anti(ison_southern_women)
 #autographr(to_anti(ison_southern_women))
 ison_adolescents \%>\%
-  activate(edges) \%>\%
-  mutate(wave = sample(1995:1998, 10, replace = TRUE)) \%>\%
+  mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) \%>\%
   to_waves(attribute = "wave") \%>\%
   to_no_isolates()
 }

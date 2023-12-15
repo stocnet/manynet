@@ -147,7 +147,7 @@ as_edgelist.siena <- function(.data,
 
 #' @rdname as
 #' @importFrom dplyr arrange
-#' @importFrom igraph edge_attr_names as_adjacency_matrix as_incidence_matrix
+#' @importFrom igraph edge_attr_names as_adjacency_matrix as_biadjacency_matrix
 #' @importFrom network is.bipartite list.edge.attributes as.matrix.network
 #' @export
 as_matrix <- function(.data,
@@ -202,10 +202,10 @@ as_matrix.igraph <- function(.data,
                              twomode = NULL) {
   if ((!is.null(twomode) && twomode) | (is.null(twomode) & is_twomode(.data))) {
     if (is_weighted(.data) | is_signed(.data)) {
-      mat <- igraph::as_incidence_matrix(.data, sparse = FALSE,
+      mat <- igraph::as_biadjacency_matrix(.data, sparse = FALSE,
                                          attr = igraph::edge_attr_names(.data)[[1]])
     } else {
-      mat <- igraph::as_incidence_matrix(.data, sparse = FALSE,
+      mat <- igraph::as_biadjacency_matrix(.data, sparse = FALSE,
                                          attr = NULL)
     }
   } else {
@@ -293,7 +293,7 @@ as_matrix.siena <- function(.data,
 # igraph ####
 
 #' @rdname as
-#' @importFrom igraph graph_from_data_frame graph_from_incidence_matrix
+#' @importFrom igraph graph_from_data_frame graph_from_biadjacency_matrix
 #'  graph_from_adjacency_matrix delete_vertex_attr V vertex_attr
 #'  edge_attr delete_edge_attr set_edge_attr
 #' @importFrom network list.edge.attributes as.sociomatrix
@@ -329,11 +329,11 @@ as_igraph.matrix <- function(.data,
                              twomode = FALSE) {
   if (nrow(.data) != ncol(.data) | twomode) {
     if (!(all(.data %in% c(0, 1)))) {
-      graph <- igraph::graph_from_incidence_matrix(.data,
+      graph <- igraph::graph_from_biadjacency_matrix(.data,
                                                    weighted = TRUE,
                                                    directed = FALSE)
     } else {
-      graph <- igraph::graph_from_incidence_matrix(.data,
+      graph <- igraph::graph_from_biadjacency_matrix(.data,
                                                    directed = FALSE)
     }
   } else {
@@ -374,10 +374,10 @@ as_igraph.network <- function(.data,
   if (network::is.bipartite(.data)) {
     if ("weight" %in% network::list.edge.attributes(.data)) {
       graph <- network::as.sociomatrix(.data, attrname = "weight")
-      graph <- igraph::graph_from_incidence_matrix(graph, weighted = TRUE)
+      graph <- igraph::graph_from_biadjacency_matrix(graph, weighted = TRUE)
     } else {
       graph <- network::as.sociomatrix(.data)
-      graph <- igraph::graph_from_incidence_matrix(graph)
+      graph <- igraph::graph_from_biadjacency_matrix(graph)
     }
   } else {
     if ("weight" %in% network::list.edge.attributes(.data)) {
@@ -656,6 +656,17 @@ as_tidygraph.siena <- function(.data, twomode = FALSE) {
   as_tidygraph(as_igraph.siena(.data, twomode = FALSE))
 }
 
+#' @export
+as_tidygraph.diff_model <- function(.data, twomode = FALSE) {
+  out <- as_tidygraph(attr(.data, "network"))
+  attr(out, "diff_model") <- .data
+  if (!"name" %in% names(node_attribute(out))) {
+    out <- add_node_attribute(out, "name",
+                              as.character(seq_len(igraph::vcount(out))))
+  }
+  out
+}
+
 # Network ####
 
 #' @rdname as
@@ -773,6 +784,11 @@ as_siena.igraph <- function(.data, twomode = FALSE) {
   # list2env(consvars, envir = .newEnv)
   # RSiena::varCovar()
   RSiena::sienaDataCreate(list("depnet" = depnet))
+}
+
+#' @export
+as_siena.tbl_graph <- function(.data, twomode = FALSE) {
+  as_siena.igraph(.data, twomode = twomode)
 }
 
 # graphAM ####

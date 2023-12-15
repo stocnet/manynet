@@ -213,21 +213,16 @@ to_waves.data.frame <- function(.data, attribute = "wave", panels = NULL) {
 #' @export
 to_waves.diff_model <- function(.data, attribute = "t", panels = NULL) {
   if(!is.null(panels)) .data <- .data[.data[[attribute]] %in% panels,]
-  # todo: add metadata to diff_model objects for names/network properties
   if (length(unique(.data[["n"]])) > 1)
-    stop("Please make sure diffusion has the same numebr of nodes for all time points.")
-  diffusion <- create_empty(unique(.data[["n"]]))
+    stop("Please make sure diffusion has the same number of nodes for all time points.")
+  diffusion <- as_tidygraph(.data)
   out <- list()
   for (k in .data[[attribute]]) {
-    out[[k + 1]] <- diffusion %>% add_node_attribute("Infected",
-                                                     c(rep("Recovered",
-                                                           .data$R[k + 1]),
-                                                       rep("Infected",
-                                                           .data$I[k + 1]),
-                                                       rep("Exposed",
-                                                           .data$E[k + 1]),
-                                                       rep("Susceptible",
-                                                           .data$S[k + 1])))
+    out[[paste0("Time: ", k)]] <- diffusion %>%
+      add_node_attribute("Infected", c(rep("Recovered", .data$R[k + 1]),
+                                       rep("Infected", .data$I[k + 1]),
+                                       rep("Exposed", .data$E[k + 1]),
+                                       rep("Susceptible", .data$S[k + 1])))
   }
   out
 }
