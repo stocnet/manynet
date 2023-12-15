@@ -786,6 +786,11 @@ as_siena.igraph <- function(.data, twomode = FALSE) {
   RSiena::sienaDataCreate(list("depnet" = depnet))
 }
 
+#' @export
+as_siena.tbl_graph <- function(.data, twomode = FALSE) {
+  as_siena.igraph(.data, twomode = twomode)
+}
+
 # graphAM ####
 
 #' @rdname as

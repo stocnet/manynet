@@ -12,7 +12,7 @@
 
 ## Manipulating
 
-* Updated `to_waves()` to work on diff_model objects, add attributes and names.
+* `to_waves()` now works on diff_model objects, add attributes and names.
 
 ## Mapping
 
