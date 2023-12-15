@@ -20,7 +20,7 @@ theme_iheid <- function(base_size = 12, base_family = "Times") {
     + ggplot2::theme(
       line = ggplot2::element_line(colors["IHEIDBlack"]),
       rect = ggplot2::element_rect(fill = "#FFFFFF", linetype = 1,
-                                   linewidth = 0.4, colour = colors["IHEIDGrey"]),
+                                   linewidth = 0.6, colour = colors["IHEIDGrey"]),
       title = ggplot2::element_text(colour = colors["IHEIDRed"],
                                     size = base_size,
                            face = "bold"),
@@ -60,7 +60,7 @@ theme_ethz <- function(base_size = 12, base_family = "serif") {
     + ggplot2::theme(
       line = ggplot2::element_line(colors["ETHZ_Blue"]),
       rect = ggplot2::element_rect(fill = "#FFFFFF", linetype = 1,
-                                   linewidth = 0.4, colour = colors["ETHZ_Petrol"]),
+                                   linewidth = 0.6, colour = colors["ETHZ_Petrol"]),
       title = ggplot2::element_text(colour = colors["ETHZ_Green"],
                                     size = base_size,
                                     face = "bold"),
@@ -101,7 +101,7 @@ theme_uzh <- function(base_size = 12, base_family = "sans") {
     + ggplot2::theme(
       line = ggplot2::element_line(colors["UZH_Blue"]),
       rect = ggplot2::element_rect(fill = "#FFFFFF", linetype = 1,
-                                   linewidth = 0.4, colour = colors["UZH_Grey"]),
+                                   linewidth = 0.6, colour = colors["UZH_Grey"]),
       title = ggplot2::element_text(colour = colors["UZH_Orange"],
                                     size = base_size,
                                     face = "bold"),
@@ -142,7 +142,7 @@ theme_rug <- function(base_size = 12, base_family = "mono") {
     + ggplot2::theme(
       line = ggplot2::element_line(colors["RUG_Red"]),
       rect = ggplot2::element_rect(fill = "#FFFFFF", linetype = 1,
-                                   linewidth = 0.4, colour = colors["RUG_Black"]),
+                                   linewidth = 0.6, colour = colors["RUG_Black"]),
       title = ggplot2::element_text(colour = colors["RUG_Red"],
                                     size = base_size,
                                     face = "bold"),
