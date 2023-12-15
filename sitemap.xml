@@ -52,9 +52,6 @@
     <loc>https://snlab-ch.github.io/manynet/reference/generate.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/iheid_palette.html</loc>
-  </url>
-  <url>
     <loc>https://snlab-ch.github.io/manynet/reference/index.html</loc>
   </url>
   <url>
@@ -94,10 +91,16 @@
     <loc>https://snlab-ch.github.io/manynet/reference/ison_networkers.html</loc>
   </url>
   <url>
+    <loc>https://snlab-ch.github.io/manynet/reference/ison_physicians.html</loc>
+  </url>
+  <url>
     <loc>https://snlab-ch.github.io/manynet/reference/ison_southern_women.html</loc>
   </url>
   <url>
     <loc>https://snlab-ch.github.io/manynet/reference/ison_starwars.html</loc>
+  </url>
+  <url>
+    <loc>https://snlab-ch.github.io/manynet/reference/many_palettes.html</loc>
   </url>
   <url>
     <loc>https://snlab-ch.github.io/manynet/reference/miss.html</loc>
@@ -116,6 +119,9 @@
   </url>
   <url>
     <loc>https://snlab-ch.github.io/manynet/reference/reformat.html</loc>
+  </url>
+  <url>
+    <loc>https://snlab-ch.github.io/manynet/reference/scales.html</loc>
   </url>
   <url>
     <loc>https://snlab-ch.github.io/manynet/reference/split.html</loc>

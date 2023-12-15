@@ -18,7 +18,7 @@ e.g. changing the default colour of the graph's vertices and edges."><meta prope
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -61,25 +61,13 @@ e.g. changing the default colour of the graph's vertices and edges.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">theme_iheid</span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">12</span>, base_family <span class="op">=</span> <span class="st">"sans"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">theme_iheid</span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">12</span>, base_family <span class="op">=</span> <span class="st">"Times"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">scale_fill_iheid</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"IHEID"</span>, direction <span class="op">=</span> <span class="fl">1</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">theme_ethz</span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">12</span>, base_family <span class="op">=</span> <span class="st">"serif"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">scale_colour_iheid</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"IHEID"</span>, direction <span class="op">=</span> <span class="fl">1</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">theme_uzh</span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">12</span>, base_family <span class="op">=</span> <span class="st">"sans"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">scale_color_iheid</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"IHEID"</span>, direction <span class="op">=</span> <span class="fl">1</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">scale_fill_centres</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Centres"</span>, direction <span class="op">=</span> <span class="fl">1</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">scale_colour_centres</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Centres"</span>, direction <span class="op">=</span> <span class="fl">1</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">scale_color_centres</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Centres"</span>, direction <span class="op">=</span> <span class="fl">1</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">scale_fill_sdgs</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"SDGs"</span>, direction <span class="op">=</span> <span class="fl">1</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">scale_colour_sdgs</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"SDGs"</span>, direction <span class="op">=</span> <span class="fl">1</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">scale_color_sdgs</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"SDGs"</span>, direction <span class="op">=</span> <span class="fl">1</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">theme_rug</span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">12</span>, base_family <span class="op">=</span> <span class="st">"mono"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -91,36 +79,13 @@ e.g. changing the default colour of the graph's vertices and edges.</p>
 <dt>base_family</dt>
 <dd><p>Font family, by default "sans".</p></dd>
 
-
-<dt>palette</dt>
-<dd><p>Name of the palette. Current choices are:
-<code>IHEID</code>, <code>Centres</code>, and <code>SDGs</code>.</p></dd>
-
-
-<dt>direction</dt>
-<dd><p>Direction for using palette colors.</p></dd>
-
-
-<dt>...</dt>
-<dd><p>Extra arguments passed to <code><a href="https://ggplot2.tidyverse.org/reference/discrete_scale.html" class="external-link">ggplot2::discrete_scale()</a></code>.</p></dd>
-
 </dl></div>
-    <div id="value">
-    <h2>Value</h2>
-    
-
-<p>Themes the current ggraph to current IHEID guidelines.</p>
-    </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># autographr(to_mentoring(ison_brandes)) + </span></span></span>
 <span class="r-in"><span><span class="co"># labs(title = "Who leads and who follows?") +</span></span></span>
 <span class="r-in"><span><span class="co"># theme_iheid()</span></span></span>
-<span class="r-in"><span><span class="co">#ison_brandes %&gt;%</span></span></span>
-<span class="r-in"><span><span class="co">#mutate(core = migraph::node_is_core(ison_brandes)) %&gt;%</span></span></span>
-<span class="r-in"><span><span class="co">#autographr(node_color = "core") +</span></span></span>
-<span class="r-in"><span><span class="co">#scale_color_iheid()</span></span></span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>

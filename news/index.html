@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -53,6 +53,56 @@
       <small>Source: <a href="https://github.com/snlab-ch/manynet/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.3.0" id="manynet-030">manynet 0.3.0<a class="anchor" aria-label="anchor" href="#manynet-030"></a></h2>
+<p>2023-12-15</p>
+<div class="section level3">
+<h3 id="package-0-3-0">Package<a class="anchor" aria-label="anchor" href="#package-0-3-0"></a></h3>
+<ul><li>Overhaul of the README to summarise many of the unique aspects of the package</li></ul></div>
+<div class="section level3">
+<h3 id="making-0-3-0">Making<a class="anchor" aria-label="anchor" href="#making-0-3-0"></a></h3>
+<ul><li>Added <code><a href="../reference/as.html">as_tidygraph()</a></code> method for diff_model objects</li>
+<li>Added <code><a href="../reference/as.html">as_siena()</a></code> method for tidygraph objects</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-0-3-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-0-3-0"></a></h3>
+<ul><li>Manipulating functions now called Modifying</li>
+<li>
+<code><a href="../reference/split.html">to_waves()</a></code> now works on diff_model objects, add attributes and names</li>
+<li>
+<code><a href="../reference/is.html">is_multiplex()</a></code> now recognises a tie/edge ‘type’ attribute as evidence of multiplexity</li>
+<li>Deleted unnecessary reexports from other packages<ul><li>
+<code><a href="https://r.igraph.org/reference/make_bipartite_graph.html" class="external-link">igraph::is_bipartite()</a></code> is superseded by <code><a href="../reference/is.html">is_twomode()</a></code>
+</li>
+<li>
+<code><a href="https://tidygraph.data-imaginist.com/reference/activate.html" class="external-link">tidygraph::activate()</a></code> is superseded by <code><a href="../reference/tidy.html">mutate_ties()</a></code> and similar functions</li>
+</ul></li>
+<li>Fixed bug by replacing older <code><a href="https://r.igraph.org/reference/as_incidence_matrix.html" class="external-link">igraph::as_incidence_matrix()</a></code> and <code><a href="https://r.igraph.org/reference/graph_from_incidence_matrix.html" class="external-link">igraph::graph_from_incidence_matrix()</a></code> with <code><a href="https://r.igraph.org/reference/as_biadjacency_matrix.html" class="external-link">igraph::as_biadjacency_matrix()</a></code> and <code><a href="https://r.igraph.org/reference/graph_from_biadjacency_matrix.html" class="external-link">igraph::graph_from_biadjacency_matrix()</a></code>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="mapping-0-3-0">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-3-0"></a></h3>
+<ul><li>
+<code><a href="../reference/autographing.html">autographr()</a></code> now plots diff_model objects, showing the diffusion as a heatmap on the vertices</li>
+<li>
+<code><a href="../reference/autographing.html">autographs()</a></code> and <code><a href="../reference/autographing.html">autographd()</a></code> now utilise network information in diff_model objects to provide better layouts</li>
+<li>Fixed bug with specifying <code>node_size</code> in <code><a href="../reference/autographing.html">autographd()</a></code>
+</li>
+<li>
+<code>many_palettes</code> replaces <code>iheid_palette</code>
+</li>
+<li>Added new palettes, themes and scales for graphs<ul><li>
+<code><a href="../reference/themes.html">theme_ethz()</a></code>, <code><a href="../reference/scales.html">scale_color_ethz()</a></code>/<code><a href="../reference/scales.html">scale_colour_ethz()</a></code>, and <code><a href="../reference/scales.html">scale_fill_ethz()</a></code> for ETH Zürich</li>
+<li>
+<code><a href="../reference/themes.html">theme_uzh()</a></code>, <code><a href="../reference/scales.html">scale_color_uzh()</a></code>/<code><a href="../reference/scales.html">scale_colour_uzh()</a></code>, and <code><a href="../reference/scales.html">scale_fill_uzh()</a></code> for Uni Zürich</li>
+<li>
+<code><a href="../reference/themes.html">theme_rug()</a></code>, <code><a href="../reference/scales.html">scale_color_rug()</a></code>/<code><a href="../reference/scales.html">scale_colour_rug()</a></code>, and <code><a href="../reference/scales.html">scale_fill_rug()</a></code> for Uni Gröningen</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="data-0-3-0">Data<a class="anchor" aria-label="anchor" href="#data-0-3-0"></a></h3>
+<ul><li>Added <code>ison_physicians</code> data that includes four, multiplex networks with adoption data</li></ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.10" id="manynet-0210">manynet 0.2.10<a class="anchor" aria-label="anchor" href="#manynet-0210"></a></h2>
 <p>2023-12-06</p>

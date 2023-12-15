@@ -23,7 +23,7 @@ of network measures such as centrality."><meta property="og:image" content="http
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -261,6 +261,7 @@ with sensible defaults</p></li>
 <span class="r-in"><span><span class="co">#autographr(ison_lotr, layout = "multilevel",</span></span></span>
 <span class="r-in"><span><span class="co">#           node_color = "Race", level = "Race")</span></span></span>
 <span class="r-in"><span><span class="co">#autographs(to_egos(ison_adolescents))</span></span></span>
+<span class="r-in"><span><span class="co">#autographs(migraph::play_diffusion(ison_adolescents))</span></span></span>
 <span class="r-in"><span><span class="co">#ison_adolescents %&gt;%</span></span></span>
 <span class="r-in"><span><span class="co"># mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %&gt;%</span></span></span>
 <span class="r-in"><span><span class="co"># to_waves(attribute = "year") %&gt;%</span></span></span>
@@ -276,8 +277,7 @@ with sensible defaults</p></li>
 <span class="r-in"><span><span class="co">#            node_color = "color", node_size =  "size", edge_color = "e_color")</span></span></span>
 <span class="r-in"><span><span class="co">#autographd(play_diffusion(ison_adolescents, seeds = 4), layout = "circle")</span></span></span>
 <span class="r-in"><span><span class="co">#autographd(play_diffusion(ison_adolescents, seeds = 4, recovery = 0.2),</span></span></span>
-<span class="r-in"><span><span class="co">#.          layout = "circle")</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#           layout = "circle")</span></span></span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>
