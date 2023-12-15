@@ -19,8 +19,8 @@ theme_iheid <- function(base_size = 12, base_family = "Times") {
   (ggplot2::theme_minimal(base_size = base_size, base_family = base_family)
     + ggplot2::theme(
       line = ggplot2::element_line(colors["IHEIDBlack"]),
-      rect = ggplot2::element_rect(fill = colors["IHEIDGrey"],
-                          linetype = 0, colour = NA),
+      rect = ggplot2::element_rect(fill = "#FFFFFF", linetype = 1,
+                                   linewidth = 0.4, colour = colors["IHEIDGrey"]),
       title = ggplot2::element_text(colour = colors["IHEIDRed"],
                                     size = base_size,
                            face = "bold"),
@@ -59,8 +59,8 @@ theme_ethz <- function(base_size = 12, base_family = "serif") {
   (ggplot2::theme_minimal(base_size = base_size, base_family = base_family)
     + ggplot2::theme(
       line = ggplot2::element_line(colors["ETHZ_Blue"]),
-      rect = ggplot2::element_rect(fill = colors["ETHZ_Petrol"],
-                                   linetype = 0, colour = NA),
+      rect = ggplot2::element_rect(fill = "#FFFFFF", linetype = 1,
+                                   linewidth = 0.4, colour = colors["ETHZ_Petrol"]),
       title = ggplot2::element_text(colour = colors["ETHZ_Green"],
                                     size = base_size,
                                     face = "bold"),
@@ -100,8 +100,8 @@ theme_uzh <- function(base_size = 12, base_family = "sans") {
   (ggplot2::theme_minimal(base_size = base_size, base_family = base_family)
     + ggplot2::theme(
       line = ggplot2::element_line(colors["UZH_Blue"]),
-      rect = ggplot2::element_rect(fill = colors["UZH_Grey"],
-                                   linetype = 0, colour = NA),
+      rect = ggplot2::element_rect(fill = "#FFFFFF", linetype = 1,
+                                   linewidth = 0.4, colour = colors["UZH_Grey"]),
       title = ggplot2::element_text(colour = colors["UZH_Orange"],
                                     size = base_size,
                                     face = "bold"),
@@ -141,8 +141,8 @@ theme_rug <- function(base_size = 12, base_family = "mono") {
   (ggplot2::theme_minimal(base_size = base_size, base_family = base_family)
     + ggplot2::theme(
       line = ggplot2::element_line(colors["RUG_Red"]),
-      rect = ggplot2::element_rect(fill = colors["RUG_Black"],
-                                   linetype = 0, colour = NA),
+      rect = ggplot2::element_rect(fill = "#FFFFFF", linetype = 1,
+                                   linewidth = 0.4, colour = colors["RUG_Black"]),
       title = ggplot2::element_text(colour = colors["RUG_Red"],
                                     size = base_size,
                                     face = "bold"),
@@ -332,8 +332,7 @@ corp_color <- function(...) {
                    `ETHZ_Red`=	"#B7352D", `ETHZ_Purple` = "#A7117A",
                    `ETHZ_Grey`	= "#6F6F6F", `UZH_Blue` = "#0028a5",
                    `UZH_Grey` = "#a3adb7", `UZH_Orange` = "#dc6027",
-                   `RUG_Red` = "#dc002d", `RUG_White` = "#FFFFFF",
-                   `RUG_Black` = "#000000")
+                   `RUG_Red` = "#dc002d", `RUG_Black` = "#000000")
   cols <- c(...)
   if (is.null(cols))
     return (corp_colors)
@@ -370,7 +369,7 @@ corp_palette <- function(palette, ...) {
                                            "ETHZ_Green", "ETHZ_Bronze",
                                            "ETHZ_Red", "ETHZ_Purple", "ETHZ_Grey"),
                         `UZH` = corp_color("UZH_Blue", "UZH_Grey", "UZH_Orange"),
-                        `RUG` = corp_color("RUG_Red", "RUG_White", "RUG_Black"))
+                        `RUG` = corp_color("RUG_Red", "RUG_Black"))
   unlist(unname(corp_palettes[c(palette)]))
 }
 
