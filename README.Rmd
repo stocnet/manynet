@@ -202,44 +202,55 @@ and extensible by developments in those other packages too.
 
 ## Modifying
 
+Before or during analysis, you may need to modify the network you are analysing in various ways.
+Different packages have different syntaxes and vocabulary for such actions;
 `{manynet}`'s `to_*()` functions can be used on any class object 
-to reformat, transform, or split networks into networks with other properties, e.g.:
-
-- `r list_functions("^to_")`
+to reformat, transform, or split networks into networks with other properties.
 
 ### Reformatting
 
 Reformatting means changing the format of the network,
 e.g. from directed to undirected via `to_undirected()`.
 
+```{r directed_egs, echo = FALSE, dpi = 300, fig.height=4, warning=FALSE, message=FALSE}
+autographr(to_unnamed(ison_networkers)) + ggtitle("Directed", subtitle = "ison_networkers") + 
+    autographr(to_undirected(to_unnamed(ison_networkers))) + ggtitle("Undirected", subtitle = "to_undirected(ison_networkers)")
+```
+
 ### Transforming
 
 Transforming means changing the dimensions of the network,
 e.g. from a two-mode network to a one-mode projection via `to_mode1()`.
+
+```{r projection_egs, echo = FALSE, dpi = 300, fig.height=4, warning=FALSE, message=FALSE}
+library(ggplot2)
+autographr(ison_southern_women, layout = "stress") + ggtitle("Original", subtitle = "ison_southern_women") + 
+    autographr(to_mode1(ison_southern_women)) + ggtitle("Row Projection", subtitle = "to_mode1(ison_southern_women)") + 
+    autographr(to_mode2(ison_southern_women)) + ggtitle("Column Projection", subtitle = "to_mode2(ison_southern_women)") & 
+  theme(plot.subtitle = element_text(size = 10))
+```
 
 ### Splitting and Joining
 
 Splitting means separating a network,
 e.g. from a whole network to the various ego networks via `to_egos()`.
 
-#### Changing network data
+```{r splitting_egs, echo = FALSE, dpi = 300, fig.height=4, warning=FALSE, message=FALSE}
+autographr(ison_adolescents) + ggtitle("Original", subtitle = "ison_adolescents") + 
+    autographs(to_egos(ison_adolescents)) + ggtitle("Ego Splitting", subtitle = "to_egos(ison_adolescents)")
+```
 
 Those functions that split a network into a list of networks are
 distinguishable as those `to_*()` functions that are named in the plural.
+Split data can be rejoined using the `from_*()` family of functions.
+
+See also `r list_functions("^to_")` and `r list_functions("^from_")`.
 
 ### Extracting
 
-`{manynet}` offers a range of measures and models with sensible defaults.
-Many wrap existing functions in common packages for use with one-mode networks,
-but extend these to treat and/or normalise for two-mode (and sometimes three-mode) networks correctly.
-Functions are given intuitive and succinct names that avoid conflicts 
-with existing function names wherever possible.
-
 `{manynet}`'s `*is_*()` functions offer fast logical tests of various network properties.
-These can be used to create new 
 
 - `r list_functions("^is_")`
-
 
 ## Mapping
 

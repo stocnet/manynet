@@ -171,51 +171,52 @@ extensible by developments in those other packages too.
 
 ## Modifying
 
-`{manynet}`’s `to_*()` functions can be used on any class object to
-reformat, transform, or split networks into networks with other
-properties, e.g.:
-
-- `to_acyclic()`, `to_anti()`, `to_blocks()`, `to_components()`,
-  `to_directed()`, `to_egos()`, `to_eulerian()`, `to_galois()`,
-  `to_giant()`, `to_matching()`, `to_mentoring()`, `to_mode1()`,
-  `to_mode2()`, `to_multilevel()`, `to_named()`, `to_no_isolates()`,
-  `to_onemode()`, `to_reciprocated()`, `to_redirected()`,
-  `to_simplex()`, `to_slices()`, `to_subgraph()`, `to_subgraphs()`,
-  `to_ties()`, `to_twomode()`, `to_undirected()`, `to_uniplex()`,
-  `to_unnamed()`, `to_unsigned()`, `to_unweighted()`, `to_waves()`
+Before or during analysis, you may need to modify the network you are
+analysing in various ways. Different packages have different syntaxes
+and vocabulary for such actions; `{manynet}`’s `to_*()` functions can be
+used on any class object to reformat, transform, or split networks into
+networks with other properties.
 
 ### Reformatting
 
 Reformatting means changing the format of the network, e.g. from
 directed to undirected via `to_undirected()`.
 
+<img src="man/figures/README-directed_egs-1.png" width="100%" />
+
 ### Transforming
 
 Transforming means changing the dimensions of the network, e.g. from a
 two-mode network to a one-mode projection via `to_mode1()`.
+
+<img src="man/figures/README-projection_egs-1.png" width="100%" />
 
 ### Splitting and Joining
 
 Splitting means separating a network, e.g. from a whole network to the
 various ego networks via `to_egos()`.
 
-#### Changing network data
+<img src="man/figures/README-splitting_egs-1.png" width="100%" />
 
 Those functions that split a network into a list of networks are
 distinguishable as those `to_*()` functions that are named in the
-plural.
+plural. Split data can be rejoined using the `from_*()` family of
+functions.
+
+See also `to_acyclic()`, `to_anti()`, `to_blocks()`, `to_components()`,
+`to_directed()`, `to_egos()`, `to_eulerian()`, `to_galois()`,
+`to_giant()`, `to_matching()`, `to_mentoring()`, `to_mode1()`,
+`to_mode2()`, `to_multilevel()`, `to_named()`, `to_no_isolates()`,
+`to_onemode()`, `to_reciprocated()`, `to_redirected()`, `to_simplex()`,
+`to_slices()`, `to_subgraph()`, `to_subgraphs()`, `to_ties()`,
+`to_twomode()`, `to_undirected()`, `to_uniplex()`, `to_unnamed()`,
+`to_unsigned()`, `to_unweighted()`, `to_waves()` and `from_egos()`,
+`from_slices()`, `from_subgraphs()`, `from_waves()`.
 
 ### Extracting
 
-`{manynet}` offers a range of measures and models with sensible
-defaults. Many wrap existing functions in common packages for use with
-one-mode networks, but extend these to treat and/or normalise for
-two-mode (and sometimes three-mode) networks correctly. Functions are
-given intuitive and succinct names that avoid conflicts with existing
-function names wherever possible.
-
 `{manynet}`’s `*is_*()` functions offer fast logical tests of various
-network properties. These can be used to create new
+network properties.
 
 - `is_acyclic()`, `is_aperiodic()`, `is_complex()`, `is_connected()`,
   `is_directed()`, `is_dynamic()`, `is_edgelist()`, `is_eulerian()`,
