@@ -86,7 +86,7 @@ routines included for
 [GraphML](http://graphml.graphdrawing.org), and
 [DynetML](http://casos.cs.cmu.edu/projects/dynetml/) files, e.g.:
 
-<img src="man/figures/README-import-graph-1.png" width="100%" />
+![](https://www.jameshollway.com/post/manynet/README-import-graph-1.png)
 
 If you cannot remember the file name/path, then just run `read_*()` with
 the parentheses empty, and a file selection popup will open so that you
@@ -109,7 +109,7 @@ and instructional network datasets, all thoroughly documented and ready
 for analysis. Here are just a few examples, all available in
 `{manynet}`:
 
-<img src="man/figures/README-ison_egs-1.png" width="100%" />
+![](https://www.jameshollway.com/post/manynet/README-ison_egs-1.png)
 
 Here are some others: `ison_adolescents`, `ison_algebra`,
 `ison_brandes`, `ison_friends`, `ison_karateka`, `ison_konigsberg`,
@@ -124,7 +124,7 @@ Here are some others: `ison_adolescents`, `ison_algebra`,
 structure, and will always create the same format from the same inputs,
 e.g.:
 
-<img src="man/figures/README-create_egs-1.png" width="100%" />
+![](https://www.jameshollway.com/post/manynet/README-create_egs-1.png)
 
 See also `create_components()`, `create_core()`, `create_empty()`,
 `create_explicit()`, `create_filled()`, `create_lattice()`,
@@ -134,7 +134,7 @@ The `generate_*` group of functions generate networks from generative
 mechanisms that may include some random aspect, and so will return a
 different output each time they are run, e.g.:
 
-<img src="man/figures/README-generate_egs-1.png" width="100%" />
+![](https://www.jameshollway.com/post/manynet/README-generate_egs-1.png)
 
 See also `generate_permutation()`, `generate_random()`,
 `generate_scalefree()`, `generate_smallworld()`, `generate_utilities()`.
@@ -148,7 +148,7 @@ in the first mode, and 5 nodes in the second mode. Some of these
 functions wrap existing algorithms in other packages, while others are
 unique offerings or add additional formats, e.g. two-mode networks.
 
-<img src="man/figures/README-generate_tm-1.png" width="100%" />
+![](https://www.jameshollway.com/post/manynet/README-generate_tm-1.png)
 
 #### Translating network data
 
@@ -159,7 +159,7 @@ functions can be used to coerce objects from one of many common classes
 into any other. Below is a directed graph showing the currently
 available options:
 
-<img src="man/figures/README-coercion-graph-1.png" width="100%" />
+![](https://www.jameshollway.com/post/manynet/README-coercion-graph-1.png)
 
 These functions are designed to be as intuitive and lossless as
 possible, outperforming many other class-coercion packages.
@@ -186,21 +186,21 @@ networks with other properties.
 Reformatting means changing the format of the network, e.g. from
 directed to undirected via `to_undirected()`.
 
-<img src="man/figures/README-directed_egs-1.png" width="100%" />
+![](https://www.jameshollway.com/post/manynet/README-directed_egs-1.png)
 
 ### Transforming
 
 Transforming means changing the dimensions of the network, e.g. from a
 two-mode network to a one-mode projection via `to_mode1()`.
 
-<img src="man/figures/README-projection_egs-1.png" width="100%" />
+![](https://www.jameshollway.com/post/manynet/README-projection_egs-1.png)
 
 ### Splitting and Joining
 
 Splitting means separating a network, e.g. from a whole network to the
 various ego networks via `to_egos()`.
 
-<img src="man/figures/README-splitting_egs-1.png" width="100%" />
+![](https://www.jameshollway.com/post/manynet/README-splitting_egs-1.png)
 
 Those functions that split a network into a list of networks are
 distinguishable as those `to_*()` functions that are named in the
@@ -241,7 +241,7 @@ can view their network’s structure or distribution quickly with a
 minimum of fuss. Compare the output from `{manynet}` with a similar
 default from `{igraph}`:
 
-<img src="man/figures/README-layout-comparison-1.png" width="100%" />
+![](https://www.jameshollway.com/post/manynet/README-layout-comparison-1.png)
 
 Here the `{manynet}` function recognises that the network is a two-mode
 network and uses a bipartite layout by default, and recognises that the
@@ -259,7 +259,7 @@ Changing the size and colors of nodes and ties is as easy as specifying
 the function’s relevant argument with a replacement, or indicating from
 which attribute it should inherit this information.
 
-<img src="man/figures/README-more-options-1.png" width="100%" />
+![](https://www.jameshollway.com/post/manynet/README-more-options-1.png)
 
 #### More layouts
 
@@ -269,7 +269,7 @@ additional layout algorithms for snapping layouts to a grid, visualising
 partitions horizontally, vertically, or concentrically, or conforming to
 configurational coordinates.
 
-<img src="man/figures/README-more-layouts-1.png" width="100%" />
+![](https://www.jameshollway.com/post/manynet/README-more-layouts-1.png)
 
 #### More themes and scales
 
@@ -281,7 +281,7 @@ to quickly make sure your plots conform to your institution or taste,
 then it is easy to do with themes and scales that update the basic look
 and color palette used in your plots.
 
-<img src="man/figures/README-more-themes-1.png" width="100%" />
+![](https://www.jameshollway.com/post/manynet/README-more-themes-1.png)
 
 More themes are on their way, and we’re happy to take suggestions.
 
@@ -291,7 +291,7 @@ Second, `autographs()` is used to graph multiple networks together,
 which can be useful for ego networks or network panels. `{patchwork}` is
 used to help arrange individual plots together.
 
-<img src="man/figures/README-autographs-1.png" width="100%" />
+![](https://www.jameshollway.com/post/manynet/README-autographs-1.png)
 
 ### autographd
 
@@ -299,7 +299,7 @@ Third, `autographd()` is used to visualise dynamic networks. It uses
 `{gganimate}` and `{gifski}` to create a gif that visualises network
 changes over time. It really couldn’t be easier.
 
-<img src="man/figures/README-autographd-1.gif" width="100%" />
+![](https://www.jameshollway.com/post/manynet/README-autographd-1.gif)
 
 <!-- provide a common set of tools that can be used to import, export, create, and manipulate network data in a wide variety of formats, -->
 <!-- and obtain a good first visualisation quickly. -->
