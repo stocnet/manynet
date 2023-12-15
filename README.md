@@ -36,19 +36,105 @@ rely on a very different visual language (and sometimes plotting
 engine), which can mess up your pretty presentation or paper. This can
 make learning and using network analysis tools in R challenging.
 
-*That’s why `{manynet}` helps researchers with Making, Manipulating, and
-Mapping networks.*
-
-For Measures, Memberships, or Models, see
+By contrast, we build packages that offer *many* analytic tools that
+work on *many* (if not most) types of networks of all kinds. `{manynet}`
+is the first package that helps researchers with Making, Modifying, and
+Mapping networks. For Measures, Memberships, or Models, see
 [`{migraph}`](https://snlab-ch.github.io/migraph/).
+
+- [Making](#making)
+  - [Importing network data](#importing-network-data)
+  - [Identifying network data](#identifying-network-data)
+  - [Coercing network data](#coercing-network-data)
+  - [Inventing network data](#inventing-network-data)
+- [Modifying](#modifying)
+  - [Reformatting](#reformatting)
+  - [Transforming](#transforming)
+  - [Splitting and Joining](#splitting-and-joining)
+    - [Changing network data](#changing-network-data)
+  - [Extracting](#extracting)
+- [Mapping](#mapping)
+  - [Layouts](#layouts)
+  - [Themes and Scales](#themes-and-scales)
+- [Installation](#installation)
+  - [Stable](#stable)
+  - [Development](#development)
+  - [Tutorials](#tutorials)
+- [Relationship to other packages](#relationship-to-other-packages)
+- [Funding details](#funding-details)
 
 ## Making
 
-First, `{manynet}` provides tools to make networks in any number of
-common formats. Networks can come from many sources, some can be
-imported from outside R, some can be found in this or other packages and
-coerced into some common format, and many types of networks can be
-created or generated using functions in this package.
+Networks can come from many sources and be found in many different
+formats: some can be found in this or other packages, some can be
+created or generated using functions in this package, and others can be
+downloaded from the internet and imported from your file system.
+`{manynet}` provides tools to make networks from all these sources in
+any number of common formats.
+
+#### Importing network data
+
+`{manynet}` offers a number of options for importing network data found
+in other repositories. Besides importing and exporting to Excel
+edgelists, nodelists, and (bi)adjacency matrices, there are specific
+routines included for
+[UCINET](http://www.analytictech.com/archive/ucinet.htm),
+[Pajek](http://mrvar.fdv.uni-lj.si/pajek/),
+[GraphML](http://graphml.graphdrawing.org), and
+[DynetML](http://casos.cs.cmu.edu/projects/dynetml/) files, e.g.:
+
+<img src="man/figures/README-import-graph-1.png" width="100%" />
+
+If you cannot remember the file name/path, then just run `read_*()` with
+the parentheses empty, and a file selection popup will open so that you
+can browse through your file system to find the file. Usually both
+`read_*()` and `write_*()` are offered to make sure that `{manynet}` is
+compatible with your larger project and analytic workflow.
+
+- `read_dynetml()`, `read_edgelist()`, `read_graphml()`,
+  `read_matrix()`, `read_nodelist()`, `read_pajek()`, `read_ucinet()`
+- `write_edgelist()`, `write_graphml()`, `write_matrix()`,
+  `write_nodelist()`, `write_pajek()`, `write_ucinet()`
+
+#### Identifying network data
+
+There may be no need to import network data though, if that network data
+already exists in a package in R. To facilitate testing and to
+contribute to an ecosystem of easily accessible network data,
+particularly for pedagogical purposes, we include a number of classical
+and instructional network datasets, all thoroughly documented and ready
+for analysis. Here are just a few examples, all available in
+`{manynet}`:
+
+<img src="man/figures/README-ison_egs-1.png" width="100%" />
+
+Here are some others: `ison_adolescents`, `ison_algebra`,
+`ison_brandes`, `ison_friends`, `ison_karateka`, `ison_konigsberg`,
+`ison_laterals`, `ison_lawfirm`, `ison_lotr`,
+`ison_marvel_relationships`, `ison_marvel_teams`, `ison_networkers`,
+`ison_physicians`, `ison_southern_women`, `ison_starwars`
+
+#### Coercing network data
+
+Once you have imported network data, or found network data in this or
+other packages in R, you will need to work with this data. `{manynet}`’s
+`as_*()` functions can be used to coerce objects from one of many common
+classes into any other. Below is a directed graph showing the currently
+available options:
+
+<img src="man/figures/README-coercion-graph-1.png" width="100%" />
+
+These functions are designed to be as intuitive and lossless as
+possible, outperforming many other class-coercion packages.
+
+We use these functions internally in every `{manynet}` and `{migraph}`
+function to (1) allow them to be run on any compatible network format
+and (2) use the most efficient algorithm available. This makes
+`{manynet}` and `{migraph}` compatible with your existing workflow,
+whether you use base R matrices or edgelists as data frames,
+[`{igraph}`](https://igraph.org/r/), [`{network}`](https://statnet.org),
+or [`{tidygraph}`](https://tidygraph.data-imaginist.com/index.html), and
+extensible by developments in those other packages too.
 
 #### Inventing network data
 
@@ -77,44 +163,7 @@ first mode, and 5 nodes in the second mode. Some of these functions wrap
 existing algorithms in other packages, while others are unique offerings
 or add additional formats, e.g. two-mode networks.
 
-#### Importing network data
-
-`{manynet}` offers a number of options for importing network data found
-in other repositories. Besides importing and exporting to Excel
-edgelists and nodelists, there are specific routines included for
-[UCINET](http://www.analytictech.com/archive/ucinet.htm),
-[Pajek](http://mrvar.fdv.uni-lj.si/pajek/), and
-[DynetML](http://casos.cs.cmu.edu/projects/dynetml/) files, e.g.:
-
-<img src="man/figures/README-import-graph-1.png" width="100%" />
-
-- `read_dynetml()`, `read_edgelist()`, `read_graphml()`,
-  `read_matrix()`, `read_nodelist()`, `read_pajek()`, `read_ucinet()`
-- `write_edgelist()`, `write_graphml()`, `write_matrix()`,
-  `write_nodelist()`, `write_pajek()`, `write_ucinet()`
-
-#### Coercing network data
-
-There is also a lot of network data in addition to analytic functions
-that already reside in various packages in R. Once network data is in R,
-`{manynet}`’s `as_*()` functions can be used to translate objects from
-one of the above classes into any other, and include:
-
-<img src="man/figures/README-coercion-graph-1.png" width="100%" />
-
-These functions are designed to be as intuitive and lossless as
-possible, outperforming many other class-coercion packages.
-
-We use these functions internally in every `{manynet}` function to (1)
-allow them to be run on any compatible network format and (2) use the
-most efficient algorithm available. This makes `{manynet}` compatible
-with your existing workflow, whether you use base R matrices or
-edgelists as data frames, [`{igraph}`](https://igraph.org/r/),
-[`{network}`](https://statnet.org), or
-[`{tidygraph}`](https://tidygraph.data-imaginist.com/index.html), and
-extensible by developments in those other packages too.
-
-## Manipulating
+## Modifying
 
 `{manynet}`’s `to_*()` functions can be used on any class object to
 reformat, transform, or split networks into networks with other
@@ -178,7 +227,7 @@ First, `autographr()` is used to graph networks in any of the
 can view their network’s structure or distribution quickly with a
 minimum of fuss.
 
-<img src="man/figures/README-autographs-1.png" width="100%" />
+<img src="man/figures/README-autographr-def-1.png" width="100%" />
 
 Second, `autographs()` is used to graph multiple networks together,
 which can be useful for ego networks or network panels.
@@ -196,8 +245,6 @@ In addition, `{manynet}` offers some additional layout algorithms for
 snapping layouts to a grid or visualising partitions horizontally,
 vertically, or concentrically. The following figures illustrate the
 difference in results over `{igraph}`:
-
-    #> Warning: package 'igraph' was built under R version 4.2.3
 
 <img src="man/figures/README-layout-comparison-1.png" width="100%" />
 

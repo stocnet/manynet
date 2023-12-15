@@ -50,16 +50,113 @@ And they can rely on a very different visual language (and sometimes plotting en
 which can mess up your pretty presentation or paper.
 This can make learning and using network analysis tools in R challenging.
 
-_That's why `{manynet}` helps researchers with Making, Manipulating, and Mapping networks._
-
+By contrast, we build packages that offer _many_ analytic tools that work on _many_ (if not most) types of networks of all kinds.
+`{manynet}` is the first package that helps researchers with Making, Modifying, and Mapping networks.
 For Measures, Memberships, or Models, see [`{migraph}`](https://snlab-ch.github.io/migraph/).
+
+- [Making](#making)
+    - [Importing network data](#importing-network-data)
+    - [Identifying network data](#identifying-network-data)
+    - [Coercing network data](#coercing-network-data)
+    - [Inventing network data](#inventing-network-data)
+- [Modifying](#modifying)
+  - [Reformatting](#reformatting)
+  - [Transforming](#transforming)
+  - [Splitting and Joining](#splitting-and-joining)
+    - [Changing network data](#changing-network-data)
+  - [Extracting](#extracting)
+- [Mapping](#mapping)
+  - [Layouts](#layouts)
+  - [Themes and Scales](#themes-and-scales)
+- [Installation](#installation)
+  - [Stable](#stable)
+  - [Development](#development)
+  - [Tutorials](#tutorials)
+- [Relationship to other packages](#relationship-to-other-packages)
+- [Funding details](#funding-details)
 
 ## Making
 
-First, `{manynet}` provides tools to make networks in any number of common formats.
-Networks can come from many sources, some can be imported from outside R, 
-some can be found in this or other packages and coerced into some common format, 
-and many types of networks can be created or generated using functions in this package.
+Networks can come from many sources and be found in many different formats: 
+some can be found in this or other packages, 
+some can be created or generated using functions in this package,
+and others can be downloaded from the internet and imported from your file system.
+`{manynet}` provides tools to make networks from all these sources in any number of common formats.
+
+#### Importing network data
+
+`{manynet}` offers a number of options
+for importing network data found in other repositories.
+Besides importing and exporting to Excel edgelists, nodelists, and (bi)adjacency matrices,
+there are specific routines included for 
+[UCINET](http://www.analytictech.com/archive/ucinet.htm), 
+[Pajek](http://mrvar.fdv.uni-lj.si/pajek/),
+[GraphML](http://graphml.graphdrawing.org),
+and [DynetML](http://casos.cs.cmu.edu/projects/dynetml/) files, e.g.:
+
+```{r import-graph, echo = FALSE, dpi = 300, fig.height=2.5}
+imports <- igraph::graph_from_literal(ucinet:pajek+--+tidygraph,
+                                      matrix:dynetml--+tidygraph,
+                                      edgelist:nodelist+--+tibble)
+imports <- imports %>% mutate(type = ifelse(node_names(imports)%in% c("tidygraph","tibble"), TRUE, FALSE))
+autographr(imports, node_size = 4)
+```
+
+If you cannot remember the file name/path, then just run `read_*()` with the parentheses empty,
+and a file selection popup will open so that you can browse through your file system to find the file.
+Usually both `read_*()` and `write_*()` are offered to make sure that `{manynet}` is compatible with your
+larger project and analytic workflow.
+
+- `r list_functions("^read_")`
+- `r list_functions("^write_")`
+
+#### Identifying network data
+
+There may be no need to import network data though, if that network data already exists in a package in R.
+To facilitate testing and to contribute to an ecosystem of easily accessible network data, 
+particularly for pedagogical purposes,
+we include a number of classical and instructional network datasets,
+all thoroughly documented and ready for analysis.
+Here are just a few examples, all available in `{manynet}`:
+
+```{r ison_egs, echo = FALSE, dpi = 300, message=FALSE}
+library(patchwork)
+(autographr(ison_karateka) + ggtitle("Karateka", subtitle = "Zachary 1977") + 
+    autographr(ison_southern_women) + ggtitle("Southern Women", subtitle = "Davis et al 1941")) /
+  (autographr(ison_lawfirm) + ggtitle("Law Firm", subtitle = "Lazega 2001") + 
+     autographr(ison_networkers, labels = FALSE) + ggtitle("Networkers", subtitle = "Freeman and Freeman 1979"))
+```
+
+Here are some others: `r list_data("^ison_")`
+
+#### Coercing network data
+
+Once you have imported network data, or found network data in this or other packages in R,
+you will need to work with this data.
+`{manynet}`'s `as_*()` functions can be used to coerce objects 
+from one of many common classes into any other.
+Below is a directed graph showing the currently available options:
+
+```{r coercion-graph, echo = FALSE, dpi = 300}
+autographr(igraph::graph_from_literal(edgelist:matrix:igraph:network:tidygraph+--+edgelist:matrix:igraph:network:tidygraph,
+                                      edgelist:matrix:igraph:network:tidygraph--+graphAM,
+                                      tidygraph:igraph--+siena,
+                                      siena:goldfish--+edgelist:matrix:igraph:network:tidygraph:graphAM),
+           "circle", node_size = 4)
+```
+
+These functions are designed to be as intuitive and lossless as possible,
+outperforming many other class-coercion packages.
+
+We use these functions internally in every `{manynet}` and `{migraph}` function to 
+(1) allow them to be run on any compatible network format
+and (2) use the most efficient algorithm available.
+This makes `{manynet}` and `{migraph}` compatible with your existing workflow,
+whether you use base R matrices or edgelists as data frames, 
+[`{igraph}`](https://igraph.org/r/),
+[`{network}`](https://statnet.org), or 
+[`{tidygraph}`](https://tidygraph.data-imaginist.com/index.html),
+and extensible by developments in those other packages too.
 
 #### Inventing network data
 
@@ -88,56 +185,7 @@ Some of these functions wrap existing algorithms in other packages,
 while others are unique offerings or add additional formats,
 e.g. two-mode networks.
 
-#### Importing network data
-
-`{manynet}` offers a number of options
-for importing network data found in other repositories.
-Besides importing and exporting to Excel edgelists and nodelists,
-there are specific routines included for 
-[UCINET](http://www.analytictech.com/archive/ucinet.htm), 
-[Pajek](http://mrvar.fdv.uni-lj.si/pajek/),
-and [DynetML](http://casos.cs.cmu.edu/projects/dynetml/) files, e.g.:
-
-```{r import-graph, echo = FALSE, dpi = 300, fig.height=2.5}
-imports <- igraph::graph_from_literal(ucinet:pajek+--+tidygraph,
-                                      matrix:dynetml--+tidygraph,
-                                      edgelist:nodelist+--+tibble)
-imports <- imports %>% mutate(type = ifelse(node_names(imports)%in% c("tidygraph","tibble"), TRUE, FALSE))
-autographr(imports, node_size = 4)
-```
-
-- `r list_functions("^read_")`
-- `r list_functions("^write_")`
-
-#### Coercing network data
-
-There is also a lot of network data in addition to analytic functions that already reside in various packages in R.
-Once network data is in R,
-`{manynet}`'s `as_*()` functions can be used to translate objects 
-from one of the above classes into any other, and include:
-
-```{r coercion-graph, echo = FALSE, dpi = 300}
-autographr(igraph::graph_from_literal(edgelist:matrix:igraph:network:tidygraph+--+edgelist:matrix:igraph:network:tidygraph,
-                                      edgelist:matrix:igraph:network:tidygraph--+graphAM,
-                                      igraph--+siena,
-                                      siena:goldfish--+edgelist:matrix:igraph:network:tidygraph:graphAM),
-           "circle", node_size = 4)
-```
-
-These functions are designed to be as intuitive and lossless as possible,
-outperforming many other class-coercion packages.
-
-We use these functions internally in every `{manynet}` function to 
-(1) allow them to be run on any compatible network format
-and (2) use the most efficient algorithm available.
-This makes `{manynet}` compatible with your existing workflow,
-whether you use base R matrices or edgelists as data frames, 
-[`{igraph}`](https://igraph.org/r/),
-[`{network}`](https://statnet.org), or 
-[`{tidygraph}`](https://tidygraph.data-imaginist.com/index.html),
-and extensible by developments in those other packages too.
-
-## Manipulating
+## Modifying
 
 `{manynet}`'s `to_*()` functions can be used on any class object 
 to reformat, transform, or split networks into networks with other properties, e.g.:
@@ -187,7 +235,7 @@ First, `autographr()` is used to graph networks in any of the `{manynet}` format
 It includes sensible defaults so that researchers can view their network's structure
 or distribution quickly with a minimum of fuss.
 
-```{r autographs, echo = FALSE, dpi = 300}
+```{r autographr-def, echo = FALSE, dpi = 300}
 autographr(ison_adolescents)
 ```
 
