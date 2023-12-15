@@ -25,7 +25,7 @@ coverage](https://codecov.io/gh/snlab-ch/manynet/branch/main/graph/badge.svg)](h
 
 ## About the package
 
-While many great packages for network analysis exist for R, all with
+While many awesome packages for network analysis exist for R, all with
 their own offerings and advantages, they also all have their own
 vocabulary, syntax, and expected formats for data inputs and analytic
 outputs. Many of these packages only work on *some* types of networks
