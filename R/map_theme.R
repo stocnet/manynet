@@ -371,7 +371,7 @@ corp_palette <- function(palette, ...) {
                                            "ETHZ_Red", "ETHZ_Purple", "ETHZ_Grey"),
                         `UZH` = corp_color("UZH_Blue", "UZH_Grey", "UZH_Orange"),
                         `RUG` = corp_color("RUG_Red", "RUG_White", "RUG_Black"))
-  corp_palettes[[palette]]
+  unlist(unname(corp_palettes[c(palette)]))
 }
 
 palette_gen <- function(palette, direction = 1) {

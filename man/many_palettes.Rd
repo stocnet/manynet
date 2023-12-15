@@ -27,4 +27,5 @@ Many Palettes generator
 }
 \examples{
 #many_palettes("IHEID")
+#many_palettes()
 }

@@ -10,10 +10,13 @@
 #' @source Adapted from \url{https://github.com/karthik/wesanderson/blob/master/R/colors.R}
 #' @examples
 #' #many_palettes("IHEID")
+#' #many_palettes()
 #' @export
 many_palettes <- function(palette, n, type = c("discrete", "continuous")) {
   type <- match.arg(type)
-  pal <- corp_palette(palette)
+  if (missing(palette)) {
+    pal <- corp_palette(c("IHEID", "SDGs", "Centres", "ETHZ", "RUG", "UZH"))
+  } else pal <- corp_palette(palette)
   if (is.null(pal))
     stop("Palette not found.")
   if (missing(n)) {
@@ -31,7 +34,7 @@ many_palettes <- function(palette, n, type = c("discrete", "continuous")) {
   graphics::rect(0, 0.9, n + 1, 1.1, col = grDevices::rgb(1, 1, 1, 0.8),
                  border = NA)
   graphics::text(c(seq_len(n)), 1, labels = attr(x, "name"),
-                 cex = 1, family = "serif", srt = 90)
+                 cex = 0.9, family = "serif", srt = 90)
 }
 
 colorsafe_palette <- c("#d73027", "#4575b4", "#1B9E77","#D95F02","#7570B3",
