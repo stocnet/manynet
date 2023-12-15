@@ -124,8 +124,8 @@ Here are just a few examples, all available in `{manynet}`:
 
 ```{r ison_egs, echo = FALSE, dpi = 250, message=FALSE}
 library(patchwork)
-(autographr(ison_karateka) + ggtitle("Karateka Class", subtitle = "Zachary 1977") + 
-    autographr(ison_southern_women) + ggtitle("Southern Women", subtitle = "Davis et al 1941")) /
+(autographr(to_unnamed(ison_karateka)) + ggtitle("Karateka Class", subtitle = "Zachary 1977") + 
+    autographr(to_unnamed(ison_southern_women)) + ggtitle("Southern Women", subtitle = "Davis et al 1941")) /
   (autographr(ison_lawfirm) + ggtitle("Law Firm", subtitle = "Lazega 2001") + 
      autographr(ison_algebra, labels = FALSE) + ggtitle("Algebra Class", subtitle = "McFarland 2001"))
 ```
@@ -239,9 +239,9 @@ autographr(ison_southern_women, layout = "stress") + ggtitle("Original", subtitl
 Splitting means separating a network,
 e.g. from a whole network to the various ego networks via `to_egos()`.
 
-```{r splitting_egs, echo = FALSE, dpi = 300, fig.height=4, warning=FALSE, message=FALSE}
+```{r splitting_egs, echo = FALSE, dpi = 250, fig.height=4, warning=FALSE, message=FALSE}
 autographr(ison_adolescents) + ggtitle("Original", subtitle = "ison_adolescents") + 
-    autographs(to_egos(ison_adolescents)) + ggtitle("Ego Splitting", subtitle = "to_egos(ison_adolescents)")
+    autographs(lapply(to_egos(ison_adolescents), to_unnamed)) + ggtitle("Ego Splitting", subtitle = "to_egos(ison_adolescents)")
 ```
 
 Those functions that split a network into a list of networks are
@@ -317,10 +317,10 @@ snapping layouts to a grid,
 visualising partitions horizontally, vertically, or concentrically,
 or conforming to configurational coordinates.
 
-```{r more-layouts, echo = FALSE, message=FALSE, dpi = 300}
+```{r more-layouts, echo = FALSE, message=FALSE, dpi = 250}
 (autographr(ison_southern_women, layout = "concentric") + ggtitle("Concentric layout")) /
-  ((autographr(create_explicit(A-+B-+C, A-+C)) + ggtitle("Triad layout")) |
-  (autographr(create_explicit(A-+C, A-+D, B-+C, B-+D)) + ggtitle("Quad layout")))
+  ((autographr(to_unnamed(create_explicit(A-+B-+C, A-+C))) + ggtitle("Triad layout")) |
+  (autographr(to_unnamed(create_explicit(A-+C, A-+D, B-+C, B-+D))) + ggtitle("Quad layout")))
 ```
 
 #### More themes and scales
@@ -333,13 +333,13 @@ If you want to quickly make sure your plots conform to your institution or taste
 then it is easy to do with themes and scales that update the basic look and color palette
 used in your plots.
 
-```{r more-themes, echo = FALSE, message=FALSE, dpi = 300, fig.height=3.5}
+```{r more-themes, echo = FALSE, message=FALSE, dpi = 300, fig.height=3}
 p <- autographr(ison_lawfirm, node_color = "Practice") + 
   ggtitle("Original")
 p + p + theme_iheid() + scale_color_iheid() + 
   ggtitle("Graduate Institute", subtitle = "_iheid") +
   p + theme_ethz() + scale_color_ethz() + 
-  ggtitle("ETH Zürich", subtitle = "_ethz")
+  ggtitle("ETH Zürich", subtitle = "_ethz") & ggplot2::theme(legend.position = "none")
 ```
 
 More themes are on their way, and we're happy to take suggestions.
