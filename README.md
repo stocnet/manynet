@@ -53,8 +53,12 @@ Mapping networks. For Measures, Memberships, or Models, see
   - [Splitting and Joining](#splitting-and-joining)
   - [Extracting](#extracting)
 - [Mapping](#mapping)
-  - [Layouts](#layouts)
-  - [Themes and Scales](#themes-and-scales)
+  - [autographr](#autographr)
+  - [More options](#more-options)
+  - [More layouts](#more-options)
+  - [More themes and scales](#more-themes-and-scales)
+  - [autographs](#autographs)
+  - [autographd](#autographd)
 - [Installation](#installation)
   - [Stable](#stable)
   - [Development](#development)
@@ -229,31 +233,73 @@ network properties.
 `{manynet}` includes three one-line graphing functions with sensible
 defaults based on the network’s properties.
 
+### autographr
+
 First, `autographr()` is used to graph networks in any of the
 `{manynet}` formats. It includes sensible defaults so that researchers
 can view their network’s structure or distribution quickly with a
-minimum of fuss.
-
-<img src="man/figures/README-autographr-def-1.png" width="100%" />
-
-Second, `autographs()` is used to graph multiple networks together,
-which can be useful for ego networks or network panels.
-
-<img src="man/figures/README-autographs-ego-1.png" width="100%" />
-
-- `autographd()` is used to graph dynamic networks.
-
-This also makes extending and theming default output easy, and
-`{patchwork}` is used to help arrange individual plots together.
-
-### Layouts
-
-In addition, `{manynet}` offers some additional layout algorithms for
-snapping layouts to a grid or visualising partitions horizontally,
-vertically, or concentrically. The following figures illustrate the
-difference in results over `{igraph}`:
+minimum of fuss. Compare the output from `{manynet}` with a similar
+default from `{igraph}`:
 
 <img src="man/figures/README-layout-comparison-1.png" width="100%" />
+
+Here the `{manynet}` function recognises that the network is a two-mode
+network and uses a bipartite layout by default, and recognises that the
+network contains names for the nodes and prints them vertically so that
+they are legible in this layout. Other ‘clever’ features include
+automatic node sizing and more. By contrast, `{igraph}` requires the
+bipartite layout to be specified, has cumbersome node size defaults for
+all but the smallest graphs, and labels also very often need resizing
+and adjustment to avoid overlap. All of `{manynet}`’s adjustments can be
+overridden, however…
+
+#### More options
+
+Changing the size and colors of nodes and ties is as easy as specifying
+the function’s relevant argument with a replacement, or indicating from
+which attribute it should inherit this information.
+
+<img src="man/figures/README-more-options-1.png" width="100%" />
+
+#### More layouts
+
+`{manynet}` can use all the layout algorithms offered by packages such
+as `{igraph}`, `{ggraph}`, and `{graphlayouts}`, and offers some
+additional layout algorithms for snapping layouts to a grid, visualising
+partitions horizontally, vertically, or concentrically, or conforming to
+configurational coordinates.
+
+<img src="man/figures/README-more-layouts-1.png" width="100%" />
+
+#### More themes and scales
+
+Lastly, `autographr()` is highly extensible in terms of the overall look
+of your plots. `{manynet}` uses the excellent `{ggraph}` package (and
+thus `{ggplot2}`) as a plotting engine. This enables alterations such as
+the application of themes to be applied upon the defaults. If you want
+to quickly make sure your plots conform to your institution or taste,
+then it is easy to do with themes and scales that update the basic look
+and color palette used in your plots.
+
+<img src="man/figures/README-more-themes-1.png" width="100%" />
+
+More themes are on their way, and we’re happy to take suggestions.
+
+### autographs
+
+Second, `autographs()` is used to graph multiple networks together,
+which can be useful for ego networks or network panels. `{patchwork}` is
+used to help arrange individual plots together.
+
+<img src="man/figures/README-autographs-1.png" width="100%" />
+
+### autographd
+
+Third, `autographd()` is used to visualise dynamic networks. It uses
+`{gganimate}` and `{gifski}` to create a gif that visualises network
+changes over time. It really couldn’t be easier.
+
+<img src="man/figures/README-autographd-1.gif" width="100%" />
 
 <!-- provide a common set of tools that can be used to import, export, create, and manipulate network data in a wide variety of formats, -->
 <!-- and obtain a good first visualisation quickly. -->
@@ -265,16 +311,6 @@ difference in results over `{igraph}`:
 <!-- - one-, two-, and sometimes three-mode networks -->
 <!-- - undirected, directed, and sometimes complex networks -->
 <!-- - unweighted, weighted, and sometimes signed networks -->
-
-### Themes and Scales
-
-Lastly, `{manynet}` includes a number of themes and scales for quickly
-tailoring your graphs. `{manynet}` uses the excellent `{ggraph}` package
-(and thus `{ggplot2}`) as a plotting engine.
-
-<img src="man/figures/README-ggthemes-1.png" width="100%" />
-
-More themes are on their way, and we’re happy to take suggestions.
 
 ## Installation
 
