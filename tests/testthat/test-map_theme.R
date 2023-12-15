@@ -16,7 +16,7 @@ test_that("themes graph correctly", {
          caption = "ison_brandes network") + 
     theme_uzh()
   expect_equal(names(test_iheid[["theme"]][["title"]][["colour"]]), "IHEIDRed")
-  expect_equal(names(test_ethz[["theme"]][["title"]][["colour"]]), "ETHZ_Green")
+  expect_equal(names(test_ethz[["theme"]][["title"]][["colour"]]), "ETHZ_Blue")
   expect_equal(names(test_uzh[["theme"]][["title"]][["colour"]]), "UZH_Orange")
   expect_equal(names(test_iheid[["theme"]][["plot.subtitle"]][["colour"]]),
                "IHEIDGrey")
