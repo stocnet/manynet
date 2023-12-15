@@ -162,23 +162,27 @@ to_components.data.frame <- function(.data){
 #'   NULL by default.
 #'   That is, a list of networks for every available wave is returned.
 #'   Users can also list specific waves they want to select.
+#' @param cumulative Would you you like wave ties to be cumulative?
+#'   FALSE by default. That is, each wave is treated isolated.
 #' @examples
 #' ison_adolescents %>%
 #'   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) %>%
 #'   to_waves(attribute = "wave")
 #' ison_adolescents %>%
 #'   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) %>%
-#'   to_waves(attribute = "wave", panels = c(1995, 1996))
+#'   to_waves(attribute = "wave", panels = c(1995, 1996), cumulative = TRUE)
 #' @export
-to_waves <- function(.data, attribute = "wave", panels = NULL) UseMethod("to_waves")
+to_waves <- function(.data, attribute = "wave", panels = NULL,
+                     cumulative = FALSE) UseMethod("to_waves")
 
 #' @importFrom tidygraph to_subgraph as_tbl_graph
 #' @export
-to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL) {
+to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
+                               cumulative = FALSE) {
   wp <- unique(tie_attribute(.data, attribute))
   if(!is.null(panels))
     wp <- intersect(panels, wp)
-  if(length(wp)>1){
+  if(length(wp) > 1) {
     out <- lapply(wp, function(l){
       filter_ties(.data, !!as.name(attribute) == l)
     })
@@ -186,32 +190,39 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL) {
   } else {
     out <- filter_ties(.data, !!as.name(attribute) == wp)
   }
-  out
-}
-
-#' @export
-to_waves.igraph <- function(.data, attribute = "wave", panels = NULL) {
-  out <- to_waves(as_tidygraph(.data))
-  if(length(out)>1){
-    lapply(out, function(o) as_igraph(0))  
-  } else as_igraph(out)
-}
-
-#' @export
-to_waves.data.frame <- function(.data, attribute = "wave", panels = NULL) {
-  wp <- unique(tie_attribute(.data, attribute))
-  if(!is.null(panels)) wp <- intersect(panels, wp)
-  if(length(wp)>1){
-    out <- lapply(wp, function(l) .data[,attribute == l])
-    names(out) <- wp
-  } else if(length(wp)>1) {
-    out <- .data[,attribute == wp]
+  if (isTRUE(cumulative)) {
+    out <- cummulative_ties(out, attribute)
   }
   out
 }
 
 #' @export
-to_waves.diff_model <- function(.data, attribute = "t", panels = NULL) {
+to_waves.igraph <- function(.data, attribute = "wave", panels = NULL,
+                            cumulative = FALSE) {
+  out <- to_waves(as_tidygraph(.data), attribute, panels, cumulative)
+  if(length(out) > 1) lapply(out, as_igraph) else as_igraph(out)
+}
+
+#' @export
+to_waves.data.frame <- function(.data, attribute = "wave", panels = NULL,
+                                cumulative = FALSE) {
+  wp <- unique(tie_attribute(.data, attribute))
+  if(!is.null(panels)) wp <- intersect(panels, wp)
+  if(length(wp) > 1) {
+    out <- lapply(wp, function(l) .data[,attribute == l])
+    names(out) <- wp
+  } else if(length(wp) > 1) {
+    out <- .data[,attribute == wp]
+  }
+  if (isTRUE(cumulative)) {
+    out <- cummulative_ties(out, attribute)
+  }
+  out
+}
+
+#' @export
+to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
+                                cumulative = FALSE) {
   if(!is.null(panels)) .data <- .data[.data[[attribute]] %in% panels,]
   if (length(unique(.data[["n"]])) > 1)
     stop("Please make sure diffusion has the same number of nodes for all time points.")
@@ -224,7 +235,52 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL) {
                                        rep("Exposed", .data$E[k + 1]),
                                        rep("Susceptible", .data$S[k + 1])))
   }
+  if (isTRUE(cumulative)) {
+    out <- cummulative_ties(out, attribute)
+  }
   out
+}
+
+cummulative_ties <- function(x, attribute) {
+  thisRequires("zoo")
+  thisRequires("purrr")
+  ties <- data.frame("to" = 0, "from" = 0, "wave" = 0, "order" = 0)
+  x <- lapply(x, as_tidygraph)
+  for (k in seq_len(length(names(x)))) {
+    a <- x[[k]] %>%
+      tidygraph::activate(edges) %>%
+      dplyr::as_tibble() %>%
+      dplyr::mutate(order = k) %>%
+      dplyr::select(to, from, dplyr::all_of(attribute), order)
+    ties <- rbind(ties, a)
+  }
+  ties <- ties[-1,]
+  if (is.numeric(ties[[attribute]])) {
+    ties <- ties[order(ties[[attribute]]),]
+    a <- list()
+    for (k in unique(ties[[attribute]])) {
+      if (k != unique(ties[[attribute]][1])) {
+        a[[as.character(k)]] <- subset(ties, ties[[attribute]] < k)[1:3]
+        a[[as.character(k)]][attribute] <- k
+      }
+    }
+  } else {
+    message("Cummulative ties were added based on order of appearance for attribute.")
+    a <- list()
+    for (k in unique(ties$order)) {
+      if (k != 1) {
+        a[[unique(ties[[attribute]][k])]] <- subset(ties, ties$order < k)[1:3]
+        a[[unique(ties[[attribute]][k])]][attribute] <- k
+      }
+    }
+  }
+  for (k in names(a)) {
+    x[[k]] <- igraph::add.edges(
+      x[[k]], c(a[[k]]$to, a[[k]]$from)[order(c(ceiling(seq_along(a[[k]]$to)/1),
+                                                seq_along(a[[k]]$from)))],
+      attr = a[[k]][3])
+  }
+  lapply(x, as_tidygraph)
 }
 
 #' @describeIn split Returns a list of a network
