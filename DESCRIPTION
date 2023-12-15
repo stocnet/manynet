@@ -34,7 +34,6 @@ Suggests:
     patchwork,
     rmarkdown,
     learnr,
-    grDevices,
     BiocManager,
     minMSE,
     graphlayouts,
