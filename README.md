@@ -45,13 +45,12 @@ Mapping networks. For Measures, Memberships, or Models, see
 - [Making](#making)
   - [Importing network data](#importing-network-data)
   - [Identifying network data](#identifying-network-data)
-  - [Coercing network data](#coercing-network-data)
   - [Inventing network data](#inventing-network-data)
+  - [Translating network data](#translating-network-data)
 - [Modifying](#modifying)
   - [Reformatting](#reformatting)
   - [Transforming](#transforming)
   - [Splitting and Joining](#splitting-and-joining)
-    - [Changing network data](#changing-network-data)
   - [Extracting](#extracting)
 - [Mapping](#mapping)
   - [Layouts](#layouts)
@@ -114,12 +113,46 @@ Here are some others: `ison_adolescents`, `ison_algebra`,
 `ison_marvel_relationships`, `ison_marvel_teams`, `ison_networkers`,
 `ison_physicians`, `ison_southern_women`, `ison_starwars`
 
-#### Coercing network data
+#### Inventing network data
 
-Once you have imported network data, or found network data in this or
-other packages in R, you will need to work with this data. `{manynet}`’s
-`as_*()` functions can be used to coerce objects from one of many common
-classes into any other. Below is a directed graph showing the currently
+`{manynet}` includes functions for making networks algorithmically. The
+`create_*` group of functions create networks with a particular
+structure, and will always create the same format from the same inputs,
+e.g.:
+
+<img src="man/figures/README-create_egs-1.png" width="100%" />
+
+See also `create_components()`, `create_core()`, `create_empty()`,
+`create_explicit()`, `create_filled()`, `create_lattice()`,
+`create_ring()`, `create_star()`, `create_tree()`.
+
+The `generate_*` group of functions generate networks from generative
+mechanisms that may include some random aspect, and so will return a
+different output each time they are run, e.g.:
+
+<img src="man/figures/README-generate_egs-1.png" width="100%" />
+
+See also `generate_permutation()`, `generate_random()`,
+`generate_scalefree()`, `generate_smallworld()`, `generate_utilities()`.
+
+Note that all these functions can create directed or undirected,
+one-mode or two-mode networks. Creating two-mode networks is as easy as
+passing the first argument (`n`) a vector of two integers instead of
+one. For example, while `n = 15` will create a one-mode network of 10
+nodes, whereas `n = c(10,5)` will create a two-mode network of 10 nodes
+in the first mode, and 5 nodes in the second mode. Some of these
+functions wrap existing algorithms in other packages, while others are
+unique offerings or add additional formats, e.g. two-mode networks.
+
+<img src="man/figures/README-generate_tm-1.png" width="100%" />
+
+#### Translating network data
+
+Once you have imported network data, identified network data in this or
+other packages in R, or invented your own, you may need to translate
+this data into another class for analysis. `{manynet}`’s `as_*()`
+functions can be used to coerce objects from one of many common classes
+into any other. Below is a directed graph showing the currently
 available options:
 
 <img src="man/figures/README-coercion-graph-1.png" width="100%" />
@@ -135,33 +168,6 @@ whether you use base R matrices or edgelists as data frames,
 [`{igraph}`](https://igraph.org/r/), [`{network}`](https://statnet.org),
 or [`{tidygraph}`](https://tidygraph.data-imaginist.com/index.html), and
 extensible by developments in those other packages too.
-
-#### Inventing network data
-
-`{manynet}` includes algorithms for making networks with particular
-properties. The `create_*` group of functions create networks with a
-particular structure, and will always create the same format from the
-same inputs, e.g.:
-
-- `create_components()`, `create_core()`, `create_empty()`,
-  `create_explicit()`, `create_filled()`, `create_lattice()`,
-  `create_ring()`, `create_star()`, `create_tree()`
-
-The `generate_*` group of functions generate networks from generative
-mechanisms that may include some random aspect, and so will return a
-different output each time they are run, e.g.:
-
-- `generate_permutation()`, `generate_random()`, `generate_scalefree()`,
-  `generate_smallworld()`, `generate_utilities()`
-
-Note that all these functions can create directed or undirected,
-one-mode or two-mode networks. Creating two-mode networks is as easy as
-passing the first argument (`n`) a vector of two integers instead of
-one. For example, `n = 10` will create a one-mode network of 10 nodes,
-whereas `n = c(10,5)` will create a two-mode network of 10 nodes in the
-first mode, and 5 nodes in the second mode. Some of these functions wrap
-existing algorithms in other packages, while others are unique offerings
-or add additional formats, e.g. two-mode networks.
 
 ## Modifying
 

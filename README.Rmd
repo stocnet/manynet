@@ -57,13 +57,12 @@ For Measures, Memberships, or Models, see [`{migraph}`](https://snlab-ch.github.
 - [Making](#making)
     - [Importing network data](#importing-network-data)
     - [Identifying network data](#identifying-network-data)
-    - [Coercing network data](#coercing-network-data)
     - [Inventing network data](#inventing-network-data)
+    - [Translating network data](#translating-network-data)
 - [Modifying](#modifying)
   - [Reformatting](#reformatting)
   - [Transforming](#transforming)
   - [Splitting and Joining](#splitting-and-joining)
-    - [Changing network data](#changing-network-data)
   - [Extracting](#extracting)
 - [Mapping](#mapping)
   - [Layouts](#layouts)
@@ -129,10 +128,53 @@ library(patchwork)
 
 Here are some others: `r list_data("^ison_")`
 
-#### Coercing network data
+#### Inventing network data
 
-Once you have imported network data, or found network data in this or other packages in R,
-you will need to work with this data.
+`{manynet}` includes functions for making networks algorithmically.
+The `create_*` group of functions create networks with a particular structure,
+and will always create the same format from the same inputs,
+e.g.:
+
+```{r create_egs, echo = FALSE, dpi = 300, message=FALSE, fig.height=4}
+(autographr(create_lattice(15)) + ggtitle("Lattice", subtitle = "create_lattice(15)") + 
+    autographr(create_tree(15)) + ggtitle("Tree", subtitle = "create_tree(15)"))
+```
+
+See also `r list_functions("^create_")`.
+
+The `generate_*` group of functions generate networks from
+generative mechanisms that may include some random aspect, 
+and so will return a different output each time they are run,
+e.g.:
+
+```{r generate_egs, echo = FALSE, dpi = 300, message=FALSE, fig.height=4}
+(autographr(generate_smallworld(15)) + ggtitle("Small-World", subtitle = "generate_smallworld(15)") + 
+    autographr(generate_scalefree(15)) + ggtitle("Scale-Free", subtitle = "generate_scalefree(15)"))
+```
+
+See also `r list_functions("^generate_")`.
+
+Note that all these functions can create directed or undirected,
+one-mode or two-mode networks.
+Creating two-mode networks is as easy as passing the first argument (`n`)
+a vector of two integers instead of one.
+For example, while `n = 15` will create a one-mode network of 10 nodes,
+whereas `n = c(10,5)` will create a two-mode network of 10 nodes in the first mode,
+and 5 nodes in the second mode.
+Some of these functions wrap existing algorithms in other packages,
+while others are unique offerings or add additional formats,
+e.g. two-mode networks.
+
+```{r generate_tm, echo = FALSE, dpi = 300, message=FALSE, fig.height=4, warning=FALSE}
+autographr(generate_smallworld(15, directed = TRUE), layout = "stress") + ggtitle("Small-World", subtitle = "generate_smallworld(15, directed = TRUE)") + autographr(generate_smallworld(c(10,5)), layout = "stress") + ggtitle("Small-World", subtitle = "generate_smallworld(c(10,5))")
+```
+
+#### Translating network data
+
+Once you have imported network data, 
+identified network data in this or other packages in R,
+or invented your own,
+you may need to translate this data into another class for analysis.
 `{manynet}`'s `as_*()` functions can be used to coerce objects 
 from one of many common classes into any other.
 Below is a directed graph showing the currently available options:
@@ -157,33 +199,6 @@ whether you use base R matrices or edgelists as data frames,
 [`{network}`](https://statnet.org), or 
 [`{tidygraph}`](https://tidygraph.data-imaginist.com/index.html),
 and extensible by developments in those other packages too.
-
-#### Inventing network data
-
-`{manynet}` includes algorithms for making networks with particular properties.
-The `create_*` group of functions create networks with a particular structure,
-and will always create the same format from the same inputs,
-e.g.:
-
-- `r list_functions("^create_")`
-
-The `generate_*` group of functions generate networks from
-generative mechanisms that may include some random aspect, 
-and so will return a different output each time they are run,
-e.g.:
-
-- `r list_functions("^generate_")`
-
-Note that all these functions can create directed or undirected,
-one-mode or two-mode networks.
-Creating two-mode networks is as easy as passing the first argument (`n`)
-a vector of two integers instead of one.
-For example, `n = 10` will create a one-mode network of 10 nodes,
-whereas `n = c(10,5)` will create a two-mode network of 10 nodes in the first mode,
-and 5 nodes in the second mode.
-Some of these functions wrap existing algorithms in other packages,
-while others are unique offerings or add additional formats,
-e.g. two-mode networks.
 
 ## Modifying
 
