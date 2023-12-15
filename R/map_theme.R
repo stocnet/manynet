@@ -58,10 +58,10 @@ theme_ethz <- function(base_size = 12, base_family = "serif") {
   colors <-  corp_palette("ETHZ")
   (ggplot2::theme_minimal(base_size = base_size, base_family = base_family)
     + ggplot2::theme(
-      line = ggplot2::element_line(colors["ETHZ_Blue"]),
+      line = ggplot2::element_line(colors["ETHZ_Green"]),
       rect = ggplot2::element_rect(fill = "#FFFFFF", linetype = 1,
                                    linewidth = 0.6, colour = colors["ETHZ_Petrol"]),
-      title = ggplot2::element_text(colour = colors["ETHZ_Green"],
+      title = ggplot2::element_text(colour = colors["ETHZ_Blue"],
                                     size = base_size,
                                     face = "bold"),
       plot.subtitle = ggplot2::element_text(colors["ETHZ_Bronze"],
