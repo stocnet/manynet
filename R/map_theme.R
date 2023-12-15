@@ -192,14 +192,16 @@ NULL
 #' @export
 scale_fill_iheid <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "IHEID",
-                          palette_gen(palette = "IHEID", direction), ...)
+                          palette_gen(palette = "IHEID", direction),
+                          na.value = "black", ...)
 }
 
 #' @rdname scales
 #' @export
 scale_colour_iheid <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "IHEID",
-                          palette_gen(palette = "IHEID", direction), ...)
+                          palette_gen(palette = "IHEID", direction),
+                          na.value = "black", ...)
 }
 
 #' @rdname scales
@@ -212,14 +214,16 @@ scale_color_iheid <- scale_colour_iheid
 #' @export
 scale_fill_centres <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "Centres",
-                          palette_gen(palette = "Centres", direction), ...)
+                          palette_gen(palette = "Centres", direction),
+                          na.value = "black", ...)
 }
 
 #' @rdname scales
 #' @export
 scale_colour_centres <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "Centres",
-                          palette_gen(palette = "Centres", direction), ...)
+                          palette_gen(palette = "Centres", direction),
+                          na.value = "black", ...)
 }
 
 #' @rdname scales
@@ -232,14 +236,16 @@ scale_color_centres <- scale_colour_centres
 #' @export
 scale_fill_sdgs <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "SDGs",
-                          palette_gen(palette = "SDGs", direction), ...)
+                          palette_gen(palette = "SDGs", direction),
+                          na.value = "black", ...)
 }
 
 #' @rdname scales
 #' @export
 scale_colour_sdgs <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "SDGs",
-                          palette_gen(palette = "SDGs", direction), ...)
+                          palette_gen(palette = "SDGs", direction),
+                          na.value = "black", ...)
 }
 
 #' @rdname scales
@@ -252,14 +258,16 @@ scale_color_sdgs <- scale_colour_sdgs
 #' @export
 scale_fill_ethz <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "ETHZ",
-                          palette_gen(palette = "ETHZ", direction), ...)
+                          palette_gen(palette = "ETHZ", direction), 
+                          na.value = "black", ...)
 }
 
 #' @rdname scales
 #' @export
 scale_colour_ethz <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "ETHZ",
-                          palette_gen(palette = "ETHZ", direction), ...)
+                          palette_gen(palette = "ETHZ", direction), 
+                          na.value = "black", ...)
 }
 
 #' @rdname scales
@@ -272,14 +280,16 @@ scale_color_ethz <- scale_colour_ethz
 #' @export
 scale_fill_uzh <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "UZH",
-                          palette_gen(palette = "UZH", direction), ...)
+                          palette_gen(palette = "UZH", direction),
+                          na.value = "black", ...)
 }
 
 #' @rdname scales
 #' @export
 scale_colour_uzh <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "UZH",
-                          palette_gen(palette = "UZH", direction), ...)
+                          palette_gen(palette = "UZH", direction),
+                          na.value = "black", ...)
 }
 
 #' @rdname scales
@@ -292,14 +302,16 @@ scale_color_uzh <- scale_colour_uzh
 #' @export
 scale_fill_rug <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "RUG",
-                          palette_gen(palette = "RUG", direction), ...)
+                          palette_gen(palette = "RUG", direction),
+                          na.value = "grey", ...)
 }
 
 #' @rdname scales
 #' @export
 scale_colour_rug <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "RUG",
-                          palette_gen(palette = "RUG", direction), ...)
+                          palette_gen(palette = "RUG", direction),
+                          na.value = "grey", ...)
 }
 
 #' @rdname scales
