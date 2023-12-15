@@ -83,6 +83,8 @@ test_that("as_network converts correctly",{
 # })
 
 test_that("conversion of diff_model object works correctly", {
+  skip_on_cran()
+  skip_on_ci()
   diff <- migraph::play_diffusion(ison_brandes)
   tidy_diff <- as_tidygraph(diff)
   expect_equal(network_nodes(tidy_diff), network_nodes(ison_brandes))

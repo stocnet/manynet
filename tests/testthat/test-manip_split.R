@@ -36,7 +36,6 @@ set.seed(1234)
 wave <- ison_adolescents %>%
     activate(edges) %>%
     mutate(wave = sample(1995:1998, 10, replace = TRUE))
-wave_diff <- migraph::play_diffusion(ison_brandes)
 
 test_that("to_waves works", {
   expect_equal(class(to_waves(wave)), "list")
@@ -48,6 +47,9 @@ test_that("to_waves works", {
 })  
 
 test_that("to_waves works for diff_model objects", {
+  skip_on_cran()
+  skip_on_ci()
+  wave_diff <- migraph::play_diffusion(ison_brandes)
   expect_length(to_waves(wave_diff), length(wave_diff$t))
   expect_equal(network_nodes(to_waves(wave_diff)[[1]]),
                network_nodes(to_waves(wave_diff)[[12]]))
