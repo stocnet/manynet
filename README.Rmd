@@ -122,7 +122,7 @@ we include a number of classical and instructional network datasets,
 all thoroughly documented and ready for analysis.
 Here are just a few examples, all available in `{manynet}`:
 
-```{r ison_egs, echo = FALSE, dpi = 300, message=FALSE}
+```{r ison_egs, echo = FALSE, dpi = 250, message=FALSE}
 library(patchwork)
 (autographr(ison_karateka) + ggtitle("Karateka Class", subtitle = "Zachary 1977") + 
     autographr(ison_southern_women) + ggtitle("Southern Women", subtitle = "Davis et al 1941")) /
@@ -268,7 +268,7 @@ It includes sensible defaults so that researchers can view their network's struc
 or distribution quickly with a minimum of fuss.
 Compare the output from `{manynet}` with a similar default from `{igraph}`:
 
-```{r layout-comparison, echo = FALSE, message=FALSE, dpi = 300, fig.height=4}
+```{r layout-comparison, echo = FALSE, message=FALSE, dpi = 250, fig.height=4}
 library(manynet)
 library(igraph)
 library(gridBase)
@@ -350,7 +350,7 @@ Second, `autographs()` is used to graph multiple networks together,
 which can be useful for ego networks or network panels.
 `{patchwork}` is used to help arrange individual plots together.
 
-```{r autographs, echo = FALSE, dpi = 300, fig.height=3}
+```{r autographs, echo = FALSE, dpi = 250, fig.height=3}
 ison_adolescents %>%
   mutate_ties(wave = c(rep(1995, 5), rep(1998, 5))) %>%
   to_waves(attribute = "wave", panels = c(1995, 1998)) |>
@@ -364,7 +364,7 @@ It uses `{gganimate}` and `{gifski}` to create a gif that
 visualises network changes over time.
 It really couldn't be easier.
 
-```{r autographd, echo = FALSE, dpi = 300, fig.height=3.5}
+```{r autographd, echo = FALSE, dpi = 250, fig.height=3.5}
 ison_adolescents %>%
   mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %>%
   to_waves(attribute = "year") %>%
