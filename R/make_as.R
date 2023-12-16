@@ -660,10 +660,10 @@ as_tidygraph.siena <- function(.data, twomode = FALSE) {
 as_tidygraph.diff_model <- function(.data, twomode = FALSE) {
   out <- as_tidygraph(attr(.data, "network"))
   attr(out, "diff_model") <- .data
-  if (!"name" %in% names(node_attribute(out))) {
-    out <- add_node_attribute(out, "name",
-                              as.character(seq_len(igraph::vcount(out))))
-  }
+  # if (!"name" %in% names(node_attribute(out))) {
+  #   out <- add_node_attribute(out, "name",
+  #                             as.character(seq_len(igraph::vcount(out))))
+  # }
   out
 }
 
