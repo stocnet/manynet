@@ -624,9 +624,9 @@ reduce_categories <- function(g, node_group) {
                                              "Exposed" = "orange",
                                              "Recovered" = "darkgreen"))
   } else if (any("diff_model" %in% names(attributes(g)))) {
-    nshape <- ifelse(node_color == 0, "Not Adopted",
-                     ifelse(node_color == 1, "Seed(s)", "Adopted"))
     node_adopts <- .node_adoption_time(g)
+    nshape <- ifelse(node_adopts == min(node_adopts), "Seed(s)",
+                     ifelse(node_adopts == Inf, "Non-Adopter", "Adopter"))
     node_color <- ifelse(is.infinite(node_adopts), 
                          max(node_adopts[!is.infinite(node_adopts)]) + 1, 
                          node_adopts)
@@ -634,14 +634,17 @@ reduce_categories <- function(g, node_group) {
                                                   color = node_color),
                                      size = nsize) +
       ggplot2::scale_color_gradient(low = "red", high = "blue",
-                                    breaks=c(1, max(node_color)),
-                                    labels=c("Early adoption", "Late adoption"),
-                                    name = "Time of\nAdoption") +
+                                    breaks=c(min(node_color)+1, 
+                                             ifelse(any(nshape=="Non-Adopter"),
+                                                    max(node_color)-1,
+                                                    max(node_color))),
+                                    labels=c("Early\nadoption", "Late\nadoption"),
+                                    name = "Time of\nAdoption\n") +
       ggplot2::scale_shape_manual(name = "",
-                                  breaks = c("Seed(s)", "Adopted", "Not Adopted"),
+                                  breaks = c("Seed(s)", "Adopter", "Non-Adopter"),
                                   values = c("Seed(s)" = "triangle",
-                                             "Adopted" = "circle",
-                                             "Not Adopted" = "square")) +
+                                             "Adopter" = "circle",
+                                             "Non-Adopter" = "square")) +
       ggplot2::guides(color = ggplot2::guide_colorbar(order = 1, reverse = TRUE),
                       shape = ggplot2::guide_legend(order = 2))
   } else {
