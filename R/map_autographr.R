@@ -624,10 +624,12 @@ reduce_categories <- function(g, node_group) {
                                              "Exposed" = "orange",
                                              "Recovered" = "darkgreen"))
   } else if (any("diff_model" %in% names(attributes(g)))) {
-    node_color <- infection_rate(attr(g, "diff_model"))
     nshape <- ifelse(node_color == 0, "Not Adopted",
                      ifelse(node_color == 1, "Seed(s)", "Adopted"))
-    node_color <- ifelse(node_color == 0, max(node_color) + 1, node_color)
+    node_adopts <- .node_adoption_time(g)
+    node_color <- ifelse(is.infinite(node_adopts), 
+                         max(node_adopts[!is.infinite(node_adopts)]) + 1, 
+                         node_adopts)
     p <- p + ggraph::geom_node_point(ggplot2::aes(shape = nshape,
                                                   color = node_color),
                                      size = nsize) +
@@ -771,6 +773,26 @@ infection_rate <- function(x) {
   }
   out <- unlist(a)
   if (length(out) < unique(x$n)) out <- c(out, rep(0, (unique(x$n)-length(out))))
+
+.node_adoption_time <- function(g){
+  diff_model <- attr(g, "diff_model")
+  event <- nodes <- NULL
+  out <- summary(diff_model) |> dplyr::filter(event == "I") |> 
+    dplyr::distinct(nodes, .keep_all = TRUE) |> 
+    dplyr::select(nodes,t)
+  net <- attr(diff_model, "network")
+  if(!is_labelled(net))
+    out <- dplyr::arrange(out, nodes) else if (is.numeric(out$nodes))
+      out$nodes <- node_names(net)[out$nodes]
+  out <- stats::setNames(out$t, out$nodes)
+  if(length(out) != network_nodes(net)){
+    full <- rep(Inf, network_nodes(net))
+    names(full) <- `if`(is_labelled(net), 
+                        node_names(net), 
+                        as.character(seq_len(network_nodes(net))))
+    full[match(names(out), names(full))] <- out
+    out <- `if`(is_labelled(net), full, unname(full))
+  }
   out
 }
 
