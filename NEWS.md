@@ -10,6 +10,7 @@
 
 * `to_waves.diff_model()` now adds three logical vectors as variables, "Infected", "Exposed", and "Recovered"
   - Relies on parallels to migraph's `node_is_latent()`, `node_is_infected()`, and `node_is_recovered()`
+  - Fixed bug in wave naming
 
 ## Mapping
 
