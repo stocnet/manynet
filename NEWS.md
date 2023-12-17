@@ -1,10 +1,31 @@
+# manynet 0.3.1
+
+2023-12-17
+
+## Making
+
+* `as_tidygraph.diff_model()` no longer creates names for unlabelled networks
+
+## Modifying
+
+* `to_waves.diff_model()` now adds three logical vectors as variables, "Infected", "Exposed", and "Recovered"
+  - Relies on parallels to migraph's `node_is_latent()`, `node_is_infected()`, and `node_is_recovered()`
+  - Fixed bug in wave naming
+
+## Mapping
+
+* `autographr()` now shapes seed, adopter, and non-adopter nodes using a parallel to migraph's `node_adoption_time()` for 
+  - Improved guide/legend labelling and positioning
+* `autographs()` now colors susceptible, exposed, infected, and recovered nodes correctly
+* `autographd()` now colors susceptible, exposed, infected, and recovered nodes correctly
+
 # manynet 0.3.0
 
 2023-12-15
 
 ## Package
 
-* Overhaul of the README to summarise many of the unique aspects of the package
+* Overhaul of the README to summarise many of the unique aspects of the package (closed #36)
 
 ## Making
 
@@ -25,10 +46,10 @@ with `igraph::as_biadjacency_matrix()` and `igraph::graph_from_biadjacency_matri
 ## Mapping
 
 * `autographr()` now plots diff_model objects, showing the diffusion as a heatmap on the vertices
-* `autographs()` and `autographd()` now utilise network information in diff_model objects to provide better layouts 
+* `autographs()` and `autographd()` now utilise network information in diff_model objects to provide better layouts (closed #17)
 * Fixed bug with specifying `node_size` in `autographd()`
 * `many_palettes` replaces `iheid_palette`
-* Added new palettes, themes and scales for graphs
+* Added new palettes, themes and scales for graphs (closed #9)
   - `theme_ethz()`, `scale_color_ethz()`/`scale_colour_ethz()`, and `scale_fill_ethz()` for ETH Zürich
   - `theme_uzh()`, `scale_color_uzh()`/`scale_colour_uzh()`, and `scale_fill_uzh()` for Uni Zürich
   - `theme_rug()`, `scale_color_rug()`/`scale_colour_rug()`, and `scale_fill_rug()` for Uni Gröningen

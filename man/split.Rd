@@ -15,7 +15,7 @@ to_subgraphs(.data, attribute)
 
 to_components(.data)
 
-to_waves(.data, attribute = "wave", panels = NULL)
+to_waves(.data, attribute = "wave", panels = NULL, cumulative = FALSE)
 
 to_slices(.data, attribute = "time", slice = NULL)
 }
@@ -43,6 +43,9 @@ and 2 excludes ego's direct alters.}
 NULL by default.
 That is, a list of networks for every available wave is returned.
 Users can also list specific waves they want to select.}
+
+\item{cumulative}{Whether to make wave ties cumulative.
+FALSE by default. That is, each wave is treated isolated.}
 
 \item{slice}{Character string or character list indicating the date(s)
 or integer(s) range used to slice data (e.g slice = c(1:2, 3:4)).}
@@ -94,9 +97,6 @@ ison_adolescents \%>\%
 ison_adolescents \%>\%
   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) \%>\%
   to_waves(attribute = "wave")
-ison_adolescents \%>\%
-  mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) \%>\%
-  to_waves(attribute = "wave", panels = c(1995, 1996))
 ison_adolescents \%>\%
   mutate_ties(time = 1:10, increment = 1) \%>\% 
   add_ties(c(1,2), list(time = 3, increment = -1)) \%>\% 

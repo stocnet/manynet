@@ -151,7 +151,7 @@ autographs <- function(netlist, ...) {
   if (any(class(netlist) == "diff_model")) {
     netlist <- to_waves(netlist)
   }
-  if(!is.null(names(netlist))){
+  if(!is.null(names(netlist))) {
     gs <- lapply(1:length(netlist), function(x)
       autographr(netlist[[x]], ...) +
         ggtitle(names(netlist)[x]))
@@ -225,7 +225,7 @@ autographd <- function(tlist, layout, labels = TRUE,
     edge_size <- as.character(substitute(edge_size))
   }
   # Check if diffusion model
-  if (any(class(tlist) == "diff_model")) {
+  if (inherits(tlist, "diff_model")) {
     tlist <- to_waves(tlist)
   }
   # Check if object is a list of lists
@@ -615,7 +615,10 @@ reduce_categories <- function(g, node_group) {
   nsize <- .infer_nsize(g, node_size)
   nshape <- .infer_shape(g, node_shape)
   if ("Infected" %in% names(node_attribute(g))) {
-    node_color <- as.factor(node_attribute(g, "Infected"))
+    node_color <- as.factor(ifelse(node_attribute(g, "Exposed"), "Exposed",
+                                   ifelse(node_attribute(g, "Infected"),"Infected", 
+                                          ifelse(node_attribute(g, "Recovered"), "Recovered",
+                                                 "Susceptible"))))
     p <- p + ggraph::geom_node_point(ggplot2::aes(color = node_color),
                                      size = nsize, shape = nshape) +
       ggplot2::scale_color_manual(name = NULL, guide = "none",
@@ -624,22 +627,27 @@ reduce_categories <- function(g, node_group) {
                                              "Exposed" = "orange",
                                              "Recovered" = "darkgreen"))
   } else if (any("diff_model" %in% names(attributes(g)))) {
-    node_color <- infection_rate(attr(g, "diff_model"))
-    nshape <- ifelse(node_color == 0, "Not Adopted",
-                     ifelse(node_color == 1, "Seed(s)", "Adopted"))
-    node_color <- ifelse(node_color == 0, max(node_color) + 1, node_color)
+    node_adopts <- .node_adoption_time(g)
+    nshape <- ifelse(node_adopts == min(node_adopts), "Seed(s)",
+                     ifelse(node_adopts == Inf, "Non-Adopter", "Adopter"))
+    node_color <- ifelse(is.infinite(node_adopts), 
+                         max(node_adopts[!is.infinite(node_adopts)]) + 1, 
+                         node_adopts)
     p <- p + ggraph::geom_node_point(ggplot2::aes(shape = nshape,
                                                   color = node_color),
                                      size = nsize) +
       ggplot2::scale_color_gradient(low = "red", high = "blue",
-                                    breaks=c(1, max(node_color)),
-                                    labels=c("Early adoption", "Late adoption"),
-                                    name = "Time of\nAdoption") +
+                                    breaks=c(min(node_color)+1, 
+                                             ifelse(any(nshape=="Non-Adopter"),
+                                                    max(node_color)-1,
+                                                    max(node_color))),
+                                    labels=c("Early\nadoption", "Late\nadoption"),
+                                    name = "Time of\nAdoption\n") +
       ggplot2::scale_shape_manual(name = "",
-                                  breaks = c("Seed(s)", "Adopted", "Not Adopted"),
+                                  breaks = c("Seed(s)", "Adopter", "Non-Adopter"),
                                   values = c("Seed(s)" = "triangle",
-                                             "Adopted" = "circle",
-                                             "Not Adopted" = "square")) +
+                                             "Adopter" = "circle",
+                                             "Non-Adopter" = "square")) +
       ggplot2::guides(color = ggplot2::guide_colorbar(order = 1, reverse = TRUE),
                       shape = ggplot2::guide_legend(order = 2))
   } else {
@@ -758,19 +766,40 @@ is_diamond <- function(x) {
   } else FALSE
 }
 
-infection_rate <- function(x) {
-  if ("I_new" %in% names(x)) {
-    out <- c(x$I[1], x$I_new[-1])
-  } else {
-    out <- c(x$I[1], diff(x$I)[-(length(x$I))])
-    out <- ifelse(out < 0, 0, out)
+# infection_rate <- function(x) {
+#   if ("I_new" %in% names(x)) {
+#     out <- c(x$I[1], x$I_new[-1])
+#   } else {
+#     out <- c(x$I[1], diff(x$I)[-(length(x$I))])
+#     out <- ifelse(out < 0, 0, out)
+#   }
+#   a <- list()
+#   for (k in seq_len(length(out))) {
+#     a[[k]] <- rep(x$t[k], out[k])
+#   }
+#   out <- unlist(a)
+#   if (length(out) < unique(x$n)) out <- c(out, rep(0, (unique(x$n)-length(out))))
+# }
+
+.node_adoption_time <- function(g){
+  diff_model <- attr(g, "diff_model")
+  event <- nodes <- NULL
+  out <- summary(diff_model) |> dplyr::filter(event == "I") |> 
+    dplyr::distinct(nodes, .keep_all = TRUE) |> 
+    dplyr::select(nodes,t)
+  net <- attr(diff_model, "network")
+  if(!is_labelled(net))
+    out <- dplyr::arrange(out, nodes) else if (is.numeric(out$nodes))
+      out$nodes <- node_names(net)[out$nodes]
+  out <- stats::setNames(out$t, out$nodes)
+  if(length(out) != network_nodes(net)){
+    full <- rep(Inf, network_nodes(net))
+    names(full) <- `if`(is_labelled(net), 
+                        node_names(net), 
+                        as.character(seq_len(network_nodes(net))))
+    full[match(names(out), names(full))] <- out
+    out <- `if`(is_labelled(net), full, unname(full))
   }
-  a <- list()
-  for (k in seq_len(length(out))) {
-    a[[k]] <- rep(x$t[k], out[k])
-  }
-  out <- unlist(a)
-  if (length(out) < unique(x$n)) out <- c(out, rep(0, (unique(x$n)-length(out))))
   out
 }
 
@@ -853,7 +882,8 @@ time_edges_lst <- function(tlist, edges_lst, nodes_lst, edge_color) {
   })
   # Keep only necessary columns
   edg <- lapply(edg, function (x) x[,c("from", "to", "frame", "x", "y", "xend",
-                                       "yend", "id", "status", edge_color)])
+                                       "yend", "id", "status"#, edge_color
+                                       )])
 }
 
 transition_edge_lst <- function(tlist, edges_lst, nodes_lst, all_edges) {
@@ -946,9 +976,14 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
       }
     }
   } else if (is.null(node_color) & "Infected" %in% names(nodes_out)) {
-    node_color <- ifelse(nodes_out[["Infected"]] == "Infected", "red",
-                         ifelse(nodes_out[["Infected"]] == "Susceptible", "blue",
-                                ifelse(nodes_out[["Infected"]] == "Exposed", "orange", "darkgreen")))
+    node_color <- as.factor(ifelse(nodes_out[["Exposed"]], "Exposed",
+                                   ifelse(nodes_out[["Infected"]],"Infected", 
+                                          ifelse(nodes_out[["Recovered"]], "Recovered",
+                                                 "Susceptible"))))
+    # node_color <- ifelse(nodes_out[["Infected"]] == "Infected", "red",
+    #                      ifelse(nodes_out[["Infected"]] == "Susceptible", "blue",
+    #                             ifelse(nodes_out[["Infected"]] == "Exposed", "orange", "darkgreen")))
+    # node_color <- ifelse(nodes_out[["Infected"]], "Infected", "Susceptible")
   } else node_color <- "darkgray"
   if (!is.null(node_size)) {
     if (node_size %in% names(nodes_out)) {
@@ -966,7 +1001,7 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
   }
   # Plot nodes
   if ("Infected" %in% names(nodes_out)) {
-    p <- p + ggplot2::geom_point(aes(x, y, group = name, color = Infected),
+    p <- p + ggplot2::geom_point(aes(x, y, group = name, color = node_color),
                                  size = node_size, shape = node_shape, data = nodes_out) +
       ggplot2::scale_color_manual(name = NULL, values = c("Infected" = "red",
                                                           "Susceptible" = "blue",
