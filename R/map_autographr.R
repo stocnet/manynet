@@ -882,7 +882,8 @@ time_edges_lst <- function(tlist, edges_lst, nodes_lst, edge_color) {
   })
   # Keep only necessary columns
   edg <- lapply(edg, function (x) x[,c("from", "to", "frame", "x", "y", "xend",
-                                       "yend", "id", "status", edge_color)])
+                                       "yend", "id", "status"#, edge_color
+                                       )])
 }
 
 transition_edge_lst <- function(tlist, edges_lst, nodes_lst, all_edges) {
@@ -975,10 +976,14 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
       }
     }
   } else if (is.null(node_color) & "Infected" %in% names(nodes_out)) {
+    node_color <- as.factor(ifelse(nodes_out[["Exposed"]], "Exposed",
+                                   ifelse(nodes_out[["Infected"]],"Infected", 
+                                          ifelse(nodes_out[["Recovered"]], "Recovered",
+                                                 "Susceptible"))))
     # node_color <- ifelse(nodes_out[["Infected"]] == "Infected", "red",
     #                      ifelse(nodes_out[["Infected"]] == "Susceptible", "blue",
     #                             ifelse(nodes_out[["Infected"]] == "Exposed", "orange", "darkgreen")))
-    node_color <- ifelse(nodes_out[["Infected"]], "Infected", "Susceptible")
+    # node_color <- ifelse(nodes_out[["Infected"]], "Infected", "Susceptible")
   } else node_color <- "darkgray"
   if (!is.null(node_size)) {
     if (node_size %in% names(nodes_out)) {
