@@ -617,7 +617,8 @@ reduce_categories <- function(g, node_group) {
   if ("Infected" %in% names(node_attribute(g))) {
     node_color <- as.factor(ifelse(node_attribute(g, "Exposed"), "Exposed",
                                    ifelse(node_attribute(g, "Infected"),"Infected", 
-                                   "Susceptible")))
+                                          ifelse(node_attribute(g, "Recovered"), "Recovered",
+                                                 "Susceptible"))))
     p <- p + ggraph::geom_node_point(ggplot2::aes(color = node_color),
                                      size = nsize, shape = nshape) +
       ggplot2::scale_color_manual(name = NULL, guide = "none",
