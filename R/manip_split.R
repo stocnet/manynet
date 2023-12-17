@@ -168,9 +168,6 @@ to_components.data.frame <- function(.data){
 #' ison_adolescents %>%
 #'   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) %>%
 #'   to_waves(attribute = "wave")
-#' ison_adolescents %>%
-#'   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) %>%
-#'   to_waves(attribute = "wave", panels = c(1995, 1996), cumulative = TRUE)
 #' @export
 to_waves <- function(.data, attribute = "wave", panels = NULL,
                      cumulative = FALSE) UseMethod("to_waves")
@@ -310,6 +307,7 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
 }
 
 cumulative_ties <- function(x, attribute) {
+  edges <- to <- from <- NULL
   thisRequires("zoo")
   thisRequires("purrr")
   ties <- data.frame("to" = 0, "from" = 0, "wave" = 0, "order" = 0)

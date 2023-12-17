@@ -98,9 +98,6 @@ ison_adolescents \%>\%
   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) \%>\%
   to_waves(attribute = "wave")
 ison_adolescents \%>\%
-  mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) \%>\%
-  to_waves(attribute = "wave", panels = c(1995, 1996), cumulative = TRUE)
-ison_adolescents \%>\%
   mutate_ties(time = 1:10, increment = 1) \%>\% 
   add_ties(c(1,2), list(time = 3, increment = -1)) \%>\% 
   to_slices(slice = 7)
