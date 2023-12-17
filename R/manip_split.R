@@ -226,22 +226,44 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
   if(!is.null(panels)) .data <- .data[.data[[attribute]] %in% panels,]
   if (length(unique(.data[["n"]])) > 1)
     stop("Please make sure diffusion has the same number of nodes for all time points.")
-  diffusion <- as_tidygraph(.data)
+  net <- as_tidygraph(.data)
+  diff <- .data
   out <- list()
   for (k in .data[[attribute]]) {
-    out[[paste0("Time: ", k)]] <- diffusion %>%
-      add_node_attribute("Infected", c(rep("Recovered", .data$R[k + 1]),
-                                       rep("Infected", .data$I[k + 1]),
-                                       rep("Exposed", .data$E[k + 1]),
-                                       rep("Susceptible", .data$S[k + 1])))
+    out[[paste0("Time: ", k)]] <- net %>%
+      tidygraph::mutate(Infected = .node_is_infected(diff, time = k))# |> 
+      # add_node_attribute("Infected", c(rep("Recovered", .data$R[k + 1]),
+      #                                  rep("Infected", .data$I[k + 1]),
+      #                                  rep("Exposed", .data$E[k + 1]),
+      #                                  rep("Susceptible", .data$S[k + 1]))) |> 
+      # dplyr::select(name, Infected)
   }
   if (isTRUE(cumulative)) {
-    out <- cummulative_ties(out, attribute)
+    out <- cumulative_ties(out, attribute)
   }
   out
 }
 
-cummulative_ties <- function(x, attribute) {
+.node_is_infected <- function(diff_model, time = 0){
+  event <- nodes <- NULL
+  infected <- summary(diff_model) |> 
+    dplyr::filter(t <= time & event == "I") |> 
+    dplyr::select(nodes)
+  net <- attr(diff_model, "network")
+  if(!is_labelled(net))
+    infected <- dplyr::arrange(infected, nodes) else if (is.numeric(infected$nodes))
+      infected$nodes <- node_names(net)[infected$nodes]
+  if(manynet::is_labelled(net)){
+    nnames <- manynet::node_names(net)
+    out <- stats::setNames(nnames %in% infected$nodes, nnames)
+  } else {
+    seq_len(manynet::network_nodes(net))
+    out <- seq_len(manynet::network_nodes(net)) %in% infected$nodes
+  }
+  out
+}
+
+cumulative_ties <- function(x, attribute) {
   thisRequires("zoo")
   thisRequires("purrr")
   ties <- data.frame("to" = 0, "from" = 0, "wave" = 0, "order" = 0)
