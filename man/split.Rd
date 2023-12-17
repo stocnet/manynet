@@ -44,7 +44,7 @@ NULL by default.
 That is, a list of networks for every available wave is returned.
 Users can also list specific waves they want to select.}
 
-\item{cumulative}{Would you you like wave ties to be cumulative?
+\item{cumulative}{Whether to make wave ties cumulative.
 FALSE by default. That is, each wave is treated isolated.}
 
 \item{slice}{Character string or character list indicating the date(s)

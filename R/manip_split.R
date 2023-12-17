@@ -162,7 +162,7 @@ to_components.data.frame <- function(.data){
 #'   NULL by default.
 #'   That is, a list of networks for every available wave is returned.
 #'   Users can also list specific waves they want to select.
-#' @param cumulative Would you you like wave ties to be cumulative?
+#' @param cumulative Whether to make wave ties cumulative.
 #'   FALSE by default. That is, each wave is treated isolated.
 #' @examples
 #' ison_adolescents %>%
@@ -191,7 +191,7 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
     out <- filter_ties(.data, !!as.name(attribute) == wp)
   }
   if (isTRUE(cumulative)) {
-    out <- cummulative_ties(out, attribute)
+    out <- cumulative_ties(out, attribute)
   }
   out
 }
@@ -215,7 +215,7 @@ to_waves.data.frame <- function(.data, attribute = "wave", panels = NULL,
     out <- .data[,attribute == wp]
   }
   if (isTRUE(cumulative)) {
-    out <- cummulative_ties(out, attribute)
+    out <- cumulative_ties(out, attribute)
   }
   out
 }

@@ -1,3 +1,23 @@
+# manynet 0.3.1
+
+2023-12-17
+
+## Making
+
+* `as_tidygraph.diff_model()` no longer creates names for unlabelled networks
+
+## Modifying
+
+* `to_waves.diff_model()` now adds three logical vectors as variables, "Infected", "Exposed", and "Recovered"
+  - Relies on parallels to migraph's `node_is_latent()`, `node_is_infected()`, and `node_is_recovered()`
+
+## Mapping
+
+* `autographr()` now shapes seed, adopter, and non-adopter nodes using a parallel to migraph's `node_adoption_time()` for 
+  - Improved guide/legend labelling and positioning
+* `autographs()` now colors susceptible, exposed, infected, and recovered nodes correctly
+* `autographd()` now colors susceptible, exposed, infected, and recovered nodes correctly
+
 # manynet 0.3.0
 
 2023-12-15
