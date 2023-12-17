@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
       </span>
     </div>
 
@@ -54,11 +54,35 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.3.0" id="manynet-030">manynet 0.3.0<a class="anchor" aria-label="anchor" href="#manynet-030"></a></h2>
+<h2 class="page-header" data-toc-text="0.3.1" id="manynet-031">manynet 0.3.1<a class="anchor" aria-label="anchor" href="#manynet-031"></a></h2>
+<p>2023-12-17</p>
+<div class="section level3">
+<h3 id="making-0-3-1">Making<a class="anchor" aria-label="anchor" href="#making-0-3-1"></a></h3>
+<ul><li>
+<code>as_tidygraph.diff_model()</code> no longer creates names for unlabelled networks</li></ul></div>
+<div class="section level3">
+<h3 id="modifying-0-3-1">Modifying<a class="anchor" aria-label="anchor" href="#modifying-0-3-1"></a></h3>
+<ul><li>
+<code>to_waves.diff_model()</code> now adds three logical vectors as variables, “Infected”, “Exposed”, and “Recovered”<ul><li>Relies on parallels to migraph’s <code>node_is_latent()</code>, <code>node_is_infected()</code>, and <code>node_is_recovered()</code>
+</li>
+<li>Fixed bug in wave naming</li>
+</ul></li></ul></div>
+<div class="section level3">
+<h3 id="mapping-0-3-1">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-3-1"></a></h3>
+<ul><li>
+<code><a href="../reference/autographing.html">autographr()</a></code> now shapes seed, adopter, and non-adopter nodes using a parallel to migraph’s <code>node_adoption_time()</code> for<ul><li>Improved guide/legend labelling and positioning</li></ul></li>
+<li>
+<code><a href="../reference/autographing.html">autographs()</a></code> now colors susceptible, exposed, infected, and recovered nodes correctly</li>
+<li>
+<code><a href="../reference/autographing.html">autographd()</a></code> now colors susceptible, exposed, infected, and recovered nodes correctly</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.3.0" id="manynet-030">manynet 0.3.0<small>2023-12-15</small><a class="anchor" aria-label="anchor" href="#manynet-030"></a></h2>
 <p>2023-12-15</p>
 <div class="section level3">
 <h3 id="package-0-3-0">Package<a class="anchor" aria-label="anchor" href="#package-0-3-0"></a></h3>
-<ul><li>Overhaul of the README to summarise many of the unique aspects of the package</li></ul></div>
+<ul><li>Overhaul of the README to summarise many of the unique aspects of the package (closed <a href="https://github.com/snlab-ch/manynet/issues/36" class="external-link">#36</a>)</li></ul></div>
 <div class="section level3">
 <h3 id="making-0-3-0">Making<a class="anchor" aria-label="anchor" href="#making-0-3-0"></a></h3>
 <ul><li>Added <code><a href="../reference/as.html">as_tidygraph()</a></code> method for diff_model objects</li>
@@ -85,13 +109,13 @@
 <ul><li>
 <code><a href="../reference/autographing.html">autographr()</a></code> now plots diff_model objects, showing the diffusion as a heatmap on the vertices</li>
 <li>
-<code><a href="../reference/autographing.html">autographs()</a></code> and <code><a href="../reference/autographing.html">autographd()</a></code> now utilise network information in diff_model objects to provide better layouts</li>
+<code><a href="../reference/autographing.html">autographs()</a></code> and <code><a href="../reference/autographing.html">autographd()</a></code> now utilise network information in diff_model objects to provide better layouts (closed <a href="https://github.com/snlab-ch/manynet/issues/17" class="external-link">#17</a>)</li>
 <li>Fixed bug with specifying <code>node_size</code> in <code><a href="../reference/autographing.html">autographd()</a></code>
 </li>
 <li>
 <code>many_palettes</code> replaces <code>iheid_palette</code>
 </li>
-<li>Added new palettes, themes and scales for graphs<ul><li>
+<li>Added new palettes, themes and scales for graphs (closed <a href="https://github.com/snlab-ch/manynet/issues/9" class="external-link">#9</a>)<ul><li>
 <code><a href="../reference/themes.html">theme_ethz()</a></code>, <code><a href="../reference/scales.html">scale_color_ethz()</a></code>/<code><a href="../reference/scales.html">scale_colour_ethz()</a></code>, and <code><a href="../reference/scales.html">scale_fill_ethz()</a></code> for ETH Zürich</li>
 <li>
 <code><a href="../reference/themes.html">theme_uzh()</a></code>, <code><a href="../reference/scales.html">scale_color_uzh()</a></code>/<code><a href="../reference/scales.html">scale_colour_uzh()</a></code>, and <code><a href="../reference/scales.html">scale_fill_uzh()</a></code> for Uni Zürich</li>
