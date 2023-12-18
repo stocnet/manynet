@@ -1,7 +1,7 @@
 # Marvel ####
 
 #' Multilevel two-mode affiliation, signed one-mode networks of Marvel comic
-#' book characters (Yüksel 2017)
+#' book characters (Yuksel 2017)
 #'
 #' @description
 #' This package includes two datasets related to the Marvel _comic book_ universe.
@@ -15,7 +15,7 @@
 #' Friendships are indicated by a positive sign in the tie `sign` attribute,
 #' whereas enmities are indicated by a negative sign in this edge attribute.
 #' @details
-#' Additional nodal variables have been coded and included by Dr Umut Yüksel:
+#' Additional nodal variables have been coded and included by Dr Umut Yuksel:
 #'
 #' - **Gender**: binary character, 43 "Male" and 10 "Female"
 #' - **PowerOrigin**: binary character, 2 "Alien", 1 "Cyborg", 5 "God/Eternal",
@@ -31,7 +31,7 @@
 #' @keywords datasets
 #' @name ison_marvel
 #' @usage data(ison_marvel_teams)
-#' @source Umut Yüksel, 31 March 2017
+#' @source Umut Yuksel, 31 March 2017
 #' @format
 #'   ```{r, echo = FALSE}
 #'   ison_marvel_teams

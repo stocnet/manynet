@@ -106,7 +106,7 @@ autographr(ison_adolescents)
 autographr(generate_permutation(ison_adolescents))
 }
 \references{
-Erdős, Paul, and Alfréd Rényi. (1959).
+Erdos, Paul, and Alfred Renyi. (1959).
 "\href{https://www.renyi.hu/~p_erdos/1959-11.pdf}{On Random Graphs I}"
 \emph{Publicationes Mathematicae}. 6: 290–297.
 
@@ -115,7 +115,7 @@ Watts, Duncan J., and Steven H. Strogatz. 1998.
 \emph{Nature} 393(6684):440–42.
 \doi{10.1038/30918}.
 
-Barabási, Albert-László, and Réka Albert. 1999.
+Barabasi, Albert-Laszlo, and Reka Albert. 1999.
 “Emergence of Scaling in Random Networks.”
 \emph{Science} 286(5439):509–12.
 \doi{10.1126/science.286.5439.509}.

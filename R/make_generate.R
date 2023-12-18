@@ -20,7 +20,7 @@ NULL
 #' @param p Proportion of possible ties in the network that are realised or,
 #'   if integer greater than 1, the number of ties in the network.
 #' @references 
-#' Erdős, Paul, and Alfréd Rényi. (1959). 
+#' Erdos, Paul, and Alfred Renyi. (1959). 
 #' "\href{https://www.renyi.hu/~p_erdos/1959-11.pdf}{On Random Graphs I}" 
 #' _Publicationes Mathematicae_. 6: 290–297.
 #' @importFrom igraph sample_bipartite sample_gnp sample_gnm
@@ -106,7 +106,7 @@ generate_smallworld <- function(n, p = 0.05, directed = FALSE, width = 2) {
 #' @param p Power of the preferential attachment, default is 1.
 #' @importFrom igraph sample_pa
 #' @references 
-#' Barabási, Albert-László, and Réka Albert. 1999. 
+#' Barabasi, Albert-Laszlo, and Reka Albert. 1999. 
 #' “Emergence of Scaling in Random Networks.” 
 #' _Science_ 286(5439):509–12. 
 #' \doi{10.1126/science.286.5439.509}.
