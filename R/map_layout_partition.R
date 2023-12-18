@@ -189,16 +189,14 @@ layout_tbl_graph_concentric <- function(.data, membership = NULL, radius = NULL,
                            function(b) node_attribute(.data, b))
   } else {
     if (is_twomode(.data) & length(membership) == 2) {
-      for(k in 2:length(membership)) {
-      xnet <- as_matrix(to_multilevel(.data))[membership[[k-1]], 
-                                              membership[[k]]]
+      xnet <- as_matrix(to_multilevel(.data))[membership[[2-1]], 
+                                              membership[[2]]]
       lo <- layout_tbl_graph_hierarchy(as_igraph(xnet, twomode = TRUE))
       lo$names <- node_names(.data)
-      if (ncol(lo) == 2) lo[,1] <- seq_len(lo)
+      if (ncol(lo) == 2) lo[,1] <- seq_len(dim(lo)[1])
       order.values <- lapply(1:0, function(x)
         if(ncol(lo) >= 3) sort(lo[lo[,2] == x,])[,3] 
-        else sort(lo[lo[,2] == x,1]) ) 
-      } 
+        else sort(lo[lo[,2] == x,1])) 
     } else order.values <- membership
     # order.values <- getNNvec(.data, members)
   }
