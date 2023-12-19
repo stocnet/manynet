@@ -235,6 +235,14 @@ autographd <- function(tlist, layout, labels = TRUE,
   }
   # Remove lists without edges
   tlist <- Filter(function(x) igraph::gsize(x) > 0, tlist)
+  # Check names for groups
+  if (!"name" %in% names(node_attribute(tlist[[1]]))) {
+    labels <- FALSE
+    for (i in seq_len(length(tlist))) {
+      tlist[[i]] <- add_node_attribute(tlist[[i]], "name",
+                                       as.character(seq_len(igraph::vcount(tlist[[i]]))))
+    }
+  }
   # Create an edge list
   edges_lst <- lapply(1:length(tlist), function(i)
     cbind(igraph::as_data_frame(tlist[[i]], "edges"),
@@ -268,7 +276,7 @@ autographd <- function(tlist, layout, labels = TRUE,
   if (isFALSE(keep_isolates)) {
     nodes_out <- remove_isolates(edges_out, nodes_out)
   } else {
-    if(nrow(nodes_out)/length(unique(nodes_out$frame)) > 30 &
+    if (nrow(nodes_out)/length(unique(nodes_out$frame)) > 30 &
        any(unlist(lapply(tlist, migraph::node_is_isolate)) == TRUE)) {
       message("Please considering deleting isolates to improve visualisation.")
     } 
@@ -965,10 +973,6 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
                                    ifelse(nodes_out[["Infected"]],"Infected", 
                                           ifelse(nodes_out[["Recovered"]], "Recovered",
                                                  "Susceptible"))))
-    # node_color <- ifelse(nodes_out[["Infected"]] == "Infected", "red",
-    #                      ifelse(nodes_out[["Infected"]] == "Susceptible", "blue",
-    #                             ifelse(nodes_out[["Infected"]] == "Exposed", "orange", "darkgreen")))
-    # node_color <- ifelse(nodes_out[["Infected"]], "Infected", "Susceptible")
   } else node_color <- "darkgray"
   if (!is.null(node_size)) {
     if (node_size %in% names(nodes_out)) {
