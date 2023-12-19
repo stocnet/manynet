@@ -8,7 +8,7 @@
 \alias{theme_rug}
 \title{Many themes}
 \usage{
-theme_iheid(base_size = 12, base_family = "Times")
+theme_iheid(base_size = 12, base_family = "serif")
 
 theme_ethz(base_size = 12, base_family = "serif")
 

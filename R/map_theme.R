@@ -14,7 +14,7 @@ NULL
 
 #' @rdname themes
 #' @export
-theme_iheid <- function(base_size = 12, base_family = "Times") {
+theme_iheid <- function(base_size = 12, base_family = "serif") {
   colors <-  corp_palette("IHEID")
   (ggplot2::theme_minimal(base_size = base_size, base_family = base_family)
     + ggplot2::theme(
@@ -22,15 +22,15 @@ theme_iheid <- function(base_size = 12, base_family = "Times") {
       rect = ggplot2::element_rect(fill = "#FFFFFF", linetype = 1,
                                    linewidth = 0.6, colour = colors["IHEIDGrey"]),
       title = ggplot2::element_text(colour = colors["IHEIDRed"],
-                                    size = base_size,
-                           face = "bold"),
+                                    size = base_size, family = base_family,
+                                    face = "bold"),
       plot.subtitle = ggplot2::element_text(colors["IHEIDGrey"],
-                                   size = base_size*0.85, family = "Times",
-                                   face = "bold"),
+                                   size = base_size*0.85, family = base_family,
+                                   face = "italic"),
       plot.caption = ggplot2::element_text(colors["IHEIDBlack"],
                                            size = base_size*0.75,
-                                  family = "Times",
-                                  face = "italic"),
+                                  family = base_family,
+                                  face = "bold"),
       axis.title = ggplot2::element_blank(),
       axis.text = ggplot2::element_text(),
       axis.ticks = ggplot2::element_blank(),
@@ -54,7 +54,7 @@ theme_iheid <- function(base_size = 12, base_family = "Times") {
 
 #' @rdname themes
 #' @export
-theme_ethz <- function(base_size = 12, base_family = "serif") {
+theme_ethz <- function(base_size = 12, base_family = "sans") {
   colors <-  corp_palette("ETHZ")
   (ggplot2::theme_minimal(base_size = base_size, base_family = base_family)
     + ggplot2::theme(
@@ -62,16 +62,16 @@ theme_ethz <- function(base_size = 12, base_family = "serif") {
       rect = ggplot2::element_rect(fill = "#FFFFFF", linetype = 1,
                                    linewidth = 0.6, colour = colors["ETHZ_Petrol"]),
       title = ggplot2::element_text(colour = colors["ETHZ_Blue"],
-                                    size = base_size,
+                                    size = base_size, family = base_family,
                                     face = "bold"),
       plot.subtitle = ggplot2::element_text(colors["ETHZ_Bronze"],
                                             size = base_size*0.85,
-                                            family = "serif",
-                                            face = "bold"),
-      plot.caption = ggplot2::element_text(colors["ETHZ_Red"],
+                                            family = base_family,
+                                            face = "italic"),
+      plot.caption = ggplot2::element_text(colors["ETHZ_Petrol"],
                                            size = base_size*0.75,
-                                           family = "serif",
-                                           face = "italic"),
+                                           family = base_family,
+                                           face = "bold"),
       axis.title = ggplot2::element_blank(),
       axis.text = ggplot2::element_text(),
       axis.ticks = ggplot2::element_blank(),
@@ -103,15 +103,15 @@ theme_uzh <- function(base_size = 12, base_family = "sans") {
       rect = ggplot2::element_rect(fill = "#FFFFFF", linetype = 1,
                                    linewidth = 0.6, colour = colors["UZH_Grey"]),
       title = ggplot2::element_text(colour = colors["UZH_Orange"],
-                                    size = base_size,
+                                    size = base_size, family = base_family,
                                     face = "bold"),
       plot.subtitle = ggplot2::element_text(colors["UZH_Blue"],
                                             size = base_size*0.85,
-                                            family = "sans",
+                                            family = base_family,
                                             face = "bold"),
       plot.caption = ggplot2::element_text(colors["UZH_Grey"],
                                            size = base_size*0.75,
-                                           family = "sans",
+                                           family = base_family,
                                            face = "italic"),
       axis.title = ggplot2::element_blank(),
       axis.text = ggplot2::element_text(),
@@ -144,15 +144,15 @@ theme_rug <- function(base_size = 12, base_family = "mono") {
       rect = ggplot2::element_rect(fill = "#FFFFFF", linetype = 1,
                                    linewidth = 0.6, colour = colors["RUG_Black"]),
       title = ggplot2::element_text(colour = colors["RUG_Red"],
-                                    size = base_size,
+                                    size = base_size, family = base_family,
                                     face = "bold"),
       plot.subtitle = ggplot2::element_text(colors["RUG_Black"],
                                             size = base_size*0.85,
-                                            family = "mono",
+                                            family = base_family,
                                             face = "bold"),
       plot.caption = ggplot2::element_text(colors["RUG_Red"],
                                            size = base_size*0.75,
-                                           family = "mono",
+                                           family = base_family,
                                            face = "italic"),
       axis.title = ggplot2::element_blank(),
       axis.text = ggplot2::element_text(),
@@ -174,6 +174,32 @@ theme_rug <- function(base_size = 12, base_family = "mono") {
                                          face = "bold"),
       strip.background = ggplot2::element_rect()))
 }
+
+#' #' @rdname themes
+#' #' @export
+#' theme_crips <- function(base_size = 12, base_family = "serif") {
+#'   (ggraph::scale_edge_color_grey() +
+#'     ggplot2::theme_minimal(base_size = base_size, base_family = base_family) +
+#'     ggplot2::theme(axis.title = ggplot2::element_blank(),
+#'                    axis.text = ggplot2::element_text(),
+#'                    axis.ticks = ggplot2::element_blank(),
+#'                    axis.line = ggplot2::element_blank(),
+#'                    axis.title.x = ggplot2::element_blank(),
+#'                    axis.text.x = ggplot2::element_blank(),
+#'                    axis.ticks.x = ggplot2::element_blank(),
+#'                    axis.title.y = ggplot2::element_blank(),
+#'                    axis.text.y = ggplot2::element_blank(),
+#'                    axis.ticks.y = ggplot2::element_blank(),
+#'                    panel.grid.major = ggplot2::element_blank(),
+#'                    panel.grid.minor = ggplot2::element_blank(),
+#'                    legend.background = ggplot2::element_rect(),
+#'                    legend.position = "bottom",
+#'                    legend.direction = "horizontal", legend.box = "vertical",
+#'                    plot.title = ggplot2::element_text(hjust = 0,
+#'                                                       size = ggplot2::rel(1.5),
+#'                                                       face = "bold"),
+#'                    strip.background = ggplot2::element_rect()))
+#' }
 
 #' Many scales
 #' 
