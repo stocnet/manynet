@@ -10,7 +10,7 @@
 \usage{
 theme_iheid(base_size = 12, base_family = "serif")
 
-theme_ethz(base_size = 12, base_family = "serif")
+theme_ethz(base_size = 12, base_family = "sans")
 
 theme_uzh(base_size = 12, base_family = "sans")
 

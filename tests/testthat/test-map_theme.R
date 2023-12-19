@@ -24,11 +24,11 @@ test_that("themes graph correctly", {
                "ETHZ_Bronze")
   expect_equal(names(test_uzh[["theme"]][["plot.subtitle"]][["colour"]]),
                "UZH_Blue")
-  expect_equal(test_iheid[["theme"]][["plot.caption"]][["family"]], "Times")
-  expect_equal(test_ethz[["theme"]][["plot.caption"]][["family"]], "serif")
+  expect_equal(test_iheid[["theme"]][["plot.caption"]][["family"]], "serif")
+  expect_equal(test_ethz[["theme"]][["plot.caption"]][["family"]], "sans")
   expect_equal(test_uzh[["theme"]][["plot.caption"]][["family"]], "sans")
-  expect_equal(test_iheid[["theme"]][["plot.caption"]][["face"]], "italic")
-  expect_equal(test_ethz[["theme"]][["plot.caption"]][["face"]], "italic")
+  expect_equal(test_iheid[["theme"]][["plot.caption"]][["face"]], "bold")
+  expect_equal(test_ethz[["theme"]][["plot.caption"]][["face"]], "bold")
   expect_equal(test_uzh[["theme"]][["plot.caption"]][["face"]], "italic")
 })
 
