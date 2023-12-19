@@ -179,7 +179,7 @@ autographs <- function(netlist, ...) {
 #' @examples
 #' #ison_adolescents %>%
 #' # mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %>%
-#' # to_waves(attribute = "year") %>%
+#' # to_waves(attribute = "year", cumulative = TRUE) %>%
 #' # autographd()
 #' #ison_adolescents %>%
 #' # mutate(shape = rep(c("circle", "square"), times = 4),
@@ -614,7 +614,7 @@ reduce_categories <- function(g, node_group) {
 .graph_nodes <- function(p, g, node_color, node_shape, node_size){
   nsize <- .infer_nsize(g, node_size)
   nshape <- .infer_shape(g, node_shape)
-  if ("Infected" %in% names(node_attribute(g))) {
+  if (is.null(node_color) & "Infected" %in% names(node_attribute(g))) {
     node_color <- as.factor(ifelse(node_attribute(g, "Exposed"), "Exposed",
                                    ifelse(node_attribute(g, "Infected"),"Infected", 
                                           ifelse(node_attribute(g, "Recovered"), "Recovered",
@@ -626,7 +626,7 @@ reduce_categories <- function(g, node_group) {
                                              "Susceptible" = "blue",
                                              "Exposed" = "orange",
                                              "Recovered" = "darkgreen"))
-  } else if (any("diff_model" %in% names(attributes(g)))) {
+  } else if (is.null(node_color) & any("diff_model" %in% names(attributes(g)))) {
     node_adopts <- .node_adoption_time(g)
     nshape <- ifelse(node_adopts == min(node_adopts), "Seed(s)",
                      ifelse(node_adopts == Inf, "Non-Adopter", "Adopter"))
@@ -765,21 +765,6 @@ is_diamond <- function(x) {
     } else FALSE 
   } else FALSE
 }
-
-# infection_rate <- function(x) {
-#   if ("I_new" %in% names(x)) {
-#     out <- c(x$I[1], x$I_new[-1])
-#   } else {
-#     out <- c(x$I[1], diff(x$I)[-(length(x$I))])
-#     out <- ifelse(out < 0, 0, out)
-#   }
-#   a <- list()
-#   for (k in seq_len(length(out))) {
-#     a[[k]] <- rep(x$t[k], out[k])
-#   }
-#   out <- unlist(a)
-#   if (length(out) < unique(x$n)) out <- c(out, rep(0, (unique(x$n)-length(out))))
-# }
 
 .node_adoption_time <- function(g){
   diff_model <- attr(g, "diff_model")

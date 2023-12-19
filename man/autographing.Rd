@@ -169,7 +169,7 @@ with sensible defaults
 #autographs(migraph::play_diffusion(ison_adolescents))
 #ison_adolescents \%>\%
 # mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%
-# to_waves(attribute = "year") \%>\%
+# to_waves(attribute = "year", cumulative = TRUE) \%>\%
 # autographd()
 #ison_adolescents \%>\%
 # mutate(shape = rep(c("circle", "square"), times = 4),
