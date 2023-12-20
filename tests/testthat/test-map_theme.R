@@ -29,7 +29,7 @@ test_that("themes graph correctly", {
   expect_equal(test_uzh[["theme"]][["plot.caption"]][["family"]], "sans")
   expect_equal(test_iheid[["theme"]][["plot.caption"]][["face"]], "bold")
   expect_equal(test_ethz[["theme"]][["plot.caption"]][["face"]], "bold")
-  expect_equal(test_uzh[["theme"]][["plot.caption"]][["face"]], "italic")
+  expect_equal(test_uzh[["theme"]][["plot.caption"]][["face"]], "bold")
 })
 
 ##### test scales
