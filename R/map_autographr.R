@@ -345,7 +345,7 @@ reduce_categories <- function(g, node_group) {
       }
     }
   }
-  if (layout == "stress" & is_diamond(g)) {
+  if (layout == "stress" & .is_diamond(g)) {
     turn <- matrix(c(cos(0.71), -sin(0.71), sin(0.71), cos(0.71)), 2, 2)
     coord <- matrix(cbind(lo[,1], lo[,2]), ncol = 2) %*% turn
     lo[,1] <- coord[,1]
@@ -764,7 +764,7 @@ reduce_categories <- function(g, node_group) {
   out
 }
 
-is_diamond <- function(x) {
+.is_diamond <- function(x) {
   x <- as_matrix(x)
   if (is.numeric(x)) {
     if (length(x) == 100 | length(x) == 10000 &

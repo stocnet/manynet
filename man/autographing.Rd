@@ -188,7 +188,6 @@ with sensible defaults
 Other mapping: 
 \code{\link{attributes}()},
 \code{\link{configuration_layouts}},
-\code{\link{is}()},
 \code{\link{partition_layouts}},
 \code{\link{properties}}
 }
