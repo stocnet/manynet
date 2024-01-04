@@ -12,7 +12,7 @@
 #'   \item tbl_graph, from the `{tidygraph}` package
 #'   }
 #' @return TRUE if the condition is met, or FALSE otherwise.
-#' @family mapping
+#' @family marking
 #' @name is
 NULL
 

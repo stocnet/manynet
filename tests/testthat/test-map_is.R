@@ -1,4 +1,4 @@
-test_that("is tests work", {
+test_that("is_ tests return correct values", {
   expect_true(is_twomode(ison_southern_women))
   expect_false(is_directed(ison_southern_women))
   expect_false(is_weighted(ison_southern_women))
