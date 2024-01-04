@@ -367,10 +367,20 @@ is_dynamic <- function(.data) {
 
 # Features ####
 
-#' Marking networks based on their properties
+#' Marking networks based on their features
 #' 
-#' These functions implement logical tests for various network
-#' properties.
+#' @description
+#'   These functions implement logical tests for various network
+#'   features.
+#'   
+#'   - `is_connected()` tests whether network is strongly connected, 
+#'   or weakly connected if undirected.
+#'   - `is_perfect_matching()` tests whether there is a matching 
+#'   for a network that covers every node in the network.
+#'   - `is_eulerian()` tests whether there is a Eulerian path for a network
+#'   where that path passes through every tie exactly once.
+#'   - `is_acyclic()` tests whether network is a directed acyclic graph.
+#'   - `is_aperiodic()` tests whether network is aperiodic.
 #' @param .data An object of a `{manynet}`-consistent class:
 #'   \itemize{
 #'   \item matrix (adjacency or incidence) from `{base}` R
@@ -380,12 +390,12 @@ is_dynamic <- function(.data) {
 #'   \item tbl_graph, from the `{tidygraph}` package
 #'   }
 #' @return TRUE if the condition is met, or FALSE otherwise.
-#' @family marks
-#' @name is
+#' @family marking
+#' @name features
 NULL
 
-#' @describeIn is Tests whether network is weakly connected if
-#'   the network is undirected or strongly connected if directed.
+#' @rdname features
+#' @section is_connected: 
 #'   To test weak connection on a directed network,
 #'   please see `to_undirected()`.
 #' @importFrom igraph is.connected
@@ -398,21 +408,43 @@ is_connected <- function(.data) {
                                      "strong", "weak"))
 }
 
-#' @describeIn is Tests whether there is a matching for a network
-#'   that covers every node in the network
+#' @rdname features
+#' @section is_perfect_matching: 
+#'   For two-mode or bipartite networks, `to_matching()` is used
+#'   to identify whether a perfect matching is possible.
+#'   For one-mode networks, we use the Tutte theorem.
+#'   Note that currently only subgraphs with cutpoints removed are tested,
+#'   and not all possible subgraphs.
+#'   This is to avoid computationally expensive combinatorial operations,
+#'   but may come at the cost of some edge cases where a one-mode network
+#'   cannot perfectly match as suggested.
 #' @param mark A logical vector marking two types or modes.
 #'   By default "type".
+#' @references
+#'   Tutte, W. T. (1950). 
+#'   "The factorization of locally finite graphs". 
+#'   _Canadian Journal of Mathematics_. 2: 44–49. 
+#'   \doi{10.4153/cjm-1950-005-2}
 #' @examples
 #' is_perfect_matching(ison_southern_women)
 #' @export
 is_perfect_matching <- function(.data, mark = "type"){
-  matches <- to_matching(.data, mark = mark)
-  network_ties(matches)*2 == network_nodes(matches)
+  if(mark %in% network_node_attributes(.data)){
+    matches <- to_matching(.data, mark = mark)
+    network_ties(matches)*2 == network_nodes(matches)
+  } else {
+    if (network_nodes(.data) %% 2 != 0) FALSE else # odd number of nodes cannot match perfectly
+      if (!igraph::is_connected(.data) && # any odd components cannot match perfectly
+          any(igraph::component_distribution(.data)[c(F,T)]!=0)) FALSE else { # note first index is 0...
+            cutpoints <- igraph::articulation_points(.data)
+            gminusu <- igraph::delete_vertices(.data, cutpoints)
+            sum((igraph::component_distribution(gminusu) * igraph::count_components(gminusu))[c(F,T)]) <= length(cutpoints)
+          }
+  }
 }
 
-#' @describeIn is Tests whether there is a Eulerian path for a network
-#'   where that path passes through every tie exactly once
-#'   @importFrom igraph has_eulerian_path
+#' @rdname features
+#' @importFrom igraph has_eulerian_path
 #' @examples
 #' is_eulerian(ison_brandes)
 #' @export
@@ -420,7 +452,7 @@ is_eulerian <- function(.data){
   igraph::has_eulerian_path(as_igraph(.data))
 }
 
-#' @describeIn is Tests whether network is a directed acyclic graph
+#' @rdname features
 #' @importFrom igraph is_dag
 #' @examples 
 #' is_acyclic(ison_algebra)
@@ -430,7 +462,7 @@ is_acyclic <- function(.data){
   igraph::is_dag(obj)
 }
 
-#' @describeIn is Tests whether network is aperiodic
+#' @rdname features
 #' @param max_path_length Maximum path length considered.
 #'   If negative, paths of all lengths are considered.
 #'   By default 4, to avoid potentially very long computation times.
