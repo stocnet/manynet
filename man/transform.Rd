@@ -41,7 +41,7 @@ to_no_isolates(.data)
 to_galois(.data)
 }
 \arguments{
-\item{.data}{An object of a \code{{manynet}}-consistent class:
+\item{.data}{An object of a manynet-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
 \item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}

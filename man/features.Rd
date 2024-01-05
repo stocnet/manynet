@@ -67,6 +67,11 @@ please see \code{to_undirected()}.
 For two-mode or bipartite networks, \code{to_matching()} is used
 to identify whether a perfect matching is possible.
 For one-mode networks, we use the Tutte theorem.
+Note that currently only subgraphs with cutpoints removed are tested,
+and not all possible subgraphs.
+This is to avoid computationally expensive combinatorial operations,
+but may come at the cost of some edge cases where a one-mode network
+cannot perfectly match as suggested.
 }
 
 \examples{

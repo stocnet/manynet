@@ -85,7 +85,7 @@ is_edgelist.tbl_graph <- function(.data) FALSE
 #' @describeIn is Tests whether network is dynamic, time-stamped data
 #' @export
 is_list <- function(.data) {
-  inherits(.data, "list")
+  inherits(.data, "list") && !is_manynet(.data)
 }
 
 # Formats ####
