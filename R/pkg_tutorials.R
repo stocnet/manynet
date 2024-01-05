@@ -71,3 +71,43 @@ extract_tute <- function(tute) {
   }
 }
 
+#' @describeIn tutorials Returns a tibble with details of the
+#'   network datasets included in the packages
+#' @examples
+#' #pkg_data()
+#' @export
+pkg_data <- function(pkg = "manynet"){
+  datanames <- data(package = pkg)$results[,"Item"]
+  require(package = pkg, character.only = TRUE)
+  datasets <- lapply(datanames, function(d) get(d))
+  datanames <- datanames[!vapply(datasets, is_list, logical(1))]
+  datasets <- datasets[!vapply(datasets, is_list, logical(1))]
+  out <- tibble::tibble(dataset = datanames,
+                        nodes = vapply(datasets, network_nodes, numeric(1)),
+                        ties = vapply(datasets, network_ties, numeric(1)),
+                        nattr = vapply(datasets, 
+                                            function (x) length(network_node_attributes(x)), 
+                                            numeric(1)),
+                        tattr = vapply(datasets, 
+                                            function (x) length(network_tie_attributes(x)), 
+                                            numeric(1)),
+                        directed = vapply(datasets, 
+                                        is_directed, 
+                                        logical(1)),
+                        weighted = vapply(datasets, 
+                                          is_weighted, 
+                                          logical(1)),
+                        twomode = vapply(datasets, 
+                                            is_twomode, 
+                                            logical(1)),
+                        labelled = vapply(datasets, 
+                                          is_labelled, 
+                                          logical(1)),
+                        signed = vapply(datasets, 
+                                          is_signed, 
+                                          logical(1)),
+                        multiplex = vapply(datasets, 
+                                        is_multiplex, 
+                                        logical(1)))
+  out
+}

@@ -4,11 +4,14 @@
 \alias{tutorials}
 \alias{run_tute}
 \alias{extract_tute}
+\alias{pkg_data}
 \title{Open and extract code from tutorials}
 \usage{
 run_tute(tute)
 
 extract_tute(tute)
+
+pkg_data(pkg = "manynet")
 }
 \arguments{
 \item{tute}{String, name of the tutorial (e.g. "tutorial2").}
@@ -27,8 +30,12 @@ wraps \code{learnr::run_tutorial()} with some convenience
 from a \code{{manynet}} or \code{{migraph}} tutorial,
 saving the .R script to the current working directory
 
+\item \code{pkg_data()}: Returns a tibble with details of the
+network datasets included in the packages
+
 }}
 \examples{
 #run_tute("tutorial2")
 #extract_tute("tutorial2")
+#pkg_data()
 }
