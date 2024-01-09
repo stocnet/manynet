@@ -430,6 +430,7 @@ is_connected <- function(.data) {
 #' is_perfect_matching(ison_southern_women)
 #' @export
 is_perfect_matching <- function(.data, mark = "type"){
+  .data <- as_igraph(.data)
   if(mark %in% network_node_attributes(.data)){
     matches <- to_matching(.data, mark = mark)
     network_ties(matches)*2 == network_nodes(matches)
