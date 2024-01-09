@@ -25,7 +25,7 @@ autographr(
   ...
 )
 
-autographs(netlist, ...)
+autographs(netlist, frames, ...)
 
 autographd(
   tlist,
@@ -110,6 +110,12 @@ Edges can also be sized by declaring a numeric size or vector instead.}
 
 \item{netlist}{A list of manynet-compatible networks.}
 
+\item{frames}{The number of frames to be displayed.
+To display all frames, please declare "all".
+Otherwise, please declare the number of frames to be displayed.
+If missing, the number of frames will be reduced to the first and last
+frames if number of frames is bigger than 4.}
+
 \item{tlist}{The same migraph-compatible network listed according to
 a time attribute, waves, or slices.}
 
@@ -165,7 +171,10 @@ with sensible defaults
 #autographr(ison_southern_women, layout = "hierarchy", center = "events")
 #autographr(ison_lotr, layout = "multilevel",
 #           node_color = "Race", level = "Race")
-#autographs(to_egos(ison_adolescents))
+#autographs(to_egos(ison_adolescents)
+#autographs(to_egos(ison_adolescents), frames = "all")
+#autographs(to_egos(ison_adolescents), frames = 4)
+#autographs(to_egos(ison_adolescents), frames = c(2, 4, 6))
 #autographs(migraph::play_diffusion(ison_adolescents))
 #ison_adolescents \%>\%
 # mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%

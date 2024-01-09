@@ -141,15 +141,32 @@ autographr <- function(.data, layout, labels = TRUE,
 #' @describeIn autographing Graphs a list of networks 
 #'   with sensible defaults
 #' @param netlist A list of manynet-compatible networks.
+#' @param frames The number of frames to be displayed.
+#'  To display all frames, please declare "all".
+#'  Otherwise, please declare the number of frames to be displayed.
+#'  If missing, the number of frames will be reduced to the first and last
+#'  frames if number of frames is bigger than 4.
 #' @source http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
 #' @examples
-#' #autographs(to_egos(ison_adolescents))
+#' #autographs(to_egos(ison_adolescents)
+#' #autographs(to_egos(ison_adolescents), frames = "all")
+#' #autographs(to_egos(ison_adolescents), frames = 4)
+#' #autographs(to_egos(ison_adolescents), frames = c(2, 4, 6))
 #' #autographs(migraph::play_diffusion(ison_adolescents))
 #' @export
-autographs <- function(netlist, ...) {
+autographs <- function(netlist, frames, ...) {
   thisRequires("patchwork")
-  if (any(class(netlist) == "diff_model")) {
-    netlist <- to_waves(netlist)
+  if (any(class(netlist) == "diff_model")) netlist <- to_waves(netlist)
+  if (missing(frames)) {
+    if (length(netlist) > 4) {
+      netlist <- netlist[c(1, length(netlist))]
+      message("Plotting first and last frames,
+              to plot all frames please set the frames argument to 'all'.")
+    }
+  } else if (!missing(frames) & any(frames != "all")) {
+    if (length(frames) == 1) {
+      netlist <- netlist[c(1:as.numeric(frames))]
+    } else netlist <- netlist[as.numeric(frames)]
   }
   if(!is.null(names(netlist))) {
     gs <- lapply(1:length(netlist), function(x)
