@@ -268,6 +268,7 @@
 #' @keywords datasets
 #' @name ison_lawfirm
 #' @usage data(ison_lawfirm)
+#' @source `{networkdata}`
 #' @references
 #'   Lazega, Emmanuel. 2001.
 #'   \emph{The Collegial Phenomenon: The Social Mechanisms of Cooperation Among Peers in a Corporate Law Partnership}.
@@ -397,3 +398,34 @@
 #'   ison_physicians
 #'   ```
 "ison_physicians"
+
+# Harry Potter ####
+
+#' Six complex one-mode support data in Harry Potter books (Coleman, Katz, and Menzel, 1966)
+#'
+#' @description
+#'   Goele Bossaert and Nadine Meidert coded peer support ties among 64 characters
+#'   in the Harry Potter books.
+#'   Each author coded four of seven books using NVivo, 
+#'   with the seventh book coded by both and serving to assess inter-rater reliability.
+#'   The first six books concentrated on adolescent interactions,
+#'   were studied in their paper, and are made available here.
+#'   The peer support ties mean voluntary emotional, instrumental, or informational support,
+#'   or praise from one living, adolescent character to another within the book's pages.
+#'   In addition, nodal attributes name, schoolyear (which doubles as their age),
+#'   gender, and their house assigned by the sorting hat are included.
+#' @docType data
+#' @keywords datasets
+#' @name ison_potter
+#' @usage data(ison_potter)
+#' @references
+#'   Bossaert, Goele and Nadine Meidert (2013). 
+#'   "'We are only as strong as we are united, as weak as we are divided'. A dynamic analysis of the peer support networks in the Harry Potter books." 
+#'   _Open Journal of Applied Sciences_, 3(2): 174-185.
+#'   \doi{10.4236/ojapps.2013.32024}
+#' @format
+#'   ```{r, echo = FALSE}
+#'   ison_potter
+#'   ```
+"ison_potter"
+

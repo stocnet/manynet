@@ -28,6 +28,9 @@
 #> # i 2,565 more rows
 }\if{html}{\out{</div>}}
 }
+\source{
+\code{{networkdata}}
+}
 \usage{
 data(ison_lawfirm)
 }
