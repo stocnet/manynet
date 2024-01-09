@@ -8,8 +8,8 @@ Description: A set of tools for making, modifying, and mapping many different ty
    The package includes functions for importing and exporting, creating and generating networks,
    molding and manipulating networks and node and tie attributes,
    and describing and visualizing networks with sensible defaults.
-URL: https://snlab-ch.github.io/manynet/
-BugReports: https://github.com/snlab-ch/manynet/issues
+URL: https://stocnet.github.io/manynet/
+BugReports: https://github.com/stocnet/manynet/issues
 Depends: R (>= 3.6.0)
 License: MIT + file LICENSE
 Language: en-GB
