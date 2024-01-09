@@ -48,15 +48,13 @@ test_that("to_redirected works",{
 })
 
 uni <- as_tidygraph(create_filled(5)) %>%
-  mutate_ties(type = sample(1:2, 10, replace = TRUE),
-              type2 = sample(1:2, 10, replace = TRUE))
+  mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE),
+              weight = rpois(10, lambda = 4))
 
 test_that("to_uniplex works", {
-  expect_true(is_weighted(to_uniplex(uni, "type")))
-  expect_true(is_weighted(to_uniplex(as_igraph(uni), "type")))
-  expect_equal(edge_attr(uni, "type"),
-               edge_attr(to_uniplex(uni, "type"), "weight"))
-  expect_length(to_uniplex(uni, "type"), length(uni))
+  expect_true(is_uniplex(to_uniplex(uni, "friend")))
+  expect_true(is_weighted(to_uniplex(as_igraph(uni), "friend")))
+  expect_length(to_uniplex(uni, "friend"), length(uni))
   expect_false(is_multiplex(ison_southern_women))
   expect_false(is_multiplex(to_multilevel(ison_southern_women)))
 })

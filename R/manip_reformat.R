@@ -20,7 +20,7 @@
 #' @name reformat
 #' @family manipulations
 #' @inheritParams is
-#' @param edge Character string naming an edge attribute to retain from a graph.
+#' @param tie Character string naming a tie attribute to retain from a graph.
 #' @param keep In the case of a signed network, whether to retain
 #' the "positive" or "negative" ties.
 #' @param threshold For a matrix, the threshold to binarise/dichotomise at.
@@ -37,45 +37,37 @@ NULL
 #'   E edge_attr_names
 #' @examples
 #' as_tidygraph(create_filled(5)) %>%
-#'   mutate_ties(type = sample(1:2, 10, replace = TRUE)) %>%
-#'   to_uniplex("type")
+#'   mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) %>%
+#'   to_uniplex("friend")
 #' @export
-to_uniplex <- function(.data, edge) UseMethod("to_uniplex")
+to_uniplex <- function(.data, tie) UseMethod("to_uniplex")
 
 #' @export
-to_uniplex.igraph <- function(.data, edge){
-  out <- .data
-  out <- igraph::delete_edges(out,
-                              igraph::E(out)[igraph::edge_attr(out, edge) == 0])
-  edge_names <- igraph::edge_attr_names(out)
-  if (length(edge_names) > 1) {
-    for (e in setdiff(edge_names, edge)) {
-      out <- igraph::delete_edge_attr(out, e) 
-    }
-  }
-  if (is.numeric(igraph::edge_attr(.data, edge))) 
-    names(igraph::edge_attr(out)) <- "weight"
-  out
+to_uniplex.tbl_graph <- function(.data, tie){
+  type <- NULL
+  out <- dplyr::filter(.data = tidygraph::activate(.data, "edges"), 
+                       type == tie) |> dplyr::select(-type)
+  tidygraph::activate(out, "nodes")
 }
 
 #' @export
-to_uniplex.tbl_graph <- function(.data, edge){
-  as_tidygraph(to_uniplex(as_igraph(.data), edge))
+to_uniplex.igraph <- function(.data, tie){
+  as_igraph(to_uniplex(as_tidygraph(.data), tie))
 }
 
 #' @export
-to_uniplex.network <- function(.data, edge){
-  as_network(to_uniplex(as_igraph(.data), edge))
+to_uniplex.network <- function(.data, tie){
+  as_network(to_uniplex(as_igraph(.data), tie))
 }
 
 #' @export
-to_uniplex.data.frame <- function(.data, edge){
-  as_edgelist(to_uniplex(as_igraph(.data), edge))
+to_uniplex.data.frame <- function(.data, tie){
+  as_edgelist(to_uniplex(as_igraph(.data), tie))
 }
 
 #' @export
-to_uniplex.matrix <- function(.data, edge){
-  as_matrix(to_uniplex(as_igraph(.data), edge))
+to_uniplex.matrix <- function(.data, tie){
+  as_matrix(to_uniplex(as_igraph(.data), tie))
 }
 
 #' @describeIn reformat Returns an object that has any edge direction removed,

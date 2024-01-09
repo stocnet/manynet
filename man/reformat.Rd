@@ -18,7 +18,7 @@
 \alias{to_twomode}
 \title{Tools for reformatting networks, graphs, and matrices}
 \usage{
-to_uniplex(.data, edge)
+to_uniplex(.data, tie)
 
 to_undirected(.data)
 
@@ -56,7 +56,7 @@ to_twomode(.data, mark)
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
 
-\item{edge}{Character string naming an edge attribute to retain from a graph.}
+\item{tie}{Character string naming a tie attribute to retain from a graph.}
 
 \item{threshold}{For a matrix, the threshold to binarise/dichotomise at.}
 
@@ -146,8 +146,8 @@ but embeds two or more modes into a multimodal network structure.
 }}
 \examples{
 as_tidygraph(create_filled(5)) \%>\%
-  mutate_ties(type = sample(1:2, 10, replace = TRUE)) \%>\%
-  to_uniplex("type")
+  mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) \%>\%
+  to_uniplex("friend")
 }
 \seealso{
 Other manipulations: 
