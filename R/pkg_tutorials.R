@@ -75,6 +75,10 @@ extract_tute <- function(tute) {
 #'   network datasets included in the packages
 #' @examples
 #' #pkg_data()
+#' # to obtain overview of unique datasets:
+#'  #pkg_data() |> 
+#'   #dplyr::distinct(directed, weighted, twomode, signed, 
+#'    #               .keep_all = TRUE)
 #' @export
 pkg_data <- function(pkg = "manynet"){
   datanames <- data(package = pkg)$results[,"Item"]
@@ -109,5 +113,6 @@ pkg_data <- function(pkg = "manynet"){
                         multiplex = vapply(datasets, 
                                         is_multiplex, 
                                         logical(1)))
+  out <- dplyr::arrange(out, nodes)
   out
 }
