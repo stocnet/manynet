@@ -4,7 +4,7 @@
 #'   These functions make it easy to use the tutorials
 #'   in the `{manynet}` and `{migraph}` packages.
 #' @param tute String, name of the tutorial (e.g. "tutorial2").
-#' @importFrom dplyr %>% as_tibble select
+#' @importFrom dplyr %>% as_tibble select tibble
 #' @name tutorials
 NULL
 
@@ -86,7 +86,7 @@ pkg_data <- function(pkg = "manynet"){
   datasets <- lapply(datanames, function(d) get(d))
   datanames <- datanames[!vapply(datasets, is_list, logical(1))]
   datasets <- datasets[!vapply(datasets, is_list, logical(1))]
-  out <- tibble::tibble(dataset = datanames,
+  out <- dplyr::tibble(dataset = datanames,
                         nodes = vapply(datasets, network_nodes, numeric(1)),
                         ties = vapply(datasets, network_ties, numeric(1)),
                         nattr = vapply(datasets, 
