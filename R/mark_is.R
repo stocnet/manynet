@@ -244,7 +244,8 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 
 #' @export
 is_signed.data.frame <- function(.data) {
-  all(is.wholenumber(.data[,3])) && any(.data[,3] < 0)
+  if(ncol(.data) <= 2) FALSE else 
+    all(is.wholenumber(.data[,3])) && any(.data[,3] < 0)
 }
 
 #' @export
