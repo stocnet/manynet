@@ -47,7 +47,7 @@ test_that("to matching works", {
 })
 
 test_that("to_subgraph works", {
-  expect_equal(network_nodes(to_subgraph(ison_lawfirm, Office == "Boston")), 22)
+  expect_equal(network_nodes(to_subgraph(ison_lawfirm, office == "Boston")), 48)
 })
 
 test_that("to ties works", {
