@@ -229,6 +229,11 @@ to_acyclic.matrix <- function(.data) {
 }
 
 #' @export
+to_acyclic.data.frame <- function(.data) {
+  as_edgelist(to_acyclic(as_igraph(.data)))
+}
+
+#' @export
 to_acyclic.network <- function(.data) {
   as_network(to_acyclic(as_igraph(.data)))
 }

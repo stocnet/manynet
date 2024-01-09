@@ -84,7 +84,7 @@ only transforming these objects' properties.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:\tabular{lrrrrr}{
     \tab data.frame \tab igraph \tab matrix \tab network \tab tbl_graph \cr
-   to_acyclic \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_acyclic \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
    to_directed \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
    to_multilevel \tab 0 \tab 1 \tab 1 \tab 0 \tab 1 \cr
    to_named \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr

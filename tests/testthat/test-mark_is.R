@@ -16,7 +16,6 @@ test_that("is_ tests return correct values", {
   expect_false(is_aperiodic(ison_southern_women))
 })
 
-# testthat::skip_on_cran({
   manyis <- collect_functions("^is_")
   manyds <- pkg_data() |> 
     dplyr::distinct(directed, weighted, twomode, multiplex, .keep_all = TRUE) |>
@@ -25,12 +24,13 @@ test_that("is_ tests return correct values", {
   for (f in manyis) {
     for (d in manyds){
       testthat::test_that(paste(f, "works for", d), {
+        skip_on_cran()
         testthat::expect_type(get(f)(get(d)), "logical")
       })
     }
   }
-# })
-# dplyr::distinct(dplyr::across(dplyr::where(is.logical)), .keep_all = TRUE) |>
+
+  # dplyr::distinct(dplyr::across(dplyr::where(is.logical)), .keep_all = TRUE) |>
 
 # benchmark <- function(functions, coercions, data){
 #   if(missing(coercions)) coercions <- c("as_edgelist","as_igraph","as_matrix","as_network","as_tidygraph")
