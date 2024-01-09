@@ -43,7 +43,7 @@ Suggests:
     rmarkdown,
     roxygen2,
     RSiena,
-    testthat,
+    testthat (>= 3.0.0),
     xml2
 Enhances:
     Rgraphviz
@@ -59,3 +59,6 @@ Authors@R:
              comment = c("IHEID", ORCID = "0000-0003-3420-6085"))
     )
 Roxygen: list(markdown = TRUE, roclets = c("namespace", "rd"))
+Config/testthat/parallel: true
+Config/testthat/edition: 3
+Config/testthat/start-first: mark_is
