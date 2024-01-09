@@ -15,6 +15,8 @@ pkg_data(pkg = "manynet")
 }
 \arguments{
 \item{tute}{String, name of the tutorial (e.g. "tutorial2").}
+
+\item{pkg}{String, name of the package.}
 }
 \description{
 These functions make it easy to use the tutorials

@@ -4,6 +4,7 @@
 #'   These functions make it easy to use the tutorials
 #'   in the `{manynet}` and `{migraph}` packages.
 #' @param tute String, name of the tutorial (e.g. "tutorial2").
+#' @param pkg String, name of the package.
 #' @importFrom dplyr %>% as_tibble select tibble
 #' @name tutorials
 NULL
@@ -80,8 +81,9 @@ extract_tute <- function(tute) {
 #'   #dplyr::distinct(directed, weighted, twomode, signed, 
 #'    #               .keep_all = TRUE)
 #' @export
-pkg_data <- function(pkg = "manynet"){
-  datanames <- data(package = pkg)$results[,"Item"]
+pkg_data <- function(pkg = "manynet") {
+  nodes <- NULL
+  datanames <- utils::data(package = pkg)$results[,"Item"]
   require(package = pkg, character.only = TRUE)
   datasets <- lapply(datanames, function(d) get(d))
   datanames <- datanames[!vapply(datasets, is_list, logical(1))]
