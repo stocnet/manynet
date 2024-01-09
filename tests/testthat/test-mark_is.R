@@ -16,11 +16,18 @@ test_that("is_ tests return correct values", {
   expect_false(is_aperiodic(ison_southern_women))
 })
 
-manyis <- ls(getNamespace("manynet"), pattern = "^is_")
-manyis <- manyis[!grepl("\\.", manyis)] # don't test on each method
-manyds <- data(package = "manynet")$results[,"Item"]
-manyds <- manyds[!sapply(manyds, function(s) is_list(get(s)))] # just while setting up the tests
-manyds <- manyds[1:3] # just while setting up the tests
+collect_functions <- function(pattern, package = "manynet"){
+  funnies <- ls(getNamespace(package), pattern = pattern)
+  funnies <- funnies[!grepl("\\.", funnies)] # don't test on each method
+  funnies
+}
+# collect_functions("^generate_")
+
+manyis <- collect_functions("^is_")
+manyds <- pkg_data() |> 
+  dplyr::distinct(dplyr::across(dplyr::where(is.logical)), .keep_all = TRUE) |> 
+  dplyr::select(dataset) |> unlist() |> unname()
+
 for (f in manyis) {
   for (d in manyds){
     testthat::test_that(paste(f, "works for", d), {

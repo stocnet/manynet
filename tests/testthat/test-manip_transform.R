@@ -47,8 +47,7 @@ test_that("to matching works", {
 })
 
 test_that("to_subgraph works", {
-  expect_length(igraph::edge_attr(
-    to_subgraph(activate(ison_algebra, "edges"), friends == 1), "friends"), 54)
+  expect_equal(network_nodes(to_subgraph(ison_lawfirm, Office == "Boston")), 22)
 })
 
 test_that("to ties works", {
