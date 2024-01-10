@@ -429,3 +429,20 @@
 #'   ```
 "ison_potter"
 
+# US States ####
+
+#' One-mode undirected network of US state contiguity
+#'
+#' @description
+#'   This network is of contiguity between US states.
+#'   States are named by their two-letter ISO-3166 code.
+#'   This data includes also the names of the capitol cities of each state.
+#' @docType data
+#' @keywords datasets
+#' @name ison_usstates
+#' @usage data(ison_usstates)
+#' @format
+#'   ```{r, echo = FALSE}
+#'   ison_usstates
+#'   ```
+"ison_usstates"
