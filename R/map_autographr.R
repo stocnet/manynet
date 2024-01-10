@@ -141,32 +141,29 @@ autographr <- function(.data, layout, labels = TRUE,
 #' @describeIn autographing Graphs a list of networks 
 #'   with sensible defaults
 #' @param netlist A list of manynet-compatible networks.
-#' @param frames The number of frames to be displayed.
-#'  To display all frames, please declare "all".
-#'  Otherwise, please declare the number of frames to be displayed.
-#'  If missing, the number of frames will be reduced to the first and last
-#'  frames if number of frames is bigger than 4.
+#' @param waves The number of plots to be displayed side-by-side.
+#'   If missing, the number of plots will be reduced to the first and last
+#'   when there are more than four plots.
 #' @source http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
 #' @examples
-#' #autographs(to_egos(ison_adolescents)
-#' #autographs(to_egos(ison_adolescents), frames = "all")
-#' #autographs(to_egos(ison_adolescents), frames = 4)
-#' #autographs(to_egos(ison_adolescents), frames = c(2, 4, 6))
+#' #autographs(to_egos(ison_adolescents))
+#' #autographs(to_egos(ison_adolescents), waves = 8)
+#' #autographs(to_egos(ison_adolescents), waves = c(2, 4, 6))
 #' #autographs(migraph::play_diffusion(ison_adolescents))
 #' @export
-autographs <- function(netlist, frames, ...) {
+autographs <- function(netlist, waves,
+                       based_on = c("first", "last", "both"), ...) {
   thisRequires("patchwork")
   if (any(class(netlist) == "diff_model")) netlist <- to_waves(netlist)
-  if (missing(frames)) {
+  if (missing(waves)) {
     if (length(netlist) > 4) {
       netlist <- netlist[c(1, length(netlist))]
-      message("Plotting first and last frames,
-              to plot all frames please set the frames argument to 'all'.")
+      message("Plotting first and last waves side-by-side.
+              Please use the 'waves' argument to control the number of waves plotted.")
     }
-  } else if (!missing(frames) & any(frames != "all")) {
-    if (length(frames) == 1) {
-      netlist <- netlist[c(1:as.numeric(frames))]
-    } else netlist <- netlist[as.numeric(frames)]
+  } else if (!missing(waves)) {
+    if (length(waves) == 1) netlist <- netlist[c(1:waves)] else 
+      netlist <- netlist[waves]
   }
   if(!is.null(names(netlist))) {
     gs <- lapply(1:length(netlist), function(x)
@@ -176,7 +173,7 @@ autographs <- function(netlist, frames, ...) {
     gs <- lapply(netlist, function(x)
       autographr(x, ...))
   }
-  do.call(patchwork::wrap_plots, gs)
+  do.call(patchwork::wrap_plots, c(gs, list(guides = "collect")))
 }
 
 #' @describeIn autographing Graphs an dynamic (animated) network
@@ -265,7 +262,7 @@ autographd <- function(tlist, layout, labels = TRUE,
     cbind(igraph::as_data_frame(tlist[[i]], "edges"),
           frame = ifelse(is.null(names(tlist)), i, names(tlist)[i])))
   # Check if all names are present in all lists
-  if (length(unique(unlist(unname(lapply(tlist, length))))) != 1) {
+  if (length(unique(unname(lapply(netlist, length)))) != 1) {
     tlist <- to_waves(as_tidygraph(do.call("rbind", edges_lst)),
                       attribute = "frame")
   }
@@ -349,9 +346,6 @@ reduce_categories <- function(g, node_group) {
   out
 }
 
-#' @importFrom ggraph create_layout ggraph
-#' @importFrom igraph get.vertex.attribute
-#' @importFrom ggplot2 theme_void
 .graph_layout <- function(g, layout, labels, node_group, ...){
   name <- NULL
   lo <- ggraph::create_layout(g, layout, ...)
@@ -650,7 +644,8 @@ reduce_categories <- function(g, node_group) {
                                   values = c("Infected" = "red",
                                              "Susceptible" = "blue",
                                              "Exposed" = "orange",
-                                             "Recovered" = "darkgreen"))
+                                             "Recovered" = "darkgreen")) +
+      ggplot2::guides(colour = ggplot2::guide_legend(""))
   } else if (is.null(node_color) & any("diff_model" %in% names(attributes(g)))) {
     node_adopts <- .node_adoption_time(g)
     nshape <- ifelse(node_adopts == min(node_adopts), "Seed(s)",
