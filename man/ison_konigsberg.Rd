@@ -13,15 +13,15 @@
 #> 2 Kneiphof  54.7  20.5
 #> 3 Lomse     54.7  20.5
 #> 4 Vorstadt  54.7  20.5
-#> # A tibble: 7 x 2
-#>    from    to
-#>   <int> <int>
-#> 1     1     2
-#> 2     1     2
-#> 3     1     3
-#> 4     2     3
-#> 5     2     4
-#> 6     2     4
+#> # A tibble: 7 x 3
+#>    from    to name           
+#>   <int> <int> <chr>          
+#> 1     1     2 Kraemer Bruecke
+#> 2     1     2 Schmiedebruecke
+#> 3     1     3 Holzbruecke    
+#> 4     2     3 Honigbruecke   
+#> 5     2     4 Gruene Bruecke 
+#> 6     2     4 Koettelbruecke 
 #> # i 1 more row
 }\if{html}{\out{</div>}}
 }
