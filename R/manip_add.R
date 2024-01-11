@@ -55,6 +55,16 @@ delete_nodes.igraph <- function(.data, nodes){
   igraph::delete_vertices(.data, v = nodes)
 }
 
+#' @describeIn add Delete ties in a network
+#' @importFrom igraph delete_edges
+#' @export
+delete_ties <- function(.data, ties) UseMethod("delete_ties")
+
+#' @export
+delete_ties.igraph <- function(.data, ties){
+  igraph::delete_edges(.data, edges = ties)
+}
+
 #' @describeIn add Add additional ties to a network
 #' @param ties The number of ties to be added or an even list of ties.
 #' @importFrom igraph add_edges
