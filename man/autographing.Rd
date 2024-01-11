@@ -25,7 +25,7 @@ autographr(
   ...
 )
 
-autographs(netlist, waves, based_on = c("first", "last", "both"), ...)
+autographs(netlist, waves, based_on = "first", ...)
 
 autographd(
   tlist,
@@ -113,6 +113,9 @@ Edges can also be sized by declaring a numeric size or vector instead.}
 \item{waves}{The number of plots to be displayed side-by-side.
 If missing, the number of plots will be reduced to the first and last
 when there are more than four plots.}
+
+\item{based_on}{Whether the layout of the joint plots should
+be based on the "first" or the "last" network.}
 
 \item{tlist}{The same migraph-compatible network listed according to
 a time attribute, waves, or slices.}

@@ -32,14 +32,14 @@ layout_tbl_graph_ladder(.data, circular = FALSE, times = 1000)
 
 layout_tbl_graph_concentric(
   .data,
-  membership = NULL,
+  membership,
   radius = NULL,
   order.by = NULL,
   circular = FALSE,
   times = 1000
 )
 
-layout_tbl_graph_multilevel(.data, level = NULL, circular = FALSE)
+layout_tbl_graph_multilevel(.data, level, circular = FALSE)
 
 layout_tbl_graph_lineage(.data, rank, circular = FALSE)
 }
@@ -55,7 +55,7 @@ layout_tbl_graph_lineage(.data, rank, circular = FALSE)
 
 \item{center}{Further split "hierarchical" layouts by
 declaring the "center" argument as the "events", "actors",
-or by declaring a node name.
+or by declaring a node name in hierarchy layout.
 Defaults to NULL.}
 
 \item{circular}{Should the layout be transformed into a radial representation.
@@ -63,16 +63,17 @@ Only possible for some layouts. Defaults to FALSE.}
 
 \item{times}{Maximum number of iterations, where appropriate}
 
-\item{membership}{A vector of partition memberships.}
+\item{membership}{A node attribute or a vector to draw concentric circles
+for "concentric" layout.}
 
 \item{radius}{A vector of radii at which the concentric circles
-should be located.
+should be located for "concentric" layout.
 By default this is equal placement around an empty centre,
 unless one (the core) is a single node,
 in which case this node occupies the centre of the graph.}
 
 \item{order.by}{An attribute label indicating the (decreasing) order
-for the nodes around the circles.
+for the nodes around the circles for "concentric" layout.
 By default ordering is given by a bipartite placement that reduces
 the number of edge crossings.}
 
@@ -80,7 +81,7 @@ the number of edge crossings.}
 "multilevel" layout.}
 
 \item{rank}{A numerical node attribute to place nodes in Y axis
-according to values.}
+according to values for "lineage" layout.}
 }
 \description{
 These algorithms layout networks based on two or more partitions,
@@ -94,7 +95,6 @@ these functions are used though.
 The "hierarchy" layout layers the first node set along the bottom,
 and the second node set along the top,
 sequenced and spaced as necessary to minimise edge overlap.
-These node sets can be arranged using the "center" argument.
 The "alluvial" layout is similar to "hierarchy",
 but places successive layers horizontally rather than vertically.
 The "railway" layout is similar to "hierarchy",
@@ -105,8 +105,6 @@ The "concentric" layout places a "hierarchy" layout
 around a circle, with successive layers appearing as concentric circles.
 The "multilevel" layout places successive layers as multiple levels.
 The "lineage" layout ranks nodes in Y axis according to values.
-These values for ranking the nodes should be declared as a node attribute
-in the "rank" argument.
 }
 \seealso{
 Other mapping: 
