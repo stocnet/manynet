@@ -209,13 +209,15 @@ to_reciprocated.data.frame <- function(.data) {
 }
 
 #' @describeIn reformat Returns an object where all ties are acyclic.
-#' @importFrom igraph as.directed
+#' @importFrom igraph as.directed feedback_arc_set
 #' @export
 to_acyclic <- function(.data) UseMethod("to_acyclic")
 
 #' @export
 to_acyclic.igraph <- function(.data) {
-  igraph::as.directed(.data, mode = "acyclic")
+  if(is_directed(.data)){
+    delete_ties(.data, igraph::feedback_arc_set(.data))
+  } else igraph::as.directed(.data, mode = "acyclic")
 }
 
 #' @export

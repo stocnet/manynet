@@ -4,6 +4,7 @@
 \alias{add}
 \alias{add_nodes}
 \alias{delete_nodes}
+\alias{delete_ties}
 \alias{add_ties}
 \alias{add_node_attribute}
 \alias{add_tie_attribute}
@@ -12,6 +13,8 @@
 add_nodes(.data, nodes, attribute = NULL)
 
 delete_nodes(.data, nodes)
+
+delete_ties(.data, ties)
 
 add_ties(.data, ties, attribute = NULL)
 
@@ -60,6 +63,8 @@ Below are the currently implemented S3 methods:\tabular{lrrr}{
 \item \code{add_nodes()}: Add additional nodes to a network
 
 \item \code{delete_nodes()}: Delete nodes in a network
+
+\item \code{delete_ties()}: Delete ties in a network
 
 \item \code{add_ties()}: Add additional ties to a network
 
