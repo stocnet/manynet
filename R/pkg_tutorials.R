@@ -114,7 +114,10 @@ pkg_data <- function(pkg = "manynet") {
                                           logical(1)),
                         multiplex = vapply(datasets, 
                                         is_multiplex, 
-                                        logical(1)))
+                                        logical(1)),
+                       acyclic = vapply(datasets, 
+                                          is_acyclic, 
+                                          logical(1)))
   out <- dplyr::arrange(out, nodes)
   out
 }
