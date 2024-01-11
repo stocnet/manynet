@@ -165,22 +165,32 @@
 #'   ```
 "ison_karateka"
 
-# Konigsberg ####
+# Koenigsberg ####
 
-#' One-mode Seven Bridges of Konigsberg network (Euler 1741)
+#' One-mode Seven Bridges of Koenigsberg network (Euler 1741)
 #'
+#' @description
+#'   The Seven Bridges of Koenigsberg is a notable historical problem in mathematics and laid the foundations of graph theory. 
+#'   The city of Koenigsberg in Prussia (now Kaliningrad, Russia) was set on both sides of the Pregel River, 
+#'   and included two large islands which were connected to each other and the mainland by seven bridges.
+#'   A weekend diversion for inhabitants was to find a walk through the city that would cross each bridge once and only once. 
+#'   The islands could not be reached by any route other than the bridges, 
+#'   and every bridge must have been crossed completely every time 
+#'   (one could not walk half way onto the bridge and then turn around and later cross the other half from the other side).
+#'   In 1735, Leonard Euler proved that the problem has no solution.
 #' @docType data
 #' @keywords datasets
-#' @name ison_konigsberg
-#' @usage data(ison_konigsberg)
+#' @name ison_koenigsberg
+#' @usage data(ison_koenigsberg)
 #' @references
 #'   Euler, Leonard. 1741. “Solutio problematis ad geometriam situs pertinentis.”
 #'   _Commentarii academiae scientiarum Petropolitanae_.
+#' @source `{igraphdata}`
 #' @format
 #'   ```{r, echo = FALSE}
-#'   ison_konigsberg
+#'   ison_koenigsberg
 #'   ```
-"ison_konigsberg"
+"ison_koenigsberg"
 
 # Networkers ####
 
