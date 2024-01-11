@@ -144,6 +144,8 @@ autographr <- function(.data, layout, labels = TRUE,
 #' @param waves The number of plots to be displayed side-by-side.
 #'   If missing, the number of plots will be reduced to the first and last
 #'   when there are more than four plots.
+#' @param based_on Whether the layout of the joint plots should
+#'   be based on the "first" or the "last" network.
 #' @source http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
 #' @examples
 #' #autographs(to_egos(ison_adolescents))
@@ -152,7 +154,7 @@ autographr <- function(.data, layout, labels = TRUE,
 #' #autographs(migraph::play_diffusion(ison_adolescents))
 #' @export
 autographs <- function(netlist, waves,
-                       based_on = c("first", "last", "both"), ...) {
+                       based_on = "first", ...) {
   thisRequires("patchwork")
   if (any(class(netlist) == "diff_model")) netlist <- to_waves(netlist)
   if (missing(waves)) {
@@ -165,13 +167,30 @@ autographs <- function(netlist, waves,
     if (length(waves) == 1) netlist <- netlist[c(1:waves)] else 
       netlist <- netlist[waves]
   }
-  if(!is.null(names(netlist))) {
-    gs <- lapply(1:length(netlist), function(x)
-      autographr(netlist[[x]], ...) +
-        ggtitle(names(netlist)[x]))
+  if (is.null(names(netlist))) names(netlist) <- rep("", length(netlist))
+  if (length(unique(unname(lapply(netlist, length)))) == 1) {
+    if (based_on == "first") {
+      lay <- autographr(netlist[[1]], ...)
+      x <- lay$data$x
+      y <- lay$data$y
+    } else if (based_on == "last") {
+      lay <- autographr(netlist[[length(netlist)]], ...)
+      x <- lay$data$x
+      y <- lay$data$y
+    } else if (based_on == "both") {
+      lay <- autographr(netlist[[1]], ...)
+      x1 <- lay$data$x
+      y1 <- lay$data$y
+      lay1 <- autographr(netlist[[length(netlist)]], ...)
+      x <- (lay1$data$x + x1)/2
+      y <- (lay1$data$y + y1)/2
+    }
+    gs <- lapply(1:length(netlist), function(i)
+      autographr(netlist[[i]], layout = "manual", x = x, y = y,
+                 circular = FALSE, ...) + ggtitle(names(netlist)[i]))
   } else {
-    gs <- lapply(netlist, function(x)
-      autographr(x, ...))
+    gs <- lapply(1:length(netlist), function(i)
+      autographr(netlist[[i]], ...) + ggtitle(names(netlist)[i]))
   }
   do.call(patchwork::wrap_plots, c(gs, list(guides = "collect")))
 }
@@ -262,7 +281,7 @@ autographd <- function(tlist, layout, labels = TRUE,
     cbind(igraph::as_data_frame(tlist[[i]], "edges"),
           frame = ifelse(is.null(names(tlist)), i, names(tlist)[i])))
   # Check if all names are present in all lists
-  if (length(unique(unname(lapply(netlist, length)))) != 1) {
+  if (length(unique(unname(lapply(tlist, length)))) != 1) {
     tlist <- to_waves(as_tidygraph(do.call("rbind", edges_lst)),
                       attribute = "frame")
   }
