@@ -186,9 +186,9 @@ autographs <- function(netlist, waves,
       y <- (lay1$data$y + y1)/2
     }
     gs <- lapply(1:length(netlist), function(i)
-      autographr(netlist[[i]], layout = "manual", x = x, y = y,
-                 circular = FALSE, ...) + ggtitle(names(netlist)[i]))
+      autographr(netlist[[i]], x = x, y = y, ...) + ggtitle(names(netlist)[i]))
   } else {
+    message("Layouts were not standardized as different nodes appear in waves.")
     gs <- lapply(1:length(netlist), function(i)
       autographr(netlist[[i]], ...) + ggtitle(names(netlist)[i]))
   }
@@ -367,7 +367,11 @@ reduce_categories <- function(g, node_group) {
 
 .graph_layout <- function(g, layout, labels, node_group, ...){
   name <- NULL
-  lo <- ggraph::create_layout(g, layout, ...)
+  dots <- list(...)
+  if ("x" %in% names(dots) & "y" %in% names(dots)) {
+    lo <- ggraph::create_layout(g, layout = "manual",
+                                x = dots[["x"]], y = dots[["y"]])
+  } else lo <- ggraph::create_layout(g, layout, ...)
   if ("graph" %in% names(attributes(lo))) {
     if (!setequal(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
       for (n in setdiff(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
