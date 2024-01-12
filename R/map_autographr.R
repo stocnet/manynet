@@ -1053,7 +1053,7 @@ collapse_guides <- function(plist) {
                                     2, function(x) length(unique(x)) > 1)))
   }
   if (any(as.logical(lapply(glist, is_empty))) & length(unique(glist)) == 2 |
-      length(unique(glist)) == 1) {
+      length(unique(glist)) == 1 | any(lengths(glist) > 1)) {
     kl <- which.max(unlist(lapply(glist, length)))
     for (i in setdiff(seq_len(length(plist)), kl)) {
       plist[[i]]$guides <- NULL
