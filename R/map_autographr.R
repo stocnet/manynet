@@ -160,8 +160,7 @@ autographs <- function(netlist, waves,
   if (missing(waves)) {
     if (length(netlist) > 4) {
       netlist <- netlist[c(1, length(netlist))]
-      message("Plotting first and last waves side-by-side.
-              Please use the 'waves' argument to control the number of waves plotted.")
+      message("Plotting first and last waves side-by-side, to to control the number of waves plotted use the 'waves'.")
     }
   } else if (!missing(waves)) {
     if (length(waves) == 1) netlist <- netlist[c(1:waves)] else 
@@ -188,9 +187,12 @@ autographs <- function(netlist, waves,
     gs <- lapply(1:length(netlist), function(i)
       autographr(netlist[[i]], x = x, y = y, ...) + ggtitle(names(netlist)[i]))
   } else {
-    message("Layouts were not standardized as different nodes appear in waves.")
+    message("Layouts were not standardised since nodes appear across waves.")
     gs <- lapply(1:length(netlist), function(i)
       autographr(netlist[[i]], ...) + ggtitle(names(netlist)[i]))
+  }
+  if (all(c("Infected", "Exposed", "Recovered") %in% names(gs[[1]]$data))) {
+    gs <- collapse_guides(gs)
   }
   do.call(patchwork::wrap_plots, c(gs, list(guides = "collect")))
 }
@@ -1041,4 +1043,21 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
       ggplot2::theme_void()
   }
   p
+}
+
+collapse_guides <- function(plist) {
+  glist <- list()
+  for (i in seq_len(length(plist))) {
+    glist[[i]] <- names(which(apply(plist[[i]]$data[c("Infected", "Exposed",
+                                                      "Recovered")],
+                                    2, function(x) length(unique(x)) > 1)))
+  }
+  if (any(as.logical(lapply(glist, is_empty))) & length(unique(glist)) == 2 |
+      length(unique(glist)) == 1) {
+    kl <- which.max(unlist(lapply(glist, length)))
+    for (i in setdiff(seq_len(length(plist)), kl)) {
+      plist[[i]]$guides <- NULL
+    }
+  }
+  plist
 }
