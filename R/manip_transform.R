@@ -454,8 +454,8 @@ to_mentoring.igraph <- function(.data, elites = 0.1){
 #'   the Eulerian path
 #' @importFrom igraph eulerian_path
 #' @examples
-#'   to_eulerian(delete_nodes(ison_konigsberg, "Lomse"))
-#'   #autographr(to_eulerian(delete_nodes(ison_konigsberg, "Lomse")))
+#'   to_eulerian(delete_nodes(ison_koenigsberg, "Lomse"))
+#'   #autographr(to_eulerian(delete_nodes(ison_koenigsberg, "Lomse")))
 #' @export
 to_eulerian <- function(.data) UseMethod("to_eulerian")
 

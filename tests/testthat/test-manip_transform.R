@@ -100,9 +100,9 @@ test_that("to no isolates works", {
 })
 
 test_that("to eulerian works", {
-  expect_true(is_eulerian(delete_nodes(ison_konigsberg, "Lomse")))
-  expect_error(to_eulerian(ison_konigsberg), "This is not a Eulerian graph.")
-  expect_true(length(delete_nodes(ison_konigsberg, "Lomse")) ==
-                length(to_eulerian(delete_nodes(ison_konigsberg, "Lomse"))))
-  expect_true(is_connected(to_eulerian(delete_nodes(ison_konigsberg, "Lomse"))))
+  expect_true(is_eulerian(delete_nodes(ison_koenigsberg, "Lomse")))
+  expect_error(to_eulerian(ison_koenigsberg), "This is not a Eulerian graph.")
+  expect_true(length(delete_nodes(ison_koenigsberg, "Lomse")) ==
+                length(to_eulerian(delete_nodes(ison_koenigsberg, "Lomse"))))
+  expect_true(is_connected(to_eulerian(delete_nodes(ison_koenigsberg, "Lomse"))))
 })
