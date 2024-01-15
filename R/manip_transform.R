@@ -583,3 +583,11 @@ to_galois <- function(.data) {
   colnames(out)[!startsWith(colnames(out), "{")] <- ""
   out
 }
+
+#' @describeIn transform Transforms the network into a spanning
+#'   tree or a forest of spanning trees if network is unconnected
+#' @export
+to_tree <- function(.data) {
+  .data <- as_igraph(.data)
+  igraph::subgraph.edges(.data, igraph::sample_spanning_tree(.data))
+}

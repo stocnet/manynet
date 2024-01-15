@@ -152,6 +152,9 @@ node_is_latent <- function(diff_model, time = 0){
 }
 
 #' @rdname mark_nodes 
+#' @param diff_model A diff_model object,
+#'   created either by `play_diffusion()` or `as_diffusion()`.
+#' @param time A time step at which nodes are identified.
 #' @examples
 #'   # To mark nodes that are infected by a particular time point
 #'   node_is_infected(play_diffusion(create_tree(6)), time = 1)

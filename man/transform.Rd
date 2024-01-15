@@ -14,6 +14,7 @@
 \alias{to_anti}
 \alias{to_no_isolates}
 \alias{to_galois}
+\alias{to_tree}
 \title{Tools for transforming networks, graphs, and matrices}
 \usage{
 to_mode1(.data, similarity = c("count", "jaccard", "rand", "pearson", "yule"))
@@ -39,6 +40,8 @@ to_anti(.data)
 to_no_isolates(.data)
 
 to_galois(.data)
+
+to_tree(.data)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -164,6 +167,9 @@ are included in the new network.
 \item \code{to_no_isolates()}: Removes all nodes without ties
 
 \item \code{to_galois()}: Galois derivations
+
+\item \code{to_tree()}: Transforms the network into a spanning
+tree or a forest of spanning trees if network is unconnected
 
 }}
 \section{to_matching}{

@@ -64,6 +64,11 @@ a tie to themselves (a loop) will be created instead.
 Note that this is a different default behaviour than that
 described in Valente and Davis (1999).}
 
+\item{diff_model}{A diff_model object,
+created either by \code{play_diffusion()} or \code{as_diffusion()}.}
+
+\item{time}{A time step at which nodes are identified.}
+
 \item{mark}{vector denoting which nodes are infected}
 
 \item{size}{The number of nodes to select (as TRUE).}
