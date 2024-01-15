@@ -700,6 +700,8 @@ reduce_categories <- function(g, node_group) {
       if (!is.null(node_color)) {
         if (node_color %in% names(node_attribute(g))) {
           node_color <- as.factor(node_attribute(g, node_color))
+          if (all(levels(node_color) == c("FALSE", "TRUE")))
+            node_color <- factor(node_color, levels = c("TRUE", "FALSE"))
           p <- p + ggraph::geom_node_point(ggplot2::aes(color = node_color),
                                            size = nsize, shape = nshape) +
             ggplot2::scale_colour_manual(values = colorsafe_palette, guide = "none")
@@ -714,6 +716,8 @@ reduce_categories <- function(g, node_group) {
       if (!is.null(node_color)) {
         if (node_color %in% names(node_attribute(g))) {
           node_color <- as.factor(node_attribute(g, node_color))
+          if (all(levels(node_color) == c("FALSE", "TRUE")))
+            node_color <- factor(node_color, levels = c("TRUE", "FALSE"))
           p <- p + ggraph::geom_node_point(aes(color = node_color),
                                            size = nsize, shape = nshape) +
             ggplot2::scale_colour_manual(values = colorsafe_palette, guide = "none")
