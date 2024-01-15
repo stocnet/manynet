@@ -11,16 +11,16 @@
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html#maturing)
 ![CRAN/METACRAN](https://img.shields.io/cran/v/manynet) ![GitHub release
 (latest by
-date)](https://img.shields.io/github/v/release/snlab-ch/manynet)
-![GitHub Release
-Date](https://img.shields.io/github/release-date/snlab-ch/manynet)
+date)](https://img.shields.io/github/v/release/stocnet/manynet) ![GitHub
+Release
+Date](https://img.shields.io/github/release-date/stocnet/manynet)
 [![Codecov test
-coverage](https://codecov.io/gh/snlab-ch/manynet/branch/main/graph/badge.svg)](https://app.codecov.io/gh/snlab-ch/manynet?branch=main)
-[![CodeFactor](https://www.codefactor.io/repository/github/snlab-ch/manynet/badge)](https://www.codefactor.io/repository/github/snlab-ch/manynet)
+coverage](https://codecov.io/gh/stocnet/manynet/branch/main/graph/badge.svg)](https://app.codecov.io/gh/stocnet/manynet?branch=main)
+[![CodeFactor](https://www.codefactor.io/repository/github/stocnet/manynet/badge)](https://www.codefactor.io/repository/github/stocnet/manynet)
 <!-- [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4559/badge)](https://bestpractices.coreinfrastructure.org/projects/4559) -->
 <!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7076396.svg)](https://doi.org/10.5281/zenodo.7076396) -->
 <!-- see https://zenodo.org/record/7076396 -->
-<!-- ![GitHub All Releases](https://img.shields.io/github/downloads/snlab-ch/migraph/total) -->
+<!-- ![GitHub All Releases](https://img.shields.io/github/downloads/stocnet/migraph/total) -->
 <!-- badges: end -->
 
 ## About the package
@@ -40,7 +40,7 @@ By contrast, we build packages that offer *many* analytic tools that
 work on *many* (if not most) types of networks of all kinds. `{manynet}`
 is the first package that helps researchers with Making, Modifying, and
 Mapping networks. For Measures, Memberships, or Models, see
-[`{migraph}`](https://snlab-ch.github.io/migraph/).
+[`{migraph}`](https://stocnet.github.io/migraph/).
 
 - [Making](#making)
   - [Importing network data](#importing-network-data)
@@ -112,10 +112,11 @@ for analysis. Here are just a few examples, all available in
 ![](https://www.jameshollway.com/post/manynet/README-ison_egs-1.png)
 
 Here are some others: `ison_adolescents`, `ison_algebra`,
-`ison_brandes`, `ison_friends`, `ison_karateka`, `ison_konigsberg`,
+`ison_brandes`, `ison_friends`, `ison_karateka`, `ison_koenigsberg`,
 `ison_laterals`, `ison_lawfirm`, `ison_lotr`,
 `ison_marvel_relationships`, `ison_marvel_teams`, `ison_networkers`,
-`ison_physicians`, `ison_southern_women`, `ison_starwars`
+`ison_physicians`, `ison_potter`, `ison_southern_women`,
+`ison_starwars`, `ison_usstates`
 
 #### Inventing network data
 
@@ -224,9 +225,9 @@ network properties.
 
 - `is_acyclic()`, `is_aperiodic()`, `is_complex()`, `is_connected()`,
   `is_directed()`, `is_dynamic()`, `is_edgelist()`, `is_eulerian()`,
-  `is_graph()`, `is_labelled()`, `is_longitudinal()`, `is_manynet()`,
-  `is_multiplex()`, `is_perfect_matching()`, `is_signed()`,
-  `is_twomode()`, `is_uniplex()`, `is_weighted()`
+  `is_graph()`, `is_labelled()`, `is_list()`, `is_longitudinal()`,
+  `is_manynet()`, `is_multiplex()`, `is_perfect_matching()`,
+  `is_signed()`, `is_twomode()`, `is_uniplex()`, `is_weighted()`
 
 ## Mapping
 
@@ -330,8 +331,8 @@ For the latest development version, for slightly earlier access to new
 features or for testing, you may wish to download and install the
 binaries from Github or install from source locally. The latest binary
 releases for all major OSes – Windows, Mac, and Linux – can be found
-[here](https://github.com/snlab-ch/manynet/releases/latest). Download
-the appropriate binary for your operating system, and install using an
+[here](https://github.com/stocnet/manynet/releases/latest). Download the
+appropriate binary for your operating system, and install using an
 adapted version of the following commands:
 
 - For Windows:
@@ -345,9 +346,9 @@ To install from source the latest main version of `{manynet}` from
 Github, please install the `{remotes}` package from CRAN and then:
 
 - For latest stable version:
-  `remotes::install_github("snlab-ch/manynet")`
+  `remotes::install_github("stocnet/manynet")`
 - For latest development version:
-  `remotes::install_github("snlab-ch/manynet@develop")`
+  `remotes::install_github("stocnet/manynet@develop")`
 
 ### Tutorials
 
