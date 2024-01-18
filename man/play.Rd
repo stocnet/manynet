@@ -116,7 +116,7 @@ for more robust inference.
 }
 }
 \examples{
-  smeg <- manynet::generate_smallworld(15, 0.025)
+  smeg <- generate_smallworld(15, 0.025)
   plot(play_diffusion(smeg))
   plot(play_diffusion(smeg, recovery = 0.4))
   plot(play_diffusions(smeg, times = 20))

@@ -18,7 +18,7 @@ node_is_exposed(.data, mark)
 }
 \arguments{
 \item{diff_model}{A diff_model object,
-created either by \code{migraph::play_diffusion()} or \code{migraph::as_diffusion()}.}
+created either by \code{play_diffusion()} or \code{as_diffusion()}.}
 
 \item{time}{A time step at which nodes are identified.}
 
@@ -57,11 +57,11 @@ in that diffusion.
 
 \examples{
   # To mark nodes that are latent by a particular time point
-  # node_is_latent(migraph::play_diffusion(create_tree(6), latency = 1), time = 1)
+  node_is_latent(play_diffusion(create_tree(6), latency = 1), time = 1)
   # To mark nodes that are infected by a particular time point
-  # node_is_infected(migraph::play_diffusion(create_tree(6)), time = 1)
+  node_is_infected(play_diffusion(create_tree(6)), time = 1)
   # To mark nodes that are recovered by a particular time point
-  #node_is_recovered(migraph::play_diffusion(create_tree(6), recovery = 0.5), time = 3)
+  node_is_recovered(play_diffusion(create_tree(6), recovery = 0.5), time = 3)
   # To mark which nodes are currently exposed
   (expos <- node_is_exposed(manynet::create_tree(14), mark = c(1,3)))
   which(expos)

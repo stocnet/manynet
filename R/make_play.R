@@ -221,7 +221,10 @@ play_diffusions <- function(.data,
 #' - `play_learning()` plays a DeGroot learning model upon a network.
 #' - `play_segregation()` plays a Schelling segregation model upon a network.
 #' 
-#' @name learning 
+#' @name learning
+#' @inheritParams is
+#' @param steps The number of steps forward in learning.
+#'   By default the number of nodes in the network.
 #' @param beliefs A vector indicating the probabilities nodes
 #'   put on some outcome being 'true'.
 #' @param epsilon The maximum difference in beliefs accepted
@@ -325,7 +328,7 @@ play_segregation <- function(.data,
     options <- vapply(unoccupied, function(u){
       test <- manynet::add_node_attribute(temp, "test", 
                                           swtch(current, dissatisfied, u))
-      node_heterophily(test, "test")[u]
+      migraph::node_heterophily(test, "test")[u]
     }, FUN.VALUE = numeric(1))
     if(length(options)==0) next
     move_to <- switch(choice_function,
@@ -342,4 +345,3 @@ play_segregation <- function(.data,
   }
   temp
 }
-

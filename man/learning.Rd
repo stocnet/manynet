@@ -18,8 +18,20 @@ play_segregation(
 )
 }
 \arguments{
+\item{.data}{An object of a manynet-consistent class:
+\itemize{
+\item matrix (adjacency or incidence) from \code{{base}} R
+\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
+\item igraph, from the \code{{igraph}} package
+\item network, from the \code{{network}} package
+\item tbl_graph, from the \code{{tidygraph}} package
+}}
+
 \item{beliefs}{A vector indicating the probabilities nodes
 put on some outcome being 'true'.}
+
+\item{steps}{The number of steps forward in learning.
+By default the number of nodes in the network.}
 
 \item{epsilon}{The maximum difference in beliefs accepted
 for convergence to a consensus.}
@@ -59,11 +71,11 @@ These functions allow learning games to be played upon networks.
       rbinom(manynet::network_nodes(ison_networkers),1,prob = 0.25))
   startValues <- rbinom(100,1,prob = 0.5)
   startValues[sample(seq_len(100), round(100*0.2))] <- NA
-  latticeEg <- manynet::create_lattice(100)
-  latticeEg <- manynet::add_node_attribute(latticeEg, "startValues", startValues)
+  latticeEg <- create_lattice(100)
+  latticeEg <- add_node_attribute(latticeEg, "startValues", startValues)
   latticeEg
   play_segregation(latticeEg, "startValues", 0.5)
-  # manynet::autographr(latticeEg, node_color = "startValues", node_size = 5) + 
-  # manynet::autographr(play_segregation(latticeEg, "startValues", 0.2), 
+  # autographr(latticeEg, node_color = "startValues", node_size = 5) + 
+  # autographr(play_segregation(latticeEg, "startValues", 0.2), 
   #                     node_color = "startValues", node_size = 5)
 }
