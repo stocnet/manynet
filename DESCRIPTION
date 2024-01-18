@@ -45,7 +45,9 @@ Suggests:
     roxygen2,
     RSiena,
     testthat (>= 3.0.0),
-    xml2
+    xml2,
+    future,
+    furrr
 Enhances:
     Rgraphviz
 Authors@R: 
