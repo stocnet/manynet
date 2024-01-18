@@ -9,6 +9,8 @@
 #' - `{igraph}` `graph` objects
 #' - `{tidygraph}` `tbl_graph` objects
 #' - `{network}` `network` objects
+#' - `as_diffusion()` coerces a table of diffusion events into
+#'   a `diff_model` object similar to the output of `play_diffusion()`
 #'
 #' An effort is made for all of these coercion routines to be as lossless
 #' as possible, though some object classes are better at retaining certain
@@ -857,3 +859,61 @@ as_graphAM.siena <- function(.data, twomode = NULL) {
 as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
   as_graphAM(as_matrix(.data), twomode)
 }
+
+#' @rdname as 
+#' @param events A table (data frame or tibble) of diffusion events
+#'   with columns `t` indicating the time (typically an integer) of the event, 
+#'   `nodes` indicating the number or name of the node involved in the event,
+#'   and `event`, which can take on the values "I" for an infection event,
+#'   "E" for an exposure event, or "R" for a recovery event.
+#' @returns 
+#'   `as_diffusion()` and `play_diffusion()` return a 'diff_model' object
+#'   that contains two different tibbles (tables) --
+#'   a table of diffusion events and 
+#'   a table of the number of nodes in each relevant component (S, E, I, or R) --
+#'   as well as a copy of the network upon which the diffusion ran.
+#'   By default, a compact version of the component table is printed
+#'   (to print all the changes at each time point, use `print(..., verbose = T)`).
+#'   To retrieve the diffusion events table, use `summary(...)`.
+#' @importFrom dplyr tibble
+#' @examples
+#'   # How to create a diff_model object from (basic) observed data
+#'   events <- data.frame(t = c(0,1,1,2,3), nodes = c(1,2,3,2,4), event = c("I","I","I","R","I"))
+#'   as_diffusion(events, manynet::create_filled(4))
+#' @export
+as_diffusion <- function(events, .data) {
+  net <- .data
+  event <- NULL
+  sumchanges <- events |> dplyr::group_by(t) |> 
+    dplyr::reframe(I_new = sum(event == "I"),
+                   E_new = sum(event == "E"),
+                   R_new = sum(event == "R"))
+  report <- dplyr::tibble(t = seq_len(max(events$t)) - 1,
+                          n = manynet::network_nodes(net)) %>% 
+    dplyr::left_join(sumchanges, by = dplyr::join_by(t))
+  report[is.na(report)] <- 0
+  report$R <- cumsum(report$R_new)
+  report$I <- cumsum(report$I_new) - report$R
+  report$E <- ifelse(report$E_new == 0 & 
+                       cumsum(report$E_new) == max(cumsum(report$E_new)),
+                     report$E_new, cumsum(report$E_new))
+  report$E <- ifelse(report$R + report$I + report$E > report$n,
+                     report$n - (report$R + report$I),
+                     report$E)
+  report$S <- report$n - report$R - report$I - report$E
+  report$s <- vapply(report$t, function(time){
+    twin <- dplyr::filter(events, events$t <= time)
+    infected <- dplyr::filter(twin, twin$event == "I")$nodes
+    recovered <- dplyr::filter(twin, twin$event == "R")$nodes
+    infected <- setdiff(infected, recovered)
+    expos <- node_is_exposed(net, infected)
+    expos[recovered] <- F
+    sum(expos)
+  }, numeric(1) )
+  if (any(report$R + report$I + report$E + report$S != report$n)) {
+    stop("Oops, something is wrong")
+  }
+  report <- dplyr::select(report, dplyr::any_of(c("t", "n", "S", "s", "E", "E_new", "I", "I_new", "R", "R_new")))
+  make_diff_model(events, report, .data)
+}
+

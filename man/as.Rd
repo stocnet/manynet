@@ -9,6 +9,7 @@
 \alias{as_network}
 \alias{as_siena}
 \alias{as_graphAM}
+\alias{as_diffusion}
 \title{Making networks into other classes}
 \usage{
 as_edgelist(.data, twomode = FALSE)
@@ -24,6 +25,8 @@ as_network(.data, twomode = FALSE)
 as_siena(.data, twomode = FALSE)
 
 as_graphAM(.data, twomode = NULL)
+
+as_diffusion(events, .data)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -39,6 +42,12 @@ as_graphAM(.data, twomode = NULL)
 distinguishing incidence (two-mode/bipartite) from
 adjacency (one-mode/unipartite) networks.
 By default FALSE.}
+
+\item{events}{A table (data frame or tibble) of diffusion events
+with columns \code{t} indicating the time (typically an integer) of the event,
+\code{nodes} indicating the number or name of the node involved in the event,
+and \code{event}, which can take on the values "I" for an infection event,
+"E" for an exposure event, or "R" for a recovery event.}
 }
 \value{
 The currently implemented coercions or translations are:\tabular{lccccccc}{
@@ -50,6 +59,15 @@ The currently implemented coercions or translations are:\tabular{lccccccc}{
    network \tab X \tab X \tab X \tab X \tab X \tab X \tab X \cr
    graphAM \tab X \tab X \tab X \tab X \tab X \tab X \tab X \cr
 }
+
+\code{as_diffusion()} and \code{play_diffusion()} return a 'diff_model' object
+that contains two different tibbles (tables) --
+a table of diffusion events and
+a table of the number of nodes in each relevant component (S, E, I, or R) --
+as well as a copy of the network upon which the diffusion ran.
+By default, a compact version of the component table is printed
+(to print all the changes at each time point, use \code{print(..., verbose = T)}).
+To retrieve the diffusion events table, use \code{summary(...)}.
 }
 \description{
 The \code{as_} functions in \code{{manynet}} coerce objects
@@ -61,6 +79,8 @@ These include:
 \item \code{{igraph}} \code{graph} objects
 \item \code{{tidygraph}} \code{tbl_graph} objects
 \item \code{{network}} \code{network} objects
+\item \code{as_diffusion()} coerces a table of diffusion events into
+a \code{diff_model} object similar to the output of \code{play_diffusion()}
 }
 
 An effort is made for all of these coercion routines to be as lossless
@@ -101,6 +121,9 @@ as_matrix(test)
 as_igraph(test)
 as_tidygraph(test)
 as_network(test)
+  # How to create a diff_model object from (basic) observed data
+  events <- data.frame(t = c(0,1,1,2,3), nodes = c(1,2,3,2,4), event = c("I","I","I","R","I"))
+  as_diffusion(events, manynet::create_filled(4))
 }
 \seealso{
 Other makes: 
