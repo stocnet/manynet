@@ -1,14 +1,15 @@
 # Diffusions ####
 
-#' Functions to play games on networks
-#' @param .data An object of a `{manynet}`-consistent class:
-#'   \itemize{
-#'   \item matrix (adjacency or incidence) from `{base}` R
-#'   \item edgelist, a data frame from `{base}` R or tibble from `{tibble}`
-#'   \item igraph, from the `{igraph}` package
-#'   \item network, from the `{network}` package
-#'   \item tbl_graph, from the `{tidygraph}` package
-#'   }
+#' Making diffusion models on networks
+#' @description
+#' These functions simulate diffusion models upon a network.
+#' 
+#' - `play_diffusion()` runs a single simulation of a compartment model,
+#' allowing the results to be visualised and examined.
+#' - `play_diffusions()` runs multiple simulations of a compartment model
+#' for more robust inference.
+#' 
+#' @inheritParams is
 #' @param seeds A valid mark vector the length of the
 #'   number of nodes in the network.
 #' @param thresholds A numeric vector indicating the thresholds
@@ -59,7 +60,7 @@
 #' @name play
 NULL
 
-#' @describeIn play Playing compartmental diffusion on networks.
+#' @rdname play
 #' @examples 
 #'   smeg <- generate_smallworld(15, 0.025)
 #'   plot(play_diffusion(smeg))
@@ -172,24 +173,14 @@ play_diffusion <- function(.data,
   make_diff_model(events, report, .data)
 }
 
-#' @describeIn play Playing multiple compartmental diffusions on networks.
-#' @param times Integer indicating number of simulations used for quantile estimation. 
-#'   (Relevant to the null hypothesis test only - 
-#'   the analysis itself is unaffected by this parameter.) 
-#'   Note that, as for all Monte Carlo procedures, convergence is slower for more
-#'   extreme quantiles.
-#'   By default, `times=1000`.
-#'   1,000 - 10,000 repetitions recommended for publication-ready results.
-#' @param strategy If `{furrr}` is installed, 
-#'   then multiple cores can be used to accelerate the function.
-#'   By default `"sequential"`, 
-#'   but if multiple cores available,
-#'   then `"multisession"` or `"multicore"` may be useful.
-#'   Generally this is useful only when `times` > 1000.
-#'   See [`{furrr}`](https://furrr.futureverse.org) for more.
-#' @param verbose Whether the function should report on its progress.
-#'   By default FALSE.
-#'   See [`{progressr}`](https://progressr.futureverse.org) for more.
+#' @rdname play
+#' @param times Integer indicating number of simulations. 
+#'   By default `times=5`, but 1,000 - 10,000 simulations recommended for publication-ready results.
+#' @param strategy If `{furrr}` is installed, then multiple cores can be used to accelerate the simulations. 
+#'   By default "sequential", but if multiple cores available, then "multisession" or "multicore" may be useful. 
+#'   Generally this is useful only when times > 1000. See `{furrr}` for more.
+#' @param verbose Whether the function should report on its progress. 
+#'   By default FALSE. See {progressr} for more.
 #' @examples 
 #'   plot(play_diffusions(smeg, times = 20))
 #' @export
@@ -220,8 +211,54 @@ play_diffusions <- function(.data,
   make_diffs_model(out, .data)
 }
 
+# Learning ####
 
-#' @describeIn play Playing Schelling segregation on networks.
+#' Making learning models on networks
+#' 
+#' @description
+#' These functions allow learning games to be played upon networks.
+#' 
+#' - `play_learning()` plays a DeGroot learning model upon a network.
+#' - `play_segregation()` plays a Schelling segregation model upon a network.
+#' 
+#' @name learning 
+#' @param beliefs A vector indicating the probabilities nodes
+#'   put on some outcome being 'true'.
+#' @param epsilon The maximum difference in beliefs accepted
+#'   for convergence to a consensus.
+#' @examples 
+#'   play_learning(ison_networkers, 
+#'       rbinom(manynet::network_nodes(ison_networkers),1,prob = 0.25))
+#' @export
+play_learning <- function(.data, 
+                          beliefs,
+                          steps,
+                          epsilon = 0.0005){
+  n <- manynet::network_nodes(.data)
+  if(length(beliefs)!=n) 
+    stop("'beliefs' must be a vector the same length as the number of nodes in the network.")
+  if(is.logical(beliefs)) beliefs <- beliefs*1
+  if(missing(steps)) steps <- n
+  
+  t = 0
+  out <- matrix(NA,steps+1,length(beliefs))
+  out[1,] <- beliefs
+  trust_mat <- manynet::as_matrix(.data)/rowSums(manynet::as_matrix(.data))
+  
+  repeat{
+    old_beliefs <- beliefs
+    beliefs <- trust_mat %*% beliefs
+    if(all(abs(old_beliefs - beliefs) < epsilon)) break
+    t = t+1
+    out[t+1,] <- beliefs
+    if(t==steps) break
+  }
+  out <- stats::na.omit(out)
+  
+  make_learn_model(out, .data)
+}
+
+#' @rdname learning
 #' @param attribute A string naming some nodal attribute in the network.
 #'   Currently only tested for binary attributes.
 #' @param heterophily A score ranging between -1 and 1 as a threshold for 
@@ -266,6 +303,7 @@ play_segregation <- function(.data,
   if(length(heterophily)==1) heterophily <- rep(heterophily, n)
   if(length(heterophily)!=n) stop("Heterophily threshold must be the same length as the number of nodes in the network.")
   swtch <- function(x,i,j) {x[c(i,j)] <- x[c(j,i)]; x} 
+  
   t = 0
   temp <- .data
   moved <- NULL
@@ -285,9 +323,9 @@ play_segregation <- function(.data,
                              which(heterophily_scores[dissatisfied] == 
                                      max(heterophily_scores[dissatisfied]))[1]])
     options <- vapply(unoccupied, function(u){
-      test <- add_node_attribute(temp, "test", 
-                                 swtch(current, dissatisfied, u))
-      migraph::node_heterophily(test, "test")[u]
+      test <- manynet::add_node_attribute(temp, "test", 
+                                          swtch(current, dissatisfied, u))
+      node_heterophily(test, "test")[u]
     }, FUN.VALUE = numeric(1))
     if(length(options)==0) next
     move_to <- switch(choice_function,
@@ -298,103 +336,10 @@ play_segregation <- function(.data,
                                                                           igraph::V(temp)[unoccupied]))])
     if(is.na(move_to)) next
     print(paste("Moving node", dissatisfied, "to node", move_to))
-    temp <- add_node_attribute(temp, attribute, 
-                               swtch(current, dissatisfied, move_to))
+    temp <- manynet::add_node_attribute(temp, attribute, 
+                                        swtch(current, dissatisfied, move_to))
     moved <- c(dissatisfied, moved)
   }
   temp
 }
 
-#' @describeIn play Coerces a table of diffusion events into
-#'   a `diff_model` object similar to the output of `play_diffusion()`
-#' @param events A table (data frame or tibble) of diffusion events
-#'   with columns `t` indicating the time (typically an integer) of the event, 
-#'   `nodes` indicating the number or name of the node involved in the event,
-#'   and `event`, which can take on the values "I" for an infection event,
-#'   "E" for an exposure event, or "R" for a recovery event.
-#' @returns 
-#'   `as_diffusion()` and `play_diffusion()` return a 'diff_model' object
-#'   that contains two different tibbles (tables) --
-#'   a table of diffusion events and 
-#'   a table of the number of nodes in each relevant component (S, E, I, or R) --
-#'   as well as a copy of the network upon which the diffusion ran.
-#'   By default, a compact version of the component table is printed
-#'   (to print all the changes at each time point, use `print(..., verbose = T)`).
-#'   To retrieve the diffusion events table, use `summary(...)`.
-#' @importFrom dplyr tibble
-#' @examples
-#'   # How to create a diff_model object from (basic) observed data
-#'   events <- data.frame(t = c(0,1,1,2,3), nodes = c(1,2,3,2,4), event = c("I","I","I","R","I"))
-#'   as_diffusion(events, create_filled(4))
-#' @export
-as_diffusion <- function(events, .data) {
-  net <- .data
-  event <- NULL
-  sumchanges <- events |> dplyr::group_by(t) |> 
-    dplyr::reframe(I_new = sum(event == "I"),
-                   E_new = sum(event == "E"),
-                   R_new = sum(event == "R"))
-  report <- dplyr::tibble(t = seq_len(max(events$t)) - 1,
-                          n = network_nodes(net)) %>% 
-    dplyr::left_join(sumchanges, by = dplyr::join_by(t))
-  report[is.na(report)] <- 0
-  report$R <- cumsum(report$R_new)
-  report$I <- cumsum(report$I_new) - report$R
-  report$E <- ifelse(report$E_new == 0 & 
-                       cumsum(report$E_new) == max(cumsum(report$E_new)),
-                     report$E_new, cumsum(report$E_new))
-  report$E <- ifelse(report$R + report$I + report$E > report$n,
-                     report$n - (report$R + report$I),
-                     report$E)
-  report$S <- report$n - report$R - report$I - report$E
-  report$s <- vapply(report$t, function(time){
-    twin <- dplyr::filter(events, events$t <= time)
-    infected <- dplyr::filter(twin, twin$event == "I")$nodes
-    recovered <- dplyr::filter(twin, twin$event == "R")$nodes
-    infected <- setdiff(infected, recovered)
-    expos <- node_is_exposed(net, infected)
-    expos[recovered] <- F
-    sum(expos)
-  }, numeric(1) )
-  if (any(report$R + report$I + report$E + report$S != report$n)) {
-    stop("Oops, something is wrong")
-  }
-  report <- dplyr::select(report, dplyr::any_of(c("t", "n", "S", "s", "E", "E_new", "I", "I_new", "R", "R_new")))
-  make_diff_model(events, report, .data)
-}
-
-# Learning ####
-
-#' @describeIn play Playing DeGroot learning on networks.
-#' @param beliefs A vector indicating the probabilities nodes
-#'   put on some outcome being 'true'.
-#' @param epsilon The maximum difference in beliefs accepted
-#'   for convergence to a consensus.
-#' @examples 
-#'   play_learning(ison_networkers, 
-#'       rbinom(network_nodes(ison_networkers),1,prob = 0.25))
-#' @export
-play_learning <- function(.data, 
-                          beliefs,
-                          steps,
-                          epsilon = 0.0005){
-  n <- network_nodes(.data)
-  if(length(beliefs)!=n) 
-    stop("'beliefs' must be a vector the same length as the number of nodes in the network.")
-  if(is.logical(beliefs)) beliefs <- beliefs*1
-  if(missing(steps)) steps <- n
-  t = 0
-  out <- matrix(NA,steps+1,length(beliefs))
-  out[1,] <- beliefs
-  trust_mat <- as_matrix(.data)/rowSums(as_matrix(.data))
-  repeat{
-    old_beliefs <- beliefs
-    beliefs <- trust_mat %*% beliefs
-    if(all(abs(old_beliefs - beliefs) < epsilon)) break
-    t = t+1
-    out[t+1,] <- beliefs
-    if(t==steps) break
-  }
-  out <- stats::na.omit(out)
-  make_learn_model(out, .data)
-}

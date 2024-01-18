@@ -4,10 +4,7 @@
 \alias{play}
 \alias{play_diffusion}
 \alias{play_diffusions}
-\alias{play_segregation}
-\alias{as_diffusion}
-\alias{play_learning}
-\title{Functions to play games on networks}
+\title{Making diffusion models on networks}
 \usage{
 play_diffusion(
   .data,
@@ -35,22 +32,9 @@ play_diffusions(
   strategy = "sequential",
   verbose = FALSE
 )
-
-play_segregation(
-  .data,
-  attribute,
-  heterophily = 0,
-  who_moves = c("ordered", "random", "most_dissatisfied"),
-  choice_function = c("satisficing", "optimising", "minimising"),
-  steps
-)
-
-as_diffusion(events, .data)
-
-play_learning(.data, beliefs, steps, epsilon = 5e-04)
 }
 \arguments{
-\item{.data}{An object of a \code{{manynet}}-consistent class:
+\item{.data}{An object of a manynet-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
 \item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
@@ -112,107 +96,30 @@ By default the number of nodes in the network.
 If \code{steps = Inf} then the diffusion process will continue until
 there are no new infections or all nodes are infected.}
 
-\item{times}{Integer indicating number of simulations used for quantile estimation.
-(Relevant to the null hypothesis test only -
-the analysis itself is unaffected by this parameter.)
-Note that, as for all Monte Carlo procedures, convergence is slower for more
-extreme quantiles.
-By default, \code{times=1000}.
-1,000 - 10,000 repetitions recommended for publication-ready results.}
+\item{times}{Integer indicating number of simulations.
+By default \code{times=5}, but 1,000 - 10,000 simulations recommended for publication-ready results.}
 
-\item{strategy}{If \code{{furrr}} is installed,
-then multiple cores can be used to accelerate the function.
-By default \code{"sequential"},
-but if multiple cores available,
-then \code{"multisession"} or \code{"multicore"} may be useful.
-Generally this is useful only when \code{times} > 1000.
-See \href{https://furrr.futureverse.org}{\code{{furrr}}} for more.}
+\item{strategy}{If \code{{furrr}} is installed, then multiple cores can be used to accelerate the simulations.
+By default "sequential", but if multiple cores available, then "multisession" or "multicore" may be useful.
+Generally this is useful only when times > 1000. See \code{{furrr}} for more.}
 
 \item{verbose}{Whether the function should report on its progress.
-By default FALSE.
-See \href{https://progressr.futureverse.org}{\code{{progressr}}} for more.}
-
-\item{attribute}{A string naming some nodal attribute in the network.
-Currently only tested for binary attributes.}
-
-\item{heterophily}{A score ranging between -1 and 1 as a threshold for
-how heterophilous nodes will accept their neighbours to be.
-A single proportion means this threshold is shared by all nodes,
-but it can also be a vector the same length of the nodes in the network
-for issuing different thresholds to different nodes.
-By default this is 0, meaning nodes will be dissatisfied if more than half
-of their neighbours differ on the given attribute.}
-
-\item{who_moves}{One of the following options:
-"ordered" (the default) checks each node in turn for whether they are
-dissatisfied and there is an available space that they can move to,
-"random" will check a node at random,
-and "most_dissatisfied" will check (one of) the most dissatisfied nodes first.}
-
-\item{choice_function}{One of the following options:
-"satisficing" (the default) will move the node to any coordinates that satisfy
-their heterophily threshold,
-"optimising" will move the node to coordinates that are most homophilous,
-and "minimising" distance will move the node to the next nearest unoccupied coordinates.}
-
-\item{events}{A table (data frame or tibble) of diffusion events
-with columns \code{t} indicating the time (typically an integer) of the event,
-\code{nodes} indicating the number or name of the node involved in the event,
-and \code{event}, which can take on the values "I" for an infection event,
-"E" for an exposure event, or "R" for a recovery event.}
-
-\item{beliefs}{A vector indicating the probabilities nodes
-put on some outcome being 'true'.}
-
-\item{epsilon}{The maximum difference in beliefs accepted
-for convergence to a consensus.}
-}
-\value{
-\code{as_diffusion()} and \code{play_diffusion()} return a 'diff_model' object
-that contains two different tibbles (tables) --
-a table of diffusion events and
-a table of the number of nodes in each relevant component (S, E, I, or R) --
-as well as a copy of the network upon which the diffusion ran.
-By default, a compact version of the component table is printed
-(to print all the changes at each time point, use \code{print(..., verbose = T)}).
-To retrieve the diffusion events table, use \code{summary(...)}.
+By default FALSE. See {progressr} for more.}
 }
 \description{
-Functions to play games on networks
-}
-\section{Functions}{
+These functions simulate diffusion models upon a network.
 \itemize{
-\item \code{play_diffusion()}: Playing compartmental diffusion on networks.
-
-\item \code{play_diffusions()}: Playing multiple compartmental diffusions on networks.
-
-\item \code{play_segregation()}: Playing Schelling segregation on networks.
-
-\item \code{as_diffusion()}: Coerces a table of diffusion events into
-a \code{diff_model} object similar to the output of \code{play_diffusion()}
-
-\item \code{play_learning()}: Playing DeGroot learning on networks.
-
-}}
+\item \code{play_diffusion()} runs a single simulation of a compartment model,
+allowing the results to be visualised and examined.
+\item \code{play_diffusions()} runs multiple simulations of a compartment model
+for more robust inference.
+}
+}
 \examples{
-  smeg <- generate_smallworld(15, 0.025)
+  smeg <- manynet::generate_smallworld(15, 0.025)
   plot(play_diffusion(smeg))
   plot(play_diffusion(smeg, recovery = 0.4))
   plot(play_diffusions(smeg, times = 20))
-  startValues <- rbinom(100,1,prob = 0.5)
-  startValues[sample(seq_len(100), round(100*0.2))] <- NA
-  latticeEg <- create_lattice(100)
-  latticeEg <- add_node_attribute(latticeEg, "startValues", startValues)
-  latticeEg
-  play_segregation(latticeEg, "startValues", 0.5)
-  # autographr(latticeEg, node_color = "startValues", node_size = 5) + 
-  # autographr(play_segregation(latticeEg, "startValues", 0.2), 
-  #                     node_color = "startValues", node_size = 5)
-  # How to create a diff_model object from (basic) observed data
-  events <- data.frame(t = c(0,1,1,2,3), nodes = c(1,2,3,2,4), event = c("I","I","I","R","I"))
-  as_diffusion(events, create_filled(4))
-  play_learning(ison_networkers, 
-      rbinom(network_nodes(ison_networkers),1,prob = 0.25))
 }
 \concept{diffusion}
 \concept{models}
