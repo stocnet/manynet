@@ -150,48 +150,46 @@ with sensible defaults
 }}
 \examples{
 #autographr(ison_adolescents)
-#ison_adolescents \%>\% 
-#  mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2)) \%>\%
-#  autographr(layout = "lineage", rank = "year")
-#autographr(ison_algebra, layout = "circle", 
-#           node_size = 8, node_color = "orange", node_shape = "square",
-#           edge_color = "blue", edge_size = 2)
-#autographr(ison_algebra, edge_color = "friends",
-#           node_size = migraph::node_betweenness(ison_algebra)*100)
-#ison_adolescents |> 
-#  mutate(cut = migraph::node_is_cutpoint(ison_adolescents)) |> 
-#  autographr(node_color = "cut", node_shape = "cut")
-#autographr(ison_lotr, node_color = Race, 
-#           node_size = migraph::node_degree(ison_lotr)*2,
-#           edge_color = "darkgreen",
-#           edge_size = migraph::tie_degree(ison_lotr))
-#autographr(ison_karateka, node_group = obc,
-#           edge_size = migraph::tie_closeness(ison_karateka))
-#autographr(ison_southern_women, layout = "concentric", 
-#           node_color = "type", membership = "type")
+#ison_adolescents \%>\%
+# mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2)) \%>\%
+#autographr(layout = "lineage", rank = "year")
+#autographr(ison_algebra, layout = "circle",
+#          node_size = 8, node_color = "orange", node_shape = "square",
+#          edge_color = "blue", edge_size = 2)
+#autographr(ison_algebra, edge_color = "type",
+#          node_size = migraph::node_betweenness(ison_algebra)*100)
+#ison_adolescents |>
+#   mutate(cut = migraph::node_is_cutpoint(ison_adolescents)) |>
+#autographr(node_color = "cut", node_shape = "cut")
+#autographr(ison_lotr, node_color = Race,
+#            node_size = migraph::node_degree(ison_lotr)*2,
+#            edge_color = "darkgreen",
+#          edge_size = migraph::tie_degree(ison_lotr))
+#autographr(ison_karateka, node_group = allegiance,
+#            edge_size = migraph::tie_closeness(ison_karateka))
+#autographr(ison_southern_women, layout = "concentric",
+#            node_color = "type", membership = "type")
 #autographr(ison_southern_women, layout = "hierarchy", center = "events")
-#autographr(ison_lotr, layout = "multilevel",
-#           node_color = "Race", level = "Race")
+#autographr(ison_lotr, layout = "multilevel", 
+#            node_color = "Race", level = "Race")
+#autographr(migraph::play_diffusion(ison_karateka))
 #autographs(to_egos(ison_adolescents))
 #autographs(to_egos(ison_adolescents), waves = 8)
 #autographs(to_egos(ison_adolescents), waves = c(2, 4, 6))
 #autographs(migraph::play_diffusion(ison_adolescents))
 #ison_adolescents \%>\%
-# mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%
-# to_waves(attribute = "year", cumulative = TRUE) \%>\%
-# autographd()
+#  mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%
+#  to_waves(attribute = "year", cumulative = TRUE) \%>\%
+#  autographd()
 #ison_adolescents \%>\%
-# mutate(shape = rep(c("circle", "square"), times = 4),
-#        color = rep(c("blue", "red"), times = 4),
-#        size = sample(4:16, 8, replace = TRUE)) \%>\%
-# mutate_ties(year = sample(1995:1998, 10, replace = TRUE),
-#             e_color = sample(c("yellow", "green"), 10, replace = TRUE)) \%>\%
-# to_waves(attribute = "year") \%>\%
-# autographd(keep_isolates = FALSE, layout = "circle", node_shape = "shape",
-#            node_color = "color", node_size =  "size", edge_color = "e_color")
-#autographd(play_diffusion(ison_adolescents, seeds = 4), layout = "circle")
-#autographd(play_diffusion(ison_adolescents, seeds = 4, recovery = 0.2),
-#           layout = "circle")
+#  mutate(shape = rep(c("circle", "square"), times = 4),
+#         color = rep(c("blue", "red"), times = 4),
+#         size = sample(4:16, 8, replace = TRUE)) \%>\%
+#  mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%
+#  to_waves(attribute = "year") \%>\%
+#  autographd(layout = "circle", node_shape = "shape",
+#             node_color = "color", node_size =  "size")
+#autographd(migraph::play_diffusion(ison_adolescents, seeds = 5, recovery = 0.1))
 }
 \seealso{
 Other mapping: 
