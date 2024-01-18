@@ -1,7 +1,14 @@
 # Diffusions ####
 
 #' Functions to play games on networks
-#' @inheritParams cohesion
+#' @param .data An object of a `{manynet}`-consistent class:
+#'   \itemize{
+#'   \item matrix (adjacency or incidence) from `{base}` R
+#'   \item edgelist, a data frame from `{base}` R or tibble from `{tibble}`
+#'   \item igraph, from the `{igraph}` package
+#'   \item network, from the `{network}` package
+#'   \item tbl_graph, from the `{tidygraph}` package
+#'   }
 #' @param seeds A valid mark vector the length of the
 #'   number of nodes in the network.
 #' @param thresholds A numeric vector indicating the thresholds
@@ -54,7 +61,7 @@ NULL
 
 #' @describeIn play Playing compartmental diffusion on networks.
 #' @examples 
-#'   smeg <- manynet::generate_smallworld(15, 0.025)
+#'   smeg <- generate_smallworld(15, 0.025)
 #'   plot(play_diffusion(smeg))
 #'   plot(play_diffusion(smeg, recovery = 0.4))
 #' @export
@@ -66,20 +73,20 @@ play_diffusion <- function(.data,
                            recovery = 0,
                            waning = 0,
                            immune = NULL,
-                           steps){
-  n <- manynet::network_nodes(.data)
+                           steps) {
+  thisRequires("migraph")
+  n <- network_nodes(.data)
   recovered <- NULL
   if(missing(steps)) steps <- n
   if(length(thresholds)==1) thresholds <- rep(thresholds, n)
   if(all(thresholds <= 1) & !all(thresholds == 1)) 
     thresholds <- thresholds * 
-      node_degree(.data, normalized = FALSE)
+      migraph::node_degree(.data, normalized = FALSE)
   if(is.logical(seeds)) seeds <- which(seeds)
   if(!is.null(immune)){
     if(is.logical(immune)) immune <- which(immune)
     recovered <- immune
   }
-  
   infected <- seeds # seeds are initial infected
   latent <- NULL # latent compartment starts empty
   t = 0 # starting at 0
@@ -94,9 +101,7 @@ play_diffusion <- function(.data,
                        I_new = length(seeds),
                        I = length(infected),
                        R = length(recovered))
-  
   repeat{ # At each time step:
-    
     # some who have already recovered may lose their immunity:
     waned <- recovered[stats::rbinom(length(recovered), 1, waning)==1]
     # some may recover:
@@ -106,14 +111,13 @@ play_diffusion <- function(.data,
     infected <- setdiff(infected, recovered)
     # those for whom immunity has waned are no longer immune
     recovered <- setdiff(recovered, waned)
-    
     # at main infection stage, get currently exposed to infection:
     # contacts <- unlist(sapply(igraph::neighborhood(.data, nodes = infected),
     #                          function(x) setdiff(x, infected)))
     exposed <- node_is_exposed(.data, infected)
     # count exposures for each node:
     # tabcontact <- table(contacts)
-    exposure <- node_exposure(.data, infected)
+    exposure <- migraph::node_exposure(.data, infected)
     # identify those nodes who are exposed at or above their threshold
     # newinf <- as.numeric(names(which(tabcontact >= thresholds[as.numeric(names(tabcontact))])))
     open_to_it <- which(exposure >= thresholds)
@@ -169,7 +173,23 @@ play_diffusion <- function(.data,
 }
 
 #' @describeIn play Playing multiple compartmental diffusions on networks.
-#' @inheritParams regression
+#' @param times Integer indicating number of simulations used for quantile estimation. 
+#'   (Relevant to the null hypothesis test only - 
+#'   the analysis itself is unaffected by this parameter.) 
+#'   Note that, as for all Monte Carlo procedures, convergence is slower for more
+#'   extreme quantiles.
+#'   By default, `times=1000`.
+#'   1,000 - 10,000 repetitions recommended for publication-ready results.
+#' @param strategy If `{furrr}` is installed, 
+#'   then multiple cores can be used to accelerate the function.
+#'   By default `"sequential"`, 
+#'   but if multiple cores available,
+#'   then `"multisession"` or `"multicore"` may be useful.
+#'   Generally this is useful only when `times` > 1000.
+#'   See [`{furrr}`](https://furrr.futureverse.org) for more.
+#' @param verbose Whether the function should report on its progress.
+#'   By default FALSE.
+#'   See [`{progressr}`](https://progressr.futureverse.org) for more.
 #' @examples 
 #'   plot(play_diffusions(smeg, times = 20))
 #' @export
@@ -184,8 +204,10 @@ play_diffusions <- function(.data,
                             steps,
                             times = 5,
                             strategy = "sequential",
-                            verbose = FALSE){
-  if(missing(steps)) steps <- manynet::network_nodes(.data)
+                            verbose = FALSE) {
+  thisRequires("future")
+  thisRequires("furrr")
+  if(missing(steps)) steps <- network_nodes(.data)
   future::plan(strategy)
   out <- furrr::future_map_dfr(1:times, function(j){
       data.frame(sim = j,
@@ -222,12 +244,12 @@ play_diffusions <- function(.data,
 #' @examples 
 #'   startValues <- rbinom(100,1,prob = 0.5)
 #'   startValues[sample(seq_len(100), round(100*0.2))] <- NA
-#'   latticeEg <- manynet::create_lattice(100)
-#'   latticeEg <- manynet::add_node_attribute(latticeEg, "startValues", startValues)
+#'   latticeEg <- create_lattice(100)
+#'   latticeEg <- add_node_attribute(latticeEg, "startValues", startValues)
 #'   latticeEg
 #'   play_segregation(latticeEg, "startValues", 0.5)
-#'   # manynet::autographr(latticeEg, node_color = "startValues", node_size = 5) + 
-#'   # manynet::autographr(play_segregation(latticeEg, "startValues", 0.2), 
+#'   # autographr(latticeEg, node_color = "startValues", node_size = 5) + 
+#'   # autographr(play_segregation(latticeEg, "startValues", 0.2), 
 #'   #                     node_color = "startValues", node_size = 5)
 #' @export
 play_segregation <- function(.data, 
@@ -235,22 +257,22 @@ play_segregation <- function(.data,
                              heterophily = 0,
                              who_moves = c("ordered","random","most_dissatisfied"),
                              choice_function = c("satisficing","optimising", "minimising"),
-                             steps){
-  n <- manynet::network_nodes(.data)
+                             steps) {
+  thisRequires("migraph")
+  n <- network_nodes(.data)
   if(missing(steps)) steps <- n
   who_moves <- match.arg(who_moves)
   choice_function <- match.arg(choice_function)
   if(length(heterophily)==1) heterophily <- rep(heterophily, n)
   if(length(heterophily)!=n) stop("Heterophily threshold must be the same length as the number of nodes in the network.")
   swtch <- function(x,i,j) {x[c(i,j)] <- x[c(j,i)]; x} 
-
   t = 0
   temp <- .data
   moved <- NULL
   while(steps > t){
     t <- t+1
-    current <- manynet::node_attribute(temp, attribute)
-    heterophily_scores <- node_heterophily(temp, attribute)
+    current <- node_attribute(temp, attribute)
+    heterophily_scores <- migraph::node_heterophily(temp, attribute)
     dissatisfied <- which(heterophily_scores > heterophily)
     unoccupied <- which(is.na(current))
     dissatisfied <- setdiff(dissatisfied, unoccupied)
@@ -263,9 +285,9 @@ play_segregation <- function(.data,
                              which(heterophily_scores[dissatisfied] == 
                                      max(heterophily_scores[dissatisfied]))[1]])
     options <- vapply(unoccupied, function(u){
-      test <- manynet::add_node_attribute(temp, "test", 
+      test <- add_node_attribute(temp, "test", 
                                  swtch(current, dissatisfied, u))
-      node_heterophily(test, "test")[u]
+      migraph::node_heterophily(test, "test")[u]
     }, FUN.VALUE = numeric(1))
     if(length(options)==0) next
     move_to <- switch(choice_function,
@@ -276,7 +298,7 @@ play_segregation <- function(.data,
                                                                           igraph::V(temp)[unoccupied]))])
     if(is.na(move_to)) next
     print(paste("Moving node", dissatisfied, "to node", move_to))
-    temp <- manynet::add_node_attribute(temp, attribute, 
+    temp <- add_node_attribute(temp, attribute, 
                                swtch(current, dissatisfied, move_to))
     moved <- c(dissatisfied, moved)
   }
@@ -303,7 +325,7 @@ play_segregation <- function(.data,
 #' @examples
 #'   # How to create a diff_model object from (basic) observed data
 #'   events <- data.frame(t = c(0,1,1,2,3), nodes = c(1,2,3,2,4), event = c("I","I","I","R","I"))
-#'   as_diffusion(events, manynet::create_filled(4))
+#'   as_diffusion(events, create_filled(4))
 #' @export
 as_diffusion <- function(events, .data) {
   net <- .data
@@ -313,7 +335,7 @@ as_diffusion <- function(events, .data) {
                    E_new = sum(event == "E"),
                    R_new = sum(event == "R"))
   report <- dplyr::tibble(t = seq_len(max(events$t)) - 1,
-                          n = manynet::network_nodes(net)) %>% 
+                          n = network_nodes(net)) %>% 
     dplyr::left_join(sumchanges, by = dplyr::join_by(t))
   report[is.na(report)] <- 0
   report$R <- cumsum(report$R_new)
@@ -350,23 +372,21 @@ as_diffusion <- function(events, .data) {
 #'   for convergence to a consensus.
 #' @examples 
 #'   play_learning(ison_networkers, 
-#'       rbinom(manynet::network_nodes(ison_networkers),1,prob = 0.25))
+#'       rbinom(network_nodes(ison_networkers),1,prob = 0.25))
 #' @export
 play_learning <- function(.data, 
                           beliefs,
                           steps,
                           epsilon = 0.0005){
-  n <- manynet::network_nodes(.data)
+  n <- network_nodes(.data)
   if(length(beliefs)!=n) 
     stop("'beliefs' must be a vector the same length as the number of nodes in the network.")
   if(is.logical(beliefs)) beliefs <- beliefs*1
   if(missing(steps)) steps <- n
-  
   t = 0
   out <- matrix(NA,steps+1,length(beliefs))
   out[1,] <- beliefs
-  trust_mat <- manynet::as_matrix(.data)/rowSums(manynet::as_matrix(.data))
-  
+  trust_mat <- as_matrix(.data)/rowSums(as_matrix(.data))
   repeat{
     old_beliefs <- beliefs
     beliefs <- trust_mat %*% beliefs
@@ -376,6 +396,5 @@ play_learning <- function(.data,
     if(t==steps) break
   }
   out <- stats::na.omit(out)
-  
   make_learn_model(out, .data)
 }
