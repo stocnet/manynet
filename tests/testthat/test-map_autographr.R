@@ -159,6 +159,11 @@ test_that("autographr works for diff_model objects", {
   skip_on_cran()
   skip_on_ci()
   test_diff <- autographr(migraph::play_diffusion(ison_brandes))
-  expect_equal(test_diff[["guides"]][["shape"]][["name"]], "legend")
-  expect_equal(test_diff[["guides"]][["colour"]][["name"]], "colorbar")
+  if (inherits(test_diff$guides, "Guides")) {
+    expect_s3_class(test_diff[["guides"]][["guides"]][["shape"]], "GuideLegend")
+    expect_s3_class(test_diff[["guides"]][["guides"]][["colour"]], "GuideColourbar")
+  } else {
+    expect_equal(test_diff[["guides"]][["shape"]][["name"]], "legend")
+    expect_equal(test_diff[["guides"]][["colour"]][["name"]], "colorbar")
+  }
 })
