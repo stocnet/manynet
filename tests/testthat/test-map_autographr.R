@@ -158,7 +158,7 @@ test_that("hierarchy and lineage layouts graph correctly", {
 test_that("autographr works for diff_model objects", {
   skip_on_cran()
   skip_on_ci()
-  test_diff <- autographr(migraph::play_diffusion(ison_brandes))
+  test_diff <- autographr(play_diffusion(ison_brandes))
   expect_equal(test_diff[["guides"]][["shape"]][["name"]], "legend")
   expect_equal(test_diff[["guides"]][["colour"]][["name"]], "colorbar")
 })
