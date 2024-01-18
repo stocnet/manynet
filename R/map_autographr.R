@@ -85,7 +85,7 @@ NULL
 #' #autographr(ison_algebra, edge_color = "type",
 #' #          node_size = migraph::node_betweenness(ison_algebra)*100)
 #' #ison_adolescents |>
-#' #   mutate(cut = migraph::node_is_cutpoint(ison_adolescents)) |>
+#' #   mutate(cut = node_is_cutpoint(ison_adolescents)) |>
 #' #autographr(node_color = "cut", node_shape = "cut")
 #' #autographr(ison_lotr, node_color = Race,
 #' #            node_size = migraph::node_degree(ison_lotr)*2,
@@ -98,7 +98,7 @@ NULL
 #' #autographr(ison_southern_women, layout = "hierarchy", center = "events")
 #' #autographr(ison_lotr, layout = "multilevel", 
 #' #            node_color = "Race", level = "Race")
-#' #autographr(migraph::play_diffusion(ison_karateka))
+#' #autographr(play_diffusion(ison_karateka))
 #' @export
 autographr <- function(.data, layout, labels = TRUE,
                        node_color, node_shape, node_size, node_group,
@@ -152,7 +152,7 @@ autographr <- function(.data, layout, labels = TRUE,
 #' #autographs(to_egos(ison_adolescents))
 #' #autographs(to_egos(ison_adolescents), waves = 8)
 #' #autographs(to_egos(ison_adolescents), waves = c(2, 4, 6))
-#' #autographs(migraph::play_diffusion(ison_adolescents))
+#' #autographs(play_diffusion(ison_adolescents))
 #' @export
 autographs <- function(netlist, waves,
                        based_on = "first", ...) {
@@ -225,7 +225,7 @@ autographs <- function(netlist, waves,
 #' #  to_waves(attribute = "year") %>%
 #' #  autographd(layout = "circle", node_shape = "shape",
 #' #             node_color = "color", node_size =  "size")
-#' #autographd(migraph::play_diffusion(ison_adolescents, seeds = 5, recovery = 0.1))
+#' #autographd(play_diffusion(ison_adolescents, seeds = 5, recovery = 0.1))
 #' @export
 autographd <- function(tlist, layout, labels = TRUE,
                        node_color, node_shape, node_size,
@@ -233,7 +233,6 @@ autographd <- function(tlist, layout, labels = TRUE,
   thisRequires("gganimate")
   thisRequires("gifski")
   thisRequires("png")
-  thisRequires("migraph")
   x <- y <- name <- status <- frame <- NULL
   # Check arguments
   if (missing(layout)) {
@@ -310,7 +309,7 @@ autographd <- function(tlist, layout, labels = TRUE,
     nodes_out <- remove_isolates(edges_out, nodes_out)
   } else {
     if (nrow(nodes_out)/length(unique(nodes_out$frame)) > 30 &
-       any(unlist(lapply(tlist, migraph::node_is_isolate)) == TRUE)) {
+       any(unlist(lapply(tlist, node_is_isolate)) == TRUE)) {
       message("Please considering deleting isolates to improve visualisation.")
     } 
     nodes_out$status <- TRUE
