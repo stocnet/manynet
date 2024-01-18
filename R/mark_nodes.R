@@ -128,7 +128,7 @@ node_is_mentor <- function(.data, elites = 0.1){
 #' @rdname mark_nodes 
 #' @examples
 #'   # To mark nodes that are latent by a particular time point
-#'   node_is_latent(play_diffusion(create_tree(6), latency = 1), time = 1)
+#'   # node_is_latent(migraph::play_diffusion(create_tree(6), latency = 1), time = 1)
 #' @export
 node_is_latent <- function(diff_model, time = 0){
   event <- nodes <- NULL
@@ -153,11 +153,11 @@ node_is_latent <- function(diff_model, time = 0){
 
 #' @rdname mark_nodes 
 #' @param diff_model A diff_model object,
-#'   created either by `play_diffusion()` or `as_diffusion()`.
+#'   created either by `migraph::play_diffusion()` or `migraph::as_diffusion()`.
 #' @param time A time step at which nodes are identified.
 #' @examples
 #'   # To mark nodes that are infected by a particular time point
-#'   node_is_infected(play_diffusion(create_tree(6)), time = 1)
+#'   # node_is_infected(migraph::play_diffusion(create_tree(6)), time = 1)
 #' @export
 node_is_infected <- function(diff_model, time = 0){
   event <- nodes <- NULL
@@ -180,7 +180,7 @@ node_is_infected <- function(diff_model, time = 0){
 #' @rdname mark_nodes 
 #' @examples
 #'   # To mark nodes that are recovered by a particular time point
-#'   node_is_recovered(play_diffusion(create_tree(6), recovery = 0.5), time = 3)
+#'   #node_is_recovered(migraph::play_diffusion(create_tree(6), recovery = 0.5), time = 3)
 #' @export
 node_is_recovered <- function(diff_model, time = 0){
   event <- nodes <- NULL
@@ -257,7 +257,7 @@ node_is_random <- function(.data, size = 1){
 #'   three scores.
 #'   By default, `ranks = 1`.
 #' @examples 
-#' node_is_max(node_degree(ison_brandes))
+#' #node_is_max(migraph::node_degree(ison_brandes))
 #' @export
 node_is_max <- function(node_measure, ranks = 1){
   if(!inherits(node_measure, "node_measure"))
@@ -283,7 +283,7 @@ node_is_max <- function(node_measure, ranks = 1){
 
 #' @rdname mark_nodes
 #' @examples 
-#' node_is_min(node_degree(ison_brandes))
+#' #node_is_min(migraph::node_degree(ison_brandes))
 #' @export
 node_is_min <- function(node_measure, ranks = 1){
   if(!inherits(node_measure, "node_measure"))
