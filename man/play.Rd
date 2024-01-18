@@ -50,6 +50,15 @@ as_diffusion(events, .data)
 play_learning(.data, beliefs, steps, epsilon = 5e-04)
 }
 \arguments{
+\item{.data}{An object of a \code{{manynet}}-consistent class:
+\itemize{
+\item matrix (adjacency or incidence) from \code{{base}} R
+\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
+\item igraph, from the \code{{igraph}} package
+\item network, from the \code{{network}} package
+\item tbl_graph, from the \code{{tidygraph}} package
+}}
+
 \item{seeds}{A valid mark vector the length of the
 number of nodes in the network.}
 
@@ -102,6 +111,26 @@ By default NULL, indicating that no nodes begin immune.}
 By default the number of nodes in the network.
 If \code{steps = Inf} then the diffusion process will continue until
 there are no new infections or all nodes are infected.}
+
+\item{times}{Integer indicating number of simulations used for quantile estimation.
+(Relevant to the null hypothesis test only -
+the analysis itself is unaffected by this parameter.)
+Note that, as for all Monte Carlo procedures, convergence is slower for more
+extreme quantiles.
+By default, \code{times=1000}.
+1,000 - 10,000 repetitions recommended for publication-ready results.}
+
+\item{strategy}{If \code{{furrr}} is installed,
+then multiple cores can be used to accelerate the function.
+By default \code{"sequential"},
+but if multiple cores available,
+then \code{"multisession"} or \code{"multicore"} may be useful.
+Generally this is useful only when \code{times} > 1000.
+See \href{https://furrr.futureverse.org}{\code{{furrr}}} for more.}
+
+\item{verbose}{Whether the function should report on its progress.
+By default FALSE.
+See \href{https://progressr.futureverse.org}{\code{{progressr}}} for more.}
 
 \item{attribute}{A string naming some nodal attribute in the network.
 Currently only tested for binary attributes.}
@@ -166,24 +195,24 @@ a \code{diff_model} object similar to the output of \code{play_diffusion()}
 
 }}
 \examples{
-  smeg <- manynet::generate_smallworld(15, 0.025)
+  smeg <- generate_smallworld(15, 0.025)
   plot(play_diffusion(smeg))
   plot(play_diffusion(smeg, recovery = 0.4))
   plot(play_diffusions(smeg, times = 20))
   startValues <- rbinom(100,1,prob = 0.5)
   startValues[sample(seq_len(100), round(100*0.2))] <- NA
-  latticeEg <- manynet::create_lattice(100)
-  latticeEg <- manynet::add_node_attribute(latticeEg, "startValues", startValues)
+  latticeEg <- create_lattice(100)
+  latticeEg <- add_node_attribute(latticeEg, "startValues", startValues)
   latticeEg
   play_segregation(latticeEg, "startValues", 0.5)
-  # manynet::autographr(latticeEg, node_color = "startValues", node_size = 5) + 
-  # manynet::autographr(play_segregation(latticeEg, "startValues", 0.2), 
+  # autographr(latticeEg, node_color = "startValues", node_size = 5) + 
+  # autographr(play_segregation(latticeEg, "startValues", 0.2), 
   #                     node_color = "startValues", node_size = 5)
   # How to create a diff_model object from (basic) observed data
   events <- data.frame(t = c(0,1,1,2,3), nodes = c(1,2,3,2,4), event = c("I","I","I","R","I"))
-  as_diffusion(events, manynet::create_filled(4))
+  as_diffusion(events, create_filled(4))
   play_learning(ison_networkers, 
-      rbinom(manynet::network_nodes(ison_networkers),1,prob = 0.25))
+      rbinom(network_nodes(ison_networkers),1,prob = 0.25))
 }
 \concept{diffusion}
 \concept{models}

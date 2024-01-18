@@ -65,7 +65,7 @@ Note that this is a different default behaviour than that
 described in Valente and Davis (1999).}
 
 \item{diff_model}{A diff_model object,
-created either by \code{migraph::play_diffusion()} or \code{migraph::as_diffusion()}.}
+created either by \code{play_diffusion()} or \code{as_diffusion()}.}
 
 \item{time}{A time step at which nodes are identified.}
 
@@ -120,11 +120,11 @@ node_is_cutpoint(ison_brandes)
 node_is_core(ison_brandes)
 node_is_fold(create_explicit(A-B, B-C, A-C, C-D, C-E, D-E))
   # To mark nodes that are latent by a particular time point
-  # node_is_latent(migraph::play_diffusion(create_tree(6), latency = 1), time = 1)
+  node_is_latent(play_diffusion(create_tree(6), latency = 1), time = 1)
   # To mark nodes that are infected by a particular time point
-  # node_is_infected(migraph::play_diffusion(create_tree(6)), time = 1)
+  node_is_infected(play_diffusion(create_tree(6)), time = 1)
   # To mark nodes that are recovered by a particular time point
-  #node_is_recovered(migraph::play_diffusion(create_tree(6), recovery = 0.5), time = 3)
+  node_is_recovered(play_diffusion(create_tree(6), recovery = 0.5), time = 3)
   # To mark which nodes are currently exposed
   (expos <- node_is_exposed(manynet::create_tree(14), mark = c(1,3)))
   which(expos)

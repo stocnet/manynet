@@ -71,8 +71,8 @@ tie_is_loop(ison_marvel_relationships)
 tie_is_reciprocated(ison_algebra)
 tie_is_feedback(ison_algebra)
 tie_is_bridge(ison_brandes)
-tie_is_max(tie_betweenness(ison_brandes))
-tie_is_min(tie_betweenness(ison_brandes))
+# tie_is_max(migraph::tie_betweenness(ison_brandes))
+#tie_is_min(migraph::tie_betweenness(ison_brandes))
 }
 \seealso{
 Other marks: 
