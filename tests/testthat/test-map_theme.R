@@ -54,6 +54,8 @@ test_that("scales graph correctly", {
     mutate(color = c(rep(c(1,2,3), 3), 1, 2)) %>%
     autographr(node_color = color) +
     scale_color_rug()
+  # The `scale_name` field is deprecated from 3.5.0 onwards
+  skip_if(packageVersion("ggplot2") >= "3.5.0")
   expect_equal(test_sdg[["scales"]][["scales"]][[1]][["call"]][["scale_name"]], "SDGs")
   expect_equal(test_sdg[["scales"]][["scales"]][[1]][["call"]][["palette"]][["palette"]], "SDGs")
   expect_equal(test_iheid[["scales"]][["scales"]][[1]][["call"]][["scale_name"]], "IHEID")
