@@ -306,7 +306,7 @@ cumulative_ties <- function(x, attribute) {
   edges <- to <- from <- NULL
   thisRequires("zoo")
   thisRequires("purrr")
-  ties <- data.frame("to" = 0, "from" = 0, "wave" = 0, "order" = 0)
+  ties <- data.frame()
   x <- lapply(x, as_tidygraph)
   for (k in seq_len(length(names(x)))) {
     a <- x[[k]] %>%
@@ -316,7 +316,6 @@ cumulative_ties <- function(x, attribute) {
       dplyr::select(to, from, dplyr::all_of(attribute), order)
     ties <- rbind(ties, a)
   }
-  ties <- ties[-1,]
   if (is.numeric(ties[[attribute]])) {
     ties <- ties[order(ties[[attribute]]),]
     a <- list()
