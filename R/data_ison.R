@@ -445,8 +445,11 @@
 #'
 #' @description
 #'   This network is of contiguity between US states.
+#'   States that share a border are connected by a tie in the network.
+#'   The data is a network of 107 ties among 50 US states (nodes).
 #'   States are named by their two-letter ISO-3166 code.
-#'   This data includes also the names of the capitol cities of each state.
+#'   This data includes also the names of the capitol cities of each state,
+#'   which are listed in the node attribute 'capitol'.
 #' @docType data
 #' @keywords datasets
 #' @name ison_usstates
