@@ -1,9 +1,18 @@
-#' Make networks with a stochastic element
+#' Making networks with a stochastic element
 #' 
 #' @description These functions are similar to the `create_*` functions,
 #'   but include some element of randomisation. 
 #'   They are particularly useful for creating a distribution of networks 
 #'   for exploring or testing network properties.
+#'   
+#'   - `generate_random()` generates a random network with a particular probability.
+#'   - `generate_smallworld()` generates a small-world structure via ring rewiring.
+#'   - `generate_scalefree()` generates a scale-free structure via preferential attachment.
+#'   - `generate_permutation()` generates a permutation of the network
+#'   using a Fisher-Yates shuffle on both the rows and columns (for a one-mode network)
+#'   or on each of the rows and columns (for a two-mode network).
+#'   - `generate_utilities()` generates a random utility matrix.
+#' @details
 #'   Note that passing the first argument an empirical network
 #'   will prompt these functions to generate a network with the same dimensions.
 #' @name generate
@@ -16,7 +25,7 @@
 #'   using `as_matrix()`, `as_tidygraph()`, or `as_network()`.
 NULL
 
-#' @describeIn generate Generates a random network with a particular probability.
+#' @rdname generate 
 #' @param p Proportion of possible ties in the network that are realised or,
 #'   if integer greater than 1, the number of ties in the network.
 #' @references 
@@ -73,8 +82,7 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
   g
 }
 
-#' @describeIn generate Generates a small-world structure
-#'   following the lattice rewiring model.
+#' @rdname generate 
 #' @param p Proportion of possible ties in the network that are realised or,
 #'   if integer greater than 1, the number of ties in the network.
 #' @references 
@@ -101,8 +109,7 @@ generate_smallworld <- function(n, p = 0.05, directed = FALSE, width = 2) {
   g
 }
 
-#' @describeIn generate Generates a scale-free structure
-#'   following the preferential attachment model.
+#' @rdname generate 
 #' @param p Power of the preferential attachment, default is 1.
 #' @importFrom igraph sample_pa
 #' @references 
@@ -131,9 +138,7 @@ generate_scalefree <- function(n, p = 1, directed = FALSE) {
   g
 }
 
-#' @describeIn generate Generates a permutation of the original network
-#'   using a Fisher-Yates shuffle on both the rows and columns (for a one-mode network)
-#'   or on each of the rows and columns (for a two-mode network).
+#' @rdname generate 
 #' @param with_attr Logical whether any attributes of the object
 #'   should be retained. 
 #'   By default TRUE. 
@@ -152,7 +157,7 @@ generate_permutation <- function(.data, with_attr = TRUE) {
   out
 }
 
-#' @describeIn generate Generates a utility matrix
+#' @rdname generate 
 #' @param steps Number of simulation steps to run.
 #'   By default 1: a single, one-shot simulation.
 #'   If more than 1, further iterations will update the utilities

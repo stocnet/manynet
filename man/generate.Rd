@@ -7,7 +7,7 @@
 \alias{generate_scalefree}
 \alias{generate_permutation}
 \alias{generate_utilities}
-\title{Make networks with a stochastic element}
+\title{Making networks with a stochastic element}
 \usage{
 generate_random(n, p = 0.5, directed = FALSE, with_attr = TRUE)
 
@@ -75,26 +75,20 @@ These functions are similar to the \verb{create_*} functions,
 but include some element of randomisation.
 They are particularly useful for creating a distribution of networks
 for exploring or testing network properties.
+\itemize{
+\item \code{generate_random()} generates a random network with a particular probability.
+\item \code{generate_smallworld()} generates a small-world structure via ring rewiring.
+\item \code{generate_scalefree()} generates a scale-free structure via preferential attachment.
+\item \code{generate_permutation()} generates a permutation of the network
+using a Fisher-Yates shuffle on both the rows and columns (for a one-mode network)
+or on each of the rows and columns (for a two-mode network).
+\item \code{generate_utilities()} generates a random utility matrix.
+}
+}
+\details{
 Note that passing the first argument an empirical network
 will prompt these functions to generate a network with the same dimensions.
 }
-\section{Functions}{
-\itemize{
-\item \code{generate_random()}: Generates a random network with a particular probability.
-
-\item \code{generate_smallworld()}: Generates a small-world structure
-following the lattice rewiring model.
-
-\item \code{generate_scalefree()}: Generates a scale-free structure
-following the preferential attachment model.
-
-\item \code{generate_permutation()}: Generates a permutation of the original network
-using a Fisher-Yates shuffle on both the rows and columns (for a one-mode network)
-or on each of the rows and columns (for a two-mode network).
-
-\item \code{generate_utilities()}: Generates a utility matrix
-
-}}
 \examples{
 autographr(generate_random(12, 0.4))
 # autographr(generate_random(c(6, 6), 0.4))
