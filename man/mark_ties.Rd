@@ -76,6 +76,8 @@ tie_is_bridge(ison_brandes)
 }
 \seealso{
 Other marks: 
-\code{\link{mark_nodes}}
+\code{\link{mark_diff}},
+\code{\link{mark_nodes}},
+\code{\link{mark_select}}
 }
 \concept{marks}

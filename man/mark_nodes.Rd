@@ -7,14 +7,7 @@
 \alias{node_is_core}
 \alias{node_is_fold}
 \alias{node_is_mentor}
-\alias{node_is_latent}
-\alias{node_is_infected}
-\alias{node_is_recovered}
-\alias{node_is_exposed}
-\alias{node_is_random}
-\alias{node_is_max}
-\alias{node_is_min}
-\title{Marking nodes based on their properties}
+\title{Marking nodes based on structural properties}
 \usage{
 node_is_isolate(.data)
 
@@ -25,20 +18,6 @@ node_is_core(.data)
 node_is_fold(.data)
 
 node_is_mentor(.data, elites = 0.1)
-
-node_is_latent(diff_model, time = 0)
-
-node_is_infected(diff_model, time = 0)
-
-node_is_recovered(diff_model, time = 0)
-
-node_is_exposed(.data, mark)
-
-node_is_random(.data, size = 1)
-
-node_is_max(node_measure, ranks = 1)
-
-node_is_min(node_measure, ranks = 1)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -63,23 +42,6 @@ for example because they are an isolate,
 a tie to themselves (a loop) will be created instead.
 Note that this is a different default behaviour than that
 described in Valente and Davis (1999).}
-
-\item{diff_model}{A diff_model object,
-created either by \code{play_diffusion()} or \code{as_diffusion()}.}
-
-\item{time}{A time step at which nodes are identified.}
-
-\item{mark}{vector denoting which nodes are infected}
-
-\item{size}{The number of nodes to select (as TRUE).}
-
-\item{node_measure}{An object created by a \code{node_} measure.}
-
-\item{ranks}{The number of ranks of max or min to return.
-For example, \code{ranks = 3} will return TRUE for nodes with
-scores equal to any of the top (or, for \code{node_is_min()}, bottom)
-three scores.
-By default, \code{ranks = 1}.}
 }
 \description{
 These functions return logical vectors the length of the
@@ -95,42 +57,13 @@ triangles that are only connected by that node.
 \item \code{node_is_mentor()} marks a proportion of high indegree nodes as 'mentors' (see details)
 \item \code{node_is_infected()} and \code{node_is_exposed()} marks nodes that are infected
 by a particular time point or exposed to a given (other) mark
-\item \code{node_is_random()} marks one or more nodes at random.
-\item \code{node_is_max()} and \code{node_is_min()} are more generally useful
-for converting the results from some node measure into a mark-class object.
-They can be particularly useful for highlighting which node or nodes
-are key because they minimise or, more often, maximise some measure.
 }
 }
-\section{Exposed}{
-
-\code{node_is_exposed()} is similar to \code{node_exposure()},
-but returns a mark (TRUE/FALSE) vector indicating which nodes
-are currently exposed to the diffusion content.
-This diffusion content can be expressed in the 'mark' argument.
-If no 'mark' argument is provided,
-and '.data' is a diff_model object,
-then the function will return nodes exposure to the seed nodes
-in that diffusion.
-}
-
 \examples{
 node_is_isolate(ison_brandes)
 node_is_cutpoint(ison_brandes)
 node_is_core(ison_brandes)
 node_is_fold(create_explicit(A-B, B-C, A-C, C-D, C-E, D-E))
-  # To mark nodes that are latent by a particular time point
-  node_is_latent(play_diffusion(create_tree(6), latency = 1), time = 1)
-  # To mark nodes that are infected by a particular time point
-  node_is_infected(play_diffusion(create_tree(6)), time = 1)
-  # To mark nodes that are recovered by a particular time point
-  node_is_recovered(play_diffusion(create_tree(6), recovery = 0.5), time = 3)
-  # To mark which nodes are currently exposed
-  (expos <- node_is_exposed(manynet::create_tree(14), mark = c(1,3)))
-  which(expos)
-node_is_random(ison_brandes, 2)
-#node_is_max(migraph::node_degree(ison_brandes))
-#node_is_min(migraph::node_degree(ison_brandes))
 }
 \references{
 Valente, Thomas, and Rebecca Davis. 1999.
@@ -139,6 +72,8 @@ Valente, Thomas, and Rebecca Davis. 1999.
 }
 \seealso{
 Other marks: 
+\code{\link{mark_diff}},
+\code{\link{mark_select}},
 \code{\link{mark_ties}}
 }
 \concept{marks}

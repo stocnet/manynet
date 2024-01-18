@@ -1,4 +1,6 @@
-#' Marking nodes based on their properties
+# Structural properties ####
+
+#' Marking nodes based on structural properties
 #' 
 #' @description 
 #'   These functions return logical vectors the length of the 
@@ -14,11 +16,6 @@
 #'   - `node_is_mentor()` marks a proportion of high indegree nodes as 'mentors' (see details)
 #'   - `node_is_infected()` and `node_is_exposed()` marks nodes that are infected
 #'   by a particular time point or exposed to a given (other) mark
-#'   - `node_is_random()` marks one or more nodes at random.
-#'   - `node_is_max()` and `node_is_min()` are more generally useful
-#'   for converting the results from some node measure into a mark-class object.
-#'   They can be particularly useful for highlighting which node or nodes
-#'   are key because they minimise or, more often, maximise some measure.
 #' @inheritParams is
 #' @family marks
 #' @name mark_nodes
@@ -89,9 +86,9 @@ node_is_fold <- function(.data){
   tris <- matrix(tris, length(tris)/3, 3, byrow = TRUE)
   out <- vapply(seq_along(mult_tri), function(x){
     if(!mult_tri[x]) FALSE else {
-     tri_neigh <- unique(c(tris[apply(tris, 1, function(r) any(x %in% r)),] ))
-     tri_neigh <- tri_neigh[tri_neigh != x]
-     all(rowSums(igraph::distances(.data, tri_neigh, tri_neigh)==2)>=2)
+      tri_neigh <- unique(c(tris[apply(tris, 1, function(r) any(x %in% r)),] ))
+      tri_neigh <- tri_neigh[tri_neigh != x]
+      all(rowSums(igraph::distances(.data, tri_neigh, tri_neigh)==2)>=2)
     }
   }, FUN.VALUE = logical(1) )
   make_node_mark(out, .data)
@@ -125,7 +122,24 @@ node_is_mentor <- function(.data, elites = 0.1){
   make_node_mark(out, .data)
 }
 
-#' @rdname mark_nodes 
+# Diffusion properties ####
+
+#' Marking nodes based on diffusion properties
+#' 
+#' @description 
+#'   These functions return logical vectors the length of the 
+#'   nodes in a network identifying which hold certain properties or positions in the network.
+#'   
+#'   - `node_is_infected()` and `node_is_exposed()` marks nodes that are infected
+#'   by a particular time point or exposed to a given (other) mark
+#'   - `node_is_latent()` marks nodes that are latent at a particular time point
+#'   - `node_is_recovered()` marks nodes that are recovered at a particular time point
+#' @inheritParams is
+#' @family marks
+#' @name mark_diff
+NULL
+
+#' @rdname mark_diff 
 #' @examples
 #'   # To mark nodes that are latent by a particular time point
 #'   node_is_latent(play_diffusion(create_tree(6), latency = 1), time = 1)
@@ -151,7 +165,7 @@ node_is_latent <- function(diff_model, time = 0){
   make_node_mark(out, net)
 }
 
-#' @rdname mark_nodes 
+#' @rdname mark_diff 
 #' @param diff_model A diff_model object,
 #'   created either by `play_diffusion()` or `as_diffusion()`.
 #' @param time A time step at which nodes are identified.
@@ -177,7 +191,7 @@ node_is_infected <- function(diff_model, time = 0){
   make_node_mark(out, net)
 }
 
-#' @rdname mark_nodes 
+#' @rdname mark_diff 
 #' @examples
 #'   # To mark nodes that are recovered by a particular time point
 #'   node_is_recovered(play_diffusion(create_tree(6), recovery = 0.5), time = 3)
@@ -203,7 +217,7 @@ node_is_recovered <- function(diff_model, time = 0){
   make_node_mark(out, net)
 }
 
-#' @rdname mark_nodes 
+#' @rdname mark_diff 
 #' @param mark A valid 'node_mark' object or
 #'   logical vector (TRUE/FALSE) of length equal to 
 #'   the number of nodes in the network.
@@ -237,7 +251,25 @@ node_is_exposed <- function(.data, mark){
   make_node_mark(out, .data)
 }
 
-#' @rdname mark_nodes
+# Selection properties ####
+
+#' Marking nodes for selection based on measures
+#' 
+#' @description 
+#'   These functions return logical vectors the length of the 
+#'   nodes in a network identifying which hold certain properties or positions in the network.
+#'   
+#'   - `node_is_random()` marks one or more nodes at random.
+#'   - `node_is_max()` and `node_is_min()` are more generally useful
+#'   for converting the results from some node measure into a mark-class object.
+#'   They can be particularly useful for highlighting which node or nodes
+#'   are key because they minimise or, more often, maximise some measure.
+#' @inheritParams is
+#' @family marks
+#' @name mark_select
+NULL
+
+#' @rdname mark_select
 #' @param size The number of nodes to select (as TRUE).
 #' @examples 
 #' node_is_random(ison_brandes, 2)
@@ -249,7 +281,7 @@ node_is_random <- function(.data, size = 1){
   make_node_mark(out, .data)
 }
 
-#' @rdname mark_nodes
+#' @rdname mark_select
 #' @param node_measure An object created by a `node_` measure.
 #' @param ranks The number of ranks of max or min to return.
 #'   For example, `ranks = 3` will return TRUE for nodes with
@@ -268,20 +300,20 @@ node_is_max <- function(node_measure, ranks = 1){
     mode2 <- as.numeric(node_measure)[as.logical(attr(node_measure, "mode"))]
     max2 <- mode2[order(mode2, decreasing = TRUE)[1:ranks]]
     out <- ((as.numeric(node_measure) %in% max1 & 
-      !as.logical(attr(node_measure, "mode"))) | 
-      (as.numeric(node_measure) %in% max2 & 
-      as.logical(attr(node_measure, "mode"))))
+               !as.logical(attr(node_measure, "mode"))) | 
+              (as.numeric(node_measure) %in% max2 & 
+                 as.logical(attr(node_measure, "mode"))))
     attr(out, "mode") <- attr(node_measure, "mode")
   } else {
     out <- node_measure %in% node_measure[order(node_measure,
-                                   decreasing = TRUE)[1:ranks]]
+                                                decreasing = TRUE)[1:ranks]]
   }
   names(out) <- attr(node_measure, "names")
   class(out) <- c("node_mark", class(out))
   out
 }
 
-#' @rdname mark_nodes
+#' @rdname mark_select
 #' @examples 
 #' #node_is_min(migraph::node_degree(ison_brandes))
 #' @export
@@ -306,3 +338,4 @@ node_is_min <- function(node_measure, ranks = 1){
   class(out) <- c("node_mark", class(out))
   out
 }
+
