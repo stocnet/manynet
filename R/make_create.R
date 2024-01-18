@@ -1,8 +1,23 @@
-#' Make networks with defined structures
+#' Making networks with defined structures
 #'
 #' @description
 #'   These functions create networks with particular structural properties.
-#'   They can create either one-mode or two-mode networks.
+#'   
+#'   - `create_empty()` creates an empty network without any ties.
+#'   - `create_filled()` creates a filled network with every possible tie realised.
+#'   - `create_ring()` creates a ring or chord network where each nodes'
+#'   neighbours form a clique.
+#'   - `create_star()` creates a network with a maximally central node.
+#'   - `create_tree()` creates a network with successive branches.
+#'   - `create_lattice()` creates a network that forms a regular tiling.
+#'   - `create_components()` creates a network that clusters nodes into separate components.
+#'   - `create_core()` creates a network in which a certain proportion of 'core' nodes
+#'   are densely tied to each other, and the rest peripheral, tied only to the core.
+#'   - `create_explicit()` creates a network based on explicitly
+#'   named nodes and ties between them.
+#'
+#'   These functions can create either one-mode or two-mode networks.
+#' @details
 #'   To create a one-mode network, pass the main argument `n` a single integer,
 #'   indicating the number of nodes in the network.
 #'   To create a two-mode network, pass `n` a vector of \emph{two} integers,
@@ -47,7 +62,7 @@
 #' @importFrom igraph graph_from_biadjacency_matrix
 NULL
 
-#' @describeIn create Creates an empty graph of the given dimensions.
+#' @rdname create 
 #' @examples
 #' create_empty(10)
 #' @export
@@ -65,8 +80,7 @@ create_empty <- function(n, directed = FALSE) {
   as_tidygraph(out)
 }
 
-#' @describeIn create Creates a filled graph of the given dimensions,
-#'   with every possible tie realised.
+#' @rdname create 
 #' @examples
 #' create_filled(10)
 #' @export
@@ -85,8 +99,7 @@ create_filled <- function(n, directed = FALSE) {
   as_tidygraph(out)
 }
 
-#' @describeIn create Creates a ring or chord graph of the given dimensions
-#'  that loops around is of a certain width or thickness.
+#' @rdname create 
 #' @examples
 #' create_ring(8, width = 2)
 #' @export
@@ -133,8 +146,7 @@ create_ring <- function(n, directed = FALSE, width = 1, ...) {
   as_tidygraph(out)
 }
 
-#' @describeIn create Creates a graph of the given dimensions
-#'   that has a maximally central node.
+#' @rdname create 
 #' @importFrom igraph graph_from_adjacency_matrix graph_from_biadjacency_matrix
 #'   make_star
 #' @examples
@@ -158,8 +170,7 @@ create_star <- function(n,
   as_tidygraph(out)
 }
 
-#' @describeIn create Creates a graph of the given dimensions with
-#'  successive branches.
+#' @rdname create 
 #' @importFrom igraph make_tree
 #' @examples
 #' create_tree(c(7,8))
@@ -199,8 +210,7 @@ create_tree <- function(n,
   }
 }
 
-#' @describeIn create Creates a lattice graph of the given dimensions with ties
-#'  to all neighbouring nodes.
+#' @rdname create 
 #' @section Lattice graphs:
 #'   `create_lattice()` creates both two-dimensional grid and triangular
 #'   lattices with as even dimensions as possible.
@@ -308,8 +318,7 @@ create_lattice <- function(n,
 #   }
 # }
 
-#' @describeIn create Creates a graph in which the nodes are clustered
-#'   into separate components.
+#' @rdname create 
 #' @examples
 #' create_components(10, membership = c(1,1,1,2,2,2,3,3,3,3))
 #' @export
@@ -333,9 +342,7 @@ create_components <- function(n, directed = FALSE, membership = NULL) {
   as_tidygraph(out)
 }
 
-#' @describeIn create Creates a graph with a certain proportion of nodes
-#'   being core nodes, densely tied to each other and peripheral nodes,
-#'   and the rest peripheral, tied only to the core.
+#' @rdname create 
 #' @examples
 #' create_core(6)
 #' @export
@@ -358,8 +365,7 @@ create_core <- function(n, directed = FALSE, membership = NULL) {
   }
 }
 
-#' @describeIn create Creates a network based on explicitly
-#'   named nodes and ties between them.
+#' @rdname create 
 #' @seealso [igraph::graph_from_literal()] which `create_explicit()` mostly just wraps.
 #'   `create_explicit()` will also accept character input and not just a formula though,
 #'   and will never simplify the result.
