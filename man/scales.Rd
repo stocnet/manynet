@@ -20,32 +20,7 @@
 \alias{scale_fill_rug}
 \alias{scale_colour_rug}
 \alias{scale_color_rug}
-\title{#' @rdname themes
-#' @export
-theme_crips <- function(base_size = 12, base_family = "serif") {
-(ggraph::scale_edge_color_grey() +
-ggplot2::theme_bw(base_size = base_size, base_family = base_family) +
-ggplot2::theme(axis.title = ggplot2::element_blank(),
-axis.text = ggplot2::element_text(),
-axis.ticks = ggplot2::element_blank(),
-axis.line = ggplot2::element_blank(),
-axis.title.x = ggplot2::element_blank(),
-axis.text.x = ggplot2::element_blank(),
-axis.ticks.x = ggplot2::element_blank(),
-axis.title.y = ggplot2::element_blank(),
-axis.text.y = ggplot2::element_blank(),
-axis.ticks.y = ggplot2::element_blank(),
-panel.grid.major = ggplot2::element_blank(),
-panel.grid.minor = ggplot2::element_blank(),
-legend.background = ggplot2::element_rect(),
-legend.position = "bottom",
-legend.direction = "horizontal", legend.box = "vertical",
-plot.title = ggplot2::element_text(hjust = 0,
-size = ggplot2::rel(1.5),
-face = "bold"),
-strip.background = ggplot2::element_rect()))
-}
-Many scales}
+\title{Many scales}
 \usage{
 scale_fill_iheid(direction = 1, ...)
 
