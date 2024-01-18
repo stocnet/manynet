@@ -697,9 +697,10 @@ reduce_categories <- function(g, node_group) {
     if (is_twomode(g)) {
       if (!is.null(node_color)) {
         if (node_color %in% names(node_attribute(g))) {
-          node_color <- as.factor(node_attribute(g, node_color))
-          if (all(levels(node_color) == c("FALSE", "TRUE")))
-            node_color <- factor(node_color, levels = c("TRUE", "FALSE"))
+          if (is_mark_attrib(node_attribute(g, node_color))) {
+            node_color <- factor(node_attribute(g, node_color),
+                                 levels = c("TRUE", "FALSE"))
+          } else node_color <- factor(node_attribute(g, node_color))
           p <- p + ggraph::geom_node_point(ggplot2::aes(color = node_color),
                                            size = nsize, shape = nshape) +
             ggplot2::scale_colour_manual(values = colorsafe_palette, guide = "none")
@@ -713,9 +714,10 @@ reduce_categories <- function(g, node_group) {
     } else {
       if (!is.null(node_color)) {
         if (node_color %in% names(node_attribute(g))) {
-          node_color <- as.factor(node_attribute(g, node_color))
-          if (all(levels(node_color) == c("FALSE", "TRUE")))
-            node_color <- factor(node_color, levels = c("TRUE", "FALSE"))
+          if (is_mark_attrib(node_attribute(g, node_color))) {
+            node_color <- factor(node_attribute(g, node_color),
+                                 levels = c("TRUE", "FALSE"))
+          } else node_color <- factor(node_attribute(g, node_color))
           p <- p + ggraph::geom_node_point(aes(color = node_color),
                                            size = nsize, shape = nshape) +
             ggplot2::scale_colour_manual(values = colorsafe_palette, guide = "none")
@@ -1063,4 +1065,8 @@ collapse_guides <- function(plist) {
     }
   }
   plist
+}
+
+is_mark_attrib <- function(x) {
+  if ("node_mark" %in% class(x)) TRUE else FALSE
 }
