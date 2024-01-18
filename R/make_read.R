@@ -1,4 +1,4 @@
-#' Make networks from/to external formats
+#' Making networks from/to external formats
 #'
 #' @description 
 #' Researchers regularly need to work with a variety of external data formats.
@@ -6,6 +6,20 @@
 #' file formats into objects that `{manynet}` and other graph/network packages
 #' in R can work with.
 #' 
+#' - `read_matrix()` imports adjacency matrices from Excel/csv files,
+#' and `write_matrix()` exports an adjacency matrix to a .csv file.
+#' - `read_edgelist()` imports edgelists from Excel/csv files,
+#' and `write_edgelist()` exports an edgelist to a .csv file.
+#' - `read_nodelist()` imports nodelists from Excel/csv files,
+#' and `write_nodelist()` exports a nodelist to a .csv file.
+#' - `read_pajek()` imports Pajek (.net or .paj) files,
+#' and `write_pajek()` exports Pajek .net files.
+#' - `read_ucinet()` imports UCINET files from the header (.##h),
+#' and `write_ucinet()` exports a pair of UCINET files in V6404 file format (.##h, .##d).
+#' - `read_dynetml()` imports DyNetML interchange format for rich social network data.
+#' - `read_graphml()` imports GraphML files,
+#' and `write_graphml()` exports GraphML files.
+#' @details
 #' Note that these functions are not as actively maintained as others
 #' in the package, so please let us know if any are not currently working
 #' for you or if there are missing import routines 
@@ -62,7 +76,7 @@
 #' @seealso [as]
 NULL
 
-#' @describeIn read Reading adjacency matrices from Excel/csv files
+#' @rdname read 
 #' @export
 read_matrix <- function(file = file.choose(),
                           sv = c("comma", "semi-colon"),
@@ -89,7 +103,7 @@ read_matrix <- function(file = file.choose(),
   as_tidygraph(as.matrix(out))
 }
 
-#' @describeIn read Writing matrix to csv files
+#' @rdname read 
 #' @export
 write_matrix <- function(.data,
                          filename,
@@ -114,7 +128,7 @@ write_matrix <- function(.data,
   write.csv(out, file = filename, row.names = FALSE)
 }
 
-#' @describeIn read Reading edgelists from Excel/csv files
+#' @rdname read 
 #' @export
 read_edgelist <- function(file = file.choose(),
                           sv = c("comma", "semi-colon"),
@@ -133,7 +147,7 @@ read_edgelist <- function(file = file.choose(),
   out
 }
 
-#' @describeIn read Writing edgelists to csv files
+#' @rdname read 
 #' @export
 write_edgelist <- function(.data,
                            filename,
@@ -195,7 +209,7 @@ write_nodelist <- function(.data,
   write.csv(out, file = filename, row.names = FALSE, ...)
 }
 
-#' @describeIn read Reading pajek (.net/.paj) files
+#' @rdname read
 #' @param ties Where there are 
 #' @importFrom network read.paj
 #' @importFrom utils read.delim
@@ -240,7 +254,7 @@ read_pajek <- function(file = file.choose(),
   out
 }
 
-#' @describeIn read Writing pajek .net files
+#' @rdname read 
 #' @importFrom igraph write_graph
 #' @export
 write_pajek <- function(.data,
@@ -257,7 +271,7 @@ write_pajek <- function(.data,
   )
 }
 
-#' @describeIn read Reading UCINET files
+#' @rdname read
 #' @export
 read_ucinet <- function(file = file.choose()) {
   # Some basic checks of the input file
@@ -420,7 +434,7 @@ read_ucinet <- function(file = file.choose()) {
     as_tidygraph(mat)
 }
 
-#' @describeIn read Writing UCINET files
+#' @rdname read
 #' @param filename UCINET filename (without ## extension).
 #' By default the files will have the same name as the object
 #' and be saved to the working directory.
@@ -537,11 +551,11 @@ write_ucinet <- function(.data,
   close(UCINET.data)
 }
 
-#' @describeIn read Reading DynetML files
+#' @rdname read 
 #' @importFrom dplyr bind_rows coalesce filter mutate select everything
 #' @export
 read_dynetml <- function(file = file.choose()) {
-  thisRequires("readxl")
+  thisRequires("xml2")
   name <- type <- nodeset <- target <- value <- NULL
   xmlfile <- xml2::read_xml(file)
   xmllist <- xml2::as_list(xmlfile)
@@ -590,14 +604,14 @@ read_dynetml <- function(file = file.choose()) {
   as_tidygraph(list(nodes = nodes, ties = edgelist))
 }
 
-#' @describeIn read Reading GraphML files
+#' @rdname read
 #' @importFrom igraph read_graph
 #' @export
 read_graphml <- function(file = file.choose()) {
   as_tidygraph(igraph::read_graph(file, format = "graphml"))
 }
 
-#' @describeIn read Writing GraphML files
+#' @rdname read
 #' @importFrom igraph write_graph
 #' @export
 write_graphml <- function(.data,

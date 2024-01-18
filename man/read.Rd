@@ -15,7 +15,7 @@
 \alias{read_dynetml}
 \alias{read_graphml}
 \alias{write_graphml}
-\title{Make networks from/to external formats}
+\title{Making networks from/to external formats}
 \source{
 \code{read_ucinet()} and \code{write_ucinet()} kindly supplied by Christian Steglich,
 constructed on 18 June 2015.
@@ -98,13 +98,28 @@ Researchers regularly need to work with a variety of external data formats.
 The following functions offer ways to import from some common external
 file formats into objects that \code{{manynet}} and other graph/network packages
 in R can work with.
-
+\itemize{
+\item \code{read_matrix()} imports adjacency matrices from Excel/csv files,
+and \code{write_matrix()} exports an adjacency matrix to a .csv file.
+\item \code{read_edgelist()} imports edgelists from Excel/csv files,
+and \code{write_edgelist()} exports an edgelist to a .csv file.
+\item \code{read_nodelist()} imports nodelists from Excel/csv files,
+and \code{write_nodelist()} exports a nodelist to a .csv file.
+\item \code{read_pajek()} imports Pajek (.net or .paj) files,
+and \code{write_pajek()} exports Pajek .net files.
+\item \code{read_ucinet()} imports UCINET files from the header (.##h),
+and \code{write_ucinet()} exports a pair of UCINET files in V6404 file format (.##h, .##d).
+\item \code{read_dynetml()} imports DyNetML interchange format for rich social network data.
+\item \code{read_graphml()} imports GraphML files,
+and \code{write_graphml()} exports GraphML files.
+}
+}
+\details{
 Note that these functions are not as actively maintained as others
 in the package, so please let us know if any are not currently working
 for you or if there are missing import routines
 by \href{https://github.com/snlab-ch/manynet/issues}{raising an issue on Github}.
-}
-\details{
+
 There are a number of repositories for network data
 that hold various datasets in different formats. See for example:
 \itemize{
@@ -132,31 +147,9 @@ you will need to unpack them and convert them one by one.
 }
 \section{Functions}{
 \itemize{
-\item \code{read_matrix()}: Reading adjacency matrices from Excel/csv files
-
-\item \code{write_matrix()}: Writing matrix to csv files
-
-\item \code{read_edgelist()}: Reading edgelists from Excel/csv files
-
-\item \code{write_edgelist()}: Writing edgelists to csv files
-
 \item \code{read_nodelist()}: Reading nodelists from Excel/csv files
 
 \item \code{write_nodelist()}: Writing nodelists to csv files
-
-\item \code{read_pajek()}: Reading pajek (.net/.paj) files
-
-\item \code{write_pajek()}: Writing pajek .net files
-
-\item \code{read_ucinet()}: Reading UCINET files
-
-\item \code{write_ucinet()}: Writing UCINET files
-
-\item \code{read_dynetml()}: Reading DynetML files
-
-\item \code{read_graphml()}: Reading GraphML files
-
-\item \code{write_graphml()}: Writing GraphML files
 
 }}
 \seealso{
