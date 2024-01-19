@@ -197,7 +197,7 @@ layout_tbl_graph_concentric <- function(.data, membership,
       order.values <- lapply(1:0, function(x)
         if(ncol(lo) >= 3) sort(lo[lo[,2] == x,])[,3] 
         else sort(lo[lo[,2] == x,1])) 
-    } else order.values <- membership
+    } else order.values <- membership[order(sapply(membership, length))]
     # order.values <- getNNvec(.data, members)
   }
   res <- matrix(NA, nrow = length(all_n), ncol = 2)
