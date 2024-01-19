@@ -2,13 +2,72 @@
 
 #' Making diffusion models on networks
 #' @description
-#' These functions simulate diffusion models upon a network.
+#' These functions simulate diffusion or compartment models upon a network.
 #' 
 #' - `play_diffusion()` runs a single simulation of a compartment model,
 #' allowing the results to be visualised and examined.
 #' - `play_diffusions()` runs multiple simulations of a compartment model
 #' for more robust inference.
 #' 
+#' These functions allow both a full range of compartment models,
+#' as well as simplex and complex diffusion to be simulated upon a network.
+#' 
+#' @section Simple and complex diffusion: 
+#' 
+#' By default, the function will simulate a simple diffusion process in
+#' which some infectious disease or idea diffuses from seeds through
+#' contacts at some constant rate (`transmissibility`).
+#' 
+#' These `seeds` can be specified by a vector index 
+#' (the number of the position of each node in the network that should serve as a seed) 
+#' or as a logical vector where TRUE is interpreted as already infected.
+#' 
+#' `thresholds` can be set such that adoption/infection requires more than one
+#' (the default) contact already being infected.
+#' This parameter also accepts a vector so that thresholds can vary.
+#' 
+#' Complex diffusion is where the `thresholds` are defined less than one.
+#' In this case, the thresholds are interpreted as proportional.
+#' That is, the threshold to adoption/infection is defined by the
+#' proportion of the node's contacts infected.
+#' 
+#' Nodes that cannot be infected can be indicated as `immune`
+#' with a logical vector or index, similar to how `seeds` are identified.
+#' Note that `immune` nodes are interpreted internally as Recovered (R)
+#' and are thus subject to `waning` (see below).
+#' @section Compartment models: 
+#' 
+#' Compartment models are flexible models of diffusion or contagion,
+#' where nodes are compartmentalised into one of two or more categories.
+#' 
+#' The most basic model is the SI model.
+#' The SI model is the default in `play_diffusion()`/`play_diffusions()`,
+#' where nodes can only move from the Susceptible (S) category to the
+#' Infected (I) category.
+#' Whether nodes move from S to I depends on whether they are exposed
+#' to the infection, for instance through a contact,
+#' the `transmissibility` of the disease,
+#' and their `thresholds` to the disease.
+#' 
+#' Another common model is the SIR model.
+#' Here nodes move from S to I, as above, but additionally they can
+#' move from I to a Recovered (R) status.
+#' The probability that an infected node recovers at a timepoint
+#' is controlled by the `recovery` parameter.
+#' 
+#' The next most common models are the SIS and SIRS models.
+#' Here nodes move from S to I or additionally to R, as above, 
+#' but additionally they can move from I or R back to a Susceptible (S) state.
+#' This probability is governed by the `waning` parameter.
+#' Where `recover > 0` and `waning = 1`, the Recovery (R) state will be skipped
+#' and the node will return immediately to the Susceptible (S) compartment.
+#' 
+#' Lastly, these functions also offer the possibility of specifying
+#' a latency period in which nodes have been infected but are not yet infectious.
+#' Where `latency > 0`, an additional Exposed (E) compartment is introduced
+#' that governs the probability that a node moves from this E compartment
+#' to infectiousness (I).
+#' This can be used in in SEI, SEIS, SEIR, and SEIRS models.
 #' @inheritParams is
 #' @param seeds A valid mark vector the length of the
 #'   number of nodes in the network.

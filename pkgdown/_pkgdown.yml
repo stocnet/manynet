@@ -38,9 +38,9 @@ reference:
     contents:
       - starts_with("create_")
       - starts_with("generate_")
-      - starts_with("read")
-      - starts_with("write")
-      - starts_with("as_")
+      - starts_with("read_")
+      - starts_with("write_")
+      - starts_with("play_")
   - title: "Manipulating"
     desc: |
       Functions for manipulating networks into useful formats.
@@ -53,6 +53,7 @@ reference:
       There are also tidy-style and igraph-style functions for adding or joining
       new data on nodes or ties to networks.
     contents:
+      - starts_with("as_")
       - starts_with("to_")
       - starts_with("from_")
       - starts_with("na_to_")
