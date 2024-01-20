@@ -61,6 +61,13 @@ By default a \code{tbl_graph} object is returned,
 but this can be coerced into other types of objects
 using \code{as_edgelist()}, \code{as_matrix()},
 \code{as_tidygraph()}, or \code{as_network()}.
+
+By default, all networks are created as undirected.
+This can be overruled with the argument \code{directed = TRUE}.
+This will return a directed network in which the arcs are
+out-facing or equivalent.
+This direction can be swapped using \code{to_redirected()}.
+In two-mode networks, the directed argument is ignored.
 }
 \description{
 These functions create networks with particular structural properties.
@@ -80,8 +87,6 @@ named nodes and ties between them.
 }
 
 These functions can create either one-mode or two-mode networks.
-}
-\details{
 To create a one-mode network, pass the main argument \code{n} a single integer,
 indicating the number of nodes in the network.
 To create a two-mode network, pass \code{n} a vector of \emph{two} integers,
@@ -89,13 +94,6 @@ where the first integer indicates the number of nodes in the first mode,
 and the second integer indicates the number of nodes in the second mode.
 As an alternative, an existing network can be provided to \code{n}
 and the number of modes, nodes, and directedness will be inferred.
-
-By default, all networks are created as undirected.
-This can be overruled with the argument \code{directed = TRUE}.
-This will return a directed network in which the arcs are
-out-facing or equivalent.
-This direction can be swapped using \code{to_redirected()}.
-In two-mode networks, the directed argument is ignored.
 }
 \section{Lattice graphs}{
 

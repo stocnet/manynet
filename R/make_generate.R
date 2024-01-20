@@ -5,24 +5,38 @@
 #'   They are particularly useful for creating a distribution of networks 
 #'   for exploring or testing network properties.
 #'   
-#'   - `generate_random()` generates a random network with a particular probability.
-#'   - `generate_smallworld()` generates a small-world structure via ring rewiring.
-#'   - `generate_scalefree()` generates a scale-free structure via preferential attachment.
+#'   - `generate_random()` generates a random network with ties appearing at some probability.
+#'   - `generate_smallworld()` generates a small-world structure via ring rewiring at some probability.
+#'   - `generate_scalefree()` generates a scale-free structure via preferential attachment at some probability.
 #'   - `generate_permutation()` generates a permutation of the network
 #'   using a Fisher-Yates shuffle on both the rows and columns (for a one-mode network)
 #'   or on each of the rows and columns (for a two-mode network).
 #'   - `generate_utilities()` generates a random utility matrix.
-#' @details
-#'   Note that passing the first argument an empirical network
-#'   will prompt these functions to generate a network with the same dimensions.
+#'
+#'   These functions can create either one-mode or two-mode networks.
+#'   To create a one-mode network, pass the main argument `n` a single integer,
+#'   indicating the number of nodes in the network.
+#'   To create a two-mode network, pass `n` a vector of \emph{two} integers,
+#'   where the first integer indicates the number of nodes in the first mode,
+#'   and the second integer indicates the number of nodes in the second mode.
+#'   As an alternative, an existing network can be provided to `n`
+#'   and the number of modes, nodes, and directedness will be inferred.
 #' @name generate
 #' @family makes
 #' @inheritParams create
 #' @inheritParams is
 #' @param directed Whether to generate network as directed. By default FALSE.
-#' @return By default an `igraph` object is returned,
+#' @return By default a `tbl_graph` object is returned,
 #'   but this can be coerced into other types of objects
-#'   using `as_matrix()`, `as_tidygraph()`, or `as_network()`.
+#'   using `as_edgelist()`, `as_matrix()`,
+#'   `as_tidygraph()`, or `as_network()`.
+#'   
+#'   By default, all networks are created as undirected.
+#'   This can be overruled with the argument `directed = TRUE`.
+#'   This will return a directed network in which the arcs are
+#'   out-facing or equivalent.
+#'   This direction can be swapped using `to_redirected()`.
+#'   In two-mode networks, the directed argument is ignored.
 NULL
 
 #' @rdname generate 

@@ -17,7 +17,6 @@
 #'   named nodes and ties between them.
 #'
 #'   These functions can create either one-mode or two-mode networks.
-#' @details
 #'   To create a one-mode network, pass the main argument `n` a single integer,
 #'   indicating the number of nodes in the network.
 #'   To create a two-mode network, pass `n` a vector of \emph{two} integers,
@@ -25,13 +24,6 @@
 #'   and the second integer indicates the number of nodes in the second mode.
 #'   As an alternative, an existing network can be provided to `n`
 #'   and the number of modes, nodes, and directedness will be inferred.
-#'
-#'   By default, all networks are created as undirected.
-#'   This can be overruled with the argument `directed = TRUE`.
-#'   This will return a directed network in which the arcs are
-#'   out-facing or equivalent.
-#'   This direction can be swapped using `to_redirected()`.
-#'   In two-mode networks, the directed argument is ignored.
 #' @name create
 #' @family makes
 #' @seealso [as]
@@ -58,6 +50,13 @@
 #'   but this can be coerced into other types of objects
 #'   using `as_edgelist()`, `as_matrix()`,
 #'   `as_tidygraph()`, or `as_network()`.
+#'   
+#'   By default, all networks are created as undirected.
+#'   This can be overruled with the argument `directed = TRUE`.
+#'   This will return a directed network in which the arcs are
+#'   out-facing or equivalent.
+#'   This direction can be swapped using `to_redirected()`.
+#'   In two-mode networks, the directed argument is ignored.
 #' @importFrom tidygraph as_tbl_graph
 #' @importFrom igraph graph_from_biadjacency_matrix
 NULL

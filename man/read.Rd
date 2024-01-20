@@ -145,13 +145,6 @@ To import earlier UCINET file types, you will need to update them first.
 To import multiple matrices packed into a single UCINET file,
 you will need to unpack them and convert them one by one.
 }
-\section{Functions}{
-\itemize{
-\item \code{read_nodelist()}: Reading nodelists from Excel/csv files
-
-\item \code{write_nodelist()}: Writing nodelists to csv files
-
-}}
 \seealso{
 \link{as}
 

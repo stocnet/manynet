@@ -169,7 +169,7 @@ write_edgelist <- function(.data,
   write.csv(out, file = filename, row.names = FALSE, ...)
 }
 
-#' @describeIn read Reading nodelists from Excel/csv files
+#' @rdname read
 #' @export
 read_nodelist <- function(file = file.choose(),
                           sv = c("comma", "semi-colon"),
@@ -188,7 +188,7 @@ read_nodelist <- function(file = file.choose(),
   out
 }
 
-#' @describeIn read Writing nodelists to csv files
+#' @rdname read
 #' @export
 write_nodelist <- function(.data,
                            filename,

@@ -66,9 +66,17 @@ The default 0 will recognise all changes in utility,
 but raising the threshold will mute any changes less than this threshold.}
 }
 \value{
-By default an \code{igraph} object is returned,
+By default a \code{tbl_graph} object is returned,
 but this can be coerced into other types of objects
-using \code{as_matrix()}, \code{as_tidygraph()}, or \code{as_network()}.
+using \code{as_edgelist()}, \code{as_matrix()},
+\code{as_tidygraph()}, or \code{as_network()}.
+
+By default, all networks are created as undirected.
+This can be overruled with the argument \code{directed = TRUE}.
+This will return a directed network in which the arcs are
+out-facing or equivalent.
+This direction can be swapped using \code{to_redirected()}.
+In two-mode networks, the directed argument is ignored.
 }
 \description{
 These functions are similar to the \verb{create_*} functions,
@@ -76,18 +84,23 @@ but include some element of randomisation.
 They are particularly useful for creating a distribution of networks
 for exploring or testing network properties.
 \itemize{
-\item \code{generate_random()} generates a random network with a particular probability.
-\item \code{generate_smallworld()} generates a small-world structure via ring rewiring.
-\item \code{generate_scalefree()} generates a scale-free structure via preferential attachment.
+\item \code{generate_random()} generates a random network with ties appearing at some probability.
+\item \code{generate_smallworld()} generates a small-world structure via ring rewiring at some probability.
+\item \code{generate_scalefree()} generates a scale-free structure via preferential attachment at some probability.
 \item \code{generate_permutation()} generates a permutation of the network
 using a Fisher-Yates shuffle on both the rows and columns (for a one-mode network)
 or on each of the rows and columns (for a two-mode network).
 \item \code{generate_utilities()} generates a random utility matrix.
 }
-}
-\details{
-Note that passing the first argument an empirical network
-will prompt these functions to generate a network with the same dimensions.
+
+These functions can create either one-mode or two-mode networks.
+To create a one-mode network, pass the main argument \code{n} a single integer,
+indicating the number of nodes in the network.
+To create a two-mode network, pass \code{n} a vector of \emph{two} integers,
+where the first integer indicates the number of nodes in the first mode,
+and the second integer indicates the number of nodes in the second mode.
+As an alternative, an existing network can be provided to \code{n}
+and the number of modes, nodes, and directedness will be inferred.
 }
 \examples{
 autographr(generate_random(12, 0.4))
