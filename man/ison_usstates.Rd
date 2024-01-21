@@ -3,7 +3,7 @@
 \docType{data}
 \name{ison_usstates}
 \alias{ison_usstates}
-\title{One-mode undirected network of US state contiguity}
+\title{One-mode undirected network of US state contiguity (Meghanathan 2017)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, undirected network with 50 nodes and 107 ties
 #> # A tibble: 50 x 2
@@ -38,5 +38,11 @@ The data is a network of 107 ties among 50 US states (nodes).
 States are named by their two-letter ISO-3166 code.
 This data includes also the names of the capitol cities of each state,
 which are listed in the node attribute 'capitol'.
+}
+\references{
+Meghanathan, Natarajan. 2017.
+"Complex network analysis of the contiguous United States graph."
+\emph{Computer and Information Science}, 10(1): 54-76.
+\doi{10.5539/cis.v10n1p54}
 }
 \keyword{datasets}

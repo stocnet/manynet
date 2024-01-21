@@ -441,7 +441,7 @@
 
 # US States ####
 
-#' One-mode undirected network of US state contiguity
+#' One-mode undirected network of US state contiguity (Meghanathan 2017)
 #'
 #' @description
 #'   This network is of contiguity between US states.
@@ -454,6 +454,11 @@
 #' @keywords datasets
 #' @name ison_usstates
 #' @usage data(ison_usstates)
+#' @references
+#'   Meghanathan, Natarajan. 2017. 
+#'   "Complex network analysis of the contiguous United States graph." 
+#'   _Computer and Information Science_, 10(1): 54-76.
+#'   \doi{10.5539/cis.v10n1p54}
 #' @format
 #'   ```{r, echo = FALSE}
 #'   ison_usstates
