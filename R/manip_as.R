@@ -1,24 +1,25 @@
-#' Making networks into other classes
+#' Modifying network classes
 #'
 #' @description
-#' The `as_` functions in `{manynet}` coerce objects
-#' between several common classes of social network objects.
-#' These include:
-#' - edgelists, as data frames or tibbles
-#' - adjacency (one-mode/unipartite) and incidence (two-mode/bipartite) matrices
-#' - `{igraph}` `graph` objects
-#' - `{tidygraph}` `tbl_graph` objects
-#' - `{network}` `network` objects
-#' - `as_diffusion()` coerces a table of diffusion events into
-#'   a `diff_model` object similar to the output of `play_diffusion()`
+#'   The `as_` functions in `{manynet}` coerce objects of any of the following common classes
+#'   of social network objects in R into the declared class:
+#'   - `as_edgelist()` coerces the object into an edgelist, as data frames or tibbles.
+#'   - `as_matrix()` coerces the object into an adjacency (one-mode/unipartite) or incidence (two-mode/bipartite) matrix.
+#'   - `as_igraph()` coerces the object into an `{igraph}` `graph` object.
+#'   - `as_tidygraph()` coerces the object into a `{tidygraph}` `tbl_graph` objects.
+#'   - `as_network()` coerces the object into a `{network}` `network` objects.
+#'   - `as_siena()` coerces the (igraph/tidygraph) object into a SIENA dependent variable.
+#'   - `as_graphAM()` coerces the object into a graph adjacency matrix.
+#'   - `as_diffusion()` coerces a table of diffusion events into
+#'   a `diff_model` object similar to the output of `play_diffusion()`.
 #'
-#' An effort is made for all of these coercion routines to be as lossless
-#' as possible, though some object classes are better at retaining certain
-#' kinds of information than others.
-#' Note also that there are some reserved column names in one or more
-#' object classes, which could otherwise lead to some unexpected results.
+#'   An effort is made for all of these coercion routines to be as lossless
+#'   as possible, though some object classes are better at retaining certain
+#'   kinds of information than others.
+#'   Note also that there are some reserved column names in one or more
+#'   object classes, which could otherwise lead to some unexpected results.
 #' @name as
-#' @family makes
+#' @family modifications
 #' @inheritParams is
 #' @param twomode Logical option used to override heuristics for
 #'   distinguishing incidence (two-mode/bipartite) from
@@ -53,19 +54,15 @@
 #' @return
 #' The currently implemented coercions or translations are:
 #'
-#' |  to/from  | edgelists  | matrices  |igraph  |tidygraph  |network  | siena | goldfish
-#' | ------------- |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
-#' | edgelists (data frames)  | X | X | X | X | X | X | X |
-#' | matrices                 | X | X | X | X | X | X | X |
-#' | igraph                   | X | X | X | X | X | X | X |
-#' | tidygraph                | X | X | X | X | X | X | X |
-#' | network                  | X | X | X | X | X | X | X |
-#' | graphAM                  | X | X | X | X | X | X | X |
+#' ```{r, echo = FALSE, cache = TRUE} 
+#'  knitr::kable(available_methods(c("as_edgelist","as_matrix", "as_igraph", "as_tidygraph", 
+#'  "as_network", "as_siena", "as_graphAM", "as_diffusion")))
+#'  ```
 NULL
 
 # Edgelists ####
 
-#' @describeIn as Coercing various network objects into an edgelist
+#' @rdname as
 #' @importFrom igraph as_data_frame
 #' @importFrom dplyr as_tibble arrange
 #' @importFrom network get.edge.attribute as.edgelist
@@ -859,6 +856,8 @@ as_graphAM.siena <- function(.data, twomode = NULL) {
 as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
   as_graphAM(as_matrix(.data), twomode)
 }
+
+# Diffusion ####
 
 #' @rdname as 
 #' @param events A table (data frame or tibble) of diffusion events
