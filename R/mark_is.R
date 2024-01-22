@@ -59,13 +59,13 @@ is_graph.data.frame <- function(.data){FALSE}
 is_graph.matrix <- function(.data){FALSE}
 
 #' @export
-is_graph.tbl_graph <- function(.data){FALSE}
+is_graph.tbl_graph <- function(.data){TRUE}
 
 #' @export
-is_graph.igraph <- function(.data){FALSE}
+is_graph.igraph <- function(.data){TRUE}
 
 #' @export
-is_graph.network <- function(.data){FALSE}
+is_graph.network <- function(.data){TRUE}
 
 #' @rdname is
 #' @examples

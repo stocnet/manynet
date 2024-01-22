@@ -5,7 +5,7 @@ test_that("is_ tests return correct values", {
   expect_false(is_weighted(ison_southern_women))
   expect_true(is_labelled(ison_southern_women))
   expect_false(is_complex(ison_southern_women))
-  expect_false(is_graph(ison_southern_women))
+  expect_true(is_graph(ison_southern_women))
   expect_true(is_manynet(ison_southern_women))
   expect_false(is_directed(as_network(ison_southern_women)))
   expect_true(is_connected(ison_southern_women))
