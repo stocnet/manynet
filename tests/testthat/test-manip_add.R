@@ -24,7 +24,7 @@ test_that("add_node_attribute works", {
                c(rep(25, 18), rep(NA, 14)))
   # Second nodeset
   south2 <- add_node_attribute(ison_southern_women, "Budget", rep(100, 14))
-  expect_equal(igraph::get.vertex.attribute(as_igraph(south2),  "Budget"),
+  expect_equal(igraph::vertex_attr(as_igraph(south2),  "Budget"),
                c(rep(NA, 18), rep(100, 14)))
   # Test error when wrong number of attributes
   expect_error(add_node_attribute(ison_southern_women, "Budget", rep(100, 15)))
