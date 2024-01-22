@@ -400,7 +400,7 @@ is_uniplex <- function(.data) {
 
 # Features ####
 
-#' Marking networks based on their features
+#' Marking networks features
 #' 
 #' @description
 #'   These functions implement logical tests for various network

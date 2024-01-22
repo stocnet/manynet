@@ -3,19 +3,13 @@
 \name{read}
 \alias{read}
 \alias{read_matrix}
-\alias{write_matrix}
 \alias{read_edgelist}
-\alias{write_edgelist}
 \alias{read_nodelist}
-\alias{write_nodelist}
 \alias{read_pajek}
-\alias{write_pajek}
 \alias{read_ucinet}
-\alias{write_ucinet}
 \alias{read_dynetml}
 \alias{read_graphml}
-\alias{write_graphml}
-\title{Making networks from/to external formats}
+\title{Making networks from external files}
 \source{
 \code{read_ucinet()} and \code{write_ucinet()} kindly supplied by Christian Steglich,
 constructed on 18 June 2015.
@@ -23,29 +17,17 @@ constructed on 18 June 2015.
 \usage{
 read_matrix(file = file.choose(), sv = c("comma", "semi-colon"), ...)
 
-write_matrix(.data, filename, name, ...)
-
 read_edgelist(file = file.choose(), sv = c("comma", "semi-colon"), ...)
-
-write_edgelist(.data, filename, name, ...)
 
 read_nodelist(file = file.choose(), sv = c("comma", "semi-colon"), ...)
 
-write_nodelist(.data, filename, name, ...)
-
 read_pajek(file = file.choose(), ties = NULL, ...)
 
-write_pajek(.data, filename, ...)
-
 read_ucinet(file = file.choose())
-
-write_ucinet(.data, filename, name)
 
 read_dynetml(file = file.choose())
 
 read_graphml(file = file.choose())
-
-write_graphml(.data, filename, name, ...)
 }
 \arguments{
 \item{file}{A character string with the system path to the file to import.
@@ -59,23 +41,8 @@ networks from a single UCINET file. Please convert these one by one.}
 
 \item{...}{Additional parameters passed to the read/write function.}
 
-\item{.data}{An object of a manynet-consistent class:
-\itemize{
-\item matrix (adjacency or incidence) from \code{{base}} R
-\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
-\item igraph, from the \code{{igraph}} package
-\item network, from the \code{{network}} package
-\item tbl_graph, from the \code{{tidygraph}} package
-}}
-
-\item{filename}{UCINET filename (without ## extension).
-By default the files will have the same name as the object
-and be saved to the working directory.}
-
-\item{name}{name of matrix to be known in UCINET.
-By default the name will be the same as the object.}
-
-\item{ties}{Where there are}
+\item{ties}{A character string indicating the ties/network,
+where the data contains several.}
 }
 \value{
 \code{read_edgelist()} and \code{read_nodelist()} will import
@@ -87,31 +54,20 @@ a tidygraph format, since they already contain both edge and attribute data.
 \code{read_matrix()} will import into tidygraph format too.
 Note that all graphs can be easily coerced into other formats
 with \code{{manynet}}'s \code{as_} methods.
-
-The \code{write_}functions export to different file formats,
-depending on the function.
-
-A pair of UCINET files in V6404 file format (.##h, .##d)
 }
 \description{
 Researchers regularly need to work with a variety of external data formats.
 The following functions offer ways to import from some common external
 file formats into objects that \code{{manynet}} and other graph/network packages
-in R can work with.
+in R can work with:
 \itemize{
-\item \code{read_matrix()} imports adjacency matrices from Excel/csv files,
-and \code{write_matrix()} exports an adjacency matrix to a .csv file.
-\item \code{read_edgelist()} imports edgelists from Excel/csv files,
-and \code{write_edgelist()} exports an edgelist to a .csv file.
-\item \code{read_nodelist()} imports nodelists from Excel/csv files,
-and \code{write_nodelist()} exports a nodelist to a .csv file.
-\item \code{read_pajek()} imports Pajek (.net or .paj) files,
-and \code{write_pajek()} exports Pajek .net files.
-\item \code{read_ucinet()} imports UCINET files from the header (.##h),
-and \code{write_ucinet()} exports a pair of UCINET files in V6404 file format (.##h, .##d).
+\item \code{read_matrix()} imports adjacency matrices from Excel/csv files.
+\item \code{read_edgelist()} imports edgelists from Excel/csv files.
+\item \code{read_nodelist()} imports nodelists from Excel/csv files.
+\item \code{read_pajek()} imports Pajek (.net or .paj) files.
+\item \code{read_ucinet()} imports UCINET files from the header (.##h).
 \item \code{read_dynetml()} imports DyNetML interchange format for rich social network data.
-\item \code{read_graphml()} imports GraphML files,
-and \code{write_graphml()} exports GraphML files.
+\item \code{read_graphml()} imports GraphML files.
 }
 }
 \details{
@@ -125,10 +81,6 @@ that hold various datasets in different formats. See for example:
 \itemize{
 \item \href{https://sites.google.com/site/ucinetsoftware/datasets?authuser=0}{UCINET data}
 \item \href{http://vlado.fmf.uni-lj.si/pub/networks/data/}{Pajek data}
-}
-
-See also:
-\itemize{
 \item \href{https://schochastics.github.io/networkdata/}{networkdata}
 \item \href{http://www-personal.umich.edu/~mejn/netdata/}{GML datasets}
 \item UCIrvine Network Data Repository
@@ -149,8 +101,10 @@ you will need to unpack them and convert them one by one.
 \link{as}
 
 Other makes: 
-\code{\link{as}()},
 \code{\link{create}},
-\code{\link{generate}}
+\code{\link{generate}},
+\code{\link{learning}},
+\code{\link{play}},
+\code{\link{write}()}
 }
 \concept{makes}
