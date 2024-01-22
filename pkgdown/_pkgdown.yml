@@ -32,14 +32,13 @@ navbar:
 reference:
   - title: "Making"
     desc: |
-      Functions for constructing, simulating, and importing
-      directed and undirected, one-mode and two-mode networks
-      into whichever class of object is desired for further analysis.
+      Functions for importing, exporting, constructing, and simulating
+      directed and undirected, one-mode and two-mode networks.
     contents:
-      - starts_with("create_")
-      - starts_with("generate_")
       - starts_with("read_")
       - starts_with("write_")
+      - starts_with("create_")
+      - starts_with("generate_")
       - starts_with("play_")
   - title: "Manipulating"
     desc: |

@@ -186,5 +186,17 @@ This can be used in in SEI, SEIS, SEIR, and SEIRS models.
   plot(play_diffusion(smeg, recovery = 0.4))
   plot(play_diffusions(smeg, times = 20))
 }
+\seealso{
+Other makes: 
+\code{\link{create}},
+\code{\link{generate}},
+\code{\link{learning}},
+\code{\link{read}},
+\code{\link{write}()}
+
+Other models: 
+\code{\link{learning}}
+}
 \concept{diffusion}
+\concept{makes}
 \concept{models}

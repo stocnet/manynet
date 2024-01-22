@@ -114,6 +114,7 @@
 #'   By default the number of nodes in the network.
 #'   If `steps = Inf` then the diffusion process will continue until
 #'   there are no new infections or all nodes are infected.
+#' @family makes
 #' @family models
 #' @family diffusion
 #' @name play
@@ -281,6 +282,8 @@ play_diffusions <- function(.data,
 #' - `play_segregation()` plays a Schelling segregation model upon a network.
 #' 
 #' @name learning
+#' @family makes
+#' @family models
 #' @inheritParams is
 #' @param steps The number of steps forward in learning.
 #'   By default the number of nodes in the network.
