@@ -202,10 +202,10 @@ as_matrix.igraph <- function(.data,
   if ((!is.null(twomode) && twomode) | (is.null(twomode) & is_twomode(.data))) {
     if (is_weighted(.data) | is_signed(.data)) {
       mat <- igraph::as_biadjacency_matrix(.data, sparse = FALSE,
-                                         attr = igraph::edge_attr_names(.data)[[1]])
+                                           attr = igraph::edge_attr_names(.data)[[1]])
     } else {
       mat <- igraph::as_biadjacency_matrix(.data, sparse = FALSE,
-                                         attr = NULL)
+                                           attr = NULL)
     }
   } else {
     if (is_weighted(.data) | is_signed(.data)) {
