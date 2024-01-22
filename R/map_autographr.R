@@ -449,27 +449,12 @@ reduce_categories <- function(g, node_group) {
     p <- p + 
       ggforce::geom_mark_hull(ggplot2::aes(x, y, fill = node_group,
                                            label = node_group), data = lo) +
-      ggplot2::scale_fill_manual(values = colorsafe_palette, guide = "none")
+      ggplot2::scale_fill_manual(values = colorsafe_palette, guide = ggplot2::guide_legend(""))
   }
   p
 }
 
 .graph_edges <- function(p, g, edge_color, edge_size) {
-  # if (is_signed(g)) {
-  #   edge_linetype <- ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")
-  #   edge_color <- ifelse(igraph::E(g)$sign >= 0, "#d73027", "#4575b4")
-  #   } else if (!is.null(edge_color)) {
-  #     edge_color <- as.factor(igraph::get.edge.attribute(g, edge_color))
-  #     edge_color <- ifelse(edge_color != levels(edge_color)[1], "#e41a1c", "#377eb8")
-  #     edge_linetype <- "solid"
-  #   } else if (igraph::gsize(g) == 0) {
-  #     # Edge case where there are no edges
-  #     edge_linetype <- NULL
-  #     edge_color <- NULL
-  #   } else {
-  #     edge_linetype <- "solid"
-  #     edge_color <- "black"
-  # }
   weight <- NULL
   esize <- .infer_esize(g, edge_size)
   # Begin plotting edges in various cases
@@ -488,7 +473,7 @@ reduce_categories <- function(g, node_group) {
                                                                 type = "closed"), 
                                          end_cap = ggraph::circle(1.5, 'mm')) +
             ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "none") +
-            ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = "none")
+            ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = ggplot2::guide_legend(""))
         } else {
           p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = weight),
                                          colour = edge_color,
@@ -537,7 +522,7 @@ reduce_categories <- function(g, node_group) {
                                                                length = ggplot2::unit(3, "mm"),
                                                                type = "closed"),
                                         end_cap = ggraph::circle(3, "mm")) +
-          ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = "none")
+          ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = ggplot2::guide_legend(""))
         } else {
           p <- p + ggraph::geom_edge_arc(colour = edge_color,
                                          edge_alpha = 0.4, strength = bend,
@@ -575,7 +560,7 @@ reduce_categories <- function(g, node_group) {
                                         edge_alpha = 0.4, edge_linetype = "solid",
                                         edge_width = esize) +
           ggraph::scale_edge_width_continuous(range = c(0.2, 1), guide = "none") +
-          ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = "none")
+          ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = ggplot2::guide_legend(""))
         } else {
           p <- p + ggraph::geom_edge_link0(ggplot2::aes(width = weight),
                                           colour = edge_color,
@@ -604,7 +589,7 @@ reduce_categories <- function(g, node_group) {
           colour = as.factor(tie_attribute(g, edge_color))),
                                          edge_linetype = "solid",
                                          edge_alpha = 0.4, edge_width = esize) +
-          ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = "none")
+          ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = ggplot2::guide_legend(""))
         } else {
           p <- p + ggraph::geom_edge_link0(colour = edge_color,
                                            edge_linetype = "solid",
@@ -637,7 +622,7 @@ reduce_categories <- function(g, node_group) {
           colour = as.factor(tie_attribute(g, edge_color))),
           edge_linetype = "solid",
           edge_alpha = 0.4, edge_width = lsize) +
-          ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = "none")
+          ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = ggplot2::guide_legend(""))
       } else {
         p <- p + ggraph::geom_edge_link0(colour = edge_color,
                                          edge_linetype = "solid",
@@ -662,12 +647,11 @@ reduce_categories <- function(g, node_group) {
                                                  "Susceptible"))))
     p <- p + ggraph::geom_node_point(ggplot2::aes(color = node_color),
                                      size = nsize, shape = nshape) +
-      ggplot2::scale_color_manual(name = NULL, guide = "none",
+      ggplot2::scale_color_manual(name = NULL, guide = ggplot2::guide_legend(""),
                                   values = c("Infected" = "red",
                                              "Susceptible" = "blue",
                                              "Exposed" = "orange",
-                                             "Recovered" = "darkgreen")) +
-      ggplot2::guides(colour = ggplot2::guide_legend(""))
+                                             "Recovered" = "darkgreen"))
   } else if (is.null(node_color) & any("diff_model" %in% names(attributes(g)))) {
     node_adopts <- .node_adoption_time(g)
     nshape <- ifelse(node_adopts == min(node_adopts), "Seed(s)",
@@ -702,7 +686,8 @@ reduce_categories <- function(g, node_group) {
           } else node_color <- factor(node_attribute(g, node_color))
           p <- p + ggraph::geom_node_point(ggplot2::aes(color = node_color),
                                            size = nsize, shape = nshape) +
-            ggplot2::scale_colour_manual(values = colorsafe_palette, guide = "none")
+            ggplot2::scale_colour_manual(values = colorsafe_palette,
+                                         guide = ggplot2::guide_legend(""))
         } else {
           p <- p + ggraph::geom_node_point(color = node_color,
                                            size = nsize, shape = nshape) 
@@ -719,7 +704,7 @@ reduce_categories <- function(g, node_group) {
           } else node_color <- factor(node_attribute(g, node_color))
           p <- p + ggraph::geom_node_point(aes(color = node_color),
                                            size = nsize, shape = nshape) +
-            ggplot2::scale_colour_manual(values = colorsafe_palette, guide = "none")
+            ggplot2::scale_colour_manual(values = colorsafe_palette, guide = ggplot2::guide_legend(""))
         } else {
           p <- p + ggraph::geom_node_point(color = node_color,
                                            size = nsize, shape = nshape)

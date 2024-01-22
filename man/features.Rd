@@ -7,7 +7,7 @@
 \alias{is_eulerian}
 \alias{is_acyclic}
 \alias{is_aperiodic}
-\title{Marking networks based on their features}
+\title{Marking networks features}
 \source{
 https://stackoverflow.com/questions/55091438/r-igraph-find-all-cycles
 }
