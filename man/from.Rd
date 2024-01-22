@@ -6,26 +6,20 @@
 \alias{from_egos}
 \alias{from_waves}
 \alias{from_slices}
+\alias{from_ties}
 \title{Joining lists of networks, graphs, and matrices}
 \usage{
-from_subgraphs(.data)
+from_subgraphs(netlist)
 
-from_egos(.data)
+from_egos(netlist)
 
-from_waves(.data)
+from_waves(netlist)
 
-from_slices(.data, remove.duplicates = FALSE)
+from_slices(netlist, remove.duplicates = FALSE)
+
+from_ties(netlist, netnames)
 }
 \arguments{
-\item{.data}{An object of a manynet-consistent class:
-\itemize{
-\item matrix (adjacency or incidence) from \code{{base}} R
-\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
-\item igraph, from the \code{{igraph}} package
-\item network, from the \code{{network}} package
-\item tbl_graph, from the \code{{tidygraph}} package
-}}
-
 \item{remove.duplicates}{Should duplicates be removed?
 By default FALSE.
 If TRUE, duplicated edges are removed.}
@@ -35,24 +29,16 @@ A tidygraph object combining the list of network data.
 }
 \description{
 These functions offer tools for joining lists of manynet-consistent objects
-(matrices, igraph, tidygraph, or network objects).
-Joining expects a list of objects and returns a single network object.
-}
-\section{Functions}{
+(matrices, igraph, tidygraph, or network objects) into a single object.
 \itemize{
-\item \code{from_subgraphs()}: Returns a single network object
-from a list of subgraphs.
-
-\item \code{from_egos()}: Returns a single network object
-from a list of egos.
-
-\item \code{from_waves()}: Returns a single network object
-from a list of waves.
-
-\item \code{from_slices()}: Returns a single network object
-from a list of slices.
-
-}}
+\item \code{from_subgraphs()} modifies a list of subgraphs into a single tidygraph.
+\item \code{from_egos()} modifies a list of ego networks into a whole tidygraph
+\item \code{from_waves()} modifies a list of network waves into a longitudinal tidygraph.
+\item \code{from_slices()} modifies a list of time slices of a network into
+a dynamic tidygraph.
+\item \code{from_ties()} modifies a list of different ties into a multiplex tidygraph
+}
+}
 \examples{
 ison_adolescents \%>\%
   mutate(unicorn = sample(c("yes", "no"), 8, replace = TRUE)) \%>\%
@@ -70,6 +56,8 @@ ison_adolescents \%>\%
   add_ties(c(1,2), list(time = 3, increment = -1)) \%>\% 
   to_slices(slice = c(5,7)) \%>\%
   from_slices()
+# example code
+
 }
 \seealso{
 Other modifications: 
