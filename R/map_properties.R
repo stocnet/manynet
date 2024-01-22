@@ -81,12 +81,12 @@ network_dims.network <- function(.data){
 }
 
 #' @describeIn properties Returns a vector of nodal attributes in a network
-#' @importFrom igraph list.vertex.attributes
+#' @importFrom igraph vertex_attr_names
 #' @examples
 #'   network_node_attributes(ison_lotr)
 #' @export
 network_node_attributes <- function(.data){
-  igraph::list.vertex.attributes(as_igraph(.data))
+  igraph::vertex_attr_names(as_igraph(.data))
 }
 
 #' @describeIn properties Returns a vector of edge attributes in a network

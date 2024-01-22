@@ -55,14 +55,14 @@ tie_is_feedback <- function(.data){
 
 #' @describeIn mark_ties Returns logical of which ties cut
 #'   or act as articulation points in a network.
-#' @importFrom igraph decompose delete.edges
+#' @importFrom igraph decompose delete_edges
 #' @examples 
 #' tie_is_bridge(ison_brandes)
 #' @export
 tie_is_bridge <- function(.data){
   num_comp <- length( igraph::decompose(manynet::as_igraph(.data)) )
   out <- vapply(seq_len(manynet::network_ties(.data)), function(x){
-    length( igraph::decompose(igraph::delete.edges(.data, x)) ) > num_comp
+    length( igraph::decompose(igraph::delete_edges(.data, x)) ) > num_comp
   }, FUN.VALUE = logical(1))
   if(manynet::is_labelled(.data)) 
     names(out) <- attr(igraph::E(.data), "vnames")

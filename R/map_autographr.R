@@ -374,16 +374,16 @@ reduce_categories <- function(g, node_group) {
   if ("graph" %in% names(attributes(lo))) {
     if (!setequal(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
       for (n in setdiff(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
-        lo[n] <- igraph::get.vertex.attribute(g, n)
+        lo[n] <- igraph::vertex_attr(g, n)
       }
     }
   }
-  if (layout == "stress" & .is_diamond(g)) {
-    turn <- matrix(c(cos(0.71), -sin(0.71), sin(0.71), cos(0.71)), 2, 2)
-    coord <- matrix(cbind(lo[,1], lo[,2]), ncol = 2) %*% turn
-    lo[,1] <- coord[,1]
-    lo[,2] <- coord[,2]
-  }
+  # if (layout == "stress" & .is_diamond(g)) {
+  #   turn <- matrix(c(cos(0.71), -sin(0.71), sin(0.71), cos(0.71)), 2, 2)
+  #   coord <- matrix(cbind(lo[,1], lo[,2]), ncol = 2) %*% turn
+  #   lo[,1] <- coord[,1]
+  #   lo[,2] <- coord[,2]
+  # }
   p <- ggraph::ggraph(lo) + ggplot2::theme_void()
   if (labels & is_labelled(g)) {
     if (layout == "circle") {
@@ -721,7 +721,7 @@ reduce_categories <- function(g, node_group) {
   if (length(igraph::E(g)) > 100) {
     out <- 0
   } else {
-    out <- ifelse(igraph::is.mutual(g), 0.2, 0)
+    out <- ifelse(igraph::which_mutual(g), 0.2, 0)
   }
   out
 }

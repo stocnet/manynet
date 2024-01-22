@@ -670,7 +670,7 @@ as_tidygraph.diff_model <- function(.data, twomode = FALSE) {
 
 #' @rdname as
 #' @importFrom network as.network set.vertex.attribute
-#' @importFrom igraph get.vertex.attribute
+#' @importFrom igraph vertex_attr
 #' @export
 as_network <- function(.data,
                        twomode = FALSE) UseMethod("as_network")
@@ -704,7 +704,7 @@ as_network.matrix <- function(.data,
 as_network.igraph <- function(.data,
                               twomode = FALSE) {
   name <- type <- NULL
-  attr <- as.data.frame(igraph::get.vertex.attribute(.data))
+  attr <- as.data.frame(igraph::vertex_attr(.data))
   if ("name" %in% colnames(attr)) attr <- subset(attr, select = c(-name))
   if ("type" %in% colnames(attr)) attr <- subset(attr, select = c(-type))
   out <- as_network(as_matrix(.data))

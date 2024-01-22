@@ -28,7 +28,7 @@
 NULL
 
 #' @rdname is
-#' @importFrom igraph is.igraph
+#' @importFrom igraph is_igraph
 #' @importFrom tidygraph is.tbl_graph
 #' @importFrom network is.network
 #' @examples
@@ -37,14 +37,14 @@ NULL
 is_manynet <- function(.data) {
   tidygraph::is.tbl_graph(.data) |
     network::is.network(.data) |
-    igraph::is.igraph(.data) |
+    igraph::is_igraph(.data) |
     (is.data.frame(.data) & 
        "from" %in% names(.data) & "to" %in% names(.data)) |
     (is.matrix(.data) & is.numeric(.data))
 }
 
 #' @rdname is
-#' @importFrom igraph is.igraph
+#' @importFrom igraph is_igraph
 #' @importFrom tidygraph is.tbl_graph
 #' @importFrom network is.network
 #' @examples
@@ -186,7 +186,7 @@ is_twomode.numeric <- function(.data) {
 }
 
 #' @rdname is_format
-#' @importFrom igraph is.weighted
+#' @importFrom igraph is_weighted
 #' @examples
 #' is_weighted(create_tree(3))
 #' @export
@@ -194,12 +194,12 @@ is_weighted <- function(.data) UseMethod("is_weighted")
 
 #' @export
 is_weighted.igraph <- function(.data) {
-  igraph::is.weighted(.data)
+  igraph::is_weighted(.data)
 }
 
 #' @export
 is_weighted.tbl_graph <- function(.data) {
-  igraph::is.weighted(.data)
+  igraph::is_weighted(.data)
 }
 
 #' @export
@@ -219,7 +219,7 @@ is_weighted.data.frame <- function(.data) {
 }
 
 #' @rdname is_format
-#' @importFrom igraph is.directed
+#' @importFrom igraph is_directed
 #' @examples
 #' is_directed(create_tree(2))
 #' is_directed(create_tree(2, directed = TRUE))
@@ -234,12 +234,12 @@ is_directed.data.frame <- function(.data) {
 
 #' @export
 is_directed.igraph <- function(.data) {
-  if(is_twomode(.data)) FALSE else igraph::is.directed(.data)
+  if(is_twomode(.data)) FALSE else igraph::is_directed(.data)
 }
 
 #' @export
 is_directed.tbl_graph <- function(.data) {
-  if(is_twomode(.data)) FALSE else igraph::is.directed(.data)
+  if(is_twomode(.data)) FALSE else igraph::is_directed(.data)
 }
 
 #' @export
@@ -253,7 +253,7 @@ is_directed.matrix <- function(.data) {
 }
 
 #' @rdname is_format
-#' @importFrom igraph is.named
+#' @importFrom igraph is_named
 #' @examples
 #' is_labelled(create_empty(3))
 #' @export
@@ -261,12 +261,12 @@ is_labelled <- function(.data) UseMethod("is_labelled")
 
 #' @export
 is_labelled.igraph <- function(.data) {
-  igraph::is.named(.data)
+  igraph::is_named(.data)
 }
 
 #' @export
 is_labelled.tbl_graph <- function(.data) {
-  igraph::is.named(.data)
+  igraph::is_named(.data)
 }
 
 #' @export
@@ -321,7 +321,7 @@ is_signed.network <- function(.data) {
 }
 
 #' @rdname is_format
-#' @importFrom igraph is.loop
+#' @importFrom igraph any_loop
 #' @examples
 #' is_complex(create_lattice(4))
 #' @export
@@ -389,13 +389,13 @@ is_multiplex.data.frame <- function(.data) {
 }
 
 #' @rdname is_format
-#' @importFrom igraph is.simple
+#' @importFrom igraph is_simple
 #' @examples
 #' is_uniplex(create_star(3))
 #' @export
 is_uniplex <- function(.data) {
   obj <- as_igraph(.data)
-  igraph::is.simple(obj)
+  igraph::is_simple(obj)
 }
 
 # Features ####
@@ -431,12 +431,12 @@ NULL
 #' @section is_connected: 
 #'   To test weak connection on a directed network,
 #'   please see `to_undirected()`.
-#' @importFrom igraph is.connected
+#' @importFrom igraph is_connected
 #' @examples
 #' is_connected(ison_southern_women)
 #' @export
 is_connected <- function(.data) {
-  igraph::is.connected(as_igraph(.data), 
+  igraph::is_connected(as_igraph(.data), 
                        mode = ifelse(is_directed(.data),
                                      "strong", "weak"))
 }

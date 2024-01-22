@@ -140,7 +140,7 @@ bind_node_attributes <- function(.data, object2){
   }
   for(a in igraph::vertex_attr_names(object2)){
     out <- igraph::set_vertex_attr(out, a, 
-                                   value = igraph::get.vertex.attribute(object2, a))
+                                   value = igraph::vertex_attr(object2, a))
   }
   as_tidygraph(out)
 }

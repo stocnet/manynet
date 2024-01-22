@@ -47,7 +47,7 @@ NULL
 #'   "pearson" (Pearson's coefficient) and "yule" (Yule's Q)
 #'   produce correlations for valued and binary data, respectively.
 #'   Note that Yule's Q has a straightforward interpretation related to the odds ratio.
-#' @importFrom igraph bipartite.projection
+#' @importFrom igraph bipartite_projection
 #' @importFrom stats cor
 #' @examples
 #' to_mode1(ison_southern_women)
@@ -84,7 +84,7 @@ to_mode1.matrix <- function(.data,
 #' @export
 to_mode1.igraph <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
   similarity <- match.arg(similarity)
-  if(similarity == "count") igraph::bipartite.projection(.data)$proj1
+  if(similarity == "count") igraph::bipartite_projection(.data)$proj1
   else as_igraph(to_mode1(as_matrix(.data), similarity))
 }
 
@@ -136,7 +136,7 @@ to_mode2.matrix <- function(.data, similarity = c("count","jaccard","rand","pear
 #' @export
 to_mode2.igraph <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
   similarity <- match.arg(similarity)
-  if(similarity == "count") igraph::bipartite.projection(.data)$proj2
+  if(similarity == "count") igraph::bipartite_projection(.data)$proj2
   else as_igraph(to_mode2(as_matrix(.data), similarity))
 }
 
@@ -164,7 +164,7 @@ to_giant <- function(.data) UseMethod("to_giant")
 to_giant.igraph <- function(.data) {
   comps <- igraph::components(.data)
   max.comp <- which.max(comps$csize)
-  igraph::delete.vertices(.data, comps$membership != max.comp)
+  igraph::delete_vertices(.data, comps$membership != max.comp)
 }
 
 #' @export
