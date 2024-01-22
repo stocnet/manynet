@@ -1,11 +1,11 @@
-#' Tools for joining lists of networks, graphs, and matrices
+#' Joining lists of networks, graphs, and matrices
 #' 
 #' @description
 #'   These functions offer tools for joining lists of manynet-consistent objects
 #'   (matrices, igraph, tidygraph, or network objects).
 #'   Joining expects a list of objects and returns a single network object.
 #' @name from
-#' @family manipulations
+#' @family modifications
 #' @inheritParams reformat
 #' @return A tidygraph object combining the list of network data.
 NULL

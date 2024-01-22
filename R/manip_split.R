@@ -1,4 +1,4 @@
-#' Tools for splitting networks, graphs, and matrices into lists
+#' Splitting networks into lists
 #' 
 #' @description
 #'   These functions offer tools for splitting manynet-consistent objects
@@ -11,7 +11,7 @@
 #'    knitr::kable(available_methods(c("to_egos", "to_subgraphs", "to_components", "to_waves", "to_slices")))
 #'    ```
 #' @name split
-#' @family manipulations
+#' @family modifications
 #' @inheritParams reformat
 #' @return The returned object will be a list of network objects.
 NULL

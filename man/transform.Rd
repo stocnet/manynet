@@ -15,7 +15,7 @@
 \alias{to_no_isolates}
 \alias{to_galois}
 \alias{to_tree}
-\title{Tools for transforming networks, graphs, and matrices}
+\title{Transforming networks, graphs, and matrices}
 \usage{
 to_mode1(.data, similarity = c("count", "jaccard", "rand", "pearson", "yule"))
 
@@ -217,12 +217,13 @@ Valente, Thomas, and Rebecca Davis. 1999.
 \emph{Annals of the American Academy of Political and Social Science} 566: 56-67.
 }
 \seealso{
-Other manipulations: 
+Other modifications: 
 \code{\link{add}},
+\code{\link{as}()},
 \code{\link{from}},
 \code{\link{miss}},
 \code{\link{reformat}},
 \code{\link{split}()},
 \code{\link{tidy}}
 }
-\concept{manipulations}
+\concept{modifications}

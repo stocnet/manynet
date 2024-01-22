@@ -16,7 +16,7 @@
 \alias{to_onemode}
 \alias{to_multilevel}
 \alias{to_twomode}
-\title{Tools for reformatting networks, graphs, and matrices}
+\title{Modifying network formats}
 \usage{
 to_uniplex(.data, tie)
 
@@ -75,7 +75,7 @@ and passing it a network object will return a network object,
 with certain modifications as outlined for each function.
 }
 \description{
-These functions offer tools for reformatting migraph-consistent objects
+These functions offer tools for reformatting manynet-consistent objects
 (matrices, igraph, tidygraph, or network objects).
 Unlike the \verb{as_*()} group of functions,
 these functions always return the same object type as they are given,
@@ -150,12 +150,13 @@ as_tidygraph(create_filled(5)) \%>\%
   to_uniplex("friend")
 }
 \seealso{
-Other manipulations: 
+Other modifications: 
 \code{\link{add}},
+\code{\link{as}()},
 \code{\link{from}},
 \code{\link{miss}},
 \code{\link{split}()},
 \code{\link{tidy}},
 \code{\link{transform}()}
 }
-\concept{manipulations}
+\concept{modifications}

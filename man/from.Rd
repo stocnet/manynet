@@ -6,7 +6,7 @@
 \alias{from_egos}
 \alias{from_waves}
 \alias{from_slices}
-\title{Tools for joining lists of networks, graphs, and matrices}
+\title{Joining lists of networks, graphs, and matrices}
 \usage{
 from_subgraphs(.data)
 
@@ -72,12 +72,13 @@ ison_adolescents \%>\%
   from_slices()
 }
 \seealso{
-Other manipulations: 
+Other modifications: 
 \code{\link{add}},
+\code{\link{as}()},
 \code{\link{miss}},
 \code{\link{reformat}},
 \code{\link{split}()},
 \code{\link{tidy}},
 \code{\link{transform}()}
 }
-\concept{manipulations}
+\concept{modifications}

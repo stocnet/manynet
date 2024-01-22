@@ -4,7 +4,7 @@
 \alias{miss}
 \alias{na_to_zero}
 \alias{na_to_mean}
-\title{Tools for imputing missing tie data}
+\title{Modifying missing tie data}
 \usage{
 na_to_zero(.data)
 
@@ -53,12 +53,13 @@ Krause, Robert, Mark Huisman, Christian Steglich, and Tom A.B. Snijders. 2020.
 \emph{Social Networks}, 62, 99-112.
 }
 \seealso{
-Other manipulations: 
+Other modifications: 
 \code{\link{add}},
+\code{\link{as}()},
 \code{\link{from}},
 \code{\link{reformat}},
 \code{\link{split}()},
 \code{\link{tidy}},
 \code{\link{transform}()}
 }
-\concept{manipulations}
+\concept{modifications}

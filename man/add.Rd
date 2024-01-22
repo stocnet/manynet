@@ -8,7 +8,7 @@
 \alias{add_ties}
 \alias{add_node_attribute}
 \alias{add_tie_attribute}
-\title{Adding nodes and ties and their attributes}
+\title{Modifying networks nodes and ties and their attributes}
 \usage{
 add_nodes(.data, nodes, attribute = NULL)
 
@@ -79,7 +79,8 @@ Below are the currently implemented S3 methods:\tabular{lrrr}{
   add_tie_attribute(other, "weight", c(1, 2, 2, 2, 1, 2))
 }
 \seealso{
-Other manipulations: 
+Other modifications: 
+\code{\link{as}()},
 \code{\link{from}},
 \code{\link{miss}},
 \code{\link{reformat}},
@@ -87,4 +88,4 @@ Other manipulations:
 \code{\link{tidy}},
 \code{\link{transform}()}
 }
-\concept{manipulations}
+\concept{modifications}

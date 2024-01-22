@@ -1,9 +1,9 @@
 # Reformatting ####
 
-#' Tools for reformatting networks, graphs, and matrices
+#' Modifying network formats
 #' 
 #' @description
-#'   These functions offer tools for reformatting migraph-consistent objects
+#'   These functions offer tools for reformatting manynet-consistent objects
 #'   (matrices, igraph, tidygraph, or network objects).
 #'   Unlike the `as_*()` group of functions,
 #'   these functions always return the same object type as they are given,
@@ -18,7 +18,7 @@
 #'  "to_simplex", "to_onemode", "to_multilevel", "to_twomode")))
 #'  ```
 #' @name reformat
-#' @family manipulations
+#' @family modifications
 #' @inheritParams is
 #' @param tie Character string naming a tie attribute to retain from a graph.
 #' @param keep In the case of a signed network, whether to retain

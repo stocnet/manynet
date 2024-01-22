@@ -124,6 +124,12 @@ as_network(test)
 }
 \seealso{
 Other modifications: 
-\code{\link{miss}}
+\code{\link{add}},
+\code{\link{from}},
+\code{\link{miss}},
+\code{\link{reformat}},
+\code{\link{split}()},
+\code{\link{tidy}},
+\code{\link{transform}()}
 }
 \concept{modifications}

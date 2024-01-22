@@ -7,7 +7,7 @@
 \alias{to_components}
 \alias{to_waves}
 \alias{to_slices}
-\title{Tools for splitting networks, graphs, and matrices into lists}
+\title{Splitting networks into lists}
 \usage{
 to_egos(.data, max_dist = 1, min_dist = 0)
 
@@ -103,12 +103,13 @@ ison_adolescents \%>\%
   to_slices(slice = 7)
 }
 \seealso{
-Other manipulations: 
+Other modifications: 
 \code{\link{add}},
+\code{\link{as}()},
 \code{\link{from}},
 \code{\link{miss}},
 \code{\link{reformat}},
 \code{\link{tidy}},
 \code{\link{transform}()}
 }
-\concept{manipulations}
+\concept{modifications}

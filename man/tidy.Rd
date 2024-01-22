@@ -10,7 +10,7 @@
 \alias{rename_ties}
 \alias{summarise_ties}
 \alias{bind_node_attributes}
-\title{Tidy manipulations of node or tie data}
+\title{Tidy modifications of node or tie data}
 \usage{
 join_nodes(
   .data,
@@ -92,12 +92,13 @@ relation to some tie attribute.
   mutate_ties(other, form = 1:6) \%>\% filter_ties(form < 4)
 }
 \seealso{
-Other manipulations: 
+Other modifications: 
 \code{\link{add}},
+\code{\link{as}()},
 \code{\link{from}},
 \code{\link{miss}},
 \code{\link{reformat}},
 \code{\link{split}()},
 \code{\link{transform}()}
 }
-\concept{manipulations}
+\concept{modifications}

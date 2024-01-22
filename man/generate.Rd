@@ -129,8 +129,10 @@ Barabasi, Albert-Laszlo, and Reka Albert. 1999.
 }
 \seealso{
 Other makes: 
-\code{\link{as}()},
 \code{\link{create}},
-\code{\link{read}}
+\code{\link{learning}},
+\code{\link{play}},
+\code{\link{read}},
+\code{\link{write}()}
 }
 \concept{makes}

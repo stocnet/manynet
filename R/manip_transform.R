@@ -1,6 +1,6 @@
 # Transforming ####
 
-#' Tools for transforming networks, graphs, and matrices
+#' Transforming networks, graphs, and matrices
 #' 
 #' @description
 #'   These functions offer tools for transforming migraph-consistent objects
@@ -17,7 +17,7 @@
 #'     "to_matching", "to_eulerian", "to_anti", "to_no_isolates")))
 #'  ```
 #' @name transform
-#' @family manipulations
+#' @family modifications
 #' @inheritParams reformat
 #' @returns
 #' All `to_` functions return an object of the same class as that provided. 

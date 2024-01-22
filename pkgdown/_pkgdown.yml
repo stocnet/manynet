@@ -40,9 +40,10 @@ reference:
       - starts_with("create_")
       - starts_with("generate_")
       - starts_with("play_")
-  - title: "Manipulating"
+  - title: "Modifying"
     desc: |
-      Functions for manipulating networks into useful formats.
+      Functions for modifying networks into other classes or formats,
+      or mofifying their properties or attributes.
       This includes functions for reformatting networks into networks
       of the same dimensions but a different type, e.g. from directed to undirected.
       It also includes functions for transforming networks into networks

@@ -79,3 +79,16 @@ These functions allow learning games to be played upon networks.
   # autographr(play_segregation(latticeEg, "startValues", 0.2), 
   #                     node_color = "startValues", node_size = 5)
 }
+\seealso{
+Other makes: 
+\code{\link{create}},
+\code{\link{generate}},
+\code{\link{play}},
+\code{\link{read}},
+\code{\link{write}()}
+
+Other models: 
+\code{\link{play}}
+}
+\concept{makes}
+\concept{models}

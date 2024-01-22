@@ -1,11 +1,11 @@
-#' Tidy manipulations of node or tie data
+#' Tidy modifications of node or tie data
 #' 
 #' @description 
 #'   These functions allow users to add nodes, ties, or attributes to the nodes or ties
 #'   of a network.
 #'   The `join_*()`, `mutate_*()`, `select_*()`, `filter_*()`, `rename_*()`, and `summarise_*()`
 #'   functions adapt the `{dplyr}`-type syntax to work with networks of any type.
-#' @family manipulations
+#' @family modifications
 #' @inheritParams is
 #' @param object2 A second object to copy nodes or edges from.
 #' @param attr_name Name of the new attribute in the resulting object.

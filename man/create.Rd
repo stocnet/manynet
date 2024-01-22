@@ -135,8 +135,10 @@ create_core(6)
 and will never simplify the result.
 
 Other makes: 
-\code{\link{as}()},
 \code{\link{generate}},
-\code{\link{read}}
+\code{\link{learning}},
+\code{\link{play}},
+\code{\link{read}},
+\code{\link{write}()}
 }
 \concept{makes}

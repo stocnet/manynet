@@ -1,4 +1,4 @@
-#' Adding nodes and ties and their attributes
+#' Modifying networks nodes and ties and their attributes
 #' 
 #' @description 
 #'   These functions allow users to add nodes, ties, or attributes to the nodes or ties
@@ -11,7 +11,7 @@
 #'    ```{r, echo = FALSE, cache = TRUE} 
 #'  knitr::kable(available_methods(c("add_nodes", "delete_nodes", "add_ties", "add_node_attribute", "add_tie_attribute")))
 #'  ```
-#' @family manipulations
+#' @family modifications
 #' @inheritParams is
 #' @param attribute A named list to be added as tie or node attributes.
 #' @param attr_name Name of the new attribute in the resulting object.

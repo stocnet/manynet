@@ -1,6 +1,6 @@
 # Missing ####
 
-#' Tools for imputing missing tie data
+#' Modifying missing tie data
 #' 
 #' These functions offer tools for imputing missing tie data.
 #' Currently two options are available:
@@ -8,7 +8,7 @@
 #' which are the modal value in sparse social networks,
 #' and replacing the missing values with the average non-missing value for that vector.
 #' @name miss
-#' @family manipulations
+#' @family modifications
 #' @inheritParams is
 #' @return A data object of the same class as the function was given.
 #' @references 
