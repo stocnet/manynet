@@ -464,3 +464,37 @@
 #'   ison_usstates
 #'   ```
 "ison_usstates"
+
+
+# High-tech ####
+
+#' One-mode multiplex, directed network of managers of a high-tech company (Krackhardt 1987)
+#'
+#' @description
+#'   21 managers of a company of just over 100 employees manufactured high-tech equipment 
+#'   on the west coast of the United States.
+#'   Three types of ties were collected:
+#'   
+#'   - _friends_: managers' answers to the question "Who is your friend?"
+#'   - _advice_: managers' answers to the question "To whom do you go to for advice?"
+#'   - _reports_: "To whom do you report?" based on company reports
+#'   
+#'   The data is anonymised, but four nodal attributes are included:
+#'   
+#'   - _age_: the manager's age in years
+#'   - _tenure_: the manager's length of service
+#'   - _level_: the manager's level in the corporate hierarchy,
+#'   where 3 = CEO, 2 = Vice President, and 1 = manager
+#'   - _dept_: one of four departments, B, C, D, E,
+#'   with the CEO alone in A
+#' @docType data
+#' @keywords datasets
+#' @name ison_hightech
+#' @usage data(ison_hightech)
+#' @references
+#'   Krackhardt, David. 1987. "Cognitive social structures". _Social Networks_ 9: 104-134.
+#' @format
+#'   ```{r, echo = FALSE}
+#'   ison_hightech
+#'   ```
+"ison_hightech"
