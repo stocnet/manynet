@@ -6,17 +6,9 @@
 \alias{is_graph}
 \alias{is_edgelist}
 \alias{is_list}
-\alias{is_twomode}
-\alias{is_weighted}
-\alias{is_directed}
-\alias{is_labelled}
-\alias{is_signed}
-\alias{is_complex}
-\alias{is_multiplex}
-\alias{is_uniplex}
 \alias{is_longitudinal}
 \alias{is_dynamic}
-\title{Describing network formats}
+\title{Marking networks classes}
 \usage{
 is_manynet(.data)
 
@@ -25,22 +17,6 @@ is_graph(.data)
 is_edgelist(.data)
 
 is_list(.data)
-
-is_twomode(.data)
-
-is_weighted(.data)
-
-is_directed(.data)
-
-is_labelled(.data)
-
-is_signed(.data)
-
-is_complex(.data)
-
-is_multiplex(.data)
-
-is_uniplex(.data)
 
 is_longitudinal(.data)
 
@@ -60,61 +36,30 @@ is_dynamic(.data)
 TRUE if the condition is met, or FALSE otherwise.
 }
 \description{
-These functions implement logical tests for various network properties.
+These functions implement logical tests for networks' classes.
+\itemize{
+\item \code{is_manynet()} marks a network TRUE if it is compatible with \code{{manynet}} functions.
+\item \code{is_edgelist()} marks a network TRUE if it is an edgelist.
+\item \code{is_graph()} marks a network TRUE if it contains graph-level information.
+\item \code{is_list()} marks a network TRUE if it is a (non-igraph) list of networks,
+for example a set of ego networks or a dynamic or longitudinal set of networks.
+\item \code{is_longitudinal()} marks a network TRUE if it contains longitudinal, panel data.
+\item \code{is_dynamic()} marks a network TRUE if it contains dynamic, time-stamped data
+}
+
 All \verb{is_*()} functions return a logical scalar (TRUE or FALSE).
 }
-\section{Functions}{
-\itemize{
-\item \code{is_manynet()}: Tests whether network is manynet-compatible
-
-\item \code{is_graph()}: Tests whether network contains graph-level information
-
-\item \code{is_edgelist()}: Tests whether data frame is an edgelist
-
-\item \code{is_list()}: Tests whether network is dynamic, time-stamped data
-
-\item \code{is_twomode()}: Tests whether network is a two-mode network
-
-\item \code{is_weighted()}: Tests whether network is weighted
-
-\item \code{is_directed()}: Tests whether network is directed
-
-\item \code{is_labelled()}: Tests whether network includes names for the nodes
-
-\item \code{is_signed()}: Tests whether network is signed positive/negative
-
-\item \code{is_complex()}: Tests whether network contains any loops
-
-\item \code{is_multiplex()}: Tests whether network is multiplex,
-either from multiple rows with the same sender and receiver,
-or multiple columns to the edgelist.
-
-\item \code{is_uniplex()}: Tests whether network is simple (both uniplex and simplex)
-
-\item \code{is_longitudinal()}: Tests whether network is longitudinal, panel data
-
-\item \code{is_dynamic()}: Tests whether network is dynamic, time-stamped data
-
-}}
 \examples{
 is_manynet(create_filled(2))
 is_graph(create_star(2))
 is_edgelist(matrix(c(2,2), 1, 2))
 is_edgelist(as_edgelist(matrix(c(2,2), 1, 2)))
-is_twomode(create_filled(c(2,2)))
-is_weighted(create_tree(3))
-is_directed(create_tree(2))
-is_directed(create_tree(2, directed = TRUE))
-is_labelled(create_empty(3))
-is_signed(create_lattice(3))
-is_complex(create_lattice(4))
-is_multiplex(create_filled(c(3,3)))
-is_uniplex(create_star(3))
 is_longitudinal(create_tree(5, 3))
 is_dynamic(create_tree(3))
 }
 \seealso{
 Other marking: 
-\code{\link{features}}
+\code{\link{features}},
+\code{\link{is_format}}
 }
 \concept{marking}
