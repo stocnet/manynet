@@ -8,6 +8,10 @@
 \alias{mutate}
 \alias{bind_node_attributes}
 \alias{join_nodes}
+\alias{rename_nodes}
+\alias{rename}
+\alias{filter_nodes}
+\alias{filter}
 \title{Modifying node data}
 \usage{
 add_nodes(.data, nodes, attribute = NULL)
@@ -29,6 +33,13 @@ join_nodes(
   join_type = c("full", "left", "right", "inner")
 )
 
+rename_nodes(.data, ...)
+
+rename(.data, ...)
+
+filter_nodes(.data, ..., .by = NULL, .preserve = FALSE)
+
+filter(.data, ..., .by = NULL, .preserve = FALSE)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:

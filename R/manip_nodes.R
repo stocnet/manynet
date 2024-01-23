@@ -140,3 +140,23 @@ join_nodes <- function(.data, object2, by = NULL,
          "inner" = dplyr::inner_join(out, object2, by = by, copy = TRUE))
 }
 
+#' @rdname add_nodes
+#' @importFrom tidygraph rename
+#' @export
+rename_nodes <- tidygraph::rename
+
+#' @rdname add_nodes
+#' @importFrom tidygraph rename
+#' @export
+rename <- tidygraph::rename
+
+#' @rdname add_nodes
+#' @importFrom tidygraph filter
+#' @export
+filter_nodes <- tidygraph::filter
+
+#' @rdname add_nodes
+#' @importFrom tidygraph filter
+#' @export
+filter <- tidygraph::filter
+

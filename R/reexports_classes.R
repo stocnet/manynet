@@ -34,9 +34,6 @@ tidygraph::.N
 #' @export
 tidygraph::.E
 
-#' @importFrom tidygraph rename
-#' @export
-tidygraph::rename
 # expect_nodes <- function() {
 #   if (!.graph_context$free() && .graph_context$active() != "nodes") {
 #     stop("This call requires nodes to be active", call. = FALSE)
