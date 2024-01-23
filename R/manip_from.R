@@ -12,7 +12,9 @@
 #'   - `from_ties()` modifies a list of different ties into a multiplex tidygraph
 #' @name from
 #' @family modifications
-#' @inheritParams reformat
+#' @param netlist A list of network, igraph, tidygraph, matrix, or edgelist objects.
+#' @param netnames A character vector of names for the different network objects,
+#'   if not already named within the list.
 #' @return A tidygraph object combining the list of network data.
 NULL
 
@@ -125,5 +127,5 @@ from_ties <- function(netlist, netnames){
                       netlist[[x]] } else { 
                         mutate_ties(netlist[[x]], type = names(netlist)[x])
                         })
-  purrr::reduce(netlist, tidygraph::graph_join)
+  Reduce(tidygraph::graph_join, netlist)
 }

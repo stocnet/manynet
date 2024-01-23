@@ -20,9 +20,14 @@ from_slices(netlist, remove.duplicates = FALSE)
 from_ties(netlist, netnames)
 }
 \arguments{
+\item{netlist}{A list of network, igraph, tidygraph, matrix, or edgelist objects.}
+
 \item{remove.duplicates}{Should duplicates be removed?
 By default FALSE.
 If TRUE, duplicated edges are removed.}
+
+\item{netnames}{A character vector of names for the different network objects,
+if not already named within the list.}
 }
 \value{
 A tidygraph object combining the list of network data.
