@@ -64,7 +64,7 @@ ison_adolescents \%>\%
 }
 \seealso{
 Other modifications: 
-\code{\link{add}},
+\code{\link{add_nodes}()},
 \code{\link{add_ties}()},
 \code{\link{as}()},
 \code{\link{miss}},

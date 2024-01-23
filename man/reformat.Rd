@@ -143,7 +143,7 @@ to_anti(ison_southern_women)
 }
 \seealso{
 Other modifications: 
-\code{\link{add}},
+\code{\link{add_nodes}()},
 \code{\link{add_ties}()},
 \code{\link{as}()},
 \code{\link{from}},

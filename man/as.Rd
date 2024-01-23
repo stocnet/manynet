@@ -124,7 +124,7 @@ as_network(test)
 }
 \seealso{
 Other modifications: 
-\code{\link{add}},
+\code{\link{add_nodes}()},
 \code{\link{add_ties}()},
 \code{\link{from}},
 \code{\link{miss}},

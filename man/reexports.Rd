@@ -12,8 +12,6 @@
 \alias{.G}
 \alias{.N}
 \alias{.E}
-\alias{mutate}
-\alias{rename}
 \alias{ggplot}
 \alias{ggtitle}
 \alias{guides}

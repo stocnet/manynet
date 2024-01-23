@@ -70,7 +70,7 @@ Below are the currently implemented S3 methods:\tabular{lrrrr}{
 }
 \seealso{
 Other modifications: 
-\code{\link{add}},
+\code{\link{add_nodes}()},
 \code{\link{add_ties}()},
 \code{\link{as}()},
 \code{\link{from}},

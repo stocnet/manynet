@@ -54,7 +54,7 @@ Krause, Robert, Mark Huisman, Christian Steglich, and Tom A.B. Snijders. 2020.
 }
 \seealso{
 Other modifications: 
-\code{\link{add}},
+\code{\link{add_nodes}()},
 \code{\link{add_ties}()},
 \code{\link{as}()},
 \code{\link{from}},
