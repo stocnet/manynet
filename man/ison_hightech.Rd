@@ -7,14 +7,14 @@
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A multiplex, directed network with 21 nodes and 312 arcs
 #> # A tibble: 21 x 4
-#>     age tenure level  dept
-#>   <dbl>  <dbl> <dbl> <dbl>
-#> 1    33      9     3     4
-#> 2    42     20     2     4
-#> 3    40     13     3     2
-#> 4    33      8     3     4
-#> 5    32      3     3     2
-#> 6    59     28     3     1
+#>     age tenure level dept 
+#>   <dbl>  <dbl> <dbl> <chr>
+#> 1    33      9     1 E    
+#> 2    42     20     2 E    
+#> 3    40     13     1 C    
+#> 4    33      8     1 E    
+#> 5    32      3     1 C    
+#> 6    59     28     1 B    
 #> # i 15 more rows
 #> # A tibble: 312 x 3
 #>    from    to type   

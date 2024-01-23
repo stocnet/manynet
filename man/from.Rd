@@ -56,8 +56,6 @@ ison_adolescents \%>\%
   add_ties(c(1,2), list(time = 3, increment = -1)) \%>\% 
   to_slices(slice = c(5,7)) \%>\%
   from_slices()
-# example code
-
 }
 \seealso{
 Other modifications: 
