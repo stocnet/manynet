@@ -5,21 +5,33 @@
 \alias{scale_fill_iheid}
 \alias{scale_colour_iheid}
 \alias{scale_color_iheid}
+\alias{scale_edge_colour_iheid}
+\alias{scale_edge_color_iheid}
 \alias{scale_fill_centres}
 \alias{scale_colour_centres}
 \alias{scale_color_centres}
+\alias{scale_edge_colour_centres}
+\alias{scale_edge_color_centres}
 \alias{scale_fill_sdgs}
 \alias{scale_colour_sdgs}
 \alias{scale_color_sdgs}
+\alias{scale_edge_colour_sdgs}
+\alias{scale_edge_color_sdgs}
 \alias{scale_fill_ethz}
 \alias{scale_colour_ethz}
 \alias{scale_color_ethz}
+\alias{scale_edge_colour_ethz}
+\alias{scale_edge_color_ethz}
 \alias{scale_fill_uzh}
 \alias{scale_colour_uzh}
 \alias{scale_color_uzh}
+\alias{scale_edge_colour_uzh}
+\alias{scale_edge_color_uzh}
 \alias{scale_fill_rug}
 \alias{scale_colour_rug}
 \alias{scale_color_rug}
+\alias{scale_edge_colour_rug}
+\alias{scale_edge_color_rug}
 \title{Many scales}
 \usage{
 scale_fill_iheid(direction = 1, ...)
@@ -28,11 +40,19 @@ scale_colour_iheid(direction = 1, ...)
 
 scale_color_iheid(direction = 1, ...)
 
+scale_edge_colour_iheid(direction = 1, ...)
+
+scale_edge_color_iheid(direction = 1, ...)
+
 scale_fill_centres(direction = 1, ...)
 
 scale_colour_centres(direction = 1, ...)
 
 scale_color_centres(direction = 1, ...)
+
+scale_edge_colour_centres(direction = 1, ...)
+
+scale_edge_color_centres(direction = 1, ...)
 
 scale_fill_sdgs(direction = 1, ...)
 
@@ -40,11 +60,19 @@ scale_colour_sdgs(direction = 1, ...)
 
 scale_color_sdgs(direction = 1, ...)
 
+scale_edge_colour_sdgs(direction = 1, ...)
+
+scale_edge_color_sdgs(direction = 1, ...)
+
 scale_fill_ethz(direction = 1, ...)
 
 scale_colour_ethz(direction = 1, ...)
 
 scale_color_ethz(direction = 1, ...)
+
+scale_edge_colour_ethz(direction = 1, ...)
+
+scale_edge_color_ethz(direction = 1, ...)
 
 scale_fill_uzh(direction = 1, ...)
 
@@ -52,11 +80,19 @@ scale_colour_uzh(direction = 1, ...)
 
 scale_color_uzh(direction = 1, ...)
 
+scale_edge_colour_uzh(direction = 1, ...)
+
+scale_edge_color_uzh(direction = 1, ...)
+
 scale_fill_rug(direction = 1, ...)
 
 scale_colour_rug(direction = 1, ...)
 
 scale_color_rug(direction = 1, ...)
+
+scale_edge_colour_rug(direction = 1, ...)
+
+scale_edge_color_rug(direction = 1, ...)
 }
 \arguments{
 \item{direction}{Direction for using palette colors.}
@@ -71,4 +107,6 @@ These functions enable to add color scales to be graphs.
 #mutate(core = migraph::node_is_core(ison_brandes)) \%>\%
 #autographr(node_color = "core") +
 #scale_color_iheid()
+#autographr(ison_physicians[[1]], edge_color = "type") +
+#scale_edge_color_ethz()
 }

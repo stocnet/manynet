@@ -449,7 +449,8 @@ reduce_categories <- function(g, node_group) {
     p <- p + 
       ggforce::geom_mark_hull(ggplot2::aes(x, y, fill = node_group,
                                            label = node_group), data = lo) +
-      ggplot2::scale_fill_manual(values = colorsafe_palette, guide = ggplot2::guide_legend(""))
+      ggplot2::scale_fill_manual(values = colorsafe_palette,
+                                 guide = ggplot2::guide_legend(""))
   }
   p
 }
@@ -473,7 +474,8 @@ reduce_categories <- function(g, node_group) {
                                                                 type = "closed"), 
                                          end_cap = ggraph::circle(1.5, 'mm')) +
             ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "none") +
-            ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = ggplot2::guide_legend(""))
+            ggraph::scale_edge_colour_manual(values = colorsafe_palette,
+                                             guide = ggplot2::guide_legend(""))
         } else {
           p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = weight),
                                          colour = edge_color,
@@ -522,7 +524,8 @@ reduce_categories <- function(g, node_group) {
                                                                length = ggplot2::unit(3, "mm"),
                                                                type = "closed"),
                                         end_cap = ggraph::circle(3, "mm")) +
-          ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = ggplot2::guide_legend(""))
+          ggraph::scale_edge_colour_manual(values = colorsafe_palette,
+                                           guide = ggplot2::guide_legend(""))
         } else {
           p <- p + ggraph::geom_edge_arc(colour = edge_color,
                                          edge_alpha = 0.4, strength = bend,
@@ -560,7 +563,8 @@ reduce_categories <- function(g, node_group) {
                                         edge_alpha = 0.4, edge_linetype = "solid",
                                         edge_width = esize) +
           ggraph::scale_edge_width_continuous(range = c(0.2, 1), guide = "none") +
-          ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = ggplot2::guide_legend(""))
+          ggraph::scale_edge_colour_manual(values = colorsafe_palette,
+                                           guide = ggplot2::guide_legend(""))
         } else {
           p <- p + ggraph::geom_edge_link0(ggplot2::aes(width = weight),
                                           colour = edge_color,
@@ -589,7 +593,8 @@ reduce_categories <- function(g, node_group) {
           colour = as.factor(tie_attribute(g, edge_color))),
                                          edge_linetype = "solid",
                                          edge_alpha = 0.4, edge_width = esize) +
-          ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = ggplot2::guide_legend(""))
+          ggraph::scale_edge_colour_manual(values = colorsafe_palette,
+                                           guide = ggplot2::guide_legend(""))
         } else {
           p <- p + ggraph::geom_edge_link0(colour = edge_color,
                                            edge_linetype = "solid",
@@ -622,7 +627,8 @@ reduce_categories <- function(g, node_group) {
           colour = as.factor(tie_attribute(g, edge_color))),
           edge_linetype = "solid",
           edge_alpha = 0.4, edge_width = lsize) +
-          ggraph::scale_edge_colour_manual(values = colorsafe_palette, guide = ggplot2::guide_legend(""))
+          ggraph::scale_edge_colour_manual(values = colorsafe_palette,
+                                           guide = ggplot2::guide_legend(""))
       } else {
         p <- p + ggraph::geom_edge_link0(colour = edge_color,
                                          edge_linetype = "solid",

@@ -178,6 +178,8 @@ theme_rug <- function(base_size = 12, base_family = "mono") {
 #' #mutate(core = migraph::node_is_core(ison_brandes)) %>%
 #' #autographr(node_color = "core") +
 #' #scale_color_iheid()
+#' #autographr(ison_physicians[[1]], edge_color = "type") +
+#' #scale_edge_color_ethz()
 NULL
 
 #' @rdname scales
@@ -185,7 +187,7 @@ NULL
 scale_fill_iheid <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "IHEID",
                           palette_gen(palette = "IHEID", direction),
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
@@ -193,12 +195,24 @@ scale_fill_iheid <- function(direction = 1, ...) {
 scale_colour_iheid <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "IHEID",
                           palette_gen(palette = "IHEID", direction),
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
 #' @export
 scale_color_iheid <- scale_colour_iheid
+
+#' @rdname scales
+#' @export
+scale_edge_colour_iheid <- function(direction = 1, ...) {
+  ggplot2::discrete_scale("edge_colour", "IHEID",
+                          palette_gen(palette = "IHEID", direction),
+                          na.value = "black", name = "", ...)
+}
+
+#' @rdname scales
+#' @export
+scale_edge_color_iheid <- scale_edge_colour_iheid
 
 #' Centres color scales
 #' 
@@ -207,7 +221,7 @@ scale_color_iheid <- scale_colour_iheid
 scale_fill_centres <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "Centres",
                           palette_gen(palette = "Centres", direction),
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
@@ -215,12 +229,24 @@ scale_fill_centres <- function(direction = 1, ...) {
 scale_colour_centres <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "Centres",
                           palette_gen(palette = "Centres", direction),
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
 #' @export
 scale_color_centres <- scale_colour_centres
+
+#' @rdname scales
+#' @export
+scale_edge_colour_centres <- function(direction = 1, ...) {
+  ggplot2::discrete_scale("edge_colour", "Centres",
+                          palette_gen(palette = "Centres", direction),
+                          na.value = "black", name = "", ...)
+}
+
+#' @rdname scales
+#' @export
+scale_edge_color_centres <- scale_edge_colour_centres
 
 #' SDGs color scales
 #' 
@@ -229,7 +255,7 @@ scale_color_centres <- scale_colour_centres
 scale_fill_sdgs <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "SDGs",
                           palette_gen(palette = "SDGs", direction),
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
@@ -237,12 +263,24 @@ scale_fill_sdgs <- function(direction = 1, ...) {
 scale_colour_sdgs <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "SDGs",
                           palette_gen(palette = "SDGs", direction),
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
 #' @export
 scale_color_sdgs <- scale_colour_sdgs
+
+#' @rdname scales
+#' @export
+scale_edge_colour_sdgs <- function(direction = 1, ...) {
+  ggplot2::discrete_scale("edge_colour", "SDGs",
+                          palette_gen(palette = "SDGs", direction),
+                          na.value = "black", name = "", ...)
+}
+
+#' @rdname scales
+#' @export
+scale_edge_color_sdgs <- scale_edge_colour_sdgs
 
 #' ETHZ color scales
 #' 
@@ -251,7 +289,7 @@ scale_color_sdgs <- scale_colour_sdgs
 scale_fill_ethz <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "ETHZ",
                           palette_gen(palette = "ETHZ", direction), 
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
@@ -259,12 +297,24 @@ scale_fill_ethz <- function(direction = 1, ...) {
 scale_colour_ethz <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "ETHZ",
                           palette_gen(palette = "ETHZ", direction), 
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
 #' @export
 scale_color_ethz <- scale_colour_ethz
+
+#' @rdname scales
+#' @export
+scale_edge_colour_ethz <- function(direction = 1, ...) {
+  ggplot2::discrete_scale("edge_colour", "ETHZ",
+                          palette_gen(palette = "ETHZ", direction),
+                          na.value = "black", name = "", ...)
+}
+
+#' @rdname scales
+#' @export
+scale_edge_color_ethz <- scale_edge_colour_ethz
 
 #' UZH color scales
 #' 
@@ -273,7 +323,7 @@ scale_color_ethz <- scale_colour_ethz
 scale_fill_uzh <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "UZH",
                           palette_gen(palette = "UZH", direction),
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
@@ -281,12 +331,24 @@ scale_fill_uzh <- function(direction = 1, ...) {
 scale_colour_uzh <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "UZH",
                           palette_gen(palette = "UZH", direction),
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
 #' @export
 scale_color_uzh <- scale_colour_uzh
+
+#' @rdname scales
+#' @export
+scale_edge_colour_uzh <- function(direction = 1, ...) {
+  ggplot2::discrete_scale("edge_colour", "UZH",
+                          palette_gen(palette = "UZH", direction),
+                          na.value = "black", name = "", ...)
+}
+
+#' @rdname scales
+#' @export
+scale_edge_color_uzh <- scale_edge_colour_uzh
 
 #' RUG color scales
 #' 
@@ -295,7 +357,7 @@ scale_color_uzh <- scale_colour_uzh
 scale_fill_rug <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "RUG",
                           palette_gen(palette = "RUG", direction),
-                          na.value = "grey", ...)
+                          na.value = "grey", name = "", ...)
 }
 
 #' @rdname scales
@@ -303,12 +365,24 @@ scale_fill_rug <- function(direction = 1, ...) {
 scale_colour_rug <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "RUG",
                           palette_gen(palette = "RUG", direction),
-                          na.value = "grey", ...)
+                          na.value = "grey", name = "", ...)
 }
 
 #' @rdname scales
 #' @export
 scale_color_rug <- scale_colour_rug
+
+#' @rdname scales
+#' @export
+scale_edge_colour_rug <- function(direction = 1, ...) {
+  ggplot2::discrete_scale("edge_colour", "RUG",
+                          palette_gen(palette = "RUG", direction),
+                          na.value = "black", name = "", ...)
+}
+
+#' @rdname scales
+#' @export
+scale_edge_color_rug <- scale_edge_colour_rug
 
 # Helper functions
 corp_color <- function(...) {
