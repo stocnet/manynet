@@ -1,8 +1,17 @@
-#' Marking ties based on their properties
+# Structural properties ####
+
+#' Marking ties based on structural properties
 #' 
 #' @description 
 #'   These functions return logical vectors the length of the ties
-#'   in a network, identifying which hold some property.
+#'   in a network identifying which hold certain properties or positions in the network.
+#'   
+#'   - `tie_is_multiple()` marks ties that are multiples.
+#'   - `tie_is_loop()` marks ties that are loops.
+#'   - `tie_is_reciprocated()` marks ties that are mutual/reciprocated.
+#'   - `tie_is_feedback()` marks ties that are feedback arcs causing the network to not be acyclic.
+#'   - `tie_is_bridge()` marks ties that cut or act as articulation points in a network.
+#'   
 #'   They are most useful in highlighting parts of the network that
 #'   are particularly well- or poorly-connected.
 #' @inheritParams is
@@ -10,51 +19,45 @@
 #' @name mark_ties
 NULL
 
-#' @describeIn mark_ties Returns logical of which ties are multiples
+#' @rdname mark_ties
 #' @importFrom igraph which_multiple
 #' @examples 
 #' tie_is_multiple(ison_marvel_relationships)
 #' @export
 tie_is_multiple <- function(.data){
-  object <- manynet::as_igraph(.data)
-  make_tie_mark(igraph::which_multiple(.data), .data)
+  make_tie_mark(igraph::which_multiple(manynet::as_igraph(.data)), .data)
 }
 
-#' @describeIn mark_ties Returns logical of which ties are loops
+#' @rdname mark_ties
 #' @importFrom igraph which_loop
 #' @examples 
 #' tie_is_loop(ison_marvel_relationships)
 #' @export
 tie_is_loop <- function(.data){
-  .data <- manynet::as_igraph(.data)
-  make_tie_mark(igraph::which_loop(.data), .data)
+  make_tie_mark(igraph::which_loop(manynet::as_igraph(.data)), .data)
 }
 
-#' @describeIn mark_ties Returns logical of which ties 
-#'   are mutual/reciprocated
+#' @rdname mark_ties
 #' @importFrom igraph which_mutual
 #' @examples 
 #' tie_is_reciprocated(ison_algebra)
 #' @export
 tie_is_reciprocated <- function(.data){
-  .data <- manynet::as_igraph(.data) # allow for custom edge selection
-  make_tie_mark(igraph::which_mutual(.data), .data)
+  make_tie_mark(igraph::which_mutual(manynet::as_igraph(.data)), .data)
 }
 
-#' @describeIn mark_ties Returns logical of which ties 
-#'   are feedback arcs such that the network is not acyclic
+#' @rdname mark_ties
 #' @importFrom igraph feedback_arc_set
 #' @examples 
 #' tie_is_feedback(ison_algebra)
 #' @export
 tie_is_feedback <- function(.data){
-  .data <- manynet::as_igraph(.data) # allow for custom edge selection
+  .data <- manynet::as_igraph(.data)
   make_tie_mark(igraph::E(.data) %in% igraph::feedback_arc_set(.data), 
                 .data)
 }
 
-#' @describeIn mark_ties Returns logical of which ties cut
-#'   or act as articulation points in a network.
+#' @rdname mark_ties
 #' @importFrom igraph decompose delete_edges
 #' @examples 
 #' tie_is_bridge(ison_brandes)
@@ -69,8 +72,33 @@ tie_is_bridge <- function(.data){
   make_tie_mark(out, .data)
 }
 
-#' @describeIn mark_ties Returns logical of which ties 
-#'   hold the maximum of some measure
+# Selection properties ####
+
+#' Marking ties for selection based on measures
+#' 
+#' @description 
+#'   These functions return logical vectors the length of the ties in a network:
+#'   
+#'   - `tie_is_random()` marks one or more nodes at random.
+#'   - `tie_is_max()` and `tie_is_min()` are more generally useful
+#'   for converting the results from some node measure into a mark-class object.
+#'   They can be particularly useful for highlighting which node or nodes
+#'   are key because they minimise or, more often, maximise some measure.
+#' @inheritParams is
+#' @family marks
+#' @name mark_tie_select
+NULL
+
+#' @rdname mark_tie_select
+#' @export
+tie_is_random <- function(.data, size = 1){
+  n <- manynet::network_ties(.data)
+  out <- rep(FALSE, n)
+  out[sample.int(n, size)] <- TRUE
+  make_node_mark(out, .data)
+}
+
+#' @rdname mark_tie_select
 #' @param tie_measure An object created by a `tie_` measure.
 #' @examples 
 #' # tie_is_max(migraph::tie_betweenness(ison_brandes))
@@ -81,8 +109,7 @@ tie_is_max <- function(tie_measure){
   out
 }
 
-#' @describeIn mark_ties Returns logical of which ties 
-#'   hold the minimum of some measure
+#' @rdname mark_tie_select
 #' @examples 
 #' #tie_is_min(migraph::tie_betweenness(ison_brandes))
 #' @export

@@ -7,9 +7,7 @@
 \alias{tie_is_reciprocated}
 \alias{tie_is_feedback}
 \alias{tie_is_bridge}
-\alias{tie_is_max}
-\alias{tie_is_min}
-\title{Marking ties based on their properties}
+\title{Marking ties based on structural properties}
 \usage{
 tie_is_multiple(.data)
 
@@ -20,10 +18,6 @@ tie_is_reciprocated(.data)
 tie_is_feedback(.data)
 
 tie_is_bridge(.data)
-
-tie_is_max(tie_measure)
-
-tie_is_min(tie_measure)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -34,50 +28,33 @@ tie_is_min(tie_measure)
 \item network, from the \code{{network}} package
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
-
-\item{tie_measure}{An object created by a \code{tie_} measure.}
 }
 \description{
 These functions return logical vectors the length of the ties
-in a network, identifying which hold some property.
+in a network identifying which hold certain properties or positions in the network.
+\itemize{
+\item \code{tie_is_multiple()} marks ties that are multiples.
+\item \code{tie_is_loop()} marks ties that are loops.
+\item \code{tie_is_reciprocated()} marks ties that are mutual/reciprocated.
+\item \code{tie_is_feedback()} marks ties that are feedback arcs causing the network to not be acyclic.
+\item \code{tie_is_bridge()} marks ties that cut or act as articulation points in a network.
+}
+
 They are most useful in highlighting parts of the network that
 are particularly well- or poorly-connected.
 }
-\section{Functions}{
-\itemize{
-\item \code{tie_is_multiple()}: Returns logical of which ties are multiples
-
-\item \code{tie_is_loop()}: Returns logical of which ties are loops
-
-\item \code{tie_is_reciprocated()}: Returns logical of which ties
-are mutual/reciprocated
-
-\item \code{tie_is_feedback()}: Returns logical of which ties
-are feedback arcs such that the network is not acyclic
-
-\item \code{tie_is_bridge()}: Returns logical of which ties cut
-or act as articulation points in a network.
-
-\item \code{tie_is_max()}: Returns logical of which ties
-hold the maximum of some measure
-
-\item \code{tie_is_min()}: Returns logical of which ties
-hold the minimum of some measure
-
-}}
 \examples{
 tie_is_multiple(ison_marvel_relationships)
 tie_is_loop(ison_marvel_relationships)
 tie_is_reciprocated(ison_algebra)
 tie_is_feedback(ison_algebra)
 tie_is_bridge(ison_brandes)
-# tie_is_max(migraph::tie_betweenness(ison_brandes))
-#tie_is_min(migraph::tie_betweenness(ison_brandes))
 }
 \seealso{
 Other marks: 
 \code{\link{mark_diff}},
 \code{\link{mark_nodes}},
-\code{\link{mark_select}}
+\code{\link{mark_select}},
+\code{\link{mark_tie_select}}
 }
 \concept{marks}
