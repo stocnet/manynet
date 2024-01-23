@@ -14,17 +14,17 @@
 constructed on 18 June 2015.
 }
 \usage{
-write_matrix(.data, filename, name, ...)
+write_matrix(.data, filename, ...)
 
-write_edgelist(.data, filename, name, ...)
+write_edgelist(.data, filename, ...)
 
-write_nodelist(.data, filename, name, ...)
+write_nodelist(.data, filename, ...)
 
 write_pajek(.data, filename, ...)
 
 write_ucinet(.data, filename, name)
 
-write_graphml(.data, filename, name, ...)
+write_graphml(.data, filename, ...)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -36,20 +36,15 @@ write_graphml(.data, filename, name, ...)
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
 
-\item{filename}{UCINET filename (without ## extension).
-By default the files will have the same name as the object
-and be saved to the working directory.}
-
-\item{name}{name of matrix to be known in UCINET.
-By default the name will be the same as the object.}
+\item{filename}{Character string filename.
+If missing, the files will have the same name as the object
+and be saved to the working directory.
+An appropriate extension will be added if not included.}
 
 \item{...}{Additional parameters passed to the write function.}
 
-\item{file}{A character string with the system path to the file to import.
-If left unspecified, an OS-specific file picker is opened to help users select it.
-Note that in \code{read_ucinet()} the file path should be to the header file (.##h),
-if it exists and that it is currently not possible to import multiple
-networks from a single UCINET file. Please convert these one by one.}
+\item{name}{Character string to name the network internally, e.g. in UCINET.
+By default the name will be the same as the object.}
 }
 \value{
 The \code{write_}functions export to different file formats,

@@ -419,12 +419,13 @@ read_graphml <- function(file = file.choose()) {
 #'   in the package, so please let us know if any are not currently working
 #'   for you or if there are missing import routines 
 #'   by [raising an issue on Github](https://github.com/snlab-ch/manynet/issues).
-#' @param file A character string with the system path to the file to import.
-#'   If left unspecified, an OS-specific file picker is opened to help users select it.
-#'   Note that in `read_ucinet()` the file path should be to the header file (.##h),
-#'   if it exists and that it is currently not possible to import multiple
-#'   networks from a single UCINET file. Please convert these one by one.
 #' @inheritParams is
+#' @param filename Character string filename.
+#'   If missing, the files will have the same name as the object
+#'   and be saved to the working directory.
+#'   An appropriate extension will be added if not included.
+#' @param name Character string to name the network internally, e.g. in UCINET.
+#'   By default the name will be the same as the object.
 #' @param ... Additional parameters passed to the write function.
 #' @return The `write_`functions export to different file formats,
 #'   depending on the function.
@@ -441,7 +442,7 @@ NULL
 #' @export
 write_matrix <- function(.data,
                          filename,
-                         name,
+                         # name,
                          ...) {
   if (missing(.data)) {
     Abruzzo <- Campania <- Calabria <- Puglia <- NULL
@@ -458,7 +459,7 @@ write_matrix <- function(.data,
     out <- as_matrix(.data)
   }
   if (missing(filename)) filename <- paste0(getwd(), "/", object_name, ".csv")
-  if (missing(name)) name <- object_name
+  # if (missing(name)) name <- object_name
   write.csv(out, file = filename, row.names = FALSE)
 }
 
@@ -466,7 +467,7 @@ write_matrix <- function(.data,
 #' @export
 write_edgelist <- function(.data,
                            filename,
-                           name,
+                           # name,
                            ...) {
   if (missing(.data)) {
     out <- data.frame(
@@ -480,7 +481,7 @@ write_edgelist <- function(.data,
     out <- as.data.frame(as_edgelist(.data))
   }
   if (missing(filename)) filename <- paste0(getwd(), "/", object_name, ".csv")
-  if (missing(name)) name <- object_name
+  # if (missing(name)) name <- object_name
   write.csv(out, file = filename, row.names = FALSE, ...)
 }
 
@@ -488,7 +489,7 @@ write_edgelist <- function(.data,
 #' @export
 write_nodelist <- function(.data,
                            filename,
-                           name,
+                           # name,
                            ...) {
   if (missing(.data)) {
     out <- data.frame(
@@ -501,7 +502,7 @@ write_nodelist <- function(.data,
     out <- as.data.frame(as_tidygraph(.data))
   }
   if (missing(filename)) filename <- paste0(getwd(), "/", object_name, ".csv")
-  if (missing(name)) name <- object_name
+  # if (missing(name)) name <- object_name
   write.csv(out, file = filename, row.names = FALSE, ...)
 }
 
@@ -523,11 +524,6 @@ write_pajek <- function(.data,
 }
 
 #' @rdname write
-#' @param filename UCINET filename (without ## extension).
-#' By default the files will have the same name as the object
-#' and be saved to the working directory.
-#' @param name name of matrix to be known in UCINET.
-#' By default the name will be the same as the object.
 #' @importFrom utils askYesNo
 #' @return A pair of UCINET files in V6404 file format (.##h, .##d)
 #' @export
@@ -644,10 +640,10 @@ write_ucinet <- function(.data,
 #' @export
 write_graphml <- function(.data,
                           filename,
-                          name,
+                          # name,
                           ...) {
-  if (missing(name)) name <- deparse(substitute(.data))
-  if (missing(filename)) filename <- paste0(getwd(), "/", name, ".graphml")
+  # if (missing(name)) name <- deparse(substitute(.data))
+  if (missing(filename)) filename <- paste0(getwd(), "/", deparse(substitute(.data)), ".graphml")
   igraph::write_graph(.data,
                       filename,
                       format = "graphml")
