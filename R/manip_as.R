@@ -593,7 +593,7 @@ as_tidygraph.list <- function(.data, twomode = FALSE) {
   
 #' @export
 as_tidygraph.matrix <- function(.data, twomode = FALSE) {
-  tidygraph::as_tbl_graph(as_igraph(.data))
+  tidygraph::as_tbl_graph(as_igraph(.data, twomode = twomode))
 }
 
 #' @export

@@ -179,28 +179,36 @@ create_tree <- function(n,
                         width = 2) {
   directed <- infer_directed(n, directed)
   n <- infer_n(n)
-  if (length(n) > 1) {
-    out <- matrix(0, n[1], n[2])
-    avail1 <- 1:n[1]
-    avail2 <- 1:n[2]
+  if (length(n) == 2) {
+    if(which.min(n) == 2){
+      n1 <- n[1]
+      n2 <- n[2]
+    } else {
+      n1 <- n[2]
+      n2 <- n[1]
+    }
+    out <- matrix(0, n1, n2)
+    avail1 <- seq.int(n1)
+    avail2 <- seq.int(n2)
     on1 <- 1
-    avail1 <- avail1[avail1 != on1]
+    avail1 <- setdiff(avail1, on1)
     while (length(avail1) > 0 & length(avail2) > 0) {
       on2 <- vector()
       for (i in on1) {
-        matches <- avail2[1:width]
-        out[i, matches] <- 1
-        on2 <- c(on2, matches)
-        suppressWarnings(avail2 <- avail2[avail2 != matches])
+        new <- avail2[seq.int(width)]
+        out[i, new] <- 1
+        on2 <- c(on2, new)
+        avail2 <- setdiff(avail2, new)
       }
       on1 <- vector()
       for (j in on2) {
-        matches <- avail1[1:width]
-        out[matches, j] <- 1
-        on1 <- c(on1, matches)
-        suppressWarnings(avail1 <- avail1[avail1 != matches])
+        new <- avail1[seq.int(width)]
+        out[new, j] <- 1
+        on1 <- c(on1, new)
+        avail1 <- setdiff(avail1, new)
       }
     }
+    if(which.min(n) == 1) out <- t(out)
     as_tidygraph(out, twomode = TRUE)
   } else {
     as_tidygraph(igraph::make_tree(sum(n), children = width,
