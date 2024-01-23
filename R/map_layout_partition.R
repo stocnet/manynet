@@ -23,7 +23,7 @@
 #'   The "multilevel" layout places successive layers as multiple levels.
 #'   The "lineage" layout ranks nodes in Y axis according to values.
 #' @name partition_layouts
-#' @inheritParams transform
+#' @inheritParams is
 #' @param circular Should the layout be transformed into a radial representation. 
 #' Only possible for some layouts. Defaults to FALSE.
 #' @param times Maximum number of iterations, where appropriate

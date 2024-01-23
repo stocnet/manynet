@@ -1,35 +1,34 @@
-# Transforming ####
+# Projecting ####
 
-#' Transforming networks, graphs, and matrices
+#' Modifying networks projection
 #' 
 #' @description
-#'   These functions offer tools for transforming migraph-consistent objects
-#'   (matrices, igraph, tidygraph, or network objects).
-#'   Transforming means that the returned object may have different dimensions
-#'   than the original object.
+#'   These functions offer tools for projecting manynet-consistent data:
 #' 
+#'   - `to_mode1()` projects a two-mode network to a one-mode network
+#'   of the first node set's (e.g. rows) joint affiliations to nodes in the second node set (columns). 
+#'   - `to_mode2()` projects a two-mode network to a one-mode network
+#'   of the second node set's (e.g. columns) joint affiliations to nodes in the first node set (rows).
+#'   - `to_ties()` projects a network to one where the ties become nodes and incident nodes become their ties.
+#'   - `to_galois()` projects a network to its Galois derivation.
+#' @details
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
 #'    ```{r, echo = FALSE, cache = TRUE} 
-#'  knitr::kable(available_methods(c("to_mode1", "to_mode2", 
-#'     "to_giant", "to_subgraph", "to_ties", "to_blocks", 
-#'     "to_matching", "to_eulerian", "to_anti", "to_no_isolates")))
+#'  knitr::kable(available_methods(c("to_mode1", "to_mode2", "to_ties")))
 #'  ```
-#' @name transform
+#' @name to_project
 #' @family modifications
 #' @inheritParams reformat
 #' @returns
-#' All `to_` functions return an object of the same class as that provided. 
-#' So passing it an igraph object will return an igraph object
-#' and passing it a network object will return a network object,
-#' with certain modifications as outlined for each function.
+#'   All `to_` functions return an object of the same class as that provided. 
+#'   So passing it an igraph object will return an igraph object
+#'   and passing it a network object will return a network object,
+#'   with certain modifications as outlined for each function.
 NULL
 
-#' @describeIn transform Results in a weighted one-mode object
-#'   that retains the row nodes from a two-mode object,
-#'   and weights the ties between them on the basis of
-#'   their joint ties to nodes in the second mode (columns)
+#' @rdname to_project
 #' @param similarity Method for establishing ties,
 #'   currently "count" (default), "jaccard", or "rand".
 #'   "count" calculates the number of coinciding ties,
@@ -103,10 +102,7 @@ to_mode1.data.frame <- function(.data, similarity = c("count","jaccard","rand","
   as_edgelist(to_mode1(as_matrix(.data), similarity = similarity))
 }
 
-#' @describeIn transform Results in a weighted one-mode object
-#' that retains the column nodes from a two-mode object,
-#' and weights the ties between them on the basis of
-#' their joint ties to nodes in the first mode (rows).
+#' @rdname to_project
 #' @export
 to_mode2 <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) UseMethod("to_mode2")
 
@@ -155,75 +151,7 @@ to_mode2.data.frame <- function(.data, similarity = c("count","jaccard","rand","
   as_edgelist(to_mode2(as_matrix(.data), similarity))
 }
 
-#' @describeIn transform Returns an object that includes only the main component
-#' without any smaller components or isolates
-#' @export
-to_giant <- function(.data) UseMethod("to_giant")
-
-#' @export
-to_giant.igraph <- function(.data) {
-  comps <- igraph::components(.data)
-  max.comp <- which.max(comps$csize)
-  igraph::delete_vertices(.data, comps$membership != max.comp)
-}
-
-#' @export
-to_giant.network <- function(.data) {
-  comps <- igraph::components(as_igraph(.data))
-  network::delete.vertices(.data, 
-                           which(comps$membership != which.max(comps$csize)))
-}
-
-#' @export
-to_giant.tbl_graph <- function(.data) {
-  as_tidygraph(to_giant(as_igraph(.data)))
-}
-
-#' @export
-to_giant.data.frame <- function(.data) {
-  as_edgelist(to_giant(as_igraph(.data)))
-}
-
-#' @export
-to_giant.matrix <- function(.data) {
-  as_matrix(to_giant(as_igraph(.data)))
-}
-
-#' @describeIn transform Returns a network subgraph filtered
-#'   on the basis of some node-related logical statement.
-#' @param ... Arguments passed on to dplyr::filter
-#' @importFrom dplyr filter
-#' @export
-to_subgraph <- function(.data, ...) UseMethod("to_subgraph")
-
-#' @export
-to_subgraph.tbl_graph <- function(.data, ...){
-  dplyr::filter(.data = .data, ..., 
-                .preserve = FALSE)
-}
-
-#' @export
-to_subgraph.igraph <- function(.data, ...){
-  as_igraph(to_subgraph(as_tidygraph(.data), ...))
-}
-
-#' @export
-to_subgraph.network <- function(.data, ...){
-  as_network(to_subgraph(as_tidygraph(.data), ...))
-}
-
-#' @export
-to_subgraph.data.frame <- function(.data, ...){
-  as_edgelist(to_subgraph(as_tidygraph(.data), ...))
-}
-
-#' @export
-to_subgraph.matrix <- function(.data, ...){
-  as_matrix(to_subgraph(as_tidygraph(.data), ...))
-}
-
-#' @describeIn transform Returns a matrix (named if possible) 
-#'   where the edges are the nodes
+#' @rdname to_project
 #' @importFrom igraph make_line_graph E
 #' @examples
 #' to_ties(ison_adolescents)
@@ -259,8 +187,166 @@ to_ties.matrix <- function(.data){
   as_matrix(to_ties(as_igraph(.data)))
 }
 
-#' @describeIn transform Returns a reduced graph from a given
-#'   partition membership vector.
+#' @rdname to_project
+#' @section Galois lattices: 
+#'   Note that the output from `to_galois()` is very busy at the moment.
+#' @export
+to_galois <- function(.data) {
+  x <- as_matrix(.data)
+  thisRequires("multiplex")
+  out <- multiplex::galois(x, labeling = "reduced")
+  out <- multiplex::partial.order(out, type = "galois")
+  class(out) <- c("matrix", class(out))
+  rownames(out)[!startsWith(rownames(out), "{")] <- ""
+  colnames(out)[!startsWith(colnames(out), "{")] <- ""
+  out
+}
+
+# Scoping ####
+
+#' Modifying networks scope
+#' 
+#' @description
+#'   These functions offer tools for transforming manynet-consistent objects
+#'   (matrices, igraph, tidygraph, or network objects).
+#'   Transforming means that the returned object may have different dimensions
+#'   than the original object.
+#' 
+#'   - `to_giant()` scopes a network into one including only the main component and no smaller components or isolates.
+#'   - `to_no_isolates()` scopes a network into one excluding all nodes without ties
+#'   - `to_subgraph()` scopes a network into a subgraph by filtering on some node-related logical statement.
+#'   - `to_blocks()` reduces a network to ties between a given partition membership vector.
+#' @details
+#'   Not all functions have methods available for all object classes.
+#'   Below are the currently implemented S3 methods:
+#'  
+#'    ```{r, echo = FALSE, cache = TRUE} 
+#'  knitr::kable(available_methods(c("to_giant", "to_no_isolates", "to_subgraph", "to_blocks")))
+#'  ```
+#' @name to_scope
+#' @family modifications
+#' @inheritParams reformat
+#' @returns
+#'   All `to_` functions return an object of the same class as that provided. 
+#'   So passing it an igraph object will return an igraph object
+#'   and passing it a network object will return a network object,
+#'   with certain modifications as outlined for each function.
+NULL
+
+#' @rdname to_scope
+#' @export
+to_giant <- function(.data) UseMethod("to_giant")
+
+#' @export
+to_giant.igraph <- function(.data) {
+  comps <- igraph::components(.data)
+  max.comp <- which.max(comps$csize)
+  igraph::delete_vertices(.data, comps$membership != max.comp)
+}
+
+#' @export
+to_giant.network <- function(.data) {
+  comps <- igraph::components(as_igraph(.data))
+  network::delete.vertices(.data, 
+                           which(comps$membership != which.max(comps$csize)))
+}
+
+#' @export
+to_giant.tbl_graph <- function(.data) {
+  as_tidygraph(to_giant(as_igraph(.data)))
+}
+
+#' @export
+to_giant.data.frame <- function(.data) {
+  as_edgelist(to_giant(as_igraph(.data)))
+}
+
+#' @export
+to_giant.matrix <- function(.data) {
+  as_matrix(to_giant(as_igraph(.data)))
+}
+
+#' @rdname to_scope
+#' @importFrom tidygraph node_is_isolated
+#' @importFrom dplyr filter
+#' @examples
+#' ison_adolescents %>%
+#'   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) %>%
+#'   to_waves(attribute = "wave") %>%
+#'   to_no_isolates()
+#' @export
+to_no_isolates <- function(.data) UseMethod("to_no_isolates")
+
+#' @export
+to_no_isolates.tbl_graph <- function(.data) {
+  nodes <- NULL
+  # Delete edges not present vertices
+  .data %>% tidygraph::activate(nodes) %>% dplyr::filter(!tidygraph::node_is_isolated())
+}
+
+#' @export
+to_no_isolates.list <- function(.data) {
+  nodes <- NULL
+  # Delete edges not present vertices in each list
+  lapply(.data, function(x) {
+    x %>% tidygraph::activate(nodes) %>% dplyr::filter(!tidygraph::node_is_isolated())
+  })
+}
+
+#' @export
+to_no_isolates.igraph <- function(.data) {
+  as_igraph(to_no_isolates(as_tidygraph(.data)))
+}
+
+#' @export
+to_no_isolates.matrix <- function(.data) {
+  as_matrix(to_no_isolates(as_tidygraph(.data)))
+}
+
+#' @export
+to_no_isolates.network <- function(.data) {
+  as_network(to_no_isolates(as_tidygraph(.data)))
+}
+
+#' @export
+to_no_isolates.data.frame <- function(.data) {
+  as_edgelist(to_no_isolates(as_tidygraph(.data)))
+}
+
+#' @rdname to_scope
+#' @param ... Arguments passed on to dplyr::filter
+#' @importFrom dplyr filter
+#' @export
+to_subgraph <- function(.data, ...) UseMethod("to_subgraph")
+
+#' @export
+to_subgraph.tbl_graph <- function(.data, ...){
+  dplyr::filter(.data = .data, ..., 
+                .preserve = FALSE)
+}
+
+#' @export
+to_subgraph.igraph <- function(.data, ...){
+  as_igraph(to_subgraph(as_tidygraph(.data), ...))
+}
+
+#' @export
+to_subgraph.network <- function(.data, ...){
+  as_network(to_subgraph(as_tidygraph(.data), ...))
+}
+
+#' @export
+to_subgraph.data.frame <- function(.data, ...){
+  as_edgelist(to_subgraph(as_tidygraph(.data), ...))
+}
+
+#' @export
+to_subgraph.matrix <- function(.data, ...){
+  as_matrix(to_subgraph(as_tidygraph(.data), ...))
+}
+
+#' @rdname to_scope
+#' @section: `to_blocks()`: 
 #'   Reduced graphs provide summary representations of network structures 
 #'   by collapsing groups of connected nodes into single nodes 
 #'   while preserving the topology of the original structures.
@@ -324,9 +410,41 @@ to_blocks.tbl_graph <- function(.data, membership, FUN = mean){
   as_tidygraph(to_blocks(as_matrix(.data), membership, FUN))
 }
 
-#' @describeIn transform Returns a network with only
-#'   matching ties
-#' @section to_matching:
+# Pathing ####
+
+#' Modifying networks paths
+#' 
+#' @description
+#'   These functions offer tools for transforming manynet-consistent objects
+#'   (matrices, igraph, tidygraph, or network objects).
+#'   Transforming means that the returned object may have different dimensions
+#'   than the original object.
+#' 
+#'   - `to_matching()` transforms a network into one with only matching ties.
+#'   - `to_mentoring()` transforms a network where each node is connected only to their closest mentor.
+#'   - `to_eulerian()` transforms a network into one that only contains any Eulerian path within it.
+#'   - `to_tree()` transforms the network into a spanning tree or, if unconnected, a forest of spanning trees.
+#' @details
+#'   Not all functions have methods available for all object classes.
+#'   Below are the currently implemented S3 methods:
+#'  
+#'    ```{r, echo = FALSE, cache = TRUE} 
+#'  knitr::kable(available_methods(c("to_mode1", "to_mode2", 
+#'     "to_giant", "to_subgraph", "to_ties", "to_blocks", 
+#'     "to_matching", "to_eulerian", "to_anti", "to_no_isolates")))
+#'  ```
+#' @name to_paths
+#' @family modifications
+#' @inheritParams reformat
+#' @returns
+#'   All `to_` functions return an object of the same class as that provided. 
+#'   So passing it an igraph object will return an igraph object
+#'   and passing it a network object will return a network object,
+#'   with certain modifications as outlined for each function.
+NULL
+
+#' @rdname to_paths
+#' @section `to_matching()`:
 #'   `to_matching()` uses `{igraph}`'s `max_bipartite_match()`
 #'   to return a network in which each node is only tied to
 #'   one of its previous ties.
@@ -385,8 +503,7 @@ to_matching.matrix <- function(.data, mark = "type"){
   as_matrix(to_matching(as_igraph(.data), mark))
 }
 
-#' @describeIn transform Returns a network where each node is
-#'   connected only to their closest mentor
+#' @rdname to_paths 
 #' @param elites The proportion of nodes to be selected as mentors.
 #'   By default this is set at 0.1.
 #'   This means that the top 10% of nodes in terms of degree,
@@ -450,8 +567,7 @@ to_mentoring.igraph <- function(.data, elites = 0.1){
   as_igraph(out)
 }
 
-#' @describeIn transform Returns a network with only
-#'   the Eulerian path
+#' @rdname to_paths
 #' @importFrom igraph eulerian_path
 #' @examples
 #'   to_eulerian(delete_nodes(ison_koenigsberg, "Lomse"))
@@ -479,113 +595,7 @@ to_eulerian.tbl_graph <- function(.data){
   out
 }
 
-#' @describeIn transform Returns the complement of a network
-#'   where only ties _not_ present in the original network
-#'   are included in the new network.
-#' @importFrom igraph complementer
-#' @examples
-#' to_anti(ison_southern_women)
-#' #autographr(to_anti(ison_southern_women))
-#' @export
-to_anti <- function(.data) UseMethod("to_anti")
-
-#' @export
-to_anti.matrix <- function(.data){
-  matrix(1, nrow(.data), ncol(.data)) - .data
-}
-
-#' @export
-to_anti.data.frame <- function(.data){
-  as_edgelist.matrix(to_anti.matrix(as_matrix(.data)))
-}
-
-#' @export
-to_anti.igraph <- function(.data){
-  if(is_twomode(.data)){
-    as_igraph(to_anti.matrix(as_matrix(.data)))
-  } else {
-    igraph::complementer(as_igraph(.data), 
-                         loops = is_complex(.data))
-  }
-}
-
-#' @export
-to_anti.tbl_graph <- function(.data){
-  if(is_twomode(.data)){
-    as_tidygraph(to_anti.matrix(as_matrix(.data)))
-  } else {
-    as_tidygraph(igraph::complementer(as_igraph(.data), 
-                         loops = is_complex(.data)))
-  }
-}
-
-#' @export
-to_anti.network <- function(.data){
-  as_network(to_anti(as_igraph(.data)))
-}
-
-#' @describeIn transform Removes all nodes without ties
-#' @importFrom tidygraph node_is_isolated
-#' @importFrom dplyr filter
-#' @examples
-#' ison_adolescents %>%
-#'   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) %>%
-#'   to_waves(attribute = "wave") %>%
-#'   to_no_isolates()
-#' @export
-to_no_isolates <- function(.data) UseMethod("to_no_isolates")
-
-#' @export
-to_no_isolates.tbl_graph <- function(.data) {
-  nodes <- NULL
-  # Delete edges not present vertices
-  .data %>% tidygraph::activate(nodes) %>% dplyr::filter(!tidygraph::node_is_isolated())
-}
-
-#' @export
-to_no_isolates.list <- function(.data) {
-  nodes <- NULL
-  # Delete edges not present vertices in each list
-  lapply(.data, function(x) {
-    x %>% tidygraph::activate(nodes) %>% dplyr::filter(!tidygraph::node_is_isolated())
-  })
-}
-
-#' @export
-to_no_isolates.igraph <- function(.data) {
-  as_igraph(to_no_isolates(as_tidygraph(.data)))
-}
-
-#' @export
-to_no_isolates.matrix <- function(.data) {
-  as_matrix(to_no_isolates(as_tidygraph(.data)))
-}
-
-#' @export
-to_no_isolates.network <- function(.data) {
-  as_network(to_no_isolates(as_tidygraph(.data)))
-}
-
-#' @export
-to_no_isolates.data.frame <- function(.data) {
-  as_edgelist(to_no_isolates(as_tidygraph(.data)))
-}
-
-#' @describeIn transform Galois derivations
-#' @export
-to_galois <- function(.data) {
-  x <- as_matrix(.data)
-  thisRequires("multiplex")
-  out <- multiplex::galois(x, labeling = "reduced")
-  out <- multiplex::partial.order(out, type = "galois")
-  class(out) <- c("matrix", class(out))
-  rownames(out)[!startsWith(rownames(out), "{")] <- ""
-  colnames(out)[!startsWith(colnames(out), "{")] <- ""
-  out
-}
-
-#' @describeIn transform Transforms the network into a spanning
-#'   tree or a forest of spanning trees if network is unconnected
+#' @rdname to_paths 
 #' @export
 to_tree <- function(.data) {
   .data <- as_igraph(.data)

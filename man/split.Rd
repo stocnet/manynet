@@ -110,6 +110,8 @@ Other modifications:
 \code{\link{miss}},
 \code{\link{reformat}},
 \code{\link{tidy}},
-\code{\link{transform}()}
+\code{\link{to_paths}},
+\code{\link{to_project}},
+\code{\link{to_scope}}
 }
 \concept{modifications}
