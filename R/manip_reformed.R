@@ -415,24 +415,20 @@ to_blocks.tbl_graph <- function(.data, membership, FUN = mean){
 #' Modifying networks paths
 #' 
 #' @description
-#'   These functions offer tools for transforming manynet-consistent objects
-#'   (matrices, igraph, tidygraph, or network objects).
-#'   Transforming means that the returned object may have different dimensions
-#'   than the original object.
+#'   These functions return tidygraphs containing only special sets of ties:
 #' 
-#'   - `to_matching()` transforms a network into one with only matching ties.
-#'   - `to_mentoring()` transforms a network where each node is connected only to their closest mentor.
-#'   - `to_eulerian()` transforms a network into one that only contains any Eulerian path within it.
-#'   - `to_tree()` transforms the network into a spanning tree or, if unconnected, a forest of spanning trees.
+#'   - `to_matching()` returns only the matching ties in some network data.
+#'   - `to_mentoring()` returns only ties to nodes' closest mentors.
+#'   - `to_eulerian()` returns only the Eulerian path within some network data.
+#'   - `to_tree()` returns the spanning tree in some network data or, 
+#'   if the data is unconnected, a forest of spanning trees.
 #' @details
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
-#'    ```{r, echo = FALSE, cache = TRUE} 
-#'  knitr::kable(available_methods(c("to_mode1", "to_mode2", 
-#'     "to_giant", "to_subgraph", "to_ties", "to_blocks", 
-#'     "to_matching", "to_eulerian", "to_anti", "to_no_isolates")))
-#'  ```
+#'   ```{r, echo = FALSE, cache = TRUE} 
+#'   knitr::kable(available_methods(c("to_matching", "to_mentoring", "to_eulerian", "to_tree")))
+#'   ```
 #' @name to_paths
 #' @family modifications
 #' @inheritParams reformat

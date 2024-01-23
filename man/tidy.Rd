@@ -99,6 +99,7 @@ Other modifications:
 \code{\link{miss}},
 \code{\link{reformat}},
 \code{\link{split}()},
+\code{\link{to_levels}},
 \code{\link{to_paths}},
 \code{\link{to_project}},
 \code{\link{to_scope}}

@@ -11,7 +11,7 @@
 \alias{read_graphml}
 \title{Making networks from external files}
 \source{
-\code{read_ucinet()} and \code{write_ucinet()} kindly supplied by Christian Steglich,
+\code{read_ucinet()} kindly supplied by Christian Steglich,
 constructed on 18 June 2015.
 }
 \usage{

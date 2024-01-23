@@ -58,7 +58,7 @@
 #'   To import multiple matrices packed into a single UCINET file,
 #'   you will need to unpack them and convert them one by one.
 #' @source 
-#' `read_ucinet()` and `write_ucinet()` kindly supplied by Christian Steglich, 
+#' `read_ucinet()` kindly supplied by Christian Steglich, 
 #' constructed on 18 June 2015.
 #' @importFrom utils read.csv read.csv2 read.table
 #' @name read

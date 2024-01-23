@@ -13,9 +13,6 @@
 \alias{to_unnamed}
 \alias{to_named}
 \alias{to_simplex}
-\alias{to_onemode}
-\alias{to_multilevel}
-\alias{to_twomode}
 \alias{to_anti}
 \title{Modifying network formats}
 \usage{
@@ -41,12 +38,6 @@ to_named(.data, names = NULL)
 
 to_simplex(.data)
 
-to_onemode(.data)
-
-to_multilevel(.data)
-
-to_twomode(.data, mark)
-
 to_anti(.data)
 }
 \arguments{
@@ -67,9 +58,6 @@ to_anti(.data)
 the "positive" or "negative" ties.}
 
 \item{names}{Character vector of the node names. NULL by default.}
-
-\item{mark}{A logical vector marking two types or modes.
-By default "type".}
 }
 \value{
 All \code{to_} functions return an object of the same class as that provided.
@@ -78,15 +66,31 @@ and passing it a network object will return a network object,
 with certain modifications as outlined for each function.
 }
 \description{
-These functions offer tools for reformatting manynet-consistent objects
-(matrices, igraph, tidygraph, or network objects).
-Unlike the \verb{as_*()} group of functions,
-these functions always return the same object type as they are given,
-only transforming these objects' properties.
+These functions reformat manynet-consistent data.
 \itemize{
-\item \code{to_anti()} transforms a network into its complement, where only ties \emph{not} present in the original network
+\item \code{to_uniplex()} reformats multiplex network data to a single type of tie.
+\item \code{to_undirected()} reformats directed network data to an undirected network.
+\item \code{to_directed()} reformats undirected network data to a directed network.
+\item \code{to_redirected()} reformats the direction of directed network data, flipping any existing direction.
+\item \code{to_reciprocated()} reformats directed network data such that every directed tie is reciprocated.
+\item \code{to_acyclic()} reformats network data to an acyclic graph.
+\item \code{to_unweighted()} reformats weighted network data to unweighted network data.
+\item \code{to_unsigned()} reformats signed network data to unsigned network data.
+\item \code{to_unnamed()} reformats labelled network data to unlabelled network data.
+\item \code{to_named()} reformats unlabelled network data to labelled network data.
+\item \code{to_simplex()} reformats complex network data, containing loops, to simplex network data, without any loops.
+\item \code{to_anti()} reformats network data into its complement, where only ties \emph{not} present in the original network
 are included in the new network.
 }
+
+If the format condition is not met,
+for example \code{to_undirected()} is used on a network that is already undirected,
+the network data is returned unaltered.
+No warning is given so that these functions can be used to ensure conformance.
+
+Unlike the \verb{as_*()} group of functions,
+these functions always return the same class as they are given,
+only transforming these objects' properties.
 }
 \details{
 Not all functions have methods available for all object classes.
@@ -94,13 +98,10 @@ Below are the currently implemented S3 methods:\tabular{lrrrrr}{
     \tab data.frame \tab igraph \tab matrix \tab network \tab tbl_graph \cr
    to_acyclic \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
    to_directed \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
-   to_multilevel \tab 0 \tab 1 \tab 1 \tab 0 \tab 1 \cr
    to_named \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
-   to_onemode \tab 0 \tab 1 \tab 1 \tab 0 \tab 1 \cr
    to_reciprocated \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
    to_redirected \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
    to_simplex \tab 0 \tab 1 \tab 1 \tab 0 \tab 1 \cr
-   to_twomode \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \cr
    to_undirected \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
    to_uniplex \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
    to_unnamed \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
@@ -110,25 +111,16 @@ Below are the currently implemented S3 methods:\tabular{lrrrrr}{
 }
 \section{Functions}{
 \itemize{
-\item \code{to_uniplex()}: Returns an object that includes only a single type of tie
-
 \item \code{to_undirected()}: Returns an object that has any edge direction removed,
 so that any pair of nodes with at least one directed edge will be
 connected by an undirected edge in the new network.
 This is equivalent to the "collapse" mode in \code{{igraph}}.
-
-\item \code{to_directed()}: Returns a directed object.
-Note that ties' direction will be randomly assigned.
-To flip the direction, use \code{to_redirected()}.
-To match the direction, use \code{to_reciprocated()}.
 
 \item \code{to_redirected()}: Returns an object that has any edge direction transposed,
 or flipped, so that senders become receivers and receivers become senders.
 This essentially has no effect on undirected networks or reciprocated ties.
 
 \item \code{to_reciprocated()}: Returns an object where all ties are reciprocated.
-
-\item \code{to_acyclic()}: Returns an object where all ties are acyclic.
 
 \item \code{to_unweighted()}: Returns an object that has all edge weights removed.
 
@@ -140,16 +132,6 @@ or just the "negative" ties
 \item \code{to_named()}: Returns an object that has random vertex names added
 
 \item \code{to_simplex()}: Returns an object that has all loops or self-ties removed
-
-\item \code{to_onemode()}: Returns an object that has any type/mode attributes removed,
-but otherwise includes all the same nodes and ties.
-Note that this is not the same as \code{to_mode1()} or \code{to_mode2()},
-which return only some of the nodes and new ties established by coincidence.
-
-\item \code{to_multilevel()}: Returns a network that is not divided into two mode types
-but embeds two or more modes into a multimodal network structure.
-
-\item \code{to_twomode()}: Returns a network that divides the nodes into two mode types.
 
 }}
 \examples{
@@ -167,6 +149,7 @@ Other modifications:
 \code{\link{miss}},
 \code{\link{split}()},
 \code{\link{tidy}},
+\code{\link{to_levels}},
 \code{\link{to_paths}},
 \code{\link{to_project}},
 \code{\link{to_scope}}

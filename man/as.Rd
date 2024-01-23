@@ -130,6 +130,7 @@ Other modifications:
 \code{\link{reformat}},
 \code{\link{split}()},
 \code{\link{tidy}},
+\code{\link{to_levels}},
 \code{\link{to_paths}},
 \code{\link{to_project}},
 \code{\link{to_scope}}
