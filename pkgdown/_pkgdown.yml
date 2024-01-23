@@ -78,7 +78,7 @@ reference:
       and dynamic networks, respectively.
     contents:
       - starts_with("network_")
-      - starts_with("node_")
+      - attributes
       - starts_with("autograph")
       - starts_with("layout")
       - starts_with("theme")

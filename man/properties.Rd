@@ -39,23 +39,18 @@ in the case of a two-mode network.
 of all node or tie attributes in the network.
 }
 \description{
-These functions extract certain attributes from given network data.
-They are also useful as helpers within other functions.
-}
-\section{Functions}{
+These functions extract certain attributes from given network data:
 \itemize{
-\item \code{network_nodes()}: Returns the total number of nodes (of any mode) in a network.
-
-\item \code{network_ties()}: Returns the number of edges in a network.
-
-\item \code{network_dims()}: Returns the dimensions of a network in a vector
+\item \code{network_nodes()} returns the total number of nodes (of any mode) in a network.
+\item \code{network_ties()} returns the number of ties in a network.
+\item \code{network_dims()} returns the dimensions of a network in a vector
 as long as the number of modes in the network.
+\item \code{network_node_attributes()} returns a vector of nodal attributes in a network.
+\item \code{network_tie_attributes()} returns a vector of tie attributes in a network.
+}
 
-\item \code{network_node_attributes()}: Returns a vector of nodal attributes in a network
-
-\item \code{network_tie_attributes()}: Returns a vector of edge attributes in a network
-
-}}
+These functions are also often used as helpers within other functions.
+}
 \examples{
 network_nodes(ison_southern_women)
 network_ties(ison_southern_women)
