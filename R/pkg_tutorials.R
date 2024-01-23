@@ -2,16 +2,23 @@
 #' 
 #' @description 
 #'   These functions make it easy to use the tutorials
-#'   in the `{manynet}` and `{migraph}` packages.
+#'   in the `{manynet}` and `{migraph}` packages:
+#'   
+#'   - `run_tute()` runs a `{learnr}` tutorial from 
+#'   either the `{manynet}` or `{migraph}` packages,
+#'   wraps `learnr::run_tutorial()` with some convenience.
+#'   - `extract_tute()` extracts and opens just the solution code
+#'   from a `{manynet}` or `{migraph}` tutorial,
+#'   saving the .R script to the current working directory.
+#'   - `pkg_data()` returns a tibble with details of the
+#'   network datasets included in the packages.
 #' @param tute String, name of the tutorial (e.g. "tutorial2").
 #' @param pkg String, name of the package.
 #' @importFrom dplyr %>% as_tibble select tibble
 #' @name tutorials
 NULL
 
-#' @describeIn tutorials Runs a `{learnr}` tutorial from 
-#'   either the `{manynet}` or `{migraph}` packages,
-#'   wraps `learnr::run_tutorial()` with some convenience
+#' @rdname tutorials 
 #' @examples
 #' #run_tute("tutorial2")
 #' @export
@@ -45,9 +52,7 @@ run_tute <- function(tute) {
   }
 }
 
-#' @describeIn tutorials Extracts and opens just the solution code
-#'   from a `{manynet}` or `{migraph}` tutorial,
-#'   saving the .R script to the current working directory
+#' @rdname tutorials 
 #' @examples
 #' #extract_tute("tutorial2")
 #' @export
@@ -72,8 +77,7 @@ extract_tute <- function(tute) {
   }
 }
 
-#' @describeIn tutorials Returns a tibble with details of the
-#'   network datasets included in the packages
+#' @rdname tutorials 
 #' @examples
 #' #pkg_data()
 #' # to obtain overview of unique datasets:
