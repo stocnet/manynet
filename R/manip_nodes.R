@@ -10,7 +10,7 @@
 #'   - `rename_nodes()` and `rename()` rename nodal attributes.
 #'   - `bind_node_attributes()` appends all nodal attributes from one network to another,
 #'   and `join_nodes()` merges all nodal attributes from one network to another.
-#'   - `filter_nodes()` and `filter()` subsets nodes based on some nodal attribute-related logical statement.
+#'   - `filter_nodes()` subsets nodes based on some nodal attribute-related logical statement.
 #'   
 #'   Note that while `add_*()`/`delete_*()` functions operate similarly as comparable `{igraph}` functions,
 #'   `mutate*()`, `bind*()`, etc work like `{tidyverse}` or `{dplyr}`-style functions.
@@ -136,10 +136,10 @@ join_nodes <- function(.data, object2, .by = NULL,
   out <- as_tidygraph(.data)
   object2 <- as_tidygraph(object2)
   switch(join_type,
-         "full" = dplyr::full_join(out, object2, by = by, copy = TRUE),
-         "left" = dplyr::left_join(out, object2, by = by, copy = TRUE),
-         "right" = dplyr::right_join(out, object2, by = by, copy = TRUE),
-         "inner" = dplyr::inner_join(out, object2, by = by, copy = TRUE))
+         "full" = dplyr::full_join(out, object2, by = .by, copy = TRUE),
+         "left" = dplyr::left_join(out, object2, by = .by, copy = TRUE),
+         "right" = dplyr::right_join(out, object2, by = .by, copy = TRUE),
+         "inner" = dplyr::inner_join(out, object2, by = .by, copy = TRUE))
 }
 
 #' @rdname add_nodes
@@ -155,14 +155,7 @@ rename <- tidygraph::rename
 #' @rdname add_nodes
 #' @importFrom tidygraph filter
 #' @export
-filter_nodes <- function(.data., ..., .by){
-  tidygraph::filter(.data., ..., .by = .by)
-}
-
-#' @rdname add_nodes
-#' @importFrom tidygraph filter
-#' @export
-filter <- function(.data., ..., .by){
-  tidygraph::filter(.data., ..., .by = .by)
+filter_nodes <- function(.data, ..., .by){
+  tidygraph::filter(.data, ..., .by = .by)
 }
 

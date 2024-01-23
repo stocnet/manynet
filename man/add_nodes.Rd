@@ -11,7 +11,6 @@
 \alias{rename_nodes}
 \alias{rename}
 \alias{filter_nodes}
-\alias{filter}
 \title{Modifying node data}
 \usage{
 add_nodes(.data, nodes, attribute = NULL)
@@ -37,9 +36,7 @@ rename_nodes(.data, ...)
 
 rename(.data, ...)
 
-filter_nodes(.data., ..., .by)
-
-filter(.data., ..., .by)
+filter_nodes(.data, ..., .by)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -82,7 +79,7 @@ a vector of values to a network as a nodal attribute.
 \item \code{rename_nodes()} and \code{rename()} rename nodal attributes.
 \item \code{bind_node_attributes()} appends all nodal attributes from one network to another,
 and \code{join_nodes()} merges all nodal attributes from one network to another.
-\item \code{filter_nodes()} and \code{filter()} subsets nodes based on some nodal attribute-related logical statement.
+\item \code{filter_nodes()} subsets nodes based on some nodal attribute-related logical statement.
 }
 
 Note that while \verb{add_*()}/\verb{delete_*()} functions operate similarly as comparable \code{{igraph}} functions,

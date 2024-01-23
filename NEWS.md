@@ -1,6 +1,6 @@
 # manynet 1.0.0
 
-2023-12-17
+2023-12-24
 
 ## Package
 
@@ -25,7 +25,7 @@
   - `as_*()` functions are now considered modifications
 - Completed a full range of tidy verbs for nodes
   - Added `mutate_nodes()`
-  - Added `filter()` and `filter_nodes()`
+  - Added `filter_nodes()`
   - Added `rename_nodes()`
 - Completed a full range of tidy and igraph verbs for ties
   - Added `bind_ties()`
