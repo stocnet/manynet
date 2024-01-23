@@ -74,6 +74,7 @@ Valente, Thomas, and Rebecca Davis. 1999.
 Other marks: 
 \code{\link{mark_diff}},
 \code{\link{mark_select}},
+\code{\link{mark_tie_select}},
 \code{\link{mark_ties}}
 }
 \concept{marks}

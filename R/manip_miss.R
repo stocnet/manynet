@@ -2,11 +2,13 @@
 
 #' Modifying missing tie data
 #' 
-#' These functions offer tools for imputing missing tie data.
-#' Currently two options are available:
-#' replacing the missing values with zeros, 
-#' which are the modal value in sparse social networks,
-#' and replacing the missing values with the average non-missing value for that vector.
+#' @description
+#'   These functions offer tools for imputing missing tie data.
+#'   Currently two options are available:
+#' 
+#'   - `na_to_zero()` replaces any missing values with zeros,
+#'   which are the modal value in sparse social networks.
+#'   - `na_to_mean()` replaces missing values with the average non-missing value.
 #' @name miss
 #' @family modifications
 #' @inheritParams is
@@ -24,8 +26,7 @@
 #' na_to_mean(missTest)
 NULL
 
-#' @describeIn miss Impute missing tie data as zero,
-#'   the modal value in sparse social networks.
+#' @rdname miss
 #' @export
 na_to_zero <- function(.data) UseMethod("na_to_zero")
 
@@ -57,8 +58,7 @@ na_to_zero.data.frame <- function(.data){
   .data
 }
 
-#' @describeIn miss Impute missing tie data as
-#'   the mean value in the network.
+#' @rdname miss
 #' @export
 na_to_mean <- function(.data) UseMethod("na_to_mean")
 

@@ -130,10 +130,10 @@ node_is_mentor <- function(.data, elites = 0.1){
 #'   These functions return logical vectors the length of the 
 #'   nodes in a network identifying which hold certain properties or positions in the network.
 #'   
-#'   - `node_is_infected()` and `node_is_exposed()` marks nodes that are infected
-#'   by a particular time point or exposed to a given (other) mark
-#'   - `node_is_latent()` marks nodes that are latent at a particular time point
-#'   - `node_is_recovered()` marks nodes that are recovered at a particular time point
+#'   - `node_is_infected()` marks nodes that are infected by a particular time point. 
+#'   - `node_is_exposed()` marks nodes that are exposed to a given (other) mark.
+#'   - `node_is_latent()` marks nodes that are latent at a particular time point.
+#'   - `node_is_recovered()` marks nodes that are recovered at a particular time point.
 #' @inheritParams is
 #' @family marks
 #' @name mark_diff

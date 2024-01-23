@@ -9,6 +9,7 @@
 \alias{bind_ties}
 \alias{join_ties}
 \alias{filter_ties}
+\alias{select_ties}
 \alias{summarise_ties}
 \title{Modifying tie data}
 \usage{
@@ -27,6 +28,8 @@ bind_ties(.data, ..., node_key = "name")
 join_ties(.data, object2, attr_name)
 
 filter_ties(.data, ...)
+
+select_ties(.data, ...)
 
 summarise_ties(.data, ...)
 }

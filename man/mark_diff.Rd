@@ -37,10 +37,10 @@ created either by \code{play_diffusion()} or \code{as_diffusion()}.}
 These functions return logical vectors the length of the
 nodes in a network identifying which hold certain properties or positions in the network.
 \itemize{
-\item \code{node_is_infected()} and \code{node_is_exposed()} marks nodes that are infected
-by a particular time point or exposed to a given (other) mark
-\item \code{node_is_latent()} marks nodes that are latent at a particular time point
-\item \code{node_is_recovered()} marks nodes that are recovered at a particular time point
+\item \code{node_is_infected()} marks nodes that are infected by a particular time point.
+\item \code{node_is_exposed()} marks nodes that are exposed to a given (other) mark.
+\item \code{node_is_latent()} marks nodes that are latent at a particular time point.
+\item \code{node_is_recovered()} marks nodes that are recovered at a particular time point.
 }
 }
 \section{Exposed}{
@@ -70,6 +70,7 @@ in that diffusion.
 Other marks: 
 \code{\link{mark_nodes}},
 \code{\link{mark_select}},
+\code{\link{mark_tie_select}},
 \code{\link{mark_ties}}
 }
 \concept{marks}

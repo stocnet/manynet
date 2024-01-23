@@ -26,19 +26,12 @@ A data object of the same class as the function was given.
 \description{
 These functions offer tools for imputing missing tie data.
 Currently two options are available:
-replacing the missing values with zeros,
-which are the modal value in sparse social networks,
-and replacing the missing values with the average non-missing value for that vector.
-}
-\section{Functions}{
 \itemize{
-\item \code{na_to_zero()}: Impute missing tie data as zero,
-the modal value in sparse social networks.
-
-\item \code{na_to_mean()}: Impute missing tie data as
-the mean value in the network.
-
-}}
+\item \code{na_to_zero()} replaces any missing values with zeros,
+which are the modal value in sparse social networks.
+\item \code{na_to_mean()} replaces missing values with the average non-missing value.
+}
+}
 \examples{
 missTest <- ison_adolescents \%>\% 
    add_tie_attribute("weight", c(1,NA,NA,1,1,1,NA,NA,1,1)) \%>\% 

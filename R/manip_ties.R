@@ -131,15 +131,6 @@ join_ties <- function(.data, object2, attr_name) {
                        directed = is_directed(.data))
 }
 
-#' @rdname add_ties Tidy way to select tie attributes.
-#' @importFrom dplyr select
-#' @export
-select_ties <- function(.data, ...){
-  nodes <- edges <- NULL
-  out <- as_tidygraph(.data)
-  out %>% tidygraph::activate(edges) %>% dplyr::select(...) %>% activate(nodes)
-}
-
 #' @rdname add_ties 
 #' @importFrom dplyr filter
 #' @export
@@ -149,6 +140,15 @@ filter_ties <- function(.data, ...){
   out %>% tidygraph::activate(edges) %>% 
     dplyr::filter(...) %>% 
     tidygraph::activate(nodes)
+}
+
+#' @rdname add_ties
+#' @importFrom dplyr select
+#' @export
+select_ties <- function(.data, ...){
+  nodes <- edges <- NULL
+  out <- as_tidygraph(.data)
+  out %>% tidygraph::activate(edges) %>% dplyr::select(...) %>% activate(nodes)
 }
 
 #' @rdname add_ties
