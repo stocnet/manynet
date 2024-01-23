@@ -55,8 +55,6 @@ with neither incoming nor outgoing ties.
 \item \code{node_is_fold()} marks nodes that are in a structural fold between two or more
 triangles that are only connected by that node.
 \item \code{node_is_mentor()} marks a proportion of high indegree nodes as 'mentors' (see details)
-\item \code{node_is_infected()} and \code{node_is_exposed()} marks nodes that are infected
-by a particular time point or exposed to a given (other) mark
 }
 }
 \examples{

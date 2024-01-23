@@ -14,7 +14,7 @@
 #'   
 #'   They are most useful in highlighting parts of the network that
 #'   are particularly well- or poorly-connected.
-#' @inheritParams is
+#' @inheritParams mark_nodes
 #' @family marks
 #' @name mark_ties
 NULL
@@ -84,7 +84,7 @@ tie_is_bridge <- function(.data){
 #'   for converting the results from some node measure into a mark-class object.
 #'   They can be particularly useful for highlighting which node or nodes
 #'   are key because they minimise or, more often, maximise some measure.
-#' @inheritParams is
+#' @inheritParams mark_select
 #' @family marks
 #' @name mark_tie_select
 NULL

@@ -411,7 +411,7 @@
 
 # Harry Potter ####
 
-#' Six complex one-mode support data in Harry Potter books (Coleman, Katz, and Menzel, 1966)
+#' Six complex one-mode support data in Harry Potter books (Bossaert and Meidert 2013)
 #'
 #' @description
 #'   Goele Bossaert and Nadine Meidert coded peer support ties among 64 characters

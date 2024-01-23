@@ -560,11 +560,6 @@ to_anti.network <- function(.data){
 #' @name to_levels
 #' @family modifications
 #' @inheritParams is
-#' @param tie Character string naming a tie attribute to retain from a graph.
-#' @param keep In the case of a signed network, whether to retain
-#' the "positive" or "negative" ties.
-#' @param threshold For a matrix, the threshold to binarise/dichotomise at.
-#' @param names Character vector of the node names. NULL by default.
 #' @returns
 #' All `to_` functions return an object of the same class as that provided. 
 #' So passing it an igraph object will return an igraph object

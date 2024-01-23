@@ -29,7 +29,7 @@ bind_node_attributes(.data, object2)
 join_nodes(
   .data,
   object2,
-  by = NULL,
+  .by = NULL,
   join_type = c("full", "left", "right", "inner")
 )
 
@@ -37,9 +37,9 @@ rename_nodes(.data, ...)
 
 rename(.data, ...)
 
-filter_nodes(.data, ..., .by = NULL, .preserve = FALSE)
+filter_nodes(.data., ..., .by)
 
-filter(.data, ..., .by = NULL, .preserve = FALSE)
+filter(.data., ..., .by)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -59,7 +59,11 @@ filter(.data, ..., .by = NULL, .preserve = FALSE)
 
 \item{vector}{A vector of values for the new attribute.}
 
-\item{by}{An attribute name to join objects by.
+\item{...}{Additional arguments.}
+
+\item{object2}{A second object to copy nodes or ties from.}
+
+\item{.by}{An attribute name to join objects by.
 By default, NULL.}
 
 \item{join_type}{A type of join to be used.

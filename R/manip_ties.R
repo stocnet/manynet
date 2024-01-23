@@ -16,12 +16,11 @@
 #'   Note that while `add_*()`/`delete_*()` functions operate similarly as comparable `{igraph}` functions,
 #'   `mutate*()`, `bind*()`, etc work like `{tidyverse}` or `{dplyr}`-style functions.
 #' @family modifications
-#' @inheritParams is
-#' @param object2 A second object to copy nodes or edges from.
+#' @inheritParams add_nodes
 #' @param attr_name Name of the new attribute in the resulting object.
-#' @param ... Additional arguments.
 #' @return A tidygraph (`tbl_graph`) data object.
 #' @examples
+#'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
 #'   mutate_ties(other, form = 1:6) %>% filter_ties(form < 4)
 #'   add_tie_attribute(other, "weight", c(1, 2, 2, 2, 1, 2))
 #' @name add_ties
@@ -93,7 +92,9 @@ rename_ties <- function(.data, ...){
 #' @rdname add_ties
 #' @importFrom tidygraph bind_edges
 #' @export
-bind_ties <- tidygraph::bind_edges
+bind_ties <- function(.data, ...){
+  tidygraph::bind_edges(.data, ...)
+}
 
 #' @rdname add_ties 
 #' @importFrom igraph add_edges set_edge_attr E

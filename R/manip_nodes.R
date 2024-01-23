@@ -25,7 +25,9 @@
 #' @inheritParams is
 #' @param attribute A named list to be added as tie or node attributes.
 #' @param attr_name Name of the new attribute in the resulting object.
+#' @param object2 A second object to copy nodes or ties from.
 #' @param vector A vector of values for the new attribute.
+#' @param ... Additional arguments.
 #' @return A data object of the same class as the function was given.
 #' @examples
 #'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
@@ -121,14 +123,14 @@ bind_node_attributes <- function(.data, object2){
 #' @rdname add_nodes 
 #' @param join_type A type of join to be used.
 #'   Options are "full","left", "right", "inner".
-#' @param by An attribute name to join objects by.
+#' @param .by An attribute name to join objects by.
 #'   By default, NULL.
 #' @examples
 #'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
 #'   another <- create_filled(3) %>% mutate(name = c("E", "F", "G"))
 #'   join_nodes(another, other)
 #' @export
-join_nodes <- function(.data, object2, by = NULL,
+join_nodes <- function(.data, object2, .by = NULL,
                        join_type = c("full","left", "right", "inner")){
   join_type <- match.arg(join_type)
   out <- as_tidygraph(.data)
@@ -153,10 +155,14 @@ rename <- tidygraph::rename
 #' @rdname add_nodes
 #' @importFrom tidygraph filter
 #' @export
-filter_nodes <- tidygraph::filter
+filter_nodes <- function(.data., ..., .by){
+  tidygraph::filter(.data., ..., .by = .by)
+}
 
 #' @rdname add_nodes
 #' @importFrom tidygraph filter
 #' @export
-filter <- tidygraph::filter
+filter <- function(.data., ..., .by){
+  tidygraph::filter(.data., ..., .by = .by)
+}
 

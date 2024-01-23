@@ -23,6 +23,8 @@ tie_is_min(tie_measure)
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
 
+\item{size}{The number of nodes to select (as TRUE).}
+
 \item{tie_measure}{An object created by a \code{tie_} measure.}
 }
 \description{

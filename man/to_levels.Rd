@@ -25,15 +25,6 @@ to_multilevel(.data)
 
 \item{mark}{A logical vector marking two types or modes.
 By default "type".}
-
-\item{tie}{Character string naming a tie attribute to retain from a graph.}
-
-\item{keep}{In the case of a signed network, whether to retain
-the "positive" or "negative" ties.}
-
-\item{threshold}{For a matrix, the threshold to binarise/dichotomise at.}
-
-\item{names}{Character vector of the node names. NULL by default.}
 }
 \value{
 All \code{to_} functions return an object of the same class as that provided.

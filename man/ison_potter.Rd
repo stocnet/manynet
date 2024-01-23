@@ -3,7 +3,7 @@
 \docType{data}
 \name{ison_potter}
 \alias{ison_potter}
-\title{Six complex one-mode support data in Harry Potter books (Coleman, Katz, and Menzel, 1966)}
+\title{Six complex one-mode support data in Harry Potter books (Bossaert and Meidert 2013)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> $book1
 #> # A labelled, complex, directed network with 64 nodes and 47 arcs

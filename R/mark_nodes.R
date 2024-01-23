@@ -14,8 +14,6 @@
 #'   - `node_is_fold()` marks nodes that are in a structural fold between two or more
 #'   triangles that are only connected by that node.
 #'   - `node_is_mentor()` marks a proportion of high indegree nodes as 'mentors' (see details)
-#'   - `node_is_infected()` and `node_is_exposed()` marks nodes that are infected
-#'   by a particular time point or exposed to a given (other) mark
 #' @inheritParams is
 #' @family marks
 #' @name mark_nodes

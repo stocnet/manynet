@@ -23,7 +23,7 @@ mutate_ties(.data, ...)
 
 rename_ties(.data, ...)
 
-bind_ties(.data, ..., node_key = "name")
+bind_ties(.data, ...)
 
 join_ties(.data, object2, attr_name)
 
@@ -45,11 +45,15 @@ summarise_ties(.data, ...)
 
 \item{ties}{The number of ties to be added or an even list of ties.}
 
+\item{attribute}{A named list to be added as tie or node attributes.}
+
 \item{attr_name}{Name of the new attribute in the resulting object.}
+
+\item{vector}{A vector of values for the new attribute.}
 
 \item{...}{Additional arguments.}
 
-\item{object2}{A second object to copy nodes or edges from.}
+\item{object2}{A second object to copy nodes or ties from.}
 }
 \value{
 A tidygraph (\code{tbl_graph}) data object.
@@ -72,6 +76,7 @@ Note that while \verb{add_*()}/\verb{delete_*()} functions operate similarly as 
 \verb{mutate*()}, \verb{bind*()}, etc work like \code{{tidyverse}} or \code{{dplyr}}-style functions.
 }
 \examples{
+  other <- create_filled(4) \%>\% mutate(name = c("A", "B", "C", "D"))
   mutate_ties(other, form = 1:6) \%>\% filter_ties(form < 4)
   add_tie_attribute(other, "weight", c(1, 2, 2, 2, 1, 2))
 }

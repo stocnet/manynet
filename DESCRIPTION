@@ -1,12 +1,12 @@
 Package: manynet
-Title: Many Ways to Make, Modify, and Map Myriad Networks
-Version: 0.4.0
-Date: 2024-01-15
-Description: A set of tools for making, modifying, and mapping many different types of networks.
+Title: Many Ways to Make, Modify, Mark, and Map Myriad Networks
+Version: 1.0.0
+Date: 2024-01-24
+Description: A set of tools for making, modifying, marking, and mapping many different types of networks.
    All functions operate with matrices, edge lists, and 'igraph', 'network', and 'tidygraph' objects,
    and on one-mode, two-mode (bipartite), and sometimes three-mode networks.
    The package includes functions for importing and exporting, creating and generating networks,
-   molding and manipulating networks and node and tie attributes,
+   modifying networks and node and tie attributes,
    and describing and visualizing networks with sensible defaults.
 URL: https://stocnet.github.io/manynet/
 BugReports: https://github.com/stocnet/manynet/issues
