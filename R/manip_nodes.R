@@ -86,6 +86,21 @@ add_node_attribute <- function(.data, attr_name, vector){
           message("This function only works for igraph, tidygraph, or network objects.")
 }
 
+#' @rdname add_nodes
+#' @importFrom tidygraph mutate
+#' @export
+mutate_nodes <- tidygraph::mutate
+
+#' @rdname add_nodes
+#' @importFrom tidygraph mutate
+#' @export
+mutate <- tidygraph::mutate
+
+#' @export
+mutate.igraph <- function(.data, ...){
+  .data %>% as_tidygraph() %>% 
+    mutate(...) %>% as_igraph()
+}
 
 #' @rdname add_nodes
 #' @export

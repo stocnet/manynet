@@ -34,10 +34,6 @@ tidygraph::.N
 #' @export
 tidygraph::.E
 
-#' @importFrom tidygraph mutate
-#' @export
-tidygraph::mutate
-
 #' @importFrom tidygraph rename
 #' @export
 tidygraph::rename

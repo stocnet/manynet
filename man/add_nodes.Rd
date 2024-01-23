@@ -4,6 +4,8 @@
 \alias{add_nodes}
 \alias{delete_nodes}
 \alias{add_node_attribute}
+\alias{mutate_nodes}
+\alias{mutate}
 \alias{bind_node_attributes}
 \alias{join_nodes}
 \title{Modifying node data}
@@ -14,6 +16,9 @@ delete_nodes(.data, nodes)
 
 add_node_attribute(.data, attr_name, vector)
 
+mutate_nodes(.data, ...)
+
+mutate(.data, ...)
 
 bind_node_attributes(.data, object2)
 
