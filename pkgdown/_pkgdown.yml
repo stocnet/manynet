@@ -54,36 +54,29 @@ reference:
       new data on nodes or ties to networks.
     contents:
       - starts_with("as_")
+      - starts_with("add_")
       - starts_with("to_")
       - starts_with("from_")
       - starts_with("na_to_")
-      - starts_with("add_")
-      - starts_with("join_")
   - title: "Marking"
     desc: |
-      Functions for identifying properties of graphs, nodes or ties,
+      Functions for identifying properties of networks, nodes, or ties,
       all returning logical scalars or vectors.
       Note that all `node_` and `tie_` measures return a single vector
       so that they can be added directly to graph objects.
       `network_` measures return one or, in some cases of two-mode measures,
       two values.
+      All `node_` and `tie_` measures return a single vector,
+      the length of the nodes or ties in the network, respectively.
     contents:
       - contains("is_")
   - title: "Mapping"
     desc: |
-      Functions for informatively describing networks.
-      This includes identifying properties of networks, nodes, or ties
-      as well as plotting and visualising graphs of different types.
-      The `is_*()` family all return logical scalars (TRUE or FALSE).
-      `network_` measures return one or, in some cases of two-mode measures,
-      two values.
-      All `node_` and `tie_` measures return a single vector,
-      the length of the nodes or ties in the network, respectively.
+      Functions for plotting and visualising graphs of different types.
       `autographr()` graphs any manynet-compatible class object automagically.
       `autographs()` and `autographd()` do the same for multiple networks
       and dynamic networks, respectively.
     contents:
-      - starts_with("is_")
       - starts_with("network_")
       - starts_with("node_")
       - starts_with("autograph")

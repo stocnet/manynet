@@ -125,11 +125,11 @@ as_network(test)
 \seealso{
 Other modifications: 
 \code{\link{add}},
+\code{\link{add_ties}()},
 \code{\link{from}},
 \code{\link{miss}},
 \code{\link{reformat}},
 \code{\link{split}()},
-\code{\link{tidy}},
 \code{\link{to_levels}},
 \code{\link{to_paths}},
 \code{\link{to_project}},

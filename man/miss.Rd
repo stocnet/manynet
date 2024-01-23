@@ -55,11 +55,11 @@ Krause, Robert, Mark Huisman, Christian Steglich, and Tom A.B. Snijders. 2020.
 \seealso{
 Other modifications: 
 \code{\link{add}},
+\code{\link{add_ties}()},
 \code{\link{as}()},
 \code{\link{from}},
 \code{\link{reformat}},
 \code{\link{split}()},
-\code{\link{tidy}},
 \code{\link{to_levels}},
 \code{\link{to_paths}},
 \code{\link{to_project}},

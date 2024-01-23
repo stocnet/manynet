@@ -71,12 +71,12 @@ Below are the currently implemented S3 methods:\tabular{lrrrr}{
 \seealso{
 Other modifications: 
 \code{\link{add}},
+\code{\link{add_ties}()},
 \code{\link{as}()},
 \code{\link{from}},
 \code{\link{miss}},
 \code{\link{reformat}},
 \code{\link{split}()},
-\code{\link{tidy}},
 \code{\link{to_paths}},
 \code{\link{to_project}},
 \code{\link{to_scope}}

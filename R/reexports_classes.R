@@ -41,11 +41,6 @@ tidygraph::mutate
 #' @importFrom tidygraph rename
 #' @export
 tidygraph::rename
-
-#' @importFrom tidygraph bind_edges
-#' @export
-tidygraph::bind_edges
-
 # expect_nodes <- function() {
 #   if (!.graph_context$free() && .graph_context$active() != "nodes") {
 #     stop("This call requires nodes to be active", call. = FALSE)
