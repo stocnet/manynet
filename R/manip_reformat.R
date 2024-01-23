@@ -9,6 +9,9 @@
 #'   these functions always return the same object type as they are given,
 #'   only transforming these objects' properties.
 #' 
+#'   - `to_anti()` transforms a network into its complement, where only ties _not_ present in the original network
+#'   are included in the new network.
+#' @details
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
@@ -550,4 +553,47 @@ to_twomode.tbl_graph <- function(.data, mark){
 #' @export
 to_twomode.network <- function(.data, mark){
   as_network(to_twomode(as_igraph(.data), mark), twomode = TRUE)
+}
+
+#' @rdname reformat
+#' @importFrom igraph complementer
+#' @examples
+#' to_anti(ison_southern_women)
+#' #autographr(to_anti(ison_southern_women))
+#' @export
+to_anti <- function(.data) UseMethod("to_anti")
+
+#' @export
+to_anti.matrix <- function(.data){
+  matrix(1, nrow(.data), ncol(.data)) - .data
+}
+
+#' @export
+to_anti.data.frame <- function(.data){
+  as_edgelist.matrix(to_anti.matrix(as_matrix(.data)))
+}
+
+#' @export
+to_anti.igraph <- function(.data){
+  if(is_twomode(.data)){
+    as_igraph(to_anti.matrix(as_matrix(.data)))
+  } else {
+    igraph::complementer(as_igraph(.data), 
+                         loops = is_complex(.data))
+  }
+}
+
+#' @export
+to_anti.tbl_graph <- function(.data){
+  if(is_twomode(.data)){
+    as_tidygraph(to_anti.matrix(as_matrix(.data)))
+  } else {
+    as_tidygraph(igraph::complementer(as_igraph(.data), 
+                                      loops = is_complex(.data)))
+  }
+}
+
+#' @export
+to_anti.network <- function(.data){
+  as_network(to_anti(as_igraph(.data)))
 }

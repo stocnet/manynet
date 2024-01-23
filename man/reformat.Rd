@@ -16,6 +16,7 @@
 \alias{to_onemode}
 \alias{to_multilevel}
 \alias{to_twomode}
+\alias{to_anti}
 \title{Modifying network formats}
 \usage{
 to_uniplex(.data, tie)
@@ -45,6 +46,8 @@ to_onemode(.data)
 to_multilevel(.data)
 
 to_twomode(.data, mark)
+
+to_anti(.data)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -80,7 +83,12 @@ These functions offer tools for reformatting manynet-consistent objects
 Unlike the \verb{as_*()} group of functions,
 these functions always return the same object type as they are given,
 only transforming these objects' properties.
-
+\itemize{
+\item \code{to_anti()} transforms a network into its complement, where only ties \emph{not} present in the original network
+are included in the new network.
+}
+}
+\details{
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:\tabular{lrrrrr}{
     \tab data.frame \tab igraph \tab matrix \tab network \tab tbl_graph \cr
@@ -148,6 +156,8 @@ but embeds two or more modes into a multimodal network structure.
 as_tidygraph(create_filled(5)) \%>\%
   mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) \%>\%
   to_uniplex("friend")
+to_anti(ison_southern_women)
+#autographr(to_anti(ison_southern_women))
 }
 \seealso{
 Other modifications: 
@@ -157,6 +167,8 @@ Other modifications:
 \code{\link{miss}},
 \code{\link{split}()},
 \code{\link{tidy}},
-\code{\link{transform}()}
+\code{\link{to_paths}},
+\code{\link{to_project}},
+\code{\link{to_scope}}
 }
 \concept{modifications}
