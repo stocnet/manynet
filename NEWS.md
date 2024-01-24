@@ -10,6 +10,7 @@
   - Moved some functions around for more thematic documentation
 - Added `pkg_data()` to report an overview of data contained within the package(s)
 - Updated README and DESCRIPTION with new organisational affiliation: stocnet/manynet
+- Updated tests to be consistent with future `{ggplot2}` release
 
 ## Making
 
