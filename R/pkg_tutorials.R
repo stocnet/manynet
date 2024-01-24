@@ -29,7 +29,7 @@ run_tute <- function(tute) {
                            silent = TRUE) %>% dplyr::select(1:3)
     t2 <- dplyr::as_tibble(learnr::available_tutorials(package = "migraph"),
                            silent = TRUE) %>% dplyr::select(1:3)
-    rbind(t1, t2)
+    rbind(t1, t2) %>% dplyr::arrange(name) 
   } else {
     try(learnr::run_tutorial(tute, "manynet"), silent = TRUE)
     try(learnr::run_tutorial(tute, "migraph"), silent = TRUE)

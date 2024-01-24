@@ -186,6 +186,23 @@ e.g. two-mode networks.
 autographr(generate_smallworld(15, directed = TRUE), layout = "stress") + ggtitle("Small-World", subtitle = "generate_smallworld(15, directed = TRUE)") + autographr(generate_smallworld(c(10,5)), layout = "stress") + ggtitle("Small-World", subtitle = "generate_smallworld(c(10,5))")
 ```
 
+#### Inventing data on networks
+
+Lastly, `{manynet}` also includes functions for simulating diffusion
+or learning processes over a given network:
+
+- `r list_functions("^play_")`
+
+The diffusion models include not only SI and threshold models,
+but also SIS, SIR, SIRS, SEIR, and SEIRS.
+
+## Modifying
+
+Before or during analysis, you may need to modify the network you are analysing in various ways.
+Different packages have different syntaxes and vocabulary for such actions;
+`{manynet}`'s `to_*()` functions can be used on any class object 
+to reformat, transform, or split networks into networks with other properties.
+
 #### Translating network data
 
 Once you have imported network data, 
@@ -219,13 +236,6 @@ whether you use base R matrices or edgelists as data frames,
 [`{network}`](https://statnet.org), or 
 [`{tidygraph}`](https://tidygraph.data-imaginist.com/index.html),
 and extensible by developments in those other packages too.
-
-## Modifying
-
-Before or during analysis, you may need to modify the network you are analysing in various ways.
-Different packages have different syntaxes and vocabulary for such actions;
-`{manynet}`'s `to_*()` functions can be used on any class object 
-to reformat, transform, or split networks into networks with other properties.
 
 ### Reformatting
 
@@ -271,11 +281,19 @@ Split data can be rejoined using the `from_*()` family of functions.
 
 See also `r list_functions("^to_")` and `r list_functions("^from_")`.
 
-### Extracting
+## Marking
 
-`{manynet}`'s `*is_*()` functions offer fast logical tests of various network properties.
+`{manynet}`'s `*is_*()` functions offer fast logical tests of various properties.
+Whereas `is_*()` returns a single logical value for the network,
+`node_is_*()` returns a logical vector the length of the number of nodes in the network,
+and `tie_is_*()` returns a logical vector the length of the number of ties in the network.
 
 - `r list_functions("^is_")`
+- `r list_functions("^node_is_")`
+- `r list_functions("^tie_is_")`
+
+The `*is_max()` and `*is_min()` functions are used to identify
+the maximum or minimum, respectively, node or tie according to some measure (see below).
 
 ## Mapping
 

@@ -153,6 +153,25 @@ unique offerings or add additional formats, e.g. two-mode networks.
 
 ![](https://www.jameshollway.com/post/manynet/README-generate_tm-1.png)
 
+#### Inventing data on networks
+
+Lastly, `{manynet}` also includes functions for simulating diffusion or
+learning processes over a given network:
+
+- `play_diffusion()`, `play_diffusions()`, `play_learning()`,
+  `play_segregation()`
+
+The diffusion models include not only SI and threshold models, but also
+SIS, SIR, SIRS, SEIR, and SEIRS.
+
+## Modifying
+
+Before or during analysis, you may need to modify the network you are
+analysing in various ways. Different packages have different syntaxes
+and vocabulary for such actions; `{manynet}`’s `to_*()` functions can be
+used on any class object to reformat, transform, or split networks into
+networks with other properties.
+
 #### Translating network data
 
 Once you have imported network data, identified network data in this or
@@ -175,14 +194,6 @@ whether you use base R matrices or edgelists as data frames,
 [`{igraph}`](https://igraph.org/r/), [`{network}`](https://statnet.org),
 or [`{tidygraph}`](https://tidygraph.data-imaginist.com/index.html), and
 extensible by developments in those other packages too.
-
-## Modifying
-
-Before or during analysis, you may need to modify the network you are
-analysing in various ways. Different packages have different syntaxes
-and vocabulary for such actions; `{manynet}`’s `to_*()` functions can be
-used on any class object to reformat, transform, or split networks into
-networks with other properties.
 
 ### Reformatting
 
@@ -221,10 +232,13 @@ See also `to_acyclic()`, `to_anti()`, `to_blocks()`, `to_components()`,
 `from_egos()`, `from_slices()`, `from_subgraphs()`, `from_ties()`,
 `from_waves()`.
 
-### Extracting
+## Marking
 
 `{manynet}`’s `*is_*()` functions offer fast logical tests of various
-network properties.
+properties. Whereas `is_*()` returns a single logical value for the
+network, `node_is_*()` returns a logical vector the length of the number
+of nodes in the network, and `tie_is_*()` returns a logical vector the
+length of the number of ties in the network.
 
 - `is_acyclic()`, `is_aperiodic()`, `is_complex()`, `is_connected()`,
   `is_directed()`, `is_dynamic()`, `is_edgelist()`, `is_eulerian()`,
@@ -232,6 +246,17 @@ network properties.
   `is_longitudinal()`, `is_manynet()`, `is_multiplex()`,
   `is_perfect_matching()`, `is_signed()`, `is_twomode()`,
   `is_uniplex()`, `is_weighted()`
+- `node_is_core()`, `node_is_cutpoint()`, `node_is_exposed()`,
+  `node_is_fold()`, `node_is_infected()`, `node_is_isolate()`,
+  `node_is_latent()`, `node_is_max()`, `node_is_mentor()`,
+  `node_is_min()`, `node_is_random()`, `node_is_recovered()`
+- `tie_is_bridge()`, `tie_is_feedback()`, `tie_is_loop()`,
+  `tie_is_max()`, `tie_is_min()`, `tie_is_multiple()`,
+  `tie_is_random()`, `tie_is_reciprocated()`
+
+The `*is_max()` and `*is_min()` functions are used to identify the
+maximum or minimum, respectively, node or tie according to some measure
+(see below).
 
 ## Mapping
 
@@ -364,18 +389,17 @@ use `{manynet}` or `{migraph}` tutorials right out of the box:
 
 ``` r
 run_tute()
-#> # A tibble: 9 × 3
+#> # A tibble: 8 × 3
 #>   package name      title        
 #>   <chr>   <chr>     <chr>        
 #> 1 manynet tutorial0 Intro to R   
 #> 2 manynet tutorial1 Data         
 #> 3 manynet tutorial2 Visualisation
-#> 4 migraph tutorial3 Centrality   
-#> 5 migraph tutorial4 Community    
-#> 6 migraph tutorial5 Position     
-#> 7 migraph tutorial6 Topology     
-#> 8 migraph tutorial7 Diffusion    
-#> 9 migraph tutorial8 Regression
+#> 4 migraph tutorial4 Centrality   
+#> 5 migraph tutorial5 Community    
+#> 6 migraph tutorial6 Position     
+#> 7 migraph tutorial7 Topology     
+#> 8 migraph tutorial8 Regression
 # run_tute("tutorial1")
 ```
 
