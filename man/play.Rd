@@ -104,7 +104,7 @@ By default "sequential", but if multiple cores available, then "multisession" or
 Generally this is useful only when times > 1000. See \code{{furrr}} for more.}
 
 \item{verbose}{Whether the function should report on its progress.
-By default FALSE. See {progressr} for more.}
+By default FALSE. See \code{{progressr}} for more.}
 }
 \description{
 These functions simulate diffusion or compartment models upon a network.
@@ -182,7 +182,6 @@ This can be used in in SEI, SEIS, SEIR, and SEIRS models.
 
 \examples{
   smeg <- generate_smallworld(15, 0.025)
-  plot(play_diffusion(smeg))
   plot(play_diffusion(smeg, recovery = 0.4))
   plot(play_diffusions(smeg, times = 20))
 }

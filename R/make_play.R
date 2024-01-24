@@ -123,7 +123,6 @@ NULL
 #' @rdname play
 #' @examples 
 #'   smeg <- generate_smallworld(15, 0.025)
-#'   plot(play_diffusion(smeg))
 #'   plot(play_diffusion(smeg, recovery = 0.4))
 #' @export
 play_diffusion <- function(.data, 
@@ -240,7 +239,7 @@ play_diffusion <- function(.data,
 #'   By default "sequential", but if multiple cores available, then "multisession" or "multicore" may be useful. 
 #'   Generally this is useful only when times > 1000. See `{furrr}` for more.
 #' @param verbose Whether the function should report on its progress. 
-#'   By default FALSE. See {progressr} for more.
+#'   By default FALSE. See `{progressr}` for more.
 #' @examples 
 #'   plot(play_diffusions(smeg, times = 20))
 #' @export

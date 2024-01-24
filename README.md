@@ -16,7 +16,7 @@ Release
 Date](https://img.shields.io/github/release-date/stocnet/manynet)
 [![Codecov test
 coverage](https://codecov.io/gh/stocnet/manynet/branch/main/graph/badge.svg)](https://app.codecov.io/gh/stocnet/manynet?branch=main)
-[![CodeFactor](https://www.codefactor.io/repository/github/stocnet/manynet/badge)](https://www.codefactor.io/repository/github/stocnet/manynet)
+<!-- [![CodeFactor](https://www.codefactor.io/repository/github/stocnet/manynet/badge)](https://www.codefactor.io/repository/github/stocnet/manynet) -->
 <!-- [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4559/badge)](https://bestpractices.coreinfrastructure.org/projects/4559) -->
 <!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7076396.svg)](https://doi.org/10.5281/zenodo.7076396) -->
 <!-- see https://zenodo.org/record/7076396 -->
@@ -112,9 +112,11 @@ for analysis. Here are just a few examples, all available in
 ![](https://www.jameshollway.com/post/manynet/README-ison_egs-1.png)
 
 Here are some others: `ison_adolescents`, `ison_algebra`,
-`ison_brandes`, `ison_friends`, `ison_karateka`, `ison_koenigsberg`,
-`ison_laterals`, `ison_lawfirm`, `ison_lotr`,
-`ison_marvel_relationships`, `ison_marvel_teams`, `ison_networkers`,
+`ison_brandes`, `ison_friends`, `ison_hightech`, `ison_karateka`,
+`ison_koenigsberg`, `ison_laterals`, `ison_lawfirm`, `ison_lotr`,
+`ison_marvel_relationships`, `ison_marvel_teams`,
+`ison_monastery_esteem`, `ison_monastery_influence`,
+`ison_monastery_like`, `ison_monastery_praise`, `ison_networkers`,
 `ison_physicians`, `ison_potter`, `ison_southern_women`,
 `ison_starwars`, `ison_usstates`
 
@@ -214,9 +216,10 @@ See also `to_acyclic()`, `to_anti()`, `to_blocks()`, `to_components()`,
 `to_mode2()`, `to_multilevel()`, `to_named()`, `to_no_isolates()`,
 `to_onemode()`, `to_reciprocated()`, `to_redirected()`, `to_simplex()`,
 `to_slices()`, `to_subgraph()`, `to_subgraphs()`, `to_ties()`,
-`to_twomode()`, `to_undirected()`, `to_uniplex()`, `to_unnamed()`,
-`to_unsigned()`, `to_unweighted()`, `to_waves()` and `from_egos()`,
-`from_slices()`, `from_subgraphs()`, `from_waves()`.
+`to_tree()`, `to_twomode()`, `to_undirected()`, `to_uniplex()`,
+`to_unnamed()`, `to_unsigned()`, `to_unweighted()`, `to_waves()` and
+`from_egos()`, `from_slices()`, `from_subgraphs()`, `from_ties()`,
+`from_waves()`.
 
 ### Extracting
 
@@ -225,9 +228,10 @@ network properties.
 
 - `is_acyclic()`, `is_aperiodic()`, `is_complex()`, `is_connected()`,
   `is_directed()`, `is_dynamic()`, `is_edgelist()`, `is_eulerian()`,
-  `is_graph()`, `is_labelled()`, `is_list()`, `is_longitudinal()`,
-  `is_manynet()`, `is_multiplex()`, `is_perfect_matching()`,
-  `is_signed()`, `is_twomode()`, `is_uniplex()`, `is_weighted()`
+  `is_graph()`, `is_igraph()`, `is_labelled()`, `is_list()`,
+  `is_longitudinal()`, `is_manynet()`, `is_multiplex()`,
+  `is_perfect_matching()`, `is_signed()`, `is_twomode()`,
+  `is_uniplex()`, `is_weighted()`
 
 ## Mapping
 

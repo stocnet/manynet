@@ -69,7 +69,7 @@ file formats:
 Note that these functions are not as actively maintained as others
 in the package, so please let us know if any are not currently working
 for you or if there are missing import routines
-by \href{https://github.com/snlab-ch/manynet/issues}{raising an issue on Github}.
+by \href{https://github.com/stocnet/manynet/issues}{raising an issue on Github}.
 }
 \seealso{
 \link{as}

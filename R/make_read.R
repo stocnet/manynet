@@ -19,7 +19,7 @@
 #'   Note that these functions are not as actively maintained as others
 #'   in the package, so please let us know if any are not currently working
 #'   for you or if there are missing import routines 
-#'   by [raising an issue on Github](https://github.com/snlab-ch/manynet/issues).
+#'   by [raising an issue on Github](https://github.com/stocnet/manynet/issues).
 #' @param file A character string with the system path to the file to import.
 #'   If left unspecified, an OS-specific file picker is opened to help users select it.
 #'   Note that in `read_ucinet()` the file path should be to the header file (.##h),
@@ -418,7 +418,7 @@ read_graphml <- function(file = file.choose()) {
 #'   Note that these functions are not as actively maintained as others
 #'   in the package, so please let us know if any are not currently working
 #'   for you or if there are missing import routines 
-#'   by [raising an issue on Github](https://github.com/snlab-ch/manynet/issues).
+#'   by [raising an issue on Github](https://github.com/stocnet/manynet/issues).
 #' @inheritParams is
 #' @param filename Character string filename.
 #'   If missing, the files will have the same name as the object
