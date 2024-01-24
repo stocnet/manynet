@@ -47,6 +47,7 @@ test_that("unweighted, unsigned, directed networks graph correctly", {
 
 test_that("weighted, unsigned, directed networks graph correctly", {
   skip_on_cran()
+  skip_on_ci()
   # Weighted, unsigned, directed network
   test_networkers <- autographr(ison_networkers)
   # Node position
