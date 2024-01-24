@@ -1,7 +1,7 @@
 # Test split functions
 
 egos <- ison_adolescents %>%
-    activate(edges)
+    tidygraph::activate(edges)
 
 test_that("to_ and from_ egos works", {
   expect_length(to_egos(ison_brandes), length(ison_brandes))
@@ -12,7 +12,7 @@ test_that("to_ and from_ egos works", {
 })
 
 unicorn <- ison_adolescents %>%
-    activate(nodes) %>%
+    tidygraph::activate(nodes) %>%
     mutate(unicorn = sample(c("yes", "no"), 8,
     replace = TRUE))
 
@@ -34,7 +34,7 @@ test_that("to_components works", {
 
 set.seed(1234)
 wave <- ison_adolescents %>%
-    activate(edges) %>%
+    tidygraph::activate(edges) %>%
     mutate(wave = sample(1995:1998, 10, replace = TRUE))
 
 test_that("to_waves works", {
@@ -49,7 +49,7 @@ test_that("to_waves works", {
 test_that("to_waves works for diff_model objects", {
   skip_on_cran()
   skip_on_ci()
-  wave_diff <- migraph::play_diffusion(ison_brandes)
+  wave_diff <- play_diffusion(ison_brandes)
   expect_length(to_waves(wave_diff), length(wave_diff$t))
   expect_equal(network_nodes(to_waves(wave_diff)[[1]]),
                network_nodes(to_waves(wave_diff)[[12]]))
@@ -57,10 +57,9 @@ test_that("to_waves works for diff_model objects", {
                network_ties(to_waves(wave_diff)[[12]]))
   expect_equal(network_nodes(to_waves(wave_diff)[[1]]),
                network_nodes(ison_brandes))
-  expect_equal(node_attribute(to_waves(wave_diff)[[11]], "Infected"),
-               c(rep("Infected", 11)))
-  expect_equal(node_attribute(to_waves(wave_diff)[[1]], "Infected"),
-               c("Infected", rep("Susceptible", 10)))
+  expect_true(node_attribute(to_waves(wave_diff)[[1]], "Infected")[1])
+  expect_false(node_attribute(to_waves(wave_diff)[[7]], "Exposed")[1])
+  expect_false(node_attribute(to_waves(wave_diff)[[10]], "Recovered")[1])
 })
 
 slice <- ison_adolescents %>%

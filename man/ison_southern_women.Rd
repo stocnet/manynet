@@ -9,12 +9,12 @@
 #> # A tibble: 32 x 2
 #>   type  name     
 #>   <lgl> <chr>    
-#> 1 FALSE EVELYN   
-#> 2 FALSE LAURA    
-#> 3 FALSE THERESA  
-#> 4 FALSE BRENDA   
-#> 5 FALSE CHARLOTTE
-#> 6 FALSE FRANCES  
+#> 1 FALSE Evelyn   
+#> 2 FALSE Laura    
+#> 3 FALSE Theresa  
+#> 4 FALSE Brenda   
+#> 5 FALSE Charlotte
+#> 6 FALSE Frances  
 #> # i 26 more rows
 #> # A tibble: 93 x 2
 #>    from    to

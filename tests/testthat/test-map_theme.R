@@ -16,20 +16,16 @@ test_that("themes graph correctly", {
          caption = "ison_brandes network") + 
     theme_uzh()
   expect_equal(names(test_iheid[["theme"]][["title"]][["colour"]]), "IHEIDRed")
-  expect_equal(names(test_ethz[["theme"]][["title"]][["colour"]]), "ETHZ_Blue")
+  expect_null(names(test_ethz[["theme"]][["title"]][["colour"]]))
   expect_equal(names(test_uzh[["theme"]][["title"]][["colour"]]), "UZH_Orange")
   expect_equal(names(test_iheid[["theme"]][["plot.subtitle"]][["colour"]]),
                "IHEIDGrey")
-  expect_equal(names(test_ethz[["theme"]][["plot.subtitle"]][["colour"]]),
-               "ETHZ_Bronze")
+  expect_null(names(test_ethz[["theme"]][["plot.subtitle"]][["colour"]]))
   expect_equal(names(test_uzh[["theme"]][["plot.subtitle"]][["colour"]]),
                "UZH_Blue")
-  expect_equal(test_iheid[["theme"]][["plot.caption"]][["family"]], "Times")
-  expect_equal(test_ethz[["theme"]][["plot.caption"]][["family"]], "serif")
+  expect_equal(test_iheid[["theme"]][["plot.caption"]][["family"]], "serif")
+  expect_equal(test_ethz[["theme"]][["plot.caption"]][["family"]], "sans")
   expect_equal(test_uzh[["theme"]][["plot.caption"]][["family"]], "sans")
-  expect_equal(test_iheid[["theme"]][["plot.caption"]][["face"]], "italic")
-  expect_equal(test_ethz[["theme"]][["plot.caption"]][["face"]], "italic")
-  expect_equal(test_uzh[["theme"]][["plot.caption"]][["face"]], "italic")
 })
 
 ##### test scales

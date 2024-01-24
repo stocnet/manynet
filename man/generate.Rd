@@ -7,7 +7,7 @@
 \alias{generate_scalefree}
 \alias{generate_permutation}
 \alias{generate_utilities}
-\title{Make networks with a stochastic element}
+\title{Making networks with a stochastic element}
 \usage{
 generate_random(n, p = 0.5, directed = FALSE, with_attr = TRUE)
 
@@ -41,7 +41,7 @@ By default TRUE.}
 \item{width}{Integer specifying the width of the ring,
 breadth of the branches, or maximum extent of the neighbourbood.}
 
-\item{.data}{An object of a \code{{manynet}}-consistent class:
+\item{.data}{An object of a manynet-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
 \item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
@@ -66,35 +66,42 @@ The default 0 will recognise all changes in utility,
 but raising the threshold will mute any changes less than this threshold.}
 }
 \value{
-By default an \code{igraph} object is returned,
+By default a \code{tbl_graph} object is returned,
 but this can be coerced into other types of objects
-using \code{as_matrix()}, \code{as_tidygraph()}, or \code{as_network()}.
+using \code{as_edgelist()}, \code{as_matrix()},
+\code{as_tidygraph()}, or \code{as_network()}.
+
+By default, all networks are created as undirected.
+This can be overruled with the argument \code{directed = TRUE}.
+This will return a directed network in which the arcs are
+out-facing or equivalent.
+This direction can be swapped using \code{to_redirected()}.
+In two-mode networks, the directed argument is ignored.
 }
 \description{
 These functions are similar to the \verb{create_*} functions,
 but include some element of randomisation.
 They are particularly useful for creating a distribution of networks
 for exploring or testing network properties.
-Note that passing the first argument an empirical network
-will prompt these functions to generate a network with the same dimensions.
-}
-\section{Functions}{
 \itemize{
-\item \code{generate_random()}: Generates a random network with a particular probability.
-
-\item \code{generate_smallworld()}: Generates a small-world structure
-following the lattice rewiring model.
-
-\item \code{generate_scalefree()}: Generates a scale-free structure
-following the preferential attachment model.
-
-\item \code{generate_permutation()}: Generates a permutation of the original network
+\item \code{generate_random()} generates a random network with ties appearing at some probability.
+\item \code{generate_smallworld()} generates a small-world structure via ring rewiring at some probability.
+\item \code{generate_scalefree()} generates a scale-free structure via preferential attachment at some probability.
+\item \code{generate_permutation()} generates a permutation of the network
 using a Fisher-Yates shuffle on both the rows and columns (for a one-mode network)
 or on each of the rows and columns (for a two-mode network).
+\item \code{generate_utilities()} generates a random utility matrix.
+}
 
-\item \code{generate_utilities()}: Generates a utility matrix
-
-}}
+These functions can create either one-mode or two-mode networks.
+To create a one-mode network, pass the main argument \code{n} a single integer,
+indicating the number of nodes in the network.
+To create a two-mode network, pass \code{n} a vector of \emph{two} integers,
+where the first integer indicates the number of nodes in the first mode,
+and the second integer indicates the number of nodes in the second mode.
+As an alternative, an existing network can be provided to \code{n}
+and the number of modes, nodes, and directedness will be inferred.
+}
 \examples{
 autographr(generate_random(12, 0.4))
 # autographr(generate_random(c(6, 6), 0.4))
@@ -106,7 +113,7 @@ autographr(ison_adolescents)
 autographr(generate_permutation(ison_adolescents))
 }
 \references{
-Erdős, Paul, and Alfréd Rényi. (1959).
+Erdos, Paul, and Alfred Renyi. (1959).
 "\href{https://www.renyi.hu/~p_erdos/1959-11.pdf}{On Random Graphs I}"
 \emph{Publicationes Mathematicae}. 6: 290–297.
 
@@ -115,15 +122,17 @@ Watts, Duncan J., and Steven H. Strogatz. 1998.
 \emph{Nature} 393(6684):440–42.
 \doi{10.1038/30918}.
 
-Barabási, Albert-László, and Réka Albert. 1999.
+Barabasi, Albert-Laszlo, and Reka Albert. 1999.
 “Emergence of Scaling in Random Networks.”
 \emph{Science} 286(5439):509–12.
 \doi{10.1126/science.286.5439.509}.
 }
 \seealso{
 Other makes: 
-\code{\link{as}()},
 \code{\link{create}},
-\code{\link{read}}
+\code{\link{learning}},
+\code{\link{play}},
+\code{\link{read}},
+\code{\link{write}()}
 }
 \concept{makes}

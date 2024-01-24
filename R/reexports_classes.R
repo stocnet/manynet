@@ -1,6 +1,6 @@
-#' @importFrom igraph is.igraph
+#' @importFrom igraph is_igraph
 #' @export
-igraph::is.igraph
+igraph::is_igraph
 
 #' @importFrom network is.network
 #' @export
@@ -33,18 +33,6 @@ tidygraph::.N
 #' @importFrom tidygraph .E
 #' @export
 tidygraph::.E
-
-#' @importFrom tidygraph mutate
-#' @export
-tidygraph::mutate
-
-#' @importFrom tidygraph rename
-#' @export
-tidygraph::rename
-
-#' @importFrom tidygraph bind_edges
-#' @export
-tidygraph::bind_edges
 
 # expect_nodes <- function() {
 #   if (!.graph_context$free() && .graph_context$active() != "nodes") {

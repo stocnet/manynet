@@ -7,7 +7,7 @@
 \alias{to_components}
 \alias{to_waves}
 \alias{to_slices}
-\title{Tools for splitting networks, graphs, and matrices into lists}
+\title{Splitting networks into lists}
 \usage{
 to_egos(.data, max_dist = 1, min_dist = 0)
 
@@ -20,7 +20,7 @@ to_waves(.data, attribute = "wave", panels = NULL, cumulative = FALSE)
 to_slices(.data, attribute = "time", slice = NULL)
 }
 \arguments{
-\item{.data}{An object of a \code{{manynet}}-consistent class:
+\item{.data}{An object of a manynet-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
 \item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
@@ -103,12 +103,16 @@ ison_adolescents \%>\%
   to_slices(slice = 7)
 }
 \seealso{
-Other manipulations: 
-\code{\link{add}},
+Other modifications: 
+\code{\link{add_nodes}()},
+\code{\link{add_ties}()},
+\code{\link{as}()},
 \code{\link{from}},
 \code{\link{miss}},
 \code{\link{reformat}},
-\code{\link{tidy}},
-\code{\link{transform}()}
+\code{\link{to_levels}},
+\code{\link{to_paths}},
+\code{\link{to_project}},
+\code{\link{to_scope}}
 }
-\concept{manipulations}
+\concept{modifications}

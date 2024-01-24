@@ -5,28 +5,31 @@
 \alias{ison_lawfirm}
 \title{One-mode lawfirm (Lazega 2001)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A undirected network with 36 nodes and 115 ties
-#> # A tibble: 36 x 8
-#>   Seniority Status  Gender Office   Years   Age Practice   School      
-#>       <int> <chr>   <chr>  <chr>    <int> <int> <chr>      <chr>       
-#> 1         1 Partner Man    Boston      31    64 Litigation Harvard/Yale
-#> 2         2 Partner Man    Boston      32    62 Corporate  Harvard/Yale
-#> 3         3 Partner Man    Hartford    13    67 Litigation Harvard/Yale
-#> 4         4 Partner Man    Boston      31    59 Corporate  Other       
-#> 5         5 Partner Man    Hartford    31    59 Litigation Connecticut 
-#> 6         6 Partner Man    Hartford    29    55 Litigation Harvard/Yale
-#> # i 30 more rows
-#> # A tibble: 115 x 2
-#>    from    to
-#>   <int> <int>
-#> 1     1    17
-#> 2     2     7
-#> 3     2    16
-#> 4     2    17
-#> 5     2    22
-#> 6     2    26
-#> # i 109 more rows
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A multiplex, directed network with 71 nodes and 2571 arcs
+#> # A tibble: 71 x 7
+#>   status  gender office   seniority   age practice   school      
+#>   <chr>   <chr>  <chr>        <dbl> <dbl> <chr>      <chr>       
+#> 1 partner man    Boston          31    64 litigation Harvard/Yale
+#> 2 partner man    Boston          32    62 corporate  Harvard/Yale
+#> 3 partner man    Hartford        13    67 litigation Harvard/Yale
+#> 4 partner man    Boston          31    59 corporate  Other       
+#> 5 partner man    Hartford        31    59 litigation UConn       
+#> 6 partner man    Hartford        29    55 litigation Harvard/Yale
+#> # i 65 more rows
+#> # A tibble: 2,571 x 3
+#>    from    to type   
+#>   <int> <int> <chr>  
+#> 1     1     2 friends
+#> 2     1     2 advice 
+#> 3     1     4 friends
+#> 4     1     8 friends
+#> 5     1    17 friends
+#> 6     1    17 advice 
+#> # i 2,565 more rows
 }\if{html}{\out{</div>}}
+}
+\source{
+\code{{networkdata}}
 }
 \usage{
 data(ison_lawfirm)

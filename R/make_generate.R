@@ -1,26 +1,49 @@
-#' Make networks with a stochastic element
+#' Making networks with a stochastic element
 #' 
 #' @description These functions are similar to the `create_*` functions,
 #'   but include some element of randomisation. 
 #'   They are particularly useful for creating a distribution of networks 
 #'   for exploring or testing network properties.
-#'   Note that passing the first argument an empirical network
-#'   will prompt these functions to generate a network with the same dimensions.
+#'   
+#'   - `generate_random()` generates a random network with ties appearing at some probability.
+#'   - `generate_smallworld()` generates a small-world structure via ring rewiring at some probability.
+#'   - `generate_scalefree()` generates a scale-free structure via preferential attachment at some probability.
+#'   - `generate_permutation()` generates a permutation of the network
+#'   using a Fisher-Yates shuffle on both the rows and columns (for a one-mode network)
+#'   or on each of the rows and columns (for a two-mode network).
+#'   - `generate_utilities()` generates a random utility matrix.
+#'
+#'   These functions can create either one-mode or two-mode networks.
+#'   To create a one-mode network, pass the main argument `n` a single integer,
+#'   indicating the number of nodes in the network.
+#'   To create a two-mode network, pass `n` a vector of \emph{two} integers,
+#'   where the first integer indicates the number of nodes in the first mode,
+#'   and the second integer indicates the number of nodes in the second mode.
+#'   As an alternative, an existing network can be provided to `n`
+#'   and the number of modes, nodes, and directedness will be inferred.
 #' @name generate
 #' @family makes
 #' @inheritParams create
 #' @inheritParams is
 #' @param directed Whether to generate network as directed. By default FALSE.
-#' @return By default an `igraph` object is returned,
+#' @return By default a `tbl_graph` object is returned,
 #'   but this can be coerced into other types of objects
-#'   using `as_matrix()`, `as_tidygraph()`, or `as_network()`.
+#'   using `as_edgelist()`, `as_matrix()`,
+#'   `as_tidygraph()`, or `as_network()`.
+#'   
+#'   By default, all networks are created as undirected.
+#'   This can be overruled with the argument `directed = TRUE`.
+#'   This will return a directed network in which the arcs are
+#'   out-facing or equivalent.
+#'   This direction can be swapped using `to_redirected()`.
+#'   In two-mode networks, the directed argument is ignored.
 NULL
 
-#' @describeIn generate Generates a random network with a particular probability.
+#' @rdname generate 
 #' @param p Proportion of possible ties in the network that are realised or,
 #'   if integer greater than 1, the number of ties in the network.
 #' @references 
-#' Erdős, Paul, and Alfréd Rényi. (1959). 
+#' Erdos, Paul, and Alfred Renyi. (1959). 
 #' "\href{https://www.renyi.hu/~p_erdos/1959-11.pdf}{On Random Graphs I}" 
 #' _Publicationes Mathematicae_. 6: 290–297.
 #' @importFrom igraph sample_bipartite sample_gnp sample_gnm
@@ -73,8 +96,7 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
   g
 }
 
-#' @describeIn generate Generates a small-world structure
-#'   following the lattice rewiring model.
+#' @rdname generate 
 #' @param p Proportion of possible ties in the network that are realised or,
 #'   if integer greater than 1, the number of ties in the network.
 #' @references 
@@ -101,12 +123,11 @@ generate_smallworld <- function(n, p = 0.05, directed = FALSE, width = 2) {
   g
 }
 
-#' @describeIn generate Generates a scale-free structure
-#'   following the preferential attachment model.
+#' @rdname generate 
 #' @param p Power of the preferential attachment, default is 1.
 #' @importFrom igraph sample_pa
 #' @references 
-#' Barabási, Albert-László, and Réka Albert. 1999. 
+#' Barabasi, Albert-Laszlo, and Reka Albert. 1999. 
 #' “Emergence of Scaling in Random Networks.” 
 #' _Science_ 286(5439):509–12. 
 #' \doi{10.1126/science.286.5439.509}.
@@ -131,9 +152,7 @@ generate_scalefree <- function(n, p = 1, directed = FALSE) {
   g
 }
 
-#' @describeIn generate Generates a permutation of the original network
-#'   using a Fisher-Yates shuffle on both the rows and columns (for a one-mode network)
-#'   or on each of the rows and columns (for a two-mode network).
+#' @rdname generate 
 #' @param with_attr Logical whether any attributes of the object
 #'   should be retained. 
 #'   By default TRUE. 
@@ -152,7 +171,7 @@ generate_permutation <- function(.data, with_attr = TRUE) {
   out
 }
 
-#' @describeIn generate Generates a utility matrix
+#' @rdname generate 
 #' @param steps Number of simulation steps to run.
 #'   By default 1: a single, one-shot simulation.
 #'   If more than 1, further iterations will update the utilities

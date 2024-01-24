@@ -12,7 +12,6 @@
 #'   The "hierarchy" layout layers the first node set along the bottom,
 #'   and the second node set along the top, 
 #'   sequenced and spaced as necessary to minimise edge overlap.
-#'   These node sets can be arranged using the "center" argument.
 #'   The "alluvial" layout is similar to "hierarchy", 
 #'   but places successive layers horizontally rather than vertically.
 #'   The "railway" layout is similar to "hierarchy",
@@ -23,30 +22,30 @@
 #'   around a circle, with successive layers appearing as concentric circles.
 #'   The "multilevel" layout places successive layers as multiple levels.
 #'   The "lineage" layout ranks nodes in Y axis according to values.
-#'   These values for ranking the nodes should be declared as a node attribute
-#'   in the "rank" argument.
 #' @name partition_layouts
-#' @inheritParams transform
+#' @inheritParams is
 #' @param circular Should the layout be transformed into a radial representation. 
 #' Only possible for some layouts. Defaults to FALSE.
-#' @param center Further split "hierarchical" layouts by
-#'   declaring the "center" argument as the "events", "actors",
-#'   or by declaring a node name.
-#'   Defaults to NULL.
 #' @param times Maximum number of iterations, where appropriate
 #' @param radius A vector of radii at which the concentric circles
-#'   should be located.
+#'   should be located for "concentric" layout.
 #'   By default this is equal placement around an empty centre, 
 #'   unless one (the core) is a single node,
 #'   in which case this node occupies the centre of the graph.
 #' @param order.by An attribute label indicating the (decreasing) order
-#'   for the nodes around the circles. 
+#'   for the nodes around the circles for "concentric" layout.
 #'   By default ordering is given by a bipartite placement that reduces
 #'   the number of edge crossings.
+#' @param membership A node attribute or a vector to draw concentric circles
+#'   for "concentric" layout.
+#' @param center Further split "hierarchical" layouts by
+#'   declaring the "center" argument as the "events", "actors",
+#'   or by declaring a node name in hierarchy layout. 
+#'   Defaults to NULL.
 #' @param level A node attribute or a vector to hierarchically order levels for
 #'   "multilevel" layout.
 #' @param rank A numerical node attribute to place nodes in Y axis
-#'   according to values.
+#'   according to values for "lineage" layout.
 #' @family mapping
 #' @source
 #'   Diego Diez, Andrew P. Hutchins and Diego Miranda-Saavedra. 2014.
@@ -159,10 +158,11 @@ layout_tbl_graph_ladder <- function(.data,
 
 #' @rdname partition_layouts
 #' @export
-layout_tbl_graph_concentric <- function(.data, membership = NULL, radius = NULL, 
+layout_tbl_graph_concentric <- function(.data, membership,
+                                        radius = NULL, 
                                         order.by = NULL, 
                                         circular = FALSE, times = 1000) {
-  if (is.null(membership)) { 
+  if (missing(membership)) { 
     if (is_twomode(.data)) membership <- node_mode(.data) else 
       stop("Please pass the function a `membership` node attribute or a vector.")
   } else {
@@ -189,17 +189,15 @@ layout_tbl_graph_concentric <- function(.data, membership = NULL, radius = NULL,
                            function(b) node_attribute(.data, b))
   } else {
     if (is_twomode(.data) & length(membership) == 2) {
-      for(k in 2:length(membership)) {
-      xnet <- as_matrix(to_multilevel(.data))[membership[[k-1]], 
-                                              membership[[k]]]
+      xnet <- as_matrix(to_multilevel(.data))[membership[[2-1]], 
+                                              membership[[2]]]
       lo <- layout_tbl_graph_hierarchy(as_igraph(xnet, twomode = TRUE))
       lo$names <- node_names(.data)
-      if (ncol(lo) == 2) lo[,1] <- seq_len(lo)
+      if (ncol(lo) == 2) lo[,1] <- seq_len(dim(lo)[1])
       order.values <- lapply(1:0, function(x)
         if(ncol(lo) >= 3) sort(lo[lo[,2] == x,])[,3] 
-        else sort(lo[lo[,2] == x,1]) ) 
-      } 
-    } else order.values <- membership
+        else sort(lo[lo[,2] == x,1])) 
+    } else order.values <- membership[order(sapply(membership, length))]
     # order.values <- getNNvec(.data, members)
   }
   res <- matrix(NA, nrow = length(all_n), ncol = 2)
@@ -215,8 +213,8 @@ layout_tbl_graph_concentric <- function(.data, membership = NULL, radius = NULL,
 
 #' @rdname partition_layouts
 #' @export
-layout_tbl_graph_multilevel <- function(.data, level = NULL, circular = FALSE) {
-  if (is.null(level)) { 
+layout_tbl_graph_multilevel <- function(.data, level, circular = FALSE) {
+  if (missing(level)) {
     if (any(grepl("lvl", names(node_attribute(.data))))) {
       message("Level attribute 'lvl' found in data.")
       } else {

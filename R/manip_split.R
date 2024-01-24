@@ -1,4 +1,4 @@
-#' Tools for splitting networks, graphs, and matrices into lists
+#' Splitting networks into lists
 #' 
 #' @description
 #'   These functions offer tools for splitting manynet-consistent objects
@@ -11,7 +11,7 @@
 #'    knitr::kable(available_methods(c("to_egos", "to_subgraphs", "to_components", "to_waves", "to_slices")))
 #'    ```
 #' @name split
-#' @family manipulations
+#' @family modifications
 #' @inheritParams reformat
 #' @return The returned object will be a list of network objects.
 NULL
@@ -227,81 +227,14 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
   diff <- .data
   out <- list()
   for (k in .data[[attribute]]) {
-    out[[paste("Time:", formatC(k, width = max(nchar(.data[[attribute]])), flag = 0))]] <- net %>%
-      tidygraph::mutate(Infected = .node_is_infected(diff, time = k),
-                        Exposed = .node_is_latent(diff, time = k),
-                        Recovered = .node_is_recovered(diff, time = k))# |>
-      # add_node_attribute("Infected", c(rep("Recovered", .data$R[k + 1]),
-      #                                  rep("Infected", .data$I[k + 1]),
-      #                                  rep("Exposed", .data$E[k + 1]),
-      #                                  rep("Susceptible", .data$S[k + 1]))) |> 
-      # dplyr::select(name, Infected)
+    out[[paste("Time:", formatC(k, width = max(nchar(.data[[attribute]])),
+                                flag = 0))]] <- net %>%
+      tidygraph::mutate(Infected = node_is_infected(diff, time = k),
+                        Exposed = node_is_latent(diff, time = k),
+                        Recovered = node_is_recovered(diff, time = k))
   }
   if (isTRUE(cumulative)) {
     out <- cumulative_ties(out, attribute)
-  }
-  out
-}
-
-.node_is_latent <- function(diff_model, time = 0){
-  event <- nodes <- NULL
-  latent <- summary(diff_model) |> 
-    dplyr::filter(t <= time & event %in% c("E","I")) |> 
-    dplyr::filter(!duplicated(nodes, fromLast = TRUE)) |> 
-    dplyr::filter(event == "E") |> 
-    dplyr::select(nodes)
-  net <- attr(diff_model, "network")
-  if(!is_labelled(net))
-    latent <- dplyr::arrange(latent, nodes) else if (is.numeric(latent$nodes))
-      latent$nodes <- node_names(net)[latent$nodes]
-  if(manynet::is_labelled(net)){
-    nnames <- manynet::node_names(net)
-    out <- stats::setNames(nnames %in% latent$nodes, nnames)
-  } else {
-    seq_len(manynet::network_nodes(net))
-    out <- seq_len(manynet::network_nodes(net)) %in% latent$nodes
-  }
-  out
-}
-
-.node_is_infected <- function(diff_model, time = 0){
-  event <- nodes <- NULL
-  infected <- summary(diff_model) |> 
-    dplyr::filter(t <= time & event %in% c("I","R")) |> 
-    dplyr::filter(!duplicated(nodes, fromLast = TRUE)) |> 
-    dplyr::filter(event == "I") |> 
-    dplyr::select(nodes)
-  net <- attr(diff_model, "network")
-  if(!is_labelled(net))
-    infected <- dplyr::arrange(infected, nodes) else if (is.numeric(infected$nodes))
-      infected$nodes <- node_names(net)[infected$nodes]
-  if(manynet::is_labelled(net)){
-    nnames <- manynet::node_names(net)
-    out <- stats::setNames(nnames %in% infected$nodes, nnames)
-  } else {
-    seq_len(manynet::network_nodes(net))
-    out <- seq_len(manynet::network_nodes(net)) %in% infected$nodes
-  }
-  out
-}
-
-.node_is_recovered <- function(diff_model, time = 0){
-  event <- nodes <- NULL
-  recovered <- summary(diff_model) |> 
-    dplyr::filter(t <= time & event %in% c("R","S")) |> 
-    dplyr::filter(!duplicated(nodes, fromLast = TRUE)) |> 
-    dplyr::filter(event == "R") |> 
-    dplyr::select(nodes)
-  net <- attr(diff_model, "network")
-  if(!manynet::is_labelled(net))
-    recovered <- dplyr::arrange(recovered, nodes) else if (is.numeric(recovered$nodes))
-      recovered$nodes <- node_names(net)[recovered$nodes]
-  if(manynet::is_labelled(net)){
-    nnames <- manynet::node_names(net)
-    out <- stats::setNames(nnames %in% recovered$nodes, nnames)
-  } else {
-    seq_len(manynet::network_nodes(net))
-    out <- seq_len(manynet::network_nodes(net)) %in% recovered$nodes
   }
   out
 }
@@ -310,7 +243,7 @@ cumulative_ties <- function(x, attribute) {
   edges <- to <- from <- NULL
   thisRequires("zoo")
   thisRequires("purrr")
-  ties <- data.frame("to" = 0, "from" = 0, "wave" = 0, "order" = 0)
+  ties <- data.frame()
   x <- lapply(x, as_tidygraph)
   for (k in seq_len(length(names(x)))) {
     a <- x[[k]] %>%
@@ -320,7 +253,6 @@ cumulative_ties <- function(x, attribute) {
       dplyr::select(to, from, dplyr::all_of(attribute), order)
     ties <- rbind(ties, a)
   }
-  ties <- ties[-1,]
   if (is.numeric(ties[[attribute]])) {
     ties <- ties[order(ties[[attribute]]),]
     a <- list()

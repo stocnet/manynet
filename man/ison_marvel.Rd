@@ -6,7 +6,7 @@
 \alias{ison_marvel_teams}
 \alias{ison_marvel_relationships}
 \title{Multilevel two-mode affiliation, signed one-mode networks of Marvel comic
-book characters (Yüksel 2017)}
+book characters (Yuksel 2017)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, two-mode network with 194 nodes and 683 ties
 #> # A tibble: 194 x 2
@@ -56,7 +56,7 @@ book characters (Yüksel 2017)}
 }\if{html}{\out{</div>}}
 }
 \source{
-Umut Yüksel, 31 March 2017
+Umut Yuksel, 31 March 2017
 }
 \usage{
 data(ison_marvel_teams)
@@ -76,7 +76,7 @@ Friendships are indicated by a positive sign in the tie \code{sign} attribute,
 whereas enmities are indicated by a negative sign in this edge attribute.
 }
 \details{
-Additional nodal variables have been coded and included by Dr Umut Yüksel:
+Additional nodal variables have been coded and included by Dr Umut Yuksel:
 \itemize{
 \item \strong{Gender}: binary character, 43 "Male" and 10 "Female"
 \item \strong{PowerOrigin}: binary character, 2 "Alien", 1 "Cyborg", 5 "God/Eternal",

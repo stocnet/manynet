@@ -100,7 +100,7 @@ test_that("read_ucinet and write_ucinet works", {
   expect_true(is.tbl_graph(testuci))
   expect_equal(nrow(as_edgelist(testuci)), 78)
   expect_equal(ncol(as_edgelist(testuci)), 2)
-  expect_equal(igraph::get.vertex.attribute(as_igraph(testuci), "name"), NULL)
+  expect_equal(igraph::vertex_attr(as_igraph(testuci), "name"), NULL)
   expect_error(read_ucinet(testthat::test_path("sheets", "ucinettest")))
   expect_error(read_ucinet(testthat::test_path("sheets", "ucinettest1.##h")))
   file <-  tempfile() # Create file
@@ -123,7 +123,7 @@ test_that("read_graphml and write_graphml works", {
   expect_error(read_graphml(testthat::test_path("sheets", "nassau")))
   path <-  tempfile() # Create file
   write_graphml(testgml, path)
-  testgml2 <- read_graphml(paste0(path))
+  testgml2 <- suppressWarnings(read_graphml(paste0(path)))
   expect_true(is.tbl_graph(testgml2))
   edgegml <- as_edgelist(testgml2)
   expect_length(edgegml$from, length(as_edgelist(testgml)$from))

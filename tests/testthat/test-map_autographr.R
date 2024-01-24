@@ -114,8 +114,8 @@ test_that("named networks plot correctly", {
 # Test that autographr() works with arguments without quotes
 test_that("node_group works correctly", {
   skip_on_cran()
-  expect_equal(autographr(ison_lawfirm, node_group = Gender),
-               autographr(ison_lawfirm, node_group = "Gender"))
+  expect_equal(autographr(ison_lawfirm, node_group = gender),
+               autographr(ison_lawfirm, node_group = "gender"))
 })
 
 test_that("unquoted arguments plot correctly", {

@@ -2,15 +2,23 @@
 #' 
 #' @description 
 #'   These functions make it easy to use the tutorials
-#'   in the `{manynet}` and `{migraph}` packages.
+#'   in the `{manynet}` and `{migraph}` packages:
+#'   
+#'   - `run_tute()` runs a `{learnr}` tutorial from 
+#'   either the `{manynet}` or `{migraph}` packages,
+#'   wraps `learnr::run_tutorial()` with some convenience.
+#'   - `extract_tute()` extracts and opens just the solution code
+#'   from a `{manynet}` or `{migraph}` tutorial,
+#'   saving the .R script to the current working directory.
+#'   - `pkg_data()` returns a tibble with details of the
+#'   network datasets included in the packages.
 #' @param tute String, name of the tutorial (e.g. "tutorial2").
-#' @importFrom dplyr %>% as_tibble select
+#' @param pkg String, name of the package.
+#' @importFrom dplyr %>% as_tibble select tibble
 #' @name tutorials
 NULL
 
-#' @describeIn tutorials Runs a `{learnr}` tutorial from 
-#'   either the `{manynet}` or `{migraph}` packages,
-#'   wraps `learnr::run_tutorial()` with some convenience
+#' @rdname tutorials 
 #' @examples
 #' #run_tute("tutorial2")
 #' @export
@@ -44,9 +52,7 @@ run_tute <- function(tute) {
   }
 }
 
-#' @describeIn tutorials Extracts and opens just the solution code
-#'   from a `{manynet}` or `{migraph}` tutorial,
-#'   saving the .R script to the current working directory
+#' @rdname tutorials 
 #' @examples
 #' #extract_tute("tutorial2")
 #' @export
@@ -71,3 +77,51 @@ extract_tute <- function(tute) {
   }
 }
 
+#' @rdname tutorials 
+#' @examples
+#' #pkg_data()
+#' # to obtain overview of unique datasets:
+#'  #pkg_data() %>% 
+#'   #dplyr::distinct(directed, weighted, twomode, signed, 
+#'    #               .keep_all = TRUE)
+#' @export
+pkg_data <- function(pkg = "manynet") {
+  nodes <- NULL
+  datanames <- utils::data(package = pkg)$results[,"Item"]
+  require(package = pkg, character.only = TRUE)
+  datasets <- lapply(datanames, function(d) get(d))
+  datanames <- datanames[!vapply(datasets, is_list, logical(1))]
+  datasets <- datasets[!vapply(datasets, is_list, logical(1))]
+  out <- dplyr::tibble(dataset = datanames,
+                        nodes = vapply(datasets, network_nodes, numeric(1)),
+                        ties = vapply(datasets, network_ties, numeric(1)),
+                        nattr = vapply(datasets, 
+                                            function (x) length(network_node_attributes(x)), 
+                                            numeric(1)),
+                        tattr = vapply(datasets, 
+                                            function (x) length(network_tie_attributes(x)), 
+                                            numeric(1)),
+                        directed = vapply(datasets, 
+                                        is_directed, 
+                                        logical(1)),
+                        weighted = vapply(datasets, 
+                                          is_weighted, 
+                                          logical(1)),
+                        twomode = vapply(datasets, 
+                                            is_twomode, 
+                                            logical(1)),
+                        labelled = vapply(datasets, 
+                                          is_labelled, 
+                                          logical(1)),
+                        signed = vapply(datasets, 
+                                          is_signed, 
+                                          logical(1)),
+                        multiplex = vapply(datasets, 
+                                        is_multiplex, 
+                                        logical(1)),
+                       acyclic = vapply(datasets, 
+                                          is_acyclic, 
+                                          logical(1)))
+  out <- dplyr::arrange(out, nodes)
+  out
+}
