@@ -2,19 +2,19 @@
 % Please edit documentation in R/map_attributes.R
 \name{attributes}
 \alias{attributes}
+\alias{node_attribute}
 \alias{node_names}
 \alias{node_mode}
-\alias{node_attribute}
 \alias{tie_attribute}
 \alias{tie_weights}
 \alias{tie_signs}
 \title{Describing attributes of nodes or ties in a network}
 \usage{
+node_attribute(.data, attribute)
+
 node_names(.data)
 
 node_mode(.data)
-
-node_attribute(.data, attribute)
 
 tie_attribute(.data, attribute)
 
@@ -23,7 +23,7 @@ tie_weights(.data)
 tie_signs(.data)
 }
 \arguments{
-\item{.data}{An object of a \code{{manynet}}-consistent class:
+\item{.data}{An object of a manynet-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
 \item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
@@ -34,33 +34,25 @@ tie_signs(.data)
 
 \item{attribute}{Character string naming an attribute in the object.}
 }
-\value{
+\description{
+These functions extract certain attributes from network data:
+\itemize{
+\item \code{node_attribute()} returns an attribute's values for the nodes in a network.
+\item \code{node_names()} returns the names of the nodes in a network.
+\item \code{node_mode()} returns the mode of the nodes in a network.
+\item \code{tie_attribute()} returns an attribute's values for the ties in a network.
+\item \code{tie_weights()} returns the weights of the ties in a network.
+\item \code{tie_signs()} returns the signs of the ties in a network.
+}
+
+These functions are also often used as helpers within other functions.
 \verb{node_*()} and \verb{tie_*()} always return vectors the same length
 as the number of nodes or ties in the network, respectively.
 }
-\description{
-These functions extract certain attributes from given network data.
-They are also useful as helpers within other functions.
-}
-\section{Functions}{
-\itemize{
-\item \code{node_names()}: Extracts the names of the nodes in a network.
-
-\item \code{node_mode()}: Extracts the mode of the nodes in a network.
-
-\item \code{node_attribute()}: Extracts an attribute's values for the nodes in a network.
-
-\item \code{tie_attribute()}: Extracts an attribute's values for the edges in a network.
-
-\item \code{tie_weights()}: Extracts the weights of the edges in a network.
-
-\item \code{tie_signs()}: Extracts the signs of the edges in a network.
-
-}}
 \examples{
+node_attribute(ison_lotr, "Race")
 node_names(ison_southern_women)
 node_mode(ison_southern_women)
-node_attribute(ison_lotr, "Race")
 tie_attribute(ison_algebra, "task_tie")
 tie_weights(to_mode1(ison_southern_women))
 tie_signs(ison_marvel_relationships)
@@ -69,7 +61,6 @@ tie_signs(ison_marvel_relationships)
 Other mapping: 
 \code{\link{autographing}},
 \code{\link{configuration_layouts}},
-\code{\link{is}()},
 \code{\link{partition_layouts}},
 \code{\link{properties}}
 }

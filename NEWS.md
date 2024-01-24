@@ -1,3 +1,72 @@
+# manynet 0.4.0
+
+2023-12-24
+
+## Package
+
+- Major overhaul of documentation
+  - Moved function description up so that it appears in tooltips
+  - Split documentation of many functions to provide more space for explanation
+  - Moved some functions around for more thematic documentation
+- Added `pkg_data()` to report an overview of data contained within the package(s)
+- Updated README and DESCRIPTION with new organisational affiliation: stocnet/manynet
+- Updated tests to be consistent with future `{ggplot2}` release
+
+## Making
+
+- Migrated `play_diffusion()` and `play_diffusions()` from `{migraph}`
+  - Including class creation, and `print()`, `summary()`, and `plot()` methods
+- Migrated `play_learning()` and `play_segregation()` from `{migraph}`
+  - Including class creation, and `print()`, `summary()`, and `plot()` methods
+- Fixed bug in `create_tree()` where it was not returning a two-mode network correctly
+
+## Modifying
+
+- Added `as_diffusion()` to coerce a table of diffusion events into diff_model class
+  - `as_*()` functions are now considered modifications
+- Completed a full range of tidy verbs for nodes
+  - Added `mutate_nodes()`
+  - Added `filter_nodes()`
+  - Added `rename_nodes()`
+- Completed a full range of tidy and igraph verbs for ties
+  - Added `bind_ties()`
+  - Added `delete_ties()`
+- Added `to_tree()` to find one or more spanning trees amongst a network's ties
+- Added `from_ties()` to collect multiple networks into a multiplex network
+
+## Marking
+
+- Renamed `is.igraph()` to `is_igraph()` for igraph v2.0.0
+- Added `is_list()` for identifying a list of networks
+- Migrated `node_is_core()`, `node_is_cutpoint()`,  `node_is_fold()`, `node_is_isolate()`,  `node_is_mentor()` from `{migraph}`
+- Migrated `node_is_exposed()`, `node_is_infected()`, `node_is_latent()`, `node_is_recovered()` from `{migraph}`
+- Migrated `node_is_max()`, `node_is_min()`, `node_is_random()` from `{migraph}`
+- Migrated `tie_is_bridge()`, `tie_is_loop()`,  `tie_is_multiple()`, `tie_is_reciprocated()` from `{migraph}`
+- Added `tie_is_feedback()`
+- Migrated `tie_is_max()`, `tie_is_min()` from `{migraph}`
+- Added `tie_is_random()`
+
+## Mapping
+
+- Added `scale_edge_color_centres()`,  `scale_edge_color_ethz()`,  `scale_edge_color_iheid()`,  `scale_edge_color_rug()`,  `scale_edge_color_sdgs()`
+  - Fixed bug that meant edge scales were unavailable (closes #43)
+- `autographr()` now provides legends by default where multiple colours are used (closes #52)
+- `autographs()` now labels legends correctly for binary variables (closes #38)
+- `autographs()` now graphs just the first and last networks in a list (closes #45)
+- `autographs()` now includes an option whether the layout should be based on the first, last, or both of two networks (closes #48)
+
+## Data
+
+- Renamed `ison_konigsberg` to `ison_koenigsberg` and named the bridges
+- `ison_algebra` now in long multiplex format
+- `ison_karateka` now weighted, anonymous members are named by number, and "obc" variable renamed "allegiance"
+- `ison_lawfirm` enlarged from 36 to 71 nodes and now consists of three multiplex, directed networks
+- `ison_southern_women` names are now title case
+- Added `ison_hightech`, a multiplex, directed network from Krackhardt 1987
+- Added four `ison_monastery` datasets, three of which are signed and weighted, and the other is longitudinal, from Sampson 1969 (closes #49)
+- Added six `ison_potter` datasets in a list of networks, from Bossaert and Meidert 2013 (closes #47)
+- Added `ison_usstates` data on the contiguity of US states, from Meghanathan 2017
+
 # manynet 0.3.1
 
 2023-12-17

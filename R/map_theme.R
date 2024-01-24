@@ -14,7 +14,7 @@ NULL
 
 #' @rdname themes
 #' @export
-theme_iheid <- function(base_size = 12, base_family = "Times") {
+theme_iheid <- function(base_size = 12, base_family = "serif") {
   colors <-  corp_palette("IHEID")
   (ggplot2::theme_minimal(base_size = base_size, base_family = base_family)
     + ggplot2::theme(
@@ -22,55 +22,14 @@ theme_iheid <- function(base_size = 12, base_family = "Times") {
       rect = ggplot2::element_rect(fill = "#FFFFFF", linetype = 1,
                                    linewidth = 0.6, colour = colors["IHEIDGrey"]),
       title = ggplot2::element_text(colour = colors["IHEIDRed"],
-                                    size = base_size,
-                           face = "bold"),
+                                    size = base_size, family = base_family,
+                                    face = "bold"),
       plot.subtitle = ggplot2::element_text(colors["IHEIDGrey"],
-                                   size = base_size*0.85, family = "Times",
-                                   face = "bold"),
+                                   size = base_size*0.85, family = base_family,
+                                   face = "bold.italic"),
       plot.caption = ggplot2::element_text(colors["IHEIDBlack"],
                                            size = base_size*0.75,
-                                  family = "Times",
-                                  face = "italic"),
-      axis.title = ggplot2::element_blank(),
-      axis.text = ggplot2::element_text(),
-      axis.ticks = ggplot2::element_blank(),
-      axis.line = ggplot2::element_blank(),
-      axis.title.x = ggplot2::element_blank(),
-      axis.text.x = ggplot2::element_blank(),
-      axis.ticks.x = ggplot2::element_blank(),
-      axis.title.y = ggplot2::element_blank(),
-      axis.text.y = ggplot2::element_blank(),
-      axis.ticks.y = ggplot2::element_blank(),
-      panel.grid.major = ggplot2::element_blank(),
-      panel.grid.minor = ggplot2::element_blank(),
-      legend.background = ggplot2::element_rect(),
-      legend.position = "bottom",
-      legend.direction = "horizontal",
-      legend.box = "vertical",
-      plot.title = ggplot2::element_text(hjust = 0, size = ggplot2::rel(1.5),
-                                         face = "bold"),
-      strip.background = ggplot2::element_rect()))
-}
-
-#' @rdname themes
-#' @export
-theme_ethz <- function(base_size = 12, base_family = "serif") {
-  colors <-  corp_palette("ETHZ")
-  (ggplot2::theme_minimal(base_size = base_size, base_family = base_family)
-    + ggplot2::theme(
-      line = ggplot2::element_line(colors["ETHZ_Green"]),
-      rect = ggplot2::element_rect(fill = "#FFFFFF", linetype = 1,
-                                   linewidth = 0.6, colour = colors["ETHZ_Petrol"]),
-      title = ggplot2::element_text(colour = colors["ETHZ_Blue"],
-                                    size = base_size,
-                                    face = "bold"),
-      plot.subtitle = ggplot2::element_text(colors["ETHZ_Bronze"],
-                                            size = base_size*0.85,
-                                            family = "serif",
-                                            face = "bold"),
-      plot.caption = ggplot2::element_text(colors["ETHZ_Red"],
-                                           size = base_size*0.75,
-                                           family = "serif",
+                                           family = base_family,
                                            face = "italic"),
       axis.title = ggplot2::element_blank(),
       axis.text = ggplot2::element_text(),
@@ -88,8 +47,45 @@ theme_ethz <- function(base_size = 12, base_family = "serif") {
       legend.position = "bottom",
       legend.direction = "horizontal",
       legend.box = "vertical",
-      plot.title = ggplot2::element_text(hjust = 0, size = ggplot2::rel(1.5),
-                                         face = "bold"),
+      strip.background = ggplot2::element_rect()))
+}
+
+#' @rdname themes
+#' @export
+theme_ethz <- function(base_size = 12, base_family = "sans") {
+  colors <-  corp_palette("ETHZ")
+  (ggplot2::theme_minimal(base_size = base_size, base_family = base_family)
+    + ggplot2::theme(
+      line = ggplot2::element_line(colors["ETHZ_Green"]),
+      rect = ggplot2::element_rect(fill = "#FFFFFF", linetype = 1,
+                                   linewidth = 0.6, colour = colors["ETHZ_Petrol"]),
+      title = ggplot2::element_text(colour = "black",
+                                    size = base_size, family = base_family,
+                                    face = "bold.italic"),
+      plot.subtitle = ggplot2::element_text("black",
+                                            size = base_size*0.85,
+                                            family = base_family,
+                                            face = "bold.italic"),
+      plot.caption = ggplot2::element_text("black",
+                                           size = base_size*0.75,
+                                           family = base_family,
+                                           face = "italic"),
+      axis.title = ggplot2::element_blank(),
+      axis.text = ggplot2::element_text(),
+      axis.ticks = ggplot2::element_blank(),
+      axis.line = ggplot2::element_blank(),
+      axis.title.x = ggplot2::element_blank(),
+      axis.text.x = ggplot2::element_blank(),
+      axis.ticks.x = ggplot2::element_blank(),
+      axis.title.y = ggplot2::element_blank(),
+      axis.text.y = ggplot2::element_blank(),
+      axis.ticks.y = ggplot2::element_blank(),
+      panel.grid.major = ggplot2::element_blank(),
+      panel.grid.minor = ggplot2::element_blank(),
+      legend.background = ggplot2::element_rect(),
+      legend.position = "bottom",
+      legend.direction = "horizontal",
+      legend.box = "vertical",
       strip.background = ggplot2::element_rect()))
 }
 
@@ -103,15 +99,15 @@ theme_uzh <- function(base_size = 12, base_family = "sans") {
       rect = ggplot2::element_rect(fill = "#FFFFFF", linetype = 1,
                                    linewidth = 0.6, colour = colors["UZH_Grey"]),
       title = ggplot2::element_text(colour = colors["UZH_Orange"],
-                                    size = base_size,
+                                    size = base_size, family = base_family,
                                     face = "bold"),
       plot.subtitle = ggplot2::element_text(colors["UZH_Blue"],
                                             size = base_size*0.85,
-                                            family = "sans",
-                                            face = "bold"),
+                                            family = base_family,
+                                            face = "bold.italic"),
       plot.caption = ggplot2::element_text(colors["UZH_Grey"],
                                            size = base_size*0.75,
-                                           family = "sans",
+                                           family = base_family,
                                            face = "italic"),
       axis.title = ggplot2::element_blank(),
       axis.text = ggplot2::element_text(),
@@ -129,8 +125,6 @@ theme_uzh <- function(base_size = 12, base_family = "sans") {
       legend.position = "bottom",
       legend.direction = "horizontal",
       legend.box = "vertical",
-      plot.title = ggplot2::element_text(hjust = 0, size = ggplot2::rel(1.5),
-                                         face = "bold"),
       strip.background = ggplot2::element_rect()))
 }
 
@@ -144,15 +138,15 @@ theme_rug <- function(base_size = 12, base_family = "mono") {
       rect = ggplot2::element_rect(fill = "#FFFFFF", linetype = 1,
                                    linewidth = 0.6, colour = colors["RUG_Black"]),
       title = ggplot2::element_text(colour = colors["RUG_Red"],
-                                    size = base_size,
+                                    size = base_size, family = base_family,
                                     face = "bold"),
       plot.subtitle = ggplot2::element_text(colors["RUG_Black"],
                                             size = base_size*0.85,
-                                            family = "mono",
-                                            face = "bold"),
+                                            family = base_family,
+                                            face = "bold.italic"),
       plot.caption = ggplot2::element_text(colors["RUG_Red"],
                                            size = base_size*0.75,
-                                           family = "mono",
+                                           family = base_family,
                                            face = "italic"),
       axis.title = ggplot2::element_blank(),
       axis.text = ggplot2::element_text(),
@@ -170,8 +164,6 @@ theme_rug <- function(base_size = 12, base_family = "mono") {
       legend.position = "bottom",
       legend.direction = "horizontal",
       legend.box = "vertical",
-      plot.title = ggplot2::element_text(hjust = 0, size = ggplot2::rel(1.5),
-                                         face = "bold"),
       strip.background = ggplot2::element_rect()))
 }
 
@@ -186,6 +178,8 @@ theme_rug <- function(base_size = 12, base_family = "mono") {
 #' #mutate(core = migraph::node_is_core(ison_brandes)) %>%
 #' #autographr(node_color = "core") +
 #' #scale_color_iheid()
+#' #autographr(ison_physicians[[1]], edge_color = "type") +
+#' #scale_edge_color_ethz()
 NULL
 
 #' @rdname scales
@@ -193,7 +187,7 @@ NULL
 scale_fill_iheid <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "IHEID",
                           palette_gen(palette = "IHEID", direction),
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
@@ -201,12 +195,24 @@ scale_fill_iheid <- function(direction = 1, ...) {
 scale_colour_iheid <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "IHEID",
                           palette_gen(palette = "IHEID", direction),
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
 #' @export
 scale_color_iheid <- scale_colour_iheid
+
+#' @rdname scales
+#' @export
+scale_edge_colour_iheid <- function(direction = 1, ...) {
+  ggplot2::discrete_scale("edge_colour", "IHEID",
+                          palette_gen(palette = "IHEID", direction),
+                          na.value = "black", name = "", ...)
+}
+
+#' @rdname scales
+#' @export
+scale_edge_color_iheid <- scale_edge_colour_iheid
 
 #' Centres color scales
 #' 
@@ -215,7 +221,7 @@ scale_color_iheid <- scale_colour_iheid
 scale_fill_centres <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "Centres",
                           palette_gen(palette = "Centres", direction),
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
@@ -223,12 +229,24 @@ scale_fill_centres <- function(direction = 1, ...) {
 scale_colour_centres <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "Centres",
                           palette_gen(palette = "Centres", direction),
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
 #' @export
 scale_color_centres <- scale_colour_centres
+
+#' @rdname scales
+#' @export
+scale_edge_colour_centres <- function(direction = 1, ...) {
+  ggplot2::discrete_scale("edge_colour", "Centres",
+                          palette_gen(palette = "Centres", direction),
+                          na.value = "black", name = "", ...)
+}
+
+#' @rdname scales
+#' @export
+scale_edge_color_centres <- scale_edge_colour_centres
 
 #' SDGs color scales
 #' 
@@ -237,7 +255,7 @@ scale_color_centres <- scale_colour_centres
 scale_fill_sdgs <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "SDGs",
                           palette_gen(palette = "SDGs", direction),
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
@@ -245,12 +263,24 @@ scale_fill_sdgs <- function(direction = 1, ...) {
 scale_colour_sdgs <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "SDGs",
                           palette_gen(palette = "SDGs", direction),
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
 #' @export
 scale_color_sdgs <- scale_colour_sdgs
+
+#' @rdname scales
+#' @export
+scale_edge_colour_sdgs <- function(direction = 1, ...) {
+  ggplot2::discrete_scale("edge_colour", "SDGs",
+                          palette_gen(palette = "SDGs", direction),
+                          na.value = "black", name = "", ...)
+}
+
+#' @rdname scales
+#' @export
+scale_edge_color_sdgs <- scale_edge_colour_sdgs
 
 #' ETHZ color scales
 #' 
@@ -259,7 +289,7 @@ scale_color_sdgs <- scale_colour_sdgs
 scale_fill_ethz <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "ETHZ",
                           palette_gen(palette = "ETHZ", direction), 
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
@@ -267,12 +297,24 @@ scale_fill_ethz <- function(direction = 1, ...) {
 scale_colour_ethz <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "ETHZ",
                           palette_gen(palette = "ETHZ", direction), 
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
 #' @export
 scale_color_ethz <- scale_colour_ethz
+
+#' @rdname scales
+#' @export
+scale_edge_colour_ethz <- function(direction = 1, ...) {
+  ggplot2::discrete_scale("edge_colour", "ETHZ",
+                          palette_gen(palette = "ETHZ", direction),
+                          na.value = "black", name = "", ...)
+}
+
+#' @rdname scales
+#' @export
+scale_edge_color_ethz <- scale_edge_colour_ethz
 
 #' UZH color scales
 #' 
@@ -281,7 +323,7 @@ scale_color_ethz <- scale_colour_ethz
 scale_fill_uzh <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "UZH",
                           palette_gen(palette = "UZH", direction),
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
@@ -289,12 +331,24 @@ scale_fill_uzh <- function(direction = 1, ...) {
 scale_colour_uzh <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "UZH",
                           palette_gen(palette = "UZH", direction),
-                          na.value = "black", ...)
+                          na.value = "black", name = "", ...)
 }
 
 #' @rdname scales
 #' @export
 scale_color_uzh <- scale_colour_uzh
+
+#' @rdname scales
+#' @export
+scale_edge_colour_uzh <- function(direction = 1, ...) {
+  ggplot2::discrete_scale("edge_colour", "UZH",
+                          palette_gen(palette = "UZH", direction),
+                          na.value = "black", name = "", ...)
+}
+
+#' @rdname scales
+#' @export
+scale_edge_color_uzh <- scale_edge_colour_uzh
 
 #' RUG color scales
 #' 
@@ -303,7 +357,7 @@ scale_color_uzh <- scale_colour_uzh
 scale_fill_rug <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill", "RUG",
                           palette_gen(palette = "RUG", direction),
-                          na.value = "grey", ...)
+                          na.value = "grey", name = "", ...)
 }
 
 #' @rdname scales
@@ -311,12 +365,24 @@ scale_fill_rug <- function(direction = 1, ...) {
 scale_colour_rug <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour", "RUG",
                           palette_gen(palette = "RUG", direction),
-                          na.value = "grey", ...)
+                          na.value = "grey", name = "", ...)
 }
 
 #' @rdname scales
 #' @export
 scale_color_rug <- scale_colour_rug
+
+#' @rdname scales
+#' @export
+scale_edge_colour_rug <- function(direction = 1, ...) {
+  ggplot2::discrete_scale("edge_colour", "RUG",
+                          palette_gen(palette = "RUG", direction),
+                          na.value = "black", name = "", ...)
+}
+
+#' @rdname scales
+#' @export
+scale_edge_color_rug <- scale_edge_colour_rug
 
 # Helper functions
 corp_color <- function(...) {

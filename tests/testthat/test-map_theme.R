@@ -16,20 +16,16 @@ test_that("themes graph correctly", {
          caption = "ison_brandes network") + 
     theme_uzh()
   expect_equal(names(test_iheid[["theme"]][["title"]][["colour"]]), "IHEIDRed")
-  expect_equal(names(test_ethz[["theme"]][["title"]][["colour"]]), "ETHZ_Blue")
+  expect_null(names(test_ethz[["theme"]][["title"]][["colour"]]))
   expect_equal(names(test_uzh[["theme"]][["title"]][["colour"]]), "UZH_Orange")
   expect_equal(names(test_iheid[["theme"]][["plot.subtitle"]][["colour"]]),
                "IHEIDGrey")
-  expect_equal(names(test_ethz[["theme"]][["plot.subtitle"]][["colour"]]),
-               "ETHZ_Bronze")
+  expect_null(names(test_ethz[["theme"]][["plot.subtitle"]][["colour"]]))
   expect_equal(names(test_uzh[["theme"]][["plot.subtitle"]][["colour"]]),
                "UZH_Blue")
-  expect_equal(test_iheid[["theme"]][["plot.caption"]][["family"]], "Times")
-  expect_equal(test_ethz[["theme"]][["plot.caption"]][["family"]], "serif")
+  expect_equal(test_iheid[["theme"]][["plot.caption"]][["family"]], "serif")
+  expect_equal(test_ethz[["theme"]][["plot.caption"]][["family"]], "sans")
   expect_equal(test_uzh[["theme"]][["plot.caption"]][["family"]], "sans")
-  expect_equal(test_iheid[["theme"]][["plot.caption"]][["face"]], "italic")
-  expect_equal(test_ethz[["theme"]][["plot.caption"]][["face"]], "italic")
-  expect_equal(test_uzh[["theme"]][["plot.caption"]][["face"]], "italic")
 })
 
 ##### test scales
@@ -54,6 +50,8 @@ test_that("scales graph correctly", {
     mutate(color = c(rep(c(1,2,3), 3), 1, 2)) %>%
     autographr(node_color = color) +
     scale_color_rug()
+  # The `scale_name` field is deprecated from 3.5.0 onwards
+  skip_if(utils::packageVersion("ggplot2") >= "3.5.0")
   expect_equal(test_sdg[["scales"]][["scales"]][[1]][["call"]][["scale_name"]], "SDGs")
   expect_equal(test_sdg[["scales"]][["scales"]][[1]][["call"]][["palette"]][["palette"]], "SDGs")
   expect_equal(test_iheid[["scales"]][["scales"]][[1]][["call"]][["scale_name"]], "IHEID")

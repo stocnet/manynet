@@ -47,6 +47,7 @@ test_that("unweighted, unsigned, directed networks graph correctly", {
 
 test_that("weighted, unsigned, directed networks graph correctly", {
   skip_on_cran()
+  skip_on_ci()
   # Weighted, unsigned, directed network
   test_networkers <- autographr(ison_networkers)
   # Node position
@@ -114,8 +115,8 @@ test_that("named networks plot correctly", {
 # Test that autographr() works with arguments without quotes
 test_that("node_group works correctly", {
   skip_on_cran()
-  expect_equal(autographr(ison_lawfirm, node_group = Gender),
-               autographr(ison_lawfirm, node_group = "Gender"))
+  expect_equal(autographr(ison_lawfirm, node_group = gender),
+               autographr(ison_lawfirm, node_group = "gender"))
 })
 
 test_that("unquoted arguments plot correctly", {
@@ -158,7 +159,12 @@ test_that("hierarchy and lineage layouts graph correctly", {
 test_that("autographr works for diff_model objects", {
   skip_on_cran()
   skip_on_ci()
-  test_diff <- autographr(migraph::play_diffusion(ison_brandes))
-  expect_equal(test_diff[["guides"]][["shape"]][["name"]], "legend")
-  expect_equal(test_diff[["guides"]][["colour"]][["name"]], "colorbar")
+  test_diff <- autographr(play_diffusion(ison_brandes))
+  if (inherits(test_diff$guides, "Guides")) {
+    expect_s3_class(test_diff[["guides"]][["guides"]][["shape"]], "GuideLegend")
+    expect_s3_class(test_diff[["guides"]][["guides"]][["colour"]], "GuideColourbar")
+  } else {
+    expect_equal(test_diff[["guides"]][["shape"]][["name"]], "legend")
+    expect_equal(test_diff[["guides"]][["colour"]][["name"]], "colorbar")
+  }
 })

@@ -1,22 +1,25 @@
-#' Making networks into other classes
+#' Modifying network classes
 #'
 #' @description
-#' The `as_` functions in `{manynet}` coerce objects
-#' between several common classes of social network objects.
-#' These include:
-#' - edgelists, as data frames or tibbles
-#' - adjacency (one-mode/unipartite) and incidence (two-mode/bipartite) matrices
-#' - `{igraph}` `graph` objects
-#' - `{tidygraph}` `tbl_graph` objects
-#' - `{network}` `network` objects
+#'   The `as_` functions in `{manynet}` coerce objects of any of the following common classes
+#'   of social network objects in R into the declared class:
+#'   - `as_edgelist()` coerces the object into an edgelist, as data frames or tibbles.
+#'   - `as_matrix()` coerces the object into an adjacency (one-mode/unipartite) or incidence (two-mode/bipartite) matrix.
+#'   - `as_igraph()` coerces the object into an `{igraph}` `graph` object.
+#'   - `as_tidygraph()` coerces the object into a `{tidygraph}` `tbl_graph` objects.
+#'   - `as_network()` coerces the object into a `{network}` `network` objects.
+#'   - `as_siena()` coerces the (igraph/tidygraph) object into a SIENA dependent variable.
+#'   - `as_graphAM()` coerces the object into a graph adjacency matrix.
+#'   - `as_diffusion()` coerces a table of diffusion events into
+#'   a `diff_model` object similar to the output of `play_diffusion()`.
 #'
-#' An effort is made for all of these coercion routines to be as lossless
-#' as possible, though some object classes are better at retaining certain
-#' kinds of information than others.
-#' Note also that there are some reserved column names in one or more
-#' object classes, which could otherwise lead to some unexpected results.
+#'   An effort is made for all of these coercion routines to be as lossless
+#'   as possible, though some object classes are better at retaining certain
+#'   kinds of information than others.
+#'   Note also that there are some reserved column names in one or more
+#'   object classes, which could otherwise lead to some unexpected results.
 #' @name as
-#' @family makes
+#' @family modifications
 #' @inheritParams is
 #' @param twomode Logical option used to override heuristics for
 #'   distinguishing incidence (two-mode/bipartite) from
@@ -51,19 +54,15 @@
 #' @return
 #' The currently implemented coercions or translations are:
 #'
-#' |  to/from  | edgelists  | matrices  |igraph  |tidygraph  |network  | siena | goldfish
-#' | ------------- |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
-#' | edgelists (data frames)  | X | X | X | X | X | X | X |
-#' | matrices                 | X | X | X | X | X | X | X |
-#' | igraph                   | X | X | X | X | X | X | X |
-#' | tidygraph                | X | X | X | X | X | X | X |
-#' | network                  | X | X | X | X | X | X | X |
-#' | graphAM                  | X | X | X | X | X | X | X |
+#' ```{r, echo = FALSE, cache = TRUE} 
+#'  knitr::kable(available_methods(c("as_edgelist","as_matrix", "as_igraph", "as_tidygraph", 
+#'  "as_network", "as_siena", "as_graphAM", "as_diffusion")))
+#'  ```
 NULL
 
 # Edgelists ####
 
-#' @describeIn as Coercing various network objects into an edgelist
+#' @rdname as
 #' @importFrom igraph as_data_frame
 #' @importFrom dplyr as_tibble arrange
 #' @importFrom network get.edge.attribute as.edgelist
@@ -203,10 +202,10 @@ as_matrix.igraph <- function(.data,
   if ((!is.null(twomode) && twomode) | (is.null(twomode) & is_twomode(.data))) {
     if (is_weighted(.data) | is_signed(.data)) {
       mat <- igraph::as_biadjacency_matrix(.data, sparse = FALSE,
-                                         attr = igraph::edge_attr_names(.data)[[1]])
+                                           attr = igraph::edge_attr_names(.data)[[1]])
     } else {
       mat <- igraph::as_biadjacency_matrix(.data, sparse = FALSE,
-                                         attr = NULL)
+                                           attr = NULL)
     }
   } else {
     if (is_weighted(.data) | is_signed(.data)) {
@@ -594,7 +593,7 @@ as_tidygraph.list <- function(.data, twomode = FALSE) {
   
 #' @export
 as_tidygraph.matrix <- function(.data, twomode = FALSE) {
-  tidygraph::as_tbl_graph(as_igraph(.data))
+  tidygraph::as_tbl_graph(as_igraph(.data, twomode = twomode))
 }
 
 #' @export
@@ -671,7 +670,7 @@ as_tidygraph.diff_model <- function(.data, twomode = FALSE) {
 
 #' @rdname as
 #' @importFrom network as.network set.vertex.attribute
-#' @importFrom igraph get.vertex.attribute
+#' @importFrom igraph vertex_attr
 #' @export
 as_network <- function(.data,
                        twomode = FALSE) UseMethod("as_network")
@@ -705,7 +704,7 @@ as_network.matrix <- function(.data,
 as_network.igraph <- function(.data,
                               twomode = FALSE) {
   name <- type <- NULL
-  attr <- as.data.frame(igraph::get.vertex.attribute(.data))
+  attr <- as.data.frame(igraph::vertex_attr(.data))
   if ("name" %in% colnames(attr)) attr <- subset(attr, select = c(-name))
   if ("type" %in% colnames(attr)) attr <- subset(attr, select = c(-type))
   out <- as_network(as_matrix(.data))
@@ -857,3 +856,63 @@ as_graphAM.siena <- function(.data, twomode = NULL) {
 as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
   as_graphAM(as_matrix(.data), twomode)
 }
+
+# Diffusion ####
+
+#' @rdname as 
+#' @param events A table (data frame or tibble) of diffusion events
+#'   with columns `t` indicating the time (typically an integer) of the event, 
+#'   `nodes` indicating the number or name of the node involved in the event,
+#'   and `event`, which can take on the values "I" for an infection event,
+#'   "E" for an exposure event, or "R" for a recovery event.
+#' @returns 
+#'   `as_diffusion()` and `play_diffusion()` return a 'diff_model' object
+#'   that contains two different tibbles (tables) --
+#'   a table of diffusion events and 
+#'   a table of the number of nodes in each relevant component (S, E, I, or R) --
+#'   as well as a copy of the network upon which the diffusion ran.
+#'   By default, a compact version of the component table is printed
+#'   (to print all the changes at each time point, use `print(..., verbose = T)`).
+#'   To retrieve the diffusion events table, use `summary(...)`.
+#' @importFrom dplyr tibble
+#' @examples
+#'   # How to create a diff_model object from (basic) observed data
+#'   events <- data.frame(t = c(0,1,1,2,3), nodes = c(1,2,3,2,4), event = c("I","I","I","R","I"))
+#'   as_diffusion(events, manynet::create_filled(4))
+#' @export
+as_diffusion <- function(events, .data) {
+  net <- .data
+  event <- NULL
+  sumchanges <- events %>% dplyr::group_by(t) %>% 
+    dplyr::reframe(I_new = sum(event == "I"),
+                   E_new = sum(event == "E"),
+                   R_new = sum(event == "R"))
+  report <- dplyr::tibble(t = seq_len(max(events$t)) - 1,
+                          n = manynet::network_nodes(net)) %>% 
+    dplyr::left_join(sumchanges, by = dplyr::join_by(t))
+  report[is.na(report)] <- 0
+  report$R <- cumsum(report$R_new)
+  report$I <- cumsum(report$I_new) - report$R
+  report$E <- ifelse(report$E_new == 0 & 
+                       cumsum(report$E_new) == max(cumsum(report$E_new)),
+                     report$E_new, cumsum(report$E_new))
+  report$E <- ifelse(report$R + report$I + report$E > report$n,
+                     report$n - (report$R + report$I),
+                     report$E)
+  report$S <- report$n - report$R - report$I - report$E
+  report$s <- vapply(report$t, function(time){
+    twin <- dplyr::filter(events, events$t <= time)
+    infected <- dplyr::filter(twin, twin$event == "I")$nodes
+    recovered <- dplyr::filter(twin, twin$event == "R")$nodes
+    infected <- setdiff(infected, recovered)
+    expos <- node_is_exposed(net, infected)
+    expos[recovered] <- F
+    sum(expos)
+  }, numeric(1) )
+  if (any(report$R + report$I + report$E + report$S != report$n)) {
+    stop("Oops, something is wrong")
+  }
+  report <- dplyr::select(report, dplyr::any_of(c("t", "n", "S", "s", "E", "E_new", "I", "I_new", "R", "R_new")))
+  make_diff_model(events, report, .data)
+}
+

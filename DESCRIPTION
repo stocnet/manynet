@@ -1,27 +1,28 @@
 Package: manynet
-Title: Many Ways to Make, Modify, and Map Myriad Networks
-Version: 0.3.1
-Date: 2023-12-17
-Description: A set of tools for making, modifying, and mapping many different types of networks.
+Title: Many Ways to Make, Modify, Mark, and Map Myriad Networks
+Version: 0.4.0
+Date: 2024-01-24
+Description: A set of tools for making, modifying, marking, and mapping many different types of networks.
    All functions operate with matrices, edge lists, and 'igraph', 'network', and 'tidygraph' objects,
    and on one-mode, two-mode (bipartite), and sometimes three-mode networks.
    The package includes functions for importing and exporting, creating and generating networks,
-   molding and manipulating networks and node and tie attributes,
+   modifying networks and node and tie attributes,
    and describing and visualizing networks with sensible defaults.
-URL: https://snlab-ch.github.io/manynet/
-BugReports: https://github.com/snlab-ch/manynet/issues
+URL: https://stocnet.github.io/manynet/
+BugReports: https://github.com/stocnet/manynet/issues
 Depends: R (>= 3.6.0)
 License: MIT + file LICENSE
 Language: en-GB
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.0
 Imports: 
     dplyr (>= 1.1.0),
     ggplot2,
     ggraph,
     igraph (>= 1.6.0),
     network,
+    pillar,
     tidygraph
 Suggests: 
     BiocManager,
@@ -43,8 +44,10 @@ Suggests:
     rmarkdown,
     roxygen2,
     RSiena,
-    testthat,
-    xml2
+    testthat (>= 3.0.0),
+    xml2,
+    future,
+    furrr
 Enhances:
     Rgraphviz
 Authors@R: 
@@ -59,3 +62,6 @@ Authors@R:
              comment = c("IHEID", ORCID = "0000-0003-3420-6085"))
     )
 Roxygen: list(markdown = TRUE, roclets = c("namespace", "rd"))
+Config/testthat/parallel: true
+Config/testthat/edition: 3
+Config/testthat/start-first: mark_is 

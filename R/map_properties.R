@@ -1,7 +1,16 @@
 #' Describing network properties
 #' 
-#' @description These functions extract certain attributes from given network data.
-#'   They are also useful as helpers within other functions.
+#' @description 
+#'   These functions extract certain attributes from given network data:
+#'   
+#'   - `network_nodes()` returns the total number of nodes (of any mode) in a network.
+#'   - `network_ties()` returns the number of ties in a network.
+#'   - `network_dims()` returns the dimensions of a network in a vector
+#'   as long as the number of modes in the network.
+#'   - `network_node_attributes()` returns a vector of nodal attributes in a network.
+#'   - `network_tie_attributes()` returns a vector of tie attributes in a network.
+#'   
+#'   These functions are also often used as helpers within other functions.
 #' @return `network_*()` functions always relate to the overall graph or network,
 #'   usually returning a scalar.
 #'   `network_dims()` returns an integer of the number of nodes in a one-mode network,
@@ -14,7 +23,7 @@
 #' @inheritParams is
 NULL
 
-#' @describeIn properties Returns the total number of nodes (of any mode) in a network.
+#' @rdname properties
 #' @examples
 #' network_nodes(ison_southern_women)
 #' @export
@@ -22,7 +31,7 @@ network_nodes <- function(.data){
   igraph::vcount(as_igraph(.data))
 }
 
-#' @describeIn properties Returns the number of edges in a network.
+#' @rdname properties
 #' @examples
 #' network_ties(ison_southern_women)
 #' @export
@@ -30,8 +39,7 @@ network_ties <- function(.data){
   igraph::ecount(as_igraph(.data))
 }
 
-#' @describeIn properties Returns the dimensions of a network in a vector
-#'   as long as the number of modes in the network.
+#' @rdname properties
 #' @examples
 #' network_dims(ison_southern_women)
 #' network_dims(to_mode1(ison_southern_women))
@@ -80,16 +88,16 @@ network_dims.network <- function(.data){
   out
 }
 
-#' @describeIn properties Returns a vector of nodal attributes in a network
-#' @importFrom igraph list.vertex.attributes
+#' @rdname properties
+#' @importFrom igraph vertex_attr_names
 #' @examples
 #'   network_node_attributes(ison_lotr)
 #' @export
 network_node_attributes <- function(.data){
-  igraph::list.vertex.attributes(as_igraph(.data))
+  igraph::vertex_attr_names(as_igraph(.data))
 }
 
-#' @describeIn properties Returns a vector of edge attributes in a network
+#' @rdname properties
 #' @importFrom igraph edge_attr_names
 #' @examples
 #'   network_tie_attributes(ison_algebra)

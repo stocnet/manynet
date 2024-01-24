@@ -4,31 +4,40 @@
 \alias{tutorials}
 \alias{run_tute}
 \alias{extract_tute}
+\alias{pkg_data}
 \title{Open and extract code from tutorials}
 \usage{
 run_tute(tute)
 
 extract_tute(tute)
+
+pkg_data(pkg = "manynet")
 }
 \arguments{
 \item{tute}{String, name of the tutorial (e.g. "tutorial2").}
+
+\item{pkg}{String, name of the package.}
 }
 \description{
 These functions make it easy to use the tutorials
-in the \code{{manynet}} and \code{{migraph}} packages.
-}
-\section{Functions}{
+in the \code{{manynet}} and \code{{migraph}} packages:
 \itemize{
-\item \code{run_tute()}: Runs a \code{{learnr}} tutorial from
+\item \code{run_tute()} runs a \code{{learnr}} tutorial from
 either the \code{{manynet}} or \code{{migraph}} packages,
-wraps \code{learnr::run_tutorial()} with some convenience
-
-\item \code{extract_tute()}: Extracts and opens just the solution code
+wraps \code{learnr::run_tutorial()} with some convenience.
+\item \code{extract_tute()} extracts and opens just the solution code
 from a \code{{manynet}} or \code{{migraph}} tutorial,
-saving the .R script to the current working directory
-
-}}
+saving the .R script to the current working directory.
+\item \code{pkg_data()} returns a tibble with details of the
+network datasets included in the packages.
+}
+}
 \examples{
 #run_tute("tutorial2")
 #extract_tute("tutorial2")
+#pkg_data()
+# to obtain overview of unique datasets:
+ #pkg_data() \%>\% 
+  #dplyr::distinct(directed, weighted, twomode, signed, 
+   #               .keep_all = TRUE)
 }

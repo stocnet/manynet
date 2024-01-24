@@ -1,7 +1,7 @@
 # Marvel ####
 
 #' Multilevel two-mode affiliation, signed one-mode networks of Marvel comic
-#' book characters (Yüksel 2017)
+#' book characters (Yuksel 2017)
 #'
 #' @description
 #' This package includes two datasets related to the Marvel _comic book_ universe.
@@ -15,7 +15,7 @@
 #' Friendships are indicated by a positive sign in the tie `sign` attribute,
 #' whereas enmities are indicated by a negative sign in this edge attribute.
 #' @details
-#' Additional nodal variables have been coded and included by Dr Umut Yüksel:
+#' Additional nodal variables have been coded and included by Dr Umut Yuksel:
 #'
 #' - **Gender**: binary character, 43 "Male" and 10 "Female"
 #' - **PowerOrigin**: binary character, 2 "Alien", 1 "Cyborg", 5 "God/Eternal",
@@ -31,7 +31,7 @@
 #' @keywords datasets
 #' @name ison_marvel
 #' @usage data(ison_marvel_teams)
-#' @source Umut Yüksel, 31 March 2017
+#' @source Umut Yuksel, 31 March 2017
 #' @format
 #'   ```{r, echo = FALSE}
 #'   ison_marvel_teams
@@ -165,22 +165,32 @@
 #'   ```
 "ison_karateka"
 
-# Konigsberg ####
+# Koenigsberg ####
 
-#' One-mode Seven Bridges of Konigsberg network (Euler 1741)
+#' One-mode Seven Bridges of Koenigsberg network (Euler 1741)
 #'
+#' @description
+#'   The Seven Bridges of Koenigsberg is a notable historical problem in mathematics and laid the foundations of graph theory. 
+#'   The city of Koenigsberg in Prussia (now Kaliningrad, Russia) was set on both sides of the Pregel River, 
+#'   and included two large islands which were connected to each other and the mainland by seven bridges.
+#'   A weekend diversion for inhabitants was to find a walk through the city that would cross each bridge once and only once. 
+#'   The islands could not be reached by any route other than the bridges, 
+#'   and every bridge must have been crossed completely every time 
+#'   (one could not walk half way onto the bridge and then turn around and later cross the other half from the other side).
+#'   In 1735, Leonard Euler proved that the problem has no solution.
 #' @docType data
 #' @keywords datasets
-#' @name ison_konigsberg
-#' @usage data(ison_konigsberg)
+#' @name ison_koenigsberg
+#' @usage data(ison_koenigsberg)
 #' @references
 #'   Euler, Leonard. 1741. “Solutio problematis ad geometriam situs pertinentis.”
 #'   _Commentarii academiae scientiarum Petropolitanae_.
+#' @source `{igraphdata}`
 #' @format
 #'   ```{r, echo = FALSE}
-#'   ison_konigsberg
+#'   ison_koenigsberg
 #'   ```
-"ison_konigsberg"
+"ison_koenigsberg"
 
 # Networkers ####
 
@@ -268,6 +278,7 @@
 #' @keywords datasets
 #' @name ison_lawfirm
 #' @usage data(ison_lawfirm)
+#' @source `{networkdata}`
 #' @references
 #'   Lazega, Emmanuel. 2001.
 #'   \emph{The Collegial Phenomenon: The Social Mechanisms of Cooperation Among Peers in a Corporate Law Partnership}.
@@ -397,3 +408,169 @@
 #'   ison_physicians
 #'   ```
 "ison_physicians"
+
+# Harry Potter ####
+
+#' Six complex one-mode support data in Harry Potter books (Bossaert and Meidert 2013)
+#'
+#' @description
+#'   Goele Bossaert and Nadine Meidert coded peer support ties among 64 characters
+#'   in the Harry Potter books.
+#'   Each author coded four of seven books using NVivo, 
+#'   with the seventh book coded by both and serving to assess inter-rater reliability.
+#'   The first six books concentrated on adolescent interactions,
+#'   were studied in their paper, and are made available here.
+#'   The peer support ties mean voluntary emotional, instrumental, or informational support,
+#'   or praise from one living, adolescent character to another within the book's pages.
+#'   In addition, nodal attributes name, schoolyear (which doubles as their age),
+#'   gender, and their house assigned by the sorting hat are included.
+#' @docType data
+#' @keywords datasets
+#' @name ison_potter
+#' @usage data(ison_potter)
+#' @references
+#'   Bossaert, Goele and Nadine Meidert (2013). 
+#'   "'We are only as strong as we are united, as weak as we are divided'. A dynamic analysis of the peer support networks in the Harry Potter books." 
+#'   _Open Journal of Applied Sciences_, 3(2): 174-185.
+#'   \doi{10.4236/ojapps.2013.32024}
+#' @format
+#'   ```{r, echo = FALSE}
+#'   ison_potter
+#'   ```
+"ison_potter"
+
+# US States ####
+
+#' One-mode undirected network of US state contiguity (Meghanathan 2017)
+#'
+#' @description
+#'   This network is of contiguity between US states.
+#'   States that share a border are connected by a tie in the network.
+#'   The data is a network of 107 ties among 50 US states (nodes).
+#'   States are named by their two-letter ISO-3166 code.
+#'   This data includes also the names of the capitol cities of each state,
+#'   which are listed in the node attribute 'capitol'.
+#' @docType data
+#' @keywords datasets
+#' @name ison_usstates
+#' @usage data(ison_usstates)
+#' @references
+#'   Meghanathan, Natarajan. 2017. 
+#'   "Complex network analysis of the contiguous United States graph." 
+#'   _Computer and Information Science_, 10(1): 54-76.
+#'   \doi{10.5539/cis.v10n1p54}
+#' @format
+#'   ```{r, echo = FALSE}
+#'   ison_usstates
+#'   ```
+"ison_usstates"
+
+
+# High-tech ####
+
+#' One-mode multiplex, directed network of managers of a high-tech company (Krackhardt 1987)
+#'
+#' @description
+#'   21 managers of a company of just over 100 employees manufactured high-tech equipment 
+#'   on the west coast of the United States.
+#'   Three types of ties were collected:
+#'   
+#'   - _friends_: managers' answers to the question "Who is your friend?"
+#'   - _advice_: managers' answers to the question "To whom do you go to for advice?"
+#'   - _reports_: "To whom do you report?" based on company reports
+#'   
+#'   The data is anonymised, but four nodal attributes are included:
+#'   
+#'   - _age_: the manager's age in years
+#'   - _tenure_: the manager's length of service
+#'   - _level_: the manager's level in the corporate hierarchy,
+#'   where 3 = CEO, 2 = Vice President, and 1 = manager
+#'   - _dept_: one of four departments, B, C, D, E,
+#'   with the CEO alone in A
+#' @docType data
+#' @keywords datasets
+#' @name ison_hightech
+#' @usage data(ison_hightech)
+#' @references
+#'   Krackhardt, David. 1987. "Cognitive social structures". _Social Networks_ 9: 104-134.
+#' @format
+#'   ```{r, echo = FALSE}
+#'   ison_hightech
+#'   ```
+"ison_hightech"
+
+# Monastery ####
+
+#' Three one-mode signed, weighted networks and a three-wave longitudinal network of monks (Sampson 1969)
+#'
+#' @description
+#'   The data were collected for an ethnographic study of community structure in a New England monastery. 
+#'   Various sociometric data was collected of the novices attending the minor seminary of 'Cloisterville' 
+#'   preparing to join the monastic order:
+#'   
+#'   - `ison_monastery_like` records whom novices said they liked most at three time points/waves
+#'   - `ison_monastery_esteem` records whom novices said they held in esteem (sign > 0) and disesteem (sign < 0)
+#'   - `ison_monastery_praise` records whom novices said they praised (sign > 0) and blamed (sign < 0)
+#'   - `ison_monastery_influence` records whom novices said were a positive influence (sign > 0) and negative influence (sign < 0)
+#'   
+#'   All networks are weighted.
+#'   Novices' first choices are weighted 3, the second 2, and third choices 1.
+#'   Some subjects offered tied ranks for their top four choices.
+#'   
+#'   In addition to node names,
+#'   a 'groups' variable records the four groups that Sampson observed during his time there:
+#'   
+#'   - The _Loyal_ Opposition consists of novices who entered the monastery first and defended existing practices
+#'   - The _Young Turks_ arrived later during a period of change and questioned practices in the monastery
+#'   - The _Interstitial_ did not take sides in the debate
+#'   - The _Outcasts_ were novices that were not accepted in the group
+#'   
+#'   Information about senior monks was not included.
+
+#'   While `ison_monastery_like` is observed over three waves,
+#'   the rest of the data was recorded retrospectively from the end of the study,
+#'   after the network fragmented.
+#'   The waves in which the novitiates were expelled (1), voluntarily departed (2 and 3),
+#'   or remained (4) are given in the nodal attribute "left".
+#' @docType data
+#' @keywords datasets
+#' @name ison_monastery
+#' @references
+#'   Sampson, Samuel F. 1969. _Crisis in a cloister_. 
+#'   Unpublished doctoral dissertation, Cornell University.
+#'   
+#'   Breiger R., Boorman S. and Arabie P. 1975. 
+#'   "An algorithm for clustering relational data with applications to social network analysis and comparison with multidimensional scaling". 
+#'   _Journal of Mathematical Psychology_, 12: 328-383.
+#' @usage data(ison_monastery_like)
+#' @format 
+#'   ```{r, echo = FALSE}
+#'   ison_monastery_like
+#'   ```
+"ison_monastery_like"
+
+#' @rdname ison_monastery
+#' @usage data(ison_monastery_esteem)
+#' @format
+#'   ```{r, echo = FALSE}
+#'   ison_monastery_esteem
+#'   ```
+"ison_monastery_esteem"
+
+#' @rdname ison_monastery
+#' @usage data(ison_monastery_influence)
+#' @format 
+#'   ```{r, echo = FALSE}
+#'   ison_monastery_influence
+#'   ```
+"ison_monastery_influence"
+
+#' @rdname ison_monastery
+#' @usage data(ison_monastery_praise)
+#' @format 
+#'   ```{r, echo = FALSE}
+#'   ison_monastery_praise
+#'   ```
+"ison_monastery_praise"
+
+

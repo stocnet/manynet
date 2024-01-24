@@ -11,7 +11,7 @@
 \alias{create_components}
 \alias{create_core}
 \alias{create_explicit}
-\title{Make networks with defined structures}
+\title{Making networks with defined structures}
 \usage{
 create_empty(n, directed = FALSE)
 
@@ -61,17 +61,6 @@ By default a \code{tbl_graph} object is returned,
 but this can be coerced into other types of objects
 using \code{as_edgelist()}, \code{as_matrix()},
 \code{as_tidygraph()}, or \code{as_network()}.
-}
-\description{
-These functions create networks with particular structural properties.
-They can create either one-mode or two-mode networks.
-To create a one-mode network, pass the main argument \code{n} a single integer,
-indicating the number of nodes in the network.
-To create a two-mode network, pass \code{n} a vector of \emph{two} integers,
-where the first integer indicates the number of nodes in the first mode,
-and the second integer indicates the number of nodes in the second mode.
-As an alternative, an existing network can be provided to \code{n}
-and the number of modes, nodes, and directedness will be inferred.
 
 By default, all networks are created as undirected.
 This can be overruled with the argument \code{directed = TRUE}.
@@ -80,36 +69,32 @@ out-facing or equivalent.
 This direction can be swapped using \code{to_redirected()}.
 In two-mode networks, the directed argument is ignored.
 }
-\section{Functions}{
+\description{
+These functions create networks with particular structural properties.
 \itemize{
-\item \code{create_empty()}: Creates an empty graph of the given dimensions.
-
-\item \code{create_filled()}: Creates a filled graph of the given dimensions,
-with every possible tie realised.
-
-\item \code{create_ring()}: Creates a ring or chord graph of the given dimensions
-that loops around is of a certain width or thickness.
-
-\item \code{create_star()}: Creates a graph of the given dimensions
-that has a maximally central node.
-
-\item \code{create_tree()}: Creates a graph of the given dimensions with
-successive branches.
-
-\item \code{create_lattice()}: Creates a lattice graph of the given dimensions with ties
-to all neighbouring nodes.
-
-\item \code{create_components()}: Creates a graph in which the nodes are clustered
-into separate components.
-
-\item \code{create_core()}: Creates a graph with a certain proportion of nodes
-being core nodes, densely tied to each other and peripheral nodes,
-and the rest peripheral, tied only to the core.
-
-\item \code{create_explicit()}: Creates a network based on explicitly
+\item \code{create_empty()} creates an empty network without any ties.
+\item \code{create_filled()} creates a filled network with every possible tie realised.
+\item \code{create_ring()} creates a ring or chord network where each nodes'
+neighbours form a clique.
+\item \code{create_star()} creates a network with a maximally central node.
+\item \code{create_tree()} creates a network with successive branches.
+\item \code{create_lattice()} creates a network that forms a regular tiling.
+\item \code{create_components()} creates a network that clusters nodes into separate components.
+\item \code{create_core()} creates a network in which a certain proportion of 'core' nodes
+are densely tied to each other, and the rest peripheral, tied only to the core.
+\item \code{create_explicit()} creates a network based on explicitly
 named nodes and ties between them.
+}
 
-}}
+These functions can create either one-mode or two-mode networks.
+To create a one-mode network, pass the main argument \code{n} a single integer,
+indicating the number of nodes in the network.
+To create a two-mode network, pass \code{n} a vector of \emph{two} integers,
+where the first integer indicates the number of nodes in the first mode,
+and the second integer indicates the number of nodes in the second mode.
+As an alternative, an existing network can be provided to \code{n}
+and the number of modes, nodes, and directedness will be inferred.
+}
 \section{Lattice graphs}{
 
 \code{create_lattice()} creates both two-dimensional grid and triangular
@@ -150,8 +135,10 @@ create_core(6)
 and will never simplify the result.
 
 Other makes: 
-\code{\link{as}()},
 \code{\link{generate}},
-\code{\link{read}}
+\code{\link{learning}},
+\code{\link{play}},
+\code{\link{read}},
+\code{\link{write}()}
 }
 \concept{makes}

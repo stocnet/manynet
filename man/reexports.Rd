@@ -3,7 +3,7 @@
 \docType{import}
 \name{reexports}
 \alias{reexports}
-\alias{is.igraph}
+\alias{is_igraph}
 \alias{is.network}
 \alias{as.network}
 \alias{\%>\%}
@@ -12,9 +12,6 @@
 \alias{.G}
 \alias{.N}
 \alias{.E}
-\alias{mutate}
-\alias{rename}
-\alias{bind_edges}
 \alias{ggplot}
 \alias{ggtitle}
 \alias{guides}
@@ -34,10 +31,10 @@ below to see their documentation.
 
   \item{ggplot2}{\code{\link[ggplot2]{aes}}, \code{\link[ggplot2]{ggplot}}, \code{\link[ggplot2]{ggsave}}, \code{\link[ggplot2:labs]{ggtitle}}, \code{\link[ggplot2]{guides}}, \code{\link[ggplot2]{labs}}, \code{\link[ggplot2:labs]{xlab}}, \code{\link[ggplot2:labs]{ylab}}}
 
-  \item{igraph}{\code{\link[igraph:is_igraph]{is.igraph}}}
+  \item{igraph}{\code{\link[igraph]{is_igraph}}}
 
   \item{network}{\code{\link[network:network]{as.network}}, \code{\link[network:network]{is.network}}}
 
-  \item{tidygraph}{\code{\link[tidygraph:context_accessors]{.E}}, \code{\link[tidygraph:context_accessors]{.G}}, \code{\link[tidygraph:context_accessors]{.N}}, \code{\link[tidygraph:bind_graphs]{bind_edges}}, \code{\link[tidygraph:tbl_graph]{is.tbl_graph}}, \code{\link[tidygraph:reexports]{mutate}}, \code{\link[tidygraph:reexports]{rename}}, \code{\link[tidygraph]{with_graph}}}
+  \item{tidygraph}{\code{\link[tidygraph:context_accessors]{.E}}, \code{\link[tidygraph:context_accessors]{.G}}, \code{\link[tidygraph:context_accessors]{.N}}, \code{\link[tidygraph:tbl_graph]{is.tbl_graph}}, \code{\link[tidygraph]{with_graph}}}
 }}
 

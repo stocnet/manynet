@@ -26,14 +26,14 @@ list_data <- function(string){
 <!-- badges: start -->
 [![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html#maturing)
 ![CRAN/METACRAN](https://img.shields.io/cran/v/manynet)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/snlab-ch/manynet)
-![GitHub Release Date](https://img.shields.io/github/release-date/snlab-ch/manynet)
-[![Codecov test coverage](https://codecov.io/gh/snlab-ch/manynet/branch/main/graph/badge.svg)](https://app.codecov.io/gh/snlab-ch/manynet?branch=main)
-[![CodeFactor](https://www.codefactor.io/repository/github/snlab-ch/manynet/badge)](https://www.codefactor.io/repository/github/snlab-ch/manynet)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/stocnet/manynet)
+![GitHub Release Date](https://img.shields.io/github/release-date/stocnet/manynet)
+[![Codecov test coverage](https://codecov.io/gh/stocnet/manynet/branch/main/graph/badge.svg)](https://app.codecov.io/gh/stocnet/manynet?branch=main)
+<!-- [![CodeFactor](https://www.codefactor.io/repository/github/stocnet/manynet/badge)](https://www.codefactor.io/repository/github/stocnet/manynet) -->
 <!-- [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4559/badge)](https://bestpractices.coreinfrastructure.org/projects/4559) -->
 <!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7076396.svg)](https://doi.org/10.5281/zenodo.7076396) -->
 <!-- see https://zenodo.org/record/7076396 -->
-<!-- ![GitHub All Releases](https://img.shields.io/github/downloads/snlab-ch/migraph/total) -->
+<!-- ![GitHub All Releases](https://img.shields.io/github/downloads/stocnet/migraph/total) -->
 <!-- badges: end -->
 
 ## About the package
@@ -52,7 +52,7 @@ This can make learning and using network analysis tools in R challenging.
 
 By contrast, we build packages that offer _many_ analytic tools that work on _many_ (if not most) types of networks of all kinds.
 `{manynet}` is the first package that helps researchers with Making, Modifying, and Mapping networks.
-For Measures, Memberships, or Models, see [`{migraph}`](https://snlab-ch.github.io/migraph/).
+For Measures, Memberships, or Models, see [`{migraph}`](https://stocnet.github.io/migraph/).
 
 - [Making](#making)
     - [Importing network data](#importing-network-data)
@@ -186,6 +186,23 @@ e.g. two-mode networks.
 autographr(generate_smallworld(15, directed = TRUE), layout = "stress") + ggtitle("Small-World", subtitle = "generate_smallworld(15, directed = TRUE)") + autographr(generate_smallworld(c(10,5)), layout = "stress") + ggtitle("Small-World", subtitle = "generate_smallworld(c(10,5))")
 ```
 
+#### Inventing data on networks
+
+Lastly, `{manynet}` also includes functions for simulating diffusion
+or learning processes over a given network:
+
+- `r list_functions("^play_")`
+
+The diffusion models include not only SI and threshold models,
+but also SIS, SIR, SIRS, SEIR, and SEIRS.
+
+## Modifying
+
+Before or during analysis, you may need to modify the network you are analysing in various ways.
+Different packages have different syntaxes and vocabulary for such actions;
+`{manynet}`'s `to_*()` functions can be used on any class object 
+to reformat, transform, or split networks into networks with other properties.
+
 #### Translating network data
 
 Once you have imported network data, 
@@ -219,13 +236,6 @@ whether you use base R matrices or edgelists as data frames,
 [`{network}`](https://statnet.org), or 
 [`{tidygraph}`](https://tidygraph.data-imaginist.com/index.html),
 and extensible by developments in those other packages too.
-
-## Modifying
-
-Before or during analysis, you may need to modify the network you are analysing in various ways.
-Different packages have different syntaxes and vocabulary for such actions;
-`{manynet}`'s `to_*()` functions can be used on any class object 
-to reformat, transform, or split networks into networks with other properties.
 
 ### Reformatting
 
@@ -271,11 +281,19 @@ Split data can be rejoined using the `from_*()` family of functions.
 
 See also `r list_functions("^to_")` and `r list_functions("^from_")`.
 
-### Extracting
+## Marking
 
-`{manynet}`'s `*is_*()` functions offer fast logical tests of various network properties.
+`{manynet}`'s `*is_*()` functions offer fast logical tests of various properties.
+Whereas `is_*()` returns a single logical value for the network,
+`node_is_*()` returns a logical vector the length of the number of nodes in the network,
+and `tie_is_*()` returns a logical vector the length of the number of ties in the network.
 
 - `r list_functions("^is_")`
+- `r list_functions("^node_is_")`
+- `r list_functions("^tie_is_")`
+
+The `*is_max()` and `*is_min()` functions are used to identify
+the maximum or minimum, respectively, node or tie according to some measure (see below).
 
 ## Mapping
 
@@ -435,7 +453,7 @@ for slightly earlier access to new features or for testing,
 you may wish to download and install the binaries from Github
 or install from source locally.
 The latest binary releases for all major OSes -- Windows, Mac, and Linux -- 
-can be found [here](https://github.com/snlab-ch/manynet/releases/latest).
+can be found [here](https://github.com/stocnet/manynet/releases/latest).
 Download the appropriate binary for your operating system,
 and install using an adapted version of the following commands:
 
@@ -447,9 +465,9 @@ To install from source the latest main version of `{manynet}` from Github,
 please install the `{remotes}` package from CRAN and then:
 
 - For latest stable version: 
-`remotes::install_github("snlab-ch/manynet")`
+`remotes::install_github("stocnet/manynet")`
 - For latest development version: 
-`remotes::install_github("snlab-ch/manynet@develop")`
+`remotes::install_github("stocnet/manynet@develop")`
 
 ### Tutorials
 

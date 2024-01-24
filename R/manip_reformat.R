@@ -1,26 +1,45 @@
 # Reformatting ####
 
-#' Tools for reformatting networks, graphs, and matrices
+#' Modifying network formats
 #' 
 #' @description
-#'   These functions offer tools for reformatting migraph-consistent objects
-#'   (matrices, igraph, tidygraph, or network objects).
-#'   Unlike the `as_*()` group of functions,
-#'   these functions always return the same object type as they are given,
-#'   only transforming these objects' properties.
+#'   These functions reformat manynet-consistent data.
 #' 
+#'   - `to_uniplex()` reformats multiplex network data to a single type of tie.
+#'   - `to_undirected()` reformats directed network data to an undirected network.
+#'   - `to_directed()` reformats undirected network data to a directed network.
+#'   - `to_redirected()` reformats the direction of directed network data, flipping any existing direction.
+#'   - `to_reciprocated()` reformats directed network data such that every directed tie is reciprocated.
+#'   - `to_acyclic()` reformats network data to an acyclic graph.
+#'   - `to_unweighted()` reformats weighted network data to unweighted network data.
+#'   - `to_unsigned()` reformats signed network data to unsigned network data.
+#'   - `to_unnamed()` reformats labelled network data to unlabelled network data.
+#'   - `to_named()` reformats unlabelled network data to labelled network data.
+#'   - `to_simplex()` reformats complex network data, containing loops, to simplex network data, without any loops.
+#'   - `to_anti()` reformats network data into its complement, where only ties _not_ present in the original network
+#'   are included in the new network.
+#' 
+#'   If the format condition is not met,
+#'   for example `to_undirected()` is used on a network that is already undirected,
+#'   the network data is returned unaltered.
+#'   No warning is given so that these functions can be used to ensure conformance.
+#'   
+#'   Unlike the `as_*()` group of functions,
+#'   these functions always return the same class as they are given,
+#'   only transforming these objects' properties.
+#' @details
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
-#'    ```{r, echo = FALSE, cache = TRUE} 
-#'  knitr::kable(available_methods(c("to_uniplex", "to_undirected", "to_directed", "to_redirected", 
-#'  "to_reciprocated", "to_acyclic", "to_unweighted", "to_unsigned", "to_unnamed", "to_named", 
-#'  "to_simplex", "to_onemode", "to_multilevel", "to_twomode")))
-#'  ```
+#'   ```{r, echo = FALSE, cache = TRUE} 
+#'   knitr::kable(available_methods(c("to_uniplex", "to_undirected", "to_directed", "to_redirected", 
+#'   "to_reciprocated", "to_acyclic", "to_unweighted", "to_unsigned", "to_unnamed", "to_named", 
+#'   "to_simplex")))
+#'   ```
 #' @name reformat
-#' @family manipulations
+#' @family modifications
 #' @inheritParams is
-#' @param edge Character string naming an edge attribute to retain from a graph.
+#' @param tie Character string naming a tie attribute to retain from a graph.
 #' @param keep In the case of a signed network, whether to retain
 #' the "positive" or "negative" ties.
 #' @param threshold For a matrix, the threshold to binarise/dichotomise at.
@@ -32,50 +51,43 @@
 #' with certain modifications as outlined for each function.
 NULL
 
-#' @describeIn reformat Returns an object that includes only a single type of tie
+
+#' @rdname reformat
 #' @importFrom igraph delete_edges edge_attr_names delete_edge_attr
 #'   E edge_attr_names
 #' @examples
 #' as_tidygraph(create_filled(5)) %>%
-#'   mutate_ties(type = sample(1:2, 10, replace = TRUE)) %>%
-#'   to_uniplex("type")
+#'   mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) %>%
+#'   to_uniplex("friend")
 #' @export
-to_uniplex <- function(.data, edge) UseMethod("to_uniplex")
+to_uniplex <- function(.data, tie) UseMethod("to_uniplex")
 
 #' @export
-to_uniplex.igraph <- function(.data, edge){
-  out <- .data
-  out <- igraph::delete_edges(out,
-                              igraph::E(out)[igraph::edge_attr(out, edge) == 0])
-  edge_names <- igraph::edge_attr_names(out)
-  if (length(edge_names) > 1) {
-    for (e in setdiff(edge_names, edge)) {
-      out <- igraph::delete_edge_attr(out, e) 
-    }
-  }
-  if (is.numeric(igraph::edge_attr(.data, edge))) 
-    names(igraph::edge_attr(out)) <- "weight"
-  out
+to_uniplex.tbl_graph <- function(.data, tie){
+  type <- NULL
+  out <- dplyr::filter(.data = tidygraph::activate(.data, "edges"), 
+                       type == tie) %>% dplyr::select(-type)
+  tidygraph::activate(out, "nodes")
 }
 
 #' @export
-to_uniplex.tbl_graph <- function(.data, edge){
-  as_tidygraph(to_uniplex(as_igraph(.data), edge))
+to_uniplex.igraph <- function(.data, tie){
+  as_igraph(to_uniplex(as_tidygraph(.data), tie))
 }
 
 #' @export
-to_uniplex.network <- function(.data, edge){
-  as_network(to_uniplex(as_igraph(.data), edge))
+to_uniplex.network <- function(.data, tie){
+  as_network(to_uniplex(as_igraph(.data), tie))
 }
 
 #' @export
-to_uniplex.data.frame <- function(.data, edge){
-  as_edgelist(to_uniplex(as_igraph(.data), edge))
+to_uniplex.data.frame <- function(.data, tie){
+  as_edgelist(to_uniplex(as_igraph(.data), tie))
 }
 
 #' @export
-to_uniplex.matrix <- function(.data, edge){
-  as_matrix(to_uniplex(as_igraph(.data), edge))
+to_uniplex.matrix <- function(.data, tie){
+  as_matrix(to_uniplex(as_igraph(.data), tie))
 }
 
 #' @describeIn reformat Returns an object that has any edge direction removed,
@@ -115,10 +127,7 @@ to_undirected.data.frame <- function(.data) {
   as_edgelist(to_undirected(as_igraph(.data)))
 }
 
-#' @describeIn reformat Returns a directed object.
-#'   Note that ties' direction will be randomly assigned.
-#'   To flip the direction, use `to_redirected()`.
-#'   To match the direction, use `to_reciprocated()`.
+#' @rdname reformat 
 #' @importFrom igraph as.directed
 #' @export
 to_directed <- function(.data) UseMethod("to_directed")
@@ -216,14 +225,16 @@ to_reciprocated.data.frame <- function(.data) {
   as_edgelist(to_reciprocated(as_igraph(.data)))
 }
 
-#' @describeIn reformat Returns an object where all ties are acyclic.
-#' @importFrom igraph as.directed
+#' @rdname reformat
+#' @importFrom igraph as.directed feedback_arc_set
 #' @export
 to_acyclic <- function(.data) UseMethod("to_acyclic")
 
 #' @export
 to_acyclic.igraph <- function(.data) {
-  igraph::as.directed(.data, mode = "acyclic")
+  if(is_directed(.data)){
+    delete_ties(.data, igraph::feedback_arc_set(.data))
+  } else igraph::as.directed(.data, mode = "acyclic")
 }
 
 #' @export
@@ -234,6 +245,11 @@ to_acyclic.tbl_graph <- function(.data) {
 #' @export
 to_acyclic.matrix <- function(.data) {
   as_matrix(to_acyclic(as_igraph(.data)))
+}
+
+#' @export
+to_acyclic.data.frame <- function(.data) {
+  as_edgelist(to_acyclic(as_igraph(.data)))
 }
 
 #' @export
@@ -471,10 +487,87 @@ to_simplex.matrix <- function(.data) {
   out
 }
 
-#' @describeIn reformat Returns an object that has any type/mode attributes removed,
-#'   but otherwise includes all the same nodes and ties.
-#'   Note that this is not the same as `to_mode1()` or `to_mode2()`,
-#'   which return only some of the nodes and new ties established by coincidence.
+#' @rdname reformat
+#' @importFrom igraph complementer
+#' @examples
+#' to_anti(ison_southern_women)
+#' #autographr(to_anti(ison_southern_women))
+#' @export
+to_anti <- function(.data) UseMethod("to_anti")
+
+#' @export
+to_anti.matrix <- function(.data){
+  matrix(1, nrow(.data), ncol(.data)) - .data
+}
+
+#' @export
+to_anti.data.frame <- function(.data){
+  as_edgelist.matrix(to_anti.matrix(as_matrix(.data)))
+}
+
+#' @export
+to_anti.igraph <- function(.data){
+  if(is_twomode(.data)){
+    as_igraph(to_anti.matrix(as_matrix(.data)))
+  } else {
+    igraph::complementer(as_igraph(.data), 
+                         loops = is_complex(.data))
+  }
+}
+
+#' @export
+to_anti.tbl_graph <- function(.data){
+  if(is_twomode(.data)){
+    as_tidygraph(to_anti.matrix(as_matrix(.data)))
+  } else {
+    as_tidygraph(igraph::complementer(as_igraph(.data), 
+                                      loops = is_complex(.data)))
+  }
+}
+
+#' @export
+to_anti.network <- function(.data){
+  as_network(to_anti(as_igraph(.data)))
+}
+
+# Levelling ####
+
+#' Modifying network levels
+#' 
+#' @description
+#'   These functions reformat the levels in manynet-consistent network data.
+#' 
+#'   - `to_onemode()` reformats two-mode network data into one-mode network data by simply removing the nodeset 'type' information.
+#'   Note that this is not the same as `to_mode1()` or `to_mode2()`.
+#'   - `to_twomode()` reformats one-mode network data into two-mode network data, using a mark to distinguish the two sets of nodes.
+#'   - `to_multilevel()` reformats two-mode network data into multimodal network data, which allows for more levels and ties within modes.
+#' 
+#'   If the format condition is not met,
+#'   for example `to_onemode()` is used on a network that is already one-mode,
+#'   the network data is returned unaltered.
+#'   No warning is given so that these functions can be used to ensure conformance.
+#'   
+#'   Unlike the `as_*()` group of functions,
+#'   these functions always return the same class as they are given,
+#'   only transforming these objects' properties.
+#' @details
+#'   Not all functions have methods available for all object classes.
+#'   Below are the currently implemented S3 methods:
+#'  
+#'   ```{r, echo = FALSE, cache = TRUE} 
+#'   knitr::kable(available_methods(c("to_onemode", "to_twomode", "to_multilevel")))
+#'   ```
+#' @name to_levels
+#' @family modifications
+#' @inheritParams is
+#' @returns
+#' All `to_` functions return an object of the same class as that provided. 
+#' So passing it an igraph object will return an igraph object
+#' and passing it a network object will return a network object,
+#' with certain modifications as outlined for each function.
+NULL
+
+#' @rdname to_levels
 #' @importFrom igraph delete_vertex_attr vertex_attr_names
 #' @export
 to_onemode <- function(.data) UseMethod("to_onemode")
@@ -501,8 +594,30 @@ to_onemode.igraph <- function(.data) {
   .data
 }
 
-#' @describeIn reformat Returns a network that is not divided into two mode types
-#'   but embeds two or more modes into a multimodal network structure.
+#' @rdname to_levels
+#' @param mark A logical vector marking two types or modes.
+#'   By default "type".
+#' @importFrom igraph V
+#' @export
+to_twomode <- function(.data, mark) UseMethod("to_twomode")
+
+#' @export
+to_twomode.igraph <- function(.data, mark){
+  igraph::V(.data)$type <- mark
+  to_undirected(.data)
+}
+
+#' @export
+to_twomode.tbl_graph <- function(.data, mark){
+  as_tidygraph(to_twomode.igraph(.data, mark))
+}
+
+#' @export
+to_twomode.network <- function(.data, mark){
+  as_network(to_twomode(as_igraph(.data), mark), twomode = TRUE)
+}
+
+#' @rdname to_levels 
 #' @importFrom igraph V delete_vertex_attr
 #' @export
 to_multilevel <- function(.data) UseMethod("to_multilevel")
@@ -530,25 +645,3 @@ to_multilevel.matrix <- function(.data) {
   out
 }
 
-#' @describeIn reformat Returns a network that divides the nodes into two mode types.
-#' @param mark A logical vector marking two types or modes.
-#'   By default "type".
-#' @importFrom igraph V
-#' @export
-to_twomode <- function(.data, mark) UseMethod("to_twomode")
-
-#' @export
-to_twomode.igraph <- function(.data, mark){
-  igraph::V(.data)$type <- mark
-  to_undirected(.data)
-}
-
-#' @export
-to_twomode.tbl_graph <- function(.data, mark){
-  as_tidygraph(to_twomode.igraph(.data, mark))
-}
-
-#' @export
-to_twomode.network <- function(.data, mark){
-  as_network(to_twomode(as_igraph(.data), mark), twomode = TRUE)
-}

@@ -11,16 +11,16 @@
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html#maturing)
 ![CRAN/METACRAN](https://img.shields.io/cran/v/manynet) ![GitHub release
 (latest by
-date)](https://img.shields.io/github/v/release/snlab-ch/manynet)
-![GitHub Release
-Date](https://img.shields.io/github/release-date/snlab-ch/manynet)
+date)](https://img.shields.io/github/v/release/stocnet/manynet) ![GitHub
+Release
+Date](https://img.shields.io/github/release-date/stocnet/manynet)
 [![Codecov test
-coverage](https://codecov.io/gh/snlab-ch/manynet/branch/main/graph/badge.svg)](https://app.codecov.io/gh/snlab-ch/manynet?branch=main)
-[![CodeFactor](https://www.codefactor.io/repository/github/snlab-ch/manynet/badge)](https://www.codefactor.io/repository/github/snlab-ch/manynet)
+coverage](https://codecov.io/gh/stocnet/manynet/branch/main/graph/badge.svg)](https://app.codecov.io/gh/stocnet/manynet?branch=main)
+<!-- [![CodeFactor](https://www.codefactor.io/repository/github/stocnet/manynet/badge)](https://www.codefactor.io/repository/github/stocnet/manynet) -->
 <!-- [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4559/badge)](https://bestpractices.coreinfrastructure.org/projects/4559) -->
 <!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7076396.svg)](https://doi.org/10.5281/zenodo.7076396) -->
 <!-- see https://zenodo.org/record/7076396 -->
-<!-- ![GitHub All Releases](https://img.shields.io/github/downloads/snlab-ch/migraph/total) -->
+<!-- ![GitHub All Releases](https://img.shields.io/github/downloads/stocnet/migraph/total) -->
 <!-- badges: end -->
 
 ## About the package
@@ -40,7 +40,7 @@ By contrast, we build packages that offer *many* analytic tools that
 work on *many* (if not most) types of networks of all kinds. `{manynet}`
 is the first package that helps researchers with Making, Modifying, and
 Mapping networks. For Measures, Memberships, or Models, see
-[`{migraph}`](https://snlab-ch.github.io/migraph/).
+[`{migraph}`](https://stocnet.github.io/migraph/).
 
 - [Making](#making)
   - [Importing network data](#importing-network-data)
@@ -112,10 +112,13 @@ for analysis. Here are just a few examples, all available in
 ![](https://www.jameshollway.com/post/manynet/README-ison_egs-1.png)
 
 Here are some others: `ison_adolescents`, `ison_algebra`,
-`ison_brandes`, `ison_friends`, `ison_karateka`, `ison_konigsberg`,
-`ison_laterals`, `ison_lawfirm`, `ison_lotr`,
-`ison_marvel_relationships`, `ison_marvel_teams`, `ison_networkers`,
-`ison_physicians`, `ison_southern_women`, `ison_starwars`
+`ison_brandes`, `ison_friends`, `ison_hightech`, `ison_karateka`,
+`ison_koenigsberg`, `ison_laterals`, `ison_lawfirm`, `ison_lotr`,
+`ison_marvel_relationships`, `ison_marvel_teams`,
+`ison_monastery_esteem`, `ison_monastery_influence`,
+`ison_monastery_like`, `ison_monastery_praise`, `ison_networkers`,
+`ison_physicians`, `ison_potter`, `ison_southern_women`,
+`ison_starwars`, `ison_usstates`
 
 #### Inventing network data
 
@@ -150,6 +153,25 @@ unique offerings or add additional formats, e.g. two-mode networks.
 
 ![](https://www.jameshollway.com/post/manynet/README-generate_tm-1.png)
 
+#### Inventing data on networks
+
+Lastly, `{manynet}` also includes functions for simulating diffusion or
+learning processes over a given network:
+
+- `play_diffusion()`, `play_diffusions()`, `play_learning()`,
+  `play_segregation()`
+
+The diffusion models include not only SI and threshold models, but also
+SIS, SIR, SIRS, SEIR, and SEIRS.
+
+## Modifying
+
+Before or during analysis, you may need to modify the network you are
+analysing in various ways. Different packages have different syntaxes
+and vocabulary for such actions; `{manynet}`’s `to_*()` functions can be
+used on any class object to reformat, transform, or split networks into
+networks with other properties.
+
 #### Translating network data
 
 Once you have imported network data, identified network data in this or
@@ -172,14 +194,6 @@ whether you use base R matrices or edgelists as data frames,
 [`{igraph}`](https://igraph.org/r/), [`{network}`](https://statnet.org),
 or [`{tidygraph}`](https://tidygraph.data-imaginist.com/index.html), and
 extensible by developments in those other packages too.
-
-## Modifying
-
-Before or during analysis, you may need to modify the network you are
-analysing in various ways. Different packages have different syntaxes
-and vocabulary for such actions; `{manynet}`’s `to_*()` functions can be
-used on any class object to reformat, transform, or split networks into
-networks with other properties.
 
 ### Reformatting
 
@@ -213,20 +227,36 @@ See also `to_acyclic()`, `to_anti()`, `to_blocks()`, `to_components()`,
 `to_mode2()`, `to_multilevel()`, `to_named()`, `to_no_isolates()`,
 `to_onemode()`, `to_reciprocated()`, `to_redirected()`, `to_simplex()`,
 `to_slices()`, `to_subgraph()`, `to_subgraphs()`, `to_ties()`,
-`to_twomode()`, `to_undirected()`, `to_uniplex()`, `to_unnamed()`,
-`to_unsigned()`, `to_unweighted()`, `to_waves()` and `from_egos()`,
-`from_slices()`, `from_subgraphs()`, `from_waves()`.
+`to_tree()`, `to_twomode()`, `to_undirected()`, `to_uniplex()`,
+`to_unnamed()`, `to_unsigned()`, `to_unweighted()`, `to_waves()` and
+`from_egos()`, `from_slices()`, `from_subgraphs()`, `from_ties()`,
+`from_waves()`.
 
-### Extracting
+## Marking
 
 `{manynet}`’s `*is_*()` functions offer fast logical tests of various
-network properties.
+properties. Whereas `is_*()` returns a single logical value for the
+network, `node_is_*()` returns a logical vector the length of the number
+of nodes in the network, and `tie_is_*()` returns a logical vector the
+length of the number of ties in the network.
 
 - `is_acyclic()`, `is_aperiodic()`, `is_complex()`, `is_connected()`,
   `is_directed()`, `is_dynamic()`, `is_edgelist()`, `is_eulerian()`,
-  `is_graph()`, `is_labelled()`, `is_longitudinal()`, `is_manynet()`,
-  `is_multiplex()`, `is_perfect_matching()`, `is_signed()`,
-  `is_twomode()`, `is_uniplex()`, `is_weighted()`
+  `is_graph()`, `is_igraph()`, `is_labelled()`, `is_list()`,
+  `is_longitudinal()`, `is_manynet()`, `is_multiplex()`,
+  `is_perfect_matching()`, `is_signed()`, `is_twomode()`,
+  `is_uniplex()`, `is_weighted()`
+- `node_is_core()`, `node_is_cutpoint()`, `node_is_exposed()`,
+  `node_is_fold()`, `node_is_infected()`, `node_is_isolate()`,
+  `node_is_latent()`, `node_is_max()`, `node_is_mentor()`,
+  `node_is_min()`, `node_is_random()`, `node_is_recovered()`
+- `tie_is_bridge()`, `tie_is_feedback()`, `tie_is_loop()`,
+  `tie_is_max()`, `tie_is_min()`, `tie_is_multiple()`,
+  `tie_is_random()`, `tie_is_reciprocated()`
+
+The `*is_max()` and `*is_min()` functions are used to identify the
+maximum or minimum, respectively, node or tie according to some measure
+(see below).
 
 ## Mapping
 
@@ -330,8 +360,8 @@ For the latest development version, for slightly earlier access to new
 features or for testing, you may wish to download and install the
 binaries from Github or install from source locally. The latest binary
 releases for all major OSes – Windows, Mac, and Linux – can be found
-[here](https://github.com/snlab-ch/manynet/releases/latest). Download
-the appropriate binary for your operating system, and install using an
+[here](https://github.com/stocnet/manynet/releases/latest). Download the
+appropriate binary for your operating system, and install using an
 adapted version of the following commands:
 
 - For Windows:
@@ -345,9 +375,9 @@ To install from source the latest main version of `{manynet}` from
 Github, please install the `{remotes}` package from CRAN and then:
 
 - For latest stable version:
-  `remotes::install_github("snlab-ch/manynet")`
+  `remotes::install_github("stocnet/manynet")`
 - For latest development version:
-  `remotes::install_github("snlab-ch/manynet@develop")`
+  `remotes::install_github("stocnet/manynet@develop")`
 
 ### Tutorials
 
@@ -359,18 +389,17 @@ use `{manynet}` or `{migraph}` tutorials right out of the box:
 
 ``` r
 run_tute()
-#> # A tibble: 9 × 3
+#> # A tibble: 8 × 3
 #>   package name      title        
 #>   <chr>   <chr>     <chr>        
 #> 1 manynet tutorial0 Intro to R   
 #> 2 manynet tutorial1 Data         
 #> 3 manynet tutorial2 Visualisation
-#> 4 migraph tutorial3 Centrality   
-#> 5 migraph tutorial4 Community    
-#> 6 migraph tutorial5 Position     
-#> 7 migraph tutorial6 Topology     
-#> 8 migraph tutorial7 Diffusion    
-#> 9 migraph tutorial8 Regression
+#> 4 migraph tutorial4 Centrality   
+#> 5 migraph tutorial5 Community    
+#> 6 migraph tutorial6 Position     
+#> 7 migraph tutorial7 Topology     
+#> 8 migraph tutorial8 Regression
 # run_tute("tutorial1")
 ```
 

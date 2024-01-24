@@ -1,8 +1,22 @@
-#' Make networks with defined structures
+#' Making networks with defined structures
 #'
 #' @description
 #'   These functions create networks with particular structural properties.
-#'   They can create either one-mode or two-mode networks.
+#'   
+#'   - `create_empty()` creates an empty network without any ties.
+#'   - `create_filled()` creates a filled network with every possible tie realised.
+#'   - `create_ring()` creates a ring or chord network where each nodes'
+#'   neighbours form a clique.
+#'   - `create_star()` creates a network with a maximally central node.
+#'   - `create_tree()` creates a network with successive branches.
+#'   - `create_lattice()` creates a network that forms a regular tiling.
+#'   - `create_components()` creates a network that clusters nodes into separate components.
+#'   - `create_core()` creates a network in which a certain proportion of 'core' nodes
+#'   are densely tied to each other, and the rest peripheral, tied only to the core.
+#'   - `create_explicit()` creates a network based on explicitly
+#'   named nodes and ties between them.
+#'
+#'   These functions can create either one-mode or two-mode networks.
 #'   To create a one-mode network, pass the main argument `n` a single integer,
 #'   indicating the number of nodes in the network.
 #'   To create a two-mode network, pass `n` a vector of \emph{two} integers,
@@ -10,13 +24,6 @@
 #'   and the second integer indicates the number of nodes in the second mode.
 #'   As an alternative, an existing network can be provided to `n`
 #'   and the number of modes, nodes, and directedness will be inferred.
-#'
-#'   By default, all networks are created as undirected.
-#'   This can be overruled with the argument `directed = TRUE`.
-#'   This will return a directed network in which the arcs are
-#'   out-facing or equivalent.
-#'   This direction can be swapped using `to_redirected()`.
-#'   In two-mode networks, the directed argument is ignored.
 #' @name create
 #' @family makes
 #' @seealso [as]
@@ -43,11 +50,18 @@
 #'   but this can be coerced into other types of objects
 #'   using `as_edgelist()`, `as_matrix()`,
 #'   `as_tidygraph()`, or `as_network()`.
+#'   
+#'   By default, all networks are created as undirected.
+#'   This can be overruled with the argument `directed = TRUE`.
+#'   This will return a directed network in which the arcs are
+#'   out-facing or equivalent.
+#'   This direction can be swapped using `to_redirected()`.
+#'   In two-mode networks, the directed argument is ignored.
 #' @importFrom tidygraph as_tbl_graph
 #' @importFrom igraph graph_from_biadjacency_matrix
 NULL
 
-#' @describeIn create Creates an empty graph of the given dimensions.
+#' @rdname create 
 #' @examples
 #' create_empty(10)
 #' @export
@@ -65,8 +79,7 @@ create_empty <- function(n, directed = FALSE) {
   as_tidygraph(out)
 }
 
-#' @describeIn create Creates a filled graph of the given dimensions,
-#'   with every possible tie realised.
+#' @rdname create 
 #' @examples
 #' create_filled(10)
 #' @export
@@ -85,8 +98,7 @@ create_filled <- function(n, directed = FALSE) {
   as_tidygraph(out)
 }
 
-#' @describeIn create Creates a ring or chord graph of the given dimensions
-#'  that loops around is of a certain width or thickness.
+#' @rdname create 
 #' @examples
 #' create_ring(8, width = 2)
 #' @export
@@ -133,8 +145,7 @@ create_ring <- function(n, directed = FALSE, width = 1, ...) {
   as_tidygraph(out)
 }
 
-#' @describeIn create Creates a graph of the given dimensions
-#'   that has a maximally central node.
+#' @rdname create 
 #' @importFrom igraph graph_from_adjacency_matrix graph_from_biadjacency_matrix
 #'   make_star
 #' @examples
@@ -158,8 +169,7 @@ create_star <- function(n,
   as_tidygraph(out)
 }
 
-#' @describeIn create Creates a graph of the given dimensions with
-#'  successive branches.
+#' @rdname create 
 #' @importFrom igraph make_tree
 #' @examples
 #' create_tree(c(7,8))
@@ -169,28 +179,36 @@ create_tree <- function(n,
                         width = 2) {
   directed <- infer_directed(n, directed)
   n <- infer_n(n)
-  if (length(n) > 1) {
-    out <- matrix(0, n[1], n[2])
-    avail1 <- 1:n[1]
-    avail2 <- 1:n[2]
+  if (length(n) == 2) {
+    if(which.min(n) == 2){
+      n1 <- n[1]
+      n2 <- n[2]
+    } else {
+      n1 <- n[2]
+      n2 <- n[1]
+    }
+    out <- matrix(0, n1, n2)
+    avail1 <- seq.int(n1)
+    avail2 <- seq.int(n2)
     on1 <- 1
-    avail1 <- avail1[avail1 != on1]
+    avail1 <- setdiff(avail1, on1)
     while (length(avail1) > 0 & length(avail2) > 0) {
       on2 <- vector()
       for (i in on1) {
-        matches <- avail2[1:width]
-        out[i, matches] <- 1
-        on2 <- c(on2, matches)
-        suppressWarnings(avail2 <- avail2[avail2 != matches])
+        new <- avail2[seq.int(width)]
+        out[i, new] <- 1
+        on2 <- c(on2, new)
+        avail2 <- setdiff(avail2, new)
       }
       on1 <- vector()
       for (j in on2) {
-        matches <- avail1[1:width]
-        out[matches, j] <- 1
-        on1 <- c(on1, matches)
-        suppressWarnings(avail1 <- avail1[avail1 != matches])
+        new <- avail1[seq.int(width)]
+        out[new, j] <- 1
+        on1 <- c(on1, new)
+        avail1 <- setdiff(avail1, new)
       }
     }
+    if(which.min(n) == 1) out <- t(out)
     as_tidygraph(out, twomode = TRUE)
   } else {
     as_tidygraph(igraph::make_tree(sum(n), children = width,
@@ -199,8 +217,7 @@ create_tree <- function(n,
   }
 }
 
-#' @describeIn create Creates a lattice graph of the given dimensions with ties
-#'  to all neighbouring nodes.
+#' @rdname create 
 #' @section Lattice graphs:
 #'   `create_lattice()` creates both two-dimensional grid and triangular
 #'   lattices with as even dimensions as possible.
@@ -308,8 +325,7 @@ create_lattice <- function(n,
 #   }
 # }
 
-#' @describeIn create Creates a graph in which the nodes are clustered
-#'   into separate components.
+#' @rdname create 
 #' @examples
 #' create_components(10, membership = c(1,1,1,2,2,2,3,3,3,3))
 #' @export
@@ -333,9 +349,7 @@ create_components <- function(n, directed = FALSE, membership = NULL) {
   as_tidygraph(out)
 }
 
-#' @describeIn create Creates a graph with a certain proportion of nodes
-#'   being core nodes, densely tied to each other and peripheral nodes,
-#'   and the rest peripheral, tied only to the core.
+#' @rdname create 
 #' @examples
 #' create_core(6)
 #' @export
@@ -358,8 +372,7 @@ create_core <- function(n, directed = FALSE, membership = NULL) {
   }
 }
 
-#' @describeIn create Creates a network based on explicitly
-#'   named nodes and ties between them.
+#' @rdname create 
 #' @seealso [igraph::graph_from_literal()] which `create_explicit()` mostly just wraps.
 #'   `create_explicit()` will also accept character input and not just a formula though,
 #'   and will never simplify the result.

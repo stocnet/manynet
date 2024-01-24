@@ -4,14 +4,14 @@
 \alias{miss}
 \alias{na_to_zero}
 \alias{na_to_mean}
-\title{Tools for imputing missing tie data}
+\title{Modifying missing tie data}
 \usage{
 na_to_zero(.data)
 
 na_to_mean(.data)
 }
 \arguments{
-\item{.data}{An object of a \code{{manynet}}-consistent class:
+\item{.data}{An object of a manynet-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
 \item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
@@ -26,19 +26,12 @@ A data object of the same class as the function was given.
 \description{
 These functions offer tools for imputing missing tie data.
 Currently two options are available:
-replacing the missing values with zeros,
-which are the modal value in sparse social networks,
-and replacing the missing values with the average non-missing value for that vector.
-}
-\section{Functions}{
 \itemize{
-\item \code{na_to_zero()}: Impute missing tie data as zero,
-the modal value in sparse social networks.
-
-\item \code{na_to_mean()}: Impute missing tie data as
-the mean value in the network.
-
-}}
+\item \code{na_to_zero()} replaces any missing values with zeros,
+which are the modal value in sparse social networks.
+\item \code{na_to_mean()} replaces missing values with the average non-missing value.
+}
+}
 \examples{
 missTest <- ison_adolescents \%>\% 
    add_tie_attribute("weight", c(1,NA,NA,1,1,1,NA,NA,1,1)) \%>\% 
@@ -53,12 +46,16 @@ Krause, Robert, Mark Huisman, Christian Steglich, and Tom A.B. Snijders. 2020.
 \emph{Social Networks}, 62, 99-112.
 }
 \seealso{
-Other manipulations: 
-\code{\link{add}},
+Other modifications: 
+\code{\link{add_nodes}()},
+\code{\link{add_ties}()},
+\code{\link{as}()},
 \code{\link{from}},
 \code{\link{reformat}},
 \code{\link{split}()},
-\code{\link{tidy}},
-\code{\link{transform}()}
+\code{\link{to_levels}},
+\code{\link{to_paths}},
+\code{\link{to_project}},
+\code{\link{to_scope}}
 }
-\concept{manipulations}
+\concept{modifications}
