@@ -1,3 +1,13 @@
+# manynet 0.4.1
+
+2023-12-24
+
+## Package
+
+- Fixed minor documentation bug in `run_tute()`
+- pkgdown urls now point to "stocnet/manynet"
+- Closes #34 by pushing changes to CRAN
+
 # manynet 0.4.0
 
 2023-12-24
