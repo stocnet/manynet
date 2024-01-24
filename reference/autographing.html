@@ -5,7 +5,7 @@ whatever its composition.
 Users can also tailor the plot according to their
 preferences regarding node size, colour, and shape.
 The function also supports visualisation
-of network measures such as centrality."><meta property="og:image" content="https://snlab-ch.github.io/manynet/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+of network measures such as centrality."><meta property="og:image" content="https://stocnet.github.io/manynet/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
@@ -23,7 +23,7 @@ of network measures such as centrality."><meta property="og:image" content="http
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
       </span>
     </div>
 
@@ -41,7 +41,7 @@ of network measures such as centrality."><meta property="og:image" content="http
   <a href="../news/index.html">News</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/snlab-ch/manynet" class="external-link">
+  <a href="https://github.com/stocnet/manynet" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -56,7 +56,7 @@ of network measures such as centrality."><meta property="og:image" content="http
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Quickly graph networks with sensible defaults</h1>
-    <small class="dont-index">Source: <a href="https://github.com/snlab-ch/manynet/blob/HEAD/R/map_autographr.R" class="external-link"><code>R/map_autographr.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/stocnet/manynet/blob/HEAD/R/map_autographr.R" class="external-link"><code>R/map_autographr.R</code></a></small>
     <div class="hidden name"><code>autographing.Rd</code></div>
     </div>
 
@@ -84,7 +84,7 @@ of network measures such as centrality.</p>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">autographs</span><span class="op">(</span><span class="va">netlist</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">autographs</span><span class="op">(</span><span class="va">netlist</span>, <span class="va">waves</span>, based_on <span class="op">=</span> <span class="st">"first"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">autographd</span><span class="op">(</span></span>
 <span>  <span class="va">tlist</span>,</span>
@@ -198,6 +198,17 @@ Edges can also be sized by declaring a numeric size or vector instead.</p></dd>
 <dd><p>A list of manynet-compatible networks.</p></dd>
 
 
+<dt>waves</dt>
+<dd><p>The number of plots to be displayed side-by-side.
+If missing, the number of plots will be reduced to the first and last
+when there are more than four plots.</p></dd>
+
+
+<dt>based_on</dt>
+<dd><p>Whether the layout of the joint plots should
+be based on the "first" or the "last" network.</p></dd>
+
+
 <dt>tlist</dt>
 <dd><p>The same migraph-compatible network listed according to
 a time attribute, waves, or slices.</p></dd>
@@ -230,7 +241,6 @@ with sensible defaults</p></li>
     <div class="dont-index"><p>Other mapping: 
 <code><a href="attributes.html">attributes</a>()</code>,
 <code><a href="configuration_layouts.html">configuration_layouts</a></code>,
-<code><a href="is.html">is</a>()</code>,
 <code><a href="partition_layouts.html">partition_layouts</a></code>,
 <code><a href="properties.html">properties</a></code></p></div>
     </div>
@@ -238,46 +248,46 @@ with sensible defaults</p></li>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">#autographr(ison_adolescents)</span></span></span>
-<span class="r-in"><span><span class="co">#ison_adolescents %&gt;% </span></span></span>
-<span class="r-in"><span><span class="co">#  mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2)) %&gt;%</span></span></span>
-<span class="r-in"><span><span class="co">#  autographr(layout = "lineage", rank = "year")</span></span></span>
-<span class="r-in"><span><span class="co">#autographr(ison_algebra, layout = "circle", </span></span></span>
-<span class="r-in"><span><span class="co">#           node_size = 8, node_color = "orange", node_shape = "square",</span></span></span>
-<span class="r-in"><span><span class="co">#           edge_color = "blue", edge_size = 2)</span></span></span>
-<span class="r-in"><span><span class="co">#autographr(ison_algebra, edge_color = "friends",</span></span></span>
-<span class="r-in"><span><span class="co">#           node_size = migraph::node_betweenness(ison_algebra)*100)</span></span></span>
-<span class="r-in"><span><span class="co">#ison_adolescents |&gt; </span></span></span>
-<span class="r-in"><span><span class="co">#  mutate(cut = migraph::node_is_cutpoint(ison_adolescents)) |&gt; </span></span></span>
-<span class="r-in"><span><span class="co">#  autographr(node_color = "cut", node_shape = "cut")</span></span></span>
-<span class="r-in"><span><span class="co">#autographr(ison_lotr, node_color = Race, </span></span></span>
-<span class="r-in"><span><span class="co">#           node_size = migraph::node_degree(ison_lotr)*2,</span></span></span>
-<span class="r-in"><span><span class="co">#           edge_color = "darkgreen",</span></span></span>
-<span class="r-in"><span><span class="co">#           edge_size = migraph::tie_degree(ison_lotr))</span></span></span>
-<span class="r-in"><span><span class="co">#autographr(ison_karateka, node_group = obc,</span></span></span>
-<span class="r-in"><span><span class="co">#           edge_size = migraph::tie_closeness(ison_karateka))</span></span></span>
-<span class="r-in"><span><span class="co">#autographr(ison_southern_women, layout = "concentric", </span></span></span>
-<span class="r-in"><span><span class="co">#           node_color = "type", membership = "type")</span></span></span>
+<span class="r-in"><span><span class="co">#ison_adolescents %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co"># mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2)) %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co">#autographr(layout = "lineage", rank = "year")</span></span></span>
+<span class="r-in"><span><span class="co">#autographr(ison_algebra, layout = "circle",</span></span></span>
+<span class="r-in"><span><span class="co">#          node_size = 8, node_color = "orange", node_shape = "square",</span></span></span>
+<span class="r-in"><span><span class="co">#          edge_color = "blue", edge_size = 2)</span></span></span>
+<span class="r-in"><span><span class="co">#autographr(ison_algebra, edge_color = "type",</span></span></span>
+<span class="r-in"><span><span class="co">#          node_size = migraph::node_betweenness(ison_algebra)*100)</span></span></span>
+<span class="r-in"><span><span class="co">#ison_adolescents %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co">#   mutate(cut = node_is_cutpoint(ison_adolescents)) %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co">#autographr(node_color = "cut", node_shape = "cut")</span></span></span>
+<span class="r-in"><span><span class="co">#autographr(ison_lotr, node_color = Race,</span></span></span>
+<span class="r-in"><span><span class="co">#            node_size = migraph::node_degree(ison_lotr)*2,</span></span></span>
+<span class="r-in"><span><span class="co">#            edge_color = "darkgreen",</span></span></span>
+<span class="r-in"><span><span class="co">#          edge_size = migraph::tie_degree(ison_lotr))</span></span></span>
+<span class="r-in"><span><span class="co">#autographr(ison_karateka, node_group = allegiance,</span></span></span>
+<span class="r-in"><span><span class="co">#            edge_size = migraph::tie_closeness(ison_karateka))</span></span></span>
+<span class="r-in"><span><span class="co">#autographr(ison_southern_women, layout = "concentric",</span></span></span>
+<span class="r-in"><span><span class="co">#            node_color = "type", membership = "type")</span></span></span>
 <span class="r-in"><span><span class="co">#autographr(ison_southern_women, layout = "hierarchy", center = "events")</span></span></span>
-<span class="r-in"><span><span class="co">#autographr(ison_lotr, layout = "multilevel",</span></span></span>
-<span class="r-in"><span><span class="co">#           node_color = "Race", level = "Race")</span></span></span>
+<span class="r-in"><span><span class="co">#autographr(ison_lotr, layout = "multilevel", </span></span></span>
+<span class="r-in"><span><span class="co">#            node_color = "Race", level = "Race")</span></span></span>
+<span class="r-in"><span><span class="co">#autographr(play_diffusion(ison_karateka))</span></span></span>
 <span class="r-in"><span><span class="co">#autographs(to_egos(ison_adolescents))</span></span></span>
-<span class="r-in"><span><span class="co">#autographs(migraph::play_diffusion(ison_adolescents))</span></span></span>
+<span class="r-in"><span><span class="co">#autographs(to_egos(ison_adolescents), waves = 8)</span></span></span>
+<span class="r-in"><span><span class="co">#autographs(to_egos(ison_adolescents), waves = c(2, 4, 6))</span></span></span>
+<span class="r-in"><span><span class="co">#autographs(play_diffusion(ison_adolescents))</span></span></span>
 <span class="r-in"><span><span class="co">#ison_adolescents %&gt;%</span></span></span>
-<span class="r-in"><span><span class="co"># mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %&gt;%</span></span></span>
-<span class="r-in"><span><span class="co"># to_waves(attribute = "year") %&gt;%</span></span></span>
-<span class="r-in"><span><span class="co"># autographd()</span></span></span>
+<span class="r-in"><span><span class="co">#  mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co">#  to_waves(attribute = "year", cumulative = TRUE) %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co">#  autographd()</span></span></span>
 <span class="r-in"><span><span class="co">#ison_adolescents %&gt;%</span></span></span>
-<span class="r-in"><span><span class="co"># mutate(shape = rep(c("circle", "square"), times = 4),</span></span></span>
-<span class="r-in"><span><span class="co">#        color = rep(c("blue", "red"), times = 4),</span></span></span>
-<span class="r-in"><span><span class="co">#        size = sample(4:16, 8, replace = TRUE)) %&gt;%</span></span></span>
-<span class="r-in"><span><span class="co"># mutate_ties(year = sample(1995:1998, 10, replace = TRUE),</span></span></span>
-<span class="r-in"><span><span class="co">#             e_color = sample(c("yellow", "green"), 10, replace = TRUE)) %&gt;%</span></span></span>
-<span class="r-in"><span><span class="co"># to_waves(attribute = "year") %&gt;%</span></span></span>
-<span class="r-in"><span><span class="co"># autographd(keep_isolates = FALSE, layout = "circle", node_shape = "shape",</span></span></span>
-<span class="r-in"><span><span class="co">#            node_color = "color", node_size =  "size", edge_color = "e_color")</span></span></span>
-<span class="r-in"><span><span class="co">#autographd(play_diffusion(ison_adolescents, seeds = 4), layout = "circle")</span></span></span>
-<span class="r-in"><span><span class="co">#autographd(play_diffusion(ison_adolescents, seeds = 4, recovery = 0.2),</span></span></span>
-<span class="r-in"><span><span class="co">#           layout = "circle")</span></span></span>
+<span class="r-in"><span><span class="co">#  mutate(shape = rep(c("circle", "square"), times = 4),</span></span></span>
+<span class="r-in"><span><span class="co">#         color = rep(c("blue", "red"), times = 4),</span></span></span>
+<span class="r-in"><span><span class="co">#         size = sample(4:16, 8, replace = TRUE)) %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co">#  mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co">#  to_waves(attribute = "year") %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co">#  autographd(layout = "circle", node_shape = "shape",</span></span></span>
+<span class="r-in"><span><span class="co">#             node_color = "color", node_size =  "size")</span></span></span>
+<span class="r-in"><span><span class="co">#autographd(play_diffusion(ison_adolescents, seeds = 5, recovery = 0.1))</span></span></span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>

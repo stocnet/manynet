@@ -1,141 +1,192 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://snlab-ch.github.io/manynet/404.html</loc>
+    <loc>https://stocnet.github.io/manynet/404.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/CODE_OF_CONDUCT.html</loc>
+    <loc>https://stocnet.github.io/manynet/CODE_OF_CONDUCT.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/CONTRIBUTING.html</loc>
+    <loc>https://stocnet.github.io/manynet/CONTRIBUTING.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/LICENSE-text.html</loc>
+    <loc>https://stocnet.github.io/manynet/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/LICENSE.html</loc>
+    <loc>https://stocnet.github.io/manynet/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/authors.html</loc>
+    <loc>https://stocnet.github.io/manynet/authors.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/index.html</loc>
+    <loc>https://stocnet.github.io/manynet/index.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/news/index.html</loc>
+    <loc>https://stocnet.github.io/manynet/news/index.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/pull_request_template.html</loc>
+    <loc>https://stocnet.github.io/manynet/pull_request_template.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/add.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/add_nodes.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/as.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/add_ties.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/attributes.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/as.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/autographing.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/attributes.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/configuration_layouts.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/autographing.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/create.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/configuration_layouts.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/from.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/create.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/generate.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/features.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/index.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/from.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/is.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/generate.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/ison_adolescents.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/ison_algebra.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/is.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/ison_brandes.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/is_format.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/ison_friends.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/ison_adolescents.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/ison_karateka.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/ison_algebra.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/ison_konigsberg.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/ison_brandes.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/ison_laterals.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/ison_friends.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/ison_lawfirm.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/ison_hightech.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/ison_lotr.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/ison_karateka.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/ison_marvel.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/ison_koenigsberg.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/ison_networkers.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/ison_laterals.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/ison_physicians.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/ison_lawfirm.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/ison_southern_women.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/ison_lotr.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/ison_starwars.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/ison_marvel.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/many_palettes.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/ison_monastery.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/miss.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/ison_networkers.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/partition_layouts.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/ison_physicians.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/properties.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/ison_potter.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/read.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/ison_southern_women.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/reexports.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/ison_starwars.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/reformat.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/ison_usstates.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/scales.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/learning.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/split.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/many_palettes.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/themes.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/mark_diff.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/tidy.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/mark_nodes.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/transform.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/mark_select.html</loc>
   </url>
   <url>
-    <loc>https://snlab-ch.github.io/manynet/reference/tutorials.html</loc>
+    <loc>https://stocnet.github.io/manynet/reference/mark_tie_select.html</loc>
+  </url>
+  <url>
+    <loc>https://stocnet.github.io/manynet/reference/mark_ties.html</loc>
+  </url>
+  <url>
+    <loc>https://stocnet.github.io/manynet/reference/miss.html</loc>
+  </url>
+  <url>
+    <loc>https://stocnet.github.io/manynet/reference/partition_layouts.html</loc>
+  </url>
+  <url>
+    <loc>https://stocnet.github.io/manynet/reference/play.html</loc>
+  </url>
+  <url>
+    <loc>https://stocnet.github.io/manynet/reference/properties.html</loc>
+  </url>
+  <url>
+    <loc>https://stocnet.github.io/manynet/reference/read.html</loc>
+  </url>
+  <url>
+    <loc>https://stocnet.github.io/manynet/reference/reexports.html</loc>
+  </url>
+  <url>
+    <loc>https://stocnet.github.io/manynet/reference/reformat.html</loc>
+  </url>
+  <url>
+    <loc>https://stocnet.github.io/manynet/reference/scales.html</loc>
+  </url>
+  <url>
+    <loc>https://stocnet.github.io/manynet/reference/split.html</loc>
+  </url>
+  <url>
+    <loc>https://stocnet.github.io/manynet/reference/themes.html</loc>
+  </url>
+  <url>
+    <loc>https://stocnet.github.io/manynet/reference/to_levels.html</loc>
+  </url>
+  <url>
+    <loc>https://stocnet.github.io/manynet/reference/to_paths.html</loc>
+  </url>
+  <url>
+    <loc>https://stocnet.github.io/manynet/reference/to_project.html</loc>
+  </url>
+  <url>
+    <loc>https://stocnet.github.io/manynet/reference/to_scope.html</loc>
+  </url>
+  <url>
+    <loc>https://stocnet.github.io/manynet/reference/tutorials.html</loc>
+  </url>
+  <url>
+    <loc>https://stocnet.github.io/manynet/reference/write.html</loc>
   </url>
 </urlset>
