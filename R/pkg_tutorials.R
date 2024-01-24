@@ -25,6 +25,7 @@ NULL
 run_tute <- function(tute) {
   thisRequires("learnr")
   if (missing(tute)) {
+    name <- NULL
     t1 <- dplyr::as_tibble(learnr::available_tutorials(package = "manynet"),
                            silent = TRUE) %>% dplyr::select(1:3)
     t2 <- dplyr::as_tibble(learnr::available_tutorials(package = "migraph"),
