@@ -84,8 +84,8 @@ NULL
 #' #          edge_color = "blue", edge_size = 2)
 #' #autographr(ison_algebra, edge_color = "type",
 #' #          node_size = migraph::node_betweenness(ison_algebra)*100)
-#' #ison_adolescents |>
-#' #   mutate(cut = node_is_cutpoint(ison_adolescents)) |>
+#' #ison_adolescents %>%
+#' #   mutate(cut = node_is_cutpoint(ison_adolescents)) %>%
 #' #autographr(node_color = "cut", node_shape = "cut")
 #' #autographr(ison_lotr, node_color = Race,
 #' #            node_size = migraph::node_degree(ison_lotr)*2,
@@ -808,8 +808,8 @@ reduce_categories <- function(g, node_group) {
 .node_adoption_time <- function(g){
   diff_model <- attr(g, "diff_model")
   event <- nodes <- NULL
-  out <- summary(diff_model) |> dplyr::filter(event == "I") |> 
-    dplyr::distinct(nodes, .keep_all = TRUE) |> 
+  out <- summary(diff_model) %>% dplyr::filter(event == "I") %>% 
+    dplyr::distinct(nodes, .keep_all = TRUE) %>% 
     dplyr::select(nodes,t)
   net <- attr(diff_model, "network")
   if(!is_labelled(net))

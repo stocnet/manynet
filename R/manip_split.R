@@ -229,75 +229,12 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
   for (k in .data[[attribute]]) {
     out[[paste("Time:", formatC(k, width = max(nchar(.data[[attribute]])),
                                 flag = 0))]] <- net %>%
-      tidygraph::mutate(Infected = .node_is_infected(diff, time = k),
-                        Exposed = .node_is_latent(diff, time = k),
-                        Recovered = .node_is_recovered(diff, time = k))
+      tidygraph::mutate(Infected = node_is_infected(diff, time = k),
+                        Exposed = node_is_latent(diff, time = k),
+                        Recovered = node_is_recovered(diff, time = k))
   }
   if (isTRUE(cumulative)) {
     out <- cumulative_ties(out, attribute)
-  }
-  out
-}
-
-.node_is_latent <- function(diff_model, time = 0){
-  event <- nodes <- NULL
-  latent <- summary(diff_model) |> 
-    dplyr::filter(t <= time & event %in% c("E","I")) |> 
-    dplyr::filter(!duplicated(nodes, fromLast = TRUE)) |> 
-    dplyr::filter(event == "E") |> 
-    dplyr::select(nodes)
-  net <- attr(diff_model, "network")
-  if(!is_labelled(net))
-    latent <- dplyr::arrange(latent, nodes) else if (is.numeric(latent$nodes))
-      latent$nodes <- node_names(net)[latent$nodes]
-  if(manynet::is_labelled(net)){
-    nnames <- manynet::node_names(net)
-    out <- stats::setNames(nnames %in% latent$nodes, nnames)
-  } else {
-    seq_len(manynet::network_nodes(net))
-    out <- seq_len(manynet::network_nodes(net)) %in% latent$nodes
-  }
-  out
-}
-
-.node_is_infected <- function(diff_model, time = 0){
-  event <- nodes <- NULL
-  infected <- summary(diff_model) |> 
-    dplyr::filter(t <= time & event %in% c("I","R")) |> 
-    dplyr::filter(!duplicated(nodes, fromLast = TRUE)) |> 
-    dplyr::filter(event == "I") |> 
-    dplyr::select(nodes)
-  net <- attr(diff_model, "network")
-  if(!is_labelled(net))
-    infected <- dplyr::arrange(infected, nodes) else if (is.numeric(infected$nodes))
-      infected$nodes <- node_names(net)[infected$nodes]
-  if(manynet::is_labelled(net)){
-    nnames <- manynet::node_names(net)
-    out <- stats::setNames(nnames %in% infected$nodes, nnames)
-  } else {
-    seq_len(manynet::network_nodes(net))
-    out <- seq_len(manynet::network_nodes(net)) %in% infected$nodes
-  }
-  out
-}
-
-.node_is_recovered <- function(diff_model, time = 0){
-  event <- nodes <- NULL
-  recovered <- summary(diff_model) |> 
-    dplyr::filter(t <= time & event %in% c("R","S")) |> 
-    dplyr::filter(!duplicated(nodes, fromLast = TRUE)) |> 
-    dplyr::filter(event == "R") |> 
-    dplyr::select(nodes)
-  net <- attr(diff_model, "network")
-  if(!manynet::is_labelled(net))
-    recovered <- dplyr::arrange(recovered, nodes) else if (is.numeric(recovered$nodes))
-      recovered$nodes <- node_names(net)[recovered$nodes]
-  if(manynet::is_labelled(net)){
-    nnames <- manynet::node_names(net)
-    out <- stats::setNames(nnames %in% recovered$nodes, nnames)
-  } else {
-    seq_len(manynet::network_nodes(net))
-    out <- seq_len(manynet::network_nodes(net)) %in% recovered$nodes
   }
   out
 }

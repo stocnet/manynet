@@ -144,10 +144,10 @@ NULL
 #' @export
 node_is_latent <- function(diff_model, time = 0){
   event <- nodes <- NULL
-  latent <- summary(diff_model) |> 
-    dplyr::filter(t <= time & event %in% c("E","I")) |> 
-    dplyr::filter(!duplicated(nodes, fromLast = TRUE)) |> 
-    dplyr::filter(event == "E") |> 
+  latent <- summary(diff_model) %>% 
+    dplyr::filter(t <= time & event %in% c("E","I")) %>% 
+    dplyr::filter(!duplicated(nodes, fromLast = TRUE)) %>% 
+    dplyr::filter(event == "E") %>% 
     dplyr::select(nodes)
   net <- attr(diff_model, "network")
   if(!manynet::is_labelled(net))
@@ -173,10 +173,10 @@ node_is_latent <- function(diff_model, time = 0){
 #' @export
 node_is_infected <- function(diff_model, time = 0){
   event <- nodes <- NULL
-  infected <- summary(diff_model) |> 
-    dplyr::filter(t <= time & event %in% c("I","R")) |> 
-    dplyr::filter(!duplicated(nodes, fromLast = TRUE)) |> 
-    dplyr::filter(event == "I") |> 
+  infected <- summary(diff_model) %>% 
+    dplyr::filter(t <= time & event %in% c("I","R")) %>% 
+    dplyr::filter(!duplicated(nodes, fromLast = TRUE)) %>% 
+    dplyr::filter(event == "I") %>% 
     dplyr::select(nodes)
   net <- attr(diff_model, "network")
   if(manynet::is_labelled(net)){
@@ -196,10 +196,10 @@ node_is_infected <- function(diff_model, time = 0){
 #' @export
 node_is_recovered <- function(diff_model, time = 0){
   event <- nodes <- NULL
-  recovered <- summary(diff_model) |> 
-    dplyr::filter(t <= time & event %in% c("R","S")) |> 
-    dplyr::filter(!duplicated(nodes, fromLast = TRUE)) |> 
-    dplyr::filter(event == "R") |> 
+  recovered <- summary(diff_model) %>% 
+    dplyr::filter(t <= time & event %in% c("R","S")) %>% 
+    dplyr::filter(!duplicated(nodes, fromLast = TRUE)) %>% 
+    dplyr::filter(event == "R") %>% 
     dplyr::select(nodes)
   net <- attr(diff_model, "network")
   if(!manynet::is_labelled(net))
@@ -237,9 +237,9 @@ node_is_recovered <- function(diff_model, time = 0){
 node_is_exposed <- function(.data, mark){
   event <- nodes <- NULL
   if(missing(mark) && inherits(.data, "diff_model")){
-    mark <- summary(.data) |> 
-      dplyr::filter(t == 0 & event == "I") |> 
-      dplyr::select(nodes) |> unlist()
+    mark <- summary(.data) %>% 
+      dplyr::filter(t == 0 & event == "I") %>% 
+      dplyr::select(nodes) %>% unlist()
     .data <- attr(.data, "network")
   }
   if(is.logical(mark)) mark <- which(mark)

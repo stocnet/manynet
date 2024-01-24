@@ -883,7 +883,7 @@ as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
 as_diffusion <- function(events, .data) {
   net <- .data
   event <- NULL
-  sumchanges <- events |> dplyr::group_by(t) |> 
+  sumchanges <- events %>% dplyr::group_by(t) %>% 
     dplyr::reframe(I_new = sum(event == "I"),
                    E_new = sum(event == "E"),
                    R_new = sum(event == "R"))

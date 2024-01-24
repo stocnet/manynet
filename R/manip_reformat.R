@@ -66,7 +66,7 @@ to_uniplex <- function(.data, tie) UseMethod("to_uniplex")
 to_uniplex.tbl_graph <- function(.data, tie){
   type <- NULL
   out <- dplyr::filter(.data = tidygraph::activate(.data, "edges"), 
-                       type == tie) |> dplyr::select(-type)
+                       type == tie) $>$ dplyr::select(-type)
   tidygraph::activate(out, "nodes")
 }
 
