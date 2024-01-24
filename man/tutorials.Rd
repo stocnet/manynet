@@ -37,7 +37,7 @@ network datasets included in the packages.
 #extract_tute("tutorial2")
 #pkg_data()
 # to obtain overview of unique datasets:
- #pkg_data() |> 
+ #pkg_data() \%>\% 
   #dplyr::distinct(directed, weighted, twomode, signed, 
    #               .keep_all = TRUE)
 }

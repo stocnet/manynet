@@ -158,8 +158,8 @@ with sensible defaults
 #          edge_color = "blue", edge_size = 2)
 #autographr(ison_algebra, edge_color = "type",
 #          node_size = migraph::node_betweenness(ison_algebra)*100)
-#ison_adolescents |>
-#   mutate(cut = node_is_cutpoint(ison_adolescents)) |>
+#ison_adolescents \%>\%
+#   mutate(cut = node_is_cutpoint(ison_adolescents)) \%>\%
 #autographr(node_color = "cut", node_shape = "cut")
 #autographr(ison_lotr, node_color = Race,
 #            node_size = migraph::node_degree(ison_lotr)*2,
