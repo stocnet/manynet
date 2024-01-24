@@ -9,4 +9,4 @@
 
 0 errors | 0 warnings | 0 notes
 
-- This version addresses expected conflicts with the 'igraph' v2.0.0 release, on which this package depends
+- This version addresses expected conflicts with the 'igraph' v2.0.0 and 'ggplot 3.5.0' releases, on which this package depends
