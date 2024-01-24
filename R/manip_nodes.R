@@ -91,18 +91,23 @@ add_node_attribute <- function(.data, attr_name, vector){
 #' @rdname add_nodes
 #' @importFrom tidygraph mutate
 #' @export
-mutate_nodes <- tidygraph::mutate
+mutate_nodes <- function(.data, ...) UseMethod("mutate_nodes")
+
+#' @export
+mutate_nodes.tbl_graph <- function(.data, ...){
+  .data %>% tidygraph::mutate(...)
+}
+
+#' @export
+mutate_nodes.igraph <- function(.data, ...){
+  .data %>% as_tidygraph() %>% 
+    tidygraph::mutate(...) %>% as_igraph()
+}
 
 #' @rdname add_nodes
 #' @importFrom tidygraph mutate
 #' @export
 mutate <- tidygraph::mutate
-
-#' @export
-mutate.igraph <- function(.data, ...){
-  .data %>% as_tidygraph() %>% 
-    mutate(...) %>% as_igraph()
-}
 
 #' @rdname add_nodes
 #' @export
@@ -158,4 +163,3 @@ rename <- tidygraph::rename
 filter_nodes <- function(.data, ..., .by){
   tidygraph::filter(.data, ..., .by = .by)
 }
-
