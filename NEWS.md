@@ -5,7 +5,8 @@
 ## Package
 
 - Fixed minor documentation bug in `run_tute()`
-- pkgdown urls now point to "stocnet/manynet""
+- pkgdown urls now point to "stocnet/manynet"
+- Closes #34 by pushing changes to CRAN
 
 # manynet 0.4.0
 
