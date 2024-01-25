@@ -1,3 +1,11 @@
+# manynet 0.4.2
+
+2023-12-25
+
+## Making
+
+- `play_diffusions()` now reverts future plan on exit (closes #57)
+
 # manynet 0.4.1
 
 2023-12-24
