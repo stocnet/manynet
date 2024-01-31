@@ -79,7 +79,7 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
       if(!as.integer(p)==p) stop("`p` must be an integer if above 1.")
       g <- igraph::sample_bipartite(n[1], n[2],
                                     m = p,
-                                    type = "gmp",
+                                    type = "gnm",
                                     directed = directed,
                                     mode = "out")
     } else {
