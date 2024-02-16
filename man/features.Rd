@@ -89,7 +89,7 @@ Tutte, W. T. (1950).
 }
 \seealso{
 Other marking: 
-\code{\link{is_format}},
-\code{\link{is}()}
+\code{\link{is}()},
+\code{\link{is_format}}
 }
 \concept{marking}
