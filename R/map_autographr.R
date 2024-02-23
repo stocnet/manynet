@@ -465,10 +465,9 @@ reduce_categories <- function(g, node_group) {
       if (!is.null(edge_color)) {
         if (edge_color %in% names(tie_attribute(g))) {
           p <- p + ggraph::geom_edge_arc(ggplot2::aes(
-            width = weight, colour = as.factor(tie_attribute(g, edge_color))),
+            width = esize, colour = as.factor(tie_attribute(g, edge_color))),
                                          edge_alpha = 0.4, strength = bend,
                                          edge_linetype = "solid",
-                                         edge_width = esize,
                                          arrow = ggplot2::arrow(angle = 15,
                                                                 length = ggplot2::unit(2, 'mm'),
                                                                 type = "closed"), 
@@ -477,11 +476,10 @@ reduce_categories <- function(g, node_group) {
             ggraph::scale_edge_colour_manual(values = colorsafe_palette,
                                              guide = ggplot2::guide_legend(""))
         } else {
-          p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = weight),
+          p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = esize),
                                          colour = edge_color,
                                          edge_alpha = 0.4, strength = bend,
                                          edge_linetype = "solid",
-                                         edge_width = esize,
                                          arrow = ggplot2::arrow(angle = 15,
                                                                 length = ggplot2::unit(2, 'mm'),
                                                                 type = "closed"), 
@@ -490,22 +488,20 @@ reduce_categories <- function(g, node_group) {
         }
       } else if (is_signed(g)) {
         p <- p + ggraph::geom_edge_arc(
-          ggplot2::aes(width = weight,
+          ggplot2::aes(width = esize,
                        colour = ifelse(igraph::E(g)$sign >= 0, "#d73027", "#4575b4"),
                        linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")),
                                         edge_alpha = 0.4, strength = bend,
-                                        edge_width = esize,
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(2, 'mm'),
                                                                type = "closed"), 
                                         end_cap = ggraph::circle(1.5, 'mm')) +
           ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "none")
       } else {
-        p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = weight),
+        p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = esize),
                                         edge_colour = "black",
                                         edge_alpha = 0.4, strength = bend,
                                         edge_linetype = "solid",
-                                        edge_width = esize,
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(2, 'mm'),
                                                                type = "closed"), 
@@ -559,16 +555,15 @@ reduce_categories <- function(g, node_group) {
       if (!is.null(edge_color)) {
         if (edge_color %in% names(tie_attribute(g))) {
         p <- p + ggraph::geom_edge_link0(ggplot2::aes(
-          width = weight, colour = as.factor(tie_attribute(g, edge_color))),
-                                        edge_alpha = 0.4, edge_linetype = "solid",
-                                        edge_width = esize) +
+          width = esize, colour = as.factor(tie_attribute(g, edge_color))),
+                                        edge_alpha = 0.4, edge_linetype = "solid") +
           ggraph::scale_edge_width_continuous(range = c(0.2, 1), guide = "none") +
           ggraph::scale_edge_colour_manual(values = colorsafe_palette,
                                            guide = ggplot2::guide_legend(""))
         } else {
           p <- p + ggraph::geom_edge_link0(ggplot2::aes(width = weight),
                                           colour = edge_color,
-                                          edge_alpha = 0.4, edge_width = esize,
+                                          edge_alpha = 0.4,
                                           edge_linetype = "solid") +
             ggraph::scale_edge_width_continuous(range = c(0.2, 1), guide = "none")
         }
@@ -577,13 +572,13 @@ reduce_categories <- function(g, node_group) {
           ggplot2::aes(width = weight,
                        colour = ifelse(igraph::E(g)$sign >= 0, "#d73027", "#4575b4"),
                        linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")),
-          edge_alpha = 0.4, edge_width = esize) +
+          edge_alpha = 0.4) +
           ggraph::scale_edge_width_continuous(range = c(0.2, 1), guide = "none")
       } else {
         p <- p + ggraph::geom_edge_link0(ggplot2::aes(width = weight),
                                          edge_colour = "black",
                                          edge_linetype = "solid",
-                                         edge_alpha = 0.4, edge_width = esize) + 
+                                         edge_alpha = 0.4) + 
           ggraph::scale_edge_width_continuous(range = c(0.2, 1), guide = "none")
       }
     } else { # unweighted and undirected
@@ -771,6 +766,8 @@ reduce_categories <- function(g, node_group) {
       out <- edge_size
     }
     if (length(out > 1) & all(out <= 1 & out >= 0)) out <- out*10
+  } else if (is.null(edge_size) & is_weighted(g)) {
+    out <- tie_attribute(g, "weight")
   } else {
     out <- 0.5
   }
