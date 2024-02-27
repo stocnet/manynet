@@ -217,14 +217,18 @@ autographs <- function(netlist, waves,
 #' #  mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %>%
 #' #  to_waves(attribute = "year", cumulative = TRUE) %>%
 #' #  autographd()
-#' #ison_adolescents %>%
-#' #  mutate(shape = rep(c("circle", "square"), times = 4),
-#' #         color = rep(c("blue", "red"), times = 4),
-#' #         size = sample(4:16, 8, replace = TRUE)) %>%
-#' #  mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %>%
+#' #ison_adolescents %>% 
+#' #  mutate(gender = rep(c("male", "female"), times = 4),
+#' #         hair = rep(c("black", "brown"), times = 4),
+#' #         age = sample(11:16, 8, replace = TRUE)) %>%
+#' #  mutate_ties(year = sample(1995:1998, 10, replace = TRUE),
+#' #              links = sample(c("friends", "not_friends"), 10, replace = TRUE),
+#' #              weekly_meetings = sample(c(3, 5, 7), 10, replace = TRUE)) %>%
 #' #  to_waves(attribute = "year") %>%
-#' #  autographd(layout = "circle", node_shape = "shape",
-#' #             node_color = "color", node_size =  "size")
+#' #  autographd(layout = "concentric", membership = "gender",
+#' #             node_shape = "gender", node_color = "hair",
+#' #             node_size =  "age", edge_color = "links",
+#' #             edge_size = "weekly_meetings")
 #' #autographd(play_diffusion(ison_adolescents, seeds = 5, recovery = 0.1))
 #' @export
 autographd <- function(tlist, layout, labels = TRUE,
@@ -257,9 +261,7 @@ autographd <- function(tlist, layout, labels = TRUE,
     edge_size <- as.character(substitute(edge_size))
   }
   # Check if diffusion model
-  if (inherits(tlist, "diff_model")) {
-    tlist <- to_waves(tlist)
-  }
+  if (inherits(tlist, "diff_model")) tlist <- to_waves(tlist)
   # Check if object is a list of lists
   if (!is.list(tlist[[1]])) {
     stop("Please declare a migraph-compatible network listed according
@@ -294,7 +296,7 @@ autographd <- function(tlist, layout, labels = TRUE,
           frame = ifelse(is.null(names(tlist)), i, names(tlist)[i]))
   })
   # Create an edge list for each time point
-  edges_lst <- time_edges_lst(tlist, edges_lst, nodes_lst, edge_color)
+  edges_lst <- time_edges_lst(tlist, edges_lst, nodes_lst)
   # Get edge IDs for all edges
   all_edges <- do.call("rbind", lapply(tlist, igraph::get.edgelist))
   all_edges <- all_edges[!duplicated(all_edges), ]
@@ -888,7 +890,7 @@ hypot <- function (x, y) {
 }
 
 time_edges_lst <- function(tlist, edges_lst, nodes_lst, edge_color) {
-  edg <- lapply(1:length(tlist), function(i) {
+  lapply(1:length(tlist), function(i) {
     edges_lst[[i]]$x <- nodes_lst[[i]]$x[match(edges_lst[[i]]$from,
                                                nodes_lst[[i]]$name)]
     edges_lst[[i]]$y <- nodes_lst[[i]]$y[match(edges_lst[[i]]$from,
@@ -901,10 +903,6 @@ time_edges_lst <- function(tlist, edges_lst, nodes_lst, edge_color) {
     edges_lst[[i]]$status <- TRUE
     edges_lst[[i]]
   })
-  # Keep only necessary columns
-  edg <- lapply(edg, function (x) x[,c("from", "to", "frame", "x", "y", "xend",
-                                       "yend", "id", "status"#, edge_color
-                                       )])
 }
 
 transition_edge_lst <- function(tlist, edges_lst, nodes_lst, all_edges) {
@@ -958,20 +956,15 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
   # Plot edges
   if (!is.null(edge_color)) {
     # Remove NAs in edge color, if declared
-    edge_color <- ifelse(is.na(edges_out[[edge_color]]), "black", edges_out[[edge_color]])
-    color <- grDevices::colors()
-    color <- color[!color %in% "black"]
-    if(!any(grepl(paste(color, collapse = "|"), edge_color)) |
-       any(grepl("#", edge_color))) {
-      for(i in unique(edge_color)) {
-        if (i != "black") {
-          edge_color[edge_color == i] <- sample(color, 1)
-        }
-      }
+    if (edge_color %in% names(edges_out)) {
+      edge_color <- check_color(edges_out[[edge_color]])
     }
-  } else edge_color <- rep("black", nrow(edges_out))
+  } else edge_color <- "black"
   if (!is.null(edge_size)) {
+    if (edge_size %in% names(edges_out)) {
     edge_size <- as.numeric(edges_out[[edge_size]])
+    edge_size <- ifelse(is.na(edge_size), 0.5, edge_size)
+    }
   } else edge_size <- 0.5
   p <- ggplot2::ggplot() + 
     ggplot2::geom_segment(aes(x = x, xend = xend, y = y, yend = yend, group = id),
@@ -979,22 +972,16 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
                           linewidth = edge_size, show.legend = FALSE)
   # Set node shape, color, and size
   if (!is.null(node_shape)) {
-    node_shape <- as.factor(nodes_out[[node_shape]])
-    node_shape <- c("circle", "square", "triangle")[node_shape]
-  } else node_shape <- rep("circle", nrow(nodes_out))
+    if (node_shape %in% names(nodes_out)) {
+      node_shape <- as.factor(nodes_out[[node_shape]])
+      if (!any(grepl("circle|square|triangle", node_shape))) {
+        node_shape <- c("circle", "square", "triangle")[node_shape]
+      }
+    }
+    } else node_shape <- "circle"
   if (!is.null(node_color)) {
     if (node_color %in% names(nodes_out)) {
-      node_color <- nodes_out[[node_color]]
-    }
-    color <- grDevices::colors()
-    color <- color[!color %in% "black"]
-    if (!any(grepl(paste(color, collapse = "|"), node_color)) |
-       any(grepl("#", node_color))) {
-      for(i in unique(node_color)) {
-        if (i != "black") {
-          node_color[node_color == i] <- sample(color, 1)
-        }
-      }
+      node_color <- check_color(nodes_out[[node_color]])
     }
   } else if (is.null(node_color) & "Infected" %in% names(nodes_out)) {
     node_color <- as.factor(ifelse(nodes_out[["Exposed"]], "Exposed",
@@ -1011,8 +998,7 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
   } else node_size <- nrow(nodes_out)/length(unique(nodes_out$frame))
   # Add labels
   if (isTRUE(labels)) {
-    p <- p + ggplot2::geom_text(aes(x, y, label = name),
-                                alpha = alphad,
+    p <- p + ggplot2::geom_text(aes(x, y, label = name), alpha = alphad,
                                 data = nodes_out, color = "black",
                                 hjust = -0.2, vjust = -0.2, show.legend = FALSE)
   }
@@ -1034,6 +1020,20 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
       ggplot2::theme_void()
   }
   p
+}
+
+check_color <- function(v) {
+  color <- grDevices::colors()
+  color <- color[!color %in% "black"]
+  v <- ifelse(is.na(v), "black", v)
+  if (!any(grepl(paste(color, collapse = "|"), v)) | any(grepl("#", v))) {
+    for(i in unique(v)) {
+      if (i != "black") {
+        v[v == i] <- sample(color, 1)
+      }
+    }
+  }
+  v
 }
 
 collapse_guides <- function(plist) {

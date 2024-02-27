@@ -181,14 +181,18 @@ with sensible defaults
 #  mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%
 #  to_waves(attribute = "year", cumulative = TRUE) \%>\%
 #  autographd()
-#ison_adolescents \%>\%
-#  mutate(shape = rep(c("circle", "square"), times = 4),
-#         color = rep(c("blue", "red"), times = 4),
-#         size = sample(4:16, 8, replace = TRUE)) \%>\%
-#  mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%
+#ison_adolescents \%>\% 
+#  mutate(gender = rep(c("male", "female"), times = 4),
+#         hair = rep(c("black", "brown"), times = 4),
+#         age = sample(11:16, 8, replace = TRUE)) \%>\%
+#  mutate_ties(year = sample(1995:1998, 10, replace = TRUE),
+#              links = sample(c("friends", "not_friends"), 10, replace = TRUE),
+#              weekly_meetings = sample(c(3, 5, 7), 10, replace = TRUE)) \%>\%
 #  to_waves(attribute = "year") \%>\%
-#  autographd(layout = "circle", node_shape = "shape",
-#             node_color = "color", node_size =  "size")
+#  autographd(layout = "concentric", membership = "gender",
+#             node_shape = "gender", node_color = "hair",
+#             node_size =  "age", edge_color = "links",
+#             edge_size = "weekly_meetings")
 #autographd(play_diffusion(ison_adolescents, seeds = 5, recovery = 0.1))
 }
 \seealso{
