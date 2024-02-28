@@ -283,8 +283,11 @@ autographd <- function(tlist, layout, labels = TRUE,
           frame = ifelse(is.null(names(tlist)), i, names(tlist)[i])))
   # Check if all names are present in all lists
   if (length(unique(unname(lapply(tlist, length)))) != 1) {
-    tlist <- to_waves(as_tidygraph(do.call("rbind", edges_lst)),
-                      attribute = "frame")
+    if (any(c(node_shape, node_color, node_size) %in% names(node_attribute(tlist[[1]])))) {
+      node_info <- dplyr::distinct(do.call(rbind, lapply(1:length(tlist), function(i)
+        tlist[[i]] %>% activate("nodes") %>% data.frame()))) # keep node info for latter
+    } else node_info <- NULL
+    tlist <- to_waves(as_tidygraph(do.call("rbind", edges_lst)), attribute = "frame")
   }
   # Add separate layouts for each time point
   lay <- lapply(1:length(tlist), function(i)
@@ -306,6 +309,9 @@ autographd <- function(tlist, layout, labels = TRUE,
   # Bind nodes and edges list
   edges_out <- do.call("rbind", edges_lst)
   nodes_out <- do.call("rbind", nodes_lst)
+  if (!is.null(node_info)) {
+    nodes_out <- dplyr::left_join(nodes_out, node_info[!duplicated(node_info$name),], by = "name")
+  }
   # Delete nodes for each frame if isolate
   if (isFALSE(keep_isolates)) {
     nodes_out <- remove_isolates(edges_out, nodes_out)
