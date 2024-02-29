@@ -75,30 +75,30 @@ NULL
 
 #' @describeIn autographing Graphs a network with sensible defaults
 #' @examples
-#' #autographr(ison_adolescents)
-#' #ison_adolescents %>%
-#' # mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2)) %>%
-#' #autographr(layout = "lineage", rank = "year")
-#' #autographr(ison_algebra, layout = "circle",
-#' #          node_size = 8, node_color = "orange", node_shape = "square",
-#' #          edge_color = "blue", edge_size = 2)
+#' autographr(ison_adolescents)
+#' ison_adolescents %>%
+#'  mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2)) %>%
+#'  autographr(layout = "lineage", rank = "year")
+#' autographr(ison_algebra, layout = "circle",
+#'            node_size = 8, node_color = "orange", node_shape = "square",
+#'            edge_color = "blue", edge_size = 2)
+#' autographr(ison_southern_women, layout = "concentric",
+#'            node_color = "type", membership = "type")
+#' autographr(play_diffusion(ison_karateka))
 #' #autographr(ison_algebra, edge_color = "type",
-#' #          node_size = migraph::node_betweenness(ison_algebra)*100)
+#' #           node_size = migraph::node_betweenness(ison_algebra)*100)
 #' #ison_adolescents %>%
 #' #   mutate(cut = node_is_cutpoint(ison_adolescents)) %>%
 #' #autographr(node_color = "cut", node_shape = "cut")
 #' #autographr(ison_lotr, node_color = Race,
-#' #            node_size = migraph::node_degree(ison_lotr)*2,
-#' #            edge_color = "darkgreen",
-#' #          edge_size = migraph::tie_degree(ison_lotr))
+#' #           node_size = migraph::node_degree(ison_lotr)*2,
+#' #           edge_color = "darkgreen",
+#' #           edge_size = migraph::tie_degree(ison_lotr))
 #' #autographr(ison_karateka, node_group = allegiance,
-#' #            edge_size = migraph::tie_closeness(ison_karateka))
-#' #autographr(ison_southern_women, layout = "concentric",
-#' #            node_color = "type", membership = "type")
+#' #           edge_size = migraph::tie_closeness(ison_karateka))
 #' #autographr(ison_southern_women, layout = "hierarchy", center = "events")
 #' #autographr(ison_lotr, layout = "multilevel", 
-#' #            node_color = "Race", level = "Race")
-#' #autographr(play_diffusion(ison_karateka))
+#' #           node_color = "Race", level = "Race")
 #' @export
 autographr <- function(.data, layout, labels = TRUE,
                        node_color, node_shape, node_size, node_group,
