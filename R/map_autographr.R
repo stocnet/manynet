@@ -288,7 +288,7 @@ autographd <- function(tlist, layout, labels = TRUE,
         tlist[[i]] %>% activate("nodes") %>% data.frame()))) # keep node info for latter
     } else node_info <- NULL
     tlist <- to_waves(as_tidygraph(do.call("rbind", edges_lst)), attribute = "frame")
-  }
+  } else node_info <- NULL
   # Add separate layouts for each time point
   lay <- lapply(1:length(tlist), function(i)
     ggraph::create_layout(tlist[[i]], layout, ...))
