@@ -76,9 +76,6 @@ NULL
 #' @describeIn autographing Graphs a network with sensible defaults
 #' @examples
 #' autographr(ison_adolescents)
-#' ison_adolescents %>%
-#'  mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2)) %>%
-#'  autographr(layout = "lineage", rank = "year")
 #' autographr(ison_algebra, layout = "circle",
 #'            node_size = 8, node_color = "orange", node_shape = "square",
 #'            edge_color = "blue", edge_size = 2)
@@ -87,6 +84,9 @@ NULL
 #' autographr(play_diffusion(ison_karateka))
 #' #autographr(ison_algebra, edge_color = "type",
 #' #           node_size = migraph::node_betweenness(ison_algebra)*100)
+#' #ison_adolescents %>%
+#' #   mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2)) %>%
+#' #   autographr(layout = "lineage", rank = "year")
 #' #ison_adolescents %>%
 #' #   mutate(cut = node_is_cutpoint(ison_adolescents)) %>%
 #' #autographr(node_color = "cut", node_shape = "cut")
