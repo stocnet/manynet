@@ -7,9 +7,12 @@
 #' @param base_size Font size, by default 12.
 #' @param base_family Font family, by default "sans".
 #' @examples
-#' # autographr(to_mentoring(ison_brandes)) + 
-#' # labs(title = "Who leads and who follows?") +
-#' # theme_iheid()
+#' to_mentoring(ison_brandes) %>%
+#'   mutate(color = c(rep(c(1,2,3), 3), 3)) %>%
+#'   autographr(node_color = "color") +
+#'   labs(title = "Who leads and who follows?") +
+#'   scale_color_iheid() +
+#'   theme_iheid()
 NULL
 
 #' @rdname themes
