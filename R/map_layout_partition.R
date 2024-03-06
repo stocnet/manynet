@@ -242,43 +242,15 @@ layout_tbl_graph_lineage <- function(.data, rank, circular = FALSE) {
     rank <- as.numeric(node_attribute(.data, rank))
   }
   thisRequiresBio("Rgraphviz")
-  prep <- as_matrix(mutate(.data, type = ifelse(rank > mean(rank), TRUE, FALSE)),
-                    twomode = FALSE)
-  if (anyDuplicated(rownames(prep))) {
-    rownames(prep) <- seq_len(nrow(prep))
-    colnames(prep) <- seq_len(ncol(prep))
-  }
-  if (any(prep<0)) prep[prep<0] <- 0
-  out <- as_graphAM(prep)
-  out <- suppressMessages(Rgraphviz::layoutGraph(out, layoutType = 'dot',
-                                                 attrs = list(graph = list(rankdir = "LR",
-                                                                           concentrate = TRUE))))
-  .to_lo(data.frame(.rescale(rank), .rescale(out@renderInfo@nodes$nodeY)))
+  out <- layout_tbl_graph_alluvial(
+    as_igraph(mutate(.data, type = ifelse(
+      rank > mean(rank), TRUE, FALSE)), twomode = TRUE))
+  out$x <- .rescale(rank)
+  out
 }
 
 .rescale <- function(vector){
   (vector - min(vector)) / (max(vector) - min(vector))
-}
-
-.adjust <- function(x, y, names) {
-  out <- data.frame(cbind(x, y, names))
-  adj <- data.frame()
-  for (k in levels(as.factor(y))) {
-    a <- subset(out, y == k)
-    if (length(a[,1]) == 1) {
-      a[,1] <- ifelse(a[,1] > 0.8, as.numeric(a[,1])*0.8,
-                      ifelse(a[,1] < 0.2, as.numeric(a[,1])*1.2,
-                             as.numeric(a[,1])))
-    } else if (length(a[,1]) > 2) {
-      a[,1] <- seq(min(a[,1]), max(a[,1]), len = length(a[,1]))
-    }
-    adj <- rbind(adj, a)
-  }
-  name <- data.frame(names = out[,3])
-  out <- dplyr::left_join(name, adj, by = "names")
-  out <- apply(out[,2:3], 2, as.numeric)
-  rownames(out) <- name$names
-  out
 }
 
 .to_lo <- function(mat) {
