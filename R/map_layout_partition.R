@@ -239,24 +239,21 @@ layout_tbl_graph_lineage <- function(.data, rank, circular = FALSE) {
   if (length(rank) > 1 & length(rank) != length(.data)) {
     stop("Please pass the function a `rank` node attribute or a vector.")
   } else if (length(rank) != length(.data)) {
-    rank <- node_attribute(.data, rank)
-    if (!is.numeric(rank))
-      stop("Please declare a numeric attribute to `rank` nodes.")
+    rank <- as.numeric(node_attribute(.data, rank))
   }
   thisRequiresBio("Rgraphviz")
-  prep <- as_matrix(.data, twomode = FALSE)
-  if(anyDuplicated(rownames(prep))){
+  prep <- as_matrix(mutate(.data, type = ifelse(rank > mean(rank), TRUE, FALSE)),
+                    twomode = FALSE)
+  if (anyDuplicated(rownames(prep))) {
     rownames(prep) <- seq_len(nrow(prep))
     colnames(prep) <- seq_len(ncol(prep))
   }
-  if(any(prep<0)) prep[prep<0] <- 0
+  if (any(prep<0)) prep[prep<0] <- 0
   out <- as_graphAM(prep)
   out <- suppressMessages(Rgraphviz::layoutGraph(out, layoutType = 'dot',
-                                                 attrs = list(graph = list(rankdir = "BT"))))
-  nodeX <- .rescale(out@renderInfo@nodes$nodeX)
-  names <- names(nodeX)
-  nodeY <- .rescale(rank*(-1))
-  .to_lo(.adjust(nodeX, nodeY, names))
+                                                 attrs = list(graph = list(rankdir = "LR",
+                                                                           concentrate = TRUE))))
+  .to_lo(data.frame(.rescale(rank), .rescale(out@renderInfo@nodes$nodeY)))
 }
 
 .rescale <- function(vector){
@@ -284,7 +281,7 @@ layout_tbl_graph_lineage <- function(.data, rank, circular = FALSE) {
   out
 }
 
-.to_lo <- function(mat){
+.to_lo <- function(mat) {
   res <- as.data.frame(mat)
   names(res) <- c("x","y")
   res
