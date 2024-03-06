@@ -410,7 +410,7 @@ reduce_categories <- function(g, node_group) {
         hj <- ifelse(lo[,1] >= 0, -0.2, 1.2)
         vj <- ifelse(lo[,2] >= 0, -0.2, 1.2)
       }
-      p <- p + ggraph::geom_node_text(ggplot2::aes(label = name),
+      p <- p + ggraph::geom_node_text(ggplot2::aes(label = name), repel = TRUE,
                                       size = 3, hjust = hj, angle = angles) +
         ggplot2::coord_cartesian(xlim=c(-1.2,1.2), ylim=c(-1.2,1.2))
     } else if (layout == "concentric") {
@@ -425,20 +425,20 @@ reduce_categories <- function(g, node_group) {
         vj <- ifelse(lo[,2] >= 0, -0.2, 1.2)
       }
       p <- p + ggraph::geom_node_text(ggplot2::aes(label = name),
-                                      size = 3, hjust = hj,
-                                      vjust = vj, check_overlap = TRUE) +
+                                      size = 3, hjust = hj, repel = TRUE,
+                                      vjust = vj) +
         ggplot2::coord_cartesian(xlim=c(-1.2,1.2), ylim=c(-1.2,1.2))
-    } else if (layout %in% c("bipartite", "railway") |
+    } else if (layout %in% c("bipartite", "railway", "alluvial") |
                (layout == "hierarchy" & length(unique(lo[,2])) <= 2)) {
       p <- p + ggraph::geom_node_text(ggplot2::aes(label = name),
-                                      size = 2, hjust = "outward",
+                                      size = 2, hjust = "outward", repel = TRUE,
                                       nudge_y = ifelse(lo[,2] == 1, 0.05, -0.05),
                                       # vjust = ifelse(node_mode(object), -1, 1),
                                       angle = 90) +
         ggplot2::coord_cartesian(ylim=c(-0.2, 1.2))
     } else if (layout == "hierarchy" & length(unique(lo[,2])) > 2) {
       p <- p + ggraph::geom_node_text(ggplot2::aes(label = name), size = 2,
-                                      hjust = "inward", vjust = -0.4)
+                                      hjust = "inward", vjust = -0.4, repel = TRUE)
     } else if (!is_twomode(g)) { # Plot one mode
       p <- p + ggraph::geom_node_label(ggplot2::aes(label = name),
                                        label.padding = 0.15, label.size = 0,
