@@ -246,7 +246,7 @@ layout_tbl_graph_lineage <- function(.data, rank, circular = FALSE) {
     as_igraph(mutate(.data, type = ifelse(
       rank > mean(rank), TRUE, FALSE)), twomode = TRUE))
   out$x <- .rescale(rank)
-  out
+  .check_dup(out)
 }
 
 .rescale <- function(vector){
@@ -266,6 +266,11 @@ to_list <- function(members){
   })
   names(out) <- unique(members)
   out
+}
+
+.check_dup <- function(mat) {
+  mat$y <- ifelse(duplicated(mat[c('x','y')]), mat$y*0.95, mat$y)
+  mat
 }
 
 #' @importFrom igraph degree

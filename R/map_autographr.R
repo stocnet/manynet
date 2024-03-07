@@ -437,8 +437,9 @@ reduce_categories <- function(g, node_group) {
       p <- p + ggraph::geom_node_text(ggplot2::aes(label = name), size = 3,
                                       hjust = "inward", vjust = -0.4, repel = TRUE)
     } else if (layout %in% c("alluvial", "lineage")) {
-      p <- p + ggraph::geom_node_label(ggplot2::aes(label = name), size = 3, label.size = 0,
-                                       vjust = "outward", repel = TRUE, seed = 1234)
+      p <- p + ggraph::geom_node_label(ggplot2::aes(label = name), size = 3,
+                                       repel = TRUE, label.size = 0,
+                                       nudge_x = ifelse(lo[,1] == 1, 0.02, -0.02))
     } else {
       p <- p + ggraph::geom_node_label(ggplot2::aes(label = name), label.size = 0,
                                        repel = TRUE, seed = 1234, size = 3)
