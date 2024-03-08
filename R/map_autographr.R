@@ -105,10 +105,8 @@ autographr <- function(.data, layout, labels = TRUE,
                        edge_color, edge_size, ...) {
   g <- as_tidygraph(.data)
   if (missing(layout)) {
-    if (length(g) == 3) {
-      layout <- "triad" 
-    } else if (length(g) == 4) {
-      layout <- "quad" 
+    if (length(g) <= 4) {
+      layout <- "configuration" 
     } else if (is_twomode(g)) {
       layout <- "hierarchy"
     } else layout <- "stress"
