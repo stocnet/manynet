@@ -61,7 +61,7 @@ layout_tbl_graph_hierarchy <- function(.data, center = NULL,
   if (is.null(center)) {
     thisRequiresBio("Rgraphviz")
     prep <- as_matrix(.data, twomode = FALSE)
-    if(anyDuplicated(rownames(prep))){
+    if(anyDuplicated(rownames(prep))) {
       rownames(prep) <- seq_len(nrow(prep))
       colnames(prep) <- seq_len(ncol(prep))
     }
@@ -84,7 +84,6 @@ layout_tbl_graph_hierarchy <- function(.data, center = NULL,
       Evt2 <- cbind(rep(2, floor(ncol(net)/2)), nrm(rng(floor(mm/2))))
       crd <- rbind(Act, Evt1, Evt2)
       crd[which(is.nan(crd))] <- 0.5
-      crd[, 2] <- crd[, 2] * cos(pi) - crd[, 1] * sin(pi)
       rownames(crd) <- c(dimnames(net)[[1]], dimnames(net)[[2]])
     } else if (center == "events") {
       Act1 <- cbind(rep(0, ceiling(nrow(net)/2)), nrm(rng(ceiling(nn/2))))
@@ -92,7 +91,6 @@ layout_tbl_graph_hierarchy <- function(.data, center = NULL,
       Evt <- cbind(rep(1, ncol(net)), nrm(rng(mm)))
       crd <- rbind(Act1, Act2, Evt)
       crd[which(is.nan(crd))] <- 0.5
-      crd[, 2] <- crd[, 2] * cos(pi) - crd[, 1] * sin(pi)
       rownames(crd) <- c(dimnames(net)[[1]], dimnames(net)[[2]])
     } else {
       if (center %in% node_names(.data)) {
@@ -107,7 +105,6 @@ layout_tbl_graph_hierarchy <- function(.data, center = NULL,
         }
         crd <- rbind(side1, side2)
         crd[which(is.nan(crd))] <- 0.5
-        crd[, 2] <- crd[, 2] * cos(pi) - crd[, 1] * sin(pi)
         rownames(crd) <- c(dimnames(net)[[1]], dimnames(net)[[2]])
       } else stop("Please declare actors, events, or a node name as center.")
     }
@@ -139,7 +136,7 @@ layout_tbl_graph_alluvial <- function(.data,
 #' @rdname partition_layouts
 #' @export
 layout_tbl_graph_railway <- function(.data,
-                                     circular = FALSE, times = 1000){
+                                     circular = FALSE, times = 1000) {
   res <- layout_tbl_graph_hierarchy(as_igraph(.data))
   res$x <- c(match(res[res[,2]==0,1], sort(res[res[,2]==0,1])),
              match(res[res[,2]==1,1], sort(res[res[,2]==1,1])))
