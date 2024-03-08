@@ -386,12 +386,6 @@ reduce_categories <- function(g, node_group) {
       }
     }
   }
-  # if (layout == "stress" & .is_diamond(g)) {
-  #   turn <- matrix(c(cos(0.71), -sin(0.71), sin(0.71), cos(0.71)), 2, 2)
-  #   coord <- matrix(cbind(lo[,1], lo[,2]), ncol = 2) %*% turn
-  #   lo[,1] <- coord[,1]
-  #   lo[,2] <- coord[,2]
-  # }
   p <- ggraph::ggraph(lo) + ggplot2::theme_void()
   if (labels & is_labelled(g)) {
     if (layout == "circle") {
@@ -427,15 +421,14 @@ reduce_categories <- function(g, node_group) {
       p <- p + ggraph::geom_node_text(ggplot2::aes(label = name),  vjust = vj,
                                       size = 3, hjust = hj, repel = TRUE) +
         ggplot2::coord_cartesian(xlim=c(-1.2,1.2), ylim=c(-1.2,1.2))
-    } else if (layout %in% c("bipartite", "railway") |
-               (layout == "hierarchy" & length(unique(lo[,2])) <= 2)) {
+    } else if (layout %in% c("bipartite", "railway") | layout == "hierarchy" & length(unique(lo[["y"]])) <= 2) {
       p <- p + ggraph::geom_node_text(ggplot2::aes(label = name), angle = 90,
                                       size = 3, hjust = "outward", repel = TRUE,
                                       nudge_y = ifelse(lo[,2] == 1, 0.05, -0.05)) +
         ggplot2::coord_cartesian(ylim=c(-0.2, 1.2))
-    } else if (layout == "hierarchy" & length(unique(lo[,2])) > 2) {
-      p <- p + ggraph::geom_node_text(ggplot2::aes(label = name), size = 3,
-                                      hjust = "inward", vjust = -0.4, repel = TRUE)
+    } else if (layout == "hierarchy" & length(unique(lo[["y"]])) > 2) {
+      p <- p + ggraph::geom_node_text(ggplot2::aes(label = name),
+                                      size = 3, hjust = "inward", repel = TRUE)
     } else if (layout %in% c("alluvial", "lineage")) {
       p <- p + ggraph::geom_node_label(ggplot2::aes(label = name), size = 3,
                                        repel = TRUE, label.size = 0,
@@ -792,16 +785,6 @@ reduce_categories <- function(g, node_group) {
     out <- 0.5
   }
   out
-}
-
-.is_diamond <- function(x) {
-  x <- as_matrix(x)
-  if (is.numeric(x)) {
-    if (length(x) == 100 | length(x) == 10000 &
-        suppressWarnings(all(unique(rowSums(x)) == c(3, 5, 8)))) {
-      TRUE
-    } else FALSE 
-  } else FALSE
 }
 
 .node_adoption_time <- function(g){
