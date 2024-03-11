@@ -1,10 +1,15 @@
 # manynet 0.4.2
 
-2023-12-25
+2024-03-11
 
 ## Making
 
-- `play_diffusions()` now reverts future plan on exit (closes #57)
+- Closed #57 by updating `play_diffusions()` to revert future plan on exit
+
+## Mapping
+
+* Closed #6 by updating "lineage" layout.
+* Closed #39 by making `autographr()` more flexible and efficient in setting variables to aesthetics.
 
 # manynet 0.4.1
 
