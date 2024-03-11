@@ -70,7 +70,7 @@ test_that("to_acylic works", {
 test_that("to_reciprocated works",{
   expect_true(is_directed(to_reciprocated(ison_brandes)))
   expect_true(is_directed(to_reciprocated(as_igraph(ison_brandes))))
-  expect_true(is_directed(to_reciprocated(to_directed(as_matrix(ison_brandes)))))
+  expect_true(isSymmetric(to_reciprocated(as_matrix(ison_brandes))))
   expect_true(is_directed(to_reciprocated(to_directed(as_network(ison_brandes)))))
   expect_true(nrow(as_edgelist(to_reciprocated(ison_brandes))) >
                 length(ison_brandes)*2)
