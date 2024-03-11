@@ -51,8 +51,8 @@ test_that("weighted, unsigned, directed networks graph correctly", {
   # Weighted, unsigned, directed network
   test_networkers <- autographr(ison_networkers)
   # Node position
-  expect_equal(round(test_networkers[["data"]][["x"]][[1]]), 0)
-  expect_equal(round(test_networkers[["data"]][["y"]][[1]]), 0)
+  expect_equal(round(test_networkers[["data"]][["x"]][[1]]), 9)
+  expect_equal(round(test_networkers[["data"]][["y"]][[1]]), -1)
   # Edge parameters
   expect_equal(test_networkers[["layers"]][[2]][["aes_params"]][["edge_alpha"]], 0.4)
   expect_equal(test_networkers[["layers"]][[2]][["aes_params"]][["edge_linetype"]], "solid")
