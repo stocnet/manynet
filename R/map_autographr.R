@@ -55,11 +55,11 @@
 #'   Group variables should have a minimum of 3 nodes,
 #'   if less, number groups will be reduced by
 #'   merging categories with lower counts into one called "other".
-#' @param edge_color Edge variable to be used for coloring the nodes.
+#' @param edge_color Tie variable to be used for coloring the nodes.
 #'   It is easiest if this is added as an edge or tie attribute 
 #'   to the graph before plotting.
 #'   Edges can also be colored by declaring a color instead.
-#' @param edge_size Edge variable to be used for sizing the edges.
+#' @param edge_size Tie variable to be used for sizing the edges.
 #'   This can be any continuous variable on the nodes of the network.
 #'   Since this function expects this to be an existing variable,
 #'   it is recommended to calculate all edge-related statistics prior
@@ -938,7 +938,7 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
   if (!is.null(edge_color)) {
     # Remove NAs in edge color, if declared
     if (edge_color %in% names(edges_out)) {
-      edge_color <- check_color(edges_out[[edge_color]])
+      edge_color <- .check_color(edges_out[[edge_color]])
     }
   } else edge_color <- "black"
   if (!is.null(edge_size)) {
@@ -962,7 +962,7 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
     } else node_shape <- "circle"
   if (!is.null(node_color)) {
     if (node_color %in% names(nodes_out)) {
-      node_color <- check_color(nodes_out[[node_color]])
+      node_color <- .check_color(nodes_out[[node_color]])
     }
   } else if (is.null(node_color) & "Infected" %in% names(nodes_out)) {
     node_color <- as.factor(ifelse(nodes_out[["Exposed"]], "Exposed",
@@ -1003,7 +1003,7 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
   p
 }
 
-check_color <- function(v) {
+.check_color <- function(v) {
   color <- grDevices::colors()
   color <- color[!color %in% "black"]
   v <- ifelse(is.na(v), "black", v)
