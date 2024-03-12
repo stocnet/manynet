@@ -99,7 +99,7 @@ It is easiest if this is added as an edge or tie attribute
 to the graph before plotting.
 Edges can also be colored by declaring a color instead.}
 
-\item{edge_size}{Edge variable to be used for sizing the edges.
+\item{edge_size}{Tie variable to be used for sizing the edges.
 This can be any continuous variable on the nodes of the network.
 Since this function expects this to be an existing variable,
 it is recommended to calculate all edge-related statistics prior
@@ -149,30 +149,30 @@ with sensible defaults
 
 }}
 \examples{
-#autographr(ison_adolescents)
-#ison_adolescents \%>\%
-# mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2)) \%>\%
-#autographr(layout = "lineage", rank = "year")
-#autographr(ison_algebra, layout = "circle",
-#          node_size = 8, node_color = "orange", node_shape = "square",
-#          edge_color = "blue", edge_size = 2)
+autographr(ison_adolescents)
+autographr(ison_algebra, layout = "circle",
+           node_size = 8, node_color = "orange", node_shape = "square",
+           edge_color = "blue", edge_size = 2)
+autographr(ison_southern_women, layout = "concentric",
+           node_color = "type", membership = "type")
+autographr(play_diffusion(ison_karateka))
 #autographr(ison_algebra, edge_color = "type",
-#          node_size = migraph::node_betweenness(ison_algebra)*100)
+#           node_size = migraph::node_betweenness(ison_algebra)*100)
+#ison_adolescents \%>\%
+#   mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2)) \%>\%
+#   autographr(layout = "lineage", rank = "year")
 #ison_adolescents \%>\%
 #   mutate(cut = node_is_cutpoint(ison_adolescents)) \%>\%
 #autographr(node_color = "cut", node_shape = "cut")
 #autographr(ison_lotr, node_color = Race,
-#            node_size = migraph::node_degree(ison_lotr)*2,
-#            edge_color = "darkgreen",
-#          edge_size = migraph::tie_degree(ison_lotr))
+#           node_size = migraph::node_degree(ison_lotr)*2,
+#           edge_color = "darkgreen",
+#           edge_size = migraph::tie_degree(ison_lotr))
 #autographr(ison_karateka, node_group = allegiance,
-#            edge_size = migraph::tie_closeness(ison_karateka))
-#autographr(ison_southern_women, layout = "concentric",
-#            node_color = "type", membership = "type")
+#           edge_size = migraph::tie_closeness(ison_karateka))
 #autographr(ison_southern_women, layout = "hierarchy", center = "events")
 #autographr(ison_lotr, layout = "multilevel", 
-#            node_color = "Race", level = "Race")
-#autographr(play_diffusion(ison_karateka))
+#           node_color = "Race", level = "Race")
 #autographs(to_egos(ison_adolescents))
 #autographs(to_egos(ison_adolescents), waves = 8)
 #autographs(to_egos(ison_adolescents), waves = c(2, 4, 6))
@@ -181,14 +181,18 @@ with sensible defaults
 #  mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%
 #  to_waves(attribute = "year", cumulative = TRUE) \%>\%
 #  autographd()
-#ison_adolescents \%>\%
-#  mutate(shape = rep(c("circle", "square"), times = 4),
-#         color = rep(c("blue", "red"), times = 4),
-#         size = sample(4:16, 8, replace = TRUE)) \%>\%
-#  mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) \%>\%
+#ison_adolescents \%>\% 
+#  mutate(gender = rep(c("male", "female"), times = 4),
+#         hair = rep(c("black", "brown"), times = 4),
+#         age = sample(11:16, 8, replace = TRUE)) \%>\%
+#  mutate_ties(year = sample(1995:1998, 10, replace = TRUE),
+#              links = sample(c("friends", "not_friends"), 10, replace = TRUE),
+#              weekly_meetings = sample(c(3, 5, 7), 10, replace = TRUE)) \%>\%
 #  to_waves(attribute = "year") \%>\%
-#  autographd(layout = "circle", node_shape = "shape",
-#             node_color = "color", node_size =  "size")
+#  autographd(layout = "concentric", membership = "gender",
+#             node_shape = "gender", node_color = "hair",
+#             node_size =  "age", edge_color = "links",
+#             edge_size = "weekly_meetings")
 #autographd(play_diffusion(ison_adolescents, seeds = 5, recovery = 0.1))
 }
 \seealso{

@@ -257,8 +257,11 @@ play_diffusions <- function(.data,
                             verbose = FALSE) {
   thisRequires("future")
   thisRequires("furrr")
+  oplan <- future::plan(strategy)
+  on.exit(future::plan(oplan), add = TRUE)
+  
   if(missing(steps)) steps <- network_nodes(.data)
-  future::plan(strategy)
+  
   out <- furrr::future_map_dfr(1:times, function(j){
       data.frame(sim = j,
                  play_diffusion(.data, 

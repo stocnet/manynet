@@ -1,3 +1,23 @@
+# manynet 0.4.2
+
+2024-03-12
+
+## Making
+
+- Closed #57 by updating `play_diffusions()` to revert future plan on exit
+- Fixed bug with how `generate_random()` works for two-mode networks with specified number of ties
+
+## Mapping
+
+- Closed #6 by updating how "lineage" layout works and places nodes on Y axis
+- Closed #39 by making `autographr()` more flexible and efficient in setting variables to aesthetics
+- Updated themes to be compatible with newer and older versions of `{ggplot2}`
+- Added "configuration" layout for small triad/quad networks
+
+## Modifying
+
+- Updated `to_reciprocated.matrix()` to consistently work with matrices
+
 # manynet 0.4.1
 
 2023-12-24

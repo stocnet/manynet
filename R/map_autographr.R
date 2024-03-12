@@ -59,7 +59,7 @@
 #'   It is easiest if this is added as an edge or tie attribute 
 #'   to the graph before plotting.
 #'   Edges can also be colored by declaring a color instead.
-#' @param edge_size Edge variable to be used for sizing the edges.
+#' @param edge_size Tie variable to be used for sizing the edges.
 #'   This can be any continuous variable on the nodes of the network.
 #'   Since this function expects this to be an existing variable,
 #'   it is recommended to calculate all edge-related statistics prior
@@ -75,40 +75,38 @@ NULL
 
 #' @describeIn autographing Graphs a network with sensible defaults
 #' @examples
-#' #autographr(ison_adolescents)
-#' #ison_adolescents %>%
-#' # mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2)) %>%
-#' #autographr(layout = "lineage", rank = "year")
-#' #autographr(ison_algebra, layout = "circle",
-#' #          node_size = 8, node_color = "orange", node_shape = "square",
-#' #          edge_color = "blue", edge_size = 2)
+#' autographr(ison_adolescents)
+#' autographr(ison_algebra, layout = "circle",
+#'            node_size = 8, node_color = "orange", node_shape = "square",
+#'            edge_color = "blue", edge_size = 2)
+#' autographr(ison_southern_women, layout = "concentric",
+#'            node_color = "type", membership = "type")
+#' autographr(play_diffusion(ison_karateka))
 #' #autographr(ison_algebra, edge_color = "type",
-#' #          node_size = migraph::node_betweenness(ison_algebra)*100)
+#' #           node_size = migraph::node_betweenness(ison_algebra)*100)
+#' #ison_adolescents %>%
+#' #   mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2)) %>%
+#' #   autographr(layout = "lineage", rank = "year")
 #' #ison_adolescents %>%
 #' #   mutate(cut = node_is_cutpoint(ison_adolescents)) %>%
 #' #autographr(node_color = "cut", node_shape = "cut")
 #' #autographr(ison_lotr, node_color = Race,
-#' #            node_size = migraph::node_degree(ison_lotr)*2,
-#' #            edge_color = "darkgreen",
-#' #          edge_size = migraph::tie_degree(ison_lotr))
+#' #           node_size = migraph::node_degree(ison_lotr)*2,
+#' #           edge_color = "darkgreen",
+#' #           edge_size = migraph::tie_degree(ison_lotr))
 #' #autographr(ison_karateka, node_group = allegiance,
-#' #            edge_size = migraph::tie_closeness(ison_karateka))
-#' #autographr(ison_southern_women, layout = "concentric",
-#' #            node_color = "type", membership = "type")
+#' #           edge_size = migraph::tie_closeness(ison_karateka))
 #' #autographr(ison_southern_women, layout = "hierarchy", center = "events")
 #' #autographr(ison_lotr, layout = "multilevel", 
-#' #            node_color = "Race", level = "Race")
-#' #autographr(play_diffusion(ison_karateka))
+#' #           node_color = "Race", level = "Race")
 #' @export
 autographr <- function(.data, layout, labels = TRUE,
                        node_color, node_shape, node_size, node_group,
                        edge_color, edge_size, ...) {
   g <- as_tidygraph(.data)
   if (missing(layout)) {
-    if (length(g) == 3) {
-      layout <- "triad" 
-    } else if (length(g) == 4) {
-      layout <- "quad" 
+    if (length(g) <= 4) {
+      layout <- "configuration" 
     } else if (is_twomode(g)) {
       layout <- "hierarchy"
     } else layout <- "stress"
@@ -217,14 +215,18 @@ autographs <- function(netlist, waves,
 #' #  mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %>%
 #' #  to_waves(attribute = "year", cumulative = TRUE) %>%
 #' #  autographd()
-#' #ison_adolescents %>%
-#' #  mutate(shape = rep(c("circle", "square"), times = 4),
-#' #         color = rep(c("blue", "red"), times = 4),
-#' #         size = sample(4:16, 8, replace = TRUE)) %>%
-#' #  mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %>%
+#' #ison_adolescents %>% 
+#' #  mutate(gender = rep(c("male", "female"), times = 4),
+#' #         hair = rep(c("black", "brown"), times = 4),
+#' #         age = sample(11:16, 8, replace = TRUE)) %>%
+#' #  mutate_ties(year = sample(1995:1998, 10, replace = TRUE),
+#' #              links = sample(c("friends", "not_friends"), 10, replace = TRUE),
+#' #              weekly_meetings = sample(c(3, 5, 7), 10, replace = TRUE)) %>%
 #' #  to_waves(attribute = "year") %>%
-#' #  autographd(layout = "circle", node_shape = "shape",
-#' #             node_color = "color", node_size =  "size")
+#' #  autographd(layout = "concentric", membership = "gender",
+#' #             node_shape = "gender", node_color = "hair",
+#' #             node_size =  "age", edge_color = "links",
+#' #             edge_size = "weekly_meetings")
 #' #autographd(play_diffusion(ison_adolescents, seeds = 5, recovery = 0.1))
 #' @export
 autographd <- function(tlist, layout, labels = TRUE,
@@ -257,9 +259,7 @@ autographd <- function(tlist, layout, labels = TRUE,
     edge_size <- as.character(substitute(edge_size))
   }
   # Check if diffusion model
-  if (inherits(tlist, "diff_model")) {
-    tlist <- to_waves(tlist)
-  }
+  if (inherits(tlist, "diff_model")) tlist <- to_waves(tlist)
   # Check if object is a list of lists
   if (!is.list(tlist[[1]])) {
     stop("Please declare a migraph-compatible network listed according
@@ -281,9 +281,12 @@ autographd <- function(tlist, layout, labels = TRUE,
           frame = ifelse(is.null(names(tlist)), i, names(tlist)[i])))
   # Check if all names are present in all lists
   if (length(unique(unname(lapply(tlist, length)))) != 1) {
-    tlist <- to_waves(as_tidygraph(do.call("rbind", edges_lst)),
-                      attribute = "frame")
-  }
+    if (any(c(node_shape, node_color, node_size) %in% names(node_attribute(tlist[[1]])))) {
+      node_info <- dplyr::distinct(do.call(rbind, lapply(1:length(tlist), function(i)
+        tlist[[i]] %>% activate("nodes") %>% data.frame()))) # keep node info for latter
+    } else node_info <- NULL
+    tlist <- to_waves(as_tidygraph(do.call("rbind", edges_lst)), attribute = "frame")
+  } else node_info <- NULL
   # Add separate layouts for each time point
   lay <- lapply(1:length(tlist), function(i)
     ggraph::create_layout(tlist[[i]], layout, ...))
@@ -294,7 +297,7 @@ autographd <- function(tlist, layout, labels = TRUE,
           frame = ifelse(is.null(names(tlist)), i, names(tlist)[i]))
   })
   # Create an edge list for each time point
-  edges_lst <- time_edges_lst(tlist, edges_lst, nodes_lst, edge_color)
+  edges_lst <- time_edges_lst(tlist, edges_lst, nodes_lst)
   # Get edge IDs for all edges
   all_edges <- do.call("rbind", lapply(tlist, igraph::get.edgelist))
   all_edges <- all_edges[!duplicated(all_edges), ]
@@ -304,6 +307,9 @@ autographd <- function(tlist, layout, labels = TRUE,
   # Bind nodes and edges list
   edges_out <- do.call("rbind", edges_lst)
   nodes_out <- do.call("rbind", nodes_lst)
+  if (!is.null(node_info)) {
+    nodes_out <- dplyr::left_join(nodes_out, node_info[!duplicated(node_info$name),], by = "name")
+  }
   # Delete nodes for each frame if isolate
   if (isFALSE(keep_isolates)) {
     nodes_out <- remove_isolates(edges_out, nodes_out)
@@ -378,12 +384,6 @@ reduce_categories <- function(g, node_group) {
       }
     }
   }
-  # if (layout == "stress" & .is_diamond(g)) {
-  #   turn <- matrix(c(cos(0.71), -sin(0.71), sin(0.71), cos(0.71)), 2, 2)
-  #   coord <- matrix(cbind(lo[,1], lo[,2]), ncol = 2) %*% turn
-  #   lo[,1] <- coord[,1]
-  #   lo[,2] <- coord[,2]
-  # }
   p <- ggraph::ggraph(lo) + ggplot2::theme_void()
   if (labels & is_labelled(g)) {
     if (layout == "circle") {
@@ -402,7 +402,7 @@ reduce_categories <- function(g, node_group) {
         hj <- ifelse(lo[,1] >= 0, -0.2, 1.2)
         vj <- ifelse(lo[,2] >= 0, -0.2, 1.2)
       }
-      p <- p + ggraph::geom_node_text(ggplot2::aes(label = name),
+      p <- p + ggraph::geom_node_text(ggplot2::aes(label = name), repel = TRUE,
                                       size = 3, hjust = hj, angle = angles) +
         ggplot2::coord_cartesian(xlim=c(-1.2,1.2), ylim=c(-1.2,1.2))
     } else if (layout == "concentric") {
@@ -416,31 +416,24 @@ reduce_categories <- function(g, node_group) {
         hj <- ifelse(lo[,1] >= 0, -0.2, 1.2)
         vj <- ifelse(lo[,2] >= 0, -0.2, 1.2)
       }
-      p <- p + ggraph::geom_node_text(ggplot2::aes(label = name),
-                                      size = 3, hjust = hj,
-                                      vjust = vj, check_overlap = TRUE) +
+      p <- p + ggraph::geom_node_text(ggplot2::aes(label = name),  vjust = vj,
+                                      size = 3, hjust = hj, repel = TRUE) +
         ggplot2::coord_cartesian(xlim=c(-1.2,1.2), ylim=c(-1.2,1.2))
-    } else if (layout %in% c("bipartite", "railway") |
-               (layout == "hierarchy" & length(unique(lo[,2])) <= 2)) {
-      p <- p + ggraph::geom_node_text(ggplot2::aes(label = name),
-                                      size = 2, hjust = "outward",
-                                      nudge_y = ifelse(lo[,2] == 1, 0.05, -0.05),
-                                      # vjust = ifelse(node_mode(object), -1, 1),
-                                      angle = 90) +
+    } else if (layout %in% c("bipartite", "railway") | layout == "hierarchy" & length(unique(lo[["y"]])) <= 2) {
+      p <- p + ggraph::geom_node_text(ggplot2::aes(label = name), angle = 90,
+                                      size = 3, hjust = "outward", repel = TRUE,
+                                      nudge_y = ifelse(lo[,2] == 1, 0.05, -0.05)) +
         ggplot2::coord_cartesian(ylim=c(-0.2, 1.2))
-    } else if (layout == "hierarchy" & length(unique(lo[,2])) > 2) {
-      p <- p + ggraph::geom_node_text(ggplot2::aes(label = name), size = 2,
-                                      hjust = "inward", vjust = -0.4)
-    } else if (!is_twomode(g)) { # Plot one mode
-      p <- p + ggraph::geom_node_label(ggplot2::aes(label = name),
-                                       label.padding = 0.15, label.size = 0,
-                                       repel = TRUE, seed = 1234)
-    } else { # Plot two modes
+    } else if (layout == "hierarchy" & length(unique(lo[["y"]])) > 2) {
       p <- p + ggraph::geom_node_text(ggplot2::aes(label = name),
-                                      repel = TRUE, size = 2,
-                                      hjust = "outward",
-                                      nudge_x = ifelse(lo[,1] == 1, 0.05, -0.05),
-                                      seed = 1234)
+                                      size = 3, hjust = "inward", repel = TRUE)
+    } else if (layout %in% c("alluvial", "lineage")) {
+      p <- p + ggraph::geom_node_label(ggplot2::aes(label = name), size = 3,
+                                       repel = TRUE, label.size = 0,
+                                       nudge_x = ifelse(lo[,1] == 1, 0.02, -0.02))
+    } else {
+      p <- p + ggraph::geom_node_label(ggplot2::aes(label = name), label.size = 0,
+                                       repel = TRUE, seed = 1234, size = 3)
     }
   }
   if (!is.null(node_group)) {
@@ -465,10 +458,9 @@ reduce_categories <- function(g, node_group) {
       if (!is.null(edge_color)) {
         if (edge_color %in% names(tie_attribute(g))) {
           p <- p + ggraph::geom_edge_arc(ggplot2::aes(
-            width = weight, colour = as.factor(tie_attribute(g, edge_color))),
+            width = esize, colour = as.factor(tie_attribute(g, edge_color))),
                                          edge_alpha = 0.4, strength = bend,
                                          edge_linetype = "solid",
-                                         edge_width = esize,
                                          arrow = ggplot2::arrow(angle = 15,
                                                                 length = ggplot2::unit(2, 'mm'),
                                                                 type = "closed"), 
@@ -477,11 +469,10 @@ reduce_categories <- function(g, node_group) {
             ggraph::scale_edge_colour_manual(values = colorsafe_palette,
                                              guide = ggplot2::guide_legend(""))
         } else {
-          p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = weight),
+          p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = esize),
                                          colour = edge_color,
                                          edge_alpha = 0.4, strength = bend,
                                          edge_linetype = "solid",
-                                         edge_width = esize,
                                          arrow = ggplot2::arrow(angle = 15,
                                                                 length = ggplot2::unit(2, 'mm'),
                                                                 type = "closed"), 
@@ -490,22 +481,20 @@ reduce_categories <- function(g, node_group) {
         }
       } else if (is_signed(g)) {
         p <- p + ggraph::geom_edge_arc(
-          ggplot2::aes(width = weight,
+          ggplot2::aes(width = esize,
                        colour = ifelse(igraph::E(g)$sign >= 0, "#d73027", "#4575b4"),
                        linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")),
                                         edge_alpha = 0.4, strength = bend,
-                                        edge_width = esize,
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(2, 'mm'),
                                                                type = "closed"), 
                                         end_cap = ggraph::circle(1.5, 'mm')) +
           ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "none")
       } else {
-        p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = weight),
+        p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = esize),
                                         edge_colour = "black",
                                         edge_alpha = 0.4, strength = bend,
                                         edge_linetype = "solid",
-                                        edge_width = esize,
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(2, 'mm'),
                                                                type = "closed"), 
@@ -559,16 +548,15 @@ reduce_categories <- function(g, node_group) {
       if (!is.null(edge_color)) {
         if (edge_color %in% names(tie_attribute(g))) {
         p <- p + ggraph::geom_edge_link0(ggplot2::aes(
-          width = weight, colour = as.factor(tie_attribute(g, edge_color))),
-                                        edge_alpha = 0.4, edge_linetype = "solid",
-                                        edge_width = esize) +
+          width = esize, colour = as.factor(tie_attribute(g, edge_color))),
+                                        edge_alpha = 0.4, edge_linetype = "solid") +
           ggraph::scale_edge_width_continuous(range = c(0.2, 1), guide = "none") +
           ggraph::scale_edge_colour_manual(values = colorsafe_palette,
                                            guide = ggplot2::guide_legend(""))
         } else {
           p <- p + ggraph::geom_edge_link0(ggplot2::aes(width = weight),
                                           colour = edge_color,
-                                          edge_alpha = 0.4, edge_width = esize,
+                                          edge_alpha = 0.4,
                                           edge_linetype = "solid") +
             ggraph::scale_edge_width_continuous(range = c(0.2, 1), guide = "none")
         }
@@ -577,13 +565,13 @@ reduce_categories <- function(g, node_group) {
           ggplot2::aes(width = weight,
                        colour = ifelse(igraph::E(g)$sign >= 0, "#d73027", "#4575b4"),
                        linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")),
-          edge_alpha = 0.4, edge_width = esize) +
+          edge_alpha = 0.4) +
           ggraph::scale_edge_width_continuous(range = c(0.2, 1), guide = "none")
       } else {
         p <- p + ggraph::geom_edge_link0(ggplot2::aes(width = weight),
                                          edge_colour = "black",
                                          edge_linetype = "solid",
-                                         edge_alpha = 0.4, edge_width = esize) + 
+                                         edge_alpha = 0.4) + 
           ggraph::scale_edge_width_continuous(range = c(0.2, 1), guide = "none")
       }
     } else { # unweighted and undirected
@@ -771,6 +759,8 @@ reduce_categories <- function(g, node_group) {
       out <- edge_size
     }
     if (length(out > 1) & all(out <= 1 & out >= 0)) out <- out*10
+  } else if (is.null(edge_size) & is_weighted(g)) {
+    out <- tie_attribute(g, "weight")
   } else {
     out <- 0.5
   }
@@ -793,16 +783,6 @@ reduce_categories <- function(g, node_group) {
     out <- 0.5
   }
   out
-}
-
-.is_diamond <- function(x) {
-  x <- as_matrix(x)
-  if (is.numeric(x)) {
-    if (length(x) == 100 | length(x) == 10000 &
-        suppressWarnings(all(unique(rowSums(x)) == c(3, 5, 8)))) {
-      TRUE
-    } else FALSE 
-  } else FALSE
 }
 
 .node_adoption_time <- function(g){
@@ -891,7 +871,7 @@ hypot <- function (x, y) {
 }
 
 time_edges_lst <- function(tlist, edges_lst, nodes_lst, edge_color) {
-  edg <- lapply(1:length(tlist), function(i) {
+  lapply(1:length(tlist), function(i) {
     edges_lst[[i]]$x <- nodes_lst[[i]]$x[match(edges_lst[[i]]$from,
                                                nodes_lst[[i]]$name)]
     edges_lst[[i]]$y <- nodes_lst[[i]]$y[match(edges_lst[[i]]$from,
@@ -904,10 +884,6 @@ time_edges_lst <- function(tlist, edges_lst, nodes_lst, edge_color) {
     edges_lst[[i]]$status <- TRUE
     edges_lst[[i]]
   })
-  # Keep only necessary columns
-  edg <- lapply(edg, function (x) x[,c("from", "to", "frame", "x", "y", "xend",
-                                       "yend", "id", "status"#, edge_color
-                                       )])
 }
 
 transition_edge_lst <- function(tlist, edges_lst, nodes_lst, all_edges) {
@@ -961,20 +937,15 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
   # Plot edges
   if (!is.null(edge_color)) {
     # Remove NAs in edge color, if declared
-    edge_color <- ifelse(is.na(edges_out[[edge_color]]), "black", edges_out[[edge_color]])
-    color <- grDevices::colors()
-    color <- color[!color %in% "black"]
-    if(!any(grepl(paste(color, collapse = "|"), edge_color)) |
-       any(grepl("#", edge_color))) {
-      for(i in unique(edge_color)) {
-        if (i != "black") {
-          edge_color[edge_color == i] <- sample(color, 1)
-        }
-      }
+    if (edge_color %in% names(edges_out)) {
+      edge_color <- .check_color(edges_out[[edge_color]])
     }
-  } else edge_color <- rep("black", nrow(edges_out))
+  } else edge_color <- "black"
   if (!is.null(edge_size)) {
+    if (edge_size %in% names(edges_out)) {
     edge_size <- as.numeric(edges_out[[edge_size]])
+    edge_size <- ifelse(is.na(edge_size), 0.5, edge_size)
+    }
   } else edge_size <- 0.5
   p <- ggplot2::ggplot() + 
     ggplot2::geom_segment(aes(x = x, xend = xend, y = y, yend = yend, group = id),
@@ -982,22 +953,16 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
                           linewidth = edge_size, show.legend = FALSE)
   # Set node shape, color, and size
   if (!is.null(node_shape)) {
-    node_shape <- as.factor(nodes_out[[node_shape]])
-    node_shape <- c("circle", "square", "triangle")[node_shape]
-  } else node_shape <- rep("circle", nrow(nodes_out))
+    if (node_shape %in% names(nodes_out)) {
+      node_shape <- as.factor(nodes_out[[node_shape]])
+      if (!any(grepl("circle|square|triangle", node_shape))) {
+        node_shape <- c("circle", "square", "triangle")[node_shape]
+      }
+    }
+    } else node_shape <- "circle"
   if (!is.null(node_color)) {
     if (node_color %in% names(nodes_out)) {
-      node_color <- nodes_out[[node_color]]
-    }
-    color <- grDevices::colors()
-    color <- color[!color %in% "black"]
-    if (!any(grepl(paste(color, collapse = "|"), node_color)) |
-       any(grepl("#", node_color))) {
-      for(i in unique(node_color)) {
-        if (i != "black") {
-          node_color[node_color == i] <- sample(color, 1)
-        }
-      }
+      node_color <- .check_color(nodes_out[[node_color]])
     }
   } else if (is.null(node_color) & "Infected" %in% names(nodes_out)) {
     node_color <- as.factor(ifelse(nodes_out[["Exposed"]], "Exposed",
@@ -1014,8 +979,7 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
   } else node_size <- nrow(nodes_out)/length(unique(nodes_out$frame))
   # Add labels
   if (isTRUE(labels)) {
-    p <- p + ggplot2::geom_text(aes(x, y, label = name),
-                                alpha = alphad,
+    p <- p + ggplot2::geom_text(aes(x, y, label = name), alpha = alphad,
                                 data = nodes_out, color = "black",
                                 hjust = -0.2, vjust = -0.2, show.legend = FALSE)
   }
@@ -1037,6 +1001,20 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
       ggplot2::theme_void()
   }
   p
+}
+
+.check_color <- function(v) {
+  color <- grDevices::colors()
+  color <- color[!color %in% "black"]
+  v <- ifelse(is.na(v), "black", v)
+  if (!any(grepl(paste(color, collapse = "|"), v)) | any(grepl("#", v))) {
+    for(i in unique(v)) {
+      if (i != "black") {
+        v[v == i] <- sample(color, 1)
+      }
+    }
+  }
+  v
 }
 
 collapse_guides <- function(plist) {

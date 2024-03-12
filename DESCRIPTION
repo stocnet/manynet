@@ -1,7 +1,7 @@
 Package: manynet
 Title: Many Ways to Make, Modify, Mark, and Map Myriad Networks
-Version: 0.4.1
-Date: 2024-01-24
+Version: 0.4.2
+Date: 2024-03-12
 Description: A set of tools for making, modifying, marking, and mapping many different types of networks.
    All functions operate with matrices, edge lists, and 'igraph', 'network', and 'tidygraph' objects,
    and on one-mode, two-mode (bipartite), and sometimes three-mode networks.
@@ -15,7 +15,7 @@ License: MIT + file LICENSE
 Language: en-GB
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.0
+RoxygenNote: 7.3.1
 Imports: 
     dplyr (>= 1.1.0),
     ggplot2,

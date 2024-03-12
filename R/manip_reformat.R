@@ -212,7 +212,7 @@ to_reciprocated.tbl_graph <- function(.data) {
 
 #' @export
 to_reciprocated.matrix <- function(.data) {
-  as_matrix(to_reciprocated(as_igraph(.data)))
+  .data + t(.data)
 }
 
 #' @export
