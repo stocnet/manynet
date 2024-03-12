@@ -9,14 +9,14 @@
 
 ## Mapping
 
-- Closed #6 by updating "lineage" layout.
-- Closed #39 by making `autographr()` more flexible and efficient in setting variables to aesthetics.
+- Closed #6 by updating how "lineage" layout works and places nodes on Y axis
+- Closed #39 by making `autographr()` more flexible and efficient in setting variables to aesthetics
 - Updated themes to be compatible with newer and older versions of `{ggplot2}`
 - Added "configuration" layout for small triad/quad networks
 
 ## Modifying
 
-- Updated `to_reciprocated().matrix` to consistently work with matrices
+- Updated `to_reciprocated.matrix()` to consistently work with matrices
 
 # manynet 0.4.1
 
