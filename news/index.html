@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
       </span>
     </div>
 
@@ -54,7 +54,27 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.4.1" id="manynet-041">manynet 0.4.1<a class="anchor" aria-label="anchor" href="#manynet-041"></a></h2>
+<h2 class="page-header" data-toc-text="0.4.2" id="manynet-042">manynet 0.4.2<a class="anchor" aria-label="anchor" href="#manynet-042"></a></h2>
+<p>2024-03-12</p>
+<div class="section level3">
+<h3 id="making-0-4-2">Making<a class="anchor" aria-label="anchor" href="#making-0-4-2"></a></h3>
+<ul><li>Closed <a href="https://github.com/stocnet/manynet/issues/57" class="external-link">#57</a> by updating <code><a href="../reference/play.html">play_diffusions()</a></code> to revert future plan on exit</li>
+<li>Fixed bug with how <code><a href="../reference/generate.html">generate_random()</a></code> works for two-mode networks with specified number of ties</li>
+</ul></div>
+<div class="section level3">
+<h3 id="mapping-0-4-2">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-4-2"></a></h3>
+<ul><li>Closed <a href="https://github.com/stocnet/manynet/issues/6" class="external-link">#6</a> by updating how “lineage” layout works and places nodes on Y axis</li>
+<li>Closed <a href="https://github.com/stocnet/manynet/issues/39" class="external-link">#39</a> by making <code><a href="../reference/autographing.html">autographr()</a></code> more flexible and efficient in setting variables to aesthetics</li>
+<li>Updated themes to be compatible with newer and older versions of <a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a>
+</li>
+<li>Added “configuration” layout for small triad/quad networks</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-0-4-2">Modifying<a class="anchor" aria-label="anchor" href="#modifying-0-4-2"></a></h3>
+<ul><li>Updated <code>to_reciprocated.matrix()</code> to consistently work with matrices</li></ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.4.1" id="manynet-041">manynet 0.4.1<small>2024-01-24</small><a class="anchor" aria-label="anchor" href="#manynet-041"></a></h2>
 <p>2023-12-24</p>
 <div class="section level3">
 <h3 id="package-0-4-1">Package<a class="anchor" aria-label="anchor" href="#package-0-4-1"></a></h3>
@@ -79,8 +99,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="making-0-4-0">Making<a class="anchor" aria-label="anchor" href="#making-0-4-0"></a></h3>
-<ul><li>Migrated <code><a href="../reference/play.html">play_diffusion()</a></code> and <code><a href="../reference/play.html">play_diffusions()</a></code> from <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a><ul><li>Including class creation, and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>, and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods</li></ul></li>
-<li>Migrated <code><a href="../reference/learning.html">play_learning()</a></code> and <code><a href="../reference/learning.html">play_segregation()</a></code> from <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a><ul><li>Including class creation, and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>, and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods</li></ul></li>
+<ul><li>Migrated <code><a href="../reference/play.html">play_diffusion()</a></code> and <code><a href="../reference/play.html">play_diffusions()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Including class creation, and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>, and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods</li></ul></li>
+<li>Migrated <code><a href="../reference/learning.html">play_learning()</a></code> and <code><a href="../reference/learning.html">play_segregation()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Including class creation, and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>, and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods</li></ul></li>
 <li>Fixed bug in <code><a href="../reference/create.html">create_tree()</a></code> where it was not returning a two-mode network correctly</li>
 </ul></div>
 <div class="section level3">
@@ -106,17 +126,17 @@
 <h3 id="marking-0-4-0">Marking<a class="anchor" aria-label="anchor" href="#marking-0-4-0"></a></h3>
 <ul><li>Renamed <code>is.igraph()</code> to <code><a href="https://r.igraph.org/reference/is_igraph.html" class="external-link">is_igraph()</a></code> for igraph v2.0.0</li>
 <li>Added <code><a href="../reference/is.html">is_list()</a></code> for identifying a list of networks</li>
-<li>Migrated <code><a href="../reference/mark_nodes.html">node_is_core()</a></code>, <code><a href="../reference/mark_nodes.html">node_is_cutpoint()</a></code>, <code><a href="../reference/mark_nodes.html">node_is_fold()</a></code>, <code><a href="../reference/mark_nodes.html">node_is_isolate()</a></code>, <code><a href="../reference/mark_nodes.html">node_is_mentor()</a></code> from <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a>
+<li>Migrated <code><a href="../reference/mark_nodes.html">node_is_core()</a></code>, <code><a href="../reference/mark_nodes.html">node_is_cutpoint()</a></code>, <code><a href="../reference/mark_nodes.html">node_is_fold()</a></code>, <code><a href="../reference/mark_nodes.html">node_is_isolate()</a></code>, <code><a href="../reference/mark_nodes.html">node_is_mentor()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
 </li>
-<li>Migrated <code><a href="../reference/mark_diff.html">node_is_exposed()</a></code>, <code><a href="../reference/mark_diff.html">node_is_infected()</a></code>, <code><a href="../reference/mark_diff.html">node_is_latent()</a></code>, <code><a href="../reference/mark_diff.html">node_is_recovered()</a></code> from <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a>
+<li>Migrated <code><a href="../reference/mark_diff.html">node_is_exposed()</a></code>, <code><a href="../reference/mark_diff.html">node_is_infected()</a></code>, <code><a href="../reference/mark_diff.html">node_is_latent()</a></code>, <code><a href="../reference/mark_diff.html">node_is_recovered()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
 </li>
-<li>Migrated <code><a href="../reference/mark_select.html">node_is_max()</a></code>, <code><a href="../reference/mark_select.html">node_is_min()</a></code>, <code><a href="../reference/mark_select.html">node_is_random()</a></code> from <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a>
+<li>Migrated <code><a href="../reference/mark_select.html">node_is_max()</a></code>, <code><a href="../reference/mark_select.html">node_is_min()</a></code>, <code><a href="../reference/mark_select.html">node_is_random()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
 </li>
-<li>Migrated <code><a href="../reference/mark_ties.html">tie_is_bridge()</a></code>, <code><a href="../reference/mark_ties.html">tie_is_loop()</a></code>, <code><a href="../reference/mark_ties.html">tie_is_multiple()</a></code>, <code><a href="../reference/mark_ties.html">tie_is_reciprocated()</a></code> from <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a>
+<li>Migrated <code><a href="../reference/mark_ties.html">tie_is_bridge()</a></code>, <code><a href="../reference/mark_ties.html">tie_is_loop()</a></code>, <code><a href="../reference/mark_ties.html">tie_is_multiple()</a></code>, <code><a href="../reference/mark_ties.html">tie_is_reciprocated()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
 </li>
 <li>Added <code><a href="../reference/mark_ties.html">tie_is_feedback()</a></code>
 </li>
-<li>Migrated <code><a href="../reference/mark_tie_select.html">tie_is_max()</a></code>, <code><a href="../reference/mark_tie_select.html">tie_is_min()</a></code> from <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a>
+<li>Migrated <code><a href="../reference/mark_tie_select.html">tie_is_max()</a></code>, <code><a href="../reference/mark_tie_select.html">tie_is_min()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
 </li>
 <li>Added <code><a href="../reference/mark_tie_select.html">tie_is_random()</a></code>
 </li>
@@ -331,8 +351,8 @@
 <div class="section level3">
 <h3 id="package-0-2-5">Package<a class="anchor" aria-label="anchor" href="#package-0-2-5"></a></h3>
 <ul><li>Added ‘tutorial0’ for those less comfortable with R</li>
-<li>Added <code><a href="../reference/tutorials.html">run_tute()</a></code> helper for quicker access to <a href="https://stocnet.github.io/manynet/">manynet</a> and <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a> tutorials</li>
-<li>Added <code><a href="../reference/tutorials.html">extract_tute()</a></code> for extracting the main code examples from <a href="https://stocnet.github.io/manynet/">manynet</a> and <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a> tutorials</li>
+<li>Added <code><a href="../reference/tutorials.html">run_tute()</a></code> helper for quicker access to <a href="https://stocnet.github.io/manynet/">manynet</a> and <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a> tutorials</li>
+<li>Added <code><a href="../reference/tutorials.html">extract_tute()</a></code> for extracting the main code examples from <a href="https://stocnet.github.io/manynet/">manynet</a> and <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a> tutorials</li>
 <li>Added <code>purl = FALSE</code> to tutorial chunks that are not needed for extraction (thanks <a href="https://github.com/JaelTan" class="external-link">@JaelTan</a>)</li>
 <li>Updated website with new functions <code><a href="../reference/tutorials.html">run_tute()</a></code> and <code><a href="../reference/tutorials.html">extract_tute()</a></code>
 </li>
@@ -384,7 +404,7 @@
 <p>2023-09-17</p>
 <div class="section level3">
 <h3 id="package-0-2-2">Package<a class="anchor" aria-label="anchor" href="#package-0-2-2"></a></h3>
-<ul><li>README now points to <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a> earlier</li></ul></div>
+<ul><li>README now points to <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a> earlier</li></ul></div>
 <div class="section level3">
 <h3 id="tutorials-0-2-2">Tutorials<a class="anchor" aria-label="anchor" href="#tutorials-0-2-2"></a></h3>
 <ul><li>Fixed various bugs in first (data) tutorial</li></ul></div>
@@ -427,7 +447,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="map-0-2-0">Map<a class="anchor" aria-label="anchor" href="#map-0-2-0"></a></h3>
-<ul><li>Moved additional <code>is_</code> functions from <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a><ul><li>Added <code><a href="../reference/features.html">is_connected()</a></code> to test if network is strongly connected</li>
+<ul><li>Moved additional <code>is_</code> functions from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Added <code><a href="../reference/features.html">is_connected()</a></code> to test if network is strongly connected</li>
 <li>Added <code><a href="../reference/features.html">is_perfect_matching()</a></code> to test if there is a matching for every node in the network</li>
 <li>Added <code><a href="../reference/features.html">is_eulerian()</a></code> to test whether there is a Eulerian path for a network</li>
 <li>Added <code>is_acyclic</code> to test whether network is a directed acyclic graph</li>
@@ -447,9 +467,9 @@
 <p>2023-06-20</p>
 <div class="section level3">
 <h3 id="package-0-1-2">Package<a class="anchor" aria-label="anchor" href="#package-0-1-2"></a></h3>
-<ul><li>Added tutorials for package<ul><li>Moved and updated “data” tutorial from <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a>
+<ul><li>Added tutorials for package<ul><li>Moved and updated “data” tutorial from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
 </li>
-<li>Moved and updated “visualisations” tutorial from <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a>
+<li>Moved and updated “visualisations” tutorial from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
 </li>
 </ul></li></ul></div>
 </div>
@@ -475,7 +495,7 @@
 <p>2023-06-07</p>
 <div class="section level3">
 <h3 id="package-0-1-0">Package<a class="anchor" aria-label="anchor" href="#package-0-1-0"></a></h3>
-<ul><li>Split up the <a href="https://snlab-ch.github.io/migraph/" class="external-link">migraph</a> package, adding the Make, Manipulate, and Map functions to this package</li>
+<ul><li>Split up the <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a> package, adding the Make, Manipulate, and Map functions to this package</li>
 <li>Added package documentation<ul><li>Added .github files</li>
 <li>Added README structured around the problems the package solves</li>
 </ul></li>

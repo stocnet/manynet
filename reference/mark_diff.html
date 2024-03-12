@@ -24,7 +24,7 @@ node_is_recovered() marks nodes that are recovered at a particular time point.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
       </span>
     </div>
 
@@ -138,7 +138,7 @@ in that diffusion.</p>
 <span class="r-in"><span>  <span class="co"># To mark nodes that are recovered by a particular time point</span></span></span>
 <span class="r-in"><span>  <span class="fu">node_is_recovered</span><span class="op">(</span><span class="fu"><a href="play.html">play_diffusion</a></span><span class="op">(</span><span class="fu"><a href="create.html">create_tree</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span>, recovery <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>, time <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   V1    V2    V3    V4    V5    V6   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> TRUE  FALSE FALSE FALSE FALSE FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> TRUE  TRUE  TRUE  FALSE FALSE FALSE</span>
 <span class="r-in"><span>  <span class="co"># To mark which nodes are currently exposed</span></span></span>
 <span class="r-in"><span>  <span class="op">(</span><span class="va">expos</span> <span class="op">&lt;-</span> <span class="fu">node_is_exposed</span><span class="op">(</span><span class="fu">manynet</span><span class="fu">::</span><span class="fu"><a href="create.html">create_tree</a></span><span class="op">(</span><span class="fl">14</span><span class="op">)</span>, mark <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   V1    V2    V3    V4    V5    V6    V7    V8    V9    V10   V11   V12   V13  </span>
