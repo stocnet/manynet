@@ -70,10 +70,6 @@
 #' @importFrom ggraph geom_edge_link geom_node_text geom_conn_bundle
 #' get_con geom_node_point scale_edge_width_continuous geom_node_label
 #' @importFrom ggplot2 aes arrow unit scale_color_brewer scale_fill_brewer
-#' @name autographing
-NULL
-
-#' @describeIn autographing Graphs a network with sensible defaults
 #' @examples
 #' autographr(ison_adolescents)
 #' ison_adolescents |>
@@ -126,15 +122,21 @@ autographr <- function(.data, layout, labels = TRUE,
   p
 }
 
-#' @describeIn autographing Graphs a list of networks 
-#'   with sensible defaults
+#' Graphs a list of networks with sensible defaults
+#' 
+#' @description 
+#' The aim of this function is to provide users with a quick and easy
+#' graphing function for lists of networks.
+#' @family mapping
 #' @param netlist A list of manynet-compatible networks.
 #' @param waves The number of plots to be displayed side-by-side.
 #'   If missing, the number of plots will be reduced to the first and last
 #'   when there are more than four plots.
 #' @param based_on Whether the layout of the joint plots should
 #'   be based on the "first" or the "last" network.
+#' @param ... Additional arguments passed to `autographr()`.
 #' @source http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
+#' @return Multiple ggplot2::ggplot() objects displayed side-by-side.
 #' @examples
 #' #autographs(to_egos(ison_adolescents))
 #' #autographs(to_egos(ison_adolescents), waves = 8)
@@ -185,20 +187,26 @@ autographs <- function(netlist, waves,
   do.call(patchwork::wrap_plots, c(gs, list(guides = "collect")))
 }
 
-#' @describeIn autographing Graphs an dynamic (animated) network
-#'   with sensible defaults
+#' Graphs an dynamic (animated) network with sensible defaults
+#' 
+#' @description 
+#' The aim of this function is to provide users with a quick and easy
+#' graphing function to produce animated network visualisations.
+#' @family mapping
 #' @param tlist The same migraph-compatible network listed according to
 #'   a time attribute, waves, or slices.
 #' @param keep_isolates Would you like to remove vertices that do not have
 #'   any adjacent edges in each frame?
 #'   TRUE by default.
 #'   If FALSE, deletes isolated vertices in each frame.
+#' @inheritParams autographr
 #' @importFrom igraph gsize as_data_frame get.edgelist
 #' @importFrom ggplot2 ggplot geom_segment geom_point geom_text
 #' scale_alpha_manual theme_void
 #' @importFrom ggraph create_layout
 #' @importFrom dplyr mutate select distinct left_join %>%
 #' @source http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
+#' @return A gganimate::animate() object.
 #' @examples
 #' #ison_adolescents %>%
 #' #  mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %>%
