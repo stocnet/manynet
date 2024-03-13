@@ -153,7 +153,7 @@ autographr(ison_adolescents)
 ison_adolescents |>
   mutate(color = rep(c("extrovert", "introvert"), times = 4),
          size = ifelse(node_is_cutpoint(ison_adolescents), 6, 3)) |>
-         mutate_ties(ecolor = rep(c("friends", "aquaintances"), times = 5)) |>
+  mutate_ties(ecolor = rep(c("friends", "aquaintances"), times = 5)) |>
   autographr(node_color = "color", node_size = "size",
              edge_size = 1.5, edge_color = "ecolor")
 #autographr(ison_lotr, node_color = Race,
