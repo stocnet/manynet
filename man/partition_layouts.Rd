@@ -106,6 +106,20 @@ around a circle, with successive layers appearing as concentric circles.
 The "multilevel" layout places successive layers as multiple levels.
 The "lineage" layout ranks nodes in Y axis according to values.
 }
+\examples{
+#autographr(ison_southern_women, layout = "hierarchy", center = "events",
+#           node_color = "type", node_size = 3)
+#autographr(ison_southern_women, layout = "alluvial")
+#autographr(ison_southern_women, layout = "concentric", membership = "type",
+#           node_color = "type", node_size = 3)
+#autographr(ison_lotr, layout = "multilevel",
+#           node_color = "Race", level = "Race", node_size = 3)
+# ison_adolescents \%>\%
+#   mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2),
+#          cut = node_is_cutpoint(ison_adolescents)) \%>\%
+#   autographr(layout = "lineage", rank = "year", node_color = "cut",
+#              node_size = migraph::node_degree(ison_adolescents)*10)
+}
 \seealso{
 Other mapping: 
 \code{\link{attributes}()},
