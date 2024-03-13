@@ -1,3 +1,9 @@
+# manynet 0.4.3
+
+2024-03-13
+
+- Fixed issues with examples that were taking too long
+
 # manynet 0.4.2
 
 2024-03-12
