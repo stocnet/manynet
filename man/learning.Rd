@@ -77,7 +77,7 @@ These functions allow learning games to be played upon networks.
   play_segregation(latticeEg, "startValues", 0.5)
   # autographr(latticeEg, node_color = "startValues", node_size = 5) + 
   # autographr(play_segregation(latticeEg, "startValues", 0.2), 
-  #                     node_color = "startValues", node_size = 5)
+  #            node_color = "startValues", node_size = 5)
 }
 \seealso{
 Other makes: 
