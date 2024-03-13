@@ -11,4 +11,4 @@
 
 This is a resubmission. In this version I have:
 
-* Fixed issues with examples that were taking too long
+* Fixed issues with `autographr()` examples that were taking too long to run
