@@ -149,13 +149,15 @@ with sensible defaults
 
 }}
 \examples{
+\donttest{
 autographr(ison_adolescents)
+autographr(play_diffusion(ison_karateka))
 autographr(ison_algebra, layout = "circle",
            node_size = 8, node_color = "orange", node_shape = "square",
            edge_color = "blue", edge_size = 2)
 autographr(ison_southern_women, layout = "concentric",
            node_color = "type", membership = "type")
-autographr(play_diffusion(ison_karateka))
+}
 #autographr(ison_algebra, edge_color = "type",
 #           node_size = migraph::node_betweenness(ison_algebra)*100)
 #ison_adolescents \%>\%
