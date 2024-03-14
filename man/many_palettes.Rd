@@ -2,7 +2,7 @@
 % Please edit documentation in R/map_palettes.R
 \name{many_palettes}
 \alias{many_palettes}
-\title{Many Palettes generator}
+\title{Many palettes generator}
 \source{
 Adapted from \url{https://github.com/karthik/wesanderson/blob/master/R/colors.R}
 }
@@ -23,9 +23,9 @@ to automatically interpolate between colours.}
 A graphic display of colours in palette.
 }
 \description{
-Many Palettes generator
+Many palettes generator
 }
 \examples{
+many_palettes()
 #many_palettes("IHEID")
-#many_palettes()
 }
