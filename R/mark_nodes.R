@@ -145,19 +145,18 @@ NULL
 node_is_latent <- function(diff_model, time = 0){
   event <- nodes <- NULL
   latent <- summary(diff_model) %>% 
-    dplyr::filter(t <= time & event %in% c("E","I")) %>% 
-    dplyr::filter(!duplicated(nodes, fromLast = TRUE)) %>% 
-    dplyr::filter(event == "E") %>% 
+    dplyr::filter(t <= time & event %in% c("E","I"),
+                  !duplicated(nodes, fromLast = TRUE),
+                  event == "E") %>% 
     dplyr::select(nodes)
   net <- attr(diff_model, "network")
-  if(!manynet::is_labelled(net))
+  if (!manynet::is_labelled(net))
     latent <- dplyr::arrange(latent, nodes) else if (is.numeric(latent$nodes))
       latent$nodes <- manynet::node_names(net)[latent$nodes]
-  if(manynet::is_labelled(net)){
-    nnames <- manynet::node_names(net)
-    out <- stats::setNames(nnames %in% latent$nodes, nnames)
+  if (manynet::is_labelled(net)) {
+    out <- seq_len(manynet::network_nodes(net)) %in% latent$nodes
+    names(out) <- manynet::node_names(net)
   } else {
-    seq_len(manynet::network_nodes(net))
     out <- seq_len(manynet::network_nodes(net)) %in% latent$nodes
   }
   make_node_mark(out, net)
@@ -171,19 +170,18 @@ node_is_latent <- function(diff_model, time = 0){
 #'   # To mark nodes that are infected by a particular time point
 #'   node_is_infected(play_diffusion(create_tree(6)), time = 1)
 #' @export
-node_is_infected <- function(diff_model, time = 0){
+node_is_infected <- function(diff_model, time = 0) {
   event <- nodes <- NULL
   infected <- summary(diff_model) %>% 
-    dplyr::filter(t <= time & event %in% c("I","R")) %>% 
-    dplyr::filter(!duplicated(nodes, fromLast = TRUE)) %>% 
-    dplyr::filter(event == "I") %>% 
+    dplyr::filter(t <= time & event %in% c("I","R"),
+                  !duplicated(nodes, fromLast = TRUE),
+                  event == "I") %>% 
     dplyr::select(nodes)
   net <- attr(diff_model, "network")
-  if(manynet::is_labelled(net)){
-    nnames <- manynet::node_names(net)
-    out <- stats::setNames(nnames %in% infected$nodes, nnames)
+  if (manynet::is_labelled(net)) {
+    out <- seq_len(manynet::network_nodes(net)) %in% infected$nodes
+    names(out) <- manynet::node_names(net)
   } else {
-    seq_len(manynet::network_nodes(net))
     out <- seq_len(manynet::network_nodes(net)) %in% infected$nodes
   }
   make_node_mark(out, net)
@@ -197,19 +195,18 @@ node_is_infected <- function(diff_model, time = 0){
 node_is_recovered <- function(diff_model, time = 0){
   event <- nodes <- NULL
   recovered <- summary(diff_model) %>% 
-    dplyr::filter(t <= time & event %in% c("R","S")) %>% 
-    dplyr::filter(!duplicated(nodes, fromLast = TRUE)) %>% 
-    dplyr::filter(event == "R") %>% 
+    dplyr::filter(t <= time & event %in% c("R","S"),
+                  !duplicated(nodes, fromLast = TRUE),
+                  event == "R") %>% 
     dplyr::select(nodes)
   net <- attr(diff_model, "network")
-  if(!manynet::is_labelled(net))
+  if (!manynet::is_labelled(net))
     recovered <- dplyr::arrange(recovered, nodes) else if (is.numeric(recovered$nodes))
       recovered$nodes <- manynet::node_names(net)[recovered$nodes]
-  if(manynet::is_labelled(net)){
-    nnames <- manynet::node_names(net)
-    out <- stats::setNames(nnames %in% recovered$nodes, nnames)
+  if (manynet::is_labelled(net)){
+    out <- seq_len(manynet::network_nodes(net)) %in% recovered$nodes
+    names(out) <- manynet::node_names(net)
   } else {
-    seq_len(manynet::network_nodes(net))
     out <- seq_len(manynet::network_nodes(net)) %in% recovered$nodes
   }
   make_node_mark(out, net)
@@ -236,7 +233,7 @@ node_is_recovered <- function(diff_model, time = 0){
 #' @export
 node_is_exposed <- function(.data, mark){
   event <- nodes <- NULL
-  if(missing(mark) && inherits(.data, "diff_model")){
+  if (missing(mark) && inherits(.data, "diff_model")){
     mark <- summary(.data) %>% 
       dplyr::filter(t == 0 & event == "I") %>% 
       dplyr::select(nodes) %>% unlist()

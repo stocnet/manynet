@@ -180,7 +180,7 @@ graphr <- autographr
 #' #autographs(play_diffusion(ison_adolescents))
 #' @export
 autographs <- function(netlist, waves,
-                       based_on = c("first","last","both"), ...) {
+                       based_on = c("first", "last", "both"), ...) {
   thisRequires("patchwork")
   based_on <- match.arg(based_on)
   if (any(class(netlist) == "diff_model")) netlist <- to_waves(netlist)
