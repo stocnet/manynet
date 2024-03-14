@@ -2,9 +2,23 @@
 % Please edit documentation in R/map_autographr.R
 \name{autographr}
 \alias{autographr}
+\alias{graphr}
 \title{Easily graph networks with sensible defaults}
 \usage{
 autographr(
+  .data,
+  layout,
+  labels = TRUE,
+  node_color,
+  node_shape,
+  node_size,
+  node_group,
+  edge_color,
+  edge_size,
+  ...
+)
+
+graphr(
   .data,
   layout,
   labels = TRUE,
@@ -83,14 +97,16 @@ it is recommended to calculate all edge-related statistics prior
 to using this function.
 Edges can also be sized by declaring a numeric size or vector instead.}
 
-\item{...}{Extra arguments to pass on to layout.}
+\item{...}{Extra arguments to pass on to the layout algorithm, if necessary.}
 }
 \value{
-A ggplot2::ggplot() object.
+A \code{ggplot2::ggplot()} object.
+The last plot can be saved to the file system using \code{ggplot2::ggsave()}.
 }
 \description{
 This function provides users with an easy way to graph
 (m)any network data for exploration, investigation, and communication.
+
 It builds upon \code{{ggplot2}} and \code{{ggraph}} to offer
 pretty and extensible graphing solutions.
 However, compared to those solutions,
@@ -98,12 +114,14 @@ However, compared to those solutions,
 graphs by default.
 This means that just passing the function some network data
 will often be sufficient to return a reasonable-looking graph.
-However, the function also makes it easy to modify many of the most
+
+The function also makes it easy to modify many of the most
 commonly adapted aspects of a graph,
 including node and edge size, colour, and shape,
 as arguments rather than additional functions that you need to remember.
 These can be defined outright, e.g. \code{node_size = 8},
 or in reference to an attribute of the network, e.g. \code{node_size = "wealth"}.
+
 Lastly, \code{autographr()} uses ggplot2-related theme information,
 so it is easy to make colour palette and fonts institution-specific and consistent.
 }

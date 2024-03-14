@@ -3,6 +3,7 @@
 #' @description 
 #'   This function provides users with an easy way to graph
 #'   (m)any network data for exploration, investigation, and communication.
+#'   
 #'   It builds upon `{ggplot2}` and `{ggraph}` to offer
 #'   pretty and extensible graphing solutions.
 #'   However, compared to those solutions, 
@@ -10,14 +11,17 @@
 #'   graphs by default.
 #'   This means that just passing the function some network data
 #'   will often be sufficient to return a reasonable-looking graph.
-#'   However, the function also makes it easy to modify many of the most
+#'   
+#'   The function also makes it easy to modify many of the most
 #'   commonly adapted aspects of a graph, 
 #'   including node and edge size, colour, and shape,
 #'   as arguments rather than additional functions that you need to remember.
 #'   These can be defined outright, e.g. `node_size = 8`,
 #'   or in reference to an attribute of the network, e.g. `node_size = "wealth"`.
+#'   
 #'   Lastly, `autographr()` uses ggplot2-related theme information,
 #'   so it is easy to make colour palette and fonts institution-specific and consistent.
+#'   See e.g. `theme_iheid()` for more.
 #' @family mapping
 #' @param .data A manynet-consistent object.
 #' @param layout An igraph, ggraph, or manynet layout algorithm.
@@ -75,8 +79,9 @@
 #'   it is recommended to calculate all edge-related statistics prior
 #'   to using this function.
 #'   Edges can also be sized by declaring a numeric size or vector instead.
-#' @param ... Extra arguments to pass on to layout.
-#' @return A ggplot2::ggplot() object.
+#' @param ... Extra arguments to pass on to the layout algorithm, if necessary.
+#' @return A `ggplot2::ggplot()` object.
+#'   The last plot can be saved to the file system using `ggplot2::ggsave()`.
 #' @importFrom ggraph geom_edge_link geom_node_text geom_conn_bundle
 #' get_con geom_node_point scale_edge_width_continuous geom_node_label
 #' @importFrom ggplot2 aes arrow unit scale_color_brewer scale_fill_brewer
@@ -131,6 +136,10 @@ autographr <- function(.data, layout, labels = TRUE,
   p <- .graph_nodes(p, g, node_color, node_shape, node_size)
   p
 }
+
+#' @rdname autographr
+#' @export
+graphr <- autographr
 
 #' Easily graph a set of networks with sensible defaults
 #' 
