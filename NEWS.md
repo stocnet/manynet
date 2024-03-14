@@ -6,6 +6,8 @@
 
 - Fixed issues with `autographr()` examples that were taking too long to run
 - Separated documentation for `autographr()`, `autographs()`, and `autographd()` functions
+- Closed #64 by adding aliases for `autographr()`, `autographs()`, and `autographd()` functions
+
 
 # manynet 0.4.2
 
