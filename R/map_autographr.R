@@ -132,7 +132,7 @@ autographr <- function(.data, layout, labels = TRUE,
   p
 }
 
-#' Graphs a list of networks with sensible defaults
+#' Easily graph a set of networks with sensible defaults
 #' 
 #' @description 
 #' The aim of this function is to provide users with a quick and easy
@@ -197,7 +197,7 @@ autographs <- function(netlist, waves,
   do.call(patchwork::wrap_plots, c(gs, list(guides = "collect")))
 }
 
-#' Graphs an dynamic (animated) network with sensible defaults
+#' Easily animate dynamic networks with sensible defaults
 #' 
 #' @description 
 #' The aim of this function is to provide users with a quick and easy
@@ -236,7 +236,7 @@ autographs <- function(netlist, waves,
 #' #             edge_size = "weekly_meetings")
 #' #autographd(play_diffusion(ison_adolescents, seeds = 5, recovery = 0.1))
 #' @export
-autographd <- function(tlist, layout, labels = TRUE,
+autographt <- function(tlist, layout, labels = TRUE,
                        node_color, node_shape, node_size,
                        edge_color, edge_size, keep_isolates = TRUE, ...) {
   thisRequires("gganimate")
@@ -338,6 +338,10 @@ autographd <- function(tlist, layout, labels = TRUE,
   gganimate::animate(p, duration = 2*length(tlist), start_pause = 5,
                      end_pause = 10, renderer = gganimate::gifski_renderer())
 }
+
+#' @rdname autographt
+#' @export
+autographd <- autographt
 
 reduce_categories <- function(g, node_group) {
   limit <- toCondense <- NULL

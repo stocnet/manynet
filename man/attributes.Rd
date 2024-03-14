@@ -59,9 +59,9 @@ tie_signs(ison_marvel_relationships)
 }
 \seealso{
 Other mapping: 
-\code{\link{autographd}()},
 \code{\link{autographr}()},
 \code{\link{autographs}()},
+\code{\link{autographt}()},
 \code{\link{configuration_layouts}},
 \code{\link{partition_layouts}},
 \code{\link{properties}}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/map_autographr.R
 \name{autographs}
 \alias{autographs}
-\title{Graphs a list of networks with sensible defaults}
+\title{Easily graph a set of networks with sensible defaults}
 \source{
 http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
 }
@@ -37,8 +37,8 @@ graphing function for lists of networks.
 \seealso{
 Other mapping: 
 \code{\link{attributes}()},
-\code{\link{autographd}()},
 \code{\link{autographr}()},
+\code{\link{autographt}()},
 \code{\link{configuration_layouts}},
 \code{\link{partition_layouts}},
 \code{\link{properties}}
