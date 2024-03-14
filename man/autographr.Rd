@@ -2,7 +2,7 @@
 % Please edit documentation in R/map_autographr.R
 \name{autographr}
 \alias{autographr}
-\title{Quickly graph networks with sensible defaults}
+\title{Easily graph networks with sensible defaults}
 \usage{
 autographr(
   .data,
@@ -89,13 +89,23 @@ Edges can also be sized by declaring a numeric size or vector instead.}
 A ggplot2::ggplot() object.
 }
 \description{
-The aim of this function is to provide users with a quick and easy
-graphing function that makes best use of the data,
-whatever its composition.
-Users can also tailor the plot according to their
-preferences regarding node size, colour, and shape.
-The function also supports visualisation
-of network measures such as centrality.
+This function provides users with an easy way to graph
+(m)any network data for exploration, investigation, and communication.
+It builds upon \code{{ggplot2}} and \code{{ggraph}} to offer
+pretty and extensible graphing solutions.
+However, compared to those solutions,
+\code{autographr()} contains various algorithms to provide better looking
+graphs by default.
+This means that just passing the function some network data
+will often be sufficient to return a reasonable-looking graph.
+However, the function also makes it easy to modify many of the most
+commonly adapted aspects of a graph,
+including node and edge size, colour, and shape,
+as arguments rather than additional functions that you need to remember.
+These can be defined outright, e.g. \code{node_size = 8},
+or in reference to an attribute of the network, e.g. \code{node_size = "wealth"}.
+Lastly, \code{autographr()} uses ggplot2-related theme information,
+so it is easy to make colour palette and fonts institution-specific and consistent.
 }
 \examples{
 autographr(ison_adolescents)
@@ -115,8 +125,8 @@ ison_adolescents |>
 \seealso{
 Other mapping: 
 \code{\link{attributes}()},
-\code{\link{autographd}()},
 \code{\link{autographs}()},
+\code{\link{autographt}()},
 \code{\link{configuration_layouts}},
 \code{\link{partition_layouts}},
 \code{\link{properties}}
