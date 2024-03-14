@@ -218,9 +218,9 @@ autographs <- function(netlist, waves,
     gs <- lapply(1:length(netlist), function(i)
       autographr(netlist[[i]], ...) + ggtitle(names(netlist)[i]))
   }
-  if (all(c("Infected", "Exposed", "Recovered") %in% names(gs[[1]]$data))) {
-    gs <- .collapse_guides(gs)
-  }
+  # if (all(c("Infected", "Exposed", "Recovered") %in% names(gs[[1]]$data))) {
+  #   gs <- .collapse_guides(gs)
+  # }
   do.call(patchwork::wrap_plots, c(gs, list(guides = "collect")))
 }
 
@@ -276,7 +276,7 @@ graphs <- autographs
 #' #             node_shape = "gender", node_color = "hair",
 #' #             node_size =  "age", edge_color = "links",
 #' #             edge_size = "weekly_meetings")
-#' #autographd(play_diffusion(ison_adolescents, seeds = 5, recovery = 0.1))
+#' #autographd(play_diffusion(ison_adolescents, seeds = 5))
 #' @export
 autographt <- function(tlist, layout, labels = TRUE,
                        node_color, node_shape, node_size,
@@ -1074,21 +1074,22 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
   v
 }
 
-.collapse_guides <- function(plist) {
-  glist <- list()
-  for (i in seq_len(length(plist))) {
-    glist[[i]] <- names(which(apply(plist[[i]]$data[c("Infected", "Exposed",
-                                                      "Recovered")],
-                                    2, function(x) length(unique(x)) > 1)))
-  }
-  if (any(lengths(glist) > 0)) {
-    kl <- which.max(unlist(lapply(glist, length)))
-    for (i in setdiff(seq_len(length(plist)), kl)) {
-      plist[[i]]$guides <- NULL
-    }
-  }
-  plist
-}
+# .collapse_guides <- function(plist) {
+#   glist <- list()
+#   for (i in seq_len(length(plist))) {
+#     glist[[i]] <- names(which(apply(plist[[i]]$data[c("Infected",
+#                                                       "Exposed",
+#                                                       "Recovered")],
+#                                     2, function(x) length(unique(x)) > 1)))
+#   }
+#   if (any(lengths(glist) > 0)) {
+#     kl <- which.max(unlist(lapply(glist, length)))
+#     for (i in setdiff(seq_len(length(plist)), kl)) {
+#       plist[[i]]["guides"] <- NULL
+#     }
+#   }
+#   plist
+# }
 
 .is_mark_attrib <- function(x) {
   if ("node_mark" %in% class(x)) TRUE else FALSE

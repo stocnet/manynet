@@ -150,7 +150,7 @@ A progress bar is shown if it takes some time to encoding all the
 #             node_shape = "gender", node_color = "hair",
 #             node_size =  "age", edge_color = "links",
 #             edge_size = "weekly_meetings")
-#autographd(play_diffusion(ison_adolescents, seeds = 5, recovery = 0.1))
+#autographd(play_diffusion(ison_adolescents, seeds = 5))
 }
 \seealso{
 Other mapping: 
