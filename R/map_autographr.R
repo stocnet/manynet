@@ -231,23 +231,34 @@ graphs <- autographs
 #' Easily animate dynamic networks with sensible defaults
 #' 
 #' @description 
-#' The aim of this function is to provide users with a quick and easy
-#' graphing function to produce animated network visualisations.
+#'   This function provides users with an easy way to graph
+#'   dynamic network data for exploration and presentation.
+#'   
+#'   It builds upon this package's `autographr()` function, 
+#'   and inherits all the same features and arguments.
+#'   See `autographr()` for more.
+#'   However, it uses the `{gganimate}` package to animate the changes
+#'   between successive iterations of a network.
+#'   This is useful for networks in which the ties and/or the node or tie
+#'   attributes are changing.
+#'   
+#'   A progress bar is shown if it takes some time to encoding all the
+#'   .png files into a .gif.
 #' @family mapping
 #' @param tlist The same migraph-compatible network listed according to
 #'   a time attribute, waves, or slices.
-#' @param keep_isolates Would you like to remove vertices that do not have
-#'   any adjacent edges in each frame?
+#' @param keep_isolates Logical, whether to keep isolate nodes in the graph.
 #'   TRUE by default.
-#'   If FALSE, deletes isolated vertices in each frame.
+#'   If FALSE, removes nodes from each frame they are isolated in.
 #' @inheritParams autographr
 #' @importFrom igraph gsize as_data_frame get.edgelist
 #' @importFrom ggplot2 ggplot geom_segment geom_point geom_text
 #' scale_alpha_manual theme_void
 #' @importFrom ggraph create_layout
 #' @importFrom dplyr mutate select distinct left_join %>%
-#' @source http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
-#' @return A gganimate::animate() object.
+#' @source https://blog.schochastics.net/posts/2021-09-15_animating-network-evolutions-with-gganimate/
+#' @return Shows a .gif image. Assigning the result of the function
+#'   saves the gif to a temporary folder and the object holds the path to this file.
 #' @examples
 #' #ison_adolescents %>%
 #' #  mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %>%
@@ -373,6 +384,10 @@ autographt <- function(tlist, layout, labels = TRUE,
 #' @rdname autographt
 #' @export
 autographd <- autographt
+
+#' @rdname autographt
+#' @export
+grapht <- autographt
 
 reduce_categories <- function(g, node_group) {
   limit <- toCondense <- NULL

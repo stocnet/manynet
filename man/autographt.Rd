@@ -3,9 +3,10 @@
 \name{autographt}
 \alias{autographt}
 \alias{autographd}
+\alias{grapht}
 \title{Easily animate dynamic networks with sensible defaults}
 \source{
-http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
+https://blog.schochastics.net/posts/2021-09-15_animating-network-evolutions-with-gganimate/
 }
 \usage{
 autographt(
@@ -22,6 +23,19 @@ autographt(
 )
 
 autographd(
+  tlist,
+  layout,
+  labels = TRUE,
+  node_color,
+  node_shape,
+  node_size,
+  edge_color,
+  edge_size,
+  keep_isolates = TRUE,
+  ...
+)
+
+grapht(
   tlist,
   layout,
   labels = TRUE,
@@ -94,19 +108,30 @@ it is recommended to calculate all edge-related statistics prior
 to using this function.
 Edges can also be sized by declaring a numeric size or vector instead.}
 
-\item{keep_isolates}{Would you like to remove vertices that do not have
-any adjacent edges in each frame?
+\item{keep_isolates}{Logical, whether to keep isolate nodes in the graph.
 TRUE by default.
-If FALSE, deletes isolated vertices in each frame.}
+If FALSE, removes nodes from each frame they are isolated in.}
 
-\item{...}{Extra arguments to pass on to layout.}
+\item{...}{Extra arguments to pass on to the layout algorithm, if necessary.}
 }
 \value{
-A gganimate::animate() object.
+Shows a .gif image. Assigning the result of the function
+saves the gif to a temporary folder and the object holds the path to this file.
 }
 \description{
-The aim of this function is to provide users with a quick and easy
-graphing function to produce animated network visualisations.
+This function provides users with an easy way to graph
+dynamic network data for exploration and presentation.
+
+It builds upon this package's \code{autographr()} function,
+and inherits all the same features and arguments.
+See \code{autographr()} for more.
+However, it uses the \code{{gganimate}} package to animate the changes
+between successive iterations of a network.
+This is useful for networks in which the ties and/or the node or tie
+attributes are changing.
+
+A progress bar is shown if it takes some time to encoding all the
+.png files into a .gif.
 }
 \examples{
 #ison_adolescents \%>\%

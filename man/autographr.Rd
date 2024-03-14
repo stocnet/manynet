@@ -124,6 +124,7 @@ or in reference to an attribute of the network, e.g. \code{node_size = "wealth"}
 
 Lastly, \code{autographr()} uses ggplot2-related theme information,
 so it is easy to make colour palette and fonts institution-specific and consistent.
+See e.g. \code{theme_iheid()} for more.
 }
 \examples{
 autographr(ison_adolescents)
