@@ -144,18 +144,35 @@ graphr <- autographr
 #' Easily graph a set of networks with sensible defaults
 #' 
 #' @description 
-#' The aim of this function is to provide users with a quick and easy
-#' graphing function for lists of networks.
+#'   This function provides users with an easy way to graph
+#'   lists of network data for comparison.
+#'   
+#'   It builds upon this package's `autographr()` function, 
+#'   and inherits all the same features and arguments.
+#'   See `autographr()` for more.
+#'   However, it uses the `{patchwork}` package to plot the graphs
+#'   side by side and, if necessary, in successive rows.
+#'   This is useful for lists of networks that represent, for example, 
+#'   ego or component subgraphs of a network,
+#'   or a list of a network's different types of tie or across time.
+#'   By default just the first and last network will be plotted,
+#'   but this can be overridden by the "waves" parameter.
+#'   
+#'   Where the graphs are of the same network (same nodes),
+#'   the graphs may share a layout to facilitate comparison.
+#'   By default, successive graphs will use the layout calculated for 
+#'   the "first" network, but other options include the "last" layout,
+#'   or a mix, "both", of them.
 #' @family mapping
 #' @param netlist A list of manynet-compatible networks.
-#' @param waves The number of plots to be displayed side-by-side.
+#' @param waves Numeric, the number of plots to be displayed side-by-side.
 #'   If missing, the number of plots will be reduced to the first and last
 #'   when there are more than four plots.
+#'   This argument can also be passed a vector selecting the waves to plot.
 #' @param based_on Whether the layout of the joint plots should
-#'   be based on the "first" or the "last" network.
+#'   be based on the "first" or the "last" network, or "both".
 #' @param ... Additional arguments passed to `autographr()`.
-#' @source http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
-#' @return Multiple ggplot2::ggplot() objects displayed side-by-side.
+#' @return Multiple `ggplot2::ggplot()` objects displayed side-by-side.
 #' @examples
 #' #autographs(to_egos(ison_adolescents))
 #' #autographs(to_egos(ison_adolescents), waves = 8)
@@ -163,8 +180,9 @@ graphr <- autographr
 #' #autographs(play_diffusion(ison_adolescents))
 #' @export
 autographs <- function(netlist, waves,
-                       based_on = "first", ...) {
+                       based_on = c("first","last","both"), ...) {
   thisRequires("patchwork")
+  based_on <- match.arg(based_on)
   if (any(class(netlist) == "diff_model")) netlist <- to_waves(netlist)
   if (missing(waves)) {
     if (length(netlist) > 4) {
@@ -205,6 +223,10 @@ autographs <- function(netlist, waves,
   }
   do.call(patchwork::wrap_plots, c(gs, list(guides = "collect")))
 }
+
+#' @rdname autographs
+#' @export
+graphs <- autographs
 
 #' Easily animate dynamic networks with sensible defaults
 #' 
