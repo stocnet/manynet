@@ -105,8 +105,8 @@ autographr <- function(.data, layout, labels = TRUE,
                        edge_color, edge_size, ...) {
   g <- as_tidygraph(.data)
   if (missing(layout)) {
-    if (length(g) <= 4) {
-      layout <- "configuration" 
+    if (length(g) == 3 | length(g) == 4) {
+      layout <- "configuration"
     } else if (is_twomode(g)) {
       layout <- "hierarchy"
     } else layout <- "stress"
@@ -194,7 +194,7 @@ autographs <- function(netlist, waves,
       netlist <- netlist[waves]
   }
   if (is.null(names(netlist))) names(netlist) <- rep("", length(netlist))
-  if (length(unique(unname(lapply(netlist, length)))) == 1) {
+  if (length(unique(lapply(netlist, length))) == 1) {
     if (based_on == "first") {
       lay <- autographr(netlist[[1]], ...)
       x <- lay$data$x
@@ -214,12 +214,12 @@ autographs <- function(netlist, waves,
     gs <- lapply(1:length(netlist), function(i)
       autographr(netlist[[i]], x = x, y = y, ...) + ggtitle(names(netlist)[i]))
   } else {
-    message("Layouts were not standardised since nodes appear across waves.")
+    message("Layouts were not standardised since not all nodes appear across waves.")
     gs <- lapply(1:length(netlist), function(i)
       autographr(netlist[[i]], ...) + ggtitle(names(netlist)[i]))
   }
   if (all(c("Infected", "Exposed", "Recovered") %in% names(gs[[1]]$data))) {
-    gs <- collapse_guides(gs)
+    gs <- .collapse_guides(gs)
   }
   do.call(patchwork::wrap_plots, c(gs, list(guides = "collect")))
 }
@@ -433,7 +433,7 @@ reduce_categories <- function(g, node_group) {
   if ("x" %in% names(dots) & "y" %in% names(dots)) {
     lo <- ggraph::create_layout(g, layout = "manual",
                                 x = dots[["x"]], y = dots[["y"]])
-  } else lo <- ggraph::create_layout(g, layout, ...)
+  } else lo <- suppressWarnings(ggraph::create_layout(g, layout, ...))
   if ("graph" %in% names(attributes(lo))) {
     if (!setequal(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
       for (n in setdiff(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
@@ -731,7 +731,7 @@ reduce_categories <- function(g, node_group) {
     if (is_twomode(g)) {
       if (!is.null(node_color)) {
         if (node_color %in% names(node_attribute(g))) {
-          if (is_mark_attrib(node_attribute(g, node_color))) {
+          if (.is_mark_attrib(node_attribute(g, node_color))) {
             node_color <- factor(node_attribute(g, node_color),
                                  levels = c("TRUE", "FALSE"))
           } else node_color <- factor(node_attribute(g, node_color))
@@ -749,7 +749,7 @@ reduce_categories <- function(g, node_group) {
     } else {
       if (!is.null(node_color)) {
         if (node_color %in% names(node_attribute(g))) {
-          if (is_mark_attrib(node_attribute(g, node_color))) {
+          if (.is_mark_attrib(node_attribute(g, node_color))) {
             node_color <- factor(node_attribute(g, node_color),
                                  levels = c("TRUE", "FALSE"))
           } else node_color <- factor(node_attribute(g, node_color))
@@ -1074,16 +1074,14 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
   v
 }
 
-collapse_guides <- function(plist) {
+.collapse_guides <- function(plist) {
   glist <- list()
   for (i in seq_len(length(plist))) {
     glist[[i]] <- names(which(apply(plist[[i]]$data[c("Infected", "Exposed",
                                                       "Recovered")],
                                     2, function(x) length(unique(x)) > 1)))
   }
-  if (any(as.logical(lapply(glist, function(x) length(x) == 0))) &
-      length(unique(glist)) == 2 | length(unique(glist)) == 1 |
-      any(lengths(glist) > 1)) {
+  if (any(lengths(glist) > 0)) {
     kl <- which.max(unlist(lapply(glist, length)))
     for (i in setdiff(seq_len(length(plist)), kl)) {
       plist[[i]]$guides <- NULL
@@ -1092,6 +1090,6 @@ collapse_guides <- function(plist) {
   plist
 }
 
-is_mark_attrib <- function(x) {
+.is_mark_attrib <- function(x) {
   if ("node_mark" %in% class(x)) TRUE else FALSE
 }
