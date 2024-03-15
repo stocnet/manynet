@@ -4,7 +4,7 @@
 
 ## Modifying
 
-- Fixed documentation issue with `to_scope` for CRAN resubmission
+- Fixed documentation issue with `to_scope()` for CRAN resubmission
 
 # manynet 0.4.3
 
