@@ -45,7 +45,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.3</span>
       </span>
     </div>
 
@@ -237,7 +237,7 @@
 <div class="section level3">
 <h3 id="autographr">autographr<a class="anchor" aria-label="anchor" href="#autographr"></a>
 </h3>
-<p>First, <code><a href="reference/autographing.html">autographr()</a></code> is used to graph networks in any of the <a href="https://stocnet.github.io/manynet/">manynet</a> formats. It includes sensible defaults so that researchers can view their network’s structure or distribution quickly with a minimum of fuss. Compare the output from <a href="https://stocnet.github.io/manynet/">manynet</a> with a similar default from <a href="https://r.igraph.org/" class="external-link">igraph</a>:</p>
+<p>First, <code><a href="reference/autographr.html">autographr()</a></code> is used to graph networks in any of the <a href="https://stocnet.github.io/manynet/">manynet</a> formats. It includes sensible defaults so that researchers can view their network’s structure or distribution quickly with a minimum of fuss. Compare the output from <a href="https://stocnet.github.io/manynet/">manynet</a> with a similar default from <a href="https://r.igraph.org/" class="external-link">igraph</a>:</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-layout-comparison-1.png"></p>
 <p>Here the <a href="https://stocnet.github.io/manynet/">manynet</a> function recognises that the network is a two-mode network and uses a bipartite layout by default, and recognises that the network contains names for the nodes and prints them vertically so that they are legible in this layout. Other ‘clever’ features include automatic node sizing and more. By contrast, <a href="https://r.igraph.org/" class="external-link">igraph</a> requires the bipartite layout to be specified, has cumbersome node size defaults for all but the smallest graphs, and labels also very often need resizing and adjustment to avoid overlap. All of <a href="https://stocnet.github.io/manynet/">manynet</a>’s adjustments can be overridden, however…</p>
 <div class="section level4">
@@ -255,7 +255,7 @@
 <div class="section level4">
 <h4 id="more-themes-and-scales">More themes and scales<a class="anchor" aria-label="anchor" href="#more-themes-and-scales"></a>
 </h4>
-<p>Lastly, <code><a href="reference/autographing.html">autographr()</a></code> is highly extensible in terms of the overall look of your plots. <a href="https://stocnet.github.io/manynet/">manynet</a> uses the excellent <a href="https://ggraph.data-imaginist.com" class="external-link">ggraph</a> package (and thus <a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a>) as a plotting engine. This enables alterations such as the application of themes to be applied upon the defaults. If you want to quickly make sure your plots conform to your institution or taste, then it is easy to do with themes and scales that update the basic look and color palette used in your plots.</p>
+<p>Lastly, <code><a href="reference/autographr.html">autographr()</a></code> is highly extensible in terms of the overall look of your plots. <a href="https://stocnet.github.io/manynet/">manynet</a> uses the excellent <a href="https://ggraph.data-imaginist.com" class="external-link">ggraph</a> package (and thus <a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a>) as a plotting engine. This enables alterations such as the application of themes to be applied upon the defaults. If you want to quickly make sure your plots conform to your institution or taste, then it is easy to do with themes and scales that update the basic look and color palette used in your plots.</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-more-themes-1.png"></p>
 <p>More themes are on their way, and we’re happy to take suggestions.</p>
 </div>
@@ -263,13 +263,13 @@
 <div class="section level3">
 <h3 id="autographs">autographs<a class="anchor" aria-label="anchor" href="#autographs"></a>
 </h3>
-<p>Second, <code><a href="reference/autographing.html">autographs()</a></code> is used to graph multiple networks together, which can be useful for ego networks or network panels. <a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a> is used to help arrange individual plots together.</p>
+<p>Second, <code><a href="reference/autographs.html">autographs()</a></code> is used to graph multiple networks together, which can be useful for ego networks or network panels. <a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a> is used to help arrange individual plots together.</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-autographs-1.png"></p>
 </div>
 <div class="section level3">
 <h3 id="autographd">autographd<a class="anchor" aria-label="anchor" href="#autographd"></a>
 </h3>
-<p>Third, <code><a href="reference/autographing.html">autographd()</a></code> is used to visualise dynamic networks. It uses <a href="https://gganimate.com" class="external-link">gganimate</a> and <a href="https://r-rust.r-universe.dev/gifski" class="external-link">gifski</a> to create a gif that visualises network changes over time. It really couldn’t be easier.</p>
+<p>Third, <code><a href="reference/autographt.html">autographd()</a></code> is used to visualise dynamic networks. It uses <a href="https://gganimate.com" class="external-link">gganimate</a> and <a href="https://r-rust.r-universe.dev/gifski" class="external-link">gifski</a> to create a gif that visualises network changes over time. It really couldn’t be easier.</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-autographd-1.gif"></p>
 <!-- provide a common set of tools that can be used to import, export, create, and manipulate network data in a wide variety of formats, --><!-- and obtain a good first visualisation quickly. --><!-- This can be useful for pedagogical purposes, initial description, or checking something part way through the modelling process. --><!-- Through the most comprehensive network class-coercion available, --><!-- users can access routines not available in their chosen package or even in `{manynet}`. --><!-- `{manynet}` provides a common set of tools and a standard syntax for analysing many different types of networks. --><!-- It offers a broad range of functions to make, manipulate, map, measure, and model: --><!-- - one-, two-, and sometimes three-mode networks --><!-- - undirected, directed, and sometimes complex networks --><!-- - unweighted, weighted, and sometimes signed networks -->
 </div>

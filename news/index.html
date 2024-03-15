@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.3</span>
       </span>
     </div>
 
@@ -54,6 +54,17 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="0.4.3" id="manynet-043">manynet 0.4.3<a class="anchor" aria-label="anchor" href="#manynet-043"></a></h2>
+<p>2024-03-13</p>
+<div class="section level3">
+<h3 id="mapping-0-4-3">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-4-3"></a></h3>
+<ul><li>Fixed issues with <code><a href="../reference/autographr.html">autographr()</a></code> examples that were taking too long to run</li>
+<li>Separated documentation for <code><a href="../reference/autographr.html">autographr()</a></code>, <code><a href="../reference/autographs.html">autographs()</a></code>, and <code><a href="../reference/autographt.html">autographd()</a></code> functions</li>
+<li>Closed <a href="https://github.com/stocnet/manynet/issues/64" class="external-link">#64</a> by adding aliases for <code><a href="../reference/autographr.html">autographr()</a></code>, <code><a href="../reference/autographs.html">autographs()</a></code>, and <code><a href="../reference/autographt.html">autographd()</a></code> functions</li>
+<li>Closed <a href="https://github.com/stocnet/manynet/issues/65" class="external-link">#65</a> by fixing bugs with how <code><a href="../reference/mark_diff.html">node_is_infected()</a></code>, <code>node_is_recovery()</code>, <code><a href="../reference/mark_diff.html">node_is_latent()</a></code> work for network lists</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="0.4.2" id="manynet-042">manynet 0.4.2<a class="anchor" aria-label="anchor" href="#manynet-042"></a></h2>
 <p>2024-03-12</p>
 <div class="section level3">
@@ -64,7 +75,7 @@
 <div class="section level3">
 <h3 id="mapping-0-4-2">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-4-2"></a></h3>
 <ul><li>Closed <a href="https://github.com/stocnet/manynet/issues/6" class="external-link">#6</a> by updating how “lineage” layout works and places nodes on Y axis</li>
-<li>Closed <a href="https://github.com/stocnet/manynet/issues/39" class="external-link">#39</a> by making <code><a href="../reference/autographing.html">autographr()</a></code> more flexible and efficient in setting variables to aesthetics</li>
+<li>Closed <a href="https://github.com/stocnet/manynet/issues/39" class="external-link">#39</a> by making <code><a href="../reference/autographr.html">autographr()</a></code> more flexible and efficient in setting variables to aesthetics</li>
 <li>Updated themes to be compatible with newer and older versions of <a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a>
 </li>
 <li>Added “configuration” layout for small triad/quad networks</li>
@@ -145,13 +156,13 @@
 <h3 id="mapping-0-4-0">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-4-0"></a></h3>
 <ul><li>Added <code><a href="../reference/scales.html">scale_edge_color_centres()</a></code>, <code><a href="../reference/scales.html">scale_edge_color_ethz()</a></code>, <code><a href="../reference/scales.html">scale_edge_color_iheid()</a></code>, <code><a href="../reference/scales.html">scale_edge_color_rug()</a></code>, <code><a href="../reference/scales.html">scale_edge_color_sdgs()</a></code><ul><li>Fixed bug that meant edge scales were unavailable (closes <a href="https://github.com/stocnet/manynet/issues/43" class="external-link">#43</a>)</li></ul></li>
 <li>
-<code><a href="../reference/autographing.html">autographr()</a></code> now provides legends by default where multiple colours are used (closes <a href="https://github.com/stocnet/manynet/issues/52" class="external-link">#52</a>)</li>
+<code><a href="../reference/autographr.html">autographr()</a></code> now provides legends by default where multiple colours are used (closes <a href="https://github.com/stocnet/manynet/issues/52" class="external-link">#52</a>)</li>
 <li>
-<code><a href="../reference/autographing.html">autographs()</a></code> now labels legends correctly for binary variables (closes <a href="https://github.com/stocnet/manynet/issues/38" class="external-link">#38</a>)</li>
+<code><a href="../reference/autographs.html">autographs()</a></code> now labels legends correctly for binary variables (closes <a href="https://github.com/stocnet/manynet/issues/38" class="external-link">#38</a>)</li>
 <li>
-<code><a href="../reference/autographing.html">autographs()</a></code> now graphs just the first and last networks in a list (closes <a href="https://github.com/stocnet/manynet/issues/45" class="external-link">#45</a>)</li>
+<code><a href="../reference/autographs.html">autographs()</a></code> now graphs just the first and last networks in a list (closes <a href="https://github.com/stocnet/manynet/issues/45" class="external-link">#45</a>)</li>
 <li>
-<code><a href="../reference/autographing.html">autographs()</a></code> now includes an option whether the layout should be based on the first, last, or both of two networks (closes <a href="https://github.com/stocnet/manynet/issues/48" class="external-link">#48</a>)</li>
+<code><a href="../reference/autographs.html">autographs()</a></code> now includes an option whether the layout should be based on the first, last, or both of two networks (closes <a href="https://github.com/stocnet/manynet/issues/48" class="external-link">#48</a>)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="data-0-4-0">Data<a class="anchor" aria-label="anchor" href="#data-0-4-0"></a></h3>
@@ -187,11 +198,11 @@
 <div class="section level3">
 <h3 id="mapping-0-3-1">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-3-1"></a></h3>
 <ul><li>
-<code><a href="../reference/autographing.html">autographr()</a></code> now shapes seed, adopter, and non-adopter nodes using a parallel to migraph’s <code>node_adoption_time()</code> for<ul><li>Improved guide/legend labelling and positioning</li></ul></li>
+<code><a href="../reference/autographr.html">autographr()</a></code> now shapes seed, adopter, and non-adopter nodes using a parallel to migraph’s <code>node_adoption_time()</code> for<ul><li>Improved guide/legend labelling and positioning</li></ul></li>
 <li>
-<code><a href="../reference/autographing.html">autographs()</a></code> now colors susceptible, exposed, infected, and recovered nodes correctly</li>
+<code><a href="../reference/autographs.html">autographs()</a></code> now colors susceptible, exposed, infected, and recovered nodes correctly</li>
 <li>
-<code><a href="../reference/autographing.html">autographd()</a></code> now colors susceptible, exposed, infected, and recovered nodes correctly</li>
+<code><a href="../reference/autographt.html">autographd()</a></code> now colors susceptible, exposed, infected, and recovered nodes correctly</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -213,7 +224,7 @@
 <li>
 <code><a href="../reference/is_format.html">is_multiplex()</a></code> now recognises a tie/edge ‘type’ attribute as evidence of multiplexity</li>
 <li>Deleted unnecessary reexports from other packages<ul><li>
-<code><a href="https://r.igraph.org/reference/make_bipartite_graph.html" class="external-link">igraph::is_bipartite()</a></code> is superseded by <code><a href="../reference/is_format.html">is_twomode()</a></code>
+<code><a href="https://r.igraph.org/reference/is_bipartite.html" class="external-link">igraph::is_bipartite()</a></code> is superseded by <code><a href="../reference/is_format.html">is_twomode()</a></code>
 </li>
 <li>
 <code><a href="https://tidygraph.data-imaginist.com/reference/activate.html" class="external-link">tidygraph::activate()</a></code> is superseded by <code><a href="../reference/add_ties.html">mutate_ties()</a></code> and similar functions</li>
@@ -224,10 +235,10 @@
 <div class="section level3">
 <h3 id="mapping-0-3-0">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-3-0"></a></h3>
 <ul><li>
-<code><a href="../reference/autographing.html">autographr()</a></code> now plots diff_model objects, showing the diffusion as a heatmap on the vertices</li>
+<code><a href="../reference/autographr.html">autographr()</a></code> now plots diff_model objects, showing the diffusion as a heatmap on the vertices</li>
 <li>
-<code><a href="../reference/autographing.html">autographs()</a></code> and <code><a href="../reference/autographing.html">autographd()</a></code> now utilise network information in diff_model objects to provide better layouts (closed <a href="https://github.com/stocnet/manynet/issues/17" class="external-link">#17</a>)</li>
-<li>Fixed bug with specifying <code>node_size</code> in <code><a href="../reference/autographing.html">autographd()</a></code>
+<code><a href="../reference/autographs.html">autographs()</a></code> and <code><a href="../reference/autographt.html">autographd()</a></code> now utilise network information in diff_model objects to provide better layouts (closed <a href="https://github.com/stocnet/manynet/issues/17" class="external-link">#17</a>)</li>
+<li>Fixed bug with specifying <code>node_size</code> in <code><a href="../reference/autographt.html">autographd()</a></code>
 </li>
 <li>
 <code>many_palettes</code> replaces <code>iheid_palette</code>
@@ -257,7 +268,7 @@
 <div class="section level3">
 <h3 id="mapping-0-2-10">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-2-10"></a></h3>
 <ul><li>
-<code><a href="../reference/autographing.html">autographd()</a></code> and <code><a href="../reference/autographing.html">autographs()</a></code> can now be used for plotting diffusion models.<ul><li>Updates to <code><a href="../reference/split.html">to_waves()</a></code> and <code><a href="../reference/autographing.html">autographd()</a></code> to account for ‘exposed’ nodes in diffusion models.</li></ul></li>
+<code><a href="../reference/autographt.html">autographd()</a></code> and <code><a href="../reference/autographs.html">autographs()</a></code> can now be used for plotting diffusion models.<ul><li>Updates to <code><a href="../reference/split.html">to_waves()</a></code> and <code><a href="../reference/autographt.html">autographd()</a></code> to account for ‘exposed’ nodes in diffusion models.</li></ul></li>
 <li>Updates to layouts<ul><li>Updates to <code>hierarchical</code> layout so that node name can be specified for centering the layout</li>
 <li>Updated <code>theme_heid()</code> layout</li>
 </ul></li>
@@ -277,10 +288,10 @@
 <ul><li>Added <code>+.ggplot()</code> method for visualising multiple plots in the same pane</li>
 <li>Added custom theme <code>theme_iheid</code> for plots</li>
 <li>Added custom <code>scale_</code> family of functions for changing colour scales in plots</li>
-<li>Updated <code><a href="../reference/autographing.html">autographr()</a></code>:<ul><li>Added “center” option for hierarchy layout that places events or actors in the middle alike “bip” and “bip3” layouts</li>
+<li>Updated <code><a href="../reference/autographr.html">autographr()</a></code>:<ul><li>Added “center” option for hierarchy layout that places events or actors in the middle alike “bip” and “bip3” layouts</li>
 <li>Added “lineage” layout that fixes node positions according to values in y axis</li>
 </ul></li>
-<li>Fixed bugs with <code><a href="../reference/autographing.html">autographd()</a></code> function</li>
+<li>Fixed bugs with <code><a href="../reference/autographt.html">autographd()</a></code> function</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -301,13 +312,13 @@
 <ul><li>Added <code>to_mentoring</code> function</li></ul></div>
 <div class="section level3">
 <h3 id="mapping-0-2-7">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-2-7"></a></h3>
-<ul><li>Fixed bugs in <code><a href="../reference/autographing.html">autographr()</a></code> related to <code>edge_size</code> and <code>edge_color</code>
+<ul><li>Fixed bugs in <code><a href="../reference/autographr.html">autographr()</a></code> related to <code>edge_size</code> and <code>edge_color</code>
 </li>
-<li>Fixed bugs and updated label placements for “circular” and “concentric” layouts for <code><a href="../reference/autographing.html">autographr()</a></code>
+<li>Fixed bugs and updated label placements for “circular” and “concentric” layouts for <code><a href="../reference/autographr.html">autographr()</a></code>
 </li>
-<li>Fixed issues with self-ties in <code><a href="../reference/autographing.html">autographr()</a></code>
+<li>Fixed issues with self-ties in <code><a href="../reference/autographr.html">autographr()</a></code>
 </li>
-<li>Updated tests for <code><a href="../reference/autographing.html">autographr()</a></code>
+<li>Updated tests for <code><a href="../reference/autographr.html">autographr()</a></code>
 </li>
 </ul></div>
 <div class="section level3">
@@ -323,7 +334,7 @@
 <div class="section level3">
 <h3 id="making-0-2-6">Making<a class="anchor" aria-label="anchor" href="#making-0-2-6"></a></h3>
 <ul><li>
-<code>generate</code> examples leverage <code><a href="../reference/autographing.html">autographr()</a></code> again</li></ul></div>
+<code>generate</code> examples leverage <code><a href="../reference/autographr.html">autographr()</a></code> again</li></ul></div>
 <div class="section level3">
 <h3 id="manipulating-0-2-6">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-0-2-6"></a></h3>
 <ul><li>Fixed bug in <code>to_redirected.tbl_graph()</code>
@@ -374,17 +385,17 @@
 <ul><li>Added <code><a href="../reference/to_project.html">to_galois()</a></code> for transforming networks into partially ordered Galois lattices</li></ul></div>
 <div class="section level3">
 <h3 id="mapping-0-2-4">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-2-4"></a></h3>
-<ul><li>Fixed bug in node_shape argument in <code><a href="../reference/autographing.html">autographr()</a></code>
+<ul><li>Fixed bug in node_shape argument in <code><a href="../reference/autographr.html">autographr()</a></code>
 </li>
-<li>Fixed bug in node_group argument in <code><a href="../reference/autographing.html">autographr()</a></code>, closes <a href="https://github.com/stocnet/manynet/issues/11" class="external-link">#11</a></li>
-<li>Fixed bug in inconsistent default colour scheme for node_color and node_group in <code><a href="../reference/autographing.html">autographr()</a></code>
+<li>Fixed bug in node_group argument in <code><a href="../reference/autographr.html">autographr()</a></code>, closes <a href="https://github.com/stocnet/manynet/issues/11" class="external-link">#11</a></li>
+<li>Fixed bug in inconsistent default colour scheme for node_color and node_group in <code><a href="../reference/autographr.html">autographr()</a></code>
 </li>
 <li>
-<code><a href="../reference/autographing.html">autographr()</a></code> now automatically bends arcs for reciprocated ties when directed network is not too large/dense</li>
+<code><a href="../reference/autographr.html">autographr()</a></code> now automatically bends arcs for reciprocated ties when directed network is not too large/dense</li>
 <li>
-<code><a href="../reference/autographing.html">autographr()</a></code> now accepts unquoted variables as arguments</li>
+<code><a href="../reference/autographr.html">autographr()</a></code> now accepts unquoted variables as arguments</li>
 <li>
-<code><a href="../reference/autographing.html">autographr()</a></code> now uses <code><a href="https://schochastics.github.io/graphlayouts/reference/layout_multilevel.html" class="external-link">graphlayouts::layout_igraph_multilevel</a></code> where appropriate</li>
+<code><a href="../reference/autographr.html">autographr()</a></code> now uses <code><a href="https://schochastics.github.io/graphlayouts/reference/layout_multilevel.html" class="external-link">graphlayouts::layout_igraph_multilevel</a></code> where appropriate</li>
 <li>Default node labelling now larger and further from nodes in circular layout</li>
 </ul></div>
 <div class="section level3">
@@ -556,7 +567,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="maps-0-1-0">Maps<a class="anchor" aria-label="anchor" href="#maps-0-1-0"></a></h3>
-<ul><li>Added <code><a href="../reference/autographing.html">autographr()</a></code>, <code><a href="../reference/autographing.html">autographs()</a></code>, and <code><a href="../reference/autographing.html">autographd()</a></code>
+<ul><li>Added <code><a href="../reference/autographr.html">autographr()</a></code>, <code><a href="../reference/autographs.html">autographs()</a></code>, and <code><a href="../reference/autographt.html">autographd()</a></code>
 </li>
 <li>Added layout functions<ul><li>Fixed <code><a href="../reference/partition_layouts.html">layout_tbl_graph_concentric()</a></code>
 </li></ul></li>

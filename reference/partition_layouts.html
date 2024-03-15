@@ -36,7 +36,7 @@ The "lineage" layout ranks nodes in Y axis according to values.'><meta property=
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.3</span>
       </span>
     </div>
 
@@ -75,7 +75,7 @@ The "lineage" layout ranks nodes in Y axis according to values.'><meta property=
 
     <div class="ref-description">
     <p>These algorithms layout networks based on two or more partitions,
-and are recommended for use with <code><a href="autographing.html">autographr()</a></code> or <code>{ggraph}</code>.
+and are recommended for use with <code><a href="autographr.html">autographr()</a></code> or <code>{ggraph}</code>.
 Note that these layout algorithms use <code>{Rgraphviz}</code>,
 a package that is only available on Bioconductor.
 It will first need to be downloaded using <code>BiocManager::install("Rgraphviz")</code>.
@@ -192,11 +192,30 @@ according to values for "lineage" layout.</p></dd>
     <h2>See also</h2>
     <div class="dont-index"><p>Other mapping: 
 <code><a href="attributes.html">attributes</a>()</code>,
-<code><a href="autographing.html">autographing</a></code>,
+<code><a href="autographr.html">autographr</a>()</code>,
+<code><a href="autographs.html">autographs</a>()</code>,
+<code><a href="autographt.html">autographt</a>()</code>,
 <code><a href="configuration_layouts.html">configuration_layouts</a></code>,
 <code><a href="properties.html">properties</a></code></p></div>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">#autographr(ison_southern_women, layout = "hierarchy", center = "events",</span></span></span>
+<span class="r-in"><span><span class="co">#           node_color = "type", node_size = 3)</span></span></span>
+<span class="r-in"><span><span class="co">#autographr(ison_southern_women, layout = "alluvial")</span></span></span>
+<span class="r-in"><span><span class="co">#autographr(ison_southern_women, layout = "concentric", membership = "type",</span></span></span>
+<span class="r-in"><span><span class="co">#           node_color = "type", node_size = 3)</span></span></span>
+<span class="r-in"><span><span class="co">#autographr(ison_lotr, layout = "multilevel",</span></span></span>
+<span class="r-in"><span><span class="co">#           node_color = "Race", level = "Race", node_size = 3)</span></span></span>
+<span class="r-in"><span><span class="co"># ison_adolescents %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co">#   mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2),</span></span></span>
+<span class="r-in"><span><span class="co">#          cut = node_is_cutpoint(ison_adolescents)) %&gt;%</span></span></span>
+<span class="r-in"><span><span class="co">#   autographr(layout = "lineage", rank = "year", node_color = "cut",</span></span></span>
+<span class="r-in"><span><span class="co">#              node_size = migraph::node_degree(ison_adolescents)*10)</span></span></span>
+<span class="r-in"></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

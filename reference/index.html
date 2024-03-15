@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.3</span>
       </span>
     </div>
 
@@ -54,7 +54,7 @@
 
     <table class="ref-index"><colgroup><col class="alias"><col class="title"></colgroup><tbody><tr><th colspan="2">
           <h2 id="making">Making <a href="#making" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p><p>Functions for importing, exporting, constructing, and simulating directed and undirected, one-mode and two-mode networks.</p>
+          <p class="section-desc"></p><p>Functions for importing, exporting, constructing, and simulating directed and undirected, one-mode and two-mode networks. This includes functions for playing games upon networks, changing the distribution of nodal attributes.</p>
         </th>
       </tr></tbody><tbody><tr><td>
           <p><code><a href="read.html">read_matrix()</a></code> <code><a href="read.html">read_edgelist()</a></code> <code><a href="read.html">read_nodelist()</a></code> <code><a href="read.html">read_pajek()</a></code> <code><a href="read.html">read_ucinet()</a></code> <code><a href="read.html">read_dynetml()</a></code> <code><a href="read.html">read_graphml()</a></code> </p>
@@ -166,7 +166,7 @@
         <td><p>Marking ties based on structural properties</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="mapping">Mapping <a href="#mapping" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p><p>Functions for plotting and visualising graphs of different types. <code><a href="../reference/autographing.html">autographr()</a></code> graphs any manynet-compatible class object automagically. <code><a href="../reference/autographing.html">autographs()</a></code> and <code><a href="../reference/autographing.html">autographd()</a></code> do the same for multiple networks and dynamic networks, respectively.</p>
+          <p class="section-desc"></p><p>Functions for plotting and visualising graphs of different types. <code><a href="../reference/autographr.html">autographr()</a></code> graphs any manynet-compatible class object automagically. <code><a href="../reference/autographs.html">autographs()</a></code> and <code><a href="../reference/autographt.html">autographt()</a></code> do the same for multiple networks and dynamic networks, respectively.</p>
         </th>
       </tr></tbody><tbody><tr><td>
           <p><code><a href="properties.html">network_nodes()</a></code> <code><a href="properties.html">network_ties()</a></code> <code><a href="properties.html">network_dims()</a></code> <code><a href="properties.html">network_node_attributes()</a></code> <code><a href="properties.html">network_tie_attributes()</a></code> </p>
@@ -177,9 +177,17 @@
         </td>
         <td><p>Describing attributes of nodes or ties in a network</p></td>
       </tr><tr><td>
-          <p><code><a href="autographing.html">autographr()</a></code> <code><a href="autographing.html">autographs()</a></code> <code><a href="autographing.html">autographd()</a></code> </p>
+          <p><code><a href="autographr.html">autographr()</a></code> <code><a href="autographr.html">graphr()</a></code> </p>
         </td>
-        <td><p>Quickly graph networks with sensible defaults</p></td>
+        <td><p>Easily graph networks with sensible defaults</p></td>
+      </tr><tr><td>
+          <p><code><a href="autographs.html">autographs()</a></code> <code><a href="autographs.html">graphs()</a></code> </p>
+        </td>
+        <td><p>Easily graph a set of networks with sensible defaults</p></td>
+      </tr><tr><td>
+          <p><code><a href="autographt.html">autographt()</a></code> <code><a href="autographt.html">autographd()</a></code> <code><a href="autographt.html">grapht()</a></code> </p>
+        </td>
+        <td><p>Easily animate dynamic networks with sensible defaults</p></td>
       </tr><tr><td>
           <p><code><a href="configuration_layouts.html">layout_tbl_graph_configuration()</a></code> <code><a href="configuration_layouts.html">layout_tbl_graph_triad()</a></code> <code><a href="configuration_layouts.html">layout_tbl_graph_quad()</a></code> </p>
         </td>
@@ -199,7 +207,15 @@
       </tr><tr><td>
           <p><code><a href="many_palettes.html">many_palettes()</a></code> </p>
         </td>
-        <td><p>Many Palettes generator</p></td>
+        <td><p>Many palettes generator</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="tutorials">Tutorials <a href="#tutorials" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Functions for loading and extracting code from tutorials. There is also a function for tabulating the various network data included in the package, providing an overview of their properties.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="tutorials.html">run_tute()</a></code> <code><a href="tutorials.html">extract_tute()</a></code> <code><a href="tutorials.html">pkg_data()</a></code> </p>
+        </td>
+        <td><p>Open and extract code from tutorials</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="data">Data <a href="#data" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>The package contains a variety of networks useful for pedagogical purposes and used in the course ‘Social Networks Theories and Methods’ and other workshops. Each page documents the source of the data and its format. References are provided for further reading and citation.</p>
@@ -277,14 +293,6 @@ book characters (Yuksel 2017)</p></td>
           <p><code><a href="ison_usstates.html">ison_usstates</a></code> </p>
         </td>
         <td><p>One-mode undirected network of US state contiguity (Meghanathan 2017)</p></td>
-      </tr></tbody><tbody><tr><th colspan="2">
-          <h2 id="tutorials">Tutorials <a href="#tutorials" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p><p>Functions for loading and extracting code from tutorials.</p>
-        </th>
-      </tr></tbody><tbody><tr><td>
-          <p><code><a href="tutorials.html">run_tute()</a></code> <code><a href="tutorials.html">extract_tute()</a></code> <code><a href="tutorials.html">pkg_data()</a></code> </p>
-        </td>
-        <td><p>Open and extract code from tutorials</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
