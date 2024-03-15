@@ -63,8 +63,8 @@ Below are the currently implemented S3 methods:\tabular{lrrrrrr}{
    to_subgraph \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
 }
 }
-\section{}{
- \code{to_blocks()}:
+\section{\code{to_blocks()}}{
+
 Reduced graphs provide summary representations of network structures
 by collapsing groups of connected nodes into single nodes
 while preserving the topology of the original structures.

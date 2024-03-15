@@ -346,7 +346,7 @@ to_subgraph.matrix <- function(.data, ...){
 }
 
 #' @rdname to_scope
-#' @section: `to_blocks()`: 
+#' @section `to_blocks()`: 
 #'   Reduced graphs provide summary representations of network structures 
 #'   by collapsing groups of connected nodes into single nodes 
 #'   while preserving the topology of the original structures.
