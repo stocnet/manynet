@@ -1,3 +1,11 @@
+# manynet 0.4.4
+
+2024-03-15
+
+## Modifying
+
+- Fixed documentation issue with `to_scope()` for CRAN resubmission
+
 # manynet 0.4.3
 
 2024-03-13
