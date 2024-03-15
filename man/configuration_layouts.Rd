@@ -38,7 +38,9 @@ layout automatically.
 \seealso{
 Other mapping: 
 \code{\link{attributes}()},
-\code{\link{autographing}},
+\code{\link{autographr}()},
+\code{\link{autographs}()},
+\code{\link{autographt}()},
 \code{\link{partition_layouts}},
 \code{\link{properties}}
 }

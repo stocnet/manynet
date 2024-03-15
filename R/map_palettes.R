@@ -1,4 +1,4 @@
-#' Many Palettes generator
+#' Many palettes generator
 #'
 #' @param palette Name of desired palette. Current choices are:
 #'   \code{IHEID}, \code{Centres}, \code{SDGs}, \code{ETHZ}, \code{RUG},
@@ -9,8 +9,8 @@
 #' @return A graphic display of colours in palette.
 #' @source Adapted from \url{https://github.com/karthik/wesanderson/blob/master/R/colors.R}
 #' @examples
+#' many_palettes()
 #' #many_palettes("IHEID")
-#' #many_palettes()
 #' @export
 many_palettes <- function(palette, n, type = c("discrete", "continuous")) {
   type <- match.arg(type)

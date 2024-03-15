@@ -34,6 +34,8 @@ reference:
     desc: |
       Functions for importing, exporting, constructing, and simulating
       directed and undirected, one-mode and two-mode networks.
+      This includes functions for playing games upon networks,
+      changing the distribution of nodal attributes.
     contents:
       - starts_with("read_")
       - starts_with("write_")
@@ -74,7 +76,7 @@ reference:
     desc: |
       Functions for plotting and visualising graphs of different types.
       `autographr()` graphs any manynet-compatible class object automagically.
-      `autographs()` and `autographd()` do the same for multiple networks
+      `autographs()` and `autographt()` do the same for multiple networks
       and dynamic networks, respectively.
     contents:
       - starts_with("network_")
@@ -84,6 +86,13 @@ reference:
       - starts_with("theme")
       - starts_with("scale")
       - ends_with("palettes")
+  - title: "Tutorials"
+    desc: |
+      Functions for loading and extracting code from tutorials.
+      There is also a function for tabulating the various network data included in the package,
+      providing an overview of their properties.
+    contents:
+      - ends_with("_tute")
   - title: "Data"
     desc: |
       The package contains a variety of networks useful for pedagogical purposes
@@ -92,9 +101,4 @@ reference:
       References are provided for further reading and citation.
     contents:
       - starts_with("ison_")
-  - title: "Tutorials"
-    desc: |
-      Functions for loading and extracting code from tutorials.
-    contents:
-      - ends_with("_tute")
   

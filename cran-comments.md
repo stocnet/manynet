@@ -8,3 +8,7 @@
 ## R CMD check results
 
 0 errors | 0 warnings | 0 notes
+
+This is a resubmission. In this version I have:
+
+* Fixed issues with `autographr()` examples that were taking too long to run

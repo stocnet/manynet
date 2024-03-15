@@ -1,3 +1,14 @@
+# manynet 0.4.3
+
+2024-03-13
+
+## Mapping
+
+- Fixed issues with `autographr()` examples that were taking too long to run
+- Separated documentation for `autographr()`, `autographs()`, and `autographd()` functions
+- Closed #64 by adding aliases for `autographr()`, `autographs()`, and `autographd()` functions
+- Closed #65 by fixing bugs with how `node_is_infected()`, `node_is_recovery()`, `node_is_latent()` work for network lists
+
 # manynet 0.4.2
 
 2024-03-12

@@ -1,13 +1,27 @@
-#' Quickly graph networks with sensible defaults
+#' Easily graph networks with sensible defaults
 #' 
 #' @description 
-#' The aim of this function is to provide users with a quick and easy
-#' graphing function that makes best use of the data,
-#' whatever its composition.
-#' Users can also tailor the plot according to their
-#' preferences regarding node size, colour, and shape.
-#' The function also supports visualisation
-#' of network measures such as centrality.
+#'   This function provides users with an easy way to graph
+#'   (m)any network data for exploration, investigation, and communication.
+#'   
+#'   It builds upon `{ggplot2}` and `{ggraph}` to offer
+#'   pretty and extensible graphing solutions.
+#'   However, compared to those solutions, 
+#'   `autographr()` contains various algorithms to provide better looking
+#'   graphs by default.
+#'   This means that just passing the function some network data
+#'   will often be sufficient to return a reasonable-looking graph.
+#'   
+#'   The function also makes it easy to modify many of the most
+#'   commonly adapted aspects of a graph, 
+#'   including node and edge size, colour, and shape,
+#'   as arguments rather than additional functions that you need to remember.
+#'   These can be defined outright, e.g. `node_size = 8`,
+#'   or in reference to an attribute of the network, e.g. `node_size = "wealth"`.
+#'   
+#'   Lastly, `autographr()` uses ggplot2-related theme information,
+#'   so it is easy to make colour palette and fonts institution-specific and consistent.
+#'   See e.g. `theme_iheid()` for more.
 #' @family mapping
 #' @param .data A manynet-consistent object.
 #' @param layout An igraph, ggraph, or manynet layout algorithm.
@@ -65,48 +79,34 @@
 #'   it is recommended to calculate all edge-related statistics prior
 #'   to using this function.
 #'   Edges can also be sized by declaring a numeric size or vector instead.
-#' @param ... Extra arguments to pass on to layout.
-#' @return A ggplot2::ggplot() object.
+#' @param ... Extra arguments to pass on to the layout algorithm, if necessary.
+#' @return A `ggplot2::ggplot()` object.
+#'   The last plot can be saved to the file system using `ggplot2::ggsave()`.
 #' @importFrom ggraph geom_edge_link geom_node_text geom_conn_bundle
 #' get_con geom_node_point scale_edge_width_continuous geom_node_label
 #' @importFrom ggplot2 aes arrow unit scale_color_brewer scale_fill_brewer
-#' @name autographing
-NULL
-
-#' @describeIn autographing Graphs a network with sensible defaults
 #' @examples
 #' autographr(ison_adolescents)
-#' autographr(ison_algebra, layout = "circle",
-#'            node_size = 8, node_color = "orange", node_shape = "square",
-#'            edge_color = "blue", edge_size = 2)
-#' autographr(ison_southern_women, layout = "concentric",
-#'            node_color = "type", membership = "type")
-#' autographr(play_diffusion(ison_karateka))
-#' #autographr(ison_algebra, edge_color = "type",
-#' #           node_size = migraph::node_betweenness(ison_algebra)*100)
-#' #ison_adolescents %>%
-#' #   mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2)) %>%
-#' #   autographr(layout = "lineage", rank = "year")
-#' #ison_adolescents %>%
-#' #   mutate(cut = node_is_cutpoint(ison_adolescents)) %>%
-#' #autographr(node_color = "cut", node_shape = "cut")
+#' ison_adolescents |>
+#'   mutate(color = rep(c("extrovert", "introvert"), times = 4),
+#'          size = ifelse(node_is_cutpoint(ison_adolescents), 6, 3)) |>
+#'   mutate_ties(ecolor = rep(c("friends", "aquaintances"), times = 5)) |>
+#'   autographr(node_color = "color", node_size = "size",
+#'              edge_size = 1.5, edge_color = "ecolor")
 #' #autographr(ison_lotr, node_color = Race,
 #' #           node_size = migraph::node_degree(ison_lotr)*2,
 #' #           edge_color = "darkgreen",
 #' #           edge_size = migraph::tie_degree(ison_lotr))
 #' #autographr(ison_karateka, node_group = allegiance,
 #' #           edge_size = migraph::tie_closeness(ison_karateka))
-#' #autographr(ison_southern_women, layout = "hierarchy", center = "events")
-#' #autographr(ison_lotr, layout = "multilevel", 
-#' #           node_color = "Race", level = "Race")
 #' @export
 autographr <- function(.data, layout, labels = TRUE,
                        node_color, node_shape, node_size, node_group,
                        edge_color, edge_size, ...) {
   g <- as_tidygraph(.data)
   if (missing(layout)) {
-    if (length(g) <= 4) {
-      layout <- "configuration" 
+    if (length(g) == 3 | length(g) == 4) {
+      layout <- "configuration"
     } else if (is_twomode(g)) {
       layout <- "hierarchy"
     } else layout <- "stress"
@@ -137,15 +137,42 @@ autographr <- function(.data, layout, labels = TRUE,
   p
 }
 
-#' @describeIn autographing Graphs a list of networks 
-#'   with sensible defaults
+#' @rdname autographr
+#' @export
+graphr <- autographr
+
+#' Easily graph a set of networks with sensible defaults
+#' 
+#' @description 
+#'   This function provides users with an easy way to graph
+#'   lists of network data for comparison.
+#'   
+#'   It builds upon this package's `autographr()` function, 
+#'   and inherits all the same features and arguments.
+#'   See `autographr()` for more.
+#'   However, it uses the `{patchwork}` package to plot the graphs
+#'   side by side and, if necessary, in successive rows.
+#'   This is useful for lists of networks that represent, for example, 
+#'   ego or component subgraphs of a network,
+#'   or a list of a network's different types of tie or across time.
+#'   By default just the first and last network will be plotted,
+#'   but this can be overridden by the "waves" parameter.
+#'   
+#'   Where the graphs are of the same network (same nodes),
+#'   the graphs may share a layout to facilitate comparison.
+#'   By default, successive graphs will use the layout calculated for 
+#'   the "first" network, but other options include the "last" layout,
+#'   or a mix, "both", of them.
+#' @family mapping
 #' @param netlist A list of manynet-compatible networks.
-#' @param waves The number of plots to be displayed side-by-side.
+#' @param waves Numeric, the number of plots to be displayed side-by-side.
 #'   If missing, the number of plots will be reduced to the first and last
 #'   when there are more than four plots.
+#'   This argument can also be passed a vector selecting the waves to plot.
 #' @param based_on Whether the layout of the joint plots should
-#'   be based on the "first" or the "last" network.
-#' @source http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
+#'   be based on the "first" or the "last" network, or "both".
+#' @param ... Additional arguments passed to `autographr()`.
+#' @return Multiple `ggplot2::ggplot()` objects displayed side-by-side.
 #' @examples
 #' #autographs(to_egos(ison_adolescents))
 #' #autographs(to_egos(ison_adolescents), waves = 8)
@@ -153,8 +180,9 @@ autographr <- function(.data, layout, labels = TRUE,
 #' #autographs(play_diffusion(ison_adolescents))
 #' @export
 autographs <- function(netlist, waves,
-                       based_on = "first", ...) {
+                       based_on = c("first", "last", "both"), ...) {
   thisRequires("patchwork")
+  based_on <- match.arg(based_on)
   if (any(class(netlist) == "diff_model")) netlist <- to_waves(netlist)
   if (missing(waves)) {
     if (length(netlist) > 4) {
@@ -166,7 +194,7 @@ autographs <- function(netlist, waves,
       netlist <- netlist[waves]
   }
   if (is.null(names(netlist))) names(netlist) <- rep("", length(netlist))
-  if (length(unique(unname(lapply(netlist, length)))) == 1) {
+  if (length(unique(lapply(netlist, length))) == 1) {
     if (based_on == "first") {
       lay <- autographr(netlist[[1]], ...)
       x <- lay$data$x
@@ -186,30 +214,51 @@ autographs <- function(netlist, waves,
     gs <- lapply(1:length(netlist), function(i)
       autographr(netlist[[i]], x = x, y = y, ...) + ggtitle(names(netlist)[i]))
   } else {
-    message("Layouts were not standardised since nodes appear across waves.")
+    message("Layouts were not standardised since not all nodes appear across waves.")
     gs <- lapply(1:length(netlist), function(i)
       autographr(netlist[[i]], ...) + ggtitle(names(netlist)[i]))
   }
-  if (all(c("Infected", "Exposed", "Recovered") %in% names(gs[[1]]$data))) {
-    gs <- collapse_guides(gs)
-  }
+  # if (all(c("Infected", "Exposed", "Recovered") %in% names(gs[[1]]$data))) {
+  #   gs <- .collapse_guides(gs)
+  # }
   do.call(patchwork::wrap_plots, c(gs, list(guides = "collect")))
 }
 
-#' @describeIn autographing Graphs an dynamic (animated) network
-#'   with sensible defaults
+#' @rdname autographs
+#' @export
+graphs <- autographs
+
+#' Easily animate dynamic networks with sensible defaults
+#' 
+#' @description 
+#'   This function provides users with an easy way to graph
+#'   dynamic network data for exploration and presentation.
+#'   
+#'   It builds upon this package's `autographr()` function, 
+#'   and inherits all the same features and arguments.
+#'   See `autographr()` for more.
+#'   However, it uses the `{gganimate}` package to animate the changes
+#'   between successive iterations of a network.
+#'   This is useful for networks in which the ties and/or the node or tie
+#'   attributes are changing.
+#'   
+#'   A progress bar is shown if it takes some time to encoding all the
+#'   .png files into a .gif.
+#' @family mapping
 #' @param tlist The same migraph-compatible network listed according to
 #'   a time attribute, waves, or slices.
-#' @param keep_isolates Would you like to remove vertices that do not have
-#'   any adjacent edges in each frame?
+#' @param keep_isolates Logical, whether to keep isolate nodes in the graph.
 #'   TRUE by default.
-#'   If FALSE, deletes isolated vertices in each frame.
+#'   If FALSE, removes nodes from each frame they are isolated in.
+#' @inheritParams autographr
 #' @importFrom igraph gsize as_data_frame get.edgelist
 #' @importFrom ggplot2 ggplot geom_segment geom_point geom_text
 #' scale_alpha_manual theme_void
 #' @importFrom ggraph create_layout
 #' @importFrom dplyr mutate select distinct left_join %>%
-#' @source http://blog.schochastics.net/post/animating-network-evolutions-with-gganimate/
+#' @source https://blog.schochastics.net/posts/2021-09-15_animating-network-evolutions-with-gganimate/
+#' @return Shows a .gif image. Assigning the result of the function
+#'   saves the gif to a temporary folder and the object holds the path to this file.
 #' @examples
 #' #ison_adolescents %>%
 #' #  mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %>%
@@ -227,9 +276,9 @@ autographs <- function(netlist, waves,
 #' #             node_shape = "gender", node_color = "hair",
 #' #             node_size =  "age", edge_color = "links",
 #' #             edge_size = "weekly_meetings")
-#' #autographd(play_diffusion(ison_adolescents, seeds = 5, recovery = 0.1))
+#' #autographd(play_diffusion(ison_adolescents, seeds = 5))
 #' @export
-autographd <- function(tlist, layout, labels = TRUE,
+autographt <- function(tlist, layout, labels = TRUE,
                        node_color, node_shape, node_size,
                        edge_color, edge_size, keep_isolates = TRUE, ...) {
   thisRequires("gganimate")
@@ -332,6 +381,14 @@ autographd <- function(tlist, layout, labels = TRUE,
                      end_pause = 10, renderer = gganimate::gifski_renderer())
 }
 
+#' @rdname autographt
+#' @export
+autographd <- autographt
+
+#' @rdname autographt
+#' @export
+grapht <- autographt
+
 reduce_categories <- function(g, node_group) {
   limit <- toCondense <- NULL
   if (sum(table(node_attribute(g, node_group)) <= 2) > 2 &
@@ -376,7 +433,7 @@ reduce_categories <- function(g, node_group) {
   if ("x" %in% names(dots) & "y" %in% names(dots)) {
     lo <- ggraph::create_layout(g, layout = "manual",
                                 x = dots[["x"]], y = dots[["y"]])
-  } else lo <- ggraph::create_layout(g, layout, ...)
+  } else lo <- suppressWarnings(ggraph::create_layout(g, layout, ...))
   if ("graph" %in% names(attributes(lo))) {
     if (!setequal(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
       for (n in setdiff(names(as.data.frame(attr(lo, "graph"))), names(lo))) {
@@ -674,7 +731,7 @@ reduce_categories <- function(g, node_group) {
     if (is_twomode(g)) {
       if (!is.null(node_color)) {
         if (node_color %in% names(node_attribute(g))) {
-          if (is_mark_attrib(node_attribute(g, node_color))) {
+          if (.is_mark_attrib(node_attribute(g, node_color))) {
             node_color <- factor(node_attribute(g, node_color),
                                  levels = c("TRUE", "FALSE"))
           } else node_color <- factor(node_attribute(g, node_color))
@@ -692,7 +749,7 @@ reduce_categories <- function(g, node_group) {
     } else {
       if (!is.null(node_color)) {
         if (node_color %in% names(node_attribute(g))) {
-          if (is_mark_attrib(node_attribute(g, node_color))) {
+          if (.is_mark_attrib(node_attribute(g, node_color))) {
             node_color <- factor(node_attribute(g, node_color),
                                  levels = c("TRUE", "FALSE"))
           } else node_color <- factor(node_attribute(g, node_color))
@@ -1017,24 +1074,23 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
   v
 }
 
-collapse_guides <- function(plist) {
-  glist <- list()
-  for (i in seq_len(length(plist))) {
-    glist[[i]] <- names(which(apply(plist[[i]]$data[c("Infected", "Exposed",
-                                                      "Recovered")],
-                                    2, function(x) length(unique(x)) > 1)))
-  }
-  if (any(as.logical(lapply(glist, function(x) length(x) == 0))) &
-      length(unique(glist)) == 2 | length(unique(glist)) == 1 |
-      any(lengths(glist) > 1)) {
-    kl <- which.max(unlist(lapply(glist, length)))
-    for (i in setdiff(seq_len(length(plist)), kl)) {
-      plist[[i]]$guides <- NULL
-    }
-  }
-  plist
-}
+# .collapse_guides <- function(plist) {
+#   glist <- list()
+#   for (i in seq_len(length(plist))) {
+#     glist[[i]] <- names(which(apply(plist[[i]]$data[c("Infected",
+#                                                       "Exposed",
+#                                                       "Recovered")],
+#                                     2, function(x) length(unique(x)) > 1)))
+#   }
+#   if (any(lengths(glist) > 0)) {
+#     kl <- which.max(unlist(lapply(glist, length)))
+#     for (i in setdiff(seq_len(length(plist)), kl)) {
+#       plist[[i]]["guides"] <- NULL
+#     }
+#   }
+#   plist
+# }
 
-is_mark_attrib <- function(x) {
+.is_mark_attrib <- function(x) {
   if ("node_mark" %in% class(x)) TRUE else FALSE
 }
