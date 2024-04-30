@@ -389,17 +389,18 @@ use `{manynet}` or `{migraph}` tutorials right out of the box:
 
 ``` r
 run_tute()
-#> # A tibble: 8 × 3
+#> # A tibble: 9 × 3
 #>   package name      title        
 #>   <chr>   <chr>     <chr>        
 #> 1 manynet tutorial0 Intro to R   
 #> 2 manynet tutorial1 Data         
 #> 3 manynet tutorial2 Visualisation
-#> 4 migraph tutorial4 Centrality   
-#> 5 migraph tutorial5 Community    
-#> 6 migraph tutorial6 Position     
-#> 7 migraph tutorial7 Topology     
-#> 8 migraph tutorial8 Regression
+#> 4 migraph tutorial3 Centrality   
+#> 5 migraph tutorial4 Community    
+#> 6 migraph tutorial5 Position     
+#> 7 migraph tutorial6 Topology     
+#> 8 manynet tutorial7 Diffusion    
+#> 9 migraph tutorial8 Regression
 # run_tute("tutorial1")
 ```
 
