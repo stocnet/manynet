@@ -3,6 +3,7 @@
 \name{mark_nodes}
 \alias{mark_nodes}
 \alias{node_is_isolate}
+\alias{node_is_independent}
 \alias{node_is_cutpoint}
 \alias{node_is_core}
 \alias{node_is_fold}
@@ -10,6 +11,8 @@
 \title{Marking nodes based on structural properties}
 \usage{
 node_is_isolate(.data)
+
+node_is_independent(.data)
 
 node_is_cutpoint(.data)
 
@@ -47,18 +50,20 @@ described in Valente and Davis (1999).}
 These functions return logical vectors the length of the
 nodes in a network identifying which hold certain properties or positions in the network.
 \itemize{
-\item \code{node_is_cutpoint()} marks nodes that cut or act as articulation points in a network,
-increasing the number of connected components when removed.
 \item \code{node_is_isolate()} marks nodes that are isolates,
 with neither incoming nor outgoing ties.
+\item \code{node_is_independent()} marks nodes that are members of the largest independent set.
+\item \code{node_is_cutpoint()} marks nodes that cut or act as articulation points in a network,
+increasing the number of connected components when removed.
 \item \code{node_is_core()} marks nodes that are members of the network's core.
 \item \code{node_is_fold()} marks nodes that are in a structural fold between two or more
 triangles that are only connected by that node.
-\item \code{node_is_mentor()} marks a proportion of high indegree nodes as 'mentors' (see details)
+\item \code{node_is_mentor()} marks a proportion of high indegree nodes as 'mentors' (see details).
 }
 }
 \examples{
 node_is_isolate(ison_brandes)
+node_is_independent(ison_adolescents)
 node_is_cutpoint(ison_brandes)
 node_is_core(ison_brandes)
 node_is_fold(create_explicit(A-B, B-C, A-C, C-D, C-E, D-E))

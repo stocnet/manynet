@@ -1,3 +1,13 @@
+# manynet 0.5.0
+
+## Package
+
+- Updated manynet logo with stocnet address and colorsafe colorway
+
+## Marking
+
+- Added `node_is_independent()` for identifying nodes among largest independent sets
+
 # manynet 0.4.4
 
 2024-03-15

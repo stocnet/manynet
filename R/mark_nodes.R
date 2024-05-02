@@ -6,14 +6,16 @@
 #'   These functions return logical vectors the length of the 
 #'   nodes in a network identifying which hold certain properties or positions in the network.
 #'   
-#'   - `node_is_cutpoint()` marks nodes that cut or act as articulation points in a network,
-#'   increasing the number of connected components when removed.
 #'   - `node_is_isolate()` marks nodes that are isolates,
 #'   with neither incoming nor outgoing ties.
+#'   - `node_is_independent()` marks nodes that are members of the largest independent set,
+#'   aka largest internally stable set.
+#'   - `node_is_cutpoint()` marks nodes that cut or act as articulation points in a network,
+#'   increasing the number of connected components when removed.
 #'   - `node_is_core()` marks nodes that are members of the network's core.
 #'   - `node_is_fold()` marks nodes that are in a structural fold between two or more
 #'   triangles that are only connected by that node.
-#'   - `node_is_mentor()` marks a proportion of high indegree nodes as 'mentors' (see details)
+#'   - `node_is_mentor()` marks a proportion of high indegree nodes as 'mentors' (see details).
 #' @inheritParams is
 #' @family marks
 #' @name mark_nodes
@@ -31,6 +33,38 @@ node_is_isolate <- function(.data){
     out <- rowSums(mat)==0 & colSums(mat)==0
   }
   names(out) <- manynet::node_names(.data)
+  make_node_mark(out, .data)
+}
+
+#' @rdname mark_nodes
+#' @importFrom igraph largest_ivs
+#' @examples
+#' node_is_independent(ison_adolescents)
+#' @export
+node_is_independent <- function(.data){
+  if(is_twomode(.data)){
+    samp <- igraph::largest_ivs(to_mode1(.data))
+    if(manynet::is_labelled(.data)){
+      out <- manynet::node_names(.data) %in% 
+        attr(samp[[sample(1:length(samp), 1)]], 
+             "names")
+      names(out) <- manynet::node_names(.data)
+    } else {
+      out <- 1:manynet::network_nodes(.data) %in% 
+        samp[[sample(1:length(samp), 1)]]
+    }
+  } else {
+    samp <- igraph::largest_ivs(to_undirected(as_igraph(.data)))
+    if(manynet::is_labelled(.data)){
+      out <- manynet::node_names(.data) %in% 
+        attr(samp[[sample(1:length(samp), 1)]], 
+             "names")
+      names(out) <- manynet::node_names(.data)
+    } else {
+      out <- 1:manynet::network_nodes(.data) %in% 
+        samp[[sample(1:length(samp), 1)]]
+    }
+  }
   make_node_mark(out, .data)
 }
 
