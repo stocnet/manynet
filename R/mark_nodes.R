@@ -26,6 +26,7 @@ NULL
 #' node_is_isolate(ison_brandes)
 #' @export
 node_is_isolate <- function(.data){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
   mat <- manynet::as_matrix(.data)
   if(manynet::is_twomode(.data)){
     out <- c(rowSums(mat)==0, colSums(mat)==0)
@@ -42,6 +43,7 @@ node_is_isolate <- function(.data){
 #' node_is_independent(ison_adolescents)
 #' @export
 node_is_independent <- function(.data){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(is_twomode(.data)){
     samp <- igraph::largest_ivs(to_mode1(.data))
     if(manynet::is_labelled(.data)){
@@ -74,6 +76,7 @@ node_is_independent <- function(.data){
 #' node_is_cutpoint(ison_brandes)
 #' @export
 node_is_cutpoint <- function(.data){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(manynet::is_labelled(.data)){
     out <- manynet::node_names(.data) %in% 
       attr(igraph::articulation_points(manynet::as_igraph(.data)), 
@@ -91,6 +94,7 @@ node_is_cutpoint <- function(.data){
 #' node_is_core(ison_brandes)
 #' @export
 node_is_core <- function(.data){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
   degi <- colSums(as_matrix(.data))
   nord <- order(degi, decreasing = TRUE)
   zbest <-network_nodes(.data)*3
@@ -113,6 +117,7 @@ node_is_core <- function(.data){
 #' node_is_fold(create_explicit(A-B, B-C, A-C, C-D, C-E, D-E))
 #' @export
 node_is_fold <- function(.data){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
   mult_tri <- igraph::count_triangles(.data)>1
   tris <- igraph::triangles(.data)
   tris <- matrix(tris, length(tris)/3, 3, byrow = TRUE)
@@ -146,6 +151,7 @@ node_is_fold <- function(.data){
 #' _Annals of the American Academy of Political and Social Science_ 566: 56-67.
 #' @export
 node_is_mentor <- function(.data, elites = 0.1){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
   indegs <- colSums(manynet::as_matrix(.data)) # get rank order of indegrees
   out <- indegs == max(indegs)
   if(sum(out) < length(indegs)*elites){

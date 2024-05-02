@@ -52,7 +52,8 @@ nodes in a network identifying which hold certain properties or positions in the
 \itemize{
 \item \code{node_is_isolate()} marks nodes that are isolates,
 with neither incoming nor outgoing ties.
-\item \code{node_is_independent()} marks nodes that are members of the largest independent set.
+\item \code{node_is_independent()} marks nodes that are members of the largest independent set,
+aka largest internally stable set.
 \item \code{node_is_cutpoint()} marks nodes that cut or act as articulation points in a network,
 increasing the number of connected components when removed.
 \item \code{node_is_core()} marks nodes that are members of the network's core.
