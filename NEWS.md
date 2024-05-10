@@ -3,10 +3,15 @@
 ## Package
 
 - Updated manynet logo with stocnet address and colorsafe colorway
+- Fixed bug in diffusion tutorial because of undeclared `{minMse}` dependency
 
 ## Marking
 
 - Added `node_is_independent()` for identifying nodes among largest independent sets
+
+## Data
+
+- Added `ison_greys` dataset, including some corrections to that published in `{networkdata}`
 
 # manynet 0.4.4
 
