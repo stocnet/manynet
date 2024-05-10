@@ -501,6 +501,7 @@ is_acyclic <- function(.data){
 #'   If negative, paths of all lengths are considered.
 #'   By default 4, to avoid potentially very long computation times.
 #' @source https://stackoverflow.com/questions/55091438/r-igraph-find-all-cycles
+#' @importFrom minMSE vector_gcd
 #' @examples 
 #' is_aperiodic(ison_algebra)
 #' @export

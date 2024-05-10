@@ -70,6 +70,10 @@ node_is_core(ison_brandes)
 node_is_fold(create_explicit(A-B, B-C, A-C, C-D, C-E, D-E))
 }
 \references{
+Tsukiyama, S. M. Ide, H. Ariyoshi and I. Shirawaka. 1977.
+"A new algorithm for generating all the maximal independent sets".
+\emph{SIAM J Computing}, 6:505–517.
+
 Valente, Thomas, and Rebecca Davis. 1999.
 "Accelerating the Diffusion of Innovations Using Opinion Leaders",
 \emph{Annals of the American Academy of Political and Social Science} 566: 56-67.
