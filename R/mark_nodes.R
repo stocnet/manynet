@@ -39,6 +39,10 @@ node_is_isolate <- function(.data){
 
 #' @rdname mark_nodes
 #' @importFrom igraph largest_ivs
+#' @references
+#' Tsukiyama, S. M. Ide, H. Ariyoshi and I. Shirawaka. 1977.
+#' "A new algorithm for generating all the maximal independent sets". 
+#' _SIAM J Computing_, 6:505–517.
 #' @examples
 #' node_is_independent(ison_adolescents)
 #' @export

@@ -573,4 +573,37 @@
 #'   ```
 "ison_monastery_praise"
 
+# Greys ####
 
+#' One-mode undirected network of characters hook-ups on Grey's Anatomy TV show
+#'
+#' @description
+#'   Grey's Anatomy is an American medical drama television series running on ABC since 2005.
+#'   It focuses on the personal and professional lives of surgical interns, residents, and attendings
+#'   at Seattle Grace Hospital, later renamed as the Grey Sloan Memorial Hospital. 
+#'   \href{https://gweissman.github.io/post/grey-s-anatomy-network-of-sexual-relations/}{Gary Weissman} 
+#'   collected data on the sexual contacts between characters on the television show
+#'   through observation of the story lines in the episodes and fan pages,
+#'   and this data was extended by \href{http://badhessian.org/2012/09/lessons-on-exponential-random-graph-modeling-from-greys-anatomy-hook-ups/}{Benjamin Lind}
+#'   including nodal attributes:
+#'   
+#'   - 'name': first and, where available, surname
+#'   - 'sex': `F` for female and `M` for male
+#'   - 'race': `White`, `Black`, or `Other`
+#'   - 'birthyear': year born (some missing data)
+#'   - 'position': `"Chief"`, `"Attending"`, `"Resident"`, `"Intern"`, `"Nurse"`, `"Non-Staff"`, `"Other"`
+#'   - 'season': season that the character joined the show
+#'   - 'sign': character's astrological starsign, if known
+#'   
+#'   The data is current up to (I think?) season 10?
+#'   
+#' @docType data
+#' @keywords datasets
+#' @name ison_greys
+#' @author Gary Weissman and Benjamin Lind
+#' @usage data(ison_greys)
+#' @format 
+#'   ```{r, echo = FALSE}
+#'   ison_greys
+#'   ```
+"ison_greys"
