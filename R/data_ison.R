@@ -336,10 +336,10 @@
 #' from Seasons 1 to 10.
 #' The `ison_friends` is a directed network
 #' containing connections between characters organised by season number,
-#' which is reflected in the tie attribute 'season'.
+#' which is reflected in the tie attribute 'wave'.
 #' The network contains 650 nodes
 #' Each tie represents the connection between a character pair (appear in the same scene),
-#' and the weight of the tie is the number of scenes the character pair appears in together.
+#' and the 'weight' of the tie is the number of scenes the character pair appears in together.
 #' For all networks, characters are named (eg. Phoebe, Ross, Rachel).
 #' @details
 #' The data contains both networks but each may be used separately.

@@ -5,7 +5,7 @@
 \alias{ison_friends}
 \title{One-mode Friends character connections (McNulty, 2020)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, multiplex, weighted, directed network with 650 nodes and 3959 arcs
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A longitudinal, labelled, weighted, directed network with 650 nodes and 3959 arcs
 #> # A tibble: 650 x 1
 #>   name        
 #>   <chr>       
@@ -17,14 +17,14 @@
 #> 6 Aunt Lillian
 #> # i 644 more rows
 #> # A tibble: 3,959 x 4
-#>    from    to season weight
-#>   <int> <int>  <int>  <int>
-#> 1     1    44      1      1
-#> 2     2    14      1      1
-#> 3     2    44      1      1
-#> 4     2    58      1      2
-#> 5     2    72      1      1
-#> 6     2    75      1      1
+#>    from    to  wave weight
+#>   <int> <int> <int>  <int>
+#> 1     1    44     1      1
+#> 2     2    14     1      1
+#> 3     2    44     1      1
+#> 4     2    58     1      2
+#> 5     2    72     1      1
+#> 6     2    75     1      1
 #> # i 3,953 more rows
 }\if{html}{\out{</div>}}
 }
@@ -37,10 +37,10 @@ on the connections between the Friends TV series characters
 from Seasons 1 to 10.
 The \code{ison_friends} is a directed network
 containing connections between characters organised by season number,
-which is reflected in the tie attribute 'season'.
+which is reflected in the tie attribute 'wave'.
 The network contains 650 nodes
 Each tie represents the connection between a character pair (appear in the same scene),
-and the weight of the tie is the number of scenes the character pair appears in together.
+and the 'weight' of the tie is the number of scenes the character pair appears in together.
 For all networks, characters are named (eg. Phoebe, Ross, Rachel).
 }
 \details{
