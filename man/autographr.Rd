@@ -105,12 +105,13 @@ The last plot can be saved to the file system using \code{ggplot2::ggsave()}.
 }
 \description{
 This function provides users with an easy way to graph
-(m)any network data for exploration, investigation, and communication.
+(m)any network data for exploration, investigation, inspiration,
+and communication.
 
 It builds upon \code{{ggplot2}} and \code{{ggraph}} to offer
 pretty and extensible graphing solutions.
 However, compared to those solutions,
-\code{autographr()} contains various algorithms to provide better looking
+\code{graphr()} contains various algorithms to provide better looking
 graphs by default.
 This means that just passing the function some network data
 will often be sufficient to return a reasonable-looking graph.
@@ -119,11 +120,11 @@ The function also makes it easy to modify many of the most
 commonly adapted aspects of a graph,
 including node and edge size, colour, and shape,
 as arguments rather than additional functions that you need to remember.
-These can be defined outright, e.g. \code{node_size = 8},
-or in reference to an attribute of the network, e.g. \code{node_size = "wealth"}.
+These can be defined outright, e.g. \code{node_size = 8}, or
+in reference to an attribute of the network, e.g. \code{node_size = "wealth"}.
 
-Lastly, \code{autographr()} uses ggplot2-related theme information,
-so it is easy to make colour palette and fonts institution-specific and consistent.
+Lastly, \code{graphr()} uses \code{{ggplot2}}-related theme information, so
+it is easy to make colour palette and fonts institution-specific and consistent.
 See e.g. \code{theme_iheid()} for more.
 }
 \examples{
