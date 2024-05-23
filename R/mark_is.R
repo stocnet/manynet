@@ -364,17 +364,19 @@ is_multiplex.matrix <- function(.data) {
   FALSE
 }
 
+reserved_tie_attr <- c("wave","panel","sign","weight")
+
 #' @export
 is_multiplex.tbl_graph <- function(.data) {
-  igraph::any_multiple(.data) |
-    length(igraph::edge_attr_names(as_igraph(.data))) > 1 |
+  igraph::any_multiple(.data) & length(setdiff(reserved_tie_attr, network_tie_attributes(.data)))==0 |
+    length(setdiff(network_tie_attributes(.data), reserved_tie_attr)) > 0 |
     "type" %in% igraph::edge_attr_names(.data)
 }
 
 #' @export
 is_multiplex.igraph <- function(.data) {
-  igraph::any_multiple(.data) |
-    length(igraph::edge_attr_names(.data)) > 1 |
+  igraph::any_multiple(.data) & length(setdiff(reserved_tie_attr, network_tie_attributes(.data)))==0 |
+    length(setdiff(network_tie_attributes(.data), reserved_tie_attr)) > 0 |
     "type" %in% igraph::edge_attr_names(.data)
 }
 
@@ -385,7 +387,7 @@ is_multiplex.network <- function(.data) {
 
 #' @export
 is_multiplex.data.frame <- function(.data) {
-  ncol(.data) > 3
+  ncol(.data) >= 3 & "type" %in% setdiff(colnames(.data), reserved_tie_attr)
 }
 
 #' @rdname is_format
