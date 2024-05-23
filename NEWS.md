@@ -5,13 +5,26 @@
 - Updated manynet logo with stocnet address and colorsafe colorway
 - Fixed bug in diffusion tutorial because of undeclared `{minMse}` dependency
 
+## Making
+
+- Fixed bug in `create_core()` where the membership inferred when passing an existing network was incorrect
+
 ## Marking
 
+- `node_is_*()` functions now infer network data context
 - Added `node_is_independent()` for identifying nodes among largest independent sets
+- `is_multiplex()` now excludes reserved tie attribute names other than type,
+  such as "weight", "sign", or "wave"
+  
+## Mapping
+
+- node_size now an aesthetic, allowing `scale_size(range = c(...,...))` to be used
 
 ## Data
 
 - Added `ison_greys` dataset, including some corrections to that published in `{networkdata}`
+- Updated `ison_friends` dataset to be explicitly longitudinal
+- Updated data documentation with revised multiplex definition
 
 # manynet 0.4.4
 
