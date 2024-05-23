@@ -356,6 +356,7 @@ create_components <- function(n, directed = FALSE, membership = NULL) {
 create_core <- function(n, directed = FALSE, membership = NULL) {
   directed <- infer_directed(n, directed)
   membership <- infer_membership(n, membership)
+  if(!is.numeric(membership)) membership <- as.numeric(as.factor(membership))
   n <- infer_n(n)
   if (length(n) > 1) {
     mat <- matrix(0, n[1], n[2])
@@ -518,6 +519,7 @@ infer_directed <- function(n, directed) {
 
 infer_membership <- function(n, membership) {
   if (is.null(membership)) {
+    if(is_manynet(n)) n <- infer_n(n)
     if (length(n) > 1) {
       membership <- c(sort(abs(seq_len(n[1]) %% 2 -2)), 
                       sort(abs(seq_len(n[2]) %% 2 -2)))
