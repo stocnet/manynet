@@ -490,6 +490,10 @@ graphr <- autographr
   } else p <- p + ggplot2::guides(size = ggplot2::guide_legend(title = "Size"))
   if(length(unique(nshape)) == 1) p <- p + ggplot2::guides(shape = "none")
   # if(length(unique(node_color)) == 1) p <- p + ggplot2::guides(color = FALSE)
+
+  # Consider rescaling nodes
+  p <- p + scale_size(range = c(1/network_nodes(g)*10, 
+                                1/network_nodes(g)*50))
   
   p
 }
@@ -514,7 +518,7 @@ graphr <- autographr
     }
     if(length(node_size > 1) & all(out <= 1 & out >= 0)) out <- out*10
   } else {
-    out <- ifelse(network_nodes(g) <= 10, 10, (100 / network_nodes(g)) / 2)
+    out <- ifelse(network_nodes(g) <= 10, 5, (100 / network_nodes(g)) / 2)
   }
   out
 }
