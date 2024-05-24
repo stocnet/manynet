@@ -26,6 +26,7 @@
 
 - Added `ison_greys` dataset, including some corrections to that published in `{networkdata}`
 - Updated `ison_friends` dataset to be explicitly longitudinal
+- Updated `ison_usstates` dataset with population data (Alaska and Hawaii missing)
 - Updated data documentation with revised multiplex definition
 
 # manynet 0.4.4

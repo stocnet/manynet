@@ -6,15 +6,15 @@
 \title{One-mode undirected network of US state contiguity (Meghanathan 2017)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, undirected network with 50 nodes and 107 ties
-#> # A tibble: 50 x 2
-#>   name  capitol    
-#>   <chr> <chr>      
-#> 1 AK    Juneau     
-#> 2 AL    Montgomery 
-#> 3 AR    Little Rock
-#> 4 AZ    Phoenix    
-#> 5 CA    Sacramento 
-#> 6 CO    Denver     
+#> # A tibble: 50 x 3
+#>   name  capitol     population
+#>   <chr> <chr>            <int>
+#> 1 AK    Juneau              NA
+#> 2 AL    Montgomery     4780127
+#> 3 AR    Little Rock    2915958
+#> 4 AZ    Phoenix        6392307
+#> 5 CA    Sacramento    37252895
+#> 6 CO    Denver         5029324
 #> # i 44 more rows
 #> # A tibble: 107 x 2
 #>    from    to
