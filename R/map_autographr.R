@@ -472,7 +472,8 @@ graphr <- autographr
           } else node_color <- factor(node_attribute(g, node_color))
           p <- p + ggraph::geom_node_point(aes(color = node_color,
                                                size = nsize), shape = nshape) +
-            ggplot2::scale_colour_manual(values = colorsafe_palette, guide = ggplot2::guide_legend(""))
+            ggplot2::scale_colour_manual(values = colorsafe_palette, 
+                                         guide = ggplot2::guide_legend(""))
         } else {
           p <- p + ggraph::geom_node_point(aes(color = node_color,
                                            size = nsize, shape = nshape))
@@ -482,6 +483,12 @@ graphr <- autographr
       }
     }
   }
+  
+  # Drop legends for elements that don't vary
+  if(length(unique(nsize)) == 1) p <- p + ggplot2::guides(size = "none")
+  if(length(unique(nshape)) == 1) p <- p + ggplot2::guides(shape = "none")
+  # if(length(unique(node_color)) == 1) p <- p + ggplot2::guides(color = FALSE)
+  
   p
 }
 
