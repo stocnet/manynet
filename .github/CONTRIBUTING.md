@@ -9,6 +9,7 @@ are encouraged and welcome.
 The `gnevar` project is maintained using the git version control system.
 A plain-English introduction to git can be found [here](https://blog.red-badger.com/2016/11/29/gitgithub-in-plain-english).
 I recommend you read this before continuing. 
+A more recent motivation can be found [here](https://www.r-bloggers.com/2024/04/git-gud-version-control-best-practices/).
 It will explain the basics of git version control, committing and repos, pulling and pushing,
 branching and merging.
 
