@@ -19,6 +19,8 @@
 ## Mapping
 
 - node_size now an aesthetic, allowing `scale_size(range = c(...,...))` to be used
+- Reexported `scale_size()` from `{ggplot2}`
+- `graphr()` now rescales node size depending on network size (closes #51)
 
 ## Data
 
