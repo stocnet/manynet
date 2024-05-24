@@ -492,8 +492,8 @@ graphr <- autographr
   # if(length(unique(node_color)) == 1) p <- p + ggplot2::guides(color = FALSE)
 
   # Consider rescaling nodes
-  p <- p + scale_size(range = c(1/network_nodes(g)*10, 
-                                1/network_nodes(g)*50))
+  p <- p + scale_size(range = c(1/network_nodes(g)*50, 
+                                1/network_nodes(g)*100))
   
   p
 }
