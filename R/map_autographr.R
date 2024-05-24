@@ -485,7 +485,9 @@ graphr <- autographr
   }
   
   # Drop legends for elements that don't vary
-  if(length(unique(nsize)) == 1) p <- p + ggplot2::guides(size = "none")
+  if(length(unique(nsize)) == 1){
+    p <- p + ggplot2::guides(size = "none")
+  } else p <- p + ggplot2::guides(size = ggplot2::guide_legend(title = "Size"))
   if(length(unique(nshape)) == 1) p <- p + ggplot2::guides(shape = "none")
   # if(length(unique(node_color)) == 1) p <- p + ggplot2::guides(color = FALSE)
   
