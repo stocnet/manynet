@@ -225,6 +225,7 @@ graphr <- autographr
 .graph_edges <- function(p, g, edge_color, edge_size) {
   weight <- NULL
   esize <- .infer_esize(g, edge_size)
+  check_edge_variables(g, edge_color, edge_size)
   # Begin plotting edges in various cases
   if (is_directed(g)) {
     bend <- .infer_bend(g)
@@ -408,6 +409,7 @@ graphr <- autographr
 .graph_nodes <- function(p, g, node_color, node_shape, node_size){
   nshape <- .infer_shape(g, node_shape)
   nsize <- .infer_nsize(p, g, node_size)
+  check_node_variables(g, node_color, node_size)
   if (is.null(node_color) & "Infected" %in% names(node_attribute(g))) {
     node_color <- as.factor(ifelse(node_attribute(g, "Exposed"), "Exposed",
                                    ifelse(node_attribute(g, "Infected"),"Infected", 
@@ -627,6 +629,32 @@ graphr <- autographr
 
 .is_mark_attrib <- function(x) {
   if ("node_mark" %in% class(x)) TRUE else FALSE
+}
+
+check_edge_variables <- function(g, edge_color, edge_size) {
+  if (!is.null(edge_color)) {
+    if (any(tolower(edge_color) %in% tolower(igraph::edge_attr_names(g)))) {
+      message("Please make sure you spelled edge color variable correctly.")
+    } 
+  }
+  if (!is.null(edge_size)) {
+    if (any(tolower(edge_size) %in% tolower(igraph::edge_attr_names(g)))) {
+      message("Please make sure you spelled edge size variable correctly.")
+    } 
+  }
+}
+
+check_node_variables <- function(g, node_color, node_size) {
+  if (!is.null(node_color)) {
+    if (any(tolower(node_color) %in% tolower(igraph::vertex_attr_names(g)))) {
+      message("Please make sure you spelled node color variable correctly.")
+    } 
+  }
+  if (!is.null(node_size)) {
+    if (any(tolower(node_size) %in% tolower(igraph::vertex_attr_names(g)))) {
+      message("Please make sure you spelled node size variable correctly.")
+    }
+  }
 }
 
 # Longitudinal or comparative networks ####
@@ -1116,5 +1144,3 @@ remove_isolates <- function(edges_out, nodes_out) {
     dplyr::mutate(status = ifelse(is.na(status), FALSE, TRUE)) %>%
     dplyr::distinct()
 }
-
-
