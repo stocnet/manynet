@@ -168,3 +168,10 @@ test_that("autographr works for diff_model objects", {
     expect_equal(test_diff[["guides"]][["colour"]][["name"]], "colorbar")
   }
 })
+
+test_that("autographr checks variable names for mapping", {
+  skip_on_cran()
+  skip_on_ci()
+  expect_message(autographr(ison_lawfirm, node_color = "School"),
+                 "Please make sure you spelled node color variable correctly.")
+})
