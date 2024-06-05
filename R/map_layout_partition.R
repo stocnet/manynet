@@ -63,17 +63,22 @@ layout_tbl_graph_hierarchy <- function(.data, center = NULL,
                                        circular = FALSE, times = 1000) {
   if (is.null(center)) {
     thisRequiresBio("Rgraphviz")
-    prep <- as_matrix(.data, twomode = FALSE)
-    if(anyDuplicated(rownames(prep))) {
+    prep <- as_matrix(.data)
+    if (anyDuplicated(rownames(prep))) {
       rownames(prep) <- seq_len(nrow(prep))
-      colnames(prep) <- seq_len(ncol(prep))
+      colnames(prep) <- seq_len(ncol(prep)) + max(nrow(prep))
     }
-    if(any(prep<0)) prep[prep<0] <- 0
+    if (any(prep<0)) prep[prep<0] <- 0
     out <- as_graphAM(prep)
     out <- suppressMessages(Rgraphviz::layoutGraph(out, layoutType = 'dot',
                                                    attrs = list(graph = list(rankdir = "BT"))))
     nodeX <- .rescale(out@renderInfo@nodes$nodeX)
     nodeY <- .rescale(out@renderInfo@nodes$nodeY)
+    if (is_twomode(.data) & "name" %in% igraph::vertex_attr_names(.data)) {
+      names <- igraph::vertex_attr(.data, "name")
+      nodeX <- nodeX[order(match(names(nodeX), names))]
+      nodeY <- nodeY[order(match(names(nodeY), names))]
+    }
     # nodeY <- abs(nodeY - max(nodeY))
     out <- .to_lo(cbind(nodeX, nodeY))
   } else {
