@@ -184,3 +184,13 @@ test_that("concentric layout works when node names are missing", {
     autographr(layout = "concentric")
   expect_true(any(llabel$data$name == ""))
 })
+
+test_that("hierarchy layout works for two mode networks", {
+  skip_on_cran()
+  skip_on_ci()
+  tm <- ison_brandes |>
+    mutate(type = twomode_type, name = LETTERS[1:11]) |>
+    autographr()
+  expect_length(unique(tm$data[tm$data$type == TRUE, "y"]), 1)
+  expect_length(unique(tm$data[tm$data$type == FALSE, "y"]), 1)
+})
