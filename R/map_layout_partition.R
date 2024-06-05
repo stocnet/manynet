@@ -167,6 +167,13 @@ layout_tbl_graph_concentric <- function(.data, membership,
                                         radius = NULL, 
                                         order.by = NULL, 
                                         circular = FALSE, times = 1000) {
+  if (any(igraph::vertex_attr(.data, "name") == "")) {
+    ll <- unlist(lapply(seq_len(length(.data)), function(x) {
+      ifelse(igraph::vertex_attr(.data, "name")[x] == "",
+             paste0("ramdom", x), igraph::vertex_attr(.data, "name")[x])
+    }))
+    .data <- set_vertex_attr(.data, "name", value = ll)
+  }
   if (missing(membership)) { 
     if (is_twomode(.data)) membership <- node_mode(.data) else 
       stop("Please pass the function a `membership` node attribute or a vector.")
@@ -180,11 +187,6 @@ layout_tbl_graph_concentric <- function(.data, membership,
   names(membership) <- node_names(.data)
   membership <- to_list(membership)
   all_c  <- unlist(membership, use.names = FALSE)
-  if (any(all_c == "")) {
-    all_c <- lapply(seq_len(length(all_c)), function(x) {
-      ifelse(all_c[x] == "", paste0("ramdom", x), all_c[x])
-    })
-  }
   if (any(table(all_c) > 1)) stop("Duplicated nodes in layers!")
   if (is_labelled(.data)) all_n <- node_names(.data) else all_n <- 1:network_nodes(.data)
   sel_other  <- all_n[!all_n %in% all_c]
@@ -278,7 +280,7 @@ layout_tbl_graph_lineage <- function(.data, rank, circular = FALSE) {
   res
 }
 
-to_list <- function(members){
+to_list <- function(members) {
   out <- lapply(sort(unique(members)), function(x){
     y <- which(members==x)
     if(!is.null(names(y))) names(y) else y

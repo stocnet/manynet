@@ -190,7 +190,7 @@ graphr <- autographr
         hj <- ifelse(lo[,1] >= 0, -0.2, 1.2)
         vj <- ifelse(lo[,2] >= 0, -0.2, 1.2)
       }
-      p <- p + ggraph::geom_node_text(ggplot2::aes(label = name),  vjust = vj,
+      p <- p + ggraph::geom_node_text(ggplot2::aes(label = name), vjust = vj,
                                       size = 3, hjust = hj, repel = TRUE) +
         ggplot2::coord_cartesian(xlim=c(-1.2,1.2), ylim=c(-1.2,1.2))
     } else if (layout %in% c("bipartite", "railway") | layout == "hierarchy" & length(unique(lo[["y"]])) <= 2) {
