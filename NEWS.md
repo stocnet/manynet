@@ -21,6 +21,8 @@
 - node_size now an aesthetic, allowing `scale_size(range = c(...,...))` to be used
 - Reexported `scale_size()` from `{ggplot2}`
 - `graphr()` now rescales node size depending on network size (closes #51)
+- Fixed issues with "hierarchy" layout for two mode network (closes #61)
+-  Updated "concentric" layout to accept unlabelled nodes (closes #68)
 
 ## Data
 
