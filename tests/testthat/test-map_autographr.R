@@ -175,3 +175,12 @@ test_that("autographr checks variable names for mapping", {
   expect_message(autographr(ison_lawfirm, node_color = "School"),
                  "Please make sure you spelled node color variable correctly.")
 })
+
+test_that("concentric layout works when node names are missing", {
+  skip_on_cran()
+  skip_on_ci()
+  llabel <- ison_southern_women |>
+    mutate(name = ifelse(type == TRUE, "", name)) |>
+    autographr(layout = "concentric")
+  expect_true(any(llabel$data$name == ""))
+})
