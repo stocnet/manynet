@@ -180,6 +180,11 @@ layout_tbl_graph_concentric <- function(.data, membership,
   names(membership) <- node_names(.data)
   membership <- to_list(membership)
   all_c  <- unlist(membership, use.names = FALSE)
+  if (any(all_c == "")) {
+    all_c <- lapply(seq_len(length(all_c)), function(x) {
+      ifelse(all_c[x] == "", paste0("ramdom", x), all_c[x])
+    })
+  }
   if (any(table(all_c) > 1)) stop("Duplicated nodes in layers!")
   if (is_labelled(.data)) all_n <- node_names(.data) else all_n <- 1:network_nodes(.data)
   sel_other  <- all_n[!all_n %in% all_c]
