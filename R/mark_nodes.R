@@ -377,4 +377,3 @@ node_is_min <- function(node_measure, ranks = 1){
   class(out) <- c("node_mark", class(out))
   out
 }
-
