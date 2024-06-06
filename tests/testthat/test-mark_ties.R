@@ -36,3 +36,9 @@ test_that("tie_is_min works", {
   expect_equal(sum(tie_is_min(migraph::tie_betweenness(ison_brandes)) == TRUE), 1)
   expect_s3_class(tie_is_min(migraph::tie_betweenness(ison_brandes)), "logical")
 })
+
+test_that("tie_is_feedback() mark functions work", {
+  expect_equal(as.character(tie_is_feedback(ison_adolescents)),
+               c("FALSE", "FALSE", "FALSE", "FALSE", "TRUE", "TRUE", "FALSE",
+                 "TRUE", "FALSE", "FALSE"))
+})
