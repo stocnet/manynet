@@ -5,6 +5,10 @@ output:
   learnr::tutorial:
     theme: journal
 runtime: shiny_prerendered
+description: >
+  This tutorial aims to show how to simulate and investigate simple and complex
+  diffusion or contagion on empirical or generated network structures,
+  including more compartmental models and learning models.
 ---
 
 ```{r setup, include = FALSE}

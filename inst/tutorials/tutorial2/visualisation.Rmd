@@ -5,6 +5,10 @@ output:
   learnr::tutorial:
     theme: journal
 runtime: shiny_prerendered
+description: >
+  This tutorial aims to give an overview of how to use manynet and other
+  packages to effectively and efficiently visualise and tailor graphs
+  of networks in many formats.
 ---
 
 ```{r setup, include=FALSE}
