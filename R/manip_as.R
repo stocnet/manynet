@@ -289,6 +289,12 @@ as_matrix.siena <- function(.data,
   out
 }
 
+#' @export
+as_matrix.diff_model <- function(.data,
+                                 twomode = FALSE) {
+  as_matrix(as_igraph(.data, twomode = twomode))
+}
+
 # igraph ####
 
 #' @rdname as
@@ -412,6 +418,11 @@ as_igraph.network <- function(.data,
   graph
 }
 
+#' @export
+as_igraph.diff_model <- function(.data,
+                                 twomode = FALSE) {
+  as_igraph(attr(.data, "network"))
+}
 
 #' @importFrom netdiffuseR diffnet_to_igraph
 #' @export
@@ -904,7 +915,7 @@ as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
 #'   as_diffusion(events, manynet::create_filled(4))
 #' @export
 as_diffusion <- function(events, .data) {
-  net <- .data
+  net <- as_tidygraph(.data)
   event <- NULL
   sumchanges <- events %>% dplyr::group_by(t) %>% 
     dplyr::reframe(I_new = sum(event == "I"),
