@@ -950,3 +950,32 @@ as_diffusion <- function(events, .data) {
   make_diff_model(events, report, .data)
 }
 
+  
+# Diffnet ####
+
+#' @rdname as
+#' @export
+as_diffnet <- function(.data,
+                       twomode = FALSE) UseMethod("as_diffnet")
+
+#' @export
+as_diffnet.diff_model <- function(.data,
+                               twomode = FALSE) {
+  thisRequires("netdiffuseR")
+  out <- summary(.data) |> dplyr::filter(event == "I") |> 
+    dplyr::distinct(nodes, .keep_all = TRUE) |> 
+    dplyr::select(nodes,t)
+  if(!is_labelled(as_igraph(.data)))
+    out <- dplyr::arrange(out, nodes) else if (is.numeric(out$nodes))
+      out$nodes <- node_names(as_igraph(.data))[out$nodes]
+  toa <- stats::setNames(out$t, out$nodes)
+  if(is_dynamic(.data)){
+    # netdiffuseR::igraph_to_diffnet(graph.list = to_waves(.data))
+  } else {
+    graph <- as_tidygraph(.data) %>% mutate(toa = as.numeric(toa)) %>% as_igraph()
+    suppressWarnings(netdiffuseR::igraph_to_diffnet(graph = graph,
+                                  toavar = "toa"))  
+  }
+  
+}
+

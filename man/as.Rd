@@ -10,6 +10,7 @@
 \alias{as_siena}
 \alias{as_graphAM}
 \alias{as_diffusion}
+\alias{as_diffnet}
 \title{Modifying network classes}
 \usage{
 as_edgelist(.data, twomode = FALSE)
@@ -27,6 +28,8 @@ as_siena(.data, twomode = FALSE)
 as_graphAM(.data, twomode = NULL)
 
 as_diffusion(events, .data)
+
+as_diffnet(.data, twomode = FALSE)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
