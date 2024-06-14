@@ -10,6 +10,7 @@
 \alias{as_siena}
 \alias{as_graphAM}
 \alias{as_diffusion}
+\alias{as_diff_model}
 \alias{as_diffnet}
 \title{Modifying network classes}
 \usage{
@@ -28,6 +29,8 @@ as_siena(.data, twomode = FALSE)
 as_graphAM(.data, twomode = NULL)
 
 as_diffusion(events, .data)
+
+as_diff_model(.data, twomode = FALSE)
 
 as_diffnet(.data, twomode = FALSE)
 }
@@ -53,15 +56,16 @@ and \code{event}, which can take on the values "I" for an infection event,
 "E" for an exposure event, or "R" for a recovery event.}
 }
 \value{
-The currently implemented coercions or translations are:\tabular{lrrrrrrrrr}{
-    \tab data.frame \tab diff_model \tab igraph \tab list \tab matrix \tab network \tab network.goldfish \tab siena \tab tbl_graph \cr
-   as_edgelist \tab 1 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
-   as_graphAM \tab 1 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
-   as_igraph \tab 1 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
-   as_matrix \tab 1 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
-   as_network \tab 1 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
-   as_siena \tab 0 \tab 0 \tab 1 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 1 \cr
-   as_tidygraph \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+The currently implemented coercions or translations are:\tabular{lrrrrrrrrrr}{
+    \tab data.frame \tab diff_model \tab diffnet \tab igraph \tab list \tab matrix \tab network \tab network.goldfish \tab siena \tab tbl_graph \cr
+   as_diffnet \tab 0 \tab 1 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \cr
+   as_edgelist \tab 1 \tab 0 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   as_graphAM \tab 1 \tab 0 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   as_igraph \tab 1 \tab 1 \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   as_matrix \tab 1 \tab 1 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   as_network \tab 1 \tab 0 \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   as_siena \tab 0 \tab 0 \tab 0 \tab 1 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 1 \cr
+   as_tidygraph \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
 }
 
 \code{as_diffusion()} and \code{play_diffusion()} return a 'diff_model' object

@@ -216,7 +216,7 @@ Below is a directed graph showing the currently available options:
 ![](https://www.jameshollway.com/post/manynet/README-coercion-graph-1.png)
 
 ```{r coercion-graph, echo = FALSE, dpi = 300, eval=FALSE}
-autographr(igraph::graph_from_literal(edgelist:matrix:igraph:network:tidygraph+--+edgelist:matrix:igraph:network:tidygraph,
+graphr(igraph::graph_from_literal(edgelist:matrix:igraph:network:tidygraph+--+edgelist:matrix:igraph:network:tidygraph,
                                       edgelist:matrix:igraph:network:tidygraph--+graphAM,
                                       tidygraph:igraph--+siena,
                                       diff_model--+tidygraph,

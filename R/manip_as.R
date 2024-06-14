@@ -56,7 +56,7 @@
 #'
 #' ```{r, echo = FALSE, cache = TRUE} 
 #'  knitr::kable(available_methods(c("as_edgelist","as_matrix", "as_igraph", "as_tidygraph", 
-#'  "as_network", "as_siena", "as_graphAM", "as_diffusion")))
+#'  "as_network", "as_siena", "as_graphAM", "as_diffusion", "as_diffnet")))
 #'  ```
 NULL
 
@@ -950,6 +950,58 @@ as_diffusion <- function(events, .data) {
   make_diff_model(events, report, .data)
 }
 
+# Diff_model ####
+
+#' @rdname as
+#' @export
+as_diff_model <- function(.data,
+                       twomode = FALSE) UseMethod("as_diff_model")
+
+#' @export
+as_diff_model.diffnet <- function(.data,
+                                  twomode = FALSE) {
+  diffnet <- .data
+  events <- data.frame(t = .data$toa, 
+                       nodes = attr(.data$toa, "names"), 
+                       event = "I")
+  net <- as.matrix(.data$graph[[1]])
+  if(!all.equal(diffnet$graph[[1]], diffnet$graph[[length(diffnet$graph)]]))
+    warning(paste("This function currently only takes the first network.",
+                  "Network changes are not currently retained."))
+  rownames(net) <- diffnet$meta$ids
+  colnames(net) <- diffnet$meta$ids
+  sumchanges <- events %>% dplyr::group_by(t) %>% 
+    dplyr::reframe(I_new = sum(event == "I"),
+                   E_new = sum(event == "E"),
+                   R_new = sum(event == "R"))
+  report <- dplyr::tibble(t = min(events$t):max(events$t),
+                          n = diffnet$meta$n) %>% 
+    dplyr::left_join(sumchanges, by = dplyr::join_by(t))
+  report[is.na(report)] <- 0
+  report$R <- cumsum(report$R_new)
+  report$I <- cumsum(report$I_new) - report$R
+  report$E <- ifelse(report$E_new == 0 & 
+                       cumsum(report$E_new) == max(cumsum(report$E_new)),
+                     report$E_new, cumsum(report$E_new))
+  report$E <- ifelse(report$R + report$I + report$E > report$n,
+                     report$n - (report$R + report$I),
+                     report$E)
+  report$S <- report$n - report$R - report$I - report$E
+  report$s <- vapply(report$t, function(time){
+    twin <- dplyr::filter(events, events$t <= time)
+    infected <- dplyr::filter(twin, twin$event == "I")$nodes
+    recovered <- dplyr::filter(twin, twin$event == "R")$nodes
+    infected <- setdiff(infected, recovered)
+    expos <- node_is_exposed(as_igraph(net), infected)
+    expos[recovered] <- F
+    sum(expos)
+  }, numeric(1) )
+  if (any(report$R + report$I + report$E + report$S != report$n)) {
+    stop("Oops, something is wrong")
+  }
+  report <- dplyr::select(report, dplyr::any_of(c("t", "n", "S", "s", "E", "E_new", "I", "I_new", "R", "R_new")))
+  make_diff_model(events, report, net)
+}
   
 # Diffnet ####
 
