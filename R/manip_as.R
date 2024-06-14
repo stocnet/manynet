@@ -412,6 +412,15 @@ as_igraph.network <- function(.data,
   graph
 }
 
+
+#' @importFrom netdiffuseR diffnet_to_igraph
+#' @export
+as_igraph.diffnet <- function(.data,
+                                 twomode = FALSE) {
+  thisRequires("netdiffuseR")
+  netdiffuseR::diffnet_to_igraph(.data)
+}
+
 #' @export
 as_igraph.network.goldfish <- function(.data,
                                        twomode = FALSE) {
@@ -666,6 +675,12 @@ as_tidygraph.diff_model <- function(.data, twomode = FALSE) {
   out
 }
 
+#' @export
+as_tidygraph.diffnet <- function(.data, twomode = FALSE) {
+  out <- as_igraph(.data)
+  lapply(out, as_tidygraph)
+}
+
 # Network ####
 
 #' @rdname as
@@ -744,6 +759,14 @@ as_network.data.frame <- function(.data,
 as_network.network.goldfish <- function(.data,
                                         twomode = FALSE) {
   as_network(as_igraph(.data, twomode = twomode))
+}
+
+#' @importFrom netdiffuseR diffnet_to_network
+#' @export
+as_network.diffnet <- function(.data,
+                              twomode = FALSE) {
+  thisRequires("netdiffuseR")
+  netdiffuseR::diffnet_to_network(.data)
 }
 
 #' @export
