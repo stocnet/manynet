@@ -13,7 +13,7 @@
 #'   between the self ties in each pairwise calculation.
 #'   This function runs in \eqn{O(mn^2)} complexity.
 #' @name correlation
-#' @inheritParams cohesion
+#' @inheritParams is
 #' @param method One of the following:
 #'   "all" includes all information,
 #'   "diag" excludes the diagonal (self-ties),
