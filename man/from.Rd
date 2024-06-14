@@ -67,6 +67,7 @@ Other modifications:
 \code{\link{add_nodes}()},
 \code{\link{add_ties}()},
 \code{\link{as}()},
+\code{\link{correlation}},
 \code{\link{miss}},
 \code{\link{reformat}},
 \code{\link{split}()},

@@ -84,6 +84,7 @@ Note that while \verb{add_*()}/\verb{delete_*()} functions operate similarly as 
 Other modifications: 
 \code{\link{add_nodes}()},
 \code{\link{as}()},
+\code{\link{correlation}},
 \code{\link{from}},
 \code{\link{miss}},
 \code{\link{reformat}},
