@@ -58,6 +58,7 @@ and \code{event}, which can take on the values "I" for an infection event,
 \value{
 The currently implemented coercions or translations are:\tabular{lrrrrrrrrrr}{
     \tab data.frame \tab diff_model \tab diffnet \tab igraph \tab list \tab matrix \tab network \tab network.goldfish \tab siena \tab tbl_graph \cr
+   as_diff_model \tab 0 \tab 0 \tab 1 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \cr
    as_diffnet \tab 0 \tab 1 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \cr
    as_edgelist \tab 1 \tab 0 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
    as_graphAM \tab 1 \tab 0 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr

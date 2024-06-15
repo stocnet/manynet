@@ -215,13 +215,15 @@ Below is a directed graph showing the currently available options:
 
 ![](https://www.jameshollway.com/post/manynet/README-coercion-graph-1.png)
 
-```{r coercion-graph, echo = FALSE, dpi = 300, eval=FALSE}
+```{r coercion-graph, echo = FALSE, dpi = 300, eval=FALSE, fig.height=8, fig.width=8}
 graphr(igraph::graph_from_literal(edgelist:matrix:igraph:network:tidygraph+--+edgelist:matrix:igraph:network:tidygraph,
                                       edgelist:matrix:igraph:network:tidygraph--+graphAM,
                                       tidygraph:igraph--+siena,
-                                      diff_model--+tidygraph,
+                                      diff_model--+tidygraph:igraph:matrix:diffnet,
+                                  diffnet--+igraph:network:diff_model:tidygraph,
                                       siena:goldfish--+edgelist:matrix:igraph:network:tidygraph:graphAM),
-           "circle", node_size = 4)
+           "circle", node_size = 3)
+ggsave("~/Library/CloudStorage/Dropbox/Sites/jameshollway.com/content/post/manynet/README-coercion-graph-1.png")
 ```
 
 These functions are designed to be as intuitive and lossless as possible,

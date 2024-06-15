@@ -56,7 +56,7 @@
 #'
 #' ```{r, echo = FALSE, cache = TRUE} 
 #'  knitr::kable(available_methods(c("as_edgelist","as_matrix", "as_igraph", "as_tidygraph", 
-#'  "as_network", "as_siena", "as_graphAM", "as_diffusion", "as_diffnet")))
+#'  "as_network", "as_siena", "as_graphAM", "as_diffusion", "as_diffnet", "as_diff_model")))
 #'  ```
 NULL
 
