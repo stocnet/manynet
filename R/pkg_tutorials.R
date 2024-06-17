@@ -1,3 +1,5 @@
+# Tutorials overview ####
+
 #' Open and extract code from tutorials
 #' 
 #' @description 
@@ -10,10 +12,8 @@
 #'   - `extract_tute()` extracts and opens just the solution code
 #'   from a `{manynet}` or `{migraph}` tutorial,
 #'   saving the .R script to the current working directory.
-#'   - `pkg_data()` returns a tibble with details of the
-#'   network datasets included in the packages.
+#'   
 #' @param tute String, name of the tutorial (e.g. "tutorial2").
-#' @param pkg String, name of the package.
 #' @importFrom dplyr %>% as_tibble select tibble
 #' @name tutorials
 NULL
@@ -78,15 +78,30 @@ extract_tute <- function(tute) {
   }
 }
 
-#' @rdname tutorials 
+# Data overview ####
+
+#' Obtain overview of available network data
+#' 
+#' @description 
+#'   This function makes it easy to get an overview of available data:
+#'   
+#'   - `pkg_data()` returns a tibble with details of the
+#'   network datasets included in the packages.
+#'   
+#' @param pkg String, name of the package.
+#' @importFrom dplyr %>% as_tibble select tibble
+#' @name data_overview
+NULL
+
+#' @rdname data_overview 
 #' @examples
-#' #pkg_data()
+#' table_data()
 #' # to obtain overview of unique datasets:
-#'  #pkg_data() %>% 
-#'   #dplyr::distinct(directed, weighted, twomode, signed, 
-#'    #               .keep_all = TRUE)
+#' # table_data() %>% 
+#'   # dplyr::distinct(directed, weighted, twomode, signed, 
+#'   #                 .keep_all = TRUE)
 #' @export
-pkg_data <- function(pkg = "manynet") {
+table_data <- function(pkg = "manynet") {
   nodes <- NULL
   datanames <- utils::data(package = pkg)$results[,"Item"]
   require(package = pkg, character.only = TRUE)

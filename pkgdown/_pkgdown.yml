@@ -86,19 +86,20 @@ reference:
       - starts_with("theme")
       - starts_with("scale")
       - ends_with("palettes")
-  - title: "Tutorials"
+  - title: "Learning"
     desc: |
       Functions for loading and extracting code from tutorials.
       There is also a function for tabulating the various network data included in the package,
       providing an overview of their properties.
     contents:
       - ends_with("_tute")
-  - title: "Data"
+  - title: "Practicing"
     desc: |
       The package contains a variety of networks useful for pedagogical purposes
       and used in the course 'Social Networks Theories and Methods' and other workshops.
       Each page documents the source of the data and its format.
       References are provided for further reading and citation.
     contents:
+      - data_overview
       - starts_with("ison_")
   
