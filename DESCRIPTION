@@ -1,7 +1,7 @@
 Package: manynet
 Title: Many Ways to Make, Modify, Mark, and Map Myriad Networks
-Version: 0.5.0
-Date: 2024-05-23
+Version: 1.0.0
+Date: 2024-06-16
 Description: A set of tools for making, modifying, marking, and mapping many different types of networks.
    All functions operate with matrices, edge lists, and 'igraph', 'network', and 'tidygraph' objects,
    and on one-mode, two-mode (bipartite), and sometimes three-mode networks.
@@ -28,6 +28,8 @@ Imports:
 Suggests:
     BiocManager,
     concaveman,
+    future,
+    furrr,
     gganimate,
     ggforce,
     gifski,
@@ -45,10 +47,9 @@ Suggests:
     rmarkdown,
     roxygen2,
     RSiena,
+    sna,
     testthat (>= 3.0.0),
-    xml2,
-    future,
-    furrr
+    xml2
 Enhances:
     Rgraphviz
 Authors@R: 
