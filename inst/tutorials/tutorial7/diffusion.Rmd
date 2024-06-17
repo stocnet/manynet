@@ -6,7 +6,7 @@ output:
     theme: journal
 runtime: shiny_prerendered
 description: >
-  This tutorial aims to teach you how to simulate and investigate simple and complex
+  In this tutorial you will learn how to simulate and investigate simple and complex
   diffusion or contagion on empirical or generated network structures,
   including more compartmental models and learning models.
 ---
@@ -35,6 +35,8 @@ that we might be interested in here.
 Let's take the `ison_networkers` dataset from `{manynet}`,
 and create or generate ring, lattice, random, scale-free, and small-world
 versions with the same number of nodes.
+First of all, reformat `ison_networkers` as an undirected, unnamed network
+called "nw".
 
 ```{r create, echo = TRUE, exercise = TRUE, purl = FALSE}
 
@@ -123,12 +125,12 @@ sw <- generate_smallworld(nw, 0.025)
 ```{r create-nwstructure-hint-9, purl = FALSE}
 # Finally, let's plot the respective graphs:
 
-autographr(____) + ggtitle("Networkers") +
-autographr(____) + ggtitle("Ring") +
-autographr(____) + ggtitle("Lattice") +
-autographr(____) + ggtitle("Random") +
-autographr(____) + ggtitle("Scale-Free") +
-autographr(____) + ggtitle("Small-World")
+graphr(____) + ggtitle("Networkers") +
+graphr(____) + ggtitle("Ring") +
+graphr(____) + ggtitle("Lattice") +
+graphr(____) + ggtitle("Random") +
+graphr(____) + ggtitle("Scale-Free") +
+graphr(____) + ggtitle("Small-World")
 ```
 
 ```{r create-nwstructure-solution}
@@ -139,12 +141,12 @@ la <- create_lattice(nw)
 rd <- generate_random(nw, with_attr = FALSE)
 sf <- generate_scalefree(nw, 0.025)
 sw <- generate_smallworld(nw, 0.025)
-autographr(nw) + ggtitle("Networkers") +
-autographr(rg) + ggtitle("Ring") +
-autographr(la) + ggtitle("Lattice") +
-autographr(rd) + ggtitle("Random") +
-autographr(sf) + ggtitle("Scale-Free") +
-autographr(sw) + ggtitle("Small-World")
+graphr(nw) + ggtitle("Networkers") +
+graphr(rg) + ggtitle("Ring") +
+graphr(la) + ggtitle("Lattice") +
+graphr(rd) + ggtitle("Random") +
+graphr(sf) + ggtitle("Scale-Free") +
+graphr(sw) + ggtitle("Small-World")
 ```
 
 
@@ -172,7 +174,7 @@ rg_d <- play_diffusion(rg, seeds = 1)
 plot(rg_d)
 
 # visualise the diffusion within the network
-autographs(play_diffusion(rg, seeds = 1), node_color = "Infected", layout = "circle") +
+graphs(play_diffusion(rg, seeds = 1), node_color = "Infected", layout = "circle") +
   ggplot2::guides(colour = guide_legend(""))
 ```
 
@@ -229,8 +231,8 @@ plot(play_diffusion(rg, seeds = ____))
 rg_d3 <- play_diffusion(rg, seeds = 1:4)
 plot(rg_d3)
 
-# visualise the diffusion within the network
-autographs(play_diffusion(rg, seeds = 1:4), node_color = "Infected", layout = "circle") +
+# graph the diffusion within the network
+graphs(play_diffusion(rg, seeds = 1:4), node_color = "Infected", layout = "circle") +
   ggplot2::guides(colour = guide_legend(""))
 ```
 
@@ -280,7 +282,7 @@ plot(play_diffusion(la, seeds = 1))/
 plot(play_diffusion(la, seeds = 16))
 la %>%
   add_node_attribute("color", c(1, rep(0, 14), 2, rep(0, 16))) %>%
-  autographr(node_color = "color")
+  graphr(node_color = "color")
 
 # visualise diffusion in lattice graph
 autographd(play_diffusion(la, seeds = 16), layout = "grid", keep_isolates = FALSE)
@@ -312,17 +314,17 @@ sf %>%
   as_tidygraph() %>%
   mutate(degree = ifelse(node_is_max(node_degree(sf)), "max",
                       ifelse(node_is_min(node_degree(sf)), "min", "others"))) %>%
-  autographr(node_color = "degree") + guides(color = "legend") + labs(color = "degree")
+  graphr(node_color = "degree") + guides(color = "legend") + labs(color = "degree")
 plot(play_diffusion(sf, seeds = 10, steps = 10)) / 
 plot(play_diffusion(sf, seeds = node_is_random(sf), steps = 10)) /
 plot(play_diffusion(sf, seeds = node_is_max(node_degree(sf)), steps = 10)) /
 plot(play_diffusion(sf, seeds = node_is_min(node_degree(sf)), steps = 10))
 
 # visualise diffusion in scalefree network
-autographs(play_diffusion(sf, seeds = node_is_min(node_degree(sf)), steps = 10),
+graphs(play_diffusion(sf, seeds = node_is_min(node_degree(sf)), steps = 10),
            node_color = "Infected") +
   ggplot2::guides(colour = guide_legend(""))
-autographd(play_diffusion(sf, seeds = 16, steps = 10))
+grapht(play_diffusion(sf, seeds = 16, steps = 10))
 ```
 
 ```{r mindeg-interp, echo = FALSE, purl = FALSE}
@@ -440,7 +442,7 @@ plot(play_diffusion(sf, thresholds = c(rep(0.1,10), rep(0.25,22))))/
 plot(play_diffusion(sf, thresholds = c(rep(0.25,10), rep(0.1,22))))
 
 # visualise the diffusion within the network
-autographd(play_diffusion(sf, thresholds = c(rep(0.1,10), rep(0.25,22))))
+grapht(play_diffusion(sf, thresholds = c(rep(0.1,10), rep(0.25,22))))
 ```
 
 Since the first ten nodes are the first to join the scale-free network
@@ -555,7 +557,7 @@ Play a single diffusion so that you can see what's going on in a particular run.
 plot(play_diffusion(rd, recovery = 0.2, waning = 0.05))
 
 # visualise diffusion within random graph
-autographd(play_diffusion(rd, seeds = c(1,10), recovery = 0.2, waning = 0.05))
+grapht(play_diffusion(rd, seeds = c(1,10), recovery = 0.2, waning = 0.05))
 ```
 
 ```{r sirs-interp, echo = FALSE, purl = FALSE}
@@ -601,15 +603,15 @@ Play a single diffusion so that you can see what's going on in a particular run.
 plot(play_diffusion(rd, seeds = 10, latency = 0.25, recovery = 0.2))
 
 # visualise diffusion with latency and recovery
-autographd(play_diffusion(rd, seeds = 10, latency = 0.25, recovery = 0.2))
+grapht(play_diffusion(rd, seeds = 10, latency = 0.25, recovery = 0.2))
 ```
 
 ### R-nought and herd immunity
 
 So how can we establish the $R_0$ here?
 
-$R_0$, or the diffusion's reproductive number, is calculated as: $R_0 = \min\left(\frac{T}{1/IL}, \bar{k}\right)$
-It is measured as the network's transmissibility (proportion of susceptible nodes that are infected at each time period) over the network's average infection length (average length of time nodes remain infected).  
+$R_0$, or the attribute's reproductive number, is calculated as: $R_0 = \min\left(\frac{T}{1/IL}, \bar{k}\right)$
+It is measured as the transmissibility (proportion of susceptible nodes that are infected at each time period) over the average infection length (average length of time nodes remain infected).  
 - Where $R_0$ > 1, the 'disease' will 'infect' more and more nodes in the network.  
 - Where $R_0$ < 1, the 'disease' will not sustain itself and eventually die out.  
 - Where $R_0$ = 1, the 'disease' will continue as endemic, if conditions allow.  
@@ -622,7 +624,7 @@ plot(rd_diff)
 network_reproduction(rd_diff)
 # Herd Immunity Threshold
 network_immunity(rd_diff)
-ceiling(network_immunity(rd_diff) * manynet::network_nodes(rd))
+ceiling(network_immunity(rd_diff) * network_nodes(rd))
 ```
 
 The Herd Immunity Threshold or HIT indicates the threshold at which the reduction of susceptible members of the network means that infections will no longer keep increasing, allowing herd immunity to be achieved.
