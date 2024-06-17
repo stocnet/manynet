@@ -71,7 +71,7 @@ Other measures:
 \code{\link{measure_heterogeneity}},
 \code{\link{measure_hierarchy}},
 \code{\link{measure_holes}},
-\code{\link{net_diffusion}},
-\code{\link{node_diffusion}}
+\code{\link{measure_net_diffusion}},
+\code{\link{measure_node_diffusion}}
 }
 \concept{measures}

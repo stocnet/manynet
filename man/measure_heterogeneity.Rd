@@ -134,8 +134,8 @@ Other measures:
 \code{\link{measure_cohesion}},
 \code{\link{measure_hierarchy}},
 \code{\link{measure_holes}},
-\code{\link{measure_properties}},
-\code{\link{net_diffusion}},
-\code{\link{node_diffusion}}
+\code{\link{measure_net_diffusion}},
+\code{\link{measure_node_diffusion}},
+\code{\link{measure_properties}}
 }
 \concept{measures}
