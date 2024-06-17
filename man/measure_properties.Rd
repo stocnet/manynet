@@ -66,11 +66,11 @@ Other measures:
 \code{\link{cohesion}()},
 \code{\link{degree_centrality}},
 \code{\link{eigenv_centrality}},
-\code{\link{holes}},
 \code{\link{measure_attributes}},
 \code{\link{measure_closure}},
 \code{\link{measure_heterogeneity}},
 \code{\link{measure_hierarchy}},
+\code{\link{measure_holes}},
 \code{\link{net_diffusion}},
 \code{\link{node_diffusion}}
 }
