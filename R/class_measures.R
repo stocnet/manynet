@@ -154,3 +154,5 @@ plot.network_measures <- function(x, ...) {
     ggplot2::ylab("Value")
 }
 
+# defining global variables more centrally
+globalVariables(c(".data"))
