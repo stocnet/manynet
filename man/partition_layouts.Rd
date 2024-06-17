@@ -122,9 +122,9 @@ The "lineage" layout ranks nodes in Y axis according to values.
 }
 \seealso{
 Other mapping: 
-\code{\link{autographr}()},
-\code{\link{autographs}()},
-\code{\link{autographt}()},
 \code{\link{configuration_layouts}},
+\code{\link{graphr}()},
+\code{\link{graphs}()},
+\code{\link{grapht}()}
 }
 \concept{mapping}

@@ -89,21 +89,21 @@
 #' get_con geom_node_point scale_edge_width_continuous geom_node_label
 #' @importFrom ggplot2 aes arrow unit scale_color_brewer scale_fill_brewer
 #' @examples
-#' autographr(ison_adolescents)
+#' graphr(ison_adolescents)
 #' ison_adolescents |>
 #'   mutate(color = rep(c("extrovert", "introvert"), times = 4),
 #'          size = ifelse(node_is_cutpoint(ison_adolescents), 6, 3)) |>
 #'   mutate_ties(ecolor = rep(c("friends", "aquaintances"), times = 5)) |>
-#'   autographr(node_color = "color", node_size = "size",
+#'   graphr(node_color = "color", node_size = "size",
 #'              edge_size = 1.5, edge_color = "ecolor")
-#' #autographr(ison_lotr, node_color = Race,
-#' #           node_size = migraph::node_degree(ison_lotr)*2,
+#' #graphr(ison_lotr, node_color = Race,
+#' #           node_size = node_degree(ison_lotr)*2,
 #' #           edge_color = "darkgreen",
-#' #           edge_size = migraph::tie_degree(ison_lotr))
-#' #autographr(ison_karateka, node_group = allegiance,
-#' #           edge_size = migraph::tie_closeness(ison_karateka))
+#' #           edge_size = tie_degree(ison_lotr))
+#' #graphr(ison_karateka, node_group = allegiance,
+#' #           edge_size = tie_closeness(ison_karateka))
 #' @export
-autographr <- function(.data, layout, labels = TRUE,
+graphr <- function(.data, layout, labels = TRUE,
                        node_color, node_shape, node_size, node_group,
                        edge_color, edge_size, ...) {
   g <- as_tidygraph(.data)
@@ -139,10 +139,6 @@ autographr <- function(.data, layout, labels = TRUE,
   p <- .graph_nodes(p, g, node_color, node_shape, node_size)
   p
 }
-
-#' @rdname autographr
-#' @export
-graphr <- autographr
 
 .graph_layout <- function(g, layout, labels, node_group, ...){
   name <- NULL
@@ -665,9 +661,9 @@ check_node_variables <- function(g, node_color, node_size) {
 #'   This function provides users with an easy way to graph
 #'   lists of network data for comparison.
 #'   
-#'   It builds upon this package's `autographr()` function, 
+#'   It builds upon this package's `graphr()` function, 
 #'   and inherits all the same features and arguments.
-#'   See `autographr()` for more.
+#'   See `graphr()` for more.
 #'   However, it uses the `{patchwork}` package to plot the graphs
 #'   side by side and, if necessary, in successive rows.
 #'   This is useful for lists of networks that represent, for example, 
@@ -689,15 +685,15 @@ check_node_variables <- function(g, node_color, node_size) {
 #'   This argument can also be passed a vector selecting the waves to plot.
 #' @param based_on Whether the layout of the joint plots should
 #'   be based on the "first" or the "last" network, or "both".
-#' @param ... Additional arguments passed to `autographr()`.
+#' @param ... Additional arguments passed to `graphr()`.
 #' @return Multiple `ggplot2::ggplot()` objects displayed side-by-side.
 #' @examples
-#' #autographs(to_egos(ison_adolescents))
-#' #autographs(to_egos(ison_adolescents), waves = 8)
-#' #autographs(to_egos(ison_adolescents), waves = c(2, 4, 6))
-#' #autographs(play_diffusion(ison_adolescents))
+#' #graphs(to_egos(ison_adolescents))
+#' #graphs(to_egos(ison_adolescents), waves = 8)
+#' #graphs(to_egos(ison_adolescents), waves = c(2, 4, 6))
+#' #graphs(play_diffusion(ison_adolescents))
 #' @export
-autographs <- function(netlist, waves,
+graphs <- function(netlist, waves,
                        based_on = c("first", "last", "both"), ...) {
   thisRequires("patchwork")
   based_on <- match.arg(based_on)
@@ -742,10 +738,6 @@ autographs <- function(netlist, waves,
   do.call(patchwork::wrap_plots, c(gs, list(guides = "collect")))
 }
 
-#' @rdname autographs
-#' @export
-graphs <- autographs
-
 # Dynamic networks ####
 
 #' Easily animate dynamic networks with sensible defaults
@@ -783,7 +775,7 @@ graphs <- autographs
 #' #ison_adolescents %>%
 #' #  mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %>%
 #' #  to_waves(attribute = "year", cumulative = TRUE) %>%
-#' #  autographd()
+#' #  grapht()
 #' #ison_adolescents %>% 
 #' #  mutate(gender = rep(c("male", "female"), times = 4),
 #' #         hair = rep(c("black", "brown"), times = 4),
@@ -792,13 +784,13 @@ graphs <- autographs
 #' #              links = sample(c("friends", "not_friends"), 10, replace = TRUE),
 #' #              weekly_meetings = sample(c(3, 5, 7), 10, replace = TRUE)) %>%
 #' #  to_waves(attribute = "year") %>%
-#' #  autographd(layout = "concentric", membership = "gender",
+#' #  grapht(layout = "concentric", membership = "gender",
 #' #             node_shape = "gender", node_color = "hair",
 #' #             node_size =  "age", edge_color = "links",
 #' #             edge_size = "weekly_meetings")
-#' #autographd(play_diffusion(ison_adolescents, seeds = 5))
+#' #grapht(play_diffusion(ison_adolescents, seeds = 5))
 #' @export
-autographt <- function(tlist, layout, labels = TRUE,
+grapht <- function(tlist, layout, labels = TRUE,
                        node_color, node_shape, node_size,
                        edge_color, edge_size, keep_isolates = TRUE, ...) {
   thisRequires("gganimate")
@@ -900,14 +892,6 @@ autographt <- function(tlist, layout, labels = TRUE,
   gganimate::animate(p, duration = 2*length(tlist), start_pause = 5,
                      end_pause = 10, renderer = gganimate::gifski_renderer())
 }
-
-#' @rdname autographt
-#' @export
-autographd <- autographt
-
-#' @rdname autographt
-#' @export
-grapht <- autographt
 
 map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
                         node_color, node_size, edge_size, labels) {

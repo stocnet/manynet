@@ -4,12 +4,25 @@
 \alias{defunct}
 \alias{pkg_data}
 \alias{node_mode}
+\alias{autographr}
 \title{Functions that have been renamed, superseded, or are no longer working}
 \usage{
 pkg_data(pkg = "manynet")
 
 node_mode(.data)
 
+autographr(
+  .data,
+  layout,
+  labels = TRUE,
+  node_color,
+  node_shape,
+  node_size,
+  node_group,
+  edge_color,
+  edge_size,
+  ...
+)
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
@@ -26,5 +39,6 @@ wherever possible and update your scripts accordingly.
 
 \item \code{node_mode()}: Deprecated on 2024-06-17.
 
+\item \code{autographr()}: Deprecated on 2024-06-17.
 }}
 \keyword{internal}
