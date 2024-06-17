@@ -5,6 +5,7 @@
 \alias{pkg_data}
 \alias{node_mode}
 \alias{autographr}
+\alias{autographs}
 \title{Functions that have been renamed, superseded, or are no longer working}
 \usage{
 pkg_data(pkg = "manynet")
@@ -23,6 +24,9 @@ autographr(
   edge_size,
   ...
 )
+
+autographs(netlist, waves, based_on = c("first", "last", "both"), ...)
+
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
@@ -40,5 +44,8 @@ wherever possible and update your scripts accordingly.
 \item \code{node_mode()}: Deprecated on 2024-06-17.
 
 \item \code{autographr()}: Deprecated on 2024-06-17.
+
+\item \code{autographs()}: Deprecated on 2024-06-17.
+
 }}
 \keyword{internal}
