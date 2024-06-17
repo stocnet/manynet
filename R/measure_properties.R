@@ -18,28 +18,28 @@
 #'   in the case of a two-mode network.
 #'   `network_*_attributes()` returns a string vector with the names
 #'   of all node or tie attributes in the network.
-#' @name properties
-#' @family mapping
+#' @name measure_properties
+#' @family measures
 #' @inheritParams is
 NULL
 
-#' @rdname properties
+#' @rdname measure_properties
 #' @examples
 #' network_nodes(ison_southern_women)
 #' @export
 network_nodes <- function(.data){
-  igraph::vcount(as_igraph(.data))
+  make_network_measure(igraph::vcount(as_igraph(.data)), .data)
 }
 
-#' @rdname properties
+#' @rdname measure_properties
 #' @examples
 #' network_ties(ison_southern_women)
 #' @export
 network_ties <- function(.data){
-  igraph::ecount(as_igraph(.data))
+  make_network_measure(igraph::ecount(as_igraph(.data)), .data)
 }
 
-#' @rdname properties
+#' @rdname measure_properties
 #' @examples
 #' network_dims(ison_southern_women)
 #' network_dims(to_mode1(ison_southern_women))
@@ -88,7 +88,7 @@ network_dims.network <- function(.data){
   out
 }
 
-#' @rdname properties
+#' @rdname measure_properties
 #' @importFrom igraph vertex_attr_names
 #' @examples
 #'   network_node_attributes(ison_lotr)
@@ -97,7 +97,7 @@ network_node_attributes <- function(.data){
   igraph::vertex_attr_names(as_igraph(.data))
 }
 
-#' @rdname properties
+#' @rdname measure_properties
 #' @importFrom igraph edge_attr_names
 #' @examples
 #'   network_tie_attributes(ison_algebra)
