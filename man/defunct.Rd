@@ -3,9 +3,13 @@
 \name{defunct}
 \alias{defunct}
 \alias{pkg_data}
+\alias{node_mode}
 \title{Functions that have been renamed, superseded, or are no longer working}
 \usage{
 pkg_data(pkg = "manynet")
+
+node_mode(.data)
+
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
@@ -19,6 +23,8 @@ wherever possible and update your scripts accordingly.
 \section{Functions}{
 \itemize{
 \item \code{pkg_data()}: Deprecated on 2024-06-17.
+
+\item \code{node_mode()}: Deprecated on 2024-06-17.
 
 }}
 \keyword{internal}

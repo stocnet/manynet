@@ -18,3 +18,12 @@ pkg_data <- function(pkg = "manynet") {
               old = "pkg_data")
   table_data(pkg = pkg)
 }
+
+#' @describeIn defunct Deprecated on 2024-06-17.
+#' @export
+node_mode <- function(.data) {
+  .Deprecated("node_is_mode", package = "migraph",
+              old = "node_mode")
+  node_is_mode(.data)
+}
+
