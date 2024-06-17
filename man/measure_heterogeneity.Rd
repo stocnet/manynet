@@ -127,11 +127,11 @@ Moran, Patrick Alfred Pierce. 1950.
 Other measures: 
 \code{\link{between_centrality}},
 \code{\link{close_centrality}},
-\code{\link{cohesion}()},
 \code{\link{degree_centrality}},
 \code{\link{eigenv_centrality}},
 \code{\link{measure_attributes}},
 \code{\link{measure_closure}},
+\code{\link{measure_cohesion}},
 \code{\link{measure_hierarchy}},
 \code{\link{measure_holes}},
 \code{\link{measure_properties}},

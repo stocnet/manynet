@@ -40,7 +40,7 @@
 #' Burt, Ronald S. 1992. 
 #' _Structural Holes: The Social Structure of Competition_. 
 #' Cambridge, MA: Harvard University Press.
-#' @inheritParams cohesion
+#' @inheritParams is
 NULL
 
 #' @rdname measure_holes 

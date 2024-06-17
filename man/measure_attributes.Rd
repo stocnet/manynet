@@ -61,10 +61,10 @@ tie_signs(ison_marvel_relationships)
 Other measures: 
 \code{\link{between_centrality}},
 \code{\link{close_centrality}},
-\code{\link{cohesion}()},
 \code{\link{degree_centrality}},
 \code{\link{eigenv_centrality}},
 \code{\link{measure_closure}},
+\code{\link{measure_cohesion}},
 \code{\link{measure_heterogeneity}},
 \code{\link{measure_hierarchy}},
 \code{\link{measure_holes}},

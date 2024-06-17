@@ -14,7 +14,7 @@ network_efficiency(.data)
 network_upperbound(.data)
 }
 \arguments{
-\item{.data}{An object of a \code{{manynet}}-consistent class:
+\item{.data}{An object of a manynet-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
 \item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
@@ -55,11 +55,11 @@ Everett, Martin, and David Krackhardt. 2012.
 Other measures: 
 \code{\link{between_centrality}},
 \code{\link{close_centrality}},
-\code{\link{cohesion}()},
 \code{\link{degree_centrality}},
 \code{\link{eigenv_centrality}},
 \code{\link{measure_attributes}},
 \code{\link{measure_closure}},
+\code{\link{measure_cohesion}},
 \code{\link{measure_heterogeneity}},
 \code{\link{measure_holes}},
 \code{\link{measure_properties}},

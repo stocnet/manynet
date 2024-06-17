@@ -10,7 +10,7 @@
 #'   - `network_efficiency()` measures the Krackhardt efficiency score.
 #'   - `network_upperbound()` measures the Krackhardt (least) upper bound score.
 #' 
-#' @inheritParams cohesion
+#' @inheritParams is
 #' @name measure_hierarchy
 #' @family measures
 #' @references
@@ -34,7 +34,7 @@ NULL
 #' @export
 network_connectedness <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  dists <- igraph::distances(manynet::as_igraph(.data))
+  dists <- igraph::distances(as_igraph(.data))
   make_network_measure(1 - sum(dists==Inf)/sum(dists!=0),
                        .data)
 }
@@ -44,7 +44,7 @@ network_connectedness <- function(.data){
 network_efficiency <- function(.data) {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   degs <- node_indegree(.data, normalized = FALSE)
-  out <- (manynet::network_nodes(.data)-1)/sum(degs)
+  out <- (network_nodes(.data)-1)/sum(degs)
   make_network_measure(out, .data)
 }
 
@@ -55,7 +55,7 @@ network_upperbound <- function(.data) {
   dists <- igraph::distances(.data, mode = "in")
   dists[is.infinite(dists)] <- 0
   dists <- dists[order(rowSums(dists)), order(rowSums(dists))]
-  if (max(colSums(dists > 0)) / (manynet::network_nodes(.data)-1) == 1){
+  if (max(colSums(dists > 0)) / (network_nodes(.data)-1) == 1){
     out <- 1
   } else {
     out <- apply(utils::combn(2:nrow(dists), 2), 2, 
