@@ -130,10 +130,10 @@ Other measures:
 \code{\link{cohesion}()},
 \code{\link{degree_centrality}},
 \code{\link{eigenv_centrality}},
-\code{\link{hierarchy}},
 \code{\link{holes}},
 \code{\link{measure_attributes}},
 \code{\link{measure_closure}},
+\code{\link{measure_hierarchy}},
 \code{\link{measure_properties}},
 \code{\link{net_diffusion}},
 \code{\link{node_diffusion}}

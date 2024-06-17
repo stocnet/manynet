@@ -61,16 +61,16 @@ network_dims(to_mode1(ison_southern_women))
 }
 \seealso{
 Other measures: 
-\code{\link{attributes}()},
 \code{\link{between_centrality}},
 \code{\link{close_centrality}},
 \code{\link{cohesion}()},
 \code{\link{degree_centrality}},
 \code{\link{eigenv_centrality}},
-\code{\link{heterogeneity}},
-\code{\link{hierarchy}},
 \code{\link{holes}},
+\code{\link{measure_attributes}},
 \code{\link{measure_closure}},
+\code{\link{measure_heterogeneity}},
+\code{\link{measure_hierarchy}},
 \code{\link{net_diffusion}},
 \code{\link{node_diffusion}}
 }
