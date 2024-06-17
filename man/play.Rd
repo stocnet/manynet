@@ -9,6 +9,7 @@
 play_diffusion(
   .data,
   seeds = 1,
+  contact = NULL,
   thresholds = 1,
   transmissibility = 1,
   latency = 0,
@@ -45,6 +46,12 @@ play_diffusions(
 
 \item{seeds}{A valid mark vector the length of the
 number of nodes in the network.}
+
+\item{contact}{A matrix or network that replaces ".data" with some
+other explicit contact network, e.g.
+\code{create_components(.data, membership = node_in_structural(.data))}.
+Can be of arbitrary complexity, but must of the same dimensions
+as .data.}
 
 \item{thresholds}{A numeric vector indicating the thresholds
 each node has. By default 1.

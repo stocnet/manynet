@@ -71,6 +71,11 @@
 #' @inheritParams is
 #' @param seeds A valid mark vector the length of the
 #'   number of nodes in the network.
+#' @param contact A matrix or network that replaces ".data" with some 
+#'   other explicit contact network, e.g.
+#'   `create_components(.data, membership = node_in_structural(.data))`.
+#'   Can be of arbitrary complexity, but must of the same dimensions
+#'   as .data.
 #' @param thresholds A numeric vector indicating the thresholds
 #'   each node has. By default 1.
 #'   A single number means a generic threshold;
@@ -128,6 +133,7 @@ NULL
 #' @export
 play_diffusion <- function(.data, 
                            seeds = 1,
+                           contact = NULL,
                            thresholds = 1,
                            transmissibility = 1,
                            latency = 0,
@@ -150,11 +156,11 @@ play_diffusion <- function(.data,
   }
   infected <- seeds # seeds are initial infected
   latent <- NULL # latent compartment starts empty
-  t = 0 # starting at 0
+  time = 0 # starting at 0
   # initialise events table
-  events <- data.frame(t = t, nodes = seeds, event = "I", exposure = NA)
+  events <- data.frame(t = time, nodes = seeds, event = "I", exposure = NA)
   # initialise report table
-  report <- data.frame(t = t,
+  report <- data.frame(t = time,
                        n = n,
                        S = n - (length(latent) + length(infected) + length(recovered)),
                        s = sum(node_is_exposed(.data, infected)),
@@ -162,6 +168,8 @@ play_diffusion <- function(.data,
                        I_new = length(seeds),
                        I = length(infected),
                        R = length(recovered))
+  if(is.null(contact)) net <- as_tidygraph(.data) else 
+    net <- as_tidygraph(contact)
   repeat{ # At each time step:
     # some who have already recovered may lose their immunity:
     waned <- recovered[stats::rbinom(length(recovered), 1, waning)==1]
@@ -175,10 +183,10 @@ play_diffusion <- function(.data,
     # at main infection stage, get currently exposed to infection:
     # contacts <- unlist(sapply(igraph::neighborhood(.data, nodes = infected),
     #                          function(x) setdiff(x, infected)))
-    exposed <- node_is_exposed(.data, infected)
+    exposed <- node_is_exposed(net, infected)
     # count exposures for each node:
     # tabcontact <- table(contacts)
-    exposure <- migraph::node_exposure(.data, infected)
+    exposure <- migraph::node_exposure(net, infected)
     # identify those nodes who are exposed at or above their threshold
     # newinf <- as.numeric(names(which(tabcontact >= thresholds[as.numeric(names(tabcontact))])))
     open_to_it <- which(exposure >= thresholds)
@@ -196,30 +204,30 @@ play_diffusion <- function(.data,
     newinf <- setdiff(newinf, infectious)
     infected <- c(infected, infectious)
     # tick time
-    t <- t+1
+    time <- time+1
     
     # Update events table ####
     # record new infections
     if(!is.null(infectious) & length(infectious)>0)
       events <- rbind(events, 
-                    data.frame(t = t, nodes = infectious, event = "I", 
+                    data.frame(t = time, nodes = infectious, event = "I", 
                                exposure = exposure[infectious]))
     # record exposures
     if(!is.null(newinf) & length(newinf)>0)
       events <- rbind(events,
-                      data.frame(t = t, nodes = newinf, event = "E", 
+                      data.frame(t = time, nodes = newinf, event = "E", 
                                  exposure = exposure[newinf]))
     # record recoveries
     if(!is.null(recovers) & length(recovers)>0)
       events <- rbind(events,
-                      data.frame(t = t, nodes = recovers, event = "R", exposure = NA))
+                      data.frame(t = time, nodes = recovers, event = "R", exposure = NA))
     # record wanings
     if(!is.null(waned) & length(waned)>0)
       events <- rbind(events,
-                      data.frame(t = t, nodes = waned, event = "S", exposure = NA))
+                      data.frame(t = time, nodes = waned, event = "S", exposure = NA))
     # Update report table ####
     report <- rbind(report,
-                    data.frame(t = t,
+                    data.frame(t = time,
                                n = n,
                          S = n - (length(latent) + length(infected) + length(recovered)),
                          s = sum(exposed),
@@ -228,7 +236,7 @@ play_diffusion <- function(.data,
                          I = length(infected),
                          R = length(recovered)))
     if(is.infinite(steps) & length(infected)==n) break
-    if(t==steps) break
+    if(time==steps) break
   }
   make_diff_model(events, report, .data)
 }
@@ -273,6 +281,8 @@ play_diffusions <- function(.data,
     }, .progress = verbose, .options = furrr::furrr_options(seed = T))
   make_diffs_model(out, .data)
 }
+
+# contagion_function = attrib ~ 1 + prevalence + threshold + contact + equivalence
 
 # Learning ####
 
