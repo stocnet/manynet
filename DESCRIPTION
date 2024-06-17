@@ -38,6 +38,7 @@ Suggests:
     methods,
     migraph,
     multiplex,
+    netdiffuseR,
     patchwork,
     png,
     readxl,

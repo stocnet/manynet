@@ -424,7 +424,6 @@ as_igraph.diff_model <- function(.data,
   as_igraph(attr(.data, "network"))
 }
 
-#' @importFrom netdiffuseR diffnet_to_igraph
 #' @export
 as_igraph.diffnet <- function(.data,
                                  twomode = FALSE) {
@@ -772,7 +771,6 @@ as_network.network.goldfish <- function(.data,
   as_network(as_igraph(.data, twomode = twomode))
 }
 
-#' @importFrom netdiffuseR diffnet_to_network
 #' @export
 as_network.diffnet <- function(.data,
                               twomode = FALSE) {
@@ -961,6 +959,7 @@ as_diff_model <- function(.data,
 as_diff_model.diffnet <- function(.data,
                                   twomode = FALSE) {
   diffnet <- .data
+  event <- NULL
   events <- data.frame(t = .data$toa, 
                        nodes = attr(.data$toa, "names"), 
                        event = "I")
@@ -1014,6 +1013,7 @@ as_diffnet <- function(.data,
 as_diffnet.diff_model <- function(.data,
                                twomode = FALSE) {
   thisRequires("netdiffuseR")
+  event <- nodes <- NULL
   out <- summary(.data) |> dplyr::filter(event == "I") |> 
     dplyr::distinct(nodes, .keep_all = TRUE) |> 
     dplyr::select(nodes,t)
