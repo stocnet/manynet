@@ -357,8 +357,15 @@ node_exposure <- function(.data, mark, time = 0){
                      matrix(!mk, nrow(out), ncol(out), byrow = TRUE))
   } else {
     if(is.logical(mark)) mark <- which(mark)
-    contacts <- unlist(lapply(igraph::neighborhood(.data, nodes = mark),
+    if(is_twomode(.data)){
+      if(mark[1]>network_dims(.data)[1]){ 
+        dat <- to_mode2(.data)
+        mark <- mark - network_dims(.data)[1]
+      } else dat <- to_mode1(.data)
+    } else dat <- .data
+    contacts <- unlist(lapply(igraph::neighborhood(dat, nodes = mark),
                               function(x) setdiff(x, mark)))
+    if(is_twomode(.data)) contacts <- contacts + network_dims(.data)[1]
     # count exposures for each node:
     tabcontact <- table(contacts)
     out <- rep(0, network_nodes(.data))
