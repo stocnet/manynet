@@ -1,16 +1,18 @@
 test_that("redundancy is reported correctly", {
   expect_s3_class(node_redundancy(ison_brandes), "node_measure")
   expect_s3_class(node_redundancy(ison_southern_women), "node_measure")
-  expect_equal(length(node_redundancy(ison_brandes)), network_nodes(ison_brandes))
-  expect_equal(length(node_redundancy(ison_southern_women)),
-               network_nodes(ison_southern_women))
+  expect_equal(as.numeric(length(node_redundancy(ison_brandes))),
+               as.numeric(network_nodes(ison_brandes)))
+  expect_equal(as.numeric(length(node_redundancy(ison_southern_women))),
+               as.numeric(network_nodes(ison_southern_women)))
   expect_named(node_redundancy(ison_southern_women))
 })
 
 test_that("effective size is calculated and reported correctly", {
   expect_s3_class(node_effsize(ison_brandes), "node_measure")
   expect_s3_class(node_effsize(ison_southern_women), "node_measure")
-  expect_equal(length(node_effsize(ison_brandes)), network_nodes(ison_brandes))
+  expect_equal(as.numeric(length(node_effsize(ison_brandes))),
+               as.numeric(network_nodes(ison_brandes)))
   expect_equal(length(node_effsize(ison_southern_women)),
                c(network_nodes(ison_southern_women)))
   expect_named(node_effsize(ison_southern_women))
