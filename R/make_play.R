@@ -148,7 +148,7 @@ play_diffusion <- function(.data,
   if(length(thresholds)==1) thresholds <- rep(thresholds, n)
   if(all(thresholds <= 1) & !all(thresholds == 1)) 
     thresholds <- thresholds * 
-      migraph::node_degree(.data, normalized = FALSE)
+      node_deg(.data)
   if(is.logical(seeds)) seeds <- which(seeds)
   if(!is.null(immune)){
     if(is.logical(immune)) immune <- which(immune)
@@ -186,7 +186,7 @@ play_diffusion <- function(.data,
     exposed <- node_is_exposed(net, infected)
     # count exposures for each node:
     # tabcontact <- table(contacts)
-    exposure <- migraph::node_exposure(net, infected)
+    exposure <- node_exposure(net, infected)
     # identify those nodes who are exposed at or above their threshold
     # newinf <- as.numeric(names(which(tabcontact >= thresholds[as.numeric(names(tabcontact))])))
     open_to_it <- which(exposure >= thresholds)
@@ -388,7 +388,7 @@ play_segregation <- function(.data,
   while(steps > t){
     t <- t+1
     current <- node_attribute(temp, attribute)
-    heterophily_scores <- migraph::node_heterophily(temp, attribute)
+    heterophily_scores <- node_heterophily(temp, attribute)
     dissatisfied <- which(heterophily_scores > heterophily)
     unoccupied <- which(is.na(current))
     dissatisfied <- setdiff(dissatisfied, unoccupied)
@@ -403,7 +403,7 @@ play_segregation <- function(.data,
     options <- vapply(unoccupied, function(u){
       test <- manynet::add_node_attribute(temp, "test", 
                                           swtch(current, dissatisfied, u))
-      migraph::node_heterophily(test, "test")[u]
+      node_heterophily(test, "test")[u]
     }, FUN.VALUE = numeric(1))
     if(length(options)==0) next
     move_to <- switch(choice_function,
