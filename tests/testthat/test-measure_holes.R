@@ -12,7 +12,7 @@ test_that("effective size is calculated and reported correctly", {
   expect_s3_class(node_effsize(ison_southern_women), "node_measure")
   expect_equal(length(node_effsize(ison_brandes)), network_nodes(ison_brandes))
   expect_equal(length(node_effsize(ison_southern_women)),
-               network_nodes(ison_southern_women))
+               c(network_nodes(ison_southern_women)))
   expect_named(node_effsize(ison_southern_women))
   expect_equal(unname(node_effsize(ison_southern_women)[1:3]), c(2.5,1.38,2.46), tolerance = 0.01)
 })
@@ -20,9 +20,9 @@ test_that("effective size is calculated and reported correctly", {
 test_that("efficiency is reported correctly", {
   expect_s3_class(node_efficiency(ison_brandes), "node_measure")
   expect_s3_class(node_efficiency(ison_southern_women), "node_measure")
-  expect_equal(length(node_efficiency(ison_brandes)), network_nodes(ison_brandes))
+  expect_equal(length(node_efficiency(ison_brandes)), c(network_nodes(ison_brandes)))
   expect_equal(length(node_efficiency(ison_southern_women)),
-               network_nodes(ison_southern_women))
+               c(network_nodes(ison_southern_women)))
 })
 
 test_that("constraint scores are reported correctly for two-mode notworks",{
@@ -39,8 +39,8 @@ test_that("constraint scores are reported correctly for one-mode notworks",{
 test_that("hierarchy is reported correctly", {
   expect_s3_class(node_hierarchy(ison_brandes), "node_measure")
   expect_s3_class(node_hierarchy(ison_southern_women), "node_measure")
-  expect_equal(length(node_hierarchy(ison_brandes)), network_nodes(ison_brandes))
+  expect_equal(length(node_hierarchy(ison_brandes)), c(network_nodes(ison_brandes)))
   expect_equal(length(node_hierarchy(ison_southern_women)),
-               network_nodes(ison_southern_women))
+               c(network_nodes(ison_southern_women)))
   expect_named(node_hierarchy(ison_southern_women))
 })
