@@ -17,6 +17,18 @@ node_infection_length(diff_model)
 node_exposure(.data, mark, time = 0)
 }
 \arguments{
+\item{diff_model}{A valid network diffusion model,
+as created by \code{as_diffusion()} or \code{play_diffusion()}.}
+
+\item{.data}{An object of a manynet-consistent class:
+\itemize{
+\item matrix (adjacency or incidence) from \code{{base}} R
+\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
+\item igraph, from the \code{{igraph}} package
+\item network, from the \code{{network}} package
+\item tbl_graph, from the \code{{tidygraph}} package
+}}
+
 \item{mark}{A valid 'node_mark' object or
 logical vector (TRUE/FALSE) of length equal to
 the number of nodes in the network.}

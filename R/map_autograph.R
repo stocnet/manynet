@@ -762,7 +762,7 @@ graphs <- function(netlist, waves,
 #' @param keep_isolates Logical, whether to keep isolate nodes in the graph.
 #'   TRUE by default.
 #'   If FALSE, removes nodes from each frame they are isolated in.
-#' @inheritParams autographr
+#' @inheritParams graphr
 #' @importFrom igraph gsize as_data_frame get.edgelist
 #' @importFrom ggplot2 ggplot geom_segment geom_point geom_text
 #' scale_alpha_manual theme_void

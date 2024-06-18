@@ -24,9 +24,67 @@ grapht(
 \item{tlist}{The same migraph-compatible network listed according to
 a time attribute, waves, or slices.}
 
+\item{layout}{An igraph, ggraph, or manynet layout algorithm.
+If not declared, defaults to "triad" for networks with 3 nodes,
+"quad" for networks with 4 nodes,
+"stress" for all other one mode networks,
+or "hierarchy" for two mode networks.
+For "hierarchy" layout, one can further split graph by
+declaring the "center" argument as the "events", "actors",
+or by declaring a node name.
+For "concentric" layout algorithm please declare the "membership" as an
+extra argument.
+The "membership" argument expects either a quoted node attribute present
+in data or vector with the same length as nodes to draw concentric circles.
+For "multilevel" layout algorithm please declare the "level"
+as extra argument.
+The "level" argument expects either a quoted node attribute present
+in data or vector with the same length as nodes to hierarchically
+order categories.
+If "level" is missing, function will look for 'lvl' node attribute in data.
+The "lineage" layout ranks nodes in Y axis according to values.
+For "lineage" layout algorithm please declare the "rank"
+as extra argument.
+The "rank" argument expects either a quoted node attribute present
+in data or vector with the same length as nodes.}
+
+\item{labels}{Logical, whether to print node names
+as labels if present.}
+
+\item{node_color}{Node variable to be used for coloring the nodes.
+It is easiest if this is added as a node attribute to
+the graph before plotting.
+Nodes can also be colored by declaring a color instead.}
+
+\item{node_shape}{Node variable to be used for shaping the nodes.
+It is easiest if this is added as a node attribute to
+the graph before plotting.
+Nodes can also be shaped by declaring a shape instead.}
+
+\item{node_size}{Node variable to be used for sizing the nodes.
+This can be any continuous variable on the nodes of the network.
+Since this function expects this to be an existing variable,
+it is recommended to calculate all node-related statistics prior
+to using this function.
+Nodes can also be sized by declaring a numeric size or vector instead.}
+
+\item{edge_color}{Tie variable to be used for coloring the nodes.
+It is easiest if this is added as an edge or tie attribute
+to the graph before plotting.
+Edges can also be colored by declaring a color instead.}
+
+\item{edge_size}{Tie variable to be used for sizing the edges.
+This can be any continuous variable on the nodes of the network.
+Since this function expects this to be an existing variable,
+it is recommended to calculate all edge-related statistics prior
+to using this function.
+Edges can also be sized by declaring a numeric size or vector instead.}
+
 \item{keep_isolates}{Logical, whether to keep isolate nodes in the graph.
 TRUE by default.
 If FALSE, removes nodes from each frame they are isolated in.}
+
+\item{...}{Extra arguments to pass on to the layout algorithm, if necessary.}
 }
 \value{
 Shows a .gif image. Assigning the result of the function

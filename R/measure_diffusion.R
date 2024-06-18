@@ -217,8 +217,8 @@ network_hazard <- function(diff_model){
 #'   - `node_is_exposed()`: Marks the nodes that are susceptible,
 #'   i.e. are in the immediate neighbourhood of given mark vector
 #'   
-#' @inheritParams cohesion
-#' @inheritParams net_diffusion
+#' @inheritParams is
+#' @inheritParams measure_net_diffusion
 #' @family measures
 #' @family diffusion
 #' @name measure_node_diffusion
