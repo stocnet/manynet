@@ -7,6 +7,7 @@
 \alias{generate_scalefree}
 \alias{generate_permutation}
 \alias{generate_utilities}
+\alias{generate_configuration}
 \title{Making networks with a stochastic element}
 \usage{
 generate_random(n, p = 0.5, directed = FALSE, with_attr = TRUE)
@@ -18,6 +19,8 @@ generate_scalefree(n, p = 1, directed = FALSE)
 generate_permutation(.data, with_attr = TRUE)
 
 generate_utilities(n, steps = 1, volatility = 0, threshold = 0)
+
+generate_configuration(.data)
 }
 \arguments{
 \item{n}{Given:
