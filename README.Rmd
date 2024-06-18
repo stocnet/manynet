@@ -65,12 +65,12 @@ For Measures, Memberships, or Models, see [`{migraph}`](https://stocnet.github.i
   - [Splitting and Joining](#splitting-and-joining)
   - [Extracting](#extracting)
 - [Mapping](#mapping)
-  - [Graphing](#autographr)
+  - [Graphing](#graphing)
   - [More options](#more-options)
   - [More layouts](#more-options)
   - [More themes and scales](#more-themes-and-scales)
-  - [autographs](#autographs)
-  - [autographd](#autographd)
+  - [graphs](#graphs)
+  - [grapht](#grapht)
 - [Installation](#installation)
   - [Stable](#stable)
   - [Development](#development)
@@ -183,7 +183,7 @@ e.g. two-mode networks.
 ![](https://www.jameshollway.com/post/manynet/README-generate_tm-1.png)
 
 ```{r generate_tm, echo = FALSE, dpi = 300, message=FALSE, fig.height=3, warning=FALSE, eval=FALSE}
-graphr(generate_smallworld(15, directed = TRUE), layout = "stress") + ggtitle("Small-World", subtitle = "generate_smallworld(15, directed = TRUE)") + autographr(generate_smallworld(c(10,5)), layout = "stress") + ggtitle("Small-World", subtitle = "generate_smallworld(c(10,5))")
+graphr(generate_smallworld(15, directed = TRUE), layout = "stress") + ggtitle("Small-World", subtitle = "generate_smallworld(15, directed = TRUE)") + graphr(generate_smallworld(c(10,5)), layout = "stress") + ggtitle("Small-World", subtitle = "generate_smallworld(c(10,5))")
 ```
 
 #### Inventing data on networks
@@ -247,8 +247,8 @@ e.g. from directed to undirected via `to_undirected()`.
 ![](https://www.jameshollway.com/post/manynet/README-directed_egs-1.png)
 
 ```{r directed_egs, echo = FALSE, dpi = 300, fig.height=3, warning=FALSE, message=FALSE, eval=FALSE}
-autographr(to_directed(ison_brandes)) + ggtitle("Directed", subtitle = "to_directed(ison_brandes)") + 
-    autographr(to_undirected(ison_brandes)) + ggtitle("Undirected", subtitle = "to_undirected(ison_brandes)")
+graphr(to_directed(ison_brandes)) + ggtitle("Directed", subtitle = "to_directed(ison_brandes)") + 
+    graphr(to_undirected(ison_brandes)) + ggtitle("Undirected", subtitle = "to_undirected(ison_brandes)")
 ```
 
 ### Transforming
@@ -259,9 +259,9 @@ e.g. from a two-mode network to a one-mode projection via `to_mode1()`.
 ![](https://www.jameshollway.com/post/manynet/README-projection_egs-1.png)
 
 ```{r projection_egs, echo = FALSE, dpi = 300, fig.height=3, warning=FALSE, message=FALSE, eval=FALSE}
-autographr(ison_southern_women, layout = "stress") + ggtitle("Original", subtitle = "ison_southern_women") + 
-    autographr(to_mode1(ison_southern_women)) + ggtitle("Row Projection", subtitle = "to_mode1(ison_southern_women)") + 
-    autographr(to_mode2(ison_southern_women)) + ggtitle("Column Projection", subtitle = "to_mode2(ison_southern_women)") & 
+graphr(ison_southern_women, layout = "stress") + ggtitle("Original", subtitle = "ison_southern_women") + 
+    graphr(to_mode1(ison_southern_women)) + ggtitle("Row Projection", subtitle = "to_mode1(ison_southern_women)") + 
+    graphr(to_mode2(ison_southern_women)) + ggtitle("Column Projection", subtitle = "to_mode2(ison_southern_women)") & 
   ggplot2::theme(plot.subtitle = element_text(size = 10))
 ```
 
@@ -324,7 +324,7 @@ plot.new()              ## suggested by @Josh
 vps <- baseViewports()
 pushViewport(vps$figure) ##   I am in the space of the autocorrelation plot
 vp1 <-plotViewport(c(1.8,1,0,1)) ## create new vp with margins, you play with this values 
-p <- autographr(ison_southern_women) + ggtitle("{manynet} layout")
+p <- graphr(ison_southern_women) + ggtitle("{manynet} layout")
 print(p,vp = vp1) 
 ```
 
@@ -347,10 +347,10 @@ or indicating from which attribute it should inherit this information.
 ```{r more-options, echo = FALSE, message=FALSE, dpi = 300, fig.height=3, eval=FALSE}
 graphr(ison_lawfirm, node_color = "darkblue", node_size = 6) + 
   ggtitle("Manual options", 
-          subtitle = "autographr(ison_lawfirm, node_color = 'darkblue', node_size = 6)") +
+          subtitle = "graphr(ison_lawfirm, node_color = 'darkblue', node_size = 6)") +
 graphr(mutate(ison_lawfirm, Seniority = Seniority/3), node_color = "Office", node_size = "Seniority") + 
   ggtitle("Automatic options", 
-          subtitle = "autographr(ison_lawfirm, node_color = 'Office', node_size = 'Seniority')") & 
+          subtitle = "graphr(ison_lawfirm, node_color = 'Office', node_size = 'Seniority')") & 
   theme(plot.subtitle = element_text(size = 8))
 ```
 

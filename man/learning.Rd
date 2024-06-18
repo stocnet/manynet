@@ -75,8 +75,8 @@ These functions allow learning games to be played upon networks.
   latticeEg <- add_node_attribute(latticeEg, "startValues", startValues)
   latticeEg
   play_segregation(latticeEg, "startValues", 0.5)
-  # autographr(latticeEg, node_color = "startValues", node_size = 5) + 
-  # autographr(play_segregation(latticeEg, "startValues", 0.2), 
+  # graphr(latticeEg, node_color = "startValues", node_size = 5) + 
+  # graphr(play_segregation(latticeEg, "startValues", 0.2), 
   #            node_color = "startValues", node_size = 5)
 }
 \seealso{

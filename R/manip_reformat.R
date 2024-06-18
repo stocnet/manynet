@@ -491,7 +491,7 @@ to_simplex.matrix <- function(.data) {
 #' @importFrom igraph complementer
 #' @examples
 #' to_anti(ison_southern_women)
-#' #autographr(to_anti(ison_southern_women))
+#' #graphr(to_anti(ison_southern_women))
 #' @export
 to_anti <- function(.data) UseMethod("to_anti")
 

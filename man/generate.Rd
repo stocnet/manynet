@@ -103,14 +103,14 @@ As an alternative, an existing network can be provided to \code{n}
 and the number of modes, nodes, and directedness will be inferred.
 }
 \examples{
-autographr(generate_random(12, 0.4))
-# autographr(generate_random(c(6, 6), 0.4))
-autographr(generate_smallworld(12, 0.025))
-autographr(generate_smallworld(12, 0.25))
-autographr(generate_scalefree(12, 0.25))
-autographr(generate_scalefree(12, 1.25))
-autographr(ison_adolescents)
-autographr(generate_permutation(ison_adolescents))
+graphr(generate_random(12, 0.4))
+# graphr(generate_random(c(6, 6), 0.4))
+graphr(generate_smallworld(12, 0.025))
+graphr(generate_smallworld(12, 0.25))
+graphr(generate_scalefree(12, 0.25))
+graphr(generate_scalefree(12, 1.25))
+graphr(ison_adolescents)
+graphr(generate_permutation(ison_adolescents))
 }
 \references{
 Erdos, Paul, and Alfred Renyi. (1959).

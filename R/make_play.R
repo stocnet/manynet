@@ -129,7 +129,7 @@ NULL
 #' @examples 
 #'   smeg <- generate_smallworld(15, 0.025)
 #'   plot(play_diffusion(smeg, recovery = 0.4))
-#'   #autographr(play_diffusion(ison_karateka))
+#'   #graphr(play_diffusion(ison_karateka))
 #' @export
 play_diffusion <- function(.data, 
                            seeds = 1,
@@ -363,8 +363,8 @@ play_learning <- function(.data,
 #'   latticeEg <- add_node_attribute(latticeEg, "startValues", startValues)
 #'   latticeEg
 #'   play_segregation(latticeEg, "startValues", 0.5)
-#'   # autographr(latticeEg, node_color = "startValues", node_size = 5) + 
-#'   # autographr(play_segregation(latticeEg, "startValues", 0.2), 
+#'   # graphr(latticeEg, node_color = "startValues", node_size = 5) + 
+#'   # graphr(play_segregation(latticeEg, "startValues", 0.2), 
 #'   #            node_color = "startValues", node_size = 5)
 #' @export
 play_segregation <- function(.data, 

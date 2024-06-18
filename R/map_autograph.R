@@ -710,27 +710,27 @@ graphs <- function(netlist, waves,
   if (is.null(names(netlist))) names(netlist) <- rep("", length(netlist))
   if (length(unique(lapply(netlist, length))) == 1) {
     if (based_on == "first") {
-      lay <- autographr(netlist[[1]], ...)
+      lay <- graphr(netlist[[1]], ...)
       x <- lay$data$x
       y <- lay$data$y
     } else if (based_on == "last") {
-      lay <- autographr(netlist[[length(netlist)]], ...)
+      lay <- graphr(netlist[[length(netlist)]], ...)
       x <- lay$data$x
       y <- lay$data$y
     } else if (based_on == "both") {
-      lay <- autographr(netlist[[1]], ...)
+      lay <- graphr(netlist[[1]], ...)
       x1 <- lay$data$x
       y1 <- lay$data$y
-      lay1 <- autographr(netlist[[length(netlist)]], ...)
+      lay1 <- graphr(netlist[[length(netlist)]], ...)
       x <- (lay1$data$x + x1)/2
       y <- (lay1$data$y + y1)/2
     }
     gs <- lapply(1:length(netlist), function(i)
-      autographr(netlist[[i]], x = x, y = y, ...) + ggtitle(names(netlist)[i]))
+      graphr(netlist[[i]], x = x, y = y, ...) + ggtitle(names(netlist)[i]))
   } else {
     message("Layouts were not standardised since not all nodes appear across waves.")
     gs <- lapply(1:length(netlist), function(i)
-      autographr(netlist[[i]], ...) + ggtitle(names(netlist)[i]))
+      graphr(netlist[[i]], ...) + ggtitle(names(netlist)[i]))
   }
   # if (all(c("Infected", "Exposed", "Recovered") %in% names(gs[[1]]$data))) {
   #   gs <- .collapse_guides(gs)

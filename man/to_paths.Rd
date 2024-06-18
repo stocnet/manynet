@@ -85,10 +85,10 @@ where \eqn{n} is the number of nodes in the network.
 
 \examples{
 to_matching(ison_southern_women)
-#autographr(to_matching(ison_southern_women))
-autographr(to_mentoring(ison_adolescents))
+#graphr(to_matching(ison_southern_women))
+graphr(to_mentoring(ison_adolescents))
   to_eulerian(delete_nodes(ison_koenigsberg, "Lomse"))
-  #autographr(to_eulerian(delete_nodes(ison_koenigsberg, "Lomse")))
+  #graphr(to_eulerian(delete_nodes(ison_koenigsberg, "Lomse")))
 }
 \references{
 Goldberg, A V; Tarjan, R E (1986).

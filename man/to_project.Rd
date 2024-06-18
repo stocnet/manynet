@@ -78,10 +78,10 @@ Note that the output from \code{to_galois()} is very busy at the moment.
 \examples{
 to_mode1(ison_southern_women)
 to_mode2(ison_southern_women)
-#autographr(to_mode1(ison_southern_women))
-#autographr(to_mode2(ison_southern_women))
+#graphr(to_mode1(ison_southern_women))
+#graphr(to_mode2(ison_southern_women))
 to_ties(ison_adolescents)
-#autographr(to_ties(ison_adolescents))
+#graphr(to_ties(ison_adolescents))
 }
 \seealso{
 Other modifications: 

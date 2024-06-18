@@ -35,7 +35,7 @@ test_that("tie_attribute works", {
 })
 
 test_that("tie_weights works", {
-  expect_equal(tie_weights(net2), tie_attribute(net2, "weight"))
+  expect_equal(unname(tie_weights(net2)), tie_attribute(net2, "weight"))
 })
 
 test_that("network_nodes works", {

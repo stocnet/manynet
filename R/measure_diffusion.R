@@ -223,7 +223,7 @@ network_hazard <- function(diff_model){
 #' @family diffusion
 #' @name measure_node_diffusion
 #' @examples
-#'   smeg <- manynet::generate_smallworld(15, 0.025)
+#'   smeg <- generate_smallworld(15, 0.025)
 #'   smeg_diff <- play_diffusion(smeg, recovery = 0.2)
 #'   plot(smeg_diff)
 #' @references
@@ -346,13 +346,13 @@ node_exposure <- function(.data, mark, time = 0){
     mark <- manynet::node_is_infected(.data, time = time)
     .data <- attr(.data, "network")
   }
-  .data <- manynet::as_tidygraph(.data)
-  if(manynet::is_weighted(.data)){
+  .data <- as_tidygraph(.data)
+  if(is_weighted(.data)){
     if(is.numeric(mark)){
-      mk <- rep(FALSE, manynet::network_nodes(.data))
+      mk <- rep(FALSE, network_nodes(.data))
       mk[mark] <- TRUE
     }
-    out <- manynet::as_matrix(.data)
+    out <- as_matrix(.data)
     out <- colSums(out * matrix(mk, nrow(out), ncol(out)) * 
                      matrix(!mk, nrow(out), ncol(out), byrow = TRUE))
   } else {
@@ -361,7 +361,7 @@ node_exposure <- function(.data, mark, time = 0){
                               function(x) setdiff(x, mark)))
     # count exposures for each node:
     tabcontact <- table(contacts)
-    out <- rep(0, manynet::network_nodes(.data))
+    out <- rep(0, network_nodes(.data))
     out[as.numeric(names(tabcontact))] <- unname(tabcontact)
   }
   make_node_measure(out, .data)
