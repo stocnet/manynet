@@ -90,5 +90,5 @@ test_that("conversion of diff_model object works correctly", {
   expect_equal(network_nodes(tidy_diff), network_nodes(ison_brandes))
   expect_equal(network_ties(tidy_diff), network_ties(ison_brandes))
   # expect_true(is_twomode(tidy_diff))
-  expect_equal(network_nodes(tidy_diff), max(diff$I))
+  expect_equal(c(network_nodes(tidy_diff)), max(diff$I))
 })

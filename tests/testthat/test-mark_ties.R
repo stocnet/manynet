@@ -16,25 +16,25 @@ test_that("tie_is_loop works", {
 })
 
 test_that("tie_is_bridge works", {
-  expect_equal(length(tie_is_bridge(graph1)), network_ties(graph1))
+  expect_equal(length(tie_is_bridge(graph1)), c(network_ties(graph1)))
 })
 
 test_that("tie_is_max works", {
   skip_on_ci()
   skip_on_cran()
-  expect_equal(length(tie_is_max(migraph::tie_betweenness(graph1))),
-               network_ties(graph1))
-  expect_equal(sum(tie_is_max(migraph::tie_betweenness(graph1)) == TRUE), 1)
-  expect_s3_class(tie_is_max(migraph::tie_betweenness(graph1)), "logical")
+  expect_equal(length(tie_is_max(tie_betweenness(graph1))),
+               c(network_ties(graph1)))
+  expect_equal(sum(tie_is_max(tie_betweenness(graph1)) == TRUE), 1)
+  expect_s3_class(tie_is_max(tie_betweenness(graph1)), "logical")
 })
 
 test_that("tie_is_min works", {
   skip_on_ci()
   skip_on_cran()
-  expect_equal(length(tie_is_min(migraph::tie_betweenness(ison_brandes))),
-               network_ties(ison_brandes))
-  expect_equal(sum(tie_is_min(migraph::tie_betweenness(ison_brandes)) == TRUE), 1)
-  expect_s3_class(tie_is_min(migraph::tie_betweenness(ison_brandes)), "logical")
+  expect_equal(length(tie_is_min(tie_betweenness(ison_brandes))),
+               c(network_ties(ison_brandes)))
+  expect_equal(sum(tie_is_min(tie_betweenness(ison_brandes)) == TRUE), 1)
+  expect_s3_class(tie_is_min(tie_betweenness(ison_brandes)), "logical")
 })
 
 test_that("tie_is_feedback() mark functions work", {
