@@ -477,7 +477,7 @@ node_closeness <- function(.data, normalized = TRUE,
     set_size <- ifelse(igraph::V(graph)$type, sum(igraph::V(graph)$type), sum(!igraph::V(graph)$type))
     out <- closeness/(1/(other_set_size+2*set_size-2))
     } else {
-      cutoff <- cutoff %||% -1
+      cutoff <- if (is.null(cutoff)) -1 else cutoff
       out <- igraph::closeness(graph = graph, vids = igraph::V(graph), mode = direction, 
                                cutoff = cutoff, weights = weights, normalized = normalized)
     }
