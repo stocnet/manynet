@@ -180,7 +180,7 @@ layout_tbl_graph_concentric <- function(.data, membership,
     .data <- set_vertex_attr(.data, "name", value = ll)
   }
   if (missing(membership)) { 
-    if (is_twomode(.data)) membership <- node_mode(.data) else 
+    if (is_twomode(.data)) membership <- node_is_mode(.data) else 
       stop("Please pass the function a `membership` node attribute or a vector.")
   } else {
     if (length(membership) > 1 & length(membership) != length(.data)) {

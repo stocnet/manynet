@@ -362,8 +362,8 @@ to_blocks <- function(.data, membership, FUN = mean) UseMethod("to_blocks")
 to_blocks.matrix <- function(.data, membership, FUN = mean){
   if(is_twomode(.data)){
     mat <- to_onemode(.data)
-    m1_membs <- membership[!node_mode(.data)]
-    m2_membs <- membership[node_mode(.data)]
+    m1_membs <- membership[!node_is_mode(.data)]
+    m2_membs <- membership[node_is_mode(.data)]
     x <- length(unique(m1_membs))
     y <- length(unique(m2_membs))
     out <- matrix(nrow = unique(m1_membs)[x],

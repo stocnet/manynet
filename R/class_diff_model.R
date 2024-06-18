@@ -1,14 +1,14 @@
 make_diff_model <- function(events, report, .data) {
   class(report) <- c("diff_model", class(report))
   attr(report, "events") <- events
-  attr(report, "mode") <- manynet::node_mode(.data)
-  attr(report, "network") <- manynet::as_tidygraph(.data)
+  attr(report, "mode") <- node_is_mode(.data)
+  attr(report, "network") <- as_tidygraph(.data)
   report
 }
 
 make_diffs_model <- function(report, .data) {
   class(report) <- c("diffs_model", class(report))
-  attr(report, "mode") <- manynet::node_mode(.data)
+  attr(report, "mode") <- node_is_mode(.data)
   report
 }
 
@@ -117,10 +117,10 @@ plot.diffs_model <- function(x, ...){
 # learn_model ####
 make_learn_model <- function(out, .data) {
   out <- as.data.frame(out)
-  if(manynet::is_labelled(.data))
-    names(out) <- manynet::node_names(.data)
+  if(is_labelled(.data))
+    names(out) <- node_names(.data)
   class(out) <- c("learn_model", class(out))
-  attr(out, "mode") <- manynet::node_mode(.data)
+  attr(out, "mode") <- node_is_mode(.data)
   out
 }
 

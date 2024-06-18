@@ -1,7 +1,7 @@
 make_node_measure <- function(out, .data) {
-  if(manynet::is_labelled(.data)) names(out) <- manynet::node_names(.data)
+  if(is_labelled(.data)) names(out) <- node_names(.data)
   class(out) <- c("node_measure", class(out))
-  attr(out, "mode") <- manynet::node_mode(.data)
+  attr(out, "mode") <- node_is_mode(.data)
   out
 }
 
@@ -12,7 +12,7 @@ make_tie_measure <- function(out, .data) {
 
 make_network_measure <- function(out, .data) {
   class(out) <- c("network_measure", class(out))
-  attr(out, "mode") <- manynet::network_dims(.data)
+  attr(out, "mode") <- network_dims(.data)
   out
 }
 
@@ -22,7 +22,7 @@ make_network_measures <- function(out, .data) {
     dplyr::mutate(time = as.numeric(names(out))) %>% 
     dplyr::select(time, value)
   class(out) <- c("network_measures", class(out))
-  attr(out, "mode") <- manynet::network_dims(.data)
+  attr(out, "mode") <- network_dims(.data)
   out
 }
 

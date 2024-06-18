@@ -2,7 +2,7 @@ make_node_mark <- function(out, .data) {
   class(out) <- c("node_mark", class(out))
   if (is.null(names(out)) && is_labelled(.data))
     names(out) <- node_names(.data)
-  attr(out, "mode") <- node_mode(.data)
+  attr(out, "mode") <- node_is_mode(.data)
   out
 }
 
