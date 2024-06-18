@@ -210,24 +210,10 @@ generate_utilities <- function(n, steps = 1, volatility = 0, threshold = 0){
 generate_configuration <- function(.data){
   if(is_twomode(.data)){
     degs <- node_deg(.data)
-    out <- data.frame(from = NULL,to = NULL)
-    stuck <- 0
-    while(sum(degs) > 0){
-      new <- data.frame(from = sample(seq_len(network_dims(.data)[1]), 1, 
-                               prob = degs[!attr(degs, "mode")]/sum(degs[!attr(degs, "mode")])),
-                 to = sample((network_dims(.data)[1]+1):(network_dims(.data)[1]+network_dims(.data)[2]), 1, 
-                             prob = degs[attr(degs, "mode")]/sum(degs[attr(degs, "mode")])))
-      if(nrow(merge(new,out))==0){
-        out <- rbind(out, new)
-        degs[c(new[,1], new[,2])] <- degs[c(new[,1], new[,2])]-1
-      } else stuck <- stuck + 1
-      if(stuck == 3){ # if stuck 3x restart
-        degs <- node_deg(.data)
-        out <- data.frame(from = NULL,to = NULL)
-        stuck <- 0
-      } 
-    }
-    out <- to_unnamed(as_tidygraph(as_matrix(out, twomode = TRUE)))
+    outs <- ifelse(!c(attr(degs, "mode")),c(degs),rep(0,length(degs)))
+    ins <- ifelse(c(attr(degs, "mode")),c(degs),rep(0,length(degs)))
+    out <- igraph::sample_degseq(outs, ins, method = "simple.no.multiple")
+    out <- as_tidygraph(out) %>% mutate(type = c(attr(degs, "mode")))
   } else {
     if(is_complex(.data) || is_multiplex(.data) && is_directed(.data)) 
       out <- igraph::sample_degseq(node_deg(.data, direction = "out"), 
