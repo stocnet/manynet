@@ -94,9 +94,9 @@ saves the gif to a temporary folder and the object holds the path to this file.
 This function provides users with an easy way to graph
 dynamic network data for exploration and presentation.
 
-It builds upon this package's \code{autographr()} function,
+It builds upon this package's \code{graphr()} function,
 and inherits all the same features and arguments.
-See \code{autographr()} for more.
+See \code{graphr()} for more.
 However, it uses the \code{{gganimate}} package to animate the changes
 between successive iterations of a network.
 This is useful for networks in which the ties and/or the node or tie

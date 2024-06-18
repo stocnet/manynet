@@ -52,7 +52,7 @@
 #'                 key = gsub("\\:.*", "", key)) %>%
 #'     as_tidygraph() %>%
 #'     dplyr::filter(name != "NA") %>%
-#'     autographr(layout = layout)
+#'     graphr(layout = layout)
 #' }
 #' 
 #' #' @rdname plot_
@@ -89,7 +89,7 @@
 #'     as_tidygraph() %>%
 #'     mutate(type = ifelse(grepl("[0-9][0-9][0-9][0-9][A-Za-z]",
 #'                                         name), TRUE, FALSE)) %>%
-#'     autographr(layout = layout)
+#'     graphr(layout = layout)
 #' }
 #' 
 #' #' @rdname plot_
@@ -128,7 +128,7 @@
 #'                   key = gsub("\\:.*", "", key)) %>%
 #'     dplyr::distinct() %>%
 #'     as_tidygraph() %>%
-#'     autographr(layout = "nicely")
+#'     graphr(layout = "nicely")
 #' } 
 #' 
 #' #' @rdname plot_

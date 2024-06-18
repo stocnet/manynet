@@ -85,7 +85,7 @@ according to values for "lineage" layout.}
 }
 \description{
 These algorithms layout networks based on two or more partitions,
-and are recommended for use with \code{autographr()} or \code{{ggraph}}.
+and are recommended for use with \code{graphr()} or \code{{ggraph}}.
 Note that these layout algorithms use \code{{Rgraphviz}},
 a package that is only available on Bioconductor.
 It will first need to be downloaded using \code{BiocManager::install("Rgraphviz")}.
@@ -107,17 +107,17 @@ The "multilevel" layout places successive layers as multiple levels.
 The "lineage" layout ranks nodes in Y axis according to values.
 }
 \examples{
-#autographr(ison_southern_women, layout = "hierarchy", center = "events",
+#graphr(ison_southern_women, layout = "hierarchy", center = "events",
 #           node_color = "type", node_size = 3)
-#autographr(ison_southern_women, layout = "alluvial")
-#autographr(ison_southern_women, layout = "concentric", membership = "type",
+#graphr(ison_southern_women, layout = "alluvial")
+#graphr(ison_southern_women, layout = "concentric", membership = "type",
 #           node_color = "type", node_size = 3)
-#autographr(ison_lotr, layout = "multilevel",
+#graphr(ison_lotr, layout = "multilevel",
 #           node_color = "Race", level = "Race", node_size = 3)
 # ison_adolescents \%>\%
 #   mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2),
 #          cut = node_is_cutpoint(ison_adolescents)) \%>\%
-#   autographr(layout = "lineage", rank = "year", node_color = "cut",
+#   graphr(layout = "lineage", rank = "year", node_color = "cut",
 #              node_size = migraph::node_degree(ison_adolescents)*10)
 }
 \seealso{

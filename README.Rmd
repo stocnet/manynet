@@ -65,7 +65,7 @@ For Measures, Memberships, or Models, see [`{migraph}`](https://stocnet.github.i
   - [Splitting and Joining](#splitting-and-joining)
   - [Extracting](#extracting)
 - [Mapping](#mapping)
-  - [autographr](#autographr)
+  - [Graphing](#autographr)
   - [More options](#more-options)
   - [More layouts](#more-options)
   - [More themes and scales](#more-themes-and-scales)
@@ -106,7 +106,7 @@ imports <- igraph::graph_from_literal(ucinet:pajek+--+tidygraph,
                                       matrix:dynetml--+tidygraph,
                                       edgelist:nodelist+--+tibble)
 imports <- imports %>% mutate(type = ifelse(node_names(imports)%in% c("tidygraph","tibble"), TRUE, FALSE))
-autographr(imports, node_size = 4)
+graphr(imports, node_size = 4)
 ```
 
 If you cannot remember the file name/path, then just run `read_*()` with the parentheses empty,
@@ -130,11 +130,11 @@ Here are just a few examples, all available in `{manynet}`:
 
 
 ```{r ison_egs, echo = FALSE, dpi = 250, message=FALSE, fig.height=3, eval=FALSE}
-autographr(to_unnamed(ison_karateka)) + ggtitle("Karateka", subtitle = "Zachary 1977") + 
-    autographr(ison_algebra, labels = FALSE) + ggtitle("Algebra", subtitle = "McFarland 2001") +
-  autographr(to_unnamed(ison_southern_women)) + ggtitle("Southern Women", subtitle = "Davis et al 1941")
+graphr(to_unnamed(ison_karateka)) + ggtitle("Karateka", subtitle = "Zachary 1977") + 
+    graphr(ison_algebra, labels = FALSE) + ggtitle("Algebra", subtitle = "McFarland 2001") +
+  graphr(to_unnamed(ison_southern_women)) + ggtitle("Southern Women", subtitle = "Davis et al 1941")
 #/
-  # (autographr(ison_lawfirm) + ggtitle("Law Firm", subtitle = "Lazega 2001") + 
+  # (graphr(ison_lawfirm) + ggtitle("Law Firm", subtitle = "Lazega 2001") + 
 ```
 
 Here are some others: `r list_data("^ison_")`
@@ -149,8 +149,8 @@ e.g.:
 ![](https://www.jameshollway.com/post/manynet/README-create_egs-1.png)
 
 ```{r create_egs, echo = FALSE, dpi = 300, message=FALSE, fig.height=3, eval=FALSE}
-(autographr(create_lattice(15)) + ggtitle("Lattice", subtitle = "create_lattice(15)") + 
-    autographr(create_tree(15)) + ggtitle("Tree", subtitle = "create_tree(15)"))
+(graphr(create_lattice(15)) + ggtitle("Lattice", subtitle = "create_lattice(15)") + 
+    graphr(create_tree(15)) + ggtitle("Tree", subtitle = "create_tree(15)"))
 ```
 
 See also `r list_functions("^create_")`.
@@ -163,8 +163,8 @@ e.g.:
 ![](https://www.jameshollway.com/post/manynet/README-generate_egs-1.png)
 
 ```{r generate_egs, echo = FALSE, dpi = 300, message=FALSE, fig.height=3, eval=FALSE}
-(autographr(generate_smallworld(15)) + ggtitle("Small-World", subtitle = "generate_smallworld(15)") + 
-    autographr(generate_scalefree(15)) + ggtitle("Scale-Free", subtitle = "generate_scalefree(15)"))
+(graphr(generate_smallworld(15)) + ggtitle("Small-World", subtitle = "generate_smallworld(15)") + 
+    graphr(generate_scalefree(15)) + ggtitle("Scale-Free", subtitle = "generate_scalefree(15)"))
 ```
 
 See also `r list_functions("^generate_")`.
@@ -183,7 +183,7 @@ e.g. two-mode networks.
 ![](https://www.jameshollway.com/post/manynet/README-generate_tm-1.png)
 
 ```{r generate_tm, echo = FALSE, dpi = 300, message=FALSE, fig.height=3, warning=FALSE, eval=FALSE}
-autographr(generate_smallworld(15, directed = TRUE), layout = "stress") + ggtitle("Small-World", subtitle = "generate_smallworld(15, directed = TRUE)") + autographr(generate_smallworld(c(10,5)), layout = "stress") + ggtitle("Small-World", subtitle = "generate_smallworld(c(10,5))")
+graphr(generate_smallworld(15, directed = TRUE), layout = "stress") + ggtitle("Small-World", subtitle = "generate_smallworld(15, directed = TRUE)") + autographr(generate_smallworld(c(10,5)), layout = "stress") + ggtitle("Small-World", subtitle = "generate_smallworld(c(10,5))")
 ```
 
 #### Inventing data on networks
@@ -273,8 +273,8 @@ e.g. from a whole network to the various ego networks via `to_egos()`.
 ![](https://www.jameshollway.com/post/manynet/README-splitting_egs-1.png)
 
 ```{r splitting_egs, echo = FALSE, dpi = 250, fig.height=4, warning=FALSE, message=FALSE, eval=FALSE}
-autographr(ison_adolescents) + ggtitle("Original", subtitle = "ison_adolescents") + 
-    autographs(lapply(to_egos(ison_adolescents), to_unnamed)) + ggtitle("Ego Splitting", subtitle = "to_egos(ison_adolescents)")
+graphr(ison_adolescents) + ggtitle("Original", subtitle = "ison_adolescents") + 
+    graphs(lapply(to_egos(ison_adolescents), to_unnamed)) + ggtitle("Ego Splitting", subtitle = "to_egos(ison_adolescents)")
 ```
 
 Those functions that split a network into a list of networks are
@@ -302,9 +302,9 @@ the maximum or minimum, respectively, node or tie according to some measure (see
 `{manynet}` includes three one-line graphing functions with sensible defaults based on 
 the network's properties.
 
-### autographr
+### Graphing
 
-First, `autographr()` is used to graph networks in any of the `{manynet}` formats.
+First, `graphr()` is used to graph networks in any of the `{manynet}` formats.
 It includes sensible defaults so that researchers can view their network's structure
 or distribution quickly with a minimum of fuss.
 Compare the output from `{manynet}` with a similar default from `{igraph}`:
@@ -345,10 +345,10 @@ or indicating from which attribute it should inherit this information.
 ![](https://www.jameshollway.com/post/manynet/README-more-options-1.png)
 
 ```{r more-options, echo = FALSE, message=FALSE, dpi = 300, fig.height=3, eval=FALSE}
-autographr(ison_lawfirm, node_color = "darkblue", node_size = 6) + 
+graphr(ison_lawfirm, node_color = "darkblue", node_size = 6) + 
   ggtitle("Manual options", 
           subtitle = "autographr(ison_lawfirm, node_color = 'darkblue', node_size = 6)") +
-autographr(mutate(ison_lawfirm, Seniority = Seniority/3), node_color = "Office", node_size = "Seniority") + 
+graphr(mutate(ison_lawfirm, Seniority = Seniority/3), node_color = "Office", node_size = "Seniority") + 
   ggtitle("Automatic options", 
           subtitle = "autographr(ison_lawfirm, node_color = 'Office', node_size = 'Seniority')") & 
   theme(plot.subtitle = element_text(size = 8))
@@ -365,14 +365,14 @@ or conforming to configurational coordinates.
 ![](https://www.jameshollway.com/post/manynet/README-more-layouts-1.png)
 
 ```{r more-layouts, echo = FALSE, message=FALSE, dpi = 250, eval=FALSE}
-(autographr(ison_southern_women, layout = "concentric") + ggtitle("Concentric layout")) /
-  ((autographr(to_unnamed(create_explicit(A-+B-+C, A-+C))) + ggtitle("Triad layout")) |
-  (autographr(to_unnamed(create_explicit(A-+C, A-+D, B-+C, B-+D))) + ggtitle("Quad layout")))
+(graphr(ison_southern_women, layout = "concentric") + ggtitle("Concentric layout")) /
+  ((graphr(to_unnamed(create_explicit(A-+B-+C, A-+C))) + ggtitle("Triad layout")) |
+  (graphr(to_unnamed(create_explicit(A-+C, A-+D, B-+C, B-+D))) + ggtitle("Quad layout")))
 ```
 
 #### More themes and scales
 
-Lastly, `autographr()` is highly extensible in terms of the overall look of your plots.
+Lastly, `graphr()` is highly extensible in terms of the overall look of your plots.
 `{manynet}` uses the excellent `{ggraph}` package (and thus `{ggplot2}`)
 as a plotting engine.
 This enables alterations such as the application of themes to be applied upon the defaults.
@@ -383,7 +383,7 @@ used in your plots.
 ![](https://www.jameshollway.com/post/manynet/README-more-themes-1.png)
 
 ```{r more-themes, echo = FALSE, message=FALSE, dpi = 300, fig.height=3, eval=FALSE}
-p <- autographr(ison_lawfirm, node_color = "Practice") + 
+p <- graphr(ison_lawfirm, node_color = "Practice") + 
   ggtitle("Original")
 p + p + theme_iheid() + scale_color_iheid() + 
   ggtitle("Graduate Institute", subtitle = "_iheid") +
@@ -393,9 +393,9 @@ p + p + theme_iheid() + scale_color_iheid() +
 
 More themes are on their way, and we're happy to take suggestions.
 
-### autographs
+### graphs
 
-Second, `autographs()` is used to graph multiple networks together,
+Second, `graphs()` is used to graph multiple networks together,
 which can be useful for ego networks or network panels.
 `{patchwork}` is used to help arrange individual plots together.
 
@@ -405,12 +405,12 @@ which can be useful for ego networks or network panels.
 ison_adolescents %>%
   mutate_ties(wave = c(rep(1995, 5), rep(1998, 5))) %>%
   to_waves(attribute = "wave", panels = c(1995, 1998)) |>
-  autographs()
+  graphs()
 ```
 
-### autographd
+### grapht
 
-Third, `autographd()` is used to visualise dynamic networks.
+Third, `grapht()` is used to visualise dynamic networks.
 It uses `{gganimate}` and `{gifski}` to create a gif that
 visualises network changes over time.
 It really couldn't be easier.
@@ -421,7 +421,7 @@ It really couldn't be easier.
 ison_adolescents %>%
   mutate_ties(year = sample(1995:1998, 10, replace = TRUE)) %>%
   to_waves(attribute = "year") %>%
-  autographd()
+  grapht()
 ```
 
 <!-- provide a common set of tools that can be used to import, export, create, and manipulate network data in a wide variety of formats, -->

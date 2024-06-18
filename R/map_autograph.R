@@ -746,9 +746,9 @@ graphs <- function(netlist, waves,
 #'   This function provides users with an easy way to graph
 #'   dynamic network data for exploration and presentation.
 #'   
-#'   It builds upon this package's `autographr()` function, 
+#'   It builds upon this package's `graphr()` function, 
 #'   and inherits all the same features and arguments.
-#'   See `autographr()` for more.
+#'   See `graphr()` for more.
 #'   However, it uses the `{gganimate}` package to animate the changes
 #'   between successive iterations of a network.
 #'   This is useful for networks in which the ties and/or the node or tie

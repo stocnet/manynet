@@ -2,7 +2,7 @@
 #' 
 #' @description
 #'   These algorithms layout networks based on two or more partitions,
-#'   and are recommended for use with `autographr()` or `{ggraph}`.
+#'   and are recommended for use with `graphr()` or `{ggraph}`.
 #'   Note that these layout algorithms use `{Rgraphviz}`, 
 #'   a package that is only available on Bioconductor.
 #'   It will first need to be downloaded using `BiocManager::install("Rgraphviz")`.
@@ -56,7 +56,7 @@ NULL
 
 #' @rdname partition_layouts
 #' @examples
-#' #autographr(ison_southern_women, layout = "hierarchy", center = "events",
+#' #graphr(ison_southern_women, layout = "hierarchy", center = "events",
 #' #           node_color = "type", node_size = 3)
 #' @export
 layout_tbl_graph_hierarchy <- function(.data, center = NULL,
@@ -123,7 +123,7 @@ layout_tbl_graph_hierarchy <- function(.data, center = NULL,
 
 #' @rdname partition_layouts
 #' @examples
-#' #autographr(ison_southern_women, layout = "alluvial")
+#' #graphr(ison_southern_women, layout = "alluvial")
 #' @export
 layout_tbl_graph_alluvial <- function(.data,
                                       circular = FALSE, times = 1000){
@@ -165,7 +165,7 @@ layout_tbl_graph_ladder <- function(.data,
 
 #' @rdname partition_layouts
 #' @examples
-#' #autographr(ison_southern_women, layout = "concentric", membership = "type",
+#' #graphr(ison_southern_women, layout = "concentric", membership = "type",
 #' #           node_color = "type", node_size = 3)
 #' @export
 layout_tbl_graph_concentric <- function(.data, membership,
@@ -230,7 +230,7 @@ layout_tbl_graph_concentric <- function(.data, membership,
 
 #' @rdname partition_layouts
 #' @examples
-#' #autographr(ison_lotr, layout = "multilevel",
+#' #graphr(ison_lotr, layout = "multilevel",
 #' #           node_color = "Race", level = "Race", node_size = 3)
 #' @export
 layout_tbl_graph_multilevel <- function(.data, level, circular = FALSE) {
@@ -258,7 +258,7 @@ layout_tbl_graph_multilevel <- function(.data, level, circular = FALSE) {
 #' # ison_adolescents %>%
 #' #   mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2),
 #' #          cut = node_is_cutpoint(ison_adolescents)) %>%
-#' #   autographr(layout = "lineage", rank = "year", node_color = "cut",
+#' #   graphr(layout = "lineage", rank = "year", node_color = "cut",
 #' #              node_size = migraph::node_degree(ison_adolescents)*10)
 #' @export
 layout_tbl_graph_lineage <- function(.data, rank, circular = FALSE) {
