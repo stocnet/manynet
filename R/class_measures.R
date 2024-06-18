@@ -155,4 +155,4 @@ plot.network_measures <- function(x, ...) {
 }
 
 # defining global variables more centrally
-globalVariables(c(".data"))
+utils::globalVariables(c(".data"))

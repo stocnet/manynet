@@ -277,7 +277,6 @@ network_indegree <- function(.data, normalized = TRUE){
 NULL
 
 #' @rdname between_centrality
-#' @import tidygraph
 #' @examples
 #' node_betweenness(ison_southern_women)
 #' @return A numeric vector giving the betweenness centrality measure of each node.
@@ -459,7 +458,6 @@ NULL
 
 #' @rdname close_centrality
 #' @param cutoff Maximum path length to use during calculations.
-#' @import tidygraph
 #' @examples
 #' node_closeness(ison_southern_women)
 #' @export
