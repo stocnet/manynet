@@ -118,6 +118,7 @@ Other measures:
 \code{\link{measure_hierarchy}},
 \code{\link{measure_holes}},
 \code{\link{measure_net_diffusion}},
+\code{\link{measure_periods}},
 \code{\link{measure_properties}}
 
 Other diffusion: 
