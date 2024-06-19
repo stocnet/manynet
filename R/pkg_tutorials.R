@@ -111,7 +111,7 @@ table_data <- function(pkg = "manynet") {
   datasets <- lapply(datanames, function(d) get(d))
   datanames <- datanames[!vapply(datasets, is_list, logical(1))]
   datasets <- datasets[!vapply(datasets, is_list, logical(1))]
-  out <- dplyr::tibble(dataset = datanames,
+  out <- dplyr::tibble(dataset = tibble::char(datanames, min_chars = 18),
                         nodes = vapply(datasets, network_nodes, numeric(1)),
                         ties = vapply(datasets, network_ties, numeric(1)),
                         nattr = vapply(datasets, 
@@ -140,7 +140,10 @@ table_data <- function(pkg = "manynet") {
                                         logical(1)),
                        acyclic = vapply(datasets, 
                                           is_acyclic, 
-                                          logical(1)))
+                                          logical(1)),
+                       attributed = vapply(datasets, 
+                                           is_attributed, 
+                                           logical(1)))
   out <- dplyr::arrange(out, nodes)
   out
 }
