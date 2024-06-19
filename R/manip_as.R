@@ -6,12 +6,13 @@
 #'   - `as_edgelist()` coerces the object into an edgelist, as data frames or tibbles.
 #'   - `as_matrix()` coerces the object into an adjacency (one-mode/unipartite) or incidence (two-mode/bipartite) matrix.
 #'   - `as_igraph()` coerces the object into an `{igraph}` `graph` object.
-#'   - `as_tidygraph()` coerces the object into a `{tidygraph}` `tbl_graph` objects.
-#'   - `as_network()` coerces the object into a `{network}` `network` objects.
+#'   - `as_tidygraph()` coerces the object into a `{tidygraph}` `tbl_graph` object.
+#'   - `as_network()` coerces the object into a `{network}` `network` object.
 #'   - `as_siena()` coerces the (igraph/tidygraph) object into a SIENA dependent variable.
 #'   - `as_graphAM()` coerces the object into a graph adjacency matrix.
 #'   - `as_diffusion()` coerces a table of diffusion events into
 #'   a `diff_model` object similar to the output of `play_diffusion()`.
+#'   - `as_diffnet()` coerces a `diff_model` object into a `{netdiffuseR}` `diffnet` object.
 #'
 #'   An effort is made for all of these coercion routines to be as lossless
 #'   as possible, though some object classes are better at retaining certain

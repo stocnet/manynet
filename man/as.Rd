@@ -85,12 +85,13 @@ of social network objects in R into the declared class:
 \item \code{as_edgelist()} coerces the object into an edgelist, as data frames or tibbles.
 \item \code{as_matrix()} coerces the object into an adjacency (one-mode/unipartite) or incidence (two-mode/bipartite) matrix.
 \item \code{as_igraph()} coerces the object into an \code{{igraph}} \code{graph} object.
-\item \code{as_tidygraph()} coerces the object into a \code{{tidygraph}} \code{tbl_graph} objects.
-\item \code{as_network()} coerces the object into a \code{{network}} \code{network} objects.
+\item \code{as_tidygraph()} coerces the object into a \code{{tidygraph}} \code{tbl_graph} object.
+\item \code{as_network()} coerces the object into a \code{{network}} \code{network} object.
 \item \code{as_siena()} coerces the (igraph/tidygraph) object into a SIENA dependent variable.
 \item \code{as_graphAM()} coerces the object into a graph adjacency matrix.
 \item \code{as_diffusion()} coerces a table of diffusion events into
 a \code{diff_model} object similar to the output of \code{play_diffusion()}.
+\item \code{as_diffnet()} coerces a \code{diff_model} object into a \code{{netdiffuseR}} \code{diffnet} object.
 }
 
 An effort is made for all of these coercion routines to be as lossless
