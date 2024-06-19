@@ -129,6 +129,8 @@ is_dynamic <- function(.data) {
 #'   is the sender and which the receiver.
 #'   - `is_labelled()` marks networks TRUE if there is a 'names' attribute
 #'   for the nodes.
+#'   - `is_attributed()` marks networks TRUE if there are other nodal attributes
+#'   than 'names' or 'type'.
 #'   - `is_signed()` marks networks TRUE if the ties can be either positive
 #'   or negative.
 #'   - `is_complex()` marks networks TRUE if any ties are loops,
@@ -398,6 +400,14 @@ is_multiplex.data.frame <- function(.data) {
 is_uniplex <- function(.data) {
   obj <- as_igraph(.data)
   igraph::is_simple(obj)
+}
+
+#' @rdname is_format
+#' @examples
+#' is_attributed(ison_algebra)
+#' @export
+is_attributed <- function(.data) {
+  length(setdiff(network_node_attributes(.data), c("type","name")))!=0
 }
 
 # Features ####

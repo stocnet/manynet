@@ -10,6 +10,7 @@
 \alias{is_complex}
 \alias{is_multiplex}
 \alias{is_uniplex}
+\alias{is_attributed}
 \title{Marking networks formats}
 \usage{
 is_twomode(.data)
@@ -27,6 +28,8 @@ is_complex(.data)
 is_multiplex(.data)
 
 is_uniplex(.data)
+
+is_attributed(.data)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -48,6 +51,8 @@ All \verb{is_*()} functions return a logical scalar (TRUE or FALSE).
 is the sender and which the receiver.
 \item \code{is_labelled()} marks networks TRUE if there is a 'names' attribute
 for the nodes.
+\item \code{is_attributed()} marks networks TRUE if there are other nodal attributes
+than 'names' or 'type'.
 \item \code{is_signed()} marks networks TRUE if the ties can be either positive
 or negative.
 \item \code{is_complex()} marks networks TRUE if any ties are loops,
@@ -68,6 +73,7 @@ is_signed(create_lattice(3))
 is_complex(create_lattice(4))
 is_multiplex(create_filled(c(3,3)))
 is_uniplex(create_star(3))
+is_attributed(ison_algebra)
 }
 \seealso{
 Other marking: 
