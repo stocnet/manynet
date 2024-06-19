@@ -24,7 +24,8 @@ NULL
 #' node_attribute(ison_lotr, "Race")
 #' @export
 node_attribute <- function(.data, attribute){
-  igraph::vertex_attr(as_igraph(.data), attribute)
+  out <- igraph::vertex_attr(as_igraph(.data), attribute)
+  if(is.numeric(out)) make_node_measure(out, .data) else out
 }
 
 #' @rdname measure_attributes
@@ -58,7 +59,8 @@ node_is_mode <- function(.data){
 #' tie_attribute(ison_algebra, "task_tie")
 #' @export
 tie_attribute <- function(.data, attribute){
-  igraph::edge_attr(as_igraph(.data), attribute)
+  out <- igraph::edge_attr(as_igraph(.data), attribute)
+  if(is.numeric(out)) make_tie_measure(out, .data) else out
 }
 
 #' @rdname measure_attributes
