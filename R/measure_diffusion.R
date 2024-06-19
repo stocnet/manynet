@@ -347,7 +347,7 @@ node_exposure <- function(.data, mark, time = 0){
     .data <- attr(.data, "network")
   }
   .data <- as_tidygraph(.data)
-  if(is_weighted(.data)){
+  if(is_weighted(.data) || is_signed(.data)){
     if(is.numeric(mark)){
       mk <- rep(FALSE, network_nodes(.data))
       mk[mark] <- TRUE
