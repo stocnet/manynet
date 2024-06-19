@@ -10,6 +10,7 @@ play_diffusion(
   .data,
   seeds = 1,
   contact = NULL,
+  prevalence = 0,
   thresholds = 1,
   transmissibility = 1,
   latency = 0,
@@ -22,6 +23,8 @@ play_diffusion(
 play_diffusions(
   .data,
   seeds = 1,
+  contact = NULL,
+  prevalence = 0,
   thresholds = 1,
   transmissibility = 1,
   latency = 0,
@@ -52,6 +55,14 @@ other explicit contact network, e.g.
 \code{create_components(.data, membership = node_in_structural(.data))}.
 Can be of arbitrary complexity, but must of the same dimensions
 as .data.}
+
+\item{prevalence}{The proportion that global prevalence contributes
+to diffusion.
+That is, if prevalence is 0.5, then the current number of infections
+is multiplied by 0.5 and added
+"prevalence" is 0 by default, i.e. there is no global mechanism.
+Note that this is endogenously defined and is updated
+at the outset of each step.}
 
 \item{thresholds}{A numeric vector indicating the thresholds
 each node has. By default 1.

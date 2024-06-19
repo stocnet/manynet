@@ -85,6 +85,13 @@
 #'   of the number of contacts/exposures sufficient for infection.
 #'   If less than 1, the threshold is interpreted as complex,
 #'   where the threshold concerns the proportion of contacts.
+#' @param prevalence The proportion that global prevalence contributes
+#'   to diffusion. 
+#'   That is, if prevalence is 0.5, then the current number of infections
+#'   is multiplied by 0.5 and added 
+#'   "prevalence" is 0 by default, i.e. there is no global mechanism.
+#'   Note that this is endogenously defined and is updated 
+#'   at the outset of each step.
 #' @param transmissibility The transmission rate probability,
 #'   \eqn{\beta}.
 #'   By default 1, which means any node for which the threshold is met
@@ -134,6 +141,7 @@ NULL
 play_diffusion <- function(.data, 
                            seeds = 1,
                            contact = NULL,
+                           prevalence = 0,
                            thresholds = 1,
                            transmissibility = 1,
                            latency = 0,
@@ -180,15 +188,18 @@ play_diffusion <- function(.data,
     infected <- setdiff(infected, recovered)
     # those for whom immunity has waned are no longer immune
     recovered <- setdiff(recovered, waned)
+    
+    # add any global/prevalence feedback
+    new_prev <- as_matrix(net) + ((report$I_new[length(report$I_new)] - 
+                         length(recovers)) * prevalence)
+    if(!is_twomode(.data) & !is_complex(.data)) diag(new_prev) <- 0
+    net <- as_tidygraph(new_prev)
+    
     # at main infection stage, get currently exposed to infection:
-    # contacts <- unlist(sapply(igraph::neighborhood(.data, nodes = infected),
-    #                          function(x) setdiff(x, infected)))
     exposed <- node_is_exposed(net, infected)
     # count exposures for each node:
-    # tabcontact <- table(contacts)
     exposure <- node_exposure(net, infected)
     # identify those nodes who are exposed at or above their threshold
-    # newinf <- as.numeric(names(which(tabcontact >= thresholds[as.numeric(names(tabcontact))])))
     open_to_it <- which(exposure >= thresholds)
     newinf <- open_to_it[stats::rbinom(length(open_to_it), 1, transmissibility)==1]
     if(!is.null(recovery) & length(recovered)>0) 
@@ -235,6 +246,7 @@ play_diffusion <- function(.data,
                          I_new = length(infectious),
                          I = length(infected),
                          R = length(recovered)))
+    
     if(is.infinite(steps) & length(infected)==n) break
     if(time==steps) break
   }
@@ -254,6 +266,8 @@ play_diffusion <- function(.data,
 #' @export
 play_diffusions <- function(.data,
                             seeds = 1,
+                            contact = NULL,
+                            prevalence = 0,
                             thresholds = 1,
                             transmissibility = 1,
                             latency = 0,
@@ -274,8 +288,8 @@ play_diffusions <- function(.data,
   out <- furrr::future_map_dfr(1:times, function(j){
       data.frame(sim = j,
                  play_diffusion(.data, 
-                     seeds = seeds, thresholds = thresholds,
-                     transmissibility = transmissibility,
+                     seeds = seeds, contact = contact, prevalence = prevalence, 
+                     thresholds = thresholds, transmissibility = transmissibility,
                      latency = latency, recovery = recovery, waning = waning,
                      immune = immune, steps = steps))
     }, .progress = verbose, .options = furrr::furrr_options(seed = T))
