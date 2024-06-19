@@ -19,8 +19,11 @@ network datasets included in the packages.
 }
 \examples{
 table_data()
+# to obtain list of all e.g. two-mode networks:
+table_data() \%>\% 
+  dplyr::filter(directed)
 # to obtain overview of unique datasets:
-# table_data() \%>\% 
-  # dplyr::distinct(directed, weighted, twomode, signed, 
-  #                 .keep_all = TRUE)
+table_data() \%>\% 
+  dplyr::distinct(directed, weighted, twomode, signed, 
+                 .keep_all = TRUE)
 }
