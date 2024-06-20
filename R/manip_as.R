@@ -960,11 +960,11 @@ as_diff_model <- function(.data,
 as_diff_model.diffnet <- function(.data,
                                   twomode = FALSE) {
   diffnet <- .data
+  net <- as.matrix(.data$graph[[1]])
   event <- NULL
   events <- data.frame(t = .data$toa, 
                        nodes = attr(.data$toa, "names"), 
                        event = "I")
-  net <- as.matrix(.data$graph[[1]])
   if(!all.equal(diffnet$graph[[1]], diffnet$graph[[length(diffnet$graph)]]))
     warning(paste("This function currently only takes the first network.",
                   "Network changes are not currently retained."))
@@ -999,6 +999,8 @@ as_diff_model.diffnet <- function(.data,
   if (any(report$R + report$I + report$E + report$S != report$n)) {
     stop("Oops, something is wrong")
   }
+  if(is_labelled(net)) events$nodes <- match(events$nodes, node_names(net))
+  events <- events %>% dplyr::arrange(t)
   report <- dplyr::select(report, dplyr::any_of(c("t", "n", "S", "s", "E", "E_new", "I", "I_new", "R", "R_new")))
   make_diff_model(events, report, net)
 }
