@@ -198,7 +198,6 @@ Other measures:
 \code{\link{measure_hierarchy}},
 \code{\link{measure_holes}},
 \code{\link{measure_node_diffusion}},
-\code{\link{measure_periods}},
 \code{\link{measure_properties}},
 \code{\link{member_diffusion}}
 
