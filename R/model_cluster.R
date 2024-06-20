@@ -77,9 +77,9 @@ cluster_concor <- function(.data, census){
   if(is.null(colnames(p_list[[1]]))) 
     colnames(p_list[[1]]) <- paste0("V",1:ncol(p_list[[1]]))
   p_group <- list()
-  if(manynet::is_twomode(.data)){
-    p_list <- list(p_list[[1]][, !manynet::node_mode(.data), drop = FALSE],
-                   p_list[[1]][, manynet::node_mode(.data), drop = FALSE])
+  if(is_twomode(.data)){
+    p_list <- list(p_list[[1]][, !node_is_mode(.data), drop = FALSE],
+                   p_list[[1]][, node_is_mode(.data), drop = FALSE])
     p_group[[1]] <- lapply(p_list, function(z) colnames(z))
     i <- 2
   } else i <- 1
@@ -92,11 +92,11 @@ cluster_concor <- function(.data, census){
     i <- i+1
   }
   
-  if(manynet::is_labelled(.data)){
+  if(is_labelled(.data)){
     merges <- sapply(rev(1:(i-1)), 
                      function(p) lapply(p_group[[p]], 
                                         function(s){
-                                          g <- match(s, manynet::node_names(.data))
+                                          g <- match(s, node_names(.data))
                                           if(length(g)==1) c(g, 0, p) else 
                                             if(length(g)==2) c(g, p) else
                                               c(t(cbind(t(utils::combn(g, 2)), p)))

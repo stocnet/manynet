@@ -62,11 +62,11 @@ node_in_optimal <- function(.data){
 node_in_partition <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   # assign groups arbitrarily
-  n <- manynet::network_nodes(.data)
+  n <- net_nodes(.data)
   group_size <- ifelse(n %% 2 == 0, n/2, (n+1)/2)
   
   # count internal and external costs of each vertex
-  g <- manynet::as_matrix(manynet::to_multilevel(.data))
+  g <- as_matrix(to_multilevel(.data))
   g1 <- g[1:group_size, 1:group_size]
   g2 <- g[(group_size+1):n, (group_size+1):n]
   intergroup <- g[1:group_size, (group_size+1):n]
@@ -188,7 +188,7 @@ node_in_spinglass <- function(.data, max_k = 200, resolution = 1){
 node_in_fluid <- function(.data) {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   .data <- as_igraph(.data)
-  mods <- vapply(seq.int(manynet::network_nodes(.data)), function(x)
+  mods <- vapply(seq.int(net_nodes(.data)), function(x)
     igraph::modularity(.data, membership = igraph::membership(
       igraph::cluster_fluid_communities(.data, x))),
                  FUN.VALUE = numeric(1))
@@ -245,11 +245,11 @@ node_in_louvain <- function(.data, resolution = 1){
 #' @export
 node_in_leiden <- function(.data, resolution = 1){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  if(manynet::is_weighted(.data)){ # Traag resolution default
-    n <- manynet::network_nodes(.data)
-    resolution <- sum(manynet::tie_weights(.data))/(n*(n - 1)/2)
+  if(is_weighted(.data)){ # Traag resolution default
+    n <- net_nodes(.data)
+    resolution <- sum(tie_weights(.data))/(n*(n - 1)/2)
   }
-  out <- igraph::cluster_leiden(manynet::as_igraph(.data), 
+  out <- igraph::cluster_leiden(as_igraph(.data), 
                                 resolution_parameter = resolution
   )$membership
   make_node_member(out, .data)

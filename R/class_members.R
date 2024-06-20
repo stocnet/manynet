@@ -1,9 +1,9 @@
 make_node_member <- function(out, .data) {
   if(is.numeric(out))
     out <- MORELETTERS[out]
-  if (manynet::is_labelled(.data)) names(out) <- manynet::node_names(.data)
+  if (is_labelled(.data)) names(out) <- node_names(.data)
   class(out) <- c("node_member", class(out))
-  attr(out, "mode") <- manynet::node_mode(.data)
+  attr(out, "mode") <- node_is_mode(.data)
   out
 }
 
@@ -80,19 +80,19 @@ plot.node_member <- function(x, ...) {
 #   membership = node_regular_equivalence(ison_adolescents, "e"))
 # plot(as_matrix(ison_southern_women),
 #   membership = node_regular_equivalence(ison_southern_women, "e"))
-#' @importFrom tidyr pivot_longer
 #' @importFrom ggplot2 ggplot geom_tile aes scale_fill_gradient theme_grey labs theme scale_x_discrete scale_y_discrete geom_vline geom_hline element_blank element_text
 #' @export
 plot.matrix <- function(x, ..., membership = NULL) {
 
-  if (!manynet::is_twomode(x)) {
-    blocked_data <- manynet::as_matrix(x)
+  thisRequires("tidyr")
+  if (!is_twomode(x)) {
+    blocked_data <- as_matrix(x)
     if (!is.null(membership)) blocked_data <- blocked_data[order(membership),
                                                           order(membership)]
-  } else if (manynet::is_twomode(x) &&
-     length(intersect(membership[!manynet::node_mode(x)], 
-                      membership[!manynet::node_mode(x)])) > 0) {
-    blocked_data <- manynet::as_matrix(manynet::to_multilevel(x))
+  } else if (is_twomode(x) &&
+     length(intersect(membership[!node_is_mode(x)], 
+                      membership[!node_is_mode(x)])) > 0) {
+    blocked_data <- as_matrix(to_multilevel(x))
     if (!is.null(membership)) blocked_data <- blocked_data[order(membership),
                                                           order(membership)]
   } else {

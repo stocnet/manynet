@@ -46,25 +46,25 @@ NULL
 node_in_core <- function(.data, method = c("degree", "eigenvector")){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   method <- match.arg(method)
-  if(manynet::is_directed(.data)) warning("Asymmetric core-periphery not yet implemented.")
+  if(is_directed(.data)) warning("Asymmetric core-periphery not yet implemented.")
   if(method == "degree"){
     degi <- node_degree(.data, normalized = FALSE, 
-                        alpha = ifelse(manynet::is_weighted(.data), 1, 0))
+                        alpha = ifelse(is_weighted(.data), 1, 0))
   } else if (method == "eigenvector") {
     degi <- node_eigenvector(.data, normalized = FALSE)
   } else stop("This function expects either 'degree' or 'eigenvector' method to be specified.")
   nord <- order(degi, decreasing = TRUE)
-  zbest <- manynet::net_nodes(.data)*3
+  zbest <- net_nodes(.data)*3
   kbest <- 0
   z <- 1/2*sum(degi)
-  for(k in 1:(manynet::net_nodes(.data)-1)){
+  for(k in 1:(net_nodes(.data)-1)){
     z <- z + k - 1 - degi[nord][k]
     if(z < zbest){
       zbest <- z
       kbest <- k
     }
   }
-  out <- ifelse(seq_len(manynet::net_nodes(.data)) %in% nord[seq_len(kbest)],
+  out <- ifelse(seq_len(net_nodes(.data)) %in% nord[seq_len(kbest)],
          1,2)
   make_node_member(out, .data)
 }

@@ -53,7 +53,7 @@ a node's coreness is \emph{k} if it belongs to the \emph{k}-core
 but not to the (\emph{k}+1)-core.
 }
 \examples{
-node_in_component(mpn_bristol)
+node_in_component(ison_monastery_esteem)
 }
 \seealso{
 Other memberships: 

@@ -31,11 +31,11 @@ test_that("node_mode works", {
 })
 
 test_that("tie_attribute works", {
-  expect_equal(tie_attribute(net2, "weight"), c(1, 2, 3, 4, 5))
+  expect_equal(c(tie_attribute(net2, "weight")), c(1, 2, 3, 4, 5))
 })
 
 test_that("tie_weights works", {
-  expect_equal(c(tie_weights(net2)), tie_attribute(net2, "weight"))
+  expect_equal(c(tie_weights(net2)), c(tie_attribute(net2, "weight")))
 })
 
 test_that("net_nodes works", {
