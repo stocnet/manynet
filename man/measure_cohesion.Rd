@@ -2,28 +2,28 @@
 % Please edit documentation in R/measure_cohesion.R
 \name{measure_cohesion}
 \alias{measure_cohesion}
-\alias{network_density}
-\alias{network_components}
-\alias{network_cohesion}
-\alias{network_adhesion}
-\alias{network_diameter}
-\alias{network_length}
-\alias{network_independence}
+\alias{net_density}
+\alias{net_components}
+\alias{net_cohesion}
+\alias{net_adhesion}
+\alias{net_diameter}
+\alias{net_length}
+\alias{net_independence}
 \title{Measures of network cohesion or connectedness}
 \usage{
-network_density(.data)
+net_density(.data)
 
-network_components(.data)
+net_components(.data)
 
-network_cohesion(.data)
+net_cohesion(.data)
 
-network_adhesion(.data)
+net_adhesion(.data)
 
-network_diameter(.data)
+net_diameter(.data)
 
-network_length(.data)
+net_length(.data)
 
-network_independence(.data)
+net_independence(.data)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -39,17 +39,17 @@ network_independence(.data)
 These functions return values or vectors relating to how connected a network is
 and the number of nodes or edges to remove that would increase fragmentation.
 \itemize{
-\item \code{network_density()} measures the ratio of ties to the number
+\item \code{net_density()} measures the ratio of ties to the number
 of possible ties.
-\item \code{network_components()} measures the number of (strong) components
+\item \code{net_components()} measures the number of (strong) components
 in the network.
-\item \code{network_cohesion()} measures the minimum number of nodes to remove
+\item \code{net_cohesion()} measures the minimum number of nodes to remove
 from the network needed to increase the number of components.
-\item \code{network_adhesion()} measures the minimum number of ties to remove
+\item \code{net_adhesion()} measures the minimum number of ties to remove
 from the network needed to increase the number of components.
-\item \code{network_diameter()} measures the maximum path length in the network.
-\item \code{network_length()} measures the average path length in the network.
-\item \code{network_independence()} measures the independence number,
+\item \code{net_diameter()} measures the maximum path length in the network.
+\item \code{net_length()} measures the average path length in the network.
+\item \code{net_independence()} measures the independence number,
 or size of the largest independent set in the network.
 }
 }
@@ -60,19 +60,19 @@ please use \code{manynet::to_undirected()} first.
 }
 
 \examples{
-network_density(ison_adolescents)
-network_density(ison_southern_women)
-  network_components(ison_friends)
-  network_components(to_undirected(ison_friends))
-network_cohesion(ison_marvel_relationships)
-network_cohesion(to_giant(ison_marvel_relationships))
-network_adhesion(ison_marvel_relationships)
-network_adhesion(to_giant(ison_marvel_relationships))
-network_diameter(ison_marvel_relationships)
-network_diameter(to_giant(ison_marvel_relationships))
-network_length(ison_marvel_relationships)
-network_length(to_giant(ison_marvel_relationships))
-network_independence(ison_adolescents)
+net_density(ison_adolescents)
+net_density(ison_southern_women)
+  net_components(ison_friends)
+  net_components(to_undirected(ison_friends))
+net_cohesion(ison_marvel_relationships)
+net_cohesion(to_giant(ison_marvel_relationships))
+net_adhesion(ison_marvel_relationships)
+net_adhesion(to_giant(ison_marvel_relationships))
+net_diameter(ison_marvel_relationships)
+net_diameter(to_giant(ison_marvel_relationships))
+net_length(ison_marvel_relationships)
+net_length(to_giant(ison_marvel_relationships))
+net_independence(ison_adolescents)
 }
 \references{
 White, Douglas R and Frank Harary. 2001.
@@ -85,6 +85,7 @@ Other measures:
 \code{\link{close_centrality}},
 \code{\link{degree_centrality}},
 \code{\link{eigenv_centrality}},
+\code{\link{features}},
 \code{\link{measure_attributes}},
 \code{\link{measure_closure}},
 \code{\link{measure_heterogeneity}},
@@ -93,6 +94,7 @@ Other measures:
 \code{\link{measure_net_diffusion}},
 \code{\link{measure_node_diffusion}},
 \code{\link{measure_periods}},
-\code{\link{measure_properties}}
+\code{\link{measure_properties}},
+\code{\link{member_diffusion}}
 }
 \concept{measures}

@@ -2,13 +2,13 @@
 % Please edit documentation in R/measure_diffusion.R
 \name{measure_periods}
 \alias{measure_periods}
-\alias{network_change}
-\alias{network_stability}
+\alias{net_change}
+\alias{net_stability}
 \title{Measures of network change}
 \usage{
-network_change(.data, object2)
+net_change(.data, object2)
 
-network_stability(.data, object2)
+net_stability(.data, object2)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -25,11 +25,11 @@ network_stability(.data, object2)
 \description{
 These functions measure certain topological features of networks:
 \itemize{
-\item \code{network_change()} measures the Hamming distance between two or more networks.
-\item \code{network_stability()} measures the Jaccard index of stability between two or more networks.
+\item \code{net_change()} measures the Hamming distance between two or more networks.
+\item \code{net_stability()} measures the Jaccard index of stability between two or more networks.
 }
 
-These \verb{network_*()} functions return a numeric vector the length of the number
+These \verb{net_*()} functions return a numeric vector the length of the number
 of networks minus one. E.g., the periods between waves.
 }
 \seealso{
@@ -38,6 +38,7 @@ Other measures:
 \code{\link{close_centrality}},
 \code{\link{degree_centrality}},
 \code{\link{eigenv_centrality}},
+\code{\link{features}},
 \code{\link{measure_attributes}},
 \code{\link{measure_closure}},
 \code{\link{measure_cohesion}},
@@ -46,6 +47,7 @@ Other measures:
 \code{\link{measure_holes}},
 \code{\link{measure_net_diffusion}},
 \code{\link{measure_node_diffusion}},
-\code{\link{measure_properties}}
+\code{\link{measure_properties}},
+\code{\link{member_diffusion}}
 }
 \concept{measures}

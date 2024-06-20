@@ -4,17 +4,17 @@
 #'   These functions return values or vectors relating to how connected a network is
 #'   and the number of nodes or edges to remove that would increase fragmentation.
 #'   
-#'   - `network_density()` measures the ratio of ties to the number
+#'   - `net_density()` measures the ratio of ties to the number
 #'   of possible ties.
-#'   - `network_components()` measures the number of (strong) components 
+#'   - `net_components()` measures the number of (strong) components 
 #'   in the network.
-#'   - `network_cohesion()` measures the minimum number of nodes to remove
+#'   - `net_cohesion()` measures the minimum number of nodes to remove
 #'   from the network needed to increase the number of components.
-#'   - `network_adhesion()` measures the minimum number of ties to remove
+#'   - `net_adhesion()` measures the minimum number of ties to remove
 #'   from the network needed to increase the number of components.
-#'   - `network_diameter()` measures the maximum path length in the network.
-#'   - `network_length()` measures the average path length in the network.
-#'   - `network_independence()` measures the independence number, 
+#'   - `net_diameter()` measures the maximum path length in the network.
+#'   - `net_length()` measures the average path length in the network.
+#'   - `net_independence()` measures the independence number, 
 #'   or size of the largest independent set in the network.
 #'   
 #' @inheritParams is
@@ -25,10 +25,10 @@ NULL
 #' @rdname measure_cohesion
 #' @importFrom igraph edge_density
 #' @examples 
-#' network_density(ison_adolescents)
-#' network_density(ison_southern_women)
+#' net_density(ison_adolescents)
+#' net_density(ison_southern_women)
 #' @export
-network_density <- function(.data) {
+net_density <- function(.data) {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if (manynet::is_twomode(.data)) {
     mat <- manynet::as_matrix(.data)
@@ -36,7 +36,7 @@ network_density <- function(.data) {
   } else {
     out <- igraph::edge_density(manynet::as_igraph(.data))
   }
-  make_network_measure(out, .data)
+  make_net_measure(out, .data)
 }
 
 #' @rdname measure_cohesion
@@ -45,13 +45,13 @@ network_density <- function(.data) {
 #'   please use `manynet::to_undirected()` first.
 #' @importFrom igraph components
 #' @examples
-#'   network_components(ison_friends)
-#'   network_components(to_undirected(ison_friends))
+#'   net_components(ison_friends)
+#'   net_components(to_undirected(ison_friends))
 #' @export
-network_components <- function(.data){
+net_components <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   object <- manynet::as_igraph(.data)
-  make_network_measure(igraph::components(object, mode = "strong")$no,
+  make_net_measure(igraph::components(object, mode = "strong")$no,
                        object)
 }
 
@@ -62,35 +62,35 @@ network_components <- function(.data){
 #' "The Cohesiveness of Blocks In Social Networks: Node Connectivity and Conditional Density." 
 #' _Sociological Methodology_ 31(1): 305-59.
 #' @examples 
-#' network_cohesion(ison_marvel_relationships)
-#' network_cohesion(to_giant(ison_marvel_relationships))
+#' net_cohesion(ison_marvel_relationships)
+#' net_cohesion(to_giant(ison_marvel_relationships))
 #' @export
-network_cohesion <- function(.data){
+net_cohesion <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  make_network_measure(igraph::cohesion(manynet::as_igraph(.data)), .data)
+  make_net_measure(igraph::cohesion(manynet::as_igraph(.data)), .data)
 }
 
 #' @rdname measure_cohesion 
 #' @importFrom igraph adhesion
 #' @examples 
-#' network_adhesion(ison_marvel_relationships)
-#' network_adhesion(to_giant(ison_marvel_relationships))
+#' net_adhesion(ison_marvel_relationships)
+#' net_adhesion(to_giant(ison_marvel_relationships))
 #' @export
-network_adhesion <- function(.data){
+net_adhesion <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  make_network_measure(igraph::adhesion(manynet::as_igraph(.data)), .data)
+  make_net_measure(igraph::adhesion(manynet::as_igraph(.data)), .data)
 }
 
 #' @rdname measure_cohesion 
 #' @importFrom igraph diameter
 #' @examples 
-#' network_diameter(ison_marvel_relationships)
-#' network_diameter(to_giant(ison_marvel_relationships))
+#' net_diameter(ison_marvel_relationships)
+#' net_diameter(to_giant(ison_marvel_relationships))
 #' @export
-network_diameter <- function(.data){
+net_diameter <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   object <- manynet::as_igraph(.data)
-  make_network_measure(igraph::diameter(object, 
+  make_net_measure(igraph::diameter(object, 
                                         directed = manynet::is_directed(object)),
                        object)
 }
@@ -98,13 +98,13 @@ network_diameter <- function(.data){
 #' @rdname measure_cohesion 
 #' @importFrom igraph mean_distance
 #' @examples 
-#' network_length(ison_marvel_relationships)
-#' network_length(to_giant(ison_marvel_relationships))
+#' net_length(ison_marvel_relationships)
+#' net_length(to_giant(ison_marvel_relationships))
 #' @export
-network_length <- function(.data){
+net_length <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   object <- manynet::as_igraph(.data)
-  make_network_measure(igraph::mean_distance(object,
+  make_net_measure(igraph::mean_distance(object,
                                              directed = manynet::is_directed(object)),
                        object)
 }
@@ -112,14 +112,14 @@ network_length <- function(.data){
 #' @rdname measure_cohesion 
 #' @importFrom igraph ivs_size
 #' @examples 
-#' network_independence(ison_adolescents)
+#' net_independence(ison_adolescents)
 #' @export
-network_independence <- function(.data){
+net_independence <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(manynet::is_twomode(.data)){
     out <- igraph::ivs_size(manynet::to_mode1(manynet::as_igraph(.data)))
   } else {
     out <- igraph::ivs_size(manynet::to_undirected(manynet::as_igraph(.data)))
   }
-  make_network_measure(out, .data)
+  make_net_measure(out, .data)
 }
