@@ -117,9 +117,9 @@ test_that("two mode betweenness centralisation calculated correctly", {
 })
 
 test_that("net_measure class works", {
-  expect_s3_class(net_degree(ison_algebra), "net_measure")
-  expect_s3_class(net_betweenness(ison_southern_women), "net_measure")
-  expect_s3_class(net_closeness(ison_southern_women), "net_measure")
+  expect_s3_class(net_degree(ison_algebra), "network_measure")
+  expect_s3_class(net_betweenness(ison_southern_women), "network_measure")
+  expect_s3_class(net_closeness(ison_southern_women), "network_measure")
   expect_output(print(net_degree(ison_algebra)))
 })
 

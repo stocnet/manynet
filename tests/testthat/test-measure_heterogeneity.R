@@ -15,13 +15,13 @@ test_that("heterophily function works", {
 
 test_that("assortativity function works", {
   expect_length(net_assortativity(ison_networkers), 1)
-  expect_s3_class(net_assortativity(ison_networkers), "net_measure")
+  expect_s3_class(net_assortativity(ison_networkers), "network_measure")
 })
 
 test_that("richness function works", {
   expect_length(net_richness(ison_networkers), 1)
   expect_equal(as.numeric(net_richness(ison_networkers)), 3)
-  expect_s3_class(net_richness(ison_networkers), "net_measure")
+  expect_s3_class(net_richness(ison_networkers), "network_measure")
   expect_length(node_richness(ison_networkers, "type"), 32)
   expect_s3_class(node_richness(ison_networkers, "type"), "node_measure")
 })

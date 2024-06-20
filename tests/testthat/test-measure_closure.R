@@ -1,5 +1,5 @@
 test_that("network density works", {
-  expect_s3_class(net_density(ison_southern_women), "net_measure")
+  expect_s3_class(net_density(ison_southern_women), "network_measure")
   expect_equal(as.numeric(net_density(manynet::create_empty(10))), 0)
   expect_equal(as.numeric(net_density(manynet::create_empty(c(10,6)))), 0)
   expect_equal(as.numeric(net_density(manynet::create_filled(10))), 1)
@@ -8,7 +8,7 @@ test_that("network density works", {
 })
 
 test_that("network reciprocity works", {
-  expect_s3_class(net_reciprocity(ison_networkers), "net_measure")
+  expect_s3_class(net_reciprocity(ison_networkers), "network_measure")
   expect_output(print(net_reciprocity(ison_networkers)))
   expect_length(net_reciprocity(ison_networkers), 1)
   expect_equal(as.numeric(net_reciprocity(ison_networkers)),
@@ -18,14 +18,14 @@ test_that("network reciprocity works", {
 test_that("one-mode object clustering is reported correctly",{
   expect_equal(as.numeric(net_transitivity(ison_algebra)),
                0.69787, tolerance = 0.001)
-  expect_s3_class(net_transitivity(ison_algebra), "net_measure")
+  expect_s3_class(net_transitivity(ison_algebra), "network_measure")
   expect_output(print(net_transitivity(ison_algebra)))
 })
 
 test_that("two-mode object clustering is reported correctly",{
   expect_equal(as.numeric(net_equivalency(ison_southern_women)),
                0.4872, tolerance = 0.001)
-  expect_s3_class(net_equivalency(ison_southern_women), "net_measure")
+  expect_s3_class(net_equivalency(ison_southern_women), "network_measure")
   expect_output(print(net_equivalency(ison_southern_women)))
 })
 
@@ -34,7 +34,7 @@ test_that("three-mode clustering calculated correctly",{
   mat2 <- manynet::create_ring(c(5,8))
   expect_equal(as.numeric(net_congruency(mat1, mat2)),
                0.3684, tolerance = 0.001)
-  expect_s3_class(net_congruency(mat1, mat2), "net_measure")
+  expect_s3_class(net_congruency(mat1, mat2), "network_measure")
   expect_output(print(net_congruency(mat1, mat2)))
 })
 
