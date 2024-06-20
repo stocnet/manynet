@@ -53,7 +53,7 @@ net_transmissibility <- function(diff_model){
   out <- out[-1]
   out <- out[!is.infinite(out)]
   out <- out[!is.nan(out)]
-  make_net_measure(mean(out, na.rm = TRUE),
+  make_network_measure(mean(out, na.rm = TRUE),
                        attr(diff_model, "network"))
 }
 
@@ -70,7 +70,7 @@ net_transmissibility <- function(diff_model){
 #'   net_infection_length(smeg_diff)
 #' @export
 net_infection_length <- function(diff_model){
-  make_net_measure(mean(node_infection_length(diff_model), na.rm = TRUE),
+  make_network_measure(mean(node_infection_length(diff_model), na.rm = TRUE),
                        attr(diff_model, "network"))
 }
 
@@ -104,7 +104,7 @@ net_reproduction <- function(diff_model){
   out <- net_transmissibility(diff_model)/
     (1/net_infection_length(diff_model))
   out <- min(out, mean(node_degree(net, normalized = FALSE)))
-  make_net_measure(out, net)
+  make_network_measure(out, net)
 }
 
 #' @rdname measure_net_diffusion 
@@ -139,7 +139,7 @@ net_immunity <- function(diff_model, normalized = TRUE){
   net <- attr(diff_model, "network")
   out <- 1 - 1/net_reproduction(diff_model)
   if(!normalized) out <- ceiling(out * net_nodes(net))
-  make_net_measure(out, net)
+  make_network_measure(out, net)
 }
 
 #' @rdname measure_net_diffusion

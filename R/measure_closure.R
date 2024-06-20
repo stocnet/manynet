@@ -47,7 +47,7 @@ NULL
 #' @export
 net_reciprocity <- function(.data, method = "default") {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  make_net_measure(igraph::reciprocity(manynet::as_igraph(.data), mode = method), 
+  make_network_measure(igraph::reciprocity(manynet::as_igraph(.data), mode = method), 
                        .data)
 }
 
@@ -69,7 +69,7 @@ node_reciprocity <- function(.data) {
 #' @export
 net_transitivity <- function(.data) {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  make_net_measure(igraph::transitivity(manynet::as_igraph(.data)), 
+  make_network_measure(igraph::transitivity(manynet::as_igraph(.data)), 
                        .data)
 }
 
@@ -107,7 +107,7 @@ net_equivalency <- function(.data) {
     if (is.nan(output)) output <- 1
     if(manynet::is_weighted(.data)) output <- output / mean(mat[mat>0])
   } else stop("This function expects a two-mode network")
-  make_net_measure(output, .data)
+  make_network_measure(output, .data)
 }
 
 #' @rdname measure_closure 
@@ -136,5 +136,5 @@ net_congruency <- function(.data, object2){
        sum(twopaths *
              (matrix(degrees, connects, connects) - twopaths)))
   if (is.nan(output)) output <- 1
-  make_net_measure(output, .data)
+  make_network_measure(output, .data)
 }

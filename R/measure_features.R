@@ -49,7 +49,7 @@ net_core <- function(.data,
   out <- stats::cor(c(manynet::as_matrix(.data)), 
                     c(manynet::as_matrix(manynet::create_core(.data,
                                             membership = membership))))
-  make_net_measure(out, .data)
+  make_network_measure(out, .data)
 }
 
 #' @rdname measure_features
@@ -94,7 +94,7 @@ net_richclub <- function(.data){
   coefs[is.nan(coefs)] <- 1
   out <- coefs[elbow_finder(seq_along(coefs), coefs)]
     # max(coefs, na.rm = TRUE)
-  make_net_measure(out, .data)
+  make_network_measure(out, .data)
 }
 
 #' @rdname measure_features 
@@ -110,7 +110,7 @@ net_factions <- function(.data,
   out <- stats::cor(c(manynet::as_matrix(.data)), 
                     c(manynet::as_matrix(manynet::create_components(.data,
                                                   membership = membership))))
-  make_net_measure(out, .data)
+  make_network_measure(out, .data)
 }
 
 #' @rdname measure_features
@@ -153,10 +153,10 @@ net_modularity <- function(.data,
   if(!is.numeric(membership)) membership <- as.numeric(as.factor(membership))
   if(!manynet::is_graph(.data)) .data <- manynet::as_igraph(.data)
   if(manynet::is_twomode(.data)){
-    make_net_measure(igraph::modularity(manynet::to_multilevel(.data), 
+    make_network_measure(igraph::modularity(manynet::to_multilevel(.data), 
                                           membership = membership,
                                           resolution = resolution), .data)
-  } else make_net_measure(igraph::modularity(.data, 
+  } else make_network_measure(igraph::modularity(.data, 
                                                membership = membership,
                                                resolution = resolution),
                               .data)
@@ -243,7 +243,7 @@ net_smallworld <- function(.data,
                 "omega" = (lr/lo - co/cl),
                 "sigma" = (co/cr)/(lo/lr),
                 "SWI" = ((lo - ll)/(lr - ll))*((co - cr)/(cl - cr)))
-  make_net_measure(out,
+  make_network_measure(out,
                        .data)
 }
 
@@ -263,7 +263,7 @@ net_scalefree <- function(.data){
                 "could have been drawn from a power-law", 
                 "distribution rejected.\n"))
   }
-  make_net_measure(out$alpha, .data)
+  make_network_measure(out$alpha, .data)
 }
 
 #' @rdname measure_features 
@@ -327,7 +327,7 @@ net_balance <- function(.data) {
     stop("sign may only contain -1 and 1")
   }
   tria_count <- count_signed_triangles(g)
-  make_net_measure(unname((tria_count["+++"] + tria_count["+--"])/sum(tria_count)),
+  make_network_measure(unname((tria_count["+++"] + tria_count["+--"])/sum(tria_count)),
                        .data)
 }
 

@@ -54,6 +54,6 @@ over_time <- function(.data, FUN, ..., attribute = "time",
                                function(j) FUN(j, ...), 
                                .progress = verbose, 
                                .options = furrr::furrr_options(seed = T))
-  make_net_measures(out, .data)
+  make_network_measures(out, .data)
 }
 

@@ -28,7 +28,7 @@ NULL
 #' net_nodes(ison_southern_women)
 #' @export
 net_nodes <- function(.data){
-  make_net_measure(igraph::vcount(as_igraph(.data)), .data)
+  make_network_measure(igraph::vcount(as_igraph(.data)), .data)
 }
 
 #' @rdname measure_properties
@@ -36,7 +36,7 @@ net_nodes <- function(.data){
 #' net_ties(ison_southern_women)
 #' @export
 net_ties <- function(.data){
-  make_net_measure(igraph::ecount(as_igraph(.data)), .data)
+  make_network_measure(igraph::ecount(as_igraph(.data)), .data)
 }
 
 #' @rdname measure_properties

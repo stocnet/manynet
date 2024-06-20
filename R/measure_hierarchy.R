@@ -35,7 +35,7 @@ NULL
 net_connectedness <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   dists <- igraph::distances(as_igraph(.data))
-  make_net_measure(1 - sum(dists==Inf)/sum(dists!=0),
+  make_network_measure(1 - sum(dists==Inf)/sum(dists!=0),
                        .data)
 }
 
@@ -45,7 +45,7 @@ net_efficiency <- function(.data) {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   degs <- node_indegree(.data, normalized = FALSE)
   out <- (net_nodes(.data)-1)/sum(degs)
-  make_net_measure(out, .data)
+  make_network_measure(out, .data)
 }
 
 #' @rdname measure_hierarchy 
@@ -65,5 +65,5 @@ net_upperbound <- function(.data) {
                  })
     out <- sum(out)/length(out)
   }
-  make_net_measure(out, .data)
+  make_network_measure(out, .data)
 }

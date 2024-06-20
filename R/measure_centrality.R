@@ -230,7 +230,7 @@ net_degree <- function(.data, normalized = TRUE,
     out <- igraph::centr_degree(graph = .data, mode = direction, 
                                 normalized = normalized)$centralization
   }
-  out <- make_net_measure(out, .data)
+  out <- make_network_measure(out, .data)
   out
 }
 
@@ -422,7 +422,7 @@ net_betweenness <- function(.data, normalized = TRUE,
   } else {
     out <- igraph::centr_betw(graph = graph)$centralization
   }
-  out <- make_net_measure(out, .data)
+  out <- make_network_measure(out, .data)
   out
 }
 
@@ -609,7 +609,7 @@ net_closeness <- function(.data, normalized = TRUE,
                              mode = direction,
                              normalized = normalized)$centralization
   }
-  out <- make_net_measure(out, .data)
+  out <- make_network_measure(out, .data)
   out
 }
 
@@ -620,7 +620,7 @@ net_reach <- function(.data, normalized = TRUE, k = 2){
   reaches <- node_reach(.data, normalized = FALSE, k = k)
   out <- sum(max(reaches) - reaches)
   if(normalized) out <- out / sum(manynet::net_nodes(.data) - reaches)
-  make_net_measure(out, .data)
+  make_network_measure(out, .data)
 }
 
 #' @rdname close_centrality
@@ -630,7 +630,7 @@ net_harmonic <- function(.data, normalized = TRUE, k = 2){
   harm <- node_harmonic(.data, normalized = FALSE, k = k)
   out <- sum(max(harm) - harm)
   if(normalized) out <- out / sum(manynet::net_nodes(.data) - harm)
-  make_net_measure(out, .data)
+  make_network_measure(out, .data)
 }
 
 # Eigenvector-like centralities ####
@@ -839,7 +839,7 @@ net_eigenvector <- function(.data, normalized = TRUE){
     out <- igraph::centr_eigen(manynet::as_igraph(.data), 
                                normalized = normalized)$centralization
   }
-  out <- make_net_measure(out, .data)
+  out <- make_network_measure(out, .data)
   out
 }
 
