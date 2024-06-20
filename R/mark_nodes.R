@@ -222,11 +222,11 @@ node_is_infected <- function(diff_model, time = 0) {
                   event == "I") %>% 
     dplyr::select(nodes)
   net <- attr(diff_model, "network")
-  if (manynet::is_labelled(net)) {
-    out <- seq_len(manynet::network_nodes(net)) %in% infected$nodes
-    names(out) <- manynet::node_names(net)
+  if (is_labelled(net)) {
+    out <- seq_len(network_nodes(net)) %in% infected$nodes
+    names(out) <- node_names(net)
   } else {
-    out <- seq_len(manynet::network_nodes(net)) %in% infected$nodes
+    out <- seq_len(network_nodes(net)) %in% infected$nodes
   }
   make_node_mark(out, net)
 }
