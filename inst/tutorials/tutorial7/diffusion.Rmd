@@ -226,7 +226,7 @@ according to how far through the diffusion process the node adopted.
 Note also that any seeds are indicated with a triangle.
 
 ```{r graphlat}
-graphr(lat_diff)
+graphr(lat_diff, node_size = 0.3)
 graphs(lat_diff)
 graphs(lat_diff, waves = c(1,4,8))
 grapht(lat_diff)
@@ -324,8 +324,8 @@ Similar to the previous examples, we will be using the following functions withi
 ```{r scale-solution}
 sf %>%
   as_tidygraph() %>%
-  mutate(degree = ifelse(node_is_max(node_degree(sf)), "max",
-                      ifelse(node_is_min(node_degree(sf)), "min", "others"))) %>%
+  mutate(degree = ifelse(node_is_max(node_degree(sf)) == TRUE, "max",
+                      ifelse(node_is_min(node_degree(sf)) == TRUE, "min", "others"))) %>%
   graphr(node_color = "degree") + guides(color = "legend") + labs(color = "degree")
 plot(play_diffusion(sf, seeds = 10, steps = 10)) / 
 plot(play_diffusion(sf, seeds = node_is_random(sf), steps = 10)) /
@@ -360,7 +360,7 @@ But what if nodes have higher _thresholds_, or even where those thresholds vary?
 Let's first start out with our ring network again.
 Show that whereas a threshold of one will result in complete infection,
 a threshold of two will not lead to any diffusion process unless
-there are two seeds and that they are in another nodes neighbourhood.
+there are two seeds and they are both in another nodes neighbourhood.
 
 ```{r complex, exercise = TRUE, exercise.setup = "create", purl = FALSE}
 
@@ -757,6 +757,7 @@ Play a single diffusion so that you can see what's going on in a particular run.
 ```
 
 ```{r seir-solution}
+set.seed(123)
 plot(play_diffusion(rd, seeds = 10, latency = 0.25, recovery = 0.2))
 
 # visualise diffusion with latency and recovery
