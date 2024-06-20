@@ -76,10 +76,10 @@ Lai, Xiangjing, Jin-Kao Hao, Zhang-Hua Fu, and Dong Yue. 2021.
 }
 \seealso{
 Other memberships: 
-\code{\link{community}},
 \code{\link{components}()},
 \code{\link{core}},
 \code{\link{equivalence}},
-\code{\link{hierarchical_community}}
+\code{\link{member_community}},
+\code{\link{member_hierarchical}}
 }
 \concept{memberships}

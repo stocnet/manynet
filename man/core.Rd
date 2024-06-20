@@ -68,9 +68,9 @@ Lip, Sean Z. W. 2011.
 \seealso{
 Other memberships: 
 \code{\link{cliques}},
-\code{\link{community}},
 \code{\link{components}()},
 \code{\link{equivalence}},
-\code{\link{hierarchical_community}}
+\code{\link{member_community}},
+\code{\link{member_hierarchical}}
 }
 \concept{memberships}

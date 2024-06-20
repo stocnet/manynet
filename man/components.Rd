@@ -58,9 +58,9 @@ node_in_component(mpn_bristol)
 \seealso{
 Other memberships: 
 \code{\link{cliques}},
-\code{\link{community}},
 \code{\link{core}},
 \code{\link{equivalence}},
-\code{\link{hierarchical_community}}
+\code{\link{member_community}},
+\code{\link{member_hierarchical}}
 }
 \concept{memberships}
