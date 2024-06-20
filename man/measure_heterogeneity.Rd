@@ -2,31 +2,31 @@
 % Please edit documentation in R/measure_heterogeneity.R
 \name{measure_heterogeneity}
 \alias{measure_heterogeneity}
-\alias{network_richness}
+\alias{net_richness}
 \alias{node_richness}
-\alias{network_diversity}
+\alias{net_diversity}
 \alias{node_diversity}
-\alias{network_heterophily}
+\alias{net_heterophily}
 \alias{node_heterophily}
-\alias{network_assortativity}
-\alias{network_spatial}
+\alias{net_assortativity}
+\alias{net_spatial}
 \title{Measures of network diversity}
 \usage{
-network_richness(.data, attribute)
+net_richness(.data, attribute)
 
 node_richness(.data, attribute)
 
-network_diversity(.data, attribute, clusters = NULL)
+net_diversity(.data, attribute, clusters = NULL)
 
 node_diversity(.data, attribute)
 
-network_heterophily(.data, attribute)
+net_heterophily(.data, attribute)
 
 node_heterophily(.data, attribute)
 
-network_assortativity(.data)
+net_assortativity(.data)
 
-network_spatial(.data, attribute)
+net_spatial(.data, attribute)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -48,24 +48,24 @@ These functions offer ways to measure the heterogeneity of an attribute
 across a network, within groups of a network, or the distribution of ties
 across this attribute:
 \itemize{
-\item \code{network_richness()} measures the number of unique categories
+\item \code{net_richness()} measures the number of unique categories
 in a network attribute.
 \item \code{node_richness()} measures the number of unique categories
 of an attribute to which each node is connected.
-\item \code{network_diversity()} measures the heterogeneity of ties across a network
+\item \code{net_diversity()} measures the heterogeneity of ties across a network
 or within clusters by node attributes.
 \item \code{node_diversity()} measures the heterogeneity of each node's
 local neighbourhood.
-\item \code{network_heterophily()} measures how embedded nodes in the network
+\item \code{net_heterophily()} measures how embedded nodes in the network
 are within groups of nodes with the same attribute.
 \item \code{node_heterophily()} measures each node's embeddedness within groups
 of nodes with the same attribute.
-\item \code{network_assortativity()} measures the degree assortativity in a network.
-\item \code{network_spatial()} measures the spatial association/autocorrelation (
+\item \code{net_assortativity()} measures the degree assortativity in a network.
+\item \code{net_spatial()} measures the spatial association/autocorrelation (
 global Moran's I) in a network.
 }
 }
-\section{network_diversity}{
+\section{net_diversity}{
 
 Blau's index (1977) uses a formula known also in other disciplines
 by other names
@@ -82,7 +82,7 @@ The maximum value depends on the number of categories and
 whether nodes can be evenly distributed across categories.
 }
 
-\section{network_homophily}{
+\section{net_homophily}{
 
 Given a partition of a network into a number of mutually exclusive groups then
 The E-I index is the number of ties between (or \emph{external}) nodes
@@ -94,20 +94,20 @@ where 1 indicates ties only between categories/groups and -1 ties only within ca
 }
 
 \examples{
-network_richness(ison_networkers)
+net_richness(ison_networkers)
 node_richness(ison_networkers, "Discipline")
 marvel_friends <- to_unsigned(ison_marvel_relationships, "positive")
-network_diversity(marvel_friends, "Gender")
-network_diversity(marvel_friends, "Attractive")
-network_diversity(marvel_friends, "Gender", "Rich")
+net_diversity(marvel_friends, "Gender")
+net_diversity(marvel_friends, "Attractive")
+net_diversity(marvel_friends, "Gender", "Rich")
 node_diversity(marvel_friends, "Gender")
 node_diversity(marvel_friends, "Attractive")
-network_heterophily(marvel_friends, "Gender")
-network_heterophily(marvel_friends, "Attractive")
+net_heterophily(marvel_friends, "Gender")
+net_heterophily(marvel_friends, "Attractive")
 node_heterophily(marvel_friends, "Gender")
 node_heterophily(marvel_friends, "Attractive")
-network_assortativity(ison_networkers)
-network_spatial(ison_lawfirm, "age")
+net_assortativity(ison_networkers)
+net_spatial(ison_lawfirm, "age")
 }
 \references{
 Blau, Peter M. (1977).
@@ -129,6 +129,7 @@ Other measures:
 \code{\link{close_centrality}},
 \code{\link{degree_centrality}},
 \code{\link{eigenv_centrality}},
+\code{\link{features}},
 \code{\link{measure_attributes}},
 \code{\link{measure_closure}},
 \code{\link{measure_cohesion}},
@@ -137,6 +138,7 @@ Other measures:
 \code{\link{measure_net_diffusion}},
 \code{\link{measure_node_diffusion}},
 \code{\link{measure_periods}},
-\code{\link{measure_properties}}
+\code{\link{measure_properties}},
+\code{\link{member_diffusion}}
 }
 \concept{measures}

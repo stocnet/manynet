@@ -5,20 +5,20 @@
 #'   across a network, within groups of a network, or the distribution of ties
 #'   across this attribute:
 #'   
-#'   - `network_richness()` measures the number of unique categories 
+#'   - `net_richness()` measures the number of unique categories 
 #'   in a network attribute.
 #'   - `node_richness()` measures the number of unique categories 
 #'   of an attribute to which each node is connected.
-#'   - `network_diversity()` measures the heterogeneity of ties across a network 
+#'   - `net_diversity()` measures the heterogeneity of ties across a network 
 #'   or within clusters by node attributes.
 #'   - `node_diversity()` measures the heterogeneity of each node's
 #'   local neighbourhood.
-#'   - `network_heterophily()` measures how embedded nodes in the network
+#'   - `net_heterophily()` measures how embedded nodes in the network
 #'   are within groups of nodes with the same attribute.
 #'   - `node_heterophily()` measures each node's embeddedness within groups
 #'   of nodes with the same attribute.
-#'   - `network_assortativity()` measures the degree assortativity in a network.
-#'   - `network_spatial()` measures the spatial association/autocorrelation (
+#'   - `net_assortativity()` measures the degree assortativity in a network.
+#'   - `net_spatial()` measures the spatial association/autocorrelation (
 #'   global Moran's I) in a network.
 #'   
 #' @inheritParams is
@@ -31,11 +31,11 @@ NULL
 
 #' @rdname measure_heterogeneity 
 #' @examples
-#' network_richness(ison_networkers)
+#' net_richness(ison_networkers)
 #' @export
-network_richness <- function(.data, attribute){
+net_richness <- function(.data, attribute){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  make_network_measure(length(unique(manynet::node_attribute(.data, attribute))),
+  make_net_measure(length(unique(manynet::node_attribute(.data, attribute))),
                        .data)
 }
 
@@ -52,7 +52,7 @@ node_richness <- function(.data, attribute){
 }
 
 #' @rdname measure_heterogeneity 
-#' @section network_diversity:
+#' @section net_diversity:
 #'    Blau's index (1977) uses a formula known also in other disciplines
 #'    by other names 
 #'    (Gini-Simpson Index, Gini impurity, Gini's diversity index, 
@@ -72,11 +72,11 @@ node_richness <- function(.data, attribute){
 #'   New York: Free Press.
 #' @examples
 #' marvel_friends <- to_unsigned(ison_marvel_relationships, "positive")
-#' network_diversity(marvel_friends, "Gender")
-#' network_diversity(marvel_friends, "Attractive")
-#' network_diversity(marvel_friends, "Gender", "Rich")
+#' net_diversity(marvel_friends, "Gender")
+#' net_diversity(marvel_friends, "Attractive")
+#' net_diversity(marvel_friends, "Gender", "Rich")
 #' @export
-network_diversity <- function(.data, attribute, clusters = NULL){
+net_diversity <- function(.data, attribute, clusters = NULL){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   blau <- function(features) { 1 - sum((table(features)/length(features))^2) }
   attr <- manynet::node_attribute(.data, attribute)
@@ -95,7 +95,7 @@ network_diversity <- function(.data, attribute, clusters = NULL){
     names(blauout) <- paste0("Cluster ", unique(clu))
     blauout <- blauout[order(names(blauout))]
   } else stop("`clusters` must be the name of a nodal variable in the object.")
-  make_network_measure(blauout, .data)
+  make_net_measure(blauout, .data)
 }
 
 #' @rdname measure_heterogeneity 
@@ -106,7 +106,7 @@ network_diversity <- function(.data, attribute, clusters = NULL){
 node_diversity <- function(.data, attribute){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   out <- vapply(igraph::ego(manynet::as_igraph(.data)),
-                function(x) network_diversity(
+                function(x) net_diversity(
                   igraph::induced_subgraph(manynet::as_igraph(.data), x),
                   attribute),
                 FUN.VALUE = numeric(1))
@@ -114,7 +114,7 @@ node_diversity <- function(.data, attribute){
 }
 
 #' @rdname measure_heterogeneity 
-#' @section network_homophily:
+#' @section net_homophily:
 #'   Given a partition of a network into a number of mutually exclusive groups then 
 #'   The E-I index is the number of ties between (or _external_) nodes 
 #'   grouped in some mutually exclusive categories
@@ -127,10 +127,10 @@ node_diversity <- function(.data, attribute){
 #'   Informal networks and organizational crises: an experimental simulation. 
 #'   _Social Psychology Quarterly_ 51(2), 123-140.
 #' @examples 
-#' network_heterophily(marvel_friends, "Gender")
-#' network_heterophily(marvel_friends, "Attractive")
+#' net_heterophily(marvel_friends, "Gender")
+#' net_heterophily(marvel_friends, "Attractive")
 #' @export
-network_heterophily <- function(.data, attribute){
+net_heterophily <- function(.data, attribute){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   m <- manynet::as_matrix(.data)
   if (length(attribute) == 1 && is.character(attribute)) {
@@ -143,7 +143,7 @@ network_heterophily <- function(.data, attribute){
   nInternal <- sum(m * same, na.rm = TRUE)
   nExternal <- sum(m, na.rm = TRUE) - nInternal
   ei <- (nExternal - nInternal) / sum(m, na.rm = TRUE)
-  make_network_measure(ei, .data)
+  make_net_measure(ei, .data)
 }
 
 #' @rdname measure_heterogeneity 
@@ -175,11 +175,11 @@ node_heterophily <- function(.data, attribute){
 #' @rdname measure_heterogeneity 
 #' @importFrom igraph assortativity_degree
 #' @examples 
-#' network_assortativity(ison_networkers)
+#' net_assortativity(ison_networkers)
 #' @export
-network_assortativity <- function(.data){
+net_assortativity <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  make_network_measure(igraph::assortativity_degree(manynet::as_igraph(.data), 
+  make_net_measure(igraph::assortativity_degree(manynet::as_igraph(.data), 
                                directed = manynet::is_directed(.data)),
                      .data)
 }
@@ -191,11 +191,11 @@ network_assortativity <- function(.data){
 #'   _Biometrika_ 37(1): 17-23.
 #'   \doi{10.2307/2332142}
 #' @examples 
-#' network_spatial(ison_lawfirm, "age")
+#' net_spatial(ison_lawfirm, "age")
 #' @export
-network_spatial <- function(.data, attribute){
+net_spatial <- function(.data, attribute){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  N <- manynet::network_nodes(.data)
+  N <- manynet::net_nodes(.data)
   x <- manynet::node_attribute(.data, attribute)
   stopifnot(is.numeric(x))
   x_bar <- mean(x, na.rm = TRUE)
@@ -204,5 +204,5 @@ network_spatial <- function(.data, attribute){
   I <- (N/W) * 
     (sum(w * matrix(x - x_bar, N, N) * matrix(x - x_bar, N, N, byrow = TRUE)) / 
     sum((x - x_bar)^2))
-  make_network_measure(I, .data)
+  make_net_measure(I, .data)
 }
