@@ -69,7 +69,7 @@ test_random <- function(.data, FUN, ...,
               plteobs = mean(simd <= obsd),
               pgteobs = mean(simd >= obsd),
               reps = times)
-  class(out) <- "net_test"
+  class(out) <- "network_test"
   out
 }
 #' @rdname tests 
@@ -117,12 +117,12 @@ test_permutation <- function(.data, FUN, ...,
               plteobs = mean(simd <= obsd),
               pgteobs = mean(simd >= obsd),
               reps = times)
-  class(out) <- "net_test"
+  class(out) <- "network_test"
   out
 }
 
 #' @export
-print.net_test <- function(x, ...,
+print.network_test <- function(x, ...,
                              max.length = 6,
                              digits = 3){
   cat(paste("\n", x$test, "Test Results\n\n"))
@@ -132,7 +132,7 @@ print.net_test <- function(x, ...,
 }
 
 #' @export
-plot.net_test <- function(x, ...,
+plot.network_test <- function(x, ...,
                             threshold = .95, 
                             tails = c("two", "one")){
   data <- data.frame(Statistic = x$testdist)
