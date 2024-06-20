@@ -258,17 +258,17 @@ question("Select all that are true for the two-mode Brandes network.",
 `{migraph}` also implements network centralization functions.
 Here we are no longer interested in the level of the node,
 but in the level of the whole network, 
-so the syntax replaces `node_` with `network_`:
+so the syntax replaces `node_` with `net_`:
 
 ```{r centzn, exercise = TRUE, exercise.setup = "addingnames", purl = FALSE}
 
 ```
 
 ```{r centzn-solution}
-network_degree(ison_brandes)
-network_betweenness(ison_brandes)
-network_closeness(ison_brandes)
-network_eigenvector(ison_brandes)
+net_degree(ison_brandes)
+net_betweenness(ison_brandes)
+net_closeness(ison_brandes)
+net_eigenvector(ison_brandes)
 ```
 
 By default, scores are printed to 3 decimal places,
@@ -301,13 +301,13 @@ ison_brandes <- ison_brandes %>%
   add_node_attribute("eigenvector",
                               node_is_max(node_eigenvector(ison_brandes)))
 gd <- graphr(ison_brandes, node_color = "degree") + 
-  ggtitle("Degree", subtitle = round(network_degree(ison_brandes), 2))
+  ggtitle("Degree", subtitle = round(net_degree(ison_brandes), 2))
 gc <- graphr(ison_brandes, node_color = "closeness") + 
-  ggtitle("Closeness", subtitle = round(network_closeness(ison_brandes), 2))
+  ggtitle("Closeness", subtitle = round(net_closeness(ison_brandes), 2))
 gb <- graphr(ison_brandes, node_color = "betweenness") + 
-  ggtitle("Betweenness", subtitle = round(network_betweenness(ison_brandes), 2))
+  ggtitle("Betweenness", subtitle = round(net_betweenness(ison_brandes), 2))
 ge <- graphr(ison_brandes, node_color = "eigenvector") + 
-  ggtitle("Eigenvector", subtitle = round(network_eigenvector(ison_brandes), 2))
+  ggtitle("Eigenvector", subtitle = round(net_eigenvector(ison_brandes), 2))
 (gd | gb) / (gc | ge)
 # ggsave("brandes-centralities.pdf")
 ```
