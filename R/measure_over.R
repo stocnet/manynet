@@ -1,12 +1,5 @@
 #' Helper functions for measuring over splits of networks  
 #' @inheritParams is
-#' @param times Integer indicating number of simulations used for quantile estimation. 
-#'   (Relevant to the null hypothesis test only - 
-#'   the analysis itself is unaffected by this parameter.) 
-#'   Note that, as for all Monte Carlo procedures, convergence is slower for more
-#'   extreme quantiles.
-#'   By default, `times=1000`.
-#'   1,000 - 10,000 repetitions recommended for publication-ready results.
 #' @param strategy If `{furrr}` is installed, 
 #'   then multiple cores can be used to accelerate the function.
 #'   By default `"sequential"`, 

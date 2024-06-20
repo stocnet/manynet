@@ -27,6 +27,8 @@
 #'   - `net_stability()` measures the Jaccard index of stability between two or more networks.
 #' 
 #'   These `net_*()` functions return a single numeric scalar or value.
+#' @inheritParams is
+#' @inheritParams create
 #' @param membership A vector of partition membership.
 #' @name measure_features
 #' @family measures
@@ -98,7 +100,6 @@ net_richclub <- function(.data){
 
 #' @rdname measure_features 
 #' @examples 
-#'   net_factions(mpn_elite_mex)
 #'   net_factions(ison_southern_women)
 #' @export
 net_factions <- function(.data,
@@ -133,9 +134,9 @@ net_factions <- function(.data,
 #'   By default 1.
 #' @examples 
 #' net_modularity(ison_adolescents, 
-#'   node_kernighanlin(ison_adolescents))
+#'   node_in_partition(ison_adolescents))
 #' net_modularity(ison_southern_women, 
-#'   node_kernighanlin(ison_southern_women))
+#'   node_in_partition(ison_southern_women))
 #' @references 
 #' Murata, Tsuyoshi. 2010. Modularity for Bipartite Networks. 
 #' In: Memon, N., Xu, J., Hicks, D., Chen, H. (eds) 
@@ -150,9 +151,9 @@ net_modularity <- function(.data,
   if(is.null(membership))
     membership <- node_in_partition(.data)
   if(!is.numeric(membership)) membership <- as.numeric(as.factor(membership))
-  if(!manynet::is_graph(.data)) .data <- manynet::as_igraph(.data)
-  if(manynet::is_twomode(.data)){
-    make_network_measure(igraph::modularity(manynet::to_multilevel(.data), 
+  if(!is_graph(.data)) .data <- as_igraph(.data)
+  if(is_twomode(.data)){
+    make_network_measure(igraph::modularity(to_multilevel(.data), 
                                           membership = membership,
                                           resolution = resolution), .data)
   } else make_network_measure(igraph::modularity(.data, 

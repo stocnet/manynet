@@ -349,7 +349,9 @@ create_components <- function(n, directed = FALSE, membership = NULL) {
   as_tidygraph(out)
 }
 
-#' @rdname create 
+#' @rdname create
+#' @param mark A logical vector the length of the nodes in the network.
+#'   This can be created by, among other things, any `node_is_*()` function.
 #' @examples
 #' create_core(6)
 #' @export

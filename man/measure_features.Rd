@@ -29,6 +29,18 @@ net_scalefree(.data)
 net_balance(.data)
 }
 \arguments{
+\item{.data}{An object of a manynet-consistent class:
+\itemize{
+\item matrix (adjacency or incidence) from \code{{base}} R
+\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
+\item igraph, from the \code{{igraph}} package
+\item network, from the \code{{network}} package
+\item tbl_graph, from the \code{{tidygraph}} package
+}}
+
+\item{mark}{A logical vector the length of the nodes in the network.
+This can be created by, among other things, any \verb{node_is_*()} function.}
+
 \item{membership}{A vector of partition membership.}
 
 \item{resolution}{A proportion indicating the resolution scale.
@@ -111,12 +123,11 @@ to the rest of the network through a single tie.
 net_core(ison_adolescents)
 net_core(ison_southern_women)
 net_richclub(ison_adolescents)
-  net_factions(mpn_elite_mex)
   net_factions(ison_southern_women)
 net_modularity(ison_adolescents, 
-  node_kernighanlin(ison_adolescents))
+  node_in_partition(ison_adolescents))
 net_modularity(ison_southern_women, 
-  node_kernighanlin(ison_southern_women))
+  node_in_partition(ison_southern_women))
 net_smallworld(ison_brandes)
 net_smallworld(ison_southern_women)
 net_scalefree(ison_adolescents)

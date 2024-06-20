@@ -105,16 +105,16 @@ assignment.
 }
 \examples{
 \donttest{
-(nse <- node_in_structural(mpn_elite_usa_advice))
+(nse <- node_in_structural(ison_algebra))
 plot(nse)
 }
 \donttest{
-(nre <- node_in_regular(mpn_elite_usa_advice,
+(nre <- node_in_regular(ison_southern_women,
   cluster = "concor"))
 plot(nre)
 }
 \donttest{
-(nae <- node_in_automorphic(mpn_elite_usa_advice,
+(nae <- node_in_automorphic(ison_southern_women,
   k = "elbow"))
 plot(nae)
 }

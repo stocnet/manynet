@@ -25,6 +25,10 @@ net_hazard(diff_model)
 \arguments{
 \item{diff_model}{A valid network diffusion model,
 as created by \code{as_diffusion()} or \code{play_diffusion()}.}
+
+\item{normalized}{Logical scalar, whether the centrality scores are normalized.
+Different denominators are used depending on whether the object is one-mode or two-mode,
+the type of centrality, and other arguments.}
 }
 \description{
 These functions allow measurement of various features of

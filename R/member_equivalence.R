@@ -77,7 +77,7 @@ node_in_equivalence <- function(.data, census,
 #' @rdname equivalence
 #' @examples
 #' \donttest{
-#' (nse <- node_in_structural(mpn_elite_usa_advice))
+#' (nse <- node_in_structural(ison_algebra))
 #' plot(nse)
 #' }
 #' @export
@@ -99,7 +99,7 @@ node_in_structural <- function(.data,
 #' @rdname equivalence
 #' @examples
 #' \donttest{
-#' (nre <- node_in_regular(mpn_elite_usa_advice,
+#' (nre <- node_in_regular(ison_southern_women,
 #'   cluster = "concor"))
 #' plot(nre)
 #' }
@@ -124,7 +124,7 @@ node_in_regular <- function(.data,
 #' @rdname equivalence
 #' @examples
 #' \donttest{
-#' (nae <- node_in_automorphic(mpn_elite_usa_advice,
+#' (nae <- node_in_automorphic(ison_southern_women,
 #'   k = "elbow"))
 #' plot(nae)
 #' }

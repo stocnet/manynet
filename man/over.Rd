@@ -55,14 +55,6 @@ See \href{https://progressr.futureverse.org}{\code{{progressr}}} for more.}
 
 \item{slice}{Optionally, a vector of specific slices.
 Otherwise all observed slices will be returned.}
-
-\item{times}{Integer indicating number of simulations used for quantile estimation.
-(Relevant to the null hypothesis test only -
-the analysis itself is unaffected by this parameter.)
-Note that, as for all Monte Carlo procedures, convergence is slower for more
-extreme quantiles.
-By default, \code{times=1000}.
-1,000 - 10,000 repetitions recommended for publication-ready results.}
 }
 \description{
 Helper functions for measuring over splits of networks

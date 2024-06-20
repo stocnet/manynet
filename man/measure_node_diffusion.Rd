@@ -20,6 +20,13 @@ node_exposure(.data, mark, time = 0)
 \item{diff_model}{A valid network diffusion model,
 as created by \code{as_diffusion()} or \code{play_diffusion()}.}
 
+\item{normalized}{Logical scalar, whether the centrality scores are normalized.
+Different denominators are used depending on whether the object is one-mode or two-mode,
+the type of centrality, and other arguments.}
+
+\item{lag}{The number of time steps back upon which the thresholds are
+inferred.}
+
 \item{.data}{An object of a manynet-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R

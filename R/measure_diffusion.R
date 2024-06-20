@@ -20,6 +20,7 @@
 #'   
 #' @param diff_model A valid network diffusion model,
 #'   as created by `as_diffusion()` or `play_diffusion()`.
+#' @inheritParams degree_centrality
 #' @family measures
 #' @family diffusion
 #' @name measure_net_diffusion
@@ -261,6 +262,8 @@ node_adoption_time <- function(diff_model){
 }
 
 #' @rdname measure_node_diffusion 
+#' @param lag The number of time steps back upon which the thresholds are
+#'   inferred.
 #' @section Thresholds:
 #'   `node_thresholds()` infers nodes' thresholds based on how much
 #'   exposure they had when they were infected.

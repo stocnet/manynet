@@ -14,6 +14,13 @@
 #'   
 #' @name tests
 #' @inheritParams over
+#' @param times Integer indicating number of simulations used for quantile estimation. 
+#'   (Relevant to the null hypothesis test only - 
+#'   the analysis itself is unaffected by this parameter.) 
+#'   Note that, as for all Monte Carlo procedures, convergence is slower for more
+#'   extreme quantiles.
+#'   By default, `times=1000`.
+#'   1,000 - 10,000 repetitions recommended for publication-ready results.
 #' @family models
 #' @param FUN A graph-level statistic function to test.
 #' @param ... Additional arguments to be passed on to FUN,
