@@ -264,8 +264,7 @@ rg_d <- play_diffusion(rg, seeds = 1)
 plot(rg_d)
 
 # visualise the diffusion within the network
-graphs(play_diffusion(rg, seeds = 1), node_color = "Infected", layout = "circle") +
-  ggplot2::guides(colour = guide_legend(""))
+graphs(rg_d, layout = "circle")
 ```
 
 The result object, when printed, lists how many of the nodes in the network,
@@ -297,7 +296,7 @@ la %>%
   graphr(node_color = "color")
 
 # visualise diffusion in lattice graph
-autographd(play_diffusion(la, seeds = 16), layout = "grid", keep_isolates = FALSE)
+grapht(play_diffusion(la, seeds = 16), layout = "grid", keep_isolates = FALSE)
 ```
 
 ```{r lattice-interp, echo = FALSE, purl = FALSE}
@@ -333,9 +332,7 @@ plot(play_diffusion(sf, seeds = node_is_max(node_degree(sf)), steps = 10)) /
 plot(play_diffusion(sf, seeds = node_is_min(node_degree(sf)), steps = 10))
 
 # visualise diffusion in scalefree network
-graphs(play_diffusion(sf, seeds = node_is_min(node_degree(sf)), steps = 10),
-           node_color = "Infected") +
-  ggplot2::guides(colour = guide_legend(""))
+graphs(play_diffusion(sf, seeds = node_is_min(node_degree(sf)), steps = 10))
 grapht(play_diffusion(sf, seeds = 16, steps = 10))
 ```
 
@@ -863,14 +860,14 @@ Then play the learning model with these beliefs, and plot the result.
 
 ```{r degroot-hint, purl = FALSE}
 beliefs <- rbinom(net_nodes(____), 1, prob = 0.25)
-____ %>% mutate(____ = beliefs) %>% autographr(node_color = "____")
+____ %>% mutate(____ = beliefs) %>% graphr(node_color = "____")
 netlearn <- play_learning(____, ____)
 plot(____)
 ```
 
 ```{r degroot-solution}
 beliefs <- rbinom(net_nodes(ison_networkers), 1, prob = 0.25)
-ison_networkers %>% mutate(beliefs = beliefs) %>% autographr(node_color = "beliefs")
+ison_networkers %>% mutate(beliefs = beliefs) %>% graphr(node_color = "beliefs")
 netlearn <- play_learning(ison_networkers, beliefs)
 plot(netlearn)
 ```
