@@ -3,7 +3,7 @@ title: "Diffusion"
 author: "by James Hollway"
 output: 
   learnr::tutorial:
-    theme: journal
+    theme: readable
 runtime: shiny_prerendered
 description: >
   In this tutorial you will learn how to simulate and investigate simple and complex
@@ -26,10 +26,12 @@ sf <- generate_scalefree(nw, 0.025)
 sw <- generate_smallworld(nw, 0.025)
 ```
 
-## Investigate diffusion through simulation
+## Diffusion models
 
 In this tutorial, we're going to look at several diffusion processes 
 and how they operate across various networks.
+
+
 Let's start off with creating and visualising a few networks 
 that we might be interested in here.
 Let's take the `ison_networkers` dataset from `{manynet}`,
@@ -150,6 +152,94 @@ graphr(sw) + ggtitle("Small-World")
 ```
 
 
+## Cascading models
+
+The simplest kind of diffusion process is an independent cascading model,
+where any contact with the attribute (disease or innovation) 
+is enough to cause infection/adoption.
+If the network is connected, the attribute will 'cascade' across the network
+until all nodes are 'infected'/have adopted.
+
+### Diffusing across a lattice
+
+Let us begin with a lattice network that shows us exactly how such a cascade works.
+Remember, to create a lattice network, all you need to do is run `create_lattice()`,
+together with the number of nodes (of each mode) and 
+the maximum number of neighbors (width) as the arguments.
+Let's create a one-mode lattice with 32 nodes, maximum width 4, and graph it using `graphr()`:
+
+```{r clattice}
+lat <- create_lattice(32, width = 4)
+graphr(lat)
+```
+
+Ok, great! That's made a nice little lattice network.
+Next we want to play a diffusion process on this network.
+To do this, 
+
+```{r latticediff}
+lat_diff <- play_diffusion(lat)
+```
+
+We can investigate the results in a few ways.
+The first way is simply to print the result by calling the object.
+The other way is to unpack the result by calling for its summary.
+**Different name??**
+
+```{r latticedres}
+lat_diff
+summary(lat_diff)
+```
+
+The main report from the `lat_diff` object shows the number of nodes that don't
+(yet) have the attribute (S) and that have the attribute (I) at each time point (t).
+We can see a steady growth here, but for a slower initialisation and winding down.
+
+The secondary report, `summary(lat_diff)`, presents a list of the events at each
+time point.
+The event indicator 'I' indicates that these are infection/adoption events.
+Where 't' is 0, that means that these are the seeds producing the starting condition
+for the diffusion.
+The final column, 'exposure', records the number of infected nodes that the adopting
+node was exposed to when it adopted.
+This is recorded here to accelerate later analysis.
+
+### Visualising cascades
+
+We have a few different options for visualising diffusions.
+The first visualisation option that we have is to plot the diffusion result itself.
+
+```{r plotlat}
+plot(lat_diff)
+```
+
+This plot effectively visualises what we observed from the print out of the 
+`lat_diff` object above.
+The red line traces the proportion of infected;
+the blue line the (inverse) proportion of susceptible.
+The grey histogram shows the new infections.
+
+But maybe we want to view the diffusion on the actual network.
+Here we can use all the three main graphing techniques offered in `{manynet}`.
+First, `graphr()` will graph a static network where the nodes are coloured
+according to how far through the diffusion process the node adopted.
+Note also that any seeds are indicated with a triangle.
+
+```{r graphlat}
+graphr(lat_diff)
+graphs(lat_diff)
+graphs(lat_diff, waves = c(1,4,8))
+grapht(lat_diff)
+```
+
+Second, `graphs()` visualises the stages of the diffusion on the network.
+By default it will graph the first and last wave,
+but we can change this by specifying which waves to graph.
+
+Lastly, `grapht()` animates this diffusion process to a gif.
+It can take a little time to encode, but it is worth it to see exactly
+how the attribute is diffusing across the network!
+
 ### Examining diffusion across networks of different structure
 
 Now, let's start off by examining a pretty straight-forward structure,
@@ -187,84 +277,6 @@ time point, or the so-called 'force of infection' ($F = \beta I$).
 We can see that there is a pretty constant diffusion across this network,
 with 2-3 nodes being newly infected at each time-point.
 The whole network is infected by the eighth time-point.
-
-### Varying seed nodes
-
-Since the ring network we constructed is cyclical,
-then no matter where the 'infection' starts, 
-it should diffuse throughout the whole network.
-To see whether this is true, 
-try choosing the sixteenth (middle) node 
-and see whether the result is any different.
-
-```{r ring2, exercise = TRUE, exercise.setup = "create", purl = FALSE}
-
-```
-
-```{r ring2-solution}
-rg_d2 <- play_diffusion(rg, seeds = 16)
-plot(rg_d2)
-```
-
-```{r ring2-interp, echo = FALSE, purl = FALSE}
-question("Do you see any differences?",
-         answer("Yes"),
-         answer("No", correct = TRUE),
-        allow_retry = TRUE)
-```
-
-Now what if we seed the network with more than one infected node?
-Choosing the first four nodes we can see that the process is jump-started,
-but doesn't really conclude that much faster.
-
-```{r ring3, exercise = TRUE, exercise.setup = "create", purl = FALSE}
-
-```
-
-```{r ring3-hint, purl = FALSE}
-# Remember we want to see the first four nodes.
-
-plot(play_diffusion(rg, seeds = ____))
-```
-
-```{r ring3-solution}
-rg_d3 <- play_diffusion(rg, seeds = 1:4)
-plot(rg_d3)
-
-# graph the diffusion within the network
-graphs(play_diffusion(rg, seeds = 1:4), node_color = "Infected", layout = "circle") +
-  ggplot2::guides(colour = guide_legend(""))
-```
-
-But what if we seed the network at three different places?
-Here we can use `node_is_random()` to randomly select some nodes to seed.
-Try it with four randomly-selected nodes and see what you get.
-
-```{r ring4, exercise = TRUE, exercise.setup = "create", purl = FALSE}
-
-```
-
-```{r ring4-hint, purl = FALSE}
-# We will be using the node_is_random() within the seed argument to random select 
-# 4 nodes
-
-plot(play_diffusion(rg, seeds = ____(rg, ____)))
-```
-
-```{r ring4-solution}
-plot(play_diffusion(rg, seeds = node_is_random(rg, 4)))
-```
-
-```{r ring4-interp, echo = FALSE, purl = FALSE}
-question("Do you see any differences?",
-         answer("Yes", correct = TRUE),
-         answer("No"),
-        allow_retry = TRUE)
-```
-
-Where the innovation/disease is optimally seeded to 
-accelerate or decelerate diffusions 
-is a crucial question in network intervention studies.
 
 ### Varying networks
 
@@ -337,11 +349,13 @@ question("Which of these four led to the fastest diffusion process?",
         random_answer_order = TRUE)
 ```
 
-### Varying thresholds
 
-So far, we've been using a simple diffusion model where each node
+
+## Threshold models
+
+So far, we've been using a simple cascading diffusion model where each node
 needs only to be in contact with one infectious individual to be infected.
-But what if nodes have higher _thresholds_ or even where they vary?
+But what if nodes have higher _thresholds_, or even where those thresholds vary?
 
 Let's first start out with our ring network again.
 Show that whereas a threshold of one will result in complete infection,
@@ -450,7 +464,150 @@ and are preferentially attached by those who follow,
 they will have a higher degree and only with a lower threshold will
 we see complete infection.
 
-## Investigate epidemiological models
+## Get it going
+
+Let's say that you have developed an exciting new policy and
+you are keen to maximise how quickly and thoroughly it is adopted.
+We are interested here in network intervention.
+
+### Choosing where to seed
+
+Since the ring network we constructed is cyclical,
+then no matter where the 'infection' starts, 
+it should diffuse throughout the whole network.
+To see whether this is true, 
+try choosing the sixteenth (middle) node 
+and see whether the result is any different.
+
+```{r ring2, exercise = TRUE, exercise.setup = "create", purl = FALSE}
+
+```
+
+```{r ring2-solution}
+rg_d2 <- play_diffusion(rg, seeds = 16)
+plot(rg_d2)
+```
+
+```{r ring2-interp, echo = FALSE, purl = FALSE}
+question("Do you see any differences?",
+         answer("Yes"),
+         answer("No", correct = TRUE),
+        allow_retry = TRUE)
+```
+
+Now what if we seed the network with more than one infected node?
+Choosing the first four nodes we can see that the process is jump-started,
+but doesn't really conclude that much faster.
+
+```{r ring3, exercise = TRUE, exercise.setup = "create", purl = FALSE}
+
+```
+
+```{r ring3-hint, purl = FALSE}
+# Remember we want to see the first four nodes.
+
+plot(play_diffusion(rg, seeds = ____))
+```
+
+```{r ring3-solution}
+rg_d3 <- play_diffusion(rg, seeds = 1:4)
+plot(rg_d3)
+
+# graph the diffusion within the network
+graphs(play_diffusion(rg, seeds = 1:4), layout = "circle")
+```
+
+But what if we seed the network at three different places?
+Here we can use `node_is_random()` to randomly select some nodes to seed.
+Try it with four randomly-selected nodes and see what you get.
+
+```{r ring4, exercise = TRUE, exercise.setup = "create", purl = FALSE}
+
+```
+
+```{r ring4-hint, purl = FALSE}
+# We will be using the node_is_random() within the seed argument to random select 
+# 4 nodes
+
+plot(play_diffusion(rg, seeds = ____(rg, ____)))
+```
+
+```{r ring4-solution}
+plot(play_diffusion(rg, seeds = node_is_random(rg, 4)))
+```
+
+```{r ring4-interp, echo = FALSE, purl = FALSE}
+question("Do you see any differences?",
+         answer("Yes", correct = TRUE),
+         answer("No"),
+        allow_retry = TRUE)
+```
+
+Where the innovation/disease is optimally seeded to 
+accelerate or decelerate diffusions 
+is a crucial question in network intervention studies.
+
+### Advertising adoption
+
+Another strategy often employed is that of advertising how much adoption
+there already is in the network globally.
+
+## Make it stop
+
+In this section, we are interested in how to most effectively halt 
+a diffusion process.
+
+: How to stop a fire, or where to vaccinate?
+
+### R-nought and herd immunity
+
+An attribute's reproduction number, or $R_0$, is a measure of the rate of infection
+or how quickly that attribute will reproduce period over period.
+It is calculated as $R_0 = \min\left(\frac{T}{1/IL}, \bar{k}\right)$,
+i.e. the transmissibility (proportion of susceptible nodes that are infected at each time period) over the average infection length (average length of time nodes remain infected).  
+
+It can be interpreted as follows:
+- Where $R_0$ > 1, the 'disease' will 'infect' more and more nodes in the network.  
+- Where $R_0$ < 1, the 'disease' will not sustain itself and eventually die out.  
+- Where $R_0$ = 1, the 'disease' will continue as endemic, if conditions allow.  
+
+So how can we establish the $R_0$ here?
+
+```{r r0, exercise = TRUE, exercise.setup = "create"}
+set.seed(123)
+rd_diff <- play_diffusion(rd, seeds = 10, recovery = 0.1)
+plot(rd_diff)
+# R-nought
+network_reproduction(rd_diff)
+```
+
+The relationship between the reproduction number and the observed infection
+should be clear.
+
+```{r immunity, exercise = TRUE, exercise.setup = "r0"}
+# Herd Immunity Threshold
+network_immunity(rd_diff)
+network_immunity(rd_diff, normalized = FALSE)
+```
+
+```{r vaccinate, exercise = TRUE, exercise.setup = "create"}
+
+```
+
+The Herd Immunity Threshold or HIT indicates the threshold at which the reduction of susceptible members of the network means that infections will no longer keep increasing, allowing herd immunity to be achieved.
+In this model, the HIT score of 0.94 indicates that 94% of nodes in the network would need to be vaccinated or otherwise protected to achieve herd immunity.
+Multiplying the HIT score with the number of nodes in the network (32 in this example) gives the number of nodes that would need to be vaccinated: 31 nodes.
+
+```{r r0-interp, echo = FALSE, purl = FALSE}
+question("Select any true statements you can make about this R-nought result:",
+         answer("An epidemic is likely to occur.", correct = TRUE),
+         answer("There are not enough seed nodes to start an epidemic."),
+         answer("If the recovery rate was instead a mortality rate, it would make no difference.", correct = TRUE),
+        allow_retry = TRUE,
+        random_answer_order = TRUE)
+```
+
+## Compartmental models
 
 So far we've been looking at variations on a 
 pretty straight-forward diffusion process
@@ -606,38 +763,35 @@ plot(play_diffusion(rd, seeds = 10, latency = 0.25, recovery = 0.2))
 grapht(play_diffusion(rd, seeds = 10, latency = 0.25, recovery = 0.2))
 ```
 
-### R-nought and herd immunity
+## Inferring from empirics
 
-So how can we establish the $R_0$ here?
+Simulations are very useful for exploring diffusion dynamics.
+Many of these tools can be used for examining observed diffusion dynamics
+too.
+Let us borrow the `medInnovationsDiffNet` dataset from `{netdiffuseR}`:
 
-$R_0$, or the attribute's reproductive number, is calculated as: $R_0 = \min\left(\frac{T}{1/IL}, \bar{k}\right)$
-It is measured as the transmissibility (proportion of susceptible nodes that are infected at each time period) over the average infection length (average length of time nodes remain infected).  
-- Where $R_0$ > 1, the 'disease' will 'infect' more and more nodes in the network.  
-- Where $R_0$ < 1, the 'disease' will not sustain itself and eventually die out.  
-- Where $R_0$ = 1, the 'disease' will continue as endemic, if conditions allow.  
-
-```{r r0, exercise = TRUE, exercise.setup = "create"}
-set.seed(123)
-rd_diff <- play_diffusion(rd, seeds = 10, recovery = 0.1)
-plot(rd_diff)
-# R-nought
-network_reproduction(rd_diff)
-# Herd Immunity Threshold
-network_immunity(rd_diff)
-ceiling(network_immunity(rd_diff) * network_nodes(rd))
+```{r netdiff}
+medInn <- as_diff_model(netdiffuseR::medInnovationsDiffNet)
+plot(medInn)
 ```
 
-The Herd Immunity Threshold or HIT indicates the threshold at which the reduction of susceptible members of the network means that infections will no longer keep increasing, allowing herd immunity to be achieved.
-In this model, the HIT score of 0.94 indicates that 94% of nodes in the network would need to be vaccinated or otherwise protected to achieve herd immunity.
-Multiplying the HIT score with the number of nodes in the network (32 in this example) gives the number of nodes that would need to be vaccinated: 31 nodes.
+In the plot we can observe a relatively constant rate of adoption.
 
-```{r r0-interp, echo = FALSE, purl = FALSE}
-question("Select any true statements you can make about this R-nought result:",
-         answer("An epidemic is likely to occur.", correct = TRUE),
-         answer("There are not enough seed nodes to start an epidemic."),
-         answer("If the recovery rate was instead a mortality rate, it would make no difference.", correct = TRUE),
-        allow_retry = TRUE,
-        random_answer_order = TRUE)
+### Describing an empirical diffusion process
+
+**Not currently working**
+
+```{r inferthresh}
+node_thresholds(medInn)
+```
+
+
+### Comparing to an empirical diffusion process
+
+```{r something}
+# test_fit(medInn, play_diffusions(as_tidygraph(medInn), 
+                                 # seeds = node_is_random(as_tidygraph(medInn), 11),
+                                 # transmissibility = 0.8))
 ```
 
 ## Investigate learning through simulation
