@@ -82,6 +82,21 @@ reference:
     contents:
       - starts_with("measure_")
       - ends_with("_centrality")
+      - over
+  - title: "Motifs"
+    desc: |
+      Functions for calculating subgraphs in multimodal networks.
+      These functions have an additional dimension than `node_` and `network_`
+      measures and marks that capture the different motifs surveyed.
+    contents:
+      - contains("_by_")
+  - title: "Memberships"
+    desc: |
+      Functions for identifying community, cluster, or class memberships
+      in partitions within multimodal networks.
+      They return integer vectors the length of the nodes in the network.
+    contents:
+      - contains("_in_")
   - title: "Mapping"
     desc: |
       Functions for plotting and visualising graphs of different types.
@@ -94,6 +109,12 @@ reference:
       - starts_with("theme")
       - starts_with("scale")
       - ends_with("palettes")
+  - title: "Models"
+    desc: "Functions for modelling multimodal networks:"
+    contents:
+      - starts_with("test")
+      - cluster
+      - kselect
   - title: "Learning"
     desc: |
       Functions for loading and extracting code from tutorials.
