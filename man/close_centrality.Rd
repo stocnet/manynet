@@ -7,9 +7,9 @@
 \alias{node_harmonic}
 \alias{node_information}
 \alias{tie_closeness}
-\alias{network_closeness}
-\alias{network_reach}
-\alias{network_harmonic}
+\alias{net_closeness}
+\alias{net_reach}
+\alias{net_harmonic}
 \title{Measures of closeness-like centrality and centralisation}
 \usage{
 node_closeness(.data, normalized = TRUE, direction = "out", cutoff = NULL)
@@ -22,11 +22,11 @@ node_information(.data, normalized = TRUE)
 
 tie_closeness(.data, normalized = TRUE)
 
-network_closeness(.data, normalized = TRUE, direction = c("all", "out", "in"))
+net_closeness(.data, normalized = TRUE, direction = c("all", "out", "in"))
 
-network_reach(.data, normalized = TRUE, k = 2)
+net_reach(.data, normalized = TRUE, k = 2)
 
-network_harmonic(.data, normalized = TRUE, k = 2)
+net_harmonic(.data, normalized = TRUE, k = 2)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -66,9 +66,9 @@ which is thought to behave better than reach centrality for disconnected network
 \item \code{node_information()} measures nodes' information centrality or
 current-flow closeness centrality.
 \item \code{tie_closeness()} measures the closeness of each tie to other ties in the network.
-\item \code{network_closeness()} measures a network's closeness centralization.
-\item \code{network_reach()} measures a network's reach centralization.
-\item \code{network_harmonic()} measures a network's harmonic centralization.
+\item \code{net_closeness()} measures a network's closeness centralization.
+\item \code{net_reach()} measures a network's reach centralization.
+\item \code{net_harmonic()} measures a network's harmonic centralization.
 }
 
 All measures attempt to use as much information as they are offered,
@@ -85,7 +85,7 @@ node_reach(ison_adolescents)
 plot(ec)
 ison_adolescents \%>\% mutate_ties(weight = ec) \%>\% 
    graphr()
-network_closeness(ison_southern_women, direction = "in")
+net_closeness(ison_southern_women, direction = "in")
 }
 \references{
 Marchiori, M, and V Latora. 2000.
@@ -106,6 +106,7 @@ Other measures:
 \code{\link{between_centrality}},
 \code{\link{degree_centrality}},
 \code{\link{eigenv_centrality}},
+\code{\link{features}},
 \code{\link{measure_attributes}},
 \code{\link{measure_closure}},
 \code{\link{measure_cohesion}},
@@ -115,7 +116,8 @@ Other measures:
 \code{\link{measure_net_diffusion}},
 \code{\link{measure_node_diffusion}},
 \code{\link{measure_periods}},
-\code{\link{measure_properties}}
+\code{\link{measure_properties}},
+\code{\link{member_diffusion}}
 }
 \concept{centrality}
 \concept{measures}

@@ -6,7 +6,7 @@
 \alias{node_induced}
 \alias{node_flow}
 \alias{tie_betweenness}
-\alias{network_betweenness}
+\alias{net_betweenness}
 \title{Measures of betweenness-like centrality and centralisation}
 \usage{
 node_betweenness(.data, normalized = TRUE, cutoff = NULL)
@@ -17,11 +17,7 @@ node_flow(.data, normalized = TRUE)
 
 tie_betweenness(.data, normalized = TRUE)
 
-network_betweenness(
-  .data,
-  normalized = TRUE,
-  direction = c("all", "out", "in")
-)
+net_betweenness(.data, normalized = TRUE, direction = c("all", "out", "in"))
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -61,7 +57,7 @@ These functions calculate common betweenness-related centrality measures for one
 which uses an electrical current model for information spreading
 in contrast to the shortest paths model used by normal betweenness centrality.
 \item \code{tie_betweenness()} measures the number of shortest paths going through a tie.
-\item \code{network_betweenness()} measures the betweenness centralization for a network.
+\item \code{net_betweenness()} measures the betweenness centralization for a network.
 }
 
 All measures attempt to use as much information as they are offered,
@@ -78,7 +74,7 @@ node_induced(ison_adolescents)
 plot(tb)
 ison_adolescents \%>\% mutate_ties(weight = tb) \%>\% 
      graphr()
-network_betweenness(ison_southern_women, direction = "in")
+net_betweenness(ison_southern_women, direction = "in")
 }
 \references{
 Everett, Martin and Steve Borgatti. 2010.
@@ -96,6 +92,7 @@ Other measures:
 \code{\link{close_centrality}},
 \code{\link{degree_centrality}},
 \code{\link{eigenv_centrality}},
+\code{\link{features}},
 \code{\link{measure_attributes}},
 \code{\link{measure_closure}},
 \code{\link{measure_cohesion}},
@@ -105,7 +102,8 @@ Other measures:
 \code{\link{measure_net_diffusion}},
 \code{\link{measure_node_diffusion}},
 \code{\link{measure_periods}},
-\code{\link{measure_properties}}
+\code{\link{measure_properties}},
+\code{\link{member_diffusion}}
 }
 \concept{centrality}
 \concept{measures}

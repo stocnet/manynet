@@ -9,9 +9,9 @@
 \alias{node_multidegree}
 \alias{node_posneg}
 \alias{tie_degree}
-\alias{network_degree}
-\alias{network_outdegree}
-\alias{network_indegree}
+\alias{net_degree}
+\alias{net_outdegree}
+\alias{net_indegree}
 \title{Measures of degree-like centrality and centralisation}
 \usage{
 node_degree(
@@ -33,11 +33,11 @@ node_posneg(.data)
 
 tie_degree(.data, normalized = TRUE)
 
-network_degree(.data, normalized = TRUE, direction = c("all", "out", "in"))
+net_degree(.data, normalized = TRUE, direction = c("all", "out", "in"))
 
-network_outdegree(.data, normalized = TRUE)
+net_outdegree(.data, normalized = TRUE)
 
-network_indegree(.data, normalized = TRUE)
+net_indegree(.data, normalized = TRUE)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -100,11 +100,11 @@ there are several related shortcut functions:
 \item \code{node_multidegree()} measures the ratio between types of ties in a multiplex network.
 \item \code{node_posneg()} measures the PN (positive-negative) centrality of a signed network.
 \item \code{tie_degree()} measures the degree centrality of ties in a network
-\item \code{network_degree()} measures a network's degree centralization;
+\item \code{net_degree()} measures a network's degree centralization;
 there are several related shortcut functions:
 \itemize{
-\item \code{network_indegree()} returns the \code{direction = 'out'} results.
-\item \code{network_outdegree()} returns the \code{direction = 'out'} results.
+\item \code{net_indegree()} returns the \code{direction = 'out'} results.
+\item \code{net_outdegree()} returns the \code{direction = 'out'} results.
 }
 }
 
@@ -118,7 +118,7 @@ including for two-mode networks.
 \examples{
 node_degree(ison_southern_women)
 tie_degree(ison_adolescents)
-network_degree(ison_southern_women, direction = "in")
+net_degree(ison_southern_women, direction = "in")
 }
 \references{
 Faust, Katherine. 1997.
@@ -161,6 +161,7 @@ Other measures:
 \code{\link{between_centrality}},
 \code{\link{close_centrality}},
 \code{\link{eigenv_centrality}},
+\code{\link{features}},
 \code{\link{measure_attributes}},
 \code{\link{measure_closure}},
 \code{\link{measure_cohesion}},
@@ -170,7 +171,8 @@ Other measures:
 \code{\link{measure_net_diffusion}},
 \code{\link{measure_node_diffusion}},
 \code{\link{measure_periods}},
-\code{\link{measure_properties}}
+\code{\link{measure_properties}},
+\code{\link{member_diffusion}}
 }
 \concept{centrality}
 \concept{measures}

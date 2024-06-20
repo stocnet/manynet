@@ -7,7 +7,7 @@
 \alias{node_alpha}
 \alias{node_pagerank}
 \alias{tie_eigenvector}
-\alias{network_eigenvector}
+\alias{net_eigenvector}
 \title{Measures of eigenvector-like centrality and centralisation}
 \usage{
 node_eigenvector(.data, normalized = TRUE, scale = FALSE)
@@ -20,7 +20,7 @@ node_pagerank(.data)
 
 tie_eigenvector(.data, normalized = TRUE)
 
-network_eigenvector(.data, normalized = TRUE)
+net_eigenvector(.data, normalized = TRUE)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -58,7 +58,7 @@ These functions calculate common eigenvector-related centrality measures for one
 \item \code{node_alpha()} measures the alpha or Katz centrality of nodes in a network.
 \item \code{node_pagerank()} measures the pagerank centrality of nodes in a network.
 \item \code{tie_eigenvector()} measures the eigenvector centrality of ties in a network.
-\item \code{network_eigenvector()} measures the eigenvector centralization for a network.
+\item \code{net_eigenvector()} measures the eigenvector centralization for a network.
 }
 
 All measures attempt to use as much information as they are offered,
@@ -115,7 +115,7 @@ most routines solve the equation \eqn{x = (I - \frac{1}{\lambda} A^T)^{-1} e}.
 node_eigenvector(ison_southern_women)
 node_power(ison_southern_women, exponent = 0.5)
 tie_eigenvector(ison_adolescents)
-network_eigenvector(ison_southern_women)
+net_eigenvector(ison_southern_women)
 }
 \references{
 Bonacich, Phillip. 1991.
@@ -150,6 +150,7 @@ Other measures:
 \code{\link{between_centrality}},
 \code{\link{close_centrality}},
 \code{\link{degree_centrality}},
+\code{\link{features}},
 \code{\link{measure_attributes}},
 \code{\link{measure_closure}},
 \code{\link{measure_cohesion}},
@@ -159,7 +160,8 @@ Other measures:
 \code{\link{measure_net_diffusion}},
 \code{\link{measure_node_diffusion}},
 \code{\link{measure_periods}},
-\code{\link{measure_properties}}
+\code{\link{measure_properties}},
+\code{\link{member_diffusion}}
 }
 \concept{centrality}
 \concept{measures}

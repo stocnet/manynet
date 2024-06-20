@@ -14,10 +14,10 @@
 #'   - `node_multidegree()` measures the ratio between types of ties in a multiplex network.
 #'   - `node_posneg()` measures the PN (positive-negative) centrality of a signed network.
 #'   - `tie_degree()` measures the degree centrality of ties in a network
-#'   - `network_degree()` measures a network's degree centralization; 
+#'   - `net_degree()` measures a network's degree centralization; 
 #'   there are several related shortcut functions:
-#'     - `network_indegree()` returns the `direction = 'out'` results.
-#'     - `network_outdegree()` returns the `direction = 'out'` results.
+#'     - `net_indegree()` returns the `direction = 'out'` results.
+#'     - `net_outdegree()` returns the `direction = 'out'` results.
 #'   
 #'   All measures attempt to use as much information as they are offered,
 #'   including whether the networks are directed, weighted, or multimodal.
@@ -174,7 +174,7 @@ node_posneg <- function(.data){
   stopifnot(manynet::is_signed(.data))
   pos <- manynet::as_matrix(manynet::to_unsigned(.data, keep = "positive"))
   neg <- manynet::as_matrix(manynet::to_unsigned(.data, keep = "negative"))
-  nn <- manynet::network_nodes(.data)
+  nn <- manynet::net_nodes(.data)
   pn <- pos-neg*2
   diag(pn) <- 0
   idmat <- diag(nn)
@@ -198,9 +198,9 @@ tie_degree <- function(.data, normalized = TRUE){
 
 #' @rdname degree_centrality
 #' @examples
-#' network_degree(ison_southern_women, direction = "in")
+#' net_degree(ison_southern_women, direction = "in")
 #' @export
-network_degree <- function(.data, normalized = TRUE,
+net_degree <- function(.data, normalized = TRUE,
                            direction = c("all", "out", "in")){
   
   if(missing(.data)) {expect_nodes(); .data <- .G()}
@@ -230,22 +230,22 @@ network_degree <- function(.data, normalized = TRUE,
     out <- igraph::centr_degree(graph = .data, mode = direction, 
                                 normalized = normalized)$centralization
   }
-  out <- make_network_measure(out, .data)
+  out <- make_net_measure(out, .data)
   out
 }
 
 #' @rdname degree_centrality
 #' @export
-network_outdegree <- function(.data, normalized = TRUE){
+net_outdegree <- function(.data, normalized = TRUE){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  network_degree(.data, normalized = normalized, direction = "out")
+  net_degree(.data, normalized = normalized, direction = "out")
 }
 
 #' @rdname degree_centrality
 #' @export
-network_indegree <- function(.data, normalized = TRUE){
+net_indegree <- function(.data, normalized = TRUE){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  network_degree(.data, normalized = normalized, direction = "in")
+  net_degree(.data, normalized = normalized, direction = "in")
 }
 
 # Betweenness-like centralities ####
@@ -260,7 +260,7 @@ network_indegree <- function(.data, normalized = TRUE){
 #'   which uses an electrical current model for information spreading 
 #'   in contrast to the shortest paths model used by normal betweenness centrality.
 #'   - `tie_betweenness()` measures the number of shortest paths going through a tie.
-#'   - `network_betweenness()` measures the betweenness centralization for a network.
+#'   - `net_betweenness()` measures the betweenness centralization for a network.
 #'   
 #'   All measures attempt to use as much information as they are offered,
 #'   including whether the networks are directed, weighted, or multimodal.
@@ -328,7 +328,7 @@ node_induced <- function(.data, normalized = TRUE,
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   endog <- sum(node_betweenness(.data, normalized = normalized, cutoff = cutoff),
                na.rm = TRUE)
-  exog <- vapply(seq.int(manynet::network_nodes(.data)),
+  exog <- vapply(seq.int(manynet::net_nodes(.data)),
                  function(x) sum(node_betweenness(manynet::delete_nodes(.data, x),
                                               normalized = normalized, cutoff = cutoff),
                                  na.rm = TRUE),
@@ -371,9 +371,9 @@ tie_betweenness <- function(.data, normalized = TRUE){
 
 #' @rdname between_centrality
 #' @examples
-#' network_betweenness(ison_southern_women, direction = "in")
+#' net_betweenness(ison_southern_women, direction = "in")
 #' @export
-network_betweenness <- function(.data, normalized = TRUE,
+net_betweenness <- function(.data, normalized = TRUE,
                                 direction = c("all", "out", "in")) {
   
   if(missing(.data)) {expect_nodes(); .data <- .G()}
@@ -422,7 +422,7 @@ network_betweenness <- function(.data, normalized = TRUE,
   } else {
     out <- igraph::centr_betw(graph = graph)$centralization
   }
-  out <- make_network_measure(out, .data)
+  out <- make_net_measure(out, .data)
   out
 }
 
@@ -440,9 +440,9 @@ network_betweenness <- function(.data, normalized = TRUE,
 #'   - `node_information()` measures nodes' information centrality or 
 #'   current-flow closeness centrality.
 #'   - `tie_closeness()` measures the closeness of each tie to other ties in the network.
-#'   - `network_closeness()` measures a network's closeness centralization.
-#'   - `network_reach()` measures a network's reach centralization.
-#'   - `network_harmonic()` measures a network's harmonic centralization.
+#'   - `net_closeness()` measures a network's closeness centralization.
+#'   - `net_reach()` measures a network's reach centralization.
+#'   - `net_harmonic()` measures a network's harmonic centralization.
 #'   
 #'   All measures attempt to use as much information as they are offered,
 #'   including whether the networks are directed, weighted, or multimodal.
@@ -498,7 +498,7 @@ node_reach <- function(.data, normalized = TRUE, k = 2){
   } else out <- igraph::distances(manynet::as_igraph(.data))
   diag(out) <- 0
   out <- rowSums(out<=k)
-  if(normalized) out <- out/(manynet::network_nodes(.data)-1)
+  if(normalized) out <- out/(manynet::net_nodes(.data)-1)
   out <- make_node_measure(out, .data)
   out
 }
@@ -550,9 +550,9 @@ tie_closeness <- function(.data, normalized = TRUE){
 
 #' @rdname close_centrality 
 #' @examples
-#' network_closeness(ison_southern_women, direction = "in")
+#' net_closeness(ison_southern_women, direction = "in")
 #' @export
-network_closeness <- function(.data, normalized = TRUE,
+net_closeness <- function(.data, normalized = TRUE,
                               direction = c("all", "out", "in")){
   
   if(missing(.data)) {expect_nodes(); .data <- .G()}
@@ -609,28 +609,28 @@ network_closeness <- function(.data, normalized = TRUE,
                              mode = direction,
                              normalized = normalized)$centralization
   }
-  out <- make_network_measure(out, .data)
+  out <- make_net_measure(out, .data)
   out
 }
 
 #' @rdname close_centrality 
 #' @export
-network_reach <- function(.data, normalized = TRUE, k = 2){
+net_reach <- function(.data, normalized = TRUE, k = 2){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   reaches <- node_reach(.data, normalized = FALSE, k = k)
   out <- sum(max(reaches) - reaches)
-  if(normalized) out <- out / sum(manynet::network_nodes(.data) - reaches)
-  make_network_measure(out, .data)
+  if(normalized) out <- out / sum(manynet::net_nodes(.data) - reaches)
+  make_net_measure(out, .data)
 }
 
 #' @rdname close_centrality
 #' @export
-network_harmonic <- function(.data, normalized = TRUE, k = 2){
+net_harmonic <- function(.data, normalized = TRUE, k = 2){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   harm <- node_harmonic(.data, normalized = FALSE, k = k)
   out <- sum(max(harm) - harm)
-  if(normalized) out <- out / sum(manynet::network_nodes(.data) - harm)
-  make_network_measure(out, .data)
+  if(normalized) out <- out / sum(manynet::net_nodes(.data) - harm)
+  make_net_measure(out, .data)
 }
 
 # Eigenvector-like centralities ####
@@ -644,7 +644,7 @@ network_harmonic <- function(.data, normalized = TRUE, k = 2){
 #'   - `node_alpha()` measures the alpha or Katz centrality of nodes in a network.
 #'   - `node_pagerank()` measures the pagerank centrality of nodes in a network.
 #'   - `tie_eigenvector()` measures the eigenvector centrality of ties in a network.
-#'   - `network_eigenvector()` measures the eigenvector centralization for a network.
+#'   - `net_eigenvector()` measures the eigenvector centralization for a network.
 #'   
 #'   All measures attempt to use as much information as they are offered,
 #'   including whether the networks are directed, weighted, or multimodal.
@@ -826,9 +826,9 @@ tie_eigenvector <- function(.data, normalized = TRUE){
 
 #' @rdname eigenv_centrality 
 #' @examples
-#' network_eigenvector(ison_southern_women)
+#' net_eigenvector(ison_southern_women)
 #' @export
-network_eigenvector <- function(.data, normalized = TRUE){
+net_eigenvector <- function(.data, normalized = TRUE){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if (manynet::is_twomode(.data)) {
     out <- c(igraph::centr_eigen(manynet::as_igraph(manynet::to_mode1(.data)), 
@@ -839,7 +839,7 @@ network_eigenvector <- function(.data, normalized = TRUE){
     out <- igraph::centr_eigen(manynet::as_igraph(.data), 
                                normalized = normalized)$centralization
   }
-  out <- make_network_measure(out, .data)
+  out <- make_net_measure(out, .data)
   out
 }
 
