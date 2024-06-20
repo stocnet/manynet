@@ -578,7 +578,7 @@ set.seed(123)
 rd_diff <- play_diffusion(rd, seeds = 10, recovery = 0.1)
 plot(rd_diff)
 # R-nought
-network_reproduction(rd_diff)
+net_reproduction(rd_diff)
 ```
 
 The relationship between the reproduction number and the observed infection
@@ -586,8 +586,8 @@ should be clear.
 
 ```{r immunity, exercise = TRUE, exercise.setup = "r0"}
 # Herd Immunity Threshold
-network_immunity(rd_diff)
-network_immunity(rd_diff, normalized = FALSE)
+net_immunity(rd_diff)
+net_immunity(rd_diff, normalized = FALSE)
 ```
 
 ```{r vaccinate, exercise = TRUE, exercise.setup = "create"}
@@ -861,14 +861,14 @@ Then play the learning model with these beliefs, and plot the result.
 ```
 
 ```{r degroot-hint, purl = FALSE}
-beliefs <- rbinom(network_nodes(____), 1, prob = 0.25)
+beliefs <- rbinom(net_nodes(____), 1, prob = 0.25)
 ____ %>% mutate(____ = beliefs) %>% autographr(node_color = "____")
 netlearn <- play_learning(____, ____)
 plot(____)
 ```
 
 ```{r degroot-solution}
-beliefs <- rbinom(network_nodes(ison_networkers), 1, prob = 0.25)
+beliefs <- rbinom(net_nodes(ison_networkers), 1, prob = 0.25)
 ison_networkers %>% mutate(beliefs = beliefs) %>% autographr(node_color = "beliefs")
 netlearn <- play_learning(ison_networkers, beliefs)
 plot(netlearn)
