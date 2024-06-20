@@ -82,7 +82,6 @@ plot.node_member <- function(x, ...) {
 #   membership = node_regular_equivalence(ison_southern_women, "e"))
 #' @importFrom tidyr pivot_longer
 #' @importFrom ggplot2 ggplot geom_tile aes scale_fill_gradient theme_grey labs theme scale_x_discrete scale_y_discrete geom_vline geom_hline element_blank element_text
-#' @importFrom rlang .data
 #' @export
 plot.matrix <- function(x, ..., membership = NULL) {
 
