@@ -112,7 +112,7 @@ Pons, Pascal, and Matthieu Latapy
 }
 \seealso{
 Other memberships: 
-\code{\link{cliques}()},
+\code{\link{cliques}},
 \code{\link{components}()},
 \code{\link{core}},
 \code{\link{equivalence}},

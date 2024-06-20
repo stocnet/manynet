@@ -85,7 +85,7 @@ extract_tute <- function(tute) {
 #' @description 
 #'   This function makes it easy to get an overview of available data:
 #'   
-#'   - `pkg_data()` returns a tibble with details of the
+#'   - `table_data()` returns a tibble with details of the
 #'   network datasets included in the packages.
 #'   
 #' @param pkg String, name of the package.

@@ -13,7 +13,7 @@ table_data(pkg = "manynet")
 \description{
 This function makes it easy to get an overview of available data:
 \itemize{
-\item \code{pkg_data()} returns a tibble with details of the
+\item \code{table_data()} returns a tibble with details of the
 network datasets included in the packages.
 }
 }

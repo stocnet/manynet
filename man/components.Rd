@@ -57,7 +57,7 @@ node_in_component(mpn_bristol)
 }
 \seealso{
 Other memberships: 
-\code{\link{cliques}()},
+\code{\link{cliques}},
 \code{\link{core}},
 \code{\link{equivalence}},
 \code{\link{member_community}},
