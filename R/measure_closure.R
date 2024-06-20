@@ -4,22 +4,22 @@
 #'   These functions offer methods for summarising the closure in configurations 
 #'   in one-, two-, and three-mode networks:
 #'   
-#'   - `network_reciprocity()` measures reciprocity in a (usually directed) network.
+#'   - `net_reciprocity()` measures reciprocity in a (usually directed) network.
 #'   - `node_reciprocity()` measures nodes' reciprocity.
-#'   - `network_transitivity()` measures transitivity in a network.
+#'   - `net_transitivity()` measures transitivity in a network.
 #'   - `node_transitivity()` measures nodes' transitivity.
-#'   - `network_equivalency()` measures equivalence or reinforcement 
+#'   - `net_equivalency()` measures equivalence or reinforcement 
 #'   in a (usually two-mode) network.
-#'   - `network_congruency()` measures congruency across two two-mode networks.
+#'   - `net_congruency()` measures congruency across two two-mode networks.
 #'   
 #' @details 
 #' For one-mode networks, shallow wrappers of igraph versions exist via 
-#' `network_reciprocity` and `network_transitivity`.
+#' `net_reciprocity` and `net_transitivity`.
 #' 
-#' For two-mode networks, `network_equivalency` calculates the proportion of three-paths in the network
+#' For two-mode networks, `net_equivalency` calculates the proportion of three-paths in the network
 #' that are closed by fourth tie to establish a "shared four-cycle" structure.
 #' 
-#' For three-mode networks, `network_congruency` calculates the proportion of three-paths 
+#' For three-mode networks, `net_congruency` calculates the proportion of three-paths 
 #' spanning two two-mode networks that are closed by a fourth tie to establish a 
 #' "congruent four-cycle" structure.
 #' @inheritParams is
@@ -43,11 +43,11 @@ NULL
 #' @rdname measure_closure 
 #' @importFrom igraph reciprocity
 #' @examples
-#' network_reciprocity(ison_southern_women)
+#' net_reciprocity(ison_southern_women)
 #' @export
-network_reciprocity <- function(.data, method = "default") {
+net_reciprocity <- function(.data, method = "default") {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  make_network_measure(igraph::reciprocity(manynet::as_igraph(.data), mode = method), 
+  make_net_measure(igraph::reciprocity(manynet::as_igraph(.data), mode = method), 
                        .data)
 }
 
@@ -65,11 +65,11 @@ node_reciprocity <- function(.data) {
 #' @rdname measure_closure 
 #' @importFrom igraph transitivity
 #' @examples
-#' network_transitivity(ison_adolescents)
+#' net_transitivity(ison_adolescents)
 #' @export
-network_transitivity <- function(.data) {
+net_transitivity <- function(.data) {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  make_network_measure(igraph::transitivity(manynet::as_igraph(.data)), 
+  make_net_measure(igraph::transitivity(manynet::as_igraph(.data)), 
                        .data)
 }
 
@@ -86,13 +86,13 @@ node_transitivity <- function(.data) {
 
 #' @rdname measure_closure
 #' @section Equivalency: 
-#'   The `network_equivalency()` function calculates the Robins and Alexander (2004) 
+#'   The `net_equivalency()` function calculates the Robins and Alexander (2004) 
 #'   clustering coefficient for two-mode networks.
 #'   Note that for weighted two-mode networks, the result is divided by the average tie weight.
 #' @examples
-#' network_equivalency(ison_southern_women)
+#' net_equivalency(ison_southern_women)
 #' @export
-network_equivalency <- function(.data) {
+net_equivalency <- function(.data) {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if (manynet::is_twomode(.data)) {
     mat <- manynet::as_matrix(.data)
@@ -107,16 +107,16 @@ network_equivalency <- function(.data) {
     if (is.nan(output)) output <- 1
     if(manynet::is_weighted(.data)) output <- output / mean(mat[mat>0])
   } else stop("This function expects a two-mode network")
-  make_network_measure(output, .data)
+  make_net_measure(output, .data)
 }
 
 #' @rdname measure_closure 
 #' @export
-network_congruency <- function(.data, object2){
+net_congruency <- function(.data, object2){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(missing(.data) | missing(object2)) stop("This function expects two two-mode networks")
   if(!manynet::is_twomode(.data) | !manynet::is_twomode(object2)) stop("This function expects two two-mode networks")
-  if(manynet::network_dims(.data)[2] != manynet::network_dims(object2)[1]) 
+  if(manynet::net_dims(.data)[2] != manynet::net_dims(object2)[1]) 
     stop(paste("This function expects the number of nodes",
     "in the second mode of the first network", "to be the same as the number of nodes",
     "in the first mode of the second network."))
@@ -136,5 +136,5 @@ network_congruency <- function(.data, object2){
        sum(twopaths *
              (matrix(degrees, connects, connects) - twopaths)))
   if (is.nan(output)) output <- 1
-  make_network_measure(output, .data)
+  make_net_measure(output, .data)
 }

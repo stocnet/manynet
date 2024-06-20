@@ -2,25 +2,25 @@
 % Please edit documentation in R/measure_closure.R
 \name{measure_closure}
 \alias{measure_closure}
-\alias{network_reciprocity}
+\alias{net_reciprocity}
 \alias{node_reciprocity}
-\alias{network_transitivity}
+\alias{net_transitivity}
 \alias{node_transitivity}
-\alias{network_equivalency}
-\alias{network_congruency}
+\alias{net_equivalency}
+\alias{net_congruency}
 \title{Measures of network closure}
 \usage{
-network_reciprocity(.data, method = "default")
+net_reciprocity(.data, method = "default")
 
 node_reciprocity(.data)
 
-network_transitivity(.data)
+net_transitivity(.data)
 
 node_transitivity(.data)
 
-network_equivalency(.data)
+net_equivalency(.data)
 
-network_congruency(.data, object2)
+net_congruency(.data, object2)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -41,39 +41,39 @@ See \code{?igraph::reciprocity}}
 These functions offer methods for summarising the closure in configurations
 in one-, two-, and three-mode networks:
 \itemize{
-\item \code{network_reciprocity()} measures reciprocity in a (usually directed) network.
+\item \code{net_reciprocity()} measures reciprocity in a (usually directed) network.
 \item \code{node_reciprocity()} measures nodes' reciprocity.
-\item \code{network_transitivity()} measures transitivity in a network.
+\item \code{net_transitivity()} measures transitivity in a network.
 \item \code{node_transitivity()} measures nodes' transitivity.
-\item \code{network_equivalency()} measures equivalence or reinforcement
+\item \code{net_equivalency()} measures equivalence or reinforcement
 in a (usually two-mode) network.
-\item \code{network_congruency()} measures congruency across two two-mode networks.
+\item \code{net_congruency()} measures congruency across two two-mode networks.
 }
 }
 \details{
 For one-mode networks, shallow wrappers of igraph versions exist via
-\code{network_reciprocity} and \code{network_transitivity}.
+\code{net_reciprocity} and \code{net_transitivity}.
 
-For two-mode networks, \code{network_equivalency} calculates the proportion of three-paths in the network
+For two-mode networks, \code{net_equivalency} calculates the proportion of three-paths in the network
 that are closed by fourth tie to establish a "shared four-cycle" structure.
 
-For three-mode networks, \code{network_congruency} calculates the proportion of three-paths
+For three-mode networks, \code{net_congruency} calculates the proportion of three-paths
 spanning two two-mode networks that are closed by a fourth tie to establish a
 "congruent four-cycle" structure.
 }
 \section{Equivalency}{
 
-The \code{network_equivalency()} function calculates the Robins and Alexander (2004)
+The \code{net_equivalency()} function calculates the Robins and Alexander (2004)
 clustering coefficient for two-mode networks.
 Note that for weighted two-mode networks, the result is divided by the average tie weight.
 }
 
 \examples{
-network_reciprocity(ison_southern_women)
+net_reciprocity(ison_southern_women)
 node_reciprocity(to_unweighted(ison_networkers))
-network_transitivity(ison_adolescents)
+net_transitivity(ison_adolescents)
 node_transitivity(ison_adolescents)
-network_equivalency(ison_southern_women)
+net_equivalency(ison_southern_women)
 }
 \references{
 Robins, Garry L, and Malcolm Alexander. 2004.
@@ -92,6 +92,7 @@ Other measures:
 \code{\link{close_centrality}},
 \code{\link{degree_centrality}},
 \code{\link{eigenv_centrality}},
+\code{\link{features}},
 \code{\link{measure_attributes}},
 \code{\link{measure_cohesion}},
 \code{\link{measure_heterogeneity}},
@@ -100,6 +101,7 @@ Other measures:
 \code{\link{measure_net_diffusion}},
 \code{\link{measure_node_diffusion}},
 \code{\link{measure_periods}},
-\code{\link{measure_properties}}
+\code{\link{measure_properties}},
+\code{\link{member_diffusion}}
 }
 \concept{measures}
