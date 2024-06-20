@@ -2,19 +2,19 @@
 % Please edit documentation in R/motif_census.R
 \name{node_census}
 \alias{node_census}
-\alias{node_tie_census}
-\alias{node_triad_census}
+\alias{node_by_tie}
+\alias{node_by_triad}
 \alias{node_by_quad}
-\alias{node_path_census}
+\alias{node_by_path}
 \title{Censuses of nodes' motifs}
 \usage{
-node_tie_census(.data)
+node_by_tie(.data)
 
-node_triad_census(.data)
+node_by_triad(.data)
 
 node_by_quad(.data)
 
-node_path_census(.data)
+node_by_path(.data)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:

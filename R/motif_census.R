@@ -27,7 +27,7 @@ NULL
 #' task_eg <- to_named(to_uniplex(ison_algebra, "tasks"))
 #' (tie_cen <- node_by_tie(task_eg))
 #' @export
-node_tie_census <- function(.data){
+node_by_tie <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   object <- as_igraph(.data)
   # edge_names <- net_tie_attributes(object)
@@ -91,7 +91,7 @@ node_tie_census <- function(.data){
 #' @examples 
 #' (triad_cen <- node_by_triad(task_eg))
 #' @export
-node_triad_census <- function(.data){
+node_by_triad <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   out <- t(sapply(seq.int(manynet::net_nodes(.data)), 
                   function(x) net_by_triad(.data) - net_by_triad(manynet::delete_nodes(.data, x))))
@@ -206,7 +206,7 @@ node_by_quad <- function(.data){
 #' node_by_path(manynet::ison_adolescents)
 #' node_by_path(manynet::ison_southern_women)
 #' @export
-node_path_census <- function(.data){
+node_by_path <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(manynet::is_weighted(.data)){
     tore <- manynet::as_matrix(.data)/mean(manynet::as_matrix(.data))
