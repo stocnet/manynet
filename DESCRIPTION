@@ -31,6 +31,7 @@ Suggests:
     future,
     furrr,
     gganimate,
+    ggdendro,
     ggforce,
     gifski,
     graphlayouts,
@@ -41,6 +42,7 @@ Suggests:
     migraph,
     multiplex,
     netdiffuseR,
+    oaqc,
     patchwork,
     png,
     readxl,
@@ -49,6 +51,8 @@ Suggests:
     RSiena,
     sna,
     testthat (>= 3.0.0),
+    tibble,
+    tidyr,
     xml2
 Enhances:
     Rgraphviz

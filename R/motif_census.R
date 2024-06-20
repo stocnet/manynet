@@ -347,7 +347,6 @@ net_by_mixed <- function (.data, object2) {
 NULL
 
 #' @rdname brokerage_census 
-#' @importFrom sna brokerage
 #' @references 
 #' Gould, R.V. and Fernandez, R.M. 1989. 
 #' “Structures of Mediation: A Formal Approach to Brokerage in Transaction Networks.” 
@@ -361,6 +360,7 @@ NULL
 #' node_by_brokerage(manynet::ison_networkers, "Discipline")
 #' @export
 node_by_brokerage <- function(.data, membership, standardized = FALSE){
+  thisRequires("sna")
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(!manynet::is_twomode(.data)){
     out <- sna::brokerage(manynet::as_network(.data),
@@ -384,6 +384,7 @@ node_by_brokerage <- function(.data, membership, standardized = FALSE){
 #' net_by_brokerage(ison_networkers, "Discipline")
 #' @export
 net_by_brokerage <- function(.data, membership, standardized = FALSE){
+  thisRequires("sna")
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(!manynet::is_twomode(.data)){
     out <- sna::brokerage(manynet::as_network(.data),

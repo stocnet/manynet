@@ -33,6 +33,8 @@ test_random <- function(.data, FUN, ...,
                         times = 1000, 
                         strategy = "sequential", 
                         verbose = FALSE){
+  thisRequires("future")
+  thisRequires("furrr")
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   args <- unlist(list(...))
   if (!is.null(args)) {
@@ -83,6 +85,8 @@ test_permutation <- function(.data, FUN, ...,
                              times = 1000, 
                              strategy = "sequential", 
                              verbose = FALSE){
+  thisRequires("future")
+  thisRequires("furrr")
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   args <- unlist(list(...))
   if (!is.null(args)) {
@@ -149,17 +153,17 @@ plot.network_test <- function(x, ...,
   d <- ggplot2::ggplot_build(p)$data[[1]]
   tails = match.arg(tails)
   if(tails == "one"){
-    if(x$testval < quantile(data$Statistic, .5)){
-      thresh <- quantile(data$Statistic, 1 - threshold)
+    if(x$testval < stats::quantile(data$Statistic, .5)){
+      thresh <- stats::quantile(data$Statistic, 1 - threshold)
       p <- p + ggplot2::geom_area(data = subset(d, x < thresh), 
                                   aes(x = x, y = .data$y), fill = "lightgrey")
     } else {
-      thresh <- quantile(data$Statistic, threshold)
+      thresh <- stats::quantile(data$Statistic, threshold)
       p <- p + ggplot2::geom_area(data = subset(d, x > thresh), 
                                   aes(x = x, y = .data$y), fill = "lightgrey")
     }
   } else if (tails == "two"){
-    thresh <- quantile(data$Statistic, 
+    thresh <- stats::quantile(data$Statistic, 
                        c((1-threshold)/2, ((1-threshold)/2)+threshold))
     p <- p + ggplot2::geom_area(data = subset(d, x < thresh[1]), 
                                 aes(x = x, y = .data$y), fill = "lightgrey") + 
@@ -229,6 +233,7 @@ test_distribution <- function(diff_model1, diff_model2){
 #'   test_fit(x, y)
 #' @export
 test_fit <- function(diff_model, diff_models){ # make into method?
+  thisRequires("tidyr")
   x <- diff_model
   y <- diff_models
   sim <- `0` <- NULL
@@ -237,7 +242,7 @@ test_fit <- function(diff_model, diff_models){ # make into method?
     dplyr::select(-c(sim, `0`))
   sims <- sims[,colSums(stats::cov(sims))!=0]
   mah <- stats::mahalanobis(x$I[-1], colMeans(sims), stats::cov(sims))
-  pval <- pchisq(mah, df=length(x$I[-1]), lower.tail=FALSE)
+  pval <- stats::pchisq(mah, df=length(x$I[-1]), lower.tail=FALSE)
   dplyr::tibble(statistic = mah, p.value = pval, 
                 df = length(x$I[-1]), nobs = nrow(sims))
 }

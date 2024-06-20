@@ -17,8 +17,6 @@
 #' @param verbose Whether the function should report on its progress.
 #'   By default FALSE.
 #'   See [`{progressr}`](https://progressr.futureverse.org) for more.
-#' @importFrom future plan
-#' @importFrom furrr future_map_dfr furrr_options
 #' @param FUN A function to run over all splits.
 #' @param ... Further arguments to be passed on to FUN.
 #' @param attribute A string naming the attribute to be split upon.
@@ -33,6 +31,8 @@ NULL
 over_waves <- function(.data, FUN, ..., attribute = "wave",
                        strategy = "sequential",
                        verbose = FALSE){
+  thisRequires("future")
+  thisRequires("furrr")
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   oplan <- future::plan(strategy)
   on.exit(future::plan(oplan), add = TRUE)
@@ -47,6 +47,8 @@ over_time <- function(.data, FUN, ..., attribute = "time",
                       slice = NULL,
                       strategy = "sequential",
                       verbose = FALSE){
+  thisRequires("future")
+  thisRequires("furrr")
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   oplan <- future::plan(strategy)
   on.exit(future::plan(oplan), add = TRUE)

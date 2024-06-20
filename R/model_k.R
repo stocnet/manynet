@@ -40,9 +40,11 @@ k_strict <- function(hc, .data){
 #' @rdname kselect 
 #' @param census A motif census object.
 #' @param range An integer indicating the maximum number of options to consider.
-#'   The minimum of this and the number of nodes in the network is used. 
+#'   The minimum of this and the number of nodes in the network is used.
 #' @export
 k_elbow <- function(hc, .data, census, range){
+  
+  thisRequires("sna")
   
   clusterCorr <- function(observed_cor_matrix, cluster_vector) {
     num_vertices = nrow(observed_cor_matrix)
