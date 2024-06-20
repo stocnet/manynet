@@ -65,12 +65,14 @@ Other measures:
 \code{\link{eigenv_centrality}},
 \code{\link{measure_closure}},
 \code{\link{measure_cohesion}},
+\code{\link{measure_features}},
 \code{\link{measure_heterogeneity}},
 \code{\link{measure_hierarchy}},
 \code{\link{measure_holes}},
 \code{\link{measure_net_diffusion}},
 \code{\link{measure_node_diffusion}},
 \code{\link{measure_periods}},
-\code{\link{measure_properties}}
+\code{\link{measure_properties}},
+\code{\link{member_diffusion}}
 }
 \concept{measures}
