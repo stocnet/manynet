@@ -230,8 +230,8 @@ is_directed <- function(.data) UseMethod("is_directed")
 
 #' @export
 is_directed.data.frame <- function(.data) {
-  !(infer_network_reciprocity(.data) == 0 |
-      infer_network_reciprocity(.data) == 1)
+  !(infer_net_reciprocity(.data) == 0 |
+      infer_net_reciprocity(.data) == 1)
 }
 
 #' @export
@@ -370,15 +370,15 @@ reserved_tie_attr <- c("wave","panel","sign","weight")
 
 #' @export
 is_multiplex.tbl_graph <- function(.data) {
-  igraph::any_multiple(.data) & length(setdiff(reserved_tie_attr, network_tie_attributes(.data)))==0 |
-    length(setdiff(network_tie_attributes(.data), reserved_tie_attr)) > 0 |
+  igraph::any_multiple(.data) & length(setdiff(reserved_tie_attr, net_tie_attributes(.data)))==0 |
+    length(setdiff(net_tie_attributes(.data), reserved_tie_attr)) > 0 |
     "type" %in% igraph::edge_attr_names(.data)
 }
 
 #' @export
 is_multiplex.igraph <- function(.data) {
-  igraph::any_multiple(.data) & length(setdiff(reserved_tie_attr, network_tie_attributes(.data)))==0 |
-    length(setdiff(network_tie_attributes(.data), reserved_tie_attr)) > 0 |
+  igraph::any_multiple(.data) & length(setdiff(reserved_tie_attr, net_tie_attributes(.data)))==0 |
+    length(setdiff(net_tie_attributes(.data), reserved_tie_attr)) > 0 |
     "type" %in% igraph::edge_attr_names(.data)
 }
 
@@ -407,7 +407,7 @@ is_uniplex <- function(.data) {
 #' is_attributed(ison_algebra)
 #' @export
 is_attributed <- function(.data) {
-  length(setdiff(network_node_attributes(.data), c("type","name")))!=0
+  length(setdiff(net_node_attributes(.data), c("type","name")))!=0
 }
 
 # Features ####
@@ -475,11 +475,11 @@ is_connected <- function(.data) {
 #' @export
 is_perfect_matching <- function(.data, mark = "type"){
   .data <- as_igraph(.data)
-  if(mark %in% network_node_attributes(.data)){
+  if(mark %in% net_node_attributes(.data)){
     matches <- to_matching(.data, mark = mark)
-    network_ties(matches)*2 == network_nodes(matches)
+    net_ties(matches)*2 == net_nodes(matches)
   } else {
-    if (network_nodes(.data) %% 2 != 0) FALSE else # odd number of nodes cannot match perfectly
+    if (net_nodes(.data) %% 2 != 0) FALSE else # odd number of nodes cannot match perfectly
       if (!igraph::is_connected(.data) && # any odd components cannot match perfectly
           any(igraph::component_distribution(.data)[c(F,T)]!=0)) FALSE else { # note first index is 0...
             cutpoints <- igraph::articulation_points(.data)
@@ -534,9 +534,9 @@ is_aperiodic <- function(.data, max_path_length = 4){
 }
 
 # Helper functions
-infer_network_reciprocity <- function(.data, method = "default") {
+infer_net_reciprocity <- function(.data, method = "default") {
   out <- igraph::reciprocity(as_igraph(.data), mode = method)
-  class(out) <- c("network_measure", class(out))
+  class(out) <- c("net_measure", class(out))
   attr(out, "mode") <- infer_dims(.data)
   out
 }

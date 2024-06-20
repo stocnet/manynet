@@ -165,7 +165,7 @@ graphr <- function(.data, layout, labels = TRUE,
                                  lo[,2] < 0 & lo[,1] > 0 ~ angles$degree,
                                  lo[,1] == 1 ~ angles$degree,
                                  TRUE ~ angles$degree - 180)
-      if (network_nodes(g) < 20) {
+      if (net_nodes(g) < 20) {
         hj <- ifelse(lo[,1] >= 0, -0.4, 1.4)
         vj <- ifelse(lo[,2] >= 0, -0.4, 1.4)
       } else {
@@ -176,10 +176,10 @@ graphr <- function(.data, layout, labels = TRUE,
                                       size = 3, hjust = hj, angle = angles) +
         ggplot2::coord_cartesian(xlim=c(-1.2,1.2), ylim=c(-1.2,1.2))
     } else if (layout == "concentric") {
-      if (network_nodes(g) < 20) {
+      if (net_nodes(g) < 20) {
         hj <- ifelse(lo[,1] >= 0, -0.8, 1.8)
         vj <- ifelse(lo[,2] >= 0, -0.8, 1.8)
-      } else if (network_nodes(g) > 20 & network_nodes(g) < 30) {
+      } else if (net_nodes(g) > 20 & net_nodes(g) < 30) {
         hj <- ifelse(lo[,1] >= 0, -0.4, 1.4)
         vj <- ifelse(lo[,2] >= 0, -0.4, 1.4)
       } else {
@@ -490,8 +490,8 @@ graphr <- function(.data, layout, labels = TRUE,
   # if(length(unique(node_color)) == 1) p <- p + ggplot2::guides(color = FALSE)
 
   # Consider rescaling nodes
-  p <- p + scale_size(range = c(1/network_nodes(g)*50, 
-                                1/network_nodes(g)*100))
+  p <- p + scale_size(range = c(1/net_nodes(g)*50, 
+                                1/net_nodes(g)*100))
   
   p
 }
@@ -516,7 +516,7 @@ graphr <- function(.data, layout, labels = TRUE,
     }
     if(length(node_size > 1) & all(out <= 1 & out >= 0)) out <- out*10
   } else {
-    out <- ifelse(network_nodes(g) <= 10, 5, (100 / network_nodes(g)) / 2)
+    out <- ifelse(net_nodes(g) <= 10, 5, (100 / net_nodes(g)) / 2)
   }
   out
 }
@@ -526,7 +526,7 @@ graphr <- function(.data, layout, labels = TRUE,
     if (node_shape %in% names(node_attribute(g))) {
       out <- as.factor(node_attribute(g, node_shape))
     } else if (length(node_shape) == 1) {
-      out <- rep(node_shape, network_nodes(g)) 
+      out <- rep(node_shape, net_nodes(g)) 
     }
   } else if (is_twomode(g)) {
     out <- ifelse(igraph::V(g)$type, "square", "circle")
@@ -581,11 +581,11 @@ graphr <- function(.data, layout, labels = TRUE,
     out <- dplyr::arrange(out, nodes) else if (is.numeric(out$nodes))
       out$nodes <- node_names(net)[out$nodes]
   out <- stats::setNames(out$t, out$nodes)
-  if(length(out) != network_nodes(net)){
-    full <- rep(Inf, network_nodes(net))
+  if(length(out) != net_nodes(net)){
+    full <- rep(Inf, net_nodes(net))
     names(full) <- `if`(is_labelled(net), 
                         node_names(net), 
-                        as.character(seq_len(network_nodes(net))))
+                        as.character(seq_len(net_nodes(net))))
     full[match(names(out), names(full))] <- out
     out <- `if`(is_labelled(net), full, unname(full))
   }

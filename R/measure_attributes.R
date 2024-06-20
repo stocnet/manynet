@@ -44,7 +44,7 @@ node_is_mode <- function(.data){
   if(is_twomode(.data)){
     out <- igraph::vertex_attr(as_igraph(.data), "type")
   } else{
-    out <- rep(FALSE, network_nodes(.data))
+    out <- rep(FALSE, net_nodes(.data))
   }
   # cannot use make_node_mark here because then eternal loop
   class(out) <- c("node_mark", class(out))
@@ -70,7 +70,7 @@ tie_attribute <- function(.data, attribute){
 tie_weights <- function(.data){
   .data <- as_igraph(.data)
   out <- igraph::edge_attr(.data, "weight")
-  if(is.null(out)) out <- rep(1, network_ties(.data))
+  if(is.null(out)) out <- rep(1, net_ties(.data))
   make_tie_measure(out, .data)
 }
 
@@ -81,7 +81,7 @@ tie_weights <- function(.data){
 tie_signs <- function(.data){
   .data <- as_igraph(.data)
   out <- igraph::edge_attr(.data, "sign")
-  if(is.null(out)) out <- rep(1, network_ties(.data))
+  if(is.null(out)) out <- rep(1, net_ties(.data))
   make_tie_measure(out, .data)
 }
 

@@ -213,11 +213,14 @@ Other makes:
 \code{\link{write}()}
 
 Other models: 
-\code{\link{learning}}
+\code{\link{learning}},
+\code{\link{test_distributions}},
+\code{\link{tests}}
 
 Other diffusion: 
 \code{\link{measure_net_diffusion}},
-\code{\link{measure_node_diffusion}}
+\code{\link{measure_node_diffusion}},
+\code{\link{member_diffusion}}
 }
 \concept{diffusion}
 \concept{makes}

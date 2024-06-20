@@ -118,8 +118,8 @@ test_that("read_graphml and write_graphml works", {
   expect_true(is.tbl_graph(testgml))
   expect_equal(nrow(as_edgelist(testgml)), 15598)
   expect_equal(ncol(as_edgelist(testgml)), 17)
-  expect_length(network_node_attributes(testgml), 8)
-  expect_length(network_tie_attributes(testgml), 15)
+  expect_length(net_node_attributes(testgml), 8)
+  expect_length(net_tie_attributes(testgml), 15)
   expect_error(read_graphml(testthat::test_path("sheets", "nassau")))
   path <-  tempfile() # Create file
   write_graphml(testgml, path)

@@ -77,7 +77,7 @@ test_that("fancy node mods graph correctly", {
   expect_equal(round(testcolnodes$data$x[1]), 4)
   expect_equal(round(testcolnodes$data$y[1]), 3)
   expect_equal(nrow(testcolnodes[["plot_env"]][["lo"]]),
-               c(network_nodes(ison_marvel_relationships)))
+               c(net_nodes(ison_marvel_relationships)))
   # two-mode network
   ison_southern_women <- add_node_attribute(ison_southern_women, "group",
                                             c(sample(c("a", "b"),
@@ -89,7 +89,7 @@ test_that("fancy node mods graph correctly", {
   expect_equal(round(test2$data$x[1]), 0)
   expect_equal(round(test2$data$y[1]), 0)
   expect_equal(nrow(test2[["plot_env"]][["lo"]]),
-               c(network_nodes(ison_southern_women)))
+               c(net_nodes(ison_southern_women)))
 })
 
 test_that("edge colours and edge size graph correctly", {

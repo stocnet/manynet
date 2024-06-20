@@ -56,7 +56,7 @@ node_is_independent <- function(.data){
              "names")
       names(out) <- manynet::node_names(.data)
     } else {
-      out <- 1:manynet::network_nodes(.data) %in% 
+      out <- 1:manynet::net_nodes(.data) %in% 
         samp[[sample(1:length(samp), 1)]]
     }
   } else {
@@ -67,7 +67,7 @@ node_is_independent <- function(.data){
              "names")
       names(out) <- manynet::node_names(.data)
     } else {
-      out <- 1:manynet::network_nodes(.data) %in% 
+      out <- 1:manynet::net_nodes(.data) %in% 
         samp[[sample(1:length(samp), 1)]]
     }
   }
@@ -87,7 +87,7 @@ node_is_cutpoint <- function(.data){
            "names")
     names(out) <- manynet::node_names(.data)
   } else {
-    out <- 1:manynet::network_nodes(.data) %in% 
+    out <- 1:manynet::net_nodes(.data) %in% 
       igraph::articulation_points(manynet::as_igraph(.data))
   }
   make_node_mark(out, .data)
@@ -101,17 +101,17 @@ node_is_core <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   degi <- colSums(as_matrix(.data))
   nord <- order(degi, decreasing = TRUE)
-  zbest <-network_nodes(.data)*3
+  zbest <-net_nodes(.data)*3
   kbest <- 0
   z <- 1/2*sum(degi)
-  for(k in 1:(network_nodes(.data)-1)){
+  for(k in 1:(net_nodes(.data)-1)){
     z <- z + k - 1 - degi[nord][k]
     if(z < zbest){
       zbest <- z
       kbest <- k
     }
   }
-  out <- ifelse(seq_len(manynet::network_nodes(.data)) %in% nord[seq_len(kbest)],
+  out <- ifelse(seq_len(manynet::net_nodes(.data)) %in% nord[seq_len(kbest)],
                 1,2)==1
   make_node_mark(out, .data)
 }
@@ -198,10 +198,10 @@ node_is_latent <- function(diff_model, time = 0){
     latent <- dplyr::arrange(latent, nodes) else if (is.numeric(latent$nodes))
       latent$nodes <- manynet::node_names(net)[latent$nodes]
   if (manynet::is_labelled(net)) {
-    out <- seq_len(manynet::network_nodes(net)) %in% latent$nodes
+    out <- seq_len(manynet::net_nodes(net)) %in% latent$nodes
     names(out) <- manynet::node_names(net)
   } else {
-    out <- seq_len(manynet::network_nodes(net)) %in% latent$nodes
+    out <- seq_len(manynet::net_nodes(net)) %in% latent$nodes
   }
   make_node_mark(out, net)
 }
@@ -223,10 +223,10 @@ node_is_infected <- function(diff_model, time = 0) {
     dplyr::select(nodes)
   net <- attr(diff_model, "network")
   if (is_labelled(net)) {
-    out <- seq_len(network_nodes(net)) %in% infected$nodes
+    out <- seq_len(net_nodes(net)) %in% infected$nodes
     names(out) <- node_names(net)
   } else {
-    out <- seq_len(network_nodes(net)) %in% infected$nodes
+    out <- seq_len(net_nodes(net)) %in% infected$nodes
   }
   make_node_mark(out, net)
 }
@@ -248,10 +248,10 @@ node_is_recovered <- function(diff_model, time = 0){
     recovered <- dplyr::arrange(recovered, nodes) else if (is.numeric(recovered$nodes))
       recovered$nodes <- manynet::node_names(net)[recovered$nodes]
   if (manynet::is_labelled(net)){
-    out <- seq_len(manynet::network_nodes(net)) %in% recovered$nodes
+    out <- seq_len(manynet::net_nodes(net)) %in% recovered$nodes
     names(out) <- manynet::node_names(net)
   } else {
-    out <- seq_len(manynet::network_nodes(net)) %in% recovered$nodes
+    out <- seq_len(manynet::net_nodes(net)) %in% recovered$nodes
   }
   make_node_mark(out, net)
 }
@@ -284,7 +284,7 @@ node_is_exposed <- function(.data, mark){
     .data <- attr(.data, "network")
   }
   if(is.logical(mark)) mark <- which(mark)
-  out <- rep(F, manynet::network_nodes(.data))
+  out <- rep(F, manynet::net_nodes(.data))
   out[unique(setdiff(unlist(igraph::neighborhood(.data, nodes = mark)),
                      mark))] <- TRUE
   make_node_mark(out, .data)
@@ -314,7 +314,7 @@ NULL
 #' node_is_random(ison_brandes, 2)
 #' @export
 node_is_random <- function(.data, size = 1){
-  n <- manynet::network_nodes(.data)
+  n <- manynet::net_nodes(.data)
   out <- rep(FALSE, n)
   out[sample.int(n, size)] <- TRUE
   make_node_mark(out, .data)

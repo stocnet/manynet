@@ -193,7 +193,7 @@ layout_tbl_graph_concentric <- function(.data, membership,
   membership <- to_list(membership)
   all_c  <- unlist(membership, use.names = FALSE)
   if (any(table(all_c) > 1)) stop("Duplicated nodes in layers!")
-  if (is_labelled(.data)) all_n <- node_names(.data) else all_n <- 1:network_nodes(.data)
+  if (is_labelled(.data)) all_n <- node_names(.data) else all_n <- 1:net_nodes(.data)
   sel_other  <- all_n[!all_n %in% all_c]
   if (length(sel_other) > 0) membership[[length(membership) + 1]] <- sel_other
   if (is.null(radius)) {
@@ -306,7 +306,7 @@ getNNvec <- function(.data, members){
     diag(diss) <- NA
     if(is_labelled(.data))
       starts <- names(sort(igraph::degree(.data)[circle], decreasing = TRUE)[1])
-    else starts <- paste0("V",1:network_nodes(.data))[sort(igraph::degree(.data)[circle], 
+    else starts <- paste0("V",1:net_nodes(.data))[sort(igraph::degree(.data)[circle], 
                                                            decreasing = TRUE)[1]]
     if(length(circle)>1)
       starts <- c(starts, names(which.min(diss[starts,])))

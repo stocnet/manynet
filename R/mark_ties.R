@@ -64,7 +64,7 @@ tie_is_feedback <- function(.data){
 #' @export
 tie_is_bridge <- function(.data){
   num_comp <- length( igraph::decompose(manynet::as_igraph(.data)) )
-  out <- vapply(seq_len(manynet::network_ties(.data)), function(x){
+  out <- vapply(seq_len(manynet::net_ties(.data)), function(x){
     length( igraph::decompose(igraph::delete_edges(.data, x)) ) > num_comp
   }, FUN.VALUE = logical(1))
   if(manynet::is_labelled(.data)) 
@@ -92,7 +92,7 @@ NULL
 #' @rdname mark_tie_select
 #' @export
 tie_is_random <- function(.data, size = 1){
-  n <- manynet::network_ties(.data)
+  n <- manynet::net_ties(.data)
   out <- rep(FALSE, n)
   out[sample.int(n, size)] <- TRUE
   make_node_mark(out, .data)

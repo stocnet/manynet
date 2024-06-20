@@ -53,16 +53,16 @@ NULL
 #' @export
 generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
   if(is_manynet(n)){
-    m <- network_ties(n)
+    m <- net_ties(n)
     directed <- is_directed(n)
     if(is_twomode(n)){
-      g <- igraph::sample_bipartite(network_dims(n)[1], 
-                                    network_dims(n)[2],
+      g <- igraph::sample_bipartite(net_dims(n)[1], 
+                                    net_dims(n)[2],
                                     m = m, type = "gnm",
                                     directed = directed,
                                     mode = "out")
     } else {
-      g <- igraph::sample_gnm(network_nodes(n), 
+      g <- igraph::sample_gnm(net_nodes(n), 
                                     m = m,
                                     directed = directed)
     }

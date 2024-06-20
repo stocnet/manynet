@@ -297,8 +297,8 @@ to_slices <- function(.data, attribute = "time", slice = NULL) UseMethod("to_sli
 #' @export
 to_slices.tbl_graph <- function(.data, attribute = "time", slice = NULL) {
   increment <- weight <- NULL
-  incremented <- "increment" %in% network_tie_attributes(.data)
-  updated <- "replace" %in% network_tie_attributes(.data)
+  incremented <- "increment" %in% net_tie_attributes(.data)
+  updated <- "replace" %in% net_tie_attributes(.data)
   if(!is.null(slice))
     moments <- slice else 
       moments <- unique(tie_attribute(.data, attribute = attribute))

@@ -150,7 +150,7 @@ play_diffusion <- function(.data,
                            immune = NULL,
                            steps) {
   thisRequires("migraph")
-  n <- network_nodes(.data)
+  n <- net_nodes(.data)
   recovered <- NULL
   if(missing(steps)) steps <- n
   if(length(thresholds)==1) thresholds <- rep(thresholds, n)
@@ -283,7 +283,7 @@ play_diffusions <- function(.data,
   oplan <- future::plan(strategy)
   on.exit(future::plan(oplan), add = TRUE)
   
-  if(missing(steps)) steps <- network_nodes(.data)
+  if(missing(steps)) steps <- net_nodes(.data)
   
   out <- furrr::future_map_dfr(1:times, function(j){
       data.frame(sim = j,
@@ -320,13 +320,13 @@ play_diffusions <- function(.data,
 #'   for convergence to a consensus.
 #' @examples 
 #'   play_learning(ison_networkers, 
-#'       rbinom(manynet::network_nodes(ison_networkers),1,prob = 0.25))
+#'       rbinom(manynet::net_nodes(ison_networkers),1,prob = 0.25))
 #' @export
 play_learning <- function(.data, 
                           beliefs,
                           steps,
                           epsilon = 0.0005){
-  n <- manynet::network_nodes(.data)
+  n <- manynet::net_nodes(.data)
   if(length(beliefs)!=n) 
     stop("'beliefs' must be a vector the same length as the number of nodes in the network.")
   if(is.logical(beliefs)) beliefs <- beliefs*1
@@ -388,7 +388,7 @@ play_segregation <- function(.data,
                              choice_function = c("satisficing","optimising", "minimising"),
                              steps) {
   thisRequires("migraph")
-  n <- network_nodes(.data)
+  n <- net_nodes(.data)
   if(missing(steps)) steps <- n
   who_moves <- match.arg(who_moves)
   choice_function <- match.arg(choice_function)

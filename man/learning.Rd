@@ -68,7 +68,7 @@ These functions allow learning games to be played upon networks.
 }
 \examples{
   play_learning(ison_networkers, 
-      rbinom(manynet::network_nodes(ison_networkers),1,prob = 0.25))
+      rbinom(manynet::net_nodes(ison_networkers),1,prob = 0.25))
   startValues <- rbinom(100,1,prob = 0.5)
   startValues[sample(seq_len(100), round(100*0.2))] <- NA
   latticeEg <- create_lattice(100)
@@ -88,7 +88,9 @@ Other makes:
 \code{\link{write}()}
 
 Other models: 
-\code{\link{play}}
+\code{\link{play}},
+\code{\link{test_distributions}},
+\code{\link{tests}}
 }
 \concept{makes}
 \concept{models}

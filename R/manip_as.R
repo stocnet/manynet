@@ -805,7 +805,7 @@ as_siena.igraph <- function(.data, twomode = FALSE) {
   depnet <- RSiena::sienaDependent(depnetArray, 
                                    type = ifelse(is_twomode(.data) | twomode,
                                                  "bipartite", "oneMode"))
-  # nodeatts <- network_node_attributes(.data)
+  # nodeatts <- net_node_attributes(.data)
   # nodeatts <- nodeatts[nodeatts != "name"]
   # # Add constant covariates
   # consatts <- nodeatts[!grepl("_t[0-9]",nodeatts)]
@@ -921,7 +921,7 @@ as_diffusion <- function(events, .data) {
                    E_new = sum(event == "E"),
                    R_new = sum(event == "R"))
   report <- dplyr::tibble(t = seq_len(max(events$t)) - 1,
-                          n = manynet::network_nodes(net)) %>% 
+                          n = manynet::net_nodes(net)) %>% 
     dplyr::left_join(sumchanges, by = dplyr::join_by(t))
   report[is.na(report)] <- 0
   report$R <- cumsum(report$R_new)

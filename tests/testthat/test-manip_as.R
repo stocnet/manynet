@@ -78,8 +78,8 @@ test_that("as_network converts correctly",{
 
 # test conversion of siena objects
 # test_that("as_tidygraph.siena converts correctly", {
-#   expect_equal(network_nodes(as_igraph(sienadata)), network_nodes(as_matrix(sienadata)))
-#   expect_equal(network_nodes(as_igraph(sienadata)), length(sienadata[["nodeSets"]][["Actors"]]))
+#   expect_equal(net_nodes(as_igraph(sienadata)), net_nodes(as_matrix(sienadata)))
+#   expect_equal(net_nodes(as_igraph(sienadata)), length(sienadata[["nodeSets"]][["Actors"]]))
 # })
 
 test_that("conversion of diff_model object works correctly", {
@@ -87,8 +87,8 @@ test_that("conversion of diff_model object works correctly", {
   skip_on_ci()
   diff <- play_diffusion(ison_brandes)
   tidy_diff <- as_tidygraph(diff)
-  expect_equal(network_nodes(tidy_diff), network_nodes(ison_brandes))
-  expect_equal(network_ties(tidy_diff), network_ties(ison_brandes))
+  expect_equal(net_nodes(tidy_diff), net_nodes(ison_brandes))
+  expect_equal(net_ties(tidy_diff), net_ties(ison_brandes))
   # expect_true(is_twomode(tidy_diff))
-  expect_equal(c(network_nodes(tidy_diff)), max(diff$I))
+  expect_equal(c(net_nodes(tidy_diff)), max(diff$I))
 })
