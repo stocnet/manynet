@@ -2,22 +2,22 @@
 % Please edit documentation in R/measure_properties.R
 \name{measure_properties}
 \alias{measure_properties}
-\alias{network_nodes}
-\alias{network_ties}
-\alias{network_dims}
-\alias{network_node_attributes}
-\alias{network_tie_attributes}
+\alias{net_nodes}
+\alias{net_ties}
+\alias{net_dims}
+\alias{net_node_attributes}
+\alias{net_tie_attributes}
 \title{Describing network properties}
 \usage{
-network_nodes(.data)
+net_nodes(.data)
 
-network_ties(.data)
+net_ties(.data)
 
-network_dims(.data)
+net_dims(.data)
 
-network_node_attributes(.data)
+net_node_attributes(.data)
 
-network_tie_attributes(.data)
+net_tie_attributes(.data)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -30,34 +30,34 @@ network_tie_attributes(.data)
 }}
 }
 \value{
-\verb{network_*()} functions always relate to the overall graph or network,
+\verb{net_*()} functions always relate to the overall graph or network,
 usually returning a scalar.
-\code{network_dims()} returns an integer of the number of nodes in a one-mode network,
+\code{net_dims()} returns an integer of the number of nodes in a one-mode network,
 or two integers representing the number of nodes in each nodeset
 in the case of a two-mode network.
-\verb{network_*_attributes()} returns a string vector with the names
+\verb{net_*_attributes()} returns a string vector with the names
 of all node or tie attributes in the network.
 }
 \description{
 These functions extract certain attributes from given network data:
 \itemize{
-\item \code{network_nodes()} returns the total number of nodes (of any mode) in a network.
-\item \code{network_ties()} returns the number of ties in a network.
-\item \code{network_dims()} returns the dimensions of a network in a vector
+\item \code{net_nodes()} returns the total number of nodes (of any mode) in a network.
+\item \code{net_ties()} returns the number of ties in a network.
+\item \code{net_dims()} returns the dimensions of a network in a vector
 as long as the number of modes in the network.
-\item \code{network_node_attributes()} returns a vector of nodal attributes in a network.
-\item \code{network_tie_attributes()} returns a vector of tie attributes in a network.
+\item \code{net_node_attributes()} returns a vector of nodal attributes in a network.
+\item \code{net_tie_attributes()} returns a vector of tie attributes in a network.
 }
 
 These functions are also often used as helpers within other functions.
 }
 \examples{
-network_nodes(ison_southern_women)
-network_ties(ison_southern_women)
-network_dims(ison_southern_women)
-network_dims(to_mode1(ison_southern_women))
-  network_node_attributes(ison_lotr)
-  network_tie_attributes(ison_algebra)
+net_nodes(ison_southern_women)
+net_ties(ison_southern_women)
+net_dims(ison_southern_women)
+net_dims(to_mode1(ison_southern_women))
+  net_node_attributes(ison_lotr)
+  net_tie_attributes(ison_algebra)
 }
 \seealso{
 Other measures: 
@@ -65,6 +65,7 @@ Other measures:
 \code{\link{close_centrality}},
 \code{\link{degree_centrality}},
 \code{\link{eigenv_centrality}},
+\code{\link{features}},
 \code{\link{measure_attributes}},
 \code{\link{measure_closure}},
 \code{\link{measure_cohesion}},
@@ -73,6 +74,7 @@ Other measures:
 \code{\link{measure_holes}},
 \code{\link{measure_net_diffusion}},
 \code{\link{measure_node_diffusion}},
-\code{\link{measure_periods}}
+\code{\link{measure_periods}},
+\code{\link{member_diffusion}}
 }
 \concept{measures}
