@@ -701,7 +701,7 @@ graphs <- function(netlist, waves,
   if (missing(waves)) {
     if (length(netlist) > 4) {
       netlist <- netlist[c(1, length(netlist))]
-      message("Plotting first and last waves side-by-side, to to control the number of waves plotted use the 'waves'.")
+      message("Plotting first and last waves side-by-side. To control the number of waves plotted use the 'waves'.")
     }
   } else if (!missing(waves)) {
     if (length(waves) == 1) netlist <- netlist[c(1:waves)] else 
