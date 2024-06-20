@@ -5,17 +5,17 @@
 #'   These functions allow measurement of various features of
 #'   a diffusion process:
 #'   
-#'   - `network_transmissibility()` measures the average transmissibility observed
+#'   - `net_transmissibility()` measures the average transmissibility observed
 #'   in a diffusion simulation, or the number of new infections over
 #'   the number of susceptible nodes.
-#'   - `network_infection_length()` measures the average number of time steps 
+#'   - `net_infection_length()` measures the average number of time steps 
 #'   nodes remain infected once they become infected.
-#'   - `network_reproduction()` measures the observed reproductive number
+#'   - `net_reproduction()` measures the observed reproductive number
 #'   in a diffusion simulation as the network's transmissibility over
 #'   the network's average infection length.
-#'   - `network_immunity()` measures the proportion of nodes that would need
+#'   - `net_immunity()` measures the proportion of nodes that would need
 #'   to be protected through vaccination, isolation, or recovery for herd immunity to be reached.
-#'   - `network_hazard()` measures the hazard rate or instantaneous probability that
+#'   - `net_hazard()` measures the hazard rate or instantaneous probability that
 #'   nodes will adopt/become infected at that time
 #'   
 #' @param diff_model A valid network diffusion model,
@@ -34,7 +34,7 @@ NULL
 
 #' @rdname measure_net_diffusion 
 #' @section Transmissibility: 
-#'   `network_transmissibility()` measures how many directly susceptible nodes
+#'   `net_transmissibility()` measures how many directly susceptible nodes
 #'   each infected node will infect in each time period, on average.
 #'   That is:
 #'   \deqn{T = \frac{1}{n}\sum_{j=1}^n \frac{i_{j}}{s_{j}}}
@@ -46,20 +46,20 @@ NULL
 #'   infected at each time period.
 #' @examples
 #'   # To calculate the average transmissibility for a given diffusion model
-#'   network_transmissibility(smeg_diff)
+#'   net_transmissibility(smeg_diff)
 #' @export
-network_transmissibility <- function(diff_model){
+net_transmissibility <- function(diff_model){
   out <- diff_model$I_new/diff_model$s
   out <- out[-1]
   out <- out[!is.infinite(out)]
   out <- out[!is.nan(out)]
-  make_network_measure(mean(out, na.rm = TRUE),
+  make_net_measure(mean(out, na.rm = TRUE),
                        attr(diff_model, "network"))
 }
 
 #' @rdname measure_net_diffusion 
 #' @section Infection length: 
-#'   `network_infection_length()` measures the average number of time steps that
+#'   `net_infection_length()` measures the average number of time steps that
 #'   nodes in a network remain infected.
 #'   Note that in a diffusion model without recovery, average infection length
 #'   will be infinite.
@@ -67,16 +67,16 @@ network_transmissibility <- function(diff_model){
 #'   The longer nodes remain infected, the longer they can infect others.
 #' @examples
 #'   # To calculate the average infection length for a given diffusion model
-#'   network_infection_length(smeg_diff)
+#'   net_infection_length(smeg_diff)
 #' @export
-network_infection_length <- function(diff_model){
-  make_network_measure(mean(node_infection_length(diff_model), na.rm = TRUE),
+net_infection_length <- function(diff_model){
+  make_net_measure(mean(node_infection_length(diff_model), na.rm = TRUE),
                        attr(diff_model, "network"))
 }
 
 #' @rdname measure_net_diffusion 
 #' @section Reproduction number: 
-#'   `network_reproduction()` measures a given diffusion's reproductive number.
+#'   `net_reproduction()` measures a given diffusion's reproductive number.
 #'   Here it is calculated as:
 #'   \deqn{R = \min\left(\frac{T}{1/IL}, \bar{k}\right)}
 #'   where \eqn{T} is the observed transmissibility in a diffusion
@@ -97,24 +97,24 @@ network_infection_length <- function(diff_model){
 #'   if conditions allow.
 #' @examples
 #'   # To calculate the reproduction number for a given diffusion model
-#'   network_reproduction(smeg_diff)
+#'   net_reproduction(smeg_diff)
 #' @export
-network_reproduction <- function(diff_model){
+net_reproduction <- function(diff_model){
   net <- attr(diff_model, "network")
-  out <- network_transmissibility(diff_model)/
-    (1/network_infection_length(diff_model))
+  out <- net_transmissibility(diff_model)/
+    (1/net_infection_length(diff_model))
   out <- min(out, mean(node_degree(net, normalized = FALSE)))
-  make_network_measure(out, net)
+  make_net_measure(out, net)
 }
 
 #' @rdname measure_net_diffusion 
 #' @section Herd immunity: 
-#'   `network_immunity()` estimates the proportion of a network
+#'   `net_immunity()` estimates the proportion of a network
 #'   that need to be protected from infection for herd immunity
 #'   to be achieved.
 #'   This is known as the Herd Immunity Threshold or HIT:
 #'   \deqn{1 - \frac{1}{R}}
-#'   where \eqn{R} is the reproduction number from `network_reproduction()`.
+#'   where \eqn{R} is the reproduction number from `net_reproduction()`.
 #'   The HIT indicates the threshold at which
 #'   the reduction of susceptible members of the network means
 #'   that infections will no longer keep increasing.
@@ -131,14 +131,15 @@ network_reproduction <- function(diff_model){
 #'   of nodes in the network. 
 #' @examples
 #'   # Calculating the proportion required to achieve herd immunity
-#'   network_immunity(smeg_diff)
+#'   net_immunity(smeg_diff)
 #'   # To find the number of nodes to be vaccinated
-#'   ceiling(network_immunity(smeg_diff) * manynet::network_nodes(smeg))
+#'   ceiling(net_immunity(smeg_diff) * manynet::net_nodes(smeg))
 #' @export
-network_immunity <- function(diff_model){
+net_immunity <- function(diff_model, normalized = TRUE){
   net <- attr(diff_model, "network")
-  out <- 1 - 1/network_reproduction(diff_model)
-  make_network_measure(out, net)
+  out <- 1 - 1/net_reproduction(diff_model)
+  if(!normalized) out <- ceiling(out * net_nodes(net))
+  make_net_measure(out, net)
 }
 
 #' @rdname measure_net_diffusion
@@ -190,9 +191,9 @@ network_immunity <- function(diff_model){
 #' Cambridge: MIT Press.
 #' @examples
 #' # To calculate the hazard rates at each time point
-#' network_hazard(play_diffusion(smeg, transmissibility = 0.3))
+#' net_hazard(play_diffusion(smeg, transmissibility = 0.3))
 #' @export
-network_hazard <- function(diff_model){
+net_hazard <- function(diff_model){
   out <- (diff_model$I - dplyr::lag(diff_model$I)) / 
     (diff_model$n - dplyr::lag(diff_model$I))
   out
@@ -207,15 +208,12 @@ network_hazard <- function(diff_model){
 #'   
 #'   - `node_adoption_time()`: Measures the number of time steps until
 #'   nodes adopt/become infected
-#'   - `node_adopter()`: Classifies membership of nodes into diffusion categories
 #'   - `node_thresholds()`: Measures nodes' thresholds from the amount
 #'   of exposure they had when they became infected
 #'   - `node_infection_length()`: Measures the average length nodes that become
 #'   infected remain infected in a compartmental model with recovery
 #'   - `node_exposure()`: Measures how many exposures nodes have to 
 #'   a given mark
-#'   - `node_is_exposed()`: Marks the nodes that are susceptible,
-#'   i.e. are in the immediate neighbourhood of given mark vector
 #'   
 #' @inheritParams is
 #' @inheritParams measure_net_diffusion
@@ -250,11 +248,11 @@ node_adoption_time <- function(diff_model){
     out <- dplyr::arrange(out, nodes) else if (is.numeric(out$nodes))
       out$nodes <- manynet::node_names(net)[out$nodes]
   out <- stats::setNames(out$t, out$nodes)
-  if(length(out) != manynet::network_nodes(net)){
-    full <- rep(Inf, manynet::network_nodes(net))
+  if(length(out) != manynet::net_nodes(net)){
+    full <- rep(Inf, manynet::net_nodes(net))
     names(full) <- `if`(manynet::is_labelled(net), 
                         manynet::node_names(net), 
-                        as.character(seq_len(manynet::network_nodes(net))))
+                        as.character(seq_len(manynet::net_nodes(net))))
     full[match(names(out), names(full))] <- out
     out <- `if`(manynet::is_labelled(net), full, unname(full))
   }
@@ -273,7 +271,7 @@ node_adoption_time <- function(diff_model){
 #'   # To infer nodes' thresholds
 #'   node_thresholds(smeg_diff)
 #' @export
-node_thresholds <- function(diff_model){
+node_thresholds <- function(diff_model, normalized = TRUE, lag = 1){
   event <- nodes <- NULL
   exposure <- NULL
   out <- summary(diff_model)
@@ -281,7 +279,8 @@ node_thresholds <- function(diff_model){
   if(!"exposure" %in% names(out)){
     out[,'exposure'] <- NA_integer_
     for(v in unique(out$t)){
-      out$exposure[out$t == v] <- node_exposure(diff_model, time = v)[out$nodes[out$t == v]]
+      out$exposure[out$t == v] <- node_exposure(diff_model, 
+                                                time = v-lag)[out$nodes[out$t == v]]
     }
   }
   if(any(out$event == "E")) 
@@ -289,13 +288,17 @@ node_thresholds <- function(diff_model){
       out <- out |> dplyr::filter(event == "I")
   out <- out |> dplyr::distinct(nodes, .keep_all = TRUE) |> 
     dplyr::select(nodes, exposure)
-  out <- stats::setNames(out$exposure, out$nodes)
-  if(length(out) != manynet::network_nodes(net)){
-    full <- stats::setNames(rep(Inf, manynet::network_nodes(net)), 
+  if(is_labelled(net))
+    out <- stats::setNames(out$exposure, node_names(net)[out$nodes]) else
+      out <- stats::setNames(out$exposure, out$nodes)
+  if(length(out) != manynet::net_nodes(net)){
+    full <- stats::setNames(rep(Inf, manynet::net_nodes(net)), 
                      manynet::node_names(net))
     full[match(names(out), names(full))] <- out
     out <- full
   }
+  out <- out[match(node_names(net), names(out))]
+  if(normalized) out <- out / node_deg(net)
   make_node_measure(out, net)
 }
 
@@ -343,32 +346,32 @@ node_infection_length <- function(diff_model){
 node_exposure <- function(.data, mark, time = 0){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(missing(mark) && inherits(.data, "diff_model")){
-    mark <- manynet::node_is_infected(.data, time = time)
+    mark <- node_is_infected(.data, time = time)
     .data <- attr(.data, "network")
   }
   .data <- as_tidygraph(.data)
   if(is_weighted(.data) || is_signed(.data)){
     if(is.numeric(mark)){
-      mk <- rep(FALSE, network_nodes(.data))
+      mk <- rep(FALSE, net_nodes(.data))
       mk[mark] <- TRUE
-    }
+    } else mk <- mark
     out <- as_matrix(.data)
     out <- colSums(out * matrix(mk, nrow(out), ncol(out)) * 
                      matrix(!mk, nrow(out), ncol(out), byrow = TRUE))
   } else {
     if(is.logical(mark)) mark <- which(mark)
     if(is_twomode(.data)){
-      if(mark[1]>network_dims(.data)[1]){ 
+      if(mark[1]>net_dims(.data)[1]){ 
         dat <- to_mode2(.data)
-        mark <- mark - network_dims(.data)[1]
+        mark <- mark - net_dims(.data)[1]
       } else dat <- to_mode1(.data)
     } else dat <- .data
     contacts <- unlist(lapply(igraph::neighborhood(dat, nodes = mark, mode = "out"),
                               function(x) setdiff(x, mark)))
-    if(is_twomode(.data)) contacts <- contacts + network_dims(.data)[1]
+    if(is_twomode(.data)) contacts <- contacts + net_dims(.data)[1]
     # count exposures for each node:
     tabcontact <- table(contacts)
-    out <- rep(0, network_nodes(.data))
+    out <- rep(0, net_nodes(.data))
     out[as.numeric(names(tabcontact))] <- unname(tabcontact)
   }
   make_node_measure(out, .data)
@@ -380,10 +383,10 @@ node_exposure <- function(.data, mark, time = 0){
 #' @description
 #'   These functions measure certain topological features of networks:
 #'   
-#'   - `network_change()` measures the Hamming distance between two or more networks.
-#'   - `network_stability()` measures the Jaccard index of stability between two or more networks.
+#'   - `net_change()` measures the Hamming distance between two or more networks.
+#'   - `net_stability()` measures the Jaccard index of stability between two or more networks.
 #' 
-#'   These `network_*()` functions return a numeric vector the length of the number
+#'   These `net_*()` functions return a numeric vector the length of the number
 #'   of networks minus one. E.g., the periods between waves.
 #' @inheritParams is
 #' @name measure_periods
@@ -393,7 +396,7 @@ NULL
 #' @rdname measure_periods 
 #' @param object2 A network object.
 #' @export
-network_change <- function(.data, object2){
+net_change <- function(.data, object2){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(manynet::is_list(.data)){
     
@@ -410,7 +413,7 @@ network_change <- function(.data, object2){
 
 #' @rdname measure_periods 
 #' @export
-network_stability <- function(.data, object2){
+net_stability <- function(.data, object2){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(manynet::is_list(.data)){
     

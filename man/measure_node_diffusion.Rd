@@ -10,7 +10,7 @@
 \usage{
 node_adoption_time(diff_model)
 
-node_thresholds(diff_model)
+node_thresholds(diff_model, normalized = TRUE, lag = 1)
 
 node_infection_length(diff_model)
 
@@ -42,15 +42,12 @@ a diffusion process:
 \itemize{
 \item \code{node_adoption_time()}: Measures the number of time steps until
 nodes adopt/become infected
-\item \code{node_adopter()}: Classifies membership of nodes into diffusion categories
 \item \code{node_thresholds()}: Measures nodes' thresholds from the amount
 of exposure they had when they became infected
 \item \code{node_infection_length()}: Measures the average length nodes that become
 infected remain infected in a compartmental model with recovery
 \item \code{node_exposure()}: Measures how many exposures nodes have to
 a given mark
-\item \code{node_is_exposed()}: Marks the nodes that are susceptible,
-i.e. are in the immediate neighbourhood of given mark vector
 }
 }
 \section{Adoption time}{
@@ -111,6 +108,7 @@ Other measures:
 \code{\link{close_centrality}},
 \code{\link{degree_centrality}},
 \code{\link{eigenv_centrality}},
+\code{\link{features}},
 \code{\link{measure_attributes}},
 \code{\link{measure_closure}},
 \code{\link{measure_cohesion}},
@@ -119,10 +117,12 @@ Other measures:
 \code{\link{measure_holes}},
 \code{\link{measure_net_diffusion}},
 \code{\link{measure_periods}},
-\code{\link{measure_properties}}
+\code{\link{measure_properties}},
+\code{\link{member_diffusion}}
 
 Other diffusion: 
 \code{\link{measure_net_diffusion}},
+\code{\link{member_diffusion}},
 \code{\link{play}}
 }
 \concept{diffusion}

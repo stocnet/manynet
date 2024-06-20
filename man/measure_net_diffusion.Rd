@@ -2,25 +2,25 @@
 % Please edit documentation in R/measure_diffusion.R
 \name{measure_net_diffusion}
 \alias{measure_net_diffusion}
-\alias{network_transmissibility}
-\alias{network_infection_length}
-\alias{network_reproduction}
-\alias{network_immunity}
-\alias{network_hazard}
+\alias{net_transmissibility}
+\alias{net_infection_length}
+\alias{net_reproduction}
+\alias{net_immunity}
+\alias{net_hazard}
 \title{Measures of network diffusion}
 \source{
 \code{{netdiffuseR}}
 }
 \usage{
-network_transmissibility(diff_model)
+net_transmissibility(diff_model)
 
-network_infection_length(diff_model)
+net_infection_length(diff_model)
 
-network_reproduction(diff_model)
+net_reproduction(diff_model)
 
-network_immunity(diff_model)
+net_immunity(diff_model, normalized = TRUE)
 
-network_hazard(diff_model)
+net_hazard(diff_model)
 }
 \arguments{
 \item{diff_model}{A valid network diffusion model,
@@ -30,23 +30,23 @@ as created by \code{as_diffusion()} or \code{play_diffusion()}.}
 These functions allow measurement of various features of
 a diffusion process:
 \itemize{
-\item \code{network_transmissibility()} measures the average transmissibility observed
+\item \code{net_transmissibility()} measures the average transmissibility observed
 in a diffusion simulation, or the number of new infections over
 the number of susceptible nodes.
-\item \code{network_infection_length()} measures the average number of time steps
+\item \code{net_infection_length()} measures the average number of time steps
 nodes remain infected once they become infected.
-\item \code{network_reproduction()} measures the observed reproductive number
+\item \code{net_reproduction()} measures the observed reproductive number
 in a diffusion simulation as the network's transmissibility over
 the network's average infection length.
-\item \code{network_immunity()} measures the proportion of nodes that would need
+\item \code{net_immunity()} measures the proportion of nodes that would need
 to be protected through vaccination, isolation, or recovery for herd immunity to be reached.
-\item \code{network_hazard()} measures the hazard rate or instantaneous probability that
+\item \code{net_hazard()} measures the hazard rate or instantaneous probability that
 nodes will adopt/become infected at that time
 }
 }
 \section{Transmissibility}{
 
-\code{network_transmissibility()} measures how many directly susceptible nodes
+\code{net_transmissibility()} measures how many directly susceptible nodes
 each infected node will infect in each time period, on average.
 That is:
 \deqn{T = \frac{1}{n}\sum_{j=1}^n \frac{i_{j}}{s_{j}}}
@@ -60,7 +60,7 @@ infected at each time period.
 
 \section{Infection length}{
 
-\code{network_infection_length()} measures the average number of time steps that
+\code{net_infection_length()} measures the average number of time steps that
 nodes in a network remain infected.
 Note that in a diffusion model without recovery, average infection length
 will be infinite.
@@ -70,7 +70,7 @@ The longer nodes remain infected, the longer they can infect others.
 
 \section{Reproduction number}{
 
-\code{network_reproduction()} measures a given diffusion's reproductive number.
+\code{net_reproduction()} measures a given diffusion's reproductive number.
 Here it is calculated as:
 \deqn{R = \min\left(\frac{T}{1/IL}, \bar{k}\right)}
 where \eqn{T} is the observed transmissibility in a diffusion
@@ -93,12 +93,12 @@ if conditions allow.
 
 \section{Herd immunity}{
 
-\code{network_immunity()} estimates the proportion of a network
+\code{net_immunity()} estimates the proportion of a network
 that need to be protected from infection for herd immunity
 to be achieved.
 This is known as the Herd Immunity Threshold or HIT:
 \deqn{1 - \frac{1}{R}}
-where \eqn{R} is the reproduction number from \code{network_reproduction()}.
+where \eqn{R} is the reproduction number from \code{net_reproduction()}.
 The HIT indicates the threshold at which
 the reduction of susceptible members of the network means
 that infections will no longer keep increasing.
@@ -162,17 +162,17 @@ those that oscillate indicate variability in adoption behavior over time.
   smeg_diff <- play_diffusion(smeg, recovery = 0.2)
   plot(smeg_diff)
   # To calculate the average transmissibility for a given diffusion model
-  network_transmissibility(smeg_diff)
+  net_transmissibility(smeg_diff)
   # To calculate the average infection length for a given diffusion model
-  network_infection_length(smeg_diff)
+  net_infection_length(smeg_diff)
   # To calculate the reproduction number for a given diffusion model
-  network_reproduction(smeg_diff)
+  net_reproduction(smeg_diff)
   # Calculating the proportion required to achieve herd immunity
-  network_immunity(smeg_diff)
+  net_immunity(smeg_diff)
   # To find the number of nodes to be vaccinated
-  ceiling(network_immunity(smeg_diff) * manynet::network_nodes(smeg))
+  ceiling(net_immunity(smeg_diff) * manynet::net_nodes(smeg))
 # To calculate the hazard rates at each time point
-network_hazard(play_diffusion(smeg, transmissibility = 0.3))
+net_hazard(play_diffusion(smeg, transmissibility = 0.3))
 }
 \references{
 Kermack, W. and McKendrick, A., 1927. "A contribution to the mathematical theory of epidemics".
@@ -190,6 +190,7 @@ Other measures:
 \code{\link{close_centrality}},
 \code{\link{degree_centrality}},
 \code{\link{eigenv_centrality}},
+\code{\link{features}},
 \code{\link{measure_attributes}},
 \code{\link{measure_closure}},
 \code{\link{measure_cohesion}},
@@ -198,10 +199,12 @@ Other measures:
 \code{\link{measure_holes}},
 \code{\link{measure_node_diffusion}},
 \code{\link{measure_periods}},
-\code{\link{measure_properties}}
+\code{\link{measure_properties}},
+\code{\link{member_diffusion}}
 
 Other diffusion: 
 \code{\link{measure_node_diffusion}},
+\code{\link{member_diffusion}},
 \code{\link{play}}
 }
 \concept{diffusion}
