@@ -2,16 +2,16 @@
 % Please edit documentation in R/measure_hierarchy.R
 \name{measure_hierarchy}
 \alias{measure_hierarchy}
-\alias{network_connectedness}
-\alias{network_efficiency}
-\alias{network_upperbound}
+\alias{net_connectedness}
+\alias{net_efficiency}
+\alias{net_upperbound}
 \title{Graph theoretic dimensions of hierarchy}
 \usage{
-network_connectedness(.data)
+net_connectedness(.data)
 
-network_efficiency(.data)
+net_efficiency(.data)
 
-network_upperbound(.data)
+net_upperbound(.data)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -24,21 +24,21 @@ network_upperbound(.data)
 }}
 }
 \description{
-These functions, together with \code{network_reciprocity()}, are used jointly to
+These functions, together with \code{net_reciprocity()}, are used jointly to
 measure how hierarchical a network is:
 \itemize{
-\item \code{network_connectedness()} measures the proportion of dyads in the network
+\item \code{net_connectedness()} measures the proportion of dyads in the network
 that are reachable to one another,
 or the degree to which network is a single component.
-\item \code{network_efficiency()} measures the Krackhardt efficiency score.
-\item \code{network_upperbound()} measures the Krackhardt (least) upper bound score.
+\item \code{net_efficiency()} measures the Krackhardt efficiency score.
+\item \code{net_upperbound()} measures the Krackhardt (least) upper bound score.
 }
 }
 \examples{
-network_connectedness(ison_networkers)
-1 - network_reciprocity(ison_networkers)
-network_efficiency(ison_networkers)
-network_upperbound(ison_networkers)
+net_connectedness(ison_networkers)
+1 - net_reciprocity(ison_networkers)
+net_efficiency(ison_networkers)
+net_upperbound(ison_networkers)
 }
 \references{
 Krackhardt, David. 1994.
@@ -57,6 +57,7 @@ Other measures:
 \code{\link{close_centrality}},
 \code{\link{degree_centrality}},
 \code{\link{eigenv_centrality}},
+\code{\link{features}},
 \code{\link{measure_attributes}},
 \code{\link{measure_closure}},
 \code{\link{measure_cohesion}},
@@ -65,6 +66,7 @@ Other measures:
 \code{\link{measure_net_diffusion}},
 \code{\link{measure_node_diffusion}},
 \code{\link{measure_periods}},
-\code{\link{measure_properties}}
+\code{\link{measure_properties}},
+\code{\link{member_diffusion}}
 }
 \concept{measures}

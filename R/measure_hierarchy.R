@@ -1,14 +1,14 @@
 #' Graph theoretic dimensions of hierarchy
 #' 
 #' @description
-#'   These functions, together with `network_reciprocity()`, are used jointly to
+#'   These functions, together with `net_reciprocity()`, are used jointly to
 #'   measure how hierarchical a network is:
 #'   
-#'   - `network_connectedness()` measures the proportion of dyads in the network
+#'   - `net_connectedness()` measures the proportion of dyads in the network
 #'   that are reachable to one another, 
 #'   or the degree to which network is a single component.
-#'   - `network_efficiency()` measures the Krackhardt efficiency score.
-#'   - `network_upperbound()` measures the Krackhardt (least) upper bound score.
+#'   - `net_efficiency()` measures the Krackhardt efficiency score.
+#'   - `net_upperbound()` measures the Krackhardt (least) upper bound score.
 #' 
 #' @inheritParams is
 #' @name measure_hierarchy
@@ -24,38 +24,38 @@
 #' _Social Networks_, 34: 159-163.
 #' \doi{10.1016/j.socnet.2011.10.006}
 #' @examples 
-#' network_connectedness(ison_networkers)
-#' 1 - network_reciprocity(ison_networkers)
-#' network_efficiency(ison_networkers)
-#' network_upperbound(ison_networkers)
+#' net_connectedness(ison_networkers)
+#' 1 - net_reciprocity(ison_networkers)
+#' net_efficiency(ison_networkers)
+#' net_upperbound(ison_networkers)
 NULL
 
 #' @rdname measure_hierarchy 
 #' @export
-network_connectedness <- function(.data){
+net_connectedness <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   dists <- igraph::distances(as_igraph(.data))
-  make_network_measure(1 - sum(dists==Inf)/sum(dists!=0),
+  make_net_measure(1 - sum(dists==Inf)/sum(dists!=0),
                        .data)
 }
 
 #' @rdname measure_hierarchy 
 #' @export
-network_efficiency <- function(.data) {
+net_efficiency <- function(.data) {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   degs <- node_indegree(.data, normalized = FALSE)
-  out <- (network_nodes(.data)-1)/sum(degs)
-  make_network_measure(out, .data)
+  out <- (net_nodes(.data)-1)/sum(degs)
+  make_net_measure(out, .data)
 }
 
 #' @rdname measure_hierarchy 
 #' @export
-network_upperbound <- function(.data) {
+net_upperbound <- function(.data) {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   dists <- igraph::distances(.data, mode = "in")
   dists[is.infinite(dists)] <- 0
   dists <- dists[order(rowSums(dists)), order(rowSums(dists))]
-  if (max(colSums(dists > 0)) / (network_nodes(.data)-1) == 1){
+  if (max(colSums(dists > 0)) / (net_nodes(.data)-1) == 1){
     out <- 1
   } else {
     out <- apply(utils::combn(2:nrow(dists), 2), 2, 
@@ -65,5 +65,5 @@ network_upperbound <- function(.data) {
                  })
     out <- sum(out)/length(out)
   }
-  make_network_measure(out, .data)
+  make_net_measure(out, .data)
 }
