@@ -5,7 +5,6 @@
 \alias{node_is_isolate}
 \alias{node_is_independent}
 \alias{node_is_cutpoint}
-\alias{node_is_core}
 \alias{node_is_fold}
 \alias{node_is_mentor}
 \title{Marking nodes based on structural properties}
@@ -15,8 +14,6 @@ node_is_isolate(.data)
 node_is_independent(.data)
 
 node_is_cutpoint(.data)
-
-node_is_core(.data)
 
 node_is_fold(.data)
 
@@ -66,7 +63,6 @@ triangles that are only connected by that node.
 node_is_isolate(ison_brandes)
 node_is_independent(ison_adolescents)
 node_is_cutpoint(ison_brandes)
-node_is_core(ison_brandes)
 node_is_fold(create_explicit(A-B, B-C, A-C, C-D, C-E, D-E))
 }
 \references{

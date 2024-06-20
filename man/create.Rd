@@ -27,7 +27,7 @@ create_lattice(n, directed = FALSE, width = 8)
 
 create_components(n, directed = FALSE, membership = NULL)
 
-create_core(n, directed = FALSE, membership = NULL)
+create_core(n, directed = FALSE, mark = NULL)
 
 create_explicit(...)
 }

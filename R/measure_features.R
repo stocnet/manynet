@@ -43,12 +43,11 @@ NULL
 #' \doi{10.1016/S0378-8733(99)00019-2}
 #' @export
 net_core <- function(.data,
-                       membership = NULL){
+                       mark = NULL){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  if(is.null(membership)) membership <- node_in_core(.data)
-  out <- stats::cor(c(manynet::as_matrix(.data)), 
-                    c(manynet::as_matrix(manynet::create_core(.data,
-                                            membership = membership))))
+  if(is.null(mark)) mark <- node_is_core(.data)
+  out <- stats::cor(c(as_matrix(.data)), 
+                    c(as_matrix(create_core(.data, mark = mark))))
   make_network_measure(out, .data)
 }
 

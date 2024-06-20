@@ -2,11 +2,11 @@
 % Please edit documentation in R/member_core.R
 \name{core}
 \alias{core}
-\alias{node_in_core}
+\alias{node_is_core}
 \alias{node_coreness}
 \title{Core-periphery clustering algorithms}
 \usage{
-node_in_core(.data, method = c("degree", "eigenvector"))
+node_is_core(.data, method = c("degree", "eigenvector"))
 
 node_coreness(.data)
 }
@@ -49,10 +49,10 @@ it ignores ties between these blocks.
 }
 
 \examples{
-#mpn_elite_usa_advice \%>\% as_tidygraph \%>\% 
-#   mutate(corep = node_in_core(mpn_elite_usa_advice)) \%>\% 
-#   autographr(node_color = "corep")
-node_in_core(mpn_elite_usa_advice)
+node_is_core(ison_adolescents)
+#ison_adolescents \%>\% 
+#   mutate(corep = node_is_core()) \%>\% 
+#   graphr(node_color = "corep")
 node_coreness(ison_adolescents)
 }
 \references{

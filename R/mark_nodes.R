@@ -94,29 +94,6 @@ node_is_cutpoint <- function(.data){
 }
 
 #' @rdname mark_nodes
-#' @examples 
-#' node_is_core(ison_brandes)
-#' @export
-node_is_core <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
-  degi <- colSums(as_matrix(.data))
-  nord <- order(degi, decreasing = TRUE)
-  zbest <-net_nodes(.data)*3
-  kbest <- 0
-  z <- 1/2*sum(degi)
-  for(k in 1:(net_nodes(.data)-1)){
-    z <- z + k - 1 - degi[nord][k]
-    if(z < zbest){
-      zbest <- z
-      kbest <- k
-    }
-  }
-  out <- ifelse(seq_len(manynet::net_nodes(.data)) %in% nord[seq_len(kbest)],
-                1,2)==1
-  make_node_mark(out, .data)
-}
-
-#' @rdname mark_nodes
 #' @examples
 #' node_is_fold(create_explicit(A-B, B-C, A-C, C-D, C-E, D-E))
 #' @export

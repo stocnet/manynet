@@ -14,7 +14,7 @@
 \code{{signnet}} by David Schoch
 }
 \usage{
-net_core(.data, membership = NULL)
+net_core(.data, mark = NULL)
 
 net_richclub(.data)
 

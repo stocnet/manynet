@@ -38,12 +38,12 @@ NULL
 #' “A Fast Algorithm for the Discrete Core/Periphery Bipartitioning Problem.”
 #' \doi{10.48550/arXiv.1102.5511}
 #' @examples 
-#' #mpn_elite_usa_advice %>% as_tidygraph %>% 
-#' #   mutate(corep = node_in_core(mpn_elite_usa_advice)) %>% 
-#' #   autographr(node_color = "corep")
-#' node_in_core(mpn_elite_usa_advice)
+#' node_is_core(ison_adolescents)
+#' #ison_adolescents %>% 
+#' #   mutate(corep = node_is_core()) %>% 
+#' #   graphr(node_color = "corep")
 #' @export
-node_in_core <- function(.data, method = c("degree", "eigenvector")){
+node_is_core <- function(.data, method = c("degree", "eigenvector")){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   method <- match.arg(method)
   if(is_directed(.data)) warning("Asymmetric core-periphery not yet implemented.")
@@ -66,7 +66,7 @@ node_in_core <- function(.data, method = c("degree", "eigenvector")){
   }
   out <- ifelse(seq_len(net_nodes(.data)) %in% nord[seq_len(kbest)],
          1,2)
-  make_node_member(out, .data)
+  make_node_mark(out==1, .data)
 }
 
 #' @rdname core
