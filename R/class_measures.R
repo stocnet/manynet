@@ -12,7 +12,7 @@ make_tie_measure <- function(out, .data) {
 
 make_network_measure <- function(out, .data) {
   class(out) <- c("network_measure", class(out))
-  attr(out, "mode") <- network_dims(.data)
+  attr(out, "mode") <- net_dims(.data)
   out
 }
 
@@ -22,7 +22,7 @@ make_network_measures <- function(out, .data) {
     dplyr::mutate(time = as.numeric(names(out))) %>% 
     dplyr::select(time, value)
   class(out) <- c("network_measures", class(out))
-  attr(out, "mode") <- network_dims(.data)
+  attr(out, "mode") <- net_dims(.data)
   out
 }
 

@@ -100,6 +100,6 @@ Opsahl, Tore, Filip Agneessens, and John Skvoretz. 2010.
 \seealso{
 Other motifs: 
 \code{\link{brokerage_census}},
-\code{\link{network_census}}
+\code{\link{net_census}}
 }
 \concept{motifs}

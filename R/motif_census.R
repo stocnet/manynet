@@ -30,7 +30,7 @@ NULL
 node_tie_census <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   object <- as_igraph(.data)
-  # edge_names <- network_tie_attributes(object)
+  # edge_names <- net_tie_attributes(object)
   if (is_directed(object)) {
     if (is_multiplex(.data)) {
       mat <- do.call(rbind, lapply(unique(tie_attribute(object, "type")), 
@@ -93,8 +93,8 @@ node_tie_census <- function(.data){
 #' @export
 node_triad_census <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  out <- t(sapply(seq.int(manynet::network_nodes(.data)), 
-                  function(x) network_by_triad(.data) - network_by_triad(manynet::delete_nodes(.data, x))))
+  out <- t(sapply(seq.int(manynet::net_nodes(.data)), 
+                  function(x) net_by_triad(.data) - net_by_triad(manynet::delete_nodes(.data, x))))
   rownames(out) <- manynet::node_names(.data)
   make_node_motif(out, .data)
 }
@@ -224,18 +224,18 @@ node_path_census <- function(.data){
 #'   These functions include ways to take a census of the positions of nodes
 #'   in a network: 
 #'   
-#'   - `network_by_dyad()` returns a census of dyad motifs in a network.
-#'   - `network_by_triad()` returns a census of triad motifs in a network.
-#'   - `network_by_mixed()` returns a census of triad motifs that span
+#'   - `net_by_dyad()` returns a census of dyad motifs in a network.
+#'   - `net_by_triad()` returns a census of triad motifs in a network.
+#'   - `net_by_mixed()` returns a census of triad motifs that span
 #'   a one-mode and a two-mode network.
 #'   
-#' @name network_census
+#' @name net_census
 #' @family motifs
 #' @inheritParams node_census
 #' @param object2 A second, two-mode migraph-consistent object.
 NULL
 
-#' @rdname network_census 
+#' @rdname net_census 
 #' @examples 
 #' net_by_dyad(manynet::ison_algebra)
 #' @export
@@ -252,12 +252,12 @@ net_by_dyad <- function(.data) {
   }
 }
 
-#' @rdname network_census 
+#' @rdname net_census 
 #' @references 
 #' Davis, James A., and Samuel Leinhardt. 1967. 
 #' “\href{https://files.eric.ed.gov/fulltext/ED024086.pdf}{The Structure of Positive Interpersonal Relations in Small Groups}.” 55.
 #' @examples 
-#' network_by_triad(manynet::ison_adolescents)
+#' net_by_triad(manynet::ison_adolescents)
 #' @export
 net_by_triad <- function(.data) {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
@@ -274,7 +274,7 @@ net_by_triad <- function(.data) {
   }
 }
 
-#' @rdname network_census 
+#' @rdname net_census 
 #' @source Alejandro Espinosa 'netmem'
 #' @references 
 #' Hollway, James, Alessandro Lomi, Francesca Pallotti, and Christoph Stadtfeld. 2017.
@@ -291,7 +291,7 @@ net_by_mixed <- function (.data, object2) {
     stop("First object should be a one-mode network")
   if(!manynet::is_twomode(object2))
     stop("Second object should be a two-mode network")
-  if(manynet::network_dims(.data)[1] != manynet::network_dims(object2)[1])
+  if(manynet::net_dims(.data)[1] != manynet::net_dims(object2)[1])
     stop("Non-conformable arrays")
   m1 <- manynet::as_matrix(.data)
   m2 <- manynet::as_matrix(object2)
@@ -334,7 +334,7 @@ net_by_mixed <- function (.data, object2) {
 #'   
 #'   - `node_by_brokerage()` returns the Gould-Fernandez brokerage
 #'   roles played by nodes in a network.
-#'   - `network_by_brokerage()` returns the Gould-Fernandez brokerage
+#'   - `net_by_brokerage()` returns the Gould-Fernandez brokerage
 #'   roles in a network.
 #'   
 #' @name brokerage_census
