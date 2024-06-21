@@ -286,6 +286,11 @@ node_adoption_time <- function(diff_model){
 #'   This inference is of course imperfect,
 #'   especially where there is a sudden increase in exposure,
 #'   but it can be used heuristically.
+#'   In a threshold model, 
+#'   nodes activate when \eqn{\sum_{j:\text{active}} w_{ji} \geq \theta_i},
+#'   where \eqn{w} is some (potentially weighted) matrix,
+#'   \eqn{j} are some already activated nodes,
+#'   and \eqn{theta} is some pre-defined threshold value.
 #' @examples
 #'   # To infer nodes' thresholds
 #'   node_thresholds(smeg_diff)
