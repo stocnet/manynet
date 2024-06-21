@@ -570,7 +570,7 @@ graphr <- function(.data, layout, labels = TRUE,
   out
 }
 
-.node_adoption_time <- function(g){
+.node_adoption_time <- function(g) {
   diff_model <- attr(g, "diff_model")
   event <- nodes <- NULL
   out <- summary(diff_model) %>% dplyr::filter(event == "I") %>% 
@@ -694,7 +694,7 @@ check_node_variables <- function(g, node_color, node_size) {
 #' #graphs(play_diffusion(ison_adolescents))
 #' @export
 graphs <- function(netlist, waves,
-                       based_on = c("first", "last", "both"), ...) {
+                   based_on = c("first", "last", "both"), ...) {
   thisRequires("patchwork")
   based_on <- match.arg(based_on)
   if (any(class(netlist) == "diff_model")) netlist <- to_waves(netlist)
