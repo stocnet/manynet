@@ -52,10 +52,12 @@ only transforming these objects' properties.
 }
 \details{
 Not all functions have methods available for all object classes.
-Below are the currently implemented S3 methods:
-
-\if{html}{\out{<div class="sourceCode {r, echo = FALSE, cache = TRUE}">}}\preformatted{knitr::kable(available_methods(c("to_onemode", "to_twomode", "to_multilevel")))
-}\if{html}{\out{</div>}}
+Below are the currently implemented S3 methods:\tabular{lrrrr}{
+    \tab igraph \tab matrix \tab network \tab tbl_graph \cr
+   to_multilevel \tab 1 \tab 1 \tab 0 \tab 1 \cr
+   to_onemode \tab 1 \tab 1 \tab 0 \tab 1 \cr
+   to_twomode \tab 1 \tab 0 \tab 1 \tab 1 \cr
+}
 }
 \seealso{
 Other modifications: 

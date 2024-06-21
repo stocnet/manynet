@@ -79,10 +79,10 @@ tie_is_bridge <- function(.data){
 #' @description 
 #'   These functions return logical vectors the length of the ties in a network:
 #'   
-#'   - `tie_is_random()` marks one or more nodes at random.
-#'   - `tie_is_max()` and `tie_is_min()` are more generally useful
-#'   for converting the results from some node measure into a mark-class object.
-#'   They can be particularly useful for highlighting which node or nodes
+#'   - `tie_is_random()` marks one or more ties at random.
+#'   - `tie_is_max()` and `tie_is_min()` are more useful
+#'   for converting the results from some tie measure into a mark-class object.
+#'   They can be particularly useful for highlighting which tie or ties
 #'   are key because they minimise or, more often, maximise some measure.
 #' @inheritParams mark_select
 #' @family marks
