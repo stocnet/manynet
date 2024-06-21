@@ -47,189 +47,177 @@ until all nodes are 'infected'/have adopted.
 ### Diffusing across a lattice
 
 Let us begin with a lattice network that shows us exactly how such a cascade works.
+A lattice network resembles, say, people standing on stones outlined on coordinates;
+each person can touch the person next to them.
+That's why this structure is often used to stand in for spatial structure.
 Remember, to create a lattice network, all you need to do is run `create_lattice()`,
 together with the number of nodes (of each mode) and 
 the maximum number of neighbors (width) as the arguments.
 Let's create a one-mode lattice with 32 nodes, maximum width 4, and graph it using `graphr()`:
 
-```{r clattice}
+```{r clattice, exercise = TRUE, purl = FALSE}
 lat <- create_lattice(32, width = 4)
 graphr(lat)
 ```
 
 Ok, great! That's made a nice little lattice network.
-Next we want to play a diffusion process on this network.
-To do this, 
+Next we want to play a diffusion process _on_ this network.
+To do this, we just need to run `play_diffusion()`,
+and assign the result.
 
-```{r latticediff}
+```{r lat_diff, exercise = TRUE, exercise.setup = "clattice", purl = FALSE}
 lat_diff <- play_diffusion(lat)
 ```
 
-We can investigate the results in a few ways.
+We can investigate the resulting object in a few ways.
 The first way is simply to print the result by calling the object.
 The other way is to unpack the result by calling for its summary.
-**Different name??**
+<!-- different name for this function? -->
 
-```{r latticedres}
+```{r latticedres, exercise = TRUE, exercise.setup = "lat_diff", purl = FALSE}
 lat_diff
 summary(lat_diff)
 ```
 
 The main report from the `lat_diff` object shows the number of nodes that don't
-(yet) have the attribute (S) and that have the attribute (I) at each time point (t).
-We can see a steady growth here, but for a slower initialisation and winding down.
+(yet) have the attribute (S for susceptible, but can also be non-adopter) 
+and those that do have the attribute (I for infected, or adopter) at each time point (t).
+We can see a steady growth here, except for a slower initialisation and winding down.
 
-The secondary report, `summary(lat_diff)`, presents a list of the events at each
-time point.
-The event indicator 'I' indicates that these are infection/adoption events.
+The secondary report, `summary(lat_diff)`, 
+presents a list of the events at each time point.
+In the event variable, the 'I' indicates that these are all infection/adoption events.
 Where 't' is 0, that means that these are the seeds producing the starting condition
 for the diffusion.
 The final column, 'exposure', records the number of infected nodes that the adopting
 node was exposed to when it adopted.
-This is recorded here to accelerate later analysis.
+Note that we have no information about the exposure for the seed nodes when they
+were infected, and so this is a missing value.
+The exposure at infection is recorded here to accelerate later analysis.
 
 ### Visualising cascades
 
-We have a few different options for visualising diffusions.
+We have several different options for visualising diffusions.
 The first visualisation option that we have is to plot the diffusion result itself.
 
-```{r plotlat}
+```{r plotlat, exercise = TRUE, exercise.setup = "lat_diff", purl = FALSE}
 plot(lat_diff)
+plot(lat_diff, all = FALSE)
 ```
 
 This plot effectively visualises what we observed from the print out of the 
 `lat_diff` object above.
 The red line traces the proportion of infected;
 the blue line the (inverse) proportion of susceptible.
-The grey histogram shows the new infections.
+The grey histogram in the plot shows how many nodes are newly 'infected' at each
+time point, or the so-called 'force of infection' ($F = \beta I$).
 
-But maybe we want to view the diffusion on the actual network.
+We can see that by default the whole simulated period (32 steps) is shown,
+even though there is complete infection after only 10 steps.
+That's because the simulation runs over the number of nodes in the network
+by default.
+If the structure is amenable to diffusion, infection/diffusion will be completed
+before that.
+To plot only 'where the action is', use the argument `all = FALSE`.
+
+But maybe we want to also/instead view the diffusion on the actual network.
 Here we can use all the three main graphing techniques offered in `{manynet}`.
 First, `graphr()` will graph a static network where the nodes are coloured
 according to how far through the diffusion process the node adopted.
 Note also that any seeds are indicated with a triangle.
 
-```{r graphlat}
+```{r graphrlat, exercise = TRUE, exercise.setup = "lat_diff", purl = FALSE}
 graphr(lat_diff, node_size = 0.3)
-graphs(lat_diff)
-graphs(lat_diff, waves = c(1,4,8))
-grapht(lat_diff)
 ```
 
 Second, `graphs()` visualises the stages of the diffusion on the network.
 By default it will graph the first and last wave,
 but we can change this by specifying which waves to graph.
 
+```{r graphslat, exercise = TRUE, exercise.setup = "lat_diff", purl = FALSE}
+graphs(lat_diff)
+graphs(lat_diff, waves = c(1,4,8))
+```
+
 Lastly, `grapht()` animates this diffusion process to a gif.
 It can take a little time to encode, but it is worth it to see exactly
 how the attribute is diffusing across the network!
+Note that if you run this code in the console, you get a calming progress bar;
+in the tutorial you will just need to be patient.
 
-### Examining diffusion across networks of different structure
+```{r graphtlat, exercise = TRUE, exercise.setup = "lat_diff", purl = FALSE}
+grapht(lat_diff, node_size = 10)
+```
 
-Now, let's start off by examining a pretty straight-forward structure,
-that of the ring network.
-To run a basic diffusion model across this network,
-simply pass it to `play_diffusion()` and (save and) plot the result.
+We can see here exactly how the attribute in question (ideas, information, disease?) 
+is diffusing across the network.
+It's like a cascade of red sweeping across the space!
 
-```{r ring, exercise = TRUE, exercise.setup = "create", purl = FALSE}
+### Varying network structure
+
+While a lattice structure is one way of representing spatially governed diffusion,
+social and political networks can have quite different structures.
+We will get into some examples in later sections,
+but let's clarify the impact of network structure here by visualising
+how the diffusion process differs when everything but the structure stays the same.
+We're going to create (deterministically) and generate (stochastically)
+a range of different network structures with the same number of nodes and
+see the difference the structure makes.
+
++ `create_ring()`: Creates a ring or chord graph of the given dimensions that loops around and is of a specified width or thickness.
++ `generate_random()`: Generates a random network with a particular probability.
++ `generate_scalefree()`: Generates a small-world structure following the lattice rewiring model.
++ `generate_smallworld()`: Generates a scale-free structure following the preferential attachment model.
+
+```{r otherstructures, exercise = TRUE, purl = FALSE}
+graphr(play_diffusion(create_ring(32, width = 2)))
+graphr(play_diffusion(generate_random(32, 0.15)))
+graphr(play_diffusion(generate_scalefree(32, 0.025)))
+graphr(play_diffusion(generate_smallworld(32, 0.025)))
+```
+
+Which diffusion process completed first?
+`graphr()` only colors nodes' relative adoption,
+and `graphs()` (at least by default) only graphs the first and last step.
+`grapht()` will show if and when there is complete infection,
+but we need to sit through each 'movie'.
+But there is an easier way.
+Play these same diffusions again, this time nesting the call within `net_complete_infection()`.
+
+```{r completeinfection, exercise = TRUE, purl = FALSE}
+net_complete_infection(play_diffusion(create_ring(32, width = 2)))
+net_complete_infection(play_diffusion(generate_random(32, 0.15)))
+net_complete_infection(play_diffusion(generate_scalefree(32, 0.025)))
+net_complete_infection(play_diffusion(generate_smallworld(32, 0.025)))
+```
+
+```{r struct-interp, echo = FALSE, purl = FALSE}
+question("Does the structure of the network matter for whether and when a diffusion process completes?",
+  answer("No", message = "Take a closer look at the `net_complete_infection()` results. Are they all the same?"),
+  answer("Yes", correct = TRUE, message = "We can see that the different structures have varying outcomes in terms of when the diffusion completes."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
+### Fun task
+
+Run an influence cascade on US states' geographic contiguity in `ison_usstates`.
+You can start the infection in California by specifying `seeds = 5`.
+
+```{r usstates, exercise = TRUE, purl = FALSE}
 
 ```
 
-```{r ring-hint, purl = FALSE}
-# Let's call the ring structure from the previous section, "rg", and create a new object
-# "rg1" with a seed of 1. Don't forget to plot it!
-
-rg1 <- play_diffusion(____, ____)
-____(____)
+```{r usstates-solution}
+us_diff <- play_diffusion(ison_usstates, seeds = 5)
+plot(us_diff)
+graphr(us_diff)
+grapht(us_diff)
+net_complete_infection(us_diff)
 ```
 
-```{r ring-solution}
-rg_d <- play_diffusion(rg, seeds = 1)
-plot(rg_d)
-
-# visualise the diffusion within the network
-graphs(rg_d, layout = "circle")
-```
-
-The result object, when printed, lists how many of the nodes in the network,
-`n`, are 'infected' (`I`) or not (`S`) at each step `t`.
-The plot visualises this, with the proportion of `S` in blue and `I` in red.
-The bar plot behind shows how many nodes are newly 'infected' at each
-time point, or the so-called 'force of infection' ($F = \beta I$).
-
-We can see that there is a pretty constant diffusion across this network,
-with 2-3 nodes being newly infected at each time-point.
-The whole network is infected by the eighth time-point.
-
-### Varying networks
-
-Now let's see whether where the infection is seeded matters
-when the network has a different structure.
-Here let's play and plot two diffusion on the lattice network,
-one with the first node as seed and again one on the last.
-
-```{r lattice, exercise = TRUE, exercise.setup = "create", purl = FALSE}
-
-```
-
-```{r lattice-solution}
-plot(play_diffusion(la, seeds = 1))/
-plot(play_diffusion(la, seeds = 16))
-la %>%
-  add_node_attribute("color", c(1, rep(0, 14), 2, rep(0, 16))) %>%
-  graphr(node_color = "color")
-
-# visualise diffusion in lattice graph
-grapht(play_diffusion(la, seeds = 16), layout = "grid", keep_isolates = FALSE)
-```
-
-```{r lattice-interp, echo = FALSE, purl = FALSE}
-question("Do you see any differences?",
-         answer("Yes", correct = TRUE),
-         answer("No"),
-        allow_retry = TRUE)
-```
-
-Let's try one more network type, this time the scale-free network.
-Play and plot the results over ten steps for node 10,
-random, maximum, and minimum nodes as seeds.
-
-Similar to the previous examples, we will be using the following functions within the seed argument:
-
-+ `node_is_random()`: Returns a logical vector indicating a random selection of nodes as TRUE.
-+ `node_is_max()`: Returns logical of which nodes hold the maximum of some measure.
-+ `node_is_min()`: Returns logical of which nodes hold the minimum of some measure.
-
-```{r scale, exercise = TRUE, exercise.setup = "create", purl = FALSE}
-
-```
-
-```{r scale-solution}
-sf %>%
-  as_tidygraph() %>%
-  mutate(degree = ifelse(node_is_max(node_degree(sf)) == TRUE, "max",
-                      ifelse(node_is_min(node_degree(sf)) == TRUE, "min", "others"))) %>%
-  graphr(node_color = "degree") + guides(color = "legend") + labs(color = "degree")
-plot(play_diffusion(sf, seeds = 10, steps = 10)) / 
-plot(play_diffusion(sf, seeds = node_is_random(sf), steps = 10)) /
-plot(play_diffusion(sf, seeds = node_is_max(node_degree(sf)), steps = 10)) /
-plot(play_diffusion(sf, seeds = node_is_min(node_degree(sf)), steps = 10))
-
-# visualise diffusion in scalefree network
-graphs(play_diffusion(sf, seeds = node_is_min(node_degree(sf)), steps = 10))
-grapht(play_diffusion(sf, seeds = 16, steps = 10))
-```
-
-```{r mindeg-interp, echo = FALSE, purl = FALSE}
-question("Which of these four led to the fastest diffusion process?",
-         answer("Minimum degree node(s), because there are many more nodes with the minimum degree.", correct = TRUE),
-         answer("Node 10 as seed, because it is the most influential."),
-         answer("Maximum degree node(s), because these nodes are the most influential."),
-         answer("A random node, because this time it selected a good seed."),
-        allow_retry = TRUE,
-        random_answer_order = TRUE)
-```
-
+What's happening here? Can you interpret this?
 
 
 ## Threshold models
