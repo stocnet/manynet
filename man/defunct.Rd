@@ -7,6 +7,25 @@
 \alias{autographr}
 \alias{autographs}
 \alias{autographd}
+\alias{node_optimal}
+\alias{node_kernighanlin}
+\alias{node_edge_betweenness}
+\alias{node_fast_greedy}
+\alias{node_leading_eigen}
+\alias{node_walktrap}
+\alias{node_infomap}
+\alias{node_spinglass}
+\alias{node_fluid}
+\alias{node_leiden}
+\alias{node_louvain}
+\alias{node_roulette}
+\alias{node_components}
+\alias{node_weak_components}
+\alias{node_strong_components}
+\alias{node_equivalence}
+\alias{node_structural_equivalence}
+\alias{node_regular_equivalence}
+\alias{node_automorphic_equivalence}
 \alias{network_transmissibility}
 \alias{network_infection_length}
 \alias{network_reproduction}
@@ -57,6 +76,17 @@
 \alias{network_smallworld}
 \alias{network_scalefree}
 \alias{network_balance}
+\alias{node_tie_census}
+\alias{node_triad_census}
+\alias{node_quad_census}
+\alias{node_path_census}
+\alias{network_dyad_census}
+\alias{network_triad_census}
+\alias{network_mixed_census}
+\alias{node_brokerage_census}
+\alias{network_brokerage_census}
+\alias{node_brokering}
+\alias{node_core}
 \title{Functions that have been renamed, superseded, or are no longer working}
 \usage{
 pkg_data(pkg = "manynet")
@@ -90,6 +120,44 @@ autographd(
   keep_isolates = TRUE,
   ...
 )
+
+node_optimal(.data)
+
+node_kernighanlin(.data)
+
+node_edge_betweenness(.data)
+
+node_fast_greedy(.data)
+
+node_leading_eigen(.data)
+
+node_walktrap(.data)
+
+node_infomap(.data)
+
+node_spinglass(.data)
+
+node_fluid(.data)
+
+node_leiden(.data)
+
+node_louvain(.data)
+
+node_roulette(.data)
+
+node_components(.data)
+
+node_weak_components(.data)
+
+node_strong_components(.data)
+
+node_equivalence(.data)
+
+node_structural_equivalence(.data)
+
+node_regular_equivalence(.data)
+
+node_automorphic_equivalence(.data)
 
 network_transmissibility(diff_model)
 
@@ -196,6 +264,28 @@ network_smallworld(.data, method = c("omega", "sigma", "SWI"), times = 100)
 network_scalefree(.data)
 
 network_balance(.data)
+
+node_tie_census(.data)
+
+node_triad_census(.data)
+
+node_quad_census(.data)
+
+node_path_census(.data)
+
+network_dyad_census(.data)
+
+network_triad_census(.data)
+
+network_mixed_census(.data, object2)
+
+node_brokerage_census(.data, membership, standardized = FALSE)
+
+network_brokerage_census(.data, membership, standardized = FALSE)
+
+node_brokering(.data, membership)
+
+node_core(.data)
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
@@ -217,6 +307,44 @@ wherever possible and update your scripts accordingly.
 \item \code{autographs()}: Deprecated on 2024-06-17.
 
 \item \code{autographd()}: Deprecated on 2024-06-17.
+
+\item \code{node_optimal()}: Deprecated on 2024-06-14.
+
+\item \code{node_kernighanlin()}: Deprecated on 2024-06-14.
+
+\item \code{node_edge_betweenness()}: Deprecated on 2024-06-14.
+
+\item \code{node_fast_greedy()}: Deprecated on 2024-06-14.
+
+\item \code{node_leading_eigen()}: Deprecated on 2024-06-14.
+
+\item \code{node_walktrap()}: Deprecated on 2024-06-14.
+
+\item \code{node_infomap()}: Deprecated on 2024-06-14.
+
+\item \code{node_spinglass()}: Deprecated on 2024-06-14.
+
+\item \code{node_fluid()}: Deprecated on 2024-06-14.
+
+\item \code{node_leiden()}: Deprecated on 2024-06-14.
+
+\item \code{node_louvain()}: Deprecated on 2024-06-14.
+
+\item \code{node_roulette()}: Deprecated on 2024-06-14.
+
+\item \code{node_components()}: Deprecated on 2024-06-14.
+
+\item \code{node_weak_components()}: Deprecated on 2024-06-14.
+
+\item \code{node_strong_components()}: Deprecated on 2024-06-14.
+
+\item \code{node_equivalence()}: Deprecated on 2024-06-14.
+
+\item \code{node_structural_equivalence()}: Deprecated on 2024-06-14.
+
+\item \code{node_regular_equivalence()}: Deprecated on 2024-06-14.
+
+\item \code{node_automorphic_equivalence()}: Deprecated on 2024-06-14.
 
 \item \code{network_transmissibility()}: Deprecated on 2024-06-20.
 
@@ -319,6 +447,28 @@ wherever possible and update your scripts accordingly.
 \item \code{network_scalefree()}: Deprecated on 2024-06-20.
 
 \item \code{network_balance()}: Deprecated on 2024-06-20.
+
+\item \code{node_tie_census()}: Deprecated on 2024-06-20.
+
+\item \code{node_triad_census()}: Deprecated on 2024-06-20.
+
+\item \code{node_quad_census()}: Deprecated on 2024-06-20.
+
+\item \code{node_path_census()}: Deprecated on 2024-06-20.
+
+\item \code{network_dyad_census()}: Deprecated on 2024-06-20.
+
+\item \code{network_triad_census()}: Deprecated on 2024-06-20.
+
+\item \code{network_mixed_census()}: Deprecated on 2024-06-20.
+
+\item \code{node_brokerage_census()}: Deprecated on 2024-06-20.
+
+\item \code{network_brokerage_census()}: Deprecated on 2024-06-20.
+
+\item \code{node_brokering()}: Deprecated on 2024-06-20.
+
+\item \code{node_core()}: Deprecated on 2024-06-21.
 
 }}
 \keyword{internal}
