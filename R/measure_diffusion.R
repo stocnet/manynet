@@ -257,8 +257,8 @@ NULL
 #' @export
 node_adoption_time <- function(diff_model){
   event <- nodes <- NULL
-  out <- summary(diff_model) |> dplyr::filter(event == "I") |> 
-    dplyr::distinct(nodes, .keep_all = TRUE) |> 
+  out <- summary(diff_model) %>% dplyr::filter(event == "I") %>% 
+    dplyr::distinct(nodes, .keep_all = TRUE) %>% 
     dplyr::select(nodes,t)
   net <- attr(diff_model, "network")
   if(!is_labelled(net))
@@ -303,9 +303,9 @@ node_thresholds <- function(diff_model, normalized = TRUE, lag = 1){
     }
   }
   if(any(out$event == "E")) 
-    out <- out |> dplyr::filter(event == "E") else 
-      out <- out |> dplyr::filter(event == "I")
-  out <- out |> dplyr::distinct(nodes, .keep_all = TRUE) |> 
+    out <- out %>% dplyr::filter(event == "E") else 
+      out <- out %>% dplyr::filter(event == "I")
+  out <- out %>% dplyr::distinct(nodes, .keep_all = TRUE) %>% 
     dplyr::select(nodes, exposure)
   if(is_labelled(net))
     out <- stats::setNames(out$exposure, node_names(net)[out$nodes]) else

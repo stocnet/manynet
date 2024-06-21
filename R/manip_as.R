@@ -1017,8 +1017,8 @@ as_diffnet.diff_model <- function(.data,
                                twomode = FALSE) {
   thisRequires("netdiffuseR")
   event <- nodes <- NULL
-  out <- summary(.data) |> dplyr::filter(event == "I") |> 
-    dplyr::distinct(nodes, .keep_all = TRUE) |> 
+  out <- summary(.data) %>% dplyr::filter(event == "I") %>% 
+    dplyr::distinct(nodes, .keep_all = TRUE) %>% 
     dplyr::select(nodes,t)
   if(!is_labelled(as_igraph(.data)))
     out <- dplyr::arrange(out, nodes) else if (is.numeric(out$nodes))

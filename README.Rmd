@@ -404,7 +404,7 @@ which can be useful for ego networks or network panels.
 ```{r autographs, echo = FALSE, dpi = 250, fig.height=3, eval=FALSE}
 ison_adolescents %>%
   mutate_ties(wave = c(rep(1995, 5), rep(1998, 5))) %>%
-  to_waves(attribute = "wave", panels = c(1995, 1998)) |>
+  to_waves(attribute = "wave", panels = c(1995, 1998)) %>%
   graphs()
 ```
 
