@@ -29,11 +29,11 @@
 #'   to ensure that a robust solution from the broader state space is identified.
 #'   The user is referred to Lai and Hao (2016) and Lai et al (2021) for more details.
 #' @inheritParams is
-#' @name cliques
+#' @name member_cliques
 #' @family memberships
 NULL
 
-#' @rdname cliques
+#' @rdname member_cliques
 #' @param num_groups An integer indicating the number of groups desired.
 #' @param group_size An integer indicating the desired size of most of the groups.
 #'   Note that if the number of nodes is not divisible into groups of equal size,

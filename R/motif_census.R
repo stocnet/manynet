@@ -16,13 +16,13 @@
 #'   - `node_by_path()` returns the shortest path lengths
 #'   of each node to every other node in the network.
 #'   
-#' @name node_census
+#' @name motif_node
 #' @family motifs
 #' @inheritParams is
 #' @importFrom igraph vcount make_ego_graph delete_vertices triad_census
 NULL
 
-#' @rdname node_census 
+#' @rdname motif_node 
 #' @examples
 #' task_eg <- to_named(to_uniplex(ison_algebra, "tasks"))
 #' (tie_cen <- node_by_tie(task_eg))
@@ -84,7 +84,7 @@ node_by_tie <- function(.data){
   make_node_motif(t(mat), object)
 }
 
-#' @rdname node_census 
+#' @rdname motif_node 
 #' @references 
 #' Davis, James A., and Samuel Leinhardt. 1967. 
 #' “\href{https://files.eric.ed.gov/fulltext/ED024086.pdf}{The Structure of Positive Interpersonal Relations in Small Groups}.” 55.
@@ -99,7 +99,7 @@ node_by_triad <- function(.data){
   make_node_motif(out, .data)
 }
 
-#' @rdname node_census 
+#' @rdname motif_node 
 #' @section Quad census: 
 #'   The quad census uses the `{oaqc}` package to do
 #'   the heavy lifting of counting the number of each orbits.
@@ -190,7 +190,7 @@ node_by_quad <- function(.data){
 #     make_node_motif(out, .data)
 # }
 
-#' @rdname node_census 
+#' @rdname motif_node 
 #' @importFrom igraph distances
 #' @references 
 #' Dijkstra, Edsger W. 1959. 
@@ -229,13 +229,13 @@ node_by_path <- function(.data){
 #'   - `net_by_mixed()` returns a census of triad motifs that span
 #'   a one-mode and a two-mode network.
 #'   
-#' @name net_census
+#' @name motif_net
 #' @family motifs
-#' @inheritParams node_census
+#' @inheritParams motif_node
 #' @param object2 A second, two-mode migraph-consistent object.
 NULL
 
-#' @rdname net_census 
+#' @rdname motif_net 
 #' @examples 
 #' net_by_dyad(manynet::ison_algebra)
 #' @export
@@ -252,7 +252,7 @@ net_by_dyad <- function(.data) {
   }
 }
 
-#' @rdname net_census 
+#' @rdname motif_net 
 #' @references 
 #' Davis, James A., and Samuel Leinhardt. 1967. 
 #' “\href{https://files.eric.ed.gov/fulltext/ED024086.pdf}{The Structure of Positive Interpersonal Relations in Small Groups}.” 55.
@@ -274,7 +274,7 @@ net_by_triad <- function(.data) {
   }
 }
 
-#' @rdname net_census 
+#' @rdname motif_net 
 #' @source Alejandro Espinosa 'netmem'
 #' @references 
 #' Hollway, James, Alessandro Lomi, Francesca Pallotti, and Christoph Stadtfeld. 2017.
@@ -336,17 +336,19 @@ net_by_mixed <- function (.data, object2) {
 #'   roles played by nodes in a network.
 #'   - `net_by_brokerage()` returns the Gould-Fernandez brokerage
 #'   roles in a network.
+#'   - `node_brokering_activity()` measures nodes' brokerage activity.
+#'   - `node_brokering_exclusivity()` measures nodes' brokerage exclusivity. 
 #'   
-#' @name brokerage_census
+#' @name motif_brokerage
 #' @family motifs
-#' @inheritParams node_census
+#' @inheritParams motif_node
 #' @param membership A vector of partition membership as integers.
 #' @param standardized Whether the score should be standardized
 #'   into a _z_-score indicating how many standard deviations above
 #'   or below the average the score lies.
 NULL
 
-#' @rdname brokerage_census 
+#' @rdname motif_brokerage 
 #' @references 
 #' Gould, R.V. and Fernandez, R.M. 1989. 
 #' “Structures of Mediation: A Formal Approach to Brokerage in Transaction Networks.” 
@@ -379,7 +381,7 @@ node_by_brokerage <- function(.data, membership, standardized = FALSE){
   make_node_motif(out, .data)
 }
 
-#' @rdname brokerage_census 
+#' @rdname motif_brokerage 
 #' @examples 
 #' net_by_brokerage(ison_networkers, "Discipline")
 #' @export
@@ -402,7 +404,7 @@ net_by_brokerage <- function(.data, membership, standardized = FALSE){
     make_network_motif(out, .data)
 }
 
-#' @rdname brokerage_census 
+#' @rdname motif_brokerage 
 #' @references
 #'   Hamilton, Matthew, Jacob Hileman, and Orjan Bodin. 2020.
 #'   "Evaluating heterogeneous brokerage: New conceptual and methodological approaches
@@ -432,7 +434,7 @@ node_brokering_activity <- function(.data, membership){
   make_node_measure(out, .data)
 }
 
-#' @rdname brokerage_census
+#' @rdname motif_brokerage
 #' @examples
 #' node_brokering_exclusivity(ison_networkers, "Discipline")
 #' @export
@@ -460,9 +462,9 @@ node_brokering_exclusivity <- function(.data, membership){
   make_node_measure(out, .data)
 }
 
-#' @rdname brokerage_census 
+#' @rdname motif_brokerage 
 #' @export
-node_brokering <- function(.data, membership){
+node_in_brokering <- function(.data, membership){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   activ <- node_brokering_activity(.data, membership)
   exclusiv <- node_brokering_exclusivity(.data, membership)
@@ -491,3 +493,26 @@ node_brokering <- function(.data, membership){
   twopaths <- dplyr::filter(twopaths, !paste(from, to.y) %in% paste(from, to))
   twopaths
 }
+
+
+# Diffusion ####
+
+#' Censuses of exposure
+#' 
+#' @description
+#'   - `node_by_exposure()` produces a motif matrix of nodes' exposure to 
+#'   infection/adoption by time step
+#' 
+#' @family motifs
+#' @inheritParams motif_node
+#' @name motif_diffusion
+#' 
+NULL
+
+#' @rdname motif_diffusion
+#' @export
+node_by_exposure <- function(diff_model){
+  
+  <- vapply(node_is_infected(diff_model)
+}
+

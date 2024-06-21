@@ -28,11 +28,11 @@
 #'   a node's coreness is _k_ if it belongs to the _k_-core
 #'   but not to the (_k_+1)-core.
 #' @inheritParams is
-#' @name components
+#' @name member_components
 #' @family memberships
 NULL
 
-#' @rdname components 
+#' @rdname member_components 
 #' @importFrom igraph components
 #' @examples 
 #' node_in_component(ison_monastery_esteem)
@@ -44,7 +44,7 @@ node_in_component <- function(.data){
               .data)
 }
 
-#' @rdname components 
+#' @rdname member_components 
 #' @importFrom igraph components
 #' @export
 node_in_weak <- function(.data){
@@ -54,7 +54,7 @@ node_in_weak <- function(.data){
                  .data)
 }
 
-#' @rdname components 
+#' @rdname member_components 
 #' @importFrom igraph components
 #' @export
 node_in_strong <- function(.data){

@@ -25,11 +25,11 @@
 #'   and their logic or domain of inspiration.
 #'   
 #' @inheritParams is
-#' @name member_community
+#' @name member_community_non
 #' @family memberships
 NULL
 
-#' @rdname member_community 
+#' @rdname member_community_non 
 #' @section Optimal:
 #'   The general idea is to calculate the modularity of all possible partitions,
 #'   and choose the community structure that maximises this modularity measure.
@@ -49,7 +49,7 @@ node_in_optimal <- function(.data){
   make_node_member(out, .data)
 }
 
-#' @rdname member_community 
+#' @rdname member_community_non 
 #' @references
 #' Kernighan, Brian W., and Shen Lin. 1970.
 #' "An efficient heuristic procedure for partitioning graphs."
@@ -105,7 +105,7 @@ node_in_partition <- function(.data){
   make_node_member(out, .data)
 }
 
-#' @rdname member_community 
+#' @rdname member_community_non 
 #' @section Infomap:
 #'   Motivated by information theoretic principles, this algorithm tries to build 
 #'   a grouping that provides the shortest description length for a random walk,
@@ -133,7 +133,7 @@ node_in_infomap <- function(.data, times = 50){
   make_node_member(out, .data)
 }
 
-#' @rdname member_community 
+#' @rdname member_community_non 
 #' @param max_k Integer constant, the number of spins to use as an upper limit
 #'   of communities to be found. Some sets can be empty at the end.
 #' @param resolution The Reichardt-Bornholdt “gamma” resolution parameter for modularity.
@@ -169,7 +169,7 @@ node_in_spinglass <- function(.data, max_k = 200, resolution = 1){
   make_node_member(out, .data)
 }
 
-#' @rdname member_community 
+#' @rdname member_community_non 
 #' @section Fluid:
 #'   The general idea is to observe how a discrete number of fluids interact, expand and contract, 
 #'   in a non-homogenous environment, i.e. the network structure.
@@ -197,7 +197,7 @@ node_in_fluid <- function(.data) {
   make_node_member(out, .data)
 }
 
-#' @rdname member_community 
+#' @rdname member_community_non 
 #' @section Louvain:
 #'   The general idea is to take a hierarchical approach to optimising the modularity criterion.
 #'   Nodes begin in their own communities and are re-assigned in a local, greedy way:
@@ -220,7 +220,7 @@ node_in_louvain <- function(.data, resolution = 1){
   make_node_member(out, .data)
 }
 
-#' @rdname member_community 
+#' @rdname member_community_non 
 #' @section Leiden:
 #'   The general idea is to optimise the Constant Potts Model, 
 #'   which does not suffer from the resolution limit, instead of modularity.
@@ -276,12 +276,12 @@ node_in_leiden <- function(.data, resolution = 1){
 #'   availability on different types of networks, ability to maximise modularity,
 #'   and their logic or domain of inspiration.
 #'   
-#' @inheritParams member_community
-#' @name member_hierarchical
+#' @inheritParams member_community_non
+#' @name member_community_hier
 #' @family memberships
 NULL
 
-#' @rdname member_hierarchical 
+#' @rdname member_community_hier 
 #' @section Edge-betweenness:
 #'   This is motivated by the idea that edges connecting different groups 
 #'   are more likely to lie on multiple shortest paths when they are the 
@@ -310,7 +310,7 @@ node_in_betweenness <- function(.data){
   out
 }
 
-#' @rdname member_hierarchical 
+#' @rdname member_community_hier 
 #' @section Fast-greedy:
 #'   Initially, each node is assigned a separate community.
 #'   Communities are then merged iteratively such that each merge
@@ -336,7 +336,7 @@ node_in_greedy <- function(.data){
   out
 }
 
-#' @rdname member_hierarchical 
+#' @rdname member_community_hier 
 #' @section Leading eigenvector:
 #'   In each step, the network is bifurcated such that modularity increases most.
 #'   The splits are determined according to the leading eigenvector of the modularity matrix.
@@ -362,7 +362,7 @@ node_in_eigen <- function(.data){
   out
 }
 
-#' @rdname member_hierarchical 
+#' @rdname member_community_hier 
 #' @section Walktrap:
 #'   The general idea is that random walks on a network are more likely to stay 
 #'   within the same community because few edges lead outside a community.

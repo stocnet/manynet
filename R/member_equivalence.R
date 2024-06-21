@@ -18,7 +18,7 @@
 #'   A `plot()` method exists for investigating the dendrogram
 #'   of the hierarchical cluster and showing the returned cluster
 #'   assignment.
-#' @name equivalence
+#' @name member_equivalence
 #' @family memberships
 #' @inheritParams is
 #' @param census A matrix returned by a `node_by_*()` function.
@@ -47,7 +47,7 @@
 #' @source \url{https://github.com/aslez/concoR}
 NULL
 
-#' @rdname equivalence 
+#' @rdname member_equivalence 
 #' @export
 node_in_equivalence <- function(.data, census,
                              k = c("silhouette", "elbow", "strict"),
@@ -74,7 +74,7 @@ node_in_equivalence <- function(.data, census,
   out
 }
 
-#' @rdname equivalence
+#' @rdname member_equivalence
 #' @examples
 #' \donttest{
 #' (nse <- node_in_structural(ison_algebra))
@@ -96,7 +96,7 @@ node_in_structural <- function(.data,
                    k = k, cluster = cluster, distance = distance, range = range)
 }
 
-#' @rdname equivalence
+#' @rdname member_equivalence
 #' @examples
 #' \donttest{
 #' (nre <- node_in_regular(ison_southern_women,
@@ -121,7 +121,7 @@ node_in_regular <- function(.data,
                    k = k, cluster = cluster, distance = distance, range = range)
 }
 
-#' @rdname equivalence
+#' @rdname member_equivalence
 #' @examples
 #' \donttest{
 #' (nae <- node_in_automorphic(ison_southern_women,

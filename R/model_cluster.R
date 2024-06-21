@@ -12,7 +12,7 @@
 #'   but are called within `node_equivalence()` and related functions.
 #'   They are exported and listed here to provide more detailed documentation.
 #' @name cluster
-#' @inheritParams equivalence
+#' @inheritParams member_equivalence
 NULL
 
 #' @rdname cluster 
