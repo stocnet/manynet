@@ -1,6 +1,6 @@
 # Node censuses ####
 
-#' Censuses of nodes' motifs
+#' Motifs at the nodal level
 #' 
 #' @description
 #'   These functions include ways to take a census of the positions of nodes
@@ -218,7 +218,7 @@ node_by_path <- function(.data){
 
 # Network censuses ####
 
-#' Censuses of motifs at the network level
+#' Motifs at the network level
 #' 
 #' @description
 #'   These functions include ways to take a census of the positions of nodes
@@ -326,7 +326,7 @@ net_by_mixed <- function (.data, object2) {
 
 # Brokerage ####
 
-#' Censuses of brokerage motifs
+#' Motifs of brokerage
 #' 
 #' @description
 #'   These functions include ways to take a census of the brokerage positions of nodes
@@ -497,7 +497,7 @@ node_in_brokering <- function(.data, membership){
 
 # Diffusion ####
 
-#' Censuses of exposure
+#' Motifs of diffusion
 #' 
 #' @description
 #'   - `node_by_exposure()` produces a motif matrix of nodes' exposure to 
@@ -505,6 +505,7 @@ node_in_brokering <- function(.data, membership){
 #' 
 #' @family motifs
 #' @inheritParams motif_node
+#' @inheritParams measure_net_diffusion
 #' @name motif_diffusion
 #' 
 NULL
@@ -512,7 +513,15 @@ NULL
 #' @rdname motif_diffusion
 #' @export
 node_by_exposure <- function(diff_model){
-  
-  <- vapply(node_is_infected(diff_model)
+  t <- NULL
+  .data <- as_tidygraph(diff_model)
+  times <- diff_model$t
+  out <- sapply(times, function(x){
+   inf <- node_is_infected(diff_model, time = x)
+   if(sum(inf)==1) as_matrix(.data)[inf,] else
+     colSums(as_matrix(.data)[inf,])
+  })
+  colnames(out) <- paste0("t",times)
+  make_node_motif(out, .data)
 }
 

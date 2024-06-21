@@ -3,14 +3,18 @@
 \name{motif_diffusion}
 \alias{motif_diffusion}
 \alias{node_by_exposure}
-\title{Censuses of exposure}
+\title{Motifs of diffusion}
 \usage{
 node_by_exposure(diff_model)
 }
+\arguments{
+\item{diff_model}{A valid network diffusion model,
+as created by \code{as_diffusion()} or \code{play_diffusion()}.}
+}
 \description{
 \itemize{
-\item \code{node_by_exposure()} produces a motif matrix of nodes' exposure to infection/
-adoption by time step
+\item \code{node_by_exposure()} produces a motif matrix of nodes' exposure to
+infection/adoption by time step
 }
 }
 \seealso{
