@@ -3,7 +3,7 @@
 \name{measure_net_diffusion}
 \alias{measure_net_diffusion}
 \alias{net_transmissibility}
-\alias{net_infection_time}
+\alias{net_complete_infection}
 \alias{net_infection_length}
 \alias{net_reproduction}
 \alias{net_immunity}
@@ -15,7 +15,7 @@
 \usage{
 net_transmissibility(diff_model)
 
-net_infection_time(diff_model)
+net_complete_infection(diff_model)
 
 net_infection_length(diff_model)
 
@@ -67,8 +67,11 @@ infected at each time period.
 
 \section{Infection length}{
 
-\code{net_infection_time()} measures the number of time steps until
+\code{net_complete_infection()} measures the number of time steps until
 (the first instance of) complete infection.
+For diffusions that are not observed to complete,
+this function returns the value of \code{Inf} (infinity).
+This makes sure that at least ordinality is respected.
 
 
 \code{net_infection_length()} measures the average number of time steps that
@@ -174,7 +177,7 @@ those that oscillate indicate variability in adoption behavior over time.
   plot(smeg_diff)
   # To calculate the average transmissibility for a given diffusion model
   net_transmissibility(smeg_diff)
-  net_infection_time(smeg_diff)
+  net_complete_infection(smeg_diff)
   # To calculate the average infection length for a given diffusion model
   net_infection_length(smeg_diff)
   # To calculate the reproduction number for a given diffusion model

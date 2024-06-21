@@ -97,12 +97,14 @@ and `node_is_infected()` (closes #71)
   - Diffusion memberships include `node_in_adopter()`
   - Equivalence memberships include `node_in_equivalence()`, `node_in_structural()`,
   `node_in_regular()`, and `node_in_automorphic()`
+  - Note that these functions were previously named `node_*()`, but including the preposition `_in_` is more consistent.
 
 ## Motifs
 
 - Migrated motifs to take census of network, node positions, and brokerage from `{migraph}`,
 these include `node_by_tie()`, `node_by_triad()`, `node_by_quad()`, `node_by_path()`, 
 `net_by_dyad()`, `net_by_triad()`, `net_by_mixed()`, `node_by_brokerage()`, `net_by_brokerage()`
+  - Note that these functions were previously named `*_*_census()`, but the preposition `_by_` is more consistent.
 
 ## Methods
 
