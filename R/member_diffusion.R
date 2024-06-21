@@ -36,7 +36,6 @@ NULL
 #'   # To classify nodes by their position in the adoption curve
 #'   (adopts <- node_in_adopter(smeg_diff))
 #'   summary(adopts)
-#'   summary(times, membership = adopts)
 #' @export
 node_in_adopter <- function(diff_model){
   toa <- node_adoption_time(diff_model)

@@ -36,7 +36,6 @@ i.e. never adopted
   # To classify nodes by their position in the adoption curve
   (adopts <- node_in_adopter(smeg_diff))
   summary(adopts)
-  summary(times, membership = adopts)
 }
 \references{
 Valente, Tom W. 1995. \emph{Network models of the diffusion of innovations}

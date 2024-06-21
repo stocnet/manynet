@@ -7,7 +7,7 @@
 \alias{node_brokering_activity}
 \alias{node_brokering_exclusivity}
 \alias{node_in_brokering}
-\title{Censuses of brokerage motifs}
+\title{Motifs of brokerage}
 \usage{
 node_by_brokerage(.data, membership, standardized = FALSE)
 

@@ -83,19 +83,16 @@ reference:
       - starts_with("measure_")
       - ends_with("_centrality")
       - over
-  - title: "Motifs"
+  - title: "Motifs and Memberships"
     desc: |
-      Functions for calculating subgraphs in multimodal networks.
-      These functions have an additional dimension than `node_` and `net_`
-      measures and marks that capture the different motifs surveyed.
+      Motifs are functions for calculating network subgraphs,
+      always return a matrix or table of nodes as rows and motif or other property as columns,
+      and can be recognised by the `_by_` in the function name.
+      Memberships are functions for identifying community, cluster, or class memberships,
+      always return a string vector the length of the nodes in the network,
+      and can be recognised by the `_in_` in the function name.
     contents:
       - contains("_by_")
-  - title: "Memberships"
-    desc: |
-      Functions for identifying community, cluster, or class memberships
-      in partitions within multimodal networks.
-      They return integer vectors the length of the nodes in the network.
-    contents:
       - contains("_in_")
   - title: "Mapping"
     desc: |

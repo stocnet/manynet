@@ -6,7 +6,7 @@
 \alias{node_by_triad}
 \alias{node_by_quad}
 \alias{node_by_path}
-\title{Censuses of nodes' motifs}
+\title{Motifs at the nodal level}
 \usage{
 node_by_tie(.data)
 

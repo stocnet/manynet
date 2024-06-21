@@ -5,7 +5,7 @@
 \alias{net_by_dyad}
 \alias{net_by_triad}
 \alias{net_by_mixed}
-\title{Censuses of motifs at the network level}
+\title{Motifs at the network level}
 \source{
 Alejandro Espinosa 'netmem'
 }
