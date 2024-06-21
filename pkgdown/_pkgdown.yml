@@ -66,7 +66,7 @@ reference:
       all returning logical scalars or vectors.
       Note that all `node_` and `tie_` measures return a single vector
       so that they can be added directly to graph objects.
-      `network_` measures return one or, in some cases of two-mode measures,
+      `net_` measures return one or, in some cases of two-mode measures,
       two values.
       All `node_` and `tie_` measures return a single vector,
       the length of the nodes or ties in the network, respectively.
@@ -75,7 +75,7 @@ reference:
   - title: "Measuring"
     desc: |
       Functions for measuring networks and returning a numeric vector or value.
-      `network_` measures return one or, in some cases of two-mode measures,
+      `net_` measures return one or, in some cases of two-mode measures,
       two values.
       All `node_` and `tie_` measures return a single vector,
       the length of the nodes or ties in the network, respectively.
@@ -86,7 +86,7 @@ reference:
   - title: "Motifs"
     desc: |
       Functions for calculating subgraphs in multimodal networks.
-      These functions have an additional dimension than `node_` and `network_`
+      These functions have an additional dimension than `node_` and `net_`
       measures and marks that capture the different motifs surveyed.
     contents:
       - contains("_by_")
