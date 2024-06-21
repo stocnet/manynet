@@ -320,13 +320,13 @@ play_diffusions <- function(.data,
 #'   for convergence to a consensus.
 #' @examples 
 #'   play_learning(ison_networkers, 
-#'       rbinom(manynet::net_nodes(ison_networkers),1,prob = 0.25))
+#'       rbinom(net_nodes(ison_networkers),1,prob = 0.25))
 #' @export
 play_learning <- function(.data, 
                           beliefs,
                           steps,
                           epsilon = 0.0005){
-  n <- manynet::net_nodes(.data)
+  n <- net_nodes(.data)
   if(length(beliefs)!=n) 
     stop("'beliefs' must be a vector the same length as the number of nodes in the network.")
   if(is.logical(beliefs)) beliefs <- beliefs*1
@@ -335,7 +335,7 @@ play_learning <- function(.data,
   t = 0
   out <- matrix(NA,steps+1,length(beliefs))
   out[1,] <- beliefs
-  trust_mat <- manynet::as_matrix(.data)/rowSums(manynet::as_matrix(.data))
+  trust_mat <- as_matrix(.data)/rowSums(as_matrix(.data))
   
   repeat{
     old_beliefs <- beliefs
@@ -415,7 +415,7 @@ play_segregation <- function(.data,
                              which(heterophily_scores[dissatisfied] == 
                                      max(heterophily_scores[dissatisfied]))[1]])
     options <- vapply(unoccupied, function(u){
-      test <- manynet::add_node_attribute(temp, "test", 
+      test <- add_node_attribute(temp, "test", 
                                           swtch(current, dissatisfied, u))
       node_heterophily(test, "test")[u]
     }, FUN.VALUE = numeric(1))
@@ -428,7 +428,7 @@ play_segregation <- function(.data,
                                                                           igraph::V(temp)[unoccupied]))])
     if(is.na(move_to)) next
     print(paste("Moving node", dissatisfied, "to node", move_to))
-    temp <- manynet::add_node_attribute(temp, attribute, 
+    temp <- add_node_attribute(temp, attribute, 
                                         swtch(current, dissatisfied, move_to))
     moved <- c(dissatisfied, moved)
   }

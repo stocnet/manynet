@@ -27,13 +27,13 @@ NULL
 #' @export
 node_is_isolate <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  mat <- manynet::as_matrix(.data)
-  if(manynet::is_twomode(.data)){
+  mat <- as_matrix(.data)
+  if(is_twomode(.data)){
     out <- c(rowSums(mat)==0, colSums(mat)==0)
   } else {
     out <- rowSums(mat)==0 & colSums(mat)==0
   }
-  names(out) <- manynet::node_names(.data)
+  names(out) <- node_names(.data)
   make_node_mark(out, .data)
 }
 
@@ -50,24 +50,24 @@ node_is_independent <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(is_twomode(.data)){
     samp <- igraph::largest_ivs(to_mode1(.data))
-    if(manynet::is_labelled(.data)){
-      out <- manynet::node_names(.data) %in% 
+    if(is_labelled(.data)){
+      out <- node_names(.data) %in% 
         attr(samp[[sample(1:length(samp), 1)]], 
              "names")
-      names(out) <- manynet::node_names(.data)
+      names(out) <- node_names(.data)
     } else {
-      out <- 1:manynet::net_nodes(.data) %in% 
+      out <- 1:net_nodes(.data) %in% 
         samp[[sample(1:length(samp), 1)]]
     }
   } else {
     samp <- igraph::largest_ivs(to_undirected(as_igraph(.data)))
-    if(manynet::is_labelled(.data)){
-      out <- manynet::node_names(.data) %in% 
+    if(is_labelled(.data)){
+      out <- node_names(.data) %in% 
         attr(samp[[sample(1:length(samp), 1)]], 
              "names")
-      names(out) <- manynet::node_names(.data)
+      names(out) <- node_names(.data)
     } else {
-      out <- 1:manynet::net_nodes(.data) %in% 
+      out <- 1:net_nodes(.data) %in% 
         samp[[sample(1:length(samp), 1)]]
     }
   }
@@ -81,14 +81,14 @@ node_is_independent <- function(.data){
 #' @export
 node_is_cutpoint <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  if(manynet::is_labelled(.data)){
-    out <- manynet::node_names(.data) %in% 
-      attr(igraph::articulation_points(manynet::as_igraph(.data)), 
+  if(is_labelled(.data)){
+    out <- node_names(.data) %in% 
+      attr(igraph::articulation_points(as_igraph(.data)), 
            "names")
-    names(out) <- manynet::node_names(.data)
+    names(out) <- node_names(.data)
   } else {
-    out <- 1:manynet::net_nodes(.data) %in% 
-      igraph::articulation_points(manynet::as_igraph(.data))
+    out <- 1:net_nodes(.data) %in% 
+      igraph::articulation_points(as_igraph(.data))
   }
   make_node_mark(out, .data)
 }

@@ -1,10 +1,10 @@
 test_that("network density works", {
   expect_s3_class(net_density(ison_southern_women), "network_measure")
-  expect_equal(as.numeric(net_density(manynet::create_empty(10))), 0)
-  expect_equal(as.numeric(net_density(manynet::create_empty(c(10,6)))), 0)
-  expect_equal(as.numeric(net_density(manynet::create_filled(10))), 1)
-  expect_equal(as.numeric(net_density(manynet::create_filled(c(10,6)))), 1)
-  expect_output(print(net_density(manynet::create_filled(10))))
+  expect_equal(as.numeric(net_density(create_empty(10))), 0)
+  expect_equal(as.numeric(net_density(create_empty(c(10,6)))), 0)
+  expect_equal(as.numeric(net_density(create_filled(10))), 1)
+  expect_equal(as.numeric(net_density(create_filled(c(10,6)))), 1)
+  expect_output(print(net_density(create_filled(10))))
 })
 
 test_that("network reciprocity works", {

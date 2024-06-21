@@ -24,12 +24,12 @@
 #' @export
 to_correlation <- function(.data, method = NULL){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  mat <- manynet::as_matrix(.data)
-  if(is.null(method)) method <- ifelse(manynet::is_twomode(.data),
+  mat <- as_matrix(.data)
+  if(is.null(method)) method <- ifelse(is_twomode(.data),
                                        "all",
-                                       ifelse(manynet::is_complex(.data),
+                                       ifelse(is_complex(.data),
                                               "complex",
-                                              ifelse(manynet::is_directed(.data),
+                                              ifelse(is_directed(.data),
                                                      "recip", "diag")))
   out <- switch(method,
                 all = .corTwomode(mat),

@@ -911,7 +911,7 @@ as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
 #' @examples
 #'   # How to create a diff_model object from (basic) observed data
 #'   events <- data.frame(t = c(0,1,1,2,3), nodes = c(1,2,3,2,4), event = c("I","I","I","R","I"))
-#'   as_diffusion(events, manynet::create_filled(4))
+#'   as_diffusion(events, create_filled(4))
 #' @export
 as_diffusion <- function(events, .data) {
   net <- as_tidygraph(.data)
@@ -921,7 +921,7 @@ as_diffusion <- function(events, .data) {
                    E_new = sum(event == "E"),
                    R_new = sum(event == "R"))
   report <- dplyr::tibble(t = seq_len(max(events$t)) - 1,
-                          n = manynet::net_nodes(net)) %>% 
+                          n = net_nodes(net)) %>% 
     dplyr::left_join(sumchanges, by = dplyr::join_by(t))
   report[is.na(report)] <- 0
   report$R <- cumsum(report$R_new)
