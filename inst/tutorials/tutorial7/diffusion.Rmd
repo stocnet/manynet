@@ -219,23 +219,35 @@ net_complete_infection(us_diff)
 
 What's happening here? Can you interpret this?
 
-
-## Threshold models
+## Linear thresholds
 
 So far, we've been using a simple cascading diffusion model where each node
 needs only to be in contact with one infectious individual to be infected.
-But what if nodes have higher _thresholds_, or even where those thresholds vary?
+But what if nodes have higher _thresholds_, or only some nodes have higher thresholds?
+This is known as a _linear threshold_ model,
+where if infection/influence on a node through some (potentially weighted) network
+exceeds some threshold, then they will adopt/become infected.
 
-Let's first start out with our ring network again.
-Show that whereas a threshold of one will result in complete infection,
-a threshold of two will not lead to any diffusion process unless
-there are two seeds and they are both in another nodes neighbourhood.
+### Upping the threshold
 
-```{r complex, exercise = TRUE, exercise.setup = "create", purl = FALSE}
+Let's use the ring network again this time to 
+illustrate the impact of thresholds on network diffusion.
+Remember that a ring network is similar to a lattice network,
+but typically thinner (use `width = 2`) and is connected at each end.
+That it is connected at each end should ensure that the diffusion completes, right?
+Let's see what the results are if you play four different diffusions:
+
+- `seeds = 1, thresholds = 1`
+- `seeds = 1, thresholds = 2`
+- `seeds = 1:2, thresholds = 2`
+- `seeds = c(1,16), thresholds = 2`
+
+```{r complex, exercise = TRUE, exercise.setup = "clattice", purl = FALSE}
 
 ```
 
 ```{r complex-solution}
+rg <- create_ring(32, width = 2)
 plot(play_diffusion(rg, seeds = 1, thresholds = 1))/
 plot(play_diffusion(rg, seeds = 1, thresholds = 2))/
 plot(play_diffusion(rg, seeds = 1:2, thresholds = 2))/
@@ -251,47 +263,60 @@ question("For which seed/threshold combinations was there complete infection?",
         allow_retry = TRUE)
 ```
 
-In our ring network, all nodes have the same degree.
+Whereas a threshold of one will result in complete infection,
+a threshold of two will not lead to any diffusion process unless
+there are two seeds and they are both in another nodes neighbourhood.
+Note also that the nodes need to be adjacent to overcome the higher threshold.
+
+### Varying degrees
+
+In a ring network, all nodes have the same degree.
 But many typical social networks include some variation in degree.
 A threshold of 2 would be easy to surpass for particularly well connected nodes,
 but impossible for pendants.
-Let's see what happens when we use this threshold on a scale-free network.
+Let's see what happens when we use this threshold on a scale-free network instead.
 
 ```{r sfcomplex, exercise = TRUE, exercise.setup = "create", purl = FALSE}
 
 ```
 
 ```{r sfcomplex-solution}
-plot(play_diffusion(sf, seeds = 1, thresholds = 2))
+plot(play_diffusion(generate_scalefree(32, 0.025), seeds = 1:8, thresholds = 2))
 ```
 
 ```{r sfcomplex-interp, echo=FALSE, purl = FALSE}
-question("Does it matter how many seeds are used?",
+question("Here only one seed was used. Does it matter how many seeds are used?",
          answer("Yes"),
          answer("No", correct = TRUE),
         allow_retry = TRUE)
 ```
 
-That's because there's variation in degree in a scale-free network.
+That's because a scale-free network includes many nodes with only one or two ties,
+and a few very high degree nodes that act as critical brokers to the rest of the network.
+
+### Complex thresholds
+
 Let's try again, but this time we're going to specify the threshold
 as a proportion of contacts that should be infected before the node 
 will become infected.
-Try thresholds of 0.1, 0.25, and 0.5 on two seeds and 10 steps.
+This is sometimes called a fractional threshold model or complex diffusion.
+Try thresholds of 0.1, 0.25, and 0.5 on two seeds and 10 steps
+on the scale-free networks we have been using here.
 
 ```{r sfprop, exercise = TRUE, exercise.setup = "create", purl = FALSE}
 
 ```
 
 ```{r sfprop-hint, purl = FALSE}
-plot(play_diffusion(sf, seeds = 1:2, thresholds = ____, steps = ____))/
-plot(play_diffusion(sf, seeds = 1:2, thresholds = ____, steps = ____))/
-plot(play_diffusion(sf, seeds = 1:2, thresholds = ____, steps = ____))
+plot(play_diffusion(generate_scalefree(32, 0.025), seeds = 1:2, thresholds = ____, steps = ____))/
+plot(play_diffusion(generate_scalefree(32, 0.025), seeds = 1:2, thresholds = ____, steps = ____))/
+plot(play_diffusion(generate_scalefree(32, 0.025), seeds = 1:2, thresholds = ____, steps = ____))
 ```
 
 ```{r sfprop-solution}
-plot(play_diffusion(sf, seeds = 1:2, thresholds = 0.1, steps = 10))/
-plot(play_diffusion(sf, seeds = 1:2, thresholds = 0.25, steps = 10))/
-plot(play_diffusion(sf, seeds = 1:2, thresholds = 0.5, steps = 10))
+plot(play_diffusion(generate_scalefree(32, 0.025), seeds = 1:2, thresholds = 0.1, steps = 10))/
+plot(play_diffusion(generate_scalefree(32, 0.025), seeds = 1:2, thresholds = 0.25, steps = 10))/
+plot(play_diffusion(generate_scalefree(32, 0.025), seeds = 1:2, thresholds = 0.5, steps = 10))
 ```
 
 ```{r sfprop-interp, echo = FALSE, purl = FALSE}
@@ -304,34 +329,36 @@ question("Does the threshold proportion matter?",
 What's happening here is that the high degree nodes in this scale-free network
 are obstructing the diffusion process because it is unlikely that many of their branches are already infected.
 
+### Varying thresholds
+
 Lastly, note that it may be that thresholds vary across the network.
-You could make this depend on some nodal attribute, 
-or just assign some random variation.
-Try two diffusion models, one where the threshold is 0.1 for the first 10
-and 0.25 for the latter group of 22 nodes,
-and another diffusion where the threshold levels are reversed.
+Let's use an example network to explore this: `ison_lotr`.
 
-```{r rand, exercise = TRUE, exercise.setup = "create", purl = FALSE}
-
+```{r lotr, exercise = TRUE}
+graphr(ison_lotr, node_color = "Race")
 ```
 
-```{r rand-hint, purl = FALSE}
-plot(play_diffusion(sf, thresholds = c(rep(____,____), rep(____,____))))/
-plot(play_diffusion(sf, thresholds = c(rep(____,____), rep(____,____))))
+Something is going around Middle-Earth, 
+but different races have different resistances (i.e. thresholds).
+Let us say that there is a clear ordering to this.
+
+```{r lotr-resist, exercise=TRUE, purl = FALSE}
+lotr_resist <- ison_lotr %>% mutate(resistance = dplyr::case_when(Race == "Dwarf" ~ 2,
+                                                   Race == "Elf" ~ 4,
+                                                   Race == "Ent" ~ 5,
+                                                   Race == "Hobbit" ~ 3,
+                                                   Race == "Human" ~ 1,
+                                                   Race == "Maiar" ~ 6))
 ```
 
-```{r rand-solution}
-plot(play_diffusion(sf, thresholds = c(rep(0.1,10), rep(0.25,22))))/
-plot(play_diffusion(sf, thresholds = c(rep(0.25,10), rep(0.1,22))))
-
-# visualise the diffusion within the network
-grapht(play_diffusion(sf, thresholds = c(rep(0.1,10), rep(0.25,22))))
+```{r resistdiff, exercise=TRUE, exercise.setup = "lotr-resist"}
+grapht(play_diffusion(lotr_resist, thresholds = "resistance"))
 ```
 
-Since the first ten nodes are the first to join the scale-free network
-and are preferentially attached by those who follow,
-they will have a higher degree and only with a lower threshold will
-we see complete infection.
+Fun! Now how would you interpret what is going on here?
+Can you rewrite the code above so that fractional thresholds are used?
+
+<!-- ## Independent cascades -->
 
 ## Get it going
 
