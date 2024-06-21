@@ -291,6 +291,10 @@ node_adoption_time <- function(diff_model){
 #'   where \eqn{w} is some (potentially weighted) matrix,
 #'   \eqn{j} are some already activated nodes,
 #'   and \eqn{theta} is some pre-defined threshold value.
+#'   Where a fractional threshold is used, the equation is 
+#'   \eqn{\frac{\sum_{j:\text{active}} w_{ji}}{\sum_{j} w_{ji}} \geq \theta_i}.
+#'   That is, \eqn{theta} is now a proportion,
+#'   and works regardless of whether \eqn{w} is weighted or not.
 #' @examples
 #'   # To infer nodes' thresholds
 #'   node_thresholds(smeg_diff)

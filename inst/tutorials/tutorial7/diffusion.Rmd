@@ -35,6 +35,11 @@ By the end of this tutorial, you will be able to:
 
 - 'play' a diffusion process over any kind of network
 - print, plot, graph and interpret the results
+- understand cascade models
+- understand the role of network structure on diffusion
+- understand threshold models
+- understand the role of seeds for network intervention
+- understand compartmental models
 
 ## Influence cascades
 
@@ -228,10 +233,10 @@ This is known as a _linear threshold_ model,
 where if infection/influence on a node through some (potentially weighted) network
 exceeds some threshold, then they will adopt/become infected.
 
-### Upping the threshold
+### Threshold rising
 
 Let's use the ring network again this time to 
-illustrate the impact of thresholds on network diffusion.
+illustrate the impact of rising thresholds on network diffusion.
 Remember that a ring network is similar to a lattice network,
 but typically thinner (use `width = 2`) and is connected at each end.
 That it is connected at each end should ensure that the diffusion completes, right?
@@ -364,7 +369,7 @@ Can you rewrite the code above so that fractional thresholds are used?
 
 Let's say that you have developed an exciting new policy and
 you are keen to maximise how quickly and thoroughly it is adopted.
-We are interested here in network intervention.
+We are interested here in _network intervention_.
 
 ### Choosing where to seed
 
