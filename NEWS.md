@@ -23,6 +23,8 @@ basis of exposure
 - `is_multiplex()` now excludes reserved tie attribute names other than type,
 such as "weight", "sign", or "wave"
 - Added `is_attributed()` to check for non-name nodal attributes
+- Fixed issues with ordering in `node_is_latent()`, `node_is_recovered()`,
+and `node_is_infected()` (closes #71)
   
 ## Mapping
 

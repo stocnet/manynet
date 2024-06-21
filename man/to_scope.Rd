@@ -55,13 +55,10 @@ than the original object.
 }
 \details{
 Not all functions have methods available for all object classes.
-Below are the currently implemented S3 methods:\tabular{lrrrrrr}{
-    \tab data.frame \tab igraph \tab list \tab matrix \tab network \tab tbl_graph \cr
-   to_blocks \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-   to_giant \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-   to_no_isolates \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
-   to_subgraph \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-}
+Below are the currently implemented S3 methods:
+
+\if{html}{\out{<div class="sourceCode {r, echo = FALSE, cache = TRUE}">}}\preformatted{knitr::kable(available_methods(c("to_giant", "to_no_isolates", "to_subgraph", "to_blocks")))
+}\if{html}{\out{</div>}}
 }
 \section{\code{to_blocks()}}{
 
