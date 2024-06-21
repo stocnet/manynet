@@ -2,7 +2,7 @@
 #' @description
 #'   These functions identify nodes belonging to (some level of) the core of a network:
 #'   
-#'   - `node_in_core()` assigns nodes to either the core or periphery.
+#'   - `node_is_core()` assigns nodes to either the core or periphery.
 #'   - `node_coreness()` assigns nodes to their level of k-coreness.
 #' 
 #' @inheritParams is
@@ -12,11 +12,11 @@
 #'   An alternative is "eigenvector", which instead begins with high eigenvector nodes.
 #'   Other methods, such as a genetic algorithm, CONCOR, and Rombach-Porter,
 #'   can be added if there is interest.
-#' @name core
+#' @name mark_core
 #' @family memberships
 NULL
 
-#' @rdname core
+#' @rdname mark_core
 #' @section Core-periphery: 
 #'   This function is used to identify which nodes should belong to the core,
 #'   and which to the periphery.
@@ -69,7 +69,7 @@ node_is_core <- function(.data, method = c("degree", "eigenvector")){
   make_node_mark(out==1, .data)
 }
 
-#' @rdname core
+#' @rdname mark_core
 #' @examples
 #' node_coreness(ison_adolescents)
 #' @export

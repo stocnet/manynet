@@ -11,6 +11,7 @@ MORELETTERS <- c(LETTERS, sapply(LETTERS, function(x) paste0(x, LETTERS)))
 
 #' @export
 print.node_member <- function(x, ..., n = NULL) {
+  
   cat(pillar::style_subtle(paste(length(unique(x)), "groups\n")))
   if (any(attr(x, "mode"))) {
     for(m in c(FALSE, TRUE)){
