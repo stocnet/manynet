@@ -14,11 +14,10 @@ description: >
 ```{r setup, include = FALSE}
 library(learnr)
 library(manynet)
-library(migraph)
 library(patchwork)
 library(ggplot2)
 knitr::opts_chunk$set(echo = FALSE)
-nw <- to_undirected(to_unnamed(manynet::ison_networkers))
+nw <- to_undirected(to_unnamed(ison_networkers))
 rg <- create_ring(nw, width = 2)
 la <- create_lattice(nw)
 rd <- generate_random(nw, with_attr = FALSE)
@@ -28,131 +27,16 @@ sw <- generate_smallworld(nw, 0.025)
 
 ## Diffusion models
 
-In this tutorial, we're going to look at several diffusion processes 
+In this tutorial, we're going to look at several contagion or diffusion processes 
 and how they operate across various networks.
+Network structures are key to how diffusion processes play out.
 
+By the end of this tutorial, you will be able to:
 
-Let's start off with creating and visualising a few networks 
-that we might be interested in here.
-Let's take the `ison_networkers` dataset from `{manynet}`,
-and create or generate ring, lattice, random, scale-free, and small-world
-versions with the same number of nodes.
-First of all, reformat `ison_networkers` as an undirected, unnamed network
-called "nw".
+- 'play' a diffusion process over any kind of network
+- print, plot, graph and interpret the results
 
-```{r create, echo = TRUE, exercise = TRUE, purl = FALSE}
-
-```
-
-```{r create-hint-1, purl = FALSE}
-# Let's create a new object, "nw", the removes the names of all vertex names
-# Hint: We want to use two functions used for reformatting networks, graphs, and matrices
-
-nw <- ____(____(ison_networkers))
-```
-
-```{r create-hint-2, purl = FALSE}
-# We also want to remove edge direction, so that any pair of nodes with at least
-# one directed edge will be connected by an undirected edge in the new network.
-
-nw <- ____(to_unnamed(ison_networkers))
-```
-
-```{r create-solution}
-nw <- to_undirected(to_unnamed(ison_networkers))
-```
-
-### Creating and visualising different network structures
-
-Now, using the "nw" network from the last section, let's create or generate ring, lattice, random, scale-free, and small-world versions with the same number of nodes using functions like:
-
-+ `create_ring()`: Creates a ring or chord graph of the given dimensions that loops around and is of a specified width or thickness.
-+ `create_lattice()`: Creates a graph of the given dimensions with ties to all neighbouring nodes
-+ `generate_random()`: Generates a random network with a particular probability.
-+ `generate_scalefree()`: Generates a small-world structure following the lattice rewiring model.
-+ `generate_smallworld()`: Generates a scale-free structure following the preferential attachment model.
-
-```{r create-nwstructure, echo = TRUE, exercise = TRUE, purl = FALSE}
-
-```
-
-```{r create-nwstructure-hint-1, purl = FALSE}
-# Let's generate a ring structure, "rg", with a width of 2, using the appropriate
-# function above
-
-rg <- ____(____, ____)
-```
-
-```{r create-nwstructure-hint-2, purl = FALSE}
-
-rg <- create_ring(nw, width = 2)
-```
-
-```{r create-nwstructure-hint-3, purl = FALSE}
-# Let's generate a lattice structure, "la", using the appropriate function above
-
-la <- ____(____)
-```
-
-```{r create-nwstructure-hint-4, purl = FALSE}
-
-la <- create_lattice(nw)
-```
-
-```{r create-nwstructure-hint-5, purl = FALSE}
-# Let's generate a random structure, "rd", without attributes
-
-rd <- ____(____, ____)
-```
-
-```{r create-nwstructure-hint-6, purl = FALSE}
-
-rd <- generate_random(nw, with_attr = FALSE)
-```
-
-```{r create-nwstructure-hint-7, purl = FALSE}
-# The last two will look similar. For the smallworld structure we call the object "sw" 
-# and for scalefree, "sf". We will also set the proportion of possible ties to 0.025.
-
-sf <- ____(nw, ____)
-sw <- ____(nw, ____)
-```
-
-```{r create-nwstructure-hint-8, purl = FALSE}
-
-sf <- generate_scalefree(nw, 0.025)
-sw <- generate_smallworld(nw, 0.025)
-```
-
-```{r create-nwstructure-hint-9, purl = FALSE}
-# Finally, let's plot the respective graphs:
-
-graphr(____) + ggtitle("Networkers") +
-graphr(____) + ggtitle("Ring") +
-graphr(____) + ggtitle("Lattice") +
-graphr(____) + ggtitle("Random") +
-graphr(____) + ggtitle("Scale-Free") +
-graphr(____) + ggtitle("Small-World")
-```
-
-```{r create-nwstructure-solution}
-# Here is the solution:
-
-rg <- create_ring(nw, width = 2)
-la <- create_lattice(nw)
-rd <- generate_random(nw, with_attr = FALSE)
-sf <- generate_scalefree(nw, 0.025)
-sw <- generate_smallworld(nw, 0.025)
-graphr(nw) + ggtitle("Networkers") +
-graphr(rg) + ggtitle("Ring") +
-graphr(la) + ggtitle("Lattice") +
-graphr(rd) + ggtitle("Random") +
-graphr(sf) + ggtitle("Scale-Free") +
-graphr(sw) + ggtitle("Small-World")
-```
-
-
-## Cascading models
+## Influence cascades
 
 The simplest kind of diffusion process is an independent cascading model,
 where any contact with the attribute (disease or innovation) 
