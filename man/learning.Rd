@@ -88,9 +88,7 @@ Other makes:
 \code{\link{write}()}
 
 Other models: 
-\code{\link{play}},
-\code{\link{test_distributions}},
-\code{\link{tests}}
+\code{\link{play}}
 }
 \concept{makes}
 \concept{models}

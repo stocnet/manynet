@@ -104,13 +104,11 @@ and `node_is_infected()` (closes #71)
 these include `node_by_tie()`, `node_by_triad()`, `node_by_quad()`, `node_by_path()`, 
 `net_by_dyad()`, `net_by_triad()`, `net_by_mixed()`, `node_by_brokerage()`, `net_by_brokerage()`
 
-## Models
+## Methods
 
-- Migrated models from `{migraph}`
-  - Models for equivalence clustering include `cluster_hierarchical()` and `cluster_concor()`
-  - Models for selecting clusters include `k_strict()`, `k_elbow()`, and `k_silhouette()`
-  - Models for testing of network measures and distributions include `test_random()`,
-  `test_permutation()`, `test_distribution()`, and `test_fit()`
+- Migrated methods from `{migraph}`
+  - Methods for equivalence clustering include `cluster_hierarchical()` and `cluster_concor()`
+  - Methods for selecting clusters include `k_strict()`, `k_elbow()`, and `k_silhouette()`
 
 ## Data
 

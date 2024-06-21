@@ -106,10 +106,9 @@ reference:
       - starts_with("theme")
       - starts_with("scale")
       - ends_with("palettes")
-  - title: "Models"
-    desc: "Functions for modelling multimodal networks:"
+  - title: "Methods"
+    desc: "Methods used in other functions but documented here:"
     contents:
-      - starts_with("test")
       - cluster
       - kselect
   - title: "Learning"

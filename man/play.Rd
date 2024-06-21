@@ -213,9 +213,7 @@ Other makes:
 \code{\link{write}()}
 
 Other models: 
-\code{\link{learning}},
-\code{\link{test_distributions}},
-\code{\link{tests}}
+\code{\link{learning}}
 
 Other diffusion: 
 \code{\link{measure_net_diffusion}},
