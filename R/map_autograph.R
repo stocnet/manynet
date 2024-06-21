@@ -607,26 +607,26 @@ graphr <- function(.data, layout, labels = TRUE,
 
 check_edge_variables <- function(g, edge_color, edge_size) {
   if (!is.null(edge_color)) {
-    if (any(tolower(edge_color) %in% tolower(igraph::edge_attr_names(g)))) {
-      message("Please make sure you spelled edge color variable correctly.")
+    if (any(!tolower(edge_color) %in% tolower(igraph::edge_attr_names(g)))) {
+      message("Please make sure you spelled `edge_color` variable correctly.")
     } 
   }
   if (!is.null(edge_size)) {
-    if (any(tolower(edge_size) %in% tolower(igraph::edge_attr_names(g)))) {
-      message("Please make sure you spelled edge size variable correctly.")
+    if (any(!tolower(edge_size) %in% tolower(igraph::edge_attr_names(g)))) {
+      message("Please make sure you spelled `edge_size` variable correctly.")
     } 
   }
 }
 
 check_node_variables <- function(g, node_color, node_size) {
   if (!is.null(node_color)) {
-    if (any(tolower(node_color) %in% tolower(igraph::vertex_attr_names(g)))) {
-      message("Please make sure you spelled node color variable correctly.")
+    if (any(!tolower(node_color) %in% tolower(igraph::vertex_attr_names(g)))) {
+      message("Please make sure you spelled `node_color` variable correctly.")
     } 
   }
   if (!is.null(node_size)) {
-    if (any(tolower(node_size) %in% tolower(igraph::vertex_attr_names(g)))) {
-      message("Please make sure you spelled node size variable correctly.")
+    if (any(!tolower(node_size) %in% tolower(igraph::vertex_attr_names(g)))) {
+      message("Please make sure you spelled `node_size` variable correctly.")
     }
   }
 }
