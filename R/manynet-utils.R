@@ -38,16 +38,16 @@ thisRequiresBio <- function(pkgname) {
   patchwork::wrap_plots(e1, e2, ...)
 }
 
-#' @export
-`%||%` <- function(x, y) {
-  if (is_null(x)) y else x
-}
-
-# Reexport from base on newer versions of R to avoid conflict messages
-if (exists("%||%", envir = baseenv())) {
-  `%||%` <- get("%||%", envir = baseenv())
-}
-
-`%|0|%` <- function(x, y) {
-  if (!length(x)) y else x
-}
+# #' @export
+# `%||%` <- function(x, y) {
+#   if (is_null(x)) y else x
+# }
+# 
+# # Reexport from base on newer versions of R to avoid conflict messages
+# if (exists("%||%", envir = baseenv())) {
+#   `%||%` <- get("%||%", envir = baseenv())
+# }
+# 
+# `%|0|%` <- function(x, y) {
+#   if (!length(x)) y else x
+# }
