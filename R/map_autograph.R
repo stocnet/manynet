@@ -419,7 +419,7 @@ graphr <- function(.data, layout, labels = TRUE,
                                              "Exposed" = "#E6AB02",
                                              "Recovered" = "#66A61E"))
   } else if (is.null(node_color) & any("diff_model" %in% names(attributes(g)))) {
-    node_adopts <- .node_adoption_time(g)
+    node_adopts <- node_adoption_time(g)
     nshape <- ifelse(node_adopts == min(node_adopts), "Seed(s)",
                      ifelse(node_adopts == Inf, "Non-Adopter", "Adopter"))
     node_color <- ifelse(is.infinite(node_adopts), 
@@ -566,28 +566,6 @@ graphr <- function(.data, layout, labels = TRUE,
     }
   } else {
     out <- 0.5
-  }
-  out
-}
-
-.node_adoption_time <- function(g) {
-  diff_model <- attr(g, "diff_model")
-  event <- nodes <- NULL
-  out <- summary(diff_model) %>% dplyr::filter(event == "I") %>% 
-    dplyr::distinct(nodes, .keep_all = TRUE) %>% 
-    dplyr::select(nodes,t)
-  net <- attr(diff_model, "network")
-  if(!is_labelled(net))
-    out <- dplyr::arrange(out, nodes) else if (is.numeric(out$nodes))
-      out$nodes <- node_names(net)[out$nodes]
-  out <- stats::setNames(out$t, out$nodes)
-  if(length(out) != net_nodes(net)){
-    full <- rep(Inf, net_nodes(net))
-    names(full) <- `if`(is_labelled(net), 
-                        node_names(net), 
-                        as.character(seq_len(net_nodes(net))))
-    full[match(names(out), names(full))] <- out
-    out <- `if`(is_labelled(net), full, unname(full))
   }
   out
 }
