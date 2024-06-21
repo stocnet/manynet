@@ -419,7 +419,7 @@ graphr <- function(.data, layout, labels = TRUE,
                                              "Exposed" = "#E6AB02",
                                              "Recovered" = "#66A61E"))
   } else if (is.null(node_color) & any("diff_model" %in% names(attributes(g)))) {
-    node_adopts <- node_adoption_time(g)
+    node_adopts <- node_adoption_time(attr(g,"diff_model"))
     nshape <- ifelse(node_adopts == min(node_adopts), "Seed(s)",
                      ifelse(node_adopts == Inf, "Non-Adopter", "Adopter"))
     node_color <- ifelse(is.infinite(node_adopts), 
