@@ -153,6 +153,7 @@ play_diffusion <- function(.data,
   n <- net_nodes(.data)
   recovered <- NULL
   if(missing(steps)) steps <- n
+  if(is.character(thresholds)) thresholds <- node_attribute(.data, thresholds)
   if(length(thresholds)==1) thresholds <- rep(thresholds, n)
   if(all(thresholds <= 1) & !all(thresholds == 1)) 
     thresholds <- thresholds * 
