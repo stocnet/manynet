@@ -59,3 +59,414 @@ autographd <- function(tlist, layout, labels = TRUE,
          keep_isolates, ...)
 }
 
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_transmissibility <- function(diff_model) {
+  .Deprecated("net_transmissibility", package = "migraph",
+              old = "network_transmissibility")
+  net_transmissibility(diff_model)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_infection_length <- function(diff_model) {
+  .Deprecated("net_infection_length", package = "migraph",
+              old = "network_infection_length")
+  net_infection_length(diff_model)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_reproduction <- function(diff_model) {
+  .Deprecated("net_reproduction", package = "migraph",
+              old = "network_reproduction")
+  net_reproduction(diff_model)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_immunity <- function(diff_model, normalized = TRUE) {
+  .Deprecated("net_immunity", package = "migraph",
+              old = "network_immunity")
+  net_immunity(diff_model, normalized)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_hazard <- function(diff_model) {
+  .Deprecated("net_hazard", package = "migraph",
+              old = "network_hazard")
+  net_hazard(diff_model)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_density <- function(.data) {
+  .Deprecated("net_density", package = "migraph",
+              old = "network_density")
+  net_density(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_components <- function(.data) {
+  .Deprecated("net_components", package = "migraph",
+              old = "network_components")
+  net_components(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_cohesion <- function(.data) {
+  .Deprecated("net_cohesion", package = "migraph",
+              old = "network_cohesion")
+  net_cohesion(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_adhesion <- function(.data) {
+  .Deprecated("net_adhesion", package = "migraph",
+              old = "network_adhesion")
+  net_adhesion(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_diameter <- function(.data) {
+  .Deprecated("net_diameter", package = "migraph",
+              old = "network_diameter")
+  net_diameter(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_length <- function(.data) {
+  .Deprecated("net_length", package = "migraph",
+              old = "network_length")
+  net_length(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_independence <- function(.data) {
+  .Deprecated("net_independence", package = "migraph",
+              old = "network_independence")
+  net_independence(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_change <- function(.data, object2) {
+  .Deprecated("net_change", package = "migraph",
+              old = "network_change")
+  net_change(.data, object2)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_stability <- function(.data, object2) {
+  .Deprecated("net_stability", package = "migraph",
+              old = "network_stability")
+  net_stability(.data, object2)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_reciprocity <- function(.data, method = "default") {
+  .Deprecated("net_reciprocity", package = "migraph",
+              old = "network_reciprocity")
+  net_reciprocity(.data, method)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_transitivity <- function(.data) {
+  .Deprecated("net_transitivity", package = "migraph",
+              old = "network_transitivity")
+  net_transitivity(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_equivalency <- function(.data) {
+  .Deprecated("net_equivalency", package = "migraph",
+              old = "network_equivalency")
+  net_equivalency(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_transitivity <- function(.data) {
+  .Deprecated("net_transitivity", package = "migraph",
+              old = "network_transitivity")
+  net_transitivity(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_congruency <- function(.data) {
+  .Deprecated("net_congruency", package = "migraph",
+              old = "network_congruency")
+  net_congruency(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_richness <- function(.data, attribute) {
+  .Deprecated("net_richness", package = "migraph",
+              old = "network_richness")
+  net_richness(.data, attribute)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_diversity <- function(.data, attribute, clusters = NULL) {
+  .Deprecated("net_diversity", package = "migraph",
+              old = "network_diversity")
+  net_diversity(.data, attribute, clusters)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_heterophily <- function(.data, attribute) {
+  .Deprecated("net_heterophily", package = "migraph",
+              old = "network_heterophily")
+  net_heterophily(.data, attribute)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_assortativity <- function(.data) {
+  .Deprecated("net_assortativity", package = "migraph",
+              old = "network_assortativity")
+  net_assortativity(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_spatial <- function(.data, attribute) {
+  .Deprecated("net_spatial", package = "migraph",
+              old = "network_spatial")
+  net_spatial(.data, attribute)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_connectedness <- function(.data) {
+  .Deprecated("net_connectedness", package = "migraph",
+              old = "network_connectedness")
+  net_connectedness(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_efficiency <- function(.data) {
+  .Deprecated("net_efficiency", package = "migraph",
+              old = "network_efficiency")
+  net_efficiency(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_upperbound <- function(.data) {
+  .Deprecated("net_upperbound", package = "migraph",
+              old = "network_upperbound")
+  net_upperbound(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_nodes <- function(.data) {
+  .Deprecated("net_nodes", package = "manynet",
+              old = "network_nodes")
+  net_nodes(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_ties <- function(.data) {
+  .Deprecated("net_ties", package = "manynet",
+              old = "network_ties")
+  net_ties(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_dims <- function(.data) {
+  .Deprecated("net_dims", package = "manynet",
+              old = "network_dims")
+  net_dims(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_dims.data.frame <- function(.data) {
+  .Deprecated("net_dims.data.frame", package = "manynet",
+              old = "network_dims.data.frame")
+  net_dims.data.frame(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_dims.matrix <- function(.data) {
+  .Deprecated("net_dims.matrix", package = "manynet",
+              old = "network_dims.matrix")
+  net_dims.matrix(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_dims.igraph <- function(.data) {
+  .Deprecated("net_dims.igraph", package = "manynet",
+              old = "network_dims.igraph")
+  net_dims.igraph(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_dims.network <- function(.data) {
+  .Deprecated("net_dims.network", package = "manynet",
+              old = "network_dims.network")
+  net_dims.network(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_node_attributes <- function(.data) {
+  .Deprecated("net_node_attributes", package = "manynet",
+              old = "network_node_attributes")
+  net_node_attributes(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_tie_attributes <- function(.data) {
+  .Deprecated("net_tie_attributes", package = "manynet",
+              old = "network_tie_attributes")
+  net_tie_attributes(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_degree <- function(.data, normalized = TRUE,
+                           direction = c("all", "out", "in")) {
+  .Deprecated("net_degree", package = "migraph",
+              old = "network_degree")
+  net_degree(.data, normalized, direction)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_outdegree <- function(.data, normalized = TRUE) {
+  .Deprecated("net_outdegree", package = "migraph",
+              old = "network_outdegree")
+  net_outdegree(.data, normalized)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_indegree <- function(.data, normalized = TRUE) {
+  .Deprecated("net_indegree", package = "migraph",
+              old = "network_indegree")
+  net_indegree(.data, normalized)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_betweenness <- function(.data, normalized = TRUE,
+                                direction = c("all", "out", "in")) {
+  .Deprecated("net_betweenness", package = "migraph",
+              old = "network_betweenness")
+  net_betweenness(.data, normalized, direction)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_closeness <- function(.data, normalized = TRUE,
+                              direction = c("all", "out", "in")) {
+  .Deprecated("net_closeness", package = "migraph",
+              old = "network_closeness")
+  net_closeness(.data, normalized, direction)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_reach <- function(.data, normalized = TRUE, k = 2) {
+  .Deprecated("net_reach", package = "migraph",
+              old = "network_reach")
+  net_reach(.data, normalized, k)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_harmonic <- function(.data, normalized = TRUE, k = 2) {
+  .Deprecated("net_harmonic", package = "migraph",
+              old = "network_harmonic")
+  net_harmonic(.data, normalized, k)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_eigenvector <- function(.data, normalized = TRUE) {
+  .Deprecated("net_eigenvector", package = "migraph",
+              old = "network_eigenvector")
+  net_eigenvector(.data, normalized)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_core <- function(.data, mark = NULL) {
+  .Deprecated("net_core", package = "migraph",
+              old = "network_core")
+  net_core(.data, mark)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_richclub <- function(.data) {
+  .Deprecated("net_richclub", package = "migraph",
+              old = "network_richclub")
+  net_richclub(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_factions <- function(.data, membership = NULL) {
+  .Deprecated("net_factions", package = "migraph",
+              old = "network_factions")
+  net_factions(.data, membership)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_modularity <- function(.data, membership = NULL, resolution = 1) {
+  .Deprecated("net_modularity", package = "migraph",
+              old = "network_modularity")
+  net_modularity(.data, membership, resolution)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_smallworld <- function(.data, method = c("omega", "sigma", "SWI"),
+                               times = 100) {
+  .Deprecated("net_smallworld", package = "migraph",
+              old = "network_smallworld")
+  net_smallworld(.data, method, times)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_scalefree <- function(.data) {
+  .Deprecated("net_scalefree", package = "migraph",
+              old = "network_scalefree")
+  net_scalefree(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-06-20.
+#' @export
+network_balance <- function(.data) {
+  .Deprecated("net_balance", package = "migraph",
+              old = "network_balance")
+  net_balance(.data)
+}

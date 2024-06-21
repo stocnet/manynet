@@ -7,6 +7,56 @@
 \alias{autographr}
 \alias{autographs}
 \alias{autographd}
+\alias{network_transmissibility}
+\alias{network_infection_length}
+\alias{network_reproduction}
+\alias{network_immunity}
+\alias{network_hazard}
+\alias{network_density}
+\alias{network_components}
+\alias{network_cohesion}
+\alias{network_adhesion}
+\alias{network_diameter}
+\alias{network_length}
+\alias{network_independence}
+\alias{network_change}
+\alias{network_stability}
+\alias{network_reciprocity}
+\alias{network_transitivity}
+\alias{network_equivalency}
+\alias{network_congruency}
+\alias{network_richness}
+\alias{network_diversity}
+\alias{network_heterophily}
+\alias{network_assortativity}
+\alias{network_spatial}
+\alias{network_connectedness}
+\alias{network_efficiency}
+\alias{network_upperbound}
+\alias{network_nodes}
+\alias{network_ties}
+\alias{network_dims}
+\alias{network_dims.data.frame}
+\alias{network_dims.matrix}
+\alias{network_dims.igraph}
+\alias{network_dims.network}
+\alias{network_node_attributes}
+\alias{network_tie_attributes}
+\alias{network_degree}
+\alias{network_outdegree}
+\alias{network_indegree}
+\alias{network_betweenness}
+\alias{network_closeness}
+\alias{network_reach}
+\alias{network_harmonic}
+\alias{network_eigenvector}
+\alias{network_core}
+\alias{network_richclub}
+\alias{network_factions}
+\alias{network_modularity}
+\alias{network_smallworld}
+\alias{network_scalefree}
+\alias{network_balance}
 \title{Functions that have been renamed, superseded, or are no longer working}
 \usage{
 pkg_data(pkg = "manynet")
@@ -40,6 +90,112 @@ autographd(
   keep_isolates = TRUE,
   ...
 )
+
+network_transmissibility(diff_model)
+
+network_infection_length(diff_model)
+
+network_reproduction(diff_model)
+
+network_immunity(diff_model, normalized = TRUE)
+
+network_hazard(diff_model)
+
+network_density(.data)
+
+network_components(.data)
+
+network_cohesion(.data)
+
+network_adhesion(.data)
+
+network_diameter(.data)
+
+network_length(.data)
+
+network_independence(.data)
+
+network_change(.data, object2)
+
+network_stability(.data, object2)
+
+network_reciprocity(.data, method = "default")
+
+network_transitivity(.data)
+
+network_equivalency(.data)
+
+network_transitivity(.data)
+
+network_congruency(.data)
+
+network_richness(.data, attribute)
+
+network_diversity(.data, attribute, clusters = NULL)
+
+network_heterophily(.data, attribute)
+
+network_assortativity(.data)
+
+network_spatial(.data, attribute)
+
+network_connectedness(.data)
+
+network_efficiency(.data)
+
+network_upperbound(.data)
+
+network_nodes(.data)
+
+network_ties(.data)
+
+network_dims(.data)
+
+network_dims.data.frame(.data)
+
+network_dims.matrix(.data)
+
+network_dims.igraph(.data)
+
+network_dims.network(.data)
+
+network_node_attributes(.data)
+
+network_tie_attributes(.data)
+
+network_degree(.data, normalized = TRUE, direction = c("all", "out", "in"))
+
+network_outdegree(.data, normalized = TRUE)
+
+network_indegree(.data, normalized = TRUE)
+
+network_betweenness(
+  .data,
+  normalized = TRUE,
+  direction = c("all", "out", "in")
+)
+
+network_closeness(.data, normalized = TRUE, direction = c("all", "out", "in"))
+
+network_reach(.data, normalized = TRUE, k = 2)
+
+network_harmonic(.data, normalized = TRUE, k = 2)
+
+network_eigenvector(.data, normalized = TRUE)
+
+network_core(.data, mark = NULL)
+
+network_richclub(.data)
+
+network_factions(.data, membership = NULL)
+
+network_modularity(.data, membership = NULL, resolution = 1)
+
+network_smallworld(.data, method = c("omega", "sigma", "SWI"), times = 100)
+
+network_scalefree(.data)
+
+network_balance(.data)
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
@@ -61,6 +217,108 @@ wherever possible and update your scripts accordingly.
 \item \code{autographs()}: Deprecated on 2024-06-17.
 
 \item \code{autographd()}: Deprecated on 2024-06-17.
+
+\item \code{network_transmissibility()}: Deprecated on 2024-06-20.
+
+\item \code{network_infection_length()}: Deprecated on 2024-06-20.
+
+\item \code{network_reproduction()}: Deprecated on 2024-06-20.
+
+\item \code{network_immunity()}: Deprecated on 2024-06-20.
+
+\item \code{network_hazard()}: Deprecated on 2024-06-20.
+
+\item \code{network_density()}: Deprecated on 2024-06-20.
+
+\item \code{network_components()}: Deprecated on 2024-06-20.
+
+\item \code{network_cohesion()}: Deprecated on 2024-06-20.
+
+\item \code{network_adhesion()}: Deprecated on 2024-06-20.
+
+\item \code{network_diameter()}: Deprecated on 2024-06-20.
+
+\item \code{network_length()}: Deprecated on 2024-06-20.
+
+\item \code{network_independence()}: Deprecated on 2024-06-20.
+
+\item \code{network_change()}: Deprecated on 2024-06-20.
+
+\item \code{network_stability()}: Deprecated on 2024-06-20.
+
+\item \code{network_reciprocity()}: Deprecated on 2024-06-20.
+
+\item \code{network_transitivity()}: Deprecated on 2024-06-20.
+
+\item \code{network_equivalency()}: Deprecated on 2024-06-20.
+
+\item \code{network_transitivity()}: Deprecated on 2024-06-20.
+
+\item \code{network_congruency()}: Deprecated on 2024-06-20.
+
+\item \code{network_richness()}: Deprecated on 2024-06-20.
+
+\item \code{network_diversity()}: Deprecated on 2024-06-20.
+
+\item \code{network_heterophily()}: Deprecated on 2024-06-20.
+
+\item \code{network_assortativity()}: Deprecated on 2024-06-20.
+
+\item \code{network_spatial()}: Deprecated on 2024-06-20.
+
+\item \code{network_connectedness()}: Deprecated on 2024-06-20.
+
+\item \code{network_efficiency()}: Deprecated on 2024-06-20.
+
+\item \code{network_upperbound()}: Deprecated on 2024-06-20.
+
+\item \code{network_nodes()}: Deprecated on 2024-06-20.
+
+\item \code{network_ties()}: Deprecated on 2024-06-20.
+
+\item \code{network_dims()}: Deprecated on 2024-06-20.
+
+\item \code{network_dims.data.frame()}: Deprecated on 2024-06-20.
+
+\item \code{network_dims.matrix()}: Deprecated on 2024-06-20.
+
+\item \code{network_dims.igraph()}: Deprecated on 2024-06-20.
+
+\item \code{network_dims.network()}: Deprecated on 2024-06-20.
+
+\item \code{network_node_attributes()}: Deprecated on 2024-06-20.
+
+\item \code{network_tie_attributes()}: Deprecated on 2024-06-20.
+
+\item \code{network_degree()}: Deprecated on 2024-06-20.
+
+\item \code{network_outdegree()}: Deprecated on 2024-06-20.
+
+\item \code{network_indegree()}: Deprecated on 2024-06-20.
+
+\item \code{network_betweenness()}: Deprecated on 2024-06-20.
+
+\item \code{network_closeness()}: Deprecated on 2024-06-20.
+
+\item \code{network_reach()}: Deprecated on 2024-06-20.
+
+\item \code{network_harmonic()}: Deprecated on 2024-06-20.
+
+\item \code{network_eigenvector()}: Deprecated on 2024-06-20.
+
+\item \code{network_core()}: Deprecated on 2024-06-20.
+
+\item \code{network_richclub()}: Deprecated on 2024-06-20.
+
+\item \code{network_factions()}: Deprecated on 2024-06-20.
+
+\item \code{network_modularity()}: Deprecated on 2024-06-20.
+
+\item \code{network_smallworld()}: Deprecated on 2024-06-20.
+
+\item \code{network_scalefree()}: Deprecated on 2024-06-20.
+
+\item \code{network_balance()}: Deprecated on 2024-06-20.
 
 }}
 \keyword{internal}
