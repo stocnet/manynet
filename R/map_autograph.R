@@ -516,7 +516,7 @@ graphr <- function(.data, layout, labels = TRUE,
     }
     if(length(node_size > 1) & all(out <= 1 & out >= 0)) out <- out*10
   } else {
-    out <- ifelse(net_nodes(g) <= 10, 5, (100 / net_nodes(g)) / 2)
+    out <- min(20, (250 / net_nodes(g)) / 2)
   }
   out
 }
