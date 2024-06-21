@@ -402,7 +402,7 @@ graphr(ison_lawfirm, node_color = "school")
 ```
 
 Next, let's assign nodes to the core and periphery blocks
-using the `node_in_core()` function from `{migraph}`.
+using the `node_is_core()` function.
 It works pretty straightforwardly.
 By default it runs down the rank order of nodes by their degree,
 at each step working out whether including the next highest degree node
@@ -414,7 +414,7 @@ in the core will maximise the core-periphery structure of the network.
 
 ```{r nodecore-solution}
 ison_lawfirm %>% 
-  mutate(nc = node_in_core(ison_lawfirm)) %>% 
+  mutate(nc = node_is_core(ison_lawfirm)) %>% 
   graphr(node_color = "nc")
 ```
 
@@ -430,7 +430,7 @@ a core-periphery model of the same dimension using `network_core()`.
 ```
 
 ```{r netcore-solution}
-network_core(ison_lawfirm, node_in_core(ison_lawfirm))
+network_core(ison_lawfirm, node_is_core(ison_lawfirm))
 ```
 
 ```{r corecorr-qa, echo=FALSE, purl = FALSE}
@@ -449,7 +449,7 @@ question("What can we say about this correlation.",
 )
 ```
 
-Note that `node_in_core()` also includes a method that descends through
+Note that `node_is_core()` also includes a method that descends through
 the rank order of nodes' eigenvector centralities instead of degree centralities.
 Why might that not be such a good choice here?
 
@@ -464,7 +464,7 @@ between gender and core (or periphery) status.
 ```
 
 ```{r chisq-solution}
-chisq.test(node_in_core(ison_lawfirm), node_attribute(ison_lawfirm, "Gender"))
+chisq.test(node_is_core(ison_lawfirm), node_attribute(ison_lawfirm, "Gender"))
 ```
 
 ```{r chisq-qa, echo=FALSE, purl = FALSE}
@@ -489,7 +489,7 @@ An alternative route is to identify 'core' nodes
 depending on their _k_-coreness.
 In `{migraph}`, we can return nodes _k_-coreness
 with `node_coreness()` instead of 
-the `node_in_core()` used for core-periphery.
+the `node_is_core()` used for core-periphery.
 
 ```{r nodecoren, exercise=TRUE, purl = FALSE}
 
@@ -505,7 +505,7 @@ ison_lawfirm %>%
 question("Which has more than two classes/groups.",
          answer("node_coreness()", correct = TRUE,
                 message = learnr::random_praise()),
-         answer("node_in_core()",
+         answer("node_is_core()",
                 message = learnr::random_encouragement()),
          random_answer_order = TRUE,
          allow_retry = TRUE

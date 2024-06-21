@@ -708,6 +708,6 @@ node_brokering <- function(.data, membership) {
 node_core <- function(.data) {
   .Deprecated("node_is_core", package = "migraph",
               old = "node_core")
-  node_in_core(.data)
+  node_is_core(.data)
 }
 

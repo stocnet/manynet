@@ -93,7 +93,7 @@ and `node_is_infected()` (closes #71)
   `node_in_greedy()`, `node_in_eigen()`, and `node_in_walktrap()`
   - Components' memberships include `node_in_component()`, `node_in_weak()`, and
   `node_in_strong()`
-  - Core-periphery memberships include `node_in_core()` and `node_coreness()`
+  - Core-periphery memberships include `node_is_core()` and `node_coreness()`
   - Diffusion memberships include `node_in_adopter()`
   - Equivalence memberships include `node_in_equivalence()`, `node_in_structural()`,
   `node_in_regular()`, and `node_in_automorphic()`
