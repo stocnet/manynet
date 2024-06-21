@@ -118,12 +118,12 @@ graphr(ison_adolescents)
 ison_adolescents |>
   mutate(color = rep(c("extrovert", "introvert"), times = 4),
          size = ifelse(node_is_cutpoint(ison_adolescents), 6, 3)) |>
-  mutate_ties(ecolor = rep(c("friends", "aquaintances"), times = 5)) |>
+  mutate_ties(ecolor = rep(c("friends", "acquaintances"), times = 5)) |>
   graphr(node_color = "color", node_size = "size",
              edge_size = 1.5, edge_color = "ecolor")
 #graphr(ison_lotr, node_color = Race,
 #           node_size = node_degree(ison_lotr)*2,
-#           edge_color = "darkgreen",
+#           edge_color = "#66A61E",
 #           edge_size = tie_degree(ison_lotr))
 #graphr(ison_karateka, node_group = allegiance,
 #           edge_size = tie_closeness(ison_karateka))

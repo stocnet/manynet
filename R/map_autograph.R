@@ -86,19 +86,19 @@
 #' @return A `ggplot2::ggplot()` object.
 #'   The last plot can be saved to the file system using `ggplot2::ggsave()`.
 #' @importFrom ggraph geom_edge_link geom_node_text geom_conn_bundle
-#' get_con geom_node_point scale_edge_width_continuous geom_node_label
+#'   get_con geom_node_point scale_edge_width_continuous geom_node_label
 #' @importFrom ggplot2 aes arrow unit scale_color_brewer scale_fill_brewer
 #' @examples
 #' graphr(ison_adolescents)
 #' ison_adolescents |>
 #'   mutate(color = rep(c("extrovert", "introvert"), times = 4),
 #'          size = ifelse(node_is_cutpoint(ison_adolescents), 6, 3)) |>
-#'   mutate_ties(ecolor = rep(c("friends", "aquaintances"), times = 5)) |>
+#'   mutate_ties(ecolor = rep(c("friends", "acquaintances"), times = 5)) |>
 #'   graphr(node_color = "color", node_size = "size",
 #'              edge_size = 1.5, edge_color = "ecolor")
 #' #graphr(ison_lotr, node_color = Race,
 #' #           node_size = node_degree(ison_lotr)*2,
-#' #           edge_color = "darkgreen",
+#' #           edge_color = "#66A61E",
 #' #           edge_size = tie_degree(ison_lotr))
 #' #graphr(ison_karateka, node_group = allegiance,
 #' #           edge_size = tie_closeness(ison_karateka))
@@ -414,10 +414,10 @@ graphr <- function(.data, layout, labels = TRUE,
     p <- p + ggraph::geom_node_point(ggplot2::aes(color = node_color),
                                      size = nsize, shape = nshape) +
       ggplot2::scale_color_manual(name = NULL, guide = ggplot2::guide_legend(""),
-                                  values = c("Infected" = "red",
-                                             "Susceptible" = "blue",
-                                             "Exposed" = "orange",
-                                             "Recovered" = "darkgreen"))
+                                  values = c("Infected" = "#d73027",
+                                             "Susceptible" = "#4575b4",
+                                             "Exposed" = "#E6AB02",
+                                             "Recovered" = "#66A61E"))
   } else if (is.null(node_color) & any("diff_model" %in% names(attributes(g)))) {
     node_adopts <- .node_adoption_time(g)
     nshape <- ifelse(node_adopts == min(node_adopts), "Seed(s)",
@@ -428,7 +428,7 @@ graphr <- function(.data, layout, labels = TRUE,
     p <- p + ggraph::geom_node_point(ggplot2::aes(shape = nshape,
                                                   color = node_color),
                                      size = nsize) +
-      ggplot2::scale_color_gradient(low = "red", high = "blue",
+      ggplot2::scale_color_gradient(low = "#d73027", high = "#4575b4",
                                     breaks=c(min(node_color)+1, 
                                              ifelse(any(nshape=="Non-Adopter"),
                                                     max(node_color)-1,
@@ -701,7 +701,7 @@ graphs <- function(netlist, waves,
   if (missing(waves)) {
     if (length(netlist) > 4) {
       netlist <- netlist[c(1, length(netlist))]
-      message("Plotting first and last waves side-by-side. To control the number of waves plotted use the 'waves'.")
+      message("Plotting first and last waves side-by-side. \nTo set the waves plotted use the 'waves = ' argument.")
     }
   } else if (!missing(waves)) {
     if (length(waves) == 1) netlist <- netlist[c(1:waves)] else 
@@ -952,10 +952,10 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
   if ("Infected" %in% names(nodes_out)) {
     p <- p + ggplot2::geom_point(aes(x, y, group = name, color = node_color),
                                  size = node_size, shape = node_shape, data = nodes_out) +
-      ggplot2::scale_color_manual(name = NULL, values = c("Infected" = "red",
-                                                          "Susceptible" = "blue",
-                                                          "Exposed" = "orange",
-                                                          "Recovered" = "darkgreen")) +
+      ggplot2::scale_color_manual(name = NULL, values = c("Infected" = "#d73027",
+                                                          "Susceptible" = "#4575b4",
+                                                          "Exposed" = "#E6AB02",
+                                                          "Recovered" = "#66A61E")) +
       ggplot2::theme_void() +
       ggplot2::theme(legend.position = "bottom")
   } else {

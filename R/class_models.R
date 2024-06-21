@@ -73,8 +73,8 @@ plot.diff_model <- function(x, ...){
     
     p + ggplot2::scale_color_manual("Legend", 
                                     labels = labs,
-                                    values = c(A = "blue", B = "orange", 
-                                               C = "red", D = "darkgreen"),
+                                    values = c(A = "#4575b4", B = "#E6AB02", 
+                                               C = "#d73027", D = "#66A61E"),
                                     guide = "legend")
   }
 }
@@ -109,8 +109,8 @@ plot.diffs_model <- function(x, ...){
   
   p + ggplot2::scale_color_manual("Legend", 
                                   labels = labs,
-                                  values = c(A = "blue", B = "orange", 
-                                             C = "red", D = "darkgreen"),
+                                  values = c(A = "#4575b4", B = "#E6AB02", 
+                                             C = "#d73027", D = "#66A61E"),
                                   guide = "legend")
 }
 
