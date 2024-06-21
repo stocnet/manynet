@@ -324,7 +324,7 @@ plot.new()              ## suggested by @Josh
 vps <- baseViewports()
 pushViewport(vps$figure) ##   I am in the space of the autocorrelation plot
 vp1 <-plotViewport(c(1.8,1,0,1)) ## create new vp with margins, you play with this values 
-p <- graphr(ison_southern_women) + ggtitle("{manynet} layout")
+p <- graphr(ison_southern_women) + ggtitle("{manynet} twomode")
 print(p,vp = vp1) 
 ```
 
