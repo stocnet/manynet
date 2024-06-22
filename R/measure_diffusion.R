@@ -137,7 +137,7 @@ net_reproduction <- function(diff_model){
   diff_model <- as_diffusion(diff_model)
   net <- attr(diff_model, "network")
   out <- net_transmissibility(diff_model)/
-    (1/net_infection_length(diff_model))
+    (1/net_recovery(diff_model))
   out <- min(out, mean(node_deg(net)))
   make_network_measure(out, net)
 }
@@ -233,7 +233,7 @@ net_hazard <- function(diff_model){
   diff_model <- as_diffusion(diff_model)
   out <- (diff_model$I - dplyr::lag(diff_model$I)) / 
     (diff_model$n - dplyr::lag(diff_model$I))
-  make_net_measure(out, .data)
+  make_network_measure(out, .data)
 }
 
 # node_diffusion ####

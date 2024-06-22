@@ -222,9 +222,9 @@ network_transmissibility <- function(diff_model) {
 #' @describeIn defunct Deprecated on 2024-06-20.
 #' @export
 network_infection_length <- function(diff_model) {
-  .Deprecated("net_infection_length", package = "migraph",
+  .Deprecated("net_recovery", package = "migraph",
               old = "network_infection_length")
-  net_infection_length(diff_model)
+  net_recovery(diff_model)
 }
 
 #' @describeIn defunct Deprecated on 2024-06-20.

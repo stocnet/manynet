@@ -4,7 +4,8 @@
 \alias{measure_net_diffusion}
 \alias{net_transmissibility}
 \alias{net_complete_infection}
-\alias{net_infection_length}
+\alias{net_total_infection}
+\alias{net_recovery}
 \alias{net_reproduction}
 \alias{net_immunity}
 \alias{net_hazard}
@@ -17,7 +18,9 @@ net_transmissibility(diff_model)
 
 net_complete_infection(diff_model)
 
-net_infection_length(diff_model)
+net_total_infection(diff_model, normalized = TRUE)
+
+net_recovery(diff_model)
 
 net_reproduction(diff_model)
 
@@ -35,12 +38,12 @@ the type of centrality, and other arguments.}
 }
 \description{
 These functions allow measurement of various features of
-a diffusion process:
+a diffusion process at the network level:
 \itemize{
 \item \code{net_transmissibility()} measures the average transmissibility observed
 in a diffusion simulation, or the number of new infections over
 the number of susceptible nodes.
-\item \code{net_infection_length()} measures the average number of time steps
+\item \code{net_recovery()} measures the average number of time steps
 nodes remain infected once they become infected.
 \item \code{net_reproduction()} measures the observed reproductive number
 in a diffusion simulation as the network's transmissibility over
@@ -65,16 +68,24 @@ the number of nodes that are susceptible in the population).
 infected at each time period.
 }
 
-\section{Infection length}{
+\section{Complete infection}{
 
 \code{net_complete_infection()} measures the number of time steps until
 (the first instance of) complete infection.
 For diffusions that are not observed to complete,
 this function returns the value of \code{Inf} (infinity).
 This makes sure that at least ordinality is respected.
+}
 
+\section{Total infection}{
 
-\code{net_infection_length()} measures the average number of time steps that
+\code{net_total_infection()} measures the proportion or total number of nodes
+that are infected/activated by the end of the diffusion process.
+}
+
+\section{Recovery time}{
+
+\code{net_recovery()} measures the average number of time steps that
 nodes in a network remain infected.
 Note that in a diffusion model without recovery, average infection length
 will be infinite.
@@ -86,10 +97,10 @@ The longer nodes remain infected, the longer they can infect others.
 
 \code{net_reproduction()} measures a given diffusion's reproductive number.
 Here it is calculated as:
-\deqn{R = \min\left(\frac{T}{1/IL}, \bar{k}\right)}
+\deqn{R = \min\left(\frac{T}{1/L}, \bar{k}\right)}
 where \eqn{T} is the observed transmissibility in a diffusion
-and \eqn{IL} is the observed infection length in a diffusion.
-Since \eqn{IL} can be infinite where there is no recovery
+and \eqn{L} is the observed recovery length in a diffusion.
+Since \eqn{L} can be infinite where there is no recovery
 or there is right censoring,
 and since network structure places an upper limit on how many
 nodes each node may further infect (their degree),
@@ -178,8 +189,9 @@ those that oscillate indicate variability in adoption behavior over time.
   # To calculate the average transmissibility for a given diffusion model
   net_transmissibility(smeg_diff)
   net_complete_infection(smeg_diff)
+  net_total_infection(smeg_diff)
   # To calculate the average infection length for a given diffusion model
-  net_infection_length(smeg_diff)
+  net_recovery(smeg_diff)
   # To calculate the reproduction number for a given diffusion model
   net_reproduction(smeg_diff)
   # Calculating the proportion required to achieve herd immunity
