@@ -892,7 +892,7 @@ as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
 
 # Diffusion ####
 
-#' @rdname as 
+#' @rdname as
 #' @param events A table (data frame or tibble) of diffusion events
 #'   with columns `t` indicating the time (typically an integer) of the event, 
 #'   `nodes` indicating the number or name of the node involved in the event,
@@ -910,10 +910,16 @@ as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
 #' @importFrom dplyr tibble
 #' @examples
 #'   # How to create a diff_model object from (basic) observed data
-#'   events <- data.frame(t = c(0,1,1,2,3), nodes = c(1,2,3,2,4), event = c("I","I","I","R","I"))
+#'   events <- data.frame(t = c(0,1,1,2,3), 
+#'                        nodes = c(1,2,3,2,4), 
+#'                        event = c("I","I","I","R","I"))
 #'   as_diffusion(events, create_filled(4))
 #' @export
-as_diffusion <- function(events, .data) {
+as_diffusion <- function(.data,
+                     twomode = FALSE, events) UseMethod("as_diffusion")
+
+#' @export
+as_diffusion.igraph <- function(.data, events) {
   net <- as_tidygraph(.data)
   event <- NULL
   sumchanges <- events %>% dplyr::group_by(t) %>% 
@@ -949,15 +955,8 @@ as_diffusion <- function(events, .data) {
   make_diff_model(events, report, .data)
 }
 
-# Diff_model ####
-
-#' @rdname as
 #' @export
-as_diff_model <- function(.data,
-                       twomode = FALSE) UseMethod("as_diff_model")
-
-#' @export
-as_diff_model.diffnet <- function(.data,
+as_diffusion.diffnet <- function(.data,
                                   twomode = FALSE) {
   diffnet <- .data
   net <- as.matrix(.data$graph[[1]])
@@ -993,6 +992,7 @@ as_diff_model.diffnet <- function(.data,
     recovered <- dplyr::filter(twin, twin$event == "R")$nodes
     infected <- setdiff(infected, recovered)
     expos <- node_is_exposed(as_igraph(net), infected)
+    expos[infected] <- F
     expos[recovered] <- F
     sum(expos)
   }, numeric(1) )
