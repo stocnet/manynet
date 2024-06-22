@@ -50,6 +50,7 @@ NULL
 #'   net_transmissibility(smeg_diff)
 #' @export
 net_transmissibility <- function(diff_model){
+  diff_model <- as_diffusion(diff_model)
   out <- diff_model$I_new/diff_model$s
   out <- out[-1]
   out <- out[!is.infinite(out)]
@@ -69,6 +70,7 @@ net_transmissibility <- function(diff_model){
 #'   net_complete_infection(smeg_diff)
 #' @export
 net_complete_infection <- function(diff_model){
+  diff_model <- as_diffusion(diff_model)
   out <- which(diff_model$I == diff_model$n)[1]
   if(is.na(out)) out <- Inf
   make_network_measure(out, attr(diff_model, "network"))
@@ -117,6 +119,7 @@ net_infection_length <- function(diff_model){
 #'   net_reproduction(smeg_diff)
 #' @export
 net_reproduction <- function(diff_model){
+  diff_model <- as_diffusion(diff_model)
   net <- attr(diff_model, "network")
   out <- net_transmissibility(diff_model)/
     (1/net_infection_length(diff_model))
@@ -153,6 +156,7 @@ net_reproduction <- function(diff_model){
 #'   ceiling(net_immunity(smeg_diff) * manynet::net_nodes(smeg))
 #' @export
 net_immunity <- function(diff_model, normalized = TRUE){
+  diff_model <- as_diffusion(diff_model)
   net <- attr(diff_model, "network")
   out <- 1 - 1/net_reproduction(diff_model)
   if(!normalized) out <- ceiling(out * net_nodes(net))
@@ -211,6 +215,7 @@ net_immunity <- function(diff_model, normalized = TRUE){
 #' net_hazard(play_diffusion(smeg, transmissibility = 0.3))
 #' @export
 net_hazard <- function(diff_model){
+  diff_model <- as_diffusion(diff_model)
   out <- (diff_model$I - dplyr::lag(diff_model$I)) / 
     (diff_model$n - dplyr::lag(diff_model$I))
   make_net_measure(out, .data)
@@ -256,6 +261,7 @@ NULL
 #'   (times <- node_adoption_time(smeg_diff))
 #' @export
 node_adoption_time <- function(diff_model){
+  diff_model <- as_diffusion(diff_model)
   event <- nodes <- NULL
   out <- summary(diff_model) %>% dplyr::filter(event == "I") %>% 
     dplyr::distinct(nodes, .keep_all = TRUE) %>% 
@@ -300,6 +306,7 @@ node_adoption_time <- function(diff_model){
 #'   node_thresholds(smeg_diff)
 #' @export
 node_thresholds <- function(diff_model, normalized = TRUE, lag = 1){
+  diff_model <- as_diffusion(diff_model)
   event <- nodes <- NULL
   exposure <- NULL
   out <- summary(diff_model)
@@ -341,6 +348,7 @@ node_thresholds <- function(diff_model, normalized = TRUE, lag = 1){
 #'   node_infection_length(smeg_diff)
 #' @export
 node_infection_length <- function(diff_model){
+  diff_model <- as_diffusion(diff_model)
   nodes <- NULL
   events <- attr(diff_model, "events")
   out <- vapply(seq_len(diff_model$n[1]), 
@@ -445,6 +453,7 @@ NULL
 #'   summary(adopts)
 #' @export
 node_in_adopter <- function(diff_model){
+  diff_model <- as_diffusion(diff_model)
   toa <- node_adoption_time(diff_model)
   toa[is.infinite(toa)] <- NA
   avg <- mean(toa, na.rm = TRUE)

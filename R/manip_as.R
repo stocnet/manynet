@@ -57,7 +57,7 @@
 #'
 #' ```{r, echo = FALSE, cache = TRUE} 
 #'  knitr::kable(available_methods(c("as_edgelist","as_matrix", "as_igraph", "as_tidygraph", 
-#'  "as_network", "as_siena", "as_graphAM", "as_diffusion", "as_diffnet", "as_diff_model")))
+#'  "as_network", "as_siena", "as_graphAM", "as_diffusion", "as_diffnet")))
 #'  ```
 NULL
 
@@ -917,6 +917,11 @@ as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
 #' @export
 as_diffusion <- function(.data,
                      twomode = FALSE, events) UseMethod("as_diffusion")
+
+#' @export
+as_diffusion.diff_model <- function(.data) {
+  .data
+}
 
 #' @export
 as_diffusion.igraph <- function(.data, events) {

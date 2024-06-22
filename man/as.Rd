@@ -53,11 +53,18 @@ and \code{event}, which can take on the values "I" for an infection event,
 "E" for an exposure event, or "R" for a recovery event.}
 }
 \value{
-The currently implemented coercions or translations are:
-
-\if{html}{\out{<div class="sourceCode {r, echo = FALSE, cache = TRUE}">}}\preformatted{ knitr::kable(available_methods(c("as_edgelist","as_matrix", "as_igraph", "as_tidygraph", 
- "as_network", "as_siena", "as_graphAM", "as_diffusion", "as_diffnet", "as_diff_model")))
-}\if{html}{\out{</div>}}
+The currently implemented coercions or translations are:\tabular{lrrrrrrrrrr}{
+    \tab data.frame \tab diff_model \tab diffnet \tab igraph \tab list \tab matrix \tab network \tab network.goldfish \tab siena \tab tbl_graph \cr
+   as_diffnet \tab 0 \tab 1 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \cr
+   as_diffusion \tab 0 \tab 1 \tab 1 \tab 1 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \cr
+   as_edgelist \tab 1 \tab 0 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   as_graphAM \tab 1 \tab 0 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   as_igraph \tab 1 \tab 1 \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   as_matrix \tab 1 \tab 1 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   as_network \tab 1 \tab 0 \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   as_siena \tab 0 \tab 0 \tab 0 \tab 1 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 1 \cr
+   as_tidygraph \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+}
 
 \code{as_diffusion()} and \code{play_diffusion()} return a 'diff_model' object
 that contains two different tibbles (tables) --
@@ -118,7 +125,9 @@ as_igraph(test)
 as_tidygraph(test)
 as_network(test)
   # How to create a diff_model object from (basic) observed data
-  events <- data.frame(t = c(0,1,1,2,3), nodes = c(1,2,3,2,4), event = c("I","I","I","R","I"))
+  events <- data.frame(t = c(0,1,1,2,3), 
+                       nodes = c(1,2,3,2,4), 
+                       event = c("I","I","I","R","I"))
   as_diffusion(events, create_filled(4))
 }
 \seealso{
