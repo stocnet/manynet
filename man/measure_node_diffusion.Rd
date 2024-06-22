@@ -76,6 +76,10 @@ nodes activate when \eqn{\sum_{j:\text{active}} w_{ji} \geq \theta_i},
 where \eqn{w} is some (potentially weighted) matrix,
 \eqn{j} are some already activated nodes,
 and \eqn{theta} is some pre-defined threshold value.
+Where a fractional threshold is used, the equation is
+\eqn{\frac{\sum_{j:\text{active}} w_{ji}}{\sum_{j} w_{ji}} \geq \theta_i}.
+That is, \eqn{theta} is now a proportion,
+and works regardless of whether \eqn{w} is weighted or not.
 }
 
 \section{Infection length}{

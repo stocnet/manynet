@@ -51,15 +51,16 @@ plot.diff_model <- function(x, ..., all = TRUE){
   S <- E <- I <- I_new <- n <- R <- NULL # initialize variables to avoid CMD check notes
   if(nrow(x)==1) warning("No diffusion observed.") else {
     data <- x
-    if(!all) data <- data %>% dplyr::filter(!(data$I==data$n * 
-                                              duplicated(data$I==data$n)))
+    if(!all) data <- data %>% dplyr::filter(!(data$I==data$I[length(data$I)] * 
+                                              duplicated(data$I==data$I[length(data$I)])))
     p <- ggplot2::ggplot(data) + 
       ggplot2::geom_line(ggplot2::aes(x = t, y = S/n, color = "A"), linewidth = 1.25) +
       ggplot2::geom_line(ggplot2::aes(x = t, y = I/n, color = "C"), linewidth = 1.25) +
       ggplot2::geom_col(ggplot2::aes(x = t, y = I_new/n), 
                         alpha = 0.4) +
       ggplot2::theme_minimal() + 
-      ggplot2::coord_cartesian(ylim = c(0,1)) + # using coord_cartesion to avoid printing warnings
+      ggplot2::coord_cartesian(ylim = c(0,1)) + # using coord_cartesian to avoid printing warnings
+      ggplot2::scale_x_continuous(breaks = function(x) pretty(x, n=6)) +
       ggplot2::ylab("Proportion") + ggplot2::xlab("Steps")
     labs <- c("Susceptible", "Infected")
     if(any(data$E>0)){
@@ -94,6 +95,7 @@ plot.diffs_model <- function(x, ...){
                          method = "loess", se=TRUE, level = .95, formula = 'y~x') +
     ggplot2::theme_minimal() + 
     ggplot2::coord_cartesian(ylim = c(0,1)) + # using coord_cartesion to avoid printing warnings
+    ggplot2::scale_x_continuous(breaks = function(x) pretty(x, n=6)) +
     ggplot2::ylab("Proportion") + ggplot2::xlab("Steps")
   labs <- c("Susceptible", "Infected")
   if(any(data$E>0)){
