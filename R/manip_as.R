@@ -913,7 +913,7 @@ as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
 #'   events <- data.frame(t = c(0,1,1,2,3), 
 #'                        nodes = c(1,2,3,2,4), 
 #'                        event = c("I","I","I","R","I"))
-#'   as_diffusion(create_filled(4), events)
+#'   as_diffusion(create_filled(4), events = events)
 #' @export
 as_diffusion <- function(.data, twomode = FALSE, events) UseMethod("as_diffusion")
 
