@@ -913,7 +913,7 @@ as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
 #'   events <- data.frame(t = c(0,1,1,2,3), 
 #'                        nodes = c(1,2,3,2,4), 
 #'                        event = c("I","I","I","R","I"))
-#'   as_diffusion(events, create_filled(4))
+#'   as_diffusion(create_filled(4), events)
 #' @export
 as_diffusion <- function(.data, twomode = FALSE, events) UseMethod("as_diffusion")
 
@@ -960,8 +960,7 @@ as_diffusion.igraph <- function(.data, twomode = FALSE, events) {
 }
 
 #' @export
-as_diffusion.diffnet <- function(.data,
-                                  twomode = FALSE) {
+as_diffusion.diffnet <- function(.data, twomode = FALSE, events) {
   diffnet <- .data
   net <- as.matrix(.data$graph[[1]])
   event <- NULL
