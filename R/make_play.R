@@ -158,6 +158,7 @@ play_diffusion <- function(.data,
   if(all(thresholds <= 1) & !all(thresholds == 1)) 
     thresholds <- thresholds * 
       node_deg(.data)
+  if(is.character(seeds)) seeds <- which(node_names(.data)==seeds)
   if(is.logical(seeds)) seeds <- which(seeds)
   if(!is.null(immune)){
     if(is.logical(immune)) immune <- which(immune)
