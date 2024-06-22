@@ -77,8 +77,18 @@ net_complete_infection <- function(diff_model){
 }
 
 #' @rdname measure_net_diffusion 
-#' @section Infection length: 
-#'   `net_infection_length()` measures the average number of time steps that
+#' @section Total infection: 
+#'   `net_total_infection()` measures the proportion or total number of nodes
+#'   that are infected/activated by the end of the diffusion process.
+#' @examples
+#'   net_total_infection(smeg_diff)
+#' @export
+net_total_infection <- function(diff_model, normalized = TRUE){
+  diff_model <- as_diffusion(diff_model)
+  out <- diff_model$I[length(diff_model$I)]
+  if(normalized) out <- out / diff_model$n[length(diff_model$n)]
+  make_network_measure(out, attr(diff_model, "network"))
+}
 
 #' @rdname measure_net_diffusion 
 #' @section Recovery time: 
