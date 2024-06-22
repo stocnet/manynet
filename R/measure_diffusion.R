@@ -233,7 +233,7 @@ net_hazard <- function(diff_model){
   diff_model <- as_diffusion(diff_model)
   out <- (diff_model$I - dplyr::lag(diff_model$I)) / 
     (diff_model$n - dplyr::lag(diff_model$I))
-  make_network_measure(out, .data)
+  make_network_measure(out, attr(diff_model, "network"))
 }
 
 # node_diffusion ####
