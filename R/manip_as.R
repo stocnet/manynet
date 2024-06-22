@@ -915,16 +915,15 @@ as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
 #'                        event = c("I","I","I","R","I"))
 #'   as_diffusion(events, create_filled(4))
 #' @export
-as_diffusion <- function(.data,
-                     twomode = FALSE, events) UseMethod("as_diffusion")
+as_diffusion <- function(.data, twomode = FALSE, events) UseMethod("as_diffusion")
 
 #' @export
-as_diffusion.diff_model <- function(.data) {
+as_diffusion.diff_model <- function(.data, twomode = FALSE, events) {
   .data
 }
 
 #' @export
-as_diffusion.igraph <- function(.data, events) {
+as_diffusion.igraph <- function(.data, twomode = FALSE, events) {
   net <- as_tidygraph(.data)
   event <- NULL
   sumchanges <- events %>% dplyr::group_by(t) %>% 
