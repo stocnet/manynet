@@ -3,12 +3,12 @@
 #' Measures of network diffusion
 #' @description
 #'   These functions allow measurement of various features of
-#'   a diffusion process:
+#'   a diffusion process at the network level:
 #'   
 #'   - `net_transmissibility()` measures the average transmissibility observed
 #'   in a diffusion simulation, or the number of new infections over
 #'   the number of susceptible nodes.
-#'   - `net_infection_length()` measures the average number of time steps 
+#'   - `net_recovery()` measures the average number of time steps 
 #'   nodes remain infected once they become infected.
 #'   - `net_reproduction()` measures the observed reproductive number
 #'   in a diffusion simulation as the network's transmissibility over
@@ -60,7 +60,7 @@ net_transmissibility <- function(diff_model){
 }
 
 #' @rdname measure_net_diffusion 
-#' @section Infection length: 
+#' @section Complete infection: 
 #'   `net_complete_infection()` measures the number of time steps until
 #'   (the first instance of) complete infection.
 #'   For diffusions that are not observed to complete,
@@ -79,6 +79,10 @@ net_complete_infection <- function(diff_model){
 #' @rdname measure_net_diffusion 
 #' @section Infection length: 
 #'   `net_infection_length()` measures the average number of time steps that
+
+#' @rdname measure_net_diffusion 
+#' @section Recovery time: 
+#'   `net_recovery()` measures the average number of time steps that
 #'   nodes in a network remain infected.
 #'   Note that in a diffusion model without recovery, average infection length
 #'   will be infinite.
@@ -86,9 +90,10 @@ net_complete_infection <- function(diff_model){
 #'   The longer nodes remain infected, the longer they can infect others.
 #' @examples
 #'   # To calculate the average infection length for a given diffusion model
-#'   net_infection_length(smeg_diff)
+#'   net_recovery(smeg_diff)
 #' @export
-net_infection_length <- function(diff_model){
+net_recovery <- function(diff_model){
+  diff_model <- as_diffusion(diff_model)
   make_network_measure(mean(node_infection_length(diff_model), na.rm = TRUE),
                        attr(diff_model, "network"))
 }
@@ -97,10 +102,10 @@ net_infection_length <- function(diff_model){
 #' @section Reproduction number: 
 #'   `net_reproduction()` measures a given diffusion's reproductive number.
 #'   Here it is calculated as:
-#'   \deqn{R = \min\left(\frac{T}{1/IL}, \bar{k}\right)}
+#'   \deqn{R = \min\left(\frac{T}{1/L}, \bar{k}\right)}
 #'   where \eqn{T} is the observed transmissibility in a diffusion
-#'   and \eqn{IL} is the observed infection length in a diffusion.
-#'   Since \eqn{IL} can be infinite where there is no recovery
+#'   and \eqn{L} is the observed recovery length in a diffusion.
+#'   Since \eqn{L} can be infinite where there is no recovery
 #'   or there is right censoring,
 #'   and since network structure places an upper limit on how many
 #'   nodes each node may further infect (their degree),
