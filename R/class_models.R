@@ -47,11 +47,11 @@ summary.diffs_model <- function(object, ...) {
 #' @importFrom dplyr left_join
 #' @importFrom ggplot2 geom_histogram
 #' @export
-plot.diff_model <- function(x, ..., all = TRUE){
+plot.diff_model <- function(x, ..., all_steps = TRUE){
   S <- E <- I <- I_new <- n <- R <- NULL # initialize variables to avoid CMD check notes
   if(nrow(x)==1) warning("No diffusion observed.") else {
     data <- x
-    if(!all) data <- data %>% dplyr::filter(!(data$I==data$I[length(data$I)] * 
+    if(!all_steps) data <- data %>% dplyr::filter(!(data$I==data$I[length(data$I)] * 
                                               duplicated(data$I==data$I[length(data$I)])))
     p <- ggplot2::ggplot(data) + 
       ggplot2::geom_line(ggplot2::aes(x = t, y = S/n, color = "A"), linewidth = 1.25) +

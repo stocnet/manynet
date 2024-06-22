@@ -107,7 +107,7 @@ The first visualisation option that we have is to plot the diffusion result itse
 
 ```{r plotlat, exercise = TRUE, exercise.setup = "lat_diff", purl = FALSE}
 plot(lat_diff)
-plot(lat_diff, all = FALSE)
+plot(lat_diff, all_steps = FALSE)
 ```
 
 This plot effectively visualises what we observed from the print out of the 
@@ -123,7 +123,7 @@ That's because the simulation runs over the number of nodes in the network
 by default.
 If the structure is amenable to diffusion, infection/diffusion will be completed
 before that.
-To plot only 'where the action is', use the argument `all = FALSE`.
+To plot only 'where the action is', use the argument `all_steps = FALSE`.
 
 But maybe we want to also/instead view the diffusion on the actual network.
 Here we can use all the three main graphing techniques offered in `{manynet}`.
@@ -205,7 +205,7 @@ question("Does the structure of the network matter for whether and when a diffus
 )
 ```
 
-### Fun task
+### Free coding example: US States
 
 Run an influence cascade on US states' geographic contiguity in `ison_usstates`.
 You can start the infection in California by specifying `seeds = 5`.
