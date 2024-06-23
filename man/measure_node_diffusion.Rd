@@ -131,12 +131,14 @@ Other measures:
 \code{\link{measure_heterogeneity}},
 \code{\link{measure_hierarchy}},
 \code{\link{measure_holes}},
+\code{\link{measure_infection}},
 \code{\link{measure_net_diffusion}},
 \code{\link{measure_periods}},
 \code{\link{measure_properties}},
 \code{\link{member_diffusion}}
 
 Other diffusion: 
+\code{\link{measure_infection}},
 \code{\link{measure_net_diffusion}},
 \code{\link{member_diffusion}},
 \code{\link{play}}

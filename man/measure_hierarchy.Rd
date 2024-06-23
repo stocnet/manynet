@@ -63,6 +63,7 @@ Other measures:
 \code{\link{measure_features}},
 \code{\link{measure_heterogeneity}},
 \code{\link{measure_holes}},
+\code{\link{measure_infection}},
 \code{\link{measure_net_diffusion}},
 \code{\link{measure_node_diffusion}},
 \code{\link{measure_periods}},

@@ -60,37 +60,6 @@ net_transmissibility <- function(diff_model){
 }
 
 #' @rdname measure_net_diffusion 
-#' @section Complete infection: 
-#'   `net_complete_infection()` measures the number of time steps until
-#'   (the first instance of) complete infection.
-#'   For diffusions that are not observed to complete,
-#'   this function returns the value of `Inf` (infinity).
-#'   This makes sure that at least ordinality is respected.
-#' @examples
-#'   net_complete_infection(smeg_diff)
-#' @export
-net_complete_infection <- function(diff_model){
-  diff_model <- as_diffusion(diff_model)
-  out <- which(diff_model$I == diff_model$n)[1]
-  if(is.na(out)) out <- Inf
-  make_network_measure(out, attr(diff_model, "network"))
-}
-
-#' @rdname measure_net_diffusion 
-#' @section Total infection: 
-#'   `net_total_infection()` measures the proportion or total number of nodes
-#'   that are infected/activated by the end of the diffusion process.
-#' @examples
-#'   net_total_infection(smeg_diff)
-#' @export
-net_total_infection <- function(diff_model, normalized = TRUE){
-  diff_model <- as_diffusion(diff_model)
-  out <- diff_model$I[length(diff_model$I)]
-  if(normalized) out <- out / diff_model$n[length(diff_model$n)]
-  make_network_measure(out, attr(diff_model, "network"))
-}
-
-#' @rdname measure_net_diffusion 
 #' @section Recovery time: 
 #'   `net_recovery()` measures the average number of time steps that
 #'   nodes in a network remain infected.
@@ -233,6 +202,48 @@ net_hazard <- function(diff_model){
   diff_model <- as_diffusion(diff_model)
   out <- (diff_model$I - dplyr::lag(diff_model$I)) / 
     (diff_model$n - dplyr::lag(diff_model$I))
+  make_network_measure(out, attr(diff_model, "network"))
+}
+
+# net_infection ####
+
+#' Measures of network diffusion
+#' @description
+#'   These functions allow measurement of various features of
+#'   a diffusion process at the network level:
+#'   
+#'   - `net_infection_complete()` measures the number of time steps until
+#'   (the first instance of) complete infection.
+#'   For diffusions that are not observed to complete,
+#'   this function returns the value of `Inf` (infinity).
+#'   This makes sure that at least ordinality is respected.
+#'   - `net_infection_total()` measures the proportion or total number of nodes
+#'   that are infected/activated by the end of the diffusion process.
+#'   
+#' @inheritParams measure_net_diffusion
+#' @family measures
+#' @family diffusion
+#' @name measure_infection
+
+#' @rdname measure_infection 
+#' @examples
+#'   net_infection_complete(smeg_diff)
+#' @export
+net_infection_complete <- function(diff_model){
+  diff_model <- as_diffusion(diff_model)
+  out <- which(diff_model$I == diff_model$n)[1]
+  if(is.na(out)) out <- Inf
+  make_network_measure(out, attr(diff_model, "network"))
+}
+
+#' @rdname measure_infection 
+#' @examples
+#'   net_infection_total(smeg_diff)
+#' @export
+net_infection_total <- function(diff_model, normalized = TRUE){
+  diff_model <- as_diffusion(diff_model)
+  out <- diff_model$I[length(diff_model$I)]
+  if(normalized) out <- out / diff_model$n[length(diff_model$n)]
   make_network_measure(out, attr(diff_model, "network"))
 }
 

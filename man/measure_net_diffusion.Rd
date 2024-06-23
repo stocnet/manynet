@@ -3,8 +3,6 @@
 \name{measure_net_diffusion}
 \alias{measure_net_diffusion}
 \alias{net_transmissibility}
-\alias{net_complete_infection}
-\alias{net_total_infection}
 \alias{net_recovery}
 \alias{net_reproduction}
 \alias{net_immunity}
@@ -15,10 +13,6 @@
 }
 \usage{
 net_transmissibility(diff_model)
-
-net_complete_infection(diff_model)
-
-net_total_infection(diff_model, normalized = TRUE)
 
 net_recovery(diff_model)
 
@@ -66,21 +60,6 @@ and \eqn{s} is the number of nodes that could have been infected in that time pe
 the number of nodes that are susceptible in the population).
 \eqn{T} can be interpreted as the proportion of susceptible nodes that are
 infected at each time period.
-}
-
-\section{Complete infection}{
-
-\code{net_complete_infection()} measures the number of time steps until
-(the first instance of) complete infection.
-For diffusions that are not observed to complete,
-this function returns the value of \code{Inf} (infinity).
-This makes sure that at least ordinality is respected.
-}
-
-\section{Total infection}{
-
-\code{net_total_infection()} measures the proportion or total number of nodes
-that are infected/activated by the end of the diffusion process.
 }
 
 \section{Recovery time}{
@@ -188,8 +167,6 @@ those that oscillate indicate variability in adoption behavior over time.
   plot(smeg_diff)
   # To calculate the average transmissibility for a given diffusion model
   net_transmissibility(smeg_diff)
-  net_complete_infection(smeg_diff)
-  net_total_infection(smeg_diff)
   # To calculate the average infection length for a given diffusion model
   net_recovery(smeg_diff)
   # To calculate the reproduction number for a given diffusion model
@@ -224,12 +201,14 @@ Other measures:
 \code{\link{measure_heterogeneity}},
 \code{\link{measure_hierarchy}},
 \code{\link{measure_holes}},
+\code{\link{measure_infection}},
 \code{\link{measure_node_diffusion}},
 \code{\link{measure_periods}},
 \code{\link{measure_properties}},
 \code{\link{member_diffusion}}
 
 Other diffusion: 
+\code{\link{measure_infection}},
 \code{\link{measure_node_diffusion}},
 \code{\link{member_diffusion}},
 \code{\link{play}}
