@@ -5,7 +5,7 @@
 \alias{net_infection_complete}
 \alias{net_infection_total}
 \alias{net_infection_peak}
-\title{Measures of network diffusion}
+\title{Measures of network infection}
 \usage{
 net_infection_complete(diff_model)
 
@@ -31,7 +31,9 @@ For diffusions that are not observed to complete,
 this function returns the value of \code{Inf} (infinity).
 This makes sure that at least ordinality is respected.
 \item \code{net_infection_total()} measures the proportion or total number of nodes
-that are infected/activated by the end of the diffusion process.
+that are infected/activated at some time by the end of the diffusion process.
+This includes nodes that subsequently recover.
+Where reinfection is possible, the proportion may be higher than 1.
 \item \code{net_infection_peak()} measures the number of time steps until the
 highest infection rate is observed.
 }

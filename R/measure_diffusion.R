@@ -207,7 +207,7 @@ net_hazard <- function(diff_model){
 
 # net_infection ####
 
-#' Measures of network diffusion
+#' Measures of network infection
 #' @description
 #'   These functions allow measurement of various features of
 #'   a diffusion process at the network level:
@@ -218,7 +218,9 @@ net_hazard <- function(diff_model){
 #'   this function returns the value of `Inf` (infinity).
 #'   This makes sure that at least ordinality is respected.
 #'   - `net_infection_total()` measures the proportion or total number of nodes
-#'   that are infected/activated by the end of the diffusion process.
+#'   that are infected/activated at some time by the end of the diffusion process.
+#'   This includes nodes that subsequently recover.
+#'   Where reinfection is possible, the proportion may be higher than 1.
 #'   - `net_infection_peak()` measures the number of time steps until the
 #'   highest infection rate is observed.
 #'   
@@ -385,9 +387,9 @@ node_thresholds <- function(diff_model, normalized = TRUE, lag = 1){
 #'   calculated as infinite.
 #' @examples
 #'   # To measure how long each node remains infected for
-#'   node_infection_length(smeg_diff)
+#'   node_recovery(smeg_diff)
 #' @export
-node_infection_length <- function(diff_model){
+node_recovery <- function(diff_model){
   diff_model <- as_diffusion(diff_model)
   nodes <- NULL
   events <- attr(diff_model, "events")

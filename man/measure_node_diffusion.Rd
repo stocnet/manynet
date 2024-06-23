@@ -4,7 +4,7 @@
 \alias{measure_node_diffusion}
 \alias{node_adoption_time}
 \alias{node_thresholds}
-\alias{node_infection_length}
+\alias{node_recovery}
 \alias{node_exposure}
 \title{Measures of nodes in a diffusion}
 \usage{
@@ -12,7 +12,7 @@ node_adoption_time(diff_model)
 
 node_thresholds(diff_model, normalized = TRUE, lag = 1)
 
-node_infection_length(diff_model)
+node_recovery(diff_model)
 
 node_exposure(.data, mark, time = 0)
 }
@@ -109,7 +109,7 @@ nodes exposure at \eqn{t = 0}.
   # To infer nodes' thresholds
   node_thresholds(smeg_diff)
   # To measure how long each node remains infected for
-  node_infection_length(smeg_diff)
+  node_recovery(smeg_diff)
   # To measure how much exposure nodes have to a given mark
   node_exposure(smeg, mark = c(1,3))
   node_exposure(smeg_diff)
