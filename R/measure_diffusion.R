@@ -219,6 +219,8 @@ net_hazard <- function(diff_model){
 #'   This makes sure that at least ordinality is respected.
 #'   - `net_infection_total()` measures the proportion or total number of nodes
 #'   that are infected/activated by the end of the diffusion process.
+#'   - `net_infection_peak()` measures the number of time steps until the
+#'   highest infection rate is observed.
 #'   
 #' @inheritParams measure_net_diffusion
 #' @family measures
@@ -244,6 +246,16 @@ net_infection_total <- function(diff_model, normalized = TRUE){
   diff_model <- as_diffusion(diff_model)
   out <- diff_model$I[length(diff_model$I)]
   if(normalized) out <- out / diff_model$n[length(diff_model$n)]
+  make_network_measure(out, attr(diff_model, "network"))
+}
+
+#' @rdname measure_infection 
+#' @examples
+#'   net_infection_peak(smeg_diff)
+#' @export
+net_infection_peak <- function(diff_model){
+  diff_model <- as_diffusion(diff_model)
+  out <- which(diff_model$I_new == max(diff_model$I_new))[1]
   make_network_measure(out, attr(diff_model, "network"))
 }
 
