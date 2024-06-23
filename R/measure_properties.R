@@ -28,7 +28,11 @@ NULL
 #' net_nodes(ison_southern_women)
 #' @export
 net_nodes <- function(.data){
-  make_network_measure(igraph::vcount(as_igraph(.data)), .data)
+  if(is_list(.data)){
+    nodes <- vapply(.data, function(x) igraph::vcount(as_igraph(x)), 
+           FUN.VALUE = numeric(1))
+    make_network_measure(max(nodes), .data[[1]])
+  } else make_network_measure(igraph::vcount(as_igraph(.data)), .data)
 }
 
 #' @rdname measure_properties
