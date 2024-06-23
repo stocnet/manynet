@@ -14,7 +14,7 @@
 \usage{
 net_transmissibility(diff_model)
 
-net_recovery(diff_model)
+net_recovery(diff_model, censor = TRUE)
 
 net_reproduction(diff_model)
 
@@ -25,6 +25,11 @@ net_hazard(diff_model)
 \arguments{
 \item{diff_model}{A valid network diffusion model,
 as created by \code{as_diffusion()} or \code{play_diffusion()}.}
+
+\item{censor}{Where some nodes have not yet recovered by the end
+of the simulation, right censored values can be replaced by the number of steps.
+By default TRUE.
+Note that this will likely still underestimate recovery.}
 
 \item{normalized}{Logical scalar, whether the centrality scores are normalized.
 Different denominators are used depending on whether the object is one-mode or two-mode,

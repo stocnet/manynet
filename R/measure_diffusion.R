@@ -60,6 +60,10 @@ net_transmissibility <- function(diff_model){
 }
 
 #' @rdname measure_net_diffusion 
+#' @param censor Where some nodes have not yet recovered by the end
+#'   of the simulation, right censored values can be replaced by the number of steps. 
+#'   By default TRUE.
+#'   Note that this will likely still underestimate recovery.
 #' @section Recovery time: 
 #'   `net_recovery()` measures the average number of time steps that
 #'   nodes in a network remain infected.
@@ -71,9 +75,12 @@ net_transmissibility <- function(diff_model){
 #'   # To calculate the average infection length for a given diffusion model
 #'   net_recovery(smeg_diff)
 #' @export
-net_recovery <- function(diff_model){
+net_recovery <- function(diff_model, censor = TRUE){
   diff_model <- as_diffusion(diff_model)
-  make_network_measure(mean(node_infection_length(diff_model), na.rm = TRUE),
+  recovs <- node_recovery(diff_model)
+  if(censor && any(!is.infinite(recovs) & !is.na(recovs)))
+    recovs[is.infinite(recovs)] <- nrow(diff_model)
+  make_network_measure(mean(recovs, na.rm = TRUE),
                        attr(diff_model, "network"))
 }
 
