@@ -191,6 +191,13 @@ is_twomode.numeric <- function(.data) {
   return(FALSE)
 }
 
+#' @export
+is_twomode.list <- function(.data) {
+  if(is_list(.data)){
+    is_twomode(.data[[1]])
+  }
+}
+
 #' @rdname is_format
 #' @importFrom igraph is_weighted
 #' @examples
@@ -290,6 +297,13 @@ is_labelled.data.frame <- function(.data) {
   is.character(.data[,1]) & is.character(.data[,2])
 }
 
+#' @export
+is_labelled.list <- function(.data) {
+  if(is_list(.data)){
+    is_labelled(.data[[1]])
+  }
+}
+
 #' @rdname is_format
 #' @importFrom igraph edge_attr_names
 #' @examples
@@ -356,6 +370,13 @@ is_complex.data.frame <- function(.data) {
 #' @export
 is_complex.network <- function(.data) {
   network::has.loops(.data)
+}
+
+#' @export
+is_complex.list <- function(.data) {
+  if(is_list(.data)){
+    is_complex(.data[[1]])
+  }
 }
 
 #' @rdname is_format 
