@@ -701,20 +701,32 @@ grapht(play_diffusion(rd, seeds = 10, latency = 0.25, recovery = 0.2))
                                  # transmissibility = 0.8))
 ```
 
-## Investigate learning through simulation
+## Learning models
 
-Lastly, we're going to consider a different kind of model:
+The three strategies for hindering contagion mentioned earlier
+usually rely on nodes' voluntary participation:
+they must accept that vaccination, medication, or behavioral change is necessary
+to combat the contagion.
+
+Lastly, we're going to consider a rather simple type of learning model:
 a DeGroot learning model.
+A question often asked of these kinds of models is whether,
+despite heterogeneous initial beliefs, those beliefs will converge through 
+(network) interaction.
 As you will recall, a network that is strongly connected and aperiodic
 will converge to a consensus of (any) beliefs entered.
 
 ### Expectations of convergence and consensus 
 
-Let's try this out on the `ison_networkers` dataset included in the package.
-First of all, check whether the network is _connected_ and _aperiodic_ via the following functions:
+Let's try this out on the `ison_networkers` dataset of communication 
+among network academics.
+Perhaps we wish to get them to change their local networks/behavior,
+but they have different beliefs about whether this will make a difference.
+To see whether this network will converge to consensus, 
+check whether the network is _connected_ and _aperiodic_:
 
-+ `is_connected()`: Tests whether network is weakly connected if the network is *undirected* or strongly connected if directed.
-+ `is_aperiodic()`: Tests whether network is aperiodic, meaning there is no integer k > 1 that divides the length of every cycle of the graph.
++ `is_connected()` marks whether network is weakly connected if the network is *undirected* or strongly connected if directed.
++ `is_aperiodic()` marks whether network is aperiodic, meaning there is no integer k > 1 that divides the length of every cycle of the graph.
 
 ```{r aperiod, exercise = TRUE, purl = FALSE}
 
@@ -727,13 +739,13 @@ First of all, check whether the network is _connected_ and _aperiodic_ via the f
 
 ```{r aperiod-solution}
 is_connected(ison_networkers)
-is_aperiodic(ison_networkers)
+is_aperiodic(ison_networkers) # this can take a few seconds
 ```
 
 ```{r consens-interp, echo = FALSE, purl = FALSE}
 question("Based on these results, would you expect this network to converge to a consensus?",
   answer("No"),
-  answer("Yes", correct = TRUE, message = "Only with a strongly connected, aperiodic network will there be convergence to a single consensus."),
+  answer("Yes", correct = TRUE, message = "A strongly connected, aperiodic network will converge to a single consensus."),
   random_answer_order = TRUE,
   allow_retry = TRUE
 )
@@ -777,7 +789,7 @@ plot(____)
 ```{r degroot-solution}
 beliefs <- rbinom(net_nodes(ison_networkers), 1, prob = 0.25)
 ison_networkers %>% mutate(beliefs = beliefs) %>% graphr(node_color = "beliefs")
-netlearn <- play_learning(ison_networkers, beliefs)
+(netlearn <- play_learning(ison_networkers, beliefs))
 plot(netlearn)
 ```
 
