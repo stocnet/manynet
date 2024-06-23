@@ -675,7 +675,10 @@ graphs <- function(netlist, waves,
                    based_on = c("first", "last", "both"), ...) {
   thisRequires("patchwork")
   based_on <- match.arg(based_on)
-  if (any(class(netlist) == "diff_model")) netlist <- to_waves(netlist)
+  if (any(class(netlist) == "diff_model")){
+    if (is_list(attr(netlist, "network"))) netlist <- attr(netlist, "network") else
+        netlist <- to_waves(netlist)
+  } 
   if (missing(waves)) {
     if (length(netlist) > 4) {
       netlist <- netlist[c(1, length(netlist))]

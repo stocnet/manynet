@@ -169,18 +169,26 @@ play_diffusion <- function(.data,
   time = 0 # starting at 0
   # initialise events table
   events <- data.frame(t = time, nodes = seeds, event = "I", exposure = NA)
+  if(!is_list(.data)) sinit <- sum(node_is_exposed(.data, infected)) else 
+    if(is_list(.data)) sinit <- sum(node_is_exposed(.data[[1]], infected))
   # initialise report table
   report <- data.frame(t = time,
                        n = n,
                        S = n - (length(latent) + length(infected) + length(recovered)),
-                       s = sum(node_is_exposed(.data, infected)),
+                       s = sinit,
                        E = length(latent),
                        I_new = length(seeds),
                        I = length(infected),
                        R = length(recovered))
-  if(is.null(contact)) net <- as_tidygraph(.data) else 
-    net <- as_tidygraph(contact)
   repeat{ # At each time step:
+    # update network, if necessary
+    if(is_list(.data)){
+      if(time > length(.data)) break
+      net<- .data[[max(time,1)]]
+    } else {
+      if(is.null(contact)) net <- as_tidygraph(.data) else 
+        net <- as_tidygraph(contact)
+    }
     # some who have already recovered may lose their immunity:
     waned <- recovered[stats::rbinom(length(recovered), 1, waning)==1]
     # some may recover:
