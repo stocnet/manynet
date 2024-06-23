@@ -66,17 +66,13 @@ Ok, great! That's made a nice little lattice network.
 Next we want to play a diffusion process _on_ this network.
 To do this, we just need to run `play_diffusion()`,
 and assign the result.
-
-```{r lat_diff, exercise = TRUE, exercise.setup = "clattice", purl = FALSE}
-lat_diff <- play_diffusion(lat)
-```
-
-We can investigate the resulting object in a few ways.
+Then we can investigate the resulting object in a few ways.
 The first way is simply to print the result by calling the object.
 The other way is to unpack the result by calling for its summary.
 <!-- different name for this function? -->
 
-```{r latticedres, exercise = TRUE, exercise.setup = "lat_diff", purl = FALSE}
+```{r lat_diff, exercise = TRUE, exercise.setup = "clattice"}
+lat_diff <- play_diffusion(lat)
 lat_diff
 summary(lat_diff)
 ```
@@ -202,7 +198,7 @@ question("Does the structure of the network matter for whether and when a diffus
 )
 ```
 
-### Free coding example: US States
+### Free play: US States
 
 Run an influence cascade on US states' geographic contiguity in `ison_usstates`.
 You can start the infection in California by specifying `seeds = 5`.
@@ -244,11 +240,7 @@ Let's see what the results are if you play four different diffusions:
 - `seeds = 1:2, thresholds = 2`
 - `seeds = c(1,16), thresholds = 2`
 
-```{r complex, exercise = TRUE, exercise.setup = "clattice", purl = FALSE}
-
-```
-
-```{r complex-solution}
+```{r complex, exercise = TRUE}
 rg <- create_ring(32, width = 2)
 plot(play_diffusion(rg, seeds = 1, thresholds = 1))/
 plot(play_diffusion(rg, seeds = 1, thresholds = 2))/
@@ -278,12 +270,12 @@ A threshold of 2 would be easy to surpass for particularly well connected nodes,
 but impossible for pendants.
 Let's see what happens when we use this threshold on a scale-free network instead.
 
-```{r sfcomplex, exercise = TRUE, exercise.setup = "create", purl = FALSE}
+```{r sfcomplex, exercise = TRUE, purl = FALSE}
 
 ```
 
 ```{r sfcomplex-solution}
-plot(play_diffusion(generate_scalefree(32, 0.025), seeds = 1:8, thresholds = 2))
+plot(play_diffusion(generate_scalefree(32, 0.025), seeds = 1, thresholds = 2))
 ```
 
 ```{r sfcomplex-interp, echo=FALSE, purl = FALSE}
@@ -305,7 +297,7 @@ This is sometimes called a fractional threshold model or complex diffusion.
 Try thresholds of 0.1, 0.25, and 0.5 on two seeds and 10 steps
 on the scale-free networks we have been using here.
 
-```{r sfprop, exercise = TRUE, exercise.setup = "create", purl = FALSE}
+```{r sfprop, exercise = TRUE, purl = FALSE}
 
 ```
 
@@ -344,7 +336,7 @@ Something is going around Middle-Earth,
 but different races have different resistances (i.e. thresholds).
 Let us say that there is a clear ordering to this.
 
-```{r lotr-resist, exercise=TRUE, purl = FALSE}
+```{r lotr-resist, exercise=TRUE}
 lotr_resist <- ison_lotr %>% mutate(resistance = dplyr::case_when(Race == "Dwarf" ~ 2,
                                                    Race == "Elf" ~ 4,
                                                    Race == "Ent" ~ 5,
@@ -359,6 +351,13 @@ grapht(play_diffusion(lotr_resist, thresholds = "resistance"))
 
 Fun! Now how would you interpret what is going on here?
 Can you rewrite the code above so that fractional thresholds are used?
+
+### Free play: Lord of the Rings
+
+```{r lotr-free, exercise=TRUE, exercise.setup = "lotr-resist"}
+
+
+```
 
 <!-- ## Independent cascades -->
 
@@ -377,7 +376,7 @@ To see whether this is true,
 try seeding the innovation at the first and sixteenth (middle) node 
 and see whether the result is any different.
 
-```{r ring2, exercise = TRUE, exercise.setup = "create", purl = FALSE}
+```{r ring2, exercise = TRUE, purl = FALSE}
 
 ```
 
@@ -397,29 +396,30 @@ Now what if we seed the network with more than one infected node?
 Choosing the first four nodes we can see that the process is jump-started,
 but doesn't really conclude that much faster.
 
-```{r ring3, exercise = TRUE, exercise.setup = "create", purl = FALSE}
+```{r ring3, exercise = TRUE, purl = FALSE}
 
 ```
 
 ```{r ring3-hint, purl = FALSE}
 # Remember we want to see the first four nodes.
 
-plot(play_diffusion(rg, seeds = ____))
+plot(play_diffusion(create_ring(32, width = 2), seeds = ____))
 ```
 
 ```{r ring3-solution}
-rg_d3 <- play_diffusion(rg, seeds = 1:4)
+rg_d3 <- play_diffusion(create_ring(32, width = 2), seeds = 1:4)
 plot(rg_d3)
 
 # graph the diffusion within the network
-graphs(play_diffusion(rg, seeds = 1:4), layout = "circle")
+graphs(play_diffusion(create_ring(32, width = 2), seeds = 1:4), 
+       layout = "circle")
 ```
 
 But what if we seed the network at three different places?
 Here we can use `node_is_random()` to randomly select some nodes to seed.
 Try it with four randomly-selected nodes and see what you get.
 
-```{r ring4, exercise = TRUE, exercise.setup = "create", purl = FALSE}
+```{r ring4, exercise = TRUE, purl = FALSE}
 
 ```
 
@@ -427,11 +427,13 @@ Try it with four randomly-selected nodes and see what you get.
 # We will be using the node_is_random() within the seed argument to random select 
 # 4 nodes
 
-plot(play_diffusion(rg, seeds = ____(rg, ____)))
+plot(play_diffusion(create_ring(32, width = 2), 
+                    seeds = ____(create_ring(32, width = 2), ____)))
 ```
 
 ```{r ring4-solution}
-plot(play_diffusion(rg, seeds = node_is_random(rg, 4)))
+plot(play_diffusion(create_ring(32, width = 2), 
+                    seeds = node_is_random(create_ring(32, width = 2), 4)))
 ```
 
 ```{r ring4-interp, echo = FALSE, purl = FALSE}
@@ -448,21 +450,21 @@ is a crucial question in network intervention studies.
 Now let's see whether where the infection is seeded matters
 when the network has a different structure.
 Here let's play and plot two diffusion on the lattice network,
-one with the first node as seed and again one on the last.
+one with the first node as seed and again one on the middle.
 
-```{r lattice, exercise = TRUE, exercise.setup = "create", purl = FALSE}
+```{r lattice, exercise = TRUE, exercise.setup = "clattice", purl = FALSE}
 
 ```
 
 ```{r lattice-solution}
-plot(play_diffusion(la, seeds = 1))/
-plot(play_diffusion(la, seeds = 16))
-la %>%
+plot(play_diffusion(lat, seeds = 1))/
+plot(play_diffusion(lat, seeds = 16))
+lat %>%
   add_node_attribute("color", c(1, rep(0, 14), 2, rep(0, 16))) %>%
   graphr(node_color = "color")
 
 # visualise diffusion in lattice graph
-grapht(play_diffusion(la, seeds = 16), layout = "grid", keep_isolates = FALSE)
+grapht(play_diffusion(lat, seeds = 16), layout = "grid", keep_isolates = FALSE)
 ```
 
 ```{r lattice-interp, echo = FALSE, purl = FALSE}
@@ -484,17 +486,20 @@ Similar to the previous examples, we will be using the following functions withi
 
 We could use these on degree centrality, or perhaps some other kind of centrality?
 
-```{r scale, exercise = TRUE, exercise.setup = "create", purl = FALSE}
-
-```
-
-```{r scale-solution}
+```{r sf, exercise=TRUE}
 sf <- generate_scalefree(32, 0.025)
 sf %>%
   as_tidygraph() %>%
   mutate(degree = ifelse(node_is_max(node_degree(sf)) == TRUE, "max",
                       ifelse(node_is_min(node_degree(sf)) == TRUE, "min", "others"))) %>%
   graphr(node_color = "degree") + guides(color = "legend") + labs(color = "degree")
+```
+
+```{r scale, exercise = TRUE, purl = FALSE, exercise.setup="sf"}
+
+```
+
+```{r scale-solution}
 plot(play_diffusion(sf, seeds = 10, steps = 10)) / 
 plot(play_diffusion(sf, seeds = node_is_random(sf), steps = 10)) /
 plot(play_diffusion(sf, seeds = node_is_max(node_degree(sf)), steps = 10)) /
