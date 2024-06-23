@@ -758,6 +758,38 @@ After all, those who built up natural immunity (recovered) may have already
 protected some parts of the network from complete infection.
 But then...
 
+### How many people do we need to vaccinate?
+
+We can identify how many people need to be vaccinated through 
+the Herd Immunity Threshold or HIT.
+HIT indicates the threshold at which the reduction of susceptible members 
+of the network means that infections will no longer keep increasing, 
+allowing herd immunity to be achieved.
+`net_immunity()` gives us the proportion of the population that would need
+to be recovered or vaccinated for the network to have herd immunity.
+
+```{r immunity, exercise = TRUE, exercise.setup = "r0"}
+# Herd Immunity Threshold
+net_immunity(rd_diff)
+net_immunity(rd_diff, normalized = FALSE)
+```
+
+In this model, the HIT score indicates around 23% of nodes in the network 
+would need to be vaccinated or otherwise protected to achieve herd immunity.
+The unnormalised version gives the number of nodes that would need to be vaccinated: 8 nodes.
+Ok, so let's try this strategy.
+
+```{r vaccinate, exercise = TRUE, exercise.setup = "diffusions"}
+rd_diff_vacc <- play_diffusion(rando, transmissibility = 0.25, recovery = 0.05, 
+                               immune = 2:9)
+plot(rd_diff_vacc)
+net_infection_total(rd_diff_vacc)
+```
+
+We can see that we more rapidly reach a situation in which vaccinated and
+naturally recovered nodes protect many more susceptible nodes.
+(Your results may vary a bit since these are stochastic models).
+
 
 <!-- ## Inferring from empirics -->
 
