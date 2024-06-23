@@ -1,8 +1,13 @@
 make_diff_model <- function(events, report, .data) {
   class(report) <- c("diff_model", class(report))
   attr(report, "events") <- events
-  attr(report, "mode") <- node_is_mode(.data)
-  attr(report, "network") <- as_tidygraph(.data)
+  if(is_list(.data)){
+    attr(report, "mode") <- node_is_mode(.data[[1]])
+    attr(report, "network") <- .data
+  } else {
+    attr(report, "mode") <- node_is_mode(.data)
+    attr(report, "network") <- as_tidygraph(.data)
+  }
   report
 }
 
