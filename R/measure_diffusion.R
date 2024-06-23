@@ -368,13 +368,19 @@ node_thresholds <- function(diff_model, normalized = TRUE, lag = 1){
   if(is_labelled(net))
     out <- stats::setNames(out$exposure, node_names(net)[out$nodes]) else
       out <- stats::setNames(out$exposure, out$nodes)
-  if(length(out) != manynet::net_nodes(net)){
-    full <- stats::setNames(rep(Inf, manynet::net_nodes(net)), 
-                     manynet::node_names(net))
+  if(length(out) != net_nodes(net)){
+    if(is_labelled(net)){
+      full <- stats::setNames(rep(Inf, net_nodes(net)), 
+                              node_names(net))
+    } else {
+      full <- stats::setNames(rep(Inf, net_nodes(net)), 
+                              1:net_nodes(net))
+    } 
     full[match(names(out), names(full))] <- out
     out <- full
   }
-  out <- out[match(node_names(net), names(out))]
+  if(is_labelled(net))
+    out <- out[match(node_names(net), names(out))]
   if(normalized) out <- out / node_deg(net)
   make_node_measure(out, net)
 }
