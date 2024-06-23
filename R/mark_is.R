@@ -102,8 +102,12 @@ is_list <- function(.data) {
 #' is_longitudinal(create_tree(5, 3))
 #' @export
 is_longitudinal <- function(.data) {
-  atts <- igraph::edge_attr_names(as_igraph(.data))
-  "wave" %in% atts | "panel" %in% atts
+  if(is_manynet(.data)) {
+    atts <- igraph::edge_attr_names(as_igraph(.data))
+    return("wave" %in% atts | "panel" %in% atts)
+  } else if(is_list(.data)){
+    all(lapply(.data, net_nodes)==net_nodes(.data[[1]]))
+  } 
 }
 
 #' @rdname is
