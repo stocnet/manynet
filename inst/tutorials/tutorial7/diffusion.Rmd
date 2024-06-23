@@ -547,19 +547,10 @@ Try this out with our well-mixed random network, 10 steps, 5 times,
 and with a `transmissibility` parameter set to 0.5
 to indicate that in only 1/2 cases is contagion successful.
 
-```{r diffusions, exercise = TRUE, exercise.setup = "create", purl = FALSE}
-
-```
-
-```{r diffusions-hint, purl = FALSE}
-# Remember, we are looking at the random network from before, "rd", with 
-# a transmissibility parameter of 0.5, 5 times, and 10 steps.
-
-plot(play_diffusions(____, transmissibility = ____, times = ____, steps = ____))
-```
-
-```{r diffusions-solution}
-plot(play_diffusions(rd, transmissibility = 0.5, times = 5, steps = 10))
+```{r diffusions, exercise = TRUE}
+rando <- generate_random(32, 0.1)
+graphr(rando)
+plot(play_diffusions(rando, transmissibility = 0.5, times = 5, steps = 10))
 ```
 
 Note that in this plot the number of new infections is not plotted
@@ -580,7 +571,7 @@ Let's try a rate of recovery of 0.20,
 which means that it'll take an infected node on average
 5 steps (days?) to recover.
 
-```{r sir, exercise = TRUE, purl = FALSE}
+```{r sir, exercise = TRUE, exercise.setup = "diffusions", purl = FALSE}
 
 ```
 
@@ -592,7 +583,7 @@ plot(play_diffusions(____, recovery = ____))
 ```
 
 ```{r sir-solution}
-plot(play_diffusions(rd, recovery = 0.2))
+plot(play_diffusions(rando, recovery = 0.2))
 ```
 
 What we see in these kinds of models is typically a spike in infections
@@ -602,12 +593,12 @@ If you get moderately different results each time,
 try increasing the number of `times` the simulation is run,
 which should average out these differences and make the results more reliable.
 
-```{r sirtimes, exercise = TRUE, purl = FALSE}
+```{r sirtimes, exercise = TRUE, exercise.setup = "diffusions", purl = FALSE}
 
 ```
 
 ```{r sirtimes-solution}
-plot(play_diffusions(rd, recovery = 0.2, times = 100))
+plot(play_diffusions(rando, recovery = 0.2, times = 100))
 ```
 
 ### SIRS models
@@ -619,16 +610,16 @@ This means that after twenty steps (on average),
 a recovered node may lose its recovered status and become susceptible again.
 Play a single diffusion so that you can see what's going on in a particular run.
 
-```{r sirs, exercise = TRUE, purl = FALSE}
+```{r sirs, exercise = TRUE, exercise.setup = "diffusions", purl = FALSE}
 
 ```
 
 ```{r sirs-solution}
-plot(play_diffusion(rd, recovery = 0.2, waning = 0.05))
-
-# visualise diffusion within random graph
-grapht(play_diffusion(rd, seeds = c(1,10), recovery = 0.2, waning = 0.05))
+plot(play_diffusion(rando, recovery = 0.2, waning = 0.05))
 ```
+
+<!-- # visualise diffusion within random graph -->
+<!-- grapht(play_diffusion(rd, seeds = c(1,10), recovery = 0.2, waning = 0.05)) -->
 
 ```{r sirs-interp, echo = FALSE, purl = FALSE}
 question("Does the process reach a stable state?",
@@ -641,8 +632,8 @@ Depending on your particular simulation,
 there might be some variation,
 so let's run this same diffusion but multiple (100?) times.
 
-```{r sirstimes-solution, exercise = TRUE}
-plot(play_diffusions(rd, recovery = 0.2, waning = 0.05, times = 100))
+```{r sirstimes-solution, exercise.setup = "diffusions", exercise = TRUE}
+plot(play_diffusions(rando, recovery = 0.2, waning = 0.05, times = 100))
 ```
 
 ```{r sirstimes-interp, echo = FALSE, purl = FALSE}
@@ -665,13 +656,13 @@ This means that a latency of 0 means that exposure immediately renders the node 
 A latency of 0.75 means that it will take the node approximately 4 days (1/1-0.75 = 1/0.25 = 4) to become infectious.
 Play a single diffusion so that you can see what's going on in a particular run.
 
-```{r seir, exercise = TRUE, exercise.setup = "create", purl = FALSE}
+```{r seir, exercise = TRUE, exercise.setup = "diffusions", purl = FALSE}
 
 ```
 
 ```{r seir-solution}
 set.seed(123)
-plot(play_diffusion(rd, seeds = 10, latency = 0.25, recovery = 0.2))
+plot(play_diffusion(rando, seeds = 10, latency = 0.25, recovery = 0.2))
 
 # visualise diffusion with latency and recovery
 grapht(play_diffusion(rd, seeds = 10, latency = 0.25, recovery = 0.2))
@@ -679,28 +670,30 @@ grapht(play_diffusion(rd, seeds = 10, latency = 0.25, recovery = 0.2))
 
 ## Inferring from empirics
 
-Simulations are very useful for exploring diffusion dynamics.
-Many of these tools can be used for examining observed diffusion dynamics
-too.
-Let us borrow the `medInnovationsDiffNet` dataset from `{netdiffuseR}`:
+<!-- ## Inferring from empirics -->
+
+<!-- Simulations are very useful for exploring diffusion dynamics. -->
+<!-- Many of these tools can be used for examining observed diffusion dynamics -->
+<!-- too. -->
+<!-- Let us borrow the `medInnovationsDiffNet` dataset from `{netdiffuseR}`: -->
 
 ```{r netdiff}
-medInn <- as_diff_model(netdiffuseR::medInnovationsDiffNet)
-plot(medInn)
+# medInn <- as_diffusion(netdiffuseR::medInnovationsDiffNet)
+# plot(medInn)
 ```
 
-In the plot we can observe a relatively constant rate of adoption.
+<!-- In the plot we can observe a relatively constant rate of adoption. -->
 
-### Describing an empirical diffusion process
+<!-- ### Describing an empirical diffusion process -->
 
-**Not currently working**
+<!-- **Not currently working** -->
 
 ```{r inferthresh}
-node_thresholds(medInn)
+# node_thresholds(medInn)
 ```
 
 
-### Comparing to an empirical diffusion process
+<!-- ### Comparing to an empirical diffusion process -->
 
 ```{r something}
 # test_fit(medInn, play_diffusions(as_tidygraph(medInn), 
