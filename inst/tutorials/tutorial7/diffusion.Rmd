@@ -697,10 +697,67 @@ set.seed(123)
 plot(play_diffusion(rando, seeds = 10, latency = 0.25, recovery = 0.2))
 
 # visualise diffusion with latency and recovery
-grapht(play_diffusion(rd, seeds = 10, latency = 0.25, recovery = 0.2))
+grapht(play_diffusion(rando, seeds = 10, latency = 0.25, recovery = 0.2))
 ```
 
-## Inferring from empirics
+### Make it stop
+
+In this section, we are interested in how to most effectively _halt_ 
+a diffusion process.
+
+An attribute's reproduction number, or $R_0$, is a measure of the rate of infection
+or how quickly that attribute will reproduce period over period.
+It is calculated as $R_0 = \min\left(\frac{T}{1/L}, \bar{k}\right)$,
+i.e. the transmissibility (proportion of susceptible nodes that are infected at each time period) over the average recovery or infection length (average length of time nodes remain infected).  
+
+It can be interpreted as follows:
+- Where $R_0$ > 1, the 'disease' will 'infect' more and more nodes in the network.  
+- Where $R_0$ < 1, the 'disease' will not sustain itself and eventually die out.  
+- Where $R_0$ = 1, the 'disease' will continue as endemic, if conditions allow.  
+
+So how can we establish the $R_0$ here?
+We can use `net_reproduction()`.
+
+```{r r0, exercise = TRUE, exercise.setup = "diffusions"}
+rd_diff <- play_diffusion(rando, transmissibility = 0.25, recovery = 0.05)
+plot(rd_diff)
+# R-nought
+net_reproduction(rd_diff)
+net_infection_total(rd_diff)
+```
+
+```{r r0-interp, echo = FALSE, purl = FALSE}
+question("Select any true statements you can make about this R-nought result:",
+         answer("An epidemic is likely to occur.", correct = TRUE),
+         answer("There are not enough seed nodes to start an epidemic."),
+         answer("Most nodes get infected.", correct = TRUE),
+        allow_retry = TRUE,
+        random_answer_order = TRUE)
+```
+
+Ok, so there's (probably: you may have slightly different results) a danger here.
+The relationship between the reproduction number and the observed infection
+should be clear.
+The $R_0$ is over 1 and the 'disease' seems to burn through the network
+infecting almost everyone.
+How can we try to resist or halt such a disease?
+
+```{r stymie-interp, echo = FALSE, purl = FALSE}
+question("Let's review our options. What can we do to stymie this disease?",
+         answer("Reduce the number of susceptible people", correct = TRUE, 
+                message = "Yes, let's vaccinate!"),
+         answer("Reduce recovery time", correct = TRUE, 
+                message = "Yes, let's medicate!"),
+         answer("Reduce the transmission rate", correct = TRUE,
+                message = "Yes, let's try and change behaviour!"),
+        allow_retry = TRUE)
+```
+
+Ok, let's start with option 1.
+After all, those who built up natural immunity (recovered) may have already
+protected some parts of the network from complete infection.
+But then...
+
 
 <!-- ## Inferring from empirics -->
 
