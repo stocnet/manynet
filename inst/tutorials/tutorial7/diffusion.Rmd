@@ -520,6 +520,38 @@ question("Which of these four led to the fastest diffusion process?",
         random_answer_order = TRUE)
 ```
 
+### Other strategies
+
+There are many other strategies considered in the diffusion literature.
+Many of them are implemented here and might be considered as strategies:
+
+- `node_is_independent()` identifies nodes belonging to the largest independent set
+- `node_is_cutpoint()` identifies nodes at the articulation points in a network
+- `node_is_core()` identifies nodes that are members of the network's core
+- `node_is_fold()` identifies nodes that are in a structural fold between two or more triangles
+- `node_is_mentor()` identifies high indegree nodes as mentors
+
+```{r indepsets, exercise = TRUE, exercise.setup="sf"}
+sf %>% mutate_nodes(ni = node_is_independent()) %>% graphr(node_color = "ni")
+plot(play_diffusion(sf, seeds = node_is_independent(sf), steps = 10))
+```
+
+### Advertising adoption
+
+Another strategy often employed is that of advertising how much adoption
+there already is in the network globally.
+The mechanism is that as individuals see the _global_ prevalence of adoption
+increasing, they might be inclined to adopt 
+even if they are not (yet) in direct contact.
+For example, these lawyers might accept word-of-mouth directly from two colleagues,
+but are also attuned to common practice irrespective of whether direct colleagues
+have adopted the innovation.
+
+```{r prevalence, exercise=TRUE}
+plot(play_diffusion(ison_lawfirm, thresholds = 2, prevalence = 0.005),
+     all_steps = FALSE)
+```
+
 ## Compartmental models
 
 So far we've been looking at variations on a 
