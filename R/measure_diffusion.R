@@ -248,7 +248,7 @@ net_infection_complete <- function(diff_model){
 #' @export
 net_infection_total <- function(diff_model, normalized = TRUE){
   diff_model <- as_diffusion(diff_model)
-  out <- diff_model$I[length(diff_model$I)]
+  out <- sum(diff_model$I_new)
   if(normalized) out <- out / diff_model$n[length(diff_model$n)]
   make_network_measure(out, attr(diff_model, "network"))
 }
