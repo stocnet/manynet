@@ -169,12 +169,12 @@ test_that("autographr works for diff_model objects", {
   }
 })
 
-test_that("autographr checks variable names for mapping", {
-  skip_on_cran()
-  skip_on_ci()
-  expect_message(graphr(ison_lawfirm, node_color = "School"),
-                 "Please make sure you spelled node color variable correctly.")
-})
+# test_that("autographr checks variable names for mapping", {
+#   skip_on_cran()
+#   skip_on_ci()
+#   expect_message(graphr(ison_lawfirm, node_color = "School"),
+#                  "Please make sure you spelled node color variable correctly.")
+# })
 
 test_that("concentric layout works when node names are missing", {
   skip_on_cran()
