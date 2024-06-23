@@ -790,6 +790,25 @@ We can see that we more rapidly reach a situation in which vaccinated and
 naturally recovered nodes protect many more susceptible nodes.
 (Your results may vary a bit since these are stochastic models).
 
+### Free play: Grey's Anatomy
+
+Let's try this out on the `ison_greys` dataset,
+a dataset of character 'hook-ups' in the Grey's Anatomy TV show.
+You can just concentrate on the giant component (which is plenty incestuous!).
+We could say that there's a new, highly infectious disease transmittable
+through hooking up and, I have it on authority, it all starts with Mark Sloan.
+
+```{r greys, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r greys-hint}
+greys <- to_giant(ison_greys)
+graphr(greys)
+graphs(play_diffusion(greys, seeds = "Mark Sloan", transmissibility = 0.25,
+                      latency = 0.25, recovery = 0.2, waning = 0.2), 
+       waves = c(1,5,10,15), labels = FALSE)
+```
 
 <!-- ## Inferring from empirics -->
 
