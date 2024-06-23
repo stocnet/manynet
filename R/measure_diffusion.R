@@ -229,6 +229,8 @@ net_hazard <- function(diff_model){
 
 #' @rdname measure_infection 
 #' @examples
+#'   smeg <- generate_smallworld(15, 0.025)
+#'   smeg_diff <- play_diffusion(smeg, recovery = 0.2)
 #'   net_infection_complete(smeg_diff)
 #' @export
 net_infection_complete <- function(diff_model){
