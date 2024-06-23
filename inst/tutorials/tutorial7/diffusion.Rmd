@@ -448,62 +448,72 @@ Where the innovation/disease is optimally seeded to
 accelerate or decelerate diffusions 
 is a crucial question in network intervention studies.
 
-### Advertising adoption
+Now let's see whether where the infection is seeded matters
+when the network has a different structure.
+Here let's play and plot two diffusion on the lattice network,
+one with the first node as seed and again one on the last.
 
-Another strategy often employed is that of advertising how much adoption
-there already is in the network globally.
-
-## Make it stop
-
-In this section, we are interested in how to most effectively halt 
-a diffusion process.
-
-: How to stop a fire, or where to vaccinate?
-
-### R-nought and herd immunity
-
-An attribute's reproduction number, or $R_0$, is a measure of the rate of infection
-or how quickly that attribute will reproduce period over period.
-It is calculated as $R_0 = \min\left(\frac{T}{1/IL}, \bar{k}\right)$,
-i.e. the transmissibility (proportion of susceptible nodes that are infected at each time period) over the average infection length (average length of time nodes remain infected).  
-
-It can be interpreted as follows:
-- Where $R_0$ > 1, the 'disease' will 'infect' more and more nodes in the network.  
-- Where $R_0$ < 1, the 'disease' will not sustain itself and eventually die out.  
-- Where $R_0$ = 1, the 'disease' will continue as endemic, if conditions allow.  
-
-So how can we establish the $R_0$ here?
-
-```{r r0, exercise = TRUE, exercise.setup = "create"}
-set.seed(123)
-rd_diff <- play_diffusion(rd, seeds = 10, recovery = 0.1)
-plot(rd_diff)
-# R-nought
-net_reproduction(rd_diff)
-```
-
-The relationship between the reproduction number and the observed infection
-should be clear.
-
-```{r immunity, exercise = TRUE, exercise.setup = "r0"}
-# Herd Immunity Threshold
-net_immunity(rd_diff)
-net_immunity(rd_diff, normalized = FALSE)
-```
-
-```{r vaccinate, exercise = TRUE, exercise.setup = "create"}
+```{r lattice, exercise = TRUE, exercise.setup = "create", purl = FALSE}
 
 ```
 
-The Herd Immunity Threshold or HIT indicates the threshold at which the reduction of susceptible members of the network means that infections will no longer keep increasing, allowing herd immunity to be achieved.
-In this model, the HIT score of 0.94 indicates that 94% of nodes in the network would need to be vaccinated or otherwise protected to achieve herd immunity.
-Multiplying the HIT score with the number of nodes in the network (32 in this example) gives the number of nodes that would need to be vaccinated: 31 nodes.
+```{r lattice-solution}
+plot(play_diffusion(la, seeds = 1))/
+plot(play_diffusion(la, seeds = 16))
+la %>%
+  add_node_attribute("color", c(1, rep(0, 14), 2, rep(0, 16))) %>%
+  graphr(node_color = "color")
 
-```{r r0-interp, echo = FALSE, purl = FALSE}
-question("Select any true statements you can make about this R-nought result:",
-         answer("An epidemic is likely to occur.", correct = TRUE),
-         answer("There are not enough seed nodes to start an epidemic."),
-         answer("If the recovery rate was instead a mortality rate, it would make no difference.", correct = TRUE),
+# visualise diffusion in lattice graph
+grapht(play_diffusion(la, seeds = 16), layout = "grid", keep_isolates = FALSE)
+```
+
+```{r lattice-interp, echo = FALSE, purl = FALSE}
+question("Do you see any differences?",
+         answer("Yes", correct = TRUE),
+         answer("No"),
+        allow_retry = TRUE)
+```
+
+Let's try one more network type, this time the scale-free network.
+Play and plot the results over ten steps for node 10,
+random, maximum, and minimum nodes as seeds.
+
+Similar to the previous examples, we will be using the following functions within the seed argument:
+
++ `node_is_random()`: Returns a logical vector indicating a random selection of nodes as TRUE.
++ `node_is_max()`: Returns logical of which nodes hold the maximum of some measure.
++ `node_is_min()`: Returns logical of which nodes hold the minimum of some measure.
+
+We could use these on degree centrality, or perhaps some other kind of centrality?
+
+```{r scale, exercise = TRUE, exercise.setup = "create", purl = FALSE}
+
+```
+
+```{r scale-solution}
+sf <- generate_scalefree(32, 0.025)
+sf %>%
+  as_tidygraph() %>%
+  mutate(degree = ifelse(node_is_max(node_degree(sf)) == TRUE, "max",
+                      ifelse(node_is_min(node_degree(sf)) == TRUE, "min", "others"))) %>%
+  graphr(node_color = "degree") + guides(color = "legend") + labs(color = "degree")
+plot(play_diffusion(sf, seeds = 10, steps = 10)) / 
+plot(play_diffusion(sf, seeds = node_is_random(sf), steps = 10)) /
+plot(play_diffusion(sf, seeds = node_is_max(node_degree(sf)), steps = 10)) /
+plot(play_diffusion(sf, seeds = node_is_min(node_degree(sf)), steps = 10))
+
+# visualise diffusion in scalefree network
+graphs(play_diffusion(sf, seeds = node_is_min(node_degree(sf)), steps = 10))
+grapht(play_diffusion(sf, seeds = 16, steps = 10))
+```
+
+```{r mindeg-interp, echo = FALSE, purl = FALSE}
+question("Which of these four led to the fastest diffusion process?",
+         answer("Minimum degree node(s), because there are many more nodes with the minimum degree.", correct = TRUE),
+         answer("Node 10 as seed, because it is the most influential."),
+         answer("Maximum degree node(s), because these nodes are the most influential."),
+         answer("A random node, because this time it selected a good seed."),
         allow_retry = TRUE,
         random_answer_order = TRUE)
 ```
