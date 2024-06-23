@@ -25,7 +25,7 @@ sf <- generate_scalefree(nw, 0.025)
 sw <- generate_smallworld(nw, 0.025)
 ```
 
-## Diffusion models
+## This tutorial
 
 In this tutorial, we're going to look at several contagion or diffusion processes 
 and how they operate across various networks.
@@ -41,7 +41,7 @@ By the end of this tutorial, you will be able to:
 - understand the role of seeds for network intervention
 - understand compartmental models
 
-## Influence cascades
+## Influence cascade models
 
 The simplest kind of diffusion process is an independent cascading model,
 where any contact with the attribute (disease or innovation) 
@@ -190,10 +190,10 @@ But there is an easier way.
 Play these same diffusions again, this time nesting the call within `net_complete_infection()`.
 
 ```{r completeinfection, exercise = TRUE, purl = FALSE}
-net_complete_infection(play_diffusion(create_ring(32, width = 2)))
-net_complete_infection(play_diffusion(generate_random(32, 0.15)))
-net_complete_infection(play_diffusion(generate_scalefree(32, 0.025)))
-net_complete_infection(play_diffusion(generate_smallworld(32, 0.025)))
+net_infection_complete(play_diffusion(create_ring(32, width = 2)))
+net_infection_complete(play_diffusion(generate_random(32, 0.15)))
+net_infection_complete(play_diffusion(generate_scalefree(32, 0.025)))
+net_infection_complete(play_diffusion(generate_smallworld(32, 0.025)))
 ```
 
 ```{r struct-interp, echo = FALSE, purl = FALSE}
@@ -214,17 +214,17 @@ You can start the infection in California by specifying `seeds = 5`.
 
 ```
 
-```{r usstates-solution}
+```{r usstates-hint}
 us_diff <- play_diffusion(ison_usstates, seeds = 5)
 plot(us_diff)
 graphr(us_diff)
 grapht(us_diff)
-net_complete_infection(us_diff)
+net_infection_complete(us_diff)
 ```
 
 What's happening here? Can you interpret this?
 
-## Linear thresholds
+## Linear threshold models
 
 So far, we've been using a simple cascading diffusion model where each node
 needs only to be in contact with one infectious individual to be infected.
@@ -365,7 +365,7 @@ Can you rewrite the code above so that fractional thresholds are used?
 
 <!-- ## Independent cascades -->
 
-## Get it going
+### Get it going
 
 Let's say that you have developed an exciting new policy and
 you are keen to maximise how quickly and thoroughly it is adopted.
@@ -377,7 +377,7 @@ Since the ring network we constructed is cyclical,
 then no matter where the 'infection' starts, 
 it should diffuse throughout the whole network.
 To see whether this is true, 
-try choosing the sixteenth (middle) node 
+try seeding the innovation at the first and sixteenth (middle) node 
 and see whether the result is any different.
 
 ```{r ring2, exercise = TRUE, exercise.setup = "create", purl = FALSE}
@@ -385,14 +385,14 @@ and see whether the result is any different.
 ```
 
 ```{r ring2-solution}
-rg_d2 <- play_diffusion(rg, seeds = 16)
-plot(rg_d2)
+plot(play_diffusion(create_ring(32, width = 2), seeds = 1)) /
+  plot(play_diffusion(create_ring(32, width = 2), seeds = 16))
 ```
 
 ```{r ring2-interp, echo = FALSE, purl = FALSE}
-question("Do you see any differences?",
+question("Do you see any differences in infection?",
          answer("Yes"),
-         answer("No", correct = TRUE),
+         answer("No", correct = TRUE, message = "It doesn't matter where the innovation is seeded"),
         allow_retry = TRUE)
 ```
 
