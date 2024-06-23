@@ -817,3 +817,28 @@ question("What are some true statements about these results?",
   allow_retry = TRUE
 )
 ```
+
+### Free play: Networkers
+
+The most influential nodes in this network are those that have the
+highest eigenvector centrality.
+Which are the highest eigenvector centrality nodes in this network?
+
+```{r eigen, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r eigen-hint}
+node_eigenvector(ison_networkers)
+ison_networkers %>% 
+  mutate(who_to_convince = node_is_max(node_eigenvector(ison_networkers))) %>% 
+  graphr(node_color = who_to_convince)
+beliefs2 <- rep(0, net_nodes(ison_networkers))
+beliefs2[node_is_max(node_eigenvector(ison_networkers))] <- 1
+ison_networkers %>% mutate(beliefs = beliefs2) %>% graphr(node_color = "beliefs")
+(netlearn2 <- play_learning(ison_networkers, beliefs2))
+plot(netlearn2)
+```
+
+
+
