@@ -17,29 +17,26 @@ library(manynet)
 library(patchwork)
 library(ggplot2)
 knitr::opts_chunk$set(echo = FALSE)
-nw <- to_undirected(to_unnamed(ison_networkers))
-rg <- create_ring(nw, width = 2)
-la <- create_lattice(nw)
-rd <- generate_random(nw, with_attr = FALSE)
-sf <- generate_scalefree(nw, 0.025)
-sw <- generate_smallworld(nw, 0.025)
 ```
 
 ## This tutorial
 
-In this tutorial, we're going to look at several contagion or diffusion processes 
+This tutorial introduces several contagion or diffusion processes 
 and how they operate across various networks.
 Network structures are key to how diffusion processes play out.
 
 By the end of this tutorial, you will be able to:
 
-- 'play' a diffusion process over any kind of network
-- print, plot, graph and interpret the results
-- understand cascade models
-- understand the role of network structure on diffusion
-- understand threshold models
-- understand the role of seeds for network intervention
-- understand compartmental models
+- [ ] 'play' a diffusion process over any kind of network
+- [ ] print, plot, graph and interpret the results
+- [ ] understand cascade models
+- [ ] understand the role of network structure on diffusion
+- [ ] understand threshold models
+- [ ] understand the role of seeds for network intervention
+- [ ] understand compartmental models
+- [ ] understand the role of vaccination strategies
+- [ ] understand learning models
+- [ ] understand the role of influential nodes
 
 ## Influence cascade models
 
@@ -60,7 +57,7 @@ together with the number of nodes (of each mode) and
 the maximum number of neighbors (width) as the arguments.
 Let's create a one-mode lattice with 32 nodes, maximum width 4, and graph it using `graphr()`:
 
-```{r clattice, exercise = TRUE, purl = FALSE}
+```{r clattice, exercise = TRUE}
 lat <- create_lattice(32, width = 4)
 graphr(lat)
 ```
