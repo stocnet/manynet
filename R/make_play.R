@@ -149,7 +149,6 @@ play_diffusion <- function(.data,
                            waning = 0,
                            immune = NULL,
                            steps) {
-  thisRequires("migraph")
   n <- net_nodes(.data)
   recovered <- NULL
   if(missing(steps)) steps <- n
@@ -210,6 +209,7 @@ play_diffusion <- function(.data,
     # count exposures for each node:
     exposure <- node_exposure(net, infected)
     # identify those nodes who are exposed at or above their threshold
+    
     open_to_it <- which(exposure >= thresholds)
     newinf <- open_to_it[stats::rbinom(length(open_to_it), 1, transmissibility)==1]
     if(!is.null(recovery) & length(recovered)>0) 
@@ -397,7 +397,6 @@ play_segregation <- function(.data,
                              who_moves = c("ordered","random","most_dissatisfied"),
                              choice_function = c("satisficing","optimising", "minimising"),
                              steps) {
-  thisRequires("migraph")
   n <- net_nodes(.data)
   if(missing(steps)) steps <- n
   who_moves <- match.arg(who_moves)
