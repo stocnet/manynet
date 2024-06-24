@@ -1,11 +1,12 @@
-# manynet 0.5.0
+# manynet 1.0.0
 
 ## Package
 
 - Updated `{manynet}` logo with stocnet GitHub address and color blind safe colorway
 - Fixed bug in diffusion tutorial because of undeclared `{minMse}` dependency
 - Renamed all functions starting with the `network_*` prefix to `net_*` for conciseness
-- Migrated network measures, membership, motifs, and models from `{migraph}`
+- Migrated network measures, membership, motifs, and models' functions from `{migraph}`
+- Migrated community, position, topology, and diffusion tutorials from `{migraph}`
 
 ## Making
 
@@ -25,6 +26,7 @@ such as "weight", "sign", or "wave"
 - Added `is_attributed()` to check for non-name nodal attributes
 - Fixed issues with ordering in `node_is_latent()`, `node_is_recovered()`,
 and `node_is_infected()` (closes #71)
+- Added list methods for `is_twomode()`, `is_labelled()`, and `is_complex()`
   
 ## Mapping
 
@@ -61,9 +63,11 @@ and `node_is_infected()` (closes #71)
   `net_equivalency()`, and `net_congruency()`
   - Cohesion measures include `net_density()`, `net_components()`, `net_cohesion()`,   
   `net_adhesion()`, `net_diameter()`, `net_length()`, and `net_independence()`
-  - Diffusion measures include `net_transmissibility()`, `net_infection_length()`, 
-  `net_reproduction()`, `net_immunity()`, `net_hazard()`, `node_adoption_time()`,   
-  `node_thresholds()`, `node_infection_length()`, and `node_exposure()`
+  - Diffusion measures include `net_transmissibility()`, `net_recovery()`, 
+  `net_reproduction()`, `net_immunity()`, `net_hazard()`,
+  `net_infection_complete()`, `net_infection_total()`, `net_infection_peak()`,
+  `node_adoption_time()`, `node_thresholds()`, `node_recovery()`, and
+  `node_exposure()`
   - Heterogeneity measures include `net_richness()`, `node_richness()`,
   `net_diversity()`, `node_diversity()`, `net_heterophily()`,
   `node_heterophily()`, `net_assortativity()`, and `net_spatial()`
