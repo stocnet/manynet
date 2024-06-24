@@ -13,7 +13,24 @@
 #'   of the original network.
 #'   
 #' @name tests
-#' @inheritParams regression
+#' @inheritParams is
+#' @param times Integer indicating number of simulations used for quantile estimation. 
+#'   (Relevant to the null hypothesis test only - 
+#'   the analysis itself is unaffected by this parameter.) 
+#'   Note that, as for all Monte Carlo procedures, convergence is slower for more
+#'   extreme quantiles.
+#'   By default, `times=1000`.
+#'   1,000 - 10,000 repetitions recommended for publication-ready results.
+#' @param strategy If `{furrr}` is installed, 
+#'   then multiple cores can be used to accelerate the function.
+#'   By default `"sequential"`, 
+#'   but if multiple cores available,
+#'   then `"multisession"` or `"multicore"` may be useful.
+#'   Generally this is useful only when `times` > 1000.
+#'   See [`{furrr}`](https://furrr.futureverse.org) for more.
+#' @param verbose Whether the function should report on its progress.
+#'   By default FALSE.
+#'   See [`{progressr}`](https://progressr.futureverse.org) for more.
 #' @family models
 #' @param FUN A graph-level statistic function to test.
 #' @param ... Additional arguments to be passed on to FUN,
@@ -25,7 +42,7 @@ NULL
 #' marvel_friends <- to_unsigned(ison_marvel_relationships)
 #' marvel_friends <- to_giant(marvel_friends) %>% 
 #'   to_subgraph(PowerOrigin == "Human")
-#' (cugtest <- test_random(marvel_friends, network_heterophily, attribute = "Attractive",
+#' (cugtest <- test_random(marvel_friends, net_heterophily, attribute = "Attractive",
 #'   times = 200))
 #' plot(cugtest)
 #' @export
@@ -75,7 +92,7 @@ test_random <- function(.data, FUN, ...,
 #' @rdname tests 
 #' @examples 
 #' (qaptest <- test_permutation(marvel_friends, 
-#'                 network_heterophily, attribute = "Attractive",
+#'                 net_heterophily, attribute = "Attractive",
 #'                 times = 200))
 #' plot(qaptest)
 #' @export
@@ -149,17 +166,17 @@ plot.network_test <- function(x, ...,
   d <- ggplot2::ggplot_build(p)$data[[1]]
   tails = match.arg(tails)
   if(tails == "one"){
-    if(x$testval < quantile(data$Statistic, .5)){
-      thresh <- quantile(data$Statistic, 1 - threshold)
+    if(x$testval < stats::quantile(data$Statistic, .5)){
+      thresh <- stats::quantile(data$Statistic, 1 - threshold)
       p <- p + ggplot2::geom_area(data = subset(d, x < thresh), 
                                   aes(x = x, y = .data$y), fill = "lightgrey")
     } else {
-      thresh <- quantile(data$Statistic, threshold)
+      thresh <- stats::quantile(data$Statistic, threshold)
       p <- p + ggplot2::geom_area(data = subset(d, x > thresh), 
                                   aes(x = x, y = .data$y), fill = "lightgrey")
     }
   } else if (tails == "two"){
-    thresh <- quantile(data$Statistic, 
+    thresh <- stats::quantile(data$Statistic, 
                        c((1-threshold)/2, ((1-threshold)/2)+threshold))
     p <- p + ggplot2::geom_area(data = subset(d, x < thresh[1]), 
                                 aes(x = x, y = .data$y), fill = "lightgrey") + 
@@ -245,7 +262,7 @@ test_fit <- function(diff_model, diff_models){ # make into method?
     dplyr::select(-c(sim, `0`))
   sims <- sims[,colSums(stats::cov(sims))!=0]
   mah <- stats::mahalanobis(x$I[-1], colMeans(sims), stats::cov(sims))
-  pval <- pchisq(mah, df=length(x$I[-1]), lower.tail=FALSE)
+  pval <- stats::pchisq(mah, df=length(x$I[-1]), lower.tail=FALSE)
   dplyr::tibble(statistic = mah, p.value = pval, 
                 df = length(x$I[-1]), nobs = nrow(sims))
 }

@@ -69,7 +69,6 @@ and assign the result.
 Then we can investigate the resulting object in a few ways.
 The first way is simply to print the result by calling the object.
 The other way is to unpack the result by calling for its summary.
-<!-- different name for this function? -->
 
 ```{r lat_diff, exercise = TRUE, exercise.setup = "clattice"}
 lat_diff <- play_diffusion(lat)
@@ -180,7 +179,7 @@ and `graphs()` (at least by default) only graphs the first and last step.
 `grapht()` will show if and when there is complete infection,
 but we need to sit through each 'movie'.
 But there is an easier way.
-Play these same diffusions again, this time nesting the call within `net_complete_infection()`.
+Play these same diffusions again, this time nesting the call within `net_infection_complete()`.
 
 ```{r completeinfection, exercise = TRUE, purl = FALSE}
 net_infection_complete(play_diffusion(create_ring(32, width = 2)))
@@ -191,7 +190,7 @@ net_infection_complete(play_diffusion(generate_smallworld(32, 0.025)))
 
 ```{r struct-interp, echo = FALSE, purl = FALSE}
 question("Does the structure of the network matter for whether and when a diffusion process completes?",
-  answer("No", message = "Take a closer look at the `net_complete_infection()` results. Are they all the same?"),
+  answer("No", message = "Take a closer look at the `net_infection_complete()` results. Are they all the same?"),
   answer("Yes", correct = TRUE, message = "We can see that the different structures have varying outcomes in terms of when the diffusion completes."),
   random_answer_order = TRUE,
   allow_retry = TRUE
