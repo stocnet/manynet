@@ -27,7 +27,7 @@ such as "weight", "sign", or "wave"
 - Fixed issues with ordering in `node_is_latent()`, `node_is_recovered()`,
 and `node_is_infected()` (closes #71)
 - Added list methods for `is_twomode()`, `is_labelled()`, and `is_complex()`
-  
+
 ## Mapping
 
 - Renamed functions to graph networks `graphr()`, `graphs()`, and `grapht()`
