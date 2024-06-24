@@ -214,8 +214,9 @@ node_is_recovered <- function(diff_model, time = 0){
   event <- nodes <- n <- NULL
   recovered <- summary(diff_model) %>% 
     dplyr::filter(t <= time & event == "R") %>%
-    select(nodes) %>%
-    dplyr::distinct()
+    group_by(nodes) %>%
+    mutate(n = dplyr::n()) %>%
+    filter(n == 1)
   net <- attr(diff_model, "network")
   if (is_labelled(net)) {
     out <- seq_len(net_nodes(net)) %in% recovered$nodes
