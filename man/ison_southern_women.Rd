@@ -5,27 +5,27 @@
 \alias{ison_southern_women}
 \title{Two-mode southern women (Davis, Gardner and Gardner 1941)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, two-mode network with 32 nodes and 93 ties
-#> # A tibble: 32 x 2
-#>   type  name     
-#>   <lgl> <chr>    
-#> 1 FALSE Evelyn   
-#> 2 FALSE Laura    
-#> 3 FALSE Theresa  
-#> 4 FALSE Brenda   
-#> 5 FALSE Charlotte
-#> 6 FALSE Frances  
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, multiplex, two-mode network with 32 nodes and 89 ties
+#> # A tibble: 32 x 4
+#>   type  name      Surname    Title
+#>   <lgl> <chr>     <chr>      <chr>
+#> 1 FALSE Evelyn    Jefferson  Mrs  
+#> 2 FALSE Laura     Mandeville Miss 
+#> 3 FALSE Theresa   Anderson   Miss 
+#> 4 FALSE Brenda    Rogers     Miss 
+#> 5 FALSE Charlotte McDowd     Miss 
+#> 6 FALSE Frances   Anderson   Miss 
 #> # i 26 more rows
-#> # A tibble: 93 x 2
-#>    from    to
-#>   <int> <int>
-#> 1     1    19
-#> 2     1    20
-#> 3     1    21
-#> 4     1    22
-#> 5     1    23
-#> 6     1    24
-#> # i 87 more rows
+#> # A tibble: 89 x 3
+#>    from    to Date      
+#>   <int> <int> <date>    
+#> 1    14    29 1936-02-23
+#> 2    15    29 1936-02-23
+#> 3    17    29 1936-02-23
+#> 4    18    29 1936-02-23
+#> 5     1    23 1936-02-25
+#> 6     2    23 1936-02-25
+#> # i 83 more rows
 }\if{html}{\out{</div>}}
 }
 \usage{
@@ -33,8 +33,14 @@ data(ison_southern_women)
 }
 \description{
 Two-mode network dataset collected by Davis, Gardner and Gardner (1941)
-about the attendance pattern of women at informal social events
-during a 9 month period. Events and women are named.
+about the pattern of a group of women's participation
+at informal social events in Old City during a 9 month period,
+as reported in the \emph{Old City Herald} in 1936.
+By convention, the nodes are named by the women's first names
+and the code numbers of the events,
+but the women's surnames and titles (Miss, Mrs.) are recorded here too.
+The events' dates are recorded in place of the Surname,
+and these dates are also offered as a tie attribute.
 }
 \references{
 Davis, Allison, Burleigh B. Gardner, and Mary R. Gardner. 1941.

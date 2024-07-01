@@ -243,9 +243,16 @@
 
 #' Two-mode southern women (Davis, Gardner and Gardner 1941)
 #'
-#' Two-mode network dataset collected by Davis, Gardner and Gardner (1941)
-#' about the attendance pattern of women at informal social events
-#' during a 9 month period. Events and women are named.
+#' @description
+#'   Two-mode network dataset collected by Davis, Gardner and Gardner (1941)
+#'   about the pattern of a group of women's participation 
+#'   at informal social events in Old City during a 9 month period,
+#'   as reported in the \emph{Old City Herald} in 1936.
+#'   By convention, the nodes are named by the women's first names 
+#'   and the code numbers of the events,
+#'   but the women's surnames and titles (Miss, Mrs.) are recorded here too.
+#'   The events' dates are recorded in place of the Surname,
+#'   and these dates are also offered as a tie attribute.
 #' @docType data
 #' @keywords datasets
 #' @name ison_southern_women
