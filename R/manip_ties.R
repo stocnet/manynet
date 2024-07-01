@@ -90,6 +90,15 @@ rename_ties <- function(.data, ...){
 }
 
 #' @rdname add_ties
+#' @importFrom dplyr arrange
+#' @export
+arrange_ties <- function(.data, ...){
+  nodes <- edges <- NULL
+  out <- as_tidygraph(.data)
+  out %>% tidygraph::activate(edges) %>% dplyr::arrange(...) %>% activate(nodes)
+}
+
+#' @rdname add_ties
 #' @importFrom tidygraph bind_edges
 #' @export
 bind_ties <- function(.data, ...){

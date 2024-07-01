@@ -6,6 +6,7 @@
 \alias{add_tie_attribute}
 \alias{mutate_ties}
 \alias{rename_ties}
+\alias{arrange_ties}
 \alias{bind_ties}
 \alias{join_ties}
 \alias{filter_ties}
@@ -22,6 +23,8 @@ add_tie_attribute(.data, attr_name, vector)
 mutate_ties(.data, ...)
 
 rename_ties(.data, ...)
+
+arrange_ties(.data, ...)
 
 bind_ties(.data, ...)
 
