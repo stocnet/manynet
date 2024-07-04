@@ -412,13 +412,12 @@ to_named <- function(.data, names = NULL) UseMethod("to_named")
 #' @export
 to_named.tbl_graph <- function(.data, names = NULL) {
   if (!is.null(names)) {
-    .data <- .data %>% mutate(name = names)
+    out <- .data %>% mutate(name = names)
   } else {
-    names = sample(baby_names, igraph::vcount(as_igraph(.data)))
-    .data <- .data %>%
-      mutate(name = names)
+    out <- .data %>%
+      mutate(name = .get_babynames(net_nodes(.data)))
   }
-  .data
+  out
 }
 
 #' @export
@@ -426,8 +425,7 @@ to_named.igraph <- function(.data, names = NULL) {
   if (!is.null(names)) {
     igraph::V(.data)$name  <- names
   } else {
-    igraph::V(.data)$name  <- sample(baby_names,
-                                      igraph::vcount(as_igraph(.data)))
+    igraph::V(.data)$name  <- .get_babynames(net_nodes(.data))
   }
   .data
 }
@@ -438,18 +436,15 @@ to_named.data.frame <- function(.data, names = NULL) {
     .data[,1]  <- names[as.numeric(.data[,1])]
     .data[,2]  <- names[as.numeric(.data[,2])]
   } else {
-    .data[,1]  <- sample(baby_names, 
-                          igraph::vcount(as_igraph(.data)))[as.numeric(.data[,1])]
-    .data[,2]  <- sample(baby_names, 
-                          igraph::vcount(as_igraph(.data)))[as.numeric(.data[,2])]
+    .data[,1]  <- .get_babynames(net_nodes(.data))[as.numeric(.data[,1])]
+    .data[,2]  <- .get_babynames(net_nodes(.data))[as.numeric(.data[,2])]
   }
   .data
 }
 
 #' @export
 to_named.matrix <- function(.data, names = NULL) {
-  if(is.null(names)) names <- sample(baby_names,
-                                     igraph::vcount(as_igraph(.data)))
+  if(is.null(names)) names <- .get_babynames(net_nodes(.data))
   if(is_twomode(.data)){
     rownames(.data)  <- names[seq_len(nrow(.data))]
     colnames(.data)  <- names[(nrow(.data)+1):length(names)]
@@ -463,6 +458,17 @@ to_named.matrix <- function(.data, names = NULL) {
 #' @export
 to_named.network <- function(.data, names = NULL) {
   as_network(to_named(as_igraph(.data), names))
+}
+
+.get_babynames <- function(n){
+  indic <- seq(from=1, length.out=n) %% 26
+  indic[indic == 0] <- 26
+  # table(stringr::str_extract(manynet:::baby_names, "^."))
+  vapply(indic, 
+         function(x){
+           let <- LETTERS[x]
+           sample(manynet:::baby_names[startsWith(manynet:::baby_names, let)], 1)
+         }, FUN.VALUE = character(1))
 }
 
 #' @describeIn reformat Returns an object that has all loops or self-ties removed
