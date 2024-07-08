@@ -6,6 +6,7 @@
 \alias{add_tie_attribute}
 \alias{mutate_ties}
 \alias{rename_ties}
+\alias{arrange_ties}
 \alias{bind_ties}
 \alias{join_ties}
 \alias{filter_ties}
@@ -22,6 +23,8 @@ add_tie_attribute(.data, attr_name, vector)
 mutate_ties(.data, ...)
 
 rename_ties(.data, ...)
+
+arrange_ties(.data, ...)
 
 bind_ties(.data, ...)
 
@@ -84,6 +87,7 @@ Note that while \verb{add_*()}/\verb{delete_*()} functions operate similarly as 
 Other modifications: 
 \code{\link{add_nodes}()},
 \code{\link{as}()},
+\code{\link{correlation}},
 \code{\link{from}},
 \code{\link{miss}},
 \code{\link{reformat}},

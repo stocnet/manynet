@@ -30,10 +30,10 @@ tie_is_min(tie_measure)
 \description{
 These functions return logical vectors the length of the ties in a network:
 \itemize{
-\item \code{tie_is_random()} marks one or more nodes at random.
-\item \code{tie_is_max()} and \code{tie_is_min()} are more generally useful
-for converting the results from some node measure into a mark-class object.
-They can be particularly useful for highlighting which node or nodes
+\item \code{tie_is_random()} marks one or more ties at random.
+\item \code{tie_is_max()} and \code{tie_is_min()} are more useful
+for converting the results from some tie measure into a mark-class object.
+They can be particularly useful for highlighting which tie or ties
 are key because they minimise or, more often, maximise some measure.
 }
 }

@@ -27,7 +27,7 @@ create_lattice(n, directed = FALSE, width = 8)
 
 create_components(n, directed = FALSE, membership = NULL)
 
-create_core(n, directed = FALSE, membership = NULL)
+create_core(n, directed = FALSE, mark = NULL)
 
 create_explicit(...)
 }
@@ -55,6 +55,9 @@ breadth of the branches, or maximum extent of the neighbourbood.}
 \item{membership}{A vector of partition membership as integers.
 If left as \code{NULL} (the default), nodes in each mode will be
 assigned to two, equally sized partitions.}
+
+\item{mark}{A logical vector the length of the nodes in the network.
+This can be created by, among other things, any \verb{node_is_*()} function.}
 }
 \value{
 By default a \code{tbl_graph} object is returned,

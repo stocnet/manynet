@@ -64,7 +64,7 @@ tie_is_feedback <- function(.data){
 #' @export
 tie_is_bridge <- function(.data){
   num_comp <- length( igraph::decompose(manynet::as_igraph(.data)) )
-  out <- vapply(seq_len(manynet::network_ties(.data)), function(x){
+  out <- vapply(seq_len(manynet::net_ties(.data)), function(x){
     length( igraph::decompose(igraph::delete_edges(.data, x)) ) > num_comp
   }, FUN.VALUE = logical(1))
   if(manynet::is_labelled(.data)) 
@@ -79,10 +79,10 @@ tie_is_bridge <- function(.data){
 #' @description 
 #'   These functions return logical vectors the length of the ties in a network:
 #'   
-#'   - `tie_is_random()` marks one or more nodes at random.
-#'   - `tie_is_max()` and `tie_is_min()` are more generally useful
-#'   for converting the results from some node measure into a mark-class object.
-#'   They can be particularly useful for highlighting which node or nodes
+#'   - `tie_is_random()` marks one or more ties at random.
+#'   - `tie_is_max()` and `tie_is_min()` are more useful
+#'   for converting the results from some tie measure into a mark-class object.
+#'   They can be particularly useful for highlighting which tie or ties
 #'   are key because they minimise or, more often, maximise some measure.
 #' @inheritParams mark_select
 #' @family marks
@@ -92,7 +92,7 @@ NULL
 #' @rdname mark_tie_select
 #' @export
 tie_is_random <- function(.data, size = 1){
-  n <- manynet::network_ties(.data)
+  n <- manynet::net_ties(.data)
   out <- rep(FALSE, n)
   out[sample.int(n, size)] <- TRUE
   make_node_mark(out, .data)

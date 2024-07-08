@@ -102,8 +102,12 @@ is_list <- function(.data) {
 #' is_longitudinal(create_tree(5, 3))
 #' @export
 is_longitudinal <- function(.data) {
-  atts <- igraph::edge_attr_names(as_igraph(.data))
-  "wave" %in% atts | "panel" %in% atts
+  if(is_manynet(.data)) {
+    atts <- igraph::edge_attr_names(as_igraph(.data))
+    return("wave" %in% atts | "panel" %in% atts)
+  } else if(is_list(.data)){
+    all(lapply(.data, net_nodes)==net_nodes(.data[[1]]))
+  } 
 }
 
 #' @rdname is
@@ -129,6 +133,8 @@ is_dynamic <- function(.data) {
 #'   is the sender and which the receiver.
 #'   - `is_labelled()` marks networks TRUE if there is a 'names' attribute
 #'   for the nodes.
+#'   - `is_attributed()` marks networks TRUE if there are other nodal attributes
+#'   than 'names' or 'type'.
 #'   - `is_signed()` marks networks TRUE if the ties can be either positive
 #'   or negative.
 #'   - `is_complex()` marks networks TRUE if any ties are loops,
@@ -185,6 +191,13 @@ is_twomode.numeric <- function(.data) {
   return(FALSE)
 }
 
+#' @export
+is_twomode.list <- function(.data) {
+  if(is_list(.data)){
+    is_twomode(.data[[1]])
+  }
+}
+
 #' @rdname is_format
 #' @importFrom igraph is_weighted
 #' @examples
@@ -228,8 +241,8 @@ is_directed <- function(.data) UseMethod("is_directed")
 
 #' @export
 is_directed.data.frame <- function(.data) {
-  !(infer_network_reciprocity(.data) == 0 |
-      infer_network_reciprocity(.data) == 1)
+  !(infer_net_reciprocity(.data) == 0 |
+      infer_net_reciprocity(.data) == 1)
 }
 
 #' @export
@@ -282,6 +295,13 @@ is_labelled.network <- function(.data) {
 #' @export
 is_labelled.data.frame <- function(.data) {
   is.character(.data[,1]) & is.character(.data[,2])
+}
+
+#' @export
+is_labelled.list <- function(.data) {
+  if(is_list(.data)){
+    is_labelled(.data[[1]])
+  }
 }
 
 #' @rdname is_format
@@ -352,6 +372,13 @@ is_complex.network <- function(.data) {
   network::has.loops(.data)
 }
 
+#' @export
+is_complex.list <- function(.data) {
+  if(is_list(.data)){
+    is_complex(.data[[1]])
+  }
+}
+
 #' @rdname is_format 
 #' @importFrom igraph any_multiple
 #' @examples
@@ -364,17 +391,19 @@ is_multiplex.matrix <- function(.data) {
   FALSE
 }
 
+reserved_tie_attr <- c("wave","panel","sign","weight","date","begin","end")
+
 #' @export
 is_multiplex.tbl_graph <- function(.data) {
-  igraph::any_multiple(.data) |
-    length(igraph::edge_attr_names(as_igraph(.data))) > 1 |
+  igraph::any_multiple(.data) & length(setdiff(reserved_tie_attr, net_tie_attributes(.data)))==0 |
+    length(setdiff(net_tie_attributes(.data), reserved_tie_attr)) > 0 |
     "type" %in% igraph::edge_attr_names(.data)
 }
 
 #' @export
 is_multiplex.igraph <- function(.data) {
-  igraph::any_multiple(.data) |
-    length(igraph::edge_attr_names(.data)) > 1 |
+  igraph::any_multiple(.data) & length(setdiff(reserved_tie_attr, net_tie_attributes(.data)))==0 |
+    length(setdiff(net_tie_attributes(.data), reserved_tie_attr)) > 0 |
     "type" %in% igraph::edge_attr_names(.data)
 }
 
@@ -385,7 +414,7 @@ is_multiplex.network <- function(.data) {
 
 #' @export
 is_multiplex.data.frame <- function(.data) {
-  ncol(.data) > 3
+  ncol(.data) >= 3 & "type" %in% setdiff(colnames(.data), reserved_tie_attr)
 }
 
 #' @rdname is_format
@@ -396,6 +425,14 @@ is_multiplex.data.frame <- function(.data) {
 is_uniplex <- function(.data) {
   obj <- as_igraph(.data)
   igraph::is_simple(obj)
+}
+
+#' @rdname is_format
+#' @examples
+#' is_attributed(ison_algebra)
+#' @export
+is_attributed <- function(.data) {
+  length(setdiff(net_node_attributes(.data), c("type","name")))!=0
 }
 
 # Features ####
@@ -463,11 +500,11 @@ is_connected <- function(.data) {
 #' @export
 is_perfect_matching <- function(.data, mark = "type"){
   .data <- as_igraph(.data)
-  if(mark %in% network_node_attributes(.data)){
+  if(mark %in% net_node_attributes(.data)){
     matches <- to_matching(.data, mark = mark)
-    network_ties(matches)*2 == network_nodes(matches)
+    net_ties(matches)*2 == net_nodes(matches)
   } else {
-    if (network_nodes(.data) %% 2 != 0) FALSE else # odd number of nodes cannot match perfectly
+    if (net_nodes(.data) %% 2 != 0) FALSE else # odd number of nodes cannot match perfectly
       if (!igraph::is_connected(.data) && # any odd components cannot match perfectly
           any(igraph::component_distribution(.data)[c(F,T)]!=0)) FALSE else { # note first index is 0...
             cutpoints <- igraph::articulation_points(.data)
@@ -501,6 +538,7 @@ is_acyclic <- function(.data){
 #'   If negative, paths of all lengths are considered.
 #'   By default 4, to avoid potentially very long computation times.
 #' @source https://stackoverflow.com/questions/55091438/r-igraph-find-all-cycles
+#' @importFrom minMSE vector_gcd
 #' @examples 
 #' is_aperiodic(ison_algebra)
 #' @export
@@ -521,9 +559,9 @@ is_aperiodic <- function(.data, max_path_length = 4){
 }
 
 # Helper functions
-infer_network_reciprocity <- function(.data, method = "default") {
+infer_net_reciprocity <- function(.data, method = "default") {
   out <- igraph::reciprocity(as_igraph(.data), mode = method)
-  class(out) <- c("network_measure", class(out))
+  class(out) <- c("net_measure", class(out))
   attr(out, "mode") <- infer_dims(.data)
   out
 }

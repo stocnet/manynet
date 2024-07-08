@@ -31,7 +31,7 @@ book characters (Yuksel 2017)}
 #> # i 677 more rows
 }\if{html}{\out{</div>}}
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, complex, multiplex, signed, undirected network with 53 nodes and 558 ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, complex, signed, undirected network with 53 nodes and 558 ties
 #> # A tibble: 53 x 10
 #>   name     Gender Appearances Attractive  Rich Intellect Omnilingual PowerOrigin
 #>   <chr>    <chr>        <int>      <int> <int>     <int>       <int> <chr>      

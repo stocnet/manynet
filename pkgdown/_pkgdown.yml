@@ -45,7 +45,7 @@ reference:
   - title: "Modifying"
     desc: |
       Functions for modifying networks into other classes or formats,
-      or mofifying their properties or attributes.
+      or modifying their properties or attributes.
       This includes functions for reformatting networks into networks
       of the same dimensions but a different type, e.g. from directed to undirected.
       It also includes functions for transforming networks into networks
@@ -66,39 +66,65 @@ reference:
       all returning logical scalars or vectors.
       Note that all `node_` and `tie_` measures return a single vector
       so that they can be added directly to graph objects.
-      `network_` measures return one or, in some cases of two-mode measures,
+      `net_` measures return one or, in some cases of two-mode measures,
       two values.
       All `node_` and `tie_` measures return a single vector,
       the length of the nodes or ties in the network, respectively.
     contents:
       - contains("is_")
+  - title: "Measuring"
+    desc: |
+      Functions for measuring networks and returning a numeric vector or value.
+      `net_` measures return one or, in some cases of two-mode measures,
+      two values.
+      All `node_` and `tie_` measures return a single vector,
+      the length of the nodes or ties in the network, respectively.
+    contents:
+      - starts_with("measure_")
+      - ends_with("_centrality")
+      - over
+  - title: "Motifs and Memberships"
+    desc: |
+      Motifs are functions for calculating network subgraphs,
+      always return a matrix or table of nodes as rows and motif or other property as columns,
+      and can be recognised by the `_by_` in the function name.
+      Memberships are functions for identifying community, cluster, or class memberships,
+      always return a string vector the length of the nodes in the network,
+      and can be recognised by the `_in_` in the function name.
+    contents:
+      - contains("_by_")
+      - contains("_in_")
   - title: "Mapping"
     desc: |
       Functions for plotting and visualising graphs of different types.
-      `autographr()` graphs any manynet-compatible class object automagically.
-      `autographs()` and `autographt()` do the same for multiple networks
+      `graphr()` graphs any manynet-compatible class object automagically.
+      `graphs()` and `grapht()` do the same for multiple networks
       and dynamic networks, respectively.
     contents:
-      - starts_with("network_")
-      - attributes
-      - starts_with("autograph")
+      - starts_with("graph")
       - starts_with("layout")
       - starts_with("theme")
       - starts_with("scale")
       - ends_with("palettes")
-  - title: "Tutorials"
+  - title: "Methods"
+    desc: "Methods used in other functions but documented here:"
+    contents:
+      - cluster
+      - kselect
+  - title: "Learning"
     desc: |
       Functions for loading and extracting code from tutorials.
       There is also a function for tabulating the various network data included in the package,
       providing an overview of their properties.
     contents:
       - ends_with("_tute")
-  - title: "Data"
+  - title: "Practicing"
     desc: |
       The package contains a variety of networks useful for pedagogical purposes
       and used in the course 'Social Networks Theories and Methods' and other workshops.
       Each page documents the source of the data and its format.
       References are provided for further reading and citation.
     contents:
+      - data_overview
       - starts_with("ison_")
   

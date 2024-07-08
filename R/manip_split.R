@@ -220,7 +220,7 @@ to_waves.data.frame <- function(.data, attribute = "wave", panels = NULL,
 #' @export
 to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
                                 cumulative = FALSE) {
-  if(!is.null(panels)) .data <- .data[.data[[attribute]] %in% panels,]
+  if (!is.null(panels)) .data <- .data[.data[[attribute]] %in% panels,]
   if (length(unique(.data[["n"]])) > 1)
     stop("Please make sure diffusion has the same number of nodes for all time points.")
   net <- as_tidygraph(.data)
@@ -297,8 +297,8 @@ to_slices <- function(.data, attribute = "time", slice = NULL) UseMethod("to_sli
 #' @export
 to_slices.tbl_graph <- function(.data, attribute = "time", slice = NULL) {
   increment <- weight <- NULL
-  incremented <- "increment" %in% network_tie_attributes(.data)
-  updated <- "replace" %in% network_tie_attributes(.data)
+  incremented <- "increment" %in% net_tie_attributes(.data)
+  updated <- "replace" %in% net_tie_attributes(.data)
   if(!is.null(slice))
     moments <- slice else 
       moments <- unique(tie_attribute(.data, attribute = attribute))

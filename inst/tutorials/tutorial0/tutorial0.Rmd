@@ -5,6 +5,9 @@ output:
   learnr::tutorial:
     theme: journal
 runtime: shiny_prerendered
+description: >
+  The aim of this tutorial is to offer a very, very short introduction to R 
+  including objects, functions, and data structures in R.
 ---
 
 ```{r setup, include=FALSE}

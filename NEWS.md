@@ -1,3 +1,138 @@
+# manynet 1.0.0
+
+## Package
+
+- Updated `{manynet}` logo with stocnet GitHub address and color blind safe colorway
+- Fixed bug in diffusion tutorial because of undeclared `{minMse}` dependency
+- Renamed all functions starting with the `network_*` prefix to `net_*` for conciseness
+- Migrated network measures, membership, motifs, and models' functions from `{migraph}`
+- Migrated community, position, topology, and diffusion tutorials from `{migraph}`
+
+## Making
+
+- Fixed bug in `create_core()` where the membership inferred when passing an
+existing network was incorrect
+- Added `generate_configuration()` for generating configuration models
+(including for two-mode networks)
+- `play_diffuson()` now includes an explicit contact argument to control the
+basis of exposure
+
+## Marking
+
+- `node_is_*()` functions now infer network data context
+- Added `node_is_independent()` for identifying nodes among largest independent sets
+- `is_multiplex()` now excludes reserved tie attribute names other than type,
+such as "weight", "sign", or "wave"
+- Added `is_attributed()` to check for non-name nodal attributes
+- Fixed issues with ordering in `node_is_latent()`, `node_is_recovered()`,
+and `node_is_infected()` (closes #71)
+- Added list methods for `is_twomode()`, `is_labelled()`, and `is_complex()`
+
+## Mapping
+
+- Renamed functions to graph networks `graphr()`, `graphs()`, and `grapht()`
+(`autographr()`, `autographs()`, and `autographd()` are now deprecated)
+- node_size now an aesthetic, allowing `scale_size(range = c(...,...))` to be used
+- Reexported `scale_size()` from `{ggplot2}`
+- `graphr()` now rescales node size depending on network size (closes #51)
+- Fixed issues with "hierarchy" layout for two mode network (closes #61)
+- Updated "concentric" layout to accept unlabeled nodes (closes #68)
+
+## Modifying
+
+- Fixed bug in `as_diff_model()` where events were out of order and named
+- Added `to_correlation()` that implements pairwise correlation on network
+- Added `arrange_ties()` for `{dplyr}`-like reordering of ties based on some attribute
+- `to_named()` now randomly generates and adds an alphabetic sequence of names,
+  where previously this was just a random sample,
+  which may assist pedagogical use
+  - baby_names (internal) now includes a few extra "Q" and "U" names
+  
+## Marking
+
+- `is_multiplex()` now recognises "date", "begin", and "end" as reserved
+
+## Measuring
+
+- Migrated measures from `{migraph}`
+  - Centrality measures
+    - Degree-related centrality measures include `node_degree()`, `node_deg()`, 
+    `node_indegree()`, `node_outdegree()`, `node_multidegree()`, `node_posneg()`, 
+    `tie_degree()`, `net_degree()`, `net_indegree()`, and `net_outdegree()`
+    - Betweenness-related centrality measures include `node_betweenness()`,
+    `node_induced()`, `node_flow()`, `tie_betweenness()`, and `net_betweenness()`
+    - Closeness-related centrality measures include `node_closeness()`,
+    `node_reach()`, `node_harmonic()`, `node_information()`, `tie_closeness()`,
+    `net_closeness()`, `net_reach()`, and `net_harmonic()`
+    - Eigenvector-related centrality measures include `node_eigenvector()`, 
+    `node_power()`, `node_alpha()`, `node_pagerank()`, `tie_eigenvector()`, and
+    `net_eigenvector()`
+  - Closure measures include `net_reciprocity()`,
+  `node_reciprocity()`, `net_transitivity()`, `node_transitivity()`,
+  `net_equivalency()`, and `net_congruency()`
+  - Cohesion measures include `net_density()`, `net_components()`, `net_cohesion()`,   
+  `net_adhesion()`, `net_diameter()`, `net_length()`, and `net_independence()`
+  - Diffusion measures include `net_transmissibility()`, `net_recovery()`, 
+  `net_reproduction()`, `net_immunity()`, `net_hazard()`,
+  `net_infection_complete()`, `net_infection_total()`, `net_infection_peak()`,
+  `node_adoption_time()`, `node_thresholds()`, `node_recovery()`, and
+  `node_exposure()`
+  - Heterogeneity measures include `net_richness()`, `node_richness()`,
+  `net_diversity()`, `node_diversity()`, `net_heterophily()`,
+  `node_heterophily()`, `net_assortativity()`, and `net_spatial()`
+  - Hierarchy measures include `net_reciprocity()`, `net_connectedness()`,
+  `net_efficiency()`, and `net_upperbound()`
+  - Holes' measures include `node_bridges()`, `node_redundancy()`, `node_effsize()`,   
+  `node_efficiency()`, `node_constraint()`, `node_hierarchy()`, `node_eccentricity()`, 
+  `node_neighbours_degree()`, and `tie_cohesion()`
+  - Features' measures include `net_core()`, `net_richclub()`, `net_factions()`, 
+  `node_partition()`, `net_modularity()`, `net_smallworld()`, `net_scalefree()`, 
+  `net_balance()`, `net_change()`, and `net_stability()`
+- Updated properties from mapping to measuring
+- Updated attributes from mapping to measuring
+    - Renamed `node_mode()` (deprecated) to node_is_mode() since it returns a
+    logical vector
+    - Updated `node_attribute()` and `tie_attribute()` to return measures
+    when the output is numeric
+- Updated `node_exposure()` to work with two-mode and signed networks
+
+## Members
+
+- Migrated members from `{migraph}`
+  - Cliques memberships includes `node_in_roulette()`
+  - Community and hierarchical memberships includes `node_in_optimal()`, `node_in_partition()`,
+  `node_in_infomap()`, `node_in_spinglass()`, `node_in_fluid()`, 
+  `node_in_louvain()`, `node_in_leiden()`, `node_in_betweenness()`,
+  `node_in_greedy()`, `node_in_eigen()`, and `node_in_walktrap()`
+  - Components' memberships include `node_in_component()`, `node_in_weak()`, and
+  `node_in_strong()`
+  - Core-periphery memberships include `node_is_core()` and `node_coreness()`
+  - Diffusion memberships include `node_in_adopter()`
+  - Equivalence memberships include `node_in_equivalence()`, `node_in_structural()`,
+  `node_in_regular()`, and `node_in_automorphic()`
+  - Note that these functions were previously named `node_*()`, but including the preposition `_in_` is more consistent.
+
+## Motifs
+
+- Migrated motifs to take census of network, node positions, and brokerage from `{migraph}`,
+these include `node_by_tie()`, `node_by_triad()`, `node_by_quad()`, `node_by_path()`, 
+`net_by_dyad()`, `net_by_triad()`, `net_by_mixed()`, `node_by_brokerage()`, `net_by_brokerage()`
+  - Note that these functions were previously named `*_*_census()`, but the preposition `_by_` is more consistent.
+
+## Methods
+
+- Migrated methods from `{migraph}`
+  - Methods for equivalence clustering include `cluster_hierarchical()` and `cluster_concor()`
+  - Methods for selecting clusters include `k_strict()`, `k_elbow()`, and `k_silhouette()`
+
+## Data
+
+- Added `ison_greys` dataset, including some corrections to that published in `{networkdata}`
+- Updated `ison_friends` dataset to be explicitly longitudinal
+- Updated `ison_usstates` dataset with population data (Alaska and Hawaii missing)
+- Updated `ison_southern_women` dataset with surnames, titles, event dates, and corrected ties
+- Updated data documentation with revised multiplex definition
+
 # manynet 0.4.4
 
 2024-03-15

@@ -68,15 +68,15 @@ These functions allow learning games to be played upon networks.
 }
 \examples{
   play_learning(ison_networkers, 
-      rbinom(manynet::network_nodes(ison_networkers),1,prob = 0.25))
+      rbinom(net_nodes(ison_networkers),1,prob = 0.25))
   startValues <- rbinom(100,1,prob = 0.5)
   startValues[sample(seq_len(100), round(100*0.2))] <- NA
   latticeEg <- create_lattice(100)
   latticeEg <- add_node_attribute(latticeEg, "startValues", startValues)
   latticeEg
   play_segregation(latticeEg, "startValues", 0.5)
-  # autographr(latticeEg, node_color = "startValues", node_size = 5) + 
-  # autographr(play_segregation(latticeEg, "startValues", 0.2), 
+  # graphr(latticeEg, node_color = "startValues", node_size = 5) + 
+  # graphr(play_segregation(latticeEg, "startValues", 0.2), 
   #            node_color = "startValues", node_size = 5)
 }
 \seealso{

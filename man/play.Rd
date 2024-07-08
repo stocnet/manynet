@@ -9,6 +9,8 @@
 play_diffusion(
   .data,
   seeds = 1,
+  contact = NULL,
+  prevalence = 0,
   thresholds = 1,
   transmissibility = 1,
   latency = 0,
@@ -21,6 +23,8 @@ play_diffusion(
 play_diffusions(
   .data,
   seeds = 1,
+  contact = NULL,
+  prevalence = 0,
   thresholds = 1,
   transmissibility = 1,
   latency = 0,
@@ -45,6 +49,20 @@ play_diffusions(
 
 \item{seeds}{A valid mark vector the length of the
 number of nodes in the network.}
+
+\item{contact}{A matrix or network that replaces ".data" with some
+other explicit contact network, e.g.
+\code{create_components(.data, membership = node_in_structural(.data))}.
+Can be of arbitrary complexity, but must of the same dimensions
+as .data.}
+
+\item{prevalence}{The proportion that global prevalence contributes
+to diffusion.
+That is, if prevalence is 0.5, then the current number of infections
+is multiplied by 0.5 and added
+"prevalence" is 0 by default, i.e. there is no global mechanism.
+Note that this is endogenously defined and is updated
+at the outset of each step.}
 
 \item{thresholds}{A numeric vector indicating the thresholds
 each node has. By default 1.
@@ -183,7 +201,7 @@ This can be used in in SEI, SEIS, SEIR, and SEIRS models.
 \examples{
   smeg <- generate_smallworld(15, 0.025)
   plot(play_diffusion(smeg, recovery = 0.4))
-  #autographr(play_diffusion(ison_karateka))
+  #graphr(play_diffusion(ison_karateka))
   plot(play_diffusions(smeg, times = 10))
 }
 \seealso{
@@ -196,6 +214,12 @@ Other makes:
 
 Other models: 
 \code{\link{learning}}
+
+Other diffusion: 
+\code{\link{measure_infection}},
+\code{\link{measure_net_diffusion}},
+\code{\link{measure_node_diffusion}},
+\code{\link{member_diffusion}}
 }
 \concept{diffusion}
 \concept{makes}

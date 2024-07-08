@@ -5,6 +5,11 @@ output:
   learnr::tutorial:
     theme: journal
 runtime: shiny_prerendered
+description: >
+  This tutorial covers several ways to get data into the package,
+  including data from manynet and other packages, 
+  importing and using data from outside of R,
+  and creating or generating networks using functions in the manynet package.
 ---
 
 ```{r setup, include=FALSE, purl=FALSE}

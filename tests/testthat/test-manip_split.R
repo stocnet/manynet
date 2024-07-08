@@ -51,12 +51,12 @@ test_that("to_waves works for diff_model objects", {
   skip_on_ci()
   wave_diff <- play_diffusion(ison_brandes)
   expect_length(to_waves(wave_diff), length(wave_diff$t))
-  expect_equal(network_nodes(to_waves(wave_diff)[[1]]),
-               network_nodes(to_waves(wave_diff)[[12]]))
-  expect_equal(network_ties(to_waves(wave_diff)[[1]]),
-               network_ties(to_waves(wave_diff)[[12]]))
-  expect_equal(network_nodes(to_waves(wave_diff)[[1]]),
-               network_nodes(ison_brandes))
+  expect_equal(net_nodes(to_waves(wave_diff)[[1]]),
+               net_nodes(to_waves(wave_diff)[[12]]))
+  expect_equal(net_ties(to_waves(wave_diff)[[1]]),
+               net_ties(to_waves(wave_diff)[[12]]))
+  expect_equal(net_nodes(to_waves(wave_diff)[[1]]),
+               net_nodes(ison_brandes))
   expect_true(node_attribute(to_waves(wave_diff)[[1]], "Infected")[1])
   expect_false(node_attribute(to_waves(wave_diff)[[7]], "Exposed")[1])
   expect_false(node_attribute(to_waves(wave_diff)[[10]], "Recovered")[1])

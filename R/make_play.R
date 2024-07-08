@@ -71,6 +71,11 @@
 #' @inheritParams is
 #' @param seeds A valid mark vector the length of the
 #'   number of nodes in the network.
+#' @param contact A matrix or network that replaces ".data" with some 
+#'   other explicit contact network, e.g.
+#'   `create_components(.data, membership = node_in_structural(.data))`.
+#'   Can be of arbitrary complexity, but must of the same dimensions
+#'   as .data.
 #' @param thresholds A numeric vector indicating the thresholds
 #'   each node has. By default 1.
 #'   A single number means a generic threshold;
@@ -80,6 +85,13 @@
 #'   of the number of contacts/exposures sufficient for infection.
 #'   If less than 1, the threshold is interpreted as complex,
 #'   where the threshold concerns the proportion of contacts.
+#' @param prevalence The proportion that global prevalence contributes
+#'   to diffusion. 
+#'   That is, if prevalence is 0.5, then the current number of infections
+#'   is multiplied by 0.5 and added 
+#'   "prevalence" is 0 by default, i.e. there is no global mechanism.
+#'   Note that this is endogenously defined and is updated 
+#'   at the outset of each step.
 #' @param transmissibility The transmission rate probability,
 #'   \eqn{\beta}.
 #'   By default 1, which means any node for which the threshold is met
@@ -124,10 +136,12 @@ NULL
 #' @examples 
 #'   smeg <- generate_smallworld(15, 0.025)
 #'   plot(play_diffusion(smeg, recovery = 0.4))
-#'   #autographr(play_diffusion(ison_karateka))
+#'   #graphr(play_diffusion(ison_karateka))
 #' @export
 play_diffusion <- function(.data, 
                            seeds = 1,
+                           contact = NULL,
+                           prevalence = 0,
                            thresholds = 1,
                            transmissibility = 1,
                            latency = 0,
@@ -135,14 +149,15 @@ play_diffusion <- function(.data,
                            waning = 0,
                            immune = NULL,
                            steps) {
-  thisRequires("migraph")
-  n <- network_nodes(.data)
+  n <- net_nodes(.data)
   recovered <- NULL
   if(missing(steps)) steps <- n
+  if(is.character(thresholds)) thresholds <- node_attribute(.data, thresholds)
   if(length(thresholds)==1) thresholds <- rep(thresholds, n)
   if(all(thresholds <= 1) & !all(thresholds == 1)) 
     thresholds <- thresholds * 
-      migraph::node_degree(.data, normalized = FALSE)
+      node_deg(.data)
+  if(is.character(seeds)) seeds <- which(node_names(.data)==seeds)
   if(is.logical(seeds)) seeds <- which(seeds)
   if(!is.null(immune)){
     if(is.logical(immune)) immune <- which(immune)
@@ -150,19 +165,29 @@ play_diffusion <- function(.data,
   }
   infected <- seeds # seeds are initial infected
   latent <- NULL # latent compartment starts empty
-  t = 0 # starting at 0
+  time = 0 # starting at 0
   # initialise events table
-  events <- data.frame(t = t, nodes = seeds, event = "I", exposure = NA)
+  events <- data.frame(t = time, nodes = seeds, event = "I", exposure = NA)
+  if(!is_list(.data)) sinit <- sum(node_is_exposed(.data, infected)) else 
+    if(is_list(.data)) sinit <- sum(node_is_exposed(.data[[1]], infected))
   # initialise report table
-  report <- data.frame(t = t,
+  report <- data.frame(t = time,
                        n = n,
                        S = n - (length(latent) + length(infected) + length(recovered)),
-                       s = sum(node_is_exposed(.data, infected)),
+                       s = sinit,
                        E = length(latent),
                        I_new = length(seeds),
                        I = length(infected),
                        R = length(recovered))
   repeat{ # At each time step:
+    # update network, if necessary
+    if(is_list(.data)){
+      if(time > length(.data)) break
+      net<- .data[[max(time,1)]]
+    } else {
+      if(is.null(contact)) net <- as_tidygraph(.data) else 
+        net <- as_tidygraph(contact)
+    }
     # some who have already recovered may lose their immunity:
     waned <- recovered[stats::rbinom(length(recovered), 1, waning)==1]
     # some may recover:
@@ -172,15 +197,19 @@ play_diffusion <- function(.data,
     infected <- setdiff(infected, recovered)
     # those for whom immunity has waned are no longer immune
     recovered <- setdiff(recovered, waned)
+    
+    # add any global/prevalence feedback
+    new_prev <- as_matrix(net) + ((report$I_new[length(report$I_new)] - 
+                         length(recovers)) * prevalence)
+    if(!is_twomode(.data) & !is_complex(.data)) diag(new_prev) <- 0
+    net <- as_tidygraph(new_prev)
+    
     # at main infection stage, get currently exposed to infection:
-    # contacts <- unlist(sapply(igraph::neighborhood(.data, nodes = infected),
-    #                          function(x) setdiff(x, infected)))
-    exposed <- node_is_exposed(.data, infected)
+    exposed <- node_is_exposed(net, infected)
     # count exposures for each node:
-    # tabcontact <- table(contacts)
-    exposure <- migraph::node_exposure(.data, infected)
+    exposure <- node_exposure(net, infected)
     # identify those nodes who are exposed at or above their threshold
-    # newinf <- as.numeric(names(which(tabcontact >= thresholds[as.numeric(names(tabcontact))])))
+    
     open_to_it <- which(exposure >= thresholds)
     newinf <- open_to_it[stats::rbinom(length(open_to_it), 1, transmissibility)==1]
     if(!is.null(recovery) & length(recovered)>0) 
@@ -196,30 +225,30 @@ play_diffusion <- function(.data,
     newinf <- setdiff(newinf, infectious)
     infected <- c(infected, infectious)
     # tick time
-    t <- t+1
+    time <- time+1
     
     # Update events table ####
     # record new infections
     if(!is.null(infectious) & length(infectious)>0)
       events <- rbind(events, 
-                    data.frame(t = t, nodes = infectious, event = "I", 
+                    data.frame(t = time, nodes = infectious, event = "I", 
                                exposure = exposure[infectious]))
     # record exposures
     if(!is.null(newinf) & length(newinf)>0)
       events <- rbind(events,
-                      data.frame(t = t, nodes = newinf, event = "E", 
+                      data.frame(t = time, nodes = newinf, event = "E", 
                                  exposure = exposure[newinf]))
     # record recoveries
     if(!is.null(recovers) & length(recovers)>0)
       events <- rbind(events,
-                      data.frame(t = t, nodes = recovers, event = "R", exposure = NA))
+                      data.frame(t = time, nodes = recovers, event = "R", exposure = NA))
     # record wanings
     if(!is.null(waned) & length(waned)>0)
       events <- rbind(events,
-                      data.frame(t = t, nodes = waned, event = "S", exposure = NA))
+                      data.frame(t = time, nodes = waned, event = "S", exposure = NA))
     # Update report table ####
     report <- rbind(report,
-                    data.frame(t = t,
+                    data.frame(t = time,
                                n = n,
                          S = n - (length(latent) + length(infected) + length(recovered)),
                          s = sum(exposed),
@@ -227,8 +256,9 @@ play_diffusion <- function(.data,
                          I_new = length(infectious),
                          I = length(infected),
                          R = length(recovered)))
+    
     if(is.infinite(steps) & length(infected)==n) break
-    if(t==steps) break
+    if(time==steps) break
   }
   make_diff_model(events, report, .data)
 }
@@ -246,6 +276,8 @@ play_diffusion <- function(.data,
 #' @export
 play_diffusions <- function(.data,
                             seeds = 1,
+                            contact = NULL,
+                            prevalence = 0,
                             thresholds = 1,
                             transmissibility = 1,
                             latency = 0,
@@ -261,18 +293,20 @@ play_diffusions <- function(.data,
   oplan <- future::plan(strategy)
   on.exit(future::plan(oplan), add = TRUE)
   
-  if(missing(steps)) steps <- network_nodes(.data)
+  if(missing(steps)) steps <- net_nodes(.data)
   
   out <- furrr::future_map_dfr(1:times, function(j){
       data.frame(sim = j,
                  play_diffusion(.data, 
-                     seeds = seeds, thresholds = thresholds,
-                     transmissibility = transmissibility,
+                     seeds = seeds, contact = contact, prevalence = prevalence, 
+                     thresholds = thresholds, transmissibility = transmissibility,
                      latency = latency, recovery = recovery, waning = waning,
                      immune = immune, steps = steps))
     }, .progress = verbose, .options = furrr::furrr_options(seed = T))
   make_diffs_model(out, .data)
 }
+
+# contagion_function = attrib ~ 1 + prevalence + threshold + contact + equivalence
 
 # Learning ####
 
@@ -296,13 +330,13 @@ play_diffusions <- function(.data,
 #'   for convergence to a consensus.
 #' @examples 
 #'   play_learning(ison_networkers, 
-#'       rbinom(manynet::network_nodes(ison_networkers),1,prob = 0.25))
+#'       rbinom(net_nodes(ison_networkers),1,prob = 0.25))
 #' @export
 play_learning <- function(.data, 
                           beliefs,
                           steps,
                           epsilon = 0.0005){
-  n <- manynet::network_nodes(.data)
+  n <- net_nodes(.data)
   if(length(beliefs)!=n) 
     stop("'beliefs' must be a vector the same length as the number of nodes in the network.")
   if(is.logical(beliefs)) beliefs <- beliefs*1
@@ -311,7 +345,7 @@ play_learning <- function(.data,
   t = 0
   out <- matrix(NA,steps+1,length(beliefs))
   out[1,] <- beliefs
-  trust_mat <- manynet::as_matrix(.data)/rowSums(manynet::as_matrix(.data))
+  trust_mat <- as_matrix(.data)/rowSums(as_matrix(.data))
   
   repeat{
     old_beliefs <- beliefs
@@ -353,8 +387,8 @@ play_learning <- function(.data,
 #'   latticeEg <- add_node_attribute(latticeEg, "startValues", startValues)
 #'   latticeEg
 #'   play_segregation(latticeEg, "startValues", 0.5)
-#'   # autographr(latticeEg, node_color = "startValues", node_size = 5) + 
-#'   # autographr(play_segregation(latticeEg, "startValues", 0.2), 
+#'   # graphr(latticeEg, node_color = "startValues", node_size = 5) + 
+#'   # graphr(play_segregation(latticeEg, "startValues", 0.2), 
 #'   #            node_color = "startValues", node_size = 5)
 #' @export
 play_segregation <- function(.data, 
@@ -363,8 +397,7 @@ play_segregation <- function(.data,
                              who_moves = c("ordered","random","most_dissatisfied"),
                              choice_function = c("satisficing","optimising", "minimising"),
                              steps) {
-  thisRequires("migraph")
-  n <- network_nodes(.data)
+  n <- net_nodes(.data)
   if(missing(steps)) steps <- n
   who_moves <- match.arg(who_moves)
   choice_function <- match.arg(choice_function)
@@ -378,7 +411,7 @@ play_segregation <- function(.data,
   while(steps > t){
     t <- t+1
     current <- node_attribute(temp, attribute)
-    heterophily_scores <- migraph::node_heterophily(temp, attribute)
+    heterophily_scores <- node_heterophily(temp, attribute)
     dissatisfied <- which(heterophily_scores > heterophily)
     unoccupied <- which(is.na(current))
     dissatisfied <- setdiff(dissatisfied, unoccupied)
@@ -391,9 +424,9 @@ play_segregation <- function(.data,
                              which(heterophily_scores[dissatisfied] == 
                                      max(heterophily_scores[dissatisfied]))[1]])
     options <- vapply(unoccupied, function(u){
-      test <- manynet::add_node_attribute(temp, "test", 
+      test <- add_node_attribute(temp, "test", 
                                           swtch(current, dissatisfied, u))
-      migraph::node_heterophily(test, "test")[u]
+      node_heterophily(test, "test")[u]
     }, FUN.VALUE = numeric(1))
     if(length(options)==0) next
     move_to <- switch(choice_function,
@@ -404,7 +437,7 @@ play_segregation <- function(.data,
                                                                           igraph::V(temp)[unoccupied]))])
     if(is.na(move_to)) next
     print(paste("Moving node", dissatisfied, "to node", move_to))
-    temp <- manynet::add_node_attribute(temp, attribute, 
+    temp <- add_node_attribute(temp, attribute, 
                                         swtch(current, dissatisfied, move_to))
     moved <- c(dissatisfied, moved)
   }

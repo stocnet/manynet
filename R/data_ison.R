@@ -243,9 +243,16 @@
 
 #' Two-mode southern women (Davis, Gardner and Gardner 1941)
 #'
-#' Two-mode network dataset collected by Davis, Gardner and Gardner (1941)
-#' about the attendance pattern of women at informal social events
-#' during a 9 month period. Events and women are named.
+#' @description
+#'   Two-mode network dataset collected by Davis, Gardner and Gardner (1941)
+#'   about the pattern of a group of women's participation 
+#'   at informal social events in Old City during a 9 month period,
+#'   as reported in the \emph{Old City Herald} in 1936.
+#'   By convention, the nodes are named by the women's first names 
+#'   and the code numbers of the events,
+#'   but the women's surnames and titles (Miss, Mrs.) are recorded here too.
+#'   The events' dates are recorded in place of the Surname,
+#'   and these dates are also offered as a tie attribute.
 #' @docType data
 #' @keywords datasets
 #' @name ison_southern_women
@@ -336,10 +343,10 @@
 #' from Seasons 1 to 10.
 #' The `ison_friends` is a directed network
 #' containing connections between characters organised by season number,
-#' which is reflected in the tie attribute 'season'.
+#' which is reflected in the tie attribute 'wave'.
 #' The network contains 650 nodes
 #' Each tie represents the connection between a character pair (appear in the same scene),
-#' and the weight of the tie is the number of scenes the character pair appears in together.
+#' and the 'weight' of the tie is the number of scenes the character pair appears in together.
 #' For all networks, characters are named (eg. Phoebe, Ross, Rachel).
 #' @details
 #' The data contains both networks but each may be used separately.
@@ -573,4 +580,37 @@
 #'   ```
 "ison_monastery_praise"
 
+# Greys ####
 
+#' One-mode undirected network of characters hook-ups on Grey's Anatomy TV show
+#'
+#' @description
+#'   Grey's Anatomy is an American medical drama television series running on ABC since 2005.
+#'   It focuses on the personal and professional lives of surgical interns, residents, and attendings
+#'   at Seattle Grace Hospital, later renamed as the Grey Sloan Memorial Hospital. 
+#'   \href{https://gweissman.github.io/post/grey-s-anatomy-network-of-sexual-relations/}{Gary Weissman} 
+#'   collected data on the sexual contacts between characters on the television show
+#'   through observation of the story lines in the episodes and fan pages,
+#'   and this data was extended by \href{http://badhessian.org/2012/09/lessons-on-exponential-random-graph-modeling-from-greys-anatomy-hook-ups/}{Benjamin Lind}
+#'   including nodal attributes:
+#'   
+#'   - 'name': first and, where available, surname
+#'   - 'sex': `F` for female and `M` for male
+#'   - 'race': `White`, `Black`, or `Other`
+#'   - 'birthyear': year born (some missing data)
+#'   - 'position': `"Chief"`, `"Attending"`, `"Resident"`, `"Intern"`, `"Nurse"`, `"Non-Staff"`, `"Other"`
+#'   - 'season': season that the character joined the show
+#'   - 'sign': character's astrological starsign, if known
+#'   
+#'   The data is current up to (I think?) season 10?
+#'   
+#' @docType data
+#' @keywords datasets
+#' @name ison_greys
+#' @author Gary Weissman and Benjamin Lind
+#' @usage data(ison_greys)
+#' @format 
+#'   ```{r, echo = FALSE}
+#'   ison_greys
+#'   ```
+"ison_greys"

@@ -51,8 +51,8 @@ NULL
 #' @examples
 #' to_mode1(ison_southern_women)
 #' to_mode2(ison_southern_women)
-#' #autographr(to_mode1(ison_southern_women))
-#' #autographr(to_mode2(ison_southern_women))
+#' #graphr(to_mode1(ison_southern_women))
+#' #graphr(to_mode2(ison_southern_women))
 #' @export
 to_mode1 <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) UseMethod("to_mode1")
 
@@ -155,7 +155,7 @@ to_mode2.data.frame <- function(.data, similarity = c("count","jaccard","rand","
 #' @importFrom igraph make_line_graph E
 #' @examples
 #' to_ties(ison_adolescents)
-#' #autographr(to_ties(ison_adolescents))
+#' #graphr(to_ties(ison_adolescents))
 #' @export
 to_ties <- function(.data) UseMethod("to_ties")
 
@@ -362,8 +362,8 @@ to_blocks <- function(.data, membership, FUN = mean) UseMethod("to_blocks")
 to_blocks.matrix <- function(.data, membership, FUN = mean){
   if(is_twomode(.data)){
     mat <- to_onemode(.data)
-    m1_membs <- membership[!node_mode(.data)]
-    m2_membs <- membership[node_mode(.data)]
+    m1_membs <- membership[!node_is_mode(.data)]
+    m2_membs <- membership[node_is_mode(.data)]
     x <- length(unique(m1_membs))
     y <- length(unique(m2_membs))
     out <- matrix(nrow = unique(m1_membs)[x],
@@ -462,7 +462,7 @@ NULL
 #' @importFrom igraph max_bipartite_match
 #' @examples 
 #' to_matching(ison_southern_women)
-#' #autographr(to_matching(ison_southern_women))
+#' #graphr(to_matching(ison_southern_women))
 #' @export
 to_matching <- function(.data, mark = "type") UseMethod("to_matching")
 
@@ -518,7 +518,7 @@ to_matching.matrix <- function(.data, mark = "type"){
 #' "Accelerating the Diffusion of Innovations Using Opinion Leaders",
 #' _Annals of the American Academy of Political and Social Science_ 566: 56-67.
 #' @examples
-#' autographr(to_mentoring(ison_adolescents))
+#' graphr(to_mentoring(ison_adolescents))
 #' @export
 to_mentoring <- function(.data, elites = 0.1) UseMethod("to_mentoring")
 
@@ -567,7 +567,7 @@ to_mentoring.igraph <- function(.data, elites = 0.1){
 #' @importFrom igraph eulerian_path
 #' @examples
 #'   to_eulerian(delete_nodes(ison_koenigsberg, "Lomse"))
-#'   #autographr(to_eulerian(delete_nodes(ison_koenigsberg, "Lomse")))
+#'   #graphr(to_eulerian(delete_nodes(ison_koenigsberg, "Lomse")))
 #' @export
 to_eulerian <- function(.data) UseMethod("to_eulerian")
 

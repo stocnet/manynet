@@ -28,7 +28,7 @@ e.g. changing the default colour of the graph's vertices and edges.
 \examples{
 to_mentoring(ison_brandes) \%>\%
   mutate(color = c(rep(c(1,2,3), 3), 3)) \%>\%
-  autographr(node_color = "color") +
+  graphr(node_color = "color") +
   labs(title = "Who leads and who follows?") +
   scale_color_iheid() +
   theme_iheid()

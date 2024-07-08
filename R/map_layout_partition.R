@@ -2,7 +2,7 @@
 #' 
 #' @description
 #'   These algorithms layout networks based on two or more partitions,
-#'   and are recommended for use with `autographr()` or `{ggraph}`.
+#'   and are recommended for use with `graphr()` or `{ggraph}`.
 #'   Note that these layout algorithms use `{Rgraphviz}`, 
 #'   a package that is only available on Bioconductor.
 #'   It will first need to be downloaded using `BiocManager::install("Rgraphviz")`.
@@ -56,24 +56,29 @@ NULL
 
 #' @rdname partition_layouts
 #' @examples
-#' #autographr(ison_southern_women, layout = "hierarchy", center = "events",
+#' #graphr(ison_southern_women, layout = "hierarchy", center = "events",
 #' #           node_color = "type", node_size = 3)
 #' @export
 layout_tbl_graph_hierarchy <- function(.data, center = NULL,
                                        circular = FALSE, times = 1000) {
   if (is.null(center)) {
     thisRequiresBio("Rgraphviz")
-    prep <- as_matrix(.data, twomode = FALSE)
-    if(anyDuplicated(rownames(prep))) {
+    prep <- as_matrix(.data)
+    if (anyDuplicated(rownames(prep))) {
       rownames(prep) <- seq_len(nrow(prep))
-      colnames(prep) <- seq_len(ncol(prep))
+      colnames(prep) <- seq_len(ncol(prep)) + max(nrow(prep))
     }
-    if(any(prep<0)) prep[prep<0] <- 0
+    if (any(prep<0)) prep[prep<0] <- 0
     out <- as_graphAM(prep)
     out <- suppressMessages(Rgraphviz::layoutGraph(out, layoutType = 'dot',
                                                    attrs = list(graph = list(rankdir = "BT"))))
     nodeX <- .rescale(out@renderInfo@nodes$nodeX)
     nodeY <- .rescale(out@renderInfo@nodes$nodeY)
+    if (is_twomode(.data) & "name" %in% igraph::vertex_attr_names(.data)) {
+      names <- igraph::vertex_attr(.data, "name")
+      nodeX <- nodeX[order(match(names(nodeX), names))]
+      nodeY <- nodeY[order(match(names(nodeY), names))]
+    }
     # nodeY <- abs(nodeY - max(nodeY))
     out <- .to_lo(cbind(nodeX, nodeY))
   } else {
@@ -118,7 +123,7 @@ layout_tbl_graph_hierarchy <- function(.data, center = NULL,
 
 #' @rdname partition_layouts
 #' @examples
-#' #autographr(ison_southern_women, layout = "alluvial")
+#' #graphr(ison_southern_women, layout = "alluvial")
 #' @export
 layout_tbl_graph_alluvial <- function(.data,
                                       circular = FALSE, times = 1000){
@@ -160,15 +165,22 @@ layout_tbl_graph_ladder <- function(.data,
 
 #' @rdname partition_layouts
 #' @examples
-#' #autographr(ison_southern_women, layout = "concentric", membership = "type",
+#' #graphr(ison_southern_women, layout = "concentric", membership = "type",
 #' #           node_color = "type", node_size = 3)
 #' @export
 layout_tbl_graph_concentric <- function(.data, membership,
                                         radius = NULL, 
                                         order.by = NULL, 
                                         circular = FALSE, times = 1000) {
+  if (any(igraph::vertex_attr(.data, "name") == "")) {
+    ll <- unlist(lapply(seq_len(length(.data)), function(x) {
+      ifelse(igraph::vertex_attr(.data, "name")[x] == "",
+             paste0("ramdom", x), igraph::vertex_attr(.data, "name")[x])
+    }))
+    .data <- set_vertex_attr(.data, "name", value = ll)
+  }
   if (missing(membership)) { 
-    if (is_twomode(.data)) membership <- node_mode(.data) else 
+    if (is_twomode(.data)) membership <- node_is_mode(.data) else 
       stop("Please pass the function a `membership` node attribute or a vector.")
   } else {
     if (length(membership) > 1 & length(membership) != length(.data)) {
@@ -181,7 +193,7 @@ layout_tbl_graph_concentric <- function(.data, membership,
   membership <- to_list(membership)
   all_c  <- unlist(membership, use.names = FALSE)
   if (any(table(all_c) > 1)) stop("Duplicated nodes in layers!")
-  if (is_labelled(.data)) all_n <- node_names(.data) else all_n <- 1:network_nodes(.data)
+  if (is_labelled(.data)) all_n <- node_names(.data) else all_n <- 1:net_nodes(.data)
   sel_other  <- all_n[!all_n %in% all_c]
   if (length(sel_other) > 0) membership[[length(membership) + 1]] <- sel_other
   if (is.null(radius)) {
@@ -218,7 +230,7 @@ layout_tbl_graph_concentric <- function(.data, membership,
 
 #' @rdname partition_layouts
 #' @examples
-#' #autographr(ison_lotr, layout = "multilevel",
+#' #graphr(ison_lotr, layout = "multilevel",
 #' #           node_color = "Race", level = "Race", node_size = 3)
 #' @export
 layout_tbl_graph_multilevel <- function(.data, level, circular = FALSE) {
@@ -246,7 +258,7 @@ layout_tbl_graph_multilevel <- function(.data, level, circular = FALSE) {
 #' # ison_adolescents %>%
 #' #   mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2),
 #' #          cut = node_is_cutpoint(ison_adolescents)) %>%
-#' #   autographr(layout = "lineage", rank = "year", node_color = "cut",
+#' #   graphr(layout = "lineage", rank = "year", node_color = "cut",
 #' #              node_size = migraph::node_degree(ison_adolescents)*10)
 #' @export
 layout_tbl_graph_lineage <- function(.data, rank, circular = FALSE) {
@@ -273,7 +285,7 @@ layout_tbl_graph_lineage <- function(.data, rank, circular = FALSE) {
   res
 }
 
-to_list <- function(members){
+to_list <- function(members) {
   out <- lapply(sort(unique(members)), function(x){
     y <- which(members==x)
     if(!is.null(names(y))) names(y) else y
@@ -294,7 +306,7 @@ getNNvec <- function(.data, members){
     diag(diss) <- NA
     if(is_labelled(.data))
       starts <- names(sort(igraph::degree(.data)[circle], decreasing = TRUE)[1])
-    else starts <- paste0("V",1:network_nodes(.data))[sort(igraph::degree(.data)[circle], 
+    else starts <- paste0("V",1:net_nodes(.data))[sort(igraph::degree(.data)[circle], 
                                                            decreasing = TRUE)[1]]
     if(length(circle)>1)
       starts <- c(starts, names(which.min(diss[starts,])))

@@ -37,11 +37,9 @@ layout automatically.
 }
 \seealso{
 Other mapping: 
-\code{\link{attributes}()},
-\code{\link{autographr}()},
-\code{\link{autographs}()},
-\code{\link{autographt}()},
-\code{\link{partition_layouts}},
-\code{\link{properties}}
+\code{\link{graphr}()},
+\code{\link{graphs}()},
+\code{\link{grapht}()},
+\code{\link{partition_layouts}}
 }
 \concept{mapping}

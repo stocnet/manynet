@@ -16,9 +16,9 @@ NULL
 #' @export
 layout_tbl_graph_configuration <- function(.data,
                                    circular = FALSE, times = 1000){
-  if (network_nodes(.data) == 3) {
+  if (net_nodes(.data) == 3) {
     layout_tbl_graph_triad(.data, circular = circular, times = times)
-  } else if (network_nodes(.data) == 4) {
+  } else if (net_nodes(.data) == 4) {
     layout_tbl_graph_quad(.data, circular = circular, times = times)
 }}
 

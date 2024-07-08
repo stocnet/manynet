@@ -7,6 +7,7 @@
 \alias{generate_scalefree}
 \alias{generate_permutation}
 \alias{generate_utilities}
+\alias{generate_configuration}
 \title{Making networks with a stochastic element}
 \usage{
 generate_random(n, p = 0.5, directed = FALSE, with_attr = TRUE)
@@ -18,6 +19,8 @@ generate_scalefree(n, p = 1, directed = FALSE)
 generate_permutation(.data, with_attr = TRUE)
 
 generate_utilities(n, steps = 1, volatility = 0, threshold = 0)
+
+generate_configuration(.data)
 }
 \arguments{
 \item{n}{Given:
@@ -85,6 +88,8 @@ They are particularly useful for creating a distribution of networks
 for exploring or testing network properties.
 \itemize{
 \item \code{generate_random()} generates a random network with ties appearing at some probability.
+\item \code{generate_configuration()} generates a random network consistent with a
+given degree distribution.
 \item \code{generate_smallworld()} generates a small-world structure via ring rewiring at some probability.
 \item \code{generate_scalefree()} generates a scale-free structure via preferential attachment at some probability.
 \item \code{generate_permutation()} generates a permutation of the network
@@ -103,14 +108,14 @@ As an alternative, an existing network can be provided to \code{n}
 and the number of modes, nodes, and directedness will be inferred.
 }
 \examples{
-autographr(generate_random(12, 0.4))
-# autographr(generate_random(c(6, 6), 0.4))
-autographr(generate_smallworld(12, 0.025))
-autographr(generate_smallworld(12, 0.25))
-autographr(generate_scalefree(12, 0.25))
-autographr(generate_scalefree(12, 1.25))
-autographr(ison_adolescents)
-autographr(generate_permutation(ison_adolescents))
+graphr(generate_random(12, 0.4))
+# graphr(generate_random(c(6, 6), 0.4))
+graphr(generate_smallworld(12, 0.025))
+graphr(generate_smallworld(12, 0.25))
+graphr(generate_scalefree(12, 0.25))
+graphr(generate_scalefree(12, 1.25))
+graphr(ison_adolescents)
+graphr(generate_permutation(ison_adolescents))
 }
 \references{
 Erdos, Paul, and Alfred Renyi. (1959).

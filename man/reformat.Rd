@@ -139,13 +139,14 @@ as_tidygraph(create_filled(5)) \%>\%
   mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) \%>\%
   to_uniplex("friend")
 to_anti(ison_southern_women)
-#autographr(to_anti(ison_southern_women))
+#graphr(to_anti(ison_southern_women))
 }
 \seealso{
 Other modifications: 
 \code{\link{add_nodes}()},
 \code{\link{add_ties}()},
 \code{\link{as}()},
+\code{\link{correlation}},
 \code{\link{from}},
 \code{\link{miss}},
 \code{\link{split}()},

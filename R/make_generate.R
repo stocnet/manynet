@@ -6,6 +6,8 @@
 #'   for exploring or testing network properties.
 #'   
 #'   - `generate_random()` generates a random network with ties appearing at some probability.
+#'   - `generate_configuration()` generates a random network consistent with a
+#'   given degree distribution.
 #'   - `generate_smallworld()` generates a small-world structure via ring rewiring at some probability.
 #'   - `generate_scalefree()` generates a scale-free structure via preferential attachment at some probability.
 #'   - `generate_permutation()` generates a permutation of the network
@@ -48,21 +50,21 @@ NULL
 #' _Publicationes Mathematicae_. 6: 290–297.
 #' @importFrom igraph sample_bipartite sample_gnp sample_gnm
 #' @examples
-#' autographr(generate_random(12, 0.4))
-#' # autographr(generate_random(c(6, 6), 0.4))
+#' graphr(generate_random(12, 0.4))
+#' # graphr(generate_random(c(6, 6), 0.4))
 #' @export
 generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
   if(is_manynet(n)){
-    m <- network_ties(n)
+    m <- net_ties(n)
     directed <- is_directed(n)
     if(is_twomode(n)){
-      g <- igraph::sample_bipartite(network_dims(n)[1], 
-                                    network_dims(n)[2],
+      g <- igraph::sample_bipartite(net_dims(n)[1], 
+                                    net_dims(n)[2],
                                     m = m, type = "gnm",
                                     directed = directed,
                                     mode = "out")
     } else {
-      g <- igraph::sample_gnm(network_nodes(n), 
+      g <- igraph::sample_gnm(net_nodes(n), 
                                     m = m,
                                     directed = directed)
     }
@@ -106,8 +108,8 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
 #' \doi{10.1038/30918}.
 #' @importFrom igraph sample_smallworld
 #' @examples
-#' autographr(generate_smallworld(12, 0.025))
-#' autographr(generate_smallworld(12, 0.25))
+#' graphr(generate_smallworld(12, 0.025))
+#' graphr(generate_smallworld(12, 0.25))
 #' @export
 generate_smallworld <- function(n, p = 0.05, directed = FALSE, width = 2) {
   directed <- infer_directed(n, directed)
@@ -132,8 +134,8 @@ generate_smallworld <- function(n, p = 0.05, directed = FALSE, width = 2) {
 #' _Science_ 286(5439):509–12. 
 #' \doi{10.1126/science.286.5439.509}.
 #' @examples
-#' autographr(generate_scalefree(12, 0.25))
-#' autographr(generate_scalefree(12, 1.25))
+#' graphr(generate_scalefree(12, 0.25))
+#' graphr(generate_scalefree(12, 1.25))
 #' @export
 generate_scalefree <- function(n, p = 1, directed = FALSE) {
   directed <- infer_directed(n, directed)
@@ -157,8 +159,8 @@ generate_scalefree <- function(n, p = 1, directed = FALSE) {
 #'   should be retained. 
 #'   By default TRUE. 
 #' @examples
-#' autographr(ison_adolescents)
-#' autographr(generate_permutation(ison_adolescents))
+#' graphr(ison_adolescents)
+#' graphr(generate_permutation(ison_adolescents))
 #' @export
 generate_permutation <- function(.data, with_attr = TRUE) {
   out <- as_matrix(.data)
@@ -202,6 +204,32 @@ generate_utilities <- function(n, steps = 1, volatility = 0, threshold = 0){
     }
   }
   as_igraph(utilities)
+}
+
+#' @rdname generate 
+#' @importFrom igraph sample_degseq
+#' @export
+generate_configuration <- function(.data){
+  if(is_twomode(.data)){
+    degs <- node_deg(.data)
+    outs <- ifelse(!c(attr(degs, "mode")),c(degs),rep(0,length(degs)))
+    ins <- ifelse(c(attr(degs, "mode")),c(degs),rep(0,length(degs)))
+    out <- igraph::sample_degseq(outs, ins, method = "simple.no.multiple")
+    out <- as_tidygraph(out) %>% mutate(type = c(attr(degs, "mode")))
+  } else {
+    if(is_complex(.data) || is_multiplex(.data) && is_directed(.data)) 
+      out <- igraph::sample_degseq(node_deg(.data, direction = "out"), 
+                                   node_deg(.data, direction = "in"),
+                                   method = "simple")
+    if(is_complex(.data) || is_multiplex(.data) && !is_directed(.data)) 
+      out <- igraph::sample_degseq(node_deg(.data), method = "simple")
+    if(!(is_complex(.data) || is_multiplex(.data)) && is_directed(.data)) 
+      out <- igraph::sample_degseq(node_deg(.data, direction = "out"), 
+                                   node_deg(.data, direction = "in"), method = "simple.no.multiple")
+    if(!(is_complex(.data) || is_multiplex(.data)) && !is_directed(.data)) 
+      out <- igraph::sample_degseq(node_deg(.data), method = "simple.no.multiple")
+  }
+  as_tidygraph(out)
 }
 
 # Helper functions ------------------

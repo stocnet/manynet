@@ -349,23 +349,26 @@ create_components <- function(n, directed = FALSE, membership = NULL) {
   as_tidygraph(out)
 }
 
-#' @rdname create 
+#' @rdname create
+#' @param mark A logical vector the length of the nodes in the network.
+#'   This can be created by, among other things, any `node_is_*()` function.
 #' @examples
 #' create_core(6)
 #' @export
-create_core <- function(n, directed = FALSE, membership = NULL) {
+create_core <- function(n, directed = FALSE, mark = NULL) {
   directed <- infer_directed(n, directed)
-  membership <- infer_membership(n, membership)
+  mark <- infer_membership(n, mark)
+  if(!is.numeric(mark)) mark <- as.numeric(as.factor(mark))
   n <- infer_n(n)
   if (length(n) > 1) {
     mat <- matrix(0, n[1], n[2])
-    mat[membership[1:n[1]] == 1,] <- 1
-    mat[, membership[(n[1] + 1):length(membership)] == 1] <- 1
+    mat[mark[1:n[1]] == 1,] <- 1
+    mat[, mark[(n[1] + 1):length(mark)] == 1] <- 1
     as_tidygraph(mat, twomode = TRUE)
   } else {
     mat <- matrix(0, n, n)
-    mat[membership == 1,] <- 1
-    mat[, membership == 1] <- 1
+    mat[mark == 1,] <- 1
+    mat[, mark == 1] <- 1
     diag(mat) <- 0
     if(directed) mat[lower.tri(mat)] <- 0
     as_tidygraph(mat)
@@ -518,6 +521,7 @@ infer_directed <- function(n, directed) {
 
 infer_membership <- function(n, membership) {
   if (is.null(membership)) {
+    if(is_manynet(n)) n <- infer_n(n)
     if (length(n) > 1) {
       membership <- c(sort(abs(seq_len(n[1]) %% 2 -2)), 
                       sort(abs(seq_len(n[2]) %% 2 -2)))

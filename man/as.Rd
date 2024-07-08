@@ -10,6 +10,7 @@
 \alias{as_siena}
 \alias{as_graphAM}
 \alias{as_diffusion}
+\alias{as_diffnet}
 \title{Modifying network classes}
 \usage{
 as_edgelist(.data, twomode = FALSE)
@@ -26,7 +27,9 @@ as_siena(.data, twomode = FALSE)
 
 as_graphAM(.data, twomode = NULL)
 
-as_diffusion(events, .data)
+as_diffusion(.data, twomode = FALSE, events)
+
+as_diffnet(.data, twomode = FALSE)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -50,15 +53,17 @@ and \code{event}, which can take on the values "I" for an infection event,
 "E" for an exposure event, or "R" for a recovery event.}
 }
 \value{
-The currently implemented coercions or translations are:\tabular{lrrrrrrrrr}{
-    \tab data.frame \tab diff_model \tab igraph \tab list \tab matrix \tab network \tab network.goldfish \tab siena \tab tbl_graph \cr
-   as_edgelist \tab 1 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
-   as_graphAM \tab 1 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
-   as_igraph \tab 1 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
-   as_matrix \tab 1 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
-   as_network \tab 1 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
-   as_siena \tab 0 \tab 0 \tab 1 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 1 \cr
-   as_tidygraph \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+The currently implemented coercions or translations are:\tabular{lrrrrrrrrrr}{
+    \tab data.frame \tab diff_model \tab diffnet \tab igraph \tab list \tab matrix \tab network \tab network.goldfish \tab siena \tab tbl_graph \cr
+   as_diffnet \tab 0 \tab 1 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \cr
+   as_diffusion \tab 0 \tab 1 \tab 1 \tab 1 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \cr
+   as_edgelist \tab 1 \tab 0 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   as_graphAM \tab 1 \tab 0 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   as_igraph \tab 1 \tab 1 \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   as_matrix \tab 1 \tab 1 \tab 0 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   as_network \tab 1 \tab 0 \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   as_siena \tab 0 \tab 0 \tab 0 \tab 1 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 1 \cr
+   as_tidygraph \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
 }
 
 \code{as_diffusion()} and \code{play_diffusion()} return a 'diff_model' object
@@ -77,12 +82,13 @@ of social network objects in R into the declared class:
 \item \code{as_edgelist()} coerces the object into an edgelist, as data frames or tibbles.
 \item \code{as_matrix()} coerces the object into an adjacency (one-mode/unipartite) or incidence (two-mode/bipartite) matrix.
 \item \code{as_igraph()} coerces the object into an \code{{igraph}} \code{graph} object.
-\item \code{as_tidygraph()} coerces the object into a \code{{tidygraph}} \code{tbl_graph} objects.
-\item \code{as_network()} coerces the object into a \code{{network}} \code{network} objects.
+\item \code{as_tidygraph()} coerces the object into a \code{{tidygraph}} \code{tbl_graph} object.
+\item \code{as_network()} coerces the object into a \code{{network}} \code{network} object.
 \item \code{as_siena()} coerces the (igraph/tidygraph) object into a SIENA dependent variable.
 \item \code{as_graphAM()} coerces the object into a graph adjacency matrix.
 \item \code{as_diffusion()} coerces a table of diffusion events into
 a \code{diff_model} object similar to the output of \code{play_diffusion()}.
+\item \code{as_diffnet()} coerces a \code{diff_model} object into a \code{{netdiffuseR}} \code{diffnet} object.
 }
 
 An effort is made for all of these coercion routines to be as lossless
@@ -119,13 +125,16 @@ as_igraph(test)
 as_tidygraph(test)
 as_network(test)
   # How to create a diff_model object from (basic) observed data
-  events <- data.frame(t = c(0,1,1,2,3), nodes = c(1,2,3,2,4), event = c("I","I","I","R","I"))
-  as_diffusion(events, manynet::create_filled(4))
+  events <- data.frame(t = c(0,1,1,2,3), 
+                       nodes = c(1,2,3,2,4), 
+                       event = c("I","I","I","R","I"))
+  as_diffusion(create_filled(4), events = events)
 }
 \seealso{
 Other modifications: 
 \code{\link{add_nodes}()},
 \code{\link{add_ties}()},
+\code{\link{correlation}},
 \code{\link{from}},
 \code{\link{miss}},
 \code{\link{reformat}},

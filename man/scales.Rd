@@ -105,8 +105,8 @@ These functions enable to add color scales to be graphs.
 \examples{
 #ison_brandes \%>\%
 #mutate(core = migraph::node_is_core(ison_brandes)) \%>\%
-#autographr(node_color = "core") +
+#graphr(node_color = "core") +
 #scale_color_iheid()
-#autographr(ison_physicians[[1]], edge_color = "type") +
+#graphr(ison_physicians[[1]], edge_color = "type") +
 #scale_edge_color_ethz()
 }

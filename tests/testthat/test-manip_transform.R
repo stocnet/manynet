@@ -1,12 +1,12 @@
 # Test transform functions
 
 test_that("to_giant works",{
-  expect_equal(network_nodes(ison_marvel_relationships), 53)
-  expect_equal(network_nodes(to_giant(ison_marvel_relationships)), 50)
-  expect_equal(network_nodes(to_giant(as_igraph(ison_marvel_relationships))), 50)
-  expect_equal(network_nodes(to_giant(as_matrix(ison_marvel_relationships))), 50)
-  expect_equal(network_nodes(to_giant(as_network(ison_marvel_relationships))), 50)
-  expect_equal(network_nodes(to_giant(as_edgelist(ison_marvel_relationships))), 50)
+  expect_equal(c(net_nodes(ison_marvel_relationships)), 53)
+  expect_equal(c(net_nodes(to_giant(ison_marvel_relationships))), 50)
+  expect_equal(c(net_nodes(to_giant(as_igraph(ison_marvel_relationships)))), 50)
+  expect_equal(c(net_nodes(to_giant(as_matrix(ison_marvel_relationships)))), 50)
+  expect_equal(c(net_nodes(to_giant(as_network(ison_marvel_relationships)))), 50)
+  expect_equal(c(net_nodes(to_giant(as_edgelist(ison_marvel_relationships)))), 50)
 })
 
 test_that("matrix projected correctly by rows",{
@@ -19,7 +19,7 @@ test_that("matrix projected correctly by rows",{
   expect_true(all(node_names(to_mode1(ison_southern_women)) %in% node_names(ison_southern_women)))
   expect_true(length(node_names(to_mode1(ison_southern_women))) != length(node_names(ison_southern_women)))
   expect_equal(length(node_names(to_mode1(ison_southern_women))), length(rownames(as_matrix(ison_southern_women))))
-  expect_equal(network_nodes(to_mode1(ison_southern_women, "count")), network_nodes(to_mode1(ison_southern_women, "jaccard")))
+  expect_equal(net_nodes(to_mode1(ison_southern_women, "count")), net_nodes(to_mode1(ison_southern_women, "jaccard")))
   expect_true(is_weighted(to_mode1(ison_southern_women, "pearson")))
   expect_false(tie_weights(to_mode1(ison_southern_women, "rand"))[3] == tie_weights(to_mode1(ison_southern_women, "count"))[3])
 })
@@ -34,20 +34,20 @@ test_that("matrix projected correctly by columns",{
   expect_true(all(node_names(to_mode2(ison_southern_women)) %in% node_names(ison_southern_women)))
   expect_true(length(node_names(to_mode2(ison_southern_women))) != length(node_names(ison_southern_women)))
   expect_equal(length(node_names(to_mode2(ison_southern_women))), length(colnames(as_matrix(ison_southern_women))))
-  expect_equal(network_nodes(to_mode2(ison_southern_women, "count")), network_nodes(to_mode2(ison_southern_women, "jaccard")))
+  expect_equal(net_nodes(to_mode2(ison_southern_women, "count")), net_nodes(to_mode2(ison_southern_women, "jaccard")))
   expect_true(is_weighted(to_mode2(ison_southern_women, "pearson")))
   expect_false(tie_weights(to_mode2(ison_southern_women, "rand"))[1] == tie_weights(to_mode2(ison_southern_women, "count"))[1])
 })
 
 test_that("to matching works", {
   sw <- as_edgelist(to_matching(ison_southern_women))
-  expect_equal(network_nodes(to_matching(ison_southern_women)),
-               network_nodes(ison_southern_women))
+  expect_equal(net_nodes(to_matching(ison_southern_women)),
+               net_nodes(ison_southern_women))
   expect_true(nrow(sw) == nrow(dplyr::distinct(sw)))
 })
 
 test_that("to_subgraph works", {
-  expect_equal(network_nodes(to_subgraph(ison_lawfirm, office == "Boston")), 48)
+  expect_equal(c(net_nodes(to_subgraph(ison_lawfirm, office == "Boston"))), 48)
 })
 
 test_that("to ties works", {

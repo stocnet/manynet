@@ -46,7 +46,6 @@
 #'   - [networkdata](https://schochastics.github.io/networkdata/)
 #'   - [GML datasets](http://www-personal.umich.edu/~mejn/netdata/)
 #'   - UCIrvine Network Data Repository
-#'   - [KONECT project](http://konect.cc/)
 #'   - [SNAP Stanford Large Network Dataset Collection](http://snap.stanford.edu/data/)
 #'
 #'   Please let us know if you identify any further repositories

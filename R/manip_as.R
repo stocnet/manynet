@@ -6,12 +6,13 @@
 #'   - `as_edgelist()` coerces the object into an edgelist, as data frames or tibbles.
 #'   - `as_matrix()` coerces the object into an adjacency (one-mode/unipartite) or incidence (two-mode/bipartite) matrix.
 #'   - `as_igraph()` coerces the object into an `{igraph}` `graph` object.
-#'   - `as_tidygraph()` coerces the object into a `{tidygraph}` `tbl_graph` objects.
-#'   - `as_network()` coerces the object into a `{network}` `network` objects.
+#'   - `as_tidygraph()` coerces the object into a `{tidygraph}` `tbl_graph` object.
+#'   - `as_network()` coerces the object into a `{network}` `network` object.
 #'   - `as_siena()` coerces the (igraph/tidygraph) object into a SIENA dependent variable.
 #'   - `as_graphAM()` coerces the object into a graph adjacency matrix.
 #'   - `as_diffusion()` coerces a table of diffusion events into
 #'   a `diff_model` object similar to the output of `play_diffusion()`.
+#'   - `as_diffnet()` coerces a `diff_model` object into a `{netdiffuseR}` `diffnet` object.
 #'
 #'   An effort is made for all of these coercion routines to be as lossless
 #'   as possible, though some object classes are better at retaining certain
@@ -56,7 +57,7 @@
 #'
 #' ```{r, echo = FALSE, cache = TRUE} 
 #'  knitr::kable(available_methods(c("as_edgelist","as_matrix", "as_igraph", "as_tidygraph", 
-#'  "as_network", "as_siena", "as_graphAM", "as_diffusion")))
+#'  "as_network", "as_siena", "as_graphAM", "as_diffusion", "as_diffnet")))
 #'  ```
 NULL
 
@@ -289,6 +290,12 @@ as_matrix.siena <- function(.data,
   out
 }
 
+#' @export
+as_matrix.diff_model <- function(.data,
+                                 twomode = FALSE) {
+  as_matrix(as_igraph(.data, twomode = twomode))
+}
+
 # igraph ####
 
 #' @rdname as
@@ -410,6 +417,19 @@ as_igraph.network <- function(.data,
     }
   }
   graph
+}
+
+#' @export
+as_igraph.diff_model <- function(.data,
+                                 twomode = FALSE) {
+  as_igraph(attr(.data, "network"))
+}
+
+#' @export
+as_igraph.diffnet <- function(.data,
+                                 twomode = FALSE) {
+  thisRequires("netdiffuseR")
+  netdiffuseR::diffnet_to_igraph(.data)
 }
 
 #' @export
@@ -666,6 +686,12 @@ as_tidygraph.diff_model <- function(.data, twomode = FALSE) {
   out
 }
 
+#' @export
+as_tidygraph.diffnet <- function(.data, twomode = FALSE) {
+  out <- as_igraph(.data)
+  lapply(out, as_tidygraph)
+}
+
 # Network ####
 
 #' @rdname as
@@ -747,6 +773,13 @@ as_network.network.goldfish <- function(.data,
 }
 
 #' @export
+as_network.diffnet <- function(.data,
+                              twomode = FALSE) {
+  thisRequires("netdiffuseR")
+  netdiffuseR::diffnet_to_network(.data)
+}
+
+#' @export
 as_network.siena <- function(.data, twomode = FALSE) {
   as_network(as_igraph.siena(.data, twomode = FALSE))
 }
@@ -772,7 +805,7 @@ as_siena.igraph <- function(.data, twomode = FALSE) {
   depnet <- RSiena::sienaDependent(depnetArray, 
                                    type = ifelse(is_twomode(.data) | twomode,
                                                  "bipartite", "oneMode"))
-  # nodeatts <- network_node_attributes(.data)
+  # nodeatts <- net_node_attributes(.data)
   # nodeatts <- nodeatts[nodeatts != "name"]
   # # Add constant covariates
   # consatts <- nodeatts[!grepl("_t[0-9]",nodeatts)]
@@ -859,7 +892,7 @@ as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
 
 # Diffusion ####
 
-#' @rdname as 
+#' @rdname as
 #' @param events A table (data frame or tibble) of diffusion events
 #'   with columns `t` indicating the time (typically an integer) of the event, 
 #'   `nodes` indicating the number or name of the node involved in the event,
@@ -877,18 +910,28 @@ as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
 #' @importFrom dplyr tibble
 #' @examples
 #'   # How to create a diff_model object from (basic) observed data
-#'   events <- data.frame(t = c(0,1,1,2,3), nodes = c(1,2,3,2,4), event = c("I","I","I","R","I"))
-#'   as_diffusion(events, manynet::create_filled(4))
+#'   events <- data.frame(t = c(0,1,1,2,3), 
+#'                        nodes = c(1,2,3,2,4), 
+#'                        event = c("I","I","I","R","I"))
+#'   as_diffusion(create_filled(4), events = events)
 #' @export
-as_diffusion <- function(events, .data) {
-  net <- .data
+as_diffusion <- function(.data, twomode = FALSE, events) UseMethod("as_diffusion")
+
+#' @export
+as_diffusion.diff_model <- function(.data, twomode = FALSE, events) {
+  .data
+}
+
+#' @export
+as_diffusion.igraph <- function(.data, twomode = FALSE, events) {
+  net <- as_tidygraph(.data)
   event <- NULL
   sumchanges <- events %>% dplyr::group_by(t) %>% 
     dplyr::reframe(I_new = sum(event == "I"),
                    E_new = sum(event == "E"),
                    R_new = sum(event == "R"))
   report <- dplyr::tibble(t = seq_len(max(events$t)) - 1,
-                          n = manynet::network_nodes(net)) %>% 
+                          n = net_nodes(net)) %>% 
     dplyr::left_join(sumchanges, by = dplyr::join_by(t))
   report[is.na(report)] <- 0
   report$R <- cumsum(report$R_new)
@@ -914,5 +957,83 @@ as_diffusion <- function(events, .data) {
   }
   report <- dplyr::select(report, dplyr::any_of(c("t", "n", "S", "s", "E", "E_new", "I", "I_new", "R", "R_new")))
   make_diff_model(events, report, .data)
+}
+
+#' @export
+as_diffusion.diffnet <- function(.data, twomode = FALSE, events) {
+  diffnet <- .data
+  net <- as.matrix(.data$graph[[1]])
+  event <- NULL
+  events <- data.frame(t = .data$toa, 
+                       nodes = attr(.data$toa, "names"), 
+                       event = "I")
+  if(!all.equal(diffnet$graph[[1]], diffnet$graph[[length(diffnet$graph)]]))
+    warning(paste("This function currently only takes the first network.",
+                  "Network changes are not currently retained."))
+  rownames(net) <- diffnet$meta$ids
+  colnames(net) <- diffnet$meta$ids
+  sumchanges <- events %>% dplyr::group_by(t) %>% 
+    dplyr::reframe(I_new = sum(event == "I"),
+                   E_new = sum(event == "E"),
+                   R_new = sum(event == "R"))
+  report <- dplyr::tibble(t = min(events$t):max(events$t),
+                          n = diffnet$meta$n) %>% 
+    dplyr::left_join(sumchanges, by = dplyr::join_by(t))
+  report[is.na(report)] <- 0
+  report$R <- cumsum(report$R_new)
+  report$I <- cumsum(report$I_new) - report$R
+  report$E <- ifelse(report$E_new == 0 & 
+                       cumsum(report$E_new) == max(cumsum(report$E_new)),
+                     report$E_new, cumsum(report$E_new))
+  report$E <- ifelse(report$R + report$I + report$E > report$n,
+                     report$n - (report$R + report$I),
+                     report$E)
+  report$S <- report$n - report$R - report$I - report$E
+  report$s <- vapply(report$t, function(time){
+    twin <- dplyr::filter(events, events$t <= time)
+    infected <- dplyr::filter(twin, twin$event == "I")$nodes
+    recovered <- dplyr::filter(twin, twin$event == "R")$nodes
+    infected <- setdiff(infected, recovered)
+    expos <- node_is_exposed(as_igraph(net), infected)
+    expos[infected] <- F
+    expos[recovered] <- F
+    sum(expos)
+  }, numeric(1) )
+  if (any(report$R + report$I + report$E + report$S != report$n)) {
+    stop("Oops, something is wrong")
+  }
+  if(is_labelled(net)) events$nodes <- match(events$nodes, node_names(net))
+  events <- events %>% dplyr::arrange(t)
+  report <- dplyr::select(report, dplyr::any_of(c("t", "n", "S", "s", "E", "E_new", "I", "I_new", "R", "R_new")))
+  make_diff_model(events, report, net)
+}
+  
+# Diffnet ####
+
+#' @rdname as
+#' @export
+as_diffnet <- function(.data,
+                       twomode = FALSE) UseMethod("as_diffnet")
+
+#' @export
+as_diffnet.diff_model <- function(.data,
+                               twomode = FALSE) {
+  thisRequires("netdiffuseR")
+  event <- nodes <- NULL
+  out <- summary(.data) %>% dplyr::filter(event == "I") %>% 
+    dplyr::distinct(nodes, .keep_all = TRUE) %>% 
+    dplyr::select(nodes,t)
+  if(!is_labelled(as_igraph(.data)))
+    out <- dplyr::arrange(out, nodes) else if (is.numeric(out$nodes))
+      out$nodes <- node_names(as_igraph(.data))[out$nodes]
+  toa <- stats::setNames(out$t, out$nodes)
+  if(is_dynamic(.data)){
+    # netdiffuseR::igraph_to_diffnet(graph.list = to_waves(.data))
+  } else {
+    graph <- as_tidygraph(.data) %>% mutate(toa = as.numeric(toa)) %>% as_igraph()
+    suppressWarnings(netdiffuseR::igraph_to_diffnet(graph = graph,
+                                  toavar = "toa"))  
+  }
+  
 }
 

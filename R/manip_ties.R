@@ -90,6 +90,15 @@ rename_ties <- function(.data, ...){
 }
 
 #' @rdname add_ties
+#' @importFrom dplyr arrange
+#' @export
+arrange_ties <- function(.data, ...){
+  nodes <- edges <- NULL
+  out <- as_tidygraph(.data)
+  out %>% tidygraph::activate(edges) %>% dplyr::arrange(...) %>% activate(nodes)
+}
+
+#' @rdname add_ties
 #' @importFrom tidygraph bind_edges
 #' @export
 bind_ties <- function(.data, ...){
@@ -123,7 +132,10 @@ join_ties <- function(.data, object2, attr_name) {
     dplyr::summarise(dplyr::across(dplyr::everything(), 
                                    function(x){
                                      out <- suppressWarnings(max(x, na.rm = TRUE))
-                                     if(is.infinite(out)) out <- 0
+                                     if(is.infinite(out)){
+                                       if(is.numeric(out)) out <- 0 else 
+                                         out <- NA
+                                     }
                                      out
                                    }), 
                      .groups = "keep") %>% dplyr::ungroup()

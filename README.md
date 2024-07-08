@@ -53,12 +53,12 @@ Mapping networks. For Measures, Memberships, or Models, see
   - [Splitting and Joining](#splitting-and-joining)
   - [Extracting](#extracting)
 - [Mapping](#mapping)
-  - [autographr](#autographr)
+  - [Graphing](#graphing)
   - [More options](#more-options)
   - [More layouts](#more-options)
   - [More themes and scales](#more-themes-and-scales)
-  - [autographs](#autographs)
-  - [autographd](#autographd)
+  - [graphs](#graphs)
+  - [grapht](#grapht)
 - [Installation](#installation)
   - [Stable](#stable)
   - [Development](#development)
@@ -112,9 +112,9 @@ for analysis. Here are just a few examples, all available in
 ![](https://www.jameshollway.com/post/manynet/README-ison_egs-1.png)
 
 Here are some others: `ison_adolescents`, `ison_algebra`,
-`ison_brandes`, `ison_friends`, `ison_hightech`, `ison_karateka`,
-`ison_koenigsberg`, `ison_laterals`, `ison_lawfirm`, `ison_lotr`,
-`ison_marvel_relationships`, `ison_marvel_teams`,
+`ison_brandes`, `ison_friends`, `ison_greys`, `ison_hightech`,
+`ison_karateka`, `ison_koenigsberg`, `ison_laterals`, `ison_lawfirm`,
+`ison_lotr`, `ison_marvel_relationships`, `ison_marvel_teams`,
 `ison_monastery_esteem`, `ison_monastery_influence`,
 `ison_monastery_like`, `ison_monastery_praise`, `ison_networkers`,
 `ison_physicians`, `ison_potter`, `ison_southern_women`,
@@ -139,8 +139,9 @@ different output each time they are run, e.g.:
 
 ![](https://www.jameshollway.com/post/manynet/README-generate_egs-1.png)
 
-See also `generate_permutation()`, `generate_random()`,
-`generate_scalefree()`, `generate_smallworld()`, `generate_utilities()`.
+See also `generate_configuration()`, `generate_permutation()`,
+`generate_random()`, `generate_scalefree()`, `generate_smallworld()`,
+`generate_utilities()`.
 
 Note that all these functions can create directed or undirected,
 one-mode or two-mode networks. Creating two-mode networks is as easy as
@@ -222,54 +223,28 @@ plural. Split data can be rejoined using the `from_*()` family of
 functions.
 
 See also `to_acyclic()`, `to_anti()`, `to_blocks()`, `to_components()`,
-`to_directed()`, `to_egos()`, `to_eulerian()`, `to_galois()`,
-`to_giant()`, `to_matching()`, `to_mentoring()`, `to_mode1()`,
-`to_mode2()`, `to_multilevel()`, `to_named()`, `to_no_isolates()`,
-`to_onemode()`, `to_reciprocated()`, `to_redirected()`, `to_simplex()`,
-`to_slices()`, `to_subgraph()`, `to_subgraphs()`, `to_ties()`,
-`to_tree()`, `to_twomode()`, `to_undirected()`, `to_uniplex()`,
-`to_unnamed()`, `to_unsigned()`, `to_unweighted()`, `to_waves()` and
-`from_egos()`, `from_slices()`, `from_subgraphs()`, `from_ties()`,
-`from_waves()`.
-
-## Marking
-
-`{manynet}`’s `*is_*()` functions offer fast logical tests of various
-properties. Whereas `is_*()` returns a single logical value for the
-network, `node_is_*()` returns a logical vector the length of the number
-of nodes in the network, and `tie_is_*()` returns a logical vector the
-length of the number of ties in the network.
-
-- `is_acyclic()`, `is_aperiodic()`, `is_complex()`, `is_connected()`,
-  `is_directed()`, `is_dynamic()`, `is_edgelist()`, `is_eulerian()`,
-  `is_graph()`, `is_igraph()`, `is_labelled()`, `is_list()`,
-  `is_longitudinal()`, `is_manynet()`, `is_multiplex()`,
-  `is_perfect_matching()`, `is_signed()`, `is_twomode()`,
-  `is_uniplex()`, `is_weighted()`
-- `node_is_core()`, `node_is_cutpoint()`, `node_is_exposed()`,
-  `node_is_fold()`, `node_is_infected()`, `node_is_isolate()`,
-  `node_is_latent()`, `node_is_max()`, `node_is_mentor()`,
-  `node_is_min()`, `node_is_random()`, `node_is_recovered()`
-- `tie_is_bridge()`, `tie_is_feedback()`, `tie_is_loop()`,
-  `tie_is_max()`, `tie_is_min()`, `tie_is_multiple()`,
-  `tie_is_random()`, `tie_is_reciprocated()`
-
-The `*is_max()` and `*is_min()` functions are used to identify the
-maximum or minimum, respectively, node or tie according to some measure
-(see below).
+`to_correlation()`, `to_directed()`, `to_egos()`, `to_eulerian()`,
+`to_galois()`, `to_giant()`, `to_matching()`, `to_mentoring()`,
+`to_mode1()`, `to_mode2()`, `to_multilevel()`, `to_named()`,
+`to_no_isolates()`, `to_onemode()`, `to_reciprocated()`,
+`to_redirected()`, `to_simplex()`, `to_slices()`, `to_subgraph()`,
+`to_subgraphs()`, `to_ties()`, `to_tree()`, `to_twomode()`,
+`to_undirected()`, `to_uniplex()`, `to_unnamed()`, `to_unsigned()`,
+`to_unweighted()`, `to_waves()` and `from_egos()`, `from_slices()`,
+`from_subgraphs()`, `from_ties()`, `from_waves()`.
 
 ## Mapping
 
 `{manynet}` includes three one-line graphing functions with sensible
 defaults based on the network’s properties.
 
-### autographr
+### Graphing
 
-First, `autographr()` is used to graph networks in any of the
-`{manynet}` formats. It includes sensible defaults so that researchers
-can view their network’s structure or distribution quickly with a
-minimum of fuss. Compare the output from `{manynet}` with a similar
-default from `{igraph}`:
+First, `graphr()` is used to graph networks in any of the `{manynet}`
+formats. It includes sensible defaults so that researchers can view
+their network’s structure or distribution quickly with a minimum of
+fuss. Compare the output from `{manynet}` with a similar default from
+`{igraph}`:
 
 ![](https://www.jameshollway.com/post/manynet/README-layout-comparison-1.png)
 
@@ -303,29 +278,29 @@ configurational coordinates.
 
 #### More themes and scales
 
-Lastly, `autographr()` is highly extensible in terms of the overall look
-of your plots. `{manynet}` uses the excellent `{ggraph}` package (and
-thus `{ggplot2}`) as a plotting engine. This enables alterations such as
-the application of themes to be applied upon the defaults. If you want
-to quickly make sure your plots conform to your institution or taste,
-then it is easy to do with themes and scales that update the basic look
-and color palette used in your plots.
+Lastly, `graphr()` is highly extensible in terms of the overall look of
+your plots. `{manynet}` uses the excellent `{ggraph}` package (and thus
+`{ggplot2}`) as a plotting engine. This enables alterations such as the
+application of themes to be applied upon the defaults. If you want to
+quickly make sure your plots conform to your institution or taste, then
+it is easy to do with themes and scales that update the basic look and
+color palette used in your plots.
 
 ![](https://www.jameshollway.com/post/manynet/README-more-themes-1.png)
 
 More themes are on their way, and we’re happy to take suggestions.
 
-### autographs
+### graphs
 
-Second, `autographs()` is used to graph multiple networks together,
-which can be useful for ego networks or network panels. `{patchwork}` is
-used to help arrange individual plots together.
+Second, `graphs()` is used to graph multiple networks together, which
+can be useful for ego networks or network panels. `{patchwork}` is used
+to help arrange individual plots together.
 
 ![](https://www.jameshollway.com/post/manynet/README-autographs-1.png)
 
-### autographd
+### grapht
 
-Third, `autographd()` is used to visualise dynamic networks. It uses
+Third, `grapht()` is used to visualise dynamic networks. It uses
 `{gganimate}` and `{gifski}` to create a gif that visualises network
 changes over time. It really couldn’t be easier.
 
@@ -341,6 +316,66 @@ changes over time. It really couldn’t be easier.
 <!-- - one-, two-, and sometimes three-mode networks -->
 <!-- - undirected, directed, and sometimes complex networks -->
 <!-- - unweighted, weighted, and sometimes signed networks -->
+
+## Marking
+
+`{manynet}`’s `*is_*()` functions offer fast logical tests of various
+properties. Whereas `is_*()` returns a single logical value for the
+network, `node_is_*()` returns a logical vector the length of the number
+of nodes in the network, and `tie_is_*()` returns a logical vector the
+length of the number of ties in the network.
+
+- `is_acyclic()`, `is_aperiodic()`, `is_attributed()`, `is_complex()`,
+  `is_connected()`, `is_directed()`, `is_dynamic()`, `is_edgelist()`,
+  `is_eulerian()`, `is_graph()`, `is_igraph()`, `is_labelled()`,
+  `is_list()`, `is_longitudinal()`, `is_manynet()`, `is_multiplex()`,
+  `is_perfect_matching()`, `is_signed()`, `is_twomode()`,
+  `is_uniplex()`, `is_weighted()`
+- `node_is_core()`, `node_is_cutpoint()`, `node_is_exposed()`,
+  `node_is_fold()`, `node_is_independent()`, `node_is_infected()`,
+  `node_is_isolate()`, `node_is_latent()`, `node_is_max()`,
+  `node_is_mentor()`, `node_is_min()`, `node_is_mode()`,
+  `node_is_random()`, `node_is_recovered()`
+- `tie_is_bridge()`, `tie_is_feedback()`, `tie_is_loop()`,
+  `tie_is_max()`, `tie_is_min()`, `tie_is_multiple()`,
+  `tie_is_random()`, `tie_is_reciprocated()`
+
+The `*is_max()` and `*is_min()` functions are used to identify the
+maximum or minimum, respectively, node or tie according to some measure
+(see below).
+
+## Motifs
+
+`{manynet}`‘s `*by_*()` functions tabulate nodes’ frequency in various
+motifs. These include:
+
+- `net_by_brokerage()`, `net_by_dyad()`, `net_by_mixed()`,
+  `net_by_triad()`, `node_by_brokerage()`, `node_by_exposure()`,
+  `node_by_path()`, `node_by_quad()`, `node_by_tie()`, `node_by_triad()`
+
+## Memberships
+
+`{manynet}`‘s `*in_*()` functions identify nodes’ membership in some
+grouping, such as a community or component. These functions always
+return a character vector, indicating e.g. that the first node is a
+member of group “A”, the second in group “B”, etc.
+
+- `node_in_adopter()`, `node_in_automorphic()`, `node_in_betweenness()`,
+  `node_in_brokering()`, `node_in_component()`, `node_in_eigen()`,
+  `node_in_equivalence()`, `node_in_fluid()`, `node_in_greedy()`,
+  `node_in_infomap()`, `node_in_leiden()`, `node_in_louvain()`,
+  `node_in_optimal()`, `node_in_partition()`, `node_in_regular()`,
+  `node_in_roulette()`, `node_in_spinglass()`, `node_in_strong()`,
+  `node_in_structural()`, `node_in_walktrap()`, `node_in_weak()`
+
+## Measuring
+
+All other `net_*`, `node_*` and `tie_*` functions in `{manynet}` offer
+ways for users to measure some feature, property, or quantity of the
+network. This includes measures of balance and brokerage, centrality,
+closure, and cohesion, diffusion and diversity, hierarchy and
+resilience. There is a lot here, so we recommend you check out the
+function overview.
 
 ## Installation
 
@@ -389,17 +424,22 @@ use `{manynet}` or `{migraph}` tutorials right out of the box:
 
 ``` r
 run_tute()
-#> # A tibble: 8 × 3
-#>   package name      title        
-#>   <chr>   <chr>     <chr>        
-#> 1 manynet tutorial0 Intro to R   
-#> 2 manynet tutorial1 Data         
-#> 3 manynet tutorial2 Visualisation
-#> 4 migraph tutorial4 Centrality   
-#> 5 migraph tutorial5 Community    
-#> 6 migraph tutorial6 Position     
-#> 7 migraph tutorial7 Topology     
-#> 8 migraph tutorial8 Regression
+#> # A tibble: 10 × 3
+#>    package name      title        
+#>    <chr>   <chr>     <chr>        
+#>  1 manynet tutorial0 Intro to R   
+#>  2 manynet tutorial1 Data         
+#>  3 manynet tutorial2 Visualisation
+#>  4 manynet tutorial3 Centrality   
+#>  5 migraph tutorial3 Centrality   
+#>  6 manynet tutorial4 Community    
+#>  7 manynet tutorial5 Position     
+#>  8 manynet tutorial6 Topology     
+#>  9 manynet tutorial7 Diffusion    
+#> 10 migraph tutorial8 Regression
+```
+
+``` r
 # run_tute("tutorial1")
 ```
 

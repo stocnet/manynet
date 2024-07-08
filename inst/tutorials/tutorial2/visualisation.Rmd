@@ -5,6 +5,10 @@ output:
   learnr::tutorial:
     theme: journal
 runtime: shiny_prerendered
+description: >
+  This tutorial aims to give an overview of how to use manynet and other
+  packages to effectively and efficiently visualise and tailor graphs
+  of networks in many formats.
 ---
 
 ```{r setup, include=FALSE}
@@ -73,7 +77,7 @@ visualising network data.
 ## Using `{manynet}` to quickly plot network graphs
   
 To get a basic visualisation of the network before adding various specifications,
-the `autographr()` function in `{manynet}` is a quick and easy way 
+the `graphr()` function in `{manynet}` is a quick and easy way 
 to obtain a clear first look of the network 
 for preliminary investigations and understanding of the network. Let's quickly visualise one of the `ison_` datasets included in the package.
 
@@ -83,11 +87,11 @@ for preliminary investigations and understanding of the network. Let's quickly v
   
 ```{r manyneteg-solution}
 library(manynet)
-autographr(ison_brandes)
+graphr(ison_brandes)
 ```
   
 We can also specify the colours, groups, shapes, and sizes of nodes in 
-the `autographr()` function using the following parameters:
+the `graphr()` function using the following parameters:
   
 * `node_colour`
 * `node_group`
@@ -106,9 +110,9 @@ of the network.
 ```
   
 ```{r manynetexample2-solution}
-autographr(ison_adolescents,
-           labels = TRUE,
-           node_size = 1.5) + 
+graphr(ison_adolescents,
+       labels = TRUE,
+       node_size = 1.5) + 
   ggtitle("Visualisation")
 ```
 
@@ -121,8 +125,8 @@ The syntax is quite straight forward and is used throughout these vignettes.
 ```
 
 ```{r patchwork-solution}
-autographr(ison_adolescents) + autographr(ison_algebra)
-autographr(ison_adolescents) / autographr(ison_algebra)
+graphr(ison_adolescents) + graphr(ison_algebra)
+graphr(ison_adolescents) / graphr(ison_algebra)
 ```
 
 ### Adding legends
@@ -134,7 +138,7 @@ for example in the following figure.
 ```{r maxbet}
 ison_adolescents %>% 
   mutate(maxbet = node_is_max(node_betweenness(ison_adolescents))) %>% 
-  autographr(node_color = "maxbet")
+  graphr(node_color = "maxbet")
 ```
 
 Alternatively, group labels are added automatically when using the 'node_group' argument to highlight groups in a network.
@@ -145,7 +149,7 @@ Alternatively, group labels are added automatically when using the 'node_group' 
 
 ```{r group-solution}
 ison_networkers %>% 
-  autographr(node_group = "Discipline")
+  graphr(node_group = "Discipline")
 ```
 
 But other times it is important to add in a legend.
@@ -160,7 +164,7 @@ and `labs()` for giving those legends particular titles.
 
 ```{r discipline-solution}
 ison_networkers %>% 
-  autographr(node_color = "Discipline") +
+  graphr(node_color = "Discipline") +
   guides(color = "legend") + 
   labs(color = "Discipline")
 ```
@@ -177,20 +181,20 @@ question("What discipline is Charles Kadushin in according to this graph?",
 ### Layouts
 
 A range of graph layouts are available across the `{igraph}`, `{graphlayouts}`, and `{manynet}` packages 
-that can be used together with `autographr()`.
+that can be used together with `graphr()`.
 
 ```{r layoutseg, exercise=TRUE, purl = FALSE}
 
 ```
 
 ```{r layoutseg-solution}
-(autographr(ison_southern_women, layout = "bipartite") + ggtitle("bipartite") |
-autographr(ison_southern_women, layout = "kk") + ggtitle("kk"))
+(graphr(ison_southern_women, layout = "bipartite") + ggtitle("bipartite") |
+graphr(ison_southern_women, layout = "kk") + ggtitle("kk"))
 ```
 
 ### Using different colours
 
-Because the `autographr()` function is based on
+Because the `graphr()` function is based on
 the grammar of graphics,
 it's easy to extend or alter aesthetic aspects.
 Here let's try and change the colors
@@ -201,18 +205,18 @@ assigned to the different regions in the `mpn_elite_mex` dataset.
 ```
 
 ```{r colorch-solution}
-autographr(mpn_elite_mex,
+graphr(mpn_elite_mex,
            node_color = "region")
 
-autographr(mpn_elite_mex,
+graphr(mpn_elite_mex,
            node_color = "region") +
   ggplot2::scale_colour_hue()
 
-autographr(mpn_elite_mex,
+graphr(mpn_elite_mex,
            node_color = "region") +
   ggplot2::scale_colour_grey()
 
-autographr(mpn_elite_mex,
+graphr(mpn_elite_mex,
            node_color = "region") +
   ggplot2::scale_colour_manual(
     values = c("1" = "red",

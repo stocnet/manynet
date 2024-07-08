@@ -9,7 +9,7 @@
 \alias{ison_monastery_praise}
 \title{Three one-mode signed, weighted networks and a three-wave longitudinal network of monks (Sampson 1969)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A longitudinal, labelled, multiplex, weighted, directed network with 18 nodes and 168 arcs
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A longitudinal, labelled, weighted, directed network with 18 nodes and 168 arcs
 #> # A tibble: 18 x 3
 #>   name        groups        left
 #>   <chr>       <chr>        <dbl>
