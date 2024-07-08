@@ -12,18 +12,13 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Many Ways to Make, Modify, Mark, and Map Myriad Networks">
-<meta property="og:description" content="A set of tools for making, modifying, marking, and mapping many different types of networks.
-   All functions operate with matrices, edge lists, and igraph, network, and tidygraph objects,
-   and on one-mode, two-mode (bipartite), and sometimes three-mode networks.
-   The package includes functions for importing and exporting, creating and generating networks,
-   modifying networks and node and tie attributes,
-   and describing and visualizing networks with sensible defaults.">
+<meta property="og:description" content="Many tools for making, modifying, mapping, marking, measuring, and motifs and memberships of many different types of networks. All functions operate with matrices, edge lists, and igraph, network, and tidygraph objects, and on one-mode, two-mode (bipartite), and sometimes three-mode networks. The package includes functions for importing and exporting, creating and generating networks, modifying networks and node and tie attributes, and describing and visualizing networks with sensible defaults.">
 <meta property="og:image" content="https://stocnet.github.io/manynet/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -31,7 +26,7 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -45,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -54,7 +49,7 @@
 <li>
   <a href="index.html">
     <span class="fa fa-home fa-lg"></span>
-     
+
   </a>
 </li>
 <li>
@@ -68,7 +63,7 @@
 <li>
   <a href="https://github.com/stocnet/manynet" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul>
@@ -79,7 +74,7 @@
 </div>
 <!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="contents col-md-9">
@@ -113,12 +108,12 @@
 </li>
 <li>
 <a href="#mapping">Mapping</a><ul>
-<li><a href="#autographr">autographr</a></li>
+<li><a href="#graphing">Graphing</a></li>
 <li><a href="#more-options">More options</a></li>
 <li><a href="#more-options">More layouts</a></li>
 <li><a href="#more-themes-and-scales">More themes and scales</a></li>
-<li><a href="#autographs">autographs</a></li>
-<li><a href="#autographd">autographd</a></li>
+<li><a href="#graphs">graphs</a></li>
+<li><a href="#grapht">grapht</a></li>
 </ul>
 </li>
 <li>
@@ -156,7 +151,7 @@
 </h4>
 <p>There may be no need to import network data though, if that network data already exists in a package in R. To facilitate testing and to contribute to an ecosystem of easily accessible network data, particularly for pedagogical purposes, we include a number of classical and instructional network datasets, all thoroughly documented and ready for analysis. Here are just a few examples, all available in <a href="https://stocnet.github.io/manynet/">manynet</a>:</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-ison_egs-1.png"></p>
-<p>Here are some others: <code>ison_adolescents</code>, <code>ison_algebra</code>, <code>ison_brandes</code>, <code>ison_friends</code>, <code>ison_hightech</code>, <code>ison_karateka</code>, <code>ison_koenigsberg</code>, <code>ison_laterals</code>, <code>ison_lawfirm</code>, <code>ison_lotr</code>, <code>ison_marvel_relationships</code>, <code>ison_marvel_teams</code>, <code>ison_monastery_esteem</code>, <code>ison_monastery_influence</code>, <code>ison_monastery_like</code>, <code>ison_monastery_praise</code>, <code>ison_networkers</code>, <code>ison_physicians</code>, <code>ison_potter</code>, <code>ison_southern_women</code>, <code>ison_starwars</code>, <code>ison_usstates</code></p>
+<p>Here are some others: <code>ison_adolescents</code>, <code>ison_algebra</code>, <code>ison_brandes</code>, <code>ison_friends</code>, <code>ison_greys</code>, <code>ison_hightech</code>, <code>ison_karateka</code>, <code>ison_koenigsberg</code>, <code>ison_laterals</code>, <code>ison_lawfirm</code>, <code>ison_lotr</code>, <code>ison_marvel_relationships</code>, <code>ison_marvel_teams</code>, <code>ison_monastery_esteem</code>, <code>ison_monastery_influence</code>, <code>ison_monastery_like</code>, <code>ison_monastery_praise</code>, <code>ison_networkers</code>, <code>ison_physicians</code>, <code>ison_potter</code>, <code>ison_southern_women</code>, <code>ison_starwars</code>, <code>ison_usstates</code></p>
 </div>
 <div class="section level4">
 <h4 id="inventing-network-data">Inventing network data<a class="anchor" aria-label="anchor" href="#inventing-network-data"></a>
@@ -166,7 +161,7 @@
 <p>See also <code><a href="reference/create.html">create_components()</a></code>, <code><a href="reference/create.html">create_core()</a></code>, <code><a href="reference/create.html">create_empty()</a></code>, <code><a href="reference/create.html">create_explicit()</a></code>, <code><a href="reference/create.html">create_filled()</a></code>, <code><a href="reference/create.html">create_lattice()</a></code>, <code><a href="reference/create.html">create_ring()</a></code>, <code><a href="reference/create.html">create_star()</a></code>, <code><a href="reference/create.html">create_tree()</a></code>.</p>
 <p>The <code>generate_*</code> group of functions generate networks from generative mechanisms that may include some random aspect, and so will return a different output each time they are run, e.g.:</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-generate_egs-1.png"></p>
-<p>See also <code><a href="reference/generate.html">generate_permutation()</a></code>, <code><a href="reference/generate.html">generate_random()</a></code>, <code><a href="reference/generate.html">generate_scalefree()</a></code>, <code><a href="reference/generate.html">generate_smallworld()</a></code>, <code><a href="reference/generate.html">generate_utilities()</a></code>.</p>
+<p>See also <code><a href="reference/generate.html">generate_configuration()</a></code>, <code><a href="reference/generate.html">generate_permutation()</a></code>, <code><a href="reference/generate.html">generate_random()</a></code>, <code><a href="reference/generate.html">generate_scalefree()</a></code>, <code><a href="reference/generate.html">generate_smallworld()</a></code>, <code><a href="reference/generate.html">generate_utilities()</a></code>.</p>
 <p>Note that all these functions can create directed or undirected, one-mode or two-mode networks. Creating two-mode networks is as easy as passing the first argument (<code>n</code>) a vector of two integers instead of one. For example, while <code>n = 15</code> will create a one-mode network of 10 nodes, whereas <code>n = c(10,5)</code> will create a two-mode network of 10 nodes in the first mode, and 5 nodes in the second mode. Some of these functions wrap existing algorithms in other packages, while others are unique offerings or add additional formats, e.g. two-mode networks.</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-generate_tm-1.png"></p>
 </div>
@@ -210,34 +205,17 @@
 <p>Splitting means separating a network, e.g. from a whole network to the various ego networks via <code><a href="reference/split.html">to_egos()</a></code>.</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-splitting_egs-1.png"></p>
 <p>Those functions that split a network into a list of networks are distinguishable as those <code>to_*()</code> functions that are named in the plural. Split data can be rejoined using the <code>from_*()</code> family of functions.</p>
-<p>See also <code><a href="reference/reformat.html">to_acyclic()</a></code>, <code><a href="reference/reformat.html">to_anti()</a></code>, <code><a href="reference/to_scope.html">to_blocks()</a></code>, <code><a href="reference/split.html">to_components()</a></code>, <code><a href="reference/reformat.html">to_directed()</a></code>, <code><a href="reference/split.html">to_egos()</a></code>, <code><a href="reference/to_paths.html">to_eulerian()</a></code>, <code><a href="reference/to_project.html">to_galois()</a></code>, <code><a href="reference/to_scope.html">to_giant()</a></code>, <code><a href="reference/to_paths.html">to_matching()</a></code>, <code><a href="reference/to_paths.html">to_mentoring()</a></code>, <code><a href="reference/to_project.html">to_mode1()</a></code>, <code><a href="reference/to_project.html">to_mode2()</a></code>, <code><a href="reference/to_levels.html">to_multilevel()</a></code>, <code><a href="reference/reformat.html">to_named()</a></code>, <code><a href="reference/to_scope.html">to_no_isolates()</a></code>, <code><a href="reference/to_levels.html">to_onemode()</a></code>, <code><a href="reference/reformat.html">to_reciprocated()</a></code>, <code><a href="reference/reformat.html">to_redirected()</a></code>, <code><a href="reference/reformat.html">to_simplex()</a></code>, <code><a href="reference/split.html">to_slices()</a></code>, <code><a href="reference/to_scope.html">to_subgraph()</a></code>, <code><a href="reference/split.html">to_subgraphs()</a></code>, <code><a href="reference/to_project.html">to_ties()</a></code>, <code><a href="reference/to_paths.html">to_tree()</a></code>, <code><a href="reference/to_levels.html">to_twomode()</a></code>, <code><a href="reference/reformat.html">to_undirected()</a></code>, <code><a href="reference/reformat.html">to_uniplex()</a></code>, <code><a href="reference/reformat.html">to_unnamed()</a></code>, <code><a href="reference/reformat.html">to_unsigned()</a></code>, <code><a href="reference/reformat.html">to_unweighted()</a></code>, <code><a href="reference/split.html">to_waves()</a></code> and <code><a href="reference/from.html">from_egos()</a></code>, <code><a href="reference/from.html">from_slices()</a></code>, <code><a href="reference/from.html">from_subgraphs()</a></code>, <code><a href="reference/from.html">from_ties()</a></code>, <code><a href="reference/from.html">from_waves()</a></code>.</p>
+<p>See also <code><a href="reference/reformat.html">to_acyclic()</a></code>, <code><a href="reference/reformat.html">to_anti()</a></code>, <code><a href="reference/to_scope.html">to_blocks()</a></code>, <code><a href="reference/split.html">to_components()</a></code>, <code><a href="reference/correlation.html">to_correlation()</a></code>, <code><a href="reference/reformat.html">to_directed()</a></code>, <code><a href="reference/split.html">to_egos()</a></code>, <code><a href="reference/to_paths.html">to_eulerian()</a></code>, <code><a href="reference/to_project.html">to_galois()</a></code>, <code><a href="reference/to_scope.html">to_giant()</a></code>, <code><a href="reference/to_paths.html">to_matching()</a></code>, <code><a href="reference/to_paths.html">to_mentoring()</a></code>, <code><a href="reference/to_project.html">to_mode1()</a></code>, <code><a href="reference/to_project.html">to_mode2()</a></code>, <code><a href="reference/to_levels.html">to_multilevel()</a></code>, <code><a href="reference/reformat.html">to_named()</a></code>, <code><a href="reference/to_scope.html">to_no_isolates()</a></code>, <code><a href="reference/to_levels.html">to_onemode()</a></code>, <code><a href="reference/reformat.html">to_reciprocated()</a></code>, <code><a href="reference/reformat.html">to_redirected()</a></code>, <code><a href="reference/reformat.html">to_simplex()</a></code>, <code><a href="reference/split.html">to_slices()</a></code>, <code><a href="reference/to_scope.html">to_subgraph()</a></code>, <code><a href="reference/split.html">to_subgraphs()</a></code>, <code><a href="reference/to_project.html">to_ties()</a></code>, <code><a href="reference/to_paths.html">to_tree()</a></code>, <code><a href="reference/to_levels.html">to_twomode()</a></code>, <code><a href="reference/reformat.html">to_undirected()</a></code>, <code><a href="reference/reformat.html">to_uniplex()</a></code>, <code><a href="reference/reformat.html">to_unnamed()</a></code>, <code><a href="reference/reformat.html">to_unsigned()</a></code>, <code><a href="reference/reformat.html">to_unweighted()</a></code>, <code><a href="reference/split.html">to_waves()</a></code> and <code><a href="reference/from.html">from_egos()</a></code>, <code><a href="reference/from.html">from_slices()</a></code>, <code><a href="reference/from.html">from_subgraphs()</a></code>, <code><a href="reference/from.html">from_ties()</a></code>, <code><a href="reference/from.html">from_waves()</a></code>.</p>
 </div>
-</div>
-<div class="section level2">
-<h2 id="marking">Marking<a class="anchor" aria-label="anchor" href="#marking"></a>
-</h2>
-<p><a href="https://stocnet.github.io/manynet/">manynet</a>’s <code>*is_*()</code> functions offer fast logical tests of various properties. Whereas <code>is_*()</code> returns a single logical value for the network, <code>node_is_*()</code> returns a logical vector the length of the number of nodes in the network, and <code>tie_is_*()</code> returns a logical vector the length of the number of ties in the network.</p>
-<ul>
-<li>
-<code><a href="reference/features.html">is_acyclic()</a></code>, <code><a href="reference/features.html">is_aperiodic()</a></code>, <code><a href="reference/is_format.html">is_complex()</a></code>, <code><a href="reference/features.html">is_connected()</a></code>, <code><a href="reference/is_format.html">is_directed()</a></code>, <code><a href="reference/is.html">is_dynamic()</a></code>, <code><a href="reference/is.html">is_edgelist()</a></code>, <code><a href="reference/features.html">is_eulerian()</a></code>, <code><a href="reference/is.html">is_graph()</a></code>, <code><a href="https://r.igraph.org/reference/is_igraph.html" class="external-link">is_igraph()</a></code>, <code><a href="reference/is_format.html">is_labelled()</a></code>, <code><a href="reference/is.html">is_list()</a></code>, <code><a href="reference/is.html">is_longitudinal()</a></code>, <code><a href="reference/is.html">is_manynet()</a></code>, <code><a href="reference/is_format.html">is_multiplex()</a></code>, <code><a href="reference/features.html">is_perfect_matching()</a></code>, <code><a href="reference/is_format.html">is_signed()</a></code>, <code><a href="reference/is_format.html">is_twomode()</a></code>, <code><a href="reference/is_format.html">is_uniplex()</a></code>, <code><a href="reference/is_format.html">is_weighted()</a></code>
-</li>
-<li>
-<code><a href="reference/mark_nodes.html">node_is_core()</a></code>, <code><a href="reference/mark_nodes.html">node_is_cutpoint()</a></code>, <code><a href="reference/mark_diff.html">node_is_exposed()</a></code>, <code><a href="reference/mark_nodes.html">node_is_fold()</a></code>, <code><a href="reference/mark_diff.html">node_is_infected()</a></code>, <code><a href="reference/mark_nodes.html">node_is_isolate()</a></code>, <code><a href="reference/mark_diff.html">node_is_latent()</a></code>, <code><a href="reference/mark_select.html">node_is_max()</a></code>, <code><a href="reference/mark_nodes.html">node_is_mentor()</a></code>, <code><a href="reference/mark_select.html">node_is_min()</a></code>, <code><a href="reference/mark_select.html">node_is_random()</a></code>, <code><a href="reference/mark_diff.html">node_is_recovered()</a></code>
-</li>
-<li>
-<code><a href="reference/mark_ties.html">tie_is_bridge()</a></code>, <code><a href="reference/mark_ties.html">tie_is_feedback()</a></code>, <code><a href="reference/mark_ties.html">tie_is_loop()</a></code>, <code><a href="reference/mark_tie_select.html">tie_is_max()</a></code>, <code><a href="reference/mark_tie_select.html">tie_is_min()</a></code>, <code><a href="reference/mark_ties.html">tie_is_multiple()</a></code>, <code><a href="reference/mark_tie_select.html">tie_is_random()</a></code>, <code><a href="reference/mark_ties.html">tie_is_reciprocated()</a></code>
-</li>
-</ul>
-<p>The <code>*is_max()</code> and <code>*is_min()</code> functions are used to identify the maximum or minimum, respectively, node or tie according to some measure (see below).</p>
 </div>
 <div class="section level2">
 <h2 id="mapping">Mapping<a class="anchor" aria-label="anchor" href="#mapping"></a>
 </h2>
 <p><a href="https://stocnet.github.io/manynet/">manynet</a> includes three one-line graphing functions with sensible defaults based on the network’s properties.</p>
 <div class="section level3">
-<h3 id="autographr">autographr<a class="anchor" aria-label="anchor" href="#autographr"></a>
+<h3 id="graphing">Graphing<a class="anchor" aria-label="anchor" href="#graphing"></a>
 </h3>
-<p>First, <code><a href="reference/autographr.html">autographr()</a></code> is used to graph networks in any of the <a href="https://stocnet.github.io/manynet/">manynet</a> formats. It includes sensible defaults so that researchers can view their network’s structure or distribution quickly with a minimum of fuss. Compare the output from <a href="https://stocnet.github.io/manynet/">manynet</a> with a similar default from <a href="https://r.igraph.org/" class="external-link">igraph</a>:</p>
+<p>First, <code><a href="reference/graphr.html">graphr()</a></code> is used to graph networks in any of the <a href="https://stocnet.github.io/manynet/">manynet</a> formats. It includes sensible defaults so that researchers can view their network’s structure or distribution quickly with a minimum of fuss. Compare the output from <a href="https://stocnet.github.io/manynet/">manynet</a> with a similar default from <a href="https://r.igraph.org/" class="external-link">igraph</a>:</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-layout-comparison-1.png"></p>
 <p>Here the <a href="https://stocnet.github.io/manynet/">manynet</a> function recognises that the network is a two-mode network and uses a bipartite layout by default, and recognises that the network contains names for the nodes and prints them vertically so that they are legible in this layout. Other ‘clever’ features include automatic node sizing and more. By contrast, <a href="https://r.igraph.org/" class="external-link">igraph</a> requires the bipartite layout to be specified, has cumbersome node size defaults for all but the smallest graphs, and labels also very often need resizing and adjustment to avoid overlap. All of <a href="https://stocnet.github.io/manynet/">manynet</a>’s adjustments can be overridden, however…</p>
 <div class="section level4">
@@ -255,24 +233,62 @@
 <div class="section level4">
 <h4 id="more-themes-and-scales">More themes and scales<a class="anchor" aria-label="anchor" href="#more-themes-and-scales"></a>
 </h4>
-<p>Lastly, <code><a href="reference/autographr.html">autographr()</a></code> is highly extensible in terms of the overall look of your plots. <a href="https://stocnet.github.io/manynet/">manynet</a> uses the excellent <a href="https://ggraph.data-imaginist.com" class="external-link">ggraph</a> package (and thus <a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a>) as a plotting engine. This enables alterations such as the application of themes to be applied upon the defaults. If you want to quickly make sure your plots conform to your institution or taste, then it is easy to do with themes and scales that update the basic look and color palette used in your plots.</p>
+<p>Lastly, <code><a href="reference/graphr.html">graphr()</a></code> is highly extensible in terms of the overall look of your plots. <a href="https://stocnet.github.io/manynet/">manynet</a> uses the excellent <a href="https://ggraph.data-imaginist.com" class="external-link">ggraph</a> package (and thus <a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a>) as a plotting engine. This enables alterations such as the application of themes to be applied upon the defaults. If you want to quickly make sure your plots conform to your institution or taste, then it is easy to do with themes and scales that update the basic look and color palette used in your plots.</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-more-themes-1.png"></p>
 <p>More themes are on their way, and we’re happy to take suggestions.</p>
 </div>
 </div>
 <div class="section level3">
-<h3 id="autographs">autographs<a class="anchor" aria-label="anchor" href="#autographs"></a>
+<h3 id="graphs">graphs<a class="anchor" aria-label="anchor" href="#graphs"></a>
 </h3>
-<p>Second, <code><a href="reference/autographs.html">autographs()</a></code> is used to graph multiple networks together, which can be useful for ego networks or network panels. <a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a> is used to help arrange individual plots together.</p>
+<p>Second, <code><a href="reference/graphs.html">graphs()</a></code> is used to graph multiple networks together, which can be useful for ego networks or network panels. <a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a> is used to help arrange individual plots together.</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-autographs-1.png"></p>
 </div>
 <div class="section level3">
-<h3 id="autographd">autographd<a class="anchor" aria-label="anchor" href="#autographd"></a>
+<h3 id="grapht">grapht<a class="anchor" aria-label="anchor" href="#grapht"></a>
 </h3>
-<p>Third, <code><a href="reference/autographt.html">autographd()</a></code> is used to visualise dynamic networks. It uses <a href="https://gganimate.com" class="external-link">gganimate</a> and <a href="https://r-rust.r-universe.dev/gifski" class="external-link">gifski</a> to create a gif that visualises network changes over time. It really couldn’t be easier.</p>
+<p>Third, <code><a href="reference/grapht.html">grapht()</a></code> is used to visualise dynamic networks. It uses <a href="https://gganimate.com" class="external-link">gganimate</a> and <a href="https://r-rust.r-universe.dev/gifski" class="external-link">gifski</a> to create a gif that visualises network changes over time. It really couldn’t be easier.</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-autographd-1.gif"></p>
 <!-- provide a common set of tools that can be used to import, export, create, and manipulate network data in a wide variety of formats, --><!-- and obtain a good first visualisation quickly. --><!-- This can be useful for pedagogical purposes, initial description, or checking something part way through the modelling process. --><!-- Through the most comprehensive network class-coercion available, --><!-- users can access routines not available in their chosen package or even in `{manynet}`. --><!-- `{manynet}` provides a common set of tools and a standard syntax for analysing many different types of networks. --><!-- It offers a broad range of functions to make, manipulate, map, measure, and model: --><!-- - one-, two-, and sometimes three-mode networks --><!-- - undirected, directed, and sometimes complex networks --><!-- - unweighted, weighted, and sometimes signed networks -->
 </div>
+</div>
+<div class="section level2">
+<h2 id="marking">Marking<a class="anchor" aria-label="anchor" href="#marking"></a>
+</h2>
+<p><a href="https://stocnet.github.io/manynet/">manynet</a>’s <code>*is_*()</code> functions offer fast logical tests of various properties. Whereas <code>is_*()</code> returns a single logical value for the network, <code>node_is_*()</code> returns a logical vector the length of the number of nodes in the network, and <code>tie_is_*()</code> returns a logical vector the length of the number of ties in the network.</p>
+<ul>
+<li>
+<code><a href="reference/features.html">is_acyclic()</a></code>, <code><a href="reference/features.html">is_aperiodic()</a></code>, <code><a href="reference/is_format.html">is_attributed()</a></code>, <code><a href="reference/is_format.html">is_complex()</a></code>, <code><a href="reference/features.html">is_connected()</a></code>, <code><a href="reference/is_format.html">is_directed()</a></code>, <code><a href="reference/is.html">is_dynamic()</a></code>, <code><a href="reference/is.html">is_edgelist()</a></code>, <code><a href="reference/features.html">is_eulerian()</a></code>, <code><a href="reference/is.html">is_graph()</a></code>, <code><a href="https://r.igraph.org/reference/is_igraph.html" class="external-link">is_igraph()</a></code>, <code><a href="reference/is_format.html">is_labelled()</a></code>, <code><a href="reference/is.html">is_list()</a></code>, <code><a href="reference/is.html">is_longitudinal()</a></code>, <code><a href="reference/is.html">is_manynet()</a></code>, <code><a href="reference/is_format.html">is_multiplex()</a></code>, <code><a href="reference/features.html">is_perfect_matching()</a></code>, <code><a href="reference/is_format.html">is_signed()</a></code>, <code><a href="reference/is_format.html">is_twomode()</a></code>, <code><a href="reference/is_format.html">is_uniplex()</a></code>, <code><a href="reference/is_format.html">is_weighted()</a></code>
+</li>
+<li>
+<code><a href="reference/mark_core.html">node_is_core()</a></code>, <code><a href="reference/mark_nodes.html">node_is_cutpoint()</a></code>, <code><a href="reference/mark_diff.html">node_is_exposed()</a></code>, <code><a href="reference/mark_nodes.html">node_is_fold()</a></code>, <code><a href="reference/mark_nodes.html">node_is_independent()</a></code>, <code><a href="reference/mark_diff.html">node_is_infected()</a></code>, <code><a href="reference/mark_nodes.html">node_is_isolate()</a></code>, <code><a href="reference/mark_diff.html">node_is_latent()</a></code>, <code><a href="reference/mark_select.html">node_is_max()</a></code>, <code><a href="reference/mark_nodes.html">node_is_mentor()</a></code>, <code><a href="reference/mark_select.html">node_is_min()</a></code>, <code><a href="reference/measure_attributes.html">node_is_mode()</a></code>, <code><a href="reference/mark_select.html">node_is_random()</a></code>, <code><a href="reference/mark_diff.html">node_is_recovered()</a></code>
+</li>
+<li>
+<code><a href="reference/mark_ties.html">tie_is_bridge()</a></code>, <code><a href="reference/mark_ties.html">tie_is_feedback()</a></code>, <code><a href="reference/mark_ties.html">tie_is_loop()</a></code>, <code><a href="reference/mark_tie_select.html">tie_is_max()</a></code>, <code><a href="reference/mark_tie_select.html">tie_is_min()</a></code>, <code><a href="reference/mark_ties.html">tie_is_multiple()</a></code>, <code><a href="reference/mark_tie_select.html">tie_is_random()</a></code>, <code><a href="reference/mark_ties.html">tie_is_reciprocated()</a></code>
+</li>
+</ul>
+<p>The <code>*is_max()</code> and <code>*is_min()</code> functions are used to identify the maximum or minimum, respectively, node or tie according to some measure (see below).</p>
+</div>
+<div class="section level2">
+<h2 id="motifs">Motifs<a class="anchor" aria-label="anchor" href="#motifs"></a>
+</h2>
+<p><a href="https://stocnet.github.io/manynet/">manynet</a>‘s <code>*by_*()</code> functions tabulate nodes’ frequency in various motifs. These include:</p>
+<ul><li>
+<code><a href="reference/motif_brokerage.html">net_by_brokerage()</a></code>, <code><a href="reference/motif_net.html">net_by_dyad()</a></code>, <code><a href="reference/motif_net.html">net_by_mixed()</a></code>, <code><a href="reference/motif_net.html">net_by_triad()</a></code>, <code><a href="reference/motif_brokerage.html">node_by_brokerage()</a></code>, <code><a href="reference/motif_diffusion.html">node_by_exposure()</a></code>, <code><a href="reference/motif_node.html">node_by_path()</a></code>, <code><a href="reference/motif_node.html">node_by_quad()</a></code>, <code><a href="reference/motif_node.html">node_by_tie()</a></code>, <code><a href="reference/motif_node.html">node_by_triad()</a></code>
+</li></ul>
+</div>
+<div class="section level2">
+<h2 id="memberships">Memberships<a class="anchor" aria-label="anchor" href="#memberships"></a>
+</h2>
+<p><a href="https://stocnet.github.io/manynet/">manynet</a>‘s <code>*in_*()</code> functions identify nodes’ membership in some grouping, such as a community or component. These functions always return a character vector, indicating e.g. that the first node is a member of group “A”, the second in group “B”, etc.</p>
+<ul><li>
+<code><a href="reference/member_diffusion.html">node_in_adopter()</a></code>, <code><a href="reference/member_equivalence.html">node_in_automorphic()</a></code>, <code><a href="reference/member_community_hier.html">node_in_betweenness()</a></code>, <code><a href="reference/motif_brokerage.html">node_in_brokering()</a></code>, <code><a href="reference/member_components.html">node_in_component()</a></code>, <code><a href="reference/member_community_hier.html">node_in_eigen()</a></code>, <code><a href="reference/member_equivalence.html">node_in_equivalence()</a></code>, <code><a href="reference/member_community_non.html">node_in_fluid()</a></code>, <code><a href="reference/member_community_hier.html">node_in_greedy()</a></code>, <code><a href="reference/member_community_non.html">node_in_infomap()</a></code>, <code><a href="reference/member_community_non.html">node_in_leiden()</a></code>, <code><a href="reference/member_community_non.html">node_in_louvain()</a></code>, <code><a href="reference/member_community_non.html">node_in_optimal()</a></code>, <code><a href="reference/member_community_non.html">node_in_partition()</a></code>, <code><a href="reference/member_equivalence.html">node_in_regular()</a></code>, <code><a href="reference/member_cliques.html">node_in_roulette()</a></code>, <code><a href="reference/member_community_non.html">node_in_spinglass()</a></code>, <code><a href="reference/member_components.html">node_in_strong()</a></code>, <code><a href="reference/member_equivalence.html">node_in_structural()</a></code>, <code><a href="reference/member_community_hier.html">node_in_walktrap()</a></code>, <code><a href="reference/member_components.html">node_in_weak()</a></code>
+</li></ul>
+</div>
+<div class="section level2">
+<h2 id="measuring">Measuring<a class="anchor" aria-label="anchor" href="#measuring"></a>
+</h2>
+<p>All other <code>net_*</code>, <code>node_*</code> and <code>tie_*</code> functions in <a href="https://stocnet.github.io/manynet/">manynet</a> offer ways for users to measure some feature, property, or quantity of the network. This includes measures of balance and brokerage, centrality, closure, and cohesion, diffusion and diversity, hierarchy and resilience. There is a lot here, so we recommend you check out the function overview.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -310,18 +326,21 @@
 <p>This package includes tutorials to help new and experienced users learn how they can conduct social network analysis using the package. These tutorials leverage the additional package <a href="https://rstudio.github.io/learnr/" class="external-link">learnr</a> (see <a href="https://rstudio.github.io/learnr/" class="external-link">here</a>), but we have made it easy to use <a href="https://stocnet.github.io/manynet/">manynet</a> or <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a> tutorials right out of the box:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tutorials.html">run_tute</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 8 × 3</span></span>
-<span><span class="co">#&gt;   package name      title        </span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;        </span></span>
-<span><span class="co">#&gt; 1 manynet tutorial0 Intro to R   </span></span>
-<span><span class="co">#&gt; 2 manynet tutorial1 Data         </span></span>
-<span><span class="co">#&gt; 3 manynet tutorial2 Visualisation</span></span>
-<span><span class="co">#&gt; 4 migraph tutorial4 Centrality   </span></span>
-<span><span class="co">#&gt; 5 migraph tutorial5 Community    </span></span>
-<span><span class="co">#&gt; 6 migraph tutorial6 Position     </span></span>
-<span><span class="co">#&gt; 7 migraph tutorial7 Topology     </span></span>
-<span><span class="co">#&gt; 8 migraph tutorial8 Regression</span></span>
-<span><span class="co"># run_tute("tutorial1")</span></span></code></pre></div>
+<span><span class="co">#&gt; # A tibble: 10 × 3</span></span>
+<span><span class="co">#&gt;    package name      title        </span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;        </span></span>
+<span><span class="co">#&gt;  1 manynet tutorial0 Intro to R   </span></span>
+<span><span class="co">#&gt;  2 manynet tutorial1 Data         </span></span>
+<span><span class="co">#&gt;  3 manynet tutorial2 Visualisation</span></span>
+<span><span class="co">#&gt;  4 manynet tutorial3 Centrality   </span></span>
+<span><span class="co">#&gt;  5 migraph tutorial3 Centrality   </span></span>
+<span><span class="co">#&gt;  6 manynet tutorial4 Community    </span></span>
+<span><span class="co">#&gt;  7 manynet tutorial5 Position     </span></span>
+<span><span class="co">#&gt;  8 manynet tutorial6 Topology     </span></span>
+<span><span class="co">#&gt;  9 manynet tutorial7 Diffusion    </span></span>
+<span><span class="co">#&gt; 10 migraph tutorial8 Regression</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># run_tute("tutorial1")</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -400,16 +419,16 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer>
 </div>
 
-  
 
 
-  
+
+
 
   </body>
 </html>

@@ -1,198 +1,99 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://stocnet.github.io/manynet/404.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/CONTRIBUTING.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/index.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/pull_request_template.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/add_nodes.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/add_ties.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/as.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/attributes.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/autographr.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/autographs.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/autographt.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/configuration_layouts.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/create.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/features.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/from.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/generate.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/is.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/is_format.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/ison_adolescents.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/ison_algebra.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/ison_brandes.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/ison_friends.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/ison_hightech.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/ison_karateka.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/ison_koenigsberg.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/ison_laterals.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/ison_lawfirm.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/ison_lotr.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/ison_marvel.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/ison_monastery.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/ison_networkers.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/ison_physicians.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/ison_potter.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/ison_southern_women.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/ison_starwars.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/ison_usstates.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/learning.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/many_palettes.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/mark_diff.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/mark_nodes.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/mark_select.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/mark_tie_select.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/mark_ties.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/miss.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/partition_layouts.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/play.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/properties.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/read.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/reexports.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/reformat.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/scales.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/split.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/themes.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/to_levels.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/to_paths.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/to_project.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/to_scope.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/tutorials.html</loc>
-  </url>
-  <url>
-    <loc>https://stocnet.github.io/manynet/reference/write.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://stocnet.github.io/manynet/404.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/CONTRIBUTING.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/LICENSE-text.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/LICENSE.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/authors.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/index.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/news/index.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/add_nodes.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/add_ties.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/as.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/between_centrality.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/close_centrality.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/cluster.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/configuration_layouts.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/correlation.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/create.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/data_overview.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/defunct.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/degree_centrality.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/eigenv_centrality.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/features.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/from.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/generate.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/graphr.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/graphs.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/grapht.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/index.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/is.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/is_format.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_adolescents.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_algebra.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_brandes.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_friends.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_greys.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_hightech.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_karateka.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_koenigsberg.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_laterals.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_lawfirm.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_lotr.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_marvel.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_monastery.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_networkers.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_physicians.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_potter.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_southern_women.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_starwars.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_usstates.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/kselect.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/learning.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/many_palettes.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/mark_core.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/mark_diff.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/mark_nodes.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/mark_select.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/mark_tie_select.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/mark_ties.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/measure_attributes.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/measure_closure.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/measure_cohesion.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/measure_features.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/measure_heterogeneity.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/measure_hierarchy.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/measure_holes.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/measure_infection.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/measure_net_diffusion.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/measure_node_diffusion.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/measure_periods.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/measure_properties.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/member_cliques.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/member_community_hier.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/member_community_non.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/member_components.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/member_diffusion.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/member_equivalence.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/miss.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/motif_brokerage.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/motif_diffusion.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/motif_net.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/motif_node.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/over.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/partition_layouts.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/play.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/read.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/reexports.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/reformat.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/scales.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/split.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/themes.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/to_levels.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/to_paths.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/to_project.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/to_scope.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/tutorials.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/write.html</loc></url>
 </urlset>
+
