@@ -84,7 +84,6 @@ that hold various datasets in different formats. See for example:
 \item \href{https://schochastics.github.io/networkdata/}{networkdata}
 \item \href{http://www-personal.umich.edu/~mejn/netdata/}{GML datasets}
 \item UCIrvine Network Data Repository
-\item \href{http://konect.cc/}{KONECT project}
 \item \href{http://snap.stanford.edu/data/}{SNAP Stanford Large Network Dataset Collection}
 }
 
