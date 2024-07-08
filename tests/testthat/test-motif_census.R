@@ -38,7 +38,7 @@ test_that("net_triad census works", {
 test <- node_by_quad(ison_southern_women)
 test_that("node quad census works", {
   expect_s3_class(test, "node_motif")
-  expect_equal(test[1,1], 1402)
+  expect_equal(test[1,1], 1463)
 })
 
 test_that("net_mixed census works", {

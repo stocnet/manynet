@@ -140,6 +140,7 @@ node_by_quad <- function(.data){
   thisRequires("oaqc")
   graph <- .data %>% manynet::as_tidygraph() %E>% 
     as.data.frame()
+  if(ncol(graph)>2) graph <- graph[,1:2]
   out <- oaqc::oaqc(graph)[[1]]
   out <- out[-1,]
   rownames(out) <- manynet::node_names(.data)
