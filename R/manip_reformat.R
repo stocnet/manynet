@@ -468,7 +468,7 @@ to_named.network <- function(.data, names = NULL) {
   vapply(indic, 
          function(x){
            let <- LETTERS[x]
-           sample(manynet:::baby_names[startsWith(manynet:::baby_names, let)], 1)
+           sample(baby_names[startsWith(baby_names, let)], 1)
          }, FUN.VALUE = character(1))
 }
 
