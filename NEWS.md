@@ -41,7 +41,16 @@ and `node_is_infected()` (closes #71)
 ## Modifying
 
 - Fixed bug in `as_diff_model()` where events were out of order and named
-- Added `to_correlation()` tht implements pairwise correlation on network
+- Added `to_correlation()` that implements pairwise correlation on network
+- Added `arrange_ties()` for `{dplyr}`-like reordering of ties based on some attribute
+- `to_named()` now randomly generates and adds an alphabetic sequence of names,
+  where previously this was just a random sample,
+  which may assist pedagogical use
+  - baby_names (internal) now includes a few extra "Q" and "U" names
+  
+## Marking
+
+- `is_multiplex()` now recognises "date", "begin", and "end" as reserved
 
 ## Measuring
 
@@ -121,6 +130,7 @@ these include `node_by_tie()`, `node_by_triad()`, `node_by_quad()`, `node_by_pat
 - Added `ison_greys` dataset, including some corrections to that published in `{networkdata}`
 - Updated `ison_friends` dataset to be explicitly longitudinal
 - Updated `ison_usstates` dataset with population data (Alaska and Hawaii missing)
+- Updated `ison_southern_women` dataset with surnames, titles, event dates, and corrected ties
 - Updated data documentation with revised multiplex definition
 
 # manynet 0.4.4
