@@ -414,8 +414,9 @@ to_named.tbl_graph <- function(.data, names = NULL) {
   if (!is.null(names)) {
     out <- .data %>% mutate(name = names)
   } else {
+    n <- net_nodes(.data)
     out <- .data %>%
-      mutate(name = .get_babynames(net_nodes(.data)))
+      mutate(name = .get_babynames(n))
   }
   out
 }
