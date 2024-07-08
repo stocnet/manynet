@@ -13,8 +13,7 @@ test_that("to_ and from_ egos works", {
 
 unicorn <- ison_adolescents %>%
     tidygraph::activate(nodes) %>%
-    mutate(unicorn = sample(c("yes", "no"), 8,
-    replace = TRUE))
+    mutate(unicorn = rep(c("yes", "no"), 4))
 
 test_that("to_ and from_ subgraphs works", {
   expect_length(to_subgraphs(unicorn, "unicorn"), 2)

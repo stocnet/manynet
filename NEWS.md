@@ -1,3 +1,9 @@
+# manynet 1.0.1
+
+## Package
+
+- Test of `to_subgraphs()` no longer sampled
+
 # manynet 1.0.0
 
 ## Package
