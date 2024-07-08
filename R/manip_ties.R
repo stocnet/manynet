@@ -132,7 +132,10 @@ join_ties <- function(.data, object2, attr_name) {
     dplyr::summarise(dplyr::across(dplyr::everything(), 
                                    function(x){
                                      out <- suppressWarnings(max(x, na.rm = TRUE))
-                                     if(is.infinite(out)) out <- 0
+                                     if(is.infinite(out)){
+                                       if(is.numeric(out)) out <- 0 else 
+                                         out <- NA
+                                     }
                                      out
                                    }), 
                      .groups = "keep") %>% dplyr::ungroup()
