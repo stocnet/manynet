@@ -139,8 +139,9 @@ different output each time they are run, e.g.:
 
 ![](https://www.jameshollway.com/post/manynet/README-generate_egs-1.png)
 
-See also `generate_permutation()`, `generate_random()`,
-`generate_scalefree()`, `generate_smallworld()`, `generate_utilities()`.
+See also `generate_configuration()`, `generate_permutation()`,
+`generate_random()`, `generate_scalefree()`, `generate_smallworld()`,
+`generate_utilities()`.
 
 Note that all these functions can create directed or undirected,
 one-mode or two-mode networks. Creating two-mode networks is as easy as
@@ -232,33 +233,6 @@ See also `to_acyclic()`, `to_anti()`, `to_blocks()`, `to_components()`,
 `to_unweighted()`, `to_waves()` and `from_egos()`, `from_slices()`,
 `from_subgraphs()`, `from_ties()`, `from_waves()`.
 
-## Marking
-
-`{manynet}`’s `*is_*()` functions offer fast logical tests of various
-properties. Whereas `is_*()` returns a single logical value for the
-network, `node_is_*()` returns a logical vector the length of the number
-of nodes in the network, and `tie_is_*()` returns a logical vector the
-length of the number of ties in the network.
-
-- `is_acyclic()`, `is_aperiodic()`, `is_complex()`, `is_connected()`,
-  `is_directed()`, `is_dynamic()`, `is_edgelist()`, `is_eulerian()`,
-  `is_graph()`, `is_igraph()`, `is_labelled()`, `is_list()`,
-  `is_longitudinal()`, `is_manynet()`, `is_multiplex()`,
-  `is_perfect_matching()`, `is_signed()`, `is_twomode()`,
-  `is_uniplex()`, `is_weighted()`
-- `node_is_core()`, `node_is_cutpoint()`, `node_is_exposed()`,
-  `node_is_fold()`, `node_is_independent()`, `node_is_infected()`,
-  `node_is_isolate()`, `node_is_latent()`, `node_is_max()`,
-  `node_is_mentor()`, `node_is_min()`, `node_is_mode()`,
-  `node_is_random()`, `node_is_recovered()`
-- `tie_is_bridge()`, `tie_is_feedback()`, `tie_is_loop()`,
-  `tie_is_max()`, `tie_is_min()`, `tie_is_multiple()`,
-  `tie_is_random()`, `tie_is_reciprocated()`
-
-The `*is_max()` and `*is_min()` functions are used to identify the
-maximum or minimum, respectively, node or tie according to some measure
-(see below).
-
 ## Mapping
 
 `{manynet}` includes three one-line graphing functions with sensible
@@ -343,6 +317,66 @@ changes over time. It really couldn’t be easier.
 <!-- - undirected, directed, and sometimes complex networks -->
 <!-- - unweighted, weighted, and sometimes signed networks -->
 
+## Marking
+
+`{manynet}`’s `*is_*()` functions offer fast logical tests of various
+properties. Whereas `is_*()` returns a single logical value for the
+network, `node_is_*()` returns a logical vector the length of the number
+of nodes in the network, and `tie_is_*()` returns a logical vector the
+length of the number of ties in the network.
+
+- `is_acyclic()`, `is_aperiodic()`, `is_attributed()`, `is_complex()`,
+  `is_connected()`, `is_directed()`, `is_dynamic()`, `is_edgelist()`,
+  `is_eulerian()`, `is_graph()`, `is_igraph()`, `is_labelled()`,
+  `is_list()`, `is_longitudinal()`, `is_manynet()`, `is_multiplex()`,
+  `is_perfect_matching()`, `is_signed()`, `is_twomode()`,
+  `is_uniplex()`, `is_weighted()`
+- `node_is_core()`, `node_is_cutpoint()`, `node_is_exposed()`,
+  `node_is_fold()`, `node_is_independent()`, `node_is_infected()`,
+  `node_is_isolate()`, `node_is_latent()`, `node_is_max()`,
+  `node_is_mentor()`, `node_is_min()`, `node_is_mode()`,
+  `node_is_random()`, `node_is_recovered()`
+- `tie_is_bridge()`, `tie_is_feedback()`, `tie_is_loop()`,
+  `tie_is_max()`, `tie_is_min()`, `tie_is_multiple()`,
+  `tie_is_random()`, `tie_is_reciprocated()`
+
+The `*is_max()` and `*is_min()` functions are used to identify the
+maximum or minimum, respectively, node or tie according to some measure
+(see below).
+
+## Motifs
+
+`{manynet}`‘s `*by_*()` functions tabulate nodes’ frequency in various
+motifs. These include:
+
+- `net_by_brokerage()`, `net_by_dyad()`, `net_by_mixed()`,
+  `net_by_triad()`, `node_by_brokerage()`, `node_by_exposure()`,
+  `node_by_path()`, `node_by_quad()`, `node_by_tie()`, `node_by_triad()`
+
+## Memberships
+
+`{manynet}`‘s `*in_*()` functions identify nodes’ membership in some
+grouping, such as a community or component. These functions always
+return a character vector, indicating e.g. that the first node is a
+member of group “A”, the second in group “B”, etc.
+
+- `node_in_adopter()`, `node_in_automorphic()`, `node_in_betweenness()`,
+  `node_in_brokering()`, `node_in_component()`, `node_in_eigen()`,
+  `node_in_equivalence()`, `node_in_fluid()`, `node_in_greedy()`,
+  `node_in_infomap()`, `node_in_leiden()`, `node_in_louvain()`,
+  `node_in_optimal()`, `node_in_partition()`, `node_in_regular()`,
+  `node_in_roulette()`, `node_in_spinglass()`, `node_in_strong()`,
+  `node_in_structural()`, `node_in_walktrap()`, `node_in_weak()`
+
+## Measuring
+
+All other `net_*`, `node_*` and `tie_*` functions in `{manynet}` offer
+ways for users to measure some feature, property, or quantity of the
+network. This includes measures of balance and brokerage, centrality,
+closure, and cohesion, diffusion and diversity, hierarchy and
+resilience. There is a lot here, so we recommend you check out the
+function overview.
+
 ## Installation
 
 ### Stable
@@ -398,9 +432,9 @@ run_tute()
 #>  3 manynet tutorial2 Visualisation
 #>  4 manynet tutorial3 Centrality   
 #>  5 migraph tutorial3 Centrality   
-#>  6 migraph tutorial4 Community    
-#>  7 migraph tutorial5 Position     
-#>  8 migraph tutorial6 Topology     
+#>  6 manynet tutorial4 Community    
+#>  7 manynet tutorial5 Position     
+#>  8 manynet tutorial6 Topology     
 #>  9 manynet tutorial7 Diffusion    
 #> 10 migraph tutorial8 Regression
 ```

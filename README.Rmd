@@ -283,20 +283,6 @@ Split data can be rejoined using the `from_*()` family of functions.
 
 See also `r list_functions("^to_")` and `r list_functions("^from_")`.
 
-## Marking
-
-`{manynet}`'s `*is_*()` functions offer fast logical tests of various properties.
-Whereas `is_*()` returns a single logical value for the network,
-`node_is_*()` returns a logical vector the length of the number of nodes in the network,
-and `tie_is_*()` returns a logical vector the length of the number of ties in the network.
-
-- `r list_functions("^is_")`
-- `r list_functions("^node_is_")`
-- `r list_functions("^tie_is_")`
-
-The `*is_max()` and `*is_min()` functions are used to identify
-the maximum or minimum, respectively, node or tie according to some measure (see below).
-
 ## Mapping
 
 `{manynet}` includes three one-line graphing functions with sensible defaults based on 
@@ -436,6 +422,46 @@ ison_adolescents %>%
 <!-- - one-, two-, and sometimes three-mode networks -->
 <!-- - undirected, directed, and sometimes complex networks -->
 <!-- - unweighted, weighted, and sometimes signed networks -->
+
+## Marking
+
+`{manynet}`'s `*is_*()` functions offer fast logical tests of various properties.
+Whereas `is_*()` returns a single logical value for the network,
+`node_is_*()` returns a logical vector the length of the number of nodes in the network,
+and `tie_is_*()` returns a logical vector the length of the number of ties in the network.
+
+- `r list_functions("^is_")`
+- `r list_functions("^node_is_")`
+- `r list_functions("^tie_is_")`
+
+The `*is_max()` and `*is_min()` functions are used to identify
+the maximum or minimum, respectively, node or tie according to some measure (see below).
+
+## Motifs
+
+`{manynet}`'s `*by_*()` functions tabulate nodes' frequency in various motifs.
+These include:
+
+- `r list_functions("_by_")`
+
+## Memberships
+
+`{manynet}`'s `*in_*()` functions identify nodes' membership in some grouping,
+such as a community or component.
+These functions always return a character vector, 
+indicating e.g. that the first node is a member of group "A", the second in group "B", etc.
+
+- `r list_functions("_in_")`
+
+## Measuring
+
+All other `net_*`, `node_*` and `tie_*` functions in `{manynet}` offer ways
+for users to measure some feature, property, or quantity of the network.
+This includes measures of balance and brokerage,
+centrality, closure, and cohesion,
+diffusion and diversity,
+hierarchy and resilience.
+There is a lot here, so we recommend you check out the function overview.
 
 ## Installation
 

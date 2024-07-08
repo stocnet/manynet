@@ -88,6 +88,8 @@ They are particularly useful for creating a distribution of networks
 for exploring or testing network properties.
 \itemize{
 \item \code{generate_random()} generates a random network with ties appearing at some probability.
+\item \code{generate_configuration()} generates a random network consistent with a
+given degree distribution.
 \item \code{generate_smallworld()} generates a small-world structure via ring rewiring at some probability.
 \item \code{generate_scalefree()} generates a scale-free structure via preferential attachment at some probability.
 \item \code{generate_permutation()} generates a permutation of the network

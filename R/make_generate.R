@@ -6,6 +6,8 @@
 #'   for exploring or testing network properties.
 #'   
 #'   - `generate_random()` generates a random network with ties appearing at some probability.
+#'   - `generate_configuration()` generates a random network consistent with a
+#'   given degree distribution.
 #'   - `generate_smallworld()` generates a small-world structure via ring rewiring at some probability.
 #'   - `generate_scalefree()` generates a scale-free structure via preferential attachment at some probability.
 #'   - `generate_permutation()` generates a permutation of the network
