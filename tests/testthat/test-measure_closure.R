@@ -24,7 +24,7 @@ test_that("one-mode object clustering is reported correctly",{
 
 test_that("two-mode object clustering is reported correctly",{
   expect_equal(as.numeric(net_equivalency(ison_southern_women)),
-               0.4872, tolerance = 0.001)
+               0.4677, tolerance = 0.001)
   expect_s3_class(net_equivalency(ison_southern_women), "network_measure")
   expect_output(print(net_equivalency(ison_southern_women)))
 })

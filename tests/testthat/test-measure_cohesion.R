@@ -20,6 +20,6 @@ test_that("network diameter works", {
 
 test_that("network length works", {
   expect_s3_class(net_length(ison_southern_women), "network_measure")
-  expect_equal(as.numeric(net_length(ison_southern_women)), 2.29, 
+  expect_equal(as.numeric(net_length(ison_southern_women)), 2.306, 
                tolerance = 0.001)
 })

@@ -1,7 +1,7 @@
 test_that("to_unweight works", {
   expect_false(is_weighted(ison_southern_women))
   st <- igraph::set_edge_attr(ison_southern_women, "weight",
-                                   value = sample(1:93, 93))
+                                   value = sample(1:89, 89))
   expect_true(is_weighted(st))
   expect_false(is_weighted(to_unweighted(st)))
   expect_false(is_weighted(to_unweighted(as_igraph(st))))

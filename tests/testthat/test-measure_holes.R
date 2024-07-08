@@ -28,7 +28,7 @@ test_that("efficiency is reported correctly", {
 })
 
 test_that("constraint scores are reported correctly for two-mode notworks",{
-  expect_equal(round(unname(node_constraint(ison_southern_women)[1:3]),2), c(0.28, 0.31, 0.29))
+  expect_equal(top3(node_constraint(ison_southern_women)), c(0.2782, 0.3071, 0.2965))
   # expect_named(node_constraint(ison_southern_women)[1:3], c("Evelyn", "Laura", "Theresa"))
 })
 
