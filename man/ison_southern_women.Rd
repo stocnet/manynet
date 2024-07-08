@@ -5,7 +5,7 @@
 \alias{ison_southern_women}
 \title{Two-mode southern women (Davis, Gardner and Gardner 1941)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, multiplex, two-mode network with 32 nodes and 89 ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, two-mode network with 32 nodes and 89 ties
 #> # A tibble: 32 x 4
 #>   type  name      Surname    Title
 #>   <lgl> <chr>     <chr>      <chr>
@@ -17,7 +17,7 @@
 #> 6 FALSE Frances   Anderson   Miss 
 #> # i 26 more rows
 #> # A tibble: 89 x 3
-#>    from    to Date      
+#>    from    to date      
 #>   <int> <int> <date>    
 #> 1    14    29 1936-02-23
 #> 2    15    29 1936-02-23

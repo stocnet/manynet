@@ -391,7 +391,7 @@ is_multiplex.matrix <- function(.data) {
   FALSE
 }
 
-reserved_tie_attr <- c("wave","panel","sign","weight")
+reserved_tie_attr <- c("wave","panel","sign","weight","date","begin","end")
 
 #' @export
 is_multiplex.tbl_graph <- function(.data) {
