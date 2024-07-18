@@ -21,7 +21,7 @@ list_data <- function(string){
 ```
 
 # manynet 
-<img src="man/figures/logo.png" align="right" width="150"/>
+<img src="man/figures/logo.png" align="right" alt="manynet logo" width="150"/>
 
 <!-- badges: start -->
 [![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html#maturing)
@@ -97,7 +97,7 @@ there are specific routines included for
 [GraphML](http://graphml.graphdrawing.org),
 and [DynetML](http://casos.cs.cmu.edu/projects/dynetml/) files, e.g.:
 
-![](https://www.jameshollway.com/post/manynet/README-import-graph-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-import-graph-1.png" alt="Graph of manynet input/output formats"/>
 
 ```{r import-graph, echo = FALSE, dpi = 300, fig.height=2.5, eval=FALSE}
 library(patchwork)
@@ -126,8 +126,7 @@ we include a number of classical and instructional network datasets,
 all thoroughly documented and ready for analysis.
 Here are just a few examples, all available in `{manynet}`: 
 
-![](https://www.jameshollway.com/post/manynet/README-ison_egs-1.png)
-
+<img src="https://www.jameshollway.com/post/manynet/README-ison_egs-1.png" alt="Graphs illustrating several of the classic networks included in the package"/>
 
 ```{r ison_egs, echo = FALSE, dpi = 250, message=FALSE, fig.height=3, eval=FALSE}
 graphr(to_unnamed(ison_karateka)) + ggtitle("Karateka", subtitle = "Zachary 1977") + 
@@ -146,7 +145,7 @@ The `create_*` group of functions create networks with a particular structure,
 and will always create the same format from the same inputs,
 e.g.:
 
-![](https://www.jameshollway.com/post/manynet/README-create_egs-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-create_egs-1.png" alt="Graphs illustrating the creation of lattices and tree networks"/>
 
 ```{r create_egs, echo = FALSE, dpi = 300, message=FALSE, fig.height=3, eval=FALSE}
 (graphr(create_lattice(15)) + ggtitle("Lattice", subtitle = "create_lattice(15)") + 
@@ -160,7 +159,7 @@ generative mechanisms that may include some random aspect,
 and so will return a different output each time they are run,
 e.g.:
 
-![](https://www.jameshollway.com/post/manynet/README-generate_egs-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-generate_egs-1.png" alt="Graphs of small-world and scale-free networks of 15 nodes"/>
 
 ```{r generate_egs, echo = FALSE, dpi = 300, message=FALSE, fig.height=3, eval=FALSE}
 (graphr(generate_smallworld(15)) + ggtitle("Small-World", subtitle = "generate_smallworld(15)") + 
@@ -180,7 +179,7 @@ Some of these functions wrap existing algorithms in other packages,
 while others are unique offerings or add additional formats,
 e.g. two-mode networks.
 
-![](https://www.jameshollway.com/post/manynet/README-generate_tm-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-generate_tm-1.png" alt="Graphs of generated one- and two-mode small-world networks"/>
 
 ```{r generate_tm, echo = FALSE, dpi = 300, message=FALSE, fig.height=3, warning=FALSE, eval=FALSE}
 graphr(generate_smallworld(15, directed = TRUE), layout = "stress") + ggtitle("Small-World", subtitle = "generate_smallworld(15, directed = TRUE)") + graphr(generate_smallworld(c(10,5)), layout = "stress") + ggtitle("Small-World", subtitle = "generate_smallworld(c(10,5))")
@@ -213,7 +212,7 @@ you may need to translate this data into another class for analysis.
 from one of many common classes into any other.
 Below is a directed graph showing the currently available options:
 
-![](https://www.jameshollway.com/post/manynet/README-coercion-graph-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-coercion-graph-1.png" alt="Graph of coercible relationships between classes"/>
 
 ```{r coercion-graph, echo = FALSE, dpi = 300, eval=FALSE, fig.height=8, fig.width=8}
 graphr(igraph::graph_from_literal(edgelist:matrix:igraph:network:tidygraph+--+edgelist:matrix:igraph:network:tidygraph,
@@ -244,7 +243,7 @@ and extensible by developments in those other packages too.
 Reformatting means changing the format of the network,
 e.g. from directed to undirected via `to_undirected()`.
 
-![](https://www.jameshollway.com/post/manynet/README-directed_egs-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-directed_egs-1.png" alt="Graphs illustrating modification of a network's directedness"/>
 
 ```{r directed_egs, echo = FALSE, dpi = 300, fig.height=3, warning=FALSE, message=FALSE, eval=FALSE}
 graphr(to_directed(ison_brandes)) + ggtitle("Directed", subtitle = "to_directed(ison_brandes)") + 
@@ -256,7 +255,7 @@ graphr(to_directed(ison_brandes)) + ggtitle("Directed", subtitle = "to_directed(
 Transforming means changing the dimensions of the network,
 e.g. from a two-mode network to a one-mode projection via `to_mode1()`.
 
-![](https://www.jameshollway.com/post/manynet/README-projection_egs-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-projection_egs-1.png" alt="Graphs illustrating decomposition of a two-mode network into its projections"/>
 
 ```{r projection_egs, echo = FALSE, dpi = 300, fig.height=3, warning=FALSE, message=FALSE, eval=FALSE}
 graphr(ison_southern_women, layout = "stress") + ggtitle("Original", subtitle = "ison_southern_women") + 
@@ -270,7 +269,7 @@ graphr(ison_southern_women, layout = "stress") + ggtitle("Original", subtitle = 
 Splitting means separating a network,
 e.g. from a whole network to the various ego networks via `to_egos()`.
 
-![](https://www.jameshollway.com/post/manynet/README-splitting_egs-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-splitting_egs-1.png" alt="Graphs illustrating decomposition of a network into egonets"/>
 
 ```{r splitting_egs, echo = FALSE, dpi = 250, fig.height=4, warning=FALSE, message=FALSE, eval=FALSE}
 graphr(ison_adolescents) + ggtitle("Original", subtitle = "ison_adolescents") + 
@@ -295,7 +294,7 @@ It includes sensible defaults so that researchers can view their network's struc
 or distribution quickly with a minimum of fuss.
 Compare the output from `{manynet}` with a similar default from `{igraph}`:
 
-![](https://www.jameshollway.com/post/manynet/README-layout-comparison-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-layout-comparison-1.png" alt="Example illustrating differences in default igraph and manynet graphs"/>
 
 ```{r layout-comparison, echo = FALSE, message=FALSE, dpi = 250, fig.height=4, eval = FALSE}
 library(manynet)
@@ -328,7 +327,7 @@ Changing the size and colors of nodes and ties is as easy as
 specifying the function's relevant argument with a replacement,
 or indicating from which attribute it should inherit this information.
 
-![](https://www.jameshollway.com/post/manynet/README-more-options-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-more-options-1.png" alt="Graph illustrating automatic and manual use of node color and size"/>
 
 ```{r more-options, echo = FALSE, message=FALSE, dpi = 300, fig.height=3, eval=FALSE}
 graphr(ison_lawfirm, node_color = "darkblue", node_size = 6) + 
@@ -348,7 +347,7 @@ snapping layouts to a grid,
 visualising partitions horizontally, vertically, or concentrically,
 or conforming to configurational coordinates.
 
-![](https://www.jameshollway.com/post/manynet/README-more-layouts-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-more-layouts-1.png" alt="Graphs illustrating different layouts"/>
 
 ```{r more-layouts, echo = FALSE, message=FALSE, dpi = 250, eval=FALSE}
 (graphr(ison_southern_women, layout = "concentric") + ggtitle("Concentric layout")) /
@@ -366,7 +365,7 @@ If you want to quickly make sure your plots conform to your institution or taste
 then it is easy to do with themes and scales that update the basic look and color palette
 used in your plots.
 
-![](https://www.jameshollway.com/post/manynet/README-more-themes-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-more-themes-1.png" alt="Graphs using default, IHEID, and ETHZ themes"/>
 
 ```{r more-themes, echo = FALSE, message=FALSE, dpi = 300, fig.height=3, eval=FALSE}
 p <- graphr(ison_lawfirm, node_color = "Practice") + 
@@ -385,7 +384,7 @@ Second, `graphs()` is used to graph multiple networks together,
 which can be useful for ego networks or network panels.
 `{patchwork}` is used to help arrange individual plots together.
 
-![](https://www.jameshollway.com/post/manynet/README-autographs-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-autographs-1.png" alt="Example of graphs() used on longitudinal data"/>
 
 ```{r autographs, echo = FALSE, dpi = 250, fig.height=3, eval=FALSE}
 ison_adolescents %>%
@@ -401,7 +400,7 @@ It uses `{gganimate}` and `{gifski}` to create a gif that
 visualises network changes over time.
 It really couldn't be easier.
 
-![](https://www.jameshollway.com/post/manynet/README-autographd-1.gif)
+<img src="https://www.jameshollway.com/post/manynet/README-autographd-1.gif" alt="Example of grapht() on longitudinal data"/>
 
 ```{r autographd, echo = FALSE, dpi = 250, fig.height=3.5, eval=FALSE}
 ison_adolescents %>%
