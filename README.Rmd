@@ -50,9 +50,10 @@ And they can rely on a very different visual language (and sometimes plotting en
 which can mess up your pretty presentation or paper.
 This can make learning and using network analysis tools in R challenging.
 
-By contrast, we build packages that offer _many_ analytic tools that work on _many_ (if not most) types of networks of all kinds.
-`{manynet}` is the first package that helps researchers with Making, Modifying, and Mapping networks.
-For Measures, Memberships, or Models, see [`{migraph}`](https://stocnet.github.io/migraph/).
+By contrast, `{manynet}` offers _many_ analytic tools that work on _many_ (if not most) types and kinds of networks.
+It helps researchers make, modify, map, mark, measure, and identify nodes' motifs and memberships in networks.
+For further testing and modelling capabilities, 
+see [`{migraph}`](https://stocnet.github.io/migraph/) and the other [stocnet](https://github.com/stocnet) packages.
 
 - [Making](#making)
     - [Importing network data](#importing-network-data)
@@ -67,14 +68,18 @@ For Measures, Memberships, or Models, see [`{migraph}`](https://stocnet.github.i
 - [Mapping](#mapping)
   - [Graphing](#graphing)
   - [More options](#more-options)
-  - [More layouts](#more-options)
+  - [More layouts](#more-layouts)
   - [More themes and scales](#more-themes-and-scales)
   - [graphs](#graphs)
   - [grapht](#grapht)
+- [Marking](#marking)
+- [Motifs](#motifs)
+- [Memberships](#memberships)
+- [Measuring](#measuring)
+- [Tutorials](#tutorials)
 - [Installation](#installation)
   - [Stable](#stable)
   - [Development](#development)
-  - [Tutorials](#tutorials)
 - [Relationship to other packages](#relationship-to-other-packages)
 - [Funding details](#funding-details)
 
@@ -424,6 +429,12 @@ ison_adolescents %>%
 
 ## Marking
 
+`{manynet}` includes four special groups of functions, 
+each with their own pretty `print()` and `plot()` methods:
+marks, measures, motifs, and memberships.
+Marks are logical scalars or vectors, measures are numeric, 
+memberships categorical, and motifs result in tabular outputs.
+
 `{manynet}`'s `*is_*()` functions offer fast logical tests of various properties.
 Whereas `is_*()` returns a single logical value for the network,
 `node_is_*()` returns a logical vector the length of the number of nodes in the network,
@@ -452,22 +463,65 @@ indicating e.g. that the first node is a member of group "A", the second in grou
 
 - `r list_functions("_in_")`
 
+For example `node_brokerage_census()` returns 
+the frequency of nodes' participation in 
+Gould-Fernandez brokerage roles for a one-mode network,
+and the Jasny-Lubell brokerage roles for a two-mode network.
+
+These can be analysed alone, or used as a profile for establishing equivalence.
+`{manynet}` offers both HCA and CONCOR algorithms,
+as well as elbow, silhouette, and strict methods for _k_-cluster selection.
+
+<img src="https://www.jameshollway.com/post/migraph/dendroPlot.png" alt="Plot of a dendrogram of structural equivalence"/>
+
+`{manynet}` also includes functions for establishing membership on other bases,
+such as typical community detection algorithms, 
+as well as component and core-periphery partitioning algorithms.
+
 ## Measuring
 
-All other `net_*`, `node_*` and `tie_*` functions in `{manynet}` offer ways
-for users to measure some feature, property, or quantity of the network.
-This includes measures of balance and brokerage,
-centrality, closure, and cohesion,
-diffusion and diversity,
-hierarchy and resilience.
-There is a lot here, so we recommend you check out the function overview.
+`{manynet}` also offers a large and growing smorgasbord of measures that
+can be used at the node, tie, and network level 
+to measure some feature, property, or quantity of the network.
+Each recognises whether the network is directed or undirected,
+weighted or unweighted, one-mode or two-mode.
+All return normalized values wherever possible,
+though this can be overrided.
+Here are some examples:
+
+- _Centrality_: `node_degree()`, `node_closeness()`, `node_betweenness()`, and `node_eigenvector()`,
+  `net_degree()`, `net_closeness()`, `net_betweenness()`, and `net_eigenvector()`
+- _Cohesion_: `net_density()`, `net_reciprocity()`, `net_transitivity()`, `net_equivalency()`, and `net_congruency()`
+- _Hierarchy_: `net_connectedness()`, `net_efficiency()`, `net_upperbound()`
+- _Resilience_: `net_components()`, `net_cohesion()`, `net_adhesion()`, `net_diameter()`, `net_length()`
+- _Innovation_: e.g. `node_redundancy()`, `node_effsize()`, `node_efficiency()`, `node_constraint()`, `node_hierarchy()`
+- _Diversity_: `net_richness()`, `net_diversity()`, `net_heterophily()`, `net_assortativity()`, 
+  `node_richness()`, `node_diversity()`, `node_heterophily()`, `node_assortativity()`
+- _Topology_: e.g. `net_core()`, `net_factions()`, `net_modularity()`, `net_smallworld()`, `net_balance()`
+- _Diffusion_: e.g. `net_reproduction()`, `net_immunity()`, `node_thresholds()`
+
+There is a lot here, 
+so we recommend you explore [the list of functions](https://stocnet.github.io/migraph/reference/index.html) to find out more.
+
+## Tutorials
+
+This package includes tutorials to help new and experienced users
+learn how they can conduct social network analysis using the package.
+These tutorials leverage the additional package `{learnr}` (see [here](https://rstudio.github.io/learnr/)),
+but we have made it easy to use `{manynet}` or `{migraph}` tutorials
+right out of the box:
+
+```{r learnr-tutes}
+run_tute()
+# run_tute("tutorial1")
+```
 
 ## Installation
 
 ### Stable
 
 The easiest way to install the latest stable version of `{manynet}` is via CRAN.
-Simply open the R console and enter:^[Macs with Macports installed may also install from the command line [using Macports](https://ports.macports.org/port/R-manynet/).]
+Simply open the R console and enter:
 
 `install.packages('manynet')`
 
@@ -496,18 +550,11 @@ please install the `{remotes}` package from CRAN and then:
 - For latest development version: 
 `remotes::install_github("stocnet/manynet@develop")`
 
-### Tutorials
+### Other sources
 
-This package includes tutorials to help new and experienced users
-learn how they can conduct social network analysis using the package.
-These tutorials leverage the additional package `{learnr}` (see [here](https://rstudio.github.io/learnr/)),
-but we have made it easy to use `{manynet}` or `{migraph}` tutorials
-right out of the box:
+Those using Mac computers may also install using Macports:
 
-```{r learnr-tutes}
-run_tute()
-# run_tute("tutorial1")
-```
+`sudo port install R-manynet`
 
 ## Relationship to other packages
 
