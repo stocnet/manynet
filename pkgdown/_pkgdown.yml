@@ -16,10 +16,12 @@ navbar:
     right:
     - search
     - github
+    - cran
   components:
     home:
       icon: fa-home fa-lg
       href: index.html
+      aria-label: Go to home
     reference:
       text: Function Overview
       href: reference/index.html
@@ -29,6 +31,11 @@ navbar:
     github:
       icon: "fab fa-github fa-lg"
       href: https://github.com/stocnet/manynet
+      aria-label: View on Github
+    cran:
+      icon: "fab fa-r-project"
+      href: https://cloud.r-project.org/package=manynet
+      aria-label: View on CRAN
 reference:
   - title: "Making"
     desc: |
