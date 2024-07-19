@@ -42,7 +42,7 @@ expect_nodes <- function() {
 
 expect_edges <- function() {
   if (!tidygraph::.graph_context$free() && tidygraph::.graph_context$active() != "edges") {
-    stop("This call requires edges to be active", call. = FALSE)
+    stop("This call requires ties to be active", call. = FALSE)
   }
 }
 
