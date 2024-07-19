@@ -212,21 +212,74 @@ This works best for quite clustered distributions of attributes.
 graphr(ison_lotr, node_group = "Race")
 ```
 
-### Layouts
+## Layouts
+
+The aim of graph layouts is to position nodes in a (usually) two-dimensional space 
+to maximise some analytic and aesthetically pleasing function.
+Quality measures might include:
+
+- minimising the _crossing number_ of edges/ties in the graph 
+([planar graphs](https://www.jasondavies.com/planarity/) require no crossings)
+- minimising the _slope number_ of distinct edge slopes in the graph 
+(where vertices are represented as points on a Euclidean plane)
+- minimising the _bend number_ in all edges in the graph 
+(every graph has a right angle crossing (RAC) drawing with three bends per edge)
+- minimising the _total edge length_
+- minimising the _maximum edge length_
+- minimising the _edge length variance_
+- maximising the _angular resolution_ or sharpest angle of edges meeting at a common vertex
+- minimising the _bounding box_ of the plot
+- evening the _aspect ratio_ of the plot
+- displaying _symmetry groups_ (subgraph automorphisms)
 
 A range of graph layouts are available across the `{igraph}`, `{graphlayouts}`, and `{manynet}` packages 
 that can be used together with `graphr()`.
 
-```{r layoutseg, exercise=TRUE, purl = FALSE}
+### Force-directed layouts
 
+Force-directed layouts updates some initial placement of vertices
+through the operation of some system of metaphorically-physical forces.
+These might include attractive and repulsive forces.
+
+```{r forcedir, exercise=TRUE}
+(graphr(ison_southern_women, layout = "fr") + ggtitle("Fruchterman-Reingold") |
+graphr(ison_southern_women, layout = "kk") + ggtitle("Kamada-Kawai"))
 ```
 
-```{r layoutseg-solution}
-(graphr(ison_southern_women, layout = "bipartite") + ggtitle("bipartite") |
-graphr(ison_southern_women, layout = "kk") + ggtitle("kk"))
+### Layered layouts
+
+Layered layouts arrange nodes into horizontal (or vertical) layers,
+positioning them so that they reduce crossings.
+These layouts are best suited for directed acyclic graphs or similar.
+
+```{r layoutseg, exercise=TRUE}
+(graphr(ison_southern_women, layout = "bipartite") + ggtitle("Bipartite") |
+graphr(ison_southern_women, layout = "hierarchy") + ggtitle("Hierarchy")) /
+(graphr(ison_southern_women, layout = "railway") + ggtitle("Railway") |
+graphr(ison_southern_women, layout = "alluvial") + ggtitle("Alluvial"))
 ```
 
-### Using different colours
+### Circular layouts
+
+Circular layouts arrange nodes around (potentially concentric) circles,
+such that crossings are minimised and adjacent nodes are located close together.
+In some cases, location or layer can be specified by attribute or mode.
+
+```{r circular, exercise=TRUE}
+graphr(ison_southern_women, layout = "concentric") + ggtitle("Concentric")
+```
+
+### Other layouts
+
+Other layouts include:
+
+- spectral layouts
+- grid layouts
+- orthogonal layouts
+- tree layouts
+- arc layouts
+- dominance layouts
+
 
 Because the `graphr()` function is based on
 the grammar of graphics,
