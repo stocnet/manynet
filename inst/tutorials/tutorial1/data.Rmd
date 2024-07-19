@@ -652,10 +652,41 @@ Remember, all these `to_*()` functions work on any compatible class;
 the `to_*()` functions will also attempt to return that same class of object,
 making it even easier to manipulate networks into shape for analysis.
 
-## Adding data
+## Modifying data
 
-If you import one or more edgelists and nodelists, 
-it can be useful to bind these together in an igraph, tidygraph, or network class object.
+After choosing and/or importing some network data,
+and alongside other modifications,
+you may need to add or delete particular nodes or ties,
+or add or delete specific nodal or tie attributes.
+
+### Adding/deleting nodes and ties
+
+Sometimes you may wish to add particular nodes or ties.
+This can be achieved easily enough with the following functions.
+Note that one (1) additional node is added via the first command,
+and one (1) additional tie (between the nodes indexed 1 and 3) 
+is added using the second.
+
+```{r add, exercise = TRUE}
+add_nodes(ison_adolescents, 1)
+add_ties(ison_adolescents, list(1,3))
+```
+
+Other times you may wish to delete particular nodes or ties,
+and there the syntax is similar.
+Note here though that when a single value is used in the second argument,
+this is interpreted as an index,
+whereas one can also use the node's name for `delete_nodes()`,
+or name the tie(s) to be deleted using `|` as a separator.
+
+```{r delete, exercise = TRUE}
+delete_nodes(ison_adolescents, 1)
+delete_nodes(ison_adolescents, "Sue")
+delete_ties(ison_adolescents, 1)
+delete_ties(ison_adolescents, "Carol|Tina")
+```
+
+### Adding/deleting attributes
 
 Adding nodal attributes to a given network is relatively straightforward.
 `{manynet}` offers a more `{igraph}`-like syntax, e.g. `add_node_attribute()`,
@@ -667,6 +698,16 @@ ison_adolescents %>%
   mutate_nodes(color = "red",
                degree = 1:8) %>% 
   mutate_ties(weight = 1:10)
+```
+
+One can also delete nodal attributes in a similar way,
+by assigning `NULL` to a particular attribute.
+
+```{r mutnull, exercise = TRUE}
+ison_southern_women
+ison_southern_women %>% 
+  mutate_nodes(Surname = NULL,
+               Title = NULL)
 ```
 
 Note that to use `{dplyr}`-like functions like 
