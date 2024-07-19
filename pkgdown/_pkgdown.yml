@@ -71,14 +71,27 @@ reference:
       with other dimensions, such as from a two-mode network into a one-mode network.
       There are also functions for splitting networks, e.g. into a list of ego networks,
       and rejoining them from such lists.
-      There are also tidy-style and igraph-style functions for adding or joining
-      new data on nodes or ties to networks.
     contents:
-      - starts_with("as_")
-      - starts_with("add_")
       - starts_with("to_")
       - starts_with("from_")
+  - subtitle: "Coercion"
+    desc: |
+      Functions for modifying networks into other classes.
+    contents:
+      - starts_with("as_")
+  - subtitle: "Attributes"
+    desc: |
+      Functions for modifying nodal and tie attributes.
+      These include tidy-style and igraph-style functions for adding or joining
+      new data on nodes or ties to networks.
+    contents:
+      - starts_with("add_")
+  - subtitle: "Missing"
+    desc: |
+      Functions for modifying how missing data is treated.
+    contents:
       - starts_with("na_to_")
+      
   - title: "Marking"
     desc: |
       Functions for identifying properties of networks, nodes, or ties,
