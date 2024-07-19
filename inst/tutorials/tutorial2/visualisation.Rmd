@@ -26,41 +26,40 @@ As Tufte (1983: 9) said:
 
 > "At their best, graphics are instruments for reasoning about quantitative information. Often the most effective way to describe, explore, and summarize a set of numbers – even a very large set – is to look at pictures of those numbers"
 
-Brandes et al (1999) argue that visualising networks demands thinking about:
+All of this is crucial with networks.
+As a first step, network visualisation -- or _graphing_ --
+offers us a way to vet our data for anything strange that might be going on,
+both revealing and informing our assumptions and intuitions.
+
+<img src="https://info5940.infosci.cornell.edu/notes/dataviz/why-visualize-data/index_files/figure-html/datasaurus-graph-1.gif" height="600px"/>
+
+It is also crucial to the further communication of the lessons that we have
+learned through investigation with others.
+While there may be many dead-ends and time-sinks to visualisation,
+it is worth taking the time to make sure that your main points are
+easy to appreciate.
+
+Brandes et al ([1999](https://doi.org/10.1177/0951692899011001004)) argue that visualising networks demands thinking about:
 
 - _substance_: a concise and precise delivery of insights to the researcher and/or readers
 - _design_: the ergonomics of function are 98% of the purpose of good design, aesthetics only 2%
 - and _algorithm_: the features of the e.g. the layout algorithm
 
-While there may be many dead-ends to exploratory visualisation,
-it is worth taking the time to make sure that your main points are
-easy to appreciate.
+## Different approaches
 
-On [her excellent and helpful website](https://kateto.net/network-visualization), 
-Katya Ognyanova outlines some key dimensions of control
-that network researchers have to play with:
-
-- vertex position (layout)
-- vertex shape
-- vertex color
-- vertex size
-- vertex labels
-- edge color
-- edge size
-- edge shape
-- edge arrows
-
-## Approaches to visualising networks in R
-
-There are a host of packages for plotting in R, 
-and for plotting networks in R.
+There are several main packages for plotting in R, 
+as well as several for plotting networks in R.
 Plotting in R is typically based around two main approaches:
-the 'base' approach in R by default,
-and the 'grid' approach made popular by the famous and very flexible `{ggplot2}` package.^['gg' stands for the Grammar of Graphics.]
-Approaches to plotting _graphs_ or _networks_ in R can be similarly divided.
 
-The two classic packages are `{igraph}` and `{sna}`, both building upon the base R graphics engine.
-Newer packages [`{ggnetwork}`](https://www.r-bloggers.com/2016/03/ggnetwork-network-geometries-for-ggplot2/) and 
+- the 'base' approach in R by default,
+and 
+- the 'grid' approach made popular by the famous and very flexible `{ggplot2}` package.^['gg' stands for the [Grammar of Graphics](https://doi.org/10.1007/0-387-28695-0).]
+
+Approaches to plotting _graphs_ or _networks_ in R can be similarly divided:
+
+- two classic packages, `{igraph}` and `{sna}`, 
+both build upon the base R graphics engine,
+- newer packages [`{ggnetwork}`](https://www.r-bloggers.com/2016/03/ggnetwork-network-geometries-for-ggplot2/) and 
 [`{ggraph}`](https://ggraph.data-imaginist.com/index.html) build upon a grid approach.^[
 Others include: 'Networkly' for creating 2-D and 3-D interactive networks
 that can be rendered with plotly and can be easily integrated into
@@ -70,35 +69,84 @@ shiny apps or markdown documents;
 'networkD3' interacts with javascript (D3) to make interactive networks
 (https://www.r-bloggers.com/2016/10/network-visualization-part-6-d3-and-r-networkd3/).
 ]
-This vignette introduces some functions in the `{manynet}` package for plotting and 
-visualising network data.
-`{manynet}` builds upon the ggplot2/ggraph engine for plotting.
 
-## Using `{manynet}` to quickly plot network graphs
+While the coercion routines available in `{manynet}` make it easy to use 
+any of these packages' graphing capabilities,
+`{manynet}` itself builds upon the ggplot2/ggraph engine 
+to help quickly and informatively graph networks.
+
+### Dimensions of visualisation
+
+On [her excellent and helpful website](https://kateto.net/network-visualization), 
+Katya Ognyanova outlines some key dimensions of control
+that network researchers have to play with:
+
+- vertex position (layout)
+- vertex shape (e.g. circles, squares)
+- vertex color
+- vertex size
+- vertex labels
+- edge shape (e.g. straight, bends)
+- edge type (e.g. solid, dashed)
+- edge color
+- edge size
+- edge arrows
+
+In the following sections, 
+we will learn how `{manynet}` provides sensible defaults on many of these elements,
+and offers ways to extend or customise them.
+
+## Graphing
+
+### graphr
   
 To get a basic visualisation of the network before adding various specifications,
 the `graphr()` function in `{manynet}` is a quick and easy way 
 to obtain a clear first look of the network 
 for preliminary investigations and understanding of the network. Let's quickly visualise one of the `ison_` datasets included in the package.
 
-```{r manyneteg, exercise=TRUE, purl = FALSE}
-
+```{r manyneteg, exercise=TRUE}
+graphr(ison_lotr)
 ```
   
-```{r manyneteg-solution}
-library(manynet)
-graphr(ison_brandes)
-```
-  
-We can also specify the colours, groups, shapes, and sizes of nodes in 
+We can also specify the colours, groups, shapes, and sizes of nodes and edges in 
 the `graphr()` function using the following parameters:
   
 * `node_colour`
-* `node_group`
 * `node_shape`
 * `node_size`
+* `node_group`
+* `edge_color`
+* `edge_size`
 
-### Adding titles and subtitles
+```{r speceg, exercise=TRUE}
+graphr(ison_lotr, node_color = "Race")
+```
+
+### graphs
+
+`graphr()` is not the only graphing function included in `{manynet}`.
+To graph _sets_ of networks together, `graphs()` makes sure that two
+or more networks are plotted together.
+This might be a set of ego networks, subgraphs, or waves of a longitudinal network.
+
+```{r graphs, exercise=TRUE}
+graphs(to_subgraphs(ison_lotr, "Race"),
+       waves = c(1,2,3,4))
+```
+
+### grapht
+
+`grapht()` is another option, rendering network changes as a gif.
+  
+```{r grapht, exercise=TRUE}
+ison_lotr %>%
+  mutate_ties(year = sample(1:12, 66, replace = TRUE)) %>%
+  to_waves(attribute = "year", cumulative = TRUE) %>%
+  grapht()
+```
+
+## Titles and subtitles
 
 Append `ggtitle()` to add a title.
 `{manynet}` works well with both `{ggplot2}` and `{ggraph}` functions 
@@ -110,11 +158,11 @@ of the network.
 ```
   
 ```{r manynetexample2-solution}
-graphr(ison_adolescents,
-       labels = TRUE,
-       node_size = 1.5) + 
+graphr(ison_adolescents) + 
   ggtitle("Visualisation")
 ```
+
+## Arrangements
 
 `{manynet}` also uses the `{patchwork}` package for arranging
 graphs together, e.g. side-by-side or above one another.
@@ -129,53 +177,39 @@ graphr(ison_adolescents) + graphr(ison_algebra)
 graphr(ison_adolescents) / graphr(ison_algebra)
 ```
 
-### Adding legends
+## Legends
 
-By default, `{manynet}` doesn't add legends automatically, 
-as often the colours are pretty self-explanatory,
-for example in the following figure.
+While `{manynet}` attempts to provide legends where necessary,
+in some cases the legends offer insufficient detail,
+such as in the following figure, or are absent.
 
-```{r maxbet}
-ison_adolescents %>% 
-  mutate(maxbet = node_is_max(node_betweenness(ison_adolescents))) %>% 
+```{r maxbet, exercise = TRUE}
+ison_lotr %>% 
+  mutate(maxbet = node_is_max(node_betweenness(ison_lotr))) %>% 
   graphr(node_color = "maxbet")
 ```
 
-Alternatively, group labels are added automatically when using the 'node_group' argument to highlight groups in a network.
-
-```{r group, exercise = TRUE, purl = FALSE}
-
-```
-
-```{r group-solution}
-ison_networkers %>% 
-  graphr(node_group = "Discipline")
-```
-
-But other times it is important to add in a legend.
 `{manynet}` supports the `{ggplot2}` way of adding legends
 after the main plot has been constructed,
 using `guides()` to add in the legends,
 and `labs()` for giving those legends particular titles.
+Note that we can use `"\n"` within the legend title to make the title
+span multiple lines.
 
-```{r discipline, exercise = TRUE, purl = FALSE}
-
-```
-
-```{r discipline-solution}
-ison_networkers %>% 
-  graphr(node_color = "Discipline") +
+```{r legend, exercise=TRUE}
+ison_lotr %>% 
+  mutate(maxbet = node_is_max(node_betweenness(ison_lotr))) %>% 
+  graphr(node_color = "maxbet") +
   guides(color = "legend") + 
-  labs(color = "Discipline")
+  labs(color = "Maximum\nBetweenness")
 ```
 
-```{r discq, purl = FALSE}
-question("What discipline is Charles Kadushin in according to this graph?",
-         answer("Anthropology"),
-         answer("Mathematics/Statistics"),
-         answer("Other"),
-         answer("Sociology", correct = TRUE),
-        allow_retry = TRUE, random_answer_order = TRUE)
+An alternative to colors and legends is to use the 'node_group' argument 
+to highlight groups in a network.
+This works best for quite clustered distributions of attributes.
+
+```{r group, exercise = TRUE}
+graphr(ison_lotr, node_group = "Race")
 ```
 
 ### Layouts
@@ -226,6 +260,7 @@ graphr(mpn_elite_mex,
 ```
 
 ## Using `{ggraph}` for more flexibility
+## Further flexibility
 
 For more flexibility with visualizations, 
 `{manynet}` users are encouraged to use the excellent `{ggraph}` package.
@@ -236,12 +271,8 @@ a particular plot from the ground up,
 adding explicit layers to visualise the nodes and edges.
 
 ```{r ggrapheg, exercise=TRUE, purl = FALSE}
-
-```
-
-```{r ggrapheg-solution}
 library(ggraph)
-ggraph(mpn_elite_mex, layout = "fr") + 
+ggraph(ison_greys, layout = "fr") + 
   geom_edge_link(edge_colour = "dark grey", 
                   arrow = arrow(angle = 45,
                                 length = unit(2, "mm"),
@@ -256,7 +287,8 @@ ggraph(mpn_elite_mex, layout = "fr") +
   
 As we can see in the code above, we can specify various aspects of the plot to 
 tailor it to our network. 
-Firstly, we can alter the **layout** of the network using the `layout =` argument
+
+First, we can alter the **layout** of the network using the `layout =` argument
 to create a clearer visualisation of the ties between nodes. 
 This is especially important for larger networks, where nodes and ties are more 
 easily obscured or misrepresented.
@@ -268,7 +300,7 @@ More layouts can be found in the `{graphlayouts}` and `{igraph}` R packages.
 To use a layout from the `{igraph}` package, enter only the last part of the layout 
 algorithm name (eg. `layout = "mds"` for "layout_with_mds").
   
-Secondly, using `geom_node_point()` which draws the nodes as geometric shapes 
+Second, using `geom_node_point()` which draws the nodes as geometric shapes 
 (circles, squares, or triangles), we can specify the presentation of **nodes** 
 in the network in terms of their *shape* (`shape=`, choose from 1 to 21), 
 *size* (`size=`), or *colour* (`colour=`). We can also use `aes()` to match to 
@@ -276,7 +308,7 @@ node attributes. To add labels, use `geom_node_text()` or
 `geom_node_label()` (draws labels within a box). The font (`family=`), 
 font size (`size=`), and colour (`colour=`) of the labels can be specified.
   
-Thirdly, we can also specify the presentation of **edges** in the network.
+Third, we can also specify the presentation of **edges** in the network.
 To draw edges, we use `geom_edge_link0()` or `geom_edge_link()`. 
 Using the latter function makes it possible to draw a straight line with a 
 gradient. 
@@ -291,9 +323,10 @@ edge attributes using `aes()`:
   
 * *opacity*: `edge_alpha=`
   
-For directed graphs, arrows can be drawn using the `arrow=` argument and the 
-`arrow()` function from `{ggplot2}`. The angle, length, arrowhead type, and
-padding between the arrowhead and the node can also be specified.
+For directed graphs, arrows can be drawn using the `arrow=` argument 
+and the `arrow()` function from `{ggplot2}`. 
+The angle, length, arrowhead type, 
+and padding between the arrowhead and the node can also be specified.
   
 To change the position of the legend, add the `theme()` function from `{ggplot2}`.
 The legend can be positioned at the top, bottom, left, or right, 
