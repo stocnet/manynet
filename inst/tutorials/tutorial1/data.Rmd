@@ -6,43 +6,55 @@ output:
     theme: journal
 runtime: shiny_prerendered
 description: >
-  This tutorial covers several ways to get data into the package,
+  This tutorial covers several ways to make and modify network data,
   including data from manynet and other packages, 
   importing and using data from outside of R,
-  and creating or generating networks using functions in the manynet package.
+  and ways to work with this data until it is in the class or format you
+  require for further analysis.
 ---
 
 ```{r setup, include=FALSE, purl=FALSE}
 library(learnr)
 library(manynet)
+library(network)
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-# Introduction
+## Introduction
+
+<img src="https://c.tenor.com/bibDxkkQ0YAAAAAd/tenor.gif" alt="gif of man trashing own computer"/>
 
 Most network analysts want to use network analysis to better understand empirical networks.
-`{manynet}` offers several options for creating or generating,
-importing or coercing networks into formats that you can use.
-This tutorial is going to cover several ways to get data into the package:
+`{manynet}` offers various functions for importing or coercing networks into formats that you can use.
+This tutorial is going to cover two main ways to get data into the package:
 
-- using data from the `{manynet}` or other packages
+- using data from `{manynet}`, `{migraph}`, or other packages
 - importing and using data from outside of R
-- creating or generating networks using functions in the `{manynet}` package
 
-## Finding and using packaged data
+One might also create or stochastically generate networks,
+and `{manynet}` includes functions for this too,
+but we cover these functions in later tutorials on topology and diffusion.
 
-As many R packages do, `{manynet}` includes a number of datasets used for teaching and testing the functions contained in the package.
+This tutorial also covers ways to work with this data until it is in the class
+or format you require for further analysis.
+
+## Packaged data
+
+As many R packages do, `{manynet}` includes a number of datasets used for 
+teaching and testing the functions contained in the package.
 These are sometimes classical network datasets,
-such as the [Southern Women](https://snlab-ch.github.io/manynet/reference/ison_southern_women.html) dataset or Zachary's [Karateka](https://snlab-ch.github.io/manynet/reference/ison_karateka.html) dataset,
+such as the [Southern Women](https://stocnet.github.io/manynet/reference/ison_southern_women.html) dataset 
+or Zachary's [Karateka](https://stocnet.github.io/manynet/reference/ison_karateka.html) dataset,
 and sometimes new data with neat themes, features, or attributes that make
 them exemplar teaching or testing data.
 
 ### Finding the data
 
 To see what data is in the package,
-you can explore the documentation available on the website  (see [here](https://snlab-ch.github.io/manynet/reference/index.html#data))
-or use a command in R to list the data available in the package.
-The command, helpfully, is `data(package = "manynet")`.
+you can explore the documentation available on the website  (see [here](https://stocnet.github.io/manynet/reference/index.html#data))
+or use a function in R to list the data available in the package.
+
+One function, available in base R (with no added packages), is `data(package = "manynet")`.
 Type this in to the box below to see what datasets are available in the package.
 There are buttons to start over, receive any hints/solutions available,
 as well as to run the code you have entered to discover its effects.
@@ -58,6 +70,52 @@ data(package = "_____")
 
 ```{r pkgdata-solution}
 data(package = "manynet")
+```
+
+On the left of the output are the names of the objects (here all starting with `ison_*`).
+On the right is a brief description of the networks and their canonical source.
+Do you recognise any of the datasets?
+
+`{manynet}` also includes its own way of identifying network data in a package.
+`table_data()` returns a table of the network datasets in a package,
+along with information about the number of nodes, ties, and various other features.
+
+```{r table_data, exercise=TRUE}
+table_data()
+```
+
+Let's say that we are only interested in two-mode network data.
+How can we filter this table so that only those networks that are two-mode are retained?
+
+```{r twomode-filter, exercise=TRUE}
+table_data() %>% dplyr::filter(twomode)
+```
+
+```{r twomode-manynet-question, echo = FALSE, purl=FALSE}
+question("How many two-mode networks are available in the manynet package?",
+  answer(2,
+         correct = TRUE),
+  answer(1),
+  answer(3),
+  answer(13),
+  answer(23),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
+```{r twomode-migraph-question, echo = FALSE, purl=FALSE}
+question("How many two-mode networks are available in the migraph package?",
+  answer(13,
+         correct = TRUE),
+  answer(1),
+  answer(2),
+  answer(3),
+  answer(23),
+  answer(6),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
 ```
 
 ### Calling the data
@@ -90,16 +148,24 @@ library(manynet)
 ison_adolescents
 ```
 
-### Formats
+## Describing networks
 
-All of the network data available in the package is in a special `tbl_graph` format,
-from the `{tidygraph}` package, that makes it compatible, flexible, and transparent.
+### Reading prints
+
+All of the network data available in `{manynet}` (and `{migraph}`) are in a 
+special `tbl_graph` format, from the `{tidygraph}` package, 
+that makes it compatible, flexible, and transparent.
 When you call one of these data objects, some information about the type of network it is,
 how many nodes and ties it has, and the first few examples of nodes and ties is given.
 ^[You may have noticed when the package was first loaded that it mentioned that the `print_tbl_graph` method from that package was overwritten.
 That's so that we can make some different choices about what and how networks
 are described.]
-Let's see whether we can make sense of the main features of this network?
+Let's see whether we can make sense of the main features of this network.
+Run the following line and then answer the questions.
+
+```{r calldatad, exercise=TRUE}
+ison_adolescents
+```
 
 ```{r tblgraph-nodes, echo = FALSE, purl=FALSE}
 question("How many nodes does this network have?",
@@ -139,7 +205,8 @@ question("How many ties does this network have?",
 ```{r tblgraph-type, echo = FALSE, purl=FALSE}
 question("What kind of network is this? Choose all that apply.",
   answer("Undirected",
-         correct = TRUE),
+         correct = TRUE,
+         message = learnr::random_praise()),
   answer("Labelled",
          correct = TRUE),
   answer("Two-mode"),
@@ -151,14 +218,57 @@ question("What kind of network is this? Choose all that apply.",
 )
 ```
 
-We will see later how we can visualise, describe, and model this network
-in a variety of ways.
+You can now describe the main dimensions and type of network.
+In another tutorial, we will see how we can describe such networks visually.
 
-### Classes
+### Grabbing details
 
-We can do the same with networks from other R packages too.
-One challenge there though is that they may not be in the same `tbl_graph` format.
-A commonly used package is `{network}`, which also includes a few example datasets.
+We can ask other questions of this data too.
+`{manynet}` uses a simple function naming convention so that
+you always know to what it relates.
+
+- `net_*()` functions usually return one value for the network or graph,
+whether that be a string like `Evelyn` or some number like `3` or `-0.003`^[There are a few exceptions to this.]
+- `node_*()` functions always return a vector of values for the network
+as long as the number of nodes or vertices in the network (of any mode)
+- `tie_*()` functions always return a vector of values for the network
+as long as the number of ties or edges in the network (of any sign or type)
+
+To find out how many nodes are in the network, use `net_nodes()`.
+To find out how many nodes are in each mode, use `net_dims()`.
+To find out the names of those nodes, use `node_names()`.
+Use such functions to find out:
+
+a) how many nodes are in the `ison_southern_women` network
+b) how many nodes are in each mode
+b) how many ties are in the network
+d) what nodal attributes there are in the network
+c) what the names of the nodes are
+
+```{r properties, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r properties-solution}
+net_nodes(ison_southern_women)
+net_dims(ison_southern_women)
+net_ties(ison_southern_women)
+net_node_attributes(ison_southern_women)
+node_names(ison_southern_women)
+```
+
+There are a bunch of logical checks for many common properties or features of networks.
+For example, one can check whether a network `is_twomode()`, `is_directed()`, or `is_labelled()`.
+Remember, all `is_*()` functions work on any compatible class.
+
+## From class to class
+
+### Network class objects
+
+We can describe and work with networks from other R packages too,
+not just those in the `tbl_graph` format.
+For example, another commonly used package in network analysis is `{network}`, 
+which includes a few example datasets of its own.
 Can you remember how to find out which data are available in this package,
 and call the last one in the list?
 
@@ -194,6 +304,8 @@ but in case you would like to work with a network in a particular class,
 or it needs to be in a particular format for further work (e.g. for use with `{ergm}`),
 then `{manynet}` has you covered for that too.
 
+### Class coercion
+
 Coercing networks between different classes of objects uses the `as_*()` functions.
 These functions will do their best to coerce data from the current class of the object
 to the class named in the function.
@@ -219,6 +331,7 @@ flo <- as_tidygraph(_____)
 
 ```{r nettotbl-solution}
 flo <- as_tidygraph(flo)
+flo
 ```
 
 ```{r nettotblquest, echo = FALSE, purl=FALSE}
@@ -235,13 +348,13 @@ question("What are there 16 of in this network?",
 ```
 
 Other packages that include network data include
-David Schoch's eponymous [`{networkdata}`](http://networkdata.schochastics.net/) package.
+David Schoch's descriptively named [`{networkdata}`](http://networkdata.schochastics.net/) package.
 The data in this package are `{igraph}`-class objects.
 Can you coerce one of the datasets in this package
 into a tidygraph format? Into a network format?
 Into a matrix? Into an edgelist?
 
-## Finding and importing external data
+## External data
 
 ### Finding data
 
@@ -312,19 +425,26 @@ write_edgelist(ison_marvel_relationships, "data/marvedges.xlsx")
 write_nodelist(ison_marvel_relationships, "data/marvnodes.xlsx")
 ```
 
-### Importing other formats
+<img src="https://www.memesmonkey.com/images/memesmonkey/f4/f44e687f90b8797a8af15ec8ab5f4c90.gif"/>
 
-There are other functions here too that help import from or export to
-common external network data formats.
+## Importing other formats
+
+Since network data can be complex,
+edgelists (and nodelists) may not be sufficient to structure all the information
+necessary to represent the network.
+For this reason, a variety of other external formats have been proposed and used.
+As such, you may find network data of interest that is in another format.
 Here are some examples:
 
 - `read_pajek()` and `write_pajek()` for importing and exporting .net or .paj files
 - `read_ucinet()` and `write_ucinet()` for importing and exporting .##h files (.##d files are automatically imported alongside them)
+- `read_graphml()` and `write_graphml()` for importing and exporting .graphml files
+- `read_dynetml()` for importing .dynetml files
 
-For more information on any of these functions, you can also ask for help by typing `?read_pajek` in the console.
+For more information on any of these functions, you can ask for help by typing `?read_pajek` in the console.
 Whereas `read_edgelist()` and `read_nodelist()` will import into a tibble/data frame class,
 `read_pajek()` and `read_ucinet()` will import the network into a tidygraph format (see above).
-Of course, any network data that is imported can quite easily be coerced into any other compatible class.
+Of course, any network data that is imported can be easily coerced into any other compatible class.
 Let's say we want to import the adolescents edgelist back in, but we want it in an igraph format.
 There are three ways you might do this:
 
@@ -343,15 +463,31 @@ adolsigraph3
 
 How does it compare to the original?
 
-## Working with network data
+```{r adols-question, echo = FALSE, purl=FALSE}
+question("Which versions are labelled",
+  answer("ison_adolescents (the original)",
+         correct = TRUE),
+  answer("adolsigraph1",
+         correct = TRUE),
+  answer("adolsigraph2",
+         correct = TRUE),
+  answer("adolsigraph3",
+         correct = TRUE),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
 
-### Reformatting network data
+But how can we change the network to be unnamed (or anything else)?
+
+## Reformatting networks
   
 As mentioned above, `{manynet}` attempts to retain as much information as possible when converting objects between different classes.
 The presumption is that users should explicitly decide to reduce or simplify their data.
 `{manynet}` includes functions for reformatting, transforming (or removing) certain properties of network objects.
 Here will introduce a few functions used for 'reformatting' networks.
 We call functions 'reformatting functions' if they change the type but not the order (number of nodes) in the network.
+
 A good example is `to_undirected()`.
 The astute among you may have noticed that when we imported the adolescents network,
 it returned a _directed_ network instead of the original _undirected_ network.
@@ -379,16 +515,24 @@ For example:
 - `to_uniplex()` reduces a multigraph or multiplex network to one with a single set of edges or ties
 - `to_simplex()` removes all loops or self-ties from a complex network
 
-### Transforming network data
+```{r reformat-free, exercise = TRUE, purl=FALSE}
+
+```
+
+## Transforming networks
   
 These functions are similar to the reformatting functions, and are also named `to_*()`,
 but their operation always changes the network's 'order' (number of nodes).
+
+### Projections
+
 Good examples of this are `to_mode1()` and `to_mode2()` for transforming a two-mode network
 into one of its one-mode projections.
 `to_mode1()` will transform (project) the network to a one-mode network of shared ties among its first set of nodes,
 while `to_mode2()` will project the original network to a network of shared ties among its second set of nodes.
 For more information on projection,
-see for example Knoke et al. (2021).
+see for example Knoke et al. ([2021](https://doi.org/10.1017/9781108985000)).
+
 Let's try this out on a classic two-mode network, `ison_southern_women`.
 Assign and name the transformed networks something sensible using e.g.
 `women <- to_mode...` so that we can continue working with this data afterwards.
@@ -417,47 +561,12 @@ question("The first mode of the two-mode network consists of...",
 )
 ```
 
-### Grabbing key details from network data
+Now use functions introduced above on the two projections you have created
+to find out:
 
-We can ask other questions of this data too.
-`{manynet}` (and `{migraph}`) use a simple function naming convention so that
-you always know to what it relates.
-
-- `network_*()` functions usually return one value for the network or graph,
-whether that be a string like `Evelyn`, logical value like `TRUE`, or some number like `3` or `-0.003`^[There are a few exceptions to this in the `{manynet}` package, 
-or when attributes of the network are listed (see below).]
-- `node_*()` functions always return a vector of values for the network
-as long as the number of nodes or vertices in the network (of any mode)
-- `tie_*()` functions always return a vector of values for the network
-as long as the number of ties or edges in the network (of any sign or type)
-
-To find out how many nodes are in the network, use `network_nodes()`.
-To find out how many nodes are in each mode, use `network_dims()`.
-To find out the names of those nodes, use `node_names()`.
-Use such functions to find out:
-
-a) how many nodes are in the `ison_southern_women` network
-b) how many nodes are in each mode
-b) how many ties are in the network
-d) what nodal attributes there are in the network
-c) what the names of the nodes are
-
-```{r properties, exercise = TRUE, purl=FALSE}
-
-```
-
-```{r properties-solution}
-network_nodes(ison_southern_women)
-network_dims(ison_southern_women)
-network_ties(ison_southern_women)
-network_node_attributes(ison_southern_women)
-node_names(ison_southern_women)
-```
-
-Now use these functions on the two projections you have created
-to find out a) how many nodes there are in each of these networks,
-b) what the names of the nodes are,
-and c) what tie attributes there are in the networks.
+a. how many nodes there are in each of these networks,
+b. what the names of the nodes are, and
+c. what tie attributes there are in the networks.
 
 ```{r projprop-setup, purl=FALSE}
 s_women <- to_mode1(ison_southern_women)
@@ -469,12 +578,12 @@ s_events <- to_mode2(ison_southern_women)
 ```
 
 ```{r projprop-solution}
-network_nodes(s_women)
-network_nodes(s_events)
+net_nodes(s_women)
+net_nodes(s_events)
 node_names(s_women)
 node_names(s_events)
-network_tie_attributes(s_women)
-network_tie_attributes(s_events)
+net_tie_attributes(s_women)
+net_tie_attributes(s_events)
 ```
 
 So we can see that the `to_mode*()` functions have created a network of only one of the modes in the network.
@@ -483,12 +592,6 @@ representing shared connections to nodes of the other mode, are weighted.
 This shows up when listing the network's tie attributes,
 or could be retrieved using `tie_weights()`,
 but can also be checked with the simple logical check `is_weighted()`.
-
-There are a bunch of logical checks for many common properties or features of networks.
-For example, one can check whether a network `is_twomode()`, `is_directed()`, or `is_labelled()`.
-Remember, all these `to_*()` and `is_*()` functions work on any compatible class;
-the `to_*()` functions will also attempt to return that same class of object,
-making it even easier to manipulate networks into shape for analysis.
 
 Retrieve the tie weights from your women projection.
 Find the average (mean) of this vector of tie weights,
@@ -545,7 +648,11 @@ Other transforming functions include:
 and the ties are shared adjacencies to nodes.
 - `to_matching()` returns a network in which each node is only tied to one of its previously existing ties such that the network's cardinality is maximised.
 
-### Adding data
+Remember, all these `to_*()` functions work on any compatible class;
+the `to_*()` functions will also attempt to return that same class of object,
+making it even easier to manipulate networks into shape for analysis.
+
+## Adding data
 
 If you import one or more edgelists and nodelists, 
 it can be useful to bind these together in an igraph, tidygraph, or network class object.
@@ -557,8 +664,8 @@ for those already familiar with these tools in R:
 
 ```{r mutate, exercise = TRUE}
 ison_adolescents %>% 
-  mutate(color = "red",
-         degree = 1:8) %>% 
+  mutate_nodes(color = "red",
+               degree = 1:8) %>% 
   mutate_ties(weight = 1:10)
 ```
 
