@@ -280,39 +280,80 @@ Other layouts include:
 - arc layouts
 - dominance layouts
 
+## Colors
 
+### Who's hue?
+
+By default, `graphr()` will use a color palette that offers fairly good contrast
+and, since v1.0.0 of `{manynet}`, better accessibility.
+However, a different hue might offer a better aesthetic or 
+identifiability for some nodes.
 Because the `graphr()` function is based on
 the grammar of graphics,
 it's easy to extend or alter aesthetic aspects.
 Here let's try and change the colors
-assigned to the different regions in the `mpn_elite_mex` dataset.
+assigned to the different races in the `ison_lotr` dataset.
 
-```{r colorch, exercise=TRUE, purl = FALSE}
+```{r colorch, exercise=TRUE}
+graphr(ison_lotr,
+           node_color = "Race")
 
+graphr(ison_lotr,
+           node_color = "Race") +
+  ggplot2::scale_colour_hue()
 ```
 
-```{r colorch-solution}
-graphr(mpn_elite_mex,
-           node_color = "region")
+### Grayscale
 
-graphr(mpn_elite_mex,
-           node_color = "region") +
-  ggplot2::scale_colour_hue()
+Other times color may not be desired.
+Some publications require grayscale images.
+To use a grayscale color palette,
+replace `_hue` from above with `_grey`:
 
-graphr(mpn_elite_mex,
-           node_color = "region") +
+```{r greyscale, exercise=TRUE}
+graphr(ison_lotr,
+           node_color = "Race") +
   ggplot2::scale_colour_grey()
+```
 
-graphr(mpn_elite_mex,
-           node_color = "region") +
+### Manual override
+
+Or we may want to choose particular colors for each category.
+This is pretty straightforward to do with `ggplot2::scale_colour_manual()`.
+Some common color names are available,
+but otherwise hex color codes can be used for more specific colors.
+Unspecified categories are coloured (dark) grey.
+
+```{r mancolor, exercise=TRUE}
+graphr(ison_lotr,
+           node_color = "Race") +
   ggplot2::scale_colour_manual(
-    values = c("1" = "red",
-               "3" = "blue",
-               "2" = "green")) +
+    values = c("Dwarf" = "red",
+               "Hobbit" = "orange",
+               "Maiar" = "#DEC20B",
+               "Human" = "lightblue",
+               "Elf" = "lightgreen",
+               "Ent" = "darkgreen")) +
   labs(color = "Color")
 ```
 
-## Using `{ggraph}` for more flexibility
+### Theming
+
+Perhaps you are preparing a presentation,
+representing your institution, department, or research centre at home or abroad.
+In this case, you may wish to theme the whole network with institutional colors
+and fonts.
+Here we demonstrate one of the color scales available in `{manynet}`,
+the colors of the Sustainable Development Goals:
+
+```{r theming, exercise=TRUE}
+graphr(ison_lotr, node_color = "Race") + 
+  scale_color_sdgs()
+```
+
+More institutional scales and themes are available,
+and more can be implemented upon pull request.
+
 ## Further flexibility
 
 For more flexibility with visualizations, 
