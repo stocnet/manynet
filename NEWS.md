@@ -1,3 +1,36 @@
+# manynet 1.0.2
+
+## Package
+
+- Added alttext to images in the README, tutorials, and website
+- Added CRAN link to homepage
+- Updated favicons
+- Added more structure to the function overview
+
+## Making
+
+- Updated intro tutorial with images, exercises, questions, and more explanation and structure
+- Updated data tutorial with images, new function names, questions, and more explanation and structure
+- Updated data tutorial with more details on adding and deleting nodes, ties, and attributes
+- Updated topology tutorial with new function names and more structure
+
+## Mapping
+
+- Updated viz tutorial with examples of `graphs()` and `grapht()`
+- Updated viz tutorial with more details and examples on colors and theming
+- Updated viz tutorial with overview, examples, and details on layouts,
+including force-directed, layered, circular, spectral, and grid layouts
+
+## Measures
+
+- Updated centrality tutorial with images, new function names, and more structure
+- Updated centrality tutorial with more interpretation of centrality measures
+- Updated position tutorial with new function names and more structure
+
+## Memberships
+
+- Updated community tutorial with new function names and more structure
+
 # manynet 1.0.1
 
 ## Package
