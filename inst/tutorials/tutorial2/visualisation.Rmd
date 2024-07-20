@@ -352,6 +352,21 @@ Other such layouts include:
 
 - Pivot multidimensional scaling: `"pmds"`
 
+### Grid layouts
+
+Grid layouts arrange nodes based on some cartesion coordinates.
+These can be useful for making sure all nodes' labels are visible,
+but horizontal and vertical lines can overlap, 
+making it difficult to distinguish whether some nodes are tied or not.
+
+```{r grid, exercise=TRUE, fig.align='center'}
+graphr(ison_southern_women, layout = "grid") + ggtitle("Grid")
+```
+
+Other grid layouts include:
+
+- orthogonal layouts for e.g. printed circuit boards
+- grid snapping for other layouts
 
 ## Colors
 
