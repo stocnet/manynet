@@ -7,19 +7,24 @@ output:
 runtime: shiny_prerendered
 description: >
   This tutorial aims to show how to measure and map degree, betweenness,
-  closeness, eigenvector and other types of centrality and centralization.
+  closeness, eigenvector, and other types of centrality and centralization.
 ---
 
 ```{r setup, include=FALSE}
 library(learnr)
 library(manynet)
-library(migraph)
 library(patchwork)
 knitr::opts_chunk$set(echo = FALSE)
 ison_brandes2 <- ison_brandes %>% rename(type = twomode_type)
 ```
 
-## Calculating centrality
+## Today's target
+
+The aim of this tutorial is to show how we can measure and map
+degree, betweenness, closeness, eigenvector, and other types of centrality,
+explore their distributions and calculate the corresponding centralisation.
+
+### Setting up
 
 For this exercise, we'll use the `ison_brandes` dataset in `{manynet}`.
 This dataset is in a 'tidygraph' format, 
@@ -27,7 +32,7 @@ but `manynet` makes it easy to coerce this into other forms
 to be compatible with other packages.
 We can create a two-mode version of the dataset
 by renaming the nodal attribute "twomode_type" to just "type".
-Let's begin by graphing these datasets using `manynet::graphr()`.
+Let's begin by graphing these datasets using `graphr()`.
 
 ```{r coercion, exercise = TRUE, purl = FALSE}
 
@@ -44,17 +49,17 @@ ison_brandes2 <- ison_brandes %>% rename(type = twomode_type)
 graphr(____)
 ```
 
-```{r coercion-solution, purl = FALSE}
+```{r coercion-solution}
 # plot the one-mode version
 graphr(ison_brandes)
 ison_brandes2 <- ison_brandes %>% rename(type = twomode_type)
 # plot the two-mode version
-graphr(ison_brandes2)
+graphr(ison_brandes2, layout = "bipartite")
 ```
 
 The network is anonymous, but I think it would be nice to add some names,
 even if it's just pretend. 
-Luckily, `{manynet}` has a function for this.
+Luckily, `{manynet}` has a function for this: `to_named()`.
 This makes plotting the network just a wee bit more accessible and interpretable:
 
 ```{r addingnames, exercise = TRUE, purl = FALSE}
@@ -72,12 +77,14 @@ ison_brandes <- to_named(ison_brandes)
 graphr(ison_brandes)
 ```
 
-Note that you will likely get a different set of names,
+Note that you will likely get a different set of names (though still alphabetical),
 as they are assigned randomly from a pool of (American) first names.
 
-### Degree centrality
+## Degree centrality
 
-Let's start with calculating degree, as it is easy to calculate yourself.
+Let's start with calculating degree.
+Remember that degree centrality is just the number of incident edges/ties to each node.
+It is therefore easy to calculate yourself.
 Just sum the rows or columns of the matrix!
 
 ```{r degreesum, exercise = TRUE, exercise.setup = "addingnames", purl = FALSE}
@@ -92,7 +99,7 @@ rowSums(mat) == colSums(mat)
 ```
 
 ```{r degreesum-hint-2, purl = FALSE}
-# Or by using a built in command in migraph like this:
+# Or by using a built in command in manynet like this:
 node_degree(ison_brandes, normalized = FALSE)
 ```
 
@@ -101,7 +108,7 @@ node_degree(ison_brandes, normalized = FALSE)
 mat <- as_matrix(ison_brandes)
 degrees <- rowSums(mat)
 rowSums(mat) == colSums(mat)
-# You can also just use a built in command in migraph though:
+# You can also just use a built in command in manynet though:
 node_degree(ison_brandes, normalized = FALSE)
 ```
 
@@ -115,8 +122,24 @@ question("Are the row sums the same as the column sums?",
 )
 ```
 
+```{r degreeinterpQ, purl = FALSE}
+question("In what ways are higher degree nodes more 'central'?",
+         answer("They have more power than other nodes",
+                message = "Not necessarily"),
+         answer("They are more active than other nodes",
+                correct = TRUE, message = learnr::random_praise()),
+         answer("They would be located in the centre of the graph",
+                message = "Not necessarily"),
+         answer("They would be able to control information flow in the network",
+                message = "Not necessarily"),
+         allow_retry = TRUE,
+         random_answer_order = TRUE)
+```
+
+## Degree distributions
+
 Often we are interested in the distribution of (degree) centrality in a network.
-`{migraph}` offers a way to get a pretty good first look at this distribution,
+`{manynet}` offers a way to get a pretty good first look at this distribution,
 though there are more elaborate ways to do this in base and grid graphics.
 
 ```{r distrib, exercise = TRUE, exercise.setup = "addingnames", purl = FALSE}
@@ -129,13 +152,23 @@ plot(node_degree(ison_brandes))
 ```
 
 What's plotted here by default is both the degree distribution as a histogram,
-as well as a density plot overlaid on it.
-What kind of shape does this have?
+as well as a density plot overlaid on it in red.
 
-### Other centralities
+```{r degdistshapeQ, purl = FALSE}
+question("What kind of shape does this degree distribution have?",
+         answer("Exponential"),
+         answer("Hard to tell",
+                correct = TRUE, message = learnr::random_praise()),
+         answer("Uniform"),
+         answer("Normal"),
+         allow_retry = TRUE,
+         random_answer_order = TRUE)
+```
+
+## Other centralities
 
 Other measures of centrality can be a little trickier to calculate by hand.
-Fortunately, we can use functions from `{migraph}` to help calculate the
+Fortunately, we can use functions from `{manynet}` to help calculate the
 betweenness, closeness, and eigenvector centralities for each node in the network.
 Let's collect the vectors of these centralities for the `ison_brandes` dataset:
 
@@ -165,27 +198,64 @@ node_eigenvector(ison_brandes)
 node_betweenness(ison_brandes)
 node_closeness(ison_brandes)
 node_eigenvector(ison_brandes)
-# TASK: Can you create degree distributions for each of these?
 ```
 
 What is returned here are vectors of betweenness, closeness, and eigenvector scores
 for the nodes in the network.
 But what do they mean?
+
+```{r closeinterpQ, purl = FALSE}
+question("Why does a node with the smallest sum of geodesic distances to all other nodes be 'central'?",
+         answer("They have more power than other nodes",
+                message = "Not necessarily"),
+         answer("They can distribute a message to all other nodes in the network most quickly",
+                correct = TRUE, message = learnr::random_praise()),
+         answer("They would be located in the centre of the graph",
+                message = "Not necessarily"),
+         answer("They would be able to control information flow in the network",
+                message = "Not necessarily"),
+         allow_retry = TRUE,
+         random_answer_order = TRUE)
+```
+
+```{r betinterpQ, purl = FALSE}
+question("Why would a node lying 'between' many other nodes be 'central'?",
+         answer("They have more power than other nodes",
+                message = "Not necessarily"),
+         answer("They would be able to control information flow in the network",
+                correct = TRUE, message = learnr::random_praise()),
+         answer("They would be located in the centre of the graph",
+                message = "Not necessarily"),
+         answer("They can distribute a message to all other nodes in the network most quickly",
+                message = "Not necessarily"),
+         allow_retry = TRUE,
+         random_answer_order = TRUE)
+```
+
 Try to answer the following questions for yourself:
 
-- in what ways is a higher degree actor more 'central'?
-- can you explain why a node that has the smallest sum of geodesic distances to all other nodes is said to be 'central'?
-- why would an actor lying 'between' two other actors be 'central'?
 - what does Bonacich mean when he says that power and influence are not the same thing?
 - can you think of a real-world example when an actor might be central but not powerful, or powerful but not central?
 
-Note that all centrality measures in `{migraph}` return normalized
+Note that all centrality measures in `{manynet}` return normalized
 scores by default -- 
 for the raw scores, include `normalized = FALSE` in the function as an extra argument.
 
+Now, can you create degree distributions for each of these?
+
+```{r otherdist, exercise=TRUE, purl=FALSE}
+
+```
+
+```{r otherdist-solution}
+plot(node_betweenness(ison_brandes))
+plot(node_closeness(ison_brandes))
+plot(node_eigenvector(ison_brandes))
+```
+
 ## Plotting centrality
 
-It is straightforward in `{migraph}` to highlight nodes and ties 
+It is straightforward in `{manynet}` to highlight nodes and ties 
 with maximum or minimum (e.g. degree) scores.
 If the vector is numeric (i.e. a "measure"),
 then this can be easily converted into a logical vector that
@@ -228,19 +298,19 @@ What can you see?
 ```{r ggid_twomode-solution}
 ison_brandes2 %>%
   add_node_attribute("color", node_is_max(node_degree(ison_brandes2))) %>%
-  graphr(node_color = "color")
+  graphr(node_color = "color", layout = "bipartite")
 
 ison_brandes2 %>%
   add_node_attribute("color", node_is_max(node_betweenness(ison_brandes2))) %>%
-  graphr(node_color = "color")
+  graphr(node_color = "color", layout = "bipartite")
 
 ison_brandes2 %>%
   add_node_attribute("color", node_is_max(node_closeness(ison_brandes2))) %>%
-  graphr(node_color = "color")
+  graphr(node_color = "color", layout = "bipartite")
 
 ison_brandes2 %>%
   add_node_attribute("color", node_is_max(node_eigenvector(ison_brandes2))) %>%
-  graphr(node_color = "color")
+  graphr(node_color = "color", layout = "bipartite")
 ```
 
 ```{r brandes2quiz, purl = FALSE}
@@ -253,9 +323,11 @@ question("Select all that are true for the two-mode Brandes network.",
          random_answer_order = TRUE)
 ```
 
-## Calculating centralization
+## Centralization
 
-`{migraph}` also implements network centralization functions.
+<img src="https://media.makeameme.org/created/centralization-here-i.jpg"/>
+
+`{manynet}` also implements network centralization functions.
 Here we are no longer interested in the level of the node,
 but in the level of the whole network, 
 so the syntax replaces `node_` with `net_`:
@@ -268,13 +340,13 @@ so the syntax replaces `node_` with `net_`:
 net_degree(ison_brandes)
 net_betweenness(ison_brandes)
 net_closeness(ison_brandes)
-net_eigenvector(ison_brandes)
+print(net_eigenvector(ison_brandes), digits = 5)
 ```
 
-By default, scores are printed to 3 decimal places,
+By default, scores are printed up to 3 decimal places,
 but this can be modified and, in any case, 
 the unrounded values are retained internally.
-This means that even if rounded values are printed,
+This means that even if rounded values are printed (to respect console space),
 as much precision as is available is used in further calculations.
 
 Note that for centralization in two-mode networks,
@@ -286,20 +358,16 @@ What if we want to have a single image/figure with multiple plots?
 This can be a little tricky with gg-based plots,
 but fortunately the `{patchwork}` package is here to help.
 
-```{r multiplot, exercise = TRUE, exercise.setup = "addingnames", purl = FALSE}
+```{r multiplot, exercise = TRUE, exercise.setup = "addingnames", purl = FALSE, fig.width=9}
 
 ```
 
 ```{r multiplot-solution}
 ison_brandes <- ison_brandes %>%
-  add_node_attribute("degree",
-                              node_is_max(node_degree(ison_brandes))) %>%
-  add_node_attribute("betweenness",
-                              node_is_max(node_betweenness(ison_brandes))) %>%
-  add_node_attribute("closeness",
-                              node_is_max(node_closeness(ison_brandes))) %>%
-  add_node_attribute("eigenvector",
-                              node_is_max(node_eigenvector(ison_brandes)))
+  add_node_attribute("degree", node_is_max(node_degree(ison_brandes))) %>%
+  add_node_attribute("betweenness", node_is_max(node_betweenness(ison_brandes))) %>%
+  add_node_attribute("closeness", node_is_max(node_closeness(ison_brandes))) %>%
+  add_node_attribute("eigenvector", node_is_max(node_eigenvector(ison_brandes)))
 gd <- graphr(ison_brandes, node_color = "degree") + 
   ggtitle("Degree", subtitle = round(net_degree(ison_brandes), 2))
 gc <- graphr(ison_brandes, node_color = "closeness") + 

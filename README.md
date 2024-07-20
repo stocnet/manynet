@@ -3,7 +3,7 @@
 
 # manynet
 
-<img src="man/figures/logo.png" align="right" width="150"/>
+<img src="man/figures/logo.png" align="right" alt="manynet logo" width="150"/>
 
 <!-- badges: start -->
 
@@ -36,11 +36,12 @@ rely on a very different visual language (and sometimes plotting
 engine), which can mess up your pretty presentation or paper. This can
 make learning and using network analysis tools in R challenging.
 
-By contrast, we build packages that offer *many* analytic tools that
-work on *many* (if not most) types of networks of all kinds. `{manynet}`
-is the first package that helps researchers with Making, Modifying, and
-Mapping networks. For Measures, Memberships, or Models, see
-[`{migraph}`](https://stocnet.github.io/migraph/).
+By contrast, `{manynet}` offers *many* analytic tools that work on
+*many* (if not most) types and kinds of networks. It helps researchers
+make, modify, map, mark, measure, and identify nodes’ motifs and
+memberships in networks. For further testing and modelling capabilities,
+see [`{migraph}`](https://stocnet.github.io/migraph/) and the other
+[stocnet](https://github.com/stocnet) packages.
 
 - [Making](#making)
   - [Importing network data](#importing-network-data)
@@ -55,14 +56,18 @@ Mapping networks. For Measures, Memberships, or Models, see
 - [Mapping](#mapping)
   - [Graphing](#graphing)
   - [More options](#more-options)
-  - [More layouts](#more-options)
+  - [More layouts](#more-layouts)
   - [More themes and scales](#more-themes-and-scales)
   - [graphs](#graphs)
   - [grapht](#grapht)
+- [Marking](#marking)
+- [Motifs](#motifs)
+- [Memberships](#memberships)
+- [Measuring](#measuring)
+- [Tutorials](#tutorials)
 - [Installation](#installation)
   - [Stable](#stable)
   - [Development](#development)
-  - [Tutorials](#tutorials)
 - [Relationship to other packages](#relationship-to-other-packages)
 - [Funding details](#funding-details)
 
@@ -86,7 +91,7 @@ routines included for
 [GraphML](http://graphml.graphdrawing.org), and
 [DynetML](http://casos.cs.cmu.edu/projects/dynetml/) files, e.g.:
 
-![](https://www.jameshollway.com/post/manynet/README-import-graph-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-import-graph-1.png" alt="Graph of manynet input/output formats"/>
 
 If you cannot remember the file name/path, then just run `read_*()` with
 the parentheses empty, and a file selection popup will open so that you
@@ -109,7 +114,7 @@ and instructional network datasets, all thoroughly documented and ready
 for analysis. Here are just a few examples, all available in
 `{manynet}`:
 
-![](https://www.jameshollway.com/post/manynet/README-ison_egs-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-ison_egs-1.png" alt="Graphs illustrating several of the classic networks included in the package"/>
 
 Here are some others: `ison_adolescents`, `ison_algebra`,
 `ison_brandes`, `ison_friends`, `ison_greys`, `ison_hightech`,
@@ -127,7 +132,7 @@ Here are some others: `ison_adolescents`, `ison_algebra`,
 structure, and will always create the same format from the same inputs,
 e.g.:
 
-![](https://www.jameshollway.com/post/manynet/README-create_egs-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-create_egs-1.png" alt="Graphs illustrating the creation of lattices and tree networks"/>
 
 See also `create_components()`, `create_core()`, `create_empty()`,
 `create_explicit()`, `create_filled()`, `create_lattice()`,
@@ -137,7 +142,7 @@ The `generate_*` group of functions generate networks from generative
 mechanisms that may include some random aspect, and so will return a
 different output each time they are run, e.g.:
 
-![](https://www.jameshollway.com/post/manynet/README-generate_egs-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-generate_egs-1.png" alt="Graphs of small-world and scale-free networks of 15 nodes"/>
 
 See also `generate_configuration()`, `generate_permutation()`,
 `generate_random()`, `generate_scalefree()`, `generate_smallworld()`,
@@ -152,7 +157,7 @@ in the first mode, and 5 nodes in the second mode. Some of these
 functions wrap existing algorithms in other packages, while others are
 unique offerings or add additional formats, e.g. two-mode networks.
 
-![](https://www.jameshollway.com/post/manynet/README-generate_tm-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-generate_tm-1.png" alt="Graphs of generated one- and two-mode small-world networks"/>
 
 #### Inventing data on networks
 
@@ -182,7 +187,7 @@ functions can be used to coerce objects from one of many common classes
 into any other. Below is a directed graph showing the currently
 available options:
 
-![](https://www.jameshollway.com/post/manynet/README-coercion-graph-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-coercion-graph-1.png" alt="Graph of coercible relationships between classes"/>
 
 These functions are designed to be as intuitive and lossless as
 possible, outperforming many other class-coercion packages.
@@ -201,21 +206,21 @@ extensible by developments in those other packages too.
 Reformatting means changing the format of the network, e.g. from
 directed to undirected via `to_undirected()`.
 
-![](https://www.jameshollway.com/post/manynet/README-directed_egs-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-directed_egs-1.png" alt="Graphs illustrating modification of a network's directedness"/>
 
 ### Transforming
 
 Transforming means changing the dimensions of the network, e.g. from a
 two-mode network to a one-mode projection via `to_mode1()`.
 
-![](https://www.jameshollway.com/post/manynet/README-projection_egs-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-projection_egs-1.png" alt="Graphs illustrating decomposition of a two-mode network into its projections"/>
 
 ### Splitting and Joining
 
 Splitting means separating a network, e.g. from a whole network to the
 various ego networks via `to_egos()`.
 
-![](https://www.jameshollway.com/post/manynet/README-splitting_egs-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-splitting_egs-1.png" alt="Graphs illustrating decomposition of a network into egonets"/>
 
 Those functions that split a network into a list of networks are
 distinguishable as those `to_*()` functions that are named in the
@@ -246,7 +251,7 @@ their network’s structure or distribution quickly with a minimum of
 fuss. Compare the output from `{manynet}` with a similar default from
 `{igraph}`:
 
-![](https://www.jameshollway.com/post/manynet/README-layout-comparison-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-layout-comparison-1.png" alt="Example illustrating differences in default igraph and manynet graphs"/>
 
 Here the `{manynet}` function recognises that the network is a two-mode
 network and uses a bipartite layout by default, and recognises that the
@@ -264,7 +269,7 @@ Changing the size and colors of nodes and ties is as easy as specifying
 the function’s relevant argument with a replacement, or indicating from
 which attribute it should inherit this information.
 
-![](https://www.jameshollway.com/post/manynet/README-more-options-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-more-options-1.png" alt="Graph illustrating automatic and manual use of node color and size"/>
 
 #### More layouts
 
@@ -274,7 +279,7 @@ additional layout algorithms for snapping layouts to a grid, visualising
 partitions horizontally, vertically, or concentrically, or conforming to
 configurational coordinates.
 
-![](https://www.jameshollway.com/post/manynet/README-more-layouts-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-more-layouts-1.png" alt="Graphs illustrating different layouts"/>
 
 #### More themes and scales
 
@@ -286,7 +291,7 @@ quickly make sure your plots conform to your institution or taste, then
 it is easy to do with themes and scales that update the basic look and
 color palette used in your plots.
 
-![](https://www.jameshollway.com/post/manynet/README-more-themes-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-more-themes-1.png" alt="Graphs using default, IHEID, and ETHZ themes"/>
 
 More themes are on their way, and we’re happy to take suggestions.
 
@@ -296,7 +301,7 @@ Second, `graphs()` is used to graph multiple networks together, which
 can be useful for ego networks or network panels. `{patchwork}` is used
 to help arrange individual plots together.
 
-![](https://www.jameshollway.com/post/manynet/README-autographs-1.png)
+<img src="https://www.jameshollway.com/post/manynet/README-autographs-1.png" alt="Example of graphs() used on longitudinal data"/>
 
 ### grapht
 
@@ -304,7 +309,7 @@ Third, `grapht()` is used to visualise dynamic networks. It uses
 `{gganimate}` and `{gifski}` to create a gif that visualises network
 changes over time. It really couldn’t be easier.
 
-![](https://www.jameshollway.com/post/manynet/README-autographd-1.gif)
+<img src="https://www.jameshollway.com/post/manynet/README-autographd-1.gif" alt="Example of grapht() on longitudinal data"/>
 
 <!-- provide a common set of tools that can be used to import, export, create, and manipulate network data in a wide variety of formats, -->
 <!-- and obtain a good first visualisation quickly. -->
@@ -318,6 +323,11 @@ changes over time. It really couldn’t be easier.
 <!-- - unweighted, weighted, and sometimes signed networks -->
 
 ## Marking
+
+`{manynet}` includes four special groups of functions, each with their
+own pretty `print()` and `plot()` methods: marks, measures, motifs, and
+memberships. Marks are logical scalars or vectors, measures are numeric,
+memberships categorical, and motifs result in tabular outputs.
 
 `{manynet}`’s `*is_*()` functions offer fast logical tests of various
 properties. Whereas `is_*()` returns a single logical value for the
@@ -368,21 +378,83 @@ member of group “A”, the second in group “B”, etc.
   `node_in_roulette()`, `node_in_spinglass()`, `node_in_strong()`,
   `node_in_structural()`, `node_in_walktrap()`, `node_in_weak()`
 
+For example `node_brokerage_census()` returns the frequency of nodes’
+participation in Gould-Fernandez brokerage roles for a one-mode network,
+and the Jasny-Lubell brokerage roles for a two-mode network.
+
+These can be analysed alone, or used as a profile for establishing
+equivalence. `{manynet}` offers both HCA and CONCOR algorithms, as well
+as elbow, silhouette, and strict methods for *k*-cluster selection.
+
+<img src="https://www.jameshollway.com/post/migraph/dendroPlot.png" alt="Plot of a dendrogram of structural equivalence"/>
+
+`{manynet}` also includes functions for establishing membership on other
+bases, such as typical community detection algorithms, as well as
+component and core-periphery partitioning algorithms.
+
 ## Measuring
 
-All other `net_*`, `node_*` and `tie_*` functions in `{manynet}` offer
-ways for users to measure some feature, property, or quantity of the
-network. This includes measures of balance and brokerage, centrality,
-closure, and cohesion, diffusion and diversity, hierarchy and
-resilience. There is a lot here, so we recommend you check out the
-function overview.
+`{manynet}` also offers a large and growing smorgasbord of measures that
+can be used at the node, tie, and network level to measure some feature,
+property, or quantity of the network. Each recognises whether the
+network is directed or undirected, weighted or unweighted, one-mode or
+two-mode. All return normalized values wherever possible, though this
+can be overrided. Here are some examples:
+
+- *Centrality*: `node_degree()`, `node_closeness()`,
+  `node_betweenness()`, and `node_eigenvector()`, `net_degree()`,
+  `net_closeness()`, `net_betweenness()`, and `net_eigenvector()`
+- *Cohesion*: `net_density()`, `net_reciprocity()`,
+  `net_transitivity()`, `net_equivalency()`, and `net_congruency()`
+- *Hierarchy*: `net_connectedness()`, `net_efficiency()`,
+  `net_upperbound()`
+- *Resilience*: `net_components()`, `net_cohesion()`, `net_adhesion()`,
+  `net_diameter()`, `net_length()`
+- *Innovation*: e.g. `node_redundancy()`, `node_effsize()`,
+  `node_efficiency()`, `node_constraint()`, `node_hierarchy()`
+- *Diversity*: `net_richness()`, `net_diversity()`, `net_heterophily()`,
+  `net_assortativity()`, `node_richness()`, `node_diversity()`,
+  `node_heterophily()`, `node_assortativity()`
+- *Topology*: e.g. `net_core()`, `net_factions()`, `net_modularity()`,
+  `net_smallworld()`, `net_balance()`
+- *Diffusion*: e.g. `net_reproduction()`, `net_immunity()`,
+  `node_thresholds()`
+
+There is a lot here, so we recommend you explore [the list of
+functions](https://stocnet.github.io/migraph/reference/index.html) to
+find out more.
+
+## Tutorials
+
+This package includes tutorials to help new and experienced users learn
+how they can conduct social network analysis using the package. These
+tutorials leverage the additional package `{learnr}` (see
+[here](https://rstudio.github.io/learnr/)), but we have made it easy to
+use `{manynet}` or `{migraph}` tutorials right out of the box:
+
+``` r
+run_tute()
+#> # A tibble: 9 × 3
+#>   package name      title                   
+#>   <chr>   <chr>     <chr>                   
+#> 1 manynet tutorial0 Intro to R              
+#> 2 manynet tutorial1 Data                    
+#> 3 manynet tutorial2 Visualisation           
+#> 4 manynet tutorial3 Centrality              
+#> 5 manynet tutorial4 Community               
+#> 6 manynet tutorial5 Position                
+#> 7 manynet tutorial6 Topology                
+#> 8 manynet tutorial7 Diffusion               
+#> 9 migraph tutorial8 Diversity and Regression
+# run_tute("tutorial1")
+```
 
 ## Installation
 
 ### Stable
 
 The easiest way to install the latest stable version of `{manynet}` is
-via CRAN. Simply open the R console and enter:[^1]
+via CRAN. Simply open the R console and enter:
 
 `install.packages('manynet')`
 
@@ -414,34 +486,11 @@ Github, please install the `{remotes}` package from CRAN and then:
 - For latest development version:
   `remotes::install_github("stocnet/manynet@develop")`
 
-### Tutorials
+### Other sources
 
-This package includes tutorials to help new and experienced users learn
-how they can conduct social network analysis using the package. These
-tutorials leverage the additional package `{learnr}` (see
-[here](https://rstudio.github.io/learnr/)), but we have made it easy to
-use `{manynet}` or `{migraph}` tutorials right out of the box:
+Those using Mac computers may also install using Macports:
 
-``` r
-run_tute()
-#> # A tibble: 10 × 3
-#>    package name      title        
-#>    <chr>   <chr>     <chr>        
-#>  1 manynet tutorial0 Intro to R   
-#>  2 manynet tutorial1 Data         
-#>  3 manynet tutorial2 Visualisation
-#>  4 manynet tutorial3 Centrality   
-#>  5 migraph tutorial3 Centrality   
-#>  6 manynet tutorial4 Community    
-#>  7 manynet tutorial5 Position     
-#>  8 manynet tutorial6 Topology     
-#>  9 manynet tutorial7 Diffusion    
-#> 10 migraph tutorial8 Regression
-```
-
-``` r
-# run_tute("tutorial1")
-```
+`sudo port install R-manynet`
 
 ## Relationship to other packages
 
@@ -470,6 +519,3 @@ Development on this package has been funded by the Swiss National
 Science Foundation (SNSF) [Grant Number
 188976](https://data.snf.ch/grants/grant/188976): “Power and Networks
 and the Rate of Change in Institutional Complexes” (PANARCHIC).
-
-[^1]: Macs with Macports installed may also install from the command
-    line [using Macports](https://ports.macports.org/port/R-manynet/).

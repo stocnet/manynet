@@ -1,3 +1,36 @@
+# manynet 1.0.2
+
+## Package
+
+- Added alttext to images in the README, tutorials, and website
+- Added CRAN link to homepage
+- Updated favicons
+- Added more structure to the function overview
+
+## Making
+
+- Updated intro tutorial with images, exercises, questions, and more explanation and structure
+- Updated data tutorial with images, new function names, questions, and more explanation and structure
+- Updated data tutorial with more details on adding and deleting nodes, ties, and attributes
+- Updated topology tutorial with new function names and more structure
+
+## Mapping
+
+- Updated viz tutorial with examples of `graphs()` and `grapht()`
+- Updated viz tutorial with more details and examples on colors and theming
+- Updated viz tutorial with overview, examples, and details on layouts,
+including force-directed, layered, circular, spectral, and grid layouts
+
+## Measures
+
+- Updated centrality tutorial with images, new function names, and more structure
+- Updated centrality tutorial with more interpretation of centrality measures
+- Updated position tutorial with new function names and more structure
+
+## Memberships
+
+- Updated community tutorial with new function names and more structure
+
 # manynet 1.0.1
 
 ## Package
@@ -13,6 +46,7 @@
 - Renamed all functions starting with the `network_*` prefix to `net_*` for conciseness
 - Migrated network measures, membership, motifs, and models' functions from `{migraph}`
 - Migrated community, position, topology, and diffusion tutorials from `{migraph}`
+- Added descriptions to tutorials
 
 ## Making
 
@@ -46,13 +80,16 @@ and `node_is_infected()` (closes #71)
 
 ## Modifying
 
-- Fixed bug in `as_diff_model()` where events were out of order and named
-- Added `to_correlation()` that implements pairwise correlation on network
-- Added `arrange_ties()` for `{dplyr}`-like reordering of ties based on some attribute
 - `to_named()` now randomly generates and adds an alphabetic sequence of names,
   where previously this was just a random sample,
   which may assist pedagogical use
   - baby_names (internal) now includes a few extra "Q" and "U" names
+- Added `to_correlation()` that implements pairwise correlation on network
+- Added `arrange_ties()` for `{dplyr}`-like reordering of ties based on some attribute
+- Added `to_correlation()` for calculating the Pearson correlation
+  - This takes a method argument for "all", "diag", "recip", or "complex"
+  - These are similar to functions implemented by Ron Breiger and shared by him in correspondence
+- Fixed bug in `as_diff_model()` where events were out of order and named
   
 ## Marking
 
@@ -101,22 +138,34 @@ and `node_is_infected()` (closes #71)
     - Updated `node_attribute()` and `tie_attribute()` to return measures
     when the output is numeric
 - Updated `node_exposure()` to work with two-mode and signed networks
+- Fixed `node_constraint()` to work with weighted two-mode networks, thanks to Toshitaka Izumi for spotting this
+- All measure functions can now be used in e.g. `mutate()` without specifying `.data`
+- Added `net_independence()` for calculating the number of nodes in the largest independent set
+- `node_coreness()` now returns 'node_measure' output
+- `node_exposure()` now sums tie weights where passed a weighted network
 
 ## Members
 
 - Migrated members from `{migraph}`
-  - Cliques memberships includes `node_in_roulette()`
-  - Community and hierarchical memberships includes `node_in_optimal()`, `node_in_partition()`,
+  - Cliques memberships `node_in_roulette()` (previously `node_roulette()`)
+  - Community and hierarchical memberships includes `node_in_optimal()`, 
+  `node_in_partition()` (previously `node_kernaghinlin()`),
   `node_in_infomap()`, `node_in_spinglass()`, `node_in_fluid()`, 
   `node_in_louvain()`, `node_in_leiden()`, `node_in_betweenness()`,
   `node_in_greedy()`, `node_in_eigen()`, and `node_in_walktrap()`
   - Components' memberships include `node_in_component()`, `node_in_weak()`, and
-  `node_in_strong()`
+  `node_in_strong()` (NB: `node_in_component()` is no longer phrased in the plural)
   - Core-periphery memberships include `node_is_core()` and `node_coreness()`
   - Diffusion memberships include `node_in_adopter()`
   - Equivalence memberships include `node_in_equivalence()`, `node_in_structural()`,
   `node_in_regular()`, and `node_in_automorphic()`
   - Note that these functions were previously named `node_*()`, but including the preposition `_in_` is more consistent.
+- `node_member` class is now categorical
+  - `make_node_member()` now converts numeric results to LETTER character results
+  - `print.node_member()` now works with categorical membership vectors
+  - `print.node_member()` now declares how many groups before reporting the vectors
+- All membership functions can now be used in e.g. `mutate()` without specifying `.data`
+- Hierarchical clustering algorithms now return dendrograms
 
 ## Motifs
 
@@ -124,12 +173,21 @@ and `node_is_infected()` (closes #71)
 these include `node_by_tie()`, `node_by_triad()`, `node_by_quad()`, `node_by_path()`, 
 `net_by_dyad()`, `net_by_triad()`, `net_by_mixed()`, `node_by_brokerage()`, `net_by_brokerage()`
   - Note that these functions were previously named `*_*_census()`, but the preposition `_by_` is more consistent.
+- `node_tie_census()` now works on longitudinal network data
+- Fixed bug where `print.node_motif()` wasn't printing the requested number of lines
 
 ## Methods
 
 - Migrated methods from `{migraph}`
   - Methods for equivalence clustering include `cluster_hierarchical()` and `cluster_concor()`
   - Methods for selecting clusters include `k_strict()`, `k_elbow()`, and `k_silhouette()`
+- Several improvements to `cluster_concor()`
+  - `cluster_concor()` now uses `to_correlation()` for initial correlation
+  - It still uses `stats::cor()` for subsequent iterations
+  - Fixed how `cluster_concor()` handles unlabelled networks
+  - Fixed how `cluster_concor()` handles two-mode networks
+  - Fixed bug where `cluster_concor()` cutoff resulted in unsplit groups
+- `cluster_hierarchical()` now also uses `to_correlation()`
 
 ## Data
 

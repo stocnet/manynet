@@ -16,10 +16,12 @@ navbar:
     right:
     - search
     - github
+    - cran
   components:
     home:
       icon: fa-home fa-lg
       href: index.html
+      aria-label: Go to home
     reference:
       text: Function Overview
       href: reference/index.html
@@ -29,19 +31,36 @@ navbar:
     github:
       icon: "fab fa-github fa-lg"
       href: https://github.com/stocnet/manynet
+      aria-label: View on Github
+    cran:
+      icon: "fab fa-r-project"
+      href: https://cloud.r-project.org/package=manynet
+      aria-label: View on CRAN
 reference:
   - title: "Making"
     desc: |
-      Functions for importing, exporting, constructing, and simulating
-      directed and undirected, one-mode and two-mode networks.
-      This includes functions for playing games upon networks,
-      changing the distribution of nodal attributes.
+      Making functions help you obtain networks from inside or outside the package.
+  - subtitle: "Importing"
+    desc: |
+      Functions for importing and exporting networks from and to a range
+      of external formats.
     contents:
       - starts_with("read_")
       - starts_with("write_")
+  - subtitle: "Inventing"
+    desc: |
+      Functions for deterministically creating and stochastically generating 
+      directed and undirected, one-mode and two-mode networks.
+    contents:
       - starts_with("create_")
       - starts_with("generate_")
+  - subtitle: "Playing"
+    desc: |
+      Functions for simulating diffusion or learning processes,
+      i.e. nodal change, upon networks.
+    contents:
       - starts_with("play_")
+      
   - title: "Modifying"
     desc: |
       Functions for modifying networks into other classes or formats,
@@ -52,14 +71,40 @@ reference:
       with other dimensions, such as from a two-mode network into a one-mode network.
       There are also functions for splitting networks, e.g. into a list of ego networks,
       and rejoining them from such lists.
-      There are also tidy-style and igraph-style functions for adding or joining
-      new data on nodes or ties to networks.
     contents:
-      - starts_with("as_")
-      - starts_with("add_")
       - starts_with("to_")
       - starts_with("from_")
+  - subtitle: "Coercion"
+    desc: |
+      Functions for modifying networks into other classes.
+    contents:
+      - starts_with("as_")
+  - subtitle: "Attributes"
+    desc: |
+      Functions for modifying nodal and tie attributes.
+      These include tidy-style and igraph-style functions for adding or joining
+      new data on nodes or ties to networks.
+    contents:
+      - starts_with("add_")
+  - subtitle: "Missing"
+    desc: |
+      Functions for modifying how missing data is treated.
+    contents:
       - starts_with("na_to_")
+      
+  - title: "Mapping"
+    desc: |
+      Functions for plotting and visualising graphs of different types.
+      `graphr()` graphs any manynet-compatible class object automagically.
+      `graphs()` and `grapht()` do the same for multiple networks
+      and dynamic networks, respectively.
+    contents:
+      - starts_with("graph")
+      - starts_with("layout")
+      - starts_with("theme")
+      - starts_with("scale")
+      - ends_with("palettes")
+
   - title: "Marking"
     desc: |
       Functions for identifying properties of networks, nodes, or ties,
@@ -94,18 +139,6 @@ reference:
     contents:
       - contains("_by_")
       - contains("_in_")
-  - title: "Mapping"
-    desc: |
-      Functions for plotting and visualising graphs of different types.
-      `graphr()` graphs any manynet-compatible class object automagically.
-      `graphs()` and `grapht()` do the same for multiple networks
-      and dynamic networks, respectively.
-    contents:
-      - starts_with("graph")
-      - starts_with("layout")
-      - starts_with("theme")
-      - starts_with("scale")
-      - ends_with("palettes")
   - title: "Methods"
     desc: "Methods used in other functions but documented here:"
     contents:
