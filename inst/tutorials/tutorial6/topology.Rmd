@@ -1,6 +1,6 @@
 ---
-title: "Topology"
-author: "by James Hollway, Andrea Biswas-Tortajada"
+title: "Topology and Resilience"
+author: "by James Hollway"
 output: 
   learnr::tutorial:
     theme: journal
@@ -14,7 +14,6 @@ description: >
 ```{r setup, include = FALSE}
 library(learnr)
 library(manynet)
-library(migraph)
 library(patchwork)
 knitr::opts_chunk$set(echo = FALSE)
 learnr::random_phrases_add(language = "fr",
@@ -45,13 +44,13 @@ learnr::random_phrases_add(language = "en",
                            encouragement = c("Bon effort"))
 ```
 
+## Overview
+
 In this tutorial, we'll explore:
 
 - how to create or generate different network topologies
 - the core-periphery structure of a network
 - features of a network related to its resilience
-
-## Generate networks of different structures
 
 This tutorial covers a range of different network topologies:
 trees, lattices, random, small-world, scale-free, and core-periphery
@@ -65,7 +64,7 @@ We'll first look at some deterministic algorithms for _creating_ networks
 of different structures, 
 and then look at how the introduction of some randomness can _generate_ a variety of network structures.
 
-### Deterministic graphs
+## Creating networks
 
 To begin with, let's create a few 'empty' and full/'complete' graphs.
 You will want to use some of the `create_*()` group of functions from `{manynet}`,
@@ -214,7 +213,7 @@ Graph three ring networks:
 (graphr(create_ring(50, width = 2), "stress") + ggtitle("The Ring Two v2.0"))
 ```
 
-### Probabilistic graphs
+## Generating networks
 
 Next we are going to take a look at some probabilistic graphs.
 These involve some random element, perhaps in addition to specific rules,
@@ -292,7 +291,7 @@ but with a rewiring probability of 0.25:
 ```
 
 ```{r smallwtest-solution}
-network_smallworld(generate_smallworld(50, 0.25))
+net_smallworld(generate_smallworld(50, 0.25))
 ```
 
 #### Scale-free graphs
@@ -343,7 +342,7 @@ comes from a power-law distribution.
 ```
 
 ```{r scaleftest-solution}
-network_scalefree(generate_scalefree(50, 2))
+net_scalefree(generate_scalefree(50, 2))
 ```
 
 ## Core-Periphery
@@ -423,14 +422,14 @@ one on the left and one on the right.
 
 But is it really all that much of a core-periphery structure?
 We can establish how correlated our network is compared to
-a core-periphery model of the same dimension using `network_core()`.
+a core-periphery model of the same dimension using `net_core()`.
 
 ```{r netcore, exercise=TRUE, purl = FALSE}
 
 ```
 
 ```{r netcore-solution}
-network_core(ison_lawfirm, node_is_core(ison_lawfirm))
+net_core(ison_lawfirm, node_is_core(ison_lawfirm))
 ```
 
 ```{r corecorr-qa, echo=FALSE, purl = FALSE}
@@ -483,11 +482,11 @@ question("There a statistically significant association between the core assignm
 )
 ```
 
-### Coreness values
+## Coreness
 
 An alternative route is to identify 'core' nodes
 depending on their _k_-coreness.
-In `{migraph}`, we can return nodes _k_-coreness
+In `{manynet}`, we can return nodes _k_-coreness
 with `node_coreness()` instead of 
 the `node_is_core()` used for core-periphery.
 
@@ -524,7 +523,7 @@ question("Select the correct definitions:",
 )
 ```
 
-## Network Resilience
+## Resilience
 
 ### How cohesive is the network?
 
@@ -538,7 +537,7 @@ First, we might be interested in whether the network is connected at all.
 ```
 
 ```{r connected-solution}
-network_connectedness(ison_adolescents)
+net_connectedness(ison_adolescents)
 ```
 
 This measure gets at the proportion of dyads that can reach each other in the network.
@@ -567,7 +566,7 @@ Find out how many dropped nodes it would take to (further) fragment the network.
 ```
 
 ```{r cohesion-solution}
-network_cohesion(ison_adolescents)
+net_cohesion(ison_adolescents)
 ```
 
 ```{r cohesion-qa, echo=FALSE, purl = FALSE}
@@ -631,7 +630,7 @@ Let's do something similar now, but with respect to ties rather than nodes.
 ```
 
 ```{r tieside-solution}
-network_adhesion(ison_adolescents)
+net_adhesion(ison_adolescents)
 ison_adolescents |> mutate_ties(cut = tie_is_bridge(ison_adolescents)) |> 
   graphr(edge_color = "cut")
 ```
