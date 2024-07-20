@@ -1,5 +1,5 @@
 ---
-title: "Diffusion"
+title: "Diffusion and Learning"
 author: "by James Hollway"
 output: 
   learnr::tutorial:
@@ -27,16 +27,16 @@ Network structures are key to how diffusion processes play out.
 
 By the end of this tutorial, you will be able to:
 
-- [ ] 'play' a diffusion process over any kind of network
-- [ ] print, plot, graph and interpret the results
-- [ ] understand cascade models
-- [ ] understand the role of network structure on diffusion
-- [ ] understand threshold models
-- [ ] understand the role of seeds for network intervention
-- [ ] understand compartmental models
-- [ ] understand the role of vaccination strategies
-- [ ] understand learning models
-- [ ] understand the role of influential nodes
+- [ ] &nbsp; 'play' a diffusion process over any kind of network
+- [ ] &nbsp; print, plot, graph and interpret the results
+- [ ] &nbsp; understand cascade models
+- [ ] &nbsp; understand the role of network structure on diffusion
+- [ ] &nbsp; understand threshold models
+- [ ] &nbsp; understand the role of seeds for network intervention
+- [ ] &nbsp; understand compartmental models
+- [ ] &nbsp; understand the role of vaccination strategies
+- [ ] &nbsp; understand learning models
+- [ ] &nbsp; understand the role of influential nodes
 
 ## Influence cascade models
 
