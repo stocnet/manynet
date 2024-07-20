@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.2</span>
       </span>
     </div>
 
@@ -40,6 +40,12 @@
 
   </a>
 </li>
+<li>
+  <a href="https://cloud.r-project.org/package=manynet" class="external-link">
+    <span class="fab fa-r-project"></span>
+
+  </a>
+</li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -54,7 +60,11 @@
 
     <table class="ref-index"><colgroup><col class="alias"><col class="title"></colgroup><tbody><tr><th colspan="2">
           <h2 id="making">Making <a href="#making" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p><p>Functions for importing, exporting, constructing, and simulating directed and undirected, one-mode and two-mode networks. This includes functions for playing games upon networks, changing the distribution of nodal attributes.</p>
+          <p class="section-desc"></p><p>Making functions help you obtain networks from inside or outside the package.</p>
+        </th>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="importing">Importing <a href="#importing" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p><p>Functions for importing and exporting networks from and to a range of external formats.</p>
         </th>
       </tr></tbody><tbody><tr><td>
           <p><code><a href="read.html">read_matrix()</a></code> <code><a href="read.html">read_edgelist()</a></code> <code><a href="read.html">read_nodelist()</a></code> <code><a href="read.html">read_pajek()</a></code> <code><a href="read.html">read_ucinet()</a></code> <code><a href="read.html">read_dynetml()</a></code> <code><a href="read.html">read_graphml()</a></code> </p>
@@ -64,7 +74,11 @@
           <p><code><a href="write.html">write_matrix()</a></code> <code><a href="write.html">write_edgelist()</a></code> <code><a href="write.html">write_nodelist()</a></code> <code><a href="write.html">write_pajek()</a></code> <code><a href="write.html">write_ucinet()</a></code> <code><a href="write.html">write_graphml()</a></code> </p>
         </td>
         <td><p>Making networks to external files</p></td>
-      </tr><tr><td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="inventing">Inventing <a href="#inventing" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p><p>Functions for deterministically creating and stochastically generating directed and undirected, one-mode and two-mode networks.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
           <p><code><a href="create.html">create_empty()</a></code> <code><a href="create.html">create_filled()</a></code> <code><a href="create.html">create_ring()</a></code> <code><a href="create.html">create_star()</a></code> <code><a href="create.html">create_tree()</a></code> <code><a href="create.html">create_lattice()</a></code> <code><a href="create.html">create_components()</a></code> <code><a href="create.html">create_core()</a></code> <code><a href="create.html">create_explicit()</a></code> </p>
         </td>
         <td><p>Making networks with defined structures</p></td>
@@ -72,7 +86,11 @@
           <p><code><a href="generate.html">generate_random()</a></code> <code><a href="generate.html">generate_smallworld()</a></code> <code><a href="generate.html">generate_scalefree()</a></code> <code><a href="generate.html">generate_permutation()</a></code> <code><a href="generate.html">generate_utilities()</a></code> <code><a href="generate.html">generate_configuration()</a></code> </p>
         </td>
         <td><p>Making networks with a stochastic element</p></td>
-      </tr><tr><td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="playing">Playing <a href="#playing" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p><p>Functions for simulating diffusion or learning processes, i.e. nodal change, upon networks.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
           <p><code><a href="learning.html">play_learning()</a></code> <code><a href="learning.html">play_segregation()</a></code> </p>
         </td>
         <td><p>Making learning models on networks</p></td>
@@ -82,21 +100,9 @@
         <td><p>Making diffusion models on networks</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="modifying">Modifying <a href="#modifying" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p><p>Functions for modifying networks into other classes or formats, or modifying their properties or attributes. This includes functions for reformatting networks into networks of the same dimensions but a different type, e.g. from directed to undirected. It also includes functions for transforming networks into networks with other dimensions, such as from a two-mode network into a one-mode network. There are also functions for splitting networks, e.g. into a list of ego networks, and rejoining them from such lists. There are also tidy-style and igraph-style functions for adding or joining new data on nodes or ties to networks.</p>
+          <p class="section-desc"></p><p>Functions for modifying networks into other classes or formats, or modifying their properties or attributes. This includes functions for reformatting networks into networks of the same dimensions but a different type, e.g. from directed to undirected. It also includes functions for transforming networks into networks with other dimensions, such as from a two-mode network into a one-mode network. There are also functions for splitting networks, e.g. into a list of ego networks, and rejoining them from such lists.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="as.html">as_edgelist()</a></code> <code><a href="as.html">as_matrix()</a></code> <code><a href="as.html">as_igraph()</a></code> <code><a href="as.html">as_tidygraph()</a></code> <code><a href="as.html">as_network()</a></code> <code><a href="as.html">as_siena()</a></code> <code><a href="as.html">as_graphAM()</a></code> <code><a href="as.html">as_diffusion()</a></code> <code><a href="as.html">as_diffnet()</a></code> </p>
-        </td>
-        <td><p>Modifying network classes</p></td>
-      </tr><tr><td>
-          <p><code><a href="add_nodes.html">add_nodes()</a></code> <code><a href="add_nodes.html">delete_nodes()</a></code> <code><a href="add_nodes.html">add_node_attribute()</a></code> <code><a href="add_nodes.html">mutate_nodes()</a></code> <code><a href="add_nodes.html">mutate()</a></code> <code><a href="add_nodes.html">bind_node_attributes()</a></code> <code><a href="add_nodes.html">join_nodes()</a></code> <code><a href="add_nodes.html">rename_nodes()</a></code> <code><a href="add_nodes.html">rename()</a></code> <code><a href="add_nodes.html">filter_nodes()</a></code> </p>
-        </td>
-        <td><p>Modifying node data</p></td>
-      </tr><tr><td>
-          <p><code><a href="add_ties.html">add_ties()</a></code> <code><a href="add_ties.html">delete_ties()</a></code> <code><a href="add_ties.html">add_tie_attribute()</a></code> <code><a href="add_ties.html">mutate_ties()</a></code> <code><a href="add_ties.html">rename_ties()</a></code> <code><a href="add_ties.html">arrange_ties()</a></code> <code><a href="add_ties.html">bind_ties()</a></code> <code><a href="add_ties.html">join_ties()</a></code> <code><a href="add_ties.html">filter_ties()</a></code> <code><a href="add_ties.html">select_ties()</a></code> <code><a href="add_ties.html">summarise_ties()</a></code> </p>
-        </td>
-        <td><p>Modifying tie data</p></td>
-      </tr><tr><td>
           <p><code><a href="correlation.html">to_correlation()</a></code> </p>
         </td>
         <td><p>Node correlation</p></td>
@@ -128,10 +134,70 @@
           <p><code><a href="from.html">from_subgraphs()</a></code> <code><a href="from.html">from_egos()</a></code> <code><a href="from.html">from_waves()</a></code> <code><a href="from.html">from_slices()</a></code> <code><a href="from.html">from_ties()</a></code> </p>
         </td>
         <td><p>Joining lists of networks, graphs, and matrices</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="coercion">Coercion <a href="#coercion" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p><p>Functions for modifying networks into other classes.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="as.html">as_edgelist()</a></code> <code><a href="as.html">as_matrix()</a></code> <code><a href="as.html">as_igraph()</a></code> <code><a href="as.html">as_tidygraph()</a></code> <code><a href="as.html">as_network()</a></code> <code><a href="as.html">as_siena()</a></code> <code><a href="as.html">as_graphAM()</a></code> <code><a href="as.html">as_diffusion()</a></code> <code><a href="as.html">as_diffnet()</a></code> </p>
+        </td>
+        <td><p>Modifying network classes</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="attributes">Attributes <a href="#attributes" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p><p>Functions for modifying nodal and tie attributes. These include tidy-style and igraph-style functions for adding or joining new data on nodes or ties to networks.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="add_nodes.html">add_nodes()</a></code> <code><a href="add_nodes.html">delete_nodes()</a></code> <code><a href="add_nodes.html">add_node_attribute()</a></code> <code><a href="add_nodes.html">mutate_nodes()</a></code> <code><a href="add_nodes.html">mutate()</a></code> <code><a href="add_nodes.html">bind_node_attributes()</a></code> <code><a href="add_nodes.html">join_nodes()</a></code> <code><a href="add_nodes.html">rename_nodes()</a></code> <code><a href="add_nodes.html">rename()</a></code> <code><a href="add_nodes.html">filter_nodes()</a></code> </p>
+        </td>
+        <td><p>Modifying node data</p></td>
       </tr><tr><td>
+          <p><code><a href="add_ties.html">add_ties()</a></code> <code><a href="add_ties.html">delete_ties()</a></code> <code><a href="add_ties.html">add_tie_attribute()</a></code> <code><a href="add_ties.html">mutate_ties()</a></code> <code><a href="add_ties.html">rename_ties()</a></code> <code><a href="add_ties.html">arrange_ties()</a></code> <code><a href="add_ties.html">bind_ties()</a></code> <code><a href="add_ties.html">join_ties()</a></code> <code><a href="add_ties.html">filter_ties()</a></code> <code><a href="add_ties.html">select_ties()</a></code> <code><a href="add_ties.html">summarise_ties()</a></code> </p>
+        </td>
+        <td><p>Modifying tie data</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="missing">Missing <a href="#missing" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p><p>Functions for modifying how missing data is treated.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
           <p><code><a href="miss.html">na_to_zero()</a></code> <code><a href="miss.html">na_to_mean()</a></code> </p>
         </td>
         <td><p>Modifying missing tie data</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="mapping">Mapping <a href="#mapping" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Functions for plotting and visualising graphs of different types. <code><a href="../reference/graphr.html">graphr()</a></code> graphs any manynet-compatible class object automagically. <code><a href="../reference/graphs.html">graphs()</a></code> and <code><a href="../reference/grapht.html">grapht()</a></code> do the same for multiple networks and dynamic networks, respectively.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="graphr.html">graphr()</a></code> </p>
+        </td>
+        <td><p>Easily graph networks with sensible defaults</p></td>
+      </tr><tr><td>
+          <p><code><a href="graphs.html">graphs()</a></code> </p>
+        </td>
+        <td><p>Easily graph a set of networks with sensible defaults</p></td>
+      </tr><tr><td>
+          <p><code><a href="grapht.html">grapht()</a></code> </p>
+        </td>
+        <td><p>Easily animate dynamic networks with sensible defaults</p></td>
+      </tr><tr><td>
+          <p><code><a href="configuration_layouts.html">layout_tbl_graph_configuration()</a></code> <code><a href="configuration_layouts.html">layout_tbl_graph_triad()</a></code> <code><a href="configuration_layouts.html">layout_tbl_graph_quad()</a></code> </p>
+        </td>
+        <td><p>Layout algorithms based on configurational positions</p></td>
+      </tr><tr><td>
+          <p><code><a href="partition_layouts.html">layout_tbl_graph_hierarchy()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_alluvial()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_railway()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_ladder()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_concentric()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_multilevel()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_lineage()</a></code> </p>
+        </td>
+        <td><p>Layout algorithms based on bi- or other partitions</p></td>
+      </tr><tr><td>
+          <p><code><a href="themes.html">theme_iheid()</a></code> <code><a href="themes.html">theme_ethz()</a></code> <code><a href="themes.html">theme_uzh()</a></code> <code><a href="themes.html">theme_rug()</a></code> </p>
+        </td>
+        <td><p>Many themes</p></td>
+      </tr><tr><td>
+          <p><code><a href="scales.html">scale_fill_iheid()</a></code> <code><a href="scales.html">scale_colour_iheid()</a></code> <code><a href="scales.html">scale_color_iheid()</a></code> <code><a href="scales.html">scale_edge_colour_iheid()</a></code> <code><a href="scales.html">scale_edge_color_iheid()</a></code> <code><a href="scales.html">scale_fill_centres()</a></code> <code><a href="scales.html">scale_colour_centres()</a></code> <code><a href="scales.html">scale_color_centres()</a></code> <code><a href="scales.html">scale_edge_colour_centres()</a></code> <code><a href="scales.html">scale_edge_color_centres()</a></code> <code><a href="scales.html">scale_fill_sdgs()</a></code> <code><a href="scales.html">scale_colour_sdgs()</a></code> <code><a href="scales.html">scale_color_sdgs()</a></code> <code><a href="scales.html">scale_edge_colour_sdgs()</a></code> <code><a href="scales.html">scale_edge_color_sdgs()</a></code> <code><a href="scales.html">scale_fill_ethz()</a></code> <code><a href="scales.html">scale_colour_ethz()</a></code> <code><a href="scales.html">scale_color_ethz()</a></code> <code><a href="scales.html">scale_edge_colour_ethz()</a></code> <code><a href="scales.html">scale_edge_color_ethz()</a></code> <code><a href="scales.html">scale_fill_uzh()</a></code> <code><a href="scales.html">scale_colour_uzh()</a></code> <code><a href="scales.html">scale_color_uzh()</a></code> <code><a href="scales.html">scale_edge_colour_uzh()</a></code> <code><a href="scales.html">scale_edge_color_uzh()</a></code> <code><a href="scales.html">scale_fill_rug()</a></code> <code><a href="scales.html">scale_colour_rug()</a></code> <code><a href="scales.html">scale_color_rug()</a></code> <code><a href="scales.html">scale_edge_colour_rug()</a></code> <code><a href="scales.html">scale_edge_color_rug()</a></code> </p>
+        </td>
+        <td><p>Many scales</p></td>
+      </tr><tr><td>
+          <p><code><a href="many_palettes.html">many_palettes()</a></code> </p>
+        </td>
+        <td><p>Many palettes generator</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="marking">Marking <a href="#marking" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Functions for identifying properties of networks, nodes, or ties, all returning logical scalars or vectors. Note that all <code>node_</code> and <code>tie_</code> measures return a single vector so that they can be added directly to graph objects. <code>net_</code> measures return one or, in some cases of two-mode measures, two values. All <code>node_</code> and <code>tie_</code> measures return a single vector, the length of the nodes or ties in the network, respectively.</p>
@@ -292,42 +358,6 @@
           <p><code><a href="member_equivalence.html">node_in_equivalence()</a></code> <code><a href="member_equivalence.html">node_in_structural()</a></code> <code><a href="member_equivalence.html">node_in_regular()</a></code> <code><a href="member_equivalence.html">node_in_automorphic()</a></code> </p>
         </td>
         <td><p>Equivalence clustering algorithms</p></td>
-      </tr></tbody><tbody><tr><th colspan="2">
-          <h2 id="mapping">Mapping <a href="#mapping" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p><p>Functions for plotting and visualising graphs of different types. <code><a href="../reference/graphr.html">graphr()</a></code> graphs any manynet-compatible class object automagically. <code><a href="../reference/graphs.html">graphs()</a></code> and <code><a href="../reference/grapht.html">grapht()</a></code> do the same for multiple networks and dynamic networks, respectively.</p>
-        </th>
-      </tr></tbody><tbody><tr><td>
-          <p><code><a href="graphr.html">graphr()</a></code> </p>
-        </td>
-        <td><p>Easily graph networks with sensible defaults</p></td>
-      </tr><tr><td>
-          <p><code><a href="graphs.html">graphs()</a></code> </p>
-        </td>
-        <td><p>Easily graph a set of networks with sensible defaults</p></td>
-      </tr><tr><td>
-          <p><code><a href="grapht.html">grapht()</a></code> </p>
-        </td>
-        <td><p>Easily animate dynamic networks with sensible defaults</p></td>
-      </tr><tr><td>
-          <p><code><a href="configuration_layouts.html">layout_tbl_graph_configuration()</a></code> <code><a href="configuration_layouts.html">layout_tbl_graph_triad()</a></code> <code><a href="configuration_layouts.html">layout_tbl_graph_quad()</a></code> </p>
-        </td>
-        <td><p>Layout algorithms based on configurational positions</p></td>
-      </tr><tr><td>
-          <p><code><a href="partition_layouts.html">layout_tbl_graph_hierarchy()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_alluvial()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_railway()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_ladder()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_concentric()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_multilevel()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_lineage()</a></code> </p>
-        </td>
-        <td><p>Layout algorithms based on bi- or other partitions</p></td>
-      </tr><tr><td>
-          <p><code><a href="themes.html">theme_iheid()</a></code> <code><a href="themes.html">theme_ethz()</a></code> <code><a href="themes.html">theme_uzh()</a></code> <code><a href="themes.html">theme_rug()</a></code> </p>
-        </td>
-        <td><p>Many themes</p></td>
-      </tr><tr><td>
-          <p><code><a href="scales.html">scale_fill_iheid()</a></code> <code><a href="scales.html">scale_colour_iheid()</a></code> <code><a href="scales.html">scale_color_iheid()</a></code> <code><a href="scales.html">scale_edge_colour_iheid()</a></code> <code><a href="scales.html">scale_edge_color_iheid()</a></code> <code><a href="scales.html">scale_fill_centres()</a></code> <code><a href="scales.html">scale_colour_centres()</a></code> <code><a href="scales.html">scale_color_centres()</a></code> <code><a href="scales.html">scale_edge_colour_centres()</a></code> <code><a href="scales.html">scale_edge_color_centres()</a></code> <code><a href="scales.html">scale_fill_sdgs()</a></code> <code><a href="scales.html">scale_colour_sdgs()</a></code> <code><a href="scales.html">scale_color_sdgs()</a></code> <code><a href="scales.html">scale_edge_colour_sdgs()</a></code> <code><a href="scales.html">scale_edge_color_sdgs()</a></code> <code><a href="scales.html">scale_fill_ethz()</a></code> <code><a href="scales.html">scale_colour_ethz()</a></code> <code><a href="scales.html">scale_color_ethz()</a></code> <code><a href="scales.html">scale_edge_colour_ethz()</a></code> <code><a href="scales.html">scale_edge_color_ethz()</a></code> <code><a href="scales.html">scale_fill_uzh()</a></code> <code><a href="scales.html">scale_colour_uzh()</a></code> <code><a href="scales.html">scale_color_uzh()</a></code> <code><a href="scales.html">scale_edge_colour_uzh()</a></code> <code><a href="scales.html">scale_edge_color_uzh()</a></code> <code><a href="scales.html">scale_fill_rug()</a></code> <code><a href="scales.html">scale_colour_rug()</a></code> <code><a href="scales.html">scale_color_rug()</a></code> <code><a href="scales.html">scale_edge_colour_rug()</a></code> <code><a href="scales.html">scale_edge_color_rug()</a></code> </p>
-        </td>
-        <td><p>Many scales</p></td>
-      </tr><tr><td>
-          <p><code><a href="many_palettes.html">many_palettes()</a></code> </p>
-        </td>
-        <td><p>Many palettes generator</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="methods">Methods <a href="#methods" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Methods used in other functions but documented here:</p>

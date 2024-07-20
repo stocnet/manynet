@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.2</span>
       </span>
     </div>
 
@@ -40,6 +40,12 @@
 
   </a>
 </li>
+<li>
+  <a href="https://cloud.r-project.org/package=manynet" class="external-link">
+    <span class="fab fa-r-project"></span>
+
+  </a>
+</li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -54,7 +60,40 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.0.1" id="manynet-101">manynet 1.0.1<a class="anchor" aria-label="anchor" href="#manynet-101"></a></h2>
+<h2 class="page-header" data-toc-text="1.0.2" id="manynet-102">manynet 1.0.2<a class="anchor" aria-label="anchor" href="#manynet-102"></a></h2>
+<div class="section level3">
+<h3 id="package-1-0-2">Package<a class="anchor" aria-label="anchor" href="#package-1-0-2"></a></h3>
+<ul><li>Added alttext to images in the README, tutorials, and website</li>
+<li>Added CRAN link to homepage</li>
+<li>Updated favicons</li>
+<li>Added more structure to the function overview</li>
+</ul></div>
+<div class="section level3">
+<h3 id="making-1-0-2">Making<a class="anchor" aria-label="anchor" href="#making-1-0-2"></a></h3>
+<ul><li>Updated intro tutorial with images, exercises, questions, and more explanation and structure</li>
+<li>Updated data tutorial with images, new function names, questions, and more explanation and structure</li>
+<li>Updated data tutorial with more details on adding and deleting nodes, ties, and attributes</li>
+<li>Updated topology tutorial with new function names and more structure</li>
+</ul></div>
+<div class="section level3">
+<h3 id="mapping-1-0-2">Mapping<a class="anchor" aria-label="anchor" href="#mapping-1-0-2"></a></h3>
+<ul><li>Updated viz tutorial with examples of <code><a href="../reference/graphs.html">graphs()</a></code> and <code><a href="../reference/grapht.html">grapht()</a></code>
+</li>
+<li>Updated viz tutorial with more details and examples on colors and theming</li>
+<li>Updated viz tutorial with overview, examples, and details on layouts, including force-directed, layered, circular, spectral, and grid layouts</li>
+</ul></div>
+<div class="section level3">
+<h3 id="measures-1-0-2">Measures<a class="anchor" aria-label="anchor" href="#measures-1-0-2"></a></h3>
+<ul><li>Updated centrality tutorial with images, new function names, and more structure</li>
+<li>Updated centrality tutorial with more interpretation of centrality measures</li>
+<li>Updated position tutorial with new function names and more structure</li>
+</ul></div>
+<div class="section level3">
+<h3 id="memberships-1-0-2">Memberships<a class="anchor" aria-label="anchor" href="#memberships-1-0-2"></a></h3>
+<ul><li>Updated community tutorial with new function names and more structure</li></ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.0.1" id="manynet-101">manynet 1.0.1<small>2024-07-17</small><a class="anchor" aria-label="anchor" href="#manynet-101"></a></h2>
 <div class="section level3">
 <h3 id="package-1-0-1">Package<a class="anchor" aria-label="anchor" href="#package-1-0-1"></a></h3>
 <ul><li>Test of <code><a href="../reference/split.html">to_subgraphs()</a></code> no longer sampled</li></ul></div>
@@ -70,6 +109,7 @@
 </li>
 <li>Migrated community, position, topology, and diffusion tutorials from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
 </li>
+<li>Added descriptions to tutorials</li>
 </ul></div>
 <div class="section level3">
 <h3 id="making-1-0-0">Making<a class="anchor" aria-label="anchor" href="#making-1-0-0"></a></h3>
@@ -103,11 +143,14 @@
 </ul></div>
 <div class="section level3">
 <h3 id="modifying-1-0-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-0-0"></a></h3>
-<ul><li>Fixed bug in <code>as_diff_model()</code> where events were out of order and named</li>
+<ul><li>
+<code><a href="../reference/reformat.html">to_named()</a></code> now randomly generates and adds an alphabetic sequence of names, where previously this was just a random sample, which may assist pedagogical use<ul><li>baby_names (internal) now includes a few extra “Q” and “U” names</li></ul></li>
 <li>Added <code><a href="../reference/correlation.html">to_correlation()</a></code> that implements pairwise correlation on network</li>
 <li>Added <code><a href="../reference/add_ties.html">arrange_ties()</a></code> for <a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a>-like reordering of ties based on some attribute</li>
-<li>
-<code><a href="../reference/reformat.html">to_named()</a></code> now randomly generates and adds an alphabetic sequence of names, where previously this was just a random sample, which may assist pedagogical use<ul><li>baby_names (internal) now includes a few extra “Q” and “U” names</li></ul></li>
+<li>Added <code><a href="../reference/correlation.html">to_correlation()</a></code> for calculating the Pearson correlation<ul><li>This takes a method argument for “all”, “diag”, “recip”, or “complex”</li>
+<li>These are similar to functions implemented by Ron Breiger and shared by him in correspondence</li>
+</ul></li>
+<li>Fixed bug in <code>as_diff_model()</code> where events were out of order and named</li>
 </ul></div>
 <div class="section level3">
 <h3 id="marking-1-0-0-1">Marking<a class="anchor" aria-label="anchor" href="#marking-1-0-0-1"></a></h3>
@@ -144,15 +187,21 @@
 <li>Updated <code><a href="../reference/measure_attributes.html">node_attribute()</a></code> and <code><a href="../reference/measure_attributes.html">tie_attribute()</a></code> to return measures when the output is numeric</li>
 </ul></li>
 <li>Updated <code><a href="../reference/measure_node_diffusion.html">node_exposure()</a></code> to work with two-mode and signed networks</li>
+<li>Fixed <code><a href="../reference/measure_holes.html">node_constraint()</a></code> to work with weighted two-mode networks, thanks to Toshitaka Izumi for spotting this</li>
+<li>All measure functions can now be used in e.g. <code><a href="../reference/add_nodes.html">mutate()</a></code> without specifying <code>.data</code>
+</li>
+<li>Added <code><a href="../reference/measure_cohesion.html">net_independence()</a></code> for calculating the number of nodes in the largest independent set</li>
+<li>
+<code><a href="../reference/mark_core.html">node_coreness()</a></code> now returns ‘node_measure’ output</li>
+<li>
+<code><a href="../reference/measure_node_diffusion.html">node_exposure()</a></code> now sums tie weights where passed a weighted network</li>
 </ul></div>
 <div class="section level3">
 <h3 id="members-1-0-0">Members<a class="anchor" aria-label="anchor" href="#members-1-0-0"></a></h3>
-<ul><li>Migrated members from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Cliques memberships includes <code><a href="../reference/member_cliques.html">node_in_roulette()</a></code>
+<ul><li>Migrated members from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Cliques memberships <code><a href="../reference/member_cliques.html">node_in_roulette()</a></code> (previously <code><a href="../reference/defunct.html">node_roulette()</a></code>)</li>
+<li>Community and hierarchical memberships includes <code><a href="../reference/member_community_non.html">node_in_optimal()</a></code>, <code><a href="../reference/member_community_non.html">node_in_partition()</a></code> (previously <code>node_kernaghinlin()</code>), <code><a href="../reference/member_community_non.html">node_in_infomap()</a></code>, <code><a href="../reference/member_community_non.html">node_in_spinglass()</a></code>, <code><a href="../reference/member_community_non.html">node_in_fluid()</a></code>, <code><a href="../reference/member_community_non.html">node_in_louvain()</a></code>, <code><a href="../reference/member_community_non.html">node_in_leiden()</a></code>, <code><a href="../reference/member_community_hier.html">node_in_betweenness()</a></code>, <code><a href="../reference/member_community_hier.html">node_in_greedy()</a></code>, <code><a href="../reference/member_community_hier.html">node_in_eigen()</a></code>, and <code><a href="../reference/member_community_hier.html">node_in_walktrap()</a></code>
 </li>
-<li>Community and hierarchical memberships includes <code><a href="../reference/member_community_non.html">node_in_optimal()</a></code>, <code><a href="../reference/member_community_non.html">node_in_partition()</a></code>, <code><a href="../reference/member_community_non.html">node_in_infomap()</a></code>, <code><a href="../reference/member_community_non.html">node_in_spinglass()</a></code>, <code><a href="../reference/member_community_non.html">node_in_fluid()</a></code>, <code><a href="../reference/member_community_non.html">node_in_louvain()</a></code>, <code><a href="../reference/member_community_non.html">node_in_leiden()</a></code>, <code><a href="../reference/member_community_hier.html">node_in_betweenness()</a></code>, <code><a href="../reference/member_community_hier.html">node_in_greedy()</a></code>, <code><a href="../reference/member_community_hier.html">node_in_eigen()</a></code>, and <code><a href="../reference/member_community_hier.html">node_in_walktrap()</a></code>
-</li>
-<li>Components’ memberships include <code><a href="../reference/member_components.html">node_in_component()</a></code>, <code><a href="../reference/member_components.html">node_in_weak()</a></code>, and <code><a href="../reference/member_components.html">node_in_strong()</a></code>
-</li>
+<li>Components’ memberships include <code><a href="../reference/member_components.html">node_in_component()</a></code>, <code><a href="../reference/member_components.html">node_in_weak()</a></code>, and <code><a href="../reference/member_components.html">node_in_strong()</a></code> (NB: <code><a href="../reference/member_components.html">node_in_component()</a></code> is no longer phrased in the plural)</li>
 <li>Core-periphery memberships include <code><a href="../reference/mark_core.html">node_is_core()</a></code> and <code><a href="../reference/mark_core.html">node_coreness()</a></code>
 </li>
 <li>Diffusion memberships include <code><a href="../reference/member_diffusion.html">node_in_adopter()</a></code>
@@ -160,17 +209,44 @@
 <li>Equivalence memberships include <code><a href="../reference/member_equivalence.html">node_in_equivalence()</a></code>, <code><a href="../reference/member_equivalence.html">node_in_structural()</a></code>, <code><a href="../reference/member_equivalence.html">node_in_regular()</a></code>, and <code><a href="../reference/member_equivalence.html">node_in_automorphic()</a></code>
 </li>
 <li>Note that these functions were previously named <code>node_*()</code>, but including the preposition <code>_in_</code> is more consistent.</li>
-</ul></li></ul></div>
+</ul></li>
+<li>
+<code>node_member</code> class is now categorical<ul><li>
+<code>make_node_member()</code> now converts numeric results to LETTER character results</li>
+<li>
+<code>print.node_member()</code> now works with categorical membership vectors</li>
+<li>
+<code>print.node_member()</code> now declares how many groups before reporting the vectors</li>
+</ul></li>
+<li>All membership functions can now be used in e.g. <code><a href="../reference/add_nodes.html">mutate()</a></code> without specifying <code>.data</code>
+</li>
+<li>Hierarchical clustering algorithms now return dendrograms</li>
+</ul></div>
 <div class="section level3">
 <h3 id="motifs-1-0-0">Motifs<a class="anchor" aria-label="anchor" href="#motifs-1-0-0"></a></h3>
-<ul><li>Migrated motifs to take census of network, node positions, and brokerage from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>, these include <code><a href="../reference/motif_node.html">node_by_tie()</a></code>, <code><a href="../reference/motif_node.html">node_by_triad()</a></code>, <code><a href="../reference/motif_node.html">node_by_quad()</a></code>, <code><a href="../reference/motif_node.html">node_by_path()</a></code>, <code><a href="../reference/motif_net.html">net_by_dyad()</a></code>, <code><a href="../reference/motif_net.html">net_by_triad()</a></code>, <code><a href="../reference/motif_net.html">net_by_mixed()</a></code>, <code><a href="../reference/motif_brokerage.html">node_by_brokerage()</a></code>, <code><a href="../reference/motif_brokerage.html">net_by_brokerage()</a></code><ul><li>Note that these functions were previously named <code>*_*_census()</code>, but the preposition <code>_by_</code> is more consistent.</li></ul></li></ul></div>
+<ul><li>Migrated motifs to take census of network, node positions, and brokerage from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>, these include <code><a href="../reference/motif_node.html">node_by_tie()</a></code>, <code><a href="../reference/motif_node.html">node_by_triad()</a></code>, <code><a href="../reference/motif_node.html">node_by_quad()</a></code>, <code><a href="../reference/motif_node.html">node_by_path()</a></code>, <code><a href="../reference/motif_net.html">net_by_dyad()</a></code>, <code><a href="../reference/motif_net.html">net_by_triad()</a></code>, <code><a href="../reference/motif_net.html">net_by_mixed()</a></code>, <code><a href="../reference/motif_brokerage.html">node_by_brokerage()</a></code>, <code><a href="../reference/motif_brokerage.html">net_by_brokerage()</a></code><ul><li>Note that these functions were previously named <code>*_*_census()</code>, but the preposition <code>_by_</code> is more consistent.</li></ul></li>
+<li>
+<code><a href="../reference/defunct.html">node_tie_census()</a></code> now works on longitudinal network data</li>
+<li>Fixed bug where <code>print.node_motif()</code> wasn’t printing the requested number of lines</li>
+</ul></div>
 <div class="section level3">
 <h3 id="methods-1-0-0">Methods<a class="anchor" aria-label="anchor" href="#methods-1-0-0"></a></h3>
 <ul><li>Migrated methods from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Methods for equivalence clustering include <code><a href="../reference/cluster.html">cluster_hierarchical()</a></code> and <code><a href="../reference/cluster.html">cluster_concor()</a></code>
 </li>
 <li>Methods for selecting clusters include <code><a href="../reference/kselect.html">k_strict()</a></code>, <code><a href="../reference/kselect.html">k_elbow()</a></code>, and <code><a href="../reference/kselect.html">k_silhouette()</a></code>
 </li>
-</ul></li></ul></div>
+</ul></li>
+<li>Several improvements to <code><a href="../reference/cluster.html">cluster_concor()</a></code><ul><li>
+<code><a href="../reference/cluster.html">cluster_concor()</a></code> now uses <code><a href="../reference/correlation.html">to_correlation()</a></code> for initial correlation</li>
+<li>It still uses <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">stats::cor()</a></code> for subsequent iterations</li>
+<li>Fixed how <code><a href="../reference/cluster.html">cluster_concor()</a></code> handles unlabelled networks</li>
+<li>Fixed how <code><a href="../reference/cluster.html">cluster_concor()</a></code> handles two-mode networks</li>
+<li>Fixed bug where <code><a href="../reference/cluster.html">cluster_concor()</a></code> cutoff resulted in unsplit groups</li>
+</ul></li>
+<li>
+<code><a href="../reference/cluster.html">cluster_hierarchical()</a></code> now also uses <code><a href="../reference/correlation.html">to_correlation()</a></code>
+</li>
+</ul></div>
 <div class="section level3">
 <h3 id="data-1-0-0">Data<a class="anchor" aria-label="anchor" href="#data-1-0-0"></a></h3>
 <ul><li>Added <code>ison_greys</code> dataset, including some corrections to that published in <code>{networkdata}</code>
