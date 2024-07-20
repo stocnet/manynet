@@ -241,10 +241,45 @@ Force-directed layouts updates some initial placement of vertices
 through the operation of some system of metaphorically-physical forces.
 These might include attractive and repulsive forces.
 
-```{r forcedir, exercise=TRUE}
-(graphr(ison_southern_women, layout = "fr") + ggtitle("Fruchterman-Reingold") |
-graphr(ison_southern_women, layout = "kk") + ggtitle("Kamada-Kawai"))
+```{r forcedir, exercise=TRUE, fig.width=9}
+(graphr(ison_southern_women, layout = "kk") + ggtitle("Kamada-Kawai") |
+   graphr(ison_southern_women, layout = "fr") + ggtitle("Fruchterman-Reingold") |
+   graphr(ison_southern_women, layout = "stress") + ggtitle("Stress Minimisation"))
 ```
+
+The _Kamada-Kawai_ method inserts a spring between all pairs of vertices
+that is the length of the graph distance between them.
+This means that edges with a large weight will be longer. 
+KK offers a good layout for lattice-like networks,
+because it will try to space the network out evenly.
+
+The _Fruchterman-Reingold_ method uses an attractive force between directly connected vertices, 
+and a repulsive force between all vertex pairs. 
+The attractive force is proportional to the edge's weight, 
+thus edges with a large weight will be shorter. 
+FR offers a good baseline for most types of networks.
+
+The _Stress Minimisation_ method is related to the KK algorithm,
+but offers better runtime, quality, and stability and so is generally preferred.
+Indeed, `{manynet}` uses it as the default for most networks.
+It has the advantage of returning the same layout each time it is run on the same network.
+
+```{r layoutinterp-Q, echo=FALSE, purl = FALSE}
+question("Can we interpret the distance between nodes in force-directed layouts conclusively?",
+  answer("No",
+         correct = TRUE,
+         message = "That's right, they are illustrative and not to be used for hard conclusions."),
+  answer("Yes"),
+  allow_retry = FALSE
+)
+```
+
+Other force-directed layouts available include:
+
+- Simulated annealing (Davidson and Harel 1993): `"dh"`
+- Graph embedder (Frick et al. 1995): `"gem"`
+- Graphopt (Schmuhl): `"graphopt"`
+- Distributed recursive graph layout (Martin et al. 2008): `"drl"`
 
 ### Layered layouts
 
