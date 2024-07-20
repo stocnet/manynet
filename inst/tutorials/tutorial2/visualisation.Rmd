@@ -287,12 +287,29 @@ Layered layouts arrange nodes into horizontal (or vertical) layers,
 positioning them so that they reduce crossings.
 These layouts are best suited for directed acyclic graphs or similar.
 
-```{r layoutseg, exercise=TRUE}
-(graphr(ison_southern_women, layout = "bipartite") + ggtitle("Bipartite") |
-graphr(ison_southern_women, layout = "hierarchy") + ggtitle("Hierarchy")) /
-(graphr(ison_southern_women, layout = "railway") + ggtitle("Railway") |
-graphr(ison_southern_women, layout = "alluvial") + ggtitle("Alluvial"))
+```{r bipartite, exercise=TRUE, fig.width=9}
+(graphr(ison_southern_women, layout = "bipartite") + ggtitle("Bipartite")) /
+(graphr(ison_southern_women, layout = "hierarchy") + ggtitle("Hierarchy")) /
+(graphr(ison_southern_women, layout = "railway") + ggtitle("Railway"))
 ```
+
+Note that `"hierarchy"` and `"railway"` use a different algorithm to
+`{igraph}`'s `"bipartite"`, and generally performs better,
+especially where there are multiple layers.
+Whereas `"hierarchy"` tries to position nodes to minimise overlaps,
+`"railway"` sequences the nodes in each layer to a grid
+so that nodes are matched as far as possible.
+If you want to flip the horizontal and vertical,
+you could flip the coordinates, or use something like the following layout.
+
+```{r alluvial, exercise=TRUE, fig.align='center'}
+graphr(ison_southern_women, layout = "alluvial") + ggtitle("Alluvial")
+```
+
+Other layered layouts include:
+
+- Tree: `"tree"`
+- Dominance layouts
 
 ### Circular layouts
 
