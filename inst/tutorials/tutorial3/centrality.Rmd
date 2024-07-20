@@ -115,6 +115,19 @@ question("Are the row sums the same as the column sums?",
 )
 ```
 
+```{r degreeinterpQ, purl = FALSE}
+question("In what ways are higher degree nodes more 'central'?",
+         answer("They have more power than other nodes",
+                message = "Not necessarily"),
+         answer("They are more active than other nodes",
+                correct = TRUE, message = learnr::random_praise()),
+         answer("They would be located in the centre of the graph",
+                message = "Not necessarily"),
+         answer("They would be able to control information flow in the network",
+                message = "Not necessarily"),
+         allow_retry = TRUE,
+         random_answer_order = TRUE)
+```
 Often we are interested in the distribution of (degree) centrality in a network.
 `{migraph}` offers a way to get a pretty good first look at this distribution,
 though there are more elaborate ways to do this in base and grid graphics.
@@ -129,8 +142,18 @@ plot(node_degree(ison_brandes))
 ```
 
 What's plotted here by default is both the degree distribution as a histogram,
-as well as a density plot overlaid on it.
-What kind of shape does this have?
+as well as a density plot overlaid on it in red.
+
+```{r degdistshapeQ, purl = FALSE}
+question("What kind of shape does this degree distribution have?",
+         answer("Exponential"),
+         answer("Hard to tell",
+                correct = TRUE, message = learnr::random_praise()),
+         answer("Uniform"),
+         answer("Normal"),
+         allow_retry = TRUE,
+         random_answer_order = TRUE)
+```
 
 ### Other centralities
 
@@ -165,17 +188,42 @@ node_eigenvector(ison_brandes)
 node_betweenness(ison_brandes)
 node_closeness(ison_brandes)
 node_eigenvector(ison_brandes)
-# TASK: Can you create degree distributions for each of these?
 ```
 
 What is returned here are vectors of betweenness, closeness, and eigenvector scores
 for the nodes in the network.
 But what do they mean?
+
+```{r closeinterpQ, purl = FALSE}
+question("Why does a node with the smallest sum of geodesic distances to all other nodes be 'central'?",
+         answer("They have more power than other nodes",
+                message = "Not necessarily"),
+         answer("They can distribute a message to all other nodes in the network most quickly",
+                correct = TRUE, message = learnr::random_praise()),
+         answer("They would be located in the centre of the graph",
+                message = "Not necessarily"),
+         answer("They would be able to control information flow in the network",
+                message = "Not necessarily"),
+         allow_retry = TRUE,
+         random_answer_order = TRUE)
+```
+
+```{r betinterpQ, purl = FALSE}
+question("Why would a node lying 'between' many other nodes be 'central'?",
+         answer("They have more power than other nodes",
+                message = "Not necessarily"),
+         answer("They would be able to control information flow in the network",
+                correct = TRUE, message = learnr::random_praise()),
+         answer("They would be located in the centre of the graph",
+                message = "Not necessarily"),
+         answer("They can distribute a message to all other nodes in the network most quickly",
+                message = "Not necessarily"),
+         allow_retry = TRUE,
+         random_answer_order = TRUE)
+```
+
 Try to answer the following questions for yourself:
 
-- in what ways is a higher degree actor more 'central'?
-- can you explain why a node that has the smallest sum of geodesic distances to all other nodes is said to be 'central'?
-- why would an actor lying 'between' two other actors be 'central'?
 - what does Bonacich mean when he says that power and influence are not the same thing?
 - can you think of a real-world example when an actor might be central but not powerful, or powerful but not central?
 
