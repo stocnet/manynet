@@ -1,5 +1,5 @@
 ---
-title: "Community"
+title: "Cohesion and Community"
 author: "by James Hollway"
 output: 
   learnr::tutorial:
@@ -14,7 +14,6 @@ description: >
 library(learnr)
 library(patchwork)
 library(manynet)
-library(migraph)
 knitr::opts_chunk$set(echo = FALSE)
 
 friends <- to_uniplex(ison_algebra, "friends")
@@ -161,20 +160,20 @@ Because this is a directed network, we can calculate the density as:
 
 ```{r dens-explicit-solution}
 # calculating network density manually according to equation
-network_ties(tasks)/(network_nodes(tasks)*(network_nodes(tasks)-1))
+net_ties(tasks)/(net_nodes(tasks)*(net_nodes(tasks)-1))
 ```
 
-but we can also just use the `{migraph}` function...
+but we can also just use the `{manynet}` function...
 
 ```{r dens, exercise=TRUE, exercise.setup = "separatingnets", purl = FALSE}
 
 ```
 
 ```{r dens-solution}
-network_density(tasks)
+net_density(tasks)
 ```
 
-Note that the various measures in `{migraph}` print results to three decimal points
+Note that the various measures in `{manynet}` print results to three decimal points
 by default, but the underlying result retains the same recurrence.
 So same result...
 
@@ -188,11 +187,11 @@ question("Is this network's density high or low?",
 )
 ```
 
-### Closure
+## Closure
 
 Next let's calculate _reciprocity_ in the task network.
 While one could do this by hand,
-it's more efficient to do this using the `{migraph}` package.
+it's more efficient to do this using the `{manynet}` package.
 Can you guess the correct name of the function?
 
 ```{r recip, exercise=TRUE, exercise.setup = "separatingnets", purl = FALSE}
@@ -200,7 +199,7 @@ Can you guess the correct name of the function?
 ```
 
 ```{r recip-solution}
-network_reciprocity(tasks)
+net_reciprocity(tasks)
 # this function calculates the amount of reciprocity in the whole network
 ```
 
@@ -212,7 +211,7 @@ Again, can you guess the correct name of this function?
 ```
 
 ```{r trans-solution}
-network_transitivity(tasks)
+net_transitivity(tasks)
 # this function calculates the amount of transitivity in the whole network
 ```
 
@@ -237,11 +236,11 @@ question("What can we say about task closure in this network? Choose all that ap
 )
 ```
 
-### Components
+## Components
 
 Now let's look at the friendship network, 'friends'.
 We're interested here in how many _components_ there are.
-By default, the `network_components()` function will
+By default, the `net_components()` function will
 return the number of _strong_ components for directed networks.
 For _weak_ components, you will need to first make the network undirected.
 Remember the difference between weak and strong components?
@@ -260,7 +259,7 @@ question("Weak components...",
 ```
 
 ```{r comp-no-hint-1, purl = FALSE}
-network_components(friends)
+net_components(friends)
 # note that friends is a directed network
 # you can see this by calling the object 'friends'
 # or by running `manynet::is_directed(friends)`
@@ -271,13 +270,13 @@ network_components(friends)
 # Note: to_undirected() returns an object with all tie direction removed, 
 # so any pair of nodes with at least one directed edge 
 # will be connected by an undirected edge in the new network.
-network_components(to_undirected(friends))
+net_components(to_undirected(friends))
 ```
 
 ```{r comp-no-solution}
 # note that friends is a directed network
-network_components(friends)
-network_components(to_undirected(friends))
+net_components(friends)
+net_components(to_undirected(friends))
 ```
 
 ```{r comp-interp, echo = FALSE, purl = FALSE}
@@ -343,7 +342,7 @@ question("Why is there a difference between the weak and strong components resul
 )
 ```
 
-## Community Detection
+## Communities
 
 Ok, the friendship network has 3-4 components, but how many 'groups' are there?
 Just visually, it looks like there are two denser clusters within the main component.
@@ -387,7 +386,7 @@ There is no one single best community detection algorithm.
 Instead there are several, each with their strengths and weaknesses. 
 Since this is a rather small network, we'll focus on the following methods: 
 walktrap, edge betweenness, and fast greedy.
-(Others are included in `{migraph}`/`{igraph}`)
+(Others are included in `{manynet}`/`{igraph}`)
 As you use them, consider how they portray communities and consider which one(s) 
 afford a sensible view of the social world as cohesively organized.
 
@@ -448,7 +447,7 @@ which(friend_wt == 2)
 
 ```{r walk-hint-3, purl = FALSE}
 # resulting in a modularity of 
-network_modularity(friends, friend_wt)
+net_modularity(friends, friend_wt)
 ```
 
 ```{r walk-solution}
@@ -462,7 +461,7 @@ which(friend_wt == 1)
 # and the other 
 which(friend_wt == 2)
 # resulting in a modularity of 
-network_modularity(friends, friend_wt)
+net_modularity(friends, friend_wt)
 ```
 
 We can also visualise the clusters on the original network
@@ -494,9 +493,9 @@ graphr(friends,
        node_color = "walk_comm",
        node_group = "walk_comm") +
   ggtitle("Walktrap",
-    subtitle = round(network_modularity(friends, friend_wt), 3))
+    subtitle = round(net_modularity(friends, friend_wt), 3))
 # the function `round()` rounds the values to a specified number of decimal places
-# here, we are telling it to round the network_modularity score to 3 decimal places,
+# here, we are telling it to round the net_modularity score to 3 decimal places,
 # but the score is exactly 0.27 so only two decimal places are printed.
 ```
 
@@ -511,7 +510,7 @@ graphr(friends,
        node_color = "walk_comm",
        node_group = "walk_comm") +
   ggtitle("Walktrap",
-    subtitle = round(network_modularity(friends, friend_wt), 3))
+    subtitle = round(net_modularity(friends, friend_wt), 3))
 ```
 
 This can be helpful when polygons overlap to better identify membership
@@ -564,7 +563,7 @@ graphr(friends,
        node_color = "eb_comm",
        node_group = "eb_comm") +
   ggtitle("Edge-betweenness",
-    subtitle = round(network_modularity(friends, friend_eb), 3))
+    subtitle = round(net_modularity(friends, friend_eb), 3))
 ```
 
 ```{r ebplot-solution}
@@ -574,7 +573,7 @@ graphr(friends,
        node_color = "eb_comm",
        node_group = "eb_comm") +
   ggtitle("Edge-betweenness",
-    subtitle = round(network_modularity(friends, friend_eb), 3))
+    subtitle = round(net_modularity(friends, friend_eb), 3))
 ```
 
 For more on this algorithm, see M Newman and M Girvan: Finding and 
@@ -599,7 +598,7 @@ although I personally find it both useful and in many cases quite "accurate".
 ```{r fg-hint-1, purl = FALSE}
 friend_fg <- node_in_greedy(friends)
 friend_fg # Does this result in a different community partition?
-network_modularity(friends, friend_fg) # Compare this to the edge betweenness procedure
+net_modularity(friends, friend_fg) # Compare this to the edge betweenness procedure
 ```
 
 ```{r fg-hint-2, purl = FALSE}
@@ -610,14 +609,14 @@ graphr(friends,
        node_color = "fg_comm",
        node_group = "fg_comm") +
   ggtitle("Fast-greedy",
-    subtitle = round(network_modularity(friends, friend_fg), 3))
+    subtitle = round(net_modularity(friends, friend_fg), 3))
 # 
 ```
 
 ```{r fg-solution}
 friend_fg <- node_in_greedy(friends)
 friend_fg # Does this result in a different community partition?
-network_modularity(friends, friend_fg) # Compare this to the edge betweenness procedure
+net_modularity(friends, friend_fg) # Compare this to the edge betweenness procedure
 
 # Again, we can visualise these communities in different ways:
 friends <- friends %>% 
@@ -626,7 +625,7 @@ graphr(friends,
        node_color = "fg_comm",
        node_group = "fg_comm") +
   ggtitle("Fast-greedy",
-    subtitle = round(network_modularity(friends, friend_fg), 3))
+    subtitle = round(net_modularity(friends, friend_fg), 3))
 ```
 
 See A Clauset, MEJ Newman, C Moore: 
@@ -643,7 +642,9 @@ question("What is the difference between communities and components?",
          allow_retry = TRUE)
 ```
 
-## Two-mode network: Southern women
+## Projection
+
+### A two-mode network
 
 The next dataset, 'ison_southern_women', is also available in `{manynet}`.
 Let's load and graph the data.
@@ -744,22 +745,22 @@ Let's return to the question of cohesion.
 ```
 
 ```{r twomode-cohesion-hint-1, purl = FALSE}
-# network_equivalency(): Calculate equivalence or reinforcement in a (usually two-mode) network
+# net_equivalency(): Calculate equivalence or reinforcement in a (usually two-mode) network
 
-network_equivalency(ison_southern_women)
+net_equivalency(ison_southern_women)
 ```
 
 ```{r twomode-cohesion-hint-2, purl = FALSE}
-# network_transitivity(): Calculate transitivity in a network
+# net_transitivity(): Calculate transitivity in a network
 
-network_transitivity(women_graph)
-network_transitivity(event_graph)
+net_transitivity(women_graph)
+net_transitivity(event_graph)
 ```
 
 ```{r twomode-cohesion-solution}
-network_equivalency(ison_southern_women)
-network_transitivity(women_graph)
-network_transitivity(event_graph)
+net_equivalency(ison_southern_women)
+net_transitivity(women_graph)
+net_transitivity(event_graph)
 ```
 
 What do we learn from this?
