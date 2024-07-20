@@ -317,20 +317,41 @@ Circular layouts arrange nodes around (potentially concentric) circles,
 such that crossings are minimised and adjacent nodes are located close together.
 In some cases, location or layer can be specified by attribute or mode.
 
-```{r circular, exercise=TRUE}
+```{r circular, exercise=TRUE, fig.align='center'}
 graphr(ison_southern_women, layout = "concentric") + ggtitle("Concentric")
 ```
 
-### Other layouts
+Other such layouts include:
 
-Other layouts include:
+- circular: `"circle"`
+- sphere: `"sphere"`
+- star: `"star"`
+- arc or linear layouts: `"linear"`
 
-- spectral layouts
-- grid layouts
-- orthogonal layouts
-- tree layouts
-- arc layouts
-- dominance layouts
+### Spectral layouts
+
+Spectral layouts arrange nodes according to the eigenvalues 
+of the Laplacian matrix of a graph.
+These layouts tend to exaggerate clustering of like-nodes and the
+separation of less similar nodes in two-dimensional space.
+
+```{r eigen, exercise=TRUE, fig.align='center'}
+graphr(ison_southern_women, layout = "eigen") + ggtitle("Eigenvector")
+```
+
+Somewhat similar are multidimensional scaling techniques,
+that visualise the similarity between nodes in terms of their proximity
+in a two-dimensional (or more) space.
+
+```{r mds, exercise=TRUE, fig.align='center'}
+graphr(ison_southern_women, layout = "mds") + ggtitle("Multidimensional Scaling")
+graphr(ison_southern_women, layout = "mds") + ggtitle("Multidimensional Scaling")
+```
+
+Other such layouts include:
+
+- Pivot multidimensional scaling: `"pmds"`
+
 
 ## Colors
 
