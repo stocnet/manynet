@@ -9,20 +9,26 @@ https://blog.schochastics.net/posts/2021-09-15_animating-network-evolutions-with
 \usage{
 grapht(
   tlist,
+  keep_isolates = TRUE,
   layout,
   labels = TRUE,
   node_color,
+  node_colour,
   node_shape,
   node_size,
   edge_color,
+  edge_colour,
   edge_size,
-  keep_isolates = TRUE,
   ...
 )
 }
 \arguments{
 \item{tlist}{The same migraph-compatible network listed according to
 a time attribute, waves, or slices.}
+
+\item{keep_isolates}{Logical, whether to keep isolate nodes in the graph.
+TRUE by default.
+If FALSE, removes nodes from each frame they are isolated in.}
 
 \item{layout}{An igraph, ggraph, or manynet layout algorithm.
 If not declared, defaults to "triad" for networks with 3 nodes,
@@ -51,7 +57,7 @@ in data or vector with the same length as nodes.}
 \item{labels}{Logical, whether to print node names
 as labels if present.}
 
-\item{node_color}{Node variable to be used for coloring the nodes.
+\item{node_color, node_colour}{Node variable to be used for coloring the nodes.
 It is easiest if this is added as a node attribute to
 the graph before plotting.
 Nodes can also be colored by declaring a color instead.}
@@ -68,7 +74,7 @@ it is recommended to calculate all node-related statistics prior
 to using this function.
 Nodes can also be sized by declaring a numeric size or vector instead.}
 
-\item{edge_color}{Tie variable to be used for coloring the nodes.
+\item{edge_color, edge_colour}{Tie variable to be used for coloring the nodes.
 It is easiest if this is added as an edge or tie attribute
 to the graph before plotting.
 Edges can also be colored by declaring a color instead.}
@@ -79,10 +85,6 @@ Since this function expects this to be an existing variable,
 it is recommended to calculate all edge-related statistics prior
 to using this function.
 Edges can also be sized by declaring a numeric size or vector instead.}
-
-\item{keep_isolates}{Logical, whether to keep isolate nodes in the graph.
-TRUE by default.
-If FALSE, removes nodes from each frame they are isolated in.}
 
 \item{...}{Extra arguments to pass on to the layout algorithm, if necessary.}
 }

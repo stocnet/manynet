@@ -62,7 +62,7 @@
 #'   it is recommended to calculate all node-related statistics prior
 #'   to using this function.
 #'   Nodes can also be sized by declaring a numeric size or vector instead.
-#' @param node_color Node variable to be used for coloring the nodes.
+#' @param node_color,node_colour Node variable to be used for coloring the nodes.
 #'   It is easiest if this is added as a node attribute to
 #'   the graph before plotting.
 #'   Nodes can also be colored by declaring a color instead.
@@ -72,7 +72,7 @@
 #'   Group variables should have a minimum of 3 nodes,
 #'   if less, number groups will be reduced by
 #'   merging categories with lower counts into one called "other".
-#' @param edge_color Tie variable to be used for coloring the nodes.
+#' @param edge_color,edge_colour Tie variable to be used for coloring the nodes.
 #'   It is easiest if this is added as an edge or tie attribute 
 #'   to the graph before plotting.
 #'   Edges can also be colored by declaring a color instead.
@@ -104,8 +104,8 @@
 #' #           edge_size = tie_closeness(ison_karateka))
 #' @export
 graphr <- function(.data, layout, labels = TRUE,
-                       node_color, node_shape, node_size, node_group,
-                       edge_color, edge_size, ...) {
+                   node_color, node_colour, node_shape, node_size, node_group,
+                   edge_color, edge_colour, edge_size, ...) {
   g <- as_tidygraph(.data)
   if (missing(layout)) {
     if (length(g) == 3 | length(g) == 4) {
@@ -114,9 +114,13 @@ graphr <- function(.data, layout, labels = TRUE,
       layout <- "hierarchy"
     } else layout <- "stress"
   }
-  #if (methods::hasArg(node_colour)) node_color <- node_colour
-  if (missing(node_color)) node_color <- NULL else
+  if (missing(node_color) && missing(node_colour)) {
+    node_color <- NULL
+  } else if (missing(node_color)) {
+    node_color <- as.character(substitute(node_colour))
+  } else {
     node_color <- as.character(substitute(node_color))
+  }
   if (missing(node_shape)) node_shape <- NULL else
     node_shape <- as.character(substitute(node_shape))
   if (missing(node_size)) node_size <- NULL else if (!is.numeric(node_size)) {
@@ -127,9 +131,13 @@ graphr <- function(.data, layout, labels = TRUE,
     g <- activate(g, "nodes") %>%
       mutate(node_group = reduce_categories(g, node_group))
   }
-  #if (methods::hasArg(edge_colour)) edge_color <- edge_colour
-  if (missing(edge_color)) edge_color <- NULL else
+  if (missing(edge_color) && missing(edge_colour)) {
+    edge_color <- NULL
+  } else if (missing(edge_color)) {
+    edge_color <- as.character(substitute(edge_colour))
+  } else {
     edge_color <- as.character(substitute(edge_color))
+  }
   if (missing(edge_size)) edge_size <- NULL else if (!is.numeric(edge_size)) {
     edge_size <- as.character(substitute(edge_size))
   }
@@ -787,9 +795,10 @@ order_alphabetically <- function(v) {
 #' #             edge_size = "weekly_meetings")
 #' #grapht(play_diffusion(ison_adolescents, seeds = 5))
 #' @export
-grapht <- function(tlist, layout, labels = TRUE,
-                       node_color, node_shape, node_size,
-                       edge_color, edge_size, keep_isolates = TRUE, ...) {
+grapht <- function(tlist, keep_isolates = TRUE,
+                   layout, labels = TRUE,
+                   node_color, node_colour, node_shape, node_size,
+                   edge_color, edge_colour, edge_size, ...) {
   thisRequires("gganimate")
   thisRequires("gifski")
   thisRequires("png")
@@ -804,15 +813,25 @@ grapht <- function(tlist, layout, labels = TRUE,
       layout <- "hierarchy"
     } else layout <- "stress"
   }
-  if (missing(node_color)) node_color <- NULL else
+  if (missing(node_color) && missing(node_colour)) {
+    node_color <- NULL
+  } else if (missing(node_color)) {
+    node_color <- as.character(substitute(node_colour))
+  } else {
     node_color <- as.character(substitute(node_color))
+  }
   if (missing(node_shape)) node_shape <- NULL else
     node_shape <- as.character(substitute(node_shape))
   if (missing(node_size)) node_size <- NULL else if (!is.numeric(node_size)) {
     node_size <- as.character(substitute(node_size))
   }
-  if (missing(edge_color)) edge_color <- NULL else
+  if (missing(edge_color) && missing(edge_colour)) {
+    edge_color <- NULL
+  } else if (missing(edge_color)) {
+    edge_color <- as.character(substitute(edge_colour))
+  } else {
     edge_color <- as.character(substitute(edge_color))
+  }
   if (missing(edge_size)) edge_size <- NULL else if (!is.numeric(edge_size)) {
     edge_size <- as.character(substitute(edge_size))
   }
