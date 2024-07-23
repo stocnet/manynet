@@ -478,7 +478,7 @@ graphr <- function(.data, layout, labels = TRUE,
                                            shape = nshape)
         }
       } else {
-        p <- p + ggraph::geom_node_point(aes(size = nsize, shape = nshape))
+        p <- p + ggraph::geom_node_point(size = nsize, shape = nshape)
       }
     }
   }
