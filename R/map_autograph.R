@@ -114,6 +114,7 @@ graphr <- function(.data, layout, labels = TRUE,
       layout <- "hierarchy"
     } else layout <- "stress"
   }
+  #if (methods::hasArg(node_colour)) node_color <- node_colour
   if (missing(node_color)) node_color <- NULL else
     node_color <- as.character(substitute(node_color))
   if (missing(node_shape)) node_shape <- NULL else
@@ -125,7 +126,8 @@ graphr <- function(.data, layout, labels = TRUE,
     node_group <- as.character(substitute(node_group))
     g <- activate(g, "nodes") %>%
       mutate(node_group = reduce_categories(g, node_group))
-    }
+  }
+  #if (methods::hasArg(edge_colour)) edge_color <- edge_colour
   if (missing(edge_color)) edge_color <- NULL else
     edge_color <- as.character(substitute(edge_color))
   if (missing(edge_size)) edge_size <- NULL else if (!is.numeric(edge_size)) {
@@ -712,14 +714,25 @@ graphs <- function(netlist, waves,
     gs <- lapply(1:length(netlist), function(i)
       graphr(netlist[[i]], x = x, y = y, ...) + ggtitle(names(netlist)[i]))
   } else {
-    message("Layouts were not standardised since not all nodes appear across waves.")
-    gs <- lapply(1:length(netlist), function(i)
-      graphr(netlist[[i]], ...) + ggtitle(names(netlist)[i]))
+    if (!methods::hasArg("layout") & all(order_alphabetically(names(netlist)) ==
+            order_alphabetically(unique(unlist(unname(lapply(netlist, node_names))))))) {
+      gs <- lapply(1:length(netlist), function(i)
+        graphr(netlist[[i]], layout = "star", center = names(netlist)[[i]], ...) + 
+          ggtitle(names(netlist)[i]))
+    } else {
+      message("Layouts were not standardised since not all nodes appear across waves.")  
+      gs <- lapply(1:length(netlist), function(i)
+        graphr(netlist[[i]], ...) + ggtitle(names(netlist)[i]))
+    }
   }
   # if (all(c("Infected", "Exposed", "Recovered") %in% names(gs[[1]]$data))) {
   #   gs <- .collapse_guides(gs)
   # }
   do.call(patchwork::wrap_plots, c(gs, list(guides = "collect")))
+}
+
+order_alphabetically <- function(v) {
+  v[order(names(stats::setNames(v, v)))]
 }
 
 # Dynamic networks ####
