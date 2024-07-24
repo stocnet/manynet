@@ -27,7 +27,7 @@ A progress bar is shown if it takes some time to encoding all the
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.3</span>
       </span>
     </div>
 
@@ -87,14 +87,16 @@ attributes are changing.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">grapht</span><span class="op">(</span></span>
 <span>  <span class="va">tlist</span>,</span>
+<span>  keep_isolates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">layout</span>,</span>
 <span>  labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">node_color</span>,</span>
+<span>  <span class="va">node_colour</span>,</span>
 <span>  <span class="va">node_shape</span>,</span>
 <span>  <span class="va">node_size</span>,</span>
 <span>  <span class="va">edge_color</span>,</span>
+<span>  <span class="va">edge_colour</span>,</span>
 <span>  <span class="va">edge_size</span>,</span>
-<span>  keep_isolates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -110,6 +112,12 @@ attributes are changing.</p>
 <dl><dt id="arg-tlist">tlist<a class="anchor" aria-label="anchor" href="#arg-tlist"></a></dt>
 <dd><p>The same migraph-compatible network listed according to
 a time attribute, waves, or slices.</p></dd>
+
+
+<dt id="arg-keep-isolates">keep_isolates<a class="anchor" aria-label="anchor" href="#arg-keep-isolates"></a></dt>
+<dd><p>Logical, whether to keep isolate nodes in the graph.
+TRUE by default.
+If FALSE, removes nodes from each frame they are isolated in.</p></dd>
 
 
 <dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
@@ -143,7 +151,7 @@ in data or vector with the same length as nodes.</p></dd>
 as labels if present.</p></dd>
 
 
-<dt id="arg-node-color">node_color<a class="anchor" aria-label="anchor" href="#arg-node-color"></a></dt>
+<dt id="arg-node-color-node-colour">node_color, node_colour<a class="anchor" aria-label="anchor" href="#arg-node-color-node-colour"></a></dt>
 <dd><p>Node variable to be used for coloring the nodes.
 It is easiest if this is added as a node attribute to
 the graph before plotting.
@@ -166,7 +174,7 @@ to using this function.
 Nodes can also be sized by declaring a numeric size or vector instead.</p></dd>
 
 
-<dt id="arg-edge-color">edge_color<a class="anchor" aria-label="anchor" href="#arg-edge-color"></a></dt>
+<dt id="arg-edge-color-edge-colour">edge_color, edge_colour<a class="anchor" aria-label="anchor" href="#arg-edge-color-edge-colour"></a></dt>
 <dd><p>Tie variable to be used for coloring the nodes.
 It is easiest if this is added as an edge or tie attribute
 to the graph before plotting.
@@ -180,12 +188,6 @@ Since this function expects this to be an existing variable,
 it is recommended to calculate all edge-related statistics prior
 to using this function.
 Edges can also be sized by declaring a numeric size or vector instead.</p></dd>
-
-
-<dt id="arg-keep-isolates">keep_isolates<a class="anchor" aria-label="anchor" href="#arg-keep-isolates"></a></dt>
-<dd><p>Logical, whether to keep isolate nodes in the graph.
-TRUE by default.
-If FALSE, removes nodes from each frame they are isolated in.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

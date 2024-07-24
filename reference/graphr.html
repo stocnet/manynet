@@ -35,7 +35,7 @@ See e.g. theme_iheid() for more.'><meta property="og:image" content="https://sto
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.3</span>
       </span>
     </div>
 
@@ -106,10 +106,12 @@ See e.g. <code><a href="themes.html">theme_iheid()</a></code> for more.</p>
 <span>  <span class="va">layout</span>,</span>
 <span>  labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">node_color</span>,</span>
+<span>  <span class="va">node_colour</span>,</span>
 <span>  <span class="va">node_shape</span>,</span>
 <span>  <span class="va">node_size</span>,</span>
 <span>  <span class="va">node_group</span>,</span>
 <span>  <span class="va">edge_color</span>,</span>
+<span>  <span class="va">edge_colour</span>,</span>
 <span>  <span class="va">edge_size</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -154,7 +156,7 @@ in data or vector with the same length as nodes.</p></dd>
 as labels if present.</p></dd>
 
 
-<dt id="arg-node-color">node_color<a class="anchor" aria-label="anchor" href="#arg-node-color"></a></dt>
+<dt id="arg-node-color-node-colour">node_color, node_colour<a class="anchor" aria-label="anchor" href="#arg-node-color-node-colour"></a></dt>
 <dd><p>Node variable to be used for coloring the nodes.
 It is easiest if this is added as a node attribute to
 the graph before plotting.
@@ -186,7 +188,7 @@ if less, number groups will be reduced by
 merging categories with lower counts into one called "other".</p></dd>
 
 
-<dt id="arg-edge-color">edge_color<a class="anchor" aria-label="anchor" href="#arg-edge-color"></a></dt>
+<dt id="arg-edge-color-edge-colour">edge_color, edge_colour<a class="anchor" aria-label="anchor" href="#arg-edge-color-edge-colour"></a></dt>
 <dd><p>Tie variable to be used for coloring the nodes.
 It is easiest if this is added as an edge or tie attribute
 to the graph before plotting.
@@ -230,7 +232,6 @@ The last plot can be saved to the file system using <code><a href="https://ggplo
 <span class="r-in"><span>  <span class="fu"><a href="add_ties.html">mutate_ties</a></span><span class="op">(</span>ecolor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"friends"</span>, <span class="st">"acquaintances"</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu">graphr</span><span class="op">(</span>node_color <span class="op">=</span> <span class="st">"color"</span>, node_size <span class="op">=</span> <span class="st">"size"</span>,</span></span>
 <span class="r-in"><span>             edge_size <span class="op">=</span> <span class="fl">1.5</span>, edge_color <span class="op">=</span> <span class="st">"ecolor"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Please make sure you spelled `edge_size` variable correctly.</span>
 <span class="r-plt img"><img src="graphr-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co">#graphr(ison_lotr, node_color = Race,</span></span></span>
 <span class="r-in"><span><span class="co">#           node_size = node_degree(ison_lotr)*2,</span></span></span>
