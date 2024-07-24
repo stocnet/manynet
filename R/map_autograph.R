@@ -740,10 +740,11 @@ graphs <- function(netlist, waves,
 }
 
 is_ego_network <- function(nlist) {
-  if (unique(names(nlist)) != "") {
+  if (all(unique(names(nlist)) != "")) {
+    length(names(nlist)) == length(unique(unlist(unname(lapply(nlist, node_names))))) &
     all(order_alphabetically(names(nlist)) ==
           order_alphabetically(unique(unlist(unname(lapply(nlist, node_names))))))
-  } else return(FALSE)
+  } else FALSE
 }
 
 order_alphabetically <- function(v) {
