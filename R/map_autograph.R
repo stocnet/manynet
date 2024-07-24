@@ -104,8 +104,9 @@
 #' #           edge_size = tie_closeness(ison_karateka))
 #' @export
 graphr <- function(.data, layout, labels = TRUE,
-                   node_color, node_colour, node_shape, node_size, node_group,
-                   edge_color, edge_colour, edge_size, ...) {
+                   node_color, node_shape, node_size, node_group,
+                   edge_color, edge_size, ...,
+                   node_colour, edge_colour) {
   g <- as_tidygraph(.data)
   if (missing(layout)) {
     if (length(g) == 3 | length(g) == 4) {
@@ -722,8 +723,7 @@ graphs <- function(netlist, waves,
     gs <- lapply(1:length(netlist), function(i)
       graphr(netlist[[i]], x = x, y = y, ...) + ggtitle(names(netlist)[i]))
   } else {
-    if (!methods::hasArg("layout") & all(order_alphabetically(names(netlist)) ==
-            order_alphabetically(unique(unlist(unname(lapply(netlist, node_names))))))) {
+    if (!methods::hasArg("layout") & is_ego_network(netlist)) {
       gs <- lapply(1:length(netlist), function(i)
         graphr(netlist[[i]], layout = "star", center = names(netlist)[[i]], ...) + 
           ggtitle(names(netlist)[i]))
@@ -737,6 +737,14 @@ graphs <- function(netlist, waves,
   #   gs <- .collapse_guides(gs)
   # }
   do.call(patchwork::wrap_plots, c(gs, list(guides = "collect")))
+}
+
+is_ego_network <- function(nlist) {
+  if (all(unique(names(nlist)) != "")) {
+    length(names(nlist)) == length(unique(unlist(unname(lapply(nlist, node_names))))) &
+    all(order_alphabetically(names(nlist)) ==
+          order_alphabetically(unique(unlist(unname(lapply(nlist, node_names))))))
+  } else FALSE
 }
 
 order_alphabetically <- function(v) {
@@ -797,8 +805,9 @@ order_alphabetically <- function(v) {
 #' @export
 grapht <- function(tlist, keep_isolates = TRUE,
                    layout, labels = TRUE,
-                   node_color, node_colour, node_shape, node_size,
-                   edge_color, edge_colour, edge_size, ...) {
+                   node_color, node_shape, node_size,
+                   edge_color, edge_size, ...,
+                   node_colour, edge_colour) {
   thisRequires("gganimate")
   thisRequires("gifski")
   thisRequires("png")
