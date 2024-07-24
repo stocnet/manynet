@@ -99,11 +99,18 @@ plot.matrix <- function(x, ..., membership = NULL) {
   } else {
     blocked_data <- manynet::as_matrix(x)
   }
-
-  plot_data <- as.data.frame(blocked_data) %>%
-    dplyr::mutate(Var1 = rownames(blocked_data)) %>%
-    tidyr::pivot_longer(!.data[["Var1"]], names_to = "Var2", values_to = "value")
-  g <- ggplot2::ggplot(plot_data, ggplot2::aes(.data[["Var2"]], .data[["Var1"]])) +
+  
+  plot_data <- as_edgelist(blocked_data)
+  if(!is_labelled(x)){
+    plot_data$from <- paste0("N", plot_data$from)
+    plot_data$to <- paste0("N", plot_data$to)
+  }
+  all_nodes <- expand.grid(node_names(blocked_data), 
+                            node_names(blocked_data))
+  all_nodes <- data.frame(from = all_nodes$Var1, to = all_nodes$Var2,
+                          weight = 0)
+  plot_data <- rbind(plot_data, all_nodes) %>% dplyr::distinct(from, to, .keep_all = TRUE)
+  g <- ggplot2::ggplot(plot_data, ggplot2::aes(to, from)) +
     ggplot2::theme_grey(base_size = 9) +
     ggplot2::labs(x = "", y = "") +
     ggplot2::theme(
@@ -119,12 +126,13 @@ plot.matrix <- function(x, ..., membership = NULL) {
         colour = "grey50"
       )
     ) +
-    ggplot2::geom_tile(ggplot2::aes(fill = .data[["value"]]),
+    # ggplot2::geom_tile(ggplot2::aes(fill = .data[["value"]]),
+    ggplot2::geom_tile(ggplot2::aes(fill = weight),
                        colour = "white"
     )
 
   # Color for signed networks
-  if (manynet::is_signed(x)) {
+  if (is_signed(x)) {
     g <- g +
       ggplot2::scale_fill_gradient2(high = "#003049",
         mid = "white",
@@ -138,7 +146,7 @@ plot.matrix <- function(x, ..., membership = NULL) {
   }
 
   # Structure for multimodal networks
-  if (!manynet::is_twomode(x)) {
+  if (!is_twomode(x)) {
     g <- g +
       ggplot2::scale_x_discrete(expand = c(0, 0), position = "top",
                                 limits = colnames(blocked_data)
@@ -147,6 +155,7 @@ plot.matrix <- function(x, ..., membership = NULL) {
                                 limits = rev(rownames(blocked_data))
       )
     if (!is.null(membership))
+      if(!is.numeric(membership)) membership <- as.numeric(as.factor(membership))
       g <- g + ggplot2::geom_vline(
         xintercept = c(1 + which(diff(membership[order(membership)]) != 0))
         - .5,
