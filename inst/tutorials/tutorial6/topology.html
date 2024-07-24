@@ -112,6 +112,7 @@ if (window.hljs) {
 
 <div id="section-overview" class="section level2">
 <h2>Overview</h2>
+<p><img src="https://64.media.tumblr.com/tumblr_lvpgquhGbq1r54h4xo1_400.gif"/></p>
 <p>In this tutorial, we’ll explore:</p>
 <ul>
 <li>how to create or generate different network topologies</li>
@@ -123,6 +124,7 @@ lattices, random, small-world, scale-free, and core-periphery networks.
 These ideal networks exaggerate centrality, cohesion, and randomness
 features, and are thus great for theory-building and investigating the
 relationship between rules and structure.</p>
+<p><img src="https://media.tenor.com/images/e26e64a8cce94a6ee491f0ddeecc8b88/tenor.gif"/></p>
 <p>In this practical, we’re going to create/generate a number of
 ideal-typical network topologies and plot them. We’ll first look at some
 deterministic algorithms for <em>creating</em> networks of different
@@ -397,10 +399,8 @@ data-lines="0" data-pipe="|&gt;">
 (graphr(generate_scalefree(50, 1.5)) +
     ggtitle(&quot;Scalefree 3 graph&quot;, subtitle = &quot;Power = 1.5&quot;))</code></pre>
 </div>
-<p>You can also test whether a network has a degree distribution that
-fits the scale-free model. When a Kolmogorov-Smirnov test p-value less
-than 0.05 is implied, a message is given that you should reject the
-hypothesis that a power law fits here. With an alpha/power-law exponent
+<p>You can also the degree to which a network has a degree distribution
+that fits a power-law distribution. With an alpha/power-law exponent
 between 2 and 3, one generally cannot reject the hypothesis that the
 observed data comes from a power-law distribution.</p>
 <div class="tutorial-exercise" data-label="scaleftest"
@@ -461,12 +461,17 @@ status?</p>
 <div class="tutorial-exercise" data-label="gnet" data-completion="1"
 data-diagnostics="1" data-startover="1" data-lines="0"
 data-pipe="|&gt;">
+<pre class="text"><code>lawfirm &lt;- to_undirected(ison_lawfirm) |&gt; to_uniplex(&quot;friends&quot;)</code></pre>
 <script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
 </div>
 <div class="tutorial-exercise-support" data-label="gnet-solution"
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
-<pre class="text"><code>graphr(ison_lawfirm, node_color = &quot;school&quot;)</code></pre>
+<pre class="text"><code>lawfirm &lt;- to_undirected(ison_lawfirm) |&gt; to_uniplex(&quot;friends&quot;)
+graphr(lawfirm, node_color = &quot;school&quot;, edge_color = &quot;darkgray&quot;)
+graphr(lawfirm, node_color = &quot;gender&quot;, edge_color = &quot;darkgray&quot;)
+graphr(lawfirm, node_color = &quot;office&quot;, edge_color = &quot;darkgray&quot;)
+graphr(lawfirm, node_color = &quot;practice&quot;, edge_color = &quot;darkgray&quot;)</code></pre>
 </div>
 <p>Next, let’s assign nodes to the core and periphery blocks using the
 <code>node_is_core()</code> function. It works pretty straightforwardly.
@@ -481,12 +486,12 @@ data-pipe="|&gt;">
 <div class="tutorial-exercise-support" data-label="nodecore-solution"
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
-<pre class="text"><code>ison_lawfirm %&gt;% 
-  mutate(nc = node_is_core(ison_lawfirm)) %&gt;% 
-  graphr(node_color = &quot;nc&quot;)</code></pre>
+<pre class="text"><code>lawfirm %&gt;% 
+  mutate(nc = node_is_core()) %&gt;% 
+  graphr(node_color = &quot;nc&quot;, edge_color = &quot;gray&quot;)</code></pre>
 </div>
-<p>This graph suggests that there might even be two cores here, one on
-the left and one on the right.</p>
+<p>This graph suggests that there is a core and a periphery. There might
+even be two cores here, one on the left and one on the right.</p>
 <p>But is it really all that much of a core-periphery structure? We can
 establish how correlated our network is compared to a core-periphery
 model of the same dimension using <code>net_core()</code>.</p>
@@ -498,7 +503,7 @@ data-pipe="|&gt;">
 <div class="tutorial-exercise-support" data-label="netcore-solution"
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
-<pre class="text"><code>net_core(ison_lawfirm, node_is_core(ison_lawfirm))</code></pre>
+<pre class="text"><code>net_core(lawfirm, node_is_core(lawfirm))</code></pre>
 </div>
 <div class="panel panel-default tutorial-question-container">
 <div data-label="corecorr-qa" class="tutorial-question panel-body">
@@ -521,12 +526,21 @@ status.</p>
 <div class="tutorial-exercise" data-label="chisq" data-completion="1"
 data-diagnostics="1" data-startover="1" data-lines="0"
 data-pipe="|&gt;">
+<pre class="text"><code>chisq.test(as.factor(node_is_core(lawfirm)), 
+           as.factor(node_attribute(lawfirm, &quot;gender&quot;)))</code></pre>
 <script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
 </div>
 <div class="tutorial-exercise-support" data-label="chisq-solution"
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
-<pre class="text"><code>chisq.test(node_is_core(ison_lawfirm), node_attribute(ison_lawfirm, &quot;Gender&quot;))</code></pre>
+<pre class="text"><code>chisq.test(as.factor(node_is_core(lawfirm)), 
+           as.factor(node_attribute(lawfirm, &quot;gender&quot;)))
+chisq.test(as.factor(node_is_core(lawfirm)), 
+           as.factor(node_attribute(lawfirm, &quot;office&quot;)))
+chisq.test(as.factor(node_is_core(lawfirm)), 
+           as.factor(node_attribute(lawfirm, &quot;school&quot;)))
+chisq.test(as.factor(node_is_core(lawfirm)), 
+           as.factor(node_attribute(lawfirm, &quot;practice&quot;)))</code></pre>
 </div>
 <div class="panel panel-default tutorial-question-container">
 <div data-label="chisq-qa" class="tutorial-question panel-body">
@@ -547,14 +561,10 @@ data-lines="0" data-pipe="|&gt;">
 <div class="tutorial-exercise" data-label="nodecoren"
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>lawfirm %&gt;% 
+  mutate(ncn = node_coreness()) %&gt;% 
+  graphr(node_color = &quot;ncn&quot;)</code></pre>
 <script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
-</div>
-<div class="tutorial-exercise-support" data-label="nodecoren-solution"
-data-completion="1" data-diagnostics="1" data-startover="1"
-data-lines="0" data-pipe="|&gt;">
-<pre class="text"><code>ison_lawfirm %&gt;% 
-  mutate(ncn = node_coreness(ison_lawfirm)) %&gt;% 
-  graphr(node_color = &quot;ncn&quot;) + scale_colour_sdgs()</code></pre>
 </div>
 <div class="panel panel-default tutorial-question-container">
 <div data-label="dich-qa" class="tutorial-question panel-body">
@@ -593,8 +603,9 @@ data-lines="0" data-pipe="|&gt;">
 <pre class="text"><code>net_connectedness(ison_adolescents)</code></pre>
 </div>
 <p>This measure gets at the proportion of dyads that can reach each
-other in the network. Another way to get at this would be to see how
-many components there are in the network.</p>
+other in the network. In this case, the proportion is 1, i.e. all nodes
+can reach every other node. Another way to get at this would be to see
+how many components there are in the network.</p>
 <div class="panel panel-default tutorial-question-container">
 <div data-label="connect-qa" class="tutorial-question panel-body">
 <div id="connect-qa-answer_container" class="shiny-html-output"></div>
@@ -694,7 +705,7 @@ data-pipe="|&gt;">
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
 <pre class="text"><code>ison_adolescents |&gt; mutate_ties(coh = tie_cohesion(ison_adolescents)) |&gt; 
-  graphr(edge_color = &quot;coh&quot;)</code></pre>
+  graphr(edge_size = &quot;coh&quot;)</code></pre>
 </div>
 <p>Where would you target your efforts if you wanted to fragment this
 network? 
@@ -934,27 +945,27 @@ learnr:::store_exercise_cache(structure(list(label = "tree", global_setup = stru
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "lat-qa", question = structure("Why are lattices considered highly clustered?", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_36b794", 
+"character")), answers = list(structure(list(id = "lnr_ans_6159416", 
     option = "Because neighbours are likely also neighbours of each other", 
     value = "Because neighbours are likely also neighbours of each other", 
     label = structure("Because neighbours are likely also neighbours of each other", html = TRUE, class = c("html", 
-    "character")), correct = TRUE, message = structure("Smashing!", html = TRUE, class = c("html", 
+    "character")), correct = TRUE, message = structure("You should be proud.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_da257b6", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_97b4a3a", 
     option = "Because all nodes are directly connected to each other", 
     value = "Because all nodes are directly connected to each other", 
     label = structure("Because all nodes are directly connected to each other", html = TRUE, class = c("html", 
-    "character")), correct = FALSE, message = structure("That’s okay: you learn more from mistakes than successes. Let’s do it one more time.", html = TRUE, class = c("html", 
-    "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_d43452e", 
-    option = "Because there is a single component", value = "Because there is a single component", 
-    label = structure("Because there is a single component", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = structure("Try it again. You get better each time.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_a6b10ce", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_32b5a94", 
+    option = "Because there is a single component", value = "Because there is a single component", 
+    label = structure("Because there is a single component", html = TRUE, class = c("html", 
+    "character")), correct = FALSE, message = structure("That’s okay: you learn more from mistakes than successes. Let’s do it one more time.", html = TRUE, class = c("html", 
+    "character")), type = "literal"), class = c("tutorial_question_answer", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_7ca83b1", 
     option = "Because there is a single community", value = "Because there is a single community", 
     label = structure("Because there is a single community", html = TRUE, class = c("html", 
-    "character")), correct = FALSE, message = structure("Give it another try.", html = TRUE, class = c("html", 
+    "character")), correct = FALSE, message = structure("Try it again; next time’s the charm!", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
 "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
 "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
@@ -963,7 +974,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "lat-qa-answer", question = "lat-qa"), loading = NULL, 
-    random_answer_order = TRUE, allow_retry = TRUE, seed = 837326825.610089, 
+    random_answer_order = TRUE, allow_retry = TRUE, seed = 316898136.852433, 
     options = list()), class = c("learnr_radio", "tutorial_question"
 )), session = session)
 </script>
@@ -1443,13 +1454,13 @@ learnr:::store_exercise_cache(structure(list(label = "scaleftest", global_setup 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "corevcomm-qa", 
     question = structure("Can a single network have both a community structure and a core-periphery structure?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_253f23d", 
+    "character")), answers = list(structure(list(id = "lnr_ans_7004c84", 
         option = "No", value = "No", label = structure("No", html = TRUE, class = c("html", 
-        "character")), correct = FALSE, message = structure("Please try again.", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("That’s okay: you learn more from mistakes than successes. Let’s do it one more time.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_8406de8", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_7bcf845", 
         option = "Yes", value = "Yes", label = structure("Yes", html = TRUE, class = c("html", 
-        "character")), correct = TRUE, message = structure("Super job!", html = TRUE, class = c("html", 
+        "character")), correct = TRUE, message = structure("That’s right. For example, the core and periphery might represent two or more communities.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
     "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
@@ -1459,7 +1470,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "corevcomm-qa-answer", question = "corevcomm-qa"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 1697510865.20953, options = list()), class = c("learnr_radio", 
+    seed = 1772841799.67446, options = list()), class = c("learnr_radio", 
 "tutorial_question")), session = session)
 </script>
  
@@ -1494,9 +1505,9 @@ learnr:::store_exercise_cache(structure(list(label = "core", global_setup = stru
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))"
 ), chunk_opts = list(label = "setup", include = FALSE)), setup = NULL, 
     chunks = list(list(label = "core", code = "", opts = list(
-        label = "\"core\"", exercise = "TRUE", purl = "FALSE"), 
-        engine = "r")), code_check = NULL, error_check = NULL, 
-    check = NULL, solution = structure("(graphr(create_core(50)) + ggtitle(\"Core\"))", chunk_opts = list(
+        label = "\"core\"", exercise = "TRUE", purl = "FALSE", 
+        fig.width = "9"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure("(graphr(create_core(50)) + ggtitle(\"Core\"))", chunk_opts = list(
         label = "core-solution")), tests = NULL, options = list(
         eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
         tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
@@ -1506,15 +1517,15 @@ learnr:::store_exercise_cache(structure(list(label = "core", global_setup = stru
         autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
         fig.show = "asis", fig.align = "default", fig.path = "topology_files/figure-html/", 
         dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
-        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
-        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
-        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.width = 9, fig.height = 4, fig.env = "figure", fig.cap = NULL, 
+        fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 864, out.height = NULL, out.extra = NULL, 
         fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
         aniopts = "controls,loop", warning = TRUE, error = FALSE, 
         message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
         engine = "r", split = FALSE, include = TRUE, purl = FALSE, 
         max.print = 1000, label = "core", exercise = TRUE, code = "", 
-        out.width.px = 624, out.height.px = 384, params.src = "core, exercise=TRUE, purl = FALSE", 
+        out.width.px = 864, out.height.px = 384, params.src = "core, exercise=TRUE, purl = FALSE, fig.width=9", 
         fig.num = 0L, exercise.df_print = "paged", exercise.checker = "NULL"), 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
@@ -1550,29 +1561,34 @@ learnr:::store_exercise_cache(structure(list(label = "gnet", global_setup = stru
 "                                      \"Beau travail!\",", "                                      \"Bravo!\",", 
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))"
 ), chunk_opts = list(label = "setup", include = FALSE)), setup = NULL, 
-    chunks = list(list(label = "gnet", code = "", opts = list(
-        label = "\"gnet\"", exercise = "TRUE", purl = "FALSE"), 
-        engine = "r")), code_check = NULL, error_check = NULL, 
-    check = NULL, solution = structure("graphr(ison_lawfirm, node_color = \"school\")", chunk_opts = list(
-        label = "gnet-solution")), tests = NULL, options = list(
-        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
-        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
-        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
-        strip.white = TRUE, cache = 0, cache.path = "topology_cache/html/", 
-        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
-        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
-        fig.show = "asis", fig.align = "default", fig.path = "topology_files/figure-html/", 
+    chunks = list(list(label = "gnet", code = "lawfirm <- to_undirected(ison_lawfirm) |> to_uniplex(\"friends\")", 
+        opts = list(label = "\"gnet\"", exercise = "TRUE", purl = "FALSE", 
+            fig.width = "9"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure(c("lawfirm <- to_undirected(ison_lawfirm) |> to_uniplex(\"friends\")", 
+    "graphr(lawfirm, node_color = \"school\", edge_color = \"darkgray\")", 
+    "graphr(lawfirm, node_color = \"gender\", edge_color = \"darkgray\")", 
+    "graphr(lawfirm, node_color = \"office\", edge_color = \"darkgray\")", 
+    "graphr(lawfirm, node_color = \"practice\", edge_color = \"darkgray\")"
+    ), chunk_opts = list(label = "gnet-solution")), tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "topology_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "topology_files/figure-html/", 
         dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
-        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
-        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
-        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.width = 9, fig.height = 4, fig.env = "figure", fig.cap = NULL, 
+        fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 864, out.height = NULL, out.extra = NULL, 
         fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
         aniopts = "controls,loop", warning = TRUE, error = FALSE, 
         message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
         engine = "r", split = FALSE, include = TRUE, purl = FALSE, 
-        max.print = 1000, label = "gnet", exercise = TRUE, code = "", 
-        out.width.px = 624, out.height.px = 384, params.src = "gnet, exercise=TRUE, purl = FALSE", 
-        fig.num = 0L, exercise.df_print = "paged", exercise.checker = "NULL"), 
+        max.print = 1000, label = "gnet", exercise = TRUE, code = "lawfirm <- to_undirected(ison_lawfirm) |> to_uniplex(\"friends\")", 
+        out.width.px = 864, out.height.px = 384, params.src = "gnet, exercise=TRUE, purl = FALSE, fig.width=9", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
 </script>
@@ -1606,31 +1622,34 @@ learnr:::store_exercise_cache(structure(list(label = "nodecore", global_setup = 
 "learnr::random_phrases_add(language = \"en\", ", "                           praise = c(\"C'est génial!\",", 
 "                                      \"Beau travail!\",", "                                      \"Bravo!\",", 
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))"
-), chunk_opts = list(label = "setup", include = FALSE)), setup = NULL, 
-    chunks = list(list(label = "nodecore", code = "", opts = list(
-        label = "\"nodecore\"", exercise = "TRUE", purl = "FALSE"), 
+), chunk_opts = list(label = "setup", include = FALSE)), setup = "lawfirm <- to_undirected(ison_lawfirm) |> to_uniplex(\"friends\")", 
+    chunks = list(list(label = "gnet", code = "lawfirm <- to_undirected(ison_lawfirm) |> to_uniplex(\"friends\")", 
+        opts = list(label = "\"gnet\"", exercise = "TRUE", purl = "FALSE", 
+            fig.width = "9"), engine = "r"), list(label = "nodecore", 
+        code = "", opts = list(label = "\"nodecore\"", exercise = "TRUE", 
+            purl = "FALSE", fig.width = "9", exercise.setup = "\"gnet\""), 
         engine = "r")), code_check = NULL, error_check = NULL, 
-    check = NULL, solution = structure(c("ison_lawfirm %>% ", 
-    "  mutate(nc = node_is_core(ison_lawfirm)) %>% ", "  graphr(node_color = \"nc\")"
-    ), chunk_opts = list(label = "nodecore-solution")), tests = NULL, 
-    options = list(eval = FALSE, echo = TRUE, results = "markup", 
-        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
-        comment = NA, highlight = FALSE, size = "normalsize", 
-        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
-        cache.path = "topology_cache/html/", cache.vars = NULL, 
-        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
-        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
-        fig.align = "default", fig.path = "topology_files/figure-html/", 
+    check = NULL, solution = structure(c("lawfirm %>% ", "  mutate(nc = node_is_core()) %>% ", 
+    "  graphr(node_color = \"nc\", edge_color = \"gray\")"), chunk_opts = list(
+        label = "nodecore-solution")), tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "topology_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "topology_files/figure-html/", 
         dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
-        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
-        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
-        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.width = 9, fig.height = 4, fig.env = "figure", fig.cap = NULL, 
+        fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 864, out.height = NULL, out.extra = NULL, 
         fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
         aniopts = "controls,loop", warning = TRUE, error = FALSE, 
         message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
         engine = "r", split = FALSE, include = TRUE, purl = FALSE, 
         max.print = 1000, label = "nodecore", exercise = TRUE, 
-        code = "", out.width.px = 624, out.height.px = 384, params.src = "nodecore, exercise=TRUE, purl = FALSE", 
+        exercise.setup = "gnet", code = "", out.width.px = 864, 
+        out.height.px = 384, params.src = "nodecore, exercise=TRUE, purl = FALSE, fig.width=9, exercise.setup=\"gnet\"", 
         fig.num = 0L, exercise.df_print = "paged", exercise.checker = "NULL"), 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
@@ -1665,11 +1684,13 @@ learnr:::store_exercise_cache(structure(list(label = "netcore", global_setup = s
 "learnr::random_phrases_add(language = \"en\", ", "                           praise = c(\"C'est génial!\",", 
 "                                      \"Beau travail!\",", "                                      \"Bravo!\",", 
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))"
-), chunk_opts = list(label = "setup", include = FALSE)), setup = NULL, 
-    chunks = list(list(label = "netcore", code = "", opts = list(
-        label = "\"netcore\"", exercise = "TRUE", purl = "FALSE"), 
-        engine = "r")), code_check = NULL, error_check = NULL, 
-    check = NULL, solution = structure("net_core(ison_lawfirm, node_is_core(ison_lawfirm))", chunk_opts = list(
+), chunk_opts = list(label = "setup", include = FALSE)), setup = "lawfirm <- to_undirected(ison_lawfirm) |> to_uniplex(\"friends\")", 
+    chunks = list(list(label = "gnet", code = "lawfirm <- to_undirected(ison_lawfirm) |> to_uniplex(\"friends\")", 
+        opts = list(label = "\"gnet\"", exercise = "TRUE", purl = "FALSE", 
+            fig.width = "9"), engine = "r"), list(label = "netcore", 
+        code = "", opts = list(label = "\"netcore\"", exercise = "TRUE", 
+            purl = "FALSE", exercise.setup = "\"gnet\""), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = structure("net_core(lawfirm, node_is_core(lawfirm))", chunk_opts = list(
         label = "netcore-solution")), tests = NULL, options = list(
         eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
         tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
@@ -1687,7 +1708,8 @@ learnr:::store_exercise_cache(structure(list(label = "netcore", global_setup = s
         message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
         engine = "r", split = FALSE, include = TRUE, purl = FALSE, 
         max.print = 1000, label = "netcore", exercise = TRUE, 
-        code = "", out.width.px = 624, out.height.px = 384, params.src = "netcore, exercise=TRUE, purl = FALSE", 
+        exercise.setup = "gnet", code = "", out.width.px = 624, 
+        out.height.px = 384, params.src = "netcore, exercise=TRUE, purl = FALSE, exercise.setup=\"gnet\"", 
         fig.num = 0L, exercise.df_print = "paged", exercise.checker = "NULL"), 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
@@ -1696,30 +1718,30 @@ learnr:::store_exercise_cache(structure(list(label = "netcore", global_setup = s
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "corecorr-qa", 
     question = structure("What can we say about this correlation.", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_aef80a9", 
-        option = "It is a perfect positive relationship", value = "It is a perfect positive relationship", 
-        label = structure("It is a perfect positive relationship", html = TRUE, class = c("html", 
-        "character")), correct = FALSE, message = structure("Let’s try it again.", html = TRUE, class = c("html", 
-        "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_1f51c1c", 
-        option = "It is fairly strong", value = "It is fairly strong", 
-        label = structure("It is fairly strong", html = TRUE, class = c("html", 
-        "character")), correct = FALSE, message = structure("Try it again; next time’s the charm!", html = TRUE, class = c("html", 
-        "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_ab5645", 
-        option = "It is negative", value = "It is negative", 
-        label = structure("It is negative", html = TRUE, class = c("html", 
-        "character")), correct = FALSE, message = structure("Let’s try it again.", html = TRUE, class = c("html", 
-        "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_10bb23d", 
-        option = "There is absolutely no correlation", value = "There is absolutely no correlation", 
-        label = structure("There is absolutely no correlation", html = TRUE, class = c("html", 
+    "character")), answers = list(structure(list(id = "lnr_ans_933939c", 
+        option = "It is a perfect negative relationship", value = "It is a perfect negative relationship", 
+        label = structure("It is a perfect negative relationship", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("Please try again.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_53adc3f", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_3aef7cc", 
+        option = "It is fairly strong", value = "It is fairly strong", 
+        label = structure("It is fairly strong", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("Don’t give up now, try it one more time.", html = TRUE, class = c("html", 
+        "character")), type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_9240a44", 
+        option = "It is positive", value = "It is positive", 
+        label = structure("It is positive", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("Please try again.", html = TRUE, class = c("html", 
+        "character")), type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_85f73e6", 
+        option = "There is absolutely no correlation", value = "There is absolutely no correlation", 
+        label = structure("There is absolutely no correlation", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("Try it again; next time’s the charm!", html = TRUE, class = c("html", 
+        "character")), type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_6998d8a", 
         option = "None of the above", value = "None of the above", 
         label = structure("None of the above", html = TRUE, class = c("html", 
-        "character")), correct = TRUE, message = structure("Swell job!", html = TRUE, class = c("html", 
+        "character")), correct = TRUE, message = structure("Fantastic!", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
     "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
@@ -1729,7 +1751,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "corecorr-qa-answer", question = "corecorr-qa"), 
     loading = NULL, random_answer_order = FALSE, allow_retry = TRUE, 
-    seed = 519037133.258304, options = list()), class = c("learnr_radio", 
+    seed = 953808993.555848, options = list()), class = c("learnr_radio", 
 "tutorial_question")), session = session)
 </script>
 
@@ -1762,19 +1784,27 @@ learnr:::store_exercise_cache(structure(list(label = "chisq", global_setup = str
 "learnr::random_phrases_add(language = \"en\", ", "                           praise = c(\"C'est génial!\",", 
 "                                      \"Beau travail!\",", "                                      \"Bravo!\",", 
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))"
-), chunk_opts = list(label = "setup", include = FALSE)), setup = NULL, 
-    chunks = list(list(label = "chisq", code = "", opts = list(
-        label = "\"chisq\"", exercise = "TRUE", purl = "FALSE"), 
-        engine = "r")), code_check = NULL, error_check = NULL, 
-    check = NULL, solution = structure("chisq.test(node_is_core(ison_lawfirm), node_attribute(ison_lawfirm, \"Gender\"))", chunk_opts = list(
-        label = "chisq-solution")), tests = NULL, options = list(
-        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
-        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
-        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
-        strip.white = TRUE, cache = 0, cache.path = "topology_cache/html/", 
-        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
-        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
-        fig.show = "asis", fig.align = "default", fig.path = "topology_files/figure-html/", 
+), chunk_opts = list(label = "setup", include = FALSE)), setup = "lawfirm <- to_undirected(ison_lawfirm) |> to_uniplex(\"friends\")", 
+    chunks = list(list(label = "gnet", code = "lawfirm <- to_undirected(ison_lawfirm) |> to_uniplex(\"friends\")", 
+        opts = list(label = "\"gnet\"", exercise = "TRUE", purl = "FALSE", 
+            fig.width = "9"), engine = "r"), list(label = "chisq", 
+        code = "chisq.test(as.factor(node_is_core(lawfirm)), \n           as.factor(node_attribute(lawfirm, \"gender\")))", 
+        opts = list(label = "\"chisq\"", exercise = "TRUE", purl = "FALSE", 
+            exercise.setup = "\"gnet\""), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure(c("chisq.test(as.factor(node_is_core(lawfirm)), ", 
+    "           as.factor(node_attribute(lawfirm, \"gender\")))", 
+    "chisq.test(as.factor(node_is_core(lawfirm)), ", "           as.factor(node_attribute(lawfirm, \"office\")))", 
+    "chisq.test(as.factor(node_is_core(lawfirm)), ", "           as.factor(node_attribute(lawfirm, \"school\")))", 
+    "chisq.test(as.factor(node_is_core(lawfirm)), ", "           as.factor(node_attribute(lawfirm, \"practice\")))"
+    ), chunk_opts = list(label = "chisq-solution")), tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "topology_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "topology_files/figure-html/", 
         dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
         fig.width = 6.5, fig.height = 4, fig.env = "figure", 
         fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
@@ -1783,9 +1813,11 @@ learnr:::store_exercise_cache(structure(list(label = "chisq", global_setup = str
         aniopts = "controls,loop", warning = TRUE, error = FALSE, 
         message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
         engine = "r", split = FALSE, include = TRUE, purl = FALSE, 
-        max.print = 1000, label = "chisq", exercise = TRUE, code = "", 
-        out.width.px = 624, out.height.px = 384, params.src = "chisq, exercise=TRUE, purl=FALSE", 
-        fig.num = 0L, exercise.df_print = "paged", exercise.checker = "NULL"), 
+        max.print = 1000, label = "chisq", exercise = TRUE, exercise.setup = "gnet", 
+        code = c("chisq.test(as.factor(node_is_core(lawfirm)), ", 
+        "           as.factor(node_attribute(lawfirm, \"gender\")))"
+        ), out.width.px = 624, out.height.px = 384, params.src = "chisq, exercise=TRUE, purl=FALSE, exercise.setup=\"gnet\"", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
 </script>
@@ -1793,26 +1825,26 @@ learnr:::store_exercise_cache(structure(list(label = "chisq", global_setup = str
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "chisq-qa", question = structure("There a statistically significant association between the core assignment and…", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_27b5fa3", 
+"character")), answers = list(structure(list(id = "lnr_ans_cefe85", 
     option = "gender.", value = "gender.", label = structure("gender.", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = structure("Don’t give up now, try it one more time.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_574a08d", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_e2bd21f", 
     option = "office.", value = "office.", label = structure("office.", html = TRUE, class = c("html", 
-    "character")), correct = FALSE, message = structure("Try it again; next time’s the charm!", html = TRUE, class = c("html", 
+    "character")), correct = FALSE, message = structure("Don’t give up now, try it one more time.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_b66ede4", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_84e2f36", 
     option = "school.", value = "school.", label = structure("school.", html = TRUE, class = c("html", 
-    "character")), correct = FALSE, message = structure("Give it another try.", html = TRUE, class = c("html", 
+    "character")), correct = FALSE, message = structure("Try it again. I have a good feeling about this.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_824b6d8", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_4824580", 
     option = "practice.", value = "practice.", label = structure("practice.", html = TRUE, class = c("html", 
-    "character")), correct = FALSE, message = structure("But no need to fret, try it again.", html = TRUE, class = c("html", 
+    "character")), correct = FALSE, message = structure("Don’t give up now, try it one more time.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_457a50a", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_1d2bad5", 
     option = "none of the above variables.", value = "none of the above variables.", 
     label = structure("none of the above variables.", html = TRUE, class = c("html", 
-    "character")), correct = TRUE, message = structure("Delightful!", html = TRUE, class = c("html", 
+    "character")), correct = TRUE, message = structure("Impressive work!", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
 "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
 "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
@@ -1821,7 +1853,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "chisq-qa-answer", question = "chisq-qa"), loading = NULL, 
-    random_answer_order = FALSE, allow_retry = TRUE, seed = 586877525.226714, 
+    random_answer_order = FALSE, allow_retry = TRUE, seed = 247594612.384705, 
     options = list()), class = c("learnr_radio", "tutorial_question"
 )), session = session)
 </script>
@@ -1855,14 +1887,15 @@ learnr:::store_exercise_cache(structure(list(label = "nodecoren", global_setup =
 "learnr::random_phrases_add(language = \"en\", ", "                           praise = c(\"C'est génial!\",", 
 "                                      \"Beau travail!\",", "                                      \"Bravo!\",", 
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))"
-), chunk_opts = list(label = "setup", include = FALSE)), setup = NULL, 
-    chunks = list(list(label = "nodecoren", code = "", opts = list(
-        label = "\"nodecoren\"", exercise = "TRUE", purl = "FALSE"), 
-        engine = "r")), code_check = NULL, error_check = NULL, 
-    check = NULL, solution = structure(c("ison_lawfirm %>% ", 
-    "  mutate(ncn = node_coreness(ison_lawfirm)) %>% ", "  graphr(node_color = \"ncn\") + scale_colour_sdgs()"
-    ), chunk_opts = list(label = "nodecoren-solution")), tests = NULL, 
-    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+), chunk_opts = list(label = "setup", include = FALSE)), setup = "lawfirm <- to_undirected(ison_lawfirm) |> to_uniplex(\"friends\")", 
+    chunks = list(list(label = "gnet", code = "lawfirm <- to_undirected(ison_lawfirm) |> to_uniplex(\"friends\")", 
+        opts = list(label = "\"gnet\"", exercise = "TRUE", purl = "FALSE", 
+            fig.width = "9"), engine = "r"), list(label = "nodecoren", 
+        code = "lawfirm %>% \n  mutate(ncn = node_coreness()) %>% \n  graphr(node_color = \"ncn\")", 
+        opts = list(label = "\"nodecoren\"", exercise = "TRUE", 
+            purl = "FALSE", exercise.setup = "\"gnet\""), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = NULL, 
+    tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
         tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
         comment = NA, highlight = FALSE, size = "normalsize", 
         background = "#F7F7F7", strip.white = TRUE, cache = 0, 
@@ -1879,21 +1912,23 @@ learnr:::store_exercise_cache(structure(list(label = "nodecoren", global_setup =
         message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
         engine = "r", split = FALSE, include = TRUE, purl = FALSE, 
         max.print = 1000, label = "nodecoren", exercise = TRUE, 
-        code = "", out.width.px = 624, out.height.px = 384, params.src = "nodecoren, exercise=TRUE, purl = FALSE", 
-        fig.num = 0L, exercise.df_print = "paged", exercise.checker = "NULL"), 
+        exercise.setup = "gnet", code = c("lawfirm %>% ", "  mutate(ncn = node_coreness()) %>% ", 
+        "  graphr(node_color = \"ncn\")"), out.width.px = 624, 
+        out.height.px = 384, params.src = "nodecoren, exercise=TRUE, purl = FALSE, exercise.setup=\"gnet\"", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
 </script>
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "dich-qa", question = structure("Which has more than two classes/groups.", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_1c3fd92", 
+"character")), answers = list(structure(list(id = "lnr_ans_49b341c", 
     option = "node_coreness()", value = "node_coreness()", label = structure("node_coreness()", html = TRUE, class = c("html", 
-    "character")), correct = TRUE, message = structure("Spectacular job!", html = TRUE, class = c("html", 
+    "character")), correct = TRUE, message = structure("Bravo!", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_9bbd2ae", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_eee5685", 
     option = "node_is_core()", value = "node_is_core()", label = structure("node_is_core()", html = TRUE, class = c("html", 
-    "character")), correct = FALSE, message = structure("Give it another try.", html = TRUE, class = c("html", 
+    "character")), correct = FALSE, message = structure("But no need to fret, try it again.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
 "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
 "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
@@ -1902,7 +1937,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "dich-qa-answer", question = "dich-qa"), loading = NULL, 
-    random_answer_order = TRUE, allow_retry = TRUE, seed = 112806313.44747, 
+    random_answer_order = TRUE, allow_retry = TRUE, seed = 1335544467.37809, 
     options = list()), class = c("learnr_radio", "tutorial_question"
 )), session = session)
 </script>
@@ -1910,18 +1945,18 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "ness-qa", question = structure("Select the correct definitions:", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_668e0c9", 
+"character")), answers = list(structure(list(id = "lnr_ans_dca804e", 
     option = "The k-core of a network is a maximal subgraph in which each vertex has at least degree k.", 
     value = "The k-core of a network is a maximal subgraph in which each vertex has at least degree k.", 
     label = structure("The k-core of a network is a maximal subgraph in which each vertex has at least degree k.", html = TRUE, class = c("html", 
-    "character")), correct = TRUE, message = structure("Resplendent!", html = TRUE, class = c("html", 
+    "character")), correct = TRUE, message = structure("Someone knows what they’re doing :)", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_56a1bd2", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_cb65d70", 
     option = "The coreness of a node is k if it belongs to the k-core but not to the (k+1)-core.", 
     value = "The coreness of a node is k if it belongs to the k-core but not to the (k+1)-core.", 
     label = structure("The coreness of a node is k if it belongs to the k-core but not to the (k+1)-core.", html = TRUE, class = c("html", 
     "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_8189239", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_5ec1df6", 
     option = "The coreness of a node is equal to its degree.", 
     value = "The coreness of a node is equal to its degree.", 
     label = structure("The coreness of a node is equal to its degree.", html = TRUE, class = c("html", 
@@ -1934,7 +1969,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
 "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "ness-qa-answer", question = "ness-qa"), loading = NULL, 
-    random_answer_order = TRUE, allow_retry = TRUE, seed = 1035628334.01775, 
+    random_answer_order = TRUE, allow_retry = TRUE, seed = 351267504.336428, 
     options = list()), class = c("learnr_checkbox", "tutorial_question"
 )), session = session)
 </script>
@@ -1999,18 +2034,18 @@ learnr:::store_exercise_cache(structure(list(label = "connected", global_setup =
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "connect-qa", 
     question = structure("But counting the number of components instead of connectedness can overemphasise:", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_858b358", 
+    "character")), answers = list(structure(list(id = "lnr_ans_324891a", 
         option = "Isolates", value = "Isolates", label = structure("Isolates", html = TRUE, class = c("html", 
-        "character")), correct = TRUE, message = structure("Spectacular job!", html = TRUE, class = c("html", 
+        "character")), correct = TRUE, message = structure("Resplendent!", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_b58582d", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_fe4b145", 
         option = "Small components", value = "Small components", 
         label = structure("Small components", html = TRUE, class = c("html", 
-        "character")), correct = TRUE, message = structure("But no need to fret, try it again.", html = TRUE, class = c("html", 
+        "character")), correct = TRUE, message = structure("That’s okay: you learn more from mistakes than successes. Let’s do it one more time.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_bc9dc92", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_d997c50", 
         option = "Density", value = "Density", label = structure("Density", html = TRUE, class = c("html", 
-        "character")), correct = FALSE, message = structure("Try it again. Perseverence is the key to success.", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("Try it again; next time’s the charm!", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
     "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
@@ -2020,7 +2055,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "connect-qa-answer", question = "connect-qa"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 898163210.58176, options = list()), class = c("learnr_checkbox", 
+    seed = 732015123.659129, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")), session = session)
 </script>
 
@@ -2085,19 +2120,19 @@ learnr:::store_exercise_cache(structure(list(label = "cohesion", global_setup = 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "cohesion-qa", 
     question = structure("The result of this function represents…", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_91229a4", 
+    "character")), answers = list(structure(list(id = "lnr_ans_1132caa", 
         option = "the minimum number of nodes necessary to remove from the network to increase the number of components.", 
         value = "the minimum number of nodes necessary to remove from the network to increase the number of components.", 
         label = structure("the minimum number of nodes necessary to remove from the network to increase the number of components.", html = TRUE, class = c("html", 
-        "character")), correct = TRUE, message = structure("Very good!", html = TRUE, class = c("html", 
+        "character")), correct = TRUE, message = structure("Delightful!", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_a89b4e", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_dd5c92e", 
         option = "the number of strong components in the network.", 
         value = "the number of strong components in the network.", 
         label = structure("the number of strong components in the network.", html = TRUE, class = c("html", 
-        "character")), correct = FALSE, message = structure("Don’t give up now, try it one more time.", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("Let’s try it again.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_1429a03", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_d8d7796", 
         option = "the minimum number of ties necessary to remove from the network to increase the number of components.", 
         value = "the minimum number of ties necessary to remove from the network to increase the number of components.", 
         label = structure("the minimum number of ties necessary to remove from the network to increase the number of components.", html = TRUE, class = c("html", 
@@ -2111,21 +2146,21 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "cohesion-qa-answer", question = "cohesion-qa"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 1072220697.00071, options = list()), class = c("learnr_radio", 
+    seed = 1895891023.61716, options = list()), class = c("learnr_radio", 
 "tutorial_question")), session = session)
 </script>
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "res-qa", question = structure("The higher the minimum number of nodes to remove…", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_24e4869", 
+"character")), answers = list(structure(list(id = "lnr_ans_3df46c4", 
     option = "the more resilient is the network.", value = "the more resilient is the network.", 
     label = structure("the more resilient is the network.", html = TRUE, class = c("html", 
-    "character")), correct = TRUE, message = structure("That’s a first-class answer!", html = TRUE, class = c("html", 
+    "character")), correct = TRUE, message = structure("Smashing!", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_c08966f", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_a4fb545", 
     option = "the less resilient the network.", value = "the less resilient the network.", 
     label = structure("the less resilient the network.", html = TRUE, class = c("html", 
-    "character")), correct = FALSE, message = structure("Try it again. I have a good feeling about this.", html = TRUE, class = c("html", 
+    "character")), correct = FALSE, message = structure("That’s okay: you learn more from mistakes than successes. Let’s do it one more time.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
 "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
 "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
@@ -2134,7 +2169,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "res-qa-answer", question = "res-qa"), loading = NULL, 
-    random_answer_order = TRUE, allow_retry = TRUE, seed = 1887009423.12129, 
+    random_answer_order = TRUE, allow_retry = TRUE, seed = 383436151.821449, 
     options = list()), class = c("learnr_radio", "tutorial_question"
 )), session = session)
 </script>
@@ -2347,7 +2382,7 @@ learnr:::store_exercise_cache(structure(list(label = "tiecoh", global_setup = st
         label = "\"tiecoh\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r")), code_check = NULL, error_check = NULL, 
     check = NULL, solution = structure(c("ison_adolescents |> mutate_ties(coh = tie_cohesion(ison_adolescents)) |> ", 
-    "  graphr(edge_color = \"coh\")"), chunk_opts = list(label = "tiecoh-solution")), 
+    "  graphr(edge_size = \"coh\")"), chunk_opts = list(label = "tiecoh-solution")), 
     tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
         tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
         comment = NA, highlight = FALSE, size = "normalsize", 
@@ -2378,7 +2413,7 @@ learnr:::store_exercise_cache(structure(list(label = "tiecoh", global_setup = st
 <!--/html_preserve-->
 <!--html_preserve-->
 <script type="application/shiny-prerendered" data-context="execution_dependencies">
-{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84]}},"value":[{"type":"character","attributes":{},"value":["backports","base","bslib","cachem","checkmate","cli","coda","colorspace","commonmark","compiler","datasets","digest","dplyr","ellipsis","evaluate","fansi","farver","fastmap","fontawesome","generics","ggforce","ggplot2","ggraph","ggrepel","glue","graphics","graphlayouts","grDevices","grid","gridExtra","gtable","htmltools","htmlwidgets","httpuv","igraph","jquerylib","jsonlite","knitr","later","lattice","learnr","lifecycle","magrittr","manynet","markdown","MASS","memoise","methods","mime","minMSE","munsell","network","patchwork","pillar","pkgconfig","polyclip","promises","purrr","R6","Rcpp","rlang","rmarkdown","rprojroot","rstudioapi","sass","scales","shiny","statnet.common","stats","tibble","tidygraph","tidyr","tidyselect","tools","tweenr","utf8","utils","vctrs","viridis","viridisLite","withr","xfun","xtable","yaml"]},{"type":"character","attributes":{},"value":["1.5.0","4.4.1","0.7.0","1.1.0","2.3.1","3.6.3","0.19-4.1","2.1-0","1.9.1","4.4.1","4.4.1","0.6.36","1.1.4","0.3.2","0.24.0","1.0.6","2.1.2","1.2.0","0.5.2","0.1.3","0.4.2","3.5.1","2.2.1","0.9.5","1.7.0","4.4.1","1.1.1","4.4.1","4.4.1","2.3","0.3.5","0.5.8.1","1.6.4","1.6.15","2.0.3","0.1.4","1.8.8","1.48","1.3.2","0.22-6","0.11.5","1.0.4","2.0.3","1.0.1","1.13","7.3-60.2","2.0.1","4.4.1","0.12","0.5.1","0.5.1","1.18.2","1.2.0","1.9.0","2.0.3","1.10-6","1.3.0","1.0.2","2.5.1","1.0.13","1.1.4","2.27","2.0.4","0.16.0","0.4.9","1.3.0","1.8.1.1","4.9.0","4.4.1","3.2.1","1.3.1","1.3.1","1.2.1","4.4.1","2.0.3","1.2.4","4.4.1","0.6.5","0.6.5","0.4.2","3.0.0","0.46","1.8-4","2.3.9"]}]}]}
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84]}},"value":[{"type":"character","attributes":{},"value":["backports","base","bslib","cachem","checkmate","cli","coda","colorspace","commonmark","compiler","datasets","digest","dplyr","ellipsis","evaluate","fansi","farver","fastmap","fontawesome","generics","ggforce","ggplot2","ggraph","ggrepel","glue","graphics","graphlayouts","grDevices","grid","gridExtra","gtable","htmltools","htmlwidgets","httpuv","igraph","jquerylib","jsonlite","knitr","later","lattice","learnr","lifecycle","magrittr","manynet","markdown","MASS","memoise","methods","mime","minMSE","munsell","network","patchwork","pillar","pkgconfig","polyclip","promises","purrr","R6","Rcpp","rlang","rmarkdown","rprojroot","rstudioapi","sass","scales","shiny","statnet.common","stats","tibble","tidygraph","tidyr","tidyselect","tools","tweenr","utf8","utils","vctrs","viridis","viridisLite","withr","xfun","xtable","yaml"]},{"type":"character","attributes":{},"value":["1.5.0","4.4.1","0.7.0","1.1.0","2.3.1","3.6.3","0.19-4.1","2.1-0","1.9.1","4.4.1","4.4.1","0.6.36","1.1.4","0.3.2","0.24.0","1.0.6","2.1.2","1.2.0","0.5.2","0.1.3","0.4.2","3.5.1","2.2.1","0.9.5","1.7.0","4.4.1","1.1.1","4.4.1","4.4.1","2.3","0.3.5","0.5.8.1","1.6.4","1.6.15","2.0.3","0.1.4","1.8.8","1.48","1.3.2","0.22-6","0.11.5","1.0.4","2.0.3","1.0.4","1.13","7.3-60.2","2.0.1","4.4.1","0.12","0.5.1","0.5.1","1.18.2","1.2.0","1.9.0","2.0.3","1.10-6","1.3.0","1.0.2","2.5.1","1.0.13","1.1.4","2.27","2.0.4","0.16.0","0.4.9","1.3.0","1.8.1.1","4.9.0","4.4.1","3.2.1","1.3.1","1.3.1","1.2.1","4.4.1","2.0.3","1.2.4","4.4.1","0.6.5","0.6.5","0.4.2","3.0.0","0.46","1.8-4","2.3.9"]}]}]}
 </script>
 <!--/html_preserve-->
 </div>
