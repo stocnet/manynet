@@ -87,10 +87,11 @@ Note that while \verb{add_*()}/\verb{delete_*()} functions operate similarly as 
 }
 \details{
 Not all functions have methods available for all object classes.
-Below are the currently implemented S3 methods:
-
-\if{html}{\out{<div class="sourceCode {r, echo = FALSE, cache = TRUE}">}}\preformatted{knitr::kable(available_methods(c("add_nodes", "delete_nodes", "add_node_attribute")))
-}\if{html}{\out{</div>}}
+Below are the currently implemented S3 methods:\tabular{lrrr}{
+    \tab igraph \tab network \tab tbl_graph \cr
+   add_nodes \tab 1 \tab 1 \tab 1 \cr
+   delete_nodes \tab 1 \tab 0 \tab 0 \cr
+}
 }
 \examples{
   other <- create_filled(4) \%>\% mutate(name = c("A", "B", "C", "D"))

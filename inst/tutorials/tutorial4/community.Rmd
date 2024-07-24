@@ -457,9 +457,9 @@ friend_wt # note that it prints pretty, but underlying it is just a vector:
 
 # This says that dividing the graph into 2 communities maximises modularity,
 # one with the nodes 
-which(friend_wt == 1)
+which(friend_wt == "A")
 # and the other 
-which(friend_wt == 2)
+which(friend_wt == "B")
 # resulting in a modularity of 
 net_modularity(friends, friend_wt)
 ```

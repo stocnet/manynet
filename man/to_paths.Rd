@@ -61,10 +61,12 @@ if the data is unconnected, a forest of spanning trees.
 }
 \details{
 Not all functions have methods available for all object classes.
-Below are the currently implemented S3 methods:
-
-\if{html}{\out{<div class="sourceCode {r, echo = FALSE, cache = TRUE}">}}\preformatted{knitr::kable(available_methods(c("to_matching", "to_mentoring", "to_eulerian", "to_tree")))
-}\if{html}{\out{</div>}}
+Below are the currently implemented S3 methods:\tabular{lrrrrr}{
+    \tab data.frame \tab igraph \tab matrix \tab network \tab tbl_graph \cr
+   to_eulerian \tab 0 \tab 1 \tab 0 \tab 0 \tab 1 \cr
+   to_matching \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
+   to_mentoring \tab 0 \tab 1 \tab 0 \tab 0 \tab 1 \cr
+}
 }
 \section{\code{to_matching()}}{
 
