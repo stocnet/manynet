@@ -305,7 +305,8 @@ node_in_betweenness <- function(.data){
     manynet::as_igraph(.data)))
   out <- clust$membership
   out <- make_node_member(out, .data)
-  attr(out, "hc") <- stats::as.hclust(clust, use.modularity = TRUE)
+  attr(out, "hc") <- stats::as.hclust(clust, 
+                                      use.modularity = igraph::is_connected(.data))
   attr(out, "k") <- max(clust$membership)
   out
 }
@@ -327,11 +328,12 @@ node_in_betweenness <- function(.data){
 #' @export
 node_in_greedy <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  clust <- igraph::cluster_fast_greedy(manynet::as_igraph(.data))
+  clust <- igraph::cluster_fast_greedy(to_undirected(as_igraph(.data)))
   out <- clust$membership
   make_node_member(out, .data)
   out <- make_node_member(out, .data)
-  attr(out, "hc") <- stats::as.hclust(clust, use.modularity = TRUE)
+  attr(out, "hc") <- stats::as.hclust(clust, 
+                                      use.modularity = igraph::is_connected(.data))
   attr(out, "k") <- max(clust$membership)
   out
 }
@@ -353,7 +355,7 @@ node_in_greedy <- function(.data){
 #' @export
 node_in_eigen <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  clust <- igraph::cluster_leading_eigen(manynet::as_igraph(.data))
+  clust <- igraph::cluster_leading_eigen(as_igraph(.data))
   out <- clust$membership
   make_node_member(out, .data)
   out <- make_node_member(out, .data)
@@ -382,7 +384,8 @@ node_in_walktrap <- function(.data, times = 50){
   out <- clust$membership
   make_node_member(out, .data)
   out <- make_node_member(out, .data)
-  attr(out, "hc") <- stats::as.hclust(clust, use.modularity = TRUE)
+  attr(out, "hc") <- stats::as.hclust(clust, 
+                                      use.modularity = igraph::is_connected(.data))
   attr(out, "k") <- max(clust$membership)
   out
 }
