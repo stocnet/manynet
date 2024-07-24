@@ -62,7 +62,7 @@
 #'   it is recommended to calculate all node-related statistics prior
 #'   to using this function.
 #'   Nodes can also be sized by declaring a numeric size or vector instead.
-#' @param node_color Node variable to be used for coloring the nodes.
+#' @param node_color,node_colour Node variable to be used for coloring the nodes.
 #'   It is easiest if this is added as a node attribute to
 #'   the graph before plotting.
 #'   Nodes can also be colored by declaring a color instead.
@@ -72,7 +72,7 @@
 #'   Group variables should have a minimum of 3 nodes,
 #'   if less, number groups will be reduced by
 #'   merging categories with lower counts into one called "other".
-#' @param edge_color Tie variable to be used for coloring the nodes.
+#' @param edge_color,edge_colour Tie variable to be used for coloring the nodes.
 #'   It is easiest if this is added as an edge or tie attribute 
 #'   to the graph before plotting.
 #'   Edges can also be colored by declaring a color instead.
@@ -104,8 +104,8 @@
 #' #           edge_size = tie_closeness(ison_karateka))
 #' @export
 graphr <- function(.data, layout, labels = TRUE,
-                       node_color, node_shape, node_size, node_group,
-                       edge_color, edge_size, ...) {
+                   node_color, node_colour, node_shape, node_size, node_group,
+                   edge_color, edge_colour, edge_size, ...) {
   g <- as_tidygraph(.data)
   if (missing(layout)) {
     if (length(g) == 3 | length(g) == 4) {
@@ -114,8 +114,13 @@ graphr <- function(.data, layout, labels = TRUE,
       layout <- "hierarchy"
     } else layout <- "stress"
   }
-  if (missing(node_color)) node_color <- NULL else
+  if (missing(node_color) && missing(node_colour)) {
+    node_color <- NULL
+  } else if (missing(node_color)) {
+    node_color <- as.character(substitute(node_colour))
+  } else {
     node_color <- as.character(substitute(node_color))
+  }
   if (missing(node_shape)) node_shape <- NULL else
     node_shape <- as.character(substitute(node_shape))
   if (missing(node_size)) node_size <- NULL else if (!is.numeric(node_size)) {
@@ -125,9 +130,14 @@ graphr <- function(.data, layout, labels = TRUE,
     node_group <- as.character(substitute(node_group))
     g <- activate(g, "nodes") %>%
       mutate(node_group = reduce_categories(g, node_group))
-    }
-  if (missing(edge_color)) edge_color <- NULL else
+  }
+  if (missing(edge_color) && missing(edge_colour)) {
+    edge_color <- NULL
+  } else if (missing(edge_color)) {
+    edge_color <- as.character(substitute(edge_colour))
+  } else {
     edge_color <- as.character(substitute(edge_color))
+  }
   if (missing(edge_size)) edge_size <- NULL else if (!is.numeric(edge_size)) {
     edge_size <- as.character(substitute(edge_size))
   }
@@ -473,11 +483,12 @@ graphr <- function(.data, layout, labels = TRUE,
             ggplot2::scale_colour_manual(values = colorsafe_palette, 
                                          guide = ggplot2::guide_legend(""))
         } else {
-          p <- p + ggraph::geom_node_point(aes(color = node_color,
-                                           size = nsize, shape = nshape))
+          p <- p + ggraph::geom_node_point(color = node_color,
+                                           size = nsize,
+                                           shape = nshape)
         }
       } else {
-        p <- p + ggraph::geom_node_point(aes(size = nsize, shape = nshape))
+        p <- p + ggraph::geom_node_point(size = nsize, shape = nshape)
       }
     }
   }
@@ -607,12 +618,13 @@ graphr <- function(.data, layout, labels = TRUE,
 
 check_edge_variables <- function(g, edge_color, edge_size) {
   if (!is.null(edge_color)) {
-    if (any(!tolower(edge_color) %in% tolower(igraph::edge_attr_names(g)))) {
+    if (any(!tolower(edge_color) %in% tolower(igraph::edge_attr_names(g))) &
+        any(!edge_color %in% grDevices::colors())) {
       message("Please make sure you spelled `edge_color` variable correctly.")
     } 
   }
   if (!is.null(edge_size)) {
-    if (any(!tolower(edge_size) %in% tolower(igraph::edge_attr_names(g)))) {
+    if (!is.numeric(edge_size) & any(!tolower(edge_size) %in% tolower(igraph::edge_attr_names(g)))) {
       message("Please make sure you spelled `edge_size` variable correctly.")
     } 
   }
@@ -620,12 +632,13 @@ check_edge_variables <- function(g, edge_color, edge_size) {
 
 check_node_variables <- function(g, node_color, node_size) {
   if (!is.null(node_color)) {
-    if (any(!tolower(node_color) %in% tolower(igraph::vertex_attr_names(g)))) {
+    if (any(!tolower(node_color) %in% tolower(igraph::vertex_attr_names(g))) &
+        any(!node_color %in% grDevices::colors())) {
       message("Please make sure you spelled `node_color` variable correctly.")
     } 
   }
   if (!is.null(node_size)) {
-    if (any(!tolower(node_size) %in% tolower(igraph::vertex_attr_names(g)))) {
+    if (!is.numeric(node_size) & any(!tolower(node_size) %in% tolower(igraph::vertex_attr_names(g)))) {
       message("Please make sure you spelled `node_size` variable correctly.")
     }
   }
@@ -709,14 +722,25 @@ graphs <- function(netlist, waves,
     gs <- lapply(1:length(netlist), function(i)
       graphr(netlist[[i]], x = x, y = y, ...) + ggtitle(names(netlist)[i]))
   } else {
-    message("Layouts were not standardised since not all nodes appear across waves.")
-    gs <- lapply(1:length(netlist), function(i)
-      graphr(netlist[[i]], ...) + ggtitle(names(netlist)[i]))
+    if (!methods::hasArg("layout") & all(order_alphabetically(names(netlist)) ==
+            order_alphabetically(unique(unlist(unname(lapply(netlist, node_names))))))) {
+      gs <- lapply(1:length(netlist), function(i)
+        graphr(netlist[[i]], layout = "star", center = names(netlist)[[i]], ...) + 
+          ggtitle(names(netlist)[i]))
+    } else {
+      message("Layouts were not standardised since not all nodes appear across waves.")  
+      gs <- lapply(1:length(netlist), function(i)
+        graphr(netlist[[i]], ...) + ggtitle(names(netlist)[i]))
+    }
   }
   # if (all(c("Infected", "Exposed", "Recovered") %in% names(gs[[1]]$data))) {
   #   gs <- .collapse_guides(gs)
   # }
   do.call(patchwork::wrap_plots, c(gs, list(guides = "collect")))
+}
+
+order_alphabetically <- function(v) {
+  v[order(names(stats::setNames(v, v)))]
 }
 
 # Dynamic networks ####
@@ -771,9 +795,10 @@ graphs <- function(netlist, waves,
 #' #             edge_size = "weekly_meetings")
 #' #grapht(play_diffusion(ison_adolescents, seeds = 5))
 #' @export
-grapht <- function(tlist, layout, labels = TRUE,
-                       node_color, node_shape, node_size,
-                       edge_color, edge_size, keep_isolates = TRUE, ...) {
+grapht <- function(tlist, keep_isolates = TRUE,
+                   layout, labels = TRUE,
+                   node_color, node_colour, node_shape, node_size,
+                   edge_color, edge_colour, edge_size, ...) {
   thisRequires("gganimate")
   thisRequires("gifski")
   thisRequires("png")
@@ -788,15 +813,25 @@ grapht <- function(tlist, layout, labels = TRUE,
       layout <- "hierarchy"
     } else layout <- "stress"
   }
-  if (missing(node_color)) node_color <- NULL else
+  if (missing(node_color) && missing(node_colour)) {
+    node_color <- NULL
+  } else if (missing(node_color)) {
+    node_color <- as.character(substitute(node_colour))
+  } else {
     node_color <- as.character(substitute(node_color))
+  }
   if (missing(node_shape)) node_shape <- NULL else
     node_shape <- as.character(substitute(node_shape))
   if (missing(node_size)) node_size <- NULL else if (!is.numeric(node_size)) {
     node_size <- as.character(substitute(node_size))
   }
-  if (missing(edge_color)) edge_color <- NULL else
+  if (missing(edge_color) && missing(edge_colour)) {
+    edge_color <- NULL
+  } else if (missing(edge_color)) {
+    edge_color <- as.character(substitute(edge_colour))
+  } else {
     edge_color <- as.character(substitute(edge_color))
+  }
   if (missing(edge_size)) edge_size <- NULL else if (!is.numeric(edge_size)) {
     edge_size <- as.character(substitute(edge_size))
   }

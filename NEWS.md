@@ -1,3 +1,17 @@
+# manynet 1.0.3
+
+## Mapping
+
+- Fixed #73 "node_color" mapping issue with `graphr()`
+- Fixed issues with variable name warnings in `graphr()`
+- Fixed #76 numeric "node_size" issues with `graphr()` function
+- Closed #66 so `graphs()` automatically uses "star" layout to plot ego networks
+- Fixed #41 so arguments for `graphr()`, `graphs()`, and `grapht()` also accept British spellings
+
+## Memberships
+
+- Fixed bugs in hierarchical community detection algorithms for unconnected networks
+
 # manynet 1.0.2
 
 ## Package
