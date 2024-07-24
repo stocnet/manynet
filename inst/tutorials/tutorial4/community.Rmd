@@ -146,13 +146,38 @@ What (else) can we say about these three networks?
 
 ## Cohesion
 
-Let's concentrate on the task network for now and calculate a few basic
-measures of cohesion: 
+Let's concentrate on the **task** network for now and calculate a few basic measures of cohesion: 
 density, reciprocity, transitivity, and components.
 
 ### Density
 
-Because this is a directed network, we can calculate the density as:
+Density represents a generalised measure of cohesion,
+characterising how cohesive the network is in terms of how many
+potential ties (i.e. dyads) are actualised.
+Recall that there are different equations depending on the type of network.
+Below are three equations:
+
+$$A: \frac{|T|}{|N|(|N|-1)}$$
+$$B: \frac{2|T|}{|N|(|N|-1)}$$
+$$C: \frac{|T|}{|N||M|}$$
+
+where $|T|$ is the number of ties in the network,
+and $|N|$ and $|M|$ are the number of nodes in the first and second mode respectively.
+
+```{r densq, echo=FALSE, purl = FALSE}
+question("Which equation is used for measuring density for a directed network:",
+         answer("A",
+                correct = TRUE,
+                message = learnr::random_praise()),
+         answer("B",
+                message = "This is the equation for an undirected network."),
+         answer("C",
+                message = "This is the equation for a two-mode network."),
+        allow_retry = TRUE
+)
+```
+
+
 
 ```{r dens-explicit, exercise=TRUE, exercise.setup = "separatingnets", purl = FALSE}
 
@@ -178,14 +203,18 @@ by default, but the underlying result retains the same recurrence.
 So same result...
 
 ```{r dens-qa, echo=FALSE, purl = FALSE}
-question("Is this network's density high or low?",
+question("Is this network's density high or low in absolute terms?",
          answer("High",
                 message = "The closer the value is to 1, the more dense the network and the more cohesive the network is as a whole."),
          answer("Low",
                 correct = TRUE,
-                message = "The closer the value is to 0, the sparser the network and the less cohesive the network is as a whole.")
+                message = "The closer the value is to 0, the sparser the network and the less cohesive the network is as a whole. But this is still quite typical density for a relatively small, social network like this one."),
+        allow_retry = TRUE
 )
 ```
+
+Density offers an important baseline measure for characterising
+the network as a whole.
 
 ## Closure
 
