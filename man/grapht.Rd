@@ -13,13 +13,13 @@ grapht(
   layout,
   labels = TRUE,
   node_color,
-  node_colour,
   node_shape,
   node_size,
   edge_color,
-  edge_colour,
   edge_size,
-  ...
+  ...,
+  node_colour,
+  edge_colour
 )
 }
 \arguments{
