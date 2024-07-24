@@ -723,8 +723,7 @@ graphs <- function(netlist, waves,
     gs <- lapply(1:length(netlist), function(i)
       graphr(netlist[[i]], x = x, y = y, ...) + ggtitle(names(netlist)[i]))
   } else {
-    if (!methods::hasArg("layout") & all(order_alphabetically(names(netlist)) ==
-            order_alphabetically(unique(unlist(unname(lapply(netlist, node_names))))))) {
+    if (!methods::hasArg("layout") & is_ego_network(netlist)) {
       gs <- lapply(1:length(netlist), function(i)
         graphr(netlist[[i]], layout = "star", center = names(netlist)[[i]], ...) + 
           ggtitle(names(netlist)[i]))
@@ -738,6 +737,13 @@ graphs <- function(netlist, waves,
   #   gs <- .collapse_guides(gs)
   # }
   do.call(patchwork::wrap_plots, c(gs, list(guides = "collect")))
+}
+
+is_ego_network <- function(nlist) {
+  if (unique(names(nlist)) != "") {
+    all(order_alphabetically(names(nlist)) ==
+          order_alphabetically(unique(unlist(unname(lapply(nlist, node_names))))))
+  } else return(FALSE)
 }
 
 order_alphabetically <- function(v) {
