@@ -102,8 +102,13 @@ plot.matrix <- function(x, ..., membership = NULL) {
   
   plot_data <- as_edgelist(blocked_data)
   if(!is_labelled(x)){
-    plot_data$from <- paste0("N", plot_data$from)
-    plot_data$to <- paste0("N", plot_data$to)
+    indices <- c(plot_data$from,plot_data$to)
+    plot_data$from <- paste0("N", gsub("\\s", "0", 
+                                       format(plot_data$from, 
+                                              width=max(nchar(indices)))))
+    plot_data$to <- paste0("N", gsub("\\s", "0", 
+                                     format(plot_data$to, 
+                                            width=max(nchar(indices)))))
   }
   all_nodes <- expand.grid(node_names(blocked_data), 
                             node_names(blocked_data))
