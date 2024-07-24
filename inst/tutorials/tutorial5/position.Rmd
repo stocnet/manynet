@@ -15,6 +15,9 @@ library(learnr)
 library(manynet)
 library(patchwork)
 knitr::opts_chunk$set(echo = FALSE)
+friends <- to_uniplex(ison_algebra, "friends")
+social <- to_uniplex(ison_algebra, "social")
+tasks <- to_uniplex(ison_algebra, "tasks")
 ```
 
 
@@ -275,24 +278,24 @@ both outgoing and incoming ties, to characterise their relationships to tie part
 ```
 
 ```{r construct-cor-hint-1, purl = FALSE}
-# Let's use the node_tie_census() function
+# Let's use the node_by_tie() function
 # The function accepts an object such as a dataset
 # Hint: Which dataset are we using in this tutorial?
-node_tie_census(____)
+node_by_tie(____)
 ```
 
 ```{r construct-cor-hint-2, purl = FALSE}
-node_tie_census(ison_algebra)
+node_by_tie(ison_algebra)
 ```
 
 ```{r construct-cor-hint-3, purl = FALSE}
 # Now, let's get the dimensions of an object via the dim() function
-dim(node_tie_census(ison_algebra))
+dim(node_by_tie(ison_algebra))
 ```
 
 ```{r construct-cor-solution}
-node_tie_census(ison_algebra)
-dim(node_tie_census(ison_algebra))
+node_by_tie(ison_algebra)
+dim(node_by_tie(ison_algebra))
 ```
 
 We can see that the result is a matrix of 16 rows
@@ -308,7 +311,7 @@ what would you do if you wanted it to be binary?
 
 ```{r construct-binary-hint, purl = FALSE}
 # we could convert the result using as.matrix, returning the ties 
-as.matrix((node_tie_census(ison_algebra)>0)+0)
+as.matrix((node_by_tie(ison_algebra)>0)+0)
 
 ```
 
@@ -317,16 +320,16 @@ as.matrix((node_tie_census(ison_algebra)>0)+0)
 # Note that this also reduces the total number of possible paths between nodes
 ison_algebra %>%
   select_ties(-type) %>%
-  node_tie_census()
+  node_by_tie()
 ```
 
-Note that `node_tie_census()` does not need to be passed to `node_in_structural()` ---
+Note that `node_by_tie()` does not need to be passed to `node_in_structural()` ---
 this is done automatically!
 However, the more generic `node_in_equivalence()` is available and can be used with whichever tie census is desired.
 Feel free to explore using some of the other censuses available in `{manynet}`,
 though some common ones are already used in the other equivalence convenience functions,
-e.g. `node_triad_census()` in `node_in_regular()` 
-and `node_path_census()` in `node_in_automorphic()`.
+e.g. `node_by_triad()` in `node_in_regular()` 
+and `node_by_path()` in `node_in_automorphic()`.
 
 ### Step two: growing a tree of similarity
 
@@ -515,14 +518,14 @@ but this can be tweaked by assigning some other summary statistic as `FUN = `.
 ```
 
 ```{r summ-hint, purl = FALSE}
-# Let's wrap node_tie_census inside the summary() function
+# Let's wrap node_by_tie inside the summary() function
 # and pass it a membership result
-summary(node_tie_census(____),
+summary(node_by_tie(____),
         membership = ____)
 ```
 
 ```{r summ-solution}
-summary(node_tie_census(alge),
+summary(node_by_tie(alge),
         membership = node_in_structural(alge))
 ```
 
