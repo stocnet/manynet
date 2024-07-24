@@ -104,8 +104,9 @@
 #' #           edge_size = tie_closeness(ison_karateka))
 #' @export
 graphr <- function(.data, layout, labels = TRUE,
-                   node_color, node_colour, node_shape, node_size, node_group,
-                   edge_color, edge_colour, edge_size, ...) {
+                   node_color, node_shape, node_size, node_group,
+                   edge_color, edge_size, ...,
+                   node_colour, edge_colour) {
   g <- as_tidygraph(.data)
   if (missing(layout)) {
     if (length(g) == 3 | length(g) == 4) {
@@ -797,8 +798,9 @@ order_alphabetically <- function(v) {
 #' @export
 grapht <- function(tlist, keep_isolates = TRUE,
                    layout, labels = TRUE,
-                   node_color, node_colour, node_shape, node_size,
-                   edge_color, edge_colour, edge_size, ...) {
+                   node_color, node_shape, node_size,
+                   edge_color, edge_size, ...,
+                   node_colour, edge_colour) {
   thisRequires("gganimate")
   thisRequires("gifski")
   thisRequires("png")
