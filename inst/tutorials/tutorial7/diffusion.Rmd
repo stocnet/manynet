@@ -57,7 +57,7 @@ together with the number of nodes (of each mode) and
 the maximum number of neighbors (width) as the arguments.
 Let's create a one-mode lattice with 32 nodes, maximum width 4, and graph it using `graphr()`:
 
-```{r clattice, exercise = TRUE}
+```{r clattice, exercise = TRUE, fig.width=9}
 lat <- create_lattice(32, width = 4)
 graphr(lat)
 ```
@@ -97,7 +97,7 @@ The exposure at infection is recorded here to accelerate later analysis.
 We have several different options for visualising diffusions.
 The first visualisation option that we have is to plot the diffusion result itself.
 
-```{r plotlat, exercise = TRUE, exercise.setup = "lat_diff", purl = FALSE}
+```{r plotlat, exercise = TRUE, exercise.setup = "lat_diff", purl = FALSE, fig.width=9}
 plot(lat_diff)
 plot(lat_diff, all_steps = FALSE)
 ```
@@ -123,7 +123,7 @@ First, `graphr()` will graph a static network where the nodes are coloured
 according to how far through the diffusion process the node adopted.
 Note also that any seeds are indicated with a triangle.
 
-```{r graphrlat, exercise = TRUE, exercise.setup = "lat_diff", purl = FALSE}
+```{r graphrlat, exercise = TRUE, exercise.setup = "lat_diff", purl = FALSE, fig.width=9}
 graphr(lat_diff, node_size = 0.3)
 ```
 
@@ -131,7 +131,7 @@ Second, `graphs()` visualises the stages of the diffusion on the network.
 By default it will graph the first and last wave,
 but we can change this by specifying which waves to graph.
 
-```{r graphslat, exercise = TRUE, exercise.setup = "lat_diff", purl = FALSE}
+```{r graphslat, exercise = TRUE, exercise.setup = "lat_diff", purl = FALSE, fig.width=9}
 graphs(lat_diff)
 graphs(lat_diff, waves = c(1,4,8))
 ```
@@ -142,7 +142,7 @@ how the attribute is diffusing across the network!
 Note that if you run this code in the console, you get a calming progress bar;
 in the tutorial you will just need to be patient.
 
-```{r graphtlat, exercise = TRUE, exercise.setup = "lat_diff", purl = FALSE}
+```{r graphtlat, exercise = TRUE, exercise.setup = "lat_diff", purl = FALSE, fig.width=9}
 grapht(lat_diff, node_size = 10)
 ```
 
@@ -166,7 +166,7 @@ see the difference the structure makes.
 + `generate_scalefree()`: Generates a small-world structure following the lattice rewiring model.
 + `generate_smallworld()`: Generates a scale-free structure following the preferential attachment model.
 
-```{r otherstructures, exercise = TRUE, purl = FALSE}
+```{r otherstructures, exercise = TRUE, purl = FALSE, fig.width=9}
 graphr(play_diffusion(create_ring(32, width = 2)))
 graphr(play_diffusion(generate_random(32, 0.15)))
 graphr(play_diffusion(generate_scalefree(32, 0.025)))
@@ -181,7 +181,7 @@ but we need to sit through each 'movie'.
 But there is an easier way.
 Play these same diffusions again, this time nesting the call within `net_infection_complete()`.
 
-```{r completeinfection, exercise = TRUE, purl = FALSE}
+```{r completeinfection, exercise = TRUE, purl = FALSE, fig.width=9}
 net_infection_complete(play_diffusion(create_ring(32, width = 2)))
 net_infection_complete(play_diffusion(generate_random(32, 0.15)))
 net_infection_complete(play_diffusion(generate_scalefree(32, 0.025)))
@@ -202,7 +202,7 @@ question("Does the structure of the network matter for whether and when a diffus
 Run an influence cascade on US states' geographic contiguity in `ison_usstates`.
 You can start the infection in California by specifying `seeds = 5`.
 
-```{r usstates, exercise = TRUE, purl = FALSE}
+```{r usstates, exercise = TRUE, purl = FALSE, fig.width=9}
 
 ```
 
@@ -239,7 +239,7 @@ Let's see what the results are if you play four different diffusions:
 - `seeds = 1:2, thresholds = 2`
 - `seeds = c(1,16), thresholds = 2`
 
-```{r complex, exercise = TRUE}
+```{r complex, exercise = TRUE, fig.width=9}
 rg <- create_ring(32, width = 2)
 plot(play_diffusion(rg, seeds = 1, thresholds = 1))/
 plot(play_diffusion(rg, seeds = 1, thresholds = 2))/
@@ -269,7 +269,7 @@ A threshold of 2 would be easy to surpass for particularly well connected nodes,
 but impossible for pendants.
 Let's see what happens when we use this threshold on a scale-free network instead.
 
-```{r sfcomplex, exercise = TRUE, purl = FALSE}
+```{r sfcomplex, exercise = TRUE, purl = FALSE, fig.width=9}
 
 ```
 
@@ -296,7 +296,7 @@ This is sometimes called a fractional threshold model or complex diffusion.
 Try thresholds of 0.1, 0.25, and 0.5 on two seeds and 10 steps
 on the scale-free networks we have been using here.
 
-```{r sfprop, exercise = TRUE, purl = FALSE}
+```{r sfprop, exercise = TRUE, purl = FALSE, fig.width=9}
 
 ```
 
@@ -327,7 +327,7 @@ are obstructing the diffusion process because it is unlikely that many of their 
 Lastly, note that it may be that thresholds vary across the network.
 Let's use an example network to explore this: `ison_lotr`.
 
-```{r lotr, exercise = TRUE}
+```{r lotr, exercise = TRUE, fig.width=9}
 graphr(ison_lotr, node_color = "Race")
 ```
 
@@ -344,7 +344,7 @@ lotr_resist <- ison_lotr %>% mutate(resistance = dplyr::case_when(Race == "Dwarf
                                                    Race == "Maiar" ~ 6))
 ```
 
-```{r resistdiff, exercise=TRUE, exercise.setup = "lotr-resist"}
+```{r resistdiff, exercise=TRUE, exercise.setup = "lotr-resist", fig.width=9}
 grapht(play_diffusion(lotr_resist, thresholds = "resistance"))
 ```
 
@@ -353,14 +353,14 @@ Can you rewrite the code above so that fractional thresholds are used?
 
 ### Free play: Lord of the Rings
 
-```{r lotr-free, exercise=TRUE, exercise.setup = "lotr-resist"}
+```{r lotr-free, exercise=TRUE, exercise.setup = "lotr-resist", fig.width=9}
 
 
 ```
 
 <!-- ## Independent cascades -->
 
-### Get it going
+## Intervention
 
 Let's say that you have developed an exciting new policy and
 you are keen to maximise how quickly and thoroughly it is adopted.
@@ -375,7 +375,7 @@ To see whether this is true,
 try seeding the innovation at the first and sixteenth (middle) node 
 and see whether the result is any different.
 
-```{r ring2, exercise = TRUE, purl = FALSE}
+```{r ring2, exercise = TRUE, purl = FALSE, fig.width=9}
 
 ```
 
@@ -395,7 +395,7 @@ Now what if we seed the network with more than one infected node?
 Choosing the first four nodes we can see that the process is jump-started,
 but doesn't really conclude that much faster.
 
-```{r ring3, exercise = TRUE, purl = FALSE}
+```{r ring3, exercise = TRUE, purl = FALSE, fig.width=9}
 
 ```
 
@@ -411,14 +411,14 @@ plot(rg_d3)
 
 # graph the diffusion within the network
 graphs(play_diffusion(create_ring(32, width = 2), seeds = 1:4), 
-       layout = "circle")
+       layout = "stress")
 ```
 
 But what if we seed the network at three different places?
 Here we can use `node_is_random()` to randomly select some nodes to seed.
 Try it with four randomly-selected nodes and see what you get.
 
-```{r ring4, exercise = TRUE, purl = FALSE}
+```{r ring4, exercise = TRUE, purl = FALSE, fig.width=9}
 
 ```
 
@@ -451,7 +451,7 @@ when the network has a different structure.
 Here let's play and plot two diffusion on the lattice network,
 one with the first node as seed and again one on the middle.
 
-```{r lattice, exercise = TRUE, exercise.setup = "clattice", purl = FALSE}
+```{r lattice, exercise = TRUE, exercise.setup = "clattice", purl = FALSE, fig.width=9}
 
 ```
 
@@ -485,7 +485,7 @@ Similar to the previous examples, we will be using the following functions withi
 
 We could use these on degree centrality, or perhaps some other kind of centrality?
 
-```{r sf, exercise=TRUE}
+```{r sf, exercise=TRUE, fig.width=9}
 sf <- generate_scalefree(32, 0.025)
 sf %>%
   as_tidygraph() %>%
@@ -494,7 +494,7 @@ sf %>%
   graphr(node_color = "degree") + guides(color = "legend") + labs(color = "degree")
 ```
 
-```{r scale, exercise = TRUE, purl = FALSE, exercise.setup="sf"}
+```{r scale, exercise = TRUE, purl = FALSE, exercise.setup="sf", fig.width=9}
 
 ```
 
@@ -530,7 +530,7 @@ Many of them are implemented here and might be considered as strategies:
 - `node_is_fold()` identifies nodes that are in a structural fold between two or more triangles
 - `node_is_mentor()` identifies high indegree nodes as mentors
 
-```{r indepsets, exercise = TRUE, exercise.setup="sf"}
+```{r indepsets, exercise = TRUE, exercise.setup="sf", fig.width=9}
 sf %>% mutate_nodes(ni = node_is_independent()) %>% graphr(node_color = "ni")
 plot(play_diffusion(sf, seeds = node_is_independent(sf), steps = 10))
 ```
@@ -546,7 +546,7 @@ For example, these lawyers might accept word-of-mouth directly from two colleagu
 but are also attuned to common practice irrespective of whether direct colleagues
 have adopted the innovation.
 
-```{r prevalence, exercise=TRUE}
+```{r prevalence, exercise=TRUE, fig.width=9}
 plot(play_diffusion(ison_lawfirm, thresholds = 2, prevalence = 0.005),
      all_steps = FALSE)
 ```
@@ -578,7 +578,7 @@ Try this out with our well-mixed random network, 10 steps, 5 times,
 and with a `transmissibility` parameter set to 0.5
 to indicate that in only 1/2 cases is contagion successful.
 
-```{r diffusions, exercise = TRUE}
+```{r diffusions, exercise = TRUE, fig.width=9}
 rando <- generate_random(32, 0.1)
 graphr(rando)
 plot(play_diffusions(rando, transmissibility = 0.5, times = 5, steps = 10))
@@ -602,7 +602,7 @@ Let's try a rate of recovery of 0.20,
 which means that it'll take an infected node on average
 5 steps (days?) to recover.
 
-```{r sir, exercise = TRUE, exercise.setup = "diffusions", purl = FALSE}
+```{r sir, exercise = TRUE, exercise.setup = "diffusions", purl = FALSE, fig.width=9}
 
 ```
 
@@ -624,7 +624,7 @@ If you get moderately different results each time,
 try increasing the number of `times` the simulation is run,
 which should average out these differences and make the results more reliable.
 
-```{r sirtimes, exercise = TRUE, exercise.setup = "diffusions", purl = FALSE}
+```{r sirtimes, exercise = TRUE, exercise.setup = "diffusions", purl = FALSE, fig.width=9}
 
 ```
 
@@ -641,7 +641,7 @@ This means that after twenty steps (on average),
 a recovered node may lose its recovered status and become susceptible again.
 Play a single diffusion so that you can see what's going on in a particular run.
 
-```{r sirs, exercise = TRUE, exercise.setup = "diffusions", purl = FALSE}
+```{r sirs, exercise = TRUE, exercise.setup = "diffusions", purl = FALSE, fig.width=9}
 
 ```
 
@@ -652,8 +652,8 @@ plot(play_diffusion(rando, recovery = 0.2, waning = 0.05))
 <!-- # visualise diffusion within random graph -->
 <!-- grapht(play_diffusion(rd, seeds = c(1,10), recovery = 0.2, waning = 0.05)) -->
 
-```{r sirs-interp, echo = FALSE, purl = FALSE}
-question("Does the process reach a stable state?",
+```{r sirs-interp, echo = FALSE, purl = FALSE, fig.width=9}
+question("Does the process reach a reasonably stable state?",
          answer("Yes", correct = TRUE),
          answer("No"),
         allow_retry = TRUE)
@@ -663,7 +663,7 @@ Depending on your particular simulation,
 there might be some variation,
 so let's run this same diffusion but multiple (100?) times.
 
-```{r sirstimes-solution, exercise.setup = "diffusions", exercise = TRUE}
+```{r sirstimes-solution, exercise.setup = "diffusions", exercise = TRUE, fig.width=9}
 plot(play_diffusions(rando, recovery = 0.2, waning = 0.05, times = 100))
 ```
 
@@ -687,7 +687,7 @@ This means that a latency of 0 means that exposure immediately renders the node 
 A latency of 0.75 means that it will take the node approximately 4 days (1/1-0.75 = 1/0.25 = 4) to become infectious.
 Play a single diffusion so that you can see what's going on in a particular run.
 
-```{r seir, exercise = TRUE, exercise.setup = "diffusions", purl = FALSE}
+```{r seir, exercise = TRUE, exercise.setup = "diffusions", purl = FALSE, fig.width=9}
 
 ```
 
@@ -717,7 +717,7 @@ It can be interpreted as follows:
 So how can we establish the $R_0$ here?
 We can use `net_reproduction()`.
 
-```{r r0, exercise = TRUE, exercise.setup = "diffusions"}
+```{r r0, exercise = TRUE, exercise.setup = "diffusions", fig.width=9}
 rd_diff <- play_diffusion(rando, transmissibility = 0.25, recovery = 0.05)
 plot(rd_diff)
 # R-nought
@@ -773,12 +773,12 @@ net_immunity(rd_diff)
 net_immunity(rd_diff, normalized = FALSE)
 ```
 
-In this model, the HIT score indicates around 23% of nodes in the network 
+In this model, the HIT score indicates a good proportion of nodes in the network 
 would need to be vaccinated or otherwise protected to achieve herd immunity.
-The unnormalised version gives the number of nodes that would need to be vaccinated: 8 nodes.
+The unnormalised version gives the number of nodes that would need to be vaccinated.
 Ok, so let's try this strategy.
 
-```{r vaccinate, exercise = TRUE, exercise.setup = "diffusions"}
+```{r vaccinate, exercise = TRUE, exercise.setup = "diffusions", fig.width=9}
 rd_diff_vacc <- play_diffusion(rando, transmissibility = 0.25, recovery = 0.05, 
                                immune = 2:9)
 plot(rd_diff_vacc)
@@ -797,7 +797,7 @@ You can just concentrate on the giant component (which is plenty incestuous!).
 We could say that there's a new, highly infectious disease transmittable
 through hooking up and, I have it on authority, it all starts with Mark Sloan.
 
-```{r greys, exercise = TRUE, purl=FALSE}
+```{r greys, exercise = TRUE, purl=FALSE, fig.width=9}
 
 ```
 
@@ -914,7 +914,7 @@ Create the distribution of **beliefs** and graph the network
 to show where they have been distributed.
 Then play the learning model with these beliefs, and plot the result.
 
-```{r degroot, exercise = TRUE, purl = FALSE}
+```{r degroot, exercise = TRUE, purl = FALSE, fig.width=9}
 
 ```
 
@@ -963,7 +963,7 @@ The most influential nodes in this network are those that have the
 highest eigenvector centrality.
 Which are the highest eigenvector centrality nodes in this network?
 
-```{r eigen, exercise = TRUE, purl=FALSE}
+```{r eigen, exercise = TRUE, purl=FALSE, fig.width=9}
 
 ```
 
