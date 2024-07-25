@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.4</span>
       </span>
     </div>
 
@@ -59,6 +59,32 @@
       <small>Source: <a href="https://github.com/stocnet/manynet/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.0.4" id="manynet-104">manynet 1.0.4<a class="anchor" aria-label="anchor" href="#manynet-104"></a></h2>
+<div class="section level3">
+<h3 id="modifying-1-0-4">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-0-4"></a></h3>
+<ul><li>
+<code>as_matrix.igraph()</code> now only draws from the “weight” attribute and not, e.g. “type”</li>
+<li>Fixed bug in <code><a href="../reference/to_scope.html">to_blocks()</a></code> related to categorical membership variables</li>
+</ul></div>
+<div class="section level3">
+<h3 id="marks-1-0-4">Marks<a class="anchor" aria-label="anchor" href="#marks-1-0-4"></a></h3>
+<ul><li>Tie marks now infer networks when used within e.g. <code><a href="../reference/add_ties.html">mutate_ties()</a></code>
+</li></ul></div>
+<div class="section level3">
+<h3 id="memberships-1-0-4">Memberships<a class="anchor" aria-label="anchor" href="#memberships-1-0-4"></a></h3>
+<ul><li>
+<code><a href="../reference/measure_attributes.html">node_names()</a></code> now returns names of the form “N01” etc for unlabelled networks</li>
+<li>Fixed how <code>plot.matrix()</code> works for unlabelled networks</li>
+<li>Added more on density in community tutorial</li>
+</ul></div>
+<div class="section level3">
+<h3 id="mapping-1-0-4">Mapping<a class="anchor" aria-label="anchor" href="#mapping-1-0-4"></a></h3>
+<ul><li>British spelling arguments now appear further back in e.g. <code><a href="../reference/graphr.html">graphr()</a></code>
+</li>
+<li>Fixed how <code><a href="../reference/graphs.html">graphs()</a></code> recognises ego networks so it is compatible with other splits</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.0.3" id="manynet-103">manynet 1.0.3<a class="anchor" aria-label="anchor" href="#manynet-103"></a></h2>
 <div class="section level3">
