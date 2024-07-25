@@ -263,10 +263,10 @@ graphr <- function(.data, layout, labels = TRUE,
       } else if (is_signed(g)) {
         p <- p + ggraph::geom_edge_arc(
           ggplot2::aes(width = esize,
-                       colour = ifelse(igraph::E(g)$sign >= 0, "#d73027", "#4575b4"),
-                       linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed"),
-                       end_cap = ggraph::circle(c(e_cap), 'mm')),
-          edge_alpha = 0.4, strength = bend,
+                       end_cap = ggraph::circle(c(e_cap), 'mm'),
+                       edge_colour = ifelse(igraph::E(g)$sign >= 0, "#d73027", "#4575b4"),
+                       edge_linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")),
+          edge_alpha = 0.4, strength = bend, show.legend = FALSE,
           arrow = ggplot2::arrow(angle = 15, length = ggplot2::unit(2, 'mm'), type = "closed")) +
           ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "none")
       } else {
@@ -304,10 +304,10 @@ graphr <- function(.data, layout, labels = TRUE,
         }
       } else if (is_signed(g)) {
         p <- p + ggraph::geom_edge_arc(
-          ggplot2::aes(colour = ifelse(igraph::E(g)$sign >= 0, "#d73027", "#4575b4"),
-                       linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed"),
-                       end_cap = ggraph::circle(c(e_cap), 'mm')),
-          edge_alpha = 0.4, strength = bend, edge_width = esize,
+          ggplot2::aes(end_cap = ggraph::circle(c(e_cap), 'mm'),
+                       edge_colour = ifelse(igraph::E(g)$sign >= 0, "#d73027", "#4575b4"),
+                       edge_linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")),
+          edge_alpha = 0.4, strength = bend, edge_width = esize, show.legend = FALSE,
           arrow = ggplot2::arrow(angle = 15, length = ggplot2::unit(3, "mm"),
                                  type = "closed"))
       } else {
@@ -341,9 +341,9 @@ graphr <- function(.data, layout, labels = TRUE,
       } else if (is_signed(g)) {
         p <- p + ggraph::geom_edge_link0(
           ggplot2::aes(width = weight,
-                       colour = ifelse(igraph::E(g)$sign >= 0, "#d73027", "#4575b4"),
-                       linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")),
-          edge_alpha = 0.4) +
+                       edge_colour = ifelse(igraph::E(g)$sign >= 0, "#d73027", "#4575b4"),
+                       edge_linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")),
+          edge_alpha = 0.4, show.legend = FALSE) +
           ggraph::scale_edge_width_continuous(range = c(0.2, 1), guide = "none")
       } else {
         p <- p + ggraph::geom_edge_link0(ggplot2::aes(width = weight),
@@ -368,9 +368,9 @@ graphr <- function(.data, layout, labels = TRUE,
         }
       } else if (is_signed(g)) {
         p <- p + ggraph::geom_edge_link0(
-          ggplot2::aes(colour = ifelse(igraph::E(g)$sign >= 0,  "#d73027", "#4575b4"),
-                       linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")),
-          edge_alpha = 0.4, edge_width = esize)
+          ggplot2::aes(edge_colour = ifelse(igraph::E(g)$sign >= 0, "#d73027", "#4575b4"),
+                       edge_linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")),
+          edge_alpha = 0.4, edge_width = esize, show.legend = FALSE)
       } else {
         p <- p + ggraph::geom_edge_link0(edge_colour = "black",
                                          edge_linetype = "solid",
@@ -383,9 +383,9 @@ graphr <- function(.data, layout, labels = TRUE,
     if (is_signed(g)) {
       p <- p + ggraph::geom_edge_loop(
         ggplot2::aes(width = weight,
-                     colour = ifelse(igraph::E(g)$sign >= 0, "#d73027", "#4575b4"),
-                     linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")),
-        edge_alpha = 0.4, edge_width = lsize) +
+                     edge_colour = ifelse(igraph::E(g)$sign >= 0, "#d73027", "#4575b4"),
+                     edge_linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")),
+        edge_alpha = 0.4, edge_width = lsize, show.legend = FALSE) +
         ggraph::scale_edge_width_continuous(range = c(0.2, 1), guide = "none")
     } else if (!is.null(edge_color)) {
       if (edge_color %in% names(tie_attribute(g))) {
