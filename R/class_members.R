@@ -100,6 +100,8 @@ plot.matrix <- function(x, ..., membership = NULL) {
     blocked_data <- manynet::as_matrix(x)
   }
   
+  from <- to <- weight <- NULL
+  
   plot_data <- as_edgelist(blocked_data)
   if(!is_labelled(x)){
     indices <- c(plot_data$from,plot_data$to)
