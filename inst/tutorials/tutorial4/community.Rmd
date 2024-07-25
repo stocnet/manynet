@@ -146,13 +146,38 @@ What (else) can we say about these three networks?
 
 ## Cohesion
 
-Let's concentrate on the task network for now and calculate a few basic
-measures of cohesion: 
+Let's concentrate on the **task** network for now and calculate a few basic measures of cohesion: 
 density, reciprocity, transitivity, and components.
 
 ### Density
 
-Because this is a directed network, we can calculate the density as:
+Density represents a generalised measure of cohesion,
+characterising how cohesive the network is in terms of how many
+potential ties (i.e. dyads) are actualised.
+Recall that there are different equations depending on the type of network.
+Below are three equations:
+
+$$A: \frac{|T|}{|N|(|N|-1)}$$
+$$B: \frac{2|T|}{|N|(|N|-1)}$$
+$$C: \frac{|T|}{|N||M|}$$
+
+where $|T|$ is the number of ties in the network,
+and $|N|$ and $|M|$ are the number of nodes in the first and second mode respectively.
+
+```{r densq, echo=FALSE, purl = FALSE}
+question("Which equation is used for measuring density for a directed network:",
+         answer("A",
+                correct = TRUE,
+                message = learnr::random_praise()),
+         answer("B",
+                message = "This is the equation for an undirected network."),
+         answer("C",
+                message = "This is the equation for a two-mode network."),
+        allow_retry = TRUE
+)
+```
+
+
 
 ```{r dens-explicit, exercise=TRUE, exercise.setup = "separatingnets", purl = FALSE}
 
@@ -178,14 +203,18 @@ by default, but the underlying result retains the same recurrence.
 So same result...
 
 ```{r dens-qa, echo=FALSE, purl = FALSE}
-question("Is this network's density high or low?",
+question("Is this network's density high or low in absolute terms?",
          answer("High",
                 message = "The closer the value is to 1, the more dense the network and the more cohesive the network is as a whole."),
          answer("Low",
                 correct = TRUE,
-                message = "The closer the value is to 0, the sparser the network and the less cohesive the network is as a whole.")
+                message = "The closer the value is to 0, the sparser the network and the less cohesive the network is as a whole. But this is still quite typical density for a relatively small, social network like this one."),
+        allow_retry = TRUE
 )
 ```
+
+Density offers an important baseline measure for characterising
+the network as a whole.
 
 ## Closure
 
@@ -203,6 +232,21 @@ net_reciprocity(tasks)
 # this function calculates the amount of reciprocity in the whole network
 ```
 
+Wow, this seems quite high based on what we observed visually!
+But if we look closer, this makes sense.
+We can use `tie_is_reciprocated()` to identify those ties that are
+reciprocated and not.
+
+```{r recip-explanation, exercise = TRUE}
+tasks %>% mutate_ties(rec = tie_is_reciprocated(tasks)) %>% graphr(edge_color = "rec")
+net_indegree(tasks)
+```
+
+So we can see that indeed there are very few asymmetric ties,
+and yet node 16 is both the sender and receiver of most of the task activity.
+So our reciprocity measure has taught us something about this network
+that might not have been obvious visually.
+
 And let's calculate _transitivity_ in the task network.
 Again, can you guess the correct name of this function?
 
@@ -214,10 +258,6 @@ Again, can you guess the correct name of this function?
 net_transitivity(tasks)
 # this function calculates the amount of transitivity in the whole network
 ```
-
-We have collected measures of the task network's reciprocity
-and transitivity, but we still need to interpret these measures.
-These measures do not speak for themselves.
 
 ```{r trans-interp, echo=FALSE, purl = FALSE}
 question("What can we say about task closure in this network? Choose all that apply.",
@@ -262,7 +302,7 @@ question("Weak components...",
 net_components(friends)
 # note that friends is a directed network
 # you can see this by calling the object 'friends'
-# or by running `manynet::is_directed(friends)`
+# or by running `is_directed(friends)`
 ```
 
 ```{r comp-no-hint-2, purl = FALSE}
@@ -345,33 +385,15 @@ question("Why is there a difference between the weak and strong components resul
 ## Communities
 
 Ok, the friendship network has 3-4 components, but how many 'groups' are there?
-Just visually, it looks like there are two denser clusters within the main component.
+Visually, it looks like there are two denser clusters within the main component.
 
 Today we'll use the 'friends' subgraph for exploring community detection methods.
 For clarity and simplicity, 
 we will concentrate on the main component (the so-called 'giant' component)
 and consider friendship undirected.
-Can you guess how to make these changes to the 'friends' network?
 
 ```{r manip-fri, exercise=TRUE, exercise.setup = "separatingnets", purl = FALSE}
-
-```
-
-```{r manip-fri-hint-1, purl = FALSE}
 # to_giant() returns an object that includes only the main component without any smaller components or isolates
-(friends <- to_giant(friends))
-```
-
-```{r manip-fri-hint-2, purl = FALSE}
-(friends <- to_undirected(friends))
-```
-
-```{r manip-fri-hint-3, purl = FALSE}
-# now, let's graph the new network
-graphr(friends)
-```
-
-```{r manip-fri-solution}
 (friends <- to_giant(friends))
 (friends <- to_undirected(friends))
 graphr(friends)
@@ -419,25 +441,19 @@ They call this the "maximum modularity partition" and insert the parenthetical
 "(though, strictly speaking, this cannot be proven to be the optimum without 
 computationally-prohibitive exhaustive enumeration (Brandes et al. 2008))."
 
-So let's try and get a community classification using the walktrap algorithm
+So let's try and get a community classification using the walktrap algorithm, `node_in_walktrap()`,
 with path lengths of the random walks specified to be 50.
 
-```{r walk, exercise=TRUE, exercise.setup = "separatingnets", purl = FALSE}
-
+```{r walk, exercise=TRUE, exercise.setup = "separatingnets"}
+friend_wt <- node_in_walktrap(friends, times=50)
 ```
 
 ```{r walk-hint-1, purl = FALSE}
-# let's use the node_walktrap()function to create a hierarchical, 
-# agglomerative algorithm based on random walks, and assign it to
-# an object
-
-friend_wt <- node_in_walktrap(friends, times=50)
 friend_wt # note that it prints pretty, but underlying its just a vector:
+c(friend_wt)
 ```
 
 ```{r walk-hint-2, purl = FALSE}
-c(friend_wt)
-
 # This says that dividing the graph into 2 communities maximises modularity,
 # one with the nodes 
 which(friend_wt == 1)
@@ -452,15 +468,7 @@ net_modularity(friends, friend_wt)
 
 ```{r walk-solution}
 friend_wt <- node_in_walktrap(friends, times=50)
-friend_wt # note that it prints pretty, but underlying it is just a vector:
-# c(friend_wt)
-
-# This says that dividing the graph into 2 communities maximises modularity,
-# one with the nodes 
-which(friend_wt == "A")
-# and the other 
-which(friend_wt == "B")
-# resulting in a modularity of 
+# results in a modularity of 
 net_modularity(friends, friend_wt)
 ```
 
@@ -530,10 +538,7 @@ we will get a hierarchical map (dendrogram) of the communities in the graph.
 
 The following works similarly to walktrap, but no need to set a step length. 
 
-```{r eb, exercise=TRUE, exercise.setup = "separatingnets", purl = FALSE}
-```
-
-```{r eb-solution}
+```{r eb, exercise=TRUE, exercise.setup = "separatingnets"}
 friend_eb <- node_in_betweenness(friends)
 friend_eb
 ```

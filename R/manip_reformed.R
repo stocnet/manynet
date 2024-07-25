@@ -368,6 +368,7 @@ to_blocks.matrix <- function(.data, membership, FUN = mean){
     y <- length(unique(m2_membs))
     out <- matrix(nrow = unique(m1_membs)[x],
                   ncol = unique(m2_membs)[y])
+    membership <- as.numeric(as.factor(membership))
     for(i in unique(m1_membs)) for (j in unique(m2_membs))
       out[i, j] <- FUN(mat[membership == i, 
                            membership == j, drop = FALSE], 
@@ -376,6 +377,7 @@ to_blocks.matrix <- function(.data, membership, FUN = mean){
     colnames(out) <- paste("Block", seq_len(unique(m2_membs)[y]))
   } else {
     mat <- .data
+    membership <- as.numeric(as.factor(membership))
     parts <- max(membership)
     out <- matrix(nrow = parts, 
                   ncol = parts)

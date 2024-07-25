@@ -25,6 +25,7 @@ NULL
 #' tie_is_multiple(ison_marvel_relationships)
 #' @export
 tie_is_multiple <- function(.data){
+  if(missing(.data)) {expect_edges(); .data <- .G()}
   make_tie_mark(igraph::which_multiple(manynet::as_igraph(.data)), .data)
 }
 
@@ -34,6 +35,7 @@ tie_is_multiple <- function(.data){
 #' tie_is_loop(ison_marvel_relationships)
 #' @export
 tie_is_loop <- function(.data){
+  if(missing(.data)) {expect_edges(); .data <- .G()}
   make_tie_mark(igraph::which_loop(manynet::as_igraph(.data)), .data)
 }
 
@@ -43,6 +45,7 @@ tie_is_loop <- function(.data){
 #' tie_is_reciprocated(ison_algebra)
 #' @export
 tie_is_reciprocated <- function(.data){
+  if(missing(.data)) {expect_edges(); .data <- .G()}
   make_tie_mark(igraph::which_mutual(manynet::as_igraph(.data)), .data)
 }
 
@@ -52,6 +55,7 @@ tie_is_reciprocated <- function(.data){
 #' tie_is_feedback(ison_algebra)
 #' @export
 tie_is_feedback <- function(.data){
+  if(missing(.data)) {expect_edges(); .data <- .G()}
   .data <- manynet::as_igraph(.data)
   make_tie_mark(igraph::E(.data) %in% igraph::feedback_arc_set(.data), 
                 .data)
@@ -63,6 +67,7 @@ tie_is_feedback <- function(.data){
 #' tie_is_bridge(ison_brandes)
 #' @export
 tie_is_bridge <- function(.data){
+  if(missing(.data)) {expect_edges(); .data <- .G()}
   num_comp <- length( igraph::decompose(manynet::as_igraph(.data)) )
   out <- vapply(seq_len(manynet::net_ties(.data)), function(x){
     length( igraph::decompose(igraph::delete_edges(.data, x)) ) > num_comp
@@ -92,6 +97,7 @@ NULL
 #' @rdname mark_tie_select
 #' @export
 tie_is_random <- function(.data, size = 1){
+  if(missing(.data)) {expect_edges(); .data <- .G()}
   n <- manynet::net_ties(.data)
   out <- rep(FALSE, n)
   out[sample.int(n, size)] <- TRUE

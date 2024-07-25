@@ -46,6 +46,8 @@ learnr::random_phrases_add(language = "en",
 
 ## Overview
 
+<img src="https://64.media.tumblr.com/tumblr_lvpgquhGbq1r54h4xo1_400.gif"/>
+
 In this tutorial, we'll explore:
 
 - how to create or generate different network topologies
@@ -57,6 +59,8 @@ trees, lattices, random, small-world, scale-free, and core-periphery
 networks.
 These ideal networks exaggerate centrality, cohesion, and randomness features, 
 and are thus great for theory-building and investigating the relationship between rules and structure.
+
+<img src="https://media.tenor.com/images/e26e64a8cce94a6ee491f0ddeecc8b88/tenor.gif"/>
 
 In this practical, we're going to create/generate
 a number of ideal-typical network topologies and plot them.
@@ -328,11 +332,8 @@ with alpha parameters of 0.5, 1, and 1.5.
     ggtitle("Scalefree 3 graph", subtitle = "Power = 1.5"))
 ```
 
-You can also test whether a network has a degree distribution that fits
-the scale-free model.
-When a Kolmogorov-Smirnov test p-value less than 0.05 is implied,
-a message is given that you should reject the hypothesis 
-that a power law fits here.
+You can also the degree to which a network has a degree distribution that fits
+a power-law distribution.
 With an alpha/power-law exponent between 2 and 3, 
 one generally cannot reject the hypothesis that the observed data 
 comes from a power-law distribution.
@@ -362,7 +363,7 @@ sparse interactions among themselves.
 question("Can a single network have both a community structure and a core-periphery structure?",
          answer("No", message = learnr::random_encouragement()),
          answer("Yes",
-                message = learnr::random_praise(),
+                message = "That's right. For example, the core and periphery might represent two or more communities.",
                 correct = TRUE),
          random_answer_order = TRUE,
          allow_retry = TRUE)
@@ -374,7 +375,7 @@ Graph a core-periphery network of 50 nodes
 (which, unless a core-periphery membership assignment is given,
 will be split evenly between core and periphery partitions).
 
-```{r core, exercise=TRUE, purl = FALSE}
+```{r core, exercise=TRUE, purl = FALSE, fig.width=9}
 
 ```
 
@@ -392,12 +393,16 @@ might be part of the core and which are part of the periphery.
 Color the nodes by Gender, Office, Practice, and School.
 Any you might think correlate with core status?
 
-```{r gnet, exercise=TRUE, purl = FALSE}
-
+```{r gnet, exercise=TRUE, purl = FALSE, fig.width=9}
+lawfirm <- to_undirected(ison_lawfirm) |> to_uniplex("friends")
 ```
 
 ```{r gnet-solution}
-graphr(ison_lawfirm, node_color = "school")
+lawfirm <- to_undirected(ison_lawfirm) |> to_uniplex("friends")
+graphr(lawfirm, node_color = "school", edge_color = "darkgray")
+graphr(lawfirm, node_color = "gender", edge_color = "darkgray")
+graphr(lawfirm, node_color = "office", edge_color = "darkgray")
+graphr(lawfirm, node_color = "practice", edge_color = "darkgray")
 ```
 
 Next, let's assign nodes to the core and periphery blocks
@@ -407,38 +412,39 @@ By default it runs down the rank order of nodes by their degree,
 at each step working out whether including the next highest degree node
 in the core will maximise the core-periphery structure of the network.
 
-```{r nodecore, exercise=TRUE, purl = FALSE}
+```{r nodecore, exercise=TRUE, purl = FALSE, fig.width=9, exercise.setup="gnet"}
 
 ```
 
 ```{r nodecore-solution}
-ison_lawfirm %>% 
-  mutate(nc = node_is_core(ison_lawfirm)) %>% 
-  graphr(node_color = "nc")
+lawfirm %>% 
+  mutate(nc = node_is_core()) %>% 
+  graphr(node_color = "nc", edge_color = "gray")
 ```
 
-This graph suggests that there might even be two cores here,
+This graph suggests that there is a core and a periphery.
+There might even be two cores here,
 one on the left and one on the right.
 
 But is it really all that much of a core-periphery structure?
 We can establish how correlated our network is compared to
 a core-periphery model of the same dimension using `net_core()`.
 
-```{r netcore, exercise=TRUE, purl = FALSE}
+```{r netcore, exercise=TRUE, purl = FALSE, exercise.setup="gnet"}
 
 ```
 
 ```{r netcore-solution}
-net_core(ison_lawfirm, node_is_core(ison_lawfirm))
+net_core(lawfirm, node_is_core(lawfirm))
 ```
 
 ```{r corecorr-qa, echo=FALSE, purl = FALSE}
 question("What can we say about this correlation.",
-         answer("It is a perfect positive relationship",
+         answer("It is a perfect negative relationship",
                 message = learnr::random_encouragement()),
          answer("It is fairly strong",
                 message = learnr::random_encouragement()),
-         answer("It is negative",
+         answer("It is positive",
                 message = learnr::random_encouragement()),
          answer("There is absolutely no correlation",
                 message = learnr::random_encouragement()),
@@ -458,12 +464,20 @@ Since we're doing this on categorical variables, we'll use the Chi-squared test 
 Take a look and see whether there is a statistically significant association
 between gender and core (or periphery) status.
 
-```{r chisq, exercise=TRUE, purl=FALSE}
-
+```{r chisq, exercise=TRUE, purl=FALSE, exercise.setup="gnet"}
+chisq.test(as.factor(node_is_core(lawfirm)), 
+           as.factor(node_attribute(lawfirm, "gender")))
 ```
 
 ```{r chisq-solution}
-chisq.test(node_is_core(ison_lawfirm), node_attribute(ison_lawfirm, "Gender"))
+chisq.test(as.factor(node_is_core(lawfirm)), 
+           as.factor(node_attribute(lawfirm, "gender")))
+chisq.test(as.factor(node_is_core(lawfirm)), 
+           as.factor(node_attribute(lawfirm, "office")))
+chisq.test(as.factor(node_is_core(lawfirm)), 
+           as.factor(node_attribute(lawfirm, "school")))
+chisq.test(as.factor(node_is_core(lawfirm)), 
+           as.factor(node_attribute(lawfirm, "practice")))
 ```
 
 ```{r chisq-qa, echo=FALSE, purl = FALSE}
@@ -490,14 +504,10 @@ In `{manynet}`, we can return nodes _k_-coreness
 with `node_coreness()` instead of 
 the `node_is_core()` used for core-periphery.
 
-```{r nodecoren, exercise=TRUE, purl = FALSE}
-
-```
-
-```{r nodecoren-solution}
-ison_lawfirm %>% 
-  mutate(ncn = node_coreness(ison_lawfirm)) %>% 
-  graphr(node_color = "ncn") + scale_colour_sdgs()
+```{r nodecoren, exercise=TRUE, purl = FALSE, exercise.setup="gnet"}
+lawfirm %>% 
+  mutate(ncn = node_coreness()) %>% 
+  graphr(node_color = "ncn")
 ```
 
 ```{r dich-qa, echo=FALSE, purl = FALSE}
@@ -541,6 +551,7 @@ net_connectedness(ison_adolescents)
 ```
 
 This measure gets at the proportion of dyads that can reach each other in the network.
+In this case, the proportion is 1, i.e. all nodes can reach every other node.
 Another way to get at this would be to see how many components there are in the network.
 
 ```{r connect-qa, echo=FALSE, purl=FALSE}
@@ -645,7 +656,7 @@ This is called (rather confusingly) tie cohesion.
 
 ```{r tiecoh-solution}
 ison_adolescents |> mutate_ties(coh = tie_cohesion(ison_adolescents)) |> 
-  graphr(edge_color = "coh")
+  graphr(edge_size = "coh")
 ```
 
 Where would you target your efforts if you wanted to fragment this network?

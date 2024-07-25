@@ -1,3 +1,25 @@
+# manynet 1.0.4
+
+## Modifying
+
+- `as_matrix.igraph()` now only draws from the "weight" attribute and not, e.g. "type"
+- Fixed bug in `to_blocks()` related to categorical membership variables
+
+## Marks
+
+- Tie marks now infer networks when used within e.g. `mutate_ties()`
+
+## Memberships
+
+- `node_names()` now returns names of the form "N01" etc for unlabelled networks
+- Fixed how `plot.matrix()` works for unlabelled networks
+- Added more on density in community tutorial
+
+## Mapping
+
+- British spelling arguments now appear further back in e.g. `graphr()`
+- Fixed how `graphs()` recognises ego networks so it is compatible with other splits
+
 # manynet 1.0.3
 
 ## Mapping

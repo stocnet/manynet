@@ -33,7 +33,12 @@ node_attribute <- function(.data, attribute){
 #' node_names(ison_southern_women)
 #' @export
 node_names <- function(.data){
-  igraph::vertex_attr(as_igraph(.data), "name")
+  if(is_labelled(.data)){
+    igraph::vertex_attr(as_igraph(.data), "name")  
+  } else {
+    indices <- seq.int(net_nodes(.data))
+    paste0("N", gsub("\\s", "0", format(indices, width=max(nchar(indices)))))
+  }
 }
 
 #' @rdname measure_attributes
