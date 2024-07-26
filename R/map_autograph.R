@@ -224,13 +224,13 @@ graphr <- function(.data, layout, labels = TRUE,
       ggforce::geom_mark_hull(ggplot2::aes(x, y, fill = node_group,
                                            label = node_group), data = lo) +
       ggplot2::scale_fill_manual(values = colorsafe_palette,
-                                 guide = ggplot2::guide_legend(""))
+                                 guide = ggplot2::guide_legend("Color"))
   }
   p
 }
 
 .graph_edges <- function(p, g, edge_color, edge_size, node_size) {
-  weight <- NULL
+  weight <- lsize <- NULL
   esize <- .infer_esize(g, edge_size)
   check_edge_variables(g, edge_color, edge_size)
   # Begin plotting edges in various cases
@@ -246,9 +246,9 @@ graphr <- function(.data, layout, labels = TRUE,
             edge_alpha = 0.4, strength = bend, edge_linetype = "solid",
             arrow = ggplot2::arrow(angle = 15, length = ggplot2::unit(2, 'mm'),
                                    type = "closed")) +
-            ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "none") +
+            ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "Edge Size") +
             ggraph::scale_edge_colour_manual(values = colorsafe_palette,
-                                             guide = ggplot2::guide_legend(""))
+                                             guide = ggplot2::guide_legend("Edge color"))
         } else {
           p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = esize,
                                                       end_cap = ggraph::circle(c(e_cap), 'mm')),
@@ -258,7 +258,7 @@ graphr <- function(.data, layout, labels = TRUE,
                                          arrow = ggplot2::arrow(angle = 15,
                                                                 length = ggplot2::unit(2, 'mm'),
                                                                 type = "closed")) +
-            ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "none")
+            ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "Edge Size")
         }
       } else if (is_signed(g)) {
         p <- p + ggraph::geom_edge_arc(
@@ -268,7 +268,7 @@ graphr <- function(.data, layout, labels = TRUE,
                        edge_linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")),
           edge_alpha = 0.4, strength = bend, show.legend = FALSE,
           arrow = ggplot2::arrow(angle = 15, length = ggplot2::unit(2, 'mm'), type = "closed")) +
-          ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "none")
+          ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "Edge Size")
       } else {
         p <- p + ggraph::geom_edge_arc(ggplot2::aes(width = esize,
                                                     end_cap = ggraph::circle(c(e_cap), 'mm')),
@@ -278,47 +278,49 @@ graphr <- function(.data, layout, labels = TRUE,
                                         arrow = ggplot2::arrow(angle = 15,
                                                                length = ggplot2::unit(2, 'mm'),
                                                                type = "closed")) +
-          ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "none")
+          ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "Edge Size")
       }
     } else {
       if (!is.null(edge_color)) {
         if (edge_color %in% names(tie_attribute(g))) {
         p <- p + ggraph::geom_edge_arc(ggplot2::aes(
           colour = as.factor(tie_attribute(g, edge_color)),
-          end_cap = ggraph::circle(c(e_cap), 'mm')),
+          end_cap = ggraph::circle(c(e_cap), 'mm'), width = esize),
           edge_alpha = 0.4, strength = bend, edge_linetype = "solid",
-          edge_width = esize, arrow = ggplot2::arrow(angle = 15,
-                                                     length = ggplot2::unit(3, "mm"),
-                                                     type = "closed")) +
+          arrow = ggplot2::arrow(angle = 15, length = ggplot2::unit(3, "mm"),
+                                 type = "closed")) +
           ggraph::scale_edge_colour_manual(values = colorsafe_palette,
-                                           guide = ggplot2::guide_legend(""))
+                                           guide = ggplot2::guide_legend("Edge color")) +
+          ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "Edge Size")
         } else {
-          p <- p + ggraph::geom_edge_arc(ggplot2::aes(end_cap = ggraph::circle(c(e_cap), 'mm')),
-                                         colour = edge_color,
-                                         edge_alpha = 0.4, strength = bend,
-                                         edge_linetype = "solid",
-                                         edge_width = esize,
+          p <- p + ggraph::geom_edge_arc(ggplot2::aes(end_cap = ggraph::circle(c(e_cap), 'mm'),
+                                                      width = esize),
+                                         colour = edge_color, edge_alpha = 0.4,
+                                         strength = bend, edge_linetype = "solid",
                                          arrow = ggplot2::arrow(angle = 15,
                                                                 length = ggplot2::unit(3, "mm"),
-                                                                type = "closed"))
+                                                                type = "closed")) +
+            ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "Edge Size")
         }
       } else if (is_signed(g)) {
         p <- p + ggraph::geom_edge_arc(
-          ggplot2::aes(end_cap = ggraph::circle(c(e_cap), 'mm'),
+          ggplot2::aes(end_cap = ggraph::circle(c(e_cap), 'mm'), width = esize,
                        edge_colour = ifelse(igraph::E(g)$sign >= 0, "#d73027", "#4575b4"),
                        edge_linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")),
-          edge_alpha = 0.4, strength = bend, edge_width = esize, show.legend = FALSE,
+          edge_alpha = 0.4, strength = bend, show.legend = FALSE,
           arrow = ggplot2::arrow(angle = 15, length = ggplot2::unit(3, "mm"),
-                                 type = "closed"))
+                                 type = "closed")) +
+          ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "Edge Size")
       } else {
-        p <- p + ggraph::geom_edge_arc(ggplot2::aes(end_cap = ggraph::circle(c(e_cap), 'mm')),
+        p <- p + ggraph::geom_edge_arc(ggplot2::aes(end_cap = ggraph::circle(c(e_cap), 'mm'),
+                                                    width = esize),
                                        edge_colour = "black",
                                        edge_alpha = 0.4, strength = bend,
                                        edge_linetype = "solid",
-                                       edge_width = esize,
                                        arrow = ggplot2::arrow(angle = 15,
                                                               length = ggplot2::unit(3, "mm"),
-                                                              type = "closed"))
+                                                              type = "closed")) +
+          ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "Edge Size")
       }
     }
   } else {
@@ -326,11 +328,11 @@ graphr <- function(.data, layout, labels = TRUE,
       if (!is.null(edge_color)) {
         if (edge_color %in% names(tie_attribute(g))) {
         p <- p + ggraph::geom_edge_link0(ggplot2::aes(
-          width = esize, colour = as.factor(tie_attribute(g, edge_color))),
-                                        edge_alpha = 0.4, edge_linetype = "solid") +
+          width = weight, colour = as.factor(tie_attribute(g, edge_color))),
+          edge_alpha = 0.4, edge_linetype = "solid") +
           ggraph::scale_edge_width_continuous(range = c(0.2, 1), guide = "none") +
           ggraph::scale_edge_colour_manual(values = colorsafe_palette,
-                                           guide = ggplot2::guide_legend(""))
+                                           guide = ggplot2::guide_legend("Edge color"))
         } else {
           p <- p + ggraph::geom_edge_link0(ggplot2::aes(width = weight),
                                           colour = edge_color,
@@ -356,56 +358,40 @@ graphr <- function(.data, layout, labels = TRUE,
       if (!is.null(edge_color)) {
         if (edge_color %in% names(tie_attribute(g))) {
         p <- p + ggraph::geom_edge_link0(ggplot2::aes(
-          colour = as.factor(tie_attribute(g, edge_color))),
+          colour = as.factor(tie_attribute(g, edge_color)), width = esize),
                                          edge_linetype = "solid",
-                                         edge_alpha = 0.4, edge_width = esize) +
+                                         edge_alpha = 0.4) +
           ggraph::scale_edge_colour_manual(values = colorsafe_palette,
-                                           guide = ggplot2::guide_legend(""))
+                                           guide = ggplot2::guide_legend("Edge color")) +
+          ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "Edge Size")
         } else {
-          p <- p + ggraph::geom_edge_link0(colour = edge_color,
+          p <- p + ggraph::geom_edge_link0(ggplot2::aes(width = esize),
+                                           colour = edge_color,
                                            edge_linetype = "solid",
-                                           edge_alpha = 0.4, edge_width = esize)
+                                           edge_alpha = 0.4) +
+            ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "Edge Size")
         }
       } else if (is_signed(g)) {
         p <- p + ggraph::geom_edge_link0(
           ggplot2::aes(edge_colour = ifelse(igraph::E(g)$sign >= 0, "#d73027", "#4575b4"),
-                       edge_linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")),
-          edge_alpha = 0.4, edge_width = esize, show.legend = FALSE)
+                       edge_linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed"),
+                       width = esize),
+          edge_alpha = 0.4, show.legend = FALSE) +
+          ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "Edge Size")
       } else {
-        p <- p + ggraph::geom_edge_link0(edge_colour = "black",
-                                         edge_linetype = "solid",
-                                         edge_alpha = 0.4, edge_width = esize)
+        p <- p + ggraph::geom_edge_link0(ggplot2::aes(width = esize),
+                                         edge_colour = "black", edge_alpha = 0.4,
+                                         edge_linetype = "solid") +
+          ggraph::scale_edge_width_continuous(range = c(0.2, 2.5), guide = "Edge Size")
       }
     }
   }
   if (is_complex(g)) {
-    lsize <- .infer_lsize(g, edge_size)
-    if (is_signed(g)) {
-      p <- p + ggraph::geom_edge_loop(
-        ggplot2::aes(width = weight,
-                     edge_colour = ifelse(igraph::E(g)$sign >= 0, "#d73027", "#4575b4"),
-                     edge_linetype = ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")),
-        edge_alpha = 0.4, edge_width = lsize, show.legend = FALSE) +
-        ggraph::scale_edge_width_continuous(range = c(0.2, 1), guide = "none")
-    } else if (!is.null(edge_color)) {
-      if (edge_color %in% names(tie_attribute(g))) {
-        p <- p + ggraph::geom_edge_loop(ggplot2::aes(
-          colour = as.factor(tie_attribute(g, edge_color))),
-          edge_linetype = "solid",
-          edge_alpha = 0.4, edge_width = lsize) +
-          ggraph::scale_edge_colour_manual(values = colorsafe_palette,
-                                           guide = ggplot2::guide_legend(""))
-      } else {
-        p <- p + ggraph::geom_edge_link0(colour = edge_color,
-                                         edge_linetype = "solid",
-                                         edge_alpha = 0.4, edge_width = lsize)
-      } 
-    } else {
-      p <- p + ggraph::geom_edge_loop(edge_colour = "black",
-                                      edge_linetype = "solid",
-                                      edge_alpha = 0.4, edge_width = lsize)
-    }
+      p <- p + ggraph::geom_edge_loop0(edge_width = esize, edge_alpha = 0.4)
   }
+  if (length(unique(esize)) == 1) {
+    p <- p + ggplot2::guides(edge_width = "none")
+  } else p <- p + ggplot2::guides(edge_width = ggplot2::guide_legend(title = "Edge size"))
   p
 }
 
@@ -460,7 +446,7 @@ graphr <- function(.data, layout, labels = TRUE,
           p <- p + ggraph::geom_node_point(ggplot2::aes(color = node_color),
                                            size = nsize, shape = nshape) +
             ggplot2::scale_colour_manual(values = colorsafe_palette,
-                                         guide = ggplot2::guide_legend(""))
+                                         guide = ggplot2::guide_legend("Color"))
         } else {
           p <- p + ggraph::geom_node_point(color = node_color,
                                            size = nsize, shape = nshape) 
@@ -476,9 +462,9 @@ graphr <- function(.data, layout, labels = TRUE,
                                  levels = c("TRUE", "FALSE"))
           } else node_color <- factor(node_attribute(g, node_color))
           p <- p + ggraph::geom_node_point(aes(color = node_color,
-                                               size = nsize), shape = nshape) +
+                                               size = nsize, shape = nshape)) +
             ggplot2::scale_colour_manual(values = colorsafe_palette, 
-                                         guide = ggplot2::guide_legend(""))
+                                         guide = ggplot2::guide_legend("Color"))
         } else {
           p <- p + ggraph::geom_node_point(color = node_color,
                                            size = nsize,
@@ -489,18 +475,15 @@ graphr <- function(.data, layout, labels = TRUE,
       }
     }
   }
-  
   # Drop legends for elements that don't vary
-  if(length(unique(nsize)) == 1){
+  if(length(unique(nsize)) == 1) {
     p <- p + ggplot2::guides(size = "none")
   } else p <- p + ggplot2::guides(size = ggplot2::guide_legend(title = "Size"))
-  if(length(unique(nshape)) == 1) p <- p + ggplot2::guides(shape = "none")
-  # if(length(unique(node_color)) == 1) p <- p + ggplot2::guides(color = FALSE)
-
+  if (length(unique(nshape)) == 1) {
+    p <- p + ggplot2::guides(shape = "none")
+  } else p <- p + ggplot2::guides(shape = ggplot2::guide_legend(title = "Shape"))
   # Consider rescaling nodes
-  p <- p + scale_size(range = c(1/net_nodes(g)*50, 
-                                1/net_nodes(g)*100))
-  
+  p <- p + ggplot2::scale_size(range = c(1/net_nodes(g)*50, 1/net_nodes(g)*100))
   p
 }
 
@@ -571,29 +554,11 @@ graphr <- function(.data, layout, labels = TRUE,
   out
 }
 
-.infer_lsize <- function(g, edge_size) {
-  if (!is.null(edge_size)) {
-    if (is.character(edge_size)) {
-      out <- tie_attribute(g, edge_size)
-    } else {
-      out <- edge_size
-    }
-    if (length(out > 1) & all(out <= 1 & out >= 0)) {
-      out <- sum(out)/length(out)*10
-    } else if (length(out > 1)) {
-      out <- sum(out)/length(out)
-    }
-  } else {
-    out <- 0.5
-  }
-  out
-}
-
 .check_color <- function(v) {
   color <- grDevices::colors()
   color <- color[!color %in% "black"]
   v <- ifelse(is.na(v), "black", v)
-  if (!any(grepl(paste(color, collapse = "|"), v)) | !any(grepl("#", v))) {
+  if (!any(grepl(paste(color, collapse = "|"), v)) | any(grepl("^#", v))) {
     for(i in unique(v)) {
       if (i != "black") {
         v[v == i] <- sample(color, 1)
