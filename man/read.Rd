@@ -101,6 +101,7 @@ you will need to unpack them and convert them one by one.
 
 Other makes: 
 \code{\link{create}},
+\code{\link{create_explicit}()},
 \code{\link{generate}},
 \code{\link{learning}},
 \code{\link{play}},

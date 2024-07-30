@@ -135,6 +135,7 @@ Barabasi, Albert-Laszlo, and Reka Albert. 1999.
 \seealso{
 Other makes: 
 \code{\link{create}},
+\code{\link{create_explicit}()},
 \code{\link{learning}},
 \code{\link{play}},
 \code{\link{read}},

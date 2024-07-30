@@ -207,6 +207,7 @@ This can be used in in SEI, SEIS, SEIR, and SEIRS models.
 \seealso{
 Other makes: 
 \code{\link{create}},
+\code{\link{create_explicit}()},
 \code{\link{generate}},
 \code{\link{learning}},
 \code{\link{read}},

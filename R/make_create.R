@@ -1,3 +1,122 @@
+# Explicit ####
+
+#' Making networks with explicit ties
+#'
+#'
+#' @description
+#'   This function creates a network from a vector of explicitly named nodes 
+#'   and ties between them.
+#'   `create_explicit()` largely wraps [igraph::graph_from_literal()],
+#'   but will also accept character input and not just a formula,
+#'   and will never simplify the result.
+#'   Ties are indicated by `-`, and directed ties (arcs)
+#'   require `+` at either or both ends. 
+#'   Ties are separated by commas, and isolates can be added as
+#'   an additional, unlinked node after the comma within the formula.
+#'   Sets of nodes can be linked to other sets of nodes through use of
+#'   a semi-colon.
+#'   See the example for a demonstration.
+#' @name create_explicit
+#' @family makes
+#' @seealso [as]
+#' @param ... Additional arguments passed on to `{igraph}`.
+#' @examples
+#'   create_explicit(A -+ B, B -+ C, A +-+ C, D, E:F:G-+A, E:F+-+G:H)
+#' @export
+create_explicit <- function(...){
+  if(is.symbol(as.list(match.call())[-1][[1]])){
+    mf <- stats::reformulate(...)
+    mf[[1]] <- NULL
+  } else mf <- as.list(match.call())[-1]
+  f <- function(x) {
+    if (is.call(x)) {
+      return(list(as.character(x[[1]]), lapply(x[-1], f)))
+    }
+    else return(NULL)
+  }
+  ops <- unlist(lapply(mf, f))
+  if (all(ops %in% c("-", ":"))) {
+    directed <- FALSE
+  }
+  else if (all(ops %in% c("-", "+", ":"))) {
+    directed <- TRUE
+  }
+  else {
+    stop("Invalid operator in formula")
+  }
+  f <- function(x) {
+    if (is.call(x)) {
+      if (length(x) == 3) {
+        return(list(f(x[[2]]), op = as.character(x[[1]]), 
+                    f(x[[3]])))
+      }
+      else {
+        return(list(op = as.character(x[[1]]), f(x[[2]])))
+      }
+    }
+    else {
+      return(c(sym = as.character(x)))
+    }
+  }
+  ret <- lapply(mf, function(x) unlist(f(x)))
+  v <- unique(unlist(lapply(ret, function(x) {
+    x[names(x) == "sym"]
+  })))
+  ret <- lapply(ret, function(x) {
+    res <- list()
+    for (i in seq(along.with = x)) {
+      if (x[i] == ":" && names(x)[i] == "op") {
+      }
+      else if (i > 1 && x[i - 1] == ":" && names(x)[i - 
+                                                    1] == "op") {
+        res[[length(res)]] <- c(res[[length(res)]], unname(x[i]))
+      }
+      else {
+        res <- c(res, x[i])
+      }
+    }
+    res
+  })
+  edges <- numeric()
+  for (i in seq(along.with = ret)) {
+    prev.sym <- character()
+    lhead <- rhead <- character()
+    for (j in seq(along.with = ret[[i]])) {
+      act <- ret[[i]][[j]]
+      if (names(ret[[i]])[j] == "op") {
+        if (length(lhead) == 0) {
+          lhead <- rhead <- act
+        }
+        else {
+          rhead <- act
+        }
+      }
+      else if (names(ret[[i]])[j] == "sym") {
+        for (ps in prev.sym) {
+          for (ps2 in act) {
+            if (lhead == "+") {
+              edges <- c(edges, unname(c(ps2, ps)))
+            }
+            if (!directed || rhead == "+") {
+              edges <- c(edges, unname(c(ps, ps2)))
+            }
+          }
+        }
+        lhead <- rhead <- character()
+        prev.sym <- act
+      }
+    }
+  }
+  ids <- seq(along.with = v)
+  names(ids) <- v
+  res <- igraph::make_graph(unname(ids[edges]), 
+                            n = length(v), directed = directed)
+  res <- igraph::set_vertex_attr(res, "name", value = v)
+  as_tidygraph(res)
+}
+
+# Defined ####
+
 #' Making networks with defined structures
 #'
 #' @description
@@ -45,7 +164,6 @@
 #' @param membership A vector of partition membership as integers.
 #'   If left as `NULL` (the default), nodes in each mode will be
 #'   assigned to two, equally sized partitions.
-#' @param ... Additional arguments passed on to `{igraph}`.
 #' @return By default a `tbl_graph` object is returned,
 #'   but this can be coerced into other types of objects
 #'   using `as_edgelist()`, `as_matrix()`,
@@ -374,106 +492,6 @@ create_core <- function(n, directed = FALSE, mark = NULL) {
     as_tidygraph(mat)
   }
 }
-
-#' @rdname create 
-#' @seealso [igraph::graph_from_literal()] which `create_explicit()` mostly just wraps.
-#'   `create_explicit()` will also accept character input and not just a formula though,
-#'   and will never simplify the result.
-#' @examples
-#'   create_explicit(A -+ B, B -+ C, A +-+ C, D)
-#' @export
-create_explicit <- function(...){
-  if(is.symbol(as.list(match.call())[-1][[1]])){
-    mf <- stats::reformulate(...)
-    mf[[1]] <- NULL
-  } else mf <- as.list(match.call())[-1]
-  f <- function(x) {
-    if (is.call(x)) {
-      return(list(as.character(x[[1]]), lapply(x[-1], f)))
-    }
-    else return(NULL)
-  }
-  ops <- unlist(lapply(mf, f))
-  if (all(ops %in% c("-", ":"))) {
-    directed <- FALSE
-  }
-  else if (all(ops %in% c("-", "+", ":"))) {
-    directed <- TRUE
-  }
-  else {
-    stop("Invalid operator in formula")
-  }
-  f <- function(x) {
-    if (is.call(x)) {
-      if (length(x) == 3) {
-        return(list(f(x[[2]]), op = as.character(x[[1]]), 
-                    f(x[[3]])))
-      }
-      else {
-        return(list(op = as.character(x[[1]]), f(x[[2]])))
-      }
-    }
-    else {
-      return(c(sym = as.character(x)))
-    }
-  }
-  ret <- lapply(mf, function(x) unlist(f(x)))
-  v <- unique(unlist(lapply(ret, function(x) {
-    x[names(x) == "sym"]
-  })))
-  ret <- lapply(ret, function(x) {
-    res <- list()
-    for (i in seq(along.with = x)) {
-      if (x[i] == ":" && names(x)[i] == "op") {
-      }
-      else if (i > 1 && x[i - 1] == ":" && names(x)[i - 
-                                                    1] == "op") {
-        res[[length(res)]] <- c(res[[length(res)]], unname(x[i]))
-      }
-      else {
-        res <- c(res, x[i])
-      }
-    }
-    res
-  })
-  edges <- numeric()
-  for (i in seq(along.with = ret)) {
-    prev.sym <- character()
-    lhead <- rhead <- character()
-    for (j in seq(along.with = ret[[i]])) {
-      act <- ret[[i]][[j]]
-      if (names(ret[[i]])[j] == "op") {
-        if (length(lhead) == 0) {
-          lhead <- rhead <- act
-        }
-        else {
-          rhead <- act
-        }
-      }
-      else if (names(ret[[i]])[j] == "sym") {
-        for (ps in prev.sym) {
-          for (ps2 in act) {
-            if (lhead == "+") {
-              edges <- c(edges, unname(c(ps2, ps)))
-            }
-            if (!directed || rhead == "+") {
-              edges <- c(edges, unname(c(ps, ps2)))
-            }
-          }
-        }
-        lhead <- rhead <- character()
-        prev.sym <- act
-      }
-    }
-  }
-  ids <- seq(along.with = v)
-  names(ids) <- v
-  res <- igraph::make_graph(unname(ids[edges]), 
-                            n = length(v), directed = directed)
-  res <- igraph::set_vertex_attr(res, "name", value = v)
-  as_tidygraph(res)
-}
-
 
 # #' @rdname create
 # #' @details Creates a nested two-mode network.

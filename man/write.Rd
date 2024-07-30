@@ -76,6 +76,7 @@ by \href{https://github.com/stocnet/manynet/issues}{raising an issue on Github}.
 
 Other makes: 
 \code{\link{create}},
+\code{\link{create_explicit}()},
 \code{\link{generate}},
 \code{\link{learning}},
 \code{\link{play}},

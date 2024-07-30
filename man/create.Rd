@@ -10,7 +10,6 @@
 \alias{create_lattice}
 \alias{create_components}
 \alias{create_core}
-\alias{create_explicit}
 \title{Making networks with defined structures}
 \usage{
 create_empty(n, directed = FALSE)
@@ -28,8 +27,6 @@ create_lattice(n, directed = FALSE, width = 8)
 create_components(n, directed = FALSE, membership = NULL)
 
 create_core(n, directed = FALSE, mark = NULL)
-
-create_explicit(...)
 }
 \arguments{
 \item{n}{Given:
@@ -49,8 +46,6 @@ use \code{to_redirected()} on the output of these functions.}
 
 \item{width}{Integer specifying the width of the ring,
 breadth of the branches, or maximum extent of the neighbourbood.}
-
-\item{...}{Additional arguments passed on to \code{{igraph}}.}
 
 \item{membership}{A vector of partition membership as integers.
 If left as \code{NULL} (the default), nodes in each mode will be
@@ -128,16 +123,12 @@ create_tree(c(7,8))
 create_lattice(12, width = 4)
 create_components(10, membership = c(1,1,1,2,2,2,3,3,3,3))
 create_core(6)
-  create_explicit(A -+ B, B -+ C, A +-+ C, D)
 }
 \seealso{
 \link{as}
 
-\code{\link[igraph:graph_from_literal]{igraph::graph_from_literal()}} which \code{create_explicit()} mostly just wraps.
-\code{create_explicit()} will also accept character input and not just a formula though,
-and will never simplify the result.
-
 Other makes: 
+\code{\link{create_explicit}()},
 \code{\link{generate}},
 \code{\link{learning}},
 \code{\link{play}},
