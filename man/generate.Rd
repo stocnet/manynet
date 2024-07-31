@@ -3,14 +3,17 @@
 \name{generate}
 \alias{generate}
 \alias{generate_random}
+\alias{generate_configuration}
 \alias{generate_smallworld}
 \alias{generate_scalefree}
 \alias{generate_permutation}
 \alias{generate_utilities}
-\alias{generate_configuration}
+\alias{generate_fire}
 \title{Making networks with a stochastic element}
 \usage{
 generate_random(n, p = 0.5, directed = FALSE, with_attr = TRUE)
+
+generate_configuration(.data)
 
 generate_smallworld(n, p = 0.05, directed = FALSE, width = 2)
 
@@ -20,7 +23,7 @@ generate_permutation(.data, with_attr = TRUE)
 
 generate_utilities(n, steps = 1, volatility = 0, threshold = 0)
 
-generate_configuration(.data)
+generate_fire(n, contacts = 1, their_out = 0, their_in = 1, directed = FALSE)
 }
 \arguments{
 \item{n}{Given:
@@ -41,9 +44,6 @@ a network of the same dimensions will be created.
 should be retained.
 By default TRUE.}
 
-\item{width}{Integer specifying the width of the ring,
-breadth of the branches, or maximum extent of the neighbourbood.}
-
 \item{.data}{An object of a manynet-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
@@ -52,6 +52,9 @@ breadth of the branches, or maximum extent of the neighbourbood.}
 \item network, from the \code{{network}} package
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
+
+\item{width}{Integer specifying the width of the ring,
+breadth of the branches, or maximum extent of the neighbourbood.}
 
 \item{steps}{Number of simulation steps to run.
 By default 1: a single, one-shot simulation.
@@ -96,6 +99,8 @@ given degree distribution.
 using a Fisher-Yates shuffle on both the rows and columns (for a one-mode network)
 or on each of the rows and columns (for a two-mode network).
 \item \code{generate_utilities()} generates a random utility matrix.
+\item \code{generate_fire()} generates a forest fire model,
+see \code{igraph::sample_forestfire()}.
 }
 
 These functions can create either one-mode or two-mode networks.
@@ -116,6 +121,7 @@ graphr(generate_scalefree(12, 0.25))
 graphr(generate_scalefree(12, 1.25))
 graphr(ison_adolescents)
 graphr(generate_permutation(ison_adolescents))
+generate_fire(10)
 }
 \references{
 Erdos, Paul, and Alfred Renyi. (1959).

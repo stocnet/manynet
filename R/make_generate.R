@@ -14,6 +14,8 @@
 #'   using a Fisher-Yates shuffle on both the rows and columns (for a one-mode network)
 #'   or on each of the rows and columns (for a two-mode network).
 #'   - `generate_utilities()` generates a random utility matrix.
+#'   - `generate_fire()` generates a forest fire model, 
+#'   see `igraph::sample_forestfire()`.
 #'
 #'   These functions can create either one-mode or two-mode networks.
 #'   To create a one-mode network, pass the main argument `n` a single integer,
@@ -96,6 +98,32 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
     stop("`n` must be of length=1 for a one-mode network or length=2 for a two-mode network.")
   }
   g
+}
+
+#' @rdname generate 
+#' @importFrom igraph sample_degseq
+#' @export
+generate_configuration <- function(.data){
+  if(is_twomode(.data)){
+    degs <- node_deg(.data)
+    outs <- ifelse(!c(attr(degs, "mode")),c(degs),rep(0,length(degs)))
+    ins <- ifelse(c(attr(degs, "mode")),c(degs),rep(0,length(degs)))
+    out <- igraph::sample_degseq(outs, ins, method = "simple.no.multiple")
+    out <- as_tidygraph(out) %>% mutate(type = c(attr(degs, "mode")))
+  } else {
+    if(is_complex(.data) || is_multiplex(.data) && is_directed(.data)) 
+      out <- igraph::sample_degseq(node_deg(.data, direction = "out"), 
+                                   node_deg(.data, direction = "in"),
+                                   method = "simple")
+    if(is_complex(.data) || is_multiplex(.data) && !is_directed(.data)) 
+      out <- igraph::sample_degseq(node_deg(.data), method = "simple")
+    if(!(is_complex(.data) || is_multiplex(.data)) && is_directed(.data)) 
+      out <- igraph::sample_degseq(node_deg(.data, direction = "out"), 
+                                   node_deg(.data, direction = "in"), method = "simple.no.multiple")
+    if(!(is_complex(.data) || is_multiplex(.data)) && !is_directed(.data)) 
+      out <- igraph::sample_degseq(node_deg(.data), method = "simple.no.multiple")
+  }
+  as_tidygraph(out)
 }
 
 #' @rdname generate 
@@ -207,27 +235,19 @@ generate_utilities <- function(n, steps = 1, volatility = 0, threshold = 0){
 }
 
 #' @rdname generate 
-#' @importFrom igraph sample_degseq
+#' @importFrom igraph sample_forestfire
+#' @examples
+#' generate_fire(10)
 #' @export
-generate_configuration <- function(.data){
-  if(is_twomode(.data)){
-    degs <- node_deg(.data)
-    outs <- ifelse(!c(attr(degs, "mode")),c(degs),rep(0,length(degs)))
-    ins <- ifelse(c(attr(degs, "mode")),c(degs),rep(0,length(degs)))
-    out <- igraph::sample_degseq(outs, ins, method = "simple.no.multiple")
-    out <- as_tidygraph(out) %>% mutate(type = c(attr(degs, "mode")))
+generate_fire <- function(n, contacts = 1, their_out = 0, their_in = 1, directed = FALSE){
+  directed <- infer_directed(n, directed)
+  n <- infer_n(n)
+  if(length(n)==2){
+    stop("There is no forest fire model implemented for two-mode networks")
   } else {
-    if(is_complex(.data) || is_multiplex(.data) && is_directed(.data)) 
-      out <- igraph::sample_degseq(node_deg(.data, direction = "out"), 
-                                   node_deg(.data, direction = "in"),
-                                   method = "simple")
-    if(is_complex(.data) || is_multiplex(.data) && !is_directed(.data)) 
-      out <- igraph::sample_degseq(node_deg(.data), method = "simple")
-    if(!(is_complex(.data) || is_multiplex(.data)) && is_directed(.data)) 
-      out <- igraph::sample_degseq(node_deg(.data, direction = "out"), 
-                                   node_deg(.data, direction = "in"), method = "simple.no.multiple")
-    if(!(is_complex(.data) || is_multiplex(.data)) && !is_directed(.data)) 
-      out <- igraph::sample_degseq(node_deg(.data), method = "simple.no.multiple")
+    out <- igraph::sample_forestfire(n, 
+                                     fw.prob = their_out, bw.factor = their_in,
+                                     ambs = contacts, directed = directed)
   }
   as_tidygraph(out)
 }
