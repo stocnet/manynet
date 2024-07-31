@@ -27,7 +27,7 @@ create_lattice(n, directed = FALSE, width = 8)
 
 create_components(n, directed = FALSE, membership = NULL)
 
-create_degree(n, outdegree, indegree = NULL)
+create_degree(n, outdegree = NULL, indegree = NULL)
 
 create_core(n, directed = FALSE, mark = NULL)
 }

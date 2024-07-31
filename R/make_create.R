@@ -473,8 +473,10 @@ create_components <- function(n, directed = FALSE, membership = NULL) {
 #' @examples
 #' create_degree(10, outdegree = rep(1:5, 2))
 #' @export
-create_degree <- function(n, outdegree, indegree = NULL) {
+create_degree <- function(n, outdegree = NULL, indegree = NULL) {
   directed <- infer_directed(n, !is.null(indegree))
+  outdegree <- infer_outdegree(n, outdegree)
+  indegree <- infer_indegree(n, indegree)
   n <- infer_n(n)
   if (length(n) == 1) {
     if(!directed){
@@ -554,6 +556,16 @@ create_core <- function(n, directed = FALSE, mark = NULL) {
 
 # Helper functions ------------------
 
+infer_dims <- function(object) {
+  if(is_twomode(object) &
+     any(grepl("type", igraph::vertex_attr_names(as_igraph(object))))) {
+    c(sum(!igraph::V(as_igraph(object))$type),
+      sum(igraph::V(as_igraph(object))$type))
+  } else {
+    igraph::vcount(as_igraph(object))
+  }
+}
+
 infer_n <- function(n) {
   if (is_manynet(n)) n <- infer_dims(n)
   if (length(n) > 2) stop(paste("`n` should be a single integer for a one-mode network or",
@@ -564,6 +576,22 @@ infer_n <- function(n) {
 infer_directed <- function(n, directed) {
   if(is_manynet(n)) directed <- is_directed(n)
   directed
+}
+
+infer_outdegree <- function(n, outdegree) {
+  if (is.null(outdegree) && is_manynet(n)){
+    outdegree <- node_deg(n, direction = "out")
+    if(is_twomode(n)) outdegree <- outdegree[1:net_dims(n)[1]]
+  } 
+  outdegree
+}
+
+infer_indegree <- function(n, indegree) {
+  if (is.null(indegree) && is_manynet(n)){
+    indegree <- node_deg(n, direction = "in")
+    if(is_twomode(n)) indegree <- indegree[(net_dims(n)[1]+1):sum(net_dims(n))]
+  } 
+  indegree
 }
 
 infer_membership <- function(n, membership) {
@@ -586,12 +614,3 @@ roll_over <- function(w) {
   cbind(w[, ncol(w)], w[, 1:(ncol(w) - 1)])
 }
 
-infer_dims <- function(object) {
-  if(is_twomode(object) &
-     any(grepl("type", igraph::vertex_attr_names(as_igraph(object))))) {
-    c(sum(!igraph::V(as_igraph(object))$type),
-      sum(igraph::V(as_igraph(object))$type))
-  } else {
-    igraph::vcount(as_igraph(object))
-  }
-}
