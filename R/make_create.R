@@ -6,9 +6,10 @@
 #' @description
 #'   This function creates a network from a vector of explicitly named nodes 
 #'   and ties between them.
-#'   `create_explicit()` largely wraps [igraph::graph_from_literal()],
+#'   `create_explicit()` largely wraps `igraph::graph_from_literal()`,
 #'   but will also accept character input and not just a formula,
 #'   and will never simplify the result.
+#'   
 #'   Ties are indicated by `-`, and directed ties (arcs)
 #'   require `+` at either or both ends. 
 #'   Ties are separated by commas, and isolates can be added as
@@ -16,10 +17,10 @@
 #'   Sets of nodes can be linked to other sets of nodes through use of
 #'   a semi-colon.
 #'   See the example for a demonstration.
-#' @name create_explicit
+#' @name make_explicit
 #' @family makes
-#' @seealso [as]
-#' @param ... Additional arguments passed on to `{igraph}`.
+#' @param ... Arguments passed on to `{igraph}`.
+#' @importFrom igraph make_graph
 #' @examples
 #'   create_explicit(A -+ B, B -+ C, A +-+ C, D, E:F:G-+A, E:F+-+G:H)
 #' @export
@@ -132,8 +133,8 @@ create_explicit <- function(...){
 #'   - `create_components()` creates a network that clusters nodes into separate components.
 #'   - `create_core()` creates a network in which a certain proportion of 'core' nodes
 #'   are densely tied to each other, and the rest peripheral, tied only to the core.
-#'   - `create_explicit()` creates a network based on explicitly
-#'   named nodes and ties between them.
+#'   - `create_degree()` creates a network with a given (out/in)degree sequence,
+#'   which can also be used to create k-regular networks.
 #'
 #'   These functions can create either one-mode or two-mode networks.
 #'   To create a one-mode network, pass the main argument `n` a single integer,
@@ -143,7 +144,7 @@ create_explicit <- function(...){
 #'   and the second integer indicates the number of nodes in the second mode.
 #'   As an alternative, an existing network can be provided to `n`
 #'   and the number of modes, nodes, and directedness will be inferred.
-#' @name create
+#' @name make_create
 #' @family makes
 #' @seealso [as]
 #' @param n Given:
@@ -179,7 +180,7 @@ create_explicit <- function(...){
 #' @importFrom igraph graph_from_biadjacency_matrix
 NULL
 
-#' @rdname create 
+#' @rdname make_create 
 #' @examples
 #' create_empty(10)
 #' @export
@@ -197,7 +198,7 @@ create_empty <- function(n, directed = FALSE) {
   as_tidygraph(out)
 }
 
-#' @rdname create 
+#' @rdname make_create 
 #' @examples
 #' create_filled(10)
 #' @export
@@ -216,7 +217,7 @@ create_filled <- function(n, directed = FALSE) {
   as_tidygraph(out)
 }
 
-#' @rdname create 
+#' @rdname make_create 
 #' @examples
 #' create_ring(8, width = 2)
 #' @export
@@ -263,7 +264,7 @@ create_ring <- function(n, directed = FALSE, width = 1, ...) {
   as_tidygraph(out)
 }
 
-#' @rdname create 
+#' @rdname make_create 
 #' @importFrom igraph graph_from_adjacency_matrix graph_from_biadjacency_matrix
 #'   make_star
 #' @examples
@@ -287,7 +288,7 @@ create_star <- function(n,
   as_tidygraph(out)
 }
 
-#' @rdname create 
+#' @rdname make_create 
 #' @importFrom igraph make_tree
 #' @examples
 #' create_tree(c(7,8))
@@ -335,7 +336,7 @@ create_tree <- function(n,
   }
 }
 
-#' @rdname create 
+#' @rdname make_create 
 #' @section Lattice graphs:
 #'   `create_lattice()` creates both two-dimensional grid and triangular
 #'   lattices with as even dimensions as possible.
@@ -443,7 +444,7 @@ create_lattice <- function(n,
 #   }
 # }
 
-#' @rdname create 
+#' @rdname make_create 
 #' @examples
 #' create_components(10, membership = c(1,1,1,2,2,2,3,3,3,3))
 #' @export
@@ -467,7 +468,35 @@ create_components <- function(n, directed = FALSE, membership = NULL) {
   as_tidygraph(out)
 }
 
-#' @rdname create
+#' @rdname make_create 
+#' @importFrom igraph realize_degseq realize_bipartite_degseq
+#' @examples
+#' create_degree(10, outdegree = rep(1:5, 2))
+#' @export
+create_degree <- function(n, outdegree, indegree = NULL) {
+  directed <- infer_directed(n, !is.null(indegree))
+  n <- infer_n(n)
+  if (length(n) == 1) {
+    if(!directed){
+      if(length(outdegree)==1) outdegree <- rep(outdegree, n)
+      stopifnot(n == length(outdegree))
+      out <- igraph::realize_degseq(outdegree)
+    } else {
+      if(length(outdegree)==1) outdegree <- rep(outdegree, n)
+      if(length(indegree)==1) indegree <- rep(indegree, n)
+      stopifnot(n == length(outdegree), n == length(indegree))
+      out <- igraph::realize_degseq(outdegree, indegree)
+    }
+  } else if (length(n) == 2) {
+    if(length(outdegree)==1) outdegree <- rep(outdegree, n[1])
+    if(length(indegree)==1) indegree <- rep(indegree, n[2])
+    stopifnot(n[1] == length(outdegree), n[2] == length(indegree))
+    out <- igraph::realize_bipartite_degseq(outdegree, indegree)
+  }
+  as_tidygraph(out)
+}
+
+#' @rdname make_create
 #' @param mark A logical vector the length of the nodes in the network.
 #'   This can be created by, among other things, any `node_is_*()` function.
 #' @examples

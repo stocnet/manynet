@@ -25,7 +25,7 @@
 #'   and the number of modes, nodes, and directedness will be inferred.
 #' @name generate
 #' @family makes
-#' @inheritParams create
+#' @inheritParams make_create
 #' @inheritParams is
 #' @param directed Whether to generate network as directed. By default FALSE.
 #' @return By default a `tbl_graph` object is returned,

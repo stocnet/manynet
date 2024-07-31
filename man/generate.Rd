@@ -134,9 +134,9 @@ Barabasi, Albert-Laszlo, and Reka Albert. 1999.
 }
 \seealso{
 Other makes: 
-\code{\link{create}},
-\code{\link{create_explicit}()},
 \code{\link{learning}},
+\code{\link{make_create}},
+\code{\link{make_explicit}},
 \code{\link{play}},
 \code{\link{read}},
 \code{\link{write}()}

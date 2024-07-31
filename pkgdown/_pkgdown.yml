@@ -52,7 +52,8 @@ reference:
       Functions for deterministically creating and stochastically generating 
       directed and undirected, one-mode and two-mode networks.
     contents:
-      - starts_with("create_")
+      - make_explicit
+      - make_create
       - starts_with("generate_")
   - subtitle: "Playing"
     desc: |

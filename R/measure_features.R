@@ -28,7 +28,7 @@
 #' 
 #'   These `net_*()` functions return a single numeric scalar or value.
 #' @inheritParams is
-#' @inheritParams create
+#' @inheritParams make_create
 #' @param membership A vector of partition membership.
 #' @name measure_features
 #' @family measures
