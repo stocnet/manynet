@@ -243,11 +243,40 @@ generate_fire <- function(n, contacts = 1, their_out = 0, their_in = 1, directed
   directed <- infer_directed(n, directed)
   n <- infer_n(n)
   if(length(n)==2){
-    stop("There is no forest fire model implemented for two-mode networks")
+    stop("There is currently no forest fire model implemented for two-mode networks.")
   } else {
     out <- igraph::sample_forestfire(n, 
                                      fw.prob = their_out, bw.factor = their_in,
                                      ambs = contacts, directed = directed)
+  }
+  as_tidygraph(out)
+}
+
+#' @rdname generate 
+#' @importFrom igraph sample_islands
+#' @examples
+#' generate_islands(10)
+#' @export
+generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1, directed = FALSE){
+  directed <- infer_directed(n, directed)
+  if(is_manynet(n)){
+    m <- net_nodes(n)
+    extra_ties <- ifelse(islands > 2, islands * bridges, bridges)
+    aimed_ties <- net_ties(n) - extra_ties
+    m <- mean(c(table(cut(seq.int(m), islands, labels = FALSE))))
+    p <-  (aimed_ties/islands) / ifelse(directed, m*(m-1), (m*(m-1))/2)
+    if(p > 1) p <- 1
+  } 
+  n <- infer_n(n)
+  if(length(n)==2){
+    stop("There is currently no island model implemented for two-mode networks.")
+  } else {
+    out <- igraph::sample_islands(islands.n = islands,
+                                  islands.size = c(table(cut(seq.int(n), islands, labels = FALSE))),
+                                  islands.pin = p,
+                                  n.inter = bridges)
+    if(net_nodes(out) != n) out <- delete_nodes(out, order(node_constraint(out), decreasing = TRUE)[1:(net_nodes(out)-n)])
+    if(directed) out <- to_directed(out)
   }
   as_tidygraph(out)
 }

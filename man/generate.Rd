@@ -9,6 +9,7 @@
 \alias{generate_permutation}
 \alias{generate_utilities}
 \alias{generate_fire}
+\alias{generate_islands}
 \title{Making networks with a stochastic element}
 \usage{
 generate_random(n, p = 0.5, directed = FALSE, with_attr = TRUE)
@@ -24,6 +25,8 @@ generate_permutation(.data, with_attr = TRUE)
 generate_utilities(n, steps = 1, volatility = 0, threshold = 0)
 
 generate_fire(n, contacts = 1, their_out = 0, their_in = 1, directed = FALSE)
+
+generate_islands(n, islands = 2, p = 0.5, bridges = 1, directed = FALSE)
 }
 \arguments{
 \item{n}{Given:
@@ -122,6 +125,7 @@ graphr(generate_scalefree(12, 1.25))
 graphr(ison_adolescents)
 graphr(generate_permutation(ison_adolescents))
 generate_fire(10)
+generate_islands(10)
 }
 \references{
 Erdos, Paul, and Alfred Renyi. (1959).
