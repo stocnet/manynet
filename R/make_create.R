@@ -218,6 +218,7 @@ create_filled <- function(n, directed = FALSE) {
 }
 
 #' @rdname make_create 
+#' @param ... Additional arguments passed on to `igraph::make_ring()`.
 #' @examples
 #' create_ring(8, width = 2)
 #' @export
@@ -469,6 +470,16 @@ create_components <- function(n, directed = FALSE, membership = NULL) {
 }
 
 #' @rdname make_create 
+#' @param outdegree Numeric scalar or vector indicating the 
+#'   desired outdegree distribution.
+#'   By default NULL and is required.
+#'   If `n` is an existing network object and the outdegree is not specified, 
+#'   then the outdegree distribution will be inferred from that of the network.
+#'   Note that a scalar (single number) will result in a k-regular graph.
+#' @param indegree Numeric vector indicating the desired indegree distribution.
+#'   By default NULL but not required unless a directed network is desired.
+#'   If `n` is an existing directed network object and the indegree is not specified, 
+#'   then the indegree distribution will be inferred from that of the network.
 #' @importFrom igraph realize_degseq realize_bipartite_degseq
 #' @examples
 #' create_degree(10, outdegree = rep(1:5, 2))

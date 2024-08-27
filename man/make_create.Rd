@@ -50,9 +50,23 @@ use \code{to_redirected()} on the output of these functions.}
 \item{width}{Integer specifying the width of the ring,
 breadth of the branches, or maximum extent of the neighbourbood.}
 
+\item{...}{Additional arguments passed on to \code{igraph::make_ring()}.}
+
 \item{membership}{A vector of partition membership as integers.
 If left as \code{NULL} (the default), nodes in each mode will be
 assigned to two, equally sized partitions.}
+
+\item{outdegree}{Numeric scalar or vector indicating the
+desired outdegree distribution.
+By default NULL and is required.
+If \code{n} is an existing network object and the outdegree is not specified,
+then the outdegree distribution will be inferred from that of the network.
+Note that a scalar (single number) will result in a k-regular graph.}
+
+\item{indegree}{Numeric vector indicating the desired indegree distribution.
+By default NULL but not required unless a directed network is desired.
+If \code{n} is an existing directed network object and the indegree is not specified,
+then the indegree distribution will be inferred from that of the network.}
 
 \item{mark}{A logical vector the length of the nodes in the network.
 This can be created by, among other things, any \verb{node_is_*()} function.}

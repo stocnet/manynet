@@ -39,7 +39,6 @@ to_correlation <- function(.data, method = NULL){
   out
 }
   
-
 #' @rdname correlation 
 #' @param with_attr Logical whether any attributes of the object
 #'   should be retained. 

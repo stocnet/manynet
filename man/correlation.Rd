@@ -44,6 +44,10 @@ and for complex networks it will include also the difference
 between the self ties in each pairwise calculation.
 This function runs in \eqn{O(mn^2)} complexity.
 }
+\examples{
+graphr(ison_adolescents)
+graphr(to_permuted(ison_adolescents))
+}
 \seealso{
 Other modifications: 
 \code{\link{add_nodes}()},
