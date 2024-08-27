@@ -39,6 +39,51 @@ to_correlation <- function(.data, method = NULL){
   out
 }
   
+
+#' @rdname correlation 
+#' @param with_attr Logical whether any attributes of the object
+#'   should be retained. 
+#'   By default TRUE. 
+#' @examples
+#' graphr(ison_adolescents)
+#' graphr(to_permuted(ison_adolescents))
+#' @export
+to_permuted <- function(.data, with_attr = TRUE) {
+  out <- as_matrix(.data)
+  if(is_twomode(.data)){
+    out <- .r2perm(out)
+  } else {
+    out <- .r1perm(out)
+  }
+  if(with_attr) out <- bind_node_attributes(out, .data)
+  out
+}
+
+# Helper functions ------------------
+
+.r1perm <- function(m) {
+  n <- sample(seq_len(dim(m)[1]))
+  if(is_labelled(m)){
+    p <- matrix(data = m[n, n], nrow = dim(m)[1], ncol = dim(m)[2],
+                dimnames = dimnames(m))
+  } else {
+    p <- matrix(data = m[n, n], nrow = dim(m)[1], ncol = dim(m)[2])
+  }
+  p
+}
+
+.r2perm <- function(m) {
+  n <- sample(seq_len(dim(m)[1]))
+  o <- sample(seq_len(dim(m)[2]))
+  if(is_labelled(m)){
+    p <- matrix(data = m[n, o], nrow = dim(m)[1], ncol = dim(m)[2],
+                dimnames = dimnames(m))
+  } else {
+    p <- matrix(data = m[n, o], nrow = dim(m)[1], ncol = dim(m)[2])
+  }
+  p
+}
+
 .corTwomode <- function(m0){
   stats::cor(m0)
 }
@@ -96,3 +141,5 @@ to_correlation <- function(.data, method = NULL){
   m[upper.tri(m)] <- t(m)[upper.tri(m)]
   return(m)
 }
+
+

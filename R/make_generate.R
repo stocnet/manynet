@@ -183,26 +183,7 @@ generate_scalefree <- function(n, p = 1, directed = FALSE) {
   g
 }
 
-#' @rdname generate 
-#' @param with_attr Logical whether any attributes of the object
-#'   should be retained. 
-#'   By default TRUE. 
-#' @examples
-#' graphr(ison_adolescents)
-#' graphr(generate_permutation(ison_adolescents))
-#' @export
-generate_permutation <- function(.data, with_attr = TRUE) {
-  out <- as_matrix(.data)
-  if(is_twomode(.data)){
-    out <- .r2perm(out)
-  } else {
-    out <- .r1perm(out)
-  }
-  if(with_attr) out <- bind_node_attributes(out, .data)
-  out
-}
-
-#' @rdname generate 
+#' @rdname make_generate 
 #' @param steps Number of simulation steps to run.
 #'   By default 1: a single, one-shot simulation.
 #'   If more than 1, further iterations will update the utilities
@@ -295,17 +276,6 @@ generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1, directed = FA
   as_tidygraph(out)
 }
 
-# Helper functions ------------------
-
-.r1perm <- function(m) {
-  n <- sample(seq_len(dim(m)[1]))
-  if(is_labelled(m)){
-    p <- matrix(data = m[n, n], nrow = dim(m)[1], ncol = dim(m)[2],
-                dimnames = dimnames(m))
-  } else {
-    p <- matrix(data = m[n, n], nrow = dim(m)[1], ncol = dim(m)[2])
-  }
-  p
 #' @rdname make_generate 
 #' @param ties Number of ties to add per new node.
 #'   By default a uniform random sample from 1 to 4 new ties.
@@ -324,14 +294,3 @@ generate_citations <- function(n, ties = sample(1:4,1), agebins = max(1, n/10), 
   as_tidygraph(out)
 }
 
-.r2perm <- function(m) {
-  n <- sample(seq_len(dim(m)[1]))
-  o <- sample(seq_len(dim(m)[2]))
-  if(is_labelled(m)){
-    p <- matrix(data = m[n, o], nrow = dim(m)[1], ncol = dim(m)[2],
-                dimnames = dimnames(m))
-  } else {
-    p <- matrix(data = m[n, o], nrow = dim(m)[1], ncol = dim(m)[2])
-  }
-  p
-}

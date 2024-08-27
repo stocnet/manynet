@@ -711,3 +711,11 @@ node_core <- function(.data) {
   node_is_core(.data)
 }
 
+#' @describeIn defunct Deprecated on 2024-08-27.
+#' @export
+generate_permutation <- function(.data) {
+  .Deprecated("to_permuted", package = "migraph",
+              old = "generate_permutation")
+  to_permuted(.data)
+}
+
