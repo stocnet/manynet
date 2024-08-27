@@ -132,9 +132,9 @@ create_core(6)
 \link{as}
 
 Other makes: 
-\code{\link{generate}},
 \code{\link{learning}},
 \code{\link{make_explicit}},
+\code{\link{make_generate}},
 \code{\link{play}},
 \code{\link{read}},
 \code{\link{write}()}

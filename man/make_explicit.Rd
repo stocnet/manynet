@@ -30,9 +30,9 @@ See the example for a demonstration.
 }
 \seealso{
 Other makes: 
-\code{\link{generate}},
 \code{\link{learning}},
 \code{\link{make_create}},
+\code{\link{make_generate}},
 \code{\link{play}},
 \code{\link{read}},
 \code{\link{write}()}

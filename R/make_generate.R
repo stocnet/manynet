@@ -26,7 +26,7 @@
 #'   and the second integer indicates the number of nodes in the second mode.
 #'   As an alternative, an existing network can be provided to `n`
 #'   and the number of modes, nodes, and directedness will be inferred.
-#' @name generate
+#' @name make_generate
 #' @family makes
 #' @inheritParams make_create
 #' @inheritParams is
@@ -44,7 +44,7 @@
 #'   In two-mode networks, the directed argument is ignored.
 NULL
 
-#' @rdname generate 
+#' @rdname make_generate 
 #' @param p Proportion of possible ties in the network that are realised or,
 #'   if integer greater than 1, the number of ties in the network.
 #' @references 
@@ -101,7 +101,7 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
   g
 }
 
-#' @rdname generate 
+#' @rdname make_generate 
 #' @importFrom igraph sample_degseq
 #' @export
 generate_configuration <- function(.data){
@@ -127,7 +127,7 @@ generate_configuration <- function(.data){
   as_tidygraph(out)
 }
 
-#' @rdname generate 
+#' @rdname make_generate 
 #' @param p Proportion of possible ties in the network that are realised or,
 #'   if integer greater than 1, the number of ties in the network.
 #' @references 
@@ -154,7 +154,7 @@ generate_smallworld <- function(n, p = 0.05, directed = FALSE, width = 2) {
   g
 }
 
-#' @rdname generate 
+#' @rdname make_generate 
 #' @param p Power of the preferential attachment, default is 1.
 #' @importFrom igraph sample_pa
 #' @references 

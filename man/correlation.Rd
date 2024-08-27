@@ -3,9 +3,12 @@
 \name{correlation}
 \alias{correlation}
 \alias{to_correlation}
+\alias{to_permuted}
 \title{Node correlation}
 \usage{
 to_correlation(.data, method = NULL)
+
+to_permuted(.data, with_attr = TRUE)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -23,6 +26,10 @@ to_correlation(.data, method = NULL)
 "recip" excludes the diagonal but compares pairs' reciprocal ties,
 and "complex" compares pairs' reciprocal ties and their self ties.
 By default the appropriate method is chosen based on the network format.}
+
+\item{with_attr}{Logical whether any attributes of the object
+should be retained.
+By default TRUE.}
 }
 \description{
 This function performs a Pearson pairwise correlation on a given matrix or network data.

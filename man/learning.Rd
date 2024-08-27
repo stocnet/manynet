@@ -81,9 +81,9 @@ These functions allow learning games to be played upon networks.
 }
 \seealso{
 Other makes: 
-\code{\link{generate}},
 \code{\link{make_create}},
 \code{\link{make_explicit}},
+\code{\link{make_generate}},
 \code{\link{play}},
 \code{\link{read}},
 \code{\link{write}()}
