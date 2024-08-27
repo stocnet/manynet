@@ -104,46 +104,50 @@ NULL
 #'   dplyr::distinct(directed, weighted, twomode, signed, 
 #'                  .keep_all = TRUE)
 #' @export
-table_data <- function(pkg = "manynet") {
+table_data <- function(pkg = c("manynet","migraph"),
   nodes <- NULL
-  datanames <- utils::data(package = pkg)$results[,"Item"]
-  require(package = pkg, character.only = TRUE)
-  datasets <- lapply(datanames, function(d) get(d))
-  datanames <- datanames[!vapply(datasets, is_list, logical(1))]
-  datasets <- datasets[!vapply(datasets, is_list, logical(1))]
-  out <- dplyr::tibble(dataset = tibble::char(datanames, min_chars = 18),
-                        nodes = vapply(datasets, net_nodes, numeric(1)),
-                        ties = vapply(datasets, net_ties, numeric(1)),
-                        nattr = vapply(datasets, 
-                                            function (x) length(net_node_attributes(x)), 
-                                            numeric(1)),
-                        tattr = vapply(datasets, 
-                                            function (x) length(net_tie_attributes(x)), 
-                                            numeric(1)),
-                        directed = vapply(datasets, 
-                                        is_directed, 
-                                        logical(1)),
-                        weighted = vapply(datasets, 
-                                          is_weighted, 
+  pkg <- intersect(pkg, rownames(installed.packages()))
+  out <- lapply(pkg, function(x){
+    datanames <- utils::data(package = x)$results[,"Item"]
+    require(package = x, character.only = TRUE)
+    datasets <- lapply(datanames, function(d) get(d))
+    datanames <- datanames[!vapply(datasets, is_list, logical(1))]
+    datasets <- datasets[!vapply(datasets, is_list, logical(1))]
+    dplyr::tibble(dataset = tibble::char(datanames, min_chars = 18),
+                         nodes = vapply(datasets, net_nodes, numeric(1)),
+                         ties = vapply(datasets, net_ties, numeric(1)),
+                         nattr = vapply(datasets, 
+                                        function (x) length(net_node_attributes(x)), 
+                                        numeric(1)),
+                         tattr = vapply(datasets, 
+                                        function (x) length(net_tie_attributes(x)), 
+                                        numeric(1)),
+                         directed = vapply(datasets, 
+                                           is_directed, 
+                                           logical(1)),
+                         weighted = vapply(datasets, 
+                                           is_weighted, 
+                                           logical(1)),
+                         twomode = vapply(datasets, 
+                                          is_twomode, 
                                           logical(1)),
-                        twomode = vapply(datasets, 
-                                            is_twomode, 
+                         labelled = vapply(datasets, 
+                                           is_labelled, 
+                                           logical(1)),
+                         signed = vapply(datasets, 
+                                         is_signed, 
+                                         logical(1)),
+                         multiplex = vapply(datasets, 
+                                            is_multiplex, 
                                             logical(1)),
-                        labelled = vapply(datasets, 
-                                          is_labelled, 
-                                          logical(1)),
-                        signed = vapply(datasets, 
-                                          is_signed, 
-                                          logical(1)),
-                        multiplex = vapply(datasets, 
-                                        is_multiplex, 
-                                        logical(1)),
-                       acyclic = vapply(datasets, 
+                         acyclic = vapply(datasets, 
                                           is_acyclic, 
                                           logical(1)),
-                       attributed = vapply(datasets, 
-                                           is_attributed, 
-                                           logical(1)))
-  out <- dplyr::arrange(out, nodes)
+                         attributed = vapply(datasets, 
+                                             is_attributed, 
+                                             logical(1)))
+    
+  })
+  out <- dplyr::bind_rows(out) %>% dplyr::arrange(nodes)
   out
 }
