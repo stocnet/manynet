@@ -14,8 +14,9 @@
 #'   using a Fisher-Yates shuffle on both the rows and columns (for a one-mode network)
 #'   or on each of the rows and columns (for a two-mode network).
 #'   - `generate_utilities()` generates a random utility matrix.
-#'   - `generate_fire()` generates a forest fire model, 
-#'   see `igraph::sample_forestfire()`.
+#'   - `generate_fire()` generates a forest fire model.
+#'   - `generate_islands()` generates an islands model.
+#'   - `generate_citations()` generates a citations model.
 #'
 #'   These functions can create either one-mode or two-mode networks.
 #'   To create a one-mode network, pass the main argument `n` a single integer,
@@ -234,7 +235,15 @@ generate_utilities <- function(n, steps = 1, volatility = 0, threshold = 0){
   as_igraph(utilities)
 }
 
-#' @rdname generate 
+#' @rdname make_generate 
+#' @param contacts Number of contacts or ambassadors chosen from among existing
+#'   nodes in the network.
+#'   By default 1.
+#'   See `igraph::sample_forestfire()`.
+#' @param their_out Probability of tieing to a contact's outgoing ties.
+#'   By default 0.
+#' @param their_in Probability of tieing to a contact's incoming ties.
+#'   By default 1.
 #' @importFrom igraph sample_forestfire
 #' @examples
 #' generate_fire(10)
@@ -252,7 +261,12 @@ generate_fire <- function(n, contacts = 1, their_out = 0, their_in = 1, directed
   as_tidygraph(out)
 }
 
-#' @rdname generate 
+#' @rdname make_generate 
+#' @param islands Number of islands or communities to create.
+#'   By default 2.
+#'   See `igraph::sample_islands()` for more.
+#' @param bridges Number of bridges between islands/communities.
+#'   By default 1.
 #' @importFrom igraph sample_islands
 #' @examples
 #' generate_islands(10)
