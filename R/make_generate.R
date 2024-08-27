@@ -292,6 +292,22 @@ generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1, directed = FA
     p <- matrix(data = m[n, n], nrow = dim(m)[1], ncol = dim(m)[2])
   }
   p
+#' @rdname make_generate 
+#' @param ties Number of ties to add per new node.
+#'   By default a uniform random sample from 1 to 4 new ties.
+#' @param agebins Number of aging bins.
+#'   By default either \eqn{\frac{n}{10}} or 1,
+#'   whichever is the larger.
+#'   See `igraphr::sample_last_cit()` for more.
+#' @importFrom igraph sample_last_cit
+#' @examples
+#' generate_citations(10)
+#' @export
+generate_citations <- function(n, ties = sample(1:4,1), agebins = max(1, n/10), directed = FALSE){
+  directed <- infer_directed(n, directed)
+  n <- infer_n(n)
+  out <- igraph::sample_last_cit(n, edges = ties, agebins = agebins, directed = directed)
+  as_tidygraph(out)
 }
 
 .r2perm <- function(m) {
