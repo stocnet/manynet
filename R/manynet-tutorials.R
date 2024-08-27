@@ -96,15 +96,15 @@ NULL
 #' @rdname data_overview 
 #' @examples
 #' table_data()
-#' # to obtain list of all e.g. two-mode networks:
-#' table_data() %>% 
-#'   dplyr::filter(directed)
+#' # to obtain list of all e.g. directed networks:
+#' table_data(pkg = "manynet", directed)
 #' # to obtain overview of unique datasets:
 #' table_data() %>% 
 #'   dplyr::distinct(directed, weighted, twomode, signed, 
 #'                  .keep_all = TRUE)
 #' @export
 table_data <- function(pkg = c("manynet","migraph"),
+                       ...) {
   nodes <- NULL
   pkg <- intersect(pkg, rownames(installed.packages()))
   out <- lapply(pkg, function(x){
@@ -149,5 +149,6 @@ table_data <- function(pkg = c("manynet","migraph"),
     
   })
   out <- dplyr::bind_rows(out) %>% dplyr::arrange(nodes)
+  if(!is.null(filter)) out <- dplyr::filter(out, ...)
   out
 }
