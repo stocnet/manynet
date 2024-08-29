@@ -136,6 +136,23 @@ tie_is_transitive <- function(.data){
   make_tie_mark(out, .data)
 }
 
+#' @rdname mark_triangles
+#' @examples 
+#' ison_adolescents %>% to_directed() %>% 
+#'   mutate_ties(cyc = tie_is_cyclical()) %>% 
+#'   graphr(edge_color = "cyc")
+#' @export
+tie_is_cyclical <- function(.data){
+  if(missing(.data)) {expect_edges(); .data <- .G()}
+  out <- vapply(seq_len(net_ties(.data)), function(x){
+    nodes <- as_edgelist(to_unnamed(.data))[x,]
+    igraph::distances(delete_ties(.data, x), 
+                      v = nodes[2], to = nodes[1], 
+                      mode = "out") == 2
+  }, FUN.VALUE = logical(1))
+  make_tie_mark(out, .data)
+}
+
 # Selection properties ####
 
 #' Marking ties for selection based on measures
