@@ -87,6 +87,13 @@ reference:
       new data on nodes or ties to networks.
     contents:
       - starts_with("add_")
+  - subtitle: "Converting"
+    desc: |
+      Functions for permuting networks or constructing a network
+      from the nodal correlations of another network.
+    contents:
+      - manip_permutation
+      - manip_correlation
   - subtitle: "Missing"
     desc: |
       Functions for modifying how missing data is treated.

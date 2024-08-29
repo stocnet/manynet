@@ -12,7 +12,7 @@
 #'   and for complex networks it will include also the difference 
 #'   between the self ties in each pairwise calculation.
 #'   This function runs in \eqn{O(mn^2)} complexity.
-#' @name correlation
+#' @name manip_correlation
 #' @inheritParams is
 #' @param method One of the following:
 #'   "all" includes all information,
@@ -39,13 +39,24 @@ to_correlation <- function(.data, method = NULL){
   out
 }
   
-#' @rdname correlation 
+#' Network permutation
+#' 
+#' @description 
+#'   `to_permuted()` permutes the network using a Fisher-Yates shuffle 
+#'   on both the rows and columns (for a one-mode network)
+#'   or on each of the rows and columns (for a two-mode network).
+#' @name manip_permutation
+#' @inheritParams is
+#' @family modifications
+NULL
+
+#' @rdname manip_permutation 
 #' @param with_attr Logical whether any attributes of the object
 #'   should be retained. 
 #'   By default TRUE. 
 #' @examples
-#' graphr(ison_adolescents)
-#' graphr(to_permuted(ison_adolescents))
+#' graphr(ison_adolescents, node_size = 4)
+#' graphr(to_permuted(ison_adolescents), node_size = 4)
 #' @export
 to_permuted <- function(.data, with_attr = TRUE) {
   out <- as_matrix(.data)
@@ -58,6 +69,7 @@ to_permuted <- function(.data, with_attr = TRUE) {
   out
 }
 
+#' @rdname make_generate 
 #' @export
 generate_permutation <- to_permuted #to avoid migraph dependency issues
 

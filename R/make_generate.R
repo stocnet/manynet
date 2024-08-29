@@ -10,9 +10,6 @@
 #'   given degree distribution.
 #'   - `generate_smallworld()` generates a small-world structure via ring rewiring at some probability.
 #'   - `generate_scalefree()` generates a scale-free structure via preferential attachment at some probability.
-#'   - `generate_permutation()` generates a permutation of the network
-#'   using a Fisher-Yates shuffle on both the rows and columns (for a one-mode network)
-#'   or on each of the rows and columns (for a two-mode network).
 #'   - `generate_utilities()` generates a random utility matrix.
 #'   - `generate_fire()` generates a forest fire model.
 #'   - `generate_islands()` generates an islands model.
