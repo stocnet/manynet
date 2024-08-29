@@ -153,6 +153,22 @@ tie_is_cyclical <- function(.data){
   make_tie_mark(out, .data)
 }
 
+#' @rdname mark_triangles
+#' @examples 
+#' ison_monastery_like %>% 
+#'   mutate_ties(simmel = tie_is_simmelian()) %>% 
+#'   graphr(edge_color = "simmel")
+#' @export
+tie_is_simmelian <- function(.data){
+  if(missing(.data)) {expect_edges(); .data <- .G()}
+  recip <- filter_ties(.data, tie_is_reciprocated())
+  simmel <- filter_ties(recip, tie_is_triangular())
+  ties <- as_edgelist(to_unnamed(.data))[,c("from","to")]
+  simmel <- as_edgelist(to_unnamed(simmel))[,c("from","to")]
+  out <- do.call(paste, ties) %in% do.call(paste, simmel)
+  make_tie_mark(out, .data)
+}
+
 # Selection properties ####
 
 #' Marking ties for selection based on measures
