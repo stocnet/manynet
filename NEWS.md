@@ -1,3 +1,43 @@
+# manynet 1.0.5
+
+## Making
+
+- Added `create_degree()` for creating networks of a given degree sequence, including _k_-regular graphs
+- Added `generate_citations()` for citation models
+- Added `generate_fire()` for forest-fire models
+- Added `generate_islands()` for island models
+- `create_explicit()` now has its own documentation
+
+## Marking
+
+- Added `tie_is_triangular()` for identifying ties in triangles
+- Added `tie_is_cyclical()` for identifying ties in cycles
+- Added `tie_is_transitive()` for identifying ties involved in transitive closure
+- Added `tie_is_simmelian()` for identifying Simmelian ties
+
+## Manipulating
+
+- `generate_permutation()` renamed to `to_permuted()`
+
+## Mapping
+
+- Updated how `graphr()` plots edges in directed networks
+- Removed automatic legends for signed networks
+- Fixed other legends issues
+
+## Data
+
+- `table_data()` can now report on data from multiple packages
+  - `{manynet}` and `{migraph}` are included by default,
+  and if any are not installed they are just ignored
+- `tabe_data()` can now filter by any reported formats,
+such as 'directed' or 'twomode'
+
+## Website
+
+- Added more structure to Modifying section
+- Added more structure to Mapping section
+
 # manynet 1.0.4
 
 ## Modifying
