@@ -79,6 +79,7 @@ Other marks:
 \code{\link{mark_diff}},
 \code{\link{mark_select}},
 \code{\link{mark_tie_select}},
-\code{\link{mark_ties}}
+\code{\link{mark_ties}},
+\code{\link{mark_triangles}}
 }
 \concept{marks}

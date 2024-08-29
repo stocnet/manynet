@@ -48,10 +48,6 @@ a network of the same dimensions will be created.
 
 \item{directed}{Whether to generate network as directed. By default FALSE.}
 
-\item{with_attr}{Logical whether any attributes of the object
-should be retained.
-By default TRUE.}
-
 \item{.data}{An object of a manynet-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R

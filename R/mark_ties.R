@@ -77,6 +77,48 @@ tie_is_bridge <- function(.data){
   make_tie_mark(out, .data)
 }
 
+# Triangular properties ####
+
+#' Marking ties based on structural properties
+#' 
+#' @description 
+#'   These functions return logical vectors the length of the ties
+#'   in a network identifying which hold certain properties or positions in the network.
+#'   
+#'   - `tie_is_triangular()` marks ties that are in triangles.
+#'   - `tie_is_cyclical()` marks ties that are in cycles.
+#'   - `tie_is_transitive()` marks ties that complete transitive closure.
+#'   - `tie_is_simmelian()` marks ties that are both in a triangle 
+#'   and fully reciprocated.
+#'   
+#'   They are most useful in highlighting parts of the network that
+#'   are cohesively connected.
+#' @inheritParams mark_nodes
+#' @family marks
+#' @name mark_triangles
+NULL
+
+#' @rdname mark_triangles
+#' @importFrom igraph triangles
+#' @examples 
+#' tie_is_triangular(ison_monastery_like)
+#' @export
+tie_is_triangular <- function(.data){
+  if(missing(.data)) {expect_edges(); .data <- .G()}
+  out <- .triangle_ties(.data)
+  ties <- as_edgelist(to_unnamed(.data))[,c("from","to")]
+  out <- do.call(paste, ties) %in% do.call(paste, as.data.frame(out))
+  make_tie_mark(out, .data)
+}
+
+.triangle_ties <- function(.data){
+  out <- t(matrix(igraph::triangles(as_igraph(.data)), nrow = 3))
+  # out <- as.data.frame(out)
+  out <- rbind(out[,c(1,2)],out[,c(2,3)],out[,c(3,1)],
+               out[,c(1,3)],out[,c(3,2)],out[,c(2,1)])
+  out
+}
+
 # Selection properties ####
 
 #' Marking ties for selection based on measures
