@@ -3,9 +3,12 @@
 \name{mark_triangles}
 \alias{mark_triangles}
 \alias{tie_is_triangular}
+\alias{tie_is_transitive}
 \title{Marking ties based on structural properties}
 \usage{
 tie_is_triangular(.data)
+
+tie_is_transitive(.data)
 
 }
 \arguments{
@@ -23,6 +26,7 @@ These functions return logical vectors the length of the ties
 in a network identifying which hold certain properties or positions in the network.
 \itemize{
 \item \code{tie_is_triangular()} marks ties that are in triangles.
+\item \code{tie_is_transitive()} marks ties that complete transitive closure.
 }
 
 They are most useful in highlighting parts of the network that
@@ -30,6 +34,9 @@ are cohesively connected.
 }
 \examples{
 tie_is_triangular(ison_monastery_like)
+ison_adolescents \%>\% to_directed() \%>\% 
+  mutate_ties(trans = tie_is_transitive()) \%>\% 
+  graphr(edge_color = "trans")
 }
 \seealso{
 Other marks: 
