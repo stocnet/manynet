@@ -47,6 +47,9 @@ NULL
 #' @rdname make_generate 
 #' @param p Proportion of possible ties in the network that are realised or,
 #'   if integer greater than 1, the number of ties in the network.
+#' @param with_attr Logical whether any attributes of the object
+#'   should be retained. 
+#'   By default TRUE. 
 #' @references 
 #' Erdos, Paul, and Alfred Renyi. (1959). 
 #' "\href{https://www.renyi.hu/~p_erdos/1959-11.pdf}{On Random Graphs I}" 

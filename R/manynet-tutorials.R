@@ -94,6 +94,8 @@ extract_tute <- function(tute) {
 NULL
 
 #' @rdname data_overview 
+#' @param ... Network marks, e.g. directed, twomode, or signed,
+#'   that are used to filter the results.
 #' @examples
 #' table_data()
 #' # to obtain list of all e.g. directed networks:
@@ -106,7 +108,7 @@ NULL
 table_data <- function(pkg = c("manynet","migraph"),
                        ...) {
   nodes <- NULL
-  pkg <- intersect(pkg, rownames(installed.packages()))
+  pkg <- intersect(pkg, rownames(utils::installed.packages()))
   out <- lapply(pkg, function(x){
     datanames <- utils::data(package = x)$results[,"Item"]
     require(package = x, character.only = TRUE)
