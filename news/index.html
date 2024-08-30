@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.5</span>
       </span>
     </div>
 
@@ -59,6 +59,49 @@
       <small>Source: <a href="https://github.com/stocnet/manynet/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.0.5" id="manynet-105">manynet 1.0.5<small>2024-08-30</small><a class="anchor" aria-label="anchor" href="#manynet-105"></a></h2>
+<div class="section level3">
+<h3 id="making-1-0-5">Making<a class="anchor" aria-label="anchor" href="#making-1-0-5"></a></h3>
+<ul><li>Added <code><a href="../reference/make_create.html">create_degree()</a></code> for creating networks of a given degree sequence, including <em>k</em>-regular graphs</li>
+<li>Added <code><a href="../reference/make_generate.html">generate_citations()</a></code> for citation models</li>
+<li>Added <code><a href="../reference/make_generate.html">generate_fire()</a></code> for forest-fire models</li>
+<li>Added <code><a href="../reference/make_generate.html">generate_islands()</a></code> for island models</li>
+<li>
+<code><a href="../reference/make_explicit.html">create_explicit()</a></code> now has its own documentation</li>
+</ul></div>
+<div class="section level3">
+<h3 id="marking-1-0-5">Marking<a class="anchor" aria-label="anchor" href="#marking-1-0-5"></a></h3>
+<ul><li>Added <code><a href="../reference/mark_triangles.html">tie_is_triangular()</a></code> for identifying ties in triangles</li>
+<li>Added <code><a href="../reference/mark_triangles.html">tie_is_cyclical()</a></code> for identifying ties in cycles</li>
+<li>Added <code><a href="../reference/mark_triangles.html">tie_is_transitive()</a></code> for identifying ties involved in transitive closure</li>
+<li>Added <code><a href="../reference/mark_triangles.html">tie_is_simmelian()</a></code> for identifying Simmelian ties</li>
+</ul></div>
+<div class="section level3">
+<h3 id="manipulating-1-0-5">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-1-0-5"></a></h3>
+<ul><li>
+<code><a href="../reference/make_generate.html">generate_permutation()</a></code> renamed to <code><a href="../reference/manip_permutation.html">to_permuted()</a></code>
+</li></ul></div>
+<div class="section level3">
+<h3 id="mapping-1-0-5">Mapping<a class="anchor" aria-label="anchor" href="#mapping-1-0-5"></a></h3>
+<ul><li>Updated how <code><a href="../reference/graphr.html">graphr()</a></code> plots edges in directed networks</li>
+<li>Removed automatic legends for signed networks</li>
+<li>Fixed other legends issues</li>
+</ul></div>
+<div class="section level3">
+<h3 id="data-1-0-5">Data<a class="anchor" aria-label="anchor" href="#data-1-0-5"></a></h3>
+<ul><li>
+<code><a href="../reference/data_overview.html">table_data()</a></code> can now report on data from multiple packages<ul><li>
+<a href="https://stocnet.github.io/manynet/">manynet</a> and <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a> are included by default, and if any are not installed they are just ignored</li></ul></li>
+<li>
+<code>tabe_data()</code> can now filter by any reported formats, such as ‘directed’ or ‘twomode’</li>
+</ul></div>
+<div class="section level3">
+<h3 id="website-1-0-5">Website<a class="anchor" aria-label="anchor" href="#website-1-0-5"></a></h3>
+<ul><li>Added more structure to Modifying section</li>
+<li>Added more structure to Mapping section</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.0.4" id="manynet-104">manynet 1.0.4<a class="anchor" aria-label="anchor" href="#manynet-104"></a></h2>
 <div class="section level3">
@@ -138,7 +181,7 @@
 <h2 class="page-header" data-toc-text="1.0.1" id="manynet-101">manynet 1.0.1<small>2024-07-17</small><a class="anchor" aria-label="anchor" href="#manynet-101"></a></h2>
 <div class="section level3">
 <h3 id="package-1-0-1">Package<a class="anchor" aria-label="anchor" href="#package-1-0-1"></a></h3>
-<ul><li>Test of <code><a href="../reference/split.html">to_subgraphs()</a></code> no longer sampled</li></ul></div>
+<ul><li>Test of <code><a href="../reference/manip_split.html">to_subgraphs()</a></code> no longer sampled</li></ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.0.0" id="manynet-100">manynet 1.0.0<a class="anchor" aria-label="anchor" href="#manynet-100"></a></h2>
@@ -155,8 +198,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="making-1-0-0">Making<a class="anchor" aria-label="anchor" href="#making-1-0-0"></a></h3>
-<ul><li>Fixed bug in <code><a href="../reference/create.html">create_core()</a></code> where the membership inferred when passing an existing network was incorrect</li>
-<li>Added <code><a href="../reference/generate.html">generate_configuration()</a></code> for generating configuration models (including for two-mode networks)</li>
+<ul><li>Fixed bug in <code><a href="../reference/make_create.html">create_core()</a></code> where the membership inferred when passing an existing network was incorrect</li>
+<li>Added <code><a href="../reference/make_generate.html">generate_configuration()</a></code> for generating configuration models (including for two-mode networks)</li>
 <li>
 <code>play_diffuson()</code> now includes an explicit contact argument to control the basis of exposure</li>
 </ul></div>
@@ -187,9 +230,9 @@
 <h3 id="modifying-1-0-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-0-0"></a></h3>
 <ul><li>
 <code><a href="../reference/reformat.html">to_named()</a></code> now randomly generates and adds an alphabetic sequence of names, where previously this was just a random sample, which may assist pedagogical use<ul><li>baby_names (internal) now includes a few extra “Q” and “U” names</li></ul></li>
-<li>Added <code><a href="../reference/correlation.html">to_correlation()</a></code> that implements pairwise correlation on network</li>
+<li>Added <code><a href="../reference/manip_correlation.html">to_correlation()</a></code> that implements pairwise correlation on network</li>
 <li>Added <code><a href="../reference/add_ties.html">arrange_ties()</a></code> for <a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a>-like reordering of ties based on some attribute</li>
-<li>Added <code><a href="../reference/correlation.html">to_correlation()</a></code> for calculating the Pearson correlation<ul><li>This takes a method argument for “all”, “diag”, “recip”, or “complex”</li>
+<li>Added <code><a href="../reference/manip_correlation.html">to_correlation()</a></code> for calculating the Pearson correlation<ul><li>This takes a method argument for “all”, “diag”, “recip”, or “complex”</li>
 <li>These are similar to functions implemented by Ron Breiger and shared by him in correspondence</li>
 </ul></li>
 <li>Fixed bug in <code>as_diff_model()</code> where events were out of order and named</li>
@@ -279,14 +322,14 @@
 </li>
 </ul></li>
 <li>Several improvements to <code><a href="../reference/cluster.html">cluster_concor()</a></code><ul><li>
-<code><a href="../reference/cluster.html">cluster_concor()</a></code> now uses <code><a href="../reference/correlation.html">to_correlation()</a></code> for initial correlation</li>
+<code><a href="../reference/cluster.html">cluster_concor()</a></code> now uses <code><a href="../reference/manip_correlation.html">to_correlation()</a></code> for initial correlation</li>
 <li>It still uses <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">stats::cor()</a></code> for subsequent iterations</li>
 <li>Fixed how <code><a href="../reference/cluster.html">cluster_concor()</a></code> handles unlabelled networks</li>
 <li>Fixed how <code><a href="../reference/cluster.html">cluster_concor()</a></code> handles two-mode networks</li>
 <li>Fixed bug where <code><a href="../reference/cluster.html">cluster_concor()</a></code> cutoff resulted in unsplit groups</li>
 </ul></li>
 <li>
-<code><a href="../reference/cluster.html">cluster_hierarchical()</a></code> now also uses <code><a href="../reference/correlation.html">to_correlation()</a></code>
+<code><a href="../reference/cluster.html">cluster_hierarchical()</a></code> now also uses <code><a href="../reference/manip_correlation.html">to_correlation()</a></code>
 </li>
 </ul></div>
 <div class="section level3">
@@ -323,7 +366,7 @@
 <div class="section level3">
 <h3 id="making-0-4-2">Making<a class="anchor" aria-label="anchor" href="#making-0-4-2"></a></h3>
 <ul><li>Closed <a href="https://github.com/stocnet/manynet/issues/57" class="external-link">#57</a> by updating <code><a href="../reference/play.html">play_diffusions()</a></code> to revert future plan on exit</li>
-<li>Fixed bug with how <code><a href="../reference/generate.html">generate_random()</a></code> works for two-mode networks with specified number of ties</li>
+<li>Fixed bug with how <code><a href="../reference/make_generate.html">generate_random()</a></code> works for two-mode networks with specified number of ties</li>
 </ul></div>
 <div class="section level3">
 <h3 id="mapping-0-4-2">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-4-2"></a></h3>
@@ -365,7 +408,7 @@
 <h3 id="making-0-4-0">Making<a class="anchor" aria-label="anchor" href="#making-0-4-0"></a></h3>
 <ul><li>Migrated <code><a href="../reference/play.html">play_diffusion()</a></code> and <code><a href="../reference/play.html">play_diffusions()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Including class creation, and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>, and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods</li></ul></li>
 <li>Migrated <code><a href="../reference/learning.html">play_learning()</a></code> and <code><a href="../reference/learning.html">play_segregation()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Including class creation, and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>, and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods</li></ul></li>
-<li>Fixed bug in <code><a href="../reference/create.html">create_tree()</a></code> where it was not returning a two-mode network correctly</li>
+<li>Fixed bug in <code><a href="../reference/make_create.html">create_tree()</a></code> where it was not returning a two-mode network correctly</li>
 </ul></div>
 <div class="section level3">
 <h3 id="modifying-0-4-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-0-4-0"></a></h3>
@@ -473,7 +516,7 @@
 <h3 id="modifying-0-3-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-0-3-0"></a></h3>
 <ul><li>Manipulating functions now called Modifying</li>
 <li>
-<code><a href="../reference/split.html">to_waves()</a></code> now works on diff_model objects, add attributes and names</li>
+<code><a href="../reference/manip_split.html">to_waves()</a></code> now works on diff_model objects, add attributes and names</li>
 <li>
 <code><a href="../reference/is_format.html">is_multiplex()</a></code> now recognises a tie/edge ‘type’ attribute as evidence of multiplexity</li>
 <li>Deleted unnecessary reexports from other packages<ul><li>
@@ -521,7 +564,7 @@
 <div class="section level3">
 <h3 id="mapping-0-2-10">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-2-10"></a></h3>
 <ul><li>
-<code><a href="../reference/defunct.html">autographd()</a></code> and <code><a href="../reference/defunct.html">autographs()</a></code> can now be used for plotting diffusion models.<ul><li>Updates to <code><a href="../reference/split.html">to_waves()</a></code> and <code><a href="../reference/defunct.html">autographd()</a></code> to account for ‘exposed’ nodes in diffusion models.</li></ul></li>
+<code><a href="../reference/defunct.html">autographd()</a></code> and <code><a href="../reference/defunct.html">autographs()</a></code> can now be used for plotting diffusion models.<ul><li>Updates to <code><a href="../reference/manip_split.html">to_waves()</a></code> and <code><a href="../reference/defunct.html">autographd()</a></code> to account for ‘exposed’ nodes in diffusion models.</li></ul></li>
 <li>Updates to layouts<ul><li>Updates to <code>hierarchical</code> layout so that node name can be specified for centering the layout</li>
 <li>Updated <code>theme_heid()</code> layout</li>
 </ul></li>
@@ -703,7 +746,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="make-0-2-0">Make<a class="anchor" aria-label="anchor" href="#make-0-2-0"></a></h3>
-<ul><li>Added <code><a href="../reference/create.html">create_explicit()</a></code> for creating networks based on explicit nodes and ties</li></ul></div>
+<ul><li>Added <code><a href="../reference/make_explicit.html">create_explicit()</a></code> for creating networks based on explicit nodes and ties</li></ul></div>
 <div class="section level3">
 <h3 id="manip-0-2-0">Manip<a class="anchor" aria-label="anchor" href="#manip-0-2-0"></a></h3>
 <ul><li>Added <code><a href="../reference/add_nodes.html">delete_nodes()</a></code> for deleting specific nodes</li>
@@ -777,8 +820,8 @@
 <ul><li>Added <code>read_*()</code> functions, e.g. <code><a href="../reference/read.html">read_edgelist()</a></code>
 </li>
 <li>Added <code>write_*()</code> functions, e.g. <code><a href="../reference/write.html">write_edgelist()</a></code><ul><li>Added <code><a href="../reference/write.html">write_matrix()</a></code> for exporting to matrices</li></ul></li>
-<li>Added <code>create_*()</code> functions, e.g. <code><a href="../reference/create.html">create_lattice()</a></code><ul><li>All <code>create_*()</code> functions return <code>tbl_graph</code> class objects</li></ul></li>
-<li>Added <code>generate_*()</code> functions, e.g. <code><a href="../reference/generate.html">generate_smallworld()</a></code>
+<li>Added <code>create_*()</code> functions, e.g. <code><a href="../reference/make_create.html">create_lattice()</a></code><ul><li>All <code>create_*()</code> functions return <code>tbl_graph</code> class objects</li></ul></li>
+<li>Added <code>generate_*()</code> functions, e.g. <code><a href="../reference/make_generate.html">generate_smallworld()</a></code>
 </li>
 <li>Added <code>ison_*</code> network data, e.g. <code>ison_southern_women</code>
 </li>
@@ -807,7 +850,7 @@
 <li>
 <code><a href="../reference/reformat.html">to_directed()</a></code> now a method</li>
 <li>
-<code><a href="../reference/split.html">to_subgraphs()</a></code> now returns a list of <code>tbl_graph</code>s</li>
+<code><a href="../reference/manip_split.html">to_subgraphs()</a></code> now returns a list of <code>tbl_graph</code>s</li>
 <li>
 <code><a href="../reference/reformat.html">to_reciprocated()</a></code> now works on edgelists, matrices, tbl_graphs, and networks</li>
 <li>

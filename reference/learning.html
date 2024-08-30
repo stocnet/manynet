@@ -21,7 +21,7 @@ play_segregation() plays a Schelling segregation model upon a network.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.5</span>
       </span>
     </div>
 
@@ -144,8 +144,9 @@ and "minimising" distance will move the node to the next nearest unoccupied coor
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other makes:
-<code><a href="create.html">create</a></code>,
-<code><a href="generate.html">generate</a></code>,
+<code><a href="make_create.html">make_create</a></code>,
+<code><a href="make_explicit.html">make_explicit</a></code>,
+<code><a href="make_generate.html">make_generate</a></code>,
 <code><a href="play.html">play</a></code>,
 <code><a href="read.html">read</a></code>,
 <code><a href="write.html">write</a>()</code></p>
@@ -157,17 +158,18 @@ and "minimising" distance will move the node to the next nearest unoccupied coor
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span>  <span class="fu">play_learning</span><span class="op">(</span><span class="va">ison_networkers</span>, </span></span>
 <span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fu"><a href="measure_properties.html">net_nodes</a></span><span class="op">(</span><span class="va">ison_networkers</span><span class="op">)</span>,<span class="fl">1</span>,prob <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 8 × 32</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 9 × 32</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   `Lin Freeman` `Doug White` `Ev Rogers` `Richard Alba` `Phipps Arabie`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>         0            0           1             0                1    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>         0.162        0.259       0             0.078<span style="text-decoration: underline;">5</span>           0.155</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>         0.162        0.145       0.176         0.171            0.166</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>         0.151        0.160       0.149         0.150            0.153</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>         0.155        0.153       0.154         0.155            0.155</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>         0.153        0.154       0.154         0.153            0.153</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span>         0.154        0.154       0.154         0.154            0.154</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span>         0.154        0.154       0.154         0.154            0.154</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>         0            1           0              0               0    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>         0.482        0.224       0.357          0.429           0.258</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>         0.313        0.384       0.359          0.347           0.343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>         0.366        0.343       0.342          0.358           0.360</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>         0.349        0.356       0.357          0.352           0.352</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>         0.355        0.352       0.351          0.354           0.354</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span>         0.353        0.354       0.354          0.353           0.353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span>         0.353        0.353       0.353          0.353           0.353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span>         0.353        0.353       0.353          0.353           0.353</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 27 more variables: `Carol Barner-Barry` &lt;dbl&gt;, `Gary Coombs` &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   `Russ Bernard` &lt;dbl&gt;, `John Boyd` &lt;dbl&gt;, `Ron Burt` &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   `Pat Doreian` &lt;dbl&gt;, `Claude Fischer` &lt;dbl&gt;, `Brian Foster` &lt;dbl&gt;,</span></span>
@@ -177,19 +179,19 @@ and "minimising" distance will move the node to the next nearest unoccupied coor
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   `Nan Lin` &lt;dbl&gt;, `Nick Mullins` &lt;dbl&gt;, `Don Ploch` &lt;dbl&gt;, …</span></span>
 <span class="r-in"><span>  <span class="va">startValues</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fl">100</span>,<span class="fl">1</span>,prob <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">startValues</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span><span class="op">*</span><span class="fl">0.2</span><span class="op">)</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span></span>
-<span class="r-in"><span>  <span class="va">latticeEg</span> <span class="op">&lt;-</span> <span class="fu"><a href="create.html">create_lattice</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">latticeEg</span> <span class="op">&lt;-</span> <span class="fu"><a href="make_create.html">create_lattice</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">latticeEg</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_nodes.html">add_node_attribute</a></span><span class="op">(</span><span class="va">latticeEg</span>, <span class="st">"startValues"</span>, <span class="va">startValues</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">latticeEg</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected network with 100 nodes and 342 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 100 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   startValues</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>           0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>           1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>           0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>          <span style="color: #BB0000;">NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>           1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>           1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>           1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>           0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>          <span style="color: #BB0000;">NA</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>           1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>           0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>           0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 94 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 342 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
@@ -202,27 +204,33 @@ and "minimising" distance will move the node to the next nearest unoccupied coor
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2    12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 336 more rows</span></span>
 <span class="r-in"><span>  <span class="fu">play_segregation</span><span class="op">(</span><span class="va">latticeEg</span>, <span class="st">"startValues"</span>, <span class="fl">0.5</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 3 to node 28"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 10 to node 62"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 24 to node 44"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 34 to node 12"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 38 to node 83"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 60 to node 22"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 93 to node 84"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 95 to node 90"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 98 to node 20"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 30 to node 93"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 100 to node 70"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 2 to node 40"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 22 to node 3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 4 to node 7"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 13 to node 54"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 28 to node 57"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 17 to node 2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 32 to node 49"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 62 to node 79"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 64 to node 75"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 70 to node 12"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 83 to node 66"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 88 to node 51"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 78 to node 72"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 81 to node 78"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 90 to node 63"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 91 to node 23"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 100 to node 31"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected network with 100 nodes and 342 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 100 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   startValues</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;node_msr&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>  0         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>  1         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> NA         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>  1         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>  0         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>  0         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> NA         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>  1         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>  1         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>  0         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>  0         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 94 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 342 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>

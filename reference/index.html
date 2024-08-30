@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.5</span>
       </span>
     </div>
 
@@ -79,11 +79,15 @@
           <p class="section-desc"></p><p>Functions for deterministically creating and stochastically generating directed and undirected, one-mode and two-mode networks.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="create.html">create_empty()</a></code> <code><a href="create.html">create_filled()</a></code> <code><a href="create.html">create_ring()</a></code> <code><a href="create.html">create_star()</a></code> <code><a href="create.html">create_tree()</a></code> <code><a href="create.html">create_lattice()</a></code> <code><a href="create.html">create_components()</a></code> <code><a href="create.html">create_core()</a></code> <code><a href="create.html">create_explicit()</a></code> </p>
+          <p><code><a href="make_explicit.html">create_explicit()</a></code> </p>
+        </td>
+        <td><p>Making networks with explicit ties</p></td>
+      </tr><tr><td>
+          <p><code><a href="make_create.html">create_empty()</a></code> <code><a href="make_create.html">create_filled()</a></code> <code><a href="make_create.html">create_ring()</a></code> <code><a href="make_create.html">create_star()</a></code> <code><a href="make_create.html">create_tree()</a></code> <code><a href="make_create.html">create_lattice()</a></code> <code><a href="make_create.html">create_components()</a></code> <code><a href="make_create.html">create_degree()</a></code> <code><a href="make_create.html">create_core()</a></code> </p>
         </td>
         <td><p>Making networks with defined structures</p></td>
       </tr><tr><td>
-          <p><code><a href="generate.html">generate_random()</a></code> <code><a href="generate.html">generate_smallworld()</a></code> <code><a href="generate.html">generate_scalefree()</a></code> <code><a href="generate.html">generate_permutation()</a></code> <code><a href="generate.html">generate_utilities()</a></code> <code><a href="generate.html">generate_configuration()</a></code> </p>
+          <p><code><a href="make_generate.html">generate_random()</a></code> <code><a href="make_generate.html">generate_configuration()</a></code> <code><a href="make_generate.html">generate_smallworld()</a></code> <code><a href="make_generate.html">generate_scalefree()</a></code> <code><a href="make_generate.html">generate_utilities()</a></code> <code><a href="make_generate.html">generate_fire()</a></code> <code><a href="make_generate.html">generate_islands()</a></code> <code><a href="make_generate.html">generate_citations()</a></code> <code><a href="make_generate.html">generate_permutation()</a></code> </p>
         </td>
         <td><p>Making networks with a stochastic element</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -102,38 +106,6 @@
           <h2 id="modifying">Modifying <a href="#modifying" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Functions for modifying networks into other classes or formats, or modifying their properties or attributes. This includes functions for reformatting networks into networks of the same dimensions but a different type, e.g. from directed to undirected. It also includes functions for transforming networks into networks with other dimensions, such as from a two-mode network into a one-mode network. There are also functions for splitting networks, e.g. into a list of ego networks, and rejoining them from such lists.</p>
         </th>
-      </tr></tbody><tbody><tr><td>
-          <p><code><a href="correlation.html">to_correlation()</a></code> </p>
-        </td>
-        <td><p>Node correlation</p></td>
-      </tr><tr><td>
-          <p><code><a href="reformat.html">to_uniplex()</a></code> <code><a href="reformat.html">to_undirected()</a></code> <code><a href="reformat.html">to_directed()</a></code> <code><a href="reformat.html">to_redirected()</a></code> <code><a href="reformat.html">to_reciprocated()</a></code> <code><a href="reformat.html">to_acyclic()</a></code> <code><a href="reformat.html">to_unweighted()</a></code> <code><a href="reformat.html">to_unsigned()</a></code> <code><a href="reformat.html">to_unnamed()</a></code> <code><a href="reformat.html">to_named()</a></code> <code><a href="reformat.html">to_simplex()</a></code> <code><a href="reformat.html">to_anti()</a></code> </p>
-        </td>
-        <td><p>Modifying network formats</p></td>
-      </tr><tr><td>
-          <p><code><a href="split.html">to_egos()</a></code> <code><a href="split.html">to_subgraphs()</a></code> <code><a href="split.html">to_components()</a></code> <code><a href="split.html">to_waves()</a></code> <code><a href="split.html">to_slices()</a></code> </p>
-        </td>
-        <td><p>Splitting networks into lists</p></td>
-      </tr><tr><td>
-          <p><code><a href="to_levels.html">to_onemode()</a></code> <code><a href="to_levels.html">to_twomode()</a></code> <code><a href="to_levels.html">to_multilevel()</a></code> </p>
-        </td>
-        <td><p>Modifying network levels</p></td>
-      </tr><tr><td>
-          <p><code><a href="to_paths.html">to_matching()</a></code> <code><a href="to_paths.html">to_mentoring()</a></code> <code><a href="to_paths.html">to_eulerian()</a></code> <code><a href="to_paths.html">to_tree()</a></code> </p>
-        </td>
-        <td><p>Modifying networks paths</p></td>
-      </tr><tr><td>
-          <p><code><a href="to_project.html">to_mode1()</a></code> <code><a href="to_project.html">to_mode2()</a></code> <code><a href="to_project.html">to_ties()</a></code> <code><a href="to_project.html">to_galois()</a></code> </p>
-        </td>
-        <td><p>Modifying networks projection</p></td>
-      </tr><tr><td>
-          <p><code><a href="to_scope.html">to_giant()</a></code> <code><a href="to_scope.html">to_no_isolates()</a></code> <code><a href="to_scope.html">to_subgraph()</a></code> <code><a href="to_scope.html">to_blocks()</a></code> </p>
-        </td>
-        <td><p>Modifying networks scope</p></td>
-      </tr><tr><td>
-          <p><code><a href="from.html">from_subgraphs()</a></code> <code><a href="from.html">from_egos()</a></code> <code><a href="from.html">from_waves()</a></code> <code><a href="from.html">from_slices()</a></code> <code><a href="from.html">from_ties()</a></code> </p>
-        </td>
-        <td><p>Joining lists of networks, graphs, and matrices</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h3 id="coercion">Coercion <a href="#coercion" class="anchor" aria-hidden="true"></a></h3>
           <p class="section-desc"></p><p>Functions for modifying networks into other classes.</p>
@@ -155,6 +127,62 @@
         </td>
         <td><p>Modifying tie data</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="reformatting">Reformatting <a href="#reformatting" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p><p>Functions for reformatting networks, retaining the same network dimensions.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="reformat.html">to_uniplex()</a></code> <code><a href="reformat.html">to_undirected()</a></code> <code><a href="reformat.html">to_directed()</a></code> <code><a href="reformat.html">to_redirected()</a></code> <code><a href="reformat.html">to_reciprocated()</a></code> <code><a href="reformat.html">to_acyclic()</a></code> <code><a href="reformat.html">to_unweighted()</a></code> <code><a href="reformat.html">to_unsigned()</a></code> <code><a href="reformat.html">to_unnamed()</a></code> <code><a href="reformat.html">to_named()</a></code> <code><a href="reformat.html">to_simplex()</a></code> <code><a href="reformat.html">to_anti()</a></code> </p>
+        </td>
+        <td><p>Modifying network formats</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="transforming">Transforming <a href="#transforming" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p><p>Functions for transforming networks, which may change the network’s dimensions.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="to_paths.html">to_matching()</a></code> <code><a href="to_paths.html">to_mentoring()</a></code> <code><a href="to_paths.html">to_eulerian()</a></code> <code><a href="to_paths.html">to_tree()</a></code> </p>
+        </td>
+        <td><p>Modifying networks paths</p></td>
+      </tr><tr><td>
+          <p><code><a href="to_scope.html">to_giant()</a></code> <code><a href="to_scope.html">to_no_isolates()</a></code> <code><a href="to_scope.html">to_subgraph()</a></code> <code><a href="to_scope.html">to_blocks()</a></code> </p>
+        </td>
+        <td><p>Modifying networks scope</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="levels">Levels <a href="#levels" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p><p>Functions for modifying multimodal networks.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="to_levels.html">to_onemode()</a></code> <code><a href="to_levels.html">to_twomode()</a></code> <code><a href="to_levels.html">to_multilevel()</a></code> </p>
+        </td>
+        <td><p>Modifying network levels</p></td>
+      </tr><tr><td>
+          <p><code><a href="to_project.html">to_mode1()</a></code> <code><a href="to_project.html">to_mode2()</a></code> <code><a href="to_project.html">to_ties()</a></code> <code><a href="to_project.html">to_galois()</a></code> </p>
+        </td>
+        <td><p>Modifying networks projection</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="converting">Converting <a href="#converting" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p><p>Functions for permuting networks or constructing a network from the nodal correlations of another network.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="manip_permutation.html">to_permuted()</a></code> </p>
+        </td>
+        <td><p>Network permutation</p></td>
+      </tr><tr><td>
+          <p><code><a href="manip_correlation.html">to_correlation()</a></code> </p>
+        </td>
+        <td><p>Node correlation</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="splits">Splits <a href="#splits" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p><p>Functions for splitting networks into a list of networks, or (re)joining a list of networks into a single network.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="manip_split.html">to_egos()</a></code> <code><a href="manip_split.html">to_subgraphs()</a></code> <code><a href="manip_split.html">to_components()</a></code> <code><a href="manip_split.html">to_waves()</a></code> <code><a href="manip_split.html">to_slices()</a></code> </p>
+        </td>
+        <td><p>Splitting networks into lists</p></td>
+      </tr><tr><td>
+          <p><code><a href="from.html">from_subgraphs()</a></code> <code><a href="from.html">from_egos()</a></code> <code><a href="from.html">from_waves()</a></code> <code><a href="from.html">from_slices()</a></code> <code><a href="from.html">from_ties()</a></code> </p>
+        </td>
+        <td><p>Joining lists of networks, graphs, and matrices</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
           <h3 id="missing">Missing <a href="#missing" class="anchor" aria-hidden="true"></a></h3>
           <p class="section-desc"></p><p>Functions for modifying how missing data is treated.</p>
         </th>
@@ -164,7 +192,11 @@
         <td><p>Modifying missing tie data</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="mapping">Mapping <a href="#mapping" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p><p>Functions for plotting and visualising graphs of different types. <code><a href="../reference/graphr.html">graphr()</a></code> graphs any manynet-compatible class object automagically. <code><a href="../reference/graphs.html">graphs()</a></code> and <code><a href="../reference/grapht.html">grapht()</a></code> do the same for multiple networks and dynamic networks, respectively.</p>
+          <p class="section-desc"></p><p>Functions for plotting and visualising graphs of different types.</p>
+        </th>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="graphing">Graphing <a href="#graphing" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p><p>Functions for graphing networks and plotting results. <code><a href="../reference/graphr.html">graphr()</a></code> graphs any manynet-compatible class object automagically. <code><a href="../reference/graphs.html">graphs()</a></code> and <code><a href="../reference/grapht.html">grapht()</a></code> do the same for multiple networks and dynamic networks, respectively.</p>
         </th>
       </tr></tbody><tbody><tr><td>
           <p><code><a href="graphr.html">graphr()</a></code> </p>
@@ -186,7 +218,11 @@
           <p><code><a href="partition_layouts.html">layout_tbl_graph_hierarchy()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_alluvial()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_railway()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_ladder()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_concentric()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_multilevel()</a></code> <code><a href="partition_layouts.html">layout_tbl_graph_lineage()</a></code> </p>
         </td>
         <td><p>Layout algorithms based on bi- or other partitions</p></td>
-      </tr><tr><td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="theming">Theming <a href="#theming" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p><p>Functions for tailoring graphs with themes, scales, and palettes.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
           <p><code><a href="themes.html">theme_iheid()</a></code> <code><a href="themes.html">theme_ethz()</a></code> <code><a href="themes.html">theme_uzh()</a></code> <code><a href="themes.html">theme_rug()</a></code> </p>
         </td>
         <td><p>Many themes</p></td>
@@ -200,7 +236,11 @@
         <td><p>Many palettes generator</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="marking">Marking <a href="#marking" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p><p>Functions for identifying properties of networks, nodes, or ties, all returning logical scalars or vectors. Note that all <code>node_</code> and <code>tie_</code> measures return a single vector so that they can be added directly to graph objects. <code>net_</code> measures return one or, in some cases of two-mode measures, two values. All <code>node_</code> and <code>tie_</code> measures return a single vector, the length of the nodes or ties in the network, respectively.</p>
+          <p class="section-desc"></p><p>Functions for identifying properties of networks, nodes, or ties, all returning logical scalars or vectors.</p>
+        </th>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="network-marks">Network marks <a href="#network-marks" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p><p><code>is_*()</code> functions return a single logical value for the network.</p>
         </th>
       </tr></tbody><tbody><tr><td>
           <p><code><a href="features.html">is_connected()</a></code> <code><a href="features.html">is_perfect_matching()</a></code> <code><a href="features.html">is_eulerian()</a></code> <code><a href="features.html">is_acyclic()</a></code> <code><a href="features.html">is_aperiodic()</a></code> </p>
@@ -214,7 +254,11 @@
           <p><code><a href="is_format.html">is_twomode()</a></code> <code><a href="is_format.html">is_weighted()</a></code> <code><a href="is_format.html">is_directed()</a></code> <code><a href="is_format.html">is_labelled()</a></code> <code><a href="is_format.html">is_signed()</a></code> <code><a href="is_format.html">is_complex()</a></code> <code><a href="is_format.html">is_multiplex()</a></code> <code><a href="is_format.html">is_uniplex()</a></code> <code><a href="is_format.html">is_attributed()</a></code> </p>
         </td>
         <td><p>Marking networks formats</p></td>
-      </tr><tr><td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="nodal-marks">Nodal marks <a href="#nodal-marks" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p><p><code>node_is_*()</code> functions return a vector of logical values the length of the nodes in the network.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
           <p><code><a href="mark_core.html">node_is_core()</a></code> <code><a href="mark_core.html">node_coreness()</a></code> </p>
         </td>
         <td><p>Core-periphery clustering algorithms</p></td>
@@ -231,6 +275,14 @@
         </td>
         <td><p>Marking nodes for selection based on measures</p></td>
       </tr><tr><td>
+          <p><code><a href="measure_attributes.html">node_attribute()</a></code> <code><a href="measure_attributes.html">node_names()</a></code> <code><a href="measure_attributes.html">node_is_mode()</a></code> <code><a href="measure_attributes.html">tie_attribute()</a></code> <code><a href="measure_attributes.html">tie_weights()</a></code> <code><a href="measure_attributes.html">tie_signs()</a></code> </p>
+        </td>
+        <td><p>Describing attributes of nodes or ties in a network</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="tie-marks">Tie marks <a href="#tie-marks" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p><p><code>tie_is_*()</code> functions return a vector of logical values the length of the ties in the network.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
           <p><code><a href="mark_tie_select.html">tie_is_random()</a></code> <code><a href="mark_tie_select.html">tie_is_max()</a></code> <code><a href="mark_tie_select.html">tie_is_min()</a></code> </p>
         </td>
         <td><p>Marking ties for selection based on measures</p></td>
@@ -239,9 +291,9 @@
         </td>
         <td><p>Marking ties based on structural properties</p></td>
       </tr><tr><td>
-          <p><code><a href="measure_attributes.html">node_attribute()</a></code> <code><a href="measure_attributes.html">node_names()</a></code> <code><a href="measure_attributes.html">node_is_mode()</a></code> <code><a href="measure_attributes.html">tie_attribute()</a></code> <code><a href="measure_attributes.html">tie_weights()</a></code> <code><a href="measure_attributes.html">tie_signs()</a></code> </p>
+          <p><code><a href="mark_triangles.html">tie_is_triangular()</a></code> <code><a href="mark_triangles.html">tie_is_transitive()</a></code> <code><a href="mark_triangles.html">tie_is_cyclical()</a></code> <code><a href="mark_triangles.html">tie_is_simmelian()</a></code> </p>
         </td>
-        <td><p>Describing attributes of nodes or ties in a network</p></td>
+        <td><p>Marking ties based on structural properties</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="measuring">Measuring <a href="#measuring" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Functions for measuring networks and returning a numeric vector or value. <code>net_</code> measures return one or, in some cases of two-mode measures, two values. All <code>node_</code> and <code>tie_</code> measures return a single vector, the length of the nodes or ties in the network, respectively.</p>

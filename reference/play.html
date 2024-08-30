@@ -25,7 +25,7 @@ as well as simplex and complex diffusion to be simulated upon a network."><meta 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.5</span>
       </span>
     </div>
 
@@ -285,9 +285,10 @@ This can be used in in SEI, SEIS, SEIR, and SEIRS models.</p>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other makes:
-<code><a href="create.html">create</a></code>,
-<code><a href="generate.html">generate</a></code>,
 <code><a href="learning.html">learning</a></code>,
+<code><a href="make_create.html">make_create</a></code>,
+<code><a href="make_explicit.html">make_explicit</a></code>,
+<code><a href="make_generate.html">make_generate</a></code>,
 <code><a href="read.html">read</a></code>,
 <code><a href="write.html">write</a>()</code></p>
 <p>Other models:
@@ -301,7 +302,7 @@ This can be used in in SEI, SEIS, SEIR, and SEIRS models.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span>  <span class="va">smeg</span> <span class="op">&lt;-</span> <span class="fu"><a href="generate.html">generate_smallworld</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">0.025</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span>  <span class="va">smeg</span> <span class="op">&lt;-</span> <span class="fu"><a href="make_generate.html">generate_smallworld</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">0.025</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">play_diffusion</span><span class="op">(</span><span class="va">smeg</span>, recovery <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="play-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span>  <span class="co">#graphr(play_diffusion(ison_karateka))</span></span></span>

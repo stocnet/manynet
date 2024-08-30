@@ -14,15 +14,12 @@
 <url><loc>https://stocnet.github.io/manynet/reference/close_centrality.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/cluster.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/configuration_layouts.html</loc></url>
-<url><loc>https://stocnet.github.io/manynet/reference/correlation.html</loc></url>
-<url><loc>https://stocnet.github.io/manynet/reference/create.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/data_overview.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/defunct.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/degree_centrality.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/eigenv_centrality.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/features.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/from.html</loc></url>
-<url><loc>https://stocnet.github.io/manynet/reference/generate.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/graphr.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/graphs.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/grapht.html</loc></url>
@@ -50,6 +47,12 @@
 <url><loc>https://stocnet.github.io/manynet/reference/ison_usstates.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/kselect.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/learning.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/make_create.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/make_explicit.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/make_generate.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/manip_correlation.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/manip_permutation.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/manip_split.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/many_palettes.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/mark_core.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/mark_diff.html</loc></url>
@@ -57,6 +60,7 @@
 <url><loc>https://stocnet.github.io/manynet/reference/mark_select.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/mark_tie_select.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/mark_ties.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/mark_triangles.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/measure_attributes.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/measure_closure.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/measure_cohesion.html</loc></url>
@@ -87,7 +91,6 @@
 <url><loc>https://stocnet.github.io/manynet/reference/reexports.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/reformat.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/scales.html</loc></url>
-<url><loc>https://stocnet.github.io/manynet/reference/split.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/themes.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/to_levels.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/to_paths.html</loc></url>

@@ -30,7 +30,7 @@ node_is_mentor() marks a proportion of high indegree nodes as 'mentors' (see det
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.5</span>
       </span>
     </div>
 
@@ -142,7 +142,8 @@ described in Valente and Davis (1999).</p></dd>
 <code><a href="mark_diff.html">mark_diff</a></code>,
 <code><a href="mark_select.html">mark_select</a></code>,
 <code><a href="mark_tie_select.html">mark_tie_select</a></code>,
-<code><a href="mark_ties.html">mark_ties</a></code></p></div>
+<code><a href="mark_ties.html">mark_ties</a></code>,
+<code><a href="mark_triangles.html">mark_triangles</a></code></p></div>
     </div>
 
     <div id="ref-examples">
@@ -156,7 +157,7 @@ described in Valente and Davis (1999).</p></dd>
 <span class="r-in"><span><span class="fu">node_is_cutpoint</span><span class="op">(</span><span class="va">ison_brandes</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   V1    V2    V3    V4    V5    V6    V7    V8    V9    V10   V11  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> FALSE FALSE TRUE  TRUE  FALSE FALSE FALSE FALSE TRUE  FALSE FALSE</span>
-<span class="r-in"><span><span class="fu">node_is_fold</span><span class="op">(</span><span class="fu"><a href="create.html">create_explicit</a></span><span class="op">(</span><span class="va">A</span><span class="op">-</span><span class="va">B</span>, <span class="va">B</span><span class="op">-</span><span class="va">C</span>, <span class="va">A</span><span class="op">-</span><span class="va">C</span>, <span class="va">C</span><span class="op">-</span><span class="va">D</span>, <span class="va">C</span><span class="op">-</span><span class="va">E</span>, <span class="va">D</span><span class="op">-</span><span class="va">E</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">node_is_fold</span><span class="op">(</span><span class="fu"><a href="make_explicit.html">create_explicit</a></span><span class="op">(</span><span class="va">A</span><span class="op">-</span><span class="va">B</span>, <span class="va">B</span><span class="op">-</span><span class="va">C</span>, <span class="va">A</span><span class="op">-</span><span class="va">C</span>, <span class="va">C</span><span class="op">-</span><span class="va">D</span>, <span class="va">C</span><span class="op">-</span><span class="va">E</span>, <span class="va">D</span><span class="op">-</span><span class="va">E</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   A     B     C     D     E    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> FALSE FALSE TRUE  FALSE FALSE</span>
 </code></pre></div>
