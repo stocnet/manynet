@@ -9,7 +9,7 @@
 #'   - `na_to_zero()` replaces any missing values with zeros,
 #'   which are the modal value in sparse social networks.
 #'   - `na_to_mean()` replaces missing values with the average non-missing value.
-#' @name miss
+#' @name manip_miss
 #' @family modifications
 #' @inheritParams is
 #' @return A data object of the same class as the function was given.
@@ -26,7 +26,7 @@
 #' na_to_mean(missTest)
 NULL
 
-#' @rdname miss
+#' @rdname manip_miss
 #' @export
 na_to_zero <- function(.data) UseMethod("na_to_zero")
 
@@ -58,7 +58,7 @@ na_to_zero.data.frame <- function(.data){
   .data
 }
 
-#' @rdname miss
+#' @rdname manip_miss
 #' @export
 na_to_mean <- function(.data) UseMethod("na_to_mean")
 

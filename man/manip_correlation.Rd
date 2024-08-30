@@ -39,17 +39,17 @@ This function runs in \eqn{O(mn^2)} complexity.
 }
 \seealso{
 Other modifications: 
-\code{\link{add_nodes}()},
-\code{\link{add_ties}()},
-\code{\link{as}()},
-\code{\link{from}},
+\code{\link{manip_as}},
+\code{\link{manip_from}},
+\code{\link{manip_levels}},
+\code{\link{manip_miss}},
+\code{\link{manip_nodes}},
+\code{\link{manip_paths}},
 \code{\link{manip_permutation}},
+\code{\link{manip_project}},
+\code{\link{manip_reformat}},
+\code{\link{manip_scope}},
 \code{\link{manip_split}},
-\code{\link{miss}},
-\code{\link{reformat}},
-\code{\link{to_levels}},
-\code{\link{to_paths}},
-\code{\link{to_project}},
-\code{\link{to_scope}}
+\code{\link{manip_ties}}
 }
 \concept{modifications}

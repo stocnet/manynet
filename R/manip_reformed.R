@@ -18,7 +18,7 @@
 #'    ```{r, echo = FALSE, cache = TRUE} 
 #'  knitr::kable(available_methods(c("to_mode1", "to_mode2", "to_ties")))
 #'  ```
-#' @name to_project
+#' @name manip_project
 #' @family modifications
 #' @inheritParams reformat
 #' @returns
@@ -28,7 +28,7 @@
 #'   with certain modifications as outlined for each function.
 NULL
 
-#' @rdname to_project
+#' @rdname manip_project
 #' @param similarity Method for establishing ties,
 #'   currently "count" (default), "jaccard", or "rand".
 #'   "count" calculates the number of coinciding ties,
@@ -102,7 +102,7 @@ to_mode1.data.frame <- function(.data, similarity = c("count","jaccard","rand","
   as_edgelist(to_mode1(as_matrix(.data), similarity = similarity))
 }
 
-#' @rdname to_project
+#' @rdname manip_project
 #' @export
 to_mode2 <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) UseMethod("to_mode2")
 
@@ -151,7 +151,7 @@ to_mode2.data.frame <- function(.data, similarity = c("count","jaccard","rand","
   as_edgelist(to_mode2(as_matrix(.data), similarity))
 }
 
-#' @rdname to_project
+#' @rdname manip_project
 #' @importFrom igraph make_line_graph E
 #' @examples
 #' to_ties(ison_adolescents)
@@ -187,7 +187,7 @@ to_ties.matrix <- function(.data){
   as_matrix(to_ties(as_igraph(.data)))
 }
 
-#' @rdname to_project
+#' @rdname manip_project
 #' @section Galois lattices: 
 #'   Note that the output from `to_galois()` is very busy at the moment.
 #' @export
@@ -223,7 +223,7 @@ to_galois <- function(.data) {
 #'    ```{r, echo = FALSE, cache = TRUE} 
 #'  knitr::kable(available_methods(c("to_giant", "to_no_isolates", "to_subgraph", "to_blocks")))
 #'  ```
-#' @name to_scope
+#' @name manip_scope
 #' @family modifications
 #' @inheritParams reformat
 #' @returns
@@ -233,7 +233,7 @@ to_galois <- function(.data) {
 #'   with certain modifications as outlined for each function.
 NULL
 
-#' @rdname to_scope
+#' @rdname manip_scope
 #' @export
 to_giant <- function(.data) UseMethod("to_giant")
 
@@ -266,7 +266,7 @@ to_giant.matrix <- function(.data) {
   as_matrix(to_giant(as_igraph(.data)))
 }
 
-#' @rdname to_scope
+#' @rdname manip_scope
 #' @importFrom tidygraph node_is_isolated
 #' @importFrom dplyr filter
 #' @examples
@@ -313,7 +313,7 @@ to_no_isolates.data.frame <- function(.data) {
   as_edgelist(to_no_isolates(as_tidygraph(.data)))
 }
 
-#' @rdname to_scope
+#' @rdname manip_scope
 #' @param ... Arguments passed on to dplyr::filter
 #' @importFrom dplyr filter
 #' @export
@@ -345,7 +345,7 @@ to_subgraph.matrix <- function(.data, ...){
   as_matrix(to_subgraph(as_tidygraph(.data), ...))
 }
 
-#' @rdname to_scope
+#' @rdname manip_scope
 #' @section `to_blocks()`: 
 #'   Reduced graphs provide summary representations of network structures 
 #'   by collapsing groups of connected nodes into single nodes 
@@ -431,7 +431,7 @@ to_blocks.tbl_graph <- function(.data, membership, FUN = mean){
 #'   ```{r, echo = FALSE, cache = TRUE} 
 #'   knitr::kable(available_methods(c("to_matching", "to_mentoring", "to_eulerian", "to_tree")))
 #'   ```
-#' @name to_paths
+#' @name manip_paths
 #' @family modifications
 #' @inheritParams reformat
 #' @returns
@@ -441,7 +441,7 @@ to_blocks.tbl_graph <- function(.data, membership, FUN = mean){
 #'   with certain modifications as outlined for each function.
 NULL
 
-#' @rdname to_paths
+#' @rdname manip_paths
 #' @section `to_matching()`:
 #'   `to_matching()` uses `{igraph}`'s `max_bipartite_match()`
 #'   to return a network in which each node is only tied to
@@ -501,7 +501,7 @@ to_matching.matrix <- function(.data, mark = "type"){
   as_matrix(to_matching(as_igraph(.data), mark))
 }
 
-#' @rdname to_paths 
+#' @rdname manip_paths 
 #' @param elites The proportion of nodes to be selected as mentors.
 #'   By default this is set at 0.1.
 #'   This means that the top 10% of nodes in terms of degree,
@@ -565,7 +565,7 @@ to_mentoring.igraph <- function(.data, elites = 0.1){
   as_igraph(out)
 }
 
-#' @rdname to_paths
+#' @rdname manip_paths
 #' @importFrom igraph eulerian_path
 #' @examples
 #'   to_eulerian(delete_nodes(ison_koenigsberg, "Lomse"))
@@ -593,7 +593,7 @@ to_eulerian.tbl_graph <- function(.data){
   out
 }
 
-#' @rdname to_paths 
+#' @rdname manip_paths 
 #' @export
 to_tree <- function(.data) {
   .data <- as_igraph(.data)

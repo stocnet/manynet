@@ -19,7 +19,7 @@
 #'   kinds of information than others.
 #'   Note also that there are some reserved column names in one or more
 #'   object classes, which could otherwise lead to some unexpected results.
-#' @name as
+#' @name manip_as
 #' @family modifications
 #' @inheritParams is
 #' @param twomode Logical option used to override heuristics for
@@ -63,7 +63,7 @@ NULL
 
 # Edgelists ####
 
-#' @rdname as
+#' @rdname manip_as
 #' @importFrom igraph as_data_frame
 #' @importFrom dplyr as_tibble arrange
 #' @importFrom network get.edge.attribute as.edgelist
@@ -145,7 +145,7 @@ as_edgelist.siena <- function(.data,
 
 # Matrices ####
 
-#' @rdname as
+#' @rdname manip_as
 #' @importFrom dplyr arrange
 #' @importFrom igraph edge_attr_names as_adjacency_matrix as_biadjacency_matrix
 #' @importFrom network is.bipartite list.edge.attributes as.matrix.network
@@ -298,7 +298,7 @@ as_matrix.diff_model <- function(.data,
 
 # igraph ####
 
-#' @rdname as
+#' @rdname manip_as
 #' @importFrom igraph graph_from_data_frame graph_from_biadjacency_matrix
 #'  graph_from_adjacency_matrix delete_vertex_attr V vertex_attr
 #'  edge_attr delete_edge_attr set_edge_attr
@@ -586,7 +586,7 @@ as_igraph.siena <- function(.data, twomode = NULL) {
 
 # tidygraph ####
 
-#' @rdname as
+#' @rdname manip_as
 #' @importFrom tidygraph as_tbl_graph
 #' @importFrom igraph graph_from_data_frame
 #' @export
@@ -694,7 +694,7 @@ as_tidygraph.diffnet <- function(.data, twomode = FALSE) {
 
 # Network ####
 
-#' @rdname as
+#' @rdname manip_as
 #' @importFrom network as.network set.vertex.attribute
 #' @importFrom igraph vertex_attr
 #' @export
@@ -786,7 +786,7 @@ as_network.siena <- function(.data, twomode = FALSE) {
 
 # RSiena ####
 
-#' @rdname as
+#' @rdname manip_as
 #' @export
 as_siena <- function(.data,
                       twomode = FALSE) UseMethod("as_siena")
@@ -825,7 +825,7 @@ as_siena.tbl_graph <- function(.data, twomode = FALSE) {
 
 # graphAM ####
 
-#' @rdname as
+#' @rdname manip_as
 #' @export
 as_graphAM <- function(.data, twomode = NULL) UseMethod("as_graphAM")
 
@@ -892,7 +892,7 @@ as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
 
 # Diffusion ####
 
-#' @rdname as
+#' @rdname manip_as
 #' @param events A table (data frame or tibble) of diffusion events
 #'   with columns `t` indicating the time (typically an integer) of the event, 
 #'   `nodes` indicating the number or name of the node involved in the event,
@@ -1010,7 +1010,7 @@ as_diffusion.diffnet <- function(.data, twomode = FALSE, events) {
   
 # Diffnet ####
 
-#' @rdname as
+#' @rdname manip_as
 #' @export
 as_diffnet <- function(.data,
                        twomode = FALSE) UseMethod("as_diffnet")
