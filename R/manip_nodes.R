@@ -32,10 +32,10 @@
 #' @examples
 #'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
 #'   add_nodes(other, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))
-#' @name add_nodes
+#' @name manip_nodes
 NULL
 
-#' @rdname add_nodes
+#' @rdname manip_nodes
 #' @param nodes The number of nodes to be added.
 #' @importFrom igraph add_vertices
 #' @export
@@ -56,7 +56,7 @@ add_nodes.network <- function(.data, nodes, attribute = NULL){
   as_network(add_nodes(as_igraph(.data), nodes, attribute))
 }
 
-#' @rdname add_nodes
+#' @rdname manip_nodes
 #' @importFrom igraph delete_vertices
 #' @export
 delete_nodes <- function(.data, nodes) UseMethod("delete_nodes")
@@ -66,7 +66,7 @@ delete_nodes.igraph <- function(.data, nodes){
   igraph::delete_vertices(.data, v = nodes)
 }
 
-#' @rdname add_nodes 
+#' @rdname manip_nodes 
 #' @importFrom igraph vertex_attr
 #' @export
 add_node_attribute <- function(.data, attr_name, vector){
@@ -88,7 +88,7 @@ add_node_attribute <- function(.data, attr_name, vector){
           message("This function only works for igraph, tidygraph, or network objects.")
 }
 
-#' @rdname add_nodes
+#' @rdname manip_nodes
 #' @importFrom tidygraph mutate
 #' @export
 mutate_nodes <- function(.data, ...) UseMethod("mutate_nodes")
@@ -104,12 +104,12 @@ mutate_nodes.igraph <- function(.data, ...){
     tidygraph::mutate(...) %>% as_igraph()
 }
 
-#' @rdname add_nodes
+#' @rdname manip_nodes
 #' @importFrom tidygraph mutate
 #' @export
 mutate <- tidygraph::mutate
 
-#' @rdname add_nodes
+#' @rdname manip_nodes
 #' @export
 bind_node_attributes <- function(.data, object2){
   out <- as_igraph(.data)
@@ -125,7 +125,7 @@ bind_node_attributes <- function(.data, object2){
   as_tidygraph(out)
 }
 
-#' @rdname add_nodes 
+#' @rdname manip_nodes 
 #' @param join_type A type of join to be used.
 #'   Options are "full","left", "right", "inner".
 #' @param .by An attribute name to join objects by.
@@ -147,17 +147,17 @@ join_nodes <- function(.data, object2, .by = NULL,
          "inner" = dplyr::inner_join(out, object2, by = .by, copy = TRUE))
 }
 
-#' @rdname add_nodes
+#' @rdname manip_nodes
 #' @importFrom tidygraph rename
 #' @export
 rename_nodes <- tidygraph::rename
 
-#' @rdname add_nodes
+#' @rdname manip_nodes
 #' @importFrom tidygraph rename
 #' @export
 rename <- tidygraph::rename
 
-#' @rdname add_nodes
+#' @rdname manip_nodes
 #' @importFrom tidygraph filter
 #' @export
 filter_nodes <- function(.data, ..., .by){
