@@ -10,10 +10,10 @@
 #'   given degree distribution.
 #'   - `generate_smallworld()` generates a small-world structure via ring rewiring at some probability.
 #'   - `generate_scalefree()` generates a scale-free structure via preferential attachment at some probability.
-#'   - `generate_permutation()` generates a permutation of the network
-#'   using a Fisher-Yates shuffle on both the rows and columns (for a one-mode network)
-#'   or on each of the rows and columns (for a two-mode network).
 #'   - `generate_utilities()` generates a random utility matrix.
+#'   - `generate_fire()` generates a forest fire model.
+#'   - `generate_islands()` generates an islands model.
+#'   - `generate_citations()` generates a citations model.
 #'
 #'   These functions can create either one-mode or two-mode networks.
 #'   To create a one-mode network, pass the main argument `n` a single integer,
@@ -23,9 +23,9 @@
 #'   and the second integer indicates the number of nodes in the second mode.
 #'   As an alternative, an existing network can be provided to `n`
 #'   and the number of modes, nodes, and directedness will be inferred.
-#' @name generate
+#' @name make_generate
 #' @family makes
-#' @inheritParams create
+#' @inheritParams make_create
 #' @inheritParams is
 #' @param directed Whether to generate network as directed. By default FALSE.
 #' @return By default a `tbl_graph` object is returned,
@@ -41,9 +41,12 @@
 #'   In two-mode networks, the directed argument is ignored.
 NULL
 
-#' @rdname generate 
+#' @rdname make_generate 
 #' @param p Proportion of possible ties in the network that are realised or,
 #'   if integer greater than 1, the number of ties in the network.
+#' @param with_attr Logical whether any attributes of the object
+#'   should be retained. 
+#'   By default TRUE. 
 #' @references 
 #' Erdos, Paul, and Alfred Renyi. (1959). 
 #' "\href{https://www.renyi.hu/~p_erdos/1959-11.pdf}{On Random Graphs I}" 
@@ -98,7 +101,33 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
   g
 }
 
-#' @rdname generate 
+#' @rdname make_generate 
+#' @importFrom igraph sample_degseq
+#' @export
+generate_configuration <- function(.data){
+  if(is_twomode(.data)){
+    degs <- node_deg(.data)
+    outs <- ifelse(!c(attr(degs, "mode")),c(degs),rep(0,length(degs)))
+    ins <- ifelse(c(attr(degs, "mode")),c(degs),rep(0,length(degs)))
+    out <- igraph::sample_degseq(outs, ins, method = "simple.no.multiple")
+    out <- as_tidygraph(out) %>% mutate(type = c(attr(degs, "mode")))
+  } else {
+    if(is_complex(.data) || is_multiplex(.data) && is_directed(.data)) 
+      out <- igraph::sample_degseq(node_deg(.data, direction = "out"), 
+                                   node_deg(.data, direction = "in"),
+                                   method = "simple")
+    if(is_complex(.data) || is_multiplex(.data) && !is_directed(.data)) 
+      out <- igraph::sample_degseq(node_deg(.data), method = "simple")
+    if(!(is_complex(.data) || is_multiplex(.data)) && is_directed(.data)) 
+      out <- igraph::sample_degseq(node_deg(.data, direction = "out"), 
+                                   node_deg(.data, direction = "in"), method = "simple.no.multiple")
+    if(!(is_complex(.data) || is_multiplex(.data)) && !is_directed(.data)) 
+      out <- igraph::sample_degseq(node_deg(.data), method = "simple.no.multiple")
+  }
+  as_tidygraph(out)
+}
+
+#' @rdname make_generate 
 #' @param p Proportion of possible ties in the network that are realised or,
 #'   if integer greater than 1, the number of ties in the network.
 #' @references 
@@ -125,7 +154,7 @@ generate_smallworld <- function(n, p = 0.05, directed = FALSE, width = 2) {
   g
 }
 
-#' @rdname generate 
+#' @rdname make_generate 
 #' @param p Power of the preferential attachment, default is 1.
 #' @importFrom igraph sample_pa
 #' @references 
@@ -154,26 +183,7 @@ generate_scalefree <- function(n, p = 1, directed = FALSE) {
   g
 }
 
-#' @rdname generate 
-#' @param with_attr Logical whether any attributes of the object
-#'   should be retained. 
-#'   By default TRUE. 
-#' @examples
-#' graphr(ison_adolescents)
-#' graphr(generate_permutation(ison_adolescents))
-#' @export
-generate_permutation <- function(.data, with_attr = TRUE) {
-  out <- as_matrix(.data)
-  if(is_twomode(.data)){
-    out <- .r2perm(out)
-  } else {
-    out <- .r1perm(out)
-  }
-  if(with_attr) out <- bind_node_attributes(out, .data)
-  out
-}
-
-#' @rdname generate 
+#' @rdname make_generate 
 #' @param steps Number of simulation steps to run.
 #'   By default 1: a single, one-shot simulation.
 #'   If more than 1, further iterations will update the utilities
@@ -206,53 +216,81 @@ generate_utilities <- function(n, steps = 1, volatility = 0, threshold = 0){
   as_igraph(utilities)
 }
 
-#' @rdname generate 
-#' @importFrom igraph sample_degseq
+#' @rdname make_generate 
+#' @param contacts Number of contacts or ambassadors chosen from among existing
+#'   nodes in the network.
+#'   By default 1.
+#'   See `igraph::sample_forestfire()`.
+#' @param their_out Probability of tieing to a contact's outgoing ties.
+#'   By default 0.
+#' @param their_in Probability of tieing to a contact's incoming ties.
+#'   By default 1.
+#' @importFrom igraph sample_forestfire
+#' @examples
+#' generate_fire(10)
 #' @export
-generate_configuration <- function(.data){
-  if(is_twomode(.data)){
-    degs <- node_deg(.data)
-    outs <- ifelse(!c(attr(degs, "mode")),c(degs),rep(0,length(degs)))
-    ins <- ifelse(c(attr(degs, "mode")),c(degs),rep(0,length(degs)))
-    out <- igraph::sample_degseq(outs, ins, method = "simple.no.multiple")
-    out <- as_tidygraph(out) %>% mutate(type = c(attr(degs, "mode")))
+generate_fire <- function(n, contacts = 1, their_out = 0, their_in = 1, directed = FALSE){
+  directed <- infer_directed(n, directed)
+  n <- infer_n(n)
+  if(length(n)==2){
+    stop("There is currently no forest fire model implemented for two-mode networks.")
   } else {
-    if(is_complex(.data) || is_multiplex(.data) && is_directed(.data)) 
-      out <- igraph::sample_degseq(node_deg(.data, direction = "out"), 
-                                   node_deg(.data, direction = "in"),
-                                   method = "simple")
-    if(is_complex(.data) || is_multiplex(.data) && !is_directed(.data)) 
-      out <- igraph::sample_degseq(node_deg(.data), method = "simple")
-    if(!(is_complex(.data) || is_multiplex(.data)) && is_directed(.data)) 
-      out <- igraph::sample_degseq(node_deg(.data, direction = "out"), 
-                                   node_deg(.data, direction = "in"), method = "simple.no.multiple")
-    if(!(is_complex(.data) || is_multiplex(.data)) && !is_directed(.data)) 
-      out <- igraph::sample_degseq(node_deg(.data), method = "simple.no.multiple")
+    out <- igraph::sample_forestfire(n, 
+                                     fw.prob = their_out, bw.factor = their_in,
+                                     ambs = contacts, directed = directed)
   }
   as_tidygraph(out)
 }
 
-# Helper functions ------------------
-
-.r1perm <- function(m) {
-  n <- sample(seq_len(dim(m)[1]))
-  if(is_labelled(m)){
-    p <- matrix(data = m[n, n], nrow = dim(m)[1], ncol = dim(m)[2],
-                dimnames = dimnames(m))
+#' @rdname make_generate 
+#' @param islands Number of islands or communities to create.
+#'   By default 2.
+#'   See `igraph::sample_islands()` for more.
+#' @param bridges Number of bridges between islands/communities.
+#'   By default 1.
+#' @importFrom igraph sample_islands
+#' @examples
+#' generate_islands(10)
+#' @export
+generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1, directed = FALSE){
+  directed <- infer_directed(n, directed)
+  if(is_manynet(n)){
+    m <- net_nodes(n)
+    extra_ties <- ifelse(islands > 2, islands * bridges, bridges)
+    aimed_ties <- net_ties(n) - extra_ties
+    m <- mean(c(table(cut(seq.int(m), islands, labels = FALSE))))
+    p <-  (aimed_ties/islands) / ifelse(directed, m*(m-1), (m*(m-1))/2)
+    if(p > 1) p <- 1
+  } 
+  n <- infer_n(n)
+  if(length(n)==2){
+    stop("There is currently no island model implemented for two-mode networks.")
   } else {
-    p <- matrix(data = m[n, n], nrow = dim(m)[1], ncol = dim(m)[2])
+    out <- igraph::sample_islands(islands.n = islands,
+                                  islands.size = c(table(cut(seq.int(n), islands, labels = FALSE))),
+                                  islands.pin = p,
+                                  n.inter = bridges)
+    if(net_nodes(out) != n) out <- delete_nodes(out, order(node_constraint(out), decreasing = TRUE)[1:(net_nodes(out)-n)])
+    if(directed) out <- to_directed(out)
   }
-  p
+  as_tidygraph(out)
 }
 
-.r2perm <- function(m) {
-  n <- sample(seq_len(dim(m)[1]))
-  o <- sample(seq_len(dim(m)[2]))
-  if(is_labelled(m)){
-    p <- matrix(data = m[n, o], nrow = dim(m)[1], ncol = dim(m)[2],
-                dimnames = dimnames(m))
-  } else {
-    p <- matrix(data = m[n, o], nrow = dim(m)[1], ncol = dim(m)[2])
-  }
-  p
+#' @rdname make_generate 
+#' @param ties Number of ties to add per new node.
+#'   By default a uniform random sample from 1 to 4 new ties.
+#' @param agebins Number of aging bins.
+#'   By default either \eqn{\frac{n}{10}} or 1,
+#'   whichever is the larger.
+#'   See `igraphr::sample_last_cit()` for more.
+#' @importFrom igraph sample_last_cit
+#' @examples
+#' generate_citations(10)
+#' @export
+generate_citations <- function(n, ties = sample(1:4,1), agebins = max(1, n/10), directed = FALSE){
+  directed <- infer_directed(n, directed)
+  n <- infer_n(n)
+  out <- igraph::sample_last_cit(n, edges = ties, agebins = agebins, directed = directed)
+  as_tidygraph(out)
 }
+

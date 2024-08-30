@@ -1,3 +1,123 @@
+# Explicit ####
+
+#' Making networks with explicit ties
+#'
+#'
+#' @description
+#'   This function creates a network from a vector of explicitly named nodes 
+#'   and ties between them.
+#'   `create_explicit()` largely wraps `igraph::graph_from_literal()`,
+#'   but will also accept character input and not just a formula,
+#'   and will never simplify the result.
+#'   
+#'   Ties are indicated by `-`, and directed ties (arcs)
+#'   require `+` at either or both ends. 
+#'   Ties are separated by commas, and isolates can be added as
+#'   an additional, unlinked node after the comma within the formula.
+#'   Sets of nodes can be linked to other sets of nodes through use of
+#'   a semi-colon.
+#'   See the example for a demonstration.
+#' @name make_explicit
+#' @family makes
+#' @param ... Arguments passed on to `{igraph}`.
+#' @importFrom igraph make_graph
+#' @examples
+#'   create_explicit(A -+ B, B -+ C, A +-+ C, D, E:F:G-+A, E:F+-+G:H)
+#' @export
+create_explicit <- function(...){
+  if(is.symbol(as.list(match.call())[-1][[1]])){
+    mf <- stats::reformulate(...)
+    mf[[1]] <- NULL
+  } else mf <- as.list(match.call())[-1]
+  f <- function(x) {
+    if (is.call(x)) {
+      return(list(as.character(x[[1]]), lapply(x[-1], f)))
+    }
+    else return(NULL)
+  }
+  ops <- unlist(lapply(mf, f))
+  if (all(ops %in% c("-", ":"))) {
+    directed <- FALSE
+  }
+  else if (all(ops %in% c("-", "+", ":"))) {
+    directed <- TRUE
+  }
+  else {
+    stop("Invalid operator in formula")
+  }
+  f <- function(x) {
+    if (is.call(x)) {
+      if (length(x) == 3) {
+        return(list(f(x[[2]]), op = as.character(x[[1]]), 
+                    f(x[[3]])))
+      }
+      else {
+        return(list(op = as.character(x[[1]]), f(x[[2]])))
+      }
+    }
+    else {
+      return(c(sym = as.character(x)))
+    }
+  }
+  ret <- lapply(mf, function(x) unlist(f(x)))
+  v <- unique(unlist(lapply(ret, function(x) {
+    x[names(x) == "sym"]
+  })))
+  ret <- lapply(ret, function(x) {
+    res <- list()
+    for (i in seq(along.with = x)) {
+      if (x[i] == ":" && names(x)[i] == "op") {
+      }
+      else if (i > 1 && x[i - 1] == ":" && names(x)[i - 
+                                                    1] == "op") {
+        res[[length(res)]] <- c(res[[length(res)]], unname(x[i]))
+      }
+      else {
+        res <- c(res, x[i])
+      }
+    }
+    res
+  })
+  edges <- numeric()
+  for (i in seq(along.with = ret)) {
+    prev.sym <- character()
+    lhead <- rhead <- character()
+    for (j in seq(along.with = ret[[i]])) {
+      act <- ret[[i]][[j]]
+      if (names(ret[[i]])[j] == "op") {
+        if (length(lhead) == 0) {
+          lhead <- rhead <- act
+        }
+        else {
+          rhead <- act
+        }
+      }
+      else if (names(ret[[i]])[j] == "sym") {
+        for (ps in prev.sym) {
+          for (ps2 in act) {
+            if (lhead == "+") {
+              edges <- c(edges, unname(c(ps2, ps)))
+            }
+            if (!directed || rhead == "+") {
+              edges <- c(edges, unname(c(ps, ps2)))
+            }
+          }
+        }
+        lhead <- rhead <- character()
+        prev.sym <- act
+      }
+    }
+  }
+  ids <- seq(along.with = v)
+  names(ids) <- v
+  res <- igraph::make_graph(unname(ids[edges]), 
+                            n = length(v), directed = directed)
+  res <- igraph::set_vertex_attr(res, "name", value = v)
+  as_tidygraph(res)
+}
+
+# Defined ####
+
 #' Making networks with defined structures
 #'
 #' @description
@@ -13,8 +133,8 @@
 #'   - `create_components()` creates a network that clusters nodes into separate components.
 #'   - `create_core()` creates a network in which a certain proportion of 'core' nodes
 #'   are densely tied to each other, and the rest peripheral, tied only to the core.
-#'   - `create_explicit()` creates a network based on explicitly
-#'   named nodes and ties between them.
+#'   - `create_degree()` creates a network with a given (out/in)degree sequence,
+#'   which can also be used to create k-regular networks.
 #'
 #'   These functions can create either one-mode or two-mode networks.
 #'   To create a one-mode network, pass the main argument `n` a single integer,
@@ -24,7 +144,7 @@
 #'   and the second integer indicates the number of nodes in the second mode.
 #'   As an alternative, an existing network can be provided to `n`
 #'   and the number of modes, nodes, and directedness will be inferred.
-#' @name create
+#' @name make_create
 #' @family makes
 #' @seealso [as]
 #' @param n Given:
@@ -45,7 +165,6 @@
 #' @param membership A vector of partition membership as integers.
 #'   If left as `NULL` (the default), nodes in each mode will be
 #'   assigned to two, equally sized partitions.
-#' @param ... Additional arguments passed on to `{igraph}`.
 #' @return By default a `tbl_graph` object is returned,
 #'   but this can be coerced into other types of objects
 #'   using `as_edgelist()`, `as_matrix()`,
@@ -61,7 +180,7 @@
 #' @importFrom igraph graph_from_biadjacency_matrix
 NULL
 
-#' @rdname create 
+#' @rdname make_create 
 #' @examples
 #' create_empty(10)
 #' @export
@@ -79,7 +198,7 @@ create_empty <- function(n, directed = FALSE) {
   as_tidygraph(out)
 }
 
-#' @rdname create 
+#' @rdname make_create 
 #' @examples
 #' create_filled(10)
 #' @export
@@ -98,7 +217,8 @@ create_filled <- function(n, directed = FALSE) {
   as_tidygraph(out)
 }
 
-#' @rdname create 
+#' @rdname make_create 
+#' @param ... Additional arguments passed on to `igraph::make_ring()`.
 #' @examples
 #' create_ring(8, width = 2)
 #' @export
@@ -145,7 +265,7 @@ create_ring <- function(n, directed = FALSE, width = 1, ...) {
   as_tidygraph(out)
 }
 
-#' @rdname create 
+#' @rdname make_create 
 #' @importFrom igraph graph_from_adjacency_matrix graph_from_biadjacency_matrix
 #'   make_star
 #' @examples
@@ -169,7 +289,7 @@ create_star <- function(n,
   as_tidygraph(out)
 }
 
-#' @rdname create 
+#' @rdname make_create 
 #' @importFrom igraph make_tree
 #' @examples
 #' create_tree(c(7,8))
@@ -217,7 +337,7 @@ create_tree <- function(n,
   }
 }
 
-#' @rdname create 
+#' @rdname make_create 
 #' @section Lattice graphs:
 #'   `create_lattice()` creates both two-dimensional grid and triangular
 #'   lattices with as even dimensions as possible.
@@ -325,7 +445,7 @@ create_lattice <- function(n,
 #   }
 # }
 
-#' @rdname create 
+#' @rdname make_create 
 #' @examples
 #' create_components(10, membership = c(1,1,1,2,2,2,3,3,3,3))
 #' @export
@@ -349,7 +469,47 @@ create_components <- function(n, directed = FALSE, membership = NULL) {
   as_tidygraph(out)
 }
 
-#' @rdname create
+#' @rdname make_create 
+#' @param outdegree Numeric scalar or vector indicating the 
+#'   desired outdegree distribution.
+#'   By default NULL and is required.
+#'   If `n` is an existing network object and the outdegree is not specified, 
+#'   then the outdegree distribution will be inferred from that of the network.
+#'   Note that a scalar (single number) will result in a k-regular graph.
+#' @param indegree Numeric vector indicating the desired indegree distribution.
+#'   By default NULL but not required unless a directed network is desired.
+#'   If `n` is an existing directed network object and the indegree is not specified, 
+#'   then the indegree distribution will be inferred from that of the network.
+#' @importFrom igraph realize_degseq realize_bipartite_degseq
+#' @examples
+#' create_degree(10, outdegree = rep(1:5, 2))
+#' @export
+create_degree <- function(n, outdegree = NULL, indegree = NULL) {
+  directed <- infer_directed(n, !is.null(indegree))
+  outdegree <- infer_outdegree(n, outdegree)
+  indegree <- infer_indegree(n, indegree)
+  n <- infer_n(n)
+  if (length(n) == 1) {
+    if(!directed){
+      if(length(outdegree)==1) outdegree <- rep(outdegree, n)
+      stopifnot(n == length(outdegree))
+      out <- igraph::realize_degseq(outdegree)
+    } else {
+      if(length(outdegree)==1) outdegree <- rep(outdegree, n)
+      if(length(indegree)==1) indegree <- rep(indegree, n)
+      stopifnot(n == length(outdegree), n == length(indegree))
+      out <- igraph::realize_degseq(outdegree, indegree)
+    }
+  } else if (length(n) == 2) {
+    if(length(outdegree)==1) outdegree <- rep(outdegree, n[1])
+    if(length(indegree)==1) indegree <- rep(indegree, n[2])
+    stopifnot(n[1] == length(outdegree), n[2] == length(indegree))
+    out <- igraph::realize_bipartite_degseq(outdegree, indegree)
+  }
+  as_tidygraph(out)
+}
+
+#' @rdname make_create
 #' @param mark A logical vector the length of the nodes in the network.
 #'   This can be created by, among other things, any `node_is_*()` function.
 #' @examples
@@ -374,106 +534,6 @@ create_core <- function(n, directed = FALSE, mark = NULL) {
     as_tidygraph(mat)
   }
 }
-
-#' @rdname create 
-#' @seealso [igraph::graph_from_literal()] which `create_explicit()` mostly just wraps.
-#'   `create_explicit()` will also accept character input and not just a formula though,
-#'   and will never simplify the result.
-#' @examples
-#'   create_explicit(A -+ B, B -+ C, A +-+ C, D)
-#' @export
-create_explicit <- function(...){
-  if(is.symbol(as.list(match.call())[-1][[1]])){
-    mf <- stats::reformulate(...)
-    mf[[1]] <- NULL
-  } else mf <- as.list(match.call())[-1]
-  f <- function(x) {
-    if (is.call(x)) {
-      return(list(as.character(x[[1]]), lapply(x[-1], f)))
-    }
-    else return(NULL)
-  }
-  ops <- unlist(lapply(mf, f))
-  if (all(ops %in% c("-", ":"))) {
-    directed <- FALSE
-  }
-  else if (all(ops %in% c("-", "+", ":"))) {
-    directed <- TRUE
-  }
-  else {
-    stop("Invalid operator in formula")
-  }
-  f <- function(x) {
-    if (is.call(x)) {
-      if (length(x) == 3) {
-        return(list(f(x[[2]]), op = as.character(x[[1]]), 
-                    f(x[[3]])))
-      }
-      else {
-        return(list(op = as.character(x[[1]]), f(x[[2]])))
-      }
-    }
-    else {
-      return(c(sym = as.character(x)))
-    }
-  }
-  ret <- lapply(mf, function(x) unlist(f(x)))
-  v <- unique(unlist(lapply(ret, function(x) {
-    x[names(x) == "sym"]
-  })))
-  ret <- lapply(ret, function(x) {
-    res <- list()
-    for (i in seq(along.with = x)) {
-      if (x[i] == ":" && names(x)[i] == "op") {
-      }
-      else if (i > 1 && x[i - 1] == ":" && names(x)[i - 
-                                                    1] == "op") {
-        res[[length(res)]] <- c(res[[length(res)]], unname(x[i]))
-      }
-      else {
-        res <- c(res, x[i])
-      }
-    }
-    res
-  })
-  edges <- numeric()
-  for (i in seq(along.with = ret)) {
-    prev.sym <- character()
-    lhead <- rhead <- character()
-    for (j in seq(along.with = ret[[i]])) {
-      act <- ret[[i]][[j]]
-      if (names(ret[[i]])[j] == "op") {
-        if (length(lhead) == 0) {
-          lhead <- rhead <- act
-        }
-        else {
-          rhead <- act
-        }
-      }
-      else if (names(ret[[i]])[j] == "sym") {
-        for (ps in prev.sym) {
-          for (ps2 in act) {
-            if (lhead == "+") {
-              edges <- c(edges, unname(c(ps2, ps)))
-            }
-            if (!directed || rhead == "+") {
-              edges <- c(edges, unname(c(ps, ps2)))
-            }
-          }
-        }
-        lhead <- rhead <- character()
-        prev.sym <- act
-      }
-    }
-  }
-  ids <- seq(along.with = v)
-  names(ids) <- v
-  res <- igraph::make_graph(unname(ids[edges]), 
-                            n = length(v), directed = directed)
-  res <- igraph::set_vertex_attr(res, "name", value = v)
-  as_tidygraph(res)
-}
-
 
 # #' @rdname create
 # #' @details Creates a nested two-mode network.
@@ -507,6 +567,16 @@ create_explicit <- function(...){
 
 # Helper functions ------------------
 
+infer_dims <- function(object) {
+  if(is_twomode(object) &
+     any(grepl("type", igraph::vertex_attr_names(as_igraph(object))))) {
+    c(sum(!igraph::V(as_igraph(object))$type),
+      sum(igraph::V(as_igraph(object))$type))
+  } else {
+    igraph::vcount(as_igraph(object))
+  }
+}
+
 infer_n <- function(n) {
   if (is_manynet(n)) n <- infer_dims(n)
   if (length(n) > 2) stop(paste("`n` should be a single integer for a one-mode network or",
@@ -517,6 +587,22 @@ infer_n <- function(n) {
 infer_directed <- function(n, directed) {
   if(is_manynet(n)) directed <- is_directed(n)
   directed
+}
+
+infer_outdegree <- function(n, outdegree) {
+  if (is.null(outdegree) && is_manynet(n)){
+    outdegree <- node_deg(n, direction = "out")
+    if(is_twomode(n)) outdegree <- outdegree[1:net_dims(n)[1]]
+  } 
+  outdegree
+}
+
+infer_indegree <- function(n, indegree) {
+  if (is.null(indegree) && is_manynet(n)){
+    indegree <- node_deg(n, direction = "in")
+    if(is_twomode(n)) indegree <- indegree[(net_dims(n)[1]+1):sum(net_dims(n))]
+  } 
+  indegree
 }
 
 infer_membership <- function(n, membership) {
@@ -539,12 +625,3 @@ roll_over <- function(w) {
   cbind(w[, ncol(w)], w[, 1:(ncol(w) - 1)])
 }
 
-infer_dims <- function(object) {
-  if(is_twomode(object) &
-     any(grepl("type", igraph::vertex_attr_names(as_igraph(object))))) {
-    c(sum(!igraph::V(as_igraph(object))$type),
-      sum(igraph::V(as_igraph(object))$type))
-  } else {
-    igraph::vcount(as_igraph(object))
-  }
-}

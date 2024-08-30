@@ -46,6 +46,7 @@ Other marks:
 \code{\link{mark_diff}},
 \code{\link{mark_nodes}},
 \code{\link{mark_select}},
-\code{\link{mark_ties}}
+\code{\link{mark_ties}},
+\code{\link{mark_triangles}}
 }
 \concept{marks}

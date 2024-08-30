@@ -5,10 +5,13 @@
 \alias{table_data}
 \title{Obtain overview of available network data}
 \usage{
-table_data(pkg = "manynet")
+table_data(pkg = c("manynet", "migraph"), ...)
 }
 \arguments{
 \item{pkg}{String, name of the package.}
+
+\item{...}{Network marks, e.g. directed, twomode, or signed,
+that are used to filter the results.}
 }
 \description{
 This function makes it easy to get an overview of available data:
@@ -19,9 +22,8 @@ network datasets included in the packages.
 }
 \examples{
 table_data()
-# to obtain list of all e.g. two-mode networks:
-table_data() \%>\% 
-  dplyr::filter(directed)
+# to obtain list of all e.g. directed networks:
+table_data(pkg = "manynet", directed)
 # to obtain overview of unique datasets:
 table_data() \%>\% 
   dplyr::distinct(directed, weighted, twomode, signed, 

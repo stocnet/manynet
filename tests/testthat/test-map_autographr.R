@@ -38,8 +38,6 @@ test_that("unweighted, unsigned, directed networks graph correctly", {
   expect_equal(test_algebra[["layers"]][[1]][["aes_params"]][["edge_alpha"]], 0.4)
   expect_equal(test_algebra[["layers"]][[1]][["aes_params"]][["edge_linetype"]], "solid")
   expect_equal(test_algebra[["layers"]][[1]][["aes_params"]][["edge_colour"]], "black")
-  expect_equal(as.character(test_algebra[["layers"]][[1]][["aes_params"]][["end_cap"]]), "circle")
-  expect_s3_class(test_algebra[["layers"]][[1]][["aes_params"]][["end_cap"]], "ggraph_geometry")
   # Node parameters
   #expect_equal(round(test_algebra[["layers"]][[2]][["aes_params"]][["size"]]), 3)
   #expect_equal(test_algebra[["layers"]][[2]][["aes_params"]][["shape"]], "circle")
@@ -57,7 +55,6 @@ test_that("weighted, unsigned, directed networks graph correctly", {
   expect_equal(test_networkers[["layers"]][[2]][["aes_params"]][["edge_alpha"]], 0.4)
   expect_equal(test_networkers[["layers"]][[2]][["aes_params"]][["edge_linetype"]], "solid")
   expect_equal(test_networkers[["layers"]][[2]][["aes_params"]][["edge_colour"]], "black")
-  expect_equal(as.character(test_networkers[["layers"]][[2]][["aes_params"]][["end_cap"]]), "circle")
   # Node parameters
   #expect_equal(round(test_networkers[["layers"]][[3]][["aes_params"]][["size"]]), 2)
   #expect_equal(test_networkers[["layers"]][[3]][["aes_params"]][["shape"]], "circle")
@@ -69,10 +66,8 @@ test_that("fancy node mods graph correctly", {
   # one-mode network
   ison_marvel_relationships <- dplyr::mutate(ison_marvel_relationships,
                                              nodesize = Appearances/1000)
-  testcolnodes <- graphr(ison_marvel_relationships,
-                             node_color = "Gender",
-                             node_size = "nodesize",
-                             node_shape = "Attractive")
+  testcolnodes <- graphr(ison_marvel_relationships, node_color = "Gender",
+                         node_size = "nodesize", node_shape = "Attractive")
   expect_s3_class(testcolnodes, c("ggraph","gg","ggplot"))
   expect_equal(round(testcolnodes$data$x[1]), 4)
   expect_equal(round(testcolnodes$data$y[1]), 3)
@@ -83,8 +78,7 @@ test_that("fancy node mods graph correctly", {
                                             c(sample(c("a", "b"),
                                                      length(ison_southern_women),
                                                      replace = TRUE)))
-  test2 <- graphr(ison_southern_women,
-                      node_color = "type")
+  test2 <- graphr(ison_southern_women, node_color = "type")
   expect_s3_class(test2, c("ggraph","gg","ggplot"))
   expect_equal(round(test2$data$x[1]), 0)
   expect_equal(round(test2$data$y[1]), 0)

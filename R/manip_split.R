@@ -10,13 +10,13 @@
 #'    ```{r, echo = FALSE, cache = TRUE} 
 #'    knitr::kable(available_methods(c("to_egos", "to_subgraphs", "to_components", "to_waves", "to_slices")))
 #'    ```
-#' @name split
+#' @name manip_split
 #' @family modifications
 #' @inheritParams reformat
 #' @return The returned object will be a list of network objects.
 NULL
 
-#' @describeIn split Returns a list of ego (or focal)
+#' @describeIn manip_split Returns a list of ego (or focal)
 #'   networks.
 #' @param max_dist The maximum breadth of the neighbourhood.
 #'   By default 1.
@@ -86,7 +86,7 @@ to_egos.data.frame <- function(.data,
   lapply(out, function(x) as_edgelist(x))
 }
 
-#' @describeIn split Returns a list of subgraphs
+#' @describeIn manip_split Returns a list of subgraphs
 #'   on some given node attribute.
 #' @param attribute A character string indicating the categorical
 #'   attribute in a network used to split into subgraphs.
@@ -116,7 +116,7 @@ to_subgraphs.network <- function(.data, attribute){
   lapply(to_subgraphs(as_igraph(.data), attribute), as_network)
 }
 
-#' @describeIn split Returns a list of the components
+#' @describeIn manip_split Returns a list of the components
 #'   in a network.
 #' @examples 
 #'   to_components(ison_marvel_relationships)
@@ -153,7 +153,7 @@ to_components.data.frame <- function(.data){
   lapply(out, function(x) as_edgelist(x))
 }
 
-#' @describeIn split Returns a network
+#' @describeIn manip_split Returns a network
 #'   with some discrete observations over time
 #'   into a list of those observations.
 #' @param attribute Character string indicating the date
@@ -281,7 +281,7 @@ cumulative_ties <- function(x, attribute) {
   lapply(x, as_tidygraph)
 }
 
-#' @describeIn split Returns a list of a network
+#' @describeIn manip_split Returns a list of a network
 #'   with some continuous time variable at some time slice(s).
 #' @param attribute One or two attributes used to slice data.
 #' @param slice Character string or character list indicating the date(s)

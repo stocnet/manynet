@@ -18,8 +18,8 @@
 #'   - `node_heterophily()` measures each node's embeddedness within groups
 #'   of nodes with the same attribute.
 #'   - `net_assortativity()` measures the degree assortativity in a network.
-#'   - `net_spatial()` measures the spatial association/autocorrelation (
-#'   global Moran's I) in a network.
+#'   - `net_spatial()` measures the spatial association/autocorrelation 
+#'   (global Moran's I) in a network.
 #'   
 #' @inheritParams is
 #' @param attribute Name of a nodal attribute or membership vector

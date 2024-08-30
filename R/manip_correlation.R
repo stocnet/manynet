@@ -12,7 +12,7 @@
 #'   and for complex networks it will include also the difference 
 #'   between the self ties in each pairwise calculation.
 #'   This function runs in \eqn{O(mn^2)} complexity.
-#' @name correlation
+#' @name manip_correlation
 #' @inheritParams is
 #' @param method One of the following:
 #'   "all" includes all information,
@@ -39,6 +39,65 @@ to_correlation <- function(.data, method = NULL){
   out
 }
   
+#' Network permutation
+#' 
+#' @description 
+#'   `to_permuted()` permutes the network using a Fisher-Yates shuffle 
+#'   on both the rows and columns (for a one-mode network)
+#'   or on each of the rows and columns (for a two-mode network).
+#' @name manip_permutation
+#' @inheritParams is
+#' @family modifications
+NULL
+
+#' @rdname manip_permutation 
+#' @param with_attr Logical whether any attributes of the object
+#'   should be retained. 
+#'   By default TRUE. 
+#' @examples
+#' graphr(ison_adolescents, node_size = 4)
+#' graphr(to_permuted(ison_adolescents), node_size = 4)
+#' @export
+to_permuted <- function(.data, with_attr = TRUE) {
+  out <- as_matrix(.data)
+  if(is_twomode(.data)){
+    out <- .r2perm(out)
+  } else {
+    out <- .r1perm(out)
+  }
+  if(with_attr) out <- bind_node_attributes(out, .data)
+  out
+}
+
+#' @rdname make_generate 
+#' @export
+generate_permutation <- to_permuted #to avoid migraph dependency issues
+
+# Helper functions ------------------
+
+.r1perm <- function(m) {
+  n <- sample(seq_len(dim(m)[1]))
+  if(is_labelled(m)){
+    p <- matrix(data = m[n, n], nrow = dim(m)[1], ncol = dim(m)[2],
+                dimnames = dimnames(m))
+  } else {
+    p <- matrix(data = m[n, n], nrow = dim(m)[1], ncol = dim(m)[2])
+  }
+  p
+}
+
+.r2perm <- function(m) {
+  n <- sample(seq_len(dim(m)[1]))
+  o <- sample(seq_len(dim(m)[2]))
+  if(is_labelled(m)){
+    p <- matrix(data = m[n, o], nrow = dim(m)[1], ncol = dim(m)[2],
+                dimnames = dimnames(m))
+  } else {
+    p <- matrix(data = m[n, o], nrow = dim(m)[1], ncol = dim(m)[2])
+  }
+  p
+}
+
 .corTwomode <- function(m0){
   stats::cor(m0)
 }
@@ -96,3 +155,5 @@ to_correlation <- function(.data, method = NULL){
   m[upper.tri(m)] <- t(m)[upper.tri(m)]
   return(m)
 }
+
+

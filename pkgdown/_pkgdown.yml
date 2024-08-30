@@ -52,7 +52,8 @@ reference:
       Functions for deterministically creating and stochastically generating 
       directed and undirected, one-mode and two-mode networks.
     contents:
-      - starts_with("create_")
+      - make_explicit
+      - make_create
       - starts_with("generate_")
   - subtitle: "Playing"
     desc: |
@@ -71,9 +72,6 @@ reference:
       with other dimensions, such as from a two-mode network into a one-mode network.
       There are also functions for splitting networks, e.g. into a list of ego networks,
       and rejoining them from such lists.
-    contents:
-      - starts_with("to_")
-      - starts_with("from_")
   - subtitle: "Coercion"
     desc: |
       Functions for modifying networks into other classes.
@@ -86,6 +84,37 @@ reference:
       new data on nodes or ties to networks.
     contents:
       - starts_with("add_")
+  - subtitle: "Reformatting"
+    desc: |
+      Functions for reformatting networks, retaining the same network dimensions.
+    contents:
+      - reformat
+  - subtitle: "Transforming"
+    desc: |
+      Functions for transforming networks, which may change the network's dimensions.
+    contents:
+      - to_paths
+      - to_scope
+  - subtitle: "Levels"
+    desc: |
+      Functions for modifying multimodal networks.
+    contents:
+      - to_levels
+      - to_project
+  - subtitle: "Converting"
+    desc: |
+      Functions for permuting networks or constructing a network
+      from the nodal correlations of another network.
+    contents:
+      - manip_permutation
+      - manip_correlation
+  - subtitle: "Splits"
+    desc: |
+      Functions for splitting networks into a list of networks,
+      or (re)joining a list of networks into a single network.
+    contents:
+      - manip_split
+      - starts_with("from_")
   - subtitle: "Missing"
     desc: |
       Functions for modifying how missing data is treated.
@@ -95,12 +124,19 @@ reference:
   - title: "Mapping"
     desc: |
       Functions for plotting and visualising graphs of different types.
+  - subtitle: "Graphing"
+    desc: |
+      Functions for graphing networks and plotting results.
       `graphr()` graphs any manynet-compatible class object automagically.
       `graphs()` and `grapht()` do the same for multiple networks
       and dynamic networks, respectively.
     contents:
       - starts_with("graph")
       - starts_with("layout")
+  - subtitle: "Theming"
+    desc: |
+      Functions for tailoring graphs with themes, scales, and palettes.
+    contents:
       - starts_with("theme")
       - starts_with("scale")
       - ends_with("palettes")
@@ -109,14 +145,23 @@ reference:
     desc: |
       Functions for identifying properties of networks, nodes, or ties,
       all returning logical scalars or vectors.
-      Note that all `node_` and `tie_` measures return a single vector
-      so that they can be added directly to graph objects.
-      `net_` measures return one or, in some cases of two-mode measures,
-      two values.
-      All `node_` and `tie_` measures return a single vector,
-      the length of the nodes or ties in the network, respectively.
+  - subtitle: "Network marks"
+    desc: |
+      `is_*()` functions return a single logical value for the network.
     contents:
-      - contains("is_")
+      - starts_with("is_")
+  - subtitle: "Nodal marks"
+    desc: |
+      `node_is_*()` functions return a vector of logical values the length
+      of the nodes in the network.
+    contents:
+      - starts_with("node_is_")
+  - subtitle: "Tie marks"
+    desc: |
+      `tie_is_*()` functions return a vector of logical values the length
+      of the ties in the network.
+    contents:
+      - starts_with("tie_is_")
   - title: "Measuring"
     desc: |
       Functions for measuring networks and returning a numeric vector or value.

@@ -100,9 +100,10 @@ you will need to unpack them and convert them one by one.
 \link{as}
 
 Other makes: 
-\code{\link{create}},
-\code{\link{generate}},
 \code{\link{learning}},
+\code{\link{make_create}},
+\code{\link{make_explicit}},
+\code{\link{make_generate}},
 \code{\link{play}},
 \code{\link{write}()}
 }
