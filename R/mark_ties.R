@@ -11,6 +11,7 @@
 #'   - `tie_is_reciprocated()` marks ties that are mutual/reciprocated.
 #'   - `tie_is_feedback()` marks ties that are feedback arcs causing the network to not be acyclic.
 #'   - `tie_is_bridge()` marks ties that cut or act as articulation points in a network.
+#'   - `tie_is_path()` marks ties on a path from one node to another.
 #'   
 #'   They are most useful in highlighting parts of the network that
 #'   are particularly well- or poorly-connected.
@@ -74,6 +75,26 @@ tie_is_bridge <- function(.data){
   }, FUN.VALUE = logical(1))
   if(manynet::is_labelled(.data)) 
     names(out) <- attr(igraph::E(.data), "vnames")
+  make_tie_mark(out, .data)
+}
+
+#' @rdname mark_ties
+#' @param from The index or name of the node from which the path should be traced.
+#' @param to The index or name of the node to which the path should be traced.
+#' @param all_paths Whether to return a list of paths or sample just one.
+#'   By default FALSE, sampling just a single path.
+#' @importFrom igraph all_shortest_paths
+#' @examples 
+#' ison_adolescents %>% mutate_ties(route = tie_is_path(from = "Jane", to = 7)) %>% 
+#' graphr(edge_colour = "route")
+#' @export
+tie_is_path <- function(.data, from, to, all_paths = FALSE){
+  if(missing(.data)) {expect_edges(); .data <- .G()}
+  out <- igraph::all_shortest_paths(.data, from = from, to = to,
+                                     mode = "out")$epath
+  if(all_paths){
+    out <- igraph::E(.data) %in% unique(unlist(out))
+  } else out <- igraph::E(.data) %in% out[[sample(length(out),1)]]
   make_tie_mark(out, .data)
 }
 
