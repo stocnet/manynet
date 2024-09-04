@@ -4,6 +4,7 @@
 \alias{mark_triangles}
 \alias{tie_is_triangular}
 \alias{tie_is_transitive}
+\alias{tie_is_triplet}
 \alias{tie_is_cyclical}
 \alias{tie_is_simmelian}
 \title{Marking ties based on structural properties}
@@ -11,6 +12,8 @@
 tie_is_triangular(.data)
 
 tie_is_transitive(.data)
+
+tie_is_triplet(.data)
 
 tie_is_cyclical(.data)
 
@@ -33,6 +36,7 @@ in a network identifying which hold certain properties or positions in the netwo
 \item \code{tie_is_triangular()} marks ties that are in triangles.
 \item \code{tie_is_cyclical()} marks ties that are in cycles.
 \item \code{tie_is_transitive()} marks ties that complete transitive closure.
+\item \code{tie_is_triplet()} marks ties that are in a transitive triplet.
 \item \code{tie_is_simmelian()} marks ties that are both in a triangle
 and fully reciprocated.
 }
@@ -45,6 +49,9 @@ tie_is_triangular(ison_monastery_like)
 ison_adolescents \%>\% to_directed() \%>\% 
   mutate_ties(trans = tie_is_transitive()) \%>\% 
   graphr(edge_color = "trans")
+ison_adolescents \%>\% to_directed() \%>\% 
+  mutate_ties(trip = tie_is_triplet()) \%>\% 
+  graphr(edge_color = "trip")
 ison_adolescents \%>\% to_directed() \%>\% 
   mutate_ties(cyc = tie_is_cyclical()) \%>\% 
   graphr(edge_color = "cyc")

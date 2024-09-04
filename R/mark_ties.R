@@ -109,6 +109,7 @@ tie_is_path <- function(.data, from, to, all_paths = FALSE){
 #'   - `tie_is_triangular()` marks ties that are in triangles.
 #'   - `tie_is_cyclical()` marks ties that are in cycles.
 #'   - `tie_is_transitive()` marks ties that complete transitive closure.
+#'   - `tie_is_triplet()` marks ties that are in a transitive triplet.
 #'   - `tie_is_simmelian()` marks ties that are both in a triangle 
 #'   and fully reciprocated.
 #'   
@@ -155,6 +156,27 @@ tie_is_transitive <- function(.data){
                       mode = "out") == 2
   }, FUN.VALUE = logical(1))
   make_tie_mark(out, .data)
+}
+
+#' @rdname mark_triangles
+#' @examples 
+#' ison_adolescents %>% to_directed() %>% 
+#'   mutate_ties(trip = tie_is_triplet()) %>% 
+#'   graphr(edge_color = "trip")
+#' @export
+tie_is_triplet <- function(.data){
+  if(missing(.data)) {expect_edges(); .data <- .G()}
+  nodes <- as_edgelist(to_unnamed(.data))
+  trans <- tie_is_transitive(.data)
+  altpath <- unlist(lapply(which(trans), function(x){
+    tie_is_path(delete_ties(.data, x),
+                      from = nodes[x,1], to = nodes[x,2],
+                      all_paths = TRUE)
+  }))
+  names(altpath) <- gsub("^.*\\.", "", names(altpath))
+  altpath <- altpath[altpath]
+  trans[names(trans) %in% names(altpath)] <- TRUE
+  make_tie_mark(trans, .data)
 }
 
 #' @rdname mark_triangles
