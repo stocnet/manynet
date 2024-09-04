@@ -20,6 +20,15 @@ to_waves(.data, attribute = "wave", panels = NULL, cumulative = FALSE)
 to_slices(.data, attribute = "time", slice = NULL)
 }
 \arguments{
+\item{.data}{An object of a manynet-consistent class:
+\itemize{
+\item matrix (adjacency or incidence) from \code{{base}} R
+\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
+\item igraph, from the \code{{igraph}} package
+\item network, from the \code{{network}} package
+\item tbl_graph, from the \code{{tidygraph}} package
+}}
+
 \item{max_dist}{The maximum breadth of the neighbourhood.
 By default 1.}
 

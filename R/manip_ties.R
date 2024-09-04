@@ -49,6 +49,9 @@ add_ties.network <- function(.data, ties, attribute = NULL){
 
 #' @rdname manip_ties
 #' @importFrom igraph delete_edges
+#' @examples
+#' delete_ties(ison_adolescents, 3)
+#' delete_ties(ison_adolescents, "Alice|Sue")
 #' @export
 delete_ties <- function(.data, ties) UseMethod("delete_ties")
 
