@@ -20,7 +20,7 @@
 #'  ```
 #' @name manip_project
 #' @family modifications
-#' @inheritParams reformat
+#' @inheritParams manip_reformat
 #' @returns
 #'   All `to_` functions return an object of the same class as that provided. 
 #'   So passing it an igraph object will return an igraph object
@@ -225,7 +225,7 @@ to_galois <- function(.data) {
 #'  ```
 #' @name manip_scope
 #' @family modifications
-#' @inheritParams reformat
+#' @inheritParams manip_reformat
 #' @returns
 #'   All `to_` functions return an object of the same class as that provided. 
 #'   So passing it an igraph object will return an igraph object
@@ -433,7 +433,7 @@ to_blocks.tbl_graph <- function(.data, membership, FUN = mean){
 #'   ```
 #' @name manip_paths
 #' @family modifications
-#' @inheritParams reformat
+#' @inheritParams manip_reformat
 #' @returns
 #'   All `to_` functions return an object of the same class as that provided. 
 #'   So passing it an igraph object will return an igraph object

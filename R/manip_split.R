@@ -12,7 +12,7 @@
 #'    ```
 #' @name manip_split
 #' @family modifications
-#' @inheritParams reformat
+#' @inheritParams manip_reformat
 #' @return The returned object will be a list of network objects.
 NULL
 
