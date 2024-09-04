@@ -127,10 +127,10 @@ tie_is_triangular <- function(.data){
 #' @export
 tie_is_transitive <- function(.data){
   if(missing(.data)) {expect_edges(); .data <- .G()}
+  nodes <- as_edgelist(to_unnamed(.data))
   out <- vapply(seq_len(net_ties(.data)), function(x){
-    nodes <- as_edgelist(to_unnamed(.data))[x,]
     igraph::distances(delete_ties(.data, x), 
-                      v = nodes[1], to = nodes[2], 
+                      v = nodes[x,1], to = nodes[x,2], 
                       mode = "out") == 2
   }, FUN.VALUE = logical(1))
   make_tie_mark(out, .data)
