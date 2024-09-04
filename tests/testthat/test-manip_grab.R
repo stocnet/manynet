@@ -31,7 +31,7 @@ test_that("node_mode works", {
 })
 
 test_that("tie_attribute works", {
-  expect_equal(c(tie_attribute(net2, "weight")), c(1, 2, 3, 4, 5))
+  expect_equal(unname(c(tie_attribute(net2, "weight"))), c(1, 2, 3, 4, 5))
 })
 
 test_that("tie_weights works", {
