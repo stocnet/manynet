@@ -267,7 +267,7 @@ generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1, directed = FA
     stop("There is currently no island model implemented for two-mode networks.")
   } else {
     out <- igraph::sample_islands(islands.n = islands,
-                                  islands.size = c(table(cut(seq.int(n), islands, labels = FALSE))),
+                                  islands.size = ceiling(n/islands),
                                   islands.pin = p,
                                   n.inter = bridges)
     if(net_nodes(out) != n) out <- delete_nodes(out, order(node_constraint(out), decreasing = TRUE)[1:(net_nodes(out)-n)])
