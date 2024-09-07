@@ -33,8 +33,8 @@ Other makes:
 \code{\link{learning}},
 \code{\link{make_create}},
 \code{\link{make_generate}},
-\code{\link{play}},
-\code{\link{read}},
-\code{\link{write}()}
+\code{\link{make_read}},
+\code{\link{make_write}},
+\code{\link{play}}
 }
 \concept{makes}

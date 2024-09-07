@@ -210,8 +210,8 @@ Other makes:
 \code{\link{make_create}},
 \code{\link{make_explicit}},
 \code{\link{make_generate}},
-\code{\link{read}},
-\code{\link{write}()}
+\code{\link{make_read}},
+\code{\link{make_write}}
 
 Other models: 
 \code{\link{learning}}

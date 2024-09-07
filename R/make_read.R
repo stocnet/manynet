@@ -60,11 +60,11 @@
 #' `read_ucinet()` kindly supplied by Christian Steglich, 
 #' constructed on 18 June 2015.
 #' @importFrom utils read.csv read.csv2 read.table
-#' @name read
+#' @name make_read
 #' @seealso [as]
 NULL
 
-#' @rdname read 
+#' @rdname make_read 
 #' @export
 read_matrix <- function(file = file.choose(),
                         sv = c("comma", "semi-colon"),
@@ -91,7 +91,7 @@ read_matrix <- function(file = file.choose(),
   as_tidygraph(as.matrix(out))
 }
 
-#' @rdname read 
+#' @rdname make_read 
 #' @export
 read_edgelist <- function(file = file.choose(),
                           sv = c("comma", "semi-colon"),
@@ -110,7 +110,7 @@ read_edgelist <- function(file = file.choose(),
   out
 }
 
-#' @rdname read
+#' @rdname make_read
 #' @export
 read_nodelist <- function(file = file.choose(),
                           sv = c("comma", "semi-colon"),
@@ -129,7 +129,7 @@ read_nodelist <- function(file = file.choose(),
   out
 }
 
-#' @rdname read
+#' @rdname make_read
 #' @param ties A character string indicating the ties/network,
 #'   where the data contains several.
 #' @importFrom network read.paj
@@ -175,7 +175,7 @@ read_pajek <- function(file = file.choose(),
   out
 }
 
-#' @rdname read
+#' @rdname make_read
 #' @export
 read_ucinet <- function(file = file.choose()) {
   # Some basic checks of the input file
@@ -338,7 +338,7 @@ read_ucinet <- function(file = file.choose()) {
   as_tidygraph(mat)
 }
 
-#' @rdname read 
+#' @rdname make_read 
 #' @importFrom dplyr bind_rows coalesce filter mutate select everything
 #' @export
 read_dynetml <- function(file = file.choose()) {
@@ -391,7 +391,7 @@ read_dynetml <- function(file = file.choose()) {
   as_tidygraph(list(nodes = nodes, ties = edgelist))
 }
 
-#' @rdname read
+#' @rdname make_read
 #' @importFrom igraph read_graph
 #' @export
 read_graphml <- function(file = file.choose()) {
@@ -433,11 +433,11 @@ read_graphml <- function(file = file.choose()) {
 #' `write_ucinet()` kindly supplied by Christian Steglich, 
 #' constructed on 18 June 2015.
 #' @importFrom utils write.csv write.csv2
-#' @name write
+#' @name make_write
 #' @seealso [as]
 NULL
 
-#' @rdname write 
+#' @rdname make_write 
 #' @export
 write_matrix <- function(.data,
                          filename,
@@ -462,7 +462,7 @@ write_matrix <- function(.data,
   write.csv(out, file = filename, row.names = FALSE)
 }
 
-#' @rdname write 
+#' @rdname make_write 
 #' @export
 write_edgelist <- function(.data,
                            filename,
@@ -484,7 +484,7 @@ write_edgelist <- function(.data,
   write.csv(out, file = filename, row.names = FALSE, ...)
 }
 
-#' @rdname write
+#' @rdname make_write
 #' @export
 write_nodelist <- function(.data,
                            filename,
@@ -505,7 +505,7 @@ write_nodelist <- function(.data,
   write.csv(out, file = filename, row.names = FALSE, ...)
 }
 
-#' @rdname write 
+#' @rdname make_write 
 #' @importFrom igraph write_graph
 #' @export
 write_pajek <- function(.data,
@@ -522,7 +522,7 @@ write_pajek <- function(.data,
   )
 }
 
-#' @rdname write
+#' @rdname make_write
 #' @importFrom utils askYesNo
 #' @return A pair of UCINET files in V6404 file format (.##h, .##d)
 #' @export
@@ -634,7 +634,7 @@ write_ucinet <- function(.data,
   close(UCINET.data)
 }
 
-#' @rdname write
+#' @rdname make_write
 #' @importFrom igraph write_graph
 #' @export
 write_graphml <- function(.data,
@@ -647,4 +647,77 @@ write_graphml <- function(.data,
                       filename,
                       format = "graphml")
 }
+
+# Dependencies ####
+
+#' Making networks of package dependencies
+#'
+#' @description 
+#'   Researchers regularly need to work with a variety of external data formats.
+#'   The following functions offer ways to import from some common external
+#'   file formats into objects that `{manynet}` and other graph/network packages
+#'   in R can work with:
+#' 
+#'   - `read_matrix()` imports adjacency matrices from Excel/csv files.
+#'   - `read_edgelist()` imports edgelists from Excel/csv files.
+#'   - `read_nodelist()` imports nodelists from Excel/csv files.
+#'   - `read_pajek()` imports Pajek (.net or .paj) files.
+#'   - `read_ucinet()` imports UCINET files from the header (.##h).
+#'   - `read_dynetml()` imports DyNetML interchange format for rich social network data.
+#'   - `read_graphml()` imports GraphML files.
+#' @details
+#'   Note that these functions are not as actively maintained as others
+#'   in the package, so please let us know if any are not currently working
+#'   for you or if there are missing import routines 
+#'   by [raising an issue on Github](https://github.com/stocnet/manynet/issues).
+#' @param pkg The name 
+#' @source 
+#' https://www.r-bloggers.com/2016/01/r-graph-objects-igraph-vs-network/
+#' @importFrom utils available.packages contrib.url
+#' @name make_cran
+#' @family makes
+#' @seealso [as]
+#' @examples
+#' # mnet <- read_cran()
+#' # mnet <- to_uniplex(mnet, "Imports") %>% to_giant()
+#' # mnet <- to_ego(mnet, "manynet", max_dist = 2)
+#' # graphr(mnet, layout = "hierarchy", edge_color = "lightgrey")
+#' @export
+read_cran <- function(pkg = "manynet"){
+  cranInfoDF <- as.data.frame(utils::available.packages(
+    utils::contrib.url(getOption("repos"), type = "source")))
+  new <- pkg
+  done <- c()
+  out <- data.frame()
+  while(!all(new %in% done)){
+    toAdd <- dplyr::bind_rows(lapply(new, function(x) {
+      # print(paste("I am", x))
+      sections <- cranInfoDF[cranInfoDF$Package==x, 
+                             c('Depends','Imports','Suggests')]
+      if(nrow(sections)>0){
+        deps <- sections[!is.na(sections)]
+        names(deps) <- names(sections)[!is.na(sections)]
+        deps <- lapply(deps, function(y) {
+          l <- strsplit(y, split="(,|, |,\n|\n,| ,| , )| \\(")
+          if(is.list(l)) l <- l[[1]]
+          l <- l[!c(sapply(l, grepl, pattern = ">=", fixed = TRUE))]
+          l <- l[!c(sapply(l, grepl, pattern = ">", fixed = TRUE))]
+          l <- l[!c(sapply(l, grepl, pattern = "==", fixed = TRUE))]
+          l <- l[!l %in% c("R","base","compiler","datasets","graphics",
+                           "grDevices","grid","methods","parallel","splines",
+                           "stats","stats4","tcltk","tools","translations",
+                           "utils")]
+          l[!is.na(l)]
+        })
+        deps <- unlist(deps)
+        if(length(deps)>0)
+        data.frame(from = x, to = deps, type = gsub("[0-9]", "", names(deps)))
+      } }))
+    done <- c(done, new)
+    new <- setdiff(unique(toAdd$to), done)
+    out <- rbind(out, toAdd)
+  }
+  as_tidygraph(out)
+}
+
 
