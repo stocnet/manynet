@@ -83,6 +83,7 @@ Note that while \verb{add_*()}/\verb{delete_*()} functions operate similarly as 
   other <- create_filled(4) \%>\% mutate(name = c("A", "B", "C", "D"))
   mutate_ties(other, form = 1:6) \%>\% filter_ties(form < 4)
   add_tie_attribute(other, "weight", c(1, 2, 2, 2, 1, 2))
+ison_adolescents \%>\% add_ties(c("Betty","Tina")) \%>\% graphr()
 delete_ties(ison_adolescents, 3)
 delete_ties(ison_adolescents, "Alice|Sue")
 }
