@@ -176,6 +176,7 @@ Barabasi, Albert-Laszlo, and Reka Albert. 1999.
 \seealso{
 Other makes: 
 \code{\link{learning}},
+\code{\link{make_cran}},
 \code{\link{make_create}},
 \code{\link{make_explicit}},
 \code{\link{make_read}},

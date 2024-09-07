@@ -147,6 +147,7 @@ create_core(6)
 
 Other makes: 
 \code{\link{learning}},
+\code{\link{make_cran}},
 \code{\link{make_explicit}},
 \code{\link{make_generate}},
 \code{\link{make_read}},
