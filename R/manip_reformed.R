@@ -212,6 +212,7 @@ to_galois <- function(.data) {
 #'   Transforming means that the returned object may have different dimensions
 #'   than the original object.
 #' 
+#'   - `to_ego()` scopes a network into the local neighbourhood of a given node.
 #'   - `to_giant()` scopes a network into one including only the main component and no smaller components or isolates.
 #'   - `to_no_isolates()` scopes a network into one excluding all nodes without ties
 #'   - `to_subgraph()` scopes a network into a subgraph by filtering on some node-related logical statement.
@@ -221,7 +222,7 @@ to_galois <- function(.data) {
 #'   Below are the currently implemented S3 methods:
 #'  
 #'    ```{r, echo = FALSE, cache = TRUE} 
-#'  knitr::kable(available_methods(c("to_giant", "to_no_isolates", "to_subgraph", "to_blocks")))
+#'  knitr::kable(available_methods(c("to_ego", "to_giant", "to_no_isolates", "to_subgraph", "to_blocks")))
 #'  ```
 #' @name manip_scope
 #' @family modifications
@@ -232,6 +233,22 @@ to_galois <- function(.data) {
 #'   and passing it a network object will return a network object,
 #'   with certain modifications as outlined for each function.
 NULL
+
+#' @rdname manip_scope
+#' @export
+to_ego <- function(.data, node, max_dist = 1, min_dist = 0) UseMethod("to_ego")
+
+#' @export
+to_ego.igraph <- function(.data, node, max_dist = 1, min_dist = 0){
+  egos <- to_egos(.data, max_dist = max_dist, min_dist = min_dist)
+  as_igraph(egos[[node]])
+}
+
+#' @export
+to_ego.tbl_graph <- function(.data, node, max_dist = 1, min_dist = 0){
+  egos <- to_egos(.data, max_dist = max_dist, min_dist = min_dist)
+  as_tidygraph(egos[[node]])
+}
 
 #' @rdname manip_scope
 #' @export

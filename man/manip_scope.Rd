@@ -2,12 +2,15 @@
 % Please edit documentation in R/manip_reformed.R
 \name{manip_scope}
 \alias{manip_scope}
+\alias{to_ego}
 \alias{to_giant}
 \alias{to_no_isolates}
 \alias{to_subgraph}
 \alias{to_blocks}
 \title{Modifying networks scope}
 \usage{
+to_ego(.data, node, max_dist = 1, min_dist = 0)
+
 to_giant(.data)
 
 to_no_isolates(.data)
@@ -47,6 +50,7 @@ These functions offer tools for transforming manynet-consistent objects
 Transforming means that the returned object may have different dimensions
 than the original object.
 \itemize{
+\item \code{to_ego()} scopes a network into the local neighbourhood of a given node.
 \item \code{to_giant()} scopes a network into one including only the main component and no smaller components or isolates.
 \item \code{to_no_isolates()} scopes a network into one excluding all nodes without ties
 \item \code{to_subgraph()} scopes a network into a subgraph by filtering on some node-related logical statement.
@@ -58,6 +62,7 @@ Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:\tabular{lrrrrrr}{
     \tab data.frame \tab igraph \tab list \tab matrix \tab network \tab tbl_graph \cr
    to_blocks \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
+   to_ego \tab 0 \tab 1 \tab 0 \tab 0 \tab 0 \tab 1 \cr
    to_giant \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
    to_no_isolates \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
    to_subgraph \tab 1 \tab 1 \tab 0 \tab 1 \tab 1 \tab 1 \cr
