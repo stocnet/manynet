@@ -21,6 +21,7 @@
 #' @name manip_project
 #' @family modifications
 #' @inheritParams manip_reformat
+#' @inheritParams manip_split
 #' @returns
 #'   All `to_` functions return an object of the same class as that provided. 
 #'   So passing it an igraph object will return an igraph object
@@ -235,6 +236,13 @@ to_galois <- function(.data) {
 NULL
 
 #' @rdname manip_scope
+#' @param node Name or index of node.
+#' @param max_dist The maximum breadth of the neighbourhood.
+#'   By default 1.
+#' @param min_dist The minimum breadth of the neighbourhood.
+#'   By default 0. 
+#'   Increasing this to 1 excludes the ego,
+#'   and 2 excludes ego's direct alters.
 #' @export
 to_ego <- function(.data, node, max_dist = 1, min_dist = 0) UseMethod("to_ego")
 

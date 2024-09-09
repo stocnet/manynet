@@ -29,6 +29,16 @@ to_blocks(.data, membership, FUN = mean)
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
 
+\item{node}{Name or index of node.}
+
+\item{max_dist}{The maximum breadth of the neighbourhood.
+By default 1.}
+
+\item{min_dist}{The minimum breadth of the neighbourhood.
+By default 0.
+Increasing this to 1 excludes the ego,
+and 2 excludes ego's direct alters.}
+
 \item{...}{Arguments passed on to dplyr::filter}
 
 \item{membership}{A vector of partition memberships.}
