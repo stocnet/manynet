@@ -683,13 +683,15 @@ write_graphml <- function(.data,
 #' # mnet <- to_ego(mnet, "manynet", max_dist = 2)
 #' # graphr(mnet, layout = "hierarchy", edge_color = "lightgrey")
 #' @export
-read_cran <- function(pkg = "manynet"){
+read_cran <- function(pkg = "all"){
   cranInfoDF <- as.data.frame(utils::available.packages(
     utils::contrib.url(getOption("repos"), type = "source")))
-  new <- pkg
+  if(pkg=="all") new <- cranInfoDF$Package else
+    new <- pkg
   done <- c()
   out <- data.frame()
-  while(!all(new %in% done)){
+  continue <- TRUE
+  while(!all(new %in% done) && continue){
     toAdd <- dplyr::bind_rows(lapply(new, function(x) {
       # print(paste("I am", x))
       sections <- cranInfoDF[cranInfoDF$Package==x, 
@@ -715,9 +717,11 @@ read_cran <- function(pkg = "manynet"){
       } }))
     done <- c(done, new)
     new <- setdiff(unique(toAdd$to), done)
+    if(pkg=="all") continue <- FALSE
     out <- rbind(out, toAdd)
   }
-  as_tidygraph(out)
+  out <- as_tidygraph(out)
+  out
 }
 
 
