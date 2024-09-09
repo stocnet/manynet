@@ -50,7 +50,7 @@ print_tblvec <- function(y, names, n){
   mat <- matrix(y, dimnames = names)
   mat <- t(mat)
   out <- as.data.frame(mat)
-  tibs <- dplyr::tibble(out, .name_repair = "unique")
+  tibs <- dplyr::tibble(out, .name_repair = "minimal")
   setup <- pillar::tbl_format_setup(tibs, width = n)
   body <- pillar::tbl_format_body(tibs, setup)[c(TRUE, FALSE, TRUE)]
   if(setup$extra_cols_total > 0){
