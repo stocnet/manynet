@@ -8,7 +8,7 @@
 https://www.r-bloggers.com/2016/01/r-graph-objects-igraph-vs-network/
 }
 \usage{
-read_cran(pkg = "manynet")
+read_cran(pkg = "all")
 }
 \arguments{
 \item{pkg}{The name}

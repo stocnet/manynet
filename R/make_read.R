@@ -721,6 +721,10 @@ read_cran <- function(pkg = "all"){
     out <- rbind(out, toAdd)
   }
   out <- as_tidygraph(out)
+  compile <- cranInfoDF$NeedsCompilation
+  out <- out %>% 
+    mutate_nodes(Compilation = compile[match(node_names(out),
+                                             cranInfoDF$Package)]=="yes")
   out
 }
 
