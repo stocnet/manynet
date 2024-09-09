@@ -36,9 +36,9 @@ by \href{https://github.com/stocnet/manynet/issues}{raising an issue on Github}.
 }
 \examples{
 # mnet <- read_cran()
-# mnet <- to_uniplex(mnet, "Imports") \%>\% to_giant()
 # mnet <- to_ego(mnet, "manynet", max_dist = 2)
-# graphr(mnet, layout = "hierarchy", edge_color = "lightgrey")
+# graphr(mnet, layout = "hierarchy", 
+#        edge_color = "type", node_color = "Compilation")
 }
 \seealso{
 \link{as}

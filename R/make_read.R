@@ -679,9 +679,9 @@ write_graphml <- function(.data,
 #' @seealso [as]
 #' @examples
 #' # mnet <- read_cran()
-#' # mnet <- to_uniplex(mnet, "Imports") %>% to_giant()
 #' # mnet <- to_ego(mnet, "manynet", max_dist = 2)
-#' # graphr(mnet, layout = "hierarchy", edge_color = "lightgrey")
+#' # graphr(mnet, layout = "hierarchy", 
+#' #        edge_color = "type", node_color = "Compilation")
 #' @export
 read_cran <- function(pkg = "all"){
   cranInfoDF <- as.data.frame(utils::available.packages(
