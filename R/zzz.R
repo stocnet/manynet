@@ -7,9 +7,9 @@
   # 
   # cran_version <- pkgs[pkgs$Package == "manynet","Version"]
 
-  local_version <- packageVersion("manynet")
+  local_version <- utils::packageVersion("manynet")
   packageStartupMessage("This is manynet version ", local_version)
-  old.list <- as.data.frame(old.packages())
+  old.list <- as.data.frame(utils::old.packages())
   behind_cran <- "manynet" %in% old.list$Package
 
   tips <- c(
@@ -27,8 +27,8 @@
     if (behind_cran) {
       msg <- "A new version of manynet is available with bug fixes and new features."
       packageStartupMessage(msg, "\nWould you like to install it?")
-      if (menu(c("Yes", "No")) == 1) {
-        update.packages("manynet")
+      if (utils::menu(c("Yes", "No")) == 1) {
+        utils::update.packages("manynet")
       }
     } else {
       packageStartupMessage(paste(strwrap(tip), collapse = "\n"))
