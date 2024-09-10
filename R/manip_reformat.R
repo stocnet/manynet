@@ -369,15 +369,13 @@ to_unnamed <- function(.data) UseMethod("to_unnamed")
 
 #' @export
 to_unnamed.igraph <- function(.data) {
-  if ("name" %in% igraph::vertex_attr_names(.data)) {
-    igraph::delete_vertex_attr(.data, "name")
-  } else .data
 }
 
 #' @export
 to_unnamed.tbl_graph <- function(.data) {
-  out <- igraph::delete_vertex_attr(.data, "name")
-  tidygraph::as_tbl_graph(out)
+  if ("name" %in% igraph::vertex_attr_names(.data)) {
+    as_tidygraph(igraph::delete_vertex_attr(.data, "name"))
+  } else .data
 }
 
 #' @export
