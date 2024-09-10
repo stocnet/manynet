@@ -7,6 +7,7 @@
 \alias{tie_is_triplet}
 \alias{tie_is_cyclical}
 \alias{tie_is_simmelian}
+\alias{tie_is_forbidden}
 \title{Marking ties based on structural properties}
 \usage{
 tie_is_triangular(.data)
@@ -18,6 +19,8 @@ tie_is_triplet(.data)
 tie_is_cyclical(.data)
 
 tie_is_simmelian(.data)
+
+tie_is_forbidden(.data)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -58,6 +61,9 @@ ison_adolescents \%>\% to_directed() \%>\%
 ison_monastery_like \%>\% 
   mutate_ties(simmel = tie_is_simmelian()) \%>\% 
   graphr(edge_color = "simmel")
+generate_random(8, directed = TRUE) \%>\% 
+  mutate_ties(forbid = tie_is_forbidden()) \%>\% 
+  graphr(edge_color = "forbid")
 }
 \seealso{
 Other marks: 

@@ -212,6 +212,45 @@ tie_is_simmelian <- function(.data){
   make_tie_mark(out, .data)
 }
 
+#' @rdname mark_triangles
+#' @examples 
+#' generate_random(8, directed = TRUE) %>% 
+#'   mutate_ties(forbid = tie_is_forbidden()) %>% 
+#'   graphr(edge_color = "forbid")
+#' @export
+tie_is_forbidden <- function(.data){
+  if(missing(.data)) {expect_edges(); .data <- .G()}
+  dists <- igraph::distances(.data, mode = "out")==2
+  ends <- which(dists * t(dists)==1, arr.ind = TRUE)
+  ends <- t(apply(ends, 1, function(x) sort(x)))
+  ends <- ends[!duplicated(ends),]
+  recip <- tie_is_reciprocated(.data)
+  out <- apply(ends, 1, function(x){
+    (tie_is_path(.data, x[1], x[2], all_paths = TRUE) | 
+      tie_is_path(.data, x[2], x[1], all_paths = TRUE)) & 
+      recip
+  } )
+  out <- unlist(lapply(seq.int(nrow(ends)), function(x){
+    y <- out[,x]
+    nodes <- table(as.numeric(unlist(strsplit(names(y)[which(y)], "->"))))>1
+    nodes <- as.numeric(names(nodes[nodes]))
+    if(length(nodes)>2)
+    setdiff(nodes, ends[x,]) else 0
+  }))
+  out <- cbind(ends[,1], out, ends[,2])
+  # out <- out[out[,2]!=0,]
+  out <- unlist(apply(out, 1, function(x){
+    if(x[2]!=0)
+    c(paste0(x[1],"->",x[2]),
+    paste0(x[2],"->",x[1]),
+    paste0(x[2],"->",x[3]),
+    paste0(x[3],"->",x[2]))
+  } ))
+  out <- names(recip) %in% out
+  # out
+  make_tie_mark(out, .data)
+}
+
 # Selection properties ####
 
 #' Marking ties for selection based on measures
