@@ -1,3 +1,4 @@
+#' @importFrom cli cli_div cli_inform cli_end
 .onAttach <- function(...) {
 
   # suppressMessages(suppressPackageStartupMessages(library("manynet", warn.conflicts = FALSE)))
@@ -8,20 +9,24 @@
   # cran_version <- pkgs[pkgs$Package == "manynet","Version"]
 
   local_version <- utils::packageVersion("manynet")
-  packageStartupMessage("This is manynet version ", local_version)
+  cli::cli_div(theme = list(span.emph = list(color = "red")))
+  cli::cli_inform("This is {.pkg manynet} version {.emph {local_version}}", class = "packageStartupMessage")
+  cli::cli_end()
   old.list <- as.data.frame(utils::old.packages())
   behind_cran <- "manynet" %in% old.list$Package
-
-  tips <- c(
-    "Learn more about manynet at https://github.com/stocnet/manynet/.",
-    "Use `suppressPackageStartupMessages()` to eliminate package startup messages.",
-    "You might like our website Visit: https://stocnet.github.io/manynet/",
-    "Check out all the stocnet R packages. Visit: https://github.com/stocnet/.",
-    "Check out the tutorials included in the package using `run_tute()`",
-    "Star me at https://github.com/users/follow?target=jhollway"
-  )
-
-  tip <- sample(tips, 1)
+  
+  greet_startup_cli <- function() {
+    tips <- c(
+      "Contribute to manynet at {.url https://github.com/stocnet/manynet/}.",
+      "Let us know any issues or features requests at {.url https://github.com/stocnet/manynet/issues}.",
+      "Use {.fn suppressPackageStartupMessages} to eliminate package startup messages.",
+      "Visit the website to learn more: {.url https://stocnet.github.io/manynet/}.",
+      "Discover all the {.emph stocnet} R packages at {.url https://github.com/stocnet/}.",
+      # "Star me at {.url https://github.com/users/follow?target=jhollway}.",
+      "Check out the tutorials included in the package using {.fn run_tute}."
+    )
+    cli::cli_inform(sample(tips, 1), class = "packageStartupMessage")
+  }
 
   if (interactive()) {
     if (behind_cran) {
@@ -31,7 +36,8 @@
         utils::update.packages("manynet")
       }
     } else {
-      packageStartupMessage(paste(strwrap(tip), collapse = "\n"))
+      greet_startup_cli()
+      # packageStartupMessage(paste(strwrap(tip), collapse = "\n"))
     }
   }
 
