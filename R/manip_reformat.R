@@ -369,6 +369,9 @@ to_unnamed <- function(.data) UseMethod("to_unnamed")
 
 #' @export
 to_unnamed.igraph <- function(.data) {
+  if ("name" %in% igraph::vertex_attr_names(.data)) {
+    igraph::delete_vertex_attr(.data, "name")
+  } else .data
 }
 
 #' @export
