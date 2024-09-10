@@ -543,8 +543,11 @@ is_acyclic <- function(.data){
 #' is_aperiodic(ison_algebra)
 #' @export
 is_aperiodic <- function(.data, max_path_length = 4){
+  thisRequires("minMSE") # >80x faster than e.g. cheapr::gcd()
   g <- as_igraph(.data)
   out <- NULL
+  cli::cli_alert_info("Obtaining paths no greater than {max_path_length}.")
+  cli::cli_progress_bar("Obtaining paths", total = net_nodes(.data))
   for(v1 in igraph::V(g)) {
     if(igraph::degree(g, v1, mode="in") == 0) {next}
     goodNeighbors <- igraph::neighbors(g, v1, mode="out")
@@ -553,11 +556,23 @@ is_aperiodic <- function(.data, max_path_length = 4){
       vapply(igraph::all_simple_paths(g, v2, v1, mode="out", 
                                       cutoff = max_path_length), length, FUN.VALUE = numeric(1))
     })))
+    cli::cli_progress_update()
   }
-  thisRequires("minMSE")
+  cli::cli_progress_done()
   minMSE::vector_gcd(out)==1
 }
 
+# vgcd <- function(z){
+#   gcd <- function(x, y) ifelse(y, Recall(y, x %% y), x)
+#   x <- z[1]
+#   while(length(z)>0 || x==1){
+#     y <- z[1]
+#     x <- gcd(x, y)
+#     z <- z[2:length(z)]
+#   }
+#   x
+# }
+  
 # Helper functions
 infer_net_reciprocity <- function(.data, method = "default") {
   out <- igraph::reciprocity(as_igraph(.data), mode = method)
