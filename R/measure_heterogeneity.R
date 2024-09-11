@@ -21,7 +21,7 @@
 #'   - `net_spatial()` measures the spatial association/autocorrelation 
 #'   (global Moran's I) in a network.
 #'   
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @param attribute Name of a nodal attribute or membership vector
 #'   to use as categories for the diversity measure.
 #' @param clusters A nodal cluster membership vector or name of a vertex attribute.

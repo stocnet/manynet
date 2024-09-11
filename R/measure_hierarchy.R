@@ -10,7 +10,7 @@
 #'   - `net_efficiency()` measures the Krackhardt efficiency score.
 #'   - `net_upperbound()` measures the Krackhardt (least) upper bound score.
 #' 
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @name measure_hierarchy
 #' @family measures
 #' @references

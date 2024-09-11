@@ -138,10 +138,10 @@ Other measures:
 \code{\link{member_diffusion}}
 
 Other diffusion: 
+\code{\link{make_play}},
 \code{\link{measure_diffusion_infection}},
 \code{\link{measure_diffusion_net}},
-\code{\link{member_diffusion}},
-\code{\link{play}}
+\code{\link{member_diffusion}}
 }
 \concept{diffusion}
 \concept{measures}

@@ -20,7 +20,7 @@
 #'   of all node or tie attributes in the network.
 #' @name measure_properties
 #' @family measures
-#' @inheritParams is
+#' @inheritParams mark_is
 NULL
 
 #' @rdname measure_properties

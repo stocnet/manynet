@@ -30,7 +30,7 @@
 #' @family measures
 #' @seealso [to_undirected()] for removing edge directions
 #'   and [to_unweighted()] for removing weights from a graph.
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @param normalized Logical scalar, whether the centrality scores are normalized.
 #'   Different denominators are used depending on whether the object is one-mode or two-mode,
 #'   the type of centrality, and other arguments.

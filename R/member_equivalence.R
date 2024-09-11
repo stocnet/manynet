@@ -20,7 +20,7 @@
 #'   assignment.
 #' @name member_equivalence
 #' @family memberships
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @param census A matrix returned by a `node_by_*()` function.
 #' @param k Typically a character string indicating which method
 #'   should be used to select the number of clusters to return.

@@ -61,10 +61,10 @@ Other measures:
 \code{\link{measure_properties}}
 
 Other diffusion: 
+\code{\link{make_play}},
 \code{\link{measure_diffusion_infection}},
 \code{\link{measure_diffusion_net}},
-\code{\link{measure_diffusion_node}},
-\code{\link{play}}
+\code{\link{measure_diffusion_node}}
 }
 \concept{diffusion}
 \concept{measures}

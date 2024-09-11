@@ -28,7 +28,7 @@
 #'   It includes both weak and strong perturbations to an initial solution
 #'   to ensure that a robust solution from the broader state space is identified.
 #'   The user is referred to Lai and Hao (2016) and Lai et al (2021) for more details.
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @name member_cliques
 #' @family memberships
 NULL

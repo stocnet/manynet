@@ -1,5 +1,12 @@
 #' Helper functions for measuring over splits of networks  
-#' @inheritParams is
+#' 
+#' @description
+#'   - `over_waves()` runs a function, e.g. a measure,
+#'   over waves of a panel network
+#'   - `over_time()` runs a function, e.g. a measure,
+#'   over time slices of a dynamic network
+#' 
+#' @inheritParams mark_is
 #' @param strategy If `{furrr}` is installed, 
 #'   then multiple cores can be used to accelerate the function.
 #'   By default `"sequential"`, 
@@ -15,11 +22,10 @@
 #' @param attribute A string naming the attribute to be split upon.
 #' @param slice Optionally, a vector of specific slices.
 #'   Otherwise all observed slices will be returned.
-#' @name over
+#' @name measure_over
 NULL
 
-#' @describeIn over Runs a function, e.g. a measure,
-#'   over waves of a panel network
+#' @rdname measure_over
 #' @export
 over_waves <- function(.data, FUN, ..., attribute = "wave",
                        strategy = "sequential",
@@ -33,8 +39,7 @@ over_waves <- function(.data, FUN, ..., attribute = "wave",
                         .progress = verbose, .options = furrr::furrr_options(seed = T))
 }
 
-#' @describeIn over Runs a function, e.g. a measure,
-#'   over time slices of a dynamic network
+#' @rdname measure_over 
 #' @export
 over_time <- function(.data, FUN, ..., attribute = "time",
                       slice = NULL,

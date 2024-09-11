@@ -15,7 +15,7 @@
 #'   as the number of nodes or ties in the network, respectively.
 #' @name measure_attributes
 #' @family measures
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @param attribute Character string naming an attribute in the object.
 NULL
 

@@ -27,7 +27,7 @@
 #'   - `net_stability()` measures the Jaccard index of stability between two or more networks.
 #' 
 #'   These `net_*()` functions return a single numeric scalar or value.
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @inheritParams make_create
 #' @param membership A vector of partition membership.
 #' @name measure_features
@@ -343,7 +343,7 @@ net_balance <- function(.data) {
 #' 
 #'   These `net_*()` functions return a numeric vector the length of the number
 #'   of networks minus one. E.g., the periods between waves.
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @name measure_periods
 #' @family measures
 NULL

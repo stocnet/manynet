@@ -17,7 +17,7 @@
 #'   - `net_independence()` measures the independence number, 
 #'   or size of the largest independent set in the network.
 #'   
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @name measure_cohesion
 #' @family measures
 NULL

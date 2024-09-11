@@ -286,7 +286,7 @@ net_infection_peak <- function(diff_model){
 #'   - `node_exposure()`: Measures how many exposures nodes have to 
 #'   a given mark
 #'   
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @inheritParams measure_diffusion_net
 #' @family measures
 #' @family diffusion
@@ -498,7 +498,7 @@ node_exposure <- function(.data, mark, time = 0){
 #'   - _Non-adopter_: those without an adoption time,
 #'   i.e. never adopted
 #'   
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @inheritParams measure_diffusion_net
 #' @family measures
 #' @family diffusion

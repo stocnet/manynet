@@ -65,10 +65,10 @@ Other measures:
 \code{\link{member_diffusion}}
 
 Other diffusion: 
+\code{\link{make_play}},
 \code{\link{measure_diffusion_net}},
 \code{\link{measure_diffusion_node}},
-\code{\link{member_diffusion}},
-\code{\link{play}}
+\code{\link{member_diffusion}}
 }
 \concept{diffusion}
 \concept{measures}
