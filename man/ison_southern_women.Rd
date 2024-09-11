@@ -5,7 +5,7 @@
 \alias{ison_southern_women}
 \title{Two-mode southern women (Davis, Gardner and Gardner 1941)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, two-mode network with 32 nodes and 89 ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, two-mode network of 32 nodes and 89 ties 
 #> # A tibble: 32 x 4
 #>   type  name      Surname    Title
 #>   <lgl> <chr>     <chr>      <chr>

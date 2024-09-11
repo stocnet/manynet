@@ -5,7 +5,7 @@
 \alias{ison_lawfirm}
 \title{One-mode lawfirm (Lazega 2001)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A multiplex, directed network with 71 nodes and 2571 arcs
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A multiplex, directed network of 71 nodes and 2571 arcs 
 #> # A tibble: 71 x 7
 #>   status  gender office   seniority   age practice   school      
 #>   <chr>   <chr>  <chr>        <dbl> <dbl> <chr>      <chr>       
