@@ -9,13 +9,13 @@ print.mnet <- function(x, ..., n = 6) {
   graph_desc <- describe_graph(x)
   top <- dplyr::as_tibble(tidygraph::activate(x, "nodes"))
   bottom <- dplyr::as_tibble(tidygraph::activate(x, "edges"))
-  if(is_directed(x)){
-    cat('#', graph_desc, 'network with', igraph::gorder(x), 'nodes and',
-        igraph::gsize(x), 'arcs\n', sep = ' ')  
-  } else {
-    cat('#', graph_desc, 'network with', igraph::gorder(x), 'nodes and',
-        igraph::gsize(x), 'ties\n', sep = ' ')
-  }
+  if(is.null(igraph::graph_attr(x, "grand"))) node_name <- "nodes" else
+    node_name <- igraph::graph_attr(x, "grand")$vertex1
+  if(is.null(igraph::graph_attr(x, "grand"))) 
+    tie_name <- ifelse(is_directed(x), "arcs", "ties") else
+      tie_name <- igraph::graph_attr(x, "grand")$edge.pos
+  cat('#', graph_desc, 'network of', igraph::gorder(x), node_name, 'and',
+      igraph::gsize(x), tie_name, '\n', sep = ' ')  
   if (ncol(top)>0) print(top, n = n)
   if (ncol(bottom)>0) print(bottom, n = n, max_footer_lines = 1)
   invisible(x)
