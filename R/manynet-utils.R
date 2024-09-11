@@ -1,3 +1,6 @@
+# defining global variables more centrally
+utils::globalVariables(c(".data", "obs", "from", "to"))
+
 # Helper function for declaring available methods
 available_methods <- function(fun_vctr) {
   out <- lapply(fun_vctr, function(f) regmatches(utils::.S3methods(f),

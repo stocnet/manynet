@@ -217,14 +217,16 @@ reference:
     contents:
       - cluster
       - kselect
-  - title: "Learning"
+    
+  - title: "Practicing"
+  - subtitle: "Learning"
     desc: |
       Functions for loading and extracting code from tutorials.
       There is also a function for tabulating the various network data included in the package,
       providing an overview of their properties.
     contents:
       - ends_with("_tute")
-  - title: "Practicing"
+  - subtitle: "Data"
     desc: |
       The package contains a variety of networks useful for pedagogical purposes
       and used in the course 'Social Networks Theories and Methods' and other workshops.

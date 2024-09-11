@@ -218,9 +218,9 @@ Other models:
 \code{\link{learning}}
 
 Other diffusion: 
-\code{\link{measure_infection}},
-\code{\link{measure_net_diffusion}},
-\code{\link{measure_node_diffusion}},
+\code{\link{measure_diffusion_infection}},
+\code{\link{measure_diffusion_net}},
+\code{\link{measure_diffusion_node}},
 \code{\link{member_diffusion}}
 }
 \concept{diffusion}
