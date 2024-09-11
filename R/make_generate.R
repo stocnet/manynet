@@ -1,4 +1,6 @@
-#' Making networks with a stochastic element
+# Conditional ####
+
+#' Making unconditional and conditional random networks
 #' 
 #' @description These functions are similar to the `create_*` functions,
 #'   but include some element of randomisation. 
@@ -8,12 +10,9 @@
 #'   - `generate_random()` generates a random network with ties appearing at some probability.
 #'   - `generate_configuration()` generates a random network consistent with a
 #'   given degree distribution.
-#'   - `generate_smallworld()` generates a small-world structure via ring rewiring at some probability.
-#'   - `generate_scalefree()` generates a scale-free structure via preferential attachment at some probability.
+#'   - `generate_man()` generates a random network conditional on the dyad census
+#'   of Mutual, Asymmetric, and Null dyads, respectively.
 #'   - `generate_utilities()` generates a random utility matrix.
-#'   - `generate_fire()` generates a forest fire model.
-#'   - `generate_islands()` generates an islands model.
-#'   - `generate_citations()` generates a citations model.
 #'
 #'   These functions can create either one-mode or two-mode networks.
 #'   To create a one-mode network, pass the main argument `n` a single integer,
@@ -23,10 +22,10 @@
 #'   and the second integer indicates the number of nodes in the second mode.
 #'   As an alternative, an existing network can be provided to `n`
 #'   and the number of modes, nodes, and directedness will be inferred.
-#' @name make_generate
+#' @name make_random
 #' @family makes
 #' @inheritParams make_create
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @param directed Whether to generate network as directed. By default FALSE.
 #' @return By default a `tbl_graph` object is returned,
 #'   but this can be coerced into other types of objects
@@ -41,7 +40,7 @@
 #'   In two-mode networks, the directed argument is ignored.
 NULL
 
-#' @rdname make_generate 
+#' @rdname make_random 
 #' @param p Proportion of possible ties in the network that are realised or,
 #'   if integer greater than 1, the number of ties in the network.
 #' @param with_attr Logical whether any attributes of the object
@@ -68,20 +67,20 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
                                     mode = "out")
     } else {
       g <- igraph::sample_gnm(net_nodes(n), 
-                                    m = m,
-                                    directed = directed)
+                              m = m,
+                              directed = directed)
     }
     if(with_attr) g <- bind_node_attributes(g, n)
   } else if (length(n) == 1) {
     if(p > 1){
-      if(!as.integer(p)==p) stop("`p` must be an integer if above 1.")
+      if(!as.integer(p)==p) cli::cli_abort("`p` must be an integer if above 1.")
       g <- igraph::sample_gnm(n, m = p, directed = directed)
     } else {
       g <- igraph::sample_gnp(n, p = p, directed = directed)
     }
   } else if (length(n) == 2) {
     if(p > 1){
-      if(!as.integer(p)==p) stop("`p` must be an integer if above 1.")
+      if(!as.integer(p)==p) cli::cli_abort("`p` must be an integer if above 1.")
       g <- igraph::sample_bipartite(n[1], n[2],
                                     m = p,
                                     type = "gnm",
@@ -96,12 +95,12 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
     }
     
   } else {
-    stop("`n` must be of length=1 for a one-mode network or length=2 for a two-mode network.")
+    cli::cli_abort("`n` must be of length=1 for a one-mode network or length=2 for a two-mode network.")
   }
   g
 }
 
-#' @rdname make_generate 
+#' @rdname make_random 
 #' @importFrom igraph sample_degseq
 #' @export
 generate_configuration <- function(.data){
@@ -127,63 +126,31 @@ generate_configuration <- function(.data){
   as_tidygraph(out)
 }
 
-#' @rdname make_generate 
-#' @param p Proportion of possible ties in the network that are realised or,
-#'   if integer greater than 1, the number of ties in the network.
-#' @references 
-#' Watts, Duncan J., and Steven H. Strogatz. 1998. 
-#' “Collective Dynamics of ‘Small-World’ Networks.” 
-#' _Nature_ 393(6684):440–42.
-#' \doi{10.1038/30918}.
-#' @importFrom igraph sample_smallworld
-#' @examples
-#' graphr(generate_smallworld(12, 0.025))
-#' graphr(generate_smallworld(12, 0.25))
+#' @rdname make_random 
+#' @param man Vector of Mutual, Asymmetric, and Null dyads, respectively.
+#'   Can be specified as proportions, e.g. `c(0.5, 0.5, 0.5)`, 
+#'   or as a count, e.g. `c(10,0,20)`.
+#'   Is inferred from `n` if it is an existing network object.
+#' @references
+#' Holland, P.W. and Leinhardt, S. 1976. 
+#' “Local Structure in Social Networks.” 
+#' In D. Heise (Ed.), _Sociological Methodology_, pp 1-45. 
+#' San Francisco: Jossey-Bass.
 #' @export
-generate_smallworld <- function(n, p = 0.05, directed = FALSE, width = 2) {
-  directed <- infer_directed(n, directed)
+generate_man <- function(n, man = NULL){
+  thisRequires("sna")
+  if(!is.null(man) && length(man)==3){
+    dcen <- man
+  } else if (is_manynet(n)){
+    dcen <- net_by_dyad(n)
+    if(length(dcen)==2) dcen <- c(dcen[1],0,dcen[2])
+  } else cli::cli_abort("'man' needs to be specified with a numeric vector of length 3.")
   n <- infer_n(n)
-  if(length(n) > 1){
-    g <- create_ring(n, width = width, directed = directed)
-    g <- igraph::rewire(g, igraph::each_edge(p = p))
-  } else {
-    g <- igraph::sample_smallworld(dim = 1, size = n, 
-                            nei = width, p = p)
-    if(directed) g <- to_acyclic(g)
-  }
-  g
+  out <- sna::rguman(1, n, dcen[1], dcen[2], dcen[3])
+  as_tidygraph(out)
 }
 
-#' @rdname make_generate 
-#' @param p Power of the preferential attachment, default is 1.
-#' @importFrom igraph sample_pa
-#' @references 
-#' Barabasi, Albert-Laszlo, and Reka Albert. 1999. 
-#' “Emergence of Scaling in Random Networks.” 
-#' _Science_ 286(5439):509–12. 
-#' \doi{10.1126/science.286.5439.509}.
-#' @examples
-#' graphr(generate_scalefree(12, 0.25))
-#' graphr(generate_scalefree(12, 1.25))
-#' @export
-generate_scalefree <- function(n, p = 1, directed = FALSE) {
-  directed <- infer_directed(n, directed)
-  n <- infer_n(n)
-  if(length(n) > 1){
-    g <- matrix(0, n[1], n[2])
-    for(i in seq_len(nrow(g))){
-      if(i==1) g[i,1] <- 1
-      else g[i, sample.int(ncol(g), size = 1,
-                           prob = (colSums(g)^p + 1))] <- 1
-    }
-    g <- as_igraph(g, twomode = TRUE)
-  } else {
-    g <- igraph::sample_pa(n, power = p, directed = directed)
-  }
-  g
-}
-
-#' @rdname make_generate 
+#' @rdname make_random 
 #' @param steps Number of simulation steps to run.
 #'   By default 1: a single, one-shot simulation.
 #'   If more than 1, further iterations will update the utilities
@@ -216,7 +183,105 @@ generate_utilities <- function(n, steps = 1, volatility = 0, threshold = 0){
   as_igraph(utilities)
 }
 
-#' @rdname make_generate 
+# Stochastic ####
+
+#' Making networks with a stochastic element
+#' 
+#' @description These functions are similar to the `create_*` functions,
+#'   but include some element of randomisation. 
+#'   They are particularly useful for creating a distribution of networks 
+#'   for exploring or testing network properties.
+#'   
+#'   - `generate_smallworld()` generates a small-world structure via ring rewiring at some probability.
+#'   - `generate_scalefree()` generates a scale-free structure via preferential attachment at some probability.
+#'   - `generate_fire()` generates a forest fire model.
+#'   - `generate_islands()` generates an islands model.
+#'   - `generate_citations()` generates a citations model.
+#'
+#'   These functions can create either one-mode or two-mode networks.
+#'   To create a one-mode network, pass the main argument `n` a single integer,
+#'   indicating the number of nodes in the network.
+#'   To create a two-mode network, pass `n` a vector of \emph{two} integers,
+#'   where the first integer indicates the number of nodes in the first mode,
+#'   and the second integer indicates the number of nodes in the second mode.
+#'   As an alternative, an existing network can be provided to `n`
+#'   and the number of modes, nodes, and directedness will be inferred.
+#' @name make_stochastic
+#' @family makes
+#' @inheritParams make_create
+#' @inheritParams make_random
+#' @inheritParams mark_is
+#' @param directed Whether to generate network as directed. By default FALSE.
+#' @return By default a `tbl_graph` object is returned,
+#'   but this can be coerced into other types of objects
+#'   using `as_edgelist()`, `as_matrix()`,
+#'   `as_tidygraph()`, or `as_network()`.
+#'   
+#'   By default, all networks are created as undirected.
+#'   This can be overruled with the argument `directed = TRUE`.
+#'   This will return a directed network in which the arcs are
+#'   out-facing or equivalent.
+#'   This direction can be swapped using `to_redirected()`.
+#'   In two-mode networks, the directed argument is ignored.
+NULL
+
+#' @rdname make_stochastic 
+#' @param p Proportion of possible ties in the network that are realised or,
+#'   if integer greater than 1, the number of ties in the network.
+#' @references 
+#' Watts, Duncan J., and Steven H. Strogatz. 1998. 
+#' “Collective Dynamics of ‘Small-World’ Networks.” 
+#' _Nature_ 393(6684):440–42.
+#' \doi{10.1038/30918}.
+#' @importFrom igraph sample_smallworld
+#' @examples
+#' graphr(generate_smallworld(12, 0.025))
+#' graphr(generate_smallworld(12, 0.25))
+#' @export
+generate_smallworld <- function(n, p = 0.05, directed = FALSE, width = 2) {
+  directed <- infer_directed(n, directed)
+  n <- infer_n(n)
+  if(length(n) > 1){
+    g <- create_ring(n, width = width, directed = directed)
+    g <- igraph::rewire(g, igraph::each_edge(p = p))
+  } else {
+    g <- igraph::sample_smallworld(dim = 1, size = n, 
+                                   nei = width, p = p)
+    if(directed) g <- to_acyclic(g)
+  }
+  g
+}
+
+#' @rdname make_stochastic 
+#' @param p Power of the preferential attachment, default is 1.
+#' @importFrom igraph sample_pa
+#' @references 
+#' Barabasi, Albert-Laszlo, and Reka Albert. 1999. 
+#' “Emergence of Scaling in Random Networks.” 
+#' _Science_ 286(5439):509–12. 
+#' \doi{10.1126/science.286.5439.509}.
+#' @examples
+#' graphr(generate_scalefree(12, 0.25))
+#' graphr(generate_scalefree(12, 1.25))
+#' @export
+generate_scalefree <- function(n, p = 1, directed = FALSE) {
+  directed <- infer_directed(n, directed)
+  n <- infer_n(n)
+  if(length(n) > 1){
+    g <- matrix(0, n[1], n[2])
+    for(i in seq_len(nrow(g))){
+      if(i==1) g[i,1] <- 1
+      else g[i, sample.int(ncol(g), size = 1,
+                           prob = (colSums(g)^p + 1))] <- 1
+    }
+    g <- as_igraph(g, twomode = TRUE)
+  } else {
+    g <- igraph::sample_pa(n, power = p, directed = directed)
+  }
+  g
+}
+
+#' @rdname make_stochastic 
 #' @param contacts Number of contacts or ambassadors chosen from among existing
 #'   nodes in the network.
 #'   By default 1.
@@ -233,7 +298,7 @@ generate_fire <- function(n, contacts = 1, their_out = 0, their_in = 1, directed
   directed <- infer_directed(n, directed)
   n <- infer_n(n)
   if(length(n)==2){
-    stop("There is currently no forest fire model implemented for two-mode networks.")
+    cli::cli_abort("There is currently no forest fire model implemented for two-mode networks.")
   } else {
     out <- igraph::sample_forestfire(n, 
                                      fw.prob = their_out, bw.factor = their_in,
@@ -242,7 +307,7 @@ generate_fire <- function(n, contacts = 1, their_out = 0, their_in = 1, directed
   as_tidygraph(out)
 }
 
-#' @rdname make_generate 
+#' @rdname make_stochastic 
 #' @param islands Number of islands or communities to create.
 #'   By default 2.
 #'   See `igraph::sample_islands()` for more.
@@ -264,7 +329,7 @@ generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1, directed = FA
   } 
   n <- infer_n(n)
   if(length(n)==2){
-    stop("There is currently no island model implemented for two-mode networks.")
+    cli::cli_abort("There is currently no island model implemented for two-mode networks.")
   } else {
     out <- igraph::sample_islands(islands.n = islands,
                                   islands.size = ceiling(n/islands),
@@ -276,7 +341,7 @@ generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1, directed = FA
   as_tidygraph(out)
 }
 
-#' @rdname make_generate 
+#' @rdname make_stochastic 
 #' @param ties Number of ties to add per new node.
 #'   By default a uniform random sample from 1 to 4 new ties.
 #' @param agebins Number of aging bins.

@@ -25,6 +25,7 @@
 - Added `read_cran()` for creating networks of package dependencies on CRAN
   - Gathers dependency graph for whole CRAN by default, but can also trace successive outgoing dependencies from a single package (speed increase depends on the package, but is nearly 9x faster for `{manynet}`)
   - Also gathers nodal information about whether compilation is required
+- Added `generate_man()` for generating dyad census conditional uniform graphs
 - Fixed #86 by making sure igraph::sample_islands in `generate_islands()` only takes a single integer and not a vector
 
 ## Manipulating
