@@ -24,10 +24,10 @@
 #'   }
 #' @return TRUE if the condition is met, or FALSE otherwise.
 #' @family marking
-#' @name is
+#' @name mark_is
 NULL
 
-#' @rdname is
+#' @rdname mark_is
 #' @importFrom igraph is_igraph
 #' @importFrom tidygraph is.tbl_graph
 #' @importFrom network is.network
@@ -43,7 +43,7 @@ is_manynet <- function(.data) {
     (is.matrix(.data) & is.numeric(.data))
 }
 
-#' @rdname is
+#' @rdname mark_is
 #' @importFrom igraph is_igraph
 #' @importFrom tidygraph is.tbl_graph
 #' @importFrom network is.network
@@ -67,7 +67,7 @@ is_graph.igraph <- function(.data){TRUE}
 #' @export
 is_graph.network <- function(.data){TRUE}
 
-#' @rdname is
+#' @rdname mark_is
 #' @examples
 #' is_edgelist(matrix(c(2,2), 1, 2))
 #' is_edgelist(as_edgelist(matrix(c(2,2), 1, 2)))
@@ -91,13 +91,13 @@ is_edgelist.igraph <- function(.data){FALSE}
 #' @export
 is_edgelist.tbl_graph <- function(.data){FALSE}
 
-#' @rdname is
+#' @rdname mark_is
 #' @export
 is_list <- function(.data) {
   inherits(.data, "list") && !is_manynet(.data)
 }
 
-#' @rdname is
+#' @rdname mark_is
 #' @examples
 #' is_longitudinal(create_tree(5, 3))
 #' @export
@@ -110,7 +110,7 @@ is_longitudinal <- function(.data) {
   } 
 }
 
-#' @rdname is
+#' @rdname mark_is
 #' @examples 
 #' is_dynamic(create_tree(3))
 #' @export
@@ -143,12 +143,12 @@ is_dynamic <- function(.data) {
 #'   of ties, such that there can be multiple ties between the same
 #'   sender and receiver.
 #'   - `is_uniplex()` marks networks TRUE if it is neither complex nor multiplex.
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @family marking
-#' @name is_format
+#' @name mark_format
 NULL
 
-#' @rdname is_format
+#' @rdname mark_format
 #' @importFrom igraph is_bipartite
 #' @examples
 #' is_twomode(create_filled(c(2,2)))
@@ -198,7 +198,7 @@ is_twomode.list <- function(.data) {
   }
 }
 
-#' @rdname is_format
+#' @rdname mark_format
 #' @importFrom igraph is_weighted
 #' @examples
 #' is_weighted(create_tree(3))
@@ -231,7 +231,7 @@ is_weighted.data.frame <- function(.data) {
     ("weight" %in% names(.data) | is.numeric(.data[,3]))
 }
 
-#' @rdname is_format
+#' @rdname mark_format
 #' @importFrom igraph is_directed
 #' @examples
 #' is_directed(create_tree(2))
@@ -265,7 +265,7 @@ is_directed.matrix <- function(.data) {
   if(is_twomode(.data)) FALSE else !isSymmetric(.data)
 }
 
-#' @rdname is_format
+#' @rdname mark_format
 #' @importFrom igraph is_named
 #' @examples
 #' is_labelled(create_empty(3))
@@ -304,7 +304,7 @@ is_labelled.list <- function(.data) {
   }
 }
 
-#' @rdname is_format
+#' @rdname mark_format
 #' @importFrom igraph edge_attr_names
 #' @examples
 #' is_signed(create_lattice(3))
@@ -340,7 +340,7 @@ is_signed.network <- function(.data) {
   "sign" %in% network::list.edge.attributes(.data)
 }
 
-#' @rdname is_format
+#' @rdname mark_format
 #' @importFrom igraph any_loop
 #' @examples
 #' is_complex(create_lattice(4))
@@ -379,7 +379,7 @@ is_complex.list <- function(.data) {
   }
 }
 
-#' @rdname is_format 
+#' @rdname mark_format 
 #' @importFrom igraph any_multiple
 #' @examples
 #' is_multiplex(create_filled(c(3,3)))
@@ -417,7 +417,7 @@ is_multiplex.data.frame <- function(.data) {
   ncol(.data) >= 3 & "type" %in% setdiff(colnames(.data), reserved_tie_attr)
 }
 
-#' @rdname is_format
+#' @rdname mark_format
 #' @importFrom igraph is_simple
 #' @examples
 #' is_uniplex(create_star(3))
@@ -427,7 +427,7 @@ is_uniplex <- function(.data) {
   igraph::is_simple(obj)
 }
 
-#' @rdname is_format
+#' @rdname mark_format
 #' @examples
 #' is_attributed(ison_algebra)
 #' @export
@@ -461,10 +461,10 @@ is_attributed <- function(.data) {
 #'   }
 #' @return TRUE if the condition is met, or FALSE otherwise.
 #' @family marking
-#' @name features
+#' @name mark_features
 NULL
 
-#' @rdname features
+#' @rdname mark_features
 #' @section is_connected: 
 #'   To test weak connection on a directed network,
 #'   please see `to_undirected()`.
@@ -478,7 +478,7 @@ is_connected <- function(.data) {
                                      "strong", "weak"))
 }
 
-#' @rdname features
+#' @rdname mark_features
 #' @section is_perfect_matching: 
 #'   For two-mode or bipartite networks, `to_matching()` is used
 #'   to identify whether a perfect matching is possible.
@@ -514,7 +514,7 @@ is_perfect_matching <- function(.data, mark = "type"){
   }
 }
 
-#' @rdname features
+#' @rdname mark_features
 #' @importFrom igraph has_eulerian_path
 #' @examples
 #' is_eulerian(ison_brandes)
@@ -523,7 +523,7 @@ is_eulerian <- function(.data){
   igraph::has_eulerian_path(as_igraph(.data))
 }
 
-#' @rdname features
+#' @rdname mark_features
 #' @importFrom igraph is_dag
 #' @examples 
 #' is_acyclic(ison_algebra)
@@ -533,7 +533,7 @@ is_acyclic <- function(.data){
   igraph::is_dag(obj)
 }
 
-#' @rdname features
+#' @rdname mark_features
 #' @param max_path_length Maximum path length considered.
 #'   If negative, paths of all lengths are considered.
 #'   By default 4, to avoid potentially very long computation times.

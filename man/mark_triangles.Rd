@@ -54,7 +54,7 @@ ison_monks \%>\% to_uniplex("like") \%>\%
 ison_adolescents \%>\% to_directed() \%>\% 
   mutate_ties(trans = tie_is_transitive()) \%>\% 
   graphr(edge_color = "trans")
-to_directed(ison_adolescents) \%>\% 
+ison_adolescents \%>\% to_directed() \%>\% 
   mutate_ties(trip = tie_is_triplet()) \%>\% 
   graphr(edge_color = "trip")
 ison_adolescents \%>\% to_directed() \%>\% 
