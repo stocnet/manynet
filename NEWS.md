@@ -8,7 +8,7 @@
   - Offers different suggestions each time it is loaded
   - Can be silenced using `suppressPackageStartupMessages()`
 - Improved website structure
-  - Structured make_, manip_, and measure_ documentation
+  - Structured make_, manip_, map_, measure_, and model_ documentation
   - Improved function overview layout for measures
 - Updated Github Actions scripts
   - Updated renaming and releasing binaries (thanks @auzaheta)

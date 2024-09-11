@@ -1,3 +1,52 @@
+# Configurational ####
+
+#' Layout algorithms based on configurational positions
+#' 
+#' @description
+#'   Configurational layouts locate nodes at symmetric coordinates
+#'   to help illustrate the particular layouts.
+#'   Currently "triad" and "quad" layouts are available.
+#'   The "configuration" layout will choose the appropriate configurational
+#'   layout automatically.
+#' 
+#' @name map_layout_configuration
+#' @family mapping
+#' @inheritParams map_layout_partition
+NULL
+
+#' @rdname map_layout_configuration
+#' @export
+layout_tbl_graph_configuration <- function(.data,
+                                           circular = FALSE, times = 1000){
+  if (net_nodes(.data) == 3) {
+    layout_tbl_graph_triad(.data, circular = circular, times = times)
+  } else if (net_nodes(.data) == 4) {
+    layout_tbl_graph_quad(.data, circular = circular, times = times)
+  }}
+
+#' @rdname map_layout_configuration
+#' @export
+layout_tbl_graph_triad <- function(.data,
+                                   circular = FALSE, times = 1000){
+  res <- matrix(c(0,0,
+                  2,3.5,
+                  4,0), 3, 2, byrow = TRUE)
+  .to_lo(res)  
+}
+
+#' @rdname map_layout_configuration
+#' @export
+layout_tbl_graph_quad <- function(.data,
+                                  circular = FALSE, times = 1000){
+  res <- matrix(c(0,0,
+                  0,1,
+                  1,0,
+                  1,1), 4, 2, byrow = TRUE)
+  .to_lo(res)  
+}
+
+# Partitions ####
+
 #' Layout algorithms based on bi- or other partitions
 #' 
 #' @description
@@ -22,8 +71,8 @@
 #'   around a circle, with successive layers appearing as concentric circles.
 #'   The "multilevel" layout places successive layers as multiple levels.
 #'   The "lineage" layout ranks nodes in Y axis according to values.
-#' @name partition_layouts
-#' @inheritParams is
+#' @name map_layout_partition
+#' @inheritParams mark_is
 #' @param circular Should the layout be transformed into a radial representation. 
 #' Only possible for some layouts. Defaults to FALSE.
 #' @param times Maximum number of iterations, where appropriate
@@ -54,7 +103,7 @@
 #'   _Nucleic Acids Research_, 42 (1) e6.
 NULL
 
-#' @rdname partition_layouts
+#' @rdname map_layout_partition
 #' @examples
 #' #graphr(ison_southern_women, layout = "hierarchy", center = "events",
 #' #           node_color = "type", node_size = 3)
@@ -82,7 +131,7 @@ layout_tbl_graph_hierarchy <- function(.data, center = NULL,
     # nodeY <- abs(nodeY - max(nodeY))
     out <- .to_lo(cbind(nodeX, nodeY))
   } else {
-    if (!is_twomode(.data)) stop("Please declare a two-mode network.")
+    if (!is_twomode(.data)) cli::cli_abort("Please declare a two-mode network.")
     net <- as_matrix(.data)
     nn <- dim(net)[1]
     mm <- dim(net)[2]
@@ -114,14 +163,14 @@ layout_tbl_graph_hierarchy <- function(.data, center = NULL,
         crd <- rbind(side1, side2)
         crd[which(is.nan(crd))] <- 0.5
         rownames(crd) <- c(dimnames(net)[[1]], dimnames(net)[[2]])
-      } else stop("Please declare actors, events, or a node name as center.")
+      } else cli::cli_abort("Please declare actors, events, or a node name as center.")
     }
     out <- .to_lo(crd)
   }
   out
 }
 
-#' @rdname partition_layouts
+#' @rdname map_layout_partition
 #' @examples
 #' #graphr(ison_southern_women, layout = "alluvial")
 #' @export
@@ -143,7 +192,7 @@ layout_tbl_graph_alluvial <- function(.data,
     .to_lo(cbind(nodeX, nodeY))  
 }
 
-#' @rdname partition_layouts
+#' @rdname map_layout_partition
 #' @export
 layout_tbl_graph_railway <- function(.data,
                                      circular = FALSE, times = 1000) {
@@ -153,7 +202,7 @@ layout_tbl_graph_railway <- function(.data,
   res
 }
 
-#' @rdname partition_layouts
+#' @rdname map_layout_partition
 #' @export
 layout_tbl_graph_ladder <- function(.data,
                                     circular = FALSE, times = 1000){
@@ -163,7 +212,7 @@ layout_tbl_graph_ladder <- function(.data,
   res
 }
 
-#' @rdname partition_layouts
+#' @rdname map_layout_partition
 #' @examples
 #' #graphr(ison_southern_women, layout = "concentric", membership = "type",
 #' #           node_color = "type", node_size = 3)
@@ -181,10 +230,10 @@ layout_tbl_graph_concentric <- function(.data, membership,
   }
   if (missing(membership)) { 
     if (is_twomode(.data)) membership <- node_is_mode(.data) else 
-      stop("Please pass the function a `membership` node attribute or a vector.")
+      cli::cli_abort("Please pass the function a `membership` node attribute or a vector.")
   } else {
     if (length(membership) > 1 & length(membership) != length(.data)) {
-      stop("Please pass the function a `membership` node attribute or a vector.")
+      cli::cli_abort("Please pass the function a `membership` node attribute or a vector.")
     } else if (length(membership) != length(.data)) {
       membership <- node_attribute(.data, membership)
     }
@@ -192,7 +241,7 @@ layout_tbl_graph_concentric <- function(.data, membership,
   names(membership) <- node_names(.data)
   membership <- to_list(membership)
   all_c  <- unlist(membership, use.names = FALSE)
-  if (any(table(all_c) > 1)) stop("Duplicated nodes in layers!")
+  if (any(table(all_c) > 1)) cli::cli_abort("Duplicated nodes in layers!")
   if (is_labelled(.data)) all_n <- node_names(.data) else all_n <- 1:net_nodes(.data)
   sel_other  <- all_n[!all_n %in% all_c]
   if (length(sel_other) > 0) membership[[length(membership) + 1]] <- sel_other
@@ -228,7 +277,7 @@ layout_tbl_graph_concentric <- function(.data, membership,
   .to_lo(res)
 }
 
-#' @rdname partition_layouts
+#' @rdname map_layout_partition
 #' @examples
 #' #graphr(ison_lotr, layout = "multilevel",
 #' #           node_color = "Race", level = "Race", node_size = 3)
@@ -238,11 +287,11 @@ layout_tbl_graph_multilevel <- function(.data, level, circular = FALSE) {
     if (any(grepl("lvl", names(node_attribute(.data))))) {
       message("Level attribute 'lvl' found in data.")
       } else {
-        stop("Please pass the function a `level` node attribute or a vector.")
+        cli::cli_abort("Please pass the function a `level` node attribute or a vector.")
       }
   } else {
     if (length(level) > 1 & length(level) != length(.data)) {
-      stop("Please pass the function a `level` node attribute or a vector.")
+      cli::cli_abort("Please pass the function a `level` node attribute or a vector.")
     } else if (length(level) != length(.data)) {
       level <- as.factor(node_attribute(.data, level))
     }
@@ -253,7 +302,7 @@ layout_tbl_graph_multilevel <- function(.data, level, circular = FALSE) {
   .to_lo(out)
 }
 
-#' @rdname partition_layouts
+#' @rdname map_layout_partition
 #' @examples
 #' # ison_adolescents %>%
 #' #   mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2),
@@ -263,7 +312,7 @@ layout_tbl_graph_multilevel <- function(.data, level, circular = FALSE) {
 #' @export
 layout_tbl_graph_lineage <- function(.data, rank, circular = FALSE) {
   if (length(rank) > 1 & length(rank) != length(.data)) {
-    stop("Please pass the function a `rank` node attribute or a vector.")
+    cli::cli_abort("Please pass the function a `rank` node attribute or a vector.")
   } else if (length(rank) != length(.data)) {
     rank <- as.numeric(node_attribute(.data, rank))
   }
@@ -355,7 +404,7 @@ rng <- function(r) {
     x <- append(x, (-1))
     for (i in 1:(r - 1)) x <- append(x, ((-1) + (2L/(r - 1L)) * i))
     return(x * (r/50L))
-  } else stop("no negative values")
+  } else cli::cli_abort("no negative values")
 }
 
 nrm <- function(x, digits = 3) {

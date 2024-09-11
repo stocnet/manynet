@@ -7,6 +7,7 @@
 #' @param type Either "continuous" or "discrete". Use continuous if you want
 #'   to automatically interpolate between colours.
 #' @return A graphic display of colours in palette.
+#' @name map_palettes
 #' @source Adapted from \url{https://github.com/karthik/wesanderson/blob/master/R/colors.R}
 #' @examples
 #' many_palettes()
@@ -18,12 +19,12 @@ many_palettes <- function(palette, n, type = c("discrete", "continuous")) {
     pal <- corp_palette(c("IHEID", "SDGs", "Centres", "ETHZ", "RUG", "UZH"))
   } else pal <- corp_palette(palette)
   if (is.null(pal))
-    stop("Palette not found.")
+    cli::cli_abort("Palette not found.")
   if (missing(n)) {
     n <- length(pal)
   }
   if (type == "discrete" && n > length(pal)) {
-    stop("Number of requested colors greater than what palette can offer")
+    cli::cli_abort("Number of requested colors greater than what palette can offer")
   }
   x <- switch(type, continuous = grDevices::colorRampPalette(pal)(n),
               discrete = pal[1:n])
