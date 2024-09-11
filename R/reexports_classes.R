@@ -2,14 +2,6 @@
 #' @export
 igraph::is_igraph
 
-#' @importFrom network is.network
-#' @export
-network::is.network
-
-#' @importFrom network as.network
-#' @export
-network::as.network
-
 #' @importFrom dplyr %>%
 #' @export
 dplyr::`%>%`
@@ -45,15 +37,3 @@ expect_edges <- function() {
     stop("This call requires ties to be active", call. = FALSE)
   }
 }
-
-# expect_nodes <- function() {
-#   if (!.graph_context$free() && .graph_context$active() != "nodes") {
-#     stop("This call requires nodes to be active", call. = FALSE)
-#   }
-# }
-# 
-# expect_edges <- function() {
-#   if (!.graph_context$free() && .graph_context$active() != "edges") {
-#     stop("This call requires edges to be active", call. = FALSE)
-#   }
-# }

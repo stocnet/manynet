@@ -36,7 +36,9 @@ Suggests:
     ggforce,
     gifski,
     graphlayouts,
+    knitr,
     learnr,
+    methods,
     minMSE,
     multiplex,
     netdiffuseR,
@@ -65,8 +67,7 @@ Authors@R:
     )
 Config/Needs/build: 
     roxygen2, 
-    devtools,
-    knitr
+    devtools
 Roxygen: list(markdown = TRUE, roclets = c("namespace", "rd"))
 Config/Needs/check: 
     covr,

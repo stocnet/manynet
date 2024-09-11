@@ -4,8 +4,6 @@
 \name{reexports}
 \alias{reexports}
 \alias{is_igraph}
-\alias{is.network}
-\alias{as.network}
 \alias{\%>\%}
 \alias{with_graph}
 \alias{is.tbl_graph}
@@ -33,8 +31,6 @@ below to see their documentation.
   \item{ggplot2}{\code{\link[ggplot2]{aes}}, \code{\link[ggplot2]{ggplot}}, \code{\link[ggplot2]{ggsave}}, \code{\link[ggplot2:labs]{ggtitle}}, \code{\link[ggplot2]{guides}}, \code{\link[ggplot2]{labs}}, \code{\link[ggplot2]{scale_size}}, \code{\link[ggplot2:labs]{xlab}}, \code{\link[ggplot2:labs]{ylab}}}
 
   \item{igraph}{\code{\link[igraph]{is_igraph}}}
-
-  \item{network}{\code{\link[network:network]{as.network}}, \code{\link[network:network]{is.network}}}
 
   \item{tidygraph}{\code{\link[tidygraph:context_accessors]{.E}}, \code{\link[tidygraph:context_accessors]{.G}}, \code{\link[tidygraph:context_accessors]{.N}}, \code{\link[tidygraph:tbl_graph]{is.tbl_graph}}, \code{\link[tidygraph]{with_graph}}}
 }}
