@@ -107,7 +107,9 @@ arrange_ties <- function(.data, ...){
 #' @importFrom tidygraph bind_edges
 #' @export
 bind_ties <- function(.data, ...){
-  tidygraph::bind_edges(.data, ...)
+  toAdd <- as_edgelist(...)
+  tidygraph::bind_edges(.data, toAdd) %>% 
+    arrange_ties(from, to)
 }
 
 #' @rdname manip_ties 
