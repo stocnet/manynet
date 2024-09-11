@@ -594,7 +594,9 @@ as_tidygraph <- function(.data, twomode = FALSE) UseMethod("as_tidygraph")
 
 #' @export
 as_tidygraph.data.frame <- function(.data, twomode = FALSE) {
-  tidygraph::as_tbl_graph(as_igraph(.data))
+  out <- tidygraph::as_tbl_graph(as_igraph(.data))
+  class(out) <- c("mnet", class(out))
+  out
 }
 
 #' @importFrom tidygraph tbl_graph
@@ -602,33 +604,43 @@ as_tidygraph.data.frame <- function(.data, twomode = FALSE) {
 as_tidygraph.list <- function(.data, twomode = FALSE) {
   if (!is.null(names(.data))){
     if ("nodes" %in% names(.data) & "ties" %in% names(.data)) {
-      tidygraph::tbl_graph(nodes = .data[["nodes"]],
+      out <- tidygraph::tbl_graph(nodes = .data[["nodes"]],
                            edges = .data[["ties"]])
     } else if ("nodes" %in% names(.data) & "edges" %in% names(.data)) {
-      tidygraph::tbl_graph(nodes = .data[["nodes"]],
+      out <- tidygraph::tbl_graph(nodes = .data[["nodes"]],
                            edges = .data[["edges"]])
     } else stop("Please name the list elements 'nodes' and 'ties'.")
   } else stop("Please name the list elements 'nodes' and 'ties'.")
+  class(out) <- c("mnet", class(out))
+  out
 }
   
 #' @export
 as_tidygraph.matrix <- function(.data, twomode = FALSE) {
-  tidygraph::as_tbl_graph(as_igraph(.data, twomode = twomode))
+  out <- tidygraph::as_tbl_graph(as_igraph(.data, twomode = twomode))
+  class(out) <- c("mnet", class(out))
+  out
 }
 
 #' @export
 as_tidygraph.igraph <- function(.data, twomode = FALSE) {
-  tidygraph::as_tbl_graph(.data)
+  out <- tidygraph::as_tbl_graph(.data)
+  class(out) <- c("mnet", class(out))
+  out
 }
 
 #' @export
 as_tidygraph.tbl_graph <- function(.data, twomode = FALSE) {
-  .data
+  out <- .data
+  class(out) <- c("mnet", class(out))
+  out
 }
 
 #' @export
 as_tidygraph.network <- function(.data, twomode = FALSE) {
-  tidygraph::as_tbl_graph(as_igraph(.data))
+  out <- tidygraph::as_tbl_graph(as_igraph(.data))
+  class(out) <- c("mnet", class(out))
+  out
 }
 
 #' @export
@@ -667,12 +679,15 @@ as_tidygraph.network.goldfish <- function(.data,
   #   }
   # }
 
+  class(out) <- c("mnet", class(out))
   out
 }
 
 #' @export
 as_tidygraph.siena <- function(.data, twomode = FALSE) {
-  as_tidygraph(as_igraph.siena(.data, twomode = FALSE))
+  out <- as_tidygraph(as_igraph.siena(.data, twomode = FALSE))
+  class(out) <- c("mnet", class(out))
+  out
 }
 
 #' @export
@@ -683,6 +698,7 @@ as_tidygraph.diff_model <- function(.data, twomode = FALSE) {
   #   out <- add_node_attribute(out, "name",
   #                             as.character(seq_len(igraph::vcount(out))))
   # }
+  class(out) <- c("mnet", class(out))
   out
 }
 

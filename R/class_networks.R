@@ -2,9 +2,8 @@
 # #'
 # #' @param x An object of class "tbl_graph".
 # #' @param ... Other arguments passed to or from other methods.
-# #' @export print.tbl_graph
 #' @export
-print.tbl_graph <- function(x, ..., n = 6) {
+print.mnet <- function(x, ..., n = 6) {
   arg_list <- list(...)
   arg_list[['useS4']] <- NULL
   graph_desc <- describe_graph(x)
