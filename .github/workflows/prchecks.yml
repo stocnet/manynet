@@ -35,12 +35,9 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           cache-version: 2
+          needs: check, build
           extra-packages: |
             any::rcmdcheck
-            any::lintr
-            any::spelling
-            any::covr
-          needs: check
 
       - uses: r-lib/actions/check-r-package@v2
         env:

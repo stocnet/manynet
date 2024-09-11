@@ -35,11 +35,10 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           cache-version: 2
+          needs: check, build
           extra-packages: |
             any::rcmdcheck
-            any::covr
             any::remotes
-          needs: check
 
       - uses: r-lib/actions/check-r-package@v2
         env:
