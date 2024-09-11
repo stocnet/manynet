@@ -17,13 +17,14 @@
   
   greet_startup_cli <- function() {
     tips <- c(
-      "Contribute to manynet at {.url https://github.com/stocnet/manynet/}.",
-      "Let us know any issues or features requests at {.url https://github.com/stocnet/manynet/issues}.",
-      "Use {.fn suppressPackageStartupMessages} to eliminate package startup messages.",
-      "Visit the website to learn more: {.url https://stocnet.github.io/manynet/}.",
-      "Discover all the {.emph stocnet} R packages at {.url https://github.com/stocnet/}.",
-      # "Star me at {.url https://github.com/users/follow?target=jhollway}.",
-      "Check out the tutorials included in the package using {.fn run_tute}."
+      "i" = "There are lots of ways to contribute to {.pkg manynet} at {.url https://github.com/stocnet/manynet/}.",
+      "i" = "Please let us know any issues or features requests at {.url https://github.com/stocnet/manynet/issues}. It's really helpful!",
+      "i" = "To eliminate package startup messages, use: `suppressPackageStartupMessages(library({.pkg manynet}))`.",
+      "i" = "Visit the website to learn more: {.url https://stocnet.github.io/manynet/}.",
+      "i" = "We recommend the 'Function Overview' page online to discover new analytic opportunities: {.url https://stocnet.github.io/manynet/reference/index.html}.",
+      "i" = "Discover all the {.emph stocnet} R packages at {.url https://github.com/stocnet/}.",
+      # "i" = "Star me at {.url https://github.com/users/follow?target=jhollway}.",
+      "i" = "You can list all the tutorials available in {.pkg manynet} using {.fn run_tute}, and run them too!"
     )
     cli::cli_inform(sample(tips, 1), class = "packageStartupMessage")
   }
