@@ -11,7 +11,7 @@
 #'   - `na_to_mean()` replaces missing values with the average non-missing value.
 #' @name manip_miss
 #' @family modifications
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @return A data object of the same class as the function was given.
 #' @references 
 #'   Krause, Robert, Mark Huisman, Christian Steglich, and Tom A.B. Snijders. 2020. 

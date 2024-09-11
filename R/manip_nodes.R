@@ -22,7 +22,7 @@
 #'   knitr::kable(available_methods(c("add_nodes", "delete_nodes", "add_node_attribute")))
 #'   ```
 #' @family modifications
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @param attribute A named list to be added as tie or node attributes.
 #' @param attr_name Name of the new attribute in the resulting object.
 #' @param object2 A second object to copy nodes or ties from.
@@ -78,7 +78,7 @@ add_node_attribute <- function(.data, attr_name, vector){
         vector <- c(rep(NA, infer_dims(.data)[1]), vector)
       }
     } else 
-      stop("Attribute vector must be same length as nodes in object.")
+      cli::cli_abort("Attribute vector must be same length as nodes in object.")
   }
   out <- as_igraph(.data)
   igraph::vertex_attr(out, name = attr_name) <- vector

@@ -43,7 +43,7 @@ create_explicit <- function(...){
     directed <- TRUE
   }
   else {
-    stop("Invalid operator in formula")
+    cli::cli_abort("Invalid operator in formula")
   }
   f <- function(x) {
     if (is.call(x)) {
@@ -385,7 +385,7 @@ create_lattice <- function(n,
       as_tidygraph(igraph::make_lattice(dims, nei = 2, directed = directed))
     } else if (width == 4) {
       as_tidygraph(igraph::make_lattice(dims, nei = 1, directed = directed))
-    } else stop("`max_neighbourhood` expected to be 4, 8, or 12")
+    } else cli::cli_abort("`max_neighbourhood` expected to be 4, 8, or 12")
   } else {
     divs1 <- divisors(n[1])
     divs2 <- divisors(n[2])
@@ -441,7 +441,7 @@ create_lattice <- function(n,
     #   igraph::make_lattice(dims, nei = 2, directed = directed)
     # } else if (width == 4){
     #   igraph::make_lattice(dims, nei = 1, directed = directed)
-    # } else stop("`max_neighbourhood` expected to be 4, 8, or 12")
+    # } else cli::cli_abort("`max_neighbourhood` expected to be 4, 8, or 12")
 #   }
 # }
 
@@ -579,7 +579,7 @@ infer_dims <- function(object) {
 
 infer_n <- function(n) {
   if (is_manynet(n)) n <- infer_dims(n)
-  if (length(n) > 2) stop(paste("`n` should be a single integer for a one-mode network or",
+  if (length(n) > 2) cli::cli_abort(paste("`n` should be a single integer for a one-mode network or",
                              "a vector of two integers for a two-mode network."))
   n
 }

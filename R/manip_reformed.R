@@ -496,7 +496,7 @@ to_matching <- function(.data, mark = "type") UseMethod("to_matching")
 #' @export
 to_matching.igraph <- function(.data, mark = "type"){
   if(length(unique(node_attribute(.data, mark)))>2)
-    stop("This function currently only works with binary attributes.")
+    cli::cli_abort("This function currently only works with binary attributes.")
   el <- igraph::max_bipartite_match(.data, 
                  types = node_attribute(.data, mark))$matching
   el <- data.frame(from = names(el), to = el)
@@ -601,7 +601,7 @@ to_eulerian <- function(.data) UseMethod("to_eulerian")
 #' @export
 to_eulerian.igraph <- function(.data){
   if(!is_eulerian(.data))
-    stop("This is not a Eulerian graph.")
+    cli::cli_abort("This is not a Eulerian graph.")
   out <- paste(attr(igraph::eulerian_path(.data)$vpath, "names"), 
                collapse = "-+")
   out <- create_explicit(out)
@@ -611,7 +611,7 @@ to_eulerian.igraph <- function(.data){
 #' @export
 to_eulerian.tbl_graph <- function(.data){
   if(!is_eulerian(.data))
-    stop("This is not a Eulerian graph.")
+    cli::cli_abort("This is not a Eulerian graph.")
   out <- paste(attr(igraph::eulerian_path(.data)$vpath, "names"), 
                collapse = "-+")
   out <- create_explicit(out)

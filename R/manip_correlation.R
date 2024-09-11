@@ -13,7 +13,7 @@
 #'   between the self ties in each pairwise calculation.
 #'   This function runs in \eqn{O(mn^2)} complexity.
 #' @name manip_correlation
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @param method One of the following:
 #'   "all" includes all information,
 #'   "diag" excludes the diagonal (self-ties),
@@ -46,7 +46,7 @@ to_correlation <- function(.data, method = NULL){
 #'   on both the rows and columns (for a one-mode network)
 #'   or on each of the rows and columns (for a two-mode network).
 #' @name manip_permutation
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @family modifications
 NULL
 
@@ -69,7 +69,7 @@ to_permuted <- function(.data, with_attr = TRUE) {
   out
 }
 
-#' @rdname make_generate 
+#' @rdname make_random 
 #' @export
 generate_permutation <- to_permuted #to avoid migraph dependency issues
 

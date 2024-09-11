@@ -106,7 +106,7 @@ net_equivalency <- function(.data) {
              (matrix(indegrees, c, c) - twopaths)))
     if (is.nan(output)) output <- 1
     if(manynet::is_weighted(.data)) output <- output / mean(mat[mat>0])
-  } else stop("This function expects a two-mode network")
+  } else cli::cli_abort("This function expects a two-mode network")
   make_network_measure(output, .data)
 }
 
@@ -114,10 +114,10 @@ net_equivalency <- function(.data) {
 #' @export
 net_congruency <- function(.data, object2){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  if(missing(.data) | missing(object2)) stop("This function expects two two-mode networks")
-  if(!manynet::is_twomode(.data) | !manynet::is_twomode(object2)) stop("This function expects two two-mode networks")
+  if(missing(.data) | missing(object2)) cli::cli_abort("This function expects two two-mode networks")
+  if(!manynet::is_twomode(.data) | !manynet::is_twomode(object2)) cli::cli_abort("This function expects two two-mode networks")
   if(manynet::net_dims(.data)[2] != manynet::net_dims(object2)[1]) 
-    stop(paste("This function expects the number of nodes",
+    cli::cli_abort(paste("This function expects the number of nodes",
     "in the second mode of the first network", "to be the same as the number of nodes",
     "in the first mode of the second network."))
   mat1 <- manynet::as_matrix(.data)

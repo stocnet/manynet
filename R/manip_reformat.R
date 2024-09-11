@@ -38,7 +38,7 @@
 #'   ```
 #' @name manip_reformat
 #' @family modifications
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @param tie Character string naming a tie attribute to retain from a graph.
 #' @param keep In the case of a signed network, whether to retain
 #' the "positive" or "negative" ties.
@@ -288,7 +288,7 @@ to_unweighted.matrix <- function(.data, threshold = 1) {
 #' @export
 to_unweighted.data.frame <- function(.data, threshold = 1) {
   if(is_edgelist(.data)) .data[,1:2]
-  else stop("Not an edgelist")
+  else cli::cli_abort("Not an edgelist")
 }
 
 #' @describeIn manip_reformat Returns a network with either just the "positive" ties
@@ -308,7 +308,7 @@ to_unsigned.matrix <- function(.data,
   } else if (keep == "negative"){
     out[out > 0] <- 0
     out <- abs(out)
-  } else stop("Indicate whether 'positive' or 'negative' ties should be kept.")
+  } else cli::cli_abort("Indicate whether 'positive' or 'negative' ties should be kept.")
   out
 }
 
@@ -323,7 +323,7 @@ to_unsigned.data.frame <- function(.data,
     } else if (keep == "negative"){
       out$sign[out$sign > 0] <- 0
       out$sign <- out$sign(out)
-    } else stop("Indicate whether 'positive' or 'negative' ties should be kept.")
+    } else cli::cli_abort("Indicate whether 'positive' or 'negative' ties should be kept.")
   }
   out
 }
@@ -567,7 +567,7 @@ to_anti.network <- function(.data){
 #'   ```
 #' @name manip_levels
 #' @family modifications
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @returns
 #' All `to_` functions return an object of the same class as that provided. 
 #' So passing it an igraph object will return an igraph object

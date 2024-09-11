@@ -68,7 +68,7 @@
 #' that governs the probability that a node moves from this E compartment
 #' to infectiousness (I).
 #' This can be used in in SEI, SEIS, SEIR, and SEIRS models.
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @param seeds A valid mark vector the length of the
 #'   number of nodes in the network.
 #' @param contact A matrix or network that replaces ".data" with some 
@@ -129,10 +129,10 @@
 #' @family makes
 #' @family models
 #' @family diffusion
-#' @name play
+#' @name make_play
 NULL
 
-#' @rdname play
+#' @rdname make_play
 #' @examples 
 #'   smeg <- generate_smallworld(15, 0.025)
 #'   plot(play_diffusion(smeg, recovery = 0.4))
@@ -263,7 +263,7 @@ play_diffusion <- function(.data,
   make_diff_model(events, report, .data)
 }
 
-#' @rdname play
+#' @rdname make_play
 #' @param times Integer indicating number of simulations. 
 #'   By default `times=5`, but 1,000 - 10,000 simulations recommended for publication-ready results.
 #' @param strategy If `{furrr}` is installed, then multiple cores can be used to accelerate the simulations. 
@@ -318,10 +318,10 @@ play_diffusions <- function(.data,
 #' - `play_learning()` plays a DeGroot learning model upon a network.
 #' - `play_segregation()` plays a Schelling segregation model upon a network.
 #' 
-#' @name learning
+#' @name make_learning
 #' @family makes
 #' @family models
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @param steps The number of steps forward in learning.
 #'   By default the number of nodes in the network.
 #' @param beliefs A vector indicating the probabilities nodes
@@ -338,7 +338,7 @@ play_learning <- function(.data,
                           epsilon = 0.0005){
   n <- net_nodes(.data)
   if(length(beliefs)!=n) 
-    stop("'beliefs' must be a vector the same length as the number of nodes in the network.")
+    cli::cli_abort("'beliefs' must be a vector the same length as the number of nodes in the network.")
   if(is.logical(beliefs)) beliefs <- beliefs*1
   if(missing(steps)) steps <- n
   
@@ -360,7 +360,7 @@ play_learning <- function(.data,
   make_learn_model(out, .data)
 }
 
-#' @rdname learning
+#' @rdname make_learning
 #' @param attribute A string naming some nodal attribute in the network.
 #'   Currently only tested for binary attributes.
 #' @param heterophily A score ranging between -1 and 1 as a threshold for 
@@ -402,7 +402,7 @@ play_segregation <- function(.data,
   who_moves <- match.arg(who_moves)
   choice_function <- match.arg(choice_function)
   if(length(heterophily)==1) heterophily <- rep(heterophily, n)
-  if(length(heterophily)!=n) stop("Heterophily threshold must be the same length as the number of nodes in the network.")
+  if(length(heterophily)!=n) cli::cli_abort("Heterophily threshold must be the same length as the number of nodes in the network.")
   swtch <- function(x,i,j) {x[c(i,j)] <- x[c(j,i)]; x} 
   
   t = 0

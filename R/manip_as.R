@@ -21,7 +21,7 @@
 #'   object classes, which could otherwise lead to some unexpected results.
 #' @name manip_as
 #' @family modifications
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @param twomode Logical option used to override heuristics for
 #'   distinguishing incidence (two-mode/bipartite) from
 #'   adjacency (one-mode/unipartite) networks.
@@ -314,7 +314,7 @@ as_igraph.data.frame <- function(.data,
   # Warn if no column named weight and weight set to true
   if (is_weighted(.data) & !("weight" %in% names(.data))) {
     names(.data)[3] <- "weight"
-    # stop("Please rename the weight column of your dataframe to 'weight'")
+    # cli::cli_abort("Please rename the weight column of your dataframe to 'weight'")
   }
   if (!is_labelled(.data)) {
     graph <- igraph::graph_from_data_frame(.data,
@@ -453,7 +453,7 @@ as_igraph.network.goldfish <- function(.data,
     out <- igraph::graph_from_data_frame(d = get(attr(.data, "events"))[,2:4],
                                          directed = attr(.data, "directed"),
                                          vertices = get(attr(.data, "nodes")))
-  } else stop("Non-empty starts are not yet supported by this function.")
+  } else cli::cli_abort("Non-empty starts are not yet supported by this function.")
   out
 }
 
@@ -608,8 +608,8 @@ as_tidygraph.list <- function(.data, twomode = FALSE) {
     } else if ("nodes" %in% names(.data) & "edges" %in% names(.data)) {
       out <- tidygraph::tbl_graph(nodes = .data[["nodes"]],
                            edges = .data[["edges"]])
-    } else stop("Please name the list elements 'nodes' and 'ties'.")
-  } else stop("Please name the list elements 'nodes' and 'ties'.")
+    } else cli::cli_abort("Please name the list elements 'nodes' and 'ties'.")
+  } else cli::cli_abort("Please name the list elements 'nodes' and 'ties'.")
   make_mnet(out)
 }
   
@@ -659,7 +659,7 @@ as_tidygraph.network.goldfish <- function(.data,
                                          directed = attr(.data, "directed"),
                                          vertices = get(attr(.data, "nodes")))
     out <- as_tidygraph(out)
-  } else stop("Non-empty starts are not yet supported by this function.")
+  } else cli::cli_abort("Non-empty starts are not yet supported by this function.")
 
   # if(rowSums(classes)['network.goldfish']>1){
   #   nets <- colnames(classes)[classes['network.goldfish', ]==TRUE]
@@ -964,7 +964,7 @@ as_diffusion.igraph <- function(.data, twomode = FALSE, events) {
     sum(expos)
   }, numeric(1) )
   if (any(report$R + report$I + report$E + report$S != report$n)) {
-    stop("Oops, something is wrong")
+    cli::cli_abort("Oops, something is wrong")
   }
   report <- dplyr::select(report, dplyr::any_of(c("t", "n", "S", "s", "E", "E_new", "I", "I_new", "R", "R_new")))
   make_diff_model(events, report, .data)
@@ -1011,7 +1011,7 @@ as_diffusion.diffnet <- function(.data, twomode = FALSE, events) {
     sum(expos)
   }, numeric(1) )
   if (any(report$R + report$I + report$E + report$S != report$n)) {
-    stop("Oops, something is wrong")
+    cli::cli_abort("Oops, something is wrong")
   }
   if(is_labelled(net)) events$nodes <- match(events$nodes, node_names(net))
   events <- events %>% dplyr::arrange(t)

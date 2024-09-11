@@ -52,7 +52,7 @@ node_is_core <- function(.data, method = c("degree", "eigenvector")){
                         alpha = ifelse(is_weighted(.data), 1, 0))
   } else if (method == "eigenvector") {
     degi <- node_eigenvector(.data, normalized = FALSE)
-  } else stop("This function expects either 'degree' or 'eigenvector' method to be specified.")
+  } else cli::cli_abort("This function expects either 'degree' or 'eigenvector' method to be specified.")
   nord <- order(degi, decreasing = TRUE)
   zbest <- net_nodes(.data)*3
   kbest <- 0

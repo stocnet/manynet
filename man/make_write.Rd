@@ -75,12 +75,13 @@ by \href{https://github.com/stocnet/manynet/issues}{raising an issue on Github}.
 \link{as}
 
 Other makes: 
-\code{\link{learning}},
 \code{\link{make_cran}},
 \code{\link{make_create}},
 \code{\link{make_explicit}},
-\code{\link{make_generate}},
+\code{\link{make_learning}},
+\code{\link{make_play}},
+\code{\link{make_random}},
 \code{\link{make_read}},
-\code{\link{play}}
+\code{\link{make_stochastic}}
 }
 \concept{makes}

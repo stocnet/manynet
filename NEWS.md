@@ -7,6 +7,7 @@
   - Reports version number
   - Offers different suggestions each time it is loaded
   - Can be silenced using `suppressPackageStartupMessages()`
+- Improved error warnings, `stop()` replaced by `cli::cli_abort()`
 - Improved website structure
   - Structured make_, manip_, map_, mark_, measure_, and model_ documentation
   - Improved function overview layout for measures

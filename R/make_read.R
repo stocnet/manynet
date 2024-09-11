@@ -141,7 +141,7 @@ read_pajek <- function(file = file.choose(),
   paj <- network::read.paj(file, ...)
   if(!is.network(paj)){
     if(is.null(ties)) 
-      stop(paste("This file contains multiple networks/ties.",
+      cli::cli_abort(paste("This file contains multiple networks/ties.",
                  "Please choose a set of ties for the imported network among:\n",
                  paste0("- '", names(paj$networks), "'", collapse = "\n "),
                  "\n by adding the name as a character string to the `ties = ` argument"))
@@ -159,7 +159,7 @@ read_pajek <- function(file = file.choose(),
   # if(grepl("Partition", utils::read.delim(file))){
   #   clus <- strsplit(paste(utils::read.delim(file)), "\\*")[[1]]
   #   clus <- clus[grepl("^Vertices|^Partition", clus)][-1]
-  #   if(length(clus) %% 2 != 0) stop("Unexpected .pajek file structure.")
+  #   if(length(clus) %% 2 != 0) cli::cli_abort("Unexpected .pajek file structure.")
   #   namo <- clus[c(TRUE, FALSE)]
   #   attr <- clus[c(FALSE, TRUE)]
   #   for (i in seq_len(namo)){
@@ -181,12 +181,12 @@ read_ucinet <- function(file = file.choose()) {
   # Some basic checks of the input file
   # Check if the file is a UCINET header file
   if (!grepl(".##h$", file)) {
-    stop("Please select the UCINET header file with the
+    cli::cli_abort("Please select the UCINET header file with the
                                   '.##h' extension.")
   } # Continue if header file is selected
   # Check whether there is a data file to be imported in the same folder as the
   # hearder file.
-  if (!(file.exists(sub("h$", "d", file)))) stop("UCINET data file not found.
+  if (!(file.exists(sub("h$", "d", file)))) cli::cli_abort("UCINET data file not found.
                                                  Please add the '.##d' file in
                                                  the same folder as the header
                                                  file you are trying to
@@ -207,7 +207,7 @@ read_ucinet <- function(file = file.choose()) {
     # Check for correct UCINET version
     if (!(headerversion %in% c("DATE:", "V6404"))) {
       close(UCINET.header)
-      stop(paste("Unknown header type; try more recent UCINET file types"))
+      cli::cli_abort(paste("Unknown header type; try more recent UCINET file types"))
     }
     # Get ymd and weekday of the UCINET file
     year <- 2000 + readBin(UCINET.header, what = "int", size = 2)
@@ -247,7 +247,7 @@ read_ucinet <- function(file = file.choose()) {
     # This check fails if it is a time series or multilevel network.
     if (!(ndim == 2 | ndim == 3 & dims[3] == 1)) {
       close(UCINET.header)
-      stop(paste("UCINET file with", dims[3], "levels; please convert separately"))
+      cli::cli_abort(paste("UCINET file with", dims[3], "levels; please convert separately"))
     }
     # Extract the title of the UCINET network
     t.length <- readBin(UCINET.header, what = "int", size = 1)
@@ -418,7 +418,7 @@ read_graphml <- function(file = file.choose()) {
 #'   in the package, so please let us know if any are not currently working
 #'   for you or if there are missing import routines 
 #'   by [raising an issue on Github](https://github.com/stocnet/manynet/issues).
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @param filename Character string filename.
 #'   If missing, the files will have the same name as the object
 #'   and be saved to the working directory.
@@ -539,7 +539,7 @@ write_ucinet <- function(.data,
                                        ".##h here. Do you want to overwrite it?", 
                                        sep = ""))
     if (overwrite == FALSE | is.na(overwrite)) {
-      stop("Writing aborted by user.")
+      cli::cli_abort("Writing aborted by user.")
     }
   }
   mat <- as_matrix(.data)

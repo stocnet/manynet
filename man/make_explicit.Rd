@@ -30,12 +30,13 @@ See the example for a demonstration.
 }
 \seealso{
 Other makes: 
-\code{\link{learning}},
 \code{\link{make_cran}},
 \code{\link{make_create}},
-\code{\link{make_generate}},
+\code{\link{make_learning}},
+\code{\link{make_play}},
+\code{\link{make_random}},
 \code{\link{make_read}},
-\code{\link{make_write}},
-\code{\link{play}}
+\code{\link{make_stochastic}},
+\code{\link{make_write}}
 }
 \concept{makes}

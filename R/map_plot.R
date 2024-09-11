@@ -37,7 +37,7 @@
 #'     out <- dplyr::select(dataset, treatyID) %>%
 #'       dplyr::rename(key == treatyID) %>%
 #'       dplyr::distinct()
-#'   } else stop("Please declare either 'manyID' or 'treatyID'.")
+#'   } else cli::cli_abort("Please declare either 'manyID' or 'treatyID'.")
 #'   if (!is.null(treaty_type)) {
 #'     if (treaty_type == "bilateral") {
 #'       out <- out[grep("-", out$key),]
@@ -76,7 +76,7 @@
 #'     out <- dplyr::select(dataset, treatyID, dplyr::all_of(actor)) %>%
 #'       dplyr::rename(key == treatyID) %>%
 #'       dplyr::distinct()
-#'   } else stop("Please declare either 'manyID' or 'treatyID'.")
+#'   } else cli::cli_abort("Please declare either 'manyID' or 'treatyID'.")
 #'   if (!is.null(treaty_type)) {
 #'     if (treaty_type == "bilateral") {
 #'       out <- out[grep("-", out$key),]
@@ -113,7 +113,7 @@
 #'     out <- dplyr::select(dataset, treatyID) %>%
 #'       dplyr::rename(key == treatyID) %>%
 #'       dplyr::distinct()
-#'   } else stop("Please declare either 'manyID' or 'treatyID'.")
+#'   } else cli::cli_abort("Please declare either 'manyID' or 'treatyID'.")
 #'   if (!is.null(treaty_type)) {
 #'     if (treaty_type == "bilateral") {
 #'       out <- out[grep("-", out$key),]
