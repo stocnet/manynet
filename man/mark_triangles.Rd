@@ -48,17 +48,19 @@ They are most useful in highlighting parts of the network that
 are cohesively connected.
 }
 \examples{
-tie_is_triangular(ison_monastery_like)
+ison_monks \%>\% to_uniplex("like") \%>\% 
+  mutate_ties(tri = tie_is_triangular()) \%>\% 
+  graphr(edge_color = "tri")
 ison_adolescents \%>\% to_directed() \%>\% 
   mutate_ties(trans = tie_is_transitive()) \%>\% 
   graphr(edge_color = "trans")
-ison_adolescents \%>\% to_directed() \%>\% 
+to_directed(ison_adolescents) \%>\% 
   mutate_ties(trip = tie_is_triplet()) \%>\% 
   graphr(edge_color = "trip")
 ison_adolescents \%>\% to_directed() \%>\% 
   mutate_ties(cyc = tie_is_cyclical()) \%>\% 
   graphr(edge_color = "cyc")
-ison_monastery_like \%>\% 
+ison_monks \%>\% to_uniplex("like") \%>\% 
   mutate_ties(simmel = tie_is_simmelian()) \%>\% 
   graphr(edge_color = "simmel")
 generate_random(8, directed = TRUE) \%>\% 

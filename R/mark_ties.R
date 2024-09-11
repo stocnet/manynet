@@ -123,7 +123,9 @@ NULL
 #' @rdname mark_triangles
 #' @importFrom igraph triangles
 #' @examples 
-#' tie_is_triangular(ison_monastery_like)
+#' ison_monks %>% to_uniplex("like") %>% 
+#'   mutate_ties(tri = tie_is_triangular()) %>% 
+#'   graphr(edge_color = "tri")
 #' @export
 tie_is_triangular <- function(.data){
   if(missing(.data)) {expect_edges(); .data <- .G()}
@@ -173,7 +175,8 @@ tie_is_triplet <- function(.data){
                       from = nodes[x,1], to = nodes[x,2],
                       all_paths = TRUE)
   }))
-  names(altpath) <- gsub("^.*\\.", "", names(altpath))
+  if(!is.null(names(altpath)))
+    names(altpath) <- gsub("^.*\\.", "", names(altpath))
   altpath <- altpath[altpath]
   trans[names(trans) %in% names(altpath)] <- TRUE
   make_tie_mark(trans, .data)
@@ -198,7 +201,7 @@ tie_is_cyclical <- function(.data){
 
 #' @rdname mark_triangles
 #' @examples 
-#' ison_monastery_like %>% 
+#' ison_monks %>% to_uniplex("like") %>% 
 #'   mutate_ties(simmel = tie_is_simmelian()) %>% 
 #'   graphr(edge_color = "simmel")
 #' @export

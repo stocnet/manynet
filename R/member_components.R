@@ -35,7 +35,9 @@ NULL
 #' @rdname member_components 
 #' @importFrom igraph components
 #' @examples 
-#' node_in_component(ison_monastery_esteem)
+#' ison_monks %>% to_uniplex("esteem") %>% 
+#'   mutate_nodes(comp = node_in_component()) %>% 
+#'   graphr(node_color = "comp")
 #' @export
 node_in_component <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
