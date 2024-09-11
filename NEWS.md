@@ -1,3 +1,65 @@
+# manynet 1.1.0
+
+## Package
+
+- Added beautiful message on startup
+  - Depends on `{cli}`
+  - Reports version number
+  - Offers different suggestions each time it is loaded
+  - Can be silenced using `suppressPackageStartupMessages()`
+- Improved website structure
+  - Structured make_, manip_, and measure_ documentation
+  - Improved function overview layout for measures
+- Updated Github Actions scripts
+  - Updated renaming and releasing binaries (thanks @auzaheta)
+  - Using actions/download-artifact@v4 to address dependabot security warning
+  - Using actions/upload-artifact@v4
+- Moved `{minMSE}` dependency to Suggests
+- Moved `{minMSE}` dependency to Config/Needs/build
+- Dropped unnecessary `{grDevices}` and `{png}` dependencies
+- Dropped unnecessary `{network}` reexports
+- Using globalVariables
+
+## Making
+
+- Added `read_cran()` for creating networks of package dependencies on CRAN
+  - Gathers dependency graph for whole CRAN by default, but can also trace successive outgoing dependencies from a single package (speed increase depends on the package, but is nearly 9x faster for `{manynet}`)
+  - Also gathers nodal information about whether compilation is required
+- Fixed #86 by making sure igraph::sample_islands in `generate_islands()` only takes a single integer and not a vector
+
+## Manipulating
+
+- Improved `as_tidygraph()` to add an additional class 'mnet' that is used for prettier printing
+  - Uses `make_mnet()` (internally) for future-proofing
+  - `print.tbl_graph()` renamed to `print.mnet()`
+  - `print.mnet()` uses 'grand' data if available
+- Improved `bind_ties()` to be more flexible about the input it accepts, converting all input into the required edgelist
+- Added `to_ego()` for obtaining a single neighbourhood
+- Added examples for `add_ties()` and `delete_ties()` in documentation
+- Fixed bug in `to_unnamed.igraph()` when used with already unlabelled networks
+
+## Marking
+
+- tie_marks are now named vectors
+  - Printing vectors no longer requires unique names
+- Added `tie_is_path()` for tracing the ties on a particular path
+- Added `tie_is_triplet()` for returning all the ties that are members of transitive triplets
+- Added `tie_is_forbidden()` for identifying ties in forbidden triads
+- Improved `tie_is_transitive()` efficiency, now only retrieves the edgelist once
+- Improved `is_aperiodic()` to offer a progress bar if it takes longer than 2 seconds
+- Fixed bug in `tie_is_triangular()` to do with altpath naming
+
+## Measuring
+
+- tie_measures are now named vectors
+- Fixed #84 related to how `node_degree()` processed isolates in calculating strength in weighted networks
+
+## Data
+
+- Updated all `ison_` data with new `as_tidygraph()`
+- Added 'grand' data to `ison_adolescents` as a test
+- Consolidated `ison_monastery_` data into `ison_monks`, a single multiplex, signed, weighted, longitudinal network
+
 # manynet 1.0.5
 
 ## Making
