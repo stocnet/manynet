@@ -53,19 +53,19 @@ Everett, Martin, and David Krackhardt. 2012.
 }
 \seealso{
 Other measures: 
-\code{\link{between_centrality}},
-\code{\link{close_centrality}},
-\code{\link{degree_centrality}},
-\code{\link{eigenv_centrality}},
 \code{\link{measure_attributes}},
+\code{\link{measure_central_between}},
+\code{\link{measure_central_close}},
+\code{\link{measure_central_degree}},
+\code{\link{measure_central_eigen}},
 \code{\link{measure_closure}},
 \code{\link{measure_cohesion}},
+\code{\link{measure_diffusion_infection}},
+\code{\link{measure_diffusion_net}},
+\code{\link{measure_diffusion_node}},
 \code{\link{measure_features}},
 \code{\link{measure_heterogeneity}},
 \code{\link{measure_holes}},
-\code{\link{measure_infection}},
-\code{\link{measure_net_diffusion}},
-\code{\link{measure_node_diffusion}},
 \code{\link{measure_periods}},
 \code{\link{measure_properties}},
 \code{\link{member_diffusion}}

@@ -77,6 +77,7 @@ Lai, Xiangjing, Jin-Kao Hao, Zhang-Hua Fu, and Dong Yue. 2021.
 \seealso{
 Other memberships: 
 \code{\link{mark_core}},
+\code{\link{member_brokerage}},
 \code{\link{member_community_hier}},
 \code{\link{member_community_non}},
 \code{\link{member_components}},

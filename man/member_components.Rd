@@ -58,6 +58,7 @@ node_in_component(ison_monastery_esteem)
 \seealso{
 Other memberships: 
 \code{\link{mark_core}},
+\code{\link{member_brokerage}},
 \code{\link{member_cliques}},
 \code{\link{member_community_hier}},
 \code{\link{member_community_non}},

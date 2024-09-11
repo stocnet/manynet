@@ -88,19 +88,19 @@ reference:
     desc: |
       Functions for reformatting networks, retaining the same network dimensions.
     contents:
-      - reformat
+      - manip_reformat
   - subtitle: "Transforming"
     desc: |
       Functions for transforming networks, which may change the network's dimensions.
     contents:
-      - to_paths
-      - to_scope
+      - manip_paths
+      - manip_scope
   - subtitle: "Levels"
     desc: |
       Functions for modifying multimodal networks.
     contents:
-      - to_levels
-      - to_project
+      - manip_levels
+      - manip_project
   - subtitle: "Converting"
     desc: |
       Functions for permuting networks or constructing a network
@@ -132,6 +132,12 @@ reference:
       and dynamic networks, respectively.
     contents:
       - starts_with("graph")
+  - subtitle: "Laying Out"
+    desc: |
+      Functions for laying out the nodes in a graph.
+      Included here are some improved or additional layouts to those offered
+      in `{igraph}` and `{ggraph}` by default.
+    contents:
       - starts_with("layout")
   - subtitle: "Theming"
     desc: |
@@ -162,6 +168,7 @@ reference:
       of the ties in the network.
     contents:
       - starts_with("tie_is_")
+    
   - title: "Measuring"
     desc: |
       Functions for measuring networks and returning a numeric vector or value.
@@ -169,11 +176,28 @@ reference:
       two values.
       All `node_` and `tie_` measures return a single vector,
       the length of the nodes or ties in the network, respectively.
+  - subtitle: "Description"
     contents:
-      - starts_with("measure_")
-      - ends_with("_centrality")
+      - measure_attributes
+      - measure_properties
+      - measure_features
+  - subtitle: "Centrality"
+    contents:
+      - starts_with("measure_central")
+      - measure_holes
+      - measure_hierarchy
+  - subtitle: "Cohesion"
+    contents:
+      - measure_cohesion
+      - measure_closure
+      - measure_heterogeneity
+  - subtitle: "Dynamics"
+    contents:
       - over
-  - title: "Motifs and Memberships"
+      - measure_periods
+      - starts_with("measure_diffusion")
+    
+  - title: "Memberships"
     desc: |
       Motifs are functions for calculating network subgraphs,
       always return a matrix or table of nodes as rows and motif or other property as columns,
@@ -181,9 +205,13 @@ reference:
       Memberships are functions for identifying community, cluster, or class memberships,
       always return a string vector the length of the nodes in the network,
       and can be recognised by the `_in_` in the function name.
+  - subtitle: "Motifs"
     contents:
       - contains("_by_")
+  - subtitle: "Members"
+    contents:
       - contains("_in_")
+      
   - title: "Methods"
     desc: "Methods used in other functions but documented here:"
     contents:

@@ -463,7 +463,21 @@ node_brokering_exclusivity <- function(.data, membership){
   make_node_measure(out, .data)
 }
 
-#' @rdname motif_brokerage 
+#' Memberships of brokerage
+#' 
+#' @description
+#'   These functions include ways to take a census of the brokerage positions of nodes
+#'   in a network: 
+#'   
+#'   - `node_in_brokerage()` returns nodes membership as a powerhouse,
+#'   connector, linchpin, or sideliner according to Hamilton et al. (2020).
+#'   
+#' @name member_brokerage
+#' @family memberships
+#' @inheritParams motif_brokerage
+NULL
+
+#' @rdname member_brokerage 
 #' @export
 node_in_brokering <- function(.data, membership){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
@@ -506,7 +520,7 @@ node_in_brokering <- function(.data, membership){
 #' 
 #' @family motifs
 #' @inheritParams motif_node
-#' @inheritParams measure_net_diffusion
+#' @inheritParams measure_diffusion_net
 #' @name motif_diffusion
 #' 
 NULL
