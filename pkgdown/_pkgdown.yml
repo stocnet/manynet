@@ -215,8 +215,7 @@ reference:
   - title: "Methods"
     desc: "Methods used in other functions but documented here:"
     contents:
-      - cluster
-      - kselect
+      - starts_with("model_")
     
   - title: "Practicing"
   - subtitle: "Learning"

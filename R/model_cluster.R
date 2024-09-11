@@ -11,11 +11,11 @@
 #'   These functions are not intended to be called directly,
 #'   but are called within `node_equivalence()` and related functions.
 #'   They are exported and listed here to provide more detailed documentation.
-#' @name cluster
+#' @name model_cluster
 #' @inheritParams member_equivalence
 NULL
 
-#' @rdname cluster 
+#' @rdname model_cluster 
 #' @export
 cluster_hierarchical <- function(census, distance){
   correlations <- manynet::to_correlation(t(census))
@@ -30,7 +30,7 @@ cluster_hierarchical <- function(census, distance){
 # cluster_concor(ison_southern_women)
 # https://github.com/bwlewis/hclust_in_R/blob/master/hc.R
 
-#' @rdname cluster 
+#' @rdname model_cluster 
 #' @section CONCOR:
 #' 
 #' First a matrix of Pearson correlation coefficients between each pair of nodes
