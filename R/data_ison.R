@@ -506,19 +506,19 @@
 #'   ```
 "ison_hightech"
 
-# Monastery ####
+# Monks ####
 
-#' Three one-mode signed, weighted networks and a three-wave longitudinal network of monks (Sampson 1969)
+#' Multiplex network of three one-mode signed, weighted networks and a three-wave longitudinal network of monks (Sampson 1969)
 #'
 #' @description
 #'   The data were collected for an ethnographic study of community structure in a New England monastery. 
 #'   Various sociometric data was collected of the novices attending the minor seminary of 'Cloisterville' 
-#'   preparing to join the monastic order:
+#'   preparing to join the monastic order.
 #'   
-#'   - `ison_monastery_like` records whom novices said they liked most at three time points/waves
-#'   - `ison_monastery_esteem` records whom novices said they held in esteem (sign > 0) and disesteem (sign < 0)
-#'   - `ison_monastery_praise` records whom novices said they praised (sign > 0) and blamed (sign < 0)
-#'   - `ison_monastery_influence` records whom novices said were a positive influence (sign > 0) and negative influence (sign < 0)
+#'   - `type = "like"` records whom novices said they liked most at three time points/waves
+#'   - `type = "esteem"` records whom novices said they held in esteem (sign > 0) and disesteem (sign < 0)
+#'   - `type = "praise"` records whom novices said they praised (sign > 0) and blamed (sign < 0)
+#'   - `type = "influence"` records whom novices said were a positive influence (sign > 0) and negative influence (sign < 0)
 #'   
 #'   All networks are weighted.
 #'   Novices' first choices are weighted 3, the second 2, and third choices 1.
@@ -534,14 +534,14 @@
 #'   
 #'   Information about senior monks was not included.
 
-#'   While `ison_monastery_like` is observed over three waves,
+#'   While `type = "like"` is observed over three waves,
 #'   the rest of the data was recorded retrospectively from the end of the study,
 #'   after the network fragmented.
 #'   The waves in which the novitiates were expelled (1), voluntarily departed (2 and 3),
 #'   or remained (4) are given in the nodal attribute "left".
 #' @docType data
 #' @keywords datasets
-#' @name ison_monastery
+#' @name ison_monks
 #' @references
 #'   Sampson, Samuel F. 1969. _Crisis in a cloister_. 
 #'   Unpublished doctoral dissertation, Cornell University.
@@ -549,36 +549,12 @@
 #'   Breiger R., Boorman S. and Arabie P. 1975. 
 #'   "An algorithm for clustering relational data with applications to social network analysis and comparison with multidimensional scaling". 
 #'   _Journal of Mathematical Psychology_, 12: 328-383.
-#' @usage data(ison_monastery_like)
+#' @usage data(ison_monks)
 #' @format 
 #'   ```{r, echo = FALSE}
-#'   ison_monastery_like
+#'   ison_monks
 #'   ```
-"ison_monastery_like"
-
-#' @rdname ison_monastery
-#' @usage data(ison_monastery_esteem)
-#' @format
-#'   ```{r, echo = FALSE}
-#'   ison_monastery_esteem
-#'   ```
-"ison_monastery_esteem"
-
-#' @rdname ison_monastery
-#' @usage data(ison_monastery_influence)
-#' @format 
-#'   ```{r, echo = FALSE}
-#'   ison_monastery_influence
-#'   ```
-"ison_monastery_influence"
-
-#' @rdname ison_monastery
-#' @usage data(ison_monastery_praise)
-#' @format 
-#'   ```{r, echo = FALSE}
-#'   ison_monastery_praise
-#'   ```
-"ison_monastery_praise"
+"ison_monks"
 
 # Greys ####
 
