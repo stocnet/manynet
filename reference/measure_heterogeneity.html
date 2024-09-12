@@ -36,7 +36,7 @@ net_spatial() measures the spatial association/autocorrelation
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -185,19 +185,19 @@ Informal networks and organizational crises: an experimental simulation.
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other measures:
-<code><a href="between_centrality.html">between_centrality</a></code>,
-<code><a href="close_centrality.html">close_centrality</a></code>,
-<code><a href="degree_centrality.html">degree_centrality</a></code>,
-<code><a href="eigenv_centrality.html">eigenv_centrality</a></code>,
 <code><a href="measure_attributes.html">measure_attributes</a></code>,
+<code><a href="measure_central_between.html">measure_central_between</a></code>,
+<code><a href="measure_central_close.html">measure_central_close</a></code>,
+<code><a href="measure_central_degree.html">measure_central_degree</a></code>,
+<code><a href="measure_central_eigen.html">measure_central_eigen</a></code>,
 <code><a href="measure_closure.html">measure_closure</a></code>,
 <code><a href="measure_cohesion.html">measure_cohesion</a></code>,
+<code><a href="measure_diffusion_infection.html">measure_diffusion_infection</a></code>,
+<code><a href="measure_diffusion_net.html">measure_diffusion_net</a></code>,
+<code><a href="measure_diffusion_node.html">measure_diffusion_node</a></code>,
 <code><a href="measure_features.html">measure_features</a></code>,
 <code><a href="measure_hierarchy.html">measure_hierarchy</a></code>,
 <code><a href="measure_holes.html">measure_holes</a></code>,
-<code><a href="measure_infection.html">measure_infection</a></code>,
-<code><a href="measure_net_diffusion.html">measure_net_diffusion</a></code>,
-<code><a href="measure_node_diffusion.html">measure_node_diffusion</a></code>,
 <code><a href="measure_periods.html">measure_periods</a></code>,
 <code><a href="measure_properties.html">measure_properties</a></code>,
 <code><a href="member_diffusion.html">member_diffusion</a></code></p></div>
@@ -211,7 +211,7 @@ Informal networks and organizational crises: an experimental simulation.
 <span class="r-out co"><span class="r-pr">#&gt;</span>   `Lin Freeman` `Doug White` `Ev Rogers` `Richard Alba` `Phipps Arabie`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>             4            4           3              4               4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... with 27 more values from this nodeset unprinted. Use `print(..., n = Inf)` to print all values.</span></span>
-<span class="r-in"><span><span class="va">marvel_friends</span> <span class="op">&lt;-</span> <span class="fu"><a href="reformat.html">to_unsigned</a></span><span class="op">(</span><span class="va">ison_marvel_relationships</span>, <span class="st">"positive"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">marvel_friends</span> <span class="op">&lt;-</span> <span class="fu"><a href="manip_reformat.html">to_unsigned</a></span><span class="op">(</span><span class="va">ison_marvel_relationships</span>, <span class="st">"positive"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">net_diversity</span><span class="op">(</span><span class="va">marvel_friends</span>, <span class="st">"Gender"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.306</span>
 <span class="r-in"><span><span class="fu">net_diversity</span><span class="op">(</span><span class="va">marvel_friends</span>, <span class="st">"Attractive"</span><span class="op">)</span></span></span>

@@ -40,7 +40,7 @@ but not to the (k+1)-core."><meta property="og:image" content="https://stocnet.g
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -132,6 +132,7 @@ but not to the (<em>k</em>+1)-core.</p>
     <h2>See also</h2>
     <div class="dont-index"><p>Other memberships:
 <code><a href="mark_core.html">mark_core</a></code>,
+<code><a href="member_brokerage.html">member_brokerage</a></code>,
 <code><a href="member_cliques.html">member_cliques</a></code>,
 <code><a href="member_community_hier.html">member_community_hier</a></code>,
 <code><a href="member_community_non.html">member_community_non</a></code>,
@@ -140,11 +141,10 @@ but not to the (<em>k</em>+1)-core.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">node_in_component</span><span class="op">(</span><span class="va">ison_monastery_esteem</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">2 groups</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Romuald Bonaventure Ambrose Berthold Peter Louis Victor Winfrid John_bosco</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> B       A           A       A        A     A     A      A       A         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... with 9 more values from this nodeset unprinted. Use `print(..., n = Inf)` to print all values.</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">ison_monks</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="manip_reformat.html">to_uniplex</a></span><span class="op">(</span><span class="st">"esteem"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
+<span class="r-in"><span>  <span class="fu"><a href="manip_nodes.html">mutate_nodes</a></span><span class="op">(</span>comp <span class="op">=</span> <span class="fu">node_in_component</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
+<span class="r-in"><span>  <span class="fu"><a href="map_graphr.html">graphr</a></span><span class="op">(</span>node_color <span class="op">=</span> <span class="st">"comp"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="member_components-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </div>

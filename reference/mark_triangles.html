@@ -4,6 +4,7 @@ in a network identifying which hold certain properties or positions in the netwo
 tie_is_triangular() marks ties that are in triangles.
 tie_is_cyclical() marks ties that are in cycles.
 tie_is_transitive() marks ties that complete transitive closure.
+tie_is_triplet() marks ties that are in a transitive triplet.
 tie_is_simmelian() marks ties that are both in a triangle
 and fully reciprocated.
 
@@ -27,7 +28,7 @@ are cohesively connected."><meta property="og:image" content="https://stocnet.gi
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -75,6 +76,7 @@ are cohesively connected."><meta property="og:image" content="https://stocnet.gi
 in a network identifying which hold certain properties or positions in the network.</p><ul><li><p><code>tie_is_triangular()</code> marks ties that are in triangles.</p></li>
 <li><p><code>tie_is_cyclical()</code> marks ties that are in cycles.</p></li>
 <li><p><code>tie_is_transitive()</code> marks ties that complete transitive closure.</p></li>
+<li><p><code>tie_is_triplet()</code> marks ties that are in a transitive triplet.</p></li>
 <li><p><code>tie_is_simmelian()</code> marks ties that are both in a triangle
 and fully reciprocated.</p></li>
 </ul><p>They are most useful in highlighting parts of the network that
@@ -86,9 +88,13 @@ are cohesively connected.</p>
 <span></span>
 <span><span class="fu">tie_is_transitive</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">tie_is_triplet</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">tie_is_cyclical</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">tie_is_simmelian</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">tie_is_simmelian</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">tie_is_forbidden</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -116,22 +122,30 @@ are cohesively connected.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">tie_is_triangular</span><span class="op">(</span><span class="va">ison_monastery_like</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   V1    V2    V3    V4    V5    V6    V7    V8    V9    V10   V11   V12   V13  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> TRUE  TRUE  FALSE TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... with 155 more values from this nodeset unprinted. Use `print(..., n = Inf)` to print all values.</span></span>
-<span class="r-in"><span><span class="va">ison_adolescents</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="reformat.html">to_directed</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
-<span class="r-in"><span>  <span class="fu"><a href="add_ties.html">mutate_ties</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="fu">tie_is_transitive</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
-<span class="r-in"><span>  <span class="fu"><a href="graphr.html">graphr</a></span><span class="op">(</span>edge_color <span class="op">=</span> <span class="st">"trans"</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">ison_monks</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="manip_reformat.html">to_uniplex</a></span><span class="op">(</span><span class="st">"like"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
+<span class="r-in"><span>  <span class="fu"><a href="manip_ties.html">mutate_ties</a></span><span class="op">(</span>tri <span class="op">=</span> <span class="fu">tie_is_triangular</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
+<span class="r-in"><span>  <span class="fu"><a href="map_graphr.html">graphr</a></span><span class="op">(</span>edge_color <span class="op">=</span> <span class="st">"tri"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="mark_triangles-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="va">ison_adolescents</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="reformat.html">to_directed</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
-<span class="r-in"><span>  <span class="fu"><a href="add_ties.html">mutate_ties</a></span><span class="op">(</span>cyc <span class="op">=</span> <span class="fu">tie_is_cyclical</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
-<span class="r-in"><span>  <span class="fu"><a href="graphr.html">graphr</a></span><span class="op">(</span>edge_color <span class="op">=</span> <span class="st">"cyc"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ison_adolescents</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="manip_reformat.html">to_directed</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
+<span class="r-in"><span>  <span class="fu"><a href="manip_ties.html">mutate_ties</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="fu">tie_is_transitive</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
+<span class="r-in"><span>  <span class="fu"><a href="map_graphr.html">graphr</a></span><span class="op">(</span>edge_color <span class="op">=</span> <span class="st">"trans"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="mark_triangles-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="va">ison_monastery_like</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
-<span class="r-in"><span>  <span class="fu"><a href="add_ties.html">mutate_ties</a></span><span class="op">(</span>simmel <span class="op">=</span> <span class="fu">tie_is_simmelian</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
-<span class="r-in"><span>  <span class="fu"><a href="graphr.html">graphr</a></span><span class="op">(</span>edge_color <span class="op">=</span> <span class="st">"simmel"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ison_adolescents</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="manip_reformat.html">to_directed</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
+<span class="r-in"><span>  <span class="fu"><a href="manip_ties.html">mutate_ties</a></span><span class="op">(</span>trip <span class="op">=</span> <span class="fu">tie_is_triplet</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
+<span class="r-in"><span>  <span class="fu"><a href="map_graphr.html">graphr</a></span><span class="op">(</span>edge_color <span class="op">=</span> <span class="st">"trip"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="mark_triangles-3.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="va">ison_adolescents</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="manip_reformat.html">to_directed</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
+<span class="r-in"><span>  <span class="fu"><a href="manip_ties.html">mutate_ties</a></span><span class="op">(</span>cyc <span class="op">=</span> <span class="fu">tie_is_cyclical</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
+<span class="r-in"><span>  <span class="fu"><a href="map_graphr.html">graphr</a></span><span class="op">(</span>edge_color <span class="op">=</span> <span class="st">"cyc"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="mark_triangles-4.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="va">ison_monks</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="manip_reformat.html">to_uniplex</a></span><span class="op">(</span><span class="st">"like"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
+<span class="r-in"><span>  <span class="fu"><a href="manip_ties.html">mutate_ties</a></span><span class="op">(</span>simmel <span class="op">=</span> <span class="fu">tie_is_simmelian</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
+<span class="r-in"><span>  <span class="fu"><a href="map_graphr.html">graphr</a></span><span class="op">(</span>edge_color <span class="op">=</span> <span class="st">"simmel"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="mark_triangles-5.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="make_random.html">generate_random</a></span><span class="op">(</span><span class="fl">8</span>, directed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
+<span class="r-in"><span>  <span class="fu"><a href="manip_ties.html">mutate_ties</a></span><span class="op">(</span>forbid <span class="op">=</span> <span class="fu">tie_is_forbidden</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
+<span class="r-in"><span>  <span class="fu"><a href="map_graphr.html">graphr</a></span><span class="op">(</span>edge_color <span class="op">=</span> <span class="st">"forbid"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="mark_triangles-6.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </div>

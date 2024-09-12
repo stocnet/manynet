@@ -24,7 +24,7 @@ a one-mode and a two-mode network.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -133,7 +133,7 @@ a one-mode and a two-mode network.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   `003` `012` `102` `201` `210` `300`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>    13     0    29    11     0     3</span>
-<span class="r-in"><span><span class="va">marvel_friends</span> <span class="op">&lt;-</span> <span class="fu"><a href="reformat.html">to_unsigned</a></span><span class="op">(</span><span class="va">ison_marvel_relationships</span>, <span class="st">"positive"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">marvel_friends</span> <span class="op">&lt;-</span> <span class="fu"><a href="manip_reformat.html">to_unsigned</a></span><span class="op">(</span><span class="va">ison_marvel_relationships</span>, <span class="st">"positive"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">mixed_cen</span> <span class="op">&lt;-</span> <span class="fu">net_by_mixed</span><span class="op">(</span><span class="va">marvel_friends</span>, <span class="va">ison_marvel_teams</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 10</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    `22`  `21`  `20`  `12` `11D` `11U`  `10`  `02`  `01`   `00`</span>

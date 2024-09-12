@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -60,13 +60,90 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="1.1.0" id="manynet-110">manynet 1.1.0<a class="anchor" aria-label="anchor" href="#manynet-110"></a></h2>
+<div class="section level3">
+<h3 id="package-1-1-0">Package<a class="anchor" aria-label="anchor" href="#package-1-1-0"></a></h3>
+<ul><li>Added beautiful message on startup<ul><li>Depends on <a href="https://cli.r-lib.org" class="external-link">cli</a>
+</li>
+<li>Reports version number</li>
+<li>Offers different suggestions each time it is loaded</li>
+<li>Can be silenced using <code><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages()</a></code>
+</li>
+</ul></li>
+<li>Improved error warnings, <code><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop()</a></code> replaced by <code><a href="https://cli.r-lib.org/reference/cli_abort.html" class="external-link">cli::cli_abort()</a></code>
+</li>
+<li>Improved website structure<ul><li>Structured make_, manip_, map_, mark_, measure_, and model_ documentation</li>
+<li>Improved function overview layout for measures</li>
+</ul></li>
+<li>Updated Github Actions scripts<ul><li>Updated renaming and releasing binaries (thanks <a href="https://github.com/auzaheta" class="external-link">@auzaheta</a>)</li>
+<li>Using <a href="mailto:actions/download-artifact@v4" class="email">actions/download-artifact@v4</a> to address dependabot security warning</li>
+<li>Using <a href="mailto:actions/upload-artifact@v4" class="email">actions/upload-artifact@v4</a>
+</li>
+</ul></li>
+<li>Removed <a href="https://www.sebastianoschneider.com" class="external-link">minMSE</a> dependency</li>
+<li>Moved <a href="https://roxygen2.r-lib.org/" class="external-link">roxygen2</a> dependency to Config/Needs/build</li>
+<li>Dropped unnecessary <code>{grDevices}</code> and <a href="http://www.rforge.net/png/" class="external-link">png</a> dependencies</li>
+<li>Dropped unnecessary <a href="https://statnet.org/" class="external-link">network</a> reexports</li>
+<li>Using globalVariables</li>
+<li>Improved <code><a href="../reference/tutorials.html">run_tute()</a></code> and <code><a href="../reference/tutorials.html">extract_tute()</a></code> to look for installed packages and report progress</li>
+</ul></div>
+<div class="section level3">
+<h3 id="making-1-1-0">Making<a class="anchor" aria-label="anchor" href="#making-1-1-0"></a></h3>
+<ul><li>Added <code><a href="../reference/make_cran.html">read_cran()</a></code> for creating networks of package dependencies on CRAN<ul><li>Gathers dependency graph for whole CRAN by default, but can also trace successive outgoing dependencies from a single package (speed increase depends on the package, but is nearly 9x faster for <a href="https://stocnet.github.io/manynet/">manynet</a>)</li>
+<li>Also gathers nodal information about whether compilation is required</li>
+</ul></li>
+<li>Added <code><a href="../reference/make_random.html">generate_man()</a></code> for generating dyad census conditional uniform graphs</li>
+<li>Fixed <a href="https://github.com/stocnet/manynet/issues/86" class="external-link">#86</a> by making sure igraph::sample_islands in <code><a href="../reference/make_stochastic.html">generate_islands()</a></code> only takes a single integer and not a vector</li>
+</ul></div>
+<div class="section level3">
+<h3 id="manipulating-1-1-0">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-1-1-0"></a></h3>
+<ul><li>Improved <code><a href="../reference/manip_as.html">as_tidygraph()</a></code> to add an additional class ‘mnet’ that is used for prettier printing<ul><li>Uses <code>make_mnet()</code> (internally) for future-proofing</li>
+<li>
+<code>print.tbl_graph()</code> renamed to <code>print.mnet()</code>
+</li>
+<li>
+<code>print.mnet()</code> uses ‘grand’ data if available</li>
+</ul></li>
+<li>Improved <code><a href="../reference/manip_ties.html">bind_ties()</a></code> to be more flexible about the input it accepts, converting all input into the required edgelist</li>
+<li>Added <code><a href="../reference/manip_scope.html">to_ego()</a></code> for obtaining a single neighbourhood</li>
+<li>Added tbl_graph and network methods for <code><a href="../reference/manip_nodes.html">delete_nodes()</a></code> and <code><a href="../reference/manip_ties.html">delete_ties()</a></code>
+</li>
+<li>Added examples for <code><a href="../reference/manip_ties.html">add_ties()</a></code> and <code><a href="../reference/manip_ties.html">delete_ties()</a></code> in documentation</li>
+<li>Fixed bug in <code>to_unnamed.igraph()</code> when used with already unlabelled networks</li>
+</ul></div>
+<div class="section level3">
+<h3 id="marking-1-1-0">Marking<a class="anchor" aria-label="anchor" href="#marking-1-1-0"></a></h3>
+<ul><li>tie_marks are now named vectors<ul><li>Printing vectors no longer requires unique names</li></ul></li>
+<li>Added <code><a href="../reference/mark_ties.html">tie_is_path()</a></code> for tracing the ties on a particular path</li>
+<li>Added <code><a href="../reference/mark_triangles.html">tie_is_triplet()</a></code> for returning all the ties that are members of transitive triplets</li>
+<li>Added <code><a href="../reference/mark_triangles.html">tie_is_forbidden()</a></code> for identifying ties in forbidden triads</li>
+<li>Improved <code><a href="../reference/mark_triangles.html">tie_is_transitive()</a></code> efficiency, now only retrieves the edgelist once</li>
+<li>Improved <code><a href="../reference/mark_features.html">is_aperiodic()</a></code> to remove <a href="https://www.sebastianoschneider.com" class="external-link">minMSE</a> dependency and offer a progress bar if it takes longer than 2 seconds</li>
+<li>Fixed bug in <code><a href="../reference/mark_triangles.html">tie_is_triangular()</a></code> to do with altpath naming</li>
+</ul></div>
+<div class="section level3">
+<h3 id="measuring-1-1-0">Measuring<a class="anchor" aria-label="anchor" href="#measuring-1-1-0"></a></h3>
+<ul><li>tie_measures are now named vectors</li>
+<li>Added <code><a href="../reference/measure_central_close.html">node_distance()</a></code> for measuring the distance from or to particular nodes</li>
+<li>Fixed <a href="https://github.com/stocnet/manynet/issues/84" class="external-link">#84</a> related to how <code><a href="../reference/measure_central_degree.html">node_degree()</a></code> processed isolates in calculating strength in weighted networks</li>
+</ul></div>
+<div class="section level3">
+<h3 id="data-1-1-0">Data<a class="anchor" aria-label="anchor" href="#data-1-1-0"></a></h3>
+<ul><li>Updated all <code>ison_</code> data with new <code><a href="../reference/manip_as.html">as_tidygraph()</a></code>
+</li>
+<li>Added ‘grand’ data to <code>ison_adolescents</code> as a test</li>
+<li>Added <code>ison_thrones</code> on kinship arcs between Game of Thrones characters, with ‘grand’ data</li>
+<li>Consolidated <code>ison_monastery_</code> data into <code>ison_monks</code>, a single multiplex, signed, weighted, longitudinal network</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="1.0.5" id="manynet-105">manynet 1.0.5<small>2024-08-30</small><a class="anchor" aria-label="anchor" href="#manynet-105"></a></h2>
 <div class="section level3">
 <h3 id="making-1-0-5">Making<a class="anchor" aria-label="anchor" href="#making-1-0-5"></a></h3>
 <ul><li>Added <code><a href="../reference/make_create.html">create_degree()</a></code> for creating networks of a given degree sequence, including <em>k</em>-regular graphs</li>
-<li>Added <code><a href="../reference/make_generate.html">generate_citations()</a></code> for citation models</li>
-<li>Added <code><a href="../reference/make_generate.html">generate_fire()</a></code> for forest-fire models</li>
-<li>Added <code><a href="../reference/make_generate.html">generate_islands()</a></code> for island models</li>
+<li>Added <code><a href="../reference/make_stochastic.html">generate_citations()</a></code> for citation models</li>
+<li>Added <code><a href="../reference/make_stochastic.html">generate_fire()</a></code> for forest-fire models</li>
+<li>Added <code><a href="../reference/make_stochastic.html">generate_islands()</a></code> for island models</li>
 <li>
 <code><a href="../reference/make_explicit.html">create_explicit()</a></code> now has its own documentation</li>
 </ul></div>
@@ -80,11 +157,11 @@
 <div class="section level3">
 <h3 id="manipulating-1-0-5">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-1-0-5"></a></h3>
 <ul><li>
-<code><a href="../reference/make_generate.html">generate_permutation()</a></code> renamed to <code><a href="../reference/manip_permutation.html">to_permuted()</a></code>
+<code><a href="../reference/make_random.html">generate_permutation()</a></code> renamed to <code><a href="../reference/manip_permutation.html">to_permuted()</a></code>
 </li></ul></div>
 <div class="section level3">
 <h3 id="mapping-1-0-5">Mapping<a class="anchor" aria-label="anchor" href="#mapping-1-0-5"></a></h3>
-<ul><li>Updated how <code><a href="../reference/graphr.html">graphr()</a></code> plots edges in directed networks</li>
+<ul><li>Updated how <code><a href="../reference/map_graphr.html">graphr()</a></code> plots edges in directed networks</li>
 <li>Removed automatic legends for signed networks</li>
 <li>Fixed other legends issues</li>
 </ul></div>
@@ -108,11 +185,11 @@
 <h3 id="modifying-1-0-4">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-0-4"></a></h3>
 <ul><li>
 <code>as_matrix.igraph()</code> now only draws from the “weight” attribute and not, e.g. “type”</li>
-<li>Fixed bug in <code><a href="../reference/to_scope.html">to_blocks()</a></code> related to categorical membership variables</li>
+<li>Fixed bug in <code><a href="../reference/manip_scope.html">to_blocks()</a></code> related to categorical membership variables</li>
 </ul></div>
 <div class="section level3">
 <h3 id="marks-1-0-4">Marks<a class="anchor" aria-label="anchor" href="#marks-1-0-4"></a></h3>
-<ul><li>Tie marks now infer networks when used within e.g. <code><a href="../reference/add_ties.html">mutate_ties()</a></code>
+<ul><li>Tie marks now infer networks when used within e.g. <code><a href="../reference/manip_ties.html">mutate_ties()</a></code>
 </li></ul></div>
 <div class="section level3">
 <h3 id="memberships-1-0-4">Memberships<a class="anchor" aria-label="anchor" href="#memberships-1-0-4"></a></h3>
@@ -123,22 +200,22 @@
 </ul></div>
 <div class="section level3">
 <h3 id="mapping-1-0-4">Mapping<a class="anchor" aria-label="anchor" href="#mapping-1-0-4"></a></h3>
-<ul><li>British spelling arguments now appear further back in e.g. <code><a href="../reference/graphr.html">graphr()</a></code>
+<ul><li>British spelling arguments now appear further back in e.g. <code><a href="../reference/map_graphr.html">graphr()</a></code>
 </li>
-<li>Fixed how <code><a href="../reference/graphs.html">graphs()</a></code> recognises ego networks so it is compatible with other splits</li>
+<li>Fixed how <code><a href="../reference/map_graphs.html">graphs()</a></code> recognises ego networks so it is compatible with other splits</li>
 </ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.0.3" id="manynet-103">manynet 1.0.3<a class="anchor" aria-label="anchor" href="#manynet-103"></a></h2>
 <div class="section level3">
 <h3 id="mapping-1-0-3">Mapping<a class="anchor" aria-label="anchor" href="#mapping-1-0-3"></a></h3>
-<ul><li>Fixed <a href="https://github.com/stocnet/manynet/issues/73" class="external-link">#73</a> “node_color” mapping issue with <code><a href="../reference/graphr.html">graphr()</a></code>
+<ul><li>Fixed <a href="https://github.com/stocnet/manynet/issues/73" class="external-link">#73</a> “node_color” mapping issue with <code><a href="../reference/map_graphr.html">graphr()</a></code>
 </li>
-<li>Fixed issues with variable name warnings in <code><a href="../reference/graphr.html">graphr()</a></code>
+<li>Fixed issues with variable name warnings in <code><a href="../reference/map_graphr.html">graphr()</a></code>
 </li>
-<li>Fixed <a href="https://github.com/stocnet/manynet/issues/76" class="external-link">#76</a> numeric “node_size” issues with <code><a href="../reference/graphr.html">graphr()</a></code> function</li>
-<li>Closed <a href="https://github.com/stocnet/manynet/issues/66" class="external-link">#66</a> so <code><a href="../reference/graphs.html">graphs()</a></code> automatically uses “star” layout to plot ego networks</li>
-<li>Fixed <a href="https://github.com/stocnet/manynet/issues/41" class="external-link">#41</a> so arguments for <code><a href="../reference/graphr.html">graphr()</a></code>, <code><a href="../reference/graphs.html">graphs()</a></code>, and <code><a href="../reference/grapht.html">grapht()</a></code> also accept British spellings</li>
+<li>Fixed <a href="https://github.com/stocnet/manynet/issues/76" class="external-link">#76</a> numeric “node_size” issues with <code><a href="../reference/map_graphr.html">graphr()</a></code> function</li>
+<li>Closed <a href="https://github.com/stocnet/manynet/issues/66" class="external-link">#66</a> so <code><a href="../reference/map_graphs.html">graphs()</a></code> automatically uses “star” layout to plot ego networks</li>
+<li>Fixed <a href="https://github.com/stocnet/manynet/issues/41" class="external-link">#41</a> so arguments for <code><a href="../reference/map_graphr.html">graphr()</a></code>, <code><a href="../reference/map_graphs.html">graphs()</a></code>, and <code><a href="../reference/map_grapht.html">grapht()</a></code> also accept British spellings</li>
 </ul></div>
 <div class="section level3">
 <h3 id="memberships-1-0-3">Memberships<a class="anchor" aria-label="anchor" href="#memberships-1-0-3"></a></h3>
@@ -162,7 +239,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="mapping-1-0-2">Mapping<a class="anchor" aria-label="anchor" href="#mapping-1-0-2"></a></h3>
-<ul><li>Updated viz tutorial with examples of <code><a href="../reference/graphs.html">graphs()</a></code> and <code><a href="../reference/grapht.html">grapht()</a></code>
+<ul><li>Updated viz tutorial with examples of <code><a href="../reference/map_graphs.html">graphs()</a></code> and <code><a href="../reference/map_grapht.html">grapht()</a></code>
 </li>
 <li>Updated viz tutorial with more details and examples on colors and theming</li>
 <li>Updated viz tutorial with overview, examples, and details on layouts, including force-directed, layered, circular, spectral, and grid layouts</li>
@@ -199,7 +276,7 @@
 <div class="section level3">
 <h3 id="making-1-0-0">Making<a class="anchor" aria-label="anchor" href="#making-1-0-0"></a></h3>
 <ul><li>Fixed bug in <code><a href="../reference/make_create.html">create_core()</a></code> where the membership inferred when passing an existing network was incorrect</li>
-<li>Added <code><a href="../reference/make_generate.html">generate_configuration()</a></code> for generating configuration models (including for two-mode networks)</li>
+<li>Added <code><a href="../reference/make_random.html">generate_configuration()</a></code> for generating configuration models (including for two-mode networks)</li>
 <li>
 <code>play_diffuson()</code> now includes an explicit contact argument to control the basis of exposure</li>
 </ul></div>
@@ -209,29 +286,29 @@
 <code>node_is_*()</code> functions now infer network data context</li>
 <li>Added <code><a href="../reference/mark_nodes.html">node_is_independent()</a></code> for identifying nodes among largest independent sets</li>
 <li>
-<code><a href="../reference/is_format.html">is_multiplex()</a></code> now excludes reserved tie attribute names other than type, such as “weight”, “sign”, or “wave”</li>
-<li>Added <code><a href="../reference/is_format.html">is_attributed()</a></code> to check for non-name nodal attributes</li>
+<code><a href="../reference/mark_format.html">is_multiplex()</a></code> now excludes reserved tie attribute names other than type, such as “weight”, “sign”, or “wave”</li>
+<li>Added <code><a href="../reference/mark_format.html">is_attributed()</a></code> to check for non-name nodal attributes</li>
 <li>Fixed issues with ordering in <code><a href="../reference/mark_diff.html">node_is_latent()</a></code>, <code><a href="../reference/mark_diff.html">node_is_recovered()</a></code>, and <code><a href="../reference/mark_diff.html">node_is_infected()</a></code> (closes <a href="https://github.com/stocnet/manynet/issues/71" class="external-link">#71</a>)</li>
-<li>Added list methods for <code><a href="../reference/is_format.html">is_twomode()</a></code>, <code><a href="../reference/is_format.html">is_labelled()</a></code>, and <code><a href="../reference/is_format.html">is_complex()</a></code>
+<li>Added list methods for <code><a href="../reference/mark_format.html">is_twomode()</a></code>, <code><a href="../reference/mark_format.html">is_labelled()</a></code>, and <code><a href="../reference/mark_format.html">is_complex()</a></code>
 </li>
 </ul></div>
 <div class="section level3">
 <h3 id="mapping-1-0-0">Mapping<a class="anchor" aria-label="anchor" href="#mapping-1-0-0"></a></h3>
-<ul><li>Renamed functions to graph networks <code><a href="../reference/graphr.html">graphr()</a></code>, <code><a href="../reference/graphs.html">graphs()</a></code>, and <code><a href="../reference/grapht.html">grapht()</a></code> (<code><a href="../reference/defunct.html">autographr()</a></code>, <code><a href="../reference/defunct.html">autographs()</a></code>, and <code><a href="../reference/defunct.html">autographd()</a></code> are now deprecated)</li>
+<ul><li>Renamed functions to graph networks <code><a href="../reference/map_graphr.html">graphr()</a></code>, <code><a href="../reference/map_graphs.html">graphs()</a></code>, and <code><a href="../reference/map_grapht.html">grapht()</a></code> (<code><a href="../reference/defunct.html">autographr()</a></code>, <code><a href="../reference/defunct.html">autographs()</a></code>, and <code><a href="../reference/defunct.html">autographd()</a></code> are now deprecated)</li>
 <li>node_size now an aesthetic, allowing <code>scale_size(range = c(...,...))</code> to be used</li>
 <li>Reexported <code><a href="https://ggplot2.tidyverse.org/reference/scale_size.html" class="external-link">scale_size()</a></code> from <a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a>
 </li>
 <li>
-<code><a href="../reference/graphr.html">graphr()</a></code> now rescales node size depending on network size (closes <a href="https://github.com/stocnet/manynet/issues/51" class="external-link">#51</a>)</li>
+<code><a href="../reference/map_graphr.html">graphr()</a></code> now rescales node size depending on network size (closes <a href="https://github.com/stocnet/manynet/issues/51" class="external-link">#51</a>)</li>
 <li>Fixed issues with “hierarchy” layout for two mode network (closes <a href="https://github.com/stocnet/manynet/issues/61" class="external-link">#61</a>)</li>
 <li>Updated “concentric” layout to accept unlabeled nodes (closes <a href="https://github.com/stocnet/manynet/issues/68" class="external-link">#68</a>)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="modifying-1-0-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-0-0"></a></h3>
 <ul><li>
-<code><a href="../reference/reformat.html">to_named()</a></code> now randomly generates and adds an alphabetic sequence of names, where previously this was just a random sample, which may assist pedagogical use<ul><li>baby_names (internal) now includes a few extra “Q” and “U” names</li></ul></li>
+<code><a href="../reference/manip_reformat.html">to_named()</a></code> now randomly generates and adds an alphabetic sequence of names, where previously this was just a random sample, which may assist pedagogical use<ul><li>baby_names (internal) now includes a few extra “Q” and “U” names</li></ul></li>
 <li>Added <code><a href="../reference/manip_correlation.html">to_correlation()</a></code> that implements pairwise correlation on network</li>
-<li>Added <code><a href="../reference/add_ties.html">arrange_ties()</a></code> for <a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a>-like reordering of ties based on some attribute</li>
+<li>Added <code><a href="../reference/manip_ties.html">arrange_ties()</a></code> for <a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a>-like reordering of ties based on some attribute</li>
 <li>Added <code><a href="../reference/manip_correlation.html">to_correlation()</a></code> for calculating the Pearson correlation<ul><li>This takes a method argument for “all”, “diag”, “recip”, or “complex”</li>
 <li>These are similar to functions implemented by Ron Breiger and shared by him in correspondence</li>
 </ul></li>
@@ -240,23 +317,23 @@
 <div class="section level3">
 <h3 id="marking-1-0-0-1">Marking<a class="anchor" aria-label="anchor" href="#marking-1-0-0-1"></a></h3>
 <ul><li>
-<code><a href="../reference/is_format.html">is_multiplex()</a></code> now recognises “date”, “begin”, and “end” as reserved</li></ul></div>
+<code><a href="../reference/mark_format.html">is_multiplex()</a></code> now recognises “date”, “begin”, and “end” as reserved</li></ul></div>
 <div class="section level3">
 <h3 id="measuring-1-0-0">Measuring<a class="anchor" aria-label="anchor" href="#measuring-1-0-0"></a></h3>
-<ul><li>Migrated measures from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Centrality measures<ul><li>Degree-related centrality measures include <code><a href="../reference/degree_centrality.html">node_degree()</a></code>, <code><a href="../reference/degree_centrality.html">node_deg()</a></code>, <code><a href="../reference/degree_centrality.html">node_indegree()</a></code>, <code><a href="../reference/degree_centrality.html">node_outdegree()</a></code>, <code><a href="../reference/degree_centrality.html">node_multidegree()</a></code>, <code><a href="../reference/degree_centrality.html">node_posneg()</a></code>, <code><a href="../reference/degree_centrality.html">tie_degree()</a></code>, <code><a href="../reference/degree_centrality.html">net_degree()</a></code>, <code><a href="../reference/degree_centrality.html">net_indegree()</a></code>, and <code><a href="../reference/degree_centrality.html">net_outdegree()</a></code>
+<ul><li>Migrated measures from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Centrality measures<ul><li>Degree-related centrality measures include <code><a href="../reference/measure_central_degree.html">node_degree()</a></code>, <code><a href="../reference/measure_central_degree.html">node_deg()</a></code>, <code><a href="../reference/measure_central_degree.html">node_indegree()</a></code>, <code><a href="../reference/measure_central_degree.html">node_outdegree()</a></code>, <code><a href="../reference/measure_central_degree.html">node_multidegree()</a></code>, <code><a href="../reference/measure_central_degree.html">node_posneg()</a></code>, <code><a href="../reference/measure_central_degree.html">tie_degree()</a></code>, <code><a href="../reference/measure_central_degree.html">net_degree()</a></code>, <code><a href="../reference/measure_central_degree.html">net_indegree()</a></code>, and <code><a href="../reference/measure_central_degree.html">net_outdegree()</a></code>
 </li>
-<li>Betweenness-related centrality measures include <code><a href="../reference/between_centrality.html">node_betweenness()</a></code>, <code><a href="../reference/between_centrality.html">node_induced()</a></code>, <code><a href="../reference/between_centrality.html">node_flow()</a></code>, <code><a href="../reference/between_centrality.html">tie_betweenness()</a></code>, and <code><a href="../reference/between_centrality.html">net_betweenness()</a></code>
+<li>Betweenness-related centrality measures include <code><a href="../reference/measure_central_between.html">node_betweenness()</a></code>, <code><a href="../reference/measure_central_between.html">node_induced()</a></code>, <code><a href="../reference/measure_central_between.html">node_flow()</a></code>, <code><a href="../reference/measure_central_between.html">tie_betweenness()</a></code>, and <code><a href="../reference/measure_central_between.html">net_betweenness()</a></code>
 </li>
-<li>Closeness-related centrality measures include <code><a href="../reference/close_centrality.html">node_closeness()</a></code>, <code><a href="../reference/close_centrality.html">node_reach()</a></code>, <code><a href="../reference/close_centrality.html">node_harmonic()</a></code>, <code><a href="../reference/close_centrality.html">node_information()</a></code>, <code><a href="../reference/close_centrality.html">tie_closeness()</a></code>, <code><a href="../reference/close_centrality.html">net_closeness()</a></code>, <code><a href="../reference/close_centrality.html">net_reach()</a></code>, and <code><a href="../reference/close_centrality.html">net_harmonic()</a></code>
+<li>Closeness-related centrality measures include <code><a href="../reference/measure_central_close.html">node_closeness()</a></code>, <code><a href="../reference/measure_central_close.html">node_reach()</a></code>, <code><a href="../reference/measure_central_close.html">node_harmonic()</a></code>, <code><a href="../reference/measure_central_close.html">node_information()</a></code>, <code><a href="../reference/measure_central_close.html">tie_closeness()</a></code>, <code><a href="../reference/measure_central_close.html">net_closeness()</a></code>, <code><a href="../reference/measure_central_close.html">net_reach()</a></code>, and <code><a href="../reference/measure_central_close.html">net_harmonic()</a></code>
 </li>
-<li>Eigenvector-related centrality measures include <code><a href="../reference/eigenv_centrality.html">node_eigenvector()</a></code>, <code><a href="../reference/eigenv_centrality.html">node_power()</a></code>, <code><a href="../reference/eigenv_centrality.html">node_alpha()</a></code>, <code><a href="../reference/eigenv_centrality.html">node_pagerank()</a></code>, <code><a href="../reference/eigenv_centrality.html">tie_eigenvector()</a></code>, and <code><a href="../reference/eigenv_centrality.html">net_eigenvector()</a></code>
+<li>Eigenvector-related centrality measures include <code><a href="../reference/measure_central_eigen.html">node_eigenvector()</a></code>, <code><a href="../reference/measure_central_eigen.html">node_power()</a></code>, <code><a href="../reference/measure_central_eigen.html">node_alpha()</a></code>, <code><a href="../reference/measure_central_eigen.html">node_pagerank()</a></code>, <code><a href="../reference/measure_central_eigen.html">tie_eigenvector()</a></code>, and <code><a href="../reference/measure_central_eigen.html">net_eigenvector()</a></code>
 </li>
 </ul></li>
 <li>Closure measures include <code><a href="../reference/measure_closure.html">net_reciprocity()</a></code>, <code><a href="../reference/measure_closure.html">node_reciprocity()</a></code>, <code><a href="../reference/measure_closure.html">net_transitivity()</a></code>, <code><a href="../reference/measure_closure.html">node_transitivity()</a></code>, <code><a href="../reference/measure_closure.html">net_equivalency()</a></code>, and <code><a href="../reference/measure_closure.html">net_congruency()</a></code>
 </li>
 <li>Cohesion measures include <code><a href="../reference/measure_cohesion.html">net_density()</a></code>, <code><a href="../reference/measure_cohesion.html">net_components()</a></code>, <code><a href="../reference/measure_cohesion.html">net_cohesion()</a></code>,<br><code><a href="../reference/measure_cohesion.html">net_adhesion()</a></code>, <code><a href="../reference/measure_cohesion.html">net_diameter()</a></code>, <code><a href="../reference/measure_cohesion.html">net_length()</a></code>, and <code><a href="../reference/measure_cohesion.html">net_independence()</a></code>
 </li>
-<li>Diffusion measures include <code><a href="../reference/measure_net_diffusion.html">net_transmissibility()</a></code>, <code><a href="../reference/measure_net_diffusion.html">net_recovery()</a></code>, <code><a href="../reference/measure_net_diffusion.html">net_reproduction()</a></code>, <code><a href="../reference/measure_net_diffusion.html">net_immunity()</a></code>, <code><a href="../reference/measure_net_diffusion.html">net_hazard()</a></code>, <code><a href="../reference/measure_infection.html">net_infection_complete()</a></code>, <code><a href="../reference/measure_infection.html">net_infection_total()</a></code>, <code><a href="../reference/measure_infection.html">net_infection_peak()</a></code>, <code><a href="../reference/measure_node_diffusion.html">node_adoption_time()</a></code>, <code><a href="../reference/measure_node_diffusion.html">node_thresholds()</a></code>, <code><a href="../reference/measure_node_diffusion.html">node_recovery()</a></code>, and <code><a href="../reference/measure_node_diffusion.html">node_exposure()</a></code>
+<li>Diffusion measures include <code><a href="../reference/measure_diffusion_net.html">net_transmissibility()</a></code>, <code><a href="../reference/measure_diffusion_net.html">net_recovery()</a></code>, <code><a href="../reference/measure_diffusion_net.html">net_reproduction()</a></code>, <code><a href="../reference/measure_diffusion_net.html">net_immunity()</a></code>, <code><a href="../reference/measure_diffusion_net.html">net_hazard()</a></code>, <code><a href="../reference/measure_diffusion_infection.html">net_infection_complete()</a></code>, <code><a href="../reference/measure_diffusion_infection.html">net_infection_total()</a></code>, <code><a href="../reference/measure_diffusion_infection.html">net_infection_peak()</a></code>, <code><a href="../reference/measure_diffusion_node.html">node_adoption_time()</a></code>, <code><a href="../reference/measure_diffusion_node.html">node_thresholds()</a></code>, <code><a href="../reference/measure_diffusion_node.html">node_recovery()</a></code>, and <code><a href="../reference/measure_diffusion_node.html">node_exposure()</a></code>
 </li>
 <li>Heterogeneity measures include <code><a href="../reference/measure_heterogeneity.html">net_richness()</a></code>, <code><a href="../reference/measure_heterogeneity.html">node_richness()</a></code>, <code><a href="../reference/measure_heterogeneity.html">net_diversity()</a></code>, <code><a href="../reference/measure_heterogeneity.html">node_diversity()</a></code>, <code><a href="../reference/measure_heterogeneity.html">net_heterophily()</a></code>, <code><a href="../reference/measure_heterogeneity.html">node_heterophily()</a></code>, <code><a href="../reference/measure_heterogeneity.html">net_assortativity()</a></code>, and <code><a href="../reference/measure_heterogeneity.html">net_spatial()</a></code>
 </li>
@@ -271,15 +348,15 @@
 <li>Updated attributes from mapping to measuring<ul><li>Renamed <code><a href="../reference/defunct.html">node_mode()</a></code> (deprecated) to node_is_mode() since it returns a logical vector</li>
 <li>Updated <code><a href="../reference/measure_attributes.html">node_attribute()</a></code> and <code><a href="../reference/measure_attributes.html">tie_attribute()</a></code> to return measures when the output is numeric</li>
 </ul></li>
-<li>Updated <code><a href="../reference/measure_node_diffusion.html">node_exposure()</a></code> to work with two-mode and signed networks</li>
+<li>Updated <code><a href="../reference/measure_diffusion_node.html">node_exposure()</a></code> to work with two-mode and signed networks</li>
 <li>Fixed <code><a href="../reference/measure_holes.html">node_constraint()</a></code> to work with weighted two-mode networks, thanks to Toshitaka Izumi for spotting this</li>
-<li>All measure functions can now be used in e.g. <code><a href="../reference/add_nodes.html">mutate()</a></code> without specifying <code>.data</code>
+<li>All measure functions can now be used in e.g. <code><a href="../reference/manip_nodes.html">mutate()</a></code> without specifying <code>.data</code>
 </li>
 <li>Added <code><a href="../reference/measure_cohesion.html">net_independence()</a></code> for calculating the number of nodes in the largest independent set</li>
 <li>
 <code><a href="../reference/mark_core.html">node_coreness()</a></code> now returns ‘node_measure’ output</li>
 <li>
-<code><a href="../reference/measure_node_diffusion.html">node_exposure()</a></code> now sums tie weights where passed a weighted network</li>
+<code><a href="../reference/measure_diffusion_node.html">node_exposure()</a></code> now sums tie weights where passed a weighted network</li>
 </ul></div>
 <div class="section level3">
 <h3 id="members-1-0-0">Members<a class="anchor" aria-label="anchor" href="#members-1-0-0"></a></h3>
@@ -303,7 +380,7 @@
 <li>
 <code>print.node_member()</code> now declares how many groups before reporting the vectors</li>
 </ul></li>
-<li>All membership functions can now be used in e.g. <code><a href="../reference/add_nodes.html">mutate()</a></code> without specifying <code>.data</code>
+<li>All membership functions can now be used in e.g. <code><a href="../reference/manip_nodes.html">mutate()</a></code> without specifying <code>.data</code>
 </li>
 <li>Hierarchical clustering algorithms now return dendrograms</li>
 </ul></div>
@@ -316,20 +393,20 @@
 </ul></div>
 <div class="section level3">
 <h3 id="methods-1-0-0">Methods<a class="anchor" aria-label="anchor" href="#methods-1-0-0"></a></h3>
-<ul><li>Migrated methods from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Methods for equivalence clustering include <code><a href="../reference/cluster.html">cluster_hierarchical()</a></code> and <code><a href="../reference/cluster.html">cluster_concor()</a></code>
+<ul><li>Migrated methods from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Methods for equivalence clustering include <code><a href="../reference/model_cluster.html">cluster_hierarchical()</a></code> and <code><a href="../reference/model_cluster.html">cluster_concor()</a></code>
 </li>
-<li>Methods for selecting clusters include <code><a href="../reference/kselect.html">k_strict()</a></code>, <code><a href="../reference/kselect.html">k_elbow()</a></code>, and <code><a href="../reference/kselect.html">k_silhouette()</a></code>
+<li>Methods for selecting clusters include <code><a href="../reference/model_kselect.html">k_strict()</a></code>, <code><a href="../reference/model_kselect.html">k_elbow()</a></code>, and <code><a href="../reference/model_kselect.html">k_silhouette()</a></code>
 </li>
 </ul></li>
-<li>Several improvements to <code><a href="../reference/cluster.html">cluster_concor()</a></code><ul><li>
-<code><a href="../reference/cluster.html">cluster_concor()</a></code> now uses <code><a href="../reference/manip_correlation.html">to_correlation()</a></code> for initial correlation</li>
+<li>Several improvements to <code><a href="../reference/model_cluster.html">cluster_concor()</a></code><ul><li>
+<code><a href="../reference/model_cluster.html">cluster_concor()</a></code> now uses <code><a href="../reference/manip_correlation.html">to_correlation()</a></code> for initial correlation</li>
 <li>It still uses <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">stats::cor()</a></code> for subsequent iterations</li>
-<li>Fixed how <code><a href="../reference/cluster.html">cluster_concor()</a></code> handles unlabelled networks</li>
-<li>Fixed how <code><a href="../reference/cluster.html">cluster_concor()</a></code> handles two-mode networks</li>
-<li>Fixed bug where <code><a href="../reference/cluster.html">cluster_concor()</a></code> cutoff resulted in unsplit groups</li>
+<li>Fixed how <code><a href="../reference/model_cluster.html">cluster_concor()</a></code> handles unlabelled networks</li>
+<li>Fixed how <code><a href="../reference/model_cluster.html">cluster_concor()</a></code> handles two-mode networks</li>
+<li>Fixed bug where <code><a href="../reference/model_cluster.html">cluster_concor()</a></code> cutoff resulted in unsplit groups</li>
 </ul></li>
 <li>
-<code><a href="../reference/cluster.html">cluster_hierarchical()</a></code> now also uses <code><a href="../reference/manip_correlation.html">to_correlation()</a></code>
+<code><a href="../reference/model_cluster.html">cluster_hierarchical()</a></code> now also uses <code><a href="../reference/manip_correlation.html">to_correlation()</a></code>
 </li>
 </ul></div>
 <div class="section level3">
@@ -347,7 +424,7 @@
 <p>2024-03-15</p>
 <div class="section level3">
 <h3 id="modifying-0-4-4">Modifying<a class="anchor" aria-label="anchor" href="#modifying-0-4-4"></a></h3>
-<ul><li>Fixed documentation issue with <code><a href="../reference/to_scope.html">to_scope()</a></code> for CRAN resubmission</li></ul></div>
+<ul><li>Fixed documentation issue with <code>to_scope()</code> for CRAN resubmission</li></ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.4.3" id="manynet-043">manynet 0.4.3<a class="anchor" aria-label="anchor" href="#manynet-043"></a></h2>
@@ -365,8 +442,8 @@
 <p>2024-03-12</p>
 <div class="section level3">
 <h3 id="making-0-4-2">Making<a class="anchor" aria-label="anchor" href="#making-0-4-2"></a></h3>
-<ul><li>Closed <a href="https://github.com/stocnet/manynet/issues/57" class="external-link">#57</a> by updating <code><a href="../reference/play.html">play_diffusions()</a></code> to revert future plan on exit</li>
-<li>Fixed bug with how <code><a href="../reference/make_generate.html">generate_random()</a></code> works for two-mode networks with specified number of ties</li>
+<ul><li>Closed <a href="https://github.com/stocnet/manynet/issues/57" class="external-link">#57</a> by updating <code><a href="../reference/make_play.html">play_diffusions()</a></code> to revert future plan on exit</li>
+<li>Fixed bug with how <code><a href="../reference/make_random.html">generate_random()</a></code> works for two-mode networks with specified number of ties</li>
 </ul></div>
 <div class="section level3">
 <h3 id="mapping-0-4-2">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-4-2"></a></h3>
@@ -406,33 +483,33 @@
 </ul></div>
 <div class="section level3">
 <h3 id="making-0-4-0">Making<a class="anchor" aria-label="anchor" href="#making-0-4-0"></a></h3>
-<ul><li>Migrated <code><a href="../reference/play.html">play_diffusion()</a></code> and <code><a href="../reference/play.html">play_diffusions()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Including class creation, and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>, and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods</li></ul></li>
-<li>Migrated <code><a href="../reference/learning.html">play_learning()</a></code> and <code><a href="../reference/learning.html">play_segregation()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Including class creation, and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>, and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods</li></ul></li>
+<ul><li>Migrated <code><a href="../reference/make_play.html">play_diffusion()</a></code> and <code><a href="../reference/make_play.html">play_diffusions()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Including class creation, and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>, and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods</li></ul></li>
+<li>Migrated <code><a href="../reference/make_learning.html">play_learning()</a></code> and <code><a href="../reference/make_learning.html">play_segregation()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Including class creation, and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>, and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods</li></ul></li>
 <li>Fixed bug in <code><a href="../reference/make_create.html">create_tree()</a></code> where it was not returning a two-mode network correctly</li>
 </ul></div>
 <div class="section level3">
 <h3 id="modifying-0-4-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-0-4-0"></a></h3>
-<ul><li>Added <code><a href="../reference/as.html">as_diffusion()</a></code> to coerce a table of diffusion events into diff_model class<ul><li>
+<ul><li>Added <code><a href="../reference/manip_as.html">as_diffusion()</a></code> to coerce a table of diffusion events into diff_model class<ul><li>
 <code>as_*()</code> functions are now considered modifications</li></ul></li>
-<li>Completed a full range of tidy verbs for nodes<ul><li>Added <code><a href="../reference/add_nodes.html">mutate_nodes()</a></code>
+<li>Completed a full range of tidy verbs for nodes<ul><li>Added <code><a href="../reference/manip_nodes.html">mutate_nodes()</a></code>
 </li>
-<li>Added <code><a href="../reference/add_nodes.html">filter_nodes()</a></code>
+<li>Added <code><a href="../reference/manip_nodes.html">filter_nodes()</a></code>
 </li>
-<li>Added <code><a href="../reference/add_nodes.html">rename_nodes()</a></code>
-</li>
-</ul></li>
-<li>Completed a full range of tidy and igraph verbs for ties<ul><li>Added <code><a href="../reference/add_ties.html">bind_ties()</a></code>
-</li>
-<li>Added <code><a href="../reference/add_ties.html">delete_ties()</a></code>
+<li>Added <code><a href="../reference/manip_nodes.html">rename_nodes()</a></code>
 </li>
 </ul></li>
-<li>Added <code><a href="../reference/to_paths.html">to_tree()</a></code> to find one or more spanning trees amongst a network’s ties</li>
-<li>Added <code><a href="../reference/from.html">from_ties()</a></code> to collect multiple networks into a multiplex network</li>
+<li>Completed a full range of tidy and igraph verbs for ties<ul><li>Added <code><a href="../reference/manip_ties.html">bind_ties()</a></code>
+</li>
+<li>Added <code><a href="../reference/manip_ties.html">delete_ties()</a></code>
+</li>
+</ul></li>
+<li>Added <code><a href="../reference/manip_paths.html">to_tree()</a></code> to find one or more spanning trees amongst a network’s ties</li>
+<li>Added <code><a href="../reference/manip_from.html">from_ties()</a></code> to collect multiple networks into a multiplex network</li>
 </ul></div>
 <div class="section level3">
 <h3 id="marking-0-4-0">Marking<a class="anchor" aria-label="anchor" href="#marking-0-4-0"></a></h3>
 <ul><li>Renamed <code>is.igraph()</code> to <code><a href="https://r.igraph.org/reference/is_igraph.html" class="external-link">is_igraph()</a></code> for igraph v2.0.0</li>
-<li>Added <code><a href="../reference/is.html">is_list()</a></code> for identifying a list of networks</li>
+<li>Added <code><a href="../reference/mark_is.html">is_list()</a></code> for identifying a list of networks</li>
 <li>Migrated <code><a href="../reference/mark_core.html">node_is_core()</a></code>, <code><a href="../reference/mark_nodes.html">node_is_cutpoint()</a></code>, <code><a href="../reference/mark_nodes.html">node_is_fold()</a></code>, <code><a href="../reference/mark_nodes.html">node_is_isolate()</a></code>, <code><a href="../reference/mark_nodes.html">node_is_mentor()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
 </li>
 <li>Migrated <code><a href="../reference/mark_diff.html">node_is_exposed()</a></code>, <code><a href="../reference/mark_diff.html">node_is_infected()</a></code>, <code><a href="../reference/mark_diff.html">node_is_latent()</a></code>, <code><a href="../reference/mark_diff.html">node_is_recovered()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
@@ -450,7 +527,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="mapping-0-4-0">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-4-0"></a></h3>
-<ul><li>Added <code><a href="../reference/scales.html">scale_edge_color_centres()</a></code>, <code><a href="../reference/scales.html">scale_edge_color_ethz()</a></code>, <code><a href="../reference/scales.html">scale_edge_color_iheid()</a></code>, <code><a href="../reference/scales.html">scale_edge_color_rug()</a></code>, <code><a href="../reference/scales.html">scale_edge_color_sdgs()</a></code><ul><li>Fixed bug that meant edge scales were unavailable (closes <a href="https://github.com/stocnet/manynet/issues/43" class="external-link">#43</a>)</li></ul></li>
+<ul><li>Added <code><a href="../reference/map_scales.html">scale_edge_color_centres()</a></code>, <code><a href="../reference/map_scales.html">scale_edge_color_ethz()</a></code>, <code><a href="../reference/map_scales.html">scale_edge_color_iheid()</a></code>, <code><a href="../reference/map_scales.html">scale_edge_color_rug()</a></code>, <code><a href="../reference/map_scales.html">scale_edge_color_sdgs()</a></code><ul><li>Fixed bug that meant edge scales were unavailable (closes <a href="https://github.com/stocnet/manynet/issues/43" class="external-link">#43</a>)</li></ul></li>
 <li>
 <code><a href="../reference/defunct.html">autographr()</a></code> now provides legends by default where multiple colours are used (closes <a href="https://github.com/stocnet/manynet/issues/52" class="external-link">#52</a>)</li>
 <li>
@@ -494,7 +571,7 @@
 <div class="section level3">
 <h3 id="mapping-0-3-1">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-3-1"></a></h3>
 <ul><li>
-<code><a href="../reference/defunct.html">autographr()</a></code> now shapes seed, adopter, and non-adopter nodes using a parallel to migraph’s <code><a href="../reference/measure_node_diffusion.html">node_adoption_time()</a></code> for<ul><li>Improved guide/legend labelling and positioning</li></ul></li>
+<code><a href="../reference/defunct.html">autographr()</a></code> now shapes seed, adopter, and non-adopter nodes using a parallel to migraph’s <code><a href="../reference/measure_diffusion_node.html">node_adoption_time()</a></code> for<ul><li>Improved guide/legend labelling and positioning</li></ul></li>
 <li>
 <code><a href="../reference/defunct.html">autographs()</a></code> now colors susceptible, exposed, infected, and recovered nodes correctly</li>
 <li>
@@ -509,8 +586,8 @@
 <ul><li>Overhaul of the README to summarise many of the unique aspects of the package (closed <a href="https://github.com/stocnet/manynet/issues/36" class="external-link">#36</a>)</li></ul></div>
 <div class="section level3">
 <h3 id="making-0-3-0">Making<a class="anchor" aria-label="anchor" href="#making-0-3-0"></a></h3>
-<ul><li>Added <code><a href="../reference/as.html">as_tidygraph()</a></code> method for diff_model objects</li>
-<li>Added <code><a href="../reference/as.html">as_siena()</a></code> method for tidygraph objects</li>
+<ul><li>Added <code><a href="../reference/manip_as.html">as_tidygraph()</a></code> method for diff_model objects</li>
+<li>Added <code><a href="../reference/manip_as.html">as_siena()</a></code> method for tidygraph objects</li>
 </ul></div>
 <div class="section level3">
 <h3 id="modifying-0-3-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-0-3-0"></a></h3>
@@ -518,12 +595,12 @@
 <li>
 <code><a href="../reference/manip_split.html">to_waves()</a></code> now works on diff_model objects, add attributes and names</li>
 <li>
-<code><a href="../reference/is_format.html">is_multiplex()</a></code> now recognises a tie/edge ‘type’ attribute as evidence of multiplexity</li>
+<code><a href="../reference/mark_format.html">is_multiplex()</a></code> now recognises a tie/edge ‘type’ attribute as evidence of multiplexity</li>
 <li>Deleted unnecessary reexports from other packages<ul><li>
-<code><a href="https://r.igraph.org/reference/is_bipartite.html" class="external-link">igraph::is_bipartite()</a></code> is superseded by <code><a href="../reference/is_format.html">is_twomode()</a></code>
+<code><a href="https://r.igraph.org/reference/is_bipartite.html" class="external-link">igraph::is_bipartite()</a></code> is superseded by <code><a href="../reference/mark_format.html">is_twomode()</a></code>
 </li>
 <li>
-<code><a href="https://tidygraph.data-imaginist.com/reference/activate.html" class="external-link">tidygraph::activate()</a></code> is superseded by <code><a href="../reference/add_ties.html">mutate_ties()</a></code> and similar functions</li>
+<code><a href="https://tidygraph.data-imaginist.com/reference/activate.html" class="external-link">tidygraph::activate()</a></code> is superseded by <code><a href="../reference/manip_ties.html">mutate_ties()</a></code> and similar functions</li>
 </ul></li>
 <li>Fixed bug by replacing older <code><a href="https://r.igraph.org/reference/as_incidence_matrix.html" class="external-link">igraph::as_incidence_matrix()</a></code> and <code><a href="https://r.igraph.org/reference/graph_from_incidence_matrix.html" class="external-link">igraph::graph_from_incidence_matrix()</a></code> with <code><a href="https://r.igraph.org/reference/as_biadjacency_matrix.html" class="external-link">igraph::as_biadjacency_matrix()</a></code> and <code><a href="https://r.igraph.org/reference/graph_from_biadjacency_matrix.html" class="external-link">igraph::graph_from_biadjacency_matrix()</a></code>
 </li>
@@ -540,11 +617,11 @@
 <code>many_palettes</code> replaces <code>iheid_palette</code>
 </li>
 <li>Added new palettes, themes and scales for graphs (closed <a href="https://github.com/stocnet/manynet/issues/9" class="external-link">#9</a>)<ul><li>
-<code><a href="../reference/themes.html">theme_ethz()</a></code>, <code><a href="../reference/scales.html">scale_color_ethz()</a></code>/<code><a href="../reference/scales.html">scale_colour_ethz()</a></code>, and <code><a href="../reference/scales.html">scale_fill_ethz()</a></code> for ETH Zürich</li>
+<code><a href="../reference/map_themes.html">theme_ethz()</a></code>, <code><a href="../reference/map_scales.html">scale_color_ethz()</a></code>/<code><a href="../reference/map_scales.html">scale_colour_ethz()</a></code>, and <code><a href="../reference/map_scales.html">scale_fill_ethz()</a></code> for ETH Zürich</li>
 <li>
-<code><a href="../reference/themes.html">theme_uzh()</a></code>, <code><a href="../reference/scales.html">scale_color_uzh()</a></code>/<code><a href="../reference/scales.html">scale_colour_uzh()</a></code>, and <code><a href="../reference/scales.html">scale_fill_uzh()</a></code> for Uni Zürich</li>
+<code><a href="../reference/map_themes.html">theme_uzh()</a></code>, <code><a href="../reference/map_scales.html">scale_color_uzh()</a></code>/<code><a href="../reference/map_scales.html">scale_colour_uzh()</a></code>, and <code><a href="../reference/map_scales.html">scale_fill_uzh()</a></code> for Uni Zürich</li>
 <li>
-<code><a href="../reference/themes.html">theme_rug()</a></code>, <code><a href="../reference/scales.html">scale_color_rug()</a></code>/<code><a href="../reference/scales.html">scale_colour_rug()</a></code>, and <code><a href="../reference/scales.html">scale_fill_rug()</a></code> for Uni Gröningen</li>
+<code><a href="../reference/map_themes.html">theme_rug()</a></code>, <code><a href="../reference/map_scales.html">scale_color_rug()</a></code>/<code><a href="../reference/map_scales.html">scale_colour_rug()</a></code>, and <code><a href="../reference/map_scales.html">scale_fill_rug()</a></code> for Uni Gröningen</li>
 </ul></li>
 </ul></div>
 <div class="section level3">
@@ -560,7 +637,7 @@
 </li></ul></div>
 <div class="section level3">
 <h3 id="making-0-2-10">Making<a class="anchor" aria-label="anchor" href="#making-0-2-10"></a></h3>
-<ul><li>Added <code><a href="../reference/read.html">read_graphml()</a></code> and <code><a href="../reference/write.html">write_graphml()</a></code> for importing and exporting graphml objects, mostly wrappers for igraph functions.</li></ul></div>
+<ul><li>Added <code><a href="../reference/make_read.html">read_graphml()</a></code> and <code><a href="../reference/make_write.html">write_graphml()</a></code> for importing and exporting graphml objects, mostly wrappers for igraph functions.</li></ul></div>
 <div class="section level3">
 <h3 id="mapping-0-2-10">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-2-10"></a></h3>
 <ul><li>
@@ -602,7 +679,7 @@
 <p>2023-11-01</p>
 <div class="section level3">
 <h3 id="making-0-2-7">Making<a class="anchor" aria-label="anchor" href="#making-0-2-7"></a></h3>
-<ul><li>Updated treatment of adjacency matrices in <code><a href="../reference/as.html">as_igraph()</a></code> in accordance with upcoming updates to <a href="https://r.igraph.org/" class="external-link">igraph</a> package (closing <a href="https://github.com/stocnet/manynet/issues/27" class="external-link">#27</a>)</li></ul></div>
+<ul><li>Updated treatment of adjacency matrices in <code><a href="../reference/manip_as.html">as_igraph()</a></code> in accordance with upcoming updates to <a href="https://r.igraph.org/" class="external-link">igraph</a> package (closing <a href="https://github.com/stocnet/manynet/issues/27" class="external-link">#27</a>)</li></ul></div>
 <div class="section level3">
 <h3 id="manipulating-0-2-7">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-0-2-7"></a></h3>
 <ul><li>Added <code>to_mentoring</code> function</li></ul></div>
@@ -641,9 +718,9 @@
 <div class="section level3">
 <h3 id="mapping-0-2-6">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-2-6"></a></h3>
 <ul><li>
-<code><a href="../reference/partition_layouts.html">layout_tbl_graph_concentric()</a></code> now works with two-mode networks, multiple levels for one-mode networks, and accepts new vectors</li>
-<li>Added <code><a href="../reference/partition_layouts.html">layout_tbl_graph_multilevel()</a></code> for laying out multilevel networks</li>
-<li>Added <code><a href="../reference/configuration_layouts.html">layout_tbl_graph_triad()</a></code> and <code><a href="../reference/configuration_layouts.html">layout_tbl_graph_quad()</a></code> configurational layouts</li>
+<code><a href="../reference/map_layout_partition.html">layout_tbl_graph_concentric()</a></code> now works with two-mode networks, multiple levels for one-mode networks, and accepts new vectors</li>
+<li>Added <code><a href="../reference/map_layout_partition.html">layout_tbl_graph_multilevel()</a></code> for laying out multilevel networks</li>
+<li>Added <code><a href="../reference/map_layout_configuration.html">layout_tbl_graph_triad()</a></code> and <code><a href="../reference/map_layout_configuration.html">layout_tbl_graph_quad()</a></code> configurational layouts</li>
 </ul></div>
 <div class="section level3">
 <h3 id="data-0-2-6">Data<a class="anchor" aria-label="anchor" href="#data-0-2-6"></a></h3>
@@ -678,7 +755,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="manipulating-0-2-4">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-0-2-4"></a></h3>
-<ul><li>Added <code><a href="../reference/to_project.html">to_galois()</a></code> for transforming networks into partially ordered Galois lattices</li></ul></div>
+<ul><li>Added <code><a href="../reference/manip_project.html">to_galois()</a></code> for transforming networks into partially ordered Galois lattices</li></ul></div>
 <div class="section level3">
 <h3 id="mapping-0-2-4">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-2-4"></a></h3>
 <ul><li>Fixed bug in node_shape argument in <code><a href="../reference/defunct.html">autographr()</a></code>
@@ -749,24 +826,24 @@
 <ul><li>Added <code><a href="../reference/make_explicit.html">create_explicit()</a></code> for creating networks based on explicit nodes and ties</li></ul></div>
 <div class="section level3">
 <h3 id="manip-0-2-0">Manip<a class="anchor" aria-label="anchor" href="#manip-0-2-0"></a></h3>
-<ul><li>Added <code><a href="../reference/add_nodes.html">delete_nodes()</a></code> for deleting specific nodes</li>
-<li>Added <code><a href="../reference/to_paths.html">to_eulerian()</a></code> function that returns a Eulerian path network, if available, from a given network</li>
+<ul><li>Added <code><a href="../reference/manip_nodes.html">delete_nodes()</a></code> for deleting specific nodes</li>
+<li>Added <code><a href="../reference/manip_paths.html">to_eulerian()</a></code> function that returns a Eulerian path network, if available, from a given network</li>
 </ul></div>
 <div class="section level3">
 <h3 id="map-0-2-0">Map<a class="anchor" aria-label="anchor" href="#map-0-2-0"></a></h3>
-<ul><li>Moved additional <code>is_</code> functions from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Added <code><a href="../reference/features.html">is_connected()</a></code> to test if network is strongly connected</li>
-<li>Added <code><a href="../reference/features.html">is_perfect_matching()</a></code> to test if there is a matching for every node in the network</li>
-<li>Added <code><a href="../reference/features.html">is_eulerian()</a></code> to test whether there is a Eulerian path for a network</li>
+<ul><li>Moved additional <code>is_</code> functions from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Added <code><a href="../reference/mark_features.html">is_connected()</a></code> to test if network is strongly connected</li>
+<li>Added <code><a href="../reference/mark_features.html">is_perfect_matching()</a></code> to test if there is a matching for every node in the network</li>
+<li>Added <code><a href="../reference/mark_features.html">is_eulerian()</a></code> to test whether there is a Eulerian path for a network</li>
 <li>Added <code>is_acyclic</code> to test whether network is a directed acyclic graph</li>
 <li>Added <code>is_aperiodic</code> to test whether network is aperiodic</li>
 </ul></li>
-<li>Added partition layouts<ul><li>Added <code><a href="../reference/partition_layouts.html">layout_tbl_graph_alluvial()</a></code> that places successive layers horizontally</li>
-<li>Added <code><a href="../reference/partition_layouts.html">layout_tbl_graph_concentric()</a></code>that places a “hierarchy” layout around a circle</li>
-<li>Added <code><a href="../reference/partition_layouts.html">layout_tbl_graph_hierarchy()</a></code> that layers the nodes along the top and bottom sequenced to minimise overlap</li>
-<li>Added <code><a href="../reference/partition_layouts.html">layout_tbl_graph_ladder()</a></code>that aligns nodes across successive layers horizontally</li>
+<li>Added partition layouts<ul><li>Added <code><a href="../reference/map_layout_partition.html">layout_tbl_graph_alluvial()</a></code> that places successive layers horizontally</li>
+<li>Added <code><a href="../reference/map_layout_partition.html">layout_tbl_graph_concentric()</a></code>that places a “hierarchy” layout around a circle</li>
+<li>Added <code><a href="../reference/map_layout_partition.html">layout_tbl_graph_hierarchy()</a></code> that layers the nodes along the top and bottom sequenced to minimise overlap</li>
+<li>Added <code><a href="../reference/map_layout_partition.html">layout_tbl_graph_ladder()</a></code>that aligns nodes across successive layers horizontally</li>
 <li>Added <code>layout_tbl_graph_railway</code> that aligns nodes across successive layers vertically</li>
 </ul></li>
-<li>Added <code><a href="../reference/themes.html">theme_iheid()</a></code> function that themes graphs with colors based on the Geneva Graduate Institute</li>
+<li>Added <code><a href="../reference/map_themes.html">theme_iheid()</a></code> function that themes graphs with colors based on the Geneva Graduate Institute</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -817,46 +894,46 @@
 </ul></div>
 <div class="section level3">
 <h3 id="makes-0-1-0">Makes<a class="anchor" aria-label="anchor" href="#makes-0-1-0"></a></h3>
-<ul><li>Added <code>read_*()</code> functions, e.g. <code><a href="../reference/read.html">read_edgelist()</a></code>
+<ul><li>Added <code>read_*()</code> functions, e.g. <code><a href="../reference/make_read.html">read_edgelist()</a></code>
 </li>
-<li>Added <code>write_*()</code> functions, e.g. <code><a href="../reference/write.html">write_edgelist()</a></code><ul><li>Added <code><a href="../reference/write.html">write_matrix()</a></code> for exporting to matrices</li></ul></li>
+<li>Added <code>write_*()</code> functions, e.g. <code><a href="../reference/make_write.html">write_edgelist()</a></code><ul><li>Added <code><a href="../reference/make_write.html">write_matrix()</a></code> for exporting to matrices</li></ul></li>
 <li>Added <code>create_*()</code> functions, e.g. <code><a href="../reference/make_create.html">create_lattice()</a></code><ul><li>All <code>create_*()</code> functions return <code>tbl_graph</code> class objects</li></ul></li>
-<li>Added <code>generate_*()</code> functions, e.g. <code><a href="../reference/make_generate.html">generate_smallworld()</a></code>
+<li>Added <code>generate_*()</code> functions, e.g. <code><a href="../reference/make_stochastic.html">generate_smallworld()</a></code>
 </li>
 <li>Added <code>ison_*</code> network data, e.g. <code>ison_southern_women</code>
 </li>
 </ul></div>
 <div class="section level3">
 <h3 id="manipulates-0-1-0">Manipulates<a class="anchor" aria-label="anchor" href="#manipulates-0-1-0"></a></h3>
-<ul><li>Added <code>as_*()</code> functions, e.g. <code><a href="../reference/as.html">as_igraph()</a></code><ul><li>Fixed <code>as_edgelist.network()</code>
+<ul><li>Added <code>as_*()</code> functions, e.g. <code><a href="../reference/manip_as.html">as_igraph()</a></code><ul><li>Fixed <code>as_edgelist.network()</code>
 </li>
 <li>Fixed <code>as_network.data.frame()</code>
 </li>
 <li>Fixed <code>as_network.tbl_graph()</code>
 </li>
 </ul></li>
-<li>Added <code>join_*()</code> functions, e.g. <code><a href="../reference/add_ties.html">join_ties()</a></code>
+<li>Added <code>join_*()</code> functions, e.g. <code><a href="../reference/manip_ties.html">join_ties()</a></code>
 </li>
-<li>Added <code>add_*()</code> functions, e.g. <code><a href="../reference/add_nodes.html">add_node_attribute()</a></code><ul><li>All <code>create_*()</code> functions return <code>tbl_graph</code> class objects</li></ul></li>
-<li>Added <code>mutate_*()</code> functions, e.g. <code><a href="../reference/add_ties.html">mutate_ties()</a></code><ul><li>With <code><a href="../reference/add_ties.html">mutate_ties()</a></code>, it is no longer necessary to <code>activate(edges)</code>
+<li>Added <code>add_*()</code> functions, e.g. <code><a href="../reference/manip_nodes.html">add_node_attribute()</a></code><ul><li>All <code>create_*()</code> functions return <code>tbl_graph</code> class objects</li></ul></li>
+<li>Added <code>mutate_*()</code> functions, e.g. <code><a href="../reference/manip_ties.html">mutate_ties()</a></code><ul><li>With <code><a href="../reference/manip_ties.html">mutate_ties()</a></code>, it is no longer necessary to <code>activate(edges)</code>
 </li></ul></li>
-<li>Added <code>rename_*()</code> functions, e.g. <code><a href="../reference/add_ties.html">rename_ties()</a></code>
+<li>Added <code>rename_*()</code> functions, e.g. <code><a href="../reference/manip_ties.html">rename_ties()</a></code>
 </li>
-<li>Added <code>is_*()</code> functions, e.g. <code><a href="../reference/is.html">is_dynamic()</a></code><ul><li>Fixed <code><a href="../reference/is_format.html">is_labelled()</a></code> to work correctly with multiple network formats</li></ul></li>
-<li>Added <code>to_*()</code> functions, e.g. <code><a href="../reference/to_project.html">to_mode1()</a></code><ul><li>This includes functions for reformatting, transforming, and splitting</li>
+<li>Added <code>is_*()</code> functions, e.g. <code><a href="../reference/mark_is.html">is_dynamic()</a></code><ul><li>Fixed <code><a href="../reference/mark_format.html">is_labelled()</a></code> to work correctly with multiple network formats</li></ul></li>
+<li>Added <code>to_*()</code> functions, e.g. <code><a href="../reference/manip_project.html">to_mode1()</a></code><ul><li>This includes functions for reformatting, transforming, and splitting</li>
 <li>This also includes functions for returning networks with missing data replaced by some imputed values</li>
 <li>Fixed <code>to_giant.network()</code>
 </li>
 <li>
-<code><a href="../reference/reformat.html">to_directed()</a></code> now a method</li>
+<code><a href="../reference/manip_reformat.html">to_directed()</a></code> now a method</li>
 <li>
 <code><a href="../reference/manip_split.html">to_subgraphs()</a></code> now returns a list of <code>tbl_graph</code>s</li>
 <li>
-<code><a href="../reference/reformat.html">to_reciprocated()</a></code> now works on edgelists, matrices, tbl_graphs, and networks</li>
+<code><a href="../reference/manip_reformat.html">to_reciprocated()</a></code> now works on edgelists, matrices, tbl_graphs, and networks</li>
 <li>
 <code>to_acylic()</code> now works on matrices, tbl_graphs, and networks</li>
 </ul></li>
-<li>Added <code>from_*()</code> functions, e.g. <code><a href="../reference/from.html">from_egos()</a></code><ul><li>Fixed <code><a href="../reference/from.html">from_subgraphs()</a></code>
+<li>Added <code>from_*()</code> functions, e.g. <code><a href="../reference/manip_from.html">from_egos()</a></code><ul><li>Fixed <code><a href="../reference/manip_from.html">from_subgraphs()</a></code>
 </li></ul></li>
 <li>Added “grab” functions, e.g. <code><a href="../reference/defunct.html">network_nodes()</a></code><ul><li>
 <code><a href="../reference/defunct.html">network_dims()</a></code> is now a method</li></ul></li>
@@ -865,7 +942,7 @@
 <h3 id="maps-0-1-0">Maps<a class="anchor" aria-label="anchor" href="#maps-0-1-0"></a></h3>
 <ul><li>Added <code><a href="../reference/defunct.html">autographr()</a></code>, <code><a href="../reference/defunct.html">autographs()</a></code>, and <code><a href="../reference/defunct.html">autographd()</a></code>
 </li>
-<li>Added layout functions<ul><li>Fixed <code><a href="../reference/partition_layouts.html">layout_tbl_graph_concentric()</a></code>
+<li>Added layout functions<ul><li>Fixed <code><a href="../reference/map_layout_partition.html">layout_tbl_graph_concentric()</a></code>
 </li></ul></li>
 </ul></div>
 </div>

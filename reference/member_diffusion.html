@@ -33,7 +33,7 @@ i.e. never adopted
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -103,7 +103,7 @@ i.e. never adopted</p></li>
 
 <dl><dt id="arg-diff-model">diff_model<a class="anchor" aria-label="anchor" href="#arg-diff-model"></a></dt>
 <dd><p>A valid network diffusion model,
-as created by <code><a href="as.html">as_diffusion()</a></code> or <code><a href="play.html">play_diffusion()</a></code>.</p></dd>
+as created by <code><a href="manip_as.html">as_diffusion()</a></code> or <code><a href="make_play.html">play_diffusion()</a></code>.</p></dd>
 
 </dl></div>
     <div id="references">
@@ -114,42 +114,44 @@ as created by <code><a href="as.html">as_diffusion()</a></code> or <code><a href
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other measures:
-<code><a href="between_centrality.html">between_centrality</a></code>,
-<code><a href="close_centrality.html">close_centrality</a></code>,
-<code><a href="degree_centrality.html">degree_centrality</a></code>,
-<code><a href="eigenv_centrality.html">eigenv_centrality</a></code>,
 <code><a href="measure_attributes.html">measure_attributes</a></code>,
+<code><a href="measure_central_between.html">measure_central_between</a></code>,
+<code><a href="measure_central_close.html">measure_central_close</a></code>,
+<code><a href="measure_central_degree.html">measure_central_degree</a></code>,
+<code><a href="measure_central_eigen.html">measure_central_eigen</a></code>,
 <code><a href="measure_closure.html">measure_closure</a></code>,
 <code><a href="measure_cohesion.html">measure_cohesion</a></code>,
+<code><a href="measure_diffusion_infection.html">measure_diffusion_infection</a></code>,
+<code><a href="measure_diffusion_net.html">measure_diffusion_net</a></code>,
+<code><a href="measure_diffusion_node.html">measure_diffusion_node</a></code>,
 <code><a href="measure_features.html">measure_features</a></code>,
 <code><a href="measure_heterogeneity.html">measure_heterogeneity</a></code>,
 <code><a href="measure_hierarchy.html">measure_hierarchy</a></code>,
 <code><a href="measure_holes.html">measure_holes</a></code>,
-<code><a href="measure_infection.html">measure_infection</a></code>,
-<code><a href="measure_net_diffusion.html">measure_net_diffusion</a></code>,
-<code><a href="measure_node_diffusion.html">measure_node_diffusion</a></code>,
 <code><a href="measure_periods.html">measure_periods</a></code>,
 <code><a href="measure_properties.html">measure_properties</a></code></p>
 <p>Other diffusion:
-<code><a href="measure_infection.html">measure_infection</a></code>,
-<code><a href="measure_net_diffusion.html">measure_net_diffusion</a></code>,
-<code><a href="measure_node_diffusion.html">measure_node_diffusion</a></code>,
-<code><a href="play.html">play</a></code></p></div>
+<code><a href="make_play.html">make_play</a></code>,
+<code><a href="measure_diffusion_infection.html">measure_diffusion_infection</a></code>,
+<code><a href="measure_diffusion_net.html">measure_diffusion_net</a></code>,
+<code><a href="measure_diffusion_node.html">measure_diffusion_node</a></code></p></div>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span>  <span class="va">smeg</span> <span class="op">&lt;-</span> <span class="fu"><a href="make_generate.html">generate_smallworld</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">0.025</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">smeg_diff</span> <span class="op">&lt;-</span> <span class="fu"><a href="play.html">play_diffusion</a></span><span class="op">(</span><span class="va">smeg</span>, recovery <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span>  <span class="va">smeg</span> <span class="op">&lt;-</span> <span class="fu"><a href="make_stochastic.html">generate_smallworld</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">0.025</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">smeg_diff</span> <span class="op">&lt;-</span> <span class="fu"><a href="make_play.html">play_diffusion</a></span><span class="op">(</span><span class="va">smeg</span>, recovery <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="co"># To classify nodes by their position in the adoption curve</span></span></span>
 <span class="r-in"><span>  <span class="op">(</span><span class="va">adopts</span> <span class="op">&lt;-</span> <span class="fu">node_in_adopter</span><span class="op">(</span><span class="va">smeg_diff</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">2 groups</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">4 groups</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   V1     V2    V3    V4    V5    V6    V7    V8    V9    V10   V11   V12   V13  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Early… Non-… Non-… Non-… Non-… Non-… Non-… Non-… Non-… Non-… Non-… Non-… Non-…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Early… Earl… Earl… Lagg… Late… Late… Late… Late… Late… Late… Late… Earl… Earl…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... with 2 more values from this nodeset unprinted. Use `print(..., n = Inf)` to print all values.</span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">adopts</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">Class Early Adopter:</span>  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">Class Non-Adopter:</span>  2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">Class Early Adopter:</span>  1, 2, 3, 14, 15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">Class Early Majority:</span>  12, 13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">Class Laggard:</span>  4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">Class Late Majority:</span>  5, 6, 7, 8, 9, 10, 11</span>
 </code></pre></div>
     </div>
   </div>
