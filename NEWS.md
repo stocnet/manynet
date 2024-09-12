@@ -63,6 +63,7 @@
 
 - Updated all `ison_` data with new `as_tidygraph()`
 - Added 'grand' data to `ison_adolescents` as a test
+- Added `ison_thrones` on kinship arcs between Game of Thrones characters, with 'grand' data
 - Consolidated `ison_monastery_` data into `ison_monks`, a single multiplex, signed, weighted, longitudinal network
 
 # manynet 1.0.5
