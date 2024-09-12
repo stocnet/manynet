@@ -19,9 +19,9 @@
 #'   kinds of information than others.
 #'   Note also that there are some reserved column names in one or more
 #'   object classes, which could otherwise lead to some unexpected results.
-#' @name as
+#' @name manip_as
 #' @family modifications
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @param twomode Logical option used to override heuristics for
 #'   distinguishing incidence (two-mode/bipartite) from
 #'   adjacency (one-mode/unipartite) networks.
@@ -63,7 +63,7 @@ NULL
 
 # Edgelists ####
 
-#' @rdname as
+#' @rdname manip_as
 #' @importFrom igraph as_data_frame
 #' @importFrom dplyr as_tibble arrange
 #' @importFrom network get.edge.attribute as.edgelist
@@ -145,7 +145,7 @@ as_edgelist.siena <- function(.data,
 
 # Matrices ####
 
-#' @rdname as
+#' @rdname manip_as
 #' @importFrom dplyr arrange
 #' @importFrom igraph edge_attr_names as_adjacency_matrix as_biadjacency_matrix
 #' @importFrom network is.bipartite list.edge.attributes as.matrix.network
@@ -298,7 +298,7 @@ as_matrix.diff_model <- function(.data,
 
 # igraph ####
 
-#' @rdname as
+#' @rdname manip_as
 #' @importFrom igraph graph_from_data_frame graph_from_biadjacency_matrix
 #'  graph_from_adjacency_matrix delete_vertex_attr V vertex_attr
 #'  edge_attr delete_edge_attr set_edge_attr
@@ -314,7 +314,7 @@ as_igraph.data.frame <- function(.data,
   # Warn if no column named weight and weight set to true
   if (is_weighted(.data) & !("weight" %in% names(.data))) {
     names(.data)[3] <- "weight"
-    # stop("Please rename the weight column of your dataframe to 'weight'")
+    # cli::cli_abort("Please rename the weight column of your dataframe to 'weight'")
   }
   if (!is_labelled(.data)) {
     graph <- igraph::graph_from_data_frame(.data,
@@ -453,7 +453,7 @@ as_igraph.network.goldfish <- function(.data,
     out <- igraph::graph_from_data_frame(d = get(attr(.data, "events"))[,2:4],
                                          directed = attr(.data, "directed"),
                                          vertices = get(attr(.data, "nodes")))
-  } else stop("Non-empty starts are not yet supported by this function.")
+  } else cli::cli_abort("Non-empty starts are not yet supported by this function.")
   out
 }
 
@@ -586,7 +586,7 @@ as_igraph.siena <- function(.data, twomode = NULL) {
 
 # tidygraph ####
 
-#' @rdname as
+#' @rdname manip_as
 #' @importFrom tidygraph as_tbl_graph
 #' @importFrom igraph graph_from_data_frame
 #' @export
@@ -594,7 +594,8 @@ as_tidygraph <- function(.data, twomode = FALSE) UseMethod("as_tidygraph")
 
 #' @export
 as_tidygraph.data.frame <- function(.data, twomode = FALSE) {
-  tidygraph::as_tbl_graph(as_igraph(.data))
+  out <- tidygraph::as_tbl_graph(as_igraph(.data))
+  make_mnet(out)
 }
 
 #' @importFrom tidygraph tbl_graph
@@ -602,33 +603,38 @@ as_tidygraph.data.frame <- function(.data, twomode = FALSE) {
 as_tidygraph.list <- function(.data, twomode = FALSE) {
   if (!is.null(names(.data))){
     if ("nodes" %in% names(.data) & "ties" %in% names(.data)) {
-      tidygraph::tbl_graph(nodes = .data[["nodes"]],
+      out <- tidygraph::tbl_graph(nodes = .data[["nodes"]],
                            edges = .data[["ties"]])
     } else if ("nodes" %in% names(.data) & "edges" %in% names(.data)) {
-      tidygraph::tbl_graph(nodes = .data[["nodes"]],
+      out <- tidygraph::tbl_graph(nodes = .data[["nodes"]],
                            edges = .data[["edges"]])
-    } else stop("Please name the list elements 'nodes' and 'ties'.")
-  } else stop("Please name the list elements 'nodes' and 'ties'.")
+    } else cli::cli_abort("Please name the list elements 'nodes' and 'ties'.")
+  } else cli::cli_abort("Please name the list elements 'nodes' and 'ties'.")
+  make_mnet(out)
 }
   
 #' @export
 as_tidygraph.matrix <- function(.data, twomode = FALSE) {
-  tidygraph::as_tbl_graph(as_igraph(.data, twomode = twomode))
+  out <- tidygraph::as_tbl_graph(as_igraph(.data, twomode = twomode))
+  make_mnet(out)
 }
 
 #' @export
 as_tidygraph.igraph <- function(.data, twomode = FALSE) {
-  tidygraph::as_tbl_graph(.data)
+  out <- tidygraph::as_tbl_graph(.data)
+  make_mnet(out)
 }
 
 #' @export
 as_tidygraph.tbl_graph <- function(.data, twomode = FALSE) {
-  .data
+  out <- .data
+  make_mnet(out)
 }
 
 #' @export
 as_tidygraph.network <- function(.data, twomode = FALSE) {
-  tidygraph::as_tbl_graph(as_igraph(.data))
+  out <- tidygraph::as_tbl_graph(as_igraph(.data))
+  make_mnet(out)
 }
 
 #' @export
@@ -653,7 +659,7 @@ as_tidygraph.network.goldfish <- function(.data,
                                          directed = attr(.data, "directed"),
                                          vertices = get(attr(.data, "nodes")))
     out <- as_tidygraph(out)
-  } else stop("Non-empty starts are not yet supported by this function.")
+  } else cli::cli_abort("Non-empty starts are not yet supported by this function.")
 
   # if(rowSums(classes)['network.goldfish']>1){
   #   nets <- colnames(classes)[classes['network.goldfish', ]==TRUE]
@@ -666,13 +672,13 @@ as_tidygraph.network.goldfish <- function(.data,
   #     out <- join_edges(out, other, edges)
   #   }
   # }
-
-  out
+  make_mnet(out)
 }
 
 #' @export
 as_tidygraph.siena <- function(.data, twomode = FALSE) {
-  as_tidygraph(as_igraph.siena(.data, twomode = FALSE))
+  out <- as_tidygraph(as_igraph.siena(.data, twomode = FALSE))
+  make_mnet(out)
 }
 
 #' @export
@@ -683,7 +689,7 @@ as_tidygraph.diff_model <- function(.data, twomode = FALSE) {
   #   out <- add_node_attribute(out, "name",
   #                             as.character(seq_len(igraph::vcount(out))))
   # }
-  out
+  make_mnet(out)
 }
 
 #' @export
@@ -692,9 +698,14 @@ as_tidygraph.diffnet <- function(.data, twomode = FALSE) {
   lapply(out, as_tidygraph)
 }
 
+make_mnet <- function(out){
+  class(out) <- unique(c("mnet", class(out)))
+  out
+}
+
 # Network ####
 
-#' @rdname as
+#' @rdname manip_as
 #' @importFrom network as.network set.vertex.attribute
 #' @importFrom igraph vertex_attr
 #' @export
@@ -786,7 +797,7 @@ as_network.siena <- function(.data, twomode = FALSE) {
 
 # RSiena ####
 
-#' @rdname as
+#' @rdname manip_as
 #' @export
 as_siena <- function(.data,
                       twomode = FALSE) UseMethod("as_siena")
@@ -825,7 +836,7 @@ as_siena.tbl_graph <- function(.data, twomode = FALSE) {
 
 # graphAM ####
 
-#' @rdname as
+#' @rdname manip_as
 #' @export
 as_graphAM <- function(.data, twomode = NULL) UseMethod("as_graphAM")
 
@@ -855,7 +866,7 @@ setClass("graphAM", contains="graph",
 
 #' @export
 as_graphAM.matrix <- function(.data, twomode = NULL) {
-  thisRequires("RSiena")
+  thisRequires("methods")
   methods::new("graphAM", adjMat = to_onemode(.data), 
                edgemode = ifelse(is_directed(.data), "directed", "undirected"))
 }
@@ -892,7 +903,7 @@ as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
 
 # Diffusion ####
 
-#' @rdname as
+#' @rdname manip_as
 #' @param events A table (data frame or tibble) of diffusion events
 #'   with columns `t` indicating the time (typically an integer) of the event, 
 #'   `nodes` indicating the number or name of the node involved in the event,
@@ -953,7 +964,7 @@ as_diffusion.igraph <- function(.data, twomode = FALSE, events) {
     sum(expos)
   }, numeric(1) )
   if (any(report$R + report$I + report$E + report$S != report$n)) {
-    stop("Oops, something is wrong")
+    cli::cli_abort("Oops, something is wrong")
   }
   report <- dplyr::select(report, dplyr::any_of(c("t", "n", "S", "s", "E", "E_new", "I", "I_new", "R", "R_new")))
   make_diff_model(events, report, .data)
@@ -1000,7 +1011,7 @@ as_diffusion.diffnet <- function(.data, twomode = FALSE, events) {
     sum(expos)
   }, numeric(1) )
   if (any(report$R + report$I + report$E + report$S != report$n)) {
-    stop("Oops, something is wrong")
+    cli::cli_abort("Oops, something is wrong")
   }
   if(is_labelled(net)) events$nodes <- match(events$nodes, node_names(net))
   events <- events %>% dplyr::arrange(t)
@@ -1010,7 +1021,7 @@ as_diffusion.diffnet <- function(.data, twomode = FALSE, events) {
   
 # Diffnet ####
 
-#' @rdname as
+#' @rdname manip_as
 #' @export
 as_diffnet <- function(.data,
                        twomode = FALSE) UseMethod("as_diffnet")

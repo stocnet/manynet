@@ -8,6 +8,17 @@ make_node_mark <- function(out, .data) {
 
 make_tie_mark <- function(out, .data) {
   class(out) <- c("tie_mark", class(out))
+  if(is_labelled(.data)){
+    tie_names <- attr(igraph::E(.data), "vnames")
+    if(is_directed(.data)) 
+      names(out) <- gsub("\\|", "->", tie_names) else 
+        names(out) <- gsub("\\|", "-", tie_names)
+  } else {
+    ties <- as_edgelist(.data)[,1:2]
+    if(is_directed(.data)) 
+      names(out) <- paste0(ties$from, "->", ties$to) else 
+        names(out) <- paste0(ties$from, "-", ties$to)
+  }
   out
 }
 
@@ -39,7 +50,7 @@ print_tblvec <- function(y, names, n){
   mat <- matrix(y, dimnames = names)
   mat <- t(mat)
   out <- as.data.frame(mat)
-  tibs <- dplyr::tibble(out, .name_repair = "unique")
+  tibs <- dplyr::tibble(out, .name_repair = "minimal")
   setup <- pillar::tbl_format_setup(tibs, width = n)
   body <- pillar::tbl_format_body(tibs, setup)[c(TRUE, FALSE, TRUE)]
   if(setup$extra_cols_total > 0){

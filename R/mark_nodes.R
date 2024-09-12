@@ -16,7 +16,7 @@
 #'   - `node_is_fold()` marks nodes that are in a structural fold between two or more
 #'   triangles that are only connected by that node.
 #'   - `node_is_mentor()` marks a proportion of high indegree nodes as 'mentors' (see details).
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @family marks
 #' @name mark_nodes
 NULL
@@ -153,7 +153,7 @@ node_is_mentor <- function(.data, elites = 0.1){
 #'   - `node_is_exposed()` marks nodes that are exposed to a given (other) mark.
 #'   - `node_is_latent()` marks nodes that are latent at a particular time point.
 #'   - `node_is_recovered()` marks nodes that are recovered at a particular time point.
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @family marks
 #' @name mark_diff
 NULL
@@ -274,7 +274,7 @@ node_is_exposed <- function(.data, mark){
 #'   for converting the results from some node measure into a mark-class object.
 #'   They can be particularly useful for highlighting which node or nodes
 #'   are key because they minimise or, more often, maximise some measure.
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @family marks
 #' @name mark_select
 NULL
@@ -303,7 +303,7 @@ node_is_random <- function(.data, size = 1){
 #' @export
 node_is_max <- function(node_measure, ranks = 1){
   if(!inherits(node_measure, "node_measure"))
-    stop("This function expects an object of class `node_measure`")
+    cli::cli_abort("This function expects an object of class `node_measure`")
   if(any(attr(node_measure, "mode"))){
     mode1 <- as.numeric(node_measure)[!as.logical(attr(node_measure, "mode"))]
     max1 <- mode1[order(mode1, decreasing = TRUE)[1:ranks]]
@@ -329,7 +329,7 @@ node_is_max <- function(node_measure, ranks = 1){
 #' @export
 node_is_min <- function(node_measure, ranks = 1){
   if(!inherits(node_measure, "node_measure"))
-    stop("This function expects an object of class `node_measure`")
+    cli::cli_abort("This function expects an object of class `node_measure`")
   if(any(attr(node_measure, "mode"))){
     mode1 <- as.numeric(node_measure)[!as.logical(attr(node_measure, "mode"))]
     max1 <- mode1[order(mode1, decreasing = FALSE)[1:ranks]]

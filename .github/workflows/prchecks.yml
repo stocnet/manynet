@@ -35,12 +35,9 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           cache-version: 2
+          needs: check, build
           extra-packages: |
             any::rcmdcheck
-            any::lintr
-            any::spelling
-            any::covr
-          needs: check
 
       - uses: r-lib/actions/check-r-package@v2
         env:
@@ -57,7 +54,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Save binary artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.config.asset_name }}
           path: build/

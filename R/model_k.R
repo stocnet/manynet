@@ -14,7 +14,7 @@
 #'   These functions are generally not user-facing but used internally
 #'   in e.g. the `*_equivalence()` functions.
 #'   
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @param hc A hierarchical clustering object.
 #' @references 
 #'  Thorndike, Robert L. 1953. 
@@ -26,10 +26,10 @@
 #'   “Silhouettes: A Graphical Aid to the Interpretation and Validation of Cluster Analysis.” 
 #'   _Journal of Computational and Applied Mathematics_, 20: 53–65. 
 #'   \doi{10.1016/0377-0427(87)90125-7}.
-#' @name kselect
+#' @name model_kselect
 NULL
 
-#' @rdname kselect 
+#' @rdname model_kselect 
 #' @export
 k_strict <- function(hc, .data){
   zero_merged <- hc$merge[round(hc$height,4) == 0,]
@@ -37,7 +37,7 @@ k_strict <- function(hc, .data){
   k
 }
 
-#' @rdname kselect 
+#' @rdname model_kselect 
 #' @param census A motif census object.
 #' @param range An integer indicating the maximum number of options to consider.
 #'   The minimum of this and the number of nodes in the network is used.
@@ -112,7 +112,7 @@ k_elbow <- function(hc, .data, census, range){
   elbow_finder(dafr$clusters, dafr$correlations)
 }
 
-#' @rdname kselect 
+#' @rdname model_kselect 
 #' @export
 k_silhouette <- function(hc, .data, range){
   kcs <- 2:min(range, manynet::net_nodes(.data))

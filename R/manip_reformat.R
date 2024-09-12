@@ -36,9 +36,9 @@
 #'   "to_reciprocated", "to_acyclic", "to_unweighted", "to_unsigned", "to_unnamed", "to_named", 
 #'   "to_simplex")))
 #'   ```
-#' @name reformat
+#' @name manip_reformat
 #' @family modifications
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @param tie Character string naming a tie attribute to retain from a graph.
 #' @param keep In the case of a signed network, whether to retain
 #' the "positive" or "negative" ties.
@@ -52,7 +52,7 @@
 NULL
 
 
-#' @rdname reformat
+#' @rdname manip_reformat
 #' @importFrom igraph delete_edges edge_attr_names delete_edge_attr
 #'   E edge_attr_names
 #' @examples
@@ -90,7 +90,7 @@ to_uniplex.matrix <- function(.data, tie){
   as_matrix(to_uniplex(as_igraph(.data), tie))
 }
 
-#' @describeIn reformat Returns an object that has any edge direction removed,
+#' @describeIn manip_reformat Returns an object that has any edge direction removed,
 #'   so that any pair of nodes with at least one directed edge will be
 #'   connected by an undirected edge in the new network.
 #'   This is equivalent to the "collapse" mode in `{igraph}`.
@@ -127,7 +127,7 @@ to_undirected.data.frame <- function(.data) {
   as_edgelist(to_undirected(as_igraph(.data)))
 }
 
-#' @rdname reformat 
+#' @rdname manip_reformat 
 #' @importFrom igraph as.directed
 #' @export
 to_directed <- function(.data) UseMethod("to_directed")
@@ -159,7 +159,7 @@ to_directed.data.frame <- function(.data) {
   as_edgelist(to_directed(as_igraph(.data)))
 }
 
-#' @describeIn reformat Returns an object that has any edge direction transposed,
+#' @describeIn manip_reformat Returns an object that has any edge direction transposed,
 #'   or flipped, so that senders become receivers and receivers become senders.
 #'   This essentially has no effect on undirected networks or reciprocated ties.
 #' @importFrom igraph reverse_edges
@@ -195,7 +195,7 @@ to_redirected.network <- function(.data) {
   as_network(to_redirected(as_igraph(.data)))
 }
 
-#' @describeIn reformat Returns an object where all ties are reciprocated.
+#' @describeIn manip_reformat Returns an object where all ties are reciprocated.
 #' @importFrom igraph as.directed
 #' @export
 to_reciprocated <- function(.data) UseMethod("to_reciprocated")
@@ -225,7 +225,7 @@ to_reciprocated.data.frame <- function(.data) {
   as_edgelist(to_reciprocated(as_igraph(.data)))
 }
 
-#' @rdname reformat
+#' @rdname manip_reformat
 #' @importFrom igraph as.directed feedback_arc_set
 #' @export
 to_acyclic <- function(.data) UseMethod("to_acyclic")
@@ -257,7 +257,7 @@ to_acyclic.network <- function(.data) {
   as_network(to_acyclic(as_igraph(.data)))
 }
 
-#' @describeIn reformat Returns an object that has all edge weights removed.
+#' @describeIn manip_reformat Returns an object that has all edge weights removed.
 #' @importFrom dplyr filter select
 #' @export
 to_unweighted <- function(.data, threshold = 1) UseMethod("to_unweighted")
@@ -288,10 +288,10 @@ to_unweighted.matrix <- function(.data, threshold = 1) {
 #' @export
 to_unweighted.data.frame <- function(.data, threshold = 1) {
   if(is_edgelist(.data)) .data[,1:2]
-  else stop("Not an edgelist")
+  else cli::cli_abort("Not an edgelist")
 }
 
-#' @describeIn reformat Returns a network with either just the "positive" ties
+#' @describeIn manip_reformat Returns a network with either just the "positive" ties
 #'   or just the "negative" ties
 #' @importFrom igraph delete_edges E delete_edge_attr
 #' @export
@@ -308,7 +308,7 @@ to_unsigned.matrix <- function(.data,
   } else if (keep == "negative"){
     out[out > 0] <- 0
     out <- abs(out)
-  } else stop("Indicate whether 'positive' or 'negative' ties should be kept.")
+  } else cli::cli_abort("Indicate whether 'positive' or 'negative' ties should be kept.")
   out
 }
 
@@ -323,7 +323,7 @@ to_unsigned.data.frame <- function(.data,
     } else if (keep == "negative"){
       out$sign[out$sign > 0] <- 0
       out$sign <- out$sign(out)
-    } else stop("Indicate whether 'positive' or 'negative' ties should be kept.")
+    } else cli::cli_abort("Indicate whether 'positive' or 'negative' ties should be kept.")
   }
   out
 }
@@ -359,7 +359,7 @@ to_unsigned.network <- function(.data,
   as_network(to_unsigned(as_igraph(.data)))
 }
 
-#' @describeIn reformat Returns an object with all vertex names removed
+#' @describeIn manip_reformat Returns an object with all vertex names removed
 #' @importFrom igraph delete_vertex_attr
 #' @importFrom tidygraph as_tbl_graph
 #' @importFrom network delete.vertex.attribute
@@ -376,8 +376,9 @@ to_unnamed.igraph <- function(.data) {
 
 #' @export
 to_unnamed.tbl_graph <- function(.data) {
-  out <- igraph::delete_vertex_attr(.data, "name")
-  tidygraph::as_tbl_graph(out)
+  if ("name" %in% igraph::vertex_attr_names(.data)) {
+    as_tidygraph(igraph::delete_vertex_attr(.data, "name"))
+  } else .data
 }
 
 #' @export
@@ -403,7 +404,7 @@ to_unnamed.data.frame <- function(.data) {
   dplyr::as_tibble(out)
 }
 
-#' @describeIn reformat Returns an object that has random vertex names added
+#' @describeIn manip_reformat Returns an object that has random vertex names added
 #' @importFrom dplyr mutate
 #' @importFrom igraph vcount V
 #' @export
@@ -472,7 +473,7 @@ to_named.network <- function(.data, names = NULL) {
          }, FUN.VALUE = character(1))
 }
 
-#' @describeIn reformat Returns an object that has all loops or self-ties removed
+#' @describeIn manip_reformat Returns an object that has all loops or self-ties removed
 #' @importFrom igraph simplify
 #' @export
 to_simplex <- function(.data) UseMethod("to_simplex")
@@ -494,7 +495,7 @@ to_simplex.matrix <- function(.data) {
   out
 }
 
-#' @rdname reformat
+#' @rdname manip_reformat
 #' @importFrom igraph complementer
 #' @examples
 #' to_anti(ison_southern_women)
@@ -564,9 +565,9 @@ to_anti.network <- function(.data){
 #'   ```{r, echo = FALSE, cache = TRUE} 
 #'   knitr::kable(available_methods(c("to_onemode", "to_twomode", "to_multilevel")))
 #'   ```
-#' @name to_levels
+#' @name manip_levels
 #' @family modifications
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @returns
 #' All `to_` functions return an object of the same class as that provided. 
 #' So passing it an igraph object will return an igraph object
@@ -574,7 +575,7 @@ to_anti.network <- function(.data){
 #' with certain modifications as outlined for each function.
 NULL
 
-#' @rdname to_levels
+#' @rdname manip_levels
 #' @importFrom igraph delete_vertex_attr vertex_attr_names
 #' @export
 to_onemode <- function(.data) UseMethod("to_onemode")
@@ -601,7 +602,7 @@ to_onemode.igraph <- function(.data) {
   .data
 }
 
-#' @rdname to_levels
+#' @rdname manip_levels
 #' @param mark A logical vector marking two types or modes.
 #'   By default "type".
 #' @importFrom igraph V
@@ -624,7 +625,7 @@ to_twomode.network <- function(.data, mark){
   as_network(to_twomode(as_igraph(.data), mark), twomode = TRUE)
 }
 
-#' @rdname to_levels 
+#' @rdname manip_levels 
 #' @importFrom igraph V delete_vertex_attr
 #' @export
 to_multilevel <- function(.data) UseMethod("to_multilevel")

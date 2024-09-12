@@ -7,6 +7,7 @@
 \alias{tie_is_reciprocated}
 \alias{tie_is_feedback}
 \alias{tie_is_bridge}
+\alias{tie_is_path}
 \title{Marking ties based on structural properties}
 \usage{
 tie_is_multiple(.data)
@@ -18,6 +19,8 @@ tie_is_reciprocated(.data)
 tie_is_feedback(.data)
 
 tie_is_bridge(.data)
+
+tie_is_path(.data, from, to, all_paths = FALSE)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -28,6 +31,13 @@ tie_is_bridge(.data)
 \item network, from the \code{{network}} package
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
+
+\item{from}{The index or name of the node from which the path should be traced.}
+
+\item{to}{The index or name of the node to which the path should be traced.}
+
+\item{all_paths}{Whether to return a list of paths or sample just one.
+By default FALSE, sampling just a single path.}
 }
 \description{
 These functions return logical vectors the length of the ties
@@ -38,6 +48,7 @@ in a network identifying which hold certain properties or positions in the netwo
 \item \code{tie_is_reciprocated()} marks ties that are mutual/reciprocated.
 \item \code{tie_is_feedback()} marks ties that are feedback arcs causing the network to not be acyclic.
 \item \code{tie_is_bridge()} marks ties that cut or act as articulation points in a network.
+\item \code{tie_is_path()} marks ties on a path from one node to another.
 }
 
 They are most useful in highlighting parts of the network that
@@ -49,6 +60,8 @@ tie_is_loop(ison_marvel_relationships)
 tie_is_reciprocated(ison_algebra)
 tie_is_feedback(ison_algebra)
 tie_is_bridge(ison_brandes)
+ison_adolescents \%>\% mutate_ties(route = tie_is_path(from = "Jane", to = 7)) \%>\% 
+graphr(edge_colour = "route")
 }
 \seealso{
 Other marks: 

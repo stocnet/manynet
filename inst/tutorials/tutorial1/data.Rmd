@@ -148,6 +148,17 @@ library(manynet)
 ison_adolescents
 ```
 
+### Free play
+
+See whether you can call up other datasets now too.
+You won't need to load the `{manynet}` package again (it'll stay loaded),
+but identify a network that interests you from `table_data()` and then
+call/print it.
+
+```{r freecall, exercise = TRUE, purl=FALSE}
+
+```
+
 ## Describing networks
 
 ### Reading prints
@@ -291,7 +302,7 @@ _____
 
 ```{r netdata-solution}
 data(package = "network")
-data(flo)
+data(flo, package = "network")
 flo
 ```
 

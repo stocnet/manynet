@@ -25,12 +25,12 @@
 #'   first transform the salient properties using e.g. [to_undirected()] functions.
 #'   All centrality and centralization measures return normalized measures by default,
 #'   including for two-mode networks.
-#' @name degree_centrality
+#' @name measure_central_degree
 #' @family centrality
 #' @family measures
 #' @seealso [to_undirected()] for removing edge directions
 #'   and [to_unweighted()] for removing weights from a graph.
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @param normalized Logical scalar, whether the centrality scores are normalized.
 #'   Different denominators are used depending on whether the object is one-mode or two-mode,
 #'   the type of centrality, and other arguments.
@@ -85,7 +85,7 @@
 #' the function will return a `tidygraph` object where the nodes have been updated
 NULL
 
-#' @rdname degree_centrality 
+#' @rdname measure_central_degree 
 #' @importFrom manynet as_igraph
 #' @export
 node_degree <- function (.data, normalized = TRUE, alpha = 1,
@@ -122,6 +122,7 @@ node_degree <- function (.data, normalized = TRUE, alpha = 1,
                        mode = direction,
                        loops = manynet::is_complex(.data), weights = weights)
       out <- ki * (si/ki)^alpha
+      out[is.nan(out)] <- 0
       if(normalized) out <- out/max(out)
     }
   }
@@ -129,28 +130,28 @@ node_degree <- function (.data, normalized = TRUE, alpha = 1,
   out
 }
 
-#' @rdname degree_centrality
+#' @rdname measure_central_degree
 #' @export
 node_deg <- function (.data, alpha = 0, direction = c("all","out","in")){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   node_degree(.data, normalized = FALSE, alpha = alpha, direction = direction)
 }
 
-#' @rdname degree_centrality
+#' @rdname measure_central_degree
 #' @export
 node_outdegree <- function (.data, normalized = TRUE, alpha = 0){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   node_degree(.data, normalized = normalized, alpha = alpha, direction = "out")
 }
 
-#' @rdname degree_centrality
+#' @rdname measure_central_degree
 #' @export
 node_indegree <- function (.data, normalized = TRUE, alpha = 0){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   node_degree(.data, normalized = normalized, alpha = alpha, direction = "in")
 }
 
-#' @rdname degree_centrality
+#' @rdname measure_central_degree
 #' @param tie1 Character string indicating the first uniplex network.
 #' @param tie2 Character string indicating the second uniplex network.
 #' @export
@@ -162,7 +163,7 @@ node_multidegree <- function (.data, tie1, tie2){
   make_node_measure(out, .data)
 }
 
-#' @rdname degree_centrality
+#' @rdname measure_central_degree
 #' @references
 #' Everett, Martin G., and Stephen P. Borgatti. 2014. 
 #' “Networks Containing Negative Ties.” 
@@ -183,7 +184,7 @@ node_posneg <- function(.data){
   make_node_measure(out, .data)
 }
 
-#' @rdname degree_centrality
+#' @rdname measure_central_degree
 #' @examples 
 #' tie_degree(ison_adolescents)
 #' @export
@@ -196,7 +197,7 @@ tie_degree <- function(.data, normalized = TRUE){
   out
 }
 
-#' @rdname degree_centrality
+#' @rdname measure_central_degree
 #' @examples
 #' net_degree(ison_southern_women, direction = "in")
 #' @export
@@ -234,14 +235,14 @@ net_degree <- function(.data, normalized = TRUE,
   out
 }
 
-#' @rdname degree_centrality
+#' @rdname measure_central_degree
 #' @export
 net_outdegree <- function(.data, normalized = TRUE){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   net_degree(.data, normalized = normalized, direction = "out")
 }
 
-#' @rdname degree_centrality
+#' @rdname measure_central_degree
 #' @export
 net_indegree <- function(.data, normalized = TRUE){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
@@ -268,15 +269,15 @@ net_indegree <- function(.data, normalized = TRUE){
 #'   first transform the salient properties using e.g. [to_undirected()] functions.
 #'   All centrality and centralization measures return normalized measures by default,
 #'   including for two-mode networks.
-#' @name between_centrality
+#' @name measure_central_between
 #' @family centrality
 #' @family measures
-#' @inheritParams degree_centrality
+#' @inheritParams measure_central_degree
 #' @param cutoff The maximum path length to consider when calculating betweenness.
 #'   If negative or NULL (the default), there's no limit to the path lengths considered.
 NULL
 
-#' @rdname between_centrality
+#' @rdname measure_central_between
 #' @examples
 #' node_betweenness(ison_southern_women)
 #' @return A numeric vector giving the betweenness centrality measure of each node.
@@ -314,7 +315,7 @@ node_betweenness <- function(.data, normalized = TRUE,
   out
 }
 
-#' @rdname between_centrality 
+#' @rdname measure_central_between 
 #' @examples
 #' node_induced(ison_adolescents)
 #' @references
@@ -338,7 +339,7 @@ node_induced <- function(.data, normalized = TRUE,
 }
 
 
-#' @rdname between_centrality 
+#' @rdname measure_central_between 
 #' @export 
 node_flow <- function(.data, normalized = TRUE){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
@@ -350,7 +351,7 @@ node_flow <- function(.data, normalized = TRUE){
   make_node_measure(out, .data)
 }
 
-#' @rdname between_centrality
+#' @rdname measure_central_between
 #' @importFrom igraph edge_betweenness
 #' @examples
 #' (tb <- tie_betweenness(ison_adolescents))
@@ -369,7 +370,7 @@ tie_betweenness <- function(.data, normalized = TRUE){
   out
 }
 
-#' @rdname between_centrality
+#' @rdname measure_central_between
 #' @examples
 #' net_betweenness(ison_southern_women, direction = "in")
 #' @export
@@ -439,6 +440,7 @@ net_betweenness <- function(.data, normalized = TRUE,
 #'   which is thought to behave better than reach centrality for disconnected networks.
 #'   - `node_information()` measures nodes' information centrality or 
 #'   current-flow closeness centrality.
+#'   - `node_distance()` measures nodes' geodesic distance from or to a given node.
 #'   - `tie_closeness()` measures the closeness of each tie to other ties in the network.
 #'   - `net_closeness()` measures a network's closeness centralization.
 #'   - `net_reach()` measures a network's reach centralization.
@@ -450,13 +452,13 @@ net_betweenness <- function(.data, normalized = TRUE,
 #'   first transform the salient properties using e.g. [to_undirected()] functions.
 #'   All centrality and centralization measures return normalized measures by default,
 #'   including for two-mode networks.
-#' @name close_centrality
+#' @name measure_central_close
 #' @family centrality
 #' @family measures
-#' @inheritParams degree_centrality
+#' @inheritParams measure_central_degree
 NULL
 
-#' @rdname close_centrality
+#' @rdname measure_central_close
 #' @param cutoff Maximum path length to use during calculations.
 #' @examples
 #' node_closeness(ison_southern_women)
@@ -485,8 +487,8 @@ node_closeness <- function(.data, normalized = TRUE,
   out
 } 
 
-#' @rdname close_centrality 
-#' @param k Integer of steps out to calculate reach
+#' @rdname measure_central_close 
+#' @param k Integer of steps out to calculate reach.
 #' @examples
 #' node_reach(ison_adolescents)
 #' @export
@@ -503,7 +505,7 @@ node_reach <- function(.data, normalized = TRUE, k = 2){
   out
 }
 
-#' @rdname close_centrality 
+#' @rdname measure_central_close 
 #' @references
 #'   Marchiori, M, and V Latora. 2000. 
 #'   "Harmony in the small-world".
@@ -521,7 +523,7 @@ node_harmonic <- function(.data, normalized = TRUE, k = -1){
   out
 }
 
-#' @rdname close_centrality 
+#' @rdname measure_central_close 
 #' @export
 node_information <- function(.data, normalized = TRUE){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
@@ -532,7 +534,19 @@ node_information <- function(.data, normalized = TRUE){
   make_node_measure(out, .data)
 }
   
-#' @rdname close_centrality 
+#' @rdname measure_central_close 
+#' @param from,to Index or name of a node to calculate distances from or to.
+#' @export
+node_distance <- function(.data, from, to, normalized = TRUE){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(from) && missing(to)) cli::cli_abort("Either 'from' or 'to' must be specified.")
+  if(!missing(from)) out <- igraph::distances(as_igraph(.data), v = from) else 
+    if(!missing(to)) out <- igraph::distances(as_igraph(.data), to = to)
+  if(normalized) out <- out/max(out)
+  make_node_measure(out, .data)
+}
+
+#' @rdname measure_central_close 
 #' @examples
 #' (ec <- tie_closeness(ison_adolescents))
 #' plot(ec)
@@ -548,7 +562,7 @@ tie_closeness <- function(.data, normalized = TRUE){
   out
 }
 
-#' @rdname close_centrality 
+#' @rdname measure_central_close 
 #' @examples
 #' net_closeness(ison_southern_women, direction = "in")
 #' @export
@@ -613,7 +627,7 @@ net_closeness <- function(.data, normalized = TRUE,
   out
 }
 
-#' @rdname close_centrality 
+#' @rdname measure_central_close 
 #' @export
 net_reach <- function(.data, normalized = TRUE, k = 2){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
@@ -623,7 +637,7 @@ net_reach <- function(.data, normalized = TRUE, k = 2){
   make_network_measure(out, .data)
 }
 
-#' @rdname close_centrality
+#' @rdname measure_central_close
 #' @export
 net_harmonic <- function(.data, normalized = TRUE, k = 2){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
@@ -652,13 +666,13 @@ net_harmonic <- function(.data, normalized = TRUE, k = 2){
 #'   first transform the salient properties using e.g. [to_undirected()] functions.
 #'   All centrality and centralization measures return normalized measures by default,
 #'   including for two-mode networks.
-#' @name eigenv_centrality
+#' @name measure_central_eigen
 #' @family centrality
 #' @family measures
-#' @inheritParams degree_centrality
+#' @inheritParams measure_central_degree
 NULL
 
-#' @rdname eigenv_centrality
+#' @rdname measure_central_eigen
 #' @section Eigenvector centrality:
 #'   Eigenvector centrality operates as a measure of a node's influence in a network.
 #'   The idea is that being connected to well-connected others results in a higher score.
@@ -715,7 +729,7 @@ node_eigenvector <- function(.data, normalized = TRUE, scale = FALSE){
   out
 }
 
-#' @rdname eigenv_centrality
+#' @rdname measure_central_eigen
 #' @param exponent Decay rate for the Bonacich power centrality score.
 #' @section Power centrality:
 #'   Power or beta (or Bonacich) centrality 
@@ -758,7 +772,7 @@ node_power <- function(.data, normalized = TRUE, scale = FALSE, exponent = 1){
   out
 }
 
-#' @rdname eigenv_centrality 
+#' @rdname measure_central_eigen 
 #' @param alpha A constant that trades off the importance of external influence against the importance of connection.
 #'   When \eqn{\alpha = 0}, only the external influence matters.
 #'   As \eqn{\alpha} gets larger, only the connectivity matters and we reduce to eigenvector centrality.
@@ -799,7 +813,7 @@ node_alpha <- function(.data, alpha = 0.85){
                     .data)
 }
 
-#' @rdname eigenv_centrality 
+#' @rdname measure_central_eigen 
 #' @references 
 #'   Brin, Sergey and Page, Larry. 1998.
 #'   "The anatomy of a large-scale hypertextual web search engine".
@@ -811,7 +825,7 @@ node_pagerank <- function(.data){
                     .data)
 }
   
-#' @rdname eigenv_centrality
+#' @rdname measure_central_eigen
 #' @examples 
 #' tie_eigenvector(ison_adolescents)
 #' @export
@@ -824,7 +838,7 @@ tie_eigenvector <- function(.data, normalized = TRUE){
   out
 }
 
-#' @rdname eigenv_centrality 
+#' @rdname measure_central_eigen 
 #' @examples
 #' net_eigenvector(ison_southern_women)
 #' @export

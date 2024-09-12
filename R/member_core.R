@@ -5,7 +5,7 @@
 #'   - `node_is_core()` assigns nodes to either the core or periphery.
 #'   - `node_coreness()` assigns nodes to their level of k-coreness.
 #' 
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @param method Which method to use to identify cores and periphery.
 #'   By default this is "degree", 
 #'   which relies on the heuristic that high degree nodes are more likely to be in the core.
@@ -52,7 +52,7 @@ node_is_core <- function(.data, method = c("degree", "eigenvector")){
                         alpha = ifelse(is_weighted(.data), 1, 0))
   } else if (method == "eigenvector") {
     degi <- node_eigenvector(.data, normalized = FALSE)
-  } else stop("This function expects either 'degree' or 'eigenvector' method to be specified.")
+  } else cli::cli_abort("This function expects either 'degree' or 'eigenvector' method to be specified.")
   nord <- order(degi, decreasing = TRUE)
   zbest <- net_nodes(.data)*3
   kbest <- 0

@@ -4,17 +4,23 @@
 \alias{mark_triangles}
 \alias{tie_is_triangular}
 \alias{tie_is_transitive}
+\alias{tie_is_triplet}
 \alias{tie_is_cyclical}
 \alias{tie_is_simmelian}
+\alias{tie_is_forbidden}
 \title{Marking ties based on structural properties}
 \usage{
 tie_is_triangular(.data)
 
 tie_is_transitive(.data)
 
+tie_is_triplet(.data)
+
 tie_is_cyclical(.data)
 
 tie_is_simmelian(.data)
+
+tie_is_forbidden(.data)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -33,6 +39,7 @@ in a network identifying which hold certain properties or positions in the netwo
 \item \code{tie_is_triangular()} marks ties that are in triangles.
 \item \code{tie_is_cyclical()} marks ties that are in cycles.
 \item \code{tie_is_transitive()} marks ties that complete transitive closure.
+\item \code{tie_is_triplet()} marks ties that are in a transitive triplet.
 \item \code{tie_is_simmelian()} marks ties that are both in a triangle
 and fully reciprocated.
 }
@@ -41,16 +48,24 @@ They are most useful in highlighting parts of the network that
 are cohesively connected.
 }
 \examples{
-tie_is_triangular(ison_monastery_like)
+ison_monks \%>\% to_uniplex("like") \%>\% 
+  mutate_ties(tri = tie_is_triangular()) \%>\% 
+  graphr(edge_color = "tri")
 ison_adolescents \%>\% to_directed() \%>\% 
   mutate_ties(trans = tie_is_transitive()) \%>\% 
   graphr(edge_color = "trans")
 ison_adolescents \%>\% to_directed() \%>\% 
+  mutate_ties(trip = tie_is_triplet()) \%>\% 
+  graphr(edge_color = "trip")
+ison_adolescents \%>\% to_directed() \%>\% 
   mutate_ties(cyc = tie_is_cyclical()) \%>\% 
   graphr(edge_color = "cyc")
-ison_monastery_like \%>\% 
+ison_monks \%>\% to_uniplex("like") \%>\% 
   mutate_ties(simmel = tie_is_simmelian()) \%>\% 
   graphr(edge_color = "simmel")
+generate_random(8, directed = TRUE) \%>\% 
+  mutate_ties(forbid = tie_is_forbidden()) \%>\% 
+  graphr(edge_color = "forbid")
 }
 \seealso{
 Other marks: 

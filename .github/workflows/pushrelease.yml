@@ -35,11 +35,10 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           cache-version: 2
+          needs: check, build
           extra-packages: |
             any::rcmdcheck
-            any::covr
             any::remotes
-          needs: check
 
       - uses: r-lib/actions/check-r-package@v2
         env:
@@ -56,7 +55,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Save binary artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.config.asset_name }}
           path: build/
@@ -98,52 +97,37 @@ jobs:
           prerelease: false
 
       - name: Download binaries
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
 
       - name: Display structure of downloaded files
         run: ls -R
 
-      - name: Rename Mac release
-        run: mv ./macOS/*.tgz manynet_macOS.tgz
+      - name: Rename binaries release
+        shell: bash
+        run: |
+          ls -R
+          cp ./macOS/${{ env.PACKAGE_NAME }}_${{ env.PACKAGE_VERSION }}*.tgz .
+          cp ./linuxOS/${{ env.PACKAGE_NAME }}_${{ env.PACKAGE_VERSION }}*.tar.gz .
+          cp ./winOS/${{ env.PACKAGE_NAME }}_${{ env.PACKAGE_VERSION }}*.zip .
+          echo "Renamed files"
+          ls manynet_*
 
-      - name: Upload Mac binary
-        id: upload-mac
-        uses: actions/upload-release-asset@v1.0.2
+      - name: Create Release and Upload Assets
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.newtag.outputs.tag }}
+          name: Release ${{ steps.newtag.outputs.tag }}
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+          # Specify the assets you want to upload
+          files: |
+            manynet_*.tgz
+            manynet_*.tar.gz
+            manynet_*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: manynet_macOS.tgz
-          asset_name: manynet_macOS.tgz
-          asset_content_type: application/zip
-
-      - name: Rename Linux release
-        run: mv ./linuxOS/*.tar.gz manynet_linuxOS.tar.gz
-
-      - name: Upload Linux binary
-        id: upload-lin
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: manynet_linuxOS.tar.gz
-          asset_name: manynet_linuxOS.tar.gz
-          asset_content_type: application/zip
-
-      - name: Rename Windows release
-        run: mv ./winOS/*.zip manynet_winOS.zip
-
-      - name: Upload Windows binary
-        id: upload-win
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: manynet_winOS.zip
-          asset_name: manynet_winOS.zip
-          asset_content_type: application/zip
 
   pkgdown:
     name: Build and deploy website

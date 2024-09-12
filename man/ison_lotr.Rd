@@ -5,7 +5,7 @@
 \alias{ison_lotr}
 \title{One-mode network of Lord of the Rings character interactions}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, complex, undirected network with 36 nodes and 66 ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, complex, undirected network of 36 nodes and 66 ties 
 #> # A tibble: 36 x 2
 #>   name     Race  
 #>   <chr>    <chr> 

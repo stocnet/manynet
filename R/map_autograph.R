@@ -25,6 +25,7 @@
 #'   Lastly, `graphr()` uses `{ggplot2}`-related theme information, so
 #'   it is easy to make colour palette and fonts institution-specific and consistent.
 #'   See e.g. `theme_iheid()` for more.
+#' @name map_graphr
 #' @family mapping
 #' @param .data A manynet-consistent object.
 #' @param layout An igraph, ggraph, or manynet layout algorithm.
@@ -651,6 +652,7 @@ check_node_variables <- function(g, node_color, node_size) {
 #'   be based on the "first" or the "last" network, or "both".
 #' @param ... Additional arguments passed to `graphr()`.
 #' @return Multiple `ggplot2::ggplot()` objects displayed side-by-side.
+#' @name map_graphs
 #' @examples
 #' #graphs(to_egos(ison_adolescents))
 #' #graphs(to_egos(ison_adolescents), waves = 8)
@@ -695,6 +697,7 @@ graphs <- function(netlist, waves,
     gs <- lapply(1:length(netlist), function(i)
       graphr(netlist[[i]], x = x, y = y, ...) + ggtitle(names(netlist)[i]))
   } else {
+    thisRequires("methods")
     if (!methods::hasArg("layout") & is_ego_network(netlist)) {
       gs <- lapply(1:length(netlist), function(i)
         graphr(netlist[[i]], layout = "star", center = names(netlist)[[i]], ...) + 
@@ -741,13 +744,14 @@ order_alphabetically <- function(v) {
 #'   
 #'   A progress bar is shown if it takes some time to encoding all the
 #'   .png files into a .gif.
+#' @name map_grapht
 #' @family mapping
 #' @param tlist The same migraph-compatible network listed according to
 #'   a time attribute, waves, or slices.
 #' @param keep_isolates Logical, whether to keep isolate nodes in the graph.
 #'   TRUE by default.
 #'   If FALSE, removes nodes from each frame they are isolated in.
-#' @inheritParams graphr
+#' @inheritParams map_graphr
 #' @importFrom igraph gsize as_data_frame get.edgelist
 #' @importFrom ggplot2 ggplot geom_segment geom_point geom_text
 #' scale_alpha_manual theme_void
@@ -820,7 +824,7 @@ grapht <- function(tlist, keep_isolates = TRUE,
   if (inherits(tlist, "diff_model")) tlist <- to_waves(tlist)
   # Check if object is a list of lists
   if (!is.list(tlist[[1]])) {
-    stop("Please declare a migraph-compatible network listed according
+    cli::cli_abort("Please declare a migraph-compatible network listed according
          to a time attribute, waves, or slices.")
   }
   # Remove lists without edges
@@ -1021,7 +1025,7 @@ cart2pol <- function(xyz){
     m <- nrow(xyz)
     n <- ncol(xyz)
   }
-  else stop("Input must be a vector of length 3 or a matrix with 3 columns.")
+  else cli::cli_abort("Input must be a vector of length 3 or a matrix with 3 columns.")
   phi <- atan2(y, x)
   r <- hypot(x, y)
   if (n == 2) {
@@ -1048,7 +1052,7 @@ hypot <- function (x, y) {
     return(vector())
   if (!is.numeric(x) && !is.complex(x) || !is.numeric(y) && 
       !is.complex(y)) 
-    stop("Arguments 'x' and 'y' must be numeric or complex.")
+    cli::cli_abort("Arguments 'x' and 'y' must be numeric or complex.")
   if (length(x) == 1 && length(y) > 1) {
     x <- rep(x, length(y))
     dim(x) <- dim(y)
@@ -1060,7 +1064,7 @@ hypot <- function (x, y) {
   if ((is.vector(x) && is.vector(y) && length(x) != length(y)) || 
       (is.matrix(x) && is.matrix(y) && dim(x) != dim(y)) || 
       (is.vector(x) && is.matrix(y)) || is.matrix(x) && is.vector(y)) 
-    stop("Arguments 'x' and 'y' must be of the same size.")
+    cli::cli_abort("Arguments 'x' and 'y' must be of the same size.")
   x <- abs(x)
   y <- abs(y)
   m <- pmin(x, y)

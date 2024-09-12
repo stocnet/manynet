@@ -10,7 +10,7 @@
 #'   - `from_slices()` modifies a list of time slices of a network into 
 #'   a dynamic tidygraph.
 #'   - `from_ties()` modifies a list of different ties into a multiplex tidygraph
-#' @name from
+#' @name manip_from
 #' @family modifications
 #' @param netlist A list of network, igraph, tidygraph, matrix, or edgelist objects.
 #' @param netnames A character vector of names for the different network objects,
@@ -18,7 +18,7 @@
 #' @return A tidygraph object combining the list of network data.
 NULL
 
-#' @rdname from
+#' @rdname manip_from
 #' @importFrom igraph graph_from_data_frame as_data_frame set_vertex_attr
 #' @examples
 #' ison_adolescents %>%
@@ -28,7 +28,7 @@ NULL
 #' @export
 from_subgraphs <- function(netlist) {
   if (!is.list(netlist[1])) {
-    stop("Please declare a list of subgraphs. ")
+    cli::cli_abort("Please declare a list of subgraphs. ")
   }
   ann <- lapply(netlist, as_igraph)
   out <- ann[[1]]
@@ -43,7 +43,7 @@ from_subgraphs <- function(netlist) {
   as_tidygraph(out)
 }
 
-#' @rdname from
+#' @rdname manip_from
 #' @importFrom igraph graph_from_data_frame as_data_frame
 #' @importFrom dplyr distinct
 #' @examples
@@ -53,7 +53,7 @@ from_subgraphs <- function(netlist) {
 #' @export
 from_egos <- function(netlist) {
   if (!is.list(netlist[1])) {
-    stop("Please declare a list of egos.")
+    cli::cli_abort("Please declare a list of egos.")
   }
   ann <- lapply(netlist, as_igraph)
   out <- igraph::as_data_frame(ann[[1]])
@@ -63,7 +63,7 @@ from_egos <- function(netlist) {
   as_tidygraph(igraph::graph_from_data_frame(dplyr::distinct(out)))
 }
 
-#' @rdname from 
+#' @rdname manip_from 
 #' @importFrom igraph graph_from_data_frame as_data_frame
 #' @examples
 #' ison_adolescents %>%
@@ -73,7 +73,7 @@ from_egos <- function(netlist) {
 #' @export
 from_waves <- function(netlist) {
   if (!is.list(netlist[1])) {
-    stop("Please declare a list of waves.")
+    cli::cli_abort("Please declare a list of waves.")
   }
   ann <- lapply(netlist, as_igraph)
   out <- igraph::as_data_frame(ann[[1]])
@@ -83,7 +83,7 @@ from_waves <- function(netlist) {
   as_tidygraph(igraph::graph_from_data_frame(out))
 }
 
-#' @rdname from 
+#' @rdname manip_from 
 #' @param remove.duplicates Should duplicates be removed?
 #' By default FALSE.
 #' If TRUE, duplicated edges are removed.
@@ -112,14 +112,14 @@ from_slices <- function(netlist, remove.duplicates = FALSE) {
   }
 }
 
-#' @rdname from
+#' @rdname manip_from
 #' @export
 from_ties <- function(netlist, netnames){
   stopifnot(is_list(netlist))
   if(is.null(names(netlist))){
     if(!missing(netnames)){
       names(netlist) <- netnames
-    } else stop(paste("Please name the elements of the list of networks",
+    } else cli::cli_abort(paste("Please name the elements of the list of networks",
                       "or provide a vector of names for them."))
   }
   netlist <- lapply(seq_along(netlist), 

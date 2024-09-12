@@ -12,18 +12,12 @@
 #'    ```
 #' @name manip_split
 #' @family modifications
-#' @inheritParams reformat
+#' @inheritParams manip_scope
 #' @return The returned object will be a list of network objects.
 NULL
 
 #' @describeIn manip_split Returns a list of ego (or focal)
 #'   networks.
-#' @param max_dist The maximum breadth of the neighbourhood.
-#'   By default 1.
-#' @param min_dist The minimum breadth of the neighbourhood.
-#'   By default 0. 
-#'   Increasing this to 1 excludes the ego,
-#'   and 2 excludes ego's direct alters.
 #' @importFrom igraph make_ego_graph
 #' @examples
 #'   to_egos(ison_adolescents)
@@ -222,7 +216,7 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
                                 cumulative = FALSE) {
   if (!is.null(panels)) .data <- .data[.data[[attribute]] %in% panels,]
   if (length(unique(.data[["n"]])) > 1)
-    stop("Please make sure diffusion has the same number of nodes for all time points.")
+    cli::cli_abort("Please make sure diffusion has the same number of nodes for all time points.")
   net <- as_tidygraph(.data)
   diff <- .data
   out <- list()

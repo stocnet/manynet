@@ -3,7 +3,7 @@
 #' @description
 #'   These functions enable graphs to be easily and quickly themed, 
 #'   e.g. changing the default colour of the graph's vertices and edges.
-#' @name themes
+#' @name map_themes
 #' @param base_size Font size, by default 12.
 #' @param base_family Font family, by default "sans".
 #' @examples
@@ -15,7 +15,7 @@
 #'   theme_iheid()
 NULL
 
-#' @rdname themes
+#' @rdname map_themes
 #' @export
 theme_iheid <- function(base_size = 12, base_family = "serif") {
   colors <-  corp_palette("IHEID")
@@ -53,7 +53,7 @@ theme_iheid <- function(base_size = 12, base_family = "serif") {
       strip.background = ggplot2::element_rect()))
 }
 
-#' @rdname themes
+#' @rdname map_themes
 #' @export
 theme_ethz <- function(base_size = 12, base_family = "sans") {
   colors <-  corp_palette("ETHZ")
@@ -92,7 +92,7 @@ theme_ethz <- function(base_size = 12, base_family = "sans") {
       strip.background = ggplot2::element_rect()))
 }
 
-#' @rdname themes
+#' @rdname map_themes
 #' @export
 theme_uzh <- function(base_size = 12, base_family = "sans") {
   colors <-  corp_palette("UZH")
@@ -131,7 +131,7 @@ theme_uzh <- function(base_size = 12, base_family = "sans") {
       strip.background = ggplot2::element_rect()))
 }
 
-#' @rdname themes
+#' @rdname map_themes
 #' @export
 theme_rug <- function(base_size = 12, base_family = "mono") {
   colors <-  corp_palette("RUG")
@@ -173,7 +173,7 @@ theme_rug <- function(base_size = 12, base_family = "mono") {
 #' Many scales
 #' 
 #' @description These functions enable to add color scales to be graphs.
-#' @name scales
+#' @name map_scales
 #' @param direction Direction for using palette colors.
 #' @param ... Extra arguments passed to `ggplot2::discrete_scale()`.
 #' @examples
@@ -185,7 +185,7 @@ theme_rug <- function(base_size = 12, base_family = "mono") {
 #' #scale_edge_color_ethz()
 NULL
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_fill_iheid <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill",
@@ -193,7 +193,7 @@ scale_fill_iheid <- function(direction = 1, ...) {
                           na.value = "black", name = "", ...)
 }
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_colour_iheid <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour",
@@ -201,11 +201,11 @@ scale_colour_iheid <- function(direction = 1, ...) {
                           na.value = "black", name = "", ...)
 }
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_color_iheid <- scale_colour_iheid
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_edge_colour_iheid <- function(direction = 1, ...) {
   ggplot2::discrete_scale("edge_colour",
@@ -213,13 +213,13 @@ scale_edge_colour_iheid <- function(direction = 1, ...) {
                           na.value = "black", name = "", ...)
 }
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_edge_color_iheid <- scale_edge_colour_iheid
 
 #' Centres color scales
 #' 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_fill_centres <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill",
@@ -227,7 +227,7 @@ scale_fill_centres <- function(direction = 1, ...) {
                           na.value = "black", name = "", ...)
 }
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_colour_centres <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour",
@@ -235,11 +235,11 @@ scale_colour_centres <- function(direction = 1, ...) {
                           na.value = "black", name = "", ...)
 }
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_color_centres <- scale_colour_centres
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_edge_colour_centres <- function(direction = 1, ...) {
   ggplot2::discrete_scale("edge_colour",
@@ -247,13 +247,13 @@ scale_edge_colour_centres <- function(direction = 1, ...) {
                           na.value = "black", name = "", ...)
 }
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_edge_color_centres <- scale_edge_colour_centres
 
 #' SDGs color scales
 #' 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_fill_sdgs <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill",
@@ -261,7 +261,7 @@ scale_fill_sdgs <- function(direction = 1, ...) {
                           na.value = "black", name = "", ...)
 }
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_colour_sdgs <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour",
@@ -269,11 +269,11 @@ scale_colour_sdgs <- function(direction = 1, ...) {
                           na.value = "black", name = "", ...)
 }
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_color_sdgs <- scale_colour_sdgs
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_edge_colour_sdgs <- function(direction = 1, ...) {
   ggplot2::discrete_scale("edge_colour",
@@ -281,13 +281,13 @@ scale_edge_colour_sdgs <- function(direction = 1, ...) {
                           na.value = "black", name = "", ...)
 }
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_edge_color_sdgs <- scale_edge_colour_sdgs
 
 #' ETHZ color scales
 #' 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_fill_ethz <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill",
@@ -295,7 +295,7 @@ scale_fill_ethz <- function(direction = 1, ...) {
                           na.value = "black", name = "", ...)
 }
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_colour_ethz <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour",
@@ -303,11 +303,11 @@ scale_colour_ethz <- function(direction = 1, ...) {
                           na.value = "black", name = "", ...)
 }
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_color_ethz <- scale_colour_ethz
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_edge_colour_ethz <- function(direction = 1, ...) {
   ggplot2::discrete_scale("edge_colour",
@@ -315,13 +315,13 @@ scale_edge_colour_ethz <- function(direction = 1, ...) {
                           na.value = "black", name = "", ...)
 }
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_edge_color_ethz <- scale_edge_colour_ethz
 
 #' UZH color scales
 #' 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_fill_uzh <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill",
@@ -329,7 +329,7 @@ scale_fill_uzh <- function(direction = 1, ...) {
                           na.value = "black", name = "", ...)
 }
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_colour_uzh <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour",
@@ -337,11 +337,11 @@ scale_colour_uzh <- function(direction = 1, ...) {
                           na.value = "black", name = "", ...)
 }
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_color_uzh <- scale_colour_uzh
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_edge_colour_uzh <- function(direction = 1, ...) {
   ggplot2::discrete_scale("edge_colour",
@@ -349,13 +349,13 @@ scale_edge_colour_uzh <- function(direction = 1, ...) {
                           na.value = "black", name = "", ...)
 }
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_edge_color_uzh <- scale_edge_colour_uzh
 
 #' RUG color scales
 #' 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_fill_rug <- function(direction = 1, ...) {
   ggplot2::discrete_scale("fill",
@@ -363,7 +363,7 @@ scale_fill_rug <- function(direction = 1, ...) {
                           na.value = "grey", name = "", ...)
 }
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_colour_rug <- function(direction = 1, ...) {
   ggplot2::discrete_scale("colour",
@@ -371,11 +371,11 @@ scale_colour_rug <- function(direction = 1, ...) {
                           na.value = "grey", name = "", ...)
 }
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_color_rug <- scale_colour_rug
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_edge_colour_rug <- function(direction = 1, ...) {
   ggplot2::discrete_scale("edge_colour",
@@ -383,7 +383,7 @@ scale_edge_colour_rug <- function(direction = 1, ...) {
                           na.value = "black", name = "", ...)
 }
 
-#' @rdname scales
+#' @rdname map_scales
 #' @export
 scale_edge_color_rug <- scale_edge_colour_rug
 

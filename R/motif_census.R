@@ -18,7 +18,7 @@
 #'   
 #' @name motif_node
 #' @family motifs
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @importFrom igraph vcount make_ego_graph delete_vertices triad_census
 NULL
 
@@ -243,7 +243,7 @@ NULL
 net_by_dyad <- function(.data) {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if (manynet::is_twomode(.data)) {
-    stop("A twomode or multilevel option for a dyad census is not yet implemented.")
+    cli::cli_abort("A twomode or multilevel option for a dyad census is not yet implemented.")
   } else {
     out <- suppressWarnings(igraph::dyad_census(manynet::as_igraph(.data)))
     out <- unlist(out)
@@ -263,7 +263,7 @@ net_by_dyad <- function(.data) {
 net_by_triad <- function(.data) {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if (manynet::is_twomode(.data)) {
-    stop("A twomode or multilevel option for a triad census is not yet implemented.")
+    cli::cli_abort("A twomode or multilevel option for a triad census is not yet implemented.")
   } else {
     out <- suppressWarnings(igraph::triad_census(as_igraph(.data)))
     names(out) <- c("003", "012", "102", "021D",
@@ -289,11 +289,11 @@ net_by_triad <- function(.data) {
 net_by_mixed <- function (.data, object2) {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(manynet::is_twomode(.data))
-    stop("First object should be a one-mode network")
+    cli::cli_abort("First object should be a one-mode network")
   if(!manynet::is_twomode(object2))
-    stop("Second object should be a two-mode network")
+    cli::cli_abort("Second object should be a two-mode network")
   if(manynet::net_dims(.data)[1] != manynet::net_dims(object2)[1])
-    stop("Non-conformable arrays")
+    cli::cli_abort("Non-conformable arrays")
   m1 <- manynet::as_matrix(.data)
   m2 <- manynet::as_matrix(object2)
   cp <- function(m) (-m + 1)
@@ -463,7 +463,21 @@ node_brokering_exclusivity <- function(.data, membership){
   make_node_measure(out, .data)
 }
 
-#' @rdname motif_brokerage 
+#' Memberships of brokerage
+#' 
+#' @description
+#'   These functions include ways to take a census of the brokerage positions of nodes
+#'   in a network: 
+#'   
+#'   - `node_in_brokerage()` returns nodes membership as a powerhouse,
+#'   connector, linchpin, or sideliner according to Hamilton et al. (2020).
+#'   
+#' @name member_brokerage
+#' @family memberships
+#' @inheritParams motif_brokerage
+NULL
+
+#' @rdname member_brokerage 
 #' @export
 node_in_brokering <- function(.data, membership){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
@@ -506,7 +520,7 @@ node_in_brokering <- function(.data, membership){
 #' 
 #' @family motifs
 #' @inheritParams motif_node
-#' @inheritParams measure_net_diffusion
+#' @inheritParams measure_diffusion_net
 #' @name motif_diffusion
 #' 
 NULL

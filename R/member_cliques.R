@@ -28,7 +28,7 @@
 #'   It includes both weak and strong perturbations to an initial solution
 #'   to ensure that a robust solution from the broader state space is identified.
 #'   The user is referred to Lai and Hao (2016) and Lai et al (2021) for more details.
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @name member_cliques
 #' @family memberships
 NULL
@@ -59,7 +59,7 @@ NULL
 node_in_roulette <- function(.data, num_groups, group_size, times = NULL){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(missing(num_groups) & missing(group_size)){
-    stop(paste("Either `num_groups` must indicate number of groups desired",
+    cli::cli_abort(paste("Either `num_groups` must indicate number of groups desired",
                "or `group_size` must indicate the desired average size of groups."))
   }
   n <- manynet::net_nodes(.data)

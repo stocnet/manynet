@@ -5,7 +5,7 @@
 \alias{ison_friends}
 \title{One-mode Friends character connections (McNulty, 2020)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A longitudinal, labelled, weighted, directed network with 650 nodes and 3959 arcs
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A longitudinal, labelled, weighted, directed network of 650 nodes and 3959 arcs 
 #> # A tibble: 650 x 1
 #>   name        
 #>   <chr>       

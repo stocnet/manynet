@@ -5,7 +5,7 @@
 \alias{ison_usstates}
 \title{One-mode undirected network of US state contiguity (Meghanathan 2017)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, undirected network with 50 nodes and 107 ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, undirected network of 50 nodes and 107 ties 
 #> # A tibble: 50 x 3
 #>   name  capitol     population
 #>   <chr> <chr>            <int>

@@ -1,7 +1,7 @@
 Package: manynet
 Title: Many Ways to Make, Modify, Map, Mark, and Measure Myriad Networks
-Version: 1.0.5
-Date: 2024-08-29
+Version: 1.1.0
+Date: 2024-09-12
 Description: Many tools for making, modifying, mapping, marking, measuring, 
    and motifs and memberships of many different types of networks.
    All functions operate with matrices, edge lists, and 'igraph', 'network', and 'tidygraph' objects,
@@ -18,14 +18,14 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
 Imports:
+    cli,
     dplyr (>= 1.1.0),
     ggplot2,
     ggraph,
     igraph (>= 1.6.0),
     network,
     pillar,
-    tidygraph,
-    minMSE
+    tidygraph
 Suggests:
     BiocManager,
     concaveman,
@@ -36,19 +36,15 @@ Suggests:
     ggforce,
     gifski,
     graphlayouts,
-    grDevices,
     knitr,
     learnr,
     methods,
-    migraph,
     multiplex,
     netdiffuseR,
     oaqc,
     patchwork,
-    png,
     readxl,
     rmarkdown,
-    roxygen2,
     RSiena,
     sna,
     testthat (>= 3.0.0),
@@ -66,9 +62,21 @@ Authors@R:
       person(given = "Henrique",
              family = "Sposito",
              role = "ctb",
-             comment = c("IHEID", ORCID = "0000-0003-3420-6085"))
+             comment = c(ORCID = "0000-0003-3420-6085")),
+      person(given = "Christian",
+             family = "Steglich",
+             role = "ctb")
     )
+Config/Needs/build: 
+    roxygen2, 
+    devtools
 Roxygen: list(markdown = TRUE, roclets = c("namespace", "rd"))
+Config/Needs/check: 
+    covr,
+    lintr,
+    spelling
+Config/Needs/website:
+    pkgdown
 Config/testthat/parallel: true
 Config/testthat/edition: 3
 Config/testthat/start-first: mark_is 

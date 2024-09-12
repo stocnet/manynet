@@ -6,7 +6,7 @@
 \title{Six complex one-mode support data in Harry Potter books (Bossaert and Meidert 2013)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> $book1
-#> # A labelled, complex, directed network with 64 nodes and 47 arcs
+#> # A labelled, complex, directed network of 64 nodes and 47 arcs 
 #> # A tibble: 64 x 4
 #>   name              schoolyear gender house     
 #>   <chr>                  <int> <chr>  <chr>     
@@ -29,7 +29,7 @@
 #> # i 41 more rows
 #> 
 #> $book2
-#> # A labelled, complex, directed network with 64 nodes and 110 arcs
+#> # A labelled, complex, directed network of 64 nodes and 110 arcs 
 #> # A tibble: 64 x 4
 #>   name              schoolyear gender house     
 #>   <chr>                  <int> <chr>  <chr>     
@@ -52,7 +52,7 @@
 #> # i 104 more rows
 #> 
 #> $book3
-#> # A labelled, complex, directed network with 64 nodes and 104 arcs
+#> # A labelled, complex, directed network of 64 nodes and 104 arcs 
 #> # A tibble: 64 x 4
 #>   name              schoolyear gender house     
 #>   <chr>                  <int> <chr>  <chr>     
@@ -75,7 +75,7 @@
 #> # i 98 more rows
 #> 
 #> $book4
-#> # A labelled, complex, directed network with 64 nodes and 49 arcs
+#> # A labelled, complex, directed network of 64 nodes and 49 arcs 
 #> # A tibble: 64 x 4
 #>   name              schoolyear gender house     
 #>   <chr>                  <int> <chr>  <chr>     
@@ -98,7 +98,7 @@
 #> # i 43 more rows
 #> 
 #> $book5
-#> # A labelled, complex, directed network with 64 nodes and 160 arcs
+#> # A labelled, complex, directed network of 64 nodes and 160 arcs 
 #> # A tibble: 64 x 4
 #>   name              schoolyear gender house     
 #>   <chr>                  <int> <chr>  <chr>     
@@ -121,7 +121,7 @@
 #> # i 154 more rows
 #> 
 #> $book6
-#> # A labelled, complex, directed network with 64 nodes and 74 arcs
+#> # A labelled, complex, directed network of 64 nodes and 74 arcs 
 #> # A tibble: 64 x 4
 #>   name              schoolyear gender house     
 #>   <chr>                  <int> <chr>  <chr>     

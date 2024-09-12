@@ -27,7 +27,7 @@
 #'   - `net_stability()` measures the Jaccard index of stability between two or more networks.
 #' 
 #'   These `net_*()` functions return a single numeric scalar or value.
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @inheritParams make_create
 #' @param membership A vector of partition membership.
 #' @name measure_features
@@ -277,14 +277,14 @@ net_balance <- function(.data) {
   count_signed_triangles <- function(.data){
     g <- manynet::as_igraph(.data)
     if (!"sign" %in% igraph::edge_attr_names(g)) {
-      stop("network does not have a sign edge attribute")
+      cli::cli_abort("network does not have a sign edge attribute")
     }
     if (igraph::is_directed(g)) {
-      stop("g must be undirected")
+      cli::cli_abort("g must be undirected")
     }
     eattrV <- igraph::edge_attr(g, "sign")
     if (!all(eattrV %in% c(-1, 1))) {
-      stop("sign may only contain -1 and 1")
+      cli::cli_abort("sign may only contain -1 and 1")
     }
     tmat <- t(matrix(igraph::triangles(g), nrow = 3))
     if (nrow(tmat) == 0) {
@@ -316,15 +316,15 @@ net_balance <- function(.data) {
   }
   
   if (!manynet::is_signed(.data)) {
-    stop("network does not have a sign edge attribute")
+    cli::cli_abort("network does not have a sign edge attribute")
   }
   if (manynet::is_directed(.data)) {
-    stop("object must be undirected")
+    cli::cli_abort("object must be undirected")
   }
   g <- manynet::as_igraph(.data)
   eattrV <- igraph::edge_attr(g, "sign")
   if (!all(eattrV %in% c(-1, 1))) {
-    stop("sign may only contain -1 and 1")
+    cli::cli_abort("sign may only contain -1 and 1")
   }
   tria_count <- count_signed_triangles(g)
   make_network_measure(unname((tria_count["+++"] + tria_count["+--"])/sum(tria_count)),
@@ -343,7 +343,7 @@ net_balance <- function(.data) {
 #' 
 #'   These `net_*()` functions return a numeric vector the length of the number
 #'   of networks minus one. E.g., the periods between waves.
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @name measure_periods
 #' @family measures
 NULL
@@ -357,7 +357,7 @@ net_change <- function(.data, object2){
     
   } else if(!missing(object2)){
     .data <- list(.data, object2)
-  } else stop("`.data` must be a list of networks or a second network must be provided.")
+  } else cli::cli_abort("`.data` must be a list of networks or a second network must be provided.")
   periods <- length(.data)-1
   vapply(seq.int(periods), function(x){
     net1 <- manynet::as_matrix(.data[[x]])
@@ -374,7 +374,7 @@ net_stability <- function(.data, object2){
     
   } else if(!missing(object2)){
     .data <- list(.data, object2)
-  } else stop("`.data` must be a list of networks or a second network must be provided.")
+  } else cli::cli_abort("`.data` must be a list of networks or a second network must be provided.")
   periods <- length(.data)-1
   vapply(seq.int(periods), function(x){
     net1 <- manynet::as_matrix(.data[[x]])

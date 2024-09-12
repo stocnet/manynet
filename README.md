@@ -99,7 +99,7 @@ can browse through your file system to find the file. Usually both
 `read_*()` and `write_*()` are offered to make sure that `{manynet}` is
 compatible with your larger project and analytic workflow.
 
-- `read_dynetml()`, `read_edgelist()`, `read_graphml()`,
+- `read_cran()`, `read_dynetml()`, `read_edgelist()`, `read_graphml()`,
   `read_matrix()`, `read_nodelist()`, `read_pajek()`, `read_ucinet()`
 - `write_edgelist()`, `write_graphml()`, `write_matrix()`,
   `write_nodelist()`, `write_pajek()`, `write_ucinet()`
@@ -120,10 +120,8 @@ Here are some others: `ison_adolescents`, `ison_algebra`,
 `ison_brandes`, `ison_friends`, `ison_greys`, `ison_hightech`,
 `ison_karateka`, `ison_koenigsberg`, `ison_laterals`, `ison_lawfirm`,
 `ison_lotr`, `ison_marvel_relationships`, `ison_marvel_teams`,
-`ison_monastery_esteem`, `ison_monastery_influence`,
-`ison_monastery_like`, `ison_monastery_praise`, `ison_networkers`,
-`ison_physicians`, `ison_potter`, `ison_southern_women`,
-`ison_starwars`, `ison_usstates`
+`ison_monks`, `ison_networkers`, `ison_physicians`, `ison_potter`,
+`ison_southern_women`, `ison_starwars`, `ison_usstates`
 
 #### Inventing network data
 
@@ -134,9 +132,9 @@ e.g.:
 
 <img src="https://www.jameshollway.com/post/manynet/README-create_egs-1.png" alt="Graphs illustrating the creation of lattices and tree networks"/>
 
-See also `create_components()`, `create_core()`, `create_empty()`,
-`create_explicit()`, `create_filled()`, `create_lattice()`,
-`create_ring()`, `create_star()`, `create_tree()`.
+See also `create_components()`, `create_core()`, `create_degree()`,
+`create_empty()`, `create_explicit()`, `create_filled()`,
+`create_lattice()`, `create_ring()`, `create_star()`, `create_tree()`.
 
 The `generate_*` group of functions generate networks from generative
 mechanisms that may include some random aspect, and so will return a
@@ -144,9 +142,10 @@ different output each time they are run, e.g.:
 
 <img src="https://www.jameshollway.com/post/manynet/README-generate_egs-1.png" alt="Graphs of small-world and scale-free networks of 15 nodes"/>
 
-See also `generate_configuration()`, `generate_permutation()`,
-`generate_random()`, `generate_scalefree()`, `generate_smallworld()`,
-`generate_utilities()`.
+See also `generate_citations()`, `generate_configuration()`,
+`generate_fire()`, `generate_islands()`, `generate_man()`,
+`generate_permutation()`, `generate_random()`, `generate_scalefree()`,
+`generate_smallworld()`, `generate_utilities()`.
 
 Note that all these functions can create directed or undirected,
 one-mode or two-mode networks. Creating two-mode networks is as easy as
@@ -228,15 +227,15 @@ plural. Split data can be rejoined using the `from_*()` family of
 functions.
 
 See also `to_acyclic()`, `to_anti()`, `to_blocks()`, `to_components()`,
-`to_correlation()`, `to_directed()`, `to_egos()`, `to_eulerian()`,
-`to_galois()`, `to_giant()`, `to_matching()`, `to_mentoring()`,
-`to_mode1()`, `to_mode2()`, `to_multilevel()`, `to_named()`,
-`to_no_isolates()`, `to_onemode()`, `to_reciprocated()`,
-`to_redirected()`, `to_simplex()`, `to_slices()`, `to_subgraph()`,
-`to_subgraphs()`, `to_ties()`, `to_tree()`, `to_twomode()`,
-`to_undirected()`, `to_uniplex()`, `to_unnamed()`, `to_unsigned()`,
-`to_unweighted()`, `to_waves()` and `from_egos()`, `from_slices()`,
-`from_subgraphs()`, `from_ties()`, `from_waves()`.
+`to_correlation()`, `to_directed()`, `to_ego()`, `to_egos()`,
+`to_eulerian()`, `to_galois()`, `to_giant()`, `to_matching()`,
+`to_mentoring()`, `to_mode1()`, `to_mode2()`, `to_multilevel()`,
+`to_named()`, `to_no_isolates()`, `to_onemode()`, `to_permuted()`,
+`to_reciprocated()`, `to_redirected()`, `to_simplex()`, `to_slices()`,
+`to_subgraph()`, `to_subgraphs()`, `to_ties()`, `to_tree()`,
+`to_twomode()`, `to_undirected()`, `to_uniplex()`, `to_unnamed()`,
+`to_unsigned()`, `to_unweighted()`, `to_waves()` and `from_egos()`,
+`from_slices()`, `from_subgraphs()`, `from_ties()`, `from_waves()`.
 
 ## Mapping
 
@@ -339,16 +338,18 @@ length of the number of ties in the network.
   `is_connected()`, `is_directed()`, `is_dynamic()`, `is_edgelist()`,
   `is_eulerian()`, `is_graph()`, `is_igraph()`, `is_labelled()`,
   `is_list()`, `is_longitudinal()`, `is_manynet()`, `is_multiplex()`,
-  `is_perfect_matching()`, `is_signed()`, `is_twomode()`,
-  `is_uniplex()`, `is_weighted()`
+  `is_perfect_matching()`, `is_signed()`, `is_tidygraph()`,
+  `is_twomode()`, `is_uniplex()`, `is_weighted()`
 - `node_is_core()`, `node_is_cutpoint()`, `node_is_exposed()`,
   `node_is_fold()`, `node_is_independent()`, `node_is_infected()`,
   `node_is_isolate()`, `node_is_latent()`, `node_is_max()`,
   `node_is_mentor()`, `node_is_min()`, `node_is_mode()`,
   `node_is_random()`, `node_is_recovered()`
-- `tie_is_bridge()`, `tie_is_feedback()`, `tie_is_loop()`,
-  `tie_is_max()`, `tie_is_min()`, `tie_is_multiple()`,
-  `tie_is_random()`, `tie_is_reciprocated()`
+- `tie_is_bridge()`, `tie_is_cyclical()`, `tie_is_feedback()`,
+  `tie_is_forbidden()`, `tie_is_loop()`, `tie_is_max()`, `tie_is_min()`,
+  `tie_is_multiple()`, `tie_is_path()`, `tie_is_random()`,
+  `tie_is_reciprocated()`, `tie_is_simmelian()`, `tie_is_transitive()`,
+  `tie_is_triangular()`, `tie_is_triplet()`
 
 The `*is_max()` and `*is_min()` functions are used to identify the
 maximum or minimum, respectively, node or tie according to some measure
@@ -441,10 +442,10 @@ run_tute()
 #> 2 manynet tutorial1 Data                    
 #> 3 manynet tutorial2 Visualisation           
 #> 4 manynet tutorial3 Centrality              
-#> 5 manynet tutorial4 Community               
-#> 6 manynet tutorial5 Position                
-#> 7 manynet tutorial6 Topology                
-#> 8 manynet tutorial7 Diffusion               
+#> 5 manynet tutorial4 Cohesion and Community  
+#> 6 manynet tutorial5 Position and Equivalence
+#> 7 manynet tutorial6 Topology and Resilience 
+#> 8 manynet tutorial7 Diffusion and Learning  
 #> 9 migraph tutorial8 Diversity and Regression
 # run_tute("tutorial1")
 ```

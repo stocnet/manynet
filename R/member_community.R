@@ -24,7 +24,7 @@
 #'   availability on different types of networks, ability to maximise modularity,
 #'   and their logic or domain of inspiration.
 #'   
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @name member_community_non
 #' @family memberships
 NULL

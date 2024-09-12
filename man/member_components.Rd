@@ -53,11 +53,14 @@ a node's coreness is \emph{k} if it belongs to the \emph{k}-core
 but not to the (\emph{k}+1)-core.
 }
 \examples{
-node_in_component(ison_monastery_esteem)
+ison_monks \%>\% to_uniplex("esteem") \%>\% 
+  mutate_nodes(comp = node_in_component()) \%>\% 
+  graphr(node_color = "comp")
 }
 \seealso{
 Other memberships: 
 \code{\link{mark_core}},
+\code{\link{member_brokerage}},
 \code{\link{member_cliques}},
 \code{\link{member_community_hier}},
 \code{\link{member_community_non}},

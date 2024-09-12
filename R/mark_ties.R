@@ -11,6 +11,7 @@
 #'   - `tie_is_reciprocated()` marks ties that are mutual/reciprocated.
 #'   - `tie_is_feedback()` marks ties that are feedback arcs causing the network to not be acyclic.
 #'   - `tie_is_bridge()` marks ties that cut or act as articulation points in a network.
+#'   - `tie_is_path()` marks ties on a path from one node to another.
 #'   
 #'   They are most useful in highlighting parts of the network that
 #'   are particularly well- or poorly-connected.
@@ -77,6 +78,26 @@ tie_is_bridge <- function(.data){
   make_tie_mark(out, .data)
 }
 
+#' @rdname mark_ties
+#' @param from The index or name of the node from which the path should be traced.
+#' @param to The index or name of the node to which the path should be traced.
+#' @param all_paths Whether to return a list of paths or sample just one.
+#'   By default FALSE, sampling just a single path.
+#' @importFrom igraph all_shortest_paths
+#' @examples 
+#' ison_adolescents %>% mutate_ties(route = tie_is_path(from = "Jane", to = 7)) %>% 
+#' graphr(edge_colour = "route")
+#' @export
+tie_is_path <- function(.data, from, to, all_paths = FALSE){
+  if(missing(.data)) {expect_edges(); .data <- .G()}
+  out <- igraph::all_shortest_paths(.data, from = from, to = to,
+                                     mode = "out")$epath
+  if(all_paths){
+    out <- igraph::E(.data) %in% unique(unlist(out))
+  } else out <- igraph::E(.data) %in% out[[sample(length(out),1)]]
+  make_tie_mark(out, .data)
+}
+
 # Triangular properties ####
 
 #' Marking ties based on structural properties
@@ -88,6 +109,7 @@ tie_is_bridge <- function(.data){
 #'   - `tie_is_triangular()` marks ties that are in triangles.
 #'   - `tie_is_cyclical()` marks ties that are in cycles.
 #'   - `tie_is_transitive()` marks ties that complete transitive closure.
+#'   - `tie_is_triplet()` marks ties that are in a transitive triplet.
 #'   - `tie_is_simmelian()` marks ties that are both in a triangle 
 #'   and fully reciprocated.
 #'   
@@ -101,7 +123,9 @@ NULL
 #' @rdname mark_triangles
 #' @importFrom igraph triangles
 #' @examples 
-#' tie_is_triangular(ison_monastery_like)
+#' ison_monks %>% to_uniplex("like") %>% 
+#'   mutate_ties(tri = tie_is_triangular()) %>% 
+#'   graphr(edge_color = "tri")
 #' @export
 tie_is_triangular <- function(.data){
   if(missing(.data)) {expect_edges(); .data <- .G()}
@@ -127,13 +151,35 @@ tie_is_triangular <- function(.data){
 #' @export
 tie_is_transitive <- function(.data){
   if(missing(.data)) {expect_edges(); .data <- .G()}
+  nodes <- as_edgelist(to_unnamed(.data))
   out <- vapply(seq_len(net_ties(.data)), function(x){
-    nodes <- as_edgelist(to_unnamed(.data))[x,]
     igraph::distances(delete_ties(.data, x), 
-                      v = nodes[1], to = nodes[2], 
+                      v = nodes[x,1], to = nodes[x,2], 
                       mode = "out") == 2
   }, FUN.VALUE = logical(1))
   make_tie_mark(out, .data)
+}
+
+#' @rdname mark_triangles
+#' @examples 
+#' ison_adolescents %>% to_directed() %>% 
+#'   mutate_ties(trip = tie_is_triplet()) %>% 
+#'   graphr(edge_color = "trip")
+#' @export
+tie_is_triplet <- function(.data){
+  if(missing(.data)) {expect_edges(); .data <- .G()}
+  nodes <- as_edgelist(to_unnamed(.data))
+  trans <- tie_is_transitive(.data)
+  altpath <- unlist(lapply(which(trans), function(x){
+    tie_is_path(delete_ties(.data, x),
+                      from = nodes[x,1], to = nodes[x,2],
+                      all_paths = TRUE)
+  }))
+  if(!is.null(names(altpath)))
+    names(altpath) <- gsub("^.*\\.", "", names(altpath))
+  altpath <- altpath[altpath]
+  trans[names(trans) %in% names(altpath)] <- TRUE
+  make_tie_mark(trans, .data)
 }
 
 #' @rdname mark_triangles
@@ -155,7 +201,7 @@ tie_is_cyclical <- function(.data){
 
 #' @rdname mark_triangles
 #' @examples 
-#' ison_monastery_like %>% 
+#' ison_monks %>% to_uniplex("like") %>% 
 #'   mutate_ties(simmel = tie_is_simmelian()) %>% 
 #'   graphr(edge_color = "simmel")
 #' @export
@@ -166,6 +212,38 @@ tie_is_simmelian <- function(.data){
   ties <- as_edgelist(to_unnamed(.data))[,c("from","to")]
   simmel <- as_edgelist(to_unnamed(simmel))[,c("from","to")]
   out <- do.call(paste, ties) %in% do.call(paste, simmel)
+  make_tie_mark(out, .data)
+}
+
+#' @rdname mark_triangles
+#' @examples 
+#' generate_random(8, directed = TRUE) %>% 
+#'   mutate_ties(forbid = tie_is_forbidden()) %>% 
+#'   graphr(edge_color = "forbid")
+#' @export
+tie_is_forbidden <- function(.data){
+  if(missing(.data)) {expect_edges(); .data <- .G()}
+  dists <- igraph::distances(.data, mode = "out")==2
+  ends <- which(dists * t(dists)==1, arr.ind = TRUE)
+  ends <- t(apply(ends, 1, function(x) sort(x)))
+  ends <- ends[!duplicated(ends),]
+  tris <- apply(ends, 1, function(x){
+    y <- unlist(igraph::all_shortest_paths(.data, x[1], x[2], mode = "out")$res)
+    y <- matrix(y, ncol = 3, byrow = TRUE)
+    y <- do.call("paste", c(as.data.frame(y)[, , drop = FALSE], sep = "-"))
+    z <- unlist(igraph::all_shortest_paths(.data, x[1], x[2], mode = "in")$res)
+    z <- matrix(z, ncol = 3, byrow = TRUE)
+    z <- do.call("paste", c(as.data.frame(z)[, , drop = FALSE], sep = "-"))
+    as.numeric(unlist(strsplit(y[y %in% z], "-")))
+  })
+  out <- matrix(unlist(tris), ncol = 3, byrow = TRUE)
+  out <- unique(c(apply(out, 1, function(x){
+    c(paste0(x[1],"->",x[2]),
+    paste0(x[2],"->",x[1]),
+    paste0(x[2],"->",x[3]),
+    paste0(x[3],"->",x[2]))
+  } )))
+  out <- names(tie_is_reciprocated(.data)) %in% out
   make_tie_mark(out, .data)
 }
 

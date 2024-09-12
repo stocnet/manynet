@@ -20,10 +20,10 @@
 #'   
 #' @param diff_model A valid network diffusion model,
 #'   as created by `as_diffusion()` or `play_diffusion()`.
-#' @inheritParams degree_centrality
+#' @inheritParams measure_central_degree
 #' @family measures
 #' @family diffusion
-#' @name measure_net_diffusion
+#' @name measure_diffusion_net
 #' @examples
 #'   smeg <- generate_smallworld(15, 0.025)
 #'   smeg_diff <- play_diffusion(smeg, recovery = 0.2)
@@ -33,7 +33,7 @@
 #'   _Proc. R. Soc. London A_ 115: 700-721.
 NULL
 
-#' @rdname measure_net_diffusion 
+#' @rdname measure_diffusion_net 
 #' @section Transmissibility: 
 #'   `net_transmissibility()` measures how many directly susceptible nodes
 #'   each infected node will infect in each time period, on average.
@@ -59,7 +59,7 @@ net_transmissibility <- function(diff_model){
                        attr(diff_model, "network"))
 }
 
-#' @rdname measure_net_diffusion 
+#' @rdname measure_diffusion_net 
 #' @param censor Where some nodes have not yet recovered by the end
 #'   of the simulation, right censored values can be replaced by the number of steps. 
 #'   By default TRUE.
@@ -84,7 +84,7 @@ net_recovery <- function(diff_model, censor = TRUE){
                        attr(diff_model, "network"))
 }
 
-#' @rdname measure_net_diffusion 
+#' @rdname measure_diffusion_net 
 #' @section Reproduction number: 
 #'   `net_reproduction()` measures a given diffusion's reproductive number.
 #'   Here it is calculated as:
@@ -118,7 +118,7 @@ net_reproduction <- function(diff_model){
   make_network_measure(out, net)
 }
 
-#' @rdname measure_net_diffusion 
+#' @rdname measure_diffusion_net 
 #' @section Herd immunity: 
 #'   `net_immunity()` estimates the proportion of a network
 #'   that need to be protected from infection for herd immunity
@@ -154,7 +154,7 @@ net_immunity <- function(diff_model, normalized = TRUE){
   make_network_measure(out, net)
 }
 
-#' @rdname measure_net_diffusion
+#' @rdname measure_diffusion_net
 #' @section Hazard rate: 
 #' The hazard rate is the instantaneous probability of adoption/infection at each time point (Allison 1984).
 #' In survival analysis, hazard rate is formally defined as:
@@ -231,12 +231,12 @@ net_hazard <- function(diff_model){
 #'   - `net_infection_peak()` measures the number of time steps until the
 #'   highest infection rate is observed.
 #'   
-#' @inheritParams measure_net_diffusion
+#' @inheritParams measure_diffusion_net
 #' @family measures
 #' @family diffusion
-#' @name measure_infection
+#' @name measure_diffusion_infection
 
-#' @rdname measure_infection 
+#' @rdname measure_diffusion_infection 
 #' @examples
 #'   smeg <- generate_smallworld(15, 0.025)
 #'   smeg_diff <- play_diffusion(smeg, recovery = 0.2)
@@ -249,7 +249,7 @@ net_infection_complete <- function(diff_model){
   make_network_measure(out, attr(diff_model, "network"))
 }
 
-#' @rdname measure_infection 
+#' @rdname measure_diffusion_infection 
 #' @examples
 #'   net_infection_total(smeg_diff)
 #' @export
@@ -260,7 +260,7 @@ net_infection_total <- function(diff_model, normalized = TRUE){
   make_network_measure(out, attr(diff_model, "network"))
 }
 
-#' @rdname measure_infection 
+#' @rdname measure_diffusion_infection 
 #' @examples
 #'   net_infection_peak(smeg_diff)
 #' @export
@@ -286,11 +286,11 @@ net_infection_peak <- function(diff_model){
 #'   - `node_exposure()`: Measures how many exposures nodes have to 
 #'   a given mark
 #'   
-#' @inheritParams is
-#' @inheritParams measure_net_diffusion
+#' @inheritParams mark_is
+#' @inheritParams measure_diffusion_net
 #' @family measures
 #' @family diffusion
-#' @name measure_node_diffusion
+#' @name measure_diffusion_node
 #' @examples
 #'   smeg <- generate_smallworld(15, 0.025)
 #'   smeg_diff <- play_diffusion(smeg, recovery = 0.2)
@@ -300,7 +300,7 @@ net_infection_peak <- function(diff_model){
 #'   (2nd ed.). Cresskill N.J.: Hampton Press.
 NULL
 
-#' @rdname measure_node_diffusion 
+#' @rdname measure_diffusion_node 
 #' @section Adoption time: 
 #'   `node_adoption_time()` measures the time units it took 
 #'   until each node became infected.
@@ -332,7 +332,7 @@ node_adoption_time <- function(diff_model){
   make_node_measure(out, net)
 }
 
-#' @rdname measure_node_diffusion 
+#' @rdname measure_diffusion_node 
 #' @param lag The number of time steps back upon which the thresholds are
 #'   inferred.
 #' @section Thresholds:
@@ -392,7 +392,7 @@ node_thresholds <- function(diff_model, normalized = TRUE, lag = 1){
   make_node_measure(out, net)
 }
 
-#' @rdname measure_node_diffusion 
+#' @rdname measure_diffusion_node 
 #' @section Infection length:
 #'   `node_infection_length()` measures the average length of time that nodes 
 #'   that become infected remain infected in a compartmental model with recovery.
@@ -416,7 +416,7 @@ node_recovery <- function(diff_model){
   make_node_measure(out, attr(diff_model, "network"))
 }
 
-#' @rdname measure_node_diffusion
+#' @rdname measure_diffusion_node
 #' @param mark A valid 'node_mark' object or
 #'   logical vector (TRUE/FALSE) of length equal to 
 #'   the number of nodes in the network.
@@ -498,8 +498,8 @@ node_exposure <- function(.data, mark, time = 0){
 #'   - _Non-adopter_: those without an adoption time,
 #'   i.e. never adopted
 #'   
-#' @inheritParams is
-#' @inheritParams measure_net_diffusion
+#' @inheritParams mark_is
+#' @inheritParams measure_diffusion_net
 #' @family measures
 #' @family diffusion
 #' @name member_diffusion

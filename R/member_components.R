@@ -27,7 +27,7 @@
 #'   As described in `igraph::coreness`,
 #'   a node's coreness is _k_ if it belongs to the _k_-core
 #'   but not to the (_k_+1)-core.
-#' @inheritParams is
+#' @inheritParams mark_is
 #' @name member_components
 #' @family memberships
 NULL
@@ -35,7 +35,9 @@ NULL
 #' @rdname member_components 
 #' @importFrom igraph components
 #' @examples 
-#' node_in_component(ison_monastery_esteem)
+#' ison_monks %>% to_uniplex("esteem") %>% 
+#'   mutate_nodes(comp = node_in_component()) %>% 
+#'   graphr(node_color = "comp")
 #' @export
 node_in_component <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}

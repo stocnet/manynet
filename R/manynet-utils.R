@@ -1,3 +1,6 @@
+# defining global variables more centrally
+utils::globalVariables(c(".data", "obs", "from", "to", "name"))
+
 # Helper function for declaring available methods
 available_methods <- function(fun_vctr) {
   out <- lapply(fun_vctr, function(f) regmatches(utils::.S3methods(f),
@@ -18,7 +21,7 @@ thisRequires <- function(pkgname){
                                    "package is required to run this function. Would you like to install", pkgname, "from CRAN?"))) {
       utils::install.packages(pkgname)
     } else {
-      stop(paste("Please install", pkgname, "from CRAN to run this function."))
+      cli::cli_abort(paste("Please install", pkgname, "from CRAN to run this function."))
     }
   }
 }

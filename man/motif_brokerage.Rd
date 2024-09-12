@@ -6,7 +6,6 @@
 \alias{net_by_brokerage}
 \alias{node_brokering_activity}
 \alias{node_brokering_exclusivity}
-\alias{node_in_brokering}
 \title{Motifs of brokerage}
 \usage{
 node_by_brokerage(.data, membership, standardized = FALSE)
@@ -16,8 +15,6 @@ net_by_brokerage(.data, membership, standardized = FALSE)
 node_brokering_activity(.data, membership)
 
 node_brokering_exclusivity(.data, membership)
-
-node_in_brokering(.data, membership)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:

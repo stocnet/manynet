@@ -24,30 +24,36 @@ NULL
 #' @export
 run_tute <- function(tute) {
   thisRequires("learnr")
+  stocnet <- c("manynet", "migraph")
+  avail_pkgs <- stocnet[suppressWarnings(unlist(lapply(stocnet, function(x) nzchar(system.file(package = x)))))]
   if (missing(tute)) {
-    name <- NULL
-    t1 <- dplyr::as_tibble(learnr::available_tutorials(package = "manynet"),
-                           silent = TRUE) %>% dplyr::select(1:3)
-    t2 <- dplyr::as_tibble(learnr::available_tutorials(package = "migraph"),
-                           silent = TRUE) %>% dplyr::select(1:3)
-    rbind(t1, t2) %>% dplyr::arrange(name) 
+    tutelist <- lapply(cli::cli_progress_along(avail_pkgs, 
+                                               name = "Checking tutorials in stocnet packages"), function(p){
+      dplyr::as_tibble(learnr::available_tutorials(package = avail_pkgs[p]),
+                       silent = TRUE) %>% dplyr::select(1:3)
+    })
+    dplyr::bind_rows(tutelist) %>% dplyr::arrange(name) %>% print()
+    cli::cli_alert_info(paste(cli::col_grey("You can run one of these tutorials by typing e.g"), 
+                              "`run_tute('tutorial1')`", cli::col_grey("or"), "`run_tute('Data')`", 
+                              cli::col_grey("into the console.")))
   } else {
     try(learnr::run_tutorial(tute, "manynet"), silent = TRUE)
     try(learnr::run_tutorial(tute, "migraph"), silent = TRUE)
-    cat("Didn't find a direct match, so looking for close matches...")
-    t1 <- dplyr::as_tibble(learnr::available_tutorials(package = "manynet"),
-                           silent = TRUE) %>% dplyr::select(1:3)
-    t2 <- dplyr::as_tibble(learnr::available_tutorials(package = "migraph"),
-                           silent = TRUE) %>% dplyr::select(1:3)
-    avails <- rbind(t1, t2)
+    cli::cli_alert_info("Didn't find a direct match, so looking for close matches...")
+    tutelist <- lapply(cli::cli_progress_along(avail_pkgs, 
+                                               name = "Checking tutorials in stocnet packages"), function(p){
+      dplyr::as_tibble(learnr::available_tutorials(package = avail_pkgs[p]),
+                       silent = TRUE) %>% dplyr::select(1:3)
+    })
+    avails <- dplyr::bind_rows(tutelist)
     inftit <- grepl(tute, avails$title, ignore.case = TRUE)
     if(!any(inftit) | sum(inftit)>1)
       inftit <- which.min(utils::adist(tute, avails$title, ignore.case = TRUE))
     if(any(inftit) & sum(inftit)==1){
-      cat(" and found one!")
+      cli::cli_alert_success("And found one!")
       try(learnr::run_tutorial(avails$name[inftit], avails$package[inftit]), silent = TRUE)
     } else{
-      cat(" and couldn't find which one you meant. Please specify one of these titles:\n")
+      cli::cli_alert_warning("...and couldn't find which one you meant. Please specify one of these titles:\n")
       print(avails)
     }
   }
@@ -60,11 +66,16 @@ run_tute <- function(tute) {
 extract_tute <- function(tute) {
   if (missing(tute)) {
     thisRequires("learnr")
-    t1 <- dplyr::as_tibble(learnr::available_tutorials(package = "manynet"),
-                           silent = TRUE) %>% dplyr::select(1:3)
-    t2 <- dplyr::as_tibble(learnr::available_tutorials(package = "migraph"),
-                           silent = TRUE) %>% dplyr::select(1:3)
-    rbind(t1, t2)
+    stocnet <- c("manynet", "migraph")
+    avail_pkgs <- stocnet[suppressWarnings(unlist(lapply(stocnet, function(x) nzchar(system.file(package = x)))))]
+    tutelist <- lapply(cli::cli_progress_along(avail_pkgs, 
+                                               name = "Checking tutorials in stocnet packages"), function(p){
+                                                 dplyr::as_tibble(learnr::available_tutorials(package = avail_pkgs[p]),
+                                                                  silent = TRUE) %>% dplyr::select(1:3)
+                                               })
+    dplyr::bind_rows(tutelist) %>% dplyr::arrange(name) %>% print()
+    cli::cli_alert_info(paste(cli::col_grey("You can extract the code from one of these tutorials by typing e.g"), 
+                              "`extract_tute('tutorial1')`", cli::col_grey("into the console.")))
   } else {
     thisRequires("knitr")
     pth <- file.path(path.package("manynet"), "tutorials", tute)
