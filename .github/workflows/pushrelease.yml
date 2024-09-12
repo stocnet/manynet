@@ -113,7 +113,7 @@ jobs:
           ls manynet_*
 
       - name: Create Release and Upload Assets
-        id: create_release
+        id: upload_release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.newtag.outputs.tag }}
