@@ -6,7 +6,6 @@
 \alias{is_igraph}
 \alias{\%>\%}
 \alias{with_graph}
-\alias{is.tbl_graph}
 \alias{.G}
 \alias{.N}
 \alias{.E}
@@ -32,6 +31,6 @@ below to see their documentation.
 
   \item{igraph}{\code{\link[igraph]{is_igraph}}}
 
-  \item{tidygraph}{\code{\link[tidygraph:context_accessors]{.E}}, \code{\link[tidygraph:context_accessors]{.G}}, \code{\link[tidygraph:context_accessors]{.N}}, \code{\link[tidygraph:tbl_graph]{is.tbl_graph}}, \code{\link[tidygraph]{with_graph}}}
+  \item{tidygraph}{\code{\link[tidygraph:context_accessors]{.E}}, \code{\link[tidygraph:context_accessors]{.G}}, \code{\link[tidygraph:context_accessors]{.N}}, \code{\link[tidygraph]{with_graph}}}
 }}
 
