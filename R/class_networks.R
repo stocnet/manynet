@@ -13,7 +13,8 @@ print.mnet <- function(x, ..., n = 6) {
     node_name <- igraph::graph_attr(x, "grand")$vertex1
   if(is.null(igraph::graph_attr(x, "grand"))) 
     tie_name <- ifelse(is_directed(x), "arcs", "ties") else
-      tie_name <- igraph::graph_attr(x, "grand")$edge.pos
+      tie_name <- paste(igraph::graph_attr(x, "grand")$edge.pos,
+                        ifelse(is_directed(x), "arcs", "ties"))
   cat('#', graph_desc, 'network of', igraph::gorder(x), node_name, 'and',
       igraph::gsize(x), tie_name, '\n', sep = ' ')  
   if (ncol(top)>0) print(top, n = n)
