@@ -560,8 +560,11 @@ is_aperiodic <- function(.data, max_path_length = 4){
   }
   cli::cli_progress_done()
   out <- unique(sort(out))
-  while(out[1]!=1 && length(out)>1) 
-    out <- c(.gcd(out[1], out[2]), out[2:length(out)])
+  while(out[1]!=1 && length(out)>1){
+    cd <- .gcd(out[1], out[2])
+    if(length(out)==2) out <- cd else
+      out <- c(cd, out[2:length(out)])
+  }
   out[1]==1
 }
 

@@ -12,7 +12,7 @@ tidygraph::with_graph
 
 #' @importFrom tidygraph is.tbl_graph
 #' @export
-is_tidygraph <- tidygraph::is.tbl_graph
+tidygraph::is.tbl_graph
 
 #' @importFrom tidygraph .G
 #' @export
