@@ -20,7 +20,7 @@
 - Dropped unnecessary `{grDevices}` and `{png}` dependencies
 - Dropped unnecessary `{network}` reexports
 - Using globalVariables
-- Improved `run_tute()` to look for installed packages and report progress
+- Improved `run_tute()` and `extract_tute()` to look for installed packages and report progress
 
 ## Making
 
