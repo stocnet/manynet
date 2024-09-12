@@ -1,5 +1,5 @@
 # defining global variables more centrally
-utils::globalVariables(c(".data", "obs", "from", "to"))
+utils::globalVariables(c(".data", "obs", "from", "to", "name"))
 
 # Helper function for declaring available methods
 available_methods <- function(fun_vctr) {
