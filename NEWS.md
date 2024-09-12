@@ -54,6 +54,7 @@
 ## Measuring
 
 - tie_measures are now named vectors
+- Added `node_distance()` for measuring the distance from or to particular nodes
 - Fixed #84 related to how `node_degree()` processed isolates in calculating strength in weighted networks
 
 ## Data

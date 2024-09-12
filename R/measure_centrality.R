@@ -440,6 +440,7 @@ net_betweenness <- function(.data, normalized = TRUE,
 #'   which is thought to behave better than reach centrality for disconnected networks.
 #'   - `node_information()` measures nodes' information centrality or 
 #'   current-flow closeness centrality.
+#'   - `node_distance()` measures nodes' geodesic distance from or to a given node.
 #'   - `tie_closeness()` measures the closeness of each tie to other ties in the network.
 #'   - `net_closeness()` measures a network's closeness centralization.
 #'   - `net_reach()` measures a network's reach centralization.
@@ -487,7 +488,7 @@ node_closeness <- function(.data, normalized = TRUE,
 } 
 
 #' @rdname measure_central_close 
-#' @param k Integer of steps out to calculate reach
+#' @param k Integer of steps out to calculate reach.
 #' @examples
 #' node_reach(ison_adolescents)
 #' @export
@@ -533,6 +534,18 @@ node_information <- function(.data, normalized = TRUE){
   make_node_measure(out, .data)
 }
   
+#' @rdname measure_central_close 
+#' @param from,to Index or name of a node to calculate distances from or to.
+#' @export
+node_distance <- function(.data, from, to, normalized = TRUE){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(from) && missing(to)) cli::cli_abort("Either 'from' or 'to' must be specified.")
+  if(!missing(from)) out <- igraph::distances(as_igraph(.data), v = from) else 
+    if(!missing(to)) out <- igraph::distances(as_igraph(.data), to = to)
+  if(normalized) out <- out/max(out)
+  make_node_measure(out, .data)
+}
+
 #' @rdname measure_central_close 
 #' @examples
 #' (ec <- tie_closeness(ison_adolescents))

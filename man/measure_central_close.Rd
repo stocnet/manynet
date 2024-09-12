@@ -6,6 +6,7 @@
 \alias{node_reach}
 \alias{node_harmonic}
 \alias{node_information}
+\alias{node_distance}
 \alias{tie_closeness}
 \alias{net_closeness}
 \alias{net_reach}
@@ -19,6 +20,8 @@ node_reach(.data, normalized = TRUE, k = 2)
 node_harmonic(.data, normalized = TRUE, k = -1)
 
 node_information(.data, normalized = TRUE)
+
+node_distance(.data, from, to, normalized = TRUE)
 
 tie_closeness(.data, normalized = TRUE)
 
@@ -53,7 +56,9 @@ against only the centrality scores of the other nodes in that mode.}
 
 \item{cutoff}{Maximum path length to use during calculations.}
 
-\item{k}{Integer of steps out to calculate reach}
+\item{k}{Integer of steps out to calculate reach.}
+
+\item{from, to}{Index or name of a node to calculate distances from or to.}
 }
 \description{
 These functions calculate common closeness-related centrality measures for one- and two-mode networks:
@@ -65,6 +70,7 @@ or how many nodes they can reach within \emph{k} steps.
 which is thought to behave better than reach centrality for disconnected networks.
 \item \code{node_information()} measures nodes' information centrality or
 current-flow closeness centrality.
+\item \code{node_distance()} measures nodes' geodesic distance from or to a given node.
 \item \code{tie_closeness()} measures the closeness of each tie to other ties in the network.
 \item \code{net_closeness()} measures a network's closeness centralization.
 \item \code{net_reach()} measures a network's reach centralization.
