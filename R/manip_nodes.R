@@ -66,6 +66,16 @@ delete_nodes.igraph <- function(.data, nodes){
   igraph::delete_vertices(.data, v = nodes)
 }
 
+#' @export
+delete_nodes.tbl_graph <- function(.data, nodes){
+  as_tidygraph(igraph::delete_vertices(.data, v = nodes))
+}
+
+#' @export
+delete_nodes.network <- function(.data, nodes){
+  as_network(igraph::delete_vertices(as_igraph(.data), v = nodes))
+}
+
 #' @rdname manip_nodes 
 #' @importFrom igraph vertex_attr
 #' @export

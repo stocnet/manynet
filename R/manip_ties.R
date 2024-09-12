@@ -62,6 +62,16 @@ delete_ties.igraph <- function(.data, ties){
   igraph::delete_edges(.data, edges = ties)
 }
 
+#' @export
+delete_ties.tbl_graph <- function(.data, ties){
+  as_tidygraph(igraph::delete_edges(.data, edges = ties))
+}
+
+#' @export
+delete_ties.network <- function(.data, ties){
+  as_network(igraph::delete_edges(as_igraph(.data), edges = ties))
+}
+
 #' @rdname manip_ties
 #' @importFrom igraph edge_attr
 #' @export

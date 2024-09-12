@@ -91,7 +91,7 @@ Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:\tabular{lrrr}{
     \tab igraph \tab network \tab tbl_graph \cr
    add_nodes \tab 1 \tab 1 \tab 1 \cr
-   delete_nodes \tab 1 \tab 0 \tab 0 \cr
+   delete_nodes \tab 1 \tab 1 \tab 1 \cr
 }
 }
 \examples{

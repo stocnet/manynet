@@ -38,6 +38,7 @@
   - `print.mnet()` uses 'grand' data if available
 - Improved `bind_ties()` to be more flexible about the input it accepts, converting all input into the required edgelist
 - Added `to_ego()` for obtaining a single neighbourhood
+- Added tbl_graph and network methods for `delete_nodes()` and `delete_ties()`
 - Added examples for `add_ties()` and `delete_ties()` in documentation
 - Fixed bug in `to_unnamed.igraph()` when used with already unlabelled networks
 
