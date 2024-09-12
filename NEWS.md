@@ -15,8 +15,8 @@
   - Updated renaming and releasing binaries (thanks @auzaheta)
   - Using actions/download-artifact@v4 to address dependabot security warning
   - Using actions/upload-artifact@v4
-- Moved `{minMSE}` dependency to Suggests
-- Moved `{minMSE}` dependency to Config/Needs/build
+- Removed `{minMSE}` dependency
+- Moved `{roxygen2}` dependency to Config/Needs/build
 - Dropped unnecessary `{grDevices}` and `{png}` dependencies
 - Dropped unnecessary `{network}` reexports
 - Using globalVariables
@@ -49,7 +49,7 @@
 - Added `tie_is_triplet()` for returning all the ties that are members of transitive triplets
 - Added `tie_is_forbidden()` for identifying ties in forbidden triads
 - Improved `tie_is_transitive()` efficiency, now only retrieves the edgelist once
-- Improved `is_aperiodic()` to offer a progress bar if it takes longer than 2 seconds
+- Improved `is_aperiodic()` to remove `{minMSE}` dependency and offer a progress bar if it takes longer than 2 seconds
 - Fixed bug in `tie_is_triangular()` to do with altpath naming
 
 ## Measuring

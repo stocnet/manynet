@@ -39,7 +39,6 @@ Suggests:
     knitr,
     learnr,
     methods,
-    minMSE,
     multiplex,
     netdiffuseR,
     oaqc,
