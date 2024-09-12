@@ -227,30 +227,23 @@ tie_is_forbidden <- function(.data){
   ends <- which(dists * t(dists)==1, arr.ind = TRUE)
   ends <- t(apply(ends, 1, function(x) sort(x)))
   ends <- ends[!duplicated(ends),]
-  recip <- tie_is_reciprocated(.data)
-  out <- apply(ends, 1, function(x){
-    (tie_is_path(.data, x[1], x[2], all_paths = TRUE) | 
-      tie_is_path(.data, x[2], x[1], all_paths = TRUE)) & 
-      recip
-  } )
-  out <- unlist(lapply(seq.int(nrow(ends)), function(x){
-    y <- out[,x]
-    nodes <- table(as.numeric(unlist(strsplit(names(y)[which(y)], "->"))))>1
-    nodes <- as.numeric(names(nodes[nodes]))
-    if(length(nodes)>2)
-    setdiff(nodes, ends[x,]) else 0
-  }))
-  out <- cbind(ends[,1], out, ends[,2])
-  # out <- out[out[,2]!=0,]
-  out <- unlist(apply(out, 1, function(x){
-    if(x[2]!=0)
+  tris <- apply(ends, 1, function(x){
+    y <- unlist(igraph::all_shortest_paths(.data, x[1], x[2], mode = "out")$res)
+    y <- matrix(y, ncol = 3, byrow = TRUE)
+    y <- do.call("paste", c(as.data.frame(y)[, , drop = FALSE], sep = "-"))
+    z <- unlist(igraph::all_shortest_paths(.data, x[1], x[2], mode = "in")$res)
+    z <- matrix(z, ncol = 3, byrow = TRUE)
+    z <- do.call("paste", c(as.data.frame(z)[, , drop = FALSE], sep = "-"))
+    as.numeric(unlist(strsplit(y[y %in% z], "-")))
+  })
+  out <- matrix(unlist(tris), ncol = 3, byrow = TRUE)
+  out <- unique(c(apply(out, 1, function(x){
     c(paste0(x[1],"->",x[2]),
     paste0(x[2],"->",x[1]),
     paste0(x[2],"->",x[3]),
     paste0(x[3],"->",x[2]))
-  } ))
-  out <- names(recip) %in% out
-  # out
+  } )))
+  out <- names(tie_is_reciprocated(.data)) %in% out
   make_tie_mark(out, .data)
 }
 
