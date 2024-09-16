@@ -98,7 +98,7 @@
 - `table_data()` can now report on data from multiple packages
   - `{manynet}` and `{migraph}` are included by default,
   and if any are not installed they are just ignored
-- `tabe_data()` can now filter by any reported formats,
+- `table_data()` can now filter by any reported formats,
 such as 'directed' or 'twomode'
 
 ## Website
@@ -198,7 +198,7 @@ including force-directed, layered, circular, spectral, and grid layouts
 existing network was incorrect
 - Added `generate_configuration()` for generating configuration models
 (including for two-mode networks)
-- `play_diffuson()` now includes an explicit contact argument to control the
+- `play_diffusion()` now includes an explicit contact argument to control the
 basis of exposure
 
 ## Marking
@@ -277,7 +277,7 @@ and `node_is_infected()` (closes #71)
   `net_balance()`, `net_change()`, and `net_stability()`
 - Updated properties from mapping to measuring
 - Updated attributes from mapping to measuring
-    - Renamed `node_mode()` (deprecated) to node_is_mode() since it returns a
+    - Renamed `node_mode()` (deprecated) to `node_is_mode()` since it returns a
     logical vector
     - Updated `node_attribute()` and `tie_attribute()` to return measures
     when the output is numeric
