@@ -173,3 +173,37 @@ rename <- tidygraph::rename
 filter_nodes <- function(.data, ..., .by){
   tidygraph::filter(.data, ..., .by = .by)
 }
+
+#' @rdname manip_nodes
+#' @examples
+#' add_info(ison_algebra, name = "Algebra")
+#' @export
+add_info <- function(.data, ...){
+  if(!is.null(igraph::graph_attr(.data)$grand)){
+    cli::cli_inform("Hmm, I don't know how to do that yet.")
+  } else {
+    info <- list(...)
+    unrecog <- setdiff(names(info), c("name", "nodes", "ties", "doi", 
+                                      "collection", "year", "mode", "vertex1", 
+                                      "vertex1.total", "vertex2", 
+                           "vertex2.total", "edge.pos", "edge.neg"))
+    if(length(unrecog)>0) 
+      cli::cli_alert_warning("{unrecog} are not recognised fields.")
+    if("nodes" %in% names(info)){
+      info$vertex1 <- info$nodes[1]
+      if(is_twomode(.data) && length(info$nodes)==2) 
+        info$vertex2 <- info$nodes[2]
+      info$nodes <- NULL
+    }
+    if("ties" %in% names(info)){
+      info$edge.pos <- info$ties
+      info$ties <- NULL
+    }
+    # return(str(info)) # for debugging
+    out <- .data
+    igraph::graph_attr(out)$grand <- info
+  }
+  as_tidygraph(out)
+}
+
+
