@@ -17,6 +17,18 @@ NULL
 
 #' @rdname map_themes
 #' @export
+set_manynet_theme <- function(theme = "default"){
+  theme_opts <- c("default", "iheid", "ethz", "uzh", "rug", "crisp")
+  if(theme %in% theme_opts){
+    options(mnet_theme = theme)
+    cli::cli_alert_success("Theme set to {theme}.")
+  } else {
+    cli::cli_alert_danger("Please choose one of the available themes: {.emph {theme_opts}}.")
+  }
+}
+
+#' @rdname map_themes
+#' @export
 theme_iheid <- function(base_size = 12, base_family = "serif") {
   colors <-  corp_palette("IHEID")
   (ggplot2::theme_minimal(base_size = base_size, base_family = base_family)

@@ -2,12 +2,15 @@
 % Please edit documentation in R/map_theme.R
 \name{map_themes}
 \alias{map_themes}
+\alias{set_manynet_theme}
 \alias{theme_iheid}
 \alias{theme_ethz}
 \alias{theme_uzh}
 \alias{theme_rug}
 \title{Many themes}
 \usage{
+set_manynet_theme(theme = "default")
+
 theme_iheid(base_size = 12, base_family = "serif")
 
 theme_ethz(base_size = 12, base_family = "sans")
