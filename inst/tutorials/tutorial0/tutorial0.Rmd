@@ -36,6 +36,7 @@ Recommended elsewhere are the following:
 - http://data.princeton.edu/R/gettingStarted.html  
 - http://www.ats.ucla.edu/stat/R/sk/  
 - http://www.statmethods.net/  
+- https://www.r-bloggers.com/2022/05/best-books-to-learn-r-programming-2/
 
 These sites will help you learn or refresh your memory.
 But you can also expect to return to Google often as you go and type "R ..." as a query.
