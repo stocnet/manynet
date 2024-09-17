@@ -5,7 +5,8 @@
 \alias{ison_thrones}
 \title{One-mode Game of Thrones kinship (Glander 2017)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, multiplex, directed network of 208 characters and 404 kinship arcs 
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # Game of Thrones Kinship 
+#> # A labelled, multiplex, directed network of 208 characters and 404 kinship arcs 
 #> # A tibble: 208 x 8
 #>   name           male culture house          popularity house2      color  shape
 #>   <chr>         <dbl> <fct>   <chr>               <dbl> <chr>       <I<ch> <chr>

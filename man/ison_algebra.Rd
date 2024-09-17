@@ -5,7 +5,7 @@
 \alias{ison_algebra}
 \title{Multiplex graph object of friends, social, and task ties (McFarland 2001)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A multiplex, weighted, directed network of 16 nodes and 279 arcs 
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A multiplex, weighted, directed network of 16 nodes and 279 social, tasks, and friends arcs 
 #> # A tibble: 279 x 4
 #>    from    to type   weight
 #>   <int> <int> <chr>   <dbl>

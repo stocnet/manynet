@@ -5,7 +5,7 @@
 \alias{ison_monks}
 \title{Multiplex network of three one-mode signed, weighted networks and a three-wave longitudinal network of monks (Sampson 1969)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A longitudinal, labelled, multiplex, signed, weighted, directed network of 18 nodes and 463 arcs 
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A longitudinal, labelled, multiplex, signed, weighted, directed network of 18 nodes and 463 like, esteem, influence, and praise arcs 
 #> # A tibble: 18 x 3
 #>   name        groups        left
 #>   <chr>       <chr>        <dbl>
