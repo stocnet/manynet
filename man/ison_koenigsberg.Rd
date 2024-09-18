@@ -5,7 +5,7 @@
 \alias{ison_koenigsberg}
 \title{One-mode Seven Bridges of Koenigsberg network (Euler 1741)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, multiplex, undirected network of 4 nodes and 7 ties 
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, undirected network of 4 nodes and 7 ties 
 #> # A tibble: 4 x 3
 #>   name       lat   lon
 #>   <chr>    <dbl> <dbl>
