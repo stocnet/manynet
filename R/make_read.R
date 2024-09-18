@@ -684,7 +684,7 @@ write_graphml <- function(.data,
 #' #        edge_color = "type", node_color = "Compilation")
 #' @export
 read_cran <- function(pkg = "all"){
-  cli::cli_progress_step("Downloading data about available packages from CRAN")
+  mnet_progress_step("Downloading data about available packages from CRAN")
   cranInfoDF <- as.data.frame(utils::available.packages(
     utils::contrib.url(getOption("repos"), type = "source")))
   if(pkg=="all") new <- cranInfoDF$Package else

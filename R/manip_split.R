@@ -32,7 +32,7 @@ to_egos.igraph <- function(.data,
                            max_dist = 1, 
                            min_dist = 0){
   if(is_twomode(.data)) max_dist <- max_dist*2
-  cli::cli_progress_step("Obtaining neighbourhoods")
+  mnet_progress_step("Obtaining neighbourhoods")
   out <- igraph::make_ego_graph(.data,
                                 order = max_dist,
                                 mindist = min_dist)

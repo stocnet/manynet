@@ -43,3 +43,9 @@
   }
 
 }
+
+mnet_progress_step <- function(...){
+  if(getOption("manynet_verbosity")!="quiet")
+  cli::cli_progress_step(...)
+}
+
