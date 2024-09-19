@@ -12,9 +12,8 @@ print.mnet <- function(x, ..., n = 6) {
     node_name <- igraph::graph_attr(x, "grand")$vertex1
   graph_desc <- describe_graph(x)
   tie_desc <- describe_ties(x)
-  cat('#', graph_desc, 'network of', igraph::gorder(x), node_name, 'and',
-      tie_desc, '\n', sep = ' ')  
-
+  node_desc <- describe_nodes(x)
+  cli::cli_text("# {graph_desc} network of {node_desc} and {tie_desc}")  
   top <- dplyr::as_tibble(tidygraph::activate(x, "nodes"))
   bottom <- dplyr::as_tibble(tidygraph::activate(x, "edges"))
   if (ncol(top)>0) print(top, n = n)
@@ -38,6 +37,15 @@ describe_graph <- function(x) {
          ifelse(is_twomode(x), "two-mode", 
                 ifelse(is_directed(x), "directed", "undirected"))
   )
+}
+
+describe_nodes <- function(x){
+  nd <- net_dims(x)
+  if(!is.null(igraph::graph_attr(x, "grand")$vertex1)){
+    node_name <- paste(nd[1], igraph::graph_attr(x, "grand")$vertex1)
+    if(length(nd)==2 && !is.null(igraph::graph_attr(x, "grand")$vertex2))
+      node_name <- c(node_name, paste(nd[2], igraph::graph_attr(x, "grand")$vertex2))
+  } else node_name <- paste(sum(nd), "nodes")
 }
 
 describe_ties <- function(x){

@@ -5,7 +5,7 @@
 \alias{ison_greys}
 \title{One-mode undirected network of characters hook-ups on Grey's Anatomy TV show}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, undirected network of 53 nodes and 56 ties 
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, undirected network of 53 nodes and 56 ties
 #> # A tibble: 53 x 7
 #>   name               sex   race  birthyear position  season sign  
 #>   <chr>              <chr> <chr>     <dbl> <chr>      <dbl> <chr> 
