@@ -125,9 +125,12 @@ create_explicit <- function(...){
 #' @family makes
 #' @export
 create_ego <- function(max_alters = Inf,
+                       interpreter = FALSE,
                        interrelater = FALSE){
   cli::cli_text("What is ego's name?")
   ego <- readline()
+  cli::cli_text("What is the relationship you are collecting? Name it in the singular, e.g. 'friendship'")
+  ties <- readline()
   alters <- vector()
   repeat{
     cli::cli_text("Please name a contact:")
@@ -139,6 +142,22 @@ create_ego <- function(max_alters = Inf,
     if (q_yes("Are these all the contacts?")) break
   }
   out <- as_tidygraph(as.data.frame(cbind(ego, alters)))
+  if(interpreter){
+    attr <- vector()
+    repeat{
+      cli::cli_text("Please name an attribute you are collecting:")
+      attr <- c(attr, readline())
+      if (q_done()) break
+    }
+    for(att in attr){
+      values <- vector()
+      for (alt in c(ego, alters)){
+        cli::cli_text("What value does {alt} have for {att}:")
+        values <- c(values, readline())
+      }
+      out <- add_node_attribute(out, att, values)
+    }
+  }
   out <- add_info(out, ties = ties, 
                   collection = "Interview",
                   format(as.Date(Sys.Date(), format="%d/%m/%Y"),"%Y"))
