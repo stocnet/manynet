@@ -2,7 +2,6 @@
 
 #' Making networks with explicit ties
 #'
-#'
 #' @description
 #'   This function creates a network from a vector of explicitly named nodes 
 #'   and ties between them.
@@ -116,6 +115,42 @@ create_explicit <- function(...){
   as_tidygraph(res)
 }
 
+# Collections ####
+
+#' Making networks with explicit ties
+#'
+#' @description
+#'   This function creates an ego network through a set of interview questions.
+#' @name make_ego
+#' @family makes
+#' @export
+create_ego <- function(max_alters = Inf,
+                       interrelater = FALSE){
+  cli::cli_text("What is ego's name?")
+  ego <- readline()
+  alters <- vector()
+  repeat{
+    cli::cli_text("Please name a contact:")
+    alters <- c(alters, readline())
+    if(length(alters) == max_alters){
+      cli::cli_alert_info("{.code max_alters} reached.")
+      break
+    }
+    if (q_yes("Are these all the contacts?")) break
+  }
+  out <- as_tidygraph(as.data.frame(cbind(ego, alters)))
+  out
+}
+
+q_yes <- function(msg = NULL){
+  if(!is.null(msg)) cli::cli_text(msg)
+  out <- readline()
+  if(is.logical(out)) return(out)
+  if(out=="") return(FALSE)
+  choices <- c("yes","no","true","false")
+  out <- c(TRUE,FALSE,TRUE,FALSE)[pmatch(tolower(out), tolower(choices))]
+  out
+}
 # Defined ####
 
 #' Making networks with defined structures
