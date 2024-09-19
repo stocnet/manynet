@@ -174,13 +174,15 @@ filter_nodes <- function(.data, ..., .by){
   tidygraph::filter(.data, ..., .by = .by)
 }
 
-#' @rdname manip_nodes
+# Network information ####
+
+#' @rdname manip_net
 #' @examples
 #' add_info(ison_algebra, name = "Algebra")
 #' @export
 add_info <- function(.data, ...){
   if(!is.null(igraph::graph_attr(.data)$grand)){
-    cli::cli_inform("Hmm, I don't know how to do that yet.")
+    cli::cli_abort("Hmm, I don't know how to do that yet.")
   } else {
     info <- list(...)
     unrecog <- setdiff(names(info), c("name", "nodes", "ties", "doi", 
@@ -198,6 +200,10 @@ add_info <- function(.data, ...){
     if("ties" %in% names(info)){
       info$edge.pos <- info$ties
       info$ties <- NULL
+    }
+    if("collection" %in% names(info)){
+      info$mode <- info$collection
+      info$collection <- NULL
     }
     # return(str(info)) # for debugging
     out <- .data
