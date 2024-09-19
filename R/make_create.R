@@ -139,6 +139,9 @@ create_ego <- function(max_alters = Inf,
     if (q_yes("Are these all the contacts?")) break
   }
   out <- as_tidygraph(as.data.frame(cbind(ego, alters)))
+  out <- add_info(out, ties = ties, 
+                  collection = "Interview",
+                  format(as.Date(Sys.Date(), format="%d/%m/%Y"),"%Y"))
   out
 }
 
