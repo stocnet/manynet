@@ -117,10 +117,17 @@ create_explicit <- function(...){
 
 # Collections ####
 
-#' Making networks with explicit ties
+#' Making ego networks through interviewing
 #'
 #' @description
-#'   This function creates an ego network through a set of interview questions.
+#'   This function creates an ego network through interactive interview questions.
+#'   Note that it only creates a simplex, directed network.
+#' @param max_alters The maximum number of alters to collect.
+#'   By default infinity, but many name generators will expect a maximum of
+#'   e.g. 5 alters to be named.
+#' @param interpreter Logical. If TRUE, then it will ask for which attributes
+#'   to collect and give prompts for each attribute for each node in the network.
+#'   By default FALSE.
 #' @name make_ego
 #' @family makes
 #' @export
@@ -145,17 +152,24 @@ create_ego <- function(max_alters = Inf,
   if(interpreter){
     attr <- vector()
     repeat{
-      cli::cli_text("Please name an attribute you are collecting:")
+      cli::cli_text("Please name an attribute you are collecting, or press [Enter] to continue.")
       attr <- c(attr, readline())
-      if (q_done()) break
+      if (attr[length(attr)]==""){
+        attr <- attr[-length(attr)]
+        break
+      } 
     }
-    for(att in attr){
-      values <- vector()
-      for (alt in c(ego, alters)){
-        cli::cli_text("What value does {alt} have for {att}:")
-        values <- c(values, readline())
+    if(length(attr)>0){
+      for(att in attr){
+        values <- vector()
+        for (alt in c(ego, alters)){
+          cli::cli_text("What value does {alt} have for {att}:")
+          values <- c(values, readline())
+        }
+        out <- add_node_attribute(out, att, values)
       }
-      out <- add_node_attribute(out, att, values)
+    }
+  }
     }
   }
   out <- add_info(out, ties = ties, 
