@@ -7,9 +7,7 @@ print.mnet <- function(x, ..., n = 6) {
   arg_list <- list(...)
   arg_list[['useS4']] <- NULL
   if(is_grand(x) && !is.null(igraph::graph_attr(x, "grand")$name)) 
-    cat('#', igraph::graph_attr(x, "grand")$name, '\n')
-  if(is.null(igraph::graph_attr(x, "grand"))) node_name <- "nodes" else
-    node_name <- igraph::graph_attr(x, "grand")$vertex1
+    cli::cli_text("# {igraph::graph_attr(x, 'grand')$name}")
   graph_desc <- describe_graph(x)
   tie_desc <- describe_ties(x)
   node_desc <- describe_nodes(x)
@@ -46,6 +44,7 @@ describe_nodes <- function(x){
     if(length(nd)==2 && !is.null(igraph::graph_attr(x, "grand")$vertex2))
       node_name <- c(node_name, paste(nd[2], igraph::graph_attr(x, "grand")$vertex2))
   } else node_name <- paste(sum(nd), "nodes")
+  node_name
 }
 
 describe_ties <- function(x){
