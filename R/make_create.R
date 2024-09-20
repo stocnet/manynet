@@ -125,6 +125,7 @@ create_explicit <- function(...){
 #' @param max_alters The maximum number of alters to collect.
 #'   By default infinity, but many name generators will expect a maximum of
 #'   e.g. 5 alters to be named.
+#' @param roster A vector of node names to offer as potential alters for ego.
 #' @param interpreter Logical. If TRUE, then it will ask for which attributes
 #'   to collect and give prompts for each attribute for each node in the network.
 #'   By default FALSE.
@@ -134,21 +135,32 @@ create_explicit <- function(...){
 #' @family makes
 #' @export
 create_ego <- function(max_alters = Inf,
+                       roster = NULL,
                        interpreter = FALSE,
                        interrelater = FALSE){
   cli::cli_text("What is ego's name?")
   ego <- readline()
   cli::cli_text("What is the relationship you are collecting? Name it in the singular, e.g. 'friendship'")
   ties <- readline()
+  # cli::cli_text("Is this a weighted network?")
+  # weighted <- q_yes()
   alters <- vector()
-  repeat{
-    cli::cli_text("Please name a contact:")
-    alters <- c(alters, readline())
-    if(length(alters) == max_alters){
-      cli::cli_alert_info("{.code max_alters} reached.")
-      break
+  if(!is.null(roster)){
+    for (alt in roster){
+      cli::cli_text("Is {ego} connected by {ties} to {alt}?")
+      alters <- c(alters, q_yes())
     }
-    if (q_yes("Are these all the contacts?")) break
+    alters <- roster[alters]
+  } else {
+    repeat{
+      cli::cli_text("Please name a contact:")
+      alters <- c(alters, readline())
+      if(length(alters) == max_alters){
+        cli::cli_alert_info("{.code max_alters} reached.")
+        break
+      }
+      if (q_yes("Are these all the contacts?")) break
+    }
   }
   out <- as_tidygraph(as.data.frame(cbind(ego, alters)))
   if(interpreter){
@@ -186,7 +198,7 @@ create_ego <- function(max_alters = Inf,
   }
   out <- add_info(out, ties = ties, 
                   collection = "Interview",
-                  format(as.Date(Sys.Date(), format="%d/%m/%Y"),"%Y"))
+                  year = format(as.Date(Sys.Date(), format="%d/%m/%Y"),"%Y"))
   out
 }
 
