@@ -514,6 +514,8 @@ Reimport the `data/adols.csv` file, make it an igraph-class object, and then mak
 read_edgelist("data/adols.csv") %>% as_igraph() %>% to_undirected()
 ```
 
+### Free play
+
 Try this out with other compatible classes of objects, and reformatting other aspects of the network.
 For example: 
 
@@ -650,6 +652,8 @@ is just one (albeit the default) option for how ties in the projection are weigh
 Other options included in `{manynet}` include the Jaccard index, Rand simple matching coefficient, Pearson coefficient, and Yule's Q.
 These may be of interest if, for example, overlap should be weighted by participation.
 
+### Other transformations
+
 Other transforming functions include:
 
 - `to_giant()` identifies and returns only the main component of a network.
@@ -658,10 +662,19 @@ Other transforming functions include:
 - `to_ties()` returns a network where the ties in the original network become the nodes,
 and the ties are shared adjacencies to nodes.
 - `to_matching()` returns a network in which each node is only tied to one of its previously existing ties such that the network's cardinality is maximised.
+In other words, the algorithm tries to match nodes as best as possible so that each
+node has a partner.
+Note that this is not always possible.
 
 Remember, all these `to_*()` functions work on any compatible class;
 the `to_*()` functions will also attempt to return that same class of object,
 making it even easier to manipulate networks into shape for analysis.
+
+### Free play
+
+```{r transform-free, exercise = TRUE, purl=FALSE}
+
+```
 
 ## Modifying data
 
