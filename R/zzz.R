@@ -47,7 +47,7 @@
 }
 
 mnet_progress_step <- function(...){
-  if(getOption("manynet_verbosity")!="quiet")
+  if(getOption("manynet_verbosity", default = "quiet")!="quiet")
   cli::cli_progress_step(...)
 }
 
@@ -56,7 +56,7 @@ manynet_console_theme <- function(){
   list(h1 = list(`margin-top` = 1, `margin-bottom` = 0, color = "#199D77", 
                  fmt = function(x) cli::rule(x, line_col = "#199D77")), 
        h2 = list(`margin-top` = 1, `margin-bottom` = 0, color = "#199D77", 
-                 fmt = function(x) paste0(symbol$line, " ", x, " ", cli::symbol$line, cli::symbol$line)), 
+                 fmt = function(x) paste0(cli::symbol$line, " ", x, " ", cli::symbol$line, cli::symbol$line)), 
        h3 = list(`margin-top` = 1, `margin-bottom` = 0, color = "#199D77"), 
        par = list(`margin-top` = 0, `margin-bottom` = 1), 
        `.alert-danger` = list(`background-color` = "#D83127", color = "white", 
@@ -72,7 +72,7 @@ manynet_console_theme <- function(){
        span.fun = utils::modifyList(simple_theme_code(), 
                                     list(after = "()")), 
        span.fn = utils::modifyList(simple_theme_code(),
-                                   list(after = "()")), 
+                                   list(after = "")), 
        span.arg = simple_theme_code(), 
        span.kbd = utils::modifyList(simple_theme_code(), 
                                     list(before = "<", after = ">")), 
