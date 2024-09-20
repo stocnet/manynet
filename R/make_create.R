@@ -196,6 +196,10 @@ create_ego <- function(max_alters = Inf,
       out <- add_ties(out, c(rbind(alt, others[extra])))
     }
   }
+  if(!is.null(roster) && any(!roster %in% node_names(out))){
+    isolates <- roster[!roster %in% node_names(out)]
+    out <- add_nodes(out, length(isolates), list(name = isolates))
+  }
   out <- add_info(out, ties = ties, 
                   collection = "Interview",
                   year = format(as.Date(Sys.Date(), format="%d/%m/%Y"),"%Y"))
