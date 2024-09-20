@@ -176,7 +176,23 @@ filter_nodes <- function(.data, ..., .by){
 
 # Network information ####
 
-#' @rdname manip_net
+#' Modifying network data
+#' 
+#' @description
+#'   These functions allow users to add and edit information about the network
+#'   itself.
+#'   This includes the name, year, and mode of collection of the network,
+#'   as well as definitions of the nodes and ties in the network.
+#'   Where available, this information is printed for tidygraph-class objects,
+#'   and can be used for printing a grand table in the `{grand}` package.
+#' @name manip_net
+#' @inheritParams mark_is
+#' @param ... Named attributes. The following are currently recognised:
+#'   "name", "year", and "doi" of the network,
+#'   "collection" or "mode" of the network 
+#'   ("survey", "interview","sensor","observation","archival", or "simulation"),
+#'   "nodes" (a vector of the names of the nodes) or "vertex1"/"vertex2",
+#'   "ties" or "edge.pos"/"edge.neg" for defining the ties.
 #' @examples
 #' add_info(ison_algebra, name = "Algebra")
 #' @export

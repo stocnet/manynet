@@ -20,6 +20,9 @@ theme_uzh(base_size = 12, base_family = "sans")
 theme_rug(base_size = 12, base_family = "mono")
 }
 \arguments{
+\item{theme}{String naming a theme.
+By default "default".}
+
 \item{base_size}{Font size, by default 12.}
 
 \item{base_family}{Font family, by default "sans".}

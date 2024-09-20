@@ -16,6 +16,8 @@
 NULL
 
 #' @rdname map_themes
+#' @param theme String naming a theme.
+#'   By default "default".
 #' @export
 set_manynet_theme <- function(theme = "default"){
   theme_opts <- c("default", "iheid", "ethz", "uzh", "rug", "crisp")
