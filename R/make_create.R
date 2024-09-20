@@ -128,6 +128,8 @@ create_explicit <- function(...){
 #' @param interpreter Logical. If TRUE, then it will ask for which attributes
 #'   to collect and give prompts for each attribute for each node in the network.
 #'   By default FALSE.
+#' @param interrelater Logical. If TRUE, then it will ask for the contacts from
+#'   each of the alters perspectives too.
 #' @name make_ego
 #' @family makes
 #' @export
@@ -170,6 +172,16 @@ create_ego <- function(max_alters = Inf,
       }
     }
   }
+  if(interrelater){
+    for(alt in alters){
+      others <- setdiff(c(ego,alters), alt)
+      extra <- vector()
+      for(oth in others){
+        cli::cli_text("Is {alt} connected by {ties} to {oth}?")
+        extra <- c(extra, q_yes())
+      }
+      # cat(c(rbind(alt, others[extra])))
+      out <- add_ties(out, c(rbind(alt, others[extra])))
     }
   }
   out <- add_info(out, ties = ties, 
@@ -187,6 +199,7 @@ q_yes <- function(msg = NULL){
   out <- c(TRUE,FALSE,TRUE,FALSE)[pmatch(tolower(out), tolower(choices))]
   out
 }
+
 # Defined ####
 
 #' Making networks with defined structures
