@@ -122,6 +122,25 @@ net_equivalency <- function(.data) {
   make_network_measure(out, .data)
 }
 
+#' @rdname measure_closure
+#' @examples
+#' node_equivalency(ison_southern_women)
+#' @export
+node_equivalency <- function(.data) {
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  # if(is_weighted(.data))
+  #   mnet_info("Using unweighted form of the network.")
+  out <- vapply(cli::cli_progress_along(1:net_nodes(.data)), function(i){
+    threepaths <- igraph::all_simple_paths(.data, i, cutoff = 3,
+                                          mode = "all")
+    onepaths <- threepaths[vapply(threepaths, length, 
+                                  FUN.VALUE = numeric(1))==2]
+    threepaths <- threepaths[vapply(threepaths, length, 
+                                    FUN.VALUE = numeric(1))==4]
+    mean(sapply(threepaths,"[[",4) %in% sapply(onepaths,"[[",2))
+  }, FUN.VALUE = numeric(1))
+  if (any(is.nan(out))) out[is.nan(out)] <- 0
+  make_node_measure(out, .data)
 }
 
 #' @rdname measure_closure 

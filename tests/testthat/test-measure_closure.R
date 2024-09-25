@@ -29,6 +29,12 @@ test_that("two-mode object clustering is reported correctly",{
   expect_output(print(net_equivalency(ison_southern_women)))
 })
 
+test_that("node_equivalency works correctly",{
+  expect_equal(as.numeric(node_equivalency(ison_laterals$ison_mm)),
+               c(0,1,1,0,0.5,0.5), tolerance = 0.001)
+  expect_s3_class(node_equivalency(ison_southern_women), "node_measure")
+})
+
 test_that("three-mode clustering calculated correctly",{
   mat1 <- manynet::create_ring(c(10,5))
   mat2 <- manynet::create_ring(c(5,8))
