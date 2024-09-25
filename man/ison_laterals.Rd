@@ -11,21 +11,21 @@
 #>   name  type 
 #>   <chr> <lgl>
 #> 1 A     FALSE
-#> 2 U     TRUE 
-#> 3 B     FALSE
-#> 4 V     TRUE 
-#> 5 C     FALSE
-#> 6 W     TRUE 
+#> 2 B     FALSE
+#> 3 C     FALSE
+#> 4 D     FALSE
+#> 5 U     TRUE 
+#> 6 V     TRUE 
 #> # i 4 more rows
 #> # A tibble: 12 x 2
 #>    from    to
 #>   <int> <int>
-#> 1     1     2
-#> 2     1     4
-#> 3     3     2
-#> 4     3     6
-#> 5     3     7
-#> 6     3     8
+#> 1     1     5
+#> 2     1     6
+#> 3     2     5
+#> 4     2     7
+#> 5     2     8
+#> 6     2     9
 #> # i 6 more rows
 #> 
 #> $ison_bm
@@ -34,21 +34,21 @@
 #>   name  type 
 #>   <chr> <lgl>
 #> 1 A     FALSE
-#> 2 U     TRUE 
-#> 3 B     FALSE
-#> 4 V     TRUE 
-#> 5 C     FALSE
-#> 6 W     TRUE 
+#> 2 B     FALSE
+#> 3 C     FALSE
+#> 4 D     FALSE
+#> 5 U     TRUE 
+#> 6 V     TRUE 
 #> # i 2 more rows
 #> # A tibble: 9 x 2
 #>    from    to
 #>   <int> <int>
-#> 1     1     2
-#> 2     1     4
-#> 3     3     2
-#> 4     3     6
-#> 5     3     7
-#> 6     5     4
+#> 1     1     5
+#> 2     1     6
+#> 3     2     5
+#> 4     2     7
+#> 5     2     8
+#> 6     3     6
 #> # i 3 more rows
 #> 
 #> $ison_mb
@@ -57,21 +57,21 @@
 #>   name  type 
 #>   <chr> <lgl>
 #> 1 A     FALSE
-#> 2 M     TRUE 
-#> 3 B     FALSE
-#> 4 C     FALSE
-#> 5 X     TRUE 
-#> 6 Y     TRUE 
+#> 2 B     FALSE
+#> 3 C     FALSE
+#> 4 D     FALSE
+#> 5 M     TRUE 
+#> 6 X     TRUE 
 #> # i 2 more rows
 #> # A tibble: 9 x 2
 #>    from    to
 #>   <int> <int>
-#> 1     1     2
-#> 2     3     2
-#> 3     3     5
-#> 4     3     6
-#> 5     4     2
-#> 6     4     5
+#> 1     1     5
+#> 2     2     5
+#> 3     2     6
+#> 4     2     7
+#> 5     3     5
+#> 6     3     6
 #> # i 3 more rows
 #> 
 #> $ison_mm
@@ -80,20 +80,20 @@
 #>   name  type 
 #>   <chr> <lgl>
 #> 1 A     FALSE
-#> 2 M     TRUE 
-#> 3 B     FALSE
-#> 4 C     FALSE
-#> 5 N     TRUE 
-#> 6 D     FALSE
+#> 2 B     FALSE
+#> 3 C     FALSE
+#> 4 D     FALSE
+#> 5 M     TRUE 
+#> 6 N     TRUE 
 #> # A tibble: 6 x 2
 #>    from    to
 #>   <int> <int>
-#> 1     1     2
-#> 2     3     2
-#> 3     3     5
-#> 4     4     2
-#> 5     4     5
-#> 6     6     5
+#> 1     1     5
+#> 2     2     5
+#> 3     2     6
+#> 4     3     5
+#> 5     3     6
+#> 6     4     6
 }\if{html}{\out{</div>}}
 }
 \usage{
