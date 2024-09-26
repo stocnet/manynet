@@ -53,6 +53,7 @@ reference:
       directed and undirected, one-mode and two-mode networks.
     contents:
       - make_explicit
+      - make_ego
       - make_create
       - starts_with("generate_")
   - subtitle: "Playing"

@@ -657,6 +657,8 @@ net_harmonic <- function(.data, normalized = TRUE, k = 2){
 #'   - `node_power()` measures the Bonacich, beta, or power centrality of nodes in a network.
 #'   - `node_alpha()` measures the alpha or Katz centrality of nodes in a network.
 #'   - `node_pagerank()` measures the pagerank centrality of nodes in a network.
+#'   - `node_hub()` measures how well nodes in a network serve as hubs pointing to many authorities.
+#'   - `node_authority()` measures how well nodes in a network serve as authorities from many hubs.
 #'   - `tie_eigenvector()` measures the eigenvector centrality of ties in a network.
 #'   - `net_eigenvector()` measures the eigenvector centralization for a network.
 #'   
@@ -825,6 +827,27 @@ node_pagerank <- function(.data){
                     .data)
 }
   
+#' @rdname measure_central_eigen 
+#' @references 
+#'   Kleinberg, Jon. 1999.
+#'   "Authoritative sources in a hyperlinked environment". 
+#'   _Journal of the ACM_ 46(5): 604–632.
+#'   \doi{110.1145/324133.324140}.
+#' @export 
+node_authority <- function(.data){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  make_node_measure(igraph::authority_score(manynet::as_igraph(.data))$vector,
+                    .data)
+}
+
+#' @rdname measure_central_eigen 
+#' @export 
+node_hub <- function(.data){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  make_node_measure(igraph::hub_score(manynet::as_igraph(.data))$vector,
+                    .data)
+}
+
 #' @rdname measure_central_eigen
 #' @examples 
 #' tie_eigenvector(ison_adolescents)
