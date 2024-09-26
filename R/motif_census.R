@@ -275,6 +275,53 @@ net_by_triad <- function(.data) {
   }
 }
 
+#' @rdname motif_net
+#' @examples 
+#' net_by_quad(ison_southern_women)
+#' @export
+net_by_quad <- function(.data){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  cmbs <- combn(1:net_nodes(.data), 4)
+  mat <- as_matrix(to_onemode(.data))
+  dens <- apply(cmbs, 2, function(x) sum(mat[x,x]))
+  
+  E4 <- sum(dens == 0)
+  I4 <- sum(dens == 1)
+  
+  if(any(dens==2)){
+    if(sum(dens==2)>1){
+      twosies <- apply(cmbs[,dens==2], 2, function(x) max(rowSums(mat[x,x])))
+    } else twosies <- max(rowSums(mat[cmbs[,dens==2], cmbs[,dens==2]]))
+    H4 <- sum(twosies==1)
+    L4 <- sum(twosies==2)
+  } else H4 <- L4 <- 0
+  
+  if(any(dens==3)){
+    if(sum(dens==3)>1){
+      threesies <- apply(cmbs[,dens==3], 2, function(x) max(rowSums(mat[x,x])))
+    } else threesies <- max(rowSums(mat[cmbs[,dens==3], cmbs[,dens==3]]))
+    D4 <- sum(threesies==2)
+    U4 <- sum(threesies==1)
+    Y4 <- sum(threesies==3)
+  } else D4 <- U4 <- Y4 <- 0
+  
+  if(any(dens==4)){
+    if(sum(dens==4)>1){
+      foursies <- apply(cmbs[,dens==4], 2, function(x) max(rowSums(mat[x,x])))
+    } else foursies <- max(rowSums(mat[cmbs[,dens==4], cmbs[,dens==4]]))
+    P4 <- sum(foursies==3)
+    C4 <- sum(foursies==2)
+  } else P4 <- C4 <- 0
+  
+  Z4 <- sum(dens == 5)
+  X4 <- sum(dens == 6)
+  
+  out <- c(E4 = E4, I4 = I4, H4 = H4, L4 = L4, D4 = D4, U4 = U4, Y4 = Y4, 
+           P4 = P4, C4 = C4, Z4 = Z4, X4 = X4)
+  
+  make_network_motif(out, .data)
+}
+
 #' @rdname motif_net 
 #' @source Alejandro Espinosa 'netmem'
 #' @references 

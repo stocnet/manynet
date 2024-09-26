@@ -4,6 +4,7 @@
 \alias{motif_net}
 \alias{net_by_dyad}
 \alias{net_by_triad}
+\alias{net_by_quad}
 \alias{net_by_mixed}
 \title{Motifs at the network level}
 \source{
@@ -13,6 +14,8 @@ Alejandro Espinosa 'netmem'
 net_by_dyad(.data)
 
 net_by_triad(.data)
+
+net_by_quad(.data)
 
 net_by_mixed(.data, object2)
 }
@@ -41,6 +44,7 @@ a one-mode and a two-mode network.
 \examples{
 net_by_dyad(manynet::ison_algebra)
 net_by_triad(manynet::ison_adolescents)
+net_by_quad(ison_southern_women)
 marvel_friends <- to_unsigned(ison_marvel_relationships, "positive")
 (mixed_cen <- net_by_mixed(marvel_friends, ison_marvel_teams))
 }
