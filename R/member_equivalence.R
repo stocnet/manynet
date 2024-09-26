@@ -57,8 +57,7 @@ node_in_equivalence <- function(.data, census,
                              range = 8L){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   hc <- switch(match.arg(cluster),
-               hierarchical = cluster_hierarchical(`if`(manynet::is_twomode(.data), 
-                                                        manynet::to_onemode(census), census), 
+               hierarchical = cluster_hierarchical(census, 
                                                       match.arg(distance)),
                concor = cluster_concor(.data, census))
   
@@ -105,13 +104,13 @@ node_in_structural <- function(.data,
 #' }
 #' @export
 node_in_regular <- function(.data, 
-                                     k = c("silhouette", "elbow", "strict"),
-                                     cluster = c("hierarchical", "concor"),
-                                     distance = c("euclidean", "maximum", "manhattan", 
-                                                  "canberra", "binary", "minkowski"),
-                                     range = 8L){
+                            k = c("silhouette", "elbow", "strict"),
+                            cluster = c("hierarchical", "concor"),
+                            distance = c("euclidean", "maximum", "manhattan", 
+                                         "canberra", "binary", "minkowski"),
+                            range = 8L){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  if(manynet::is_twomode(.data)){
+  if(is_twomode(.data)){
     mat <- as.matrix(node_by_quad(.data))
   } else {
     mat <- node_by_triad(.data)
