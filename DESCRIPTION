@@ -41,7 +41,6 @@ Suggests:
     methods,
     multiplex,
     netdiffuseR,
-    oaqc,
     patchwork,
     readxl,
     rmarkdown,

@@ -95,83 +95,109 @@ node_by_triad <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   out <- t(sapply(seq.int(manynet::net_nodes(.data)), 
                   function(x) net_by_triad(.data) - net_by_triad(manynet::delete_nodes(.data, x))))
-  rownames(out) <- manynet::node_names(.data)
   make_node_motif(out, .data)
 }
 
-#' @rdname motif_node 
-#' @section Quad census: 
-#'   The quad census uses the `{oaqc}` package to do
-#'   the heavy lifting of counting the number of each orbits.
-#'   See `vignette('oaqc')`.
-#'   However, our function relabels some of the motifs
-#'   to avoid conflicts and improve some consistency with 
-#'   other census-labelling practices.
-#'   The letter-number pairing of these labels indicate
-#'   the number and configuration of ties.
-#'   For now, we offer a rough translation:
-#'   
-#' | migraph | Ortmann and Brandes      
-#' | ------------- |------------- |
-#' | E4  | co-K4
-#' | I40, I41  | co-diamond
-#' | H4  | co-C4
-#' | L42, L41, L40 | co-paw
-#' | D42, D40 | co-claw
-#' | U42, U41 | P4
-#' | Y43, Y41 | claw
-#' | P43, P42, P41 | paw
-#' | 04 | C4
-#' | Z42, Z43 | diamond
-#' | X4 | K4
-#' 
-#' See also [this list of graph classes](https://www.graphclasses.org/smallgraphs.html#nodes4).
-#' @importFrom tidygraph %E>%
-#' @references 
-#'  Ortmann, Mark, and Ulrik Brandes. 2017. 
-#'  “Efficient Orbit-Aware Triad and Quad Census in Directed and Undirected Graphs.” 
-#'  \emph{Applied Network Science} 2(1):13. 
-#'  \doi{10.1007/s41109-017-0027-2}.
+# #' @rdname motif_node
+# #' @section Quad census:
+# #'   The quad census uses the `{oaqc}` package to do
+# #'   the heavy lifting of counting the number of each orbits.
+# #'   See `vignette('oaqc')`.
+# #'   However, our function relabels some of the motifs
+# #'   to avoid conflicts and improve some consistency with
+# #'   other census-labelling practices.
+# #'   The letter-number pairing of these labels indicate
+# #'   the number and configuration of ties.
+# #'   For now, we offer a rough translation:
+# #' 
+# #' | migraph | Ortmann and Brandes      
+# #' | ------------- |------------- |
+# #' | E4  | co-K4
+# #' | I40, I41  | co-diamond
+# #' | H4  | co-C4
+# #' | L42, L41, L40 | co-paw
+# #' | D42, D40 | co-claw
+# #' | U42, U41 | P4
+# #' | Y43, Y41 | claw
+# #' | P43, P42, P41 | paw
+# #' | 04 | C4
+# #' | Z42, Z43 | diamond
+# #' | X4 | K4
+# #' 
+# #' See also [this list of graph classes](https://www.graphclasses.org/smallgraphs.html#nodes4).
+# #' @importFrom tidygraph %E>%
+# #' @references 
+# #'  Ortmann, Mark, and Ulrik Brandes. 2017. 
+# #'  “Efficient Orbit-Aware Triad and Quad Census in Directed and Undirected Graphs.” 
+# #'  \emph{Applied Network Science} 2(1):13. 
+# #'  \doi{10.1007/s41109-017-0027-2}.
+# #' @examples 
+# #' node_by_quad(ison_southern_women)
+# #' @export
+# node_by_quad <- function(.data){
+#   if(missing(.data)) {expect_nodes(); .data <- .G()}
+#   thisRequires("oaqc")
+#   graph <- .data %>% manynet::as_tidygraph() %E>% 
+#     as.data.frame()
+#   if(ncol(graph)>2) graph <- graph[,1:2]
+#   out <- oaqc::oaqc(graph)[[1]]
+#   out <- out[-1,]
+#   rownames(out) <- manynet::node_names(.data)
+#   colnames(out) <- c("E4", # co-K4
+#                      "I41","I40", # co-diamond
+#                      "H4", # co-C4
+#                      "L42","L41","L40", # co-paw
+#                      "D42","D40", # co-claw
+#                      "U42","U41", # P4
+#                      "Y43","Y41", # claw
+#                      "P43","P42","P41", # paw
+#                      "04", # C4
+#                      "Z42","Z43", # diamond
+#                      "X4") # K4
+#   if(manynet::is_twomode(.data)) out <- out[,-c(8,9,14,15,16,18,19,20)]
+#   make_node_motif(out, .data)
+# }
+
+#' @rdname motif_node
 #' @examples 
-#' node_by_quad(manynet::ison_southern_women)
+#' node_by_quad(ison_southern_women)
 #' @export
 node_by_quad <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
-  thisRequires("oaqc")
-  graph <- .data %>% manynet::as_tidygraph() %E>% 
-    as.data.frame()
-  if(ncol(graph)>2) graph <- graph[,1:2]
-  out <- oaqc::oaqc(graph)[[1]]
-  out <- out[-1,]
-  rownames(out) <- manynet::node_names(.data)
-  colnames(out) <- c("E4", # co-K4
-                     "I41","I40", # co-diamond
-                     "H4", # co-C4
-                     "L42","L41","L40", # co-paw
-                     "D42","D40", # co-claw
-                     "U42","U41", # P4
-                     "Y43","Y41", # claw
-                     "P43","P42","P41", # paw
-                     "04", # C4
-                     "Z42","Z43", # diamond
-                     "X4") # K4
-  if(manynet::is_twomode(.data)) out <- out[,-c(8,9,14,15,16,18,19,20)]
+  cmbs <- combn(1:net_nodes(.data), 4)
+  mat <- as_matrix(to_onemode(.data))
+  dd <- apply(cmbs, 2, function(x) c(sum(mat[x,x]), 
+                                     max(rowSums(mat[x,x]))))
+  
+  types <- rep(NA, ncol(cmbs))
+  types[dd[1,] == 0] <- "E4"
+  types[dd[1,] == 2] <- "I4"
+  types[dd[1,] == 4 & dd[2,] == 1] <- "H4"
+  types[dd[1,] == 4 & dd[2,] == 2] <- "L4"
+  types[dd[1,] == 6 & dd[2,] == 2] <- "D4"
+  types[dd[1,] == 6 & dd[2,] == 1] <- "U4"
+  types[dd[1,] == 6 & dd[2,] == 3] <- "Y4"
+  types[dd[1,] == 8 & dd[2,] == 3] <- "P4"
+  types[dd[1,] == 8 & dd[2,] == 2] <- "C4"
+  types[dd[1,] == 10] <- "Z4"
+  types[dd[1,] == 12] <- "X4"
+  
+  appears <- sapply(seq.int(net_nodes(.data)), 
+         function(x) types[which(cmbs == x, arr.ind = TRUE)[,2]])
+  out <- apply(appears, 2, table)
+
+  if(is.list(out)){
+    out <- as.matrix(dplyr::bind_rows(out))
+  } else out <- as.matrix(as.data.frame(t(out)))
+  out.order <- c("E4","I4","H4","L4","D4","U4","Y4","P4","C4","Z4","X4")
+  out <- out[,match(out.order, colnames(out))]
+  colnames(out) <- out.order
+  out[is.na(out)] <- 0
+
   make_node_motif(out, .data)
 }
 
-# #' @export
-# node_bmotif_census <- function(.data, normalized = FALSE){
-#   if (!("bmotif" %in% rownames(utils::installed.packages()))) {
-#     message("Please install package `{bmotif}`.")
-#     out <- bmotif::node_positions(manynet::as_matrix(.data), 
-#                                   weights_method = ifelse(manynet::is_weighted(.data),
-#                                                           'mean_motifweights', 'none'),
-#                                   normalisation = ifelse(normalized, 
-#                                                          'levelsize_NAzero', 'none'))
-#     make_node_motif(out, .data)
-#   }
 # }
-# 
+  
 # #' @export
 # node_igraph_census <- function(.data, normalized = FALSE){
 #     out <- igraph::motifs(manynet::as_igraph(.data), 4)

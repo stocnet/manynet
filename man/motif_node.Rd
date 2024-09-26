@@ -41,51 +41,17 @@ in motifs of four nodes.
 of each node to every other node in the network.
 }
 }
-\section{Quad census}{
-
-The quad census uses the \code{{oaqc}} package to do
-the heavy lifting of counting the number of each orbits.
-See \code{vignette('oaqc')}.
-However, our function relabels some of the motifs
-to avoid conflicts and improve some consistency with
-other census-labelling practices.
-The letter-number pairing of these labels indicate
-the number and configuration of ties.
-For now, we offer a rough translation:\tabular{ll}{
-   migraph \tab Ortmann and Brandes \cr
-   E4 \tab co-K4 \cr
-   I40, I41 \tab co-diamond \cr
-   H4 \tab co-C4 \cr
-   L42, L41, L40 \tab co-paw \cr
-   D42, D40 \tab co-claw \cr
-   U42, U41 \tab P4 \cr
-   Y43, Y41 \tab claw \cr
-   P43, P42, P41 \tab paw \cr
-   04 \tab C4 \cr
-   Z42, Z43 \tab diamond \cr
-   X4 \tab K4 \cr
-}
-
-
-See also \href{https://www.graphclasses.org/smallgraphs.html#nodes4}{this list of graph classes}.
-}
-
 \examples{
 task_eg <- to_named(to_uniplex(ison_algebra, "tasks"))
 (tie_cen <- node_by_tie(task_eg))
 (triad_cen <- node_by_triad(task_eg))
-node_by_quad(manynet::ison_southern_women)
+node_by_quad(ison_southern_women)
 node_by_path(manynet::ison_adolescents)
 node_by_path(manynet::ison_southern_women)
 }
 \references{
 Davis, James A., and Samuel Leinhardt. 1967.
 “\href{https://files.eric.ed.gov/fulltext/ED024086.pdf}{The Structure of Positive Interpersonal Relations in Small Groups}.” 55.
-
-Ortmann, Mark, and Ulrik Brandes. 2017.
-“Efficient Orbit-Aware Triad and Quad Census in Directed and Undirected Graphs.”
-\emph{Applied Network Science} 2(1):13.
-\doi{10.1007/s41109-017-0027-2}.
 
 Dijkstra, Edsger W. 1959.
 "A note on two problems in connexion with graphs".
