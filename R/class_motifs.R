@@ -15,14 +15,20 @@ make_network_motif <- function(out, .data) {
 print.node_motif <- function(x, ...,
                          n = 6,
                          digits = 3) {
-  if(!is.null(attr(x, "dimnames")[[1]])){
-    x <- data.frame(names = attr(x, "dimnames")[[1]], x)
-  }
   if (any(attr(x, "mode"))) {
-    print(dplyr::tibble(as.data.frame(x)[!attr(x, "mode")]), n = n)
-    print(dplyr::tibble(as.data.frame(x)[attr(x, "mode")]), n = n)
+    y <- as.data.frame(x[!attr(x, "mode"),])
+    z <- as.data.frame(x[attr(x, "mode"),])
+    if(!is.null(attr(x, "dimnames")[[1]])){
+      y <- data.frame(names = attr(x, "dimnames")[[1]][!attr(x, "mode")], y)
+      z <- data.frame(names = attr(x, "dimnames")[[1]][attr(x, "mode")], z)
+    } 
+    print(dplyr::tibble(y), n = n)
+    print(dplyr::tibble(z), n = n)
   } else {
-    print(dplyr::tibble(as.data.frame(x)), n = n)
+    if(!is.null(attr(x, "dimnames")[[1]])){
+      x <- data.frame(names = attr(x, "dimnames")[[1]], x)
+    } else x <- as.data.frame(x)
+    print(dplyr::tibble(x), n = n)
   }
 }
 
