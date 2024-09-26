@@ -12,7 +12,8 @@
   # cran_version <- pkgs[pkgs$Package == "manynet","Version"]
 
   local_version <- utils::packageVersion("manynet")
-  cli::cli_inform("This is {.pkg manynet} version {.version {local_version}}", class = "packageStartupMessage")
+  cli::cli_inform("You are using {.pkg manynet} version {.version {local_version}}.", 
+                  class = "packageStartupMessage")
   old.list <- as.data.frame(utils::old.packages())
   behind_cran <- "manynet" %in% old.list$Package
   
@@ -49,6 +50,11 @@
 mnet_progress_step <- function(...){
   if(getOption("manynet_verbosity", default = "quiet")!="quiet")
   cli::cli_progress_step(...)
+}
+
+mnet_info <- function(...){
+  if(getOption("manynet_verbosity", default = "quiet")!="quiet")
+    cli::cli_alert_info(...)
 }
 
 manynet_console_theme <- function(){
