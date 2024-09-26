@@ -163,7 +163,7 @@ node_by_triad <- function(.data){
 #' node_by_quad(ison_southern_women)
 #' @export
 node_by_quad <- function(.data){
-  cmbs <- combn(1:net_nodes(.data), 4)
+  cmbs <- utils::combn(1:net_nodes(.data), 4)
   mat <- as_matrix(to_onemode(.data))
   dd <- apply(cmbs, 2, function(x) c(sum(mat[x,x]), 
                                      max(rowSums(mat[x,x]))))
@@ -196,6 +196,14 @@ node_by_quad <- function(.data){
   make_node_motif(out, .data)
 }
 
+# https://stackoverflow.com/questions/26828301/faster-version-of-combn#26828486
+# comb2.int <- function(n, choose = 2){
+#   # e.g. n=3 => (1,2), (1,3), (2,3)
+#   x <- rep(1:n,(n:1)-1)
+#   i <- seq_along(x)+1
+#   o <- c(0,cumsum((n-2):1))
+#   y <- i-o[x]
+#   return(cbind(x,y))
 # }
   
 # #' @export
@@ -307,7 +315,7 @@ net_by_triad <- function(.data) {
 #' @export
 net_by_quad <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  cmbs <- combn(1:net_nodes(.data), 4)
+  cmbs <- utils::combn(1:net_nodes(.data), 4)
   mat <- as_matrix(to_onemode(.data))
   dens <- apply(cmbs, 2, function(x) sum(mat[x,x]))
   
