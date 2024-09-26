@@ -1,6 +1,7 @@
 make_node_motif <- function(out, .data) {
   class(out) <- c("node_motif", class(out))
-  attr(out, "mode") <- node_is_mode(.data)
+  if(is_twomode(.data)) attr(out, "mode") <- node_is_mode(.data)
+  if(is_labelled(.data)) attr(out, "dimnames")[[1]] <- node_names(.data)
   out
 }
 
