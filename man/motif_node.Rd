@@ -50,8 +50,8 @@ task_eg <- to_named(to_uniplex(ison_algebra, "tasks"))
 node_by_dyad(ison_networkers)
 (triad_cen <- node_by_triad(task_eg))
 node_by_quad(ison_southern_women)
-node_by_path(manynet::ison_adolescents)
-node_by_path(manynet::ison_southern_women)
+node_by_path(ison_adolescents)
+node_by_path(ison_southern_women)
 }
 \references{
 Davis, James A., and Samuel Leinhardt. 1967.

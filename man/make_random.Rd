@@ -125,6 +125,7 @@ Other makes:
 \code{\link{make_ego}},
 \code{\link{make_explicit}},
 \code{\link{make_learning}},
+\code{\link{make_motifs}},
 \code{\link{make_play}},
 \code{\link{make_read}},
 \code{\link{make_stochastic}},

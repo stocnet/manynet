@@ -59,7 +59,7 @@ mnet_info <- function(...){
 
 mnet_unavailable <- function(...){
   if(getOption("manynet_verbosity", default = "quiet")!="quiet")
-    cli::cli_alert_warning(paste(..., 
+    cli::cli_abort(paste(..., 
                            "If you are interested in this feature,",
                            "please vote for it or raise it as an issue at", 
                            "{.url https://github.com/stocnet/manynet/issues}."))

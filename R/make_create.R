@@ -216,6 +216,74 @@ q_yes <- function(msg = NULL){
   out
 }
 
+# Collections ####
+
+#' Making motifs
+#'
+#' @description
+#'   `create_motifs()` is used to create a list of networks that represent the
+#'   subgraphs or motifs corresponding to a certain number of nodes and direction.
+#'   Note that currently only `n==2` to `n==4` is implemented,
+#'   and the latter only for undirected networks.
+#' 
+#' @inheritParams make_create
+#' @name make_motifs
+#' @family makes
+#' @export
+create_motifs <- function(n, directed = FALSE){
+  directed <- infer_directed(n, directed)
+  n <- infer_n(n)
+  if(!directed & n==2){
+    return(list(Null = mutate_nodes(create_empty(2),
+                                 name = c("A","B")),
+                M = create_explicit(A--B)))
+  } else if(directed & n==2){
+    return(list(Null = mutate_nodes(create_empty(2, directed = TRUE),
+                                 name = c("A","B")),
+                Asymmetric = create_explicit(A-+B),
+                Mutual = create_explicit(A++B)))
+  } else if(!directed & n==3){
+    return(list(Empty = mutate_nodes(create_empty(3),
+                                     names = c("A","B","C")),
+                Edge = create_explicit(A--B, C),
+                Path = create_explicit(A--B--C),
+                Triangle = create_explicit(A--B--C--A)))
+  } else if(directed & n==3){
+    return(list(`003` = mutate_nodes(create_empty(3, directed = TRUE),
+                                     names = c("A","B","C")),
+                `012` = create_explicit(A-+B, C),
+                `102` = create_explicit(A++B, C),
+                `021D` = create_explicit(A-+B, A-+C),
+                `021U` = create_explicit(A+-B, A+-C),
+                `021C` = create_explicit(A-+B, B-+C),
+                `111D` = create_explicit(A++B, C-+B),
+                `111U` = create_explicit(A++B, B-+C),
+                `030T` = create_explicit(A-+B, A-+C, B-+C),
+                `030C` = create_explicit(A-+B, B-+C, C-+A),
+                `201` = create_explicit(A++B, B++C),
+                `120D` = create_explicit(A++B, C-+A:B),
+                `120U` = create_explicit(A++B, A:B-+C),
+                `120C` = create_explicit(A++B, A-+C-+B),
+                `210` = create_explicit(A++B, B++C, A-+C),
+                `300` = create_explicit(A++B++C++A)))
+  } else if(!directed & n==4){
+    return(list(E4 = mutate_nodes(create_empty(4),
+                                  name = c("A","B","C","D")),
+                I4 = create_explicit(A--B, C, D),
+                H4 = create_explicit(A--B, C--D),
+                L4 = create_explicit(A--B--C, D),
+                D4 = create_explicit(A--B--C--A, D),
+                U4 = create_explicit(A--B--C--D),
+                Y4 = create_explicit(A--B--C, B--D),
+                P4 = create_explicit(A--B--C, B--D--C),
+                C4 = create_explicit(A--B--C--D--A),
+                Z4 = create_explicit(A--B--C--D--A--C),
+                X4 = create_explicit(A--B--C--D--A--C, B--D)))
+  } else 
+    cli::cli_alert_warning("Motifs not yet available for that kind of network.")
+}
+
+
 # Defined ####
 
 #' Making networks with defined structures

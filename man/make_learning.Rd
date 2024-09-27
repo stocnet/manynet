@@ -85,6 +85,7 @@ Other makes:
 \code{\link{make_create}},
 \code{\link{make_ego}},
 \code{\link{make_explicit}},
+\code{\link{make_motifs}},
 \code{\link{make_play}},
 \code{\link{make_random}},
 \code{\link{make_read}},
