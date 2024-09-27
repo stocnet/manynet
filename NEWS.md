@@ -1,3 +1,61 @@
+# manynet 1.2.0
+
+## Package
+
+- Added progress updates, information, and unavailability errors to several functions
+  - These can be silenced by setting `options(manynet_verbosity ="quiet")`
+  - Where a feature is unavailable, users are directed to the Github issues page
+- Added console theme to color the startup and various warning or info messages
+
+## Making
+
+- Added `create_ego()` for collecting ego networks through interviews, including arguments for:
+  - Indicating whether a roster should be used, otherwise follows a name generator approach
+  - Indicating whether nodes should be interpreted, i.e. nodal attributes collected
+  - Indicating whether ties between alters should be requested
+- Added `create_motifs()` for creating networks that correspond to the isomorphic subgraphs of certain size and format
+
+## Modifying
+
+- Improved `print.mnet()`
+  - Prints multiplex types if available
+  - Prints both nodesets for two-mode networks
+- Added `add_info()` for adding grand info to tidygraph objects
+  - This includes the name of the network, node sets and ties, DOI, year and mode of collection
+- Fixed `to_unweighted()` so that it passes through unweighted networks correctly
+
+## Mapping
+
+- Added `set_manynet_theme()` to set theme (re #60), but not yet fully implemented
+
+## Marking
+
+- Improved `is_multiplex()` to ignore "name" tie attributes
+
+## Measuring
+
+- Added `node_authority()` and `node_hub()` centrality measures
+- Added `node_equivalency()` for calculating four-cycle closure by node
+- Extended `net_equivalency()` to one-mode networks
+
+## Members
+
+- Fixed `node_in_equivalence()` to use census directly
+
+## Motifs
+
+- Added plot methods for network_motif and node_motif classes that use `create_motifs()`
+- Added `node_by_dyad()` for node level dyad census
+- Added `net_by_quad()` for network level quad census
+- Improved `node_by_quad()` to avoid `{oaqc}` dependency, more flexible but slower
+- Fixed `print.node_motif()` to convert to tibble and add modes and names where available only upon print
+  - The underlying object is still a matrix, used for equivalence and blockmodelling
+
+## Data
+
+- Updated `ison_southern_women` with grand info
+- Updated `ison_laterals` with reordered nodes
+
 # manynet 1.1.0
 
 ## Package
