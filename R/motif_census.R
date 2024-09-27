@@ -85,6 +85,26 @@ node_by_tie <- function(.data){
 }
 
 #' @rdname motif_node 
+#' @examples 
+#' node_by_dyad(ison_networkers)
+#' @export
+node_by_dyad <- function(.data) {
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(is_weighted(.data)){
+    .data <- to_unweighted(.data)
+    mnet_info("Ignoring tie weights.")
+  }
+  mat <- as_matrix(.data)
+  out <- t(vapply(seq_nodes(.data), function(x){
+    vec <- mat[x,] + mat[,x]
+    c(sum(vec==2), sum(vec==1), sum(vec==0))
+  }, FUN.VALUE = numeric(3)))
+  colnames(out) <- c("Mutual", "Asymmetric", "Null")
+  if (!is_directed(.data)) out <- out[,c(1, 3)]
+  make_node_motif(out, .data)
+}
+
+#' @rdname motif_node 
 #' @references 
 #' Davis, James A., and Samuel Leinhardt. 1967. 
 #' “\href{https://files.eric.ed.gov/fulltext/ED024086.pdf}{The Structure of Positive Interpersonal Relations in Small Groups}.” 55.
@@ -238,8 +258,8 @@ node_by_quad <- function(.data){
 #' _Social Networks_ 32(3): 245-51.
 #' \doi{10.1016/j.socnet.2010.03.006}.
 #' @examples 
-#' node_by_path(manynet::ison_adolescents)
-#' node_by_path(manynet::ison_southern_women)
+#' node_by_path(ison_adolescents)
+#' node_by_path(ison_southern_women)
 #' @export
 node_by_path <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}

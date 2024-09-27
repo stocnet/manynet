@@ -3,12 +3,15 @@
 \name{motif_node}
 \alias{motif_node}
 \alias{node_by_tie}
+\alias{node_by_dyad}
 \alias{node_by_triad}
 \alias{node_by_quad}
 \alias{node_by_path}
 \title{Motifs at the nodal level}
 \usage{
 node_by_tie(.data)
+
+node_by_dyad(.data)
 
 node_by_triad(.data)
 
@@ -44,6 +47,7 @@ of each node to every other node in the network.
 \examples{
 task_eg <- to_named(to_uniplex(ison_algebra, "tasks"))
 (tie_cen <- node_by_tie(task_eg))
+node_by_dyad(ison_networkers)
 (triad_cen <- node_by_triad(task_eg))
 node_by_quad(ison_southern_women)
 node_by_path(manynet::ison_adolescents)
