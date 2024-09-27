@@ -297,7 +297,7 @@ NULL
 net_by_dyad <- function(.data) {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if (manynet::is_twomode(.data)) {
-    cli::cli_abort("A twomode or multilevel option for a dyad census is not yet implemented.")
+    mnet_unavailable("A twomode or multilevel option for a dyad census is not yet implemented.")
   } else {
     out <- suppressWarnings(igraph::dyad_census(manynet::as_igraph(.data)))
     out <- unlist(out)

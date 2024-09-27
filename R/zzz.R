@@ -57,6 +57,14 @@ mnet_info <- function(...){
     cli::cli_alert_info(...)
 }
 
+mnet_unavailable <- function(...){
+  if(getOption("manynet_verbosity", default = "quiet")!="quiet")
+    cli::cli_alert_warning(paste(..., 
+                           "If you are interested in this feature,",
+                           "please vote for it or raise it as an issue at", 
+                           "{.url https://github.com/stocnet/manynet/issues}."))
+}
+
 manynet_console_theme <- function(){
   # dark <- detect_dark_theme(dark)
   list(h1 = list(`margin-top` = 1, `margin-bottom` = 0, color = "#199D77", 
