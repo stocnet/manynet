@@ -47,7 +47,7 @@
 - Added plot methods for network_motif and node_motif classes that use `create_motifs()`
 - Added `node_by_dyad()` for node level dyad census
 - Added `net_by_quad()` for network level quad census
-- Improved `node_by_quad()` to avoid `{oaqc}` dependency, more flexible but slower
+- Fixed `node_by_quad()` to avoid `{oaqc}` dependency (#89), more flexible but slower
 - Fixed `print.node_motif()` to convert to tibble and add modes and names where available only upon print
   - The underlying object is still a matrix, used for equivalence and blockmodelling
 
