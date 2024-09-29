@@ -94,19 +94,18 @@ to_uniplex.matrix <- function(.data, tie){
 #'   so that any pair of nodes with at least one directed edge will be
 #'   connected by an undirected edge in the new network.
 #'   This is equivalent to the "collapse" mode in `{igraph}`.
-#' @importFrom igraph as.undirected
 #' @export
 to_undirected <- function(.data) UseMethod("to_undirected")
 
 #' @importFrom igraph as.undirected
 #' @export
 to_undirected.igraph <- function(.data) {
-  igraph::as.undirected(.data, edge.attr.comb = "first")
+  igraph::as.undirected(.data)
 }
 
 #' @export
 to_undirected.tbl_graph <- function(.data) {
-  as_tidygraph(igraph::as.undirected(.data, edge.attr.comb = "first"))
+  as_tidygraph(igraph::as.undirected(.data))
 }
 
 #' @export
