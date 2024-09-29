@@ -19,7 +19,7 @@ and adding missing information by hand.'><meta property="og:image" content="http
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
       </span>
     </div>
 
@@ -74,27 +74,29 @@ and adding missing information by hand.</p>
 
     <div id="format">
     <h2>Format</h2>
-    <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#&gt; # A labelled, multiplex, directed network of 208 characters and 404 kinship arcs</span></span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="co">#&gt; # A tibble: 208 x 8</span></span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="co">#&gt;   name           male culture house          popularity house2      color  shape</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;fct&gt;   &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;       &lt;I&lt;ch&gt; &lt;chr&gt;</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="co">#&gt; 1 Alys Arryn        0 &lt;NA&gt;    House Arryn        0.0803 &lt;NA&gt;        &lt;NA&gt;   circ~</span></span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="co">#&gt; 2 Elys Waynwood     0 &lt;NA&gt;    House Waynwood     0.0702 &lt;NA&gt;        &lt;NA&gt;   circ~</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="co">#&gt; 3 Jasper Arryn      1 &lt;NA&gt;    House Arryn        0.0435 &lt;NA&gt;        &lt;NA&gt;   squa~</span></span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="co">#&gt; 4 Jeyne Royce       0 &lt;NA&gt;    House Royce        0      &lt;NA&gt;        &lt;NA&gt;   circ~</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#&gt; 5 Jon Arryn         1 Valemen House Arryn        0.836  &lt;NA&gt;        &lt;NA&gt;   squa~</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#&gt; 6 Lysa Arryn        0 &lt;NA&gt;    House Tully        0      House Tully #F781~ circ~</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#&gt; # i 202 more rows</span></span>
-<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#&gt; # A tibble: 404 x 5</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#&gt;    from    to type   color    lty</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;I&lt;chr&gt;&gt; &lt;chr&gt;</span></span>
-<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#&gt; 1     6     7 mother #7570B3  solid</span></span>
-<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#&gt; 2     3     1 father #1B9E77  solid</span></span>
-<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#&gt; 3     3     5 father #1B9E77  solid</span></span>
-<span id="cb1-18"><a href="#cb1-18"></a><span class="co">#&gt; 4     5     7 father #1B9E77  solid</span></span>
-<span id="cb1-19"><a href="#cb1-19"></a><span class="co">#&gt; 5    10    23 mother #7570B3  solid</span></span>
-<span id="cb1-20"><a href="#cb1-20"></a><span class="co">#&gt; 6    10    12 mother #7570B3  solid</span></span>
-<span id="cb1-21"><a href="#cb1-21"></a><span class="co">#&gt; # i 398 more rows</span></span></code></pre><p></p></div>
+    <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#&gt; # Game of Thrones Kinship</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="co">#&gt; # A labelled, multiplex, directed network of 208 characters and 404 kinship</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co">#&gt; arcs</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="co">#&gt; # A tibble: 208 x 8</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="co">#&gt;   name           male culture house          popularity house2      color  shape</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;fct&gt;   &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;       &lt;I&lt;ch&gt; &lt;chr&gt;</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co">#&gt; 1 Alys Arryn        0 &lt;NA&gt;    House Arryn        0.0803 &lt;NA&gt;        &lt;NA&gt;   circ~</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="co">#&gt; 2 Elys Waynwood     0 &lt;NA&gt;    House Waynwood     0.0702 &lt;NA&gt;        &lt;NA&gt;   circ~</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#&gt; 3 Jasper Arryn      1 &lt;NA&gt;    House Arryn        0.0435 &lt;NA&gt;        &lt;NA&gt;   squa~</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#&gt; 4 Jeyne Royce       0 &lt;NA&gt;    House Royce        0      &lt;NA&gt;        &lt;NA&gt;   circ~</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#&gt; 5 Jon Arryn         1 Valemen House Arryn        0.836  &lt;NA&gt;        &lt;NA&gt;   squa~</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#&gt; 6 Lysa Arryn        0 &lt;NA&gt;    House Tully        0      House Tully #F781~ circ~</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#&gt; # i 202 more rows</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#&gt; # A tibble: 404 x 5</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#&gt;    from    to type   color    lty</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;I&lt;chr&gt;&gt; &lt;chr&gt;</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#&gt; 1     6     7 mother #7570B3  solid</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a><span class="co">#&gt; 2     3     1 father #1B9E77  solid</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="co">#&gt; 3     3     5 father #1B9E77  solid</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="co">#&gt; 4     5     7 father #1B9E77  solid</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a><span class="co">#&gt; 5    10    23 mother #7570B3  solid</span></span>
+<span id="cb1-22"><a href="#cb1-22"></a><span class="co">#&gt; 6    10    12 mother #7570B3  solid</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a><span class="co">#&gt; # i 398 more rows</span></span></code></pre><p></p></div>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -114,7 +116,7 @@ and adding missing information by hand.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>

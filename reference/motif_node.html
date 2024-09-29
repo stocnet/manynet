@@ -29,7 +29,7 @@ of each node to every other node in the network.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
       </span>
     </div>
 
@@ -88,6 +88,8 @@ of each node to every other node in the network.</p></li>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">node_by_tie</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">node_by_dyad</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">node_by_triad</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">node_by_quad</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
@@ -108,29 +110,10 @@ of each node to every other node in the network.</p></li>
 </ul></dd>
 
 </dl></div>
-    <div id="quad-census">
-    <h2>Quad census</h2>
-
-
-<p>The quad census uses the <code>{oaqc}</code> package to do
-the heavy lifting of counting the number of each orbits.
-See <code>vignette('oaqc')</code>.
-However, our function relabels some of the motifs
-to avoid conflicts and improve some consistency with
-other census-labelling practices.
-The letter-number pairing of these labels indicate
-the number and configuration of ties.
-For now, we offer a rough translation:</p><table class="table table"><tr><td>migraph</td><td>Ortmann and Brandes</td></tr><tr><td>E4</td><td>co-K4</td></tr><tr><td>I40, I41</td><td>co-diamond</td></tr><tr><td>H4</td><td>co-C4</td></tr><tr><td>L42, L41, L40</td><td>co-paw</td></tr><tr><td>D42, D40</td><td>co-claw</td></tr><tr><td>U42, U41</td><td>P4</td></tr><tr><td>Y43, Y41</td><td>claw</td></tr><tr><td>P43, P42, P41</td><td>paw</td></tr><tr><td>04</td><td>C4</td></tr><tr><td>Z42, Z43</td><td>diamond</td></tr><tr><td>X4</td><td>K4</td></tr></table><p>See also <a href="https://www.graphclasses.org/smallgraphs.html#nodes4" class="external-link">this list of graph classes</a>.</p>
-    </div>
     <div id="references">
     <h2>References</h2>
     <p>Davis, James A., and Samuel Leinhardt. 1967.
 “<a href="https://files.eric.ed.gov/fulltext/ED024086.pdf" class="external-link">The Structure of Positive Interpersonal Relations in Small Groups</a>.” 55.</p>
-<p>Ortmann, Mark, and Ulrik Brandes. 2017.
-“Efficient Orbit-Aware Triad and Quad Census in Directed and Undirected Graphs.”
-<em>Applied Network Science</em> 2(1):13.
-<a href="https://doi.org/10.1007/s41109-017-0027-2" class="external-link">doi:10.1007/s41109-017-0027-2</a>
-.</p>
 <p>Dijkstra, Edsger W. 1959.
 "A note on two problems in connexion with graphs".
 <em>Numerische Mathematik</em> 1, 269-71.
@@ -170,6 +153,17 @@ For now, we offer a rough translation:</p><table class="table table"><tr><td>mig
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   toBritney &lt;dbl&gt;, toCarly &lt;dbl&gt;, toDaniela &lt;dbl&gt;, toEva &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   toFannie &lt;dbl&gt;, toGerald &lt;dbl&gt;, toHarold &lt;dbl&gt;, toIsabel &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   toJoann &lt;dbl&gt;, toKristen &lt;dbl&gt;, toLorraine &lt;dbl&gt;, toMarlene &lt;dbl&gt;, …</span></span>
+<span class="r-in"><span><span class="fu">node_by_dyad</span><span class="op">(</span><span class="va">ison_networkers</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 32 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   names              Mutual Asymmetric  Null</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Lin Freeman            29          2     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Doug White             21         10     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Ev Rogers               3          8    21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Richard Alba           17          2    13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Phipps Arabie           8         20     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Carol Barner-Barry     12          4    16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 26 more rows</span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">triad_cen</span> <span class="op">&lt;-</span> <span class="fu">node_by_triad</span><span class="op">(</span><span class="va">task_eg</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 16 × 17</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   names   X003  X012  X102 X021D X021U X021C X111D X111U X030T X030C  X201 X120D</span>
@@ -182,18 +176,28 @@ For now, we offer a rough translation:</p><table class="table table"><tr><td>mig
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Fannie    23     8    40     1     0     0     3     3     0     0    18     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 10 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: X120U &lt;dbl&gt;, X120C &lt;dbl&gt;, X210 &lt;dbl&gt;, X300 &lt;dbl&gt;</span></span>
-<span class="r-in"><span><span class="fu">node_by_quad</span><span class="op">(</span><span class="fu">manynet</span><span class="fu">::</span><span class="va"><a href="ison_southern_women.html">ison_southern_women</a></span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 32 × 13</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   names     E4   I41   I40    H4   L42   L41   L40   U42   U41   Y43   Y41   X04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Evelyn  <span style="text-decoration: underline;">1</span>463  <span style="text-decoration: underline;">1</span>072   440   176   397   698   121   200    72    56   190    75</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Laura   <span style="text-decoration: underline;">1</span>604  <span style="text-decoration: underline;">1</span>008   541   180   323   665   155   134    79    35   168    68</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> There…  <span style="text-decoration: underline;">1</span>562   999   396   123   364   792    66   217    69    56   225    91</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Brenda  <span style="text-decoration: underline;">1</span>624   990   524   176   320   688   152   134    76    35   170    71</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Charl…  <span style="text-decoration: underline;">2</span>018   777   930   157   117   421   328    30    87     4    70    21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Franc…  <span style="text-decoration: underline;">2</span>138   664   898   114   102   506   240    36    98     4   130    30</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 26 more rows</span></span>
-<span class="r-in"><span><span class="fu">node_by_path</span><span class="op">(</span><span class="fu">manynet</span><span class="fu">::</span><span class="va"><a href="ison_adolescents.html">ison_adolescents</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">node_by_quad</span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 18 × 12</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   names        E4    I4    H4    L4    D4    U4    Y4    P4    C4    Z4    X4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Evelyn     <span style="text-decoration: underline;">1</span>241  <span style="text-decoration: underline;">1</span>347   176  <span style="text-decoration: underline;">1</span>138   272     0   246     0    75     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Laura      <span style="text-decoration: underline;">1</span>365  <span style="text-decoration: underline;">1</span>389   180  <span style="text-decoration: underline;">1</span>077   213     0   203     0    68     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Theresa    <span style="text-decoration: underline;">1</span>333  <span style="text-decoration: underline;">1</span>244   123  <span style="text-decoration: underline;">1</span>137   286     0   281     0    91     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Brenda     <span style="text-decoration: underline;">1</span>384  <span style="text-decoration: underline;">1</span>356   176  <span style="text-decoration: underline;">1</span>093   210     0   205     0    71     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Charlotte  <span style="text-decoration: underline;">1</span>728  <span style="text-decoration: underline;">1</span>562   157   836   117     0    74     0    21     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Frances    <span style="text-decoration: underline;">1</span>840  <span style="text-decoration: underline;">1</span>433   114   810   134     0   134     0    30     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 12 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 14 × 12</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   names    E4    I4    H4    L4    D4    U4    Y4    P4    C4    Z4    X4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> E1     <span style="text-decoration: underline;">1</span>877  <span style="text-decoration: underline;">1</span>632    96   710   113     0    52     0    15     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> E2     <span style="text-decoration: underline;">1</span>886  <span style="text-decoration: underline;">1</span>631    84   698   122     0    58     0    16     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> E3     <span style="text-decoration: underline;">1</span>368  <span style="text-decoration: underline;">1</span>611   190  <span style="text-decoration: underline;">1</span>006   168     0    98     0    54     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> E4     <span style="text-decoration: underline;">1</span>681  <span style="text-decoration: underline;">1</span>673   131   784   138     0    64     0    24     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> E5     <span style="text-decoration: underline;">1</span>061  <span style="text-decoration: underline;">1</span>557   232  <span style="text-decoration: underline;">1</span>208   216     0   140     0    81     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> E6     <span style="text-decoration: underline;">1</span>085  <span style="text-decoration: underline;">1</span>576   178  <span style="text-decoration: underline;">1</span>142   287     0   156     0    71     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 8 more rows</span></span>
+<span class="r-in"><span><span class="fu">node_by_path</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 8 × 9</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   names Betty   Sue Alice  Jane  Dale   Pam Carol  Tina</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -204,8 +208,8 @@ For now, we offer a rough translation:</p><table class="table table"><tr><td>mig
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Dale      2     1     1     1     0     2     3     4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Pam       2     1     1     2     2     0     1     2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more rows</span></span>
-<span class="r-in"><span><span class="fu">node_by_path</span><span class="op">(</span><span class="fu">manynet</span><span class="fu">::</span><span class="va"><a href="ison_southern_women.html">ison_southern_women</a></span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 32 × 33</span></span>
+<span class="r-in"><span><span class="fu">node_by_path</span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 18 × 33</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   names  Evelyn Laura Theresa Brenda Charlotte Frances Eleanor Pearl  Ruth Verne</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Evelyn      0     2       2      2         2       2       2     2     2     2</span>
@@ -214,7 +218,21 @@ For now, we offer a rough translation:</p><table class="table table"><tr><td>mig
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Brenda      2     2       2      0         2       2       2     2     2     2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Charl…      2     2       2      2         0       2       2     4     2     2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Franc…      2     2       2      2         2       0       2     2     2     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 26 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 12 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 22 more variables: Myra &lt;dbl&gt;, Katherine &lt;dbl&gt;, Sylvia &lt;dbl&gt;, Nora &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   Helen &lt;dbl&gt;, Dorothy &lt;dbl&gt;, Olivia &lt;dbl&gt;, Flora &lt;dbl&gt;, E1 &lt;dbl&gt;, E2 &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   E3 &lt;dbl&gt;, E4 &lt;dbl&gt;, E5 &lt;dbl&gt;, E6 &lt;dbl&gt;, E7 &lt;dbl&gt;, E8 &lt;dbl&gt;, E9 &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   E10 &lt;dbl&gt;, E11 &lt;dbl&gt;, E12 &lt;dbl&gt;, E13 &lt;dbl&gt;, E14 &lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 14 × 33</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   names Evelyn Laura Theresa Brenda Charlotte Frances Eleanor Pearl  Ruth Verne</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> E1         1     1       3      1         3       3       3     3     3     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> E2         1     1       1      3         3       3       3     3     3     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> E3         1     1       1      1         1       1       3     3     3     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> E4         1     3       1      1         1       3       3     3     3     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> E5         1     1       1      1         1       1       1     3     1     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> E6         1     1       1      1         3       1       1     1     3     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 8 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 22 more variables: Myra &lt;dbl&gt;, Katherine &lt;dbl&gt;, Sylvia &lt;dbl&gt;, Nora &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   Helen &lt;dbl&gt;, Dorothy &lt;dbl&gt;, Olivia &lt;dbl&gt;, Flora &lt;dbl&gt;, E1 &lt;dbl&gt;, E2 &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   E3 &lt;dbl&gt;, E4 &lt;dbl&gt;, E5 &lt;dbl&gt;, E6 &lt;dbl&gt;, E7 &lt;dbl&gt;, E8 &lt;dbl&gt;, E9 &lt;dbl&gt;,</span></span>
@@ -233,7 +251,7 @@ For now, we offer a rough translation:</p><table class="table table"><tr><td>mig
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>

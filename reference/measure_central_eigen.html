@@ -4,6 +4,8 @@ node_eigenvector() measures the eigenvector centrality of nodes in a network.
 node_power() measures the Bonacich, beta, or power centrality of nodes in a network.
 node_alpha() measures the alpha or Katz centrality of nodes in a network.
 node_pagerank() measures the pagerank centrality of nodes in a network.
+node_hub() measures how well nodes in a network serve as hubs pointing to many authorities.
+node_authority() measures how well nodes in a network serve as authorities from many hubs.
 tie_eigenvector() measures the eigenvector centrality of ties in a network.
 net_eigenvector() measures the eigenvector centralization for a network.
 
@@ -31,7 +33,7 @@ including for two-mode networks."><meta property="og:image" content="https://sto
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
       </span>
     </div>
 
@@ -79,6 +81,8 @@ including for two-mode networks."><meta property="og:image" content="https://sto
 <li><p><code>node_power()</code> measures the Bonacich, beta, or power centrality of nodes in a network.</p></li>
 <li><p><code>node_alpha()</code> measures the alpha or Katz centrality of nodes in a network.</p></li>
 <li><p><code>node_pagerank()</code> measures the pagerank centrality of nodes in a network.</p></li>
+<li><p><code>node_hub()</code> measures how well nodes in a network serve as hubs pointing to many authorities.</p></li>
+<li><p><code>node_authority()</code> measures how well nodes in a network serve as authorities from many hubs.</p></li>
 <li><p><code>tie_eigenvector()</code> measures the eigenvector centrality of ties in a network.</p></li>
 <li><p><code>net_eigenvector()</code> measures the eigenvector centralization for a network.</p></li>
 </ul><p>All measures attempt to use as much information as they are offered,
@@ -97,6 +101,10 @@ including for two-mode networks.</p>
 <span><span class="fu">node_alpha</span><span class="op">(</span><span class="va">.data</span>, alpha <span class="op">=</span> <span class="fl">0.85</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">node_pagerank</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">node_authority</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">node_hub</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">tie_eigenvector</span><span class="op">(</span><span class="va">.data</span>, normalized <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
@@ -208,6 +216,11 @@ most routines solve the equation \(x = (I - \frac{1}{\lambda} A^T)^{-1} e\).</p>
 <p>Brin, Sergey and Page, Larry. 1998.
 "The anatomy of a large-scale hypertextual web search engine".
 <em>Proceedings of the 7th World-Wide Web Conference</em>. Brisbane, Australia.</p>
+<p>Kleinberg, Jon. 1999.
+"Authoritative sources in a hyperlinked environment".
+<em>Journal of the ACM</em> 46(5): 604–632.
+<a href="https://doi.org/110.1145/324133.324140" class="external-link">doi:110.1145/324133.324140</a>
+.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -271,7 +284,7 @@ most routines solve the equation \(x = (I - \frac{1}{\lambda} A^T)^{-1} e\).</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>

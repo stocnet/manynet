@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
       </span>
     </div>
 
@@ -60,7 +60,63 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.1.0" id="manynet-110">manynet 1.1.0<a class="anchor" aria-label="anchor" href="#manynet-110"></a></h2>
+<h2 class="page-header" data-toc-text="1.2.0" id="manynet-120">manynet 1.2.0<a class="anchor" aria-label="anchor" href="#manynet-120"></a></h2>
+<div class="section level3">
+<h3 id="package-1-2-0">Package<a class="anchor" aria-label="anchor" href="#package-1-2-0"></a></h3>
+<ul><li>Added progress updates, information, and unavailability errors to several functions<ul><li>These can be silenced by setting <code>options(manynet_verbosity ="quiet")</code>
+</li>
+<li>Where a feature is unavailable, users are directed to the Github issues page</li>
+</ul></li>
+<li>Added console theme to color the startup and various warning or info messages</li>
+</ul></div>
+<div class="section level3">
+<h3 id="making-1-2-0">Making<a class="anchor" aria-label="anchor" href="#making-1-2-0"></a></h3>
+<ul><li>Added <code><a href="../reference/make_ego.html">create_ego()</a></code> for collecting ego networks through interviews, including arguments for:<ul><li>Indicating whether a roster should be used, otherwise follows a name generator approach</li>
+<li>Indicating whether nodes should be interpreted, i.e. nodal attributes collected</li>
+<li>Indicating whether ties between alters should be requested</li>
+</ul></li>
+<li>Added <code><a href="../reference/make_motifs.html">create_motifs()</a></code> for creating networks that correspond to the isomorphic subgraphs of certain size and format</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-1-2-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-2-0"></a></h3>
+<ul><li>Improved <code>print.mnet()</code><ul><li>Prints multiplex types if available</li>
+<li>Prints both nodesets for two-mode networks</li>
+</ul></li>
+<li>Added <code><a href="../reference/manip_net.html">add_info()</a></code> for adding grand info to tidygraph objects<ul><li>This includes the name of the network, node sets and ties, DOI, year and mode of collection</li></ul></li>
+<li>Fixed <code><a href="../reference/manip_reformat.html">to_unweighted()</a></code> so that it passes through unweighted networks correctly</li>
+</ul></div>
+<div class="section level3">
+<h3 id="mapping-1-2-0">Mapping<a class="anchor" aria-label="anchor" href="#mapping-1-2-0"></a></h3>
+<ul><li>Added <code><a href="../reference/map_themes.html">set_manynet_theme()</a></code> to set theme (re <a href="https://github.com/stocnet/manynet/issues/60" class="external-link">#60</a>), but not yet fully implemented</li></ul></div>
+<div class="section level3">
+<h3 id="marking-1-2-0">Marking<a class="anchor" aria-label="anchor" href="#marking-1-2-0"></a></h3>
+<ul><li>Improved <code><a href="../reference/mark_format.html">is_multiplex()</a></code> to ignore “name” tie attributes</li></ul></div>
+<div class="section level3">
+<h3 id="measuring-1-2-0">Measuring<a class="anchor" aria-label="anchor" href="#measuring-1-2-0"></a></h3>
+<ul><li>Added <code><a href="../reference/measure_central_eigen.html">node_authority()</a></code> and <code><a href="../reference/measure_central_eigen.html">node_hub()</a></code> centrality measures</li>
+<li>Added <code><a href="../reference/measure_closure.html">node_equivalency()</a></code> for calculating four-cycle closure by node</li>
+<li>Extended <code><a href="../reference/measure_closure.html">net_equivalency()</a></code> to one-mode networks</li>
+</ul></div>
+<div class="section level3">
+<h3 id="members-1-2-0">Members<a class="anchor" aria-label="anchor" href="#members-1-2-0"></a></h3>
+<ul><li>Fixed <code><a href="../reference/member_equivalence.html">node_in_equivalence()</a></code> to use census directly</li></ul></div>
+<div class="section level3">
+<h3 id="motifs-1-2-0">Motifs<a class="anchor" aria-label="anchor" href="#motifs-1-2-0"></a></h3>
+<ul><li>Added plot methods for network_motif and node_motif classes that use <code><a href="../reference/make_motifs.html">create_motifs()</a></code>
+</li>
+<li>Added <code><a href="../reference/motif_node.html">node_by_dyad()</a></code> for node level dyad census</li>
+<li>Added <code><a href="../reference/motif_net.html">net_by_quad()</a></code> for network level quad census</li>
+<li>Fixed <code><a href="../reference/motif_node.html">node_by_quad()</a></code> to avoid <code>{oaqc}</code> dependency (<a href="https://github.com/stocnet/manynet/issues/89" class="external-link">#89</a>), more flexible but slower</li>
+<li>Fixed <code>print.node_motif()</code> to convert to tibble and add modes and names where available only upon print<ul><li>The underlying object is still a matrix, used for equivalence and blockmodelling</li></ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="data-1-2-0">Data<a class="anchor" aria-label="anchor" href="#data-1-2-0"></a></h3>
+<ul><li>Updated <code>ison_southern_women</code> with grand info</li>
+<li>Updated <code>ison_laterals</code> with reordered nodes</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.1.0" id="manynet-110">manynet 1.1.0<small>2024-09-12</small><a class="anchor" aria-label="anchor" href="#manynet-110"></a></h2>
 <div class="section level3">
 <h3 id="package-1-1-0">Package<a class="anchor" aria-label="anchor" href="#package-1-1-0"></a></h3>
 <ul><li>Added beautiful message on startup<ul><li>Depends on <a href="https://cli.r-lib.org" class="external-link">cli</a>
@@ -171,7 +227,7 @@
 <code><a href="../reference/data_overview.html">table_data()</a></code> can now report on data from multiple packages<ul><li>
 <a href="https://stocnet.github.io/manynet/">manynet</a> and <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a> are included by default, and if any are not installed they are just ignored</li></ul></li>
 <li>
-<code>tabe_data()</code> can now filter by any reported formats, such as ‘directed’ or ‘twomode’</li>
+<code><a href="../reference/data_overview.html">table_data()</a></code> can now filter by any reported formats, such as ‘directed’ or ‘twomode’</li>
 </ul></div>
 <div class="section level3">
 <h3 id="website-1-0-5">Website<a class="anchor" aria-label="anchor" href="#website-1-0-5"></a></h3>
@@ -278,7 +334,7 @@
 <ul><li>Fixed bug in <code><a href="../reference/make_create.html">create_core()</a></code> where the membership inferred when passing an existing network was incorrect</li>
 <li>Added <code><a href="../reference/make_random.html">generate_configuration()</a></code> for generating configuration models (including for two-mode networks)</li>
 <li>
-<code>play_diffuson()</code> now includes an explicit contact argument to control the basis of exposure</li>
+<code><a href="../reference/make_play.html">play_diffusion()</a></code> now includes an explicit contact argument to control the basis of exposure</li>
 </ul></div>
 <div class="section level3">
 <h3 id="marking-1-0-0">Marking<a class="anchor" aria-label="anchor" href="#marking-1-0-0"></a></h3>
@@ -345,7 +401,7 @@
 </li>
 </ul></li>
 <li>Updated properties from mapping to measuring</li>
-<li>Updated attributes from mapping to measuring<ul><li>Renamed <code><a href="../reference/defunct.html">node_mode()</a></code> (deprecated) to node_is_mode() since it returns a logical vector</li>
+<li>Updated attributes from mapping to measuring<ul><li>Renamed <code><a href="../reference/defunct.html">node_mode()</a></code> (deprecated) to <code><a href="../reference/measure_attributes.html">node_is_mode()</a></code> since it returns a logical vector</li>
 <li>Updated <code><a href="../reference/measure_attributes.html">node_attribute()</a></code> and <code><a href="../reference/measure_attributes.html">tie_attribute()</a></code> to return measures when the output is numeric</li>
 </ul></li>
 <li>Updated <code><a href="../reference/measure_diffusion_node.html">node_exposure()</a></code> to work with two-mode and signed networks</li>
@@ -960,7 +1016,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>

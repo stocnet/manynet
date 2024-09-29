@@ -32,8 +32,10 @@
 <url><loc>https://stocnet.github.io/manynet/reference/ison_usstates.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/make_cran.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/make_create.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/make_ego.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/make_explicit.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/make_learning.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/make_motifs.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/make_play.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/make_random.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/make_read.html</loc></url>
@@ -44,6 +46,7 @@
 <url><loc>https://stocnet.github.io/manynet/reference/manip_from.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_levels.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_miss.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/manip_net.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_nodes.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_paths.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_permutation.html</loc></url>

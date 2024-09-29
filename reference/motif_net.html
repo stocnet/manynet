@@ -24,7 +24,7 @@ a one-mode and a two-mode network.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
       </span>
     </div>
 
@@ -80,6 +80,8 @@ a one-mode and a two-mode network.</p></li>
 <span></span>
 <span><span class="fu">net_by_triad</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">net_by_quad</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">net_by_mixed</span><span class="op">(</span><span class="va">.data</span>, <span class="va">object2</span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -133,6 +135,11 @@ a one-mode and a two-mode network.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   `003` `012` `102` `201` `210` `300`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>    13     0    29    11     0     3</span>
+<span class="r-in"><span><span class="fu">net_by_quad</span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 11</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      E4    I4    H4    L4    D4    U4    Y4    P4    C4    Z4    X4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> <span style="text-decoration: underline;">12</span>388     0 <span style="text-decoration: underline;">11</span>869     0     0     0     0     0  <span style="text-decoration: underline;">7</span>458     0  <span style="text-decoration: underline;">2</span>758</span>
 <span class="r-in"><span><span class="va">marvel_friends</span> <span class="op">&lt;-</span> <span class="fu"><a href="manip_reformat.html">to_unsigned</a></span><span class="op">(</span><span class="va">ison_marvel_relationships</span>, <span class="st">"positive"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">mixed_cen</span> <span class="op">&lt;-</span> <span class="fu">net_by_mixed</span><span class="op">(</span><span class="va">marvel_friends</span>, <span class="va">ison_marvel_teams</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 10</span></span>
@@ -153,7 +160,7 @@ a one-mode and a two-mode network.</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>

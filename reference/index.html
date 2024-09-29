@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
       </span>
     </div>
 
@@ -87,6 +87,14 @@
         </td>
         <td><p>Making networks with explicit ties</p></td>
       </tr><tr><td>
+          <p><code><a href="make_ego.html">create_ego()</a></code> </p>
+        </td>
+        <td><p>Making ego networks through interviewing</p></td>
+      </tr><tr><td>
+          <p><code><a href="make_motifs.html">create_motifs()</a></code> </p>
+        </td>
+        <td><p>Making motifs</p></td>
+      </tr><tr><td>
           <p><code><a href="make_create.html">create_empty()</a></code> <code><a href="make_create.html">create_filled()</a></code> <code><a href="make_create.html">create_ring()</a></code> <code><a href="make_create.html">create_star()</a></code> <code><a href="make_create.html">create_tree()</a></code> <code><a href="make_create.html">create_lattice()</a></code> <code><a href="make_create.html">create_components()</a></code> <code><a href="make_create.html">create_degree()</a></code> <code><a href="make_create.html">create_core()</a></code> </p>
         </td>
         <td><p>Making networks with defined structures</p></td>
@@ -127,6 +135,10 @@
           <p class="section-desc"></p><p>Functions for modifying nodal and tie attributes. These include tidy-style and igraph-style functions for adding or joining new data on nodes or ties to networks.</p>
         </th>
       </tr></tbody><tbody><tr><td>
+          <p><code><a href="manip_net.html">add_info()</a></code> </p>
+        </td>
+        <td><p>Modifying network data</p></td>
+      </tr><tr><td>
           <p><code><a href="manip_nodes.html">add_nodes()</a></code> <code><a href="manip_nodes.html">delete_nodes()</a></code> <code><a href="manip_nodes.html">add_node_attribute()</a></code> <code><a href="manip_nodes.html">mutate_nodes()</a></code> <code><a href="manip_nodes.html">mutate()</a></code> <code><a href="manip_nodes.html">bind_node_attributes()</a></code> <code><a href="manip_nodes.html">join_nodes()</a></code> <code><a href="manip_nodes.html">rename_nodes()</a></code> <code><a href="manip_nodes.html">rename()</a></code> <code><a href="manip_nodes.html">filter_nodes()</a></code> </p>
         </td>
         <td><p>Modifying node data</p></td>
@@ -235,7 +247,7 @@
           <p class="section-desc"></p><p>Functions for tailoring graphs with themes, scales, and palettes.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="map_themes.html">theme_iheid()</a></code> <code><a href="map_themes.html">theme_ethz()</a></code> <code><a href="map_themes.html">theme_uzh()</a></code> <code><a href="map_themes.html">theme_rug()</a></code> </p>
+          <p><code><a href="map_themes.html">set_manynet_theme()</a></code> <code><a href="map_themes.html">theme_iheid()</a></code> <code><a href="map_themes.html">theme_ethz()</a></code> <code><a href="map_themes.html">theme_uzh()</a></code> <code><a href="map_themes.html">theme_rug()</a></code> </p>
         </td>
         <td><p>Many themes</p></td>
       </tr><tr><td>
@@ -343,7 +355,7 @@
         </td>
         <td><p>Measures of degree-like centrality and centralisation</p></td>
       </tr><tr><td>
-          <p><code><a href="measure_central_eigen.html">node_eigenvector()</a></code> <code><a href="measure_central_eigen.html">node_power()</a></code> <code><a href="measure_central_eigen.html">node_alpha()</a></code> <code><a href="measure_central_eigen.html">node_pagerank()</a></code> <code><a href="measure_central_eigen.html">tie_eigenvector()</a></code> <code><a href="measure_central_eigen.html">net_eigenvector()</a></code> </p>
+          <p><code><a href="measure_central_eigen.html">node_eigenvector()</a></code> <code><a href="measure_central_eigen.html">node_power()</a></code> <code><a href="measure_central_eigen.html">node_alpha()</a></code> <code><a href="measure_central_eigen.html">node_pagerank()</a></code> <code><a href="measure_central_eigen.html">node_authority()</a></code> <code><a href="measure_central_eigen.html">node_hub()</a></code> <code><a href="measure_central_eigen.html">tie_eigenvector()</a></code> <code><a href="measure_central_eigen.html">net_eigenvector()</a></code> </p>
         </td>
         <td><p>Measures of eigenvector-like centrality and centralisation</p></td>
       </tr><tr><td>
@@ -363,7 +375,7 @@
         </td>
         <td><p>Measures of network cohesion or connectedness</p></td>
       </tr><tr><td>
-          <p><code><a href="measure_closure.html">net_reciprocity()</a></code> <code><a href="measure_closure.html">node_reciprocity()</a></code> <code><a href="measure_closure.html">net_transitivity()</a></code> <code><a href="measure_closure.html">node_transitivity()</a></code> <code><a href="measure_closure.html">net_equivalency()</a></code> <code><a href="measure_closure.html">net_congruency()</a></code> </p>
+          <p><code><a href="measure_closure.html">net_reciprocity()</a></code> <code><a href="measure_closure.html">node_reciprocity()</a></code> <code><a href="measure_closure.html">net_transitivity()</a></code> <code><a href="measure_closure.html">node_transitivity()</a></code> <code><a href="measure_closure.html">net_equivalency()</a></code> <code><a href="measure_closure.html">node_equivalency()</a></code> <code><a href="measure_closure.html">net_congruency()</a></code> </p>
         </td>
         <td><p>Measures of network closure</p></td>
       </tr><tr><td>
@@ -411,11 +423,11 @@
         </td>
         <td><p>Motifs of diffusion</p></td>
       </tr><tr><td>
-          <p><code><a href="motif_net.html">net_by_dyad()</a></code> <code><a href="motif_net.html">net_by_triad()</a></code> <code><a href="motif_net.html">net_by_mixed()</a></code> </p>
+          <p><code><a href="motif_net.html">net_by_dyad()</a></code> <code><a href="motif_net.html">net_by_triad()</a></code> <code><a href="motif_net.html">net_by_quad()</a></code> <code><a href="motif_net.html">net_by_mixed()</a></code> </p>
         </td>
         <td><p>Motifs at the network level</p></td>
       </tr><tr><td>
-          <p><code><a href="motif_node.html">node_by_tie()</a></code> <code><a href="motif_node.html">node_by_triad()</a></code> <code><a href="motif_node.html">node_by_quad()</a></code> <code><a href="motif_node.html">node_by_path()</a></code> </p>
+          <p><code><a href="motif_node.html">node_by_tie()</a></code> <code><a href="motif_node.html">node_by_dyad()</a></code> <code><a href="motif_node.html">node_by_triad()</a></code> <code><a href="motif_node.html">node_by_quad()</a></code> <code><a href="motif_node.html">node_by_path()</a></code> </p>
         </td>
         <td><p>Motifs at the nodal level</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -575,7 +587,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>

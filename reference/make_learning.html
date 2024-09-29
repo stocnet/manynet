@@ -21,7 +21,7 @@ play_segregation() plays a Schelling segregation model upon a network.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
       </span>
     </div>
 
@@ -146,7 +146,9 @@ and "minimising" distance will move the node to the next nearest unoccupied coor
     <div class="dont-index"><p>Other makes:
 <code><a href="make_cran.html">make_cran</a></code>,
 <code><a href="make_create.html">make_create</a></code>,
+<code><a href="make_ego.html">make_ego</a></code>,
 <code><a href="make_explicit.html">make_explicit</a></code>,
+<code><a href="make_motifs.html">make_motifs</a></code>,
 <code><a href="make_play.html">make_play</a></code>,
 <code><a href="make_random.html">make_random</a></code>,
 <code><a href="make_read.html">make_read</a></code>,
@@ -184,7 +186,7 @@ and "minimising" distance will move the node to the next nearest unoccupied coor
 <span class="r-in"><span>  <span class="va">latticeEg</span> <span class="op">&lt;-</span> <span class="fu"><a href="make_create.html">create_lattice</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">latticeEg</span> <span class="op">&lt;-</span> <span class="fu"><a href="manip_nodes.html">add_node_attribute</a></span><span class="op">(</span><span class="va">latticeEg</span>, <span class="st">"startValues"</span>, <span class="va">startValues</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">latticeEg</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected network of 100 nodes and 342 ties </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> # A undirected network of 100 nodes and 342 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 100 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   startValues</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
@@ -217,7 +219,7 @@ and "minimising" distance will move the node to the next nearest unoccupied coor
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 64 to node 9"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 97 to node 45"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 98 to node 92"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected network of 100 nodes and 342 ties </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> # A undirected network of 100 nodes and 342 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 100 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   startValues</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;node_msr&gt;</span> </span>
@@ -255,7 +257,7 @@ and "minimising" distance will move the node to the next nearest unoccupied coor
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>

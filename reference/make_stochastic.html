@@ -35,7 +35,7 @@ and the number of modes, nodes, and directedness will be inferred."><meta proper
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
       </span>
     </div>
 
@@ -212,8 +212,10 @@ In two-mode networks, the directed argument is ignored.</p>
     <div class="dont-index"><p>Other makes:
 <code><a href="make_cran.html">make_cran</a></code>,
 <code><a href="make_create.html">make_create</a></code>,
+<code><a href="make_ego.html">make_ego</a></code>,
 <code><a href="make_explicit.html">make_explicit</a></code>,
 <code><a href="make_learning.html">make_learning</a></code>,
+<code><a href="make_motifs.html">make_motifs</a></code>,
 <code><a href="make_play.html">make_play</a></code>,
 <code><a href="make_random.html">make_random</a></code>,
 <code><a href="make_read.html">make_read</a></code>,
@@ -231,7 +233,7 @@ In two-mode networks, the directed argument is ignored.</p>
 <span class="r-in"><span><span class="fu"><a href="map_graphr.html">graphr</a></span><span class="op">(</span><span class="fu">generate_scalefree</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">1.25</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="make_stochastic-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu">generate_fire</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected network of 10 nodes and 9 ties </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> # A undirected network of 10 nodes and 9 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 9 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
@@ -243,7 +245,7 @@ In two-mode networks, the directed argument is ignored.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     6     7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 3 more rows</span></span>
 <span class="r-in"><span><span class="fu">generate_islands</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected network of 10 nodes and 10 ties </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> # A undirected network of 10 nodes and 10 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
@@ -255,7 +257,7 @@ In two-mode networks, the directed argument is ignored.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     7     8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more rows</span></span>
 <span class="r-in"><span><span class="fu">generate_citations</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # A undirected network of 10 nodes and 9 ties </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> # A undirected network of 10 nodes and 9 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 9 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
@@ -280,7 +282,7 @@ In two-mode networks, the directed argument is ignored.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>
