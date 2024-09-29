@@ -832,7 +832,7 @@ node_pagerank <- function(.data){
 #'   Kleinberg, Jon. 1999.
 #'   "Authoritative sources in a hyperlinked environment". 
 #'   _Journal of the ACM_ 46(5): 604–632.
-#'   \doi{110.1145/324133.324140}.
+#'   \doi{10.1145/324133.324140}.
 #' @export 
 node_authority <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}

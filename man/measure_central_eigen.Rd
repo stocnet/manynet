@@ -151,7 +151,7 @@ Brin, Sergey and Page, Larry. 1998.
 Kleinberg, Jon. 1999.
 "Authoritative sources in a hyperlinked environment".
 \emph{Journal of the ACM} 46(5): 604–632.
-\doi{110.1145/324133.324140}.
+\doi{10.1145/324133.324140}.
 }
 \seealso{
 Other centrality: 
