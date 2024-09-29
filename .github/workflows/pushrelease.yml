@@ -68,7 +68,6 @@ jobs:
     name: Bump version and release
     if: ${{ always() }}
     needs: build
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
