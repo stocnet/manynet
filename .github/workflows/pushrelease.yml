@@ -61,18 +61,20 @@ jobs:
           path: build/
 
       - name: Calculate code coverage
+        if: runner.os == 'macOS-latest'
         run: Rscript -e "covr::codecov()"
 
   release:
     name: Bump version and release
     if: ${{ always() }}
     needs: build
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - name: Checkout one
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
         with:
           fetch-depth: '0'
       - name: Bump version and push tag
@@ -84,23 +86,15 @@ jobs:
           DEFAULT_BUMP: patch
           RELEASE_BRANCHES: main
       - name: Checkout two
-        uses: actions/checkout@v2
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.newtag.outputs.tag }}
-          release_name: Release ${{ steps.newtag.outputs.tag }}
-          draft: false
-          prerelease: false
+        uses: actions/checkout@v4
+
+      - name: Extract version
+        run: |
+          echo "PACKAGE_VERSION=$(grep '^Version' DESCRIPTION | sed 's/.*: *//')" >> $GITHUB_ENV
+          echo "PACKAGE_NAME=$(grep '^Package' DESCRIPTION | sed 's/.*: *//')" >> $GITHUB_ENV
 
       - name: Download binaries
         uses: actions/download-artifact@v4
-
-      - name: Display structure of downloaded files
-        run: ls -R
 
       - name: Rename binaries release
         shell: bash
@@ -111,9 +105,9 @@ jobs:
           cp ./winOS/${{ env.PACKAGE_NAME }}_${{ env.PACKAGE_VERSION }}*.zip .
           echo "Renamed files"
           ls manynet_*
-
+       
       - name: Create Release and Upload Assets
-        id: upload_release
+        id: create_release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.newtag.outputs.tag }}
@@ -127,7 +121,7 @@ jobs:
             manynet_*.tar.gz
             manynet_*.zip
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
 
   pkgdown:
     name: Build and deploy website

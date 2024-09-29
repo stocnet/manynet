@@ -173,3 +173,59 @@ rename <- tidygraph::rename
 filter_nodes <- function(.data, ..., .by){
   tidygraph::filter(.data, ..., .by = .by)
 }
+
+# Network information ####
+
+#' Modifying network data
+#' 
+#' @description
+#'   These functions allow users to add and edit information about the network
+#'   itself.
+#'   This includes the name, year, and mode of collection of the network,
+#'   as well as definitions of the nodes and ties in the network.
+#'   Where available, this information is printed for tidygraph-class objects,
+#'   and can be used for printing a grand table in the `{grand}` package.
+#' @name manip_net
+#' @inheritParams mark_is
+#' @param ... Named attributes. The following are currently recognised:
+#'   "name", "year", and "doi" of the network,
+#'   "collection" or "mode" of the network 
+#'   ("survey", "interview","sensor","observation","archival", or "simulation"),
+#'   "nodes" (a vector of the names of the nodes) or "vertex1"/"vertex2",
+#'   "ties" or "edge.pos"/"edge.neg" for defining the ties.
+#' @examples
+#' add_info(ison_algebra, name = "Algebra")
+#' @export
+add_info <- function(.data, ...){
+  if(!is.null(igraph::graph_attr(.data)$grand)){
+    cli::cli_abort("Hmm, I don't know how to do that yet.")
+  } else {
+    info <- list(...)
+    unrecog <- setdiff(names(info), c("name", "nodes", "ties", "doi", 
+                                      "collection", "year", "mode", "vertex1", 
+                                      "vertex1.total", "vertex2", 
+                           "vertex2.total", "edge.pos", "edge.neg"))
+    if(length(unrecog)>0) 
+      cli::cli_alert_warning("{unrecog} are not recognised fields.")
+    if("nodes" %in% names(info)){
+      info$vertex1 <- info$nodes[1]
+      if(is_twomode(.data) && length(info$nodes)==2) 
+        info$vertex2 <- info$nodes[2]
+      info$nodes <- NULL
+    }
+    if("ties" %in% names(info)){
+      info$edge.pos <- info$ties
+      info$ties <- NULL
+    }
+    if("collection" %in% names(info)){
+      info$mode <- info$collection
+      info$collection <- NULL
+    }
+    # return(str(info)) # for debugging
+    out <- .data
+    igraph::graph_attr(out)$grand <- info
+  }
+  as_tidygraph(out)
+}
+
+

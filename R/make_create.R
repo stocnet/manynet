@@ -2,7 +2,6 @@
 
 #' Making networks with explicit ties
 #'
-#'
 #' @description
 #'   This function creates a network from a vector of explicitly named nodes 
 #'   and ties between them.
@@ -115,6 +114,175 @@ create_explicit <- function(...){
   res <- igraph::set_vertex_attr(res, "name", value = v)
   as_tidygraph(res)
 }
+
+# Collections ####
+
+#' Making ego networks through interviewing
+#'
+#' @description
+#'   This function creates an ego network through interactive interview questions.
+#'   Note that it only creates a simplex, directed network.
+#' @param max_alters The maximum number of alters to collect.
+#'   By default infinity, but many name generators will expect a maximum of
+#'   e.g. 5 alters to be named.
+#' @param roster A vector of node names to offer as potential alters for ego.
+#' @param interpreter Logical. If TRUE, then it will ask for which attributes
+#'   to collect and give prompts for each attribute for each node in the network.
+#'   By default FALSE.
+#' @param interrelater Logical. If TRUE, then it will ask for the contacts from
+#'   each of the alters perspectives too.
+#' @name make_ego
+#' @family makes
+#' @export
+create_ego <- function(max_alters = Inf,
+                       roster = NULL,
+                       interpreter = FALSE,
+                       interrelater = FALSE){
+  cli::cli_text("What is ego's name?")
+  ego <- readline()
+  cli::cli_text("What is the relationship you are collecting? Name it in the singular, e.g. 'friendship'")
+  ties <- readline()
+  # cli::cli_text("Is this a weighted network?")
+  # weighted <- q_yes()
+  alters <- vector()
+  if(!is.null(roster)){
+    for (alt in roster){
+      cli::cli_text("Is {ego} connected by {ties} to {alt}?")
+      alters <- c(alters, q_yes())
+    }
+    alters <- roster[alters]
+  } else {
+    repeat{
+      cli::cli_text("Please name a contact:")
+      alters <- c(alters, readline())
+      if(length(alters) == max_alters){
+        cli::cli_alert_info("{.code max_alters} reached.")
+        break
+      }
+      if (q_yes("Are these all the contacts?")) break
+    }
+  }
+  out <- as_tidygraph(as.data.frame(cbind(ego, alters)))
+  if(interpreter){
+    attr <- vector()
+    repeat{
+      cli::cli_text("Please name an attribute you are collecting, or press [Enter] to continue.")
+      attr <- c(attr, readline())
+      if (attr[length(attr)]==""){
+        attr <- attr[-length(attr)]
+        break
+      } 
+    }
+    if(length(attr)>0){
+      for(att in attr){
+        values <- vector()
+        for (alt in c(ego, alters)){
+          cli::cli_text("What value does {alt} have for {att}:")
+          values <- c(values, readline())
+        }
+        out <- add_node_attribute(out, att, values)
+      }
+    }
+  }
+  if(interrelater){
+    for(alt in alters){
+      others <- setdiff(c(ego,alters), alt)
+      extra <- vector()
+      for(oth in others){
+        cli::cli_text("Is {alt} connected by {ties} to {oth}?")
+        extra <- c(extra, q_yes())
+      }
+      # cat(c(rbind(alt, others[extra])))
+      out <- add_ties(out, c(rbind(alt, others[extra])))
+    }
+  }
+  if(!is.null(roster) && any(!roster %in% node_names(out))){
+    isolates <- roster[!roster %in% node_names(out)]
+    out <- add_nodes(out, length(isolates), list(name = isolates))
+  }
+  out <- add_info(out, ties = ties, 
+                  collection = "Interview",
+                  year = format(as.Date(Sys.Date(), format="%d/%m/%Y"),"%Y"))
+  out
+}
+
+q_yes <- function(msg = NULL){
+  if(!is.null(msg)) cli::cli_text(msg)
+  out <- readline()
+  if(is.logical(out)) return(out)
+  if(out=="") return(FALSE)
+  choices <- c("yes","no","true","false")
+  out <- c(TRUE,FALSE,TRUE,FALSE)[pmatch(tolower(out), tolower(choices))]
+  out
+}
+
+# Collections ####
+
+#' Making motifs
+#'
+#' @description
+#'   `create_motifs()` is used to create a list of networks that represent the
+#'   subgraphs or motifs corresponding to a certain number of nodes and direction.
+#'   Note that currently only `n==2` to `n==4` is implemented,
+#'   and the latter only for undirected networks.
+#' 
+#' @inheritParams make_create
+#' @name make_motifs
+#' @family makes
+#' @export
+create_motifs <- function(n, directed = FALSE){
+  directed <- infer_directed(n, directed)
+  n <- infer_n(n)
+  if(!directed & n==2){
+    return(list(Null = mutate_nodes(create_empty(2),
+                                 name = c("A","B")),
+                M = create_explicit(A--B)))
+  } else if(directed & n==2){
+    return(list(Null = mutate_nodes(create_empty(2, directed = TRUE),
+                                 name = c("A","B")),
+                Asymmetric = create_explicit(A-+B),
+                Mutual = create_explicit(A++B)))
+  } else if(!directed & n==3){
+    return(list(Empty = mutate_nodes(create_empty(3),
+                                     names = c("A","B","C")),
+                Edge = create_explicit(A--B, C),
+                Path = create_explicit(A--B--C),
+                Triangle = create_explicit(A--B--C--A)))
+  } else if(directed & n==3){
+    return(list(`003` = mutate_nodes(create_empty(3, directed = TRUE),
+                                     names = c("A","B","C")),
+                `012` = create_explicit(A-+B, C),
+                `102` = create_explicit(A++B, C),
+                `021D` = create_explicit(A-+B, A-+C),
+                `021U` = create_explicit(A+-B, A+-C),
+                `021C` = create_explicit(A-+B, B-+C),
+                `111D` = create_explicit(A++B, C-+B),
+                `111U` = create_explicit(A++B, B-+C),
+                `030T` = create_explicit(A-+B, A-+C, B-+C),
+                `030C` = create_explicit(A-+B, B-+C, C-+A),
+                `201` = create_explicit(A++B, B++C),
+                `120D` = create_explicit(A++B, C-+A:B),
+                `120U` = create_explicit(A++B, A:B-+C),
+                `120C` = create_explicit(A++B, A-+C-+B),
+                `210` = create_explicit(A++B, B++C, A-+C),
+                `300` = create_explicit(A++B++C++A)))
+  } else if(!directed & n==4){
+    return(list(E4 = mutate_nodes(create_empty(4),
+                                  name = c("A","B","C","D")),
+                I4 = create_explicit(A--B, C, D),
+                H4 = create_explicit(A--B, C--D),
+                L4 = create_explicit(A--B--C, D),
+                D4 = create_explicit(A--B--C--A, D),
+                U4 = create_explicit(A--B--C--D),
+                Y4 = create_explicit(A--B--C, B--D),
+                P4 = create_explicit(A--B--C, B--D--C),
+                C4 = create_explicit(A--B--C--D--A),
+                Z4 = create_explicit(A--B--C--D--A--C),
+                X4 = create_explicit(A--B--C--D--A--C, B--D)))
+  } else 
+    cli::cli_alert_warning("Motifs not yet available for that kind of network.")
+}
+
 
 # Defined ####
 

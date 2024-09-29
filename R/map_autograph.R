@@ -388,7 +388,7 @@ graphr <- function(.data, layout, labels = TRUE,
     }
   }
   if (is_complex(g)) {
-      p <- p + ggraph::geom_edge_loop0(edge_width = esize, edge_alpha = 0.4)
+      p <- p + ggraph::geom_edge_loop0(edge_alpha = 0.4)
   }
   if (length(unique(esize)) == 1) {
     p <- p + ggplot2::guides(edge_width = "none")

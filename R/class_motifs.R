@@ -1,6 +1,7 @@
 make_node_motif <- function(out, .data) {
   class(out) <- c("node_motif", class(out))
-  attr(out, "mode") <- node_is_mode(.data)
+  if(is_twomode(.data)) attr(out, "mode") <- node_is_mode(.data)
+  if(is_labelled(.data)) attr(out, "dimnames")[[1]] <- node_names(.data)
   out
 }
 
@@ -14,15 +15,53 @@ make_network_motif <- function(out, .data) {
 print.node_motif <- function(x, ...,
                          n = 6,
                          digits = 3) {
-  if(!is.null(attr(x, "dimnames")[[1]])){
-    x <- data.frame(names = attr(x, "dimnames")[[1]], x)
-  }
   if (any(attr(x, "mode"))) {
-    print(dplyr::tibble(as.data.frame(x)[!attr(x, "mode")]), n = n)
-    print(dplyr::tibble(as.data.frame(x)[attr(x, "mode")]), n = n)
+    y <- as.data.frame(x[!attr(x, "mode"),])
+    z <- as.data.frame(x[attr(x, "mode"),])
+    if(!is.null(attr(x, "dimnames")[[1]])){
+      y <- data.frame(names = attr(x, "dimnames")[[1]][!attr(x, "mode")], y)
+      z <- data.frame(names = attr(x, "dimnames")[[1]][attr(x, "mode")], z)
+    } 
+    print(dplyr::tibble(y), n = n)
+    print(dplyr::tibble(z), n = n)
   } else {
-    print(dplyr::tibble(as.data.frame(x)), n = n)
+    if(!is.null(attr(x, "dimnames")[[1]])){
+      x <- data.frame(names = attr(x, "dimnames")[[1]], x)
+    } else x <- as.data.frame(x)
+    print(dplyr::tibble(x), n = n)
   }
+}
+
+#' @export
+plot.node_motif <- function(x, ...) {
+  motifs <- dimnames(x)[[2]]
+  if("X4" %in% motifs){
+    graphs(create_motifs(4), waves = 1:11)
+  } else if("021D" %in% motifs){
+    graphs(create_motifs(3, directed = TRUE), waves = 1:16)
+  } else if("102" %in% motifs){
+    graphs(create_motifs(3), waves = 1:4)
+  } else if("Asymmetric" %in% motifs){
+    graphs(create_motifs(2, directed = TRUE), waves = 1:3)
+  } else if("Mutual" %in% motifs){
+    graphs(create_motifs(2), waves = 1:2)
+  } else mnet_unavailable("Cannot plot these motifs yet, sorry.")
+}
+  
+#' @export
+plot.network_motif <- function(x, ...) {
+  motifs <- dimnames(x)[[2]]
+  if("X4" %in% motifs){
+    graphs(create_motifs(4), waves = 1:11)
+  } else if("021D" %in% motifs){
+    graphs(create_motifs(3, directed = TRUE), waves = 1:16)
+  } else if("102" %in% motifs){
+    graphs(create_motifs(3), waves = 1:4)
+  } else if("Asymmetric" %in% motifs){
+    graphs(create_motifs(2, directed = TRUE), waves = 1:3)
+  } else if("Mutual" %in% motifs){
+    graphs(create_motifs(2), waves = 1:2)
+  } else mnet_unavailable("Cannot plot these motifs yet, sorry.")
 }
 
 # summary(node_by_triad(mpn_elite_mex),

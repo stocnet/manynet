@@ -1,7 +1,7 @@
 Package: manynet
 Title: Many Ways to Make, Modify, Map, Mark, and Measure Myriad Networks
-Version: 1.1.0
-Date: 2024-09-12
+Version: 1.2.0
+Date: 2024-09-28
 Description: Many tools for making, modifying, mapping, marking, measuring, 
    and motifs and memberships of many different types of networks.
    All functions operate with matrices, edge lists, and 'igraph', 'network', and 'tidygraph' objects,
@@ -41,7 +41,6 @@ Suggests:
     methods,
     multiplex,
     netdiffuseR,
-    oaqc,
     patchwork,
     readxl,
     rmarkdown,

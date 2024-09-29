@@ -6,6 +6,8 @@
 \alias{node_power}
 \alias{node_alpha}
 \alias{node_pagerank}
+\alias{node_authority}
+\alias{node_hub}
 \alias{tie_eigenvector}
 \alias{net_eigenvector}
 \title{Measures of eigenvector-like centrality and centralisation}
@@ -17,6 +19,10 @@ node_power(.data, normalized = TRUE, scale = FALSE, exponent = 1)
 node_alpha(.data, alpha = 0.85)
 
 node_pagerank(.data)
+
+node_authority(.data)
+
+node_hub(.data)
 
 tie_eigenvector(.data, normalized = TRUE)
 
@@ -57,6 +63,8 @@ These functions calculate common eigenvector-related centrality measures for one
 \item \code{node_power()} measures the Bonacich, beta, or power centrality of nodes in a network.
 \item \code{node_alpha()} measures the alpha or Katz centrality of nodes in a network.
 \item \code{node_pagerank()} measures the pagerank centrality of nodes in a network.
+\item \code{node_hub()} measures how well nodes in a network serve as hubs pointing to many authorities.
+\item \code{node_authority()} measures how well nodes in a network serve as authorities from many hubs.
 \item \code{tie_eigenvector()} measures the eigenvector centrality of ties in a network.
 \item \code{net_eigenvector()} measures the eigenvector centralization for a network.
 }
@@ -139,6 +147,11 @@ Bonacich, P. and Lloyd, P. 2001.
 Brin, Sergey and Page, Larry. 1998.
 "The anatomy of a large-scale hypertextual web search engine".
 \emph{Proceedings of the 7th World-Wide Web Conference}. Brisbane, Australia.
+
+Kleinberg, Jon. 1999.
+"Authoritative sources in a hyperlinked environment".
+\emph{Journal of the ACM} 46(5): 604–632.
+\doi{110.1145/324133.324140}.
 }
 \seealso{
 Other centrality: 

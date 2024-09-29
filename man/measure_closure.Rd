@@ -7,6 +7,7 @@
 \alias{net_transitivity}
 \alias{node_transitivity}
 \alias{net_equivalency}
+\alias{node_equivalency}
 \alias{net_congruency}
 \title{Measures of network closure}
 \usage{
@@ -19,6 +20,8 @@ net_transitivity(.data)
 node_transitivity(.data)
 
 net_equivalency(.data)
+
+node_equivalency(.data)
 
 net_congruency(.data, object2)
 }
@@ -74,6 +77,7 @@ node_reciprocity(to_unweighted(ison_networkers))
 net_transitivity(ison_adolescents)
 node_transitivity(ison_adolescents)
 net_equivalency(ison_southern_women)
+node_equivalency(ison_southern_women)
 }
 \references{
 Robins, Garry L, and Malcolm Alexander. 2004.

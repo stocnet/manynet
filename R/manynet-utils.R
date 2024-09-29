@@ -1,5 +1,5 @@
 # defining global variables more centrally
-utils::globalVariables(c(".data", "obs", "from", "to", "name"))
+utils::globalVariables(c(".data", "obs", "from", "to", "name", "A","B","C","D"))
 
 # Helper function for declaring available methods
 available_methods <- function(fun_vctr) {
@@ -39,6 +39,10 @@ thisRequiresBio <- function(pkgname) {
 `+.ggplot` <- function(e1, e2, ...) {
   thisRequires("patchwork")
   patchwork::wrap_plots(e1, e2, ...)
+}
+
+seq_nodes <- function(.data){
+  seq.int(net_nodes(.data))
 }
 
 # #' @export

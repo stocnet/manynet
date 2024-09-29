@@ -264,10 +264,12 @@ to_unweighted <- function(.data, threshold = 1) UseMethod("to_unweighted")
 
 #' @export
 to_unweighted.tbl_graph <- function(.data, threshold = 1) {
-  edges <- weight <- NULL
-  .data %>% activate(edges) %>% 
-    dplyr::filter(weight >= threshold) %>% 
-    dplyr::select(-c(weight))
+  if(is_weighted(.data)){
+    edges <- weight <- NULL
+    .data %>% activate(edges) %>% 
+      dplyr::filter(weight >= threshold) %>% 
+      dplyr::select(-c(weight))
+  } else .data
 }
 
 #' @export

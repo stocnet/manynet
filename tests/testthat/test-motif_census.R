@@ -21,8 +21,6 @@ test_that("net_dyad census works", {
   expect_equal(test[[2]], 18)
   expect_equal(names(test), c("Mutual", "Null"))
   expect_s3_class(test, "network_motif")
-  # Error
-  expect_error(net_by_dyad(ison_southern_women))
 })
 
 test <- net_by_triad(ison_adolescents)
@@ -38,7 +36,7 @@ test_that("net_triad census works", {
 test <- node_by_quad(ison_southern_women)
 test_that("node quad census works", {
   expect_s3_class(test, "node_motif")
-  expect_equal(test[1,1], 1463)
+  expect_equal(test[1,1], 1241)
 })
 
 test_that("net_mixed census works", {

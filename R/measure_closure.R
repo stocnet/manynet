@@ -94,20 +94,53 @@ node_transitivity <- function(.data) {
 #' @export
 net_equivalency <- function(.data) {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  if (manynet::is_twomode(.data)) {
+  if(is_twomode(.data)){
     mat <- manynet::as_matrix(.data)
     c <- ncol(mat)
     indegrees <- colSums(mat)
     twopaths <- crossprod(mat)
     diag(twopaths) <- 0
-    output <- sum(twopaths * (twopaths - 1)) /
+    out <- sum(twopaths * (twopaths - 1)) /
       (sum(twopaths * (twopaths - 1)) +
          sum(twopaths *
-             (matrix(indegrees, c, c) - twopaths)))
-    if (is.nan(output)) output <- 1
-    if(manynet::is_weighted(.data)) output <- output / mean(mat[mat>0])
-  } else cli::cli_abort("This function expects a two-mode network")
-  make_network_measure(output, .data)
+               (matrix(indegrees, c, c) - twopaths)))
+    if (is.nan(out)) out <- 1
+    if(manynet::is_weighted(.data)) out <- out / mean(mat[mat>0])
+  } else {
+    out <- rowSums(vapply(cli::cli_progress_along(1:net_nodes(.data)), function(i){
+      threepaths <- igraph::all_simple_paths(.data, i, cutoff = 3,
+                                             mode = "all")
+      onepaths <- threepaths[vapply(threepaths, length,
+                                    FUN.VALUE = numeric(1))==2]
+      threepaths <- threepaths[vapply(threepaths, length,
+                                      FUN.VALUE = numeric(1))==4]
+      c(sum(sapply(threepaths,"[[",4) %in% sapply(onepaths,"[[",2)),
+        length(threepaths))
+    }, FUN.VALUE = numeric(2)))
+    out <- out[1]/out[2]
+  }
+  make_network_measure(out, .data)
+}
+
+#' @rdname measure_closure
+#' @examples
+#' node_equivalency(ison_southern_women)
+#' @export
+node_equivalency <- function(.data) {
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  # if(is_weighted(.data))
+  #   mnet_info("Using unweighted form of the network.")
+  out <- vapply(cli::cli_progress_along(1:net_nodes(.data)), function(i){
+    threepaths <- igraph::all_simple_paths(.data, i, cutoff = 3,
+                                          mode = "all")
+    onepaths <- threepaths[vapply(threepaths, length, 
+                                  FUN.VALUE = numeric(1))==2]
+    threepaths <- threepaths[vapply(threepaths, length, 
+                                    FUN.VALUE = numeric(1))==4]
+    mean(sapply(threepaths,"[[",4) %in% sapply(onepaths,"[[",2))
+  }, FUN.VALUE = numeric(1))
+  if (any(is.nan(out))) out[is.nan(out)] <- 0
+  make_node_measure(out, .data)
 }
 
 #' @rdname measure_closure 

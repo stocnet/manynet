@@ -6,7 +6,8 @@
 \title{Four multiplex one-mode physician diffusion data (Coleman, Katz, and Menzel, 1966)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> $Peoria
-#> # A multiplex, directed network of 117 nodes and 543 arcs 
+#> # A multiplex, directed network of 117 nodes and 543 friendship, advice, and
+#> discussion arcs
 #> # A tibble: 117 x 12
 #>   adoption specialty    conferences journals practice   community patients
 #>      <dbl> <chr>        <chr>          <dbl> <chr>      <chr>     <chr>   
@@ -31,7 +32,8 @@
 #> # i 537 more rows
 #> 
 #> $Bloomington
-#> # A multiplex, directed network of 50 nodes and 211 arcs 
+#> # A multiplex, directed network of 50 nodes and 211 friendship, discussion, and
+#> advice arcs
 #> # A tibble: 50 x 12
 #>   adoption specialty conferences journals practice   community patients
 #>      <dbl> <chr>     <chr>          <dbl> <chr>      <chr>     <chr>   
@@ -56,7 +58,8 @@
 #> # i 205 more rows
 #> 
 #> $Quincy
-#> # A multiplex, directed network of 44 nodes and 174 arcs 
+#> # A multiplex, directed network of 44 nodes and 174 advice, discussion, and
+#> friendship arcs
 #> # A tibble: 44 x 12
 #>   adoption specialty conferences journals practice   community patients
 #>      <dbl> <chr>     <chr>          <dbl> <chr>      <chr>     <chr>   
@@ -81,7 +84,8 @@
 #> # i 168 more rows
 #> 
 #> $Galesburg
-#> # A multiplex, directed network of 35 nodes and 171 arcs 
+#> # A multiplex, directed network of 35 nodes and 171 advice, discussion, and
+#> friendship arcs
 #> # A tibble: 35 x 12
 #>   adoption specialty conferences journals practice   community patients
 #>      <dbl> <chr>     <chr>          <dbl> <chr>      <chr>     <chr>   
