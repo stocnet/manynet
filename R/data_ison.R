@@ -394,6 +394,38 @@
 #'   ```
 "ison_monks"
 
+## Dolphins ####
+
+#' One-mode, undirected network of frequent associations in a dolphin pod (Lusseau et al. 2003)
+#'
+#' @description
+#'   These data contain the frequent associations between the 62 dolphins of a
+#'   pod of dolphins living off Doubtful Sound, New Zealand.
+#'   Additional information can be found in the literature cited below.
+#' @docType data
+#' @keywords datasets
+#' @name ison_dolphins
+#' @references
+#'   Lusseau, David, K. Schneider, O. J. Boisseau, P. Haase, E. Slooten, and S. M. Dawson. 2003. 
+#'   "The bottlenose dolphin community of Doubtful Sound features a large proportion of long-lasting associations", 
+#'   _Behavioral Ecology and Sociobiology_ 54, 396-405.
+#'   
+#'   Lusseau, David. 2003.
+#'   "The emergent properties of a dolphin social network",
+#'   _Proc. R. Soc. London B_ 270(S): S186-S188.
+#'   \doi{10.1098/rsbl.2003.0057}
+#'   
+#'   Lusseau, David. 2007. 
+#'   "Evidence for social role in a dolphin social network". 
+#'   _Evolutionary Ecology_ 21: 357–366. 
+#'   \doi{10.1007/s10682-006-9105-0}
+#' @usage data(ison_dolphins)
+#' @format 
+#'   ```{r, echo = FALSE}
+#'   ison_dolphins
+#'   ```
+"ison_dolphins"
+
 # Fictitious ####
 
 ## Marvel ####
@@ -591,7 +623,8 @@
 #'   \href{https://gweissman.github.io/post/grey-s-anatomy-network-of-sexual-relations/}{Gary Weissman} 
 #'   collected data on the sexual contacts between characters on the television show
 #'   through observation of the story lines in the episodes and fan pages,
-#'   and this data was extended by \href{http://badhessian.org/2012/09/lessons-on-exponential-random-graph-modeling-from-greys-anatomy-hook-ups/}{Benjamin Lind}
+#'   and this data was extended by 
+#'   \href{http://badhessian.org/2012/09/lessons-on-exponential-random-graph-modeling-from-greys-anatomy-hook-ups/}{Benjamin Lind}
 #'   including nodal attributes:
 #'   
 #'   - 'name': first and, where available, surname
