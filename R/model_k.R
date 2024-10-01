@@ -16,16 +16,6 @@
 #'   
 #' @inheritParams mark_is
 #' @param hc A hierarchical clustering object.
-#' @references 
-#'  Thorndike, Robert L. 1953. 
-#'    "Who Belongs in the Family?". 
-#'    _Psychometrika_, 18(4): 267–76. 
-#'    \doi{10.1007/BF02289263}.
-#'
-#' Rousseeuw, Peter J. 1987. 
-#'   “Silhouettes: A Graphical Aid to the Interpretation and Validation of Cluster Analysis.” 
-#'   _Journal of Computational and Applied Mathematics_, 20: 53–65. 
-#'   \doi{10.1016/0377-0427(87)90125-7}.
 #' @name model_kselect
 NULL
 
@@ -41,6 +31,12 @@ k_strict <- function(hc, .data){
 #' @param census A motif census object.
 #' @param range An integer indicating the maximum number of options to consider.
 #'   The minimum of this and the number of nodes in the network is used.
+#' @references 
+#' ## On the elbow method
+#'  Thorndike, Robert L. 1953. 
+#'    "Who Belongs in the Family?". 
+#'    _Psychometrika_, 18(4): 267–76. 
+#'    \doi{10.1007/BF02289263}.
 #' @export
 k_elbow <- function(hc, .data, census, range){
   
@@ -113,6 +109,12 @@ k_elbow <- function(hc, .data, census, range){
 }
 
 #' @rdname model_kselect 
+#' @references 
+#' ## On the silhouette method
+#' Rousseeuw, Peter J. 1987. 
+#'   “Silhouettes: A Graphical Aid to the Interpretation and Validation of Cluster Analysis.” 
+#'   _Journal of Computational and Applied Mathematics_, 20: 53–65. 
+#'   \doi{10.1016/0377-0427(87)90125-7}.
 #' @export
 k_silhouette <- function(hc, .data, range){
   kcs <- 2:min(range, manynet::net_nodes(.data))
