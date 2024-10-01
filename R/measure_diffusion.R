@@ -29,8 +29,11 @@
 #'   smeg_diff <- play_diffusion(smeg, recovery = 0.2)
 #'   plot(smeg_diff)
 #' @references
-#'   Kermack, W. and McKendrick, A., 1927. "A contribution to the mathematical theory of epidemics". 
+#' ## On epidemiological models
+#'   Kermack, William O., and Anderson Gray McKendrick. 1927. 
+#'   "A contribution to the mathematical theory of epidemics". 
 #'   _Proc. R. Soc. London A_ 115: 700-721.
+#'   \doi{10.1098/rspa.1927.0118}
 NULL
 
 #' @rdname measure_diffusion_net 
@@ -105,6 +108,17 @@ net_recovery <- function(diff_model, censor = TRUE){
 #'   die out.
 #'   Where \eqn{R = 1}, the 'disease' will continue as endemic,
 #'   if conditions allow.
+#' @references
+#' ## On the basic reproduction number
+#' Diekmann, Odo, Hans J.A.P. Heesterbeek, and Hans J.A.J. Metz. 1990. 
+#' "On the definition and the computation of the basic reproduction ratio R0 in models for infectious diseases in heterogeneous populations". 
+#' _Journal of Mathematical Biology_, 28(4): 365–82.
+#' \doi{10.1007/BF00178324}
+#' 
+#' Kenah, Eben, and James M. Robins. 2007. 
+#' "Second look at the spread of epidemics on networks". 
+#' _Physical Review E_, 76(3 Pt 2): 036113.
+#' \doi{10.1103/PhysRevE.76.036113}
 #' @examples
 #'   # To calculate the reproduction number for a given diffusion model
 #'   net_reproduction(smeg_diff)
@@ -139,7 +153,13 @@ net_reproduction <- function(diff_model){
 #'   A HIT or immunity score of 0.75 would mean that 75% of the nodes in the network
 #'   would need to be vaccinated or otherwise protected to achieve herd immunity.
 #'   To identify how many nodes this would be, multiply this proportion with the number
-#'   of nodes in the network. 
+#'   of nodes in the network.
+#' @references
+#' ## On herd immunity
+#' Garnett, G.P. 2005.
+#' "Role of herd immunity in determining the effect of vaccines against sexually transmitted disease".
+#' _The Journal of Infectious Diseases_, 191(1): S97-106.
+#' \doi{10.1086/425271}
 #' @examples
 #'   # Calculating the proportion required to achieve herd immunity
 #'   net_immunity(smeg_diff)
@@ -196,10 +216,14 @@ net_immunity <- function(diff_model, normalized = TRUE){
 #' those that oscillate indicate variability in adoption behavior over time.
 #' @source `{netdiffuseR}`
 #' @references
-#' Allison, P. 1984. _Event history analysis regression for longitudinal event data_. 
+#' ## On hazard rates
+#' Allison, Paul D. 1984. 
+#' _Event history analysis: Regression for longitudinal event data_. 
 #' London: Sage Publications.
+#' \doi{10.4135/9781412984195}
 #'
-#' Wooldridge, J. M. 2010. _Econometric Analysis of Cross Section and Panel Data_ (2nd ed.). 
+#' Wooldridge, Jeffrey M. 2010. 
+#' _Econometric Analysis of Cross Section and Panel Data_ (2nd ed.). 
 #' Cambridge: MIT Press.
 #' @examples
 #' # To calculate the hazard rates at each time point
@@ -296,6 +320,7 @@ net_infection_peak <- function(diff_model){
 #'   smeg_diff <- play_diffusion(smeg, recovery = 0.2)
 #'   plot(smeg_diff)
 #' @references
+#' ## On diffusion measures
 #'   Valente, Tom W. 1995. _Network models of the diffusion of innovations_
 #'   (2nd ed.). Cresskill N.J.: Hampton Press.
 NULL
@@ -504,7 +529,9 @@ node_exposure <- function(.data, mark, time = 0){
 #' @family diffusion
 #' @name member_diffusion
 #' @references
-#'   Valente, Tom W. 1995. _Network models of the diffusion of innovations_
+#' ## On adopter classes
+#'   Valente, Tom W. 1995. 
+#'   _Network models of the diffusion of innovations_
 #'   (2nd ed.). Cresskill N.J.: Hampton Press.
 NULL
 

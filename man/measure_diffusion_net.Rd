@@ -184,14 +184,46 @@ those that oscillate indicate variability in adoption behavior over time.
 net_hazard(play_diffusion(smeg, transmissibility = 0.3))
 }
 \references{
-Kermack, W. and McKendrick, A., 1927. "A contribution to the mathematical theory of epidemics".
+\subsection{On epidemiological models}{
+
+Kermack, William O., and Anderson Gray McKendrick. 1927.
+"A contribution to the mathematical theory of epidemics".
 \emph{Proc. R. Soc. London A} 115: 700-721.
+\doi{10.1098/rspa.1927.0118}
+}
 
-Allison, P. 1984. \emph{Event history analysis regression for longitudinal event data}.
+\subsection{On the basic reproduction number}{
+
+Diekmann, Odo, Hans J.A.P. Heesterbeek, and Hans J.A.J. Metz. 1990.
+"On the definition and the computation of the basic reproduction ratio R0 in models for infectious diseases in heterogeneous populations".
+\emph{Journal of Mathematical Biology}, 28(4): 365–82.
+\doi{10.1007/BF00178324}
+
+Kenah, Eben, and James M. Robins. 2007.
+"Second look at the spread of epidemics on networks".
+\emph{Physical Review E}, 76(3 Pt 2): 036113.
+\doi{10.1103/PhysRevE.76.036113}
+}
+
+\subsection{On herd immunity}{
+
+Garnett, G.P. 2005.
+"Role of herd immunity in determining the effect of vaccines against sexually transmitted disease".
+\emph{The Journal of Infectious Diseases}, 191(1): S97-106.
+\doi{10.1086/425271}
+}
+
+\subsection{On hazard rates}{
+
+Allison, Paul D. 1984.
+\emph{Event history analysis: Regression for longitudinal event data}.
 London: Sage Publications.
+\doi{10.4135/9781412984195}
 
-Wooldridge, J. M. 2010. \emph{Econometric Analysis of Cross Section and Panel Data} (2nd ed.).
+Wooldridge, Jeffrey M. 2010.
+\emph{Econometric Analysis of Cross Section and Panel Data} (2nd ed.).
 Cambridge: MIT Press.
+}
 }
 \seealso{
 Other measures: 
