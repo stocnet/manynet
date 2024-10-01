@@ -44,7 +44,9 @@ the type of centrality, and other arguments.}
 
 \item{scale}{Logical scalar, whether to rescale the vector so the maximum score is 1.}
 
-\item{exponent}{Decay rate for the Bonacich power centrality score.}
+\item{exponent}{Decay rate or attentuation factor for
+the Bonacich power centrality score.
+Can be positive or negative.}
 
 \item{alpha}{A constant that trades off the importance of external influence against the importance of connection.
 When \eqn{\alpha = 0}, only the external influence matters.
@@ -103,7 +105,7 @@ Where \eqn{\beta} is negative, this means being connected to central people
 decreases centrality
 (and being connected to more peripheral actors increases centrality).
 When \eqn{\beta = 0}, this is the outdegree.
-\eqn{\alpha} is calculated to make sure the root mean square equal
+\eqn{\alpha} is calculated to make sure the root mean square equals
 the network size.
 }
 
