@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
       </span>
     </div>
 
@@ -59,6 +59,31 @@
       <small>Source: <a href="https://github.com/stocnet/manynet/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.1" id="manynet-121">manynet 1.2.1<a class="anchor" aria-label="anchor" href="#manynet-121"></a></h2>
+<div class="section level3">
+<h3 id="making-1-2-1">Making<a class="anchor" aria-label="anchor" href="#making-1-2-1"></a></h3>
+<ul><li>All <code>read_*()</code> now print the command used to the console if the (default) file.choose() is used</li>
+<li>Added <code><a href="../reference/make_read.html">read_gml()</a></code>
+</li>
+<li>Updated references, structure, and DOIs to make and modify documentation</li>
+</ul></div>
+<div class="section level3">
+<h3 id="measures-1-2-1">Measures<a class="anchor" aria-label="anchor" href="#measures-1-2-1"></a></h3>
+<ul><li>Updated references, structure, and DOIs to centrality, diffusion, and other measures, as well as to marks, motifs, memberships, and models</li>
+<li>Added more documentation on <code><a href="../reference/measure_central_eigen.html">node_power()</a></code>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="data-1-2-1">Data<a class="anchor" aria-label="anchor" href="#data-1-2-1"></a></h3>
+<ul><li>Added <code>ison_dolphins</code>
+</li>
+<li>Added <code>ison_books</code>
+</li>
+<li>Added <code>ison_blogs</code>
+</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.2.0" id="manynet-120">manynet 1.2.0<a class="anchor" aria-label="anchor" href="#manynet-120"></a></h2>
 <div class="section level3">
@@ -656,7 +681,7 @@
 <code><a href="https://r.igraph.org/reference/is_bipartite.html" class="external-link">igraph::is_bipartite()</a></code> is superseded by <code><a href="../reference/mark_format.html">is_twomode()</a></code>
 </li>
 <li>
-<code><a href="https://tidygraph.data-imaginist.com/reference/activate.html" class="external-link">tidygraph::activate()</a></code> is superseded by <code><a href="../reference/manip_ties.html">mutate_ties()</a></code> and similar functions</li>
+<code><a href="https://rdrr.io/pkg/tidygraph/man/activate.html" class="external-link">tidygraph::activate()</a></code> is superseded by <code><a href="../reference/manip_ties.html">mutate_ties()</a></code> and similar functions</li>
 </ul></li>
 <li>Fixed bug by replacing older <code><a href="https://r.igraph.org/reference/as_incidence_matrix.html" class="external-link">igraph::as_incidence_matrix()</a></code> and <code><a href="https://r.igraph.org/reference/graph_from_incidence_matrix.html" class="external-link">igraph::graph_from_incidence_matrix()</a></code> with <code><a href="https://r.igraph.org/reference/as_biadjacency_matrix.html" class="external-link">igraph::as_biadjacency_matrix()</a></code> and <code><a href="https://r.igraph.org/reference/graph_from_biadjacency_matrix.html" class="external-link">igraph::graph_from_biadjacency_matrix()</a></code>
 </li>

@@ -19,8 +19,6 @@ net_balance() measures the structural balance index on
 the proportion of balanced triangles,
 ranging between 0 if all triangles are imbalanced and
 1 if all triangles are balanced.
-net_change() measures the Hamming distance between two or more networks.
-net_stability() measures the Jaccard index of stability between two or more networks.
 
 
 These net_*() functions return a single numeric scalar or value."><meta property="og:image" content="https://stocnet.github.io/manynet/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -41,7 +39,7 @@ These net_*() functions return a single numeric scalar or value."><meta property
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
       </span>
     </div>
 
@@ -104,8 +102,6 @@ a power-law distribution.</p></li>
 the proportion of balanced triangles,
 ranging between <code>0</code> if all triangles are imbalanced and
 <code>1</code> if all triangles are balanced.</p></li>
-<li><p><code><a href="measure_periods.html">net_change()</a></code> measures the Hamming distance between two or more networks.</p></li>
-<li><p><code><a href="measure_periods.html">net_stability()</a></code> measures the Jaccard index of stability between two or more networks.</p></li>
 </ul><p>These <code>net_*()</code> functions return a single numeric scalar or value.</p>
     </div>
 
@@ -205,30 +201,97 @@ to the rest of the network through a single tie.</p>
     </div>
     <div id="references">
     <h2>References</h2>
-    <p>Borgatti, Stephen P., and Martin G. Everett. 2000.
+
+<div class="section">
+<h3 id="on-core-periphery">On core-periphery<a class="anchor" aria-label="anchor" href="#on-core-periphery"></a></h3>
+
+
+<p>Borgatti, Stephen P., and Martin G. Everett. 2000.
 “Models of Core/Periphery Structures.”
 <em>Social Networks</em> 21(4):375–95.
 <a href="https://doi.org/10.1016/S0378-8733%2899%2900019-2" class="external-link">doi:10.1016/S0378-8733(99)00019-2</a></p>
-<p>Murata, Tsuyoshi. 2010. Modularity for Bipartite Networks.
+</div>
+
+<div class="section">
+<h3 id="on-the-rich-club-coefficient">On the rich-club coefficient<a class="anchor" aria-label="anchor" href="#on-the-rich-club-coefficient"></a></h3>
+
+
+<p>Zhou, Shi, and Raul J. Mondragon. 2004.
+"The Rich-Club Phenomenon in the Internet Topology".
+<em>IEEE Communications Letters</em>, 8(3): 180-182.
+<a href="https://doi.org/10.1109/lcomm.2004.823426" class="external-link">doi:10.1109/lcomm.2004.823426</a></p>
+</div>
+
+<div class="section">
+<h3 id="on-modularity">On modularity<a class="anchor" aria-label="anchor" href="#on-modularity"></a></h3>
+
+
+<p>Newman, Mark E.J. 2006.
+"Modularity and community structure in networks",
+<em>Proceedings of the National Academy of Sciences</em> 103(23): 8577-8696.
+<a href="https://doi.org/10.1073/pnas.0601602103" class="external-link">doi:10.1073/pnas.0601602103</a></p>
+<p>Murata, Tsuyoshi. 2010.
+"Modularity for Bipartite Networks".
 In: Memon, N., Xu, J., Hicks, D., Chen, H. (eds)
 <em>Data Mining for Social Network Data. Annals of Information Systems</em>, Vol 12.
 Springer, Boston, MA.
 <a href="https://doi.org/10.1007/978-1-4419-6287-4_7" class="external-link">doi:10.1007/978-1-4419-6287-4_7</a></p>
+</div>
+
+<div class="section">
+<h3 id="on-small-worldliness">On small-worldliness<a class="anchor" aria-label="anchor" href="#on-small-worldliness"></a></h3>
+
+
 <p>Watts, Duncan J., and Steven H. Strogatz. 1998.
-“Collective Dynamics of ‘Small-World’ Networks.”
+“Collective Dynamics of ‘Small-World’ Networks”.
 <em>Nature</em> 393(6684):440–42.
-<a href="https://doi.org/10.1038/30918" class="external-link">doi:10.1038/30918</a>
-.</p>
+<a href="https://doi.org/10.1038/30918" class="external-link">doi:10.1038/30918</a></p>
 <p>Telesford QK, Joyce KE, Hayasaka S, Burdette JH, Laurienti PJ. 2011.
 "The ubiquity of small-world networks".
 <em>Brain Connectivity</em> 1(5): 367–75.
-<a href="https://doi.org/10.1089/brain.2011.0038" class="external-link">doi:10.1089/brain.2011.0038</a>
-.</p>
-<p>Neal Zachary P. 2017.
+<a href="https://doi.org/10.1089/brain.2011.0038" class="external-link">doi:10.1089/brain.2011.0038</a></p>
+<p>Neal, Zachary P. 2017.
 "How small is it? Comparing indices of small worldliness".
 <em>Network Science</em>. 5 (1): 30–44.
-<a href="https://doi.org/10.1017/nws.2017.5" class="external-link">doi:10.1017/nws.2017.5</a>
-.</p>
+<a href="https://doi.org/10.1017/nws.2017.5" class="external-link">doi:10.1017/nws.2017.5</a></p>
+</div>
+
+<div class="section">
+<h3 id="on-scale-free-networks">On scale-free networks<a class="anchor" aria-label="anchor" href="#on-scale-free-networks"></a></h3>
+
+
+<p>Barabasi, Albert-Laszlo, and Reka Albert. 1999.
+"Emergence of scaling in random networks",
+<em>Science</em>, 286(5439): 509-512.
+<a href="https://doi.org/10.1126/science.286.5439.509" class="external-link">doi:10.1126/science.286.5439.509</a></p>
+<p>Clauset, Aaron, Cosma Rohilla Shalizi, and Mark E.J. Newman. 2009.
+"Power-law distributions in empirical data",
+<em>SIAM Review</em>, 51(4): 661-703.
+<a href="https://doi.org/10.1137/070710111" class="external-link">doi:10.1137/070710111</a></p>
+<p>Stumpf, Michael P.H., and Mason Porter. 2012.
+"Critical truths about power laws",
+<em>Science</em>, 335(6069): 665-666.
+<a href="https://doi.org/10.1126/science.1216142" class="external-link">doi:10.1126/science.1216142</a></p>
+<p>Holme, Petter. 2019.
+"Rare and everywhere: Perspectives on scale-free networks",
+<em>Nature Communications</em>, 10(1): 1016.
+<a href="https://doi.org/10.1038/s41467-019-09038-8" class="external-link">doi:10.1038/s41467-019-09038-8</a></p>
+</div>
+
+<div class="section">
+<h3 id="on-balance-theory">On balance theory<a class="anchor" aria-label="anchor" href="#on-balance-theory"></a></h3>
+
+
+<p>Heider, Fritz. 1946.
+"Attitudes and cognitive organization".
+<em>The Journal of Psychology</em>, 21: 107-112.
+<a href="https://doi.org/10.1080/00223980.1946.9917275" class="external-link">doi:10.1080/00223980.1946.9917275</a></p>
+<p>Cartwright, D., and Frank Harary. 1956.
+"Structural balance: A generalization of Heider's theory".
+<em>Psychological Review</em>, 63(5): 277-293.
+<a href="https://doi.org/10.1037/h0046049" class="external-link">doi:10.1037/h0046049</a></p>
+</div>
+
     </div>
     <div id="see-also">
     <h2>See also</h2>

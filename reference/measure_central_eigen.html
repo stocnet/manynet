@@ -33,7 +33,7 @@ including for two-mode networks."><meta property="og:image" content="https://sto
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
       </span>
     </div>
 
@@ -135,7 +135,9 @@ the type of centrality, and other arguments.</p></dd>
 
 
 <dt id="arg-exponent">exponent<a class="anchor" aria-label="anchor" href="#arg-exponent"></a></dt>
-<dd><p>Decay rate for the Bonacich power centrality score.</p></dd>
+<dd><p>Decay rate or attentuation factor for
+the Bonacich power centrality score.
+Can be positive or negative.</p></dd>
 
 
 <dt id="arg-alpha">alpha<a class="anchor" aria-label="anchor" href="#arg-alpha"></a></dt>
@@ -168,11 +170,21 @@ and \(\lambda\) is a constant representing the principal eigenvalue.
 Rather than performing this iteration,
 most routines solve the eigenvector equation \(Ax = \lambda x\).</p>
     </div>
-    <div id="power-centrality">
-    <h2>Power centrality</h2>
+    <div id="power-or-beta-or-bonacich-centrality">
+    <h2>Power or beta (or Bonacich) centrality</h2>
 
 
-<p>Power or beta (or Bonacich) centrality</p>
+<p>Power centrality includes an exponent that weights contributions to a node's
+centrality based on how far away those other nodes are.
+$$c_b(i) = \sum A(i,j) (\alpha = \beta c(j))$$
+Where \(\beta\) is positive, this means being connected to central people
+increases centrality.
+Where \(\beta\) is negative, this means being connected to central people
+decreases centrality
+(and being connected to more peripheral actors increases centrality).
+When \(\beta = 0\), this is the outdegree.
+\(\alpha\) is calculated to make sure the root mean square equals
+the network size.</p>
     </div>
     <div id="alpha-centrality">
     <h2>Alpha centrality</h2>
@@ -197,30 +209,59 @@ most routines solve the equation \(x = (I - \frac{1}{\lambda} A^T)^{-1} e\).</p>
     </div>
     <div id="references">
     <h2>References</h2>
-    <p>Bonacich, Phillip. 1991.
+
+<div class="section">
+<h3 id="on-eigenvector-centrality">On eigenvector centrality<a class="anchor" aria-label="anchor" href="#on-eigenvector-centrality"></a></h3>
+
+
+<p>Bonacich, Phillip. 1991.
 “Simultaneous Group and Individual Centralities.”
 <em>Social Networks</em> 13(2):155–68.
-<a href="https://doi.org/10.1016/0378-8733%2891%2990018-O" class="external-link">doi:10.1016/0378-8733(91)90018-O</a>
-.</p>
+<a href="https://doi.org/10.1016/0378-8733%2891%2990018-O" class="external-link">doi:10.1016/0378-8733(91)90018-O</a></p>
+</div>
+
+<div class="section">
+<h3 id="on-power-centrality">On power centrality<a class="anchor" aria-label="anchor" href="#on-power-centrality"></a></h3>
+
+
 <p>Bonacich, Phillip. 1987.
 “Power and Centrality: A Family of Measures.”
 <em>The American Journal of Sociology</em>, 92(5): 1170–82.
 <a href="https://doi.org/10.1086/228631" class="external-link">doi:10.1086/228631</a>
 .</p>
+</div>
+
+<div class="section">
+<h3 id="on-alpha-centrality">On alpha centrality<a class="anchor" aria-label="anchor" href="#on-alpha-centrality"></a></h3>
+
+
 <p>Katz, Leo 1953.
 "A new status index derived from sociometric analysis".
 <em>Psychometrika</em>. 18(1): 39–43.</p>
 <p>Bonacich, P. and Lloyd, P. 2001.
 “Eigenvector-like measures of centrality for asymmetric relations”
 <em>Social Networks</em>. 23(3):191-201.</p>
+</div>
+
+<div class="section">
+<h3 id="on-pagerank-centrality">On pagerank centrality<a class="anchor" aria-label="anchor" href="#on-pagerank-centrality"></a></h3>
+
+
 <p>Brin, Sergey and Page, Larry. 1998.
 "The anatomy of a large-scale hypertextual web search engine".
 <em>Proceedings of the 7th World-Wide Web Conference</em>. Brisbane, Australia.</p>
+</div>
+
+<div class="section">
+<h3 id="on-hub-and-authority-centrality">On hub and authority centrality<a class="anchor" aria-label="anchor" href="#on-hub-and-authority-centrality"></a></h3>
+
+
 <p>Kleinberg, Jon. 1999.
 "Authoritative sources in a hyperlinked environment".
 <em>Journal of the ACM</em> 46(5): 604–632.
-<a href="https://doi.org/110.1145/324133.324140" class="external-link">doi:110.1145/324133.324140</a>
-.</p>
+<a href="https://doi.org/10.1145/324133.324140" class="external-link">doi:10.1145/324133.324140</a></p>
+</div>
+
     </div>
     <div id="see-also">
     <h2>See also</h2>
