@@ -77,10 +77,13 @@ ison_adolescents \%>\% mutate_ties(weight = tb) \%>\%
 net_betweenness(ison_southern_women, direction = "in")
 }
 \references{
+\subsection{On induced centrality}{
+
 Everett, Martin and Steve Borgatti. 2010.
 "Induced, endogenous and exogenous centrality"
 \emph{Social Networks}, 32: 339-344.
 \doi{10.1016/j.socnet.2010.06.004}
+}
 }
 \seealso{
 Other centrality: 

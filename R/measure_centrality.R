@@ -58,23 +58,25 @@
 #'   and two centralization scores if the object was two-mode.
 #' @importFrom igraph graph_from_incidence_matrix is_bipartite degree V
 #' @references 
+#' ## On multimodal centrality
 #' Faust, Katherine. 1997. 
 #' "Centrality in affiliation networks." 
 #' _Social Networks_ 19(2): 157-191.
-#' \doi{10.1016/S0378-8733(96)00300-0}.
+#' \doi{10.1016/S0378-8733(96)00300-0}
 #' 
 #' Borgatti, Stephen P., and Martin G. Everett. 1997. 
 #' "Network analysis of 2-mode data." 
 #' _Social Networks_ 19(3): 243-270.
-#' \doi{10.1016/S0378-8733(96)00301-2}.
+#' \doi{10.1016/S0378-8733(96)00301-2}
 #' 
 #' Borgatti, Stephen P., and Daniel S. Halgin. 2011. 
 #' "Analyzing affiliation networks." 
 #' In _The SAGE Handbook of Social Network Analysis_, 
 #' edited by John Scott and Peter J. Carrington, 417–33. 
 #' London, UK: Sage.
-#' \doi{10.4135/9781446294413.n28}.
+#' \doi{10.4135/9781446294413.n28}
 #' 
+#' ## On strength centrality
 #' Opsahl, Tore, Filip Agneessens, and John Skvoretz. 2010. 
 #' "Node centrality in weighted networks: Generalizing degree and shortest paths." 
 #' _Social Networks_ 32, 245-251.
@@ -165,10 +167,11 @@ node_multidegree <- function (.data, tie1, tie2){
 
 #' @rdname measure_central_degree
 #' @references
+#' ## On signed centrality
 #' Everett, Martin G., and Stephen P. Borgatti. 2014. 
 #' “Networks Containing Negative Ties.” 
 #' _Social Networks_ 38:111–20. 
-#' \doi{10.1016/j.socnet.2014.03.005}.
+#' \doi{10.1016/j.socnet.2014.03.005}
 #' @export
 node_posneg <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
@@ -319,6 +322,7 @@ node_betweenness <- function(.data, normalized = TRUE,
 #' @examples
 #' node_induced(ison_adolescents)
 #' @references
+#' ## On induced centrality
 #' Everett, Martin and Steve Borgatti. 2010.
 #' "Induced, endogenous and exogenous centrality"
 #' _Social Networks_, 32: 339-344.
@@ -507,6 +511,7 @@ node_reach <- function(.data, normalized = TRUE, k = 2){
 
 #' @rdname measure_central_close 
 #' @references
+#'   ## On harmonic centrality
 #'   Marchiori, M, and V Latora. 2000. 
 #'   "Harmony in the small-world".
 #'   _Physica A_ 285: 539-546.
@@ -689,10 +694,11 @@ NULL
 #'   We use `{igraph}` routines behind the scenes here for consistency and because they are often faster.
 #'   For example, `igraph::eigencentrality()` is approximately 25% faster than `sna::evcent()`.
 #' @references 
+#'   ## On eigenvector centrality
 #'   Bonacich, Phillip. 1991. 
 #'   “Simultaneous Group and Individual Centralities.” 
 #'   _Social Networks_ 13(2):155–68. 
-#'   \doi{10.1016/0378-8733(91)90018-O}.
+#'   \doi{10.1016/0378-8733(91)90018-O}
 #' @examples
 #' node_eigenvector(ison_southern_women)
 #' @return A numeric vector giving the eigenvector centrality measure of each node.
@@ -736,6 +742,7 @@ node_eigenvector <- function(.data, normalized = TRUE, scale = FALSE){
 #' @section Power centrality:
 #'   Power or beta (or Bonacich) centrality 
 #' @references 
+#' ## On power centrality
 #'   Bonacich, Phillip. 1987. 
 #'   “Power and Centrality: A Family of Measures.” 
 #'   _The American Journal of Sociology_, 92(5): 1170–82.
@@ -800,6 +807,7 @@ node_power <- function(.data, normalized = TRUE, scale = FALSE, exponent = 1){
 #'   most routines solve the equation \eqn{x = (I - \frac{1}{\lambda} A^T)^{-1} e}.
 #' @importFrom igraph alpha_centrality
 #' @references 
+#' ## On alpha centrality
 #'   Katz, Leo 1953. 
 #'   "A new status index derived from sociometric analysis". 
 #'   _Psychometrika_. 18(1): 39–43.
@@ -817,6 +825,7 @@ node_alpha <- function(.data, alpha = 0.85){
 
 #' @rdname measure_central_eigen 
 #' @references 
+#' ## On pagerank centrality
 #'   Brin, Sergey and Page, Larry. 1998.
 #'   "The anatomy of a large-scale hypertextual web search engine".
 #'   _Proceedings of the 7th World-Wide Web Conference_. Brisbane, Australia.
@@ -829,10 +838,11 @@ node_pagerank <- function(.data){
   
 #' @rdname measure_central_eigen 
 #' @references 
+#' ## On hub and authority centrality
 #'   Kleinberg, Jon. 1999.
 #'   "Authoritative sources in a hyperlinked environment". 
 #'   _Journal of the ACM_ 46(5): 604–632.
-#'   \doi{10.1145/324133.324140}.
+#'   \doi{10.1145/324133.324140}
 #' @export 
 node_authority <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
