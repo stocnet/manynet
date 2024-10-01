@@ -56,6 +56,8 @@ node_is_core(ison_adolescents)
 node_coreness(ison_adolescents)
 }
 \references{
+\subsection{On core-periphery partitioning}{
+
 Borgatti, Stephen P., & Everett, Martin G. 1999.
 Models of core /periphery structures.
 \emph{Social Networks}, 21, 375–395.
@@ -64,6 +66,7 @@ Models of core /periphery structures.
 Lip, Sean Z. W. 2011.
 “A Fast Algorithm for the Discrete Core/Periphery Bipartitioning Problem.”
 \doi{10.48550/arXiv.1102.5511}
+}
 }
 \seealso{
 Other memberships: 

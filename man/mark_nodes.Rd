@@ -66,13 +66,36 @@ node_is_cutpoint(ison_brandes)
 node_is_fold(create_explicit(A-B, B-C, A-C, C-D, C-E, D-E))
 }
 \references{
-Tsukiyama, S. M. Ide, H. Ariyoshi and I. Shirawaka. 1977.
+\subsection{On independent sets}{
+
+Tsukiyama, Shuji, Mikio Ide, Hiromu Ariyoshi, and Isao Shirawaka. 1977.
 "A new algorithm for generating all the maximal independent sets".
-\emph{SIAM J Computing}, 6:505–517.
+\emph{SIAM Journal on Computing}, 6(3):505–517.
+\doi{10.1137/0206036}
+}
+
+\subsection{On articulation or cut-points}{
+
+Tarjan, Robert E. and Uzi Vishkin. 1985.
+"An Efficient Parallel Biconnectivity Algorithm",
+\emph{SIAM Journal on Computing} 14(4): 862-874.
+\doi{10.1137/0214061}
+}
+
+\subsection{On structural folds}{
+
+Vedres, Balazs, and David Stark. 2010.
+"Structural folds: Generative disruption in overlapping groups",
+\emph{American Journal of Sociology} 115(4): 1150-1190.
+\doi{10.1086/649497}
+}
+
+\subsection{On mentoring}{
 
 Valente, Thomas, and Rebecca Davis. 1999.
 "Accelerating the Diffusion of Innovations Using Opinion Leaders",
 \emph{Annals of the American Academy of Political and Social Science} 566: 56-67.
+}
 }
 \seealso{
 Other marks: 
