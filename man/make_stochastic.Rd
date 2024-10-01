@@ -113,15 +113,28 @@ generate_islands(10)
 generate_citations(10)
 }
 \references{
+\subsection{On small-world networks}{
+
 Watts, Duncan J., and Steven H. Strogatz. 1998.
 “Collective Dynamics of ‘Small-World’ Networks.”
 \emph{Nature} 393(6684):440–42.
 \doi{10.1038/30918}.
+}
+
+\subsection{On scale-free networks}{
 
 Barabasi, Albert-Laszlo, and Reka Albert. 1999.
 “Emergence of Scaling in Random Networks.”
 \emph{Science} 286(5439):509–12.
 \doi{10.1126/science.286.5439.509}.
+}
+
+\subsection{On the forest-fire model}{
+
+Leskovec, Jure, Jon Kleinberg, and Christos Faloutsos. 2007.
+"\href{https://www.cs.cmu.edu/~jure/pubs/powergrowth-tkdd.pdf}{Graph evolution: Densification and shrinking diameters}".
+\emph{ACM transactions on Knowledge Discovery from Data}, 1(1): 2-es.
+}
 }
 \seealso{
 Other makes: 

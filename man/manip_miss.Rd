@@ -41,9 +41,13 @@ na_to_zero(missTest)
 na_to_mean(missTest)
 }
 \references{
+\subsection{On missing data}{
+
 Krause, Robert, Mark Huisman, Christian Steglich, and Tom A.B. Snijders. 2020.
-"Missing data in cross-sectional networks–An extensive comparison of missing data treatment methods".
-\emph{Social Networks}, 62, 99-112.
+"Missing data in cross-sectional networks: An extensive comparison of missing data treatment methods".
+\emph{Social Networks}, 62: 99-112.
+\doi{10.1016/j.socnet.2020.02.004}
+}
 }
 \seealso{
 Other modifications: 
