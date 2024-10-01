@@ -69,6 +69,7 @@ NULL
 read_matrix <- function(file = file.choose(),
                         sv = c("comma", "semi-colon"),
                         ...) {
+  if(missing(file)) cli::cli_alert_success("Executing: read_matrix('{file}')")
   sv <- match.arg(sv)
   if (grepl("csv$", file)) {
     if (sv == "comma") {
@@ -96,6 +97,7 @@ read_matrix <- function(file = file.choose(),
 read_edgelist <- function(file = file.choose(),
                           sv = c("comma", "semi-colon"),
                           ...) {
+  if(missing(file)) cli::cli_alert_success("Executing: read_edgelist('{file}')")
   sv <- match.arg(sv)
   if (grepl("csv$", file)) {
     if (sv == "comma") {
@@ -115,6 +117,7 @@ read_edgelist <- function(file = file.choose(),
 read_nodelist <- function(file = file.choose(),
                           sv = c("comma", "semi-colon"),
                           ...) {
+  if(missing(file)) cli::cli_alert_success("Executing: read_nodelist('{file}')")
   sv <- match.arg(sv)
   if (grepl("csv$", file)) {
     if (sv == "comma") {
@@ -138,6 +141,7 @@ read_nodelist <- function(file = file.choose(),
 read_pajek <- function(file = file.choose(), 
                        ties = NULL,
                        ...) {
+  if(missing(file)) cli::cli_alert_success("Executing: read_pajek('{file}')")
   paj <- network::read.paj(file, ...)
   if(!is.network(paj)){
     if(is.null(ties)) 
@@ -178,6 +182,7 @@ read_pajek <- function(file = file.choose(),
 #' @rdname make_read
 #' @export
 read_ucinet <- function(file = file.choose()) {
+  if(missing(file)) cli::cli_alert_success("Executing: read_ucinet('{file}')")
   # Some basic checks of the input file
   # Check if the file is a UCINET header file
   if (!grepl(".##h$", file)) {
@@ -342,6 +347,7 @@ read_ucinet <- function(file = file.choose()) {
 #' @importFrom dplyr bind_rows coalesce filter mutate select everything
 #' @export
 read_dynetml <- function(file = file.choose()) {
+  if(missing(file)) cli::cli_alert_success("Executing: read_dynetml('{file}')")
   thisRequires("xml2")
   name <- type <- nodeset <- target <- value <- NULL
   xmlfile <- xml2::read_xml(file)
@@ -395,12 +401,14 @@ read_dynetml <- function(file = file.choose()) {
 #' @importFrom igraph read_graph
 #' @export
 read_graphml <- function(file = file.choose()) {
+  if(missing(file)) cli::cli_alert_success("Executing: read_graphml('{file}')")
   as_tidygraph(igraph::read_graph(file, format = "graphml"))
 }
 
 #' @rdname make_read
 #' @export
 read_gml <- function(file = file.choose()) {
+  if(missing(file)) cli::cli_alert_success("Executing: read_gml('{file}')")
   as_tidygraph(igraph::read_graph(file, format = "gml"))
 }
 
