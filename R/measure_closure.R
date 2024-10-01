@@ -28,16 +28,6 @@
 #'   See `?igraph::reciprocity`
 #' @name measure_closure
 #' @family measures
-#' @references 
-#' Robins, Garry L, and Malcolm Alexander. 2004. 
-#' Small worlds among interlocking directors: Network structure and distance in bipartite graphs. 
-#' \emph{Computational & Mathematical Organization Theory} 10(1): 69–94.
-#' \doi{10.1023/B:CMOT.0000032580.12184.c0}.
-#' 
-#' Knoke, David, Mario Diani, James Hollway, and Dimitris C Christopoulos. 2021. 
-#' \emph{Multimodal Political Networks}. 
-#' Cambridge University Press. Cambridge University Press.
-#' \doi{10.1017/9781108985000}
 NULL
 
 #' @rdname measure_closure 
@@ -89,6 +79,12 @@ node_transitivity <- function(.data) {
 #'   The `net_equivalency()` function calculates the Robins and Alexander (2004) 
 #'   clustering coefficient for two-mode networks.
 #'   Note that for weighted two-mode networks, the result is divided by the average tie weight.
+#' @references 
+#' ## On equivalency or four-cycles
+#' Robins, Garry L, and Malcolm Alexander. 2004. 
+#' Small worlds among interlocking directors: Network structure and distance in bipartite graphs. 
+#' \emph{Computational & Mathematical Organization Theory} 10(1): 69–94.
+#' \doi{10.1023/B:CMOT.0000032580.12184.c0}.
 #' @examples
 #' net_equivalency(ison_southern_women)
 #' @export
@@ -144,6 +140,12 @@ node_equivalency <- function(.data) {
 }
 
 #' @rdname measure_closure 
+#' @references 
+#' ## On congruency
+#' Knoke, David, Mario Diani, James Hollway, and Dimitris C Christopoulos. 2021. 
+#' \emph{Multimodal Political Networks}. 
+#' Cambridge University Press. Cambridge University Press.
+#' \doi{10.1017/9781108985000}
 #' @export
 net_congruency <- function(.data, object2){
   if(missing(.data)) {expect_nodes(); .data <- .G()}

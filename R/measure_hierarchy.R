@@ -14,6 +14,7 @@
 #' @name measure_hierarchy
 #' @family measures
 #' @references
+#' ## On hierarchy
 #' Krackhardt, David. 1994. 
 #' Graph theoretical dimensions of informal organizations. 
 #' In Carley and Prietula (eds) _Computational Organizational Theory_, 

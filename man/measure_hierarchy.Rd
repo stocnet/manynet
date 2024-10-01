@@ -41,6 +41,8 @@ net_efficiency(ison_networkers)
 net_upperbound(ison_networkers)
 }
 \references{
+\subsection{On hierarchy}{
+
 Krackhardt, David. 1994.
 Graph theoretical dimensions of informal organizations.
 In Carley and Prietula (eds) \emph{Computational Organizational Theory},
@@ -50,6 +52,7 @@ Everett, Martin, and David Krackhardt. 2012.
 “A second look at Krackhardt's graph theoretical dimensions of informal organizations.”
 \emph{Social Networks}, 34: 159-163.
 \doi{10.1016/j.socnet.2011.10.006}
+}
 }
 \seealso{
 Other measures: 

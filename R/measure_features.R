@@ -23,8 +23,6 @@
 #'   the proportion of balanced triangles,
 #'   ranging between `0` if all triangles are imbalanced and 
 #'   `1` if all triangles are balanced.
-#'   - `net_change()` measures the Hamming distance between two or more networks.
-#'   - `net_stability()` measures the Jaccard index of stability between two or more networks.
 #' 
 #'   These `net_*()` functions return a single numeric scalar or value.
 #' @inheritParams mark_is
@@ -39,6 +37,7 @@ NULL
 #' net_core(ison_adolescents)
 #' net_core(ison_southern_women)
 #' @references 
+#' ## On core-periphery
 #' Borgatti, Stephen P., and Martin G. Everett. 2000. 
 #' “Models of Core/Periphery Structures.” 
 #' _Social Networks_ 21(4):375–95.
@@ -54,6 +53,12 @@ net_core <- function(.data,
 }
 
 #' @rdname measure_features
+#' @references
+#' ## On the rich-club coefficient
+#' Zhou, Shi, and Raul J. Mondragon. 2004.
+#' "The Rich-Club Phenomenon in the Internet Topology".
+#' _IEEE Communications Letters_, 8(3): 180-182.
+#' \doi{10.1109/lcomm.2004.823426}
 #' @examples
 #' net_richclub(ison_adolescents)
 #' @export
@@ -138,7 +143,14 @@ net_factions <- function(.data,
 #' net_modularity(ison_southern_women, 
 #'   node_in_partition(ison_southern_women))
 #' @references 
-#' Murata, Tsuyoshi. 2010. Modularity for Bipartite Networks. 
+#' ## On modularity
+#' Newman, Mark E.J. 2006.
+#' "Modularity and community structure in networks",
+#' _Proceedings of the National Academy of Sciences_ 103(23): 8577-8696.
+#' \doi{https://doi.org/10.1073/pnas.0601602103}
+#' 
+#' Murata, Tsuyoshi. 2010. 
+#' "Modularity for Bipartite Networks". 
 #' In: Memon, N., Xu, J., Hicks, D., Chen, H. (eds) 
 #' _Data Mining for Social Network Data. Annals of Information Systems_, Vol 12. 
 #' Springer, Boston, MA. 
@@ -188,20 +200,21 @@ net_modularity <- function(.data,
 #' @seealso [net_transitivity()] and [net_equivalency()]
 #'   for how clustering is calculated
 #' @references 
+#' ## On small-worldliness
 #' Watts, Duncan J., and Steven H. Strogatz. 1998. 
-#'   “Collective Dynamics of ‘Small-World’ Networks.” 
+#'   “Collective Dynamics of ‘Small-World’ Networks”. 
 #'   _Nature_ 393(6684):440–42.
-#'   \doi{10.1038/30918}.
+#'   \doi{10.1038/30918}
 #' 
 #' Telesford QK, Joyce KE, Hayasaka S, Burdette JH, Laurienti PJ. 2011. 
 #'   "The ubiquity of small-world networks". 
 #'   _Brain Connectivity_ 1(5): 367–75.
-#'   \doi{10.1089/brain.2011.0038}.
+#'   \doi{10.1089/brain.2011.0038}
 #'   
-#' Neal Zachary P. 2017. 
+#' Neal, Zachary P. 2017. 
 #'   "How small is it? Comparing indices of small worldliness". 
 #'   _Network Science_. 5 (1): 30–44.
-#'   \doi{10.1017/nws.2017.5}.
+#'   \doi{10.1017/nws.2017.5}
 #' @examples
 #' net_smallworld(ison_brandes)
 #' net_smallworld(ison_southern_women)
@@ -249,6 +262,27 @@ net_smallworld <- function(.data,
 
 #' @rdname measure_features 
 #' @importFrom igraph fit_power_law
+#' @references
+#' ## On scale-free networks
+#' Barabasi, Albert-Laszlo, and Reka Albert. 1999.
+#' "Emergence of scaling in random networks",
+#' _Science_, 286(5439): 509-512.
+#' \doi{10.1126/science.286.5439.509}
+#' 
+#' Clauset, Aaron, Cosma Rohilla Shalizi, and Mark E.J. Newman. 2009.
+#' "Power-law distributions in empirical data",
+#' _SIAM Review_, 51(4): 661-703.
+#' \doi{10.1137/070710111}
+#' 
+#' Stumpf, Michael P.H., and Mason Porter. 2012.
+#' "Critical truths about power laws",
+#' _Science_, 335(6069): 665-666.
+#' \doi{10.1126/science.1216142}
+#' 
+#' Holme, Petter. 2019.
+#' "Rare and everywhere: Perspectives on scale-free networks",
+#' _Nature Communications_, 10(1): 1016.
+#' \doi{10.1038/s41467-019-09038-8}
 #' @examples 
 #' net_scalefree(ison_adolescents)
 #' net_scalefree(generate_scalefree(50, 1.5))
@@ -268,6 +302,17 @@ net_scalefree <- function(.data){
 
 #' @rdname measure_features 
 #' @source `{signnet}` by David Schoch
+#' @references
+#' ## On balance theory
+#' Heider, Fritz. 1946.
+#' "Attitudes and cognitive organization".
+#' _The Journal of Psychology_, 21: 107-112.
+#' \doi{10.1080/00223980.1946.9917275}
+#' 
+#' Cartwright, D., and Frank Harary. 1956.
+#' "Structural balance: A generalization of Heider's theory".
+#' _Psychological Review_, 63(5): 277-293.
+#' \doi{10.1037/h0046049}
 #' @examples
 #' net_balance(ison_marvel_relationships)
 #' @export

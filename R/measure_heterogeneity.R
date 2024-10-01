@@ -67,7 +67,8 @@ node_richness <- function(.data, attribute){
 #'    The maximum value depends on the number of categories and 
 #'    whether nodes can be evenly distributed across categories. 
 #' @references 
-#'   Blau, Peter M. (1977). 
+#' ## On diversity
+#'   Blau, Peter M. 1977. 
 #'   _Inequality and heterogeneity_. 
 #'   New York: Free Press.
 #' @examples
@@ -123,9 +124,16 @@ node_diversity <- function(.data, attribute){
 #'   This value can range from 1 to -1,
 #'   where 1 indicates ties only between categories/groups and -1 ties only within categories/groups.
 #' @references 
-#'   Krackhardt, David and Robert N. Stern (1988). 
+#' ## On heterophily
+#'   Krackhardt, David, and Robert N. Stern. 1988. 
 #'   Informal networks and organizational crises: an experimental simulation. 
-#'   _Social Psychology Quarterly_ 51(2), 123-140.
+#'   _Social Psychology Quarterly_ 51(2): 123-140.
+#'   \doi{10.2307/2786835}
+#'   
+#'   McPherson, Miller, Lynn Smith-Lovin, and James M. Cook. 2001.
+#'   "Birds of a Feather: Homophily in Social Networks".
+#'   _Annual Review of Sociology_, 27(1): 415-444.
+#'   \doi{10.1146/annurev.soc.27.1.415}
 #' @examples 
 #' net_heterophily(marvel_friends, "Gender")
 #' net_heterophily(marvel_friends, "Attractive")
@@ -174,6 +182,12 @@ node_heterophily <- function(.data, attribute){
 
 #' @rdname measure_heterogeneity 
 #' @importFrom igraph assortativity_degree
+#' @references
+#' ## On assortativity
+#' Newman, Mark E.J. 2002.
+#' "Assortative Mxing in Networks".
+#' _Physical Review Letters_, 89(20): 208701.
+#' \doi{10.1103/physrevlett.89.208701} 
 #' @examples 
 #' net_assortativity(ison_networkers)
 #' @export
@@ -186,6 +200,7 @@ net_assortativity <- function(.data){
 
 #' @rdname measure_heterogeneity 
 #' @references
+#' ## On spatial autocorrelation
 #'   Moran, Patrick Alfred Pierce. 1950.
 #'   "Notes on Continuous Stochastic Phenomena".
 #'   _Biometrika_ 37(1): 17-23.

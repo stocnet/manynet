@@ -110,18 +110,41 @@ net_assortativity(ison_networkers)
 net_spatial(ison_lawfirm, "age")
 }
 \references{
-Blau, Peter M. (1977).
+\subsection{On diversity}{
+
+Blau, Peter M. 1977.
 \emph{Inequality and heterogeneity}.
 New York: Free Press.
+}
 
-Krackhardt, David and Robert N. Stern (1988).
+\subsection{On heterophily}{
+
+Krackhardt, David, and Robert N. Stern. 1988.
 Informal networks and organizational crises: an experimental simulation.
-\emph{Social Psychology Quarterly} 51(2), 123-140.
+\emph{Social Psychology Quarterly} 51(2): 123-140.
+\doi{10.2307/2786835}
+
+McPherson, Miller, Lynn Smith-Lovin, and James M. Cook. 2001.
+"Birds of a Feather: Homophily in Social Networks".
+\emph{Annual Review of Sociology}, 27(1): 415-444.
+\doi{10.1146/annurev.soc.27.1.415}
+}
+
+\subsection{On assortativity}{
+
+Newman, Mark E.J. 2002.
+"Assortative Mxing in Networks".
+\emph{Physical Review Letters}, 89(20): 208701.
+\doi{10.1103/physrevlett.89.208701}
+}
+
+\subsection{On spatial autocorrelation}{
 
 Moran, Patrick Alfred Pierce. 1950.
 "Notes on Continuous Stochastic Phenomena".
 \emph{Biometrika} 37(1): 17-23.
 \doi{10.2307/2332142}
+}
 }
 \seealso{
 Other measures: 
