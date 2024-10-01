@@ -96,19 +96,37 @@ node_in_eigen(ison_adolescents)
 node_in_walktrap(ison_adolescents)
 }
 \references{
-Newman, M, and M Girvan. 2004.
+\subsection{On edge-betweenness community detection}{
+
+Newman, Mark, and Michelle Girvan. 2004.
 "Finding and evaluating community structure in networks."
 \emph{Physical Review E} 69: 026113.
+\doi{10.1103/PhysRevE.69.026113}
+}
 
-Clauset, A, MEJ Newman, MEJ and C Moore.
+\subsection{On fast-greedy community detection}{
+
+Clauset, Aaron, Mark E.J. Newman, and Cristopher Moore. 2004.
 "Finding community structure in very large networks."
+\emph{Physical Review E}, 70: 066111.
+\doi{10.1103/PhysRevE.70.066111}
+}
 
-Newman, MEJ. 2006.
+\subsection{On leading eigenvector community detection}{
+
+Newman, Mark E.J. 2006.
 "Finding community structure using the eigenvectors of matrices"
 \emph{Physical Review E} 74:036104.
+\doi{10.1103/PhysRevE.74.036104}
+}
 
-Pons, Pascal, and Matthieu Latapy
+\subsection{On walktrap community detection}{
+
+Pons, Pascal, and Matthieu Latapy. 2005.
 "Computing communities in large networks using random walks".
+1-20.
+\doi{10.48550/arXiv.physics/0512106}
+}
 }
 \seealso{
 Other memberships: 

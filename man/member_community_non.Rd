@@ -143,14 +143,22 @@ node_in_louvain(ison_adolescents)
 node_in_leiden(ison_adolescents)
 }
 \references{
+\subsection{On optimal community detection}{
+
 Brandes, Ulrik, Daniel Delling, Marco Gaertler, Robert Gorke, Martin Hoefer, Zoran Nikoloski, Dorothea Wagner. 2008.
 "On Modularity Clustering",
 \emph{IEEE Transactions on Knowledge and Data Engineering} 20(2):172-188.
+}
+
+\subsection{On partitioning community detection}{
 
 Kernighan, Brian W., and Shen Lin. 1970.
 "An efficient heuristic procedure for partitioning graphs."
 \emph{The Bell System Technical Journal} 49(2): 291-307.
 \doi{10.1002/j.1538-7305.1970.tb01770.x}
+}
+
+\subsection{On infomap community detection}{
 
 Rosvall, M, and C. T. Bergstrom. 2008.
 "Maps of information flow reveal community structure in complex networks",
@@ -161,29 +169,44 @@ Rosvall, M., D. Axelsson, and C. T. Bergstrom. 2009.
 "The map equation",
 \emph{Eur. Phys. J. Special Topics} 178: 13.
 \doi{10.1140/epjst/e2010-01179-1}
+}
+
+\subsection{On spinglass community detection}{
 
 Reichardt, Jorg, and Stefan Bornholdt. 2006.
 "Statistical Mechanics of Community Detection"
 \emph{Physical Review E}, 74(1): 016110–14.
 \doi{10.1073/pnas.0605965104}
 
-Traag, VA, and Jeroen Bruggeman. 2008.
+Traag, Vincent A., and Jeroen Bruggeman. 2009.
 "Community detection in networks with positive and negative links".
+\emph{Physical Review E}, 80(3): 036115.
+\doi{10.1103/PhysRevE.80.036115}
+}
 
-Parés F, Gasulla DG, et. al. 2018.
+\subsection{On fluid community detection}{
+
+Parés Ferran, Dario Garcia Gasulla, Armand Vilalta, Jonatan Moreno, Eduard Ayguade, Jesus Labarta, Ulises Cortes, and Toyotaro Suzumura. 2018.
 "Fluid Communities: A Competitive, Scalable and Diverse Community Detection Algorithm".
 In: \emph{Complex Networks & Their Applications VI}
 Springer, 689: 229.
 \doi{10.1007/978-3-319-72150-7_19}
+}
+
+\subsection{On Louvain community detection}{
 
 Blondel, Vincent, Jean-Loup Guillaume, Renaud Lambiotte, Etienne Lefebvre. 2008.
 "Fast unfolding of communities in large networks",
 \emph{J. Stat. Mech.} P10008.
+}
 
-Traag, V. A., L Waltman, and NJ van Eck. 2019.
+\subsection{On Leiden community detection}{
+
+Traag, Vincent A., Ludo Waltman, and Nees Jan van Eck. 2019.
 "From Louvain to Leiden: guaranteeing well-connected communities",
 \emph{Scientific Reports}, 9(1):5233.
 \doi{10.1038/s41598-019-41695-z}
+}
 }
 \seealso{
 Other memberships: 

@@ -64,6 +64,8 @@ The user is referred to Lai and Hao (2016) and Lai et al (2021) for more details
 }
 
 \references{
+\subsection{On the maximally diverse grouping problem}{
+
 Lai, Xiangjing, and Jin-Kao Hao. 2016.
 “Iterated Maxima Search for the Maximally Diverse Grouping Problem.”
 \emph{European Journal of Operational Research} 254(3):780–800.
@@ -73,6 +75,7 @@ Lai, Xiangjing, Jin-Kao Hao, Zhang-Hua Fu, and Dong Yue. 2021.
 “Neighborhood Decomposition Based Variable Neighborhood Search and Tabu Search for Maximally Diverse Grouping.”
 \emph{European Journal of Operational Research} 289(3):1067–86.
 \doi{10.1016/j.ejor.2020.07.048}.
+}
 }
 \seealso{
 Other memberships: 

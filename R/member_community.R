@@ -36,6 +36,7 @@ NULL
 #'   Note that this is an NP-complete problem with exponential time complexity.
 #'   The guidance in the igraph package is networks of <50-200 nodes is probably fine.
 #' @references
+#' ## On optimal community detection
 #' Brandes, Ulrik, Daniel Delling, Marco Gaertler, Robert Gorke, Martin Hoefer, Zoran Nikoloski, Dorothea Wagner. 2008.
 #' "On Modularity Clustering", 
 #' _IEEE Transactions on Knowledge and Data Engineering_ 20(2):172-188.
@@ -51,6 +52,7 @@ node_in_optimal <- function(.data){
 
 #' @rdname member_community_non 
 #' @references
+#' ## On partitioning community detection
 #' Kernighan, Brian W., and Shen Lin. 1970.
 #' "An efficient heuristic procedure for partitioning graphs."
 #' _The Bell System Technical Journal_ 49(2): 291-307.
@@ -113,6 +115,7 @@ node_in_partition <- function(.data){
 #' @param times Integer indicating number of simulations/walks used.
 #'   By default, `times=50`.
 #' @references
+#' ## On infomap community detection
 #' Rosvall, M, and C. T. Bergstrom. 2008.
 #' "Maps of information flow reveal community structure in complex networks", 
 #' _PNAS_ 105:1118.
@@ -150,13 +153,16 @@ node_in_infomap <- function(.data, times = 50){
 #'   A different implementation than the default is used in the case of signed networks,
 #'   such that nodes connected by negative ties will be more likely found in separate communities.
 #' @references
+#' ## On spinglass community detection
 #' Reichardt, Jorg, and Stefan Bornholdt. 2006.
 #' "Statistical Mechanics of Community Detection"
 #' _Physical Review E_, 74(1): 016110–14.
 #' \doi{10.1073/pnas.0605965104}
 #' 
-#' Traag, VA, and Jeroen Bruggeman. 2008.
+#' Traag, Vincent A., and Jeroen Bruggeman. 2009.
 #' "Community detection in networks with positive and negative links".
+#' _Physical Review E_, 80(3): 036115.
+#' \doi{10.1103/PhysRevE.80.036115}
 #' @examples
 #' node_in_spinglass(ison_adolescents)
 #' @export
@@ -177,7 +183,8 @@ node_in_spinglass <- function(.data, max_k = 200, resolution = 1){
 #'   this function iterates over all possible numbers of communities and returns the membership
 #'   associated with the highest modularity.
 #' @references
-#' Parés F, Gasulla DG, et. al. 2018. 
+#' ## On fluid community detection
+#' Parés Ferran, Dario Garcia Gasulla, Armand Vilalta, Jonatan Moreno, Eduard Ayguade, Jesus Labarta, Ulises Cortes, and Toyotaro Suzumura. 2018. 
 #' "Fluid Communities: A Competitive, Scalable and Diverse Community Detection Algorithm". 
 #' In: _Complex Networks & Their Applications VI_
 #' Springer, 689: 229.
@@ -206,6 +213,7 @@ node_in_fluid <- function(.data) {
 #'   the resulting communities are considered nodes (like a reduced graph),
 #'   and the process continues.
 #' @references
+#' ## On Louvain community detection
 #' Blondel, Vincent, Jean-Loup Guillaume, Renaud Lambiotte, Etienne Lefebvre. 2008.
 #' "Fast unfolding of communities in large networks",
 #' _J. Stat. Mech._ P10008.
@@ -236,7 +244,8 @@ node_in_louvain <- function(.data, resolution = 1){
 #'   and \eqn{\delta(\sigma_i, \sigma_j) = 1} if and only if
 #'   _i_ and _j_ are in the same communities and 0 otherwise.
 #' @references
-#' Traag, V. A., L Waltman, and NJ van Eck. 2019. 
+#' ## On Leiden community detection
+#' Traag, Vincent A., Ludo Waltman, and Nees Jan van Eck. 2019. 
 #' "From Louvain to Leiden: guaranteeing well-connected communities", 
 #' _Scientific Reports_, 9(1):5233. 
 #' \doi{10.1038/s41598-019-41695-z}
@@ -292,9 +301,11 @@ NULL
 #'   Networks of ~700 nodes and ~3500 ties are around the upper size limit 
 #'   that are feasible with this approach. 
 #' @references
-#' Newman, M, and M Girvan. 2004.
+#' ## On edge-betweenness community detection
+#' Newman, Mark, and Michelle Girvan. 2004.
 #' "Finding and evaluating community structure in networks." 
 #' _Physical Review E_ 69: 026113.
+#' \doi{10.1103/PhysRevE.69.026113}
 #' @examples
 #' node_in_betweenness(ison_adolescents)
 #' plot(node_in_betweenness(ison_adolescents))
@@ -321,8 +332,11 @@ node_in_betweenness <- function(.data){
 #'   because it has no parameters to tune. 
 #'   However, it is known to suffer from a resolution limit.
 #' @references
-#' Clauset, A, MEJ Newman, MEJ and C Moore. 
+#' ## On fast-greedy community detection
+#' Clauset, Aaron, Mark E.J. Newman, and Cristopher Moore. 2004.
 #' "Finding community structure in very large networks."
+#' _Physical Review E_, 70: 066111.
+#' \doi{10.1103/PhysRevE.70.066111}
 #' @examples
 #' node_in_greedy(ison_adolescents)
 #' @export
@@ -347,9 +361,11 @@ node_in_greedy <- function(.data){
 #'   this algorithm will perform poorly on degenerate networks,
 #'   but will likely obtain a higher modularity than fast-greedy (at some cost of speed).
 #' @references
-#' Newman, MEJ. 2006.
+#' ## On leading eigenvector community detection
+#' Newman, Mark E.J. 2006.
 #' "Finding community structure using the eigenvectors of matrices"
 #' _Physical Review E_ 74:036104.
+#' \doi{10.1103/PhysRevE.74.036104}
 #' @examples
 #' node_in_eigen(ison_adolescents)
 #' @export
@@ -373,8 +389,11 @@ node_in_eigen <- function(.data){
 #' @param times Integer indicating number of simulations/walks used.
 #'   By default, `times=50`.
 #' @references
-#' Pons, Pascal, and Matthieu Latapy
+#' ## On walktrap community detection
+#' Pons, Pascal, and Matthieu Latapy. 2005.
 #' "Computing communities in large networks using random walks".
+#' 1-20.
+#' \doi{10.48550/arXiv.physics/0512106}
 #' @examples
 #' node_in_walktrap(ison_adolescents)
 #' @export

@@ -29,6 +29,7 @@ NULL
 #'   and minimises density in the periphery block;
 #'   it ignores ties between these blocks.
 #' @references
+#' ## On core-periphery partitioning
 #' Borgatti, Stephen P., & Everett, Martin G. 1999. 
 #' Models of core /periphery structures. 
 #' _Social Networks_, 21, 375–395. 
