@@ -398,6 +398,12 @@ read_graphml <- function(file = file.choose()) {
   as_tidygraph(igraph::read_graph(file, format = "graphml"))
 }
 
+#' @rdname make_read
+#' @export
+read_gml <- function(file = file.choose()) {
+  as_tidygraph(igraph::read_graph(file, format = "gml"))
+}
+
 # Write ####
 
 #' Making networks to external files
