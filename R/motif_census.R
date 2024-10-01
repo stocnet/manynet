@@ -8,7 +8,7 @@
 #'   
 #'   - `node_by_tie()` returns a census of the ties in a network.
 #'   For directed networks, out-ties and in-ties are bound together.
-#'   for multiplex networks, the various types of ties are bound together.
+#'   For multiplex networks, the various types of ties are bound together.
 #'   - `node_by_triad()` returns a census of the triad configurations
 #'   nodes are embedded in.
 #'   - `node_by_quad()` returns a census of nodes' positions
@@ -85,6 +85,12 @@ node_by_tie <- function(.data){
 }
 
 #' @rdname motif_node 
+#' @references
+#' ## On the dyad census
+#' Holland, Paul W., and Samuel Leinhardt. 1970. 
+#' "A Method for Detecting Structure in Sociometric Data". 
+#' _American Journal of Sociology_, 76: 492-513.
+#' \doi{10.1016/B978-0-12-442450-0.50028-6}
 #' @examples 
 #' node_by_dyad(ison_networkers)
 #' @export
@@ -106,6 +112,7 @@ node_by_dyad <- function(.data) {
 
 #' @rdname motif_node 
 #' @references 
+#' ## On the triad census
 #' Davis, James A., and Samuel Leinhardt. 1967. 
 #' “\href{https://files.eric.ed.gov/fulltext/ED024086.pdf}{The Structure of Positive Interpersonal Relations in Small Groups}.” 55.
 #' @examples 
@@ -248,6 +255,7 @@ node_by_quad <- function(.data){
 #' @rdname motif_node 
 #' @importFrom igraph distances
 #' @references 
+#' ## On paths
 #' Dijkstra, Edsger W. 1959. 
 #' "A note on two problems in connexion with graphs". 
 #' _Numerische Mathematik_ 1, 269-71.
@@ -290,7 +298,17 @@ node_by_path <- function(.data){
 #' @param object2 A second, two-mode migraph-consistent object.
 NULL
 
-#' @rdname motif_net 
+#' @rdname motif_net
+#' @references
+#' ## On the dyad census
+#' Holland, Paul W., and Samuel Leinhardt. 1970. 
+#' "A Method for Detecting Structure in Sociometric Data". 
+#' _American Journal of Sociology_, 76: 492-513.
+#' \doi{10.1016/B978-0-12-442450-0.50028-6}
+#' 
+#' Wasserman, Stanley, and Katherine Faust. 1994. 
+#' "Social Network Analysis: Methods and Applications". 
+#' Cambridge: Cambridge University Press.
 #' @examples 
 #' net_by_dyad(manynet::ison_algebra)
 #' @export
@@ -309,6 +327,7 @@ net_by_dyad <- function(.data) {
 
 #' @rdname motif_net 
 #' @references 
+#' ## On the triad census
 #' Davis, James A., and Samuel Leinhardt. 1967. 
 #' “\href{https://files.eric.ed.gov/fulltext/ED024086.pdf}{The Structure of Positive Interpersonal Relations in Small Groups}.” 55.
 #' @examples 
@@ -379,6 +398,7 @@ net_by_quad <- function(.data){
 #' @rdname motif_net 
 #' @source Alejandro Espinosa 'netmem'
 #' @references 
+#' ## On the mixed census
 #' Hollway, James, Alessandro Lomi, Francesca Pallotti, and Christoph Stadtfeld. 2017.
 #' “Multilevel Social Spaces: The Network Dynamics of Organizational Fields.” 
 #' _Network Science_ 5(2): 187–212.
@@ -452,14 +472,16 @@ NULL
 
 #' @rdname motif_brokerage 
 #' @references 
-#' Gould, R.V. and Fernandez, R.M. 1989. 
+#' ## On brokerage motifs
+#' Gould, Roger V., and Roberto M. Fernandez. 1989. 
 #' “Structures of Mediation: A Formal Approach to Brokerage in Transaction Networks.” 
 #' _Sociological Methodology_, 19: 89-126.
+#' \doi{10.2307/270949}
 #' 
 #' Jasny, Lorien, and Mark Lubell. 2015. 
 #' “Two-Mode Brokerage in Policy Networks.” 
 #' _Social Networks_ 41:36–47. 
-#' \doi{10.1016/j.socnet.2014.11.005}.
+#' \doi{10.1016/j.socnet.2014.11.005}
 #' @examples 
 #' node_by_brokerage(manynet::ison_networkers, "Discipline")
 #' @export
@@ -508,6 +530,7 @@ net_by_brokerage <- function(.data, membership, standardized = FALSE){
 
 #' @rdname motif_brokerage 
 #' @references
+#' ## On brokerage activity and exclusivity
 #'   Hamilton, Matthew, Jacob Hileman, and Orjan Bodin. 2020.
 #'   "Evaluating heterogeneous brokerage: New conceptual and methodological approaches
 #'   and their application to multi-level environmental governance networks"
