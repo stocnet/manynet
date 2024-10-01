@@ -677,3 +677,29 @@
 #'   ```
 "ison_books"
 
+## Blogs ####
+
+#' One-mode directed network of links between US political blogs (Adamic and Glance 2005)
+#'
+#' @description
+#'   This network consists of the blogosphere around the time of the 2004
+#'   US presidential election until February 2005.
+#'   Ties were constructed from a crawl of the front page of each blog.
+#'   
+#'   Political leaning is indicated as "Liberal" (or left leaning) or 
+#'   "Conservative" (or right leaning), sourced from blog directories.
+#'   Some blogs were labelled manually, 
+#'   based on incoming and outgoing links and posts.
+#' @docType data
+#' @keywords datasets
+#' @name ison_blogs
+#' @references
+#' Adamic, Lada A., and Natalie Glance. 2005.
+#' "The political blogosphere and the 2004 US Election", 
+#' _Proceedings of the WWW-2005 Workshop on the Weblogging Ecosystem_.
+#' @usage data(ison_blogs)
+#' @format 
+#'   ```{r, echo = FALSE}
+#'   ison_blogs
+#'   ```
+"ison_blogs"
