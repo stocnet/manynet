@@ -204,7 +204,8 @@ add_info <- function(.data, ...){
     unrecog <- setdiff(names(info), c("name", "nodes", "ties", "doi", 
                                       "collection", "year", "mode", "vertex1", 
                                       "vertex1.total", "vertex2", 
-                           "vertex2.total", "edge.pos", "edge.neg"))
+                           "vertex2.total", 
+                           "edge.pos", "edge.neg", "positive", "negative"))
     if(length(unrecog)>0) 
       cli::cli_alert_warning("{unrecog} are not recognised fields.")
     if("nodes" %in% names(info)){
@@ -214,7 +215,7 @@ add_info <- function(.data, ...){
       info$nodes <- NULL
     }
     if("ties" %in% names(info)){
-      info$edge.pos <- info$ties
+      info$edge.pos <- info$positive <- info$ties
       info$ties <- NULL
     }
     if("collection" %in% names(info)){

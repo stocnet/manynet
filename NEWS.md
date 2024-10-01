@@ -1,3 +1,22 @@
+# manynet 1.2.1
+
+## Making
+
+- All `read_*()` now print the command used to the console if the (default) file.choose() is used
+- Added `read_gml()`
+- Updated references, structure, and DOIs to make and modify documentation
+
+## Measures
+
+- Updated references, structure, and DOIs to centrality, diffusion, and other measures, as well as to marks, motifs, memberships, and models
+- Added more documentation on `node_power()`
+
+## Data
+
+- Added `ison_dolphins`
+- Added `ison_books`
+- Added `ison_blogs`
+
 # manynet 1.2.0
 
 ## Package

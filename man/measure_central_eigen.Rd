@@ -44,7 +44,9 @@ the type of centrality, and other arguments.}
 
 \item{scale}{Logical scalar, whether to rescale the vector so the maximum score is 1.}
 
-\item{exponent}{Decay rate for the Bonacich power centrality score.}
+\item{exponent}{Decay rate or attentuation factor for
+the Bonacich power centrality score.
+Can be positive or negative.}
 
 \item{alpha}{A constant that trades off the importance of external influence against the importance of connection.
 When \eqn{\alpha = 0}, only the external influence matters.
@@ -92,9 +94,19 @@ Rather than performing this iteration,
 most routines solve the eigenvector equation \eqn{Ax = \lambda x}.
 }
 
-\section{Power centrality}{
+\section{Power or beta (or Bonacich) centrality}{
 
-Power or beta (or Bonacich) centrality
+Power centrality includes an exponent that weights contributions to a node's
+centrality based on how far away those other nodes are.
+\deqn{c_b(i) = \sum A(i,j) (\alpha = \beta c(j))}
+Where \eqn{\beta} is positive, this means being connected to central people
+increases centrality.
+Where \eqn{\beta} is negative, this means being connected to central people
+decreases centrality
+(and being connected to more peripheral actors increases centrality).
+When \eqn{\beta = 0}, this is the outdegree.
+\eqn{\alpha} is calculated to make sure the root mean square equals
+the network size.
 }
 
 \section{Alpha centrality}{
@@ -126,15 +138,23 @@ tie_eigenvector(ison_adolescents)
 net_eigenvector(ison_southern_women)
 }
 \references{
+\subsection{On eigenvector centrality}{
+
 Bonacich, Phillip. 1991.
 “Simultaneous Group and Individual Centralities.”
 \emph{Social Networks} 13(2):155–68.
-\doi{10.1016/0378-8733(91)90018-O}.
+\doi{10.1016/0378-8733(91)90018-O}
+}
+
+\subsection{On power centrality}{
 
 Bonacich, Phillip. 1987.
 “Power and Centrality: A Family of Measures.”
 \emph{The American Journal of Sociology}, 92(5): 1170–82.
 \doi{10.1086/228631}.
+}
+
+\subsection{On alpha centrality}{
 
 Katz, Leo 1953.
 "A new status index derived from sociometric analysis".
@@ -143,15 +163,22 @@ Katz, Leo 1953.
 Bonacich, P. and Lloyd, P. 2001.
 “Eigenvector-like measures of centrality for asymmetric relations”
 \emph{Social Networks}. 23(3):191-201.
+}
+
+\subsection{On pagerank centrality}{
 
 Brin, Sergey and Page, Larry. 1998.
 "The anatomy of a large-scale hypertextual web search engine".
 \emph{Proceedings of the 7th World-Wide Web Conference}. Brisbane, Australia.
+}
+
+\subsection{On hub and authority centrality}{
 
 Kleinberg, Jon. 1999.
 "Authoritative sources in a hyperlinked environment".
 \emph{Journal of the ACM} 46(5): 604–632.
-\doi{110.1145/324133.324140}.
+\doi{10.1145/324133.324140}
+}
 }
 \seealso{
 Other centrality: 

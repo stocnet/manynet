@@ -9,4 +9,5 @@
 
 0 errors | 0 warnings | 0 notes
 
-* This version fixes errors on Linux versions for which the {oaqc} package is not available
+* Re errors on CRAN, this version fixes errors on Linux versions for which the {oaqc} package is not available
+* Re previous submission, this version fixes a DOI and avoids an issue with {igraph}

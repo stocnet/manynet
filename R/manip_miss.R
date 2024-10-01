@@ -14,9 +14,11 @@
 #' @inheritParams mark_is
 #' @return A data object of the same class as the function was given.
 #' @references 
+#' ## On missing data
 #'   Krause, Robert, Mark Huisman, Christian Steglich, and Tom A.B. Snijders. 2020. 
-#'   "Missing data in cross-sectional networks–An extensive comparison of missing data treatment methods". 
-#'   _Social Networks_, 62, 99-112.
+#'   "Missing data in cross-sectional networks: An extensive comparison of missing data treatment methods". 
+#'   _Social Networks_, 62: 99-112.
+#'   \doi{10.1016/j.socnet.2020.02.004}
 #' @examples 
 #' missTest <- ison_adolescents %>% 
 #'    add_tie_attribute("weight", c(1,NA,NA,1,1,1,NA,NA,1,1)) %>% 

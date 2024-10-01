@@ -82,10 +82,21 @@ is_acyclic(ison_algebra)
 is_aperiodic(ison_algebra)
 }
 \references{
-Tutte, W. T. (1950).
+\subsection{On perfect matching}{
+
+Tutte, William T. 1950.
 "The factorization of locally finite graphs".
 \emph{Canadian Journal of Mathematics}. 2: 44–49.
 \doi{10.4153/cjm-1950-005-2}
+}
+
+\subsection{On aperiodicity}{
+
+Jarvis, J.P, and D.R. Shier. 1996.
+"Graph-theoretic analysis of finite Markov chains",
+in Shier, D.R., Wallenius, K.T. (eds) \emph{Applied Mathematical Modeling: A Multidisciplinary Approach}.
+CRC Press.
+}
 }
 \seealso{
 Other marking: 

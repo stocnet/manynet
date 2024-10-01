@@ -9,6 +9,7 @@
 \alias{read_ucinet}
 \alias{read_dynetml}
 \alias{read_graphml}
+\alias{read_gml}
 \title{Making networks from external files}
 \source{
 \code{read_ucinet()} kindly supplied by Christian Steglich,
@@ -28,6 +29,8 @@ read_ucinet(file = file.choose())
 read_dynetml(file = file.choose())
 
 read_graphml(file = file.choose())
+
+read_gml(file = file.choose())
 }
 \arguments{
 \item{file}{A character string with the system path to the file to import.

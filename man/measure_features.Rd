@@ -94,8 +94,6 @@ a power-law distribution.
 the proportion of balanced triangles,
 ranging between \code{0} if all triangles are imbalanced and
 \code{1} if all triangles are balanced.
-\item \code{net_change()} measures the Hamming distance between two or more networks.
-\item \code{net_stability()} measures the Jaccard index of stability between two or more networks.
 }
 
 These \verb{net_*()} functions return a single numeric scalar or value.
@@ -136,31 +134,90 @@ net_scalefree(create_lattice(100))
 net_balance(ison_marvel_relationships)
 }
 \references{
+\subsection{On core-periphery}{
+
 Borgatti, Stephen P., and Martin G. Everett. 2000.
 “Models of Core/Periphery Structures.”
 \emph{Social Networks} 21(4):375–95.
 \doi{10.1016/S0378-8733(99)00019-2}
+}
 
-Murata, Tsuyoshi. 2010. Modularity for Bipartite Networks.
+\subsection{On the rich-club coefficient}{
+
+Zhou, Shi, and Raul J. Mondragon. 2004.
+"The Rich-Club Phenomenon in the Internet Topology".
+\emph{IEEE Communications Letters}, 8(3): 180-182.
+\doi{10.1109/lcomm.2004.823426}
+}
+
+\subsection{On modularity}{
+
+Newman, Mark E.J. 2006.
+"Modularity and community structure in networks",
+\emph{Proceedings of the National Academy of Sciences} 103(23): 8577-8696.
+\doi{https://doi.org/10.1073/pnas.0601602103}
+
+Murata, Tsuyoshi. 2010.
+"Modularity for Bipartite Networks".
 In: Memon, N., Xu, J., Hicks, D., Chen, H. (eds)
 \emph{Data Mining for Social Network Data. Annals of Information Systems}, Vol 12.
 Springer, Boston, MA.
 \doi{10.1007/978-1-4419-6287-4_7}
+}
+
+\subsection{On small-worldliness}{
 
 Watts, Duncan J., and Steven H. Strogatz. 1998.
-“Collective Dynamics of ‘Small-World’ Networks.”
+“Collective Dynamics of ‘Small-World’ Networks”.
 \emph{Nature} 393(6684):440–42.
-\doi{10.1038/30918}.
+\doi{10.1038/30918}
 
 Telesford QK, Joyce KE, Hayasaka S, Burdette JH, Laurienti PJ. 2011.
 "The ubiquity of small-world networks".
 \emph{Brain Connectivity} 1(5): 367–75.
-\doi{10.1089/brain.2011.0038}.
+\doi{10.1089/brain.2011.0038}
 
-Neal Zachary P. 2017.
+Neal, Zachary P. 2017.
 "How small is it? Comparing indices of small worldliness".
 \emph{Network Science}. 5 (1): 30–44.
-\doi{10.1017/nws.2017.5}.
+\doi{10.1017/nws.2017.5}
+}
+
+\subsection{On scale-free networks}{
+
+Barabasi, Albert-Laszlo, and Reka Albert. 1999.
+"Emergence of scaling in random networks",
+\emph{Science}, 286(5439): 509-512.
+\doi{10.1126/science.286.5439.509}
+
+Clauset, Aaron, Cosma Rohilla Shalizi, and Mark E.J. Newman. 2009.
+"Power-law distributions in empirical data",
+\emph{SIAM Review}, 51(4): 661-703.
+\doi{10.1137/070710111}
+
+Stumpf, Michael P.H., and Mason Porter. 2012.
+"Critical truths about power laws",
+\emph{Science}, 335(6069): 665-666.
+\doi{10.1126/science.1216142}
+
+Holme, Petter. 2019.
+"Rare and everywhere: Perspectives on scale-free networks",
+\emph{Nature Communications}, 10(1): 1016.
+\doi{10.1038/s41467-019-09038-8}
+}
+
+\subsection{On balance theory}{
+
+Heider, Fritz. 1946.
+"Attitudes and cognitive organization".
+\emph{The Journal of Psychology}, 21: 107-112.
+\doi{10.1080/00223980.1946.9917275}
+
+Cartwright, D., and Frank Harary. 1956.
+"Structural balance: A generalization of Heider's theory".
+\emph{Psychological Review}, 63(5): 277-293.
+\doi{10.1037/h0046049}
+}
 }
 \seealso{
 \code{\link[=net_transitivity]{net_transitivity()}} and \code{\link[=net_equivalency]{net_equivalency()}}

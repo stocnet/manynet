@@ -92,9 +92,12 @@ node_hierarchy(ison_adolescents)
 node_hierarchy(ison_southern_women)
 }
 \references{
+\subsection{On structural holes}{
+
 Burt, Ronald S. 1992.
 \emph{Structural Holes: The Social Structure of Competition}.
 Cambridge, MA: Harvard University Press.
+}
 
 Borgatti, Steven. 1997.
 “\href{http://www.analytictech.com/connections/v20(1)/holes.htm}{Structural Holes: Unpacking Burt’s Redundancy Measures}”
@@ -106,13 +109,16 @@ Burchard, Jake, and Benjamin Cornwell. 2018.
 \doi{10.1016/j.socnet.2018.04.001}
 
 Hollway, James, Jean-Frédéric Morin, and Joost Pauwelyn. 2020.
-"Structural conditions for novelty: the introduction of new environmental clauses to the trade regime complex."
+"Structural conditions for novelty: The introduction of new environmental clauses to the trade regime complex."
 \emph{International Environmental Agreements: Politics, Law and Economics} 20 (1): 61–83.
-\doi{10.1007/s10784-019-09464-5}.
+\doi{10.1007/s10784-019-09464-5}
+
+\subsection{On neighbours average degree}{
 
 Barrat, Alain, Marc Barthelemy, Romualdo Pastor-Satorras, and Alessandro Vespignani. 2004.
 "The architecture of complex weighted networks",
 \emph{Proc. Natl. Acad. Sci.} 101: 3747.
+}
 }
 \seealso{
 Other measures: 

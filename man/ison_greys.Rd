@@ -38,7 +38,8 @@ at Seattle Grace Hospital, later renamed as the Grey Sloan Memorial Hospital.
 \href{https://gweissman.github.io/post/grey-s-anatomy-network-of-sexual-relations/}{Gary Weissman}
 collected data on the sexual contacts between characters on the television show
 through observation of the story lines in the episodes and fan pages,
-and this data was extended by \href{http://badhessian.org/2012/09/lessons-on-exponential-random-graph-modeling-from-greys-anatomy-hook-ups/}{Benjamin Lind}
+and this data was extended by
+\href{http://badhessian.org/2012/09/lessons-on-exponential-random-graph-modeling-from-greys-anatomy-hook-ups/}{Benjamin Lind}
 including nodal attributes:
 \itemize{
 \item 'name': first and, where available, surname

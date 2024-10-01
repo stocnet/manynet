@@ -48,6 +48,7 @@ cluster_hierarchical <- function(census, distance){
 #' and this is given to `stats::hclust()` so that dendrograms etc can be returned.
 #' @importFrom stats complete.cases
 #' @references 
+#' ## On CONCOR clustering
 #' Breiger, Ronald L., Scott A. Boorman, and Phipps Arabie. 1975.  
 #'   "An Algorithm for Clustering Relational Data with Applications to 
 #'   Social Network Analysis and Comparison with Multidimensional Scaling". 

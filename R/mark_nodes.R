@@ -40,9 +40,11 @@ node_is_isolate <- function(.data){
 #' @rdname mark_nodes
 #' @importFrom igraph largest_ivs
 #' @references
-#' Tsukiyama, S. M. Ide, H. Ariyoshi and I. Shirawaka. 1977.
+#' ## On independent sets
+#' Tsukiyama, Shuji, Mikio Ide, Hiromu Ariyoshi, and Isao Shirawaka. 1977.
 #' "A new algorithm for generating all the maximal independent sets". 
-#' _SIAM J Computing_, 6:505–517.
+#' _SIAM Journal on Computing_, 6(3):505–517.
+#' \doi{10.1137/0206036}
 #' @examples
 #' node_is_independent(ison_adolescents)
 #' @export
@@ -76,6 +78,12 @@ node_is_independent <- function(.data){
 
 #' @rdname mark_nodes
 #' @importFrom igraph articulation_points
+#' @references
+#' ## On articulation or cut-points
+#' Tarjan, Robert E. and Uzi Vishkin. 1985.
+#' "An Efficient Parallel Biconnectivity Algorithm",
+#' _SIAM Journal on Computing_ 14(4): 862-874.
+#' \doi{10.1137/0214061}
 #' @examples 
 #' node_is_cutpoint(ison_brandes)
 #' @export
@@ -94,6 +102,12 @@ node_is_cutpoint <- function(.data){
 }
 
 #' @rdname mark_nodes
+#' @references
+#' ## On structural folds
+#' Vedres, Balazs, and David Stark. 2010.
+#' "Structural folds: Generative disruption in overlapping groups",
+#' _American Journal of Sociology_ 115(4): 1150-1190.
+#' \doi{10.1086/649497}
 #' @examples
 #' node_is_fold(create_explicit(A-B, B-C, A-C, C-D, C-E, D-E))
 #' @export
@@ -127,6 +141,7 @@ node_is_fold <- function(.data){
 #'   Note that this is a different default behaviour than that
 #'   described in Valente and Davis (1999).
 #' @references
+#' ## On mentoring
 #' Valente, Thomas, and Rebecca Davis. 1999.
 #' "Accelerating the Diffusion of Innovations Using Opinion Leaders",
 #' _Annals of the American Academy of Political and Social Science_ 566: 56-67.

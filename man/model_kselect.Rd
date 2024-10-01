@@ -46,13 +46,19 @@ These functions are generally not user-facing but used internally
 in e.g. the \verb{*_equivalence()} functions.
 }
 \references{
+\subsection{On the elbow method}{
+
 Thorndike, Robert L. 1953.
 "Who Belongs in the Family?".
 \emph{Psychometrika}, 18(4): 267–76.
 \doi{10.1007/BF02289263}.
+}
+
+\subsection{On the silhouette method}{
 
 Rousseeuw, Peter J. 1987.
 “Silhouettes: A Graphical Aid to the Interpretation and Validation of Cluster Analysis.”
 \emph{Journal of Computational and Applied Mathematics}, 20: 53–65.
 \doi{10.1016/0377-0427(87)90125-7}.
+}
 }

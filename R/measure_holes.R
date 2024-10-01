@@ -37,6 +37,7 @@
 #' @name measure_holes
 #' @family measures
 #' @references 
+#' ## On structural holes
 #' Burt, Ronald S. 1992. 
 #' _Structural Holes: The Social Structure of Competition_. 
 #' Cambridge, MA: Harvard University Press.
@@ -146,9 +147,9 @@ node_efficiency <- function(.data){
 #' @rdname measure_holes 
 #' @references
 #' Hollway, James, Jean-Frédéric Morin, and Joost Pauwelyn. 2020.
-#' "Structural conditions for novelty: the introduction of new environmental clauses to the trade regime complex."
+#' "Structural conditions for novelty: The introduction of new environmental clauses to the trade regime complex."
 #' _International Environmental Agreements: Politics, Law and Economics_ 20 (1): 61–83.
-#' \doi{10.1007/s10784-019-09464-5}.
+#' \doi{10.1007/s10784-019-09464-5}
 #' @examples
 #' node_constraint(ison_southern_women)
 #' @export 
@@ -230,6 +231,7 @@ node_eccentricity <- function(.data){
 #' @rdname measure_holes 
 #' @importFrom igraph knn
 #' @references
+#' ## On neighbours average degree
 #' Barrat, Alain, Marc Barthelemy, Romualdo Pastor-Satorras, and Alessandro Vespignani. 2004.
 #' "The architecture of complex weighted networks",
 #' _Proc. Natl. Acad. Sci._ 101: 3747.

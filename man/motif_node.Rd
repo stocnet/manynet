@@ -35,7 +35,7 @@ in a network:
 \itemize{
 \item \code{node_by_tie()} returns a census of the ties in a network.
 For directed networks, out-ties and in-ties are bound together.
-for multiplex networks, the various types of ties are bound together.
+For multiplex networks, the various types of ties are bound together.
 \item \code{node_by_triad()} returns a census of the triad configurations
 nodes are embedded in.
 \item \code{node_by_quad()} returns a census of nodes' positions
@@ -54,8 +54,21 @@ node_by_path(ison_adolescents)
 node_by_path(ison_southern_women)
 }
 \references{
+\subsection{On the dyad census}{
+
+Holland, Paul W., and Samuel Leinhardt. 1970.
+"A Method for Detecting Structure in Sociometric Data".
+\emph{American Journal of Sociology}, 76: 492-513.
+\doi{10.1016/B978-0-12-442450-0.50028-6}
+}
+
+\subsection{On the triad census}{
+
 Davis, James A., and Samuel Leinhardt. 1967.
 “\href{https://files.eric.ed.gov/fulltext/ED024086.pdf}{The Structure of Positive Interpersonal Relations in Small Groups}.” 55.
+}
+
+\subsection{On paths}{
 
 Dijkstra, Edsger W. 1959.
 "A note on two problems in connexion with graphs".
@@ -66,6 +79,7 @@ Opsahl, Tore, Filip Agneessens, and John Skvoretz. 2010.
 "Node centrality in weighted networks: Generalizing degree and shortest paths".
 \emph{Social Networks} 32(3): 245-51.
 \doi{10.1016/j.socnet.2010.03.006}.
+}
 }
 \seealso{
 Other motifs: 

@@ -115,8 +115,11 @@ nodes exposure at \eqn{t = 0}.
   node_exposure(smeg_diff)
 }
 \references{
+\subsection{On diffusion measures}{
+
 Valente, Tom W. 1995. \emph{Network models of the diffusion of innovations}
 (2nd ed.). Cresskill N.J.: Hampton Press.
+}
 }
 \seealso{
 Other measures: 

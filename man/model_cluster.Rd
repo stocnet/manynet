@@ -60,9 +60,12 @@ and this is given to \code{stats::hclust()} so that dendrograms etc can be retur
 }
 
 \references{
+\subsection{On CONCOR clustering}{
+
 Breiger, Ronald L., Scott A. Boorman, and Phipps Arabie. 1975.
 "An Algorithm for Clustering Relational Data with Applications to
 Social Network Analysis and Comparison with Multidimensional Scaling".
 \emph{Journal of Mathematical Psychology}, 12: 328-83.
 \doi{10.1016/0022-2496(75)90028-0}.
+}
 }

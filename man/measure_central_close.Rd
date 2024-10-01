@@ -94,6 +94,8 @@ ison_adolescents \%>\% mutate_ties(weight = ec) \%>\%
 net_closeness(ison_southern_women, direction = "in")
 }
 \references{
+\subsection{On harmonic centrality}{
+
 Marchiori, M, and V Latora. 2000.
 "Harmony in the small-world".
 \emph{Physica A} 285: 539-546.
@@ -101,6 +103,7 @@ Marchiori, M, and V Latora. 2000.
 Dekker, Anthony. 2005.
 "Conceptual distance in social network analysis".
 \emph{Journal of Social Structure} 6(3).
+}
 }
 \seealso{
 Other centrality: 

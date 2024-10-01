@@ -121,32 +121,41 @@ tie_degree(ison_adolescents)
 net_degree(ison_southern_women, direction = "in")
 }
 \references{
+\subsection{On multimodal centrality}{
+
 Faust, Katherine. 1997.
 "Centrality in affiliation networks."
 \emph{Social Networks} 19(2): 157-191.
-\doi{10.1016/S0378-8733(96)00300-0}.
+\doi{10.1016/S0378-8733(96)00300-0}
 
 Borgatti, Stephen P., and Martin G. Everett. 1997.
 "Network analysis of 2-mode data."
 \emph{Social Networks} 19(3): 243-270.
-\doi{10.1016/S0378-8733(96)00301-2}.
+\doi{10.1016/S0378-8733(96)00301-2}
 
 Borgatti, Stephen P., and Daniel S. Halgin. 2011.
 "Analyzing affiliation networks."
 In \emph{The SAGE Handbook of Social Network Analysis},
 edited by John Scott and Peter J. Carrington, 417–33.
 London, UK: Sage.
-\doi{10.4135/9781446294413.n28}.
+\doi{10.4135/9781446294413.n28}
+}
+
+\subsection{On strength centrality}{
 
 Opsahl, Tore, Filip Agneessens, and John Skvoretz. 2010.
 "Node centrality in weighted networks: Generalizing degree and shortest paths."
 \emph{Social Networks} 32, 245-251.
 \doi{10.1016/j.socnet.2010.03.006}
+}
+
+\subsection{On signed centrality}{
 
 Everett, Martin G., and Stephen P. Borgatti. 2014.
 “Networks Containing Negative Ties.”
 \emph{Social Networks} 38:111–20.
-\doi{10.1016/j.socnet.2014.03.005}.
+\doi{10.1016/j.socnet.2014.03.005}
+}
 }
 \seealso{
 \code{\link[=to_undirected]{to_undirected()}} for removing edge directions

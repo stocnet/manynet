@@ -38,8 +38,12 @@ i.e. never adopted
   summary(adopts)
 }
 \references{
-Valente, Tom W. 1995. \emph{Network models of the diffusion of innovations}
+\subsection{On adopter classes}{
+
+Valente, Tom W. 1995.
+\emph{Network models of the diffusion of innovations}
 (2nd ed.). Cresskill N.J.: Hampton Press.
+}
 }
 \seealso{
 Other measures: 

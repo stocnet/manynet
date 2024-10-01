@@ -46,6 +46,7 @@ NULL
 #'   approximately the number of nodes divided by the number of groups,
 #'   will take place irrespective of whether it improves the objective function.
 #' @references
+#' ## On the maximally diverse grouping problem
 #' Lai, Xiangjing, and Jin-Kao Hao. 2016. 
 #' “Iterated Maxima Search for the Maximally Diverse Grouping Problem.” 
 #' _European Journal of Operational Research_ 254(3):780–800. 

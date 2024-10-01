@@ -491,7 +491,8 @@ is_connected <- function(.data) {
 #' @param mark A logical vector marking two types or modes.
 #'   By default "type".
 #' @references
-#'   Tutte, W. T. (1950). 
+#' ## On perfect matching
+#'   Tutte, William T. 1950. 
 #'   "The factorization of locally finite graphs". 
 #'   _Canadian Journal of Mathematics_. 2: 44–49. 
 #'   \doi{10.4153/cjm-1950-005-2}
@@ -538,6 +539,12 @@ is_acyclic <- function(.data){
 #'   If negative, paths of all lengths are considered.
 #'   By default 4, to avoid potentially very long computation times.
 #' @source https://stackoverflow.com/questions/55091438/r-igraph-find-all-cycles
+#' @references
+#' ## On aperiodicity
+#' Jarvis, J.P, and D.R. Shier. 1996.
+#' "Graph-theoretic analysis of finite Markov chains",
+#' in Shier, D.R., Wallenius, K.T. (eds) _Applied Mathematical Modeling: A Multidisciplinary Approach_.
+#' CRC Press.
 #' @examples 
 #' is_aperiodic(ison_algebra)
 #' @export

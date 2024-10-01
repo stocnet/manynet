@@ -394,6 +394,38 @@
 #'   ```
 "ison_monks"
 
+## Dolphins ####
+
+#' One-mode, undirected network of frequent associations in a dolphin pod (Lusseau et al. 2003)
+#'
+#' @description
+#'   These data contain the frequent associations between the 62 dolphins of a
+#'   pod of dolphins living off Doubtful Sound, New Zealand.
+#'   Additional information can be found in the literature cited below.
+#' @docType data
+#' @keywords datasets
+#' @name ison_dolphins
+#' @references
+#'   Lusseau, David, K. Schneider, O. J. Boisseau, P. Haase, E. Slooten, and S. M. Dawson. 2003. 
+#'   "The bottlenose dolphin community of Doubtful Sound features a large proportion of long-lasting associations", 
+#'   _Behavioral Ecology and Sociobiology_ 54, 396-405.
+#'   
+#'   Lusseau, David. 2003.
+#'   "The emergent properties of a dolphin social network",
+#'   _Proc. R. Soc. London B_ 270(S): S186-S188.
+#'   \doi{10.1098/rsbl.2003.0057}
+#'   
+#'   Lusseau, David. 2007. 
+#'   "Evidence for social role in a dolphin social network". 
+#'   _Evolutionary Ecology_ 21: 357–366. 
+#'   \doi{10.1007/s10682-006-9105-0}
+#' @usage data(ison_dolphins)
+#' @format 
+#'   ```{r, echo = FALSE}
+#'   ison_dolphins
+#'   ```
+"ison_dolphins"
+
 # Fictitious ####
 
 ## Marvel ####
@@ -591,7 +623,8 @@
 #'   \href{https://gweissman.github.io/post/grey-s-anatomy-network-of-sexual-relations/}{Gary Weissman} 
 #'   collected data on the sexual contacts between characters on the television show
 #'   through observation of the story lines in the episodes and fan pages,
-#'   and this data was extended by \href{http://badhessian.org/2012/09/lessons-on-exponential-random-graph-modeling-from-greys-anatomy-hook-ups/}{Benjamin Lind}
+#'   and this data was extended by 
+#'   \href{http://badhessian.org/2012/09/lessons-on-exponential-random-graph-modeling-from-greys-anatomy-hook-ups/}{Benjamin Lind}
 #'   including nodal attributes:
 #'   
 #'   - 'name': first and, where available, surname
@@ -614,3 +647,59 @@
 #'   ison_greys
 #'   ```
 "ison_greys"
+
+# Political ####
+
+## Books ####
+
+#' One-mode undirected network of co-purchased books about US politics on Amazon
+#'
+#' @description
+#'   This network consists of books about US politics sold by Amazon.com.
+#'   Ties represent books that are often purchased together,
+#'   as revealed by Amazon's 'customers who bought this book also bought these other
+#'   books' section on those books' pages on the website.
+#'   
+#'   Information about the book's leaning "Liberal", "Neutral", or "Conservative"
+#'   were added separately by Mark Newman based on the abstracts, descriptions,
+#'   and reviews posted on Amazon.
+#'   
+#'   These data should be cited as V. Krebs, unpublished, http://www.orgnet.com/.
+#'   
+#' @docType data
+#' @keywords datasets
+#' @name ison_books
+#' @author Valdis Krebs, Mark Newman
+#' @usage data(ison_books)
+#' @format 
+#'   ```{r, echo = FALSE}
+#'   ison_books
+#'   ```
+"ison_books"
+
+## Blogs ####
+
+#' One-mode directed network of links between US political blogs (Adamic and Glance 2005)
+#'
+#' @description
+#'   This network consists of the blogosphere around the time of the 2004
+#'   US presidential election until February 2005.
+#'   Ties were constructed from a crawl of the front page of each blog.
+#'   
+#'   Political leaning is indicated as "Liberal" (or left leaning) or 
+#'   "Conservative" (or right leaning), sourced from blog directories.
+#'   Some blogs were labelled manually, 
+#'   based on incoming and outgoing links and posts.
+#' @docType data
+#' @keywords datasets
+#' @name ison_blogs
+#' @references
+#' Adamic, Lada A., and Natalie Glance. 2005.
+#' "The political blogosphere and the 2004 US Election", 
+#' _Proceedings of the WWW-2005 Workshop on the Weblogging Ecosystem_.
+#' @usage data(ison_blogs)
+#' @format 
+#'   ```{r, echo = FALSE}
+#'   ison_blogs
+#'   ```
+"ison_blogs"

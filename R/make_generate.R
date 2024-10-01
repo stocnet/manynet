@@ -47,7 +47,8 @@ NULL
 #'   should be retained. 
 #'   By default TRUE. 
 #' @references 
-#' Erdos, Paul, and Alfred Renyi. (1959). 
+#' ## On random networks
+#' Erdos, Paul, and Alfred Renyi. 1959. 
 #' "\href{https://www.renyi.hu/~p_erdos/1959-11.pdf}{On Random Graphs I}" 
 #' _Publicationes Mathematicae_. 6: 290–297.
 #' @importFrom igraph sample_bipartite sample_gnp sample_gnm
@@ -101,6 +102,11 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
 }
 
 #' @rdname make_random 
+#' @references
+#' ## On configuration models
+#' Bollobas, Bela. 1980.
+#' "A Probabilistic Proof of an Asymptotic Formula for the Number of Labelled Regular Graphs".
+#' _European Journal of Combinatorics_ 1: 311-316.
 #' @importFrom igraph sample_degseq
 #' @export
 generate_configuration <- function(.data){
@@ -132,7 +138,8 @@ generate_configuration <- function(.data){
 #'   or as a count, e.g. `c(10,0,20)`.
 #'   Is inferred from `n` if it is an existing network object.
 #' @references
-#' Holland, P.W. and Leinhardt, S. 1976. 
+#' ## On dyad-census conditioned networks
+#' Holland, Paul W., and Samuel Leinhardt. 1976. 
 #' “Local Structure in Social Networks.” 
 #' In D. Heise (Ed.), _Sociological Methodology_, pp 1-45. 
 #' San Francisco: Jossey-Bass.
@@ -229,6 +236,7 @@ NULL
 #' @param p Proportion of possible ties in the network that are realised or,
 #'   if integer greater than 1, the number of ties in the network.
 #' @references 
+#' ## On small-world networks
 #' Watts, Duncan J., and Steven H. Strogatz. 1998. 
 #' “Collective Dynamics of ‘Small-World’ Networks.” 
 #' _Nature_ 393(6684):440–42.
@@ -256,6 +264,7 @@ generate_smallworld <- function(n, p = 0.05, directed = FALSE, width = 2) {
 #' @param p Power of the preferential attachment, default is 1.
 #' @importFrom igraph sample_pa
 #' @references 
+#' ## On scale-free networks
 #' Barabasi, Albert-Laszlo, and Reka Albert. 1999. 
 #' “Emergence of Scaling in Random Networks.” 
 #' _Science_ 286(5439):509–12. 
@@ -291,6 +300,11 @@ generate_scalefree <- function(n, p = 1, directed = FALSE) {
 #' @param their_in Probability of tieing to a contact's incoming ties.
 #'   By default 1.
 #' @importFrom igraph sample_forestfire
+#' @references
+#' ## On the forest-fire model
+#' Leskovec, Jure, Jon Kleinberg, and Christos Faloutsos. 2007. 
+#' "\href{https://www.cs.cmu.edu/~jure/pubs/powergrowth-tkdd.pdf}{Graph evolution: Densification and shrinking diameters}". 
+#' _ACM transactions on Knowledge Discovery from Data_, 1(1): 2-es.
 #' @examples
 #' generate_fire(10)
 #' @export
