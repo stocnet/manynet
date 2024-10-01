@@ -647,3 +647,33 @@
 #'   ison_greys
 #'   ```
 "ison_greys"
+
+# Political ####
+
+## Books ####
+
+#' One-mode undirected network of co-purchased books about US politics on Amazon
+#'
+#' @description
+#'   This network consists of books about US politics sold by Amazon.com.
+#'   Ties represent books that are often purchased together,
+#'   as revealed by Amazon's 'customers who bought this book also bought these other
+#'   books' section on those books' pages on the website.
+#'   
+#'   Information about the book's leaning "Liberal", "Neutral", or "Conservative"
+#'   were added separately by Mark Newman based on the abstracts, descriptions,
+#'   and reviews posted on Amazon.
+#'   
+#'   These data should be cited as V. Krebs, unpublished, http://www.orgnet.com/.
+#'   
+#' @docType data
+#' @keywords datasets
+#' @name ison_books
+#' @author Valdis Krebs, Mark Newman
+#' @usage data(ison_books)
+#' @format 
+#'   ```{r, echo = FALSE}
+#'   ison_books
+#'   ```
+"ison_books"
+
