@@ -738,9 +738,21 @@ node_eigenvector <- function(.data, normalized = TRUE, scale = FALSE){
 }
 
 #' @rdname measure_central_eigen
-#' @param exponent Decay rate for the Bonacich power centrality score.
-#' @section Power centrality:
-#'   Power or beta (or Bonacich) centrality 
+#' @param exponent Decay rate or attentuation factor for 
+#'   the Bonacich power centrality score.
+#'   Can be positive or negative.
+#' @section Power or beta (or Bonacich) centrality:
+#'   Power centrality includes an exponent that weights contributions to a node's
+#'   centrality based on how far away those other nodes are.
+#'   \deqn{c_b(i) = \sum A(i,j) (\alpha = \beta c(j))}
+#'   Where \eqn{\beta} is positive, this means being connected to central people
+#'   increases centrality.
+#'   Where \eqn{\beta} is negative, this means being connected to central people
+#'   decreases centrality 
+#'   (and being connected to more peripheral actors increases centrality).
+#'   When \eqn{\beta = 0}, this is the outdegree.
+#'   \eqn{\alpha} is calculated to make sure the root mean square equals 
+#'   the network size.
 #' @references 
 #' ## On power centrality
 #'   Bonacich, Phillip. 1987. 
