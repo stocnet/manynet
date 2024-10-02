@@ -279,7 +279,7 @@ graphr <- function(.data, layout, labels = TRUE,
   }
 }
 
-# Helper functions
+# `graphr()` helper functions
 reduce_categories <- function(g, node_group) {
   limit <- toCondense <- NULL
   if (sum(table(node_attribute(g, node_group)) <= 2) > 2 &
@@ -339,14 +339,22 @@ reduce_categories <- function(g, node_group) {
         out <- factor(as.character(tie_attribute(g, edge_color)),
                       levels = c("FALSE", "TRUE"))
       } else out <- as.factor(as.character(tie_attribute(g, edge_color)))
+      if (length(unique(out)) == 1) {
+        out <- rep("black", net_ties(g))
+        message("Please indicate a variable with more than one value or level when mapping edge colors.")
+      }
+    } else if (length(edge_color) == 1) {
+        out <- rep(edge_color, net_ties(g))
     } else {
-      out <- .check_color(edge_color)
-    } 
+        out <- edge_color
+    }
   } else if (is.null(edge_color) & is_signed(g)) {
-    out <- ifelse(igraph::E(g)$sign >= 0, "Positive", "Negative")
-    out <- ifelse(length(unique(out)) == 1, "black", out)
+    out <- as.factor(ifelse(igraph::E(g)$sign >= 0, "Positive", "Negative"))
+    if (length(unique(out)) == 1) {
+      out <- rep("black", net_ties(g))
+    }
   } else {
-    out <- "black"
+    out <- rep("black", net_ties(g))
   }
   out
 }
@@ -355,13 +363,15 @@ reduce_categories <- function(g, node_group) {
   if (!is.null(edge_size)) {
     if (any(edge_size %in% names(tie_attribute(g)))) {
       out <- tie_attribute(g, edge_size)
+    } else if (is.numeric(edge_size) & length(edge_size) == 1) {
+      out <- rep(edge_size, net_ties(g))
     } else {
       out <- edge_size
     }
   } else if (is.null(edge_size) & is_weighted(g)) {
     out <- tie_attribute(g, "weight")
   } else {
-    out <- 0.5
+    out <- rep(0.5, net_ties(g))
   }
   as.numeric(out)
 }
@@ -390,20 +400,6 @@ reduce_categories <- function(g, node_group) {
     out <- ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")
     ifelse(length(unique(out)) == 1, unique(out), out)
   } else "solid"
-}
-
-.check_color <- function(v) {
-  color <- grDevices::colors()
-  color <- color[!color %in% "black"]
-  v <- ifelse(is.na(v), "black", v)
-  if (!any(grepl(paste(color, collapse = "|"), v)) | any(grepl("^#", v))) {
-    for(i in unique(v)) {
-      if (i != "black") {
-        v[v == i] <- sample(color, 1)
-      }
-    }
-  }
-  v
 }
 
 check_edge_variables <- function(g, edge_color, edge_size) {
@@ -459,6 +455,10 @@ check_edge_variables <- function(g, edge_color, edge_size) {
         out <- factor(as.character(node_attribute(g, node_color)),
                       levels = c("FALSE", "TRUE"))
       } else out <- as.factor(as.character(node_attribute(g, node_color)))
+      if (length(unique(out)) == 1) {
+        out <- rep("black", net_nodes(g))
+        message("Please indicate a variable with more than one value or level when mapping node colors.")
+      }
     } else out <- node_color
   } else {
     out <- "black"
@@ -547,6 +547,70 @@ map_nodes <- function(p, out) {
                                                   size = out[["nsize"]]))
   }
   p
+}
+
+
+cart2pol <- function(xyz){
+  stopifnot(is.numeric(xyz))
+  if (is.vector(xyz) && (length(xyz) == 2 || length(xyz) == 
+                         3)) {
+    x <- xyz[1]
+    y <- xyz[2]
+    m <- 1
+    n <- length(xyz)
+  }
+  else if (is.matrix(xyz) && (ncol(xyz) == 2 || ncol(xyz) == 
+                              3)) {
+    x <- xyz[, 1]
+    y <- xyz[, 2]
+    m <- nrow(xyz)
+    n <- ncol(xyz)
+  }
+  else cli::cli_abort("Input must be a vector of length 3 or a matrix with 3 columns.")
+  phi <- atan2(y, x)
+  r <- hypot(x, y)
+  if (n == 2) {
+    if (m == 1) 
+      prz <- c(phi, r)
+    else prz <- cbind(phi, r)
+  }
+  else {
+    if (m == 1) {
+      z <- xyz[3]
+      prz <- c(phi, r, z)
+    }
+    else {
+      z <- xyz[, 3]
+      prz <- cbind(phi, r, z)
+    }
+  }
+  return(prz)
+}
+
+hypot <- function (x, y) {
+  if ((length(x) == 0 && is.numeric(y) && length(y) <= 1) || 
+      (length(y) == 0 && is.numeric(x) && length(x) <= 1)) 
+    return(vector())
+  if (!is.numeric(x) && !is.complex(x) || !is.numeric(y) && 
+      !is.complex(y)) 
+    cli::cli_abort("Arguments 'x' and 'y' must be numeric or complex.")
+  if (length(x) == 1 && length(y) > 1) {
+    x <- rep(x, length(y))
+    dim(x) <- dim(y)
+  }
+  else if (length(x) > 1 && length(y) == 1) {
+    y <- rep(y, length(x))
+    dim(y) <- dim(x)
+  }
+  if ((is.vector(x) && is.vector(y) && length(x) != length(y)) || 
+      (is.matrix(x) && is.matrix(y) && dim(x) != dim(y)) || 
+      (is.vector(x) && is.matrix(y)) || is.matrix(x) && is.vector(y)) 
+    cli::cli_abort("Arguments 'x' and 'y' must be of the same size.")
+  x <- abs(x)
+  y <- abs(y)
+  m <- pmin(x, y)
+  M <- pmax(x, y)
+  ifelse(M == 0, 0, M * sqrt(1 + (m/M)^2))
 }
 
 # Longitudinal or comparative networks ####
@@ -645,6 +709,7 @@ graphs <- function(netlist, waves,
   do.call(patchwork::wrap_plots, c(gs, list(guides = "collect")))
 }
 
+# `graphs()` helper functions
 is_ego_network <- function(nlist) {
   if (all(unique(names(nlist)) != "")) {
     length(names(nlist)) == length(unique(unlist(unname(lapply(nlist, node_names))))) &
@@ -900,107 +965,19 @@ map_dynamic <- function(edges_out, nodes_out, edge_color, node_shape,
   p
 }
 
-# Helpers ####
-
-reduce_categories <- function(g, node_group) {
-  limit <- toCondense <- NULL
-  if (sum(table(node_attribute(g, node_group)) <= 2) > 2 &
-      length(unique(node_attribute(g, node_group))) > 2) {
-    toCondense <- names(which(table(node_attribute(g, node_group)) <= 2))
-    out <- ifelse(node_attribute(g, node_group) %in% toCondense,
-                  "Other", node_attribute(g, node_group))
-    message("The number of groups was reduced since there were groups with less than 2 nodes.")
-  } else if (sum(table(node_attribute(g, node_group)) <= 2) == 2 &
-             length(unique(node_attribute(g, node_group))) > 2) {
-    limit <- stats::reorder(node_attribute(g, node_group),
-                            node_attribute(g, node_group),
-                            FUN = length, decreasing = TRUE)
-    if (sum(utils::tail(attr(limit, "scores"), 2))) {
-      toCondense <- utils::tail(levels(limit), 3)
-    } else {
-      toCondense <- utils::tail(levels(limit), 2)
-    }
-    out <- ifelse(node_attribute(g, node_group) %in% toCondense, "Other",
-                  node_attribute(g, node_group))
-    message("The number of groups was reduced since there were groups with less than 2 nodes.")
-  } else if (sum(table(node_attribute(g, node_group)) <= 2) == 1 &
-             length(unique(node_attribute(g, node_group))) > 2) {
-    limit <- stats::reorder(node_attribute(g, node_group),
-                            node_attribute(g, node_group),
-                            FUN = length, decreasing = TRUE)
-    toCondense <- utils::tail(levels(limit), 2)
-    out <- ifelse(node_attribute(g, node_group) %in% toCondense, "Other",
-                  node_attribute(g, node_group))
-    message("The number of groups was reduced since there were groups with less than 2 nodes.")
-  } else if (sum(table(node_attribute(g, node_group)) <= 2) == 1 &
-             length(unique(node_attribute(g, node_group))) == 2) {
-    out <- as.factor(node_attribute(g, node_group))
-    message("Node groups with 2 nodes or less can be cause issues for plotting ...")
-  } else out <- as.factor(node_attribute(g, node_group))
-  out
-}
-
-cart2pol <- function(xyz){
-  stopifnot(is.numeric(xyz))
-  if (is.vector(xyz) && (length(xyz) == 2 || length(xyz) == 
-                         3)) {
-    x <- xyz[1]
-    y <- xyz[2]
-    m <- 1
-    n <- length(xyz)
-  }
-  else if (is.matrix(xyz) && (ncol(xyz) == 2 || ncol(xyz) == 
-                              3)) {
-    x <- xyz[, 1]
-    y <- xyz[, 2]
-    m <- nrow(xyz)
-    n <- ncol(xyz)
-  }
-  else cli::cli_abort("Input must be a vector of length 3 or a matrix with 3 columns.")
-  phi <- atan2(y, x)
-  r <- hypot(x, y)
-  if (n == 2) {
-    if (m == 1) 
-      prz <- c(phi, r)
-    else prz <- cbind(phi, r)
-  }
-  else {
-    if (m == 1) {
-      z <- xyz[3]
-      prz <- c(phi, r, z)
-    }
-    else {
-      z <- xyz[, 3]
-      prz <- cbind(phi, r, z)
+# `graphd()` helper functions
+.check_color <- function(v) {
+  color <- grDevices::colors()
+  color <- color[!color %in% "black"]
+  v <- ifelse(is.na(v), "black", v)
+  if (!any(grepl(paste(color, collapse = "|"), v)) | any(grepl("^#", v))) {
+    for(i in unique(v)) {
+      if (i != "black") {
+        v[v == i] <- sample(color, 1)
+      }
     }
   }
-  return(prz)
-}
-
-hypot <- function (x, y) {
-  if ((length(x) == 0 && is.numeric(y) && length(y) <= 1) || 
-      (length(y) == 0 && is.numeric(x) && length(x) <= 1)) 
-    return(vector())
-  if (!is.numeric(x) && !is.complex(x) || !is.numeric(y) && 
-      !is.complex(y)) 
-    cli::cli_abort("Arguments 'x' and 'y' must be numeric or complex.")
-  if (length(x) == 1 && length(y) > 1) {
-    x <- rep(x, length(y))
-    dim(x) <- dim(y)
-  }
-  else if (length(x) > 1 && length(y) == 1) {
-    y <- rep(y, length(x))
-    dim(y) <- dim(x)
-  }
-  if ((is.vector(x) && is.vector(y) && length(x) != length(y)) || 
-      (is.matrix(x) && is.matrix(y) && dim(x) != dim(y)) || 
-      (is.vector(x) && is.matrix(y)) || is.matrix(x) && is.vector(y)) 
-    cli::cli_abort("Arguments 'x' and 'y' must be of the same size.")
-  x <- abs(x)
-  y <- abs(y)
-  m <- pmin(x, y)
-  M <- pmax(x, y)
-  ifelse(M == 0, 0, M * sqrt(1 + (m/M)^2))
+  v
 }
 
 time_edges_lst <- function(tlist, edges_lst, nodes_lst, edge_color) {
