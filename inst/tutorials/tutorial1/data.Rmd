@@ -3,7 +3,7 @@ title: "Data"
 author: "by James Hollway"
 output: 
   learnr::tutorial:
-    theme: journal
+    theme: flatly
 runtime: shiny_prerendered
 description: >
   This tutorial covers several ways to make and modify network data,
