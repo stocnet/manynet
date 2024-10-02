@@ -277,19 +277,19 @@ we can highlight which node or nodes hold the maximum score in red.
 ```{r ggid-solution}
 # plot the network, highlighting the node with the highest centrality score with a different colour
 ison_brandes %>%
-  add_node_attribute("color", node_is_max(node_degree(ison_brandes))) %>%
+  mutate_nodes(color = node_is_max(node_degree())) %>%
   graphr(node_color = "color")
 
 ison_brandes %>%
-  add_node_attribute("color", node_is_max(node_betweenness(ison_brandes))) %>%
+  mutate_nodes(color = node_is_max(node_betweenness())) %>%
   graphr(node_color = "color")
 
 ison_brandes %>%
-  add_node_attribute("color", node_is_max(node_closeness(ison_brandes))) %>%
+  mutate_nodes(color = node_is_max(node_closeness())) %>%
   graphr(node_color = "color")
 
 ison_brandes %>%
-  add_node_attribute("color", node_is_max(node_eigenvector(ison_brandes))) %>%
+  mutate_nodes(color = node_is_max(node_eigenvector())) %>%
   graphr(node_color = "color")
 ```
 
