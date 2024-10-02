@@ -13,6 +13,7 @@
 #'     - `node_outdegree()` returns the `direction = 'out'` results.
 #'   - `node_multidegree()` measures the ratio between types of ties in a multiplex network.
 #'   - `node_posneg()` measures the PN (positive-negative) centrality of a signed network.
+#'   - `node_leverage()` measures the leverage centrality of nodes in a network.
 #'   - `tie_degree()` measures the degree centrality of ties in a network
 #'   - `net_degree()` measures a network's degree centralization; 
 #'   there are several related shortcut functions:
@@ -188,6 +189,25 @@ node_posneg <- function(.data){
 }
 
 #' @rdname measure_central_degree
+#' @section Leverage centrality: 
+#'   Leverage centrality concerns the degree of a node compared with that of its
+#'   neighbours, \eqn{J}:
+#'   \deqn{C_L(i) = \frac{1}{deg(i)} \sum_{j \in J(i)} \frac{deg(i) - deg(j)}{deg(i) + deg(j)}}
+#' @references
+#' ## On leverage centrality
+#' Joyce, Karen E., Paul J. Laurienti, Jonathan H. Burdette, and Satoru Hayasaka. 2010.
+#' "A New Measure of Centrality for Brain Networks". 
+#' _PLoS ONE_ 5(8): e12200.
+#' \doi{10.1371/journal.pone.0012200}
+#' @export
+node_leverage <- function(.data){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  out <- (node_deg(.data) - node_neighbours_degree(.data))/
+    (node_deg(.data) + node_neighbours_degree(.data))
+  make_node_measure(out, .data)
+}
+
+#' @rdname measure_central_degree
 #' @examples 
 #' tie_degree(ison_adolescents)
 #' @export
@@ -263,6 +283,7 @@ net_indegree <- function(.data, normalized = TRUE){
 #'   - `node_flow()` measures the flow betweenness centralities of nodes in a network,
 #'   which uses an electrical current model for information spreading 
 #'   in contrast to the shortest paths model used by normal betweenness centrality.
+#'   - `node_stress()` measures the stress centrality of nodes in a network.
 #'   - `tie_betweenness()` measures the number of shortest paths going through a tie.
 #'   - `net_betweenness()` measures the betweenness centralization for a network.
 #'   
@@ -281,6 +302,16 @@ net_indegree <- function(.data, normalized = TRUE){
 NULL
 
 #' @rdname measure_central_between
+#' @section Betweenness centrality: 
+#'   Betweenness centrality is based on the number of shortest paths between
+#'   other nodes that a node lies upon:
+#'   \deqn{C_B(i) = \sum_{j,k:j \neq k, j \neq i, k \neq i} \frac{g_{jik}}{g_{jk}}}
+#' @references
+#' ## On betweenness centrality
+#' Freeman, Linton. 1977. 
+#' "A set of measures of centrality based on betweenness". 
+#' _Sociometry_, 40(1): 35–41. 
+#' \doi{10.2307/3033543}
 #' @examples
 #' node_betweenness(ison_southern_women)
 #' @return A numeric vector giving the betweenness centrality measure of each node.
@@ -319,14 +350,18 @@ node_betweenness <- function(.data, normalized = TRUE,
 }
 
 #' @rdname measure_central_between 
-#' @examples
-#' node_induced(ison_adolescents)
+#' @section Induced centrality: 
+#'   Induced centrality or vitality centrality concerns the change in 
+#'   total betweenness centrality between networks with and without a given node:
+#'   \deqn{C_I(i) = C_B(G) - C_B(G\ i)}
 #' @references
 #' ## On induced centrality
 #' Everett, Martin and Steve Borgatti. 2010.
 #' "Induced, endogenous and exogenous centrality"
 #' _Social Networks_, 32: 339-344.
 #' \doi{10.1016/j.socnet.2010.06.004}
+#' @examples
+#' node_induced(ison_adolescents)
 #' @export 
 node_induced <- function(.data, normalized = TRUE, 
                          cutoff = NULL){
@@ -342,16 +377,55 @@ node_induced <- function(.data, normalized = TRUE,
   make_node_measure(out, .data)
 }
 
-
 #' @rdname measure_central_between 
+#' @section Flow betweenness centrality: 
+#'   Flow betweenness centrality concerns the total maximum flow, \eqn{f},
+#'   between other nodes \eqn{j,k} in a network \eqn{G} that a given node mediates:
+#'   \deqn{C_F(i) = \sum_{j,k:j\neq k, j\neq i, k\neq i} f(j,k,G) - f(j,k,G\ i)}
+#'   When normalized (by default) this sum of differences is divided by the
+#'   sum of flows \eqn{f(i,j,G)}.
+#' @references
+#' ## On flow centrality
+#' Freeman, Lin, Stephen Borgatti, and Douglas White. 1991. 
+#' "Centrality in Valued Graphs: A Measure of Betweenness Based on Network Flow". 
+#' _Social Networks_, 13(2), 141-154.
+#' 
+#' Koschutzki, D., K.A. Lehmann, L. Peeters, S. Richter, D. Tenfelde-Podehl, and O. Zlotowski. 2005. 
+#' "Centrality Indices". 
+#' In U. Brandes and T. Erlebach (eds.), _Network Analysis: Methodological Foundations_. 
+#' Berlin: Springer.
 #' @export 
 node_flow <- function(.data, normalized = TRUE){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   thisRequires("sna")
-  out <- sna::flowbet(manynet::as_network(.data),
-                      gmode = ifelse(manynet::is_directed(.data), "digraph", "graph"),
-                      diag = manynet::is_complex(.data),
+  out <- sna::flowbet(as_network(.data),
+                      gmode = ifelse(is_directed(.data), "digraph", "graph"),
+                      diag = is_complex(.data),
                       cmode = ifelse(normalized, "normflow", "rawflow"))
+  make_node_measure(out, .data)
+}
+
+#' @rdname measure_central_between 
+#' @section Stress centrality: 
+#'   Stress centrality is the number of all shortest paths or geodesics, \eqn{g}, 
+#'   between other nodes that a given node mediates:
+#'   \deqn{C_S(i) = \sum_{j,k:j \neq k, j \neq i, k \neq i} g_{jik}}
+#'   High stress nodes lie on a large number of shortest paths between other
+#'   nodes, and thus associated with bridging or spanning boundaries.
+#' @references
+#' ## On stress centrality
+#'   Shimbel, A. 1953.
+#'   "Structural Parameters of Communication Networks".
+#'   _Bulletin of Mathematical Biophysics_, 15:501-507.
+#'   \doi{10.1007/BF02476438}
+#' @export 
+node_stress <- function(.data, normalized = TRUE){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  thisRequires("sna")
+  out <- sna::stresscent(as_network(.data),
+                      gmode = ifelse(is_directed(.data), "digraph", "graph"),
+                      diag = is_complex(.data),
+                      rescale = normalized)
   make_node_measure(out, .data)
 }
 
