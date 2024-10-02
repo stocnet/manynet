@@ -435,17 +435,22 @@ net_betweenness <- function(.data, normalized = TRUE,
 
 #' Measures of closeness-like centrality and centralisation
 #' @description
-#'   These functions calculate common closeness-related centrality measures for one- and two-mode networks:
+#'   These functions calculate common closeness-related centrality measures 
+#'   that rely on path-length for one- and two-mode networks:
 #'   
-#'   - `node_closeness()` measures the closeness centrality of nodes in a network.
+#'   - `node_closeness()` measures the closeness centrality of nodes in a 
+#'   network.
 #'   - `node_reach()` measures nodes' reach centrality,
 #'   or how many nodes they can reach within _k_ steps.
-#'   - `node_harmonic()` measures nodes' harmonic centrality or valued centrality,
-#'   which is thought to behave better than reach centrality for disconnected networks.
+#'   - `node_harmonic()` measures nodes' harmonic centrality or valued 
+#'   centrality, which is thought to behave better than reach centrality 
+#'   for disconnected networks.
 #'   - `node_information()` measures nodes' information centrality or 
 #'   current-flow closeness centrality.
-#'   - `node_distance()` measures nodes' geodesic distance from or to a given node.
-#'   - `tie_closeness()` measures the closeness of each tie to other ties in the network.
+#'   - `node_distance()` measures nodes' geodesic distance from or to a 
+#'   given node.
+#'   - `tie_closeness()` measures the closeness of each tie to other ties 
+#'   in the network.
 #'   - `net_closeness()` measures a network's closeness centralization.
 #'   - `net_reach()` measures a network's reach centralization.
 #'   - `net_harmonic()` measures a network's harmonic centralization.
@@ -464,6 +469,23 @@ NULL
 
 #' @rdname measure_central_close
 #' @param cutoff Maximum path length to use during calculations.
+#' @section Closeness centrality: 
+#'   Closeness centrality or status centrality is defined as the reciprocal of 
+#'   the farness or distance, \eqn{d}, 
+#'   from a node to all other nodes in the network:
+#'   \deqn{C_C(i) = \frac{1}{\sum_j d(i,j)}}
+#'   When (more commonly) normalised, the numerator is instead \eqn{N-1}.
+#' @references
+#' ## On closeness centrality
+#' Bavelas, Alex. 1950. 
+#' "Communication Patterns in Task‐Oriented Groups". 
+#' _The Journal of the Acoustical Society of America_, 22(6): 725–730.
+#' \doi{10.1121/1.1906679}
+#' 
+#' Harary, Frank. 1959. 
+#' "Status and Contrastatus". 
+#' _Sociometry_, 22(1): 23–43. 
+#' \doi{10.2307/2785610}
 #' @examples
 #' node_closeness(ison_southern_women)
 #' @export
@@ -492,29 +514,21 @@ node_closeness <- function(.data, normalized = TRUE,
 } 
 
 #' @rdname measure_central_close 
-#' @param k Integer of steps out to calculate reach.
-#' @examples
-#' node_reach(ison_adolescents)
-#' @export
-node_reach <- function(.data, normalized = TRUE, k = 2){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
-  if(manynet::is_weighted(.data)){
-    tore <- manynet::as_matrix(.data)/mean(manynet::as_matrix(.data))
-    out <- 1/tore
-  } else out <- igraph::distances(manynet::as_igraph(.data))
-  diag(out) <- 0
-  out <- rowSums(out<=k)
-  if(normalized) out <- out/(manynet::net_nodes(.data)-1)
-  out <- make_node_measure(out, .data)
-  out
-}
-
-#' @rdname measure_central_close 
+#' @section Harmonic centrality:
+#'   Harmonic centrality or valued centrality reverses the sum and reciprocal 
+#'   operations compared to closeness centrality:
+#'   \deqn{C_H(i) = \sum_{i, i \neq j} \frac{1}{d(i,j)}}
+#'   where \eqn{\frac{1}{d(i,j)} = 0} where there is no path between \eqn{i} and
+#'   \eqn{j}. Normalization is by \eqn{N-1}. 
+#'   Since the harmonic mean performs better than the arithmetic mean on
+#'   unconnected networks, i.e. networks with infinite distances,
+#'   harmonic centrality is to be preferred in these cases.
 #' @references
 #'   ## On harmonic centrality
-#'   Marchiori, M, and V Latora. 2000. 
+#'   Marchiori, Massimo, and Vito Latora. 2000. 
 #'   "Harmony in the small-world".
 #'   _Physica A_ 285: 539-546.
+#'   \doi{10.1016/S0378-4371(00)00311-3}
 #'   
 #'   Dekker, Anthony. 2005.
 #'   "Conceptual distance in social network analysis".
@@ -529,13 +543,81 @@ node_harmonic <- function(.data, normalized = TRUE, k = -1){
 }
 
 #' @rdname measure_central_close 
+#' @param steps Integer of steps out to calculate reach.
+#'   By default 2.
+#' @section Reach centrality: 
+#'   In some cases, longer path lengths are irrelevant and 'closeness' should
+#'   be defined as how many others are in a local neighbourhood.
+#'   How many steps out this neighbourhood should be defined as is given by 
+#'   \eqn{steps}. 
+#'   This parameter is usually called \eqn{k} or \eqn{m},
+#'   which is why this is sometimes called (\eqn{m}- or) 
+#'   \eqn{k}-step reach centrality.
+#'   \deqn{C_R(i) = \sum_j d(i,j) \leq k}
+#'   The maximum reach score is \eqn{N-1}, achieved when the node can reach all
+#'   other nodes in the network in \eqn{k} steps or less,
+#'   but the normalised version, \eqn{\frac{C_R}{N-1}}, is more common.
+#'   Note that if \eqn{steps = 1}, then this returns the node's degree.
+#' @references
+#' ## On reach centrality
+#' Borgatti, Stephen P., Martin G. Everett, and J.C. Johnson. 2013. 
+#' _Analyzing social networks_. 
+#' London: SAGE Publications Limited.
+#' @examples
+#' node_reach(ison_adolescents)
+#' @export
+node_reach <- function(.data, normalized = TRUE, steps = 2){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(is_weighted(.data)){
+    tore <- as_matrix(.data)/mean(as_matrix(.data))
+    out <- 1/tore
+  } else out <- igraph::distances(as_igraph(.data))
+  diag(out) <- 0
+  out <- rowSums(out<=steps)
+  if(normalized) out <- out/(net_nodes(.data)-1)
+  out <- make_node_measure(out, .data)
+  out
+}
+
+#' @rdname measure_central_close 
+#' @section Information centrality: 
+#'   Information centrality, also known as current-flow centrality, 
+#'   is a hybrid measure relating to both path-length and walk-based measures. 
+#'   The information centrality of a node is the harmonic average of the 
+#'   “bandwidth” or inverse path-length for all paths originating from the node.
+#'   
+#'   As described in the `{sna}` package, 
+#'   information centrality works on an undirected but potentially weighted 
+#'   network excluding isolates (which take scores of zero).
+#'   It is defined as:
+#'   \deqn{C_I = \frac{1}{T + \frac{\sum T - 2 \sum C_1}{|N|}}}
+#'   where \eqn{C = B^-1} with \eqn{B} is a pseudo-adjacency matrix replacing
+#'   the diagonal of \eqn{1-A} with \eqn{1+k},
+#'   and \eqn{T} is the trace of \eqn{C} and \eqn{S_R} an arbitrary row sum 
+#'   (all rows in \eqn{C} have the same sum). 
+#'   
+#'   Nodes with higher information centrality have a large number of short paths
+#'   to many others in the network, and are thus considered to have greater
+#'   control of the flow of information.
+#' @references
+#' ## On information centrality
+#' Stephenson, Karen, and Marvin Zelen. 1989.
+#' "Rethinking centrality: Methods and examples". 
+#' _Social Networks_ 11(1):1-37. 
+#' \doi{10.1016/0378-8733(89)90016-6}
+#' 
+#' Brandes, Ulrik, and Daniel Fleischer. 2005. 
+#' "Centrality Measures Based on Current Flow". 
+#' _Proc. 22nd Symp. Theoretical Aspects of Computer Science_ LNCS 3404: 533-544. 
+#' \doi{10.1007/978-3-540-31856-9_44}
 #' @export
 node_information <- function(.data, normalized = TRUE){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   thisRequires("sna")
   out <- sna::infocent(manynet::as_network(.data),
                        gmode = ifelse(manynet::is_directed(.data), "digraph", "graph"),
-                       diag = manynet::is_complex(.data))
+                       diag = manynet::is_complex(.data),
+                       rescale = normalized)
   make_node_measure(out, .data)
 }
   
@@ -656,23 +738,31 @@ net_harmonic <- function(.data, normalized = TRUE, k = 2){
 
 #' Measures of eigenvector-like centrality and centralisation
 #' @description
-#'   These functions calculate common eigenvector-related centrality measures for one- and two-mode networks:
+#'   These functions calculate common eigenvector-related centrality 
+#'   measures, or walk-based eigenmeasures, for one- and two-mode networks:
 #'   
-#'   - `node_eigenvector()` measures the eigenvector centrality of nodes in a network.
-#'   - `node_power()` measures the Bonacich, beta, or power centrality of nodes in a network.
-#'   - `node_alpha()` measures the alpha or Katz centrality of nodes in a network.
+#'   - `node_eigenvector()` measures the eigenvector centrality of nodes 
+#'   in a network.
+#'   - `node_power()` measures the Bonacich, beta, or power centrality of 
+#'   nodes in a network.
+#'   - `node_alpha()` measures the alpha or Katz centrality of nodes in a 
+#'   network.
 #'   - `node_pagerank()` measures the pagerank centrality of nodes in a network.
-#'   - `node_hub()` measures how well nodes in a network serve as hubs pointing to many authorities.
-#'   - `node_authority()` measures how well nodes in a network serve as authorities from many hubs.
-#'   - `tie_eigenvector()` measures the eigenvector centrality of ties in a network.
-#'   - `net_eigenvector()` measures the eigenvector centralization for a network.
+#'   - `node_hub()` measures how well nodes in a network serve as hubs pointing 
+#'   to many authorities.
+#'   - `node_authority()` measures how well nodes in a network serve as 
+#'   authorities from many hubs.
+#'   - `tie_eigenvector()` measures the eigenvector centrality of ties in a 
+#'   network.
+#'   - `net_eigenvector()` measures the eigenvector centralization for a 
+#'   network.
 #'   
 #'   All measures attempt to use as much information as they are offered,
 #'   including whether the networks are directed, weighted, or multimodal.
 #'   If this would produce unintended results, 
 #'   first transform the salient properties using e.g. [to_undirected()] functions.
-#'   All centrality and centralization measures return normalized measures by default,
-#'   including for two-mode networks.
+#'   All centrality and centralization measures return normalized measures 
+#'   by default, including for two-mode networks.
 #' @name measure_central_eigen
 #' @family centrality
 #' @family measures

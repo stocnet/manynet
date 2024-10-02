@@ -3,8 +3,8 @@
 \name{measure_central_close}
 \alias{measure_central_close}
 \alias{node_closeness}
-\alias{node_reach}
 \alias{node_harmonic}
+\alias{node_reach}
 \alias{node_information}
 \alias{node_distance}
 \alias{tie_closeness}
@@ -15,9 +15,9 @@
 \usage{
 node_closeness(.data, normalized = TRUE, direction = "out", cutoff = NULL)
 
-node_reach(.data, normalized = TRUE, k = 2)
-
 node_harmonic(.data, normalized = TRUE, k = -1)
+
+node_reach(.data, normalized = TRUE, steps = 2)
 
 node_information(.data, normalized = TRUE)
 
@@ -56,22 +56,28 @@ against only the centrality scores of the other nodes in that mode.}
 
 \item{cutoff}{Maximum path length to use during calculations.}
 
-\item{k}{Integer of steps out to calculate reach.}
+\item{steps}{Integer of steps out to calculate reach.
+By default 2.}
 
 \item{from, to}{Index or name of a node to calculate distances from or to.}
 }
 \description{
-These functions calculate common closeness-related centrality measures for one- and two-mode networks:
+These functions calculate common closeness-related centrality measures
+that rely on path-length for one- and two-mode networks:
 \itemize{
-\item \code{node_closeness()} measures the closeness centrality of nodes in a network.
+\item \code{node_closeness()} measures the closeness centrality of nodes in a
+network.
 \item \code{node_reach()} measures nodes' reach centrality,
 or how many nodes they can reach within \emph{k} steps.
-\item \code{node_harmonic()} measures nodes' harmonic centrality or valued centrality,
-which is thought to behave better than reach centrality for disconnected networks.
+\item \code{node_harmonic()} measures nodes' harmonic centrality or valued
+centrality, which is thought to behave better than reach centrality
+for disconnected networks.
 \item \code{node_information()} measures nodes' information centrality or
 current-flow closeness centrality.
-\item \code{node_distance()} measures nodes' geodesic distance from or to a given node.
-\item \code{tie_closeness()} measures the closeness of each tie to other ties in the network.
+\item \code{node_distance()} measures nodes' geodesic distance from or to a
+given node.
+\item \code{tie_closeness()} measures the closeness of each tie to other ties
+in the network.
 \item \code{net_closeness()} measures a network's closeness centralization.
 \item \code{net_reach()} measures a network's reach centralization.
 \item \code{net_harmonic()} measures a network's harmonic centralization.
@@ -84,6 +90,65 @@ first transform the salient properties using e.g. \code{\link[=to_undirected]{to
 All centrality and centralization measures return normalized measures by default,
 including for two-mode networks.
 }
+\section{Closeness centrality}{
+
+Closeness centrality or status centrality is defined as the reciprocal of
+the farness or distance, \eqn{d},
+from a node to all other nodes in the network:
+\deqn{C_C(i) = \frac{1}{\sum_j d(i,j)}}
+When (more commonly) normalised, the numerator is instead \eqn{N-1}.
+}
+
+\section{Harmonic centrality}{
+
+Harmonic centrality or valued centrality reverses the sum and reciprocal
+operations compared to closeness centrality:
+\deqn{C_H(i) = \sum_{i, i \neq j} \frac{1}{d(i,j)}}
+where \eqn{\frac{1}{d(i,j)} = 0} where there is no path between \eqn{i} and
+\eqn{j}. Normalization is by \eqn{N-1}.
+Since the harmonic mean performs better than the arithmetic mean on
+unconnected networks, i.e. networks with infinite distances,
+harmonic centrality is to be preferred in these cases.
+}
+
+\section{Reach centrality}{
+
+In some cases, longer path lengths are irrelevant and 'closeness' should
+be defined as how many others are in a local neighbourhood.
+How many steps out this neighbourhood should be defined as is given by
+\eqn{steps}.
+This parameter is usually called \eqn{k} or \eqn{m},
+which is why this is sometimes called (\eqn{m}- or)
+\eqn{k}-step reach centrality.
+\deqn{C_R(i) = \sum_j d(i,j) \leq k}
+The maximum reach score is \eqn{N-1}, achieved when the node can reach all
+other nodes in the network in \eqn{k} steps or less,
+but the normalised version, \eqn{\frac{C_R}{N-1}}, is more common.
+Note that if \eqn{steps = 1}, then this returns the node's degree.
+}
+
+\section{Information centrality}{
+
+Information centrality, also known as current-flow centrality,
+is a hybrid measure relating to both path-length and walk-based measures.
+The information centrality of a node is the harmonic average of the
+“bandwidth” or inverse path-length for all paths originating from the node.
+
+As described in the \code{{sna}} package,
+information centrality works on an undirected but potentially weighted
+network excluding isolates (which take scores of zero).
+It is defined as:
+\deqn{C_I = \frac{1}{T + \frac{\sum T - 2 \sum C_1}{|N|}}}
+where \eqn{C = B^-1} with \eqn{B} is a pseudo-adjacency matrix replacing
+the diagonal of \eqn{1-A} with \eqn{1+k},
+and \eqn{T} is the trace of \eqn{C} and \eqn{S_R} an arbitrary row sum
+(all rows in \eqn{C} have the same sum).
+
+Nodes with higher information centrality have a large number of short paths
+to many others in the network, and are thus considered to have greater
+control of the flow of information.
+}
+
 \examples{
 node_closeness(ison_southern_women)
 node_reach(ison_adolescents)
@@ -94,15 +159,49 @@ ison_adolescents \%>\% mutate_ties(weight = ec) \%>\%
 net_closeness(ison_southern_women, direction = "in")
 }
 \references{
+\subsection{On closeness centrality}{
+
+Bavelas, Alex. 1950.
+"Communication Patterns in Task‐Oriented Groups".
+\emph{The Journal of the Acoustical Society of America}, 22(6): 725–730.
+\doi{10.1121/1.1906679}
+
+Harary, Frank. 1959.
+"Status and Contrastatus".
+\emph{Sociometry}, 22(1): 23–43.
+\doi{10.2307/2785610}
+}
+
 \subsection{On harmonic centrality}{
 
-Marchiori, M, and V Latora. 2000.
+Marchiori, Massimo, and Vito Latora. 2000.
 "Harmony in the small-world".
 \emph{Physica A} 285: 539-546.
+\doi{10.1016/S0378-4371(00)00311-3}
 
 Dekker, Anthony. 2005.
 "Conceptual distance in social network analysis".
 \emph{Journal of Social Structure} 6(3).
+}
+
+\subsection{On reach centrality}{
+
+Borgatti, Stephen P., Martin G. Everett, and J.C. Johnson. 2013.
+\emph{Analyzing social networks}.
+London: SAGE Publications Limited.
+}
+
+\subsection{On information centrality}{
+
+Stephenson, Karen, and Marvin Zelen. 1989.
+"Rethinking centrality: Methods and examples".
+\emph{Social Networks} 11(1):1-37.
+\doi{10.1016/0378-8733(89)90016-6}
+
+Brandes, Ulrik, and Daniel Fleischer. 2005.
+"Centrality Measures Based on Current Flow".
+\emph{Proc. 22nd Symp. Theoretical Aspects of Computer Science} LNCS 3404: 533-544.
+\doi{10.1007/978-3-540-31856-9_44}
 }
 }
 \seealso{
