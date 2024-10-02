@@ -3,7 +3,7 @@ title: "Cohesion and Community"
 author: "by James Hollway"
 output: 
   learnr::tutorial:
-    theme: journal
+    theme: spacelab
 runtime: shiny_prerendered
 description: >
   This tutorial aims to teach you how to calculate various cohesion measures,

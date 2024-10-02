@@ -3,7 +3,7 @@ title: "Visualisation"
 author: "by James Hollway"
 output: 
   learnr::tutorial:
-    theme: journal
+    theme: lumen
 runtime: shiny_prerendered
 description: >
   This tutorial aims to give an overview of how to use manynet and other
