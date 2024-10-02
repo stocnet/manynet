@@ -447,6 +447,8 @@ net_betweenness <- function(.data, normalized = TRUE,
 #'   for disconnected networks.
 #'   - `node_information()` measures nodes' information centrality or 
 #'   current-flow closeness centrality.
+#'   - `node_eccentricity()` measures nodes' eccentricity or maximum distance
+#'   from another node in the network.
 #'   - `node_distance()` measures nodes' geodesic distance from or to a 
 #'   given node.
 #'   - `tie_closeness()` measures the closeness of each tie to other ties 
@@ -624,7 +626,8 @@ node_information <- function(.data, normalized = TRUE){
   
 #' @rdname measure_central_close
 #' @section Eccentricity centrality: 
-#'   Eccentricity centrality is the inverse of the distance to the furthest node:
+#'   Eccentricity centrality, or graph centrality, 
+#'   is the inverse of the distance to the furthest node:
 #'   \deqn{C_E(i) = \frac{1}{max_{j \in N} d(i,j)}}
 #'   where the distance from \eqn{i} to \eqn{j} is \eqn{\infty} if unconnected.
 #'   As such it is only well defined for connected networks.
@@ -644,6 +647,19 @@ node_eccentricity <- function(.data, normalized = TRUE){
   if(normalized) out <- 1/out
   make_node_measure(out, .data)
 }
+
+#   - `node_eccentricity()` measures nodes' eccentricity or Koenig number,
+#   a measure of farness based on number of links needed to reach 
+#   most distant node in the network.
+# #' @rdname measure_holes 
+# #' @importFrom igraph eccentricity
+# #' @export
+# cnode_eccentricity <- function(.data){
+#  if(missing(.data)) {expect_nodes(); .data <- .G()}
+#  out <- igraph::eccentricity(manynet::as_igraph(.data),
+#                              mode = "out")
+#  make_node_measure(out, .data)
+# }
 
 #' @rdname measure_central_close 
 #' @param from,to Index or name of a node to calculate distances from or to.

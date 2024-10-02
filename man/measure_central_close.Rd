@@ -22,7 +22,7 @@ node_reach(.data, normalized = TRUE, steps = 2)
 
 node_information(.data, normalized = TRUE)
 
-node_eccentricity(.data)
+node_eccentricity(.data, normalized = TRUE)
 
 node_distance(.data, from, to, normalized = TRUE)
 
@@ -77,6 +77,8 @@ centrality, which is thought to behave better than reach centrality
 for disconnected networks.
 \item \code{node_information()} measures nodes' information centrality or
 current-flow closeness centrality.
+\item \code{node_eccentricity()} measures nodes' eccentricity or maximum distance
+from another node in the network.
 \item \code{node_distance()} measures nodes' geodesic distance from or to a
 given node.
 \item \code{tie_closeness()} measures the closeness of each tie to other ties
@@ -155,7 +157,8 @@ control of the flow of information.
 
 \section{Eccentricity centrality}{
 
-Eccentricity centrality is the inverse of the distance to the furthest node:
+Eccentricity centrality, or graph centrality,
+is the inverse of the distance to the furthest node:
 \deqn{C_E(i) = \frac{1}{max_{j \in N} d(i,j)}}
 where the distance from \eqn{i} to \eqn{j} is \eqn{\infty} if unconnected.
 As such it is only well defined for connected networks.

@@ -8,7 +8,6 @@
 \alias{node_efficiency}
 \alias{node_constraint}
 \alias{node_hierarchy}
-\alias{node_eccentricity}
 \alias{node_neighbours_degree}
 \alias{tie_cohesion}
 \title{Measures of structural holes}
@@ -24,8 +23,6 @@ node_efficiency(.data)
 node_constraint(.data)
 
 node_hierarchy(.data)
-
-node_eccentricity(.data)
 
 node_neighbours_degree(.data)
 
@@ -54,9 +51,6 @@ is adjacent.
 according to Burt (1992) and for two-mode networks according to Hollway et al (2020).
 \item \code{node_hierarchy()} measures nodes' exposure to hierarchy,
 where only one or two contacts are the source of closure.
-\item \code{node_eccentricity()} measures nodes' eccentricity or Koenig number,
-a measure of farness based on number of links needed to reach
-most distant node in the network.
 \item \code{node_neighbours_degree()} measures nodes' average nearest neighbors degree,
 or \eqn{knn}, a measure of the type of local environment a node finds itself in
 \item \code{tie_cohesion()} measures the ratio between common neighbors to ties'

@@ -13,9 +13,6 @@
 #'   according to Burt (1992) and for two-mode networks according to Hollway et al (2020). 
 #'   - `node_hierarchy()` measures nodes' exposure to hierarchy,
 #'   where only one or two contacts are the source of closure.
-#'   - `node_eccentricity()` measures nodes' eccentricity or Koenig number,
-#'   a measure of farness based on number of links needed to reach 
-#'   most distant node in the network.
 #'   - `node_neighbours_degree()` measures nodes' average nearest neighbors degree,
 #'   or \eqn{knn}, a measure of the type of local environment a node finds itself in
 #'   - `tie_cohesion()` measures the ratio between common neighbors to ties'
@@ -215,16 +212,6 @@ node_hierarchy <- function(.data){
     sum(rj*log(rj)) / (N * log(N))
   }, FUN.VALUE = numeric(1))
   out[is.nan(out)] <- 0
-  make_node_measure(out, .data)
-}
-
-#' @rdname measure_holes 
-#' @importFrom igraph eccentricity
-#' @export
-node_eccentricity <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
-  out <- igraph::eccentricity(manynet::as_igraph(.data),
-                              mode = "out")
   make_node_measure(out, .data)
 }
 
