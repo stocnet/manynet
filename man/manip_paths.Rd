@@ -6,6 +6,7 @@
 \alias{to_mentoring}
 \alias{to_eulerian}
 \alias{to_tree}
+\alias{to_dominating}
 \title{Modifying networks paths}
 \usage{
 to_matching(.data, mark = "type")
@@ -15,6 +16,8 @@ to_mentoring(.data, elites = 0.1)
 to_eulerian(.data)
 
 to_tree(.data)
+
+to_dominating(.data, from, direction = c("out", "in"))
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -57,6 +60,7 @@ These functions return tidygraphs containing only special sets of ties:
 \item \code{to_eulerian()} returns only the Eulerian path within some network data.
 \item \code{to_tree()} returns the spanning tree in some network data or,
 if the data is unconnected, a forest of spanning trees.
+\item \code{to_dominating()} returns the dominating tree of the network
 }
 }
 \details{
