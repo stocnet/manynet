@@ -1,3 +1,5 @@
+# manynet 1.2.2
+
 # manynet 1.2.1
 
 ## Making
