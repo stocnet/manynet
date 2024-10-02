@@ -6,6 +6,7 @@
 \alias{node_harmonic}
 \alias{node_reach}
 \alias{node_information}
+\alias{node_eccentricity}
 \alias{node_distance}
 \alias{tie_closeness}
 \alias{net_closeness}
@@ -20,6 +21,8 @@ node_harmonic(.data, normalized = TRUE, k = -1)
 node_reach(.data, normalized = TRUE, steps = 2)
 
 node_information(.data, normalized = TRUE)
+
+node_eccentricity(.data)
 
 node_distance(.data, from, to, normalized = TRUE)
 
@@ -125,6 +128,7 @@ The maximum reach score is \eqn{N-1}, achieved when the node can reach all
 other nodes in the network in \eqn{k} steps or less,
 but the normalised version, \eqn{\frac{C_R}{N-1}}, is more common.
 Note that if \eqn{steps = 1}, then this returns the node's degree.
+At higher steps reach centrality returns the size of the node's component.
 }
 
 \section{Information centrality}{
@@ -147,6 +151,14 @@ and \eqn{T} is the trace of \eqn{C} and \eqn{S_R} an arbitrary row sum
 Nodes with higher information centrality have a large number of short paths
 to many others in the network, and are thus considered to have greater
 control of the flow of information.
+}
+
+\section{Eccentricity centrality}{
+
+Eccentricity centrality is the inverse of the distance to the furthest node:
+\deqn{C_E(i) = \frac{1}{max_{j \in N} d(i,j)}}
+where the distance from \eqn{i} to \eqn{j} is \eqn{\infty} if unconnected.
+As such it is only well defined for connected networks.
 }
 
 \examples{
@@ -202,6 +214,14 @@ Brandes, Ulrik, and Daniel Fleischer. 2005.
 "Centrality Measures Based on Current Flow".
 \emph{Proc. 22nd Symp. Theoretical Aspects of Computer Science} LNCS 3404: 533-544.
 \doi{10.1007/978-3-540-31856-9_44}
+}
+
+\subsection{On eccentricity centrality}{
+
+Hage, Per, and Frank Harary. 1995.
+"Eccentricity and centrality in networks".
+\emph{Social Networks}, 17(1): 57-63.
+\doi{10.1016/0378-8733(94)00248-9}
 }
 }
 \seealso{

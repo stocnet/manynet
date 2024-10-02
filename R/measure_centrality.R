@@ -558,6 +558,7 @@ node_harmonic <- function(.data, normalized = TRUE, k = -1){
 #'   other nodes in the network in \eqn{k} steps or less,
 #'   but the normalised version, \eqn{\frac{C_R}{N-1}}, is more common.
 #'   Note that if \eqn{steps = 1}, then this returns the node's degree.
+#'   At higher steps reach centrality returns the size of the node's component.
 #' @references
 #' ## On reach centrality
 #' Borgatti, Stephen P., Martin G. Everett, and J.C. Johnson. 2013. 
@@ -621,6 +622,29 @@ node_information <- function(.data, normalized = TRUE){
   make_node_measure(out, .data)
 }
   
+#' @rdname measure_central_close
+#' @section Eccentricity centrality: 
+#'   Eccentricity centrality is the inverse of the distance to the furthest node:
+#'   \deqn{C_E(i) = \frac{1}{max_{j \in N} d(i,j)}}
+#'   where the distance from \eqn{i} to \eqn{j} is \eqn{\infty} if unconnected.
+#'   As such it is only well defined for connected networks.
+#' @references
+#' ## On eccentricity centrality
+#'   Hage, Per, and Frank Harary. 1995.
+#'   "Eccentricity and centrality in networks".
+#'   _Social Networks_, 17(1): 57-63.
+#'   \doi{10.1016/0378-8733(94)00248-9}
+#' @export
+node_eccentricity <- function(.data, normalized = TRUE){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(!is_connected(.data)) 
+    mnet_unavailable("Eccentricity centrality is only available for connected networks.")
+  disties <- igraph::distances(as_igraph(.data))
+  out <- apply(disties, 1, max)
+  if(normalized) out <- 1/out
+  make_node_measure(out, .data)
+}
+
 #' @rdname measure_central_close 
 #' @param from,to Index or name of a node to calculate distances from or to.
 #' @export
