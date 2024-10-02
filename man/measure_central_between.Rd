@@ -5,6 +5,7 @@
 \alias{node_betweenness}
 \alias{node_induced}
 \alias{node_flow}
+\alias{node_stress}
 \alias{tie_betweenness}
 \alias{net_betweenness}
 \title{Measures of betweenness-like centrality and centralisation}
@@ -14,6 +15,8 @@ node_betweenness(.data, normalized = TRUE, cutoff = NULL)
 node_induced(.data, normalized = TRUE, cutoff = NULL)
 
 node_flow(.data, normalized = TRUE)
+
+node_stress(.data, normalized = TRUE)
 
 tie_betweenness(.data, normalized = TRUE)
 
@@ -56,6 +59,7 @@ These functions calculate common betweenness-related centrality measures for one
 \item \code{node_flow()} measures the flow betweenness centralities of nodes in a network,
 which uses an electrical current model for information spreading
 in contrast to the shortest paths model used by normal betweenness centrality.
+\item \code{node_stress()} measures the stress centrality of nodes in a network.
 \item \code{tie_betweenness()} measures the number of shortest paths going through a tie.
 \item \code{net_betweenness()} measures the betweenness centralization for a network.
 }
@@ -67,6 +71,38 @@ first transform the salient properties using e.g. \code{\link[=to_undirected]{to
 All centrality and centralization measures return normalized measures by default,
 including for two-mode networks.
 }
+\section{Betweenness centrality}{
+
+Betweenness centrality is based on the number of shortest paths between
+other nodes that a node lies upon:
+\deqn{C_B(i) = \sum_{j,k:j \neq k, j \neq i, k \neq i} \frac{g_{jik}}{g_{jk}}}
+}
+
+\section{Induced centrality}{
+
+Induced centrality or vitality centrality concerns the change in
+total betweenness centrality between networks with and without a given node:
+\deqn{C_I(i) = C_B(G) - C_B(G\ i)}
+}
+
+\section{Flow betweenness centrality}{
+
+Flow betweenness centrality concerns the total maximum flow, \eqn{f},
+between other nodes \eqn{j,k} in a network \eqn{G} that a given node mediates:
+\deqn{C_F(i) = \sum_{j,k:j\neq k, j\neq i, k\neq i} f(j,k,G) - f(j,k,G\ i)}
+When normalized (by default) this sum of differences is divided by the
+sum of flows \eqn{f(i,j,G)}.
+}
+
+\section{Stress centrality}{
+
+Stress centrality is the number of all shortest paths or geodesics, \eqn{g},
+between other nodes that a given node mediates:
+\deqn{C_S(i) = \sum_{j,k:j \neq k, j \neq i, k \neq i} g_{jik}}
+High stress nodes lie on a large number of shortest paths between other
+nodes, and thus associated with bridging or spanning boundaries.
+}
+
 \examples{
 node_betweenness(ison_southern_women)
 node_induced(ison_adolescents)
@@ -77,12 +113,40 @@ ison_adolescents \%>\% mutate_ties(weight = tb) \%>\%
 net_betweenness(ison_southern_women, direction = "in")
 }
 \references{
+\subsection{On betweenness centrality}{
+
+Freeman, Linton. 1977.
+"A set of measures of centrality based on betweenness".
+\emph{Sociometry}, 40(1): 35–41.
+\doi{10.2307/3033543}
+}
+
 \subsection{On induced centrality}{
 
 Everett, Martin and Steve Borgatti. 2010.
 "Induced, endogenous and exogenous centrality"
 \emph{Social Networks}, 32: 339-344.
 \doi{10.1016/j.socnet.2010.06.004}
+}
+
+\subsection{On flow centrality}{
+
+Freeman, Lin, Stephen Borgatti, and Douglas White. 1991.
+"Centrality in Valued Graphs: A Measure of Betweenness Based on Network Flow".
+\emph{Social Networks}, 13(2), 141-154.
+
+Koschutzki, D., K.A. Lehmann, L. Peeters, S. Richter, D. Tenfelde-Podehl, and O. Zlotowski. 2005.
+"Centrality Indices".
+In U. Brandes and T. Erlebach (eds.), \emph{Network Analysis: Methodological Foundations}.
+Berlin: Springer.
+}
+
+\subsection{On stress centrality}{
+
+Shimbel, A. 1953.
+"Structural Parameters of Communication Networks".
+\emph{Bulletin of Mathematical Biophysics}, 15:501-507.
+\doi{10.1007/BF02476438}
 }
 }
 \seealso{
