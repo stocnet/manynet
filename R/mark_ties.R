@@ -85,8 +85,9 @@ tie_is_bridge <- function(.data){
 #'   By default FALSE, sampling just a single path.
 #' @importFrom igraph all_shortest_paths
 #' @examples 
-#' ison_adolescents %>% mutate_ties(route = tie_is_path(from = "Jane", to = 7)) %>% 
-#' graphr(edge_colour = "route")
+#' ison_adolescents %>%
+#'   mutate_ties(route = tie_is_path(from = "Jane", to = 7)) %>% 
+#'   graphr(edge_colour = "route")
 #' @export
 tie_is_path <- function(.data, from, to, all_paths = FALSE){
   if(missing(.data)) {expect_edges(); .data <- .G()}
