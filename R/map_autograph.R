@@ -182,19 +182,12 @@ graphr <- function(.data, layout, labels = TRUE,
 }
 
 .graph_edges <- function(p, g, edge_color, edge_size, node_size) {
-  out <- .infer_edge_mapping(g, edge_color, edge_size, node_size)
   if (is_directed(g)) {
-    p <- p + ggraph::geom_edge_arc(ggplot2::aes(edge_colour = out[["ecolor"]],
-                                                edge_width = out[["esize"]],
-                                                end_cap = ggraph::circle(c(out[["end_cap"]]), 'mm')),
-                                   edge_alpha = 0.4, edge_linetype = out[["line_type"]],
-                                   strength = ifelse(igraph::which_mutual(g), 0.2, 0),
-                                   arrow = ggplot2::arrow(angle = 15, type = "closed",
-                                                          length = ggplot2::unit(2, 'mm')))
+    out <- .infer_directed_edge_mapping(g, edge_color, edge_size, node_size)
+    p <- map_directed_edges(p, g, out)
   } else {
-    p <- p + ggraph::geom_edge_link0(ggplot2::aes(edge_width = out[["esize"]],
-                                                  edge_colour = out[["ecolor"]]),
-                                     edge_alpha = 0.4, edge_linetype = out[["line_type"]])
+    out <- .infer_edge_mapping(g, edge_color, edge_size)
+    p <- map_edges(p, g, out)
   }
   if (is_complex(g)) {
     p <- p + ggraph::geom_edge_loop0(edge_alpha = 0.4)
@@ -318,18 +311,19 @@ reduce_categories <- function(g, node_group) {
   out
 }
 
-.infer_edge_mapping <- function(g, edge_color, edge_size, node_size) {
+.infer_directed_edge_mapping <- function(g, edge_color, edge_size, node_size) {
   check_edge_variables(g, edge_color, edge_size)
-  if (is_directed(g)) {
-    list("ecolor" = .infer_ecolor(g, edge_color),
-         "esize" = .infer_esize(g, edge_size),
-         "line_type" = .infer_line_type(g, edge_color),
-         "end_cap" = .infer_end_cap(g, node_size))
-  } else {
-    list("ecolor" = .infer_ecolor(g, edge_color),
-         "esize" = .infer_esize(g, edge_size),
-         "line_type" = .infer_line_type(g, edge_color))
-  }
+  list("ecolor" = .infer_ecolor(g, edge_color),
+       "esize" = .infer_esize(g, edge_size),
+       "line_type" = .infer_line_type(g),
+       "end_cap" = .infer_end_cap(g, node_size))
+}
+
+.infer_edge_mapping <- function(g, edge_color, edge_size) {
+  check_edge_variables(g, edge_color, edge_size)
+  list("ecolor" = .infer_ecolor(g, edge_color),
+       "esize" = .infer_esize(g, edge_size),
+       "line_type" = .infer_line_type(g))
 }
 
 .infer_ecolor <- function(g, edge_color){
@@ -343,18 +337,16 @@ reduce_categories <- function(g, node_group) {
         out <- rep("black", net_ties(g))
         message("Please indicate a variable with more than one value or level when mapping edge colors.")
       }
-    } else if (length(edge_color) == 1) {
-        out <- rep(edge_color, net_ties(g))
     } else {
-        out <- edge_color
+      out <- edge_color
     }
   } else if (is.null(edge_color) & is_signed(g)) {
     out <- as.factor(ifelse(igraph::E(g)$sign >= 0, "Positive", "Negative"))
     if (length(unique(out)) == 1) {
-      out <- rep("black", net_ties(g))
+      out <- "black"
     }
   } else {
-    out <- rep("black", net_ties(g))
+    out <- "black"
   }
   out
 }
@@ -363,17 +355,15 @@ reduce_categories <- function(g, node_group) {
   if (!is.null(edge_size)) {
     if (any(edge_size %in% names(tie_attribute(g)))) {
       out <- tie_attribute(g, edge_size)
-    } else if (is.numeric(edge_size) & length(edge_size) == 1) {
-      out <- rep(edge_size, net_ties(g))
     } else {
       out <- edge_size
     }
   } else if (is.null(edge_size) & is_weighted(g)) {
     out <- tie_attribute(g, "weight")
   } else {
-    out <- rep(0.5, net_ties(g))
+    out <- 0.5
   }
-  as.numeric(out)
+  out
 }
 
 .infer_end_cap <- function(g, node_size) {
@@ -395,9 +385,10 @@ reduce_categories <- function(g, node_group) {
   out
 }
 
-.infer_line_type <- function(g, edge_color) {
+.infer_line_type <- function(g) {
   if (is_signed(g)) {
-    out <- ifelse(igraph::E(g)$sign >= 0, "solid", "dashed")
+    out <- ifelse(as.numeric(tie_attribute(ison_marvel_relationships, "sign")) >= 0,
+           "solid", "dashed")
     ifelse(length(unique(out)) == 1, unique(out), out)
   } else "solid"
 }
@@ -413,6 +404,63 @@ check_edge_variables <- function(g, edge_color, edge_size) {
     if (!is.numeric(edge_size) & any(!tolower(edge_size) %in% tolower(igraph::edge_attr_names(g)))) {
       message("Please make sure you spelled `edge_size` variable correctly.")
     } 
+  }
+}
+
+map_directed_edges <- function(p, g, out) {
+  if (length(out[["ecolor"]]) == 1 & length(out[["esize"]]) == 1) {
+    p <- p + ggraph::geom_edge_arc(ggplot2::aes(end_cap = ggraph::circle(c(out[["end_cap"]]), 'mm')),
+                                   edge_colour = out[["ecolor"]], edge_width = out[["esize"]],
+                                   edge_linetype = out[["line_type"]],
+                                   edge_alpha = 0.4, strength = ifelse(igraph::which_mutual(g), 0.2, 0),
+                                   arrow = ggplot2::arrow(angle = 15, type = "closed",
+                                                          length = ggplot2::unit(2, 'mm')))
+  } else if (length(out[["ecolor"]]) > 1 & length(out[["esize"]]) == 1) {
+    p <- p + ggraph::geom_edge_arc(ggplot2::aes(edge_colour = out[["ecolor"]],
+                                                end_cap = ggraph::circle(c(out[["end_cap"]]), 'mm')),
+                                   edge_width = out[["esize"]], edge_linetype = out[["line_type"]],
+                                   edge_alpha = 0.4, strength = ifelse(igraph::which_mutual(g), 0.2, 0),
+                                   arrow = ggplot2::arrow(angle = 15, type = "closed",
+                                                          length = ggplot2::unit(2, 'mm')))
+  } else if (length(out[["ecolor"]]) == 1 & length(out[["esize"]]) > 1) {
+    p <- p + ggraph::geom_edge_arc(ggplot2::aes(edge_width = out[["esize"]],
+                                                end_cap = ggraph::circle(c(out[["end_cap"]]), 'mm')),
+                                   edge_colour = out[["ecolor"]], edge_linetype = out[["line_type"]],
+                                   edge_alpha = 0.4, strength = ifelse(igraph::which_mutual(g), 0.2, 0),
+                                   arrow = ggplot2::arrow(angle = 15, type = "closed",
+                                                          length = ggplot2::unit(2, 'mm')))
+  } else {
+    p <- p + ggraph::geom_edge_arc(ggplot2::aes(edge_colour = out[["ecolor"]],
+                                                edge_width = out[["esize"]],
+                                                end_cap = ggraph::circle(c(out[["end_cap"]]), 'mm')),
+                                   edge_linetype = out[["line_type"]],
+                                   edge_alpha = 0.4, strength = ifelse(igraph::which_mutual(g), 0.2, 0),
+                                   arrow = ggplot2::arrow(angle = 15, type = "closed",
+                                                          length = ggplot2::unit(2, 'mm')))
+  }
+  p
+}
+
+map_edges <- function(p, g, out) {
+  if (length(out[["ecolor"]]) == 1 & length(out[["esize"]]) == 1) {
+    p <- p + ggraph::geom_edge_link0(edge_width = out[["esize"]],
+                                     edge_colour = out[["ecolor"]],
+                                     edge_alpha = 0.4,
+                                     edge_linetype = out[["line_type"]])
+  } else if (length(out[["ecolor"]]) > 1 & length(out[["esize"]]) == 1) {
+    p <- p + ggraph::geom_edge_link0(ggplot2::aes(edge_colour = out[["ecolor"]]),
+                                     edge_width = out[["esize"]],
+                                     edge_alpha = 0.4,
+                                     edge_linetype = out[["line_type"]])
+  } else if (length(out[["ecolor"]]) == 1 & length(out[["esize"]]) > 1) {
+    p <- p + ggraph::geom_edge_link0(ggplot2::aes(edge_width = out[["esize"]]),
+                                     edge_colour = out[["ecolor"]],
+                                     edge_alpha = 0.4,
+                                     edge_linetype = out[["line_type"]])
+  } else {
+    p <- p + ggraph::geom_edge_link0(ggplot2::aes(edge_width = out[["esize"]],
+                                                  edge_colour = out[["ecolor"]]),
+                                     edge_alpha = 0.4, edge_linetype = out[["line_type"]])
   }
 }
 
