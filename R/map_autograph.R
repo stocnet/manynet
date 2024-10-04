@@ -387,7 +387,7 @@ reduce_categories <- function(g, node_group) {
 
 .infer_line_type <- function(g) {
   if (is_signed(g)) {
-    out <- ifelse(as.numeric(tie_attribute(ison_marvel_relationships, "sign")) >= 0,
+    out <- ifelse(as.numeric(tie_attribute(g, "sign")) >= 0,
            "solid", "dashed")
     ifelse(length(unique(out)) == 1, unique(out), out)
   } else "solid"
