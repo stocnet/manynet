@@ -16,9 +16,9 @@
 \usage{
 node_closeness(.data, normalized = TRUE, direction = "out", cutoff = NULL)
 
-node_harmonic(.data, normalized = TRUE, k = -1)
+node_harmonic(.data, normalized = TRUE, cutoff = -1)
 
-node_reach(.data, normalized = TRUE, steps = 2)
+node_reach(.data, normalized = TRUE, cutoff = 2)
 
 node_information(.data, normalized = TRUE)
 
@@ -30,9 +30,9 @@ tie_closeness(.data, normalized = TRUE)
 
 net_closeness(.data, normalized = TRUE, direction = c("all", "out", "in"))
 
-net_reach(.data, normalized = TRUE, k = 2)
+net_reach(.data, normalized = TRUE, cutoff = 2)
 
-net_harmonic(.data, normalized = TRUE, k = 2)
+net_harmonic(.data, normalized = TRUE, cutoff = 2)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -58,9 +58,6 @@ between the maximum centrality score for the mode
 against only the centrality scores of the other nodes in that mode.}
 
 \item{cutoff}{Maximum path length to use during calculations.}
-
-\item{steps}{Integer of steps out to calculate reach.
-By default 2.}
 
 \item{from, to}{Index or name of a node to calculate distances from or to.}
 }
@@ -121,16 +118,16 @@ harmonic centrality is to be preferred in these cases.
 In some cases, longer path lengths are irrelevant and 'closeness' should
 be defined as how many others are in a local neighbourhood.
 How many steps out this neighbourhood should be defined as is given by
-\eqn{steps}.
-This parameter is usually called \eqn{k} or \eqn{m},
+the 'cutoff' parameter.
+This is usually termed \eqn{k} or \eqn{m} in equations,
 which is why this is sometimes called (\eqn{m}- or)
-\eqn{k}-step reach centrality.
+\eqn{k}-step reach centrality:
 \deqn{C_R(i) = \sum_j d(i,j) \leq k}
 The maximum reach score is \eqn{N-1}, achieved when the node can reach all
 other nodes in the network in \eqn{k} steps or less,
 but the normalised version, \eqn{\frac{C_R}{N-1}}, is more common.
-Note that if \eqn{steps = 1}, then this returns the node's degree.
-At higher steps reach centrality returns the size of the node's component.
+Note that if \eqn{k = 1} (i.e. cutoff = 1), then this returns the node's degree.
+At higher cutoff reach centrality returns the size of the node's component.
 }
 
 \section{Information centrality}{

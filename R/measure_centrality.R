@@ -610,31 +610,29 @@ node_closeness <- function(.data, normalized = TRUE,
 #'   "Conceptual distance in social network analysis".
 #'   _Journal of Social Structure_ 6(3).
 #' @export
-node_harmonic <- function(.data, normalized = TRUE, k = -1){
+node_harmonic <- function(.data, normalized = TRUE, cutoff = -1){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   out <- igraph::harmonic_centrality(as_igraph(.data), # weighted if present
-                                     normalized = normalized, cutoff = k)
+                                     normalized = normalized, cutoff = cutoff)
   out <- make_node_measure(out, .data)
   out
 }
 
 #' @rdname measure_central_close 
-#' @param steps Integer of steps out to calculate reach.
-#'   By default 2.
 #' @section Reach centrality: 
 #'   In some cases, longer path lengths are irrelevant and 'closeness' should
 #'   be defined as how many others are in a local neighbourhood.
 #'   How many steps out this neighbourhood should be defined as is given by 
-#'   \eqn{steps}. 
-#'   This parameter is usually called \eqn{k} or \eqn{m},
+#'   the 'cutoff' parameter. 
+#'   This is usually termed \eqn{k} or \eqn{m} in equations,
 #'   which is why this is sometimes called (\eqn{m}- or) 
-#'   \eqn{k}-step reach centrality.
+#'   \eqn{k}-step reach centrality:
 #'   \deqn{C_R(i) = \sum_j d(i,j) \leq k}
 #'   The maximum reach score is \eqn{N-1}, achieved when the node can reach all
 #'   other nodes in the network in \eqn{k} steps or less,
 #'   but the normalised version, \eqn{\frac{C_R}{N-1}}, is more common.
-#'   Note that if \eqn{steps = 1}, then this returns the node's degree.
-#'   At higher steps reach centrality returns the size of the node's component.
+#'   Note that if \eqn{k = 1} (i.e. cutoff = 1), then this returns the node's degree.
+#'   At higher cutoff reach centrality returns the size of the node's component.
 #' @references
 #' ## On reach centrality
 #' Borgatti, Stephen P., Martin G. Everett, and J.C. Johnson. 2013. 
@@ -643,14 +641,14 @@ node_harmonic <- function(.data, normalized = TRUE, k = -1){
 #' @examples
 #' node_reach(ison_adolescents)
 #' @export
-node_reach <- function(.data, normalized = TRUE, steps = 2){
+node_reach <- function(.data, normalized = TRUE, cutoff = 2){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(is_weighted(.data)){
     tore <- as_matrix(.data)/mean(as_matrix(.data))
     out <- 1/tore
   } else out <- igraph::distances(as_igraph(.data))
   diag(out) <- 0
-  out <- rowSums(out<=steps)
+  out <- rowSums(out <= cutoff)
   if(normalized) out <- out/(net_nodes(.data)-1)
   out <- make_node_measure(out, .data)
   out
@@ -830,9 +828,9 @@ net_closeness <- function(.data, normalized = TRUE,
 
 #' @rdname measure_central_close 
 #' @export
-net_reach <- function(.data, normalized = TRUE, k = 2){
+net_reach <- function(.data, normalized = TRUE, cutoff = 2){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  reaches <- node_reach(.data, normalized = FALSE, k = k)
+  reaches <- node_reach(.data, normalized = FALSE, cutoff = cutoff)
   out <- sum(max(reaches) - reaches)
   if(normalized) out <- out / sum(manynet::net_nodes(.data) - reaches)
   make_network_measure(out, .data)
@@ -840,9 +838,9 @@ net_reach <- function(.data, normalized = TRUE, k = 2){
 
 #' @rdname measure_central_close
 #' @export
-net_harmonic <- function(.data, normalized = TRUE, k = 2){
+net_harmonic <- function(.data, normalized = TRUE, cutoff = 2){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  harm <- node_harmonic(.data, normalized = FALSE, k = k)
+  harm <- node_harmonic(.data, normalized = FALSE, cutoff = cutoff)
   out <- sum(max(harm) - harm)
   if(normalized) out <- out / sum(manynet::net_nodes(.data) - harm)
   make_network_measure(out, .data)

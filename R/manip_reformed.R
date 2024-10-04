@@ -657,6 +657,8 @@ to_tree <- function(.data) {
 }
 
 #' @rdname manip_paths 
+#' @param from The index or name of the node from which the path should be traced.
+#' @param direction String, either "out" or "in".
 #' @export
 to_dominating <- function(.data, from, direction = c("out","in")) {
   direction <- match.arg(direction)

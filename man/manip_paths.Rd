@@ -45,6 +45,10 @@ for example because they are an isolate,
 a tie to themselves (a loop) will be created instead.
 Note that this is a different default behaviour than that
 described in Valente and Davis (1999).}
+
+\item{from}{The index or name of the node from which the path should be traced.}
+
+\item{direction}{String, either "out" or "in".}
 }
 \value{
 All \code{to_} functions return an object of the same class as that provided.

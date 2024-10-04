@@ -79,7 +79,7 @@ tie_is_bridge <- function(.data){
 }
 
 #' @rdname mark_ties
-#' @param from The index or name of the node from which the path should be traced.
+#' @inheritParams manip_paths
 #' @param to The index or name of the node to which the path should be traced.
 #' @param all_paths Whether to return a list of paths or sample just one.
 #'   By default FALSE, sampling just a single path.
