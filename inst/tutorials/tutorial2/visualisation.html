@@ -390,17 +390,17 @@ data-pipe="|&gt;">
    graphr(ison_southern_women, layout = &quot;stress&quot;) + ggtitle(&quot;Stress Minimisation&quot;))</code></pre>
 <script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
 </div>
-<p>The <em>Kamada-Kawai</em> method inserts a spring between all pairs
-of vertices that is the length of the graph distance between them. This
-means that edges with a large weight will be longer. KK offers a good
-layout for lattice-like networks, because it will try to space the
+<p>The <em>Kamada-Kawai</em> (KK) method inserts a spring between all
+pairs of vertices that is the length of the graph distance between them.
+This means that edges with a large weight will be longer. KK offers a
+good layout for lattice-like networks, because it will try to space the
 network out evenly.</p>
-<p>The <em>Fruchterman-Reingold</em> method uses an attractive force
-between directly connected vertices, and a repulsive force between all
-vertex pairs. The attractive force is proportional to the edge’s weight,
-thus edges with a large weight will be shorter. FR offers a good
+<p>The <em>Fruchterman-Reingold</em> (FR) method uses an attractive
+force between directly connected vertices, and a repulsive force between
+all vertex pairs. The attractive force is proportional to the edge’s
+weight, thus edges with a large weight will be shorter. FR offers a good
 baseline for most types of networks.</p>
-<p>The <em>Stress Minimisation</em> method is related to the KK
+<p>The <em>Stress Minimisation</em> (stress) method is related to the KK
 algorithm, but offers better runtime, quality, and stability and so is
 generally preferred. Indeed, <code>{manynet}</code> uses it as the
 default for most networks. It has the advantage of returning the same
@@ -494,18 +494,25 @@ two-dimensional (or more) space.</p>
 <div class="tutorial-exercise" data-label="mds" data-completion="1"
 data-diagnostics="1" data-startover="1" data-lines="0"
 data-pipe="|&gt;">
-<pre class="text"><code>graphr(ison_southern_women, layout = &quot;mds&quot;) + ggtitle(&quot;Multidimensional Scaling&quot;)
-graphr(ison_southern_women, layout = &quot;mds&quot;) + ggtitle(&quot;Multidimensional Scaling&quot;)</code></pre>
+<pre class="text"><code>graphr(ison_southern_women, layout = &quot;mds&quot;) + ggtitle(&quot;Multidimensional Scaling&quot;)</code></pre>
 <script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
 </div>
 <p>Other such layouts include:</p>
 <ul>
 <li>Pivot multidimensional scaling: <code>"pmds"</code></li>
 </ul>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="spectralinterp-Q" class="tutorial-question panel-body">
+<div id="spectralinterp-Q-answer_container" class="shiny-html-output"></div>
+<div id="spectralinterp-Q-message_container" class="shiny-html-output"></div>
+<div id="spectralinterp-Q-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
 </div>
 <div id="section-grid-layouts" class="section level3">
 <h3>Grid layouts</h3>
-<p>Grid layouts arrange nodes based on some cartesion coordinates. These
+<p>Grid layouts arrange nodes based on some Cartesian coordinates. These
 can be useful for making sure all nodes’ labels are visible, but
 horizontal and vertical lines can overlap, making it difficult to
 distinguish whether some nodes are tied or not.</p>
@@ -550,7 +557,8 @@ graphr(ison_lotr,
 <h3>Grayscale</h3>
 <p>Other times color may not be desired. Some publications require
 grayscale images. To use a grayscale color palette, replace
-<code>_hue</code> from above with <code>_grey</code>:</p>
+<code>_hue</code> from above with <code>_grey</code> (note the ‘e’
+spelling):</p>
 <div class="tutorial-exercise" data-label="greyscale"
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
@@ -559,6 +567,8 @@ data-lines="0" data-pipe="|&gt;">
   ggplot2::scale_colour_grey()</code></pre>
 <script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
 </div>
+<p>Note that grayscale is more effective for continuous variables or
+very few discrete variables than the number used here.</p>
 </div>
 <div id="section-manual-override" class="section level3">
 <h3>Manual override</h3>
@@ -1127,11 +1137,11 @@ learnr:::store_exercise_cache(structure(list(label = "forcedir", global_setup = 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "layoutinterp-Q", 
     question = structure("Can we interpret the distance between nodes in force-directed layouts conclusively?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_f075f48", 
+    "character")), answers = list(structure(list(id = "lnr_ans_fdbcfbb", 
         option = "No", value = "No", label = structure("No", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = structure("That’s right, they are illustrative and not to be used for hard conclusions.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_5165904", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_e4fd2b9", 
         option = "Yes", value = "Yes", label = structure("Yes", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
@@ -1141,8 +1151,8 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
     "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "layoutinterp-Q-answer", question = "layoutinterp-Q"), 
-    loading = NULL, random_answer_order = FALSE, allow_retry = FALSE, 
-    seed = 1851428785.13786, options = list()), class = c("learnr_radio", 
+    loading = NULL, random_answer_order = FALSE, allow_retry = TRUE, 
+    seed = 336727302.843199, options = list()), class = c("learnr_radio", 
 "tutorial_question")), session = session)
 </script>
 
@@ -1320,7 +1330,7 @@ learnr:::store_exercise_cache(structure(list(label = "mds", global_setup = struc
 "library(manynet)", "library(migraph)", "library(patchwork)", 
 "knitr::opts_chunk$set(echo = FALSE)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "mds", 
-    code = "graphr(ison_southern_women, layout = \"mds\") + ggtitle(\"Multidimensional Scaling\")\ngraphr(ison_southern_women, layout = \"mds\") + ggtitle(\"Multidimensional Scaling\")", 
+    code = "graphr(ison_southern_women, layout = \"mds\") + ggtitle(\"Multidimensional Scaling\")", 
     opts = list(label = "\"mds\"", exercise = "TRUE", fig.align = "\"center\""), 
     engine = "r")), code_check = NULL, error_check = NULL, check = NULL, 
     solution = NULL, tests = NULL, options = list(eval = FALSE, 
@@ -1339,9 +1349,8 @@ learnr:::store_exercise_cache(structure(list(label = "mds", global_setup = struc
         aniopts = "controls,loop", warning = TRUE, error = FALSE, 
         message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
         engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
-        max.print = 1000, label = "mds", exercise = TRUE, code = c("graphr(ison_southern_women, layout = \"mds\") + ggtitle(\"Multidimensional Scaling\")", 
-        "graphr(ison_southern_women, layout = \"mds\") + ggtitle(\"Multidimensional Scaling\")"
-        ), out.width.px = 624, out.height.px = 384, params.src = "mds, exercise=TRUE, fig.align='center'", 
+        max.print = 1000, label = "mds", exercise = TRUE, code = "graphr(ison_southern_women, layout = \"mds\") + ggtitle(\"Multidimensional Scaling\")", 
+        out.width.px = 624, out.height.px = 384, params.src = "mds, exercise=TRUE, fig.align='center'", 
         fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
@@ -1349,12 +1358,35 @@ learnr:::store_exercise_cache(structure(list(label = "mds", global_setup = struc
 
 
 <script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "spectralinterp-Q", 
+    question = structure("Can we interpret the distance between nodes in spectral layouts?", html = TRUE, class = c("html", 
+    "character")), answers = list(structure(list(id = "lnr_ans_44c8514", 
+        option = "No", value = "No", label = structure("No", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_835b980", 
+        option = "Yes", value = "Yes", label = structure("Yes", html = TRUE, class = c("html", 
+        "character")), correct = TRUE, message = structure("That’s right, though it is not always easy to do so…", html = TRUE, class = c("html", 
+        "character")), type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Incorrect", html = TRUE, class = c("html", 
+    "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
+    "character")), message = NULL, post_message = NULL), ids = list(
+        answer = "spectralinterp-Q-answer", question = "spectralinterp-Q"), 
+    loading = NULL, random_answer_order = FALSE, allow_retry = TRUE, 
+    seed = 321625634.850231, options = list()), class = c("learnr_radio", 
+"tutorial_question")), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
 `tutorial-exercise-grid-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-grid-code-editor`)), session)
 output$`tutorial-exercise-grid-output` <- renderUI({
   `tutorial-exercise-grid-result`()
 })
 </script>
- 
+
+
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "grid", global_setup = structure(c("library(learnr)", 
 "library(manynet)", "library(migraph)", "library(patchwork)", 
@@ -1385,15 +1417,15 @@ learnr:::store_exercise_cache(structure(list(label = "grid", global_setup = stru
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
 </script>
-
-
+ 
 <script type="application/shiny-prerendered" data-context="server">
 `tutorial-exercise-colorch-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-colorch-code-editor`)), session)
 output$`tutorial-exercise-colorch-output` <- renderUI({
   `tutorial-exercise-colorch-result`()
 })
 </script>
- 
+
+
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "colorch", global_setup = structure(c("library(learnr)", 
 "library(manynet)", "library(migraph)", "library(patchwork)", 
@@ -1427,15 +1459,15 @@ learnr:::store_exercise_cache(structure(list(label = "colorch", global_setup = s
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
 </script>
-
-
+ 
 <script type="application/shiny-prerendered" data-context="server">
 `tutorial-exercise-greyscale-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-greyscale-code-editor`)), session)
 output$`tutorial-exercise-greyscale-output` <- renderUI({
   `tutorial-exercise-greyscale-result`()
 })
 </script>
- 
+
+
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "greyscale", global_setup = structure(c("library(learnr)", 
 "library(manynet)", "library(migraph)", "library(patchwork)", 
@@ -1468,15 +1500,15 @@ learnr:::store_exercise_cache(structure(list(label = "greyscale", global_setup =
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
 </script>
-
-
+ 
 <script type="application/shiny-prerendered" data-context="server">
 `tutorial-exercise-mancolor-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-mancolor-code-editor`)), session)
 output$`tutorial-exercise-mancolor-output` <- renderUI({
   `tutorial-exercise-mancolor-result`()
 })
 </script>
- 
+
+
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "mancolor", global_setup = structure(c("library(learnr)", 
 "library(manynet)", "library(migraph)", "library(patchwork)", 
@@ -1512,15 +1544,15 @@ learnr:::store_exercise_cache(structure(list(label = "mancolor", global_setup = 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
 </script>
-
-
+ 
 <script type="application/shiny-prerendered" data-context="server">
 `tutorial-exercise-theming-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-theming-code-editor`)), session)
 output$`tutorial-exercise-theming-output` <- renderUI({
   `tutorial-exercise-theming-result`()
 })
 </script>
- 
+
+
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "theming", global_setup = structure(c("library(learnr)", 
 "library(manynet)", "library(migraph)", "library(patchwork)", 
@@ -1552,15 +1584,15 @@ learnr:::store_exercise_cache(structure(list(label = "theming", global_setup = s
         exercise.checker = "NULL"), engine = "r", version = "4"), class = c("r", 
 "tutorial_exercise")))
 </script>
-
-
+ 
 <script type="application/shiny-prerendered" data-context="server">
 `tutorial-exercise-ggrapheg-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-ggrapheg-code-editor`)), session)
 output$`tutorial-exercise-ggrapheg-output` <- renderUI({
   `tutorial-exercise-ggrapheg-result`()
 })
 </script>
- 
+
+
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "ggrapheg", global_setup = structure(c("library(learnr)", 
 "library(manynet)", "library(migraph)", "library(patchwork)", 
@@ -1607,7 +1639,7 @@ learnr:::store_exercise_cache(structure(list(label = "ggrapheg", global_setup = 
 <!--/html_preserve-->
 <!--html_preserve-->
 <script type="application/shiny-prerendered" data-context="execution_dependencies">
-{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91]}},"value":[{"type":"character","attributes":{},"value":["backports","base","bslib","cachem","checkmate","cli","coda","codetools","colorspace","commonmark","compiler","datasets","digest","dplyr","ellipsis","evaluate","fansi","farver","fastmap","fontawesome","furrr","future","generics","ggforce","ggplot2","ggraph","ggrepel","globals","glue","graphics","graphlayouts","grDevices","grid","gridExtra","gtable","htmltools","htmlwidgets","httpuv","igraph","jquerylib","jsonlite","knitr","later","lattice","learnr","lifecycle","listenv","magrittr","manynet","markdown","MASS","memoise","methods","migraph","mime","munsell","network","parallel","parallelly","patchwork","pillar","pkgconfig","polyclip","promises","purrr","R6","Rcpp","rlang","rmarkdown","rprojroot","rstudioapi","sass","scales","shiny","statnet.common","stats","tibble","tidygraph","tidyr","tidyselect","tools","tweenr","utf8","utils","vctrs","viridis","viridisLite","withr","xfun","xtable","yaml"]},{"type":"character","attributes":{},"value":["1.5.0","4.4.1","0.8.0","1.1.0","2.3.2","3.6.3","0.19-4.1","0.2-20","2.1-1","1.9.1","4.4.1","4.4.1","0.6.37","1.1.4","0.3.2","1.0.0","1.0.6","2.1.2","1.2.0","0.5.2","0.3.1","1.34.0","0.1.3","0.4.2","3.5.1","2.2.1","0.9.6","0.16.3","1.7.0","4.4.1","1.2.0","4.4.1","4.4.1","2.3","0.3.5","0.5.8.1","1.6.4","1.6.15","2.0.3","0.1.4","1.8.9","1.48","1.3.2","0.22-6","0.11.5","1.0.4","0.9.1","2.0.3","1.2.1","1.13","7.3-61","2.0.1","4.4.1","1.4.2","0.12","0.5.1","1.18.2","4.4.1","1.38.0","1.3.0","1.9.0","2.0.3","1.10-7","1.3.0","1.0.2","2.5.1","1.0.13","1.1.4","2.28","2.0.4","0.16.0","0.4.9","1.3.0","1.9.1","4.9.0","4.4.1","3.2.1","1.3.1","1.3.1","1.2.1","4.4.1","2.0.3","1.2.4","4.4.1","0.6.5","0.6.5","0.4.2","3.0.1","0.47","1.8-4","2.3.10"]}]}]}
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91]}},"value":[{"type":"character","attributes":{},"value":["backports","base","bslib","cachem","checkmate","cli","coda","codetools","colorspace","commonmark","compiler","datasets","digest","dplyr","ellipsis","evaluate","fansi","farver","fastmap","fontawesome","furrr","future","generics","ggforce","ggplot2","ggraph","ggrepel","globals","glue","graphics","graphlayouts","grDevices","grid","gridExtra","gtable","htmltools","htmlwidgets","httpuv","igraph","jquerylib","jsonlite","knitr","later","lattice","learnr","lifecycle","listenv","magrittr","manynet","markdown","MASS","memoise","methods","migraph","mime","munsell","network","parallel","parallelly","patchwork","pillar","pkgconfig","polyclip","promises","purrr","R6","Rcpp","rlang","rmarkdown","rprojroot","rstudioapi","sass","scales","shiny","statnet.common","stats","tibble","tidygraph","tidyr","tidyselect","tools","tweenr","utf8","utils","vctrs","viridis","viridisLite","withr","xfun","xtable","yaml"]},{"type":"character","attributes":{},"value":["1.5.0","4.4.1","0.8.0","1.1.0","2.3.2","3.6.3","0.19-4.1","0.2-20","2.1-1","1.9.1","4.4.1","4.4.1","0.6.37","1.1.4","0.3.2","1.0.0","1.0.6","2.1.2","1.2.0","0.5.2","0.3.1","1.34.0","0.1.3","0.4.2","3.5.1","2.2.1","0.9.6","0.16.3","1.7.0","4.4.1","1.2.0","4.4.1","4.4.1","2.3","0.3.5","0.5.8.1","1.6.4","1.6.15","2.0.3","0.1.4","1.8.9","1.48","1.3.2","0.22-6","0.11.5","1.0.4","0.9.1","2.0.3","1.2.2","1.13","7.3-61","2.0.1","4.4.1","1.4.2","0.12","0.5.1","1.18.2","4.4.1","1.38.0","1.3.0","1.9.0","2.0.3","1.10-7","1.3.0","1.0.2","2.5.1","1.0.13","1.1.4","2.28","2.0.4","0.16.0","0.4.9","1.3.0","1.9.1","4.9.0","4.4.1","3.2.1","1.3.1","1.3.1","1.2.1","4.4.1","2.0.3","1.2.4","4.4.1","0.6.5","0.6.5","0.4.2","3.0.1","0.47","1.8-4","2.3.10"]}]}]}
 </script>
 <!--/html_preserve-->
 </div>
