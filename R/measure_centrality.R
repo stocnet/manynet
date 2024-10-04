@@ -700,8 +700,8 @@ node_information <- function(.data, normalized = TRUE){
   
 #' @rdname measure_central_close
 #' @section Eccentricity centrality: 
-#'   Eccentricity centrality, or graph centrality, 
-#'   is the inverse of the distance to the furthest node:
+#'   Eccentricity centrality, graph centrality, or the Koenig number,
+#'   is the (if normalized, inverse of) the distance to the furthest node:
 #'   \deqn{C_E(i) = \frac{1}{max_{j \in N} d(i,j)}}
 #'   where the distance from \eqn{i} to \eqn{j} is \eqn{\infty} if unconnected.
 #'   As such it is only well defined for connected networks.
