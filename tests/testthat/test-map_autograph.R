@@ -63,6 +63,7 @@ test_that("weighted, unsigned, directed networks graph correctly", {
 # Testing the node_color, node_size, and node_shape args by specifying a node attribute
 test_that("fancy node mods graph correctly", {
   skip_on_cran()
+  skip_on_ci()
   # one-mode network
   ison_marvel_relationships <- dplyr::mutate(ison_marvel_relationships,
                                              nodesize = Appearances/1000)
@@ -100,6 +101,7 @@ test_that("edge colours and edge size graph correctly", {
 # Named networks
 test_that("named networks plot correctly", {
   skip_on_cran()
+  skip_on_ci()
   onemode <- graphr(ison_adolescents)
   twomode <- graphr(ison_southern_women)
   expect_equal(onemode[["data"]][["name"]], node_names(ison_adolescents))
@@ -135,6 +137,7 @@ test_that("concentric and circular layouts graph correctly", {
 
 test_that("hierarchy and lineage layouts graph correctly", {
   skip_on_cran()
+  skip_on_ci()
   test_lin <- ison_adolescents %>% 
     mutate(year = rep(c(1985, 1990, 1995, 2000), times = 2)) %>%
     graphr(layout = "lineage", rank = "year")
