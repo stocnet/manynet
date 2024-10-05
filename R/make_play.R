@@ -272,7 +272,7 @@ play_diffusion <- function(.data,
 #' @param verbose Whether the function should report on its progress. 
 #'   By default FALSE. See `{progressr}` for more.
 #' @examples 
-#'   plot(play_diffusions(smeg, times = 10))
+#' # plot(play_diffusions(smeg, times = 10))
 #' @export
 play_diffusions <- function(.data,
                             seeds = 1,

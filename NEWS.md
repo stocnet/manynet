@@ -1,3 +1,9 @@
+# manynet 1.2.5
+
+## Package
+
+- Fixed errors when testing on extended features and Suggested packages not available
+
 # manynet 1.2.4
 
 ## Package
