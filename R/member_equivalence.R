@@ -123,9 +123,11 @@ node_in_regular <- function(.data,
 #' @rdname member_equivalence
 #' @examples
 #' \donttest{
+#' if(require("sna", quietly = TRUE)){
 #' (nae <- node_in_automorphic(ison_southern_women,
 #'   k = "elbow"))
 #' plot(nae)
+#' }
 #' }
 #' @export
 node_in_automorphic <- function(.data,
