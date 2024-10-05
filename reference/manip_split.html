@@ -29,7 +29,7 @@ to_waves111001
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.4</span>
       </span>
     </div>
 
@@ -79,7 +79,7 @@ to_waves111001
 Below are the currently implemented S3 methods:</p><table class="table table"><tr><td></td><td>data.frame</td><td>diff_model</td><td>igraph</td><td>matrix</td><td>network</td><td>tbl_graph</td></tr><tr><td>to_components</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>1</td></tr><tr><td>to_egos</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>1</td></tr><tr><td>to_slices</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td></tr><tr><td>to_subgraphs</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr><tr><td>to_waves</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td></tr></table></div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">to_egos</span><span class="op">(</span><span class="va">.data</span>, max_dist <span class="op">=</span> <span class="fl">1</span>, min_dist <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">to_egos</span><span class="op">(</span><span class="va">.data</span>, max_dist <span class="op">=</span> <span class="fl">1</span>, min_dist <span class="op">=</span> <span class="fl">0</span>, direction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"out"</span>, <span class="st">"in"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">to_subgraphs</span><span class="op">(</span><span class="va">.data</span>, <span class="va">attribute</span><span class="op">)</span></span>
 <span></span>
@@ -113,6 +113,10 @@ By default 1.</p></dd>
 By default 0.
 Increasing this to 1 excludes the ego,
 and 2 excludes ego's direct alters.</p></dd>
+
+
+<dt id="arg-direction">direction<a class="anchor" aria-label="anchor" href="#arg-direction"></a></dt>
+<dd><p>String, either "out" or "in".</p></dd>
 
 
 <dt id="arg-attribute">attribute<a class="anchor" aria-label="anchor" href="#arg-attribute"></a></dt>

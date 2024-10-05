@@ -27,7 +27,7 @@ to_blocks() reduces a network to ties between a given partition membership vecto
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.4</span>
       </span>
     </div>
 
@@ -82,7 +82,7 @@ than the original object.</p><ul><li><p><code>to_ego()</code> scopes a network i
 </ul></div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">to_ego</span><span class="op">(</span><span class="va">.data</span>, <span class="va">node</span>, max_dist <span class="op">=</span> <span class="fl">1</span>, min_dist <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">to_ego</span><span class="op">(</span><span class="va">.data</span>, <span class="va">node</span>, max_dist <span class="op">=</span> <span class="fl">1</span>, min_dist <span class="op">=</span> <span class="fl">0</span>, direction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"out"</span>, <span class="st">"in"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">to_giant</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
@@ -120,6 +120,10 @@ By default 1.</p></dd>
 By default 0.
 Increasing this to 1 excludes the ego,
 and 2 excludes ego's direct alters.</p></dd>
+
+
+<dt id="arg-direction">direction<a class="anchor" aria-label="anchor" href="#arg-direction"></a></dt>
+<dd><p>String, either "out" or "in".</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

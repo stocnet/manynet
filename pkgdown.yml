@@ -2,7 +2,7 @@ pandoc: 2.7.3
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles: {}
-last_built: 2024-10-05T05:25Z
+last_built: 2024-10-05T11:33Z
 urls:
   reference: https://stocnet.github.io/manynet/reference
   article: https://stocnet.github.io/manynet/articles
