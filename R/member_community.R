@@ -308,7 +308,9 @@ NULL
 #' \doi{10.1103/PhysRevE.69.026113}
 #' @examples
 #' node_in_betweenness(ison_adolescents)
+#' if(require("ggdendro", quietly = TRUE)){
 #' plot(node_in_betweenness(ison_adolescents))
+#' }
 #' @export
 node_in_betweenness <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}

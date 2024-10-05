@@ -106,17 +106,23 @@ assignment.
 \examples{
 \donttest{
 (nse <- node_in_structural(ison_algebra))
+if(require("ggdendro", quietly = TRUE)){
 plot(nse)
+}
 }
 \donttest{
 (nre <- node_in_regular(ison_southern_women,
   cluster = "concor"))
+if(require("ggdendro", quietly = TRUE)){
 plot(nre)
+}
 }
 \donttest{
 if(require("sna", quietly = TRUE)){
 (nae <- node_in_automorphic(ison_southern_women,
   k = "elbow"))
+}
+if(require("ggdendro", quietly = TRUE)){
 plot(nae)
 }
 }
