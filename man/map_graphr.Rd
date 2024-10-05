@@ -115,6 +115,9 @@ in reference to an attribute of the network, e.g. \code{node_size = "wealth"}.
 Lastly, \code{graphr()} uses \code{{ggplot2}}-related theme information, so
 it is easy to make colour palette and fonts institution-specific and consistent.
 See e.g. \code{theme_iheid()} for more.
+
+To learn more about what can be done visually,
+try \code{run_tute("Visualisation")}.
 }
 \examples{
 graphr(ison_adolescents)
@@ -124,10 +127,6 @@ ison_adolescents \%>\%
   mutate_ties(ecolor = rep(c("friends", "acquaintances"), times = 5)) \%>\%
   graphr(node_color = "color", node_size = "size",
          edge_size = 1.5, edge_color = "ecolor")
-graphr(ison_lotr, node_color = Race, node_size = node_degree(ison_lotr)*2,
-       edge_color = "yellow", edge_size = tie_degree(ison_lotr))
-graphr(ison_karateka, node_group = allegiance,
-       edge_size = tie_closeness(ison_karateka))
 }
 \seealso{
 Other mapping: 
