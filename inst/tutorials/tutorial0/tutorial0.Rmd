@@ -3,7 +3,7 @@ title: "Intro to R"
 author: "by James Hollway"
 output: 
   learnr::tutorial:
-    theme: journal
+    theme: bootstrap
 runtime: shiny_prerendered
 description: >
   The aim of this tutorial is to offer a very, very short introduction to R 

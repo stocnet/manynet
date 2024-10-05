@@ -6,6 +6,7 @@
 \alias{to_mentoring}
 \alias{to_eulerian}
 \alias{to_tree}
+\alias{to_dominating}
 \title{Modifying networks paths}
 \usage{
 to_matching(.data, mark = "type")
@@ -15,6 +16,8 @@ to_mentoring(.data, elites = 0.1)
 to_eulerian(.data)
 
 to_tree(.data)
+
+to_dominating(.data, from, direction = c("out", "in"))
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -42,6 +45,10 @@ for example because they are an isolate,
 a tie to themselves (a loop) will be created instead.
 Note that this is a different default behaviour than that
 described in Valente and Davis (1999).}
+
+\item{from}{The index or name of the node from which the path should be traced.}
+
+\item{direction}{String, either "out" or "in".}
 }
 \value{
 All \code{to_} functions return an object of the same class as that provided.
@@ -57,6 +64,7 @@ These functions return tidygraphs containing only special sets of ties:
 \item \code{to_eulerian()} returns only the Eulerian path within some network data.
 \item \code{to_tree()} returns the spanning tree in some network data or,
 if the data is unconnected, a forest of spanning trees.
+\item \code{to_dominating()} returns the dominating tree of the network
 }
 }
 \details{

@@ -79,14 +79,15 @@ tie_is_bridge <- function(.data){
 }
 
 #' @rdname mark_ties
-#' @param from The index or name of the node from which the path should be traced.
+#' @inheritParams manip_paths
 #' @param to The index or name of the node to which the path should be traced.
 #' @param all_paths Whether to return a list of paths or sample just one.
 #'   By default FALSE, sampling just a single path.
 #' @importFrom igraph all_shortest_paths
 #' @examples 
-#' ison_adolescents %>% mutate_ties(route = tie_is_path(from = "Jane", to = 7)) %>% 
-#' graphr(edge_colour = "route")
+#' ison_adolescents %>%
+#'   mutate_ties(route = tie_is_path(from = "Jane", to = 7)) %>% 
+#'   graphr(edge_colour = "route")
 #' @export
 tie_is_path <- function(.data, from, to, all_paths = FALSE){
   if(missing(.data)) {expect_edges(); .data <- .G()}

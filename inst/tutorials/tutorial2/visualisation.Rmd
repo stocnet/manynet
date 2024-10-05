@@ -3,7 +3,7 @@ title: "Visualisation"
 author: "by James Hollway"
 output: 
   learnr::tutorial:
-    theme: journal
+    theme: lumen
 runtime: shiny_prerendered
 description: >
   This tutorial aims to give an overview of how to use manynet and other
@@ -247,19 +247,19 @@ These might include attractive and repulsive forces.
    graphr(ison_southern_women, layout = "stress") + ggtitle("Stress Minimisation"))
 ```
 
-The _Kamada-Kawai_ method inserts a spring between all pairs of vertices
+The _Kamada-Kawai_ (KK) method inserts a spring between all pairs of vertices
 that is the length of the graph distance between them.
 This means that edges with a large weight will be longer. 
 KK offers a good layout for lattice-like networks,
 because it will try to space the network out evenly.
 
-The _Fruchterman-Reingold_ method uses an attractive force between directly connected vertices, 
+The _Fruchterman-Reingold_ (FR) method uses an attractive force between directly connected vertices, 
 and a repulsive force between all vertex pairs. 
 The attractive force is proportional to the edge's weight, 
 thus edges with a large weight will be shorter. 
 FR offers a good baseline for most types of networks.
 
-The _Stress Minimisation_ method is related to the KK algorithm,
+The _Stress Minimisation_ (stress) method is related to the KK algorithm,
 but offers better runtime, quality, and stability and so is generally preferred.
 Indeed, `{manynet}` uses it as the default for most networks.
 It has the advantage of returning the same layout each time it is run on the same network.
@@ -270,7 +270,7 @@ question("Can we interpret the distance between nodes in force-directed layouts 
          correct = TRUE,
          message = "That's right, they are illustrative and not to be used for hard conclusions."),
   answer("Yes"),
-  allow_retry = FALSE
+  allow_retry = TRUE
 )
 ```
 
@@ -345,16 +345,25 @@ in a two-dimensional (or more) space.
 
 ```{r mds, exercise=TRUE, fig.align='center'}
 graphr(ison_southern_women, layout = "mds") + ggtitle("Multidimensional Scaling")
-graphr(ison_southern_women, layout = "mds") + ggtitle("Multidimensional Scaling")
 ```
 
 Other such layouts include:
 
 - Pivot multidimensional scaling: `"pmds"`
 
+```{r spectralinterp-Q, echo=FALSE, purl = FALSE}
+question("Can we interpret the distance between nodes in spectral layouts?",
+  answer("No"),
+  answer("Yes",
+         correct = TRUE,
+         message = "That's right, though it is not always easy to do so..."),
+  allow_retry = TRUE
+)
+```
+
 ### Grid layouts
 
-Grid layouts arrange nodes based on some cartesion coordinates.
+Grid layouts arrange nodes based on some Cartesian coordinates.
 These can be useful for making sure all nodes' labels are visible,
 but horizontal and vertical lines can overlap, 
 making it difficult to distinguish whether some nodes are tied or not.
@@ -391,18 +400,22 @@ graphr(ison_lotr,
   ggplot2::scale_colour_hue()
 ```
 
+
 ### Grayscale
 
 Other times color may not be desired.
 Some publications require grayscale images.
 To use a grayscale color palette,
-replace `_hue` from above with `_grey`:
+replace `_hue` from above with `_grey` (note the 'e' spelling):
 
 ```{r greyscale, exercise=TRUE}
 graphr(ison_lotr,
            node_color = "Race") +
   ggplot2::scale_colour_grey()
 ```
+
+As you can see, grayscale is more effective for continuous variables
+or very few discrete variables than the number used here.
 
 ### Manual override
 

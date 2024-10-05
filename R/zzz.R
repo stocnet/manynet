@@ -21,7 +21,7 @@
   greet_startup_cli <- function() {
     tips <- c(
       "i" = "There are lots of ways to contribute to {.pkg manynet} at {.url https://github.com/stocnet/manynet/}.",
-      "i" = "Please let us know any issues or features requests at {.url https://github.com/stocnet/manynet/issues}. It's really helpful!",
+      "i" = "Please let us know any bugs, issues, or feature requests at {.url https://github.com/stocnet/manynet/issues}. It's really helpful!",
       "i" = "To eliminate package startup messages, use: `suppressPackageStartupMessages(library({.pkg manynet}))`.",
       # "i" = "Changing the theme of all your graphs is straightforward with `set_manynet_theme()`",
       "i" = "If there are too many messages in the console, run `options(manynet_verbosity = 'quiet')`",

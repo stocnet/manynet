@@ -3,7 +3,7 @@ title: "Diffusion and Learning"
 author: "by James Hollway"
 output: 
   learnr::tutorial:
-    theme: readable
+    theme: simplex
 runtime: shiny_prerendered
 description: >
   In this tutorial you will learn how to simulate and investigate simple and complex

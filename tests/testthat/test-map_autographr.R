@@ -9,8 +9,8 @@ test_that("unweighted, unsigned, undirected networks graph correctly", {
   expect_equal(test_brandes[["layers"]][[1]][["aes_params"]][["edge_alpha"]], 0.4)
   expect_equal(test_brandes[["layers"]][[1]][["aes_params"]][["edge_linetype"]], "solid")
   # Node parameters
-  #expect_equal(round(test_brandes[["layers"]][[2]][["aes_params"]][["size"]]), 5)
-  #expect_equal(as.character(test_brandes[["layers"]][[2]][["aes_params"]][["shape"]]), "circle")
+  expect_equal(round(test_brandes[["layers"]][[2]][["aes_params"]][["size"]]), 11)
+  expect_equal(as.character(test_brandes[["layers"]][[2]][["aes_params"]][["shape"]]), "circle")
 })
 
 test_that("unweighted, signed, undirected networks graph correctly", {
@@ -23,7 +23,7 @@ test_that("unweighted, signed, undirected networks graph correctly", {
   # Edge parameters
   expect_equal(test_marvel[["layers"]][[2]][["aes_params"]][["edge_alpha"]], 0.4)
   # Node parameters
-  #expect_equal(test_marvel[["layers"]][[4]][["aes_params"]][["size"]], 1)
+  expect_equal(test_marvel[["layers"]][[4]][["aes_params"]][["size"]], 3)
   #expect_equal(test_marvel[["layers"]][[4]][["aes_params"]][["shape"]], "circle")
 })
 
@@ -37,10 +37,10 @@ test_that("unweighted, unsigned, directed networks graph correctly", {
   # Edge parameters
   expect_equal(test_algebra[["layers"]][[1]][["aes_params"]][["edge_alpha"]], 0.4)
   expect_equal(test_algebra[["layers"]][[1]][["aes_params"]][["edge_linetype"]], "solid")
-  expect_equal(test_algebra[["layers"]][[1]][["aes_params"]][["edge_colour"]], "black")
+  #expect_equal(test_algebra[["layers"]][[1]][["mapping"]][["edge_colour"]], "black")
   # Node parameters
-  #expect_equal(round(test_algebra[["layers"]][[2]][["aes_params"]][["size"]]), 3)
-  #expect_equal(test_algebra[["layers"]][[2]][["aes_params"]][["shape"]], "circle")
+  expect_equal(round(test_algebra[["layers"]][[2]][["aes_params"]][["size"]]), 8)
+  expect_equal(test_algebra[["layers"]][[2]][["aes_params"]][["shape"]], "circle")
 })
 
 test_that("weighted, unsigned, directed networks graph correctly", {
@@ -52,11 +52,11 @@ test_that("weighted, unsigned, directed networks graph correctly", {
   expect_equal(round(test_networkers[["data"]][["x"]][[1]]), 9)
   expect_equal(round(test_networkers[["data"]][["y"]][[1]]), -1)
   # Edge parameters
-  expect_equal(test_networkers[["layers"]][[2]][["aes_params"]][["edge_alpha"]], 0.4)
-  expect_equal(test_networkers[["layers"]][[2]][["aes_params"]][["edge_linetype"]], "solid")
-  expect_equal(test_networkers[["layers"]][[2]][["aes_params"]][["edge_colour"]], "black")
+  #expect_equal(test_networkers[["layers"]][[2]][["aes_params"]][["edge_alpha"]], 0.4)
+  #expect_equal(test_networkers[["layers"]][[2]][["aes_params"]][["edge_linetype"]], "solid")
+  #expect_equal(test_networkers[["layers"]][[2]][["aes_params"]][["edge_colour"]], "black")
   # Node parameters
-  #expect_equal(round(test_networkers[["layers"]][[3]][["aes_params"]][["size"]]), 2)
+  expect_equal(round(test_networkers[["layers"]][[3]][["aes_params"]][["size"]]), 3)
   #expect_equal(test_networkers[["layers"]][[3]][["aes_params"]][["shape"]], "circle")
 })
 
@@ -115,8 +115,8 @@ test_that("node_group works correctly", {
 
 test_that("unquoted arguments plot correctly", {
   skip_on_cran()
-  expect_equal(graphr(ison_lawfirm, node_color = "Gender"),
-               graphr(ison_lawfirm, node_color = Gender))
+  expect_equal(graphr(ison_lawfirm, node_color = "gender"),
+               graphr(ison_lawfirm, node_color = gender))
 })
 
 # Layouts
@@ -162,13 +162,6 @@ test_that("autographr works for diff_model objects", {
     expect_equal(test_diff[["guides"]][["colour"]][["name"]], "colorbar")
   }
 })
-
-# test_that("autographr checks variable names for mapping", {
-#   skip_on_cran()
-#   skip_on_ci()
-#   expect_message(graphr(ison_lawfirm, node_color = "School"),
-#                  "Please make sure you spelled node color variable correctly.")
-# })
 
 test_that("concentric layout works when node names are missing", {
   skip_on_cran()

@@ -59,24 +59,32 @@ A numeric vector giving the eigenvector centrality measure of each node.
 A numeric vector giving each node's power centrality measure.
 }
 \description{
-These functions calculate common eigenvector-related centrality measures for one- and two-mode networks:
+These functions calculate common eigenvector-related centrality
+measures, or walk-based eigenmeasures, for one- and two-mode networks:
 \itemize{
-\item \code{node_eigenvector()} measures the eigenvector centrality of nodes in a network.
-\item \code{node_power()} measures the Bonacich, beta, or power centrality of nodes in a network.
-\item \code{node_alpha()} measures the alpha or Katz centrality of nodes in a network.
+\item \code{node_eigenvector()} measures the eigenvector centrality of nodes
+in a network.
+\item \code{node_power()} measures the Bonacich, beta, or power centrality of
+nodes in a network.
+\item \code{node_alpha()} measures the alpha or Katz centrality of nodes in a
+network.
 \item \code{node_pagerank()} measures the pagerank centrality of nodes in a network.
-\item \code{node_hub()} measures how well nodes in a network serve as hubs pointing to many authorities.
-\item \code{node_authority()} measures how well nodes in a network serve as authorities from many hubs.
-\item \code{tie_eigenvector()} measures the eigenvector centrality of ties in a network.
-\item \code{net_eigenvector()} measures the eigenvector centralization for a network.
+\item \code{node_hub()} measures how well nodes in a network serve as hubs pointing
+to many authorities.
+\item \code{node_authority()} measures how well nodes in a network serve as
+authorities from many hubs.
+\item \code{tie_eigenvector()} measures the eigenvector centrality of ties in a
+network.
+\item \code{net_eigenvector()} measures the eigenvector centralization for a
+network.
 }
 
 All measures attempt to use as much information as they are offered,
 including whether the networks are directed, weighted, or multimodal.
 If this would produce unintended results,
 first transform the salient properties using e.g. \code{\link[=to_undirected]{to_undirected()}} functions.
-All centrality and centralization measures return normalized measures by default,
-including for two-mode networks.
+All centrality and centralization measures return normalized measures
+by default, including for two-mode networks.
 }
 \details{
 We use \code{{igraph}} routines behind the scenes here for consistency and because they are often faster.

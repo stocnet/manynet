@@ -449,6 +449,7 @@ to_blocks.tbl_graph <- function(.data, membership, FUN = mean){
 #'   - `to_eulerian()` returns only the Eulerian path within some network data.
 #'   - `to_tree()` returns the spanning tree in some network data or, 
 #'   if the data is unconnected, a forest of spanning trees.
+#'   - `to_dominating()` returns the dominating tree of the network
 #' @details
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
@@ -651,5 +652,17 @@ to_eulerian.tbl_graph <- function(.data){
 #' @export
 to_tree <- function(.data) {
   .data <- as_igraph(.data)
-  igraph::subgraph.edges(.data, igraph::sample_spanning_tree(.data))
+  out <- igraph::subgraph.edges(.data, igraph::sample_spanning_tree(.data))
+  as_tidygraph(out)
+}
+
+#' @rdname manip_paths 
+#' @param from The index or name of the node from which the path should be traced.
+#' @param direction String, either "out" or "in".
+#' @export
+to_dominating <- function(.data, from, direction = c("out","in")) {
+  direction <- match.arg(direction)
+  .data <- as_igraph(.data)
+  out <- igraph::dominator_tree(.data, root = from, mode = direction)$domtree
+  as_tidygraph(out)
 }

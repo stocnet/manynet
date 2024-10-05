@@ -24,6 +24,8 @@ The aim of this tutorial is to show how we can measure and map
 degree, betweenness, closeness, eigenvector, and other types of centrality,
 explore their distributions and calculate the corresponding centralisation.
 
+<img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExbG5oYmVtYmcxMWs1d3MzOGh3Zng5dTZhc241ZHR2NTE0YThiZWp4NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/970Sr8vpwEbXG/giphy.gif" height="480px"/>
+
 ### Setting up
 
 For this exercise, we'll use the `ison_brandes` dataset in `{manynet}`.
@@ -58,7 +60,7 @@ graphr(ison_brandes2, layout = "bipartite")
 ```
 
 The network is anonymous, but I think it would be nice to add some names,
-even if it's just pretend. 
+even if it's just pretend.
 Luckily, `{manynet}` has a function for this: `to_named()`.
 This makes plotting the network just a wee bit more accessible and interpretable:
 
@@ -81,6 +83,8 @@ Note that you will likely get a different set of names (though still alphabetica
 as they are assigned randomly from a pool of (American) first names.
 
 ## Degree centrality
+
+<img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3d6eGd2OHRxb2FvbHYzc2oyenFzOG5qcjhzMm82Mm1ncTVpOHhreiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/uVd5gVHAq63SjtjAOe/giphy.gif" height="480px"/>
 
 Let's start with calculating degree.
 Remember that degree centrality is just the number of incident edges/ties to each node.
@@ -137,6 +141,8 @@ question("In what ways are higher degree nodes more 'central'?",
 ```
 
 ## Degree distributions
+
+<img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExanZ4OWhwM2k0eWU1ancza3NtYXlpZDFkdTJub2RvMnFkYnlwbWZ4dCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7aTHbH39h8xYePza/giphy.gif" height="400px"/>
 
 Often we are interested in the distribution of (degree) centrality in a network.
 `{manynet}` offers a way to get a pretty good first look at this distribution,
@@ -271,19 +277,19 @@ we can highlight which node or nodes hold the maximum score in red.
 ```{r ggid-solution}
 # plot the network, highlighting the node with the highest centrality score with a different colour
 ison_brandes %>%
-  add_node_attribute("color", node_is_max(node_degree(ison_brandes))) %>%
+  mutate_nodes(color = node_is_max(node_degree())) %>%
   graphr(node_color = "color")
 
 ison_brandes %>%
-  add_node_attribute("color", node_is_max(node_betweenness(ison_brandes))) %>%
+  mutate_nodes(color = node_is_max(node_betweenness())) %>%
   graphr(node_color = "color")
 
 ison_brandes %>%
-  add_node_attribute("color", node_is_max(node_closeness(ison_brandes))) %>%
+  mutate_nodes(color = node_is_max(node_closeness())) %>%
   graphr(node_color = "color")
 
 ison_brandes %>%
-  add_node_attribute("color", node_is_max(node_eigenvector(ison_brandes))) %>%
+  mutate_nodes(color = node_is_max(node_eigenvector())) %>%
   graphr(node_color = "color")
 ```
 
@@ -406,9 +412,17 @@ question("What is the difference between centrality and centralisation according
 )
 ```
 
-## Tasks
+## Free play
 
-1. Name a plausible research question you could ask of this data
-for each of the four main centrality measures
-(degree, betweenness, closeness, eigenvector)
-You may want to add these as titles or subtitles to each plot.
+<img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExejh4dXBha3JhNW0yenJwMDd5aGpwd3Brc201ZXoxZnY2aWFna3Z4cCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7ROgX60TtTVK0mZwkJ/giphy.gif" height="400px"/>
+
+Choose another dataset included in `{manynet}`.
+Name a plausible research question you could ask of the dataset relating to each 
+of the four main centrality measures (degree, betweenness, closeness, eigenvector).
+Plot the network with nodes sized by each centrality measure,
+using titles or subtitles to record the question and/or centralization measure.
+
+```{r freeplayend, exercise=TRUE, purl=FALSE, fig.width=9}
+
+```
+

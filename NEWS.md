@@ -1,3 +1,27 @@
+# manynet 1.2.2
+
+## Package
+
+- Updated all tutorials with different themes to make them more distinctive
+- Updated centrality tutorial with gifs
+- Updated visualisation tutorial with a few extras
+
+## Modifying
+
+- Added `to_dominating()` for extracting the dominating tree of a given network
+
+## Mapping
+
+- Reworked `graphr()` to make function more concise and consistent (thanks @henriquesposito)
+  - This allows new functionality and improves debugging moving forward
+  
+## Measuring
+
+- Updated closeness centrality documentation
+- Improved `node_eccentricity()` to allow normalisation, appear in closeness documentation
+- Added `node_stress()` as a new betweenness-like centrality measure
+- Added `node_leverage()` as a new degree-like centrality measure
+
 # manynet 1.2.1
 
 ## Making
