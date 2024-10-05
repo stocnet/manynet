@@ -10,9 +10,6 @@ node_constraint() measures nodes' constraint scores for one-mode networks
 according to Burt (1992) and for two-mode networks according to Hollway et al (2020).
 node_hierarchy() measures nodes' exposure to hierarchy,
 where only one or two contacts are the source of closure.
-node_eccentricity() measures nodes' eccentricity or Koenig number,
-a measure of farness based on number of links needed to reach
-most distant node in the network.
 node_neighbours_degree() measures nodes' average nearest neighbors degree,
 or \(knn\), a measure of the type of local environment a node finds itself in
 tie_cohesion() measures the ratio between common neighbors to ties'
@@ -41,7 +38,7 @@ can gain some comparative advantage from that position."><meta property="og:imag
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.2</span>
       </span>
     </div>
 
@@ -95,9 +92,6 @@ is adjacent.</p></li>
 according to Burt (1992) and for two-mode networks according to Hollway et al (2020).</p></li>
 <li><p><code>node_hierarchy()</code> measures nodes' exposure to hierarchy,
 where only one or two contacts are the source of closure.</p></li>
-<li><p><code>node_eccentricity()</code> measures nodes' eccentricity or Koenig number,
-a measure of farness based on number of links needed to reach
-most distant node in the network.</p></li>
 <li><p><code>node_neighbours_degree()</code> measures nodes' average nearest neighbors degree,
 or \(knn\), a measure of the type of local environment a node finds itself in</p></li>
 <li><p><code>tie_cohesion()</code> measures the ratio between common neighbors to ties'
@@ -121,8 +115,6 @@ can gain some comparative advantage from that position.</p>
 <span><span class="fu">node_constraint</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">node_hierarchy</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">node_eccentricity</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">node_neighbours_degree</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>

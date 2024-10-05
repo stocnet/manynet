@@ -9,6 +9,7 @@ node_outdegree() returns the direction = 'out' results.
 
 node_multidegree() measures the ratio between types of ties in a multiplex network.
 node_posneg() measures the PN (positive-negative) centrality of a signed network.
+node_leverage() measures the leverage centrality of nodes in a network.
 tie_degree() measures the degree centrality of ties in a network
 net_degree() measures a network's degree centralization;
 there are several related shortcut functions:
@@ -40,7 +41,7 @@ including for two-mode networks."><meta property="og:image" content="https://sto
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.2</span>
       </span>
     </div>
 
@@ -92,6 +93,7 @@ there are several related shortcut functions:</p><ul><li><p><code>node_deg()</co
 </ul></li>
 <li><p><code>node_multidegree()</code> measures the ratio between types of ties in a multiplex network.</p></li>
 <li><p><code>node_posneg()</code> measures the PN (positive-negative) centrality of a signed network.</p></li>
+<li><p><code>node_leverage()</code> measures the leverage centrality of nodes in a network.</p></li>
 <li><p><code>tie_degree()</code> measures the degree centrality of ties in a network</p></li>
 <li><p><code>net_degree()</code> measures a network's degree centralization;
 there are several related shortcut functions:</p><ul><li><p><code>net_indegree()</code> returns the <code>direction = 'out'</code> results.</p></li>
@@ -122,6 +124,8 @@ including for two-mode networks.</p>
 <span><span class="fu">node_multidegree</span><span class="op">(</span><span class="va">.data</span>, <span class="va">tie1</span>, <span class="va">tie2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">node_posneg</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">node_leverage</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">tie_degree</span><span class="op">(</span><span class="va">.data</span>, normalized <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
@@ -192,6 +196,14 @@ and two centralization scores if the object was two-mode.</p>
 <p>Depending on how and what kind of an object is passed to the function,
 the function will return a <code>tidygraph</code> object where the nodes have been updated</p>
     </div>
+    <div id="leverage-centrality">
+    <h2>Leverage centrality</h2>
+
+
+<p>Leverage centrality concerns the degree of a node compared with that of its
+neighbours, \(J\):
+$$C_L(i) = \frac{1}{deg(i)} \sum_{j \in J(i)} \frac{deg(i) - deg(j)}{deg(i) + deg(j)}$$</p>
+    </div>
     <div id="references">
     <h2>References</h2>
 
@@ -233,6 +245,16 @@ London, UK: Sage.
 “Networks Containing Negative Ties.”
 <em>Social Networks</em> 38:111–20.
 <a href="https://doi.org/10.1016/j.socnet.2014.03.005" class="external-link">doi:10.1016/j.socnet.2014.03.005</a></p>
+</div>
+
+<div class="section">
+<h3 id="on-leverage-centrality">On leverage centrality<a class="anchor" aria-label="anchor" href="#on-leverage-centrality"></a></h3>
+
+
+<p>Joyce, Karen E., Paul J. Laurienti, Jonathan H. Burdette, and Satoru Hayasaka. 2010.
+"A New Measure of Centrality for Brain Networks".
+<em>PLoS ONE</em> 5(8): e12200.
+<a href="https://doi.org/10.1371/journal.pone.0012200" class="external-link">doi:10.1371/journal.pone.0012200</a></p>
 </div>
 
     </div>

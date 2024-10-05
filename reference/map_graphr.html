@@ -35,7 +35,7 @@ See e.g. theme_iheid() for more.'><meta property="og:image" content="https://sto
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.2</span>
       </span>
     </div>
 
@@ -231,14 +231,14 @@ The last plot can be saved to the file system using <code><a href="https://ggplo
 <span class="r-in"><span>         size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="mark_nodes.html">node_is_cutpoint</a></span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span>, <span class="fl">6</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="manip_ties.html">mutate_ties</a></span><span class="op">(</span>ecolor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"friends"</span>, <span class="st">"acquaintances"</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu">graphr</span><span class="op">(</span>node_color <span class="op">=</span> <span class="st">"color"</span>, node_size <span class="op">=</span> <span class="st">"size"</span>,</span></span>
-<span class="r-in"><span>             edge_size <span class="op">=</span> <span class="fl">1.5</span>, edge_color <span class="op">=</span> <span class="st">"ecolor"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>         edge_size <span class="op">=</span> <span class="fl">1.5</span>, edge_color <span class="op">=</span> <span class="st">"ecolor"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="map_graphr-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="co">#graphr(ison_lotr, node_color = Race,</span></span></span>
-<span class="r-in"><span><span class="co">#           node_size = node_degree(ison_lotr)*2,</span></span></span>
-<span class="r-in"><span><span class="co">#           edge_color = "#66A61E",</span></span></span>
-<span class="r-in"><span><span class="co">#           edge_size = tie_degree(ison_lotr))</span></span></span>
-<span class="r-in"><span><span class="co">#graphr(ison_karateka, node_group = allegiance,</span></span></span>
-<span class="r-in"><span><span class="co">#           edge_size = tie_closeness(ison_karateka))</span></span></span>
+<span class="r-in"><span><span class="fu">graphr</span><span class="op">(</span><span class="va">ison_lotr</span>, node_color <span class="op">=</span> <span class="va">Race</span>, node_size <span class="op">=</span> <span class="fu"><a href="measure_central_degree.html">node_degree</a></span><span class="op">(</span><span class="va">ison_lotr</span><span class="op">)</span><span class="op">*</span><span class="fl">2</span>,</span></span>
+<span class="r-in"><span>       edge_color <span class="op">=</span> <span class="st">"yellow"</span>, edge_size <span class="op">=</span> <span class="fu"><a href="measure_central_degree.html">tie_degree</a></span><span class="op">(</span><span class="va">ison_lotr</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="map_graphr-3.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu">graphr</span><span class="op">(</span><span class="va">ison_karateka</span>, node_group <span class="op">=</span> <span class="va">allegiance</span>,</span></span>
+<span class="r-in"><span>       edge_size <span class="op">=</span> <span class="fu"><a href="measure_central_close.html">tie_closeness</a></span><span class="op">(</span><span class="va">ison_karateka</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="map_graphr-4.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </div>

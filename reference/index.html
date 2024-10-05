@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.2</span>
       </span>
     </div>
 
@@ -159,7 +159,7 @@
           <p class="section-desc"></p><p>Functions for transforming networks, which may change the network’s dimensions.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="manip_paths.html">to_matching()</a></code> <code><a href="manip_paths.html">to_mentoring()</a></code> <code><a href="manip_paths.html">to_eulerian()</a></code> <code><a href="manip_paths.html">to_tree()</a></code> </p>
+          <p><code><a href="manip_paths.html">to_matching()</a></code> <code><a href="manip_paths.html">to_mentoring()</a></code> <code><a href="manip_paths.html">to_eulerian()</a></code> <code><a href="manip_paths.html">to_tree()</a></code> <code><a href="manip_paths.html">to_dominating()</a></code> </p>
         </td>
         <td><p>Modifying networks paths</p></td>
       </tr><tr><td>
@@ -343,15 +343,15 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="measure_central_between.html">node_betweenness()</a></code> <code><a href="measure_central_between.html">node_induced()</a></code> <code><a href="measure_central_between.html">node_flow()</a></code> <code><a href="measure_central_between.html">tie_betweenness()</a></code> <code><a href="measure_central_between.html">net_betweenness()</a></code> </p>
+          <p><code><a href="measure_central_between.html">node_betweenness()</a></code> <code><a href="measure_central_between.html">node_induced()</a></code> <code><a href="measure_central_between.html">node_flow()</a></code> <code><a href="measure_central_between.html">node_stress()</a></code> <code><a href="measure_central_between.html">tie_betweenness()</a></code> <code><a href="measure_central_between.html">net_betweenness()</a></code> </p>
         </td>
         <td><p>Measures of betweenness-like centrality and centralisation</p></td>
       </tr><tr><td>
-          <p><code><a href="measure_central_close.html">node_closeness()</a></code> <code><a href="measure_central_close.html">node_reach()</a></code> <code><a href="measure_central_close.html">node_harmonic()</a></code> <code><a href="measure_central_close.html">node_information()</a></code> <code><a href="measure_central_close.html">node_distance()</a></code> <code><a href="measure_central_close.html">tie_closeness()</a></code> <code><a href="measure_central_close.html">net_closeness()</a></code> <code><a href="measure_central_close.html">net_reach()</a></code> <code><a href="measure_central_close.html">net_harmonic()</a></code> </p>
+          <p><code><a href="measure_central_close.html">node_closeness()</a></code> <code><a href="measure_central_close.html">node_harmonic()</a></code> <code><a href="measure_central_close.html">node_reach()</a></code> <code><a href="measure_central_close.html">node_information()</a></code> <code><a href="measure_central_close.html">node_eccentricity()</a></code> <code><a href="measure_central_close.html">node_distance()</a></code> <code><a href="measure_central_close.html">tie_closeness()</a></code> <code><a href="measure_central_close.html">net_closeness()</a></code> <code><a href="measure_central_close.html">net_reach()</a></code> <code><a href="measure_central_close.html">net_harmonic()</a></code> </p>
         </td>
         <td><p>Measures of closeness-like centrality and centralisation</p></td>
       </tr><tr><td>
-          <p><code><a href="measure_central_degree.html">node_degree()</a></code> <code><a href="measure_central_degree.html">node_deg()</a></code> <code><a href="measure_central_degree.html">node_outdegree()</a></code> <code><a href="measure_central_degree.html">node_indegree()</a></code> <code><a href="measure_central_degree.html">node_multidegree()</a></code> <code><a href="measure_central_degree.html">node_posneg()</a></code> <code><a href="measure_central_degree.html">tie_degree()</a></code> <code><a href="measure_central_degree.html">net_degree()</a></code> <code><a href="measure_central_degree.html">net_outdegree()</a></code> <code><a href="measure_central_degree.html">net_indegree()</a></code> </p>
+          <p><code><a href="measure_central_degree.html">node_degree()</a></code> <code><a href="measure_central_degree.html">node_deg()</a></code> <code><a href="measure_central_degree.html">node_outdegree()</a></code> <code><a href="measure_central_degree.html">node_indegree()</a></code> <code><a href="measure_central_degree.html">node_multidegree()</a></code> <code><a href="measure_central_degree.html">node_posneg()</a></code> <code><a href="measure_central_degree.html">node_leverage()</a></code> <code><a href="measure_central_degree.html">tie_degree()</a></code> <code><a href="measure_central_degree.html">net_degree()</a></code> <code><a href="measure_central_degree.html">net_outdegree()</a></code> <code><a href="measure_central_degree.html">net_indegree()</a></code> </p>
         </td>
         <td><p>Measures of degree-like centrality and centralisation</p></td>
       </tr><tr><td>
@@ -359,7 +359,7 @@
         </td>
         <td><p>Measures of eigenvector-like centrality and centralisation</p></td>
       </tr><tr><td>
-          <p><code><a href="measure_holes.html">node_bridges()</a></code> <code><a href="measure_holes.html">node_redundancy()</a></code> <code><a href="measure_holes.html">node_effsize()</a></code> <code><a href="measure_holes.html">node_efficiency()</a></code> <code><a href="measure_holes.html">node_constraint()</a></code> <code><a href="measure_holes.html">node_hierarchy()</a></code> <code><a href="measure_holes.html">node_eccentricity()</a></code> <code><a href="measure_holes.html">node_neighbours_degree()</a></code> <code><a href="measure_holes.html">tie_cohesion()</a></code> </p>
+          <p><code><a href="measure_holes.html">node_bridges()</a></code> <code><a href="measure_holes.html">node_redundancy()</a></code> <code><a href="measure_holes.html">node_effsize()</a></code> <code><a href="measure_holes.html">node_efficiency()</a></code> <code><a href="measure_holes.html">node_constraint()</a></code> <code><a href="measure_holes.html">node_hierarchy()</a></code> <code><a href="measure_holes.html">node_neighbours_degree()</a></code> <code><a href="measure_holes.html">tie_cohesion()</a></code> </p>
         </td>
         <td><p>Measures of structural holes</p></td>
       </tr><tr><td>

@@ -5,6 +5,7 @@ node_induced() measures the induced betweenness centralities of nodes in a netwo
 node_flow() measures the flow betweenness centralities of nodes in a network,
 which uses an electrical current model for information spreading
 in contrast to the shortest paths model used by normal betweenness centrality.
+node_stress() measures the stress centrality of nodes in a network.
 tie_betweenness() measures the number of shortest paths going through a tie.
 net_betweenness() measures the betweenness centralization for a network.
 
@@ -32,7 +33,7 @@ including for two-mode networks."><meta property="og:image" content="https://sto
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.2</span>
       </span>
     </div>
 
@@ -81,6 +82,7 @@ including for two-mode networks."><meta property="og:image" content="https://sto
 <li><p><code>node_flow()</code> measures the flow betweenness centralities of nodes in a network,
 which uses an electrical current model for information spreading
 in contrast to the shortest paths model used by normal betweenness centrality.</p></li>
+<li><p><code>node_stress()</code> measures the stress centrality of nodes in a network.</p></li>
 <li><p><code>tie_betweenness()</code> measures the number of shortest paths going through a tie.</p></li>
 <li><p><code>net_betweenness()</code> measures the betweenness centralization for a network.</p></li>
 </ul><p>All measures attempt to use as much information as they are offered,
@@ -97,6 +99,8 @@ including for two-mode networks.</p>
 <span><span class="fu">node_induced</span><span class="op">(</span><span class="va">.data</span>, normalized <span class="op">=</span> <span class="cn">TRUE</span>, cutoff <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">node_flow</span><span class="op">(</span><span class="va">.data</span>, normalized <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">node_stress</span><span class="op">(</span><span class="va">.data</span>, normalized <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">tie_betweenness</span><span class="op">(</span><span class="va">.data</span>, normalized <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
@@ -142,8 +146,54 @@ against only the centrality scores of the other nodes in that mode.</p></dd>
     <h2>Value</h2>
     <p>A numeric vector giving the betweenness centrality measure of each node.</p>
     </div>
+    <div id="betweenness-centrality">
+    <h2>Betweenness centrality</h2>
+
+
+<p>Betweenness centrality is based on the number of shortest paths between
+other nodes that a node lies upon:
+$$C_B(i) = \sum_{j,k:j \neq k, j \neq i, k \neq i} \frac{g_{jik}}{g_{jk}}$$</p>
+    </div>
+    <div id="induced-centrality">
+    <h2>Induced centrality</h2>
+
+
+<p>Induced centrality or vitality centrality concerns the change in
+total betweenness centrality between networks with and without a given node:
+$$C_I(i) = C_B(G) - C_B(G\ i)$$</p>
+    </div>
+    <div id="flow-betweenness-centrality">
+    <h2>Flow betweenness centrality</h2>
+
+
+<p>Flow betweenness centrality concerns the total maximum flow, \(f\),
+between other nodes \(j,k\) in a network \(G\) that a given node mediates:
+$$C_F(i) = \sum_{j,k:j\neq k, j\neq i, k\neq i} f(j,k,G) - f(j,k,G\ i)$$
+When normalized (by default) this sum of differences is divided by the
+sum of flows \(f(i,j,G)\).</p>
+    </div>
+    <div id="stress-centrality">
+    <h2>Stress centrality</h2>
+
+
+<p>Stress centrality is the number of all shortest paths or geodesics, \(g\),
+between other nodes that a given node mediates:
+$$C_S(i) = \sum_{j,k:j \neq k, j \neq i, k \neq i} g_{jik}$$
+High stress nodes lie on a large number of shortest paths between other
+nodes, and thus associated with bridging or spanning boundaries.</p>
+    </div>
     <div id="references">
     <h2>References</h2>
+
+<div class="section">
+<h3 id="on-betweenness-centrality">On betweenness centrality<a class="anchor" aria-label="anchor" href="#on-betweenness-centrality"></a></h3>
+
+
+<p>Freeman, Linton. 1977.
+"A set of measures of centrality based on betweenness".
+<em>Sociometry</em>, 40(1): 35–41.
+<a href="https://doi.org/10.2307/3033543" class="external-link">doi:10.2307/3033543</a></p>
+</div>
 
 <div class="section">
 <h3 id="on-induced-centrality">On induced centrality<a class="anchor" aria-label="anchor" href="#on-induced-centrality"></a></h3>
@@ -153,6 +203,29 @@ against only the centrality scores of the other nodes in that mode.</p></dd>
 "Induced, endogenous and exogenous centrality"
 <em>Social Networks</em>, 32: 339-344.
 <a href="https://doi.org/10.1016/j.socnet.2010.06.004" class="external-link">doi:10.1016/j.socnet.2010.06.004</a></p>
+</div>
+
+<div class="section">
+<h3 id="on-flow-centrality">On flow centrality<a class="anchor" aria-label="anchor" href="#on-flow-centrality"></a></h3>
+
+
+<p>Freeman, Lin, Stephen Borgatti, and Douglas White. 1991.
+"Centrality in Valued Graphs: A Measure of Betweenness Based on Network Flow".
+<em>Social Networks</em>, 13(2), 141-154.</p>
+<p>Koschutzki, D., K.A. Lehmann, L. Peeters, S. Richter, D. Tenfelde-Podehl, and O. Zlotowski. 2005.
+"Centrality Indices".
+In U. Brandes and T. Erlebach (eds.), <em>Network Analysis: Methodological Foundations</em>.
+Berlin: Springer.</p>
+</div>
+
+<div class="section">
+<h3 id="on-stress-centrality">On stress centrality<a class="anchor" aria-label="anchor" href="#on-stress-centrality"></a></h3>
+
+
+<p>Shimbel, A. 1953.
+"Structural Parameters of Communication Networks".
+<em>Bulletin of Mathematical Biophysics</em>, 15:501-507.
+<a href="https://doi.org/10.1007/BF02476438" class="external-link">doi:10.1007/BF02476438</a></p>
 </div>
 
     </div>

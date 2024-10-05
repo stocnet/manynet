@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.2</span>
       </span>
     </div>
 
@@ -59,6 +59,28 @@
       <small>Source: <a href="https://github.com/stocnet/manynet/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.2" id="manynet-122">manynet 1.2.2<a class="anchor" aria-label="anchor" href="#manynet-122"></a></h2>
+<div class="section level3">
+<h3 id="package-1-2-2">Package<a class="anchor" aria-label="anchor" href="#package-1-2-2"></a></h3>
+<ul><li>Updated all tutorials with different themes to make them more distinctive</li>
+<li>Updated centrality tutorial with gifs</li>
+<li>Updated visualisation tutorial with a few extras</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-1-2-2">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-2-2"></a></h3>
+<ul><li>Added <code><a href="../reference/manip_paths.html">to_dominating()</a></code> for extracting the dominating tree of a given network</li></ul></div>
+<div class="section level3">
+<h3 id="mapping-1-2-2">Mapping<a class="anchor" aria-label="anchor" href="#mapping-1-2-2"></a></h3>
+<ul><li>Reworked <code><a href="../reference/map_graphr.html">graphr()</a></code> to make function more concise and consistent (thanks <a href="https://github.com/henriquesposito" class="external-link">@henriquesposito</a>)<ul><li>This allows new functionality and improves debugging moving forward</li></ul></li></ul></div>
+<div class="section level3">
+<h3 id="measuring-1-2-2">Measuring<a class="anchor" aria-label="anchor" href="#measuring-1-2-2"></a></h3>
+<ul><li>Updated closeness centrality documentation</li>
+<li>Improved <code><a href="../reference/measure_central_close.html">node_eccentricity()</a></code> to allow normalisation, appear in closeness documentation</li>
+<li>Added <code><a href="../reference/measure_central_between.html">node_stress()</a></code> as a new betweenness-like centrality measure</li>
+<li>Added <code><a href="../reference/measure_central_degree.html">node_leverage()</a></code> as a new degree-like centrality measure</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.2.1" id="manynet-121">manynet 1.2.1<a class="anchor" aria-label="anchor" href="#manynet-121"></a></h2>
 <div class="section level3">
@@ -420,7 +442,7 @@
 </li>
 <li>Hierarchy measures include <code><a href="../reference/measure_closure.html">net_reciprocity()</a></code>, <code><a href="../reference/measure_hierarchy.html">net_connectedness()</a></code>, <code><a href="../reference/measure_hierarchy.html">net_efficiency()</a></code>, and <code><a href="../reference/measure_hierarchy.html">net_upperbound()</a></code>
 </li>
-<li>Holes’ measures include <code><a href="../reference/measure_holes.html">node_bridges()</a></code>, <code><a href="../reference/measure_holes.html">node_redundancy()</a></code>, <code><a href="../reference/measure_holes.html">node_effsize()</a></code>,<br><code><a href="../reference/measure_holes.html">node_efficiency()</a></code>, <code><a href="../reference/measure_holes.html">node_constraint()</a></code>, <code><a href="../reference/measure_holes.html">node_hierarchy()</a></code>, <code><a href="../reference/measure_holes.html">node_eccentricity()</a></code>, <code><a href="../reference/measure_holes.html">node_neighbours_degree()</a></code>, and <code><a href="../reference/measure_holes.html">tie_cohesion()</a></code>
+<li>Holes’ measures include <code><a href="../reference/measure_holes.html">node_bridges()</a></code>, <code><a href="../reference/measure_holes.html">node_redundancy()</a></code>, <code><a href="../reference/measure_holes.html">node_effsize()</a></code>,<br><code><a href="../reference/measure_holes.html">node_efficiency()</a></code>, <code><a href="../reference/measure_holes.html">node_constraint()</a></code>, <code><a href="../reference/measure_holes.html">node_hierarchy()</a></code>, <code><a href="../reference/measure_central_close.html">node_eccentricity()</a></code>, <code><a href="../reference/measure_holes.html">node_neighbours_degree()</a></code>, and <code><a href="../reference/measure_holes.html">tie_cohesion()</a></code>
 </li>
 <li>Features’ measures include <code><a href="../reference/measure_features.html">net_core()</a></code>, <code><a href="../reference/measure_features.html">net_richclub()</a></code>, <code><a href="../reference/measure_features.html">net_factions()</a></code>, <code>node_partition()</code>, <code><a href="../reference/measure_features.html">net_modularity()</a></code>, <code><a href="../reference/measure_features.html">net_smallworld()</a></code>, <code><a href="../reference/measure_features.html">net_scalefree()</a></code>, <code><a href="../reference/measure_features.html">net_balance()</a></code>, <code><a href="../reference/measure_periods.html">net_change()</a></code>, and <code><a href="../reference/measure_periods.html">net_stability()</a></code>
 </li>
@@ -681,7 +703,7 @@
 <code><a href="https://r.igraph.org/reference/is_bipartite.html" class="external-link">igraph::is_bipartite()</a></code> is superseded by <code><a href="../reference/mark_format.html">is_twomode()</a></code>
 </li>
 <li>
-<code><a href="https://rdrr.io/pkg/tidygraph/man/activate.html" class="external-link">tidygraph::activate()</a></code> is superseded by <code><a href="../reference/manip_ties.html">mutate_ties()</a></code> and similar functions</li>
+<code><a href="https://tidygraph.data-imaginist.com/reference/activate.html" class="external-link">tidygraph::activate()</a></code> is superseded by <code><a href="../reference/manip_ties.html">mutate_ties()</a></code> and similar functions</li>
 </ul></li>
 <li>Fixed bug by replacing older <code><a href="https://r.igraph.org/reference/as_incidence_matrix.html" class="external-link">igraph::as_incidence_matrix()</a></code> and <code><a href="https://r.igraph.org/reference/graph_from_incidence_matrix.html" class="external-link">igraph::graph_from_incidence_matrix()</a></code> with <code><a href="https://r.igraph.org/reference/as_biadjacency_matrix.html" class="external-link">igraph::as_biadjacency_matrix()</a></code> and <code><a href="https://r.igraph.org/reference/graph_from_biadjacency_matrix.html" class="external-link">igraph::graph_from_biadjacency_matrix()</a></code>
 </li>
