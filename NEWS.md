@@ -1,3 +1,10 @@
+# manynet 1.2.6
+
+## Package
+
+- Fixed errors when testing without `{concaveman}`
+- Fixed errors when plotting some examples without `{ggdendro}`
+
 # manynet 1.2.5
 
 ## Package
