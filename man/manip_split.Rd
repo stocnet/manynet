@@ -9,7 +9,7 @@
 \alias{to_slices}
 \title{Splitting networks into lists}
 \usage{
-to_egos(.data, max_dist = 1, min_dist = 0)
+to_egos(.data, max_dist = 1, min_dist = 0, direction = c("out", "in"))
 
 to_subgraphs(.data, attribute)
 
@@ -36,6 +36,8 @@ By default 1.}
 By default 0.
 Increasing this to 1 excludes the ego,
 and 2 excludes ego's direct alters.}
+
+\item{direction}{String, either "out" or "in".}
 
 \item{attribute}{One or two attributes used to slice data.}
 

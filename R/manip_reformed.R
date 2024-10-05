@@ -243,18 +243,24 @@ NULL
 #'   By default 0. 
 #'   Increasing this to 1 excludes the ego,
 #'   and 2 excludes ego's direct alters.
+#' @param direction String, either "out" or "in".
 #' @export
-to_ego <- function(.data, node, max_dist = 1, min_dist = 0) UseMethod("to_ego")
+to_ego <- function(.data, node, max_dist = 1, min_dist = 0,
+                   direction = c("out","in")) UseMethod("to_ego")
 
 #' @export
-to_ego.igraph <- function(.data, node, max_dist = 1, min_dist = 0){
-  egos <- to_egos(.data, max_dist = max_dist, min_dist = min_dist)
+to_ego.igraph <- function(.data, node, max_dist = 1, min_dist = 0,
+                          direction = c("out","in")){
+  egos <- to_egos(.data, max_dist = max_dist, min_dist = min_dist,
+                  direction = direction)
   as_igraph(egos[[node]])
 }
 
 #' @export
-to_ego.tbl_graph <- function(.data, node, max_dist = 1, min_dist = 0){
-  egos <- to_egos(.data, max_dist = max_dist, min_dist = min_dist)
+to_ego.tbl_graph <- function(.data, node, max_dist = 1, min_dist = 0,
+                             direction = c("out","in")){
+  egos <- to_egos(.data, max_dist = max_dist, min_dist = min_dist,
+                  direction = direction)
   as_tidygraph(egos[[node]])
 }
 
@@ -459,7 +465,7 @@ to_blocks.tbl_graph <- function(.data, membership, FUN = mean){
 #'   ```
 #' @name manip_paths
 #' @family modifications
-#' @inheritParams manip_reformat
+#' @inheritParams manip_scope
 #' @returns
 #'   All `to_` functions return an object of the same class as that provided. 
 #'   So passing it an igraph object will return an igraph object
@@ -658,7 +664,6 @@ to_tree <- function(.data) {
 
 #' @rdname manip_paths 
 #' @param from The index or name of the node from which the path should be traced.
-#' @param direction String, either "out" or "in".
 #' @export
 to_dominating <- function(.data, from, direction = c("out","in")) {
   direction <- match.arg(direction)
