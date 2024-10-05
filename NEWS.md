@@ -1,3 +1,14 @@
+# manynet 1.2.4
+
+## Package
+
+- Fixed `thisRequires()` bug by testing for interactivity
+- Dropped brokerage census examples
+
+## Modifying
+
+- Improved `to_ego()` and `to_egos()` to specify direction
+
 # manynet 1.2.3
 
 ## Mapping
