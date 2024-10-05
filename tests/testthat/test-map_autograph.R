@@ -111,6 +111,7 @@ test_that("named networks plot correctly", {
 # Test that autographr() works with arguments without quotes
 test_that("node_group works correctly", {
   skip_on_cran()
+  testthat::skip_if_not_installed("concaveman")
   expect_equal(graphr(ison_lawfirm, node_group = gender),
                graphr(ison_lawfirm, node_group = "gender"))
 })
