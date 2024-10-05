@@ -1,3 +1,10 @@
+# manynet 1.2.3
+
+## Mapping
+
+- Fixed bug in `graphr()` where user not informed about `{concaveman}` dependency
+- Fixed `graphr()` examples
+
 # manynet 1.2.2
 
 ## Package

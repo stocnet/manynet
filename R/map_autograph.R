@@ -25,6 +25,9 @@
 #'   Lastly, `graphr()` uses `{ggplot2}`-related theme information, so
 #'   it is easy to make colour palette and fonts institution-specific and consistent.
 #'   See e.g. `theme_iheid()` for more.
+#'   
+#'   To learn more about what can be done visually,
+#'   try `run_tute("Visualisation")`.
 #' @name map_graphr
 #' @family mapping
 #' @param .data A manynet-consistent object.
@@ -97,10 +100,6 @@
 #'   mutate_ties(ecolor = rep(c("friends", "acquaintances"), times = 5)) %>%
 #'   graphr(node_color = "color", node_size = "size",
 #'          edge_size = 1.5, edge_color = "ecolor")
-#' graphr(ison_lotr, node_color = Race, node_size = node_degree(ison_lotr)*2,
-#'        edge_color = "yellow", edge_size = tie_degree(ison_lotr))
-#' graphr(ison_karateka, node_group = allegiance,
-#'        edge_size = tie_closeness(ison_karateka))
 #' @export
 graphr <- function(.data, layout, labels = TRUE,
                    node_color, node_shape, node_size, node_group,
@@ -172,6 +171,7 @@ graphr <- function(.data, layout, labels = TRUE,
   if (!is.null(node_group)) {
     x <- y <- NULL
     thisRequires("ggforce")
+    thisRequires("concaveman")
     p <- p + 
       ggforce::geom_mark_hull(ggplot2::aes(x, y, fill = node_group,
                                            label = node_group), data = lo) +
@@ -280,7 +280,7 @@ reduce_categories <- function(g, node_group) {
     toCondense <- names(which(table(node_attribute(g, node_group)) <= 2))
     out <- ifelse(node_attribute(g, node_group) %in% toCondense,
                   "Other", node_attribute(g, node_group))
-    message("The number of groups was reduced since there were groups with less than 2 nodes.")
+    mnet_info("The number of groups was reduced since there were groups with less than 2 nodes.")
   } else if (sum(table(node_attribute(g, node_group)) <= 2) == 2 &
              length(unique(node_attribute(g, node_group))) > 2) {
     limit <- stats::reorder(node_attribute(g, node_group),
@@ -293,7 +293,7 @@ reduce_categories <- function(g, node_group) {
     }
     out <- ifelse(node_attribute(g, node_group) %in% toCondense, "Other",
                   node_attribute(g, node_group))
-    message("The number of groups was reduced since there were groups with less than 2 nodes.")
+    mnet_info("The number of groups was reduced since there were groups with less than 2 nodes.")
   } else if (sum(table(node_attribute(g, node_group)) <= 2) == 1 &
              length(unique(node_attribute(g, node_group))) > 2) {
     limit <- stats::reorder(node_attribute(g, node_group),
@@ -302,11 +302,11 @@ reduce_categories <- function(g, node_group) {
     toCondense <- utils::tail(levels(limit), 2)
     out <- ifelse(node_attribute(g, node_group) %in% toCondense, "Other",
                   node_attribute(g, node_group))
-    message("The number of groups was reduced since there were groups with less than 2 nodes.")
+    mnet_info("The number of groups was reduced since there were groups with less than 2 nodes.")
   } else if (sum(table(node_attribute(g, node_group)) <= 2) == 1 &
              length(unique(node_attribute(g, node_group))) == 2) {
     out <- as.factor(node_attribute(g, node_group))
-    message("Node groups with 2 nodes or less can be cause issues for plotting ...")
+    mnet_info("Node groups with 2 nodes or less can be cause issues for plotting ...")
   } else out <- as.factor(node_attribute(g, node_group))
   out
 }
@@ -335,7 +335,7 @@ reduce_categories <- function(g, node_group) {
       } else out <- as.factor(as.character(tie_attribute(g, edge_color)))
       if (length(unique(out)) == 1) {
         out <- rep("black", net_ties(g))
-        message("Please indicate a variable with more than one value or level when mapping edge colors.")
+        mnet_info("Please indicate a variable with more than one value or level when mapping edge colors.")
       }
     } else {
       out <- edge_color
@@ -397,12 +397,12 @@ check_edge_variables <- function(g, edge_color, edge_size) {
   if (!is.null(edge_color)) {
     if (any(!tolower(edge_color) %in% tolower(igraph::edge_attr_names(g))) &
         any(!edge_color %in% grDevices::colors())) {
-      message("Please make sure you spelled `edge_color` variable correctly.")
+      mnet_info("Please make sure you spelled `edge_color` variable correctly.")
     } 
   }
   if (!is.null(edge_size)) {
     if (!is.numeric(edge_size) & any(!tolower(edge_size) %in% tolower(igraph::edge_attr_names(g)))) {
-      message("Please make sure you spelled `edge_size` variable correctly.")
+      mnet_info("Please make sure you spelled `edge_size` variable correctly.")
     } 
   }
 }
@@ -505,7 +505,7 @@ map_edges <- function(p, g, out) {
       } else out <- as.factor(as.character(node_attribute(g, node_color)))
       if (length(unique(out)) == 1) {
         out <- rep("black", net_nodes(g))
-        message("Please indicate a variable with more than one value or level when mapping node colors.")
+        mnet_info("Please indicate a variable with more than one value or level when mapping node colors.")
       }
     } else out <- node_color
   } else {
@@ -518,12 +518,12 @@ check_node_variables <- function(g, node_color, node_size) {
   if (!is.null(node_color)) {
     if (any(!tolower(node_color) %in% tolower(igraph::vertex_attr_names(g))) &
         any(!node_color %in% grDevices::colors())) {
-      message("Please make sure you spelled `node_color` variable correctly.")
+      mnet_info("Please make sure you spelled `node_color` variable correctly.")
     } 
   }
   if (!is.null(node_size)) {
     if (!is.numeric(node_size) & any(!tolower(node_size) %in% tolower(igraph::vertex_attr_names(g)))) {
-      message("Please make sure you spelled `node_size` variable correctly.")
+      mnet_info("Please make sure you spelled `node_size` variable correctly.")
     }
   }
 }
@@ -713,7 +713,7 @@ graphs <- function(netlist, waves,
   if (missing(waves)) {
     if (length(netlist) > 4) {
       netlist <- netlist[c(1, length(netlist))]
-      message("Plotting first and last waves side-by-side. \nTo set the waves plotted use the 'waves = ' argument.")
+      mnet_info("Plotting first and last waves side-by-side. \nTo set the waves plotted use the 'waves = ' argument.")
     }
   } else if (!missing(waves)) {
     if (length(waves) == 1) netlist <- netlist[c(1:waves)] else 
@@ -746,7 +746,7 @@ graphs <- function(netlist, waves,
         graphr(netlist[[i]], layout = "star", center = names(netlist)[[i]], ...) + 
           ggtitle(names(netlist)[i]))
     } else {
-      message("Layouts were not standardised since not all nodes appear across waves.")  
+      mnet_info("Layouts were not standardised since not all nodes appear across waves.")  
       gs <- lapply(1:length(netlist), function(i)
         graphr(netlist[[i]], ...) + ggtitle(names(netlist)[i]))
     }
@@ -830,7 +830,7 @@ grapht <- function(tlist, keep_isolates = TRUE,
                    node_colour, edge_colour) {
   thisRequires("gganimate")
   thisRequires("gifski")
-  thisRequires("png")
+  # thisRequires("png")
   x <- y <- name <- status <- frame <- NULL
   # Check arguments
   if (missing(layout)) {
@@ -922,7 +922,7 @@ grapht <- function(tlist, keep_isolates = TRUE,
   } else {
     if (nrow(nodes_out)/length(unique(nodes_out$frame)) > 30 &
         any(unlist(lapply(tlist, node_is_isolate)) == TRUE)) {
-      message("Please considering deleting isolates to improve visualisation.")
+      mnet_info("Please considering deleting isolates to improve visualisation.")
     } 
     nodes_out$status <- TRUE
   }
