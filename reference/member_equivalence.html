@@ -34,7 +34,7 @@ assignment."><meta property="og:image" content="https://stocnet.github.io/manyne
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.5</span>
       </span>
     </div>
 
@@ -219,16 +219,26 @@ Ignored when <code>k = "strict"</code> or a discrete number is given for <code>k
 <span class="r-plt img"><img src="member_equivalence-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://statnet.org" class="external-link">"sna"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">nae</span> <span class="op">&lt;-</span> <span class="fu">node_in_automorphic</span><span class="op">(</span><span class="va">ison_southern_women</span>,</span></span>
 <span class="r-in"><span>  k <span class="op">=</span> <span class="st">"elbow"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">5 groups</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Evelyn Laura Theresa Brenda Charlotte Frances Eleanor Pearl Ruth  Verne Myra </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A      A     A       A      A         B       B       C     C     C     D    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... with 7 more values from this nodeset unprinted. Use `print(..., n = Inf)` to print all values.</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   E1    E2    E3    E4    E5    E6    E7    E8    E9    E10   E11   E12   E13  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A     A     A     A     A     B     B     B     E     D     D     D     D    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... with 1 more values from this nodeset unprinted. Use `print(..., n = Inf)` to print all values.</span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nae</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘statnet.common’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:base’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     attr, order</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ‘network’ 1.18.2 (2023-12-04), part of the Statnet Project</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * ‘news(package="network")’ for changes since last version</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * ‘citation("network")’ for citation information</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> * ‘https://statnet.org’ for help, support, and other information</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> sna: Tools for Social Network Analysis</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Version 2.8 created on 2024-09-07.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> copyright (c) 2005, Carter T. Butts, University of California-Irvine</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  For citation information, type citation("sna").</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  Type help(package="sna") to get started.</span>
 <span class="r-plt img"><img src="member_equivalence-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
