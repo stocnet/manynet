@@ -9,7 +9,7 @@
 \alias{to_blocks}
 \title{Modifying networks scope}
 \usage{
-to_ego(.data, node, max_dist = 1, min_dist = 0)
+to_ego(.data, node, max_dist = 1, min_dist = 0, direction = c("out", "in"))
 
 to_giant(.data)
 
@@ -38,6 +38,8 @@ By default 1.}
 By default 0.
 Increasing this to 1 excludes the ego,
 and 2 excludes ego's direct alters.}
+
+\item{direction}{String, either "out" or "in".}
 
 \item{...}{Arguments passed on to dplyr::filter}
 

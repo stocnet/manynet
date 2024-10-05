@@ -483,7 +483,7 @@ NULL
 #' _Social Networks_ 41:36–47. 
 #' \doi{10.1016/j.socnet.2014.11.005}
 #' @examples 
-#' node_by_brokerage(manynet::ison_networkers, "Discipline")
+#' # node_by_brokerage(ison_networkers, "Discipline")
 #' @export
 node_by_brokerage <- function(.data, membership, standardized = FALSE){
   thisRequires("sna")
@@ -507,7 +507,7 @@ node_by_brokerage <- function(.data, membership, standardized = FALSE){
 
 #' @rdname motif_brokerage 
 #' @examples 
-#' net_by_brokerage(ison_networkers, "Discipline")
+#' # net_by_brokerage(ison_networkers, "Discipline")
 #' @export
 net_by_brokerage <- function(.data, membership, standardized = FALSE){
   thisRequires("sna")

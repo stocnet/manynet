@@ -1,6 +1,6 @@
 Package: manynet
 Title: Many Ways to Make, Modify, Map, Mark, and Measure Myriad Networks
-Version: 1.2.3
+Version: 1.2.4
 Date: 2024-10-05
 Description: Many tools for making, modifying, mapping, marking, measuring, 
    and motifs and memberships of many different types of networks.
@@ -11,12 +11,12 @@ Description: Many tools for making, modifying, mapping, marking, measuring,
    and describing and visualizing networks with sensible defaults.
 URL: https://stocnet.github.io/manynet/
 BugReports: https://github.com/stocnet/manynet/issues
-Depends: R (>= 3.6.0)
 License: MIT + file LICENSE
 Language: en-GB
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
+Depends: R (>= 3.6.0)
 Imports:
     cli,
     dplyr (>= 1.1.0),

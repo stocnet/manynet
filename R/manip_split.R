@@ -25,17 +25,20 @@ NULL
 #' @export
 to_egos <- function(.data, 
                     max_dist = 1, 
-                    min_dist = 0) UseMethod("to_egos")
+                    min_dist = 0,
+                    direction = c("out","in")) UseMethod("to_egos")
 
 #' @export
 to_egos.igraph <- function(.data, 
                            max_dist = 1, 
-                           min_dist = 0){
+                           min_dist = 0,
+                           direction = c("out","in")){
   if(is_twomode(.data)) max_dist <- max_dist*2
   mnet_progress_step("Obtaining neighbourhoods")
   out <- igraph::make_ego_graph(.data,
                                 order = max_dist,
-                                mindist = min_dist)
+                                mindist = min_dist,
+                                mode = match.arg(direction))
   if(is_labelled(.data)) 
     names(out) <- node_names(.data)
   out
@@ -44,40 +47,44 @@ to_egos.igraph <- function(.data,
 #' @export
 to_egos.tbl_graph <- function(.data, 
                            max_dist = 1, 
-                           min_dist = 0){
+                           min_dist = 0,
+                           direction = c("out","in")){
   out <- to_egos(as_igraph(.data), 
                        max_dist, 
-                       min_dist)
+                       min_dist, direction)
   lapply(out, function(x) as_tidygraph(x))
 }
 
 #' @export
 to_egos.network <- function(.data, 
                               max_dist = 1, 
-                              min_dist = 0){
+                              min_dist = 0,
+                            direction = c("out","in")){
   out <- to_egos(as_igraph(.data), 
                        max_dist, 
-                       min_dist)
+                       min_dist, direction)
   lapply(out, function(x) as_network(x))
 }
 
 #' @export
 to_egos.matrix <- function(.data, 
                               max_dist = 1, 
-                              min_dist = 0){
+                              min_dist = 0,
+                           direction = c("out","in")){
   out <- to_egos(as_igraph(.data), 
                        max_dist, 
-                       min_dist)
+                       min_dist, direction)
   lapply(out, function(x) as_matrix(x))
 }
 
 #' @export
 to_egos.data.frame <- function(.data, 
                               max_dist = 1, 
-                              min_dist = 0){
+                              min_dist = 0,
+                              direction = c("out","in")){
   out <- to_egos(as_igraph(.data), 
                        max_dist, 
-                       min_dist)
+                       min_dist, direction)
   lapply(out, function(x) as_edgelist(x))
 }
 

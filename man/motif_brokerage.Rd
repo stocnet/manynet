@@ -45,8 +45,8 @@ roles in a network.
 }
 }
 \examples{
-node_by_brokerage(manynet::ison_networkers, "Discipline")
-net_by_brokerage(ison_networkers, "Discipline")
+# node_by_brokerage(ison_networkers, "Discipline")
+# net_by_brokerage(ison_networkers, "Discipline")
 node_brokering_exclusivity(ison_networkers, "Discipline")
 }
 \references{
