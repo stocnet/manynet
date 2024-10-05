@@ -114,9 +114,11 @@ plot(nse)
 plot(nre)
 }
 \donttest{
+if(require("sna", quietly = TRUE)){
 (nae <- node_in_automorphic(ison_southern_women,
   k = "elbow"))
 plot(nae)
+}
 }
 }
 \seealso{

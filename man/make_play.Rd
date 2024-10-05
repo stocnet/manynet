@@ -202,7 +202,7 @@ This can be used in in SEI, SEIS, SEIR, and SEIRS models.
   smeg <- generate_smallworld(15, 0.025)
   plot(play_diffusion(smeg, recovery = 0.4))
   #graphr(play_diffusion(ison_karateka))
-  plot(play_diffusions(smeg, times = 10))
+# plot(play_diffusions(smeg, times = 10))
 }
 \seealso{
 Other makes: 

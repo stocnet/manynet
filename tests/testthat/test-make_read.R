@@ -1,10 +1,6 @@
 # Test read family of functions
 
 test_that("read_edgelist works", {
-  expect_equal(read_edgelist(testthat::test_path("sheets", "test.xlsx")),
-               dplyr::tibble(From = c(1, 2, 2),
-                             To = c(2, 1, 3),
-                             Weight = c(1, 2, 3)))
   expect_equal(read_edgelist(testthat::test_path("sheets", "testCSVComma.csv"),
                              sv = "comma"),
                data.frame(From = c(1, 2, 2),
@@ -17,6 +13,11 @@ test_that("read_edgelist works", {
                              Weight = c(1, 2, 3)))
   expect_error(read_edgelist(testthat::test_path("sheets", "testCSVSemiColon.csv"),
                              sv = "SomethingWrong"))
+  testthat::skip_if_not_installed("readxl")
+  expect_equal(read_edgelist(testthat::test_path("sheets", "test.xlsx")),
+               dplyr::tibble(From = c(1, 2, 2),
+                             To = c(2, 1, 3),
+                             Weight = c(1, 2, 3)))
 })
 
 test_that("write_edgelist works", {
@@ -40,10 +41,6 @@ test_that("write_edgelist works", {
 })
 
 test_that("read_nodelist works", {
-  expect_equal(read_nodelist(testthat::test_path("sheets", "test.xlsx")),
-               dplyr::tibble(From = c(1, 2, 2),
-                             To = c(2, 1, 3),
-                             Weight = c(1, 2, 3)))
   expect_equal(read_nodelist(testthat::test_path("sheets", "testCSVComma.csv"),
                              sv = "comma"),
                data.frame(From = c(1, 2, 2),
@@ -56,6 +53,11 @@ test_that("read_nodelist works", {
                           Weight = c(1, 2, 3)))
   expect_error(read_nodelist(testthat::test_path("sheets", "testCSVSemiColon.csv"),
                              sv = "SomethingWrong"))
+  testthat::skip_if_not_installed("readxl")
+  expect_equal(read_nodelist(testthat::test_path("sheets", "test.xlsx")),
+               dplyr::tibble(From = c(1, 2, 2),
+                             To = c(2, 1, 3),
+                             Weight = c(1, 2, 3)))
 })
 
 test_that("write_nodelist works", {
