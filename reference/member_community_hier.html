@@ -31,7 +31,7 @@ and their logic or domain of inspiration."><meta property="og:image" content="ht
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.6</span>
       </span>
     </div>
 
@@ -223,7 +223,9 @@ information about the hierarchical merging of communities is collected.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">2 groups</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Betty Sue   Alice Jane  Dale  Pam   Carol Tina </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A     A     A     A     A     A     B     B    </span>
+<span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://andrie.github.io/ggdendro/" class="external-link">"ggdendro"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">node_in_betweenness</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-plt img"><img src="member_community_hier-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu">node_in_greedy</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">3 groups</span></span>
