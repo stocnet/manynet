@@ -86,6 +86,7 @@
 #'   it is recommended to calculate all edge-related statistics prior
 #'   to using this function.
 #'   Edges can also be sized by declaring a numeric size or vector instead.
+#' @param snap Logical scalar, whether the layout should be snapped to a grid.
 #' @param ... Extra arguments to pass on to the layout algorithm, if necessary.
 #' @return A `ggplot2::ggplot()` object.
 #'   The last plot can be saved to the file system using `ggplot2::ggsave()`.
@@ -103,11 +104,11 @@
 #' @export
 graphr <- function(.data, layout, labels = TRUE,
                    node_color, node_shape, node_size, node_group,
-                   edge_color, edge_size, ...,
+                   edge_color, edge_size, snap = FALSE, ...,
                    node_colour, edge_colour) {
   g <- as_tidygraph(.data)
   if (missing(layout)) {
-    if (length(g) == 3 | length(g) == 4) {
+    if (net_nodes(g) <= 4) {
       layout <- "configuration"
     } else if (is_twomode(g)) {
       layout <- "hierarchy"
@@ -141,7 +142,7 @@ graphr <- function(.data, layout, labels = TRUE,
     edge_size <- as.character(substitute(edge_size))
   }
   # Add layout ----
-  p <- .graph_layout(g, layout, labels, node_group, ...)
+  p <- .graph_layout(g, layout, labels, node_group, snap, ...)
   # Add edges ----
   p <- .graph_edges(p, g, edge_color, edge_size, node_size)
   # Add nodes ----
@@ -153,7 +154,7 @@ graphr <- function(.data, layout, labels = TRUE,
   p
 }
 
-.graph_layout <- function(g, layout, labels, node_group, ...) {
+.graph_layout <- function(g, layout, labels, node_group, snap, ...) {
   name <- NULL
   dots <- list(...)
   if ("x" %in% names(dots) & "y" %in% names(dots)) {
@@ -177,6 +178,14 @@ graphr <- function(.data, layout, labels = TRUE,
                                            label = node_group), data = lo) +
       ggplot2::scale_fill_manual(values = colorsafe_palette,
                                  guide = ggplot2::guide_legend("Group"))
+  }
+  if(snap){
+    mnet_info("Snapping layout coordinates to grid.")
+    if(grepl("lattice", 
+             igraph::graph_attr(attr(p$data, "graph"), "grand")$name, 
+             ignore.case = TRUE))
+      p$data[,c("x","y")] <- round(p$data[,c("x","y")])
+    else p$data[,c("x","y")] <- depth_first_recursive_search(p)
   }
   p
 }

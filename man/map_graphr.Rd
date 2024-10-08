@@ -15,6 +15,7 @@ graphr(
   node_group,
   edge_color,
   edge_size,
+  snap = FALSE,
   ...,
   node_colour,
   edge_colour
@@ -85,6 +86,8 @@ Since this function expects this to be an existing variable,
 it is recommended to calculate all edge-related statistics prior
 to using this function.
 Edges can also be sized by declaring a numeric size or vector instead.}
+
+\item{snap}{Logical scalar, whether the layout should be snapped to a grid.}
 
 \item{...}{Extra arguments to pass on to the layout algorithm, if necessary.}
 }
