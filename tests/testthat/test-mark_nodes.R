@@ -1,12 +1,34 @@
-test_that("node cuts works", {
-  expect_s3_class(node_is_cutpoint(ison_algebra), "node_mark")
+set.seed(1234)
+
+test_that("node_is_cutpoint", {
+  expect_true(exists("node_is_cutpoint"))
+  test_that("returns correct type", {
+    expect_s3_class(node_is_cutpoint(ison_algebra), "node_mark")
+  })
   expect_length(node_is_cutpoint(ison_southern_women),
                 c(net_nodes(ison_southern_women)))
 })
 
-test_that("node isolate works", {
-  expect_s3_class(node_is_isolate(ison_brandes), "logical")
-  expect_equal(length(node_is_isolate(ison_brandes)), c(net_nodes(ison_brandes)))
+test_that("node_is_isolate", {
+  expect_true(exists("node_is_isolate"))
+  test <- node_is_isolate(ison_brandes)
+  test_that("returns correct values", {
+    expect_equal(length(test), c(net_nodes(ison_brandes)))
+  })
+  test_that("returns correct type", {
+    expect_s3_class(test, "logical")
+  })
+})
+
+test_that("node_is_fold", {
+  expect_true(exists("node_is_fold"))
+  test <- node_is_fold(create_explicit(A-B, B-C, A-C, C-D, C-E, D-E))
+  test_that("returns correct values", {
+    expect_equal(as.logical(test), c(F,F,T,F,F))
+  })
+  test_that("returns correct type", {
+    expect_s3_class(test, "node_mark")
+  })
 })
 
 test_that("node_is_max works", {
@@ -35,9 +57,6 @@ test_that("additional node mark functions work", {
   expect_equal(as.character(node_is_core(ison_brandes)),
                c("FALSE", "FALSE", "TRUE", "TRUE", "FALSE", "FALSE", "FALSE",
                  "FALSE", "TRUE", "FALSE", "FALSE"))
-  set.seed(1234)
-  expect_equal(as.character(node_is_fold(create_explicit(A-B, B-C, A-C, C-D, C-E, D-E))),
-               c("FALSE", "FALSE", "TRUE", "FALSE", "FALSE"))
   set.seed(1234)
   expect_equal(as.character(node_is_mentor(ison_adolescents)),
                c("FALSE", "TRUE", "TRUE", "FALSE", "FALSE", "FALSE", "FALSE", "FALSE"))
