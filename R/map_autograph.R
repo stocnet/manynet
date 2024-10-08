@@ -233,9 +233,15 @@ graphr <- function(.data, layout, labels = TRUE,
     if (length(unique(out[["nshape"]])) > 1) 
       p <- p + ggplot2::guides(shape = ggplot2::guide_legend(
         title = ifelse(is_twomode(g) & is.null(node_shape), "Node Mode", "Node Shape")))
-    if (length(unique(out[["ncolor"]])) > 1)
-      p <- p + ggplot2::scale_colour_manual(values = colorsafe_palette,
-                                            guide = ggplot2::guide_legend("Node Color"))
+    if (length(unique(out[["ncolor"]])) > 1){
+      if(length(unique(out[["ncolor"]])) ==2){
+        p <- p + ggplot2::scale_colour_manual(values = colorsafe_palette[c(2,1)],
+                                              guide = ggplot2::guide_legend("Node Color"))
+      } else {
+        p <- p + ggplot2::scale_colour_manual(values = colorsafe_palette,
+                                              guide = ggplot2::guide_legend("Node Color"))
+      }
+    }
   }
   # Consider rescaling nodes
   p <- p + ggplot2::scale_size(range = c(1/net_nodes(g)*50, 1/net_nodes(g)*100))
