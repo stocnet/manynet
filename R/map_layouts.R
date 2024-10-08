@@ -4,7 +4,7 @@
 #' 
 #' @description
 #'   Configurational layouts locate nodes at symmetric coordinates
-#'   to help illustrate the particular layouts.
+#'   to help illustrate particular configurations.
 #'   Currently "triad" and "quad" layouts are available.
 #'   The "configuration" layout will choose the appropriate configurational
 #'   layout automatically.
@@ -18,11 +18,23 @@ NULL
 #' @export
 layout_tbl_graph_configuration <- function(.data,
                                            circular = FALSE, times = 1000){
-  if (net_nodes(.data) == 3) {
+  if (net_nodes(.data) == 2) {
+    layout_tbl_graph_dyad(.data, circular = circular, times = times)
+  } else if (net_nodes(.data) == 3) {
     layout_tbl_graph_triad(.data, circular = circular, times = times)
   } else if (net_nodes(.data) == 4) {
     layout_tbl_graph_quad(.data, circular = circular, times = times)
-  }}
+  }
+}
+
+#' @rdname map_layout_configuration
+#' @export
+layout_tbl_graph_dyad <- function(.data,
+                                   circular = FALSE, times = 1000){
+  res <- matrix(c(0,0,
+                  1,0), 2, 2, byrow = TRUE)
+  .to_lo(res)  
+}
 
 #' @rdname map_layout_configuration
 #' @export

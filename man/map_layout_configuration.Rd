@@ -3,11 +3,14 @@
 \name{map_layout_configuration}
 \alias{map_layout_configuration}
 \alias{layout_tbl_graph_configuration}
+\alias{layout_tbl_graph_dyad}
 \alias{layout_tbl_graph_triad}
 \alias{layout_tbl_graph_quad}
 \title{Layout algorithms based on configurational positions}
 \usage{
 layout_tbl_graph_configuration(.data, circular = FALSE, times = 1000)
+
+layout_tbl_graph_dyad(.data, circular = FALSE, times = 1000)
 
 layout_tbl_graph_triad(.data, circular = FALSE, times = 1000)
 
@@ -30,7 +33,7 @@ Only possible for some layouts. Defaults to FALSE.}
 }
 \description{
 Configurational layouts locate nodes at symmetric coordinates
-to help illustrate the particular layouts.
+to help illustrate particular configurations.
 Currently "triad" and "quad" layouts are available.
 The "configuration" layout will choose the appropriate configurational
 layout automatically.
