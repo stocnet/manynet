@@ -3,6 +3,7 @@
 \name{mark_nodes}
 \alias{mark_nodes}
 \alias{node_is_isolate}
+\alias{node_is_pendant}
 \alias{node_is_independent}
 \alias{node_is_cutpoint}
 \alias{node_is_fold}
@@ -10,6 +11,8 @@
 \title{Marking nodes based on structural properties}
 \usage{
 node_is_isolate(.data)
+
+node_is_pendant(.data)
 
 node_is_independent(.data)
 

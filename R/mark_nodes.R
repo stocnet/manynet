@@ -38,6 +38,19 @@ node_is_isolate <- function(.data){
 }
 
 #' @rdname mark_nodes
+#' @export
+node_is_pendant <- function(.data){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  mat <- as_matrix(.data)
+  if(is_twomode(.data)){
+    out <- c(rowSums(mat)==1, colSums(mat)==1)
+  } else {
+    out <- rowSums(mat)==1 & colSums(mat)==1
+  }
+  make_node_mark(out, .data)
+}
+
+#' @rdname mark_nodes
 #' @importFrom igraph largest_ivs
 #' @references
 #' ## On independent sets
