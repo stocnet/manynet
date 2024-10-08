@@ -24,6 +24,8 @@ tasks <- to_uniplex(ison_algebra, "tasks")
 
 ## Setting up
 
+<img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExbDNsNmZnNzJ2YzRyYzE5cDl4M2pxeGU4d2M1bnMwZm1qd3JvMWw3MyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/N7AOIqqUpjXUc/giphy.gif" alt="gif of man not knowing how to study"/>
+
 The data we're going to use here, "ison_algebra", is included in the `{manynet}` package.
 Do you remember how to call the data?
 Can you find out some more information about it?
@@ -282,7 +284,8 @@ Now let's look at the friendship network, 'friends'.
 We're interested here in how many _components_ there are.
 By default, the `net_components()` function will
 return the number of _strong_ components for directed networks.
-For _weak_ components, you will need to first make the network undirected.
+For _weak_ components, you will need to first make the network 
+<dfn title='An undirected network is one in which the edges do not have orientations.'>undirected</dfn>.
 Remember the difference between weak and strong components?
 
 ```{r weak-strong, echo = FALSE, purl = FALSE}
