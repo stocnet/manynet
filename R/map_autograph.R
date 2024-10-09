@@ -402,10 +402,11 @@ reduce_categories <- function(g, node_group) {
 
 .infer_line_type <- function(g) {
   if (is_signed(g)) {
-    out <- ifelse(as.numeric(tie_attribute(g, "sign")) >= 0,
+    out <- ifelse(as.numeric(tie_signs(g)) >= 0,
            "solid", "dashed")
-    ifelse(length(unique(out)) == 1, unique(out), out)
-  } else "solid"
+    # ifelse(length(unique(out)) == 1, unique(out), out)
+  } else out <- "solid"
+  out
 }
 
 check_edge_variables <- function(g, edge_color, edge_size) {
