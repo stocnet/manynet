@@ -10,8 +10,9 @@ test_that("node_is_cutpoint", {
 })
 
 test_that("node_is_isolate", {
-  expect_true(exists("node_is_isolate"))
-  test <- node_is_isolate(ison_brandes)
+  f <- node_is_isolate
+  expect_true(is.function(f))
+  test <- f(ison_brandes)
   test_that("returns correct values", {
     expect_equal(length(test), c(net_nodes(ison_brandes)))
   })
