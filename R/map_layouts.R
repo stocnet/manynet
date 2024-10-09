@@ -437,6 +437,17 @@ nrm <- function(x, digits = 3) {
 
 # Grid ####
 
+#' Layouts for snapping layouts to a grid
+#'
+#' @description The function uses approximate pattern matching
+#'   to redistribute coarse layouts on square grid points, while
+#'   preserving the topological relationships among the nodes (see Inoue et al. 2012). 
+#' @references
+#' Inoue, Kentaro, Shinichi Shimozono, Hideaki Yoshida, and Hiroyuki Kurata. 2012. 
+#' “Application of Approximate Pattern Matching in Two Dimensional Spaces to Grid Layout for Biochemical Network Maps” edited by J. Bourdon. 
+#' _PLoS ONE_ 7(6):e37739.
+#' \doi{https://doi.org/10.1371/journal.pone.0037739}.
+#' @keywords internal
 depth_first_recursive_search <- function(layout) {
   if("ggraph" %in% class(layout)) layout <- layout$data[,c("x","y")]
   layout <- as.data.frame(layout)
