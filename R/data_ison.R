@@ -684,6 +684,7 @@
 #' @description
 #'   This network consists of the blogosphere around the time of the 2004
 #'   US presidential election until February 2005.
+#'   The 2004 election was the first in which blogging played a significant role.
 #'   Ties were constructed from a crawl of the front page of each blog.
 #'   
 #'   Political leaning is indicated as "Liberal" (or left leaning) or 
@@ -692,14 +693,50 @@
 #'   based on incoming and outgoing links and posts.
 #' @docType data
 #' @keywords datasets
-#' @name ison_blogs
+#' @name irps_blogs
 #' @references
-#' Adamic, Lada A., and Natalie Glance. 2005.
-#' "The political blogosphere and the 2004 US Election", 
-#' _Proceedings of the WWW-2005 Workshop on the Weblogging Ecosystem_.
-#' @usage data(ison_blogs)
+#' Adamic, Lada, and Natalie Glance. 2005.
+#' "The political blogosphere and the 2004 US Election: Divided they blog". 
+#' _LinkKDD '05: Proceedings of the 3rd international workshop on Link discovery_, 36-43.
+#' \doi{10.1145/1134271.1134277}
+#' @usage data(irps_blogs)
 #' @format 
 #'   ```{r, echo = FALSE}
-#'   ison_blogs
+#'   irps_blogs
 #'   ```
-"ison_blogs"
+"irps_blogs"
+
+## WWI ####
+
+#' One-mode signed network of relationships between European major powers (Antal et al. 2006)
+#'
+#' @description
+#'   This network records the evolution of the major relationship changes
+#'   between the protagonists of World War I (WWI) from 1872 to 1907.
+#'   It is incomplete both in terms of (eventual) parties to the war as well
+#'   as some other relations, but gives a good overview of the main alliances
+#'   and enmities.
+#'   
+#'   The data series begins with the Three Emperors' League (1872, revived in 1881)
+#'   between Germany, Austria-Hungary, and Russia.
+#'   The Triple Alliance in 1882 joined Germany, Austria-Hungary, and Italy into
+#'   a bloc that lasted until WWI.
+#'   A bilateral alliance between Germany and Russia lapsed in 1890,
+#'   and a French-Russian alliance developed between 1891-1894.
+#'   The Entente Cordiale thawed and then fostered relations between Great Britain
+#'   and France in 1904, and a British-Russian agreement in 1907 bound
+#'   Great Britain, France, and Russia into the Triple Entente.
+#' @docType data
+#' @keywords datasets
+#' @name irps_wwi
+#' @references
+#' Antal, Tibor, Pavel Krapivsky, and Sidney Redner. 2006.
+#' "Social balance on networks: The dynamics of friendship and enmity". 
+#' _Physica D_ 224: 130-136.
+#' \doi{10.1016/j.physd.2006.09.028}
+#' @usage data(irps_wwi)
+#' @format 
+#'   ```{r, echo = FALSE}
+#'   irps_wwi
+#'   ```
+"irps_wwi"
