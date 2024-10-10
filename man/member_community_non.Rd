@@ -2,6 +2,7 @@
 % Please edit documentation in R/member_community.R
 \name{member_community_non}
 \alias{member_community_non}
+\alias{node_in_community}
 \alias{node_in_optimal}
 \alias{node_in_partition}
 \alias{node_in_infomap}
@@ -11,6 +12,8 @@
 \alias{node_in_leiden}
 \title{Non-hierarchical community partitioning algorithms}
 \usage{
+node_in_community(.data)
+
 node_in_optimal(.data)
 
 node_in_partition(.data)
@@ -50,6 +53,9 @@ and larger values make missing ties more important.}
 These functions offer algorithms for partitioning
 networks into sets of communities:
 \itemize{
+\item \code{node_in_community()} runs either optimal or, for larger networks,
+finds the algorithm that maximises modularity and returns that membership
+vector.
 \item \code{node_in_optimal()} is a problem-solving algorithm that seeks to maximise
 modularity over all possible partitions.
 \item \code{node_in_partition()} is a greedy, iterative, deterministic
@@ -69,6 +75,16 @@ The different algorithms offer various advantages in terms of computation time,
 availability on different types of networks, ability to maximise modularity,
 and their logic or domain of inspiration.
 }
+\section{Community}{
+
+This function runs through all available community detection algorithms
+for a given network type, finds the algorithm that returns the
+largest modularity score, and returns the corresponding membership
+partition.
+Where feasible (a small enough network), the optimal problem solving
+technique is used to ensure the maximal modularity partition.
+}
+
 \section{Optimal}{
 
 The general idea is to calculate the modularity of all possible partitions,

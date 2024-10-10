@@ -6,6 +6,9 @@
 #'   These functions offer algorithms for partitioning
 #'   networks into sets of communities:
 #' 
+#'   - `node_in_community()` runs either optimal or, for larger networks, 
+#'   finds the algorithm that maximises modularity and returns that membership
+#'   vector.
 #'   - `node_in_optimal()` is a problem-solving algorithm that seeks to maximise 
 #'   modularity over all possible partitions.
 #'   - `node_in_partition()` is a greedy, iterative, deterministic
@@ -28,6 +31,56 @@
 #' @name member_community_non
 #' @family memberships
 NULL
+
+#' @rdname member_community_non 
+#' @section Community:
+#'   This function runs through all available community detection algorithms 
+#'   for a given network type, finds the algorithm that returns the
+#'   largest modularity score, and returns the corresponding membership
+#'   partition.
+#'   Where feasible (a small enough network), the optimal problem solving
+#'   technique is used to ensure the maximal modularity partition.
+#' @export
+node_in_community <- function(.data){
+  if(net_nodes(.data)<100){
+    # don't use node_in_betweenness because slow and poorer quality to optimal
+    mnet_success("{.fn node_in_optimal} available and", 
+                 "will return the highest modularity partition.")
+    node_in_optimal(.data)
+  } else {
+    poss_algs <- c("node_in_infomap",
+                   "node_in_spinglass",
+                   "node_in_fluid",
+                   "node_in_louvain",
+                   "node_in_leiden",
+                   "node_in_greedy",
+                   "node_in_eigen",
+                   "node_in_walktrap")
+    if(!manynet::is_connected(.data)){
+      notforconnected <- c("node_in_spinglass", 
+                           "node_in_fluid")
+      mnet_info("Excluding {.fn {notforconnected}} because network unconnected.")
+      poss_algs <- setdiff(poss_algs, notforconnected)
+    }
+    if(manynet::is_directed(.data)){
+      notfordirected <- c("node_in_louvain", 
+                          "node_in_leiden",
+                          "node_in_eigen")
+      mnet_info("Excluding {.fn {notfordirected}} because network directed.")
+      poss_algs <- setdiff(poss_algs, notfordirected)
+    }
+    mnet_info("Considering each of {.fn {poss_algs}}.")
+    candidates <- lapply(mnet_progress_along(poss_algs), function(comm){
+      memb <- get(poss_algs[comm])(.data)
+      mod <- net_modularity(.data, memb)
+      list(memb, mod)
+    })
+    mods <- unlist(sapply(candidates, "[", 2))
+    maxmod <- which.max(mods)
+    mnet_success("{.fn {poss_algs[maxmod]}} returns the highest modularity ({round(mods[maxmod],3)}).")
+    candidates[[maxmod]][[1]]
+  }
+}
 
 #' @rdname member_community_non 
 #' @section Optimal:
@@ -453,3 +506,27 @@ node_in_walktrap <- function(.data, times = 50){
   out
 }
 
+# #' @rdname member_community_hier 
+# #' @section Ensemble:
+# #'   Ensemble-based community detection runs community detection
+# #'   algorithms over multilayer or multiplex networks.
+# #' @references
+# #' ## On ensemble-based community detection
+# #' Tagarelli, Andrea, Alessia Amelio, and Francesco Gullo. 2017.
+# #' "Ensemble-based Community Detection in Multilayer Networks".
+# #' _Data Mining and Knowledge Discovery_, 31: 1506-1543.
+# #' \doi{10.1007/s10618-017-0528-8}
+# #' @examples
+# #' node_in_ensemble(ison_adolescents)
+# #' @export
+# node_in_ensemble <- function(.data, linkage_constraint = TRUE){
+#   if(missing(.data)) {expect_nodes(); .data <- .G()}
+#   clust <- igraph::cluster_walktrap(manynet::as_igraph(.data))
+#   out <- clust$membership
+#   make_node_member(out, .data)
+#   out <- make_node_member(out, .data)
+#   attr(out, "hc") <- stats::as.hclust(clust, 
+#                                       use.modularity = igraph::is_connected(.data))
+#   attr(out, "k") <- max(clust$membership)
+#   out
+# }
