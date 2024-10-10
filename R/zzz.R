@@ -54,12 +54,20 @@ mnet_progress_step <- function(..., .envir = parent.frame()){
   cli::cli_progress_step(..., .envir = .envir)
 }
 
-mnet_info <- function(...){
+mnet_progress_along <- function(..., .envir = parent.frame()){
   if(getOption("manynet_verbosity", default = "quiet")!="quiet")
-    cli::cli_alert_info(...)
+    cli::cli_progress_along(..., .envir = .envir)
 }
 
-mnet_unavailable <- function(...){
+mnet_info <- function(..., .envir = parent.frame()){
+  if(getOption("manynet_verbosity", default = "quiet")!="quiet")
+    cli::cli_alert_info(paste(...), .envir = .envir)
+}
+
+mnet_success <- function(..., .envir = parent.frame()){
+  if(getOption("manynet_verbosity", default = "quiet")!="quiet")
+    cli::cli_alert_success(paste(...), .envir = .envir)
+}
 
 mnet_unavailable <- function(..., .envir = parent.frame()){
   if(getOption("manynet_verbosity", default = "quiet")!="quiet")
