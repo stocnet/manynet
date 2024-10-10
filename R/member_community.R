@@ -45,6 +45,9 @@ NULL
 #' @export
 node_in_optimal <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(net_nodes(.data)>100) 
+    cli::cli_alert_danger(paste("This algorithm may take some time", 
+    "or even run out of memory on such a large network."))
   out <- igraph::cluster_optimal(manynet::as_igraph(.data)
   )$membership
   make_node_member(out, .data)
@@ -67,7 +70,7 @@ node_in_partition <- function(.data){
   n <- net_nodes(.data)
   group_size <- ifelse(n %% 2 == 0, n/2, (n+1)/2)
   
-  # count internal and external costs of each vertex
+  # count internal and external costs of each node
   g <- as_matrix(to_multilevel(.data))
   g1 <- g[1:group_size, 1:group_size]
   g2 <- g[(group_size+1):n, (group_size+1):n]
@@ -79,14 +82,14 @@ node_in_partition <- function(.data){
   g1.intcosts <- rowSums(g1)
   g1.extcosts <- rowSums(intergroup)
   
-  # count edge costs of each vertex
+  # count edge costs of each nodes
   g1.net <- g1.extcosts - g1.intcosts
   g2.net <- g2.extcosts - g2.intcosts
   
   g1.net <- sort(g1.net, decreasing = TRUE)
   g2.net <- sort(g2.net, decreasing = TRUE)
   
-  # swap pairs of vertices (one from each group) that give a positive sum of net edge costs
+  # swap pairs of nodes (one from each group) that give a positive sum of net tie costs
   if(length(g1.net)!=length(g2.net)) {
     g2.net <- c(g2.net,0)
   } else {g2.net}
@@ -168,11 +171,16 @@ node_in_infomap <- function(.data, times = 50){
 #' @export
 node_in_spinglass <- function(.data, max_k = 200, resolution = 1){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  out <- igraph::cluster_spinglass(manynet::as_igraph(.data), 
-                                   spins = max_k, gamma = resolution,
-                                   implementation = ifelse(manynet::is_signed(.data), "neg", "orig")
-  )$membership
-  make_node_member(out, .data)
+  if(!igraph::is_connected(.data)) # note manynet::is_connected will return false
+    mnet_unavailable("This algorithm only works for connected networks.",
+                     "We suggest using `to_giant()`", 
+                     "to select the largest component.") else {
+      out <- igraph::cluster_spinglass(manynet::as_igraph(.data), 
+                                       spins = max_k, gamma = resolution,
+                                       implementation = ifelse(manynet::is_signed(.data), "neg", "orig")
+      )$membership
+      make_node_member(out, .data)
+    }
 }
 
 #' @rdname member_community_non 
@@ -195,13 +203,29 @@ node_in_spinglass <- function(.data, max_k = 200, resolution = 1){
 node_in_fluid <- function(.data) {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   .data <- as_igraph(.data)
-  mods <- vapply(seq.int(net_nodes(.data)), function(x)
-    igraph::modularity(.data, membership = igraph::membership(
-      igraph::cluster_fluid_communities(.data, x))),
-                 FUN.VALUE = numeric(1))
-  out <- igraph::membership(igraph::cluster_fluid_communities(
-    .data, no.of.communities = which.max(mods)))
-  make_node_member(out, .data)
+  if (!igraph::is_connected(.data)) {
+    mnet_unavailable("This algorithm only works for connected networks.",
+                     "We suggest using `to_giant()`", 
+                     "to select the largest component.")
+  } else {
+    if(is_complex(.data)){
+      mnet_info("This algorithm only works for simple networks.", 
+                      "Converting to simplex.")
+      .data <- to_simplex(.data)
+    }
+    if(is_directed(.data)){
+      mnet_info("This algorithm only works for undirected networks.", 
+                      "Converting to undirected")
+      .data <- to_undirected(.data)
+    }
+    mods <- vapply(seq_nodes(.data), function(x)
+      igraph::modularity(.data, membership = igraph::membership(
+        igraph::cluster_fluid_communities(.data, x))),
+      FUN.VALUE = numeric(1))
+    out <- igraph::membership(igraph::cluster_fluid_communities(
+      .data, no.of.communities = which.max(mods)))
+    make_node_member(out, .data)
+  }
 }
 
 #' @rdname member_community_non 
@@ -222,6 +246,11 @@ node_in_fluid <- function(.data) {
 #' @export
 node_in_louvain <- function(.data, resolution = 1){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(is_directed(.data)){
+    mnet_info("This algorithm only works for undirected networks.", 
+              "Converting to undirected")
+    .data <- to_undirected(.data)
+  }
   out <- igraph::cluster_louvain(manynet::as_igraph(.data), 
                                 resolution = resolution
   )$membership
@@ -254,6 +283,11 @@ node_in_louvain <- function(.data, resolution = 1){
 #' @export
 node_in_leiden <- function(.data, resolution = 1){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(is_directed(.data)){
+    mnet_info("This algorithm only works for undirected networks.", 
+              "Converting to undirected")
+    .data <- to_undirected(.data)
+  }
   if(is_weighted(.data)){ # Traag resolution default
     n <- net_nodes(.data)
     resolution <- sum(tie_weights(.data))/(n*(n - 1)/2)
@@ -314,6 +348,9 @@ NULL
 #' @export
 node_in_betweenness <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(net_nodes(.data)>100) 
+    cli::cli_alert_danger(paste("This algorithm may take some time", 
+                                "or even run out of memory on such a large network."))
   clust <- suppressWarnings(igraph::cluster_edge_betweenness(
     manynet::as_igraph(.data)))
   out <- clust$membership
@@ -373,6 +410,11 @@ node_in_greedy <- function(.data){
 #' @export
 node_in_eigen <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(is_directed(.data)){
+    mnet_info("This algorithm only works for undirected networks.", 
+              "Converting to undirected")
+    .data <- to_undirected(.data)
+  }
   clust <- igraph::cluster_leading_eigen(as_igraph(.data))
   out <- clust$membership
   make_node_member(out, .data)
