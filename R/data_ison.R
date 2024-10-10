@@ -668,14 +668,14 @@
 #'   
 #' @docType data
 #' @keywords datasets
-#' @name ison_books
+#' @name irps_books
 #' @author Valdis Krebs, Mark Newman
-#' @usage data(ison_books)
+#' @usage data(irps_books)
 #' @format 
 #'   ```{r, echo = FALSE}
-#'   ison_books
+#'   irps_books
 #'   ```
-"ison_books"
+"irps_books"
 
 ## Blogs ####
 

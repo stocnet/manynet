@@ -34,6 +34,7 @@ data(irps_blogs)
 \description{
 This network consists of the blogosphere around the time of the 2004
 US presidential election until February 2005.
+The 2004 election was the first in which blogging played a significant role.
 Ties were constructed from a crawl of the front page of each blog.
 
 Political leaning is indicated as "Liberal" (or left leaning) or
@@ -42,8 +43,9 @@ Some blogs were labelled manually,
 based on incoming and outgoing links and posts.
 }
 \references{
-Adamic, Lada A., and Natalie Glance. 2005.
-"The political blogosphere and the 2004 US Election",
-\emph{Proceedings of the WWW-2005 Workshop on the Weblogging Ecosystem}.
+Adamic, Lada, and Natalie Glance. 2005.
+"The political blogosphere and the 2004 US Election: Divided they blog".
+\emph{LinkKDD '05: Proceedings of the 3rd international workshop on Link discovery}, 36-43.
+\doi{10.1145/1134271.1134277}
 }
 \keyword{datasets}
