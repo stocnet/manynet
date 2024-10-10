@@ -24,6 +24,13 @@ tasks <- to_uniplex(ison_algebra, "tasks")
 
 ## Setting up
 
+In the last tutorial, we looked at network centrality and centralisation.
+Nodal centrality is often thought to be an expression of structural inequality.
+But nodes don't always seek to differentiate themselves in a network.
+Sometimes they are interested in being part of a group.
+In this tutorial, we're going to consider various ways in which 'groupiness'
+might be examined.
+
 <img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExbDNsNmZnNzJ2YzRyYzE5cDl4M2pxeGU4d2M1bnMwZm1qd3JvMWw3MyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/N7AOIqqUpjXUc/giphy.gif" alt="gif of man not knowing how to study"/>
 
 The data we're going to use here, "ison_algebra", is included in the `{manynet}` package.
@@ -220,7 +227,13 @@ the network as a whole.
 
 ## Closure
 
-Next let's calculate _reciprocity_ in the task network.
+In this section we're going to move from generalised measures of cohesion,
+like density, to more localised measures of cohesion.
+These are not only measures of cohesion though,
+but are also often associated with certain mechanisms of closure.
+
+### Reciprocity
+
 While one could do this by hand,
 it's more efficient to do this using the `{manynet}` package.
 Can you guess the correct name of the function?
