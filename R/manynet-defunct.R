@@ -714,8 +714,24 @@ node_core <- function(.data) {
 #' @describeIn defunct Deprecated on 2024-10-10.
 #' @export
 node_by_quad <- function(.data) {
-  .Deprecated("node_by_quad", package = "manynet",
-              old = "node_by_tetrad")
+  .Deprecated("node_by_tetrad", package = "manynet",
+              old = "node_by_quad")
   node_by_tetrad(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-10-10.
+#' @export
+net_by_quad <- function(.data) {
+  .Deprecated("net_by_tetrad", package = "manynet",
+              old = "net_by_quad")
+  net_by_tetrad(.data)
+}
+
+#' @describeIn defunct Deprecated on 2024-10-10.
+#' @export
+layout_tbl_graph_quad <- function(.data, circular = FALSE, times = 1000) {
+  .Deprecated("layout_tbl_graph_tetrad", package = "manynet",
+              old = "layout_tbl_graph_quad")
+  layout_tbl_graph_tetrad(.data, circular = circular, times = times)
 }
 
