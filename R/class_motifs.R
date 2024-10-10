@@ -8,6 +8,7 @@ make_node_motif <- function(out, .data) {
 make_network_motif <- function(out, .data) {
   class(out) <- c("network_motif", class(out))
   attr(out, "mode") <- net_dims(.data)
+  attr(out, "call") <- deparse(sys.calls())
   out
 }
 
@@ -50,7 +51,7 @@ plot.node_motif <- function(x, ...) {
   
 #' @export
 plot.network_motif <- function(x, ...) {
-  motifs <- dimnames(x)[[2]]
+  motifs <- attr(x, "names")
   if("X4" %in% motifs){
     graphs(create_motifs(4), waves = 1:11)
   } else if("021D" %in% motifs){

@@ -5,7 +5,9 @@
 \alias{layout_tbl_graph_configuration}
 \alias{layout_tbl_graph_dyad}
 \alias{layout_tbl_graph_triad}
-\alias{layout_tbl_graph_quad}
+\alias{layout_tbl_graph_tetrad}
+\alias{layout_tbl_graph_pentad}
+\alias{layout_tbl_graph_hexad}
 \title{Layout algorithms based on configurational positions}
 \usage{
 layout_tbl_graph_configuration(.data, circular = FALSE, times = 1000)
@@ -14,7 +16,11 @@ layout_tbl_graph_dyad(.data, circular = FALSE, times = 1000)
 
 layout_tbl_graph_triad(.data, circular = FALSE, times = 1000)
 
-layout_tbl_graph_quad(.data, circular = FALSE, times = 1000)
+layout_tbl_graph_tetrad(.data, circular = FALSE, times = 1000)
+
+layout_tbl_graph_pentad(.data, circular = FALSE, times = 1000)
+
+layout_tbl_graph_hexad(.data, circular = FALSE, times = 1000)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
