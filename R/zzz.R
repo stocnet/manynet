@@ -49,9 +49,9 @@
 
 }
 
-mnet_progress_step <- function(...){
+mnet_progress_step <- function(..., .envir = parent.frame()){
   if(getOption("manynet_verbosity", default = "quiet")!="quiet")
-  cli::cli_progress_step(...)
+  cli::cli_progress_step(..., .envir = .envir)
 }
 
 mnet_info <- function(...){
@@ -60,11 +60,14 @@ mnet_info <- function(...){
 }
 
 mnet_unavailable <- function(...){
+
+mnet_unavailable <- function(..., .envir = parent.frame()){
   if(getOption("manynet_verbosity", default = "quiet")!="quiet")
     cli::cli_abort(paste(..., 
                            "If you are interested in this feature,",
                            "please vote for it or raise it as an issue at", 
-                           "{.url https://github.com/stocnet/manynet/issues}."))
+                           "{.url https://github.com/stocnet/manynet/issues}."), 
+                   .envir = .envir)
 }
 
 manynet_console_theme <- function(){
