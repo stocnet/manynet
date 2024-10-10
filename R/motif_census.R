@@ -187,9 +187,9 @@ node_by_triad <- function(.data){
 
 #' @rdname motif_node
 #' @examples 
-#' node_by_quad(ison_southern_women)
+#' node_by_tetrad(ison_southern_women)
 #' @export
-node_by_quad <- function(.data){
+node_by_tetrad <- function(.data){
   cmbs <- utils::combn(1:net_nodes(.data), 4)
   mat <- as_matrix(to_onemode(.data))
   dd <- apply(cmbs, 2, function(x) c(sum(mat[x,x]), 

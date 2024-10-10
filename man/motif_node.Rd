@@ -5,7 +5,7 @@
 \alias{node_by_tie}
 \alias{node_by_dyad}
 \alias{node_by_triad}
-\alias{node_by_quad}
+\alias{node_by_tetrad}
 \alias{node_by_path}
 \title{Motifs at the nodal level}
 \usage{
@@ -15,7 +15,7 @@ node_by_dyad(.data)
 
 node_by_triad(.data)
 
-node_by_quad(.data)
+node_by_tetrad(.data)
 
 node_by_path(.data)
 }
@@ -49,7 +49,7 @@ task_eg <- to_named(to_uniplex(ison_algebra, "tasks"))
 (tie_cen <- node_by_tie(task_eg))
 node_by_dyad(ison_networkers)
 (triad_cen <- node_by_triad(task_eg))
-node_by_quad(ison_southern_women)
+node_by_tetrad(ison_southern_women)
 node_by_path(ison_adolescents)
 node_by_path(ison_southern_women)
 }

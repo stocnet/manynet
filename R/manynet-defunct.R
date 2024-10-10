@@ -711,3 +711,11 @@ node_core <- function(.data) {
   node_is_core(.data)
 }
 
+#' @describeIn defunct Deprecated on 2024-10-10.
+#' @export
+node_by_quad <- function(.data) {
+  .Deprecated("node_by_quad", package = "manynet",
+              old = "node_by_tetrad")
+  node_by_tetrad(.data)
+}
+
