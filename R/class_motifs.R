@@ -88,3 +88,23 @@ print.network_motif <- function(x, ...) {
   out <- as.data.frame(mat)
   print(dplyr::tibble(out))
 }
+
+#' @export
+summary.network_motif <- function(object, ...,
+                               null = c("random","configuration"), 
+                               times = 500) {
+  null <- paste0("generate_", match.arg(null))
+  callItems <- trimws(strsplit(unlist(attr(object, "call")), 
+                               split = "\\(|\\)|,")[[1]])
+  idFun <- which(grepl("net_by_", callItems))[1]
+  fun <- callItems[idFun]
+  dat <- callItems[idFun+1]
+  nulls <- t(vapply(mnet_progress_seq(times), function(r){
+    get(fun)(get(null)(get(dat)))
+  }, FUN.VALUE = numeric(length(object))))
+  out <- (object - colMeans(nulls))/apply(nulls, 2, sd)
+  out[is.nan(out)] <- 0
+  out
+}
+
+
