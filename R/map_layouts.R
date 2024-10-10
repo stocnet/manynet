@@ -23,7 +23,11 @@ layout_tbl_graph_configuration <- function(.data,
   } else if (net_nodes(.data) == 3) {
     layout_tbl_graph_triad(.data, circular = circular, times = times)
   } else if (net_nodes(.data) == 4) {
-    layout_tbl_graph_quad(.data, circular = circular, times = times)
+    layout_tbl_graph_tetrad(.data, circular = circular, times = times)
+  } else if (net_nodes(.data) == 5) {
+    layout_tbl_graph_pentad(.data, circular = circular, times = times)
+  } else if (net_nodes(.data) == 6) {
+    layout_tbl_graph_hexad(.data, circular = circular, times = times)
   }
 }
 
@@ -48,12 +52,37 @@ layout_tbl_graph_triad <- function(.data,
 
 #' @rdname map_layout_configuration
 #' @export
-layout_tbl_graph_quad <- function(.data,
+layout_tbl_graph_tetrad <- function(.data,
                                   circular = FALSE, times = 1000){
   res <- matrix(c(0,0,
                   0,1,
                   1,0,
                   1,1), 4, 2, byrow = TRUE)
+  .to_lo(res)  
+}
+
+#' @rdname map_layout_configuration
+#' @export
+layout_tbl_graph_pentad <- function(.data,
+                                    circular = FALSE, times = 1000){
+  res <- matrix(c(0,1,
+                  -0.9511,0.3090,
+                  -0.5878,-0.8090,
+                  0.5878,-0.8090,
+                  0.9511,0.3090), 5, 2, byrow = TRUE)
+  .to_lo(res)  
+}
+
+#' @rdname map_layout_configuration
+#' @export
+layout_tbl_graph_hexad <- function(.data,
+                                    circular = FALSE, times = 1000){
+  res <- matrix(c(1,0,
+                  1/2,sqrt(3)/2,
+                  -1/2,sqrt(3)/2,
+                  -1,0,
+                  -1/2,-sqrt(3)/2,
+                  1/2,-sqrt(3)/2), 6, 2, byrow = TRUE)
   .to_lo(res)  
 }
 

@@ -108,7 +108,7 @@ graphr <- function(.data, layout, labels = TRUE,
                    node_colour, edge_colour) {
   g <- as_tidygraph(.data)
   if (missing(layout)) {
-    if (net_nodes(g) <= 4) {
+    if (net_nodes(g) <= 6) {
       layout <- "configuration"
     } else if (is_twomode(g)) {
       layout <- "hierarchy"
@@ -151,6 +151,7 @@ graphr <- function(.data, layout, labels = TRUE,
   if (isTRUE(labels) & is_labelled(g)) {
     p <- .graph_labels(p, g, layout)
   }
+  # assign("last.warning", NULL, envir = baseenv()) # to avoid persistent ggrepel
   p
 }
 
