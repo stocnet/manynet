@@ -534,6 +534,106 @@ question("Why is there a difference between the weak and strong components resul
 )
 ```
 
+## Factions
+
+Components offer a precise way of understanding groups in a network.
+However, they can also ignore some 'groupiness' that is obvious to even a
+cursory examination of the graph.
+Take a look at the following network, 
+about the links between political blogs in the 2004 election.
+
+```{r graphirpsblogs, warning=FALSE, fig.width=9, exercise=TRUE}
+graphr(irps_blogs)
+```
+
+This network probably has a lot of components, not least because there are so many isolates.
+Even if we look at weak components, we see that there are a lot of components.
+
+```{r blogcomp, exercise = TRUE}
+net_components(irps_blogs)
+net_components(to_undirected(irps_blogs))
+```
+
+### Giant component
+
+However, a lot of these components are actually isolates.
+We can calculate the number of isolates by simply summing `node_is_isolate()`.
+
+```{r blogisolates, exercise = TRUE}
+sum(node_is_isolate(irps_blogs))
+```
+
+Wow, it looks like most of the (weak) components are due to isolates!
+So how do we concentrate on the main component of this network?
+Well, the main/largest component in a network is called the
+<dfn title='The giant component is the component that includes the most nodes in the network'>giant component</dfn>.
+
+```{r blogtogiant, exercise=TRUE, warning=FALSE, fig.width=9}
+blogs <- irps_blogs %>% to_giant()
+sum(node_is_isolate(blogs))
+graphr(blogs)
+```
+
+Finally, we have a single 'giant' component to examine.
+However, now we have a different kind of challenge: 
+everything is one big hairball.
+And yet, if we think about what we might expect of the structure of a network
+of political blogs, we might not think it is so undifferentiated.
+We might hypothesise that, despite the _graphical_ presentation of a hairball,
+there is actually a reasonable partition of the network into two factions.
+
+### Finding a partition
+
+To find a partition in a network, we use the `node_in_partition()` function.
+All `node_in_*()` functions return a string vector the length of the number 
+of nodes in the network.
+It is a string vector because this is how a categorical result is obtained.
+We can assign the result of this function to the nodes in the network
+(because it is the length of the nodes in the network),
+and graph the network using this result.
+
+```{r bloggraph, exercise=TRUE, exercise.setup = "blogtogiant", warning=FALSE, fig.width=9}
+blogs %>% mutate_nodes(part = node_in_partition()) %>% 
+  graphr(node_color = "part")
+```
+
+We see from this graph that indeed there seems to be an obvious separation
+between the left and right 'hemispheres' of the network.
+
+## Modularity
+
+But what is the 'fit' of this assignment of the blog nodes into two partitions?
+The most common measure of the fit of a community assignment in a network is
+modularity.
+
+```{r blogmod, exercise=TRUE, exercise.setup = "blogtogiant"}
+net_modularity(blogs, membership = node_in_partition(blogs))
+```
+
+Remember that modularity ranges between 1 and -1.
+How can we interpret this result?
+
+While the partition algorithm is useful for deriving a partition of the network
+into the number of factions assigned,
+it is still an algorithm that tries to maximise modularity.
+Other times we might instead have an empirically collected grouping,
+and we are keen to see how 'modular' the network is around this attribute.
+This only works on categorical attributes, of course,
+but is otherwise quite flexible.
+
+```{r blogmodassign, exercise=TRUE, exercise.setup = "blogtogiant", warning=FALSE, fig.width=9}
+graphr(blogs, node_color = "Leaning")
+net_modularity(blogs, membership = node_attribute(blogs, "Leaning"))
+```
+
+How interesting.
+Perhaps the partitioning algorithm is not the algorithm that maximises
+modularity after all...
+Perhaps we need to look further and see whether there is another solution here
+that returns an even greater modularity criterion.
+
+<img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExcXFwZWF2azV0YTlwdnM0bTZncXpuOTdxdHFyMjJqcXJod2V3b29vYiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/PsBRTPKG71YVq/giphy.gif" alt="gif of Chevy Chase saying plot twist"/>
+
 ## Communities
 
 Ok, the friendship network has 3-4 components, but how many 'groups' are there?
