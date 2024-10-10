@@ -87,6 +87,9 @@
 \alias{network_brokerage_census}
 \alias{node_brokering}
 \alias{node_core}
+\alias{node_by_quad}
+\alias{net_by_quad}
+\alias{layout_tbl_graph_quad}
 \title{Functions that have been renamed, superseded, or are no longer working}
 \usage{
 pkg_data(pkg = "manynet")
@@ -286,6 +289,12 @@ network_brokerage_census(.data, membership, standardized = FALSE)
 node_brokering(.data, membership)
 
 node_core(.data)
+
+node_by_quad(.data)
+
+net_by_quad(.data)
+
+layout_tbl_graph_quad(.data, circular = FALSE, times = 1000)
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
@@ -469,6 +478,12 @@ wherever possible and update your scripts accordingly.
 \item \code{node_brokering()}: Deprecated on 2024-06-20.
 
 \item \code{node_core()}: Deprecated on 2024-06-21.
+
+\item \code{node_by_quad()}: Deprecated on 2024-10-10.
+
+\item \code{net_by_quad()}: Deprecated on 2024-10-10.
+
+\item \code{layout_tbl_graph_quad()}: Deprecated on 2024-10-10.
 
 }}
 \keyword{internal}

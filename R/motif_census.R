@@ -11,7 +11,7 @@
 #'   For multiplex networks, the various types of ties are bound together.
 #'   - `node_by_triad()` returns a census of the triad configurations
 #'   nodes are embedded in.
-#'   - `node_by_quad()` returns a census of nodes' positions
+#'   - `node_by_tetrad()` returns a census of nodes' positions
 #'   in motifs of four nodes.
 #'   - `node_by_path()` returns the shortest path lengths
 #'   of each node to every other node in the network.
@@ -152,40 +152,42 @@ node_by_triad <- function(.data){
 # #' | X4 | K4
 # #' 
 # #' See also [this list of graph classes](https://www.graphclasses.org/smallgraphs.html#nodes4).
-# #' @importFrom tidygraph %E>%
-# #' @references 
-# #'  Ortmann, Mark, and Ulrik Brandes. 2017. 
-# #'  “Efficient Orbit-Aware Triad and Quad Census in Directed and Undirected Graphs.” 
-# #'  \emph{Applied Network Science} 2(1):13. 
-# #'  \doi{10.1007/s41109-017-0027-2}.
-# #' @examples 
-# #' node_by_quad(ison_southern_women)
-# #' @export
-# node_by_quad <- function(.data){
-#   if(missing(.data)) {expect_nodes(); .data <- .G()}
-#   thisRequires("oaqc")
-#   graph <- .data %>% manynet::as_tidygraph() %E>% 
-#     as.data.frame()
-#   if(ncol(graph)>2) graph <- graph[,1:2]
-#   out <- oaqc::oaqc(graph)[[1]]
-#   out <- out[-1,]
-#   rownames(out) <- manynet::node_names(.data)
-#   colnames(out) <- c("E4", # co-K4
-#                      "I41","I40", # co-diamond
-#                      "H4", # co-C4
-#                      "L42","L41","L40", # co-paw
-#                      "D42","D40", # co-claw
-#                      "U42","U41", # P4
-#                      "Y43","Y41", # claw
-#                      "P43","P42","P41", # paw
-#                      "04", # C4
-#                      "Z42","Z43", # diamond
-#                      "X4") # K4
-#   if(manynet::is_twomode(.data)) out <- out[,-c(8,9,14,15,16,18,19,20)]
-#   make_node_motif(out, .data)
-# }
 
 #' @rdname motif_node
+#' @section Tetrad census:
+#'   The nodal tetrad census counts the number of four-node configurations
+#'   that each node is embedded in.
+#'   The function returns a matrix with a special naming convention:
+#'   - E4 (aka co-K4): This is an empty set of four nodes; no ties
+#'   - I4 (aka co-diamond): This is a set of four nodes with just one tie
+#'   - H4 (aka co-C4): This set of four nodes includes two non-adjacent ties
+#'   - L4 (aka co-paw): This set of four nodes includes two adjacent ties
+#'   - D4 (aka co-claw): This set of four nodes includes three adjacent ties,
+#'   in the form of a triangle with one isolate
+#'   - U4 (aka P4, four-actor line): This set of four nodes includes three ties 
+#'   arranged in a line
+#'   - Y4 (aka claw): This set of four nodes includes three ties all adjacent
+#'   to a single node
+#'   - P4 (aka paw, kite): This set of four nodes includes four ties arranged
+#'   as a triangle with an extra tie hanging off of one of the nodes
+#'   - C4 (aka bifan): This is a symmetric box or 4-cycle or set of shared choices
+#'   - Z4 (aka diamond): This resembles C4 but with an extra tie cutting across the box
+#'   - X4 (aka K4): This resembles C4 but with two extra ties cutting across the box;
+#'   a realisation of all possible ties
+#'   
+#'   Graphs of these motifs can be shown using 
+#'   `plot(node_by_tetrad(ison_southern_women))`.
+#' @references
+#' ## On the tetrad census
+#'  Ortmann, Mark, and Ulrik Brandes. 2017. 
+#'  “Efficient Orbit-Aware Triad and Quad Census in Directed and Undirected Graphs.” 
+#'  \emph{Applied Network Science} 2(1):13. 
+#'  \doi{10.1007/s41109-017-0027-2}.
+#'  
+#'  McMillan, Cassie, and Diane Felmlee. 2020.
+#'  "Beyond Dyads and Triads: A Comparison of Tetrads in Twenty Social Networks".
+#'  _Social Psychology Quarterly_ 83(4): 383-404.
+#'  \doi{10.1177/0190272520944151}
 #' @examples 
 #' node_by_tetrad(ison_southern_women)
 #' @export
@@ -289,6 +291,7 @@ node_by_path <- function(.data){
 #'   
 #'   - `net_by_dyad()` returns a census of dyad motifs in a network.
 #'   - `net_by_triad()` returns a census of triad motifs in a network.
+#'   - `net_by_tetrad()` returns a census of tetrad motifs in a network.
 #'   - `net_by_mixed()` returns a census of triad motifs that span
 #'   a one-mode and a two-mode network.
 #'   
@@ -349,10 +352,43 @@ net_by_triad <- function(.data) {
 }
 
 #' @rdname motif_net
+#' @section Tetrad census:
+#'   The tetrad census counts the number of four-node configurations in the network.
+#'   The function returns a matrix with a special naming convention:
+#'   - E4 (aka co-K4): This is an empty set of four nodes; no ties
+#'   - I4 (aka co-diamond): This is a set of four nodes with just one tie
+#'   - H4 (aka co-C4): This set of four nodes includes two non-adjacent ties
+#'   - L4 (aka co-paw): This set of four nodes includes two adjacent ties
+#'   - D4 (aka co-claw): This set of four nodes includes three adjacent ties,
+#'   in the form of a triangle with one isolate
+#'   - U4 (aka P4, four-actor line): This set of four nodes includes three ties 
+#'   arranged in a line
+#'   - Y4 (aka claw): This set of four nodes includes three ties all adjacent
+#'   to a single node
+#'   - P4 (aka paw, kite): This set of four nodes includes four ties arranged
+#'   as a triangle with an extra tie hanging off of one of the nodes
+#'   - C4 (aka bifan): This is a symmetric box or 4-cycle or set of shared choices
+#'   - Z4 (aka diamond): This resembles C4 but with an extra tie cutting across the box
+#'   - X4 (aka K4): This resembles C4 but with two extra ties cutting across the box;
+#'   a realisation of all possible ties
+#'   
+#'   Graphs of these motifs can be shown using 
+#'   `plot(net_by_tetrad(ison_southern_women))`.
+#' @references
+#' ## On the tetrad census
+#'  Ortmann, Mark, and Ulrik Brandes. 2017. 
+#'  “Efficient Orbit-Aware Triad and Quad Census in Directed and Undirected Graphs.” 
+#'  \emph{Applied Network Science} 2(1):13. 
+#'  \doi{10.1007/s41109-017-0027-2}.
+#'  
+#'  McMillan, Cassie, and Diane Felmlee. 2020.
+#'  "Beyond Dyads and Triads: A Comparison of Tetrads in Twenty Social Networks".
+#'  _Social Psychology Quarterly_ 83(4): 383-404.
+#'  \doi{10.1177/0190272520944151}
 #' @examples 
-#' net_by_quad(ison_southern_women)
+#' net_by_tetrad(ison_southern_women)
 #' @export
-net_by_quad <- function(.data){
+net_by_tetrad <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   cmbs <- utils::combn(1:net_nodes(.data), 4)
   mat <- as_matrix(to_onemode(.data))
@@ -391,7 +427,6 @@ net_by_quad <- function(.data){
   
   out <- c(E4 = E4, I4 = I4, H4 = H4, L4 = L4, D4 = D4, U4 = U4, Y4 = Y4, 
            P4 = P4, C4 = C4, Z4 = Z4, X4 = X4)
-  
   make_network_motif(out, .data)
 }
 
