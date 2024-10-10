@@ -234,6 +234,9 @@ but are also often associated with certain mechanisms of closure.
 
 ### Reciprocity
 
+First, let's calculate 
+<dfn title='A measure of how often nodes in a directed network are mutually linked.'>reciprocity</dfn>
+in the task network.
 While one could do this by hand,
 it's more efficient to do this using the `{manynet}` package.
 Can you guess the correct name of the function?
@@ -262,7 +265,11 @@ and yet node 16 is both the sender and receiver of most of the task activity.
 So our reciprocity measure has taught us something about this network
 that might not have been obvious visually.
 
-And let's calculate _transitivity_ in the task network.
+### Transitivity
+
+And let's calculate 
+<dfn title='Triadic closure is where if the connections A-B and A-C exist among three nodes, there is a tendency for B-C also to be formed.'>transitivity</dfn> 
+in the task network.
 Again, can you guess the correct name of this function?
 
 ```{r trans, exercise=TRUE, exercise.setup = "separatingnets", purl = FALSE}
@@ -294,7 +301,9 @@ question("What can we say about task closure in this network? Choose all that ap
 ## Components
 
 Now let's look at the friendship network, 'friends'.
-We're interested here in how many _components_ there are.
+We're interested here in how many 
+<dfn title='A component is a connected subgraph not part of a larger connected subgraph.'>components</dfn> 
+there are.
 By default, the `net_components()` function will
 return the number of _strong_ components for directed networks.
 For _weak_ components, you will need to first make the network 
