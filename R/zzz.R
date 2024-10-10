@@ -59,6 +59,11 @@ mnet_progress_along <- function(..., .envir = parent.frame()){
     cli::cli_progress_along(..., .envir = .envir)
 }
 
+mnet_progress_seq <- function(..., .envir = parent.frame()){
+  if(getOption("manynet_verbosity", default = "quiet")!="quiet")
+    cli::cli_progress_along(seq.int(...), .envir = .envir)
+}
+
 mnet_info <- function(..., .envir = parent.frame()){
   if(getOption("manynet_verbosity", default = "quiet")!="quiet")
     cli::cli_alert_info(paste(...), .envir = .envir)
