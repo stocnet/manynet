@@ -298,6 +298,133 @@ question("What can we say about task closure in this network? Choose all that ap
 )
 ```
 
+## Projection
+
+### A two-mode network
+
+The next dataset, 'ison_southern_women', is also available in `{manynet}`.
+Let's load and graph the data.
+
+```{r setup-women, exercise=TRUE, exercise.setup = "data", purl = FALSE}
+
+```
+
+```{r setup-women-hint-1, purl = FALSE}
+# let's load the data and analyze it
+data("ison_southern_women")
+ison_southern_women
+```
+
+```{r setup-women-hint-2, purl = FALSE}
+graphr(ison_southern_women, node_color = "type")
+graphr(ison_southern_women, "railway", node_color = "type")
+```
+
+```{r setup-women-solution}
+data("ison_southern_women")
+ison_southern_women
+graphr(ison_southern_women, node_color = "type")
+```
+
+### Project two-mode network into two one-mode networks
+
+Now what if we are only interested in one part of the network?
+For that, we can obtain a 'projection' of the two-mode network.
+There are two ways of doing this.
+The hard way...
+
+```{r hardway, exercise=TRUE, exercise.setup = "setup-women", purl = FALSE}
+
+```
+
+```{r hardway-solution}
+twomode_matrix <- as_matrix(ison_southern_women)
+women_matrix <- twomode_matrix %*% t(twomode_matrix)
+event_matrix <- t(twomode_matrix) %*% twomode_matrix
+```
+
+Or the easy way:
+
+```{r easyway, exercise=TRUE, exercise.setup = "setup-women", purl = FALSE}
+
+```
+
+```{r easyway-hint-1, purl = FALSE}
+# women-graph
+# to_mode1(): Results in a weighted one-mode object that retains the row nodes from
+# a two-mode object, and weights the ties between them on the basis of their joint
+# ties to nodes in the second mode (columns)
+
+women_graph <- to_mode1(ison_southern_women)
+graphr(women_graph)
+
+# note that projection `to_mode1` involves keeping one type of nodes
+# this is different from to_uniplex above, which keeps one type of ties in the network
+```
+
+```{r easyway-hint-2, purl = FALSE}
+# event-graph
+# to_mode2(): Results in a weighted one-mode object that retains the column nodes from
+# a two-mode object, and weights the ties between them on the basis of their joint ties
+# to nodes in the first mode (rows)
+
+event_graph <- to_mode2(ison_southern_women)
+graphr(event_graph)
+```
+
+```{r easyway-solution}
+women_graph <- to_mode1(ison_southern_women)
+graphr(women_graph)
+event_graph <- to_mode2(ison_southern_women)
+graphr(event_graph)
+```
+
+`{manynet}` also includes several other options for how to construct the projection.
+Please see the help file for more details.
+
+```{r otherway, exercise=TRUE, exercise.setup = "setup-women", purl = FALSE}
+
+```
+
+```{r otherway-solution}
+graphr(to_mode2(ison_southern_women, similarity = "jaccard")) + ggtitle("Jaccard") +
+graphr(to_mode2(ison_southern_women, similarity = "rand")) + ggtitle("Rand") +
+graphr(to_mode2(ison_southern_women, similarity = "pearson")) + ggtitle("Pearson") +
+graphr(to_mode2(ison_southern_women, similarity = "yule")) + ggtitle("Yule's Q")
+```
+
+Which women/events 'bind' which events/women?
+Let's return to the question of cohesion.
+
+```{r twomode-cohesion, exercise=TRUE, exercise.setup = "setup-women", purl = FALSE}
+
+```
+
+```{r twomode-cohesion-hint-1, purl = FALSE}
+# net_equivalency(): Calculate equivalence or reinforcement in a (usually two-mode) network
+
+net_equivalency(ison_southern_women)
+```
+
+```{r twomode-cohesion-hint-2, purl = FALSE}
+# net_transitivity(): Calculate transitivity in a network
+
+net_transitivity(women_graph)
+net_transitivity(event_graph)
+```
+
+```{r twomode-cohesion-solution}
+net_equivalency(ison_southern_women)
+net_transitivity(women_graph)
+net_transitivity(event_graph)
+```
+
+What do we learn from this?
+
+Explain in no more than a paragraph why projection can lead to misleading transitivity measures.
+
+Explain in no more than a paragraph how structural balance might lead to group identity.
+
 ## Components
 
 Now let's look at the friendship network, 'friends'.
@@ -672,132 +799,18 @@ question("What is the difference between communities and components?",
          allow_retry = TRUE)
 ```
 
-## Projection
+## Free play
 
-### A two-mode network
+We've looked here at the `irps_blogs` dataset.
+Now have a go at the `irps_books` dataset.
+What is the density? Does it make sense to investigate reciprocity,
+transitivity, or equivalence? How can we interpret the results?
+How many components in the network? Is there a strong factional structure?
+Which community detection algorithm returns the highest modularity score,
+or corresponds best to what is in the data or what you see in the graph?
 
-The next dataset, 'ison_southern_women', is also available in `{manynet}`.
-Let's load and graph the data.
-
-```{r setup-women, exercise=TRUE, exercise.setup = "data", purl = FALSE}
-
+```{r freeplay, exercise = TRUE, fig.width=9}
+irps_books
 ```
 
-```{r setup-women-hint-1, purl = FALSE}
-# let's load the data and analyze it
-data("ison_southern_women")
-ison_southern_women
-```
 
-```{r setup-women-hint-2, purl = FALSE}
-graphr(ison_southern_women, node_color = "type")
-graphr(ison_southern_women, "railway", node_color = "type")
-```
-
-```{r setup-women-solution}
-data("ison_southern_women")
-ison_southern_women
-graphr(ison_southern_women, node_color = "type")
-```
-
-### Project two-mode network into two one-mode networks
-
-Now what if we are only interested in one part of the network?
-For that, we can obtain a 'projection' of the two-mode network.
-There are two ways of doing this.
-The hard way...
-
-```{r hardway, exercise=TRUE, exercise.setup = "setup-women", purl = FALSE}
-
-```
-
-```{r hardway-solution}
-twomode_matrix <- as_matrix(ison_southern_women)
-women_matrix <- twomode_matrix %*% t(twomode_matrix)
-event_matrix <- t(twomode_matrix) %*% twomode_matrix
-```
-
-Or the easy way:
-
-```{r easyway, exercise=TRUE, exercise.setup = "setup-women", purl = FALSE}
-
-```
-
-```{r easyway-hint-1, purl = FALSE}
-# women-graph
-# to_mode1(): Results in a weighted one-mode object that retains the row nodes from
-# a two-mode object, and weights the ties between them on the basis of their joint
-# ties to nodes in the second mode (columns)
-
-women_graph <- to_mode1(ison_southern_women)
-graphr(women_graph)
-
-# note that projection `to_mode1` involves keeping one type of nodes
-# this is different from to_uniplex above, which keeps one type of ties in the network
-```
-
-```{r easyway-hint-2, purl = FALSE}
-# event-graph
-# to_mode2(): Results in a weighted one-mode object that retains the column nodes from
-# a two-mode object, and weights the ties between them on the basis of their joint ties
-# to nodes in the first mode (rows)
-
-event_graph <- to_mode2(ison_southern_women)
-graphr(event_graph)
-```
-
-```{r easyway-solution}
-women_graph <- to_mode1(ison_southern_women)
-graphr(women_graph)
-event_graph <- to_mode2(ison_southern_women)
-graphr(event_graph)
-```
-
-`{manynet}` also includes several other options for how to construct the projection.
-Please see the help file for more details.
-
-```{r otherway, exercise=TRUE, exercise.setup = "setup-women", purl = FALSE}
-
-```
-
-```{r otherway-solution}
-graphr(to_mode2(ison_southern_women, similarity = "jaccard")) + ggtitle("Jaccard") +
-graphr(to_mode2(ison_southern_women, similarity = "rand")) + ggtitle("Rand") +
-graphr(to_mode2(ison_southern_women, similarity = "pearson")) + ggtitle("Pearson") +
-graphr(to_mode2(ison_southern_women, similarity = "yule")) + ggtitle("Yule's Q")
-```
-
-Which women/events 'bind' which events/women?
-Let's return to the question of cohesion.
-
-```{r twomode-cohesion, exercise=TRUE, exercise.setup = "setup-women", purl = FALSE}
-
-```
-
-```{r twomode-cohesion-hint-1, purl = FALSE}
-# net_equivalency(): Calculate equivalence or reinforcement in a (usually two-mode) network
-
-net_equivalency(ison_southern_women)
-```
-
-```{r twomode-cohesion-hint-2, purl = FALSE}
-# net_transitivity(): Calculate transitivity in a network
-
-net_transitivity(women_graph)
-net_transitivity(event_graph)
-```
-
-```{r twomode-cohesion-solution}
-net_equivalency(ison_southern_women)
-net_transitivity(women_graph)
-net_transitivity(event_graph)
-```
-
-What do we learn from this?
-
-## Task/Unit Test
-
-1. Produce a plot comparing 3 community detection procedures used here on a 
-(women) projection of the 'ison_southern_women' dataset. Identify which you prefer, and explain why.
-2. Explain in no more than a paragraph why projection can lead to misleading transitivity measures.
-3. Explain in no more than a paragraph how structural balance might lead to group identity.
