@@ -135,8 +135,12 @@ net_factions <- function(.data,
 #'   can miss small clusters that 'hide' inside larger clusters.
 #'   In the extreme case, this can be where they are only connected
 #'   to the rest of the network through a single tie.
+#'   To help manage this problem, a `resolution` parameter is added. 
+#'   Please see the argument definition for more details.
 #' @param resolution A proportion indicating the resolution scale.
-#'   By default 1.
+#'   By default 1, which returns the original definition of modularity.
+#'   The higher this parameter, the more smaller communities will be privileged.
+#'   The lower this parameter, the fewer larger communities are likely to be found.
 #' @examples 
 #' net_modularity(ison_adolescents, 
 #'   node_in_partition(ison_adolescents))

@@ -325,6 +325,8 @@ node_in_louvain <- function(.data, resolution = 1){
 #'   \eqn{n_i} is the node weight of node _i_,
 #'   and \eqn{\delta(\sigma_i, \sigma_j) = 1} if and only if
 #'   _i_ and _j_ are in the same communities and 0 otherwise.
+#'   Compared to the Louvain method, the Leiden algorithm additionally
+#'   tries to avoid unconnected communities.
 #' @references
 #' ## On Leiden community detection
 #' Traag, Vincent A., Ludo Waltman, and Nees Jan van Eck. 2019. 

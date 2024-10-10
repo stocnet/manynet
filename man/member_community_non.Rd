@@ -146,6 +146,8 @@ where \emph{m} is the total tie weight,
 \eqn{n_i} is the node weight of node \emph{i},
 and \eqn{\delta(\sigma_i, \sigma_j) = 1} if and only if
 \emph{i} and \emph{j} are in the same communities and 0 otherwise.
+Compared to the Louvain method, the Leiden algorithm additionally
+tries to avoid unconnected communities.
 }
 
 \examples{
