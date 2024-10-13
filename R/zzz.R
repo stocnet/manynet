@@ -132,4 +132,3 @@ simple_theme_code <- function(){
 col_mnet_green <- cli::make_ansi_style("#199D77")
 
 col_mnet_blue <- cli::make_ansi_style("#4576B5")
-
