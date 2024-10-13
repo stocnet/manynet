@@ -112,7 +112,12 @@ if (window.hljs) {
 
 <div id="section-setting-up" class="section level2">
 <h2>Setting up</h2>
-<p>Networks are not just structures of interconnected nodes, but</p>
+<p>In the last tutorial, we looked at network centrality and
+centralisation. Nodal centrality is often thought to be an expression of
+structural inequality. But nodes don’t always seek to differentiate
+themselves in a network. Sometimes they are interested in being part of
+a group. In this tutorial, we’re going to consider various ways in which
+‘groupiness’ might be examined.</p>
 <p><img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExbDNsNmZnNzJ2YzRyYzE5cDl4M2pxeGU4d2M1bnMwZm1qd3JvMWw3MyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/N7AOIqqUpjXUc/giphy.gif" alt="gif of man not knowing how to study"/></p>
 <p>The data we’re going to use here, “ison_algebra”, is included in the
 <code>{manynet}</code> package. Do you remember how to call the data?
@@ -527,10 +532,13 @@ to group identity.</p>
 <h2>Components</h2>
 <p>Now let’s look at the friendship network, ‘friends’. We’re interested
 here in how many
-<dfn title='A component is a connected subgraph not part of a larger connected subgraph.'>components</dfn>
-there are. By default, the <code>net_components()</code> function will
-return the number of <em>strong</em> components for directed networks.
-For <em>weak</em> components, you will need to first make the network
+<abbr><dfn title='A component is a connected subgraph not part of a larger connected subgraph.'>
+components </dfn></abbr> there are. By default, the
+<code>net_components()</code> function will return the number of
+<em>strong</em> components for directed networks. For <em>weak</em>
+components, you will need to first make the network
+<abbr><dfn title='An undirected network is one in which tie direction is undefined.'>
+undirected </dfn></abbr>
 <dfn title='An undirected network is one in which the edges do not have orientations.'>undirected</dfn>.
 Remember the difference between weak and strong components?</p>
 <div class="panel panel-default tutorial-question-container">
@@ -1200,15 +1208,15 @@ learnr:::store_exercise_cache(structure(list(label = "separatingnets", global_se
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "densq", question = structure("Which equation is used for measuring density for a directed network:", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_dd0302f", 
+"character")), answers = list(structure(list(id = "lnr_ans_674dc2b", 
     option = "A", value = "A", label = structure("A", html = TRUE, class = c("html", 
-    "character")), correct = TRUE, message = structure("Success!", html = TRUE, class = c("html", 
+    "character")), correct = TRUE, message = structure("Smashing!", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_499621f", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_e25f629", 
     option = "B", value = "B", label = structure("B", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = structure("This is the equation for an undirected network.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_5aaa8b1", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_753a3c", 
     option = "C", value = "C", label = structure("C", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = structure("This is the equation for a two-mode network.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
@@ -1219,7 +1227,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "densq-answer", question = "densq"), loading = NULL, 
-    random_answer_order = FALSE, allow_retry = TRUE, seed = 116961984.445535, 
+    random_answer_order = FALSE, allow_retry = TRUE, seed = 577255494.731194, 
     options = list()), class = c("learnr_radio", "tutorial_question"
 )), session = session)
 </script>
@@ -1321,11 +1329,11 @@ learnr:::store_exercise_cache(structure(list(label = "dens", global_setup = stru
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "dens-qa", question = structure("Is this network’s density high or low in absolute terms?", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_87fe7a2", 
+"character")), answers = list(structure(list(id = "lnr_ans_eba0a15", 
     option = "High", value = "High", label = structure("High", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = structure("The closer the value is to 1, the more dense the network and the more cohesive the network is as a whole.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_4c9793", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_327ebcd", 
     option = "Low", value = "Low", label = structure("Low", html = TRUE, class = c("html", 
     "character")), correct = TRUE, message = structure("The closer the value is to 0, the sparser the network and the less cohesive the network is as a whole. But this is still quite typical density for a relatively small, social network like this one.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
@@ -1336,7 +1344,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "dens-qa-answer", question = "dens-qa"), loading = NULL, 
-    random_answer_order = FALSE, allow_retry = TRUE, seed = 2032856415.55338, 
+    random_answer_order = FALSE, allow_retry = TRUE, seed = 1499727671.80163, 
     options = list()), class = c("learnr_radio", "tutorial_question"
 )), session = session)
 </script>
@@ -1480,29 +1488,29 @@ learnr:::store_exercise_cache(structure(list(label = "trans", global_setup = str
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "trans-interp", 
     question = structure("What can we say about task closure in this network? Choose all that apply.", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_e24b33f", 
+    "character")), answers = list(structure(list(id = "lnr_ans_a62eaa2", 
         option = "Transitivity for the task network is 0.568", 
         value = "Transitivity for the task network is 0.568", 
         label = structure("Transitivity for the task network is 0.568", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_94c381d", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_8d39c3f", 
         option = "Transitivity for the task network is -0.568", 
         value = "Transitivity for the task network is -0.568", 
         label = structure("Transitivity for the task network is -0.568", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("Transivitity must be between 0 and 1.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_c8d8686", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_b1a0f16", 
         option = "Transitivity is quite low in this network", 
         value = "Transitivity is quite low in this network", 
         label = structure("Transitivity is quite low in this network", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("Transitivity is usually around 0.3 in most social networks.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_81afe80", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_334ffed", 
         option = "Transitivity is quite high in this network", 
         value = "Transitivity is quite high in this network", 
         label = structure("Transitivity is quite high in this network", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_37981bb", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_f22fbb0", 
         option = "Transitivity is likely higher in the task network than the friendship network", 
         value = "Transitivity is likely higher in the task network than the friendship network", 
         label = structure("Transitivity is likely higher in the task network than the friendship network", html = TRUE, class = c("html", 
@@ -1515,7 +1523,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "trans-interp-answer", question = "trans-interp"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 1598511190.25564, options = list()), class = c("learnr_checkbox", 
+    seed = 326129599.348134, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")), session = session)
 </script>
 
@@ -1764,12 +1772,12 @@ learnr:::store_exercise_cache(structure(list(label = "twomode-cohesion", global_
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "weak-strong", 
     question = structure("Weak components…", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_53f6f8c", 
+    "character")), answers = list(structure(list(id = "lnr_ans_7b5a309", 
         option = "don't care about tie direction when establishing components.", 
         value = "don't care about tie direction when establishing components.", 
         label = structure("don’t care about tie direction when establishing components.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_1939b26", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_fa64c4f", 
         option = "care about tie direction when establishing components.", 
         value = "care about tie direction when establishing components.", 
         label = structure("care about tie direction when establishing components.", html = TRUE, class = c("html", 
@@ -1782,7 +1790,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "weak-strong-answer", question = "weak-strong"), 
     loading = NULL, random_answer_order = FALSE, allow_retry = TRUE, 
-    seed = 955129577.555233, options = list()), class = c("learnr_radio", 
+    seed = 1310509615.38975, options = list()), class = c("learnr_radio", 
 "tutorial_question")), session = session)
 </script>
  
@@ -1837,19 +1845,19 @@ learnr:::store_exercise_cache(structure(list(label = "comp-no", global_setup = s
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "comp-interp", 
     question = structure("How many components are there?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_e11ba16", 
+    "character")), answers = list(structure(list(id = "lnr_ans_548d1d2", 
         option = "2", value = "2", label = structure("2", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("There are more than 2 components.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_c1681e", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_da17b63", 
         option = "3", value = "3", label = structure("3", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = structure("There are 3 <em>weak<\u002fem> components.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_cbf3534", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_d7197f7", 
         option = "4", value = "4", label = structure("4", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = structure("There are 4 <em>strong<\u002fem> components.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_c9f42f1", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_214a688", 
         option = "5", value = "5", label = structure("5", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("There are fewer than 5 components.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
@@ -1861,7 +1869,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "comp-interp-answer", question = "comp-interp"), 
     loading = NULL, random_answer_order = FALSE, allow_retry = TRUE, 
-    seed = 1889943344.61993, options = list()), class = c("learnr_checkbox", 
+    seed = 757719062.14716, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")), session = session)
 </script>
 
@@ -1919,20 +1927,20 @@ learnr:::store_exercise_cache(structure(list(label = "comp-memb", global_setup =
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "node-comp-interp", 
     question = structure("Why is there a difference between the weak and strong components results?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_20431e8", 
+    "character")), answers = list(structure(list(id = "lnr_ans_d9e5e8c", 
         option = "Because one node has only incoming ties.", 
         value = "Because one node has only incoming ties.", label = structure("Because one node has only incoming ties.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_170936c", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_cdf5c9d", 
         option = "Because three nodes cannot reach any other nodes.", 
         value = "Because three nodes cannot reach any other nodes.", 
         label = structure("Because three nodes cannot reach any other nodes.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_95f78b2", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_5c2015c", 
         option = "Because there is an extra isolate.", value = "Because there is an extra isolate.", 
         label = structure("Because there is an extra isolate.", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_3980bda", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_cae8a11", 
         option = "Because the tie strength matters.", value = "Because the tie strength matters.", 
         label = structure("Because the tie strength matters.", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
@@ -1944,7 +1952,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "node-comp-interp-answer", question = "node-comp-interp"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 1243479900.42096, options = list()), class = c("learnr_checkbox", 
+    seed = 2064206116.03878, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")), session = session)
 </script>
  
@@ -2561,16 +2569,16 @@ learnr:::store_exercise_cache(structure(list(label = "fg", global_setup = struct
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "comm-comp", question = structure("What is the difference between communities and components?", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_e274fc4", 
+"character")), answers = list(structure(list(id = "lnr_ans_c3439fa", 
     option = "Communities and components are just different terms for the same thing", 
     value = "Communities and components are just different terms for the same thing", 
     label = structure("Communities and components are just different terms for the same thing", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_d39f7e2", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_1f9d0f", 
     option = "Communities are a stricter form of component", 
     value = "Communities are a stricter form of component", label = structure("Communities are a stricter form of component", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_1109a0a", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_7ab908a", 
     option = "Components are about paths whereas communities are about the relationship between within-group and between-group ties", 
     value = "Components are about paths whereas communities are about the relationship between within-group and between-group ties", 
     label = structure("Components are about paths whereas communities are about the relationship between within-group and between-group ties", html = TRUE, class = c("html", 
@@ -2582,7 +2590,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "comm-comp-answer", question = "comm-comp"), loading = NULL, 
-    random_answer_order = TRUE, allow_retry = TRUE, seed = 1293970546.39745, 
+    random_answer_order = TRUE, allow_retry = TRUE, seed = 1915922485.60783, 
     options = list()), class = c("learnr_radio", "tutorial_question"
 )), session = session)
 </script>

@@ -166,3 +166,27 @@ table_data <- function(pkg = c("manynet","migraph"),
   if(!is.null(filter)) out <- dplyr::filter(out, ...)
   out
 }
+
+# Glossary ####
+
+#' @export
+gloss <- function(text, ref = NULL){
+  if(is.null(ref)) ref <- text
+  if(!ref %in% names(glossies)) 
+    cli::cli_abort("No glossary entry for '{text}' exists.") else {
+      defn <- glossies[which(names(glossies)==ref)]
+      paste(paste0("<abbr><dfn title='", defn, "'>"), text, "</dfn></abbr>")
+    }
+}
+
+glossies <- list(
+  component = "A component is a connected subgraph not part of a larger connected subgraph.",
+  giant = "The giant component is the component that includes the most nodes in the network",
+  undirected = "An undirected network is one in which tie direction is undefined.",
+  reciprocity = "A measure of how often nodes in a directed network are mutually linked.",
+  transitivity = "Triadic closure is where if the connections A-B and A-C exist among three nodes, there is a tendency for B-C also to be formed."
+)
+
+# print_glossary(){
+#   
+# }

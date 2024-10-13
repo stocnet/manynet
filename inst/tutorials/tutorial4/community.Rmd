@@ -235,7 +235,7 @@ but are also often associated with certain mechanisms of closure.
 ### Reciprocity
 
 First, let's calculate 
-<dfn title='A measure of how often nodes in a directed network are mutually linked.'>reciprocity</dfn>
+`r gloss("reciprocity")`
 in the task network.
 While one could do this by hand,
 it's more efficient to do this using the `{manynet}` package.
@@ -268,7 +268,7 @@ that might not have been obvious visually.
 ### Transitivity
 
 And let's calculate 
-<dfn title='Triadic closure is where if the connections A-B and A-C exist among three nodes, there is a tendency for B-C also to be formed.'>transitivity</dfn> 
+`r gloss("transitivity")`
 in the task network.
 Again, can you guess the correct name of this function?
 
@@ -429,12 +429,12 @@ Explain in no more than a paragraph how structural balance might lead to group i
 
 Now let's look at the friendship network, 'friends'.
 We're interested here in how many 
-<dfn title='A component is a connected subgraph not part of a larger connected subgraph.'>components</dfn> 
+`r gloss("components", "component")`
 there are.
 By default, the `net_components()` function will
 return the number of _strong_ components for directed networks.
 For _weak_ components, you will need to first make the network 
-<dfn title='An undirected network is one in which the edges do not have orientations.'>undirected</dfn>.
+`r gloss("undirected")`.
 Remember the difference between weak and strong components?
 
 ```{r weak-strong, echo = FALSE, purl = FALSE}
@@ -566,7 +566,7 @@ sum(node_is_isolate(irps_blogs))
 Wow, it looks like most of the (weak) components are due to isolates!
 So how do we concentrate on the main component of this network?
 Well, the main/largest component in a network is called the
-<dfn title='The giant component is the component that includes the most nodes in the network'>giant component</dfn>.
+`r gloss("giant component", "giant")`.
 
 ```{r blogtogiant, exercise=TRUE, warning=FALSE, fig.width=9}
 blogs <- irps_blogs %>% to_giant()
