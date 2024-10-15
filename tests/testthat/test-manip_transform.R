@@ -18,8 +18,8 @@ test_that("matrix projected correctly by rows",{
   expect_true(is_weighted(to_mode1(as_edgelist(ison_southern_women))))
   expect_true(all(node_names(to_mode1(ison_southern_women)) %in% node_names(ison_southern_women)))
   expect_true(length(node_names(to_mode1(ison_southern_women))) != length(node_names(ison_southern_women)))
-  expect_equal(length(node_names(to_mode1(ison_southern_women))), length(rownames(as_matrix(ison_southern_women))))
-  expect_equal(net_nodes(to_mode1(ison_southern_women, "count")), net_nodes(to_mode1(ison_southern_women, "jaccard")))
+  expect_values(length(node_names(to_mode1(ison_southern_women))), length(rownames(as_matrix(ison_southern_women))))
+  expect_values(net_nodes(to_mode1(ison_southern_women, "count")), net_nodes(to_mode1(ison_southern_women, "jaccard")))
   expect_true(is_weighted(to_mode1(ison_southern_women, "pearson")))
   expect_false(tie_weights(to_mode1(ison_southern_women, "rand"))[3] == tie_weights(to_mode1(ison_southern_women, "count"))[3])
 })
@@ -33,15 +33,15 @@ test_that("matrix projected correctly by columns",{
   expect_true(is_weighted(to_mode2(as_edgelist(ison_southern_women))))
   expect_true(all(node_names(to_mode2(ison_southern_women)) %in% node_names(ison_southern_women)))
   expect_true(length(node_names(to_mode2(ison_southern_women))) != length(node_names(ison_southern_women)))
-  expect_equal(length(node_names(to_mode2(ison_southern_women))), length(colnames(as_matrix(ison_southern_women))))
-  expect_equal(net_nodes(to_mode2(ison_southern_women, "count")), net_nodes(to_mode2(ison_southern_women, "jaccard")))
+  expect_values(length(node_names(to_mode2(ison_southern_women))), length(colnames(as_matrix(ison_southern_women))))
+  expect_values(net_nodes(to_mode2(ison_southern_women, "count")), net_nodes(to_mode2(ison_southern_women, "jaccard")))
   expect_true(is_weighted(to_mode2(ison_southern_women, "pearson")))
   expect_false(tie_weights(to_mode2(ison_southern_women, "rand"))[1] == tie_weights(to_mode2(ison_southern_women, "count"))[1])
 })
 
 test_that("to matching works", {
   sw <- as_edgelist(to_matching(ison_southern_women))
-  expect_equal(net_nodes(to_matching(ison_southern_women)),
+  expect_values(net_nodes(to_matching(ison_southern_women)),
                net_nodes(ison_southern_women))
   expect_true(nrow(sw) == nrow(dplyr::distinct(sw)))
 })

@@ -33,8 +33,8 @@ test_that("net_triad census works", {
   expect_error(net_by_triad(ison_southern_women))
 })
 
-test <- node_by_quad(ison_southern_women)
-test_that("node quad census works", {
+test <- node_by_tetrad(ison_southern_women)
+test_that("node tetrad census works", {
   expect_s3_class(test, "node_motif")
   expect_equal(test[1,1], 1241)
 })
