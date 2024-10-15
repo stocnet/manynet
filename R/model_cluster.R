@@ -26,26 +26,36 @@ cluster_hierarchical <- function(census, distance){
   hc
 }
 
+#' @rdname model_cluster 
+#' @export
+cluster_cosine <- function(census, distance){
+  cosines <- manynet::to_cosine(census)
+  dissimilarity <- 1 - cosines
+  distances <- stats::dist(dissimilarity, method = distance)
+  hc <- stats::hclust(distances)
+  hc$distances <- distances
+  hc
+}
+
 # cluster_concor(ison_adolescents)
 # cluster_concor(ison_southern_women)
 # https://github.com/bwlewis/hclust_in_R/blob/master/hc.R
 
 #' @rdname model_cluster 
 #' @section CONCOR:
-#' 
-#' First a matrix of Pearson correlation coefficients between each pair of nodes
-#' profiles in the given census is created. 
-#' Then, again, we find the correlations of this square, symmetric matrix,
-#' and continue to do this iteratively until each entry is either `1` or `-1`.
-#' These values are used to split the data into two partitions,
-#' with members either holding the values `1` or `-1`.
-#' This procedure from census to convergence is then repeated within each block,
-#' allowing further partitions to be found.
-#' Unlike UCINET, partitions are continued until there are single members in
-#' each partition.
-#' Then a distance matrix is constructed from records of in which partition phase
-#' nodes were separated, 
-#' and this is given to `stats::hclust()` so that dendrograms etc can be returned.
+#'   First a matrix of Pearson correlation coefficients between each pair of nodes
+#'   profiles in the given census is created. 
+#'   Then, again, we find the correlations of this square, symmetric matrix,
+#'   and continue to do this iteratively until each entry is either `1` or `-1`.
+#'   These values are used to split the data into two partitions,
+#'   with members either holding the values `1` or `-1`.
+#'   This procedure from census to convergence is then repeated within each block,
+#'   allowing further partitions to be found.
+#'   Unlike UCINET, partitions are continued until there are single members in
+#'   each partition.
+#'   Then a distance matrix is constructed from records of in which partition phase
+#'   nodes were separated, 
+#'   and this is given to `stats::hclust()` so that dendrograms etc can be returned.
 #' @importFrom stats complete.cases
 #' @references 
 #' ## On CONCOR clustering
@@ -132,4 +142,3 @@ cluster_concor <- function(.data, census){
   hc$distances <- distances
   hc  
 }
-
