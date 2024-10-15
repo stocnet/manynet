@@ -247,6 +247,67 @@ tie_is_forbidden <- function(.data){
   make_tie_mark(out, .data)
 }
 
+#' @rdname mark_triangles
+#' @examples
+#' tie_is_imbalanced(ison_marvel_relationships)
+#' @export
+tie_is_imbalanced <- function(.data){
+  if(missing(.data)) {expect_edges(); .data <- .G()}
+  
+  # identify_imbalanced_ties <- function(adj_matrix) {
+  adj_matrix <- as_matrix(.data)
+  
+  # Check if the input is a square matrix
+  if (!is.matrix(adj_matrix) || nrow(adj_matrix) != ncol(adj_matrix)) {
+    mnet_unavailable("This function only works with undirected one-mode networks.")
+  }
+  
+  # Get the number of nodes
+  n <- net_nodes(.data)
+  
+  # Identify all edges in the upper triangle (non-zero)
+  edges <- as_edgelist(to_unnamed(.data))
+  num_edges <- nrow(edges)
+  
+  # Initialize a logical vector to store the result for each edge
+  is_imbalanced <- logical(num_edges)
+  
+  # Loop over each edge to check if it participates in an imbalanced triad
+  for (e in 1:num_edges) {
+    i <- unname(unlist(edges[e, 1]))
+    j <- unname(unlist(edges[e, 2]))
+    
+    # Variable to track if the current edge is part of any imbalanced triad
+    imbalanced_found <- FALSE
+    
+    # Check all possible third nodes k to form a triad (i, j, k)
+    for (k in setdiff(1:n, c(i, j))) {
+      # Get the ties for the triad (i, j, k)
+      a <- adj_matrix[i, j]
+      b <- adj_matrix[j, k]
+      c <- adj_matrix[i, k]
+      
+      # Check if the triad is complete (no zeros)
+      if (b != 0 && c != 0) {
+        # Count the number of positive ties in the triad
+        positive_count <- sum(c(a, b, c) > 0)
+        
+        # Determine if the triad is imbalanced
+        if (positive_count == 2 || positive_count == 0) {
+          # Mark as imbalanced and exit loop for this edge
+          imbalanced_found <- TRUE
+          break
+        }
+      }
+    }
+    
+    # Store the result for the current edge
+    is_imbalanced[e] <- imbalanced_found
+  }
+  
+  make_tie_mark(is_imbalanced, .data)
+}
+
 # Selection properties ####
 
 #' Marking ties for selection based on measures

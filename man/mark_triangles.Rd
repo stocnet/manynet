@@ -8,6 +8,7 @@
 \alias{tie_is_cyclical}
 \alias{tie_is_simmelian}
 \alias{tie_is_forbidden}
+\alias{tie_is_imbalanced}
 \title{Marking ties based on structural properties}
 \usage{
 tie_is_triangular(.data)
@@ -21,6 +22,8 @@ tie_is_cyclical(.data)
 tie_is_simmelian(.data)
 
 tie_is_forbidden(.data)
+
+tie_is_imbalanced(.data)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -66,6 +69,7 @@ ison_monks \%>\% to_uniplex("like") \%>\%
 generate_random(8, directed = TRUE) \%>\% 
   mutate_ties(forbid = tie_is_forbidden()) \%>\% 
   graphr(edge_color = "forbid")
+tie_is_imbalanced(ison_marvel_relationships)
 }
 \seealso{
 Other marks: 
