@@ -169,6 +169,16 @@ node_is_mentor <- function(.data, elites = 0.1){
   make_node_mark(out, .data)
 }
 
+#' @rdname mark_nodes
+#' @inheritParams manip_scope
+#' @export
+node_is_neighbor <- function(.data, node){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  .data <- as_igraph(.data)
+  out <- igraph::V(.data) %in% igraph::neighbors(.data, v = node)
+  make_node_mark(out, .data)
+}
+
 # Diffusion properties ####
 
 #' Marking nodes based on diffusion properties
