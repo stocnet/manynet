@@ -193,6 +193,25 @@ gloss <- function(text, ref = NULL){
     }
 }
 
+#' @rdname glossary
+#' @export
+print_glossary <- function(){
+  defns <- getOption("mnet_glossary", default = "")
+  if(length(defns)!=0){
+    glossd <- glossies[names(glossies) %in% defns]
+    glossn <- gsub("([[:alpha:]])([[:alpha:]]+)", "\\U\\1\\L\\2", names(glossd), perl=TRUE)
+    glosst <- data.frame(term = paste("<dt>",glossn,"</dt>"), 
+                         defn = paste("<dd>    ",glossd,"</dd>"))
+    paste("<dl>",paste(paste(glosst$term, glosst$defn), collapse = " "),"</dl>")
+  }
+}
+
+#' @rdname glossary
+#' @export
+clear_glossary <- function(){
+  options(mnet_glossary = vector())
+}
+
 glossies <- list(
   component = "A component is a connected subgraph not part of a larger connected subgraph.",
   giant = "The giant component is the component that includes the most nodes in the network",
