@@ -658,6 +658,33 @@ to_signed.network <- function(.data, mark = NULL){
   as_network(to_signed.tbl_graph(as_tidygraph(.data), mark = mark))
 }
 
+#' @rdname manip_preformat
+#' @param measure A numeric vector (measure) that will be added as the tie
+#'   weights to the network.
+#'   If this is NULL, then the tie weights will be drawn from a 
+#'   Poisson distribution with \eqn{\lambda = 4}.
+#' @export
+to_weighted <- function(.data, measure = NULL) UseMethod("to_weighted")
+
+#' @export
+to_weighted.tbl_graph <- function(.data, measure = NULL){
+  if(is.null(measure)){
+    measure <- stats::rpois(net_ties(.data), lambda = 4)
+    mnet_info("Since no measure values given, weights are generated from",
+              "a Poisson distribution with lambda = 4.")
+  }
+  .data %>% mutate_ties(weight = measure)
+}
+
+#' @export
+to_weighted.igraph <- function(.data, measure = NULL){
+  as_igraph(to_weighted.tbl_graph(as_tidygraph(.data), measure = measure))
+}
+
+#' @export
+to_weighted.network <- function(.data, measure = NULL){
+  as_network(to_weighted.tbl_graph(as_tidygraph(.data), measure = measure))
+}
 
 # Levelling ####
 
