@@ -24,6 +24,7 @@ set_manynet_theme <- function(theme = "default"){
   if(theme %in% theme_opts){
     options(mnet_theme = theme)
     set_highlight_theme(theme)
+    set_background_theme(theme)
     cli::cli_alert_success("Theme set to {.emph {theme}}.")
   } else {
     cli::cli_alert_warning("Please choose one of the available themes: {.emph {theme_opts}}.")
@@ -45,6 +46,14 @@ set_highlight_theme <- function(theme){
     options(mnet_highlight = c("#5aeafd", "#54fe4b"))
   } else {
     options(mnet_highlight = c("#4576B5", "#D83127"))
+  }
+}
+
+set_background_theme <- function(theme){
+  if(theme == "neon"){
+    options(mnet_background = "#070f23")
+  } else {
+    options(mnet_background = "#FFFFFF")
   }
 }
 
@@ -499,3 +508,4 @@ palette_gen <- function(palette, direction = 1) {
     }
   }
 }
+

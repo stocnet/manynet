@@ -143,6 +143,9 @@ graphr <- function(.data, layout, labels = TRUE,
   }
   # Add layout ----
   p <- .graph_layout(g, layout, labels, node_group, snap, ...)
+  # Add background ----
+  if(getOption("mnet_background", default = "#FFFFFF")!="#FFFFFF")
+    p <- p + ggplot2::theme(panel.background = ggplot2::element_rect(fill = getOption("mnet_background", default = "#FFFFFF")))
   # Add edges ----
   p <- .graph_edges(p, g, edge_color, edge_size, node_size)
   # Add nodes ----
