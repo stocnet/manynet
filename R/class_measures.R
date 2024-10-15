@@ -24,6 +24,7 @@ make_tie_measure <- function(out, .data) {
 make_network_measure <- function(out, .data) {
   class(out) <- c("network_measure", class(out))
   attr(out, "mode") <- net_dims(.data)
+  attr(out, "call") <- deparse(sys.calls())
   out
 }
 
@@ -99,6 +100,30 @@ summary.node_measure <- function(object, ...,
     names(out) <- unique(membership)
   }
   out
+}
+
+#' @export
+summary.network_measure <- function(object, ...,
+                                  null = c("random","configuration"), 
+                                  times = 500) {
+  null <- paste0("generate_", match.arg(null))
+  callItems <- trimws(strsplit(unlist(attr(object, "call")), 
+                               split = "\\(|\\)|,")[[1]])
+  idFun <- which(grepl("^net_", callItems))[1]
+  fun <- callItems[idFun]
+  dat <- callItems[idFun+1]
+  nulls <- vapply(mnet_progress_seq(times), function(r){
+    suppressMessages(get(fun)(get(null)(get(dat))))
+  }, FUN.VALUE = numeric(1))
+  out <- (object - mean(nulls))/stats::sd(nulls)
+  out[is.nan(out)] <- 0
+  p <- 2 * stats::pnorm(out, 
+             mean = mean(nulls), sd = stats::sd(nulls), 
+             lower.tail = ifelse(out>0, FALSE, TRUE))
+  cli::cli_text(cli::style_bold(round(object,3)), 
+                "  (z = ", cli::style_italic(round(out,2)),
+                ", p = ", cli::style_italic(round(p,3)),
+                ")")
 }
 
 # Plotting ####
