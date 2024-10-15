@@ -51,7 +51,7 @@ NULL
 #' @export
 node_in_equivalence <- function(.data, census,
                              k = c("silhouette", "elbow", "strict"),
-                             cluster = c("hierarchical", "concor"),
+                             cluster = c("hierarchical", "concor", "cosine"),
                              distance = c("euclidean", "maximum", "manhattan", 
                                           "canberra", "binary", "minkowski"),
                              range = 8L){
@@ -59,7 +59,9 @@ node_in_equivalence <- function(.data, census,
   hc <- switch(match.arg(cluster),
                hierarchical = cluster_hierarchical(census, 
                                                       match.arg(distance)),
-               concor = cluster_concor(.data, census))
+               concor = cluster_concor(.data, census),
+               cosine = cluster_cosine(census, 
+                                       match.arg(distance)))
   
   if(!is.numeric(k))
     k <- switch(match.arg(k),
@@ -84,7 +86,7 @@ node_in_equivalence <- function(.data, census,
 #' @export
 node_in_structural <- function(.data,
                                         k = c("silhouette", "elbow", "strict"),
-                                        cluster = c("hierarchical", "concor"),
+                                        cluster = c("hierarchical", "concor","cosine"),
                                         distance = c("euclidean", "maximum", "manhattan", 
                                                      "canberra", "binary", "minkowski"),
                                         range = 8L){
@@ -109,7 +111,7 @@ node_in_structural <- function(.data,
 #' @export
 node_in_regular <- function(.data, 
                             k = c("silhouette", "elbow", "strict"),
-                            cluster = c("hierarchical", "concor"),
+                            cluster = c("hierarchical", "concor","cosine"),
                             distance = c("euclidean", "maximum", "manhattan", 
                                          "canberra", "binary", "minkowski"),
                             range = 8L){
@@ -144,7 +146,7 @@ node_in_regular <- function(.data,
 #' @export
 node_in_automorphic <- function(.data,
                                          k = c("silhouette", "elbow", "strict"),
-                                         cluster = c("hierarchical", "concor"),
+                                         cluster = c("hierarchical", "concor","cosine"),
                                          distance = c("euclidean", "maximum", "manhattan", 
                                                       "canberra", "binary", "minkowski"),
                                          range = 8L){
