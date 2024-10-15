@@ -214,12 +214,17 @@ clear_glossary <- function(){
 
 glossies <- list(
   component = "A component is a connected subgraph not part of a larger connected subgraph.",
-  giant = "The giant component is the component that includes the most nodes in the network",
-  undirected = "An undirected network is one in which tie direction is undefined.",
+  degree = "A node's degree is the number of connections it has.",
+  giant = "The giant component is the component that includes the most nodes in the network.",
+  graphlet = "A graphlet is a small, connected, induced, non-isomorphic subgraphs.",
+  induced = "An induced subgraph comprises all ties in a subset of the nodes in a network.",
+  motif = "A subgraph that is exceptional or significant compared to a null model.",
+  neighborhood = "A node's neighborhood is the set of other nodes to which that node is connected.",
+  network = "A network comprises a set of nodes/vertices and a set of ties/edges among them.",
+  orbit = "An orbit is a unique position in a subgraph.",
   reciprocity = "A measure of how often nodes in a directed network are mutually linked.",
-  transitivity = "Triadic closure is where if the connections A-B and A-C exist among three nodes, there is a tendency for B-C also to be formed."
+  subgraph = "A subgraph comprises a subset of the nodes and ties in a network.",
+  transitivity = "Triadic closure is where if the connections A-B and A-C exist among three nodes, there is a tendency for B-C also to be formed.",
+  undirected = "An undirected network is one in which tie direction is undefined."
 )
 
-# print_glossary(){
-#   
-# }
