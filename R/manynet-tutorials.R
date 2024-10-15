@@ -169,12 +169,26 @@ table_data <- function(pkg = c("manynet","migraph"),
 
 # Glossary ####
 
+
+#' Adding network glossary items
+#' 
+#' @description 
+#'   This function adds a glossary item, useful in tutorials.
+#'   
+#' @param text The text to appear.
+#' @param ref The name of the glossary item to index.
+#'   If NULL, then the function will search the glossary for 'text' instead.
+#' @name glossary
+NULL
+
+#' @rdname glossary
 #' @export
 gloss <- function(text, ref = NULL){
-  if(is.null(ref)) ref <- text
+  if(is.null(ref)) ref <- tolower(text)
   if(!ref %in% names(glossies)) 
     cli::cli_abort("No glossary entry for '{text}' exists.") else {
       defn <- glossies[which(names(glossies)==ref)]
+      options(mnet_glossary = unique(c(ref, getOption("mnet_glossary", default = ""))))
       paste(paste0("<abbr><dfn title='", defn, "'>"), text, "</dfn></abbr>")
     }
 }
