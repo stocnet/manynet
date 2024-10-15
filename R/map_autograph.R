@@ -456,7 +456,7 @@ map_directed_edges <- function(p, g, out) {
                                    arrow = ggplot2::arrow(angle = 15, type = "closed",
                                                           length = ggplot2::unit(2, 'mm')))
   } else {
-    p <- p + ggraph::geom_edge_arc(ggplot2::aes(edge_colour = out[["ecolor"]],
+    p <- p + ggraph::geom_edge_arc(ggplot2::aes(edge_colour = getOption("mnet_cat")[out[["ecolor"]]],
                                                 edge_width = out[["esize"]],
                                                 end_cap = ggraph::circle(c(out[["end_cap"]]), 'mm')),
                                    edge_linetype = out[["line_type"]],

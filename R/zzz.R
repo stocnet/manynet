@@ -5,8 +5,9 @@
   if (!interactive()) return()
   
   options(manynet_verbosity = getOption("manynet_verbosity", "verbose"))
-  # options(manynet_theme = getOption("manynet_theme", "default"))
+  options(manynet_theme = getOption("manynet_theme", "default"))
   options(cli.theme = manynet_console_theme())
+  options(cli.progress_clear = TRUE)
   
   # pkgs <- as.data.frame(utils::available.packages(utils::contrib.url(getOption("repos"))))
   # 
@@ -61,7 +62,8 @@ mnet_progress_along <- function(..., .envir = parent.frame()){
 
 mnet_progress_seq <- function(..., .envir = parent.frame()){
   if(getOption("manynet_verbosity", default = "quiet")!="quiet")
-    cli::cli_progress_along(seq.int(...), .envir = .envir)
+    cli::cli_progress_along(seq.int(...), .envir = .envir, 
+                            total = ..., clear = TRUE)
 }
 
 mnet_info <- function(..., .envir = parent.frame()){
@@ -132,3 +134,4 @@ simple_theme_code <- function(){
 col_mnet_green <- cli::make_ansi_style("#199D77")
 
 col_mnet_blue <- cli::make_ansi_style("#4576B5")
+

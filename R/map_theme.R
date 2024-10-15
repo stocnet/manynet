@@ -25,6 +25,7 @@ set_manynet_theme <- function(theme = "default"){
     options(mnet_theme = theme)
     set_highlight_theme(theme)
     set_background_theme(theme)
+    set_categorical_theme(theme)
     cli::cli_alert_success("Theme set to {.emph {theme}}.")
   } else {
     cli::cli_alert_warning("Please choose one of the available themes: {.emph {theme_opts}}.")
@@ -56,6 +57,20 @@ set_background_theme <- function(theme){
     options(mnet_background = "#FFFFFF")
   }
 }
+
+set_categorical_theme <- function(theme){
+  if(theme == "iheid"){
+    options(mnet_cat = c("#006564","#0094D8","#622550",
+                         "#268D2B","#3E2682","#820C2B",
+                         "#008F92","#006EAA","#A8086E"))
+  } else {
+    options(mnet_cat = c("#1B9E77","#4575b4","#d73027",
+                         "#66A61E","#E6AB02","#D95F02","#7570B3",
+                         "#A6761D","#E7298A","#666666"))
+  }
+}
+
+
 
 #' @rdname map_themes
 #' @export
