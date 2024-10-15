@@ -32,7 +32,7 @@ net_by_mixed(.data, object2)
 \item{object2}{A second, two-mode migraph-consistent object.}
 }
 \description{
-These functions include ways to take a census of the positions of nodes
+These functions include ways to take a census of the graphlets
 in a network:
 \itemize{
 \item \code{net_by_dyad()} returns a census of dyad motifs in a network.
@@ -41,6 +41,8 @@ in a network:
 \item \code{net_by_mixed()} returns a census of triad motifs that span
 a one-mode and a two-mode network.
 }
+
+See also \href{https://www.graphclasses.org/smallgraphs.html}{graph classes}.
 }
 \section{Tetrad census}{
 

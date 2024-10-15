@@ -100,9 +100,9 @@ summary.network_motif <- function(object, ...,
   fun <- callItems[idFun]
   dat <- callItems[idFun+1]
   nulls <- t(vapply(mnet_progress_seq(times), function(r){
-    get(fun)(get(null)(get(dat)))
+    suppressMessages(get(fun)(get(null)(get(dat))))
   }, FUN.VALUE = numeric(length(object))))
-  out <- (object - colMeans(nulls))/apply(nulls, 2, sd)
+  out <- (object - colMeans(nulls))/apply(nulls, 2, stats::sd)
   out[is.nan(out)] <- 0
   out
 }

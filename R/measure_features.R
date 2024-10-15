@@ -110,8 +110,11 @@ net_richclub <- function(.data){
 net_factions <- function(.data,
                        membership = NULL){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  if(is.null(membership))
+  if(is.null(membership)){
+    mnet_info("No membership vector assigned.",
+              "Partitioning the network using {.fn node_in_partition}.")
     membership <- node_in_partition(.data)
+  }
   out <- stats::cor(c(manynet::as_matrix(.data)), 
                     c(manynet::as_matrix(manynet::create_components(.data,
                                                   membership = membership))))

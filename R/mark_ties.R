@@ -138,7 +138,6 @@ tie_is_triangular <- function(.data){
 
 .triangle_ties <- function(.data){
   out <- t(matrix(igraph::triangles(as_igraph(.data)), nrow = 3))
-  # out <- as.data.frame(out)
   out <- rbind(out[,c(1,2)],out[,c(2,3)],out[,c(3,1)],
                out[,c(1,3)],out[,c(3,2)],out[,c(2,1)])
   out

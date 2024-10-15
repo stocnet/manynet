@@ -488,7 +488,7 @@ depth_first_recursive_search <- function(layout) {
   gridout <- layout[order(abs(layout[,1]) + abs(layout[,2])), ] # sort centroid distance
   nodes <- seq_len(nrow(gridout))
   for (i in nodes) {
-    dists <- as.matrix(dist(rbind(gridout[i, 1:2], vacant_points),
+    dists <- as.matrix(stats::dist(rbind(gridout[i, 1:2], vacant_points),
                             method = "manhattan"))[, 1]
     mindist <- which(dists == min(dists[2:length(dists)]))[1] - 1
     vacpoint <- vacant_points[mindist, ]

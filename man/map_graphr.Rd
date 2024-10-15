@@ -125,7 +125,7 @@ try \code{run_tute("Visualisation")}.
 \examples{
 graphr(ison_adolescents)
 ison_adolescents \%>\%
-  mutate(color = rep(c("extrovert", "introvert"), times = 4),
+  mutate(color = rep(c("introvert","extrovert"), times = 4),
          size = ifelse(node_is_cutpoint(ison_adolescents), 6, 3)) \%>\%
   mutate_ties(ecolor = rep(c("friends", "acquaintances"), times = 5)) \%>\%
   graphr(node_color = "color", node_size = "size",

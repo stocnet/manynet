@@ -286,7 +286,7 @@ node_by_path <- function(.data){
 #' Motifs at the network level
 #' 
 #' @description
-#'   These functions include ways to take a census of the positions of nodes
+#'   These functions include ways to take a census of the graphlets
 #'   in a network: 
 #'   
 #'   - `net_by_dyad()` returns a census of dyad motifs in a network.
@@ -294,6 +294,8 @@ node_by_path <- function(.data){
 #'   - `net_by_tetrad()` returns a census of tetrad motifs in a network.
 #'   - `net_by_mixed()` returns a census of triad motifs that span
 #'   a one-mode and a two-mode network.
+#'   
+#'   See also \href{https://www.graphclasses.org/smallgraphs.html}{graph classes}.
 #'   
 #' @name motif_net
 #' @family motifs
