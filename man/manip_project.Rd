@@ -5,7 +5,6 @@
 \alias{to_mode1}
 \alias{to_mode2}
 \alias{to_ties}
-\alias{to_galois}
 \title{Modifying networks projection}
 \usage{
 to_mode1(.data, similarity = c("count", "jaccard", "rand", "pearson", "yule"))
@@ -13,8 +12,6 @@ to_mode1(.data, similarity = c("count", "jaccard", "rand", "pearson", "yule"))
 to_mode2(.data, similarity = c("count", "jaccard", "rand", "pearson", "yule"))
 
 to_ties(.data)
-
-to_galois(.data)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -58,7 +55,6 @@ of the first node set's (e.g. rows) joint affiliations to nodes in the second no
 \item \code{to_mode2()} projects a two-mode network to a one-mode network
 of the second node set's (e.g. columns) joint affiliations to nodes in the first node set (rows).
 \item \code{to_ties()} projects a network to one where the ties become nodes and incident nodes become their ties.
-\item \code{to_galois()} projects a network to its Galois derivation.
 }
 }
 \details{
@@ -70,11 +66,6 @@ Below are the currently implemented S3 methods:\tabular{lrrrrr}{
    to_ties \tab 1 \tab 1 \tab 1 \tab 1 \tab 1 \cr
 }
 }
-\section{Galois lattices}{
-
-Note that the output from \code{to_galois()} is very busy at the moment.
-}
-
 \examples{
 to_mode1(ison_southern_women)
 to_mode2(ison_southern_women)
@@ -87,12 +78,14 @@ to_ties(ison_adolescents)
 Other modifications: 
 \code{\link{manip_as}},
 \code{\link{manip_correlation}},
+\code{\link{manip_deformat}},
 \code{\link{manip_from}},
 \code{\link{manip_levels}},
 \code{\link{manip_miss}},
 \code{\link{manip_nodes}},
 \code{\link{manip_paths}},
 \code{\link{manip_permutation}},
+\code{\link{manip_preformat}},
 \code{\link{manip_reformat}},
 \code{\link{manip_scope}},
 \code{\link{manip_split}},

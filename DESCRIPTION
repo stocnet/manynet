@@ -39,7 +39,6 @@ Suggests:
     knitr,
     learnr,
     methods,
-    multiplex,
     netdiffuseR,
     patchwork,
     readxl,

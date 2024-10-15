@@ -10,7 +10,7 @@
 #'   - `to_mode2()` projects a two-mode network to a one-mode network
 #'   of the second node set's (e.g. columns) joint affiliations to nodes in the first node set (rows).
 #'   - `to_ties()` projects a network to one where the ties become nodes and incident nodes become their ties.
-#'   - `to_galois()` projects a network to its Galois derivation.
+# #'   - `to_galois()` projects a network to its Galois derivation.
 #' @details
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
@@ -188,20 +188,20 @@ to_ties.matrix <- function(.data){
   as_matrix(to_ties(as_igraph(.data)))
 }
 
-#' @rdname manip_project
-#' @section Galois lattices: 
-#'   Note that the output from `to_galois()` is very busy at the moment.
-#' @export
-to_galois <- function(.data) {
-  x <- as_matrix(.data)
-  thisRequires("multiplex")
-  out <- multiplex::galois(x, labeling = "reduced")
-  out <- multiplex::partial.order(out, type = "galois")
-  class(out) <- c("matrix", class(out))
-  rownames(out)[!startsWith(rownames(out), "{")] <- ""
-  colnames(out)[!startsWith(colnames(out), "{")] <- ""
-  out
-}
+# #' @rdname manip_project
+# #' @section Galois lattices: 
+# #'   Note that the output from `to_galois()` is very busy at the moment.
+# #' @export
+# to_galois <- function(.data) {
+#   x <- as_matrix(.data)
+#   thisRequires("multiplex")
+#   out <- multiplex::galois(x, labeling = "reduced")
+#   out <- multiplex::partial.order(out, type = "galois")
+#   class(out) <- c("matrix", class(out))
+#   rownames(out)[!startsWith(rownames(out), "{")] <- ""
+#   colnames(out)[!startsWith(colnames(out), "{")] <- ""
+#   out
+# }
 
 # Scoping ####
 
