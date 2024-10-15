@@ -96,7 +96,7 @@
 #' @examples
 #' graphr(ison_adolescents)
 #' ison_adolescents %>%
-#'   mutate(color = rep(c("extrovert", "introvert"), times = 4),
+#'   mutate(color = rep(c("introvert","extrovert"), times = 4),
 #'          size = ifelse(node_is_cutpoint(ison_adolescents), 6, 3)) %>%
 #'   mutate_ties(ecolor = rep(c("friends", "acquaintances"), times = 5)) %>%
 #'   graphr(node_color = "color", node_size = "size",
@@ -212,7 +212,13 @@ graphr <- function(.data, layout, labels = TRUE,
                                                                "Edge Weight", "Edge Size")))
   if (length(unique(out[["ecolor"]])) == 1) {
     p <- p + ggplot2::guides(edge_colour = "none")
-  } else p <- p + ggraph::scale_edge_colour_manual(values = colorsafe_palette,
+  } else if (length(unique(out[["ecolor"]])) == 2){
+    p <- p + ggraph::scale_edge_colour_manual(values = getOption("mnet_highlight", default = c("grey","black")),
+                                                   guide = ggplot2::guide_legend(
+                                                     ifelse(is.null(edge_color) &
+                                                              is_signed(g),
+                                                            "Edge Sign", "Edge Color")))
+    } else p <- p + ggraph::scale_edge_colour_manual(values = getOption("mnet_cat", default = colorsafe_palette),
                                                    guide = ggplot2::guide_legend(
                                                      ifelse(is.null(edge_color) &
                                                               is_signed(g),
@@ -235,8 +241,8 @@ graphr <- function(.data, layout, labels = TRUE,
       p <- p + ggplot2::guides(shape = ggplot2::guide_legend(
         title = ifelse(is_twomode(g) & is.null(node_shape), "Node Mode", "Node Shape")))
     if (length(unique(out[["ncolor"]])) > 1){
-      if(length(unique(out[["ncolor"]])) ==2){
-        p <- p + ggplot2::scale_colour_manual(values = colorsafe_palette[c(2,1)],
+      if(length(unique(out[["ncolor"]])) == 2){
+        p <- p + ggplot2::scale_colour_manual(values = getOption("mnet_highlight", default = c("grey","black")),
                                               guide = ggplot2::guide_legend("Node Color"))
       } else {
         p <- p + ggplot2::scale_colour_manual(values = colorsafe_palette,

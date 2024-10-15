@@ -20,12 +20,31 @@ NULL
 #'   By default "default".
 #' @export
 set_manynet_theme <- function(theme = "default"){
-  theme_opts <- c("default", "iheid", "ethz", "uzh", "rug", "crisp")
+  theme_opts <- c("default", "iheid", "ethz", "uzh", "rug", "crisp", "neon")
   if(theme %in% theme_opts){
     options(mnet_theme = theme)
-    cli::cli_alert_success("Theme set to {theme}.")
+    set_highlight_theme(theme)
+    cli::cli_alert_success("Theme set to {.emph {theme}}.")
   } else {
-    cli::cli_alert_danger("Please choose one of the available themes: {.emph {theme_opts}}.")
+    cli::cli_alert_warning("Please choose one of the available themes: {.emph {theme_opts}}.")
+  }
+}
+
+set_highlight_theme <- function(theme){
+  if(theme == "iheid"){
+    options(mnet_highlight = c("#000010","#E20020"))
+  } else if(theme == "rug"){
+    options(mnet_highlight = c("#000000", "#dc002d"))
+  } else if(theme == "uzh"){
+    options(mnet_highlight = c("#a3adb7", "#dc6027"))
+  } else if(theme == "ethz"){
+    options(mnet_highlight = c("#6F6F6F", "#0028a5"))
+  } else if(theme == "crisp"){
+    options(mnet_highlight = c("#FFFFFA", "#101314"))
+  } else if(theme == "neon"){
+    options(mnet_highlight = c("#5aeafd", "#54fe4b"))
+  } else {
+    options(mnet_highlight = c("#4576B5", "#D83127"))
   }
 }
 
