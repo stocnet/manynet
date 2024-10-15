@@ -465,6 +465,153 @@ to_reciprocated.data.frame <- function(.data) {
   as_edgelist(to_reciprocated(as_igraph(.data)))
 }
 
+# Formatting ####
+
+#' Modifying network formats
+#' 
+#' @description
+#'   These functions add some format to manynet-consistent data.
+#' 
+#'   - `to_directed()` reformats undirected network data to a directed network.
+#'   - `to_redirected()` reformats the direction of directed network data, flipping any existing direction.
+#'   - `to_reciprocated()` reformats directed network data such that every directed tie is reciprocated.
+#'   - `to_acyclic()` reformats network data to an acyclic graph.
+#'   - `to_named()` reformats unlabelled network data to labelled network data 
+#'   from a vector of names or random baby names.
+#'   - `to_signed()` reformats unsigned network data to signed network data
+#'   with signs from a mark vector or at random.
+#' 
+#'   If the format condition is not met,
+#'   for example `to_undirected()` is used on a network that is already undirected,
+#'   the network data is returned unaltered.
+#'   No warning is given so that these functions can be used to ensure conformance.
+#'   
+#'   Unlike the `as_*()` group of functions,
+#'   these functions always return the same class as they are given,
+#'   only transforming these objects' properties.
+#' @details
+#'   Not all functions have methods available for all object classes.
+#'   Below are the currently implemented S3 methods:
+#'  
+#'   ```{r, echo = FALSE, cache = TRUE} 
+#'   knitr::kable(available_methods(c("to_directed", "to_redirected", 
+#'   "to_reciprocated", "to_acyclic", "to_named", "to_simplex")))
+#'   ```
+#' @name manip_preformat
+#' @family modifications
+#' @inheritParams mark_is
+#' @param names Character vector of the node names. NULL by default.
+#' @returns
+#' All `to_` functions return an object of the same class as that provided. 
+#' So passing it an igraph object will return an igraph object
+#' and passing it a network object will return a network object,
+#' with certain modifications as outlined for each function.
+NULL
+
+#' @rdname manip_preformat
+#' @param names Character vector of the node names. NULL by default.
+#' @importFrom dplyr mutate
+#' @importFrom igraph vcount V
+#' @export
+to_named <- function(.data, names = NULL) UseMethod("to_named")
+
+#' @export
+to_named.tbl_graph <- function(.data, names = NULL) {
+  if (!is.null(names)) {
+    out <- .data %>% mutate(name = names)
+  } else {
+    n <- net_nodes(.data)
+    out <- .data %>%
+      mutate(name = .get_babynames(n))
+  }
+  out
+}
+
+#' @export
+to_named.igraph <- function(.data, names = NULL) {
+  if (!is.null(names)) {
+    igraph::V(.data)$name  <- names
+  } else {
+    igraph::V(.data)$name  <- .get_babynames(net_nodes(.data))
+  }
+  .data
+}
+
+#' @export
+to_named.data.frame <- function(.data, names = NULL) {
+  if (!is.null(names)) {
+    .data[,1]  <- names[as.numeric(.data[,1])]
+    .data[,2]  <- names[as.numeric(.data[,2])]
+  } else {
+    .data[,1]  <- .get_babynames(net_nodes(.data))[as.numeric(.data[,1])]
+    .data[,2]  <- .get_babynames(net_nodes(.data))[as.numeric(.data[,2])]
+  }
+  .data
+}
+
+#' @export
+to_named.matrix <- function(.data, names = NULL) {
+  if(is.null(names)) names <- .get_babynames(net_nodes(.data))
+  if(is_twomode(.data)){
+    rownames(.data)  <- names[seq_len(nrow(.data))]
+    colnames(.data)  <- names[(nrow(.data)+1):length(names)]
+  } else {
+    rownames(.data)  <- names
+    colnames(.data)  <- names
+  }
+  .data
+}
+
+#' @export
+to_named.network <- function(.data, names = NULL) {
+  as_network(to_named(as_igraph(.data), names))
+}
+
+.get_babynames <- function(n){
+  indic <- seq(from=1, length.out=n) %% 26
+  indic[indic == 0] <- 26
+  mnet_info("Assigning alphabetic baby names at random.")
+  # table(stringr::str_extract(manynet:::baby_names, "^."))
+  vapply(indic, 
+         function(x){
+           let <- LETTERS[x]
+           sample(baby_names[startsWith(baby_names, let)], 1)
+         }, FUN.VALUE = character(1))
+}
+
+#' @rdname manip_reformat 
+#' @importFrom igraph as.directed
+#' @export
+to_directed <- function(.data) UseMethod("to_directed")
+
+#' @export
+to_directed.igraph <- function(.data) {
+  if(!is_directed.igraph(.data)){
+    mnet_info("Directions are assigned to existing ties at random.")
+    igraph::as.directed(.data, mode = "random")
+  } else .data
+}
+
+#' @export
+to_directed.tbl_graph <- function(.data) {
+  as_tidygraph(to_directed(as_igraph(.data)))
+}
+
+#' @export
+to_directed.matrix <- function(.data) {
+  as_matrix(to_directed(as_igraph(.data)))
+}
+
+#' @export
+to_directed.network <- function(.data) {
+  as_network(to_directed(as_igraph(.data)))
+}
+
+#' @export
+to_directed.data.frame <- function(.data) {
+  as_edgelist(to_directed(as_igraph(.data)))
+}
+
 
 # Levelling ####
 

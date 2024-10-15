@@ -34,11 +34,13 @@ graphr(to_permuted(ison_adolescents), node_size = 4)
 Other modifications: 
 \code{\link{manip_as}},
 \code{\link{manip_correlation}},
+\code{\link{manip_deformat}},
 \code{\link{manip_from}},
 \code{\link{manip_levels}},
 \code{\link{manip_miss}},
 \code{\link{manip_nodes}},
 \code{\link{manip_paths}},
+\code{\link{manip_preformat}},
 \code{\link{manip_project}},
 \code{\link{manip_reformat}},
 \code{\link{manip_scope}},
