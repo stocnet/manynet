@@ -584,33 +584,31 @@
 
 ## Friends ####
 
-#' One-mode Friends character connections (McNulty, 2020)
+#' One-mode undirected Friends character scene co-appearances (McNulty, 2020)
 #'
 #' @description
 #' One-mode network collected by \href{https://github.com/keithmcnulty/friends_analysis/}{McNulty (2020)}
 #' on the connections between the Friends TV series characters
 #' from Seasons 1 to 10.
-#' The `ison_friends` is a directed network
+#' The `fict_friends` is an undirected network
 #' containing connections between characters organised by season number,
 #' which is reflected in the tie attribute 'wave'.
 #' The network contains 650 nodes
 #' Each tie represents the connection between a character pair (appear in the same scene),
 #' and the 'weight' of the tie is the number of scenes the character pair appears in together.
 #' For all networks, characters are named (eg. Phoebe, Ross, Rachel).
-#' @details
-#' The data contains both networks but each may be used separately.
 #' @docType data
 #' @keywords datasets
-#' @name ison_friends
-#' @usage data(ison_friends)
+#' @name fict_friends
+#' @usage data(fict_friends)
 #' @references
 #'   McNulty, K. (2020).
 #'   \emph{Network analysis of Friends scripts.}.
 #' @format
 #'   ```{r, echo = FALSE}
-#'   ison_friends
+#'   fict_friends
 #'   ```
-"ison_friends"
+"fict_friends"
 
 ## Greys ####
 
