@@ -12,7 +12,7 @@
 \alias{net_eigenvector}
 \title{Measures of eigenvector-like centrality and centralisation}
 \usage{
-node_eigenvector(.data, normalized = TRUE, scale = FALSE)
+node_eigenvector(.data, normalized = TRUE, scale = TRUE)
 
 node_power(.data, normalized = TRUE, scale = FALSE, exponent = 1)
 
@@ -100,6 +100,8 @@ where \eqn{a_{i,j} = 1} if \eqn{i} is linked to \eqn{j} and 0 otherwise,
 and \eqn{\lambda} is a constant representing the principal eigenvalue.
 Rather than performing this iteration,
 most routines solve the eigenvector equation \eqn{Ax = \lambda x}.
+Note that since \code{{igraph}} v2.1.1,
+the values will always be rescaled so that the maximum is 1.
 }
 
 \section{Power or beta (or Bonacich) centrality}{
