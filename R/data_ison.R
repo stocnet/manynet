@@ -637,14 +637,14 @@
 #'   
 #' @docType data
 #' @keywords datasets
-#' @name ison_greys
+#' @name fict_greys
 #' @author Gary Weissman and Benjamin Lind
-#' @usage data(ison_greys)
+#' @usage data(fict_greys)
 #' @format 
 #'   ```{r, echo = FALSE}
-#'   ison_greys
+#'   fict_greys
 #'   ```
-"ison_greys"
+"fict_greys"
 
 # Political ####
 
