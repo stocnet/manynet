@@ -121,9 +121,9 @@ plot(nre)
 if(require("sna", quietly = TRUE)){
 (nae <- node_in_automorphic(ison_southern_women,
   k = "elbow"))
-}
 if(require("ggdendro", quietly = TRUE)){
 plot(nae)
+}
 }
 }
 }

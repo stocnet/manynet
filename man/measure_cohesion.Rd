@@ -62,8 +62,8 @@ please use \code{manynet::to_undirected()} first.
 \examples{
 net_density(ison_adolescents)
 net_density(ison_southern_women)
-  net_components(ison_friends)
-  net_components(to_undirected(ison_friends))
+  net_components(fict_thrones)
+  net_components(to_undirected(fict_thrones))
 net_cohesion(ison_marvel_relationships)
 net_cohesion(to_giant(ison_marvel_relationships))
 net_adhesion(ison_marvel_relationships)

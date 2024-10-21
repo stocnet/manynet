@@ -50,7 +50,7 @@ These functions are also often used as helpers within other functions.
 as the number of nodes or ties in the network, respectively.
 }
 \examples{
-node_attribute(ison_lotr, "Race")
+node_attribute(fict_lotr, "Race")
 node_names(ison_southern_women)
 node_is_mode(ison_southern_women)
 tie_attribute(ison_algebra, "task_tie")

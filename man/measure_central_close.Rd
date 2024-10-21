@@ -8,6 +8,7 @@
 \alias{node_information}
 \alias{node_eccentricity}
 \alias{node_distance}
+\alias{node_vitality}
 \alias{tie_closeness}
 \alias{net_closeness}
 \alias{net_reach}
@@ -25,6 +26,8 @@ node_information(.data, normalized = TRUE)
 node_eccentricity(.data, normalized = TRUE)
 
 node_distance(.data, from, to, normalized = TRUE)
+
+node_vitality(.data, normalized = TRUE)
 
 tie_closeness(.data, normalized = TRUE)
 
@@ -161,6 +164,14 @@ where the distance from \eqn{i} to \eqn{j} is \eqn{\infty} if unconnected.
 As such it is only well defined for connected networks.
 }
 
+\section{Closeness vitality centrality}{
+
+The closeness vitality of a node is the change in the sum of all distances
+in a network, also known as the Wiener Index, when that node is removed.
+Note that the closeness vitality may be negative infinity if
+removing that node would disconnect the network.
+}
+
 \examples{
 node_closeness(ison_southern_women)
 node_reach(ison_adolescents)
@@ -223,6 +234,13 @@ Hage, Per, and Frank Harary. 1995.
 \emph{Social Networks}, 17(1): 57-63.
 \doi{10.1016/0378-8733(94)00248-9}
 }
+
+Koschuetzki, Dirk, Katharina Lehmann, Leon Peeters, Stefan Richter,
+Dagmar Tenfelde-Podehl, and Oliver Zlotowski. 2005.
+"Centrality Indices", in
+Brandes, Ulrik, and Thomas Erlebach (eds.).
+\emph{Network Analysis: Methodological Foundations}.
+Springer: Berlin, pp. 16-61.
 }
 \seealso{
 Other centrality: 

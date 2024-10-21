@@ -746,6 +746,30 @@ node_distance <- function(.data, from, to, normalized = TRUE){
 }
 
 #' @rdname measure_central_close 
+#' @section Closeness vitality centrality: 
+#'   The closeness vitality of a node is the change in the sum of all distances
+#'   in a network, also known as the Wiener Index, when that node is removed.
+#'   Note that the closeness vitality may be negative infinity if
+#'   removing that node would disconnect the network.
+#' @references
+#'   Koschuetzki, Dirk, Katharina Lehmann, Leon Peeters, Stefan Richter,
+#'   Dagmar Tenfelde-Podehl, and Oliver Zlotowski. 2005.
+#'   "Centrality Indices", in
+#'   Brandes, Ulrik, and Thomas Erlebach (eds.). 
+#'   _Network Analysis: Methodological Foundations_. 
+#'   Springer: Berlin, pp. 16-61.
+#' @export
+node_vitality <- function(.data, normalized = TRUE){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  .data <- as_igraph(.data)
+  out <- vapply(mnet_progress_nodes(.data), function(x){
+    sum(igraph::distances(.data)) - sum(igraph::distances(delete_nodes(.data, x)))
+  }, FUN.VALUE = numeric(1))
+  if(normalized) out <- out/max(out)
+  make_node_measure(out, .data)
+}
+
+#' @rdname measure_central_close 
 #' @examples
 #' (ec <- tie_closeness(ison_adolescents))
 #' plot(ec)
