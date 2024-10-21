@@ -20,7 +20,9 @@ NULL
 #'   By default "default".
 #' @export
 set_manynet_theme <- function(theme = "default"){
-  theme_opts <- c("default", "iheid", "ethz", "uzh", "rug", "crisp", "neon")
+  theme_opts <- c("default", 
+                  "iheid", "ethz", "uzh", "rug", 
+                  "crisp", "neon", "rainbow")
   if(theme %in% theme_opts){
     options(mnet_theme = theme)
     set_highlight_theme(theme)
@@ -45,6 +47,8 @@ set_highlight_theme <- function(theme){
     options(mnet_highlight = c("#FFFFFA", "#101314"))
   } else if(theme == "neon"){
     options(mnet_highlight = c("#5aeafd", "#54fe4b"))
+  } else if(theme == "rainbow"){
+    options(mnet_highlight = c('#1965B0', '#DC050C'))
   } else {
     options(mnet_highlight = c("#4576B5", "#D83127"))
   }
@@ -63,7 +67,18 @@ set_categorical_theme <- function(theme){
     options(mnet_cat = c("#006564","#0094D8","#622550",
                          "#268D2B","#3E2682","#820C2B",
                          "#008F92","#006EAA","#A8086E"))
-  } else {
+    } else if(theme == "rainbow"){
+      options(mnet_cat = c('#E8ECFB', '#D9CCE3', '#D1BBD7', 
+                           '#CAACCB', '#BA8DB4', '#AE76A3', 
+                           '#AA6F9E', '#994F88', '#882E72', 
+                           '#1965B0', '#437DBF', '#5289C7', 
+                           '#6195CF', '#7BAFDE', 
+                           '#4EB265', '#90C987', '#CAE0AB', 
+                           '#F7F056', '#F7CB45', '#F6C141', 
+                           '#F4A736', '#F1932D', '#EE8026', 
+                           '#E8601C', '#E65518', '#DC050C', 
+                           '#A5170E', '#72190E', '#42150A'))
+    } else {
     options(mnet_cat = c("#1B9E77","#4575b4","#d73027",
                          "#66A61E","#E6AB02","#D95F02","#7570B3",
                          "#A6761D","#E7298A","#666666"))
