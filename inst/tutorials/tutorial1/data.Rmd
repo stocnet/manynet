@@ -633,7 +633,7 @@ mean(as_matrix(s_women))
 ```
 
 ```{r womenweightsq, purl=FALSE}
-question("2.438849 is...",
+question("2.316547 is...",
   answer("the average frequency of events shared by women who shared any events.",
          correct = TRUE),
   answer("the average frequency of events shared by women."),
