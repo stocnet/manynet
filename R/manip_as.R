@@ -61,6 +61,18 @@
 #'  ```
 NULL
 
+# Nodelists ####
+
+#' @rdname manip_as
+#' @export
+as_nodelist <- function(.data) UseMethod("as_nodelist")
+
+#' @export
+as_nodelist.tbl_graph <- function(.data) {
+  out <- .data
+  dplyr::tibble(data.frame(out))
+}
+
 # Edgelists ####
 
 #' @rdname manip_as

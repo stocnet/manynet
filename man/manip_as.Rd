@@ -2,6 +2,7 @@
 % Please edit documentation in R/manip_as.R
 \name{manip_as}
 \alias{manip_as}
+\alias{as_nodelist}
 \alias{as_edgelist}
 \alias{as_matrix}
 \alias{as_igraph}
@@ -13,6 +14,8 @@
 \alias{as_diffnet}
 \title{Modifying network classes}
 \usage{
+as_nodelist(.data)
+
 as_edgelist(.data, twomode = FALSE)
 
 as_matrix(.data, twomode = NULL)

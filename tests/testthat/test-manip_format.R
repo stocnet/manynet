@@ -86,11 +86,11 @@ test_that("to_onemode works",{
 })
 
 test_that("to_simplex works", {
-  expect_true(is_complex(ison_lotr))
-  expect_false(is_complex(to_simplex(ison_lotr)))
-  expect_false(is_complex(to_simplex(as_igraph(ison_lotr))))
-  expect_false(is_complex(to_simplex(as_matrix(ison_lotr))))
-  expect_false(is_complex(to_simplex(as_igraph(ison_lotr))))
+  expect_true(is_complex(fict_lotr))
+  expect_false(is_complex(to_simplex(fict_lotr)))
+  expect_false(is_complex(to_simplex(as_igraph(fict_lotr))))
+  expect_false(is_complex(to_simplex(as_matrix(fict_lotr))))
+  expect_false(is_complex(to_simplex(as_igraph(fict_lotr))))
 })
 
 test_that("to_unsigned works", {
