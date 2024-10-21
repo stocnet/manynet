@@ -284,33 +284,6 @@
 #'   ```
 "ison_physicians"
 
-## US States ####
-
-#' One-mode undirected network of US state contiguity (Meghanathan 2017)
-#'
-#' @description
-#'   This network is of contiguity between US states.
-#'   States that share a border are connected by a tie in the network.
-#'   The data is a network of 107 ties among 50 US states (nodes).
-#'   States are named by their two-letter ISO-3166 code.
-#'   This data includes also the names of the capitol cities of each state,
-#'   which are listed in the node attribute 'capitol'.
-#' @docType data
-#' @keywords datasets
-#' @name ison_usstates
-#' @usage data(ison_usstates)
-#' @references
-#'   Meghanathan, Natarajan. 2017. 
-#'   "Complex network analysis of the contiguous United States graph." 
-#'   _Computer and Information Science_, 10(1): 54-76.
-#'   \doi{10.5539/cis.v10n1p54}
-#' @format
-#'   ```{r, echo = FALSE}
-#'   ison_usstates
-#'   ```
-"ison_usstates"
-
-
 ## High-tech ####
 
 #' One-mode multiplex, directed network of managers of a high-tech company (Krackhardt 1987)
@@ -486,13 +459,13 @@
 #'   Interaction can be cooperative or conflictual.
 #' @docType data
 #' @keywords datasets
-#' @name ison_lotr
-#' @usage data(ison_lotr)
+#' @name fict_lotr
+#' @usage data(fict_lotr)
 #' @format
 #'   ```{r, echo = FALSE}
-#'   ison_lotr
+#'   fict_lotr
 #'   ```
-"ison_lotr"
+"fict_lotr"
 
 ## Harry Potter ####
 
@@ -529,21 +502,30 @@
 #' One-mode Game of Thrones kinship (Glander 2017)
 #'
 #' @description
-#'   Shirin Glander extended a data set on character deaths in the TV series Game of Thrones
-#'   with the kinship relationships between the characters, by scraping "A Wiki of Ice and Fire"
-#'   and adding missing information by hand.
+#'   The original dataset was put together by Erin Pierce and Ben Kahle for an
+#'   assignment for a course on Bayesian statistics.
+#'   The data included information on when characters died in the Song of Ice
+#'   and Fire books,
+#'   and some predictive factors such as whether they were nobles, married, etc.
+#'   Shirin Glander extended this data set on character deaths in the TV series 
+#'   Game of Thrones with the kinship relationships between the characters, 
+#'   by scraping "A Wiki of Ice and Fire" and adding missing information by hand.
+#'   There is certainly more that can be done here.
 #' @docType data
 #' @keywords datasets
-#' @name ison_thrones
-#' @usage data(ison_thrones)
+#' @name fict_thrones
+#' @usage data(fict_thrones)
 #' @references
-#'   Glander, Shirin (2017). 
+#'   Pierce, Erin, and Ben Kahle. 2015.
+#'   "\href{http://allendowney.blogspot.com/2015/03/bayesian-survival-analysis-for-game-of.html}{Bayesian Survival Analysis in A Song of Ice and Fire}".
+#'   
+#'   Glander, Shirin. 2017. 
 #'   "\href{https://datascienceplus.com/network-analysis-of-game-of-thrones/}{Network analysis of Game of Thrones}".
 #' @format
 #'   ```{r, echo = FALSE}
-#'   ison_thrones
+#'   fict_thrones
 #'   ```
-"ison_thrones"
+"fict_thrones"
 
 ## Star Wars ####
 
@@ -738,3 +720,29 @@
 #'   irps_wwi
 #'   ```
 "irps_wwi"
+
+## US States ####
+
+#' One-mode undirected network of US state contiguity (Meghanathan 2017)
+#'
+#' @description
+#'   This network is of contiguity between US states.
+#'   States that share a border are connected by a tie in the network.
+#'   The data is a network of 107 ties among 50 US states (nodes).
+#'   States are named by their two-letter ISO-3166 code.
+#'   This data includes also the names of the capitol cities of each state,
+#'   which are listed in the node attribute 'capitol'.
+#' @docType data
+#' @keywords datasets
+#' @name irps_usgeo
+#' @usage data(irps_usgeo)
+#' @references
+#'   Meghanathan, Natarajan. 2017. 
+#'   "Complex network analysis of the contiguous United States graph." 
+#'   _Computer and Information Science_, 10(1): 54-76.
+#'   \doi{10.5539/cis.v10n1p54}
+#' @format
+#'   ```{r, echo = FALSE}
+#'   irps_usgeo
+#'   ```
+"irps_usgeo"
