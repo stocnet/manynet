@@ -213,6 +213,7 @@ clear_glossary <- function(){
 }
 
 glossies <- list(
+  blockmodel = "A blockmodel reduces a network to a smaller comprehensible structure of the roles positions take with respect to one another.",
   component = "A component is a connected subgraph not part of a larger connected subgraph.",
   degree = "A node's degree is the number of connections it has.",
   giant = "The giant component is the component that includes the most nodes in the network.",
@@ -223,6 +224,7 @@ glossies <- list(
   network = "A network comprises a set of nodes/vertices and a set of ties/edges among them.",
   orbit = "An orbit is a unique position in a subgraph.",
   reciprocity = "A measure of how often nodes in a directed network are mutually linked.",
+  reduced = "A reduced graph is a representation of the ties within and between blocks in the network.",
   subgraph = "A subgraph comprises a subset of the nodes and ties in a network.",
   transitivity = "Triadic closure is where if the connections A-B and A-C exist among three nodes, there is a tendency for B-C also to be formed.",
   undirected = "An undirected network is one in which tie direction is undefined."

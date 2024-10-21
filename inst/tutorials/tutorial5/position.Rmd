@@ -23,6 +23,8 @@ tasks <- to_uniplex(ison_algebra, "tasks")
 
 ## Setting up
 
+<img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMTVtNTJqZmFsdmFpOGRjd24zeHZ1NTM0bDhxbWxrMWdja202NXo1eSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/fL1EXX8pQs0dd9zqLR/giphy.gif" alt="gif of rick and morty characters hanging out with themselves"/>
+
 For this session, we're going to use the "ison_algebra" dataset included in the `{manynet}` package.
 Do you remember how to call the data?
 Can you find out some more information about it via its help file?
@@ -77,24 +79,18 @@ ____ <- to_uniplex(ison_algebra, _____)
 ```
 
 ```{r separatingnets-hint-4, purl = FALSE}
-# Now, let's compare the each attribute's graph, side-by-side by using "+"
-# Note: using "/" after each graph will order them vertically; however, it might not be best way
-# See for example:
-gfriend <- graphr(friends) + ggtitle("Friendship")
-gfriend + gsocial + gtask
+graphr(friends) + ggtitle("Friendship")
 ```
 
 ```{r separatingnets-solution}
 friends <- to_uniplex(ison_algebra, "friends")
-gfriend <- graphr(friends) + ggtitle("Friendship")
+graphr(friends) + ggtitle("Friendship")
 
 social <- to_uniplex(ison_algebra, "social")
-gsocial <- graphr(social) + ggtitle("Social")
+graphr(social) + ggtitle("Social")
 
 tasks <- to_uniplex(ison_algebra, "tasks")
-gtask <- graphr(tasks) + ggtitle("Task")
-
-gfriend + gsocial + gtask
+graphr(tasks) + ggtitle("Task")
 ```
 
 Note also that these are weighted networks.
@@ -121,11 +117,13 @@ question("If we interpret ties with higher weights as strong ties, and lesser we
 Our first question for this network, is where innovation and creative ideas
 might be expected to appear.
 
+<img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmY4ejhpMnZoZmh3OGUxbTdjbXQwMTcwcmg0ZHo5dmJ6NzI3c3FxNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9dg/2E7VU4zGVm8H1mFSAz/giphy.gif" alt="gif of a morty assassinating another morty"/>
+
 ```{r structinnov-qa, echo=FALSE, purl = FALSE}
 question("Which network concepts are associated with innovation?",
          answer("Structural holes",
                 correct = TRUE,
-                message = learnr::random_praise()),
+                message = "Exactly, both structural holes and structural folds have been said to be positions associated with innovation."),
          answer("Structural folds",
                 correct = TRUE),
          answer("Structural balance",
@@ -226,6 +224,8 @@ So what can we learn from this plot
 about where innovation might occur within this network?
 
 ## Structural Equivalence
+
+<img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGhvaTZ2Z3NxOW0yeTJ6ZjVoZ2ZqM2NqMjlxbXp1YnBmb2VtdTBldiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/XcFqv8EzBiAlzeEID9/giphy.gif" alt="gif of rick multiplying"/>
 
 Next we might ask ourselves what (other) roles there are in the network?
 We want to know who plays what role in this algebra class.
@@ -535,7 +535,7 @@ it takes a bit to look through what varies between the different classes
 as 'blocked'.
 But only four rows (the four structurally equivalent classes, according to the default).
 
-Another way to do this is to plot the blockmodel as a whole.
+Another way to do this is to plot the `gloss("blockmodel")` as a whole.
 Passing the `plot()` function an adjacency/incidence matrix
 along with a membership vector allows the matrix to be sorted and framed
 (without the membership vector, just the adjacency/incidence matrix is plotted):
@@ -590,7 +590,7 @@ but everyone hangs out with them for task advice.
 
 Lastly, we can consider how _classes_ of nodes relate to one another in a blockmodel.
 Let's use the 4-cluster solution on the valued network (though binary is possible too)
-to create a _reduced graph_.
+to create a `r gloss("reduced graph","reduced")`.
 A reduced graph is a transformation of a network such that 
 the nodes are no longer the individual nodes but the groups of one or more nodes as a class,
 and the ties between these blocked nodes can represent the sum or average tie between these classes.
@@ -605,3 +605,13 @@ bm <- bm %>% as_tidygraph %>%
   mutate(name = c("Freaks", "Squares", "Nerds", "Geek"))
 graphr(bm)
 ```
+
+## Free play
+
+## Glossary
+
+Here are some of the terms that we have covered in this module:
+
+`r print_glossary()`
+
+
