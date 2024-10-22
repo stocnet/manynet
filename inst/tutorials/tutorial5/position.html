@@ -204,7 +204,8 @@ automatically recognises these different weights and plots them.</p>
 <div id="section-structural-holes" class="section level2">
 <h2>Structural Holes</h2>
 <p>Our first question for this network, is where innovation and creative
-ideas might be expected to appear.</p>
+ideas might be expected to appear. There are a number of theories that
+associate innovation or novelty with structural position.</p>
 <p><img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmY4ejhpMnZoZmh3OGUxbTdjbXQwMTcwcmg0ZHo5dmJ6NzI3c3FxNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9dg/2E7VU4zGVm8H1mFSAz/giphy.gif" alt="gif of a morty assassinating another morty"/></p>
 <div class="panel panel-default tutorial-question-container">
 <div data-label="structinnov-qa" class="tutorial-question panel-body">
@@ -646,11 +647,11 @@ plot(as_matrix(alge),
      membership = node_in_structural(alge))
 
 # plot the blockmodel for the friends, tasks, and social networks separately
-plot(as_matrix(friends),
+plot(as_matrix(to_uniplex(alge, &quot;friends&quot;)),
      membership = node_in_structural(alge))
-plot(as_matrix(tasks),
+plot(as_matrix(to_uniplex(alge, &quot;tasks&quot;)),
      membership = node_in_structural(alge))
-plot(as_matrix(social),
+plot(as_matrix(to_uniplex(alge, &quot;social&quot;)),
      membership = node_in_structural(alge))</code></pre>
 </div>
 <p>By passing the membership argument our structural equivalence
@@ -842,19 +843,19 @@ learnr:::store_exercise_cache(structure(list(label = "separatingnets", global_se
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "strongties-qa", 
     question = structure("If we interpret ties with higher weights as strong ties, and lesser weights as weak ties, then, according to network theory, where would we expect novel information to come from?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_343948b", 
+    "character")), answers = list(structure(list(id = "lnr_ans_a96d02a", 
         option = "Weak ties", value = "Weak ties", label = structure("Weak ties", html = TRUE, class = c("html", 
-        "character")), correct = TRUE, message = structure("Magnificent!", html = TRUE, class = c("html", 
+        "character")), correct = TRUE, message = structure("Lovely job!", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_492aaf4", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_e46b317", 
         option = "Strong ties", value = "Strong ties", label = structure("Strong ties", html = TRUE, class = c("html", 
-        "character")), correct = FALSE, message = structure("Let’s try it again.", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("Don’t give up now, try it one more time.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_b3e43b6", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_6550b90", 
         option = "Isolates", value = "Isolates", label = structure("Isolates", html = TRUE, class = c("html", 
-        "character")), correct = FALSE, message = structure("Let’s try it again.", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("Give it another try.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_35c1e0e", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_ad18c47", 
         option = "Highest degree nodes", value = "Highest degree nodes", 
         label = structure("Highest degree nodes", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("Don’t give up now, try it one more time.", html = TRUE, class = c("html", 
@@ -867,7 +868,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "strongties-qa-answer", question = "strongties-qa"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 1178031456.95144, options = list()), class = c("learnr_radio", 
+    seed = 372951679.326331, options = list()), class = c("learnr_radio", 
 "tutorial_question")), session = session)
 </script>
 
@@ -875,28 +876,28 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "structinnov-qa", 
     question = structure("Which network concepts are associated with innovation?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_246f760", 
+    "character")), answers = list(structure(list(id = "lnr_ans_b79cac", 
         option = "Structural holes", value = "Structural holes", 
         label = structure("Structural holes", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = structure("Exactly, both structural holes and structural folds have been said to be positions associated with innovation.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_94c6ec1", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_9b0d6d1", 
         option = "Structural folds", value = "Structural folds", 
         label = structure("Structural folds", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_4664194", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_3361352", 
         option = "Structural balance", value = "Structural balance", 
         label = structure("Structural balance", html = TRUE, class = c("html", 
-        "character")), correct = FALSE, message = structure("Try it again; next time’s the charm!", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("Please try again.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_ce6ae6f", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_50a49f6", 
         option = "Structural equivalence", value = "Structural equivalence", 
         label = structure("Structural equivalence", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("But no need to fret, try it again.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_f0f4301", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_23f4567", 
         option = "Structuralism", value = "Structuralism", label = structure("Structuralism", html = TRUE, class = c("html", 
-        "character")), correct = FALSE, message = structure("But no need to fret, try it again.", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("Try it again. I have a good feeling about this.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
     "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
@@ -906,31 +907,31 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "structinnov-qa-answer", question = "structinnov-qa"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 1225425496.92937, options = list()), class = c("learnr_checkbox", 
+    seed = 117953986.445073, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")), session = session)
 </script>
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "shmeasures-qa", 
     question = structure("There are a number of measures that might be used to approximate the concept of structural holes. Select all that apply.", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_47f5059", 
+    "character")), answers = list(structure(list(id = "lnr_ans_6682287", 
         option = "Constraint", value = "Constraint", label = structure("Constraint", html = TRUE, class = c("html", 
-        "character")), correct = TRUE, message = structure("Beautiful!", html = TRUE, class = c("html", 
+        "character")), correct = TRUE, message = structure("Great work!", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_9d8f33a", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_3f4cf4", 
         option = "Effective size", value = "Effective size", 
         label = structure("Effective size", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_97e405", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_8e9e432", 
         option = "Bridges", value = "Bridges", label = structure("Bridges", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_df46544", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_e0e759e", 
         option = "Redundancy", value = "Redundancy", label = structure("Redundancy", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_a15967e", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_1a94ab6", 
         option = "Efficiency", value = "Efficiency", label = structure("Efficiency", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_498d46f", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_8811f05", 
         option = "Hierarchy", value = "Hierarchy", label = structure("Hierarchy", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
@@ -941,7 +942,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "shmeasures-qa-answer", question = "shmeasures-qa"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 933570401.065272, options = list()), class = c("learnr_checkbox", 
+    seed = 1217462234.93307, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")), session = session)
 </script>
 
@@ -1041,17 +1042,17 @@ learnr:::store_exercise_cache(structure(list(label = "constraintplot", global_se
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "equiv-qa", question = structure("Structural equivalence means identifying classes of nodes with…", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_f2b981", 
+"character")), answers = list(structure(list(id = "lnr_ans_f04b03", 
     option = "same/similar tie partners.", value = "same/similar tie partners.", 
     label = structure("same/similar tie partners.", html = TRUE, class = c("html", 
     "character")), correct = TRUE, message = structure("Wonderful!", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_9184f40", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_a3be34", 
     option = "same/similar pattern of ties.", value = "same/similar pattern of ties.", 
     label = structure("same/similar pattern of ties.", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = structure("This is the definition for regular equivalence.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_f916f8a", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_1587fc1", 
     option = "same/similar distance from all others.", value = "same/similar distance from all others.", 
     label = structure("same/similar distance from all others.", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = structure("This is the definition for automorphic equivalence.", html = TRUE, class = c("html", 
@@ -1063,7 +1064,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "equiv-qa-answer", question = "equiv-qa"), loading = NULL, 
-    random_answer_order = FALSE, allow_retry = FALSE, seed = 794533897.630016, 
+    random_answer_order = FALSE, allow_retry = FALSE, seed = 883215504.088721, 
     options = list()), class = c("learnr_radio", "tutorial_question"
 )), session = session)
 </script>
@@ -1256,11 +1257,11 @@ learnr:::store_exercise_cache(structure(list(label = "varyclust", global_setup =
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "scale-interp", 
     question = structure("Do you see any differences?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_1a1c660", 
+    "character")), answers = list(structure(list(id = "lnr_ans_ea07c42", 
         option = "Yes", value = "Yes", label = structure("Yes", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = structure("Magnificent!", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_ae575c8", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_f915afc", 
         option = "No", value = "No", label = structure("No", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
@@ -1271,7 +1272,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "scale-interp-answer", question = "scale-interp"), 
     loading = NULL, random_answer_order = FALSE, allow_retry = TRUE, 
-    seed = 1764070981.17854, options = list()), class = c("learnr_radio", 
+    seed = 1039279824.51605, options = list()), class = c("learnr_radio", 
 "tutorial_question")), session = session)
 </script>
 
@@ -1543,9 +1544,9 @@ learnr:::store_exercise_cache(structure(list(label = "block", global_setup = str
     error_check = NULL, check = NULL, solution = structure(c("# plot the blockmodel for the whole network", 
     "plot(as_matrix(alge),", "     membership = node_in_structural(alge))", 
     "", "# plot the blockmodel for the friends, tasks, and social networks separately", 
-    "plot(as_matrix(friends),", "     membership = node_in_structural(alge))", 
-    "plot(as_matrix(tasks),", "     membership = node_in_structural(alge))", 
-    "plot(as_matrix(social),", "     membership = node_in_structural(alge))"
+    "plot(as_matrix(to_uniplex(alge, \"friends\")),", "     membership = node_in_structural(alge))", 
+    "plot(as_matrix(to_uniplex(alge, \"tasks\")),", "     membership = node_in_structural(alge))", 
+    "plot(as_matrix(to_uniplex(alge, \"social\")),", "     membership = node_in_structural(alge))"
     ), chunk_opts = list(label = "block-solution")), tests = NULL, 
     options = list(eval = FALSE, echo = TRUE, results = "markup", 
         tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 

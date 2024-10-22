@@ -116,20 +116,21 @@ question("If we interpret ties with higher weights as strong ties, and lesser we
 
 Our first question for this network, is where innovation and creative ideas
 might be expected to appear.
-
-<img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmY4ejhpMnZoZmh3OGUxbTdjbXQwMTcwcmg0ZHo5dmJ6NzI3c3FxNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9dg/2E7VU4zGVm8H1mFSAz/giphy.gif" alt="gif of a morty assassinating another morty"/>
+There are a number of theories that associate innovation or novelty with 
+structural position.
 
 ```{r structinnov-qa, echo=FALSE, purl = FALSE}
 question("Which network concepts are associated with innovation?",
          answer("Structural holes",
                 correct = TRUE,
-                message = "Exactly, both structural holes and structural folds have been said to be positions associated with innovation."),
+                message = "Being positioned in a structural hole is said to be a brokerage position that brings with it information arbitrage possibilities."),
          answer("Structural folds",
-                correct = TRUE),
+                correct = TRUE,
+                message = "Being positioned in a structural fold, with in-group membership in multiple groups, can provide not only information arbitrage possibilities, but also the standing in the target group to introduce novelty successfully."),
          answer("Structural balance",
                 message = learnr::random_encouragement()),
          answer("Structural equivalence",
-                message = learnr::random_encouragement()),
+                message = '<img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmY4ejhpMnZoZmh3OGUxbTdjbXQwMTcwcmg0ZHo5dmJ6NzI3c3FxNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9dg/2E7VU4zGVm8H1mFSAz/giphy.gif" alt="gif of a morty assassinating another morty"/>'),
          answer("Structuralism",
                 message = learnr::random_encouragement()),
   random_answer_order = TRUE,
@@ -491,6 +492,8 @@ but here it essentially just reports nodes' identity.
 
 ## Blockmodelling
 
+<img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHVzdGlhOGkyOWg2Z3BnMmE2eDgxMnlhZHhwaWx0bGZ3dTNmZnYyaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/dsKkAGVnds7aXQKBI7/giphy.gif" alt="gif of mortys in a block parade"/>
+
 ### Summarising profiles
 
 Ok, so now we have a result from establishing nodes' membership in structurally equivalent classes.
@@ -505,6 +508,8 @@ alge %>%
 While this plot adds the structurally equivalent classes information to our earlier graph,
 it doesn't really help us understand how the classes relate.
 That is, we might be less interested in how the individuals in the different classes relate, and more interested in how the different classes relate in aggregate.
+
+<img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmRlczhzaDJzaTBma3Q0c3pydDJjZTFkY20yMmhzbW13YmU3cnl6ZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9dg/QIEol1DjEwSOc9PvLu/giphy.gif" alt="gif of mortys learning about roles"/>
 
 One option that can be useful for characterising what
 the profile of ties (partners) is for each position/equivalence class
@@ -607,6 +612,15 @@ graphr(bm)
 ```
 
 ## Free play
+
+Now try to find the regularly equivalent classes in the `ison_lawfirm` dataset.
+As this is a multiplex network, you can make this a uniplex network first.
+
+```{r freeplay, exercise = TRUE}
+
+```
+
+An extension would be to also explore automorphically equivalent classes.
 
 ## Glossary
 
