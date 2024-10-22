@@ -541,37 +541,44 @@ question("Why is there a difference between the weak and strong components resul
 Components offer a precise way of understanding groups in a network.
 However, they can also ignore some 'groupiness' that is obvious to even a
 cursory examination of the graph.
-Take a look at the following network, 
-about the links between political blogs in the 2004 election.
+The `irps_blogs` network concerns the url links between political blogs 
+in the 2004 election.
+It is a big network (you can check below).
+In our experience, it can take a few seconds 
 
-```{r graphirpsblogs, warning=FALSE, fig.width=9, exercise=TRUE}
-graphr(irps_blogs)
+```{r blogsize, exercise = TRUE}
+# This is a large network
+net_nodes(irps_blogs)
+# Let's concentrate on just a sample of 490
+blogs <- delete_nodes(irps_blogs, sample(1:1490, 1000))
+graphr(blogs)
 ```
 
-This network probably has a lot of components, not least because there are so many isolates.
-Even if we look at weak components, we see that there are a lot of components.
+But are they all actually linked?
+Even among the smaller sample, there seems to be a number of isolates.
+We can calculate the number of isolates by simply summing `node_is_isolate()`.
 
-```{r blogcomp, exercise = TRUE}
-net_components(irps_blogs)
-net_components(to_undirected(irps_blogs))
+```{r blogisolates, exercise = TRUE, exercise.setup = "blogsize"}
+sum(node_is_isolate(blogs))
+```
+
+Since there are many isolates, there will be many components,
+even if we look at weak components and not just strong components.
+
+```{r blogcomp, exercise = TRUE, exercise.setup = "blogsize"}
+net_components(blogs)
+net_components(to_undirected(blogs))
 ```
 
 ### Giant component
 
-However, a lot of these components are actually isolates.
-We can calculate the number of isolates by simply summing `node_is_isolate()`.
-
-```{r blogisolates, exercise = TRUE}
-sum(node_is_isolate(irps_blogs))
-```
-
-Wow, it looks like most of the (weak) components are due to isolates!
-So how do we concentrate on the main component of this network?
+So, it looks like most of the (weak) components are due to isolates!
+How do we concentrate on the main component of this network?
 Well, the main/largest component in a network is called the
 `r gloss("giant component", "giant")`.
 
-```{r blogtogiant, exercise=TRUE, warning=FALSE, fig.width=9}
-blogs <- irps_blogs %>% to_giant()
+```{r blogtogiant, exercise=TRUE, warning=FALSE, fig.width=9, exercise.setup = "blogsize"}
+blogs <- blogs %>% to_giant()
 sum(node_is_isolate(blogs))
 graphr(blogs)
 ```

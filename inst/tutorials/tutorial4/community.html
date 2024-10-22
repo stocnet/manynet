@@ -119,6 +119,15 @@ themselves in a network. Sometimes they are interested in being part of
 a group. In this tutorial, we’re going to consider various ways in which
 ‘groupiness’ might be examined.</p>
 <p><img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExbDNsNmZnNzJ2YzRyYzE5cDl4M2pxeGU4d2M1bnMwZm1qd3JvMWw3MyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/N7AOIqqUpjXUc/giphy.gif" alt="gif of man not knowing how to study"/></p>
+<p><img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExZXBpNDlsZzNraTJ1bHN6MW1scjA4aDVzdXo1NW11bGI5bWF0dzYxMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Hg7gPa05K6bAc/giphy.gif" alt="gif of cool cool cool"/></p>
+<p><img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ29idmxwMGNpb3Z6YzV0NGdremNoZ3A3OXdjeHlsd3UwNDdwY3ZwOCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/dxVdo4ca7FkME/giphy.gif" alt="gif of ah ha gotcha"/></p>
+<p><img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExeDBpd3BsdzVjMmNpYmloM2NjcTdvdWh1YWxwaDYya2hpbWw5Y3llMCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/YKypDIKxXXfDq/giphy.gif" alt="gif of I'll allow it"/></p>
+<p><img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExZXFscHVkY3hxYWM4aXNoNHNrOXNpa2Jkenc5aGgwemhxNWNkbmJ6dyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/WXVWHMW1Ki7C/giphy.gif" alt="gif of oh no scream"/></p>
+<p><img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExZmdqZHFraGR5Ym9udTBrYzA1ejhwd3ljOXdma3ppNWp2cXozMTh0bCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xqjZLKH1iTBe0/giphy.gif" alt="gif of you just wrinkled my brain"/></p>
+<p><img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMTNjOTFqMGdvc2NmN2VuaGQydXExOW96czZwamY1OHNkMmg4dW0ybyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/z8gtBVdZVrH20/giphy.gif" alt="gif of huzzah"/></p>
+<p><img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExc3Z1ZmlueXJhNzU5eHQ4eW14bHc3YWRiemdubnhkdzR5YzFvOHN4dCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/mnLSsJi13Sgmc/giphy.gif" alt="gif of two dancing"/></p>
+<p><img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExZDJxanoxNGh4aWE4YXdzaGdsdG9kNDkzOHdjMThsNmVkNWU2MnJvdSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/14rgZN1O9BxIBO/giphy.gif" alt="gif of troy's thoughts"/></p>
+<p><img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMTQ4bWhkbGJ1emlpaDd4a3RocDg2OWxzNnB3czdpZXBoZjdsYWhqNSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/10VoRuQWt2mb28/giphy.gif" alt="gif of annie raising her hand"/></p>
 <p>The data we’re going to use here, “ison_algebra”, is included in the
 <code>{manynet}</code> package. Do you remember how to call the data?
 Can you find out some more information about it?</p>
@@ -635,45 +644,49 @@ graphr(friends, node_color = &quot;strong_comp&quot;) + ggtitle(&quot;Strong com
 <h2>Factions</h2>
 <p>Components offer a precise way of understanding groups in a network.
 However, they can also ignore some ‘groupiness’ that is obvious to even
-a cursory examination of the graph. Take a look at the following
-network, about the links between political blogs in the 2004
-election.</p>
-<div class="tutorial-exercise" data-label="graphirpsblogs"
-data-completion="1" data-diagnostics="1" data-startover="1"
-data-lines="0" data-pipe="|&gt;">
-<pre class="text"><code>graphr(irps_blogs)</code></pre>
+a cursory examination of the graph. The <code>irps_blogs</code> network
+concerns the url links between political blogs in the 2004 election. It
+is a big network (you can check below). In our experience, it can take a
+few seconds</p>
+<div class="tutorial-exercise" data-label="blogsize" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code># This is a large network
+net_nodes(irps_blogs)
+# Let&#39;s concentrate on just a sample of 490
+blogs &lt;- delete_nodes(irps_blogs, sample(1:1490, 1000))
+graphr(blogs)</code></pre>
 <script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
 </div>
-<p>This network probably has a lot of components, not least because
-there are so many isolates. Even if we look at weak components, we see
-that there are a lot of components.</p>
+<p>But are they all actually linked? Even among the smaller sample,
+there seems to be a number of isolates. We can calculate the number of
+isolates by simply summing <code>node_is_isolate()</code>.</p>
+<div class="tutorial-exercise" data-label="blogisolates"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>sum(node_is_isolate(blogs))</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<p>Since there are many isolates, there will be many components, even if
+we look at weak components and not just strong components.</p>
 <div class="tutorial-exercise" data-label="blogcomp" data-completion="1"
 data-diagnostics="1" data-startover="1" data-lines="0"
 data-pipe="|&gt;">
-<pre class="text"><code>net_components(irps_blogs)
-net_components(to_undirected(irps_blogs))</code></pre>
+<pre class="text"><code>net_components(blogs)
+net_components(to_undirected(blogs))</code></pre>
 <script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
 </div>
 <div id="section-giant-component" class="section level3">
 <h3>Giant component</h3>
-<p>However, a lot of these components are actually isolates. We can
-calculate the number of isolates by simply summing
-<code>node_is_isolate()</code>.</p>
-<div class="tutorial-exercise" data-label="blogisolates"
-data-completion="1" data-diagnostics="1" data-startover="1"
-data-lines="0" data-pipe="|&gt;">
-<pre class="text"><code>sum(node_is_isolate(irps_blogs))</code></pre>
-<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
-</div>
-<p>Wow, it looks like most of the (weak) components are due to isolates!
-So how do we concentrate on the main component of this network? Well,
-the main/largest component in a network is called the
-<abbr><dfn title='The giant component is the component that includes the most nodes in the network'>
+<p>So, it looks like most of the (weak) components are due to isolates!
+How do we concentrate on the main component of this network? Well, the
+main/largest component in a network is called the
+<abbr><dfn title='The giant component is the component that includes the most nodes in the network.'>
 giant component </dfn></abbr>.</p>
 <div class="tutorial-exercise" data-label="blogtogiant"
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
-<pre class="text"><code>blogs &lt;- irps_blogs %&gt;% to_giant()
+<pre class="text"><code>blogs &lt;- blogs %&gt;% to_giant()
 sum(node_is_isolate(blogs))
 graphr(blogs)</code></pre>
 <script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
@@ -1035,6 +1048,7 @@ data-pipe="|&gt;">
 <pre class="text"><code>irps_books</code></pre>
 <script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
 </div>
+<p><img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExZXlkZWQ2d3NvM3NhbHFyMDBhc25meXhvOTU2YTU4dWQ0cXhlbGlsNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/eobYwOL3jdtqo/giphy.gif" alt="gif of a movie reference"/></p>
 <div id="section-glossary" class="section level3">
 <h3>Glossary</h3>
 <p>Here are some of the terms that we have covered in this module:</p>
@@ -1051,13 +1065,7 @@ Giant
 </dt>
 <dd>
 The giant component is the component that includes the most nodes in the
-network
-</dd>
-<dt>
-Undirected
-</dt>
-<dd>
-An undirected network is one in which tie direction is undefined.
+network.
 </dd>
 <dt>
 Reciprocity
@@ -1071,6 +1079,12 @@ Transitivity
 <dd>
 Triadic closure is where if the connections A-B and A-C exist among
 three nodes, there is a tendency for B-C also to be formed.
+</dd>
+<dt>
+Undirected
+</dt>
+<dd>
+An undirected network is one in which tie direction is undefined.
 </dd>
 </dl>
 <p>
@@ -1247,15 +1261,15 @@ learnr:::store_exercise_cache(structure(list(label = "separatingnets", global_se
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "densq", question = structure("Which equation is used for measuring density for a directed network:", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_28d6bc2", 
+"character")), answers = list(structure(list(id = "lnr_ans_a3f3174", 
     option = "A", value = "A", label = structure("A", html = TRUE, class = c("html", 
-    "character")), correct = TRUE, message = structure("I couldn’t have done it better myself.", html = TRUE, class = c("html", 
+    "character")), correct = TRUE, message = structure("<img src=\"https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2M5cTNmZm1kdmszdmR6Yzc3MnczcWxvb3MzdHRic2N0ZncwYml2MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/YcMs3OGd89Pxu/giphy.gif\" alt=\"gif of a thumbs up\"/>\n", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_e2dcc6", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_1c7189b", 
     option = "B", value = "B", label = structure("B", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = structure("This is the equation for an undirected network.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_48d625f", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_60ac23a", 
     option = "C", value = "C", label = structure("C", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = structure("This is the equation for a two-mode network.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
@@ -1266,7 +1280,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "densq-answer", question = "densq"), loading = NULL, 
-    random_answer_order = FALSE, allow_retry = TRUE, seed = 163763950.923741, 
+    random_answer_order = FALSE, allow_retry = TRUE, seed = 1551377751.77758, 
     options = list()), class = c("learnr_radio", "tutorial_question"
 )), session = session)
 </script>
@@ -1369,13 +1383,13 @@ learnr:::store_exercise_cache(structure(list(label = "dens", global_setup = stru
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "dens-qa", question = structure("Is this network’s density high or low in absolute terms?", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_95de245", 
+"character")), answers = list(structure(list(id = "lnr_ans_7f3bd58", 
     option = "High", value = "High", label = structure("High", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = structure("The closer the value is to 1, the more dense the network and the more cohesive the network is as a whole.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_34087cb", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_e03b62e", 
     option = "Low", value = "Low", label = structure("Low", html = TRUE, class = c("html", 
-    "character")), correct = TRUE, message = structure("The closer the value is to 0, the sparser the network and the less cohesive the network is as a whole. But this is still quite typical density for a relatively small, social network like this one.", html = TRUE, class = c("html", 
+    "character")), correct = TRUE, message = structure("The closer the value is to 0, the sparser the network and the less cohesive the network is as a whole. But this is still quite typical density for a relatively small, social network like this one.  <br><br>    <img src=\"https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWs4Y292OXg5YmlvNTF3OWp4YWxmNjNpdm11c2kyMm55Z2U4eTJkeiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/6agGMtS4rEVSo/giphy.gif\" alt=\"gif of i knew it\"/>", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
 "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
 "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
@@ -1384,7 +1398,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "dens-qa-answer", question = "dens-qa"), loading = NULL, 
-    random_answer_order = FALSE, allow_retry = TRUE, seed = 1009021456.03014, 
+    random_answer_order = FALSE, allow_retry = TRUE, seed = 616140494.213087, 
     options = list()), class = c("learnr_radio", "tutorial_question"
 )), session = session)
 </script>
@@ -1530,29 +1544,29 @@ learnr:::store_exercise_cache(structure(list(label = "trans", global_setup = str
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "trans-interp", 
     question = structure("What can we say about task closure in this network? Choose all that apply.", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_8aec3ed", 
+    "character")), answers = list(structure(list(id = "lnr_ans_69ec891", 
         option = "Transitivity for the task network is 0.568", 
         value = "Transitivity for the task network is 0.568", 
         label = structure("Transitivity for the task network is 0.568", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_a900ec9", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_ba66ce3", 
         option = "Transitivity for the task network is -0.568", 
         value = "Transitivity for the task network is -0.568", 
         label = structure("Transitivity for the task network is -0.568", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("Transivitity must be between 0 and 1.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_ce0c42e", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_5eb2bcf", 
         option = "Transitivity is quite low in this network", 
         value = "Transitivity is quite low in this network", 
         label = structure("Transitivity is quite low in this network", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("Transitivity is usually around 0.3 in most social networks.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_c7bc583", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_2ea6aa9", 
         option = "Transitivity is quite high in this network", 
         value = "Transitivity is quite high in this network", 
         label = structure("Transitivity is quite high in this network", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_4514f11", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_7012ed4", 
         option = "Transitivity is likely higher in the task network than the friendship network", 
         value = "Transitivity is likely higher in the task network than the friendship network", 
         label = structure("Transitivity is likely higher in the task network than the friendship network", html = TRUE, class = c("html", 
@@ -1565,7 +1579,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "trans-interp-answer", question = "trans-interp"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 1242661495.92134, options = list()), class = c("learnr_checkbox", 
+    seed = 1737993984.19068, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")), session = session)
 </script>
 
@@ -1818,12 +1832,12 @@ learnr:::store_exercise_cache(structure(list(label = "twomode-cohesion", global_
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "weak-strong", 
     question = structure("Weak components…", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_d16b5bc", 
+    "character")), answers = list(structure(list(id = "lnr_ans_6669cee", 
         option = "don't care about tie direction when establishing components.", 
         value = "don't care about tie direction when establishing components.", 
         label = structure("don’t care about tie direction when establishing components.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_67d4198", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_812ed40", 
         option = "care about tie direction when establishing components.", 
         value = "care about tie direction when establishing components.", 
         label = structure("care about tie direction when establishing components.", html = TRUE, class = c("html", 
@@ -1836,7 +1850,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "weak-strong-answer", question = "weak-strong"), 
     loading = NULL, random_answer_order = FALSE, allow_retry = TRUE, 
-    seed = 668178876.688855, options = list()), class = c("learnr_radio", 
+    seed = 1007198433.53099, options = list()), class = c("learnr_radio", 
 "tutorial_question")), session = session)
 </script>
  
@@ -1892,19 +1906,19 @@ learnr:::store_exercise_cache(structure(list(label = "comp-no", global_setup = s
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "comp-interp", 
     question = structure("How many components are there?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_242b3f2", 
+    "character")), answers = list(structure(list(id = "lnr_ans_2c515b7", 
         option = "2", value = "2", label = structure("2", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("There are more than 2 components.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_67f4b05", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_3d8ff85", 
         option = "3", value = "3", label = structure("3", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = structure("There are 3 <em>weak<\u002fem> components.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_a345437", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_4f43153", 
         option = "4", value = "4", label = structure("4", html = TRUE, class = c("html", 
-        "character")), correct = TRUE, message = structure("There are 4 <em>strong<\u002fem> components.", html = TRUE, class = c("html", 
+        "character")), correct = TRUE, message = structure("There are 4 <em>strong<\u002fem> components. <img src=\"https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMDB5bzhjcGo3NHozZm5jdHcyMWk5emhnajNyZnFxc3Z2cmJnbGN0ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/YpS0oFFC2VJ84/giphy.gif\" alt=\"gif of two thumbs up\"/>", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_4ada9d0", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_6deba", 
         option = "5", value = "5", label = structure("5", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("There are fewer than 5 components.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
@@ -1916,7 +1930,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "comp-interp-answer", question = "comp-interp"), 
     loading = NULL, random_answer_order = FALSE, allow_retry = TRUE, 
-    seed = 279015260.370073, options = list()), class = c("learnr_checkbox", 
+    seed = 1455497140.32223, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")), session = session)
 </script>
 
@@ -1975,20 +1989,20 @@ learnr:::store_exercise_cache(structure(list(label = "comp-memb", global_setup =
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "node-comp-interp", 
     question = structure("Why is there a difference between the weak and strong components results?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_57a894a", 
+    "character")), answers = list(structure(list(id = "lnr_ans_69776f6", 
         option = "Because one node has only incoming ties.", 
         value = "Because one node has only incoming ties.", label = structure("Because one node has only incoming ties.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_243bf96", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_efe914f", 
         option = "Because three nodes cannot reach any other nodes.", 
         value = "Because three nodes cannot reach any other nodes.", 
         label = structure("Because three nodes cannot reach any other nodes.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_b83787f", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_fcb660b", 
         option = "Because there is an extra isolate.", value = "Because there is an extra isolate.", 
         label = structure("Because there is an extra isolate.", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_f9bac3e", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_52c514b", 
         option = "Because the tie strength matters.", value = "Because the tie strength matters.", 
         label = structure("Because the tie strength matters.", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
@@ -2000,27 +2014,72 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "node-comp-interp-answer", question = "node-comp-interp"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 481706576.775688, options = list()), class = c("learnr_checkbox", 
+    seed = 1974379587.58061, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")), session = session)
 </script>
  
 <script type="application/shiny-prerendered" data-context="server">
-`tutorial-exercise-graphirpsblogs-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-graphirpsblogs-code-editor`)), session)
-output$`tutorial-exercise-graphirpsblogs-output` <- renderUI({
-  `tutorial-exercise-graphirpsblogs-result`()
+`tutorial-exercise-blogsize-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-blogsize-code-editor`)), session)
+output$`tutorial-exercise-blogsize-output` <- renderUI({
+  `tutorial-exercise-blogsize-result`()
 })
 </script>
 
 
 <script type="application/shiny-prerendered" data-context="server">
-learnr:::store_exercise_cache(structure(list(label = "graphirpsblogs", global_setup = structure(c("library(learnr)", 
+learnr:::store_exercise_cache(structure(list(label = "blogsize", global_setup = structure(c("library(learnr)", 
 "library(patchwork)", "library(manynet)", "knitr::opts_chunk$set(echo = FALSE)", 
 "clear_glossary()", "", "friends <- to_uniplex(ison_algebra, \"friends\")", 
 "social <- to_uniplex(ison_algebra, \"social\")", "tasks <- to_uniplex(ison_algebra, \"tasks\")"
 ), chunk_opts = list(label = "setup", include = FALSE)), setup = NULL, 
-    chunks = list(list(label = "graphirpsblogs", code = "graphr(irps_blogs)", 
-        opts = list(label = "\"graphirpsblogs\"", warning = "FALSE", 
-            fig.width = "9", exercise = "TRUE"), engine = "r")), 
+    chunks = list(list(label = "blogsize", code = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 490\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1000))\ngraphr(blogs)", 
+        opts = list(label = "\"blogsize\"", exercise = "TRUE"), 
+        engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = NULL, tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "community_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "community_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, label = "blogsize", exercise = TRUE, 
+        code = c("# This is a large network", "net_nodes(irps_blogs)", 
+        "# Let's concentrate on just a sample of 490", "blogs <- delete_nodes(irps_blogs, sample(1:1490, 1000))", 
+        "graphr(blogs)"), out.width.px = 624, out.height.px = 384, 
+        params.src = "blogsize, exercise = TRUE", fig.num = 0, 
+        exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-blogisolates-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-blogisolates-code-editor`)), session)
+output$`tutorial-exercise-blogisolates-output` <- renderUI({
+  `tutorial-exercise-blogisolates-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "blogisolates", global_setup = structure(c("library(learnr)", 
+"library(patchwork)", "library(manynet)", "knitr::opts_chunk$set(echo = FALSE)", 
+"clear_glossary()", "", "friends <- to_uniplex(ison_algebra, \"friends\")", 
+"social <- to_uniplex(ison_algebra, \"social\")", "tasks <- to_uniplex(ison_algebra, \"tasks\")"
+), chunk_opts = list(label = "setup", include = FALSE)), setup = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 490\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1000))\ngraphr(blogs)", 
+    chunks = list(list(label = "blogsize", code = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 490\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1000))\ngraphr(blogs)", 
+        opts = list(label = "\"blogsize\"", exercise = "TRUE"), 
+        engine = "r"), list(label = "blogisolates", code = "sum(node_is_isolate(blogs))", 
+        opts = list(label = "\"blogisolates\"", exercise = "TRUE", 
+            exercise.setup = "\"blogsize\""), engine = "r")), 
     code_check = NULL, error_check = NULL, check = NULL, solution = NULL, 
     tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
         tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
@@ -2031,16 +2090,16 @@ learnr:::store_exercise_cache(structure(list(label = "graphirpsblogs", global_se
         cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
         fig.align = "default", fig.path = "community_files/figure-html/", 
         dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
-        fig.width = 9, fig.height = 4, fig.env = "figure", fig.cap = NULL, 
-        fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
-        fig.pos = "", out.width = 864, out.height = NULL, out.extra = NULL, 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
         fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
-        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
         message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
         engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
-        max.print = 1000, label = "graphirpsblogs", exercise = TRUE, 
-        code = "graphr(irps_blogs)", out.width.px = 864, out.height.px = 384, 
-        params.src = "graphirpsblogs, warning=FALSE, fig.width=9, exercise=TRUE", 
+        max.print = 1000, label = "blogisolates", exercise = TRUE, 
+        exercise.setup = "blogsize", code = "sum(node_is_isolate(blogs))", 
+        out.width.px = 624, out.height.px = 384, params.src = "blogisolates, exercise = TRUE, exercise.setup = \"blogsize\"", 
         fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
@@ -2059,18 +2118,21 @@ learnr:::store_exercise_cache(structure(list(label = "blogcomp", global_setup = 
 "library(patchwork)", "library(manynet)", "knitr::opts_chunk$set(echo = FALSE)", 
 "clear_glossary()", "", "friends <- to_uniplex(ison_algebra, \"friends\")", 
 "social <- to_uniplex(ison_algebra, \"social\")", "tasks <- to_uniplex(ison_algebra, \"tasks\")"
-), chunk_opts = list(label = "setup", include = FALSE)), setup = NULL, 
-    chunks = list(list(label = "blogcomp", code = "net_components(irps_blogs)\nnet_components(to_undirected(irps_blogs))", 
-        opts = list(label = "\"blogcomp\"", exercise = "TRUE"), 
-        engine = "r")), code_check = NULL, error_check = NULL, 
-    check = NULL, solution = NULL, tests = NULL, options = list(
-        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
-        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
-        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
-        strip.white = TRUE, cache = 0, cache.path = "community_cache/html/", 
-        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
-        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
-        fig.show = "asis", fig.align = "default", fig.path = "community_files/figure-html/", 
+), chunk_opts = list(label = "setup", include = FALSE)), setup = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 490\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1000))\ngraphr(blogs)", 
+    chunks = list(list(label = "blogsize", code = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 490\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1000))\ngraphr(blogs)", 
+        opts = list(label = "\"blogsize\"", exercise = "TRUE"), 
+        engine = "r"), list(label = "blogcomp", code = "net_components(blogs)\nnet_components(to_undirected(blogs))", 
+        opts = list(label = "\"blogcomp\"", exercise = "TRUE", 
+            exercise.setup = "\"blogsize\""), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = NULL, 
+    tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "community_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "community_files/figure-html/", 
         dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
         fig.width = 6.5, fig.height = 4, fig.env = "figure", 
         fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
@@ -2080,49 +2142,9 @@ learnr:::store_exercise_cache(structure(list(label = "blogcomp", global_setup = 
         message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
         engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
         max.print = 1000, label = "blogcomp", exercise = TRUE, 
-        code = c("net_components(irps_blogs)", "net_components(to_undirected(irps_blogs))"
-        ), out.width.px = 624, out.height.px = 384, params.src = "blogcomp, exercise = TRUE", 
-        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
-    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
-)))
-</script>
- 
-<script type="application/shiny-prerendered" data-context="server">
-`tutorial-exercise-blogisolates-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-blogisolates-code-editor`)), session)
-output$`tutorial-exercise-blogisolates-output` <- renderUI({
-  `tutorial-exercise-blogisolates-result`()
-})
-</script>
-
-
-<script type="application/shiny-prerendered" data-context="server">
-learnr:::store_exercise_cache(structure(list(label = "blogisolates", global_setup = structure(c("library(learnr)", 
-"library(patchwork)", "library(manynet)", "knitr::opts_chunk$set(echo = FALSE)", 
-"clear_glossary()", "", "friends <- to_uniplex(ison_algebra, \"friends\")", 
-"social <- to_uniplex(ison_algebra, \"social\")", "tasks <- to_uniplex(ison_algebra, \"tasks\")"
-), chunk_opts = list(label = "setup", include = FALSE)), setup = NULL, 
-    chunks = list(list(label = "blogisolates", code = "sum(node_is_isolate(irps_blogs))", 
-        opts = list(label = "\"blogisolates\"", exercise = "TRUE"), 
-        engine = "r")), code_check = NULL, error_check = NULL, 
-    check = NULL, solution = NULL, tests = NULL, options = list(
-        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
-        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
-        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
-        strip.white = TRUE, cache = 0, cache.path = "community_cache/html/", 
-        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
-        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
-        fig.show = "asis", fig.align = "default", fig.path = "community_files/figure-html/", 
-        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
-        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
-        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
-        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
-        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
-        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
-        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
-        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
-        max.print = 1000, label = "blogisolates", exercise = TRUE, 
-        code = "sum(node_is_isolate(irps_blogs))", out.width.px = 624, 
-        out.height.px = 384, params.src = "blogisolates, exercise = TRUE", 
+        exercise.setup = "blogsize", code = c("net_components(blogs)", 
+        "net_components(to_undirected(blogs))"), out.width.px = 624, 
+        out.height.px = 384, params.src = "blogcomp, exercise = TRUE, exercise.setup = \"blogsize\"", 
         fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
@@ -2141,19 +2163,21 @@ learnr:::store_exercise_cache(structure(list(label = "blogtogiant", global_setup
 "library(patchwork)", "library(manynet)", "knitr::opts_chunk$set(echo = FALSE)", 
 "clear_glossary()", "", "friends <- to_uniplex(ison_algebra, \"friends\")", 
 "social <- to_uniplex(ison_algebra, \"social\")", "tasks <- to_uniplex(ison_algebra, \"tasks\")"
-), chunk_opts = list(label = "setup", include = FALSE)), setup = NULL, 
-    chunks = list(list(label = "blogtogiant", code = "blogs <- irps_blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
+), chunk_opts = list(label = "setup", include = FALSE)), setup = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 490\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1000))\ngraphr(blogs)", 
+    chunks = list(list(label = "blogsize", code = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 490\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1000))\ngraphr(blogs)", 
+        opts = list(label = "\"blogsize\"", exercise = "TRUE"), 
+        engine = "r"), list(label = "blogtogiant", code = "blogs <- blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
         opts = list(label = "\"blogtogiant\"", exercise = "TRUE", 
-            warning = "FALSE", fig.width = "9"), engine = "r")), 
-    code_check = NULL, error_check = NULL, check = NULL, solution = NULL, 
-    tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
-        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
-        comment = NA, highlight = FALSE, size = "normalsize", 
-        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
-        cache.path = "community_cache/html/", cache.vars = NULL, 
-        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
-        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
-        fig.align = "default", fig.path = "community_files/figure-html/", 
+            warning = "FALSE", fig.width = "9", exercise.setup = "\"blogsize\""), 
+        engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = NULL, tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "community_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "community_files/figure-html/", 
         dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
         fig.width = 9, fig.height = 4, fig.env = "figure", fig.cap = NULL, 
         fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
@@ -2163,9 +2187,9 @@ learnr:::store_exercise_cache(structure(list(label = "blogtogiant", global_setup
         message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
         engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
         max.print = 1000, label = "blogtogiant", exercise = TRUE, 
-        code = c("blogs <- irps_blogs %>% to_giant()", "sum(node_is_isolate(blogs))", 
-        "graphr(blogs)"), out.width.px = 864, out.height.px = 384, 
-        params.src = "blogtogiant, exercise=TRUE, warning=FALSE, fig.width=9", 
+        exercise.setup = "blogsize", code = c("blogs <- blogs %>% to_giant()", 
+        "sum(node_is_isolate(blogs))", "graphr(blogs)"), out.width.px = 864, 
+        out.height.px = 384, params.src = "blogtogiant, exercise=TRUE, warning=FALSE, fig.width=9, exercise.setup = \"blogsize\"", 
         fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
@@ -2184,14 +2208,16 @@ learnr:::store_exercise_cache(structure(list(label = "bloggraph", global_setup =
 "library(patchwork)", "library(manynet)", "knitr::opts_chunk$set(echo = FALSE)", 
 "clear_glossary()", "", "friends <- to_uniplex(ison_algebra, \"friends\")", 
 "social <- to_uniplex(ison_algebra, \"social\")", "tasks <- to_uniplex(ison_algebra, \"tasks\")"
-), chunk_opts = list(label = "setup", include = FALSE)), setup = "blogs <- irps_blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
-    chunks = list(list(label = "blogtogiant", code = "blogs <- irps_blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
+), chunk_opts = list(label = "setup", include = FALSE)), setup = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 490\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1000))\ngraphr(blogs)\nblogs <- blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
+    chunks = list(list(label = "blogsize", code = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 490\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1000))\ngraphr(blogs)", 
+        opts = list(label = "\"blogsize\"", exercise = "TRUE"), 
+        engine = "r"), list(label = "blogtogiant", code = "blogs <- blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
         opts = list(label = "\"blogtogiant\"", exercise = "TRUE", 
-            warning = "FALSE", fig.width = "9"), engine = "r"), 
-        list(label = "bloggraph", code = "blogs %>% mutate_nodes(part = node_in_partition()) %>% \n  graphr(node_color = \"part\")", 
-            opts = list(label = "\"bloggraph\"", exercise = "TRUE", 
-                exercise.setup = "\"blogtogiant\"", warning = "FALSE", 
-                fig.width = "9"), engine = "r")), code_check = NULL, 
+            warning = "FALSE", fig.width = "9", exercise.setup = "\"blogsize\""), 
+        engine = "r"), list(label = "bloggraph", code = "blogs %>% mutate_nodes(part = node_in_partition()) %>% \n  graphr(node_color = \"part\")", 
+        opts = list(label = "\"bloggraph\"", exercise = "TRUE", 
+            exercise.setup = "\"blogtogiant\"", warning = "FALSE", 
+            fig.width = "9"), engine = "r")), code_check = NULL, 
     error_check = NULL, check = NULL, solution = NULL, tests = NULL, 
     options = list(eval = FALSE, echo = TRUE, results = "markup", 
         tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
@@ -2231,13 +2257,15 @@ learnr:::store_exercise_cache(structure(list(label = "blogmod", global_setup = s
 "library(patchwork)", "library(manynet)", "knitr::opts_chunk$set(echo = FALSE)", 
 "clear_glossary()", "", "friends <- to_uniplex(ison_algebra, \"friends\")", 
 "social <- to_uniplex(ison_algebra, \"social\")", "tasks <- to_uniplex(ison_algebra, \"tasks\")"
-), chunk_opts = list(label = "setup", include = FALSE)), setup = "blogs <- irps_blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
-    chunks = list(list(label = "blogtogiant", code = "blogs <- irps_blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
+), chunk_opts = list(label = "setup", include = FALSE)), setup = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 490\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1000))\ngraphr(blogs)\nblogs <- blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
+    chunks = list(list(label = "blogsize", code = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 490\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1000))\ngraphr(blogs)", 
+        opts = list(label = "\"blogsize\"", exercise = "TRUE"), 
+        engine = "r"), list(label = "blogtogiant", code = "blogs <- blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
         opts = list(label = "\"blogtogiant\"", exercise = "TRUE", 
-            warning = "FALSE", fig.width = "9"), engine = "r"), 
-        list(label = "blogmod", code = "net_modularity(blogs, membership = node_in_partition(blogs))", 
-            opts = list(label = "\"blogmod\"", exercise = "TRUE", 
-                exercise.setup = "\"blogtogiant\""), engine = "r")), 
+            warning = "FALSE", fig.width = "9", exercise.setup = "\"blogsize\""), 
+        engine = "r"), list(label = "blogmod", code = "net_modularity(blogs, membership = node_in_partition(blogs))", 
+        opts = list(label = "\"blogmod\"", exercise = "TRUE", 
+            exercise.setup = "\"blogtogiant\""), engine = "r")), 
     code_check = NULL, error_check = NULL, check = NULL, solution = NULL, 
     tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
         tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
@@ -2276,14 +2304,16 @@ learnr:::store_exercise_cache(structure(list(label = "blogmodassign", global_set
 "library(patchwork)", "library(manynet)", "knitr::opts_chunk$set(echo = FALSE)", 
 "clear_glossary()", "", "friends <- to_uniplex(ison_algebra, \"friends\")", 
 "social <- to_uniplex(ison_algebra, \"social\")", "tasks <- to_uniplex(ison_algebra, \"tasks\")"
-), chunk_opts = list(label = "setup", include = FALSE)), setup = "blogs <- irps_blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
-    chunks = list(list(label = "blogtogiant", code = "blogs <- irps_blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
+), chunk_opts = list(label = "setup", include = FALSE)), setup = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 490\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1000))\ngraphr(blogs)\nblogs <- blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
+    chunks = list(list(label = "blogsize", code = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 490\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1000))\ngraphr(blogs)", 
+        opts = list(label = "\"blogsize\"", exercise = "TRUE"), 
+        engine = "r"), list(label = "blogtogiant", code = "blogs <- blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
         opts = list(label = "\"blogtogiant\"", exercise = "TRUE", 
-            warning = "FALSE", fig.width = "9"), engine = "r"), 
-        list(label = "blogmodassign", code = "graphr(blogs, node_color = \"Leaning\")\nnet_modularity(blogs, membership = node_attribute(blogs, \"Leaning\"))", 
-            opts = list(label = "\"blogmodassign\"", exercise = "TRUE", 
-                exercise.setup = "\"blogtogiant\"", warning = "FALSE", 
-                fig.width = "9"), engine = "r")), code_check = NULL, 
+            warning = "FALSE", fig.width = "9", exercise.setup = "\"blogsize\""), 
+        engine = "r"), list(label = "blogmodassign", code = "graphr(blogs, node_color = \"Leaning\")\nnet_modularity(blogs, membership = node_attribute(blogs, \"Leaning\"))", 
+        opts = list(label = "\"blogmodassign\"", exercise = "TRUE", 
+            exercise.setup = "\"blogtogiant\"", warning = "FALSE", 
+            fig.width = "9"), engine = "r")), code_check = NULL, 
     error_check = NULL, check = NULL, solution = NULL, tests = NULL, 
     options = list(eval = FALSE, echo = TRUE, results = "markup", 
         tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
@@ -2622,16 +2652,16 @@ learnr:::store_exercise_cache(structure(list(label = "fg", global_setup = struct
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "comm-comp", question = structure("What is the difference between communities and components?", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_7b460e1", 
+"character")), answers = list(structure(list(id = "lnr_ans_d256962", 
     option = "Communities and components are just different terms for the same thing", 
     value = "Communities and components are just different terms for the same thing", 
     label = structure("Communities and components are just different terms for the same thing", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_2b88458", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_3f8a790", 
     option = "Communities are a stricter form of component", 
     value = "Communities are a stricter form of component", label = structure("Communities are a stricter form of component", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_d637ada", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_71f0ecd", 
     option = "Components are about paths whereas communities are about the relationship between within-group and between-group ties", 
     value = "Components are about paths whereas communities are about the relationship between within-group and between-group ties", 
     label = structure("Components are about paths whereas communities are about the relationship between within-group and between-group ties", html = TRUE, class = c("html", 
@@ -2643,7 +2673,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "comm-comp-answer", question = "comm-comp"), loading = NULL, 
-    random_answer_order = TRUE, allow_retry = TRUE, seed = 1703423312.70678, 
+    random_answer_order = TRUE, allow_retry = TRUE, seed = 1552463950.27708, 
     options = list()), class = c("learnr_radio", "tutorial_question"
 )), session = session)
 </script>
@@ -2697,7 +2727,7 @@ learnr:::store_exercise_cache(structure(list(label = "freeplay", global_setup = 
 <!--/html_preserve-->
 <!--html_preserve-->
 <script type="application/shiny-prerendered" data-context="execution_dependencies">
-{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83]}},"value":[{"type":"character","attributes":{},"value":["backports","base","bslib","cachem","checkmate","cli","coda","colorspace","commonmark","compiler","datasets","digest","dplyr","ellipsis","evaluate","fansi","farver","fastmap","fontawesome","generics","ggforce","ggplot2","ggraph","ggrepel","glue","graphics","graphlayouts","grDevices","grid","gridExtra","gtable","htmltools","htmlwidgets","httpuv","igraph","jquerylib","jsonlite","knitr","later","lattice","learnr","lifecycle","magrittr","manynet","markdown","MASS","memoise","methods","mime","munsell","network","patchwork","pillar","pkgconfig","polyclip","promises","purrr","R6","Rcpp","rlang","rmarkdown","rprojroot","rstudioapi","sass","scales","shiny","statnet.common","stats","tibble","tidygraph","tidyr","tidyselect","tools","tweenr","utf8","utils","vctrs","viridis","viridisLite","withr","xfun","xtable","yaml"]},{"type":"character","attributes":{},"value":["1.5.0","4.4.1","0.8.0","1.1.0","2.3.2","3.6.3","0.19-4.1","2.1-1","1.9.1","4.4.1","4.4.1","0.6.37","1.1.4","0.3.2","1.0.0","1.0.6","2.1.2","1.2.0","0.5.2","0.1.3","0.4.2","3.5.1","2.2.1","0.9.6","1.8.0","4.4.1","1.2.0","4.4.1","4.4.1","2.3","0.3.5","0.5.8.1","1.6.4","1.6.15","2.0.3","0.1.4","1.8.9","1.48","1.3.2","0.22-6","0.11.5","1.0.4","2.0.3","1.2.6","1.13","7.3-61","2.0.1","4.4.1","0.12","0.5.1","1.18.2","1.3.0","1.9.0","2.0.3","1.10-7","1.3.0","1.0.2","2.5.1","1.0.13","1.1.4","2.28","2.0.4","0.16.0","0.4.9","1.3.0","1.9.1","4.9.0","4.4.1","3.2.1","1.3.1","1.3.1","1.2.1","4.4.1","2.0.3","1.2.4","4.4.1","0.6.5","0.6.5","0.4.2","3.0.1","0.47","1.8-4","2.3.10"]}]}]}
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83]}},"value":[{"type":"character","attributes":{},"value":["backports","base","bslib","cachem","checkmate","cli","coda","colorspace","commonmark","compiler","datasets","digest","dplyr","ellipsis","evaluate","fansi","farver","fastmap","fontawesome","generics","ggforce","ggplot2","ggraph","ggrepel","glue","graphics","graphlayouts","grDevices","grid","gridExtra","gtable","htmltools","htmlwidgets","httpuv","igraph","jquerylib","jsonlite","knitr","later","lattice","learnr","lifecycle","magrittr","manynet","markdown","MASS","memoise","methods","mime","munsell","network","patchwork","pillar","pkgconfig","polyclip","promises","purrr","R6","Rcpp","rlang","rmarkdown","rprojroot","rstudioapi","sass","scales","shiny","statnet.common","stats","tibble","tidygraph","tidyr","tidyselect","tools","tweenr","utf8","utils","vctrs","viridis","viridisLite","withr","xfun","xtable","yaml"]},{"type":"character","attributes":{},"value":["1.5.0","4.4.1","0.8.0","1.1.0","2.3.2","3.6.3","0.19-4.1","2.1-1","1.9.1","4.4.1","4.4.1","0.6.37","1.1.4","0.3.2","1.0.0","1.0.6","2.1.2","1.2.0","0.5.2","0.1.3","0.4.2","3.5.1","2.2.1","0.9.6","1.8.0","4.4.1","1.2.0","4.4.1","4.4.1","2.3","0.3.5","0.5.8.1","1.6.4","1.6.15","2.0.3","0.1.4","1.8.9","1.48","1.3.2","0.22-6","0.11.5","1.0.4","2.0.3","1.3.0","1.13","7.3-61","2.0.1","4.4.1","0.12","0.5.1","1.18.2","1.3.0","1.9.0","2.0.3","1.10-7","1.3.0","1.0.2","2.5.1","1.0.13","1.1.4","2.28","2.0.4","0.16.0","0.4.9","1.3.0","1.9.1","4.9.0","4.4.1","3.2.1","1.3.1","1.3.1","1.2.1","4.4.1","2.0.3","1.2.4","4.4.1","0.6.5","0.6.5","0.4.2","3.0.1","0.47","1.8-4","2.3.10"]}]}]}
 </script>
 <!--/html_preserve-->
 </div>
