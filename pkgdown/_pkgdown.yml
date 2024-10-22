@@ -90,7 +90,9 @@ reference:
     desc: |
       Functions for reformatting networks, retaining the same network dimensions.
     contents:
+      - manip_preformat
       - manip_reformat
+      - manip_deformat
   - subtitle: "Transforming"
     desc: |
       Functions for transforming networks, which may change the network's dimensions.
@@ -227,14 +229,22 @@ reference:
       providing an overview of their properties.
     contents:
       - ends_with("_tute")
+      - glossary
   - subtitle: "Data"
     desc: |
       The package contains a variety of networks useful for pedagogical purposes
       and used in the course 'Social Networks Theories and Methods' and other workshops.
+      There are three collections of data: `ison_` include classic datasets used
+      for introducing network analysis,
+      `fict_` include some popular fictional datasets,
+      and `irps_` include some network datasets that demonstrate the application
+      of social network analysis to International Relations or Political Science
+      topics.
       Each page documents the source of the data and its format.
       References are provided for further reading and citation.
     contents:
       - data_overview
       - starts_with("ison_")
+      - starts_with("fict_")
       - starts_with("irps_")
   
