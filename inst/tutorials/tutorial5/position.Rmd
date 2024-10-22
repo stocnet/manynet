@@ -558,11 +558,11 @@ plot(as_matrix(alge),
      membership = node_in_structural(alge))
 
 # plot the blockmodel for the friends, tasks, and social networks separately
-plot(as_matrix(friends),
-     membership = node_in_structural(alge)) +
-plot(as_matrix(tasks),
-     membership = node_in_structural(alge)) +
-plot(as_matrix(social),
+plot(as_matrix(to_uniplex(alge, "friends")),
+     membership = node_in_structural(alge))
+plot(as_matrix(to_uniplex(alge, "tasks")),
+     membership = node_in_structural(alge))
+plot(as_matrix(to_uniplex(alge, "social")),
      membership = node_in_structural(alge))
 ```
 
