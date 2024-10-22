@@ -394,7 +394,7 @@ Color the nodes by Gender, Office, Practice, and School.
 Any you might think correlate with core status?
 
 ```{r gnet, exercise=TRUE, purl = FALSE, fig.width=9}
-lawfirm <- to_undirected(ison_lawfirm) |> to_uniplex("friends")
+lawfirm <- ison_lawfirm |> to_uniplex("friends") |> to_undirected()
 ```
 
 ```{r gnet-solution}
@@ -491,7 +491,7 @@ question("There a statistically significant association between the core assignm
          answer("practice.",
                 message = learnr::random_encouragement()),
          answer("none of the above variables.", correct = TRUE,
-                message = learnr::random_praise()),
+                message = "That's right. The p-value for office is close, but no cigar."),
          allow_retry = TRUE
 )
 ```

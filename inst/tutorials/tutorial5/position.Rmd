@@ -620,7 +620,7 @@ As this is a multiplex network, you can make this a uniplex network first.
 
 ```
 
-An extension would be to also explore automorphically equivalent classes.
+An extension can be to also explore automorphically equivalent classes.
 
 ## Glossary
 
