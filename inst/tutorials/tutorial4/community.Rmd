@@ -178,7 +178,8 @@ and $|N|$ and $|M|$ are the number of nodes in the first and second mode respect
 question("Which equation is used for measuring density for a directed network:",
          answer("A",
                 correct = TRUE,
-                message = learnr::random_praise()),
+                message = '<img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2M5cTNmZm1kdmszdmR6Yzc3MnczcWxvb3MzdHRic2N0ZncwYml2MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/YcMs3OGd89Pxu/giphy.gif" alt="gif of a thumbs up"/>'
+),
          answer("B",
                 message = "This is the equation for an undirected network."),
          answer("C",
@@ -218,7 +219,7 @@ question("Is this network's density high or low in absolute terms?",
                 message = "The closer the value is to 1, the more dense the network and the more cohesive the network is as a whole."),
          answer("Low",
                 correct = TRUE,
-                message = "The closer the value is to 0, the sparser the network and the less cohesive the network is as a whole. But this is still quite typical density for a relatively small, social network like this one."),
+                message = 'The closer the value is to 0, the sparser the network and the less cohesive the network is as a whole. But this is still quite typical density for a relatively small, social network like this one.  <br><br>    <img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWs4Y292OXg5YmlvNTF3OWp4YWxmNjNpdm11c2kyMm55Z2U4eTJkeiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/6agGMtS4rEVSo/giphy.gif" alt="gif of i knew it"/>'),
         allow_retry = TRUE
 )
 ```
@@ -480,7 +481,7 @@ question("How many components are there?",
          message = "There are 3 _weak_ components.",
          correct = TRUE),
   answer("4", 
-         message = "There are 4 _strong_ components.",
+         message = 'There are 4 _strong_ components. <img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMDB5bzhjcGo3NHozZm5jdHcyMWk5emhnajNyZnFxc3Z2cmJnbGN0ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/YpS0oFFC2VJ84/giphy.gif" alt="gif of two thumbs up"/>',
          correct = TRUE),
   answer("5", 
          message = "There are fewer than 5 components."),
@@ -627,13 +628,13 @@ graphr(blogs, node_color = "Leaning")
 net_modularity(blogs, membership = node_attribute(blogs, "Leaning"))
 ```
 
+<img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExcXFwZWF2azV0YTlwdnM0bTZncXpuOTdxdHFyMjJqcXJod2V3b29vYiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/PsBRTPKG71YVq/giphy.gif" alt="gif of Chevy Chase saying plot twist"/>
+
 How interesting.
 Perhaps the partitioning algorithm is not the algorithm that maximises
 modularity after all...
 Perhaps we need to look further and see whether there is another solution here
 that returns an even greater modularity criterion.
-
-<img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExcXFwZWF2azV0YTlwdnM0bTZncXpuOTdxdHFyMjJqcXJod2V3b29vYiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/PsBRTPKG71YVq/giphy.gif" alt="gif of Chevy Chase saying plot twist"/>
 
 ## Communities
 
@@ -913,6 +914,8 @@ or corresponds best to what is in the data or what you see in the graph?
 ```{r freeplay, exercise = TRUE, fig.width=9}
 irps_books
 ```
+
+<img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExZXlkZWQ2d3NvM3NhbHFyMDBhc25meXhvOTU2YTU4dWQ0cXhlbGlsNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/eobYwOL3jdtqo/giphy.gif" alt="gif of a movie reference"/>
 
 ### Glossary
 
