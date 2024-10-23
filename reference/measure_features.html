@@ -39,7 +39,7 @@ These net_*() functions return a single numeric scalar or value."><meta property
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -149,7 +149,9 @@ This can be created by, among other things, any <code>node_is_*()</code> functio
 
 <dt id="arg-resolution">resolution<a class="anchor" aria-label="anchor" href="#arg-resolution"></a></dt>
 <dd><p>A proportion indicating the resolution scale.
-By default 1.</p></dd>
+By default 1, which returns the original definition of modularity.
+The higher this parameter, the more smaller communities will be privileged.
+The lower this parameter, the fewer larger communities are likely to be found.</p></dd>
 
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
@@ -197,7 +199,9 @@ This problem appears when optimising modularity,
 particularly with large networks or depending on the degree of interconnectedness,
 can miss small clusters that 'hide' inside larger clusters.
 In the extreme case, this can be where they are only connected
-to the rest of the network through a single tie.</p>
+to the rest of the network through a single tie.
+To help manage this problem, a <code>resolution</code> parameter is added.
+Please see the argument definition for more details.</p>
     </div>
     <div id="references">
     <h2>References</h2>

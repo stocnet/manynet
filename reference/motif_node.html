@@ -6,7 +6,7 @@ For directed networks, out-ties and in-ties are bound together.
 For multiplex networks, the various types of ties are bound together.
 node_by_triad() returns a census of the triad configurations
 nodes are embedded in.
-node_by_quad() returns a census of nodes' positions
+node_by_tetrad() returns a census of nodes' positions
 in motifs of four nodes.
 node_by_path() returns the shortest path lengths
 of each node to every other node in the network.
@@ -29,7 +29,7 @@ of each node to every other node in the network.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -79,7 +79,7 @@ For directed networks, out-ties and in-ties are bound together.
 For multiplex networks, the various types of ties are bound together.</p></li>
 <li><p><code>node_by_triad()</code> returns a census of the triad configurations
 nodes are embedded in.</p></li>
-<li><p><code>node_by_quad()</code> returns a census of nodes' positions
+<li><p><code>node_by_tetrad()</code> returns a census of nodes' positions
 in motifs of four nodes.</p></li>
 <li><p><code>node_by_path()</code> returns the shortest path lengths
 of each node to every other node in the network.</p></li>
@@ -92,7 +92,7 @@ of each node to every other node in the network.</p></li>
 <span></span>
 <span><span class="fu">node_by_triad</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">node_by_quad</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span><span class="fu">node_by_tetrad</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">node_by_path</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -110,6 +110,31 @@ of each node to every other node in the network.</p></li>
 </ul></dd>
 
 </dl></div>
+    <div id="tetrad-census">
+    <h2>Tetrad census</h2>
+
+
+<p>The nodal tetrad census counts the number of four-node configurations
+that each node is embedded in.
+The function returns a matrix with a special naming convention:</p><ul><li><p>E4 (aka co-K4): This is an empty set of four nodes; no ties</p></li>
+<li><p>I4 (aka co-diamond): This is a set of four nodes with just one tie</p></li>
+<li><p>H4 (aka co-C4): This set of four nodes includes two non-adjacent ties</p></li>
+<li><p>L4 (aka co-paw): This set of four nodes includes two adjacent ties</p></li>
+<li><p>D4 (aka co-claw): This set of four nodes includes three adjacent ties,
+in the form of a triangle with one isolate</p></li>
+<li><p>U4 (aka P4, four-actor line): This set of four nodes includes three ties
+arranged in a line</p></li>
+<li><p>Y4 (aka claw): This set of four nodes includes three ties all adjacent
+to a single node</p></li>
+<li><p>P4 (aka paw, kite): This set of four nodes includes four ties arranged
+as a triangle with an extra tie hanging off of one of the nodes</p></li>
+<li><p>C4 (aka bifan): This is a symmetric box or 4-cycle or set of shared choices</p></li>
+<li><p>Z4 (aka diamond): This resembles C4 but with an extra tie cutting across the box</p></li>
+<li><p>X4 (aka K4): This resembles C4 but with two extra ties cutting across the box;
+a realisation of all possible ties</p></li>
+</ul><p>Graphs of these motifs can be shown using
+<code>plot(node_by_tetrad(ison_southern_women))</code>.</p>
+    </div>
     <div id="references">
     <h2>References</h2>
 
@@ -129,6 +154,21 @@ of each node to every other node in the network.</p></li>
 
 <p>Davis, James A., and Samuel Leinhardt. 1967.
 “<a href="https://files.eric.ed.gov/fulltext/ED024086.pdf" class="external-link">The Structure of Positive Interpersonal Relations in Small Groups</a>.” 55.</p>
+</div>
+
+<div class="section">
+<h3 id="on-the-tetrad-census">On the tetrad census<a class="anchor" aria-label="anchor" href="#on-the-tetrad-census"></a></h3>
+
+
+<p>Ortmann, Mark, and Ulrik Brandes. 2017.
+“Efficient Orbit-Aware Triad and Quad Census in Directed and Undirected Graphs.”
+<em>Applied Network Science</em> 2(1):13.
+<a href="https://doi.org/10.1007/s41109-017-0027-2" class="external-link">doi:10.1007/s41109-017-0027-2</a>
+.</p>
+<p>McMillan, Cassie, and Diane Felmlee. 2020.
+"Beyond Dyads and Triads: A Comparison of Tetrads in Twenty Social Networks".
+<em>Social Psychology Quarterly</em> 83(4): 383-404.
+<a href="https://doi.org/10.1177/0190272520944151" class="external-link">doi:10.1177/0190272520944151</a></p>
 </div>
 
 <div class="section">
@@ -158,24 +198,24 @@ of each node to every other node in the network.</p></li>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">task_eg</span> <span class="op">&lt;-</span> <span class="fu"><a href="manip_reformat.html">to_named</a></span><span class="op">(</span><span class="fu"><a href="manip_reformat.html">to_uniplex</a></span><span class="op">(</span><span class="va">ison_algebra</span>, <span class="st">"tasks"</span><span class="op">)</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">task_eg</span> <span class="op">&lt;-</span> <span class="fu"><a href="manip_preformat.html">to_named</a></span><span class="op">(</span><span class="fu"><a href="manip_deformat.html">to_uniplex</a></span><span class="op">(</span><span class="va">ison_algebra</span>, <span class="st">"tasks"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">tie_cen</span> <span class="op">&lt;-</span> <span class="fu">node_by_tie</span><span class="op">(</span><span class="va">task_eg</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 16 × 33</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   names fromAda fromBeulah fromCaleb fromDalton fromEileen fromFannie fromGerald</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Ada       0            0      0             0       0.3        0           0  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Beul…     0            0      0             0       0          0           1.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Caleb     0            0      0             0       0.15       0.75        0  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Dalt…     0            0      0             0       0          0           0  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Eile…     0.3          0      0.15          0       0          0.45        0  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Fann…     0            0      0.6           0       0.75       0           0  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   names   fromAutumn fromBarbara fromCarolyn fromDixie fromEstella fromFred</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Autumn         0             0        0            0        0.3      0   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Barbara        0             0        0            0        0        0   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Carolyn        0             0        0            0        0.15     0.75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Dixie          0             0        0            0        0        0   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Estella        0.3           0        0.15         0        0        0.45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Fred           0             0        0.6          0        0.75     0   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 10 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 25 more variables: fromHeather &lt;dbl&gt;, fromIva &lt;dbl&gt;, fromJean &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   fromKaiden &lt;dbl&gt;, fromLulu &lt;dbl&gt;, fromMarcia &lt;dbl&gt;, fromNaomi &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   fromOla &lt;dbl&gt;, fromPhilip &lt;dbl&gt;, toAda &lt;dbl&gt;, toBeulah &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   toCaleb &lt;dbl&gt;, toDalton &lt;dbl&gt;, toEileen &lt;dbl&gt;, toFannie &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   toGerald &lt;dbl&gt;, toHeather &lt;dbl&gt;, toIva &lt;dbl&gt;, toJean &lt;dbl&gt;, toKaiden &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   toLulu &lt;dbl&gt;, toMarcia &lt;dbl&gt;, toNaomi &lt;dbl&gt;, toOla &lt;dbl&gt;, toPhilip &lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 26 more variables: fromGordon &lt;dbl&gt;, fromHobart &lt;dbl&gt;, fromIsaiah &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   fromJosie &lt;dbl&gt;, fromKatie &lt;dbl&gt;, fromLouise &lt;dbl&gt;, fromMatteo &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   fromNellie &lt;dbl&gt;, fromOtis &lt;dbl&gt;, fromPaisley &lt;dbl&gt;, toAutumn &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   toBarbara &lt;dbl&gt;, toCarolyn &lt;dbl&gt;, toDixie &lt;dbl&gt;, toEstella &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   toFred &lt;dbl&gt;, toGordon &lt;dbl&gt;, toHobart &lt;dbl&gt;, toIsaiah &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   toJosie &lt;dbl&gt;, toKatie &lt;dbl&gt;, toLouise &lt;dbl&gt;, toMatteo &lt;dbl&gt;, …</span></span>
 <span class="r-in"><span><span class="fu">node_by_dyad</span><span class="op">(</span><span class="va">ison_networkers</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 32 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   names              Mutual Asymmetric  Null</span>
@@ -191,15 +231,15 @@ of each node to every other node in the network.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 16 × 17</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   names   X003  X012  X102 X021D X021U X021C X111D X111U X030T X030C  X201 X120D</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Ada       23    11    39     0     0     0     2     2     0     0    17     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Beulah    21     6    47     0     0     0     5     6     0     0    10     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Caleb     34     3    46     0     0     0     2     1     0     0    13     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Dalton    52     6    28     0     0     0     0     0     0     0    18     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Eileen    17    11    37     1     0     1     6     7     0     0    15     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Fannie    23     8    40     1     0     0     3     3     0     0    18     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Autumn    23    11    39     0     0     0     2     2     0     0    17     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Barba…    21     6    47     0     0     0     5     6     0     0    10     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Carol…    34     3    46     0     0     0     2     1     0     0    13     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Dixie     52     6    28     0     0     0     0     0     0     0    18     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Estel…    17    11    37     1     0     1     6     7     0     0    15     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Fred      23     8    40     1     0     0     3     3     0     0    18     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 10 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: X120U &lt;dbl&gt;, X120C &lt;dbl&gt;, X210 &lt;dbl&gt;, X300 &lt;dbl&gt;</span></span>
-<span class="r-in"><span><span class="fu">node_by_quad</span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">node_by_tetrad</span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 18 × 12</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   names        E4    I4    H4    L4    D4    U4    Y4    P4    C4    Z4    X4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>

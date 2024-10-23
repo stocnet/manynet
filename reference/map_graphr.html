@@ -37,7 +37,7 @@ try run_tute("Visualisation").'><meta property="og:image" content="https://stocn
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -115,6 +115,7 @@ try <code>run_tute("Visualisation")</code>.</p>
 <span>  <span class="va">node_group</span>,</span>
 <span>  <span class="va">edge_color</span>,</span>
 <span>  <span class="va">edge_size</span>,</span>
+<span>  snap <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  <span class="va">node_colour</span>,</span>
 <span>  <span class="va">edge_colour</span></span>
@@ -208,6 +209,10 @@ to using this function.
 Edges can also be sized by declaring a numeric size or vector instead.</p></dd>
 
 
+<dt id="arg-snap">snap<a class="anchor" aria-label="anchor" href="#arg-snap"></a></dt>
+<dd><p>Logical scalar, whether the layout should be snapped to a grid.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Extra arguments to pass on to the layout algorithm, if necessary.</p></dd>
 
@@ -231,7 +236,7 @@ The last plot can be saved to the file system using <code><a href="https://ggplo
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">graphr</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="map_graphr-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">ison_adolescents</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="manip_nodes.html">mutate</a></span><span class="op">(</span>color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"extrovert"</span>, <span class="st">"introvert"</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="manip_nodes.html">mutate</a></span><span class="op">(</span>color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"introvert"</span>,<span class="st">"extrovert"</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>         size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="mark_nodes.html">node_is_cutpoint</a></span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span>, <span class="fl">6</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="manip_ties.html">mutate_ties</a></span><span class="op">(</span>ecolor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"friends"</span>, <span class="st">"acquaintances"</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu">graphr</span><span class="op">(</span>node_color <span class="op">=</span> <span class="st">"color"</span>, node_size <span class="op">=</span> <span class="st">"size"</span>,</span></span>

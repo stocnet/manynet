@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -127,7 +127,7 @@
           <p class="section-desc"></p><p>Functions for modifying networks into other classes.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="manip_as.html">as_edgelist()</a></code> <code><a href="manip_as.html">as_matrix()</a></code> <code><a href="manip_as.html">as_igraph()</a></code> <code><a href="manip_as.html">as_tidygraph()</a></code> <code><a href="manip_as.html">as_network()</a></code> <code><a href="manip_as.html">as_siena()</a></code> <code><a href="manip_as.html">as_graphAM()</a></code> <code><a href="manip_as.html">as_diffusion()</a></code> <code><a href="manip_as.html">as_diffnet()</a></code> </p>
+          <p><code><a href="manip_as.html">as_nodelist()</a></code> <code><a href="manip_as.html">as_edgelist()</a></code> <code><a href="manip_as.html">as_matrix()</a></code> <code><a href="manip_as.html">as_igraph()</a></code> <code><a href="manip_as.html">as_tidygraph()</a></code> <code><a href="manip_as.html">as_network()</a></code> <code><a href="manip_as.html">as_siena()</a></code> <code><a href="manip_as.html">as_graphAM()</a></code> <code><a href="manip_as.html">as_diffusion()</a></code> <code><a href="manip_as.html">as_diffnet()</a></code> </p>
         </td>
         <td><p>Modifying network classes</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -151,7 +151,15 @@
           <p class="section-desc"></p><p>Functions for reformatting networks, retaining the same network dimensions.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="manip_reformat.html">to_uniplex()</a></code> <code><a href="manip_reformat.html">to_undirected()</a></code> <code><a href="manip_reformat.html">to_directed()</a></code> <code><a href="manip_reformat.html">to_redirected()</a></code> <code><a href="manip_reformat.html">to_reciprocated()</a></code> <code><a href="manip_reformat.html">to_acyclic()</a></code> <code><a href="manip_reformat.html">to_unweighted()</a></code> <code><a href="manip_reformat.html">to_unsigned()</a></code> <code><a href="manip_reformat.html">to_unnamed()</a></code> <code><a href="manip_reformat.html">to_named()</a></code> <code><a href="manip_reformat.html">to_simplex()</a></code> <code><a href="manip_reformat.html">to_anti()</a></code> </p>
+          <p><code><a href="manip_preformat.html">to_named()</a></code> <code><a href="manip_preformat.html">to_signed()</a></code> <code><a href="manip_preformat.html">to_weighted()</a></code> </p>
+        </td>
+        <td><p>Modifying network formats</p></td>
+      </tr><tr><td>
+          <p><code><a href="manip_reformat.html">to_acyclic()</a></code> <code><a href="manip_reformat.html">to_anti()</a></code> <code><a href="manip_reformat.html">to_redirected()</a></code> <code><a href="manip_reformat.html">to_reciprocated()</a></code> <code><a href="manip_reformat.html">to_directed()</a></code> </p>
+        </td>
+        <td><p>Modifying network formats</p></td>
+      </tr><tr><td>
+          <p><code><a href="manip_deformat.html">to_unnamed()</a></code> <code><a href="manip_deformat.html">to_undirected()</a></code> <code><a href="manip_deformat.html">to_unweighted()</a></code> <code><a href="manip_deformat.html">to_unsigned()</a></code> <code><a href="manip_deformat.html">to_simplex()</a></code> <code><a href="manip_deformat.html">to_uniplex()</a></code> </p>
         </td>
         <td><p>Modifying network formats</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -175,7 +183,7 @@
         </td>
         <td><p>Modifying network levels</p></td>
       </tr><tr><td>
-          <p><code><a href="manip_project.html">to_mode1()</a></code> <code><a href="manip_project.html">to_mode2()</a></code> <code><a href="manip_project.html">to_ties()</a></code> <code><a href="manip_project.html">to_galois()</a></code> </p>
+          <p><code><a href="manip_project.html">to_mode1()</a></code> <code><a href="manip_project.html">to_mode2()</a></code> <code><a href="manip_project.html">to_ties()</a></code> </p>
         </td>
         <td><p>Modifying networks projection</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -187,7 +195,7 @@
         </td>
         <td><p>Network permutation</p></td>
       </tr><tr><td>
-          <p><code><a href="manip_correlation.html">to_correlation()</a></code> </p>
+          <p><code><a href="manip_correlation.html">to_correlation()</a></code> <code><a href="manip_correlation.html">to_cosine()</a></code> </p>
         </td>
         <td><p>Node correlation</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -235,7 +243,7 @@
           <p class="section-desc"></p><p>Functions for laying out the nodes in a graph. Included here are some improved or additional layouts to those offered in <a href="https://r.igraph.org/" class="external-link">igraph</a> and <a href="https://ggraph.data-imaginist.com" class="external-link">ggraph</a> by default.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="map_layout_configuration.html">layout_tbl_graph_configuration()</a></code> <code><a href="map_layout_configuration.html">layout_tbl_graph_triad()</a></code> <code><a href="map_layout_configuration.html">layout_tbl_graph_quad()</a></code> </p>
+          <p><code><a href="map_layout_configuration.html">layout_tbl_graph_configuration()</a></code> <code><a href="map_layout_configuration.html">layout_tbl_graph_dyad()</a></code> <code><a href="map_layout_configuration.html">layout_tbl_graph_triad()</a></code> <code><a href="map_layout_configuration.html">layout_tbl_graph_tetrad()</a></code> <code><a href="map_layout_configuration.html">layout_tbl_graph_pentad()</a></code> <code><a href="map_layout_configuration.html">layout_tbl_graph_hexad()</a></code> </p>
         </td>
         <td><p>Layout algorithms based on configurational positions</p></td>
       </tr><tr><td>
@@ -291,7 +299,7 @@
         </td>
         <td><p>Marking nodes based on diffusion properties</p></td>
       </tr><tr><td>
-          <p><code><a href="mark_nodes.html">node_is_isolate()</a></code> <code><a href="mark_nodes.html">node_is_independent()</a></code> <code><a href="mark_nodes.html">node_is_cutpoint()</a></code> <code><a href="mark_nodes.html">node_is_fold()</a></code> <code><a href="mark_nodes.html">node_is_mentor()</a></code> </p>
+          <p><code><a href="mark_nodes.html">node_is_isolate()</a></code> <code><a href="mark_nodes.html">node_is_pendant()</a></code> <code><a href="mark_nodes.html">node_is_independent()</a></code> <code><a href="mark_nodes.html">node_is_cutpoint()</a></code> <code><a href="mark_nodes.html">node_is_fold()</a></code> <code><a href="mark_nodes.html">node_is_mentor()</a></code> <code><a href="mark_nodes.html">node_is_neighbor()</a></code> </p>
         </td>
         <td><p>Marking nodes based on structural properties</p></td>
       </tr><tr><td>
@@ -315,7 +323,7 @@
         </td>
         <td><p>Marking ties based on structural properties</p></td>
       </tr><tr><td>
-          <p><code><a href="mark_triangles.html">tie_is_triangular()</a></code> <code><a href="mark_triangles.html">tie_is_transitive()</a></code> <code><a href="mark_triangles.html">tie_is_triplet()</a></code> <code><a href="mark_triangles.html">tie_is_cyclical()</a></code> <code><a href="mark_triangles.html">tie_is_simmelian()</a></code> <code><a href="mark_triangles.html">tie_is_forbidden()</a></code> </p>
+          <p><code><a href="mark_triangles.html">tie_is_triangular()</a></code> <code><a href="mark_triangles.html">tie_is_transitive()</a></code> <code><a href="mark_triangles.html">tie_is_triplet()</a></code> <code><a href="mark_triangles.html">tie_is_cyclical()</a></code> <code><a href="mark_triangles.html">tie_is_simmelian()</a></code> <code><a href="mark_triangles.html">tie_is_forbidden()</a></code> <code><a href="mark_triangles.html">tie_is_imbalanced()</a></code> </p>
         </td>
         <td><p>Marking ties based on structural properties</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -347,7 +355,7 @@
         </td>
         <td><p>Measures of betweenness-like centrality and centralisation</p></td>
       </tr><tr><td>
-          <p><code><a href="measure_central_close.html">node_closeness()</a></code> <code><a href="measure_central_close.html">node_harmonic()</a></code> <code><a href="measure_central_close.html">node_reach()</a></code> <code><a href="measure_central_close.html">node_information()</a></code> <code><a href="measure_central_close.html">node_eccentricity()</a></code> <code><a href="measure_central_close.html">node_distance()</a></code> <code><a href="measure_central_close.html">tie_closeness()</a></code> <code><a href="measure_central_close.html">net_closeness()</a></code> <code><a href="measure_central_close.html">net_reach()</a></code> <code><a href="measure_central_close.html">net_harmonic()</a></code> </p>
+          <p><code><a href="measure_central_close.html">node_closeness()</a></code> <code><a href="measure_central_close.html">node_harmonic()</a></code> <code><a href="measure_central_close.html">node_reach()</a></code> <code><a href="measure_central_close.html">node_information()</a></code> <code><a href="measure_central_close.html">node_eccentricity()</a></code> <code><a href="measure_central_close.html">node_distance()</a></code> <code><a href="measure_central_close.html">node_vitality()</a></code> <code><a href="measure_central_close.html">tie_closeness()</a></code> <code><a href="measure_central_close.html">net_closeness()</a></code> <code><a href="measure_central_close.html">net_reach()</a></code> <code><a href="measure_central_close.html">net_harmonic()</a></code> </p>
         </td>
         <td><p>Measures of closeness-like centrality and centralisation</p></td>
       </tr><tr><td>
@@ -423,11 +431,11 @@
         </td>
         <td><p>Motifs of diffusion</p></td>
       </tr><tr><td>
-          <p><code><a href="motif_net.html">net_by_dyad()</a></code> <code><a href="motif_net.html">net_by_triad()</a></code> <code><a href="motif_net.html">net_by_quad()</a></code> <code><a href="motif_net.html">net_by_mixed()</a></code> </p>
+          <p><code><a href="motif_net.html">net_by_dyad()</a></code> <code><a href="motif_net.html">net_by_triad()</a></code> <code><a href="motif_net.html">net_by_tetrad()</a></code> <code><a href="motif_net.html">net_by_mixed()</a></code> </p>
         </td>
         <td><p>Motifs at the network level</p></td>
       </tr><tr><td>
-          <p><code><a href="motif_node.html">node_by_tie()</a></code> <code><a href="motif_node.html">node_by_dyad()</a></code> <code><a href="motif_node.html">node_by_triad()</a></code> <code><a href="motif_node.html">node_by_quad()</a></code> <code><a href="motif_node.html">node_by_path()</a></code> </p>
+          <p><code><a href="motif_node.html">node_by_tie()</a></code> <code><a href="motif_node.html">node_by_dyad()</a></code> <code><a href="motif_node.html">node_by_triad()</a></code> <code><a href="motif_node.html">node_by_tetrad()</a></code> <code><a href="motif_node.html">node_by_path()</a></code> </p>
         </td>
         <td><p>Motifs at the nodal level</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -447,7 +455,7 @@
         </td>
         <td><p>Hierarchical community partitioning algorithms</p></td>
       </tr><tr><td>
-          <p><code><a href="member_community_non.html">node_in_optimal()</a></code> <code><a href="member_community_non.html">node_in_partition()</a></code> <code><a href="member_community_non.html">node_in_infomap()</a></code> <code><a href="member_community_non.html">node_in_spinglass()</a></code> <code><a href="member_community_non.html">node_in_fluid()</a></code> <code><a href="member_community_non.html">node_in_louvain()</a></code> <code><a href="member_community_non.html">node_in_leiden()</a></code> </p>
+          <p><code><a href="member_community_non.html">node_in_community()</a></code> <code><a href="member_community_non.html">node_in_optimal()</a></code> <code><a href="member_community_non.html">node_in_partition()</a></code> <code><a href="member_community_non.html">node_in_infomap()</a></code> <code><a href="member_community_non.html">node_in_spinglass()</a></code> <code><a href="member_community_non.html">node_in_fluid()</a></code> <code><a href="member_community_non.html">node_in_louvain()</a></code> <code><a href="member_community_non.html">node_in_leiden()</a></code> </p>
         </td>
         <td><p>Non-hierarchical community partitioning algorithms</p></td>
       </tr><tr><td>
@@ -467,7 +475,7 @@
           <p class="section-desc"></p><p>Methods used in other functions but documented here:</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="model_cluster.html">cluster_hierarchical()</a></code> <code><a href="model_cluster.html">cluster_concor()</a></code> </p>
+          <p><code><a href="model_cluster.html">cluster_hierarchical()</a></code> <code><a href="model_cluster.html">cluster_cosine()</a></code> <code><a href="model_cluster.html">cluster_concor()</a></code> </p>
         </td>
         <td><p>Methods for equivalence clustering</p></td>
       </tr><tr><td>
@@ -486,9 +494,13 @@
           <p><code><a href="tutorials.html">run_tute()</a></code> <code><a href="tutorials.html">extract_tute()</a></code> </p>
         </td>
         <td><p>Open and extract code from tutorials</p></td>
+      </tr><tr><td>
+          <p><code><a href="glossary.html">gloss()</a></code> <code><a href="glossary.html">print_glossary()</a></code> <code><a href="glossary.html">clear_glossary()</a></code> </p>
+        </td>
+        <td><p>Adding network glossary items</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h3 id="data">Data <a href="#data" class="anchor" aria-hidden="true"></a></h3>
-          <p class="section-desc"></p><p>The package contains a variety of networks useful for pedagogical purposes and used in the course ‘Social Networks Theories and Methods’ and other workshops. Each page documents the source of the data and its format. References are provided for further reading and citation.</p>
+          <p class="section-desc"></p><p>The package contains a variety of networks useful for pedagogical purposes and used in the course ‘Social Networks Theories and Methods’ and other workshops. There are three collections of data: <code>ison_</code> include classic datasets used for introducing network analysis, <code>fict_</code> include some popular fictional datasets, and <code>irps_</code> include some network datasets that demonstrate the application of social network analysis to International Relations or Political Science topics. Each page documents the source of the data and its format. References are provided for further reading and citation.</p>
         </th>
       </tr></tbody><tbody><tr><td>
           <p><code><a href="data_overview.html">table_data()</a></code> </p>
@@ -503,14 +515,6 @@
         </td>
         <td><p>Multiplex graph object of friends, social, and task ties (McFarland 2001)</p></td>
       </tr><tr><td>
-          <p><code><a href="ison_blogs.html">ison_blogs</a></code> </p>
-        </td>
-        <td><p>One-mode directed network of links between US political blogs (Adamic and Glance 2005)</p></td>
-      </tr><tr><td>
-          <p><code><a href="ison_books.html">ison_books</a></code> </p>
-        </td>
-        <td><p>One-mode undirected network of co-purchased books about US politics on Amazon</p></td>
-      </tr><tr><td>
           <p><code><a href="ison_brandes.html">ison_brandes</a></code> </p>
         </td>
         <td><p>One-mode and two-mode centrality demonstration networks</p></td>
@@ -518,14 +522,6 @@
           <p><code><a href="ison_dolphins.html">ison_dolphins</a></code> </p>
         </td>
         <td><p>One-mode, undirected network of frequent associations in a dolphin pod (Lusseau et al. 2003)</p></td>
-      </tr><tr><td>
-          <p><code><a href="ison_friends.html">ison_friends</a></code> </p>
-        </td>
-        <td><p>One-mode Friends character connections (McNulty, 2020)</p></td>
-      </tr><tr><td>
-          <p><code><a href="ison_greys.html">ison_greys</a></code> </p>
-        </td>
-        <td><p>One-mode undirected network of characters hook-ups on Grey's Anatomy TV show</p></td>
       </tr><tr><td>
           <p><code><a href="ison_hightech.html">ison_hightech</a></code> </p>
         </td>
@@ -547,10 +543,6 @@
         </td>
         <td><p>One-mode lawfirm (Lazega 2001)</p></td>
       </tr><tr><td>
-          <p><code><a href="ison_lotr.html">ison_lotr</a></code> </p>
-        </td>
-        <td><p>One-mode network of Lord of the Rings character interactions</p></td>
-      </tr><tr><td>
           <p><code><a href="ison_marvel.html">ison_marvel_teams</a></code> <code><a href="ison_marvel.html">ison_marvel_relationships</a></code> </p>
         </td>
         <td><p>Multilevel two-mode affiliation, signed one-mode networks of Marvel comic book characters (Yuksel 2017)</p></td>
@@ -567,10 +559,6 @@
         </td>
         <td><p>Four multiplex one-mode physician diffusion data (Coleman, Katz, and Menzel, 1966)</p></td>
       </tr><tr><td>
-          <p><code><a href="ison_potter.html">ison_potter</a></code> </p>
-        </td>
-        <td><p>Six complex one-mode support data in Harry Potter books (Bossaert and Meidert 2013)</p></td>
-      </tr><tr><td>
           <p><code><a href="ison_southern_women.html">ison_southern_women</a></code> </p>
         </td>
         <td><p>Two-mode southern women (Davis, Gardner and Gardner 1941)</p></td>
@@ -579,13 +567,41 @@
         </td>
         <td><p>Seven one-mode Star Wars character interactions (Gabasova 2016)</p></td>
       </tr><tr><td>
-          <p><code><a href="ison_thrones.html">ison_thrones</a></code> </p>
+          <p><code><a href="fict_friends.html">fict_friends</a></code> </p>
+        </td>
+        <td><p>One-mode undirected Friends character scene co-appearances (McNulty, 2020)</p></td>
+      </tr><tr><td>
+          <p><code><a href="fict_greys.html">fict_greys</a></code> </p>
+        </td>
+        <td><p>One-mode undirected network of characters hook-ups on Grey's Anatomy TV show</p></td>
+      </tr><tr><td>
+          <p><code><a href="fict_lotr.html">fict_lotr</a></code> </p>
+        </td>
+        <td><p>One-mode network of Lord of the Rings character interactions</p></td>
+      </tr><tr><td>
+          <p><code><a href="fict_potter.html">fict_potter</a></code> </p>
+        </td>
+        <td><p>Six complex one-mode support data in Harry Potter books (Bossaert and Meidert 2013)</p></td>
+      </tr><tr><td>
+          <p><code><a href="fict_thrones.html">fict_thrones</a></code> </p>
         </td>
         <td><p>One-mode Game of Thrones kinship (Glander 2017)</p></td>
       </tr><tr><td>
-          <p><code><a href="ison_usstates.html">ison_usstates</a></code> </p>
+          <p><code><a href="irps_blogs.html">irps_blogs</a></code> </p>
+        </td>
+        <td><p>One-mode directed network of links between US political blogs (Adamic and Glance 2005)</p></td>
+      </tr><tr><td>
+          <p><code><a href="irps_books.html">irps_books</a></code> </p>
+        </td>
+        <td><p>One-mode undirected network of co-purchased books about US politics on Amazon</p></td>
+      </tr><tr><td>
+          <p><code><a href="irps_usgeo.html">irps_usgeo</a></code> </p>
         </td>
         <td><p>One-mode undirected network of US state contiguity (Meghanathan 2017)</p></td>
+      </tr><tr><td>
+          <p><code><a href="irps_wwi.html">irps_wwi</a></code> </p>
+        </td>
+        <td><p>One-mode signed network of relationships between European major powers (Antal et al. 2006)</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

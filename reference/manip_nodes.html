@@ -29,7 +29,7 @@ mutate*(), bind*(), etc work like {tidyverse} or {dplyr}-style functions."><meta
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -172,11 +172,13 @@ Below are the currently implemented S3 methods:</p><table class="table table"><t
     <div class="dont-index"><p>Other modifications:
 <code><a href="manip_as.html">manip_as</a></code>,
 <code><a href="manip_correlation.html">manip_correlation</a></code>,
+<code><a href="manip_deformat.html">manip_deformat</a></code>,
 <code><a href="manip_from.html">manip_from</a></code>,
 <code><a href="manip_levels.html">manip_levels</a></code>,
 <code><a href="manip_miss.html">manip_miss</a></code>,
 <code><a href="manip_paths.html">manip_paths</a></code>,
 <code><a href="manip_permutation.html">manip_permutation</a></code>,
+<code><a href="manip_preformat.html">manip_preformat</a></code>,
 <code><a href="manip_project.html">manip_project</a></code>,
 <code><a href="manip_reformat.html">manip_reformat</a></code>,
 <code><a href="manip_scope.html">manip_scope</a></code>,
@@ -188,6 +190,7 @@ Below are the currently implemented S3 methods:</p><table class="table table"><t
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span>  <span class="va">other</span> <span class="op">&lt;-</span> <span class="fu"><a href="make_create.html">create_filled</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">mutate</span><span class="op">(</span>name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>, <span class="st">"D"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">add_nodes</span><span class="op">(</span><span class="va">other</span>, <span class="fl">4</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Matthew"</span>, <span class="st">"Mark"</span>, <span class="st">"Luke"</span>, <span class="st">"Tim"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> # Filled network</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> # A labelled, undirected network of 8 nodes and 6 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 8 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   name   </span>
@@ -212,6 +215,7 @@ Below are the currently implemented S3 methods:</p><table class="table table"><t
 <span class="r-in"><span>  <span class="va">another</span> <span class="op">&lt;-</span> <span class="fu"><a href="make_create.html">create_filled</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">mutate</span><span class="op">(</span>name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"E"</span>, <span class="st">"F"</span>, <span class="st">"G"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">join_nodes</span><span class="op">(</span><span class="va">another</span>, <span class="va">other</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(name)`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> # Filled network</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> # A labelled, undirected network of 7 nodes and 3 ties</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 7 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   name </span>

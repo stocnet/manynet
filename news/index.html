@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -60,7 +60,96 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.2.6" id="manynet-126">manynet 1.2.6<a class="anchor" aria-label="anchor" href="#manynet-126"></a></h2>
+<h2 class="page-header" data-toc-text="1.3.0" id="manynet-130">manynet 1.3.0<a class="anchor" aria-label="anchor" href="#manynet-130"></a></h2>
+<div class="section level3">
+<h3 id="package-1-3-0">Package<a class="anchor" aria-label="anchor" href="#package-1-3-0"></a></h3>
+<ul><li>Improved user information in the console<ul><li>manynet cli functions now inherit parent frame</li>
+<li>Added manynet cli functions for success and progress along, seq, and nodes</li>
+</ul></li>
+<li>Improved testing architecture<ul><li>Moving to nested testthats</li>
+<li>Added custom testthat function for expecting values and ignoring dimension names</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="making-1-3-0">Making<a class="anchor" aria-label="anchor" href="#making-1-3-0"></a></h3>
+<ul><li>Added some names to created networks (<code><a href="../reference/make_ego.html">create_ego()</a></code>, <code><a href="../reference/make_create.html">create_empty()</a></code>, <code><a href="../reference/make_create.html">create_filled()</a></code>, <code><a href="../reference/make_create.html">create_ring()</a></code>, <code><a href="../reference/make_create.html">create_star()</a></code>, <code><a href="../reference/make_create.html">create_lattice()</a></code>)</li></ul></div>
+<div class="section level3">
+<h3 id="modifying-1-3-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-3-0"></a></h3>
+<ul><li>Fixed how <code><a href="../reference/manip_as.html">as_matrix()</a></code> handles signed networks</li>
+<li>Added <code><a href="../reference/manip_as.html">as_nodelist()</a></code> for extracting nodelists from networks into tibbles</li>
+<li>Added <code><a href="../reference/manip_correlation.html">to_cosine()</a></code>
+</li>
+<li>Dropped <code>to_galois()</code> until it can be refactored</li>
+<li>Split reformatting documentation into format, reformat, and deformat groups of functions<ul><li>Added <code><a href="../reference/manip_preformat.html">to_signed()</a></code> for adding signs to networks</li>
+<li>Added <code><a href="../reference/manip_preformat.html">to_weighted()</a></code> for adding weights to networks</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="mapping-1-3-0">Mapping<a class="anchor" aria-label="anchor" href="#mapping-1-3-0"></a></h3>
+<ul><li>Fixed default color ordering so that red is the highlight</li>
+<li>Fixed bug in <code><a href="../reference/map_graphr.html">graphr()</a></code> where line types were inferred incorrectly</li>
+<li>Improved <code><a href="../reference/map_graphr.html">graphr()</a></code> so that layouts can now be <code>snap</code>ped to a grid, mileage may vary</li>
+<li>Improved theme handling so that it is set globally (WIP)<ul><li>Added highlight themes</li>
+<li>Added background themes</li>
+<li>Added categorical themes</li>
+</ul></li>
+<li>Improved configurational layouts<ul><li>Added dyad, pentad, and hexad layouts to configurational layouts</li>
+<li>Renamed quad layout to tetrad layout</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="marking-1-3-0">Marking<a class="anchor" aria-label="anchor" href="#marking-1-3-0"></a></h3>
+<ul><li>Added <code><a href="../reference/mark_nodes.html">node_is_pendant()</a></code> for identifying pendant nodes</li>
+<li>Added <code><a href="../reference/mark_nodes.html">node_is_neighbor()</a></code> for identifying adjacent nodes</li>
+<li>Added <code><a href="../reference/mark_triangles.html">tie_is_imbalanced()</a></code> for identifying ties in imbalanced configurations</li>
+</ul></div>
+<div class="section level3">
+<h3 id="measuring-1-3-0">Measuring<a class="anchor" aria-label="anchor" href="#measuring-1-3-0"></a></h3>
+<ul><li>Added <code>summary.network_measure()</code> to return z-scores and p-values for measures</li>
+<li>Added <code><a href="../reference/measure_central_close.html">node_vitality()</a></code> for measuring closeness vitality centrality</li>
+<li>Fixed <a href="https://github.com/stocnet/manynet/issues/98" class="external-link">#98</a> by dropping scale and normalization for <code><a href="../reference/measure_central_eigen.html">node_eigenvector()</a></code>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="memberships-1-3-0">Memberships<a class="anchor" aria-label="anchor" href="#memberships-1-3-0"></a></h3>
+<ul><li>Improved community detection options for new users<ul><li>Community detection algorithms now reformat networks as necessary or suggest that it be used on only the giant component</li>
+<li>Added <code><a href="../reference/member_community_non.html">node_in_community()</a></code> which runs through most salient community detection algorithms to find and return the one with the highest modularity</li>
+<li>Updated documentation on resolution parameters</li>
+</ul></li>
+<li>Improved <code><a href="../reference/member_equivalence.html">node_in_regular()</a></code> to inform user which census is being used</li>
+<li>Renamed <code><a href="../reference/defunct.html">node_by_quad()</a></code> to <code><a href="../reference/motif_node.html">node_by_tetrad()</a></code> to be more consistent with Greek origins<ul><li>Restored and updated documentation about the various configurations</li></ul></li>
+<li>Added <code>summary.network_motif()</code> which returns the z-scores for the motif scores based on random or configurational networks, traces progress</li>
+<li>Fixed bug in <code>plot.network_motif()</code> where motif names were not identified correctly, internal make_network_motif now inherits call information</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modelling-1-3-0">Modelling<a class="anchor" aria-label="anchor" href="#modelling-1-3-0"></a></h3>
+<ul><li>Added <code><a href="../reference/model_cluster.html">cluster_cosine()</a></code> for another equivalence option</li>
+<li>Added internal documentation for depth_first_recursive_search</li>
+</ul></div>
+<div class="section level3">
+<h3 id="practicing-1-3-0">Practicing<a class="anchor" aria-label="anchor" href="#practicing-1-3-0"></a></h3>
+<ul><li>Improved how <code><a href="../reference/tutorials.html">run_tute()</a></code> fuzzy matched so that insertions are not as costly</li>
+<li>Improved tutorials with glossary architecture<ul><li>Added <code><a href="../reference/glossary.html">gloss()</a></code>, <code><a href="../reference/glossary.html">clear_glossary()</a></code>, and <code><a href="../reference/glossary.html">print_glossary()</a></code> for adding glossaries to tutorials</li></ul></li>
+<li>Updated tutorials<ul><li>Updated community, position, and topology tutorials with glossaries, free play sections, and gifs</li>
+<li>Fixed miscellaneous issues in these tutorials</li>
+<li>Added faction section to community tutorial</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="data-1-3-0">Data<a class="anchor" aria-label="anchor" href="#data-1-3-0"></a></h3>
+<ul><li>Added <code>irps_wwi</code>, a dynamic, signed network</li>
+<li>Renamed <code>ison_blogs</code> to <code>irps_blogs</code>, added info</li>
+<li>Renamed <code>ison_books</code> to <code>irps_books</code>, added info</li>
+<li>Renamed <code>ison_usstates</code> to <code>irps_usgeo</code>, added info</li>
+<li>Renamed <code>ison_friends</code> to <code>fict_friends</code>, added info and fixed directed issue</li>
+<li>Renamed <code>ison_greys</code> to <code>fict_greys</code>, added info</li>
+<li>Renamed <code>ison_lotr</code> to <code>fict_lotr</code>, added info</li>
+<li>Renamed <code>ison_thrones</code> to <code>fict_thrones</code>, added info and some additional nodal attributes</li>
+<li>Renamed <code>ison_potter</code> to <code>fict_potter</code>, added info and combined waves into single object</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.6" id="manynet-126">manynet 1.2.6<small>2024-10-05</small><a class="anchor" aria-label="anchor" href="#manynet-126"></a></h2>
 <div class="section level3">
 <h3 id="package-1-2-6">Package<a class="anchor" aria-label="anchor" href="#package-1-2-6"></a></h3>
 <ul><li>Fixed errors when testing without <a href="https://joelgombin.github.io/concaveman/" class="external-link">concaveman</a>
@@ -165,7 +254,7 @@
 <li>Prints both nodesets for two-mode networks</li>
 </ul></li>
 <li>Added <code><a href="../reference/manip_net.html">add_info()</a></code> for adding grand info to tidygraph objects<ul><li>This includes the name of the network, node sets and ties, DOI, year and mode of collection</li></ul></li>
-<li>Fixed <code><a href="../reference/manip_reformat.html">to_unweighted()</a></code> so that it passes through unweighted networks correctly</li>
+<li>Fixed <code><a href="../reference/manip_deformat.html">to_unweighted()</a></code> so that it passes through unweighted networks correctly</li>
 </ul></div>
 <div class="section level3">
 <h3 id="mapping-1-2-0">Mapping<a class="anchor" aria-label="anchor" href="#mapping-1-2-0"></a></h3>
@@ -187,8 +276,8 @@
 <ul><li>Added plot methods for network_motif and node_motif classes that use <code><a href="../reference/make_motifs.html">create_motifs()</a></code>
 </li>
 <li>Added <code><a href="../reference/motif_node.html">node_by_dyad()</a></code> for node level dyad census</li>
-<li>Added <code><a href="../reference/motif_net.html">net_by_quad()</a></code> for network level quad census</li>
-<li>Fixed <code><a href="../reference/motif_node.html">node_by_quad()</a></code> to avoid <code>{oaqc}</code> dependency (<a href="https://github.com/stocnet/manynet/issues/89" class="external-link">#89</a>), more flexible but slower</li>
+<li>Added <code><a href="../reference/defunct.html">net_by_quad()</a></code> for network level quad census</li>
+<li>Fixed <code><a href="../reference/defunct.html">node_by_quad()</a></code> to avoid <a href="https://github.com/schochastics/oaqc" class="external-link">oaqc</a> dependency (<a href="https://github.com/stocnet/manynet/issues/89" class="external-link">#89</a>), more flexible but slower</li>
 <li>Fixed <code>print.node_motif()</code> to convert to tibble and add modes and names where available only upon print<ul><li>The underlying object is still a matrix, used for equivalence and blockmodelling</li></ul></li>
 </ul></div>
 <div class="section level3">
@@ -444,7 +533,7 @@
 <div class="section level3">
 <h3 id="modifying-1-0-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-0-0"></a></h3>
 <ul><li>
-<code><a href="../reference/manip_reformat.html">to_named()</a></code> now randomly generates and adds an alphabetic sequence of names, where previously this was just a random sample, which may assist pedagogical use<ul><li>baby_names (internal) now includes a few extra “Q” and “U” names</li></ul></li>
+<code><a href="../reference/manip_preformat.html">to_named()</a></code> now randomly generates and adds an alphabetic sequence of names, where previously this was just a random sample, which may assist pedagogical use<ul><li>baby_names (internal) now includes a few extra “Q” and “U” names</li></ul></li>
 <li>Added <code><a href="../reference/manip_correlation.html">to_correlation()</a></code> that implements pairwise correlation on network</li>
 <li>Added <code><a href="../reference/manip_ties.html">arrange_ties()</a></code> for <a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a>-like reordering of ties based on some attribute</li>
 <li>Added <code><a href="../reference/manip_correlation.html">to_correlation()</a></code> for calculating the Pearson correlation<ul><li>This takes a method argument for “all”, “diag”, “recip”, or “complex”</li>
@@ -524,7 +613,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="motifs-1-0-0">Motifs<a class="anchor" aria-label="anchor" href="#motifs-1-0-0"></a></h3>
-<ul><li>Migrated motifs to take census of network, node positions, and brokerage from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>, these include <code><a href="../reference/motif_node.html">node_by_tie()</a></code>, <code><a href="../reference/motif_node.html">node_by_triad()</a></code>, <code><a href="../reference/motif_node.html">node_by_quad()</a></code>, <code><a href="../reference/motif_node.html">node_by_path()</a></code>, <code><a href="../reference/motif_net.html">net_by_dyad()</a></code>, <code><a href="../reference/motif_net.html">net_by_triad()</a></code>, <code><a href="../reference/motif_net.html">net_by_mixed()</a></code>, <code><a href="../reference/motif_brokerage.html">node_by_brokerage()</a></code>, <code><a href="../reference/motif_brokerage.html">net_by_brokerage()</a></code><ul><li>Note that these functions were previously named <code>*_*_census()</code>, but the preposition <code>_by_</code> is more consistent.</li></ul></li>
+<ul><li>Migrated motifs to take census of network, node positions, and brokerage from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>, these include <code><a href="../reference/motif_node.html">node_by_tie()</a></code>, <code><a href="../reference/motif_node.html">node_by_triad()</a></code>, <code><a href="../reference/defunct.html">node_by_quad()</a></code>, <code><a href="../reference/motif_node.html">node_by_path()</a></code>, <code><a href="../reference/motif_net.html">net_by_dyad()</a></code>, <code><a href="../reference/motif_net.html">net_by_triad()</a></code>, <code><a href="../reference/motif_net.html">net_by_mixed()</a></code>, <code><a href="../reference/motif_brokerage.html">node_by_brokerage()</a></code>, <code><a href="../reference/motif_brokerage.html">net_by_brokerage()</a></code><ul><li>Note that these functions were previously named <code>*_*_census()</code>, but the preposition <code>_by_</code> is more consistent.</li></ul></li>
 <li>
 <code><a href="../reference/defunct.html">node_tie_census()</a></code> now works on longitudinal network data</li>
 <li>Fixed bug where <code>print.node_motif()</code> wasn’t printing the requested number of lines</li>
@@ -858,7 +947,7 @@
 <ul><li>
 <code><a href="../reference/map_layout_partition.html">layout_tbl_graph_concentric()</a></code> now works with two-mode networks, multiple levels for one-mode networks, and accepts new vectors</li>
 <li>Added <code><a href="../reference/map_layout_partition.html">layout_tbl_graph_multilevel()</a></code> for laying out multilevel networks</li>
-<li>Added <code><a href="../reference/map_layout_configuration.html">layout_tbl_graph_triad()</a></code> and <code><a href="../reference/map_layout_configuration.html">layout_tbl_graph_quad()</a></code> configurational layouts</li>
+<li>Added <code><a href="../reference/map_layout_configuration.html">layout_tbl_graph_triad()</a></code> and <code><a href="../reference/defunct.html">layout_tbl_graph_quad()</a></code> configurational layouts</li>
 </ul></div>
 <div class="section level3">
 <h3 id="data-0-2-6">Data<a class="anchor" aria-label="anchor" href="#data-0-2-6"></a></h3>
@@ -893,7 +982,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="manipulating-0-2-4">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-0-2-4"></a></h3>
-<ul><li>Added <code><a href="../reference/manip_project.html">to_galois()</a></code> for transforming networks into partially ordered Galois lattices</li></ul></div>
+<ul><li>Added <code>to_galois()</code> for transforming networks into partially ordered Galois lattices</li></ul></div>
 <div class="section level3">
 <h3 id="mapping-0-2-4">Mapping<a class="anchor" aria-label="anchor" href="#mapping-0-2-4"></a></h3>
 <ul><li>Fixed bug in node_shape argument in <code><a href="../reference/defunct.html">autographr()</a></code>

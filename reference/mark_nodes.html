@@ -30,7 +30,7 @@ node_is_mentor() marks a proportion of high indegree nodes as 'mentors' (see det
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -90,13 +90,17 @@ triangles that are only connected by that node.</p></li>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">node_is_isolate</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">node_is_pendant</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">node_is_independent</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">node_is_cutpoint</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">node_is_fold</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">node_is_mentor</span><span class="op">(</span><span class="va">.data</span>, elites <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">node_is_mentor</span><span class="op">(</span><span class="va">.data</span>, elites <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">node_is_neighbor</span><span class="op">(</span><span class="va">.data</span>, <span class="va">node</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -125,6 +129,10 @@ for example because they are an isolate,
 a tie to themselves (a loop) will be created instead.
 Note that this is a different default behaviour than that
 described in Valente and Davis (1999).</p></dd>
+
+
+<dt id="arg-node">node<a class="anchor" aria-label="anchor" href="#arg-node"></a></dt>
+<dd><p>Name or index of node.</p></dd>
 
 </dl></div>
     <div id="references">
