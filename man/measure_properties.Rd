@@ -56,7 +56,7 @@ net_nodes(ison_southern_women)
 net_ties(ison_southern_women)
 net_dims(ison_southern_women)
 net_dims(to_mode1(ison_southern_women))
-  net_node_attributes(ison_lotr)
+  net_node_attributes(fict_lotr)
   net_tie_attributes(ison_algebra)
 }
 \seealso{

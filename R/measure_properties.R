@@ -95,7 +95,7 @@ net_dims.network <- function(.data){
 #' @rdname measure_properties
 #' @importFrom igraph vertex_attr_names
 #' @examples
-#'   net_node_attributes(ison_lotr)
+#'   net_node_attributes(fict_lotr)
 #' @export
 net_node_attributes <- function(.data){
   igraph::vertex_attr_names(as_igraph(.data))

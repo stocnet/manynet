@@ -484,8 +484,8 @@
 #'   gender, and their house assigned by the sorting hat are included.
 #' @docType data
 #' @keywords datasets
-#' @name ison_potter
-#' @usage data(ison_potter)
+#' @name fict_potter
+#' @usage data(fict_potter)
 #' @references
 #'   Bossaert, Goele and Nadine Meidert (2013). 
 #'   "'We are only as strong as we are united, as weak as we are divided'. A dynamic analysis of the peer support networks in the Harry Potter books." 
@@ -493,9 +493,9 @@
 #'   \doi{10.4236/ojapps.2013.32024}
 #' @format
 #'   ```{r, echo = FALSE}
-#'   ison_potter
+#'   fict_potter
 #'   ```
-"ison_potter"
+"fict_potter"
 
 ## Game of Thrones ####
 

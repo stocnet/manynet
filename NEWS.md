@@ -87,6 +87,7 @@ mileage may vary
 - Renamed `ison_greys` to `fict_greys`, added info
 - Renamed `ison_lotr` to `fict_lotr`, added info
 - Renamed `ison_thrones` to `fict_thrones`, added info and some additional nodal attributes
+- Renamed `ison_potter` to `fict_potter`, added info and combined waves into single object
 
 # manynet 1.2.6
 
