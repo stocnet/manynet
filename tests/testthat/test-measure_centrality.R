@@ -67,16 +67,15 @@ test_that("two mode betweenness centrality calculated correctly",{
 })
 
 test_that("one mode eigenvector centrality calculated correctly",{
-  expect_equal(top3(node_eigenvector(ison_adolescents, normalized = FALSE)), c(0.16, 0.491, 0.529), tolerance = 0.001)
-  expect_equal(top3(node_eigenvector(ison_adolescents, normalized = TRUE)), c(0.227, 0.694, 0.748), tolerance = 0.001)
+  # expect_equal(top3(node_eigenvector(ison_adolescents, normalized = FALSE)), c(0.16, 0.491, 0.529), tolerance = 0.001)
+  expect_equal(top3(node_eigenvector(ison_adolescents)), c(0.303, 0.928, 1), tolerance = 0.001)
 })
 
 test_that("two mode eigenvector centrality calculated correctly",{
-  expect_equal(top3(node_eigenvector(test_mat, normalized = FALSE)), c(0.3185, 0.3004, 0.3536))
-  expect_equal(top3(node_eigenvector(test_igr, normalized = FALSE)), c(0.3185, 0.3004, 0.3536))
-  expect_equal(bot3(node_eigenvector(test_mat, normalized = FALSE)), c(0.2156, 0.1316, 0.1316))
-  expect_equal(bot3(node_eigenvector(test_igr, normalized = FALSE)), c(0.2156, 0.1316, 0.1316))
-  expect_equal(top3(node_eigenvector(test_igr, normalized = TRUE)), c(0.4505, 0.4248, 0.5000))
+  expect_equal(top3(node_eigenvector(test_mat)), c(0.9009, 0.8497, 1))
+  expect_equal(bot3(node_eigenvector(test_mat)), c(0.4764, 0.2907, 0.2907))
+  expect_equal(top3(node_eigenvector(test_igr)), c(0.9009, 0.8497, 1))
+  expect_equal(bot3(node_eigenvector(test_igr)), c(0.4764, 0.2907, 0.2907))
 })
 
 test_that("node measure class works", {

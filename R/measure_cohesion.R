@@ -45,8 +45,8 @@ net_density <- function(.data) {
 #'   please use `manynet::to_undirected()` first.
 #' @importFrom igraph components
 #' @examples
-#'   net_components(ison_friends)
-#'   net_components(to_undirected(ison_friends))
+#'   net_components(fict_thrones)
+#'   net_components(to_undirected(fict_thrones))
 #' @export
 net_components <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}

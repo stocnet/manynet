@@ -86,6 +86,7 @@
 #'   it is recommended to calculate all edge-related statistics prior
 #'   to using this function.
 #'   Edges can also be sized by declaring a numeric size or vector instead.
+#' @param snap Logical scalar, whether the layout should be snapped to a grid.
 #' @param ... Extra arguments to pass on to the layout algorithm, if necessary.
 #' @return A `ggplot2::ggplot()` object.
 #'   The last plot can be saved to the file system using `ggplot2::ggsave()`.
@@ -95,7 +96,7 @@
 #' @examples
 #' graphr(ison_adolescents)
 #' ison_adolescents %>%
-#'   mutate(color = rep(c("extrovert", "introvert"), times = 4),
+#'   mutate(color = rep(c("introvert","extrovert"), times = 4),
 #'          size = ifelse(node_is_cutpoint(ison_adolescents), 6, 3)) %>%
 #'   mutate_ties(ecolor = rep(c("friends", "acquaintances"), times = 5)) %>%
 #'   graphr(node_color = "color", node_size = "size",
@@ -103,11 +104,11 @@
 #' @export
 graphr <- function(.data, layout, labels = TRUE,
                    node_color, node_shape, node_size, node_group,
-                   edge_color, edge_size, ...,
+                   edge_color, edge_size, snap = FALSE, ...,
                    node_colour, edge_colour) {
   g <- as_tidygraph(.data)
   if (missing(layout)) {
-    if (length(g) == 3 | length(g) == 4) {
+    if (net_nodes(g) <= 6) {
       layout <- "configuration"
     } else if (is_twomode(g)) {
       layout <- "hierarchy"
@@ -141,7 +142,10 @@ graphr <- function(.data, layout, labels = TRUE,
     edge_size <- as.character(substitute(edge_size))
   }
   # Add layout ----
-  p <- .graph_layout(g, layout, labels, node_group, ...)
+  p <- .graph_layout(g, layout, labels, node_group, snap, ...)
+  # Add background ----
+  if(getOption("mnet_background", default = "#FFFFFF")!="#FFFFFF")
+    p <- p + ggplot2::theme(panel.background = ggplot2::element_rect(fill = getOption("mnet_background", default = "#FFFFFF")))
   # Add edges ----
   p <- .graph_edges(p, g, edge_color, edge_size, node_size)
   # Add nodes ----
@@ -150,10 +154,11 @@ graphr <- function(.data, layout, labels = TRUE,
   if (isTRUE(labels) & is_labelled(g)) {
     p <- .graph_labels(p, g, layout)
   }
+  # assign("last.warning", NULL, envir = baseenv()) # to avoid persistent ggrepel
   p
 }
 
-.graph_layout <- function(g, layout, labels, node_group, ...) {
+.graph_layout <- function(g, layout, labels, node_group, snap, ...) {
   name <- NULL
   dots <- list(...)
   if ("x" %in% names(dots) & "y" %in% names(dots)) {
@@ -177,6 +182,14 @@ graphr <- function(.data, layout, labels = TRUE,
                                            label = node_group), data = lo) +
       ggplot2::scale_fill_manual(values = colorsafe_palette,
                                  guide = ggplot2::guide_legend("Group"))
+  }
+  if(snap){
+    mnet_info("Snapping layout coordinates to grid.")
+    if(grepl("lattice", 
+             igraph::graph_attr(attr(p$data, "graph"), "grand")$name, 
+             ignore.case = TRUE))
+      p$data[,c("x","y")] <- round(p$data[,c("x","y")])
+    else p$data[,c("x","y")] <- depth_first_recursive_search(p)
   }
   p
 }
@@ -202,7 +215,13 @@ graphr <- function(.data, layout, labels = TRUE,
                                                                "Edge Weight", "Edge Size")))
   if (length(unique(out[["ecolor"]])) == 1) {
     p <- p + ggplot2::guides(edge_colour = "none")
-  } else p <- p + ggraph::scale_edge_colour_manual(values = colorsafe_palette,
+  } else if (length(unique(out[["ecolor"]])) == 2){
+    p <- p + ggraph::scale_edge_colour_manual(values = getOption("mnet_highlight", default = c("grey","black")),
+                                                   guide = ggplot2::guide_legend(
+                                                     ifelse(is.null(edge_color) &
+                                                              is_signed(g),
+                                                            "Edge Sign", "Edge Color")))
+    } else p <- p + ggraph::scale_edge_colour_manual(values = getOption("mnet_cat", default = colorsafe_palette),
                                                    guide = ggplot2::guide_legend(
                                                      ifelse(is.null(edge_color) &
                                                               is_signed(g),
@@ -224,9 +243,15 @@ graphr <- function(.data, layout, labels = TRUE,
     if (length(unique(out[["nshape"]])) > 1) 
       p <- p + ggplot2::guides(shape = ggplot2::guide_legend(
         title = ifelse(is_twomode(g) & is.null(node_shape), "Node Mode", "Node Shape")))
-    if (length(unique(out[["ncolor"]])) > 1)
-      p <- p + ggplot2::scale_colour_manual(values = colorsafe_palette,
-                                            guide = ggplot2::guide_legend("Node Color"))
+    if (length(unique(out[["ncolor"]])) > 1){
+      if(length(unique(out[["ncolor"]])) == 2){
+        p <- p + ggplot2::scale_colour_manual(values = getOption("mnet_highlight", default = c("grey","black")),
+                                              guide = ggplot2::guide_legend("Node Color"))
+      } else {
+        p <- p + ggplot2::scale_colour_manual(values = colorsafe_palette,
+                                              guide = ggplot2::guide_legend("Node Color"))
+      }
+    }
   }
   # Consider rescaling nodes
   p <- p + ggplot2::scale_size(range = c(1/net_nodes(g)*50, 1/net_nodes(g)*100))
@@ -387,10 +412,11 @@ reduce_categories <- function(g, node_group) {
 
 .infer_line_type <- function(g) {
   if (is_signed(g)) {
-    out <- ifelse(as.numeric(tie_attribute(g, "sign")) >= 0,
+    out <- ifelse(as.numeric(tie_signs(g)) >= 0,
            "solid", "dashed")
-    ifelse(length(unique(out)) == 1, unique(out), out)
-  } else "solid"
+    # ifelse(length(unique(out)) == 1, unique(out), out)
+  } else out <- "solid"
+  out
 }
 
 check_edge_variables <- function(g, edge_color, edge_size) {
@@ -430,7 +456,7 @@ map_directed_edges <- function(p, g, out) {
                                    arrow = ggplot2::arrow(angle = 15, type = "closed",
                                                           length = ggplot2::unit(2, 'mm')))
   } else {
-    p <- p + ggraph::geom_edge_arc(ggplot2::aes(edge_colour = out[["ecolor"]],
+    p <- p + ggraph::geom_edge_arc(ggplot2::aes(edge_colour = getOption("mnet_cat")[out[["ecolor"]]],
                                                 edge_width = out[["esize"]],
                                                 end_cap = ggraph::circle(c(out[["end_cap"]]), 'mm')),
                                    edge_linetype = out[["line_type"]],

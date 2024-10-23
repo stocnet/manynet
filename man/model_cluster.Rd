@@ -3,10 +3,13 @@
 \name{model_cluster}
 \alias{model_cluster}
 \alias{cluster_hierarchical}
+\alias{cluster_cosine}
 \alias{cluster_concor}
 \title{Methods for equivalence clustering}
 \usage{
 cluster_hierarchical(census, distance)
+
+cluster_cosine(census, distance)
 
 cluster_concor(.data, census)
 }
@@ -42,7 +45,6 @@ but are called within \code{node_equivalence()} and related functions.
 They are exported and listed here to provide more detailed documentation.
 }
 \section{CONCOR}{
-
 
 First a matrix of Pearson correlation coefficients between each pair of nodes
 profiles in the given census is created.

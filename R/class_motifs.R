@@ -8,6 +8,7 @@ make_node_motif <- function(out, .data) {
 make_network_motif <- function(out, .data) {
   class(out) <- c("network_motif", class(out))
   attr(out, "mode") <- net_dims(.data)
+  attr(out, "call") <- deparse(sys.calls())
   out
 }
 
@@ -50,7 +51,7 @@ plot.node_motif <- function(x, ...) {
   
 #' @export
 plot.network_motif <- function(x, ...) {
-  motifs <- dimnames(x)[[2]]
+  motifs <- attr(x, "names")
   if("X4" %in% motifs){
     graphs(create_motifs(4), waves = 1:11)
   } else if("021D" %in% motifs){
@@ -87,3 +88,23 @@ print.network_motif <- function(x, ...) {
   out <- as.data.frame(mat)
   print(dplyr::tibble(out))
 }
+
+#' @export
+summary.network_motif <- function(object, ...,
+                               null = c("random","configuration"), 
+                               times = 500) {
+  null <- paste0("generate_", match.arg(null))
+  callItems <- trimws(strsplit(unlist(attr(object, "call")), 
+                               split = "\\(|\\)|,")[[1]])
+  idFun <- which(grepl("net_by_", callItems))[1]
+  fun <- callItems[idFun]
+  dat <- callItems[idFun+1]
+  nulls <- t(vapply(mnet_progress_seq(times), function(r){
+    suppressMessages(get(fun)(get(null)(get(dat))))
+  }, FUN.VALUE = numeric(length(object))))
+  out <- (object - colMeans(nulls))/apply(nulls, 2, stats::sd)
+  out[is.nan(out)] <- 0
+  out
+}
+
+

@@ -21,7 +21,7 @@ NULL
 
 #' @rdname measure_attributes
 #' @examples
-#' node_attribute(ison_lotr, "Race")
+#' node_attribute(fict_lotr, "Race")
 #' @export
 node_attribute <- function(.data, attribute){
   out <- igraph::vertex_attr(as_igraph(.data), attribute)

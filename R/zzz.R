@@ -5,8 +5,9 @@
   if (!interactive()) return()
   
   options(manynet_verbosity = getOption("manynet_verbosity", "verbose"))
-  # options(manynet_theme = getOption("manynet_theme", "default"))
+  options(manynet_theme = getOption("manynet_theme", "default"))
   options(cli.theme = manynet_console_theme())
+  options(cli.progress_clear = TRUE)
   
   # pkgs <- as.data.frame(utils::available.packages(utils::contrib.url(getOption("repos"))))
   # 
@@ -49,22 +50,45 @@
 
 }
 
-mnet_progress_step <- function(...){
+mnet_progress_step <- function(..., .envir = parent.frame()){
   if(getOption("manynet_verbosity", default = "quiet")!="quiet")
-  cli::cli_progress_step(...)
+  cli::cli_progress_step(..., .envir = .envir)
 }
 
-mnet_info <- function(...){
+mnet_progress_along <- function(..., .envir = parent.frame()){
   if(getOption("manynet_verbosity", default = "quiet")!="quiet")
-    cli::cli_alert_info(...)
+    cli::cli_progress_along(..., .envir = .envir)
 }
 
-mnet_unavailable <- function(...){
+mnet_progress_seq <- function(..., .envir = parent.frame()){
+  if(getOption("manynet_verbosity", default = "quiet")!="quiet")
+    cli::cli_progress_along(seq.int(...), .envir = .envir, 
+                            total = ..., clear = TRUE)
+}
+
+mnet_progress_nodes <- function(..., .envir = parent.frame()){
+  if(getOption("manynet_verbosity", default = "quiet")!="quiet")
+    cli::cli_progress_along(seq.int(net_nodes(...)), .envir = .envir, 
+                            total = ..., clear = TRUE)
+}
+
+mnet_info <- function(..., .envir = parent.frame()){
+  if(getOption("manynet_verbosity", default = "quiet")!="quiet")
+    cli::cli_alert_info(paste(...), .envir = .envir)
+}
+
+mnet_success <- function(..., .envir = parent.frame()){
+  if(getOption("manynet_verbosity", default = "quiet")!="quiet")
+    cli::cli_alert_success(paste(...), .envir = .envir)
+}
+
+mnet_unavailable <- function(..., .envir = parent.frame()){
   if(getOption("manynet_verbosity", default = "quiet")!="quiet")
     cli::cli_abort(paste(..., 
                            "If you are interested in this feature,",
                            "please vote for it or raise it as an issue at", 
-                           "{.url https://github.com/stocnet/manynet/issues}."))
+                           "{.url https://github.com/stocnet/manynet/issues}."), 
+                   .envir = .envir)
 }
 
 manynet_console_theme <- function(){

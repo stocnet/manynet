@@ -15,7 +15,7 @@ node_in_equivalence(
   .data,
   census,
   k = c("silhouette", "elbow", "strict"),
-  cluster = c("hierarchical", "concor"),
+  cluster = c("hierarchical", "concor", "cosine"),
   distance = c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"),
   range = 8L
 )
@@ -23,7 +23,7 @@ node_in_equivalence(
 node_in_structural(
   .data,
   k = c("silhouette", "elbow", "strict"),
-  cluster = c("hierarchical", "concor"),
+  cluster = c("hierarchical", "concor", "cosine"),
   distance = c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"),
   range = 8L
 )
@@ -31,7 +31,7 @@ node_in_structural(
 node_in_regular(
   .data,
   k = c("silhouette", "elbow", "strict"),
-  cluster = c("hierarchical", "concor"),
+  cluster = c("hierarchical", "concor", "cosine"),
   distance = c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"),
   range = 8L
 )
@@ -39,7 +39,7 @@ node_in_regular(
 node_in_automorphic(
   .data,
   k = c("silhouette", "elbow", "strict"),
-  cluster = c("hierarchical", "concor"),
+  cluster = c("hierarchical", "concor", "cosine"),
   distance = c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"),
   range = 8L
 )
@@ -121,9 +121,9 @@ plot(nre)
 if(require("sna", quietly = TRUE)){
 (nae <- node_in_automorphic(ison_southern_women,
   k = "elbow"))
-}
 if(require("ggdendro", quietly = TRUE)){
 plot(nae)
+}
 }
 }
 }

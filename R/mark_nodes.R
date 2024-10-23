@@ -38,6 +38,19 @@ node_is_isolate <- function(.data){
 }
 
 #' @rdname mark_nodes
+#' @export
+node_is_pendant <- function(.data){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  mat <- as_matrix(.data)
+  if(is_twomode(.data)){
+    out <- c(rowSums(mat)==1, colSums(mat)==1)
+  } else {
+    out <- rowSums(mat)==1 & colSums(mat)==1
+  }
+  make_node_mark(out, .data)
+}
+
+#' @rdname mark_nodes
 #' @importFrom igraph largest_ivs
 #' @references
 #' ## On independent sets
@@ -153,6 +166,16 @@ node_is_mentor <- function(.data, elites = 0.1){
   if(sum(out) < length(indegs)*elites){
     out <- indegs %in% unique(sort(indegs, decreasing=TRUE)[seq_len(length(indegs)*elites)])
   }
+  make_node_mark(out, .data)
+}
+
+#' @rdname mark_nodes
+#' @inheritParams manip_scope
+#' @export
+node_is_neighbor <- function(.data, node){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  .data <- as_igraph(.data)
+  out <- igraph::V(.data) %in% igraph::neighbors(.data, v = node)
   make_node_mark(out, .data)
 }
 

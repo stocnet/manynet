@@ -145,7 +145,7 @@ Try varying the `width` argument to see the result.
 
 #### Lattices
 
-Lattices reflect highly clustered networks
+`r gloss("Lattices","lattice")` reflect highly clustered networks
 where there is a high likelihood that interaction partners also interact.
 They are used to show how clustering facilitates or limits diffusion
 or makes pockets of behaviour stable.
@@ -394,7 +394,7 @@ Color the nodes by Gender, Office, Practice, and School.
 Any you might think correlate with core status?
 
 ```{r gnet, exercise=TRUE, purl = FALSE, fig.width=9}
-lawfirm <- to_undirected(ison_lawfirm) |> to_uniplex("friends")
+lawfirm <- ison_lawfirm |> to_uniplex("friends") |> to_undirected()
 ```
 
 ```{r gnet-solution}
@@ -491,7 +491,7 @@ question("There a statistically significant association between the core assignm
          answer("practice.",
                 message = learnr::random_encouragement()),
          answer("none of the above variables.", correct = TRUE,
-                message = learnr::random_praise()),
+                message = "That's right. The p-value for office is close, but no cigar."),
          allow_retry = TRUE
 )
 ```
@@ -607,7 +607,7 @@ question("The higher the minimum number of nodes to remove...",
 ### Identifying cutpoints
 
 But which are these nodes? Is there more than one? 
-Nodes that endanger fragmentation of the network are called cutpoints.
+Nodes that endanger fragmentation of the network are called `r gloss("cutpoints","cutpoint")`.
 Find and use a function to identify which, if any, of the nodes in the `ison_adolescents`
 network are cutpoints.
 
@@ -635,6 +635,7 @@ ison_adolescents |> mutate(cut = node_is_cutpoint(ison_adolescents)) |>
 ### Identifying bridges
 
 Let's do something similar now, but with respect to ties rather than nodes.
+Here we are interested in identifying which ties are `r gloss("bridges","bridge")`.
 
 ```{r tieside, exercise = TRUE, purl=FALSE}
 
@@ -660,3 +661,17 @@ ison_adolescents |> mutate_ties(coh = tie_cohesion(ison_adolescents)) |>
 ```
 
 Where would you target your efforts if you wanted to fragment this network?
+
+## Free play
+
+```{r freeplay, exercise = TRUE}
+
+```
+
+## Glossary
+
+Here are some of the terms that we have covered in this module:
+
+`r print_glossary()`
+
+

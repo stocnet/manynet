@@ -51,7 +51,7 @@ NULL
 #' @export
 node_in_equivalence <- function(.data, census,
                              k = c("silhouette", "elbow", "strict"),
-                             cluster = c("hierarchical", "concor"),
+                             cluster = c("hierarchical", "concor", "cosine"),
                              distance = c("euclidean", "maximum", "manhattan", 
                                           "canberra", "binary", "minkowski"),
                              range = 8L){
@@ -59,7 +59,9 @@ node_in_equivalence <- function(.data, census,
   hc <- switch(match.arg(cluster),
                hierarchical = cluster_hierarchical(census, 
                                                       match.arg(distance)),
-               concor = cluster_concor(.data, census))
+               concor = cluster_concor(.data, census),
+               cosine = cluster_cosine(census, 
+                                       match.arg(distance)))
   
   if(!is.numeric(k))
     k <- switch(match.arg(k),
@@ -84,7 +86,7 @@ node_in_equivalence <- function(.data, census,
 #' @export
 node_in_structural <- function(.data,
                                         k = c("silhouette", "elbow", "strict"),
-                                        cluster = c("hierarchical", "concor"),
+                                        cluster = c("hierarchical", "concor","cosine"),
                                         distance = c("euclidean", "maximum", "manhattan", 
                                                      "canberra", "binary", "minkowski"),
                                         range = 8L){
@@ -109,14 +111,20 @@ node_in_structural <- function(.data,
 #' @export
 node_in_regular <- function(.data, 
                             k = c("silhouette", "elbow", "strict"),
-                            cluster = c("hierarchical", "concor"),
+                            cluster = c("hierarchical", "concor","cosine"),
                             distance = c("euclidean", "maximum", "manhattan", 
                                          "canberra", "binary", "minkowski"),
                             range = 8L){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(is_twomode(.data)){
-    mat <- as.matrix(node_by_quad(.data))
+    mnet_info("Since this is a two-mode network,", 
+              "using {.fn node_by_tetrad} to", 
+              "profile nodes' embedding in local structures.")
+    mat <- as.matrix(node_by_tetrad(.data))
   } else {
+    mnet_info("Since this is a one-mode network,", 
+              "using {.fn node_by_triad} to", 
+              "profile nodes' embedding in local structures.")
     mat <- node_by_triad(.data)
   }
   if(any(colSums(mat) == 0)) mat <- mat[,-which(colSums(mat) == 0)]
@@ -130,15 +138,15 @@ node_in_regular <- function(.data,
 #' if(require("sna", quietly = TRUE)){
 #' (nae <- node_in_automorphic(ison_southern_women,
 #'   k = "elbow"))
-#' }
 #' if(require("ggdendro", quietly = TRUE)){
 #' plot(nae)
+#' }
 #' }
 #' }
 #' @export
 node_in_automorphic <- function(.data,
                                          k = c("silhouette", "elbow", "strict"),
-                                         cluster = c("hierarchical", "concor"),
+                                         cluster = c("hierarchical", "concor","cosine"),
                                          distance = c("euclidean", "maximum", "manhattan", 
                                                       "canberra", "binary", "minkowski"),
                                          range = 8L){

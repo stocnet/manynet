@@ -52,11 +52,6 @@ As described in \code{igraph::coreness},
 a node's coreness is \emph{k} if it belongs to the \emph{k}-core
 but not to the (\emph{k}+1)-core.
 }
-\examples{
-ison_monks \%>\% to_uniplex("esteem") \%>\% 
-  mutate_nodes(comp = node_in_component()) \%>\% 
-  graphr(node_color = "comp")
-}
 \seealso{
 Other memberships: 
 \code{\link{mark_core}},

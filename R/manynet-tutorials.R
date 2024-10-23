@@ -48,7 +48,8 @@ run_tute <- function(tute) {
     avails <- dplyr::bind_rows(tutelist)
     inftit <- grepl(tute, avails$title, ignore.case = TRUE)
     if(!any(inftit) | sum(inftit)>1)
-      inftit <- which.min(utils::adist(tute, avails$title, ignore.case = TRUE))
+      inftit <- which.min(utils::adist(tute, avails$title, ignore.case = TRUE,
+                                       costs = list(ins=0, del=1, sub=1)))
     if(any(inftit) & sum(inftit)==1){
       cli::cli_alert_success("And found one!")
       try(learnr::run_tutorial(avails$name[inftit], avails$package[inftit]), silent = TRUE)
@@ -165,3 +166,75 @@ table_data <- function(pkg = c("manynet","migraph"),
   if(!is.null(filter)) out <- dplyr::filter(out, ...)
   out
 }
+
+# Glossary ####
+
+
+#' Adding network glossary items
+#' 
+#' @description 
+#'   This function adds a glossary item, useful in tutorials.
+#'   
+#' @param text The text to appear.
+#' @param ref The name of the glossary item to index.
+#'   If NULL, then the function will search the glossary for 'text' instead.
+#' @name glossary
+NULL
+
+#' @rdname glossary
+#' @export
+gloss <- function(text, ref = NULL){
+  if(is.null(ref)) ref <- tolower(text)
+  if(!ref %in% names(glossies)) 
+    cli::cli_abort("No glossary entry for '{text}' exists.") else {
+      defn <- glossies[which(names(glossies)==ref)]
+      options(mnet_glossary = unique(c(ref, getOption("mnet_glossary", default = ""))))
+      paste(paste0("<abbr><dfn title='", defn, "'>"), text, "</dfn></abbr>")
+    }
+}
+
+#' @rdname glossary
+#' @export
+print_glossary <- function(){
+  defns <- getOption("mnet_glossary", default = "")
+  if(length(defns)!=0){
+    glossd <- glossies[names(glossies) %in% defns]
+    glossn <- gsub("([[:alpha:]])([[:alpha:]]+)", "\\U\\1\\L\\2", names(glossd), perl=TRUE)
+    glosst <- data.frame(term = paste("<dt>",glossn,"</dt>"), 
+                         defn = paste("<dd>    ",glossd,"</dd>"))
+    paste("<dl>",paste(paste(glosst$term, glosst$defn), collapse = " "),"</dl>")
+  }
+}
+
+#' @rdname glossary
+#' @export
+clear_glossary <- function(){
+  options(mnet_glossary = vector())
+}
+
+## Definitions ####
+
+glossies <- list(
+  acyclic = "An acyclic network is a network without any cycles.",
+  adhesion = "The minimum number of ties to remove to increase the number of components.",
+  blockmodel = "A blockmodel reduces a network to a smaller comprehensible structure of the roles positions take with respect to one another.",
+  bridge = "A bridge is a tie whose deletion increases the number of components.",
+  cohesion = "The minimum number of nodes to remove to increase the number of components.",
+  component = "A component is a connected subgraph not part of a larger connected subgraph.",
+  cutpoint = "A cutpoint or articulation point is a node whose deletion increases the number of components.",
+  degree = "A node's degree is the number of connections it has.",
+  giant = "The giant component is the component that includes the most nodes in the network.",
+  graphlet = "A graphlet is a small, connected, induced, non-isomorphic subgraphs.",
+  induced = "An induced subgraph comprises all ties in a subset of the nodes in a network.",
+  lattice = "A network that can be drawn as a regular tiling.",
+  motif = "A subgraph that is exceptional or significant compared to a null model.",
+  neighborhood = "A node's neighborhood is the set of other nodes to which that node is connected.",
+  network = "A network comprises a set of nodes/vertices and a set of ties/edges among them.",
+  orbit = "An orbit is a unique position in a subgraph.",
+  reciprocity = "A measure of how often nodes in a directed network are mutually linked.",
+  reduced = "A reduced graph is a representation of the ties within and between blocks in the network.",
+  subgraph = "A subgraph comprises a subset of the nodes and ties in a network.",
+  transitivity = "Triadic closure is where if the connections A-B and A-C exist among three nodes, there is a tendency for B-C also to be formed.",
+  undirected = "An undirected network is one in which tie direction is undefined."
+)
+

@@ -21,6 +21,9 @@
 #'   and "complex" compares pairs' reciprocal ties and their self ties.
 #'   By default the appropriate method is chosen based on the network format.
 #' @family modifications
+NULL
+
+#' @rdname manip_correlation
 #' @export
 to_correlation <- function(.data, method = NULL){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
@@ -37,6 +40,23 @@ to_correlation <- function(.data, method = NULL){
                 recip = .corRecip(mat),
                 diag = .corDiag(mat))
   out
+}
+
+#' @rdname manip_correlation
+#' @export
+to_cosine <- function(.data){
+  x <- as_matrix(.data)
+  co = array(0, c(ncol(x), ncol(x)))
+  f = colnames(x)
+  dimnames(co) = list(f, f)
+  for (i in 2:ncol(x)) {
+    for (j in 1:(i - 1)) {
+      co[i, j] = crossprod(x[, i], x[, j])/sqrt(crossprod(x[, i]) * crossprod(x[, j]))
+    }
+  }
+  co = co + t(co)
+  diag(co) = 1
+  as.matrix(co)
 }
   
 #' Network permutation

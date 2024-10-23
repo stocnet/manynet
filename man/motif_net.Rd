@@ -4,7 +4,7 @@
 \alias{motif_net}
 \alias{net_by_dyad}
 \alias{net_by_triad}
-\alias{net_by_quad}
+\alias{net_by_tetrad}
 \alias{net_by_mixed}
 \title{Motifs at the network level}
 \source{
@@ -15,7 +15,7 @@ net_by_dyad(.data)
 
 net_by_triad(.data)
 
-net_by_quad(.data)
+net_by_tetrad(.data)
 
 net_by_mixed(.data, object2)
 }
@@ -32,19 +32,49 @@ net_by_mixed(.data, object2)
 \item{object2}{A second, two-mode migraph-consistent object.}
 }
 \description{
-These functions include ways to take a census of the positions of nodes
+These functions include ways to take a census of the graphlets
 in a network:
 \itemize{
 \item \code{net_by_dyad()} returns a census of dyad motifs in a network.
 \item \code{net_by_triad()} returns a census of triad motifs in a network.
+\item \code{net_by_tetrad()} returns a census of tetrad motifs in a network.
 \item \code{net_by_mixed()} returns a census of triad motifs that span
 a one-mode and a two-mode network.
 }
+
+See also \href{https://www.graphclasses.org/smallgraphs.html}{graph classes}.
 }
+\section{Tetrad census}{
+
+The tetrad census counts the number of four-node configurations in the network.
+The function returns a matrix with a special naming convention:
+\itemize{
+\item E4 (aka co-K4): This is an empty set of four nodes; no ties
+\item I4 (aka co-diamond): This is a set of four nodes with just one tie
+\item H4 (aka co-C4): This set of four nodes includes two non-adjacent ties
+\item L4 (aka co-paw): This set of four nodes includes two adjacent ties
+\item D4 (aka co-claw): This set of four nodes includes three adjacent ties,
+in the form of a triangle with one isolate
+\item U4 (aka P4, four-actor line): This set of four nodes includes three ties
+arranged in a line
+\item Y4 (aka claw): This set of four nodes includes three ties all adjacent
+to a single node
+\item P4 (aka paw, kite): This set of four nodes includes four ties arranged
+as a triangle with an extra tie hanging off of one of the nodes
+\item C4 (aka bifan): This is a symmetric box or 4-cycle or set of shared choices
+\item Z4 (aka diamond): This resembles C4 but with an extra tie cutting across the box
+\item X4 (aka K4): This resembles C4 but with two extra ties cutting across the box;
+a realisation of all possible ties
+}
+
+Graphs of these motifs can be shown using
+\code{plot(net_by_tetrad(ison_southern_women))}.
+}
+
 \examples{
 net_by_dyad(manynet::ison_algebra)
 net_by_triad(manynet::ison_adolescents)
-net_by_quad(ison_southern_women)
+net_by_tetrad(ison_southern_women)
 marvel_friends <- to_unsigned(ison_marvel_relationships, "positive")
 (mixed_cen <- net_by_mixed(marvel_friends, ison_marvel_teams))
 }
@@ -65,6 +95,19 @@ Cambridge: Cambridge University Press.
 
 Davis, James A., and Samuel Leinhardt. 1967.
 “\href{https://files.eric.ed.gov/fulltext/ED024086.pdf}{The Structure of Positive Interpersonal Relations in Small Groups}.” 55.
+}
+
+\subsection{On the tetrad census}{
+
+Ortmann, Mark, and Ulrik Brandes. 2017.
+“Efficient Orbit-Aware Triad and Quad Census in Directed and Undirected Graphs.”
+\emph{Applied Network Science} 2(1):13.
+\doi{10.1007/s41109-017-0027-2}.
+
+McMillan, Cassie, and Diane Felmlee. 2020.
+"Beyond Dyads and Triads: A Comparison of Tetrads in Twenty Social Networks".
+\emph{Social Psychology Quarterly} 83(4): 383-404.
+\doi{10.1177/0190272520944151}
 }
 
 \subsection{On the mixed census}{

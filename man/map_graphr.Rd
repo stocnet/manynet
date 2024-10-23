@@ -15,6 +15,7 @@ graphr(
   node_group,
   edge_color,
   edge_size,
+  snap = FALSE,
   ...,
   node_colour,
   edge_colour
@@ -86,6 +87,8 @@ it is recommended to calculate all edge-related statistics prior
 to using this function.
 Edges can also be sized by declaring a numeric size or vector instead.}
 
+\item{snap}{Logical scalar, whether the layout should be snapped to a grid.}
+
 \item{...}{Extra arguments to pass on to the layout algorithm, if necessary.}
 }
 \value{
@@ -122,7 +125,7 @@ try \code{run_tute("Visualisation")}.
 \examples{
 graphr(ison_adolescents)
 ison_adolescents \%>\%
-  mutate(color = rep(c("extrovert", "introvert"), times = 4),
+  mutate(color = rep(c("introvert","extrovert"), times = 4),
          size = ifelse(node_is_cutpoint(ison_adolescents), 6, 3)) \%>\%
   mutate_ties(ecolor = rep(c("friends", "acquaintances"), times = 5)) \%>\%
   graphr(node_color = "color", node_size = "size",

@@ -2,6 +2,7 @@
 % Please edit documentation in R/manip_as.R
 \name{manip_as}
 \alias{manip_as}
+\alias{as_nodelist}
 \alias{as_edgelist}
 \alias{as_matrix}
 \alias{as_igraph}
@@ -13,6 +14,8 @@
 \alias{as_diffnet}
 \title{Modifying network classes}
 \usage{
+as_nodelist(.data)
+
 as_edgelist(.data, twomode = FALSE)
 
 as_matrix(.data, twomode = NULL)
@@ -133,12 +136,14 @@ as_network(test)
 \seealso{
 Other modifications: 
 \code{\link{manip_correlation}},
+\code{\link{manip_deformat}},
 \code{\link{manip_from}},
 \code{\link{manip_levels}},
 \code{\link{manip_miss}},
 \code{\link{manip_nodes}},
 \code{\link{manip_paths}},
 \code{\link{manip_permutation}},
+\code{\link{manip_preformat}},
 \code{\link{manip_project}},
 \code{\link{manip_reformat}},
 \code{\link{manip_scope}},

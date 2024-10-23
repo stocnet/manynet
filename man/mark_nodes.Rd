@@ -3,13 +3,17 @@
 \name{mark_nodes}
 \alias{mark_nodes}
 \alias{node_is_isolate}
+\alias{node_is_pendant}
 \alias{node_is_independent}
 \alias{node_is_cutpoint}
 \alias{node_is_fold}
 \alias{node_is_mentor}
+\alias{node_is_neighbor}
 \title{Marking nodes based on structural properties}
 \usage{
 node_is_isolate(.data)
+
+node_is_pendant(.data)
 
 node_is_independent(.data)
 
@@ -18,6 +22,8 @@ node_is_cutpoint(.data)
 node_is_fold(.data)
 
 node_is_mentor(.data, elites = 0.1)
+
+node_is_neighbor(.data, node)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -42,6 +48,8 @@ for example because they are an isolate,
 a tie to themselves (a loop) will be created instead.
 Note that this is a different default behaviour than that
 described in Valente and Davis (1999).}
+
+\item{node}{Name or index of node.}
 }
 \description{
 These functions return logical vectors the length of the

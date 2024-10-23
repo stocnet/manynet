@@ -746,6 +746,30 @@ node_distance <- function(.data, from, to, normalized = TRUE){
 }
 
 #' @rdname measure_central_close 
+#' @section Closeness vitality centrality: 
+#'   The closeness vitality of a node is the change in the sum of all distances
+#'   in a network, also known as the Wiener Index, when that node is removed.
+#'   Note that the closeness vitality may be negative infinity if
+#'   removing that node would disconnect the network.
+#' @references
+#'   Koschuetzki, Dirk, Katharina Lehmann, Leon Peeters, Stefan Richter,
+#'   Dagmar Tenfelde-Podehl, and Oliver Zlotowski. 2005.
+#'   "Centrality Indices", in
+#'   Brandes, Ulrik, and Thomas Erlebach (eds.). 
+#'   _Network Analysis: Methodological Foundations_. 
+#'   Springer: Berlin, pp. 16-61.
+#' @export
+node_vitality <- function(.data, normalized = TRUE){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  .data <- as_igraph(.data)
+  out <- vapply(mnet_progress_nodes(.data), function(x){
+    sum(igraph::distances(.data)) - sum(igraph::distances(delete_nodes(.data, x)))
+  }, FUN.VALUE = numeric(1))
+  if(normalized) out <- out/max(out)
+  make_node_measure(out, .data)
+}
+
+#' @rdname measure_central_close 
 #' @examples
 #' (ec <- tie_closeness(ison_adolescents))
 #' plot(ec)
@@ -891,6 +915,8 @@ NULL
 #'   and \eqn{\lambda} is a constant representing the principal eigenvalue.
 #'   Rather than performing this iteration,
 #'   most routines solve the eigenvector equation \eqn{Ax = \lambda x}.
+#'   Note that since `{igraph}` v2.1.1,
+#'   the values will always be rescaled so that the maximum is 1.
 #' @param scale Logical scalar, whether to rescale the vector so the maximum score is 1. 
 #' @details
 #'   We use `{igraph}` routines behind the scenes here for consistency and because they are often faster.
@@ -905,35 +931,34 @@ NULL
 #' node_eigenvector(ison_southern_women)
 #' @return A numeric vector giving the eigenvector centrality measure of each node.
 #' @export 
-node_eigenvector <- function(.data, normalized = TRUE, scale = FALSE){
+node_eigenvector <- function(.data, normalized = TRUE, scale = TRUE){
   
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   weights <- `if`(manynet::is_weighted(.data), 
                   manynet::tie_weights(.data), NA)
   graph <- manynet::as_igraph(.data)
   
+  if(!normalized) mnet_info("This function always returns a normalized value now.")
+  if(!scale) mnet_info("This function always returns a scaled value now.")
+  
   if(!manynet::is_connected(.data)) 
-    warning("Unconnected networks will only allow nodes from one component have non-zero eigenvector scores.")
+    cli::cli_alert_warning("Unconnected networks will only allow nodes from one component to have non-zero eigenvector scores.")
   
   # Do the calculations
   if (!manynet::is_twomode(graph)){
     out <- igraph::eigen_centrality(graph = graph, 
-                                    directed = manynet::is_directed(graph), scale = scale, 
+                                    directed = manynet::is_directed(graph),
                                     options = igraph::arpack_defaults())$vector
-    if (normalized) out <- out / sqrt(1/2)
-    if(scale) out <- out / max(out)
   } else {
     eigen1 <- manynet::to_mode1(graph)
     eigen1 <- igraph::eigen_centrality(graph = eigen1, 
-                                       directed = manynet::is_directed(eigen1), scale = scale, 
+                                       directed = manynet::is_directed(eigen1),
                                        options = igraph::arpack_defaults())$vector
     eigen2 <- manynet::to_mode2(graph)
     eigen2 <- igraph::eigen_centrality(graph = eigen2, 
-                                       directed = manynet::is_directed(eigen2), scale = scale, 
+                                       directed = manynet::is_directed(eigen2),
                                        options = igraph::arpack_defaults())$vector
     out <- c(eigen1, eigen2)
-    if (normalized) out <- out / sqrt(1/2)
-    if(scale) out <- out / max(out)
   }
   out <- make_node_measure(out, .data)
   out

@@ -44,7 +44,9 @@ This can be created by, among other things, any \verb{node_is_*()} function.}
 \item{membership}{A vector of partition membership.}
 
 \item{resolution}{A proportion indicating the resolution scale.
-By default 1.}
+By default 1, which returns the original definition of modularity.
+The higher this parameter, the more smaller communities will be privileged.
+The lower this parameter, the fewer larger communities are likely to be found.}
 
 \item{method}{There are three small-world measures implemented:
 \itemize{
@@ -115,6 +117,8 @@ particularly with large networks or depending on the degree of interconnectednes
 can miss small clusters that 'hide' inside larger clusters.
 In the extreme case, this can be where they are only connected
 to the rest of the network through a single tie.
+To help manage this problem, a \code{resolution} parameter is added.
+Please see the argument definition for more details.
 }
 
 \examples{

@@ -200,7 +200,7 @@ create_ego <- function(max_alters = Inf,
     isolates <- roster[!roster %in% node_names(out)]
     out <- add_nodes(out, length(isolates), list(name = isolates))
   }
-  out <- add_info(out, ties = ties, 
+  out <- add_info(out, ties = ties, name = "Ego network",
                   collection = "Interview",
                   year = format(as.Date(Sys.Date(), format="%d/%m/%Y"),"%Y"))
   out
@@ -363,7 +363,8 @@ create_empty <- function(n, directed = FALSE) {
     out <- as_igraph(out, twomode = TRUE)
   }
   if (!directed) out <- to_undirected(out)
-  as_tidygraph(out)
+  as_tidygraph(out) %>% 
+    add_info(name = "Empty network")
 }
 
 #' @rdname make_create 
@@ -382,7 +383,8 @@ create_filled <- function(n, directed = FALSE) {
     out <- matrix(1, n[1], n[2])
     out <- as_igraph(out, twomode = TRUE)
   }
-  as_tidygraph(out)
+  as_tidygraph(out) %>% 
+    add_info(name = "Filled network")
 }
 
 #' @rdname make_create 
@@ -430,7 +432,8 @@ create_ring <- function(n, directed = FALSE, width = 1, ...) {
     mat[mat > 1] <- 1
     out <- as_igraph(mat, twomode = TRUE)
   }
-  as_tidygraph(out)
+  as_tidygraph(out) %>% 
+    add_info(name = "Ring network")
 }
 
 #' @rdname make_create 
@@ -454,7 +457,8 @@ create_star <- function(n,
     }
     out <- as_igraph(out, twomode = TRUE)
   }
-  as_tidygraph(out)
+  as_tidygraph(out) %>% 
+    add_info(name = "Star network")
 }
 
 #' @rdname make_create 
@@ -548,11 +552,14 @@ create_lattice <- function(n,
       }
       if (!directed)
         nei1.5[lower.tri(nei1.5)] <- t(nei1.5)[lower.tri(nei1.5)]
-      as_tidygraph(nei1.5)
+      as_tidygraph(nei1.5) %>% 
+        add_info(name = "Lattice network")
     } else if (width == 12) {
-      as_tidygraph(igraph::make_lattice(dims, nei = 2, directed = directed))
+      as_tidygraph(igraph::make_lattice(dims, nei = 2, directed = directed)) %>% 
+        add_info(name = "Lattice network")
     } else if (width == 4) {
-      as_tidygraph(igraph::make_lattice(dims, nei = 1, directed = directed))
+      as_tidygraph(igraph::make_lattice(dims, nei = 1, directed = directed)) %>% 
+        add_info(name = "Lattice network")
     } else cli::cli_abort("`max_neighbourhood` expected to be 4, 8, or 12")
   } else {
     divs1 <- divisors(n[1])
@@ -570,7 +577,8 @@ create_lattice <- function(n,
     mat[lower.tri(mat)] <- 0
     out <- mat[rowSums(mat) ==2,]
     out <- do.call(rbind, replicate(nrow(mat)/nrow(out), out, simplify=FALSE))
-    as_tidygraph(out)
+    as_tidygraph(out) %>% 
+      add_info(name = "Lattice network")
   }
 }
 

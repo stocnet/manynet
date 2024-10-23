@@ -9,6 +9,5 @@
 
 0 errors | 0 warnings | 0 notes
 
-* Re errors on CRAN, this version fixes errors on Linux versions for which the {oaqc} package is not available
-* Re previous submission, this version fixes a DOI and avoids an issue with {igraph}
-* Fixed errors occurring in tests and examples when suggested packages excluded
+* Attempted to fix non ASCII strings warning
+* Changes to avoid reverse dependency issues for igraph
