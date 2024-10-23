@@ -1,3 +1,93 @@
+# manynet 1.3.0
+
+## Package
+
+- Improved user information in the console
+  - manynet cli functions now inherit parent frame
+  - Added manynet cli functions for success and progress along, seq, and nodes
+- Improved testing architecture
+  - Moving to nested testthats
+  - Added custom testthat function for expecting values and ignoring dimension names
+
+## Making
+
+- Added some names to created networks (`create_ego()`, `create_empty()`, 
+`create_filled()`, `create_ring()`, `create_star()`, `create_lattice()`)
+
+## Modifying
+
+- Fixed how `as_matrix()` handles signed networks
+- Added `as_nodelist()` for extracting nodelists from networks into tibbles
+- Added `to_cosine()`
+- Dropped `to_galois()` until it can be refactored
+- Split reformatting documentation into format, reformat, and deformat groups of functions
+  - Added `to_signed()` for adding signs to networks
+  - Added `to_weighted()` for adding weights to networks
+
+## Mapping
+
+- Fixed default color ordering so that red is the highlight
+- Fixed bug in `graphr()` where line types were inferred incorrectly
+- Improved `graphr()` so that layouts can now be `snap`ped to a grid,
+mileage may vary
+- Improved theme handling so that it is set globally (WIP)
+  - Added highlight themes
+  - Added background themes
+  - Added categorical themes
+- Improved configurational layouts
+  - Added dyad, pentad, and hexad layouts to configurational layouts
+  - Renamed quad layout to tetrad layout
+
+## Marking
+
+- Added `node_is_pendant()` for identifying pendant nodes
+- Added `node_is_neighbor()` for identifying adjacent nodes
+- Added `tie_is_imbalanced()` for identifying ties in imbalanced configurations
+
+## Measuring
+
+- Added `summary.network_measure()` to return z-scores and p-values for measures
+- Added `node_vitality()` for measuring closeness vitality centrality
+- Fixed #98 by dropping scale and normalization for `node_eigenvector()`
+
+## Memberships
+
+- Improved community detection options for new users
+  - Community detection algorithms now reformat networks as necessary or suggest that it be used on only the giant component
+  - Added `node_in_community()` which runs through most salient community detection algorithms to find and return the one with the highest modularity
+  - Updated documentation on resolution parameters
+- Improved `node_in_regular()` to inform user which census is being used
+- Renamed `node_by_quad()` to `node_by_tetrad()` to be more consistent with Greek origins
+  - Restored and updated documentation about the various configurations
+- Added `summary.network_motif()` which returns the z-scores for the motif scores based on random or configurational networks, traces progress
+- Fixed bug in `plot.network_motif()` where motif names were not identified correctly, internal make_network_motif now inherits call information
+
+## Modelling
+
+- Added `cluster_cosine()` for another equivalence option
+- Added internal documentation for depth_first_recursive_search
+
+## Practicing
+
+- Improved how `run_tute()` fuzzy matched so that insertions are not as costly
+- Improved tutorials with glossary architecture
+  - Added `gloss()`, `clear_glossary()`, and `print_glossary()` for adding glossaries to tutorials
+- Updated tutorials
+  - Updated community, position, and topology tutorials with glossaries, free play sections, and gifs
+  - Fixed miscellaneous issues in these tutorials
+  - Added faction section to community tutorial
+
+## Data
+
+- Added `irps_wwi`, a dynamic, signed network
+- Renamed `ison_blogs` to `irps_blogs`, added info
+- Renamed `ison_books` to `irps_books`, added info
+- Renamed `ison_usstates` to `irps_usgeo`, added info
+- Renamed `ison_friends` to `fict_friends`, added info and fixed directed issue
+- Renamed `ison_greys` to `fict_greys`, added info
+- Renamed `ison_lotr` to `fict_lotr`, added info
+- Renamed `ison_thrones` to `fict_thrones`, added info and some additional nodal attributes
+
 # manynet 1.2.6
 
 ## Package
