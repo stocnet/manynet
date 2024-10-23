@@ -212,13 +212,21 @@ clear_glossary <- function(){
   options(mnet_glossary = vector())
 }
 
+## Definitions ####
+
 glossies <- list(
+  acyclic = "An acyclic network is a network without any cycles.",
+  adhesion = "The minimum number of ties to remove to increase the number of components.",
   blockmodel = "A blockmodel reduces a network to a smaller comprehensible structure of the roles positions take with respect to one another.",
+  bridge = "A bridge is a tie whose deletion increases the number of components.",
+  cohesion = "The minimum number of nodes to remove to increase the number of components.",
   component = "A component is a connected subgraph not part of a larger connected subgraph.",
+  cutpoint = "A cutpoint or articulation point is a node whose deletion increases the number of components.",
   degree = "A node's degree is the number of connections it has.",
   giant = "The giant component is the component that includes the most nodes in the network.",
   graphlet = "A graphlet is a small, connected, induced, non-isomorphic subgraphs.",
   induced = "An induced subgraph comprises all ties in a subset of the nodes in a network.",
+  lattice = "A network that can be drawn as a regular tiling.",
   motif = "A subgraph that is exceptional or significant compared to a null model.",
   neighborhood = "A node's neighborhood is the set of other nodes to which that node is connected.",
   network = "A network comprises a set of nodes/vertices and a set of ties/edges among them.",
