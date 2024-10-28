@@ -106,7 +106,7 @@ to obtain a clear first look of the network
 for preliminary investigations and understanding of the network. Let's quickly visualise one of the `ison_` datasets included in the package.
 
 ```{r manyneteg, exercise=TRUE}
-graphr(ison_lotr)
+graphr(fict_lotr)
 ```
   
 We can also specify the colours, groups, shapes, and sizes of nodes and edges in 
@@ -120,7 +120,7 @@ the `graphr()` function using the following parameters:
 * `edge_size`
 
 ```{r speceg, exercise=TRUE}
-graphr(ison_lotr, node_color = "Race")
+graphr(fict_lotr, node_color = "Race")
 ```
 
 ### graphs
@@ -131,7 +131,7 @@ or more networks are plotted together.
 This might be a set of ego networks, subgraphs, or waves of a longitudinal network.
 
 ```{r graphs, exercise=TRUE}
-graphs(to_subgraphs(ison_lotr, "Race"),
+graphs(to_subgraphs(fict_lotr, "Race"),
        waves = c(1,2,3,4))
 ```
 
@@ -140,7 +140,7 @@ graphs(to_subgraphs(ison_lotr, "Race"),
 `grapht()` is another option, rendering network changes as a gif.
   
 ```{r grapht, exercise=TRUE}
-ison_lotr %>%
+fict_lotr %>%
   mutate_ties(year = sample(1:12, 66, replace = TRUE)) %>%
   to_waves(attribute = "year", cumulative = TRUE) %>%
   grapht()
@@ -184,8 +184,8 @@ in some cases the legends offer insufficient detail,
 such as in the following figure, or are absent.
 
 ```{r maxbet, exercise = TRUE}
-ison_lotr %>% 
-  mutate(maxbet = node_is_max(node_betweenness(ison_lotr))) %>% 
+fict_lotr %>% 
+  mutate(maxbet = node_is_max(node_betweenness(fict_lotr))) %>% 
   graphr(node_color = "maxbet")
 ```
 
@@ -197,8 +197,8 @@ Note that we can use `"\n"` within the legend title to make the title
 span multiple lines.
 
 ```{r legend, exercise=TRUE}
-ison_lotr %>% 
-  mutate(maxbet = node_is_max(node_betweenness(ison_lotr))) %>% 
+fict_lotr %>% 
+  mutate(maxbet = node_is_max(node_betweenness(fict_lotr))) %>% 
   graphr(node_color = "maxbet") +
   guides(color = "legend") + 
   labs(color = "Maximum\nBetweenness")
@@ -209,7 +209,7 @@ to highlight groups in a network.
 This works best for quite clustered distributions of attributes.
 
 ```{r group, exercise = TRUE}
-graphr(ison_lotr, node_group = "Race")
+graphr(fict_lotr, node_group = "Race")
 ```
 
 ## Layouts
@@ -288,9 +288,9 @@ positioning them so that they reduce crossings.
 These layouts are best suited for directed acyclic graphs or similar.
 
 ```{r bipartite, exercise=TRUE, fig.width=9}
-(graphr(ison_southern_women, layout = "bipartite") + ggtitle("Bipartite")) /
-(graphr(ison_southern_women, layout = "hierarchy") + ggtitle("Hierarchy")) /
-(graphr(ison_southern_women, layout = "railway") + ggtitle("Railway"))
+graphr(ison_southern_women, layout = "bipartite") + ggtitle("Bipartite")
+graphr(ison_southern_women, layout = "hierarchy") + ggtitle("Hierarchy")
+graphr(ison_southern_women, layout = "railway") + ggtitle("Railway")
 ```
 
 Note that `"hierarchy"` and `"railway"` use a different algorithm to
@@ -389,13 +389,13 @@ Because the `graphr()` function is based on
 the grammar of graphics,
 it's easy to extend or alter aesthetic aspects.
 Here let's try and change the colors
-assigned to the different races in the `ison_lotr` dataset.
+assigned to the different races in the `fict_lotr` dataset.
 
 ```{r colorch, exercise=TRUE}
-graphr(ison_lotr,
+graphr(fict_lotr,
            node_color = "Race")
 
-graphr(ison_lotr,
+graphr(fict_lotr,
            node_color = "Race") +
   ggplot2::scale_colour_hue()
 ```
@@ -409,7 +409,7 @@ To use a grayscale color palette,
 replace `_hue` from above with `_grey` (note the 'e' spelling):
 
 ```{r greyscale, exercise=TRUE}
-graphr(ison_lotr,
+graphr(fict_lotr,
            node_color = "Race") +
   ggplot2::scale_colour_grey()
 ```
@@ -426,7 +426,7 @@ but otherwise hex color codes can be used for more specific colors.
 Unspecified categories are coloured (dark) grey.
 
 ```{r mancolor, exercise=TRUE}
-graphr(ison_lotr,
+graphr(fict_lotr,
            node_color = "Race") +
   ggplot2::scale_colour_manual(
     values = c("Dwarf" = "red",
@@ -448,7 +448,7 @@ Here we demonstrate one of the color scales available in `{manynet}`,
 the colors of the Sustainable Development Goals:
 
 ```{r theming, exercise=TRUE}
-graphr(ison_lotr, node_color = "Race") + 
+graphr(fict_lotr, node_color = "Race") + 
   scale_color_sdgs()
 ```
 
@@ -467,7 +467,7 @@ adding explicit layers to visualise the nodes and edges.
 
 ```{r ggrapheg, exercise=TRUE, purl = FALSE}
 library(ggraph)
-ggraph(ison_greys, layout = "fr") + 
+ggraph(fict_greys, layout = "fr") + 
   geom_edge_link(edge_colour = "dark grey", 
                   arrow = arrow(angle = 45,
                                 length = unit(2, "mm"),

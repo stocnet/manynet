@@ -199,7 +199,7 @@ question("Does the structure of the network matter for whether and when a diffus
 
 ### Free play: US States
 
-Run an influence cascade on US states' geographic contiguity in `ison_usstates`.
+Run an influence cascade on US states' geographic contiguity in `irps_usgeo`.
 You can start the infection in California by specifying `seeds = 5`.
 
 ```{r usstates, exercise = TRUE, purl = FALSE, fig.width=9}
@@ -207,7 +207,7 @@ You can start the infection in California by specifying `seeds = 5`.
 ```
 
 ```{r usstates-hint}
-us_diff <- play_diffusion(ison_usstates, seeds = 5)
+us_diff <- play_diffusion(irps_usgeo, seeds = 5)
 plot(us_diff)
 graphr(us_diff)
 grapht(us_diff)
@@ -325,10 +325,10 @@ are obstructing the diffusion process because it is unlikely that many of their 
 ### Varying thresholds
 
 Lastly, note that it may be that thresholds vary across the network.
-Let's use an example network to explore this: `ison_lotr`.
+Let's use an example network to explore this: `fict_lotr`.
 
 ```{r lotr, exercise = TRUE, fig.width=9}
-graphr(ison_lotr, node_color = "Race")
+graphr(fict_lotr, node_color = "Race")
 ```
 
 Something is going around Middle-Earth, 
@@ -336,7 +336,7 @@ but different races have different resistances (i.e. thresholds).
 Let us say that there is a clear ordering to this.
 
 ```{r lotr-resist, exercise=TRUE}
-lotr_resist <- ison_lotr %>% mutate(resistance = dplyr::case_when(Race == "Dwarf" ~ 2,
+lotr_resist <- fict_lotr %>% mutate(resistance = dplyr::case_when(Race == "Dwarf" ~ 2,
                                                    Race == "Elf" ~ 4,
                                                    Race == "Ent" ~ 5,
                                                    Race == "Hobbit" ~ 3,
@@ -791,7 +791,7 @@ naturally recovered nodes protect many more susceptible nodes.
 
 ### Free play: Grey's Anatomy
 
-Let's try this out on the `ison_greys` dataset,
+Let's try this out on the `fict_greys` dataset,
 a dataset of character 'hook-ups' in the Grey's Anatomy TV show.
 You can just concentrate on the giant component (which is plenty incestuous!).
 We could say that there's a new, highly infectious disease transmittable
@@ -802,7 +802,7 @@ through hooking up and, I have it on authority, it all starts with Mark Sloan.
 ```
 
 ```{r greys-hint}
-greys <- to_giant(ison_greys)
+greys <- to_giant(fict_greys)
 graphr(greys)
 graphs(play_diffusion(greys, seeds = "Mark Sloan", transmissibility = 0.25,
                       latency = 0.25, recovery = 0.2, waning = 0.2), 
