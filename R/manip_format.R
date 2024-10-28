@@ -29,10 +29,14 @@
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
-#'   ```{r, echo = FALSE, cache = TRUE} 
-#'   knitr::kable(available_methods(c("to_undirected", "to_unweighted", 
-#'   "to_unsigned", "to_unnamed", "to_simplex", "to_uniplex")))
-#'   ```
+#'   |              | data.frame| igraph| matrix| network| tbl_graph|
+#'   |:-------------|----------:|------:|------:|-------:|---------:|
+#'   |to_simplex    |          1|      1|      1|       1|         1|
+#'   |to_undirected |          1|      1|      1|       1|         1|
+#'   |to_uniplex    |          1|      1|      1|       1|         1|
+#'   |to_unnamed    |          1|      1|      1|       1|         1|
+#'   |to_unsigned   |          1|      1|      1|       1|         1|
+#'   |to_unweighted |          1|      1|      1|       1|         1|
 #' @inheritParams mark_is
 #' @param threshold For a matrix, the threshold to binarise/dichotomise at.
 #' @returns
@@ -96,12 +100,12 @@ to_undirected <- function(.data) UseMethod("to_undirected")
 #' @importFrom igraph as.undirected
 #' @export
 to_undirected.igraph <- function(.data) {
-  igraph::as.undirected(.data)
+  igraph::as_undirected(.data)
 }
 
 #' @export
 to_undirected.tbl_graph <- function(.data) {
-  as_tidygraph(igraph::as.undirected(.data))
+  as_tidygraph(igraph::as_undirected(.data))
 }
 
 #' @export
@@ -249,6 +253,17 @@ to_simplex.matrix <- function(.data) {
   out
 }
 
+#' @export
+to_simplex.data.frame <- function(.data) {
+  out <- .data[.data$from != .data$to,]
+  out
+}
+
+#' @export
+to_simplex.network <- function(.data) {
+  as_network(to_simplex(as_igraph(.data)))
+}
+
 #' @rdname manip_deformat
 #' @param tie Character string naming a tie attribute to retain from a graph.
 #' @importFrom igraph delete_edges edge_attr_names delete_edge_attr
@@ -311,9 +326,12 @@ to_uniplex.matrix <- function(.data, tie){
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
-#'   ```{r, echo = FALSE, cache = TRUE} 
-#'   knitr::kable(available_methods(c("to_acyclic", "to_anti", "to_redirected", "to_reciprocated")))
-#'   ```
+#'   |                | data.frame| igraph| matrix| network| tbl_graph|
+#'   |:---------------|----------:|------:|------:|-------:|---------:|
+#'   |to_acyclic      |          1|      1|      1|       1|         1|
+#'   |to_anti         |          1|      1|      1|       1|         1|
+#'   |to_reciprocated |          1|      1|      1|       1|         1|
+#'   |to_redirected   |          1|      1|      1|       1|         1|
 #' @name manip_reformat
 #' @family modifications
 #' @inheritParams mark_is
@@ -325,7 +343,7 @@ to_uniplex.matrix <- function(.data, tie){
 NULL
 
 #' @rdname manip_reformat
-#' @importFrom igraph as.directed feedback_arc_set
+#' @importFrom igraph as_directed feedback_arc_set
 #' @export
 to_acyclic <- function(.data) UseMethod("to_acyclic")
 
@@ -333,7 +351,7 @@ to_acyclic <- function(.data) UseMethod("to_acyclic")
 to_acyclic.igraph <- function(.data) {
   if(is_directed(.data)){
     delete_ties(.data, igraph::feedback_arc_set(.data))
-  } else igraph::as.directed(.data, mode = "acyclic")
+  } else igraph::as_directed(.data, mode = "acyclic")
 }
 
 #' @export
@@ -436,13 +454,13 @@ to_redirected.network <- function(.data) {
 }
 
 #' @describeIn manip_reformat Returns an object where all ties are reciprocated.
-#' @importFrom igraph as.directed
+#' @importFrom igraph as_directed
 #' @export
 to_reciprocated <- function(.data) UseMethod("to_reciprocated")
 
 #' @export
 to_reciprocated.igraph <- function(.data) {
-  igraph::as.directed(.data, mode = "mutual")
+  igraph::as_directed(.data, mode = "mutual")
 }
 
 #' @export
@@ -493,10 +511,14 @@ to_reciprocated.data.frame <- function(.data) {
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
-#'   ```{r, echo = FALSE, cache = TRUE} 
-#'   knitr::kable(available_methods(c("to_directed", "to_redirected", 
-#'   "to_reciprocated", "to_acyclic", "to_named", "to_simplex")))
-#'   ```
+#'   |                | data.frame| igraph| matrix| network| tbl_graph|
+#'   |:---------------|----------:|------:|------:|-------:|---------:|
+#'   |to_acyclic      |          1|      1|      1|       1|         1|
+#'   |to_directed     |          1|      1|      1|       1|         1|
+#'   |to_named        |          1|      1|      1|       1|         1|
+#'   |to_reciprocated |          1|      1|      1|       1|         1|
+#'   |to_redirected   |          1|      1|      1|       1|         1|
+#'   |to_simplex      |          0|      1|      1|       0|         1|
 #' @name manip_preformat
 #' @family modifications
 #' @inheritParams mark_is
@@ -588,7 +610,7 @@ to_directed <- function(.data) UseMethod("to_directed")
 to_directed.igraph <- function(.data) {
   if(!is_directed.igraph(.data)){
     mnet_info("Directions are assigned to existing ties at random.")
-    igraph::as.directed(.data, mode = "random")
+    igraph::as_directed(.data, mode = "random")
   } else .data
 }
 
@@ -710,9 +732,11 @@ to_weighted.network <- function(.data, measure = NULL){
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
-#'   ```{r, echo = FALSE, cache = TRUE} 
-#'   knitr::kable(available_methods(c("to_onemode", "to_twomode", "to_multilevel")))
-#'   ```
+#'   |              | igraph| matrix| network| tbl_graph|
+#'   |:-------------|------:|------:|-------:|---------:|
+#'   |to_multilevel |      1|      1|       0|         1|
+#'   |to_onemode    |      1|      1|       0|         1|
+#'   |to_twomode    |      1|      0|       1|         1|
 #' @name manip_levels
 #' @family modifications
 #' @inheritParams mark_is
