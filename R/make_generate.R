@@ -331,7 +331,8 @@ generate_fire <- function(n, contacts = 1, their_out = 0, their_in = 1, directed
 #' @examples
 #' generate_islands(10)
 #' @export
-generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1, directed = FALSE){
+generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1, 
+                             directed = FALSE){
   directed <- infer_directed(n, directed)
   if(is_manynet(n)){
     m <- net_nodes(n)

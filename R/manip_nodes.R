@@ -18,9 +18,10 @@
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
-#'   ```{r, echo = FALSE, cache = TRUE} 
-#'   knitr::kable(available_methods(c("add_nodes", "delete_nodes", "add_node_attribute")))
-#'   ```
+#'   |             | igraph| network| tbl_graph|
+#'   |:------------|------:|-------:|---------:|
+#'   |add_nodes    |      1|       1|         1|
+#'   |delete_nodes |      1|       1|         1|
 #' @family modifications
 #' @inheritParams mark_is
 #' @param attribute A named list to be added as tie or node attributes.
