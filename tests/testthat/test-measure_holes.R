@@ -32,7 +32,7 @@ test_that("constraint scores are reported correctly for two-mode notworks",{
   # expect_named(node_constraint(ison_southern_women)[1:3], c("Evelyn", "Laura", "Theresa"))
 })
 
-om <- igraph::graph(edges = c(1,2, 2,3), n = 4, directed = FALSE) 
+om <- igraph::make_graph(edges = c(1,2, 2,3), n = 4, directed = FALSE) 
 
 test_that("constraint scores are reported correctly for one-mode notworks",{
   expect_equal(round(unname(node_constraint(ison_adolescents)[1:3]),2), c(1, .43, .57))
