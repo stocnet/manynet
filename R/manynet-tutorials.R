@@ -19,8 +19,6 @@
 NULL
 
 #' @rdname tutorials 
-#' @examples
-#' #run_tute("tutorial2")
 #' @export
 run_tute <- function(tute) {
   thisRequires("learnr")
@@ -61,8 +59,6 @@ run_tute <- function(tute) {
 }
 
 #' @rdname tutorials 
-#' @examples
-#' #extract_tute("tutorial2")
 #' @export
 extract_tute <- function(tute) {
   if (missing(tute)) {
