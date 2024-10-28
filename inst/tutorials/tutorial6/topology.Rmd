@@ -16,6 +16,7 @@ library(learnr)
 library(manynet)
 library(patchwork)
 knitr::opts_chunk$set(echo = FALSE)
+clear_glossary()
 learnr::random_phrases_add(language = "fr",
                            praise = c("C'est génial!",
                                       "Beau travail",

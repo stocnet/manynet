@@ -16,6 +16,7 @@ library(learnr)
 library(manynet)
 library(patchwork)
 library(ggplot2)
+clear_glossary()
 knitr::opts_chunk$set(echo = FALSE)
 ```
 

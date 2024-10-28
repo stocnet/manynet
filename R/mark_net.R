@@ -551,34 +551,38 @@ is_acyclic <- function(.data){
 is_aperiodic <- function(.data, max_path_length = 4){
   # thisRequires("minMSE") # >80x faster than e.g. cheapr::gcd()
   g <- as_igraph(.data)
-  out <- NULL
-  cli::cli_alert_info("Obtaining paths no greater than {max_path_length}.")
-  cli::cli_progress_bar("Obtaining paths", total = net_nodes(.data))
-  for(v1 in igraph::V(g)) {
-    if(igraph::degree(g, v1, mode="in") == 0) {next}
-    goodNeighbors <- igraph::neighbors(g, v1, mode="out")
-    goodNeighbors <- goodNeighbors[goodNeighbors > v1]
-    out <- c(out, unlist(lapply(goodNeighbors, function(v2){
-      vapply(igraph::all_simple_paths(g, v2, v1, mode="out", 
-                                      cutoff = max_path_length), length, 
-             FUN.VALUE = numeric(1))
-    })))
-    cli::cli_progress_update()
-  }
-  cli::cli_progress_done()
+  mnet_info("Obtaining paths no greater than {max_path_length}.")
+  out <- suppressMessages(.quiet(unlist(lapply(1:net_nodes(g), function(v1){
+    if(igraph::degree(g, v1, mode="in") == 0) NULL else {
+      goodNeighbors <- igraph::neighbors(g, igraph::V(g)[v1], mode="out")
+      goodNeighbors <- goodNeighbors[goodNeighbors > igraph::V(g)[v1]]
+      unlist(lapply(goodNeighbors, function(v2){
+        vapply(igraph::all_simple_paths(g, v2, igraph::V(g)[v1], mode="out", 
+                                        cutoff = max_path_length), length, 
+               FUN.VALUE = numeric(1))
+      }))
+    }
+  }))))
+  mnet_info("Finding greatest common divisor of all paths.")
   out <- unique(sort(out))
   while(out[1]!=1 && length(out)>1){
     cd <- .gcd(out[1], out[2])
     if(length(out)==2) out <- cd else
       out <- c(cd, out[2:length(out)])
   }
-  out[1]==1
+  return(as.logical(out[1]==1))
+}
+
+.quiet <- function(x) { 
+  sink(tempfile()) 
+  on.exit(sink()) 
+  invisible(force(x)) 
 }
 
 .gcd <- function(x, y){
   ifelse(y, Recall(y, x %% y), x)
-} 
-  
+}
+
 # Helper functions
 infer_net_reciprocity <- function(.data, method = "default") {
   out <- igraph::reciprocity(as_igraph(.data), mode = method)
