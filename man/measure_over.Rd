@@ -2,10 +2,20 @@
 % Please edit documentation in R/measure_over.R
 \name{measure_over}
 \alias{measure_over}
+\alias{over_membership}
 \alias{over_waves}
 \alias{over_time}
 \title{Helper functions for measuring over splits of networks}
 \usage{
+over_membership(
+  .data,
+  FUN,
+  ...,
+  membership,
+  strategy = "sequential",
+  verbose = FALSE
+)
+
 over_waves(
   .data,
   FUN,
@@ -39,8 +49,6 @@ over_time(
 
 \item{...}{Further arguments to be passed on to FUN.}
 
-\item{attribute}{A string naming the attribute to be split upon.}
-
 \item{strategy}{If \code{{furrr}} is installed,
 then multiple cores can be used to accelerate the function.
 By default \code{"sequential"},
@@ -53,11 +61,15 @@ See \href{https://furrr.futureverse.org}{\code{{furrr}}} for more.}
 By default FALSE.
 See \href{https://progressr.futureverse.org}{\code{{progressr}}} for more.}
 
+\item{attribute}{A string naming the attribute to be split upon.}
+
 \item{slice}{Optionally, a vector of specific slices.
 Otherwise all observed slices will be returned.}
 }
 \description{
 \itemize{
+\item \code{over_membership()} runs a function, e.g. a measure,
+over different group memberships
 \item \code{over_waves()} runs a function, e.g. a measure,
 over waves of a panel network
 \item \code{over_time()} runs a function, e.g. a measure,
