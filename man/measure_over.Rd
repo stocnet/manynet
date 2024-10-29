@@ -49,6 +49,8 @@ over_time(
 
 \item{...}{Further arguments to be passed on to FUN.}
 
+\item{membership}{A categorical membership vector.}
+
 \item{strategy}{If \code{{furrr}} is installed,
 then multiple cores can be used to accelerate the function.
 By default \code{"sequential"},

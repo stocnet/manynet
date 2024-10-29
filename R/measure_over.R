@@ -28,6 +28,7 @@
 NULL
 
 #' @rdname measure_over
+#' @param membership A categorical membership vector.
 #' @export
 over_membership <- function(.data, FUN, ..., membership,
                             strategy = "sequential",
