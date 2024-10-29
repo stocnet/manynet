@@ -212,17 +212,22 @@ clear_glossary <- function(){
 
 glossies <- list(
   acyclic = "An acyclic network is a network without any cycles.",
+  aperiodic = "An aperiodic network is a network where the greatest common divisor of the lengths of its cycles is one.",
   adhesion = "The minimum number of ties to remove to increase the number of components.",
   blockmodel = "A blockmodel reduces a network to a smaller comprehensible structure of the roles positions take with respect to one another.",
   bridge = "A bridge is a tie whose deletion increases the number of components.",
   cohesion = "The minimum number of nodes to remove to increase the number of components.",
   component = "A component is a connected subgraph not part of a larger connected subgraph.",
+  connected = "A connected network is one with a single (strong) component.",
   cutpoint = "A cutpoint or articulation point is a node whose deletion increases the number of components.",
   degree = "A node's degree is the number of connections it has.",
   giant = "The giant component is the component that includes the most nodes in the network.",
   graphlet = "A graphlet is a small, connected, induced, non-isomorphic subgraphs.",
+  hit = "A herd immunity threshold is the proportion of the population that would need to be immune for a disease to cease being endemic.",
   induced = "An induced subgraph comprises all ties in a subset of the nodes in a network.",
+  intervention = "A network intervention is a process to accelerate behavioural change or improve performance in a network.",
   lattice = "A network that can be drawn as a regular tiling.",
+  LTM = "A linear threshold model is a diffusion model where nodes are resistant to activation up to some threshold.",
   motif = "A subgraph that is exceptional or significant compared to a null model.",
   neighborhood = "A node's neighborhood is the set of other nodes to which that node is connected.",
   network = "A network comprises a set of nodes/vertices and a set of ties/edges among them.",
@@ -231,6 +236,7 @@ glossies <- list(
   reduced = "A reduced graph is a representation of the ties within and between blocks in the network.",
   subgraph = "A subgraph comprises a subset of the nodes and ties in a network.",
   transitivity = "Triadic closure is where if the connections A-B and A-C exist among three nodes, there is a tendency for B-C also to be formed.",
+  threshold = "A threshold is a limit over which behaviour is expected to vary.",
   undirected = "An undirected network is one in which tie direction is undefined."
 )
 
