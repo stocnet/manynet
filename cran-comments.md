@@ -11,3 +11,4 @@
 
 * Attempted to fix non ASCII strings warning
 * Changes to avoid reverse dependency issues for igraph
+* Changes to avoid long runtimes for one example on some systems

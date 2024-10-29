@@ -1,3 +1,27 @@
+# manynet 1.3.1
+
+## Package
+
+- Fixed miscellaneous documentation issues, re roxygen
+- Separated out the data sections in pkgdown
+
+## Modifying
+
+- Added `to_simplex.data.frame()` and `to_simplex.network()`
+
+## Marking
+
+- Fixed bug in `is_aperiodic()` where it would not work in tutorial chunks
+
+## Measuring
+
+- Added `over_membership()` for obtaining summary statistics by a membership vector
+
+## Practicing
+
+- Fixed data pointers in several tutorials
+- Added glossary items to diffusion tutorial
+
 # manynet 1.3.0
 
 ## Package
