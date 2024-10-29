@@ -16,6 +16,7 @@ library(learnr)
 library(manynet)
 library(patchwork)
 knitr::opts_chunk$set(echo = FALSE)
+clear_glossary()
 learnr::random_phrases_add(language = "fr",
                            praise = c("C'est génial!",
                                       "Beau travail",
@@ -398,7 +399,7 @@ lawfirm <- ison_lawfirm |> to_uniplex("friends") |> to_undirected()
 ```
 
 ```{r gnet-solution}
-lawfirm <- to_undirected(ison_lawfirm) |> to_uniplex("friends")
+lawfirm <- ison_lawfirm |> to_uniplex("friends") |> to_undirected()
 graphr(lawfirm, node_color = "school", edge_color = "darkgray")
 graphr(lawfirm, node_color = "gender", edge_color = "darkgray")
 graphr(lawfirm, node_color = "office", edge_color = "darkgray")

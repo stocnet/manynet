@@ -1,6 +1,8 @@
 #' Helper functions for measuring over splits of networks  
 #' 
 #' @description
+#'   - `over_membership()` runs a function, e.g. a measure,
+#'   over different group memberships
 #'   - `over_waves()` runs a function, e.g. a measure,
 #'   over waves of a panel network
 #'   - `over_time()` runs a function, e.g. a measure,
@@ -24,6 +26,21 @@
 #'   Otherwise all observed slices will be returned.
 #' @name measure_over
 NULL
+
+#' @rdname measure_over
+#' @param membership A categorical membership vector.
+#' @export
+over_membership <- function(.data, FUN, ..., membership,
+                            strategy = "sequential",
+                            verbose = FALSE){
+  thisRequires("future")
+  thisRequires("furrr")
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  oplan <- future::plan(strategy)
+  on.exit(future::plan(oplan), add = TRUE)
+  furrr::future_map_dbl(unique(membership), function(j) FUN(to_subgraph(.data, membership==j), ...), 
+                        .progress = verbose, .options = furrr::furrr_options(seed = T))
+}
 
 #' @rdname measure_over
 #' @export

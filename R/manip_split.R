@@ -7,9 +7,13 @@
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
-#'    ```{r, echo = FALSE, cache = TRUE} 
-#'    knitr::kable(available_methods(c("to_egos", "to_subgraphs", "to_components", "to_waves", "to_slices")))
-#'    ```
+#'   |              | data.frame| diff_model| igraph| matrix| network| tbl_graph|
+#'   |:-------------|----------:|----------:|------:|------:|-------:|---------:|
+#'   |to_components |          1|          0|      1|      1|       1|         1|
+#'   |to_egos       |          1|          0|      1|      1|       1|         1|
+#'   |to_slices     |          0|          0|      1|      0|       0|         1|
+#'   |to_subgraphs  |          0|          0|      1|      0|       1|         1|
+#'   |to_waves      |          1|          1|      1|      0|       0|         1|
 #' @name manip_split
 #' @family modifications
 #' @inheritParams manip_scope
@@ -21,7 +25,7 @@ NULL
 #' @importFrom igraph make_ego_graph
 #' @examples
 #'   to_egos(ison_adolescents)
-#'   #autographs(to_egos(ison_adolescents,2))
+#'   # graphs(to_egos(ison_adolescents,2))
 #' @export
 to_egos <- function(.data, 
                     max_dist = 1, 
@@ -265,7 +269,7 @@ cumulative_ties <- function(x, attribute) {
       }
     }
   } else {
-    message("Cummulative ties were added based on order of appearance for attribute.")
+    mnet_info("Cummulative ties were added based on order of appearance for attribute.")
     a <- list()
     for (k in unique(ties$order)) {
       if (k != 1) {

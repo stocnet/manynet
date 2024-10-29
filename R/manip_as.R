@@ -55,10 +55,17 @@
 #' @return
 #' The currently implemented coercions or translations are:
 #'
-#' ```{r, echo = FALSE, cache = TRUE} 
-#'  knitr::kable(available_methods(c("as_edgelist","as_matrix", "as_igraph", "as_tidygraph", 
-#'  "as_network", "as_siena", "as_graphAM", "as_diffusion", "as_diffnet")))
-#'  ```
+#' |             | data.frame| diff_model| diffnet| igraph| list| matrix| network| network.goldfish| siena| tbl_graph|
+#' |:------------|----------:|----------:|-------:|------:|----:|------:|-------:|----------------:|-----:|---------:|
+#' |as_diffnet   |          0|          1|       0|      0|    0|      0|       0|                0|     0|         0|
+#' |as_diffusion |          0|          1|       1|      1|    0|      0|       0|                0|     0|         0|
+#' |as_edgelist  |          1|          0|       0|      1|    0|      1|       1|                1|     1|         1|
+#' |as_graphAM   |          1|          0|       0|      1|    0|      1|       1|                1|     1|         1|
+#' |as_igraph    |          1|          1|       1|      1|    0|      1|       1|                1|     1|         1|
+#' |as_matrix    |          1|          1|       0|      1|    0|      1|       1|                1|     1|         1|
+#' |as_network   |          1|          0|       1|      1|    0|      1|       1|                1|     1|         1|
+#' |as_siena     |          0|          0|       0|      1|    0|      0|       0|                0|     0|         1|
+#' |as_tidygraph |          1|          1|       1|      1|    1|      1|       1|                1|     1|         1|
 NULL
 
 # Nodelists ####

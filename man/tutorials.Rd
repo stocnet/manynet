@@ -25,7 +25,3 @@ from a \code{{manynet}} or \code{{migraph}} tutorial,
 saving the .R script to the current working directory.
 }
 }
-\examples{
-#run_tute("tutorial2")
-#extract_tute("tutorial2")
-}

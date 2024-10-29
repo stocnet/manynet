@@ -16,6 +16,7 @@ library(learnr)
 library(manynet)
 library(patchwork)
 library(ggplot2)
+clear_glossary()
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
@@ -199,7 +200,7 @@ question("Does the structure of the network matter for whether and when a diffus
 
 ### Free play: US States
 
-Run an influence cascade on US states' geographic contiguity in `ison_usstates`.
+Run an influence cascade on US states' geographic contiguity in `irps_usgeo`.
 You can start the infection in California by specifying `seeds = 5`.
 
 ```{r usstates, exercise = TRUE, purl = FALSE, fig.width=9}
@@ -207,7 +208,7 @@ You can start the infection in California by specifying `seeds = 5`.
 ```
 
 ```{r usstates-hint}
-us_diff <- play_diffusion(ison_usstates, seeds = 5)
+us_diff <- play_diffusion(irps_usgeo, seeds = 5)
 plot(us_diff)
 graphr(us_diff)
 grapht(us_diff)
@@ -220,8 +221,9 @@ What's happening here? Can you interpret this?
 
 So far, we've been using a simple cascading diffusion model where each node
 needs only to be in contact with one infectious individual to be infected.
-But what if nodes have higher _thresholds_, or only some nodes have higher thresholds?
-This is known as a _linear threshold_ model,
+But what if nodes have higher `r gloss("thresholds", "threshold")`, 
+or only some nodes have higher thresholds?
+This is known as a `r gloss("linear threshold", "LTM")` model,
 where if infection/influence on a node through some (potentially weighted) network
 exceeds some threshold, then they will adopt/become infected.
 
@@ -325,10 +327,10 @@ are obstructing the diffusion process because it is unlikely that many of their 
 ### Varying thresholds
 
 Lastly, note that it may be that thresholds vary across the network.
-Let's use an example network to explore this: `ison_lotr`.
+Let's use an example network to explore this: `fict_lotr`.
 
 ```{r lotr, exercise = TRUE, fig.width=9}
-graphr(ison_lotr, node_color = "Race")
+graphr(fict_lotr, node_color = "Race")
 ```
 
 Something is going around Middle-Earth, 
@@ -336,7 +338,7 @@ but different races have different resistances (i.e. thresholds).
 Let us say that there is a clear ordering to this.
 
 ```{r lotr-resist, exercise=TRUE}
-lotr_resist <- ison_lotr %>% mutate(resistance = dplyr::case_when(Race == "Dwarf" ~ 2,
+lotr_resist <- fict_lotr %>% mutate(resistance = dplyr::case_when(Race == "Dwarf" ~ 2,
                                                    Race == "Elf" ~ 4,
                                                    Race == "Ent" ~ 5,
                                                    Race == "Hobbit" ~ 3,
@@ -364,7 +366,7 @@ Can you rewrite the code above so that fractional thresholds are used?
 
 Let's say that you have developed an exciting new policy and
 you are keen to maximise how quickly and thoroughly it is adopted.
-We are interested here in _network intervention_.
+We are interested here in `r gloss("network intervention", "intervention")`.
 
 ### Choosing where to seed
 
@@ -760,7 +762,7 @@ But then...
 ### How many people do we need to vaccinate?
 
 We can identify how many people need to be vaccinated through 
-the Herd Immunity Threshold or HIT.
+the `gloss("Herd Immunity Threshold", "hit")` or HIT.
 HIT indicates the threshold at which the reduction of susceptible members 
 of the network means that infections will no longer keep increasing, 
 allowing herd immunity to be achieved.
@@ -791,7 +793,7 @@ naturally recovered nodes protect many more susceptible nodes.
 
 ### Free play: Grey's Anatomy
 
-Let's try this out on the `ison_greys` dataset,
+Let's try this out on the `fict_greys` dataset,
 a dataset of character 'hook-ups' in the Grey's Anatomy TV show.
 You can just concentrate on the giant component (which is plenty incestuous!).
 We could say that there's a new, highly infectious disease transmittable
@@ -802,7 +804,7 @@ through hooking up and, I have it on authority, it all starts with Mark Sloan.
 ```
 
 ```{r greys-hint}
-greys <- to_giant(ison_greys)
+greys <- to_giant(fict_greys)
 graphr(greys)
 graphs(play_diffusion(greys, seeds = "Mark Sloan", transmissibility = 0.25,
                       latency = 0.25, recovery = 0.2, waning = 0.2), 
@@ -862,9 +864,9 @@ among network academics.
 Perhaps we wish to get them to change their local networks/behavior,
 but they have different beliefs about whether this will make a difference.
 To see whether this network will converge to consensus, 
-check whether the network is _connected_ and _aperiodic_:
+check whether the network is `r gloss("connected")` and `r gloss("aperiodic")`:
 
-+ `is_connected()` marks whether network is weakly connected if the network is *undirected* or strongly connected if directed.
++ `is_connected()` marks whether network is weakly connected if the network is `r gloss("undirected")` or strongly connected if directed.
 + `is_aperiodic()` marks whether network is aperiodic, meaning there is no integer k > 1 that divides the length of every cycle of the graph.
 
 ```{r aperiod, exercise = TRUE, purl = FALSE}
@@ -980,4 +982,8 @@ plot(netlearn2)
 ```
 
 
+## Glossary
 
+Here are some of the terms that we have covered in this module:
+
+`r print_glossary()`

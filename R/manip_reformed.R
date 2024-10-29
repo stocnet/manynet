@@ -15,9 +15,11 @@
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
-#'    ```{r, echo = FALSE, cache = TRUE} 
-#'  knitr::kable(available_methods(c("to_mode1", "to_mode2", "to_ties")))
-#'  ```
+#'  |         | data.frame| igraph| matrix| network| tbl_graph|
+#'  |:--------|----------:|------:|------:|-------:|---------:|
+#'  |to_mode1 |          1|      1|      1|       1|         1|
+#'  |to_mode2 |          1|      1|      1|       1|         1|
+#'  |to_ties  |          1|      1|      1|       1|         1|
 #' @name manip_project
 #' @family modifications
 #' @inheritParams manip_reformat
@@ -222,9 +224,13 @@ to_ties.matrix <- function(.data){
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
-#'    ```{r, echo = FALSE, cache = TRUE} 
-#'  knitr::kable(available_methods(c("to_ego", "to_giant", "to_no_isolates", "to_subgraph", "to_blocks")))
-#'  ```
+#'  |               | data.frame| igraph| list| matrix| network| tbl_graph|
+#'  |:--------------|----------:|------:|----:|------:|-------:|---------:|
+#'  |to_blocks      |          1|      1|    0|      1|       1|         1|
+#'  |to_ego         |          0|      1|    0|      0|       0|         1|
+#'  |to_giant       |          1|      1|    0|      1|       1|         1|
+#'  |to_no_isolates |          1|      1|    1|      1|       1|         1|
+#'  |to_subgraph    |          1|      1|    0|      1|       1|         1|
 #' @name manip_scope
 #' @family modifications
 #' @inheritParams manip_reformat
@@ -460,9 +466,11 @@ to_blocks.tbl_graph <- function(.data, membership, FUN = mean){
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
-#'   ```{r, echo = FALSE, cache = TRUE} 
-#'   knitr::kable(available_methods(c("to_matching", "to_mentoring", "to_eulerian", "to_tree")))
-#'   ```
+#'  |             | data.frame| igraph| matrix| network| tbl_graph|
+#'  |:------------|----------:|------:|------:|-------:|---------:|
+#'  |to_eulerian  |          0|      1|      0|       0|         1|
+#'  |to_matching  |          1|      1|      1|       1|         1|
+#'  |to_mentoring |          0|      1|      0|       0|         1|
 #' @name manip_paths
 #' @family modifications
 #' @inheritParams manip_scope

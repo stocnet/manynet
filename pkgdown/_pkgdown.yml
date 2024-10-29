@@ -230,21 +230,32 @@ reference:
     contents:
       - ends_with("_tute")
       - glossary
-  - subtitle: "Data"
+      
+  - title: "Data"
     desc: |
       The package contains a variety of networks useful for pedagogical purposes
       and used in the course 'Social Networks Theories and Methods' and other workshops.
-      There are three collections of data: `ison_` include classic datasets used
-      for introducing network analysis,
-      `fict_` include some popular fictional datasets,
-      and `irps_` include some network datasets that demonstrate the application
-      of social network analysis to International Relations or Political Science
-      topics.
       Each page documents the source of the data and its format.
       References are provided for further reading and citation.
     contents:
       - data_overview
+  - subtitle: "Classic data"
+    desc: |
+      `ison_` include classic datasets used for introducing and teaching 
+      network analysis, though are sometimes quite limited in terms of
+      the attributes of nodes and ties collected.
+    contents:
       - starts_with("ison_")
+  - subtitle: "Fictional data"
+    desc: |
+      `fict_` data are popular fictional datasets, treating recognisable themes,
+      and often have more attributes coded.
+    contents:
       - starts_with("fict_")
+  - subtitle: "Political data"
+    desc: |
+      `irps_` network data concern various international and domestic political
+      networks and problems.
+    contents:
       - starts_with("irps_")
   

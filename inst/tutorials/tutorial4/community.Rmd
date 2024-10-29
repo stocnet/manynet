@@ -583,8 +583,9 @@ In our experience, it can take a few seconds
 ```{r blogsize, exercise = TRUE}
 # This is a large network
 net_nodes(irps_blogs)
-# Let's concentrate on just a sample of 490
-blogs <- delete_nodes(irps_blogs, sample(1:1490, 1000))
+# Let's concentrate on just a sample of 240 
+# (by deleting a random sample of 1250)
+blogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))
 graphr(blogs)
 ```
 
