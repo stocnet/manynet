@@ -21,10 +21,10 @@ make_tie_measure <- function(out, .data) {
   out
 }
 
-make_network_measure <- function(out, .data) {
+make_network_measure <- function(out, .data, call) {
   class(out) <- c("network_measure", class(out))
   attr(out, "mode") <- net_dims(.data)
-  attr(out, "call") <- deparse(sys.calls())
+  attr(out, "call") <- call
   out
 }
 
@@ -107,13 +107,18 @@ summary.network_measure <- function(object, ...,
                                   null = c("random","configuration"), 
                                   times = 500) {
   null <- paste0("generate_", match.arg(null))
-  callItems <- trimws(strsplit(unlist(attr(object, "call")), 
+  callItems <- trimws(strsplit(attr(object, "call"), 
                                split = "\\(|\\)|,")[[1]])
   idFun <- which(grepl("^net_", callItems))[1]
   fun <- callItems[idFun]
   dat <- callItems[idFun+1]
+  if(length(callItems)>2) oth <- callItems[3:length(callItems)] else
+    oth <- NULL
   nulls <- vapply(mnet_progress_seq(times), function(r){
-    suppressMessages(get(fun)(get(null)(get(dat))))
+    if(is.null(oth))
+      suppressMessages(get(fun)(get(null)(get(dat)))) else
+        suppressMessages(get(fun)(get(null)(get(dat)), 
+                                  gsub("\"", "", oth)))
   }, FUN.VALUE = numeric(1))
   out <- (object - mean(nulls))/stats::sd(nulls)
   out[is.nan(out)] <- 0
