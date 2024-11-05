@@ -1,3 +1,10 @@
+# manynet 1.3.2
+
+## Measuring
+
+- Added `net_correlation()` for calculating the product-moment correlation between networks
+- Improved speed of make_network_measure by retrieving single call at parent level
+
 # manynet 1.3.1
 
 ## Package
