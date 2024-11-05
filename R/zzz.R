@@ -67,9 +67,10 @@ mnet_progress_seq <- function(..., .envir = parent.frame()){
 }
 
 mnet_progress_nodes <- function(..., .envir = parent.frame()){
-  if(getOption("manynet_verbosity", default = "quiet")!="quiet")
+  if(getOption("manynet_verbosity", default = "quiet")!="quiet" && interactive()){
     cli::cli_progress_along(seq.int(net_nodes(...)), .envir = .envir, 
                             total = ..., clear = TRUE)
+  } else seq.int(net_nodes(...))
 }
 
 mnet_info <- function(..., .envir = parent.frame()){
