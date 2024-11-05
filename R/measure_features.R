@@ -100,7 +100,7 @@ net_richclub <- function(.data){
   coefs[is.nan(coefs)] <- 1
   out <- coefs[elbow_finder(seq_along(coefs), coefs)]
     # max(coefs, na.rm = TRUE)
-  make_network_measure(out, .data)
+  make_network_measure(out, .data, call = deparse(sys.call()))
 }
 
 #' @rdname measure_features 
@@ -393,6 +393,7 @@ net_balance <- function(.data) {
 #'   
 #'   - `net_change()` measures the Hamming distance between two or more networks.
 #'   - `net_stability()` measures the Jaccard index of stability between two or more networks.
+#'   - `net_correlation()` measures the product-moment correlation between two networks.
 #' 
 #'   These `net_*()` functions return a numeric vector the length of the number
 #'   of networks minus one. E.g., the periods between waves.
@@ -437,4 +438,20 @@ net_stability <- function(.data, object2){
     n10 <- sum(net1 * net2==0)
     n11 / (n01 + n10 + n11)
   }, FUN.VALUE = numeric(1))
+}
+
+#' @rdname measure_periods 
+#' @export
+net_correlation <- function(.data, object2){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  comp1 <- as_matrix(.data)
+  comp2 <- as_matrix(object2)
+  if(!is_complex(.data)){
+    diag(comp1) <- NA
+  }
+  if(!is_directed(.data)){
+    comp1[upper.tri(comp1)] <- NA
+  }
+  out <- cor(c(comp1), c(comp2), use = "complete.obs")
+  make_network_measure(out, .data, call = deparse(sys.call()))
 }
