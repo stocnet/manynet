@@ -31,8 +31,9 @@ net_nodes <- function(.data){
   if(is_list(.data)){
     nodes <- vapply(.data, function(x) igraph::vcount(as_igraph(x)), 
            FUN.VALUE = numeric(1))
-    make_network_measure(max(nodes), .data[[1]])
-  } else make_network_measure(igraph::vcount(as_igraph(.data)), .data)
+    make_network_measure(max(nodes), .data[[1]], call = deparse(sys.call()))
+  } else make_network_measure(igraph::vcount(as_igraph(.data)), .data, 
+                              call = deparse(sys.call()))
 }
 
 #' @rdname measure_properties
@@ -40,7 +41,8 @@ net_nodes <- function(.data){
 #' net_ties(ison_southern_women)
 #' @export
 net_ties <- function(.data){
-  make_network_measure(igraph::ecount(as_igraph(.data)), .data)
+  make_network_measure(igraph::ecount(as_igraph(.data)), .data,
+                       call = deparse(sys.call()))
 }
 
 #' @rdname measure_properties

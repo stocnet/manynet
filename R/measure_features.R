@@ -49,7 +49,7 @@ net_core <- function(.data,
   if(is.null(mark)) mark <- node_is_core(.data)
   out <- stats::cor(c(as_matrix(.data)), 
                     c(as_matrix(create_core(.data, mark = mark))))
-  make_network_measure(out, .data)
+  make_network_measure(out, .data, call = deparse(sys.call()))
 }
 
 #' @rdname measure_features
@@ -118,7 +118,7 @@ net_factions <- function(.data,
   out <- stats::cor(c(manynet::as_matrix(.data)), 
                     c(manynet::as_matrix(manynet::create_components(.data,
                                                   membership = membership))))
-  make_network_measure(out, .data)
+  make_network_measure(out, .data, call = deparse(sys.call()))
 }
 
 #' @rdname measure_features
@@ -174,11 +174,12 @@ net_modularity <- function(.data,
   if(is_twomode(.data)){
     make_network_measure(igraph::modularity(to_multilevel(.data), 
                                           membership = membership,
-                                          resolution = resolution), .data)
+                                          resolution = resolution), 
+                         .data, call = deparse(sys.call()))
   } else make_network_measure(igraph::modularity(.data, 
                                                membership = membership,
                                                resolution = resolution),
-                              .data)
+                              .data, call = deparse(sys.call()))
 }
 
 #' @rdname measure_features 
@@ -264,7 +265,7 @@ net_smallworld <- function(.data,
                 "sigma" = (co/cr)/(lo/lr),
                 "SWI" = ((lo - ll)/(lr - ll))*((co - cr)/(cl - cr)))
   make_network_measure(out,
-                       .data)
+                       .data, call = deparse(sys.call()))
 }
 
 #' @rdname measure_features 

@@ -254,7 +254,7 @@ net_degree <- function(.data, normalized = TRUE,
     out <- igraph::centr_degree(graph = .data, mode = direction, 
                                 normalized = normalized)$centralization
   }
-  out <- make_network_measure(out, .data)
+  out <- make_network_measure(out, .data, call = deparse(sys.call()))
   out
 }
 
@@ -501,7 +501,7 @@ net_betweenness <- function(.data, normalized = TRUE,
   } else {
     out <- igraph::centr_betw(graph = graph)$centralization
   }
-  out <- make_network_measure(out, .data)
+  out <- make_network_measure(out, .data, call = deparse(sys.call()))
   out
 }
 
@@ -846,7 +846,7 @@ net_closeness <- function(.data, normalized = TRUE,
                              mode = direction,
                              normalized = normalized)$centralization
   }
-  out <- make_network_measure(out, .data)
+  out <- make_network_measure(out, .data, call = deparse(sys.call()))
   out
 }
 
@@ -1125,7 +1125,7 @@ net_eigenvector <- function(.data, normalized = TRUE){
     out <- igraph::centr_eigen(manynet::as_igraph(.data), 
                                normalized = normalized)$centralization
   }
-  out <- make_network_measure(out, .data)
+  out <- make_network_measure(out, .data, call = deparse(sys.call()))
   out
 }
 
