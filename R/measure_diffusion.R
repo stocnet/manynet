@@ -59,7 +59,8 @@ net_transmissibility <- function(diff_model){
   out <- out[!is.infinite(out)]
   out <- out[!is.nan(out)]
   make_network_measure(mean(out, na.rm = TRUE),
-                       attr(diff_model, "network"))
+                       attr(diff_model, "network"),
+                       call = deparse(sys.call()))
 }
 
 #' @rdname measure_diffusion_net 
@@ -84,7 +85,8 @@ net_recovery <- function(diff_model, censor = TRUE){
   if(censor && any(!is.infinite(recovs) & !is.na(recovs)))
     recovs[is.infinite(recovs)] <- nrow(diff_model)
   make_network_measure(mean(recovs, na.rm = TRUE),
-                       attr(diff_model, "network"))
+                       attr(diff_model, "network"),
+                       call = deparse(sys.call()))
 }
 
 #' @rdname measure_diffusion_net 
@@ -129,7 +131,8 @@ net_reproduction <- function(diff_model){
   out <- net_transmissibility(diff_model)/
     (1/net_recovery(diff_model))
   out <- min(out, mean(node_deg(net)))
-  make_network_measure(out, net)
+  make_network_measure(out, net,
+                       call = deparse(sys.call()))
 }
 
 #' @rdname measure_diffusion_net 
@@ -171,7 +174,8 @@ net_immunity <- function(diff_model, normalized = TRUE){
   net <- attr(diff_model, "network")
   out <- 1 - 1/net_reproduction(diff_model)
   if(!normalized) out <- ceiling(out * net_nodes(net))
-  make_network_measure(out, net)
+  make_network_measure(out, net,
+                       call = deparse(sys.call()))
 }
 
 #' @rdname measure_diffusion_net
@@ -233,7 +237,8 @@ net_hazard <- function(diff_model){
   diff_model <- as_diffusion(diff_model)
   out <- (diff_model$I - dplyr::lag(diff_model$I)) / 
     (diff_model$n - dplyr::lag(diff_model$I))
-  make_network_measure(out, attr(diff_model, "network"))
+  make_network_measure(out, attr(diff_model, "network"),
+                       call = deparse(sys.call()))
 }
 
 # net_infection ####
@@ -270,7 +275,8 @@ net_infection_complete <- function(diff_model){
   diff_model <- as_diffusion(diff_model)
   out <- which(diff_model$I == diff_model$n)[1]
   if(is.na(out)) out <- Inf
-  make_network_measure(out, attr(diff_model, "network"))
+  make_network_measure(out, attr(diff_model, "network"),
+                       call = deparse(sys.call()))
 }
 
 #' @rdname measure_diffusion_infection 
@@ -281,7 +287,8 @@ net_infection_total <- function(diff_model, normalized = TRUE){
   diff_model <- as_diffusion(diff_model)
   out <- sum(diff_model$I_new)
   if(normalized) out <- out / diff_model$n[length(diff_model$n)]
-  make_network_measure(out, attr(diff_model, "network"))
+  make_network_measure(out, attr(diff_model, "network"),
+                       call = deparse(sys.call()))
 }
 
 #' @rdname measure_diffusion_infection 
@@ -291,7 +298,8 @@ net_infection_total <- function(diff_model, normalized = TRUE){
 net_infection_peak <- function(diff_model){
   diff_model <- as_diffusion(diff_model)
   out <- which(diff_model$I_new == max(diff_model$I_new))[1]
-  make_network_measure(out, attr(diff_model, "network"))
+  make_network_measure(out, attr(diff_model, "network"),
+                       call = deparse(sys.call()))
 }
 
 # node_diffusion ####

@@ -36,7 +36,7 @@ net_density <- function(.data) {
   } else {
     out <- igraph::edge_density(manynet::as_igraph(.data))
   }
-  make_network_measure(out, .data)
+  make_network_measure(out, .data, call = deparse(sys.call()))
 }
 
 #' @rdname measure_cohesion
@@ -52,7 +52,7 @@ net_components <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   object <- manynet::as_igraph(.data)
   make_network_measure(igraph::components(object, mode = "strong")$no,
-                       object)
+                       object, call = deparse(sys.call()))
 }
 
 #' @rdname measure_cohesion 
@@ -69,7 +69,8 @@ net_components <- function(.data){
 #' @export
 net_cohesion <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  make_network_measure(igraph::cohesion(manynet::as_igraph(.data)), .data)
+  make_network_measure(igraph::cohesion(manynet::as_igraph(.data)), 
+                       .data, call = deparse(sys.call()))
 }
 
 #' @rdname measure_cohesion 
@@ -80,7 +81,8 @@ net_cohesion <- function(.data){
 #' @export
 net_adhesion <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  make_network_measure(igraph::adhesion(manynet::as_igraph(.data)), .data)
+  make_network_measure(igraph::adhesion(manynet::as_igraph(.data)), 
+                       .data, call = deparse(sys.call()))
 }
 
 #' @rdname measure_cohesion 
@@ -94,7 +96,7 @@ net_diameter <- function(.data){
   object <- manynet::as_igraph(.data)
   make_network_measure(igraph::diameter(object, 
                                         directed = manynet::is_directed(object)),
-                       object)
+                       object, call = deparse(sys.call()))
 }
 
 #' @rdname measure_cohesion 
@@ -108,7 +110,7 @@ net_length <- function(.data){
   object <- manynet::as_igraph(.data)
   make_network_measure(igraph::mean_distance(object,
                                              directed = manynet::is_directed(object)),
-                       object)
+                       object, call = deparse(sys.call()))
 }
 
 #' @rdname measure_cohesion 
@@ -123,5 +125,5 @@ net_independence <- function(.data){
   } else {
     out <- igraph::ivs_size(manynet::to_undirected(manynet::as_igraph(.data)))
   }
-  make_network_measure(out, .data)
+  make_network_measure(out, .data, call = deparse(sys.call()))
 }

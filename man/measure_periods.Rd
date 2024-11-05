@@ -4,11 +4,14 @@
 \alias{measure_periods}
 \alias{net_change}
 \alias{net_stability}
+\alias{net_correlation}
 \title{Measures of network change}
 \usage{
 net_change(.data, object2)
 
 net_stability(.data, object2)
+
+net_correlation(.data, object2)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -27,6 +30,7 @@ These functions measure certain topological features of networks:
 \itemize{
 \item \code{net_change()} measures the Hamming distance between two or more networks.
 \item \code{net_stability()} measures the Jaccard index of stability between two or more networks.
+\item \code{net_correlation()} measures the product-moment correlation between two networks.
 }
 
 These \verb{net_*()} functions return a numeric vector the length of the number

@@ -36,7 +36,7 @@ NULL
 net_richness <- function(.data, attribute){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   make_network_measure(length(unique(manynet::node_attribute(.data, attribute))),
-                       .data)
+                       .data, call = deparse(sys.call()))
 }
 
 #' @rdname measure_heterogeneity 
@@ -96,7 +96,7 @@ net_diversity <- function(.data, attribute, clusters = NULL){
     names(blauout) <- paste0("Cluster ", unique(clu))
     blauout <- blauout[order(names(blauout))]
   } else cli::cli_abort("`clusters` must be the name of a nodal variable in the object.")
-  make_network_measure(blauout, .data)
+  make_network_measure(blauout, .data, call = deparse(sys.call()))
 }
 
 #' @rdname measure_heterogeneity 
@@ -151,7 +151,7 @@ net_heterophily <- function(.data, attribute){
   nInternal <- sum(m * same, na.rm = TRUE)
   nExternal <- sum(m, na.rm = TRUE) - nInternal
   ei <- (nExternal - nInternal) / sum(m, na.rm = TRUE)
-  make_network_measure(ei, .data)
+  make_network_measure(ei, .data, call = deparse(sys.call()))
 }
 
 #' @rdname measure_heterogeneity 
@@ -195,7 +195,7 @@ net_assortativity <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   make_network_measure(igraph::assortativity_degree(manynet::as_igraph(.data), 
                                directed = manynet::is_directed(.data)),
-                     .data)
+                     .data, call = deparse(sys.call()))
 }
 
 #' @rdname measure_heterogeneity 
@@ -219,5 +219,6 @@ net_spatial <- function(.data, attribute){
   I <- (N/W) * 
     (sum(w * matrix(x - x_bar, N, N) * matrix(x - x_bar, N, N, byrow = TRUE)) / 
     sum((x - x_bar)^2))
-  make_network_measure(I, .data)
+  make_network_measure(I, .data, 
+                       call = deparse(sys.call()))
 }

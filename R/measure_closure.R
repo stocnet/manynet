@@ -38,7 +38,7 @@ NULL
 net_reciprocity <- function(.data, method = "default") {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   make_network_measure(igraph::reciprocity(manynet::as_igraph(.data), mode = method), 
-                       .data)
+                       .data, call = deparse(sys.call()))
 }
 
 #' @rdname measure_closure 
@@ -60,7 +60,7 @@ node_reciprocity <- function(.data) {
 net_transitivity <- function(.data) {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   make_network_measure(igraph::transitivity(manynet::as_igraph(.data)), 
-                       .data)
+                       .data, call = deparse(sys.call()))
 }
 
 #' @rdname measure_closure 
@@ -103,7 +103,7 @@ net_equivalency <- function(.data) {
     if (is.nan(out)) out <- 1
     if(manynet::is_weighted(.data)) out <- out / mean(mat[mat>0])
   } else {
-    out <- rowSums(vapply(cli::cli_progress_along(1:net_nodes(.data)), function(i){
+    out <- rowSums(vapply(mnet_progress_nodes(.data), function(i){
       threepaths <- igraph::all_simple_paths(.data, i, cutoff = 3,
                                              mode = "all")
       onepaths <- threepaths[vapply(threepaths, length,
@@ -115,7 +115,7 @@ net_equivalency <- function(.data) {
     }, FUN.VALUE = numeric(2)))
     out <- out[1]/out[2]
   }
-  make_network_measure(out, .data)
+  make_network_measure(out, .data, call = deparse(sys.call()))
 }
 
 #' @rdname measure_closure
@@ -171,5 +171,5 @@ net_congruency <- function(.data, object2){
        sum(twopaths *
              (matrix(degrees, connects, connects) - twopaths)))
   if (is.nan(output)) output <- 1
-  make_network_measure(output, .data)
+  make_network_measure(output, .data, call = deparse(sys.call()))
 }
