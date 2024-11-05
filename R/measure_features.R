@@ -305,7 +305,8 @@ net_scalefree <- function(.data){
                 "could have been drawn from a power-law", 
                 "distribution rejected.\n"))
   }
-  make_network_measure(out$alpha, .data)
+  make_network_measure(out$alpha, .data, 
+                       call = deparse(sys.call()))
 }
 
 #' @rdname measure_features 
@@ -381,7 +382,8 @@ net_balance <- function(.data) {
   }
   tria_count <- count_signed_triangles(g)
   make_network_measure(unname((tria_count["+++"] + tria_count["+--"])/sum(tria_count)),
-                       .data)
+                       .data, 
+                       call = deparse(sys.call()))
 }
 
 

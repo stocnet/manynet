@@ -219,5 +219,6 @@ net_spatial <- function(.data, attribute){
   I <- (N/W) * 
     (sum(w * matrix(x - x_bar, N, N) * matrix(x - x_bar, N, N, byrow = TRUE)) / 
     sum((x - x_bar)^2))
-  make_network_measure(I, .data)
+  make_network_measure(I, .data, 
+                       call = deparse(sys.call()))
 }
