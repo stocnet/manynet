@@ -130,7 +130,7 @@ manynet_console_theme <- function(){
 }
 
 simple_theme_code <- function(){
-  # if (dark) {
+  # if (dark) { # Can't detect dark themes without rstudioapi dependency...
   #   list(`background-color` = "#232323", color = "#f0f0f0")
   # }
   # else {

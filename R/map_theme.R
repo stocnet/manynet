@@ -67,6 +67,23 @@ set_categorical_theme <- function(theme){
     options(mnet_cat = c("#006564","#0094D8","#622550",
                          "#268D2B","#3E2682","#820C2B",
                          "#008F92","#006EAA","#A8086E"))
+    } else if(theme == "ethz"){
+      options(mnet_cat = c("#215CAF","#007894","#627313",
+                           "#8E6713","#B7352D","#A7117A","#6F6F6F"))
+    } else if(theme == "uzh"){
+      options(mnet_cat = c("#0028A5","#4AC9E3","#A4D233",
+                           "#FFC845","#FC4C02","#BF0D3E",
+                           "#BDC9E8","#DBF4F9","#ECF6D6",
+                           "#FFF4DA","#FFDBCC","#FBC6D4",
+                           "#7596FF","#B7E9F4","#DBEDAD",
+                           "#FFE9B5","#FEB799","#F78CAA",
+                           "#3062FF","#92DFEE","#C8E485",
+                           "#FFDE8F","#FE9367","#F3537F",
+                           "#001E7C","#1EA7C4","#7CA023",
+                           "#F3AB00","#BD3902","#8F0A2E",
+                           "#001452","#147082","#536B18",
+                           "#A27200","#7E2601","#60061F"))
+      
     } else if(theme == "rainbow"){
       options(mnet_cat = c('#E8ECFB', '#D9CCE3', '#D1BBD7', 
                            '#CAACCB', '#BA8DB4', '#AE76A3', 

@@ -248,7 +248,7 @@ graphr <- function(.data, layout, labels = TRUE,
         p <- p + ggplot2::scale_colour_manual(values = getOption("mnet_highlight", default = c("grey","black")),
                                               guide = ggplot2::guide_legend("Node Color"))
       } else {
-        p <- p + ggplot2::scale_colour_manual(values = colorsafe_palette,
+        p <- p + ggplot2::scale_colour_manual(values = getOption("mnet_cat", default = colorsafe_palette),
                                               guide = ggplot2::guide_legend("Node Color"))
       }
     }
