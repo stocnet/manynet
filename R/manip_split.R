@@ -196,7 +196,7 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
   if (isTRUE(cumulative)) {
     out <- cumulative_ties(out, attribute)
   }
-  out
+  out[order(names(out))]
 }
 
 #' @export
