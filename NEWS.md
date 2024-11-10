@@ -1,3 +1,13 @@
+# manynet 1.3.3
+
+## Modifying
+
+- Fixed bug in `to_waves()` where result was unordered
+
+## Mapping
+
+- `graphr()` now uses categorical palettes (effectively closing #60)
+
 # manynet 1.3.2
 
 ## Measuring
