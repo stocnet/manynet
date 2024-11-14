@@ -366,7 +366,8 @@ reduce_categories <- function(g, node_group) {
       out <- edge_color
     }
   } else if (is.null(edge_color) & is_signed(g)) {
-    out <- as.factor(ifelse(igraph::E(g)$sign >= 0, "Positive", "Negative"))
+    out <- factor(ifelse(igraph::E(g)$sign >= 0, "Positive", "Negative"),
+                  levels = c("Positive", "Negative"))
     if (length(unique(out)) == 1) {
       out <- "black"
     }
