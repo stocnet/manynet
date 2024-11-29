@@ -9,6 +9,8 @@
 \alias{net_diameter}
 \alias{net_length}
 \alias{net_independence}
+\alias{net_strength}
+\alias{net_toughness}
 \title{Measures of network cohesion or connectedness}
 \usage{
 net_density(.data)
@@ -24,6 +26,10 @@ net_diameter(.data)
 net_length(.data)
 
 net_independence(.data)
+
+net_strength(.data)
+
+net_toughness(.data)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -73,6 +79,8 @@ net_diameter(to_giant(ison_marvel_relationships))
 net_length(ison_marvel_relationships)
 net_length(to_giant(ison_marvel_relationships))
 net_independence(ison_adolescents)
+net_strength(ison_adolescents)
+net_toughness(ison_adolescents)
 }
 \references{
 \subsection{On cohesion}{
