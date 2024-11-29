@@ -34,19 +34,20 @@ NULL
 #' @rdname manip_project
 #' @param similarity Method for establishing ties,
 #'   currently "count" (default), "jaccard", or "rand".
-#'   "count" calculates the number of coinciding ties,
+#'   
+#'   - "count" calculates the number of coinciding ties,
 #'   and can be interpreted as indicating the degree of opportunities
 #'   between nodes.
-#'   "jaccard" uses this count as the numerator in a proportion,
+#'   - "jaccard" uses this count as the numerator in a proportion,
 #'   where the denominator consists of any cell where either node has a tie.
 #'   It can be interpreted as opportunity weighted by participation.
-#'   "rand", or the Simple Matching Coefficient,
+#'   - "rand", or the Simple Matching Coefficient,
 #'   is a proportion where the numerator consists of the count of cells where
 #'   both nodes are present or both are absent,
 #'   over all possible cells.
 #'   It can be interpreted as the (weighted) degree of behavioral mirroring
 #'   between two nodes.
-#'   "pearson" (Pearson's coefficient) and "yule" (Yule's Q)
+#'   - "pearson" (Pearson's coefficient) and "yule" (Yule's Q)
 #'   produce correlations for valued and binary data, respectively.
 #'   Note that Yule's Q has a straightforward interpretation related to the odds ratio.
 #' @importFrom igraph bipartite_projection
