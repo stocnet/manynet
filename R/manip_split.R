@@ -269,7 +269,7 @@ cumulative_ties <- function(x, attribute) {
       }
     }
   } else {
-    mnet_info("Cummulative ties were added based on order of appearance for attribute.")
+    mnet_info("Cumulative ties were added based on order of appearance for attribute.")
     a <- list()
     for (k in unique(ties$order)) {
       if (k != 1) {

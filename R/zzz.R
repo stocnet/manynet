@@ -26,6 +26,7 @@
       "i" = "To eliminate package startup messages, use: `suppressPackageStartupMessages(library({.pkg manynet}))`.",
       # "i" = "Changing the theme of all your graphs is straightforward with `set_manynet_theme()`",
       "i" = "If there are too many messages in the console, run `options(manynet_verbosity = 'quiet')`",
+      "i" = "Explore the changes since the last version with {.code news(package = 'manynet')}.",
       "i" = "Visit the website to learn more: {.url https://stocnet.github.io/manynet/}.",
       "i" = "We recommend the 'Function Overview' page online to discover new analytic opportunities: {.url https://stocnet.github.io/manynet/reference/index.html}.",
       "i" = "Discover all the {.emph stocnet} R packages at {.url https://github.com/stocnet/}.",

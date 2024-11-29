@@ -119,11 +119,25 @@ first transform the salient properties using e.g. \code{\link[=to_undirected]{to
 All centrality and centralization measures return normalized measures by default,
 including for two-mode networks.
 }
+\section{Degree centrality}{
+
+A node's degree is the number of connections it has.
+It is also sometimes called the valency of a node, \eqn{d(v)}.
+The maximum degree in a network is often denoted \eqn{\Delta (G)} and
+the minimum degree in a network \eqn{\delta (G)}.
+The total degree of a network is the sum of all degrees, \eqn{\sum_v d(v)}.
+The degree sequence is the set of all nodes' degrees,
+ordered from largest to smallest.
+Directed networks discriminate between
+outdegree (degree of outgoing ties) and
+indegree (degree of incoming ties).
+}
+
 \section{Leverage centrality}{
 
 Leverage centrality concerns the degree of a node compared with that of its
 neighbours, \eqn{J}:
-\deqn{C_L(i) = \frac{1}{deg(i)} \sum_{j \in J(i)} \frac{deg(i) - deg(j)}{deg(i) + deg(j)}}
+\deqn{C_L(i) = \frac{1}{d(i)} \sum_{j \in J(i)} \frac{d(i) - d(j)}{d(i) + d(j)}}
 }
 
 \examples{

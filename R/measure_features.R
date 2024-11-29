@@ -167,8 +167,11 @@ net_modularity <- function(.data,
                              membership = NULL, 
                              resolution = 1){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  if(is.null(membership))
+  if(is.null(membership)){
+    mnet_info("Since no membership argument has been provided,",
+              "a partition of the network into two will be calculated and used.")
     membership <- node_in_partition(.data)
+  }
   if(!is.numeric(membership)) membership <- as.numeric(as.factor(membership))
   if(!is_graph(.data)) .data <- as_igraph(.data)
   if(is_twomode(.data)){
