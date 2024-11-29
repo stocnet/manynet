@@ -388,9 +388,9 @@ graphr(event_graph)
 ```
 
 `{manynet}` also includes several other options for how to construct the projection.
-The default ("count") might be interpreted as indicating the degree of
-opportunity between nodes that comes from sharing ties to the other mode.
-"jaccard" divides this count by the number of nodes in the other mode that 
+The default ("count") might be interpreted as indicating the degree or amount of
+shared ties to the other mode.
+"jaccard" divides this count by the number of nodes in the other mode 
 to which either of the nodes are tied.
 It can thus be interpreted as opportunity weighted by participation.
 "rand" instead counts both shared ties and shared absences,
@@ -938,6 +938,43 @@ question("What is the difference between communities and components?",
          answer("Communities and components are just different terms for the same thing"),
          answer("Communities are a stricter form of component"),
          answer("Components are about paths whereas communities are about the relationship between within-group and between-group ties",
+                correct = TRUE),
+  random_answer_order = TRUE,
+         allow_retry = TRUE)
+```
+
+### Communities
+
+Lastly, `{manynet}` includes a function to run through and find the membership
+assignment that maximises modularity across any of the applicable community
+detection procedures.
+This is helpfully called `node_in_community()`.
+This function pays attention to the size and other salient network properties,
+such as whether it is directed, weighted, or connected.
+It either uses the algorithm that maximises modularity by default 
+(`node_in_optimal()`) for smaller networks, or surveys the approximations 
+provided by other algorithms for the result that maximises the modularity.
+
+```{r incomm, exercise = TRUE, exercise.setup = "separatingnets"}
+node_in_community(friends)
+```
+
+It is important to name _which_ algorithm produced the membership assignment
+that is then subsequently analysed though.
+
+```{r comm-comp, echo=FALSE, purl = FALSE}
+question("Which algorithm provides the 'best' membership assignment here?",
+         answer("Walktrap"),
+         answer("Edge betweenness"),
+         answer("Leiden"),
+         answer("Louvain"),
+         answer("Infomap"),
+         answer("Fluid"),
+         answer("Fast Greedy"),
+         answer("Eigenvector"),
+         answer("Spinglass"),
+         answer("Partition"),
+         answer("Optimal",
                 correct = TRUE),
   random_answer_order = TRUE,
          allow_retry = TRUE)
