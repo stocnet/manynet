@@ -95,8 +95,8 @@ mnet_unavailable <- function(..., .envir = parent.frame()){
 
 manynet_console_theme <- function(){
   # dark <- detect_dark_theme(dark)
-  list(h1 = list(`margin-top` = 1, `margin-bottom` = 0, color = "#199D77", 
-                 fmt = function(x) cli::rule(x, line_col = "#199D77")), 
+  list(h1 = list(`margin-top` = 1, `margin-bottom` = 0, color = "#D83127", 
+                 fmt = function(x) cli::rule(x, line_col = "#D83127")), 
        h2 = list(`margin-top` = 1, `margin-bottom` = 0, color = "#199D77", 
                  fmt = function(x) paste0(cli::symbol$line, " ", x, " ", cli::symbol$line, cli::symbol$line)), 
        h3 = list(`margin-top` = 1, `margin-bottom` = 0, color = "#199D77"), 
