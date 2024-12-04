@@ -5,8 +5,11 @@
 \alias{ison_adolescents}
 \title{One-mode subset of the adolescent society network (Coleman 1961)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # The Adolescent Society
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> 
+#> -- # The Adolescent Society ----------------------------------------------------
 #> # A labelled, undirected network of 8 adolescents and 10 friendships ties
+#> 
+#> -- Nodes
 #> # A tibble: 8 x 1
 #>   name 
 #>   <chr>
@@ -17,6 +20,8 @@
 #> 5 Dale 
 #> 6 Pam  
 #> # i 2 more rows
+#> 
+#> -- Ties
 #> # A tibble: 10 x 2
 #>    from    to
 #>   <int> <int>
@@ -27,6 +32,7 @@
 #> 5     3     5
 #> 6     4     5
 #> # i 4 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \usage{

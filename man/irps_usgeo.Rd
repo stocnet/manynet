@@ -5,8 +5,10 @@
 \alias{irps_usgeo}
 \title{One-mode undirected network of US state contiguity (Meghanathan 2017)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # US State Contiguity
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # US State Contiguity -------------------------------------------------------
 #> # A labelled, undirected network of 50 states and 107 contiguity ties
+#> 
+#> -- Nodes
 #> # A tibble: 50 x 3
 #>   name  capitol     population
 #>   <chr> <chr>            <int>
@@ -17,6 +19,8 @@
 #> 5 CA    Sacramento    37252895
 #> 6 CO    Denver         5029324
 #> # i 44 more rows
+#> 
+#> -- Ties
 #> # A tibble: 107 x 2
 #>    from    to
 #>   <int> <int>
@@ -27,6 +31,7 @@
 #> 5     3    18
 #> 6     3    24
 #> # i 101 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \usage{

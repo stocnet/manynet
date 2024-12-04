@@ -5,8 +5,10 @@
 \alias{fict_greys}
 \title{One-mode undirected network of characters hook-ups on Grey's Anatomy TV show}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # Grey's Anatomy
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Grey's Anatomy ------------------------------------------------------------
 #> # A labelled, undirected network of 53 characters and 56 hook-up ties
+#> 
+#> -- Nodes
 #> # A tibble: 53 x 7
 #>   name               sex   race  birthyear position  season sign  
 #>   <chr>              <chr> <chr>     <dbl> <chr>      <dbl> <chr> 
@@ -17,6 +19,8 @@
 #> 5 Arizona Robbins    F     White      1976 Attending      5 Leo   
 #> 6 Rebecca Pope       F     White      1975 Non-Staff      3 Gemini
 #> # i 47 more rows
+#> 
+#> -- Ties
 #> # A tibble: 56 x 2
 #>    from    to
 #>   <int> <int>
@@ -27,6 +31,7 @@
 #> 5    18    41
 #> 6    21    41
 #> # i 50 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \usage{

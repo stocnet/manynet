@@ -5,9 +5,11 @@
 \alias{fict_thrones}
 \title{One-mode Game of Thrones kinship (Glander 2017)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # Game of Thrones Kinship
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Game of Thrones Kinship ---------------------------------------------------
 #> # A labelled, multiplex, directed network of 208 characters and 404 kinship
 #> arcs
+#> 
+#> -- Nodes
 #> # A tibble: 208 x 10
 #>   name          culture house  popularity Gender title birth death noble married
 #>   <chr>         <fct>   <chr>       <dbl> <chr>  <chr> <int> <int> <lgl> <lgl>  
@@ -18,6 +20,8 @@
 #> 5 Jon Arryn     Valemen House~     0.836  male   "Eyr~   217   298 TRUE  TRUE   
 #> 6 Lysa Arryn    <NA>    House~     0      female "Lad~   266   300 TRUE  TRUE   
 #> # i 202 more rows
+#> 
+#> -- Ties
 #> # A tibble: 404 x 3
 #>    from    to type  
 #>   <int> <int> <chr> 
@@ -28,6 +32,7 @@
 #> 5     4     5 spouse
 #> 6     5     4 spouse
 #> # i 398 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \usage{
