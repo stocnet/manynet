@@ -198,7 +198,7 @@ filter_nodes <- function(.data, ..., .by){
 #' add_info(ison_algebra, name = "Algebra")
 #' @export
 add_info <- function(.data, ...){
-  if(!is.null(igraph::graph_attr(.data)$grand)){
+  if(!is.null(igraph::graph_attr(.data)$info)){
     cli::cli_abort("Hmm, I don't know how to do that yet.")
   } else {
     info <- list(...)
@@ -226,6 +226,12 @@ add_info <- function(.data, ...){
     # return(str(info)) # for debugging
     out <- .data
     igraph::graph_attr(out)$grand <- info
+    if("name" %in% names(info)){
+      igraph::graph_attr(out)$name <- info$name
+      igraph::graph_attr(out)$grand$name <- NULL  
+    }
+    if(length(igraph::graph_attr(out)$grand) == 0) 
+      igraph::graph_attr(out)$grand <- NULL
   }
   as_tidygraph(out)
 }
