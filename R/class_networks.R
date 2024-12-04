@@ -20,8 +20,24 @@ print.mnet <- function(x, ..., n = 6) {
   cli::cli_end()
   top <- dplyr::as_tibble(tidygraph::activate(x, "nodes"))
   bottom <- dplyr::as_tibble(tidygraph::activate(x, "edges"))
-  if (ncol(top)>0) print(top, n = n)
-  if (ncol(bottom)>0) print(bottom, n = n, max_footer_lines = 1)
+  if (ncol(top)>0){
+    cli::cli_par()
+    cli::cli_h3("Nodes")
+    print(top, n = n)
+    cli::cli_end()
+  } 
+  if(!is.null(igraph::graph_attr(x, "changes"))){
+    cli::cli_par()
+    cli::cli_h3("Changes")
+    print(dplyr::as_tibble(igraph::graph_attr(x, "changes")))
+    cli::cli_end()
+  }
+  if (ncol(bottom)>0){
+    # cli::cli_par()
+    cli::cli_h3("Ties")
+    print(bottom, n = n, max_footer_lines = 1)
+    # cli::cli_end()
+  } 
   invisible(x)
 }
 
