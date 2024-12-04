@@ -5,8 +5,11 @@
 \alias{ison_monks}
 \title{Multiplex network of three one-mode signed, weighted networks and a three-wave longitudinal network of monks (Sampson 1969)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A longitudinal, labelled, multiplex, signed, weighted, directed network of 18
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Sampson's Monks -----------------------------------------------------------
+#> # A longitudinal, labelled, multiplex, signed, weighted, directed network of 18
 #> nodes and 463 like, esteem, influence, and praise arcs
+#> 
+#> -- Nodes
 #> # A tibble: 18 x 3
 #>   name        groups        left
 #>   <chr>       <chr>        <dbl>
@@ -17,6 +20,8 @@
 #> 5 Peter       Loyal            3
 #> 6 Louis       Loyal            4
 #> # i 12 more rows
+#> 
+#> -- Ties
 #> # A tibble: 463 x 6
 #>    from    to  sign type  weight  wave
 #>   <int> <int> <dbl> <chr>  <dbl> <dbl>
@@ -27,6 +32,7 @@
 #> 5     1     5     1 like       3     2
 #> 6     1     5     1 like       3     3
 #> # i 457 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \usage{
