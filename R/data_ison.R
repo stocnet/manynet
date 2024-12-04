@@ -32,12 +32,12 @@
 #' Multiplex graph object of friends, social, and task ties (McFarland 2001)
 #'
 #' @description
-#'  Multiplex graph object of friends, social, and task ties between 16 anonymous students.
-#'  M182 was an honors algebra class where researchers
-#'  collected friendship, social, and task ties between 16 students.
-#'  The edge attribute `friends` contains friendship ties,
-#'  where `2` = best friends, `1` = friend, and `0` is not a friend.
-#'  `social` consists of social interactions per hour,
+#'  Multiplex graph object of friends, social, and task ties 
+#'  between 16 anonymous students in an honors algebra class (M182).
+#'  Each type of tie is weighted:
+#'  the `friends` ties are weighted 
+#'  `2` = best friends, `1` = friend, and `0` is not a friend;
+#'  `social` consists of social interactions per hour;
 #'  and `tasks` consists of task interactions per hour.
 #' @docType data
 #' @keywords datasets
@@ -47,7 +47,9 @@
 #' McFarland, Daniel A. (2001) “Student Resistance.”
 #' _American Journal of Sociology_ 107(3): 612-78.
 #' \doi{10.1086/338779}.
-#' @source See also `data(studentnets.M182, package = "NetData")`
+#' @source 
+#' See also `data(studentnets.M182, package = "NetData")`
+#' 
 #' Larger comprehensive data set publicly available, contact Daniel A. McFarland for details.
 #' @format
 #'   ```{r, echo = FALSE}
