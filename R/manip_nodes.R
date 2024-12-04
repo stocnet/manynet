@@ -236,4 +236,15 @@ add_info <- function(.data, ...){
   as_tidygraph(out)
 }
 
+#' @rdname manip_nodes
+#' @examples
+#' add_node_changes(ison_algebra, changes)
+#' @export
+add_node_changes <- function(.data, changes){
+  out <- .data
+  igraph::graph_attr(out)$changes <- changes
+  as_tidygraph(out)
+}
+
+
 
