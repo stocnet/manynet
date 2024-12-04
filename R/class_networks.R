@@ -6,8 +6,11 @@
 print.mnet <- function(x, ..., n = 6) {
   arg_list <- list(...)
   arg_list[['useS4']] <- NULL
-  if(is_grand(x) && !is.null(igraph::graph_attr(x, "grand")$name)) 
-    cli::cli_text("# {igraph::graph_attr(x, 'grand')$name}")
+  if(!is.null(igraph::graph_attr(x, "name"))) {
+    cli::cli_h1("# {igraph::graph_attr(x, 'name')}")
+  } else if(is_grand(x) && !is.null(igraph::graph_attr(x, "grand")$name)){
+    cli::cli_h1("# {igraph::graph_attr(x, 'grand')$name}")
+  } 
   graph_desc <- describe_graph(x)
   tie_desc <- describe_ties(x)
   node_desc <- describe_nodes(x)
