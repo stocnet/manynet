@@ -5,7 +5,10 @@
 \alias{irps_books}
 \title{One-mode undirected network of co-purchased books about US politics on Amazon}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, undirected network of 105 nodes and 441 ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Co-purchased US political books -------------------------------------------
+#> # A labelled, undirected network of 105 books and 441 co-purchasing ties
+#> 
+#> -- Nodes
 #> # A tibble: 105 x 2
 #>   name                       Leaning     
 #>   <chr>                      <chr>       
@@ -16,6 +19,8 @@
 #> 5 Sleeping With the Devil    Neutral     
 #> 6 The Man Who Warned America Conservative
 #> # i 99 more rows
+#> 
+#> -- Ties
 #> # A tibble: 441 x 2
 #>    from    to
 #>   <int> <int>
@@ -26,6 +31,7 @@
 #> 5     1     5
 #> 6     3     5
 #> # i 435 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \usage{
