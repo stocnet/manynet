@@ -198,41 +198,46 @@ filter_nodes <- function(.data, ..., .by){
 #' add_info(ison_algebra, name = "Algebra")
 #' @export
 add_info <- function(.data, ...){
-  if(!is.null(igraph::graph_attr(.data)$info)){
-    cli::cli_abort("Hmm, I don't know how to do that yet.")
-  } else {
-    info <- list(...)
-    unrecog <- setdiff(names(info), c("name", "nodes", "ties", "doi", 
-                                      "collection", "year", "mode", "vertex1", 
-                                      "vertex1.total", "vertex2", 
-                           "vertex2.total", 
-                           "edge.pos", "edge.neg", "positive", "negative"))
-    if(length(unrecog)>0) 
-      cli::cli_alert_warning("{unrecog} are not recognised fields.")
-    if("nodes" %in% names(info)){
-      info$vertex1 <- info$nodes[1]
-      if(is_twomode(.data) && length(info$nodes)==2) 
-        info$vertex2 <- info$nodes[2]
-      info$nodes <- NULL
-    }
-    if("ties" %in% names(info)){
-      info$edge.pos <- info$positive <- info$ties
-      info$ties <- NULL
-    }
-    if("collection" %in% names(info)){
-      info$mode <- info$collection
-      info$collection <- NULL
-    }
-    # return(str(info)) # for debugging
-    out <- .data
-    igraph::graph_attr(out)$grand <- info
-    if("name" %in% names(info)){
-      igraph::graph_attr(out)$name <- info$name
-      igraph::graph_attr(out)$grand$name <- NULL  
-    }
-    if(length(igraph::graph_attr(out)$grand) == 0) 
-      igraph::graph_attr(out)$grand <- NULL
+  
+  if(!is.null(igraph::graph_attr(.data)$grand)){ # Updating
+    mnet_success("Deleting information from previous version(s).")
+    igraph::graph_attr(.data)$grand <- NULL
   }
+  
+  info <- list(...)
+  unrecog <- setdiff(names(info), c("name", "nodes", "ties", "doi", 
+                                    "collection", "year", "mode", "vertex1", 
+                                    "vertex1.total", "vertex2", 
+                                    "vertex2.total", 
+                                    "edge.pos", "edge.neg", "positive", "negative"))
+  if(length(unrecog)>0) 
+    cli::cli_alert_warning("{unrecog} are not recognised fields.")
+
+  out <- .data
+  if("name" %in% names(info)){
+    igraph::graph_attr(out)$name <- info$name
+  }
+  if("nodes" %in% names(info)){
+    if(is_twomode(.data) && length(info$nodes)!=2) 
+      cli::cli_abort("Please name both nodesets in a two-mode network.")
+    igraph::graph_attr(out)$nodes <- info$nodes
+  }
+  if("ties" %in% names(info)){
+    if(is_multiplex(.data) && length(info$ties) != length(unique(tie_attribute(.data, "type")))) 
+      cli::cli_abort("Please name all types of tie in a multiplex network.")
+    igraph::graph_attr(out)$ties <- info$ties
+  }
+  if("collection" %in% names(info)){
+    igraph::graph_attr(out)$collection <- info$collection
+  }
+  if("doi" %in% names(info)){
+    igraph::graph_attr(out)$doi <- info$doi
+  }
+  if("year" %in% names(info)){
+    igraph::graph_attr(out)$year <- info$year
+  }
+  # return(str(info)) # for debugging
+  
   as_tidygraph(out)
 }
 
