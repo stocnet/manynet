@@ -61,7 +61,11 @@ describe_graph <- function(x) {
 
 describe_nodes <- function(x){
   nd <- net_dims(x)
-  if(!is.null(igraph::graph_attr(x, "grand")$vertex1)){
+  if(!is.null(igraph::graph_attr(x, "nodes"))){
+    node_name <- paste(nd[1], igraph::graph_attr(x, "nodes")[1])
+    if(length(nd)==2 && length(igraph::graph_attr(x, "nodes"))==2)
+      node_name <- c(node_name, paste(nd[2], igraph::graph_attr(x, "nodes")[2]))
+  } else if(!is.null(igraph::graph_attr(x, "grand")$vertex1)){
     node_name <- paste(nd[1], igraph::graph_attr(x, "grand")$vertex1)
     if(length(nd)==2 && !is.null(igraph::graph_attr(x, "grand")$vertex2))
       node_name <- c(node_name, paste(nd[2], igraph::graph_attr(x, "grand")$vertex2))
@@ -72,7 +76,9 @@ describe_nodes <- function(x){
 describe_ties <- function(x){
   nt <- net_ties(x)
   tie_name <- ifelse(is_directed(x), "arcs", "ties") 
-  if(!is.null(igraph::graph_attr(x, "grand")$edge.pos)){
+  if(!is.null(igraph::graph_attr(x, "ties"))){
+    tie_name <- paste(igraph::graph_attr(x, "ties"), tie_name)
+  } else if(!is.null(igraph::graph_attr(x, "grand")$edge.pos)){
     tie_name <- paste(igraph::graph_attr(x, "grand")$edge.pos,
                       tie_name)
   } else if(!is.null(tie_attribute(x, "type"))){
