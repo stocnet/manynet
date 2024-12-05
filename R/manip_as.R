@@ -334,7 +334,8 @@ as_igraph.data.frame <- function(.data,
   if (inherits(.data, "tbl_df")) .data <- as.data.frame(.data)
   # Warn if no column named weight and weight set to true
   if (is_weighted(.data) & !("weight" %in% names(.data))) {
-    names(.data)[3] <- "weight"
+    if(!names(.data)[3] %in% c("begin","sign","date"))
+      names(.data)[3] <- "weight"
     # cli::cli_abort("Please rename the weight column of your dataframe to 'weight'")
   }
   if (!is_labelled(.data)) {
