@@ -6,7 +6,10 @@
 \title{Seven one-mode Star Wars character interactions (Gabasova 2016)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> $`Episode I`
+#> -- # Episode I – The Phantom Menace --------------------------------------------
 #> # A labelled, weighted, undirected network of 38 nodes and 135 ties
+#> 
+#> -- Nodes
 #> # A tibble: 38 x 11
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
@@ -18,6 +21,8 @@
 #> 6 OBI-W~    182    77 auburn, w~ fair       blue-gray         57 male  Stewjon  
 #> # i 32 more rows
 #> # i 2 more variables: species <chr>, faction <chr>
+#> 
+#> -- Ties
 #> # A tibble: 135 x 3
 #>    from    to weight
 #>   <int> <int>  <int>
@@ -29,8 +34,12 @@
 #> 6     1    25      2
 #> # i 129 more rows
 #> 
+#> 
 #> $`Episode II`
+#> -- # Episode II – Attack of the Clones -----------------------------------------
 #> # A labelled, weighted, undirected network of 33 nodes and 101 ties
+#> 
+#> -- Nodes
 #> # A tibble: 33 x 11
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
@@ -42,6 +51,8 @@
 #> 6 MACE ~    188    84 none       dark       brown             72 male  Haruun K~
 #> # i 27 more rows
 #> # i 2 more variables: species <chr>, faction <chr>
+#> 
+#> -- Ties
 #> # A tibble: 101 x 3
 #>    from    to weight
 #>   <int> <int>  <int>
@@ -53,8 +64,12 @@
 #> 6     4     5      1
 #> # i 95 more rows
 #> 
+#> 
 #> $`Episode III`
+#> -- # Episode III – Revenge of the Sith -----------------------------------------
 #> # A labelled, weighted, undirected network of 24 nodes and 65 ties
+#> 
+#> -- Nodes
 #> # A tibble: 24 x 11
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
@@ -66,6 +81,8 @@
 #> 6 EMPER~    170    75 grey       pale       yellow          82   male  Naboo    
 #> # i 18 more rows
 #> # i 2 more variables: species <chr>, faction <chr>
+#> 
+#> -- Ties
 #> # A tibble: 65 x 3
 #>    from    to weight
 #>   <int> <int>  <int>
@@ -77,8 +94,12 @@
 #> 6     1    10      4
 #> # i 59 more rows
 #> 
+#> 
 #> $`Episode IV`
+#> -- # Episode IV – A New Hope ---------------------------------------------------
 #> # A labelled, weighted, undirected network of 21 nodes and 60 ties
+#> 
+#> -- Nodes
 #> # A tibble: 21 x 11
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
@@ -90,6 +111,8 @@
 #> 6 CAMIE      NA    NA <NA>       <NA>       <NA>            NA   <NA>  <NA>     
 #> # i 15 more rows
 #> # i 2 more variables: species <chr>, faction <chr>
+#> 
+#> -- Ties
 #> # A tibble: 60 x 3
 #>    from    to weight
 #>   <int> <int>  <int>
@@ -101,8 +124,12 @@
 #> 6     1    11      4
 #> # i 54 more rows
 #> 
+#> 
 #> $`Episode V`
+#> -- # Episode V – The Empire Strikes Back ---------------------------------------
 #> # A labelled, weighted, undirected network of 21 nodes and 55 ties
+#> 
+#> -- Nodes
 #> # A tibble: 21 x 11
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
@@ -114,6 +141,8 @@
 #> 6 LEIA      150    49 brown      light      brown             19 fema~ Alderaan 
 #> # i 15 more rows
 #> # i 2 more variables: species <chr>, faction <chr>
+#> 
+#> -- Ties
 #> # A tibble: 55 x 3
 #>    from    to weight
 #>   <int> <int>  <int>
@@ -125,8 +154,12 @@
 #> 6     1    21      1
 #> # i 49 more rows
 #> 
+#> 
 #> $`Episode VI`
+#> -- # Episode VI – Return of the Jedi -------------------------------------------
 #> # A labelled, weighted, undirected network of 20 nodes and 55 ties
+#> 
+#> -- Nodes
 #> # A tibble: 20 x 11
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
@@ -138,6 +171,8 @@
 #> 6 BIB F~    180    NA none       pale       pink            NA   male  Ryloth   
 #> # i 14 more rows
 #> # i 2 more variables: species <chr>, faction <chr>
+#> 
+#> -- Ties
 #> # A tibble: 55 x 3
 #>    from    to weight
 #>   <int> <int>  <int>
@@ -149,8 +184,12 @@
 #> 6     1    10      9
 #> # i 49 more rows
 #> 
+#> 
 #> $`Episode VII`
+#> -- # Episode VII – The Force Awakens -------------------------------------------
 #> # A labelled, weighted, undirected network of 27 nodes and 92 ties
+#> 
+#> -- Nodes
 #> # A tibble: 27 x 11
 #>   name   height  mass hair_color skin_color eye_color birth_year sex   homeworld
 #>   <chr>   <int> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> <chr>    
@@ -162,6 +201,8 @@
 #> 6 POE        NA    NA brown      light      brown             NA male  <NA>     
 #> # i 21 more rows
 #> # i 2 more variables: species <chr>, faction <chr>
+#> 
+#> -- Ties
 #> # A tibble: 92 x 3
 #>    from    to weight
 #>   <int> <int>  <int>
@@ -172,6 +213,7 @@
 #> 5     3     9     20
 #> 6     3    11     13
 #> # i 86 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \usage{

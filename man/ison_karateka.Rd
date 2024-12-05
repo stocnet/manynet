@@ -5,7 +5,11 @@
 \alias{ison_karateka}
 \title{One-mode karateka network (Zachary 1977)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, weighted, undirected network of 34 nodes and 78 ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Zachary's karate club network ---------------------------------------------
+#> # A labelled, weighted, undirected network of 34 club members and 78
+#> association ties
+#> 
+#> -- Nodes
 #> # A tibble: 34 x 2
 #>   name  allegiance
 #>   <chr>      <dbl>
@@ -16,6 +20,8 @@
 #> 5 5              1
 #> 6 6              1
 #> # i 28 more rows
+#> 
+#> -- Ties
 #> # A tibble: 78 x 3
 #>    from    to weight
 #>   <int> <int>  <dbl>
@@ -26,6 +32,7 @@
 #> 5     2     4      3
 #> 6     3     4      3
 #> # i 72 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \usage{
