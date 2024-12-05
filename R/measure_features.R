@@ -396,6 +396,7 @@ net_balance <- function(.data) {
 #' @description
 #'   These functions measure certain topological features of networks:
 #'   
+#'   - `net_waves()` measures the number of waves in longitudinal network data.
 #'   - `net_change()` measures the Hamming distance between two or more networks.
 #'   - `net_stability()` measures the Jaccard index of stability between two or more networks.
 #'   - `net_correlation()` measures the product-moment correlation between two networks.
@@ -407,6 +408,12 @@ net_balance <- function(.data) {
 #' @family measures
 NULL
 
+#' @rdname measure_periods 
+#' @export
+net_waves <- function(.data){
+  length(unique(tie_attribute(.data, "wave")))
+}
+  
 #' @rdname measure_periods 
 #' @param object2 A network object.
 #' @export
