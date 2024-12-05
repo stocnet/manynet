@@ -14,9 +14,10 @@ print.mnet <- function(x, ..., n = 6) {
   graph_desc <- describe_graph(x)
   tie_desc <- describe_ties(x)
   node_desc <- describe_nodes(x)
+  change_desc <- describe_changes(x)
   cli::cli_par()
   cli_div(theme = list(.emph = list(color = "#4576B5")))
-  cli::cli_text("{.emph # {graph_desc} network of {node_desc} and {tie_desc}}")
+  cli::cli_text("{.emph # {graph_desc} network of {node_desc} and {tie_desc}{change_desc}}")
   cli::cli_end()
   top <- dplyr::as_tibble(tidygraph::activate(x, "nodes"))
   bottom <- dplyr::as_tibble(tidygraph::activate(x, "edges"))
@@ -86,4 +87,12 @@ describe_ties <- function(x){
           tie_name)
   } 
   paste(nt, tie_name)
+}
+
+describe_changes <- function(x){
+  if(is_longitudinal(x)){
+    paste(" over", max(tie_attribute(x, "wave")), "waves")
+  } else if (is_dynamic(x)){
+    paste(" from", min(tie_attribute(x, "begin")), "to", max(tie_attribute(x, "end")))
+  }
 }

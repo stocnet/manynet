@@ -7,7 +7,7 @@
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Sampson's Monks -----------------------------------------------------------
 #> # A longitudinal, labelled, multiplex, signed, weighted, directed network of 18
-#> nodes and 463 like, esteem, influence, and praise arcs
+#> nodes and 463 like, esteem, influence, and praise arcs over 3 waves
 #> 
 #> -- Nodes
 #> # A tibble: 18 x 3
