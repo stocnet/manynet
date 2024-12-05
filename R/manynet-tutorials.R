@@ -132,36 +132,51 @@ table_data <- function(pkg = c("manynet","migraph"),
                          tattr = vapply(datasets, 
                                         function (x) length(net_tie_attributes(x)), 
                                         numeric(1)),
-                         directed = vapply(datasets, 
+                         directed = as.logi(vapply(datasets, 
                                            is_directed, 
-                                           logical(1)),
-                         weighted = vapply(datasets, 
+                                           logical(1))),
+                         weighted = as.logi(vapply(datasets, 
                                            is_weighted, 
-                                           logical(1)),
-                         twomode = vapply(datasets, 
+                                           logical(1))),
+                         twomode = as.logi(vapply(datasets, 
                                           is_twomode, 
-                                          logical(1)),
-                         labelled = vapply(datasets, 
+                                          logical(1))),
+                         labelled = as.logi(vapply(datasets, 
                                            is_labelled, 
-                                           logical(1)),
-                         signed = vapply(datasets, 
+                                           logical(1))),
+                         signed = as.logi(vapply(datasets, 
                                          is_signed, 
-                                         logical(1)),
-                         multiplex = vapply(datasets, 
+                                         logical(1))),
+                         multiplex = as.logi(vapply(datasets, 
                                             is_multiplex, 
-                                            logical(1)),
-                         acyclic = vapply(datasets, 
+                                            logical(1))),
+                         acyclic = as.logi(vapply(datasets, 
                                           is_acyclic, 
-                                          logical(1)),
-                         attributed = vapply(datasets, 
+                                          logical(1))),
+                         attributed = as.logi(vapply(datasets, 
                                              is_attributed, 
-                                             logical(1)))
+                                             logical(1))))
     
   })
   out <- dplyr::bind_rows(out) %>% dplyr::arrange(nodes)
   if(!is.null(filter)) out <- dplyr::filter(out, ...)
+  # out <- apply(out, 2, function(x) ifelse(is.logical(x), as.logi(x), x))
   out
 }
+
+as.logi <- function(x){
+  class(x) <- c("logi", class(x))
+  x
+}
+
+#' @noRd
+#' @importFrom pillar pillar_shaft
+#' @export
+pillar_shaft.logi <- function(x, ...) {
+  pillar::new_pillar_shaft_simple(ifelse(x, pillar::style_bold(x),
+                                         pillar::style_na(x)), align = "left")
+}
+
 
 # Glossary ####
 
