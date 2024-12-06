@@ -92,11 +92,20 @@ mutate_net <- function(.data, ...){
 #'   but there are internal routines from some otherwise common formats.
 #'   A data frame of composition change can be just two columns.
 #' @examples
-#' add_changes(ison_algebra, changes)
+#' add_changes(ison_algebra, 
+#'             data.frame(wave = 2, node = 1, var = "active", value = FALSE))
 #' @export
 add_changes <- function(.data, changes){
   out <- .data
-  if(nrow(changes) == net_nodes(.data) && ncol(changes)==2){
+  if(length(names(changes)) == 4){
+    
+    if("active" %in% changes[,3] && !("active" %in% net_node_attributes(.data))){
+      out <- .infer_active(out, changes)
+      # changes <- changes[changes[,1] != min(changes[,1]),]
+    }
+    
+  } else {
+    
     if("active" %in% net_node_attributes(.data))
       mnet_unavailable()
     out <- out %>% mutate_nodes(active = as.logi(changes[,1] == min(changes[,1])))
@@ -118,4 +127,25 @@ add_changes <- function(.data, changes){
 }
 
 
+
+.infer_active <- function(.data, changes){
+  
+  if(length(unique(changes$node))==net_nodes(.data)){ # if table of when active
+    out <- .data %>% mutate_nodes(active = as.logi(changes[,1] == min(changes[,1])))
+
+  } else { # if some actives
+    if(all(changes[changes[,3]=="active",4])){
+      starts <- rep(FALSE, net_nodes(out))
+    } else if(all(!changes[changes[,3]=="active",4])) {
+      starts <- rep(TRUE, net_nodes(out))
+    } else if(changes[order(changes[,1]),4][1]){
+      starts <- rep(NA, net_nodes(out))
+      first <- changes[changes[,1] == min(changes[,1]),]
+      starts[first[,2]] <- first[,4]
+      starts[is.na(starts) & changes[changes$var == "active" & changes$value == TRUE & changes$wave > min(changes$wave),2]] <- FALSE
+    } else mnet_unavailable()
+    out <- .data %>% mutate_nodes(active = starts)
+  }
+  out
+}
 

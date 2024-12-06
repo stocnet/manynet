@@ -31,5 +31,5 @@ nodal attributes.
 }
 \examples{
 add_changes(ison_algebra, 
-            data.frame(wave = 1, node = 1, var = "active", value = TRUE))
+            data.frame(wave = 2, node = 1, var = "active", value = FALSE))
 }
