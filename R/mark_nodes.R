@@ -391,17 +391,17 @@ node_is_min <- function(node_measure, ranks = 1){
 #' @examples 
 #' #node_is_mean(node_degree(ison_brandes))
 #' @export
-node_is_mean <- function(node_measure, rank = 1){
+node_is_mean <- function(node_measure, ranks = 1){
   if(!inherits(node_measure, "node_measure"))
     cli::cli_abort("This function expects an object of class `node_measure`")
   if(any(attr(node_measure, "mode"))){
     mode1 <- node_measure[!as.logical(attr(node_measure, "mode"))]
-    out <- mode1 == sort(abs(mode1 - mean(mode1)))[rank]
+    out <- mode1 == sort(abs(mode1 - mean(mode1)))[ranks]
     mode2 <- node_measure[as.logical(attr(node_measure, "mode"))]
-    out <- c(out, mode2 == sort(abs(mode2 - mean(mode2)))[rank])
+    out <- c(out, mode2 == sort(abs(mode2 - mean(mode2)))[ranks])
     attr(out, "mode") <- as.logical(attr(node_measure, "mode"))
   } else {
-    out <- node_measure == sort(abs(node_measure - mean(node_measure)))[rank]
+    out <- node_measure == sort(abs(node_measure - mean(node_measure)))[ranks]
   }
   class(out) <- c("node_mark", class(out))
   out

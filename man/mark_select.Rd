@@ -14,7 +14,7 @@ node_is_max(node_measure, ranks = 1)
 
 node_is_min(node_measure, ranks = 1)
 
-node_is_mean(node_measure, rank = 1)
+node_is_mean(node_measure, ranks = 1)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
