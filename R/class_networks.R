@@ -30,7 +30,8 @@ print.mnet <- function(x, ..., n = 6) {
   if(!is.null(igraph::graph_attr(x, "changes"))){
     cli::cli_par()
     cli::cli_h3("Changes")
-    print(dplyr::as_tibble(igraph::graph_attr(x, "changes")))
+    print(dplyr::as_tibble(igraph::graph_attr(x, "changes")),
+          n = n)
     cli::cli_end()
   }
   if (ncol(bottom)>0){

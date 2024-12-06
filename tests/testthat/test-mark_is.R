@@ -43,7 +43,7 @@ test_that("is_ tests return correct values", {
 # drill <- function(object, ..., which_summ = c("functions","coercions","data")){
 #   which_summ <- match.arg(which_summ)
 #   expr <- NULL
-#   object |> tibble::as_tibble() |> 
+#   object |> dplyr::as_tibble() |> 
 #     tidyr::separate_wider_delim(expr, delim = "(", names = c("functions", "coercions", "data")) |> 
 #     dplyr::mutate(data = stringr::str_remove(data, "\\)\\)")) |> 
 #     dplyr::group_by(!!!rlang::parse_expr(which_summ)) |> 
