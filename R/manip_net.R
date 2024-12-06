@@ -103,15 +103,26 @@ add_changes <- function(.data, changes){
       out <- .infer_active(out, changes)
       # changes <- changes[changes[,1] != min(changes[,1]),]
     }
+    .check_changevars(changes)
+    .check_varexists(out, changes)
     
   } else {
     
     if("active" %in% net_node_attributes(.data))
-      mnet_unavailable()
-    out <- out %>% mutate_nodes(active = as.logi(changes[,1] == min(changes[,1])))
-    changes <- data.frame(node = 1:nrow(changes), 
-                          begin = changes[,1], end = changes[,2])
-    changes <- reshape(changes,
+      mnet_unavailable("There is already an `active` nodal attribute.")
+    
+    if(nrow(changes) == net_nodes(.data) && ncol(changes)==2){
+      out <- out %>% mutate_nodes(active = as.logi(changes[,1] == min(changes[,1])))
+      changes <- data.frame(node = 1:nrow(changes), 
+                            begin = changes[,1], end = changes[,2])
+    } else if(all(names(changes) == c("node", "begin", "end"))){
+      
+      first <- changes[!duplicated(changes[,1]),]
+      out <- out %>% mutate_nodes(active = first[,2] == min(first[,2]))
+      
+    } else mnet_unavailable()
+    
+    changes <- stats::reshape(changes,
                        varying = colnames(changes)[-1],
                        v.names = "wave",
                        times = colnames(changes)[-1],
@@ -120,13 +131,31 @@ add_changes <- function(.data, changes){
                                          var = "active", value = value=="begin") %>% 
       dplyr::select(wave, node, var, value) %>% dplyr::arrange(wave, node) %>% 
       dplyr::filter(wave != 1)
-  } else mnet_unavailable()
+  }
   
   igraph::graph_attr(out)$changes <- changes
   as_tidygraph(out)
 }
 
+.check_changevars <- function(changes){
+  if(!(all(names(changes) == c("wave", "node", "var", "value")) || 
+       all(names(changes) == c("time", "node", "var", "value")))){
+    notexist <- setdiff(names(changes), c("time", "wave", "node", "var", "value"))
+    cli::cli_abort(paste("The following column names are in the changelist",
+                         "but are not recognised:",
+                         "{notexist}"))
+  }
+}
 
+.check_varexists <- function(.data, changes){
+  if(!all(unique(changes$var) %in% net_node_attributes(.data))){
+    notexist <- unique(changes$var)[which(!unique(changes$var) %in% 
+                                            net_node_attributes(.data))]
+    cli::cli_abort(paste("The following variables are in the changelist",
+                                "but not among the nodal attributes in the network:",
+                                "{notexist}"))
+  }
+}
 
 .infer_active <- function(.data, changes){
   
