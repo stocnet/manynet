@@ -30,5 +30,6 @@ though the function can flexibly accommodate changes in other
 nodal attributes.
 }
 \examples{
-add_changes(ison_algebra, changes)
+add_changes(ison_algebra, 
+            data.frame(wave = 1, node = 1, var = "active", value = TRUE))
 }

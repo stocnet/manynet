@@ -135,7 +135,7 @@ net_independence <- function(.data){
 net_strength <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   n <- net_ties(.data)
-  seties <- unlist(lapply(1:n, combn, x = 1:n, simplify = FALSE), recursive = FALSE)
+  seties <- unlist(lapply(1:n, utils::combn, x = 1:n, simplify = FALSE), recursive = FALSE)
   out <- vapply(seties, function(x) length(x)/net_components(delete_ties(.data, x)), 
                 FUN.VALUE = numeric(1))
   make_network_measure(min(out), .data, call = deparse(sys.call()))
@@ -148,7 +148,7 @@ net_strength <- function(.data){
 net_toughness <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   n <- net_nodes(.data)
-  seties <- unlist(lapply(1:n, combn, x = 1:n, simplify = FALSE), recursive = FALSE)
+  seties <- unlist(lapply(1:n, utils::combn, x = 1:n, simplify = FALSE), recursive = FALSE)
   out <- vapply(seties, function(x) length(x)/net_components(delete_nodes(.data, x)), 
                 FUN.VALUE = numeric(1))
   make_network_measure(min(out), .data, call = deparse(sys.call()))
