@@ -75,3 +75,47 @@ mutate_net <- function(.data, ...){
   out
 }
 
+
+# Network changes ####
+
+#' Modifying nodal attributes over time
+#' @description
+#'   This function adds a table of changes to the nodes of a network.
+#'   An example of when this might be useful is to track change in the
+#'   composition of a network (when nodes are present or absent over time),
+#'   though the function can flexibly accommodate changes in other
+#'   nodal attributes.
+#' @name manip_changes
+#' @inheritParams mark_is
+#' @param changes A data frame of changes.
+#'   Ideally this will be in the form of "wave", "node", "var", and "value",
+#'   but there are internal routines from some otherwise common formats.
+#'   A data frame of composition change can be just two columns.
+#' @examples
+#' add_changes(ison_algebra, changes)
+#' @export
+add_changes <- function(.data, changes){
+  out <- .data
+  if(nrow(changes) == net_nodes(.data) && ncol(changes)==2){
+    if("active" %in% net_node_attributes(.data))
+      mnet_unavailable()
+    out <- out %>% mutate_nodes(active = as.logi(changes[,1] == min(changes[,1])))
+    changes <- data.frame(node = 1:nrow(changes), 
+                          begin = changes[,1], end = changes[,2])
+    changes <- reshape(changes,
+                       varying = colnames(changes)[-1],
+                       v.names = "wave",
+                       times = colnames(changes)[-1],
+                       timevar = "value", direction = "long")
+    changes <- changes %>% dplyr::mutate(wave = wave, node = node, 
+                                         var = "active", value = value=="begin") %>% 
+      dplyr::select(wave, node, var, value) %>% dplyr::arrange(wave, node) %>% 
+      dplyr::filter(wave != 1)
+  } else mnet_unavailable()
+  
+  igraph::graph_attr(out)$changes <- changes
+  as_tidygraph(out)
+}
+
+
+

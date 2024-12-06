@@ -12,7 +12,6 @@
 \alias{rename_nodes}
 \alias{rename}
 \alias{filter_nodes}
-\alias{add_node_changes}
 \title{Modifying node data}
 \usage{
 add_nodes(.data, nodes, attribute = NULL)
@@ -39,8 +38,6 @@ rename_nodes(.data, ...)
 rename(.data, ...)
 
 filter_nodes(.data, ..., .by)
-
-add_node_changes(.data, changes)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -103,7 +100,6 @@ Below are the currently implemented S3 methods:\tabular{lrrr}{
   other <- create_filled(4) \%>\% mutate(name = c("A", "B", "C", "D"))
   another <- create_filled(3) \%>\% mutate(name = c("E", "F", "G"))
   join_nodes(another, other)
-add_node_changes(ison_algebra, changes)
 }
 \seealso{
 Other modifications: 

@@ -175,15 +175,3 @@ filter_nodes <- function(.data, ..., .by){
   tidygraph::filter(.data, ..., .by = .by)
 }
 
-#' @rdname manip_nodes
-#' @examples
-#' add_node_changes(ison_algebra, changes)
-#' @export
-add_node_changes <- function(.data, changes){
-  out <- .data
-  igraph::graph_attr(out)$changes <- changes
-  as_tidygraph(out)
-}
-
-
-
