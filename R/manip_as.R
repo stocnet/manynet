@@ -480,6 +480,31 @@ as_igraph.network.goldfish <- function(.data,
 }
 
 #' @export
+as_igraph.networkDynamic <- function(.data, twomode = FALSE) {
+  
+  # edges
+  out <- do.call(rbind, lapply(.data$mel, function(x) 
+    data.frame(x$outl, x$inl, x$atl$active)))
+  names(out) <- c("from","to","begin","end")
+  out <- as.data.frame(out)
+  
+  # nodes
+  nodes <- do.call(rbind, lapply(.data$val, 
+                                 function(x) x[!names(x) %in% c("na","active")]))
+  nodes <- as.data.frame(nodes)
+  names(nodes) <- gsub("vertex.names", "name", names(nodes))
+  
+  out <- igraph::graph_from_data_frame(out, vertices = nodes)
+  
+  # changes
+  changes <- do.call(rbind, lapply(1:length(.data$val), 
+                                   function(x) data.frame(x, .data$val[[x]]$active)))
+  names(changes) <- c("node","begin","end")
+  
+  as_igraph(add_changes(out, changes))
+}
+
+#' @export
 as_igraph.siena <- function(.data, twomode = NULL) {
   edges <- orig <- .get_rem_time_periods <- .get_all_time_periods <- NULL
   ## Helper functions for as_igraph.siena
@@ -723,6 +748,11 @@ as_tidygraph.diffnet <- function(.data, twomode = FALSE) {
 make_mnet <- function(out){
   class(out) <- unique(c("mnet", class(out)))
   out
+}
+
+#' @export
+as_tidygraph.networkDynamic <- function(.data, twomode = FALSE) {
+  as_tidygraph(as_igraph.networkDynamic(.data, twomode = twomode))
 }
 
 # Network ####
