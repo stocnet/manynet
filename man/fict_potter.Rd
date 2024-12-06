@@ -5,19 +5,35 @@
 \alias{fict_potter}
 \title{Six complex one-mode support data in Harry Potter books (Bossaert and Meidert 2013)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # Harry Potter
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Harry Potter support network ----------------------------------------------
 #> # A longitudinal, labelled, complex, directed network of 64 students and 544
-#> support arcs
-#> # A tibble: 64 x 4
-#>   name              schoolyear gender house     
-#>   <chr>                  <int> <chr>  <chr>     
-#> 1 Adrian Pucey            1989 male   Slytherin 
-#> 2 Alicia Spinnet          1989 female Gryffindor
-#> 3 Angelina Johnson        1989 female Gryffindor
-#> 4 Anthony Goldstein       1991 male   Ravenclaw 
-#> 5 Blaise Zabini           1991 male   Slytherin 
-#> 6 C. Warrington           1989 male   Slytherin 
+#> support arcs over 6 waves
+#> 
+#> -- Nodes
+#> # A tibble: 64 x 5
+#>   name              schoolyear gender house      active
+#>   <chr>                  <int> <chr>  <chr>      <logi>
+#> 1 Adrian Pucey            1989 male   Slytherin  TRUE  
+#> 2 Alicia Spinnet          1989 female Gryffindor TRUE  
+#> 3 Angelina Johnson        1989 female Gryffindor TRUE  
+#> 4 Anthony Goldstein       1991 male   Ravenclaw  TRUE  
+#> 5 Blaise Zabini           1991 male   Slytherin  TRUE  
+#> 6 C. Warrington           1989 male   Slytherin  TRUE  
 #> # i 58 more rows
+#> 
+#> -- Changes
+#> # A tibble: 81 x 4
+#>    wave  node var    value
+#>   <int> <int> <chr>  <lgl>
+#> 1     2     9 active TRUE 
+#> 2     2    21 active TRUE 
+#> 3     2    35 active TRUE 
+#> 4     2    39 active FALSE
+#> 5     3    12 active TRUE 
+#> 6     3    45 active FALSE
+#> # i 75 more rows
+#> 
+#> -- Ties
 #> # A tibble: 544 x 3
 #>    from    to  wave
 #>   <int> <int> <dbl>
@@ -28,6 +44,7 @@
 #> 5    11    56     1
 #> 6    11    58     1
 #> # i 538 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \usage{
