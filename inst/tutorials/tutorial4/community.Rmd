@@ -962,7 +962,7 @@ node_in_community(friends)
 It is important to name _which_ algorithm produced the membership assignment
 that is then subsequently analysed though.
 
-```{r comm-comp, echo=FALSE, purl = FALSE}
+```{r alg-comp, echo=FALSE, purl = FALSE}
 question("Which algorithm provides the 'best' membership assignment here?",
          answer("Walktrap"),
          answer("Edge betweenness"),
