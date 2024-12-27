@@ -1,3 +1,5 @@
+# Manipulating nodes ####
+
 #' Modifying node data
 #' 
 #' @description 
@@ -102,6 +104,11 @@ add_node_attribute <- function(.data, attr_name, vector){
 #' @rdname manip_nodes
 #' @importFrom tidygraph mutate
 #' @export
+mutate <- tidygraph::mutate
+
+#' @rdname manip_nodes
+#' @importFrom tidygraph mutate
+#' @export
 mutate_nodes <- function(.data, ...) UseMethod("mutate_nodes")
 
 #' @export
@@ -116,21 +123,25 @@ mutate_nodes.igraph <- function(.data, ...){
 }
 
 #' @rdname manip_nodes
+#' @importFrom tidygraph select
 #' @export
-mutate_changes <- function(.data, ...) UseMethod("mutate_changes")
-
-#' @export
-mutate_changes.tbl_graph <- function(.data, ...){
-  changes <- igraph::graph_attr(.data, "changes")
-  changes <- tidygraph::mutate(changes, ...)
-  igraph::graph_attr(.data, "changes") <- changes
-  .data
-}
+select <- tidygraph::select
 
 #' @rdname manip_nodes
 #' @importFrom tidygraph mutate
 #' @export
-mutate <- tidygraph::mutate
+select_nodes <- function(.data, ...) UseMethod("select_nodes")
+
+#' @export
+select_nodes.tbl_graph <- function(.data, ...){
+  .data %>% tidygraph::select(...)
+}
+
+#' @export
+select_nodes.igraph <- function(.data, ...){
+  .data %>% as_tidygraph() %>% 
+    tidygraph::select(...) %>% as_igraph()
+}
 
 #' @rdname manip_nodes
 #' @export

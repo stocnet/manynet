@@ -5,9 +5,10 @@
 \alias{add_nodes}
 \alias{delete_nodes}
 \alias{add_node_attribute}
-\alias{mutate_nodes}
-\alias{mutate_changes}
 \alias{mutate}
+\alias{mutate_nodes}
+\alias{select}
+\alias{select_nodes}
 \alias{bind_node_attributes}
 \alias{join_nodes}
 \alias{rename_nodes}
@@ -21,11 +22,13 @@ delete_nodes(.data, nodes)
 
 add_node_attribute(.data, attr_name, vector)
 
+mutate(.data, ...)
+
 mutate_nodes(.data, ...)
 
-mutate_changes(.data, ...)
+select(.data, ...)
 
-mutate(.data, ...)
+select_nodes(.data, ...)
 
 bind_node_attributes(.data, object2)
 
