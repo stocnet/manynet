@@ -6,6 +6,7 @@
 \alias{delete_nodes}
 \alias{add_node_attribute}
 \alias{mutate_nodes}
+\alias{mutate_changes}
 \alias{mutate}
 \alias{bind_node_attributes}
 \alias{join_nodes}
@@ -21,6 +22,8 @@ delete_nodes(.data, nodes)
 add_node_attribute(.data, attr_name, vector)
 
 mutate_nodes(.data, ...)
+
+mutate_changes(.data, ...)
 
 mutate(.data, ...)
 

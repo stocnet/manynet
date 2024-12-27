@@ -116,6 +116,18 @@ mutate_nodes.igraph <- function(.data, ...){
 }
 
 #' @rdname manip_nodes
+#' @export
+mutate_changes <- function(.data, ...) UseMethod("mutate_changes")
+
+#' @export
+mutate_changes.tbl_graph <- function(.data, ...){
+  changes <- igraph::graph_attr(.data, "changes")
+  changes <- tidygraph::mutate(changes, ...)
+  igraph::graph_attr(.data, "changes") <- changes
+  .data
+}
+
+#' @rdname manip_nodes
 #' @importFrom tidygraph mutate
 #' @export
 mutate <- tidygraph::mutate
