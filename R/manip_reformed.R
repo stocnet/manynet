@@ -272,6 +272,41 @@ to_ego.tbl_graph <- function(.data, node, max_dist = 1, min_dist = 0,
 }
 
 #' @rdname manip_scope
+#' @param time A time point or wave at which to present the network.
+#' @export
+to_time <- function(.data, time) UseMethod("to_time")
+
+#' @export
+to_time.tbl_graph <- function(.data, time){
+  if(time > net_waves(.data)){
+    mnet_info("Sorry, there are not that many waves in this dataset.",
+              "Reverting to the maximum wave:", net_waves(.data))
+    time <- net_waves(.data)
+  }
+  if(is_dynamic(.data)){
+    mnet_unavailable()
+  } else if(is_longitudinal(.data)){
+    out <- .data
+    if(is_changing(out)){
+      if(any(time >= as_changelist(.data)$wave)){
+        out <- apply_changes(out, time)
+      } else {
+        igraph::graph_attr(out, "changes") <- NULL
+      } 
+      out <- out %>% 
+        filter_nodes(active) %>% 
+        select_nodes(-active)
+    }
+    out %>% 
+      # trim ties
+      filter_ties(wave == time) %>% 
+      select_ties(-wave)
+  } else {
+    .data
+  }
+}
+
+#' @rdname manip_scope
 #' @export
 to_giant <- function(.data) UseMethod("to_giant")
 
