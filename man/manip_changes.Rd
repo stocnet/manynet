@@ -6,6 +6,7 @@
 \alias{mutate_changes}
 \alias{filter_changes}
 \alias{collect_changes}
+\alias{apply_changes}
 \title{Modifying nodal attributes over time}
 \usage{
 add_changes(.data, changes)
@@ -16,6 +17,7 @@ filter_changes(.data, ..., .by = NULL)
 
 collect_changes(.data, time)
 
+apply_changes(.data, time)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
