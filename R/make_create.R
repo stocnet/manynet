@@ -147,7 +147,7 @@ create_ego <- function(max_alters = Inf,
   alters <- vector()
   if(!is.null(roster)){
     for (alt in roster){
-      cli::cli_text("Is {ego} connected by {ties} to {alt}?")
+      cli::cli_text("Is {ego} connected by a {ties} tie to {alt}?")
       alters <- c(alters, q_yes())
     }
     alters <- roster[alters]

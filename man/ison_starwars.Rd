@@ -6,20 +6,47 @@
 \alias{fict_starwars}
 \title{Seven one-mode Star Wars character interactions (Gabasova 2016)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A tibble: 184 x 4
-#>     wave node           var    value
-#>    <int> <chr>          <chr>  <chr>
-#>  1     2 Beru           active TRUE 
-#>  2     2 Boba Fett      active TRUE 
-#>  3     2 Boss Nass      active FALSE
-#>  4     2 Bravo Three    active FALSE
-#>  5     2 Bravo Two      active FALSE
-#>  6     2 Captain Panaka active FALSE
-#>  7     2 Captain Typho  active TRUE 
-#>  8     2 Cliegg         active TRUE 
-#>  9     2 Count Dooku    active TRUE 
-#> 10     2 Darth Maul     active FALSE
-#> # i 174 more rows
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Star Wars network data ----------------------------------------------------
+#> # A longitudinal, labelled, complex, weighted, directed network of 110
+#> characters and 563 interaction arcs over 7 waves
+#> 
+#> -- Nodes
+#> # A tibble: 110 x 12
+#>   name            species homeworld sex   height hair_color eye_color skin_color
+#>   <chr>           <chr>   <chr>     <chr>  <int> <chr>      <chr>     <chr>     
+#> 1 Admiral Ackbar  Mon Ca~ Mon Cala  male     180 none       orange    brown mot~
+#> 2 Admiral Statura Human   Garel     male     172 black      brown     light     
+#> 3 Anakin          Human   Tatooine  male     188 blond      blue      fair      
+#> 4 Bail Organa     Human   Alderaan  male     191 black      brown     tan       
+#> 5 Bala-Tik        Human   <NA>      male     180 brown      brown     light     
+#> 6 Bb-8            Droid   Hosnian ~ none      67 none       black     none      
+#> # i 104 more rows
+#> # i 4 more variables: birth_year <dbl>, mass <dbl>, faction <chr>, active <lgl>
+#> 
+#> -- Changes
+#> # A tibble: 184 x 4
+#>    wave node           var    value
+#>   <int> <chr>          <chr>  <chr>
+#> 1     2 Beru           active TRUE 
+#> 2     2 Boba Fett      active TRUE 
+#> 3     2 Boss Nass      active FALSE
+#> 4     2 Bravo Three    active FALSE
+#> 5     2 Bravo Two      active FALSE
+#> 6     2 Captain Panaka active FALSE
+#> # i 178 more rows
+#> 
+#> -- Ties
+#> # A tibble: 563 x 4
+#>    from    to weight  wave
+#>   <int> <int>  <int> <int>
+#> 1    80    73     11     1
+#> 2    80    79     14     1
+#> 3    80     3     16     1
+#> 4    80   106      3     1
+#> 5    80    15      2     1
+#> 6    80    53      2     1
+#> # i 557 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \usage{

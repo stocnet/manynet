@@ -223,3 +223,18 @@ filter_changes <- function(.data, ..., .by = NULL){
   .data
 }
 
+#' @rdname manip_changes
+#' @examples
+#' collect_changes(fict_starwars, time = 3)
+#' @export
+collect_changes <- function(.data, time){
+  changes <- igraph::graph_attr(.data, "changes")
+  changes <- changes %>% 
+    dplyr::filter(wave <= time) %>% 
+    dplyr::arrange(node, var, wave) %>% 
+    dplyr::group_by(node, var) %>% 
+    dplyr::mutate(value = dplyr::last(value)) %>% 
+    dplyr::distinct(node, var, value)
+  changes
+}
+
