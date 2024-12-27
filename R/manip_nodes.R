@@ -198,3 +198,28 @@ filter_nodes <- function(.data, ..., .by = NULL){
   tidygraph::filter(.data, ..., .by = .by)
 }
 
+# Manipulating changes ####
+
+#' @rdname manip_changes
+#' @export
+mutate_changes <- function(.data, ...) UseMethod("mutate_changes")
+
+#' @export
+mutate_changes.tbl_graph <- function(.data, ...){
+  changes <- igraph::graph_attr(.data, "changes")
+  changes <- tidygraph::mutate(changes, ...)
+  igraph::graph_attr(.data, "changes") <- changes
+  .data
+}
+
+#' @rdname manip_changes
+#' @examples
+#' filter_changes(fict_starwars, node == "Anakin")
+#' @export
+filter_changes <- function(.data, ..., .by = NULL){
+  changes <- igraph::graph_attr(.data, "changes")
+  changes <- tidygraph::filter(changes, ..., .by = .by)
+  igraph::graph_attr(.data, "changes") <- changes
+  .data
+}
+
