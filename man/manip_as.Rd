@@ -3,6 +3,7 @@
 \name{manip_as}
 \alias{manip_as}
 \alias{as_nodelist}
+\alias{as_changelist}
 \alias{as_edgelist}
 \alias{as_matrix}
 \alias{as_igraph}
@@ -15,6 +16,8 @@
 \title{Modifying network classes}
 \usage{
 as_nodelist(.data)
+
+as_changelist(.data)
 
 as_edgelist(.data, twomode = FALSE)
 

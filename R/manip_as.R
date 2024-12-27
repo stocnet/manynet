@@ -80,6 +80,18 @@ as_nodelist.tbl_graph <- function(.data) {
   dplyr::tibble(data.frame(out))
 }
 
+# Changelists ####
+
+#' @rdname manip_as
+#' @export
+as_changelist <- function(.data) UseMethod("as_changelist")
+
+#' @export
+as_changelist.tbl_graph <- function(.data) {
+  out <- igraph::graph_attr(as_igraph(.data), "changes")
+  dplyr::tibble(data.frame(out))
+}
+
 # Edgelists ####
 
 #' @rdname manip_as
