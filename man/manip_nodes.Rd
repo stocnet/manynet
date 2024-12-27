@@ -43,7 +43,7 @@ rename_nodes(.data, ...)
 
 rename(.data, ...)
 
-filter_nodes(.data, ..., .by)
+filter_nodes(.data, ..., .by = NULL)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
