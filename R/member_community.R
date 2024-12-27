@@ -42,12 +42,14 @@ NULL
 #'   technique is used to ensure the maximal modularity partition.
 #' @export
 node_in_community <- function(.data){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(net_nodes(.data)<100){
     # don't use node_in_betweenness because slow and poorer quality to optimal
     mnet_success("{.fn node_in_optimal} available and", 
                  "will return the highest modularity partition.")
     node_in_optimal(.data)
   } else {
+    mnet_info("Excluding {.fn node_in_optimal} because network rather large.")
     poss_algs <- c("node_in_infomap",
                    "node_in_spinglass",
                    "node_in_fluid",
