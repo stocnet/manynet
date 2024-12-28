@@ -293,14 +293,18 @@ to_time.tbl_graph <- function(.data, time){
       } else {
         igraph::graph_attr(out, "changes") <- NULL
       } 
-      out <- out %>% 
-        filter_nodes(active) %>% 
-        select_nodes(-active)
+      if("active" %in% net_node_attributes(out)){
+        out <- out %>% 
+          filter_nodes(active) %>% 
+          select_nodes(-active)
+      }
     }
-    out %>% 
-      # trim ties
-      filter_ties(wave == time) %>% 
-      select_ties(-wave)
+    if("wave" %in% net_tie_attributes(out)){
+      out %>% 
+        # trim ties
+        filter_ties(wave == time) %>% 
+        select_ties(-wave)
+    } else out
   } else {
     .data
   }
