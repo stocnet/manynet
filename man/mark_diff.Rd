@@ -8,20 +8,15 @@
 \alias{node_is_exposed}
 \title{Marking nodes based on diffusion properties}
 \usage{
-node_is_latent(diff_model, time = 0)
+node_is_latent(.data, time = 0)
 
-node_is_infected(diff_model, time = 0)
+node_is_infected(.data, time = 0)
 
-node_is_recovered(diff_model, time = 0)
+node_is_recovered(.data, time = 0)
 
 node_is_exposed(.data, mark)
 }
 \arguments{
-\item{diff_model}{A diff_model object,
-created either by \code{play_diffusion()} or \code{as_diffusion()}.}
-
-\item{time}{A time step at which nodes are identified.}
-
 \item{.data}{An object of a manynet-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
@@ -31,7 +26,12 @@ created either by \code{play_diffusion()} or \code{as_diffusion()}.}
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
 
+\item{time}{A time step at which nodes are identified.}
+
 \item{mark}{vector denoting which nodes are infected}
+
+\item{diff_model}{A diff_model object,
+created either by \code{play_diffusion()} or \code{as_diffusion()}.}
 }
 \description{
 These functions return logical vectors the length of the

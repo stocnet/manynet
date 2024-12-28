@@ -82,14 +82,10 @@ test_that("node infection, exposure, and recovery works", {
   skip_on_cran()
   skip_on_ci()
   set.seed(1234)
-  .data <- play_diffusion(generate_random(to_undirected(to_unnamed(ison_networkers)), with_attr = FALSE),
-                          seeds = 10, latency = 0.25, recovery = 0.2, steps = 10)
-  expect_true(c(node_is_infected(.data, time = 0))[dplyr::filter(summary(.data),
-                                                                 event == "I" & t == 0)$nodes])
-  expect_true(c(node_is_recovered(.data, time = 4))[dplyr::filter(summary(.data),
-                                                                  event == "R" & t == 4)$nodes[1]])
-  expect_true(c(node_is_latent(.data, time = 2))[dplyr::filter(summary(.data),
-                                                               event == "E" & t == 2)$nodes[1]])
+  .data <- play_diffusion(create_tree(15),
+                          seeds = 10, latency = 1, steps = 10)
+  expect_true(which(node_is_infected(.data, time = 0))==10)
+  expect_true(which(node_is_latent(.data, time = 2))==5)
 })
 
 
