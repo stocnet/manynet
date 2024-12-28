@@ -133,6 +133,11 @@
 NULL
 
 #' @rdname make_play
+#' @param old_version This is included to maintain backward compatibility
+#'   with the old version of this function, that would return a special
+#'   object.
+#'   The new version adds the diffusion event record as changes to the
+#'   original network.
 #' @examples 
 #'   smeg <- generate_smallworld(15, 0.025)
 #'   plot(play_diffusion(smeg, recovery = 0.4))
@@ -148,7 +153,8 @@ play_diffusion <- function(.data,
                            recovery = 0,
                            waning = 0,
                            immune = NULL,
-                           steps) {
+                           steps,
+                           old_version = FALSE) {
   n <- net_nodes(.data)
   recovered <- NULL
   if(missing(steps)) steps <- n
@@ -259,6 +265,14 @@ play_diffusion <- function(.data,
     
     if(is.infinite(steps) & length(infected)==n) break
     if(time==steps) break
+  }
+  if(old_version){
+    make_diff_model(events, report, .data)
+  } else {
+    .data <- .data %>% mutate_nodes(diffusion = "S")
+    events <- data.frame(wave = events$t, node = events$nodes, 
+                         var = "diffusion", value = events$event)
+    add_changes(.data, events)
   }
 }
 

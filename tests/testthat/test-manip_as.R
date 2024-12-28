@@ -85,7 +85,7 @@ test_that("as_network converts correctly",{
 test_that("conversion of diff_model object works correctly", {
   skip_on_cran()
   skip_on_ci()
-  diff <- play_diffusion(ison_brandes)
+  diff <- play_diffusion(ison_brandes, old_version = TRUE)
   tidy_diff <- as_tidygraph(diff)
   expect_values(net_nodes(tidy_diff), net_nodes(ison_brandes))
   expect_values(net_ties(tidy_diff), net_ties(ison_brandes))
