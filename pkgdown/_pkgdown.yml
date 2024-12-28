@@ -52,6 +52,7 @@ reference:
       Functions for deterministically creating and stochastically generating 
       directed and undirected, one-mode and two-mode networks.
     contents:
+      - make_mnet
       - make_explicit
       - make_ego
       - make_motifs
