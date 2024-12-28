@@ -6,8 +6,8 @@
 #' 
 #' - `play_diffusion()` runs a single simulation of a compartment model,
 #' allowing the results to be visualised and examined.
-#' - `play_diffusions()` runs multiple simulations of a compartment model
-#' for more robust inference.
+# #' - `play_diffusions()` runs multiple simulations of a compartment model
+# #' for more robust inference.
 #' 
 #' These functions allow both a full range of compartment models,
 #' as well as simplex and complex diffusion to be simulated upon a network.
@@ -260,50 +260,6 @@ play_diffusion <- function(.data,
     if(is.infinite(steps) & length(infected)==n) break
     if(time==steps) break
   }
-  make_diff_model(events, report, .data)
-}
-
-#' @rdname make_play
-#' @param times Integer indicating number of simulations. 
-#'   By default `times=5`, but 1,000 - 10,000 simulations recommended for publication-ready results.
-#' @param strategy If `{furrr}` is installed, then multiple cores can be used to accelerate the simulations. 
-#'   By default "sequential", but if multiple cores available, then "multisession" or "multicore" may be useful. 
-#'   Generally this is useful only when times > 1000. See `{furrr}` for more.
-#' @param verbose Whether the function should report on its progress. 
-#'   By default FALSE. See `{progressr}` for more.
-#' @examples 
-#' # plot(play_diffusions(smeg, times = 10))
-#' @export
-play_diffusions <- function(.data,
-                            seeds = 1,
-                            contact = NULL,
-                            prevalence = 0,
-                            thresholds = 1,
-                            transmissibility = 1,
-                            latency = 0,
-                            recovery = 0,
-                            waning = 0,
-                            immune = NULL,
-                            steps,
-                            times = 5,
-                            strategy = "sequential",
-                            verbose = FALSE) {
-  thisRequires("future")
-  thisRequires("furrr")
-  oplan <- future::plan(strategy)
-  on.exit(future::plan(oplan), add = TRUE)
-  
-  if(missing(steps)) steps <- net_nodes(.data)
-  
-  out <- furrr::future_map_dfr(1:times, function(j){
-      data.frame(sim = j,
-                 play_diffusion(.data, 
-                     seeds = seeds, contact = contact, prevalence = prevalence, 
-                     thresholds = thresholds, transmissibility = transmissibility,
-                     latency = latency, recovery = recovery, waning = waning,
-                     immune = immune, steps = steps))
-    }, .progress = verbose, .options = furrr::furrr_options(seed = T))
-  make_diffs_model(out, .data)
 }
 
 # contagion_function = attrib ~ 1 + prevalence + threshold + contact + equivalence
