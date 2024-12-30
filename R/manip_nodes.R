@@ -241,6 +241,9 @@ add_changes <- function(.data, changes){
       out <- .infer_active(out, changes)
       # changes <- changes[changes[,1] != min(changes[,1]),]
     }
+    if("diffusion" %in% changes[,3] && !("diffusion" %in% net_node_attributes(.data))){
+      out <- .infer_susceptible(out, changes)
+    }
     .check_changevars(changes)
     .check_varexists(out, changes)
     
@@ -316,6 +319,10 @@ add_changes <- function(.data, changes){
     out <- .data %>% mutate_nodes(active = starts)
   }
   out
+}
+
+.infer_susceptible <- function(.data, changes){
+    .data %>% mutate_nodes(diffusion = "S")
 }
 
 #' @rdname manip_changes
