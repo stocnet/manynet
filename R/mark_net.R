@@ -105,8 +105,9 @@ is_list <- function(.data) {
 is_longitudinal <- function(.data) {
   if(is_manynet(.data)) {
     ig <- as_igraph(.data)
-    atts <- c(igraph::edge_attr_names(ig), names(igraph::graph_attr(ig, "changes")))
-    return("wave" %in% atts | "panel" %in% atts)
+    catts <- names(igraph::graph_attr(ig, "changes"))
+    tatts <- igraph::edge_attr_names(ig)
+    return("time" %in% catts | "wave" %in% tatts | "panel" %in% tatts)
   } else if(is_list(.data)){
     all(lapply(.data, net_nodes)==net_nodes(.data[[1]]))
   } 

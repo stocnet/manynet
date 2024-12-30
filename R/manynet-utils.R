@@ -1,7 +1,8 @@
 # defining global variables more centrally
 utils::globalVariables(c(".data", "obs", 
                          "from", "to", "name", "weight","sign","wave",
-                         "node","value","var","active",
+                         "nodes","event","exposure",
+                         "node","value","var","active","time",
                          "A","B","C","D"))
 
 # Helper function for declaring available methods
