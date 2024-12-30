@@ -343,6 +343,17 @@ filter_changes <- function(.data, ..., .by = NULL){
 
 #' @rdname manip_changes
 #' @examples
+#' select_changes(fict_starwars, node)
+#' @export
+select_changes <- function(.data, ..., .by = NULL){
+  changes <- igraph::graph_attr(.data, "changes")
+  changes <- tidygraph::select(changes, ..., .by = .by)
+  igraph::graph_attr(.data, "changes") <- changes
+  .data
+}
+
+#' @rdname manip_changes
+#' @examples
 #' collect_changes(fict_starwars, time = 3)
 #' @export
 collect_changes <- function(.data, time){

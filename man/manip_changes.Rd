@@ -5,6 +5,7 @@
 \alias{add_changes}
 \alias{mutate_changes}
 \alias{filter_changes}
+\alias{select_changes}
 \alias{collect_changes}
 \alias{apply_changes}
 \title{Modifying changes to nodes over time}
@@ -14,6 +15,8 @@ add_changes(.data, changes)
 mutate_changes(.data, ...)
 
 filter_changes(.data, ..., .by = NULL)
+
+select_changes(.data, ..., .by = NULL)
 
 collect_changes(.data, time)
 
@@ -64,6 +67,7 @@ nodal attributes.
 add_changes(ison_algebra, 
             data.frame(wave = 2, node = 1, var = "active", value = FALSE))
 filter_changes(fict_starwars, node == "Anakin")
+select_changes(fict_starwars, node)
 collect_changes(fict_starwars, time = 3)
 collect_changes(fict_starwars, time = 3)
 }
