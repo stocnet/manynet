@@ -15,11 +15,11 @@
 #'   the network's average infection length.
 #'   - `net_immunity()` measures the proportion of nodes that would need
 #'   to be protected through vaccination, isolation, or recovery for herd immunity to be reached.
-#'   - `net_hazard()` measures the hazard rate or instantaneous probability that
-#'   nodes will adopt/become infected at that time
 #'   
-#' @param diff_model A valid network diffusion model,
-#'   as created by `as_diffusion()` or `play_diffusion()`.
+#' @param .data Network data with nodal changes,
+#'   as created by `play_diffusion()`,
+#'   or a valid network diffusion model,
+#'   as created by `as_diffusion()`.
 #' @inheritParams measure_central_degree
 #' @family measures
 #' @family diffusion
@@ -52,14 +52,17 @@ NULL
 #'   # To calculate the average transmissibility for a given diffusion model
 #'   net_transmissibility(smeg_diff)
 #' @export
-net_transmissibility <- function(diff_model){
-  diff_model <- as_diffusion(diff_model)
+net_transmissibility <- function(.data){
+  diff_model <- as_diffusion(.data)
   out <- diff_model$I_new/diff_model$s
   out <- out[-1]
   out <- out[!is.infinite(out)]
   out <- out[!is.nan(out)]
+  if(inherits(.data, "diff_model")) 
+    net <- attr(.data, "network") else 
+      net <- .data
   make_network_measure(mean(out, na.rm = TRUE),
-                       attr(diff_model, "network"),
+                       net,
                        call = deparse(sys.call()))
 }
 
@@ -79,13 +82,16 @@ net_transmissibility <- function(diff_model){
 #'   # To calculate the average infection length for a given diffusion model
 #'   net_recovery(smeg_diff)
 #' @export
-net_recovery <- function(diff_model, censor = TRUE){
-  diff_model <- as_diffusion(diff_model)
-  recovs <- node_recovery(diff_model)
+net_recovery <- function(.data, censor = TRUE){
+  diff_model <- as_diffusion(.data)
+  recovs <- node_recovery(.data)
   if(censor && any(!is.infinite(recovs) & !is.na(recovs)))
     recovs[is.infinite(recovs)] <- nrow(diff_model)
+  if(inherits(.data, "diff_model")) 
+    net <- attr(.data, "network") else 
+      net <- .data
   make_network_measure(mean(recovs, na.rm = TRUE),
-                       attr(diff_model, "network"),
+                       net,
                        call = deparse(sys.call()))
 }
 
@@ -125,12 +131,14 @@ net_recovery <- function(diff_model, censor = TRUE){
 #'   # To calculate the reproduction number for a given diffusion model
 #'   net_reproduction(smeg_diff)
 #' @export
-net_reproduction <- function(diff_model){
-  diff_model <- as_diffusion(diff_model)
-  net <- attr(diff_model, "network")
-  out <- net_transmissibility(diff_model)/
-    (1/net_recovery(diff_model))
-  out <- min(out, mean(node_deg(net)))
+net_reproduction <- function(.data){
+  # diff_model <- as_diffusion(.data)
+  if(inherits(.data, "diff_model")) 
+    net <- attr(.data, "network") else 
+      net <- .data
+    out <- net_transmissibility(.data)/
+      (1/net_recovery(.data))
+    out <- min(out, mean(node_deg(net)))
   make_network_measure(out, net,
                        call = deparse(sys.call()))
 }
@@ -167,77 +175,16 @@ net_reproduction <- function(diff_model){
 #'   # Calculating the proportion required to achieve herd immunity
 #'   net_immunity(smeg_diff)
 #'   # To find the number of nodes to be vaccinated
-#'   ceiling(net_immunity(smeg_diff) * manynet::net_nodes(smeg))
+#'   net_immunity(smeg_diff, normalized = FALSE)
 #' @export
-net_immunity <- function(diff_model, normalized = TRUE){
-  diff_model <- as_diffusion(diff_model)
-  net <- attr(diff_model, "network")
-  out <- 1 - 1/net_reproduction(diff_model)
+net_immunity <- function(.data, normalized = TRUE){
+  # diff_model <- as_diffusion(.data)
+  if(inherits(.data, "diff_model")) 
+    net <- attr(.data, "network") else 
+      net <- .data
+  out <- 1 - 1/net_reproduction(.data)
   if(!normalized) out <- ceiling(out * net_nodes(net))
   make_network_measure(out, net,
-                       call = deparse(sys.call()))
-}
-
-#' @rdname measure_diffusion_net
-#' @section Hazard rate: 
-#' The hazard rate is the instantaneous probability of adoption/infection at each time point (Allison 1984).
-#' In survival analysis, hazard rate is formally defined as:
-#'
-#' \deqn{%
-#' \lambda(t)=\lim_{h\to +0}\frac{F(t+h)-F(t)}{h}\frac{1}{1-F(t)} %
-#' }{%
-#' \lambda(t-1)= lim (t -> +0) [F(t+h)-F(t)]/h * 1/[1-F(t)] %
-#' }
-#'
-#' By approximating \eqn{h=1}, we can rewrite the equation as
-#'
-#' \deqn{%
-#' \lambda(t)=\frac{F(t+1)-F(t)}{1-F(t)} %
-#' }{%
-#' \lambda(t-1)= [F(t+1)-F(t)]/[1-F(t)] %
-#' }
-#'
-#' If we estimate \eqn{F(t)}, 
-#' the probability of not having adopted the innovation in time \eqn{t}, 
-#' from the proportion of adopters in that time, 
-#' such that \eqn{F(t) \sim q_t/n}{F(t) ~ q(t)/n}, we now have (ultimately for \eqn{t>1}):
-#'
-#' \deqn{%
-#' \lambda(t)=\frac{q_{t+1}/n-q_t/n}{1-q_t/n} = \frac{q_{t+1} - q_t}{n - q_t} = \frac{q_t - q_{t-1}}{n - q_{t-1}} %
-#' }{%
-#' \lambda(t-1)= [q(t+1)/n-q(t)/n]/[1-q(t)/n] = [q(t+1) - q(t)]/[n - q(t)] = [q(t) - q(t-1)]/[n - q(t-1)] %
-#' }
-#' 
-#' where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t}, 
-#' and \eqn{n} is the number of vertices in the graph.
-#'
-#' The shape of the hazard rate indicates the pattern of new adopters over time.
-#' Rapid diffusion with convex cumulative adoption curves will have 
-#' hazard functions that peak early and decay over time. 
-#' Slow concave cumulative adoption curves will have 
-#' hazard functions that are low early and rise over time.
-#' Smooth hazard curves indicate constant adoption whereas 
-#' those that oscillate indicate variability in adoption behavior over time.
-#' @source `{netdiffuseR}`
-#' @references
-#' ## On hazard rates
-#' Allison, Paul D. 1984. 
-#' _Event history analysis: Regression for longitudinal event data_. 
-#' London: Sage Publications.
-#' \doi{10.4135/9781412984195}
-#'
-#' Wooldridge, Jeffrey M. 2010. 
-#' _Econometric Analysis of Cross Section and Panel Data_ (2nd ed.). 
-#' Cambridge: MIT Press.
-#' @examples
-#' # To calculate the hazard rates at each time point
-#' net_hazard(play_diffusion(smeg, transmissibility = 0.3))
-#' @export
-net_hazard <- function(diff_model){
-  diff_model <- as_diffusion(diff_model)
-  out <- (diff_model$I - dplyr::lag(diff_model$I)) / 
-    (diff_model$n - dplyr::lag(diff_model$I))
-  make_network_measure(out, attr(diff_model, "network"),
                        call = deparse(sys.call()))
 }
 
@@ -271,11 +218,14 @@ net_hazard <- function(diff_model){
 #'   smeg_diff <- play_diffusion(smeg, recovery = 0.2)
 #'   net_infection_complete(smeg_diff)
 #' @export
-net_infection_complete <- function(diff_model){
-  diff_model <- as_diffusion(diff_model)
+net_infection_complete <- function(.data){
+  diff_model <- as_diffusion(.data)
   out <- which(diff_model$I == diff_model$n)[1]
   if(is.na(out)) out <- Inf
-  make_network_measure(out, attr(diff_model, "network"),
+  if(inherits(.data, "diff_model")) 
+    net <- attr(.data, "network") else 
+      net <- .data
+  make_network_measure(out, net,
                        call = deparse(sys.call()))
 }
 
@@ -283,22 +233,32 @@ net_infection_complete <- function(diff_model){
 #' @examples
 #'   net_infection_total(smeg_diff)
 #' @export
-net_infection_total <- function(diff_model, normalized = TRUE){
-  diff_model <- as_diffusion(diff_model)
-  out <- sum(diff_model$I_new)
-  if(normalized) out <- out / diff_model$n[length(diff_model$n)]
-  make_network_measure(out, attr(diff_model, "network"),
-                       call = deparse(sys.call()))
+net_infection_total <- function(.data, normalized = TRUE){
+  if(inherits(.data, "diff_model")){
+    diff_model <- as_diffusion(.data)
+    out <- sum(diff_model$I_new)
+    if(normalized) out <- out / diff_model$n[length(diff_model$n)]
+    make_network_measure(out, attr(diff_model, "network"),
+                         call = deparse(sys.call()))
+  } else {
+    out <- sum(as_changelist(.data)$value == "I")
+    if(normalized) out <- out / net_nodes(.data)
+    make_network_measure(out, .data,
+                         call = deparse(sys.call()))
+  }
 }
 
 #' @rdname measure_diffusion_infection 
 #' @examples
 #'   net_infection_peak(smeg_diff)
 #' @export
-net_infection_peak <- function(diff_model){
-  diff_model <- as_diffusion(diff_model)
+net_infection_peak <- function(.data){
+  diff_model <- as_diffusion(.data)
+  if(inherits(.data, "diff_model")) 
+    net <- attr(.data, "network") else 
+      net <- .data
   out <- which(diff_model$I_new == max(diff_model$I_new))[1]
-  make_network_measure(out, attr(diff_model, "network"),
+  make_network_measure(out, net,
                        call = deparse(sys.call()))
 }
 
@@ -342,25 +302,44 @@ NULL
 #'   # To measure when nodes adopted a diffusion/were infected
 #'   (times <- node_adoption_time(smeg_diff))
 #' @export
-node_adoption_time <- function(diff_model){
-  diff_model <- as_diffusion(diff_model)
-  event <- nodes <- NULL
-  out <- summary(diff_model) %>% dplyr::filter(event == "I") %>% 
-    dplyr::distinct(nodes, .keep_all = TRUE) %>% 
-    dplyr::select(nodes,t)
-  net <- attr(diff_model, "network")
-  if(!is_labelled(net))
-    out <- dplyr::arrange(out, nodes) else if (is.numeric(out$nodes))
-      out$nodes <- node_names(net)[out$nodes]
-  out <- stats::setNames(out$t, out$nodes)
-  if(length(out) != net_nodes(net)){
-    full <- rep(Inf, net_nodes(net))
-    names(full) <- `if`(is_labelled(net), 
-                        node_names(net), 
-                        as.character(seq_len(net_nodes(net))))
-    full[match(names(out), names(full))] <- out
-    out <- `if`(is_labelled(net), full, unname(full))
+node_adoption_time <- function(.data){
+
+  if(inherits(.data, "diff_model")){
+    net <- attr(.data, "network") 
+    out <- summary(.data) %>% dplyr::filter(event == "I") %>% 
+      dplyr::distinct(nodes, .keep_all = TRUE) %>% 
+      dplyr::select(nodes,t)
+    if(!is_labelled(net))
+      out <- dplyr::arrange(out, nodes) else if (is.numeric(out$nodes))
+        out$nodes <- node_names(net)[out$nodes]
+    out <- stats::setNames(out$t, out$nodes)
+    if(length(out) != net_nodes(net)){
+      full <- rep(Inf, net_nodes(net))
+      names(full) <- `if`(is_labelled(net), 
+                          node_names(net), 
+                          as.character(seq_len(net_nodes(net))))
+      full[match(names(out), names(full))] <- out
+      out <- `if`(is_labelled(net), full, unname(full))
+    }
+  } else {
+    net <- .data
+    out <- as_changelist(.data) %>% dplyr::filter(value == "I") %>% 
+      dplyr::distinct(node, .keep_all = TRUE) %>% 
+      dplyr::select(node,time)
+    if(!is_labelled(net))
+      out <- dplyr::arrange(out, node) else if (is.numeric(out$node))
+        out$node <- node_names(net)[out$node]
+    out <- stats::setNames(out$time, out$node)
+    if(length(out) != net_nodes(net)){
+      full <- rep(Inf, net_nodes(net))
+      names(full) <- `if`(is_labelled(net), 
+                          node_names(net), 
+                          as.character(seq_len(net_nodes(net))))
+      full[match(names(out), names(full))] <- out
+      out <- `if`(is_labelled(net), full, unname(full))
+    }
   }
+      
   if(!is_labelled(net)) out <- unname(out)
   make_node_measure(out, net)
 }
@@ -387,27 +366,46 @@ node_adoption_time <- function(diff_model){
 #'   # To infer nodes' thresholds
 #'   node_thresholds(smeg_diff)
 #' @export
-node_thresholds <- function(diff_model, normalized = TRUE, lag = 1){
-  diff_model <- as_diffusion(diff_model)
-  event <- nodes <- NULL
-  exposure <- NULL
-  out <- summary(diff_model)
-  net <- attr(diff_model, "network")
-  if(!"exposure" %in% names(out)){
-    out[,'exposure'] <- NA_integer_
-    for(v in unique(out$t)){
-      out$exposure[out$t == v] <- node_exposure(diff_model, 
-                                                time = v-lag)[out$nodes[out$t == v]]
+node_thresholds <- function(.data, normalized = TRUE, lag = 1){
+  if(inherits(.data, "diff_model")){
+    net <- attr(.data, "network") 
+    diff_model <- as_diffusion(.data)
+    out <- summary(diff_model)
+    if(!"exposure" %in% names(out)){
+      out[,'exposure'] <- NA_integer_
+      for(v in unique(out$t)){
+        out$exposure[out$t == v] <- node_exposure(diff_model, 
+                                                  time = v-lag)[out$nodes[out$t == v]]
+      }
     }
+    if(any(out$event == "E")) 
+      out <- out %>% dplyr::filter(event == "E") else 
+        out <- out %>% dplyr::filter(event == "I")
+    out <- out %>% dplyr::distinct(nodes, .keep_all = TRUE) %>% 
+      dplyr::select(nodes, exposure)
+    if(is_labelled(net))
+      out <- stats::setNames(out$exposure, node_names(net)[out$nodes]) else
+        out <- stats::setNames(out$exposure, out$nodes)
+  } else {
+    net <- .data
+    diff_model <- as_diffusion(.data)
+    out <- as_changelist(.data)
+    if(!"exposure" %in% names(out)){
+      out[,'exposure'] <- NA_integer_
+      for(v in unique(out$time)){
+        out$exposure[out$time == v] <- node_exposure(.data, 
+                                                  time = v-lag)[out$node[out$time == v]]
+      }
+    }
+    if(any(out$value == "E")) 
+      out <- out %>% dplyr::filter(value == "E") else 
+        out <- out %>% dplyr::filter(value == "I")
+    out <- out %>% dplyr::distinct(node, .keep_all = TRUE) %>% 
+      dplyr::select(node, exposure)
+    if(is_labelled(net))
+      out <- stats::setNames(out$exposure, node_names(net)[out$node]) else
+        out <- stats::setNames(out$exposure, out$node)
   }
-  if(any(out$event == "E")) 
-    out <- out %>% dplyr::filter(event == "E") else 
-      out <- out %>% dplyr::filter(event == "I")
-  out <- out %>% dplyr::distinct(nodes, .keep_all = TRUE) %>% 
-    dplyr::select(nodes, exposure)
-  if(is_labelled(net))
-    out <- stats::setNames(out$exposure, node_names(net)[out$nodes]) else
-      out <- stats::setNames(out$exposure, out$nodes)
   if(length(out) != net_nodes(net)){
     if(is_labelled(net)){
       full <- stats::setNames(rep(Inf, net_nodes(net)), 
@@ -420,7 +418,9 @@ node_thresholds <- function(diff_model, normalized = TRUE, lag = 1){
     out <- full
   }
   if(is_labelled(net))
-    out <- out[match(node_names(net), names(out))]
+    out <- out[match(node_names(net), names(out))] else {
+      out <- unname(out[order(as.numeric(names(out)))])
+    }
   if(normalized) out <- out / node_deg(net)
   make_node_measure(out, net)
 }
@@ -435,18 +435,29 @@ node_thresholds <- function(diff_model, normalized = TRUE, lag = 1){
 #'   # To measure how long each node remains infected for
 #'   node_recovery(smeg_diff)
 #' @export
-node_recovery <- function(diff_model){
-  diff_model <- as_diffusion(diff_model)
-  nodes <- NULL
-  events <- attr(diff_model, "events")
-  out <- vapply(seq_len(diff_model$n[1]), 
-         function(x) ifelse("I" %in% dplyr::filter(events, nodes == x)$event,
-                          ifelse("R" %in% dplyr::filter(events, nodes == x)$event,
-                               mean(diff(dplyr::filter(events, nodes == x)$t)),
-                               Inf),
-                            NA),
-         FUN.VALUE = numeric(1))
-  make_node_measure(out, attr(diff_model, "network"))
+node_recovery <- function(.data){
+  if(inherits(.data, "diff_model")){
+    net <- attr(.data, "network")
+    events <- attr(.data, "events")
+    out <- vapply(seq_len(.data$n[1]), 
+                  function(x) ifelse("I" %in% dplyr::filter(events, nodes == x)$event,
+                                     ifelse("R" %in% dplyr::filter(events, nodes == x)$event,
+                                            mean(diff(dplyr::filter(events, nodes == x)$t)),
+                                            Inf),
+                                     NA),
+                  FUN.VALUE = numeric(1))
+  } else {
+    net <- .data
+    events <- as_changelist(.data)
+    out <- vapply(seq_len(net_nodes(net)), 
+                  function(x) ifelse("I" %in% dplyr::filter(events, node == x)$value,
+                                     ifelse("R" %in% dplyr::filter(events, node == x)$value,
+                                            mean(diff(dplyr::filter(events, node == x)$time)),
+                                            Inf),
+                                     NA),
+                  FUN.VALUE = numeric(1))
+  }
+  make_node_measure(out, net)
 }
 
 #' @rdname measure_diffusion_node
@@ -469,9 +480,13 @@ node_recovery <- function(diff_model){
 #' @export
 node_exposure <- function(.data, mark, time = 0){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  if(missing(mark) && inherits(.data, "diff_model")){
-    mark <- node_is_infected(.data, time = time)
-    .data <- attr(.data, "network")
+  if(missing(mark)){ 
+    if(inherits(.data, "diff_model")){
+      mark <- node_is_infected(.data, time = time)
+      .data <- attr(.data, "network")
+    } else {
+      mark <- node_is_infected(.data, time = time)
+    }
   }
   .data <- as_tidygraph(.data)
   if(is_weighted(.data) || is_signed(.data)){
@@ -551,9 +566,8 @@ NULL
 #'   (adopts <- node_in_adopter(smeg_diff))
 #'   summary(adopts)
 #' @export
-node_in_adopter <- function(diff_model){
-  diff_model <- as_diffusion(diff_model)
-  toa <- node_adoption_time(diff_model)
+node_in_adopter <- function(.data){
+  toa <- node_adoption_time(.data)
   toa[is.infinite(toa)] <- NA
   avg <- mean(toa, na.rm = TRUE)
   sdv <- stats::sd(toa, na.rm = TRUE)
@@ -563,5 +577,8 @@ node_in_adopter <- function(diff_model){
                               ifelse(avg < toa & toa <= avg + sdv, "Late Majority", 
                                      "Non-Adopter"))))
   out[is.na(out)] <- "Non-Adopter"
-  make_node_member(out, attr(diff_model, "network"))
+  if(inherits(.data, "diff_model")) 
+    net <- attr(.data, "network") else 
+      net <- .data
+  make_node_member(out, net)
 }

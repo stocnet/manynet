@@ -6,25 +6,21 @@
 \alias{net_recovery}
 \alias{net_reproduction}
 \alias{net_immunity}
-\alias{net_hazard}
 \title{Measures of network diffusion}
-\source{
-\code{{netdiffuseR}}
-}
 \usage{
-net_transmissibility(diff_model)
+net_transmissibility(.data)
 
-net_recovery(diff_model, censor = TRUE)
+net_recovery(.data, censor = TRUE)
 
-net_reproduction(diff_model)
+net_reproduction(.data)
 
-net_immunity(diff_model, normalized = TRUE)
-
-net_hazard(diff_model)
+net_immunity(.data, normalized = TRUE)
 }
 \arguments{
-\item{diff_model}{A valid network diffusion model,
-as created by \code{as_diffusion()} or \code{play_diffusion()}.}
+\item{.data}{Network data with nodal changes,
+as created by \code{play_diffusion()},
+or a valid network diffusion model,
+as created by \code{as_diffusion()}.}
 
 \item{censor}{Where some nodes have not yet recovered by the end
 of the simulation, right censored values can be replaced by the number of steps.
@@ -49,8 +45,6 @@ in a diffusion simulation as the network's transmissibility over
 the network's average infection length.
 \item \code{net_immunity()} measures the proportion of nodes that would need
 to be protected through vaccination, isolation, or recovery for herd immunity to be reached.
-\item \code{net_hazard()} measures the hazard rate or instantaneous probability that
-nodes will adopt/become infected at that time
 }
 }
 \section{Transmissibility}{
@@ -124,48 +118,6 @@ To identify how many nodes this would be, multiply this proportion with the numb
 of nodes in the network.
 }
 
-\section{Hazard rate}{
-
-The hazard rate is the instantaneous probability of adoption/infection at each time point (Allison 1984).
-In survival analysis, hazard rate is formally defined as:
-
-\deqn{%
-\lambda(t)=\lim_{h\to +0}\frac{F(t+h)-F(t)}{h}\frac{1}{1-F(t)} %
-}{%
-\lambda(t-1)= lim (t -> +0) [F(t+h)-F(t)]/h * 1/[1-F(t)] %
-}
-
-By approximating \eqn{h=1}, we can rewrite the equation as
-
-\deqn{%
-\lambda(t)=\frac{F(t+1)-F(t)}{1-F(t)} %
-}{%
-\lambda(t-1)= [F(t+1)-F(t)]/[1-F(t)] %
-}
-
-If we estimate \eqn{F(t)},
-the probability of not having adopted the innovation in time \eqn{t},
-from the proportion of adopters in that time,
-such that \eqn{F(t) \sim q_t/n}{F(t) ~ q(t)/n}, we now have (ultimately for \eqn{t>1}):
-
-\deqn{%
-\lambda(t)=\frac{q_{t+1}/n-q_t/n}{1-q_t/n} = \frac{q_{t+1} - q_t}{n - q_t} = \frac{q_t - q_{t-1}}{n - q_{t-1}} %
-}{%
-\lambda(t-1)= [q(t+1)/n-q(t)/n]/[1-q(t)/n] = [q(t+1) - q(t)]/[n - q(t)] = [q(t) - q(t-1)]/[n - q(t-1)] %
-}
-
-where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t},
-and \eqn{n} is the number of vertices in the graph.
-
-The shape of the hazard rate indicates the pattern of new adopters over time.
-Rapid diffusion with convex cumulative adoption curves will have
-hazard functions that peak early and decay over time.
-Slow concave cumulative adoption curves will have
-hazard functions that are low early and rise over time.
-Smooth hazard curves indicate constant adoption whereas
-those that oscillate indicate variability in adoption behavior over time.
-}
-
 \examples{
   smeg <- generate_smallworld(15, 0.025)
   smeg_diff <- play_diffusion(smeg, recovery = 0.2)
@@ -179,9 +131,7 @@ those that oscillate indicate variability in adoption behavior over time.
   # Calculating the proportion required to achieve herd immunity
   net_immunity(smeg_diff)
   # To find the number of nodes to be vaccinated
-  ceiling(net_immunity(smeg_diff) * manynet::net_nodes(smeg))
-# To calculate the hazard rates at each time point
-net_hazard(play_diffusion(smeg, transmissibility = 0.3))
+  net_immunity(smeg_diff, normalized = FALSE)
 }
 \references{
 \subsection{On epidemiological models}{
@@ -211,18 +161,6 @@ Garnett, G.P. 2005.
 "Role of herd immunity in determining the effect of vaccines against sexually transmitted disease".
 \emph{The Journal of Infectious Diseases}, 191(1): S97-106.
 \doi{10.1086/425271}
-}
-
-\subsection{On hazard rates}{
-
-Allison, Paul D. 1984.
-\emph{Event history analysis: Regression for longitudinal event data}.
-London: Sage Publications.
-\doi{10.4135/9781412984195}
-
-Wooldridge, Jeffrey M. 2010.
-\emph{Econometric Analysis of Cross Section and Panel Data} (2nd ed.).
-Cambridge: MIT Press.
 }
 }
 \seealso{
