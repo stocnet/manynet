@@ -364,10 +364,11 @@ select_changes <- function(.data, ..., .by = NULL){
 #' collect_changes(fict_starwars, time = 3)
 #' @export
 collect_changes <- function(.data, time){
+  t <- time
   changes <- igraph::graph_attr(.data, "changes")
   changes <- changes %>% 
-    dplyr::filter(wave <= time) %>% 
-    dplyr::arrange(node, var, wave) %>% 
+    dplyr::filter(time <= t) %>% 
+    dplyr::arrange(node, var, time) %>% 
     dplyr::group_by(node, var) %>% 
     dplyr::mutate(value = dplyr::last(value)) %>% 
     dplyr::distinct(node, var, value)

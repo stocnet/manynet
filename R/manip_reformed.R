@@ -288,7 +288,7 @@ to_time.tbl_graph <- function(.data, time){
   } else if(is_longitudinal(.data)){
     out <- .data
     if(is_changing(out)){
-      if(any(time >= as_changelist(.data)$wave)){
+      if(any(time >= as_changelist(.data)$time)){
         out <- apply_changes(out, time)
       } else {
         igraph::graph_attr(out, "changes") <- NULL

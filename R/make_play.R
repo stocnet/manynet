@@ -270,7 +270,7 @@ play_diffusion <- function(.data,
     make_diff_model(events, report, .data)
   } else {
     .data <- .data %>% mutate_nodes(diffusion = "S")
-    events <- data.frame(wave = events$t, node = events$nodes, 
+    events <- data.frame(time = events$t, node = events$nodes, 
                          var = "diffusion", value = events$event)
     add_changes(.data, events)
   }

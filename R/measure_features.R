@@ -413,7 +413,7 @@ NULL
 net_waves <- function(.data){
   tie_waves <- length(unique(tie_attribute(.data, "wave")))
   if(is_changing(.data)){
-    chltime <- as_changelist(.data)$wave
+    chltime <- as_changelist(.data)$time
     chg_waves <- (max(chltime)+1) - max(min(chltime)-1, 0)
   } else chg_waves <- 0
   max(tie_waves, chg_waves)    

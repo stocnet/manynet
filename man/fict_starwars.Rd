@@ -24,14 +24,14 @@
 #> 
 #> -- Changes
 #> # A tibble: 184 x 4
-#>    wave node           var    value
-#>   <int> <chr>          <chr>  <chr>
-#> 1     2 Beru           active TRUE 
-#> 2     2 Boba Fett      active TRUE 
-#> 3     2 Boss Nass      active FALSE
-#> 4     2 Bravo Three    active FALSE
-#> 5     2 Bravo Two      active FALSE
-#> 6     2 Captain Panaka active FALSE
+#>    time  node var    value
+#>   <int> <int> <chr>  <chr>
+#> 1     2     7 active TRUE 
+#> 2     2    10 active TRUE 
+#> 3     2    11 active FALSE
+#> 4     2    13 active FALSE
+#> 5     2    14 active FALSE
+#> 6     2    18 active FALSE
 #> # i 178 more rows
 #> 
 #> -- Ties

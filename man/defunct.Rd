@@ -90,6 +90,7 @@
 \alias{node_by_quad}
 \alias{net_by_quad}
 \alias{layout_tbl_graph_quad}
+\alias{net_hazard}
 \title{Functions that have been renamed, superseded, or are no longer working}
 \usage{
 pkg_data(pkg = "manynet")
@@ -295,6 +296,8 @@ node_by_quad(.data)
 net_by_quad(.data)
 
 layout_tbl_graph_quad(.data, circular = FALSE, times = 1000)
+
+net_hazard(.data)
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
@@ -484,6 +487,8 @@ wherever possible and update your scripts accordingly.
 \item \code{net_by_quad()}: Deprecated on 2024-10-10.
 
 \item \code{layout_tbl_graph_quad()}: Deprecated on 2024-10-10.
+
+\item \code{net_hazard()}: Deprecated on 2024-12-30.
 
 }}
 \keyword{internal}

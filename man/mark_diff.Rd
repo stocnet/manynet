@@ -29,9 +29,6 @@ node_is_exposed(.data, mark)
 \item{time}{A time step at which nodes are identified.}
 
 \item{mark}{vector denoting which nodes are infected}
-
-\item{diff_model}{A diff_model object,
-created either by \code{play_diffusion()} or \code{as_diffusion()}.}
 }
 \description{
 These functions return logical vectors the length of the

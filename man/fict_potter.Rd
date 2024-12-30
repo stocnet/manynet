@@ -23,7 +23,7 @@
 #> 
 #> -- Changes
 #> # A tibble: 81 x 4
-#>    wave  node var    value
+#>    time  node var    value
 #>   <int> <int> <chr>  <lgl>
 #> 1     2     9 active TRUE 
 #> 2     2    21 active TRUE 
