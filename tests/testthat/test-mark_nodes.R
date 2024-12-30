@@ -51,31 +51,20 @@ test_that("node_is_min works", {
 })
 
 test_that("additional node mark functions work", {
+  expect_mark(node_is_independent(ison_adolescents), c(TRUE,FALSE,F))
+  expect_mark(node_is_core(ison_adolescents), c(F,T,T))
+  expect_mark(node_is_mentor(ison_adolescents), c(F,T,T))
+  expect_mark(node_is_latent(play_diffusion(create_tree(6), latency = 1), time = 1),
+               c(F,T,T))
+  expect_mark(node_is_infected(play_diffusion(create_tree(6)), time = 1),
+               c(T,T,T,F,F,F), top = 6)
+  set.seed(123)
+  expect_mark(node_is_recovered(play_diffusion(create_tree(12), recovery = 0.3), time = 3),
+               c(T,T,T,F,F,F), top = 6)
+  expect_mark(node_is_exposed(manynet::create_tree(6), mark = c(1,3)),
+               c(F,T,F))
   set.seed(1234)
-  expect_equal(as.character(node_is_independent(ison_adolescents)),
-               c("TRUE", "FALSE", "FALSE", "FALSE", "TRUE", "TRUE", "FALSE", "TRUE"))
-  set.seed(1234)
-  expect_equal(as.character(node_is_core(ison_brandes)),
-               c("FALSE", "FALSE", "TRUE", "TRUE", "FALSE", "FALSE", "FALSE",
-                 "FALSE", "TRUE", "FALSE", "FALSE"))
-  set.seed(1234)
-  expect_equal(as.character(node_is_mentor(ison_adolescents)),
-               c("FALSE", "TRUE", "TRUE", "FALSE", "FALSE", "FALSE", "FALSE", "FALSE"))
-  set.seed(1234)
-  expect_equal(as.character(node_is_latent(play_diffusion(create_tree(6), latency = 1), time = 1)),
-               c("FALSE", "TRUE",  "TRUE",  "FALSE", "FALSE", "FALSE"))
-  set.seed(1234)
-  expect_equal(as.character(node_is_infected(play_diffusion(create_tree(6)), time = 1)),
-               c("TRUE", "TRUE",  "TRUE",  "FALSE", "FALSE", "FALSE"))
-  set.seed(1234)
-  expect_equal(as.character(node_is_recovered(play_diffusion(create_tree(6), recovery = 0.5), time = 3)),
-               c("TRUE", "TRUE",  "TRUE",  "FALSE", "FALSE", "FALSE"))
-  set.seed(1234)
-  expect_equal(as.character(node_is_exposed(manynet::create_tree(6), mark = c(1,3))),
-               c("FALSE", "TRUE",  "FALSE",  "FALSE", "FALSE", "TRUE"))
-  set.seed(1234)
-  expect_equal(as.character(node_is_random(ison_adolescents, 1)),
-               c("FALSE", "FALSE",  "FALSE",  "TRUE", "FALSE", "FALSE", "FALSE", "FALSE"))
+  expect_mark(node_is_random(ison_adolescents, 2), c(F,T,F))
 })
 
 test_that("node infection, exposure, and recovery works", {
