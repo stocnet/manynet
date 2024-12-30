@@ -735,3 +735,11 @@ layout_tbl_graph_quad <- function(.data, circular = FALSE, times = 1000) {
   layout_tbl_graph_tetrad(.data, circular = circular, times = times)
 }
 
+#' @describeIn defunct Deprecated on 2024-12-30.
+#' @export
+net_hazard <- function(.data) {
+  .Deprecated("net_by_hazard", package = "manynet",
+              old = "net_hazard")
+  net_by_hazard(.data)
+}
+
