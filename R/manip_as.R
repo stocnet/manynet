@@ -985,16 +985,57 @@ as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
 #' @importFrom dplyr tibble
 #' @examples
 #'   # How to create a diff_model object from (basic) observed data
-#'   events <- data.frame(t = c(0,1,1,2,3), 
-#'                        nodes = c(1,2,3,2,4), 
-#'                        event = c("I","I","I","R","I"))
-#'   as_diffusion(create_filled(4), events = events)
+#'   events <- data.frame(time = c(0,1,1,2,3), 
+#'                        node = c(1,2,3,2,4),
+#'                        var = "diffusion", 
+#'                        value = c("I","I","I","R","I"))
+#'   add_changes(create_filled(4), events)
 #' @export
 as_diffusion <- function(.data, twomode = FALSE, events) UseMethod("as_diffusion")
 
 #' @export
 as_diffusion.diff_model <- function(.data, twomode = FALSE, events) {
   .data
+}
+
+#' @export
+as_diffusion.mnet <- function(.data, twomode = FALSE, events) {
+  events <- as_changelist(.data)
+  nodes <- net_nodes(.data)
+  sumchanges <- events %>% dplyr::group_by(time) %>% 
+    dplyr::reframe(I_new = sum(value == "I"),
+                   E_new = sum(value == "E"),
+                   R_new = sum(value == "R"))
+  report <- dplyr::tibble(time = seq_len(max(events$time)) - 1,
+                          n = nodes) %>% 
+    dplyr::left_join(sumchanges, by = dplyr::join_by(time))
+  report[is.na(report)] <- 0
+  report$R <- cumsum(report$R_new)
+  report$I <- cumsum(report$I_new) - report$R
+  report$E <- ifelse(report$E_new == 0 & 
+                       cumsum(report$E_new) == max(cumsum(report$E_new)),
+                     report$E_new, cumsum(report$E_new))
+  report$E <- ifelse(report$R + report$I + report$E > report$n,
+                     report$n - (report$R + report$I),
+                     report$E)
+  report$S <- report$n - report$R - report$I - report$E
+  report$s <- vapply(report$time, function(t){
+    twin <- dplyr::filter(events, events$time <= t)
+    infected <- dplyr::filter(twin, twin$value == "I")$node
+    recovered <- dplyr::filter(twin, twin$value == "R")$node
+    infected <- setdiff(infected, recovered)
+    expos <- node_is_exposed(.data, infected)
+    expos[recovered] <- F
+    sum(expos)
+  }, numeric(1) )
+  if (any(report$R + report$I + report$E + report$S != report$n)) {
+    cli::cli_abort("Oops, something is wrong")
+  }
+  report <- dplyr::select(report, 
+                          dplyr::any_of(c("time", "n", "S", "s", "E", "E_new", 
+                                          "I", "I_new", "R", "R_new")))
+  # make_diff_model(events, report, .data)
+  report
 }
 
 #' @export
