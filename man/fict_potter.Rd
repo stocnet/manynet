@@ -17,9 +17,7 @@
 #> 2 Alicia Spinnet          1989 female Gryffindor TRUE  
 #> 3 Angelina Johnson        1989 female Gryffindor TRUE  
 #> 4 Anthony Goldstein       1991 male   Ravenclaw  TRUE  
-#> 5 Blaise Zabini           1991 male   Slytherin  TRUE  
-#> 6 C. Warrington           1989 male   Slytherin  TRUE  
-#> # i 58 more rows
+#> # i 60 more rows
 #> 
 #> -- Changes
 #> # A tibble: 81 x 4
@@ -29,9 +27,7 @@
 #> 2     2    21 active TRUE 
 #> 3     2    35 active TRUE 
 #> 4     2    39 active FALSE
-#> 5     3    12 active TRUE 
-#> 6     3    45 active FALSE
-#> # i 75 more rows
+#> # i 77 more rows
 #> 
 #> -- Ties
 #> # A tibble: 544 x 3
@@ -41,9 +37,7 @@
 #> 2    11    25     1
 #> 3    11    26     1
 #> 4    11    44     1
-#> 5    11    56     1
-#> 6    11    58     1
-#> # i 538 more rows
+#> # i 540 more rows
 #> 
 }\if{html}{\out{</div>}}
 }

@@ -17,9 +17,7 @@
 #> 2 Admiral Statura Human   Garel     male     172 black      brown     light     
 #> 3 Anakin          Human   Tatooine  male     188 blond      blue      fair      
 #> 4 Bail Organa     Human   Alderaan  male     191 black      brown     tan       
-#> 5 Bala-Tik        <NA>    <NA>      male     180 brown      brown     light     
-#> 6 Bb-8            Droid   Hosnian ~ none      67 none       black     none      
-#> # i 104 more rows
+#> # i 106 more rows
 #> # i 4 more variables: birth_year <dbl>, mass <dbl>, faction <chr>, active <lgl>
 #> 
 #> -- Changes
@@ -30,9 +28,7 @@
 #> 2     2    10 active TRUE 
 #> 3     2    11 active FALSE
 #> 4     2    13 active FALSE
-#> 5     2    14 active FALSE
-#> 6     2    18 active FALSE
-#> # i 178 more rows
+#> # i 180 more rows
 #> 
 #> -- Ties
 #> # A tibble: 563 x 4
@@ -42,9 +38,7 @@
 #> 2    80    79     14     1
 #> 3    80     3     16     1
 #> 4    80   106      3     1
-#> 5    80    15      2     1
-#> 6    80    53      2     1
-#> # i 557 more rows
+#> # i 559 more rows
 #> 
 }\if{html}{\out{</div>}}
 }

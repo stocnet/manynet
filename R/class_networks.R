@@ -50,10 +50,11 @@ NULL
 #' @rdname make_mnet
 #' @param x An object of class "mnet" or "tbl_graph".
 #' @param ... Other arguments passed to or from other methods.
-#' @param n Number of observations to print in each network component,
+#' @param n Number of observations to print across all network components,
 #'   i.e. nodes, changes, and ties.
+#'   By default 12.
 #' @export
-print.mnet <- function(x, ..., n = 6) {
+print.mnet <- function(x, ..., n = 12) {
   arg_list <- list(...)
   arg_list[['useS4']] <- NULL
   if(!is.null(igraph::graph_attr(x, "name"))) {
@@ -71,6 +72,8 @@ print.mnet <- function(x, ..., n = 6) {
   cli::cli_end()
   top <- dplyr::as_tibble(tidygraph::activate(x, "nodes"))
   bottom <- dplyr::as_tibble(tidygraph::activate(x, "edges"))
+  if(!is.null(igraph::graph_attr(x, "changes"))) n <- ceiling(n/3) else 
+    n <- ceiling(n/2)
   if (ncol(top)>0){
     cli::cli_par()
     cli::cli_h3("Nodes")

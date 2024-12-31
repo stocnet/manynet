@@ -1144,6 +1144,7 @@ as_diffnet.diff_model <- function(.data,
       out$nodes <- node_names(as_igraph(.data))[out$nodes]
   toa <- stats::setNames(out$t, out$nodes)
   if(is_dynamic(.data)){
+    mnet_unavailable()
     # netdiffuseR::igraph_to_diffnet(graph.list = to_waves(.data))
   } else {
     graph <- as_tidygraph(.data) %>% mutate(toa = as.numeric(toa)) %>% as_igraph()

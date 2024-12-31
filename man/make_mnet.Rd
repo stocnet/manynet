@@ -6,7 +6,7 @@
 \alias{print_all}
 \title{Multilevel, multiplex, multimodal, signed, dynamic or longitudinal changing networks}
 \usage{
-\method{print}{mnet}(x, ..., n = 6)
+\method{print}{mnet}(x, ..., n = 12)
 
 print_all(x, ...)
 }
@@ -15,8 +15,9 @@ print_all(x, ...)
 
 \item{...}{Other arguments passed to or from other methods.}
 
-\item{n}{Number of observations to print in each network component,
-i.e. nodes, changes, and ties.}
+\item{n}{Number of observations to print across all network components,
+i.e. nodes, changes, and ties.
+By default 12.}
 }
 \description{
 The 'mnet' class of network object is an additional class layered on top of
