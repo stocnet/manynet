@@ -29,8 +29,6 @@ Imports:
 Suggests:
     BiocManager,
     concaveman,
-    future,
-    furrr,
     gganimate,
     ggdendro,
     ggforce,

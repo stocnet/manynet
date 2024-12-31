@@ -16,6 +16,10 @@
 #'   - `net_length()` measures the average path length in the network.
 #'   - `net_independence()` measures the independence number, 
 #'   or size of the largest independent set in the network.
+#'   - `net_strength()` measures the number of ties that would need to be
+#'   removed from a network to increase its number of components.
+#'   - `net_toughness()` measures the number of nodes that would need to be
+#'   removed from a network to increase its number of components.
 #'   
 #' @inheritParams mark_is
 #' @name measure_cohesion

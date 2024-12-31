@@ -198,7 +198,6 @@ reference:
       - measure_heterogeneity
   - subtitle: "Dynamics"
     contents:
-      - measure_over
       - measure_periods
       - starts_with("measure_diffusion")
     

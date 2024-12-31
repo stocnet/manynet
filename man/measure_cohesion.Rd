@@ -57,6 +57,10 @@ from the network needed to increase the number of components.
 \item \code{net_length()} measures the average path length in the network.
 \item \code{net_independence()} measures the independence number,
 or size of the largest independent set in the network.
+\item \code{net_strength()} measures the number of ties that would need to be
+removed from a network to increase its number of components.
+\item \code{net_toughness()} measures the number of nodes that would need to be
+removed from a network to increase its number of components.
 }
 }
 \section{Cohesion}{
