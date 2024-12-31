@@ -24,7 +24,7 @@ to_ties() projects a network to one where the ties become nodes and incident nod
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
       </span>
     </div>
 
@@ -98,22 +98,22 @@ of the second node set's (e.g. columns) joint affiliations to nodes in the first
 
 <dt id="arg-similarity">similarity<a class="anchor" aria-label="anchor" href="#arg-similarity"></a></dt>
 <dd><p>Method for establishing ties,
-currently "count" (default), "jaccard", or "rand".
-"count" calculates the number of coinciding ties,
+currently "count" (default), "jaccard", or "rand".</p><ul><li><p>"count" calculates the number of coinciding ties,
 and can be interpreted as indicating the degree of opportunities
-between nodes.
-"jaccard" uses this count as the numerator in a proportion,
+between nodes.</p></li>
+<li><p>"jaccard" uses this count as the numerator in a proportion,
 where the denominator consists of any cell where either node has a tie.
-It can be interpreted as opportunity weighted by participation.
-"rand", or the Simple Matching Coefficient,
+It can be interpreted as opportunity weighted by participation.</p></li>
+<li><p>"rand", or the Simple Matching Coefficient,
 is a proportion where the numerator consists of the count of cells where
 both nodes are present or both are absent,
 over all possible cells.
 It can be interpreted as the (weighted) degree of behavioral mirroring
-between two nodes.
-"pearson" (Pearson's coefficient) and "yule" (Yule's Q)
+between two nodes.</p></li>
+<li><p>"pearson" (Pearson's coefficient) and "yule" (Yule's Q)
 produce correlations for valued and binary data, respectively.
-Note that Yule's Q has a straightforward interpretation related to the odds ratio.</p></dd>
+Note that Yule's Q has a straightforward interpretation related to the odds ratio.</p></li>
+</ul></dd>
 
 </dl></div>
     <div id="value">
@@ -149,9 +149,12 @@ Below are the currently implemented S3 methods:</p><table class="table table"><t
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">to_mode1</span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> # Southern Women Data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> # A labelled, weighted, undirected network of 18 women and 139 participation</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ties</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Southern Women Data</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, weighted, undirected network of 18 women and 139 participation</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 18 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   name      Surname    Title</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
@@ -162,6 +165,8 @@ Below are the currently implemented S3 methods:</p><table class="table table"><t
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Charlotte McDowd     Miss </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Frances   Anderson   Miss </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 12 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 139 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to weight</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -172,10 +177,13 @@ Below are the currently implemented S3 methods:</p><table class="table table"><t
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     1     6      4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     1     7      3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 133 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu">to_mode2</span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> # Southern Women Data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> # A labelled, weighted, undirected network of 14 women and 66 participation</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ties</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Southern Women Data</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, weighted, undirected network of 14 women and 66 participation</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 14 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   name  Surname Title</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
@@ -186,6 +194,8 @@ Below are the currently implemented S3 methods:</p><table class="table table"><t
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> E5    2/25    <span style="color: #BB0000;">NA</span>   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> E6    5/19    <span style="color: #BB0000;">NA</span>   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 8 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 66 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to weight</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -196,10 +206,14 @@ Below are the currently implemented S3 methods:</p><table class="table table"><t
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     1     6      3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     1     8      3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 60 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co">#graphr(to_mode1(ison_southern_women))</span></span></span>
 <span class="r-in"><span><span class="co">#graphr(to_mode2(ison_southern_women))</span></span></span>
 <span class="r-in"><span><span class="fu">to_ties</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> # A labelled, undirected network of 10 nodes and 20 ties</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Line graph</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 10 nodes and 20 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   name      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
@@ -210,6 +224,8 @@ Below are the currently implemented S3 methods:</p><table class="table table"><t
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Alice-Dale</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Jane-Dale </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 20 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
@@ -220,6 +236,7 @@ Below are the currently implemented S3 methods:</p><table class="table table"><t
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     4     5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2     5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 14 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co">#graphr(to_ties(ison_adolescents))</span></span></span>
 </code></pre></div>
     </div>

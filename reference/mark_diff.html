@@ -24,7 +24,7 @@ node_is_recovered() marks nodes that are recovered at a particular time point.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
       </span>
     </div>
 
@@ -76,11 +76,11 @@ nodes in a network identifying which hold certain properties or positions in the
 </ul></div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">node_is_latent</span><span class="op">(</span><span class="va">diff_model</span>, time <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">node_is_latent</span><span class="op">(</span><span class="va">.data</span>, time <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">node_is_infected</span><span class="op">(</span><span class="va">diff_model</span>, time <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="fu">node_is_infected</span><span class="op">(</span><span class="va">.data</span>, time <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">node_is_recovered</span><span class="op">(</span><span class="va">diff_model</span>, time <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="fu">node_is_recovered</span><span class="op">(</span><span class="va">.data</span>, time <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">node_is_exposed</span><span class="op">(</span><span class="va">.data</span>, <span class="va">mark</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -89,22 +89,17 @@ nodes in a network identifying which hold certain properties or positions in the
     <h2>Arguments</h2>
 
 
-<dl><dt id="arg-diff-model">diff_model<a class="anchor" aria-label="anchor" href="#arg-diff-model"></a></dt>
-<dd><p>A diff_model object,
-created either by <code><a href="make_play.html">play_diffusion()</a></code> or <code><a href="manip_as.html">as_diffusion()</a></code>.</p></dd>
-
-
-<dt id="arg-time">time<a class="anchor" aria-label="anchor" href="#arg-time"></a></dt>
-<dd><p>A time step at which nodes are identified.</p></dd>
-
-
-<dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
+<dl><dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
 <dd><p>An object of a manynet-consistent class:</p><ul><li><p>matrix (adjacency or incidence) from <code>{base}</code> R</p></li>
 <li><p>edgelist, a data frame from <code>{base}</code> R or tibble from <code>{tibble}</code></p></li>
 <li><p>igraph, from the <code>{igraph}</code> package</p></li>
 <li><p>network, from the <code>{network}</code> package</p></li>
 <li><p>tbl_graph, from the <code>{tidygraph}</code> package</p></li>
 </ul></dd>
+
+
+<dt id="arg-time">time<a class="anchor" aria-label="anchor" href="#arg-time"></a></dt>
+<dd><p>A time step at which nodes are identified.</p></dd>
 
 
 <dt id="arg-mark">mark<a class="anchor" aria-label="anchor" href="#arg-mark"></a></dt>
@@ -147,7 +142,7 @@ in that diffusion.</p>
 <span class="r-in"><span>  <span class="co"># To mark nodes that are recovered by a particular time point</span></span></span>
 <span class="r-in"><span>  <span class="fu">node_is_recovered</span><span class="op">(</span><span class="fu"><a href="make_play.html">play_diffusion</a></span><span class="op">(</span><span class="fu"><a href="make_create.html">create_tree</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span>, recovery <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>, time <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   V1    V2    V3    V4    V5    V6   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> TRUE  TRUE  FALSE FALSE FALSE FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> TRUE  FALSE TRUE  FALSE FALSE FALSE</span>
 <span class="r-in"><span>  <span class="co"># To mark which nodes are currently exposed</span></span></span>
 <span class="r-in"><span>  <span class="op">(</span><span class="va">expos</span> <span class="op">&lt;-</span> <span class="fu">node_is_exposed</span><span class="op">(</span><span class="fu">manynet</span><span class="fu">::</span><span class="fu"><a href="make_create.html">create_tree</a></span><span class="op">(</span><span class="fl">14</span><span class="op">)</span>, mark <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   V1    V2    V3    V4    V5    V6    V7    V8    V9    V10   V11   V12   V13  </span>

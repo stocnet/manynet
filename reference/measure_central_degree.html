@@ -41,7 +41,7 @@ including for two-mode networks."><meta property="og:image" content="https://sto
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
       </span>
     </div>
 
@@ -196,13 +196,28 @@ and two centralization scores if the object was two-mode.</p>
 <p>Depending on how and what kind of an object is passed to the function,
 the function will return a <code>tidygraph</code> object where the nodes have been updated</p>
     </div>
+    <div id="degree-centrality">
+    <h2>Degree centrality</h2>
+
+
+<p>A node's degree is the number of connections it has.
+It is also sometimes called the valency of a node, \(d(v)\).
+The maximum degree in a network is often denoted \(\Delta (G)\) and
+the minimum degree in a network \(\delta (G)\).
+The total degree of a network is the sum of all degrees, \(\sum_v d(v)\).
+The degree sequence is the set of all nodes' degrees,
+ordered from largest to smallest.
+Directed networks discriminate between
+outdegree (degree of outgoing ties) and
+indegree (degree of incoming ties).</p>
+    </div>
     <div id="leverage-centrality">
     <h2>Leverage centrality</h2>
 
 
 <p>Leverage centrality concerns the degree of a node compared with that of its
 neighbours, \(J\):
-$$C_L(i) = \frac{1}{deg(i)} \sum_{j \in J(i)} \frac{deg(i) - deg(j)}{deg(i) + deg(j)}$$</p>
+$$C_L(i) = \frac{1}{d(i)} \sum_{j \in J(i)} \frac{d(i) - d(j)}{d(i) + d(j)}$$</p>
     </div>
     <div id="references">
     <h2>References</h2>

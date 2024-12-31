@@ -26,7 +26,7 @@ gender, and their house assigned by the sorting hat are included."><meta propert
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
       </span>
     </div>
 
@@ -88,29 +88,40 @@ gender, and their house assigned by the sorting hat are included.</p>
 
     <div id="format">
     <h2>Format</h2>
-    <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#&gt; # Harry Potter</span></span>
+    <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#&gt; -- # Harry Potter support network ----------------------------------------------</span></span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="co">#&gt; # A longitudinal, labelled, complex, directed network of 64 students and 544</span></span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="co">#&gt; support arcs</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="co">#&gt; # A tibble: 64 x 4</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="co">#&gt;   name              schoolyear gender house</span></span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="co">#&gt;   &lt;chr&gt;                  &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="co">#&gt; 1 Adrian Pucey            1989 male   Slytherin</span></span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="co">#&gt; 2 Alicia Spinnet          1989 female Gryffindor</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#&gt; 3 Angelina Johnson        1989 female Gryffindor</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#&gt; 4 Anthony Goldstein       1991 male   Ravenclaw</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#&gt; 5 Blaise Zabini           1991 male   Slytherin</span></span>
-<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#&gt; 6 C. Warrington           1989 male   Slytherin</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#&gt; # i 58 more rows</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#&gt; # A tibble: 544 x 3</span></span>
-<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#&gt;    from    to  wave</span></span>
-<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;dbl&gt;</span></span>
-<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#&gt; 1     2     2     2</span></span>
-<span id="cb1-18"><a href="#cb1-18"></a><span class="co">#&gt; 2     2     2     3</span></span>
-<span id="cb1-19"><a href="#cb1-19"></a><span class="co">#&gt; 3     2     2     5</span></span>
-<span id="cb1-20"><a href="#cb1-20"></a><span class="co">#&gt; 4     2     3     2</span></span>
-<span id="cb1-21"><a href="#cb1-21"></a><span class="co">#&gt; 5     2     3     3</span></span>
-<span id="cb1-22"><a href="#cb1-22"></a><span class="co">#&gt; 6     2     3     5</span></span>
-<span id="cb1-23"><a href="#cb1-23"></a><span class="co">#&gt; # i 538 more rows</span></span></code></pre><p></p></div>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co">#&gt; support arcs over 6 waves</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="co">#&gt;</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="co">#&gt; -- Nodes</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="co">#&gt; # A tibble: 64 x 5</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co">#&gt;   name              schoolyear gender house      active</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="co">#&gt;   &lt;chr&gt;                  &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;      &lt;logi&gt;</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#&gt; 1 Adrian Pucey            1989 male   Slytherin  TRUE</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#&gt; 2 Alicia Spinnet          1989 female Gryffindor TRUE</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#&gt; 3 Angelina Johnson        1989 female Gryffindor TRUE</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#&gt; 4 Anthony Goldstein       1991 male   Ravenclaw  TRUE</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#&gt; # i 60 more rows</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#&gt;</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#&gt; -- Changes</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#&gt; # A tibble: 81 x 4</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#&gt;    time  node var    value</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;lgl&gt;</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="co">#&gt; 1     2     9 active TRUE</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="co">#&gt; 2     2    21 active TRUE</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a><span class="co">#&gt; 3     2    35 active TRUE</span></span>
+<span id="cb1-22"><a href="#cb1-22"></a><span class="co">#&gt; 4     2    39 active FALSE</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a><span class="co">#&gt; # i 77 more rows</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a><span class="co">#&gt;</span></span>
+<span id="cb1-25"><a href="#cb1-25"></a><span class="co">#&gt; -- Ties</span></span>
+<span id="cb1-26"><a href="#cb1-26"></a><span class="co">#&gt; # A tibble: 544 x 3</span></span>
+<span id="cb1-27"><a href="#cb1-27"></a><span class="co">#&gt;    from    to  wave</span></span>
+<span id="cb1-28"><a href="#cb1-28"></a><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;dbl&gt;</span></span>
+<span id="cb1-29"><a href="#cb1-29"></a><span class="co">#&gt; 1    11    11     1</span></span>
+<span id="cb1-30"><a href="#cb1-30"></a><span class="co">#&gt; 2    11    25     1</span></span>
+<span id="cb1-31"><a href="#cb1-31"></a><span class="co">#&gt; 3    11    26     1</span></span>
+<span id="cb1-32"><a href="#cb1-32"></a><span class="co">#&gt; 4    11    44     1</span></span>
+<span id="cb1-33"><a href="#cb1-33"></a><span class="co">#&gt; # i 540 more rows</span></span>
+<span id="cb1-34"><a href="#cb1-34"></a><span class="co">#&gt;</span></span></code></pre><p></p></div>
     </div>
     <div id="references">
     <h2>References</h2>

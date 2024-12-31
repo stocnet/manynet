@@ -21,7 +21,7 @@ their age, and how many years they had been at the firm."><meta property="og:ima
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
       </span>
     </div>
 
@@ -78,28 +78,34 @@ their age, and how many years they had been at the firm.</p>
 
     <div id="format">
     <h2>Format</h2>
-    <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#&gt; # A multiplex, directed network of 71 nodes and 2571 friends, advice, and</span></span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="co">#&gt; cowork arcs</span></span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="co">#&gt; # A tibble: 71 x 7</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="co">#&gt;   status  gender office   seniority   age practice   school</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;</span></span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="co">#&gt; 1 partner man    Boston          31    64 litigation Harvard/Yale</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="co">#&gt; 2 partner man    Boston          32    62 corporate  Harvard/Yale</span></span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="co">#&gt; 3 partner man    Hartford        13    67 litigation Harvard/Yale</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#&gt; 4 partner man    Boston          31    59 corporate  Other</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#&gt; 5 partner man    Hartford        31    59 litigation UConn</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#&gt; 6 partner man    Hartford        29    55 litigation Harvard/Yale</span></span>
-<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#&gt; # i 65 more rows</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#&gt; # A tibble: 2,571 x 3</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#&gt;    from    to type</span></span>
-<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;chr&gt;</span></span>
-<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#&gt; 1     1     2 friends</span></span>
-<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#&gt; 2     1     2 advice</span></span>
-<span id="cb1-18"><a href="#cb1-18"></a><span class="co">#&gt; 3     1     4 friends</span></span>
-<span id="cb1-19"><a href="#cb1-19"></a><span class="co">#&gt; 4     1     8 friends</span></span>
-<span id="cb1-20"><a href="#cb1-20"></a><span class="co">#&gt; 5     1    17 friends</span></span>
-<span id="cb1-21"><a href="#cb1-21"></a><span class="co">#&gt; 6     1    17 advice</span></span>
-<span id="cb1-22"><a href="#cb1-22"></a><span class="co">#&gt; # i 2,565 more rows</span></span></code></pre><p></p></div>
+    <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#&gt; -- # Lazega's Lawyers ----------------------------------------------------------</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="co">#&gt; # A multiplex, directed network of 71 attorneys and 2571 friends, advice, and</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co">#&gt; cowork arcs</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="co">#&gt;</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="co">#&gt; -- Nodes</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="co">#&gt; # A tibble: 71 x 7</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co">#&gt;   status  gender office   seniority   age practice   school</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#&gt; 1 partner man    Boston          31    64 litigation Harvard/Yale</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#&gt; 2 partner man    Boston          32    62 corporate  Harvard/Yale</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#&gt; 3 partner man    Hartford        13    67 litigation Harvard/Yale</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#&gt; 4 partner man    Boston          31    59 corporate  Other</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#&gt; 5 partner man    Hartford        31    59 litigation UConn</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#&gt; 6 partner man    Hartford        29    55 litigation Harvard/Yale</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#&gt; # i 65 more rows</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#&gt;</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#&gt; -- Ties</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a><span class="co">#&gt; # A tibble: 2,571 x 3</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="co">#&gt;    from    to type</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;chr&gt;</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a><span class="co">#&gt; 1     1     2 friends</span></span>
+<span id="cb1-22"><a href="#cb1-22"></a><span class="co">#&gt; 2     1     2 advice</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a><span class="co">#&gt; 3     1     4 friends</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a><span class="co">#&gt; 4     1     8 friends</span></span>
+<span id="cb1-25"><a href="#cb1-25"></a><span class="co">#&gt; 5     1    17 friends</span></span>
+<span id="cb1-26"><a href="#cb1-26"></a><span class="co">#&gt; 6     1    17 advice</span></span>
+<span id="cb1-27"><a href="#cb1-27"></a><span class="co">#&gt; # i 2,565 more rows</span></span>
+<span id="cb1-28"><a href="#cb1-28"></a><span class="co">#&gt;</span></span></code></pre><p></p></div>
     </div>
     <div id="source">
     <h2>Source</h2>

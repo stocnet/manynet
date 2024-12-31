@@ -24,7 +24,7 @@ In 1735, Leonard Euler proved that the problem has no solution."><meta property=
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
       </span>
     </div>
 
@@ -84,24 +84,30 @@ In 1735, Leonard Euler proved that the problem has no solution.</p>
 
     <div id="format">
     <h2>Format</h2>
-    <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#&gt; # A labelled, undirected network of 4 nodes and 7 ties</span></span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="co">#&gt; # A tibble: 4 x 3</span></span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="co">#&gt;   name       lat   lon</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="co">#&gt;   &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="co">#&gt; 1 Altstadt  54.7  20.5</span></span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="co">#&gt; 2 Kneiphof  54.7  20.5</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="co">#&gt; 3 Lomse     54.7  20.5</span></span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="co">#&gt; 4 Vorstadt  54.7  20.5</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#&gt; # A tibble: 7 x 3</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#&gt;    from    to name</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;chr&gt;</span></span>
-<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#&gt; 1     1     2 Kraemer Bruecke</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#&gt; 2     1     2 Schmiedebruecke</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#&gt; 3     1     3 Holzbruecke</span></span>
-<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#&gt; 4     2     3 Honigbruecke</span></span>
-<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#&gt; 5     2     4 Gruene Bruecke</span></span>
-<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#&gt; 6     2     4 Koettelbruecke</span></span>
-<span id="cb1-18"><a href="#cb1-18"></a><span class="co">#&gt; # i 1 more row</span></span></code></pre><p></p></div>
+    <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#&gt; -- # Seven Bridges of Koenigsberg network --------------------------------------</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="co">#&gt; # A labelled, undirected network of 4 landmasses and 7 bridge ties</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co">#&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="co">#&gt; -- Nodes</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="co">#&gt; # A tibble: 4 x 3</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="co">#&gt;   name       lat   lon</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co">#&gt;   &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="co">#&gt; 1 Altstadt  54.7  20.5</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#&gt; 2 Kneiphof  54.7  20.5</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#&gt; 3 Lomse     54.7  20.5</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#&gt; 4 Vorstadt  54.7  20.5</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#&gt;</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#&gt; -- Ties</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#&gt; # A tibble: 7 x 3</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#&gt;    from    to name</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;chr&gt;</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#&gt; 1     1     2 Kraemer Bruecke</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a><span class="co">#&gt; 2     1     2 Schmiedebruecke</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="co">#&gt; 3     1     3 Holzbruecke</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="co">#&gt; 4     2     3 Honigbruecke</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a><span class="co">#&gt; 5     2     4 Gruene Bruecke</span></span>
+<span id="cb1-22"><a href="#cb1-22"></a><span class="co">#&gt; 6     2     4 Koettelbruecke</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a><span class="co">#&gt; # i 1 more row</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a><span class="co">#&gt;</span></span></code></pre><p></p></div>
     </div>
     <div id="source">
     <h2>Source</h2>

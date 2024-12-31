@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
       </span>
     </div>
 
@@ -60,6 +60,72 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="1.4.0" id="manynet-140">manynet 1.4.0<a class="anchor" aria-label="anchor" href="#manynet-140"></a></h2>
+<div class="section level3">
+<h3 id="making-1-4-0">Making<a class="anchor" aria-label="anchor" href="#making-1-4-0"></a></h3>
+<ul><li>Updated documentation on “mnet” class objects</li>
+<li>Improved <code><a href="../reference/make_mnet.html">print.mnet()</a></code> to print sections more prettily and accommodate changes when present</li>
+<li>Added <code><a href="../reference/make_mnet.html">print_all()</a></code> for printing infinite rows</li>
+<li>Moved <code>play_diffusions()</code> to <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a> (but not <code><a href="../reference/make_play.html">play_diffusion()</a></code>)</li>
+<li>Improved <code><a href="../reference/make_play.html">play_diffusion()</a></code> to return an ‘mnet’ class object with changes instead of a ‘diff_model’ object with hidden network<ul><li>Older behavior can still be obtained using <code>old_version = TRUE</code>
+</li></ul></li>
+<li>Improved <code>write_*()</code> functions by printing picked pathnames to the console</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-1-4-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-4-0"></a></h3>
+<ul><li>Added <code><a href="../reference/manip_as.html">as_changelist()</a></code> for extracting changelists from ‘mnet’ objects</li>
+<li>Added <code>as_diffusion.mnet()</code> for maintaining backward compatibility for diffusion measures</li>
+<li>Added <code>as_tidygraph.networkDynamic()</code> and <code>as_igraph.networkDynamic()</code> for coercing ‘networkDynamic’ objects into ‘mnet’, ‘tidygraph’, and ‘igraph’ objects</li>
+<li>Added functions for adding and working with network changes, i.e. changes to network nodes<ul><li>Added <code><a href="../reference/manip_changes.html">add_changes()</a></code> for adding changes to a network, including checks and imputing activity and susceptibility</li>
+<li>Added <code><a href="../reference/manip_changes.html">mutate_changes()</a></code> to mutate changes</li>
+<li>Added <code><a href="../reference/manip_changes.html">select_changes()</a></code> to select change variables</li>
+<li>Added <code><a href="../reference/manip_changes.html">filter_changes()</a></code> to filter changes</li>
+<li>Added <code><a href="../reference/manip_changes.html">collect_changes()</a></code> to collect changes up to a time point</li>
+<li>Added <code><a href="../reference/manip_changes.html">apply_changes()</a></code> to apply collected changes to a time point</li>
+</ul></li>
+<li>Added <code><a href="../reference/manip_scope.html">to_time()</a></code> for scoping a longitudinal network to a time point, including nodal and/or tie changes</li>
+<li>Added <code><a href="../reference/manip_nodes.html">select_nodes()</a></code> for selecting only some nodal variables</li>
+<li>Added <code><a href="../reference/manip_info.html">mutate_net()</a></code> for working with network information</li>
+</ul></div>
+<div class="section level3">
+<h3 id="marking-1-4-0">Marking<a class="anchor" aria-label="anchor" href="#marking-1-4-0"></a></h3>
+<ul><li>Added <code><a href="../reference/mark_is.html">is_changing()</a></code> for identifying networks with a change component</li>
+<li>Added <code><a href="../reference/mark_select.html">node_is_mean()</a></code> for identifying typical nodes</li>
+<li>Updated <code>node_is_*()</code> diffusion marks to work with new .data output</li>
+<li>Internally added expect_mark test helper</li>
+</ul></div>
+<div class="section level3">
+<h3 id="measuring-1-4-0">Measuring<a class="anchor" aria-label="anchor" href="#measuring-1-4-0"></a></h3>
+<ul><li>Added <code><a href="../reference/measure_cohesion.html">net_strength()</a></code> for measuring the number of ties that would need to be removed from a network to increase its number of components</li>
+<li>Added <code><a href="../reference/measure_cohesion.html">net_toughness()</a></code> for measuring the number of nodes that would need to be removed from a network to increase its number of components</li>
+<li>Moved <code>over_*()</code> to <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
+</li>
+<li>Updated <code>node_*()</code> diffusion measures to work with new .data output</li>
+<li>Improved <code><a href="../reference/measure_features.html">net_modularity()</a></code> by informing users when a bipartition is used</li>
+<li>Added <code><a href="../reference/measure_periods.html">net_waves()</a></code> for measuring the number of waves in a network</li>
+</ul></div>
+<div class="section level3">
+<h3 id="motifs-1-4-0">Motifs<a class="anchor" aria-label="anchor" href="#motifs-1-4-0"></a></h3>
+<ul><li>Renamed <code><a href="../reference/defunct.html">net_hazard()</a></code> to <code><a href="../reference/motif_diffusion.html">net_by_hazard()</a></code>
+</li>
+<li>Updated <code>node_by_*()</code> diffusion motifs to work with new .data output</li>
+</ul></div>
+<div class="section level3">
+<h3 id="data-1-4-0">Data<a class="anchor" aria-label="anchor" href="#data-1-4-0"></a></h3>
+<ul><li>Updated <code>fict_potter</code> with composition changes</li>
+<li>Renamed <code>ison_starwars</code> to <code>fict_starwars</code>, updating it with composition changes and additional coding</li>
+<li>Added <code>irps_911</code> network data on 9/11 hijackers and associates</li>
+</ul></div>
+<div class="section level3">
+<h3 id="learning-1-4-0">Learning<a class="anchor" aria-label="anchor" href="#learning-1-4-0"></a></h3>
+<ul><li>Updated ‘community’ tutorial with guidance on <code><a href="../reference/member_community_non.html">node_in_community()</a></code>
+</li>
+<li>Updated ‘position’ tutorial with guidance on <code><a href="../reference/mark_ties.html">tie_is_bridge()</a></code> and <code><a href="../reference/measure_holes.html">node_bridges()</a></code>
+</li>
+<li>Moved ‘diffusion’ tutorial to <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a> to help with dependencies</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="1.3.3" id="manynet-133">manynet 1.3.3<a class="anchor" aria-label="anchor" href="#manynet-133"></a></h2>
 <div class="section level3">
 <h3 id="modifying-1-3-3">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-3-3"></a></h3>
@@ -93,7 +159,7 @@
 <ul><li>Fixed bug in <code><a href="../reference/mark_features.html">is_aperiodic()</a></code> where it would not work in tutorial chunks</li></ul></div>
 <div class="section level3">
 <h3 id="measuring-1-3-1">Measuring<a class="anchor" aria-label="anchor" href="#measuring-1-3-1"></a></h3>
-<ul><li>Added <code><a href="../reference/measure_over.html">over_membership()</a></code> for obtaining summary statistics by a membership vector</li></ul></div>
+<ul><li>Added <code>over_membership()</code> for obtaining summary statistics by a membership vector</li></ul></div>
 <div class="section level3">
 <h3 id="practicing-1-3-1">Practicing<a class="anchor" aria-label="anchor" href="#practicing-1-3-1"></a></h3>
 <ul><li>Fixed data pointers in several tutorials</li>
@@ -291,10 +357,10 @@
 </ul></div>
 <div class="section level3">
 <h3 id="modifying-1-2-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-2-0"></a></h3>
-<ul><li>Improved <code>print.mnet()</code><ul><li>Prints multiplex types if available</li>
+<ul><li>Improved <code><a href="../reference/make_mnet.html">print.mnet()</a></code><ul><li>Prints multiplex types if available</li>
 <li>Prints both nodesets for two-mode networks</li>
 </ul></li>
-<li>Added <code><a href="../reference/manip_net.html">add_info()</a></code> for adding grand info to tidygraph objects<ul><li>This includes the name of the network, node sets and ties, DOI, year and mode of collection</li></ul></li>
+<li>Added <code><a href="../reference/manip_info.html">add_info()</a></code> for adding grand info to tidygraph objects<ul><li>This includes the name of the network, node sets and ties, DOI, year and mode of collection</li></ul></li>
 <li>Fixed <code><a href="../reference/manip_deformat.html">to_unweighted()</a></code> so that it passes through unweighted networks correctly</li>
 </ul></div>
 <div class="section level3">
@@ -365,12 +431,12 @@
 </ul></div>
 <div class="section level3">
 <h3 id="manipulating-1-1-0">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-1-1-0"></a></h3>
-<ul><li>Improved <code><a href="../reference/manip_as.html">as_tidygraph()</a></code> to add an additional class ‘mnet’ that is used for prettier printing<ul><li>Uses <code>make_mnet()</code> (internally) for future-proofing</li>
+<ul><li>Improved <code><a href="../reference/manip_as.html">as_tidygraph()</a></code> to add an additional class ‘mnet’ that is used for prettier printing<ul><li>Uses <code><a href="../reference/make_mnet.html">make_mnet()</a></code> (internally) for future-proofing</li>
 <li>
-<code>print.tbl_graph()</code> renamed to <code>print.mnet()</code>
+<code>print.tbl_graph()</code> renamed to <code><a href="../reference/make_mnet.html">print.mnet()</a></code>
 </li>
 <li>
-<code>print.mnet()</code> uses ‘grand’ data if available</li>
+<code><a href="../reference/make_mnet.html">print.mnet()</a></code> uses ‘grand’ data if available</li>
 </ul></li>
 <li>Improved <code><a href="../reference/manip_ties.html">bind_ties()</a></code> to be more flexible about the input it accepts, converting all input into the required edgelist</li>
 <li>Added <code><a href="../reference/manip_scope.html">to_ego()</a></code> for obtaining a single neighbourhood</li>
@@ -601,7 +667,7 @@
 </li>
 <li>Cohesion measures include <code><a href="../reference/measure_cohesion.html">net_density()</a></code>, <code><a href="../reference/measure_cohesion.html">net_components()</a></code>, <code><a href="../reference/measure_cohesion.html">net_cohesion()</a></code>,<br><code><a href="../reference/measure_cohesion.html">net_adhesion()</a></code>, <code><a href="../reference/measure_cohesion.html">net_diameter()</a></code>, <code><a href="../reference/measure_cohesion.html">net_length()</a></code>, and <code><a href="../reference/measure_cohesion.html">net_independence()</a></code>
 </li>
-<li>Diffusion measures include <code><a href="../reference/measure_diffusion_net.html">net_transmissibility()</a></code>, <code><a href="../reference/measure_diffusion_net.html">net_recovery()</a></code>, <code><a href="../reference/measure_diffusion_net.html">net_reproduction()</a></code>, <code><a href="../reference/measure_diffusion_net.html">net_immunity()</a></code>, <code><a href="../reference/measure_diffusion_net.html">net_hazard()</a></code>, <code><a href="../reference/measure_diffusion_infection.html">net_infection_complete()</a></code>, <code><a href="../reference/measure_diffusion_infection.html">net_infection_total()</a></code>, <code><a href="../reference/measure_diffusion_infection.html">net_infection_peak()</a></code>, <code><a href="../reference/measure_diffusion_node.html">node_adoption_time()</a></code>, <code><a href="../reference/measure_diffusion_node.html">node_thresholds()</a></code>, <code><a href="../reference/measure_diffusion_node.html">node_recovery()</a></code>, and <code><a href="../reference/measure_diffusion_node.html">node_exposure()</a></code>
+<li>Diffusion measures include <code><a href="../reference/measure_diffusion_net.html">net_transmissibility()</a></code>, <code><a href="../reference/measure_diffusion_net.html">net_recovery()</a></code>, <code><a href="../reference/measure_diffusion_net.html">net_reproduction()</a></code>, <code><a href="../reference/measure_diffusion_net.html">net_immunity()</a></code>, <code><a href="../reference/defunct.html">net_hazard()</a></code>, <code><a href="../reference/measure_diffusion_infection.html">net_infection_complete()</a></code>, <code><a href="../reference/measure_diffusion_infection.html">net_infection_total()</a></code>, <code><a href="../reference/measure_diffusion_infection.html">net_infection_peak()</a></code>, <code><a href="../reference/measure_diffusion_node.html">node_adoption_time()</a></code>, <code><a href="../reference/measure_diffusion_node.html">node_thresholds()</a></code>, <code><a href="../reference/measure_diffusion_node.html">node_recovery()</a></code>, and <code><a href="../reference/measure_diffusion_node.html">node_exposure()</a></code>
 </li>
 <li>Heterogeneity measures include <code><a href="../reference/measure_heterogeneity.html">net_richness()</a></code>, <code><a href="../reference/measure_heterogeneity.html">node_richness()</a></code>, <code><a href="../reference/measure_heterogeneity.html">net_diversity()</a></code>, <code><a href="../reference/measure_heterogeneity.html">node_diversity()</a></code>, <code><a href="../reference/measure_heterogeneity.html">net_heterophily()</a></code>, <code><a href="../reference/measure_heterogeneity.html">node_heterophily()</a></code>, <code><a href="../reference/measure_heterogeneity.html">net_assortativity()</a></code>, and <code><a href="../reference/measure_heterogeneity.html">net_spatial()</a></code>
 </li>
@@ -710,7 +776,7 @@
 <p>2024-03-12</p>
 <div class="section level3">
 <h3 id="making-0-4-2">Making<a class="anchor" aria-label="anchor" href="#making-0-4-2"></a></h3>
-<ul><li>Closed <a href="https://github.com/stocnet/manynet/issues/57" class="external-link">#57</a> by updating <code><a href="../reference/make_play.html">play_diffusions()</a></code> to revert future plan on exit</li>
+<ul><li>Closed <a href="https://github.com/stocnet/manynet/issues/57" class="external-link">#57</a> by updating <code>play_diffusions()</code> to revert future plan on exit</li>
 <li>Fixed bug with how <code><a href="../reference/make_random.html">generate_random()</a></code> works for two-mode networks with specified number of ties</li>
 </ul></div>
 <div class="section level3">
@@ -751,7 +817,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="making-0-4-0">Making<a class="anchor" aria-label="anchor" href="#making-0-4-0"></a></h3>
-<ul><li>Migrated <code><a href="../reference/make_play.html">play_diffusion()</a></code> and <code><a href="../reference/make_play.html">play_diffusions()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Including class creation, and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>, and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods</li></ul></li>
+<ul><li>Migrated <code><a href="../reference/make_play.html">play_diffusion()</a></code> and <code>play_diffusions()</code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Including class creation, and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>, and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods</li></ul></li>
 <li>Migrated <code><a href="../reference/make_learning.html">play_learning()</a></code> and <code><a href="../reference/make_learning.html">play_segregation()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a><ul><li>Including class creation, and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>, and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods</li></ul></li>
 <li>Fixed bug in <code><a href="../reference/make_create.html">create_tree()</a></code> where it was not returning a two-mode network correctly</li>
 </ul></div>

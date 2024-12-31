@@ -21,7 +21,7 @@ play_segregation() plays a Schelling segregation model upon a network.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
       </span>
     </div>
 
@@ -186,8 +186,11 @@ and "minimising" distance will move the node to the next nearest unoccupied coor
 <span class="r-in"><span>  <span class="va">latticeEg</span> <span class="op">&lt;-</span> <span class="fu"><a href="make_create.html">create_lattice</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">latticeEg</span> <span class="op">&lt;-</span> <span class="fu"><a href="manip_nodes.html">add_node_attribute</a></span><span class="op">(</span><span class="va">latticeEg</span>, <span class="st">"startValues"</span>, <span class="va">startValues</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">latticeEg</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> # Lattice network</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> # A undirected network of 100 nodes and 342 ties</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Lattice network</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A undirected network of 100 nodes and 342 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 100 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   startValues</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
@@ -198,6 +201,8 @@ and "minimising" distance will move the node to the next nearest unoccupied coor
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>           1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>           1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 94 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 342 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
@@ -208,6 +213,7 @@ and "minimising" distance will move the node to the next nearest unoccupied coor
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     2    11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2    12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 336 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span>  <span class="fu">play_segregation</span><span class="op">(</span><span class="va">latticeEg</span>, <span class="st">"startValues"</span>, <span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 1 to node 59"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 9 to node 53"</span>
@@ -220,8 +226,10 @@ and "minimising" distance will move the node to the next nearest unoccupied coor
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 64 to node 9"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 97 to node 45"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Moving node 98 to node 92"</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> # Lattice network</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> # A undirected network of 100 nodes and 342 ties</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Lattice network</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A undirected network of 100 nodes and 342 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 100 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   startValues</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;node_msr&gt;</span> </span>
@@ -232,6 +240,8 @@ and "minimising" distance will move the node to the next nearest unoccupied coor
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>  1         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>  1         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 94 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 342 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
@@ -242,6 +252,7 @@ and "minimising" distance will move the node to the next nearest unoccupied coor
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     2    11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2    12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 336 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span>  <span class="co"># graphr(latticeEg, node_color = "startValues", node_size = 5) + </span></span></span>
 <span class="r-in"><span>  <span class="co"># graphr(play_segregation(latticeEg, "startValues", 0.2), </span></span></span>
 <span class="r-in"><span>  <span class="co">#            node_color = "startValues", node_size = 5)</span></span></span>
