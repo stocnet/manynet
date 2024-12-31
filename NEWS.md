@@ -1,3 +1,72 @@
+# manynet 1.4.0
+
+## Making
+
+- Updated documentation on "mnet" class objects
+- Improved `print.mnet()` to print sections more prettily and 
+accommodate changes when present
+- Added `print_all()` for printing infinite rows
+- Moved `play_diffusions()` to `{migraph}` (but not `play_diffusion()`)
+- Improved `play_diffusion()` to return an 'mnet' class object with changes
+instead of a 'diff_model' object with hidden network
+  - Older behavior can still be obtained using `old_version = TRUE`
+- Improved `write_*()` functions by printing picked pathnames to the console
+
+## Modifying
+
+- Added `as_changelist()` for extracting changelists from 'mnet' objects
+- Added `as_diffusion.mnet()` for maintaining backward compatibility for
+diffusion measures
+- Added `as_tidygraph.networkDynamic()` and `as_igraph.networkDynamic()` for 
+coercing 'networkDynamic' objects into 'mnet', 'tidygraph', and 'igraph' objects
+- Added functions for adding and working with network changes, i.e. changes to network nodes
+  - Added `add_changes()` for adding changes to a network,
+  including checks and imputing activity and susceptibility
+  - Added `mutate_changes()` to mutate changes
+  - Added `select_changes()` to select change variables
+  - Added `filter_changes()` to filter changes
+  - Added `collect_changes()` to collect changes up to a time point
+  - Added `apply_changes()` to apply collected changes to a time point
+- Added `to_time()` for scoping a longitudinal network to a time point,
+including nodal and/or tie changes 
+- Added `select_nodes()` for selecting only some nodal variables
+- Added `mutate_net()` for working with network information
+
+## Marking
+
+- Added `is_changing()` for identifying networks with a change component
+- Added `node_is_mean()` for identifying typical nodes
+- Updated `node_is_*()` diffusion marks to work with new .data output
+- Internally added expect_mark test helper
+
+## Measuring
+
+- Added `net_strength()` for measuring the number of ties that would need to be
+removed from a network to increase its number of components
+- Added `net_toughness()` for measuring the number of nodes that would need to be
+removed from a network to increase its number of components
+- Moved `over_*()` to `{migraph}`
+- Updated `node_*()` diffusion measures to work with new .data output
+- Improved `net_modularity()` by informing users when a bipartition is used
+- Added `net_waves()` for measuring the number of waves in a network
+
+## Motifs
+
+- Renamed `net_hazard()` to `net_by_hazard()`
+- Updated `node_by_*()` diffusion motifs to work with new .data output
+
+## Data
+
+- Updated `fict_potter` with composition changes
+- Renamed `ison_starwars` to `fict_starwars`, updating it with composition changes and additional coding
+- Added `irps_911` network data on 9/11 hijackers and associates
+
+## Learning
+
+- Updated 'community' tutorial with guidance on `node_in_community()`
+- Updated 'position' tutorial with guidance on `tie_is_bridge()` and `node_bridges()`
+- Moved 'diffusion' tutorial to `{migraph}` to help with dependencies
+
 # manynet 1.3.3
 
 ## Modifying
