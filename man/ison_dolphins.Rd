@@ -5,7 +5,11 @@
 \alias{ison_dolphins}
 \title{One-mode, undirected network of frequent associations in a dolphin pod (Lusseau et al. 2003)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, undirected network of 62 nodes and 159 ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Doubtful Sound dolphins ---------------------------------------------------
+#> # A labelled, undirected network of 62 dolphins and 159 frequent association
+#> ties
+#> 
+#> -- Nodes
 #> # A tibble: 62 x 1
 #>   name      
 #>   <chr>     
@@ -16,6 +20,8 @@
 #> 5 Cross     
 #> 6 DN16      
 #> # i 56 more rows
+#> 
+#> -- Ties
 #> # A tibble: 159 x 2
 #>    from    to
 #>   <int> <int>
@@ -26,6 +32,7 @@
 #> 5     3    11
 #> 6     6    14
 #> # i 153 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \usage{

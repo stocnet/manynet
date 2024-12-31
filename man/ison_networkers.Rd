@@ -5,7 +5,10 @@
 \alias{ison_networkers}
 \title{One-mode EIES dataset (Freeman and Freeman 1979)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, weighted, directed network of 32 nodes and 440 arcs
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # EIES Networkers -----------------------------------------------------------
+#> # A labelled, weighted, directed network of 32 nodes and 440 arcs
+#> 
+#> -- Nodes
 #> # A tibble: 32 x 3
 #>   name               Discipline   Citations
 #>   <chr>              <chr>            <dbl>
@@ -16,6 +19,8 @@
 #> 5 Phipps Arabie      Other               16
 #> 6 Carol Barner-Barry Other                6
 #> # i 26 more rows
+#> 
+#> -- Ties
 #> # A tibble: 440 x 3
 #>    from    to weight
 #>   <int> <int>  <dbl>
@@ -26,6 +31,7 @@
 #> 5     1     6     65
 #> 6     1     7     45
 #> # i 434 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \source{

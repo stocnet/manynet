@@ -26,6 +26,7 @@
       "i" = "To eliminate package startup messages, use: `suppressPackageStartupMessages(library({.pkg manynet}))`.",
       # "i" = "Changing the theme of all your graphs is straightforward with `set_manynet_theme()`",
       "i" = "If there are too many messages in the console, run `options(manynet_verbosity = 'quiet')`",
+      "i" = "Explore the changes since the last version with {.code news(package = 'manynet')}.",
       "i" = "Visit the website to learn more: {.url https://stocnet.github.io/manynet/}.",
       "i" = "We recommend the 'Function Overview' page online to discover new analytic opportunities: {.url https://stocnet.github.io/manynet/reference/index.html}.",
       "i" = "Discover all the {.emph stocnet} R packages at {.url https://github.com/stocnet/}.",
@@ -94,8 +95,8 @@ mnet_unavailable <- function(..., .envir = parent.frame()){
 
 manynet_console_theme <- function(){
   # dark <- detect_dark_theme(dark)
-  list(h1 = list(`margin-top` = 1, `margin-bottom` = 0, color = "#199D77", 
-                 fmt = function(x) cli::rule(x, line_col = "#199D77")), 
+  list(h1 = list(`margin-top` = 1, `margin-bottom` = 0, color = "#D83127", 
+                 fmt = function(x) cli::rule(x, line_col = "#D83127")), 
        h2 = list(`margin-top` = 1, `margin-bottom` = 0, color = "#199D77", 
                  fmt = function(x) paste0(cli::symbol$line, " ", x, " ", cli::symbol$line, cli::symbol$line)), 
        h3 = list(`margin-top` = 1, `margin-bottom` = 0, color = "#199D77"), 

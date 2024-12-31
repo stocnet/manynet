@@ -34,19 +34,20 @@ NULL
 #' @rdname manip_project
 #' @param similarity Method for establishing ties,
 #'   currently "count" (default), "jaccard", or "rand".
-#'   "count" calculates the number of coinciding ties,
+#'   
+#'   - "count" calculates the number of coinciding ties,
 #'   and can be interpreted as indicating the degree of opportunities
 #'   between nodes.
-#'   "jaccard" uses this count as the numerator in a proportion,
+#'   - "jaccard" uses this count as the numerator in a proportion,
 #'   where the denominator consists of any cell where either node has a tie.
 #'   It can be interpreted as opportunity weighted by participation.
-#'   "rand", or the Simple Matching Coefficient,
+#'   - "rand", or the Simple Matching Coefficient,
 #'   is a proportion where the numerator consists of the count of cells where
 #'   both nodes are present or both are absent,
 #'   over all possible cells.
 #'   It can be interpreted as the (weighted) degree of behavioral mirroring
 #'   between two nodes.
-#'   "pearson" (Pearson's coefficient) and "yule" (Yule's Q)
+#'   - "pearson" (Pearson's coefficient) and "yule" (Yule's Q)
 #'   produce correlations for valued and binary data, respectively.
 #'   Note that Yule's Q has a straightforward interpretation related to the odds ratio.
 #' @importFrom igraph bipartite_projection
@@ -268,6 +269,45 @@ to_ego.tbl_graph <- function(.data, node, max_dist = 1, min_dist = 0,
   egos <- to_egos(.data, max_dist = max_dist, min_dist = min_dist,
                   direction = direction)
   as_tidygraph(egos[[node]])
+}
+
+#' @rdname manip_scope
+#' @param time A time point or wave at which to present the network.
+#' @export
+to_time <- function(.data, time) UseMethod("to_time")
+
+#' @export
+to_time.tbl_graph <- function(.data, time){
+  if(time > net_waves(.data)){
+    mnet_info("Sorry, there are not that many waves in this dataset.",
+              "Reverting to the maximum wave:", net_waves(.data))
+    time <- net_waves(.data)
+  }
+  if(is_dynamic(.data)){
+    mnet_unavailable()
+  } else if(is_longitudinal(.data)){
+    out <- .data
+    if(is_changing(out)){
+      if(any(time >= as_changelist(.data)$time)){
+        out <- apply_changes(out, time)
+      } else {
+        igraph::graph_attr(out, "changes") <- NULL
+      } 
+      if("active" %in% net_node_attributes(out)){
+        out <- out %>% 
+          filter_nodes(active) %>% 
+          select_nodes(-active)
+      }
+    }
+    if("wave" %in% net_tie_attributes(out)){
+      out %>% 
+        # trim ties
+        filter_ties(wave == time) %>% 
+        select_ties(-wave)
+    } else out
+  } else {
+    .data
+  }
 }
 
 #' @rdname manip_scope

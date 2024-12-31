@@ -1,3 +1,5 @@
+# Manipulating nodes ####
+
 #' Modifying node data
 #' 
 #' @description 
@@ -102,6 +104,11 @@ add_node_attribute <- function(.data, attr_name, vector){
 #' @rdname manip_nodes
 #' @importFrom tidygraph mutate
 #' @export
+mutate <- tidygraph::mutate
+
+#' @rdname manip_nodes
+#' @importFrom tidygraph mutate
+#' @export
 mutate_nodes <- function(.data, ...) UseMethod("mutate_nodes")
 
 #' @export
@@ -116,9 +123,25 @@ mutate_nodes.igraph <- function(.data, ...){
 }
 
 #' @rdname manip_nodes
+#' @importFrom tidygraph select
+#' @export
+select <- tidygraph::select
+
+#' @rdname manip_nodes
 #' @importFrom tidygraph mutate
 #' @export
-mutate <- tidygraph::mutate
+select_nodes <- function(.data, ...) UseMethod("select_nodes")
+
+#' @export
+select_nodes.tbl_graph <- function(.data, ...){
+  .data %>% tidygraph::select(...)
+}
+
+#' @export
+select_nodes.igraph <- function(.data, ...){
+  .data %>% as_tidygraph() %>% 
+    tidygraph::select(...) %>% as_igraph()
+}
 
 #' @rdname manip_nodes
 #' @export
@@ -171,63 +194,209 @@ rename <- tidygraph::rename
 #' @rdname manip_nodes
 #' @importFrom tidygraph filter
 #' @export
-filter_nodes <- function(.data, ..., .by){
+filter_nodes <- function(.data, ..., .by = NULL){
   tidygraph::filter(.data, ..., .by = .by)
 }
 
-# Network information ####
+# Manipulating changes ####
 
-#' Modifying network data
-#' 
+#' Modifying changes to nodes over time
 #' @description
-#'   These functions allow users to add and edit information about the network
-#'   itself.
-#'   This includes the name, year, and mode of collection of the network,
-#'   as well as definitions of the nodes and ties in the network.
-#'   Where available, this information is printed for tidygraph-class objects,
-#'   and can be used for printing a grand table in the `{grand}` package.
-#' @name manip_net
-#' @inheritParams mark_is
-#' @param ... Named attributes. The following are currently recognised:
-#'   "name", "year", and "doi" of the network,
-#'   "collection" or "mode" of the network 
-#'   ("survey", "interview","sensor","observation","archival", or "simulation"),
-#'   "nodes" (a vector of the names of the nodes) or "vertex1"/"vertex2",
-#'   "ties" or "edge.pos"/"edge.neg" for defining the ties.
+#'   These functions offer ways to modify data held about how nodes
+#'   change over time. 
+#'   They include:
+#'   
+#'   - `add_changes()` adds a table of changes to the nodes of a network.
+#'   - `mutate_changes()` can be used to update network changes.
+#'   - `filter_changes()` is used to subset network changes.
+#'   - `collect_changes()` is similar to `filter_changes()`,
+#'   but collects the cumulative changes up to a time point.
+#'   - `apply_changes()` applies the changes collected up to a time point
+#'   to a network, removing the changes.
+#' 
+#'   An example of when this might be useful is to track change in the
+#'   composition of a network (when nodes are present or absent over time),
+#'   though the function can flexibly accommodate changes in other
+#'   nodal attributes.
+#' @name manip_changes
+#' @inheritParams manip_nodes
+#' @inheritParams manip_scope
+#' @seealso [to_time()]
+NULL
+
+#' @rdname manip_changes
+#' @param changes A data frame of changes.
+#'   Ideally this will be in the form of "wave", "node", "var", and "value",
+#'   but there are internal routines from some otherwise common formats.
+#'   A data frame of composition change can be just two columns.
 #' @examples
-#' add_info(ison_algebra, name = "Algebra")
+#' add_changes(ison_algebra, 
+#'             data.frame(wave = 2, node = 1, var = "active", value = FALSE))
 #' @export
-add_info <- function(.data, ...){
-  if(!is.null(igraph::graph_attr(.data)$grand)){
-    cli::cli_abort("Hmm, I don't know how to do that yet.")
+add_changes <- function(.data, changes){
+  out <- .data
+  if(length(names(changes)) == 4){
+    
+    if("active" %in% changes[,3] && !("active" %in% net_node_attributes(.data))){
+      out <- .infer_active(out, changes)
+      # changes <- changes[changes[,1] != min(changes[,1]),]
+    }
+    if("diffusion" %in% changes[,3] && !("diffusion" %in% net_node_attributes(.data))){
+      out <- .infer_susceptible(out, changes)
+    }
+    .check_changevars(changes)
+    .check_varexists(out, changes)
+    
   } else {
-    info <- list(...)
-    unrecog <- setdiff(names(info), c("name", "nodes", "ties", "doi", 
-                                      "collection", "year", "mode", "vertex1", 
-                                      "vertex1.total", "vertex2", 
-                           "vertex2.total", 
-                           "edge.pos", "edge.neg", "positive", "negative"))
-    if(length(unrecog)>0) 
-      cli::cli_alert_warning("{unrecog} are not recognised fields.")
-    if("nodes" %in% names(info)){
-      info$vertex1 <- info$nodes[1]
-      if(is_twomode(.data) && length(info$nodes)==2) 
-        info$vertex2 <- info$nodes[2]
-      info$nodes <- NULL
+    
+    if("active" %in% net_node_attributes(.data))
+      mnet_unavailable("There is already an `active` nodal attribute.")
+    
+    if(nrow(changes) == net_nodes(.data) && ncol(changes)==2){
+      # converting a begin-end composition table for all nodes
+      out <- out %>% mutate_nodes(active = as.logi(changes[,1] == min(changes[,1])))
+      changes <- data.frame(node = 1:nrow(changes), 
+                            begin = changes[,1], end = changes[,2])
     }
-    if("ties" %in% names(info)){
-      info$edge.pos <- info$positive <- info$ties
-      info$ties <- NULL
-    }
-    if("collection" %in% names(info)){
-      info$mode <- info$collection
-      info$collection <- NULL
-    }
-    # return(str(info)) # for debugging
-    out <- .data
-    igraph::graph_attr(out)$grand <- info
+    if(all(names(changes) == c("node", "begin", "end"))){
+      # inferring starting positions
+      first <- changes[!duplicated(changes[,1]),]
+      out <- out %>% mutate_nodes(active = first[,2] == min(first[,2]))
+      
+    } else mnet_unavailable()
+    
+    changes <- stats::reshape(changes,
+                              varying = colnames(changes)[-1],
+                              v.names = "wave",
+                              times = colnames(changes)[-1],
+                              timevar = "value", direction = "long")
+    changes <- changes %>% dplyr::mutate(wave = wave, node = node, 
+                                         var = "active", value = value=="begin") %>% 
+      dplyr::select(wave, node, var, value) %>% dplyr::arrange(wave, node) %>% 
+      dplyr::filter(wave != 1)
   }
+  
+  igraph::graph_attr(out)$changes <- changes
   as_tidygraph(out)
 }
 
+.check_changevars <- function(changes){
+  if(!(all(names(changes) == c("wave", "node", "var", "value")) || 
+       all(names(changes) == c("time", "node", "var", "value")))){
+    notexist <- setdiff(names(changes), c("time", "wave", "node", "var", "value"))
+    cli::cli_abort(paste("The following column names are in the changelist",
+                         "but are not recognised:",
+                         "{notexist}"))
+  }
+}
+
+.check_varexists <- function(.data, changes){
+  if(!all(unique(changes$var) %in% net_node_attributes(.data))){
+    notexist <- unique(changes$var)[which(!unique(changes$var) %in% 
+                                            net_node_attributes(.data))]
+    cli::cli_abort(paste("The following variables are in the changelist",
+                         "but not among the nodal attributes in the network:",
+                         "{notexist}"))
+  }
+}
+
+.infer_active <- function(.data, changes){
+  
+  if(length(unique(changes$node))==net_nodes(.data)){ # if table of when active
+    out <- .data %>% mutate_nodes(active = as.logi(changes[,1] == min(changes[,1])))
+    
+  } else { # if some actives
+    if(all(changes[changes[,3]=="active",4])){
+      starts <- rep(FALSE, net_nodes(.data))
+    } else if(all(!changes[changes[,3]=="active",4])) {
+      starts <- rep(TRUE, net_nodes(.data))
+    } else if(changes[order(changes[,1]),4][1]){
+      starts <- rep(NA, net_nodes(.data))
+      first <- changes[changes[,1] == min(changes[,1]),]
+      starts[first[,2]] <- first[,4]
+      starts[is.na(starts) & changes[changes$var == "active" & changes$value == TRUE & changes$wave > min(changes$wave),2]] <- FALSE
+    } else mnet_unavailable()
+    out <- .data %>% mutate_nodes(active = starts)
+  }
+  out
+}
+
+.infer_susceptible <- function(.data, changes){
+    .data %>% mutate_nodes(diffusion = "S")
+}
+
+#' @rdname manip_changes
+#' @export
+mutate_changes <- function(.data, ...) UseMethod("mutate_changes")
+
+#' @export
+mutate_changes.tbl_graph <- function(.data, ...){
+  changes <- igraph::graph_attr(.data, "changes")
+  changes <- tidygraph::mutate(changes, ...)
+  igraph::graph_attr(.data, "changes") <- changes
+  .data
+}
+
+#' @rdname manip_changes
+#' @examples
+#' filter_changes(fict_starwars, node == "Anakin")
+#' @export
+filter_changes <- function(.data, ..., .by = NULL){
+  changes <- igraph::graph_attr(.data, "changes")
+  changes <- tidygraph::filter(changes, ..., .by = .by)
+  igraph::graph_attr(.data, "changes") <- changes
+  .data
+}
+
+#' @rdname manip_changes
+#' @examples
+#' select_changes(fict_starwars, node)
+#' @export
+select_changes <- function(.data, ..., .by = NULL){
+  changes <- igraph::graph_attr(.data, "changes")
+  changes <- tidygraph::select(changes, ..., .by = .by)
+  igraph::graph_attr(.data, "changes") <- changes
+  .data
+}
+
+#' @rdname manip_changes
+#' @examples
+#' collect_changes(fict_starwars, time = 3)
+#' @export
+collect_changes <- function(.data, time){
+  t <- time
+  changes <- igraph::graph_attr(.data, "changes")
+  changes <- changes %>% 
+    dplyr::filter(time <= t) %>% 
+    dplyr::arrange(node, var, time) %>% 
+    dplyr::group_by(node, var) %>% 
+    dplyr::mutate(value = dplyr::last(value)) %>% 
+    dplyr::distinct(node, var, value)
+  changes
+}
+
+#' @rdname manip_changes
+#' @examples
+#' collect_changes(fict_starwars, time = 3)
+#' @export
+apply_changes <- function(.data, time){
+  out <- as.data.frame(as_nodelist(.data))
+  changes <- collect_changes(.data, time)
+  if(is.character(changes$node)) 
+    changes$node <- match(changes$node, node_names(.data))
+  if(is.character(changes$var)) 
+    changes$var <- match(changes$var, net_node_attributes(.data))
+  for(i in cli::cli_progress_along(1:nrow(changes), "Applying changes")){
+    if(is.numeric(out[,changes$var[i]])){
+      out[changes$node[i], changes$var[i]] <- as.numeric(changes$value[i])
+    } else if (is.logical(out[,changes$var[i]])){
+      out[changes$node[i], changes$var[i]] <- as.logical(changes$value[i])
+    } else out[changes$node[i], changes$var[i]] <- changes$value[i]
+  }
+  if(!is_labelled(.data)) out <- cbind(1:nrow(out), out)
+  out <- as_tidygraph(igraph::graph_from_data_frame(as_edgelist(.data), 
+                                                    vertices = out))
+  if(!is_labelled(.data)) out <- to_unnamed(out)
+  out
+}
 

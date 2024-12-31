@@ -5,9 +5,11 @@
 \alias{irps_wwi}
 \title{One-mode signed network of relationships between European major powers (Antal et al. 2006)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # World War I Protagonists
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # World War I Protagonists --------------------------------------------------
 #> # A dynamic, labelled, signed, undirected network of 6 European major powers
-#> and 20 relationship ties
+#> and 20 relationship ties from 1872 to 1918
+#> 
+#> -- Nodes
 #> # A tibble: 6 x 1
 #>   name 
 #>   <chr>
@@ -16,7 +18,9 @@
 #> 3 RUS  
 #> 4 AUH  
 #> 5 DEU  
-#> 6 ITA  
+#> 6 ITA
+#> 
+#> -- Ties
 #> # A tibble: 20 x 5
 #>    from    to  sign begin   end
 #>   <int> <int> <dbl> <dbl> <dbl>
@@ -27,6 +31,7 @@
 #> 5     2     4    -1  1872  1918
 #> 6     2     5    -1  1872  1918
 #> # i 14 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \usage{

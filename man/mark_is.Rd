@@ -8,6 +8,7 @@
 \alias{is_list}
 \alias{is_longitudinal}
 \alias{is_dynamic}
+\alias{is_changing}
 \title{Marking networks classes}
 \usage{
 is_manynet(.data)
@@ -21,6 +22,8 @@ is_list(.data)
 is_longitudinal(.data)
 
 is_dynamic(.data)
+
+is_changing(.data)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -44,7 +47,8 @@ These functions implement logical tests for networks' classes.
 \item \code{is_list()} marks a network TRUE if it is a (non-igraph) list of networks,
 for example a set of ego networks or a dynamic or longitudinal set of networks.
 \item \code{is_longitudinal()} marks a network TRUE if it contains longitudinal, panel data.
-\item \code{is_dynamic()} marks a network TRUE if it contains dynamic, time-stamped data
+\item \code{is_dynamic()} marks a network TRUE if it contains dynamic, time-stamped data.
+\item \code{is_changing()} marks a network TRUE if it contains changes to nodal attributes.
 }
 
 All \verb{is_*()} functions return a logical scalar (TRUE or FALSE).
@@ -56,6 +60,7 @@ is_edgelist(matrix(c(2,2), 1, 2))
 is_edgelist(as_edgelist(matrix(c(2,2), 1, 2)))
 is_longitudinal(create_tree(5, 3))
 is_dynamic(create_tree(3))
+is_changing(fict_starwars)
 }
 \seealso{
 Other marking: 

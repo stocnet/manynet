@@ -5,7 +5,10 @@
 \alias{irps_blogs}
 \title{One-mode directed network of links between US political blogs (Adamic and Glance 2005)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, complex, directed network of 1490 blogs and 19090 link arcs
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # US political blogosphere circa 2004 ---------------------------------------
+#> # A labelled, complex, directed network of 1490 blogs and 19090 link arcs
+#> 
+#> -- Nodes
 #> # A tibble: 1,490 x 3
 #>   name                       Leaning Source               
 #>   <chr>                      <chr>   <chr>                
@@ -16,6 +19,8 @@
 #> 5 750volts.blogspot.com      Liberal Blogarama            
 #> 6 95theses.blogspot.com      Liberal Blogarama            
 #> # i 1,484 more rows
+#> 
+#> -- Ties
 #> # A tibble: 19,090 x 2
 #>    from    to
 #>   <int> <int>
@@ -26,6 +31,7 @@
 #> 5   904   919
 #> 6   904  1045
 #> # i 19,084 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \usage{

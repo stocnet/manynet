@@ -5,8 +5,10 @@
 \alias{add_nodes}
 \alias{delete_nodes}
 \alias{add_node_attribute}
-\alias{mutate_nodes}
 \alias{mutate}
+\alias{mutate_nodes}
+\alias{select}
+\alias{select_nodes}
 \alias{bind_node_attributes}
 \alias{join_nodes}
 \alias{rename_nodes}
@@ -20,9 +22,13 @@ delete_nodes(.data, nodes)
 
 add_node_attribute(.data, attr_name, vector)
 
+mutate(.data, ...)
+
 mutate_nodes(.data, ...)
 
-mutate(.data, ...)
+select(.data, ...)
+
+select_nodes(.data, ...)
 
 bind_node_attributes(.data, object2)
 
@@ -37,7 +43,7 @@ rename_nodes(.data, ...)
 
 rename(.data, ...)
 
-filter_nodes(.data, ..., .by)
+filter_nodes(.data, ..., .by = NULL)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:

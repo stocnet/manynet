@@ -3,6 +3,7 @@
 \name{manip_scope}
 \alias{manip_scope}
 \alias{to_ego}
+\alias{to_time}
 \alias{to_giant}
 \alias{to_no_isolates}
 \alias{to_subgraph}
@@ -10,6 +11,8 @@
 \title{Modifying networks scope}
 \usage{
 to_ego(.data, node, max_dist = 1, min_dist = 0, direction = c("out", "in"))
+
+to_time(.data, time)
 
 to_giant(.data)
 
@@ -40,6 +43,8 @@ Increasing this to 1 excludes the ego,
 and 2 excludes ego's direct alters.}
 
 \item{direction}{String, either "out" or "in".}
+
+\item{time}{A time point or wave at which to present the network.}
 
 \item{...}{Arguments passed on to dplyr::filter}
 

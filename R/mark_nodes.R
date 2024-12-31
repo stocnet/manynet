@@ -201,46 +201,56 @@ NULL
 #'   # To mark nodes that are latent by a particular time point
 #'   node_is_latent(play_diffusion(create_tree(6), latency = 1), time = 1)
 #' @export
-node_is_latent <- function(diff_model, time = 0){
-  event <- nodes <- n <- NULL
-  latent <- summary(diff_model) %>%
-    dplyr::filter(t <= time & event %in% c("E", "I")) %>%
-    group_by(nodes) %>%
-    mutate(n = dplyr::n()) %>%
-    filter(n == 1 & event == "E")
-  net <- attr(diff_model, "network")
-  if (is_labelled(net)) {
-    out <- seq_len(net_nodes(net)) %in% latent$nodes
-    names(out) <- node_names(net)
+node_is_latent <- function(.data, time = 0){
+  if(inherits(.data, "diff_model")){
+    event <- nodes <- n <- NULL
+    latent <- summary(.data) %>%
+      dplyr::filter(t <= time & event %in% c("E", "I")) %>%
+      group_by(nodes) %>%
+      mutate(n = dplyr::n()) %>%
+      filter(n == 1 & event == "E")
+    net <- attr(.data, "network")
+    if (is_labelled(net)) {
+      out <- seq_len(net_nodes(net)) %in% latent$nodes
+      names(out) <- node_names(net)
+    } else {
+      out <- seq_len(net_nodes(net)) %in% latent$nodes
+    }
+    make_node_mark(out, net)
   } else {
-    out <- seq_len(net_nodes(net)) %in% latent$nodes
+    out <- to_time(.data, time)
+    out <- node_attribute(out, "diffusion") == "E"
+    make_node_mark(out, .data)
   }
-  make_node_mark(out, net)
 }
 
 #' @rdname mark_diff 
-#' @param diff_model A diff_model object,
-#'   created either by `play_diffusion()` or `as_diffusion()`.
 #' @param time A time step at which nodes are identified.
 #' @examples
 #'   # To mark nodes that are infected by a particular time point
 #'   node_is_infected(play_diffusion(create_tree(6)), time = 1)
 #' @export
-node_is_infected <- function(diff_model, time = 0) {
-  event <- nodes <- n <- NULL
-  infected <- summary(diff_model) %>% 
-    dplyr::filter(t <= time & event %in% c("I", "R")) %>%
-    group_by(nodes) %>%
-    mutate(n = dplyr::n()) %>%
-    filter(n == 1 & event == "I")
-  net <- attr(diff_model, "network")
-  if (is_labelled(net)) {
-    out <- seq_len(net_nodes(net)) %in% infected$nodes
-    names(out) <- node_names(net)
+node_is_infected <- function(.data, time = 0) {
+  if(inherits(.data, "diff_model")){
+    event <- nodes <- n <- NULL
+    infected <- summary(.data) %>% 
+      dplyr::filter(t <= time & event %in% c("I", "R")) %>%
+      group_by(nodes) %>%
+      mutate(n = dplyr::n()) %>%
+      filter(n == 1 & event == "I")
+    net <- attr(.data, "network")
+    if (is_labelled(net)) {
+      out <- seq_len(net_nodes(net)) %in% infected$nodes
+      names(out) <- node_names(net)
+    } else {
+      out <- seq_len(net_nodes(net)) %in% infected$nodes
+    }
+    make_node_mark(out, net)
   } else {
-    out <- seq_len(net_nodes(net)) %in% infected$nodes
+    out <- to_time(.data, time)
+    out <- node_attribute(out, "diffusion") == "I"
+    make_node_mark(out, .data)
   }
-  make_node_mark(out, net)
 }
 
 #' @rdname mark_diff 
@@ -248,21 +258,27 @@ node_is_infected <- function(diff_model, time = 0) {
 #'   # To mark nodes that are recovered by a particular time point
 #'   node_is_recovered(play_diffusion(create_tree(6), recovery = 0.5), time = 3)
 #' @export
-node_is_recovered <- function(diff_model, time = 0){
-  event <- nodes <- n <- NULL
-  recovered <- summary(diff_model) %>% 
-    dplyr::filter(t <= time & event == "R") %>%
-    group_by(nodes) %>%
-    mutate(n = dplyr::n()) %>%
-    filter(n == 1)
-  net <- attr(diff_model, "network")
-  if (is_labelled(net)) {
-    out <- seq_len(net_nodes(net)) %in% recovered$nodes
-    names(out) <- node_names(net)
+node_is_recovered <- function(.data, time = 0){
+  if(inherits(.data, "diff_model")){
+    event <- nodes <- n <- NULL
+    recovered <- summary(.data) %>% 
+      dplyr::filter(t <= time & event == "R") %>%
+      group_by(nodes) %>%
+      mutate(n = dplyr::n()) %>%
+      filter(n == 1)
+    net <- attr(.data, "network")
+    if (is_labelled(net)) {
+      out <- seq_len(net_nodes(net)) %in% recovered$nodes
+      names(out) <- node_names(net)
+    } else {
+      out <- seq_len(net_nodes(net)) %in% recovered$nodes
+    }
+    make_node_mark(out, net)
   } else {
-    out <- seq_len(net_nodes(net)) %in% recovered$nodes
+    out <- to_time(.data, time)
+    out <- node_attribute(out, "diffusion") == "R"
+    make_node_mark(out, .data)
   }
-  make_node_mark(out, net)
 }
 
 #' @rdname mark_diff 
@@ -386,3 +402,24 @@ node_is_min <- function(node_measure, ranks = 1){
   class(out) <- c("node_mark", class(out))
   out
 }
+
+#' @rdname mark_select
+#' @examples 
+#' #node_is_mean(node_degree(ison_brandes))
+#' @export
+node_is_mean <- function(node_measure, ranks = 1){
+  if(!inherits(node_measure, "node_measure"))
+    cli::cli_abort("This function expects an object of class `node_measure`")
+  if(any(attr(node_measure, "mode"))){
+    mode1 <- node_measure[!as.logical(attr(node_measure, "mode"))]
+    out <- mode1 == sort(abs(mode1 - mean(mode1)))[ranks]
+    mode2 <- node_measure[as.logical(attr(node_measure, "mode"))]
+    out <- c(out, mode2 == sort(abs(mode2 - mean(mode2)))[ranks])
+    attr(out, "mode") <- as.logical(attr(node_measure, "mode"))
+  } else {
+    out <- node_measure == sort(abs(node_measure - mean(node_measure)))[ranks]
+  }
+  class(out) <- c("node_mark", class(out))
+  out
+}
+

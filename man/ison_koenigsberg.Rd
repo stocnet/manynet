@@ -5,7 +5,10 @@
 \alias{ison_koenigsberg}
 \title{One-mode Seven Bridges of Koenigsberg network (Euler 1741)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, undirected network of 4 nodes and 7 ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Seven Bridges of Koenigsberg network --------------------------------------
+#> # A labelled, undirected network of 4 landmasses and 7 bridge ties
+#> 
+#> -- Nodes
 #> # A tibble: 4 x 3
 #>   name       lat   lon
 #>   <chr>    <dbl> <dbl>
@@ -13,6 +16,8 @@
 #> 2 Kneiphof  54.7  20.5
 #> 3 Lomse     54.7  20.5
 #> 4 Vorstadt  54.7  20.5
+#> 
+#> -- Ties
 #> # A tibble: 7 x 3
 #>    from    to name           
 #>   <int> <int> <chr>          
@@ -23,6 +28,7 @@
 #> 5     2     4 Gruene Bruecke 
 #> 6     2     4 Koettelbruecke 
 #> # i 1 more row
+#> 
 }\if{html}{\out{</div>}}
 }
 \source{

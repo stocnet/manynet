@@ -167,8 +167,11 @@ net_modularity <- function(.data,
                              membership = NULL, 
                              resolution = 1){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  if(is.null(membership))
+  if(is.null(membership)){
+    mnet_info("Since no membership argument has been provided,",
+              "a partition of the network into two will be calculated and used.")
     membership <- node_in_partition(.data)
+  }
   if(!is.numeric(membership)) membership <- as.numeric(as.factor(membership))
   if(!is_graph(.data)) .data <- as_igraph(.data)
   if(is_twomode(.data)){
@@ -393,6 +396,7 @@ net_balance <- function(.data) {
 #' @description
 #'   These functions measure certain topological features of networks:
 #'   
+#'   - `net_waves()` measures the number of waves in longitudinal network data.
 #'   - `net_change()` measures the Hamming distance between two or more networks.
 #'   - `net_stability()` measures the Jaccard index of stability between two or more networks.
 #'   - `net_correlation()` measures the product-moment correlation between two networks.
@@ -404,6 +408,17 @@ net_balance <- function(.data) {
 #' @family measures
 NULL
 
+#' @rdname measure_periods 
+#' @export
+net_waves <- function(.data){
+  tie_waves <- length(unique(tie_attribute(.data, "wave")))
+  if(is_changing(.data)){
+    chltime <- as_changelist(.data)$time
+    chg_waves <- (max(chltime)+1) - max(min(chltime)-1, 0)
+  } else chg_waves <- 0
+  max(tie_waves, chg_waves)    
+}
+  
 #' @rdname measure_periods 
 #' @param object2 A network object.
 #' @export

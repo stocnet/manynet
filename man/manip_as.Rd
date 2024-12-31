@@ -3,6 +3,7 @@
 \name{manip_as}
 \alias{manip_as}
 \alias{as_nodelist}
+\alias{as_changelist}
 \alias{as_edgelist}
 \alias{as_matrix}
 \alias{as_igraph}
@@ -15,6 +16,8 @@
 \title{Modifying network classes}
 \usage{
 as_nodelist(.data)
+
+as_changelist(.data)
 
 as_edgelist(.data, twomode = FALSE)
 
@@ -128,10 +131,11 @@ as_igraph(test)
 as_tidygraph(test)
 as_network(test)
   # How to create a diff_model object from (basic) observed data
-  events <- data.frame(t = c(0,1,1,2,3), 
-                       nodes = c(1,2,3,2,4), 
-                       event = c("I","I","I","R","I"))
-  as_diffusion(create_filled(4), events = events)
+  events <- data.frame(time = c(0,1,1,2,3), 
+                       node = c(1,2,3,2,4),
+                       var = "diffusion", 
+                       value = c("I","I","I","R","I"))
+  add_changes(create_filled(4), events)
 }
 \seealso{
 Other modifications: 

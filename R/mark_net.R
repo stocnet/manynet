@@ -11,7 +11,8 @@
 #'   - `is_list()` marks a network TRUE if it is a (non-igraph) list of networks,
 #'   for example a set of ego networks or a dynamic or longitudinal set of networks.
 #'   - `is_longitudinal()` marks a network TRUE if it contains longitudinal, panel data.
-#'   - `is_dynamic()` marks a network TRUE if it contains dynamic, time-stamped data
+#'   - `is_dynamic()` marks a network TRUE if it contains dynamic, time-stamped data.
+#'   - `is_changing()` marks a network TRUE if it contains changes to nodal attributes.
 #'   
 #'   All `is_*()` functions return a logical scalar (TRUE or FALSE).
 #' @param .data An object of a manynet-consistent class:
@@ -103,8 +104,10 @@ is_list <- function(.data) {
 #' @export
 is_longitudinal <- function(.data) {
   if(is_manynet(.data)) {
-    atts <- igraph::edge_attr_names(as_igraph(.data))
-    return("wave" %in% atts | "panel" %in% atts)
+    ig <- as_igraph(.data)
+    catts <- names(igraph::graph_attr(ig, "changes"))
+    tatts <- igraph::edge_attr_names(ig)
+    return("time" %in% catts | "wave" %in% tatts | "panel" %in% tatts)
   } else if(is_list(.data)){
     all(lapply(.data, net_nodes)==net_nodes(.data[[1]]))
   } 
@@ -117,6 +120,14 @@ is_longitudinal <- function(.data) {
 is_dynamic <- function(.data) {
   atts <- igraph::edge_attr_names(as_igraph(.data))
   "time" %in% atts | "beg" %in% atts | "begin" %in% atts | "start" %in% atts
+}
+
+#' @rdname mark_is
+#' @examples 
+#' is_changing(fict_starwars)
+#' @export
+is_changing <- function(.data) {
+  "changes" %in% igraph::graph_attr_names(as_igraph(.data))
 }
 
 # Formats ####

@@ -7,6 +7,8 @@
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> $ison_bb
 #> # A labelled, two-mode network of 10 nodes and 12 ties
+#> 
+#> -- Nodes
 #> # A tibble: 10 x 2
 #>   name  type 
 #>   <chr> <lgl>
@@ -17,6 +19,8 @@
 #> 5 U     TRUE 
 #> 6 V     TRUE 
 #> # i 4 more rows
+#> 
+#> -- Ties
 #> # A tibble: 12 x 2
 #>    from    to
 #>   <int> <int>
@@ -28,8 +32,11 @@
 #> 6     2     9
 #> # i 6 more rows
 #> 
+#> 
 #> $ison_bm
 #> # A labelled, two-mode network of 8 nodes and 9 ties
+#> 
+#> -- Nodes
 #> # A tibble: 8 x 2
 #>   name  type 
 #>   <chr> <lgl>
@@ -40,6 +47,8 @@
 #> 5 U     TRUE 
 #> 6 V     TRUE 
 #> # i 2 more rows
+#> 
+#> -- Ties
 #> # A tibble: 9 x 2
 #>    from    to
 #>   <int> <int>
@@ -51,8 +60,11 @@
 #> 6     3     6
 #> # i 3 more rows
 #> 
+#> 
 #> $ison_mb
 #> # A labelled, two-mode network of 8 nodes and 9 ties
+#> 
+#> -- Nodes
 #> # A tibble: 8 x 2
 #>   name  type 
 #>   <chr> <lgl>
@@ -63,6 +75,8 @@
 #> 5 M     TRUE 
 #> 6 X     TRUE 
 #> # i 2 more rows
+#> 
+#> -- Ties
 #> # A tibble: 9 x 2
 #>    from    to
 #>   <int> <int>
@@ -74,8 +88,11 @@
 #> 6     3     6
 #> # i 3 more rows
 #> 
+#> 
 #> $ison_mm
 #> # A labelled, two-mode network of 6 nodes and 6 ties
+#> 
+#> -- Nodes
 #> # A tibble: 6 x 2
 #>   name  type 
 #>   <chr> <lgl>
@@ -84,7 +101,9 @@
 #> 3 C     FALSE
 #> 4 D     FALSE
 #> 5 M     TRUE 
-#> 6 N     TRUE 
+#> 6 N     TRUE
+#> 
+#> -- Ties
 #> # A tibble: 6 x 2
 #>    from    to
 #>   <int> <int>
@@ -94,6 +113,7 @@
 #> 4     3     5
 #> 5     3     6
 #> 6     4     6
+#> 
 }\if{html}{\out{</div>}}
 }
 \usage{

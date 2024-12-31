@@ -5,9 +5,11 @@
 \alias{fict_lotr}
 \title{One-mode network of Lord of the Rings character interactions}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # Lord of the Rings
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Lord of the Rings ---------------------------------------------------------
 #> # A labelled, complex, undirected network of 36 characters and 66 interaction
 #> ties
+#> 
+#> -- Nodes
 #> # A tibble: 36 x 2
 #>   name     Race  
 #>   <chr>    <chr> 
@@ -18,6 +20,8 @@
 #> 5 Denethor Human 
 #> 6 Elladan  Elf   
 #> # i 30 more rows
+#> 
+#> -- Ties
 #> # A tibble: 66 x 2
 #>    from    to
 #>   <int> <int>
@@ -28,6 +32,7 @@
 #> 5     3    10
 #> 6     9    10
 #> # i 60 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \usage{

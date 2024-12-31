@@ -16,6 +16,10 @@
 #'   - `net_length()` measures the average path length in the network.
 #'   - `net_independence()` measures the independence number, 
 #'   or size of the largest independent set in the network.
+#'   - `net_strength()` measures the number of ties that would need to be
+#'   removed from a network to increase its number of components.
+#'   - `net_toughness()` measures the number of nodes that would need to be
+#'   removed from a network to increase its number of components.
 #'   
 #' @inheritParams mark_is
 #' @name measure_cohesion
@@ -127,3 +131,30 @@ net_independence <- function(.data){
   }
   make_network_measure(out, .data, call = deparse(sys.call()))
 }
+
+#' @rdname measure_cohesion 
+#' @examples 
+#' net_strength(ison_adolescents)
+#' @export
+net_strength <- function(.data){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  n <- net_ties(.data)
+  seties <- unlist(lapply(1:n, utils::combn, x = 1:n, simplify = FALSE), recursive = FALSE)
+  out <- vapply(seties, function(x) length(x)/net_components(delete_ties(.data, x)), 
+                FUN.VALUE = numeric(1))
+  make_network_measure(min(out), .data, call = deparse(sys.call()))
+}
+
+#' @rdname measure_cohesion 
+#' @examples 
+#' net_toughness(ison_adolescents)
+#' @export
+net_toughness <- function(.data){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  n <- net_nodes(.data)
+  seties <- unlist(lapply(1:n, utils::combn, x = 1:n, simplify = FALSE), recursive = FALSE)
+  out <- vapply(seties, function(x) length(x)/net_components(delete_nodes(.data, x)), 
+                FUN.VALUE = numeric(1))
+  make_network_measure(min(out), .data, call = deparse(sys.call()))
+}
+

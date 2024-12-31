@@ -5,8 +5,11 @@
 \alias{ison_lawfirm}
 \title{One-mode lawfirm (Lazega 2001)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A multiplex, directed network of 71 nodes and 2571 friends, advice, and
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Lazega's Lawyers ----------------------------------------------------------
+#> # A multiplex, directed network of 71 attorneys and 2571 friends, advice, and
 #> cowork arcs
+#> 
+#> -- Nodes
 #> # A tibble: 71 x 7
 #>   status  gender office   seniority   age practice   school      
 #>   <chr>   <chr>  <chr>        <dbl> <dbl> <chr>      <chr>       
@@ -17,6 +20,8 @@
 #> 5 partner man    Hartford        31    59 litigation UConn       
 #> 6 partner man    Hartford        29    55 litigation Harvard/Yale
 #> # i 65 more rows
+#> 
+#> -- Ties
 #> # A tibble: 2,571 x 3
 #>    from    to type   
 #>   <int> <int> <chr>  
@@ -27,6 +32,7 @@
 #> 5     1    17 friends
 #> 6     1    17 advice 
 #> # i 2,565 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \source{

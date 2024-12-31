@@ -7,15 +7,17 @@
 \alias{net_infection_peak}
 \title{Measures of network infection}
 \usage{
-net_infection_complete(diff_model)
+net_infection_complete(.data)
 
-net_infection_total(diff_model, normalized = TRUE)
+net_infection_total(.data, normalized = TRUE)
 
-net_infection_peak(diff_model)
+net_infection_peak(.data)
 }
 \arguments{
-\item{diff_model}{A valid network diffusion model,
-as created by \code{as_diffusion()} or \code{play_diffusion()}.}
+\item{.data}{Network data with nodal changes,
+as created by \code{play_diffusion()},
+or a valid network diffusion model,
+as created by \code{as_diffusion()}.}
 
 \item{normalized}{Logical scalar, whether the centrality scores are normalized.
 Different denominators are used depending on whether the object is one-mode or two-mode,

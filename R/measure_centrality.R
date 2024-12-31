@@ -89,6 +89,17 @@
 NULL
 
 #' @rdname measure_central_degree 
+#' @section Degree centrality: 
+#'   `r glossies$degree`
+#'   It is also sometimes called the valency of a node, \eqn{d(v)}.
+#'   The maximum degree in a network is often denoted \eqn{\Delta (G)} and
+#'   the minimum degree in a network \eqn{\delta (G)}.
+#'   The total degree of a network is the sum of all degrees, \eqn{\sum_v d(v)}.
+#'   The degree sequence is the set of all nodes' degrees,
+#'   ordered from largest to smallest.
+#'   Directed networks discriminate between 
+#'   outdegree (degree of outgoing ties) and
+#'   indegree (degree of incoming ties).
 #' @importFrom manynet as_igraph
 #' @export
 node_degree <- function (.data, normalized = TRUE, alpha = 1,
@@ -192,7 +203,7 @@ node_posneg <- function(.data){
 #' @section Leverage centrality: 
 #'   Leverage centrality concerns the degree of a node compared with that of its
 #'   neighbours, \eqn{J}:
-#'   \deqn{C_L(i) = \frac{1}{deg(i)} \sum_{j \in J(i)} \frac{deg(i) - deg(j)}{deg(i) + deg(j)}}
+#'   \deqn{C_L(i) = \frac{1}{d(i)} \sum_{j \in J(i)} \frac{d(i) - d(j)}{d(i) + d(j)}}
 #' @references
 #' ## On leverage centrality
 #' Joyce, Karen E., Paul J. Laurienti, Jonathan H. Burdette, and Satoru Hayasaka. 2010.

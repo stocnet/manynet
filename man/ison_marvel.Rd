@@ -9,6 +9,8 @@
 book characters (Yuksel 2017)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, two-mode network of 194 nodes and 683 ties
+#> 
+#> -- Nodes
 #> # A tibble: 194 x 2
 #>   type  name         
 #>   <lgl> <chr>        
@@ -19,6 +21,8 @@ book characters (Yuksel 2017)}
 #> 5 FALSE Black Panther
 #> 6 FALSE Black Widow  
 #> # i 188 more rows
+#> 
+#> -- Ties
 #> # A tibble: 683 x 2
 #>    from    to
 #>   <int> <int>
@@ -29,9 +33,12 @@ book characters (Yuksel 2017)}
 #> 5     1   179
 #> 6     2    56
 #> # i 677 more rows
+#> 
 }\if{html}{\out{</div>}}
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, complex, signed, undirected network of 53 nodes and 558 ties
+#> 
+#> -- Nodes
 #> # A tibble: 53 x 10
 #>   name     Gender Appearances Attractive  Rich Intellect Omnilingual PowerOrigin
 #>   <chr>    <chr>        <int>      <int> <int>     <int>       <int> <chr>      
@@ -43,6 +50,8 @@ book characters (Yuksel 2017)}
 #> 6 Black W~ Female        2907          1     0         1           0 Human      
 #> # i 47 more rows
 #> # i 2 more variables: UnarmedCombat <int>, ArmedCombat <int>
+#> 
+#> -- Ties
 #> # A tibble: 558 x 3
 #>    from    to  sign
 #>   <int> <int> <dbl>
@@ -53,6 +62,7 @@ book characters (Yuksel 2017)}
 #> 5     1    24    -1
 #> 6     1    25    -1
 #> # i 552 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \source{

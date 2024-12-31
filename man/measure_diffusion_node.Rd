@@ -8,25 +8,15 @@
 \alias{node_exposure}
 \title{Measures of nodes in a diffusion}
 \usage{
-node_adoption_time(diff_model)
+node_adoption_time(.data)
 
-node_thresholds(diff_model, normalized = TRUE, lag = 1)
+node_thresholds(.data, normalized = TRUE, lag = 1)
 
-node_recovery(diff_model)
+node_recovery(.data)
 
 node_exposure(.data, mark, time = 0)
 }
 \arguments{
-\item{diff_model}{A valid network diffusion model,
-as created by \code{as_diffusion()} or \code{play_diffusion()}.}
-
-\item{normalized}{Logical scalar, whether the centrality scores are normalized.
-Different denominators are used depending on whether the object is one-mode or two-mode,
-the type of centrality, and other arguments.}
-
-\item{lag}{The number of time steps back upon which the thresholds are
-inferred.}
-
 \item{.data}{An object of a manynet-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
@@ -35,6 +25,13 @@ inferred.}
 \item network, from the \code{{network}} package
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
+
+\item{normalized}{Logical scalar, whether the centrality scores are normalized.
+Different denominators are used depending on whether the object is one-mode or two-mode,
+the type of centrality, and other arguments.}
+
+\item{lag}{The number of time steps back upon which the thresholds are
+inferred.}
 
 \item{mark}{A valid 'node_mark' object or
 logical vector (TRUE/FALSE) of length equal to

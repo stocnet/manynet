@@ -5,11 +5,17 @@
 \alias{node_in_adopter}
 \title{Membership of nodes in a diffusion}
 \usage{
-node_in_adopter(diff_model)
+node_in_adopter(.data)
 }
 \arguments{
-\item{diff_model}{A valid network diffusion model,
-as created by \code{as_diffusion()} or \code{play_diffusion()}.}
+\item{.data}{An object of a manynet-consistent class:
+\itemize{
+\item matrix (adjacency or incidence) from \code{{base}} R
+\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
+\item igraph, from the \code{{igraph}} package
+\item network, from the \code{{network}} package
+\item tbl_graph, from the \code{{tidygraph}} package
+}}
 }
 \description{
 \code{node_in_adopter()} classifies membership of nodes into diffusion categories

@@ -3,18 +3,93 @@
 \name{motif_diffusion}
 \alias{motif_diffusion}
 \alias{node_by_exposure}
+\alias{net_by_hazard}
 \title{Motifs of diffusion}
+\source{
+\code{{netdiffuseR}}
+}
 \usage{
-node_by_exposure(diff_model)
+node_by_exposure(.data)
+
+net_by_hazard(.data)
 }
 \arguments{
-\item{diff_model}{A valid network diffusion model,
-as created by \code{as_diffusion()} or \code{play_diffusion()}.}
+\item{.data}{An object of a manynet-consistent class:
+\itemize{
+\item matrix (adjacency or incidence) from \code{{base}} R
+\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
+\item igraph, from the \code{{igraph}} package
+\item network, from the \code{{network}} package
+\item tbl_graph, from the \code{{tidygraph}} package
+}}
 }
 \description{
 \itemize{
+\item \code{net_by_hazard()} measures the hazard rate or instantaneous probability that
+nodes will adopt/become infected at that time.
 \item \code{node_by_exposure()} produces a motif matrix of nodes' exposure to
-infection/adoption by time step
+infection/adoption by time step.
+}
+}
+\section{Hazard rate}{
+
+The hazard rate is the instantaneous probability of adoption/infection at each time point (Allison 1984).
+In survival analysis, hazard rate is formally defined as:
+
+\deqn{%
+\lambda(t)=\lim_{h\to +0}\frac{F(t+h)-F(t)}{h}\frac{1}{1-F(t)} %
+}{%
+\lambda(t-1)= lim (t -> +0) [F(t+h)-F(t)]/h * 1/[1-F(t)] %
+}
+
+By approximating \eqn{h=1}, we can rewrite the equation as
+
+\deqn{%
+\lambda(t)=\frac{F(t+1)-F(t)}{1-F(t)} %
+}{%
+\lambda(t-1)= [F(t+1)-F(t)]/[1-F(t)] %
+}
+
+If we estimate \eqn{F(t)},
+the probability of not having adopted the innovation in time \eqn{t},
+from the proportion of adopters in that time,
+such that \eqn{F(t) \sim q_t/n}{F(t) ~ q(t)/n}, we now have (ultimately for \eqn{t>1}):
+
+\deqn{%
+\lambda(t)=\frac{q_{t+1}/n-q_t/n}{1-q_t/n} = \frac{q_{t+1} - q_t}{n - q_t} = \frac{q_t - q_{t-1}}{n - q_{t-1}} %
+}{%
+\lambda(t-1)= [q(t+1)/n-q(t)/n]/[1-q(t)/n] = [q(t+1) - q(t)]/[n - q(t)] = [q(t) - q(t-1)]/[n - q(t-1)] %
+}
+
+where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t},
+and \eqn{n} is the number of vertices in the graph.
+
+The shape of the hazard rate indicates the pattern of new adopters over time.
+Rapid diffusion with convex cumulative adoption curves will have
+hazard functions that peak early and decay over time.
+Slow concave cumulative adoption curves will have
+hazard functions that are low early and rise over time.
+Smooth hazard curves indicate constant adoption whereas
+those that oscillate indicate variability in adoption behavior over time.
+}
+
+\examples{
+node_by_exposure(play_diffusion(create_tree(12)))
+# To calculate the hazard rates at each time point
+  smeg <- generate_smallworld(15, 0.025)
+net_by_hazard(play_diffusion(smeg, transmissibility = 0.3))
+}
+\references{
+\subsection{On hazard rates}{
+
+Allison, Paul D. 1984.
+\emph{Event history analysis: Regression for longitudinal event data}.
+London: Sage Publications.
+\doi{10.4135/9781412984195}
+
+Wooldridge, Jeffrey M. 2010.
+\emph{Econometric Analysis of Cross Section and Panel Data} (2nd ed.).
+Cambridge: MIT Press.
 }
 }
 \seealso{

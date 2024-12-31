@@ -161,8 +161,28 @@ question("There are a number of measures that might be used to approximate the c
 )
 ```
 
+### Bridges
+
+One common way of thinking about how innovations and ideas might flow across
+the network is to think about where the bottlenecks are.
+Ties that are the bottlenecks for information to flow from one part of the
+network to another are called bridges.
+Remember, this means that only ties can be bridges,
+though a node-based measure that tracks the count of bridges to which a node
+is adjacent is available.
+Unfortunately, if we take a closer look at the friends network,
+there are no bridges.
+
+```{r bridges, exercise = TRUE, exercise.setup = "objects-setup"}
+sum(tie_is_bridge(friends))
+any(node_bridges(friends)>0)
+```
+
+### Constraint
+
+But some nodes do seem more deeply embedded in the network than others,
 Let's take a look at which actors are least _constrained_ 
-by their position in the *task* network to begin with.
+by their position in the *task* network.
 `{manynet}` makes this easy enough with the `node_constraint()` function.
 
 ```{r objects-setup, purl=FALSE}
@@ -463,8 +483,8 @@ The silhouette method, by contrast, sees `k == 4` as maximising cluster similari
 and dissimilarity.
 Either is probably fine here, 
 and there is much debate around how to select the number of clusters anyway.
-However, the silhouette method seems to do a better job of identifying how unique
-the 16th node is.
+However, the silhouette method seems to do a better job of identifying 
+how unique the 16th node is.
 The silhouette method is also the default in `{manynet}`.
 
 Note that there is a somewhat hidden parameter here, `range`.
@@ -488,7 +508,8 @@ Here for example, no two nodes have precisely the same tie-profile,
 otherwise their branches would join/fork at a distance of 0.
 As such, `k = "strict"` partitions the network into 16 clusters.
 Where networks have a number of nodes with strictly the same profiles,
-such a k-selection method might be helpful to recognise those in exactly the same structural position,
+such a k-selection method might be helpful to recognise nodes in exactly 
+the same structural position,
 but here it essentially just reports nodes' identity.
 
 ## Blockmodelling

@@ -3,7 +3,6 @@
 \name{make_play}
 \alias{make_play}
 \alias{play_diffusion}
-\alias{play_diffusions}
 \title{Making diffusion models on networks}
 \usage{
 play_diffusion(
@@ -17,24 +16,8 @@ play_diffusion(
   recovery = 0,
   waning = 0,
   immune = NULL,
-  steps
-)
-
-play_diffusions(
-  .data,
-  seeds = 1,
-  contact = NULL,
-  prevalence = 0,
-  thresholds = 1,
-  transmissibility = 1,
-  latency = 0,
-  recovery = 0,
-  waning = 0,
-  immune = NULL,
   steps,
-  times = 5,
-  strategy = "sequential",
-  verbose = FALSE
+  old_version = FALSE
 )
 }
 \arguments{
@@ -114,23 +97,17 @@ By default the number of nodes in the network.
 If \code{steps = Inf} then the diffusion process will continue until
 there are no new infections or all nodes are infected.}
 
-\item{times}{Integer indicating number of simulations.
-By default \code{times=5}, but 1,000 - 10,000 simulations recommended for publication-ready results.}
-
-\item{strategy}{If \code{{furrr}} is installed, then multiple cores can be used to accelerate the simulations.
-By default "sequential", but if multiple cores available, then "multisession" or "multicore" may be useful.
-Generally this is useful only when times > 1000. See \code{{furrr}} for more.}
-
-\item{verbose}{Whether the function should report on its progress.
-By default FALSE. See \code{{progressr}} for more.}
+\item{old_version}{This is included to maintain backward compatibility
+with the old version of this function, that would return a special
+object.
+The new version adds the diffusion event record as changes to the
+original network.}
 }
 \description{
 These functions simulate diffusion or compartment models upon a network.
 \itemize{
 \item \code{play_diffusion()} runs a single simulation of a compartment model,
 allowing the results to be visualised and examined.
-\item \code{play_diffusions()} runs multiple simulations of a compartment model
-for more robust inference.
 }
 
 These functions allow both a full range of compartment models,
@@ -202,7 +179,6 @@ This can be used in in SEI, SEIS, SEIR, and SEIRS models.
   smeg <- generate_smallworld(15, 0.025)
   plot(play_diffusion(smeg, recovery = 0.4))
   #graphr(play_diffusion(ison_karateka))
-# plot(play_diffusions(smeg, times = 10))
 }
 \seealso{
 Other makes: 

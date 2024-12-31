@@ -5,8 +5,11 @@
 \alias{ison_hightech}
 \title{One-mode multiplex, directed network of managers of a high-tech company (Krackhardt 1987)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A multiplex, directed network of 21 nodes and 312 friends, advice, and
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # High-tech company managers ------------------------------------------------
+#> # A multiplex, directed network of 21 managers and 312 friends, advice, and
 #> reports arcs
+#> 
+#> -- Nodes
 #> # A tibble: 21 x 4
 #>     age tenure level dept 
 #>   <dbl>  <dbl> <dbl> <chr>
@@ -17,6 +20,8 @@
 #> 5    32      3     1 C    
 #> 6    59     28     1 B    
 #> # i 15 more rows
+#> 
+#> -- Ties
 #> # A tibble: 312 x 3
 #>    from    to type   
 #>   <int> <int> <chr>  
@@ -27,6 +32,7 @@
 #> 5     1     4 advice 
 #> 6     1     8 friends
 #> # i 306 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \usage{

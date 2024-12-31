@@ -2,11 +2,14 @@
 % Please edit documentation in R/measure_features.R
 \name{measure_periods}
 \alias{measure_periods}
+\alias{net_waves}
 \alias{net_change}
 \alias{net_stability}
 \alias{net_correlation}
 \title{Measures of network change}
 \usage{
+net_waves(.data)
+
 net_change(.data, object2)
 
 net_stability(.data, object2)
@@ -28,6 +31,7 @@ net_correlation(.data, object2)
 \description{
 These functions measure certain topological features of networks:
 \itemize{
+\item \code{net_waves()} measures the number of waves in longitudinal network data.
 \item \code{net_change()} measures the Hamming distance between two or more networks.
 \item \code{net_stability()} measures the Jaccard index of stability between two or more networks.
 \item \code{net_correlation()} measures the product-moment correlation between two networks.

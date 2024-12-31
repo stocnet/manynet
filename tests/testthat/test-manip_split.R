@@ -48,7 +48,7 @@ test_that("to_waves works", {
 test_that("to_waves works for diff_model objects", {
   skip_on_cran()
   skip_on_ci()
-  wave_diff <- play_diffusion(ison_brandes)
+  wave_diff <- play_diffusion(ison_brandes, old_version = TRUE)
   expect_length(to_waves(wave_diff), length(wave_diff$t))
   expect_values(net_nodes(to_waves(wave_diff)[[1]]),
                net_nodes(to_waves(wave_diff)[[12]]))

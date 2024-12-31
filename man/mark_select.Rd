@@ -5,6 +5,7 @@
 \alias{node_is_random}
 \alias{node_is_max}
 \alias{node_is_min}
+\alias{node_is_mean}
 \title{Marking nodes for selection based on measures}
 \usage{
 node_is_random(.data, size = 1)
@@ -12,6 +13,8 @@ node_is_random(.data, size = 1)
 node_is_max(node_measure, ranks = 1)
 
 node_is_min(node_measure, ranks = 1)
+
+node_is_mean(node_measure, ranks = 1)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -48,6 +51,7 @@ are key because they minimise or, more often, maximise some measure.
 node_is_random(ison_brandes, 2)
 #node_is_max(migraph::node_degree(ison_brandes))
 #node_is_min(migraph::node_degree(ison_brandes))
+#node_is_mean(node_degree(ison_brandes))
 }
 \seealso{
 Other marks: 

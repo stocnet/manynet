@@ -5,9 +5,11 @@
 \alias{fict_friends}
 \title{One-mode undirected Friends character scene co-appearances (McNulty, 2020)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # Friends network
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Friends network -----------------------------------------------------------
 #> # A labelled, weighted, undirected network of 650 characters and 2976 scene
 #> co-appearance ties
+#> 
+#> -- Nodes
 #> # A tibble: 650 x 1
 #>   name        
 #>   <chr>       
@@ -18,6 +20,8 @@
 #> 5 Aunt Iris   
 #> 6 Aunt Lillian
 #> # i 644 more rows
+#> 
+#> -- Ties
 #> # A tibble: 2,976 x 3
 #>    from    to weight
 #>   <int> <int>  <dbl>
@@ -28,6 +32,7 @@
 #> 5     2    14      1
 #> 6     3    14      1
 #> # i 2,970 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \usage{

@@ -471,7 +471,10 @@ write_matrix <- function(.data,
     object_name <- deparse(substitute(.data))
     out <- as_matrix(.data)
   }
-  if (missing(filename)) filename <- paste0(getwd(), "/", object_name, ".csv")
+  if (missing(filename)){
+    filename <- paste0(getwd(), "/", object_name, ".csv")
+    mnet_success("Writing to {.file {filename}}")
+  } 
   # if (missing(name)) name <- object_name
   write.csv(out, file = filename, row.names = FALSE)
 }
@@ -493,7 +496,10 @@ write_edgelist <- function(.data,
     object_name <- deparse(substitute(.data))
     out <- as.data.frame(as_edgelist(.data))
   }
-  if (missing(filename)) filename <- paste0(getwd(), "/", object_name, ".csv")
+  if (missing(filename)){
+    filename <- paste0(getwd(), "/", object_name, "-edges.csv")
+    mnet_success("Writing to {.file {filename}}")
+  } 
   # if (missing(name)) name <- object_name
   write.csv(out, file = filename, row.names = FALSE, ...)
 }
@@ -514,7 +520,10 @@ write_nodelist <- function(.data,
     object_name <- deparse(substitute(.data))
     out <- as.data.frame(as_tidygraph(.data))
   }
-  if (missing(filename)) filename <- paste0(getwd(), "/", object_name, ".csv")
+  if (missing(filename)){
+    filename <- paste0(getwd(), "/", object_name, "-nodes.csv")
+    mnet_success("Writing to {.file {filename}}")
+  } 
   # if (missing(name)) name <- object_name
   write.csv(out, file = filename, row.names = FALSE, ...)
 }
@@ -528,6 +537,7 @@ write_pajek <- function(.data,
   if (missing(filename)) {
     object_name <- deparse(substitute(.data))
     filename <- paste0(getwd(), "/", object_name, ".net")
+    mnet_success("Writing to {.file {filename}}")
   }
   igraph::write_graph(as_igraph(.data),
                       file = filename,
@@ -642,6 +652,7 @@ write_ucinet <- function(.data,
   close(UCINET.header)
   # continue with UCINET data file: --> Write the actual matrix
   UCINET.data <- file(paste(filename, ".##d", sep = ""), "wb")
+  mnet_success("Writing to {.file {filename}}")
   for (i in seq_len(length(mat))) {
     writeBin(t(mat)[i], UCINET.data, size = 4, endian = "little")
   }
@@ -656,7 +667,10 @@ write_graphml <- function(.data,
                           # name,
                           ...) {
   # if (missing(name)) name <- deparse(substitute(.data))
-  if (missing(filename)) filename <- paste0(getwd(), "/", deparse(substitute(.data)), ".graphml")
+  if (missing(filename)){
+    filename <- paste0(getwd(), "/", deparse(substitute(.data)), ".graphml")
+    mnet_success("Writing to {.file {filename}}")
+  } 
   igraph::write_graph(.data,
                       filename,
                       format = "graphml")

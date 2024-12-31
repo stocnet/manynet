@@ -8,6 +8,8 @@
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> $Peoria
 #> # A multiplex, directed network of 117 nodes and 543 friendship, advice, and
 #> discussion arcs
+#> 
+#> -- Nodes
 #> # A tibble: 117 x 12
 #>   adoption specialty    conferences journals practice   community patients
 #>      <dbl> <chr>        <chr>          <dbl> <chr>      <chr>     <chr>   
@@ -20,6 +22,8 @@
 #> # i 111 more rows
 #> # i 5 more variables: doc_freetime <dbl>, doc_discuss <dbl>, doc_friends <dbl>,
 #> #   doc_club <dbl>, doc_proximity <chr>
+#> 
+#> -- Ties
 #> # A tibble: 543 x 3
 #>    from    to type      
 #>   <int> <int> <chr>     
@@ -31,9 +35,12 @@
 #> 6     1   112 friendship
 #> # i 537 more rows
 #> 
+#> 
 #> $Bloomington
 #> # A multiplex, directed network of 50 nodes and 211 friendship, discussion, and
 #> advice arcs
+#> 
+#> -- Nodes
 #> # A tibble: 50 x 12
 #>   adoption specialty conferences journals practice   community patients
 #>      <dbl> <chr>     <chr>          <dbl> <chr>      <chr>     <chr>   
@@ -46,6 +53,8 @@
 #> # i 44 more rows
 #> # i 5 more variables: doc_freetime <dbl>, doc_discuss <dbl>, doc_friends <dbl>,
 #> #   doc_club <dbl>, doc_proximity <chr>
+#> 
+#> -- Ties
 #> # A tibble: 211 x 3
 #>    from    to type      
 #>   <int> <int> <chr>     
@@ -57,9 +66,12 @@
 #> 6     2     6 advice    
 #> # i 205 more rows
 #> 
+#> 
 #> $Quincy
 #> # A multiplex, directed network of 44 nodes and 174 advice, discussion, and
 #> friendship arcs
+#> 
+#> -- Nodes
 #> # A tibble: 44 x 12
 #>   adoption specialty conferences journals practice   community patients
 #>      <dbl> <chr>     <chr>          <dbl> <chr>      <chr>     <chr>   
@@ -72,6 +84,8 @@
 #> # i 38 more rows
 #> # i 5 more variables: doc_freetime <dbl>, doc_discuss <dbl>, doc_friends <dbl>,
 #> #   doc_club <dbl>, doc_proximity <chr>
+#> 
+#> -- Ties
 #> # A tibble: 174 x 3
 #>    from    to type      
 #>   <int> <int> <chr>     
@@ -83,9 +97,12 @@
 #> 6     1    22 discussion
 #> # i 168 more rows
 #> 
+#> 
 #> $Galesburg
 #> # A multiplex, directed network of 35 nodes and 171 advice, discussion, and
 #> friendship arcs
+#> 
+#> -- Nodes
 #> # A tibble: 35 x 12
 #>   adoption specialty conferences journals practice   community patients
 #>      <dbl> <chr>     <chr>          <dbl> <chr>      <chr>     <chr>   
@@ -98,6 +115,8 @@
 #> # i 29 more rows
 #> # i 5 more variables: doc_freetime <dbl>, doc_discuss <dbl>, doc_friends <dbl>,
 #> #   doc_club <dbl>, doc_proximity <chr>
+#> 
+#> -- Ties
 #> # A tibble: 171 x 3
 #>    from    to type      
 #>   <int> <int> <chr>     
@@ -108,6 +127,7 @@
 #> 5     1    30 friendship
 #> 6     1    31 friendship
 #> # i 165 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \source{

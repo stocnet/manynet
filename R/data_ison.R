@@ -32,12 +32,12 @@
 #' Multiplex graph object of friends, social, and task ties (McFarland 2001)
 #'
 #' @description
-#'  Multiplex graph object of friends, social, and task ties between 16 anonymous students.
-#'  M182 was an honors algebra class where researchers
-#'  collected friendship, social, and task ties between 16 students.
-#'  The edge attribute `friends` contains friendship ties,
-#'  where `2` = best friends, `1` = friend, and `0` is not a friend.
-#'  `social` consists of social interactions per hour,
+#'  Multiplex graph object of friends, social, and task ties 
+#'  between 16 anonymous students in an honors algebra class (M182).
+#'  Each type of tie is weighted:
+#'  the `friends` ties are weighted 
+#'  `2` = best friends, `1` = friend, and `0` is not a friend;
+#'  `social` consists of social interactions per hour;
 #'  and `tasks` consists of task interactions per hour.
 #' @docType data
 #' @keywords datasets
@@ -47,7 +47,9 @@
 #' McFarland, Daniel A. (2001) “Student Resistance.”
 #' _American Journal of Sociology_ 107(3): 612-78.
 #' \doi{10.1086/338779}.
-#' @source See also `data(studentnets.M182, package = "NetData")`
+#' @source 
+#' See also `data(studentnets.M182, package = "NetData")`
+#' 
 #' Larger comprehensive data set publicly available, contact Daniel A. McFarland for details.
 #' @format
 #'   ```{r, echo = FALSE}
@@ -532,37 +534,40 @@
 #' Seven one-mode Star Wars character interactions (Gabasova 2016)
 #'
 #' @description
-#' One-mode network dataset collected by Gabasova (2016)
-#' on the interactions between Star Wars characters in each movie from
-#' Episode 1 (The Phantom Menace) to Episode 7 (The Force Awakens).
-#' There is a separate network for each episode,
-#' and the data is listed in order from episode 1 to 7.
-#' The network for each episode varies in the number of nodes and ties.
-#' For all networks, characters are named (eg. R2-D2, Anakin, Chewbacca)
-#' and the following node attributes are provided where available:
-#' height, mass, hair color, skin color, eye color, birth year, sex, homeworld, and species.
-#' The node attribute 'faction' has also been added,
-#' denoting the faction (eg. Jedi, Rebel Alliance, etc) 
-#' that Star Wars characters belong to in each episode
-#' (coding completed with help of Yichen Shen and Tiphaine Aeby).
-#' Weighted ties represent the number of times characters speak 
-#' within the same scene of the film.
+#'   One-mode network dataset collected by Gabasova (2016)
+#'   on the interactions between Star Wars characters in each movie from
+#'   Episode 1 ("The Phantom Menace") to Episode 7 ("The Force Awakens").
+#'   
+#'   Characters are named (eg. R2-D2, Anakin, Chewbacca)
+#'   and the following node attributes are provided where available:
+#'   height, mass, hair color, skin color, eye color, birth year, sex, homeworld, and species.
+#'   The node attribute 'faction' has also been added,
+#'   denoting the faction (eg. Jedi, Rebel Alliance, etc) 
+#'   that Star Wars characters belong to in each episode
+#'   (coding completed by Yichen Shen, Tiphaine Aeby, and James Hollway).
+#'   
+#'   Weighted ties represent the number of times characters speak 
+#'   within the same scene of each film, indicated by the wave (1-7).
+#'   
+#'   Change in the composition of the network is tracked by the variable 'active',
+#'   though several other variables also change 
+#'   (mostly as Anakin becomes *spoiler alert*).
 #' @details
 #' The network for each episode may be extracted and used separately,
-#' eg. `ison_starwars[[1]]` or `ison_starwars$Episode I` for Episode 1.
+#' eg. `to_time(fict_starwars, 1)` for Episode 1.
 #' @docType data
 #' @keywords datasets
-#' @name ison_starwars
-#' @usage data(ison_starwars)
+#' @name fict_starwars
+#' @usage data(fict_starwars)
 #' @references
 #'   Gabasova, E. (2016).
 #'   \emph{Star Wars social network.}.
 #'   \doi{10.5281/zenodo.1411479}
 #' @format
 #'   ```{r, echo = FALSE}
-#'   ison_starwars
+#'   fict_starwars
 #'   ```
-"ison_starwars"
+"fict_starwars"
 
 ## Friends ####
 
@@ -720,6 +725,42 @@
 #'   irps_wwi
 #'   ```
 "irps_wwi"
+
+## Hijackers ####
+
+#' One-mode multiplex network of relationships between 9/11 hijackers (Krebs 2002)
+#'
+#' @description
+#'   This network records two different types of relationships between and
+#'   surrounding the hijackers of four planes in the United States 
+#'   on September 11, 2001, culminating in those planes crashing into four
+#'   locations: New York's World Trade Center (North and South buildings),
+#'   as well as the Pentagon and a location in Somerset County, Pennsylvania.
+#'   
+#'   The hijackers were members of al-Qaeda.
+#'   Valdis Krebs collected further information from newspapers on the
+#'   broader network of associates of these hijackers,
+#'   reflecting on the challenges of collecting this information even
+#'   after the fact.
+#'   
+#'   The data includes two types of ties:
+#'   "trust"ed prior contacts among the hijackers,
+#'   and "association" ties among the hijackers but also their broader associates.
+#'   All associates are named, along with a logical vector about whether they
+#'   were a hijacker or not, and if so which their (eventual) target was.
+#' @docType data
+#' @keywords datasets
+#' @name irps_911
+#' @references
+#' Krebs, Valdis. 2002.
+#' "Mapping networks of terrorist cells". 
+#' _Connections_ 24(3): 43-52.
+#' @usage data(irps_911)
+#' @format 
+#'   ```{r, echo = FALSE}
+#'   irps_911
+#'   ```
+"irps_911"
 
 ## US States ####
 

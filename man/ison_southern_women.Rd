@@ -5,9 +5,11 @@
 \alias{ison_southern_women}
 \title{Two-mode southern women (Davis, Gardner and Gardner 1941)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # Southern Women Data
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Southern Women Data -------------------------------------------------------
 #> # A labelled, two-mode network of 18 women and 14 social events and 89
 #> participation ties
+#> 
+#> -- Nodes
 #> # A tibble: 32 x 4
 #>   type  name      Surname    Title
 #>   <lgl> <chr>     <chr>      <chr>
@@ -18,6 +20,8 @@
 #> 5 FALSE Charlotte McDowd     Miss 
 #> 6 FALSE Frances   Anderson   Miss 
 #> # i 26 more rows
+#> 
+#> -- Ties
 #> # A tibble: 89 x 3
 #>    from    to date      
 #>   <int> <int> <date>    
@@ -28,6 +32,7 @@
 #> 5     1    23 1936-02-25
 #> 6     2    23 1936-02-25
 #> # i 83 more rows
+#> 
 }\if{html}{\out{</div>}}
 }
 \usage{
