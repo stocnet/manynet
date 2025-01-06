@@ -39,9 +39,14 @@ make_network_measures <- function(out, .data) {
 }
 
 # Printing ####
+#' @importFrom cli spark_bar
 #' @export
 print.node_measure <- function(x, ...,
-                          n = NULL, digits = 3){
+                          n = NULL, digits = 3, spark = TRUE){
+  if(spark && cli::is_utf8_output()){
+    counts <- hist(x, plot = FALSE)$counts
+    cat(cli::spark_bar(counts/sum(counts)))
+  }
   if (any(attr(x, "mode"))) {
     for(m in c(FALSE, TRUE)){
       print_tblvec(y = round(as.numeric(x)[attr(x, "mode") == m], 
