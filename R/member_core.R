@@ -17,6 +17,24 @@
 NULL
 
 #' @rdname mark_core
+#' @section Universal/dominating node: 
+#'   A universal node is adjacent to all other nodes in the network.
+#'   It is also sometimes called the dominating vertex because it represents
+#'   a one-element dominating set.
+#'   A network with a universal node is called a cone, and its universal node
+#'   is called the apex of the cone.
+#'   A classic example of a cone is a star graph,
+#'   but friendship, wheel, and threshold graphs are also cones.
+#' @examples
+#'   node_is_universal(create_star(11))
+#' @export
+node_is_universal <- function(.data){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  net <- to_undirected(to_unweighted(.data))
+  make_node_mark(node_deg(net)==(net_nodes(net)-1), .data)
+}
+
+#' @rdname mark_core
 #' @section Core-periphery: 
 #'   This function is used to identify which nodes should belong to the core,
 #'   and which to the periphery.

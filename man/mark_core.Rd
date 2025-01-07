@@ -2,10 +2,13 @@
 % Please edit documentation in R/member_core.R
 \name{mark_core}
 \alias{mark_core}
+\alias{node_is_universal}
 \alias{node_is_core}
 \alias{node_coreness}
 \title{Core-periphery clustering algorithms}
 \usage{
+node_is_universal(.data)
+
 node_is_core(.data, method = c("degree", "eigenvector"))
 
 node_coreness(.data)
@@ -34,6 +37,17 @@ These functions identify nodes belonging to (some level of) the core of a networ
 \item \code{node_coreness()} assigns nodes to their level of k-coreness.
 }
 }
+\section{Universal/dominating node}{
+
+A universal node is adjacent to all other nodes in the network.
+It is also sometimes called the dominating vertex because it represents
+a one-element dominating set.
+A network with a universal node is called a cone, and its universal node
+is called the apex of the cone.
+A classic example of a cone is a star graph,
+but friendship, wheel, and threshold graphs are also cones.
+}
+
 \section{Core-periphery}{
 
 This function is used to identify which nodes should belong to the core,
@@ -49,6 +63,7 @@ it ignores ties between these blocks.
 }
 
 \examples{
+  node_is_universal(create_star(11))
 node_is_core(ison_adolescents)
 #ison_adolescents \%>\% 
 #   mutate(corep = node_is_core()) \%>\% 
