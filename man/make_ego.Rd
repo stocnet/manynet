@@ -6,6 +6,7 @@
 \title{Making ego networks through interviewing}
 \usage{
 create_ego(
+  ego = NULL,
   max_alters = Inf,
   roster = NULL,
   interpreter = FALSE,

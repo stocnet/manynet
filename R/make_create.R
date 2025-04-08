@@ -134,13 +134,15 @@ create_explicit <- function(...){
 #' @name make_ego
 #' @family makes
 #' @export
-create_ego <- function(max_alters = Inf,
+create_ego <- function(ego = NULL,
+                       max_alters = Inf,
                        roster = NULL,
                        interpreter = FALSE,
                        interrelater = FALSE){
-  cli::cli_text("What is ego's name?")
-  ego <- readline()
-  cli::cli_text("What is the relationship you are collecting? Name it in the singular, e.g. 'friendship'")
+  if(is.null(ego)){
+    cli::cli_text("What is ego's name?")
+    ego <- readline()
+  }
   ties <- readline()
   # cli::cli_text("Is this a weighted network?")
   # weighted <- q_yes()
