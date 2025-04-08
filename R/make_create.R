@@ -143,10 +143,12 @@ create_ego <- function(ego = NULL,
     cli::cli_text("What is ego's name?")
     ego <- readline()
   }
+  cli::cli_text("What is the relationship you are collecting?")
+  cli::cli_text("Name it in the singular, e.g. 'friendship'")
   ties <- readline()
   # cli::cli_text("Is this a weighted network?")
   # weighted <- q_yes()
-  alters <- vector()
+  alters <- as.character(vector())
   if(!is.null(roster)){
     for (alt in roster){
       cli::cli_text("Is {ego} connected by a {ties} tie to {alt}?")
@@ -155,7 +157,8 @@ create_ego <- function(ego = NULL,
     alters <- roster[alters]
   } else {
     repeat{
-      cli::cli_text("Please name a contact:")
+      contacts <- length(alters)
+      cli::cli_text("Please name {cli::qty(contacts)} {?a/another/another} contact of {ego}:")
       alters <- c(alters, readline())
       if(length(alters) == max_alters){
         cli::cli_alert_info("{.code max_alters} reached.")
