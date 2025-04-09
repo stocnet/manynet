@@ -103,7 +103,7 @@ net_equivalency <- function(.data) {
     if (is.nan(out)) out <- 1
     if(manynet::is_weighted(.data)) out <- out / mean(mat[mat>0])
   } else {
-    out <- rowSums(vapply(mnet_progress_nodes(.data), function(i){
+    out <- rowSums(vapply(snet_progress_nodes(.data), function(i){
       threepaths <- igraph::all_simple_paths(.data, i, cutoff = 3,
                                              mode = "all")
       onepaths <- threepaths[vapply(threepaths, length,
@@ -125,7 +125,7 @@ net_equivalency <- function(.data) {
 node_equivalency <- function(.data) {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   # if(is_weighted(.data))
-  #   mnet_info("Using unweighted form of the network.")
+  #   snet_info("Using unweighted form of the network.")
   out <- vapply(cli::cli_progress_along(1:net_nodes(.data)), function(i){
     threepaths <- igraph::all_simple_paths(.data, i, cutoff = 3,
                                           mode = "all")
@@ -149,10 +149,10 @@ node_equivalency <- function(.data) {
 #' @export
 net_congruency <- function(.data, object2){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  if(missing(.data) | missing(object2)) cli::cli_abort("This function expects two two-mode networks")
-  if(!manynet::is_twomode(.data) | !manynet::is_twomode(object2)) cli::cli_abort("This function expects two two-mode networks")
+  if(missing(.data) | missing(object2)) snet_abort("This function expects two two-mode networks")
+  if(!manynet::is_twomode(.data) | !manynet::is_twomode(object2)) snet_abort("This function expects two two-mode networks")
   if(manynet::net_dims(.data)[2] != manynet::net_dims(object2)[1]) 
-    cli::cli_abort(paste("This function expects the number of nodes",
+    snet_abort(paste("This function expects the number of nodes",
     "in the second mode of the first network", "to be the same as the number of nodes",
     "in the first mode of the second network."))
   mat1 <- manynet::as_matrix(.data)
