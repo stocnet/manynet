@@ -1,3 +1,24 @@
+# manynet 1.4.1
+
+## Making
+
+- Improvements to `create_ego()`
+  - Now accepts an explicit ego in the call, e.g. create_ego("Andy")
+  - Now uses pluralization to prompt alter?s
+  - Can now create two-mode ego networks
+  - Uses new `snet_prompt()` for easier to read consoles 
+  - Uses new `snet_minor_info()` for reminding users to assign the function
+  - Now names ego in the title of the resulting object
+  - Fixed bug where ego duplicated if already in the roster
+
+## Marking
+
+- Added `node_is_universal()`
+
+## Measuring
+
+- Improved node measure printing with a spark bar
+
 # manynet 1.4.0
 
 ## Making
