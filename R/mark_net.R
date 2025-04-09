@@ -562,7 +562,7 @@ is_acyclic <- function(.data){
 is_aperiodic <- function(.data, max_path_length = 4){
   # thisRequires("minMSE") # >80x faster than e.g. cheapr::gcd()
   g <- as_igraph(.data)
-  mnet_info("Obtaining paths no greater than {max_path_length}.")
+  snet_info("Obtaining paths no greater than {max_path_length}.")
   out <- suppressMessages(.quiet(unlist(lapply(1:net_nodes(g), function(v1){
     if(igraph::degree(g, v1, mode="in") == 0) NULL else {
       goodNeighbors <- igraph::neighbors(g, igraph::V(g)[v1], mode="out")
@@ -574,7 +574,7 @@ is_aperiodic <- function(.data, max_path_length = 4){
       }))
     }
   }))))
-  mnet_info("Finding greatest common divisor of all paths.")
+  snet_info("Finding greatest common divisor of all paths.")
   out <- unique(sort(out))
   while(out[1]!=1 && length(out)>1){
     cd <- .gcd(out[1], out[2])

@@ -259,7 +259,7 @@ tie_is_imbalanced <- function(.data){
   
   # Check if the input is a square matrix
   if (!is.matrix(adj_matrix) || nrow(adj_matrix) != ncol(adj_matrix)) {
-    mnet_unavailable("This function only works with undirected one-mode networks.")
+    snet_unavailable("This function only works with undirected one-mode networks.")
   }
   
   # Get the number of nodes

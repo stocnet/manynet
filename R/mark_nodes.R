@@ -357,7 +357,7 @@ node_is_random <- function(.data, size = 1){
 #' @export
 node_is_max <- function(node_measure, ranks = 1){
   if(!inherits(node_measure, "node_measure"))
-    cli::cli_abort("This function expects an object of class `node_measure`")
+    snet_abort("This function expects an object of class `node_measure`")
   if(any(attr(node_measure, "mode"))){
     mode1 <- as.numeric(node_measure)[!as.logical(attr(node_measure, "mode"))]
     max1 <- mode1[order(mode1, decreasing = TRUE)[1:ranks]]
@@ -383,7 +383,7 @@ node_is_max <- function(node_measure, ranks = 1){
 #' @export
 node_is_min <- function(node_measure, ranks = 1){
   if(!inherits(node_measure, "node_measure"))
-    cli::cli_abort("This function expects an object of class `node_measure`")
+    snet_abort("This function expects an object of class `node_measure`")
   if(any(attr(node_measure, "mode"))){
     mode1 <- as.numeric(node_measure)[!as.logical(attr(node_measure, "mode"))]
     max1 <- mode1[order(mode1, decreasing = FALSE)[1:ranks]]
@@ -409,7 +409,7 @@ node_is_min <- function(node_measure, ranks = 1){
 #' @export
 node_is_mean <- function(node_measure, ranks = 1){
   if(!inherits(node_measure, "node_measure"))
-    cli::cli_abort("This function expects an object of class `node_measure`")
+    snet_abort("This function expects an object of class `node_measure`")
   if(any(attr(node_measure, "mode"))){
     mode1 <- node_measure[!as.logical(attr(node_measure, "mode"))]
     out <- mode1 == sort(abs(mode1 - mean(mode1)))[ranks]
