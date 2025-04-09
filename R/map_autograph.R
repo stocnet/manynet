@@ -184,7 +184,7 @@ graphr <- function(.data, layout, labels = TRUE,
                                  guide = ggplot2::guide_legend("Group"))
   }
   if(snap){
-    mnet_info("Snapping layout coordinates to grid.")
+    snet_info("Snapping layout coordinates to grid.")
     if(grepl("lattice", 
              igraph::graph_attr(attr(p$data, "graph"), "grand")$name, 
              ignore.case = TRUE))
@@ -305,7 +305,7 @@ reduce_categories <- function(g, node_group) {
     toCondense <- names(which(table(node_attribute(g, node_group)) <= 2))
     out <- ifelse(node_attribute(g, node_group) %in% toCondense,
                   "Other", node_attribute(g, node_group))
-    mnet_info("The number of groups was reduced since there were groups with less than 2 nodes.")
+    snet_info("The number of groups was reduced since there were groups with less than 2 nodes.")
   } else if (sum(table(node_attribute(g, node_group)) <= 2) == 2 &
              length(unique(node_attribute(g, node_group))) > 2) {
     limit <- stats::reorder(node_attribute(g, node_group),
@@ -318,7 +318,7 @@ reduce_categories <- function(g, node_group) {
     }
     out <- ifelse(node_attribute(g, node_group) %in% toCondense, "Other",
                   node_attribute(g, node_group))
-    mnet_info("The number of groups was reduced since there were groups with less than 2 nodes.")
+    snet_info("The number of groups was reduced since there were groups with less than 2 nodes.")
   } else if (sum(table(node_attribute(g, node_group)) <= 2) == 1 &
              length(unique(node_attribute(g, node_group))) > 2) {
     limit <- stats::reorder(node_attribute(g, node_group),
@@ -327,11 +327,11 @@ reduce_categories <- function(g, node_group) {
     toCondense <- utils::tail(levels(limit), 2)
     out <- ifelse(node_attribute(g, node_group) %in% toCondense, "Other",
                   node_attribute(g, node_group))
-    mnet_info("The number of groups was reduced since there were groups with less than 2 nodes.")
+    snet_info("The number of groups was reduced since there were groups with less than 2 nodes.")
   } else if (sum(table(node_attribute(g, node_group)) <= 2) == 1 &
              length(unique(node_attribute(g, node_group))) == 2) {
     out <- as.factor(node_attribute(g, node_group))
-    mnet_info("Node groups with 2 nodes or less can be cause issues for plotting ...")
+    snet_info("Node groups with 2 nodes or less can be cause issues for plotting ...")
   } else out <- as.factor(node_attribute(g, node_group))
   out
 }
@@ -360,7 +360,7 @@ reduce_categories <- function(g, node_group) {
       } else out <- as.factor(as.character(tie_attribute(g, edge_color)))
       if (length(unique(out)) == 1) {
         out <- rep("black", net_ties(g))
-        mnet_info("Please indicate a variable with more than one value or level when mapping edge colors.")
+        snet_info("Please indicate a variable with more than one value or level when mapping edge colors.")
       }
     } else {
       out <- edge_color
@@ -424,12 +424,12 @@ check_edge_variables <- function(g, edge_color, edge_size) {
   if (!is.null(edge_color)) {
     if (any(!tolower(edge_color) %in% tolower(igraph::edge_attr_names(g))) &
         any(!edge_color %in% grDevices::colors())) {
-      mnet_info("Please make sure you spelled `edge_color` variable correctly.")
+      snet_info("Please make sure you spelled `edge_color` variable correctly.")
     } 
   }
   if (!is.null(edge_size)) {
     if (!is.numeric(edge_size) & any(!tolower(edge_size) %in% tolower(igraph::edge_attr_names(g)))) {
-      mnet_info("Please make sure you spelled `edge_size` variable correctly.")
+      snet_info("Please make sure you spelled `edge_size` variable correctly.")
     } 
   }
 }
@@ -532,7 +532,7 @@ map_edges <- function(p, g, out) {
       } else out <- as.factor(as.character(node_attribute(g, node_color)))
       if (length(unique(out)) == 1) {
         out <- rep("black", net_nodes(g))
-        mnet_info("Please indicate a variable with more than one value or level when mapping node colors.")
+        snet_info("Please indicate a variable with more than one value or level when mapping node colors.")
       }
     } else out <- node_color
   } else {
@@ -545,12 +545,12 @@ check_node_variables <- function(g, node_color, node_size) {
   if (!is.null(node_color)) {
     if (any(!tolower(node_color) %in% tolower(igraph::vertex_attr_names(g))) &
         any(!node_color %in% grDevices::colors())) {
-      mnet_info("Please make sure you spelled `node_color` variable correctly.")
+      snet_info("Please make sure you spelled `node_color` variable correctly.")
     } 
   }
   if (!is.null(node_size)) {
     if (!is.numeric(node_size) & any(!tolower(node_size) %in% tolower(igraph::vertex_attr_names(g)))) {
-      mnet_info("Please make sure you spelled `node_size` variable correctly.")
+      snet_info("Please make sure you spelled `node_size` variable correctly.")
     }
   }
 }
@@ -641,7 +641,7 @@ cart2pol <- function(xyz){
     m <- nrow(xyz)
     n <- ncol(xyz)
   }
-  else cli::cli_abort("Input must be a vector of length 3 or a matrix with 3 columns.")
+  else snet_abort("Input must be a vector of length 3 or a matrix with 3 columns.")
   phi <- atan2(y, x)
   r <- hypot(x, y)
   if (n == 2) {
@@ -668,7 +668,7 @@ hypot <- function (x, y) {
     return(vector())
   if (!is.numeric(x) && !is.complex(x) || !is.numeric(y) && 
       !is.complex(y)) 
-    cli::cli_abort("Arguments 'x' and 'y' must be numeric or complex.")
+    snet_abort("Arguments 'x' and 'y' must be numeric or complex.")
   if (length(x) == 1 && length(y) > 1) {
     x <- rep(x, length(y))
     dim(x) <- dim(y)
@@ -680,7 +680,7 @@ hypot <- function (x, y) {
   if ((is.vector(x) && is.vector(y) && length(x) != length(y)) || 
       (is.matrix(x) && is.matrix(y) && dim(x) != dim(y)) || 
       (is.vector(x) && is.matrix(y)) || is.matrix(x) && is.vector(y)) 
-    cli::cli_abort("Arguments 'x' and 'y' must be of the same size.")
+    snet_abort("Arguments 'x' and 'y' must be of the same size.")
   x <- abs(x)
   y <- abs(y)
   m <- pmin(x, y)
@@ -740,7 +740,7 @@ graphs <- function(netlist, waves,
   if (missing(waves)) {
     if (length(netlist) > 4) {
       netlist <- netlist[c(1, length(netlist))]
-      mnet_info("Plotting first and last waves side-by-side. \nTo set the waves plotted use the 'waves = ' argument.")
+      snet_info("Plotting first and last waves side-by-side. \nTo set the waves plotted use the 'waves = ' argument.")
     }
   } else if (!missing(waves)) {
     if (length(waves) == 1) netlist <- netlist[c(1:waves)] else 
@@ -773,7 +773,7 @@ graphs <- function(netlist, waves,
         graphr(netlist[[i]], layout = "star", center = names(netlist)[[i]], ...) + 
           ggtitle(names(netlist)[i]))
     } else {
-      mnet_info("Layouts were not standardised since not all nodes appear across waves.")  
+      snet_info("Layouts were not standardised since not all nodes appear across waves.")  
       gs <- lapply(1:length(netlist), function(i)
         graphr(netlist[[i]], ...) + ggtitle(names(netlist)[i]))
     }
@@ -895,7 +895,7 @@ grapht <- function(tlist, keep_isolates = TRUE,
   if (inherits(tlist, "diff_model")) tlist <- to_waves(tlist)
   # Check if object is a list of lists
   if (!is.list(tlist[[1]])) {
-    cli::cli_abort("Please declare a migraph-compatible network listed according
+    snet_abort("Please declare a migraph-compatible network listed according
          to a time attribute, waves, or slices.")
   }
   # Remove lists without edges
@@ -949,7 +949,7 @@ grapht <- function(tlist, keep_isolates = TRUE,
   } else {
     if (nrow(nodes_out)/length(unique(nodes_out$frame)) > 30 &
         any(unlist(lapply(tlist, node_is_isolate)) == TRUE)) {
-      mnet_info("Please considering deleting isolates to improve visualisation.")
+      snet_info("Please considering deleting isolates to improve visualisation.")
     } 
     nodes_out$status <- TRUE
   }
