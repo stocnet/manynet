@@ -4,6 +4,24 @@ Contributions to `manynet`,
 whether in the form of issue identification, bug fixes, new code or documentation 
 are encouraged and welcome.
 
+## Aims
+
+Here is some things that Guy Kawasaki, Silicon Valley venture capitalist,
+learned from Steve Jobs:
+
+- "Experts" are clueless. Especially self-declared ones.
+- Customers cannot tell you what they need. They can help with evolution, but not revolution.
+- Biggest challenges beget the best work.
+- Design counts. Users will see the skin/UI of your product, not the great algorithms.
+- Big graphics, big fonts.
+- Jump curves---do things 10 times better, not 10 percent.
+- All that truly matters is whether something works or doesn't work. Open or close, iPhone or Android, car or train, doesn't matter---make
+it work.
+- "Value" is different from "price". There is a class of people who do care about value. Ease of use -> less support costs. You have to create a unique and valuable product as an engineer.
+- Real CEOs can demo. If you can't demo your own product, then quit.
+- Real entrepreneurs ship, not slip.
+- Some things need to be believed to be seen.
+
 ## Git and Bitbucket
 
 `stocnet` projects are maintained using the git version control system.
