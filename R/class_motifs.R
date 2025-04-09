@@ -46,7 +46,7 @@ plot.node_motif <- function(x, ...) {
     graphs(create_motifs(2, directed = TRUE), waves = 1:3)
   } else if("Mutual" %in% motifs){
     graphs(create_motifs(2), waves = 1:2)
-  } else mnet_unavailable("Cannot plot these motifs yet, sorry.")
+  } else snet_unavailable("Cannot plot these motifs yet, sorry.")
 }
   
 #' @export
@@ -62,7 +62,7 @@ plot.network_motif <- function(x, ...) {
     graphs(create_motifs(2, directed = TRUE), waves = 1:3)
   } else if("Mutual" %in% motifs){
     graphs(create_motifs(2), waves = 1:2)
-  } else mnet_unavailable("Cannot plot these motifs yet, sorry.")
+  } else snet_unavailable("Cannot plot these motifs yet, sorry.")
 }
 
 # summary(node_by_triad(mpn_elite_mex),
