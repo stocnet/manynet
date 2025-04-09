@@ -128,3 +128,8 @@ col_mnet_green <- cli::make_ansi_style("#199D77")
 
 col_mnet_blue <- cli::make_ansi_style("#4576B5")
 
+.quiet <- function(x) { 
+  sink(tempfile()) 
+  on.exit(sink()) 
+  invisible(force(x)) 
+}

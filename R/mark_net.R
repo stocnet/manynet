@@ -584,12 +584,6 @@ is_aperiodic <- function(.data, max_path_length = 4){
   return(as.logical(out[1]==1))
 }
 
-.quiet <- function(x) { 
-  sink(tempfile()) 
-  on.exit(sink()) 
-  invisible(force(x)) 
-}
-
 .gcd <- function(x, y){
   ifelse(y, Recall(y, x %% y), x)
 }
