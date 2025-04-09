@@ -121,7 +121,16 @@ create_explicit <- function(...){
 #'
 #' @description
 #'   This function creates an ego network through interactive interview questions.
-#'   Note that it only creates a simplex, directed network.
+#'   It currently only supports a simplex, directed network of one
+#'   or two modes.
+#'   These directed networks can be reformatted as undirected using `to_undirected()`. 
+#'   Multiplex networks can be collected separately and then joined together
+#'   afterwards.
+#'   
+#'   The function supports the use of rosters or a maximum number of
+#'   alters to collect. If a roster is provided it will offer ego all names.
+#'   The function can also prompt ego to interpret each node's attributes,
+#'   or about how ego considers their alters to be related.
 #' @param max_alters The maximum number of alters to collect.
 #'   By default infinity, but many name generators will expect a maximum of
 #'   e.g. 5 alters to be named.
@@ -131,6 +140,8 @@ create_explicit <- function(...){
 #'   By default FALSE.
 #' @param interrelater Logical. If TRUE, then it will ask for the contacts from
 #'   each of the alters perspectives too.
+#' @param twomode Logical. If TRUE, then it will assign ego to the first mode
+#'   and all alters to a second mode.
 #' @name make_ego
 #' @family makes
 #' @export
@@ -138,7 +149,8 @@ create_ego <- function(ego = NULL,
                        max_alters = Inf,
                        roster = NULL,
                        interpreter = FALSE,
-                       interrelater = FALSE){
+                       interrelater = FALSE,
+                       twomode = FALSE){
   if(is.null(ego)){
     cli::cli_text("What is ego's name?")
     ego <- readline()
@@ -208,6 +220,7 @@ create_ego <- function(ego = NULL,
   out <- add_info(out, ties = ties, name = "Ego network",
                   collection = "Interview",
                   year = format(as.Date(Sys.Date(), format="%d/%m/%Y"),"%Y"))
+  if(twomode) out <- to_twomode(out, c(F, rep(T,net_nodes(out)-1)))
   out
 }
 
