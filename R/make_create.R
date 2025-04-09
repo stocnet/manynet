@@ -131,6 +131,9 @@ create_explicit <- function(...){
 #'   alters to collect. If a roster is provided it will offer ego all names.
 #'   The function can also prompt ego to interpret each node's attributes,
 #'   or about how ego considers their alters to be related.
+#' @param ego A character string.
+#'   If desired, the name of ego can be declared as an argument.
+#'   Otherwise the first prompt of the function will be to enter a name for ego.
 #' @param max_alters The maximum number of alters to collect.
 #'   By default infinity, but many name generators will expect a maximum of
 #'   e.g. 5 alters to be named.
@@ -218,7 +221,7 @@ create_ego <- function(ego = NULL,
     isolates <- roster[!roster %in% node_names(out)]
     out <- add_nodes(out, length(isolates), list(name = isolates))
   }
-  out <- add_info(out, ties = ties, name = "Ego network",
+  out <- add_info(out, ties = ties, name = paste("Ego network of", ego),
                   collection = "Interview",
                   year = format(as.Date(Sys.Date(), format="%d/%m/%Y"),"%Y"))
   if(twomode) out <- to_twomode(out, c(F, rep(T,net_nodes(out)-1)))

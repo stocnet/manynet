@@ -3,9 +3,11 @@
 \name{interface}
 \alias{interface}
 \alias{snet_info}
+\alias{snet_minor_info}
 \alias{snet_warn}
 \alias{snet_abort}
 \alias{snet_success}
+\alias{snet_prompt}
 \alias{snet_unavailable}
 \alias{snet_progress_step}
 \alias{snet_progress_along}
@@ -15,11 +17,15 @@
 \usage{
 snet_info(..., .envir = parent.frame())
 
+snet_minor_info(..., .envir = parent.frame())
+
 snet_warn(..., .envir = parent.frame())
 
 snet_abort(..., .envir = parent.frame())
 
 snet_success(..., .envir = parent.frame())
+
+snet_prompt(..., .envir = parent.frame())
 
 snet_unavailable(..., .envir = parent.frame())
 
