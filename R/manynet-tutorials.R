@@ -197,7 +197,7 @@ NULL
 gloss <- function(text, ref = NULL){
   if(is.null(ref)) ref <- tolower(text)
   if(!ref %in% names(glossies)) 
-    cli::cli_abort("No glossary entry for '{text}' exists.") else {
+    snet_abort("No glossary entry for '{text}' exists.") else {
       defn <- glossies[which(names(glossies)==ref)]
       options(mnet_glossary = unique(c(ref, getOption("mnet_glossary", default = ""))))
       paste(paste0("<abbr><dfn title='", defn, "'>"), text, "</dfn></abbr>")

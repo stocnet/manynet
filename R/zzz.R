@@ -4,7 +4,7 @@
   # suppressMessages(suppressPackageStartupMessages(library("manynet", warn.conflicts = FALSE)))
   if (!interactive()) return()
   
-  options(manynet_verbosity = getOption("manynet_verbosity", "verbose"))
+  options(snet_verbosity = getOption("snet_verbosity", "verbose"))
   options(manynet_theme = getOption("manynet_theme", "default"))
   options(cli.theme = manynet_console_theme())
   options(cli.progress_clear = TRUE)
@@ -25,7 +25,7 @@
       "i" = "Please let us know any bugs, issues, or feature requests at {.url https://github.com/stocnet/manynet/issues}. It's really helpful!",
       "i" = "To eliminate package startup messages, use: `suppressPackageStartupMessages(library({.pkg manynet}))`.",
       # "i" = "Changing the theme of all your graphs is straightforward with `set_manynet_theme()`",
-      "i" = "If there are too many messages in the console, run `options(manynet_verbosity = 'quiet')`",
+      "i" = "If there are too many messages in the console, run `options(snet_verbosity = 'quiet')`",
       "i" = "Explore the changes since the last version with {.code news(package = 'manynet')}.",
       "i" = "Visit the website to learn more: {.url https://stocnet.github.io/manynet/}.",
       "i" = "We recommend the 'Function Overview' page online to discover new analytic opportunities: {.url https://stocnet.github.io/manynet/reference/index.html}.",

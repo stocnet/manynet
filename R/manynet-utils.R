@@ -25,7 +25,7 @@ thisRequires <- function(pkgname){
                                    "package is required to run this function. Would you like to install", pkgname, "from CRAN?"))) {
       utils::install.packages(pkgname)
     } else {
-      cli::cli_abort(paste("Please install", pkgname, "from CRAN to run this function."))
+      snet_abort(paste("Please install", pkgname, "from CRAN to run this function."))
     }
   }
 }
