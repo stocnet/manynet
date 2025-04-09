@@ -158,6 +158,9 @@ create_ego <- function(ego = NULL,
   if(is.null(ego)){
     snet_prompt("What is ego's name?")
     ego <- readline()
+    if(!is.null(roster)){
+      if(ego %in% roster) roster <- setdiff(roster, ego)
+    }
   }
   snet_prompt("What is the relationship you are collecting?")
   snet_minor_info("Name the relationship in the singular, e.g. 'friendship'")
