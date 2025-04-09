@@ -152,28 +152,28 @@ create_ego <- function(ego = NULL,
                        interrelater = FALSE,
                        twomode = FALSE){
   if(is.null(ego)){
-    cli::cli_text("What is ego's name?")
+    snet_prompt("What is ego's name?")
     ego <- readline()
   }
-  cli::cli_text("What is the relationship you are collecting?")
   cli::cli_text("Name it in the singular, e.g. 'friendship'")
+  snet_prompt("What is the relationship you are collecting?")
   ties <- readline()
   # cli::cli_text("Is this a weighted network?")
   # weighted <- q_yes()
   alters <- as.character(vector())
   if(!is.null(roster)){
     for (alt in roster){
-      cli::cli_text("Is {ego} connected by a {ties} tie to {alt}?")
+      snet_prompt("Is {ego} connected by a {ties} tie to {alt}?")
       alters <- c(alters, q_yes())
     }
     alters <- roster[alters]
   } else {
     repeat{
       contacts <- length(alters)
-      cli::cli_text("Please name {cli::qty(contacts)} {?a/another/another} contact of {ego}:")
+      snet_prompt("Please name {cli::qty(contacts)} {?a/another/another} {ties} contact of {ego}:")
       alters <- c(alters, readline())
       if(length(alters) == max_alters){
-        cli::cli_alert_info("{.code max_alters} reached.")
+        snet_info("{.code max_alters} reached.")
         break
       }
       if (q_yes("Are these all the contacts?")) break
@@ -183,7 +183,7 @@ create_ego <- function(ego = NULL,
   if(interpreter){
     attr <- vector()
     repeat{
-      cli::cli_text("Please name an attribute you are collecting, or press [Enter] to continue.")
+      snet_prompt("Please name an attribute you are collecting, or press [Enter] to continue.")
       attr <- c(attr, readline())
       if (attr[length(attr)]==""){
         attr <- attr[-length(attr)]
@@ -194,7 +194,7 @@ create_ego <- function(ego = NULL,
       for(att in attr){
         values <- vector()
         for (alt in c(ego, alters)){
-          cli::cli_text("What value does {alt} have for {att}:")
+          snet_prompt("What value does {alt} have for {att}:")
           values <- c(values, readline())
         }
         out <- add_node_attribute(out, att, values)
@@ -206,7 +206,7 @@ create_ego <- function(ego = NULL,
       others <- setdiff(c(ego,alters), alt)
       extra <- vector()
       for(oth in others){
-        cli::cli_text("Is {alt} connected by {ties} to {oth}?")
+        snet_prompt("Is {alt} connected by {ties} to {oth}?")
         extra <- c(extra, q_yes())
       }
       # cat(c(rbind(alt, others[extra])))
@@ -225,7 +225,7 @@ create_ego <- function(ego = NULL,
 }
 
 q_yes <- function(msg = NULL){
-  if(!is.null(msg)) cli::cli_text(msg)
+  if(!is.null(msg)) snet_prompt(msg)
   out <- readline()
   if(is.logical(out)) return(out)
   if(out=="") return(FALSE)

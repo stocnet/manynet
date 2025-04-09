@@ -38,6 +38,14 @@ snet_success <- function(..., .envir = parent.frame()){
 
 #' @rdname interface
 #' @export
+snet_prompt <- function(..., .envir = parent.frame()){
+  # if(getOption("snet_verbosity", default = "quiet")!="quiet")
+    cli::cli_text(cli::style_italic(paste(...)), 
+                   .envir = .envir)
+}
+
+#' @rdname interface
+#' @export
 snet_unavailable <- function(..., .envir = parent.frame()){
   if(getOption("snet_verbosity", default = "quiet")!="quiet")
     cli::cli_abort(paste(..., 
