@@ -49,7 +49,7 @@ node_is_universal <- function(.data){
 #' @references
 #' ## On core-periphery partitioning
 #' Borgatti, Stephen P., & Everett, Martin G. 1999. 
-#' Models of core /periphery structures. 
+#' "Models of core /periphery structures". 
 #' _Social Networks_, 21, 375–395. 
 #' \doi{10.1016/S0378-8733(99)00019-2}
 #' 
@@ -71,7 +71,7 @@ node_is_core <- function(.data, method = c("degree", "eigenvector")){
                         alpha = ifelse(is_weighted(.data), 1, 0))
   } else if (method == "eigenvector") {
     degi <- node_eigenvector(.data, normalized = FALSE)
-  } else cli::cli_abort("This function expects either 'degree' or 'eigenvector' method to be specified.")
+  } else snet_abort("This function expects either 'degree' or 'eigenvector' method to be specified.")
   nord <- order(degi, decreasing = TRUE)
   zbest <- net_nodes(.data)*3
   kbest <- 0

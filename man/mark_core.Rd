@@ -74,7 +74,7 @@ node_coreness(ison_adolescents)
 \subsection{On core-periphery partitioning}{
 
 Borgatti, Stephen P., & Everett, Martin G. 1999.
-Models of core /periphery structures.
+"Models of core /periphery structures".
 \emph{Social Networks}, 21, 375–395.
 \doi{10.1016/S0378-8733(99)00019-2}
 

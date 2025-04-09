@@ -117,12 +117,12 @@ node_in_regular <- function(.data,
                             range = 8L){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(is_twomode(.data)){
-    mnet_info("Since this is a two-mode network,", 
+    snet_info("Since this is a two-mode network,", 
               "using {.fn node_by_tetrad} to", 
               "profile nodes' embedding in local structures.")
     mat <- as.matrix(node_by_tetrad(.data))
   } else {
-    mnet_info("Since this is a one-mode network,", 
+    snet_info("Since this is a one-mode network,", 
               "using {.fn node_by_triad} to", 
               "profile nodes' embedding in local structures.")
     mat <- node_by_triad(.data)
