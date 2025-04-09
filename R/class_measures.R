@@ -44,8 +44,8 @@ make_network_measures <- function(out, .data) {
 print.node_measure <- function(x, ...,
                           n = NULL, digits = 3, spark = TRUE){
   if(spark && cli::is_utf8_output()){
-    counts <- hist(x, plot = FALSE)$counts
-    cat(cli::spark_bar(counts/sum(counts)))
+    counts <- graphics::hist(x, plot = FALSE)$counts
+    cat(cli::spark_bar(counts/sum(counts)), "\n")
   }
   if (any(attr(x, "mode"))) {
     for(m in c(FALSE, TRUE)){
