@@ -74,14 +74,14 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
     if(with_attr) g <- bind_node_attributes(g, n)
   } else if (length(n) == 1) {
     if(p > 1){
-      if(!as.integer(p)==p) cli::cli_abort("`p` must be an integer if above 1.")
+      if(!as.integer(p)==p) snet_abort("`p` must be an integer if above 1.")
       g <- igraph::sample_gnm(n, m = p, directed = directed)
     } else {
       g <- igraph::sample_gnp(n, p = p, directed = directed)
     }
   } else if (length(n) == 2) {
     if(p > 1){
-      if(!as.integer(p)==p) cli::cli_abort("`p` must be an integer if above 1.")
+      if(!as.integer(p)==p) snet_abort("`p` must be an integer if above 1.")
       g <- igraph::sample_bipartite(n[1], n[2],
                                     m = p,
                                     type = "gnm",
@@ -96,7 +96,7 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
     }
     
   } else {
-    cli::cli_abort("`n` must be of length=1 for a one-mode network or length=2 for a two-mode network.")
+    snet_abort("`n` must be of length=1 for a one-mode network or length=2 for a two-mode network.")
   }
   g
 }
@@ -151,7 +151,7 @@ generate_man <- function(n, man = NULL){
   } else if (is_manynet(n)){
     dcen <- net_by_dyad(n)
     if(length(dcen)==2) dcen <- c(dcen[1],0,dcen[2])
-  } else cli::cli_abort("'man' needs to be specified with a numeric vector of length 3.")
+  } else snet_abort("'man' needs to be specified with a numeric vector of length 3.")
   n <- infer_n(n)
   out <- sna::rguman(1, n, dcen[1], dcen[2], dcen[3])
   as_tidygraph(out)
@@ -312,7 +312,7 @@ generate_fire <- function(n, contacts = 1, their_out = 0, their_in = 1, directed
   directed <- infer_directed(n, directed)
   n <- infer_n(n)
   if(length(n)==2){
-    cli::cli_abort("There is currently no forest fire model implemented for two-mode networks.")
+    snet_abort("There is currently no forest fire model implemented for two-mode networks.")
   } else {
     out <- igraph::sample_forestfire(n, 
                                      fw.prob = their_out, bw.factor = their_in,
@@ -344,7 +344,7 @@ generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1,
   } 
   n <- infer_n(n)
   if(length(n)==2){
-    cli::cli_abort("There is currently no island model implemented for two-mode networks.")
+    snet_abort("There is currently no island model implemented for two-mode networks.")
   } else {
     out <- igraph::sample_islands(islands.n = islands,
                                   islands.size = ceiling(n/islands),
