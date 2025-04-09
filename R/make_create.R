@@ -151,12 +151,13 @@ create_ego <- function(ego = NULL,
                        interpreter = FALSE,
                        interrelater = FALSE,
                        twomode = FALSE){
+  snet_minor_info("Make sure you assign this function, e.g. {.code obj <- create_ego()}")
   if(is.null(ego)){
     snet_prompt("What is ego's name?")
     ego <- readline()
   }
-  cli::cli_text("Name it in the singular, e.g. 'friendship'")
   snet_prompt("What is the relationship you are collecting?")
+  snet_minor_info("Name the relationship in the singular, e.g. 'friendship'")
   ties <- readline()
   # cli::cli_text("Is this a weighted network?")
   # weighted <- q_yes()

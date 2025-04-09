@@ -17,6 +17,13 @@ snet_info <- function(..., .envir = parent.frame()){
 
 #' @rdname interface
 #' @export
+snet_minor_info <- function(..., .envir = parent.frame()){
+  if(getOption("snet_verbosity", default = "quiet")!="quiet")
+    cli::cli_alert_info(cli::col_grey(paste(...)), .envir = .envir)
+}
+
+#' @rdname interface
+#' @export
 snet_warn <- function(..., .envir = parent.frame()){
   if(getOption("snet_verbosity", default = "quiet")!="quiet")
     cli::cli_alert_warning(paste(...), .envir = .envir)
