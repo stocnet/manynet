@@ -78,3 +78,53 @@ snet_progress_nodes <- function(..., .envir = parent.frame()){
   } else seq.int(net_nodes(...))
 }
 
+manynet_console_theme <- function(){
+  # dark <- detect_dark_theme(dark)
+  list(h1 = list(`margin-top` = 1, `margin-bottom` = 0, color = "#D83127", 
+                 fmt = function(x) cli::rule(x, line_col = "#D83127")), 
+       h2 = list(`margin-top` = 1, `margin-bottom` = 0, color = "#199D77", 
+                 fmt = function(x) paste0(cli::symbol$line, " ", x, " ", cli::symbol$line, cli::symbol$line)), 
+       h3 = list(`margin-top` = 1, `margin-bottom` = 0, color = "#199D77"), 
+       par = list(`margin-top` = 0, `margin-bottom` = 1), 
+       `.alert-danger` = list(`background-color` = "#D83127", color = "white", 
+                              before = function() paste0(cli::symbol$cross, " ")), 
+       `.alert-warning` = list(color = "#E6AB02", `font-weight` = "bold", before = paste0("!", " ")), 
+       `.alert-success` = list(before = function() paste0(col_mnet_green(cli::symbol$tick), " ")), 
+       `.alert-info` = list(before = function() paste0(col_mnet_blue(cli::symbol$info), " ")), 
+       `.alert-start` = list(before = function() paste0(cli::symbol$arrow_right, " ")), 
+       span.pkg = list(color = "#199D77", `font-weight` = "bold"), 
+       span.version = list(color = "#D83127"), 
+       span.emph = list(color = "#D83127"), 
+       span.strong = list(`font-weight` = "bold", `font-style` = "italic"), 
+       span.fun = utils::modifyList(simple_theme_code(), 
+                                    list(after = "()")), 
+       span.fn = utils::modifyList(simple_theme_code(),
+                                   list(after = "")), 
+       span.arg = simple_theme_code(), 
+       span.kbd = utils::modifyList(simple_theme_code(), 
+                                    list(before = "<", after = ">")), 
+       span.key = utils::modifyList(simple_theme_code(), 
+                                    list(before = "<", after = ">")), 
+       span.file = list(color = "#4576B5"), 
+       span.path = list(color = "#4576B5"), 
+       span.email = list(color = "#4576B5"), 
+       span.url = utils::modifyList(list(color = "#4576B5"), list(before = "<", 
+                                                                  after = ">")), 
+       span.var = simple_theme_code(), 
+       span.envvar = simple_theme_code(), 
+       span.timestamp = list(before = "[", after = "]", color = "grey"))
+}
+
+simple_theme_code <- function(){
+  # if (dark) { # Can't detect dark themes without rstudioapi dependency...
+  #   list(`background-color` = "#232323", color = "#f0f0f0")
+  # }
+  # else {
+  list(`background-color` = "#f8f8f8", color = "#202020")
+  # }
+}
+
+col_mnet_green <- cli::make_ansi_style("#199D77")
+
+col_mnet_blue <- cli::make_ansi_style("#4576B5")
+
