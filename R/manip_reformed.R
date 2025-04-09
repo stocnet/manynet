@@ -279,12 +279,12 @@ to_time <- function(.data, time) UseMethod("to_time")
 #' @export
 to_time.tbl_graph <- function(.data, time){
   if(time > net_waves(.data)){
-    mnet_info("Sorry, there are not that many waves in this dataset.",
+    snet_info("Sorry, there are not that many waves in this dataset.",
               "Reverting to the maximum wave:", net_waves(.data))
     time <- net_waves(.data)
   }
   if(is_dynamic(.data)){
-    mnet_unavailable()
+    snet_unavailable()
   } else if(is_longitudinal(.data)){
     out <- .data
     if(is_changing(out)){
@@ -670,7 +670,7 @@ to_eulerian <- function(.data) UseMethod("to_eulerian")
 #' @export
 to_eulerian.igraph <- function(.data){
   if(!is_eulerian(.data))
-    cli::cli_abort("This is not a Eulerian graph.")
+    snet_abort("This is not a Eulerian graph.")
   out <- paste(attr(igraph::eulerian_path(.data)$vpath, "names"), 
                collapse = "-+")
   out <- create_explicit(out)
@@ -680,7 +680,7 @@ to_eulerian.igraph <- function(.data){
 #' @export
 to_eulerian.tbl_graph <- function(.data){
   if(!is_eulerian(.data))
-    cli::cli_abort("This is not a Eulerian graph.")
+    snet_abort("This is not a Eulerian graph.")
   out <- paste(attr(igraph::eulerian_path(.data)$vpath, "names"), 
                collapse = "-+")
   out <- create_explicit(out)

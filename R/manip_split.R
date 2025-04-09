@@ -38,7 +38,7 @@ to_egos.igraph <- function(.data,
                            min_dist = 0,
                            direction = c("out","in")){
   if(is_twomode(.data)) max_dist <- max_dist*2
-  mnet_progress_step("Obtaining neighbourhoods")
+  snet_progress_step("Obtaining neighbourhoods")
   out <- igraph::make_ego_graph(.data,
                                 order = max_dist,
                                 mindist = min_dist,
@@ -228,7 +228,7 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
                                 cumulative = FALSE) {
   if (!is.null(panels)) .data <- .data[.data[[attribute]] %in% panels,]
   if (length(unique(.data[["n"]])) > 1)
-    cli::cli_abort("Please make sure diffusion has the same number of nodes for all time points.")
+    snet_abort("Please make sure diffusion has the same number of nodes for all time points.")
   net <- as_tidygraph(.data)
   diff <- .data
   out <- list()
@@ -269,7 +269,7 @@ cumulative_ties <- function(x, attribute) {
       }
     }
   } else {
-    mnet_info("Cumulative ties were added based on order of appearance for attribute.")
+    snet_info("Cumulative ties were added based on order of appearance for attribute.")
     a <- list()
     for (k in unique(ties$order)) {
       if (k != 1) {
