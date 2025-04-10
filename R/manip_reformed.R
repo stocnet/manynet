@@ -523,7 +523,12 @@ NULL
 
 #' @rdname manip_paths
 #' @section `to_matching()`:
-#'   `to_matching()` uses `{igraph}`'s `max_bipartite_match()`
+#'   This function attempts to solve the stable matching problem,
+#'   also known as the stable marriage problem, upon a given
+#'   two-mode network (or other network with a binary mark).  
+#' 
+#'   In the basic version,
+#'   `to_matching()` uses `igraph::max_bipartite_match()`
 #'   to return a network in which each node is only tied to
 #'   one of its previous ties.
 #'   The number of these ties left is its _cardinality_,
@@ -534,8 +539,20 @@ NULL
 #'   with greedy initialization and a global relabelling
 #'   after every \eqn{\frac{n}{2}} steps,
 #'   where \eqn{n} is the number of nodes in the network.
+#'   
+#'   In the more general version, each node may have a larger capacity,
+#'   or even different capacities.
+#'   Here an implementation of the Gale-Shapley algorithm is used,
+#'   in which an iterative process of proposal and acceptance is repeated until
+#'   all are matched or have exhausted their lists of preferences.
+#'   This is, however, computationally slower.
 #' @references 
 #' ## On matching
+#'   Gale, David, and Lloyd Stowell Shapley. 1962. 
+#'   "College admissions and the stability of marriage". 
+#'   _The American Mathematical Monthly_, 69(1): 9–14. 
+#'   \doi{10.2307/2312726}
+#' 
 #'   Goldberg, Andrew V., and Robert E. Tarjan. 1986. 
 #'   "A new approach to the maximum flow problem". 
 #'   _Proceedings of the eighteenth annual ACM symposium on Theory of computing – STOC '86_. 
@@ -548,18 +565,63 @@ NULL
 #' to_matching(ison_southern_women)
 #' #graphr(to_matching(ison_southern_women))
 #' @export
-to_matching <- function(.data, mark = "type") UseMethod("to_matching")
+to_matching <- function(.data, mark = "type", capacities = NULL) UseMethod("to_matching")
 
 #' @export
-to_matching.igraph <- function(.data, mark = "type"){
+to_matching.igraph <- function(.data, mark = "type", capacities = NULL){
   if(length(unique(node_attribute(.data, mark)))>2)
-    cli::cli_abort("This function currently only works with binary attributes.")
-  el <- igraph::max_bipartite_match(.data, 
-                 types = node_attribute(.data, mark))$matching
-  el <- data.frame(from = names(el), to = el)
-  out <- suppressWarnings(as_igraph(el, twomode = TRUE))
-  out <- igraph::delete_vertices(out, "NA")
-  out <- to_twomode(out, node_attribute(.data, mark))
+    snet_abort("This function currently only works with binary attributes.")
+  if(is.null(capacities)){
+    el <- igraph::max_bipartite_match(.data, 
+                                      types = node_attribute(.data, mark))$matching
+    el <- data.frame(from = names(el), to = el)
+    out <- suppressWarnings(as_igraph(el, twomode = TRUE))
+    out <- igraph::delete_vertices(out, "NA")
+    out <- to_twomode(out, node_attribute(.data, mark))
+  } else {
+    if(length(capacities) == 1) 
+      capacities <- rep(capacities, net_dims(.data)[2])
+    as_matrix(.data)
+    
+    unmatched_m1 <- 1:net_dims(.data)[1]  # First mode nodes who haven't been matched yet
+    m1_matches <- list()  # Student -> College mapping
+    m2_matches <- list()  # College -> Students mapping
+    for (m2 in 1:net_dims(.data)[2]) {
+      m2_matches[[m2]] <- c()
+    }
+    
+    # Gale-Shapley Algorithm
+    while (length(unmatched_m1) > 0) {
+      m1 <- unmatched_m1[1]
+      student_prefs <- students[[student]]
+      
+      for (college in student_prefs) {
+        # If the college has capacity, admit the student
+        if (length(college_matches[[college]]) < capacities[[college]]) {
+          college_matches[[college]] <- c(college_matches[[college]], student)
+          student_matches[[student]] <- college
+          unmatched_students <- unmatched_students[-1]  # Remove the matched student
+          break
+        } else {
+          # If college is full, check if the student can replace a current match
+          current_students <- college_matches[[college]]
+          college_prefs <- colleges[[college]]
+          
+          # Check if the college prefers this student over any current matches
+          worst_student <- current_students[which.max(sapply(current_students, function(s) which(college_prefs == s)))]
+          if (which(college_prefs == student) < which(college_prefs == worst_student)) {
+            # Replace the worst student
+            college_matches[[college]] <- setdiff(current_students, worst_student)
+            college_matches[[college]] <- c(college_matches[[college]], student)
+            student_matches[[student]] <- college
+            unmatched_students <- c(unmatched_students, worst_student)
+            unmatched_students <- unmatched_students[unmatched_students != student]
+            break
+          }
+        }
+      }
+    }
+  }
   out
 }
 

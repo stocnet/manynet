@@ -12,6 +12,11 @@
   - Uses new `snet_minor_info()` for reminding users to assign the function
   - Now names ego in the title of the resulting object
   - Fixed bug where ego duplicated if already in the roster
+  
+## Modifying
+
+- Extended `to_matching()` to work on the more general class of stable matching
+problems, including where nodes have different capacities
 
 ## Marking
 

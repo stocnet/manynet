@@ -9,7 +9,7 @@
 \alias{to_dominating}
 \title{Modifying networks paths}
 \usage{
-to_matching(.data, mark = "type")
+to_matching(.data, mark = "type", capacities = NULL)
 
 to_mentoring(.data, elites = 0.1)
 
@@ -78,7 +78,12 @@ Below are the currently implemented S3 methods:\tabular{lrrrrr}{
 }
 \section{\code{to_matching()}}{
 
-\code{to_matching()} uses \code{{igraph}}'s \code{max_bipartite_match()}
+This function attempts to solve the stable matching problem,
+also known as the stable marriage problem, upon a given
+two-mode network (or other network with a binary mark).
+
+In the basic version,
+\code{to_matching()} uses \code{igraph::max_bipartite_match()}
 to return a network in which each node is only tied to
 one of its previous ties.
 The number of these ties left is its \emph{cardinality},
@@ -89,6 +94,13 @@ The algorithm used is the push-relabel algorithm
 with greedy initialization and a global relabelling
 after every \eqn{\frac{n}{2}} steps,
 where \eqn{n} is the number of nodes in the network.
+
+In the more general version, each node may have a larger capacity,
+or even different capacities.
+Here an implementation of the Gale-Shapley algorithm is used,
+in which an iterative process of proposal and acceptance is repeated until
+all are matched or have exhausted their lists of preferences.
+This is, however, computationally slower.
 }
 
 \examples{
@@ -100,6 +112,11 @@ graphr(to_mentoring(ison_adolescents))
 }
 \references{
 \subsection{On matching}{
+
+Gale, David, and Lloyd Stowell Shapley. 1962.
+"College admissions and the stability of marriage".
+\emph{The American Mathematical Monthly}, 69(1): 9–14.
+\doi{10.2307/2312726}
 
 Goldberg, Andrew V., and Robert E. Tarjan. 1986.
 "A new approach to the maximum flow problem".
