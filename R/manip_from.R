@@ -28,7 +28,7 @@ NULL
 #' @export
 from_subgraphs <- function(netlist) {
   if (!is.list(netlist[1])) {
-    cli::cli_abort("Please declare a list of subgraphs. ")
+    snet_abort("Please declare a list of subgraphs. ")
   }
   ann <- lapply(netlist, as_igraph)
   out <- ann[[1]]
@@ -53,7 +53,7 @@ from_subgraphs <- function(netlist) {
 #' @export
 from_egos <- function(netlist) {
   if (!is.list(netlist[1])) {
-    cli::cli_abort("Please declare a list of egos.")
+    snet_abort("Please declare a list of egos.")
   }
   ann <- lapply(netlist, as_igraph)
   out <- igraph::as_data_frame(ann[[1]])
@@ -73,7 +73,7 @@ from_egos <- function(netlist) {
 #' @export
 from_waves <- function(netlist) {
   if (!is.list(netlist[1])) {
-    cli::cli_abort("Please declare a list of waves.")
+    snet_abort("Please declare a list of waves.")
   }
   ann <- lapply(netlist, as_igraph)
   out <- igraph::as_data_frame(ann[[1]])
@@ -119,7 +119,7 @@ from_ties <- function(netlist, netnames){
   if(is.null(names(netlist))){
     if(!missing(netnames)){
       names(netlist) <- netnames
-    } else cli::cli_abort(paste("Please name the elements of the list of networks",
+    } else snet_abort(paste("Please name the elements of the list of networks",
                       "or provide a vector of names for them."))
   }
   netlist <- lapply(seq_along(netlist), 

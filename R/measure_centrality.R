@@ -724,7 +724,7 @@ node_information <- function(.data, normalized = TRUE){
 node_eccentricity <- function(.data, normalized = TRUE){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(!is_connected(.data)) 
-    mnet_unavailable("Eccentricity centrality is only available for connected networks.")
+    snet_unavailable("Eccentricity centrality is only available for connected networks.")
   disties <- igraph::distances(as_igraph(.data))
   out <- apply(disties, 1, max)
   if(normalized) out <- 1/out
@@ -749,7 +749,7 @@ node_eccentricity <- function(.data, normalized = TRUE){
 #' @export
 node_distance <- function(.data, from, to, normalized = TRUE){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
-  if(missing(from) && missing(to)) cli::cli_abort("Either 'from' or 'to' must be specified.")
+  if(missing(from) && missing(to)) snet_abort("Either 'from' or 'to' must be specified.")
   if(!missing(from)) out <- igraph::distances(as_igraph(.data), v = from) else 
     if(!missing(to)) out <- igraph::distances(as_igraph(.data), to = to)
   if(normalized) out <- out/max(out)
@@ -773,7 +773,7 @@ node_distance <- function(.data, from, to, normalized = TRUE){
 node_vitality <- function(.data, normalized = TRUE){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   .data <- as_igraph(.data)
-  out <- vapply(mnet_progress_nodes(.data), function(x){
+  out <- vapply(snet_progress_nodes(.data), function(x){
     sum(igraph::distances(.data)) - sum(igraph::distances(delete_nodes(.data, x)))
   }, FUN.VALUE = numeric(1))
   if(normalized) out <- out/max(out)
@@ -949,8 +949,8 @@ node_eigenvector <- function(.data, normalized = TRUE, scale = TRUE){
                   manynet::tie_weights(.data), NA)
   graph <- manynet::as_igraph(.data)
   
-  if(!normalized) mnet_info("This function always returns a normalized value now.")
-  if(!scale) mnet_info("This function always returns a scaled value now.")
+  if(!normalized) snet_info("This function always returns a normalized value now.")
+  if(!scale) snet_info("This function always returns a scaled value now.")
   
   if(!manynet::is_connected(.data)) 
     cli::cli_alert_warning("Unconnected networks will only allow nodes from one component to have non-zero eigenvector scores.")

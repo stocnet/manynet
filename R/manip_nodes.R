@@ -91,7 +91,7 @@ add_node_attribute <- function(.data, attr_name, vector){
         vector <- c(rep(NA, infer_dims(.data)[1]), vector)
       }
     } else 
-      cli::cli_abort("Attribute vector must be same length as nodes in object.")
+      snet_abort("Attribute vector must be same length as nodes in object.")
   }
   out <- as_igraph(.data)
   igraph::vertex_attr(out, name = attr_name) <- vector
@@ -250,7 +250,7 @@ add_changes <- function(.data, changes){
   } else {
     
     if("active" %in% net_node_attributes(.data))
-      mnet_unavailable("There is already an `active` nodal attribute.")
+      snet_unavailable("There is already an `active` nodal attribute.")
     
     if(nrow(changes) == net_nodes(.data) && ncol(changes)==2){
       # converting a begin-end composition table for all nodes
@@ -263,7 +263,7 @@ add_changes <- function(.data, changes){
       first <- changes[!duplicated(changes[,1]),]
       out <- out %>% mutate_nodes(active = first[,2] == min(first[,2]))
       
-    } else mnet_unavailable()
+    } else snet_unavailable()
     
     changes <- stats::reshape(changes,
                               varying = colnames(changes)[-1],
@@ -284,7 +284,7 @@ add_changes <- function(.data, changes){
   if(!(all(names(changes) == c("wave", "node", "var", "value")) || 
        all(names(changes) == c("time", "node", "var", "value")))){
     notexist <- setdiff(names(changes), c("time", "wave", "node", "var", "value"))
-    cli::cli_abort(paste("The following column names are in the changelist",
+    snet_abort(paste("The following column names are in the changelist",
                          "but are not recognised:",
                          "{notexist}"))
   }
@@ -294,7 +294,7 @@ add_changes <- function(.data, changes){
   if(!all(unique(changes$var) %in% net_node_attributes(.data))){
     notexist <- unique(changes$var)[which(!unique(changes$var) %in% 
                                             net_node_attributes(.data))]
-    cli::cli_abort(paste("The following variables are in the changelist",
+    snet_abort(paste("The following variables are in the changelist",
                          "but not among the nodal attributes in the network:",
                          "{notexist}"))
   }
@@ -315,7 +315,7 @@ add_changes <- function(.data, changes){
       first <- changes[changes[,1] == min(changes[,1]),]
       starts[first[,2]] <- first[,4]
       starts[is.na(starts) & changes[changes$var == "active" & changes$value == TRUE & changes$wave > min(changes$wave),2]] <- FALSE
-    } else mnet_unavailable()
+    } else snet_unavailable()
     out <- .data %>% mutate_nodes(active = starts)
   }
   out

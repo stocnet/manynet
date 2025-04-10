@@ -1,3 +1,31 @@
+# manynet 1.4.1
+
+## Making
+
+- Added Deffuant model to `play_learning()`
+- Added fatality parameter to `play_diffusion()` for e.g. SID models
+- Improvements to `create_ego()`
+  - Now accepts an explicit ego in the call, e.g. create_ego("Andy")
+  - Now uses pluralization to prompt alter?s
+  - Can now create two-mode ego networks
+  - Uses new `snet_prompt()` for easier to read consoles 
+  - Uses new `snet_minor_info()` for reminding users to assign the function
+  - Now names ego in the title of the resulting object
+  - Fixed bug where ego duplicated if already in the roster
+  
+## Modifying
+
+- Extended `to_matching()` to work on the more general class of stable matching
+problems, including where nodes have different capacities
+
+## Marking
+
+- Added `node_is_universal()`
+
+## Measuring
+
+- Improved node measure printing with a spark bar
+
 # manynet 1.4.0
 
 ## Making

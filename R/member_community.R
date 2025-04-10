@@ -45,11 +45,11 @@ node_in_community <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(net_nodes(.data)<100){
     # don't use node_in_betweenness because slow and poorer quality to optimal
-    mnet_success("{.fn node_in_optimal} available and", 
+    snet_success("{.fn node_in_optimal} available and", 
                  "will return the highest modularity partition.")
     node_in_optimal(.data)
   } else {
-    mnet_info("Excluding {.fn node_in_optimal} because network rather large.")
+    snet_info("Excluding {.fn node_in_optimal} because network rather large.")
     poss_algs <- c("node_in_infomap",
                    "node_in_spinglass",
                    "node_in_fluid",
@@ -61,25 +61,25 @@ node_in_community <- function(.data){
     if(!manynet::is_connected(.data)){
       notforconnected <- c("node_in_spinglass", 
                            "node_in_fluid")
-      mnet_info("Excluding {.fn {notforconnected}} because network unconnected.")
+      snet_info("Excluding {.fn {notforconnected}} because network unconnected.")
       poss_algs <- setdiff(poss_algs, notforconnected)
     }
     if(manynet::is_directed(.data)){
       notfordirected <- c("node_in_louvain", 
                           "node_in_leiden",
                           "node_in_eigen")
-      mnet_info("Excluding {.fn {notfordirected}} because network directed.")
+      snet_info("Excluding {.fn {notfordirected}} because network directed.")
       poss_algs <- setdiff(poss_algs, notfordirected)
     }
-    mnet_info("Considering each of {.fn {poss_algs}}.")
-    candidates <- lapply(mnet_progress_along(poss_algs), function(comm){
+    snet_info("Considering each of {.fn {poss_algs}}.")
+    candidates <- lapply(snet_progress_along(poss_algs), function(comm){
       memb <- get(poss_algs[comm])(.data)
       mod <- net_modularity(.data, memb)
       list(memb, mod)
     })
     mods <- unlist(sapply(candidates, "[", 2))
     maxmod <- which.max(mods)
-    mnet_success("{.fn {poss_algs[maxmod]}} returns the highest modularity ({round(mods[maxmod],3)}).")
+    snet_success("{.fn {poss_algs[maxmod]}} returns the highest modularity ({round(mods[maxmod],3)}).")
     candidates[[maxmod]][[1]]
   }
 }
@@ -227,7 +227,7 @@ node_in_infomap <- function(.data, times = 50){
 node_in_spinglass <- function(.data, max_k = 200, resolution = 1){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(!igraph::is_connected(.data)) # note manynet::is_connected will return false
-    mnet_unavailable("This algorithm only works for connected networks.",
+    snet_unavailable("This algorithm only works for connected networks.",
                      "We suggest using `to_giant()`", 
                      "to select the largest component.") else {
       out <- igraph::cluster_spinglass(manynet::as_igraph(.data), 
@@ -259,17 +259,17 @@ node_in_fluid <- function(.data) {
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   .data <- as_igraph(.data)
   if (!igraph::is_connected(.data)) {
-    mnet_unavailable("This algorithm only works for connected networks.",
+    snet_unavailable("This algorithm only works for connected networks.",
                      "We suggest using `to_giant()`", 
                      "to select the largest component.")
   } else {
     if(is_complex(.data)){
-      mnet_info("This algorithm only works for simple networks.", 
+      snet_info("This algorithm only works for simple networks.", 
                       "Converting to simplex.")
       .data <- to_simplex(.data)
     }
     if(is_directed(.data)){
-      mnet_info("This algorithm only works for undirected networks.", 
+      snet_info("This algorithm only works for undirected networks.", 
                       "Converting to undirected")
       .data <- to_undirected(.data)
     }
@@ -302,7 +302,7 @@ node_in_fluid <- function(.data) {
 node_in_louvain <- function(.data, resolution = 1){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(is_directed(.data)){
-    mnet_info("This algorithm only works for undirected networks.", 
+    snet_info("This algorithm only works for undirected networks.", 
               "Converting to undirected")
     .data <- to_undirected(.data)
   }
@@ -341,7 +341,7 @@ node_in_louvain <- function(.data, resolution = 1){
 node_in_leiden <- function(.data, resolution = 1){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(is_directed(.data)){
-    mnet_info("This algorithm only works for undirected networks.", 
+    snet_info("This algorithm only works for undirected networks.", 
               "Converting to undirected")
     .data <- to_undirected(.data)
   }
@@ -468,7 +468,7 @@ node_in_greedy <- function(.data){
 node_in_eigen <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(is_directed(.data)){
-    mnet_info("This algorithm only works for undirected networks.", 
+    snet_info("This algorithm only works for undirected networks.", 
               "Converting to undirected")
     .data <- to_undirected(.data)
   }

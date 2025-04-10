@@ -42,7 +42,7 @@ create_explicit <- function(...){
     directed <- TRUE
   }
   else {
-    cli::cli_abort("Invalid operator in formula")
+    snet_abort("Invalid operator in formula")
   }
   f <- function(x) {
     if (is.call(x)) {
@@ -121,7 +121,19 @@ create_explicit <- function(...){
 #'
 #' @description
 #'   This function creates an ego network through interactive interview questions.
-#'   Note that it only creates a simplex, directed network.
+#'   It currently only supports a simplex, directed network of one
+#'   or two modes.
+#'   These directed networks can be reformatted as undirected using `to_undirected()`. 
+#'   Multiplex networks can be collected separately and then joined together
+#'   afterwards.
+#'   
+#'   The function supports the use of rosters or a maximum number of
+#'   alters to collect. If a roster is provided it will offer ego all names.
+#'   The function can also prompt ego to interpret each node's attributes,
+#'   or about how ego considers their alters to be related.
+#' @param ego A character string.
+#'   If desired, the name of ego can be declared as an argument.
+#'   Otherwise the first prompt of the function will be to enter a name for ego.
 #' @param max_alters The maximum number of alters to collect.
 #'   By default infinity, but many name generators will expect a maximum of
 #'   e.g. 5 alters to be named.
@@ -131,32 +143,44 @@ create_explicit <- function(...){
 #'   By default FALSE.
 #' @param interrelater Logical. If TRUE, then it will ask for the contacts from
 #'   each of the alters perspectives too.
+#' @param twomode Logical. If TRUE, then it will assign ego to the first mode
+#'   and all alters to a second mode.
 #' @name make_ego
 #' @family makes
 #' @export
-create_ego <- function(max_alters = Inf,
+create_ego <- function(ego = NULL,
+                       max_alters = Inf,
                        roster = NULL,
                        interpreter = FALSE,
-                       interrelater = FALSE){
-  cli::cli_text("What is ego's name?")
-  ego <- readline()
-  cli::cli_text("What is the relationship you are collecting? Name it in the singular, e.g. 'friendship'")
+                       interrelater = FALSE,
+                       twomode = FALSE){
+  snet_minor_info("Make sure you assign this function, e.g. {.code obj <- create_ego()}")
+  if(is.null(ego)){
+    snet_prompt("What is ego's name?")
+    ego <- readline()
+    if(!is.null(roster)){
+      if(ego %in% roster) roster <- setdiff(roster, ego)
+    }
+  }
+  snet_prompt("What is the relationship you are collecting?")
+  snet_minor_info("Name the relationship in the singular, e.g. 'friendship'")
   ties <- readline()
   # cli::cli_text("Is this a weighted network?")
   # weighted <- q_yes()
-  alters <- vector()
+  alters <- as.character(vector())
   if(!is.null(roster)){
     for (alt in roster){
-      cli::cli_text("Is {ego} connected by a {ties} tie to {alt}?")
+      snet_prompt("Is {ego} connected by a {ties} tie to {alt}?")
       alters <- c(alters, q_yes())
     }
     alters <- roster[alters]
   } else {
     repeat{
-      cli::cli_text("Please name a contact:")
+      contacts <- length(alters)
+      snet_prompt("Please name {cli::qty(contacts)} {?a/another/another} {ties} contact of {ego}:")
       alters <- c(alters, readline())
       if(length(alters) == max_alters){
-        cli::cli_alert_info("{.code max_alters} reached.")
+        snet_info("{.code max_alters} reached.")
         break
       }
       if (q_yes("Are these all the contacts?")) break
@@ -166,7 +190,7 @@ create_ego <- function(max_alters = Inf,
   if(interpreter){
     attr <- vector()
     repeat{
-      cli::cli_text("Please name an attribute you are collecting, or press [Enter] to continue.")
+      snet_prompt("Please name an attribute you are collecting, or press [Enter] to continue.")
       attr <- c(attr, readline())
       if (attr[length(attr)]==""){
         attr <- attr[-length(attr)]
@@ -177,7 +201,7 @@ create_ego <- function(max_alters = Inf,
       for(att in attr){
         values <- vector()
         for (alt in c(ego, alters)){
-          cli::cli_text("What value does {alt} have for {att}:")
+          snet_prompt("What value does {alt} have for {att}:")
           values <- c(values, readline())
         }
         out <- add_node_attribute(out, att, values)
@@ -189,7 +213,7 @@ create_ego <- function(max_alters = Inf,
       others <- setdiff(c(ego,alters), alt)
       extra <- vector()
       for(oth in others){
-        cli::cli_text("Is {alt} connected by {ties} to {oth}?")
+        snet_prompt("Is {alt} connected by {ties} to {oth}?")
         extra <- c(extra, q_yes())
       }
       # cat(c(rbind(alt, others[extra])))
@@ -200,14 +224,15 @@ create_ego <- function(max_alters = Inf,
     isolates <- roster[!roster %in% node_names(out)]
     out <- add_nodes(out, length(isolates), list(name = isolates))
   }
-  out <- add_info(out, ties = ties, name = "Ego network",
+  out <- add_info(out, ties = ties, name = paste("Ego network of", ego),
                   collection = "Interview",
                   year = format(as.Date(Sys.Date(), format="%d/%m/%Y"),"%Y"))
+  if(twomode) out <- to_twomode(out, c(F, rep(T,net_nodes(out)-1)))
   out
 }
 
 q_yes <- function(msg = NULL){
-  if(!is.null(msg)) cli::cli_text(msg)
+  if(!is.null(msg)) snet_prompt(msg)
   out <- readline()
   if(is.logical(out)) return(out)
   if(out=="") return(FALSE)
@@ -216,7 +241,7 @@ q_yes <- function(msg = NULL){
   out
 }
 
-# Collections ####
+# Sets ####
 
 #' Making motifs
 #'
@@ -560,7 +585,7 @@ create_lattice <- function(n,
     } else if (width == 4) {
       as_tidygraph(igraph::make_lattice(dims, nei = 1, directed = directed)) %>% 
         add_info(name = "Lattice network")
-    } else cli::cli_abort("`max_neighbourhood` expected to be 4, 8, or 12")
+    } else snet_abort("`max_neighbourhood` expected to be 4, 8, or 12")
   } else {
     divs1 <- divisors(n[1])
     divs2 <- divisors(n[2])
@@ -617,7 +642,7 @@ create_lattice <- function(n,
     #   igraph::make_lattice(dims, nei = 2, directed = directed)
     # } else if (width == 4){
     #   igraph::make_lattice(dims, nei = 1, directed = directed)
-    # } else cli::cli_abort("`max_neighbourhood` expected to be 4, 8, or 12")
+    # } else snet_abort("`max_neighbourhood` expected to be 4, 8, or 12")
 #   }
 # }
 
@@ -755,7 +780,7 @@ infer_dims <- function(object) {
 
 infer_n <- function(n) {
   if (is_manynet(n)) n <- infer_dims(n)
-  if (length(n) > 2) cli::cli_abort(paste("`n` should be a single integer for a one-mode network or",
+  if (length(n) > 2) snet_abort(paste("`n` should be a single integer for a one-mode network or",
                              "a vector of two integers for a two-mode network."))
   n
 }

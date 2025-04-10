@@ -348,7 +348,7 @@ as_igraph.data.frame <- function(.data,
   if (is_weighted(.data) & !("weight" %in% names(.data))) {
     if(!names(.data)[3] %in% c("begin","sign","date"))
       names(.data)[3] <- "weight"
-    # cli::cli_abort("Please rename the weight column of your dataframe to 'weight'")
+    # snet_abort("Please rename the weight column of your dataframe to 'weight'")
   }
   if (!is_labelled(.data)) {
     graph <- igraph::graph_from_data_frame(.data,
@@ -487,7 +487,7 @@ as_igraph.network.goldfish <- function(.data,
     out <- igraph::graph_from_data_frame(d = get(attr(.data, "events"))[,2:4],
                                          directed = attr(.data, "directed"),
                                          vertices = get(attr(.data, "nodes")))
-  } else cli::cli_abort("Non-empty starts are not yet supported by this function.")
+  } else snet_abort("Non-empty starts are not yet supported by this function.")
   out
 }
 
@@ -667,8 +667,8 @@ as_tidygraph.list <- function(.data, twomode = FALSE) {
     } else if ("nodes" %in% names(.data) & "edges" %in% names(.data)) {
       out <- tidygraph::tbl_graph(nodes = .data[["nodes"]],
                            edges = .data[["edges"]])
-    } else cli::cli_abort("Please name the list elements 'nodes' and 'ties'.")
-  } else cli::cli_abort("Please name the list elements 'nodes' and 'ties'.")
+    } else snet_abort("Please name the list elements 'nodes' and 'ties'.")
+  } else snet_abort("Please name the list elements 'nodes' and 'ties'.")
   make_mnet(out)
 }
   
@@ -718,7 +718,7 @@ as_tidygraph.network.goldfish <- function(.data,
                                          directed = attr(.data, "directed"),
                                          vertices = get(attr(.data, "nodes")))
     out <- as_tidygraph(out)
-  } else cli::cli_abort("Non-empty starts are not yet supported by this function.")
+  } else snet_abort("Non-empty starts are not yet supported by this function.")
 
   # if(rowSums(classes)['network.goldfish']>1){
   #   nets <- colnames(classes)[classes['network.goldfish', ]==TRUE]
@@ -1029,7 +1029,7 @@ as_diffusion.mnet <- function(.data, twomode = FALSE, events) {
     sum(expos)
   }, numeric(1) )
   if (any(report$R + report$I + report$E + report$S != report$n)) {
-    cli::cli_abort("Oops, something is wrong")
+    snet_abort("Oops, something is wrong")
   }
   report <- dplyr::select(report, 
                           dplyr::any_of(c("time", "n", "S", "s", "E", "E_new", 
@@ -1069,7 +1069,7 @@ as_diffusion.igraph <- function(.data, twomode = FALSE, events) {
     sum(expos)
   }, numeric(1) )
   if (any(report$R + report$I + report$E + report$S != report$n)) {
-    cli::cli_abort("Oops, something is wrong")
+    snet_abort("Oops, something is wrong")
   }
   report <- dplyr::select(report, dplyr::any_of(c("t", "n", "S", "s", "E", "E_new", "I", "I_new", "R", "R_new")))
   make_diff_model(events, report, .data)
@@ -1116,7 +1116,7 @@ as_diffusion.diffnet <- function(.data, twomode = FALSE, events) {
     sum(expos)
   }, numeric(1) )
   if (any(report$R + report$I + report$E + report$S != report$n)) {
-    cli::cli_abort("Oops, something is wrong")
+    snet_abort("Oops, something is wrong")
   }
   if(is_labelled(net)) events$nodes <- match(events$nodes, node_names(net))
   events <- events %>% dplyr::arrange(t)
@@ -1144,7 +1144,7 @@ as_diffnet.diff_model <- function(.data,
       out$nodes <- node_names(as_igraph(.data))[out$nodes]
   toa <- stats::setNames(out$t, out$nodes)
   if(is_dynamic(.data)){
-    mnet_unavailable()
+    snet_unavailable()
     # netdiffuseR::igraph_to_diffnet(graph.list = to_waves(.data))
   } else {
     graph <- as_tidygraph(.data) %>% mutate(toa = as.numeric(toa)) %>% as_igraph()

@@ -95,7 +95,7 @@ net_diversity <- function(.data, attribute, clusters = NULL){
                       numeric(1))
     names(blauout) <- paste0("Cluster ", unique(clu))
     blauout <- blauout[order(names(blauout))]
-  } else cli::cli_abort("`clusters` must be the name of a nodal variable in the object.")
+  } else snet_abort("`clusters` must be the name of a nodal variable in the object.")
   make_network_measure(blauout, .data, call = deparse(sys.call()))
 }
 

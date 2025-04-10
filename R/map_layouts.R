@@ -172,7 +172,7 @@ layout_tbl_graph_hierarchy <- function(.data, center = NULL,
     # nodeY <- abs(nodeY - max(nodeY))
     out <- .to_lo(cbind(nodeX, nodeY))
   } else {
-    if (!is_twomode(.data)) cli::cli_abort("Please declare a two-mode network.")
+    if (!is_twomode(.data)) snet_abort("Please declare a two-mode network.")
     net <- as_matrix(.data)
     nn <- dim(net)[1]
     mm <- dim(net)[2]
@@ -204,7 +204,7 @@ layout_tbl_graph_hierarchy <- function(.data, center = NULL,
         crd <- rbind(side1, side2)
         crd[which(is.nan(crd))] <- 0.5
         rownames(crd) <- c(dimnames(net)[[1]], dimnames(net)[[2]])
-      } else cli::cli_abort("Please declare actors, events, or a node name as center.")
+      } else snet_abort("Please declare actors, events, or a node name as center.")
     }
     out <- .to_lo(crd)
   }
@@ -271,10 +271,10 @@ layout_tbl_graph_concentric <- function(.data, membership,
   }
   if (missing(membership)) { 
     if (is_twomode(.data)) membership <- node_is_mode(.data) else 
-      cli::cli_abort("Please pass the function a `membership` node attribute or a vector.")
+      snet_abort("Please pass the function a `membership` node attribute or a vector.")
   } else {
     if (length(membership) > 1 & length(membership) != length(.data)) {
-      cli::cli_abort("Please pass the function a `membership` node attribute or a vector.")
+      snet_abort("Please pass the function a `membership` node attribute or a vector.")
     } else if (length(membership) != length(.data)) {
       membership <- node_attribute(.data, membership)
     }
@@ -282,7 +282,7 @@ layout_tbl_graph_concentric <- function(.data, membership,
   names(membership) <- node_names(.data)
   membership <- to_list(membership)
   all_c  <- unlist(membership, use.names = FALSE)
-  if (any(table(all_c) > 1)) cli::cli_abort("Duplicated nodes in layers!")
+  if (any(table(all_c) > 1)) snet_abort("Duplicated nodes in layers!")
   if (is_labelled(.data)) all_n <- node_names(.data) else all_n <- 1:net_nodes(.data)
   sel_other  <- all_n[!all_n %in% all_c]
   if (length(sel_other) > 0) membership[[length(membership) + 1]] <- sel_other
@@ -328,11 +328,11 @@ layout_tbl_graph_multilevel <- function(.data, level, circular = FALSE) {
     if (any(grepl("lvl", names(node_attribute(.data))))) {
       message("Level attribute 'lvl' found in data.")
       } else {
-        cli::cli_abort("Please pass the function a `level` node attribute or a vector.")
+        snet_abort("Please pass the function a `level` node attribute or a vector.")
       }
   } else {
     if (length(level) > 1 & length(level) != length(.data)) {
-      cli::cli_abort("Please pass the function a `level` node attribute or a vector.")
+      snet_abort("Please pass the function a `level` node attribute or a vector.")
     } else if (length(level) != length(.data)) {
       level <- as.factor(node_attribute(.data, level))
     }
@@ -353,7 +353,7 @@ layout_tbl_graph_multilevel <- function(.data, level, circular = FALSE) {
 #' @export
 layout_tbl_graph_lineage <- function(.data, rank, circular = FALSE) {
   if (length(rank) > 1 & length(rank) != length(.data)) {
-    cli::cli_abort("Please pass the function a `rank` node attribute or a vector.")
+    snet_abort("Please pass the function a `rank` node attribute or a vector.")
   } else if (length(rank) != length(.data)) {
     rank <- as.numeric(node_attribute(.data, rank))
   }
@@ -445,7 +445,7 @@ rng <- function(r) {
     x <- append(x, (-1))
     for (i in 1:(r - 1)) x <- append(x, ((-1) + (2L/(r - 1L)) * i))
     return(x * (r/50L))
-  } else cli::cli_abort("no negative values")
+  } else snet_abort("no negative values")
 }
 
 nrm <- function(x, digits = 3) {

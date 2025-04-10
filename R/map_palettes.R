@@ -19,12 +19,12 @@ many_palettes <- function(palette, n, type = c("discrete", "continuous")) {
     pal <- corp_palette(c("IHEID", "SDGs", "Centres", "ETHZ", "RUG", "UZH"))
   } else pal <- corp_palette(palette)
   if (is.null(pal))
-    cli::cli_abort("Palette not found.")
+    snet_abort("Palette not found.")
   if (missing(n)) {
     n <- length(pal)
   }
   if (type == "discrete" && n > length(pal)) {
-    cli::cli_abort("Number of requested colors greater than what palette can offer")
+    snet_abort("Number of requested colors greater than what palette can offer")
   }
   x <- switch(type, continuous = grDevices::colorRampPalette(pal)(n),
               discrete = pal[1:n])

@@ -23,7 +23,7 @@
 add_info <- function(.data, ...){
   
   if(!is.null(igraph::graph_attr(.data)$grand)){ # Updating
-    mnet_success("Deleting information from previous version(s).")
+    snet_success("Deleting information from previous version(s).")
     igraph::graph_attr(.data)$grand <- NULL
   }
   
@@ -34,7 +34,7 @@ add_info <- function(.data, ...){
                                     "vertex2.total", 
                                     "edge.pos", "edge.neg", "positive", "negative"))
   if(length(unrecog)>0) 
-    cli::cli_alert_warning("{unrecog} are not recognised fields.")
+    snet_warn("{unrecog} are not recognised fields.")
   
   out <- .data
   if("name" %in% names(info)){
@@ -42,12 +42,12 @@ add_info <- function(.data, ...){
   }
   if("nodes" %in% names(info)){
     if(is_twomode(.data) && length(info$nodes)!=2) 
-      cli::cli_abort("Please name both nodesets in a two-mode network.")
+      snet_abort("Please name both nodesets in a two-mode network.")
     igraph::graph_attr(out)$nodes <- info$nodes
   }
   if("ties" %in% names(info)){
     if(is_multiplex(.data) && length(info$ties) != length(unique(tie_attribute(.data, "type")))) 
-      cli::cli_abort("Please name all types of tie in a multiplex network.")
+      snet_abort("Please name all types of tie in a multiplex network.")
     igraph::graph_attr(out)$ties <- info$ties
   }
   if("collection" %in% names(info)){

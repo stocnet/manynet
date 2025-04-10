@@ -117,6 +117,12 @@
 #'   By default 0, which means any recovered individuals retain lifelong immunity (i.e. an SIR model).
 #'   Anything higher results in e.g. a SIRS model.
 #'   \eqn{\xi = 1} would mean there is no period of immunity, e.g. an SIS model.
+#' @param fatality The probability those who are infected
+#'   are removed from the network, \eqn{\alpha}.
+#'   Note that fatality is distinct from a natural mortality rate.
+#'   By default \eqn{\alpha = 0}, which means that there is no fatality.
+#'   Where \eqn{\alpha > 0}, the nodal attribute 'active' will be
+#'   added if it is not already present.
 #' @param immune A logical or numeric vector identifying nodes
 #'   that begin the diffusion process as already recovered.
 #'   This could be interpreted as those who are vaccinated or equivalent.
@@ -152,9 +158,13 @@ play_diffusion <- function(.data,
                            latency = 0,
                            recovery = 0,
                            waning = 0,
+                           fatality = 0,
                            immune = NULL,
                            steps,
                            old_version = FALSE) {
+  if(old_version) 
+    cli::cli_warn(paste("Please use the new version of this function (since v1.4.0), with new features.",
+                        "The old version will no longer be maintained and is retained here only for backwards compatibility."))
   n <- net_nodes(.data)
   recovered <- NULL
   if(missing(steps)) steps <- n
@@ -169,6 +179,7 @@ play_diffusion <- function(.data,
     if(is.logical(immune)) immune <- which(immune)
     recovered <- immune
   }
+  
   infected <- seeds # seeds are initial infected
   latent <- NULL # latent compartment starts empty
   time = 0 # starting at 0
@@ -185,6 +196,7 @@ play_diffusion <- function(.data,
                        I_new = length(seeds),
                        I = length(infected),
                        R = length(recovered))
+  
   repeat{ # At each time step:
     # update network, if necessary
     if(is_list(.data)){
@@ -203,6 +215,8 @@ play_diffusion <- function(.data,
     infected <- setdiff(infected, recovered)
     # those for whom immunity has waned are no longer immune
     recovered <- setdiff(recovered, waned)
+    # some infected, sadly, shake off this mortal coil
+    deceased <- infected[stats::rbinom(length(infected), 1, fatality)==1]
     
     # add any global/prevalence feedback
     new_prev <- as_matrix(net) + ((report$I_new[length(report$I_new)] - 
@@ -252,6 +266,10 @@ play_diffusion <- function(.data,
     if(!is.null(waned) & length(waned)>0)
       events <- rbind(events,
                       data.frame(t = time, nodes = waned, event = "S", exposure = NA))
+    # record fatalities
+    if(!is.null(fatality) & length(deceased)>0)
+      events <- rbind(events,
+                      data.frame(t = time, nodes = deceased, event = "D", exposure = NA))
     # Update report table ####
     report <- rbind(report,
                     data.frame(t = time,
@@ -270,9 +288,13 @@ play_diffusion <- function(.data,
     make_diff_model(events, report, .data)
   } else {
     .data <- .data %>% mutate_nodes(diffusion = "S")
-    events <- data.frame(time = events$t, node = events$nodes, 
+    changes <- data.frame(time = events$t, node = events$nodes, 
                          var = "diffusion", value = events$event)
-    add_changes(.data, events)
+    if(fatality > 0)
+      changes <- changes %>% mutate(var = ifelse(value=="D", "active", var),
+                                    value = ifelse(value=="D", FALSE, value))
+    .data <- add_changes(.data, changes)
+    .data
   }
 }
 
@@ -285,9 +307,15 @@ play_diffusion <- function(.data,
 #' @description
 #' These functions allow learning games to be played upon networks.
 #' 
-#' - `play_learning()` plays a DeGroot learning model upon a network.
+#' - `play_learning()` plays a learning model upon a network.
 #' - `play_segregation()` plays a Schelling segregation model upon a network.
 #' 
+#' @section Learning models: 
+#'   The default is a Degroot learning model,
+#'   but if `closeness` is defined as anything less than infinity, 
+#'   this becomes a Deffuant model.
+#'   A Deffuant model is similar to a Degroot model, however nodes only learn
+#'   from other nodes whose beliefs are not too dissimilar from their own.
 #' @name make_learning
 #' @family makes
 #' @family models
@@ -296,19 +324,37 @@ play_diffusion <- function(.data,
 #'   By default the number of nodes in the network.
 #' @param beliefs A vector indicating the probabilities nodes
 #'   put on some outcome being 'true'.
+#' @param closeness A threshold at which beliefs are too different to
+#'   influence each other. By default `Inf`, i.e. there is no threshold.
 #' @param epsilon The maximum difference in beliefs accepted
 #'   for convergence to a consensus.
+#' @references
+#' DeGroot, Morris H. 1974. 
+#' "Reaching a consensus",
+#' _Journal of the American Statistical Association_, 69(345): 118–21.
+#' \doi{10.1080/01621459.1974.10480137}
+#' 
+#' Deffuant, Guillaume, David Neau, Frederic Amblard, and Gérard Weisbuch. 2000.
+#' "Mixing beliefs among interacting agents",
+#' _Advances in Complex Systems_, 3(1): 87-98.
+#' \doi{10.1142/S0219525900000078}
+#' 
+#' Golub, Benjamin, and Matthew O. Jackson 2010. 
+#' "Naive learning in social networks and the wisdom of crowds", 
+#' _American Economic Journal_, 2(1): 112-49.
+#' \doi{10.1257/mic.2.1.112}
 #' @examples 
 #'   play_learning(ison_networkers, 
 #'       rbinom(net_nodes(ison_networkers),1,prob = 0.25))
 #' @export
 play_learning <- function(.data, 
                           beliefs,
+                          closeness = Inf,
                           steps,
                           epsilon = 0.0005){
   n <- net_nodes(.data)
   if(length(beliefs)!=n) 
-    cli::cli_abort("'beliefs' must be a vector the same length as the number of nodes in the network.")
+    snet_abort("'beliefs' must be a vector the same length as the number of nodes in the network.")
   if(is.logical(beliefs)) beliefs <- beliefs*1
   if(missing(steps)) steps <- n
   
@@ -316,10 +362,13 @@ play_learning <- function(.data,
   out <- matrix(NA,steps+1,length(beliefs))
   out[1,] <- beliefs
   trust_mat <- as_matrix(.data)/rowSums(as_matrix(.data))
-  
+
   repeat{
     old_beliefs <- beliefs
-    beliefs <- trust_mat %*% beliefs
+    listen_mat <- trust_mat * (as.matrix(stats::dist(beliefs)) <= closeness)
+    listen_mat <- listen_mat/rowSums(listen_mat)
+    listen_mat[is.nan(listen_mat)] <- 0
+    beliefs <- listen_mat %*% beliefs
     if(all(abs(old_beliefs - beliefs) < epsilon)) break
     t = t+1
     out[t+1,] <- beliefs
@@ -372,7 +421,7 @@ play_segregation <- function(.data,
   who_moves <- match.arg(who_moves)
   choice_function <- match.arg(choice_function)
   if(length(heterophily)==1) heterophily <- rep(heterophily, n)
-  if(length(heterophily)!=n) cli::cli_abort("Heterophily threshold must be the same length as the number of nodes in the network.")
+  if(length(heterophily)!=n) snet_abort("Heterophily threshold must be the same length as the number of nodes in the network.")
   swtch <- function(x,i,j) {x[c(i,j)] <- x[c(j,i)]; x} 
   
   t = 0

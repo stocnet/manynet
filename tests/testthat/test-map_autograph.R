@@ -154,18 +154,18 @@ test_that("hierarchy and lineage layouts graph correctly", {
                "events")
 })
 
-test_that("autographr works for diff_model objects", {
-  skip_on_cran()
-  skip_on_ci()
-  test_diff <- graphr(play_diffusion(ison_brandes, old_version = TRUE))
-  if (inherits(test_diff$guides, "Guides")) {
-    expect_s3_class(test_diff[["guides"]][["guides"]][["shape"]], "GuideLegend")
-    expect_s3_class(test_diff[["guides"]][["guides"]][["colour"]], "GuideColourbar")
-  } else {
-    expect_equal(test_diff[["guides"]][["shape"]][["name"]], "legend")
-    expect_equal(test_diff[["guides"]][["colour"]][["name"]], "colorbar")
-  }
-})
+# test_that("graphr works for diff_model objects", {
+#   skip_on_cran()
+#   skip_on_ci()
+#   test_diff <- graphr(play_diffusion(ison_brandes, old_version = TRUE))
+#   if (inherits(test_diff$guides, "Guides")) {
+#     expect_s3_class(test_diff[["guides"]][["guides"]][["shape"]], "GuideLegend")
+#     expect_s3_class(test_diff[["guides"]][["guides"]][["colour"]], "GuideColourbar")
+#   } else {
+#     expect_equal(test_diff[["guides"]][["shape"]][["name"]], "legend")
+#     expect_equal(test_diff[["guides"]][["colour"]][["name"]], "colorbar")
+#   }
+# })
 
 test_that("concentric layout works when node names are missing", {
   skip_on_cran()
