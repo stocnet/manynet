@@ -630,7 +630,7 @@ to_matching.igraph <- function(.data, mark = "type", capacities = NULL){
 
 #' @export
 to_matching.tbl_graph <- function(.data, mark = "type", capacities = NULL){
-  as_tidygraph(to_matching.igraph(.data), mark, capacities = capacities)
+  as_tidygraph(to_matching.igraph(.data, mark, capacities = capacities))
 }
 
 #' @export
