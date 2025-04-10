@@ -25,7 +25,7 @@ to_dominating() returns the dominating tree of the network
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.1</span>
       </span>
     </div>
 
@@ -78,7 +78,7 @@ if the data is unconnected, a forest of spanning trees.</p></li>
 </ul></div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">to_matching</span><span class="op">(</span><span class="va">.data</span>, mark <span class="op">=</span> <span class="st">"type"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">to_matching</span><span class="op">(</span><span class="va">.data</span>, mark <span class="op">=</span> <span class="st">"type"</span>, capacities <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">to_mentoring</span><span class="op">(</span><span class="va">.data</span>, elites <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
 <span></span>
@@ -105,6 +105,12 @@ if the data is unconnected, a forest of spanning trees.</p></li>
 <dt id="arg-mark">mark<a class="anchor" aria-label="anchor" href="#arg-mark"></a></dt>
 <dd><p>A logical vector marking two types or modes.
 By default "type".</p></dd>
+
+
+<dt id="arg-capacities">capacities<a class="anchor" aria-label="anchor" href="#arg-capacities"></a></dt>
+<dd><p>An integer or vector of integers the same length as the
+nodes in the network that describes the maximum possible degree the node
+can have in the matched network.</p></dd>
 
 
 <dt id="arg-elites">elites<a class="anchor" aria-label="anchor" href="#arg-elites"></a></dt>
@@ -145,7 +151,11 @@ Below are the currently implemented S3 methods:</p><table class="table table"><t
     <h2><code>to_matching()</code></h2>
 
 
-<p><code>to_matching()</code> uses <code>{igraph}</code>'s <code>max_bipartite_match()</code>
+<p>This function attempts to solve the stable matching problem,
+also known as the stable marriage problem, upon a given
+two-mode network (or other network with a binary mark).</p>
+<p>In the basic version,
+<code>to_matching()</code> uses <code><a href="https://r.igraph.org/reference/matching.html" class="external-link">igraph::max_bipartite_match()</a></code>
 to return a network in which each node is only tied to
 one of its previous ties.
 The number of these ties left is its <em>cardinality</em>,
@@ -156,6 +166,12 @@ The algorithm used is the push-relabel algorithm
 with greedy initialization and a global relabelling
 after every \(\frac{n}{2}\) steps,
 where \(n\) is the number of nodes in the network.</p>
+<p>In the more general version, each node may have a larger capacity,
+or even different capacities.
+Here an implementation of the Gale-Shapley algorithm is used,
+in which an iterative process of proposal and acceptance is repeated until
+all are matched or have exhausted their lists of preferences.
+This is, however, computationally slower.</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -164,6 +180,10 @@ where \(n\) is the number of nodes in the network.</p>
 <h3 id="on-matching">On matching<a class="anchor" aria-label="anchor" href="#on-matching"></a></h3>
 
 
+<p>Gale, David, and Lloyd Stowell Shapley. 1962.
+"College admissions and the stability of marriage".
+<em>The American Mathematical Monthly</em>, 69(1): 9–14.
+<a href="https://doi.org/10.2307/2312726" class="external-link">doi:10.2307/2312726</a></p>
 <p>Goldberg, Andrew V., and Robert E. Tarjan. 1986.
 "A new approach to the maximum flow problem".
 <em>Proceedings of the eighteenth annual ACM symposium on Theory of computing – STOC '86</em>.

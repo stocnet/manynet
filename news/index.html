@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.1</span>
       </span>
     </div>
 
@@ -59,6 +59,33 @@
       <small>Source: <a href="https://github.com/stocnet/manynet/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.4.1" id="manynet-141">manynet 1.4.1<a class="anchor" aria-label="anchor" href="#manynet-141"></a></h2>
+<div class="section level3">
+<h3 id="making-1-4-1">Making<a class="anchor" aria-label="anchor" href="#making-1-4-1"></a></h3>
+<ul><li>Added Deffuant model to <code><a href="../reference/make_learning.html">play_learning()</a></code>
+</li>
+<li>Added fatality parameter to <code><a href="../reference/make_play.html">play_diffusion()</a></code> for e.g. SID models</li>
+<li>Improvements to <code><a href="../reference/make_ego.html">create_ego()</a></code><ul><li>Now accepts an explicit ego in the call, e.g. create_ego(“Andy”)</li>
+<li>Now uses pluralization to prompt alter?s</li>
+<li>Can now create two-mode ego networks</li>
+<li>Uses new <code><a href="../reference/interface.html">snet_prompt()</a></code> for easier to read consoles</li>
+<li>Uses new <code><a href="../reference/interface.html">snet_minor_info()</a></code> for reminding users to assign the function</li>
+<li>Now names ego in the title of the resulting object</li>
+<li>Fixed bug where ego duplicated if already in the roster</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-1-4-1">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-4-1"></a></h3>
+<ul><li>Extended <code><a href="../reference/manip_paths.html">to_matching()</a></code> to work on the more general class of stable matching problems, including where nodes have different capacities</li></ul></div>
+<div class="section level3">
+<h3 id="marking-1-4-1">Marking<a class="anchor" aria-label="anchor" href="#marking-1-4-1"></a></h3>
+<ul><li>Added <code><a href="../reference/mark_core.html">node_is_universal()</a></code>
+</li></ul></div>
+<div class="section level3">
+<h3 id="measuring-1-4-1">Measuring<a class="anchor" aria-label="anchor" href="#measuring-1-4-1"></a></h3>
+<ul><li>Improved node measure printing with a spark bar</li></ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.4.0" id="manynet-140">manynet 1.4.0<a class="anchor" aria-label="anchor" href="#manynet-140"></a></h2>
 <div class="section level3">

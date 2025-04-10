@@ -23,7 +23,7 @@ as well as simplex and complex diffusion to be simulated upon a network."><meta 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.1</span>
       </span>
     </div>
 
@@ -84,6 +84,7 @@ as well as simplex and complex diffusion to be simulated upon a network.</p>
 <span>  latency <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  recovery <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  waning <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  fatality <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  immune <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">steps</span>,</span>
 <span>  old_version <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -173,6 +174,15 @@ four days to lose their immunity, then \(\xi = 0.25\).
 By default 0, which means any recovered individuals retain lifelong immunity (i.e. an SIR model).
 Anything higher results in e.g. a SIRS model.
 \(\xi = 1\) would mean there is no period of immunity, e.g. an SIS model.</p></dd>
+
+
+<dt id="arg-fatality">fatality<a class="anchor" aria-label="anchor" href="#arg-fatality"></a></dt>
+<dd><p>The probability those who are infected
+are removed from the network, \(\alpha\).
+Note that fatality is distinct from a natural mortality rate.
+By default \(\alpha = 0\), which means that there is no fatality.
+Where \(\alpha &gt; 0\), the nodal attribute 'active' will be
+added if it is not already present.</p></dd>
 
 
 <dt id="arg-immune">immune<a class="anchor" aria-label="anchor" href="#arg-immune"></a></dt>

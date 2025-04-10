@@ -41,7 +41,7 @@ by default, including for two-mode networks."><meta property="og:image" content=
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.1</span>
       </span>
     </div>
 
@@ -309,6 +309,7 @@ most routines solve the equation \(x = (I - \frac{1}{\lambda} A^T)^{-1} e\).</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">node_eigenvector</span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ▂▁▂▁▂▂▁▁ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Evelyn Laura Theresa Brenda Charlotte Frances Eleanor Pearl  Ruth Verne  Myra</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>  0.901  0.85       1  0.861     0.493   0.616   0.676 0.549 0.703 0.653 0.559</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... with 7 more values from this nodeset unprinted. Use `print(..., n = Inf)` to print all values.</span></span>
@@ -316,6 +317,7 @@ most routines solve the equation \(x = (I - \frac{1}{\lambda} A^T)^{-1} e\).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 0.371 0.391 0.612 0.448 0.735 0.749 0.833     1 0.777 0.413 0.224 0.476 0.291</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... with 1 more values from this nodeset unprinted. Use `print(..., n = Inf)` to print all values.</span></span>
 <span class="r-in"><span><span class="fu">node_power</span><span class="op">(</span><span class="va">ison_southern_women</span>, exponent <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ▁▁▂▄▁▁▁ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Evelyn Laura Theresa Brenda Charlotte Frances Eleanor Pearl  Ruth Verne  Myra</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>  -<span style="color: #BB0000;">1.44</span> -<span style="color: #BB0000;">1.38</span>   -<span style="color: #BB0000;">1.44</span>  -<span style="color: #BB0000;">1.38</span>     -<span style="color: #BB0000;">1.00</span>   -<span style="color: #BB0000;">1.38</span>   -<span style="color: #BB0000;">1.38</span> -<span style="color: #BB0000;">1.52</span> -<span style="color: #BB0000;">1.44</span> -<span style="color: #BB0000;">1.44</span> -<span style="color: #BB0000;">1.52</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... with 7 more values from this nodeset unprinted. Use `print(..., n = Inf)` to print all values.</span></span>

@@ -44,7 +44,7 @@ including for two-mode networks."><meta property="og:image" content="https://sto
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.1</span>
       </span>
     </div>
 
@@ -356,6 +356,7 @@ Springer: Berlin, pp. 16-61.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">node_closeness</span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ▂▂▁▂▂▂▁ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Evelyn Laura Theresa Brenda Charlotte Frances Eleanor Pearl  Ruth Verne  Myra</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>    0.8 0.727     0.8  0.727       0.6   0.667   0.667 0.667 0.706 0.706 0.686</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... with 7 more values from this nodeset unprinted. Use `print(..., n = Inf)` to print all values.</span></span>
@@ -363,6 +364,7 @@ Springer: Berlin, pp. 16-61.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 0.524 0.524 0.564 0.537 0.595 0.688 0.733 0.846 0.786  0.55 0.537 0.564 0.524</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... with 1 more values from this nodeset unprinted. Use `print(..., n = Inf)` to print all values.</span></span>
 <span class="r-in"><span><span class="fu">node_reach</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ▁▃▃▁ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Betty   Sue Alice  Jane  Dale   Pam Carol  Tina</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 0.714     1     1 0.714 0.857  1.14 0.714 0.429</span>
 <span class="r-in"><span><span class="op">(</span><span class="va">ec</span> <span class="op">&lt;-</span> <span class="fu">tie_closeness</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span><span class="op">)</span></span></span>

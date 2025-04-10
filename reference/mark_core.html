@@ -21,7 +21,7 @@ node_coreness() assigns nodes to their level of k-coreness.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.1</span>
       </span>
     </div>
 
@@ -70,7 +70,9 @@ node_coreness() assigns nodes to their level of k-coreness.
 </ul></div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">node_is_core</span><span class="op">(</span><span class="va">.data</span>, method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"degree"</span>, <span class="st">"eigenvector"</span><span class="op">)</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">node_is_universal</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">node_is_core</span><span class="op">(</span><span class="va">.data</span>, method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"degree"</span>, <span class="st">"eigenvector"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">node_coreness</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -97,6 +99,18 @@ Other methods, such as a genetic algorithm, CONCOR, and Rombach-Porter,
 can be added if there is interest.</p></dd>
 
 </dl></div>
+    <div id="universal-dominating-node">
+    <h2>Universal/dominating node</h2>
+
+
+<p>A universal node is adjacent to all other nodes in the network.
+It is also sometimes called the dominating vertex because it represents
+a one-element dominating set.
+A network with a universal node is called a cone, and its universal node
+is called the apex of the cone.
+A classic example of a cone is a star graph,
+but friendship, wheel, and threshold graphs are also cones.</p>
+    </div>
     <div id="core-periphery">
     <h2>Core-periphery</h2>
 
@@ -120,7 +134,7 @@ it ignores ties between these blocks.</p>
 
 
 <p>Borgatti, Stephen P., &amp; Everett, Martin G. 1999.
-Models of core /periphery structures.
+"Models of core /periphery structures".
 <em>Social Networks</em>, 21, 375–395.
 <a href="https://doi.org/10.1016/S0378-8733%2899%2900019-2" class="external-link">doi:10.1016/S0378-8733(99)00019-2</a></p>
 <p>Lip, Sean Z. W. 2011.
@@ -142,13 +156,17 @@ Models of core /periphery structures.
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">node_is_core</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span>  <span class="fu">node_is_universal</span><span class="op">(</span><span class="fu"><a href="make_create.html">create_star</a></span><span class="op">(</span><span class="fl">11</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   V1    V2    V3    V4    V5    V6    V7    V8    V9    V10   V11  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> TRUE  FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</span>
+<span class="r-in"><span><span class="fu">node_is_core</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Betty Sue   Alice Jane  Dale  Pam   Carol Tina </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> FALSE TRUE  TRUE  FALSE TRUE  FALSE FALSE FALSE</span>
 <span class="r-in"><span><span class="co">#ison_adolescents %&gt;% </span></span></span>
 <span class="r-in"><span><span class="co">#   mutate(corep = node_is_core()) %&gt;% </span></span></span>
 <span class="r-in"><span><span class="co">#   graphr(node_color = "corep")</span></span></span>
 <span class="r-in"><span><span class="fu">node_coreness</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ▃▁▁▁▅ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Betty   Sue Alice  Jane  Dale   Pam Carol  Tina</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2     2     2     2     2     1     1</span>
 </code></pre></div>

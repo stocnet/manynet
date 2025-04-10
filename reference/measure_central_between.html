@@ -33,7 +33,7 @@ including for two-mode networks."><meta property="og:image" content="https://sto
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.1</span>
       </span>
     </div>
 
@@ -257,6 +257,7 @@ Berlin: Springer.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">node_betweenness</span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ▆▂▁▁▁ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Evelyn Laura Theresa Brenda Charlotte Frances Eleanor Pearl  Ruth Verne  Myra</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>  0.097 0.052   0.088   0.05     0.011   0.011    0.01 0.007 0.017 0.016 0.016</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... with 7 more values from this nodeset unprinted. Use `print(..., n = Inf)` to print all values.</span></span>
@@ -264,6 +265,7 @@ Berlin: Springer.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 0.002 0.002 0.018 0.008 0.038 0.065  0.13 0.244 0.226 0.011  0.02 0.018 0.002</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... with 1 more values from this nodeset unprinted. Use `print(..., n = Inf)` to print all values.</span></span>
 <span class="r-in"><span><span class="fu">node_induced</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ▁▁▄▁▁ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Betty   Sue  Alice  Jane   Dale   Pam Carol  Tina</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 0.095 0.362 -<span style="color: #BB0000;">0.505</span> 0.029 -<span style="color: #BB0000;">0.105</span>  1.10 0.895 0.362</span>
 <span class="r-in"><span><span class="op">(</span><span class="va">tb</span> <span class="op">&lt;-</span> <span class="fu">tie_betweenness</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span><span class="op">)</span></span></span>
