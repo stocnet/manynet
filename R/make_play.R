@@ -155,6 +155,9 @@ play_diffusion <- function(.data,
                            immune = NULL,
                            steps,
                            old_version = FALSE) {
+  if(old_version) 
+    cli::cli_warn(paste("Please use the new version of this function (since v1.4.0), with new features.",
+                        "The old version will no longer be maintained and is retained here only for backwards compatibility."))
   n <- net_nodes(.data)
   recovered <- NULL
   if(missing(steps)) steps <- n
@@ -169,6 +172,7 @@ play_diffusion <- function(.data,
     if(is.logical(immune)) immune <- which(immune)
     recovered <- immune
   }
+  
   infected <- seeds # seeds are initial infected
   latent <- NULL # latent compartment starts empty
   time = 0 # starting at 0
@@ -185,6 +189,7 @@ play_diffusion <- function(.data,
                        I_new = length(seeds),
                        I = length(infected),
                        R = length(recovered))
+  
   repeat{ # At each time step:
     # update network, if necessary
     if(is_list(.data)){
@@ -270,9 +275,13 @@ play_diffusion <- function(.data,
     make_diff_model(events, report, .data)
   } else {
     .data <- .data %>% mutate_nodes(diffusion = "S")
-    events <- data.frame(time = events$t, node = events$nodes, 
+    changes <- data.frame(time = events$t, node = events$nodes, 
                          var = "diffusion", value = events$event)
-    add_changes(.data, events)
+    if(fatality > 0)
+      changes <- changes %>% mutate(var = ifelse(value=="D", "active", var),
+                                    value = ifelse(value=="D", FALSE, value))
+    .data <- add_changes(.data, changes)
+    .data
   }
 }
 
@@ -308,7 +317,7 @@ play_learning <- function(.data,
                           epsilon = 0.0005){
   n <- net_nodes(.data)
   if(length(beliefs)!=n) 
-    cli::cli_abort("'beliefs' must be a vector the same length as the number of nodes in the network.")
+    snet_abort("'beliefs' must be a vector the same length as the number of nodes in the network.")
   if(is.logical(beliefs)) beliefs <- beliefs*1
   if(missing(steps)) steps <- n
   
@@ -316,7 +325,7 @@ play_learning <- function(.data,
   out <- matrix(NA,steps+1,length(beliefs))
   out[1,] <- beliefs
   trust_mat <- as_matrix(.data)/rowSums(as_matrix(.data))
-  
+
   repeat{
     old_beliefs <- beliefs
     beliefs <- trust_mat %*% beliefs
@@ -372,7 +381,7 @@ play_segregation <- function(.data,
   who_moves <- match.arg(who_moves)
   choice_function <- match.arg(choice_function)
   if(length(heterophily)==1) heterophily <- rep(heterophily, n)
-  if(length(heterophily)!=n) cli::cli_abort("Heterophily threshold must be the same length as the number of nodes in the network.")
+  if(length(heterophily)!=n) snet_abort("Heterophily threshold must be the same length as the number of nodes in the network.")
   swtch <- function(x,i,j) {x[c(i,j)] <- x[c(j,i)]; x} 
   
   t = 0
