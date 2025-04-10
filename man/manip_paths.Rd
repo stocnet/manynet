@@ -32,6 +32,10 @@ to_dominating(.data, from, direction = c("out", "in"))
 \item{mark}{A logical vector marking two types or modes.
 By default "type".}
 
+\item{capacities}{An integer or vector of integers the same length as the
+nodes in the network that describes the maximum possible degree the node
+can have in the matched network.}
+
 \item{elites}{The proportion of nodes to be selected as mentors.
 By default this is set at 0.1.
 This means that the top 10\% of nodes in terms of degree,

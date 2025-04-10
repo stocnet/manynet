@@ -560,6 +560,9 @@ NULL
 #'   \doi{10.1145/12130.12144}
 #' @param mark A logical vector marking two types or modes.
 #'   By default "type".
+#' @param capacities An integer or vector of integers the same length as the
+#'   nodes in the network that describes the maximum possible degree the node
+#'   can have in the matched network.
 #' @importFrom igraph max_bipartite_match
 #' @examples 
 #' to_matching(ison_southern_women)

@@ -5,6 +5,11 @@
 #'   
 #'   If you wish to receive fewer messages in the console,
 #'   run `options(snet_verbosity = 'quiet')`.
+#' @param ... One or more character strings.
+#'   For most of these functions, if multiple strings are passed these will be
+#'   pasted together.
+#' @param .envir This argument is just to inherit the parent frame in the 
+#'   (likely) event that the function is used within another function.
 #' @name interface
 NULL
 

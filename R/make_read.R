@@ -473,7 +473,7 @@ write_matrix <- function(.data,
   }
   if (missing(filename)){
     filename <- paste0(getwd(), "/", object_name, ".csv")
-    mnet_success("Writing to {.file {filename}}")
+    snet_success("Writing to {.file {filename}}")
   } 
   # if (missing(name)) name <- object_name
   write.csv(out, file = filename, row.names = FALSE)

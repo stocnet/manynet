@@ -37,6 +37,14 @@ snet_progress_seq(..., .envir = parent.frame())
 
 snet_progress_nodes(..., .envir = parent.frame())
 }
+\arguments{
+\item{...}{One or more character strings.
+For most of these functions, if multiple strings are passed these will be
+pasted together.}
+
+\item{.envir}{This argument is just to inherit the parent frame in the
+(likely) event that the function is used within another function.}
+}
 \description{
 These functions wrap \code{{cli}} functions and elements
 to build an attractive command line interface (CLI).

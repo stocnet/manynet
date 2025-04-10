@@ -2,6 +2,7 @@
 utils::globalVariables(c(".data", "obs", 
                          "from", "to", "name", "weight","sign","wave",
                          "nodes","event","exposure",
+                         "student","students","colleges",
                          "node","value","var","active","time",
                          "A","B","C","D"))
 

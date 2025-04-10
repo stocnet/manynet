@@ -365,7 +365,7 @@ play_learning <- function(.data,
 
   repeat{
     old_beliefs <- beliefs
-    listen_mat <- trust_mat * (as.matrix(dist(beliefs)) <= closeness)
+    listen_mat <- trust_mat * (as.matrix(stats::dist(beliefs)) <= closeness)
     listen_mat <- listen_mat/rowSums(listen_mat)
     listen_mat[is.nan(listen_mat)] <- 0
     beliefs <- listen_mat %*% beliefs

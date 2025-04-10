@@ -119,7 +119,7 @@ summary.network_measure <- function(object, ...,
   dat <- callItems[idFun+1]
   if(length(callItems)>2) oth <- callItems[3:length(callItems)] else
     oth <- NULL
-  nulls <- vapply(mnet_progress_seq(times), function(r){
+  nulls <- vapply(snet_progress_seq(times), function(r){
     if(is.null(oth))
       suppressMessages(get(fun)(get(null)(get(dat)))) else
         suppressMessages(get(fun)(get(null)(get(dat)), 
