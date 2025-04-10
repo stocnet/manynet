@@ -15,6 +15,7 @@ play_diffusion(
   latency = 0,
   recovery = 0,
   waning = 0,
+  fatality = 0,
   immune = NULL,
   steps,
   old_version = FALSE
@@ -85,6 +86,13 @@ four days to lose their immunity, then \eqn{\xi = 0.25}.
 By default 0, which means any recovered individuals retain lifelong immunity (i.e. an SIR model).
 Anything higher results in e.g. a SIRS model.
 \eqn{\xi = 1} would mean there is no period of immunity, e.g. an SIS model.}
+
+\item{fatality}{The probability those who are infected
+are removed from the network, \eqn{\alpha}.
+Note that fatality is distinct from a natural mortality rate.
+By default \eqn{\alpha = 0}, which means that there is no fatality.
+Where \eqn{\alpha > 0}, the nodal attribute 'active' will be
+added if it is not already present.}
 
 \item{immune}{A logical or numeric vector identifying nodes
 that begin the diffusion process as already recovered.

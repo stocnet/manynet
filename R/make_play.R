@@ -117,6 +117,12 @@
 #'   By default 0, which means any recovered individuals retain lifelong immunity (i.e. an SIR model).
 #'   Anything higher results in e.g. a SIRS model.
 #'   \eqn{\xi = 1} would mean there is no period of immunity, e.g. an SIS model.
+#' @param fatality The probability those who are infected
+#'   are removed from the network, \eqn{\alpha}.
+#'   Note that fatality is distinct from a natural mortality rate.
+#'   By default \eqn{\alpha = 0}, which means that there is no fatality.
+#'   Where \eqn{\alpha > 0}, the nodal attribute 'active' will be
+#'   added if it is not already present.
 #' @param immune A logical or numeric vector identifying nodes
 #'   that begin the diffusion process as already recovered.
 #'   This could be interpreted as those who are vaccinated or equivalent.
@@ -152,6 +158,7 @@ play_diffusion <- function(.data,
                            latency = 0,
                            recovery = 0,
                            waning = 0,
+                           fatality = 0,
                            immune = NULL,
                            steps,
                            old_version = FALSE) {
@@ -208,6 +215,8 @@ play_diffusion <- function(.data,
     infected <- setdiff(infected, recovered)
     # those for whom immunity has waned are no longer immune
     recovered <- setdiff(recovered, waned)
+    # some infected, sadly, shake off this mortal coil
+    deceased <- infected[stats::rbinom(length(infected), 1, fatality)==1]
     
     # add any global/prevalence feedback
     new_prev <- as_matrix(net) + ((report$I_new[length(report$I_new)] - 
@@ -257,6 +266,10 @@ play_diffusion <- function(.data,
     if(!is.null(waned) & length(waned)>0)
       events <- rbind(events,
                       data.frame(t = time, nodes = waned, event = "S", exposure = NA))
+    # record fatalities
+    if(!is.null(fatality) & length(deceased)>0)
+      events <- rbind(events,
+                      data.frame(t = time, nodes = deceased, event = "D", exposure = NA))
     # Update report table ####
     report <- rbind(report,
                     data.frame(t = time,

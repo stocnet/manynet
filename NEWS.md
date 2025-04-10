@@ -3,6 +3,7 @@
 ## Making
 
 - Added Deffuant model to `play_learning()`
+- Added fatality parameter to `play_diffusion()` for e.g. SID models
 - Improvements to `create_ego()`
   - Now accepts an explicit ego in the call, e.g. create_ego("Andy")
   - Now uses pluralization to prompt alter?s
