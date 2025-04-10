@@ -629,23 +629,23 @@ to_matching.igraph <- function(.data, mark = "type", capacities = NULL){
 }
 
 #' @export
-to_matching.tbl_graph <- function(.data, mark = "type"){
-  as_tidygraph(to_matching.igraph(.data), mark)
+to_matching.tbl_graph <- function(.data, mark = "type", capacities = NULL){
+  as_tidygraph(to_matching.igraph(.data), mark, capacities = capacities)
 }
 
 #' @export
-to_matching.network <- function(.data, mark = "type"){
-  as_network(to_matching(as_igraph(.data), mark))
+to_matching.network <- function(.data, mark = "type", capacities = NULL){
+  as_network(to_matching(as_igraph(.data), mark, capacities = capacities))
 }
 
 #' @export
-to_matching.data.frame <- function(.data, mark = "type"){
-  as_edgelist(to_matching(as_igraph(.data), mark))
+to_matching.data.frame <- function(.data, mark = "type", capacities = NULL){
+  as_edgelist(to_matching(as_igraph(.data), mark, capacities = capacities))
 }
 
 #' @export
-to_matching.matrix <- function(.data, mark = "type"){
-  as_matrix(to_matching(as_igraph(.data), mark))
+to_matching.matrix <- function(.data, mark = "type", capacities = NULL){
+  as_matrix(to_matching(as_igraph(.data), mark, capacities = capacities))
 }
 
 #' @rdname manip_paths 
