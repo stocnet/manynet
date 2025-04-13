@@ -218,7 +218,9 @@ to_ties.matrix <- function(.data){
 #' 
 #'   - `to_ego()` scopes a network into the local neighbourhood of a given node.
 #'   - `to_giant()` scopes a network into one including only the main component and no smaller components or isolates.
-#'   - `to_no_isolates()` scopes a network into one excluding all nodes without ties
+#'   - `to_no_isolates()` scopes a network into one excluding all nodes without ties.
+#'   - `to_no_missing()` scopes a network to one retaining only complete cases,
+#'   i.e. nodes with no missing values.
 #'   - `to_subgraph()` scopes a network into a subgraph by filtering on some node-related logical statement.
 #'   - `to_blocks()` reduces a network to ties between a given partition membership vector.
 #' @details
@@ -241,6 +243,16 @@ to_ties.matrix <- function(.data){
 #'   and passing it a network object will return a network object,
 #'   with certain modifications as outlined for each function.
 NULL
+
+#' @rdname manip_scope
+#' @export
+to_no_missing <- function(.data) UseMethod("to_no_missing")
+
+#' @export
+to_no_missing.tbl_graph <- function(.data){
+  delete_nodes(.data, !stats::complete.cases(as_nodelist(test)))
+}
+
 
 #' @rdname manip_scope
 #' @param node Name or index of node.
