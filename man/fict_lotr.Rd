@@ -39,8 +39,17 @@
 data(fict_lotr)
 }
 \description{
-A network of 36 Lord of the Rings book characters and 66 interactional relationships.
+The Lord of the Rings is a beloved, epic high fantasy novel written by
+J.R.R. Tolkien.
+This is a network of 36 Lord of the Rings book characters and
+66 interactional relationships.
+
 The ties are unweighted and concern only interaction.
 Interaction can be cooperative or conflictual.
+
+In addition, the race of these characters has been coded,
+though not without debate.
+The most contentious is the coding of Tom Bombadil and Goldberry as Maiar,
+presumably coded as such to avoid having categories of one.
 }
 \keyword{datasets}
