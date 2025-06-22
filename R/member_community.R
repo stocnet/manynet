@@ -350,7 +350,7 @@ node_in_leiden <- function(.data, resolution = 1){
     resolution <- sum(tie_weights(.data))/(n*(n - 1)/2)
   }
   out <- igraph::cluster_leiden(as_igraph(.data), 
-                                resolution_parameter = resolution
+                                resolution = resolution
   )$membership
   make_node_member(out, .data)
 }

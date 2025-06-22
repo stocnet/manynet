@@ -18,6 +18,10 @@
 - Dropped plotting methods (moved to `{autograph}`)
 - Added Page 2010 citation to `node_richness()` documentation
 
+## Memberships
+
+- Fixed `node_in_leiden()` to use resolution parameter in call to igraph
+
 ## Data
 
 - Improved `table_data()` so that it lists components, longitudinal, dynamic, 
