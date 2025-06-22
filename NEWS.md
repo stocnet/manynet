@@ -1,3 +1,34 @@
+# manynet 1.5.0
+
+## Package
+
+- Updated pandoc setup in pushrelease workflow
+
+## Making
+
+- Dropped print and summary methods for diffs_model (moved to `{migraph}`)
+
+## Modifying
+
+- Added `to_no_missing()` for removing nodes with missing data
+- Fixed `as_diffusion.mnet()` so that it includes "diff_model" class
+
+## Measuring
+
+- Dropped plotting methods (moved to `{autograph}`)
+- Added Page 2010 citation to `node_richness()` documentation
+
+## Memberships
+
+- Fixed `node_in_leiden()` to use resolution parameter in call to igraph
+
+## Data
+
+- Improved `table_data()` so that it lists components, longitudinal, dynamic, 
+and changing data
+- Added more description for `fict_lotr`
+- Added `irps_revere` data
+
 # manynet 1.4.1
 
 ## Making

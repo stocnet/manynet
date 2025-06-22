@@ -5,13 +5,13 @@
 \alias{table_data}
 \title{Obtain overview of available network data}
 \usage{
-table_data(pkg = c("manynet", "migraph"), ...)
+table_data(..., pkg = c("manynet", "migraph"))
 }
 \arguments{
-\item{pkg}{String, name of the package.}
-
 \item{...}{Network marks, e.g. directed, twomode, or signed,
 that are used to filter the results.}
+
+\item{pkg}{String, name of the package.}
 }
 \description{
 This function makes it easy to get an overview of available data:

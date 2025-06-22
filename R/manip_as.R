@@ -1035,6 +1035,7 @@ as_diffusion.mnet <- function(.data, twomode = FALSE, events) {
                           dplyr::any_of(c("time", "n", "S", "s", "E", "E_new", 
                                           "I", "I_new", "R", "R_new")))
   # make_diff_model(events, report, .data)
+  class(report) <- c("diff_model", class(report))
   report
 }
 

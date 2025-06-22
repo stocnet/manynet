@@ -456,9 +456,18 @@
 #' One-mode network of Lord of the Rings character interactions
 #'
 #' @description
-#'   A network of 36 Lord of the Rings book characters and 66 interactional relationships.
+#'   The Lord of the Rings is a beloved, epic high fantasy novel written by
+#'   J.R.R. Tolkien.
+#'   This is a network of 36 Lord of the Rings book characters and 
+#'   66 interactional relationships.
+#'   
 #'   The ties are unweighted and concern only interaction.
 #'   Interaction can be cooperative or conflictual.
+#'   
+#'   In addition, the race of these characters has been coded,
+#'   though not without debate.
+#'   The most contentious is the coding of Tom Bombadil and Goldberry as Maiar,
+#'   presumably coded as such to avoid having categories of one.
 #' @docType data
 #' @keywords datasets
 #' @name fict_lotr
@@ -787,3 +796,46 @@
 #'   irps_usgeo
 #'   ```
 "irps_usgeo"
+
+## Revere ####
+
+#' Two-mode network of Paul Revere's (Fischer 1995)
+#'
+#' @description
+#'   This network is of Paul Revere and 253 of his contemporary's overlapping 
+#'   memberships in seven colonial organisations.
+#'   The data has been collected by Kieran Healy from the appendix to
+#'   David Hackett Fischer's "Paul Revere's Ride".
+#'   It highlights Paul Revere's centrality in this network, and thus his
+#'   ability to mobilise the towns he rode through on horseback north
+#'   from Boston on the night of April 18, 1775.
+#'   This is in contrast to William Dawes, who set out the same night,
+#'   but south. 
+#'   Despite both men coming from similar class and backgrounds,
+#'   and riding through towns with similar demography and political leanings,
+#'   only Paul Revere was able to mobilise those he encountered,
+#'   and his social network was thought key to this.
+#' @docType data
+#' @keywords datasets
+#' @name irps_revere
+#' @usage data(irps_revere)
+#' @references
+#'   Fischer, David Hackett. 1995.
+#'   "Paul Revere's Ride".
+#'   Oxford: Oxford University Press.
+#' 
+#'   Han, Shin-Kap. 2009.
+#'   "The Other Ride of Paul Revere: The Brokerage Role in the Making of the American Revolution".
+#'   _Mobilization: An International Quarterly_, 14(2): 143-162.
+#'   \doi{10.17813/maiq.14.2.g360870167085210}
+#'   
+#'   Healy, Kieran. 2013.
+#'   "Using Metadata to find Paul Revere".
+#' @format
+#'   ```{r, echo = FALSE}
+#'   irps_revere
+#'   ```
+"irps_revere"
+
+
+

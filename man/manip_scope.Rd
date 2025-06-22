@@ -2,6 +2,7 @@
 % Please edit documentation in R/manip_reformed.R
 \name{manip_scope}
 \alias{manip_scope}
+\alias{to_no_missing}
 \alias{to_ego}
 \alias{to_time}
 \alias{to_giant}
@@ -10,6 +11,8 @@
 \alias{to_blocks}
 \title{Modifying networks scope}
 \usage{
+to_no_missing(.data)
+
 to_ego(.data, node, max_dist = 1, min_dist = 0, direction = c("out", "in"))
 
 to_time(.data, time)
@@ -69,7 +72,9 @@ than the original object.
 \itemize{
 \item \code{to_ego()} scopes a network into the local neighbourhood of a given node.
 \item \code{to_giant()} scopes a network into one including only the main component and no smaller components or isolates.
-\item \code{to_no_isolates()} scopes a network into one excluding all nodes without ties
+\item \code{to_no_isolates()} scopes a network into one excluding all nodes without ties.
+\item \code{to_no_missing()} scopes a network to one retaining only complete cases,
+i.e. nodes with no missing values.
 \item \code{to_subgraph()} scopes a network into a subgraph by filtering on some node-related logical statement.
 \item \code{to_blocks()} reduces a network to ties between a given partition membership vector.
 }

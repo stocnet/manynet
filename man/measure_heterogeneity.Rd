@@ -115,6 +115,11 @@ net_spatial(ison_lawfirm, "age")
 Blau, Peter M. 1977.
 \emph{Inequality and heterogeneity}.
 New York: Free Press.
+
+Page, Scott E. 2010.
+\emph{Diversity and Complexity}.
+Princeton: Princeton University Press.
+\doi{10.1515/9781400835140}
 }
 
 \subsection{On heterophily}{

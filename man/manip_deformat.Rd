@@ -8,7 +8,7 @@
 \alias{to_unsigned}
 \alias{to_simplex}
 \alias{to_uniplex}
-\title{Modifying network formats}
+\title{Modifying network formats by removing information}
 \usage{
 to_unnamed(.data)
 

@@ -1,6 +1,6 @@
 # Deformatting ####
 
-#' Modifying network formats
+#' Modifying network formats by removing information
 #' 
 #' @description
 #'   These functions reformat manynet-consistent data.

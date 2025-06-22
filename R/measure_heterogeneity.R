@@ -71,6 +71,11 @@ node_richness <- function(.data, attribute){
 #'   Blau, Peter M. 1977. 
 #'   _Inequality and heterogeneity_. 
 #'   New York: Free Press.
+#'   
+#'   Page, Scott E. 2010. 
+#'   _Diversity and Complexity_. 
+#'   Princeton: Princeton University Press. 
+#'   \doi{10.1515/9781400835140}
 #' @examples
 #' marvel_friends <- to_unsigned(ison_marvel_relationships, "positive")
 #' net_diversity(marvel_friends, "Gender")

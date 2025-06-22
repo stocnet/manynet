@@ -22,3 +22,13 @@ test_that("node_walktrap algorithm works", {
   expect_length(node_in_walktrap(ison_southern_women), 
                 net_nodes(ison_southern_women))
 })
+
+test_that("node_in_community uses node_in_optimal on small networks", {
+  options(manynet_verbosity = "verbose")
+  options(snet_verbosity = "verbose")
+  expect_message(node_in_community(manynet::create_ring(10)), "optimal")
+  expect_message(node_in_community(manynet::create_ring(200)), "xcluding")
+  expect_message(node_in_community(fict_thrones), "xcluding")
+  options(manynet_verbosity = "quiet")
+  options(snet_verbosity = "quiet")
+})

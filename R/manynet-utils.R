@@ -1,5 +1,5 @@
 # defining global variables more centrally
-utils::globalVariables(c(".data", "obs", 
+utils::globalVariables(c(".data", "obs",
                          "from", "to", "name", "weight","sign","wave",
                          "nodes","event","exposure",
                          "student","students","colleges",

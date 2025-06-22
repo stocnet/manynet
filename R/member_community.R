@@ -350,7 +350,7 @@ node_in_leiden <- function(.data, resolution = 1){
     resolution <- sum(tie_weights(.data))/(n*(n - 1)/2)
   }
   out <- igraph::cluster_leiden(as_igraph(.data), 
-                                resolution_parameter = resolution
+                                resolution = resolution
   )$membership
   make_node_member(out, .data)
 }
@@ -399,9 +399,6 @@ NULL
 #' \doi{10.1103/PhysRevE.69.026113}
 #' @examples
 #' node_in_betweenness(ison_adolescents)
-#' if(require("ggdendro", quietly = TRUE)){
-#' plot(node_in_betweenness(ison_adolescents))
-#' }
 #' @export
 node_in_betweenness <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
