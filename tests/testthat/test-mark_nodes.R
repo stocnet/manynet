@@ -67,6 +67,16 @@ test_that("additional node mark functions work", {
   expect_mark(node_is_random(ison_adolescents, 2), c(F,T,F))
 })
 
+test_that("node_is_pendant correctly identifies pendant nodes", {
+  # Apply the function
+  result <- node_is_pendant(create_star(5))
+  
+  # The center of the star (node 1) is not pendant, others are
+  expect_type(result, "logical")
+  expect_length(result, 5)
+  expect_equal(as.logical(result), c(FALSE, TRUE, TRUE, TRUE, TRUE))
+})
+
 test_that("node infection, exposure, and recovery works", {
   skip_on_cran()
   skip_on_ci()
