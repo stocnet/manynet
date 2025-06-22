@@ -113,8 +113,7 @@ NULL
 #'   dplyr::distinct(directed, weighted, twomode, signed, 
 #'                  .keep_all = TRUE)
 #' @export
-table_data <- function(pkg = c("manynet","migraph"),
-                       ...) {
+table_data <- function(..., pkg = c("manynet","migraph")) {
   nodes <- NULL
   pkg <- intersect(pkg, rownames(utils::installed.packages()))
   out <- lapply(pkg, function(x){
@@ -150,7 +149,16 @@ table_data <- function(pkg = c("manynet","migraph"),
                          multiplex = as.logi(vapply(datasets, 
                                             is_multiplex, 
                                             logical(1))),
-                         acyclic = as.logi(vapply(datasets, 
+                  longitudinal = as.logi(vapply(datasets, 
+                                           is_longitudinal, 
+                                           logical(1))),
+                  dynamic = as.logi(vapply(datasets, 
+                                             is_dynamic, 
+                                             logical(1))),
+                  changing = as.logi(vapply(datasets, 
+                                             is_changing, 
+                                             logical(1))),
+                  acyclic = as.logi(vapply(datasets, 
                                           is_acyclic, 
                                           logical(1))),
                          attributed = as.logi(vapply(datasets, 
