@@ -20,8 +20,8 @@
 
 ## Data
 
-- Improved `table_data()` so that it lists longitudinal, dynamic, and changing
-data
+- Improved `table_data()` so that it lists components, longitudinal, dynamic, 
+and changing data
 - Added more description for `fict_lotr`
 - Added `irps_revere` data
 
