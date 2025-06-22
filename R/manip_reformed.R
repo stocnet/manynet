@@ -280,7 +280,9 @@ to_ego.tbl_graph <- function(.data, node, max_dist = 1, min_dist = 0,
                              direction = c("out","in")){
   egos <- to_egos(.data, max_dist = max_dist, min_dist = min_dist,
                   direction = direction)
-  as_tidygraph(egos[[node]])
+  existname <- net_name(.data, prefix = "from")
+  out <- as_tidygraph(egos[[node]])
+  add_info(out, name = paste("Ego network of", node, existname))
 }
 
 #' @rdname manip_scope
