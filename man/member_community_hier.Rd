@@ -90,9 +90,6 @@ information about the hierarchical merging of communities is collected.
 
 \examples{
 node_in_betweenness(ison_adolescents)
-if(require("ggdendro", quietly = TRUE)){
-plot(node_in_betweenness(ison_adolescents))
-}
 node_in_greedy(ison_adolescents)
 node_in_eigen(ison_adolescents)
 node_in_walktrap(ison_adolescents)

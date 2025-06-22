@@ -250,7 +250,7 @@ to_no_missing <- function(.data) UseMethod("to_no_missing")
 
 #' @export
 to_no_missing.tbl_graph <- function(.data){
-  delete_nodes(.data, !stats::complete.cases(as_nodelist(test)))
+  delete_nodes(.data, !stats::complete.cases(as_nodelist(.data)))
 }
 
 
