@@ -252,7 +252,8 @@ to_no_missing <- function(.data) UseMethod("to_no_missing")
 
 #' @export
 to_no_missing.tbl_graph <- function(.data){
-  delete_nodes(.data, !stats::complete.cases(as_nodelist(.data)))
+  delete_nodes(.data, !stats::complete.cases(as_nodelist(.data))) %>% 
+    add_info(name = paste(net_name(.data), "without nodes with missing data"))
 }
 
 
@@ -346,7 +347,8 @@ to_giant.network <- function(.data) {
 
 #' @export
 to_giant.tbl_graph <- function(.data) {
-  as_tidygraph(to_giant(as_igraph(.data)))
+  as_tidygraph(to_giant(as_igraph(.data))) %>% 
+    add_info(name = paste(net_name(.data, prefix = "Giant component of")))
 }
 
 #' @export
@@ -374,7 +376,9 @@ to_no_isolates <- function(.data) UseMethod("to_no_isolates")
 to_no_isolates.tbl_graph <- function(.data) {
   nodes <- NULL
   # Delete edges not present vertices
-  .data %>% tidygraph::activate(nodes) %>% dplyr::filter(!tidygraph::node_is_isolated())
+  .data %>% tidygraph::activate(nodes) %>% 
+    dplyr::filter(!tidygraph::node_is_isolated()) %>% 
+    add_info(name = paste(net_name(.data), "without isolates"))
 }
 
 #' @export

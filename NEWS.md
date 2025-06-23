@@ -1,3 +1,10 @@
+# manynet 1.5.2
+
+## Modifying
+
+- Improved `to_no_missing()` to record missing removal
+- Improved `to_no_isolates()` to record isolate removal
+- Improved `to_giant()` to record giant component scoping
 # manynet 1.5.1
 
 ## Package
