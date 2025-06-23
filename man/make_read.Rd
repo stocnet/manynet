@@ -83,7 +83,6 @@ There are a number of repositories for network data
 that hold various datasets in different formats. See for example:
 \itemize{
 \item \href{https://sites.google.com/site/ucinetsoftware/datasets?authuser=0}{UCINET data}
-\item \href{http://vlado.fmf.uni-lj.si/pub/networks/data/}{Pajek data}
 \item \href{https://schochastics.github.io/networkdata/}{networkdata}
 \item \href{http://www-personal.umich.edu/~mejn/netdata/}{GML datasets}
 \item UCIrvine Network Data Repository
