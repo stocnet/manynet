@@ -93,7 +93,8 @@ to_mode1.igraph <- function(.data, similarity = c("count","jaccard","rand","pear
 
 #' @export
 to_mode1.tbl_graph <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
-  as_tidygraph(to_mode1(as_igraph(.data), similarity = similarity))
+  out <- as_tidygraph(to_mode1(as_igraph(.data), similarity = similarity))
+  add_info(out, name = paste("Projection", net_name(.data, prefix = "of")))
 }
 
 #' @export
@@ -142,7 +143,8 @@ to_mode2.igraph <- function(.data, similarity = c("count","jaccard","rand","pear
 
 #' @export
 to_mode2.tbl_graph <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
-  as_tidygraph(to_mode2(as_igraph(.data), similarity))
+  out <- as_tidygraph(to_mode2(as_igraph(.data), similarity))
+  add_info(out, name = paste("Projection", net_name(.data, prefix = "of")))
 }
 
 #' @export
