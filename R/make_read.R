@@ -42,7 +42,6 @@
 #'   that hold various datasets in different formats. See for example:
 #'
 #'   - [UCINET data](https://sites.google.com/site/ucinetsoftware/datasets?authuser=0)
-#'   - [Pajek data](http://vlado.fmf.uni-lj.si/pub/networks/data/)
 #'   - [networkdata](https://schochastics.github.io/networkdata/)
 #'   - [GML datasets](http://www-personal.umich.edu/~mejn/netdata/)
 #'   - UCIrvine Network Data Repository

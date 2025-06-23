@@ -1,3 +1,13 @@
+# manynet 1.5.1
+
+## Package
+
+- Removed failing URLs
+
+## Modifying
+
+- Improved `to_mode1()` and `to_mode2()` to record projection change
+
 # manynet 1.5.0
 
 ## Package

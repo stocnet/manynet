@@ -8,3 +8,5 @@
 ## R CMD check results
 
 0 errors | 0 warnings | 0 notes
+
+- Removed failing URLs from previous submission (v1.5.0)
