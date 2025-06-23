@@ -124,7 +124,7 @@ Gale, David, and Lloyd Stowell Shapley. 1962.
 
 Goldberg, Andrew V., and Robert E. Tarjan. 1986.
 "A new approach to the maximum flow problem".
-\emph{Proceedings of the eighteenth annual ACM symposium on Theory of computing – STOC '86}.
+\emph{Proceedings of the 18th Annual ACM Symposium on Theory of Computing}.
 136-146.
 \doi{10.1145/12130.12144}
 }

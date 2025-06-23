@@ -5,6 +5,10 @@
 - Improved `to_no_missing()` to record missing removal
 - Improved `to_no_isolates()` to record isolate removal
 - Improved `to_giant()` to record giant component scoping
+- Improved `to_matching()` to record matching
+- Improved `to_mentoring()` to record mentoring
+- Improved `to_eulerian()` to record Eulerian pathing
+
 # manynet 1.5.1
 
 ## Package

@@ -575,7 +575,7 @@ NULL
 #' 
 #'   Goldberg, Andrew V., and Robert E. Tarjan. 1986. 
 #'   "A new approach to the maximum flow problem". 
-#'   _Proceedings of the eighteenth annual ACM symposium on Theory of computing – STOC '86_. 
+#'   _Proceedings of the 18th Annual ACM Symposium on Theory of Computing_. 
 #'   136-146. 
 #'   \doi{10.1145/12130.12144}
 #' @param mark A logical vector marking two types or modes.
@@ -588,7 +588,8 @@ NULL
 #' to_matching(ison_southern_women)
 #' #graphr(to_matching(ison_southern_women))
 #' @export
-to_matching <- function(.data, mark = "type", capacities = NULL) UseMethod("to_matching")
+to_matching <- function(.data, mark = "type", 
+                        capacities = NULL) UseMethod("to_matching")
 
 #' @export
 to_matching.igraph <- function(.data, mark = "type", capacities = NULL){
@@ -650,7 +651,8 @@ to_matching.igraph <- function(.data, mark = "type", capacities = NULL){
 
 #' @export
 to_matching.tbl_graph <- function(.data, mark = "type", capacities = NULL){
-  as_tidygraph(to_matching.igraph(.data, mark, capacities = capacities))
+  as_tidygraph(to_matching.igraph(.data, mark, capacities = capacities)) %>% 
+    add_info(name = paste(net_name(.data, prefix = "Stable matching of")))
 }
 
 #' @export
@@ -695,7 +697,8 @@ to_mentoring <- function(.data, elites = 0.1) UseMethod("to_mentoring")
 
 #' @export
 to_mentoring.tbl_graph <- function(.data, elites = 0.1){
-  as_tidygraph(to_mentoring.igraph(.data, elites = elites))
+  as_tidygraph(to_mentoring.igraph(.data, elites = elites)) %>% 
+    add_info(name = paste(net_name(.data), "mentorship"))
 }
 
 #' @export
@@ -769,7 +772,8 @@ to_eulerian.tbl_graph <- function(.data){
   out <- paste(attr(igraph::eulerian_path(.data)$vpath, "names"), 
                collapse = "-+")
   out <- create_explicit(out)
-  out
+  out %>% 
+    add_info(name = paste(net_name(.data, prefix = "Eulerian path of")))
 }
 
 #' @rdname manip_paths 
