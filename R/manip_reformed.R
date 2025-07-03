@@ -594,8 +594,10 @@ to_matching.igraph <- function(.data, mark = "type", capacities = NULL){
     el <- igraph::max_bipartite_match(.data, 
                                       types = node_attribute(.data, mark))$matching
     el <- data.frame(from = names(el), to = el)
-    el <- el[!is.na(el$to) & !is.na(el$from), ]
+    el$from[is.na(el$from)] <- "dummy"
+    el$to[is.na(el$to)] <- "dummy"
     out <- as_igraph(el, twomode = TRUE)
+    out <- igraph::delete_vertices(out, "dummy")
     out <- to_twomode(out, node_attribute(.data, mark))
   } else {
     if(length(capacities) == 1) 
