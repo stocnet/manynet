@@ -586,7 +586,6 @@ NULL
 #' @importFrom igraph max_bipartite_match
 #' @examples 
 #' to_matching(ison_southern_women)
-#' #graphr(to_matching(ison_southern_women))
 #' @export
 to_matching <- function(.data, mark = "type", 
                         capacities = NULL) UseMethod("to_matching")
