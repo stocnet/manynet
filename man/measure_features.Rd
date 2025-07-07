@@ -14,7 +14,11 @@
 \code{{signnet}} by David Schoch
 }
 \usage{
-net_core(.data, mark = NULL)
+net_core(
+  .data,
+  mark = NULL,
+  method = c("correlation", "ident", "ndiff", "diff")
+)
 
 net_richclub(.data)
 
@@ -41,13 +45,6 @@ net_balance(.data)
 \item{mark}{A logical vector the length of the nodes in the network.
 This can be created by, among other things, any \verb{node_is_*()} function.}
 
-\item{membership}{A vector of partition membership.}
-
-\item{resolution}{A proportion indicating the resolution scale.
-By default 1, which returns the original definition of modularity.
-The higher this parameter, the more smaller communities will be privileged.
-The lower this parameter, the fewer larger communities are likely to be found.}
-
 \item{method}{There are three small-world measures implemented:
 \itemize{
 \item "sigma" is the original equation from Watts and Strogatz (1998),
@@ -71,6 +68,13 @@ with the same dimensions.
 \eqn{SWI} also ranges between 0 and 1 with the same interpretation,
 but where there may not be a network for which \eqn{SWI = 1}.
 }}
+
+\item{membership}{A vector of partition membership.}
+
+\item{resolution}{A proportion indicating the resolution scale.
+By default 1, which returns the original definition of modularity.
+The higher this parameter, the more smaller communities will be privileged.
+The lower this parameter, the fewer larger communities are likely to be found.}
 
 \item{times}{Integer of number of simulations.}
 }
@@ -100,6 +104,14 @@ ranging between \code{0} if all triangles are imbalanced and
 
 These \verb{net_*()} functions return a single numeric scalar or value.
 }
+\section{Core-Periphery}{
+
+\code{net_core()} calculates the Pearson correlation between the given network,
+where the nodes in the core are assigned by some given mark, and an ideal
+typical core-periphery network with the same number of nodes in the core
+and the periphery.
+}
+
 \section{Modularity}{
 
 Modularity measures the difference between the number of ties within each community
