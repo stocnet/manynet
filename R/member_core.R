@@ -90,9 +90,9 @@ node_is_core <- function(.data, method = c("degree", "eigenvector")){
 
 #' @rdname mark_core
 #' @examples
-#' node_coreness(ison_adolescents)
+#' node_kcoreness(ison_adolescents)
 #' @export
-node_coreness <- function(.data){
+node_kcoreness <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(!manynet::is_graph(.data)) .data <- manynet::as_igraph(.data)
   out <- igraph::coreness(.data)
