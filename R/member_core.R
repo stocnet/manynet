@@ -2,8 +2,13 @@
 #' @description
 #'   These functions identify nodes belonging to (some level of) the core of a network:
 #'   
-#'   - `node_is_core()` assigns nodes to either the core or periphery.
-#'   - `node_coreness()` assigns nodes to their level of k-coreness.
+#'   - `node_is_universal()` identifies whether nodes are adjacent to all other
+#'   nodes in the network.
+#'   - `node_is_core()` identifies whether nodes belong to the core of the 
+#'   network, as opposed to the periphery.
+#'   - `node_coreness()` returns a continuous measure of how closely each node
+#'   resembles a typical core node.
+#'   - `node_kcoreness()` assigns nodes to their level of k-coreness.
 #' 
 #' @inheritParams mark_is
 #' @param method Which method to use to identify cores and periphery.
@@ -98,4 +103,24 @@ node_kcoreness <- function(.data){
   out <- igraph::coreness(.data)
   make_node_measure(out, .data)
 }
+
+#' @rdname mark_core
+#' @examples
+#' node_coreness(ison_adolescents)
+#' @export
+node_coreness <- function(.data) {
+  A <- as_matrix(.data)
+  n <- nrow(A)
+  obj_fun <- function(c) {
+    ideal <- outer(c, c)
+    val <- suppressWarnings(cor(as.vector(A), as.vector(ideal)))
+    if (!is.finite(val)) return(1e6)  # Penalize non-finite values
+    return(-val)  # Negative for maximization
+  }
+  # Initial guess: all nodes have coreness 0.5
+  init <- rep(0.5, n)
+  result <- optim(init, obj_fun, method = "L-BFGS-B", lower = 0, upper = 1)
+  make_node_measure(result$par, .data)
+}
+
 
