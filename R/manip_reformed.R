@@ -252,7 +252,8 @@ to_no_missing <- function(.data) UseMethod("to_no_missing")
 
 #' @export
 to_no_missing.tbl_graph <- function(.data){
-  delete_nodes(.data, !stats::complete.cases(as_nodelist(.data)))
+  delete_nodes(.data, !stats::complete.cases(as_nodelist(.data))) %>% 
+    add_info(name = paste(net_name(.data), "without nodes with missing data"))
 }
 
 
@@ -346,7 +347,8 @@ to_giant.network <- function(.data) {
 
 #' @export
 to_giant.tbl_graph <- function(.data) {
-  as_tidygraph(to_giant(as_igraph(.data)))
+  as_tidygraph(to_giant(as_igraph(.data))) %>% 
+    add_info(name = paste(net_name(.data, prefix = "Giant component of")))
 }
 
 #' @export
@@ -374,7 +376,9 @@ to_no_isolates <- function(.data) UseMethod("to_no_isolates")
 to_no_isolates.tbl_graph <- function(.data) {
   nodes <- NULL
   # Delete edges not present vertices
-  .data %>% tidygraph::activate(nodes) %>% dplyr::filter(!tidygraph::node_is_isolated())
+  .data %>% tidygraph::activate(nodes) %>% 
+    dplyr::filter(!tidygraph::node_is_isolated()) %>% 
+    add_info(name = paste(net_name(.data), "without isolates"))
 }
 
 #' @export
@@ -571,7 +575,7 @@ NULL
 #' 
 #'   Goldberg, Andrew V., and Robert E. Tarjan. 1986. 
 #'   "A new approach to the maximum flow problem". 
-#'   _Proceedings of the eighteenth annual ACM symposium on Theory of computing – STOC '86_. 
+#'   _Proceedings of the 18th Annual ACM Symposium on Theory of Computing_. 
 #'   136-146. 
 #'   \doi{10.1145/12130.12144}
 #' @param mark A logical vector marking two types or modes.
@@ -582,9 +586,9 @@ NULL
 #' @importFrom igraph max_bipartite_match
 #' @examples 
 #' to_matching(ison_southern_women)
-#' #graphr(to_matching(ison_southern_women))
 #' @export
-to_matching <- function(.data, mark = "type", capacities = NULL) UseMethod("to_matching")
+to_matching <- function(.data, mark = "type", 
+                        capacities = NULL) UseMethod("to_matching")
 
 #' @export
 to_matching.igraph <- function(.data, mark = "type", capacities = NULL){
@@ -594,8 +598,10 @@ to_matching.igraph <- function(.data, mark = "type", capacities = NULL){
     el <- igraph::max_bipartite_match(.data, 
                                       types = node_attribute(.data, mark))$matching
     el <- data.frame(from = names(el), to = el)
-    out <- suppressWarnings(as_igraph(el, twomode = TRUE))
-    out <- igraph::delete_vertices(out, "NA")
+    el$from[is.na(el$from)] <- "dummy"
+    el$to[is.na(el$to)] <- "dummy"
+    out <- as_igraph(el, twomode = TRUE)
+    out <- igraph::delete_vertices(out, "dummy")
     out <- to_twomode(out, node_attribute(.data, mark))
   } else {
     if(length(capacities) == 1) 
@@ -646,7 +652,8 @@ to_matching.igraph <- function(.data, mark = "type", capacities = NULL){
 
 #' @export
 to_matching.tbl_graph <- function(.data, mark = "type", capacities = NULL){
-  as_tidygraph(to_matching.igraph(.data, mark, capacities = capacities))
+  as_tidygraph(to_matching.igraph(.data, mark, capacities = capacities)) %>% 
+    add_info(name = paste(net_name(.data, prefix = "Stable matching of")))
 }
 
 #' @export
@@ -691,7 +698,8 @@ to_mentoring <- function(.data, elites = 0.1) UseMethod("to_mentoring")
 
 #' @export
 to_mentoring.tbl_graph <- function(.data, elites = 0.1){
-  as_tidygraph(to_mentoring.igraph(.data, elites = elites))
+  as_tidygraph(to_mentoring.igraph(.data, elites = elites)) %>% 
+    add_info(name = paste(net_name(.data), "mentorship"))
 }
 
 #' @export
@@ -765,7 +773,8 @@ to_eulerian.tbl_graph <- function(.data){
   out <- paste(attr(igraph::eulerian_path(.data)$vpath, "names"), 
                collapse = "-+")
   out <- create_explicit(out)
-  out
+  out %>% 
+    add_info(name = paste(net_name(.data, prefix = "Eulerian path of")))
 }
 
 #' @rdname manip_paths 

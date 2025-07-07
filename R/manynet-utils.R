@@ -42,8 +42,12 @@ thisRequiresBio <- function(pkgname) {
 
 #' @export
 `+.ggplot` <- function(e1, e2, ...) {
-  thisRequires("patchwork")
-  patchwork::wrap_plots(e1, e2, ...)
+  if (inherits(e2, c("ggplot", "ggplot2::ggplot"))) {
+    thisRequires("patchwork")
+    patchwork::wrap_plots(e1, e2, ...)
+  } else {
+    NextMethod()
+  }
 }
 
 seq_nodes <- function(.data){

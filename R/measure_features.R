@@ -33,22 +33,62 @@
 NULL
 
 #' @rdname measure_features
-#' @examples 
-#' net_core(ison_adolescents)
-#' net_core(ison_southern_women)
+#' @param method Which method of the following to use to calculate the fit of
+#'   the core assignment to a core-periphery model.
+#'   "correlation" calculates the correlation between the empirical network and
+#'   an ideal typical network, and "ident" calculates the Euclidean distances
+#'   between the same.
+#'   "ndiff", however, calculates how distinct the core and periphery groups are
+#'   based on the difference in coreness scores between the least core-like
+#'   member of the core and the most core-like member of the periphery.
+#'   "diff" is similar to "ndiff", but multiplies the raw "ndiff" score by the
+#'   square root of the size of the core, thus penalising large cores.
+#' @section Core-Periphery: 
+#'   `net_core()` calculates the Pearson correlation between the given network, 
+#'   where the nodes in the core are assigned by some given mark, and an ideal
+#'   typical core-periphery network with the same number of nodes in the core
+#'   and the periphery.
 #' @references 
 #' ## On core-periphery
 #' Borgatti, Stephen P., and Martin G. Everett. 2000. 
 #' “Models of Core/Periphery Structures.” 
 #' _Social Networks_ 21(4):375–95.
 #' \doi{10.1016/S0378-8733(99)00019-2}
+#' @examples 
+#' net_core(ison_adolescents)
+#' net_core(ison_southern_women)
 #' @export
 net_core <- function(.data,
-                       mark = NULL){
+                     mark = NULL,
+                     method = c("correlation","ident","ndiff", "diff")){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   if(is.null(mark)) mark <- node_is_core(.data)
-  out <- stats::cor(c(as_matrix(.data)), 
-                    c(as_matrix(create_core(.data, mark = mark))))
+  
+  method <- match.arg(method)
+  if(method == "correlation"){
+    out <- stats::cor(c(as_matrix(.data)), 
+                      c(as_matrix(create_core(.data, mark = mark))))
+  } else if(method == "ident"){
+    out <- sqrt(sum((as_matrix(.data) - 
+                       as_matrix(create_core(.data, mark = mark)))^2))
+  } else if(method %in% c("ndiff","diff")){
+    # Sort nodes by coreness
+    c_scores <- node_coreness(.data)
+    core <- c_scores[mark]
+    periphery <- c_scores[!mark]
+    
+    min_core <- min(core)
+    max_periphery <- max(periphery)
+    
+    diff1 <- sum(min_core - periphery)
+    diff2 <- sum(core - max_periphery)
+    
+    if(method == "ndiff"){
+      out <- (diff1 + diff2) / length(c_scores)  # Normalize
+    } else if(method == "diff"){
+      out <- (diff1 + diff2) * sqrt(sum(mark))
+    } 
+  } else snet_unavailable(method)
   make_network_measure(out, .data, call = deparse(sys.call()))
 }
 
