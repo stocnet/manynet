@@ -29,7 +29,7 @@ of each node to every other node in the network.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.0</span>
       </span>
     </div>
 
@@ -201,21 +201,21 @@ a realisation of all possible ties</p></li>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">task_eg</span> <span class="op">&lt;-</span> <span class="fu"><a href="manip_preformat.html">to_named</a></span><span class="op">(</span><span class="fu"><a href="manip_deformat.html">to_uniplex</a></span><span class="op">(</span><span class="va">ison_algebra</span>, <span class="st">"tasks"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">tie_cen</span> <span class="op">&lt;-</span> <span class="fu">node_by_tie</span><span class="op">(</span><span class="va">task_eg</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 16 × 33</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   names fromAngelina fromBrooklyn fromCarter fromDouglas fromElias fromFrederick</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Ange…          0              0       0              0      0.3           0   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Broo…          0              0       0              0      0             0   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Cart…          0              0       0              0      0.15          0.75</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Doug…          0              0       0              0      0             0   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Elias          0.3            0       0.15           0      0             0.45</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Fred…          0              0       0.6            0      0.75          0   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   names   fromAlton fromBryce fromChester fromDrew fromEarnest fromFrancis</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Alton         0           0        0           0        0.3         0   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Bryce         0           0        0           0        0           0   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Chester       0           0        0           0        0.15        0.75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Drew          0           0        0           0        0           0   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Earnest       0.3         0        0.15        0        0           0.45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Francis       0           0        0.6         0        0.75        0   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 10 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 26 more variables: fromGertrude &lt;dbl&gt;, fromHobart &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   fromIsabella &lt;dbl&gt;, fromJustin &lt;dbl&gt;, fromKara &lt;dbl&gt;, fromLeo &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   fromMelvin &lt;dbl&gt;, fromNichole &lt;dbl&gt;, fromOlivia &lt;dbl&gt;, fromPhilip &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   toAngelina &lt;dbl&gt;, toBrooklyn &lt;dbl&gt;, toCarter &lt;dbl&gt;, toDouglas &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   toElias &lt;dbl&gt;, toFrederick &lt;dbl&gt;, toGertrude &lt;dbl&gt;, toHobart &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   toIsabella &lt;dbl&gt;, toJustin &lt;dbl&gt;, toKara &lt;dbl&gt;, toLeo &lt;dbl&gt;, …</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 26 more variables: fromGlenda &lt;dbl&gt;, fromHarry &lt;dbl&gt;, fromIsla &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   fromJosue &lt;dbl&gt;, fromKinsley &lt;dbl&gt;, fromLeona &lt;dbl&gt;, fromMadison &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   fromNatalie &lt;dbl&gt;, fromOwen &lt;dbl&gt;, fromPriscilla &lt;dbl&gt;, toAlton &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   toBryce &lt;dbl&gt;, toChester &lt;dbl&gt;, toDrew &lt;dbl&gt;, toEarnest &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   toFrancis &lt;dbl&gt;, toGlenda &lt;dbl&gt;, toHarry &lt;dbl&gt;, toIsla &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   toJosue &lt;dbl&gt;, toKinsley &lt;dbl&gt;, toLeona &lt;dbl&gt;, toMadison &lt;dbl&gt;, …</span></span>
 <span class="r-in"><span><span class="fu">node_by_dyad</span><span class="op">(</span><span class="va">ison_networkers</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 32 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   names              Mutual Asymmetric  Null</span>
@@ -231,12 +231,12 @@ a realisation of all possible ties</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 16 × 17</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   names   X003  X012  X102 X021D X021U X021C X111D X111U X030T X030C  X201 X120D</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Angel…    23    11    39     0     0     0     2     2     0     0    17     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Brook…    21     6    47     0     0     0     5     6     0     0    10     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Carter    34     3    46     0     0     0     2     1     0     0    13     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Dougl…    52     6    28     0     0     0     0     0     0     0    18     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Elias     17    11    37     1     0     1     6     7     0     0    15     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Frede…    23     8    40     1     0     0     3     3     0     0    18     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Alton     23    11    39     0     0     0     2     2     0     0    17     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Bryce     21     6    47     0     0     0     5     6     0     0    10     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Chest…    34     3    46     0     0     0     2     1     0     0    13     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Drew      52     6    28     0     0     0     0     0     0     0    18     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Earne…    17    11    37     1     0     1     6     7     0     0    15     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Franc…    23     8    40     1     0     0     3     3     0     0    18     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 10 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: X120U &lt;dbl&gt;, X120C &lt;dbl&gt;, X210 &lt;dbl&gt;, X300 &lt;dbl&gt;</span></span>
 <span class="r-in"><span><span class="fu">node_by_tetrad</span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span></span></span>

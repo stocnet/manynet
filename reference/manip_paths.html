@@ -25,7 +25,7 @@ to_dominating() returns the dominating tree of the network
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.0</span>
       </span>
     </div>
 
@@ -186,7 +186,7 @@ This is, however, computationally slower.</p>
 <a href="https://doi.org/10.2307/2312726" class="external-link">doi:10.2307/2312726</a></p>
 <p>Goldberg, Andrew V., and Robert E. Tarjan. 1986.
 "A new approach to the maximum flow problem".
-<em>Proceedings of the eighteenth annual ACM symposium on Theory of computing – STOC '86</em>.
+<em>Proceedings of the 18th Annual ACM Symposium on Theory of Computing</em>.
 136-146.
 <a href="https://doi.org/10.1145/12130.12144" class="external-link">doi:10.1145/12130.12144</a></p>
 </div>
@@ -254,6 +254,8 @@ This is, however, computationally slower.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">to_matching</span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Stable matching of Southern Women Data</span> <span style="color: #00BBBB;">────────────────────────────────────</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, two-mode network of 32 nodes and 14 ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
@@ -280,10 +282,8 @@ This is, however, computationally slower.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     6    24</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 8 more rows</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="co">#graphr(to_matching(ison_southern_women))</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="map_graphr.html">graphr</a></span><span class="op">(</span><span class="fu">to_mentoring</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="manip_paths-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span>  <span class="fu">to_eulerian</span><span class="op">(</span><span class="fu"><a href="manip_nodes.html">delete_nodes</a></span><span class="op">(</span><span class="va">ison_koenigsberg</span>, <span class="st">"Lomse"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Eulerian path of Seven Bridges of Koenigsberg network</span> <span style="color: #00BBBB;">─────────────────────</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, directed network of 3 nodes and 4 arcs</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
@@ -303,7 +303,6 @@ This is, however, computationally slower.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     3     2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     2     1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span>  <span class="co">#graphr(to_eulerian(delete_nodes(ison_koenigsberg, "Lomse")))</span></span></span>
 </code></pre></div>
     </div>
   </div>

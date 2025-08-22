@@ -9,7 +9,6 @@
 <url><loc>https://stocnet.github.io/manynet/news/index.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/data_overview.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/defunct.html</loc></url>
-<url><loc>https://stocnet.github.io/manynet/reference/depth_first_recursive_search.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/fict_friends.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/fict_greys.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/fict_lotr.html</loc></url>
@@ -68,14 +67,6 @@
 <url><loc>https://stocnet.github.io/manynet/reference/manip_scope.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_split.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_ties.html</loc></url>
-<url><loc>https://stocnet.github.io/manynet/reference/map_graphr.html</loc></url>
-<url><loc>https://stocnet.github.io/manynet/reference/map_graphs.html</loc></url>
-<url><loc>https://stocnet.github.io/manynet/reference/map_grapht.html</loc></url>
-<url><loc>https://stocnet.github.io/manynet/reference/map_layout_configuration.html</loc></url>
-<url><loc>https://stocnet.github.io/manynet/reference/map_layout_partition.html</loc></url>
-<url><loc>https://stocnet.github.io/manynet/reference/map_palettes.html</loc></url>
-<url><loc>https://stocnet.github.io/manynet/reference/map_scales.html</loc></url>
-<url><loc>https://stocnet.github.io/manynet/reference/map_themes.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/mark_core.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/mark_diff.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/mark_features.html</loc></url>

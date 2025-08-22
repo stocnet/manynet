@@ -39,7 +39,7 @@ These net_*() functions return a single numeric scalar or value."><meta property
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.0</span>
       </span>
     </div>
 
@@ -106,7 +106,11 @@ ranging between <code>0</code> if all triangles are imbalanced and
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">net_core</span><span class="op">(</span><span class="va">.data</span>, mark <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">net_core</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  mark <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"correlation"</span>, <span class="st">"ident"</span>, <span class="st">"ndiff"</span>, <span class="st">"diff"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">net_richclub</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
@@ -143,17 +147,6 @@ ranging between <code>0</code> if all triangles are imbalanced and
 This can be created by, among other things, any <code>node_is_*()</code> function.</p></dd>
 
 
-<dt id="arg-membership">membership<a class="anchor" aria-label="anchor" href="#arg-membership"></a></dt>
-<dd><p>A vector of partition membership.</p></dd>
-
-
-<dt id="arg-resolution">resolution<a class="anchor" aria-label="anchor" href="#arg-resolution"></a></dt>
-<dd><p>A proportion indicating the resolution scale.
-By default 1, which returns the original definition of modularity.
-The higher this parameter, the more smaller communities will be privileged.
-The lower this parameter, the fewer larger communities are likely to be found.</p></dd>
-
-
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p>There are three small-world measures implemented:</p><ul><li><p>"sigma" is the original equation from Watts and Strogatz (1998),
 $$\frac{\frac{C}{C_r}}{\frac{L}{L_r}}$$,
@@ -178,10 +171,30 @@ but where there may not be a network for which \(SWI = 1\).</p></li>
 </ul></dd>
 
 
+<dt id="arg-membership">membership<a class="anchor" aria-label="anchor" href="#arg-membership"></a></dt>
+<dd><p>A vector of partition membership.</p></dd>
+
+
+<dt id="arg-resolution">resolution<a class="anchor" aria-label="anchor" href="#arg-resolution"></a></dt>
+<dd><p>A proportion indicating the resolution scale.
+By default 1, which returns the original definition of modularity.
+The higher this parameter, the more smaller communities will be privileged.
+The lower this parameter, the fewer larger communities are likely to be found.</p></dd>
+
+
 <dt id="arg-times">times<a class="anchor" aria-label="anchor" href="#arg-times"></a></dt>
 <dd><p>Integer of number of simulations.</p></dd>
 
 </dl></div>
+    <div id="core-periphery">
+    <h2>Core-Periphery</h2>
+
+
+<p><code>net_core()</code> calculates the Pearson correlation between the given network,
+where the nodes in the core are assigned by some given mark, and an ideal
+typical core-periphery network with the same number of nodes in the core
+and the periphery.</p>
+    </div>
     <div id="modularity">
     <h2>Modularity</h2>
 
@@ -343,7 +356,7 @@ for how clustering is calculated</p>
 <span class="r-in"><span><span class="fu">net_scalefree</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3.69</span>
 <span class="r-in"><span><span class="fu">net_scalefree</span><span class="op">(</span><span class="fu"><a href="make_stochastic.html">generate_scalefree</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">1.5</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2.28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2.39</span>
 <span class="r-in"><span><span class="fu">net_scalefree</span><span class="op">(</span><span class="fu"><a href="make_create.html">create_lattice</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3.46</span>
 <span class="r-in"><span><span class="fu">net_balance</span><span class="op">(</span><span class="va">ison_marvel_relationships</span><span class="op">)</span></span></span>

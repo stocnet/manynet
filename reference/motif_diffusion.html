@@ -24,7 +24,7 @@ infection/adoption by time step.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.0</span>
       </span>
     </div>
 
@@ -169,10 +169,11 @@ Cambridge: MIT Press.</p>
 <span class="r-in"><span><span class="co"># To calculate the hazard rates at each time point</span></span></span>
 <span class="r-in"><span>  <span class="va">smeg</span> <span class="op">&lt;-</span> <span class="fu"><a href="make_stochastic.html">generate_smallworld</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">0.025</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">net_by_hazard</span><span class="op">(</span><span class="fu"><a href="make_play.html">play_diffusion</a></span><span class="op">(</span><span class="va">smeg</span>, transmissibility <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 11</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      t0    t1     t2    t3    t4    t5    t6    t7    t8    t9   t10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>    <span style="color: #BB0000;">NA</span>     0 0.071<span style="text-decoration: underline;">4</span>     0 0.154 0.364 0.286   0.4     0 0.333   0.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 15</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      t0     t1    t2    t3    t4    t5    t6    t7    t8    t9   t10   t11   t12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>    <span style="color: #BB0000;">NA</span> 0.071<span style="text-decoration: underline;">4</span> 0.154 0.182     0 0.111 0.125 0.286   0.2     0     0   0.5   0.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: t13 &lt;dbl&gt;, t14 &lt;dbl&gt;</span></span>
 </code></pre></div>
     </div>
   </div>

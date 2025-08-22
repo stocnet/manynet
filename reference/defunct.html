@@ -23,7 +23,7 @@ wherever possible and update your scripts accordingly."><meta property="og:image
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.0</span>
       </span>
     </div>
 
@@ -80,34 +80,6 @@ wherever possible and update your scripts accordingly.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">pkg_data</span><span class="op">(</span>pkg <span class="op">=</span> <span class="st">"manynet"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">node_mode</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">autographr</span><span class="op">(</span></span>
-<span>  <span class="va">.data</span>,</span>
-<span>  <span class="va">layout</span>,</span>
-<span>  labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="va">node_color</span>,</span>
-<span>  <span class="va">node_shape</span>,</span>
-<span>  <span class="va">node_size</span>,</span>
-<span>  <span class="va">node_group</span>,</span>
-<span>  <span class="va">edge_color</span>,</span>
-<span>  <span class="va">edge_size</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">autographs</span><span class="op">(</span><span class="va">netlist</span>, <span class="va">waves</span>, based_on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"first"</span>, <span class="st">"last"</span>, <span class="st">"both"</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">autographd</span><span class="op">(</span></span>
-<span>  <span class="va">tlist</span>,</span>
-<span>  <span class="va">layout</span>,</span>
-<span>  labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="va">node_color</span>,</span>
-<span>  <span class="va">node_shape</span>,</span>
-<span>  <span class="va">node_size</span>,</span>
-<span>  <span class="va">edge_color</span>,</span>
-<span>  <span class="va">edge_size</span>,</span>
-<span>  keep_isolates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">node_optimal</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
@@ -279,8 +251,6 @@ wherever possible and update your scripts accordingly.</p>
 <span></span>
 <span><span class="fu">net_by_quad</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">layout_tbl_graph_quad</span><span class="op">(</span><span class="va">.data</span>, circular <span class="op">=</span> <span class="cn">FALSE</span>, times <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu">net_hazard</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -289,9 +259,6 @@ wherever possible and update your scripts accordingly.</p>
 
 <ul><li><p><code>pkg_data()</code>: Deprecated on 2024-06-17.</p></li>
 <li><p><code>node_mode()</code>: Deprecated on 2024-06-17.</p></li>
-<li><p><code>autographr()</code>: Deprecated on 2024-06-17.</p></li>
-<li><p><code>autographs()</code>: Deprecated on 2024-06-17.</p></li>
-<li><p><code>autographd()</code>: Deprecated on 2024-06-17.</p></li>
 <li><p><code>node_optimal()</code>: Deprecated on 2024-06-14.</p></li>
 <li><p><code>node_kernighanlin()</code>: Deprecated on 2024-06-14.</p></li>
 <li><p><code>node_edge_betweenness()</code>: Deprecated on 2024-06-14.</p></li>
@@ -375,7 +342,6 @@ wherever possible and update your scripts accordingly.</p>
 <li><p><code>node_core()</code>: Deprecated on 2024-06-21.</p></li>
 <li><p><code>node_by_quad()</code>: Deprecated on 2024-10-10.</p></li>
 <li><p><code>net_by_quad()</code>: Deprecated on 2024-10-10.</p></li>
-<li><p><code>layout_tbl_graph_quad()</code>: Deprecated on 2024-10-10.</p></li>
 <li><p><code>net_hazard()</code>: Deprecated on 2024-12-30.</p></li>
 </ul></div>
 
