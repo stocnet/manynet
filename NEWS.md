@@ -1,4 +1,14 @@
-# manynet 1.5.2
+# manynet 1.6.0
+
+## Package
+
+- Dropped viz-related dependencies: `{ggplot2}`, `{ggraph}`, `{patchwork}`, 
+`{ggdendro}`, `{concaveman}`, `{gifski}`, `{graphlayouts}`, `{ggforce}`,
+and `{BiocManager}`
+
+## Classes
+
+- Added mdate pillar shaft for pretty printing of NAs in messydate variables
 
 ## Modifying
 
@@ -6,8 +16,29 @@
 - Improved `to_no_isolates()` to record isolate removal
 - Improved `to_giant()` to record giant component scoping
 - Improved `to_matching()` to record matching
+- Fixed `to_matching()` triggering warnings from handling NAs (thanks @schochastics for fixing #109)
 - Improved `to_mentoring()` to record mentoring
 - Improved `to_eulerian()` to record Eulerian pathing
+
+## Measuring
+
+- Improved `net_core()` with method options for calculating correlation, distance, ndiff, and diff
+
+## Membership
+
+- Improved `node_coreness()` to implement Borgatti and Everett's continuous coreness algorithm
+- Moved previous functionality of `node_coreness()` to `node_kcoreness()`
+
+## Mapping
+
+- Moved `graphr()`, `graphs()`, and `grapht()` to `{autograph}`
+- Moved palette functionality to `{autograph}`
+- Moved remaining layouts to `{autograph}`
+- Moved theme functionality to `{autograph}`
+- Dropped remaining plot functions
+- Dropped or avoided using `{autograph}`-related functions in examples to
+make package lighter
+- Please see `{autograph}` for continued development of these features
 
 # manynet 1.5.1
 
