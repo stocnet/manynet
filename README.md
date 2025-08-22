@@ -38,9 +38,11 @@ make learning and using network analysis tools in R challenging.
 
 By contrast, `{manynet}` offers *many* analytic tools that work on
 *many* (if not most) types and kinds of networks. It helps researchers
-make, modify, map, mark, measure, and identify nodes’ motifs and
-memberships in networks. For further testing and modelling capabilities,
-see [`{migraph}`](https://stocnet.github.io/migraph/) and the other
+make, modify, mark, measure, and identify nodes’ motifs and memberships
+in networks. For graph drawing see
+[`{autograph}`](https://stocnet.github.io/autograph/), and for further
+testing and modelling capabilities see
+[`{migraph}`](https://stocnet.github.io/migraph/) and the other
 [stocnet](https://github.com/stocnet) packages.
 
 - [Making](#making)
@@ -53,13 +55,6 @@ see [`{migraph}`](https://stocnet.github.io/migraph/) and the other
   - [Transforming](#transforming)
   - [Splitting and Joining](#splitting-and-joining)
   - [Extracting](#extracting)
-- [Mapping](#mapping)
-  - [Graphing](#graphing)
-  - [More options](#more-options)
-  - [More layouts](#more-layouts)
-  - [More themes and scales](#more-themes-and-scales)
-  - [graphs](#graphs)
-  - [grapht](#grapht)
 - [Marking](#marking)
 - [Motifs](#motifs)
 - [Memberships](#memberships)
@@ -236,99 +231,6 @@ See also `to_acyclic()`, `to_anti()`, `to_blocks()`, `to_components()`,
 `to_undirected()`, `to_uniplex()`, `to_unnamed()`, `to_unsigned()`,
 `to_unweighted()`, `to_waves()`, `to_weighted()` and `from_egos()`,
 `from_slices()`, `from_subgraphs()`, `from_ties()`, `from_waves()`.
-
-## Mapping
-
-`{manynet}` includes three one-line graphing functions with sensible
-defaults based on the network’s properties.
-
-### Graphing
-
-First, `graphr()` is used to graph networks in any of the `{manynet}`
-formats. It includes sensible defaults so that researchers can view
-their network’s structure or distribution quickly with a minimum of
-fuss. Compare the output from `{manynet}` with a similar default from
-`{igraph}`:
-
-<img src="https://www.jameshollway.com/post/manynet/README-layout-comparison-1.png" alt="Example illustrating differences in default igraph and manynet graphs"/>
-
-Here the `{manynet}` function recognises that the network is a two-mode
-network and uses a bipartite layout by default, and recognises that the
-network contains names for the nodes and prints them vertically so that
-they are legible in this layout. Other ‘clever’ features include
-automatic node sizing and more. By contrast, `{igraph}` requires the
-bipartite layout to be specified, has cumbersome node size defaults for
-all but the smallest graphs, and labels also very often need resizing
-and adjustment to avoid overlap. All of `{manynet}`’s adjustments can be
-overridden, however…
-
-#### More options
-
-Changing the size and colors of nodes and ties is as easy as specifying
-the function’s relevant argument with a replacement, or indicating from
-which attribute it should inherit this information.
-
-<img src="https://www.jameshollway.com/post/manynet/README-more-options-1.png" alt="Graph illustrating automatic and manual use of node color and size"/>
-
-#### More layouts
-
-`{manynet}` can use all the layout algorithms offered by packages such
-as `{igraph}`, `{ggraph}`, and `{graphlayouts}`, and offers some
-additional layout algorithms for snapping layouts to a grid, visualising
-partitions horizontally, vertically, or concentrically, or conforming to
-configurational coordinates.
-
-<img src="https://www.jameshollway.com/post/manynet/README-more-layouts-1.png" alt="Graphs illustrating different layouts"/>
-
-#### More themes and scales
-
-Lastly, `graphr()` is highly extensible in terms of the overall look of
-your plots. `{manynet}` uses the excellent `{ggraph}` package (and thus
-`{ggplot2}`) as a plotting engine. This enables alterations such as the
-application of themes to be applied upon the defaults. If you want to
-quickly make sure your plots conform to your institution or taste, then
-it is easy to do with themes and scales that update the basic look and
-color palette used in your plots.
-
-<img src="https://www.jameshollway.com/post/manynet/README-more-themes-1.png" alt="Graphs using default, IHEID, and ETHZ themes"/>
-
-More themes are on their way, and we’re happy to take suggestions.
-
-### graphs
-
-Second, `graphs()` is used to graph multiple networks together, which
-can be useful for ego networks or network panels. `{patchwork}` is used
-to help arrange individual plots together.
-
-<img src="https://www.jameshollway.com/post/manynet/README-autographs-1.png" alt="Example of graphs() used on longitudinal data"/>
-
-### grapht
-
-Third, `grapht()` is used to visualise dynamic networks. It uses
-`{gganimate}` and `{gifski}` to create a gif that visualises network
-changes over time. It really couldn’t be easier.
-
-<img src="https://www.jameshollway.com/post/manynet/README-autographd-1.gif" alt="Example of grapht() on longitudinal data"/>
-
-<!-- provide a common set of tools that can be used to import, export, create, and manipulate network data in a wide variety of formats, -->
-
-<!-- and obtain a good first visualisation quickly. -->
-
-<!-- This can be useful for pedagogical purposes, initial description, or checking something part way through the modelling process. -->
-
-<!-- Through the most comprehensive network class-coercion available, -->
-
-<!-- users can access routines not available in their chosen package or even in `{manynet}`. -->
-
-<!-- `{manynet}` provides a common set of tools and a standard syntax for analysing many different types of networks. -->
-
-<!-- It offers a broad range of functions to make, manipulate, map, measure, and model: -->
-
-<!-- - one-, two-, and sometimes three-mode networks -->
-
-<!-- - undirected, directed, and sometimes complex networks -->
-
-<!-- - unweighted, weighted, and sometimes signed networks -->
 
 ## Marking
 
