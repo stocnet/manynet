@@ -38,8 +38,6 @@ Suggests:
     tibble,
     tidyr,
     xml2
-Enhances:
-    Rgraphviz
 Authors@R: 
     c(person(given = "James",
              family = "Hollway",

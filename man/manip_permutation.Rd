@@ -26,10 +26,6 @@ By default TRUE.}
 on both the rows and columns (for a one-mode network)
 or on each of the rows and columns (for a two-mode network).
 }
-\examples{
-autograph::graphr(ison_adolescents, node_size = 4)
-autograph::graphr(to_permuted(ison_adolescents), node_size = 4)
-}
 \seealso{
 Other modifications: 
 \code{\link{manip_as}},

@@ -70,7 +70,6 @@ This essentially has no effect on undirected networks or reciprocated ties.
 }}
 \examples{
 to_anti(ison_southern_women)
-# autograph::graphr(to_anti(ison_southern_women))
 }
 \seealso{
 Other modifications: 

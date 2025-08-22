@@ -707,8 +707,6 @@ write_graphml <- function(.data,
 #' @examples
 #' # mnet <- read_cran()
 #' # mnet <- to_ego(mnet, "manynet", max_dist = 2)
-#' # autograph::graphr(mnet, layout = "hierarchy", 
-#' #        edge_color = "type", node_color = "Compilation")
 #' @export
 read_cran <- function(pkg = "all"){
   snet_progress_step("Downloading data about available packages from CRAN")

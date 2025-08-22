@@ -444,7 +444,6 @@ node_stress <- function(.data, normalized = TRUE){
 #' @importFrom igraph edge_betweenness
 #' @examples
 #' (tb <- tie_betweenness(ison_adolescents))
-#' #autograph::plot(tb)
 #' ison_adolescents %>% mutate_ties(weight = tb)
 #' @export
 tie_betweenness <- function(.data, normalized = TRUE){
@@ -782,7 +781,6 @@ node_vitality <- function(.data, normalized = TRUE){
 #' @rdname measure_central_close 
 #' @examples
 #' (ec <- tie_closeness(ison_adolescents))
-#' #autograph::plot(ec)
 #' ison_adolescents %>% mutate_ties(weight = ec)
 #' @export
 tie_closeness <- function(.data, normalized = TRUE){

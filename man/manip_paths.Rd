@@ -109,9 +109,7 @@ This is, however, computationally slower.
 
 \examples{
 to_matching(ison_southern_women)
-autograph::graphr(to_mentoring(ison_adolescents))
   to_eulerian(delete_nodes(ison_koenigsberg, "Lomse"))
-  #autograph::graphr(to_eulerian(delete_nodes(ison_koenigsberg, "Lomse")))
 }
 \references{
 \subsection{On matching}{
