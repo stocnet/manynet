@@ -4,12 +4,15 @@
 \alias{mark_core}
 \alias{node_is_universal}
 \alias{node_is_core}
+\alias{node_kcoreness}
 \alias{node_coreness}
 \title{Core-periphery clustering algorithms}
 \usage{
 node_is_universal(.data)
 
 node_is_core(.data, method = c("degree", "eigenvector"))
+
+node_kcoreness(.data)
 
 node_coreness(.data)
 }
@@ -33,8 +36,13 @@ can be added if there is interest.}
 \description{
 These functions identify nodes belonging to (some level of) the core of a network:
 \itemize{
-\item \code{node_is_core()} assigns nodes to either the core or periphery.
-\item \code{node_coreness()} assigns nodes to their level of k-coreness.
+\item \code{node_is_universal()} identifies whether nodes are adjacent to all other
+nodes in the network.
+\item \code{node_is_core()} identifies whether nodes belong to the core of the
+network, as opposed to the periphery.
+\item \code{node_coreness()} returns a continuous measure of how closely each node
+resembles a typical core node.
+\item \code{node_kcoreness()} assigns nodes to their level of k-coreness.
 }
 }
 \section{Universal/dominating node}{
@@ -68,6 +76,7 @@ node_is_core(ison_adolescents)
 #ison_adolescents \%>\% 
 #   mutate(corep = node_is_core()) \%>\% 
 #   graphr(node_color = "corep")
+node_kcoreness(ison_adolescents)
 node_coreness(ison_adolescents)
 }
 \references{

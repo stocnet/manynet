@@ -185,8 +185,6 @@ This can be used in in SEI, SEIS, SEIR, and SEIRS models.
 
 \examples{
   smeg <- generate_smallworld(15, 0.025)
-  plot(play_diffusion(smeg, recovery = 0.4))
-  #graphr(play_diffusion(ison_karateka))
 }
 \seealso{
 Other makes: 

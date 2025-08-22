@@ -107,9 +107,7 @@ nodes, and thus associated with bridging or spanning boundaries.
 node_betweenness(ison_southern_women)
 node_induced(ison_adolescents)
 (tb <- tie_betweenness(ison_adolescents))
-plot(tb)
-ison_adolescents \%>\% mutate_ties(weight = tb) \%>\% 
-     graphr()
+ison_adolescents \%>\% mutate_ties(weight = tb)
 net_betweenness(ison_southern_women, direction = "in")
 }
 \references{

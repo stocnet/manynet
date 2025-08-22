@@ -176,9 +176,7 @@ removing that node would disconnect the network.
 node_closeness(ison_southern_women)
 node_reach(ison_adolescents)
 (ec <- tie_closeness(ison_adolescents))
-plot(ec)
-ison_adolescents \%>\% mutate_ties(weight = ec) \%>\% 
-   graphr()
+ison_adolescents \%>\% mutate_ties(weight = ec)
 net_closeness(ison_southern_women, direction = "in")
 }
 \references{

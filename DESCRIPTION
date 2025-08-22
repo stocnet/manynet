@@ -1,14 +1,14 @@
 Package: manynet
-Title: Many Ways to Make, Modify, Map, Mark, and Measure Myriad Networks
-Version: 1.5.1
-Date: 2025-06-23
-Description: Many tools for making, modifying, mapping, marking, measuring, 
+Title: Many Ways to Make, Modify, Mark, and Measure Myriad Networks
+Version: 1.6.0
+Date: 2025-08-22
+Description: Many tools for making, modifying, marking, measuring, 
    and motifs and memberships of many different types of networks.
    All functions operate with matrices, edge lists, and 'igraph', 'network', and 'tidygraph' objects,
-   and on one-mode, two-mode (bipartite), and sometimes three-mode networks.
+   on directed, multiplex, multimodal, signed, and other networks.
    The package includes functions for importing and exporting, creating and generating networks,
    modifying networks and node and tie attributes,
-   and describing and visualizing networks with sensible defaults.
+   and describing networks with sensible defaults.
 URL: https://stocnet.github.io/manynet/
 BugReports: https://github.com/stocnet/manynet/issues
 License: MIT + file LICENSE
@@ -20,25 +20,16 @@ Depends: R (>= 3.6.0)
 Imports:
     cli,
     dplyr (>= 1.1.0),
-    ggplot2,
-    ggraph,
     igraph (>= 2.1.0),
     network,
     pillar,
     tidygraph
 Suggests:
-    BiocManager,
-    concaveman,
-    gganimate,
-    ggdendro,
-    ggforce,
-    gifski,
-    graphlayouts,
+    autograph,
     knitr,
     learnr,
     methods,
     netdiffuseR,
-    patchwork,
     readxl,
     rmarkdown,
     RSiena,
@@ -47,8 +38,6 @@ Suggests:
     tibble,
     tidyr,
     xml2
-Enhances:
-    Rgraphviz
 Authors@R: 
     c(person(given = "James",
              family = "Hollway",

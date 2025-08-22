@@ -30,7 +30,7 @@ NULL
 #' @param ties The number of ties to be added or an even list of ties.
 #' @importFrom igraph add_edges
 #' @examples
-#' ison_adolescents %>% add_ties(c("Betty","Tina")) %>% graphr()
+#' ison_adolescents %>% add_ties(c("Betty","Tina"))
 #' @export
 add_ties <- function(.data, ties, attribute = NULL) UseMethod("add_ties")
 

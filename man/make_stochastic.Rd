@@ -104,10 +104,10 @@ As an alternative, an existing network can be provided to \code{n}
 and the number of modes, nodes, and directedness will be inferred.
 }
 \examples{
-graphr(generate_smallworld(12, 0.025))
-graphr(generate_smallworld(12, 0.25))
-graphr(generate_scalefree(12, 0.25))
-graphr(generate_scalefree(12, 1.25))
+generate_smallworld(12, 0.025)
+generate_smallworld(12, 0.25)
+generate_scalefree(12, 0.25)
+generate_scalefree(12, 1.25)
 generate_fire(10)
 generate_islands(10)
 generate_citations(10)

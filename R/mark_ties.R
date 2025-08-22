@@ -86,8 +86,8 @@ tie_is_bridge <- function(.data){
 #' @importFrom igraph all_shortest_paths
 #' @examples 
 #' ison_adolescents %>%
-#'   mutate_ties(route = tie_is_path(from = "Jane", to = 7)) %>% 
-#'   graphr(edge_colour = "route")
+#'   mutate_ties(route = tie_is_path(from = "Jane", to = 7)) 
+#'   #graphr(edge_colour = "route")
 #' @export
 tie_is_path <- function(.data, from, to, all_paths = FALSE){
   if(missing(.data)) {expect_edges(); .data <- .G()}
@@ -125,8 +125,8 @@ NULL
 #' @importFrom igraph triangles
 #' @examples 
 #' ison_monks %>% to_uniplex("like") %>% 
-#'   mutate_ties(tri = tie_is_triangular()) %>% 
-#'   graphr(edge_color = "tri")
+#'   mutate_ties(tri = tie_is_triangular())
+#'   #graphr(edge_color = "tri")
 #' @export
 tie_is_triangular <- function(.data){
   if(missing(.data)) {expect_edges(); .data <- .G()}
@@ -146,8 +146,8 @@ tie_is_triangular <- function(.data){
 #' @rdname mark_triangles
 #' @examples 
 #' ison_adolescents %>% to_directed() %>% 
-#'   mutate_ties(trans = tie_is_transitive()) %>% 
-#'   graphr(edge_color = "trans")
+#'   mutate_ties(trans = tie_is_transitive())
+#'   #graphr(edge_color = "trans")
 #' @export
 tie_is_transitive <- function(.data){
   if(missing(.data)) {expect_edges(); .data <- .G()}
@@ -163,8 +163,8 @@ tie_is_transitive <- function(.data){
 #' @rdname mark_triangles
 #' @examples 
 #' ison_adolescents %>% to_directed() %>% 
-#'   mutate_ties(trip = tie_is_triplet()) %>% 
-#'   graphr(edge_color = "trip")
+#'   mutate_ties(trip = tie_is_triplet())
+#'   #graphr(edge_color = "trip")
 #' @export
 tie_is_triplet <- function(.data){
   if(missing(.data)) {expect_edges(); .data <- .G()}
@@ -185,8 +185,8 @@ tie_is_triplet <- function(.data){
 #' @rdname mark_triangles
 #' @examples 
 #' ison_adolescents %>% to_directed() %>% 
-#'   mutate_ties(cyc = tie_is_cyclical()) %>% 
-#'   graphr(edge_color = "cyc")
+#'   mutate_ties(cyc = tie_is_cyclical())
+#'   #graphr(edge_color = "cyc")
 #' @export
 tie_is_cyclical <- function(.data){
   if(missing(.data)) {expect_edges(); .data <- .G()}
@@ -202,8 +202,8 @@ tie_is_cyclical <- function(.data){
 #' @rdname mark_triangles
 #' @examples 
 #' ison_monks %>% to_uniplex("like") %>% 
-#'   mutate_ties(simmel = tie_is_simmelian()) %>% 
-#'   graphr(edge_color = "simmel")
+#'   mutate_ties(simmel = tie_is_simmelian())
+#'   #graphr(edge_color = "simmel")
 #' @export
 tie_is_simmelian <- function(.data){
   if(missing(.data)) {expect_edges(); .data <- .G()}
@@ -218,8 +218,8 @@ tie_is_simmelian <- function(.data){
 #' @rdname mark_triangles
 #' @examples 
 #' generate_random(8, directed = TRUE) %>% 
-#'   mutate_ties(forbid = tie_is_forbidden()) %>% 
-#'   graphr(edge_color = "forbid")
+#'   mutate_ties(forbid = tie_is_forbidden())
+#'   #graphr(edge_color = "forbid")
 #' @export
 tie_is_forbidden <- function(.data){
   if(missing(.data)) {expect_edges(); .data <- .G()}

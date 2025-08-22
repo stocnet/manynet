@@ -61,8 +61,8 @@ tie_is_reciprocated(ison_algebra)
 tie_is_feedback(ison_algebra)
 tie_is_bridge(ison_brandes)
 ison_adolescents \%>\%
-  mutate_ties(route = tie_is_path(from = "Jane", to = 7)) \%>\% 
-  graphr(edge_colour = "route")
+  mutate_ties(route = tie_is_path(from = "Jane", to = 7)) 
+  #graphr(edge_colour = "route")
 }
 \seealso{
 Other marks: 

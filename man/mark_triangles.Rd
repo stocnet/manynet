@@ -52,23 +52,23 @@ are cohesively connected.
 }
 \examples{
 ison_monks \%>\% to_uniplex("like") \%>\% 
-  mutate_ties(tri = tie_is_triangular()) \%>\% 
-  graphr(edge_color = "tri")
+  mutate_ties(tri = tie_is_triangular())
+  #graphr(edge_color = "tri")
 ison_adolescents \%>\% to_directed() \%>\% 
-  mutate_ties(trans = tie_is_transitive()) \%>\% 
-  graphr(edge_color = "trans")
+  mutate_ties(trans = tie_is_transitive())
+  #graphr(edge_color = "trans")
 ison_adolescents \%>\% to_directed() \%>\% 
-  mutate_ties(trip = tie_is_triplet()) \%>\% 
-  graphr(edge_color = "trip")
+  mutate_ties(trip = tie_is_triplet())
+  #graphr(edge_color = "trip")
 ison_adolescents \%>\% to_directed() \%>\% 
-  mutate_ties(cyc = tie_is_cyclical()) \%>\% 
-  graphr(edge_color = "cyc")
+  mutate_ties(cyc = tie_is_cyclical())
+  #graphr(edge_color = "cyc")
 ison_monks \%>\% to_uniplex("like") \%>\% 
-  mutate_ties(simmel = tie_is_simmelian()) \%>\% 
-  graphr(edge_color = "simmel")
+  mutate_ties(simmel = tie_is_simmelian())
+  #graphr(edge_color = "simmel")
 generate_random(8, directed = TRUE) \%>\% 
-  mutate_ties(forbid = tie_is_forbidden()) \%>\% 
-  graphr(edge_color = "forbid")
+  mutate_ties(forbid = tie_is_forbidden())
+  #graphr(edge_color = "forbid")
 tie_is_imbalanced(ison_marvel_relationships)
 }
 \seealso{

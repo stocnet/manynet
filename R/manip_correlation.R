@@ -74,9 +74,6 @@ NULL
 #' @param with_attr Logical whether any attributes of the object
 #'   should be retained. 
 #'   By default TRUE. 
-#' @examples
-#' graphr(ison_adolescents, node_size = 4)
-#' graphr(to_permuted(ison_adolescents), node_size = 4)
 #' @export
 to_permuted <- function(.data, with_attr = TRUE) {
   out <- as_matrix(.data)

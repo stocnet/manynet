@@ -105,8 +105,8 @@ As an alternative, an existing network can be provided to \code{n}
 and the number of modes, nodes, and directedness will be inferred.
 }
 \examples{
-graphr(generate_random(12, 0.4))
-# graphr(generate_random(c(6, 6), 0.4))
+generate_random(12, 0.4)
+# generate_random(c(6, 6), 0.4)
 }
 \references{
 \subsection{On random networks}{
