@@ -27,37 +27,37 @@ node_mode <- function(.data) {
   node_is_mode(.data)
 }
 
-#' @describeIn defunct Deprecated on 2024-06-17.
-#' @export
-autographr <- function(.data, layout, labels = TRUE,
-    node_color, node_shape, node_size, node_group,
-    edge_color, edge_size, ...) {
-  .Deprecated("graphr", package = "migraph",
-              old = "autographr")
-  graphr(.data, layout, labels,
-         node_color, node_shape, node_size, node_group,
-         edge_color, edge_size, ...)
-}
+#' #' @describeIn defunct Deprecated on 2024-06-17.
+#' #' @export
+#' autographr <- function(.data, layout, labels = TRUE,
+#'     node_color, node_shape, node_size, node_group,
+#'     edge_color, edge_size, ...) {
+#'   .Deprecated("graphr", package = "migraph",
+#'               old = "autographr")
+#'   graphr(.data, layout, labels,
+#'          node_color, node_shape, node_size, node_group,
+#'          edge_color, edge_size, ...)
+#' }
 
-#' @describeIn defunct Deprecated on 2024-06-17.
-#' @export
-autographs <- function(netlist, waves, based_on = c("first", "last", "both"), ...) {
-  .Deprecated("graphs", package = "migraph",
-              old = "autographs")
-  graphs(netlist, waves, based_on, ...)
-}
+#' #' @describeIn defunct Deprecated on 2024-06-17.
+#' #' @export
+#' autographs <- function(netlist, waves, based_on = c("first", "last", "both"), ...) {
+#'   .Deprecated("graphs", package = "migraph",
+#'               old = "autographs")
+#'   graphs(netlist, waves, based_on, ...)
+#' }
 
-#' @describeIn defunct Deprecated on 2024-06-17.
-#' @export
-autographd <- function(tlist, layout, labels = TRUE,
-    node_color, node_shape, node_size, edge_color, edge_size,
-    keep_isolates = TRUE, ...) {
-  .Deprecated("grapht", package = "migraph",
-              old = "autographd")
-  grapht(tlist, layout, labels,
-         node_color, node_shape, node_size, edge_color, edge_size,
-         keep_isolates, ...)
-}
+#' #' @describeIn defunct Deprecated on 2024-06-17.
+#' #' @export
+#' autographd <- function(tlist, layout, labels = TRUE,
+#'     node_color, node_shape, node_size, edge_color, edge_size,
+#'     keep_isolates = TRUE, ...) {
+#'   .Deprecated("grapht", package = "migraph",
+#'               old = "autographd")
+#'   grapht(tlist, layout, labels,
+#'          node_color, node_shape, node_size, edge_color, edge_size,
+#'          keep_isolates, ...)
+#' }
 
 #' @describeIn defunct Deprecated on 2024-06-14.
 #' @export
@@ -727,13 +727,13 @@ net_by_quad <- function(.data) {
   net_by_tetrad(.data)
 }
 
-#' @describeIn defunct Deprecated on 2024-10-10.
-#' @export
-layout_tbl_graph_quad <- function(.data, circular = FALSE, times = 1000) {
-  .Deprecated("layout_tbl_graph_tetrad", package = "manynet",
-              old = "layout_tbl_graph_quad")
-  layout_tbl_graph_tetrad(.data, circular = circular, times = times)
-}
+#' #' @describeIn defunct Deprecated on 2024-10-10.
+#' #' @export
+#' layout_tbl_graph_quad <- function(.data, circular = FALSE, times = 1000) {
+#'   .Deprecated("layout_tbl_graph_tetrad", package = "manynet",
+#'               old = "layout_tbl_graph_quad")
+#'   layout_tbl_graph_tetrad(.data, circular = circular, times = times)
+#' }
 
 #' @describeIn defunct Deprecated on 2024-12-30.
 #' @export

@@ -4,9 +4,6 @@
 \alias{defunct}
 \alias{pkg_data}
 \alias{node_mode}
-\alias{autographr}
-\alias{autographs}
-\alias{autographd}
 \alias{node_optimal}
 \alias{node_kernighanlin}
 \alias{node_edge_betweenness}
@@ -89,41 +86,12 @@
 \alias{node_core}
 \alias{node_by_quad}
 \alias{net_by_quad}
-\alias{layout_tbl_graph_quad}
 \alias{net_hazard}
 \title{Functions that have been renamed, superseded, or are no longer working}
 \usage{
 pkg_data(pkg = "manynet")
 
 node_mode(.data)
-
-autographr(
-  .data,
-  layout,
-  labels = TRUE,
-  node_color,
-  node_shape,
-  node_size,
-  node_group,
-  edge_color,
-  edge_size,
-  ...
-)
-
-autographs(netlist, waves, based_on = c("first", "last", "both"), ...)
-
-autographd(
-  tlist,
-  layout,
-  labels = TRUE,
-  node_color,
-  node_shape,
-  node_size,
-  edge_color,
-  edge_size,
-  keep_isolates = TRUE,
-  ...
-)
 
 node_optimal(.data)
 
@@ -295,8 +263,6 @@ node_by_quad(.data)
 
 net_by_quad(.data)
 
-layout_tbl_graph_quad(.data, circular = FALSE, times = 1000)
-
 net_hazard(.data)
 }
 \description{
@@ -313,12 +279,6 @@ wherever possible and update your scripts accordingly.
 \item \code{pkg_data()}: Deprecated on 2024-06-17.
 
 \item \code{node_mode()}: Deprecated on 2024-06-17.
-
-\item \code{autographr()}: Deprecated on 2024-06-17.
-
-\item \code{autographs()}: Deprecated on 2024-06-17.
-
-\item \code{autographd()}: Deprecated on 2024-06-17.
 
 \item \code{node_optimal()}: Deprecated on 2024-06-14.
 
@@ -485,8 +445,6 @@ wherever possible and update your scripts accordingly.
 \item \code{node_by_quad()}: Deprecated on 2024-10-10.
 
 \item \code{net_by_quad()}: Deprecated on 2024-10-10.
-
-\item \code{layout_tbl_graph_quad()}: Deprecated on 2024-10-10.
 
 \item \code{net_hazard()}: Deprecated on 2024-12-30.
 
