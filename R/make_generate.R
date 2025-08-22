@@ -53,8 +53,8 @@ NULL
 #' _Publicationes Mathematicae_. 6: 290–297.
 #' @importFrom igraph sample_bipartite sample_gnp sample_gnm
 #' @examples
-#' graphr(generate_random(12, 0.4))
-#' # graphr(generate_random(c(6, 6), 0.4))
+#' generate_random(12, 0.4)
+#' # generate_random(c(6, 6), 0.4)
 #' @export
 generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
   if(is_manynet(n)){
@@ -243,8 +243,8 @@ NULL
 #' \doi{10.1038/30918}.
 #' @importFrom igraph sample_smallworld
 #' @examples
-#' graphr(generate_smallworld(12, 0.025))
-#' graphr(generate_smallworld(12, 0.25))
+#' generate_smallworld(12, 0.025)
+#' generate_smallworld(12, 0.25)
 #' @export
 generate_smallworld <- function(n, p = 0.05, directed = FALSE, width = 2) {
   directed <- infer_directed(n, directed)
@@ -270,8 +270,8 @@ generate_smallworld <- function(n, p = 0.05, directed = FALSE, width = 2) {
 #' _Science_ 286(5439):509–12. 
 #' \doi{10.1126/science.286.5439.509}.
 #' @examples
-#' graphr(generate_scalefree(12, 0.25))
-#' graphr(generate_scalefree(12, 1.25))
+#' generate_scalefree(12, 0.25)
+#' generate_scalefree(12, 1.25)
 #' @export
 generate_scalefree <- function(n, p = 1, directed = FALSE) {
   directed <- infer_directed(n, directed)

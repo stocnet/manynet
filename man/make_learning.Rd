@@ -87,8 +87,8 @@ from other nodes whose beliefs are not too dissimilar from their own.
   latticeEg <- add_node_attribute(latticeEg, "startValues", startValues)
   latticeEg
   play_segregation(latticeEg, "startValues", 0.5)
-  # graphr(latticeEg, node_color = "startValues", node_size = 5) + 
-  # graphr(play_segregation(latticeEg, "startValues", 0.2), 
+  # autograph::graphr(latticeEg, node_color = "startValues", node_size = 5) + 
+  # autograph::graphr(play_segregation(latticeEg, "startValues", 0.2), 
   #            node_color = "startValues", node_size = 5)
 }
 \references{

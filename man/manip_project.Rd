@@ -71,10 +71,10 @@ Below are the currently implemented S3 methods:\tabular{lrrrrr}{
 \examples{
 to_mode1(ison_southern_women)
 to_mode2(ison_southern_women)
-#graphr(to_mode1(ison_southern_women))
-#graphr(to_mode2(ison_southern_women))
+#autograph::graphr(to_mode1(ison_southern_women))
+#autograph::graphr(to_mode2(ison_southern_women))
 to_ties(ison_adolescents)
-#graphr(to_ties(ison_adolescents))
+#autograph::graphr(to_ties(ison_adolescents))
 }
 \seealso{
 Other modifications: 

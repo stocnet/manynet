@@ -707,7 +707,7 @@ write_graphml <- function(.data,
 #' @examples
 #' # mnet <- read_cran()
 #' # mnet <- to_ego(mnet, "manynet", max_dist = 2)
-#' # graphr(mnet, layout = "hierarchy", 
+#' # autograph::graphr(mnet, layout = "hierarchy", 
 #' #        edge_color = "type", node_color = "Compilation")
 #' @export
 read_cran <- function(pkg = "all"){
