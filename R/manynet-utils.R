@@ -31,25 +31,6 @@ thisRequires <- function(pkgname){
   }
 }
 
-thisRequiresBio <- function(pkgname) {
-  if (!requireNamespace(pkgname, quietly = TRUE) & interactive()) {
-    if(utils::askYesNo(msg = paste("The", pkgname, 
-                                   "package is required to run this function. Would you like to install", pkgname, "from BioConductor?"))) {
-  thisRequires("BiocManager")
-  BiocManager::install(pkgname)
-  }}
-}
-
-#' @export
-`+.ggplot` <- function(e1, e2, ...) {
-  if (inherits(e2, c("ggplot", "ggplot2::ggplot"))) {
-    thisRequires("patchwork")
-    patchwork::wrap_plots(e1, e2, ...)
-  } else {
-    NextMethod()
-  }
-}
-
 seq_nodes <- function(.data){
   seq.int(net_nodes(.data))
 }

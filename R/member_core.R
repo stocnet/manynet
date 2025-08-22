@@ -119,7 +119,8 @@ node_coreness <- function(.data) {
   }
   # Initial guess: all nodes have coreness 0.5
   init <- rep(0.5, n)
-  result <- optim(init, obj_fun, method = "L-BFGS-B", lower = 0, upper = 1)
+  result <- stats::optim(init, obj_fun, method = "L-BFGS-B", 
+                         lower = 0, upper = 1)
   make_node_measure(result$par, .data)
 }
 

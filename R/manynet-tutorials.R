@@ -186,9 +186,13 @@ pillar_shaft.logi <- function(x, ...) {
                                          pillar::style_na(x)), align = "left")
 }
 
+#' @noRd
+#' @export
+pillar_shaft.mdate <- function(x, ...) {
+  pillar::pillar_shaft(as.character(x), width = 11)
+}
 
 # Glossary ####
-
 
 #' Adding network glossary items
 #' 
