@@ -126,32 +126,6 @@ reference:
     contents:
       - starts_with("na_to_")
       
-  - title: "Mapping"
-    desc: |
-      Functions for plotting and visualising graphs of different types.
-  - subtitle: "Graphing"
-    desc: |
-      Functions for graphing networks and plotting results.
-      `graphr()` graphs any manynet-compatible class object automagically.
-      `graphs()` and `grapht()` do the same for multiple networks
-      and dynamic networks, respectively.
-    contents:
-      - starts_with("graph")
-  - subtitle: "Laying Out"
-    desc: |
-      Functions for laying out the nodes in a graph.
-      Included here are some improved or additional layouts to those offered
-      in `{igraph}` and `{ggraph}` by default.
-    contents:
-      - starts_with("layout")
-  - subtitle: "Theming"
-    desc: |
-      Functions for tailoring graphs with themes, scales, and palettes.
-    contents:
-      - starts_with("theme")
-      - starts_with("scale")
-      - ends_with("palettes")
-
   - title: "Marking"
     desc: |
       Functions for identifying properties of networks, nodes, or ties,
