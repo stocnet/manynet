@@ -48,7 +48,7 @@ test_that("to_redirected works",{
 })
 
 uni <- as_tidygraph(create_filled(5)) %>%
-  mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE),
+  mutate_ties(type = c(rep("friend",5), rep("enemy",5)),
               weight = rpois(10, lambda = 4))
 
 test_that("to_uniplex works", {
