@@ -837,5 +837,31 @@
 #'   ```
 "irps_revere"
 
+## Nuclear Discourse ####
+
+#' Two-mode dynamic discourse network of Germany's nuclear energy phase-out (Haunss and Hollway 2023)
+#'
+#' @description
+#'   Following the 11 March 2011 Fukushima nuclear disaster in Japan,
+#'   there was a vigorous public debate in Germany about the future of nuclear energy.
+#'   This network captures the discourse established by 337 actors,
+#'   including individual politicians, experts, parties, and the media,
+#'   and their claims about nuclear energy and German nuclear energy policy.
+#'   These claims were with respect to 54 concepts coded,
+#'   and could be supportive or critical, and could also be repeated.
+#' @docType data
+#' @keywords datasets
+#' @name irps_nuclear_discourse
+#' @usage data(irps_nuclear_discourse)
+#' @references
+#'   Haunss Sebastian, James Hollway. 2023.
+#'   "Multimodal mechanisms of political discourse dynamics and the case of Germany’s nuclear energy phase-out". 
+#'   _Network Science_, 11(2):205-223. 
+#'   \doi{10.1017/nws.2022.31}
+#' @format
+#'   ```{r, echo = FALSE}
+#'   irps_nuclear_discourse
+#'   ```
+"irps_nuclear_discourse"
 
 
