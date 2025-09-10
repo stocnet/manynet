@@ -866,6 +866,31 @@ create_cycle <- function(n){
   return(net)
 }
 
+#' @rdname make_create
+#' @examples
+#'   create_wheel(6)
+#' @export
+create_wheel <- function(n) {
+  if (length(n) == 1) {
+    if (n < 4) {
+      stop("At least 4 nodes required to form a wheel graph.")
+    }
+    center_node <- 1
+    rim_nodes <- 2:n
+    # Create the cycle (rim)
+    rim_cycle <- cbind(rim_nodes, c(rim_nodes[-1], rim_nodes[1]))
+    # Connect center to each rim node
+    center_edges <- cbind(center_node, rim_nodes)
+    edges <- rbind(rim_cycle, center_edges)
+    g <- igraph::graph_from_edgelist(edges, directed = FALSE)
+    return(g)
+  } else if (length(n) == 2) {
+    snet_abort("Wheel graphs are undefined for two-mode networks",
+               "because the rim nodes cannot be adjacent to both neighbouring",
+               "rim nodes and the dominant node in the centre.")
+  } else stop("Argument 'n' must be a scalar or vector of length 2.")
+}
+
 # #' @rdname create
 # #' @details Creates a nested two-mode network.
 # #' Will construct an affiliation matrix,
