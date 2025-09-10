@@ -84,6 +84,50 @@
 #'   ```
 "ison_karateka"
 
+## Judo moves ####
+
+#' One-mode judo moves network (Bastazini 2025)
+#'
+#' @description
+#'   Judo is a martial art with a long history and many different techniques.
+#'   It involves a dynamic 'chess match' of throws, holds, locks, 
+#'   submission techniques, and other maneuvers.
+#'   The techniques are often combined in sequences to create fluid and 
+#'   effective combinations to score points or achieve victory.
+#'   As the author of this network describes,
+#'   "While individual techniques (called waza) are foundational,
+#'   the real artistry lies in how they are chained together --
+#'   through renraku-waza (combination techniques) and 
+#'   renzoku-waza (continuous combination techniques)"
+#'   This network describes the relationships between 33 individual judo moves,
+#'   as recognised by the Kodokan (the official international governing body of judo),
+#'   where an arc indicates that one move can be followed by another.
+#' @docType data
+#' @keywords datasets
+#' @name ison_judo_moves
+#' @usage data(ison_judo_moves)
+#' @references
+#'   Bastazini, Vinicius. 2025. 
+#'   "The Dynamics of the “Gentle Way”: Exploring Judo Attack Combinations as Networks in R",
+#'   https://geekcologist.wordpress.com/2025/05/27/the-dynamics-of-the-gentle-way-exploring-judo-attack-combinations-as-networks-in-r/
+#'   
+#'   Kashiwazaki, Katsuhiko, and Hidetoshi Nakanishi. 1995. 
+#'   _Attacking Judo: A Guide to Combinations and Counters_. 
+#'   Ippon Books.
+#'   
+#'   Kawaishi, Mikinosuke. 1963. 
+#'   _Standing judo: The combinations and counter-attacks_. 
+#'   Budoworks.
+#'   
+#'   van Haesendonck, F.M. 1968. 
+#'   _Judo: Ecyclopédie par l’Image_. 
+#'   Éditions Erasme: Anvers-Bruxelles.
+#' @format
+#'   ```{r, echo = FALSE}
+#'   ison_judo_moves
+#'   ```
+"ison_judo_moves"
+
 ## Koenigsberg ####
 
 #' One-mode Seven Bridges of Koenigsberg network (Euler 1741)
