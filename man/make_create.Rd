@@ -12,6 +12,7 @@
 \alias{create_degree}
 \alias{create_core}
 \alias{create_windmill}
+\alias{create_cycle}
 \title{Making networks with defined structures}
 \usage{
 create_empty(n, directed = FALSE)
@@ -33,6 +34,8 @@ create_degree(n, outdegree = NULL, indegree = NULL)
 create_core(n, directed = FALSE, mark = NULL)
 
 create_windmill(n)
+
+create_cycle(n)
 }
 \arguments{
 \item{n}{Given:
@@ -145,6 +148,7 @@ create_components(10, membership = c(1,1,1,2,2,2,3,3,3,3))
 create_degree(10, outdegree = rep(1:5, 2))
 create_core(6)
   create_windmill(6)
+  create_cycle(6)
 }
 \seealso{
 \link{as}

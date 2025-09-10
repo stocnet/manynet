@@ -830,6 +830,42 @@ create_windmill <- function(n) {
   
 }
 
+#' @rdname make_create
+#' @examples
+#'   create_cycle(6)
+#' @export
+create_cycle <- function(n){
+  # Helper: Create edge list for unimodal cycle
+  unimodal_cycle <- function(n_nodes) {
+    edges <- data.frame(
+      from = 1:n_nodes,
+      to = c(2:n_nodes, 1)
+    )
+    as_tidygraph(edges)
+  }
+  
+  # Helper: Create edge list for bimodal cycle
+  bimodal_cycle <- function(n_modes) {
+    if(n_modes[1] != n_modes[2]){
+      snet_abort("Two-mode cycles require equal number of nodes in each mode.")
+    }
+    unimodal_cycle(sum(n_modes)) %>% 
+      mutate_nodes(type = rep_len(c(F,T), sum(n_modes)))
+  }
+  
+  # Main logic
+  if (length(n) == 1) {
+    # Unimodal cycle
+    net <- unimodal_cycle(n)
+  } else if (length(n) == 2) {
+    # Bimodal cycle
+    net <- bimodal_cycle(n)
+  } else {
+    snet_abort("Argument 'n' must be a scalar or a vector of length 2.")
+  }
+  return(net)
+}
+
 # #' @rdname create
 # #' @details Creates a nested two-mode network.
 # #' Will construct an affiliation matrix,
