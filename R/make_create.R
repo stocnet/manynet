@@ -736,6 +736,161 @@ create_core <- function(n, directed = FALSE, mark = NULL) {
   }
 }
 
+#' @rdname make_create
+#' @examples
+#'   create_windmill(6)
+#' @export
+create_windmill <- function(n) {
+  total_nodes <- n
+  
+  if (length(total_nodes) == 1) {
+
+    if (total_nodes < 3) {
+      snet_abort("At least 3 nodes required to form a windmill graph.")
+    }
+    
+    # Find all valid (k, n) pairs
+    valid_pairs <- list()
+    for (k in 1:(total_nodes - 2)) {
+      n_candidate <- (total_nodes - 1) / k + 1
+      if (n_candidate == floor(n_candidate) && n_candidate >= 2) {
+        valid_pairs[[length(valid_pairs) + 1]] <- list(k = k, n = as.integer(n_candidate))
+      }
+    }
+    
+    if (length(valid_pairs) == 0) {
+      snet_abort("No valid (k, n) pair found for a windmill graph with given number of nodes.")
+    }
+    
+    # Choose the pair with minimal |k - n|
+    best_pair <- valid_pairs[[which.min(sapply(valid_pairs, function(p) abs(p$k - p$n)))]]
+    k <- best_pair$k
+    n <- best_pair$n
+    snet_info("Using k = {k} groups of n = {n} nodes (including universal node)")
+    
+    total_nodes <- 1 + k * (n - 1)
+    g <- igraph::make_empty_graph(n = total_nodes, directed = FALSE)
+    
+    universal_node <- 1
+    current_node <- 2
+    
+    for (i in 1:k) {
+      group_nodes <- current_node:(current_node + n - 2)
+      
+      group_edges <- utils::combn(group_nodes, 2, simplify = FALSE)
+      universal_edges <- lapply(group_nodes, function(x) c(universal_node, x))
+      
+      g <- igraph::add_edges(g, unlist(c(group_edges, universal_edges), recursive = FALSE))
+      current_node <- current_node + n - 1
+    }
+    
+    return(g)
+    
+  } else if (length(total_nodes) == 2) {
+
+    a <- total_nodes[1]  # Mode A
+    b <- total_nodes[2]  # Mode B
+    
+    if (a < 2 || b < 1) {
+      snet_abort("Need at least 2 Mode A nodes and 1 Mode B node.")
+    }
+    
+    k <- a - 1  # Number of blades/groups
+    if (b %% k != 0) {
+      snet_abort("Mode B nodes must divide evenly across Mode A groups (excluding universal node).")
+    }
+    
+    group_size <- b / k
+    mode_A_nodes <- 1:a
+    mode_B_nodes <- (a + 1):(a + b)
+    
+    edges <- list()
+    current_B <- a + 1
+    
+    for (i in 1:k) {
+      group_B_nodes <- current_B:(current_B + group_size - 1)
+      
+      for (b_node in group_B_nodes) {
+        # Connect to universal node (Mode A node 1)
+        edges[[length(edges) + 1]] <- c(1, b_node)
+        # Connect to group-specific Mode A node
+        edges[[length(edges) + 1]] <- c(i + 1, b_node)
+      }
+      
+      current_B <- current_B + group_size
+    }
+    
+    g <- igraph::make_empty_graph(n = a + b, directed = FALSE)
+    g <- igraph::add_edges(g, unlist(edges))
+    g <- igraph::set_vertex_attr(g, "type", value = c(rep(TRUE, a), rep(FALSE, b)))  # Bipartite flag
+    
+    return(g)
+    
+  } else snet_abort("Sorry, that's not possible.")
+  
+}
+
+#' @rdname make_create
+#' @examples
+#'   create_cycle(6)
+#' @export
+create_cycle <- function(n){
+  # Helper: Create edge list for unimodal cycle
+  unimodal_cycle <- function(n_nodes) {
+    edges <- data.frame(
+      from = 1:n_nodes,
+      to = c(2:n_nodes, 1)
+    )
+    as_tidygraph(edges)
+  }
+  
+  # Helper: Create edge list for bimodal cycle
+  bimodal_cycle <- function(n_modes) {
+    if(n_modes[1] != n_modes[2]){
+      snet_abort("Two-mode cycles require equal number of nodes in each mode.")
+    }
+    unimodal_cycle(sum(n_modes)) %>% 
+      mutate_nodes(type = rep_len(c(F,T), sum(n_modes)))
+  }
+  
+  # Main logic
+  if (length(n) == 1) {
+    # Unimodal cycle
+    net <- unimodal_cycle(n)
+  } else if (length(n) == 2) {
+    # Bimodal cycle
+    net <- bimodal_cycle(n)
+  } else {
+    snet_abort("Argument 'n' must be a scalar or a vector of length 2.")
+  }
+  return(net)
+}
+
+#' @rdname make_create
+#' @examples
+#'   create_wheel(6)
+#' @export
+create_wheel <- function(n) {
+  if (length(n) == 1) {
+    if (n < 4) {
+      snet_abort("At least 4 nodes required to form a wheel graph.")
+    }
+    center_node <- 1
+    rim_nodes <- 2:n
+    # Create the cycle (rim)
+    rim_cycle <- cbind(rim_nodes, c(rim_nodes[-1], rim_nodes[1]))
+    # Connect center to each rim node
+    center_edges <- cbind(center_node, rim_nodes)
+    edges <- rbind(rim_cycle, center_edges)
+    g <- igraph::graph_from_edgelist(edges, directed = FALSE)
+    return(g)
+  } else if (length(n) == 2) {
+    snet_abort("Wheel graphs are undefined for two-mode networks",
+               "because the rim nodes cannot be adjacent to both neighbouring",
+               "rim nodes and the dominant node in the centre.")
+  } else snet_abort("Argument 'n' must be a scalar or vector of length 2.")
+}
+
 # #' @rdname create
 # #' @details Creates a nested two-mode network.
 # #' Will construct an affiliation matrix,

@@ -165,6 +165,14 @@ describe_changes <- function(x){
   if(is_longitudinal(x)){
     paste(" over", max(tie_attribute(x, "wave")), "waves")
   } else if (is_dynamic(x)){
-    paste(" from", min(tie_attribute(x, "begin")), "to", max(tie_attribute(x, "end")))
+    
+    if("time" %in% net_tie_attributes(x)){
+      paste(" from", min(tie_attribute(x, "time"), na.rm = TRUE), 
+            "to", max(tie_attribute(x, "time"), na.rm = TRUE))
+    } else if("begin" %in% net_tie_attributes(x)){
+      paste(" from", min(tie_attribute(x, "begin"), na.rm = TRUE), 
+            "to", max(tie_attribute(x, "end"), na.rm = TRUE))
+    }
+      
   }
 }

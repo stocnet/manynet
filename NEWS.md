@@ -1,3 +1,35 @@
+# manynet 1.6.1
+
+## Package
+
+- Dropped mapping from function overview on website
+- Dropped viz tutorial, moved to `{autograph}`
+- Added CITATION
+- Improved `run_tute()` and `extract_tute()` to search for `{autograph}`
+
+## Printing
+
+- Improved `describe_changes()` to work with time as well as begin/end tie attributes
+
+## Making
+
+- Added `create_windmill()`
+- Added `create_wheel()`
+- Added `create_cycle()`
+
+## Modifying
+
+- Fixed `to_uniplex()` test so that it doesn't rely on random sampling
+
+## Marking
+
+- Improved `is_multiplex()` to recognise more tie attributes
+
+## Data
+
+- Added `irps_nuclear_discourse` for goldfish and various testing of dynamic networks
+- Added `ison_judo_moves` for judo move sequences
+
 # manynet 1.6.0
 
 ## Package

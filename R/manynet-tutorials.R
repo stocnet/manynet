@@ -18,11 +18,12 @@
 #' @name tutorials
 NULL
 
+stocnet <- c("manynet", "migraph", "autograph")
+
 #' @rdname tutorials 
 #' @export
 run_tute <- function(tute) {
   thisRequires("learnr")
-  stocnet <- c("manynet", "migraph")
   avail_pkgs <- stocnet[suppressWarnings(unlist(lapply(stocnet, function(x) nzchar(system.file(package = x)))))]
   if (missing(tute)) {
     tutelist <- lapply(cli::cli_progress_along(avail_pkgs, 
@@ -31,12 +32,13 @@ run_tute <- function(tute) {
                        silent = TRUE) %>% dplyr::select(1:3)
     })
     dplyr::bind_rows(tutelist) %>% dplyr::arrange(name) %>% print()
-    cli::cli_alert_info(paste(cli::col_grey("You can run one of these tutorials by typing e.g"), 
+    cli::cli_alert_info(paste(cli::col_grey("You can run a tutorial by typing e.g"), 
                               "`run_tute('tutorial1')`", cli::col_grey("or"), "`run_tute('Data')`", 
                               cli::col_grey("into the console.")))
   } else {
     try(learnr::run_tutorial(tute, "manynet"), silent = TRUE)
     try(learnr::run_tutorial(tute, "migraph"), silent = TRUE)
+    try(learnr::run_tutorial(tute, "autograph"), silent = TRUE)
     cli::cli_alert_info("Didn't find a direct match, so looking for close matches...")
     tutelist <- lapply(cli::cli_progress_along(avail_pkgs, 
                                                name = "Checking tutorials in stocnet packages"), function(p){
@@ -63,7 +65,6 @@ run_tute <- function(tute) {
 extract_tute <- function(tute) {
   if (missing(tute)) {
     thisRequires("learnr")
-    stocnet <- c("manynet", "migraph")
     avail_pkgs <- stocnet[suppressWarnings(unlist(lapply(stocnet, function(x) nzchar(system.file(package = x)))))]
     tutelist <- lapply(cli::cli_progress_along(avail_pkgs, 
                                                name = "Checking tutorials in stocnet packages"), function(p){
@@ -77,8 +78,12 @@ extract_tute <- function(tute) {
     thisRequires("knitr")
     pth <- file.path(path.package("manynet"), "tutorials", tute)
     if(!dir.exists(pth)) {
+      thisRequires("autograph")
+      pth <- gsub("manynet", "autograph", pth)
+    }
+    if(!dir.exists(pth)) {
       thisRequires("migraph")
-      pth <- gsub("manynet", "migraph", pth)
+      pth <- gsub("autograph", "migraph", pth)
     }
     knitr::purl(file.path(pth, list.files(pth, pattern = "*.Rmd")),
                 documentation = 1)

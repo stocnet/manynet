@@ -1,0 +1,13 @@
+citHeader("To cite manynet in publications use:")
+
+bibentry(
+  bibtype    = "Manual",
+  title    = "manynet: Many Ways to Make and Modify Myriad Networks",
+  author   = "James Hollway",
+  year     = "2021",
+  url      = "https://github.com/stocnet/manynet",
+  doi      = "10.5281/zenodo.12689606",
+  textVersion = paste("James Hollway (2021) ‘manynet: Many Ways to Make and Modify Myriad Networks’. doi:10.5281/zenodo.12689606."
+  )
+)
+
