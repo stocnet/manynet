@@ -8,5 +8,3 @@
 ## R CMD check results
 
 0 errors | 0 warnings | 0 notes
-
-- Required for ggplot2 v4.0.0
