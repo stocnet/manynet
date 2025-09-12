@@ -873,7 +873,7 @@ create_cycle <- function(n){
 create_wheel <- function(n) {
   if (length(n) == 1) {
     if (n < 4) {
-      stop("At least 4 nodes required to form a wheel graph.")
+      snet_abort("At least 4 nodes required to form a wheel graph.")
     }
     center_node <- 1
     rim_nodes <- 2:n
@@ -888,7 +888,7 @@ create_wheel <- function(n) {
     snet_abort("Wheel graphs are undefined for two-mode networks",
                "because the rim nodes cannot be adjacent to both neighbouring",
                "rim nodes and the dominant node in the centre.")
-  } else stop("Argument 'n' must be a scalar or vector of length 2.")
+  } else snet_abort("Argument 'n' must be a scalar or vector of length 2.")
 }
 
 # #' @rdname create
