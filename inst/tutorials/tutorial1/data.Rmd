@@ -483,6 +483,27 @@ and alongside other modifications,
 you may need to add or delete particular nodes or ties,
 or add or delete specific nodal or tie attributes.
 
+### Examining the data
+
+Let's see what is there first.
+Because the data in the `{manynet}` package are igraph objects at their core,
+we can query (and manipulate) the object using the same `[` and `[[` operators.
+
+```{r examine, exercise = TRUE}
+ison_adolescents[1:3, 1:3]
+ison_adolescents[[2]]
+```
+
+```{r examine, exercise = TRUE}
+test <- ison_adolescents
+test[1,] <- FALSE
+test[1:3, 1:3]
+```
+
+Note that because this is an undirected network, 
+removing the tie from node 1 to node 2 also removes the reciprocal tie 
+from node 2 to node 1.
+
 ### Adding/deleting nodes and ties
 
 Sometimes you may wish to add particular nodes or ties.
