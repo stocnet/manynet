@@ -176,3 +176,54 @@ describe_changes <- function(x){
       
   }
 }
+
+#' @export
+`$.mnet` <- function(x, name) {
+  if(grepl("\\$", name)){
+    type <- sub("\\$.*", "", name)
+    name <- sub(".*\\$", "", name)
+    out <- switch(type,
+                  node = node_attribute(x, name),
+                  tie = tie_attribute(x, name),
+                  net = igraph::graph_attr(x, name))
+    if(is.null(out)) snet_abort("No {.var type} attribute {.var name} found in this object")
+    return(out)
+  } else {
+    name <- sub(".*\\$", "", name)
+    if (name %in% igraph::list.vertex.attributes(x)) {
+      return(igraph::vertex_attr(x, name))
+    } else if (name %in% igraph::list.edge.attributes(x)) {
+      return(igraph::edge_attr(x, name))
+    } else if (name %in% igraph::list.graph.attributes(x)) {
+      return(igraph::graph_attr(x, name))
+    } else {
+      snet_abort("No attribute {.var name} found in this object")
+    }
+  }    
+}
+
+#' @export
+`$<-.mnet` <- function(x, name, value) {
+  if (igraph::vcount(x) == length(value)) {
+    x <- igraph::set_vertex_attr(x, name, value = value)
+  } else if (ecount(x) == length(value)) {
+    x <- igraph::set_edge_attr(x, name, value = value)
+  } else if (length(value) == 1) {
+    x <- igraph::set_graph_attr(x, name, value = value)
+  } else {
+    snet_abort("Length of value does not match the length of the nodes, ties, or is not 1")
+  }
+  return(x)
+}
+
+#' @export
+.DollarNames.mnet <- function(x, pattern = "") {
+  # Collect possible names
+  attrs <- c(
+    paste0("node$", net_node_attributes(x)),
+    paste0("tie$", net_tie_attributes(x)),
+    paste0("net$", igraph::list.graph.attributes(x))
+  )
+  # Filter by the pattern (so typing g$co will suggest "color")
+  grep(pattern, attrs, value = TRUE)
+}
