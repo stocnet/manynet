@@ -91,19 +91,6 @@ How can we filter this table so that only those networks that are two-mode are r
 table_data() %>% dplyr::filter(twomode)
 ```
 
-```{r twomode-manynet-question, echo = FALSE, purl=FALSE}
-question("How many two-mode networks are available in the manynet package?",
-  answer(2,
-         correct = TRUE),
-  answer(1),
-  answer(3),
-  answer(13),
-  answer(23),
-  random_answer_order = TRUE,
-  allow_retry = TRUE
-)
-```
-
 ```{r twomode-migraph-question, echo = FALSE, purl=FALSE}
 question("How many two-mode networks are available in the migraph package?",
   answer(13,
