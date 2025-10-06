@@ -534,6 +534,36 @@ question("Select the correct definitions:",
 )
 ```
 
+## Hierarchy
+
+What sometimes drives our interest in whether a network resembles a 
+core-periphery network is that it offers a generalisation of hierarchy:
+the core are the rule-makers; the periphery are the rule-takers.
+But where we have a directed network, 
+we may be able to measure hierarchy explicitly.
+
+### Graph theoretic dimensions of hierarchy
+
+Recall that measuring hierarchy directly is difficult, 
+as the concept incorporates several different aspects.
+Can you recall which of the following are components of
+the graph theoretic dimensions of hierarchy?
+
+```{r gtdh-qa, echo=FALSE, purl = FALSE}
+question("Select the measures included in the graph theoretic dimensions of hierarchy:",
+         answer("reciprocity", correct = TRUE,
+                message = learnr::random_praise()),
+         answer("connectedness", correct = TRUE),
+         answer("efficiency", correct = TRUE),
+         answer("least upper bound", correct = TRUE),
+         answer("components", message = learnr::random_encouragement()),
+         answer("degree", message = learnr::random_encouragement()),
+         answer("density", message = learnr::random_encouragement()),
+         random_answer_order = TRUE,
+         allow_retry = TRUE
+)
+```
+
 ## Resilience
 
 ### How cohesive is the network?
