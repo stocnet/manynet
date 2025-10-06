@@ -564,6 +564,31 @@ question("Select the measures included in the graph theoretic dimensions of hier
 )
 ```
 
+### Measuring GTDH
+
+Ok, so let's now take a closer look at how to investigate the degree of
+hierarchy in a given network.
+The classic example would be to look at a tree network,
+like the one constructed earlier.
+Let's try the function `net_by_hierarchy()` on a tree network of 12 nodes.
+
+```{r treeh, exercise = TRUE, purl = FALSE}
+treeleven <- create_tree(11, directed = TRUE)
+net_by_hierarchy(treeleven)
+rowMeans(net_by_hierarchy(treeleven))
+```
+
+We see here four different measures of hierarchy:
+
+- **connectedness**: the proportion of dyads that can reach each other
+- **reciprocity**: the proportion of ties that are reciprocated (inverse)
+- **efficiency**: the minimum indegrees required to connect the network over
+the actual indegrees present
+- **least upper bound**: all nodes in a hierarchy should have a node that can
+reach both of them
+
+Note that to get an overall score, we can take the average of these four measures.
+
 ## Resilience
 
 ### How cohesive is the network?
