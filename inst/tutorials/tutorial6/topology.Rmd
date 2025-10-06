@@ -497,7 +497,7 @@ question("There a statistically significant association between the core assignm
 )
 ```
 
-## Coreness
+### Coreness
 
 An alternative route is to identify 'core' nodes
 depending on their _k_-coreness.
@@ -507,13 +507,13 @@ the `node_is_core()` used for core-periphery.
 
 ```{r nodecoren, exercise=TRUE, purl = FALSE, exercise.setup="gnet"}
 lawfirm %>% 
-  mutate(ncn = node_coreness()) %>% 
+  mutate(ncn = node_kcoreness()) %>% 
   graphr(node_color = "ncn")
 ```
 
 ```{r dich-qa, echo=FALSE, purl = FALSE}
 question("Which has more than two classes/groups.",
-         answer("node_coreness()", correct = TRUE,
+         answer("node_kcoreness()", correct = TRUE,
                 message = learnr::random_praise()),
          answer("node_is_core()",
                 message = learnr::random_encouragement()),
