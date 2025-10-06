@@ -589,6 +589,43 @@ reach both of them
 
 Note that to get an overall score, we can take the average of these four measures.
 
+### Comparing GTDH
+
+Because some of these measures (reciprocity), only make sense for a directed
+network, we'll switch to a couple of directed networks for this exercise.
+Which one would you consider is more hierarchical:
+`ison_emotions`, a directed network of emotional transitions, 
+or `fict_thrones`, a directed network of kinship ties?
+
+```{r hierarchy, exercise = TRUE, warning=FALSE}
+graphr(ison_emotions)
+graphr(fict_thrones)
+```
+
+```{r hierarchy-solution}
+graphr(ison_emotions)
+net_by_hierarchy(ison_emotions)
+graphr(fict_thrones)
+net_by_hierarchy(fict_thrones)
+```
+
+Actually, these two networks have the same average hierarchy score of around 0.525.
+But they have quite different profiles.
+Can you make sense of these results?
+
+```{r gtdhcompare-qa, echo=FALSE, purl = FALSE}
+question("Compared to the emotional transitions network, the Game of Thrones kinship network has:",
+         answer("more nodes able to reach each other",
+                message = learnr::random_encouragement()),
+         answer("fewer reciprocated ties", correct = TRUE,
+                message = learnr::random_praise()),
+         answer("fewer redundant ties", correct = TRUE),
+         answer("at least one boss for all pairs"),
+         random_answer_order = TRUE,
+         allow_retry = TRUE
+)
+```
+
 ## Resilience
 
 ### How cohesive is the network?
