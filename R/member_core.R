@@ -109,6 +109,7 @@ node_kcoreness <- function(.data){
 #' node_coreness(ison_adolescents)
 #' @export
 node_coreness <- function(.data) {
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
   A <- as_matrix(.data)
   n <- nrow(A)
   obj_fun <- function(c) {
