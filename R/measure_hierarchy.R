@@ -33,6 +33,17 @@ NULL
 
 #' @rdname measure_hierarchy 
 #' @export
+net_by_hierarchy <- function(.data){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  out <- data.frame(Connectedness = net_connectedness(.data),
+                    InvReciprocity = 1 - net_reciprocity(.data),
+                    Efficiency = net_efficiency(.data),
+                    LeastUpperBound = net_upperbound(.data))
+  make_network_motif(out, .data)
+}
+
+#' @rdname measure_hierarchy 
+#' @export
 net_connectedness <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   dists <- igraph::distances(as_igraph(.data))
