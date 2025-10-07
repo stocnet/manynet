@@ -206,7 +206,7 @@ describe_changes <- function(x){
 `$<-.mnet` <- function(x, name, value) {
   if (igraph::vcount(x) == length(value)) {
     x <- igraph::set_vertex_attr(x, name, value = value)
-  } else if (ecount(x) == length(value)) {
+  } else if (igraph::ecount(x) == length(value)) {
     x <- igraph::set_edge_attr(x, name, value = value)
   } else if (length(value) == 1) {
     x <- igraph::set_graph_attr(x, name, value = value)
@@ -216,6 +216,7 @@ describe_changes <- function(x){
   return(x)
 }
 
+#' @importFrom utils .DollarNames
 #' @export
 .DollarNames.mnet <- function(x, pattern = "") {
   # Collect possible names
