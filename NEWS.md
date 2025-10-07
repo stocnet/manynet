@@ -1,3 +1,46 @@
+# manynet 1.6.2
+
+## Making
+
+- Fixed #113 relating to igraph v2.2.0+ and explicit sample_bipartite functions
+- Added `read_pkg()` for creating a network of the function interdependencies
+within a package
+
+## Modifying
+
+- Added familiar $ operations for `mnet` objects
+  - There is now dollar lookup functionality
+
+## Measures
+
+- Fixed bug in `node_coreness()` where data wasn't recognised within pipes
+
+## Memberships
+
+- Added `node_in_core()` for categorising nodes into 2+ core/periphery groups
+
+## Motifs
+
+- Added `net_by_hierarchy()` for characterising networks by their graph theoretic dimensions of hierarchy
+
+## Data
+
+- Added `ison_emotions`
+- Renamed `irps_nuclear`
+- Separated out data scripts into their different categories
+
+## Tutorials
+
+- Added `{autograph}` to setups for all manynet tutorials
+- Improved data tutorial
+  - Removed manynet two-mode question from data tutorial
+  - Added more detail on examining data to data tutorial
+- Improved topology tutorial
+  - Using k-coreness in section on core-periphery
+  - Added hierarchy multichoice
+  - Demonstrated how to interpret hierarchy measure
+  - Added more challenging comparison of hierarchy in two networks
+
 # manynet 1.6.1
 
 ## Package
