@@ -23,8 +23,8 @@ with the directory or directories to search for R scripts.
 If \code{NULL} (the default), the current working directory is used.}
 }
 \value{
-A \code{tidygraph} object representing the network of
-function dependencies in a package.
+A \code{tidygraph} object representing the network of package dependencies
+or function dependencies in a package.
 }
 \description{
 These functions read information from CRAN or within an R package's
@@ -58,20 +58,6 @@ by \href{https://github.com/stocnet/manynet/issues}{raising an issue on Github}.
 }
 \seealso{
 \link{as}
-
-\link{as}
-
-Other makes: 
-\code{\link{make_create}},
-\code{\link{make_ego}},
-\code{\link{make_explicit}},
-\code{\link{make_learning}},
-\code{\link{make_motifs}},
-\code{\link{make_play}},
-\code{\link{make_random}},
-\code{\link{make_read}},
-\code{\link{make_stochastic}},
-\code{\link{make_write}}
 
 Other makes: 
 \code{\link{make_create}},

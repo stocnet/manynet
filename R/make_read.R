@@ -702,12 +702,17 @@ write_graphml <- function(.data,
 #'   for you or if there are missing import routines 
 #'   by [raising an issue on Github](https://github.com/stocnet/manynet/issues).
 #' @param pkg The name 
+#' @return A `tidygraph` object representing the network of package dependencies
+#'   or function dependencies in a package.
 #' @source 
 #' https://www.r-bloggers.com/2016/01/r-graph-objects-igraph-vs-network/
 #' @importFrom utils available.packages contrib.url
 #' @name make_cran
 #' @family makes
 #' @seealso [as]
+NULL
+
+#' @rdname make_cran
 #' @examples
 #' # mnet <- read_cran()
 #' # mnet <- to_ego(mnet, "manynet", max_dist = 2)
@@ -764,10 +769,6 @@ read_cran <- function(pkg = "all"){
 #' @param dir Character string or vector of character strings
 #'   with the directory or directories to search for R scripts.
 #'   If `NULL` (the default), the current working directory is used.
-#' @return A `tidygraph` object representing the network of
-#'   function dependencies in a package.
-#' @family makes
-#' @seealso [as]
 #' @author Jakob Gepp
 #' @source https://github.com/STATWORX/helfRlein/blob/master/R/get_network.R
 #' @examples
