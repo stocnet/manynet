@@ -40,6 +40,7 @@ within a package
   - Added hierarchy multichoice
   - Demonstrated how to interpret hierarchy measure
   - Added more challenging comparison of hierarchy in two networks
+  - Updated several glossary terms
 
 # manynet 1.6.1
 

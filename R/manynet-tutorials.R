@@ -24,10 +24,12 @@ stocnet <- c("manynet", "migraph", "autograph")
 #' @export
 run_tute <- function(tute) {
   thisRequires("learnr")
-  avail_pkgs <- stocnet[suppressWarnings(unlist(lapply(stocnet, function(x) nzchar(system.file(package = x)))))]
+  avail_pkgs <- stocnet[suppressWarnings(unlist(lapply(stocnet, 
+                            function(x) nzchar(system.file(package = x)))))]
   if (missing(tute)) {
     tutelist <- lapply(cli::cli_progress_along(avail_pkgs, 
-                                               name = "Checking tutorials in stocnet packages"), function(p){
+                          name = "Checking tutorials in stocnet packages"), 
+                       function(p){
       dplyr::as_tibble(learnr::available_tutorials(package = avail_pkgs[p]),
                        silent = TRUE) %>% dplyr::select(1:3)
     })
@@ -258,10 +260,9 @@ glossies <- list(
   component = "A component is a connected subgraph not part of a larger connected subgraph.",
   connected = "A connected network is one with a single (strong) component.",
   core = "A core-periphery is a bipartition of nodes into maximally dense and sparse blocks.",
-  coreness = "A k-core is the induced subgraph formed by removing all nodes of degree less than k following earlier removals.",
   cutpoint = "A cutpoint or articulation point is a node whose deletion increases the number of components.",
   cycle = "A simple cycle is a closed walk without any repeated nodes.",
-  degree = "A node's degree is the number of connections it has.",
+  degree = "The degree of a node is the number of connections it has.",
   density = "The density of a network is the proportion of possible ties that are present.",
   diameter = "A network's diameter is the maximum length of any shortest path.",
   dominating = "A dominating set is the set of nodes that includes or is adjacent to every node in the network.",
@@ -279,6 +280,7 @@ glossies <- list(
   intersection = "The intersection of two networks is their largest common subgraph.",
   intervention = "A network intervention is a process to accelerate behavioural change or improve performance in a network.",
   isolate = "An isolate is a node with degree equal to zero.",
+  kcoreness = "A k-core is the induced subgraph formed by removing all nodes of degree less than k following earlier removals.",
   label = "A labelled network includes unique labels for each node (or ties) in the network.",
   lattice = "A network that can be drawn as a regular tiling.",
   loop = "A loop is a self-tie with a single node as both endpoints, forming a cycle of length 1.",
@@ -303,6 +305,7 @@ glossies <- list(
   reciprocity = "A measure of how often nodes in a directed network are mutually linked.",
   reduced = "A reduced graph is a contraction of a network into the ties within and between blocks.",
   regular = "A k-regular network includes only nodes with degree of k.",
+  scalefree = "A scale-free network is a type of network whose degree distribution asymptotically follows a power law.",
   simplex = "A simplex network is one without loops or multiple adjacencies.",
   sink = "A sink is a node without outgoing ties.",
   size = "The size of a network is its number of ties.",
@@ -314,7 +317,7 @@ glossies <- list(
   strength = "A network's strength is the minimum ratio of removed ties to components created.",
   subgraph = "A subgraph comprises a subset of the nodes and ties in a network.",
   supergraph = "A supergraph is formed by adding nodes, ties, or both to a network.",
-  toughness = "A network's strength is the minimum ratio of removed nodes to components created.",
+  toughness = "A network's toughness is the minimum ratio of removed nodes to components created.",
   transitivity = "Triadic closure is where if the connections A-B and A-C exist among three nodes, there is a tendency for B-C also to be formed.",
   threshold = "A threshold is a limit over which behaviour is expected to vary.",
   tour = "A closed trail, a walk without repeated ties.",
