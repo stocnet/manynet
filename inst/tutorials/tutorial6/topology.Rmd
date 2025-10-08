@@ -58,7 +58,7 @@ In this tutorial, we'll explore:
 This tutorial covers a range of different network topologies:
 trees, lattices, random, small-world, scale-free, and core-periphery
 networks.
-These ideal networks exaggerate centrality, cohesion, and randomness features, 
+These ideal networks exaggerate centrality, clustering, and randomness features, 
 and are thus great for theory-building and investigating the relationship between rules and structure.
 
 <img src="https://media.tenor.com/images/e26e64a8cce94a6ee491f0ddeecc8b88/tenor.gif"/>
@@ -98,12 +98,11 @@ Add that too.
 
 #### Stars
 
-In a star network, there is one node to which all other nodes are connected.
+In a `r gloss("star", "star")` network, there is one node to which all other nodes are connected,
+otherwise known as the `r gloss("universal", "universal")` node.
 There is no transitivity.
 The maximum path length is two.
-And centrality is maximised!
-This network maximises all centrality measures as one node acts
-as the sole bridge connecting one part of the network to the other.
+And `r gloss("degree", "degree")` centrality is maximised!^[In fact, all centrality measures are maximised, as one node acts as the sole bridge connecting one part of the network to the other.]
 
 Use the `create_star()` function to graph three star networks:
 
@@ -262,7 +261,7 @@ Try generating a random graph with 200 edges/ties now:
 
 Remember the ring graph from above?
 What if we rewire (change) some of the edges at a certain probability?
-This is how small-world networks are generated.
+This is how `r gloss("small-world","smallworld")` networks are generated.
 Graph three small-world networks, all with 50 nodes and a rewiring probability of 0.025.
 
 ```{r smallw, exercise = TRUE, purl = FALSE}
@@ -301,11 +300,11 @@ net_smallworld(generate_smallworld(50, 0.25))
 
 #### Scale-free graphs
 
-There is another famous model in network science: the scale-free model.
+There is another famous model in network science: the `r gloss("scale-free","scalefree")` model.
 Remember:
 "In many real-world networks, the distribution of the number of network neighbours
 the degree distribution is typically right-skewed with a "heavy tail".
-A majority of the nodes have less-than-average degree and
+A majority of the nodes have less-than-average `r gloss("degree","degree")` and
 a small fraction of hubs are many times better connected than average (2004, p. 250).
 
 The following generates a scale-free graph according to the Barabasi-Albert (BA) model
@@ -351,7 +350,7 @@ net_scalefree(generate_scalefree(50, 2))
 
 ### Core-periphery graphs
 
-Lastly, we'll take a look at some core-periphery graphs.
+Lastly, we'll take a look at some `r gloss("core-periphery","core")` graphs.
 The most common definition of a core-periphery network
 is one in which the network can be partitioned into two groups
 such that one group of nodes (the core) has 
@@ -500,7 +499,7 @@ question("There a statistically significant association between the core assignm
 ### Coreness
 
 An alternative route is to identify 'core' nodes
-depending on their _k_-coreness.
+depending on their `r gloss("k-coreness","kcoreness")`.
 In `{manynet}`, we can return nodes _k_-coreness
 with `node_coreness()` instead of 
 the `node_is_core()` used for core-periphery.
@@ -546,7 +545,7 @@ we may be able to measure hierarchy explicitly.
 
 Recall that measuring hierarchy directly is difficult, 
 as the concept incorporates several different aspects.
-Can you recall which of the following are components of
+Can you recall which of the following are aspects of
 the graph theoretic dimensions of hierarchy?
 
 ```{r gtdh-qa, echo=FALSE, purl = FALSE}
@@ -633,7 +632,7 @@ question("Compared to the emotional transitions network, the Game of Thrones kin
 When investigating a network's resilience,
 we might think of whether the network will remain connected despite some nodes or ties dropping out.
 Let's explore how resilient a (core) network of adolescents (`ison_adolescents`) might be.
-First, we might be interested in whether the network is connected at all.
+First, we might be interested in whether the network is `r gloss("connected","connected")` at all.
 
 ```{r connected, exercise=TRUE, purl = FALSE}
 
@@ -645,7 +644,7 @@ net_connectedness(ison_adolescents)
 
 This measure gets at the proportion of dyads that can reach each other in the network.
 In this case, the proportion is 1, i.e. all nodes can reach every other node.
-Another way to get at this would be to see how many components there are in the network.
+Another way to get at this would be to see how many `r gloss("components","component")` there are in the network.
 
 ```{r connect-qa, echo=FALSE, purl=FALSE}
 question("But counting the number of components instead of connectedness can overemphasise:",
@@ -662,8 +661,11 @@ question("But counting the number of components instead of connectedness can ove
 
 A dropped tie can have severe consequences to the topology of a network
 if it is a bridge, say.
+The more ties you would need to remove to fragment the network,
+the greater the `r gloss("adhesion","adhesion")` of the network.
 But a dropped node can be even more consequential, as it will take any ties it has with it.
-Find out how many dropped nodes it would take to (further) fragment the network.
+Find out the `r gloss("cohesion","cohesion")`, 
+or how many dropped nodes it would take to (further) fragment the network.
 
 ```{r cohesion, exercise=TRUE, purl = FALSE}
 
