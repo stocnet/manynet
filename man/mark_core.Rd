@@ -6,6 +6,7 @@
 \alias{node_is_core}
 \alias{node_kcoreness}
 \alias{node_coreness}
+\alias{node_in_core}
 \title{Core-periphery clustering algorithms}
 \usage{
 node_is_universal(.data)
@@ -15,6 +16,8 @@ node_is_core(.data, method = c("degree", "eigenvector"))
 node_kcoreness(.data)
 
 node_coreness(.data)
+
+node_in_core(.data, groups = 3, cluster_by = c("bins", "quantiles", "kmeans"))
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -32,6 +35,13 @@ which relies on the heuristic that high degree nodes are more likely to be in th
 An alternative is "eigenvector", which instead begins with high eigenvector nodes.
 Other methods, such as a genetic algorithm, CONCOR, and Rombach-Porter,
 can be added if there is interest.}
+
+\item{groups}{Number of categories to create. Must be at least 2 and at most
+the number of nodes in the network. Default is 3.}
+
+\item{cluster_by}{Method to use to create the categories.
+One of "bins" (equal-width bins), "quantiles" (quantile-based bins),
+or "kmeans" (k-means clustering). Default is "bins".}
 }
 \description{
 These functions identify nodes belonging to (some level of) the core of a network:
@@ -40,6 +50,8 @@ These functions identify nodes belonging to (some level of) the core of a networ
 nodes in the network.
 \item \code{node_is_core()} identifies whether nodes belong to the core of the
 network, as opposed to the periphery.
+\item \code{node_in_core()} categorizes nodes into two or more core/periphery
+categories based on their coreness.
 \item \code{node_coreness()} returns a continuous measure of how closely each node
 resembles a typical core node.
 \item \code{node_kcoreness()} assigns nodes to their level of k-coreness.
@@ -70,14 +82,25 @@ and minimises density in the periphery block;
 it ignores ties between these blocks.
 }
 
+\section{Core-periphery categories}{
+
+This function categorizes nodes based on their coreness into a specified
+number of groups. The groups are labeled as "Core", "Semi-core",
+"Semi-periphery", and "Periphery" depending on the number of groups
+specified.
+The categorization can be done using different methods: equal-width bins,
+quantile-based bins, or k-means clustering.
+}
+
 \examples{
-  node_is_universal(create_star(11))
+node_is_universal(create_star(11))
 node_is_core(ison_adolescents)
 #ison_adolescents \%>\% 
 #   mutate(corep = node_is_core()) \%>\% 
 #   graphr(node_color = "corep")
 node_kcoreness(ison_adolescents)
 node_coreness(ison_adolescents)
+node_in_core(ison_adolescents)
 }
 \references{
 \subsection{On core-periphery partitioning}{
@@ -90,6 +113,27 @@ Borgatti, Stephen P., & Everett, Martin G. 1999.
 Lip, Sean Z. W. 2011.
 “A Fast Algorithm for the Discrete Core/Periphery Bipartitioning Problem.”
 \doi{10.48550/arXiv.1102.5511}
+}
+
+\subsection{On k-coreness}{
+
+Seidman, Stephen B. 1983.
+"Network structure and minimum degree".
+\emph{Social Networks}, 5(3), 269-287.
+\doi{10.1016/0378-8733(83)90028-X}
+
+Batagelj, Vladimir, and Matjaz Zaversnik. 2003.
+"An O(m) algorithm for cores decomposition of networks".
+\emph{arXiv preprint} cs/0310049.
+\doi{10.48550/arXiv.cs/0310049}
+}
+
+\subsection{On core-periphery categorization}{
+
+Wallerstein, Immanuel. 1974.
+"Dependence in an Interdependent World: The Limited Possibilities of Transformation Within the Capitalist World Economy."
+\emph{African Studies Review}, 17(1), 1-26.
+\doi{https://doi.org/10.2307/523574}
 }
 }
 \seealso{

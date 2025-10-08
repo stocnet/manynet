@@ -12,8 +12,8 @@ description: >
 
 ```{r setup, include=FALSE}
 library(learnr)
-library(patchwork)
 library(manynet)
+library(autograph)
 knitr::opts_chunk$set(echo = FALSE)
 clear_glossary()
 

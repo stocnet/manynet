@@ -91,19 +91,6 @@ How can we filter this table so that only those networks that are two-mode are r
 table_data() %>% dplyr::filter(twomode)
 ```
 
-```{r twomode-manynet-question, echo = FALSE, purl=FALSE}
-question("How many two-mode networks are available in the manynet package?",
-  answer(2,
-         correct = TRUE),
-  answer(1),
-  answer(3),
-  answer(13),
-  answer(23),
-  random_answer_order = TRUE,
-  allow_retry = TRUE
-)
-```
-
 ```{r twomode-migraph-question, echo = FALSE, purl=FALSE}
 question("How many two-mode networks are available in the migraph package?",
   answer(13,
@@ -489,6 +476,89 @@ question("Which versions are labelled",
 )
 ```
 
+## Modifying data
+
+After choosing and/or importing some network data,
+and alongside other modifications,
+you may need to add or delete particular nodes or ties,
+or add or delete specific nodal or tie attributes.
+
+### Examining the data
+
+Let's see what is there first.
+Because the data in the `{manynet}` package are igraph objects at their core,
+we can query (and manipulate) the object using the same `[` and `[[` operators.
+
+```{r examine, exercise = TRUE}
+ison_adolescents[1:3, 1:3]
+ison_adolescents[[2]]
+```
+
+```{r examine, exercise = TRUE}
+test <- ison_adolescents
+test[1,] <- FALSE
+test[1:3, 1:3]
+```
+
+Note that because this is an undirected network, 
+removing the tie from node 1 to node 2 also removes the reciprocal tie 
+from node 2 to node 1.
+
+### Adding/deleting nodes and ties
+
+Sometimes you may wish to add particular nodes or ties.
+This can be achieved easily enough with the following functions.
+Note that one (1) additional node is added via the first command,
+and one (1) additional tie (between the nodes indexed 1 and 3) 
+is added using the second.
+
+```{r add, exercise = TRUE}
+add_nodes(ison_adolescents, 1)
+add_ties(ison_adolescents, list(1,3))
+```
+
+Other times you may wish to delete particular nodes or ties,
+and there the syntax is similar.
+Note here though that when a single value is used in the second argument,
+this is interpreted as an index,
+whereas one can also use the node's name for `delete_nodes()`,
+or name the tie(s) to be deleted using `|` as a separator.
+
+```{r delete, exercise = TRUE}
+delete_nodes(ison_adolescents, 1)
+delete_nodes(ison_adolescents, "Sue")
+delete_ties(ison_adolescents, 1)
+delete_ties(ison_adolescents, "Carol|Tina")
+```
+
+### Adding/deleting attributes
+
+Adding nodal attributes to a given network is relatively straightforward.
+`{manynet}` offers a more `{igraph}`-like syntax, e.g. `add_node_attribute()`,
+as well as a more `{dplyr}`-like syntax, e.g. `mutate()`, 
+for those already familiar with these tools in R:
+
+```{r mutate, exercise = TRUE}
+ison_adolescents %>% 
+  mutate_nodes(color = "red",
+               degree = 1:8) %>% 
+  mutate_ties(weight = 1:10)
+```
+
+One can also delete nodal attributes in a similar way,
+by assigning `NULL` to a particular attribute.
+
+```{r mutnull, exercise = TRUE}
+ison_southern_women
+ison_southern_women %>% 
+  mutate_nodes(Surname = NULL,
+               Title = NULL)
+```
+
+Note that to use `{dplyr}`-like functions like 
+`mutate()`, `rename()`, `filter()`, `select()`, or `join()` on network ties,
+you will need to append the function name with `_ties`.
+
 But how can we change the network to be unnamed (or anything else)?
 
 ## Reformatting networks
@@ -675,65 +745,3 @@ making it even easier to manipulate networks into shape for analysis.
 ```{r transform-free, exercise = TRUE, purl=FALSE}
 
 ```
-
-## Modifying data
-
-After choosing and/or importing some network data,
-and alongside other modifications,
-you may need to add or delete particular nodes or ties,
-or add or delete specific nodal or tie attributes.
-
-### Adding/deleting nodes and ties
-
-Sometimes you may wish to add particular nodes or ties.
-This can be achieved easily enough with the following functions.
-Note that one (1) additional node is added via the first command,
-and one (1) additional tie (between the nodes indexed 1 and 3) 
-is added using the second.
-
-```{r add, exercise = TRUE}
-add_nodes(ison_adolescents, 1)
-add_ties(ison_adolescents, list(1,3))
-```
-
-Other times you may wish to delete particular nodes or ties,
-and there the syntax is similar.
-Note here though that when a single value is used in the second argument,
-this is interpreted as an index,
-whereas one can also use the node's name for `delete_nodes()`,
-or name the tie(s) to be deleted using `|` as a separator.
-
-```{r delete, exercise = TRUE}
-delete_nodes(ison_adolescents, 1)
-delete_nodes(ison_adolescents, "Sue")
-delete_ties(ison_adolescents, 1)
-delete_ties(ison_adolescents, "Carol|Tina")
-```
-
-### Adding/deleting attributes
-
-Adding nodal attributes to a given network is relatively straightforward.
-`{manynet}` offers a more `{igraph}`-like syntax, e.g. `add_node_attribute()`,
-as well as a more `{dplyr}`-like syntax, e.g. `mutate()`, 
-for those already familiar with these tools in R:
-
-```{r mutate, exercise = TRUE}
-ison_adolescents %>% 
-  mutate_nodes(color = "red",
-               degree = 1:8) %>% 
-  mutate_ties(weight = 1:10)
-```
-
-One can also delete nodal attributes in a similar way,
-by assigning `NULL` to a particular attribute.
-
-```{r mutnull, exercise = TRUE}
-ison_southern_women
-ison_southern_women %>% 
-  mutate_nodes(Surname = NULL,
-               Title = NULL)
-```
-
-Note that to use `{dplyr}`-like functions like 
-`mutate()`, `rename()`, `filter()`, `select()`, or `join()` on network ties,
-you will need to append the function name with `_ties`.

@@ -121,7 +121,7 @@ including for two-mode networks.
 }
 \section{Degree centrality}{
 
-A node's degree is the number of connections it has.
+The degree of a node is the number of connections it has.
 It is also sometimes called the valency of a node, \eqn{d(v)}.
 The maximum degree in a network is often denoted \eqn{\Delta (G)} and
 the minimum degree in a network \eqn{\delta (G)}.

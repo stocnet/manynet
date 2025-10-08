@@ -13,7 +13,7 @@ description: >
 ```{r setup, include=FALSE}
 library(learnr)
 library(manynet)
-library(patchwork)
+library(autograph)
 knitr::opts_chunk$set(echo = FALSE)
 ison_brandes2 <- ison_brandes %>% rename(type = twomode_type)
 ```

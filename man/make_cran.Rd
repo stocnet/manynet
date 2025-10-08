@@ -3,29 +3,46 @@
 \name{make_cran}
 \alias{make_cran}
 \alias{read_cran}
-\title{Making networks of package dependencies}
+\alias{read_pkg}
+\title{Making networks of inter- and intra-package dependencies}
 \source{
 https://www.r-bloggers.com/2016/01/r-graph-objects-igraph-vs-network/
+
+https://github.com/STATWORX/helfRlein/blob/master/R/get_network.R
 }
 \usage{
 read_cran(pkg = "all")
+
+read_pkg(dir = getwd())
 }
 \arguments{
 \item{pkg}{The name}
+
+\item{dir}{Character string or vector of character strings
+with the directory or directories to search for R scripts.
+If \code{NULL} (the default), the current working directory is used.}
+}
+\value{
+A \code{tidygraph} object representing the network of package dependencies
+or function dependencies in a package.
 }
 \description{
-Researchers regularly need to work with a variety of external data formats.
-The following functions offer ways to import from some common external
-file formats into objects that \code{{manynet}} and other graph/network packages
-in R can work with:
+These functions read information from CRAN or within an R package's
+working directory to create a networks of a package's dependencies:
 \itemize{
-\item \code{read_matrix()} imports adjacency matrices from Excel/csv files.
-\item \code{read_edgelist()} imports edgelists from Excel/csv files.
-\item \code{read_nodelist()} imports nodelists from Excel/csv files.
-\item \code{read_pajek()} imports Pajek (.net or .paj) files.
-\item \code{read_ucinet()} imports UCINET files from the header (.##h).
-\item \code{read_dynetml()} imports DyNetML interchange format for rich social network data.
-\item \code{read_graphml()} imports GraphML files.
+\item \code{read_cran()} creates a network of a package's dependencies on other
+packages available on CRAN.
+It looks for the \code{Depends}, \code{Imports} and \code{Suggests} fields
+in the package's DESCRIPTION file
+and creates a network where nodes are packages
+and ties are dependencies.
+\item \code{read_pkg()} creates a network of function dependencies
+from R scripts in a directory.
+It looks for function definitions and function calls
+within the scripts and creates a network
+where nodes are functions and edges are function calls.
+It can also include function calls
+to functions not defined within the scripts.
 }
 }
 \details{
@@ -37,6 +54,7 @@ by \href{https://github.com/stocnet/manynet/issues}{raising an issue on Github}.
 \examples{
 # mnet <- read_cran()
 # mnet <- to_ego(mnet, "manynet", max_dist = 2)
+# mnet <- read_pkg()
 }
 \seealso{
 \link{as}
@@ -52,5 +70,8 @@ Other makes:
 \code{\link{make_read}},
 \code{\link{make_stochastic}},
 \code{\link{make_write}}
+}
+\author{
+Jakob Gepp
 }
 \concept{makes}

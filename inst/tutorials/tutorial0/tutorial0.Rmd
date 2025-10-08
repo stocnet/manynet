@@ -417,10 +417,10 @@ You can follow my example below (copy to a new script and uncomment):
 ```{r egonet-eg, exercise = TRUE}
 mynetwork <- matrix(0,2,2) # this creates an empty network of 2 people
 # Next I'm going to name the matrix rows and columns:
-rownames(mynetwork) <- c("James Hollway","Jael Tan")
-colnames(mynetwork) <- c("James Hollway","Jael Tan")
-mynetwork[1,2] <- 1 # this means I know Jael already
-mynetwork[2,1] <- 1 # I think I can say Jael knows me already too...
-mynetwork["James Hollway","Jael Tan"] <- 1 # I could also do this by name
+rownames(mynetwork) <- c("James Hollway","Korakot Janteerasakul")
+colnames(mynetwork) <- c("James Hollway","Korakot Janteerasakul")
+mynetwork[1,2] <- 1 # this means I know Korakot already
+mynetwork[2,1] <- 1 # I think I can say Korakot knows me already too...
+mynetwork["James Hollway","Korakot Janteerasakul"] <- 1 # I could also do this by name
 # mynetwork[mynetwork > 0] <- 0 # Just in case you make a mistake, this wipes it!
 ```

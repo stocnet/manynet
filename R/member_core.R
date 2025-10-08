@@ -6,6 +6,8 @@
 #'   nodes in the network.
 #'   - `node_is_core()` identifies whether nodes belong to the core of the 
 #'   network, as opposed to the periphery.
+#'   - `node_in_core()` categorizes nodes into two or more core/periphery
+#'   categories based on their coreness.
 #'   - `node_coreness()` returns a continuous measure of how closely each node
 #'   resembles a typical core node.
 #'   - `node_kcoreness()` assigns nodes to their level of k-coreness.
@@ -31,7 +33,7 @@ NULL
 #'   A classic example of a cone is a star graph,
 #'   but friendship, wheel, and threshold graphs are also cones.
 #' @examples
-#'   node_is_universal(create_star(11))
+#' node_is_universal(create_star(11))
 #' @export
 node_is_universal <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
@@ -94,6 +96,17 @@ node_is_core <- function(.data, method = c("degree", "eigenvector")){
 }
 
 #' @rdname mark_core
+#' @references
+#' ## On k-coreness
+#' Seidman, Stephen B. 1983. 
+#' "Network structure and minimum degree". 
+#' _Social Networks_, 5(3), 269-287.
+#' \doi{10.1016/0378-8733(83)90028-X}
+#' 
+#' Batagelj, Vladimir, and Matjaz Zaversnik. 2003. 
+#' "An O(m) algorithm for cores decomposition of networks". 
+#' _arXiv preprint_ cs/0310049.
+#' \doi{10.48550/arXiv.cs/0310049}
 #' @examples
 #' node_kcoreness(ison_adolescents)
 #' @export
@@ -109,6 +122,7 @@ node_kcoreness <- function(.data){
 #' node_coreness(ison_adolescents)
 #' @export
 node_coreness <- function(.data) {
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
   A <- as_matrix(.data)
   n <- nrow(A)
   obj_fun <- function(c) {
@@ -124,4 +138,63 @@ node_coreness <- function(.data) {
   make_node_measure(result$par, .data)
 }
 
-
+#' @rdname mark_core
+#' @param groups Number of categories to create. Must be at least 2 and at most
+#'   the number of nodes in the network. Default is 3.
+#' @param cluster_by Method to use to create the categories.
+#'   One of "bins" (equal-width bins), "quantiles" (quantile-based bins),
+#'   or "kmeans" (k-means clustering). Default is "bins".
+#' @section Core-periphery categories:
+#'   This function categorizes nodes based on their coreness into a specified
+#'   number of groups. The groups are labeled as "Core", "Semi-core",
+#'   "Semi-periphery", and "Periphery" depending on the number of groups
+#'   specified.
+#'   The categorization can be done using different methods: equal-width bins,
+#'   quantile-based bins, or k-means clustering.
+#' @references
+#' ## On core-periphery categorization
+#' Wallerstein, Immanuel. 1974.
+#' "Dependence in an Interdependent World: The Limited Possibilities of Transformation Within the Capitalist World Economy."
+#' _African Studies Review_, 17(1), 1-26.
+#' \doi{https://doi.org/10.2307/523574}
+#' @examples
+#' node_in_core(ison_adolescents)
+#' @export
+node_in_core <- function(.data, groups = 3,
+                         cluster_by = c("bins","quantiles","kmeans")) {
+  if (groups < 2) snet_abort("Number of categories must be at least 2")
+  if (groups > net_nodes(.data)) snet_abort("There cannot be more categories than nodes.")
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  contin <- node_coreness(.data)
+  cluster_by <- match.arg(cluster_by)
+  out <- switch(cluster_by,
+                bins = cut(as.numeric(contin), breaks = groups, labels = FALSE),
+                quantiles = as.numeric(cut(as.numeric(contin),
+                                           breaks = stats::quantile(as.numeric(contin),
+                                                                    probs = seq(0, 1, length.out = groups + 1)),
+                                           include.lowest = TRUE, labels = FALSE)),
+                kmeans = stats::kmeans(as.numeric(contin), centers = groups)$cluster
+  )
+  
+  if (groups == 2) core_labels <- c("Core", "Periphery")
+  if (groups == 3) core_labels <- c("Core", "Semi-periphery", "Periphery")
+  if (groups == 4) core_labels <- c("Core", "Semi-core", "Semi-periphery", "Periphery")
+  if (groups >= 5){
+    n_middle <- groups - 2
+    middle <- character(n_middle)
+    
+    for (i in seq_len(n_middle)) {
+      if (i %% 2 == 1) {
+        middle[i] <- paste0("Semi-periphery-", (i + 1) %/% 2)
+      } else {
+        middle[i] <- paste0("Semi-core-", i %/% 2)
+      }
+    }
+    middle <- middle[order(middle)]
+    
+    core_labels <- c("Core", middle, "Periphery")
+    if(groups == 5) core_labels[2] <- "Semi-core"
+  } 
+  out <- rev(core_labels)[out]
+  make_node_member(out, .data)
+}
