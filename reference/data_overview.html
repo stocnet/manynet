@@ -21,7 +21,7 @@ network datasets included in the packages.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.2</span>
       </span>
     </div>
 
@@ -90,7 +90,7 @@ that are used to filter the results.</p></dd>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">table_data</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 27 × 17</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 29 × 17</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    dataset             components nodes  ties nattr tattr directed weighted</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;char&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;logi&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;logi&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> ison_koenigsberg             1     4     7     3     1 <span style="color: #BB0000;">FALSE</span>    <span style="color: #BB0000;">FALSE</span>   </span>
@@ -98,30 +98,31 @@ that are used to filter the results.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> ison_adolescents             1     8    10     1     0 <span style="color: #BB0000;">FALSE</span>    <span style="color: #BB0000;">FALSE</span>   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> ison_brandes                 1    11    12     1     0 <span style="color: #BB0000;">FALSE</span>    <span style="color: #BB0000;">FALSE</span>   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> ison_algebra                 1    16   279     0     2 TRUE     TRUE    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> ison_monks                   1    18   463     3     4 TRUE     TRUE    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> ison_hightech                1    21   312     4     1 TRUE     <span style="color: #BB0000;">FALSE</span>   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> ison_networkers              1    32   440     3     1 TRUE     TRUE    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> ison_southern_women          1    32    89     4     1 <span style="color: #BB0000;">FALSE</span>    <span style="color: #BB0000;">FALSE</span>   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> ison_judo_moves             20    33    81     1     0 TRUE     <span style="color: #BB0000;">FALSE</span>   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 17 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> ison_emotions                1    18   315     1     1 TRUE     TRUE    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> ison_monks                   1    18   463     3     4 TRUE     TRUE    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> ison_hightech                1    21   312     4     1 TRUE     <span style="color: #BB0000;">FALSE</span>   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> ison_networkers              1    32   440     3     1 TRUE     TRUE    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> ison_southern_women          1    32    89     4     1 <span style="color: #BB0000;">FALSE</span>    <span style="color: #BB0000;">FALSE</span>   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 19 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 9 more variables: twomode &lt;logi&gt;, labelled &lt;logi&gt;, signed &lt;logi&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   multiplex &lt;logi&gt;, longitudinal &lt;logi&gt;, dynamic &lt;logi&gt;, changing &lt;logi&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   acyclic &lt;logi&gt;, attributed &lt;logi&gt;</span></span>
 <span class="r-in"><span><span class="co"># to obtain list of all e.g. directed networks:</span></span></span>
 <span class="r-in"><span><span class="fu">table_data</span><span class="op">(</span>pkg <span class="op">=</span> <span class="st">"manynet"</span>, <span class="va">directed</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 17</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 11 × 17</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    dataset         components nodes  ties nattr tattr directed weighted twomode</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;char&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;logi&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;logi&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;logi&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> ison_algebra             1    16   279     0     2 TRUE     TRUE     <span style="color: #BB0000;">FALSE</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> ison_monks               1    18   463     3     4 TRUE     TRUE     <span style="color: #BB0000;">FALSE</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> ison_hightech            1    21   312     4     1 TRUE     <span style="color: #BB0000;">FALSE</span>    <span style="color: #BB0000;">FALSE</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> ison_networkers          1    32   440     3     1 TRUE     TRUE     <span style="color: #BB0000;">FALSE</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> ison_judo_moves         20    33    81     1     0 TRUE     <span style="color: #BB0000;">FALSE</span>    <span style="color: #BB0000;">FALSE</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> fict_potter             34    64   544     5     1 TRUE     <span style="color: #BB0000;">FALSE</span>    <span style="color: #BB0000;">FALSE</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> ison_lawfirm             1    71  <span style="text-decoration: underline;">2</span>571     7     1 TRUE     <span style="color: #BB0000;">FALSE</span>    <span style="color: #BB0000;">FALSE</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> fict_starwars           64   110   563    12     2 TRUE     TRUE     <span style="color: #BB0000;">FALSE</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> fict_thrones           130   208   404    10     1 TRUE     <span style="color: #BB0000;">FALSE</span>    <span style="color: #BB0000;">FALSE</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> irps_blogs             688  <span style="text-decoration: underline;">1</span>490 <span style="text-decoration: underline;">19</span>090     3     0 TRUE     <span style="color: #BB0000;">FALSE</span>    <span style="color: #BB0000;">FALSE</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> ison_emotions            1    18   315     1     1 TRUE     TRUE     <span style="color: #BB0000;">FALSE</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> ison_monks               1    18   463     3     4 TRUE     TRUE     <span style="color: #BB0000;">FALSE</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> ison_hightech            1    21   312     4     1 TRUE     <span style="color: #BB0000;">FALSE</span>    <span style="color: #BB0000;">FALSE</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> ison_networkers          1    32   440     3     1 TRUE     TRUE     <span style="color: #BB0000;">FALSE</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> ison_judo_moves         20    33    81     1     0 TRUE     <span style="color: #BB0000;">FALSE</span>    <span style="color: #BB0000;">FALSE</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> fict_potter             34    64   544     5     1 TRUE     <span style="color: #BB0000;">FALSE</span>    <span style="color: #BB0000;">FALSE</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> ison_lawfirm             1    71  <span style="text-decoration: underline;">2</span>571     7     1 TRUE     <span style="color: #BB0000;">FALSE</span>    <span style="color: #BB0000;">FALSE</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> fict_starwars           64   110   563    12     2 TRUE     TRUE     <span style="color: #BB0000;">FALSE</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> fict_thrones           130   208   404    10     1 TRUE     <span style="color: #BB0000;">FALSE</span>    <span style="color: #BB0000;">FALSE</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> irps_blogs             688  <span style="text-decoration: underline;">1</span>490 <span style="text-decoration: underline;">19</span>090     3     0 TRUE     <span style="color: #BB0000;">FALSE</span>    <span style="color: #BB0000;">FALSE</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 8 more variables: labelled &lt;logi&gt;, signed &lt;logi&gt;, multiplex &lt;logi&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   longitudinal &lt;logi&gt;, dynamic &lt;logi&gt;, changing &lt;logi&gt;, acyclic &lt;logi&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   attributed &lt;logi&gt;</span></span>

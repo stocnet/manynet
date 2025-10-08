@@ -4,6 +4,8 @@ node_is_universal() identifies whether nodes are adjacent to all other
 nodes in the network.
 node_is_core() identifies whether nodes belong to the core of the
 network, as opposed to the periphery.
+node_in_core() categorizes nodes into two or more core/periphery
+categories based on their coreness.
 node_coreness() returns a continuous measure of how closely each node
 resembles a typical core node.
 node_kcoreness() assigns nodes to their level of k-coreness.
@@ -26,7 +28,7 @@ node_kcoreness() assigns nodes to their level of k-coreness.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.2</span>
       </span>
     </div>
 
@@ -74,6 +76,8 @@ node_kcoreness() assigns nodes to their level of k-coreness.
 nodes in the network.</p></li>
 <li><p><code>node_is_core()</code> identifies whether nodes belong to the core of the
 network, as opposed to the periphery.</p></li>
+<li><p><code>node_in_core()</code> categorizes nodes into two or more core/periphery
+categories based on their coreness.</p></li>
 <li><p><code>node_coreness()</code> returns a continuous measure of how closely each node
 resembles a typical core node.</p></li>
 <li><p><code>node_kcoreness()</code> assigns nodes to their level of k-coreness.</p></li>
@@ -86,7 +90,9 @@ resembles a typical core node.</p></li>
 <span></span>
 <span><span class="fu">node_kcoreness</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">node_coreness</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">node_coreness</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">node_in_core</span><span class="op">(</span><span class="va">.data</span>, groups <span class="op">=</span> <span class="fl">3</span>, cluster_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bins"</span>, <span class="st">"quantiles"</span>, <span class="st">"kmeans"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -109,6 +115,17 @@ which relies on the heuristic that high degree nodes are more likely to be in th
 An alternative is "eigenvector", which instead begins with high eigenvector nodes.
 Other methods, such as a genetic algorithm, CONCOR, and Rombach-Porter,
 can be added if there is interest.</p></dd>
+
+
+<dt id="arg-groups">groups<a class="anchor" aria-label="anchor" href="#arg-groups"></a></dt>
+<dd><p>Number of categories to create. Must be at least 2 and at most
+the number of nodes in the network. Default is 3.</p></dd>
+
+
+<dt id="arg-cluster-by">cluster_by<a class="anchor" aria-label="anchor" href="#arg-cluster-by"></a></dt>
+<dd><p>Method to use to create the categories.
+One of "bins" (equal-width bins), "quantiles" (quantile-based bins),
+or "kmeans" (k-means clustering). Default is "bins".</p></dd>
 
 </dl></div>
     <div id="universal-dominating-node">
@@ -138,6 +155,17 @@ Note that minimising this quantity maximises density in the core block
 and minimises density in the periphery block;
 it ignores ties between these blocks.</p>
     </div>
+    <div id="core-periphery-categories">
+    <h2>Core-periphery categories</h2>
+
+
+<p>This function categorizes nodes based on their coreness into a specified
+number of groups. The groups are labeled as "Core", "Semi-core",
+"Semi-periphery", and "Periphery" depending on the number of groups
+specified.
+The categorization can be done using different methods: equal-width bins,
+quantile-based bins, or k-means clustering.</p>
+    </div>
     <div id="references">
     <h2>References</h2>
 
@@ -154,6 +182,30 @@ it ignores ties between these blocks.</p>
 <a href="https://doi.org/10.48550/arXiv.1102.5511" class="external-link">doi:10.48550/arXiv.1102.5511</a></p>
 </div>
 
+<div class="section">
+<h3 id="on-k-coreness">On k-coreness<a class="anchor" aria-label="anchor" href="#on-k-coreness"></a></h3>
+
+
+<p>Seidman, Stephen B. 1983.
+"Network structure and minimum degree".
+<em>Social Networks</em>, 5(3), 269-287.
+<a href="https://doi.org/10.1016/0378-8733%2883%2990028-X" class="external-link">doi:10.1016/0378-8733(83)90028-X</a></p>
+<p>Batagelj, Vladimir, and Matjaz Zaversnik. 2003.
+"An O(m) algorithm for cores decomposition of networks".
+<em>arXiv preprint</em> cs/0310049.
+<a href="https://doi.org/10.48550/arXiv.cs/0310049" class="external-link">doi:10.48550/arXiv.cs/0310049</a></p>
+</div>
+
+<div class="section">
+<h3 id="on-core-periphery-categorization">On core-periphery categorization<a class="anchor" aria-label="anchor" href="#on-core-periphery-categorization"></a></h3>
+
+
+<p>Wallerstein, Immanuel. 1974.
+"Dependence in an Interdependent World: The Limited Possibilities of Transformation Within the Capitalist World Economy."
+<em>African Studies Review</em>, 17(1), 1-26.
+<a href="https://doi.org/10.2307/523574" class="external-link">doi:10.2307/523574</a></p>
+</div>
+
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -168,7 +220,7 @@ it ignores ties between these blocks.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span>  <span class="fu">node_is_universal</span><span class="op">(</span><span class="fu"><a href="make_create.html">create_star</a></span><span class="op">(</span><span class="fl">11</span><span class="op">)</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">node_is_universal</span><span class="op">(</span><span class="fu"><a href="make_create.html">create_star</a></span><span class="op">(</span><span class="fl">11</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   V1    V2    V3    V4    V5    V6    V7    V8    V9    V10   V11  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> TRUE  FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</span>
 <span class="r-in"><span><span class="fu">node_is_core</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span></span></span>
@@ -185,6 +237,10 @@ it ignores ties between these blocks.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ▃▁▁▁▃ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Betty   Sue Alice  Jane  Dale   Pam Carol  Tina</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 0.181  0.89     1 0.562  0.82 0.619 0.071     0</span>
+<span class="r-in"><span><span class="fu">node_in_core</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">3 groups</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Betty     Sue   Alice Jane           Dale  Pam            Carol     Tina     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Periphery Core  Core  Semi-periphery Core  Semi-periphery Periphery Periphery</span>
 </code></pre></div>
     </div>
   </div>

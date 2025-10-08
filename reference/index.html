@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.2</span>
       </span>
     </div>
 
@@ -67,9 +67,9 @@
           <p class="section-desc"></p><p>Functions for importing and exporting networks from and to a range of external formats.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="make_cran.html">read_cran()</a></code> </p>
+          <p><code><a href="make_cran.html">read_cran()</a></code> <code><a href="make_cran.html">read_pkg()</a></code> </p>
         </td>
-        <td><p>Making networks of package dependencies</p></td>
+        <td><p>Making networks of inter- and intra-package dependencies</p></td>
       </tr><tr><td>
           <p><code><a href="make_read.html">read_matrix()</a></code> <code><a href="make_read.html">read_edgelist()</a></code> <code><a href="make_read.html">read_nodelist()</a></code> <code><a href="make_read.html">read_pajek()</a></code> <code><a href="make_read.html">read_ucinet()</a></code> <code><a href="make_read.html">read_dynetml()</a></code> <code><a href="make_read.html">read_graphml()</a></code> <code><a href="make_read.html">read_gml()</a></code> </p>
         </td>
@@ -251,7 +251,7 @@
           <p class="section-desc"></p><p><code>node_is_*()</code> functions return a vector of logical values the length of the nodes in the network.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="mark_core.html">node_is_universal()</a></code> <code><a href="mark_core.html">node_is_core()</a></code> <code><a href="mark_core.html">node_kcoreness()</a></code> <code><a href="mark_core.html">node_coreness()</a></code> </p>
+          <p><code><a href="mark_core.html">node_is_universal()</a></code> <code><a href="mark_core.html">node_is_core()</a></code> <code><a href="mark_core.html">node_kcoreness()</a></code> <code><a href="mark_core.html">node_coreness()</a></code> <code><a href="mark_core.html">node_in_core()</a></code> </p>
         </td>
         <td><p>Core-periphery clustering algorithms</p></td>
       </tr><tr><td>
@@ -331,7 +331,7 @@
         </td>
         <td><p>Measures of structural holes</p></td>
       </tr><tr><td>
-          <p><code><a href="measure_hierarchy.html">net_connectedness()</a></code> <code><a href="measure_hierarchy.html">net_efficiency()</a></code> <code><a href="measure_hierarchy.html">net_upperbound()</a></code> </p>
+          <p><code><a href="measure_hierarchy.html">net_by_hierarchy()</a></code> <code><a href="measure_hierarchy.html">net_connectedness()</a></code> <code><a href="measure_hierarchy.html">net_efficiency()</a></code> <code><a href="measure_hierarchy.html">net_upperbound()</a></code> </p>
         </td>
         <td><p>Graph theoretic dimensions of hierarchy</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -379,6 +379,10 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
+          <p><code><a href="measure_hierarchy.html">net_by_hierarchy()</a></code> <code><a href="measure_hierarchy.html">net_connectedness()</a></code> <code><a href="measure_hierarchy.html">net_efficiency()</a></code> <code><a href="measure_hierarchy.html">net_upperbound()</a></code> </p>
+        </td>
+        <td><p>Graph theoretic dimensions of hierarchy</p></td>
+      </tr><tr><td>
           <p><code><a href="motif_brokerage.html">node_by_brokerage()</a></code> <code><a href="motif_brokerage.html">net_by_brokerage()</a></code> <code><a href="motif_brokerage.html">node_brokering_activity()</a></code> <code><a href="motif_brokerage.html">node_brokering_exclusivity()</a></code> </p>
         </td>
         <td><p>Motifs of brokerage</p></td>
@@ -399,6 +403,10 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
+          <p><code><a href="mark_core.html">node_is_universal()</a></code> <code><a href="mark_core.html">node_is_core()</a></code> <code><a href="mark_core.html">node_kcoreness()</a></code> <code><a href="mark_core.html">node_coreness()</a></code> <code><a href="mark_core.html">node_in_core()</a></code> </p>
+        </td>
+        <td><p>Core-periphery clustering algorithms</p></td>
+      </tr><tr><td>
           <p><code><a href="member_brokerage.html">node_in_brokering()</a></code> </p>
         </td>
         <td><p>Memberships of brokerage</p></td>
@@ -487,6 +495,10 @@
         </td>
         <td><p>One-mode, undirected network of frequent associations in a dolphin pod (Lusseau et al. 2003)</p></td>
       </tr><tr><td>
+          <p><code><a href="ison_emotions.html">ison_emotions</a></code> </p>
+        </td>
+        <td><p>One-mode, weighted network of emotional transitions (Trampe et al. 2015)</p></td>
+      </tr><tr><td>
           <p><code><a href="ison_hightech.html">ison_hightech</a></code> </p>
         </td>
         <td><p>One-mode multiplex, directed network of managers of a high-tech company (Krackhardt 1987)</p></td>
@@ -535,6 +547,10 @@
           <p class="section-desc"></p><p><code>fict_</code> data are popular fictional datasets, treating recognisable themes, and often have more attributes coded.</p>
         </th>
       </tr></tbody><tbody><tr><td>
+          <p><code><a href="fict_actually.html">fict_actually</a></code> </p>
+        </td>
+        <td><p>Two-mode network of Love Actually characters and their scene appearances (Robinson 2015)</p></td>
+      </tr><tr><td>
           <p><code><a href="fict_friends.html">fict_friends</a></code> </p>
         </td>
         <td><p>One-mode undirected Friends character scene co-appearances (McNulty, 2020)</p></td>
@@ -575,7 +591,7 @@
         </td>
         <td><p>One-mode undirected network of co-purchased books about US politics on Amazon</p></td>
       </tr><tr><td>
-          <p><code><a href="irps_nuclear_discourse.html">irps_nuclear_discourse</a></code> </p>
+          <p><code><a href="irps_nuclear.html">irps_nuclear</a></code> </p>
         </td>
         <td><p>Two-mode dynamic discourse network of Germany's nuclear energy phase-out (Haunss and Hollway 2023)</p></td>
       </tr><tr><td>

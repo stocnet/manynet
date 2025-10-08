@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.2</span>
       </span>
     </div>
 
@@ -60,7 +60,56 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.6.1" id="manynet-161">manynet 1.6.1<a class="anchor" aria-label="anchor" href="#manynet-161"></a></h2>
+<h2 class="page-header" data-toc-text="1.6.2" id="manynet-162">manynet 1.6.2<a class="anchor" aria-label="anchor" href="#manynet-162"></a></h2>
+<div class="section level3">
+<h3 id="making-1-6-2">Making<a class="anchor" aria-label="anchor" href="#making-1-6-2"></a></h3>
+<ul><li>Fixed <a href="https://github.com/stocnet/manynet/issues/113" class="external-link">#113</a> relating to igraph v2.2.0+ and explicit sample_bipartite functions</li>
+<li>Added <code><a href="../reference/make_cran.html">read_pkg()</a></code> for creating a network of the function interdependencies within a package</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-1-6-2">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-6-2"></a></h3>
+<ul><li>Added familiar $ operations for <code>mnet</code> objects
+<ul><li>There is now dollar lookup functionality</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="measures-1-6-2">Measures<a class="anchor" aria-label="anchor" href="#measures-1-6-2"></a></h3>
+<ul><li>Fixed bug in <code><a href="../reference/mark_core.html">node_coreness()</a></code> where data wasn’t recognised within pipes</li>
+</ul></div>
+<div class="section level3">
+<h3 id="memberships-1-6-2">Memberships<a class="anchor" aria-label="anchor" href="#memberships-1-6-2"></a></h3>
+<ul><li>Added <code><a href="../reference/mark_core.html">node_in_core()</a></code> for categorising nodes into 2+ core/periphery groups</li>
+</ul></div>
+<div class="section level3">
+<h3 id="motifs-1-6-2">Motifs<a class="anchor" aria-label="anchor" href="#motifs-1-6-2"></a></h3>
+<ul><li>Added <code><a href="../reference/measure_hierarchy.html">net_by_hierarchy()</a></code> for characterising networks by their graph theoretic dimensions of hierarchy</li>
+</ul></div>
+<div class="section level3">
+<h3 id="data-1-6-2">Data<a class="anchor" aria-label="anchor" href="#data-1-6-2"></a></h3>
+<ul><li>Added <code>ison_emotions</code>
+</li>
+<li>Renamed <code>irps_nuclear</code>
+</li>
+<li>Separated out data scripts into their different categories</li>
+</ul></div>
+<div class="section level3">
+<h3 id="tutorials-1-6-2">Tutorials<a class="anchor" aria-label="anchor" href="#tutorials-1-6-2"></a></h3>
+<ul><li>Added <a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a> to setups for all manynet tutorials</li>
+<li>Improved data tutorial
+<ul><li>Removed manynet two-mode question from data tutorial</li>
+<li>Added more detail on examining data to data tutorial</li>
+</ul></li>
+<li>Improved topology tutorial
+<ul><li>Using k-coreness in section on core-periphery</li>
+<li>Added hierarchy multichoice</li>
+<li>Demonstrated how to interpret hierarchy measure</li>
+<li>Added more challenging comparison of hierarchy in two networks</li>
+<li>Updated several glossary terms</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.6.1" id="manynet-161">manynet 1.6.1<small>2025-09-12</small><a class="anchor" aria-label="anchor" href="#manynet-161"></a></h2>
 <div class="section level3">
 <h3 id="package-1-6-1">Package<a class="anchor" aria-label="anchor" href="#package-1-6-1"></a></h3>
 <ul><li>Dropped mapping from function overview on website</li>
