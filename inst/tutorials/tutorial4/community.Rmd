@@ -10,13 +10,41 @@ description: >
   as well as detect communities using a variety of algorithms.
 ---
 
-```{r setup, include=FALSE}
-library(learnr)
+```{r pkgs, include = FALSE}
 library(manynet)
 library(autograph)
+```
+
+```{r setup, include = FALSE, purl=FALSE}
+library(learnr)
 knitr::opts_chunk$set(echo = FALSE)
 clear_glossary()
-
+learnr::random_phrases_add(language = "fr",
+                           praise = c("C'est génial!",
+                                      "Beau travail",
+                                      "Excellent travail!",
+                                      "Bravo!",
+                                      "Super!",
+                                      "Bien fait",
+                                      "Bien joué",
+                                      "Tu l'as fait!",
+                                      "Je savais que tu pouvais le faire.",
+                                      "Ça a l'air facile!",
+                                      "C'était un travail de première classe.",
+                                      "C'est ce que j'appelle un bon travail!"),
+                          encouragement = c("Bon effort",
+                                            "Vous l'avez presque maîtrisé!",
+                                            "Ça avance bien.",
+                                            "Continuez comme ça.",
+                                            "Continuez à travailler dur!",
+                                            "Vous apprenez vite!",
+                                            "Vous faites un excellent travail aujourd'hui."))
+learnr::random_phrases_add(language = "en", 
+                           praise = c("C'est génial!",
+                                      "Beau travail!",
+                                      "Bravo!",
+                                      "Super!"),
+                           encouragement = c("Bon effort"))
 friends <- to_uniplex(ison_algebra, "friends")
 social <- to_uniplex(ison_algebra, "social")
 tasks <- to_uniplex(ison_algebra, "tasks")
