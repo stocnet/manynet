@@ -352,6 +352,9 @@ question("What can we say about task closure in this network? Choose all that ap
 ### A two-mode network
 
 The next dataset, 'ison_southern_women', is also available in `{manynet}`.
+It's a classic two-mode network about the attendance of 18 women
+at 14 social events in the 1930s American South.
+For more details see `?ison_southern_women` for documentation in your R/RStudio.
 Let's load and graph the data.
 
 ```{r setup-women, exercise=TRUE, exercise.setup = "data", purl = FALSE}
@@ -415,6 +418,8 @@ event_graph <- to_mode2(ison_southern_women)
 graphr(event_graph)
 ```
 
+### Projection options
+
 `{manynet}` also includes several other options for how to construct the projection.
 The default ("count") might be interpreted as indicating the degree or amount of
 shared ties to the other mode.
@@ -432,11 +437,25 @@ correlations in ties for valued and binary data respectively.
 ```
 
 ```{r otherway-solution}
-to_mode2(ison_southern_women, similarity = "jaccard")
-to_mode2(ison_southern_women, similarity = "rand")
-to_mode2(ison_southern_women, similarity = "pearson")
-to_mode2(ison_southern_women, similarity = "yule")
+tie_weights(to_mode1(ison_southern_women, similarity = "count"))
+tie_weights(to_mode1(ison_southern_women, similarity = "jaccard"))
+tie_weights(to_mode1(ison_southern_women, similarity = "rand"))
+tie_weights(to_mode1(ison_southern_women, similarity = "pearson"))
+tie_weights(to_mode1(ison_southern_women, similarity = "yule"))
 ```
+
+Practically speaking, most projection is conducted using the "count" method,
+as it reflects the absolute overlap, the frequency of co-occurrence.
+As such, it is most commonly used in social and organisational network analysis,
+reflecting shared group membership or collaboration intensity.
+But it is sensitive to asymmetries in the number of nodes in each node set and
+the degree distribution of each node set, and ignores the absence of ties as
+uninformative.
+To normalise for these effects, "jaccard" and "rand" are often used.
+"pearson" and "yule" are less commonly used, but can be useful when
+interested in the correlation of ties between nodes.
+
+### Closure in two-mode networks
 
 Let's return to the question of closure.
 First try one of the closure measures we have already treated that gives us
