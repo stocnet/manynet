@@ -10,13 +10,41 @@ description: >
   as well as detect communities using a variety of algorithms.
 ---
 
-```{r setup, include=FALSE}
-library(learnr)
+```{r pkgs, include = FALSE}
 library(manynet)
 library(autograph)
+```
+
+```{r setup, include = FALSE, purl=FALSE}
+library(learnr)
 knitr::opts_chunk$set(echo = FALSE)
 clear_glossary()
-
+learnr::random_phrases_add(language = "fr",
+                           praise = c("C'est génial!",
+                                      "Beau travail",
+                                      "Excellent travail!",
+                                      "Bravo!",
+                                      "Super!",
+                                      "Bien fait",
+                                      "Bien joué",
+                                      "Tu l'as fait!",
+                                      "Je savais que tu pouvais le faire.",
+                                      "Ça a l'air facile!",
+                                      "C'était un travail de première classe.",
+                                      "C'est ce que j'appelle un bon travail!"),
+                          encouragement = c("Bon effort",
+                                            "Vous l'avez presque maîtrisé!",
+                                            "Ça avance bien.",
+                                            "Continuez comme ça.",
+                                            "Continuez à travailler dur!",
+                                            "Vous apprenez vite!",
+                                            "Vous faites un excellent travail aujourd'hui."))
+learnr::random_phrases_add(language = "en", 
+                           praise = c("C'est génial!",
+                                      "Beau travail!",
+                                      "Bravo!",
+                                      "Super!"),
+                           encouragement = c("Bon effort"))
 friends <- to_uniplex(ison_algebra, "friends")
 social <- to_uniplex(ison_algebra, "social")
 tasks <- to_uniplex(ison_algebra, "tasks")
@@ -324,6 +352,9 @@ question("What can we say about task closure in this network? Choose all that ap
 ### A two-mode network
 
 The next dataset, 'ison_southern_women', is also available in `{manynet}`.
+It's a classic two-mode network about the attendance of 18 women
+at 14 social events in the 1930s American South.
+For more details see `?ison_southern_women` for documentation in your R/RStudio.
 Let's load and graph the data.
 
 ```{r setup-women, exercise=TRUE, exercise.setup = "data", purl = FALSE}
@@ -387,6 +418,8 @@ event_graph <- to_mode2(ison_southern_women)
 graphr(event_graph)
 ```
 
+### Projection options
+
 `{manynet}` also includes several other options for how to construct the projection.
 The default ("count") might be interpreted as indicating the degree or amount of
 shared ties to the other mode.
@@ -404,11 +437,25 @@ correlations in ties for valued and binary data respectively.
 ```
 
 ```{r otherway-solution}
-to_mode2(ison_southern_women, similarity = "jaccard")
-to_mode2(ison_southern_women, similarity = "rand")
-to_mode2(ison_southern_women, similarity = "pearson")
-to_mode2(ison_southern_women, similarity = "yule")
+tie_weights(to_mode1(ison_southern_women, similarity = "count"))
+tie_weights(to_mode1(ison_southern_women, similarity = "jaccard"))
+tie_weights(to_mode1(ison_southern_women, similarity = "rand"))
+tie_weights(to_mode1(ison_southern_women, similarity = "pearson"))
+tie_weights(to_mode1(ison_southern_women, similarity = "yule"))
 ```
+
+Practically speaking, most projection is conducted using the "count" method,
+as it reflects the absolute overlap, the frequency of co-occurrence.
+As such, it is most commonly used in social and organisational network analysis,
+reflecting shared group membership or collaboration intensity.
+But it is sensitive to asymmetries in the number of nodes in each node set and
+the degree distribution of each node set, and ignores the absence of ties as
+uninformative.
+To normalise for these effects, "jaccard" and "rand" are often used.
+"pearson" and "yule" are less commonly used, but can be useful when
+interested in the correlation of ties between nodes.
+
+### Closure in two-mode networks
 
 Let's return to the question of closure.
 First try one of the closure measures we have already treated that gives us
@@ -648,7 +695,7 @@ between the left and right 'hemispheres' of the network.
 
 But what is the 'fit' of this assignment of the blog nodes into two partitions?
 The most common measure of the fit of a community assignment in a network is
-modularity.
+`r gloss("modularity")`.
 
 ```{r blogmod, exercise=TRUE, exercise.setup = "blogtogiant"}
 net_modularity(blogs, membership = node_in_partition(blogs))
@@ -656,6 +703,19 @@ net_modularity(blogs, membership = node_in_partition(blogs))
 
 Remember that modularity ranges between 1 and -1.
 How can we interpret this result?
+
+```{r blogQ, echo = FALSE, purl = FALSE}
+question("Which statements about modularity are true?",
+  answer("A community assignment with modularity > 0 means there are more ties within communities than between communities.",
+         correct = TRUE),
+  answer("A community assignment with modularity = 0 means any tie is as likely to occur within a community as between assigned communities.",
+         correct = TRUE),
+  answer("In a community assignment with modularity = 1, every community must have an internal density of 1 and an external density of 0."),
+  answer("A community assignment with modularity = -1 is impossible."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
 
 While the partition algorithm is useful for deriving a partition of the network
 into the number of factions assigned,
@@ -711,7 +771,7 @@ afford a sensible view of the social world as cohesively organized.
 ### Walktrap
 
 This algorithm detects communities through a series of short random walks, 
-with the idea that nodes encountered on any given random walk 
+with the idea that nodes encountered on any given random `r gloss("walk")` 
 are more likely to be within a community than not.
 It was proposed by Pons and Latapy (2005).
 
@@ -822,7 +882,7 @@ Or you can use node color and size to indicate other attributes...
 
 ### Edge Betweenness
 
-Edge betweenness is like betweenness centrality but for ties not nodes.
+Edge betweenness is like `r gloss("betweenness")` centrality but for ties not nodes.
 The edge-betweenness score of an edge measures the number of
 shortest paths from one vertex to another that go through it.
 
@@ -830,7 +890,7 @@ The idea of the edge-betweenness based community structure detection is that
 it is likely that edges connecting separate clusters have high edge-betweenness, 
 as all the shortest paths from one cluster to another must traverse through them. 
 So if we iteratively remove the edge with the highest edge-betweenness score 
-we will get a hierarchical map (dendrogram) of the communities in the graph. 
+we will get a hierarchical map (`r gloss("dendrogram")`) of the communities in the graph. 
 
 The following works similarly to walktrap, but no need to set a step length. 
 
@@ -884,8 +944,8 @@ evaluating community structure in networks, Physical Review E 69, 026113
 ### Fast Greedy
 
 This algorithm is the Clauset-Newman-Moore algorithm. 
-Whereas edge betweenness was divisive (top-down), 
-the fast greedy algorithm is agglomerative (bottom-up).
+Whereas edge betweenness was `r gloss("divisive")` (top-down), 
+the fast greedy algorithm is `r gloss("agglomerative")` (bottom-up).
 
 At each step, the algorithm seeks a merge that would most increase modularity.
 This is very fast, but has the disadvantage of being a greedy algorithm, 
@@ -946,7 +1006,7 @@ question("What is the difference between communities and components?",
 ### Communities
 
 Lastly, `{manynet}` includes a function to run through and find the membership
-assignment that maximises modularity across any of the applicable community
+assignment that maximises `r gloss("modularity")` across any of the applicable community
 detection procedures.
 This is helpfully called `node_in_community()`.
 This function pays attention to the size and other salient network properties,

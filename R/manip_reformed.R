@@ -85,13 +85,16 @@ to_mode1.matrix <- function(.data,
 #' @export
 to_mode1.igraph <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
   similarity <- match.arg(similarity)
-  if(similarity == "count") igraph::bipartite_projection(.data)$proj1
-  else as_igraph(to_mode1(as_matrix(.data), similarity))
+  if(similarity == "count") igraph::bipartite_projection(.data)$proj1 else 
+    as_igraph(to_mode1(as_matrix(.data), similarity))
 }
 
 #' @export
 to_mode1.tbl_graph <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
   out <- as_tidygraph(to_mode1(as_igraph(.data), similarity = similarity))
+  if(match.arg(similarity) %in% c("pearson","yule")){
+    out <- out %>% mutate_ties(sign = dplyr::if_else(tie_weights(out)<0, -1, 1))
+  }
   add_info(out, name = paste("Projection", net_name(.data, prefix = "of")))
 }
 
@@ -135,13 +138,16 @@ to_mode2.matrix <- function(.data, similarity = c("count","jaccard","rand","pear
 #' @export
 to_mode2.igraph <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
   similarity <- match.arg(similarity)
-  if(similarity == "count") igraph::bipartite_projection(.data)$proj2
-  else as_igraph(to_mode2(as_matrix(.data), similarity))
+  if(similarity == "count") igraph::bipartite_projection(.data)$proj2 else 
+    as_igraph(to_mode2(as_matrix(.data), similarity))
 }
 
 #' @export
 to_mode2.tbl_graph <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
   out <- as_tidygraph(to_mode2(as_igraph(.data), similarity))
+  if(match.arg(similarity) %in% c("pearson","yule")){
+    out <- out %>% mutate_ties(sign = dplyr::if_else(tie_weights(out)<0, -1, 1))
+  }
   add_info(out, name = paste("Projection", net_name(.data, prefix = "of")))
 }
 

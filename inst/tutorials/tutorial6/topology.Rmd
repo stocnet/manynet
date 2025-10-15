@@ -11,10 +11,13 @@ description: >
   and measure network resilience.
 ---
 
-```{r setup, include = FALSE}
-library(learnr)
+```{r pkgs, include = FALSE}
 library(manynet)
 library(autograph)
+```
+
+```{r setup, include = FALSE, purl=FALSE}
+library(learnr)
 knitr::opts_chunk$set(echo = FALSE)
 clear_glossary()
 learnr::random_phrases_add(language = "fr",

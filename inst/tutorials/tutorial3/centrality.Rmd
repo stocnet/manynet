@@ -10,11 +10,41 @@ description: >
   closeness, eigenvector, and other types of centrality and centralization.
 ---
 
-```{r setup, include=FALSE}
-library(learnr)
+```{r pkgs, include = FALSE}
 library(manynet)
 library(autograph)
+```
+
+```{r setup, include = FALSE, purl=FALSE}
+library(learnr)
 knitr::opts_chunk$set(echo = FALSE)
+clear_glossary()
+learnr::random_phrases_add(language = "fr",
+                           praise = c("C'est génial!",
+                                      "Beau travail",
+                                      "Excellent travail!",
+                                      "Bravo!",
+                                      "Super!",
+                                      "Bien fait",
+                                      "Bien joué",
+                                      "Tu l'as fait!",
+                                      "Je savais que tu pouvais le faire.",
+                                      "Ça a l'air facile!",
+                                      "C'était un travail de première classe.",
+                                      "C'est ce que j'appelle un bon travail!"),
+                          encouragement = c("Bon effort",
+                                            "Vous l'avez presque maîtrisé!",
+                                            "Ça avance bien.",
+                                            "Continuez comme ça.",
+                                            "Continuez à travailler dur!",
+                                            "Vous apprenez vite!",
+                                            "Vous faites un excellent travail aujourd'hui."))
+learnr::random_phrases_add(language = "en", 
+                           praise = c("C'est génial!",
+                                      "Beau travail!",
+                                      "Bravo!",
+                                      "Super!"),
+                           encouragement = c("Bon effort"))
 ison_brandes2 <- ison_brandes %>% rename(type = twomode_type)
 ```
 
@@ -86,7 +116,7 @@ as they are assigned randomly from a pool of (American) first names.
 
 <img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3d6eGd2OHRxb2FvbHYzc2oyenFzOG5qcjhzMm82Mm1ncTVpOHhreiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/uVd5gVHAq63SjtjAOe/giphy.gif" height="480px"/>
 
-Let's start with calculating degree.
+Let's start with calculating `r gloss("degree")`.
 Remember that degree centrality is just the number of incident edges/ties to each node.
 It is therefore easy to calculate yourself.
 Just sum the rows or columns of the matrix!
@@ -145,7 +175,7 @@ question("In what ways are higher degree nodes more 'central'?",
 <img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExanZ4OWhwM2k0eWU1ancza3NtYXlpZDFkdTJub2RvMnFkYnlwbWZ4dCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7aTHbH39h8xYePza/giphy.gif" height="400px"/>
 
 Often we are interested in the distribution of (degree) centrality in a network.
-`{manynet}` offers a way to get a pretty good first look at this distribution,
+`{autograph}` offers a way to get a pretty good first look at this `r gloss("distribution")`,
 though there are more elaborate ways to do this in base and grid graphics.
 
 ```{r distrib, exercise = TRUE, exercise.setup = "addingnames", purl = FALSE}
@@ -171,11 +201,25 @@ question("What kind of shape does this degree distribution have?",
          random_answer_order = TRUE)
 ```
 
+```{r degdistinterpQ, purl = FALSE}
+question("What can the degree distribution tell us?",
+         answer("Whether the network is centralized around a few key nodes",
+                correct = TRUE, message = learnr::random_praise()),
+         answer("Whether there are a few highly connected nodes and many poorly connected nodes",
+                correct = TRUE, message = learnr::random_praise()),
+         answer("Whether the network is hierarchical",
+                message = "Not necessarily"),
+         answer("Whether the network is robust to random failure",
+                message = "Not necessarily"),
+         allow_retry = TRUE,
+         random_answer_order = TRUE)
+```
+
 ## Other centralities
 
 Other measures of centrality can be a little trickier to calculate by hand.
 Fortunately, we can use functions from `{manynet}` to help calculate the
-betweenness, closeness, and eigenvector centralities for each node in the network.
+`r gloss("betweenness")`, `r gloss("closeness")`, and `r gloss("eigenvector")` centralities for each node in the network.
 Let's collect the vectors of these centralities for the `ison_brandes` dataset:
 
 ```{r micent, exercise = TRUE, exercise.setup = "addingnames", purl = FALSE}
@@ -206,12 +250,12 @@ node_closeness(ison_brandes)
 node_eigenvector(ison_brandes)
 ```
 
-What is returned here are vectors of betweenness, closeness, and eigenvector scores
-for the nodes in the network.
+What is returned here are vectors of betweenness, closeness, and eigenvector 
+scores for the nodes in the network.
 But what do they mean?
 
 ```{r closeinterpQ, purl = FALSE}
-question("Why does a node with the smallest sum of geodesic distances to all other nodes be 'central'?",
+question("In what way is a node with the smallest sum of geodesic distances to all other nodes 'central'?",
          answer("They have more power than other nodes",
                 message = "Not necessarily"),
          answer("They can distribute a message to all other nodes in the network most quickly",
@@ -238,9 +282,23 @@ question("Why would a node lying 'between' many other nodes be 'central'?",
          random_answer_order = TRUE)
 ```
 
+```{r eiginterpQ, purl = FALSE}
+question("Which of the following is true of eigenvector centrality?",
+         answer("It is the only centrality measure that is correlated with power",
+                message = "Not necessarily"),
+         answer("It is a measure of influence, not activity",
+                correct = TRUE, message = learnr::random_praise()),
+         answer("It always gives the highest score to the node with the highest degree",
+                message = "Not necessarily"),
+         answer("It is only meaningful in networks with nodes of similar degree",
+                message = "Not necessarily"),
+         allow_retry = TRUE,
+         random_answer_order = TRUE)
+```
+
 Try to answer the following questions for yourself:
 
-- what does Bonacich mean when he says that power and influence are not the same thing?
+- what does Bonacich mean when he says that `r gloss("power")` and influence are not the same thing?
 - can you think of a real-world example when an actor might be central but not powerful, or powerful but not central?
 
 Note that all centrality measures in `{manynet}` return normalized
@@ -261,7 +319,7 @@ plot(node_eigenvector(ison_brandes))
 
 ## Plotting centrality
 
-It is straightforward in `{manynet}` to highlight nodes and ties 
+It is straightforward in `{autograph}` to highlight nodes and ties 
 with maximum or minimum (e.g. degree) scores.
 If the vector is numeric (i.e. a "measure"),
 then this can be easily converted into a logical vector that
@@ -322,7 +380,7 @@ ison_brandes2 %>%
 ```{r brandes2quiz, purl = FALSE}
 question("Select all that are true for the two-mode Brandes network.",
          answer("Only one node is selected in each plot."),
-         answer("The maximum degree square has a higher degree than the maximum degree circle(s).",
+         answer("The maximum degree triangle has a higher degree than the maximum degree circle(s).",
                 correct = TRUE),
          answer("No node is ever the most central according to two or more different centrality measures."),
          allow_retry = TRUE,
@@ -333,7 +391,7 @@ question("Select all that are true for the two-mode Brandes network.",
 
 <img src="https://media.makeameme.org/created/centralization-here-i.jpg"/>
 
-`{manynet}` also implements network centralization functions.
+`{manynet}` also implements network `r gloss("centralization")` functions.
 Here we are no longer interested in the level of the node,
 but in the level of the whole network, 
 so the syntax replaces `node_` with `net_`:
@@ -405,9 +463,9 @@ question("What is the difference between centrality and centralisation according
   answer("Centrality is for nodes and centralisation is for networks",
          correct = TRUE),
   answer("Centrality is a state and centralisation is a process"),
-  answer("Centrality is a ity and centralisation is a sation"),
+  answer("Centrality is a '-ity' and centralisation is a '-isation'"),
   answer("Centrality is to centralisation what polarity is to polarisation"),
-  allow_retry = FALSE,
+  allow_retry = TRUE,
   random_answer_order = TRUE
 )
 ```
@@ -426,3 +484,8 @@ using titles or subtitles to record the question and/or centralization measure.
 
 ```
 
+## Glossary
+
+Here are some of the terms that we have covered in this module:
+
+`r print_glossary()`

@@ -1,3 +1,11 @@
+# manynet 1.6.3
+
+## Tutorials
+
+- Added more glossary items on centrality, modularity
+- Excluded setup details when extracting a tutorial script
+- Added French phrases to tutorials 3-6
+
 # manynet 1.6.2
 
 ## Making
