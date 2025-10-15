@@ -35,7 +35,7 @@ and the number of modes, nodes, and directedness will be inferred."><meta proper
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.3</span>
       </span>
     </div>
 
@@ -247,32 +247,32 @@ In two-mode networks, the directed argument is ignored.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">generate_smallworld</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">0.025</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 6d5823f U--- 12 24 -- Watts-Strogatz random graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH f3f0d8a U--- 12 24 -- Watts-Strogatz random graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), dim (g/n), size (g/n), nei (g/n), p (g/n), loops</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | (g/l), multiple (g/l)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 6d5823f:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from f3f0d8a:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 5  2-- 3  3-- 4  4-- 5  5-- 6  6-- 7  7-- 8  8-- 9  9--10 10--11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11] 11--12  1--12  1-- 3  1--11  2--12  2-- 4  3-- 5  4-- 6  5-- 7  6-- 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [21]  7-- 9  8--10  9--11 10--12</span>
 <span class="r-in"><span><span class="fu">generate_smallworld</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">0.25</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH a5ac82a U--- 12 24 -- Watts-Strogatz random graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 9e3af24 U--- 12 24 -- Watts-Strogatz random graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), dim (g/n), size (g/n), nei (g/n), p (g/n), loops</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | (g/l), multiple (g/l)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from a5ac82a:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 9e3af24:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 2  2-- 3  3-- 4  5-- 9  5--12  6-- 7  7-- 8  8-- 9  9--10 10--11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11] 11--12  1--12  1-- 3  1--11  2--12  2-- 4  5-- 8  4-- 6  5-- 7  6-- 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [21]  7-- 9  8--10  9--11  3--10</span>
 <span class="r-in"><span><span class="fu">generate_scalefree</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">0.25</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH d7d5853 U--- 12 11 -- Barabasi graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 011676f U--- 12 11 -- Barabasi graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), power (g/n), m (g/n), zero.appeal (g/n), algorithm</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | (g/c)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from d7d5853:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 011676f:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1-- 2 1-- 3 2-- 4 4-- 5 1-- 6 5-- 7 2-- 8 1-- 9 2--10 7--11 7--12</span>
 <span class="r-in"><span><span class="fu">generate_scalefree</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">1.25</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH f33b99a U--- 12 11 -- Barabasi graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 33bfeec U--- 12 11 -- Barabasi graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), power (g/n), m (g/n), zero.appeal (g/n), algorithm</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | (g/c)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from f33b99a:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 33bfeec:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 2  1-- 3  1-- 4  3-- 5  3-- 6  6-- 7  3-- 8  4-- 9  1--10  4--11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11] 10--12</span>
 <span class="r-in"><span><span class="fu">generate_fire</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></span>
