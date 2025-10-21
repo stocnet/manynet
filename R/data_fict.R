@@ -252,9 +252,13 @@
 #'
 #' @description
 #'   Love Actually is a 2003 British romantic comedy film.
-#'   This is a two-mode network of 20 characters and their appearances 
-#'   across 76 scenes.
-#'   The data was collected by David Robinson as parsed from the script. 
+#'   David Robinson's data is a two-mode network of 20 characters and their 
+#'   appearances across 76 scenes, as parsed from the script.
+#'   
+#'   Added to this are multiplex, one-mode networks of character relationships,
+#'   including "romantic", "family", "friendship", and "professional" ties.
+#'   These were added by Korakot Janteerasakul from the following source:
+#'   \url{https://en.wikipedia.org/wiki/Love_Actually#/media/File:Love_Actually_(2003)_Interconnections.svg}.
 #'   
 #' @docType data
 #' @keywords datasets
