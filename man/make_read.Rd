@@ -10,6 +10,7 @@
 \alias{read_dynetml}
 \alias{read_graphml}
 \alias{read_gml}
+\alias{read_gdf}
 \title{Making networks from external files}
 \source{
 \code{read_ucinet()} kindly supplied by Christian Steglich,
@@ -31,6 +32,8 @@ read_dynetml(file = file.choose())
 read_graphml(file = file.choose())
 
 read_gml(file = file.choose())
+
+read_gdf(file = file.choose())
 }
 \arguments{
 \item{file}{A character string with the system path to the file to import.
@@ -60,9 +63,9 @@ with \code{{manynet}}'s \code{as_} methods.
 }
 \description{
 Researchers regularly need to work with a variety of external data formats.
-The following functions offer ways to import from some common external
-file formats into objects that \code{{manynet}} and other graph/network packages
-in R can work with:
+The following functions enable importing from some common external file
+formats into objects that \code{{manynet}} and other graph/network packages in R
+can work with:
 \itemize{
 \item \code{read_matrix()} imports adjacency matrices from Excel/csv files.
 \item \code{read_edgelist()} imports edgelists from Excel/csv files.
@@ -71,6 +74,8 @@ in R can work with:
 \item \code{read_ucinet()} imports UCINET files from the header (.##h).
 \item \code{read_dynetml()} imports DyNetML interchange format for rich social network data.
 \item \code{read_graphml()} imports GraphML files.
+\item \code{read_gml()} imports GML files.
+\item \code{read_gdf()} imports GDF files.
 }
 }
 \details{
