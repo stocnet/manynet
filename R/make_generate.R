@@ -60,19 +60,19 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
     m <- net_ties(n)
     directed <- is_directed(n)
     if(is_twomode(n)){
-      # if (utils::packageVersion("igraph") >= "2.2.0") {
-      #   g <- igraph::sample_bipartite_gnm(net_dims(n)[1], 
-      #                                     net_dims(n)[2],
-      #                                     m = m,
-      #                                     directed = directed,
-      #                                     mode = "out")        
-      # } else {
+      if (utils::packageVersion("igraph") >= "2.2.0") {
+        g <- igraph::sample_bipartite_gnm(net_dims(n)[1],
+                                          net_dims(n)[2],
+                                          m = m,
+                                          directed = directed,
+                                          mode = "out")
+      } else {
         g <- igraph::sample_bipartite(net_dims(n)[1], 
                                       net_dims(n)[2],
                                       m = m, type = "gnm",
                                       directed = directed,
                                       mode = "out")
-      # }
+      }
     } else {
       g <- igraph::sample_gnm(net_nodes(n), 
                               m = m,
@@ -89,31 +89,31 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
   } else if (length(n) == 2) {
     if(p > 1){
       if(!as.integer(p)==p) snet_abort("`p` must be an integer if above 1.")
-      # if (utils::packageVersion("igraph") >= "2.2.0") {
-      #   g <- igraph::sample_bipartite_gnm(n[1], n[2],
-      #                                     m = p,
-      #                                     directed = directed,
-      #                                     mode = "out")        
-      # } else {
+      if (utils::packageVersion("igraph") >= "2.2.0") {
+        g <- igraph::sample_bipartite_gnm(n[1], n[2],
+                                          m = p,
+                                          directed = directed,
+                                          mode = "out")
+      } else {
         g <- igraph::sample_bipartite(n[1], n[2],
                                       m = p,
                                       type = "gnm",
                                       directed = directed,
                                       mode = "out")
-    # }
+    }
   } else {
-    # if (utils::packageVersion("igraph") >= "2.2.0") {
-    #   g <- igraph::sample_bipartite_gnp(n[1], n[2],
-    #                                     p = p,
-    #                                     directed = directed,
-    #                                     mode = "out")        
-    # } else {
+    if (utils::packageVersion("igraph") >= "2.2.0") {
+      g <- igraph::sample_bipartite_gnp(n[1], n[2],
+                                        p = p,
+                                        directed = directed,
+                                        mode = "out")
+    } else {
       g <- igraph::sample_bipartite(n[1], n[2],
                                     p = p,
                                     type = "gnp",
                                     directed = directed,
                                     mode = "out")
-    # }
+    }
     }
     
   } else {
