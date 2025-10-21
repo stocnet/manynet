@@ -4,9 +4,9 @@
 #'
 #' @description 
 #'   Researchers regularly need to work with a variety of external data formats.
-#'   The following functions offer ways to import from some common external
-#'   file formats into objects that `{manynet}` and other graph/network packages
-#'   in R can work with:
+#'   The following functions enable importing from some common external file 
+#'   formats into objects that `{manynet}` and other graph/network packages in R 
+#'   can work with:
 #' 
 #'   - `read_matrix()` imports adjacency matrices from Excel/csv files.
 #'   - `read_edgelist()` imports edgelists from Excel/csv files.
@@ -15,6 +15,8 @@
 #'   - `read_ucinet()` imports UCINET files from the header (.##h).
 #'   - `read_dynetml()` imports DyNetML interchange format for rich social network data.
 #'   - `read_graphml()` imports GraphML files.
+#'   - `read_gml()` imports GML files.
+#'   - `read_gdf()` imports GDF files.
 #' @details
 #'   Note that these functions are not as actively maintained as others
 #'   in the package, so please let us know if any are not currently working
