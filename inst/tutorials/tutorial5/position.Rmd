@@ -10,12 +10,12 @@ description: >
   identify and interpret structurally equivalent nodes.
 ---
 
-```{r pkgs, include = FALSE}
+```{r pkgs, include = FALSE, eval=TRUE}
 library(manynet)
 library(autograph)
 ```
 
-```{r setup, include = FALSE, purl=FALSE}
+```{r setup, include = FALSE, purl=FALSE, eval=TRUE}
 library(learnr)
 knitr::opts_chunk$set(echo = FALSE)
 clear_glossary()
