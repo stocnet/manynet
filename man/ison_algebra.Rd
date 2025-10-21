@@ -6,8 +6,8 @@
 \title{Multiplex graph object of friends, social, and task ties (McFarland 2001)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # M182 Algebra Class --------------------------------------------------------
-#> # A multiplex, weighted, directed network of 16 nodes and 279 social, tasks,
-#> and friends arcs
+#> # A multiplex, weighted, directed network of 16 nodes and 62 friends, 129
+#> social, and 88 tasks ties
 #> 
 #> -- Ties
 #> # A tibble: 279 x 4

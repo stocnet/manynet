@@ -6,8 +6,8 @@
 \title{One-mode multiplex, directed network of managers of a high-tech company (Krackhardt 1987)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # High-tech company managers ------------------------------------------------
-#> # A multiplex, directed network of 21 managers and 312 friends, advice, and
-#> reports arcs
+#> # A multiplex, directed network of 21 managers and 190 advice, 102 friends, and
+#> 20 reports ties
 #> 
 #> -- Nodes
 #> # A tibble: 21 x 4

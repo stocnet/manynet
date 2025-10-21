@@ -6,8 +6,8 @@
 \title{Four multiplex one-mode physician diffusion data (Coleman, Katz, and Menzel, 1966)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> $Peoria
-#> # A multiplex, directed network of 117 nodes and 543 friendship, advice, and
-#> discussion arcs
+#> # A multiplex, directed network of 117 nodes and 242 advice, 154 discussion,
+#> and 147 friendship ties
 #> 
 #> -- Nodes
 #> # A tibble: 117 x 12
@@ -37,8 +37,8 @@
 #> 
 #> 
 #> $Bloomington
-#> # A multiplex, directed network of 50 nodes and 211 friendship, discussion, and
-#> advice arcs
+#> # A multiplex, directed network of 50 nodes and 94 advice, 57 discussion, and
+#> 60 friendship ties
 #> 
 #> -- Nodes
 #> # A tibble: 50 x 12
@@ -68,8 +68,8 @@
 #> 
 #> 
 #> $Quincy
-#> # A multiplex, directed network of 44 nodes and 174 advice, discussion, and
-#> friendship arcs
+#> # A multiplex, directed network of 44 nodes and 70 advice, 52 discussion, and
+#> 52 friendship ties
 #> 
 #> -- Nodes
 #> # A tibble: 44 x 12
@@ -99,8 +99,8 @@
 #> 
 #> 
 #> $Galesburg
-#> # A multiplex, directed network of 35 nodes and 171 advice, discussion, and
-#> friendship arcs
+#> # A multiplex, directed network of 35 nodes and 74 advice, 46 discussion, and
+#> 51 friendship ties
 #> 
 #> -- Nodes
 #> # A tibble: 35 x 12

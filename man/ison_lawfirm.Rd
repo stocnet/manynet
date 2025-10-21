@@ -6,8 +6,8 @@
 \title{One-mode lawfirm (Lazega 2001)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Lazega's Lawyers ----------------------------------------------------------
-#> # A multiplex, directed network of 71 attorneys and 2571 friends, advice, and
-#> cowork arcs
+#> # A multiplex, directed network of 71 attorneys and 892 advice, 1104 cowork,
+#> and 575 friends ties
 #> 
 #> -- Nodes
 #> # A tibble: 71 x 7
