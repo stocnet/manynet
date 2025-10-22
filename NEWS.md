@@ -9,9 +9,17 @@
 
 - Fixed `join_nodes()` not recognising nodelists correctly
 
+## Measuring
+
+- Fixed #114 by updating net_heterophily documentation
+- Added `node_randomwalk()` closeness centrality
+- Added `node_subgraph()` centrality
+
 ## Tutorials
 
 - Fixed bug where tutorials were not autoloading necessary packages
+- Moved glossary to own script and added more tutorial 5-relevant entries
+- Added more glossary keys to tutorial 5
 
 ## Data
 
