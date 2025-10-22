@@ -450,7 +450,7 @@ read_gdf <- function(file = file.choose()) {
     collapse = ","
   )
   
-  ## Some links have commas in them wo/quotation marks, thus messing
+  ## Some links have commas in them without quotation marks, thus messing
   ## up the fread. We just remove troubled rows, and check n commas in
   ## the header row
   n_sep <- lengths(regmatches(node_data, gregexpr(",", node_data)))

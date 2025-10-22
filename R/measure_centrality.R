@@ -832,6 +832,8 @@ node_randomwalk <- function(.data, normalized = TRUE){
   make_node_measure(out, .data)
 }
 
+# This is a helper function to compute the Moore-Penrose generalized inverse
+# of a matrix using its singular value decomposition (SVD).
 .ginv <- function (X, tol = sqrt(.Machine$double.eps)){
   if (length(dim(X)) > 2L || !(is.numeric(X) || is.complex(X))) 
     stop("'X' must be a numeric or complex matrix")
