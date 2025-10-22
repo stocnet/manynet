@@ -41,7 +41,7 @@ by default, including for two-mode networks."><meta property="og:image" content=
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.4</span>
       </span>
     </div>
 
@@ -121,6 +121,8 @@ by default, including for two-mode networks.</p>
 <span><span class="fu">node_authority</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">node_hub</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">node_subgraph</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">tie_eigenvector</span><span class="op">(</span><span class="va">.data</span>, normalized <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
@@ -208,9 +210,9 @@ the network size.</p>
     <h2>Alpha centrality</h2>
 
 
-<p>Alpha or Katz (or Katz-Bonacich) centrality operates better than eigenvector centrality
-for directed networks.
-Eigenvector centrality will return 0s for all nodes not in the main strongly-connected component.
+<p>Alpha or Katz (or Katz-Bonacich) centrality operates better than
+eigenvector centrality for directed networks because eigenvector centrality
+will return 0s for all nodes not in the main strongly-connected component.
 Each node's alpha centrality can be defined as:
 $$x_i = \frac{1}{\lambda} \sum_{j \in N} a_{i,j} x_j + e_i$$
 where \(a_{i,j} = 1\) if \(i\) is linked to \(j\) and 0 otherwise,
@@ -224,6 +226,26 @@ each secondary connection (or tertius) would be worth \((0.5)^2 = 0.25\),
 each tertiary connection would be worth \((0.5)^3 = 0.125\), and so on.</p>
 <p>Rather than performing this iteration though,
 most routines solve the equation \(x = (I - \frac{1}{\lambda} A^T)^{-1} e\).</p>
+    </div>
+    <div id="subgraph-centrality">
+    <h2>Subgraph centrality</h2>
+
+
+<p>Subgraph centrality measures the participation of a node in all subgraphs
+in the network, giving higher weight to smaller subgraphs.
+It is defined as:
+$$C_S(i) = \sum_{k=0}^{\infty} \frac{(A^k)_{ii}}{k!}$$
+where \((A^k)_{ii}\) is the \(i\)th diagonal element of the \(k\)th power
+of the adjacency matrix \(A\), representing the number of closed walks
+of length \(k\) starting and ending at node \(i\).
+Weighting by \(\frac{1}{k!}\) ensures that shorter walks contribute more
+to the centrality score than longer walks.</p>
+<p>Subgraph centrality is a good choice of measure when the focus is on
+local connectivity and clustering around a node,
+as it captures the extent to which a node is embedded in tightly-knit
+groups within the network.
+Note though that because of the way spectral decomposition is used to
+calculate this measure, this is not a good measure for very large graphs.</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -278,6 +300,16 @@ most routines solve the equation \(x = (I - \frac{1}{\lambda} A^T)^{-1} e\).</p>
 "Authoritative sources in a hyperlinked environment".
 <em>Journal of the ACM</em> 46(5): 604–632.
 <a href="https://doi.org/10.1145/324133.324140" class="external-link">doi:10.1145/324133.324140</a></p>
+</div>
+
+<div class="section">
+<h3 id="on-subgraph-centrality">On subgraph centrality<a class="anchor" aria-label="anchor" href="#on-subgraph-centrality"></a></h3>
+
+
+<p>Estrada, Ernesto and Rodríguez-Velázquez, Juan A. 2005.
+"Subgraph centrality in complex networks".
+<em>Physical Review E</em> 71(5): 056103.
+<a href="https://doi.org/10.1103/PhysRevE.71.056103" class="external-link">doi:10.1103/PhysRevE.71.056103</a></p>
 </div>
 
     </div>
