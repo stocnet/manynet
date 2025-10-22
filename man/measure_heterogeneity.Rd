@@ -82,7 +82,7 @@ The maximum value depends on the number of categories and
 whether nodes can be evenly distributed across categories.
 }
 
-\section{net_homophily}{
+\section{net_heterophily}{
 
 Given a partition of a network into a number of mutually exclusive groups then
 The E-I index is the number of ties between (or \emph{external}) nodes

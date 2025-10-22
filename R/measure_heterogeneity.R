@@ -120,7 +120,7 @@ node_diversity <- function(.data, attribute){
 }
 
 #' @rdname measure_heterogeneity 
-#' @section net_homophily:
+#' @section net_heterophily:
 #'   Given a partition of a network into a number of mutually exclusive groups then 
 #'   The E-I index is the number of ties between (or _external_) nodes 
 #'   grouped in some mutually exclusive categories
