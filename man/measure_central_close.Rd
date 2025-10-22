@@ -9,6 +9,7 @@
 \alias{node_eccentricity}
 \alias{node_distance}
 \alias{node_vitality}
+\alias{node_randomwalk}
 \alias{tie_closeness}
 \alias{net_closeness}
 \alias{net_reach}
@@ -28,6 +29,8 @@ node_eccentricity(.data, normalized = TRUE)
 node_distance(.data, from, to, normalized = TRUE)
 
 node_vitality(.data, normalized = TRUE)
+
+node_randomwalk(.data, normalized = TRUE)
 
 tie_closeness(.data, normalized = TRUE)
 
@@ -170,6 +173,22 @@ The closeness vitality of a node is the change in the sum of all distances
 in a network, also known as the Wiener Index, when that node is removed.
 Note that the closeness vitality may be negative infinity if
 removing that node would disconnect the network.
+Formally:
+\deqn{C_V(i) = \sum_{j,k} d(j,k) - \sum_{j,k} d(j,k,G\ i)}
+where \eqn{d(j,k,G\ i)} is the distance between nodes \eqn{j} and \eqn{k}
+in the network with node \eqn{i} removed.
+}
+
+\section{Random walk closeness centrality}{
+
+Random walk closeness centrality is based on the average length of
+random walks starting at all other nodes to reach a given node.
+It is defined as the inverse of the average hitting time to a node.
+This means that higher values are given to nodes that can be reached
+more quickly on average by random walks starting at other nodes.
+Formally:
+\deqn{C_{RW}(i) = \frac{1}{\frac{1}{N-1} \sum_{j \neq i} H_{ji}}}
+where \eqn{H_{ji}} is the hitting time from node \eqn{j} to node \eqn{i}.
 }
 
 \examples{
@@ -233,12 +252,23 @@ Hage, Per, and Frank Harary. 1995.
 \doi{10.1016/0378-8733(94)00248-9}
 }
 
+\subsection{On closeness vitality centrality}{
+
 Koschuetzki, Dirk, Katharina Lehmann, Leon Peeters, Stefan Richter,
 Dagmar Tenfelde-Podehl, and Oliver Zlotowski. 2005.
 "Centrality Indices", in
 Brandes, Ulrik, and Thomas Erlebach (eds.).
 \emph{Network Analysis: Methodological Foundations}.
 Springer: Berlin, pp. 16-61.
+}
+
+\subsection{On random walk closeness centrality}{
+
+Noh, J.D. and R. Rieger. 2004.
+"Random Walks on Complex Networks".
+\emph{Physical Review Letters}, 92(11): 118701.
+\doi{10.1103/PhysRevLett.92.118701}
+}
 }
 \seealso{
 Other centrality: 

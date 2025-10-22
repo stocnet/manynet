@@ -1,3 +1,30 @@
+# manynet 1.6.4
+
+## Making
+
+- Added `read_gdf()` for importing GDF files
+- Improved mnet object printing to publish the number of each type of tie in multiplex networks
+
+## Modifying
+
+- Fixed `join_nodes()` not recognising nodelists correctly
+
+## Measuring
+
+- Fixed #114 by updating net_heterophily documentation
+- Added `node_randomwalk()` closeness centrality
+- Added `node_subgraph()` centrality
+
+## Tutorials
+
+- Fixed bug where tutorials were not autoloading necessary packages
+- Moved glossary to own script and added more tutorial 5-relevant entries
+- Added more glossary keys to tutorial 5
+
+## Data
+
+- Improved `fict_actually` to be a multiplex network (thanks @korakotbua)
+
 # manynet 1.6.3
 
 ## Tutorials

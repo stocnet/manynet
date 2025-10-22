@@ -10,12 +10,12 @@ description: >
   identify and interpret structurally equivalent nodes.
 ---
 
-```{r pkgs, include = FALSE}
+```{r pkgs, include = FALSE, eval=TRUE}
 library(manynet)
 library(autograph)
 ```
 
-```{r setup, include = FALSE, purl=FALSE}
+```{r setup, include = FALSE, purl=FALSE, eval=TRUE}
 library(learnr)
 knitr::opts_chunk$set(echo = FALSE)
 clear_glossary()
@@ -90,7 +90,7 @@ friendship (friends), social (social) and task interactions (tasks).
 
 ### Separating multiplex networks
 
-As a multiplex network, 
+As a `r gloss("multiplex")` network, 
 there are actually three different types of ties in this network.
 We can extract them and investigate them separately using `to_uniplex()`.
 Within the parentheses, put the multiplex object's name,
@@ -123,7 +123,7 @@ tasks <- to_uniplex(ison_algebra, "tasks")
 graphr(tasks) + ggtitle("Task")
 ```
 
-Note also that these are weighted networks.
+Note also that these are `r gloss("weighted")` networks.
 `graphr()` automatically recognises these different weights and plots them.
 
 ```{r strongties-qa, echo=FALSE, purl = FALSE}
@@ -195,7 +195,7 @@ question("There are a number of measures that might be used to approximate the c
 One common way of thinking about how innovations and ideas might flow across
 the network is to think about where the bottlenecks are.
 Ties that are the bottlenecks for information to flow from one part of the
-network to another are called bridges.
+network to another are called `r gloss("bridges", "bridge")`.
 Remember, this means that only ties can be bridges,
 though a node-based measure that tracks the count of bridges to which a node
 is adjacent is available.
@@ -209,8 +209,8 @@ any(node_bridges(friends)>0)
 
 ### Constraint
 
-But some nodes do seem more deeply embedded in the network than others,
-Let's take a look at which actors are least _constrained_ 
+But some nodes do seem more deeply embedded in the network than others.
+Let's take a look at which actors are least `r gloss("constrained", "constraint")`
 by their position in the *task* network.
 `{manynet}` makes this easy enough with the `node_constraint()` function.
 
@@ -269,10 +269,25 @@ tasks <- tasks %>%
 graphr(tasks, node_size = "constraint", node_color = "low_constraint")
 ```
 
-Why minimum? Because constraint measures how well connected each node's partners are,
-with the implication that having few partners that are already connected to each other puts a node in an advantageous position to identify and share novel solutions to problems.
+Why minimum? 
+Because constraint measures how well connected each node's partners are,
+with the implication that having few partners that are already connected to each 
+other puts a node in an advantageous position to identify and 
+share novel solutions to problems.
 So what can we learn from this plot
 about where innovation might occur within this network?
+
+```{r constraintQ, echo=FALSE, purl = FALSE}
+question("Do bridges innovate?",
+         answer("No",
+                correct = TRUE,
+                message = learnr::random_praise()),
+         answer("Yes",
+                message = "Bridges can be important conduits for information, but ties do not typically have agency. Nodes do. Nodes in structural holes are called brokers. Nodes that are located in structural holes that would be there but for the node and their ties can be identified through various measures such as the number of bridges they are adjacent to, or their constraint score."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
 
 ## Structural Equivalence
 
@@ -280,7 +295,7 @@ about where innovation might occur within this network?
 
 Next we might ask ourselves what (other) roles there are in the network?
 We want to know who plays what role in this algebra class.
-Let us begin with structural equivalence.
+Let us begin with `r gloss("structural equivalence", "structeq")`.
 
 ```{r equiv-qa, echo=FALSE, purl = FALSE}
 question("Structural equivalence means identifying classes of nodes with...",
@@ -290,7 +305,9 @@ question("Structural equivalence means identifying classes of nodes with...",
          answer("same/similar pattern of ties.",
                 message = "This is the definition for regular equivalence."),
          answer("same/similar distance from all others.",
-                message = "This is the definition for automorphic equivalence.")
+                message = "This is the definition for automorphic equivalence."),
+         allow_retry = TRUE,
+         random_answer_order = TRUE
 )
 ```
 
@@ -312,6 +329,7 @@ ison_algebra %>%
   graphr(node_color = "se")
 ```
 
+That is all.
 But actually, a lot is going on behind the scenes here that we can unpack.
 Understanding what is going on behind the scenes is important for understanding
 how these classes are identified and how to interpret them.
@@ -349,10 +367,9 @@ node_by_tie(ison_algebra)
 dim(node_by_tie(ison_algebra))
 ```
 
-We can see that the result is a matrix of 16 rows
-and 96 columns, 
-because we want to catalogue or take a census of all the different incoming/outgoing partners 
-our 16 nodes might have across these three networks.
+We can see that the result is a matrix of 16 rows and 96 columns, 
+because we want to catalogue or take a census of all the different 
+incoming/outgoing partners our 16 nodes might have across these three networks.
 Note also that the result is a weighted matrix; 
 what would you do if you wanted it to be binary?
 
@@ -376,7 +393,8 @@ ison_algebra %>%
 
 Note that `node_by_tie()` does not need to be passed to `node_in_structural()` ---
 this is done automatically!
-However, the more generic `node_in_equivalence()` is available and can be used with whichever tie census is desired.
+However, the more generic `node_in_equivalence()` is available and can be used 
+with whichever census (`node_by_*()` output) is desired.
 Feel free to explore using some of the other censuses available in `{manynet}`,
 though some common ones are already used in the other equivalence convenience functions,
 e.g. `node_by_triad()` in `node_in_regular()` 
@@ -384,7 +402,8 @@ and `node_by_path()` in `node_in_automorphic()`.
 
 ### Step two: growing a tree of similarity
 
-The next part takes this census and creates a dendrogram based on distance or dissimilarity among the nodes' census profiles.
+The next part takes this census and creates a `r gloss("dendrogram")` based on 
+distance or dissimilarity among the nodes' census profiles.
 This is all done internally within e.g. `node_in_structural()`,
 though there are two important parameters that can be set to obtain different results.
 
@@ -394,7 +413,7 @@ so that help page should be consulted for more details.
 By default `"euclidean"` is used.
 
 Second, we can also set the type of clustering algorithm employed.
-By default, `{manynet}`'s equivalence functions use hierarchical clustering, `"hier"`,
+By default, `{manynet}`'s equivalence functions use `r gloss("hierarchical clustering","hierclust")`, `"hier"`,
 but for compatibility and enthusiasts, we also offer `"concor"`,
 which implements a CONCOR (CONvergence of CORrelations) algorithm.
 
@@ -455,7 +474,9 @@ or the number of clusters.
 Remember, the further to the right the red line is 
 (the lower on the tree the cut point is)
 the more dissimilar we're allowing nodes in the same cluster to be.
-We could set this ourselves by just passing `k` an integer.
+We could set this ourselves by just passing `k` an integer, say `k = 2`.
+What we are saying here is that we want to partition the nodes
+into two clusters, no matter how dissimilar they are.
 
 ```{r k-discrete, exercise = TRUE, exercise.setup = "varyclust"}
 plot(node_in_structural(alge, k = 2))
@@ -508,8 +529,8 @@ plot(node_in_structural(alge, k = "silhouette"))
 
 Ok, so it looks like the elbow method returns `k == 3` as a good trade-off
 between fit and parsimony.
-The silhouette method, by contrast, sees `k == 4` as maximising cluster similarity
-and dissimilarity.
+The silhouette method, by contrast, sees `k == 4` as maximising cluster 
+similarity and dissimilarity.
 Either is probably fine here, 
 and there is much debate around how to select the number of clusters anyway.
 However, the silhouette method seems to do a better job of identifying 
@@ -547,7 +568,8 @@ but here it essentially just reports nodes' identity.
 
 ### Summarising profiles
 
-Ok, so now we have a result from establishing nodes' membership in structurally equivalent classes.
+Ok, so now we have a result from establishing nodes' membership in 
+structurally equivalent classes.
 We can graph this of course, as above:
 
 ```{r strplot, exercise = TRUE, exercise.setup = "varyclust"}
@@ -556,9 +578,10 @@ alge %>%
   graphr(node_color = "se")
 ```
 
-While this plot adds the structurally equivalent classes information to our earlier graph,
-it doesn't really help us understand how the classes relate.
-That is, we might be less interested in how the individuals in the different classes relate, and more interested in how the different classes relate in aggregate.
+While this plot adds the structurally equivalent classes information to our 
+earlier graph, it doesn't really help us understand how the classes relate.
+That is, we might be less interested in how the individuals in the different 
+classes relate, and more interested in how the different classes relate in aggregate.
 
 <img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmRlczhzaDJzaTBma3Q0c3pydDJjZTFkY20yMmhzbW13YmU3cnl6ZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9dg/QIEol1DjEwSOc9PvLu/giphy.gif" alt="gif of mortys learning about roles"/>
 
@@ -651,7 +674,7 @@ A reduced graph is a transformation of a network such that
 the nodes are no longer the individual nodes but the groups of one or more nodes as a class,
 and the ties between these blocked nodes can represent the sum or average tie between these classes.
 Of course, this means that there can be self-ties or loops,
-because even if the original network was simple (not complex), 
+because even if the original network was simple (not `r gloss("complex")`), 
 any within-class ties will end up becoming loops and thus the network will be complex.
 
 ```{r structblock, exercise = TRUE, exercise.setup = "varyclust", warning=FALSE}
@@ -671,7 +694,8 @@ As this is a multiplex network, you can make this a uniplex network first.
 
 ```
 
-An extension can be to also explore automorphically equivalent classes.
+An extension can be to also explore `r gloss("regularly equivalent","regulareq")` 
+or `r gloss("automorphically equivalent","automorphiceq")` classes.
 
 ## Glossary
 

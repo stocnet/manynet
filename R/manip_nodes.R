@@ -173,7 +173,9 @@ join_nodes <- function(.data, object2, .by = NULL,
                        join_type = c("full","left", "right", "inner")){
   join_type <- match.arg(join_type)
   out <- as_tidygraph(.data)
-  object2 <- as_tidygraph(object2)
+  if(is_graph(object2)){
+    object2 <- as_tidygraph(object2)
+  }
   switch(join_type,
          "full" = dplyr::full_join(out, object2, by = .by, copy = TRUE),
          "left" = dplyr::left_join(out, object2, by = .by, copy = TRUE),

@@ -4,9 +4,9 @@
 #'
 #' @description 
 #'   Researchers regularly need to work with a variety of external data formats.
-#'   The following functions offer ways to import from some common external
-#'   file formats into objects that `{manynet}` and other graph/network packages
-#'   in R can work with:
+#'   The following functions enable importing from some common external file 
+#'   formats into objects that `{manynet}` and other graph/network packages in R 
+#'   can work with:
 #' 
 #'   - `read_matrix()` imports adjacency matrices from Excel/csv files.
 #'   - `read_edgelist()` imports edgelists from Excel/csv files.
@@ -15,6 +15,8 @@
 #'   - `read_ucinet()` imports UCINET files from the header (.##h).
 #'   - `read_dynetml()` imports DyNetML interchange format for rich social network data.
 #'   - `read_graphml()` imports GraphML files.
+#'   - `read_gml()` imports GML files.
+#'   - `read_gdf()` imports GDF files.
 #' @details
 #'   Note that these functions are not as actively maintained as others
 #'   in the package, so please let us know if any are not currently working
@@ -409,6 +411,75 @@ read_graphml <- function(file = file.choose()) {
 read_gml <- function(file = file.choose()) {
   if(missing(file)) cli::cli_alert_success("Executing: read_gml('{file}')")
   as_tidygraph(igraph::read_graph(file, format = "gml"))
+}
+
+#' @rdname make_read
+#' @export
+read_gdf <- function(file = file.choose()) {
+  if(missing(file)) cli::cli_alert_success("Executing: read_gdf('{file}')")
+  gdf <- readLines(file)
+  
+  edge_place <- grep("edgedef>", gdf)
+  if (length(edge_place) > 0) {
+    has_edge_data <- length(length(edge_place):length(gdf)) > 1
+    node_data <- gdf[1:(edge_place - 1)]
+  } else {
+    has_edge_data <- FALSE
+    node_data <- gdf
+  }
+  
+  if (has_edge_data) {
+    snet_minor_info("Extracting tie data.")
+    edge_data <- gdf[edge_place:length(gdf)]
+    edge_data[1] <- sub("edgedef>node", "node", edge_data[1])
+    edge_data <- read.table(text = edge_data, sep = ",", 
+                            header = TRUE, stringsAsFactors = FALSE)
+    if(is.numeric(edge_data[,1])) edge_data[,1] <- as.character(edge_data[,1])
+    if(is.numeric(edge_data[,2])) edge_data[,2] <- as.character(edge_data[,2])
+    names(edge_data) <- c("from","to")
+  } else {
+    snet_minor_info("No tie data found.")
+    edge_data <- data.frame()
+  }
+  
+  snet_minor_info("Extracting node data")
+  node_data[1] <- gsub("nodedef>name", "name", node_data[1])
+  node_data[1] <- paste0(
+    sapply(strsplit(node_data[1], ","),
+           function(x) gsub("^(.*) [A-Z]+$", "\\1", x)),
+    collapse = ","
+  )
+  
+  ## Some links have commas in them without quotation marks, thus messing
+  ## up the fread. We just remove troubled rows, and check n commas in
+  ## the header row
+  n_sep <- lengths(regmatches(node_data, gregexpr(",", node_data)))
+  bad_apples <- which(n_sep != stats::median(n_sep[2:length(n_sep)]))
+  bad_apples <- bad_apples[bad_apples != 1]
+  if (length(bad_apples) > 0) {
+    node_data <- node_data[-bad_apples]
+    snet_minor_info("Removed {length(bad_apples)} row{?s} due to comma errors.")
+  }
+  if (n_sep[1] < stats::median(n_sep)) {
+    node_data[1] <- paste0(
+      node_data[1],
+      paste0(rep(",", (stats::median(n_sep[2:length(n_sep)]) - n_sep[1])),
+             collapse = "")
+    )
+  }
+  
+  ## The combine and fread, if there is any node data.
+  if (length(node_data) > 1) {
+    node_data <- data.frame(do.call(rbind, strsplit(node_data, ",")))
+    names(node_data) <- node_data[1,]
+    node_data <- node_data[-1, ]
+  } else {
+    snet_minor_info("No node data found.")
+    node_data <- data.frame()
+    has_node_data <- FALSE
+  }
+  
+  as_tidygraph(list(nodes = node_data, ties = edge_data))
 }
 
 # Write ####

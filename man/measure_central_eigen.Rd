@@ -8,6 +8,7 @@
 \alias{node_pagerank}
 \alias{node_authority}
 \alias{node_hub}
+\alias{node_subgraph}
 \alias{tie_eigenvector}
 \alias{net_eigenvector}
 \title{Measures of eigenvector-like centrality and centralisation}
@@ -23,6 +24,8 @@ node_pagerank(.data)
 node_authority(.data)
 
 node_hub(.data)
+
+node_subgraph(.data)
 
 tie_eigenvector(.data, normalized = TRUE)
 
@@ -121,9 +124,9 @@ the network size.
 
 \section{Alpha centrality}{
 
-Alpha or Katz (or Katz-Bonacich) centrality operates better than eigenvector centrality
-for directed networks.
-Eigenvector centrality will return 0s for all nodes not in the main strongly-connected component.
+Alpha or Katz (or Katz-Bonacich) centrality operates better than
+eigenvector centrality for directed networks because eigenvector centrality
+will return 0s for all nodes not in the main strongly-connected component.
 Each node's alpha centrality can be defined as:
 \deqn{x_i = \frac{1}{\lambda} \sum_{j \in N} a_{i,j} x_j + e_i}
 where \eqn{a_{i,j} = 1} if \eqn{i} is linked to \eqn{j} and 0 otherwise,
@@ -139,6 +142,26 @@ each tertiary connection would be worth \eqn{(0.5)^3 = 0.125}, and so on.
 
 Rather than performing this iteration though,
 most routines solve the equation \eqn{x = (I - \frac{1}{\lambda} A^T)^{-1} e}.
+}
+
+\section{Subgraph centrality}{
+
+Subgraph centrality measures the participation of a node in all subgraphs
+in the network, giving higher weight to smaller subgraphs.
+It is defined as:
+\deqn{C_S(i) = \sum_{k=0}^{\infty} \frac{(A^k)_{ii}}{k!}}
+where \eqn{(A^k)_{ii}} is the \eqn{i}th diagonal element of the \eqn{k}th power
+of the adjacency matrix \eqn{A}, representing the number of closed walks
+of length \eqn{k} starting and ending at node \eqn{i}.
+Weighting by \eqn{\frac{1}{k!}} ensures that shorter walks contribute more
+to the centrality score than longer walks.
+
+Subgraph centrality is a good choice of measure when the focus is on
+local connectivity and clustering around a node,
+as it captures the extent to which a node is embedded in tightly-knit
+groups within the network.
+Note though that because of the way spectral decomposition is used to
+calculate this measure, this is not a good measure for very large graphs.
 }
 
 \examples{
@@ -188,6 +211,14 @@ Kleinberg, Jon. 1999.
 "Authoritative sources in a hyperlinked environment".
 \emph{Journal of the ACM} 46(5): 604–632.
 \doi{10.1145/324133.324140}
+}
+
+\subsection{On subgraph centrality}{
+
+Estrada, Ernesto and Rodríguez-Velázquez, Juan A. 2005.
+"Subgraph centrality in complex networks".
+\emph{Physical Review E} 71(5): 056103.
+\doi{10.1103/PhysRevE.71.056103}
 }
 }
 \seealso{

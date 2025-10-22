@@ -6,32 +6,32 @@
 \title{Two-mode network of Love Actually characters and their scene appearances (Robinson 2015)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Love actually interactions ------------------------------------------------
-#> # A labelled, two-mode network of 20 characters and 76 scenes and 162
-#> appearance ties
+#> # A labelled, multiplex, two-mode network of 20 characters and 76 scenes and
+#> 162 appearance, 3 family, 7 friendship, 10 professional, and 7 romance ties
 #> 
 #> -- Nodes
-#> # A tibble: 96 x 3
-#>   type  name    Actor         
-#>   <lgl> <chr>   <chr>         
-#> 1 FALSE Aurelia Lúcia Moniz   
-#> 2 FALSE Billy   Bill Nighy    
-#> 3 FALSE Colin   Kris Marshall 
-#> 4 FALSE Daniel  Liam Neeson   
-#> 5 FALSE Harry   Alan Rickman  
-#> 6 FALSE Jack    Martin Freeman
+#> # A tibble: 96 x 6
+#>   type  name    Actor          Gender Nationality Occupation        
+#>   <lgl> <chr>   <chr>          <chr>  <chr>       <chr>             
+#> 1 FALSE Aurelia Lúcia Moniz    Female Portuguese  Assistant         
+#> 2 FALSE Billy   Bill Nighy     Male   British     Singer            
+#> 3 FALSE Colin   Kris Marshall  Male   British     Travels to America
+#> 4 FALSE Daniel  Liam Neeson    Male   British     Widower           
+#> 5 FALSE Harry   Alan Rickman   Male   British     Agency Director   
+#> 6 FALSE John    Martin Freeman Male   British     Nude stand-in     
 #> # i 90 more rows
 #> 
 #> -- Ties
-#> # A tibble: 162 x 2
-#>    from    to
-#>   <int> <int>
-#> 1     1    51
-#> 2     1    57
-#> 3     1    58
-#> 4     1    63
-#> 5     1    95
-#> 6     1    96
-#> # i 156 more rows
+#> # A tibble: 189 x 3
+#>    from    to type      
+#>   <int> <int> <chr>     
+#> 1     1     7 romance   
+#> 2     1    51 appearance
+#> 3     1    57 appearance
+#> 4     1    58 appearance
+#> 5     1    63 appearance
+#> 6     1    95 appearance
+#> # i 183 more rows
 #> 
 }\if{html}{\out{</div>}}
 }
@@ -40,9 +40,13 @@ data(fict_actually)
 }
 \description{
 Love Actually is a 2003 British romantic comedy film.
-This is a two-mode network of 20 characters and their appearances
-across 76 scenes.
-The data was collected by David Robinson as parsed from the script.
+David Robinson's data is a two-mode network of 20 characters and their
+appearances across 76 scenes, as parsed from the script.
+
+Added to this are multiplex, one-mode networks of character relationships,
+including "romantic", "family", "friendship", and "professional" ties.
+These were added by Korakot Janteerasakul from the following source:
+\url{https://en.wikipedia.org/wiki/Love_Actually#/media/File:Love_Actually_(2003)_Interconnections.svg}.
 }
 \references{
 Robinson, David. 2015.

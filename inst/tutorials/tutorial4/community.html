@@ -1297,9 +1297,9 @@ learnr:::store_exercise_cache(structure(list(label = "data", global_setup = stru
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = NULL, 
-    chunks = list(list(label = "data", code = "", opts = list(
-        label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = NULL, chunks = list(list(label = "data", code = "", 
+        opts = list(label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r")), code_check = NULL, error_check = NULL, 
     check = NULL, solution = structure(c("data(\"ison_algebra\", package = \"manynet\")", 
     "?manynet::ison_algebra", "# If you want to see the network object, you can run the name of the object", 
@@ -1360,9 +1360,9 @@ learnr:::store_exercise_cache(structure(list(label = "addingnames", global_setup
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "", 
-    chunks = list(list(label = "data", code = "", opts = list(
-        label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "", chunks = list(list(label = "data", code = "", 
+        opts = list(label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "addingnames", code = "", 
         opts = list(label = "\"addingnames\"", exercise = "TRUE", 
             exercise.setup = "\"data\"", purl = "FALSE"), engine = "r")), 
@@ -1423,9 +1423,9 @@ learnr:::store_exercise_cache(structure(list(label = "separatingnets", global_se
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "", 
-    chunks = list(list(label = "data", code = "", opts = list(
-        label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "", chunks = list(list(label = "data", code = "", 
+        opts = list(label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "separatingnets", code = "", 
         opts = list(label = "\"separatingnets\"", exercise = "TRUE", 
             exercise.setup = "\"data\"", purl = "FALSE"), engine = "r")), 
@@ -1461,15 +1461,15 @@ learnr:::store_exercise_cache(structure(list(label = "separatingnets", global_se
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "densq", question = structure("Which equation is used for measuring density for a directed network:", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_f9c7e84", 
+"character")), answers = list(structure(list(id = "lnr_ans_3972e7b", 
     option = "A", value = "A", label = structure("A", html = TRUE, class = c("html", 
     "character")), correct = TRUE, message = structure("<img src=\"https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2M5cTNmZm1kdmszdmR6Yzc3MnczcWxvb3MzdHRic2N0ZncwYml2MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/YcMs3OGd89Pxu/giphy.gif\" alt=\"gif of a thumbs up\"/>", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_b7d06c7", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_43dd89b", 
     option = "B", value = "B", label = structure("B", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = structure("This is the equation for an undirected network.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_ef607ca", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_b465123", 
     option = "C", value = "C", label = structure("C", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = structure("This is the equation for a two-mode network.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
@@ -1480,7 +1480,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "densq-answer", question = "densq"), loading = NULL, 
-    random_answer_order = FALSE, allow_retry = TRUE, seed = 567860799.735569, 
+    random_answer_order = FALSE, allow_retry = TRUE, seed = 458665419.786417, 
     options = list()), class = c("learnr_radio", "tutorial_question"
 )), session = session)
 </script>
@@ -1516,9 +1516,9 @@ learnr:::store_exercise_cache(structure(list(label = "dens-explicit", global_set
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "\n", 
-    chunks = list(list(label = "data", code = "", opts = list(
-        label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "\n", chunks = list(list(label = "data", code = "", 
+        opts = list(label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "separatingnets", code = "", 
         opts = list(label = "\"separatingnets\"", exercise = "TRUE", 
             exercise.setup = "\"data\"", purl = "FALSE"), engine = "r"), 
@@ -1583,9 +1583,9 @@ learnr:::store_exercise_cache(structure(list(label = "dens", global_setup = stru
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "\n", 
-    chunks = list(list(label = "data", code = "", opts = list(
-        label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "\n", chunks = list(list(label = "data", code = "", 
+        opts = list(label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "separatingnets", code = "", 
         opts = list(label = "\"separatingnets\"", exercise = "TRUE", 
             exercise.setup = "\"data\"", purl = "FALSE"), engine = "r"), 
@@ -1619,11 +1619,11 @@ learnr:::store_exercise_cache(structure(list(label = "dens", global_setup = stru
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "dens-qa", question = structure("Is this network’s density high or low in absolute terms?", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_20bda9", 
+"character")), answers = list(structure(list(id = "lnr_ans_b9b2daa", 
     option = "High", value = "High", label = structure("High", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = structure("The closer the value is to 1, the more dense the network and the more cohesive the network is as a whole.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_bea1d3b", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_6c577f2", 
     option = "Low", value = "Low", label = structure("Low", html = TRUE, class = c("html", 
     "character")), correct = TRUE, message = structure("The closer the value is to 0, the sparser the network and the less cohesive the network is as a whole. But this is still quite typical density for a relatively small, social network like this one.  <br><br>    <img src=\"https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWs4Y292OXg5YmlvNTF3OWp4YWxmNjNpdm11c2kyMm55Z2U4eTJkeiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/6agGMtS4rEVSo/giphy.gif\" alt=\"gif of i knew it\"/>", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
@@ -1634,7 +1634,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "dens-qa-answer", question = "dens-qa"), loading = NULL, 
-    random_answer_order = FALSE, allow_retry = TRUE, seed = 1167353344.45641, 
+    random_answer_order = FALSE, allow_retry = TRUE, seed = 1351745785.87054, 
     options = list()), class = c("learnr_radio", "tutorial_question"
 )), session = session)
 </script>
@@ -1670,9 +1670,9 @@ learnr:::store_exercise_cache(structure(list(label = "recip", global_setup = str
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "\n", 
-    chunks = list(list(label = "data", code = "", opts = list(
-        label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "\n", chunks = list(list(label = "data", code = "", 
+        opts = list(label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "separatingnets", code = "", 
         opts = list(label = "\"separatingnets\"", exercise = "TRUE", 
             exercise.setup = "\"data\"", purl = "FALSE"), engine = "r"), 
@@ -1736,8 +1736,9 @@ learnr:::store_exercise_cache(structure(list(label = "recip-explanation", global
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = NULL, 
-    chunks = list(list(label = "recip-explanation", code = "tasks %>% mutate_ties(rec = tie_is_reciprocated(tasks)) %>% graphr(edge_color = \"rec\")\nnet_indegree(tasks)", 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = NULL, chunks = list(list(label = "recip-explanation", 
+        code = "tasks %>% mutate_ties(rec = tie_is_reciprocated(tasks)) %>% graphr(edge_color = \"rec\")\nnet_indegree(tasks)", 
         opts = list(label = "\"recip-explanation\"", exercise = "TRUE"), 
         engine = "r")), code_check = NULL, error_check = NULL, 
     check = NULL, solution = NULL, tests = NULL, options = list(
@@ -1796,9 +1797,9 @@ learnr:::store_exercise_cache(structure(list(label = "trans", global_setup = str
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "\n", 
-    chunks = list(list(label = "data", code = "", opts = list(
-        label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "\n", chunks = list(list(label = "data", code = "", 
+        opts = list(label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "separatingnets", code = "", 
         opts = list(label = "\"separatingnets\"", exercise = "TRUE", 
             exercise.setup = "\"data\"", purl = "FALSE"), engine = "r"), 
@@ -1834,30 +1835,30 @@ learnr:::store_exercise_cache(structure(list(label = "trans", global_setup = str
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "trans-interp", 
     question = structure("What can we say about task closure in this network? Choose all that apply.", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_3130a98", 
+    "character")), answers = list(structure(list(id = "lnr_ans_cae281", 
         option = "Transitivity for the task network is 0.568", 
         value = "Transitivity for the task network is 0.568", 
         label = structure("Transitivity for the task network is 0.568", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = structure("<img src=\"https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExZXBpNDlsZzNraTJ1bHN6MW1scjA4aDVzdXo1NW11bGI5bWF0dzYxMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Hg7gPa05K6bAc/giphy.gif\" alt=\"gif of cool cool cool\"/>", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_2d57b2f", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_775b2a7", 
         option = "Transitivity for the task network is -0.568", 
         value = "Transitivity for the task network is -0.568", 
         label = structure("Transitivity for the task network is -0.568", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("Transivitity must be between 0 and 1.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_2f306dd", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_efbfa49", 
         option = "Transitivity is quite low in this network", 
         value = "Transitivity is quite low in this network", 
         label = structure("Transitivity is quite low in this network", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("Transitivity is often around 0.3 in most social networks.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_ff4bc59", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_f230798", 
         option = "Transitivity is quite high in this network", 
         value = "Transitivity is quite high in this network", 
         label = structure("Transitivity is quite high in this network", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_246ae0", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_9cd989", 
         option = "Transitivity is likely higher in the task network than the friendship network", 
         value = "Transitivity is likely higher in the task network than the friendship network", 
         label = structure("Transitivity is likely higher in the task network than the friendship network", html = TRUE, class = c("html", 
@@ -1870,7 +1871,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "trans-interp-answer", question = "trans-interp"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 1046579428.01265, options = list()), class = c("learnr_checkbox", 
+    seed = 1119458092.97871, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")), session = session)
 </script>
 
@@ -1905,9 +1906,9 @@ learnr:::store_exercise_cache(structure(list(label = "setup-women", global_setup
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "", 
-    chunks = list(list(label = "data", code = "", opts = list(
-        label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "", chunks = list(list(label = "data", code = "", 
+        opts = list(label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "setup-women", code = "", 
         opts = list(label = "\"setup-women\"", exercise = "TRUE", 
             exercise.setup = "\"data\"", purl = "FALSE"), engine = "r")), 
@@ -1969,9 +1970,9 @@ learnr:::store_exercise_cache(structure(list(label = "hardway", global_setup = s
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "\n", 
-    chunks = list(list(label = "data", code = "", opts = list(
-        label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "\n", chunks = list(list(label = "data", code = "", 
+        opts = list(label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "setup-women", code = "", 
         opts = list(label = "\"setup-women\"", exercise = "TRUE", 
             exercise.setup = "\"data\"", purl = "FALSE"), engine = "r"), 
@@ -2036,9 +2037,9 @@ learnr:::store_exercise_cache(structure(list(label = "easyway", global_setup = s
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "\n", 
-    chunks = list(list(label = "data", code = "", opts = list(
-        label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "\n", chunks = list(list(label = "data", code = "", 
+        opts = list(label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "setup-women", code = "", 
         opts = list(label = "\"setup-women\"", exercise = "TRUE", 
             exercise.setup = "\"data\"", purl = "FALSE"), engine = "r"), 
@@ -2110,9 +2111,9 @@ learnr:::store_exercise_cache(structure(list(label = "otherway", global_setup = 
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "\n", 
-    chunks = list(list(label = "data", code = "", opts = list(
-        label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "\n", chunks = list(list(label = "data", code = "", 
+        opts = list(label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "setup-women", code = "", 
         opts = list(label = "\"setup-women\"", exercise = "TRUE", 
             exercise.setup = "\"data\"", purl = "FALSE"), engine = "r"), 
@@ -2180,7 +2181,8 @@ learnr:::store_exercise_cache(structure(list(label = "twomode-cohesion", global_
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "\n\n# women-graph\n# to_mode1(): Results in a weighted one-mode object that retains the row nodes from\n# a two-mode object, and weights the ties between them on the basis of their joint\n# ties to nodes in the second mode (columns)\n\nwomen_graph <- to_mode1(ison_southern_women)\ngraphr(women_graph)\n\n# note that projection `to_mode1` involves keeping one type of nodes\n# this is different from to_uniplex above, which keeps one type of ties in the network\n\n# event-graph\n# to_mode2(): Results in a weighted one-mode object that retains the column nodes from\n# a two-mode object, and weights the ties between them on the basis of their joint ties\n# to nodes in the first mode (rows)\n\nevent_graph <- to_mode2(ison_southern_women)\ngraphr(event_graph)", 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "\n\n# women-graph\n# to_mode1(): Results in a weighted one-mode object that retains the row nodes from\n# a two-mode object, and weights the ties between them on the basis of their joint\n# ties to nodes in the second mode (columns)\n\nwomen_graph <- to_mode1(ison_southern_women)\ngraphr(women_graph)\n\n# note that projection `to_mode1` involves keeping one type of nodes\n# this is different from to_uniplex above, which keeps one type of ties in the network\n\n# event-graph\n# to_mode2(): Results in a weighted one-mode object that retains the column nodes from\n# a two-mode object, and weights the ties between them on the basis of their joint ties\n# to nodes in the first mode (rows)\n\nevent_graph <- to_mode2(ison_southern_women)\ngraphr(event_graph)", 
     chunks = list(list(label = "data", code = "", opts = list(
         label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "setup-women", code = "", 
@@ -2224,28 +2226,28 @@ learnr:::store_exercise_cache(structure(list(label = "twomode-cohesion", global_
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "equil-interp", 
     question = structure("What do we learn from this? Choose all that apply.", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_1f8f1b3", 
+    "character")), answers = list(structure(list(id = "lnr_ans_b0d2f33", 
         option = "Transitivity in the women projection is very high.", 
         value = "Transitivity in the women projection is very high.", 
         label = structure("Transitivity in the women projection is very high.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_eac33ad", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_8d1de8", 
         option = "Transitivity in the event projection is very high.", 
         value = "Transitivity in the event projection is very high.", 
         label = structure("Transitivity in the event projection is very high.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_bd511e9", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_92acde9", 
         option = "Equivalence for the two-mode Southern Women dataset is moderate.", 
         value = "Equivalence for the two-mode Southern Women dataset is moderate.", 
         label = structure("Equivalence for the two-mode Southern Women dataset is moderate.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = structure("<img src=\"https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExZmdqZHFraGR5Ym9udTBrYzA1ejhwd3ljOXdma3ppNWp2cXozMTh0bCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xqjZLKH1iTBe0/giphy.gif\" alt=\"gif of you just wrinkled my brain\"/>", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_a879bcc", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_151b567", 
         option = "Transitivity will often be very high in projected networks.", 
         value = "Transitivity will often be very high in projected networks.", 
         label = structure("Transitivity will often be very high in projected networks.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_5f508ca", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_3603274", 
         option = "Projection obscures which women are members of which events and vice versa.", 
         value = "Projection obscures which women are members of which events and vice versa.", 
         label = structure("Projection obscures which women are members of which events and vice versa.", html = TRUE, class = c("html", 
@@ -2258,19 +2260,19 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "equil-interp-answer", question = "equil-interp"), 
     loading = NULL, random_answer_order = FALSE, allow_retry = TRUE, 
-    seed = 835930052.11074, options = list()), class = c("learnr_checkbox", 
+    seed = 1500895110.30109, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")), session = session)
 </script>
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "weak-strong", 
     question = structure("Weak components…", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_a96df92", 
+    "character")), answers = list(structure(list(id = "lnr_ans_3814a60", 
         option = "don't care about tie direction when establishing components.", 
         value = "don't care about tie direction when establishing components.", 
         label = structure("don’t care about tie direction when establishing components.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_19486f", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_d34cd1d", 
         option = "care about tie direction when establishing components.", 
         value = "care about tie direction when establishing components.", 
         label = structure("care about tie direction when establishing components.", html = TRUE, class = c("html", 
@@ -2283,7 +2285,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "weak-strong-answer", question = "weak-strong"), 
     loading = NULL, random_answer_order = FALSE, allow_retry = TRUE, 
-    seed = 441897022.794226, options = list()), class = c("learnr_radio", 
+    seed = 799369996.627764, options = list()), class = c("learnr_radio", 
 "tutorial_question")), session = session)
 </script>
 
@@ -2318,9 +2320,9 @@ learnr:::store_exercise_cache(structure(list(label = "comp-no", global_setup = s
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "\n", 
-    chunks = list(list(label = "data", code = "", opts = list(
-        label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "\n", chunks = list(list(label = "data", code = "", 
+        opts = list(label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "separatingnets", code = "", 
         opts = list(label = "\"separatingnets\"", exercise = "TRUE", 
             exercise.setup = "\"data\"", purl = "FALSE"), engine = "r"), 
@@ -2358,19 +2360,19 @@ learnr:::store_exercise_cache(structure(list(label = "comp-no", global_setup = s
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "comp-interp", 
     question = structure("How many components are there?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_a618612", 
+    "character")), answers = list(structure(list(id = "lnr_ans_8ab7561", 
         option = "2", value = "2", label = structure("2", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("There are more than 2 components.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_aa62b4d", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_ba29274", 
         option = "3", value = "3", label = structure("3", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = structure("There are 3 <em>weak<\u002fem> components.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_c1706fe", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_edd8bca", 
         option = "4", value = "4", label = structure("4", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = structure("There are 4 <em>strong<\u002fem> components. <img src=\"https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMDB5bzhjcGo3NHozZm5jdHcyMWk5emhnajNyZnFxc3Z2cmJnbGN0ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/YpS0oFFC2VJ84/giphy.gif\" alt=\"gif of two thumbs up\"/>", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_691c0cb", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_4e7aed7", 
         option = "5", value = "5", label = structure("5", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("There are fewer than 5 components.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
@@ -2382,7 +2384,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "comp-interp-answer", question = "comp-interp"), 
     loading = NULL, random_answer_order = FALSE, allow_retry = TRUE, 
-    seed = 1601421714.25428, options = list()), class = c("learnr_checkbox", 
+    seed = 1971380286.082, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")), session = session)
 </script>
  
@@ -2417,9 +2419,9 @@ learnr:::store_exercise_cache(structure(list(label = "comp-memb", global_setup =
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "\n", 
-    chunks = list(list(label = "data", code = "", opts = list(
-        label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "\n", chunks = list(list(label = "data", code = "", 
+        opts = list(label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "separatingnets", code = "", 
         opts = list(label = "\"separatingnets\"", exercise = "TRUE", 
             exercise.setup = "\"data\"", purl = "FALSE"), engine = "r"), 
@@ -2458,20 +2460,20 @@ learnr:::store_exercise_cache(structure(list(label = "comp-memb", global_setup =
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "node-comp-interp", 
     question = structure("Why is there a difference between the weak and strong components results?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_8790d16", 
+    "character")), answers = list(structure(list(id = "lnr_ans_4045d58", 
         option = "Because one node has only incoming ties.", 
         value = "Because one node has only incoming ties.", label = structure("Because one node has only incoming ties.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_bf9b4c4", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_c17942c", 
         option = "Because three nodes cannot reach any other nodes.", 
         value = "Because three nodes cannot reach any other nodes.", 
         label = structure("Because three nodes cannot reach any other nodes.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_a799fe7", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_9b57986", 
         option = "Because there is an extra isolate.", value = "Because there is an extra isolate.", 
         label = structure("Because there is an extra isolate.", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_5177d33", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_a40bbbd", 
         option = "Because the tie strength matters.", value = "Because the tie strength matters.", 
         label = structure("Because the tie strength matters.", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
@@ -2483,7 +2485,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "node-comp-interp-answer", question = "node-comp-interp"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 1931696472.60048, options = list()), class = c("learnr_checkbox", 
+    seed = 1103875890.98597, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")), session = session)
 </script>
 
@@ -2518,8 +2520,8 @@ learnr:::store_exercise_cache(structure(list(label = "blogsize", global_setup = 
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = NULL, 
-    chunks = list(list(label = "blogsize", code = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)", 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = NULL, chunks = list(list(label = "blogsize", code = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)", 
         opts = list(label = "\"blogsize\"", exercise = "TRUE"), 
         engine = "r")), code_check = NULL, error_check = NULL, 
     check = NULL, solution = NULL, tests = NULL, options = list(
@@ -2580,7 +2582,8 @@ learnr:::store_exercise_cache(structure(list(label = "blogisolates", global_setu
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)", 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)", 
     chunks = list(list(label = "blogsize", code = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)", 
         opts = list(label = "\"blogsize\"", exercise = "TRUE"), 
         engine = "r"), list(label = "blogisolates", code = "sum(node_is_isolate(blogs))", 
@@ -2642,7 +2645,8 @@ learnr:::store_exercise_cache(structure(list(label = "blogcomp", global_setup = 
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)", 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)", 
     chunks = list(list(label = "blogsize", code = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)", 
         opts = list(label = "\"blogsize\"", exercise = "TRUE"), 
         engine = "r"), list(label = "blogcomp", code = "net_components(blogs)\nnet_components(to_undirected(blogs))", 
@@ -2705,7 +2709,8 @@ learnr:::store_exercise_cache(structure(list(label = "blogtogiant", global_setup
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)", 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)", 
     chunks = list(list(label = "blogsize", code = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)", 
         opts = list(label = "\"blogsize\"", exercise = "TRUE"), 
         engine = "r"), list(label = "blogtogiant", code = "blogs <- blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
@@ -2768,7 +2773,8 @@ learnr:::store_exercise_cache(structure(list(label = "bloggraph", global_setup =
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)\nblogs <- blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)\nblogs <- blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
     chunks = list(list(label = "blogsize", code = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)", 
         opts = list(label = "\"blogsize\"", exercise = "TRUE"), 
         engine = "r"), list(label = "blogtogiant", code = "blogs <- blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
@@ -2835,7 +2841,8 @@ learnr:::store_exercise_cache(structure(list(label = "blogmod", global_setup = s
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)\nblogs <- blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)\nblogs <- blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
     chunks = list(list(label = "blogsize", code = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)", 
         opts = list(label = "\"blogsize\"", exercise = "TRUE"), 
         engine = "r"), list(label = "blogtogiant", code = "blogs <- blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
@@ -2872,22 +2879,22 @@ learnr:::store_exercise_cache(structure(list(label = "blogmod", global_setup = s
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "blogQ", question = structure("Which statements about modularity are true?", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_32dc2fa", 
+"character")), answers = list(structure(list(id = "lnr_ans_b4fab0d", 
     option = "A community assignment with modularity > 0 means there are more ties within communities than between communities.", 
     value = "A community assignment with modularity > 0 means there are more ties within communities than between communities.", 
     label = structure("A community assignment with modularity &gt; 0 means there are more ties within communities than between communities.", html = TRUE, class = c("html", 
     "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_b8f1bbf", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_11caf7a", 
     option = "A community assignment with modularity = 0 means any tie is as likely to occur within a community as between assigned communities.", 
     value = "A community assignment with modularity = 0 means any tie is as likely to occur within a community as between assigned communities.", 
     label = structure("A community assignment with modularity = 0 means any tie is as likely to occur within a community as between assigned communities.", html = TRUE, class = c("html", 
     "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_4f96bd2", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_335fdc5", 
     option = "In a community assignment with modularity = 1, every community must have an internal density of 1 and an external density of 0.", 
     value = "In a community assignment with modularity = 1, every community must have an internal density of 1 and an external density of 0.", 
     label = structure("In a community assignment with modularity = 1, every community must have an internal density of 1 and an external density of 0.", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_2cae4aa", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_c85ee28", 
     option = "A community assignment with modularity = -1 is impossible.", 
     value = "A community assignment with modularity = -1 is impossible.", 
     label = structure("A community assignment with modularity = -1 is impossible.", html = TRUE, class = c("html", 
@@ -2899,7 +2906,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
 "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "blogQ-answer", question = "blogQ"), loading = NULL, 
-    random_answer_order = TRUE, allow_retry = TRUE, seed = 1947856959.59296, 
+    random_answer_order = TRUE, allow_retry = TRUE, seed = 2078411267.03216, 
     options = list()), class = c("learnr_checkbox", "tutorial_question"
 )), session = session)
 </script>
@@ -2935,7 +2942,8 @@ learnr:::store_exercise_cache(structure(list(label = "blogmodassign", global_set
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)\nblogs <- blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)\nblogs <- blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
     chunks = list(list(label = "blogsize", code = "# This is a large network\nnet_nodes(irps_blogs)\n# Let's concentrate on just a sample of 240 \n# (by deleting a random sample of 1250)\nblogs <- delete_nodes(irps_blogs, sample(1:1490, 1250))\ngraphr(blogs)", 
         opts = list(label = "\"blogsize\"", exercise = "TRUE"), 
         engine = "r"), list(label = "blogtogiant", code = "blogs <- blogs %>% to_giant()\nsum(node_is_isolate(blogs))\ngraphr(blogs)", 
@@ -3002,9 +3010,9 @@ learnr:::store_exercise_cache(structure(list(label = "manip-fri", global_setup =
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "\n", 
-    chunks = list(list(label = "data", code = "", opts = list(
-        label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "\n", chunks = list(list(label = "data", code = "", 
+        opts = list(label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "separatingnets", code = "", 
         opts = list(label = "\"separatingnets\"", exercise = "TRUE", 
             exercise.setup = "\"data\"", purl = "FALSE"), engine = "r"), 
@@ -3069,9 +3077,9 @@ learnr:::store_exercise_cache(structure(list(label = "walk", global_setup = stru
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "\n", 
-    chunks = list(list(label = "data", code = "", opts = list(
-        label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "\n", chunks = list(list(label = "data", code = "", 
+        opts = list(label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "separatingnets", code = "", 
         opts = list(label = "\"separatingnets\"", exercise = "TRUE", 
             exercise.setup = "\"data\"", purl = "FALSE"), engine = "r"), 
@@ -3136,7 +3144,8 @@ learnr:::store_exercise_cache(structure(list(label = "walkplot", global_setup = 
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "\n\nfriend_wt <- node_in_walktrap(friends, times=50)", 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "\n\nfriend_wt <- node_in_walktrap(friends, times=50)", 
     chunks = list(list(label = "data", code = "", opts = list(
         label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "separatingnets", code = "", 
@@ -3211,9 +3220,9 @@ learnr:::store_exercise_cache(structure(list(label = "eb", global_setup = struct
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "\n", 
-    chunks = list(list(label = "data", code = "", opts = list(
-        label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "\n", chunks = list(list(label = "data", code = "", 
+        opts = list(label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "separatingnets", code = "", 
         opts = list(label = "\"separatingnets\"", exercise = "TRUE", 
             exercise.setup = "\"data\"", purl = "FALSE"), engine = "r"), 
@@ -3277,7 +3286,8 @@ learnr:::store_exercise_cache(structure(list(label = "ebplot", global_setup = st
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "\n\nfriend_eb <- node_in_betweenness(friends)\nfriend_eb", 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "\n\nfriend_eb <- node_in_betweenness(friends)\nfriend_eb", 
     chunks = list(list(label = "data", code = "", opts = list(
         label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "separatingnets", code = "", 
@@ -3349,9 +3359,9 @@ learnr:::store_exercise_cache(structure(list(label = "fg", global_setup = struct
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "\n", 
-    chunks = list(list(label = "data", code = "", opts = list(
-        label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "\n", chunks = list(list(label = "data", code = "", 
+        opts = list(label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "separatingnets", code = "", 
         opts = list(label = "\"separatingnets\"", exercise = "TRUE", 
             exercise.setup = "\"data\"", purl = "FALSE"), engine = "r"), 
@@ -3391,16 +3401,16 @@ learnr:::store_exercise_cache(structure(list(label = "fg", global_setup = struct
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "comm-comp", question = structure("What is the difference between communities and components?", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_801bd0d", 
+"character")), answers = list(structure(list(id = "lnr_ans_9d8eca0", 
     option = "Communities and components are just different terms for the same thing", 
     value = "Communities and components are just different terms for the same thing", 
     label = structure("Communities and components are just different terms for the same thing", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_11ba402", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_5d62bbe", 
     option = "Communities are a stricter form of component", 
     value = "Communities are a stricter form of component", label = structure("Communities are a stricter form of component", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_696bd5f", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_f0dbeec", 
     option = "Components are about paths whereas communities are about the relationship between within-group and between-group ties", 
     value = "Components are about paths whereas communities are about the relationship between within-group and between-group ties", 
     label = structure("Components are about paths whereas communities are about the relationship between within-group and between-group ties", html = TRUE, class = c("html", 
@@ -3412,7 +3422,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "comm-comp-answer", question = "comm-comp"), loading = NULL, 
-    random_answer_order = TRUE, allow_retry = TRUE, seed = 2053274309.04387, 
+    random_answer_order = TRUE, allow_retry = TRUE, seed = 930697472.56661, 
     options = list()), class = c("learnr_radio", "tutorial_question"
 )), session = session)
 </script>
@@ -3448,9 +3458,9 @@ learnr:::store_exercise_cache(structure(list(label = "incomm", global_setup = st
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = "\n", 
-    chunks = list(list(label = "data", code = "", opts = list(
-        label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = "\n", chunks = list(list(label = "data", code = "", 
+        opts = list(label = "\"data\"", exercise = "TRUE", purl = "FALSE"), 
         engine = "r"), list(label = "separatingnets", code = "", 
         opts = list(label = "\"separatingnets\"", exercise = "TRUE", 
             exercise.setup = "\"data\"", purl = "FALSE"), engine = "r"), 
@@ -3485,38 +3495,38 @@ learnr:::store_exercise_cache(structure(list(label = "incomm", global_setup = st
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "alg-comp", question = structure("Which algorithm provides the ‘best’ membership assignment here?", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_b0ec60b", 
+"character")), answers = list(structure(list(id = "lnr_ans_aeb0a2c", 
     option = "Walktrap", value = "Walktrap", label = structure("Walktrap", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_6fcc748", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_92cbc51", 
     option = "Edge betweenness", value = "Edge betweenness", 
     label = structure("Edge betweenness", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_f8b9383", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_42a493d", 
     option = "Leiden", value = "Leiden", label = structure("Leiden", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_347bf7b", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_c70ea82", 
     option = "Louvain", value = "Louvain", label = structure("Louvain", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_76b74ad", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_dd58302", 
     option = "Infomap", value = "Infomap", label = structure("Infomap", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_a05c502", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_d8cc7be", 
     option = "Fluid", value = "Fluid", label = structure("Fluid", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_8608c00", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_8dd4777", 
     option = "Fast Greedy", value = "Fast Greedy", label = structure("Fast Greedy", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_22e0907", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_2f1b5bc", 
     option = "Eigenvector", value = "Eigenvector", label = structure("Eigenvector", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_6b88943", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_b505c11", 
     option = "Spinglass", value = "Spinglass", label = structure("Spinglass", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_66c65c5", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_30bd410", 
     option = "Partition", value = "Partition", label = structure("Partition", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_5b05a81", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_38fec6", 
     option = "Optimal", value = "Optimal", label = structure("Optimal", html = TRUE, class = c("html", 
     "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
 "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
@@ -3526,7 +3536,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "alg-comp-answer", question = "alg-comp"), loading = NULL, 
-    random_answer_order = TRUE, allow_retry = TRUE, seed = 685361529.180854, 
+    random_answer_order = TRUE, allow_retry = TRUE, seed = 252155214.882581, 
     options = list()), class = c("learnr_radio", "tutorial_question"
 )), session = session)
 </script>
@@ -3562,8 +3572,8 @@ learnr:::store_exercise_cache(structure(list(label = "freeplay", global_setup = 
 "                                      \"Super!\"),", "                           encouragement = c(\"Bon effort\"))", 
 "friends <- to_uniplex(ison_algebra, \"friends\")", "social <- to_uniplex(ison_algebra, \"social\")", 
 "tasks <- to_uniplex(ison_algebra, \"tasks\")"), chunk_opts = list(
-    label = "setup", include = FALSE, purl = FALSE)), setup = NULL, 
-    chunks = list(list(label = "freeplay", code = "irps_books", 
+    label = "setup", include = FALSE, purl = FALSE, eval = TRUE)), 
+    setup = NULL, chunks = list(list(label = "freeplay", code = "irps_books", 
         opts = list(label = "\"freeplay\"", exercise = "TRUE", 
             fig.width = "9"), engine = "r")), code_check = NULL, 
     error_check = NULL, check = NULL, solution = NULL, tests = NULL, 

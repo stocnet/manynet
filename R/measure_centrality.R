@@ -760,7 +760,12 @@ node_distance <- function(.data, from, to, normalized = TRUE){
 #'   in a network, also known as the Wiener Index, when that node is removed.
 #'   Note that the closeness vitality may be negative infinity if
 #'   removing that node would disconnect the network.
+#'   Formally:
+#'   \deqn{C_V(i) = \sum_{j,k} d(j,k) - \sum_{j,k} d(j,k,G\ i)}
+#'   where \eqn{d(j,k,G\ i)} is the distance between nodes \eqn{j} and \eqn{k}
+#'   in the network with node \eqn{i} removed.
 #' @references
+#' ## On closeness vitality centrality
 #'   Koschuetzki, Dirk, Katharina Lehmann, Leon Peeters, Stefan Richter,
 #'   Dagmar Tenfelde-Podehl, and Oliver Zlotowski. 2005.
 #'   "Centrality Indices", in
@@ -776,6 +781,74 @@ node_vitality <- function(.data, normalized = TRUE){
   }, FUN.VALUE = numeric(1))
   if(normalized) out <- out/max(out)
   make_node_measure(out, .data)
+}
+
+#' @rdname measure_central_close 
+#' @section Random walk closeness centrality: 
+#'   Random walk closeness centrality is based on the average length of
+#'   random walks starting at all other nodes to reach a given node.
+#'   It is defined as the inverse of the average hitting time to a node.
+#'   This means that higher values are given to nodes that can be reached
+#'   more quickly on average by random walks starting at other nodes.
+#'   Formally:
+#'   \deqn{C_{RW}(i) = \frac{1}{\frac{1}{N-1} \sum_{j \neq i} H_{ji}}}
+#'   where \eqn{H_{ji}} is the hitting time from node \eqn{j} to node \eqn{i}.
+#' @references
+#' ## On random walk closeness centrality
+#'   Noh, J.D. and R. Rieger. 2004.
+#'   "Random Walks on Complex Networks".
+#'   _Physical Review Letters_, 92(11): 118701.
+#'   \doi{10.1103/PhysRevLett.92.118701}
+#' @export
+node_randomwalk <- function(.data, normalized = TRUE){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  # adjacency and degree matrices
+  A <- as_matrix(.data)
+  degs <- node_deg(.data)
+  D <- diag(degs)
+  
+  # Laplacian
+  L <- D - A
+  
+  # pseudoinverse of Laplacian
+  Lplus <- .ginv(L)
+  
+  volG <- sum(degs)  # total degree (2 * edges)
+  n <- net_nodes(.data)
+  
+  out <- numeric(n)
+  
+  for (i in 1:n) {
+    # hitting time from j to i
+    hitting_times <- sapply(1:n, function(j) {
+      if (i == j) return(0)
+      volG * (Lplus[j, j] + Lplus[i, i] - 2 * Lplus[i, j])
+    })
+    # average hitting time to node i
+    avg_ht <- mean(hitting_times[-i])
+    out[i] <- 1 / avg_ht
+  }
+  
+  make_node_measure(out, .data)
+}
+
+# This is a helper function to compute the Moore-Penrose generalized inverse
+# of a matrix using its singular value decomposition (SVD).
+.ginv <- function (X, tol = sqrt(.Machine$double.eps)){
+  if (length(dim(X)) > 2L || !(is.numeric(X) || is.complex(X))) 
+    stop("'X' must be a numeric or complex matrix")
+  if (!is.matrix(X)) 
+    X <- as.matrix(X)
+  Xsvd <- svd(X)
+  if (is.complex(X)) 
+    Xsvd$u <- Conj(Xsvd$u)
+  Positive <- Xsvd$d > max(tol * Xsvd$d[1L], 0)
+  if (all(Positive)) 
+    Xsvd$v %*% (1/Xsvd$d * t(Xsvd$u))
+  else if (!any(Positive)) 
+    array(0, dim(X)[2L:1L])
+  else Xsvd$v[, Positive, drop = FALSE] %*% ((1/Xsvd$d[Positive]) * 
+                                               t(Xsvd$u[, Positive, drop = FALSE]))
 }
 
 #' @rdname measure_central_close 
@@ -1033,9 +1106,9 @@ node_power <- function(.data, normalized = TRUE, scale = FALSE, exponent = 1){
 #'   As \eqn{\alpha} gets larger, only the connectivity matters and we reduce to eigenvector centrality.
 #'   By default \eqn{\alpha = 0.85}.
 #' @section Alpha centrality:
-#'   Alpha or Katz (or Katz-Bonacich) centrality operates better than eigenvector centrality
-#'   for directed networks.
-#'   Eigenvector centrality will return 0s for all nodes not in the main strongly-connected component.
+#'   Alpha or Katz (or Katz-Bonacich) centrality operates better than 
+#'   eigenvector centrality for directed networks because eigenvector centrality 
+#'   will return 0s for all nodes not in the main strongly-connected component.
 #'   Each node's alpha centrality can be defined as:
 #'   \deqn{x_i = \frac{1}{\lambda} \sum_{j \in N} a_{i,j} x_j + e_i}
 #'   where \eqn{a_{i,j} = 1} if \eqn{i} is linked to \eqn{j} and 0 otherwise,
@@ -1101,6 +1174,37 @@ node_authority <- function(.data){
 node_hub <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   make_node_measure(igraph::hub_score(manynet::as_igraph(.data))$vector,
+                    .data)
+}
+
+#' @rdname measure_central_eigen 
+#' @section Subgraph centrality:
+#'   Subgraph centrality measures the participation of a node in all subgraphs
+#'   in the network, giving higher weight to smaller subgraphs.
+#'   It is defined as:
+#'   \deqn{C_S(i) = \sum_{k=0}^{\infty} \frac{(A^k)_{ii}}{k!}}
+#'   where \eqn{(A^k)_{ii}} is the \eqn{i}th diagonal element of the \eqn{k}th power
+#'   of the adjacency matrix \eqn{A}, representing the number of closed walks
+#'   of length \eqn{k} starting and ending at node \eqn{i}.
+#'   Weighting by \eqn{\frac{1}{k!}} ensures that shorter walks contribute more
+#'   to the centrality score than longer walks.
+#'   
+#'   Subgraph centrality is a good choice of measure when the focus is on
+#'   local connectivity and clustering around a node,
+#'   as it captures the extent to which a node is embedded in tightly-knit
+#'   groups within the network.
+#'   Note though that because of the way spectral decomposition is used to
+#'   calculate this measure, this is not a good measure for very large graphs.
+#' @references
+#' ## On subgraph centrality
+#'   Estrada, Ernesto and Rodríguez-Velázquez, Juan A. 2005.
+#'   "Subgraph centrality in complex networks".
+#'   _Physical Review E_ 71(5): 056103.
+#'   \doi{10.1103/PhysRevE.71.056103}
+#' @export 
+node_subgraph <- function(.data){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  make_node_measure(igraph::subgraph_centrality(manynet::as_igraph(.data)),
                     .data)
 }
 

@@ -155,8 +155,18 @@ describe_ties <- function(x){
     tie_name <- paste(igraph::graph_attr(x, "grand")$edge.pos,
                       tie_name)
   } else if(!is.null(tie_attribute(x, "type"))){
-    tie_name <- paste(cli::ansi_collapse(unique(tie_attribute(x, "type"))), 
-          tie_name)
+    tab <- table(tie_attribute(x, "type"))
+    parts <- paste0(tab, " ", names(tab))
+    if (length(parts) > 1) {
+      result <- paste(
+        paste(parts[-length(parts)], collapse = ", "),
+        parts[length(parts)],
+        sep = ", and "
+      )
+    } else {
+      result <- parts
+    }
+    return(paste0(result, " ties"))
   } 
   paste(nt, tie_name)
 }
