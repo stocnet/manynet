@@ -1104,9 +1104,9 @@ node_power <- function(.data, normalized = TRUE, scale = FALSE, exponent = 1){
 #'   As \eqn{\alpha} gets larger, only the connectivity matters and we reduce to eigenvector centrality.
 #'   By default \eqn{\alpha = 0.85}.
 #' @section Alpha centrality:
-#'   Alpha or Katz (or Katz-Bonacich) centrality operates better than eigenvector centrality
-#'   for directed networks.
-#'   Eigenvector centrality will return 0s for all nodes not in the main strongly-connected component.
+#'   Alpha or Katz (or Katz-Bonacich) centrality operates better than 
+#'   eigenvector centrality for directed networks because eigenvector centrality 
+#'   will return 0s for all nodes not in the main strongly-connected component.
 #'   Each node's alpha centrality can be defined as:
 #'   \deqn{x_i = \frac{1}{\lambda} \sum_{j \in N} a_{i,j} x_j + e_i}
 #'   where \eqn{a_{i,j} = 1} if \eqn{i} is linked to \eqn{j} and 0 otherwise,
@@ -1172,6 +1172,37 @@ node_authority <- function(.data){
 node_hub <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()}
   make_node_measure(igraph::hub_score(manynet::as_igraph(.data))$vector,
+                    .data)
+}
+
+#' @rdname measure_central_eigen 
+#' @section Subgraph centrality:
+#'   Subgraph centrality measures the participation of a node in all subgraphs
+#'   in the network, giving higher weight to smaller subgraphs.
+#'   It is defined as:
+#'   \deqn{C_S(i) = \sum_{k=0}^{\infty} \frac{(A^k)_{ii}}{k!}}
+#'   where \eqn{(A^k)_{ii}} is the \eqn{i}th diagonal element of the \eqn{k}th power
+#'   of the adjacency matrix \eqn{A}, representing the number of closed walks
+#'   of length \eqn{k} starting and ending at node \eqn{i}.
+#'   Weighting by \eqn{\frac{1}{k!}} ensures that shorter walks contribute more
+#'   to the centrality score than longer walks.
+#'   
+#'   Subgraph centrality is a good choice of measure when the focus is on
+#'   local connectivity and clustering around a node,
+#'   as it captures the extent to which a node is embedded in tightly-knit
+#'   groups within the network.
+#'   Note though that because of the way spectral decomposition is used to
+#'   calculate this measure, this is not a good measure for very large graphs.
+#' @references
+#' ## On subgraph centrality
+#'   Estrada, Ernesto and Rodríguez-Velázquez, Juan A. 2005.
+#'   "Subgraph centrality in complex networks".
+#'   _Physical Review E_ 71(5): 056103.
+#'   \doi{10.1103/PhysRevE.71.056103}
+#' @export 
+node_subgraph <- function(.data){
+  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  make_node_measure(igraph::subgraph_centrality(manynet::as_igraph(.data)),
                     .data)
 }
 
