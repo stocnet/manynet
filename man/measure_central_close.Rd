@@ -100,8 +100,8 @@ including for two-mode networks.
 }
 \section{Closeness centrality}{
 
-Closeness centrality or status centrality is defined as the reciprocal of
-the farness or distance, \eqn{d},
+Closeness centrality, status centrality, or barycenter centrality is
+defined as the reciprocal of the farness or distance, \eqn{d},
 from a node to all other nodes in the network:
 \deqn{C_C(i) = \frac{1}{\sum_j d(i,j)}}
 When (more commonly) normalised, the numerator is instead \eqn{N-1}.
