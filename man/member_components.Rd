@@ -24,8 +24,7 @@ node_in_strong(.data)
 }}
 }
 \description{
-These functions create a vector of nodes' memberships in
-components or degrees of coreness:
+These functions create a vector of nodes' memberships in components:
 \itemize{
 \item \code{node_in_component()} assigns nodes' component membership
 using edge direction where available.
@@ -45,12 +44,6 @@ strongly connected components consist of subgraphs where there are paths
 in each direction between member nodes.
 Weakly connected components consist of subgraphs where there is a path
 in either direction between member nodes.
-
-Coreness captures the maximal subgraphs in which each vertex has at least
-degree \emph{k}, where \emph{k} is also the order of the subgraph.
-As described in \code{igraph::coreness},
-a node's coreness is \emph{k} if it belongs to the \emph{k}-core
-but not to the (\emph{k}+1)-core.
 }
 \seealso{
 Other memberships: 

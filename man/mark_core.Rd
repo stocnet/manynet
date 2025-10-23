@@ -82,6 +82,15 @@ and minimises density in the periphery block;
 it ignores ties between these blocks.
 }
 
+\section{k-coreness}{
+
+k-coreness captures the maximal subgraphs in which each vertex has at least
+degree \emph{k}, where \emph{k} is also the order of the subgraph.
+As described in \code{igraph::coreness},
+a node's coreness is \emph{k} if it belongs to the \emph{k}-core
+but not to the (\emph{k}+1)-core.
+}
+
 \section{Core-periphery categories}{
 
 This function categorizes nodes based on their coreness into a specified
