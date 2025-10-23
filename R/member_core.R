@@ -96,6 +96,12 @@ node_is_core <- function(.data, method = c("degree", "eigenvector")){
 }
 
 #' @rdname mark_core
+#' @section k-coreness:
+#'   k-coreness captures the maximal subgraphs in which each vertex has at least
+#'   degree _k_, where _k_ is also the order of the subgraph.
+#'   As described in `igraph::coreness`,
+#'   a node's coreness is _k_ if it belongs to the _k_-core
+#'   but not to the (_k_+1)-core.
 #' @references
 #' ## On k-coreness
 #' Seidman, Stephen B. 1983. 
