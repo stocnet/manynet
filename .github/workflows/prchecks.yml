@@ -59,15 +59,39 @@ jobs:
           name: ${{ matrix.config.asset_name }}
           path: build/
 
-      - name: Generate coverage file
-        run: Rscript -e 'covr::coverage_to_file(covr::package_coverage(), "coverage.xml")'
+      - name: Test coverage
+        run: |
+          cov <- covr::package_coverage(
+            quiet = FALSE,
+            clean = FALSE,
+            install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
+          )
+          covr::to_cobertura(cov)
+        shell: Rscript {0}
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@v5
         with:
+          # Fail if error if not on PR, or if on PR and token is given
+          fail_ci_if_error: ${{ github.event_name != 'pull_request' || secrets.CODECOV_TOKEN }}
+          file: ./cobertura.xml
+          plugin: noop
+          disable_search: true
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: coverage.xml
-    
+
+      - name: Show testthat output
+        if: always()
+        run: |
+          ## --------------------------------------------------------------------
+          find '${{ runner.temp }}/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
+        shell: bash
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-test-failures
+          path: ${{ runner.temp }}/package
+          
       - name: Calculate code coverage
         if: runner.os == 'macOS'
         env:
