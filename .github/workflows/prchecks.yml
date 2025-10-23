@@ -59,6 +59,11 @@ jobs:
           name: ${{ matrix.config.asset_name }}
           path: build/
 
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
       - name: Calculate code coverage
         if: runner.os == 'macOS'
         env:
