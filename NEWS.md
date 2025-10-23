@@ -1,3 +1,9 @@
+# manynet 1.6.5
+
+## Package
+
+- Removed extracted tute scripts from root folder
+
 # manynet 1.6.4
 
 ## Making
