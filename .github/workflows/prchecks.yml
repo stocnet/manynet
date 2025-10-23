@@ -59,11 +59,15 @@ jobs:
           name: ${{ matrix.config.asset_name }}
           path: build/
 
+      - name: Generate coverage file
+        run: Rscript -e 'covr::coverage_to_file(covr::package_coverage(), "coverage.xml")'
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-
+          files: coverage.xml
+    
       - name: Calculate code coverage
         if: runner.os == 'macOS'
         env:
