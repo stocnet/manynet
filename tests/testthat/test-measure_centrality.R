@@ -84,6 +84,8 @@ test_that("node measure class works", {
   expect_s3_class(node_closeness(ison_adolescents), "node_measure")
   expect_s3_class(node_eigenvector(ison_adolescents), "node_measure")
   expect_s3_class(node_reach(ison_adolescents), "node_measure")
+  expect_s3_class(node_randomwalk(ison_adolescents), "node_measure")
+  expect_s3_class(node_harmonic(ison_adolescents), "node_measure")
 })
 
 # ####### Centralization
