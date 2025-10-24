@@ -45,6 +45,10 @@ in each direction between member nodes.
 Weakly connected components consist of subgraphs where there is a path
 in either direction between member nodes.
 }
+\examples{
+ison_monks \%>\% to_uniplex("esteem") \%>\%
+  mutate_nodes(comp = node_in_component())
+}
 \seealso{
 Other memberships: 
 \code{\link{mark_core}},
