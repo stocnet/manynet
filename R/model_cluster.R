@@ -7,9 +7,12 @@
 #'   created by `stats::hclust()`.
 #'   - `cluster_concor()` returns a hierarchical clustering object
 #'   created from a convergence of correlations procedure (CONCOR).
+#'   - `cluster_cosine()` returns a hierarchical clustering object
+#'   created by `stats::hclust()` on cosine dissimilarities,
+#'   rather than correlations, as created by `to_cosine()`.
 #' 
 #'   These functions are not intended to be called directly,
-#'   but are called within `node_equivalence()` and related functions.
+#'   but are called within `node_in_equivalence()` and related functions.
 #'   They are exported and listed here to provide more detailed documentation.
 #' @name model_cluster
 #' @inheritParams member_equivalence
