@@ -48,3 +48,11 @@ test_that("hierarchy is reported correctly", {
                c(net_nodes(ison_southern_women)))
   expect_named(node_hierarchy(ison_southern_women))
 })
+
+test_that("node_neighbours_degree works", {
+  expect_equal(top3(node_neighbours_degree(ison_adolescents)), c(4,2.75,3))
+})
+
+test_that("tie_cohesion works", {
+  expect_equal(top3(tie_cohesion(ison_adolescents)), c(0,0.5,0.3333))
+})
