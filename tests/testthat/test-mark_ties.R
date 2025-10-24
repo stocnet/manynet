@@ -19,6 +19,22 @@ test_that("tie_is_bridge works", {
   expect_equal(length(tie_is_bridge(graph1)), c(net_ties(graph1)))
 })
 
+test_that("tie_is_path works", {
+  expect_equal(sum(tie_is_path(ison_adolescents, "Betty", "Alice")), 2)
+})
+
+test_that("tie_is_triangular works", {
+  expect_equal(sum(tie_is_triangular(ison_adolescents)), 7)
+})
+
+test_that("directed triangle tie marks work", {
+  acy_adol <- to_acyclic(ison_adolescents)
+  expect_true(sum(tie_is_transitive(acy_adol)) >= 3)
+  expect_true(sum(tie_is_triplet(acy_adol)) >= 3)
+  expect_false(any(tie_is_cyclical(acy_adol)))
+  expect_false(any(tie_is_simmelian(acy_adol)))
+})
+
 test_that("tie_is_max works", {
   skip_on_ci()
   skip_on_cran()
