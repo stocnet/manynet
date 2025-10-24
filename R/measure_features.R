@@ -388,8 +388,10 @@ net_balance <- function(.data) {
       warning("g does not contain any triangles")
       return(c(`+++` = 0, `++-` = 0, `+--` = 0, `---` = 0))
     }
-    emat <- t(apply(tmat, 1, function(x) c(igraph::get.edge.ids(g, 
-                                                                x[1:2]), igraph::get.edge.ids(g, x[2:3]), igraph::get.edge.ids(g, 
+    emat <- t(apply(tmat, 1, function(x) c(igraph::get_edge_ids(g, 
+                                                                x[1:2]), 
+                                           igraph::get_edge_ids(g, x[2:3]), 
+                                           igraph::get_edge_ids(g, 
                                                                                                                                x[c(3, 1)]))))
     emat[, 1] <- eattrV[emat[, 1]]
     emat[, 2] <- eattrV[emat[, 2]]

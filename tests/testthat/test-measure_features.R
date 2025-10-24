@@ -43,3 +43,15 @@ test_that("net_factions works", {
   expect_length(out,1)
 })
 
+test_that("net_scalefree works", {
+  out <- net_scalefree(ison_adolescents)
+  expect_s3_class(out, "network_measure")
+  expect_values(out,3.689)
+})
+
+test_that("net_balance works", {
+  out <- net_balance(irps_wwi)
+  expect_s3_class(out, "network_measure")
+  expect_values(out,1)
+})
+
