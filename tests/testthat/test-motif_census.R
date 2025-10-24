@@ -11,6 +11,12 @@ test_that("node_by_tie census works", {
                3)
 })
 
+test_that("node_by_dyad census works", {
+  test <- node_by_dyad(ison_adolescents)
+  expect_s3_class(test, "node_motif")
+  expect_equal(colnames(test)[1:2], c("Mutual", "Null"))
+})
+
 test_that("node_by_triad census works", {
   test <- node_by_triad(task_eg)
   expect_equal(top3(test[,16]), c(7,8,6))
@@ -36,6 +42,12 @@ test_that("net_by_triad census works", {
   expect_equal(names(summary(test)), c("003", "012", "102", "201", "210", "300"))
   # Error
   expect_error(net_by_triad(ison_southern_women))
+})
+
+test_that("net_by_tetrad census works", {
+  test <- net_by_tetrad(ison_southern_women)
+  expect_s3_class(test, "network_motif")
+  expect_values(c(test)[1], 12388)
 })
 
 test_that("node_by_tetrad census works", {
@@ -68,25 +80,3 @@ test_that("node path census works", {
                 ncol(node_by_path(ison_southern_women)))
 })
 
-test <- node_brokering_activity(ison_networkers, "Discipline")
-test_that("node activity works", {
-  expect_s3_class(test, "node_measure")
-  expect_equal(c(net_nodes(ison_networkers)), length(test))
-  expect_equal(top3(test), c(333,207,3))
-})
-
-test <- node_brokering_exclusivity(ison_networkers, "Discipline")
-test_that("node exclusivity works", {
-  expect_s3_class(test, "node_measure")
-  expect_equal(c(net_nodes(ison_networkers)), length(test))
-  expect_equal(top3(test), c(1,0,0))
-})
-
-test_that("node_in_brokering works", {
-  test <- node_in_brokering(ison_networkers, "Discipline")
-  expect_s3_class(test, "node_member")
-  expect_equal(c(net_nodes(ison_networkers)), length(test))
-  expect_equal(top3(test), c("Powerhouse","Connectors","Sideliners"))
-  expect_output(print(node_in_brokering(ison_marvel_teams)), "4 groups")
-  expect_output(print(summary(node_in_brokering(ison_marvel_teams))), "Connectors")
-})
