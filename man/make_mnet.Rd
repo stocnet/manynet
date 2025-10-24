@@ -4,11 +4,23 @@
 \alias{make_mnet}
 \alias{print.mnet}
 \alias{print_all}
+\alias{describe_network}
+\alias{describe_nodes}
+\alias{describe_ties}
+\alias{describe_changes}
 \title{Multilevel, multiplex, multimodal, signed, dynamic or longitudinal changing networks}
 \usage{
 \method{print}{mnet}(x, ..., n = 12)
 
 print_all(x, ...)
+
+describe_network(x)
+
+describe_nodes(x)
+
+describe_ties(x)
+
+describe_changes(x)
 }
 \arguments{
 \item{x}{An object of class "mnet" or "tbl_graph".}
@@ -25,9 +37,8 @@ the 'igraph' and 'tbl_graph' classes.
 Under the hood it is an 'igraph' object, which enables all the igraph
 functions to operate.
 It is also a 'tbl_graph' object, which enables it to be used with \code{{ggraph}}.
-However, 'mnet' objects offer prettier printing and
-a consistent structure that enables more complex forms of networks
-to be contained in a single object.
+However, 'mnet' objects offer prettier printing and a consistent structure
+that enables more complex forms of networks to be contained in a single object.
 }
 \section{Nodes}{
 

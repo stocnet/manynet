@@ -4,6 +4,10 @@
 
 - Removed extracted tute scripts from root folder
 
+## Making
+
+- Exported `describe_*()` functions for describing networks, nodes, ties, and changes
+
 # manynet 1.6.4
 
 ## Making
