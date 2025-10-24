@@ -28,7 +28,7 @@ NULL
 #' (tie_cen <- node_by_tie(task_eg))
 #' @export
 node_by_tie <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   object <- as_igraph(.data)
   # edge_names <- net_tie_attributes(object)
   if (is_directed(object)) {
@@ -95,7 +95,7 @@ node_by_tie <- function(.data){
 #' node_by_dyad(ison_networkers)
 #' @export
 node_by_dyad <- function(.data) {
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(is_weighted(.data)){
     .data <- to_unweighted(.data)
     snet_info("Ignoring tie weights.")
@@ -119,7 +119,7 @@ node_by_dyad <- function(.data) {
 #' (triad_cen <- node_by_triad(task_eg))
 #' @export
 node_by_triad <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   out <- t(sapply(seq.int(manynet::net_nodes(.data)), 
                   function(x) net_by_triad(.data) - net_by_triad(manynet::delete_nodes(.data, x))))
   make_node_motif(out, .data)
@@ -272,7 +272,7 @@ node_by_tetrad <- function(.data){
 #' node_by_path(ison_southern_women)
 #' @export
 node_by_path <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(manynet::is_weighted(.data)){
     tore <- manynet::as_matrix(.data)/mean(manynet::as_matrix(.data))
     out <- 1/tore
@@ -318,7 +318,7 @@ NULL
 #' net_by_dyad(manynet::ison_algebra)
 #' @export
 net_by_dyad <- function(.data) {
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if (manynet::is_twomode(.data)) {
     snet_unavailable("A twomode or multilevel option for a dyad census is not yet implemented.")
   } else {
@@ -339,7 +339,7 @@ net_by_dyad <- function(.data) {
 #' net_by_triad(manynet::ison_adolescents)
 #' @export
 net_by_triad <- function(.data) {
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if (manynet::is_twomode(.data)) {
     snet_abort("A twomode or multilevel option for a triad census is not yet implemented.")
   } else {
@@ -391,7 +391,7 @@ net_by_triad <- function(.data) {
 #' net_by_tetrad(ison_southern_women)
 #' @export
 net_by_tetrad <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   cmbs <- utils::combn(1:net_nodes(.data), 4)
   mat <- as_matrix(to_onemode(.data))
   dens <- apply(cmbs, 2, function(x) sum(mat[x,x]))
@@ -445,7 +445,7 @@ net_by_tetrad <- function(.data){
 #' (mixed_cen <- net_by_mixed(marvel_friends, ison_marvel_teams))
 #' @export
 net_by_mixed <- function (.data, object2) {
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(manynet::is_twomode(.data))
     snet_abort("First object should be a one-mode network")
   if(!manynet::is_twomode(object2))
@@ -524,7 +524,7 @@ NULL
 #' @export
 node_by_brokerage <- function(.data, membership, standardized = FALSE){
   thisRequires("sna")
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(!manynet::is_twomode(.data)){
     out <- sna::brokerage(manynet::as_network(.data),
                           manynet::node_attribute(.data, membership))
@@ -548,7 +548,7 @@ node_by_brokerage <- function(.data, membership, standardized = FALSE){
 #' @export
 net_by_brokerage <- function(.data, membership, standardized = FALSE){
   thisRequires("sna")
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(!manynet::is_twomode(.data)){
     out <- sna::brokerage(manynet::as_network(.data),
                         manynet::node_attribute(.data, membership))
@@ -575,7 +575,7 @@ net_by_brokerage <- function(.data, membership, standardized = FALSE){
 #'   \doi{10.1016/j.socnet.2019.08.002}
 #' @export
 node_brokering_activity <- function(.data, membership){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   from <- to.y <- to_memb <- from_memb <- NULL
   twopaths <- .to_twopaths(.data)
   if(!missing(membership)){
@@ -601,7 +601,7 @@ node_brokering_activity <- function(.data, membership){
 #' node_brokering_exclusivity(ison_networkers, "Discipline")
 #' @export
 node_brokering_exclusivity <- function(.data, membership){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   from <- to.y <- to_memb <- from_memb <- NULL
   twopaths <- .to_twopaths(.data)
   if(!missing(membership)){
@@ -641,7 +641,7 @@ NULL
 #' @rdname member_brokerage 
 #' @export
 node_in_brokering <- function(.data, membership){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   activ <- node_brokering_activity(.data, membership)
   exclusiv <- node_brokering_exclusivity(.data, membership)
   activ <- activ - mean(activ)

@@ -34,7 +34,7 @@ NULL
 #' net_richness(ison_networkers)
 #' @export
 net_richness <- function(.data, attribute){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   make_network_measure(length(unique(manynet::node_attribute(.data, attribute))),
                        .data, call = deparse(sys.call()))
 }
@@ -44,7 +44,7 @@ net_richness <- function(.data, attribute){
 #' node_richness(ison_networkers, "Discipline")
 #' @export
 node_richness <- function(.data, attribute){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   out <- vapply(manynet::to_egos(.data, min_dist = 1), 
          function(x) length(unique(manynet::node_attribute(x, attribute))),
          FUN.VALUE = numeric(1))
@@ -83,7 +83,7 @@ node_richness <- function(.data, attribute){
 #' net_diversity(marvel_friends, "Gender", "Rich")
 #' @export
 net_diversity <- function(.data, attribute, clusters = NULL){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   blau <- function(features) { 1 - sum((table(features)/length(features))^2) }
   attr <- manynet::node_attribute(.data, attribute)
   if (is.null(clusters)) {
@@ -110,7 +110,7 @@ net_diversity <- function(.data, attribute, clusters = NULL){
 #' node_diversity(marvel_friends, "Attractive")
 #' @export
 node_diversity <- function(.data, attribute){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   out <- vapply(igraph::ego(manynet::as_igraph(.data)),
                 function(x) net_diversity(
                   igraph::induced_subgraph(manynet::as_igraph(.data), x),
@@ -144,7 +144,7 @@ node_diversity <- function(.data, attribute){
 #' net_heterophily(marvel_friends, "Attractive")
 #' @export
 net_heterophily <- function(.data, attribute){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   m <- manynet::as_matrix(.data)
   if (length(attribute) == 1 && is.character(attribute)) {
     attribute <- manynet::node_attribute(.data, attribute)
@@ -165,7 +165,7 @@ net_heterophily <- function(.data, attribute){
 #' node_heterophily(marvel_friends, "Attractive")
 #' @export
 node_heterophily <- function(.data, attribute){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   m <- manynet::as_matrix(.data)
   if (length(attribute) == 1 && is.character(attribute)) {
     attribute <- manynet::node_attribute(.data, attribute)
@@ -197,7 +197,7 @@ node_heterophily <- function(.data, attribute){
 #' net_assortativity(ison_networkers)
 #' @export
 net_assortativity <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   make_network_measure(igraph::assortativity_degree(manynet::as_igraph(.data), 
                                directed = manynet::is_directed(.data)),
                      .data, call = deparse(sys.call()))
@@ -214,7 +214,7 @@ net_assortativity <- function(.data){
 #' net_spatial(ison_lawfirm, "age")
 #' @export
 net_spatial <- function(.data, attribute){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   N <- manynet::net_nodes(.data)
   x <- manynet::node_attribute(.data, attribute)
   stopifnot(is.numeric(x))

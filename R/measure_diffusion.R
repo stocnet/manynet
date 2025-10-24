@@ -479,7 +479,7 @@ node_recovery <- function(.data){
 #'   node_exposure(smeg_diff)
 #' @export
 node_exposure <- function(.data, mark, time = 0){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(missing(mark)){ 
     if(inherits(.data, "diff_model")){
       mark <- node_is_infected(.data, time = time)

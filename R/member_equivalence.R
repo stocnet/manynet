@@ -55,7 +55,7 @@ node_in_equivalence <- function(.data, census,
                              distance = c("euclidean", "maximum", "manhattan", 
                                           "canberra", "binary", "minkowski"),
                              range = 8L){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   hc <- switch(match.arg(cluster),
                hierarchical = cluster_hierarchical(census, 
                                                       match.arg(distance)),
@@ -85,7 +85,7 @@ node_in_structural <- function(.data,
                                         distance = c("euclidean", "maximum", "manhattan", 
                                                      "canberra", "binary", "minkowski"),
                                         range = 8L){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   mat <- node_by_tie(.data)
   if(any(colSums(t(mat))==0)){
     mat <- cbind(mat, (colSums(t(mat))==0))
@@ -105,7 +105,7 @@ node_in_regular <- function(.data,
                             distance = c("euclidean", "maximum", "manhattan", 
                                          "canberra", "binary", "minkowski"),
                             range = 8L){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(is_twomode(.data)){
     snet_info("Since this is a two-mode network,", 
               "using {.fn node_by_tetrad} to", 
@@ -135,7 +135,7 @@ node_in_automorphic <- function(.data,
                                          distance = c("euclidean", "maximum", "manhattan", 
                                                       "canberra", "binary", "minkowski"),
                                          range = 8L){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   mat <- node_by_path(.data)
   node_in_equivalence(.data, mat, 
                    k = k, cluster = cluster, distance = distance, range = range)

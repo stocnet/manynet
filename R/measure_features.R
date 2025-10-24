@@ -61,7 +61,7 @@ NULL
 net_core <- function(.data,
                      mark = NULL,
                      method = c("correlation","ident","ndiff", "diff")){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(is.null(mark)) mark <- node_is_core(.data)
   
   method <- match.arg(method)
@@ -103,7 +103,7 @@ net_core <- function(.data,
 #' net_richclub(ison_adolescents)
 #' @export
 net_richclub <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   coefs <- vector()
   temp <- .data
   for(k in seq_len(max(node_degree(temp, normalized = FALSE)))){
@@ -149,7 +149,7 @@ net_richclub <- function(.data){
 #' @export
 net_factions <- function(.data,
                        membership = NULL){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(is.null(membership)){
     snet_info("No membership vector assigned.",
               "Partitioning the network using {.fn node_in_partition}.")
@@ -206,7 +206,7 @@ net_factions <- function(.data,
 net_modularity <- function(.data, 
                              membership = NULL, 
                              resolution = 1){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(is.null(membership)){
     snet_info("Since no membership argument has been provided,",
               "a partition of the network into two will be calculated and used.")
@@ -274,7 +274,7 @@ net_smallworld <- function(.data,
                                method = c("omega", "sigma", "SWI"),
                                times = 100) {
   
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   method <- match.arg(method)
   
   if(manynet::is_twomode(.data)){
@@ -340,7 +340,7 @@ net_smallworld <- function(.data,
 #' net_scalefree(create_lattice(100))
 #' @export
 net_scalefree <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   out <- igraph::fit_power_law(node_deg(.data))
   if ("KS.p" %in% names(out)) {
     if(out$KS.p < 0.05) 
@@ -370,7 +370,7 @@ net_scalefree <- function(.data){
 #' @export
 net_balance <- function(.data) {
   
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   count_signed_triangles <- function(.data){
     g <- manynet::as_igraph(.data)
     if (!"sign" %in% igraph::edge_attr_names(g)) {
@@ -463,7 +463,7 @@ net_waves <- function(.data){
 #' @param object2 A network object.
 #' @export
 net_change <- function(.data, object2){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(manynet::is_list(.data)){
     
   } else if(!missing(object2)){
@@ -480,7 +480,7 @@ net_change <- function(.data, object2){
 #' @rdname measure_periods 
 #' @export
 net_stability <- function(.data, object2){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(manynet::is_list(.data)){
     
   } else if(!missing(object2)){
@@ -500,7 +500,7 @@ net_stability <- function(.data, object2){
 #' @rdname measure_periods 
 #' @export
 net_correlation <- function(.data, object2){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   comp1 <- as_matrix(.data)
   comp2 <- as_matrix(object2)
   if(!is_complex(.data)){
