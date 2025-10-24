@@ -26,7 +26,7 @@ NULL
 #' node_is_isolate(ison_brandes)
 #' @export
 node_is_isolate <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   mat <- as_matrix(.data)
   if(is_twomode(.data)){
     out <- c(rowSums(mat)==0, colSums(mat)==0)
@@ -40,7 +40,7 @@ node_is_isolate <- function(.data){
 #' @rdname mark_nodes
 #' @export
 node_is_pendant <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   mat <- as_matrix(.data)
   if(is_twomode(.data)){
     out <- c(rowSums(mat)==1, colSums(mat)==1)
@@ -62,7 +62,7 @@ node_is_pendant <- function(.data){
 #' node_is_independent(ison_adolescents)
 #' @export
 node_is_independent <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(is_twomode(.data)){
     samp <- igraph::largest_ivs(to_mode1(.data))
     if(is_labelled(.data)){
@@ -101,7 +101,7 @@ node_is_independent <- function(.data){
 #' node_is_cutpoint(ison_brandes)
 #' @export
 node_is_cutpoint <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(is_labelled(.data)){
     out <- node_names(.data) %in% 
       attr(igraph::articulation_points(as_igraph(.data)), 
@@ -160,7 +160,7 @@ node_is_fold <- function(.data){
 #' _Annals of the American Academy of Political and Social Science_ 566: 56-67.
 #' @export
 node_is_mentor <- function(.data, elites = 0.1){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   indegs <- colSums(manynet::as_matrix(.data)) # get rank order of indegrees
   out <- indegs == max(indegs)
   if(sum(out) < length(indegs)*elites){
@@ -173,7 +173,7 @@ node_is_mentor <- function(.data, elites = 0.1){
 #' @inheritParams manip_scope
 #' @export
 node_is_neighbor <- function(.data, node){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   .data <- as_igraph(.data)
   out <- igraph::V(.data) %in% igraph::neighbors(.data, v = node)
   make_node_mark(out, .data)
