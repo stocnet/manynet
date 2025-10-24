@@ -120,8 +120,6 @@ summary.network_measure <- function(object, ...,
   p <- 2 * stats::pnorm(out, 
              mean = mean(nulls), sd = stats::sd(nulls), 
              lower.tail = ifelse(out>0, FALSE, TRUE))
-  cli::cli_text(cli::style_bold(round(object,3)), 
-                "  (z = ", cli::style_italic(round(out,2)),
-                ", p = ", cli::style_italic(round(p,3)),
-                ")")
+  paste(round(object,3), 
+        paste0("(z = ", round(out, 2), ", p = ", round(p, 3), ")"))
 }
