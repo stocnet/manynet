@@ -28,7 +28,9 @@ test_that("efficiency is reported correctly", {
 })
 
 test_that("constraint scores are reported correctly for two-mode networks",{
-  expect_equal(top3(node_constraint(ison_southern_women)), c(0.2782, 0.3071, 0.2965))
+  res <- node_constraint(ison_southern_women)
+  expect_equal(top3(res), c(0.2782, 0.3071, 0.2965))
+  expect_output(print(res), "Evelyn")
   # expect_named(node_constraint(ison_southern_women)[1:3], c("Evelyn", "Laura", "Theresa"))
 })
 
