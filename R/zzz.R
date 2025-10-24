@@ -1,3 +1,4 @@
+# nocov start
 #' @importFrom cli cli_div cli_inform cli_end
 .onAttach <- function(...) {
 
@@ -51,3 +52,4 @@
 
 }
 
+# nocov end
