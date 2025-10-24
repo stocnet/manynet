@@ -28,7 +28,7 @@ node_kcoreness() assigns nodes to their level of k-coreness.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.5</span>
       </span>
     </div>
 
@@ -154,6 +154,16 @@ and the indicator function is 1 if the predicate is true or 0 otherwise.
 Note that minimising this quantity maximises density in the core block
 and minimises density in the periphery block;
 it ignores ties between these blocks.</p>
+    </div>
+    <div id="k-coreness">
+    <h2>k-coreness</h2>
+
+
+<p>k-coreness captures the maximal subgraphs in which each vertex has at least
+degree <em>k</em>, where <em>k</em> is also the order of the subgraph.
+As described in <code><a href="https://r.igraph.org/reference/coreness.html" class="external-link">igraph::coreness</a></code>,
+a node's coreness is <em>k</em> if it belongs to the <em>k</em>-core
+but not to the (<em>k</em>+1)-core.</p>
     </div>
     <div id="core-periphery-categories">
     <h2>Core-periphery categories</h2>
