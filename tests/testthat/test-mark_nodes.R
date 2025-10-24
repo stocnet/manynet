@@ -75,6 +75,7 @@ test_that("node_is_pendant correctly identifies pendant nodes", {
   expect_type(result, "logical")
   expect_length(result, 5)
   expect_equal(as.logical(result), c(FALSE, TRUE, TRUE, TRUE, TRUE))
+  expect_output(print(result), "V1")
 })
 
 test_that("node infection, exposure, and recovery works", {

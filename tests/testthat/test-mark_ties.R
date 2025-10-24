@@ -25,6 +25,7 @@ test_that("tie_is_path works", {
 
 test_that("tie_is_triangular works", {
   expect_equal(sum(tie_is_triangular(ison_adolescents)), 7)
+  expect_output(print(tie_is_triangular(ison_adolescents)), "Betty-Sue")
 })
 
 test_that("directed triangle tie marks work", {
