@@ -12,3 +12,7 @@ test_that("node_in_component works", {
   expect_equal(length(unique(comp)), 
                length(unique(node_in_weak(to_uniplex(ison_monks, "esteem")))))
 })
+
+test_that("node_in_component works for two-mode networks", {
+  expect_output(print(node_in_component(ison_southern_women)), "1 group")
+})

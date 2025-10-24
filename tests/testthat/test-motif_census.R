@@ -82,9 +82,11 @@ test_that("node exclusivity works", {
   expect_equal(top3(test), c(1,0,0))
 })
 
-test <- node_in_brokering(ison_networkers, "Discipline")
-test_that("node brokering works", {
+test_that("node_in_brokering works", {
+  test <- node_in_brokering(ison_networkers, "Discipline")
   expect_s3_class(test, "node_member")
   expect_equal(c(net_nodes(ison_networkers)), length(test))
   expect_equal(top3(test), c("Powerhouse","Connectors","Sideliners"))
+  expect_output(print(node_in_brokering(ison_marvel_teams)), "4 groups")
+  expect_output(print(summary(node_in_brokering(ison_marvel_teams))), "Connectors")
 })
