@@ -1,3 +1,5 @@
+# nocov start
+
 # defining global variables more centrally
 utils::globalVariables(c(".data", "obs",
                          "from", "to", "name", "weight","sign","wave",
@@ -48,3 +50,5 @@ seq_nodes <- function(.data){
 # `%|0|%` <- function(x, y) {
 #   if (!length(x)) y else x
 # }
+
+# nocov end
