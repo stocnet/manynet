@@ -34,7 +34,7 @@ NULL
 #' @export
 node_in_component <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
-  if(!is_graph(.data)) .data <- as_igraph(.data)
+  if(!is_graph(.data)) .data <- as_igraph(.data) # nocov
   make_node_member(igraph::components(.data, mode = "strong")$membership,
               .data)
 }
@@ -44,7 +44,7 @@ node_in_component <- function(.data){
 #' @export
 node_in_weak <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
-  if(!manynet::is_graph(.data)) .data <- manynet::as_igraph(.data)
+  if(!manynet::is_graph(.data)) .data <- manynet::as_igraph(.data) # nocov
   make_node_member(igraph::components(.data, mode = "weak")$membership,
                  .data)
 }
@@ -54,7 +54,7 @@ node_in_weak <- function(.data){
 #' @export
 node_in_strong <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
-  if(!manynet::is_graph(.data)) .data <- manynet::as_igraph(.data)
+  if(!manynet::is_graph(.data)) .data <- manynet::as_igraph(.data) # nocov
   make_node_member(igraph::components(.data, mode = "strong")$membership,
                  .data)
 }
