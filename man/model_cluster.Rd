@@ -38,10 +38,13 @@ These functions are used to cluster some census object:
 created by \code{stats::hclust()}.
 \item \code{cluster_concor()} returns a hierarchical clustering object
 created from a convergence of correlations procedure (CONCOR).
+\item \code{cluster_cosine()} returns a hierarchical clustering object
+created by \code{stats::hclust()} on cosine dissimilarities,
+rather than correlations, as created by \code{to_cosine()}.
 }
 
 These functions are not intended to be called directly,
-but are called within \code{node_equivalence()} and related functions.
+but are called within \code{node_in_equivalence()} and related functions.
 They are exported and listed here to provide more detailed documentation.
 }
 \section{CONCOR}{

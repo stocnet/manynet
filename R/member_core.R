@@ -36,7 +36,7 @@ NULL
 #' node_is_universal(create_star(11))
 #' @export
 node_is_universal <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   net <- to_undirected(to_unweighted(.data))
   make_node_mark(node_deg(net)==(net_nodes(net)-1), .data)
 }
@@ -70,7 +70,7 @@ node_is_universal <- function(.data){
 #' #   graphr(node_color = "corep")
 #' @export
 node_is_core <- function(.data, method = c("degree", "eigenvector")){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   method <- match.arg(method)
   if(is_directed(.data)) warning("Asymmetric core-periphery not yet implemented.")
   if(method == "degree"){
@@ -96,6 +96,12 @@ node_is_core <- function(.data, method = c("degree", "eigenvector")){
 }
 
 #' @rdname mark_core
+#' @section k-coreness:
+#'   k-coreness captures the maximal subgraphs in which each vertex has at least
+#'   degree _k_, where _k_ is also the order of the subgraph.
+#'   As described in `igraph::coreness`,
+#'   a node's coreness is _k_ if it belongs to the _k_-core
+#'   but not to the (_k_+1)-core.
 #' @references
 #' ## On k-coreness
 #' Seidman, Stephen B. 1983. 
@@ -111,7 +117,7 @@ node_is_core <- function(.data, method = c("degree", "eigenvector")){
 #' node_kcoreness(ison_adolescents)
 #' @export
 node_kcoreness <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(!manynet::is_graph(.data)) .data <- manynet::as_igraph(.data)
   out <- igraph::coreness(.data)
   make_node_measure(out, .data)
@@ -122,7 +128,7 @@ node_kcoreness <- function(.data){
 #' node_coreness(ison_adolescents)
 #' @export
 node_coreness <- function(.data) {
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   A <- as_matrix(.data)
   n <- nrow(A)
   obj_fun <- function(c) {
@@ -164,7 +170,7 @@ node_in_core <- function(.data, groups = 3,
                          cluster_by = c("bins","quantiles","kmeans")) {
   if (groups < 2) snet_abort("Number of categories must be at least 2")
   if (groups > net_nodes(.data)) snet_abort("There cannot be more categories than nodes.")
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   contin <- node_coreness(.data)
   cluster_by <- match.arg(cluster_by)
   out <- switch(cluster_by,

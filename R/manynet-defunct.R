@@ -1,3 +1,4 @@
+# nocov start
 #' Functions that have been renamed, superseded, or are no longer working
 #' 
 #' `r lifecycle::badge("deprecated")`
@@ -743,3 +744,4 @@ net_hazard <- function(.data) {
   net_by_hazard(.data)
 }
 
+# nocov end

@@ -24,6 +24,26 @@ test_that("ring creation works", {
   expect_error(create_ring(c(5,5,5)), "single integer")
 })
 
+test_that("create_degree works", {
+  expect_values(net_ties(create_degree(10, outdegree = rep(1:5, 2))), 15)
+  expect_values(net_ties(create_degree(c(5,5), outdegree = 2, indegree = 2)), 10)
+})
+
+test_that("create_windmill works", {
+  expect_values(net_ties(create_windmill(5)), 6)
+  expect_values(net_ties(create_windmill(c(5,8))), 16)
+})
+
+test_that("create_cycle works", {
+  expect_values(net_ties(create_cycle(5)), 5)
+  expect_values(net_ties(create_cycle(c(5,5))), 10)
+})
+
+test_that("create_wheel works", {
+  expect_values(net_ties(create_wheel(5)), 8)
+  expect_error(create_wheel(c(5,5)))
+})
+
 test_that("star creation works", {
   expect_true(!is_twomode(create_star(5)))
   expect_true(is_twomode(create_star(c(5,5))))

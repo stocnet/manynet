@@ -36,7 +36,7 @@ NULL
 #' net_reciprocity(ison_southern_women)
 #' @export
 net_reciprocity <- function(.data, method = "default") {
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   make_network_measure(igraph::reciprocity(manynet::as_igraph(.data), mode = method), 
                        .data, call = deparse(sys.call()))
 }
@@ -46,7 +46,7 @@ net_reciprocity <- function(.data, method = "default") {
 #' node_reciprocity(to_unweighted(ison_networkers))
 #' @export
 node_reciprocity <- function(.data) {
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   out <- manynet::as_matrix(.data)
   make_node_measure(rowSums(out * t(out))/rowSums(out), 
                     .data)
@@ -58,7 +58,7 @@ node_reciprocity <- function(.data) {
 #' net_transitivity(ison_adolescents)
 #' @export
 net_transitivity <- function(.data) {
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   make_network_measure(igraph::transitivity(manynet::as_igraph(.data)), 
                        .data, call = deparse(sys.call()))
 }
@@ -68,7 +68,7 @@ net_transitivity <- function(.data) {
 #' node_transitivity(ison_adolescents)
 #' @export
 node_transitivity <- function(.data) {
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   make_node_measure(igraph::transitivity(manynet::as_igraph(.data), 
                                          type = "local"), 
                     .data)
@@ -89,7 +89,7 @@ node_transitivity <- function(.data) {
 #' net_equivalency(ison_southern_women)
 #' @export
 net_equivalency <- function(.data) {
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(is_twomode(.data)){
     mat <- manynet::as_matrix(.data)
     c <- ncol(mat)
@@ -123,7 +123,7 @@ net_equivalency <- function(.data) {
 #' node_equivalency(ison_southern_women)
 #' @export
 node_equivalency <- function(.data) {
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   # if(is_weighted(.data))
   #   snet_info("Using unweighted form of the network.")
   out <- vapply(cli::cli_progress_along(1:net_nodes(.data)), function(i){
@@ -148,7 +148,7 @@ node_equivalency <- function(.data) {
 #' \doi{10.1017/9781108985000}
 #' @export
 net_congruency <- function(.data, object2){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(missing(.data) | missing(object2)) snet_abort("This function expects two two-mode networks")
   if(!manynet::is_twomode(.data) | !manynet::is_twomode(object2)) snet_abort("This function expects two two-mode networks")
   if(manynet::net_dims(.data)[2] != manynet::net_dims(object2)[1]) 

@@ -1,3 +1,14 @@
+# manynet 1.6.5
+
+## Package
+
+- Removed extracted tute scripts from root folder
+- Added extensive testing for core and older functions
+
+## Making
+
+- Exported `describe_*()` functions for describing networks, nodes, ties, and changes
+
 # manynet 1.6.4
 
 ## Making

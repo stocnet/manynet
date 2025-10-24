@@ -91,3 +91,12 @@ test_that("conversion of diff_model object works correctly", {
   expect_values(net_ties(tidy_diff), net_ties(ison_brandes))
   expect_values(net_nodes(tidy_diff), max(diff$I))
 })
+
+test_that("mnet objects printed correctly", {
+  expect_output(print(ison_adolescents), "A tibble")
+  expect_match(describe_network(ison_adolescents), "labelled, undirected")
+  expect_match(describe_nodes(ison_adolescents), "8 adolescents")
+  expect_match(describe_ties(ison_adolescents), "10 friendship")
+  expect_null(describe_changes(ison_adolescents))
+})
+  

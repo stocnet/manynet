@@ -25,3 +25,12 @@ test_that("richness function works", {
   expect_length(node_richness(ison_networkers, "type"), 32)
   expect_s3_class(node_richness(ison_networkers, "type"), "node_measure")
 })
+
+test_that("node_diversity works", {
+  expect_equal(top3(node_diversity(ison_lawfirm, "gender")),
+                c(0.285, 0.375,0), tolerance = 0.01)
+})
+
+test_that("net_spatial works", {
+  expect_values(net_spatial(ison_lawfirm, "age"), 0.126)
+})

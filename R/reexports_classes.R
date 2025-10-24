@@ -26,6 +26,8 @@ tidygraph::.N
 #' @export
 tidygraph::.E
 
+# nocov start
+
 expect_nodes <- function() {
   if (!tidygraph::.graph_context$free() && tidygraph::.graph_context$active() != "nodes") {
     snet_abort("This call requires nodes to be active", call. = FALSE)
@@ -37,3 +39,5 @@ expect_edges <- function() {
     snet_abort("This call requires ties to be active", call. = FALSE)
   }
 }
+
+# nocov end

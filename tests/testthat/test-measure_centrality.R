@@ -84,6 +84,17 @@ test_that("node measure class works", {
   expect_s3_class(node_closeness(ison_adolescents), "node_measure")
   expect_s3_class(node_eigenvector(ison_adolescents), "node_measure")
   expect_s3_class(node_reach(ison_adolescents), "node_measure")
+  expect_s3_class(node_randomwalk(ison_adolescents), "node_measure")
+  expect_s3_class(node_harmonic(ison_adolescents), "node_measure")
+})
+
+test_that("summary node measure works", {
+  expect_equal(names(summary(node_degree(ison_adolescents))), 
+               c("Minimum","Maximum","Mean","StdDev","Missing"))
+})
+
+test_that("summary net measure works", {
+  expect_match(summary(net_degree(ison_adolescents)), "z =")
 })
 
 # ####### Centralization
@@ -121,10 +132,10 @@ test_that("net_measure class works", {
 
 # ####### Edge centrality
 test_that("tie_degree works", {
-  expect_s3_class(tie_degree(ison_adolescents),
-                  "tie_measure")
-  expect_length(tie_degree(ison_adolescents),
-                manynet::net_ties(ison_adolescents))
+  res <- tie_degree(ison_adolescents)
+  expect_s3_class(res, "tie_measure")
+  expect_length(res, manynet::net_ties(ison_adolescents))
+  expect_output(print(res), "Betty-Sue")
 })
 
 test_that("tie_betweenness works", {

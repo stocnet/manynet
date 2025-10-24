@@ -5,9 +5,8 @@
 #'   Under the hood it is an 'igraph' object, which enables all the igraph
 #'   functions to operate.
 #'   It is also a 'tbl_graph' object, which enables it to be used with `{ggraph}`.
-#'   However, 'mnet' objects offer prettier printing and 
-#'   a consistent structure that enables more complex forms of networks 
-#'   to be contained in a single object.
+#'   However, 'mnet' objects offer prettier printing and a consistent structure 
+#'   that enables more complex forms of networks to be contained in a single object.
 #' @section Nodes:
 #'   Nodes are held as vertices and vertex attributes in the 'igraph' object,
 #'   but printed as a nodelist.
@@ -62,13 +61,13 @@ print.mnet <- function(x, ..., n = 12) {
   } else if(is_grand(x) && !is.null(igraph::graph_attr(x, "grand")$name)){
     cli::cli_h1("# {igraph::graph_attr(x, 'grand')$name}")
   } 
-  graph_desc <- describe_graph(x)
+  net_desc <- describe_network(x)
   tie_desc <- describe_ties(x)
   node_desc <- describe_nodes(x)
   change_desc <- describe_changes(x)
   cli::cli_par()
   cli_div(theme = list(.emph = list(color = "#4576B5")))
-  cli::cli_text("{.emph # {graph_desc} network of {node_desc} and {tie_desc}{change_desc}}")
+  cli::cli_text("{.emph # {net_desc} network of {node_desc} and {tie_desc}{change_desc}}")
   cli::cli_end()
   top <- dplyr::as_tibble(tidygraph::activate(x, "nodes"))
   bottom <- dplyr::as_tibble(tidygraph::activate(x, "edges"))
@@ -118,7 +117,9 @@ net_name <- function(.data, prefix = NULL){
   existname
 }
 
-describe_graph <- function(x) {
+#' @rdname make_mnet
+#' @export
+describe_network <- function(x) {
   paste0("A ",
          ifelse(is_dynamic(x), "dynamic, ", ""),
          ifelse(is_longitudinal(x), "longitudinal, ", ""),
@@ -132,6 +133,8 @@ describe_graph <- function(x) {
   )
 }
 
+#' @rdname make_mnet
+#' @export
 describe_nodes <- function(x){
   nd <- net_dims(x)
   if(!is.null(igraph::graph_attr(x, "nodes"))){
@@ -146,6 +149,8 @@ describe_nodes <- function(x){
   node_name
 }
 
+#' @rdname make_mnet
+#' @export
 describe_ties <- function(x){
   nt <- net_ties(x)
   tie_name <- ifelse(is_directed(x), "arcs", "ties") 
@@ -171,6 +176,8 @@ describe_ties <- function(x){
   paste(nt, tie_name)
 }
 
+#' @rdname make_mnet
+#' @export
 describe_changes <- function(x){
   if(is_longitudinal(x)){
     paste(" over", max(tie_attribute(x, "wave")), "waves")

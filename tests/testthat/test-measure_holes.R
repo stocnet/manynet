@@ -27,15 +27,17 @@ test_that("efficiency is reported correctly", {
                c(net_nodes(ison_southern_women)))
 })
 
-test_that("constraint scores are reported correctly for two-mode notworks",{
-  expect_equal(top3(node_constraint(ison_southern_women)), c(0.2782, 0.3071, 0.2965))
+test_that("constraint scores are reported correctly for two-mode networks",{
+  res <- node_constraint(ison_southern_women)
+  expect_equal(top3(res), c(0.2782, 0.3071, 0.2965))
+  expect_output(print(res), "Evelyn")
   # expect_named(node_constraint(ison_southern_women)[1:3], c("Evelyn", "Laura", "Theresa"))
 })
 
-om <- igraph::make_graph(edges = c(1,2, 2,3), n = 4, directed = FALSE) 
-
 test_that("constraint scores are reported correctly for one-mode notworks",{
-  expect_equal(round(unname(node_constraint(ison_adolescents)[1:3]),2), c(1, .43, .57))
+  res <- node_constraint(ison_adolescents)
+  expect_equal(round(unname(res[1:3]),2), c(1, .43, .57))
+  expect_output(print(res), "Alice")
 })
 
 test_that("hierarchy is reported correctly", {
@@ -45,4 +47,12 @@ test_that("hierarchy is reported correctly", {
   expect_equal(length(node_hierarchy(ison_southern_women)),
                c(net_nodes(ison_southern_women)))
   expect_named(node_hierarchy(ison_southern_women))
+})
+
+test_that("node_neighbours_degree works", {
+  expect_equal(top3(node_neighbours_degree(ison_adolescents)), c(4,2.75,3))
+})
+
+test_that("tie_cohesion works", {
+  expect_equal(top3(tie_cohesion(ison_adolescents)), c(0,0.5,0.3333))
 })

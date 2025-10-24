@@ -27,6 +27,7 @@ test_that("two-mode object clustering is reported correctly",{
                0.4677, tolerance = 0.001)
   expect_s3_class(net_equivalency(ison_southern_women), "network_measure")
   expect_output(print(net_equivalency(ison_southern_women)))
+  expect_values(net_equivalency(ison_adolescents), 0.258)
 })
 
 test_that("node_equivalency works correctly",{
@@ -47,4 +48,9 @@ test_that("three-mode clustering calculated correctly",{
 test_that("node_transitivity is reported correctly",{
   expect_length(node_transitivity(ison_algebra), net_nodes(ison_algebra))
   expect_s3_class(node_transitivity(ison_algebra), "node_measure")
+})
+
+test_that("node_reciprocity works",{
+  expect_length(node_reciprocity(ison_networkers), net_nodes(ison_networkers))
+  expect_s3_class(node_reciprocity(ison_networkers), "node_measure")
 })

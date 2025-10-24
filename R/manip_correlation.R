@@ -26,7 +26,7 @@ NULL
 #' @rdname manip_correlation
 #' @export
 to_correlation <- function(.data, method = NULL){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   mat <- as_matrix(.data)
   if(is.null(method)) method <- ifelse(is_twomode(.data),
                                        "all",

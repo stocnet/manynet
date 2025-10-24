@@ -34,7 +34,7 @@ NULL
 #' @rdname measure_hierarchy 
 #' @export
 net_by_hierarchy <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   out <- data.frame(Connectedness = net_connectedness(.data),
                     InvReciprocity = 1 - net_reciprocity(.data),
                     Efficiency = net_efficiency(.data),
@@ -45,7 +45,7 @@ net_by_hierarchy <- function(.data){
 #' @rdname measure_hierarchy 
 #' @export
 net_connectedness <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   dists <- igraph::distances(as_igraph(.data))
   make_network_measure(1 - sum(dists==Inf)/sum(dists!=0),
                        .data, 
@@ -55,7 +55,7 @@ net_connectedness <- function(.data){
 #' @rdname measure_hierarchy 
 #' @export
 net_efficiency <- function(.data) {
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   degs <- node_indegree(.data, normalized = FALSE)
   out <- (net_nodes(.data)-1)/sum(degs)
   make_network_measure(out, .data, 
@@ -65,7 +65,7 @@ net_efficiency <- function(.data) {
 #' @rdname measure_hierarchy 
 #' @export
 net_upperbound <- function(.data) {
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   dists <- igraph::distances(.data, mode = "in")
   dists[is.infinite(dists)] <- 0
   dists <- dists[order(rowSums(dists)), order(rowSums(dists))]

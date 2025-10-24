@@ -42,7 +42,7 @@ NULL
 #'   technique is used to ensure the maximal modularity partition.
 #' @export
 node_in_community <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(net_nodes(.data)<100){
     # don't use node_in_betweenness because slow and poorer quality to optimal
     snet_success("{.fn node_in_optimal} available and", 
@@ -99,7 +99,7 @@ node_in_community <- function(.data){
 #' node_in_optimal(ison_adolescents)
 #' @export
 node_in_optimal <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(net_nodes(.data)>100) 
     cli::cli_alert_danger(paste("This algorithm may take some time", 
     "or even run out of memory on such a large network."))
@@ -120,7 +120,7 @@ node_in_optimal <- function(.data){
 #' node_in_partition(ison_southern_women)
 #' @export
 node_in_partition <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   # assign groups arbitrarily
   n <- net_nodes(.data)
   group_size <- ifelse(n %% 2 == 0, n/2, (n+1)/2)
@@ -187,7 +187,7 @@ node_in_partition <- function(.data){
 #' node_in_infomap(ison_adolescents)
 #' @export
 node_in_infomap <- function(.data, times = 50){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   out <- igraph::cluster_infomap(manynet::as_igraph(.data), 
                                  nb.trials = times
   )$membership
@@ -225,7 +225,7 @@ node_in_infomap <- function(.data, times = 50){
 #' node_in_spinglass(ison_adolescents)
 #' @export
 node_in_spinglass <- function(.data, max_k = 200, resolution = 1){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(!igraph::is_connected(.data)) # note manynet::is_connected will return false
     snet_unavailable("This algorithm only works for connected networks.",
                      "We suggest using `to_giant()`", 
@@ -256,7 +256,7 @@ node_in_spinglass <- function(.data, max_k = 200, resolution = 1){
 #' node_in_fluid(ison_adolescents)
 #' @export
 node_in_fluid <- function(.data) {
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   .data <- as_igraph(.data)
   if (!igraph::is_connected(.data)) {
     snet_unavailable("This algorithm only works for connected networks.",
@@ -300,7 +300,7 @@ node_in_fluid <- function(.data) {
 #' node_in_louvain(ison_adolescents)
 #' @export
 node_in_louvain <- function(.data, resolution = 1){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(is_directed(.data)){
     snet_info("This algorithm only works for undirected networks.", 
               "Converting to undirected")
@@ -339,7 +339,7 @@ node_in_louvain <- function(.data, resolution = 1){
 #' node_in_leiden(ison_adolescents)
 #' @export
 node_in_leiden <- function(.data, resolution = 1){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(is_directed(.data)){
     snet_info("This algorithm only works for undirected networks.", 
               "Converting to undirected")
@@ -401,7 +401,7 @@ NULL
 #' node_in_betweenness(ison_adolescents)
 #' @export
 node_in_betweenness <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(net_nodes(.data)>100) 
     cli::cli_alert_danger(paste("This algorithm may take some time", 
                                 "or even run out of memory on such a large network."))
@@ -434,7 +434,7 @@ node_in_betweenness <- function(.data){
 #' node_in_greedy(ison_adolescents)
 #' @export
 node_in_greedy <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   clust <- igraph::cluster_fast_greedy(to_undirected(as_igraph(.data)))
   out <- clust$membership
   make_node_member(out, .data)
@@ -463,7 +463,7 @@ node_in_greedy <- function(.data){
 #' node_in_eigen(ison_adolescents)
 #' @export
 node_in_eigen <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(is_directed(.data)){
     snet_info("This algorithm only works for undirected networks.", 
               "Converting to undirected")
@@ -496,7 +496,7 @@ node_in_eigen <- function(.data){
 #' node_in_walktrap(ison_adolescents)
 #' @export
 node_in_walktrap <- function(.data, times = 50){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   clust <- igraph::cluster_walktrap(manynet::as_igraph(.data))
   out <- clust$membership
   make_node_member(out, .data)

@@ -7,9 +7,12 @@
 #'   created by `stats::hclust()`.
 #'   - `cluster_concor()` returns a hierarchical clustering object
 #'   created from a convergence of correlations procedure (CONCOR).
+#'   - `cluster_cosine()` returns a hierarchical clustering object
+#'   created by `stats::hclust()` on cosine dissimilarities,
+#'   rather than correlations, as created by `to_cosine()`.
 #' 
 #'   These functions are not intended to be called directly,
-#'   but are called within `node_equivalence()` and related functions.
+#'   but are called within `node_in_equivalence()` and related functions.
 #'   They are exported and listed here to provide more detailed documentation.
 #' @name model_cluster
 #' @inheritParams member_equivalence
@@ -66,7 +69,7 @@ cluster_cosine <- function(census, distance){
 #'   \doi{10.1016/0022-2496(75)90028-0}.
 #' @export
 cluster_concor <- function(.data, census){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   split_cor <- function(m0, cutoff = 1) {
     if (ncol(m0) < 2 | all(manynet::to_correlation(m0)==1)) list(m0)
     else {

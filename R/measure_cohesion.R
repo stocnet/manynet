@@ -33,7 +33,7 @@ NULL
 #' net_density(ison_southern_women)
 #' @export
 net_density <- function(.data) {
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if (manynet::is_twomode(.data)) {
     mat <- manynet::as_matrix(.data)
     out <- sum(mat) / (nrow(mat) * ncol(mat))
@@ -53,7 +53,7 @@ net_density <- function(.data) {
 #'   net_components(to_undirected(fict_thrones))
 #' @export
 net_components <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   object <- manynet::as_igraph(.data)
   make_network_measure(igraph::components(object, mode = "strong")$no,
                        object, call = deparse(sys.call()))
@@ -72,7 +72,7 @@ net_components <- function(.data){
 #' net_cohesion(to_giant(ison_marvel_relationships))
 #' @export
 net_cohesion <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   make_network_measure(igraph::cohesion(manynet::as_igraph(.data)), 
                        .data, call = deparse(sys.call()))
 }
@@ -84,7 +84,7 @@ net_cohesion <- function(.data){
 #' net_adhesion(to_giant(ison_marvel_relationships))
 #' @export
 net_adhesion <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   make_network_measure(igraph::adhesion(manynet::as_igraph(.data)), 
                        .data, call = deparse(sys.call()))
 }
@@ -96,7 +96,7 @@ net_adhesion <- function(.data){
 #' net_diameter(to_giant(ison_marvel_relationships))
 #' @export
 net_diameter <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   object <- manynet::as_igraph(.data)
   make_network_measure(igraph::diameter(object, 
                                         directed = manynet::is_directed(object)),
@@ -110,7 +110,7 @@ net_diameter <- function(.data){
 #' net_length(to_giant(ison_marvel_relationships))
 #' @export
 net_length <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   object <- manynet::as_igraph(.data)
   make_network_measure(igraph::mean_distance(object,
                                              directed = manynet::is_directed(object)),
@@ -123,7 +123,7 @@ net_length <- function(.data){
 #' net_independence(ison_adolescents)
 #' @export
 net_independence <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(manynet::is_twomode(.data)){
     out <- igraph::ivs_size(manynet::to_mode1(manynet::as_igraph(.data)))
   } else {
@@ -137,7 +137,7 @@ net_independence <- function(.data){
 #' net_strength(ison_adolescents)
 #' @export
 net_strength <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   n <- net_ties(.data)
   seties <- unlist(lapply(1:n, utils::combn, x = 1:n, simplify = FALSE), recursive = FALSE)
   out <- vapply(seties, function(x) length(x)/net_components(delete_ties(.data, x)), 
@@ -150,7 +150,7 @@ net_strength <- function(.data){
 #' net_toughness(ison_adolescents)
 #' @export
 net_toughness <- function(.data){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   n <- net_nodes(.data)
   seties <- unlist(lapply(1:n, utils::combn, x = 1:n, simplify = FALSE), recursive = FALSE)
   out <- vapply(seties, function(x) length(x)/net_components(delete_nodes(.data, x)), 

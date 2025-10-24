@@ -58,7 +58,7 @@ NULL
 #' \doi{10.1016/j.ejor.2020.07.048}.
 #' @export
 node_in_roulette <- function(.data, num_groups, group_size, times = NULL){
-  if(missing(.data)) {expect_nodes(); .data <- .G()}
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   if(missing(num_groups) & missing(group_size)){
     snet_abort(paste("Either `num_groups` must indicate number of groups desired",
                "or `group_size` must indicate the desired average size of groups."))

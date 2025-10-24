@@ -21,20 +21,19 @@ test_that("node_is_isolate", {
   })
 })
 
-test_that("node_is_fold", {
-  expect_true(exists("node_is_fold"))
+test_that("node_is_fold works", {
   test <- node_is_fold(create_explicit(A-B, B-C, A-C, C-D, C-E, D-E))
-  test_that("returns correct values", {
-    expect_equal(as.logical(test), c(F,F,T,F,F))
-  })
-  test_that("returns correct type", {
-    expect_s3_class(test, "node_mark")
-  })
+  expect_equal(as.logical(test), c(F,F,T,F,F))
+  expect_s3_class(test, "node_mark")
+})
+
+test_that("node_is_neighbor works", {
+  expect_equal(names(which(node_is_neighbor(ison_adolescents, "Betty"))), "Sue")
 })
 
 test_that("node_is_max works", {
-  skip_on_cran()
-  skip_on_ci()
+  # skip_on_cran()
+  # skip_on_ci()
   expect_equal(length(node_is_max(node_betweenness(ison_brandes))),
                c(net_nodes(ison_brandes)))
   expect_equal(sum(node_is_max(node_betweenness(ison_brandes)) == TRUE), 1)
@@ -42,12 +41,16 @@ test_that("node_is_max works", {
 })
 
 test_that("node_is_min works", {
-  skip_on_cran()
-  skip_on_ci()
+  # skip_on_cran()
+  # skip_on_ci()
   expect_equal(length(node_is_min(node_betweenness(ison_brandes))),
                c(net_nodes(ison_brandes)))
   expect_equal(sum(node_is_min(node_betweenness(ison_brandes)) == TRUE), 4)
   expect_s3_class(node_is_min(node_betweenness(ison_brandes)), "logical")
+})
+
+test_that("node_is_mean works", {
+  expect_s3_class(node_is_mean(node_betweenness(ison_brandes)), "logical")
 })
 
 test_that("additional node mark functions work", {
@@ -75,6 +78,7 @@ test_that("node_is_pendant correctly identifies pendant nodes", {
   expect_type(result, "logical")
   expect_length(result, 5)
   expect_equal(as.logical(result), c(FALSE, TRUE, TRUE, TRUE, TRUE))
+  expect_output(print(result), "V1")
 })
 
 test_that("node infection, exposure, and recovery works", {

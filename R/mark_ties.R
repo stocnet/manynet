@@ -26,7 +26,7 @@ NULL
 #' tie_is_multiple(ison_marvel_relationships)
 #' @export
 tie_is_multiple <- function(.data){
-  if(missing(.data)) {expect_edges(); .data <- .G()}
+  if(missing(.data)) {expect_edges(); .data <- .G()} # nocov
   make_tie_mark(igraph::which_multiple(manynet::as_igraph(.data)), .data)
 }
 
@@ -36,7 +36,7 @@ tie_is_multiple <- function(.data){
 #' tie_is_loop(ison_marvel_relationships)
 #' @export
 tie_is_loop <- function(.data){
-  if(missing(.data)) {expect_edges(); .data <- .G()}
+  if(missing(.data)) {expect_edges(); .data <- .G()} # nocov
   make_tie_mark(igraph::which_loop(manynet::as_igraph(.data)), .data)
 }
 
@@ -46,7 +46,7 @@ tie_is_loop <- function(.data){
 #' tie_is_reciprocated(ison_algebra)
 #' @export
 tie_is_reciprocated <- function(.data){
-  if(missing(.data)) {expect_edges(); .data <- .G()}
+  if(missing(.data)) {expect_edges(); .data <- .G()} # nocov
   make_tie_mark(igraph::which_mutual(manynet::as_igraph(.data)), .data)
 }
 
@@ -56,7 +56,7 @@ tie_is_reciprocated <- function(.data){
 #' tie_is_feedback(ison_algebra)
 #' @export
 tie_is_feedback <- function(.data){
-  if(missing(.data)) {expect_edges(); .data <- .G()}
+  if(missing(.data)) {expect_edges(); .data <- .G()} # nocov
   .data <- manynet::as_igraph(.data)
   make_tie_mark(igraph::E(.data) %in% igraph::feedback_arc_set(.data), 
                 .data)
@@ -68,7 +68,7 @@ tie_is_feedback <- function(.data){
 #' tie_is_bridge(ison_brandes)
 #' @export
 tie_is_bridge <- function(.data){
-  if(missing(.data)) {expect_edges(); .data <- .G()}
+  if(missing(.data)) {expect_edges(); .data <- .G()} # nocov
   num_comp <- length( igraph::decompose(manynet::as_igraph(.data)) )
   out <- vapply(seq_len(manynet::net_ties(.data)), function(x){
     length( igraph::decompose(igraph::delete_edges(.data, x)) ) > num_comp
@@ -90,7 +90,7 @@ tie_is_bridge <- function(.data){
 #'   #graphr(edge_colour = "route")
 #' @export
 tie_is_path <- function(.data, from, to, all_paths = FALSE){
-  if(missing(.data)) {expect_edges(); .data <- .G()}
+  if(missing(.data)) {expect_edges(); .data <- .G()} # nocov
   out <- igraph::all_shortest_paths(.data, from = from, to = to,
                                      mode = "out")$epath
   if(all_paths){
@@ -129,7 +129,7 @@ NULL
 #'   #graphr(edge_color = "tri")
 #' @export
 tie_is_triangular <- function(.data){
-  if(missing(.data)) {expect_edges(); .data <- .G()}
+  if(missing(.data)) {expect_edges(); .data <- .G()} # nocov
   out <- .triangle_ties(.data)
   ties <- as_edgelist(to_unnamed(.data))[,c("from","to")]
   out <- do.call(paste, ties) %in% do.call(paste, as.data.frame(out))
@@ -150,7 +150,7 @@ tie_is_triangular <- function(.data){
 #'   #graphr(edge_color = "trans")
 #' @export
 tie_is_transitive <- function(.data){
-  if(missing(.data)) {expect_edges(); .data <- .G()}
+  if(missing(.data)) {expect_edges(); .data <- .G()} # nocov
   nodes <- as_edgelist(to_unnamed(.data))
   out <- vapply(seq_len(net_ties(.data)), function(x){
     igraph::distances(delete_ties(.data, x), 
@@ -167,7 +167,7 @@ tie_is_transitive <- function(.data){
 #'   #graphr(edge_color = "trip")
 #' @export
 tie_is_triplet <- function(.data){
-  if(missing(.data)) {expect_edges(); .data <- .G()}
+  if(missing(.data)) {expect_edges(); .data <- .G()} # nocov
   nodes <- as_edgelist(to_unnamed(.data))
   trans <- tie_is_transitive(.data)
   altpath <- unlist(lapply(which(trans), function(x){
@@ -189,7 +189,7 @@ tie_is_triplet <- function(.data){
 #'   #graphr(edge_color = "cyc")
 #' @export
 tie_is_cyclical <- function(.data){
-  if(missing(.data)) {expect_edges(); .data <- .G()}
+  if(missing(.data)) {expect_edges(); .data <- .G()} # nocov
   out <- vapply(seq_len(net_ties(.data)), function(x){
     nodes <- as_edgelist(to_unnamed(.data))[x,]
     igraph::distances(delete_ties(.data, x), 
@@ -206,7 +206,7 @@ tie_is_cyclical <- function(.data){
 #'   #graphr(edge_color = "simmel")
 #' @export
 tie_is_simmelian <- function(.data){
-  if(missing(.data)) {expect_edges(); .data <- .G()}
+  if(missing(.data)) {expect_edges(); .data <- .G()} # nocov
   recip <- filter_ties(.data, tie_is_reciprocated())
   simmel <- filter_ties(recip, tie_is_triangular())
   ties <- as_edgelist(to_unnamed(.data))[,c("from","to")]
@@ -222,7 +222,7 @@ tie_is_simmelian <- function(.data){
 #'   #graphr(edge_color = "forbid")
 #' @export
 tie_is_forbidden <- function(.data){
-  if(missing(.data)) {expect_edges(); .data <- .G()}
+  if(missing(.data)) {expect_edges(); .data <- .G()} # nocov
   dists <- igraph::distances(.data, mode = "out")==2
   ends <- which(dists * t(dists)==1, arr.ind = TRUE)
   ends <- t(apply(ends, 1, function(x) sort(x)))
@@ -252,7 +252,7 @@ tie_is_forbidden <- function(.data){
 #' tie_is_imbalanced(ison_marvel_relationships)
 #' @export
 tie_is_imbalanced <- function(.data){
-  if(missing(.data)) {expect_edges(); .data <- .G()}
+  if(missing(.data)) {expect_edges(); .data <- .G()} # nocov
   
   # identify_imbalanced_ties <- function(adj_matrix) {
   adj_matrix <- as_matrix(.data)
@@ -328,7 +328,7 @@ NULL
 #' @rdname mark_tie_select
 #' @export
 tie_is_random <- function(.data, size = 1){
-  if(missing(.data)) {expect_edges(); .data <- .G()}
+  if(missing(.data)) {expect_edges(); .data <- .G()} # nocov
   n <- manynet::net_ties(.data)
   out <- rep(FALSE, n)
   out[sample.int(n, size)] <- TRUE
