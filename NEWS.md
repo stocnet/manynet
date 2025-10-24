@@ -3,6 +3,7 @@
 ## Package
 
 - Removed extracted tute scripts from root folder
+- Added extensive testing for core and older functions
 
 ## Making
 
