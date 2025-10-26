@@ -1,3 +1,14 @@
+# manynet 1.6.6
+
+## Modifying
+
+- Fixed `generate_configuration()` to use recent versions of `igraph::sample_degseq()` correctly
+- Added further testing
+
+## Tutorials
+
+- Fixed duplicate chunk label in data tutorial
+
 # manynet 1.6.5
 
 ## Package

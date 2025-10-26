@@ -233,6 +233,7 @@ describe_changes <- function(x){
   return(x)
 }
 
+# nocov start
 #' @importFrom utils .DollarNames
 #' @export
 .DollarNames.mnet <- function(x, pattern = "") {
@@ -245,3 +246,4 @@ describe_changes <- function(x){
   # Filter by the pattern (so typing g$co will suggest "color")
   grep(pattern, attrs, value = TRUE)
 }
+#nocov end

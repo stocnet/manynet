@@ -52,6 +52,13 @@ test_that("as_igraph converts correctly",{
   # to igraph. Should not matter though.
 })
 
+test_that("as_graphAM converts correctly",{
+  expect_s4_class(as_graphAM(mat1), "graphAM")
+  expect_s4_class(as_graphAM(ison_southern_women), "graphAM")
+  expect_s4_class(as_graphAM(as_network(ison_southern_women)), "graphAM")
+  expect_equal(as_graphAM(as_network(data2))@edgemode, "directed")
+})
+
 test_that("as_tidygraph converts correctly",{
   expect_s3_class(as_tidygraph(mat1), "tbl_graph")
   expect_s3_class(as_tidygraph(ison_southern_women), "tbl_graph")
