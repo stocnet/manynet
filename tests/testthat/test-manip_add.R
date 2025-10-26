@@ -73,3 +73,8 @@ test_that("delete_nodes works", {
   expect_length(ison_adolescents, 8)
   expect_length(delete_nodes(ison_adolescents, "Betty"), 7)
 })
+
+
+test_that("$ works", {
+  expect_length(ison_adolescents$`node$name`, 8)
+})
