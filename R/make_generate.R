@@ -131,24 +131,28 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
 #' @importFrom igraph sample_degseq
 #' @export
 generate_configuration <- function(.data){
+  method1 <- if(utils::packageVersion("igraph") >= "2.1.0") "configuration" else "simple"
+  method2 <- if(utils::packageVersion("igraph") >= "2.1.0") "fast.heur.simple" else "simple.no.multiple"
   if(is_twomode(.data)){
     degs <- node_deg(.data)
     outs <- ifelse(!c(attr(degs, "mode")),c(degs),rep(0,length(degs)))
     ins <- ifelse(c(attr(degs, "mode")),c(degs),rep(0,length(degs)))
-    out <- igraph::sample_degseq(outs, ins, method = "simple.no.multiple")
+    out <- igraph::sample_degseq(outs, ins, method = method2)
     out <- as_tidygraph(out) %>% mutate(type = c(attr(degs, "mode")))
   } else {
     if(is_complex(.data) || is_multiplex(.data) && is_directed(.data)) 
       out <- igraph::sample_degseq(node_deg(.data, direction = "out"), 
                                    node_deg(.data, direction = "in"),
-                                   method = "simple")
+                                   method = method1)
     if(is_complex(.data) || is_multiplex(.data) && !is_directed(.data)) 
-      out <- igraph::sample_degseq(node_deg(.data), method = "simple")
+      out <- igraph::sample_degseq(node_deg(.data), method = method1)
     if(!(is_complex(.data) || is_multiplex(.data)) && is_directed(.data)) 
       out <- igraph::sample_degseq(node_deg(.data, direction = "out"), 
-                                   node_deg(.data, direction = "in"), method = "simple.no.multiple")
+                                   node_deg(.data, direction = "in"), 
+                                   method = method2)
     if(!(is_complex(.data) || is_multiplex(.data)) && !is_directed(.data)) 
-      out <- igraph::sample_degseq(node_deg(.data), method = "simple.no.multiple")
+      out <- igraph::sample_degseq(node_deg(.data), 
+                                   method = method2)
   }
   as_tidygraph(out)
 }
