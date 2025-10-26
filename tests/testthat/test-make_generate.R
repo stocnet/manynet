@@ -26,6 +26,7 @@ test_that("generate_permutation() works", {
 
 test_that("generate_configuration works", {
   expect_s3_class(generate_configuration(ison_adolescents), "igraph")
+  expect_s3_class(generate_configuration(ison_southern_women), "igraph")
 })
 
 test_that("generate_man works", {
