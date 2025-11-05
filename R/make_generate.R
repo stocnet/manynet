@@ -131,8 +131,8 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
 #' @importFrom igraph sample_degseq
 #' @export
 generate_configuration <- function(.data){
-  method1 <- if(utils::packageVersion("igraph") >= "2.1.0") "configuration" else "simple"
-  method2 <- if(utils::packageVersion("igraph") >= "2.1.0") "fast.heur.simple" else "simple.no.multiple"
+  method1 <- "configuration"
+  method2 <- "fast.heur.simple"
   if(is_twomode(.data)){
     degs <- node_deg(.data)
     outs <- ifelse(!c(attr(degs, "mode")),c(degs),rep(0,length(degs)))
