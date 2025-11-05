@@ -1,3 +1,13 @@
+# manynet 1.6.7
+
+## Making
+
+- Fixed `generate_configuration()` methods since igraph >= v2.1.0 required
+
+## Tutorials
+
+- Added more glossary items for diversity tutorial
+
 # manynet 1.6.6
 
 ## Modifying
