@@ -66,7 +66,7 @@ node_richness <- function(.data, attribute){
 }
 
 #' @rdname measure_heterogeneity 
-#' @section net_diversity:
+#' @section Diversity:
 #'    Blau's index (1977) uses a formula known also in other disciplines
 #'    by other names 
 #'    (Gini-Simpson Index, Gini impurity, Gini's diversity index, 
@@ -93,6 +93,33 @@ node_richness <- function(.data, attribute){
 #'    It thus shares similar properties to Blau's index,
 #'    but includes also a notion of richness that tends to give more weight to 
 #'    rare categories and thus tends to highlight imbalances more.
+#'
+#'    The coefficient of variation (CV) is a standardised measure of dispersion
+#'    of a probability distribution or frequency distribution.
+#'    It is defined as the ratio of the standard deviation \eqn{\sigma}
+#'    to the mean \eqn{\mu}:
+#'    \deqn{CV = \frac{\sigma}{\mu}}
+#'    It is often expressed as a percentage.
+#'    The CV is useful because the standard deviation of data must always be understood
+#'    in the context of the mean of the data.
+#'    The CV is particularly useful when comparing the degree of variation
+#'    from one data series to another,
+#'    even if the means are drastically different from each other.
+#'
+#'    The Gini coefficient is a measure of statistical dispersion
+#'    that is intended to represent the income or wealth distribution
+#'    of a nation's residents,
+#'    and is commonly used as a measure of inequality.
+#'    It is defined as a ratio with values between 0 and 1,
+#'    where 0 corresponds with perfect equality
+#'    (everyone has the same income) and 1 corresponds with perfect inequality
+#'    (one person has all the income, and everyone else has zero income).
+#'    The Gini coefficient can be calculated from the Lorenz curve,
+#'    which plots the proportion of the total income of the population
+#'    that is cumulatively earned by the bottom x% of the population.
+#'    The Gini coefficient is defined as the area between the line of equality
+#'    and the Lorenz curve,
+#'    divided by the total area under the line of equality.
 #' @references 
 #' ## On diversity
 #'   Blau, Peter M. 1977. 
@@ -183,7 +210,7 @@ node_diversity <- function(.data, attribute,
 }
 
 #' @rdname measure_heterogeneity 
-#' @section net_heterophily:
+#' @section Homophily:
 #'   Given a partition of a network into a number of mutually exclusive groups then 
 #'   The E-I index is the number of ties between (or _external_) nodes 
 #'   grouped in some mutually exclusive categories

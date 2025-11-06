@@ -8,6 +8,7 @@
 \alias{node_diversity}
 \alias{net_heterophily}
 \alias{node_heterophily}
+\alias{net_homophily}
 \alias{node_homophily}
 \alias{net_assortativity}
 \alias{net_spatial}
@@ -23,13 +24,19 @@ net_diversity(
   method = c("blau", "teachman", "variation", "gini")
 )
 
-node_diversity(.data, attribute, method = c("blau", "teachman", "cv", "gini"))
+node_diversity(
+  .data,
+  attribute,
+  method = c("blau", "teachman", "variation", "gini")
+)
 
 net_heterophily(.data, attribute)
 
 node_heterophily(.data, attribute)
 
-node_homophily(.data, attribute)
+net_homophily(.data, attribute, method = c("ie", "ei", "yule", "geary"))
+
+node_homophily(.data, attribute, method = c("ie", "ei", "yule", "geary"))
 
 net_assortativity(.data)
 
@@ -77,7 +84,13 @@ of nodes with the same attribute.
 (global Moran's I) in a network.
 }
 }
-\section{net_diversity}{
+\section{Richness}{
+
+Richness is a simple count of the number of different categories
+present for a given attribute.
+}
+
+\section{Diversity}{
 
 Blau's index (1977) uses a formula known also in other disciplines
 by other names
@@ -105,9 +118,36 @@ whether nodes can be evenly distributed across categories.
 It thus shares similar properties to Blau's index,
 but includes also a notion of richness that tends to give more weight to
 rare categories and thus tends to highlight imbalances more.
+
+The coefficient of variation (CV) is a standardised measure of dispersion
+of a probability distribution or frequency distribution.
+It is defined as the ratio of the standard deviation \eqn{\sigma}
+to the mean \eqn{\mu}:
+\deqn{CV = \frac{\sigma}{\mu}}
+It is often expressed as a percentage.
+The CV is useful because the standard deviation of data must always be understood
+in the context of the mean of the data.
+The CV is particularly useful when comparing the degree of variation
+from one data series to another,
+even if the means are drastically different from each other.
+
+The Gini coefficient is a measure of statistical dispersion
+that is intended to represent the income or wealth distribution
+of a nation's residents,
+and is commonly used as a measure of inequality.
+It is defined as a ratio with values between 0 and 1,
+where 0 corresponds with perfect equality
+(everyone has the same income) and 1 corresponds with perfect inequality
+(one person has all the income, and everyone else has zero income).
+The Gini coefficient can be calculated from the Lorenz curve,
+which plots the proportion of the total income of the population
+that is cumulatively earned by the bottom x\% of the population.
+The Gini coefficient is defined as the area between the line of equality
+and the Lorenz curve,
+divided by the total area under the line of equality.
 }
 
-\section{net_heterophily}{
+\section{Homophily}{
 
 Given a partition of a network into a number of mutually exclusive groups then
 The E-I index is the number of ties between (or \emph{external}) nodes
@@ -130,11 +170,19 @@ net_heterophily(marvel_friends, "Gender")
 net_heterophily(marvel_friends, "Attractive")
 node_heterophily(marvel_friends, "Gender")
 node_heterophily(marvel_friends, "Attractive")
-node_homophily(marvel_friends, "Gender")
+net_homophily(marvel_friends, "Gender")
 net_assortativity(ison_networkers)
 net_spatial(ison_lawfirm, "age")
 }
 \references{
+\subsection{On richness}{
+
+Magurran, Anne E. 1988.
+\emph{Ecological Diversity and Its Measurement}.
+Princeton: Princeton University Press.
+\doi{10.1007/978-94-015-7358-0}
+}
+
 \subsection{On diversity}{
 
 Blau, Peter M. 1977.
