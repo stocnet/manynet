@@ -1,3 +1,9 @@
+# manynet 1.6.8
+
+## Making
+
+- Improved vector printing to be more succinct and suggest `print_all()`
+
 # manynet 1.6.7
 
 ## Making

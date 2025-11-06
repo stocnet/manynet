@@ -55,9 +55,9 @@ print_tblvec <- function(y, names, n){
   body <- pillar::tbl_format_body(tibs, setup)[c(TRUE, FALSE, TRUE)]
   if(setup$extra_cols_total > 0){
     print(body)
-    cat(pillar::style_subtle(paste("# ... with",
+    cat(pillar::style_subtle(paste("# ... and",
                                    setup$extra_cols_total,
-                                   "more values from this nodeset unprinted.",
-                                   "Use `print(..., n = Inf)` to print all values.")))
+                                   "more values from this nodeset.",
+                                   "Use `print_all(...)` to print all values.")))
   } else print(body)
 }
