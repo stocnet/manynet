@@ -4,6 +4,18 @@
 
 - Improved vector printing to be more succinct and suggest `print_all()`
 
+## Measuring
+
+- Improved `net_diversity()`
+  - No longer offers a cluster option, which can be obtained using `over_membership()`
+  - Added more methods for calculating diversity, including Teachman's, coefficient of variation, and the Gini coefficient
+- Improved `net_diversity()` and `node_diversity()` to use and declare methods appropriate for the vector of attributes
+- Updated documentation for richness, diversity, and homophily measures
+- Added `net_homophily()` and `node_homophily()` for measuring homophily according to different methods including
+  - Krackhardt's EI index of heterophily as well as its inverse as a measure of homophily
+  - Yule's Q as a further measure of homophily
+  - Geary's C as a measure of homophily for numeric attributes
+
 # manynet 1.6.7
 
 ## Making

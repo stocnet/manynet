@@ -276,6 +276,131 @@ node_heterophily <- function(.data, attribute){
 }
 
 #' @rdname measure_heterogeneity 
+#' @examples 
+#' net_homophily(marvel_friends, "Gender")
+#' @export
+net_homophily <- function(.data, attribute,
+                          method = c("ie","ei","yule","geary")){
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
+  # mode <- attr_mode(.data, attribute)
+  # if(is_twomode(.data) && !is.null(mode)){
+  #   if(mode){
+  #     snet_info("Attribute only present on second mode of two-mode network.")
+  #     snet_info("Calculating homophily on first mode instead.")
+  #     attribute <- manynet::node_attribute(.data, attribute)[
+  #       !manynet::node_is_mode(.data)]
+  #   } else {
+  #     snet_info("Attribute only present on first mode of two-mode network.")
+  #     snet_info("Calculating homophily on second mode instead.")
+  #     attribute <- manynet::node_attribute(.data, attribute)[
+  #       manynet::node_is_mode(.data)]
+  #   }
+  #   .data <- manynet::to_mode(.data, mode = mode)
+  # }
+  if (length(attribute) == 1 && is.character(attribute)) {
+    attribute <- manynet::node_attribute(.data, attribute)
+  }
+  method <- match.arg(method)
+  if(is.numeric(attribute) && method %in% c("ie","ei","yule")){
+    snet_info("{.val {method}} index is not appropriate for numeric attributes.")
+    snet_info("Using {.val geary}'s C instead.")
+    method <- "geary"
+  }
+  if(!is.numeric(attribute) && method %in% c("geary")){
+    snet_info("{.val {method}} index is not appropriate for categorical attributes.")
+    snet_info("Using {.val ie} index instead.")
+    method <- "ie"
+  }
+  
+  m <- manynet::as_matrix(to_unweighted(.data))
+
+  ei <- function(m, attribute){
+    same <- outer(attribute, attribute, "==")
+    nInternal <- sum(m * same, na.rm = TRUE)
+    nExternal <- sum(m, na.rm = TRUE) - nInternal
+    (nExternal - nInternal) / sum(m, na.rm = TRUE)
+  }
+  
+  yule <- function(m, attribute){
+    same <- outer(attribute, attribute, "==")
+    a <- sum(m * same, na.rm = TRUE)
+    b <- sum(m * (!same), na.rm = TRUE)
+    c <- sum((1 - m) * same, na.rm = TRUE)
+    d <- sum((1 - m) * (!same), na.rm = TRUE)
+    (a*d - b*c)/(a*d + b*c)
+  }
+  
+  geary <- function(m, attribute){
+    # identify valid nodes
+    valid <- !is.na(attribute)
+    attr_valid <- attribute[valid]
+    m_valid <- m[valid, valid, drop = FALSE]
+    
+    # recompute n and mean on valid nodes
+    n <- length(attr_valid)
+    xbar <- mean(attr_valid, na.rm = TRUE)
+    
+    # pairwise squared differences
+    diffsq <- (outer(attr_valid, attr_valid, "-"))^2
+    
+    # weight sum
+    W <- sum(m_valid, na.rm = TRUE)
+    
+    # numerator and denominator
+    num <- (n - 1) * sum(m_valid * diffsq, na.rm = TRUE)
+    den <- 2 * W * sum((attr_valid - xbar)^2, na.rm = TRUE)
+    
+    if (den == 0) return(NA_real_)
+    num / den
+    }
+  
+  res <- switch(match.arg(method),
+                ie = -ei(m, attribute),
+                ei = ei(m, attribute),
+                yule = yule(m, attribute),
+                geary = geary(m, attribute))
+  
+  make_network_measure(res, .data, call = deparse(sys.call()))
+}
+  
+
+attr_mode <- function(.data, attribute){
+  if(is_twomode(.data)){
+    miss <- is.na(node_attribute(.data, attribute))
+    mode <- node_is_mode(.data)
+    if(all(miss[mode])) return(FALSE) # attribute only on first (FALSE) mode
+    if(all(miss[!mode])) return(TRUE) # attribute only on second (TRUE) mode
+  } else NULL
+}
+
+#' @rdname measure_heterogeneity
+#' @export
+node_homophily <- function(.data, attribute,
+                          method = c("ie","ei","yule","geary")){
+  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
+  if (length(attribute) == 1 && is.character(attribute)) {
+    attribute <- manynet::node_attribute(.data, attribute)
+  }
+  method <- match.arg(method)
+  if(is.numeric(attribute) && method %in% c("ie","ei","yule")){
+    snet_info("{.val {method}} index is not appropriate for numeric attributes.")
+    snet_info("Using {.val geary}'s C instead.")
+    method <- "geary"
+  }
+  if(!is.numeric(attribute) && method %in% c("geary")){
+    snet_info("{.val {method}} index is not appropriate for categorical attributes.")
+    snet_info("Using {.val ie} index instead.")
+    method <- "ie"
+  }
+  out <- vapply(igraph::ego(manynet::as_igraph(.data)),
+                function(x) net_homophily(
+                  igraph::induced_subgraph(manynet::as_igraph(.data), x),
+                  attribute, method = method),
+                FUN.VALUE = numeric(1))
+  make_node_measure(out, .data)
+}
+
+#' @rdname measure_heterogeneity 
 #' @importFrom igraph assortativity_degree
 #' @references
 #' ## On assortativity
