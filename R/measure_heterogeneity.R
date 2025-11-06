@@ -23,7 +23,13 @@
 #' @inheritParams mark_is
 #' @param attribute Name of a nodal attribute or membership vector
 #'   to use as categories for the diversity measure.
-#' @param clusters A nodal cluster membership vector or name of a vertex attribute.
+#' @param method Which method to use for `net_diversity()`.
+#'  Either "blau" (Blau's index) or "teachman" (Teachman's index) for
+#'  categorical attributes, or "variation" (coefficient of variation)
+#'  or "gini" (Gini coefficient) for numeric attributes.
+#'  Default is "blau". 
+#'  If an incompatible method is chosen for the attribute type,
+#'  a suitable alternative will be used instead with a message.
 #' @name measure_heterogeneity
 #' @family measures
 NULL
@@ -97,21 +103,30 @@ node_richness <- function(.data, attribute){
 #' marvel_friends <- to_unsigned(ison_marvel_relationships, "positive")
 #' net_diversity(marvel_friends, "Gender")
 #' net_diversity(marvel_friends, "Attractive")
-#' net_diversity(marvel_friends, "Gender", "Rich")
 #' @export
 net_diversity <- function(.data, attribute, 
-                        method = c("blau","teachman","cv","gini")){
+                        method = c("blau","teachman","variation","gini")){
   if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   blau <- function(features) { 1 - sum((table(features)/length(features))^2) }
   teachman <- function(features) {
     p <- table(features)/length(features)
     -sum(p * log(p))
   }
+  cv <- function(values) { 
+    sd(values, na.rm = TRUE) / mean(values, na.rm = TRUE) }
+  gini <- function(values) {
+    x <- sort(values)
+    n <- length(x)
+    G <- sum(x * (1:n))
+    return((2 * G) / (n * sum(x)) - (n + 1) / n)
+  }
   attr <- manynet::node_attribute(.data, attribute)
   
   out <- switch(method,
                 blau = blau(attr),
                 teachman = teachman(attr),
+                variation = cv(attr),
+                gini = gini(attr))
   make_network_measure(out, .data, call = deparse(sys.call()))
 }
 
@@ -121,7 +136,7 @@ net_diversity <- function(.data, attribute,
 #' node_diversity(marvel_friends, "Attractive")
 #' @export
 node_diversity <- function(.data, attribute, 
-                           method = c("blau","teachman","cv","gini")){
+                           method = c("blau","teachman","variation","gini")){
   if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   out <- vapply(igraph::ego(manynet::as_igraph(.data)),
                 function(x) net_diversity(
