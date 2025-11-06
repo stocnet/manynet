@@ -9,8 +9,7 @@
 #'   in a network attribute.
 #'   - `node_richness()` measures the number of unique categories 
 #'   of an attribute to which each node is connected.
-#'   - `net_diversity()` measures the heterogeneity of ties across a network 
-#'   or within clusters by node attributes.
+#'   - `net_diversity()` measures the heterogeneity of ties across a network.
 #'   - `node_diversity()` measures the heterogeneity of each node's
 #'   local neighbourhood.
 #'   - `net_heterophily()` measures how embedded nodes in the network
@@ -86,22 +85,7 @@ net_diversity <- function(.data, attribute, clusters = NULL){
   if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   blau <- function(features) { 1 - sum((table(features)/length(features))^2) }
   attr <- manynet::node_attribute(.data, attribute)
-  if (is.null(clusters)) {
-    blauout <- blau(attr)
-  } else if (is.numeric(clusters) && is.vector(clusters)) {
-    blauout <- vapply(unique(clusters), 
-                      function(i) blau(attr[clusters == i]),
-                      numeric(1))
-    names(blauout) <- paste0("Cluster ", unique(clusters))
-  } else if (is.character(clusters)) {
-    clu <- manynet::node_attribute(.data, clusters)
-    blauout <- vapply(unique(clu), 
-                      function(i) blau(attr[clu == i]),
-                      numeric(1))
-    names(blauout) <- paste0("Cluster ", unique(clu))
-    blauout <- blauout[order(names(blauout))]
-  } else snet_abort("`clusters` must be the name of a nodal variable in the object.")
-  make_network_measure(blauout, .data, call = deparse(sys.call()))
+  make_network_measure(out, .data, call = deparse(sys.call()))
 }
 
 #' @rdname measure_heterogeneity 
