@@ -34,7 +34,16 @@
 #' @family measures
 NULL
 
-#' @rdname measure_heterogeneity 
+#' @rdname measure_heterogeneity
+#' @section Richness:
+#'   Richness is a simple count of the number of different categories
+#'   present for a given attribute.
+#' @references
+#' ## On richness
+#'   Magurran, Anne E. 1988.
+#'   _Ecological Diversity and Its Measurement_.
+#'   Princeton: Princeton University Press.
+#'   \doi{10.1007/978-94-015-7358-0}
 #' @examples
 #' net_richness(ison_networkers)
 #' @export
