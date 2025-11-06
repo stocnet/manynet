@@ -56,7 +56,7 @@ node_richness <- function(.data, attribute){
 #'    by other names 
 #'    (Gini-Simpson Index, Gini impurity, Gini's diversity index, 
 #'    Gibbs-Martin index, and probability of interspecific encounter (PIE)): 
-#'    \deqn{1 - \sum\limits_{i = 1}^k {p_i^2 }}, 
+#'    \deqn{1 - \sum\limits_{i = 1}^k {p_i^2 }} 
 #'    where \eqn{p_i} is the proportion of group members in \eqn{i}th category 
 #'    and \eqn{k} is the number of categories for an attribute of interest. 
 #'    This index can be interpreted as the probability that two members 
@@ -64,12 +64,30 @@ node_richness <- function(.data, attribute){
 #'    This index finds its minimum value (0) when there is no variety, 
 #'    i.e. when all individuals are classified in the same category. 
 #'    The maximum value depends on the number of categories and 
-#'    whether nodes can be evenly distributed across categories. 
+#'    whether nodes can be evenly distributed across categories.
+#'    
+#'    Teachman's index (1980) is based on information theory
+#'    and is calculated as:
+#'    \deqn{- \sum\limits_{i = 1}^k {p_i \log(p_i)}}
+#'    where \eqn{p_i} is the proportion of group members in \eqn{i}th category 
+#'    and \eqn{k} is the number of categories for an attribute of interest.
+#'    This index finds its minimum value (0) when there is no variety, 
+#'    i.e. when all individuals are classified in the same category. 
+#'    The maximum value depends on the number of categories and 
+#'    whether nodes can be evenly distributed across categories.
+#'    It thus shares similar properties to Blau's index,
+#'    but includes also a notion of richness that tends to give more weight to 
+#'    rare categories and thus tends to highlight imbalances more.
 #' @references 
 #' ## On diversity
 #'   Blau, Peter M. 1977. 
 #'   _Inequality and heterogeneity_. 
 #'   New York: Free Press.
+#'   
+#'   Teachman, Jay D. 1980. 
+#'   Analysis of population diversity: Measures of qualitative variation. 
+#'   _Sociological Methods & Research_, 8:341-362.
+#'   \doi{10.1177/004912418000800305}
 #'   
 #'   Page, Scott E. 2010. 
 #'   _Diversity and Complexity_. 
@@ -81,10 +99,19 @@ node_richness <- function(.data, attribute){
 #' net_diversity(marvel_friends, "Attractive")
 #' net_diversity(marvel_friends, "Gender", "Rich")
 #' @export
-net_diversity <- function(.data, attribute, clusters = NULL){
+net_diversity <- function(.data, attribute, 
+                        method = c("blau","teachman","cv","gini")){
   if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   blau <- function(features) { 1 - sum((table(features)/length(features))^2) }
+  teachman <- function(features) {
+    p <- table(features)/length(features)
+    -sum(p * log(p))
+  }
   attr <- manynet::node_attribute(.data, attribute)
+  
+  out <- switch(method,
+                blau = blau(attr),
+                teachman = teachman(attr),
   make_network_measure(out, .data, call = deparse(sys.call()))
 }
 
@@ -93,12 +120,13 @@ net_diversity <- function(.data, attribute, clusters = NULL){
 #' node_diversity(marvel_friends, "Gender")
 #' node_diversity(marvel_friends, "Attractive")
 #' @export
-node_diversity <- function(.data, attribute){
+node_diversity <- function(.data, attribute, 
+                           method = c("blau","teachman","cv","gini")){
   if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   out <- vapply(igraph::ego(manynet::as_igraph(.data)),
                 function(x) net_diversity(
                   igraph::induced_subgraph(manynet::as_igraph(.data), x),
-                  attribute),
+                  attribute, method = method),
                 FUN.VALUE = numeric(1))
   make_node_measure(out, .data)
 }
