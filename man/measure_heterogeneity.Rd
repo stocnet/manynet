@@ -8,6 +8,7 @@
 \alias{node_diversity}
 \alias{net_heterophily}
 \alias{node_heterophily}
+\alias{node_homophily}
 \alias{net_assortativity}
 \alias{net_spatial}
 \title{Measures of network diversity}
@@ -16,13 +17,19 @@ net_richness(.data, attribute)
 
 node_richness(.data, attribute)
 
-net_diversity(.data, attribute, clusters = NULL)
+net_diversity(
+  .data,
+  attribute,
+  method = c("blau", "teachman", "variation", "gini")
+)
 
-node_diversity(.data, attribute)
+node_diversity(.data, attribute, method = c("blau", "teachman", "cv", "gini"))
 
 net_heterophily(.data, attribute)
 
 node_heterophily(.data, attribute)
+
+node_homophily(.data, attribute)
 
 net_assortativity(.data)
 
@@ -41,7 +48,13 @@ net_spatial(.data, attribute)
 \item{attribute}{Name of a nodal attribute or membership vector
 to use as categories for the diversity measure.}
 
-\item{clusters}{A nodal cluster membership vector or name of a vertex attribute.}
+\item{method}{Which method to use for \code{net_diversity()}.
+Either "blau" (Blau's index) or "teachman" (Teachman's index) for
+categorical attributes, or "variation" (coefficient of variation)
+or "gini" (Gini coefficient) for numeric attributes.
+Default is "blau".
+If an incompatible method is chosen for the attribute type,
+a suitable alternative will be used instead with a message.}
 }
 \description{
 These functions offer ways to measure the heterogeneity of an attribute
@@ -52,8 +65,7 @@ across this attribute:
 in a network attribute.
 \item \code{node_richness()} measures the number of unique categories
 of an attribute to which each node is connected.
-\item \code{net_diversity()} measures the heterogeneity of ties across a network
-or within clusters by node attributes.
+\item \code{net_diversity()} measures the heterogeneity of ties across a network.
 \item \code{node_diversity()} measures the heterogeneity of each node's
 local neighbourhood.
 \item \code{net_heterophily()} measures how embedded nodes in the network
@@ -71,7 +83,7 @@ Blau's index (1977) uses a formula known also in other disciplines
 by other names
 (Gini-Simpson Index, Gini impurity, Gini's diversity index,
 Gibbs-Martin index, and probability of interspecific encounter (PIE)):
-\deqn{1 - \sum\limits_{i = 1}^k {p_i^2 }},
+\deqn{1 - \sum\limits_{i = 1}^k {p_i^2 }}
 where \eqn{p_i} is the proportion of group members in \eqn{i}th category
 and \eqn{k} is the number of categories for an attribute of interest.
 This index can be interpreted as the probability that two members
@@ -80,6 +92,19 @@ This index finds its minimum value (0) when there is no variety,
 i.e. when all individuals are classified in the same category.
 The maximum value depends on the number of categories and
 whether nodes can be evenly distributed across categories.
+
+Teachman's index (1980) is based on information theory
+and is calculated as:
+\deqn{- \sum\limits_{i = 1}^k {p_i \log(p_i)}}
+where \eqn{p_i} is the proportion of group members in \eqn{i}th category
+and \eqn{k} is the number of categories for an attribute of interest.
+This index finds its minimum value (0) when there is no variety,
+i.e. when all individuals are classified in the same category.
+The maximum value depends on the number of categories and
+whether nodes can be evenly distributed across categories.
+It thus shares similar properties to Blau's index,
+but includes also a notion of richness that tends to give more weight to
+rare categories and thus tends to highlight imbalances more.
 }
 
 \section{net_heterophily}{
@@ -99,13 +124,13 @@ node_richness(ison_networkers, "Discipline")
 marvel_friends <- to_unsigned(ison_marvel_relationships, "positive")
 net_diversity(marvel_friends, "Gender")
 net_diversity(marvel_friends, "Attractive")
-net_diversity(marvel_friends, "Gender", "Rich")
 node_diversity(marvel_friends, "Gender")
 node_diversity(marvel_friends, "Attractive")
 net_heterophily(marvel_friends, "Gender")
 net_heterophily(marvel_friends, "Attractive")
 node_heterophily(marvel_friends, "Gender")
 node_heterophily(marvel_friends, "Attractive")
+node_homophily(marvel_friends, "Gender")
 net_assortativity(ison_networkers)
 net_spatial(ison_lawfirm, "age")
 }
@@ -115,6 +140,11 @@ net_spatial(ison_lawfirm, "age")
 Blau, Peter M. 1977.
 \emph{Inequality and heterogeneity}.
 New York: Free Press.
+
+Teachman, Jay D. 1980.
+Analysis of population diversity: Measures of qualitative variation.
+\emph{Sociological Methods & Research}, 8:341-362.
+\doi{10.1177/004912418000800305}
 
 Page, Scott E. 2010.
 \emph{Diversity and Complexity}.
@@ -138,7 +168,7 @@ McPherson, Miller, Lynn Smith-Lovin, and James M. Cook. 2001.
 \subsection{On assortativity}{
 
 Newman, Mark E.J. 2002.
-"Assortative Mxing in Networks".
+"Assortative mixing in networks".
 \emph{Physical Review Letters}, 89(20): 208701.
 \doi{10.1103/physrevlett.89.208701}
 }
@@ -146,7 +176,7 @@ Newman, Mark E.J. 2002.
 \subsection{On spatial autocorrelation}{
 
 Moran, Patrick Alfred Pierce. 1950.
-"Notes on Continuous Stochastic Phenomena".
+"Notes on continuous stochastic phenomena".
 \emph{Biometrika} 37(1): 17-23.
 \doi{10.2307/2332142}
 }

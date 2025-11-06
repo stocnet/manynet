@@ -121,6 +121,19 @@ net_diversity <- function(.data, attribute,
     return((2 * G) / (n * sum(x)) - (n + 1) / n)
   }
   attr <- manynet::node_attribute(.data, attribute)
+  method <- match.arg(method)
+  if(is.numeric(attr) && method %in% c("blau","teachman")){
+    snet_info("{.val {method}} index is not appropriate for numeric attributes.")
+    snet_info("Using {.val variation} coefficient instead",
+              "({.val gini} coefficient also available).")
+    method <- "cv"
+  }
+  if(is.character(attr) && method %in% c("variation","gini")){
+    snet_info("{.val {method}} coefficient is not appropriate for categorical attributes.")
+    snet_info("Using {.val blau} index instead",
+              "({.val teachman} index also available).")
+    method <- "blau"
+  }
   
   out <- switch(method,
                 blau = blau(attr),
@@ -138,6 +151,20 @@ net_diversity <- function(.data, attribute,
 node_diversity <- function(.data, attribute, 
                            method = c("blau","teachman","variation","gini")){
   if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
+  attr <- manynet::node_attribute(.data, attribute)
+  method <- match.arg(method)
+  if(is.numeric(attr) && method %in% c("blau","teachman")){
+    snet_info("{.val {method}} index is not appropriate for numeric attributes.")
+    snet_info("Using {.val variation} coefficient instead",
+              "({.val gini} coefficient also available).")
+    method <- "cv"
+  }
+  if(is.character(attr) && method %in% c("variation","gini")){
+    snet_info("{.val {method}} coefficient is not appropriate for categorical attributes.")
+    snet_info("Using {.val blau} index instead",
+              "({.val teachman} index also available).")
+    method <- "blau"
+  }
   out <- vapply(igraph::ego(manynet::as_igraph(.data)),
                 function(x) net_diversity(
                   igraph::induced_subgraph(manynet::as_igraph(.data), x),
@@ -217,7 +244,7 @@ node_heterophily <- function(.data, attribute){
 #' @references
 #' ## On assortativity
 #' Newman, Mark E.J. 2002.
-#' "Assortative Mxing in Networks".
+#' "Assortative mixing in networks".
 #' _Physical Review Letters_, 89(20): 208701.
 #' \doi{10.1103/physrevlett.89.208701} 
 #' @examples 
@@ -234,7 +261,7 @@ net_assortativity <- function(.data){
 #' @references
 #' ## On spatial autocorrelation
 #'   Moran, Patrick Alfred Pierce. 1950.
-#'   "Notes on Continuous Stochastic Phenomena".
+#'   "Notes on continuous stochastic phenomena".
 #'   _Biometrika_ 37(1): 17-23.
 #'   \doi{10.2307/2332142}
 #' @examples 
