@@ -149,7 +149,7 @@ net_diversity <- function(.data, attribute,
     -sum(p * log(p))
   }
   cv <- function(values) { 
-    sd(values, na.rm = TRUE) / mean(values, na.rm = TRUE) }
+    stats::sd(values, na.rm = TRUE) / mean(values, na.rm = TRUE) }
   gini <- function(values) {
     x <- sort(values)
     n <- length(x)
