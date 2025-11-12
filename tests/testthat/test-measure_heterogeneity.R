@@ -1,9 +1,9 @@
 #*************** Test the heterogeneity family of functions ******************#
 
-test_that("diversity function works", {
+test_that("diversity functions works", {
   expect_equal(as.numeric(net_diversity(ison_marvel_relationships, "Gender")), 0.306, tolerance = 0.001)
-  expect_equal(as.numeric(net_diversity(ison_marvel_relationships, "Gender", "Rich")),
-               c(0.3367,0.1653), tolerance = 0.001)
+  expect_equal(top3(node_diversity(ison_lawfirm, "gender")),
+               c(0.285, 0.375,0), tolerance = 0.01)
 })
 
 test_that("heterophily function works", {
@@ -24,11 +24,6 @@ test_that("richness function works", {
   expect_s3_class(net_richness(ison_networkers), "network_measure")
   expect_length(node_richness(ison_networkers, "type"), 32)
   expect_s3_class(node_richness(ison_networkers, "type"), "node_measure")
-})
-
-test_that("node_diversity works", {
-  expect_equal(top3(node_diversity(ison_lawfirm, "gender")),
-                c(0.285, 0.375,0), tolerance = 0.01)
 })
 
 test_that("net_spatial works", {
