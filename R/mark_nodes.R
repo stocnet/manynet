@@ -339,13 +339,17 @@ node_is_recovered <- function(.data, time = 0){
 #'   (expos <- node_is_exposed(manynet::create_tree(14), mark = c(1,3)))
 #'   which(expos)
 #' @export
-node_is_exposed <- function(.data, mark){
-  event <- nodes <- NULL
-  if (missing(mark) && inherits(.data, "diff_model")){
-    mark <- summary(.data) %>% 
-      dplyr::filter(t == 0 & event == "I") %>% 
-      dplyr::select(nodes) %>% unlist()
-    .data <- attr(.data, "network")
+node_is_exposed <- function(.data, mark, time = 0){
+  if (missing(mark)){
+    if(is_changing(.data)){
+      t <- time
+      return(make_node_mark(node_exposure(.data, time = t)>0, .data))
+    } else if(inherits(.data, "diff_model")){
+      mark <- summary(.data) %>% 
+        dplyr::filter(t == 0 & event == "I") %>% 
+        dplyr::select(nodes) %>% unlist()
+      .data <- attr(.data, "network")
+    }    
   }
   if(is.logical(mark)) mark <- which(mark)
   out <- rep(F, manynet::net_nodes(.data))
