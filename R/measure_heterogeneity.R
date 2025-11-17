@@ -138,7 +138,7 @@ node_richness <- function(.data, attribute){
 #' @examples
 #' marvel_friends <- to_unsigned(ison_marvel_relationships, "positive")
 #' net_diversity(marvel_friends, "Gender")
-#' net_diversity(marvel_friends, "Attractive")
+#' net_diversity(marvel_friends, "Appearances")
 #' @export
 net_diversity <- function(.data, attribute, 
                         method = c("blau","teachman","variation","gini")){
@@ -162,7 +162,7 @@ net_diversity <- function(.data, attribute,
     snet_info("{.val {method}} index is not appropriate for numeric attributes.")
     snet_info("Using {.val variation} coefficient instead",
               "({.val gini} coefficient also available).")
-    method <- "cv"
+    method <- "variation"
   }
   if(is.character(attr) && method %in% c("variation","gini")){
     snet_info("{.val {method}} coefficient is not appropriate for categorical attributes.")
