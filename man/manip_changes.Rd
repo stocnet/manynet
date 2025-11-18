@@ -3,6 +3,7 @@
 \name{manip_changes}
 \alias{manip_changes}
 \alias{add_changes}
+\alias{delete_changes}
 \alias{mutate_changes}
 \alias{filter_changes}
 \alias{select_changes}
@@ -11,6 +12,8 @@
 \title{Modifying changes to nodes over time}
 \usage{
 add_changes(.data, changes)
+
+delete_changes(.data)
 
 mutate_changes(.data, ...)
 
