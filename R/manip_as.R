@@ -1006,7 +1006,7 @@ as_diffusion.mnet <- function(.data, twomode = FALSE, events) {
     dplyr::reframe(I_new = sum(value == "I"),
                    E_new = sum(value == "E"),
                    R_new = sum(value == "R"))
-  report <- dplyr::tibble(time = seq_len(max(events$time)) - 1,
+  report <- dplyr::tibble(time = 0:max(events$time),
                           n = nodes) %>% 
     dplyr::left_join(sumchanges, by = dplyr::join_by(time))
   report[is.na(report)] <- 0
