@@ -163,8 +163,6 @@ net_richness(ison_networkers)
 node_richness(ison_networkers, "Discipline")
 marvel_friends <- to_unsigned(ison_marvel_relationships, "positive")
 net_diversity(marvel_friends, "Gender")
-marvel_friends <- mutate_nodes(marvel_friends,
-                            Attractive = ifelse(Attractive==1, "Attractive", "Not Attractive"))
 net_diversity(marvel_friends, "Appearances")
 node_diversity(marvel_friends, "Gender")
 node_diversity(marvel_friends, "Attractive")
