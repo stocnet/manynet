@@ -193,7 +193,7 @@ node_diversity <- function(.data, attribute,
     snet_info("{.val {method}} index is not appropriate for numeric attributes.")
     snet_info("Using {.val variation} coefficient instead",
               "({.val gini} coefficient also available).")
-    method <- "cv"
+    method <- "variation"
   }
   if(is.character(attr) && method %in% c("variation","gini")){
     snet_info("{.val {method}} coefficient is not appropriate for categorical attributes.")
