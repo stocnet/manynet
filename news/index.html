@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.0</span>
       </span>
     </div>
 
@@ -59,6 +59,47 @@
       <small>Source: <a href="https://github.com/stocnet/manynet/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.7.0" id="manynet-170">manynet 1.7.0<a class="anchor" aria-label="anchor" href="#manynet-170"></a></h2>
+<div class="section level3">
+<h3 id="making-1-7-0">Making<a class="anchor" aria-label="anchor" href="#making-1-7-0"></a></h3>
+<ul><li>Improved vector printing to be more succinct and suggest <code><a href="../reference/make_mnet.html">print_all()</a></code>
+</li>
+<li>Improved printing methods for changing mnet objects</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-1-7-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-7-0"></a></h3>
+<ul><li>Added <code><a href="../reference/manip_changes.html">delete_changes()</a></code> for deleting all changes from a changing network</li>
+<li>Improved <code><a href="../reference/manip_split.html">to_waves()</a></code> to work with networks that are changing, longitudinal, or both</li>
+<li>Fixed <code><a href="../reference/manip_as.html">as_diffusion()</a></code> to not trim off final wave in the report</li>
+<li>Fixed <code><a href="../reference/manip_as.html">as_diffusion()</a></code> to return correct E and R compartments for waning diffusion models</li>
+</ul></div>
+<div class="section level3">
+<h3 id="marking-1-7-0">Marking<a class="anchor" aria-label="anchor" href="#marking-1-7-0"></a></h3>
+<ul><li>Improved <code><a href="../reference/mark_is.html">is_longitudinal()</a></code> to only check for tie waves and not nodal changes</li>
+</ul></div>
+<div class="section level3">
+<h3 id="measuring-1-7-0">Measuring<a class="anchor" aria-label="anchor" href="#measuring-1-7-0"></a></h3>
+<ul><li>Improved <code><a href="../reference/measure_heterogeneity.html">net_diversity()</a></code> and <code><a href="../reference/measure_heterogeneity.html">node_diversity()</a></code>
+<ul><li>No longer offers a cluster option, which can be obtained using <code>over_membership()</code>
+</li>
+<li>Added more methods for calculating diversity, including Teachman’s, coefficient of variation, and the Gini coefficient</li>
+<li>Improved <code><a href="../reference/measure_heterogeneity.html">net_diversity()</a></code> and <code><a href="../reference/measure_heterogeneity.html">node_diversity()</a></code> to use and declare methods appropriate for the vector of attributes</li>
+</ul></li>
+<li>Added <code><a href="../reference/measure_heterogeneity.html">net_homophily()</a></code> and <code><a href="../reference/measure_heterogeneity.html">node_homophily()</a></code> for measuring homophily according to different methods including
+<ul><li>Krackhardt’s EI index of heterophily as well as its inverse as a measure of homophily</li>
+<li>Yule’s Q as a further measure of homophily</li>
+<li>Geary’s C as a measure of homophily for numeric attributes</li>
+</ul></li>
+<li>Updated documentation for richness, diversity, and homophily measures</li>
+<li>Fixed <code><a href="../reference/mark_diff.html">node_is_latent()</a></code>, <code><a href="../reference/mark_diff.html">node_is_infected()</a></code>, <code>node_is_recoverd()</code> to work with changing networks</li>
+<li>Improved <code><a href="../reference/mark_diff.html">node_is_exposed()</a></code> to work with changing networks and now accepts a time argument</li>
+</ul></div>
+<div class="section level3">
+<h3 id="tutorials-1-7-0">Tutorials<a class="anchor" aria-label="anchor" href="#tutorials-1-7-0"></a></h3>
+<ul><li>Fixed description of <code><a href="../reference/manip_reformat.html">to_directed()</a></code> and <code><a href="../reference/manip_reformat.html">to_redirected()</a></code> in the data tutorial</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.6.7" id="manynet-167">manynet 1.6.7<a class="anchor" aria-label="anchor" href="#manynet-167"></a></h2>
 <div class="section level3">
@@ -1710,7 +1751,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>

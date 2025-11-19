@@ -35,7 +35,7 @@ object classes, which could otherwise lead to some unexpected results."><meta pr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.0</span>
       </span>
     </div>
 
@@ -214,9 +214,9 @@ specified to override this heuristic.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> B 1 0 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> C 1 1 0</span>
 <span class="r-in"><span><span class="fu">as_igraph</span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH ba56196 DN-- 6 5 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 4b9244f DN-- 6 5 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (v/c)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from ba56196 (vertex names):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 4b9244f (vertex names):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] A-&gt;I B-&gt;G B-&gt;I C-&gt;G C-&gt;H</span>
 <span class="r-in"><span><span class="fu">as_tidygraph</span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, directed network of 6 nodes and 5 arcs</span></span>
@@ -265,8 +265,7 @@ specified to override this heuristic.</p>
 <span class="r-in"><span>                       value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"I"</span>,<span class="st">"I"</span>,<span class="st">"I"</span>,<span class="st">"R"</span>,<span class="st">"I"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="manip_changes.html">add_changes</a></span><span class="op">(</span><span class="fu"><a href="make_create.html">create_filled</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>, <span class="va">events</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Filled network</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────────</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A longitudinal, undirected network of 4 nodes and 6 ties over -Inf waves</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A undirected network of 4 nodes and 6 ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 1</span></span>
@@ -311,7 +310,7 @@ specified to override this heuristic.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>

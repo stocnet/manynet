@@ -6,8 +6,7 @@ net_richness() measures the number of unique categories
 in a network attribute.
 node_richness() measures the number of unique categories
 of an attribute to which each node is connected.
-net_diversity() measures the heterogeneity of ties across a network
-or within clusters by node attributes.
+net_diversity() measures the heterogeneity of ties across a network.
 node_diversity() measures the heterogeneity of each node's
 local neighbourhood.
 net_heterophily() measures how embedded nodes in the network
@@ -36,7 +35,7 @@ net_spatial() measures the spatial association/autocorrelation
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.0</span>
       </span>
     </div>
 
@@ -86,8 +85,7 @@ across this attribute:</p><ul><li><p><code>net_richness()</code> measures the nu
 in a network attribute.</p></li>
 <li><p><code>node_richness()</code> measures the number of unique categories
 of an attribute to which each node is connected.</p></li>
-<li><p><code>net_diversity()</code> measures the heterogeneity of ties across a network
-or within clusters by node attributes.</p></li>
+<li><p><code>net_diversity()</code> measures the heterogeneity of ties across a network.</p></li>
 <li><p><code>node_diversity()</code> measures the heterogeneity of each node's
 local neighbourhood.</p></li>
 <li><p><code>net_heterophily()</code> measures how embedded nodes in the network
@@ -104,13 +102,25 @@ of nodes with the same attribute.</p></li>
 <span></span>
 <span><span class="fu">node_richness</span><span class="op">(</span><span class="va">.data</span>, <span class="va">attribute</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">net_diversity</span><span class="op">(</span><span class="va">.data</span>, <span class="va">attribute</span>, clusters <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu">net_diversity</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  <span class="va">attribute</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blau"</span>, <span class="st">"teachman"</span>, <span class="st">"variation"</span>, <span class="st">"gini"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">node_diversity</span><span class="op">(</span><span class="va">.data</span>, <span class="va">attribute</span><span class="op">)</span></span>
+<span><span class="fu">node_diversity</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  <span class="va">attribute</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blau"</span>, <span class="st">"teachman"</span>, <span class="st">"variation"</span>, <span class="st">"gini"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">net_heterophily</span><span class="op">(</span><span class="va">.data</span>, <span class="va">attribute</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">node_heterophily</span><span class="op">(</span><span class="va">.data</span>, <span class="va">attribute</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">net_homophily</span><span class="op">(</span><span class="va">.data</span>, <span class="va">attribute</span>, method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ie"</span>, <span class="st">"ei"</span>, <span class="st">"yule"</span>, <span class="st">"geary"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">node_homophily</span><span class="op">(</span><span class="va">.data</span>, <span class="va">attribute</span>, method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ie"</span>, <span class="st">"ei"</span>, <span class="st">"yule"</span>, <span class="st">"geary"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">net_assortativity</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
@@ -135,19 +145,32 @@ of nodes with the same attribute.</p></li>
 to use as categories for the diversity measure.</p></dd>
 
 
-<dt id="arg-clusters">clusters<a class="anchor" aria-label="anchor" href="#arg-clusters"></a></dt>
-<dd><p>A nodal cluster membership vector or name of a vertex attribute.</p></dd>
+<dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
+<dd><p>Which method to use for <code>net_diversity()</code>.
+Either "blau" (Blau's index) or "teachman" (Teachman's index) for
+categorical attributes, or "variation" (coefficient of variation)
+or "gini" (Gini coefficient) for numeric attributes.
+Default is "blau".
+If an incompatible method is chosen for the attribute type,
+a suitable alternative will be used instead with a message.</p></dd>
 
 </dl></div>
-    <div id="net-diversity">
-    <h2>net_diversity</h2>
+    <div id="richness">
+    <h2>Richness</h2>
+
+
+<p>Richness is a simple count of the number of different categories
+present for a given attribute.</p>
+    </div>
+    <div id="diversity">
+    <h2>Diversity</h2>
 
 
 <p>Blau's index (1977) uses a formula known also in other disciplines
 by other names
 (Gini-Simpson Index, Gini impurity, Gini's diversity index,
 Gibbs-Martin index, and probability of interspecific encounter (PIE)):
-$$1 - \sum\limits_{i = 1}^k {p_i^2 }$$,
+$$1 - \sum\limits_{i = 1}^k {p_i^2 }$$
 where \(p_i\) is the proportion of group members in \(i\)th category
 and \(k\) is the number of categories for an attribute of interest.
 This index can be interpreted as the probability that two members
@@ -156,9 +179,46 @@ This index finds its minimum value (0) when there is no variety,
 i.e. when all individuals are classified in the same category.
 The maximum value depends on the number of categories and
 whether nodes can be evenly distributed across categories.</p>
+<p>Teachman's index (1980) is based on information theory
+and is calculated as:
+$$- \sum\limits_{i = 1}^k {p_i \log(p_i)}$$
+where \(p_i\) is the proportion of group members in \(i\)th category
+and \(k\) is the number of categories for an attribute of interest.
+This index finds its minimum value (0) when there is no variety,
+i.e. when all individuals are classified in the same category.
+The maximum value depends on the number of categories and
+whether nodes can be evenly distributed across categories.
+It thus shares similar properties to Blau's index,
+but includes also a notion of richness that tends to give more weight to
+rare categories and thus tends to highlight imbalances more.</p>
+<p>The coefficient of variation (CV) is a standardised measure of dispersion
+of a probability distribution or frequency distribution.
+It is defined as the ratio of the standard deviation \(\sigma\)
+to the mean \(\mu\):
+$$CV = \frac{\sigma}{\mu}$$
+It is often expressed as a percentage.
+The CV is useful because the standard deviation of data must always be understood
+in the context of the mean of the data.
+The CV is particularly useful when comparing the degree of variation
+from one data series to another,
+even if the means are drastically different from each other.</p>
+<p>The Gini coefficient is a measure of statistical dispersion
+that is intended to represent the income or wealth distribution
+of a nation's residents,
+and is commonly used as a measure of inequality.
+It is defined as a ratio with values between 0 and 1,
+where 0 corresponds with perfect equality
+(everyone has the same income) and 1 corresponds with perfect inequality
+(one person has all the income, and everyone else has zero income).
+The Gini coefficient can be calculated from the Lorenz curve,
+which plots the proportion of the total income of the population
+that is cumulatively earned by the bottom x% of the population.
+The Gini coefficient is defined as the area between the line of equality
+and the Lorenz curve,
+divided by the total area under the line of equality.</p>
     </div>
-    <div id="net-heterophily">
-    <h2>net_heterophily</h2>
+    <div id="homophily">
+    <h2>Homophily</h2>
 
 
 <p>Given a partition of a network into a number of mutually exclusive groups then
@@ -173,12 +233,26 @@ where 1 indicates ties only between categories/groups and -1 ties only within ca
     <h2>References</h2>
 
 <div class="section">
+<h3 id="on-richness">On richness<a class="anchor" aria-label="anchor" href="#on-richness"></a></h3>
+
+
+<p>Magurran, Anne E. 1988.
+<em>Ecological Diversity and Its Measurement</em>.
+Princeton: Princeton University Press.
+<a href="https://doi.org/10.1007/978-94-015-7358-0" class="external-link">doi:10.1007/978-94-015-7358-0</a></p>
+</div>
+
+<div class="section">
 <h3 id="on-diversity">On diversity<a class="anchor" aria-label="anchor" href="#on-diversity"></a></h3>
 
 
 <p>Blau, Peter M. 1977.
 <em>Inequality and heterogeneity</em>.
 New York: Free Press.</p>
+<p>Teachman, Jay D. 1980.
+Analysis of population diversity: Measures of qualitative variation.
+<em>Sociological Methods &amp; Research</em>, 8:341-362.
+<a href="https://doi.org/10.1177/004912418000800305" class="external-link">doi:10.1177/004912418000800305</a></p>
 <p>Page, Scott E. 2010.
 <em>Diversity and Complexity</em>.
 Princeton: Princeton University Press.
@@ -204,7 +278,7 @@ Informal networks and organizational crises: an experimental simulation.
 
 
 <p>Newman, Mark E.J. 2002.
-"Assortative Mxing in Networks".
+"Assortative mixing in networks".
 <em>Physical Review Letters</em>, 89(20): 208701.
 <a href="https://doi.org/10.1103/physrevlett.89.208701" class="external-link">doi:10.1103/physrevlett.89.208701</a></p>
 </div>
@@ -214,7 +288,7 @@ Informal networks and organizational crises: an experimental simulation.
 
 
 <p>Moran, Patrick Alfred Pierce. 1950.
-"Notes on Continuous Stochastic Phenomena".
+"Notes on continuous stochastic phenomena".
 <em>Biometrika</em> 37(1): 17-23.
 <a href="https://doi.org/10.2307/2332142" class="external-link">doi:10.2307/2332142</a></p>
 </div>
@@ -249,24 +323,22 @@ Informal networks and organizational crises: an experimental simulation.
 <span class="r-out co"><span class="r-pr">#&gt;</span> ▂▃▁▅ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   `Lin Freeman` `Doug White` `Ev Rogers` `Richard Alba` `Phipps Arabie`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>             4            4           2              4               4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... with 27 more values from this nodeset unprinted. Use `print(..., n = Inf)` to print all values.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 27 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
 <span class="r-in"><span><span class="va">marvel_friends</span> <span class="op">&lt;-</span> <span class="fu"><a href="manip_deformat.html">to_unsigned</a></span><span class="op">(</span><span class="va">ison_marvel_relationships</span>, <span class="st">"positive"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">net_diversity</span><span class="op">(</span><span class="va">marvel_friends</span>, <span class="st">"Gender"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.306</span>
-<span class="r-in"><span><span class="fu">net_diversity</span><span class="op">(</span><span class="va">marvel_friends</span>, <span class="st">"Attractive"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.35</span>
-<span class="r-in"><span><span class="fu">net_diversity</span><span class="op">(</span><span class="va">marvel_friends</span>, <span class="st">"Gender"</span>, <span class="st">"Rich"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.337 0.165</span>
+<span class="r-in"><span><span class="fu">net_diversity</span><span class="op">(</span><span class="va">marvel_friends</span>, <span class="st">"Appearances"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.802</span>
 <span class="r-in"><span><span class="fu">node_diversity</span><span class="op">(</span><span class="va">marvel_friends</span>, <span class="st">"Gender"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ▃▁▁▃▂ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Abomination `Ant-Man` Apocalypse Beast `Black Panther` `Black Widow` Blade</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>           0      0.48          0 0.363            0.34         0.337     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... with 46 more values from this nodeset unprinted. Use `print(..., n = Inf)` to print all values.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 46 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
 <span class="r-in"><span><span class="fu">node_diversity</span><span class="op">(</span><span class="va">marvel_friends</span>, <span class="st">"Attractive"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ▃▃▁▂▁ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ▂▄▂▂▁▁▁▁▁ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Abomination `Ant-Man` Apocalypse Beast `Black Panther` `Black Widow` Blade</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>           0      0.32          0 0.172           0.159         0.133     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... with 46 more values from this nodeset unprinted. Use `print(..., n = Inf)` to print all values.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>          <span style="color: #BB0000;">NA</span>     0.559        <span style="color: #BB0000;">NaN</span> 0.332           0.316         0.288     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 46 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
 <span class="r-in"><span><span class="fu">net_heterophily</span><span class="op">(</span><span class="va">marvel_friends</span>, <span class="st">"Gender"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.285</span>
 <span class="r-in"><span><span class="fu">net_heterophily</span><span class="op">(</span><span class="va">marvel_friends</span>, <span class="st">"Attractive"</span><span class="op">)</span></span></span>
@@ -275,12 +347,14 @@ Informal networks and organizational crises: an experimental simulation.
 <span class="r-out co"><span class="r-pr">#&gt;</span> ▅▂▁▂ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Abomination `Ant-Man` Apocalypse Beast `Black Panther` `Black Widow` Blade</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>         <span style="color: #BB0000;">NaN</span>       0.5         -<span style="color: #BB0000;">1</span>  -<span style="color: #BB0000;">0.5</span>          -<span style="color: #BB0000;">0.545</span>         0.692    -<span style="color: #BB0000;">1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... with 46 more values from this nodeset unprinted. Use `print(..., n = Inf)` to print all values.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 46 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
 <span class="r-in"><span><span class="fu">node_heterophily</span><span class="op">(</span><span class="va">marvel_friends</span>, <span class="st">"Attractive"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ▆▂▁▁ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Abomination `Ant-Man` Apocalypse Beast `Black Panther` `Black Widow` Blade</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>         <span style="color: #BB0000;">NaN</span>      -<span style="color: #BB0000;">0.5</span>         -<span style="color: #BB0000;">1</span>  -<span style="color: #BB0000;">0.8</span>          -<span style="color: #BB0000;">0.818</span>        -<span style="color: #BB0000;">0.846</span>    -<span style="color: #BB0000;">1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... with 46 more values from this nodeset unprinted. Use `print(..., n = Inf)` to print all values.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 46 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
+<span class="r-in"><span><span class="fu">net_homophily</span><span class="op">(</span><span class="va">marvel_friends</span>, <span class="st">"Gender"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.285</span>
 <span class="r-in"><span><span class="fu">net_assortativity</span><span class="op">(</span><span class="va">ison_networkers</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.41</span>
 <span class="r-in"><span><span class="fu">net_spatial</span><span class="op">(</span><span class="va">ison_lawfirm</span>, <span class="st">"age"</span><span class="op">)</span></span></span>
@@ -299,7 +373,7 @@ Informal networks and organizational crises: an experimental simulation.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>
