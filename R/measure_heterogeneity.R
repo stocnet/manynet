@@ -306,7 +306,7 @@ net_homophily <- function(.data, attribute,
     snet_info("Using {.val geary}'s C instead.")
     method <- "geary"
   }
-  if(!is.numeric(attribute) && method %in% c("geary")){
+  if(!is.numeric(attribute) && method == "geary"){
     snet_info("{.val {method}} index is not appropriate for categorical attributes.")
     snet_info("Using {.val ie} index instead.")
     method <- "ie"
@@ -387,7 +387,7 @@ node_homophily <- function(.data, attribute,
     snet_info("Using {.val geary}'s C instead.")
     method <- "geary"
   }
-  if(!is.numeric(attribute) && method %in% c("geary")){
+  if(!is.numeric(attribute) && method == "geary"){
     snet_info("{.val {method}} index is not appropriate for categorical attributes.")
     snet_info("Using {.val ie} index instead.")
     method <- "ie"
