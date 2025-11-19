@@ -6,7 +6,8 @@ utils::globalVariables(c(".data", "obs",
                          "nodes","event","exposure",
                          "student","students","colleges",
                          "node","value","var","active","time",
-                         "A","B","C","D"))
+                         "A","B","C","D",
+                         "n"))
 
 # Helper function for declaring available methods
 available_methods <- function(fun_vctr) {

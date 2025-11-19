@@ -215,7 +215,7 @@ net_immunity <- function(.data, normalized = TRUE){
 #' @rdname measure_diffusion_infection 
 #' @examples
 #'   smeg <- generate_smallworld(15, 0.025)
-#'   smeg_diff <- play_diffusion(smeg, recovery = 0.2)
+#'   smeg_diff <- play_diffusion(smeg)
 #'   net_infection_complete(smeg_diff)
 #' @export
 net_infection_complete <- function(.data){
@@ -426,8 +426,8 @@ node_thresholds <- function(.data, normalized = TRUE, lag = 1){
 }
 
 #' @rdname measure_diffusion_node 
-#' @section Infection length:
-#'   `node_infection_length()` measures the average length of time that nodes 
+#' @section Recovery:
+#'   `node_recovery()` measures the average length of time that nodes 
 #'   that become infected remain infected in a compartmental model with recovery.
 #'   Infections that are not concluded by the end of the study period are
 #'   calculated as infinite.

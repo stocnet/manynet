@@ -202,8 +202,21 @@ NULL
 #'   node_is_latent(play_diffusion(create_tree(6), latency = 1), time = 1)
 #' @export
 node_is_latent <- function(.data, time = 0){
-  if(inherits(.data, "diff_model")){
-    event <- nodes <- n <- NULL
+  if(is_changing(.data)){
+    t <- time
+    latent <- as_changelist(.data) %>% 
+      dplyr::filter(time <= t & value %in% c("E", "I")) %>%
+      dplyr::group_by(node) %>%
+      dplyr::mutate(n = dplyr::n()) %>%
+      dplyr::filter(n == 1 & value == "E")
+    if (is_labelled(.data)) {
+      out <- seq_len(net_nodes(.data)) %in% latent$node
+      names(out) <- node_names(.data)
+    } else {
+      out <- seq_len(net_nodes(.data)) %in% latent$node
+    }
+    make_node_mark(out, .data)
+  } else if(inherits(.data, "diff_model")){
     latent <- summary(.data) %>%
       dplyr::filter(t <= time & event %in% c("E", "I")) %>%
       group_by(nodes) %>%
@@ -231,8 +244,21 @@ node_is_latent <- function(.data, time = 0){
 #'   node_is_infected(play_diffusion(create_tree(6)), time = 1)
 #' @export
 node_is_infected <- function(.data, time = 0) {
-  if(inherits(.data, "diff_model")){
-    event <- nodes <- n <- NULL
+  if(is_changing(.data)){
+    t <- time
+    infected <- as_changelist(.data) %>% 
+      dplyr::filter(time <= t & value %in% c("I", "R")) %>%
+      dplyr::group_by(node) %>%
+      dplyr::mutate(n = dplyr::n()) %>%
+      dplyr::filter(n == 1 & value == "I")
+    if (is_labelled(.data)) {
+      out <- seq_len(net_nodes(.data)) %in% infected$node
+      names(out) <- node_names(.data)
+    } else {
+      out <- seq_len(net_nodes(.data)) %in% infected$node
+    }
+    make_node_mark(out, .data)
+  } else if(inherits(.data, "diff_model")){
     infected <- summary(.data) %>% 
       dplyr::filter(t <= time & event %in% c("I", "R")) %>%
       group_by(nodes) %>%
@@ -259,8 +285,21 @@ node_is_infected <- function(.data, time = 0) {
 #'   node_is_recovered(play_diffusion(create_tree(6), recovery = 0.5), time = 3)
 #' @export
 node_is_recovered <- function(.data, time = 0){
-  if(inherits(.data, "diff_model")){
-    event <- nodes <- n <- NULL
+  if(is_changing(.data)){
+    t <- time
+    recovered <- as_changelist(.data) %>% 
+      dplyr::filter(time <= t & value %in% c("R")) %>%
+      dplyr::group_by(node) %>%
+      dplyr::mutate(n = dplyr::n()) %>%
+      dplyr::filter(n == 1 & value == "R")
+    if (is_labelled(.data)) {
+      out <- seq_len(net_nodes(.data)) %in% recovered$node
+      names(out) <- node_names(.data)
+    } else {
+      out <- seq_len(net_nodes(.data)) %in% recovered$node
+    }
+    make_node_mark(out, .data)
+  } else if(inherits(.data, "diff_model")){
     recovered <- summary(.data) %>% 
       dplyr::filter(t <= time & event == "R") %>%
       group_by(nodes) %>%
@@ -300,13 +339,17 @@ node_is_recovered <- function(.data, time = 0){
 #'   (expos <- node_is_exposed(manynet::create_tree(14), mark = c(1,3)))
 #'   which(expos)
 #' @export
-node_is_exposed <- function(.data, mark){
-  event <- nodes <- NULL
-  if (missing(mark) && inherits(.data, "diff_model")){
-    mark <- summary(.data) %>% 
-      dplyr::filter(t == 0 & event == "I") %>% 
-      dplyr::select(nodes) %>% unlist()
-    .data <- attr(.data, "network")
+node_is_exposed <- function(.data, mark, time = 0){
+  if (missing(mark)){
+    if(is_changing(.data)){
+      t <- time
+      return(make_node_mark(node_exposure(.data, time = t)>0, .data))
+    } else if(inherits(.data, "diff_model")){
+      mark <- summary(.data) %>% 
+        dplyr::filter(t == 0 & event == "I") %>% 
+        dplyr::select(nodes) %>% unlist()
+      .data <- attr(.data, "network")
+    }    
   }
   if(is.logical(mark)) mark <- which(mark)
   out <- rep(F, manynet::net_nodes(.data))

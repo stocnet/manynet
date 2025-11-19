@@ -14,7 +14,7 @@ node_is_infected(.data, time = 0)
 
 node_is_recovered(.data, time = 0)
 
-node_is_exposed(.data, mark)
+node_is_exposed(.data, mark, time = 0)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:

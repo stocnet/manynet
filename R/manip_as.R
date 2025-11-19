@@ -1001,24 +1001,26 @@ as_diffusion.diff_model <- function(.data, twomode = FALSE, events) {
 #' @export
 as_diffusion.mnet <- function(.data, twomode = FALSE, events) {
   events <- as_changelist(.data)
-  nodes <- net_nodes(.data)
+  nodes <- c(net_nodes(.data))
   sumchanges <- events %>% dplyr::group_by(time) %>% 
-    dplyr::reframe(I_new = sum(value == "I"),
+    dplyr::reframe(S_new = sum(value == "S"),
                    E_new = sum(value == "E"),
+                   I_new = sum(value == "I"),
                    R_new = sum(value == "R"))
-  report <- dplyr::tibble(time = seq_len(max(events$time)) - 1,
+  report <- dplyr::tibble(time = 0:max(events$time),
                           n = nodes) %>% 
     dplyr::left_join(sumchanges, by = dplyr::join_by(time))
   report[is.na(report)] <- 0
-  report$R <- cumsum(report$R_new)
-  report$I <- cumsum(report$I_new) - report$R
-  report$E <- ifelse(report$E_new == 0 & 
-                       cumsum(report$E_new) == max(cumsum(report$E_new)),
-                     report$E_new, cumsum(report$E_new))
-  report$E <- ifelse(report$R + report$I + report$E > report$n,
-                     report$n - (report$R + report$I),
-                     report$E)
-  report$S <- report$n - report$R - report$I - report$E
+  
+  if(all(report$E_new == 0)){
+    report$S = report$n + cumsum(report$S_new - report$I_new)
+    report$E = rep(0, nrow(report))
+  } else {
+    report$S = report$n + cumsum(report$S_new - report$E_new) # susceptible decreases as they become exposed
+    report$E = cumsum(report$E_new) - cumsum(report$I_new) # exposed become infectious
+  }
+  report$I = cumsum(report$I_new) - cumsum(report$R_new) # infectious recover
+  report$R = cumsum(report$R_new) - cumsum(report$S_new) # recovered accumulate
   report$s <- vapply(report$time, function(t){
     twin <- dplyr::filter(events, events$time <= t)
     infected <- dplyr::filter(twin, twin$value == "I")$node
@@ -1028,11 +1030,11 @@ as_diffusion.mnet <- function(.data, twomode = FALSE, events) {
     expos[recovered] <- F
     sum(expos)
   }, numeric(1) )
-  if (any(report$R + report$I + report$E + report$S != report$n)) {
+  if (any((report$R + report$I + report$E + report$S) != report$n)) {
     snet_abort("Oops, something is wrong")
   }
   report <- dplyr::select(report, 
-                          dplyr::any_of(c("time", "n", "S", "s", "E", "E_new", 
+                          dplyr::any_of(c("time", "n", "S", "s", "S_new", "E", "E_new", 
                                           "I", "I_new", "R", "R_new")))
   # make_diff_model(events, report, .data)
   class(report) <- c("diff_model", class(report))

@@ -182,21 +182,86 @@ to_waves <- function(.data, attribute = "wave", panels = NULL,
 #' @export
 to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
                                cumulative = FALSE) {
-  wp <- unique(tie_attribute(.data, attribute))
-  if(!is.null(panels))
-    wp <- intersect(panels, wp)
-  if(length(wp) > 1) {
-    out <- lapply(wp, function(l){
-      filter_ties(.data, !!as.name(attribute) == l)
+  out <- NULL
+  if(is_changing(.data) && is_longitudinal(.data)){
+    cl <- as_changelist(.data)
+    el <- as_edgelist(.data)
+    
+    # Get all unique times in order
+    times <- sort(unique(cl$time))
+    if(!is.null(panels))
+      times <- intersect(panels, times)
+    
+    waves <- lapply(times, function(t) {
+      # Latest changes by time t
+      changes <- cl %>% 
+        dplyr::filter(time <= t) %>% 
+        dplyr::group_by(node) %>% 
+        dplyr::reframe(var = var,
+                         latest_value = value[which.max(time)],
+                         .groups = "drop")
+      for(v in unique(changes$var)){
+        upd <- rep(NA, net_nodes(.data))
+        upd[changes[var = v,]$node] <- changes[var = v,]$latest_value
+        old <- node_attribute(.data, v)
+        if(inherits(old, "logi")) old <- as.logical(old)
+        out <- add_node_attribute(.data, v, dplyr::coalesce(upd, old))
+      }
+      out <- delete_changes(out)
+      out <- filter_ties(out, wave == t)
+      out
     })
-    names(out) <- wp
-  } else {
-    out <- filter_ties(.data, !!as.name(attribute) == wp)
+    names(waves) <- paste("Wave", times)
+    out <- waves
+  } else if(is_changing(.data)){
+    cl <- as_changelist(.data)
+    if(!attribute %in% names(cl) && "time" %in% names(cl)){
+      attribute <- "time"
+    }
+    # Get all unique times in order
+    times <- sort(unique(cl$time))
+    if(!is.null(panels))
+      times <- intersect(panels, times)
+
+    # Iterate over times
+    waves <- lapply(times, function(t) {
+      # Latest changes by time t
+      changes <- cl %>% 
+        dplyr::filter(time <= t) %>% 
+        dplyr::group_by(node) %>% 
+        dplyr::reframe(var = var,
+                         latest_value = value[which.max(time)],
+                         .groups = "drop")
+      for(v in unique(changes$var)){
+        upd <- rep(NA, net_nodes(.data))
+        upd[changes[var = v,]$node] <- changes[var = v,]$latest_value
+        old <- node_attribute(.data, v)
+        if(inherits(old, "logi")) old <- as.logical(old)
+        out <- add_node_attribute(.data, v, dplyr::coalesce(upd, old))
+      }
+      out <- delete_changes(out)
+      out
+    })
+    names(waves) <- paste("Wave", times)
+    out <- waves
+  } else if(is_longitudinal(.data)){
+    wp <- unique(tie_attribute(.data, attribute))
+    if(!is.null(panels))
+      wp <- intersect(panels, wp)
+    if(length(wp) > 1) {
+      out <- lapply(wp, function(l){
+        filter_ties(.data, !!as.name(attribute) == l)
+      })
+      names(out) <- wp
+    } else {
+      out <- filter_ties(.data, !!as.name(attribute) == wp)
+    }
+    if (isTRUE(cumulative)) {
+      out <- .cumulative_ties(out, attribute)
+    }
+    out <- out[order(names(out))]
   }
-  if (isTRUE(cumulative)) {
-    out <- cumulative_ties(out, attribute)
-  }
-  out[order(names(out))]
+  if(is.null(out)) .data else out
 }
 
 #' @export
@@ -218,7 +283,7 @@ to_waves.data.frame <- function(.data, attribute = "wave", panels = NULL,
     out <- .data[,attribute == wp]
   }
   if (isTRUE(cumulative)) {
-    out <- cumulative_ties(out, attribute)
+    out <- .cumulative_ties(out, attribute)
   }
   out
 }
@@ -240,12 +305,12 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
                         Recovered = node_is_recovered(diff, time = k))
   }
   if (isTRUE(cumulative)) {
-    out <- cumulative_ties(out, attribute)
+    out <- .cumulative_ties(out, attribute)
   }
   out
 }
 
-cumulative_ties <- function(x, attribute) {
+.cumulative_ties <- function(x, attribute) {
   edges <- to <- from <- NULL
   thisRequires("zoo")
   thisRequires("purrr")

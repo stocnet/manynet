@@ -329,6 +329,12 @@ add_changes <- function(.data, changes){
 
 #' @rdname manip_changes
 #' @export
+delete_changes <- function(.data){
+  igraph::delete_graph_attr(.data, "changes")
+}
+
+#' @rdname manip_changes
+#' @export
 mutate_changes <- function(.data, ...) UseMethod("mutate_changes")
 
 #' @export

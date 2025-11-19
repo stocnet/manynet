@@ -17,6 +17,7 @@ print.diff_model <- function(x, ..., verbose = FALSE){
   if(!verbose){
     x$n <- NULL
     x$s <- NULL
+    x$S_new <- NULL
     x$I_new <- NULL
     x$E_new <- NULL
     x$R_new <- NULL

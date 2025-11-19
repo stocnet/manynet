@@ -1,3 +1,39 @@
+# manynet 1.7.0
+
+## Making
+
+- Improved vector printing to be more succinct and suggest `print_all()`
+- Improved printing methods for changing mnet objects
+
+## Modifying
+
+- Added `delete_changes()` for deleting all changes from a changing network
+- Improved `to_waves()` to work with networks that are changing, longitudinal, or both
+- Fixed `as_diffusion()` to not trim off final wave in the report
+- Fixed `as_diffusion()` to return correct E and R compartments for waning diffusion models
+
+## Marking
+
+- Improved `is_longitudinal()` to only check for tie waves and not nodal changes
+
+## Measuring
+
+- Improved `net_diversity()` and `node_diversity()`
+  - No longer offers a cluster option, which can be obtained using `over_membership()`
+  - Added more methods for calculating diversity, including Teachman's, coefficient of variation, and the Gini coefficient
+  - Improved `net_diversity()` and `node_diversity()` to use and declare methods appropriate for the vector of attributes
+- Added `net_homophily()` and `node_homophily()` for measuring homophily according to different methods including
+  - Krackhardt's EI index of heterophily as well as its inverse as a measure of homophily
+  - Yule's Q as a further measure of homophily
+  - Geary's C as a measure of homophily for numeric attributes
+- Updated documentation for richness, diversity, and homophily measures
+- Fixed `node_is_latent()`, `node_is_infected()`, `node_is_recoverd()` to work with changing networks
+- Improved `node_is_exposed()` to work with changing networks and now accepts a time argument
+  
+## Tutorials
+
+- Fixed description of `to_directed()` and `to_redirected()` in the data tutorial
+
 # manynet 1.6.7
 
 ## Making

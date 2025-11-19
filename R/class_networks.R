@@ -180,9 +180,10 @@ describe_ties <- function(x){
 #' @export
 describe_changes <- function(x){
   if(is_longitudinal(x)){
-    paste(" over", max(tie_attribute(x, "wave")), "waves")
+    waves <- tie_attribute(x, "wave")
+    if(is.null(waves)) waves <- as_changelist(x)$time
+    paste(" over", max(waves), "waves")
   } else if (is_dynamic(x)){
-    
     if("time" %in% net_tie_attributes(x)){
       paste(" from", min(tie_attribute(x, "time"), na.rm = TRUE), 
             "to", max(tie_attribute(x, "time"), na.rm = TRUE))

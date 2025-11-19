@@ -592,7 +592,8 @@ For example:
 - `to_unnamed()` removes/anonymises all vertex/node labels
 - `to_named()` adds some random (U.S.) childrens' names, which can be useful for identifying particular nodes
 - `to_undirected()` replaces directed ties with an undirected tie (if an arc in either direction is present)
-- `to_redirected()` replaces undirected ties with directed ties (arcs) or, if already directed, swaps arcs' direction
+- `to_directed()` replaces undirected ties with directed ties (arcs) or, if already directed, does nothing
+- `to_redirected()` swaps the direction of directed ties (arcs) or, if undirected, does nothing
 - `to_unweighted()` binarises or dichotomises a network around a particular threshold (by default `1`)
 - `to_unsigned()` returns just the "positive" or "negative" ties from a signed network, respectively
 - `to_uniplex()` reduces a multigraph or multiplex network to one with a single set of edges or ties
