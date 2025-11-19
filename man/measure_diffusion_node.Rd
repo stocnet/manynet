@@ -79,9 +79,9 @@ That is, \eqn{theta} is now a proportion,
 and works regardless of whether \eqn{w} is weighted or not.
 }
 
-\section{Infection length}{
+\section{Recovery}{
 
-\code{node_infection_length()} measures the average length of time that nodes
+\code{node_recovery()} measures the average length of time that nodes
 that become infected remain infected in a compartmental model with recovery.
 Infections that are not concluded by the end of the study period are
 calculated as infinite.
