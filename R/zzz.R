@@ -23,14 +23,14 @@
   greet_startup_cli <- function() {
     tips <- c(
       "i" = "There are lots of ways to contribute to {.pkg manynet} at {.url https://github.com/stocnet/manynet/}.",
-      "i" = "Please let us know any bugs, issues, or feature requests at {.url https://github.com/stocnet/manynet/issues}. It's really helpful!",
-      "i" = "To eliminate package startup messages, use: `suppressPackageStartupMessages(library({.pkg manynet}))`.",
+      "i" = "Please share bugs, issues, or feature requests at {.url https://github.com/stocnet/manynet/issues}. It's really helpful!",
+      "i" = "To suppress package startup messages, use: `suppressPackageStartupMessages(library({.pkg manynet}))`.",
       # "i" = "Changing the theme of all your graphs is straightforward with `set_manynet_theme()`",
-      "i" = "If there are too many messages in the console, run `options(snet_verbosity = 'quiet')`",
+      "i" = "If too many messages appear in the console, run `options(snet_verbosity = 'quiet')`",
       "i" = "Explore the changes since the last version with {.code news(package = 'manynet')}.",
       "i" = "Visit the website to learn more: {.url https://stocnet.github.io/manynet/}.",
-      "i" = "We recommend the 'Function Overview' page online to discover new analytic opportunities: {.url https://stocnet.github.io/manynet/reference/index.html}.",
-      "i" = "Discover all the {.emph stocnet} R packages at {.url https://github.com/stocnet/}.",
+      "i" = "The 'Function Overview' may suggest new analytic opportunities: {.url https://stocnet.github.io/manynet/reference/index.html}.",
+      "i" = "Discover {.emph stocnet} R packages at {.url https://github.com/stocnet/}.",
       # "i" = "Star me at {.url https://github.com/users/follow?target=jhollway}.",
       "i" = "You can list all the tutorials available in {.pkg manynet} using {.fn run_tute}, and run them too!"
     )
