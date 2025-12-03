@@ -8,6 +8,7 @@
 \alias{tie_attribute}
 \alias{tie_weights}
 \alias{tie_signs}
+\alias{tie_is_twomode}
 \title{Describing attributes of nodes or ties in a network}
 \usage{
 node_attribute(.data, attribute)
@@ -21,6 +22,8 @@ tie_attribute(.data, attribute)
 tie_weights(.data)
 
 tie_signs(.data)
+
+tie_is_twomode(.data)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
@@ -56,6 +59,7 @@ node_is_mode(ison_southern_women)
 tie_attribute(ison_algebra, "task_tie")
 tie_weights(to_mode1(ison_southern_women))
 tie_signs(ison_marvel_relationships)
+tie_is_twomode(fict_actually)
 }
 \seealso{
 Other measures: 

@@ -90,3 +90,17 @@ tie_signs <- function(.data){
   make_tie_measure(out, .data)
 }
 
+#' @rdname measure_attributes
+#' @examples 
+#' tie_is_twomode(fict_actually)
+#' @export
+tie_is_twomode <- function(.data){
+  if(is_twomode(.data)){
+    el <- igraph::as_edgelist(.data, names = FALSE)
+    el[,1] <- node_is_mode(.data)[el[,1]]
+    el[,2] <- node_is_mode(.data)[el[,2]]
+    out <- el[,1] != el[,2]
+  } else out <- rep(FALSE, net_ties(.data))
+  make_tie_measure(out, .data)
+}
+
