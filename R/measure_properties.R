@@ -95,12 +95,30 @@ net_dims.network <- function(.data){
 }
 
 #' @rdname measure_properties
+#' @importFrom igraph graph_attr
+#' @examples
+#'   net_node_names(ison_algebra)
+#' @export
+net_node_names <- function(.data){
+  igraph::graph_attr(.data, "nodes")
+}
+
+#' @rdname measure_properties
 #' @importFrom igraph vertex_attr_names
 #' @examples
 #'   net_node_attributes(fict_lotr)
 #' @export
 net_node_attributes <- function(.data){
   igraph::vertex_attr_names(as_igraph(.data))
+}
+
+#' @rdname measure_properties
+#' @importFrom igraph graph_attr
+#' @examples
+#'   net_tie_names(ison_algebra)
+#' @export
+net_tie_names <- function(.data){
+  igraph::graph_attr(.data, "ties")
 }
 
 #' @rdname measure_properties
@@ -111,3 +129,4 @@ net_node_attributes <- function(.data){
 net_tie_attributes <- function(.data){
   igraph::edge_attr_names(as_igraph(.data))
 }
+
