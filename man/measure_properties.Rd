@@ -5,7 +5,9 @@
 \alias{net_nodes}
 \alias{net_ties}
 \alias{net_dims}
+\alias{net_node_names}
 \alias{net_node_attributes}
+\alias{net_tie_names}
 \alias{net_tie_attributes}
 \title{Describing network properties}
 \usage{
@@ -15,7 +17,11 @@ net_ties(.data)
 
 net_dims(.data)
 
+net_node_names(.data)
+
 net_node_attributes(.data)
+
+net_tie_names(.data)
 
 net_tie_attributes(.data)
 }
@@ -56,12 +62,15 @@ net_nodes(ison_southern_women)
 net_ties(ison_southern_women)
 net_dims(ison_southern_women)
 net_dims(to_mode1(ison_southern_women))
+  net_node_names(ison_algebra)
   net_node_attributes(fict_lotr)
+  net_tie_names(ison_algebra)
   net_tie_attributes(ison_algebra)
 }
 \seealso{
 Other measures: 
-\code{\link{measure_attributes}},
+\code{\link{measure_attributes_nodes}},
+\code{\link{measure_attributes_ties}},
 \code{\link{measure_central_between}},
 \code{\link{measure_central_close}},
 \code{\link{measure_central_degree}},
