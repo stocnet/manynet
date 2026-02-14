@@ -14,7 +14,6 @@ tidygraph::with_graph
 #' @export
 tidygraph::is.tbl_graph
 
-#' @importFrom tidygraph .G
 #' @export
 tidygraph::.G
 
@@ -28,16 +27,26 @@ tidygraph::.E
 
 # nocov start
 
-expect_nodes <- function() {
-  if (!tidygraph::.graph_context$free() && tidygraph::.graph_context$active() != "nodes") {
-    snet_abort("This call requires nodes to be active", call. = FALSE)
-  }
+#' @importFrom tidygraph .G
+#' @export
+expect_nodes <- function(.data) {
+  if(missing(.data)){
+    if (!tidygraph::.graph_context$free() && tidygraph::.graph_context$active() != "nodes") {
+      snet_abort("This call requires nodes to be active", call. = FALSE)
+    }
+    tidygraph::.G()
+  } else .data
 }
 
-expect_edges <- function() {
-  if (!tidygraph::.graph_context$free() && tidygraph::.graph_context$active() != "edges") {
+#' @importFrom tidygraph .G
+#' @export
+expect_ties <- function(.data) {
+  if(missing(.data)){
+    if (!tidygraph::.graph_context$free() && tidygraph::.graph_context$active() != "edges") {
     snet_abort("This call requires ties to be active", call. = FALSE)
-  }
+    }
+    tidygraph::.G()
+  } else .data
 }
 
 # nocov end
