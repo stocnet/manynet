@@ -3,11 +3,16 @@
 #' @description 
 #'   These functions extract certain attributes from given network data:
 #'   
+#'   - `net_name()` returns the name of the network, if it has one.
 #'   - `net_nodes()` returns the total number of nodes (of any mode) in a network.
 #'   - `net_ties()` returns the number of ties in a network.
 #'   - `net_dims()` returns the dimensions of a network in a vector
 #'   as long as the number of modes in the network.
+#'   - `net_node_names()` returns a vector of the names of the nodes in a network,
+#'   if they have been defined.
 #'   - `net_node_attributes()` returns a vector of nodal attributes in a network.
+#'   - `net_tie_names()` returns a vector of the names of the ties in a network,
+#'   if they have been defined.
 #'   - `net_tie_attributes()` returns a vector of tie attributes in a network.
 #'   
 #'   These functions are also often used as helpers within other functions.
@@ -22,6 +27,22 @@
 #' @family measures
 #' @inheritParams mark_is
 NULL
+
+#' @rdname measure_properties
+#' @examples
+#' net_name(ison_southern_women)
+#' @export
+net_name <- function(.data, prefix = NULL){
+  existname <- ""
+  if(!is.null(igraph::graph_attr(.data, "name"))) {
+    existname <- igraph::graph_attr(.data, 'name')
+  } else if(is_grand(.data) && 
+            !is.null(igraph::graph_attr(.data, "grand")$name)){
+    existname <- igraph::graph_attr(.data, 'grand')$name
+  }
+  if(existname != "" && !is.null(prefix)) existname <- paste(prefix, existname)
+  existname
+}
 
 #' @rdname measure_properties
 #' @examples
