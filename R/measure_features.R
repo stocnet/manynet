@@ -366,7 +366,7 @@ net_scalefree <- function(.data){
 #' _Psychological Review_, 63(5): 277-293.
 #' \doi{10.1037/h0046049}
 #' @examples
-#' net_balance(ison_marvel_relationships)
+#' net_balance(to_uniplex(fict_marvel, "relationship"))
 #' @export
 net_balance <- function(.data) {
   

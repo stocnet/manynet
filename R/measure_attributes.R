@@ -101,7 +101,7 @@ tie_weights <- function(.data){
 
 #' @rdname measure_attributes_ties
 #' @examples 
-#' tie_signs(ison_marvel_relationships)
+#' tie_signs(to_uniplex(fict_marvel,"relationship"))
 #' @export
 tie_signs <- function(.data){
   .data <- as_igraph(.data)

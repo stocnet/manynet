@@ -136,7 +136,7 @@ node_richness <- function(.data, attribute){
 #'   Princeton: Princeton University Press. 
 #'   \doi{10.1515/9781400835140}
 #' @examples
-#' marvel_friends <- to_unsigned(ison_marvel_relationships, "positive")
+#' marvel_friends <- to_unsigned(to_uniplex(fict_marvel, "relationship"), "positive")
 #' net_diversity(marvel_friends, "Gender")
 #' net_diversity(marvel_friends, "Appearances")
 #' @export

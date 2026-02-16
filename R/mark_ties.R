@@ -23,7 +23,7 @@ NULL
 #' @rdname mark_ties
 #' @importFrom igraph which_multiple
 #' @examples 
-#' tie_is_multiple(ison_marvel_relationships)
+#' tie_is_multiple(fict_marvel)
 #' @export
 tie_is_multiple <- function(.data){
   if(missing(.data)) {expect_ties(); .data <- .G()} # nocov
@@ -33,7 +33,7 @@ tie_is_multiple <- function(.data){
 #' @rdname mark_ties
 #' @importFrom igraph which_loop
 #' @examples 
-#' tie_is_loop(ison_marvel_relationships)
+#' tie_is_loop(fict_marvel)
 #' @export
 tie_is_loop <- function(.data){
   if(missing(.data)) {expect_ties(); .data <- .G()} # nocov
@@ -249,7 +249,7 @@ tie_is_forbidden <- function(.data){
 
 #' @rdname mark_triangles
 #' @examples
-#' tie_is_imbalanced(ison_marvel_relationships)
+#' tie_is_imbalanced(to_uniplex(fict_marvel, "relationship"))
 #' @export
 tie_is_imbalanced <- function(.data){
   if(missing(.data)) {expect_ties(); .data <- .G()} # nocov

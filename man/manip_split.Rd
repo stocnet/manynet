@@ -95,7 +95,7 @@ ison_adolescents \%>\%
   mutate(unicorn = sample(c("yes", "no"), 8,
                           replace = TRUE)) \%>\%
   to_subgraphs(attribute = "unicorn")
-  to_components(ison_marvel_relationships)
+  to_components(to_uniplex(fict_marvel, "relationship"))
 ison_adolescents \%>\%
   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) \%>\%
   to_waves(attribute = "wave")

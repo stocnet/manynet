@@ -44,7 +44,7 @@ as the number of ties in the network, respectively.
 \examples{
 tie_attribute(ison_algebra, "task_tie")
 tie_weights(to_mode1(ison_southern_women))
-tie_signs(ison_marvel_relationships)
+tie_signs(to_uniplex(fict_marvel,"relationship"))
 tie_is_twomode(fict_actually)
 }
 \seealso{

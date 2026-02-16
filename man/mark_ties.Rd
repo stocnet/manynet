@@ -55,8 +55,8 @@ They are most useful in highlighting parts of the network that
 are particularly well- or poorly-connected.
 }
 \examples{
-tie_is_multiple(ison_marvel_relationships)
-tie_is_loop(ison_marvel_relationships)
+tie_is_multiple(fict_marvel)
+tie_is_loop(fict_marvel)
 tie_is_reciprocated(ison_algebra)
 tie_is_feedback(ison_algebra)
 tie_is_bridge(ison_brandes)

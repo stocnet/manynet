@@ -125,7 +125,7 @@ to_subgraphs.network <- function(.data, attribute){
 #' @describeIn manip_split Returns a list of the components
 #'   in a network.
 #' @examples 
-#'   to_components(ison_marvel_relationships)
+#'   to_components(to_uniplex(fict_marvel, "relationship"))
 #' @export
 to_components <- function(.data) UseMethod("to_components")
 
