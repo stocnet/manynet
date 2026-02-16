@@ -29,6 +29,7 @@
 NULL
 
 #' @rdname measure_properties
+#' @param prefix An optional string to be added before the name of the network.
 #' @examples
 #' net_name(ison_southern_women)
 #' @export
