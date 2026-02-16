@@ -67,6 +67,7 @@ Other modifications:
 \code{\link{manip_as}},
 \code{\link{manip_correlation}},
 \code{\link{manip_deformat}},
+\code{\link{manip_direction}},
 \code{\link{manip_levels}},
 \code{\link{manip_miss}},
 \code{\link{manip_nodes}},
