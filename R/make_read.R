@@ -741,7 +741,7 @@ write_graphml <- function(.data,
     filename <- paste0(getwd(), "/", deparse(substitute(.data)), ".graphml")
     snet_success("Writing to {.file {filename}}")
   } 
-  igraph::write_graph(.data,
+  igraph::write_graph(as_igraph(.data),
                       filename,
                       format = "graphml")
 }
