@@ -197,7 +197,7 @@ rename <- tidygraph::rename
 #' @importFrom tidygraph filter
 #' @export
 filter_nodes <- function(.data, ..., .by = NULL){
-  tidygraph::filter(.data, ..., .by = .by)
+  tidygraph::filter(.data, ..., .by = dplyr::all_of(.by))
 }
 
 # Manipulating changes ####
