@@ -93,6 +93,7 @@ reference:
     contents:
       - manip_preformat
       - manip_reformat
+      - manip_direction
       - manip_deformat
   - subtitle: "Transforming"
     desc: |
@@ -157,9 +158,8 @@ reference:
       the length of the nodes or ties in the network, respectively.
   - subtitle: "Description"
     contents:
-      - measure_attributes
+      - starts_with("measure_attributes")
       - measure_properties
-      - measure_features
   - subtitle: "Centrality"
     contents:
       - starts_with("measure_central")
@@ -169,6 +169,7 @@ reference:
     contents:
       - measure_cohesion
       - measure_closure
+      - measure_features
       - measure_heterogeneity
   - subtitle: "Dynamics"
     contents:
