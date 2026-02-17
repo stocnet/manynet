@@ -14,6 +14,7 @@ tidygraph::with_graph
 #' @export
 tidygraph::is.tbl_graph
 
+#' @importFrom tidygraph .G
 #' @export
 tidygraph::.G
 
@@ -27,7 +28,12 @@ tidygraph::.E
 
 # nocov start
 
-#' @importFrom tidygraph .G
+#' Expecting either nodes or ties to be active
+#' @keywords internal
+#' @name expect
+NULL
+
+#' @rdname expect
 #' @export
 expect_nodes <- function(.data) {
   if(missing(.data)){
@@ -38,7 +44,7 @@ expect_nodes <- function(.data) {
   } else .data
 }
 
-#' @importFrom tidygraph .G
+#' @rdname expect
 #' @export
 expect_ties <- function(.data) {
   if(missing(.data)){
