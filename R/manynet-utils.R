@@ -39,6 +39,12 @@ seq_nodes <- function(.data){
   seq.int(net_nodes(.data))
 }
 
+interpolate <- function(values, positions, n, fill = NA) {
+  out <- rep(fill, n) 
+  out[positions] <- values
+  out
+}
+
 # #' @export
 # `%||%` <- function(x, y) {
 #   if (is_null(x)) y else x

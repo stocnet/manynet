@@ -263,7 +263,7 @@ add_changes <- function(.data, changes){
     if(all(names(changes) == c("node", "begin", "end"))){
       # inferring starting positions
       first <- changes[!duplicated(changes[,1]),]
-      out <- out %>% mutate_nodes(active = fill_at(first[,2] == min(first[,2]),
+      out <- out %>% mutate_nodes(active = interpolate(first[,2] == min(first[,2]),
                                                    first[,1],
                                                    net_nodes(out),
                                                    fill = TRUE))
