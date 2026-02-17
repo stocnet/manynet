@@ -26,7 +26,7 @@ test_that("to_ and from_ subgraphs works", {
 })
 
 test_that("to_components works", {
-  expect_length(to_components(ison_marvel_relationships), 4)
+  expect_length(to_components(to_uniplex(fict_marvel,"relationship")), 4)
   expect_length(to_components(ison_adolescents), 1)
   expect_s3_class(to_components(ison_adolescents)[[1]], "tbl_graph")
 })
