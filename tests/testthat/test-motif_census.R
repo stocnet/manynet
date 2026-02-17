@@ -57,18 +57,18 @@ test_that("node_by_tetrad census works", {
 })
 
 test_that("net_mixed census works", {
-  marvel_friends <- to_unsigned(ison_marvel_relationships, "positive")
-  test <- net_by_mixed(marvel_friends, ison_marvel_teams)
+  marvel_friends <- to_unsigned(to_uniplex(fict_marvel, "relationship"), "positive")
+  test <- net_by_mixed(marvel_friends, to_uniplex(fict_marvel, "affiliation"))
   expect_s3_class(test, "network_motif")
   expect_equal(unname(test[1]), 1137)
   expect_equal(names(test[1]), "22")
   # Errors
   expect_error(net_by_mixed(ison_southern_women,
-                                    ison_marvel_teams))
-  expect_error(net_by_mixed(ison_marvel_teams,
+                            to_uniplex(fict_marvel, "affiliation")))
+  expect_error(net_by_mixed(to_uniplex(fict_marvel, "affiliation"),
                                     ison_southern_women))
   expect_error(net_by_mixed(ison_karateka,
-                                    ison_marvel_teams))
+                            to_uniplex(fict_marvel, "affiliation")))
 })
 
 test <- node_by_path(ison_southern_women)

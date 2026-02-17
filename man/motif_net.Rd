@@ -75,8 +75,7 @@ Graphs of these motifs can be shown using
 net_by_dyad(manynet::ison_algebra)
 net_by_triad(manynet::ison_adolescents)
 net_by_tetrad(ison_southern_women)
-marvel_friends <- to_unsigned(ison_marvel_relationships, "positive")
-(mixed_cen <- net_by_mixed(marvel_friends, ison_marvel_teams))
+net_by_mixed(fict_marvel)
 }
 \references{
 \subsection{On the dyad census}{

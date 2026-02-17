@@ -17,8 +17,8 @@ test_that("node_in_brokering works", {
   expect_s3_class(test, "node_member")
   expect_equal(c(net_nodes(ison_networkers)), length(test))
   expect_equal(top3(test), c("Powerhouse","Connectors","Sideliners"))
-  expect_output(print(node_in_brokering(ison_marvel_teams)), "4 groups")
-  expect_output(print(summary(node_in_brokering(ison_marvel_teams))), "Connectors")
+  expect_output(print(node_in_brokering(to_uniplex(fict_marvel, "affiliation"))), "4 groups")
+  expect_output(print(summary(node_in_brokering(to_uniplex(fict_marvel, "affiliation")))), "Connectors")
 })
 
 test_that("node_by_brokerage works", {
