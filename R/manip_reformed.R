@@ -85,8 +85,12 @@ to_mode1.matrix <- function(.data,
 #' @export
 to_mode1.igraph <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
   similarity <- match.arg(similarity)
-  if(similarity == "count") igraph::bipartite_projection(.data)$proj1 else 
-    as_igraph(to_mode1(as_matrix(.data), similarity))
+  if(similarity == "count") igraph::bipartite_projection(.data)$proj1 else {
+    as_igraph(to_mode1(as_matrix(.data), similarity)) %>% 
+      join_nodes(object2 = .data, join_type = "left") %>% 
+      mutate_nodes(type = NULL) %>%
+      select_nodes(dplyr::where(~ !all(is.na(.))))
+  }
 }
 
 #' @export
@@ -138,8 +142,12 @@ to_mode2.matrix <- function(.data, similarity = c("count","jaccard","rand","pear
 #' @export
 to_mode2.igraph <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
   similarity <- match.arg(similarity)
-  if(similarity == "count") igraph::bipartite_projection(.data)$proj2 else 
-    as_igraph(to_mode2(as_matrix(.data), similarity))
+  if(similarity == "count") igraph::bipartite_projection(.data)$proj2 else {
+    as_igraph(to_mode2(as_matrix(.data), similarity)) %>% 
+      join_nodes(object2 = .data, join_type = "left") %>% 
+      mutate_nodes(type = NULL) %>%
+      select_nodes(dplyr::where(~ !all(is.na(.))))
+  }
 }
 
 #' @export
