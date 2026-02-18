@@ -1,12 +1,13 @@
 # Test transform functions
 
 test_that("to_giant works",{
-  expect_equal(c(net_nodes(ison_marvel_relationships)), 53)
-  expect_equal(c(net_nodes(to_giant(ison_marvel_relationships))), 50)
-  expect_equal(c(net_nodes(to_giant(as_igraph(ison_marvel_relationships)))), 50)
-  # expect_equal(c(net_nodes(to_giant(as_matrix(ison_marvel_relationships)))), 50)
-  # expect_equal(c(net_nodes(to_giant(as_network(ison_marvel_relationships)))), 50)
-  expect_equal(c(net_nodes(to_giant(as_edgelist(ison_marvel_relationships)))), 50)
+  fm <- to_uniplex(fict_marvel, tie = "relationship")
+  expect_equal(c(net_nodes(fm)), 53)
+  expect_equal(c(net_nodes(to_giant(fm))), 50)
+  expect_equal(c(net_nodes(to_giant(as_igraph(fm)))), 50)
+  # expect_equal(c(net_nodes(to_giant(as_matrix(fict_marvel)))), 50)
+  # expect_equal(c(net_nodes(to_giant(as_network(fict_marvel)))), 50)
+  expect_equal(c(net_nodes(to_giant(as_edgelist(fm)))), 50)
 })
 
 test_that("matrix projected correctly by rows",{

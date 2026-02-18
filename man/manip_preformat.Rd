@@ -41,7 +41,6 @@ with certain modifications as outlined for each function.
 \description{
 These functions add some format to manynet-consistent data.
 \itemize{
-\item \code{to_directed()} reformats undirected network data to a directed network.
 \item \code{to_redirected()} reformats the direction of directed network data, flipping any existing direction.
 \item \code{to_reciprocated()} reformats directed network data such that every directed tie is reciprocated.
 \item \code{to_acyclic()} reformats network data to an acyclic graph.
@@ -77,6 +76,7 @@ Other modifications:
 \code{\link{manip_as}},
 \code{\link{manip_correlation}},
 \code{\link{manip_deformat}},
+\code{\link{manip_direction}},
 \code{\link{manip_from}},
 \code{\link{manip_levels}},
 \code{\link{manip_miss}},

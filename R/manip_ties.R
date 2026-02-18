@@ -90,7 +90,6 @@ add_tie_attribute <- function(.data, attr_name, vector){
 #' @importFrom tidygraph activate
 #' @export
 mutate_ties <- function(.data, ...){
-  nodes <- edges <- NULL
   out <- as_tidygraph(.data)
   out %>% tidygraph::activate(edges) %>% mutate(...) %>% activate(nodes)
 }
@@ -99,7 +98,6 @@ mutate_ties <- function(.data, ...){
 #' @importFrom dplyr rename
 #' @export
 rename_ties <- function(.data, ...){
-  nodes <- edges <- NULL
   out <- as_tidygraph(.data)
   out %>% tidygraph::activate(edges) %>% dplyr::rename(...) %>% activate(nodes)
 }
@@ -108,7 +106,6 @@ rename_ties <- function(.data, ...){
 #' @importFrom dplyr arrange
 #' @export
 arrange_ties <- function(.data, ...){
-  nodes <- edges <- NULL
   out <- as_tidygraph(.data)
   out %>% tidygraph::activate(edges) %>% dplyr::arrange(...) %>% activate(nodes)
 }
@@ -127,7 +124,6 @@ bind_ties <- function(.data, ...){
 #' @importFrom dplyr mutate summarise across group_by everything ungroup %>%
 #' @export
 join_ties <- function(.data, object2, attr_name) {
-  edges <- from <- to <- NULL
   el <- c(t(as.matrix(as_edgelist(object2))))
   obj <- as_tidygraph(.data) %>% 
     tidygraph::activate(edges)
@@ -165,7 +161,6 @@ join_ties <- function(.data, object2, attr_name) {
 #' @importFrom dplyr filter
 #' @export
 filter_ties <- function(.data, ...){
-  nodes <- edges <- NULL
   out <- as_tidygraph(.data)
   out %>% tidygraph::activate(edges) %>% 
     dplyr::filter(...) %>% 
@@ -176,7 +171,6 @@ filter_ties <- function(.data, ...){
 #' @importFrom dplyr select
 #' @export
 select_ties <- function(.data, ...){
-  nodes <- edges <- NULL
   out <- as_tidygraph(.data)
   out %>% tidygraph::activate(edges) %>% dplyr::select(...) %>% activate(nodes)
 }

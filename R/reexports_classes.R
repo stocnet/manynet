@@ -28,16 +28,31 @@ tidygraph::.E
 
 # nocov start
 
-expect_nodes <- function() {
-  if (!tidygraph::.graph_context$free() && tidygraph::.graph_context$active() != "nodes") {
-    snet_abort("This call requires nodes to be active", call. = FALSE)
-  }
+#' Expecting either nodes or ties to be active
+#' @keywords internal
+#' @name expect
+NULL
+
+#' @rdname expect
+#' @export
+expect_nodes <- function(.data) {
+  if(missing(.data)){
+    if (!tidygraph::.graph_context$free() && tidygraph::.graph_context$active() != "nodes") {
+      snet_abort("This call requires nodes to be active", call. = FALSE)
+    }
+    tidygraph::.G()
+  } else .data
 }
 
-expect_edges <- function() {
-  if (!tidygraph::.graph_context$free() && tidygraph::.graph_context$active() != "edges") {
+#' @rdname expect
+#' @export
+expect_ties <- function(.data) {
+  if(missing(.data)){
+    if (!tidygraph::.graph_context$free() && tidygraph::.graph_context$active() != "edges") {
     snet_abort("This call requires ties to be active", call. = FALSE)
-  }
+    }
+    tidygraph::.G()
+  } else .data
 }
 
 # nocov end

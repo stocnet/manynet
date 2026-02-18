@@ -1,3 +1,210 @@
+# Direction ####
+
+#' Modifying networks by formatting their directionality
+#' 
+#' @description
+#'   These functions reformat manynet-consistent data.
+#' 
+#'   - `to_directed()` reformats undirected network data to a directed network.
+#'   - `to_undirected()` reformats directed network data to an undirected network,
+#'   so that any pair of nodes with at least one directed edge will be
+#'   connected by an undirected edge in the new network.
+#'   This is equivalent to the "collapse" mode in `{igraph}`..
+#'   - `to_redirected()` formats directed network data by flipping/transposing
+#'   any existing direction such that senders become receivers and
+#'   receivers become senders.
+#'   This essentially has no effect on undirected networks or reciprocated ties.
+#'   - `to_reciprocated()` reformats directed network data such that every 
+#'   directed tie is reciprocated.
+#'   - `to_acyclic()` reformats network data to an acyclic graph.
+#' 
+#'   If the format condition is not met,
+#'   for example `to_undirected()` is used on a network that is already undirected,
+#'   the network data is returned unaltered.
+#'   No warning is given so that these functions can be used to ensure conformance.
+#'   
+#'   Unlike the `as_*()` group of functions,
+#'   these functions always return the same class as they are given,
+#'   only transforming these objects' properties.
+#' @details
+#'   Not all functions have methods available for all object classes.
+#'   Below are the currently implemented S3 methods:
+#'  
+#'   |              | data.frame| igraph| matrix| network| tbl_graph|
+#'   |:-------------|----------:|------:|------:|-------:|---------:|
+#'   |to_undirected |          1|      1|      1|       1|         1|
+#' @inheritParams mark_is
+#' @returns
+#'   All `to_` functions return an object of the same class as that provided. 
+#'   So passing it an igraph object will return an igraph object
+#'   and passing it a network object will return a network object,
+#'   with certain modifications as outlined for each function.
+#' @name manip_direction
+#' @family modifications
+NULL
+
+#' @rdname manip_direction 
+#' @importFrom igraph as.directed
+#' @export
+to_directed <- function(.data) UseMethod("to_directed")
+
+#' @export
+to_directed.igraph <- function(.data) {
+  if(!is_directed.igraph(.data)){
+    snet_info("Directions are assigned to existing ties at random.")
+    igraph::as_directed(.data, mode = "random")
+  } else .data
+}
+
+#' @export
+to_directed.tbl_graph <- function(.data) {
+  as_tidygraph(to_directed(as_igraph(.data)))
+}
+
+#' @export
+to_directed.matrix <- function(.data) {
+  as_matrix(to_directed(as_igraph(.data)))
+}
+
+#' @export
+to_directed.network <- function(.data) {
+  as_network(to_directed(as_igraph(.data)))
+}
+
+#' @export
+to_directed.data.frame <- function(.data) {
+  as_edgelist(to_directed(as_igraph(.data)))
+}
+
+#' @rdname manip_direction
+#' @export
+to_undirected <- function(.data) UseMethod("to_undirected")
+
+#' @importFrom igraph as.undirected
+#' @export
+to_undirected.igraph <- function(.data) {
+  igraph::as_undirected(.data)
+}
+
+#' @export
+to_undirected.tbl_graph <- function(.data) {
+  as_tidygraph(igraph::as_undirected(.data))
+}
+
+#' @export
+to_undirected.network <- function(.data) {
+  .data$gal$directed <- FALSE
+  .data
+}
+
+#' @export
+to_undirected.matrix <- function(.data) {
+  if (is_twomode(.data)) {
+    .data
+  } else ((.data + t(.data)) > 0) * 1
+}
+
+#' @export
+to_undirected.data.frame <- function(.data) {
+  as_edgelist(to_undirected(as_igraph(.data)))
+}
+
+#' @rdname manip_direction 
+#' @importFrom igraph reverse_edges
+#' @importFrom tidygraph reroute
+#' @export
+to_redirected <- function(.data) UseMethod("to_redirected")
+
+#' @export
+to_redirected.tbl_graph <- function(.data) {
+  as_tidygraph(to_redirected.igraph(.data))
+}
+
+#' @export
+to_redirected.igraph <- function(.data) {
+  igraph::reverse_edges(.data)
+}
+
+#' @export
+to_redirected.data.frame <- function(.data) {
+  out <- .data
+  out$from <- .data$to
+  out$to <- .data$from
+  out
+}
+
+#' @export
+to_redirected.matrix <- function(.data) {
+  t(.data)
+}
+
+#' @export
+to_redirected.network <- function(.data) {
+  as_network(to_redirected(as_igraph(.data)))
+}
+
+#' @rdname manip_direction
+#' @importFrom igraph as_directed
+#' @export
+to_reciprocated <- function(.data) UseMethod("to_reciprocated")
+
+#' @export
+to_reciprocated.igraph <- function(.data) {
+  igraph::as_directed(.data, mode = "mutual")
+}
+
+#' @export
+to_reciprocated.tbl_graph <- function(.data) {
+  as_tidygraph(to_reciprocated(as_igraph(.data)))
+}
+
+#' @export
+to_reciprocated.matrix <- function(.data) {
+  .data + t(.data)
+}
+
+#' @export
+to_reciprocated.network <- function(.data) {
+  as_network(to_reciprocated(as_igraph(.data)))
+}
+
+#' @export
+to_reciprocated.data.frame <- function(.data) {
+  as_edgelist(to_reciprocated(as_igraph(.data)))
+}
+
+#' @rdname manip_direction
+#' @importFrom igraph as_directed feedback_arc_set
+#' @export
+to_acyclic <- function(.data) UseMethod("to_acyclic")
+
+#' @export
+to_acyclic.igraph <- function(.data) {
+  if(is_directed(.data)){
+    delete_ties(.data, igraph::feedback_arc_set(.data))
+  } else igraph::as_directed(.data, mode = "acyclic")
+}
+
+#' @export
+to_acyclic.tbl_graph <- function(.data) {
+  as_tidygraph(to_acyclic(as_igraph(.data)))
+}
+
+#' @export
+to_acyclic.matrix <- function(.data) {
+  as_matrix(to_acyclic(as_igraph(.data)))
+}
+
+#' @export
+to_acyclic.data.frame <- function(.data) {
+  as_edgelist(to_acyclic(as_igraph(.data)))
+}
+
+#' @export
+to_acyclic.network <- function(.data) {
+  as_network(to_acyclic(as_igraph(.data)))
+}
+
 # Deformatting ####
 
 #' Modifying network formats by removing information
@@ -6,10 +213,6 @@
 #'   These functions reformat manynet-consistent data.
 #' 
 #'   - `to_unnamed()` reformats labelled network data to unlabelled network data.
-#'   - `to_undirected()` reformats directed network data to an undirected network,
-#'   so that any pair of nodes with at least one directed edge will be
-#'   connected by an undirected edge in the new network.
-#'   This is equivalent to the "collapse" mode in `{igraph}`..
 #'   - `to_unweighted()` reformats weighted network data to unweighted network 
 #'   data, with all tie weights removed.
 #'   - `to_unsigned()` reformats signed network data to unsigned network data
@@ -91,39 +294,6 @@ to_unnamed.data.frame <- function(.data) {
   out[,1] <- match(unlist(.data[,1]), names)
   out[,2] <- match(unlist(.data[,2]), names)
   dplyr::as_tibble(out)
-}
-
-#' @rdname manip_deformat 
-#' @export
-to_undirected <- function(.data) UseMethod("to_undirected")
-
-#' @importFrom igraph as.undirected
-#' @export
-to_undirected.igraph <- function(.data) {
-  igraph::as_undirected(.data)
-}
-
-#' @export
-to_undirected.tbl_graph <- function(.data) {
-  as_tidygraph(igraph::as_undirected(.data))
-}
-
-#' @export
-to_undirected.network <- function(.data) {
-  .data$gal$directed <- FALSE
-  .data
-}
-
-#' @export
-to_undirected.matrix <- function(.data) {
-  if (is_twomode(.data)) {
-    .data
-  } else ((.data + t(.data)) > 0) * 1
-}
-
-#' @export
-to_undirected.data.frame <- function(.data) {
-  as_edgelist(to_undirected(as_igraph(.data)))
 }
 
 #' @rdname manip_deformat
@@ -277,12 +447,21 @@ to_uniplex <- function(.data, tie) UseMethod("to_uniplex")
 
 #' @export
 to_uniplex.tbl_graph <- function(.data, tie){
-  type <- NULL
   out <- dplyr::filter(.data = tidygraph::activate(.data, "edges"), 
                        type == tie) %>% dplyr::select(-type)
-  if(is_signed(out) && all(tie_signs(out)==1)) out <- out %>% dplyr::select(-sign)
-  if(is_weighted(out) && all(tie_weights(out)==1)) out <- out %>% dplyr::select(-weight)
-  if(is_longitudinal(out) && length(unique(tie_attribute(out, "wave")))==1) out <- out %>% dplyr::select(-wave)
+  if(is_signed(out) && all(tie_signs(out)==1) || all(is.na(tie_signs(out)))) 
+    out <- out %>% dplyr::select(-sign)
+  if(is_weighted(out) && all(tie_weights(out)==1)) 
+    out <- out %>% dplyr::select(-weight)
+  if(is_longitudinal(out) && length(unique(tie_attribute(out, "wave")))==1) 
+    out <- out %>% dplyr::select(-wave)
+  if(is_twomode(out) && all(!tie_is_twomode(out))){ # if only one-mode left
+    retain <- node_is_mode(out)[igraph::as_edgelist(out, names = FALSE)[1,1]]
+    out <- tidygraph::activate(out, "nodes") %>% 
+      filter_nodes(type == retain) %>% 
+      mutate_nodes(type = NULL)
+  }
+  out <- out %>% mutate_net(ties = tie)
   tidygraph::activate(out, "nodes")
 }
 
@@ -313,11 +492,8 @@ to_uniplex.matrix <- function(.data, tie){
 #' @description
 #'   These functions reformat manynet-consistent data.
 #' 
-#'   - `to_acyclic()` reformats network data to an acyclic graph.
 #'   - `to_anti()` reformats network data into its complement, where only ties _not_ present in the original network
 #'   are included in the new network.
-#'   - `to_redirected()` reformats the direction of directed network data, flipping any existing direction.
-#'   - `to_reciprocated()` reformats directed network data such that every directed tie is reciprocated.
 #' 
 #'   Unlike the `as_*()` group of functions,
 #'   these functions always return the same class as they are given,
@@ -341,38 +517,6 @@ to_uniplex.matrix <- function(.data, tie){
 #' and passing it a network object will return a network object,
 #' with certain modifications as outlined for each function.
 NULL
-
-#' @rdname manip_reformat
-#' @importFrom igraph as_directed feedback_arc_set
-#' @export
-to_acyclic <- function(.data) UseMethod("to_acyclic")
-
-#' @export
-to_acyclic.igraph <- function(.data) {
-  if(is_directed(.data)){
-    delete_ties(.data, igraph::feedback_arc_set(.data))
-  } else igraph::as_directed(.data, mode = "acyclic")
-}
-
-#' @export
-to_acyclic.tbl_graph <- function(.data) {
-  as_tidygraph(to_acyclic(as_igraph(.data)))
-}
-
-#' @export
-to_acyclic.matrix <- function(.data) {
-  as_matrix(to_acyclic(as_igraph(.data)))
-}
-
-#' @export
-to_acyclic.data.frame <- function(.data) {
-  as_edgelist(to_acyclic(as_igraph(.data)))
-}
-
-#' @export
-to_acyclic.network <- function(.data) {
-  as_network(to_acyclic(as_igraph(.data)))
-}
 
 #' @rdname manip_reformat
 #' @importFrom igraph complementer
@@ -416,72 +560,6 @@ to_anti.network <- function(.data){
   as_network(to_anti(as_igraph(.data)))
 }
 
-#' @describeIn manip_reformat Returns an object that has any edge direction transposed,
-#'   or flipped, so that senders become receivers and receivers become senders.
-#'   This essentially has no effect on undirected networks or reciprocated ties.
-#' @importFrom igraph reverse_edges
-#' @importFrom tidygraph reroute
-#' @export
-to_redirected <- function(.data) UseMethod("to_redirected")
-
-#' @export
-to_redirected.tbl_graph <- function(.data) {
-  as_tidygraph(to_redirected.igraph(.data))
-}
-
-#' @export
-to_redirected.igraph <- function(.data) {
-  igraph::reverse_edges(.data)
-}
-
-#' @export
-to_redirected.data.frame <- function(.data) {
-  out <- .data
-  out$from <- .data$to
-  out$to <- .data$from
-  out
-}
-
-#' @export
-to_redirected.matrix <- function(.data) {
-  t(.data)
-}
-
-#' @export
-to_redirected.network <- function(.data) {
-  as_network(to_redirected(as_igraph(.data)))
-}
-
-#' @describeIn manip_reformat Returns an object where all ties are reciprocated.
-#' @importFrom igraph as_directed
-#' @export
-to_reciprocated <- function(.data) UseMethod("to_reciprocated")
-
-#' @export
-to_reciprocated.igraph <- function(.data) {
-  igraph::as_directed(.data, mode = "mutual")
-}
-
-#' @export
-to_reciprocated.tbl_graph <- function(.data) {
-  as_tidygraph(to_reciprocated(as_igraph(.data)))
-}
-
-#' @export
-to_reciprocated.matrix <- function(.data) {
-  .data + t(.data)
-}
-
-#' @export
-to_reciprocated.network <- function(.data) {
-  as_network(to_reciprocated(as_igraph(.data)))
-}
-
-#' @export
-to_reciprocated.data.frame <- function(.data) {
-  as_edgelist(to_reciprocated(as_igraph(.data)))
-}
-
 # Formatting ####
 
 #' Modifying network formats
@@ -489,7 +567,6 @@ to_reciprocated.data.frame <- function(.data) {
 #' @description
 #'   These functions add some format to manynet-consistent data.
 #' 
-#'   - `to_directed()` reformats undirected network data to a directed network.
 #'   - `to_redirected()` reformats the direction of directed network data, flipping any existing direction.
 #'   - `to_reciprocated()` reformats directed network data such that every directed tie is reciprocated.
 #'   - `to_acyclic()` reformats network data to an acyclic graph.
@@ -598,39 +675,6 @@ to_named.network <- function(.data, names = NULL) {
            let <- LETTERS[x]
            sample(baby_names[startsWith(baby_names, let)], 1)
          }, FUN.VALUE = character(1))
-}
-
-#' @rdname manip_reformat 
-#' @importFrom igraph as.directed
-#' @export
-to_directed <- function(.data) UseMethod("to_directed")
-
-#' @export
-to_directed.igraph <- function(.data) {
-  if(!is_directed.igraph(.data)){
-    snet_info("Directions are assigned to existing ties at random.")
-    igraph::as_directed(.data, mode = "random")
-  } else .data
-}
-
-#' @export
-to_directed.tbl_graph <- function(.data) {
-  as_tidygraph(to_directed(as_igraph(.data)))
-}
-
-#' @export
-to_directed.matrix <- function(.data) {
-  as_matrix(to_directed(as_igraph(.data)))
-}
-
-#' @export
-to_directed.network <- function(.data) {
-  as_network(to_directed(as_igraph(.data)))
-}
-
-#' @export
-to_directed.data.frame <- function(.data) {
-  as_edgelist(to_directed(as_igraph(.data)))
 }
 
 #' @rdname manip_preformat

@@ -85,8 +85,12 @@ to_mode1.matrix <- function(.data,
 #' @export
 to_mode1.igraph <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
   similarity <- match.arg(similarity)
-  if(similarity == "count") igraph::bipartite_projection(.data)$proj1 else 
-    as_igraph(to_mode1(as_matrix(.data), similarity))
+  if(similarity == "count") igraph::bipartite_projection(.data)$proj1 else {
+    as_igraph(to_mode1(as_matrix(.data), similarity)) %>% 
+      join_nodes(object2 = .data, join_type = "left") %>% 
+      mutate_nodes(type = NULL) %>%
+      select_nodes(dplyr::where(~ !all(is.na(.))))
+  }
 }
 
 #' @export
@@ -95,7 +99,14 @@ to_mode1.tbl_graph <- function(.data, similarity = c("count","jaccard","rand","p
   if(match.arg(similarity) %in% c("pearson","yule")){
     out <- out %>% mutate_ties(sign = dplyr::if_else(tie_weights(out)<0, -1, 1))
   }
-  add_info(out, name = paste("Projection", net_name(.data, prefix = "of")))
+  if(!is.null(net_name(.data))) out <- out %>% 
+      add_info(name = net_name(.data, prefix = "Projection of"))
+  if(!is.null(net_tie_names(.data))) out <- out %>% 
+      add_info(ties = paste0("co-", net_tie_names(.data)))
+  if(!is.null(net_node_names(.data))) out <- out %>% 
+      add_info(nodes = net_node_names(.data)[1],
+               ties = paste0("co-", net_node_names(.data)[2]))
+  out
 }
 
 #' @export
@@ -138,8 +149,12 @@ to_mode2.matrix <- function(.data, similarity = c("count","jaccard","rand","pear
 #' @export
 to_mode2.igraph <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
   similarity <- match.arg(similarity)
-  if(similarity == "count") igraph::bipartite_projection(.data)$proj2 else 
-    as_igraph(to_mode2(as_matrix(.data), similarity))
+  if(similarity == "count") igraph::bipartite_projection(.data)$proj2 else {
+    as_igraph(to_mode2(as_matrix(.data), similarity)) %>% 
+      join_nodes(object2 = .data, join_type = "left") %>% 
+      mutate_nodes(type = NULL) %>%
+      select_nodes(dplyr::where(~ !all(is.na(.))))
+  }
 }
 
 #' @export
@@ -148,7 +163,14 @@ to_mode2.tbl_graph <- function(.data, similarity = c("count","jaccard","rand","p
   if(match.arg(similarity) %in% c("pearson","yule")){
     out <- out %>% mutate_ties(sign = dplyr::if_else(tie_weights(out)<0, -1, 1))
   }
-  add_info(out, name = paste("Projection", net_name(.data, prefix = "of")))
+  if(!is.null(net_name(.data))) out <- out %>% 
+      add_info(name = net_name(.data, prefix = "Projection of"))
+  if(!is.null(net_tie_names(.data))) out <- out %>% 
+      add_info(ties = paste0("co-", net_tie_names(.data)))
+  if(!is.null(net_node_names(.data))) out <- out %>% 
+      add_info(nodes = net_node_names(.data)[2],
+               ties = paste0("co-", net_node_names(.data)[1]))
+  out
 }
 
 #' @export

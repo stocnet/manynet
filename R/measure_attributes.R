@@ -1,4 +1,6 @@
-#' Describing attributes of nodes or ties in a network
+# Node attributes ####
+
+#' Describing attributes of nodes in a network
 #' 
 #' @description 
 #'   These functions extract certain attributes from network data:
@@ -6,20 +8,17 @@
 #'   - `node_attribute()` returns an attribute's values for the nodes in a network.
 #'   - `node_names()` returns the names of the nodes in a network.
 #'   - `node_is_mode()` returns the mode of the nodes in a network.
-#'   - `tie_attribute()` returns an attribute's values for the ties in a network.
-#'   - `tie_weights()` returns the weights of the ties in a network.
-#'   - `tie_signs()` returns the signs of the ties in a network.
 #'   
 #'   These functions are also often used as helpers within other functions.
-#'   `node_*()` and `tie_*()` always return vectors the same length
-#'   as the number of nodes or ties in the network, respectively.
-#' @name measure_attributes
+#'   `node_*()` always return vectors the same length
+#'   as the number of nodes in the network.
+#' @name measure_attributes_nodes
 #' @family measures
 #' @inheritParams mark_is
 #' @param attribute Character string naming an attribute in the object.
 NULL
 
-#' @rdname measure_attributes
+#' @rdname measure_attributes_nodes
 #' @examples
 #' node_attribute(fict_lotr, "Race")
 #' @export
@@ -28,7 +27,7 @@ node_attribute <- function(.data, attribute){
   if(is.numeric(out)) make_node_measure(out, .data) else out
 }
 
-#' @rdname measure_attributes
+#' @rdname measure_attributes_nodes
 #' @examples 
 #' node_names(ison_southern_women)
 #' @export
@@ -41,7 +40,7 @@ node_names <- function(.data){
   }
 }
 
-#' @rdname measure_attributes
+#' @rdname measure_attributes_nodes
 #' @examples 
 #' node_is_mode(ison_southern_women)
 #' @export
@@ -59,7 +58,28 @@ node_is_mode <- function(.data){
   out
 }
 
-#' @rdname measure_attributes
+# Tie attributes ####
+
+#' Describing attributes of ties in a network
+#' 
+#' @description 
+#'   These functions extract certain attributes from network data:
+#'   
+#'   - `tie_attribute()` returns an attribute's values for the ties in a network.
+#'   - `tie_weights()` returns the weights of the ties in a network.
+#'   - `tie_signs()` returns the signs of the ties in a network.
+#'   - `tie_is_twomode()` returns whether each tie in a network is a cross-mode tie. 
+#'   
+#'   These functions are also often used as helpers within other functions.
+#'   `tie_*()` always return vectors the same length
+#'   as the number of ties in the network, respectively.
+#' @name measure_attributes_ties
+#' @family measures
+#' @inheritParams mark_is
+#' @param attribute Character string naming an attribute in the object.
+NULL
+
+#' @rdname measure_attributes_ties
 #' @examples
 #' tie_attribute(ison_algebra, "task_tie")
 #' @export
@@ -68,7 +88,7 @@ tie_attribute <- function(.data, attribute){
   if(is.numeric(out)) make_tie_measure(out, .data) else out
 }
 
-#' @rdname measure_attributes
+#' @rdname measure_attributes_ties
 #' @examples
 #' tie_weights(to_mode1(ison_southern_women))
 #' @export
@@ -79,14 +99,28 @@ tie_weights <- function(.data){
   make_tie_measure(out, .data)
 }
 
-#' @rdname measure_attributes
+#' @rdname measure_attributes_ties
 #' @examples 
-#' tie_signs(ison_marvel_relationships)
+#' tie_signs(to_uniplex(fict_marvel,"relationship"))
 #' @export
 tie_signs <- function(.data){
   .data <- as_igraph(.data)
   out <- igraph::edge_attr(.data, "sign")
   if(is.null(out)) out <- rep(1, net_ties(.data))
+  make_tie_measure(out, .data)
+}
+
+#' @rdname measure_attributes_ties
+#' @examples 
+#' tie_is_twomode(fict_actually)
+#' @export
+tie_is_twomode <- function(.data){
+  if(is_twomode(.data)){
+    el <- igraph::as_edgelist(.data, names = FALSE)
+    el[,1] <- node_is_mode(.data)[el[,1]]
+    el[,2] <- node_is_mode(.data)[el[,2]]
+    out <- el[,1] != el[,2]
+  } else out <- rep(FALSE, net_ties(.data))
   make_tie_measure(out, .data)
 }
 

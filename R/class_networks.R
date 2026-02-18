@@ -105,18 +105,6 @@ is_grand <- function(.data){
   !is.null(igraph::graph_attr(.data, "grand"))
 }
 
-net_name <- function(.data, prefix = NULL){
-  existname <- ""
-  if(!is.null(igraph::graph_attr(.data, "name"))) {
-    existname <- igraph::graph_attr(.data, 'name')
-  } else if(is_grand(.data) && 
-            !is.null(igraph::graph_attr(.data, "grand")$name)){
-    existname <- igraph::graph_attr(.data, 'grand')$name
-  }
-  if(existname != "" && !is.null(prefix)) existname <- paste(prefix, existname)
-  existname
-}
-
 #' @rdname make_mnet
 #' @export
 describe_network <- function(x) {

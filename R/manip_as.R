@@ -510,8 +510,13 @@ as_igraph.networkDynamic <- function(.data, twomode = FALSE) {
   
   # changes
   changes <- do.call(rbind, lapply(1:length(.data$val), 
-                                   function(x) data.frame(x, .data$val[[x]]$active)))
+                                   function(x) data.frame(node = x, 
+                                                          if(is.null(.data$val[[x]]$active)) 
+                                                            matrix(c(NA, NA), ncol = 2) else 
+                                                            .data$val[[x]]$active
+                                                          )))
   names(changes) <- c("node","begin","end")
+  changes <- stats::na.omit(changes)
   
   as_igraph(add_changes(out, changes))
 }

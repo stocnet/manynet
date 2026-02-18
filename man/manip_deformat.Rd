@@ -3,7 +3,6 @@
 \name{manip_deformat}
 \alias{manip_deformat}
 \alias{to_unnamed}
-\alias{to_undirected}
 \alias{to_unweighted}
 \alias{to_unsigned}
 \alias{to_simplex}
@@ -11,8 +10,6 @@
 \title{Modifying network formats by removing information}
 \usage{
 to_unnamed(.data)
-
-to_undirected(.data)
 
 to_unweighted(.data, threshold = 1)
 
@@ -49,10 +46,6 @@ with certain modifications as outlined for each function.
 These functions reformat manynet-consistent data.
 \itemize{
 \item \code{to_unnamed()} reformats labelled network data to unlabelled network data.
-\item \code{to_undirected()} reformats directed network data to an undirected network,
-so that any pair of nodes with at least one directed edge will be
-connected by an undirected edge in the new network.
-This is equivalent to the "collapse" mode in \code{{igraph}}..
 \item \code{to_unweighted()} reformats weighted network data to unweighted network
 data, with all tie weights removed.
 \item \code{to_unsigned()} reformats signed network data to unsigned network data
@@ -91,6 +84,7 @@ as_tidygraph(create_filled(5)) \%>\%
 Other modifications: 
 \code{\link{manip_as}},
 \code{\link{manip_correlation}},
+\code{\link{manip_direction}},
 \code{\link{manip_from}},
 \code{\link{manip_levels}},
 \code{\link{manip_miss}},

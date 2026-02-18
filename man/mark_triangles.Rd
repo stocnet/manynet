@@ -69,7 +69,7 @@ ison_monks \%>\% to_uniplex("like") \%>\%
 generate_random(8, directed = TRUE) \%>\% 
   mutate_ties(forbid = tie_is_forbidden())
   #graphr(edge_color = "forbid")
-tie_is_imbalanced(ison_marvel_relationships)
+tie_is_imbalanced(to_uniplex(fict_marvel, "relationship"))
 }
 \seealso{
 Other marks: 

@@ -2,20 +2,18 @@
 
 ## Marvel ####
 
-#' Multilevel two-mode affiliation, signed one-mode networks of Marvel comic
-#' book characters (Yuksel 2017)
+#' Multiplex two-mode affiliation and one-mode signed relationship network of 
+#' Marvel comic book characters (Yuksel 2017)
 #'
 #' @description
-#' This package includes two datasets related to the Marvel _comic book_ universe.
-#' The first, `ison_marvel_teams`,  is a two-mode affiliation network of 53
-#' Marvel comic book characters and their affiliations to 141 different teams.
-#' This network includes only information about nodes' names and nodeset,
-#' but additional nodal data can be taken from the other Marvel dataset here.
-#'
-#' The second network, `ison_marvel_relationships`, is a one-mode signed network
-#' of friendships and enmities between the 53 Marvel comic book characters.
-#' Friendships are indicated by a positive sign in the tie `sign` attribute,
-#' whereas enmities are indicated by a negative sign in this edge attribute.
+#'   This multiplex network contains two types of ties related to the 
+#'   Marvel _comic book_ universe.
+#'   The "affiliation" ties offer a two-mode affiliation network of 53
+#'   Marvel comic book characters and their affiliations to 141 teams.
+#'   The "relationship" ties offer a one-mode signed network
+#'   of friendships and enmities between the 53 Marvel comic book characters.
+#'   Friendships are indicated by a positive sign in the tie `sign` attribute,
+#'   whereas enmities are indicated by a negative sign in this edge attribute.
 #' @details
 #' Additional nodal variables have been coded and included by Dr Umut Yuksel:
 #'
@@ -33,22 +31,14 @@
 #' See also https://graphics.straitstimes.com/STI/STIMEDIA/Interactives/2018/04/marvel-cinematic-universe-whos-who-interactive/index.html.
 #' @docType data
 #' @keywords datasets
-#' @name ison_marvel
-#' @usage data(ison_marvel_teams)
+#' @name fict_marvel
+#' @usage data(fict_marvel)
 #' @source Umut Yuksel, 31 March 2017
 #' @format
 #'   ```{r, echo = FALSE}
-#'   ison_marvel_teams
+#'   fict_marvel
 #'   ```
-"ison_marvel_teams"
-
-#' @rdname ison_marvel
-#' @usage data(ison_marvel_relationships)
-#' @format
-#'   ```{r, echo = FALSE}
-#'   ison_marvel_relationships
-#'   ```
-"ison_marvel_relationships"
+"fict_marvel"
 
 ## Lord of the Rings ####
 

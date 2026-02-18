@@ -3,10 +3,11 @@
 # defining global variables more centrally
 utils::globalVariables(c(".data", "obs",
                          "from", "to", "name", "weight","sign","wave",
-                         "nodes","event","exposure",
+                         "nodes","edges","event","exposure",
                          "student","students","colleges",
                          "node","value","var","active","time",
                          "A","B","C","D",
+                         "type",
                          "n"))
 
 # Helper function for declaring available methods
@@ -36,6 +37,12 @@ thisRequires <- function(pkgname){
 
 seq_nodes <- function(.data){
   seq.int(net_nodes(.data))
+}
+
+interpolate <- function(values, positions, n, fill = NA) {
+  out <- rep(fill, n) 
+  out[positions] <- values
+  out
 }
 
 # #' @export

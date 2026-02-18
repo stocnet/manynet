@@ -57,6 +57,8 @@ test_that("to_uniplex works", {
   expect_length(to_uniplex(uni, "friend"), length(uni))
   expect_false(is_multiplex(ison_southern_women))
   expect_false(is_multiplex(to_multilevel(ison_southern_women)))
+  expect_true(is_twomode(to_uniplex(fict_actually, "appearance")))
+  expect_false(is_twomode(to_uniplex(fict_actually, "romance")))
 })
 
 test_that("to_acylic works", {

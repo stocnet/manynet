@@ -100,7 +100,6 @@ NULL
 #'   Directed networks discriminate between 
 #'   outdegree (degree of outgoing ties) and
 #'   indegree (degree of incoming ties).
-#' @importFrom manynet as_igraph
 #' @export
 node_degree <- function (.data, normalized = TRUE, alpha = 1,
                          direction = c("all","out","in")){

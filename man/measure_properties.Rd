@@ -2,20 +2,29 @@
 % Please edit documentation in R/measure_properties.R
 \name{measure_properties}
 \alias{measure_properties}
+\alias{net_name}
 \alias{net_nodes}
 \alias{net_ties}
 \alias{net_dims}
+\alias{net_node_names}
 \alias{net_node_attributes}
+\alias{net_tie_names}
 \alias{net_tie_attributes}
 \title{Describing network properties}
 \usage{
+net_name(.data, prefix = NULL)
+
 net_nodes(.data)
 
 net_ties(.data)
 
 net_dims(.data)
 
+net_node_names(.data)
+
 net_node_attributes(.data)
+
+net_tie_names(.data)
 
 net_tie_attributes(.data)
 }
@@ -28,6 +37,8 @@ net_tie_attributes(.data)
 \item network, from the \code{{network}} package
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
+
+\item{prefix}{An optional string to be added before the name of the network.}
 }
 \value{
 \verb{net_*()} functions always relate to the overall graph or network,
@@ -41,27 +52,36 @@ of all node or tie attributes in the network.
 \description{
 These functions extract certain attributes from given network data:
 \itemize{
+\item \code{net_name()} returns the name of the network, if it has one.
 \item \code{net_nodes()} returns the total number of nodes (of any mode) in a network.
 \item \code{net_ties()} returns the number of ties in a network.
 \item \code{net_dims()} returns the dimensions of a network in a vector
 as long as the number of modes in the network.
+\item \code{net_node_names()} returns a vector of the names of the nodes in a network,
+if they have been defined.
 \item \code{net_node_attributes()} returns a vector of nodal attributes in a network.
+\item \code{net_tie_names()} returns a vector of the names of the ties in a network,
+if they have been defined.
 \item \code{net_tie_attributes()} returns a vector of tie attributes in a network.
 }
 
 These functions are also often used as helpers within other functions.
 }
 \examples{
+net_name(ison_southern_women)
 net_nodes(ison_southern_women)
 net_ties(ison_southern_women)
 net_dims(ison_southern_women)
 net_dims(to_mode1(ison_southern_women))
+  net_node_names(ison_algebra)
   net_node_attributes(fict_lotr)
+  net_tie_names(ison_algebra)
   net_tie_attributes(ison_algebra)
 }
 \seealso{
 Other measures: 
-\code{\link{measure_attributes}},
+\code{\link{measure_attributes_nodes}},
+\code{\link{measure_attributes_ties}},
 \code{\link{measure_central_between}},
 \code{\link{measure_central_close}},
 \code{\link{measure_central_degree}},

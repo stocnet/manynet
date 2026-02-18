@@ -1,7 +1,8 @@
 #*************** Test the heterogeneity family of functions ******************#
 
 test_that("diversity functions works", {
-  expect_equal(as.numeric(net_diversity(ison_marvel_relationships, "Gender")), 0.306, tolerance = 0.001)
+  expect_equal(as.numeric(net_diversity(to_uniplex(fict_marvel,"relationship"), "Gender")), 
+               0.306, tolerance = 0.001)
   expect_equal(top3(node_diversity(ison_lawfirm, "gender")),
                c(0.285, 0.375,0), tolerance = 0.01)
 })

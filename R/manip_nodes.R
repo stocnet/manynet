@@ -197,7 +197,7 @@ rename <- tidygraph::rename
 #' @importFrom tidygraph filter
 #' @export
 filter_nodes <- function(.data, ..., .by = NULL){
-  tidygraph::filter(.data, ..., .by = .by)
+  tidygraph::filter(.data, ..., .by = dplyr::all_of(.by))
 }
 
 # Manipulating changes ####
@@ -236,7 +236,7 @@ NULL
 #'             data.frame(wave = 2, node = 1, var = "active", value = FALSE))
 #' @export
 add_changes <- function(.data, changes){
-  out <- .data
+  out <- as_tidygraph(.data)
   if(length(names(changes)) == 4){
     
     if("active" %in% changes[,3] && !("active" %in% net_node_attributes(.data))){
@@ -251,10 +251,10 @@ add_changes <- function(.data, changes){
     
   } else {
     
-    if("active" %in% net_node_attributes(.data))
+    if("active" %in% net_node_attributes(out))
       snet_unavailable("There is already an `active` nodal attribute.")
     
-    if(nrow(changes) == net_nodes(.data) && ncol(changes)==2){
+    if(nrow(changes) == net_nodes(out) && ncol(changes)==2){
       # converting a begin-end composition table for all nodes
       out <- out %>% mutate_nodes(active = as.logi(changes[,1] == min(changes[,1])))
       changes <- data.frame(node = 1:nrow(changes), 
@@ -263,7 +263,10 @@ add_changes <- function(.data, changes){
     if(all(names(changes) == c("node", "begin", "end"))){
       # inferring starting positions
       first <- changes[!duplicated(changes[,1]),]
-      out <- out %>% mutate_nodes(active = first[,2] == min(first[,2]))
+      out <- out %>% mutate_nodes(active = interpolate(first[,2] == min(first[,2]),
+                                                   first[,1],
+                                                   net_nodes(out),
+                                                   fill = TRUE))
       
     } else snet_unavailable()
     

@@ -98,7 +98,8 @@ Cambridge University Press. Cambridge University Press.
 }
 \seealso{
 Other measures: 
-\code{\link{measure_attributes}},
+\code{\link{measure_attributes_nodes}},
+\code{\link{measure_attributes_ties}},
 \code{\link{measure_central_between}},
 \code{\link{measure_central_close}},
 \code{\link{measure_central_degree}},

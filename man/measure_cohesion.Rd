@@ -74,14 +74,14 @@ net_density(ison_adolescents)
 net_density(ison_southern_women)
   net_components(fict_thrones)
   net_components(to_undirected(fict_thrones))
-net_cohesion(ison_marvel_relationships)
-net_cohesion(to_giant(ison_marvel_relationships))
-net_adhesion(ison_marvel_relationships)
-net_adhesion(to_giant(ison_marvel_relationships))
-net_diameter(ison_marvel_relationships)
-net_diameter(to_giant(ison_marvel_relationships))
-net_length(ison_marvel_relationships)
-net_length(to_giant(ison_marvel_relationships))
+net_cohesion(to_uniplex(fict_marvel, "relationship"))
+net_cohesion(to_giant(to_uniplex(fict_marvel, "relationship")))
+net_adhesion(to_uniplex(fict_marvel, "relationship"))
+net_adhesion(to_giant(to_uniplex(fict_marvel, "relationship")))
+net_diameter(to_uniplex(fict_marvel, "relationship"))
+net_diameter(to_giant(to_uniplex(fict_marvel, "relationship")))
+net_length(to_uniplex(fict_marvel, "relationship"))
+net_length(to_giant(to_uniplex(fict_marvel, "relationship")))
 net_independence(ison_adolescents)
 net_strength(ison_adolescents)
 net_toughness(ison_adolescents)
@@ -97,7 +97,8 @@ White, Douglas R and Frank Harary. 2001.
 }
 \seealso{
 Other measures: 
-\code{\link{measure_attributes}},
+\code{\link{measure_attributes_nodes}},
+\code{\link{measure_attributes_ties}},
 \code{\link{measure_central_between}},
 \code{\link{measure_central_close}},
 \code{\link{measure_central_degree}},

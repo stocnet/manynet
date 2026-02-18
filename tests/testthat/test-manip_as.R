@@ -106,4 +106,27 @@ test_that("mnet objects printed correctly", {
   expect_match(describe_ties(ison_adolescents), "10 friendship")
   expect_null(describe_changes(ison_adolescents))
 })
-  
+
+# test_that("network dynamic converts correctly",{
+#   skip_if_not(requireNamespace("networkDynamic", quietly = TRUE)) 
+#   networkDynamic <- get("networkDynamic", asNamespace("networkDynamic"))
+#   onset <- 7168
+#   terminus <- 19843
+#   nodeID <- c( 1,2,13,29,31,34,44,59,67,82,89,115,121,122,128,146,156,181,190,191,
+#                197,211,223,274,288,289,301,302,334,351,393,394,396,418)
+#   ndf <- data.frame(onset, terminus, nodeID)
+#   start_time <- c(19517, 19794, 19138, 19425, 19837, 19805, 19438, 19462, 19507,
+#                   19796, 19832, 19514, 19808, 19252, 19266, 19711, 19783, 19178,
+#                   19348, 19508)
+#   end_time <- c(19517, 19795, 19139, 19426, 19838, 19805, 19439, 19462, 19508,
+#                 19796, 19836, 19515, 19809, 19254, 19266, 19712, 19783, 19178,
+#                 19348, 19509)
+#   from <- c(1, 418, 34, 396, 34, 223, 13, 334, 34, 191, 181, 2, 2, 211, 31, 156, 288, 289, 122, 156)
+#   to <- c(156, 393, 351, 394, 146, 115, 274, 121, 29, 190, 89, 128, 44, 67, 302, 59, 34,301, 82, 197)
+#   edf <- data.frame(start_time, end_time, from, to)
+#   sample_net <- networkDynamic(vertex.spells = ndf[ ,c(1,2,3)],
+#                                edge.spells = edf[ ,c(1,2,3,4)])
+#   network::set.network.attribute(sample_net, 'net.obs.period', list(observations = list(c(7168,19843)), mode = "discrete", time.increment = 1, time.unit = 'day'))
+#   class(sample_net)
+#   expect_no_failure(as_igraph(sample_net))
+# })

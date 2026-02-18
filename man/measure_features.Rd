@@ -147,7 +147,7 @@ net_smallworld(ison_southern_women)
 net_scalefree(ison_adolescents)
 net_scalefree(generate_scalefree(50, 1.5))
 net_scalefree(create_lattice(100))
-net_balance(ison_marvel_relationships)
+net_balance(to_uniplex(fict_marvel, "relationship"))
 }
 \references{
 \subsection{On core-periphery}{
@@ -240,7 +240,8 @@ Cartwright, D., and Frank Harary. 1956.
 for how clustering is calculated
 
 Other measures: 
-\code{\link{measure_attributes}},
+\code{\link{measure_attributes_nodes}},
+\code{\link{measure_attributes_ties}},
 \code{\link{measure_central_between}},
 \code{\link{measure_central_close}},
 \code{\link{measure_central_degree}},

@@ -68,8 +68,8 @@ net_components <- function(.data){
 #' _Sociological Methodology_ 31(1): 305-59.
 #' \doi{10.1111/0081-1750.00098}
 #' @examples 
-#' net_cohesion(ison_marvel_relationships)
-#' net_cohesion(to_giant(ison_marvel_relationships))
+#' net_cohesion(to_uniplex(fict_marvel, "relationship"))
+#' net_cohesion(to_giant(to_uniplex(fict_marvel, "relationship")))
 #' @export
 net_cohesion <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
@@ -80,8 +80,8 @@ net_cohesion <- function(.data){
 #' @rdname measure_cohesion 
 #' @importFrom igraph adhesion
 #' @examples 
-#' net_adhesion(ison_marvel_relationships)
-#' net_adhesion(to_giant(ison_marvel_relationships))
+#' net_adhesion(to_uniplex(fict_marvel, "relationship"))
+#' net_adhesion(to_giant(to_uniplex(fict_marvel, "relationship")))
 #' @export
 net_adhesion <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
@@ -92,8 +92,8 @@ net_adhesion <- function(.data){
 #' @rdname measure_cohesion 
 #' @importFrom igraph diameter
 #' @examples 
-#' net_diameter(ison_marvel_relationships)
-#' net_diameter(to_giant(ison_marvel_relationships))
+#' net_diameter(to_uniplex(fict_marvel, "relationship"))
+#' net_diameter(to_giant(to_uniplex(fict_marvel, "relationship")))
 #' @export
 net_diameter <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
@@ -106,8 +106,8 @@ net_diameter <- function(.data){
 #' @rdname measure_cohesion 
 #' @importFrom igraph mean_distance
 #' @examples 
-#' net_length(ison_marvel_relationships)
-#' net_length(to_giant(ison_marvel_relationships))
+#' net_length(to_uniplex(fict_marvel, "relationship"))
+#' net_length(to_giant(to_uniplex(fict_marvel, "relationship")))
 #' @export
 net_length <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
