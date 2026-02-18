@@ -1,3 +1,40 @@
+# manynet 1.7.1
+
+## Package
+
+- Restructured website
+- Removed unnecessary global variables
+- Exporting `expect_nodes()` and `expect_ties()` for use in other packages
+
+## Making
+
+- Added `net_name()` for obtaining network name if available
+- Added `net_node_names()` and `net_tie_names()` for network element information
+- Fixed `write_graphml()` to coerce to igraph first
+
+## Modifying
+
+- Improved `to_mode1()` and `to_mode2()` to carry forward nodal and tie attributes during projection
+- Improved `to_mode1()` and `to_mode2()` to drop unnecessary nodal information
+- Improved `to_uniplex()` to handle multimodal multiplex filtering correctly and retain tie type information
+- Fixed #123 by inserting NAs before converting networkDynamic to igraph
+- Fixed `add_changes()` to work with tbl_graph
+- Fixed `filter_nodes()` to use `dplyr::all_of()`
+- Added `interpolate()` helper for injecting missing data
+- Restructured modifying function documentation around transformations (e.g. direction)
+
+## Measuring
+
+- Split `measure_attributes` documentation into separate nodes and ties pages
+
+## Motifs
+
+- Fixed `net_by_mixed()` to work with multiplex networks
+
+## Data
+
+- Compiled `ison_marvel_relationships` and `ison_marvel_teams` into single multiplex `fict_marvel` dataset
+
 # manynet 1.7.0
 
 ## Making
