@@ -36,7 +36,7 @@ removed from a network to increase its number of components.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.1</span>
       </span>
     </div>
 
@@ -137,7 +137,7 @@ removed from a network to increase its number of components.</p></li>
 
 
 <p>To get the 'weak' components of a directed graph,
-please use <code><a href="manip_deformat.html">manynet::to_undirected()</a></code> first.</p>
+please use <code><a href="manip_direction.html">manynet::to_undirected()</a></code> first.</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -156,7 +156,8 @@ please use <code><a href="manip_deformat.html">manynet::to_undirected()</a></cod
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other measures:
-<code><a href="measure_attributes.html">measure_attributes</a></code>,
+<code><a href="measure_attributes_nodes.html">measure_attributes_nodes</a></code>,
+<code><a href="measure_attributes_ties.html">measure_attributes_ties</a></code>,
 <code><a href="measure_central_between.html">measure_central_between</a></code>,
 <code><a href="measure_central_close.html">measure_central_close</a></code>,
 <code><a href="measure_central_degree.html">measure_central_degree</a></code>,
@@ -182,23 +183,23 @@ please use <code><a href="manip_deformat.html">manynet::to_undirected()</a></cod
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.353</span>
 <span class="r-in"><span>  <span class="fu">net_components</span><span class="op">(</span><span class="va">fict_thrones</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 130</span>
-<span class="r-in"><span>  <span class="fu">net_components</span><span class="op">(</span><span class="fu"><a href="manip_deformat.html">to_undirected</a></span><span class="op">(</span><span class="va">fict_thrones</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">net_components</span><span class="op">(</span><span class="fu"><a href="manip_direction.html">to_undirected</a></span><span class="op">(</span><span class="va">fict_thrones</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
-<span class="r-in"><span><span class="fu">net_cohesion</span><span class="op">(</span><span class="va">ison_marvel_relationships</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">net_cohesion</span><span class="op">(</span><span class="fu"><a href="manip_deformat.html">to_uniplex</a></span><span class="op">(</span><span class="va">fict_marvel</span>, <span class="st">"relationship"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-in"><span><span class="fu">net_cohesion</span><span class="op">(</span><span class="fu"><a href="manip_scope.html">to_giant</a></span><span class="op">(</span><span class="va">ison_marvel_relationships</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">net_cohesion</span><span class="op">(</span><span class="fu"><a href="manip_scope.html">to_giant</a></span><span class="op">(</span><span class="fu"><a href="manip_deformat.html">to_uniplex</a></span><span class="op">(</span><span class="va">fict_marvel</span>, <span class="st">"relationship"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5</span>
-<span class="r-in"><span><span class="fu">net_adhesion</span><span class="op">(</span><span class="va">ison_marvel_relationships</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">net_adhesion</span><span class="op">(</span><span class="fu"><a href="manip_deformat.html">to_uniplex</a></span><span class="op">(</span><span class="va">fict_marvel</span>, <span class="st">"relationship"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-in"><span><span class="fu">net_adhesion</span><span class="op">(</span><span class="fu"><a href="manip_scope.html">to_giant</a></span><span class="op">(</span><span class="va">ison_marvel_relationships</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">net_adhesion</span><span class="op">(</span><span class="fu"><a href="manip_scope.html">to_giant</a></span><span class="op">(</span><span class="fu"><a href="manip_deformat.html">to_uniplex</a></span><span class="op">(</span><span class="va">fict_marvel</span>, <span class="st">"relationship"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5</span>
-<span class="r-in"><span><span class="fu">net_diameter</span><span class="op">(</span><span class="va">ison_marvel_relationships</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">net_diameter</span><span class="op">(</span><span class="fu"><a href="manip_deformat.html">to_uniplex</a></span><span class="op">(</span><span class="va">fict_marvel</span>, <span class="st">"relationship"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3</span>
-<span class="r-in"><span><span class="fu">net_diameter</span><span class="op">(</span><span class="fu"><a href="manip_scope.html">to_giant</a></span><span class="op">(</span><span class="va">ison_marvel_relationships</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">net_diameter</span><span class="op">(</span><span class="fu"><a href="manip_scope.html">to_giant</a></span><span class="op">(</span><span class="fu"><a href="manip_deformat.html">to_uniplex</a></span><span class="op">(</span><span class="va">fict_marvel</span>, <span class="st">"relationship"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3</span>
-<span class="r-in"><span><span class="fu">net_length</span><span class="op">(</span><span class="va">ison_marvel_relationships</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">net_length</span><span class="op">(</span><span class="fu"><a href="manip_deformat.html">to_uniplex</a></span><span class="op">(</span><span class="va">fict_marvel</span>, <span class="st">"relationship"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.62</span>
-<span class="r-in"><span><span class="fu">net_length</span><span class="op">(</span><span class="fu"><a href="manip_scope.html">to_giant</a></span><span class="op">(</span><span class="va">ison_marvel_relationships</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">net_length</span><span class="op">(</span><span class="fu"><a href="manip_scope.html">to_giant</a></span><span class="op">(</span><span class="fu"><a href="manip_deformat.html">to_uniplex</a></span><span class="op">(</span><span class="va">fict_marvel</span>, <span class="st">"relationship"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.62</span>
 <span class="r-in"><span><span class="fu">net_independence</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4</span>

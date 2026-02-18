@@ -35,7 +35,7 @@ net_spatial() measures the spatial association/autocorrelation
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.1</span>
       </span>
     </div>
 
@@ -297,7 +297,8 @@ Informal networks and organizational crises: an experimental simulation.
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other measures:
-<code><a href="measure_attributes.html">measure_attributes</a></code>,
+<code><a href="measure_attributes_nodes.html">measure_attributes_nodes</a></code>,
+<code><a href="measure_attributes_ties.html">measure_attributes_ties</a></code>,
 <code><a href="measure_central_between.html">measure_central_between</a></code>,
 <code><a href="measure_central_close.html">measure_central_close</a></code>,
 <code><a href="measure_central_degree.html">measure_central_degree</a></code>,
@@ -324,7 +325,7 @@ Informal networks and organizational crises: an experimental simulation.
 <span class="r-out co"><span class="r-pr">#&gt;</span>   `Lin Freeman` `Doug White` `Ev Rogers` `Richard Alba` `Phipps Arabie`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>             4            4           2              4               4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 27 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
-<span class="r-in"><span><span class="va">marvel_friends</span> <span class="op">&lt;-</span> <span class="fu"><a href="manip_deformat.html">to_unsigned</a></span><span class="op">(</span><span class="va">ison_marvel_relationships</span>, <span class="st">"positive"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">marvel_friends</span> <span class="op">&lt;-</span> <span class="fu"><a href="manip_deformat.html">to_unsigned</a></span><span class="op">(</span><span class="fu"><a href="manip_deformat.html">to_uniplex</a></span><span class="op">(</span><span class="va">fict_marvel</span>, <span class="st">"relationship"</span><span class="op">)</span>, <span class="st">"positive"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">net_diversity</span><span class="op">(</span><span class="va">marvel_friends</span>, <span class="st">"Gender"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.306</span>
 <span class="r-in"><span><span class="fu">net_diversity</span><span class="op">(</span><span class="va">marvel_friends</span>, <span class="st">"Appearances"</span><span class="op">)</span></span></span>

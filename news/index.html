@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.1</span>
       </span>
     </div>
 
@@ -60,7 +60,46 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.7.0" id="manynet-170">manynet 1.7.0<a class="anchor" aria-label="anchor" href="#manynet-170"></a></h2>
+<h2 class="page-header" data-toc-text="1.7.1" id="manynet-171">manynet 1.7.1<a class="anchor" aria-label="anchor" href="#manynet-171"></a></h2>
+<div class="section level3">
+<h3 id="package-1-7-1">Package<a class="anchor" aria-label="anchor" href="#package-1-7-1"></a></h3>
+<ul><li>Restructured website</li>
+<li>Removed unnecessary global variables</li>
+<li>Exporting <code><a href="../reference/expect.html">expect_nodes()</a></code> and <code><a href="../reference/expect.html">expect_ties()</a></code> for use in other packages</li>
+</ul></div>
+<div class="section level3">
+<h3 id="making-1-7-1">Making<a class="anchor" aria-label="anchor" href="#making-1-7-1"></a></h3>
+<ul><li>Added <code><a href="../reference/measure_properties.html">net_name()</a></code> for obtaining network name if available</li>
+<li>Added <code><a href="../reference/measure_properties.html">net_node_names()</a></code> and <code><a href="../reference/measure_properties.html">net_tie_names()</a></code> for network element information</li>
+<li>Fixed <code><a href="../reference/make_write.html">write_graphml()</a></code> to coerce to igraph first</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-1-7-1">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-7-1"></a></h3>
+<ul><li>Improved <code><a href="../reference/manip_project.html">to_mode1()</a></code> and <code><a href="../reference/manip_project.html">to_mode2()</a></code> to carry forward nodal and tie attributes during projection</li>
+<li>Improved <code><a href="../reference/manip_project.html">to_mode1()</a></code> and <code><a href="../reference/manip_project.html">to_mode2()</a></code> to drop unnecessary nodal information</li>
+<li>Improved <code><a href="../reference/manip_deformat.html">to_uniplex()</a></code> to handle multimodal multiplex filtering correctly and retain tie type information</li>
+<li>Fixed <a href="https://github.com/stocnet/manynet/issues/123" class="external-link">#123</a> by inserting NAs before converting networkDynamic to igraph</li>
+<li>Fixed <code><a href="../reference/manip_changes.html">add_changes()</a></code> to work with tbl_graph</li>
+<li>Fixed <code><a href="../reference/manip_nodes.html">filter_nodes()</a></code> to use <code><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">dplyr::all_of()</a></code>
+</li>
+<li>Added <code>interpolate()</code> helper for injecting missing data</li>
+<li>Restructured modifying function documentation around transformations (e.g. direction)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="measuring-1-7-1">Measuring<a class="anchor" aria-label="anchor" href="#measuring-1-7-1"></a></h3>
+<ul><li>Split <code>measure_attributes</code> documentation into separate nodes and ties pages</li>
+</ul></div>
+<div class="section level3">
+<h3 id="motifs-1-7-1">Motifs<a class="anchor" aria-label="anchor" href="#motifs-1-7-1"></a></h3>
+<ul><li>Fixed <code><a href="../reference/motif_net.html">net_by_mixed()</a></code> to work with multiplex networks</li>
+</ul></div>
+<div class="section level3">
+<h3 id="data-1-7-1">Data<a class="anchor" aria-label="anchor" href="#data-1-7-1"></a></h3>
+<ul><li>Compiled <code>ison_marvel_relationships</code> and <code>ison_marvel_teams</code> into single multiplex <code>fict_marvel</code> dataset</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.7.0" id="manynet-170">manynet 1.7.0<small>2025-11-19</small><a class="anchor" aria-label="anchor" href="#manynet-170"></a></h2>
 <div class="section level3">
 <h3 id="making-1-7-0">Making<a class="anchor" aria-label="anchor" href="#making-1-7-0"></a></h3>
 <ul><li>Improved vector printing to be more succinct and suggest <code><a href="../reference/make_mnet.html">print_all()</a></code>
@@ -97,7 +136,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="tutorials-1-7-0">Tutorials<a class="anchor" aria-label="anchor" href="#tutorials-1-7-0"></a></h3>
-<ul><li>Fixed description of <code><a href="../reference/manip_reformat.html">to_directed()</a></code> and <code><a href="../reference/manip_reformat.html">to_redirected()</a></code> in the data tutorial</li>
+<ul><li>Fixed description of <code><a href="../reference/manip_direction.html">to_directed()</a></code> and <code><a href="../reference/manip_direction.html">to_redirected()</a></code> in the data tutorial</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -895,7 +934,7 @@
 <div class="section level3">
 <h3 id="memberships-1-0-4">Memberships<a class="anchor" aria-label="anchor" href="#memberships-1-0-4"></a></h3>
 <ul><li>
-<code><a href="../reference/measure_attributes.html">node_names()</a></code> now returns names of the form “N01” etc for unlabelled networks</li>
+<code><a href="../reference/measure_attributes_nodes.html">node_names()</a></code> now returns names of the form “N01” etc for unlabelled networks</li>
 <li>Fixed how <code>plot.matrix()</code> works for unlabelled networks</li>
 <li>Added more on density in community tutorial</li>
 </ul></div>
@@ -1056,8 +1095,8 @@
 </ul></li>
 <li>Updated properties from mapping to measuring</li>
 <li>Updated attributes from mapping to measuring
-<ul><li>Renamed <code><a href="../reference/defunct.html">node_mode()</a></code> (deprecated) to <code><a href="../reference/measure_attributes.html">node_is_mode()</a></code> since it returns a logical vector</li>
-<li>Updated <code><a href="../reference/measure_attributes.html">node_attribute()</a></code> and <code><a href="../reference/measure_attributes.html">tie_attribute()</a></code> to return measures when the output is numeric</li>
+<ul><li>Renamed <code><a href="../reference/defunct.html">node_mode()</a></code> (deprecated) to <code><a href="../reference/measure_attributes_nodes.html">node_is_mode()</a></code> since it returns a logical vector</li>
+<li>Updated <code><a href="../reference/measure_attributes_nodes.html">node_attribute()</a></code> and <code><a href="../reference/measure_attributes_ties.html">tie_attribute()</a></code> to return measures when the output is numeric</li>
 </ul></li>
 <li>Updated <code><a href="../reference/measure_diffusion_node.html">node_exposure()</a></code> to work with two-mode and signed networks</li>
 <li>Fixed <code><a href="../reference/measure_holes.html">node_constraint()</a></code> to work with weighted two-mode networks, thanks to Toshitaka Izumi for spotting this</li>
@@ -1710,11 +1749,11 @@
 <li>Fixed <code>to_giant.network()</code>
 </li>
 <li>
-<code><a href="../reference/manip_reformat.html">to_directed()</a></code> now a method</li>
+<code><a href="../reference/manip_direction.html">to_directed()</a></code> now a method</li>
 <li>
 <code><a href="../reference/manip_split.html">to_subgraphs()</a></code> now returns a list of <code>tbl_graph</code>s</li>
 <li>
-<code><a href="../reference/manip_reformat.html">to_reciprocated()</a></code> now works on edgelists, matrices, tbl_graphs, and networks</li>
+<code><a href="../reference/manip_direction.html">to_reciprocated()</a></code> now works on edgelists, matrices, tbl_graphs, and networks</li>
 <li>
 <code>to_acylic()</code> now works on matrices, tbl_graphs, and networks</li>
 </ul></li>

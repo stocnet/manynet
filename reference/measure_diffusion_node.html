@@ -28,7 +28,7 @@ a given mark
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.1</span>
       </span>
     </div>
 
@@ -190,7 +190,8 @@ nodes exposure at \(t = 0\).</p>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other measures:
-<code><a href="measure_attributes.html">measure_attributes</a></code>,
+<code><a href="measure_attributes_nodes.html">measure_attributes_nodes</a></code>,
+<code><a href="measure_attributes_ties.html">measure_attributes_ties</a></code>,
 <code><a href="measure_central_between.html">measure_central_between</a></code>,
 <code><a href="measure_central_close.html">measure_central_close</a></code>,
 <code><a href="measure_central_degree.html">measure_central_degree</a></code>,
@@ -221,32 +222,32 @@ nodes exposure at \(t = 0\).</p>
 <span class="r-plt img"><img src="measure_diffusion_node-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span>  <span class="co"># To measure when nodes adopted a diffusion/were infected</span></span></span>
 <span class="r-in"><span>  <span class="op">(</span><span class="va">times</span> <span class="op">&lt;-</span> <span class="fu">node_adoption_time</span><span class="op">(</span><span class="va">smeg_diff</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ▃▃▃▂ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ▃▃▂▂▁ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      V1    V2    V3    V4    V5    V6    V7    V8    V9   V10   V11   V12   V13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     0     1     1     2     2     3     3     4     4     3     3     2     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     0     1     2     2     3     5     4     4     3     3     2     2     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 2 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
 <span class="r-in"><span>  <span class="co"># To infer nodes' thresholds</span></span></span>
 <span class="r-in"><span>  <span class="fu">node_thresholds</span><span class="op">(</span><span class="va">smeg_diff</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ▁▅▃▂ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ▁▂▃▁▃▁▁ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      V1    V2    V3    V4    V5    V6    V7    V8    V9   V10   V11   V12   V13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     0  0.25  0.25   0.5  0.25   0.5  0.25  0.75  0.75  0.25   0.5  0.25   0.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     0  0.25 0.333  0.25   0.5 0.667   0.5   0.5   0.2   0.5  0.25   0.5   0.2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 2 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
 <span class="r-in"><span>  <span class="co"># To measure how long each node remains infected for</span></span></span>
 <span class="r-in"><span>  <span class="fu">node_recovery</span><span class="op">(</span><span class="va">smeg_diff</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ▄▁▃▁▁▁▁ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ▄▃▂▁▁▁ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      V1    V2    V3    V4    V5    V6    V7    V8    V9   V10   V11   V12   V13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     4    14     9     2     2     6     1     2     5     2     5     2     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     2     4     4     1     2     2     3     3     5     2     3     3   <span style="color: #BB0000;">Inf</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 2 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
 <span class="r-in"><span>  <span class="co"># To measure how much exposure nodes have to a given mark</span></span></span>
 <span class="r-in"><span>  <span class="fu">node_exposure</span><span class="op">(</span><span class="va">smeg</span>, mark <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ▆▃▁▁ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ▅▃▁▁ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      V1    V2    V3    V4    V5    V6    V7    V8    V9   V10   V11   V12   V13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     0     2     0     1     1     0     0     0     0     0     0     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     0     2     0     1     1     0     0     0     0     0     0     0     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 2 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
 <span class="r-in"><span>  <span class="fu">node_exposure</span><span class="op">(</span><span class="va">smeg_diff</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ▆▁▁▁▃ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      V1    V2    V3    V4    V5    V6    V7    V8    V9   V10   V11   V12   V13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     0     1     1     0     0     0     0     0     0     0     0     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     0     1     0     0     0     0     0     0     0     0     0     0     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 2 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
 </code></pre></div>
     </div>

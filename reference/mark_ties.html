@@ -28,7 +28,7 @@ are particularly well- or poorly-connected."><meta property="og:image" content="
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.1</span>
       </span>
     </div>
 
@@ -135,14 +135,14 @@ By default FALSE, sampling just a single path.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">tie_is_multiple</span><span class="op">(</span><span class="va">ison_marvel_relationships</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   `Abomination-Beast` `Abomination-Colossus` `Abomination-Cyclops`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> FALSE               FALSE                  FALSE                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 555 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
-<span class="r-in"><span><span class="fu">tie_is_loop</span><span class="op">(</span><span class="va">ison_marvel_relationships</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   `Abomination-Beast` `Abomination-Colossus` `Abomination-Cyclops`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> FALSE               FALSE                  FALSE                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 555 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">tie_is_multiple</span><span class="op">(</span><span class="va">fict_marvel</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `Abomination-Abomination` `Abomination-Beast` `Abomination-Colossus`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> FALSE                     FALSE               FALSE                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 1238 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
+<span class="r-in"><span><span class="fu">tie_is_loop</span><span class="op">(</span><span class="va">fict_marvel</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `Abomination-Abomination` `Abomination-Beast` `Abomination-Colossus`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> TRUE                      FALSE               FALSE                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 1238 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
 <span class="r-in"><span><span class="fu">tie_is_reciprocated</span><span class="op">(</span><span class="va">ison_algebra</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   `1-&gt;5` `1-&gt;5` `1-&gt;8` `1-&gt;9` `1-&gt;9` `1-&gt;10` `1-&gt;10` `1-&gt;11` `1-&gt;12` `1-&gt;12`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> TRUE   TRUE   FALSE  TRUE   TRUE   TRUE    TRUE    TRUE    TRUE    TRUE   </span>

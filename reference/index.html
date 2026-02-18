@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.1</span>
       </span>
     </div>
 
@@ -163,11 +163,15 @@
         </td>
         <td><p>Modifying network formats</p></td>
       </tr><tr><td>
-          <p><code><a href="manip_reformat.html">to_acyclic()</a></code> <code><a href="manip_reformat.html">to_anti()</a></code> <code><a href="manip_reformat.html">to_redirected()</a></code> <code><a href="manip_reformat.html">to_reciprocated()</a></code> <code><a href="manip_reformat.html">to_directed()</a></code> </p>
+          <p><code><a href="manip_reformat.html">to_anti()</a></code> </p>
         </td>
         <td><p>Modifying network formats</p></td>
       </tr><tr><td>
-          <p><code><a href="manip_deformat.html">to_unnamed()</a></code> <code><a href="manip_deformat.html">to_undirected()</a></code> <code><a href="manip_deformat.html">to_unweighted()</a></code> <code><a href="manip_deformat.html">to_unsigned()</a></code> <code><a href="manip_deformat.html">to_simplex()</a></code> <code><a href="manip_deformat.html">to_uniplex()</a></code> </p>
+          <p><code><a href="manip_direction.html">to_directed()</a></code> <code><a href="manip_direction.html">to_undirected()</a></code> <code><a href="manip_direction.html">to_redirected()</a></code> <code><a href="manip_direction.html">to_reciprocated()</a></code> <code><a href="manip_direction.html">to_acyclic()</a></code> </p>
+        </td>
+        <td><p>Modifying networks by formatting their directionality</p></td>
+      </tr><tr><td>
+          <p><code><a href="manip_deformat.html">to_unnamed()</a></code> <code><a href="manip_deformat.html">to_unweighted()</a></code> <code><a href="manip_deformat.html">to_unsigned()</a></code> <code><a href="manip_deformat.html">to_simplex()</a></code> <code><a href="manip_deformat.html">to_uniplex()</a></code> </p>
         </td>
         <td><p>Modifying network formats by removing information</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -267,9 +271,9 @@
         </td>
         <td><p>Marking nodes for selection based on measures</p></td>
       </tr><tr><td>
-          <p><code><a href="measure_attributes.html">node_attribute()</a></code> <code><a href="measure_attributes.html">node_names()</a></code> <code><a href="measure_attributes.html">node_is_mode()</a></code> <code><a href="measure_attributes.html">tie_attribute()</a></code> <code><a href="measure_attributes.html">tie_weights()</a></code> <code><a href="measure_attributes.html">tie_signs()</a></code> </p>
+          <p><code><a href="measure_attributes_nodes.html">node_attribute()</a></code> <code><a href="measure_attributes_nodes.html">node_names()</a></code> <code><a href="measure_attributes_nodes.html">node_is_mode()</a></code> </p>
         </td>
-        <td><p>Describing attributes of nodes or ties in a network</p></td>
+        <td><p>Describing attributes of nodes in a network</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h3 id="tie-marks">Tie marks <a href="#tie-marks" class="anchor" aria-hidden="true"></a></h3>
           <p class="section-desc"></p><p><code>tie_is_*()</code> functions return a vector of logical values the length of the ties in the network.</p>
@@ -286,6 +290,10 @@
           <p><code><a href="mark_triangles.html">tie_is_triangular()</a></code> <code><a href="mark_triangles.html">tie_is_transitive()</a></code> <code><a href="mark_triangles.html">tie_is_triplet()</a></code> <code><a href="mark_triangles.html">tie_is_cyclical()</a></code> <code><a href="mark_triangles.html">tie_is_simmelian()</a></code> <code><a href="mark_triangles.html">tie_is_forbidden()</a></code> <code><a href="mark_triangles.html">tie_is_imbalanced()</a></code> </p>
         </td>
         <td><p>Marking ties based on structural properties</p></td>
+      </tr><tr><td>
+          <p><code><a href="measure_attributes_ties.html">tie_attribute()</a></code> <code><a href="measure_attributes_ties.html">tie_weights()</a></code> <code><a href="measure_attributes_ties.html">tie_signs()</a></code> <code><a href="measure_attributes_ties.html">tie_is_twomode()</a></code> </p>
+        </td>
+        <td><p>Describing attributes of ties in a network</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="measuring">Measuring <a href="#measuring" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Functions for measuring networks and returning a numeric vector or value. <code>net_</code> measures return one or, in some cases of two-mode measures, two values. All <code>node_</code> and <code>tie_</code> measures return a single vector, the length of the nodes or ties in the network, respectively.</p>
@@ -295,17 +303,17 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="measure_attributes.html">node_attribute()</a></code> <code><a href="measure_attributes.html">node_names()</a></code> <code><a href="measure_attributes.html">node_is_mode()</a></code> <code><a href="measure_attributes.html">tie_attribute()</a></code> <code><a href="measure_attributes.html">tie_weights()</a></code> <code><a href="measure_attributes.html">tie_signs()</a></code> </p>
+          <p><code><a href="measure_attributes_nodes.html">node_attribute()</a></code> <code><a href="measure_attributes_nodes.html">node_names()</a></code> <code><a href="measure_attributes_nodes.html">node_is_mode()</a></code> </p>
         </td>
-        <td><p>Describing attributes of nodes or ties in a network</p></td>
+        <td><p>Describing attributes of nodes in a network</p></td>
       </tr><tr><td>
-          <p><code><a href="measure_properties.html">net_nodes()</a></code> <code><a href="measure_properties.html">net_ties()</a></code> <code><a href="measure_properties.html">net_dims()</a></code> <code><a href="measure_properties.html">net_node_attributes()</a></code> <code><a href="measure_properties.html">net_tie_attributes()</a></code> </p>
+          <p><code><a href="measure_attributes_ties.html">tie_attribute()</a></code> <code><a href="measure_attributes_ties.html">tie_weights()</a></code> <code><a href="measure_attributes_ties.html">tie_signs()</a></code> <code><a href="measure_attributes_ties.html">tie_is_twomode()</a></code> </p>
+        </td>
+        <td><p>Describing attributes of ties in a network</p></td>
+      </tr><tr><td>
+          <p><code><a href="measure_properties.html">net_name()</a></code> <code><a href="measure_properties.html">net_nodes()</a></code> <code><a href="measure_properties.html">net_ties()</a></code> <code><a href="measure_properties.html">net_dims()</a></code> <code><a href="measure_properties.html">net_node_names()</a></code> <code><a href="measure_properties.html">net_node_attributes()</a></code> <code><a href="measure_properties.html">net_tie_names()</a></code> <code><a href="measure_properties.html">net_tie_attributes()</a></code> </p>
         </td>
         <td><p>Describing network properties</p></td>
-      </tr><tr><td>
-          <p><code><a href="measure_features.html">net_core()</a></code> <code><a href="measure_features.html">net_richclub()</a></code> <code><a href="measure_features.html">net_factions()</a></code> <code><a href="measure_features.html">net_modularity()</a></code> <code><a href="measure_features.html">net_smallworld()</a></code> <code><a href="measure_features.html">net_scalefree()</a></code> <code><a href="measure_features.html">net_balance()</a></code> </p>
-        </td>
-        <td><p>Measures of network topological features</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h3 id="centrality">Centrality <a href="#centrality" class="anchor" aria-hidden="true"></a></h3>
           <p class="section-desc"></p>
@@ -346,6 +354,10 @@
           <p><code><a href="measure_closure.html">net_reciprocity()</a></code> <code><a href="measure_closure.html">node_reciprocity()</a></code> <code><a href="measure_closure.html">net_transitivity()</a></code> <code><a href="measure_closure.html">node_transitivity()</a></code> <code><a href="measure_closure.html">net_equivalency()</a></code> <code><a href="measure_closure.html">node_equivalency()</a></code> <code><a href="measure_closure.html">net_congruency()</a></code> </p>
         </td>
         <td><p>Measures of network closure</p></td>
+      </tr><tr><td>
+          <p><code><a href="measure_features.html">net_core()</a></code> <code><a href="measure_features.html">net_richclub()</a></code> <code><a href="measure_features.html">net_factions()</a></code> <code><a href="measure_features.html">net_modularity()</a></code> <code><a href="measure_features.html">net_smallworld()</a></code> <code><a href="measure_features.html">net_scalefree()</a></code> <code><a href="measure_features.html">net_balance()</a></code> </p>
+        </td>
+        <td><p>Measures of network topological features</p></td>
       </tr><tr><td>
           <p><code><a href="measure_heterogeneity.html">net_richness()</a></code> <code><a href="measure_heterogeneity.html">node_richness()</a></code> <code><a href="measure_heterogeneity.html">net_diversity()</a></code> <code><a href="measure_heterogeneity.html">node_diversity()</a></code> <code><a href="measure_heterogeneity.html">net_heterophily()</a></code> <code><a href="measure_heterogeneity.html">node_heterophily()</a></code> <code><a href="measure_heterogeneity.html">net_homophily()</a></code> <code><a href="measure_heterogeneity.html">node_homophily()</a></code> <code><a href="measure_heterogeneity.html">net_assortativity()</a></code> <code><a href="measure_heterogeneity.html">net_spatial()</a></code> </p>
         </td>
@@ -523,10 +535,6 @@
         </td>
         <td><p>One-mode lawfirm (Lazega 2001)</p></td>
       </tr><tr><td>
-          <p><code><a href="ison_marvel.html">ison_marvel_teams</a></code> <code><a href="ison_marvel.html">ison_marvel_relationships</a></code> </p>
-        </td>
-        <td><p>Multilevel two-mode affiliation, signed one-mode networks of Marvel comic book characters (Yuksel 2017)</p></td>
-      </tr><tr><td>
           <p><code><a href="ison_monks.html">ison_monks</a></code> </p>
         </td>
         <td><p>Multiplex network of three one-mode signed, weighted networks and a three-wave longitudinal network of monks (Sampson 1969)</p></td>
@@ -562,6 +570,10 @@
           <p><code><a href="fict_lotr.html">fict_lotr</a></code> </p>
         </td>
         <td><p>One-mode network of Lord of the Rings character interactions</p></td>
+      </tr><tr><td>
+          <p><code><a href="fict_marvel.html">fict_marvel</a></code> </p>
+        </td>
+        <td><p>Multiplex two-mode affiliation and one-mode signed relationship network of Marvel comic book characters (Yuksel 2017)</p></td>
       </tr><tr><td>
           <p><code><a href="fict_potter.html">fict_potter</a></code> </p>
         </td>

@@ -9,10 +9,12 @@
 <url><loc>https://stocnet.github.io/manynet/news/index.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/data_overview.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/defunct.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/expect.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/fict_actually.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/fict_friends.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/fict_greys.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/fict_lotr.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/fict_marvel.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/fict_potter.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/fict_starwars.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/fict_thrones.html</loc></url>
@@ -37,7 +39,6 @@
 <url><loc>https://stocnet.github.io/manynet/reference/ison_koenigsberg.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/ison_laterals.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/ison_lawfirm.html</loc></url>
-<url><loc>https://stocnet.github.io/manynet/reference/ison_marvel.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/ison_monks.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/ison_networkers.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/ison_physicians.html</loc></url>
@@ -58,6 +59,7 @@
 <url><loc>https://stocnet.github.io/manynet/reference/manip_changes.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_correlation.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_deformat.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/manip_direction.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_from.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_info.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_levels.html</loc></url>
@@ -81,7 +83,8 @@
 <url><loc>https://stocnet.github.io/manynet/reference/mark_tie_select.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/mark_ties.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/mark_triangles.html</loc></url>
-<url><loc>https://stocnet.github.io/manynet/reference/measure_attributes.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/measure_attributes_nodes.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/measure_attributes_ties.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/measure_central_between.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/measure_central_close.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/measure_central_degree.html</loc></url>
