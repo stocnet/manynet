@@ -55,3 +55,12 @@ test_that("net_balance works", {
   expect_values(out,1)
 })
 
+wavenet <- ison_adolescents %>%
+  tidygraph::activate(edges) %>%
+  mutate(wave = c(1, 1, 1, 1, 2, 2, 2, 3, 3, 3))
+
+test_that("net_waves works", {
+  expect_equal(net_waves(ison_adolescents), 1)
+  expect_equal(net_waves(wavenet), 3)
+})
+
