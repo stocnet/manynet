@@ -280,13 +280,6 @@ and call the last one in the list?
 data(flo, package = "network")
 ```
 
-```{r netdata-hint-2, purl=FALSE}
-data(package = "_____")
-library(_____)
-data(_____)
-_____
-```
-
 ```{r netdata-solution}
 data(package = "network")
 data(flo, package = "network")
