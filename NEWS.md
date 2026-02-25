@@ -1,3 +1,13 @@
+# manynet 1.7.2
+
+## Making
+
+- Fixed #126 with a `stopifnot(is.scalar(ties))` in `generate_citations()`
+
+## Tutorials
+
+- Fixed bug in "tutorial1" where `{renv}` was misinterpreting a hint as a package dependency
+
 # manynet 1.7.1
 
 ## Package
