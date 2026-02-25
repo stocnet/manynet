@@ -45,9 +45,9 @@ interpolate <- function(values, positions, n, fill = NA) {
   out
 }
 
-is.scalar <- function(x){
+is.scalar <- function(x) {
   is.atomic(x) && length(x) == 1L
-} 
+}
 
 # #' @export
 # `%||%` <- function(x, y) {
