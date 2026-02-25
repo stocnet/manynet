@@ -67,7 +67,7 @@ print.mnet <- function(x, ..., n = 12) {
   change_desc <- describe_changes(x)
   cli::cli_par()
   cli_div(theme = list(.emph = list(color = "#4576B5")))
-  cli::cli_text("{.emph # {net_desc} network of {node_desc} and {tie_desc}{change_desc}}")
+  cli::cli_text("{.emph # {net_desc} of {node_desc} and {tie_desc}{change_desc}}")
   cli::cli_end()
   top <- dplyr::as_tibble(tidygraph::activate(x, "nodes"))
   bottom <- dplyr::as_tibble(tidygraph::activate(x, "edges"))
@@ -117,7 +117,8 @@ describe_network <- function(x) {
          ifelse(is_signed(x), "signed, ", ""),
          ifelse(is_weighted(x), "weighted, ", ""),
          ifelse(is_twomode(x), "two-mode", 
-                ifelse(is_directed(x), "directed", "undirected"))
+                ifelse(is_directed(x), "directed", "undirected")),
+         " network"
   )
 }
 
