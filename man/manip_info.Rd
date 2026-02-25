@@ -4,11 +4,17 @@
 \alias{manip_info}
 \alias{add_info}
 \alias{mutate_net}
+\alias{net_info}
+\alias{net_attributes}
 \title{Modifying network data}
 \usage{
 add_info(.data, ...)
 
 mutate_net(.data, ...)
+
+net_info(.data)
+
+net_attributes(.data)
 }
 \arguments{
 \item{.data}{An object of a manynet-consistent class:
