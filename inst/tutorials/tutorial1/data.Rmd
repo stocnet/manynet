@@ -64,10 +64,6 @@ Try it out now!
 
 ```
 
-```{r pkgdata-hint, purl=FALSE}
-data(package = "_____")
-```
-
 ```{r pkgdata-solution}
 data(package = "manynet")
 ```
@@ -123,11 +119,6 @@ and then just typing `ison_adolescents` to see what happens.
 
 ```{r calldata, exercise = TRUE, purl=FALSE}
 
-```
-
-```{r calldata-hint, purl=FALSE}
-library(______)
-ison______
 ```
 
 ```{r calldata-solution}
