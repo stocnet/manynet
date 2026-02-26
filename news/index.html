@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.2</span>
       </span>
     </div>
 
@@ -60,7 +60,32 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.7.1" id="manynet-171">manynet 1.7.1<a class="anchor" aria-label="anchor" href="#manynet-171"></a></h2>
+<h2 class="page-header" data-toc-text="1.7.2" id="manynet-172">manynet 1.7.2<a class="anchor" aria-label="anchor" href="#manynet-172"></a></h2>
+<div class="section level3">
+<h3 id="making-1-7-2">Making<a class="anchor" aria-label="anchor" href="#making-1-7-2"></a></h3>
+<ul><li>Fixed <a href="https://github.com/stocnet/manynet/issues/126" class="external-link">#126</a> with a <code>stopifnot(is.scalar(ties))</code> in <code><a href="../reference/make_stochastic.html">generate_citations()</a></code>
+</li>
+<li>Improved <code><a href="../reference/make_stochastic.html">generate_citations()</a></code> to be clear that it doesn’t yet work on two-mode networks</li>
+<li>Improved <code><a href="../reference/make_mnet.html">describe_network()</a></code> to include “network” as a suffix</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-1-7-2">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-7-2"></a></h3>
+<ul><li>Added <code><a href="../reference/manip_info.html">net_attributes()</a></code> for returning the names of graph attributes</li>
+<li>Added <code><a href="../reference/manip_info.html">net_info()</a></code> for returning the list of graph attributes</li>
+<li>Improved <code><a href="../reference/measure_periods.html">net_waves()</a></code> to now return waves = 1 for cross-sectional networks</li>
+</ul></div>
+<div class="section level3">
+<h3 id="marking-1-7-2">Marking<a class="anchor" aria-label="anchor" href="#marking-1-7-2"></a></h3>
+<ul><li>Fixed <code><a href="../reference/mark_nodes.html">node_is_isolate()</a></code> to work with signed networks</li>
+<li>Fixed <code><a href="../reference/mark_nodes.html">node_is_pendant()</a></code> to work with signed networks</li>
+</ul></div>
+<div class="section level3">
+<h3 id="tutorials-1-7-2">Tutorials<a class="anchor" aria-label="anchor" href="#tutorials-1-7-2"></a></h3>
+<ul><li>Fixed bug in “tutorial1” where <a href="https://rstudio.github.io/renv/" class="external-link">renv</a> was misinterpreting a hint as a package dependency</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.7.1" id="manynet-171">manynet 1.7.1<small>2026-02-19</small><a class="anchor" aria-label="anchor" href="#manynet-171"></a></h2>
 <div class="section level3">
 <h3 id="package-1-7-1">Package<a class="anchor" aria-label="anchor" href="#package-1-7-1"></a></h3>
 <ul><li>Restructured website</li>
