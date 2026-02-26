@@ -8,14 +8,16 @@
 #'   
 #'   - `node_is_isolate()` marks nodes that are isolates,
 #'   with neither incoming nor outgoing ties.
+#'   - `node_is_pendant()` marks nodes that are pendants,
+#'   with only one incoming or outgoing tie.
 #'   - `node_is_independent()` marks nodes that are members of the largest independent set,
 #'   aka largest internally stable set.
 #'   - `node_is_cutpoint()` marks nodes that cut or act as articulation points in a network,
 #'   increasing the number of connected components when removed.
-#'   - `node_is_core()` marks nodes that are members of the network's core.
 #'   - `node_is_fold()` marks nodes that are in a structural fold between two or more
 #'   triangles that are only connected by that node.
 #'   - `node_is_mentor()` marks a proportion of high indegree nodes as 'mentors' (see details).
+#'   - `node_is_neighbor()` marks nodes that are neighbours of a given node.
 #' @inheritParams mark_is
 #' @family marks
 #' @name mark_nodes
@@ -41,7 +43,7 @@ node_is_isolate <- function(.data){
 #' @export
 node_is_pendant <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
-  mat <- as_matrix(.data)
+  mat <- abs(as_matrix(.data))
   if(is_twomode(.data)){
     out <- c(rowSums(mat)==1, colSums(mat)==1)
   } else {

@@ -15,6 +15,7 @@
 ## Marking
 
 - Fixed `node_is_isolate()` to work with signed networks
+- Fixed `node_is_pendant()` to work with signed networks
 
 ## Tutorials
 
