@@ -12,6 +12,10 @@
 - Added `net_info()` for returning the list of graph attributes
 - Improved `net_waves()` to now return waves = 1 for cross-sectional networks
 
+## Marking
+
+- Fixed `node_is_isolate()` to work with signed networks
+
 ## Tutorials
 
 - Fixed bug in "tutorial1" where `{renv}` was misinterpreting a hint as a package dependency

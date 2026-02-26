@@ -27,7 +27,7 @@ NULL
 #' @export
 node_is_isolate <- function(.data){
   if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
-  mat <- as_matrix(.data)
+  mat <- abs(as_matrix(.data)) # using abs() to make sure signed ties counted correctly
   if(is_twomode(.data)){
     out <- c(rowSums(mat)==0, colSums(mat)==0)
   } else {
