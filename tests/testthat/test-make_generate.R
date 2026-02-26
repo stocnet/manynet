@@ -42,5 +42,5 @@ test_that("generate_islands works", {
 })
 
 test_that("generate_citations works", {
-  expect_s3_class(generate_citations(ison_southern_women), "igraph")
+  expect_s3_class(generate_citations(ison_adolescents), "igraph")
 })

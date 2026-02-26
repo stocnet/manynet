@@ -60,3 +60,21 @@ test_that("net_tie_attributes works", {
   expect_equal(net_tie_attributes(net2), "weight")
   expect_length(net_tie_attributes(net2), 1)
 })
+
+net_named <- add_info(ison_adolescents, name = "Adolescents", year = 1994)
+
+test_that("net_info works", {
+  out <- net_info(net_named)
+  expect_type(out, "list")
+  expect_equal(out$name, "Adolescents")
+  expect_equal(out$year, 1994)
+  expect_type(net_info(as_matrix(ison_adolescents)), "list")
+})
+
+test_that("net_attributes works", {
+  out <- net_attributes(net_named)
+  expect_type(out, "character")
+  expect_true("name" %in% out)
+  expect_true("year" %in% out)
+  expect_type(net_attributes(as_matrix(ison_adolescents)), "character")
+})

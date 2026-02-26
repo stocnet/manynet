@@ -1,3 +1,26 @@
+# manynet 1.7.2
+
+## Making
+
+- Fixed #126 with a `stopifnot(is.scalar(ties))` in `generate_citations()`
+- Improved `generate_citations()` to be clear that it doesn't yet work on two-mode networks
+- Improved `describe_network()` to include "network" as a suffix
+
+## Modifying
+
+- Added `net_attributes()` for returning the names of graph attributes
+- Added `net_info()` for returning the list of graph attributes
+- Improved `net_waves()` to now return waves = 1 for cross-sectional networks
+
+## Marking
+
+- Fixed `node_is_isolate()` to work with signed networks
+- Fixed `node_is_pendant()` to work with signed networks
+
+## Tutorials
+
+- Fixed bug in "tutorial1" where `{renv}` was misinterpreting a hint as a package dependency
+
 # manynet 1.7.1
 
 ## Package

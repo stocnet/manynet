@@ -68,13 +68,24 @@ add_info <- function(.data, ...){
 #' @export
 mutate_net <- function(.data, ...){
   info <- list(...)
-  out <- .data
+  out <- as_tidygraph(.data)
   for(item in names(info)){
     igraph::graph_attr(out, item) <- info[[item]]
   }
   out
 }
 
+#' @rdname manip_info
+#' @export
+net_info <- function(.data){
+  igraph::graph_attr(as_igraph(.data))
+}
+
+#' @rdname manip_info
+#' @export
+net_attributes <- function(.data){
+  names(igraph::graph_attr(as_igraph(.data)))
+}
 
 
 

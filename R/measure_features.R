@@ -457,7 +457,7 @@ net_waves <- function(.data){
   if(is_changing(.data)){
     chltime <- as_changelist(.data)$time
     chg_waves <- (max(chltime)+1) - max(min(chltime)-1, 0)
-  } else chg_waves <- 0
+  } else chg_waves <- 1
   max(tie_waves, chg_waves)    
 }
   

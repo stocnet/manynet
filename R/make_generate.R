@@ -395,6 +395,10 @@ generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1,
 generate_citations <- function(n, ties = sample(1:4,1), agebins = max(1, n/10), directed = FALSE){
   directed <- infer_directed(n, directed)
   n <- infer_n(n)
+  if(length(n)>1){
+    snet_abort("There is currently no citation model implemented for two-mode networks.")
+  }
+  stopifnot(is.scalar(ties))
   out <- igraph::sample_last_cit(n, edges = ties, agebins = agebins, directed = directed)
   as_tidygraph(out)
 }
