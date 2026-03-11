@@ -147,7 +147,6 @@ Wallerstein, Immanuel. 1974.
 }
 \seealso{
 Other memberships: 
-\code{\link{member_brokerage}},
 \code{\link{member_cliques}},
 \code{\link{member_community_hier}},
 \code{\link{member_community_non}},
