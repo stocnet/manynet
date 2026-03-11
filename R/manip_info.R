@@ -28,7 +28,10 @@ add_info <- function(.data, ...){
   }
   
   info <- list(...)
+  if(length(info)==0) return(.check_info(.data))
+  
   unrecog <- setdiff(names(info), c("name", "nodes", "ties", "doi", 
+                                    "source",
                                     "collection", "year", "mode", "vertex1", 
                                     "vertex1.total", "vertex2", 
                                     "vertex2.total", 
@@ -88,4 +91,50 @@ net_attributes <- function(.data){
 }
 
 
+.check_info <- function(.data){
+  
+  out <- .data
+  
+  # Names
+  if(is.null(net_name(.data)) || net_name(.data) == ""){
+    snet_prompt("This network does not have a name. Please add one.")
+    out <- add_info(out, name = readline(prompt = "Network name: "))
+  } else snet_success("Network name: {net_name(out)}")
+  
+  # Nodes
+  if(is_twomode(.data) && is.null(net_node_names(.data))){
+    snet_prompt("This two-mode network does not have names for the nodesets. Please add one.")
+    out$nodes <- c(readline(prompt = "Nodeset 1 name: "),
+                   readline(prompt = "Nodeset 2 name: "))
+  } else if(is_twomode(.data)){
+    snet_success("Nodesets: {net_node_names(out)}")
+  } else if(!is_twomode(.data) && is.null(net_node_names(.data))){
+    snet_prompt("This network does not have a name for the nodes. Please add one.")
+    out <- add_info(out, nodes = readline(prompt = "Nodeset name: "))
+  } else snet_success("Nodeset: {net_node_names(out)}")
+  
+  # Source
+  if(!"source" %in% net_attributes(.data)){
+    snet_prompt("This network does not have a source. You may add one.")
+    source_options <- c("Observed", "Synthetic")
+    source <- menu(choices = source_options, title = "Is this network observed or synthetic?")
+    if(source == 1){
+      source_options <- c("Survey", "Interview", "Sensor", "Archival", "Trace", "Ethnography")
+      out <- add_info(out, source = menu(choices = source_options, title = "Source: "))
+    } else if(source == 2){
+      source_options <- c("Deterministic", "Generated", "Simulated")
+      out <- add_info(out, source = menu(choices = source_options, title = "Source: "))
+    }
+  } else snet_success("Source: {net_source(out)}")
+  
+  # Ties
+  if(is.null(net_tie_names(.data))){
+    snet_prompt("This network does not have a name for the ties. Please add one.")
+    out <- add_info(out, ties = readline(prompt = "Ties name: "))
+  } else snet_success("Ties: {net_tie_names(out)}")
+  
+  
+
+  out
+}
 
