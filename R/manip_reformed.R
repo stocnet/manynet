@@ -193,7 +193,13 @@ to_ties <- function(.data) UseMethod("to_ties")
 #' @export
 to_ties.igraph <- function(.data){
   out <- igraph::make_line_graph(.data)
-  out <- add_node_attribute(out, "name", attr(igraph::E(.data), "vnames"))
+  if(!is_labelled(.data)) {
+    igraph::V(out)$name <- paste0(igraph::as_edgelist(.data)[,1], 
+                                  ifelse(is_directed(.data), "->", "-"), 
+                                  igraph::as_edgelist(.data)[,2])
+  } else {
+    igraph::V(out)$name <- attr(igraph::E(.data), "vnames")
+  }
   igraph::V(out)$name <- gsub("\\|", "-", igraph::V(out)$name)
   out
 }
