@@ -231,7 +231,8 @@ as_matrix.matrix <- function(.data,
 #' @export
 as_matrix.igraph <- function(.data,
                              twomode = NULL) {
-  if ((!is.null(twomode) && twomode) | (is.null(twomode) & is_twomode(.data))) {
+  if ((!is.null(twomode) && twomode) | 
+      (is.null(twomode) & is_twomode(.data) & !is_multiplex(.data))) {
     if (is_weighted(.data) | is_signed(.data)) {
       mat <- igraph::as_biadjacency_matrix(.data, sparse = FALSE,
                                            attr = ifelse(is_weighted(.data), "weight", 
@@ -245,6 +246,8 @@ as_matrix.igraph <- function(.data,
       mat <- igraph::as_adjacency_matrix(.data, sparse = FALSE,
                                          attr = ifelse(is_weighted(.data), "weight", 
                                                        ifelse(is_signed(.data), "sign", NULL)))
+      # Where multiplex network 
+      if(anyNA(mat) && is_multiplex(.data)) mat[is.na(mat)] <- 1
     } else {
       mat <- igraph::as_adjacency_matrix(.data, sparse = FALSE,
                                          attr = NULL)
