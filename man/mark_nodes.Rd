@@ -109,7 +109,6 @@ Valente, Thomas, and Rebecca Davis. 1999.
 }
 \seealso{
 Other marks: 
-\code{\link{mark_diff}},
-\code{\link{mark_select}}
+\code{\link{mark_diff}}
 }
 \concept{marks}

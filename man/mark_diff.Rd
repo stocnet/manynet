@@ -65,7 +65,6 @@ in that diffusion.
 }
 \seealso{
 Other marks: 
-\code{\link{mark_nodes}},
-\code{\link{mark_select}}
+\code{\link{mark_nodes}}
 }
 \concept{marks}
