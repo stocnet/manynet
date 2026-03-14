@@ -119,11 +119,11 @@ net_attributes <- function(.data){
     if(!"source" %in% net_attributes(.data)){
       snet_prompt("This network does not have a source. You may add one.")
       source_options <- c("Observed", "Synthetic")
-      source <- menu(choices = source_options, title = "Is this network observed or synthetic?")
+      source <- utils::menu(choices = source_options, title = "Is this network observed or synthetic?")
       if(source == 1){
         method_options <- c("Survey", "Interview", "Sensor", "Archival", "Trace", "Ethnography")
         out <- add_info(out, source = source_options[source],
-                        method = menu(choices = source_options, title = "Method: "))
+                        method = utils::menu(choices = source_options, title = "Method: "))
       } else if(source == 2){
         out <- add_info(out, source = source_options[source],
                         method = readline(prompt = "Model: "))
