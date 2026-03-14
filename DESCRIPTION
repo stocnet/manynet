@@ -25,11 +25,8 @@ Imports:
     pillar,
     tidygraph
 Suggests:
-    autograph,
     knitr,
-    learnr,
     methods,
-    netdiffuseR,
     readxl,
     rmarkdown,
     RSiena,
