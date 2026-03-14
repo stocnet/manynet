@@ -130,7 +130,7 @@ table_data <- function(..., pkg = c("manynet","migraph")) {
     datanames <- datanames[!vapply(datasets, is_list, logical(1))]
     datasets <- datasets[!vapply(datasets, is_list, logical(1))]
     dplyr::tibble(dataset = tibble::char(datanames, min_chars = 18),
-                  components = vapply(datasets, net_components, numeric(1)),
+                  # components = vapply(datasets, net_components, numeric(1)),
                   nodes = vapply(datasets, net_nodes, numeric(1)),
                          ties = vapply(datasets, net_ties, numeric(1)),
                          nattr = vapply(datasets, 
