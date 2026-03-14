@@ -947,7 +947,7 @@ infer_directed <- function(n, directed) {
 
 infer_outdegree <- function(n, outdegree) {
   if (is.null(outdegree) && is_manynet(n)){
-    outdegree <- node_deg(n, direction = "out")
+    outdegree <- .node_deg(n, direction = "out")
     if(is_twomode(n)) outdegree <- outdegree[1:net_dims(n)[1]]
   } 
   outdegree
@@ -955,7 +955,7 @@ infer_outdegree <- function(n, outdegree) {
 
 infer_indegree <- function(n, indegree) {
   if (is.null(indegree) && is_manynet(n)){
-    indegree <- node_deg(n, direction = "in")
+    indegree <- .node_deg(n, direction = "in")
     if(is_twomode(n)) indegree <- indegree[(net_dims(n)[1]+1):sum(net_dims(n))]
   } 
   indegree
