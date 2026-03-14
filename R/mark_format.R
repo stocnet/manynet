@@ -353,7 +353,7 @@ is_changing <- function(.data) {
 #' is_egonet(fict_starwars)
 #' @export
 is_egonet <- function(.data) {
-  if (all(unique(names(.data)) != "")) {
+  if(!is_list(.data)) return(FALSE) else if (all(unique(names(.data)) != "")) {
     length(names(.data)) == length(unique(unlist(unname(lapply(.data, 
                                                                manynet::node_names))))) &
       all(.order_alphabetically(names(.data)) ==
