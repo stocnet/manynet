@@ -465,8 +465,30 @@ as_igraph.diff_model <- function(.data,
 #' @export
 as_igraph.diffnet <- function(.data,
                                  twomode = FALSE) {
-  thisRequires("netdiffuseR")
-  netdiffuseR::diffnet_to_igraph(.data)
+  graph <- .data[, , 1:.data$meta$nper]
+  static.attrs <- colnames(graph$vertex.static.attrs)
+  dynamic.attrs <- colnames(graph$vertex.dyn.attrs[[1]])
+  out <- vector("list", graph$meta$nper)
+  names(out) <- dimnames(graph)[[3]]
+  for (p in 1:length(out)) {
+    tempgraph <- graph$graph[[p]]
+    dimnames(tempgraph) <- with(graph$meta, list(ids, ids))
+    tempgraph <- igraph::graph_from_adjacency_matrix(adjmatrix = tempgraph, 
+                                                     mode = ifelse(graph$meta$undirected, "undirected", 
+                                                                   "directed"), weighted = TRUE, diag = graph$meta$self)
+    for (k in static.attrs) tempgraph <- igraph::set_vertex_attr(graph = tempgraph, 
+                                                                 name = k, value = graph[[k]])
+    for (k in dynamic.attrs) tempgraph <- igraph::set_vertex_attr(graph = tempgraph, 
+                                                                  name = k, value = graph[[k]][[p]])
+    tempgraph <- igraph::set_vertex_attr(graph = tempgraph, name = "toa", 
+                                 value = graph$toa)
+    tempgraph <- igraph::set_graph_attr(tempgraph, "name", 
+                                        graph$meta$name)
+    tempgraph <- igraph::set_graph_attr(tempgraph, "behavior", 
+                                        graph$meta$behavior)
+    out[[p]] <- tempgraph
+  }
+  out
 }
 
 #' @export
@@ -858,8 +880,18 @@ as_network.network.goldfish <- function(.data,
 #' @export
 as_network.diffnet <- function(.data,
                               twomode = FALSE) {
-  thisRequires("netdiffuseR")
-  netdiffuseR::diffnet_to_network(.data)
+  graph <- .data[, , 1:.data$meta$nper]
+  n <- graph$meta$n
+  structure(Map(function(g, a, time) {
+    dimnames(g) <- list(rownames(graph), rownames(graph))
+    ans <- network::network(x = as.matrix(g), 
+                            vertex.attr = c(list(toa = graph$toa),
+                                            unclass(a), unclass(graph$vertex.static.attrs)), 
+                            loops = graph$meta$self)
+    network::set.network.attribute(ans, "name", graph$meta$name)
+    network::set.network.attribute(ans, "behavior", graph$meta$behavior)
+    ans
+  }, g = graph$graph, a = graph$vertex.dyn.attrs), names = dimnames(graph)[[3]])
 }
 
 #' @export
@@ -1145,8 +1177,6 @@ as_diffnet <- function(.data,
 #' @export
 as_diffnet.diff_model <- function(.data,
                                twomode = FALSE) {
-  thisRequires("netdiffuseR")
-  event <- nodes <- NULL
   out <- summary(.data) %>% dplyr::filter(event == "I") %>% 
     dplyr::distinct(nodes, .keep_all = TRUE) %>% 
     dplyr::select(nodes,t)
@@ -1159,8 +1189,14 @@ as_diffnet.diff_model <- function(.data,
     # netdiffuseR::igraph_to_diffnet(graph.list = to_waves(.data))
   } else {
     graph <- as_tidygraph(.data) %>% mutate(toa = as.numeric(toa)) %>% as_igraph()
-    suppressWarnings(netdiffuseR::igraph_to_diffnet(graph = graph,
-                                  toavar = "toa"))  
+    # suppressWarnings(netdiffuseR::igraph_to_diffnet(graph = graph,
+    #                               toavar = "toa"))
+    return(structure(list(graph = graph, toa = toa#, 
+                          # adopt = adopt, 
+                          # cumadopt = cumadopt, vertex.static.attrs = vertex.static.attrs, 
+                          # vertex.dyn.attrs = vertex.dyn.attrs, graph.attrs = graph.attrs, 
+                          # meta = meta
+                          ), class = "diffnet"))
   }
   
 }
