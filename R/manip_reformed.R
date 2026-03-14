@@ -224,6 +224,16 @@ to_ties.matrix <- function(.data){
   as_matrix(to_ties(as_igraph(.data)))
 }
 
+.net_waves <- function(.data){
+  .data <- manynet::expect_nodes(.data)
+  tie_waves <- length(unique(manynet::tie_attribute(.data, "wave")))
+  if(manynet::is_changing(.data)){
+    chltime <- manynet::as_changelist(.data)$time
+    chg_waves <- (max(chltime)+1) - max(min(chltime)-1, 0)
+  } else chg_waves <- 1
+  max(tie_waves, chg_waves)
+}
+
 # #' @rdname manip_project
 # #' @section Galois lattices: 
 # #'   Note that the output from `to_galois()` is very busy at the moment.
@@ -326,10 +336,10 @@ to_time <- function(.data, time) UseMethod("to_time")
 
 #' @export
 to_time.tbl_graph <- function(.data, time){
-  if(time > net_waves(.data)){
+  if(time > .net_waves(.data)){
     snet_info("Sorry, there are not that many waves in this dataset.",
-              "Reverting to the maximum wave:", net_waves(.data))
-    time <- net_waves(.data)
+              "Reverting to the maximum wave:", .net_waves(.data))
+    time <- .net_waves(.data)
   }
   if(is_dynamic(.data)){
     snet_unavailable()

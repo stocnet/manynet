@@ -1034,7 +1034,7 @@ as_diffusion.mnet <- function(.data, twomode = FALSE, events) {
     infected <- dplyr::filter(twin, twin$value == "I")$node
     recovered <- dplyr::filter(twin, twin$value == "R")$node
     infected <- setdiff(infected, recovered)
-    expos <- node_is_exposed(.data, infected)
+    expos <- .node_is_exposed(.data, infected)
     expos[recovered] <- F
     sum(expos)
   }, numeric(1) )
@@ -1075,7 +1075,7 @@ as_diffusion.igraph <- function(.data, twomode = FALSE, events) {
     infected <- dplyr::filter(twin, twin$event == "I")$nodes
     recovered <- dplyr::filter(twin, twin$event == "R")$nodes
     infected <- setdiff(infected, recovered)
-    expos <- node_is_exposed(net, infected)
+    expos <- .node_is_exposed(net, infected)
     expos[recovered] <- F
     sum(expos)
   }, numeric(1) )
@@ -1121,7 +1121,7 @@ as_diffusion.diffnet <- function(.data, twomode = FALSE, events) {
     infected <- dplyr::filter(twin, twin$event == "I")$nodes
     recovered <- dplyr::filter(twin, twin$event == "R")$nodes
     infected <- setdiff(infected, recovered)
-    expos <- node_is_exposed(as_igraph(net), infected)
+    expos <- .node_is_exposed(as_igraph(net), infected)
     expos[infected] <- F
     expos[recovered] <- F
     sum(expos)

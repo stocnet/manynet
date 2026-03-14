@@ -395,10 +395,54 @@ generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1,
                                   islands.size = ceiling(n/islands),
                                   islands.pin = p,
                                   n.inter = bridges)
-    if(net_nodes(out) != n) out <- delete_nodes(out, order(node_constraint(out), decreasing = TRUE)[1:(net_nodes(out)-n)])
+    if(net_nodes(out) != n) out <- delete_nodes(out, 
+          order(.node_constraint(out), decreasing = TRUE)[1:(net_nodes(out)-n)])
     if(directed) out <- to_directed(out)
   }
   as_tidygraph(out)
+}
+
+.node_constraint <- function(.data) {
+  .data <- manynet::expect_nodes(.data)
+  if (manynet::is_twomode(.data)) {
+    get_constraint_scores <- function(mat) {
+      inst <- colnames(mat)
+      rowp <- mat * matrix(1 / rowSums(mat), nrow(mat), ncol(mat))
+      colp <- mat * matrix(1 / colSums(mat), nrow(mat), ncol(mat), byrow = T)
+      res <- vector()
+      for (i in inst) {
+        ci <- 0
+        membs <- names(which(mat[, i] > 0))
+        for (a in membs) {
+          pia <- colp[a, i]
+          oth <- membs[membs != a]
+          pbj <- 0
+          if (length(oth) == 1) {
+            for (j in inst[mat[oth, ] > 0 & inst != i]) {
+              pbj <- sum(pbj, sum(colp[oth, i] * rowp[oth, j] * colp[a, j]))
+            }
+          } else {
+            for (j in inst[colSums(mat[oth, ]) > 0 & inst != i]) {
+              pbj <- sum(pbj, sum(colp[oth, i] * rowp[oth, j] * colp[a, j]))
+            }
+          }
+          cia <- (pia + pbj)^2
+          ci <- sum(ci, cia)
+        }
+        res <- c(res, ci)
+      }
+      names(res) <- inst
+      res
+    }
+    inst.res <- get_constraint_scores(manynet::as_matrix(.data))
+    actr.res <- get_constraint_scores(t(manynet::as_matrix(.data)))
+    res <- c(actr.res, inst.res)
+  } else {
+    res <- igraph::constraint(manynet::as_igraph(.data), 
+                              nodes = igraph::V(.data), 
+                              weights = NULL)
+  }
+  res
 }
 
 #' @rdname make_stochastic 

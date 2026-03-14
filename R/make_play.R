@@ -638,7 +638,7 @@ play_segregation <- function(.data,
   if (missing(mark)){
     if(is_changing(.data)){
       t <- time
-      return(make_node_mark(node_exposure(.data, time = t)>0, .data))
+      return(make_node_mark(.node_exposure(.data, time = t)>0, .data))
     } else if(inherits(.data, "diff_model")){
       mark <- summary(.data) %>% 
         dplyr::filter(t == 0 & event == "I") %>% 
