@@ -300,9 +300,9 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
   for (k in .data[[attribute]]) {
     out[[paste("Time:", formatC(k, width = max(nchar(.data[[attribute]])),
                                 flag = 0))]] <- net %>%
-      tidygraph::mutate(Infected = node_is_infected(diff, time = k),
-                        Exposed = node_is_latent(diff, time = k),
-                        Recovered = node_is_recovered(diff, time = k))
+      tidygraph::mutate(Infected = .node_is_infected(diff, time = k),
+                        Exposed = .node_is_latent(diff, time = k),
+                        Recovered = .node_is_recovered(diff, time = k))
   }
   if (isTRUE(cumulative)) {
     out <- .cumulative_ties(out, attribute)
