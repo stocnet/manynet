@@ -134,27 +134,38 @@ generate_configuration <- function(.data){
   method1 <- "configuration"
   method2 <- "fast.heur.simple"
   if(is_twomode(.data)){
-    degs <- node_deg(.data)
-    outs <- ifelse(!c(attr(degs, "mode")),c(degs),rep(0,length(degs)))
-    ins <- ifelse(c(attr(degs, "mode")),c(degs),rep(0,length(degs)))
+    modes <- node_attribute(.data, "type")
+    degs <- .node_deg(.data)
+    outs <- ifelse(!modes,c(degs),rep(0,length(degs)))
+    ins <- ifelse(modes,c(degs),rep(0,length(degs)))
     out <- igraph::sample_degseq(outs, ins, method = method2)
-    out <- as_tidygraph(out) %>% mutate(type = c(attr(degs, "mode")))
+    out <- as_tidygraph(out) %>% add_node_attribute("type", modes)
   } else {
     if(is_complex(.data) || is_multiplex(.data) && is_directed(.data)) 
-      out <- igraph::sample_degseq(node_deg(.data, direction = "out"), 
-                                   node_deg(.data, direction = "in"),
+      out <- igraph::sample_degseq(.node_deg(.data, direction = "out"), 
+                                   .node_deg(.data, direction = "in"),
                                    method = method1)
     if(is_complex(.data) || is_multiplex(.data) && !is_directed(.data)) 
-      out <- igraph::sample_degseq(node_deg(.data), method = method1)
+      out <- igraph::sample_degseq(.node_deg(.data), method = method1)
     if(!(is_complex(.data) || is_multiplex(.data)) && is_directed(.data)) 
-      out <- igraph::sample_degseq(node_deg(.data, direction = "out"), 
-                                   node_deg(.data, direction = "in"), 
+      out <- igraph::sample_degseq(.node_deg(.data, direction = "out"), 
+                                   .node_deg(.data, direction = "in"), 
                                    method = method2)
     if(!(is_complex(.data) || is_multiplex(.data)) && !is_directed(.data)) 
-      out <- igraph::sample_degseq(node_deg(.data), 
+      out <- igraph::sample_degseq(.node_deg(.data), 
                                    method = method2)
   }
   as_tidygraph(out)
+}
+
+.node_deg <- function(.data, direction = "all"){
+  if(is_twomode(.data)){
+    out <- igraph::degree(as_igraph(.data), mode = ifelse(direction == "out", "out", "in"))
+  } else {
+    out <- igraph::degree(as_igraph(.data), mode = ifelse(direction == "out", "out", 
+                                                  ifelse(direction == "in", "in", "all")))
+  }
+  out
 }
 
 #' @rdname make_random 
@@ -174,12 +185,21 @@ generate_man <- function(n, man = NULL){
   if(!is.null(man) && length(man)==3){
     dcen <- man
   } else if (is_manynet(n)){
-    dcen <- net_by_dyad(n)
+    dcen <- .net_by_dyad(n)
     if(length(dcen)==2) dcen <- c(dcen[1],0,dcen[2])
   } else snet_abort("'man' needs to be specified with a numeric vector of length 3.")
   n <- infer_n(n)
   out <- sna::rguman(1, n, dcen[1], dcen[2], dcen[3])
   as_tidygraph(out)
+}
+
+.net_by_dyad <- function(.data) {
+  .data <- manynet::expect_nodes(.data)
+  out <- suppressWarnings(igraph::dyad_census(manynet::as_igraph(.data)))
+  out <- unlist(out)
+  names(out) <- c("Mutual", "Asymmetric", "Null")
+  if (!manynet::is_directed(.data)) out <- out[c(1, 3)]
+  out
 }
 
 #' @rdname make_random 
