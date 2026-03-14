@@ -63,8 +63,4 @@ in that diffusion.
   (expos <- node_is_exposed(manynet::create_tree(14), mark = c(1,3)))
   which(expos)
 }
-\seealso{
-Other marks: 
-\code{\link{mark_nodes}}
-}
 \concept{marks}
