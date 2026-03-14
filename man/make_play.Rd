@@ -201,12 +201,6 @@ Other makes:
 
 Other models: 
 \code{\link{make_learning}}
-
-Other diffusion: 
-\code{\link{measure_diffusion_infection}},
-\code{\link{measure_diffusion_net}},
-\code{\link{measure_diffusion_node}},
-\code{\link{member_diffusion}}
 }
 \concept{diffusion}
 \concept{makes}

@@ -110,9 +110,6 @@ Valente, Thomas, and Rebecca Davis. 1999.
 \seealso{
 Other marks: 
 \code{\link{mark_diff}},
-\code{\link{mark_select}},
-\code{\link{mark_tie_select}},
-\code{\link{mark_ties}},
-\code{\link{mark_triangles}}
+\code{\link{mark_select}}
 }
 \concept{marks}
