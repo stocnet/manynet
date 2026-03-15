@@ -2,7 +2,7 @@
 
 ## Package
 
-- Moved measuring, marking (node marks, tie marks, node selection, nodal diff marks), membership, and motif functions to `{netrics}`
+- Moved measuring, marking functions (node marks, tie marks, node selection, nodal diff marks), membership, and motif functions to `{netrics}`
 - Moved defunct functions to `{netrics}`
 - Moved `run_tute()` and `extract_tute()` to `{migraph}`
 - Removed `{autograph}`, `{learnr}`, and `{netdiffuseR}` from suggested dependencies
