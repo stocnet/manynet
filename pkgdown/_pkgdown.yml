@@ -127,15 +127,19 @@ reference:
     contents:
       - starts_with("na_to_")
       
-  - title: "Marking"
+  - title: "Identifying"
     desc: |
-      Functions for identifying properties of networks, nodes, or ties,
-      all returning logical scalars or vectors.
+      Functions for measuring networks and returning a numeric vector or value.
+      `net_` measures return one or, in some cases of two-mode measures,
+      two values.
+      All `node_` and `tie_` measures return a single vector,
+      the length of the nodes or ties in the network, respectively.
   - subtitle: "Network marks"
     desc: |
       `is_*()` functions return a single logical value for the network.
     contents:
       - starts_with("is_")
+      - measure_properties
   - subtitle: "Nodal marks"
     desc: |
       `node_is_*()` functions return a vector of logical values the length
@@ -149,61 +153,12 @@ reference:
     contents:
       - starts_with("tie_is_")
     
-  - title: "Measuring"
-    desc: |
-      Functions for measuring networks and returning a numeric vector or value.
-      `net_` measures return one or, in some cases of two-mode measures,
-      two values.
-      All `node_` and `tie_` measures return a single vector,
-      the length of the nodes or ties in the network, respectively.
-  - subtitle: "Description"
-    contents:
-      - starts_with("measure_attributes")
-      - measure_properties
-  - subtitle: "Centrality"
-    contents:
-      - starts_with("measure_central")
-      - measure_holes
-      - measure_hierarchy
-  - subtitle: "Cohesion"
-    contents:
-      - measure_cohesion
-      - measure_closure
-      - measure_features
-      - measure_heterogeneity
-  - subtitle: "Dynamics"
-    contents:
-      - measure_periods
-      - starts_with("measure_diffusion")
-    
-  - title: "Memberships"
-    desc: |
-      Motifs are functions for calculating network subgraphs,
-      always return a matrix or table of nodes as rows and motif or other property as columns,
-      and can be recognised by the `_by_` in the function name.
-      Memberships are functions for identifying community, cluster, or class memberships,
-      always return a string vector the length of the nodes in the network,
-      and can be recognised by the `_in_` in the function name.
-  - subtitle: "Motifs"
-    contents:
-      - contains("_by_")
-  - subtitle: "Members"
-    contents:
-      - contains("_in_")
-      
-  - title: "Methods"
-    desc: "Methods used in other functions but documented here:"
-    contents:
-      - starts_with("model_")
-    
   - title: "Practicing"
-  - subtitle: "Learning"
+  - subtitle: "Interface"
     desc: |
-      Functions for loading and extracting code from tutorials.
-      There is also a function for tabulating the various network data included in the package,
-      providing an overview of their properties.
+      Functions to support new users in learning and interacting with
+      network concepts and data.
     contents:
-      - ends_with("_tute")
       - glossary
       - interface
       
