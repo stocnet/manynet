@@ -93,9 +93,9 @@ can browse through your file system to find the file. Usually both
 `read_*()` and `write_*()` are offered to make sure that `{manynet}` is
 compatible with your larger project and analytic workflow.
 
-- `read_cran()`, `read_dynetml()`, `read_edgelist()`, `read_gml()`,
-  `read_graphml()`, `read_matrix()`, `read_nodelist()`, `read_pajek()`,
-  `read_ucinet()`
+- `read_cran()`, `read_dynetml()`, `read_edgelist()`, `read_gdf()`,
+  `read_gml()`, `read_graphml()`, `read_matrix()`, `read_nodelist()`,
+  `read_pajek()`, `read_pkg()`, `read_ucinet()`
 - `write_edgelist()`, `write_graphml()`, `write_matrix()`,
   `write_nodelist()`, `write_pajek()`, `write_ucinet()`
 
@@ -112,10 +112,10 @@ for analysis. Here are just a few examples, all available in
 <img src="https://www.jameshollway.com/post/manynet/README-ison_egs-1.png" alt="Graphs illustrating several of the classic networks included in the package"/>
 
 Here are some others: `ison_adolescents`, `ison_algebra`,
-`ison_brandes`, `ison_dolphins`, `ison_hightech`, `ison_karateka`,
-`ison_koenigsberg`, `ison_laterals`, `ison_lawfirm`,
-`ison_marvel_relationships`, `ison_marvel_teams`, `ison_monks`,
-`ison_networkers`, `ison_physicians`, `ison_southern_women`
+`ison_brandes`, `ison_dolphins`, `ison_emotions`, `ison_hightech`,
+`ison_judo_moves`, `ison_karateka`, `ison_koenigsberg`, `ison_laterals`,
+`ison_lawfirm`, `ison_monks`, `ison_networkers`, `ison_physicians`,
+`ison_southern_women`
 
 #### Inventing network data
 
@@ -126,10 +126,11 @@ e.g.:
 
 <img src="https://www.jameshollway.com/post/manynet/README-create_egs-1.png" alt="Graphs illustrating the creation of lattices and tree networks"/>
 
-See also `create_components()`, `create_core()`, `create_degree()`,
-`create_ego()`, `create_empty()`, `create_explicit()`,
-`create_filled()`, `create_lattice()`, `create_motifs()`,
-`create_ring()`, `create_star()`, `create_tree()`.
+See also `create_components()`, `create_core()`, `create_cycle()`,
+`create_degree()`, `create_ego()`, `create_empty()`,
+`create_explicit()`, `create_filled()`, `create_lattice()`,
+`create_motifs()`, `create_ring()`, `create_star()`, `create_tree()`,
+`create_wheel()`, `create_windmill()`.
 
 The `generate_*` group of functions generate networks from generative
 mechanisms that may include some random aspect, and so will return a
@@ -231,141 +232,6 @@ See also `to_acyclic()`, `to_anti()`, `to_blocks()`, `to_components()`,
 `to_undirected()`, `to_uniplex()`, `to_unnamed()`, `to_unsigned()`,
 `to_unweighted()`, `to_waves()`, `to_weighted()` and `from_egos()`,
 `from_slices()`, `from_subgraphs()`, `from_ties()`, `from_waves()`.
-
-## Marking
-
-`{manynet}` includes four special groups of functions, each with their
-own pretty `print()` and `plot()` methods: marks, measures, motifs, and
-memberships. Marks are logical scalars or vectors, measures are numeric,
-memberships categorical, and motifs result in tabular outputs.
-
-`{manynet}`’s `*is_*()` functions offer fast logical tests of various
-properties. Whereas `is_*()` returns a single logical value for the
-network, `node_is_*()` returns a logical vector the length of the number
-of nodes in the network, and `tie_is_*()` returns a logical vector the
-length of the number of ties in the network.
-
-- `is_acyclic()`, `is_aperiodic()`, `is_attributed()`, `is_changing()`,
-  `is_complex()`, `is_connected()`, `is_directed()`, `is_dynamic()`,
-  `is_edgelist()`, `is_eulerian()`, `is_graph()`, `is_igraph()`,
-  `is_labelled()`, `is_list()`, `is_longitudinal()`, `is_manynet()`,
-  `is_multiplex()`, `is_perfect_matching()`, `is_signed()`,
-  `is_twomode()`, `is_uniplex()`, `is_weighted()`
-- `node_is_core()`, `node_is_cutpoint()`, `node_is_exposed()`,
-  `node_is_fold()`, `node_is_independent()`, `node_is_infected()`,
-  `node_is_isolate()`, `node_is_latent()`, `node_is_max()`,
-  `node_is_mean()`, `node_is_mentor()`, `node_is_min()`,
-  `node_is_mode()`, `node_is_neighbor()`, `node_is_pendant()`,
-  `node_is_random()`, `node_is_recovered()`, `node_is_universal()`
-- `tie_is_bridge()`, `tie_is_cyclical()`, `tie_is_feedback()`,
-  `tie_is_forbidden()`, `tie_is_imbalanced()`, `tie_is_loop()`,
-  `tie_is_max()`, `tie_is_min()`, `tie_is_multiple()`, `tie_is_path()`,
-  `tie_is_random()`, `tie_is_reciprocated()`, `tie_is_simmelian()`,
-  `tie_is_transitive()`, `tie_is_triangular()`, `tie_is_triplet()`
-
-The `*is_max()` and `*is_min()` functions are used to identify the
-maximum or minimum, respectively, node or tie according to some measure
-(see below).
-
-## Motifs
-
-`{manynet}`‘s `*by_*()` functions tabulate nodes’ frequency in various
-motifs. These include:
-
-- `net_by_brokerage()`, `net_by_dyad()`, `net_by_hazard()`,
-  `net_by_mixed()`, `net_by_quad()`, `net_by_tetrad()`,
-  `net_by_triad()`, `node_by_brokerage()`, `node_by_dyad()`,
-  `node_by_exposure()`, `node_by_path()`, `node_by_quad()`,
-  `node_by_tetrad()`, `node_by_tie()`, `node_by_triad()`
-
-## Memberships
-
-`{manynet}`‘s `*in_*()` functions identify nodes’ membership in some
-grouping, such as a community or component. These functions always
-return a character vector, indicating e.g. that the first node is a
-member of group “A”, the second in group “B”, etc.
-
-- `node_in_adopter()`, `node_in_automorphic()`, `node_in_betweenness()`,
-  `node_in_brokering()`, `node_in_community()`, `node_in_component()`,
-  `node_in_eigen()`, `node_in_equivalence()`, `node_in_fluid()`,
-  `node_in_greedy()`, `node_in_infomap()`, `node_in_leiden()`,
-  `node_in_louvain()`, `node_in_optimal()`, `node_in_partition()`,
-  `node_in_regular()`, `node_in_roulette()`, `node_in_spinglass()`,
-  `node_in_strong()`, `node_in_structural()`, `node_in_walktrap()`,
-  `node_in_weak()`
-
-For example `node_brokerage_census()` returns the frequency of nodes’
-participation in Gould-Fernandez brokerage roles for a one-mode network,
-and the Jasny-Lubell brokerage roles for a two-mode network.
-
-These can be analysed alone, or used as a profile for establishing
-equivalence. `{manynet}` offers both HCA and CONCOR algorithms, as well
-as elbow, silhouette, and strict methods for *k*-cluster selection.
-
-<img src="https://www.jameshollway.com/post/migraph/dendroPlot.png" alt="Plot of a dendrogram of structural equivalence"/>
-
-`{manynet}` also includes functions for establishing membership on other
-bases, such as typical community detection algorithms, as well as
-component and core-periphery partitioning algorithms.
-
-## Measuring
-
-`{manynet}` also offers a large and growing smorgasbord of measures that
-can be used at the node, tie, and network level to measure some feature,
-property, or quantity of the network. Each recognises whether the
-network is directed or undirected, weighted or unweighted, one-mode or
-two-mode. All return normalized values wherever possible, though this
-can be overrided. Here are some examples:
-
-- *Centrality*: `node_degree()`, `node_closeness()`,
-  `node_betweenness()`, and `node_eigenvector()`, `net_degree()`,
-  `net_closeness()`, `net_betweenness()`, and `net_eigenvector()`
-- *Cohesion*: `net_density()`, `net_reciprocity()`,
-  `net_transitivity()`, `net_equivalency()`, and `net_congruency()`
-- *Hierarchy*: `net_connectedness()`, `net_efficiency()`,
-  `net_upperbound()`
-- *Resilience*: `net_components()`, `net_cohesion()`, `net_adhesion()`,
-  `net_diameter()`, `net_length()`
-- *Innovation*: e.g. `node_redundancy()`, `node_effsize()`,
-  `node_efficiency()`, `node_constraint()`, `node_hierarchy()`
-- *Diversity*: `net_richness()`, `net_diversity()`, `net_heterophily()`,
-  `net_assortativity()`, `node_richness()`, `node_diversity()`,
-  `node_heterophily()`, `node_assortativity()`
-- *Topology*: e.g. `net_core()`, `net_factions()`, `net_modularity()`,
-  `net_smallworld()`, `net_balance()`
-- *Diffusion*: e.g. `net_reproduction()`, `net_immunity()`,
-  `node_thresholds()`
-
-There is a lot here, so we recommend you explore [the list of
-functions](https://stocnet.github.io/migraph/reference/index.html) to
-find out more.
-
-## Tutorials
-
-This package includes tutorials to help new and experienced users learn
-how they can conduct social network analysis using the package. These
-tutorials leverage the additional package `{learnr}` (see
-[here](https://rstudio.github.io/learnr/)), but we have made it easy to
-use `{manynet}` or `{migraph}` tutorials right out of the box:
-
-``` r
-run_tute()
-#> Checking tutorials in stocnet packages ■■■■■■■■■■■■■■■■ 50% | …
-#> # A tibble: 9 × 3
-#>   package name      title                   
-#>   <chr>   <chr>     <chr>                   
-#> 1 manynet tutorial0 Intro to R              
-#> 2 manynet tutorial1 Data                    
-#> 3 manynet tutorial2 Visualisation           
-#> 4 manynet tutorial3 Centrality              
-#> 5 manynet tutorial4 Cohesion and Community  
-#> 6 manynet tutorial5 Position and Equivalence
-#> 7 manynet tutorial6 Topology and Resilience 
-#> 8 migraph tutorial7 Diffusion and Learning  
-#> 9 migraph tutorial8 Diversity and Regression
-#> ℹ You can run one of these tutorials by typing e.g `run_tute('tutorial1')` or `run_tute('Data')` into the console.
-# run_tute("tutorial1")
-```
 
 ## Installation
 
