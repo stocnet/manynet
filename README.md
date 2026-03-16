@@ -59,7 +59,6 @@ testing and modelling capabilities see
 - [Motifs](#motifs)
 - [Memberships](#memberships)
 - [Measuring](#measuring)
-- [Tutorials](#tutorials)
 - [Installation](#installation)
   - [Stable](#stable)
   - [Development](#development)
