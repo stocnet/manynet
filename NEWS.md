@@ -1,3 +1,23 @@
+# manynet 2.0.0
+
+## Package
+
+- Moved measuring, marking functions (node marks, tie marks, node selection, nodal diff marks), membership, and motif functions to `{netrics}`
+- Moved defunct functions to `{netrics}`
+- Moved `run_tute()` and `extract_tute()` to `{migraph}`
+- Removed `{autograph}`, `{learnr}`, and `{netdiffuseR}` from suggested dependencies
+
+## Modifying
+
+- Improved `add_info()` so that if no further arguments are given it checks to see whether metadata may be added
+- Internalized `diffnet` coercion so that `{netdiffuseR}` is no longer required
+- Fixed `as_matrix.igraph()` for multiplex networks
+- Fixed `to_ties.igraph()` for unlabelled networks
+
+## Marking
+
+- Fixed `is_egonet()` to return correct value (`FALSE`) for non-netlists
+
 # manynet 1.7.2
 
 ## Making
