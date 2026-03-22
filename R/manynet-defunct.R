@@ -106,6 +106,14 @@ network_tie_attributes <- function(.data) {
   net_tie_attributes(.data)
 }
 
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_mode <- function(.data) {
+  .Deprecated("node_is_mode", package = "manynet",
+              old = "node_mode")
+  node_is_mode(.data)
+}
+
 # Moved to netrics from 2.0.0 ####
 
 #' @describeIn defunct Deprecated on 2026-03-22.
@@ -170,7 +178,7 @@ node_infomap <- function(...) fn_moved("node_infomap", "node_in_infomap", versio
 
 #' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-node_kernighanlin <- function(...) fn_moved("node_kernighanlin", "node_kernighanlin", version = "2.0.0")
+node_kernighanlin <- function(...) fn_moved("node_kernighanlin", "node_in_partition", version = "2.0.0")
 
 #' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
@@ -183,10 +191,6 @@ node_leiden <- function(...) fn_moved("node_leiden", "node_in_leiden", version =
 #' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
 node_louvain <- function(...) fn_moved("node_louvain", "node_in_louvain", version = "2.0.0")
-
-#' @describeIn defunct Deprecated on 2026-03-22.
-#' @export
-node_mode <- function(...) fn_moved("node_mode", "node_mode", version = "2.0.0")
 
 #' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
@@ -315,10 +319,6 @@ tie_is_cyclical <- function(...) fn_moved("tie_is_cyclical", "tie_is_cyclical", 
 #' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
 tie_is_feedback <- function(...) fn_moved("tie_is_feedback", "tie_is_feedback", version = "2.0.0")
-
-#' @describeIn defunct Deprecated on 2026-03-22.
-#' @export
-tie_is_forbidden <- function(...) fn_moved("tie_is_forbidden", "tie_is_forbidden", version = "2.0.0")
 
 #' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
