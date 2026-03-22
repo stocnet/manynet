@@ -9,10 +9,6 @@
 \alias{snet_success}
 \alias{snet_prompt}
 \alias{snet_unavailable}
-\alias{snet_progress_step}
-\alias{snet_progress_along}
-\alias{snet_progress_seq}
-\alias{snet_progress_nodes}
 \title{Console command line interface}
 \usage{
 snet_info(..., .envir = parent.frame())
@@ -28,14 +24,6 @@ snet_success(..., .envir = parent.frame())
 snet_prompt(..., .envir = parent.frame())
 
 snet_unavailable(..., .envir = parent.frame())
-
-snet_progress_step(..., .envir = parent.frame())
-
-snet_progress_along(..., .envir = parent.frame())
-
-snet_progress_seq(..., .envir = parent.frame())
-
-snet_progress_nodes(..., .envir = parent.frame())
 }
 \arguments{
 \item{...}{One or more character strings.
@@ -48,6 +36,15 @@ pasted together.}
 \description{
 These functions wrap \code{{cli}} functions and elements
 to build an attractive command line interface (CLI).
+\itemize{
+\item \code{snet_info()} for general information messages.
+\item \code{snet_minor_info()} for minor information messages.
+\item \code{snet_warn()} for warning messages.
+\item \code{snet_abort()} for error messages.
+\item \code{snet_success()} for success messages.
+\item \code{snet_prompt()} for prompts to the user.
+\item \code{snet_unavailable()} for features that are not yet available.
+}
 
 If you wish to receive fewer messages in the console,
 run \code{options(snet_verbosity = 'quiet')}.

@@ -1,7 +1,17 @@
+# Information ####
+
 #' Console command line interface
 #' @description
 #'   These functions wrap `{cli}` functions and elements
 #'   to build an attractive command line interface (CLI).
+#'   
+#'   - `snet_info()` for general information messages.
+#'   - `snet_minor_info()` for minor information messages.
+#'   - `snet_warn()` for warning messages.
+#'   - `snet_abort()` for error messages.
+#'   - `snet_success()` for success messages.
+#'   - `snet_prompt()` for prompts to the user.
+#'   - `snet_unavailable()` for features that are not yet available.
 #'   
 #'   If you wish to receive fewer messages in the console,
 #'   run `options(snet_verbosity = 'quiet')`.
@@ -67,21 +77,39 @@ snet_unavailable <- function(..., .envir = parent.frame()){
                    .envir = .envir)
 }
 
-#' @rdname interface
+# Progress ####
+
+#' Console command line interface
+#' @description
+#'   These functions wrap `{cli}` functions and elements
+#'   to build an attractive command line interface (CLI).
+#'   
+#'   - `snet_progress_step()` for progress steps.
+#'   - `snet_progress_along()` for progress along a vector.
+#'   - `snet_progress_seq()` for progress along a sequence.
+#'   - `snet_progress_nodes()` for progress along the nodes of a network.
+#'   
+#'   If you wish to receive fewer messages in the console,
+#'   run `options(snet_verbosity = 'quiet')`.
+#' @inheritParams interface
+#' @name progress
+NULL
+
+#' @rdname progress
 #' @export
 snet_progress_step <- function(..., .envir = parent.frame()){
   if(getOption("snet_verbosity", default = "quiet")!="quiet")
     cli::cli_progress_step(..., .envir = .envir)
 }
 
-#' @rdname interface
+#' @rdname progress
 #' @export
 snet_progress_along <- function(..., .envir = parent.frame()){
   if(getOption("snet_verbosity", default = "quiet")!="quiet")
     cli::cli_progress_along(..., .envir = .envir)
 }
 
-#' @rdname interface
+#' @rdname progress
 #' @export
 snet_progress_seq <- function(..., .envir = parent.frame()){
   if(getOption("snet_verbosity", default = "quiet")!="quiet")
@@ -89,7 +117,7 @@ snet_progress_seq <- function(..., .envir = parent.frame()){
                             total = ..., clear = TRUE)
 }
 
-#' @rdname interface
+#' @rdname progress
 #' @export
 snet_progress_nodes <- function(..., .envir = parent.frame()){
   if(getOption("snet_verbosity", default = "quiet")!="quiet" && interactive()){
@@ -97,6 +125,8 @@ snet_progress_nodes <- function(..., .envir = parent.frame()){
                             total = ..., clear = TRUE)
   } else seq.int(net_nodes(...))
 }
+
+# Console theme ####
 
 manynet_console_theme <- function(){
   # dark <- detect_dark_theme(dark)
@@ -113,6 +143,11 @@ manynet_console_theme <- function(){
        `.alert-info` = list(before = function() paste0(col_mnet_blue(cli::symbol$info), " ")), 
        `.alert-start` = list(before = function() paste0(cli::symbol$arrow_right, " ")), 
        span.pkg = list(color = "#199D77", `font-weight` = "bold"), 
+       span.mnet = list(color = "#fda030", `font-weight` = "bold"),
+       span.tric = list(color = "#199D77", `font-weight` = "bold"),
+       span.auto = list(color = "#d22a20", `font-weight` = "bold"),
+       span.infr = list(color = "#4576B5", `font-weight` = "bold"),
+       span.migr = list(color = "#e6298a", `font-weight` = "bold"),
        span.version = list(color = "#D83127"), 
        span.emph = list(color = "#D83127"), 
        span.strong = list(`font-weight` = "bold", `font-style` = "italic"), 
@@ -144,9 +179,15 @@ simple_theme_code <- function(){
   # }
 }
 
+col_mnet_yellow <- cli::make_ansi_style("#e6ab04")
+
 col_mnet_green <- cli::make_ansi_style("#199D77")
 
 col_mnet_blue <- cli::make_ansi_style("#4576B5")
+
+col_mnet_red <- cli::make_ansi_style("#d22a20")
+
+col_mnet_pink <- cli::make_ansi_style("#e6298a")
 
 .quiet <- function(x) { 
   sink(tempfile()) 
