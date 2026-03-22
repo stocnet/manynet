@@ -12,6 +12,8 @@
 \alias{network_dims.network}
 \alias{network_node_attributes}
 \alias{network_tie_attributes}
+\alias{node_degree}
+\alias{node_deg}
 \title{Functions that have been renamed, superseded, or are no longer working}
 \usage{
 pkg_data(pkg = "manynet")
@@ -33,6 +35,10 @@ network_dims.network(.data)
 network_node_attributes(.data)
 
 network_tie_attributes(.data)
+
+node_degree(...)
+
+node_deg(...)
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
@@ -64,6 +70,10 @@ wherever possible and update your scripts accordingly.
 \item \code{network_node_attributes()}: Deprecated on 2024-06-20.
 
 \item \code{network_tie_attributes()}: Deprecated on 2024-06-20.
+
+\item \code{node_degree()}: Deprecated on 2026-03-22.
+
+\item \code{node_deg()}: Deprecated on 2026-03-22.
 
 }}
 \keyword{internal}
