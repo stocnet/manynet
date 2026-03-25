@@ -176,11 +176,26 @@ join_nodes <- function(.data, object2, .by = NULL,
   if(is_graph(object2)){
     object2 <- as_tidygraph(object2)
   }
-  switch(join_type,
+  if(is_labelled(.data) && is_labelled(object2)){
+    if(is.null(.by)) .by <- "name"
+  } else if(is_labelled(.data) && !is_labelled(object2)){
+    snet_unavailable("Joining a labelled and an unlabelled object is not currently supported.")
+  } else if(!is_labelled(.data) && is_labelled(object2)){
+    snet_unavailable("Joining an unlabelled and a labelled object is not currently supported.")
+  } else if(!is_labelled(.data) && !is_labelled(object2)){
+    if(is.null(.by)) .by <- "id"
+    out <- out %>% mutate(id = 1:net_nodes(out))
+    object2 <- object2 %>% mutate(id = 1:net_nodes(object2))
+  }
+  out <- switch(join_type,
          "full" = dplyr::full_join(out, object2, by = .by, copy = TRUE),
          "left" = dplyr::left_join(out, object2, by = .by, copy = TRUE),
          "right" = dplyr::right_join(out, object2, by = .by, copy = TRUE),
          "inner" = dplyr::inner_join(out, object2, by = .by, copy = TRUE))
+  if(!is_labelled(.data) && !is_labelled(object2)){
+    out <- out %>% select(-id)
+  }
+  out
 }
 
 #' @rdname manip_nodes
