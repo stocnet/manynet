@@ -497,7 +497,7 @@ play_segregation <- function(.data,
                                                                           igraph::V(temp)[dissatisfied], 
                                                                           igraph::V(temp)[unoccupied]))])
     if(is.na(move_to)) next
-    print(paste("Moving node", dissatisfied, "to node", move_to))
+    snet_minor_info("Moving node {dissatisfied} to node {move_to}")
     temp <- add_node_attribute(temp, attribute, 
                                         swtch(current, dissatisfied, move_to))
     moved <- c(dissatisfied, moved)
