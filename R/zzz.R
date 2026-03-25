@@ -27,8 +27,8 @@
       # "i" = "Changing the theme of all your graphs is straightforward with `set_manynet_theme()`",
       "i" = "If too many messages appear in the console, run `options(snet_verbosity = 'quiet')`",
       "i" = "Explore changes since the last version with {.code news(package = 'manynet')}.",
-      "i" = "Visit the website to learn more: {.url https://stocnet.github.io/manynet/}.",
-      "i" = "The 'Function Overview' may suggest new analytic opportunities: {.url https://stocnet.github.io/manynet/reference/index.html}.",
+      "i" = "Visit {.url https://stocnet.github.io/manynet/} to learn more.",
+      "i" = "The 'Function Overview' may suggest options: {.url https://stocnet.github.io/manynet/reference/index.html}.",
       "i" = "Discover {.emph stocnet} R packages at {.url https://github.com/stocnet/}.",
       # "i" = "Star me at {.url https://github.com/users/follow?target=jhollway}.",
       "i" = "You can list all the tutorials available in {.pkg manynet} using {.fn run_tute}, and run them too!"
