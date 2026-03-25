@@ -66,8 +66,7 @@ test_that("to anti works", {
 
 test_that("to, and from, waves work", {
   orig <- ison_adolescents %>%
-    activate(edges) %>%
-    mutate(wave = sample(1995:1998, 10, replace = TRUE))
+    mutate_ties(wave = sample(1995:1998, 10, replace = TRUE))
   waves <- to_waves(orig, attribute = "wave")
   from_wave <- from_waves(waves)
   expect_length(waves, length(unique(tie_attribute(orig, "wave"))))
