@@ -127,5 +127,5 @@ from_ties <- function(netlist, netnames){
                       netlist[[x]] } else { 
                         mutate_ties(netlist[[x]], type = names(netlist)[x])
                         })
-  Reduce(tidygraph::graph_join, netlist)
+  suppressMessages(Reduce(tidygraph::graph_join, netlist))
 }
