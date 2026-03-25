@@ -20,7 +20,7 @@ to_tree(.data)
 to_dominating(.data, from, direction = c("out", "in"))
 }
 \arguments{
-\item{.data}{An object of a manynet-consistent class:
+\item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
 \item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
@@ -52,7 +52,9 @@ described in Valente and Davis (1999).}
 
 \item{from}{The index or name of the node from which the path should be traced.}
 
-\item{direction}{String, either "out" or "in".}
+\item{direction}{Character string, “out” bases the measure on outgoing ties,
+“in” on incoming ties, and "all" on either/the sum of the two.
+By default "all".}
 }
 \value{
 All \code{to_} functions return an object of the same class as that provided.

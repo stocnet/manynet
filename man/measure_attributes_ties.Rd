@@ -17,7 +17,7 @@ tie_signs(.data)
 tie_is_twomode(.data)
 }
 \arguments{
-\item{.data}{An object of a manynet-consistent class:
+\item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
 \item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
@@ -26,7 +26,8 @@ tie_is_twomode(.data)
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
 
-\item{attribute}{Character string naming an attribute in the object.}
+\item{attribute}{Character string naming a nodal attribute.
+The attribute itself may be a logical mark, numeric measure, or character membership vector.}
 }
 \description{
 These functions extract certain attributes from network data:

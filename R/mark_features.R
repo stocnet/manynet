@@ -12,14 +12,7 @@
 #'   where that path passes through every tie exactly once.
 #'   - `is_acyclic()` tests whether network is a directed acyclic graph.
 #'   - `is_aperiodic()` tests whether network is aperiodic.
-#' @param .data An object of a `{manynet}`-consistent class:
-#'   \itemize{
-#'   \item matrix (adjacency or incidence) from `{base}` R
-#'   \item edgelist, a data frame from `{base}` R or tibble from `{tibble}`
-#'   \item igraph, from the `{igraph}` package
-#'   \item network, from the `{network}` package
-#'   \item tbl_graph, from the `{tidygraph}` package
-#'   }
+#' @template param_data
 #' @return TRUE if the condition is met, or FALSE otherwise.
 #' @family marking
 #' @name mark_features

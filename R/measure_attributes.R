@@ -15,7 +15,7 @@
 #' @name measure_attributes_nodes
 #' @family measures
 #' @inheritParams mark_is
-#' @param attribute Character string naming an attribute in the object.
+#' @template param_attr
 NULL
 
 #' @rdname measure_attributes_nodes
@@ -76,7 +76,7 @@ node_is_mode <- function(.data){
 #' @name measure_attributes_ties
 #' @family measures
 #' @inheritParams mark_is
-#' @param attribute Character string naming an attribute in the object.
+#' @template param_attr
 NULL
 
 #' @rdname measure_attributes_ties
