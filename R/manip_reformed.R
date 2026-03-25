@@ -86,9 +86,17 @@ to_mode1.matrix <- function(.data,
 to_mode1.igraph <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
   similarity <- match.arg(similarity)
   if(similarity == "count") igraph::bipartite_projection(.data)$proj1 else {
-    as_igraph(to_mode1(as_matrix(.data), similarity)) %>% 
-      join_nodes(object2 = .data, join_type = "left") %>% 
-      mutate_nodes(type = NULL) %>%
+    if(!is_labelled(.data)){
+      nind <- seq_len(net_nodes(.data))
+      temp <- .data %>% mutate_nodes(name = paste0("x", nind))
+      out <- temp %>% as_matrix() %>% to_mode1(similarity) %>% as_igraph() %>% 
+        join_nodes(object2 = temp, join_type = "left",
+                   .by = dplyr::join_by(name)) %>% 
+        mutate_nodes(name = NULL)
+    } else out <- as_igraph(to_mode1(as_matrix(.data), similarity)) %>% 
+        join_nodes(object2 = .data, join_type = "left",
+                                     .by = dplyr::join_by(name))
+    out %>% mutate_nodes(type = NULL) %>%
       select_nodes(dplyr::where(~ !all(is.na(.))))
   }
 }
@@ -150,9 +158,17 @@ to_mode2.matrix <- function(.data, similarity = c("count","jaccard","rand","pear
 to_mode2.igraph <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
   similarity <- match.arg(similarity)
   if(similarity == "count") igraph::bipartite_projection(.data)$proj2 else {
-    as_igraph(to_mode2(as_matrix(.data), similarity)) %>% 
-      join_nodes(object2 = .data, join_type = "left") %>% 
-      mutate_nodes(type = NULL) %>%
+    if(!is_labelled(.data)){
+      nind <- seq_len(net_nodes(.data))
+      temp <- .data %>% mutate_nodes(name = paste0("x", nind))
+      out <- temp %>% as_matrix() %>% to_mode2(similarity) %>% as_igraph() %>% 
+        join_nodes(object2 = temp, join_type = "left",
+                   .by = dplyr::join_by(name)) %>% 
+        mutate_nodes(name = NULL)
+    } else out <- as_igraph(to_mode2(as_matrix(.data), similarity)) %>% 
+        join_nodes(object2 = .data, join_type = "left",
+                   .by = dplyr::join_by(name))
+    out %>% mutate_nodes(type = NULL) %>%
       select_nodes(dplyr::where(~ !all(is.na(.))))
   }
 }
@@ -306,7 +322,7 @@ to_no_missing.tbl_graph <- function(.data){
 #'   By default 0. 
 #'   Increasing this to 1 excludes the ego,
 #'   and 2 excludes ego's direct alters.
-#' @param direction String, either "out" or "in".
+#' @template param_dir
 #' @export
 to_ego <- function(.data, node, max_dist = 1, min_dist = 0,
                    direction = c("out","in")) UseMethod("to_ego")
