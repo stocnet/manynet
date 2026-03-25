@@ -129,26 +129,23 @@ reference:
       
   - title: "Identifying"
     desc: |
-      Functions for measuring networks and returning a numeric vector or value.
-      `net_` measures return one or, in some cases of two-mode measures,
-      two values.
-      All `node_` and `tie_` measures return a single vector,
-      the length of the nodes or ties in the network, respectively.
+      Functions for identifying properties of networks,
+      nodes (where the function prefix is `node_`), or ties (where the function prefix is `tie_`).
   - subtitle: "Network marks"
     desc: |
       `is_*()` functions return a single logical value for the network.
     contents:
       - starts_with("is_")
       - measure_properties
-  - subtitle: "Nodal marks"
+  - subtitle: "Nodal attributes"
     desc: |
-      `node_is_*()` functions return a vector of logical values the length
+      `node_*()` functions return a vector of values the length
       of the nodes in the network.
     contents:
       - starts_with("node_is_")
-  - subtitle: "Tie marks"
+  - subtitle: "Tie attributes"
     desc: |
-      `tie_is_*()` functions return a vector of logical values the length
+      `tie_*()` functions return a vector of values the length
       of the ties in the network.
     contents:
       - starts_with("tie_is_")
@@ -161,6 +158,7 @@ reference:
     contents:
       - glossary
       - interface
+      - progress
       
   - title: "Data"
     desc: |
