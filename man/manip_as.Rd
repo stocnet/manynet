@@ -13,6 +13,7 @@
 \alias{as_graphAM}
 \alias{as_diffusion}
 \alias{as_diffnet}
+\alias{as_snet}
 \title{Modifying network classes}
 \usage{
 as_nodelist(.data)
@@ -36,6 +37,8 @@ as_graphAM(.data, twomode = NULL)
 as_diffusion(.data, twomode = FALSE, events)
 
 as_diffnet(.data, twomode = FALSE)
+
+as_snet(.data, ...)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:

@@ -51,6 +51,6 @@ tie_is_twomode(fict_actually)
 \seealso{
 Other measures: 
 \code{\link{measure_attributes_nodes}},
-\code{\link{measure_properties}}
+\code{\link{measure_dims}}
 }
 \concept{measures}
