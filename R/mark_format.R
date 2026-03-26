@@ -66,6 +66,12 @@ is_twomode.data.frame <- function(.data) {
 }
 
 #' @export
+is_twomode.snet <- function(.data) {
+  if(is.null(.data$nodes)) return(FALSE) else if (!"mode" %in% names(.data$nodes)) 
+    return(FALSE) else length(unique(.data$nodes$mode)) == 2
+}
+
+#' @export
 is_twomode.numeric <- function(.data) {
   return(FALSE)
 }
@@ -127,6 +133,11 @@ is_directed.data.frame <- function(.data) {
 #' @export
 is_directed.igraph <- function(.data) {
   if(is_twomode(.data)) FALSE else igraph::is_directed(.data)
+}
+
+#' @export
+is_directed.snet <- function(.data) {
+  if(is_twomode(.data)) FALSE else any(.data$info$directed)
 }
 
 #' @export
