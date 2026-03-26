@@ -1201,3 +1201,43 @@ as_diffnet.diff_model <- function(.data,
   
 }
 
+# stocnet ####
+
+#' @rdname manip_as
+#' @export
+as_snet <- function(.data, ...) UseMethod("as_snet")
+
+#' @export
+as_snet.igraph <- function(.data, ...) {
+  info <- net_info(.data)
+  nodes <- as_nodelist(.data)
+  changes <- as_changelist(.data)
+  ties <- as_edgelist(.data)
+  
+  if(is_labelled(.data)){
+    ties$from <- match(ties$from, nodes$name)
+    ties$to <- match(ties$to, nodes$name)
+    nodes$label <- nodes$name
+    nodes$name <- NULL
+  }
+  if(is_twomode(.data)){
+    if(!is.null(info$nodes) && length(info$nodes) == 2){
+      nodes$mode <- info$nodes[(nodes$type*1+1)]
+      nodes$type <- NULL
+    }
+  }
+  if(!is.null(info$changes)) info$changes <- NULL
+  info$directed <- is_directed(.data)
+  
+  nodes <- dplyr::select(nodes, 
+                         dplyr::any_of(c("label", "mode")), 
+                         dplyr::everything())
+  if(ncol(nodes)==0) nodes <- NULL
+  if(ncol(changes)==0) changes <- NULL
+  if(ncol(ties)==0) ties <- NULL
+  
+  out <- list(info = info, nodes = nodes, changes = changes, ties = ties)
+  class(out) <- c("snet", class(out))
+  out
+}
+  
