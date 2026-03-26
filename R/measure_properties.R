@@ -1,19 +1,14 @@
-#' Describing network properties
-#' 
+# Dimensions ####
+
+#' Describing network dimensions
+#' @name measure_dims
 #' @description 
 #'   These functions extract certain attributes from given network data:
 #'   
-#'   - `net_name()` returns the name of the network, if it has one.
 #'   - `net_nodes()` returns the total number of nodes (of any mode) in a network.
 #'   - `net_ties()` returns the number of ties in a network.
 #'   - `net_dims()` returns the dimensions of a network in a vector
 #'   as long as the number of modes in the network.
-#'   - `net_node_names()` returns a vector of the names of the nodes in a network,
-#'   if they have been defined.
-#'   - `net_node_attributes()` returns a vector of nodal attributes in a network.
-#'   - `net_tie_names()` returns a vector of the names of the ties in a network,
-#'   if they have been defined.
-#'   - `net_tie_attributes()` returns a vector of tie attributes in a network.
 #'   
 #'   These functions are also often used as helpers within other functions.
 #' @return `net_*()` functions always relate to the overall graph or network,
@@ -21,17 +16,13 @@
 #'   `net_dims()` returns an integer of the number of nodes in a one-mode network,
 #'   or two integers representing the number of nodes in each nodeset 
 #'   in the case of a two-mode network.
-#'   `net_*_attributes()` returns a string vector with the names
-#'   of all node or tie attributes in the network.
-#' @name measure_properties
 #' @family measures
-#' @inheritParams mark_is
+#' @template param_data
 NULL
 
-#' @rdname measure_properties
-#' @param prefix An optional string to be added before the name of the network.
+#' @rdname measure_dims
 #' @examples
-#' net_name(ison_southern_women)
+#' net_nodes(ison_southern_women)
 #' @export
 net_name <- function(.data, prefix = NULL){
   existname <- ""
@@ -117,6 +108,31 @@ net_dims.network <- function(.data){
 }
 
 #' @rdname measure_properties
+
+# Names ####
+
+#' Describing network names
+#' @name measure_names
+#' @description 
+#'   These functions extract certain attributes from given network data:
+#'   
+#'   - `net_name()` returns the name of the network, if it has one.
+#'   - `net_node_names()` returns a vector of the names of the nodes in a network,
+#'   if they have been defined.
+#'   - `net_node_attributes()` returns a vector of nodal attributes in a network.
+#'   - `net_tie_names()` returns a vector of the names of the ties in a network,
+#'   if they have been defined.
+#'   - `net_tie_attributes()` returns a vector of tie attributes in a network.
+#'   
+#'   These functions are also often used as helpers within other functions.
+#' @return `net_*()` functions always relate to the overall graph or network,
+#'   usually returning a scalar.
+#'   `net_*_attributes()` returns a string vector with the names
+#'   of all node or tie attributes in the network.
+#' @family attributes
+#' @template param_data
+NULL
+
 #' @importFrom igraph graph_attr
 #' @examples
 #'   net_node_names(ison_algebra)
@@ -134,7 +150,7 @@ net_node_attributes <- function(.data){
   igraph::vertex_attr_names(as_igraph(.data))
 }
 
-#' @rdname measure_properties
+#' @rdname measure_names
 #' @importFrom igraph graph_attr
 #' @examples
 #'   net_tie_names(ison_algebra)
