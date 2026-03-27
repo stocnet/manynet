@@ -187,7 +187,9 @@ net_node_names <- function(.data) UseMethod("net_node_names")
 
 #' @export
 net_node_names.igraph <- function(.data){
-  igraph::graph_attr(.data, "nodes")
+  igraph::graph_attr(.data, "nodes") %||%
+    c(igraph::graph_attr(.data, "grand")$vertex1,
+      igraph::graph_attr(.data, "grand")$vertex2)
 }
 
 #' @export
@@ -213,7 +215,9 @@ net_tie_names <- function(.data) UseMethod("net_tie_names")
 
 #' @export
 net_tie_names.igraph <- function(.data){
-  igraph::graph_attr(.data, "ties")
+  igraph::graph_attr(.data, "ties") %||%
+    c(igraph::graph_attr(.data, "grand")$edge.pos,
+      igraph::graph_attr(.data, "grand")$edge.neg)
 }
 
 #' @export
