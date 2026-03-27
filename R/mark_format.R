@@ -1,33 +1,23 @@
-# Formats ####
+# Node Formats ####
 
-#' Marking networks formats
-#'
+#' Marking networks nodal formats
+#' @name mark_format_node
 #' @description
 #'   These functions implement logical tests for various network properties.
 #'   All `is_*()` functions return a logical scalar (TRUE or FALSE).
 #'   
 #'   - `is_twomode()` marks networks TRUE if they contain two sets of nodes.
-#'   - `is_weighted()` marks networks TRUE if they contain tie weights.
-#'   - `is_directed()` marks networks TRUE if the ties specify which node
-#'   is the sender and which the receiver.
 #'   - `is_labelled()` marks networks TRUE if there is a 'names' attribute
 #'   for the nodes.
 #'   - `is_attributed()` marks networks TRUE if there are other nodal attributes
 #'   than 'names' or 'type'.
-#'   - `is_signed()` marks networks TRUE if the ties can be either positive
-#'   or negative.
-#'   - `is_complex()` marks networks TRUE if any ties are loops,
-#'   with the sender and receiver being the same node.
-#'   - `is_multiplex()` marks networks TRUE if it contains multiple types 
-#'   of ties, such that there can be multiple ties between the same
-#'   sender and receiver.
-#'   - `is_uniplex()` marks networks TRUE if it is neither complex nor multiplex.
-#' @inheritParams mark_is
-#' @family marking
-#' @name mark_format
+#'   - `is_egonet()` marks networks TRUE if it is a list of networks where each
+#'   network contains only one node and its ties.
+#' @template param_data
+#' @family marks
 NULL
 
-#' @rdname mark_format
+#' @rdname mark_format_node
 #' @importFrom igraph is_bipartite
 #' @examples
 #' is_twomode(create_filled(c(2,2)))
@@ -83,79 +73,7 @@ is_twomode.list <- function(.data) {
   }
 }
 
-#' @rdname mark_format
-#' @importFrom igraph is_weighted
-#' @examples
-#' is_weighted(create_tree(3))
-#' @export
-is_weighted <- function(.data) UseMethod("is_weighted")
-
-#' @export
-is_weighted.igraph <- function(.data) {
-  igraph::is_weighted(.data)
-}
-
-#' @export
-is_weighted.tbl_graph <- function(.data) {
-  igraph::is_weighted(.data)
-}
-
-#' @export
-is_weighted.matrix <- function(.data) {
-  !all(.data == 0 | .data == 1)
-}
-
-#' @export
-is_weighted.network <- function(.data) {
-  "weight" %in% network::list.edge.attributes(.data)
-}
-
-#' @export
-is_weighted.data.frame <- function(.data) {
-  ncol(.data)>=3 && 
-    ("weight" %in% names(.data) | is.numeric(.data[,3]))
-}
-
-#' @rdname mark_format
-#' @importFrom igraph is_directed
-#' @examples
-#' is_directed(create_tree(2))
-#' is_directed(create_tree(2, directed = TRUE))
-#' @export
-is_directed <- function(.data) UseMethod("is_directed")
-
-#' @export
-is_directed.data.frame <- function(.data) {
-  !(.infer_net_reciprocity(.data) == 0 |
-      .infer_net_reciprocity(.data) == 1)
-}
-
-#' @export
-is_directed.igraph <- function(.data) {
-  if(is_twomode(.data)) FALSE else igraph::is_directed(.data)
-}
-
-#' @export
-is_directed.snet <- function(.data) {
-  if(is_twomode(.data)) FALSE else any(.data$info$directed)
-}
-
-#' @export
-is_directed.tbl_graph <- function(.data) {
-  if(is_twomode(.data)) FALSE else igraph::is_directed(.data)
-}
-
-#' @export
-is_directed.network <- function(.data) {
-  .data$gal$directed
-}
-
-#' @export
-is_directed.matrix <- function(.data) {
-  if(is_twomode(.data)) FALSE else !isSymmetric(.data)
-}
-
-#' @rdname mark_format
+#' @rdname mark_format_node
 #' @importFrom igraph is_named
 #' @examples
 #' is_labelled(create_empty(3))
@@ -194,7 +112,134 @@ is_labelled.list <- function(.data) {
   }
 }
 
-#' @rdname mark_format
+#' @rdname mark_format_node
+#' @examples
+#' is_attributed(ison_algebra)
+#' @export
+is_attributed <- function(.data) {
+  length(setdiff(net_node_attributes(.data), c("type","name")))!=0
+}
+
+#' @rdname mark_format_node
+#' @examples 
+#' is_egonet(fict_starwars)
+#' @export
+is_egonet <- function(.data) {
+  if(!is_list(.data)) return(FALSE) else if (all(unique(names(.data)) != "")) {
+    length(names(.data)) == length(unique(unlist(unname(lapply(.data, 
+                                                               manynet::node_names))))) &
+      all(.order_alphabetically(names(.data)) ==
+            .order_alphabetically(unique(unlist(unname(lapply(.data, 
+                                                              manynet::node_names))))))
+  } else FALSE
+}
+
+# Tie Formats ####
+
+#' Marking networks tie formats
+#' @name mark_format_tie
+#' @description
+#'   These functions implement logical tests for various network properties.
+#'   All `is_*()` functions return a logical scalar (TRUE or FALSE).
+#'   
+#'   - `is_twomode()` marks networks TRUE if they contain two sets of nodes.
+#'   - `is_weighted()` marks networks TRUE if they contain tie weights.
+#'   - `is_directed()` marks networks TRUE if the ties specify which node
+#'   is the sender and which the receiver.
+#'   - `is_labelled()` marks networks TRUE if there is a 'names' attribute
+#'   for the nodes.
+#'   - `is_attributed()` marks networks TRUE if there are other nodal attributes
+#'   than 'names' or 'type'.
+#'   - `is_signed()` marks networks TRUE if the ties can be either positive
+#'   or negative.
+#'   - `is_complex()` marks networks TRUE if any ties are loops,
+#'   with the sender and receiver being the same node.
+#'   - `is_multiplex()` marks networks TRUE if it contains multiple types 
+#'   of ties, such that there can be multiple ties between the same
+#'   sender and receiver.
+#'   - `is_uniplex()` marks networks TRUE if it is neither complex nor multiplex.
+#' @template param_data
+#' @family marks
+NULL
+
+#' @rdname mark_format_tie
+#' @importFrom igraph is_weighted
+#' @examples
+#' is_weighted(create_tree(3))
+#' @export
+is_weighted <- function(.data) UseMethod("is_weighted")
+
+#' @export
+is_weighted.igraph <- function(.data) {
+  igraph::is_weighted(.data)
+}
+
+#' @export
+is_weighted.tbl_graph <- function(.data) {
+  igraph::is_weighted(.data)
+}
+
+#' @export
+is_weighted.snet <- function(.data) {
+  "weight" %in% names(.data$ties)
+}
+
+#' @export
+is_weighted.matrix <- function(.data) {
+  !all(.data == 0 | .data == 1)
+}
+
+#' @export
+is_weighted.network <- function(.data) {
+  "weight" %in% network::list.edge.attributes(.data)
+}
+
+#' @export
+is_weighted.data.frame <- function(.data) {
+  ncol(.data)>=3 && 
+    ("weight" %in% names(.data) | is.numeric(.data[,3]))
+}
+
+#' @rdname mark_format_tie
+#' @importFrom igraph is_directed
+#' @examples
+#' is_directed(create_tree(2))
+#' is_directed(create_tree(2, directed = TRUE))
+#' @export
+is_directed <- function(.data) UseMethod("is_directed")
+
+#' @export
+is_directed.data.frame <- function(.data) {
+  !(.infer_net_reciprocity(.data) == 0 |
+      .infer_net_reciprocity(.data) == 1)
+}
+
+#' @export
+is_directed.igraph <- function(.data) {
+  if(is_twomode(.data)) FALSE else igraph::is_directed(.data)
+}
+
+#' @export
+is_directed.snet <- function(.data) {
+  if(is_twomode(.data)) FALSE else any(.data$info$directed)
+}
+
+#' @export
+is_directed.tbl_graph <- function(.data) {
+  if(is_twomode(.data)) FALSE else igraph::is_directed(.data)
+}
+
+#' @export
+is_directed.network <- function(.data) {
+  .data$gal$directed
+}
+
+#' @export
+is_directed.matrix <- function(.data) {
+  if(is_twomode(.data)) FALSE else !isSymmetric(.data)
+}
+
+#' @rdname mark_format_tie
 #' @importFrom igraph edge_attr_names
 #' @examples
 #' is_signed(create_lattice(3))
@@ -230,7 +275,7 @@ is_signed.network <- function(.data) {
   "sign" %in% network::list.edge.attributes(.data)
 }
 
-#' @rdname mark_format
+#' @rdname mark_format_tie
 #' @importFrom igraph any_loop
 #' @examples
 #' is_complex(create_lattice(4))
@@ -269,7 +314,7 @@ is_complex.list <- function(.data) {
   }
 }
 
-#' @rdname mark_format 
+#' @rdname mark_format_tie 
 #' @importFrom igraph any_multiple
 #' @examples
 #' is_multiplex(create_filled(c(3,3)))
@@ -308,7 +353,7 @@ is_multiplex.data.frame <- function(.data) {
   ncol(.data) >= 3 & "type" %in% setdiff(colnames(.data), reserved_tie_attr)
 }
 
-#' @rdname mark_format
+#' @rdname mark_format_tie
 #' @importFrom igraph is_simple
 #' @examples
 #' is_uniplex(create_star(3))
@@ -318,15 +363,22 @@ is_uniplex <- function(.data) {
   igraph::is_simple(obj)
 }
 
-#' @rdname mark_format
-#' @examples
-#' is_attributed(ison_algebra)
-#' @export
-is_attributed <- function(.data) {
-  length(setdiff(net_node_attributes(.data), c("type","name")))!=0
-}
+# Tie Formats ####
 
-#' @rdname mark_format
+#' Marking networks change formats
+#' @name mark_format_change
+#' @description
+#'   These functions implement logical tests for various network properties.
+#'   All `is_*()` functions return a logical scalar (TRUE or FALSE).
+#'   
+#'   - `is_longitudinal()` marks networks TRUE if they contain multiple waves of data.
+#'   - `is_dynamic()` marks networks TRUE if they contain time-stamped data.
+#'   - `is_changing()` marks networks TRUE if they contain any nodal changes.
+#' @template param_data
+#' @family marks
+NULL
+
+#' @rdname mark_format_change
 #' @examples
 #' is_longitudinal(create_tree(5, 3))
 #' @export
@@ -342,7 +394,7 @@ is_longitudinal <- function(.data) {
   } 
 }
 
-#' @rdname mark_format
+#' @rdname mark_format_change
 #' @examples 
 #' is_dynamic(create_tree(3))
 #' @export
@@ -351,26 +403,12 @@ is_dynamic <- function(.data) {
   "time" %in% atts | "beg" %in% atts | "begin" %in% atts | "start" %in% atts
 }
 
-#' @rdname mark_format
+#' @rdname mark_format_change
 #' @examples 
 #' is_changing(fict_starwars)
 #' @export
 is_changing <- function(.data) {
   "changes" %in% igraph::graph_attr_names(as_igraph(.data))
-}
-
-#' @rdname mark_format
-#' @examples 
-#' is_egonet(fict_starwars)
-#' @export
-is_egonet <- function(.data) {
-  if(!is_list(.data)) return(FALSE) else if (all(unique(names(.data)) != "")) {
-    length(names(.data)) == length(unique(unlist(unname(lapply(.data, 
-                                                               manynet::node_names))))) &
-      all(.order_alphabetically(names(.data)) ==
-            .order_alphabetically(unique(unlist(unname(lapply(.data, 
-                                                              manynet::node_names))))))
-  } else FALSE
 }
 
 # Helper functions ----
