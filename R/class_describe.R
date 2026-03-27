@@ -38,16 +38,13 @@ describe_network <- function(x) {
 describe_nodes <- function(x){
   nd <- net_dims(x)
   nn <- net_node_names(x)
+  if(is.null(nn)) nn <- "nodes"
   nn <- ifelse(nd==1, singularize(nn), pluralize(nn))
-  if(!is.null(nn)){
-    node_name <- paste(nd[1], nn[1])
-    if(length(nd)==2 && length(nn)==2)
-      node_name <- c(node_name, paste(nd[2], nn[2]))
-  } else node_name <- paste(sum(nd), "nodes")
+  node_name <- paste(nd, nn)
   to_phrase(node_name)
 }
 
-#' @rdname make_mnet
+#' @rdname class_describe
 #' @export
 describe_ties <- function(x){
   nt <- net_ties(x)

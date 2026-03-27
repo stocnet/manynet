@@ -4,12 +4,15 @@
 \alias{class_describe}
 \alias{describe_network}
 \alias{describe_nodes}
+\alias{describe_ties}
 \alias{describe_changes}
 \title{Describe a network}
 \usage{
 describe_network(x)
 
 describe_nodes(x)
+
+describe_ties(x)
 
 describe_changes(x)
 }
