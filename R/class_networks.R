@@ -97,91 +97,56 @@ print.mnet <- function(x, ..., n = 12) {
 
 #' @rdname make_mnet
 #' @export
+print.snet <- function(x, ..., n = 12) {
+  arg_list <- list(...)
+  arg_list[['useS4']] <- NULL
+  if(!is.null(igraph::graph_attr(x, "name"))) {
+    cli::cli_h1("# {net_name(x))}")
+  } else if(is_grand(x) && !is.null(igraph::graph_attr(x, "grand")$name)){
+    cli::cli_h1("# {net_name(x)}")
+  } 
+  net_desc <- describe_network(x)
+  tie_desc <- describe_ties(x)
+  node_desc <- describe_nodes(x)
+  change_desc <- describe_changes(x)
+  cli::cli_par()
+  cli_div(theme = list(.emph = list(color = "#4576B5")))
+  cli::cli_text("{.emph # {net_desc} of {node_desc} and {tie_desc}{change_desc}}")
+  cli::cli_end()
+  top <- .data$nodes
+  bottom <- .data$ties
+  if(!is.null(.data$changes)) n <- ceiling(n/3) else 
+    n <- ceiling(n/2)
+  if (ncol(top)>0){
+    cli::cli_par()
+    cli::cli_h3("Nodes")
+    print(top, n = n)
+    cli::cli_end()
+  } 
+  if(!is.null(.data$changes)){
+    cli::cli_par()
+    cli::cli_h3("Changes")
+    print(dplyr::as_tibble(.data$changes),
+          n = n)
+    cli::cli_end()
+  }
+  if (ncol(bottom)>0){
+    # cli::cli_par()
+    cli::cli_h3("Ties")
+    print(bottom, n = n, max_footer_lines = 1)
+    # cli::cli_end()
+  } 
+  invisible(x)
+}
+
+#' @rdname make_mnet
+#' @export
 print_all <- function(x, ...) {
   print(x, n = Inf)
 }
 
 is_grand <- function(.data){
   !is.null(igraph::graph_attr(.data, "grand"))
-}
-
-#' @rdname make_mnet
-#' @export
-describe_network <- function(x) {
-  paste0("A ",
-         ifelse(is_dynamic(x), "dynamic, ", ""),
-         ifelse(is_longitudinal(x), "longitudinal, ", ""),
-         ifelse(is_labelled(x), "labelled, ", ""),
-         ifelse(is_complex(x), "complex, ", ""),
-         ifelse(is_multiplex(x), "multiplex, ", ""),
-         ifelse(is_signed(x), "signed, ", ""),
-         ifelse(is_weighted(x), "weighted, ", ""),
-         ifelse(is_twomode(x), "two-mode", 
-                ifelse(is_directed(x), "directed", "undirected")),
-         " network"
-  )
-}
-
-#' @rdname make_mnet
-#' @export
-describe_nodes <- function(x){
-  nd <- net_dims(x)
-  if(!is.null(igraph::graph_attr(x, "nodes"))){
-    node_name <- paste(nd[1], igraph::graph_attr(x, "nodes")[1])
-    if(length(nd)==2 && length(igraph::graph_attr(x, "nodes"))==2)
-      node_name <- c(node_name, paste(nd[2], igraph::graph_attr(x, "nodes")[2]))
-  } else if(!is.null(igraph::graph_attr(x, "grand")$vertex1)){
-    node_name <- paste(nd[1], igraph::graph_attr(x, "grand")$vertex1)
-    if(length(nd)==2 && !is.null(igraph::graph_attr(x, "grand")$vertex2))
-      node_name <- c(node_name, paste(nd[2], igraph::graph_attr(x, "grand")$vertex2))
-  } else node_name <- paste(sum(nd), "nodes")
-  node_name
-}
-
-#' @rdname make_mnet
-#' @export
-describe_ties <- function(x){
-  nt <- net_ties(x)
-  tie_name <- ifelse(is_directed(x), "arcs", "ties") 
-  if(!is.null(igraph::graph_attr(x, "ties"))){
-    tie_name <- paste(igraph::graph_attr(x, "ties"), tie_name)
-  } else if(!is.null(igraph::graph_attr(x, "grand")$edge.pos)){
-    tie_name <- paste(igraph::graph_attr(x, "grand")$edge.pos,
-                      tie_name)
-  } else if(!is.null(tie_attribute(x, "type"))){
-    tab <- table(tie_attribute(x, "type"))
-    parts <- paste0(tab, " ", names(tab))
-    if (length(parts) > 1) {
-      result <- paste(
-        paste(parts[-length(parts)], collapse = ", "),
-        parts[length(parts)],
-        sep = ", and "
-      )
-    } else {
-      result <- parts
-    }
-    return(paste0(result, " ties"))
-  } 
-  paste(nt, tie_name)
-}
-
-#' @rdname make_mnet
-#' @export
-describe_changes <- function(x){
-  if(is_longitudinal(x)){
-    waves <- tie_attribute(x, "wave")
-    if(is.null(waves)) waves <- as_changelist(x)$time
-    paste(" over", max(waves), "waves")
-  } else if (is_dynamic(x)){
-    if("time" %in% net_tie_attributes(x)){
-      paste(" from", min(tie_attribute(x, "time"), na.rm = TRUE), 
-            "to", max(tie_attribute(x, "time"), na.rm = TRUE))
-    } else if("begin" %in% net_tie_attributes(x)){
-      paste(" from", min(tie_attribute(x, "begin"), na.rm = TRUE), 
-            "to", max(tie_attribute(x, "end"), na.rm = TRUE))
-    }
-      
-  }
 }
 
 #' @export
