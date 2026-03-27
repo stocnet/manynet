@@ -52,7 +52,6 @@ is_edgelist(as_edgelist(matrix(c(2,2), 1, 2)))
 }
 \seealso{
 Other marking: 
-\code{\link{mark_features}},
-\code{\link{mark_format}}
+\code{\link{mark_features}}
 }
 \concept{marking}

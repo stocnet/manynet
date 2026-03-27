@@ -3,24 +3,15 @@
 \name{make_mnet}
 \alias{make_mnet}
 \alias{print.mnet}
+\alias{print.snet}
 \alias{print_all}
-\alias{describe_network}
-\alias{describe_nodes}
-\alias{describe_ties}
-\alias{describe_changes}
 \title{Multilevel, multiplex, multimodal, signed, dynamic or longitudinal changing networks}
 \usage{
 \method{print}{mnet}(x, ..., n = 12)
 
+\method{print}{snet}(x, ..., n = 12)
+
 print_all(x, ...)
-
-describe_network(x)
-
-describe_nodes(x)
-
-describe_ties(x)
-
-describe_changes(x)
 }
 \arguments{
 \item{x}{An object of class "mnet" or "tbl_graph".}

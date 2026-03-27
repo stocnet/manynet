@@ -100,7 +100,6 @@ CRC Press.
 }
 \seealso{
 Other marking: 
-\code{\link{mark_format}},
 \code{\link{mark_is}}
 }
 \concept{marking}

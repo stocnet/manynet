@@ -127,7 +127,7 @@ net_dims.snet <- function(.data){
 # Names ####
 
 #' Describing network names
-#' @name measure_names
+#' @name member_names
 #' @description 
 #'   These functions extract certain attributes from given network data:
 #'   
@@ -148,7 +148,7 @@ net_dims.snet <- function(.data){
 #' @template param_data
 NULL
 
-#' @rdname measure_names
+#' @rdname member_names
 #' @param prefix An optional string to be added before the name of the network.
 #' @examples
 #' net_name(ison_southern_women)
@@ -178,7 +178,7 @@ net_name.igraph <- function(.data, prefix = NULL){
   existname
 }
 
-#' @rdname measure_names
+#' @rdname member_names
 #' @importFrom igraph graph_attr
 #' @examples
 #'   net_node_names(ison_algebra)
@@ -197,7 +197,7 @@ net_node_names.snet <- function(.data){
   .data$info$nodes
 }
 
-#' @rdname measure_names
+#' @rdname member_names
 #' @importFrom igraph vertex_attr_names
 #' @examples
 #'   net_node_attributes(fict_lotr)
@@ -206,7 +206,7 @@ net_node_attributes <- function(.data){
   igraph::vertex_attr_names(as_igraph(.data))
 }
 
-#' @rdname measure_names
+#' @rdname member_names
 #' @importFrom igraph graph_attr
 #' @examples
 #'   net_tie_names(ison_algebra)
@@ -225,7 +225,7 @@ net_tie_names.snet <- function(.data){
   .data$info$ties
 }
 
-#' @rdname measure_names
+#' @rdname member_names
 #' @importFrom igraph edge_attr_names
 #' @examples
 #'   net_tie_attributes(ison_algebra)
