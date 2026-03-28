@@ -32,6 +32,7 @@ is_manynet <- function(.data) {
   tidygraph::is.tbl_graph(.data) |
     network::is.network(.data) |
     igraph::is_igraph(.data) |
+    inherits(.data, "snet") |
     (is.data.frame(.data) & 
        "from" %in% names(.data) & "to" %in% names(.data)) |
     (is.matrix(.data) & is.numeric(.data))
