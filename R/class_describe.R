@@ -14,30 +14,31 @@
 #'   if any, such as how many waves there are.
 #'   
 #'   These descriptions are constructed to be GRAND-consistent.
+#' @template para_data
 NULL
 
 #' @rdname class_describe
 #' @export
-describe_network <- function(x) {
+describe_network <- function(.data) {
   paste0("A ",
-         ifelse(is_dynamic(x), "dynamic, ", ""),
-         ifelse(is_longitudinal(x), "longitudinal, ", ""),
-         ifelse(is_labelled(x), "labelled, ", ""),
-         ifelse(is_complex(x), "complex, ", ""),
-         ifelse(is_multiplex(x), "multiplex, ", ""),
-         ifelse(is_signed(x), "signed, ", ""),
-         ifelse(is_weighted(x), "weighted, ", ""),
-         ifelse(is_twomode(x), "two-mode", 
-                ifelse(is_directed(x), "directed", "undirected")),
+         ifelse(is_dynamic(.data), "dynamic, ", ""),
+         ifelse(is_longitudinal(.data), "longitudinal, ", ""),
+         ifelse(is_labelled(.data), "labelled, ", ""),
+         ifelse(is_complex(.data), "complex, ", ""),
+         ifelse(is_multiplex(.data), "multiplex, ", ""),
+         ifelse(is_signed(.data), "signed, ", ""),
+         ifelse(is_weighted(.data), "weighted, ", ""),
+         ifelse(is_twomode(.data), "two-mode", 
+                ifelse(is_directed(.data), "directed", "undirected")),
          " network"
   )
 }
 
 #' @rdname class_describe
 #' @export
-describe_nodes <- function(x){
-  nd <- net_dims(x)
-  nn <- net_node_names(x)
+describe_nodes <- function(.data){
+  nd <- net_dims(.data)
+  nn <- net_node_names(.data)
   if(is.null(nn)) nn <- "nodes"
   nn <- ifelse(nd==1, singularize(nn), pluralize(nn))
   node_name <- paste(nd, nn)
@@ -46,13 +47,13 @@ describe_nodes <- function(x){
 
 #' @rdname class_describe
 #' @export
-describe_ties <- function(x){
-  nt <- net_ties(x)
-  tie_name <- ifelse(is_directed(x), "arcs", "ties") 
-  if(!is.null(net_tie_names(x))){
-    tie_name <- paste(net_tie_names(x), tie_name)
-  } else if(!is.null(tie_attribute(x, "type"))){
-    tab <- table(tie_attribute(x, "type"))
+describe_ties <- function(.data){
+  nt <- net_ties(.data)
+  tie_name <- ifelse(is_directed(.data), "arcs", "ties") 
+  if(!is.null(net_tie_names(.data))){
+    tie_name <- paste(net_tie_names(.data), tie_name)
+  } else if(!is.null(tie_attribute(.data, "type"))){
+    tab <- table(tie_attribute(.data, "type"))
     parts <- paste0(tab, " ", singularize(names(tab)))
     # if (length(parts) > 1) {
     #   result <- paste(
@@ -70,18 +71,18 @@ describe_ties <- function(x){
 
 #' @rdname class_describe
 #' @export
-describe_changes <- function(x){
-  if(is_longitudinal(x)){
-    waves <- tie_attribute(x, "wave")
-    if(is.null(waves)) waves <- as_changelist(x)$time
+describe_changes <- function(.data){
+  if(is_longitudinal(.data)){
+    waves <- tie_attribute(.data, "wave")
+    if(is.null(waves)) waves <- as_changelist(.data)$time
     paste(" over", max(waves), "waves")
-  } else if (is_dynamic(x)){
-    if("time" %in% net_tie_attributes(x)){
-      paste(" from", min(tie_attribute(x, "time"), na.rm = TRUE), 
-            "to", max(tie_attribute(x, "time"), na.rm = TRUE))
-    } else if("begin" %in% net_tie_attributes(x)){
-      paste(" from", min(tie_attribute(x, "begin"), na.rm = TRUE), 
-            "to", max(tie_attribute(x, "end"), na.rm = TRUE))
+  } else if (is_dynamic(.data)){
+    if("time" %in% net_tie_attributes(.data)){
+      paste(" from", min(tie_attribute(.data, "time"), na.rm = TRUE), 
+            "to", max(tie_attribute(.data, "time"), na.rm = TRUE))
+    } else if("begin" %in% net_tie_attributes(.data)){
+      paste(" from", min(tie_attribute(.data, "begin"), na.rm = TRUE), 
+            "to", max(tie_attribute(.data, "end"), na.rm = TRUE))
     }
     
   }
