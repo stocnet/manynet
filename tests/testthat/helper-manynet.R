@@ -66,3 +66,21 @@ bot5 <- function(res, dec = 4){
     unname(round(res, dec))[(lr-4):lr]
   } else unname(res)[(lr-2):lr]
 }
+
+collect_functions <- function(pattern, package = "manynet"){
+  getNamespaceExports(package)[grepl(pattern, getNamespaceExports(package))]
+}
+funs_objs <- mget(ls("package:manynet"), inherits = TRUE)
+
+set.seed(1234)
+data_objs <- list(directed = generate_random(12, directed = TRUE),
+                  twomode = generate_random(c(6,6)),
+                  labelled = to_signed(add_node_attribute(create_wheel(12), "name", 
+                                                          LETTERS[1:12])),
+                  attribute = add_node_attribute(create_ring(12), "group", 
+                                                 rep(c("A","B"), each = 6)),
+                  weighted = add_tie_attribute(create_ring(12), "weight", 
+                                               rep(c(1,2), each = 6)),
+                  diffusion = play_diffusion(create_ring(12), seeds = 1, 
+                                             steps = 5, latency = 0.75, 
+                                             recovery = 0.25))

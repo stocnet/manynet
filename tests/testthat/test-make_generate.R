@@ -1,5 +1,23 @@
 # Tests for the generate family of functions
 
+gen_funs <- funs_objs[grepl("generate_", names(funs_objs)) &
+                           !grepl("permutation|utilities|man|islands|fire|config|citation", names(funs_objs))]
+
+for(fn in names(gen_funs)) {
+  test_that(paste(fn, "creates an object of the correct class"), {
+    expect_s3_class(gen_funs[[fn]](10), "igraph")
+    expect_s3_class(gen_funs[[fn]](c(10,10)), "igraph")
+  })
+  test_that(paste(fn, "creates an object with the correct number of nodes"), {
+    expect_values(net_nodes(gen_funs[[fn]](10)), 10)
+    expect_values(net_nodes(gen_funs[[fn]](c(5,5))), 10)
+  })
+  test_that(paste(fn, "creates an object with the correct directedness"), {
+    expect_false(is_directed(gen_funs[[fn]](10)))
+    expect_true(is_directed(gen_funs[[fn]](10, directed = TRUE)))
+  })
+}
+
 test_that("random creation works", {
   expect_false(isTRUE(all.equal(generate_random(4,.3), generate_random(4,.3))))
   expect_false(isTRUE(all.equal(generate_random(c(2,4),.3), generate_random(c(2,4),.3))))
@@ -18,10 +36,6 @@ test_that("generate_smallworld() works", {
 test_that("generate_scalefree() works", {
   expect_s3_class(generate_scalefree(12, 0.025), "igraph")
   expect_s3_class(generate_scalefree(c(6,6), 0.025), "igraph")
-})
-
-test_that("generate_permutation() works", {
-  expect_s3_class(generate_permutation(ison_southern_women), "igraph")
 })
 
 test_that("generate_configuration works", {

@@ -1,16 +1,30 @@
+create_funs <- funs_objs[grepl("create_", names(funs_objs)) &
+                           !grepl("ego|wheel|motif|windmill|lattice|explicit|degree|cycle", names(funs_objs))]
+
+for(fn in names(create_funs)) {
+  test_that(paste(fn, "creates an object of the correct class"), {
+    expect_s3_class(create_funs[[fn]](10), "igraph")
+    expect_s3_class(create_funs[[fn]](c(10,10)), "igraph")
+  })
+  test_that(paste(fn, "creates an object with the correct number of nodes"), {
+    expect_values(net_nodes(create_funs[[fn]](10)), 10)
+    expect_values(net_nodes(create_funs[[fn]](c(5,5))), 10)
+  })
+  test_that(paste(fn, "creates an object with the correct directedness"), {
+    expect_false(is_directed(create_funs[[fn]](10)))
+    expect_true(is_directed(create_funs[[fn]](10, directed = TRUE)))
+  })
+}
+
 test_that("create empty graph works", {
   expect_true(is_twomode(create_empty(c(5,5))))
-  expect_s3_class(create_empty(4), "igraph")
   expect_error(create_empty(c(5,5,5)), "single integer")
   expect_length(create_empty(4), 4)
 })
 
 test_that("create filled graph works", {
   expect_true(is_twomode(create_filled(c(5,5))))
-  expect_s3_class(create_filled(4), "igraph")
   expect_error(create_filled(c(5,5,5)), "single integer")
-  expect_false(is_directed(create_filled(6)))
-  expect_false(is_directed(create_filled(c(5,5))))
 })
 
 test_that("ring creation works", {
