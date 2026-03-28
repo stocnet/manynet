@@ -82,7 +82,12 @@ mutate_net <- function(.data, ...){
 #' @rdname manip_info
 #' @export
 net_info <- function(.data){
-  igraph::graph_attr(as_igraph(.data))
+  out <- igraph::graph_attr(as_igraph(.data))
+  if("grand" %in% names(out)){ 
+    out <- out$grand 
+    if("mode" %in% names(out)) out$mode <- NULL
+  }
+  out
 }
 
 #' @rdname manip_info
