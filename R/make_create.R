@@ -118,7 +118,7 @@ create_explicit <- function(...){
 # Collections ####
 
 #' Making ego networks through interviewing
-#'
+#' @name make_ego
 #' @description
 #'   This function creates an ego network through interactive interview questions.
 #'   It currently only supports a simplex, directed network of one
@@ -145,10 +145,9 @@ create_explicit <- function(...){
 #'   each of the alters perspectives too.
 #' @param twomode Logical. If TRUE, then it will assign ego to the first mode
 #'   and all alters to a second mode.
-#' @name make_ego
 #' @family makes
 #' @export
-create_ego <- function(ego = NULL,
+collect_ego <- function(ego = NULL,
                        max_alters = Inf,
                        roster = NULL,
                        interpreter = FALSE,

@@ -2,10 +2,10 @@
 % Please edit documentation in R/make_create.R
 \name{make_ego}
 \alias{make_ego}
-\alias{create_ego}
+\alias{collect_ego}
 \title{Making ego networks through interviewing}
 \usage{
-create_ego(
+collect_ego(
   ego = NULL,
   max_alters = Inf,
   roster = NULL,
