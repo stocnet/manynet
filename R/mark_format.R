@@ -106,6 +106,12 @@ is_labelled.data.frame <- function(.data) {
 }
 
 #' @export
+is_labelled.snet <- function(.data) {
+  "name" %in% net_node_attributes(.data) ||
+    "label" %in% net_node_attributes(.data)
+}
+
+#' @export
 is_labelled.list <- function(.data) {
   if(is_list(.data)){
     is_labelled(.data[[1]])
@@ -266,6 +272,14 @@ is_signed.igraph <- function(.data) {
 }
 
 #' @export
+is_signed.snet <- function(.data) {
+  if("sign" %in% net_tie_attributes(.data)) return(TRUE) else
+    if("weight" %in% net_tie_attributes(.data)) 
+      return(any(is.wholenumber(c(.data$ties$weight)) && any(.data$ties$weight < 0))) else 
+        FALSE
+}
+
+#' @export
 is_signed.tbl_graph <- function(.data) {
   "sign" %in% igraph::edge_attr_names(.data)
 }
@@ -300,6 +314,11 @@ is_complex.matrix <- function(.data) {
 #' @export
 is_complex.data.frame <- function(.data) {
   any(.data[,1] == .data[,2])
+}
+
+#' @export
+is_complex.snet <- function(.data) {
+  any(.data$from == .data$to)
 }
 
 #' @export
@@ -349,6 +368,12 @@ is_multiplex.network <- function(.data) {
 }
 
 #' @export
+is_multiplex.snet <- function(.data) {
+  "type" %in% net_tie_attributes(.data) ||
+    "layer" %in% net_tie_attributes(.data)
+}
+
+#' @export
 is_multiplex.data.frame <- function(.data) {
   ncol(.data) >= 3 & "type" %in% setdiff(colnames(.data), reserved_tie_attr)
 }
@@ -384,11 +409,10 @@ NULL
 #' @export
 is_longitudinal <- function(.data) {
   if(is_manynet(.data)) {
-    ig <- as_igraph(.data)
+    # ig <- as_igraph(.data)
     # catts <- names(igraph::graph_attr(ig, "changes"))
-    tatts <- igraph::edge_attr_names(ig)
-    return(#"time" %in% catts | 
-      "wave" %in% tatts | "panel" %in% tatts)
+    return("wave" %in% net_tie_attributes(.data) | 
+             "panel" %in% net_tie_attributes(.data))
   } else if(is_list(.data)){
     all(lapply(.data, net_nodes)==net_nodes(.data[[1]]))
   } 
@@ -399,7 +423,7 @@ is_longitudinal <- function(.data) {
 #' is_dynamic(create_tree(3))
 #' @export
 is_dynamic <- function(.data) {
-  atts <- igraph::edge_attr_names(as_igraph(.data))
+  atts <- net_tie_attributes(.data)
   "time" %in% atts | "beg" %in% atts | "begin" %in% atts | "start" %in% atts
 }
 
@@ -407,8 +431,16 @@ is_dynamic <- function(.data) {
 #' @examples 
 #' is_changing(fict_starwars)
 #' @export
-is_changing <- function(.data) {
-  "changes" %in% igraph::graph_attr_names(as_igraph(.data))
+is_changing <- function(.data) UseMethod("is_changing")
+
+#' @export
+is_changing.igraph <- function(.data) {
+  "changes" %in% igraph::graph_attr_names(.data)
+}
+
+#' @export
+is_changing.snet <- function(.data) {
+  "changes" %in% names(.data)
 }
 
 # Helper functions ----
