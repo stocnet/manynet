@@ -38,7 +38,7 @@ as_diffusion(.data, twomode = FALSE, events)
 
 as_diffnet(.data, twomode = FALSE)
 
-as_snet(.data, ...)
+as_snet(.data)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:

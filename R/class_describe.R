@@ -14,7 +14,7 @@
 #'   if any, such as how many waves there are.
 #'   
 #'   These descriptions are constructed to be GRAND-consistent.
-#' @template para_data
+#' @template param_data
 NULL
 
 #' @rdname class_describe
