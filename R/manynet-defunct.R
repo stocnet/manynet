@@ -114,6 +114,14 @@ node_mode <- function(.data) {
   node_is_mode(.data)
 }
 
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+mutate_net <- function(.data, ...) {
+  .Deprecated("mutate_info", package = "manynet",
+              old = "mutate_net")
+  mutate_info(.data, ...)
+}
+
 # Moved to netrics from 2.0.0 ####
 
 #' @describeIn defunct Deprecated on 2026-03-22.

@@ -3,14 +3,14 @@
 \name{manip_info}
 \alias{manip_info}
 \alias{add_info}
-\alias{mutate_net}
+\alias{mutate_info}
 \alias{net_info}
 \alias{net_attributes}
 \title{Modifying network data}
 \usage{
 add_info(.data, ...)
 
-mutate_net(.data, ...)
+mutate_info(.data, ...)
 
 net_info(.data)
 

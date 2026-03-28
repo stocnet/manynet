@@ -70,7 +70,7 @@ add_info <- function(.data, ...){
 
 #' @rdname manip_info
 #' @export
-mutate_net <- function(.data, ...){
+mutate_info <- function(.data, ...){
   info <- list(...)
   out <- as_tidygraph(.data)
   for(item in names(info)){
