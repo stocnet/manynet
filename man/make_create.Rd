@@ -36,9 +36,9 @@ create_core(n, directed = FALSE, mark = NULL)
 
 create_windmill(n)
 
-create_cycle(n)
+create_cycle(n, directed = FALSE)
 
-create_wheel(n)
+create_wheel(n, directed = FALSE)
 }
 \arguments{
 \item{n}{Given:

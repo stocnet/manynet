@@ -833,7 +833,7 @@ create_windmill <- function(n) {
 #' @examples
 #'   create_cycle(6)
 #' @export
-create_cycle <- function(n){
+create_cycle <- function(n, directed = FALSE){
   # Helper: Create edge list for unimodal cycle
   unimodal_cycle <- function(n_nodes) {
     edges <- data.frame(
@@ -862,6 +862,7 @@ create_cycle <- function(n){
   } else {
     snet_abort("Argument 'n' must be a scalar or a vector of length 2.")
   }
+  if(!directed) net <- to_undirected(net)
   return(net)
 }
 
@@ -869,7 +870,7 @@ create_cycle <- function(n){
 #' @examples
 #'   create_wheel(6)
 #' @export
-create_wheel <- function(n) {
+create_wheel <- function(n, directed = FALSE) {
   if (length(n) == 1) {
     if (n < 4) {
       snet_abort("At least 4 nodes required to form a wheel graph.")
@@ -881,7 +882,7 @@ create_wheel <- function(n) {
     # Connect center to each rim node
     center_edges <- cbind(center_node, rim_nodes)
     edges <- rbind(rim_cycle, center_edges)
-    g <- igraph::graph_from_edgelist(edges, directed = FALSE)
+    g <- igraph::graph_from_edgelist(edges, directed = directed)
     return(g)
   } else if (length(n) == 2) {
     snet_abort("Wheel graphs are undefined for two-mode networks",
