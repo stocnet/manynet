@@ -1,19 +1,18 @@
-test_that("is_ tests return correct values", {
-  expect_true(is_twomode(ison_southern_women))
-  expect_false(is_directed(ison_southern_women))
-  expect_false(is_weighted(ison_southern_women))
-  expect_false(is_weighted(ison_southern_women))
-  expect_true(is_labelled(ison_southern_women))
-  expect_false(is_complex(ison_southern_women))
-  expect_true(is_graph(ison_southern_women))
-  expect_true(is_manynet(ison_southern_women))
-  expect_false(is_directed(as_network(ison_southern_women)))
-  expect_true(is_connected(ison_southern_women))
-  expect_false(is_perfect_matching(ison_southern_women))
-  expect_false(is_eulerian(ison_southern_women))
-  expect_false(is_acyclic(ison_southern_women))
-  expect_false(is_aperiodic(ison_southern_women))
-})
+is_funs <- funs_objs[grepl("^is_", names(funs_objs)) &
+                           !grepl("bloop", names(funs_objs))]
+
+for(fn in collect_functions("^is_")) {
+  if(grepl("twomode|attributed|igraph|connected|labelled|graph|manynet|uniplex", fn)) {
+    test_that(paste(fn, "returns TRUE for ison_southern_women"), {
+      expect_true(is_funs[[fn]](ison_southern_women))
+    })
+  } else {
+    test_that(paste(fn, "returns FALSE for ison_southern_women"), {
+      expect_false(is_funs[[fn]](ison_southern_women))
+    })
+  }
+}
+
 
   # manyis <- collect_functions("^is_")
   # manyds <- pkg_data() |> 
