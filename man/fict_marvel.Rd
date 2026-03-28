@@ -9,7 +9,7 @@ Marvel comic book characters (Yuksel 2017)}
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> 
 #> -- # Marvel universe -----------------------------------------------------------
 #> # A labelled, complex, multiplex, signed, two-mode network of 53 characters and
-#> 141 teams and 683 affiliation, and 558 relationship ties
+#> 141 teams and 683 affiliation and 558 relationship ties
 #> 
 #> -- Nodes
 #> # A tibble: 194 x 11
