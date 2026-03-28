@@ -202,8 +202,16 @@ net_node_names.snet <- function(.data){
 #' @examples
 #'   net_node_attributes(fict_lotr)
 #' @export
-net_node_attributes <- function(.data){
-  igraph::vertex_attr_names(as_igraph(.data))
+net_node_attributes <- function(.data) UseMethod("net_node_attributes")
+
+#' @export
+net_node_attributes.igraph <- function(.data){
+  igraph::vertex_attr_names(.data)
+}
+
+#' @export
+net_node_attributes.snet <- function(.data){
+  names(.data$nodes)
 }
 
 #' @rdname member_names
@@ -230,7 +238,15 @@ net_tie_names.snet <- function(.data){
 #' @examples
 #'   net_tie_attributes(ison_algebra)
 #' @export
-net_tie_attributes <- function(.data){
-  igraph::edge_attr_names(as_igraph(.data))
+net_tie_attributes <- function(.data) UseMethod("net_tie_attributes")
+
+#' @export
+net_tie_attributes.igraph <- function(.data){
+  igraph::edge_attr_names(.data)
+}
+
+#' @export
+net_tie_attributes.snet <- function(.data){
+  names(.data$ties)
 }
 
