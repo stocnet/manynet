@@ -1,3 +1,34 @@
+lossless_roundtrip <- function(obj, to_class) {
+  from_class <- class(obj)[1]
+  to_fun     <- get(paste0("as_", to_class))
+  back_fun   <- get(paste0("as_", from_class))
+  
+  obj2 <- back_fun(to_fun(obj))
+  
+  identical(as.matrix(obj), as.matrix(obj2))
+}
+
+for(ms in manynet_classes){
+  to_classes <- setdiff(manynet_classes, ms)
+  
+  test_that(paste("coercion from", ms, "to other classes is lossless where expected"), {
+    obj <- switch(ms,
+                  "matrix" = matrix(c(0,1,1,0), 2, 2),
+                  "igraph" = igraph::graph_from_adjacency_matrix(matrix(c(0,1,1,0), 2, 2)),
+                  "graphAM" = methods::new("graphAM", adjMat = matrix(c(0,1,1,0), 2, 2), edgemode = "directed"),
+                  "tbl_graph" = tidygraph::as_tbl_graph(matrix(c(0,1,1,0), 2, 2)),
+                  "network" = network::network(matrix(c(0,1,1,0), 2, 2))
+    )
+    
+    for (to in to_classes) {
+      expect_true(
+        lossless_roundtrip(obj, to),
+        info = paste("Lossy coercion:", ms, "→", to)
+      )
+    }
+  })
+}
+
 # Tests for the as_ conversion methods
 mat1 <- matrix(c(0,1,0,0,1,0,1,0,0,1,0,1,0,0,0,0),4,4, byrow = TRUE)
 rownames(mat1) <- LETTERS[1:4]
