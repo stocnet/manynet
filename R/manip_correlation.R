@@ -86,10 +86,6 @@ to_permuted <- function(.data, with_attr = TRUE) {
   out
 }
 
-#' @rdname make_random 
-#' @export
-generate_permutation <- to_permuted #to avoid migraph dependency issues
-
 # Helper functions ------------------
 
 .r1perm <- function(m) {
