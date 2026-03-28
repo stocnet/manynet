@@ -131,12 +131,26 @@ reference:
     desc: |
       Functions for identifying properties of networks,
       nodes (where the function prefix is `node_`), or ties (where the function prefix is `tie_`).
+  - subtitle: "Network descriptions"
+    desc: |
+      `describe_*()` functions return a character string describing a network.
+    contents:
+      - class_describe
+  - subtitle: "Network measures"
+    desc: |
+      `net_*()` functions return a numeric output.
+    contents:
+      - measure_dims
+  - subtitle: "Network members"
+    desc: |
+      `net_node_*()` and `net_tie_*()` functions return a string vector relating to nodes or ties in the network.
+    contents:
+      - member_names
   - subtitle: "Network marks"
     desc: |
       `is_*()` functions return a single logical value for the network.
     contents:
       - starts_with("is_")
-      - measure_properties
   - subtitle: "Nodal attributes"
     desc: |
       `node_*()` functions return a vector of values the length
