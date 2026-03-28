@@ -1,5 +1,5 @@
 #' Modifying network classes
-#'
+#' @name manip_as
 #' @description
 #'   The `as_` functions in `{manynet}` coerce objects of any of the following common classes
 #'   of social network objects in R into the declared class:
@@ -19,9 +19,8 @@
 #'   kinds of information than others.
 #'   Note also that there are some reserved column names in one or more
 #'   object classes, which could otherwise lead to some unexpected results.
-#' @name manip_as
 #' @family modifications
-#' @inheritParams mark_is
+#' @template param_data
 #' @param twomode Logical option used to override heuristics for
 #'   distinguishing incidence (two-mode/bipartite) from
 #'   adjacency (one-mode/unipartite) networks.
@@ -1205,10 +1204,10 @@ as_diffnet.diff_model <- function(.data,
 
 #' @rdname manip_as
 #' @export
-as_snet <- function(.data, ...) UseMethod("as_snet")
+as_snet <- function(.data) UseMethod("as_snet")
 
 #' @export
-as_snet.igraph <- function(.data, ...) {
+as_snet.igraph <- function(.data) {
   info <- net_info(.data)
   nodes <- as_nodelist(.data)
   changes <- as_changelist(.data)

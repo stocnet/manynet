@@ -7,7 +7,7 @@ utils::globalVariables(c(".data", "obs",
                          "student","students","colleges",
                          "node","value","var","active","time",
                          "A","B","C","D",
-                         "type",
+                         "type","id",
                          "n"))
 
 # Helper function for declaring available methods

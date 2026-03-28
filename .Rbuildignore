@@ -18,3 +18,4 @@ vignettes/precompile\.R
 ^CRAN-SUBMISSION$
 ^README\.Rmd$
 ^.mailmap$
+man-roxygen
