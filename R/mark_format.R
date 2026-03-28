@@ -443,6 +443,11 @@ is_changing.snet <- function(.data) {
   "changes" %in% names(.data)
 }
 
+#' @export
+is_changing.diff_model <- function(.data) {
+  is_changing.igraph(as_igraph(.data))
+}
+
 # Helper functions ----
 .infer_net_reciprocity <- function(.data, method = "default") {
   out <- igraph::reciprocity(as_igraph(.data), mode = method)
