@@ -266,23 +266,29 @@ as_matrix.network <- function(.data,
                               twomode = NULL) {
   if (network::is.bipartite(.data)) {
     if ("weight" %in% network::list.edge.attributes(.data)) {
-      network::as.matrix.network(.data,
+      out <- network::as.matrix.network(.data,
                                  attrname = "weight",
                                  expand.bipartite = FALSE)
       # Note: if expand.bipartite is true it returns the adjacency matrix. If
       # false it returns the incidence matrix that we want. Use
       # to_multilevel(mat) on the resulting matrix to do the conversion if needed.
     } else {
-      network::as.matrix.network(.data,
+      out <- network::as.matrix.network(.data,
                                  expand.bipartite = FALSE)
     }
   } else {
     if ("weight" %in% network::list.edge.attributes(.data)) {
-      network::as.matrix.network(.data, attrname = "weight")
+      out <- network::as.matrix.network(.data, attrname = "weight")
     } else {
-      network::as.matrix.network(.data)
+      out <- network::as.matrix.network(.data)
     }
   }
+  # because network can have vertex names that are integers (i.e. just node IDs), 
+  # we remove them since they are really anonymous.
+  if(is.integer(network::network.vertex.names(.data))){
+    attr(out, "dimnames") <- NULL
+  }
+  out
 }
 
 #' @export
@@ -452,6 +458,10 @@ as_igraph.network <- function(.data,
                                        value = sapply(.data[[3]], "[[", a))
     }
   }
+  # because network can have vertex names that are integers (i.e. just node IDs), 
+  # we remove them since they are really anonymous.
+  if(is.integer(network::network.vertex.names(.data))) 
+    graph <- igraph::delete_vertex_attr(graph, "name")
   graph
 }
 
