@@ -461,7 +461,7 @@ to_uniplex.tbl_graph <- function(.data, tie){
       filter_nodes(type == retain) %>% 
       mutate_nodes(type = NULL)
   }
-  out <- out %>% mutate_net(ties = tie)
+  out <- out %>% mutate_info(ties = tie)
   tidygraph::activate(out, "nodes")
 }
 

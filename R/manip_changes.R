@@ -19,8 +19,7 @@
 #'   composition of a network (when nodes are present or absent over time),
 #'   though the function can flexibly accommodate changes in other
 #'   nodal attributes.
-#' @inheritParams manip_nodes
-#' @inheritParams manip_scope
+#' @template param_data
 #' @seealso [to_time()]
 NULL
 
