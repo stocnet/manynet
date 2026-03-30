@@ -65,10 +65,28 @@ reference:
     contents:
       - starts_with("play_")
       
+  - title: "Manipulating"
+    desc: |
+      Functions for manipulating aspects within networks,
+      such as their nodes, ties, changes, and network metadata (information).
+      This includes functions to add and delete nodes and ties, 
+      as well as to add and delete nodal and tie attributes.
+  - subtitle: "Info"
+    contents:
+      - starts_with("add_info")
+  - subtitle: "Nodes"
+    contents:
+      - starts_with("manip_nodes")
+  - subtitle: "Changes"
+    contents:
+      - starts_with("add_changes")
+  - subtitle: "Ties"
+    contents:
+      - starts_with("manip_ties")
+
   - title: "Modifying"
     desc: |
-      Functions for modifying networks into other classes or formats,
-      or modifying their properties or attributes.
+      Functions for modifying networks into other classes or formats.
       This includes functions for reformatting networks into networks
       of the same dimensions but a different type, e.g. from directed to undirected.
       It also includes functions for transforming networks into networks
@@ -80,13 +98,6 @@ reference:
       Functions for modifying networks into other classes.
     contents:
       - starts_with("as_")
-  - subtitle: "Attributes"
-    desc: |
-      Functions for modifying nodal and tie attributes.
-      These include tidy-style and igraph-style functions for adding or joining
-      new data on nodes or ties to networks.
-    contents:
-      - starts_with("add_")
   - subtitle: "Reformatting"
     desc: |
       Functions for reformatting networks, retaining the same network dimensions.

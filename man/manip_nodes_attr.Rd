@@ -50,23 +50,19 @@ rename(.data, ...)
 
 \item{vector}{A vector of values for the new attribute.}
 
-\item{...}{Additional arguments.}
+\item{...}{Additional parameters and arguments passed on internally.}
 
 \item{object2}{A second object to copy nodes or ties from.}
 
-\item{.by}{An attribute name to join objects by.
-By default, NULL.}
+\item{.by}{An attribute name to join objects by. By default, NULL.}
 
-\item{join_type}{A type of join to be used.
-Options are "full","left", "right", "inner".}
-
-\item{attribute}{A named list to be added as tie or node attributes.}
+\item{join_type}{A type of join to be used. Options are "full","left", "right", "inner".}
 }
 \value{
 A data object of the same class as the function was given.
 }
 \description{
-These functions allow users to add and delete nodes and their attributes:
+These functions allow users to add nodes attributes:
 \itemize{
 \item \code{add_node_attribute()}, \code{mutate()}, or \code{mutate_nodes()} offer ways to add
 a vector of values to a network as a nodal attribute.
@@ -75,16 +71,8 @@ a vector of values to a network as a nodal attribute.
 and \code{join_nodes()} merges all nodal attributes from one network to another.
 }
 
-Note that while \verb{add_*()}/\verb{delete_*()} functions operate similarly as comparable \code{{igraph}} functions,
+Note that while \verb{add_*()} functions operate similarly as comparable \code{{igraph}} functions,
 \verb{mutate*()}, \verb{bind*()}, etc work like \code{{tidyverse}} or \code{{dplyr}}-style functions.
-}
-\details{
-Not all functions have methods available for all object classes.
-Below are the currently implemented S3 methods:\tabular{lrrr}{
-    \tab igraph \tab network \tab tbl_graph \cr
-   add_nodes \tab 1 \tab 1 \tab 1 \cr
-   delete_nodes \tab 1 \tab 1 \tab 1 \cr
-}
 }
 \examples{
   other <- create_filled(4) \%>\% mutate(name = c("A", "B", "C", "D"))
@@ -94,22 +82,11 @@ Below are the currently implemented S3 methods:\tabular{lrrr}{
   join_nodes(another, other)
 }
 \seealso{
-Other modifications: 
-\code{\link{manip_as}},
-\code{\link{manip_correlation}},
-\code{\link{manip_deformat}},
-\code{\link{manip_direction}},
-\code{\link{manip_from}},
-\code{\link{manip_levels}},
-\code{\link{manip_miss}},
+Other manipulations: 
+\code{\link{manip_changes}},
+\code{\link{manip_info}},
 \code{\link{manip_nodes_num}},
-\code{\link{manip_paths}},
-\code{\link{manip_permutation}},
-\code{\link{manip_preformat}},
-\code{\link{manip_project}},
-\code{\link{manip_reformat}},
-\code{\link{manip_scope}},
-\code{\link{manip_split}},
-\code{\link{manip_ties}}
+\code{\link{manip_ties_attr}},
+\code{\link{manip_ties_num}}
 }
-\concept{modifications}
+\concept{manipulations}

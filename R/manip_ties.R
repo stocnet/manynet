@@ -1,5 +1,7 @@
-#' Modifying tie data
-#' 
+# Manipulating ties number ####
+
+#' Modifying tie number
+#' @name manip_ties_num
 #' @description 
 #'   These functions allow users to add and delete ties and their attributes:
 #'   
@@ -15,18 +17,18 @@
 #'   
 #'   Note that while `add_*()`/`delete_*()` functions operate similarly as comparable `{igraph}` functions,
 #'   `mutate*()`, `bind*()`, etc work like `{tidyverse}` or `{dplyr}`-style functions.
-#' @family modifications
-#' @inheritParams add_nodes
+#' @family manipulations
+#' @template param_data
+#' @template param_dots
 #' @param attr_name Name of the new attribute in the resulting object.
 #' @return A tidygraph (`tbl_graph`) data object.
 #' @examples
 #'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
 #'   mutate_ties(other, form = 1:6) %>% filter_ties(form < 4)
 #'   add_tie_attribute(other, "weight", c(1, 2, 2, 2, 1, 2))
-#' @name manip_ties
 NULL
 
-#' @rdname manip_ties
+#' @rdname manip_ties_num
 #' @param ties The number of ties to be added or an even list of ties.
 #' @importFrom igraph add_edges
 #' @examples
@@ -49,7 +51,7 @@ add_ties.network <- function(.data, ties, attribute = NULL){
   as_network(add_ties(as_igraph(.data), ties, attribute))
 }
 
-#' @rdname manip_ties
+#' @rdname manip_ties_num
 #' @importFrom igraph delete_edges
 #' @examples
 #' delete_ties(ison_adolescents, 3)
@@ -72,7 +74,46 @@ delete_ties.network <- function(.data, ties){
   as_network(igraph::delete_edges(as_igraph(.data), edges = ties))
 }
 
-#' @rdname manip_ties
+#' @rdname manip_ties_num 
+#' @importFrom dplyr filter
+#' @export
+filter_ties <- function(.data, ...){
+  out <- as_tidygraph(.data)
+  out %>% tidygraph::activate(edges) %>% 
+    dplyr::filter(...) %>% 
+    tidygraph::activate(nodes)
+}
+
+# Manipulating ties attributes ####
+
+#' Modifying tie attributes
+#' @name manip_ties_attr
+#' @description 
+#'   These functions allow users to add and delete ties and their attributes:
+#'   
+#'   - `add_ties()` adds additional ties to network data
+#'   - `delete_ties()` deletes ties from network data
+#'   - `add_tie_attribute()` and `mutate_ties()` offer ways to add 
+#'   a vector of values to a network as a tie attribute.
+#'   - `rename_ties()` renames tie attributes.
+#'   - `bind_ties()` appends the tie data from two networks and 
+#'   `join_ties()` merges ties from two networks,
+#'   adding a tie attribute identifying the newly added ties.
+#'   - `filter_ties()` subsets ties based on some tie attribute-related logical statement.
+#'   
+#'   Note that while `add_*()`/`delete_*()` functions operate similarly as comparable `{igraph}` functions,
+#'   `mutate*()`, `bind*()`, etc work like `{tidyverse}` or `{dplyr}`-style functions.
+#' @family manipulations
+#' @template param_data
+#' @template param_dots
+#' @return A tidygraph (`tbl_graph`) data object.
+#' @examples
+#'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
+#'   mutate_ties(other, form = 1:6) %>% filter_ties(form < 4)
+#'   add_tie_attribute(other, "weight", c(1, 2, 2, 2, 1, 2))
+NULL
+
+#' @rdname manip_ties_attr
 #' @importFrom igraph edge_attr
 #' @export
 add_tie_attribute <- function(.data, attr_name, vector){
@@ -86,7 +127,7 @@ add_tie_attribute <- function(.data, attr_name, vector){
                         "igraph, tidygraph, or network objects or data frame edgelists."))
 }
 
-#' @rdname manip_ties
+#' @rdname manip_ties_attr
 #' @importFrom tidygraph activate
 #' @export
 mutate_ties <- function(.data, ...){
@@ -94,7 +135,7 @@ mutate_ties <- function(.data, ...){
   out %>% tidygraph::activate(edges) %>% mutate(...) %>% activate(nodes)
 }
 
-#' @rdname manip_ties
+#' @rdname manip_ties_attr
 #' @importFrom dplyr rename
 #' @export
 rename_ties <- function(.data, ...){
@@ -102,7 +143,7 @@ rename_ties <- function(.data, ...){
   out %>% tidygraph::activate(edges) %>% dplyr::rename(...) %>% activate(nodes)
 }
 
-#' @rdname manip_ties
+#' @rdname manip_ties_attr
 #' @importFrom dplyr arrange
 #' @export
 arrange_ties <- function(.data, ...){
@@ -110,7 +151,7 @@ arrange_ties <- function(.data, ...){
   out %>% tidygraph::activate(edges) %>% dplyr::arrange(...) %>% activate(nodes)
 }
 
-#' @rdname manip_ties
+#' @rdname manip_ties_attr
 #' @importFrom tidygraph bind_edges
 #' @export
 bind_ties <- function(.data, ...){
@@ -119,7 +160,7 @@ bind_ties <- function(.data, ...){
     arrange_ties(from, to)
 }
 
-#' @rdname manip_ties 
+#' @rdname manip_ties_attr 
 #' @importFrom igraph add_edges set_edge_attr E
 #' @importFrom dplyr mutate summarise across group_by everything ungroup %>%
 #' @export
@@ -157,17 +198,7 @@ join_ties <- function(.data, object2, attr_name) {
                        directed = is_directed(.data))
 }
 
-#' @rdname manip_ties 
-#' @importFrom dplyr filter
-#' @export
-filter_ties <- function(.data, ...){
-  out <- as_tidygraph(.data)
-  out %>% tidygraph::activate(edges) %>% 
-    dplyr::filter(...) %>% 
-    tidygraph::activate(nodes)
-}
-
-#' @rdname manip_ties
+#' @rdname manip_ties_attr
 #' @importFrom dplyr select
 #' @export
 select_ties <- function(.data, ...){
@@ -175,7 +206,7 @@ select_ties <- function(.data, ...){
   out %>% tidygraph::activate(edges) %>% dplyr::select(...) %>% activate(nodes)
 }
 
-#' @rdname manip_ties
+#' @rdname manip_ties_attr
 #' @importFrom dplyr summarise
 #' @export
 summarise_ties <- function(.data, ...){

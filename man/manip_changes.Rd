@@ -39,6 +39,12 @@ apply_changes(.data, time)
 Ideally this will be in the form of "wave", "node", "var", and "value",
 but there are internal routines from some otherwise common formats.
 A data frame of composition change can be just two columns.}
+
+\item{...}{Additional parameters and arguments passed on internally.}
+
+\item{.by}{An attribute name to join objects by. By default, NULL.}
+
+\item{time}{A time point or wave at which to present the network.}
 }
 \description{
 These functions offer ways to modify data held about how nodes
@@ -69,4 +75,12 @@ collect_changes(fict_starwars, time = 3)
 }
 \seealso{
 \code{\link[=to_time]{to_time()}}
+
+Other manipulations: 
+\code{\link{manip_info}},
+\code{\link{manip_nodes_attr}},
+\code{\link{manip_nodes_num}},
+\code{\link{manip_ties_attr}},
+\code{\link{manip_ties_num}}
 }
+\concept{manipulations}

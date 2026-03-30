@@ -1,7 +1,7 @@
 # Network information ####
 
 #' Modifying network data
-#' 
+#' @name manip_info
 #' @description
 #'   These functions allow users to add and edit information about the network
 #'   itself.
@@ -9,8 +9,8 @@
 #'   as well as definitions of the nodes and ties in the network.
 #'   Where available, this information is printed for tidygraph-class objects,
 #'   and can be used for printing a grand table in the `{grand}` package.
-#' @name manip_info
-#' @inheritParams mark_is
+#' @template param_data
+#' @family manipulations
 #' @param ... Named attributes. The following are currently recognised:
 #'   "name", "year", and "doi" of the network,
 #'   "collection" or "mode" of the network 

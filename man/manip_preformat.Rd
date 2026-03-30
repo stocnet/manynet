@@ -80,14 +80,11 @@ Other modifications:
 \code{\link{manip_from}},
 \code{\link{manip_levels}},
 \code{\link{manip_miss}},
-\code{\link{manip_nodes_attr}},
-\code{\link{manip_nodes_num}},
 \code{\link{manip_paths}},
 \code{\link{manip_permutation}},
 \code{\link{manip_project}},
 \code{\link{manip_reformat}},
 \code{\link{manip_scope}},
-\code{\link{manip_split}},
-\code{\link{manip_ties}}
+\code{\link{manip_split}}
 }
 \concept{modifications}

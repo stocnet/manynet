@@ -2,6 +2,7 @@
 
 #' Modifying changes to nodes over time
 #' @name manip_changes
+#' @family manipulations
 #' @description
 #'   These functions offer ways to modify data held about how nodes
 #'   change over time. 
@@ -20,6 +21,8 @@
 #'   though the function can flexibly accommodate changes in other
 #'   nodal attributes.
 #' @template param_data
+#' @template param_dots
+#' @template param_by
 #' @seealso [to_time()]
 NULL
 
@@ -168,6 +171,7 @@ select_changes <- function(.data, ..., .by = NULL){
 }
 
 #' @rdname manip_changes
+#' @template param_time
 #' @examples
 #' collect_changes(fict_starwars, time = 3)
 #' @export

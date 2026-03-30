@@ -3,7 +3,7 @@
 #' Modifying nodes number
 #' @name manip_nodes_num
 #' @description 
-#'   These functions allow users to add and delete nodes and their attributes:
+#'   These functions allow users to add and delete nodes:
 #'   
 #'   - `add_nodes()` adds an additional number of nodes to network data.
 #'   - `delete_nodes()` deletes nodes from network data.
@@ -19,13 +19,11 @@
 #'   |:------------|------:|-------:|---------:|
 #'   |add_nodes    |      1|       1|         1|
 #'   |delete_nodes |      1|       1|         1|
-#' @family modifications
+#' @family manipulations
 #' @template param_data
+#' @template param_dots
+#' @template param_by
 #' @param attribute A named list to be added as tie or node attributes.
-#' @param attr_name Name of the new attribute in the resulting object.
-#' @param object2 A second object to copy nodes or ties from.
-#' @param vector A vector of values for the new attribute.
-#' @param ... Additional arguments.
 #' @return A data object of the same class as the function was given.
 #' @examples
 #'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
@@ -85,7 +83,7 @@ filter_nodes <- function(.data, ..., .by = NULL){
 #' Modifying node attributes
 #' @name manip_nodes_attr
 #' @description 
-#'   These functions allow users to add and delete nodes and their attributes:
+#'   These functions allow users to add nodes attributes:
 #'   
 #'   - `add_node_attribute()`, `mutate()`, or `mutate_nodes()` offer ways to add 
 #'   a vector of values to a network as a nodal attribute.
@@ -93,23 +91,14 @@ filter_nodes <- function(.data, ..., .by = NULL){
 #'   - `bind_node_attributes()` appends all nodal attributes from one network to another,
 #'   and `join_nodes()` merges all nodal attributes from one network to another.
 #'   
-#'   Note that while `add_*()`/`delete_*()` functions operate similarly as comparable `{igraph}` functions,
+#'   Note that while `add_*()` functions operate similarly as comparable `{igraph}` functions,
 #'   `mutate*()`, `bind*()`, etc work like `{tidyverse}` or `{dplyr}`-style functions.
-#' @details
-#'   Not all functions have methods available for all object classes.
-#'   Below are the currently implemented S3 methods:
-#'  
-#'   |             | igraph| network| tbl_graph|
-#'   |:------------|------:|-------:|---------:|
-#'   |add_nodes    |      1|       1|         1|
-#'   |delete_nodes |      1|       1|         1|
-#' @family modifications
-#' @inheritParams mark_is
-#' @param attribute A named list to be added as tie or node attributes.
+#' @family manipulations
+#' @template param_data
+#' @template param_dots
 #' @param attr_name Name of the new attribute in the resulting object.
 #' @param object2 A second object to copy nodes or ties from.
 #' @param vector A vector of values for the new attribute.
-#' @param ... Additional arguments.
 #' @return A data object of the same class as the function was given.
 #' @examples
 #'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
@@ -197,10 +186,8 @@ select_nodes.igraph <- function(.data, ...){
 }
 
 #' @rdname manip_nodes_attr 
-#' @param join_type A type of join to be used.
-#'   Options are "full","left", "right", "inner".
-#' @param .by An attribute name to join objects by.
-#'   By default, NULL.
+#' @template param_join
+#' @template param_by
 #' @examples
 #'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
 #'   another <- create_filled(3) %>% mutate(name = c("E", "F", "G"))
