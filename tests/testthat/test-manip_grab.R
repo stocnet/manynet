@@ -68,7 +68,6 @@ test_that("as_infolist works", {
   expect_type(out, "list")
   expect_equal(out$name, "Adolescents")
   expect_equal(out$year, 1994)
-  expect_type(as_infolist(as_matrix(ison_adolescents)), "list")
 })
 
 test_that("net_attributes works", {

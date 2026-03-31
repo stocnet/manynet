@@ -17,7 +17,8 @@ for(ms in manynet_classes){
                   "igraph" = igraph::graph_from_adjacency_matrix(matrix(c(0,1,1,0), 2, 2)),
                   "graphAM" = methods::new("graphAM", adjMat = matrix(c(0,1,1,0), 2, 2), edgemode = "directed"),
                   "tbl_graph" = tidygraph::as_tbl_graph(matrix(c(0,1,1,0), 2, 2)),
-                  "network" = network::network(matrix(c(0,1,1,0), 2, 2))
+                  "network" = network::network(matrix(c(0,1,1,0), 2, 2)),
+                  "stocnet" = as_snet(matrix(c(0,1,1,0), 2, 2))
     )
     
     for (to in to_classes) {

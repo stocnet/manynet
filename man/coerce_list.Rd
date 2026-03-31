@@ -38,15 +38,17 @@ By default FALSE.}
 The currently implemented coercions or translations are:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame diff_model igraph matrix network network.goldfish
-as_changelist                                                             
+as_changelist                            ✓                                
 as_edgelist            ✓                 ✓      ✓       ✓                ✓
+as_infolist                              ✓              ✓                 
 as_matrix              ✓          ✓      ✓      ✓       ✓                ✓
-as_nodelist                                                               
-              siena tbl_graph
-as_changelist               ✓
-as_edgelist       ✓         ✓
-as_matrix         ✓         ✓
-as_nodelist                 ✓
+as_nodelist                              ✓              ✓                 
+              siena snet tbl_graph
+as_changelist          ✓         ✓
+as_edgelist       ✓    ✓         ✓
+as_infolist            ✓         ✓
+as_matrix         ✓    ✓         ✓
+as_nodelist            ✓         ✓
 }\if{html}{\out{</div>}}
 }
 \description{

@@ -59,6 +59,23 @@ as_nodelist.tbl_graph <- function(.data) {
   dplyr::tibble(data.frame(out))
 }
 
+#' @export
+as_nodelist.igraph <- function(.data) {
+  out <- .data
+  dplyr::tibble(data.frame(as_tidygraph(out)))
+}
+
+#' @export
+as_nodelist.snet <- function(.data) {
+  dplyr::tibble(.data$nodes)
+}
+
+#' @export
+as_nodelist.network <- function(.data) {
+  out <- .data
+  dplyr::tibble(network::as.data.frame.network(out, unit = "vertices"))
+}
+
 # Changelists ####
 
 #' @rdname coerce_list
@@ -69,6 +86,17 @@ as_changelist <- function(.data) UseMethod("as_changelist")
 as_changelist.tbl_graph <- function(.data) {
   out <- igraph::graph_attr(as_igraph(.data), "changes")
   dplyr::tibble(data.frame(out))
+}
+
+#' @export
+as_changelist.igraph <- function(.data) {
+  out <- igraph::graph_attr(.data, "changes")
+  dplyr::tibble(data.frame(out))
+}
+
+#' @export
+as_changelist.snet <- function(.data) {
+  dplyr::tibble(.data$changes)
 }
 
 # Edgelists ####
@@ -153,17 +181,47 @@ as_edgelist.siena <- function(.data,
   as_edgelist(as_igraph(.data, twomode = twomode))
 }
 
+#' @export
+as_edgelist.snet <- function(.data) {
+  dplyr::tibble(.data$ties)
+}
+
 # Infolists ####
 
 #' @rdname coerce_list
 #' @export
-as_infolist <- function(.data){
-  out <- igraph::graph_attr(as_igraph(.data))
+as_infolist <- function(.data) UseMethod("as_infolist")
+
+#' @export
+as_infolist.igraph <- function(.data){
+  out <- igraph::graph_attr(.data)
   if("grand" %in% names(out)){ 
     out <- out$grand 
     if("mode" %in% names(out)) out$mode <- NULL
   }
+  if("changes" %in% names(out)) out$changes <- NULL
   out
+}
+
+#' @export
+as_infolist.tbl_graph <- function(.data){
+  out <- igraph::graph_attr(.data)
+  if("grand" %in% names(out)){ 
+    out <- out$grand 
+    if("mode" %in% names(out)) out$mode <- NULL
+  }
+  if("changes" %in% names(out)) out$changes <- NULL
+  out
+}
+
+#' @export
+as_infolist.snet <- function(.data) {
+  .data$info
+}
+
+#' @export
+as_infolist.network <- function(.data) {
+  .data$gal
 }
 
 # Matrices ####
@@ -326,6 +384,12 @@ as_matrix.siena <- function(.data,
 
 #' @export
 as_matrix.diff_model <- function(.data,
+                                 twomode = FALSE) {
+  as_matrix(as_igraph(.data, twomode = twomode))
+}
+
+#' @export
+as_matrix.snet <- function(.data,
                                  twomode = FALSE) {
   as_matrix(as_igraph(.data, twomode = twomode))
 }
