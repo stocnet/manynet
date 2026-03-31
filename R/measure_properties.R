@@ -178,6 +178,20 @@ net_name.igraph <- function(.data, prefix = NULL){
   existname
 }
 
+#' @export
+net_name.network <- function(.data, prefix = NULL){
+  existname <- ""
+  if(!is.null(igraph::graph_attr(.data, "name"))) {
+    existname <- igraph::graph_attr(.data, 'name')
+  } else if(is_grand(.data) && 
+            !is.null(igraph::graph_attr(.data, "grand")$name)){
+    existname <- igraph::graph_attr(.data, 'grand')$name
+  }
+  if(existname != "" && !is.null(prefix)) existname <- paste(prefix, existname)
+  existname
+}
+
+
 #' @rdname member_names
 #' @importFrom igraph graph_attr
 #' @examples
