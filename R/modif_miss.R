@@ -1,7 +1,7 @@
 # Missing ####
 
 #' Modifying missing tie data
-#' 
+#' @name modif_miss
 #' @description
 #'   These functions offer tools for imputing missing tie data.
 #'   Currently two options are available:
@@ -9,10 +9,8 @@
 #'   - `na_to_zero()` replaces any missing values with zeros,
 #'   which are the modal value in sparse social networks.
 #'   - `na_to_mean()` replaces missing values with the average non-missing value.
-#' @name manip_miss
-#' @family modifications
-#' @inheritParams mark_is
-#' @return A data object of the same class as the function was given.
+#' @template param_data
+#' @template fam_modif
 #' @references 
 #' ## On missing data
 #'   Krause, Robert, Mark Huisman, Christian Steglich, and Tom A.B. Snijders. 2020. 
@@ -28,7 +26,7 @@
 #' na_to_mean(missTest)
 NULL
 
-#' @rdname manip_miss
+#' @rdname modif_miss
 #' @export
 na_to_zero <- function(.data) UseMethod("na_to_zero")
 
@@ -60,7 +58,7 @@ na_to_zero.data.frame <- function(.data){
   .data
 }
 
-#' @rdname manip_miss
+#' @rdname modif_miss
 #' @export
 na_to_mean <- function(.data) UseMethod("na_to_mean")
 

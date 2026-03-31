@@ -1,5 +1,5 @@
 #' Node correlation
-#' 
+#' @name modif_correlation
 #' @description 
 #'   This function performs a Pearson pairwise correlation on a given matrix or network data.
 #'   It includes a switch: 
@@ -12,18 +12,17 @@
 #'   and for complex networks it will include also the difference 
 #'   between the self ties in each pairwise calculation.
 #'   This function runs in \eqn{O(mn^2)} complexity.
-#' @name manip_correlation
-#' @inheritParams mark_is
 #' @param method One of the following:
 #'   "all" includes all information,
 #'   "diag" excludes the diagonal (self-ties),
 #'   "recip" excludes the diagonal but compares pairs' reciprocal ties,
 #'   and "complex" compares pairs' reciprocal ties and their self ties.
 #'   By default the appropriate method is chosen based on the network format.
-#' @family modifications
+#' @template param_data
+#' @template fam_modif
 NULL
 
-#' @rdname manip_correlation
+#' @rdname modif_correlation
 #' @export
 to_correlation <- function(.data, method = NULL){
   if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
@@ -42,7 +41,7 @@ to_correlation <- function(.data, method = NULL){
   out
 }
 
-#' @rdname manip_correlation
+#' @rdname modif_correlation
 #' @export
 to_cosine <- function(.data){
   x <- as_matrix(.data)
@@ -60,17 +59,16 @@ to_cosine <- function(.data){
 }
   
 #' Network permutation
-#' 
+#' @name modif_permutation
 #' @description 
 #'   `to_permuted()` permutes the network using a Fisher-Yates shuffle 
 #'   on both the rows and columns (for a one-mode network)
 #'   or on each of the rows and columns (for a two-mode network).
-#' @name manip_permutation
-#' @inheritParams mark_is
-#' @family modifications
+#' @template param_data
+#' @template fam_modif
 NULL
 
-#' @rdname manip_permutation 
+#' @rdname modif_permutation 
 #' @param with_attr Logical whether any attributes of the object
 #'   should be retained. 
 #'   By default TRUE. 

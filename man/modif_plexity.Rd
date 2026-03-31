@@ -52,9 +52,9 @@ Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{           data.frame igraph matrix network tbl_graph
-to_anti             √      √      √       √         √
-to_simplex          √      √      √       √         √
-to_uniplex          √      √      √       √         √
+to_anti             ✓      ✓      ✓       ✓         ✓
+to_simplex          ✓      ✓      ✓       ✓         ✓
+to_uniplex          ✓      ✓      ✓       ✓         ✓
 }\if{html}{\out{</div>}}
 }
 \examples{
@@ -65,17 +65,17 @@ as_tidygraph(create_filled(5)) \%>\%
 }
 \seealso{
 Other modifications: 
-\code{\link{manip_correlation}},
-\code{\link{manip_from}},
-\code{\link{manip_miss}},
-\code{\link{manip_permutation}},
-\code{\link{manip_project}},
-\code{\link{manip_scope}},
-\code{\link{manip_split}},
+\code{\link{modif_correlation}},
 \code{\link{modif_direction}},
+\code{\link{modif_from}},
 \code{\link{modif_labels}},
 \code{\link{modif_levels}},
+\code{\link{modif_miss}},
 \code{\link{modif_paths}},
+\code{\link{modif_permutation}},
+\code{\link{modif_project}},
+\code{\link{modif_scope}},
+\code{\link{modif_split}},
 \code{\link{modif_weight}}
 }
 \concept{modifications}

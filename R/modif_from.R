@@ -1,5 +1,5 @@
 #' Joining lists of networks, graphs, and matrices
-#' 
+#' @name modif_from
 #' @description
 #'   These functions offer tools for joining lists of manynet-consistent objects
 #'   (matrices, igraph, tidygraph, or network objects) into a single object.
@@ -10,15 +10,13 @@
 #'   - `from_slices()` modifies a list of time slices of a network into 
 #'   a dynamic tidygraph.
 #'   - `from_ties()` modifies a list of different ties into a multiplex tidygraph
-#' @name manip_from
-#' @family modifications
 #' @param netlist A list of network, igraph, tidygraph, matrix, or edgelist objects.
 #' @param netnames A character vector of names for the different network objects,
 #'   if not already named within the list.
-#' @return A tidygraph object combining the list of network data.
+#' @template fam_modif
 NULL
 
-#' @rdname manip_from
+#' @rdname modif_from
 #' @importFrom igraph graph_from_data_frame as_data_frame set_vertex_attr
 #' @examples
 #' ison_adolescents %>%
@@ -43,7 +41,7 @@ from_subgraphs <- function(netlist) {
   as_tidygraph(out)
 }
 
-#' @rdname manip_from
+#' @rdname modif_from
 #' @importFrom igraph graph_from_data_frame as_data_frame
 #' @importFrom dplyr distinct
 #' @examples
@@ -63,7 +61,7 @@ from_egos <- function(netlist) {
   as_tidygraph(igraph::graph_from_data_frame(dplyr::distinct(out)))
 }
 
-#' @rdname manip_from 
+#' @rdname modif_from 
 #' @importFrom igraph graph_from_data_frame as_data_frame
 #' @examples
 #' ison_adolescents %>%
@@ -83,7 +81,7 @@ from_waves <- function(netlist) {
   as_tidygraph(igraph::graph_from_data_frame(out))
 }
 
-#' @rdname manip_from 
+#' @rdname modif_from 
 #' @param remove.duplicates Should duplicates be removed?
 #' By default FALSE.
 #' If TRUE, duplicated edges are removed.
@@ -112,7 +110,7 @@ from_slices <- function(netlist, remove.duplicates = FALSE) {
   }
 }
 
-#' @rdname manip_from
+#' @rdname modif_from
 #' @export
 from_ties <- function(netlist, netnames){
   stopifnot(is_list(netlist))

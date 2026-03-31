@@ -1,27 +1,36 @@
 #' Splitting networks into lists
-#' 
+#' @name modif_split
 #' @description
 #'   These functions offer tools for splitting manynet-consistent objects
 #'   (matrices, igraph, tidygraph, or network objects) into lists of networks.
-#' 
+#'   
+#'   - `to_egos()` splits a network into ego (or focal) networks.
+#'   - `to_subgraphs()` splits a network into subgraphs on some given node
+#'   attribute.
+#'   - `to_components()` splits a network into its components.
+#'   - `to_waves()` splits a network with some discrete observations over time
+#'   into a list of those observations.
+#'   - `to_slices()` splits a network with some continuous time variable at some
+#'   time slice(s).
+#' @details
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
-#'   |              | data.frame| diff_model| igraph| matrix| network| tbl_graph|
-#'   |:-------------|----------:|----------:|------:|------:|-------:|---------:|
-#'   |to_components |          1|          0|      1|      1|       1|         1|
-#'   |to_egos       |          1|          0|      1|      1|       1|         1|
-#'   |to_slices     |          0|          0|      1|      0|       0|         1|
-#'   |to_subgraphs  |          0|          0|      1|      0|       1|         1|
-#'   |to_waves      |          1|          1|      1|      0|       0|         1|
-#' @name manip_split
-#' @family modifications
-#' @inheritParams manip_scope
-#' @return The returned object will be a list of network objects.
+#'   ```{r, echo = FALSE, comment=""}
+#'   available_methods(collect_functions("to_.*(components|subgraphs|egos|waves|slices)"))
+#'   ```
+#' @template param_data
+#' @template param_dir
+#' @template fam_modif
 NULL
 
-#' @describeIn manip_split Returns a list of ego (or focal)
-#'   networks.
+#' @rdname modif_split
+#' @param max_dist The maximum breadth of the neighbourhood.
+#'   By default 1.
+#' @param min_dist The minimum breadth of the neighbourhood.
+#'   By default 0. 
+#'   Increasing this to 1 excludes the ego,
+#'   and 2 excludes ego's direct alters.
 #' @importFrom igraph make_ego_graph
 #' @examples
 #'   to_egos(ison_adolescents)
@@ -92,8 +101,7 @@ to_egos.data.frame <- function(.data,
   lapply(out, function(x) as_edgelist(x))
 }
 
-#' @describeIn manip_split Returns a list of subgraphs
-#'   on some given node attribute.
+#' @rdname modif_split
 #' @param attribute A character string indicating the categorical
 #'   attribute in a network used to split into subgraphs.
 #' @importFrom igraph induced_subgraph
@@ -122,8 +130,7 @@ to_subgraphs.network <- function(.data, attribute){
   lapply(to_subgraphs(as_igraph(.data), attribute), as_network)
 }
 
-#' @describeIn manip_split Returns a list of the components
-#'   in a network.
+#' @rdname modif_split
 #' @examples 
 #'   to_components(to_uniplex(fict_marvel, "relationship"))
 #' @export
@@ -159,9 +166,7 @@ to_components.data.frame <- function(.data){
   lapply(out, function(x) as_edgelist(x))
 }
 
-#' @describeIn manip_split Returns a network
-#'   with some discrete observations over time
-#'   into a list of those observations.
+#' @rdname modif_split
 #' @param attribute Character string indicating the date
 #'   attribute in a network used to split into subgraphs.
 #' @param panels Would you like to select certain waves?
@@ -352,8 +357,7 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
   lapply(x, as_tidygraph)
 }
 
-#' @describeIn manip_split Returns a list of a network
-#'   with some continuous time variable at some time slice(s).
+#' @rdname modif_split
 #' @param attribute One or two attributes used to slice data.
 #' @param slice Character string or character list indicating the date(s)
 #'   or integer(s) range used to slice data (e.g slice = c(1:2, 3:4)).
@@ -367,12 +371,11 @@ to_slices <- function(.data, attribute = "time", slice = NULL) UseMethod("to_sli
 
 #' @export
 to_slices.tbl_graph <- function(.data, attribute = "time", slice = NULL) {
-  increment <- weight <- NULL
   incremented <- "increment" %in% net_tie_attributes(.data)
   updated <- "replace" %in% net_tie_attributes(.data)
   if(!is.null(slice))
     moments <- slice else 
-      moments <- unique(tie_attribute(.data, attribute = attribute))
+      moments <- unique(tie_attribute(.data, attr_name = attribute))
   if(length(moments)>1){
     out <- lapply(moments, function(tm){
       snap <- filter_ties(.data, !!as.name(attribute) <= tm)
