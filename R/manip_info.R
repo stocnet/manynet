@@ -1,6 +1,6 @@
 # Network information ####
 
-#' Modifying network data
+#' Modifying network information
 #' @name manip_info
 #' @description
 #'   These functions allow users to add and edit information about the network
@@ -10,7 +10,8 @@
 #'   Where available, this information is printed for tidygraph-class objects,
 #'   and can be used for printing a grand table in the `{grand}` package.
 #' @template param_data
-#' @family manipulations
+#' @family info
+#' @template fam_manip
 #' @param ... Named attributes. The following are currently recognised:
 #'   "name", "year", and "doi" of the network,
 #'   "collection" or "mode" of the network 
@@ -75,17 +76,6 @@ mutate_info <- function(.data, ...){
   out <- as_tidygraph(.data)
   for(item in names(info)){
     igraph::graph_attr(out, item) <- info[[item]]
-  }
-  out
-}
-
-#' @rdname manip_info
-#' @export
-net_info <- function(.data){
-  out <- igraph::graph_attr(as_igraph(.data))
-  if("grand" %in% names(out)){ 
-    out <- out$grand 
-    if("mode" %in% names(out)) out$mode <- NULL
   }
   out
 }

@@ -1,10 +1,6 @@
 options(manynet_verbosity = "quiet")
 options(snet_verbosity = "quiet")
 
-collect_functions <- function(pattern, package = "manynet"){
-  getNamespaceExports(package)[grepl(pattern, getNamespaceExports(package))]
-}
-
 expect_values <- function(object, ref, toler = 3) {
   # 1. Capture object and label
   # act <- quasi_label(rlang::enquo(object), arg = "object")
@@ -67,9 +63,6 @@ bot5 <- function(res, dec = 4){
   } else unname(res)[(lr-2):lr]
 }
 
-collect_functions <- function(pattern, package = "manynet"){
-  getNamespaceExports(package)[grepl(pattern, getNamespaceExports(package))]
-}
 funs_objs <- mget(ls("package:manynet"), inherits = TRUE)
 
 set.seed(1234)

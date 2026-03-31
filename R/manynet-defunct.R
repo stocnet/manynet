@@ -122,6 +122,14 @@ mutate_net <- function(.data, ...) {
   mutate_info(.data, ...)
 }
 
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_info <- function(.data) {
+  .Deprecated("as_infolist", package = "manynet",
+              old = "net_info")
+  as_infolist(.data)
+}
+
 # Moved to netrics from 2.0.0 ####
 
 #' @describeIn defunct Deprecated on 2026-03-22.

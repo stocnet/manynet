@@ -14,6 +14,7 @@
 \alias{network_tie_attributes}
 \alias{node_mode}
 \alias{mutate_net}
+\alias{net_info}
 \alias{node_degree}
 \alias{node_deg}
 \alias{net_by_quad}
@@ -238,6 +239,8 @@ network_tie_attributes(.data)
 node_mode(.data)
 
 mutate_net(.data, ...)
+
+net_info(.data)
 
 node_degree(...)
 
@@ -671,6 +674,8 @@ wherever possible and update your scripts accordingly.
 \item \code{node_mode()}: Deprecated on 2026-03-22.
 
 \item \code{mutate_net()}: Deprecated on 2026-03-22.
+
+\item \code{net_info()}: Deprecated on 2026-03-22.
 
 \item \code{node_degree()}: Deprecated on 2026-03-22.
 

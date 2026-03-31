@@ -6,6 +6,7 @@ utils::globalVariables(c(".data", "obs",
                          "nodes","edges","event","exposure",
                          "student","students","colleges",
                          "node","value","var","active","time",
+                         "increment",
                          "A","B","C","D",
                          "type","id",
                          "n"))
@@ -20,7 +21,14 @@ available_methods <- function(fun_vctr) {
   colnames(out) <- c("from","to")
   rownames(out) <- NULL
   out <- as.data.frame(out)
-  as_matrix(out)
+  out <- as_matrix(out)
+  out[out == 1] <- "√"
+  out[out == 0] <- ""
+  as.data.frame(out)
+}
+
+collect_functions <- function(pattern, package = "manynet"){
+  getNamespaceExports(package)[grepl(pattern, getNamespaceExports(package))]
 }
 
 # Helper function for checking and downloading packages

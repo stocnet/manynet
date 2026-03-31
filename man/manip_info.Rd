@@ -4,15 +4,12 @@
 \alias{manip_info}
 \alias{add_info}
 \alias{mutate_info}
-\alias{net_info}
 \alias{net_attributes}
-\title{Modifying network data}
+\title{Modifying network information}
 \usage{
 add_info(.data, ...)
 
 mutate_info(.data, ...)
-
-net_info(.data)
 
 net_attributes(.data)
 }
@@ -33,6 +30,9 @@ net_attributes(.data)
 "nodes" (a vector of the names of the nodes) or "vertex1"/"vertex2",
 "ties" or "edge.pos"/"edge.neg" for defining the ties.}
 }
+\value{
+A data object of the same class as the function was given.
+}
 \description{
 These functions allow users to add and edit information about the network
 itself.
@@ -52,4 +52,5 @@ Other manipulations:
 \code{\link{manip_ties_attr}},
 \code{\link{manip_ties_num}}
 }
+\concept{info}
 \concept{manipulations}
