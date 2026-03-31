@@ -106,26 +106,22 @@ as_changelist.snet <- function(.data) {
 #' @importFrom dplyr as_tibble arrange
 #' @importFrom network get.edge.attribute as.edgelist
 #' @export
-as_edgelist <- function(.data,
-                        twomode = FALSE) UseMethod("as_edgelist")
+as_edgelist <- function(.data, twomode = FALSE) UseMethod("as_edgelist")
 
 #' @export
-as_edgelist.igraph <- function(.data,
-                               twomode = FALSE) {
+as_edgelist.igraph <- function(.data, twomode = FALSE) {
   igraph::as_data_frame(.data, what = "edges") %>%
     dplyr::as_tibble()
 }
 
 #' @export
-as_edgelist.tbl_graph <- function(.data,
-                                  twomode = FALSE) {
+as_edgelist.tbl_graph <- function(.data, twomode = FALSE) {
   igraph::as_data_frame(.data, what = "edges") %>% 
     dplyr::as_tibble()
 }
 
 #' @export
-as_edgelist.network <- function(.data,
-                                twomode = FALSE) {
+as_edgelist.network <- function(.data, twomode = FALSE) {
   out <- network::as.edgelist(.data)
   edges <- as.data.frame(out)
   if (is_twomode(.data)) {
@@ -149,15 +145,12 @@ as_edgelist.network <- function(.data,
 }
 
 #' @export
-as_edgelist.matrix <- function(.data,
-                               twomode = FALSE) {
-  as_edgelist(as_igraph(.data,
-                        twomode = FALSE))
+as_edgelist.matrix <- function(.data, twomode = FALSE) {
+  as_edgelist(as_igraph(.data, twomode = twomode))
 }
 
 #' @export
-as_edgelist.data.frame <- function(.data,
-                                   twomode = FALSE) {
+as_edgelist.data.frame <- function(.data, twomode = FALSE) {
   if (ncol(.data) == 2 && any(names(.data) != c("from", "to"))) {
     names(.data) <- c("from", "to")
     .data
@@ -170,19 +163,17 @@ as_edgelist.data.frame <- function(.data,
 }
 
 #' @export
-as_edgelist.network.goldfish <- function(.data,
-                                         twomode = FALSE) {
+as_edgelist.network.goldfish <- function(.data, twomode = FALSE) {
   as_matrix(as_igraph(.data, twomode = twomode))
 }
 
 #' @export
-as_edgelist.siena <- function(.data,
-                              twomode = NULL) {
+as_edgelist.siena <- function(.data, twomode = NULL) {
   as_edgelist(as_igraph(.data, twomode = twomode))
 }
 
 #' @export
-as_edgelist.snet <- function(.data) {
+as_edgelist.snet <- function(.data, twomode = NULL) {
   dplyr::tibble(.data$ties)
 }
 

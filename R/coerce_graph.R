@@ -631,7 +631,7 @@ as_network.snet <- function(.data, twomode = FALSE) {
 #' @export
 as_network.networkDynamic <- function(.data, twomode = FALSE) {
   out <- .data
-  class(out) <- class(out)[class(x) != "networkDynamic"]
+  class(out) <- class(out)[class(out) != "networkDynamic"]
   out
 }
 

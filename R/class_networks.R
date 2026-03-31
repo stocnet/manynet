@@ -56,7 +56,7 @@ NULL
 print.mnet <- function(x, ..., n = 12) {
   arg_list <- list(...)
   arg_list[['useS4']] <- NULL
-  if(!is.null(net_name(x)))
+  if(!is.null(net_name(x)) && net_name(x) != "")
     cli::cli_h1("# {net_name(x)}")
   net_desc <- describe_network(x)
   tie_desc <- describe_ties(x)
