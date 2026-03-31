@@ -1,10 +1,8 @@
-#' Modifying network classes
-#' @name manip_as
+#' Coercing into graph objects
+#' @name coerce_graph
 #' @description
 #'   The `as_` functions in `{manynet}` coerce objects of any of the following common classes
 #'   of social network objects in R into the declared class:
-#'   - `as_edgelist()` coerces the object into an edgelist, as data frames or tibbles.
-#'   - `as_matrix()` coerces the object into an adjacency (one-mode/unipartite) or incidence (two-mode/bipartite) matrix.
 #'   - `as_igraph()` coerces the object into an `{igraph}` `graph` object.
 #'   - `as_tidygraph()` coerces the object into a `{tidygraph}` `tbl_graph` object.
 #'   - `as_network()` coerces the object into a `{network}` `network` object.
@@ -19,31 +17,9 @@
 #'   kinds of information than others.
 #'   Note also that there are some reserved column names in one or more
 #'   object classes, which could otherwise lead to some unexpected results.
-#' @family modifications
+#' @family coercions
 #' @template param_data
-#' @param twomode Logical option used to override heuristics for
-#'   distinguishing incidence (two-mode/bipartite) from
-#'   adjacency (one-mode/unipartite) networks.
-#'   By default FALSE.
-#' @details
-#' Edgelists are expected to be held in data.frame or tibble class objects.
-#' The first two columns of such an object are expected to be the
-#' senders and receivers of a tie, respectively, and are typically
-#' named "from" and "to" (even in the case of an undirected network).
-#' These columns can contain integers to identify nodes or character
-#' strings/factors if the network is labelled.
-#' If the sets of senders and receivers overlap, a one-mode network is inferred.
-#' If the sets contain no overlap, a two-mode network is inferred.
-#' If a third, numeric column is present, a weighted network will be created.
-#'
-#' Matrices can be either adjacency (one-mode) or incidence (two-mode) matrices.
-#' Incidence matrices are typically inferred from unequal dimensions,
-#' but since in rare cases a matrix with equal dimensions may still
-#' be an incidence matrix, an additional argument `twomode` can be
-#' specified to override this heuristic.
-#'
-#' This information is usually already embedded in `{igraph}`,
-#' `{tidygraph}`, and `{network}` objects.
+#' @template param_two
 #' @examples
 #' test <- data.frame(from = c("A","B","B","C","C"), to = c("I","G","I","G","H"))
 #' as_edgelist(test)
@@ -54,292 +30,14 @@
 #' @return
 #' The currently implemented coercions or translations are:
 #'
-#' |             | data.frame| diff_model| diffnet| igraph| list| matrix| network| network.goldfish| siena| tbl_graph|
-#' |:------------|----------:|----------:|-------:|------:|----:|------:|-------:|----------------:|-----:|---------:|
-#' |as_diffnet   |          0|          1|       0|      0|    0|      0|       0|                0|     0|         0|
-#' |as_diffusion |          0|          1|       1|      1|    0|      0|       0|                0|     0|         0|
-#' |as_edgelist  |          1|          0|       0|      1|    0|      1|       1|                1|     1|         1|
-#' |as_graphAM   |          1|          0|       0|      1|    0|      1|       1|                1|     1|         1|
-#' |as_igraph    |          1|          1|       1|      1|    0|      1|       1|                1|     1|         1|
-#' |as_matrix    |          1|          1|       0|      1|    0|      1|       1|                1|     1|         1|
-#' |as_network   |          1|          0|       1|      1|    0|      1|       1|                1|     1|         1|
-#' |as_siena     |          0|          0|       0|      1|    0|      0|       0|                0|     0|         1|
-#' |as_tidygraph |          1|          1|       1|      1|    1|      1|       1|                1|     1|         1|
+#'   ```{r, echo = FALSE, comment=""}
+#'   available_methods(collect_functions("as.*(graph|net|diff|siena|goldfish)"))
+#'   ```
 NULL
-
-# Nodelists ####
-
-#' @rdname manip_as
-#' @export
-as_nodelist <- function(.data) UseMethod("as_nodelist")
-
-#' @export
-as_nodelist.tbl_graph <- function(.data) {
-  out <- .data
-  dplyr::tibble(data.frame(out))
-}
-
-# Changelists ####
-
-#' @rdname manip_as
-#' @export
-as_changelist <- function(.data) UseMethod("as_changelist")
-
-#' @export
-as_changelist.tbl_graph <- function(.data) {
-  out <- igraph::graph_attr(as_igraph(.data), "changes")
-  dplyr::tibble(data.frame(out))
-}
-
-# Edgelists ####
-
-#' @rdname manip_as
-#' @importFrom igraph as_data_frame
-#' @importFrom dplyr as_tibble arrange
-#' @importFrom network get.edge.attribute as.edgelist
-#' @export
-as_edgelist <- function(.data,
-                        twomode = FALSE) UseMethod("as_edgelist")
-
-#' @export
-as_edgelist.igraph <- function(.data,
-                               twomode = FALSE) {
-  igraph::as_data_frame(.data, what = "edges") %>%
-    dplyr::as_tibble()
-}
-
-#' @export
-as_edgelist.tbl_graph <- function(.data,
-                                  twomode = FALSE) {
-  igraph::as_data_frame(.data, what = "edges") %>% 
-    dplyr::as_tibble()
-}
-
-#' @export
-as_edgelist.network <- function(.data,
-                                twomode = FALSE) {
-  out <- network::as.edgelist(.data)
-  edges <- as.data.frame(out)
-  if (is_twomode(.data)) {
-    edges <- edges[((nrow(edges)/2) + 1):nrow(edges),]
-  }
-  from <- to <- NULL
-  # Handle node names
-  if (is_labelled(.data)) {
-    names <- attr(out, "vnames")
-    edges[,1] <- names[edges[,1]]
-    edges[,2] <- names[edges[,2]]
-  }
-  # Handle edge weights
-  if (is_weighted(.data)) {
-    edges[,3] <- network::get.edge.attribute(.data, "weight")
-    names(edges) <- c("from", "to", "weight")
-  } else names(edges) <- c("from", "to")
-  # Remove weight column if only unity weights.
-  if (all(edges$weight == 1)) edges <- edges[, -3]
-  dplyr::arrange(dplyr::as_tibble(edges), from, to)
-}
-
-#' @export
-as_edgelist.matrix <- function(.data,
-                               twomode = FALSE) {
-  as_edgelist(as_igraph(.data,
-                        twomode = FALSE))
-}
-
-#' @export
-as_edgelist.data.frame <- function(.data,
-                                   twomode = FALSE) {
-  if (ncol(.data) == 2 && any(names(.data) != c("from", "to"))) {
-    names(.data) <- c("from", "to")
-    .data
-  } else if(ncol(.data) == 3 && 
-            (any(names(.data) != c("from", "to", "weight")) |
-            any(names(.data) != c("from", "to", "sign")))) {
-    names(.data) <- c("from", "to", "weight")
-    .data
-  } else .data
-}
-
-#' @export
-as_edgelist.network.goldfish <- function(.data,
-                                         twomode = FALSE) {
-  as_matrix(as_igraph(.data, twomode = twomode))
-}
-
-#' @export
-as_edgelist.siena <- function(.data,
-                              twomode = NULL) {
-  as_edgelist(as_igraph(.data, twomode = twomode))
-}
-
-# Matrices ####
-
-#' @rdname manip_as
-#' @importFrom dplyr arrange
-#' @importFrom igraph edge_attr_names as_adjacency_matrix as_biadjacency_matrix
-#' @importFrom network is.bipartite list.edge.attributes as.matrix.network
-#' @export
-as_matrix <- function(.data,
-                      twomode = NULL) UseMethod("as_matrix")
-
-#' @export
-as_matrix.data.frame <- function(.data,
-                                 twomode = NULL) {
-  if ("tbl_df" %in% class(.data)) .data <- as.data.frame(.data)
-  if (ncol(.data) == 2 | !is_weighted(.data)) {
-    .data <- data.frame(.data) # in case it's a tibble
-    .data <- as.data.frame(table(c(.data[,1]), c(.data[,2])))
-    names(.data) <- c("from","to","weight")
-  }
-  if (ncol(.data) == 3) {
-    # Adds a third (weight) column to a two-column edgelist
-    # .data <- .data[order(.data[,1], .data[,2]),]
-    nodes1 <- as.character(unique(.data[,1]))
-    nodes1 <- sort(nodes1)
-    nodes2 <- as.character(unique(.data[,2]))
-    nodes2 <- sort(nodes2)
-    if(length(intersect(nodes1, nodes2)) > 0 &
-       !setequal(nodes1, nodes2))
-      nodes1 <- nodes2 <- sort(unique(c(nodes1,nodes2)))
-    if (nrow(.data) != length(nodes1)*length(nodes2)) {
-      allcombs <- expand.grid(nodes1, nodes2, stringsAsFactors = FALSE)
-      allcombs <- subset(allcombs, !duplicated(allcombs))
-      names(allcombs) <- c("from","to")
-      .data <- merge(allcombs, .data, all.x = TRUE)
-      .data <- .data[order(.data[,2], .data[,1]),]
-      .data[is.na(.data)] <- 0
-    }
-    .data <- dplyr::arrange(.data,
-                             as.character(.data$to),
-                             as.character(.data$from))
-    .data <- structure(as.numeric(.data[,3]),
-                     .Dim = c(as.integer(length(nodes1)),
-                              as.integer(length(nodes2))),
-                     .Dimnames = list(nodes1, nodes2))
-  }
-  .data
-}
-
-#' @export
-as_matrix.matrix <- function(.data,
-                             twomode = NULL) {
-  .data
-}
-
-#' @export
-as_matrix.igraph <- function(.data,
-                             twomode = NULL) {
-  if ((!is.null(twomode) && twomode) | 
-      (is.null(twomode) & is_twomode(.data) & !is_multiplex(.data))) {
-    if (is_weighted(.data) | is_signed(.data)) {
-      mat <- igraph::as_biadjacency_matrix(.data, sparse = FALSE,
-                                           attr = ifelse(is_weighted(.data), "weight", 
-                                                         ifelse(is_signed(.data), "sign", NULL)))
-    } else {
-      mat <- igraph::as_biadjacency_matrix(.data, sparse = FALSE,
-                                           attr = NULL)
-    }
-  } else {
-    if (is_weighted(.data) | is_signed(.data)) {
-      mat <- igraph::as_adjacency_matrix(.data, sparse = FALSE,
-                                         attr = ifelse(is_weighted(.data), "weight", 
-                                                       ifelse(is_signed(.data), "sign", NULL)))
-      # Where multiplex network 
-      if(anyNA(mat) && is_multiplex(.data)) mat[is.na(mat)] <- 1
-    } else {
-      mat <- igraph::as_adjacency_matrix(.data, sparse = FALSE,
-                                         attr = NULL)
-    }
-  }
-  mat
-}
-
-#' @export
-as_matrix.tbl_graph <- function(.data,
-                                twomode = NULL) {
-  as_matrix(as_igraph(.data), twomode = twomode)
-}
-
-#' @export
-as_matrix.network <- function(.data,
-                              twomode = NULL) {
-  if (network::is.bipartite(.data)) {
-    if ("weight" %in% network::list.edge.attributes(.data)) {
-      out <- network::as.matrix.network(.data,
-                                 attrname = "weight",
-                                 expand.bipartite = FALSE)
-      # Note: if expand.bipartite is true it returns the adjacency matrix. If
-      # false it returns the incidence matrix that we want. Use
-      # to_multilevel(mat) on the resulting matrix to do the conversion if needed.
-    } else {
-      out <- network::as.matrix.network(.data,
-                                 expand.bipartite = FALSE)
-    }
-  } else {
-    if ("weight" %in% network::list.edge.attributes(.data)) {
-      out <- network::as.matrix.network(.data, attrname = "weight")
-    } else {
-      out <- network::as.matrix.network(.data)
-    }
-  }
-  # because network can have vertex names that are integers (i.e. just node IDs), 
-  # we remove them since they are really anonymous.
-  if(is.integer(network::network.vertex.names(.data))){
-    attr(out, "dimnames") <- NULL
-  }
-  out
-}
-
-#' @export
-as_matrix.network.goldfish <- function(.data,
-                                       twomode = FALSE) {
-  as_matrix(as_igraph(.data, twomode = twomode))
-}
-
-#' @export
-as_matrix.siena <- function(.data,
-                            twomode = NULL) {
-  # Get the dependent network(s) first
-  # Identify all dyadic depvars
-  dvs <- lapply(.data$depvars, function(x) is.matrix(x[,,1]) )
-  ddvs <- names(which(dvs == TRUE))
-  # Add in first wave of first DV network
-  out <- .data$depvars[[ddvs[1]]][,,1]
-  # Add remaining waves
-  for(d in 2:dim(.data$depvars[[ddvs[1]]])[3]) {
-    out <- .data$depvars[[ddvs[1]]][,,d] + out
-  }
-  # Add other dyadic depvars
-  if (length(ddvs) > 1) {
-    for (l in 2:length(ddvs)) {
-      for (d in seq_len(dim(.data$depvars[[ddvs[l]]])[3])) {
-        out <- .data$depvars[[ddvs[l]]][,,d] + out
-      }
-    }
-  }
-  # Add dycCovars
-  for (k in seq_len(length(.data$dycCovars))) {
-    out <- .data$dycCovars[[ddvs[k]]] + out
-  }
-  # Add dyvCovars
-  for (k in seq_len(length(.data$dyvCovars))) {
-    for (d in seq_len(dim(.data$dyvCovars[[k]])[3])) {
-      out <- .data$dyvCovars[[k]][,,d] + out
-    }
-  }
-  out
-}
-
-#' @export
-as_matrix.diff_model <- function(.data,
-                                 twomode = FALSE) {
-  as_matrix(as_igraph(.data, twomode = twomode))
-}
 
 # igraph ####
 
-#' @rdname manip_as
+#' @rdname coerce_graph
 #' @importFrom igraph graph_from_data_frame graph_from_biadjacency_matrix
 #'  graph_from_adjacency_matrix delete_vertex_attr V vertex_attr
 #'  edge_attr delete_edge_attr set_edge_attr
@@ -378,11 +76,11 @@ as_igraph.matrix <- function(.data,
   if (nrow(.data) != ncol(.data) | twomode) {
     if (!(all(.data %in% c(0, 1)))) {
       graph <- igraph::graph_from_biadjacency_matrix(.data,
-                                                   weighted = TRUE,
-                                                   directed = FALSE)
+                                                     weighted = TRUE,
+                                                     directed = FALSE)
     } else {
       graph <- igraph::graph_from_biadjacency_matrix(.data,
-                                                   directed = FALSE)
+                                                     directed = FALSE)
     }
   } else {
     if (!(all(.data %in% c(0, 1)))) {
@@ -473,7 +171,7 @@ as_igraph.diff_model <- function(.data,
 
 #' @export
 as_igraph.diffnet <- function(.data,
-                                 twomode = FALSE) {
+                              twomode = FALSE) {
   graph <- .data[, , 1:.data$meta$nper]
   static.attrs <- colnames(graph$vertex.static.attrs)
   dynamic.attrs <- colnames(graph$vertex.dyn.attrs[[1]])
@@ -490,7 +188,7 @@ as_igraph.diffnet <- function(.data,
     for (k in dynamic.attrs) tempgraph <- igraph::set_vertex_attr(graph = tempgraph, 
                                                                   name = k, value = graph[[k]][[p]])
     tempgraph <- igraph::set_vertex_attr(graph = tempgraph, name = "toa", 
-                                 value = graph$toa)
+                                         value = graph$toa)
     tempgraph <- igraph::set_graph_attr(tempgraph, "name", 
                                         graph$meta$name)
     tempgraph <- igraph::set_graph_attr(tempgraph, "behavior", 
@@ -503,7 +201,7 @@ as_igraph.diffnet <- function(.data,
 #' @export
 as_igraph.network.goldfish <- function(.data,
                                        twomode = FALSE) {
-
+  
   # orig <- deparse(substitute(.data))
   # y <- ls(envir = .GlobalEnv)
   # envir  <- .GlobalEnv
@@ -516,7 +214,7 @@ as_igraph.network.goldfish <- function(.data,
   # classes <- vapply(gfobjs, FUN = function(x) checkClasses(get(x), 
   #                                                          classes = classesToKeep), 
   #                   FUN.VALUE = logical(length(classesToKeep)))
-
+  
   if(sum(.data)==0){
     out <- igraph::graph_from_data_frame(d = get(attr(.data, "events"))[,2:4],
                                          directed = attr(.data, "directed"),
@@ -547,8 +245,8 @@ as_igraph.networkDynamic <- function(.data, twomode = FALSE) {
                                    function(x) data.frame(node = x, 
                                                           if(is.null(.data$val[[x]]$active)) 
                                                             matrix(c(NA, NA), ncol = 2) else 
-                                                            .data$val[[x]]$active
-                                                          )))
+                                                              .data$val[[x]]$active
+                                   )))
   names(changes) <- c("node","begin","end")
   changes <- stats::na.omit(changes)
   
@@ -682,9 +380,18 @@ as_igraph.siena <- function(.data, twomode = NULL) {
   out
 }
 
+#' @export
+as_igraph.snet <- function(.data, twomode = FALSE) {
+  out <- igraph::graph_from_data_frame(as_edgelist(.data), 
+                                       vertices = as_nodelist(.data))
+  igraph::graph_attr(out, "info") <- as_infolist(.data)
+  igraph::graph_attr(out, "changes") <- as_changelist(.data)
+  out
+}
+
 # tidygraph ####
 
-#' @rdname manip_as
+#' @rdname coerce_graph
 #' @importFrom tidygraph as_tbl_graph
 #' @importFrom igraph graph_from_data_frame
 #' @export
@@ -702,15 +409,15 @@ as_tidygraph.list <- function(.data, twomode = FALSE) {
   if (!is.null(names(.data))){
     if ("nodes" %in% names(.data) & "ties" %in% names(.data)) {
       out <- tidygraph::tbl_graph(nodes = .data[["nodes"]],
-                           edges = .data[["ties"]])
+                                  edges = .data[["ties"]])
     } else if ("nodes" %in% names(.data) & "edges" %in% names(.data)) {
       out <- tidygraph::tbl_graph(nodes = .data[["nodes"]],
-                           edges = .data[["edges"]])
+                                  edges = .data[["edges"]])
     } else snet_abort("Please name the list elements 'nodes' and 'ties'.")
   } else snet_abort("Please name the list elements 'nodes' and 'ties'.")
   make_mnet(out)
 }
-  
+
 #' @export
 as_tidygraph.matrix <- function(.data, twomode = FALSE) {
   out <- tidygraph::as_tbl_graph(as_igraph(.data, twomode = twomode))
@@ -738,7 +445,7 @@ as_tidygraph.network <- function(.data, twomode = FALSE) {
 #' @export
 as_tidygraph.network.goldfish <- function(.data,
                                           twomode = FALSE) {
-
+  
   # orig <- deparse(substitute(.data))
   # y <- ls(envir = .GlobalEnv)
   # envir  <- .GlobalEnv
@@ -751,14 +458,14 @@ as_tidygraph.network.goldfish <- function(.data,
   # classes <- vapply(gfobjs, FUN = function(x) checkClasses(get(x),
   #                                classes = classesToKeep),
   #                   FUN.VALUE = logical(length(classesToKeep)))
-
+  
   if (sum(.data)==0) {
     out <- igraph::graph_from_data_frame(d = get(attr(.data, "events"))[,2:4],
                                          directed = attr(.data, "directed"),
                                          vertices = get(attr(.data, "nodes")))
     out <- as_tidygraph(out)
   } else snet_abort("Non-empty starts are not yet supported by this function.")
-
+  
   # if(rowSums(classes)['network.goldfish']>1){
   #   nets <- colnames(classes)[classes['network.goldfish', ]==TRUE]
   #   nets <- nets[nets != orig]
@@ -808,7 +515,7 @@ as_tidygraph.networkDynamic <- function(.data, twomode = FALSE) {
 
 # Network ####
 
-#' @rdname manip_as
+#' @rdname coerce_graph
 #' @importFrom network as.network set.vertex.attribute
 #' @importFrom igraph vertex_attr
 #' @export
@@ -877,7 +584,7 @@ as_network.data.frame <- function(.data,
                                                    FALSE,
                                                    is_directed(.data)),
                                  bipartite = is_twomode(.data)
-                                  )
+  )
 }
 
 #' @export
@@ -888,7 +595,7 @@ as_network.network.goldfish <- function(.data,
 
 #' @export
 as_network.diffnet <- function(.data,
-                              twomode = FALSE) {
+                               twomode = FALSE) {
   graph <- .data[, , 1:.data$meta$nper]
   n <- graph$meta$n
   structure(Map(function(g, a, time) {
@@ -910,10 +617,10 @@ as_network.siena <- function(.data, twomode = FALSE) {
 
 # RSiena ####
 
-#' @rdname manip_as
+#' @rdname coerce_graph
 #' @export
 as_siena <- function(.data,
-                      twomode = FALSE) UseMethod("as_siena")
+                     twomode = FALSE) UseMethod("as_siena")
 
 #' @export
 as_siena.igraph <- function(.data, twomode = FALSE) {
@@ -949,7 +656,7 @@ as_siena.tbl_graph <- function(.data, twomode = FALSE) {
 
 # graphAM ####
 
-#' @rdname manip_as
+#' @rdname coerce_graph
 #' @export
 as_graphAM <- function(.data, twomode = NULL) UseMethod("as_graphAM")
 
@@ -1016,7 +723,7 @@ as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
 
 # Diffusion ####
 
-#' @rdname manip_as
+#' @rdname coerce_graph
 #' @param events A table (data frame or tibble) of diffusion events
 #'   with columns `t` indicating the time (typically an integer) of the event, 
 #'   `nodes` indicating the number or name of the node involved in the event,
@@ -1175,50 +882,50 @@ as_diffusion.diffnet <- function(.data, twomode = FALSE, events) {
   report <- dplyr::select(report, dplyr::any_of(c("t", "n", "S", "s", "E", "E_new", "I", "I_new", "R", "R_new")))
   make_diff_model(events, report, net)
 }
-  
+
 # Diffnet ####
 
-#' @rdname manip_as
+#' @rdname coerce_graph
 #' @export
 as_diffnet <- function(.data,
                        twomode = FALSE) UseMethod("as_diffnet")
 
 #' @export
 as_diffnet.diff_model <- function(.data,
-                               twomode = FALSE) {
+                                  twomode = FALSE) {
   out <- summary(.data) %>% dplyr::filter(event == "I") %>% 
     dplyr::distinct(nodes, .keep_all = TRUE) %>% 
     dplyr::select(nodes,t)
   if(!is_labelled(as_igraph(.data)))
     out <- dplyr::arrange(out, nodes) else if (is.numeric(out$nodes))
       out$nodes <- node_names(as_igraph(.data))[out$nodes]
-  toa <- stats::setNames(out$t, out$nodes)
-  if(is_dynamic(.data)){
-    snet_unavailable()
-    # netdiffuseR::igraph_to_diffnet(graph.list = to_waves(.data))
-  } else {
-    graph <- as_tidygraph(.data) %>% mutate(toa = as.numeric(toa)) %>% as_igraph()
-    # suppressWarnings(netdiffuseR::igraph_to_diffnet(graph = graph,
-    #                               toavar = "toa"))
-    return(structure(list(graph = graph, toa = toa#, 
-                          # adopt = adopt, 
-                          # cumadopt = cumadopt, vertex.static.attrs = vertex.static.attrs, 
-                          # vertex.dyn.attrs = vertex.dyn.attrs, graph.attrs = graph.attrs, 
-                          # meta = meta
-                          ), class = "diffnet"))
-  }
-  
+    toa <- stats::setNames(out$t, out$nodes)
+    if(is_dynamic(.data)){
+      snet_unavailable()
+      # netdiffuseR::igraph_to_diffnet(graph.list = to_waves(.data))
+    } else {
+      graph <- as_tidygraph(.data) %>% mutate(toa = as.numeric(toa)) %>% as_igraph()
+      # suppressWarnings(netdiffuseR::igraph_to_diffnet(graph = graph,
+      #                               toavar = "toa"))
+      return(structure(list(graph = graph, toa = toa#, 
+                            # adopt = adopt, 
+                            # cumadopt = cumadopt, vertex.static.attrs = vertex.static.attrs, 
+                            # vertex.dyn.attrs = vertex.dyn.attrs, graph.attrs = graph.attrs, 
+                            # meta = meta
+      ), class = "diffnet"))
+    }
+    
 }
 
 # stocnet ####
 
-#' @rdname manip_as
+#' @rdname coerce_graph
 #' @export
 as_snet <- function(.data) UseMethod("as_snet")
 
 #' @export
 as_snet.igraph <- function(.data) {
-  info <- net_info(.data)
+  info <- as_infolist(.data)
   nodes <- as_nodelist(.data)
   changes <- as_changelist(.data)
   ties <- as_edgelist(.data)
@@ -1249,4 +956,3 @@ as_snet.igraph <- function(.data) {
   class(out) <- c("snet", class(out))
   out
 }
-  
