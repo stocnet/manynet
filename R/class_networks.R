@@ -56,11 +56,8 @@ NULL
 print.mnet <- function(x, ..., n = 12) {
   arg_list <- list(...)
   arg_list[['useS4']] <- NULL
-  if(!is.null(igraph::graph_attr(x, "name"))) {
-    cli::cli_h1("# {igraph::graph_attr(x, 'name')}")
-  } else if(is_grand(x) && !is.null(igraph::graph_attr(x, "grand")$name)){
-    cli::cli_h1("# {igraph::graph_attr(x, 'grand')$name}")
-  } 
+  if(!is.null(net_name(x)))
+    cli::cli_h1("# {net_name(x)}")
   net_desc <- describe_network(x)
   tie_desc <- describe_ties(x)
   node_desc <- describe_nodes(x)
@@ -100,11 +97,8 @@ print.mnet <- function(x, ..., n = 12) {
 print.snet <- function(x, ..., n = 12) {
   arg_list <- list(...)
   arg_list[['useS4']] <- NULL
-  if(!is.null(igraph::graph_attr(x, "name"))) {
-    cli::cli_h1("# {net_name(x))}")
-  } else if(is_grand(x) && !is.null(igraph::graph_attr(x, "grand")$name)){
+  if(!is.null(net_name(x)))
     cli::cli_h1("# {net_name(x)}")
-  } 
   net_desc <- describe_network(x)
   tie_desc <- describe_ties(x)
   node_desc <- describe_nodes(x)
@@ -113,9 +107,9 @@ print.snet <- function(x, ..., n = 12) {
   cli_div(theme = list(.emph = list(color = "#4576B5")))
   cli::cli_text("{.emph # {net_desc} of {node_desc} and {tie_desc}{change_desc}}")
   cli::cli_end()
-  top <- .data$nodes
-  bottom <- .data$ties
-  if(!is.null(.data$changes)) n <- ceiling(n/3) else 
+  top <- x$nodes
+  bottom <- x$ties
+  if(!is.null(x$changes)) n <- ceiling(n/3) else 
     n <- ceiling(n/2)
   if (ncol(top)>0){
     cli::cli_par()
@@ -123,10 +117,10 @@ print.snet <- function(x, ..., n = 12) {
     print(top, n = n)
     cli::cli_end()
   } 
-  if(!is.null(.data$changes)){
+  if(!is.null(x$changes)){
     cli::cli_par()
     cli::cli_h3("Changes")
-    print(dplyr::as_tibble(.data$changes),
+    print(dplyr::as_tibble(x$changes),
           n = n)
     cli::cli_end()
   }

@@ -55,10 +55,6 @@ testing and modelling capabilities see
   - [Transforming](#transforming)
   - [Splitting and Joining](#splitting-and-joining)
   - [Extracting](#extracting)
-- [Marking](#marking)
-- [Motifs](#motifs)
-- [Memberships](#memberships)
-- [Measuring](#measuring)
 - [Installation](#installation)
   - [Stable](#stable)
   - [Development](#development)
@@ -126,10 +122,10 @@ e.g.:
 <img src="https://www.jameshollway.com/post/manynet/README-create_egs-1.png" alt="Graphs illustrating the creation of lattices and tree networks"/>
 
 See also `create_components()`, `create_core()`, `create_cycle()`,
-`create_degree()`, `create_ego()`, `create_empty()`,
-`create_explicit()`, `create_filled()`, `create_lattice()`,
-`create_motifs()`, `create_ring()`, `create_star()`, `create_tree()`,
-`create_wheel()`, `create_windmill()`.
+`create_degree()`, `create_empty()`, `create_explicit()`,
+`create_filled()`, `create_lattice()`, `create_motifs()`,
+`create_ring()`, `create_star()`, `create_tree()`, `create_wheel()`,
+`create_windmill()`.
 
 The `generate_*` group of functions generate networks from generative
 mechanisms that may include some random aspect, and so will return a
@@ -139,8 +135,8 @@ different output each time they are run, e.g.:
 
 See also `generate_citations()`, `generate_configuration()`,
 `generate_fire()`, `generate_islands()`, `generate_man()`,
-`generate_permutation()`, `generate_random()`, `generate_scalefree()`,
-`generate_smallworld()`, `generate_utilities()`.
+`generate_random()`, `generate_scalefree()`, `generate_smallworld()`,
+`generate_utilities()`.
 
 Note that all these functions can create directed or undirected,
 one-mode or two-mode networks. Creating two-mode networks is as easy as
