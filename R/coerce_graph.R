@@ -384,7 +384,7 @@ as_igraph.siena <- function(.data, twomode = NULL) {
 as_igraph.snet <- function(.data, twomode = FALSE) {
   out <- igraph::graph_from_data_frame(as_edgelist(.data), 
                                        vertices = as_nodelist(.data))
-  igraph::graph_attr(out, "info") <- as_infolist(.data)
+  igraph::graph_attr(out) <- as_infolist(.data)
   igraph::graph_attr(out, "changes") <- as_changelist(.data)
   out
 }
@@ -513,6 +513,11 @@ as_tidygraph.networkDynamic <- function(.data, twomode = FALSE) {
   as_tidygraph(as_igraph.networkDynamic(.data, twomode = twomode))
 }
 
+#' @export
+as_tidygraph.snet <- function(.data, twomode = FALSE) {
+  as_tidygraph(as_igraph.snet(.data, twomode = twomode))
+}
+
 # Network ####
 
 #' @rdname coerce_graph
@@ -613,6 +618,21 @@ as_network.diffnet <- function(.data,
 #' @export
 as_network.siena <- function(.data, twomode = FALSE) {
   as_network(as_igraph.siena(.data, twomode = FALSE))
+}
+
+#' @export
+as_network.snet <- function(.data, twomode = FALSE) {
+  out <- as_network(as_igraph.snet(.data))
+  out$gal <- as_infolist(.data)
+  network::set.network.attribute(out, "changes", as_changelist(.data))
+  out
+}
+
+#' @export
+as_network.networkDynamic <- function(.data, twomode = FALSE) {
+  out <- .data
+  class(out) <- class(out)[class(x) != "networkDynamic"]
+  out
 }
 
 # RSiena ####
@@ -718,6 +738,11 @@ as_graphAM.siena <- function(.data, twomode = NULL) {
 
 #' @export
 as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
+  as_graphAM(as_matrix(.data), twomode)
+}
+
+#' @export
+as_graphAM.snet <- function(.data, twomode = NULL) {
   as_graphAM(as_matrix(.data), twomode)
 }
 
@@ -921,10 +946,16 @@ as_diffnet.diff_model <- function(.data,
 
 #' @rdname coerce_graph
 #' @export
-as_snet <- function(.data) UseMethod("as_snet")
+as_snet <- function(.data,
+                    twomode = FALSE) UseMethod("as_snet")
 
 #' @export
-as_snet.igraph <- function(.data) {
+as_snet.snet <- function(.data, twomode = FALSE) {
+  .data
+}
+
+#' @export
+as_snet.igraph <- function(.data, twomode = FALSE) {
   info <- as_infolist(.data)
   nodes <- as_nodelist(.data)
   changes <- as_changelist(.data)
@@ -953,6 +984,30 @@ as_snet.igraph <- function(.data) {
   if(ncol(ties)==0) ties <- NULL
   
   out <- list(info = info, nodes = nodes, changes = changes, ties = ties)
+  class(out) <- c("snet", class(out))
+  out
+}
+
+#' @export
+as_snet.tbl_graph <- function(.data,
+                           twomode = FALSE) {
+  as_snet(as_igraph(.data, twomode = twomode)) 
+}
+
+
+#' @export
+as_snet.matrix <- function(.data,
+                           twomode = FALSE) {
+ as_snet(as_tidygraph(.data, twomode = twomode)) 
+}
+  
+#' @export
+as_snet.network <- function(.data,
+                           twomode = FALSE) {
+  out <- list(info = as_infolist(.data), 
+              nodes = as_nodelist(.data), 
+              changes = as_changelist(.data), 
+              ties = as_edgelist(.data))
   class(out) <- c("snet", class(out))
   out
 }
