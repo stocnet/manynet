@@ -32,7 +32,9 @@ to_no_missing <- function(.data) UseMethod("to_no_missing")
 
 #' @export
 to_no_missing.tbl_graph <- function(.data){
-  delete_nodes(.data, !stats::complete.cases(as_nodelist(.data))) %>% 
+  out <- .data
+  nl <- as_nodelist(out)
+  delete_nodes(.data, !stats::complete.cases(nl)) %>% 
     add_info(name = paste(net_name(.data), "without nodes with missing data"))
 }
 
