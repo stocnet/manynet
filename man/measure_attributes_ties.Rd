@@ -8,7 +8,7 @@
 \alias{tie_is_twomode}
 \title{Describing attributes of ties in a network}
 \usage{
-tie_attribute(.data, attribute)
+tie_attribute(.data, attr_name)
 
 tie_weights(.data)
 
@@ -26,7 +26,7 @@ tie_is_twomode(.data)
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
 
-\item{attribute}{Character string naming a nodal attribute.
+\item{attr_name}{Character string naming a nodal attribute.
 The attribute itself may be a logical mark, numeric measure, or character membership vector.}
 }
 \description{

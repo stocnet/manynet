@@ -7,7 +7,7 @@
 \alias{filter_ties}
 \title{Modifying tie number}
 \usage{
-add_ties(.data, ties, attribute = NULL)
+add_ties(.data, ties, attr_list = NULL)
 
 delete_ties(.data, ties)
 
@@ -25,29 +25,32 @@ filter_ties(.data, ...)
 
 \item{ties}{The number of ties to be added or an even list of ties.}
 
-\item{...}{Additional parameters and arguments passed on internally.}
+\item{attr_list}{A list of attributes to be added to the new ties.}
 
-\item{attr_name}{Name of the new attribute in the resulting object.}
+\item{...}{Additional parameters and arguments passed on internally.}
 }
 \value{
-A tidygraph (\code{tbl_graph}) data object.
+A data object of the same class as the function was given.
 }
 \description{
-These functions allow users to add and delete ties and their attributes:
+These functions allow users to add and delete ties:
 \itemize{
 \item \code{add_ties()} adds additional ties to network data
 \item \code{delete_ties()} deletes ties from network data
-\item \code{add_tie_attribute()} and \code{mutate_ties()} offer ways to add
-a vector of values to a network as a tie attribute.
-\item \code{rename_ties()} renames tie attributes.
-\item \code{bind_ties()} appends the tie data from two networks and
-\code{join_ties()} merges ties from two networks,
-adding a tie attribute identifying the newly added ties.
 \item \code{filter_ties()} subsets ties based on some tie attribute-related logical statement.
 }
 
-Note that while \verb{add_*()}/\verb{delete_*()} functions operate similarly as comparable \code{{igraph}} functions,
-\verb{mutate*()}, \verb{bind*()}, etc work like \code{{tidyverse}} or \code{{dplyr}}-style functions.
+While \verb{add_*()}/\verb{delete_*()} functions operate similarly as comparable \code{{igraph}} functions,
+\verb{filter*()}, etc work like \code{{tidyverse}} or \code{{dplyr}}-style functions.
+}
+\details{
+Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{            igraph network tbl_graph
+add_ties         √       √         √
+delete_ties      √       √         √
+}\if{html}{\out{</div>}}
 }
 \examples{
   other <- create_filled(4) \%>\% mutate(name = c("A", "B", "C", "D"))
@@ -58,6 +61,11 @@ delete_ties(ison_adolescents, 3)
 delete_ties(ison_adolescents, "Alice|Sue")
 }
 \seealso{
+Other ties: 
+\code{\link{manip_ties_attr}},
+\code{\link{modif_direction}},
+\code{\link{modif_weight}}
+
 Other manipulations: 
 \code{\link{manip_changes}},
 \code{\link{manip_info}},
@@ -66,3 +74,4 @@ Other manipulations:
 \code{\link{manip_ties_attr}}
 }
 \concept{manipulations}
+\concept{ties}

@@ -111,10 +111,10 @@ reference:
     desc: |
       Functions for reformatting networks, retaining the same network dimensions.
     contents:
-      - manip_preformat
-      - manip_reformat
-      - manip_direction
-      - manip_deformat
+      - modif_direction
+      - modif_weight
+      - modif_labels
+      - modif_plexity
   - subtitle: "Transforming"
     desc: |
       Functions for transforming networks, which may change the network's dimensions.
@@ -125,7 +125,7 @@ reference:
     desc: |
       Functions for modifying multimodal networks.
     contents:
-      - manip_levels
+      - modif_levels
       - manip_project
   - subtitle: "Converting"
     desc: |

@@ -38,23 +38,27 @@ summarise_ties(.data, ...)
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
 
+\item{attr_name}{Character string naming a nodal attribute.
+The attribute itself may be a logical mark, numeric measure, or character membership vector.}
+
+\item{vector}{A vector of values for the new attribute.}
+
 \item{...}{Additional parameters and arguments passed on internally.}
+
+\item{object2}{A second object to copy nodes or ties from.}
 }
 \value{
-A tidygraph (\code{tbl_graph}) data object.
+A data object of the same class as the function was given.
 }
 \description{
-These functions allow users to add and delete ties and their attributes:
+These functions allow users to add and delete tie attributes:
 \itemize{
-\item \code{add_ties()} adds additional ties to network data
-\item \code{delete_ties()} deletes ties from network data
 \item \code{add_tie_attribute()} and \code{mutate_ties()} offer ways to add
 a vector of values to a network as a tie attribute.
 \item \code{rename_ties()} renames tie attributes.
 \item \code{bind_ties()} appends the tie data from two networks and
 \code{join_ties()} merges ties from two networks,
 adding a tie attribute identifying the newly added ties.
-\item \code{filter_ties()} subsets ties based on some tie attribute-related logical statement.
 }
 
 Note that while \verb{add_*()}/\verb{delete_*()} functions operate similarly as comparable \code{{igraph}} functions,
@@ -66,6 +70,11 @@ Note that while \verb{add_*()}/\verb{delete_*()} functions operate similarly as 
   add_tie_attribute(other, "weight", c(1, 2, 2, 2, 1, 2))
 }
 \seealso{
+Other ties: 
+\code{\link{manip_ties_num}},
+\code{\link{modif_direction}},
+\code{\link{modif_weight}}
+
 Other manipulations: 
 \code{\link{manip_changes}},
 \code{\link{manip_info}},
@@ -74,3 +83,4 @@ Other manipulations:
 \code{\link{manip_ties_num}}
 }
 \concept{manipulations}
+\concept{ties}

@@ -1,7 +1,7 @@
 # Node attributes ####
 
 #' Describing attributes of nodes in a network
-#' 
+#' @name measure_attributes_nodes
 #' @description 
 #'   These functions extract certain attributes from network data:
 #'   
@@ -12,9 +12,8 @@
 #'   These functions are also often used as helpers within other functions.
 #'   `node_*()` always return vectors the same length
 #'   as the number of nodes in the network.
-#' @name measure_attributes_nodes
 #' @family measures
-#' @inheritParams mark_is
+#' @template param_data
 #' @template param_attr
 NULL
 
@@ -22,8 +21,8 @@ NULL
 #' @examples
 #' node_attribute(fict_lotr, "Race")
 #' @export
-node_attribute <- function(.data, attribute){
-  out <- igraph::vertex_attr(as_igraph(.data), attribute)
+node_attribute <- function(.data, attr_name){
+  out <- igraph::vertex_attr(as_igraph(.data), attr_name)
   if(is.numeric(out)) make_node_measure(out, .data) else out
 }
 
@@ -61,7 +60,7 @@ node_is_mode <- function(.data){
 # Tie attributes ####
 
 #' Describing attributes of ties in a network
-#' 
+#' @name measure_attributes_ties
 #' @description 
 #'   These functions extract certain attributes from network data:
 #'   
@@ -73,9 +72,8 @@ node_is_mode <- function(.data){
 #'   These functions are also often used as helpers within other functions.
 #'   `tie_*()` always return vectors the same length
 #'   as the number of ties in the network, respectively.
-#' @name measure_attributes_ties
 #' @family measures
-#' @inheritParams mark_is
+#' @template param_data
 #' @template param_attr
 NULL
 
@@ -83,8 +81,8 @@ NULL
 #' @examples
 #' tie_attribute(ison_algebra, "task_tie")
 #' @export
-tie_attribute <- function(.data, attribute){
-  out <- igraph::edge_attr(as_igraph(.data), attribute)
+tie_attribute <- function(.data, attr_name){
+  out <- igraph::edge_attr(as_igraph(.data), attr_name)
   if(is.numeric(out)) make_tie_measure(out, .data) else out
 }
 

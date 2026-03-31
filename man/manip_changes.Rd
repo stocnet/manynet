@@ -46,6 +46,9 @@ A data frame of composition change can be just two columns.}
 
 \item{time}{A time point or wave at which to present the network.}
 }
+\value{
+A data object of the same class as the function was given.
+}
 \description{
 These functions offer ways to modify data held about how nodes
 change over time.
@@ -83,4 +86,5 @@ Other manipulations:
 \code{\link{manip_ties_attr}},
 \code{\link{manip_ties_num}}
 }
+\concept{changes}
 \concept{manipulations}

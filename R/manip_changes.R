@@ -2,7 +2,6 @@
 
 #' Modifying changes to nodes over time
 #' @name manip_changes
-#' @family manipulations
 #' @description
 #'   These functions offer ways to modify data held about how nodes
 #'   change over time. 
@@ -23,6 +22,8 @@
 #' @template param_data
 #' @template param_dots
 #' @template param_by
+#' @family changes
+#' @template fam_manip
 #' @seealso [to_time()]
 NULL
 

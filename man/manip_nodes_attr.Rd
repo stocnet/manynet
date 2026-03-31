@@ -46,7 +46,8 @@ rename(.data, ...)
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
 
-\item{attr_name}{Name of the new attribute in the resulting object.}
+\item{attr_name}{Character string naming a nodal attribute.
+The attribute itself may be a logical mark, numeric measure, or character membership vector.}
 
 \item{vector}{A vector of values for the new attribute.}
 
@@ -82,6 +83,9 @@ Note that while \verb{add_*()} functions operate similarly as comparable \code{{
   join_nodes(another, other)
 }
 \seealso{
+Other nodes: 
+\code{\link{manip_nodes_num}}
+
 Other manipulations: 
 \code{\link{manip_changes}},
 \code{\link{manip_info}},
@@ -90,3 +94,4 @@ Other manipulations:
 \code{\link{manip_ties_num}}
 }
 \concept{manipulations}
+\concept{nodes}

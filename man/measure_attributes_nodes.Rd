@@ -7,7 +7,7 @@
 \alias{node_is_mode}
 \title{Describing attributes of nodes in a network}
 \usage{
-node_attribute(.data, attribute)
+node_attribute(.data, attr_name)
 
 node_names(.data)
 
@@ -23,7 +23,7 @@ node_is_mode(.data)
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
 
-\item{attribute}{Character string naming a nodal attribute.
+\item{attr_name}{Character string naming a nodal attribute.
 The attribute itself may be a logical mark, numeric measure, or character membership vector.}
 }
 \description{

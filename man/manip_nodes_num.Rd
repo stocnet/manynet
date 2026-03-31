@@ -58,6 +58,9 @@ Below are the currently implemented S3 methods:\tabular{lrrr}{
   add_nodes(other, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))
 }
 \seealso{
+Other nodes: 
+\code{\link{manip_nodes_attr}}
+
 Other manipulations: 
 \code{\link{manip_changes}},
 \code{\link{manip_info}},
@@ -66,3 +69,4 @@ Other manipulations:
 \code{\link{manip_ties_num}}
 }
 \concept{manipulations}
+\concept{nodes}

@@ -19,12 +19,12 @@
 #'   |:------------|------:|-------:|---------:|
 #'   |add_nodes    |      1|       1|         1|
 #'   |delete_nodes |      1|       1|         1|
-#' @family manipulations
 #' @template param_data
 #' @template param_dots
 #' @template param_by
+#' @family nodes
+#' @template fam_manip
 #' @param attribute A named list to be added as tie or node attributes.
-#' @return A data object of the same class as the function was given.
 #' @examples
 #'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
 #'   add_nodes(other, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))
@@ -93,13 +93,13 @@ filter_nodes <- function(.data, ..., .by = NULL){
 #'   
 #'   Note that while `add_*()` functions operate similarly as comparable `{igraph}` functions,
 #'   `mutate*()`, `bind*()`, etc work like `{tidyverse}` or `{dplyr}`-style functions.
-#' @family manipulations
 #' @template param_data
 #' @template param_dots
-#' @param attr_name Name of the new attribute in the resulting object.
-#' @param object2 A second object to copy nodes or ties from.
-#' @param vector A vector of values for the new attribute.
-#' @return A data object of the same class as the function was given.
+#' @template param_attr
+#' @template param_vect
+#' @template param_obj2
+#' @family nodes
+#' @template fam_manip
 #' @examples
 #'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
 #'   add_nodes(other, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))

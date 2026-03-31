@@ -3,25 +3,25 @@
 #' Modifying tie number
 #' @name manip_ties_num
 #' @description 
-#'   These functions allow users to add and delete ties and their attributes:
+#'   These functions allow users to add and delete ties:
 #'   
 #'   - `add_ties()` adds additional ties to network data
 #'   - `delete_ties()` deletes ties from network data
-#'   - `add_tie_attribute()` and `mutate_ties()` offer ways to add 
-#'   a vector of values to a network as a tie attribute.
-#'   - `rename_ties()` renames tie attributes.
-#'   - `bind_ties()` appends the tie data from two networks and 
-#'   `join_ties()` merges ties from two networks,
-#'   adding a tie attribute identifying the newly added ties.
 #'   - `filter_ties()` subsets ties based on some tie attribute-related logical statement.
 #'   
-#'   Note that while `add_*()`/`delete_*()` functions operate similarly as comparable `{igraph}` functions,
-#'   `mutate*()`, `bind*()`, etc work like `{tidyverse}` or `{dplyr}`-style functions.
-#' @family manipulations
+#'   While `add_*()`/`delete_*()` functions operate similarly as comparable `{igraph}` functions,
+#'   `filter*()`, etc work like `{tidyverse}` or `{dplyr}`-style functions.
 #' @template param_data
 #' @template param_dots
-#' @param attr_name Name of the new attribute in the resulting object.
-#' @return A tidygraph (`tbl_graph`) data object.
+#' @family ties
+#' @template fam_manip
+#' @details
+#'   Not all functions have methods available for all object classes.
+#'   Below are the currently implemented S3 methods:
+#'  
+#'   ```{r, echo = FALSE, comment=""}
+#'   available_methods(collect_functions("(add|del|filter).*ties"))
+#'   ```
 #' @examples
 #'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
 #'   mutate_ties(other, form = 1:6) %>% filter_ties(form < 4)
@@ -30,25 +30,26 @@ NULL
 
 #' @rdname manip_ties_num
 #' @param ties The number of ties to be added or an even list of ties.
+#' @param attr_list A list of attributes to be added to the new ties.
 #' @importFrom igraph add_edges
 #' @examples
 #' ison_adolescents %>% add_ties(c("Betty","Tina"))
 #' @export
-add_ties <- function(.data, ties, attribute = NULL) UseMethod("add_ties")
+add_ties <- function(.data, ties, attr_list = NULL) UseMethod("add_ties")
 
 #' @export
-add_ties.igraph <- function(.data, ties, attribute = NULL){
-  igraph::add_edges(.data, edges = ties, attr = attribute)
+add_ties.igraph <- function(.data, ties, attr_list = NULL){
+  igraph::add_edges(.data, edges = ties, attr = attr_list)
 }
 
 #' @export
-add_ties.tbl_graph <- function(.data, ties, attribute = NULL){
-  as_tidygraph(add_ties(as_igraph(.data), ties, attribute))
+add_ties.tbl_graph <- function(.data, ties, attr_list = NULL){
+  as_tidygraph(add_ties(as_igraph(.data), ties, attr_list))
 }
 
 #' @export
-add_ties.network <- function(.data, ties, attribute = NULL){
-  as_network(add_ties(as_igraph(.data), ties, attribute))
+add_ties.network <- function(.data, ties, attr_list = NULL){
+  as_network(add_ties(as_igraph(.data), ties, attr_list))
 }
 
 #' @rdname manip_ties_num
@@ -89,24 +90,24 @@ filter_ties <- function(.data, ...){
 #' Modifying tie attributes
 #' @name manip_ties_attr
 #' @description 
-#'   These functions allow users to add and delete ties and their attributes:
+#'   These functions allow users to add and delete tie attributes:
 #'   
-#'   - `add_ties()` adds additional ties to network data
-#'   - `delete_ties()` deletes ties from network data
 #'   - `add_tie_attribute()` and `mutate_ties()` offer ways to add 
 #'   a vector of values to a network as a tie attribute.
 #'   - `rename_ties()` renames tie attributes.
 #'   - `bind_ties()` appends the tie data from two networks and 
 #'   `join_ties()` merges ties from two networks,
 #'   adding a tie attribute identifying the newly added ties.
-#'   - `filter_ties()` subsets ties based on some tie attribute-related logical statement.
 #'   
 #'   Note that while `add_*()`/`delete_*()` functions operate similarly as comparable `{igraph}` functions,
 #'   `mutate*()`, `bind*()`, etc work like `{tidyverse}` or `{dplyr}`-style functions.
-#' @family manipulations
 #' @template param_data
 #' @template param_dots
-#' @return A tidygraph (`tbl_graph`) data object.
+#' @template param_attr
+#' @template param_vect
+#' @template param_obj2
+#' @family ties
+#' @template fam_manip
 #' @examples
 #'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
 #'   mutate_ties(other, form = 1:6) %>% filter_ties(form < 4)
