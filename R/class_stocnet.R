@@ -71,7 +71,7 @@ validate_stocnet <- function(.data) {
 }
 
 res_cols <- function(.data, component, reserved_cols, class, length = NULL, aka = NULL) {
-  if(reserved_cols %in% colnames(.data[[component]])){
+  if(reserved_cols %in% names(.data[[component]])){
     if(!is.null(length)){
       if(length(.data[[component]][[reserved_cols]]) != length) 
         snet_abort("'{reserved_cols}' must be of length {length}.")
@@ -79,15 +79,15 @@ res_cols <- function(.data, component, reserved_cols, class, length = NULL, aka 
     if(!inherits(.data[[component]][[reserved_cols]], class)) 
       snet_abort("'{reserved_cols}' must be of class '{class}'.")
   } else if(!is.null(aka)){
-    if(any(aka %in% colnames(.data[[component]]))){
-      mislabelled <- colnames(.data[[component]])[colnames(.data[[component]]) %in% aka]
+    if(any(aka %in% names(.data[[component]]))){
+      mislabelled <- names(.data[[component]])[names(.data[[component]]) %in% aka]
       snet_warn("Columns '{mislabelled}' might be better called {reserved_cols}.")
     }
   }
 }
 
 req_cols <- function(.data, component, required_cols) {
-  if(!all(required_cols %in% colnames(.data[[component]]))) 
+  if(!all(required_cols %in% names(.data[[component]]))) 
     snet_abort("The '{component}' component of a stocnet object must have the following columns: {to_phrase(required_cols)}.")
 }
 
@@ -95,6 +95,7 @@ exp_class <- function(.data, component, expected_class) {
   if(!inherits(.data[[component]], expected_class)) 
     snet_abort("The '{component}' component of a stocnet object must be of class '{expected_class}'.")
 }
+
 
 validate_nodes <- function(.data){
   if(is.null(.data$nodes)) return(invisible(.data))
@@ -112,6 +113,8 @@ validate_ties <- function(.data){
   res_cols(.data, "ties", "from", "numeric", aka = c("source", "sender", "ego"))
   res_cols(.data, "ties", "to", "numeric", aka = c("receiver", "target", "alter"))
   res_cols(.data, "ties", "weight", "numeric", aka = c("value", "strength", "val", "sign"))
+  res_cols(.data, "ties", "time", "character", aka = c("wave", "period", "date", "begin", "end"))
+  res_cols(.data, "ties", "layer", "character", aka = c("type", "plex", "tie"))
   invisible(.data)
 }
 
@@ -127,6 +130,9 @@ validate_changes <- function(.data){
 validate_info <- function(.data){
   if(is.null(.data$info)) return(invisible(.data))
   exp_class(.data, "info", "list")
+  res_cols(.data, "info", "name", "character")
+  res_cols(.data, "info", "nodes", "character", length = net_modes(.data))
+  res_cols(.data, "info", "ties", "character", length = net_layers(.data))
   invisible(.data)
 }
 
