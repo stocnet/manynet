@@ -2,10 +2,13 @@
 % Please edit documentation in R/class_stocnet.R
 \name{make_stocnet}
 \alias{make_stocnet}
+\alias{validate_stocnet}
 \alias{print.stocnet}
 \title{Multilevel, multiplex, multimodal, signed, dynamic or longitudinal changing networks}
 \usage{
 make_stocnet(info = NULL, nodes = NULL, ties = NULL, changes = NULL)
+
+validate_stocnet(.data)
 
 \method{print}{stocnet}(x, ..., n = 12)
 }

@@ -58,6 +58,18 @@ make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL, changes = NULL)
     structure(class = "stocnet")
 }
 
+#' @rdname make_stocnet
+#' @export
+validate_stocnet <- function(.data) {
+  if(!inherits(.data, "stocnet")) 
+    snet_abort("This function only works for stocnet objects.")
+  validate_info(.data)
+  validate_nodes(.data)
+  validate_ties(.data)
+  validate_changes(.data)
+  invisible(.data)
+}
+
 res_cols <- function(.data, component, reserved_cols, class, length = NULL, aka = NULL) {
   if(reserved_cols %in% colnames(.data[[component]])){
     if(!is.null(length)){
@@ -84,6 +96,39 @@ exp_class <- function(.data, component, expected_class) {
     snet_abort("The '{component}' component of a stocnet object must be of class '{expected_class}'.")
 }
 
+validate_nodes <- function(.data){
+  if(is.null(.data$nodes)) return(invisible(.data))
+  exp_class(.data, "nodes", "tbl_df")
+  res_cols(.data, "nodes", "label", "character", aka = c("name", "id"))
+  res_cols(.data, "nodes", "mode", "character")
+  res_cols(.data, "nodes", "active", "logical")
+  invisible(.data)
+}
+
+validate_ties <- function(.data){
+  if(is.null(.data$ties)) return(invisible(.data))
+  exp_class(.data, "ties", "tbl_df")
+  req_cols(.data, "ties", c("from", "to"))
+  res_cols(.data, "ties", "from", "numeric", aka = c("source", "sender", "ego"))
+  res_cols(.data, "ties", "to", "numeric", aka = c("receiver", "target", "alter"))
+  res_cols(.data, "ties", "weight", "numeric", aka = c("value", "strength", "val", "sign"))
+  invisible(.data)
+}
+
+validate_changes <- function(.data){
+  if(is.null(.data$changes)) return(invisible(.data))
+  exp_class(.data, "changes", "tbl_df")
+  req_cols(.data, "changes", c("node", "var", "value"))
+  res_cols(.data, "changes", "node", "numeric", aka = c("id"))
+  res_cols(.data, "changes", "var", "character")
+  invisible(.data)
+}
+
+validate_info <- function(.data){
+  if(is.null(.data$info)) return(invisible(.data))
+  exp_class(.data, "info", "list")
+  invisible(.data)
+}
 
 #' @rdname make_stocnet
 #' @export
