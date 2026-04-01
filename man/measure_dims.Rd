@@ -3,13 +3,19 @@
 \name{measure_dims}
 \alias{measure_dims}
 \alias{net_nodes}
+\alias{net_modes}
 \alias{net_ties}
+\alias{net_layers}
 \alias{net_dims}
 \title{Describing network dimensions}
 \usage{
 net_nodes(.data)
 
+net_modes(.data)
+
 net_ties(.data)
+
+net_layers(.data)
 
 net_dims(.data)
 }
@@ -43,7 +49,9 @@ These functions are also often used as helpers within other functions.
 }
 \examples{
 net_nodes(ison_southern_women)
+net_modes(ison_southern_women)
 net_ties(ison_southern_women)
+net_layers(ison_southern_women)
 net_dims(ison_southern_women)
 net_dims(to_mode1(ison_southern_women))
 }

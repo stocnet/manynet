@@ -53,6 +53,24 @@ net_nodes.tbl <- function(.data){
 
 #' @rdname measure_dims
 #' @examples
+#' net_modes(ison_southern_women)
+#' @export
+net_modes <- function(.data) UseMethod("net_modes")
+
+#' @export
+net_modes.stocnet <- function(.data){
+  if("mode" %in% names(.data$nodes)){
+    length(unique(.data$nodes$mode))
+  } else 1L
+}
+
+#' @export
+net_modes.igraph <- function(.data){
+  if(is_twomode(.data)) 2L else 1L
+}
+
+#' @rdname measure_dims
+#' @examples
 #' net_ties(ison_southern_women)
 #' @export
 net_ties <- function(.data) UseMethod("net_ties")
@@ -66,6 +84,26 @@ net_ties.stocnet <- function(.data){
 net_ties.igraph <- function(.data){
   make_network_measure(igraph::ecount(as_igraph(.data)), .data,
                        call = deparse(sys.call()))
+}
+
+#' @rdname measure_dims
+#' @examples
+#' net_layers(ison_southern_women)
+#' @export
+net_layers <- function(.data) UseMethod("net_layers")
+
+#' @export
+net_layers.stocnet <- function(.data){
+  if("layer" %in% names(.data$ties)){
+    length(unique(.data$ties$layer))
+  } else 1L
+}
+
+#' @export
+net_layers.igraph <- function(.data){
+  if("type" %in% net_tie_attributes(.data)){
+    length(unique(tie_attribute(.data, "type")))
+  } else 1L
 }
 
 #' @rdname measure_dims
