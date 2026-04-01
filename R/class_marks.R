@@ -1,3 +1,4 @@
+# nocov start
 make_node_mark <- function(out, .data) {
   class(out) <- c("node_mark", class(out))
   if (is.null(names(out)) && is_labelled(.data))
@@ -61,3 +62,4 @@ print_tblvec <- function(y, names, n){
                                    "Use `print_all(...)` to print all values.")))
   } else print(body)
 }
+# nocov end

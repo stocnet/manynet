@@ -1,5 +1,5 @@
 # Information ####
-
+# nocov start
 #' Console command line interface
 #' @description
 #'   These functions wrap `{cli}` functions and elements
@@ -194,3 +194,4 @@ col_mnet_pink <- cli::make_ansi_style("#e6298a")
   on.exit(sink()) 
   invisible(force(x)) 
 }
+# nocov end

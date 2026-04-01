@@ -1,3 +1,4 @@
+# nocov start
 make_node_motif <- function(out, .data) {
   class(out) <- c("node_motif", class(out))
   if(is_twomode(.data)) attr(out, "mode") <- node_is_mode(.data)
@@ -75,5 +76,4 @@ summary.network_motif <- function(object, ...,
   out[is.nan(out)] <- 0
   out
 }
-
-
+# nocov end

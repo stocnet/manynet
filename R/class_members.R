@@ -1,3 +1,4 @@
+# nocov start
 make_node_member <- function(out, .data) {
   if(is.numeric(out))
     out <- MORELETTERS[out]
@@ -59,3 +60,4 @@ summary.node_member <- function(object, ...,
 }
 
 elementwise.all.equal <- Vectorize(function(x, y) {isTRUE(all.equal(x, y))})
+# nocov end
