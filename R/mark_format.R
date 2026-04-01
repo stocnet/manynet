@@ -258,7 +258,7 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 #' @export
 is_signed.data.frame <- function(.data) {
   if(ncol(.data) <= 2) FALSE else 
-    all(is.wholenumber(.data[,3])) && any(.data[,3] < 0)
+    any(.data[,3] < 0)
 }
 
 #' @export
@@ -275,7 +275,7 @@ is_signed.igraph <- function(.data) {
 is_signed.stocnet <- function(.data) {
   if("sign" %in% net_tie_attributes(.data)) return(TRUE) else
     if("weight" %in% net_tie_attributes(.data)) 
-      return(any(is.wholenumber(c(.data$ties$weight)) && any(.data$ties$weight < 0))) else 
+      return(any(.data$ties$weight < 0)) else 
         FALSE
 }
 
