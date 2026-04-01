@@ -58,6 +58,32 @@ make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL, changes = NULL)
     structure(class = "stocnet")
 }
 
+res_cols <- function(.data, component, reserved_cols, class, length = NULL, aka = NULL) {
+  if(reserved_cols %in% colnames(.data[[component]])){
+    if(!is.null(length)){
+      if(length(.data[[component]][[reserved_cols]]) != length) 
+        snet_abort("'{reserved_cols}' must be of length {length}.")
+    }
+    if(!inherits(.data[[component]][[reserved_cols]], class)) 
+      snet_abort("'{reserved_cols}' must be of class '{class}'.")
+  } else if(!is.null(aka)){
+    if(any(aka %in% colnames(.data[[component]]))){
+      mislabelled <- colnames(.data[[component]])[colnames(.data[[component]]) %in% aka]
+      snet_warn("Columns '{mislabelled}' might be better called {reserved_cols}.")
+    }
+  }
+}
+
+req_cols <- function(.data, component, required_cols) {
+  if(!all(required_cols %in% colnames(.data[[component]]))) 
+    snet_abort("The '{component}' component of a stocnet object must have the following columns: {to_phrase(required_cols)}.")
+}
+
+exp_class <- function(.data, component, expected_class) {
+  if(!inherits(.data[[component]], expected_class)) 
+    snet_abort("The '{component}' component of a stocnet object must be of class '{expected_class}'.")
+}
+
 
 #' @rdname make_stocnet
 #' @export

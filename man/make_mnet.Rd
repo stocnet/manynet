@@ -3,13 +3,10 @@
 \name{make_mnet}
 \alias{make_mnet}
 \alias{print.mnet}
-\alias{print.stocnet}
 \alias{print_all}
 \title{Multilevel, multiplex, multimodal, signed, dynamic or longitudinal changing networks}
 \usage{
 \method{print}{mnet}(x, ..., n = 12)
-
-\method{print}{stocnet}(x, ..., n = 12)
 
 print_all(x, ...)
 }
