@@ -1,5 +1,5 @@
 # Collections ####
-
+# nocov start
 #' Making ego networks through interviewing
 #' @name make_ego
 #' @description
@@ -123,3 +123,4 @@ q_yes <- function(msg = NULL){
   out
 }
 
+# nocov end

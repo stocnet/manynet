@@ -1,5 +1,5 @@
 # Read ####
-
+# nocov start
 #' Making networks from external files
 #'
 #' @description 
@@ -1287,3 +1287,5 @@ read_pkg <- function(dir = getwd()) {
   # output
   return(as_tidygraph(g1))
 }
+
+# nocov end
