@@ -34,6 +34,7 @@ add_info <- function(.data, ...){
   unrecog <- setdiff(names(info), c("name", "nodes", "ties", "doi", 
                                     "source", "method", "location", "date", "system",
                                     "degree",
+                                    "dependent",
                                     "collection", "year", "mode", "vertex1", 
                                     "vertex1.total", "vertex2", 
                                     "vertex2.total", 
