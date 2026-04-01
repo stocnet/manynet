@@ -138,7 +138,7 @@ manynet_console_theme <- function(){
        par = list(`margin-top` = 0, `margin-bottom` = 1), 
        `.alert-danger` = list(`background-color` = "#D83127", color = "white", 
                               before = function() paste0(cli::symbol$cross, " ")), 
-       `.alert-warning` = list(color = "#E6AB02", `font-weight` = "bold", before = paste0("!", " ")), 
+       `.alert-warning` = list(color = "#e6298a", `font-weight` = "bold", before = paste0("!", " ")), 
        `.alert-success` = list(before = function() paste0(col_mnet_green(cli::symbol$tick), " ")), 
        `.alert-info` = list(before = function() paste0(col_mnet_blue(cli::symbol$info), " ")), 
        `.alert-start` = list(before = function() paste0(cli::symbol$arrow_right, " ")), 
