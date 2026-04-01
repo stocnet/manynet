@@ -101,7 +101,8 @@ validate_stocnet <- function(.data) {
   invisible(.data)
 }
 
-res_cols <- function(.data, component, reserved_cols, class, length = NULL, aka = NULL) {
+res_cols <- function(.data, component, reserved_cols, class, 
+                     length = NULL, match = NULL, aka = NULL) {
   if(reserved_cols %in% names(.data[[component]])){
     if(!is.null(length)){
       if(length(.data[[component]][[reserved_cols]]) != length) 
@@ -109,6 +110,10 @@ res_cols <- function(.data, component, reserved_cols, class, length = NULL, aka 
     }
     if(!inherits(.data[[component]][[reserved_cols]], class)) 
       snet_abort("'{reserved_cols}' must be of class '{class}'.")
+    if(!is.null(match)){
+      if(!all(.data[[component]][[reserved_cols]] %in% match)) 
+        snet_abort("'{reserved_cols}' must be one of {to_phrase(match)}.")
+    }
   } else if(!is.null(aka)){
     if(any(aka %in% names(.data[[component]]))){
       mislabelled <- names(.data[[component]])[names(.data[[component]]) %in% aka]
@@ -164,6 +169,8 @@ validate_info <- function(.data){
   res_cols(.data, "info", "name", "character")
   res_cols(.data, "info", "nodes", "character", length = net_modes(.data))
   res_cols(.data, "info", "ties", "character", length = net_layers(.data))
+  res_cols(.data, "info", "dependent", "character", length = 1, 
+           match = net_tie_names(.data))
   invisible(.data)
 }
 
@@ -186,7 +193,7 @@ print.stocnet <- function(x, ..., n = 12) {
   bottom <- x$ties
   if(!is.null(x$changes)) n <- ceiling(n/3) else 
     n <- ceiling(n/2)
-  if (ncol(top)>0){
+  if (!is.null(top) && ncol(top)>0){
     cli::cli_par()
     cli::cli_h3("Nodes")
     print(top, n = n)
@@ -199,7 +206,7 @@ print.stocnet <- function(x, ..., n = 12) {
           n = n)
     cli::cli_end()
   }
-  if (ncol(bottom)>0){
+  if (!is.null(bottom) && ncol(bottom)>0){
     # cli::cli_par()
     cli::cli_h3("Ties")
     print(bottom, n = n, max_footer_lines = 1)
