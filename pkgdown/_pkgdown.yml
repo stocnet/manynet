@@ -53,6 +53,7 @@ reference:
       directed and undirected, one-mode and two-mode networks.
     contents:
       - make_mnet
+      - make_stocnet
       - make_explicit
       - make_motifs
       - make_create
@@ -119,27 +120,27 @@ reference:
     desc: |
       Functions for transforming networks, which may change the network's dimensions.
     contents:
-      - manip_paths
-      - manip_scope
+      - modif_paths
+      - modif_scope
   - subtitle: "Levels"
     desc: |
       Functions for modifying multimodal networks.
     contents:
       - modif_levels
-      - manip_project
+      - modif_project
   - subtitle: "Converting"
     desc: |
       Functions for permuting networks or constructing a network
       from the nodal correlations of another network.
     contents:
-      - manip_permutation
-      - manip_correlation
+      - modif_permutation
+      - modif_correlation
   - subtitle: "Splits"
     desc: |
       Functions for splitting networks into a list of networks,
       or (re)joining a list of networks into a single network.
     contents:
-      - manip_split
+      - modif_split
       - starts_with("from_")
   - subtitle: "Missing"
     desc: |

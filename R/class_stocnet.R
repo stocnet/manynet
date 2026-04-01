@@ -46,6 +46,18 @@
 #'   too.
 NULL
 
+#' @rdname make_stocnet
+#' @export
+make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL, changes = NULL) {
+  list(
+    info = info,
+    nodes = nodes,
+    ties = ties,
+    changes = changes
+  ) %>% 
+    structure(class = "stocnet")
+}
+
 
 #' @rdname make_stocnet
 #' @export
