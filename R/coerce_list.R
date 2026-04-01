@@ -66,7 +66,7 @@ as_nodelist.igraph <- function(.data) {
 }
 
 #' @export
-as_nodelist.snet <- function(.data) {
+as_nodelist.stocnet <- function(.data) {
   dplyr::tibble(.data$nodes)
 }
 
@@ -95,7 +95,7 @@ as_changelist.igraph <- function(.data) {
 }
 
 #' @export
-as_changelist.snet <- function(.data) {
+as_changelist.stocnet <- function(.data) {
   dplyr::tibble(.data$changes)
 }
 
@@ -173,7 +173,7 @@ as_edgelist.siena <- function(.data, twomode = NULL) {
 }
 
 #' @export
-as_edgelist.snet <- function(.data, twomode = NULL) {
+as_edgelist.stocnet <- function(.data, twomode = NULL) {
   dplyr::tibble(.data$ties)
 }
 
@@ -206,7 +206,7 @@ as_infolist.tbl_graph <- function(.data){
 }
 
 #' @export
-as_infolist.snet <- function(.data) {
+as_infolist.stocnet <- function(.data) {
   .data$info
 }
 
@@ -380,7 +380,7 @@ as_matrix.diff_model <- function(.data,
 }
 
 #' @export
-as_matrix.snet <- function(.data,
+as_matrix.stocnet <- function(.data,
                                  twomode = FALSE) {
   as_matrix(as_igraph(.data, twomode = twomode))
 }

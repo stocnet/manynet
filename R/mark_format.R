@@ -56,7 +56,7 @@ is_twomode.data.frame <- function(.data) {
 }
 
 #' @export
-is_twomode.snet <- function(.data) {
+is_twomode.stocnet <- function(.data) {
   if(is.null(.data$nodes)) return(FALSE) else if (!"mode" %in% names(.data$nodes)) 
     return(FALSE) else length(unique(.data$nodes$mode)) == 2
 }

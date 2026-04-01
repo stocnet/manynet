@@ -381,7 +381,7 @@ as_igraph.siena <- function(.data, twomode = NULL) {
 }
 
 #' @export
-as_igraph.snet <- function(.data, twomode = FALSE) {
+as_igraph.stocnet <- function(.data, twomode = FALSE) {
   out <- igraph::graph_from_data_frame(as_edgelist(.data), 
                                        vertices = as_nodelist(.data))
   igraph::graph_attr(out) <- as_infolist(.data)
@@ -514,8 +514,8 @@ as_tidygraph.networkDynamic <- function(.data, twomode = FALSE) {
 }
 
 #' @export
-as_tidygraph.snet <- function(.data, twomode = FALSE) {
-  as_tidygraph(as_igraph.snet(.data, twomode = twomode))
+as_tidygraph.stocnet <- function(.data, twomode = FALSE) {
+  as_tidygraph(as_igraph.stocnet(.data, twomode = twomode))
 }
 
 # Network ####
@@ -621,8 +621,8 @@ as_network.siena <- function(.data, twomode = FALSE) {
 }
 
 #' @export
-as_network.snet <- function(.data, twomode = FALSE) {
-  out <- as_network(as_igraph.snet(.data))
+as_network.stocnet <- function(.data, twomode = FALSE) {
+  out <- as_network(as_igraph.stocnet(.data))
   out$gal <- as_infolist(.data)
   network::set.network.attribute(out, "changes", as_changelist(.data))
   out
@@ -742,7 +742,7 @@ as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
 }
 
 #' @export
-as_graphAM.snet <- function(.data, twomode = NULL) {
+as_graphAM.stocnet <- function(.data, twomode = NULL) {
   as_graphAM(as_matrix(.data), twomode)
 }
 
@@ -946,16 +946,16 @@ as_diffnet.diff_model <- function(.data,
 
 #' @rdname coerce_graph
 #' @export
-as_snet <- function(.data,
-                    twomode = FALSE) UseMethod("as_snet")
+as_stocnet <- function(.data,
+                    twomode = FALSE) UseMethod("as_stocnet")
 
 #' @export
-as_snet.snet <- function(.data, twomode = FALSE) {
+as_stocnet.stocnet <- function(.data, twomode = FALSE) {
   .data
 }
 
 #' @export
-as_snet.igraph <- function(.data, twomode = FALSE) {
+as_stocnet.igraph <- function(.data, twomode = FALSE) {
   info <- as_infolist(.data)
   nodes <- as_nodelist(.data)
   changes <- as_changelist(.data)
@@ -984,30 +984,30 @@ as_snet.igraph <- function(.data, twomode = FALSE) {
   if(ncol(ties)==0) ties <- NULL
   
   out <- list(info = info, nodes = nodes, changes = changes, ties = ties)
-  class(out) <- c("snet", class(out))
+  class(out) <- c("stocnet", class(out))
   out
 }
 
 #' @export
-as_snet.tbl_graph <- function(.data,
+as_stocnet.tbl_graph <- function(.data,
                            twomode = FALSE) {
-  as_snet(as_igraph(.data, twomode = twomode)) 
+  as_stocnet(as_igraph(.data, twomode = twomode)) 
 }
 
 
 #' @export
-as_snet.matrix <- function(.data,
+as_stocnet.matrix <- function(.data,
                            twomode = FALSE) {
- as_snet(as_tidygraph(.data, twomode = twomode)) 
+ as_stocnet(as_tidygraph(.data, twomode = twomode)) 
 }
   
 #' @export
-as_snet.network <- function(.data,
+as_stocnet.network <- function(.data,
                            twomode = FALSE) {
   out <- list(info = as_infolist(.data), 
               nodes = as_nodelist(.data), 
               changes = as_changelist(.data), 
               ties = as_edgelist(.data))
-  class(out) <- c("snet", class(out))
+  class(out) <- c("stocnet", class(out))
   out
 }

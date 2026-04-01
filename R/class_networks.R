@@ -94,7 +94,7 @@ print.mnet <- function(x, ..., n = 12) {
 
 #' @rdname make_mnet
 #' @export
-print.snet <- function(x, ..., n = 12) {
+print.stocnet <- function(x, ..., n = 12) {
   arg_list <- list(...)
   arg_list[['useS4']] <- NULL
   if(!is.null(net_name(x)))

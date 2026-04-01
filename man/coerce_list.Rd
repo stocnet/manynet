@@ -43,12 +43,12 @@ as_edgelist            ✓                 ✓      ✓       ✓               
 as_infolist                              ✓              ✓                 
 as_matrix              ✓          ✓      ✓      ✓       ✓                ✓
 as_nodelist                              ✓              ✓                 
-              siena snet tbl_graph
-as_changelist          ✓         ✓
-as_edgelist       ✓    ✓         ✓
-as_infolist            ✓         ✓
-as_matrix         ✓    ✓         ✓
-as_nodelist            ✓         ✓
+              siena stocnet tbl_graph
+as_changelist             ✓         ✓
+as_edgelist       ✓       ✓         ✓
+as_infolist               ✓         ✓
+as_matrix         ✓       ✓         ✓
+as_nodelist               ✓         ✓
 }\if{html}{\out{</div>}}
 }
 \description{

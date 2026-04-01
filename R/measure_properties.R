@@ -27,7 +27,7 @@ NULL
 net_nodes <- function(.data) UseMethod("net_nodes")
 
 #' @export
-net_nodes.snet <- function(.data){
+net_nodes.stocnet <- function(.data){
   nrow(.data$nodes)
 }
 
@@ -58,7 +58,7 @@ net_nodes.tbl <- function(.data){
 net_ties <- function(.data) UseMethod("net_ties")
 
 #' @export
-net_ties.snet <- function(.data){
+net_ties.stocnet <- function(.data){
   nrow(.data$ties)
 }
 
@@ -118,7 +118,7 @@ net_dims.network <- function(.data){
 }
 
 #' @export
-net_dims.snet <- function(.data){
+net_dims.stocnet <- function(.data){
   if(is_twomode(.data)){
     out <- tabulate(match(.data$nodes$mode, unique(.data$nodes$mode)))
   } else nrow(.data$nodes)
@@ -156,7 +156,7 @@ NULL
 net_name <- function(.data, prefix = NULL) UseMethod("net_name")
 
 #' @export
-net_name.snet <- function(.data, prefix = NULL){
+net_name.stocnet <- function(.data, prefix = NULL){
   existname <- ""
   if(!is.null(.data$info$name)) {
     existname <- .data$info$name
@@ -207,7 +207,7 @@ net_node_names.igraph <- function(.data){
 }
 
 #' @export
-net_node_names.snet <- function(.data){
+net_node_names.stocnet <- function(.data){
   .data$info$nodes
 }
 
@@ -224,7 +224,7 @@ net_node_attributes.igraph <- function(.data){
 }
 
 #' @export
-net_node_attributes.snet <- function(.data){
+net_node_attributes.stocnet <- function(.data){
   names(.data$nodes)
 }
 
@@ -243,7 +243,7 @@ net_tie_names.igraph <- function(.data){
 }
 
 #' @export
-net_tie_names.snet <- function(.data){
+net_tie_names.stocnet <- function(.data){
   .data$info$ties
 }
 
@@ -260,7 +260,7 @@ net_tie_attributes.igraph <- function(.data){
 }
 
 #' @export
-net_tie_attributes.snet <- function(.data){
+net_tie_attributes.stocnet <- function(.data){
   names(.data$ties)
 }
 

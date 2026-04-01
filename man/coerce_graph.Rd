@@ -9,7 +9,7 @@
 \alias{as_graphAM}
 \alias{as_diffusion}
 \alias{as_diffnet}
-\alias{as_snet}
+\alias{as_stocnet}
 \title{Coercing into graph objects}
 \usage{
 as_igraph(.data, twomode = FALSE)
@@ -26,7 +26,7 @@ as_diffusion(.data, twomode = FALSE, events)
 
 as_diffnet(.data, twomode = FALSE)
 
-as_snet(.data, twomode = FALSE)
+as_stocnet(.data, twomode = FALSE)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -59,17 +59,15 @@ as_graphAM            ✓                         ✓           ✓            �
 as_igraph             ✓          ✓       ✓      ✓           ✓            ✓
 as_network            ✓                  ✓      ✓           ✓            ✓
 as_siena                                        ✓                         
-as_snet                                         ✓           ✓            ✓
 as_tidygraph          ✓          ✓       ✓      ✓    ✓      ✓            ✓
-             network.goldfish networkDynamic siena snet tbl_graph
-as_diffnet                                                       
-as_diffusion                                                     
-as_graphAM                  ✓                    ✓    ✓         ✓
-as_igraph                   ✓              ✓     ✓    ✓         ✓
-as_network                  ✓              ✓     ✓    ✓         ✓
-as_siena                                                        ✓
-as_snet                                               ✓         ✓
-as_tidygraph                ✓              ✓     ✓    ✓         ✓
+             network.goldfish networkDynamic siena stocnet tbl_graph
+as_diffnet                                                          
+as_diffusion                                                        
+as_graphAM                  ✓                    ✓       ✓         ✓
+as_igraph                   ✓              ✓     ✓       ✓         ✓
+as_network                  ✓              ✓     ✓       ✓         ✓
+as_siena                                                           ✓
+as_tidygraph                ✓              ✓     ✓       ✓         ✓
 }\if{html}{\out{</div>}}
 
 \code{as_diffusion()} and \code{play_diffusion()} return a 'diff_model' object
