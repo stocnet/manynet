@@ -1,13 +1,10 @@
 #' Multilevel, multiplex, multimodal, signed, dynamic or longitudinal changing networks
 #' @name make_stocnet
 #' @description
-#'   The 'mnet' class of network object is an additional class layered on top of
-#'   the 'igraph' and 'tbl_graph' classes.
-#'   Under the hood it is an 'igraph' object, which enables all the igraph
-#'   functions to operate.
-#'   It is also a 'tbl_graph' object, which enables it to be used with `{ggraph}`.
-#'   However, 'mnet' objects offer prettier printing and a consistent structure 
-#'   that enables more complex forms of networks to be contained in a single object.
+#'   The 'stocnet' class of network object is a list of four main elements:
+#'   nodes, ties, (nodal) changes, and info metadata about the network as a whole.
+#'   This offers a consistent and flexible structure that enables more complex 
+#'   forms of networks to be contained in a single object.
 #' @section Nodes:
 #'   Nodes are held as vertices and vertex attributes in the 'igraph' object,
 #'   but printed as a nodelist.
@@ -31,6 +28,14 @@
 #'   Additional reserved columns include 'weight' for weighted networks,
 #'   'wave' for longitudinal networks, 'type' for multiplex networks,
 #'   and 'sign' for signed networks.
+#' @section Info:
+#'  The info component of a stocnet object is a list of metadata about the network as a whole.
+#'  This can include the name of the network, as well as the names of the types of nodes
+#'  and ties in the network.
+#'  For example, the info component could include a 'name' element with the name of the network,
+#'  a 'nodes' element with a character vector of the names of the types of
+#'  nodes in the network, and a 'ties' element with a character vector of the names of the types of
+#'  ties in the network.
 #' @section Printing: 
 #'   When printed, 'mnet' objects will print to the console any information
 #'   stored about the network's name, or its types of nodes or ties.
@@ -47,6 +52,32 @@
 NULL
 
 #' @rdname make_stocnet
+#' @param info A list of metadata about the network as a whole.
+#'  This can include the name of the network, as well as the names of the
+#'  types of nodes and ties in the network.
+#'  For example, the info component could include a 'name' element with the name
+#'  of the network, a 'nodes' element with a character vector of the names of the types of
+#'  nodes in the network, and a 'ties' element with a character vector of
+#'  the names of the types of ties in the network.
+#'  By default NULL.
+#' @param nodes A tibble of nodes in the network, with one row per node
+#'   and one column for the node labels, which should be called 'name'.
+#'   Additional columns can be included for node attributes, such as 'active' for changing networks
+#'   and 'type' for multimodal networks.
+#'   By default NULL.
+#' @param ties A tibble of ties in the network, with one row per tie
+#'   and at least two columns for the node labels of the tie endpoints, which should be
+#'   called 'from' and 'to', even if the network is not directed.
+#'   Additional columns can be included for tie attributes, such as 'weight' for weighted networks
+#'   and 'type' for multiplex networks.
+#'   By default NULL.
+#' @param changes A tibble of nodal changes in the network, with one row
+#'   per change and at least three columns for the node label of the change, which should be called 'node',
+#'   the variable to which the change applies, which should be called 'var', and the
+#'   new value to be applied, which should be called 'value'.
+#'   Additional columns can be included for the time of the change, such as 'wave'
+#'   or 'time'.
+#'   By default NULL.
 #' @export
 make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL, changes = NULL) {
   list(
