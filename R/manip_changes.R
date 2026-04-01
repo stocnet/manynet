@@ -1,6 +1,6 @@
 # Manipulating changes ####
 
-#' Modifying changes to nodes over time
+#' Manipulating changes to nodes over time
 #' @name manip_changes
 #' @description
 #'   These functions offer ways to modify data held about how nodes

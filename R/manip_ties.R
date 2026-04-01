@@ -1,6 +1,6 @@
 # Manipulating ties number ####
 
-#' Modifying tie number
+#' Manipulating number of ties
 #' @name manip_ties_num
 #' @description 
 #'   These functions allow users to add and delete ties:
@@ -87,7 +87,7 @@ filter_ties <- function(.data, ...){
 
 # Manipulating ties attributes ####
 
-#' Modifying tie attributes
+#' Manipulating tie attributes
 #' @name manip_ties_attr
 #' @description 
 #'   These functions allow users to add and delete tie attributes:

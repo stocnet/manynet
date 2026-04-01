@@ -1,6 +1,6 @@
 # Manipulating nodes number ####
 
-#' Modifying nodes number
+#' Manipulating number of nodes
 #' @name manip_nodes_num
 #' @description 
 #'   These functions allow users to add and delete nodes:
@@ -80,7 +80,7 @@ filter_nodes <- function(.data, ..., .by = NULL){
 
 # Manipulating nodes attributes ####
 
-#' Modifying node attributes
+#' Manipulating node attributes
 #' @name manip_nodes_attr
 #' @description 
 #'   These functions allow users to add nodes attributes:

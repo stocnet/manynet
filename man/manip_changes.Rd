@@ -9,7 +9,7 @@
 \alias{select_changes}
 \alias{collect_changes}
 \alias{apply_changes}
-\title{Modifying changes to nodes over time}
+\title{Manipulating changes to nodes over time}
 \usage{
 add_changes(.data, changes)
 

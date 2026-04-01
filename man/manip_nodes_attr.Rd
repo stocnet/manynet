@@ -11,7 +11,7 @@
 \alias{bind_node_attributes}
 \alias{rename_nodes}
 \alias{rename}
-\title{Modifying node attributes}
+\title{Manipulating node attributes}
 \usage{
 add_node_attribute(.data, attr_name, vector)
 

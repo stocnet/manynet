@@ -5,7 +5,7 @@
 \alias{add_info}
 \alias{mutate_info}
 \alias{net_attributes}
-\title{Modifying network information}
+\title{Manipulating network information}
 \usage{
 add_info(.data, ...)
 

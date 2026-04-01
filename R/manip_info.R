@@ -1,6 +1,6 @@
 # Network information ####
 
-#' Modifying network information
+#' Manipulating network information
 #' @name manip_info
 #' @description
 #'   These functions allow users to add and edit information about the network

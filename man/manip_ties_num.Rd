@@ -5,7 +5,7 @@
 \alias{add_ties}
 \alias{delete_ties}
 \alias{filter_ties}
-\title{Modifying tie number}
+\title{Manipulating number of ties}
 \usage{
 add_ties(.data, ties, attr_list = NULL)
 

@@ -5,7 +5,7 @@
 \alias{add_nodes}
 \alias{delete_nodes}
 \alias{filter_nodes}
-\title{Modifying nodes number}
+\title{Manipulating number of nodes}
 \usage{
 add_nodes(.data, nodes, attribute = NULL)
 

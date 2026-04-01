@@ -10,7 +10,7 @@
 \alias{join_ties}
 \alias{select_ties}
 \alias{summarise_ties}
-\title{Modifying tie attributes}
+\title{Manipulating tie attributes}
 \usage{
 add_tie_attribute(.data, attr_name, vector)
 
