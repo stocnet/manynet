@@ -973,6 +973,13 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
       nodes$type <- NULL
     }
   }
+  if(is_multiplex(.data)){
+    ties$layer <- ties$type
+    ties$type <- NULL
+    if(is.null(info$ties)){
+      info$ties <- unique(ties$layer)
+    }
+  }
   if(!is.null(info$changes)) info$changes <- NULL
   info$directed <- is_directed(.data)
   
