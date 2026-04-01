@@ -106,7 +106,7 @@ is_labelled.data.frame <- function(.data) {
 }
 
 #' @export
-is_labelled.snet <- function(.data) {
+is_labelled.stocnet <- function(.data) {
   "name" %in% net_node_attributes(.data) ||
     "label" %in% net_node_attributes(.data)
 }
@@ -186,7 +186,7 @@ is_weighted.tbl_graph <- function(.data) {
 }
 
 #' @export
-is_weighted.snet <- function(.data) {
+is_weighted.stocnet <- function(.data) {
   "weight" %in% names(.data$ties)
 }
 
@@ -226,7 +226,7 @@ is_directed.igraph <- function(.data) {
 }
 
 #' @export
-is_directed.snet <- function(.data) {
+is_directed.stocnet <- function(.data) {
   if(is_twomode(.data)) FALSE else any(.data$info$directed)
 }
 
@@ -272,7 +272,7 @@ is_signed.igraph <- function(.data) {
 }
 
 #' @export
-is_signed.snet <- function(.data) {
+is_signed.stocnet <- function(.data) {
   if("sign" %in% net_tie_attributes(.data)) return(TRUE) else
     if("weight" %in% net_tie_attributes(.data)) 
       return(any(is.wholenumber(c(.data$ties$weight)) && any(.data$ties$weight < 0))) else 
@@ -317,7 +317,7 @@ is_complex.data.frame <- function(.data) {
 }
 
 #' @export
-is_complex.snet <- function(.data) {
+is_complex.stocnet <- function(.data) {
   any(.data$from == .data$to)
 }
 
@@ -368,7 +368,7 @@ is_multiplex.network <- function(.data) {
 }
 
 #' @export
-is_multiplex.snet <- function(.data) {
+is_multiplex.stocnet <- function(.data) {
   "type" %in% net_tie_attributes(.data) ||
     "layer" %in% net_tie_attributes(.data)
 }
@@ -439,7 +439,7 @@ is_changing.igraph <- function(.data) {
 }
 
 #' @export
-is_changing.snet <- function(.data) {
+is_changing.stocnet <- function(.data) {
   "changes" %in% names(.data)
 }
 
