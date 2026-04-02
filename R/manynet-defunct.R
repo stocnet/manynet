@@ -130,6 +130,22 @@ net_info <- function(.data) {
   as_infolist(.data)
 }
 
+#' @describeIn defunct Deprecated on 2026-04-02.
+#' @export
+read_cran <- function(pkg = "all") {
+  .Deprecated("collect_cran", package = "manynet",
+              old = "read_cran")
+  collect_cran(pkg = pkg)
+}
+
+#' @describeIn defunct Deprecated on 2026-04-02.
+#' @export
+read_pkg <- function(dir = getwd()) {
+  .Deprecated("collect_pkg", package = "manynet",
+              old = "read_pkg")
+  collect_pkg(dir = dir)
+}
+
 # Moved to netrics from 2.0.0 ####
 
 #' @describeIn defunct Deprecated on 2026-03-22.
