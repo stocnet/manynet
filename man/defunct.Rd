@@ -15,6 +15,8 @@
 \alias{node_mode}
 \alias{mutate_net}
 \alias{net_info}
+\alias{read_cran}
+\alias{read_pkg}
 \alias{node_degree}
 \alias{node_deg}
 \alias{net_by_quad}
@@ -241,6 +243,10 @@ node_mode(.data)
 mutate_net(.data, ...)
 
 net_info(.data)
+
+read_cran(pkg = "all")
+
+read_pkg(dir = getwd())
 
 node_degree(...)
 
@@ -676,6 +682,10 @@ wherever possible and update your scripts accordingly.
 \item \code{mutate_net()}: Deprecated on 2026-03-22.
 
 \item \code{net_info()}: Deprecated on 2026-03-22.
+
+\item \code{read_cran()}: Deprecated on 2026-04-02.
+
+\item \code{read_pkg()}: Deprecated on 2026-04-02.
 
 \item \code{node_degree()}: Deprecated on 2026-03-22.
 

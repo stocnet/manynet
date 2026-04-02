@@ -215,3 +215,61 @@ print.stocnet <- function(x, ..., n = 12) {
   invisible(x)
 }
 
+as.logi <- function(x){
+  class(x) <- c("logi", class(x))
+  x
+}
+
+as.value <- function(x){
+  class(x) <- c("value", class(x))
+  x
+}
+
+#' @noRd
+#' @importFrom pillar pillar_shaft type_sum
+#' @export
+pillar_shaft.logi <- function(x, ...) {
+  pillar::new_pillar_shaft_simple(ifelse(x, pillar::style_bold(x),
+                                         pillar::style_na(x)), align = "left")
+}
+
+#' @noRd
+#' @export
+pillar_shaft.mdate <- function(x, ...) {
+  pillar::pillar_shaft(as.character(x), width = 11)
+}
+
+# Tell pillar this is a list-like column
+#' @exportS3Method
+type_sum.value <- function(x, ...) {
+  "list"
+}
+
+#' @noRd
+#' @export
+pillar_shaft.value <- function(x, ...) {
+  # Determine underlying class
+  underlying_class <- sapply(x, function(y) class(y[[1]]))
+  underlying_class <- dplyr::replace_values(underlying_class, 
+                                            "logical" ~ "lgl",
+                                            "character" ~ "chr",
+                                            "numeric" ~ "dbl",
+                                            "integer" ~ "int")
+  
+  lengths <- sapply(x, length)
+  
+  # Value to print (only first element)
+  value_text <- lapply(x, function(y) if(length(y) == 1) y else "...")
+  
+  # Type label exactly like tibble uses
+  type_label <- paste0("<", underlying_class, ">")
+  
+  # Pillar requires the type label to be a *named* vector
+  type_vec <- c(type = pillar::style_subtle(type_label))
+  
+  pillar::new_pillar_shaft_simple(
+    paste0(value_text, type_vec),
+    align = "right"
+  )
+}
+
