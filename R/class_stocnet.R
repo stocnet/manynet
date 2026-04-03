@@ -95,7 +95,7 @@ make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL, changes = NULL)
 print.stocnet <- function(x, ..., n = 12) {
   arg_list <- list(...)
   arg_list[['useS4']] <- NULL
-  if(!is.null(net_name(x)))
+  if(!is.null(net_name(x)) && net_name(x) != "")
     cli::cli_h1("# {net_name(x)}")
   net_desc <- describe_network(x)
   tie_desc <- describe_ties(x)
@@ -107,7 +107,7 @@ print.stocnet <- function(x, ..., n = 12) {
   cli::cli_end()
   top <- x$nodes
   bottom <- x$ties
-  if(!is.null(x$changes)) n <- ceiling(n/3) else 
+  if(!is.null(x$changes) && ncol(x$changes) >0) n <- ceiling(n/3) else 
     n <- ceiling(n/2)
   if (!is.null(top) && ncol(top)>0){
     cli::cli_par()
@@ -115,7 +115,7 @@ print.stocnet <- function(x, ..., n = 12) {
     print(top, n = n)
     cli::cli_end()
   } 
-  if(!is.null(x$changes)){
+  if(!is.null(x$changes) && ncol(x$changes) >0){
     cli::cli_par()
     cli::cli_h3("Changes")
     print(dplyr::as_tibble(x$changes),
