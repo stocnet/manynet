@@ -69,7 +69,7 @@ print.network_measure <- function(x, ...,
     } else {
       y <- as.numeric(x)
       if (length(y) == 2)
-        names(y) <- paste("Mode", seq_len(length(attr(x, "mode"))))
+        names(y) <- paste("Mode", seq_along(attr(x, "mode")))
       print(y, digits = digits)
     }
 }

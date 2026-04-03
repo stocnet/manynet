@@ -321,7 +321,7 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
   thisRequires("purrr")
   ties <- data.frame()
   x <- lapply(x, as_tidygraph)
-  for (k in seq_len(length(names(x)))) {
+  for (k in seq_along(names(x))) {
     a <- x[[k]] %>%
       tidygraph::activate(edges) %>%
       dplyr::as_tibble() %>%

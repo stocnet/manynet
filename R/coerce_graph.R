@@ -345,35 +345,35 @@ as_igraph.siena <- function(.data, twomode = NULL) {
     }
   }
   # Add dycCovar
-  for (k in seq_len(length(.data$dycCovars))) {
+  for (k in seq_along(.data$dycCovars)) {
     out <- join_ties(out, as_igraph(.data$dycCovars[k]),
                      attr_name = paste0(names(.data$dycCovars)[k]))
   }
   # Add dyvCovars
-  for (k in seq_len(length(.data$dyvCovars))) {
+  for (k in seq_along(.data$dyvCovars)) {
     out <- .get_all_time_periods(.data$dyvCovars[[k]], out,
                                  name = paste0(names(.data$dyvCovars)[k]))
   }
   # Add any behavioral depvars
   if(length(which(dvs == FALSE)) > 0) {
     bdvs <- names(which(dvs == FALSE))
-    for (b in seq_len(length(bdvs))) {
+    for (b in seq_along(bdvs)) {
       out <- .get_attributes(.data$depvars[[bdvs[b]]], out,
                              name = bdvs[b])
     }
   }
   # Add composition change
-  for (k in seq_len(length(.data$compositionChange))) {
+  for (k in seq_along(.data$compositionChange)) {
     out <- igraph::vertex_attr(out, name =  paste0(names(.data$compositionChange)[k]),
                                value = as.vector(.data$compositionChange[[k]]))
   }
   # Add cCovar
-  for (k in seq_len(length(.data$cCovars))) {
+  for (k in seq_along(.data$cCovars)) {
     out <- igraph::vertex_attr(out, name = paste0(names(.data$cCovars)[k]),
                                value = as.vector(.data$cCovars[[k]]))
   }
   # Add vCovar
-  for (k in seq_len(length(.data$vCovars))) {
+  for (k in seq_along(.data$vCovars)) {
     out <- .get_attributes(.data$vCovars[[k]], out,
                            name = paste0(names(.data$vCovars)[k]))
   }

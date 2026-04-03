@@ -280,7 +280,7 @@ read_ucinet <- function(file = file.choose()) {
       haslab[3] <- readBin(UCINET.header, what = "logical", size = 1)
     }
     dim.labels <- list()
-    for (arr.dim in seq_len(length(dims))) {
+    for (arr.dim in seq_along(dims)) {
       if (haslab[arr.dim]) {
         dim.labels[[arr.dim]] <- rep(NA, dims[arr.dim])
         for (i in seq_len(dims[arr.dim])) {
@@ -730,7 +730,7 @@ write_ucinet <- function(.data,
   # continue with UCINET data file: --> Write the actual matrix
   UCINET.data <- file(paste(filename, ".##d", sep = ""), "wb")
   snet_success("Writing to {.file {filename}}")
-  for (i in seq_len(length(mat))) {
+  for (i in seq_along(mat)) {
     writeBin(t(mat)[i], UCINET.data, size = 4, endian = "little")
   }
   close(UCINET.data)

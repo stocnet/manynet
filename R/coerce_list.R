@@ -364,11 +364,11 @@ as_matrix.siena <- function(.data,
     }
   }
   # Add dycCovars
-  for (k in seq_len(length(.data$dycCovars))) {
+  for (k in seq_along(.data$dycCovars)) {
     out <- .data$dycCovars[[ddvs[k]]] + out
   }
   # Add dyvCovars
-  for (k in seq_len(length(.data$dyvCovars))) {
+  for (k in seq_along(.data$dyvCovars)) {
     for (d in seq_len(dim(.data$dyvCovars[[k]])[3])) {
       out <- .data$dyvCovars[[k]][,,d] + out
     }
