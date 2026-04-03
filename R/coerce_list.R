@@ -260,6 +260,8 @@ as_matrix.data.frame <- function(.data,
                               as.integer(length(nodes2))),
                      .Dimnames = list(nodes1, nodes2))
   }
+  if(!is_twomode(.data) && all(rownames(.data) == as.character(seq_nodes(.data)))) attr(.data, "dimnames") <- NULL
+  if(!is_twomode(.data) && sum(.data[lower.tri(.data)])==0) .data <- .data + t(.data)
   .data
 }
 
@@ -294,6 +296,7 @@ as_matrix.igraph <- function(.data,
                                          attr = NULL)
     }
   }
+  if(!is_labelled(.data)) attr(mat, "dimnames") <- NULL
   mat
 }
 
