@@ -21,7 +21,10 @@
 #' @examples
 #' add_info(ison_algebra, name = "Algebra")
 #' @export
-add_info <- function(.data, ...){
+add_info <- function(.data, ...) UseMethod("add_info")
+
+#' @export
+add_info.igraph <- function(.data, ...){
   
   if(!is.null(igraph::graph_attr(.data)$grand)){ # Updating
     snet_success("Deleting information from previous version(s).")
@@ -66,8 +69,16 @@ add_info <- function(.data, ...){
     igraph::graph_attr(out)$year <- info$year
   }
   # return(str(info)) # for debugging
-  
   as_tidygraph(out)
+}
+
+#' @export
+add_info.stocnet <- function(.data, ...){
+  dots <- list(...)
+  for(item in names(dots)){
+    .data$info[[item]] <- dots[[item]]
+  }
+  .data
 }
 
 #' @rdname manip_info

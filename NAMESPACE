@@ -3,6 +3,8 @@
 S3method("$",mnet)
 S3method("$<-",mnet)
 S3method(.DollarNames,mnet)
+S3method(add_info,igraph)
+S3method(add_info,stocnet)
 S3method(add_node_attribute,igraph)
 S3method(add_node_attribute,network)
 S3method(add_node_attribute,tbl_graph)
