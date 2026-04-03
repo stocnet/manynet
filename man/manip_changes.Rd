@@ -7,7 +7,7 @@
 \alias{mutate_changes}
 \alias{filter_changes}
 \alias{select_changes}
-\alias{collect_changes}
+\alias{gather_changes}
 \alias{apply_changes}
 \title{Manipulating changes to nodes over time}
 \usage{
@@ -21,7 +21,7 @@ filter_changes(.data, ..., .by = NULL)
 
 select_changes(.data, ..., .by = NULL)
 
-collect_changes(.data, time)
+gather_changes(.data, time)
 
 apply_changes(.data, time)
 }
@@ -57,7 +57,7 @@ They include:
 \item \code{add_changes()} adds a table of changes to the nodes of a network.
 \item \code{mutate_changes()} can be used to update network changes.
 \item \code{filter_changes()} is used to subset network changes.
-\item \code{collect_changes()} is similar to \code{filter_changes()},
+\item \code{gather_changes()} is similar to \code{filter_changes()},
 but collects the cumulative changes up to a time point.
 \item \code{apply_changes()} applies the changes collected up to a time point
 to a network, removing the changes.
@@ -73,7 +73,7 @@ add_changes(ison_algebra,
             data.frame(wave = 2, node = 1, var = "active", value = FALSE))
 filter_changes(fict_starwars, node == "Anakin")
 select_changes(fict_starwars, node)
-collect_changes(fict_starwars, time = 3)
+gather_changes(fict_starwars, time = 3)
 collect_changes(fict_starwars, time = 3)
 }
 \seealso{

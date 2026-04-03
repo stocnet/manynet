@@ -10,7 +10,7 @@
 #'   - `add_changes()` adds a table of changes to the nodes of a network.
 #'   - `mutate_changes()` can be used to update network changes.
 #'   - `filter_changes()` is used to subset network changes.
-#'   - `collect_changes()` is similar to `filter_changes()`,
+#'   - `gather_changes()` is similar to `filter_changes()`,
 #'   but collects the cumulative changes up to a time point.
 #'   - `apply_changes()` applies the changes collected up to a time point
 #'   to a network, removing the changes.
@@ -174,9 +174,9 @@ select_changes <- function(.data, ..., .by = NULL){
 #' @rdname manip_changes
 #' @template param_time
 #' @examples
-#' collect_changes(fict_starwars, time = 3)
+#' gather_changes(fict_starwars, time = 3)
 #' @export
-collect_changes <- function(.data, time){
+gather_changes <- function(.data, time){
   t <- time
   changes <- igraph::graph_attr(.data, "changes")
   changes <- changes %>% 
