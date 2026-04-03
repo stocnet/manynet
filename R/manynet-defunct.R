@@ -146,6 +146,14 @@ read_pkg <- function(dir = getwd()) {
   collect_pkg(dir = dir)
 }
 
+#' @describeIn defunct Deprecated on 2026-04-02.
+#' @export
+collect_changes <- function(.data, time) {
+  .Deprecated("gather_changes", package = "manynet",
+              old = "collect_changes")
+  gather_changes(.data, time)
+}
+
 # Moved to netrics from 2.0.0 ####
 
 #' @describeIn defunct Deprecated on 2026-03-22.

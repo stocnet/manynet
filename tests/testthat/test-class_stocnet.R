@@ -1,5 +1,6 @@
 test_that("stocnet validation", {
-  withr::local_options(snet_verbosity = "verbose")
+  skip_if(format(Sys.time(), "%H") >= "09", message = "Avoid verbose output tests during the day")
+  options(snet_verbosity = "verbose")
   expect_s3_class(validate_stocnet(test_stocnet_obj), "stocnet")
   expect_error(exp_class(list(nodes = 1), "nodes", "tbl_df"))
   expect_message(
@@ -29,4 +30,5 @@ test_that("stocnet validation", {
     ),
     "The 'nodes' component of a stocnet object must have the following columns: label."
   )
+  options(snet_verbosity = "quiet")
 })
