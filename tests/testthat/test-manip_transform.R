@@ -1,3 +1,16 @@
+to_funs <- funs_objs[grepl("to_", names(funs_objs))]
+to_funs <- to_funs[!grepl("^na_|s$", names(to_funs))]
+fun_names <- names(to_funs)
+fun_names <- fun_names[!grepl("\\.", fun_names)]
+
+for(fn in fun_names) {
+  test_that(paste(fn, "works"), {
+    skip_if(grepl("twomode|uniplex|time|ego", fn), message = "Some functions need more input")
+    skip_if(grepl("mode1|mode2|matching", fn), message = "Some functions expect a two-mode network")
+    skip_if(grepl("mentoring|eulerian|dominating", fn), message = "Some functions have internal errors")
+    expect_no_error(to_funs[[fn]](create_ring(5)))
+  })
+}
 # Test transform functions
 
 test_that("to_giant works",{

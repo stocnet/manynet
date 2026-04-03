@@ -274,7 +274,7 @@ to_eulerian.tbl_graph <- function(.data){
 #' @export
 to_tree <- function(.data) {
   .data <- as_igraph(.data)
-  out <- igraph::subgraph.edges(.data, igraph::sample_spanning_tree(.data))
+  out <- igraph::subgraph_from_edges(.data, igraph::sample_spanning_tree(.data))
   as_tidygraph(out)
 }
 
