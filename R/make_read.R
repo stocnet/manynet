@@ -72,6 +72,7 @@ read_matrix <- function(file = file.choose(),
                         ...) {
   if(missing(file)) cli::cli_alert_success("Executing: read_matrix('{file}')")
   sv <- match.arg(sv)
+  if(!grepl("\\.csv$|\\.xlsx$|\\.xls$", file)) file <- paste0(file, ".csv")
   if (grepl("csv$", file)) {
     if (sv == "comma") {
       out <- read.csv(file, ...) # For US
@@ -90,7 +91,9 @@ read_matrix <- function(file = file.choose(),
   if(!is.null(colnames(out)) & is.null(rownames(out)) &
      dim(out)[1] == dim(out)[2])
     rownames(out) <- colnames(out)
-  as_tidygraph(as.matrix(out))
+  out <- as.matrix(out)
+  if(is.null(rownames(out)) && colnames(out)[1] == "V1") colnames(out) <- NULL
+  as_tidygraph(out)
 }
 
 #' @rdname make_read 
@@ -100,6 +103,7 @@ read_edgelist <- function(file = file.choose(),
                           ...) {
   if(missing(file)) cli::cli_alert_success("Executing: read_edgelist('{file}')")
   sv <- match.arg(sv)
+  if(!grepl("\\.csv$|\\.xlsx$|\\.xls$", file)) file <- paste0(file, ".csv")
   if (grepl("csv$", file)) {
     if (sv == "comma") {
       out <- read.csv(file, header = TRUE, ...) # For US
@@ -120,6 +124,7 @@ read_nodelist <- function(file = file.choose(),
                           ...) {
   if(missing(file)) cli::cli_alert_success("Executing: read_nodelist('{file}')")
   sv <- match.arg(sv)
+  if(!grepl("\\.csv$|\\.xlsx$|\\.xls$", file)) file <- paste0(file, ".csv")
   if (grepl("csv$", file)) {
     if (sv == "comma") {
       out <- read.csv(file, header = TRUE, ...) # For US
@@ -143,6 +148,7 @@ read_pajek <- function(file = file.choose(),
                        ties = NULL,
                        ...) {
   if(missing(file)) cli::cli_alert_success("Executing: read_pajek('{file}')")
+  if(!grepl("\\.paj$", file)) file <- paste0(file, ".paj")
   paj <- network::read.paj(file, ...)
   if(!is.network(paj)){
     if(is.null(ties)) 
@@ -186,7 +192,8 @@ read_ucinet <- function(file = file.choose()) {
   if(missing(file)) cli::cli_alert_success("Executing: read_ucinet('{file}')")
   # Some basic checks of the input file
   # Check if the file is a UCINET header file
-  if (!grepl(".##h$", file)) {
+  if(!grepl("\\.##h$", file)) file <- paste0(file, ".##h")
+  if (!grepl("\\.##h$", file)) {
     snet_abort("Please select the UCINET header file with the
                                   '.##h' extension.")
   } # Continue if header file is selected
@@ -403,6 +410,7 @@ read_dynetml <- function(file = file.choose()) {
 #' @export
 read_graphml <- function(file = file.choose()) {
   if(missing(file)) cli::cli_alert_success("Executing: read_graphml('{file}')")
+  if(!grepl("\\.graphml$", file)) file <- paste0(file, ".graphml")
   as_tidygraph(igraph::read_graph(file, format = "graphml"))
 }
 
@@ -525,7 +533,6 @@ NULL
 #' @export
 write_matrix <- function(.data,
                          filename,
-                         # name,
                          ...) {
   if (missing(.data)) {
     Abruzzo <- Campania <- Calabria <- Puglia <- NULL
@@ -545,7 +552,7 @@ write_matrix <- function(.data,
     filename <- paste0(getwd(), "/", object_name, ".csv")
     snet_success("Writing to {.file {filename}}")
   } 
-  # if (missing(name)) name <- object_name
+  if(!grepl("\\.csv$", filename)) filename <- paste0(filename, ".csv")
   write.csv(out, file = filename, row.names = FALSE)
 }
 
@@ -553,7 +560,6 @@ write_matrix <- function(.data,
 #' @export
 write_edgelist <- function(.data,
                            filename,
-                           # name,
                            ...) {
   if (missing(.data)) {
     out <- data.frame(
@@ -569,8 +575,8 @@ write_edgelist <- function(.data,
   if (missing(filename)){
     filename <- paste0(getwd(), "/", object_name, "-edges.csv")
     snet_success("Writing to {.file {filename}}")
-  } 
-  # if (missing(name)) name <- object_name
+  }
+  if(!grepl("\\.csv$", filename)) filename <- paste0(filename, ".csv")
   write.csv(out, file = filename, row.names = FALSE, ...)
 }
 
@@ -594,7 +600,7 @@ write_nodelist <- function(.data,
     filename <- paste0(getwd(), "/", object_name, "-nodes.csv")
     snet_success("Writing to {.file {filename}}")
   } 
-  # if (missing(name)) name <- object_name
+  if(!grepl("\\.csv$", filename)) filename <- paste0(filename, ".csv")
   write.csv(out, file = filename, row.names = FALSE, ...)
 }
 
@@ -609,6 +615,7 @@ write_pajek <- function(.data,
     filename <- paste0(getwd(), "/", object_name, ".net")
     snet_success("Writing to {.file {filename}}")
   }
+  if(!grepl("\\.paj$", filename)) filename <- paste0(filename, ".paj")
   igraph::write_graph(as_igraph(.data),
                       file = filename,
                       format = "pajek",
@@ -741,6 +748,7 @@ write_graphml <- function(.data,
     filename <- paste0(getwd(), "/", deparse(substitute(.data)), ".graphml")
     snet_success("Writing to {.file {filename}}")
   } 
+  if(!grepl("\\.graphml$", filename)) filename <- paste0(filename, ".graphml")
   igraph::write_graph(as_igraph(.data),
                       filename,
                       format = "graphml")
