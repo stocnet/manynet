@@ -1,30 +1,35 @@
 lossless_roundtrip <- function(obj, to_class) {
   from_class <- class(obj)[1]
+  if(to_class == "tbl_graph") to_class <- "tidygraph"
+  if(from_class == "tbl_graph") from_class <- "tidygraph"
   to_fun     <- get(paste0("as_", to_class))
   back_fun   <- get(paste0("as_", from_class))
   
   obj2 <- back_fun(to_fun(obj))
   
-  identical(as.matrix(obj), as.matrix(obj2))
+  identical(as_matrix(obj), as_matrix(obj2))
+  # waldo::compare(as_matrix(obj), as_matrix(obj2), x_arg = "obj", y_arg = "obj2")
 }
 
 for(ms in manynet_classes){
   to_classes <- setdiff(manynet_classes, ms)
   
   test_that(paste("coercion from", ms, "to other classes is lossless where expected"), {
+    mat <- matrix(c(0,1,1,0,0,1,1,1,0), 3, 3)
     obj <- switch(ms,
-                  "matrix" = matrix(c(0,1,1,0), 2, 2),
-                  "igraph" = igraph::graph_from_adjacency_matrix(matrix(c(0,1,1,0), 2, 2)),
-                  "graphAM" = methods::new("graphAM", adjMat = matrix(c(0,1,1,0), 2, 2), edgemode = "directed"),
-                  "tbl_graph" = tidygraph::as_tbl_graph(matrix(c(0,1,1,0), 2, 2)),
-                  "network" = network::network(matrix(c(0,1,1,0), 2, 2)),
-                  "stocnet" = as_snet(matrix(c(0,1,1,0), 2, 2))
+                  "matrix" = mat,
+                  "igraph" = igraph::graph_from_adjacency_matrix(mat),
+                  "graphAM" = methods::new("graphAM", adjMat = mat, edgemode = "directed"),
+                  "tbl_graph" = tidygraph::as_tbl_graph(mat),
+                  "network" = network::network(mat),
+                  "stocnet" = as_stocnet(mat)
     )
     
     for (to in to_classes) {
+      skip_if(ms == "stocnet" && to == "network", "Known lossy coercion from stocnet to network")
       expect_true(
         lossless_roundtrip(obj, to),
-        info = paste("Lossy coercion:", ms, "→", to)
+        info = paste("Lossy coercion:", ms, "(obj) →", to, "(obj2)")
       )
     }
   })

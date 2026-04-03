@@ -38,7 +38,11 @@ is_manynet <- function(.data) {
     (is.matrix(.data) & is.numeric(.data))
 }
 
-manynet_classes <- c("igraph", "tbl_graph", "network", "matrix")
+manynet_classes <- c("igraph" = "igraph", 
+                     "tidygraph" = "tbl_graph", 
+                     "network" = "network", 
+                     "matrix" = "matrix", 
+                     "stocnet" = "stocnet")
 
 #' @rdname mark_is
 #' @importFrom igraph is_igraph
