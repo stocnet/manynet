@@ -32,6 +32,13 @@ net_nodes.stocnet <- function(.data){
 }
 
 #' @export
+net_nodes.matrix <- function(.data){
+  if(is_twomode(.data)){
+    sum(dim(.data))
+  } else nrow(.data)
+}
+
+#' @export
 net_nodes.igraph <- function(.data){
   if(is_list(.data)){
     nodes <- vapply(.data, function(x) igraph::vcount(as_igraph(x)), 
