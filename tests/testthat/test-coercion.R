@@ -8,7 +8,6 @@ lossless_roundtrip <- function(obj, to_class) {
   obj2 <- back_fun(to_fun(obj))
   
   identical(as_matrix(obj), as_matrix(obj2))
-  # waldo::compare(as_matrix(obj), as_matrix(obj2), x_arg = "obj", y_arg = "obj2")
 }
 
 for(ms in manynet_classes){

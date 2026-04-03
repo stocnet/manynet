@@ -20,7 +20,7 @@
 #' @examples 
 #' missTest <- ison_adolescents |> 
 #'    add_tie_attribute("weight", c(1,NA,NA,1,1,1,NA,NA,1,1)) |> 
-#'    as_matrix
+#'    as_matrix()
 #' missTest
 #' na_to_zero(missTest)
 #' na_to_mean(missTest)

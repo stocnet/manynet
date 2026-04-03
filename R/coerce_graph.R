@@ -638,7 +638,7 @@ as_network.stocnet <- function(.data, twomode = FALSE) {
 #' @export
 as_network.networkDynamic <- function(.data, twomode = FALSE) {
   out <- .data
-  class(out) <- class(out)[class(out) != "networkDynamic"]
+  class(out) <- setdiff(class(out), "networkDynamic")
   out
 }
 
@@ -1023,7 +1023,7 @@ as_stocnet.network <- function(.data,
               changes = as_changelist(.data), 
               ties = as_edgelist(.data))
   class(out) <- c("stocnet", class(out))
-  if(class(network::network.vertex.names(.data))=="integer")
+  if(inherits(network::network.vertex.names(.data), "integer"))
     out$nodes$vertex.names <- NULL
   out
 }
