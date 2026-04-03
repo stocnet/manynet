@@ -5,40 +5,82 @@
 #'   nodes, ties, (nodal) changes, and info metadata about the network as a whole.
 #'   This offers a consistent and flexible structure that enables more complex 
 #'   forms of networks to be contained in a single object.
-#' @section Nodes:
-#'   Nodes are held as vertices and vertex attributes in the 'igraph' object,
-#'   but printed as a nodelist.
-#'   Here the convention is for the first column of the nodelist to be called
-#'   'name' and records the labels of the nodes.
-#'   Additional reserved columns include 'active' for changing networks and
-#'   'type' for multimodal networks.
-#' @section Changes: 
-#'   Changes, that is a list of changes to the nodes in the network,
-#'   are held internally as a graph attribute in the 'igraph' object,
-#'   but printed as a changelist.
-#'   Here the convention is for the 'wave' or 'time' column to appear first,
-#'   followed by 'node' indicating to which node the change applies,
-#'   'var' for the variable to which the change applies,
-#'   and 'value' for the new value to be applied.
-#' @section Ties:
-#'   Ties are held as edges and edge attributes in the 'igraph' object,
-#'   but printed as an edgelist.
-#'   Here the convention is for the first column of the edgelist to be called
-#'   'from' and the second column 'to', even if the network is not directed.
-#'   Additional reserved columns include 'weight' for weighted networks,
-#'   'wave' for longitudinal networks, 'type' for multiplex networks,
-#'   and 'sign' for signed networks.
+#'   Unlike 'mnet' objects, 'stocnet' objects are not layered on top of 'igraph' or 'tbl_graph' objects,
+#'   but instead are a list of tibbles and metadata.
+#'   Unlike 'igraph' or 'tbl_graph' objects,
+#'   'stocnet' objects typically include more complex multimodal, longitudinal, or dynamic networks.
+#'   They also typically include more metadata about the network, 
+#'   such as the names of the types of nodes and ties in the network.
+#'   In other words, they are made not just for network analysis,
+#'   but also network modelling.
+#' @details
+#'   The package includes a validation function for stocnet objects, `validate_stocnet()`. 
+#'   This checks that the object has the correct structure and required components,
+#'   and suggests improvements to the structure (e.g. correcting or adding reserved names) where possible.
+#'   The required and reserved names for the components of a stocnet object are described below.
 #' @section Info:
-#'  The info component of a stocnet object is a list of metadata about the network as a whole.
-#'  This can include the name of the network, as well as the names of the types of nodes
-#'  and ties in the network.
-#'  For example, the info component could include a 'name' element with the name of the network,
-#'  a 'nodes' element with a character vector of the names of the types of
-#'  nodes in the network, and a 'ties' element with a character vector of the names of the types of
-#'  ties in the network.
+#'   There are several reserved names for the elements of the info component of a stocnet object.
+#'   - 'name' should be a single character string with the name of the network.
+#'   - 'modes' should be a character vector of the names of the modes of the nodes in a multimodal network.
+#'   - 'layers' should be a character vector of the names of the layers of
+#'   the ties in a multiplex or multilayer network.
+#'   - 'directed' should be a logical indicating whether each layer is directed or undirected.
+#'   If there are multiple layers, this can be a named logical vector with the directedness of each layer, 
+#'   where the names correspond to the layer names.
+#'   - 'dependent' should be a character string indicating which layer is the dependent layer in a multiplex network.
+#'   - 'doi' can be a character string with the DOI of the network, if it is from a published source.
+#'   - 'date' can be an integer of the year or the date the network represents.
+#'   - 'location' can be a character string with the location of the network.
+#'   - 'source' can be a character string indicating whether the network is observed or synthetic.
+#'   If it is observed, the 'method' of data collection can be further specified.
+#'   For example, the source could be 'observed', 'synthetic', 'survey', 'archival', 'digital trace', etc.
+#'   If it is synthetic, then more details about how the network was generated can be included.
+#'   
+#'   Many of these elements are drawn from the GRAND project's metadata standards for networks, 
+#'   which are designed to be consistent with the FAIR principles for data management.
+#'   
+#'   In addition to these reserved names, the info component can include metadata relating to each layer of the network, 
+#'   such as the names of the types of nodes and ties in each layer, 
+#'   as well as the names of the dependent and independent layers in a multiplex network.
+#'   These must be named as one of the layer names.
+#'   There are some reserved names for these elements too:
+#'   - 'sender' should be a character string naming the type of node that sends ties in this layer.
+#'   - 'recipient' should be a character string naming the type of node that receives ties in this layer.
+#'   - 'update' should be a character string indicating whether layer changes are by "increment" or "replace".
+#'   
+#' @section Nodes:
+#'   There are several reserved names for the columns of the nodes component of a stocnet object.
+#'   - 'label' should be a character vector of the labels of the nodes in the network.
+#'   - 'mode' should be a character vector of the modes of the nodes in a multimodal network.
+#'   - 'present' should be a logical vector indicating the initial active status of the node in changing networks.
+#'   It can also be used to indicate missing nodes in a network, 
+#'   if the network is not changing but some nodes are missing,
+#'   or the network is changing but some nodes never appear.
+#' @section Changes: 
+#'   There are several required names for the columns of the changes component of a stocnet object (if one is included).
+#'   - 'time' can be an integer (e.g. for a wave) or date (e.g. POSIXct or mdate) vector of the times at which changes occur.
+#'   - 'node' must be an index (or names) of the node to which the change applies.
+#'   - 'var' must be a string vector naming the variable to which the change applies, such as 'active' for changing networks.
+#'   - 'value' must be the new value that should be applied at that change (or incremented, as appropriate).
+#'   Note that the value column can be of any class, such as logical for changes to active status, 
+#'   or numeric for changes to a nodal attribute.
+#'   These values are held internally as a list within the tibble, so that they can be of any class and length, 
+#'   but printed as a tibble with a 'value' column that shows the first value and a type label for the class of the value.
+#' @section Ties:
+#'   There are several required names for the columns of the ties component of a stocnet object (if one is included).
+#'   - 'from' must be an integer vector of the nodes sending each tie
+#'   - 'to' must be an integer vector of the nodes receiving each tie
+#'   
+#'   There are also several reserved names for the columns of the ties component of a stocnet object.
+#'   - 'layer' should be a character vector of the layer of each tie in a multiplex or multilayer network
+#'   - 'weight' should be a numeric vector of the weights of the ties in a weighted network
+#'   If the weight vector includes also negative values, then the network is a signed network, 
+#'   and the sign of the tie can be determined from the weight.
+#'   Missing weights can be used to indicate missing ties in a network.
+#'   - 'time' should be a character or date vector of the time at which each tie is active in a longitudinal network.
 #' @section Printing: 
-#'   When printed, 'mnet' objects will print to the console any information
-#'   stored about the network's name, or its types of nodes or ties.
+#'   When printed, 'stocnet' objects will print to the console any information
+#'   stored about the names of the network, its modes, or layers.
 #'   It will also describe key features of the network,
 #'   such as whether the network is multiplex, weighted, directed, etc.
 #'   
