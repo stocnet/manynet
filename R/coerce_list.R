@@ -67,13 +67,14 @@ as_nodelist.igraph <- function(.data) {
 
 #' @export
 as_nodelist.stocnet <- function(.data) {
-  dplyr::tibble(.data$nodes)
+  .data$nodes
 }
 
 #' @export
 as_nodelist.network <- function(.data) {
   out <- .data
-  dplyr::tibble(network::as.data.frame.network(out, unit = "vertices"))
+  out <- network::as.data.frame.network(out, unit = "vertices")
+  dplyr::as_tibble(out)
 }
 
 # Changelists ####
@@ -96,7 +97,13 @@ as_changelist.igraph <- function(.data) {
 
 #' @export
 as_changelist.stocnet <- function(.data) {
-  dplyr::tibble(.data$changes)
+  .data$changes
+}
+
+#' @export
+as_changelist.network <- function(.data) {
+  out <- network::get.network.attribute(.data, "changes")
+  dplyr::tibble(data.frame(out))
 }
 
 # Edgelists ####
@@ -174,7 +181,7 @@ as_edgelist.siena <- function(.data, twomode = NULL) {
 
 #' @export
 as_edgelist.stocnet <- function(.data, twomode = NULL) {
-  dplyr::tibble(.data$ties)
+  .data$ties
 }
 
 # Infolists ####
