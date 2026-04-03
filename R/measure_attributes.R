@@ -21,8 +21,17 @@ NULL
 #' @examples
 #' node_attribute(fict_lotr, "Race")
 #' @export
-node_attribute <- function(.data, attr_name){
+node_attribute <- function(.data, attr_name) UseMethod("node_attribute")
+
+#' @export
+node_attribute.default <- function(.data, attr_name){
   out <- igraph::vertex_attr(as_igraph(.data), attr_name)
+  if(is.numeric(out)) make_node_measure(out, .data) else out
+}
+
+#' @export
+node_attribute.stocnet <- function(.data, attr_name){
+  out <- .data$nodes[[attr_name]]
   if(is.numeric(out)) make_node_measure(out, .data) else out
 }
 
@@ -81,8 +90,17 @@ NULL
 #' @examples
 #' tie_attribute(ison_algebra, "task_tie")
 #' @export
-tie_attribute <- function(.data, attr_name){
+tie_attribute <- function(.data, attr_name) UseMethod("tie_attribute")
+
+#' @export
+tie_attribute.default <- function(.data, attr_name){
   out <- igraph::edge_attr(as_igraph(.data), attr_name)
+  if(is.numeric(out)) make_tie_measure(out, .data) else out
+}
+
+#' @export
+tie_attribute.stocnet <- function(.data, attr_name){
+  out <- .data$ties[[attr_name]]
   if(is.numeric(out)) make_tie_measure(out, .data) else out
 }
 

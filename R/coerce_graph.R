@@ -382,10 +382,16 @@ as_igraph.siena <- function(.data, twomode = NULL) {
 
 #' @export
 as_igraph.stocnet <- function(.data, twomode = FALSE) {
-  out <- igraph::graph_from_data_frame(as_edgelist(.data), 
-                                       vertices = as_nodelist(.data))
+  if(is.null(as_nodelist(.data)) || length(as_nodelist(.data)) == 0){
+    out <- igraph::graph_from_data_frame(as_edgelist(.data))
+    out <- to_unnamed(out)
+  } else {
+    out <- igraph::graph_from_data_frame(as_edgelist(.data), 
+                                         vertices = as_nodelist(.data))
+  }
   igraph::graph_attr(out) <- as_infolist(.data)
-  igraph::graph_attr(out, "changes") <- as_changelist(.data)
+  if(!is.null(as_changelist(.data)) && length(as_changelist(.data)) > 0)
+    igraph::graph_attr(out, "changes") <- as_changelist(.data)
   out
 }
 
@@ -624,7 +630,8 @@ as_network.siena <- function(.data, twomode = FALSE) {
 as_network.stocnet <- function(.data, twomode = FALSE) {
   out <- as_network(as_igraph.stocnet(.data))
   out$gal <- as_infolist(.data)
-  network::set.network.attribute(out, "changes", as_changelist(.data))
+  if(!is.null(as_changelist(.data)) && length(as_changelist(.data)) > 0)
+    network::set.network.attribute(out, "changes", as_changelist(.data))
   out
 }
 
@@ -986,8 +993,8 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
   nodes <- dplyr::select(nodes, 
                          dplyr::any_of(c("label", "mode")), 
                          dplyr::everything())
-  if(ncol(nodes)==0) nodes <- NULL
-  if(ncol(changes)==0) changes <- NULL
+  # if(ncol(nodes)==0) nodes <- NULL
+  # if(ncol(changes)==0) changes <- NULL
   if(ncol(ties)==0) ties <- NULL
   
   out <- list(info = info, nodes = nodes, changes = changes, ties = ties)
@@ -1016,5 +1023,7 @@ as_stocnet.network <- function(.data,
               changes = as_changelist(.data), 
               ties = as_edgelist(.data))
   class(out) <- c("stocnet", class(out))
+  if(class(network::network.vertex.names(.data))=="integer")
+    out$nodes$vertex.names <- NULL
   out
 }
