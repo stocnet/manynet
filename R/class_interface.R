@@ -92,6 +92,7 @@ snet_unavailable <- function(..., .envir = parent.frame()){
 #'   If you wish to receive fewer messages in the console,
 #'   run `options(snet_verbosity = 'quiet')`.
 #' @inheritParams interface
+#' @template param_data
 #' @name progress
 NULL
 
@@ -124,6 +125,18 @@ snet_progress_nodes <- function(..., .envir = parent.frame()){
     cli::cli_progress_along(seq.int(net_nodes(...)), .envir = .envir, 
                             total = ..., clear = TRUE)
   } else seq.int(net_nodes(...))
+}
+
+#' @rdname progress
+#' @export
+seq_nodes <- function(.data){
+  seq.int(net_nodes(.data))
+}
+
+#' @rdname progress
+#' @export
+seq_ties <- function(.data){
+  seq.int(net_ties(.data))
 }
 
 # Console theme ####

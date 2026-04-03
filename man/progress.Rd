@@ -6,6 +6,8 @@
 \alias{snet_progress_along}
 \alias{snet_progress_seq}
 \alias{snet_progress_nodes}
+\alias{seq_nodes}
+\alias{seq_ties}
 \title{Console command line interface}
 \usage{
 snet_progress_step(..., .envir = parent.frame())
@@ -15,6 +17,10 @@ snet_progress_along(..., .envir = parent.frame())
 snet_progress_seq(..., .envir = parent.frame())
 
 snet_progress_nodes(..., .envir = parent.frame())
+
+seq_nodes(.data)
+
+seq_ties(.data)
 }
 \arguments{
 \item{...}{One or more character strings.
@@ -23,6 +29,15 @@ pasted together.}
 
 \item{.envir}{This argument is just to inherit the parent frame in the
 (likely) event that the function is used within another function.}
+
+\item{.data}{An object of a \code{{manynet}}-consistent class:
+\itemize{
+\item matrix (adjacency or incidence) from \code{{base}} R
+\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
+\item igraph, from the \code{{igraph}} package
+\item network, from the \code{{network}} package
+\item tbl_graph, from the \code{{tidygraph}} package
+}}
 }
 \description{
 These functions wrap \code{{cli}} functions and elements

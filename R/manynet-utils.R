@@ -43,18 +43,6 @@ thisRequires <- function(pkgname){
   }
 }
 
-#' @noRd
-#' @export
-seq_nodes <- function(.data){
-  seq.int(net_nodes(.data))
-}
-
-#' @noRd
-#' @export
-seq_ties <- function(.data){
-  seq.int(net_ties(.data))
-}
-
 interpolate <- function(values, positions, n, fill = NA) {
   out <- rep(fill, n) 
   out[positions] <- values
