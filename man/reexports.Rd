@@ -4,7 +4,6 @@
 \name{reexports}
 \alias{reexports}
 \alias{is_igraph}
-\alias{\%>\%}
 \alias{with_graph}
 \alias{is.tbl_graph}
 \alias{.G}
@@ -17,8 +16,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{dplyr}{\code{\link[dplyr:reexports]{\%>\%}}}
-
   \item{igraph}{\code{\link[igraph]{is_igraph}}}
 
   \item{tidygraph}{\code{\link[tidygraph:context_accessors]{.E}}, \code{\link[tidygraph:context_accessors]{.G}}, \code{\link[tidygraph:context_accessors]{.N}}, \code{\link[tidygraph:tbl_graph]{is.tbl_graph}}, \code{\link[tidygraph]{with_graph}}}

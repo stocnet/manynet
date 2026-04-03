@@ -205,7 +205,7 @@ collect_cran <- function(pkg = "all"){
   }
   out <- as_tidygraph(out)
   compile <- cranInfoDF$NeedsCompilation
-  out <- out %>% 
+  out <- out |> 
     mutate_nodes(Compilation = compile[match(node_names(out),
                                              cranInfoDF$Package)]=="yes")
   out

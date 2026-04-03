@@ -2,10 +2,6 @@
 #' @export
 igraph::is_igraph
 
-#' @importFrom dplyr %>%
-#' @export
-dplyr::`%>%`
-
 #' @importFrom tidygraph with_graph
 #' @export
 tidygraph::with_graph

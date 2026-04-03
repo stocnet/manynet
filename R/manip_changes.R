@@ -57,14 +57,14 @@ add_changes <- function(.data, changes){
     
     if(nrow(changes) == net_nodes(out) && ncol(changes)==2){
       # converting a begin-end composition table for all nodes
-      out <- out %>% mutate_nodes(active = as.logi(changes[,1] == min(changes[,1])))
+      out <- out |> mutate_nodes(active = as.logi(changes[,1] == min(changes[,1])))
       changes <- data.frame(node = 1:nrow(changes), 
                             begin = changes[,1], end = changes[,2])
     }
     if(all(names(changes) == c("node", "begin", "end"))){
       # inferring starting positions
       first <- changes[!duplicated(changes[,1]),]
-      out <- out %>% mutate_nodes(active = interpolate(first[,2] == min(first[,2]),
+      out <- out |> mutate_nodes(active = interpolate(first[,2] == min(first[,2]),
                                                        first[,1],
                                                        net_nodes(out),
                                                        fill = TRUE))
@@ -76,9 +76,9 @@ add_changes <- function(.data, changes){
                               v.names = "wave",
                               times = colnames(changes)[-1],
                               timevar = "value", direction = "long")
-    changes <- changes %>% dplyr::mutate(wave = wave, node = node, 
-                                         var = "active", value = value=="begin") %>% 
-      dplyr::select(wave, node, var, value) %>% dplyr::arrange(wave, node) %>% 
+    changes <- changes |> dplyr::mutate(wave = wave, node = node, 
+                                         var = "active", value = value=="begin") |> 
+      dplyr::select(wave, node, var, value) |> dplyr::arrange(wave, node) |> 
       dplyr::filter(wave != 1)
   }
   
@@ -109,7 +109,7 @@ add_changes <- function(.data, changes){
 .infer_active <- function(.data, changes){
   
   if(length(unique(changes$node))==net_nodes(.data)){ # if table of when active
-    out <- .data %>% mutate_nodes(active = as.logi(changes[,1] == min(changes[,1])))
+    out <- .data |> mutate_nodes(active = as.logi(changes[,1] == min(changes[,1])))
     
   } else { # if some actives
     if(all(changes[changes[,3]=="active",4])){
@@ -122,13 +122,13 @@ add_changes <- function(.data, changes){
       starts[first[,2]] <- first[,4]
       starts[is.na(starts) & changes[changes$var == "active" & changes$value == TRUE & changes$wave > min(changes$wave),2]] <- FALSE
     } else snet_unavailable()
-    out <- .data %>% mutate_nodes(active = starts)
+    out <- .data |> mutate_nodes(active = starts)
   }
   out
 }
 
 .infer_susceptible <- function(.data, changes){
-  .data %>% mutate_nodes(diffusion = "S")
+  .data |> mutate_nodes(diffusion = "S")
 }
 
 #' @rdname manip_changes
@@ -179,11 +179,11 @@ select_changes <- function(.data, ..., .by = NULL){
 gather_changes <- function(.data, time){
   t <- time
   changes <- igraph::graph_attr(.data, "changes")
-  changes <- changes %>% 
-    dplyr::filter(time <= t) %>% 
-    dplyr::arrange(node, var, time) %>% 
-    dplyr::group_by(node, var) %>% 
-    dplyr::mutate(value = dplyr::last(value)) %>% 
+  changes <- changes |> 
+    dplyr::filter(time <= t) |> 
+    dplyr::arrange(node, var, time) |> 
+    dplyr::group_by(node, var) |> 
+    dplyr::mutate(value = dplyr::last(value)) |> 
     dplyr::distinct(node, var, value)
   changes
 }

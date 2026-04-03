@@ -34,7 +34,7 @@ to_no_missing <- function(.data) UseMethod("to_no_missing")
 to_no_missing.tbl_graph <- function(.data){
   out <- .data
   nl <- as_nodelist(out)
-  delete_nodes(.data, !stats::complete.cases(nl)) %>% 
+  delete_nodes(.data, !stats::complete.cases(nl)) |> 
     add_info(name = paste(net_name(.data), "without nodes with missing data"))
 }
 
@@ -93,15 +93,15 @@ to_time.tbl_graph <- function(.data, time){
         igraph::graph_attr(out, "changes") <- NULL
       } 
       if("active" %in% net_node_attributes(out)){
-        out <- out %>% 
-          filter_nodes(active) %>% 
+        out <- out |> 
+          filter_nodes(active) |> 
           select_nodes(-active)
       }
     }
     if("wave" %in% net_tie_attributes(out)){
-      out %>% 
+      out |> 
         # trim ties
-        filter_ties(wave == time) %>% 
+        filter_ties(wave == time) |> 
         select_ties(-wave)
     } else out
   } else {
@@ -129,7 +129,7 @@ to_giant.network <- function(.data) {
 
 #' @export
 to_giant.tbl_graph <- function(.data) {
-  as_tidygraph(to_giant(as_igraph(.data))) %>% 
+  as_tidygraph(to_giant(as_igraph(.data))) |> 
     add_info(name = paste(net_name(.data, prefix = "Giant component of")))
 }
 
@@ -147,9 +147,9 @@ to_giant.matrix <- function(.data) {
 #' @importFrom tidygraph node_is_isolated
 #' @importFrom dplyr filter
 #' @examples
-#' ison_adolescents %>%
-#'   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) %>%
-#'   to_waves(attribute = "wave") %>%
+#' ison_adolescents |>
+#'   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) |>
+#'   to_waves(attribute = "wave") |>
 #'   to_no_isolates()
 #' @export
 to_no_isolates <- function(.data) UseMethod("to_no_isolates")
@@ -158,8 +158,8 @@ to_no_isolates <- function(.data) UseMethod("to_no_isolates")
 to_no_isolates.tbl_graph <- function(.data) {
   nodes <- NULL
   # Delete edges not present vertices
-  .data %>% tidygraph::activate(nodes) %>% 
-    dplyr::filter(!tidygraph::node_is_isolated()) %>% 
+  .data |> tidygraph::activate(nodes) |> 
+    dplyr::filter(!tidygraph::node_is_isolated()) |> 
     add_info(name = paste(net_name(.data), "without isolates"))
 }
 
@@ -168,7 +168,7 @@ to_no_isolates.list <- function(.data) {
   nodes <- NULL
   # Delete edges not present vertices in each list
   lapply(.data, function(x) {
-    x %>% tidygraph::activate(nodes) %>% dplyr::filter(!tidygraph::node_is_isolated())
+    x |> tidygraph::activate(nodes) |> dplyr::filter(!tidygraph::node_is_isolated())
   })
 }
 

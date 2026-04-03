@@ -46,21 +46,21 @@ a dynamic tidygraph.
 }
 }
 \examples{
-ison_adolescents \%>\%
-  mutate(unicorn = sample(c("yes", "no"), 8, replace = TRUE)) \%>\%
-  to_subgraphs(attribute = "unicorn") \%>\%
+ison_adolescents |>
+  mutate(unicorn = sample(c("yes", "no"), 8, replace = TRUE)) |>
+  to_subgraphs(attribute = "unicorn") |>
   from_subgraphs()
-ison_adolescents \%>\%
-  to_egos() \%>\%
+ison_adolescents |>
+  to_egos() |>
   from_egos()
-ison_adolescents \%>\%
-  mutate_ties(wave = sample(1:4, 10, replace = TRUE)) \%>\%
-  to_waves(attribute = "wave") \%>\%
+ison_adolescents |>
+  mutate_ties(wave = sample(1:4, 10, replace = TRUE)) |>
+  to_waves(attribute = "wave") |>
   from_waves()
-ison_adolescents \%>\%
-  mutate_ties(time = 1:10, increment = 1) \%>\% 
-  add_ties(c(1,2), list(time = 3, increment = -1)) \%>\% 
-  to_slices(slice = c(5,7)) \%>\%
+ison_adolescents |>
+  mutate_ties(time = 1:10, increment = 1) |> 
+  add_ties(c(1,2), list(time = 3, increment = -1)) |> 
+  to_slices(slice = c(5,7)) |>
   from_slices()
 }
 \seealso{

@@ -85,7 +85,7 @@ make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL, changes = NULL)
     nodes = nodes,
     ties = ties,
     changes = changes
-  ) %>% 
+  ) |> 
     structure(class = "stocnet")
 }
 

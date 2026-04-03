@@ -79,15 +79,15 @@ to_mode1.igraph <- function(.data, similarity = c("count","jaccard","rand","pear
   if(similarity == "count") igraph::bipartite_projection(.data)$proj1 else {
     if(!is_labelled(.data)){
       nind <- seq_len(net_nodes(.data))
-      temp <- .data %>% mutate_nodes(name = paste0("x", nind))
-      out <- temp %>% as_matrix() %>% to_mode1(similarity) %>% as_igraph() %>% 
+      temp <- .data |> mutate_nodes(name = paste0("x", nind))
+      out <- temp |> as_matrix() |> to_mode1(similarity) |> as_igraph() |> 
         join_nodes(object2 = temp, join_type = "left",
-                   .by = dplyr::join_by(name)) %>% 
+                   .by = dplyr::join_by(name)) |> 
         mutate_nodes(name = NULL)
-    } else out <- as_igraph(to_mode1(as_matrix(.data), similarity)) %>% 
+    } else out <- as_igraph(to_mode1(as_matrix(.data), similarity)) |> 
         join_nodes(object2 = .data, join_type = "left",
                                      .by = dplyr::join_by(name))
-    out %>% mutate_nodes(type = NULL) %>%
+    out |> mutate_nodes(type = NULL) |>
       select_nodes(dplyr::where(~ !all(is.na(.))))
   }
 }
@@ -96,13 +96,13 @@ to_mode1.igraph <- function(.data, similarity = c("count","jaccard","rand","pear
 to_mode1.tbl_graph <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
   out <- as_tidygraph(to_mode1(as_igraph(.data), similarity = similarity))
   if(match.arg(similarity) %in% c("pearson","yule")){
-    out <- out %>% mutate_ties(sign = dplyr::if_else(tie_weights(out)<0, -1, 1))
+    out <- out |> mutate_ties(sign = dplyr::if_else(tie_weights(out)<0, -1, 1))
   }
-  if(!is.null(net_name(.data))) out <- out %>% 
+  if(!is.null(net_name(.data))) out <- out |> 
       add_info(name = net_name(.data, prefix = "Projection of"))
-  if(!is.null(net_tie_names(.data))) out <- out %>% 
+  if(!is.null(net_tie_names(.data))) out <- out |> 
       add_info(ties = paste0("co-", net_tie_names(.data)))
-  if(!is.null(net_node_names(.data))) out <- out %>% 
+  if(!is.null(net_node_names(.data))) out <- out |> 
       add_info(nodes = net_node_names(.data)[1],
                ties = paste0("co-", net_node_names(.data)[2]))
   out
@@ -151,15 +151,15 @@ to_mode2.igraph <- function(.data, similarity = c("count","jaccard","rand","pear
   if(similarity == "count") igraph::bipartite_projection(.data)$proj2 else {
     if(!is_labelled(.data)){
       nind <- seq_len(net_nodes(.data))
-      temp <- .data %>% mutate_nodes(name = paste0("x", nind))
-      out <- temp %>% as_matrix() %>% to_mode2(similarity) %>% as_igraph() %>% 
+      temp <- .data |> mutate_nodes(name = paste0("x", nind))
+      out <- temp |> as_matrix() |> to_mode2(similarity) |> as_igraph() |> 
         join_nodes(object2 = temp, join_type = "left",
-                   .by = dplyr::join_by(name)) %>% 
+                   .by = dplyr::join_by(name)) |> 
         mutate_nodes(name = NULL)
-    } else out <- as_igraph(to_mode2(as_matrix(.data), similarity)) %>% 
+    } else out <- as_igraph(to_mode2(as_matrix(.data), similarity)) |> 
         join_nodes(object2 = .data, join_type = "left",
                    .by = dplyr::join_by(name))
-    out %>% mutate_nodes(type = NULL) %>%
+    out |> mutate_nodes(type = NULL) |>
       select_nodes(dplyr::where(~ !all(is.na(.))))
   }
 }
@@ -168,13 +168,13 @@ to_mode2.igraph <- function(.data, similarity = c("count","jaccard","rand","pear
 to_mode2.tbl_graph <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
   out <- as_tidygraph(to_mode2(as_igraph(.data), similarity))
   if(match.arg(similarity) %in% c("pearson","yule")){
-    out <- out %>% mutate_ties(sign = dplyr::if_else(tie_weights(out)<0, -1, 1))
+    out <- out |> mutate_ties(sign = dplyr::if_else(tie_weights(out)<0, -1, 1))
   }
-  if(!is.null(net_name(.data))) out <- out %>% 
+  if(!is.null(net_name(.data))) out <- out |> 
       add_info(name = net_name(.data, prefix = "Projection of"))
-  if(!is.null(net_tie_names(.data))) out <- out %>% 
+  if(!is.null(net_tie_names(.data))) out <- out |> 
       add_info(ties = paste0("co-", net_tie_names(.data)))
-  if(!is.null(net_node_names(.data))) out <- out %>% 
+  if(!is.null(net_node_names(.data))) out <- out |> 
       add_info(nodes = net_node_names(.data)[2],
                ties = paste0("co-", net_node_names(.data)[1]))
   out

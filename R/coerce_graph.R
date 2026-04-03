@@ -278,13 +278,13 @@ as_igraph.siena <- function(.data, twomode = NULL) {
                          attr_name = paste0(name, "_", "t", d))
         } else { # x is onemode but y is twomode
           y <- as_edgelist(y)
-          y <- y %>%
+          y <- y |>
             dplyr::mutate(weight = 1)
-          x <- dplyr::bind_rows(y, as_edgelist(x)) %>%
+          x <- dplyr::bind_rows(y, as_edgelist(x)) |>
             as_igraph()
           x <- igraph::set_edge_attr(x, name = paste0(name, "_", "t", d),
                                      value = igraph::edge_attr(as_igraph(x),
-                                                               "weight")) %>%
+                                                               "weight")) |>
             igraph::delete_edge_attr("weight")
         }
       } else {
@@ -294,13 +294,13 @@ as_igraph.siena <- function(.data, twomode = NULL) {
         # join ties
         if (isTRUE(is_twomode(x))) { # x is twomode but y is onemode
           y <- as_edgelist(y)
-          y <- y %>%
+          y <- y |>
             dplyr::mutate(weight = 1)
-          x <- dplyr::bind_rows(y, as_edgelist(x)) %>%
+          x <- dplyr::bind_rows(y, as_edgelist(x)) |>
             as_igraph()
           x <- igraph::set_edge_attr(x, name = paste0(name, "_", "t", d),
                                      value = igraph::edge_attr(as_igraph(x),
-                                                               "weight")) %>%
+                                                               "weight")) |>
             igraph::delete_edge_attr("weight")
         } else { # x and y are onemode
           x <- join_ties(x, as_igraph(y), 
@@ -335,7 +335,7 @@ as_igraph.siena <- function(.data, twomode = NULL) {
                                name = ddvs[1])
   out <- igraph::set_edge_attr(out, name = paste0(ddvs[1], "_", "t1"),
                                value = igraph::edge_attr(as_igraph(out),
-                                                         "orig")) %>%
+                                                         "orig")) |>
     igraph::delete_edge_attr("orig")
   # Add rest of the dyadic depvars
   if (length(ddvs) > 1) {
@@ -783,13 +783,13 @@ as_diffusion.diff_model <- function(.data, twomode = FALSE, events) {
 as_diffusion.mnet <- function(.data, twomode = FALSE, events) {
   events <- as_changelist(.data)
   nodes <- c(net_nodes(.data))
-  sumchanges <- events %>% dplyr::group_by(time) %>% 
+  sumchanges <- events |> dplyr::group_by(time) |> 
     dplyr::reframe(S_new = sum(value == "S"),
                    E_new = sum(value == "E"),
                    I_new = sum(value == "I"),
                    R_new = sum(value == "R"))
   report <- dplyr::tibble(time = 0:max(events$time),
-                          n = nodes) %>% 
+                          n = nodes) |> 
     dplyr::left_join(sumchanges, by = dplyr::join_by(time))
   report[is.na(report)] <- 0
   
@@ -826,12 +826,12 @@ as_diffusion.mnet <- function(.data, twomode = FALSE, events) {
 as_diffusion.igraph <- function(.data, twomode = FALSE, events) {
   net <- as_tidygraph(.data)
   event <- NULL
-  sumchanges <- events %>% dplyr::group_by(t) %>% 
+  sumchanges <- events |> dplyr::group_by(t) |> 
     dplyr::reframe(I_new = sum(event == "I"),
                    E_new = sum(event == "E"),
                    R_new = sum(event == "R"))
   report <- dplyr::tibble(t = seq_len(max(events$t)) - 1,
-                          n = net_nodes(net)) %>% 
+                          n = net_nodes(net)) |> 
     dplyr::left_join(sumchanges, by = dplyr::join_by(t))
   report[is.na(report)] <- 0
   report$R <- cumsum(report$R_new)
@@ -872,12 +872,12 @@ as_diffusion.diffnet <- function(.data, twomode = FALSE, events) {
                   "Network changes are not currently retained."))
   rownames(net) <- diffnet$meta$ids
   colnames(net) <- diffnet$meta$ids
-  sumchanges <- events %>% dplyr::group_by(t) %>% 
+  sumchanges <- events |> dplyr::group_by(t) |> 
     dplyr::reframe(I_new = sum(event == "I"),
                    E_new = sum(event == "E"),
                    R_new = sum(event == "R"))
   report <- dplyr::tibble(t = min(events$t):max(events$t),
-                          n = diffnet$meta$n) %>% 
+                          n = diffnet$meta$n) |> 
     dplyr::left_join(sumchanges, by = dplyr::join_by(t))
   report[is.na(report)] <- 0
   report$R <- cumsum(report$R_new)
@@ -903,7 +903,7 @@ as_diffusion.diffnet <- function(.data, twomode = FALSE, events) {
     snet_abort("Oops, something is wrong")
   }
   if(is_labelled(net)) events$nodes <- match(events$nodes, node_names(net))
-  events <- events %>% dplyr::arrange(t)
+  events <- events |> dplyr::arrange(t)
   report <- dplyr::select(report, dplyr::any_of(c("t", "n", "S", "s", "E", "E_new", "I", "I_new", "R", "R_new")))
   make_diff_model(events, report, net)
 }
@@ -918,8 +918,8 @@ as_diffnet <- function(.data,
 #' @export
 as_diffnet.diff_model <- function(.data,
                                   twomode = FALSE) {
-  out <- summary(.data) %>% dplyr::filter(event == "I") %>% 
-    dplyr::distinct(nodes, .keep_all = TRUE) %>% 
+  out <- summary(.data) |> dplyr::filter(event == "I") |> 
+    dplyr::distinct(nodes, .keep_all = TRUE) |> 
     dplyr::select(nodes,t)
   if(!is_labelled(as_igraph(.data)))
     out <- dplyr::arrange(out, nodes) else if (is.numeric(out$nodes))
@@ -929,7 +929,7 @@ as_diffnet.diff_model <- function(.data,
       snet_unavailable()
       # netdiffuseR::igraph_to_diffnet(graph.list = to_waves(.data))
     } else {
-      graph <- as_tidygraph(.data) %>% mutate(toa = as.numeric(toa)) %>% as_igraph()
+      graph <- as_tidygraph(.data) |> mutate(toa = as.numeric(toa)) |> as_igraph()
       # suppressWarnings(netdiffuseR::igraph_to_diffnet(graph = graph,
       #                               toavar = "toa"))
       return(structure(list(graph = graph, toa = toa#, 

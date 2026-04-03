@@ -9,7 +9,7 @@
 #'   network datasets included in the packages.
 #'   
 #' @param pkg String, name of the package.
-#' @importFrom dplyr %>% as_tibble select tibble
+#' @importFrom dplyr as_tibble select tibble
 #' @name data_overview
 NULL
 
@@ -21,7 +21,7 @@ NULL
 #' # to obtain list of all e.g. directed networks:
 #' table_data(pkg = "manynet", directed)
 #' # to obtain overview of unique datasets:
-#' table_data() %>% 
+#' table_data() |> 
 #'   dplyr::distinct(directed, weighted, twomode, signed, 
 #'                  .keep_all = TRUE)
 #' @export
@@ -79,7 +79,7 @@ table_data <- function(..., pkg = c("manynet","migraph")) {
                                              logical(1))))
     
   })
-  out <- dplyr::bind_rows(out) %>% dplyr::arrange(nodes)
+  out <- dplyr::bind_rows(out) |> dplyr::arrange(nodes)
   if(!is.null(filter)) out <- dplyr::filter(out, ...)
   # out <- apply(out, 2, function(x) ifelse(is.logical(x), as.logi(x), x))
   out

@@ -87,17 +87,17 @@ to_waves               ✓          ✓      ✓                        ✓
 \examples{
   to_egos(ison_adolescents)
   # graphs(to_egos(ison_adolescents,2))
-ison_adolescents \%>\%
+ison_adolescents |>
   mutate(unicorn = sample(c("yes", "no"), 8,
-                          replace = TRUE)) \%>\%
+                          replace = TRUE)) |>
   to_subgraphs(attribute = "unicorn")
   to_components(to_uniplex(fict_marvel, "relationship"))
-ison_adolescents \%>\%
-  mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) \%>\%
+ison_adolescents |>
+  mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) |>
   to_waves(attribute = "wave")
-ison_adolescents \%>\%
-  mutate_ties(time = 1:10, increment = 1) \%>\% 
-  add_ties(c(1,2), list(time = 3, increment = -1)) \%>\% 
+ison_adolescents |>
+  mutate_ties(time = 1:10, increment = 1) |> 
+  add_ties(c(1,2), list(time = 3, increment = -1)) |> 
   to_slices(slice = 7)
 }
 \seealso{

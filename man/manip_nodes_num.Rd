@@ -54,7 +54,7 @@ Below are the currently implemented S3 methods:\tabular{lrrr}{
 }
 }
 \examples{
-  other <- create_filled(4) \%>\% mutate(name = c("A", "B", "C", "D"))
+  other <- create_filled(4) |> mutate(name = c("A", "B", "C", "D"))
   add_nodes(other, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))
 }
 \seealso{

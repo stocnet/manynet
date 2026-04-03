@@ -285,11 +285,11 @@ play_diffusion <- function(.data,
   if(old_version){
     make_diff_model(events, report, .data)
   } else {
-    .data <- .data %>% mutate_nodes(diffusion = "S")
+    .data <- .data |> mutate_nodes(diffusion = "S")
     changes <- data.frame(time = events$t, node = events$nodes, 
                          var = "diffusion", value = events$event)
     if(fatality > 0)
-      changes <- changes %>% mutate(var = ifelse(value=="D", "active", var),
+      changes <- changes |> mutate(var = ifelse(value=="D", "active", var),
                                     value = ifelse(value=="D", FALSE, value))
     .data <- add_changes(.data, changes)
     .data
@@ -529,10 +529,10 @@ play_segregation <- function(.data,
 .node_is_latent <- function(.data, time = 0){
   if(is_changing(.data)){
     t <- time
-    latent <- as_changelist(.data) %>% 
-      dplyr::filter(time <= t & value %in% c("E", "I")) %>%
-      dplyr::group_by(node) %>%
-      dplyr::mutate(n = dplyr::n()) %>%
+    latent <- as_changelist(.data) |> 
+      dplyr::filter(time <= t & value %in% c("E", "I")) |>
+      dplyr::group_by(node) |>
+      dplyr::mutate(n = dplyr::n()) |>
       dplyr::filter(n == 1 & value == "E")
     if (is_labelled(.data)) {
       out <- seq_len(net_nodes(.data)) %in% latent$node
@@ -542,10 +542,10 @@ play_segregation <- function(.data,
     }
     make_node_mark(out, .data)
   } else if(inherits(.data, "diff_model")){
-    latent <- summary(.data) %>%
-      dplyr::filter(t <= time & event %in% c("E", "I")) %>%
-      group_by(nodes) %>%
-      mutate(n = dplyr::n()) %>%
+    latent <- summary(.data) |>
+      dplyr::filter(t <= time & event %in% c("E", "I")) |>
+      group_by(nodes) |>
+      mutate(n = dplyr::n()) |>
       filter(n == 1 & event == "E")
     net <- attr(.data, "network")
     if (is_labelled(net)) {
@@ -565,10 +565,10 @@ play_segregation <- function(.data,
 .node_is_infected <- function(.data, time = 0) {
   if(is_changing(.data)){
     t <- time
-    infected <- as_changelist(.data) %>% 
-      dplyr::filter(time <= t & value %in% c("I", "R")) %>%
-      dplyr::group_by(node) %>%
-      dplyr::mutate(n = dplyr::n()) %>%
+    infected <- as_changelist(.data) |> 
+      dplyr::filter(time <= t & value %in% c("I", "R")) |>
+      dplyr::group_by(node) |>
+      dplyr::mutate(n = dplyr::n()) |>
       dplyr::filter(n == 1 & value == "I")
     if (is_labelled(.data)) {
       out <- seq_len(net_nodes(.data)) %in% infected$node
@@ -578,10 +578,10 @@ play_segregation <- function(.data,
     }
     make_node_mark(out, .data)
   } else if(inherits(.data, "diff_model")){
-    infected <- summary(.data) %>% 
-      dplyr::filter(t <= time & event %in% c("I", "R")) %>%
-      group_by(nodes) %>%
-      mutate(n = dplyr::n()) %>%
+    infected <- summary(.data) |> 
+      dplyr::filter(t <= time & event %in% c("I", "R")) |>
+      group_by(nodes) |>
+      mutate(n = dplyr::n()) |>
       filter(n == 1 & event == "I")
     net <- attr(.data, "network")
     if (is_labelled(net)) {
@@ -601,10 +601,10 @@ play_segregation <- function(.data,
 .node_is_recovered <- function(.data, time = 0){
   if(is_changing(.data)){
     t <- time
-    recovered <- as_changelist(.data) %>% 
-      dplyr::filter(time <= t & value %in% c("R")) %>%
-      dplyr::group_by(node) %>%
-      dplyr::mutate(n = dplyr::n()) %>%
+    recovered <- as_changelist(.data) |> 
+      dplyr::filter(time <= t & value %in% c("R")) |>
+      dplyr::group_by(node) |>
+      dplyr::mutate(n = dplyr::n()) |>
       dplyr::filter(n == 1 & value == "R")
     if (is_labelled(.data)) {
       out <- seq_len(net_nodes(.data)) %in% recovered$node
@@ -614,10 +614,10 @@ play_segregation <- function(.data,
     }
     make_node_mark(out, .data)
   } else if(inherits(.data, "diff_model")){
-    recovered <- summary(.data) %>% 
-      dplyr::filter(t <= time & event == "R") %>%
-      group_by(nodes) %>%
-      mutate(n = dplyr::n()) %>%
+    recovered <- summary(.data) |> 
+      dplyr::filter(t <= time & event == "R") |>
+      group_by(nodes) |>
+      mutate(n = dplyr::n()) |>
       filter(n == 1)
     net <- attr(.data, "network")
     if (is_labelled(net)) {
@@ -640,9 +640,9 @@ play_segregation <- function(.data,
       t <- time
       return(make_node_mark(.node_exposure(.data, time = t)>0, .data))
     } else if(inherits(.data, "diff_model")){
-      mark <- summary(.data) %>% 
-        dplyr::filter(t == 0 & event == "I") %>% 
-        dplyr::select(nodes) %>% unlist()
+      mark <- summary(.data) |> 
+        dplyr::filter(t == 0 & event == "I") |> 
+        dplyr::select(nodes) |> unlist()
       .data <- attr(.data, "network")
     }    
   }

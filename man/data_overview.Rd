@@ -25,7 +25,7 @@ table_data()
 # to obtain list of all e.g. directed networks:
 table_data(pkg = "manynet", directed)
 # to obtain overview of unique datasets:
-table_data() \%>\% 
+table_data() |> 
   dplyr::distinct(directed, weighted, twomode, signed, 
                  .keep_all = TRUE)
 }

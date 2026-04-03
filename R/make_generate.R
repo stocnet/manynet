@@ -139,7 +139,7 @@ generate_configuration <- function(.data){
     outs <- ifelse(!modes,c(degs),rep(0,length(degs)))
     ins <- ifelse(modes,c(degs),rep(0,length(degs)))
     out <- igraph::sample_degseq(outs, ins, method = method2)
-    out <- as_tidygraph(out) %>% add_node_attribute("type", modes)
+    out <- as_tidygraph(out) |> add_node_attribute("type", modes)
   } else {
     if(is_complex(.data) || is_multiplex(.data) && is_directed(.data)) 
       out <- igraph::sample_degseq(.node_deg(.data, direction = "out"), 

@@ -19,9 +19,9 @@ NULL
 #' @rdname modif_from
 #' @importFrom igraph graph_from_data_frame as_data_frame set_vertex_attr
 #' @examples
-#' ison_adolescents %>%
-#'   mutate(unicorn = sample(c("yes", "no"), 8, replace = TRUE)) %>%
-#'   to_subgraphs(attribute = "unicorn") %>%
+#' ison_adolescents |>
+#'   mutate(unicorn = sample(c("yes", "no"), 8, replace = TRUE)) |>
+#'   to_subgraphs(attribute = "unicorn") |>
 #'   from_subgraphs()
 #' @export
 from_subgraphs <- function(netlist) {
@@ -45,8 +45,8 @@ from_subgraphs <- function(netlist) {
 #' @importFrom igraph graph_from_data_frame as_data_frame
 #' @importFrom dplyr distinct
 #' @examples
-#' ison_adolescents %>%
-#'   to_egos() %>%
+#' ison_adolescents |>
+#'   to_egos() |>
 #'   from_egos()
 #' @export
 from_egos <- function(netlist) {
@@ -64,9 +64,9 @@ from_egos <- function(netlist) {
 #' @rdname modif_from 
 #' @importFrom igraph graph_from_data_frame as_data_frame
 #' @examples
-#' ison_adolescents %>%
-#'   mutate_ties(wave = sample(1:4, 10, replace = TRUE)) %>%
-#'   to_waves(attribute = "wave") %>%
+#' ison_adolescents |>
+#'   mutate_ties(wave = sample(1:4, 10, replace = TRUE)) |>
+#'   to_waves(attribute = "wave") |>
 #'   from_waves()
 #' @export
 from_waves <- function(netlist) {
@@ -88,10 +88,10 @@ from_waves <- function(netlist) {
 #' @importFrom igraph graph_from_data_frame as_data_frame
 #' @importFrom dplyr distinct
 #' @examples
-#' ison_adolescents %>%
-#'   mutate_ties(time = 1:10, increment = 1) %>% 
-#'   add_ties(c(1,2), list(time = 3, increment = -1)) %>% 
-#'   to_slices(slice = c(5,7)) %>%
+#' ison_adolescents |>
+#'   mutate_ties(time = 1:10, increment = 1) |> 
+#'   add_ties(c(1,2), list(time = 3, increment = -1)) |> 
+#'   to_slices(slice = c(5,7)) |>
 #'   from_slices()
 #' @export
 from_slices <- function(netlist, remove.duplicates = FALSE) {

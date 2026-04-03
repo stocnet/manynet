@@ -36,10 +36,10 @@ to_named <- function(.data, names = NULL) UseMethod("to_named")
 #' @export
 to_named.tbl_graph <- function(.data, names = NULL) {
   if (!is.null(names)) {
-    out <- .data %>% mutate(name = names)
+    out <- .data |> mutate(name = names)
   } else {
     n <- net_nodes(.data)
-    out <- .data %>%
+    out <- .data |>
       mutate(name = .get_babynames(n))
   }
   out

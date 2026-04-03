@@ -102,9 +102,9 @@ while preserving the topology of the original structures.
 }
 
 \examples{
-ison_adolescents \%>\%
-  mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) \%>\%
-  to_waves(attribute = "wave") \%>\%
+ison_adolescents |>
+  mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) |>
+  to_waves(attribute = "wave") |>
   to_no_isolates()
 }
 \seealso{

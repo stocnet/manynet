@@ -65,8 +65,8 @@ Note that while \verb{add_*()}/\verb{delete_*()} functions operate similarly as 
 \verb{mutate*()}, \verb{bind*()}, etc work like \code{{tidyverse}} or \code{{dplyr}}-style functions.
 }
 \examples{
-  other <- create_filled(4) \%>\% mutate(name = c("A", "B", "C", "D"))
-  mutate_ties(other, form = 1:6) \%>\% filter_ties(form < 4)
+  other <- create_filled(4) |> mutate(name = c("A", "B", "C", "D"))
+  mutate_ties(other, form = 1:6) |> filter_ties(form < 4)
   add_tie_attribute(other, "weight", c(1, 2, 2, 2, 1, 2))
 }
 \seealso{

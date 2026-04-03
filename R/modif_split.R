@@ -106,9 +106,9 @@ to_egos.data.frame <- function(.data,
 #'   attribute in a network used to split into subgraphs.
 #' @importFrom igraph induced_subgraph
 #' @examples
-#' ison_adolescents %>%
+#' ison_adolescents |>
 #'   mutate(unicorn = sample(c("yes", "no"), 8,
-#'                           replace = TRUE)) %>%
+#'                           replace = TRUE)) |>
 #'   to_subgraphs(attribute = "unicorn")
 #' @export
 to_subgraphs <- function(.data, attribute) UseMethod("to_subgraphs")
@@ -176,8 +176,8 @@ to_components.data.frame <- function(.data){
 #' @param cumulative Whether to make wave ties cumulative.
 #'   FALSE by default. That is, each wave is treated isolated.
 #' @examples
-#' ison_adolescents %>%
-#'   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) %>%
+#' ison_adolescents |>
+#'   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) |>
 #'   to_waves(attribute = "wave")
 #' @export
 to_waves <- function(.data, attribute = "wave", panels = NULL,
@@ -199,9 +199,9 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
     
     waves <- lapply(times, function(t) {
       # Latest changes by time t
-      changes <- cl %>% 
-        dplyr::filter(time <= t) %>% 
-        dplyr::group_by(node) %>% 
+      changes <- cl |> 
+        dplyr::filter(time <= t) |> 
+        dplyr::group_by(node) |> 
         dplyr::reframe(var = var,
                          latest_value = value[which.max(time)],
                          .groups = "drop")
@@ -231,9 +231,9 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
     # Iterate over times
     waves <- lapply(times, function(t) {
       # Latest changes by time t
-      changes <- cl %>% 
-        dplyr::filter(time <= t) %>% 
-        dplyr::group_by(node) %>% 
+      changes <- cl |> 
+        dplyr::filter(time <= t) |> 
+        dplyr::group_by(node) |> 
         dplyr::reframe(var = var,
                          latest_value = value[which.max(time)],
                          .groups = "drop")
@@ -304,7 +304,7 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
   out <- list()
   for (k in .data[[attribute]]) {
     out[[paste("Time:", formatC(k, width = max(nchar(.data[[attribute]])),
-                                flag = 0))]] <- net %>%
+                                flag = 0))]] <- net |>
       tidygraph::mutate(Infected = .node_is_infected(diff, time = k),
                         Exposed = .node_is_latent(diff, time = k),
                         Recovered = .node_is_recovered(diff, time = k))
@@ -322,10 +322,10 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
   ties <- data.frame()
   x <- lapply(x, as_tidygraph)
   for (k in seq_along(names(x))) {
-    a <- x[[k]] %>%
-      tidygraph::activate(edges) %>%
-      dplyr::as_tibble() %>%
-      dplyr::mutate(order = k) %>%
+    a <- x[[k]] |>
+      tidygraph::activate(edges) |>
+      dplyr::as_tibble() |>
+      dplyr::mutate(order = k) |>
       dplyr::select(to, from, dplyr::all_of(attribute), order)
     ties <- rbind(ties, a)
   }
@@ -362,9 +362,9 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
 #' @param slice Character string or character list indicating the date(s)
 #'   or integer(s) range used to slice data (e.g slice = c(1:2, 3:4)).
 #' @examples
-#' ison_adolescents %>%
-#'   mutate_ties(time = 1:10, increment = 1) %>% 
-#'   add_ties(c(1,2), list(time = 3, increment = -1)) %>% 
+#' ison_adolescents |>
+#'   mutate_ties(time = 1:10, increment = 1) |> 
+#'   add_ties(c(1,2), list(time = 3, increment = -1)) |> 
 #'   to_slices(slice = 7)
 #' @export
 to_slices <- function(.data, attribute = "time", slice = NULL) UseMethod("to_slices")

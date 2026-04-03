@@ -59,8 +59,8 @@ to_uniplex          ✓      ✓      ✓       ✓         ✓
 }
 \examples{
 to_anti(ison_southern_women)
-as_tidygraph(create_filled(5)) \%>\%
-  mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) \%>\%
+as_tidygraph(create_filled(5)) |>
+  mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) |>
   to_uniplex("friend")
 }
 \seealso{

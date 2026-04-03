@@ -76,10 +76,10 @@ Note that while \verb{add_*()} functions operate similarly as comparable \code{{
 \verb{mutate*()}, \verb{bind*()}, etc work like \code{{tidyverse}} or \code{{dplyr}}-style functions.
 }
 \examples{
-  other <- create_filled(4) \%>\% mutate(name = c("A", "B", "C", "D"))
+  other <- create_filled(4) |> mutate(name = c("A", "B", "C", "D"))
   add_nodes(other, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))
-  other <- create_filled(4) \%>\% mutate(name = c("A", "B", "C", "D"))
-  another <- create_filled(3) \%>\% mutate(name = c("E", "F", "G"))
+  other <- create_filled(4) |> mutate(name = c("A", "B", "C", "D"))
+  another <- create_filled(3) |> mutate(name = c("E", "F", "G"))
   join_nodes(another, other)
 }
 \seealso{

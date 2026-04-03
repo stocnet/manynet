@@ -133,7 +133,7 @@ to_matching.igraph <- function(.data, mark = "type", capacities = NULL){
 
 #' @export
 to_matching.tbl_graph <- function(.data, mark = "type", capacities = NULL){
-  as_tidygraph(to_matching.igraph(.data, mark, capacities = capacities)) %>% 
+  as_tidygraph(to_matching.igraph(.data, mark, capacities = capacities)) |> 
     add_info(name = paste(net_name(.data, prefix = "Stable matching of")))
 }
 
@@ -177,7 +177,7 @@ to_mentoring <- function(.data, elites = 0.1) UseMethod("to_mentoring")
 
 #' @export
 to_mentoring.tbl_graph <- function(.data, elites = 0.1){
-  as_tidygraph(to_mentoring.igraph(.data, elites = elites)) %>% 
+  as_tidygraph(to_mentoring.igraph(.data, elites = elites)) |> 
     add_info(name = paste(net_name(.data), "mentorship"))
 }
 
@@ -251,7 +251,7 @@ to_eulerian.tbl_graph <- function(.data){
   out <- paste(attr(igraph::eulerian_path(.data)$vpath, "names"), 
                collapse = "-+")
   out <- create_explicit(out)
-  out %>% 
+  out |> 
     add_info(name = paste(net_name(.data, prefix = "Eulerian path of")))
 }
 

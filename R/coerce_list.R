@@ -110,13 +110,13 @@ as_edgelist <- function(.data, twomode = FALSE) UseMethod("as_edgelist")
 
 #' @export
 as_edgelist.igraph <- function(.data, twomode = FALSE) {
-  igraph::as_data_frame(.data, what = "edges") %>%
+  igraph::as_data_frame(.data, what = "edges") |>
     dplyr::as_tibble()
 }
 
 #' @export
 as_edgelist.tbl_graph <- function(.data, twomode = FALSE) {
-  igraph::as_data_frame(.data, what = "edges") %>% 
+  igraph::as_data_frame(.data, what = "edges") |> 
     dplyr::as_tibble()
 }
 

@@ -109,8 +109,8 @@ to_simplex.network <- function(.data) {
 #' @importFrom igraph delete_edges edge_attr_names delete_edge_attr
 #'   E edge_attr_names
 #' @examples
-#' as_tidygraph(create_filled(5)) %>%
-#'   mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) %>%
+#' as_tidygraph(create_filled(5)) |>
+#'   mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) |>
 #'   to_uniplex("friend")
 #' @export
 to_uniplex <- function(.data, tie) UseMethod("to_uniplex")
@@ -118,20 +118,20 @@ to_uniplex <- function(.data, tie) UseMethod("to_uniplex")
 #' @export
 to_uniplex.tbl_graph <- function(.data, tie){
   out <- dplyr::filter(.data = tidygraph::activate(.data, "edges"), 
-                       type == tie) %>% dplyr::select(-type)
+                       type == tie) |> dplyr::select(-type)
   if(is_signed(out) && all(tie_signs(out)==1) || all(is.na(tie_signs(out)))) 
-    out <- out %>% dplyr::select(-sign)
+    out <- out |> dplyr::select(-sign)
   if(is_weighted(out) && all(tie_weights(out)==1)) 
-    out <- out %>% dplyr::select(-weight)
+    out <- out |> dplyr::select(-weight)
   if(is_longitudinal(out) && length(unique(tie_attribute(out, "wave")))==1) 
-    out <- out %>% dplyr::select(-wave)
+    out <- out |> dplyr::select(-wave)
   if(is_twomode(out) && all(!tie_is_twomode(out))){ # if only one-mode left
     retain <- node_is_mode(out)[igraph::as_edgelist(out, names = FALSE)[1,1]]
-    out <- tidygraph::activate(out, "nodes") %>% 
-      filter_nodes(type == retain) %>% 
+    out <- tidygraph::activate(out, "nodes") |> 
+      filter_nodes(type == retain) |> 
       mutate_nodes(type = NULL)
   }
-  out <- out %>% mutate_info(ties = tie)
+  out <- out |> mutate_info(ties = tie)
   tidygraph::activate(out, "nodes")
 }
 

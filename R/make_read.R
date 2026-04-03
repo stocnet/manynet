@@ -388,9 +388,9 @@ read_dynetml <- function(file = file.choose()) {
   }))
   # Add nodeset information if necessary
   if(length(unique(nodesets))==2)
-    nodes <- nodes %>% dplyr::mutate(type = nodesets == unique(nodesets)[2]) %>% 
+    nodes <- nodes |> dplyr::mutate(type = nodesets == unique(nodesets)[2]) |> 
     dplyr::select(name, type, dplyr::everything()) else if (length(unique(nodesets))>2)
-      nodes <- nodes %>% dplyr::mutate(nodeset = nodesets) %>% 
+      nodes <- nodes |> dplyr::mutate(nodeset = nodesets) |> 
     dplyr::select(name, nodeset, dplyr::everything())
   
   # Getting edges

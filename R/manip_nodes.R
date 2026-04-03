@@ -26,7 +26,7 @@
 #' @template fam_manip
 #' @param attribute A named list to be added as tie or node attributes.
 #' @examples
-#'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
+#'   other <- create_filled(4) |> mutate(name = c("A", "B", "C", "D"))
 #'   add_nodes(other, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))
 NULL
 
@@ -101,7 +101,7 @@ filter_nodes <- function(.data, ..., .by = NULL){
 #' @family nodes
 #' @template fam_manip
 #' @examples
-#'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
+#'   other <- create_filled(4) |> mutate(name = c("A", "B", "C", "D"))
 #'   add_nodes(other, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))
 NULL
 
@@ -134,7 +134,7 @@ add_node_attribute.network <- function(.data, attr_name, vector){
 
 #' @export
 add_node_attribute.tbl_graph <- function(.data, attr_name, vector){
-  as_igraph(.data) %>% add_node_attribute(attr_name, vector) %>% as_tidygraph()
+  as_igraph(.data) |> add_node_attribute(attr_name, vector) |> as_tidygraph()
 }
 
 #' @rdname manip_nodes_attr
@@ -149,19 +149,19 @@ mutate_nodes <- function(.data, ...) UseMethod("mutate_nodes")
 
 #' @export
 mutate_nodes.tbl_graph <- function(.data, ...){
-  .data %>% tidygraph::mutate(...)
+  .data |> tidygraph::mutate(...)
 }
 
 #' @export
 mutate_nodes.igraph <- function(.data, ...){
-  .data %>% as_tidygraph() %>% 
-    tidygraph::mutate(...) %>% as_igraph()
+  .data |> as_tidygraph() |> 
+    tidygraph::mutate(...) |> as_igraph()
 }
 
 #' @export
 mutate_nodes.network <- function(.data, ...){
-  .data %>% as_tidygraph() %>% 
-    tidygraph::mutate(...) %>% as_network()
+  .data |> as_tidygraph() |> 
+    tidygraph::mutate(...) |> as_network()
 }
 
 #' @rdname manip_nodes_attr
@@ -176,21 +176,21 @@ select_nodes <- function(.data, ...) UseMethod("select_nodes")
 
 #' @export
 select_nodes.tbl_graph <- function(.data, ...){
-  .data %>% tidygraph::select(...)
+  .data |> tidygraph::select(...)
 }
 
 #' @export
 select_nodes.igraph <- function(.data, ...){
-  .data %>% as_tidygraph() %>% 
-    tidygraph::select(...) %>% as_igraph()
+  .data |> as_tidygraph() |> 
+    tidygraph::select(...) |> as_igraph()
 }
 
 #' @rdname manip_nodes_attr 
 #' @template param_join
 #' @template param_by
 #' @examples
-#'   other <- create_filled(4) %>% mutate(name = c("A", "B", "C", "D"))
-#'   another <- create_filled(3) %>% mutate(name = c("E", "F", "G"))
+#'   other <- create_filled(4) |> mutate(name = c("A", "B", "C", "D"))
+#'   another <- create_filled(3) |> mutate(name = c("E", "F", "G"))
 #'   join_nodes(another, other)
 #' @export
 join_nodes <- function(.data, object2, .by = NULL,
@@ -208,8 +208,8 @@ join_nodes <- function(.data, object2, .by = NULL,
     snet_unavailable("Joining an unlabelled and a labelled object is not currently supported.")
   } else if(!is_labelled(.data) && !is_labelled(object2)){
     if(is.null(.by)) .by <- "id"
-    out <- out %>% mutate(id = 1:net_nodes(out))
-    object2 <- object2 %>% mutate(id = 1:net_nodes(object2))
+    out <- out |> mutate(id = 1:net_nodes(out))
+    object2 <- object2 |> mutate(id = 1:net_nodes(object2))
   }
   out <- switch(join_type,
                 "full" = dplyr::full_join(out, object2, by = .by, copy = TRUE),
@@ -217,7 +217,7 @@ join_nodes <- function(.data, object2, .by = NULL,
                 "right" = dplyr::right_join(out, object2, by = .by, copy = TRUE),
                 "inner" = dplyr::inner_join(out, object2, by = .by, copy = TRUE))
   if(!is_labelled(.data) && !is_labelled(object2)){
-    out <- out %>% select(-id)
+    out <- out |> select(-id)
   }
   out
 }

@@ -260,7 +260,7 @@ create_empty <- function(n, directed = FALSE) {
     out <- as_igraph(out, twomode = TRUE)
   }
   if (!directed) out <- to_undirected(out)
-  as_tidygraph(out) %>% 
+  as_tidygraph(out) |> 
     add_info(name = "Empty network")
 }
 
@@ -280,7 +280,7 @@ create_filled <- function(n, directed = FALSE) {
     out <- matrix(1, n[1], n[2])
     out <- as_igraph(out, twomode = TRUE)
   }
-  as_tidygraph(out) %>% 
+  as_tidygraph(out) |> 
     add_info(name = "Filled network")
 }
 
@@ -329,7 +329,7 @@ create_ring <- function(n, directed = FALSE, width = 1, ...) {
     mat[mat > 1] <- 1
     out <- as_igraph(mat, twomode = TRUE)
   }
-  as_tidygraph(out) %>% 
+  as_tidygraph(out) |> 
     add_info(name = "Ring network")
 }
 
@@ -354,7 +354,7 @@ create_star <- function(n,
     }
     out <- as_igraph(out, twomode = TRUE)
   }
-  as_tidygraph(out) %>% 
+  as_tidygraph(out) |> 
     add_info(name = "Star network")
 }
 
@@ -449,13 +449,13 @@ create_lattice <- function(n,
       }
       if (!directed)
         nei1.5[lower.tri(nei1.5)] <- t(nei1.5)[lower.tri(nei1.5)]
-      as_tidygraph(nei1.5) %>% 
+      as_tidygraph(nei1.5) |> 
         add_info(name = "Lattice network")
     } else if (width == 12) {
-      as_tidygraph(igraph::make_lattice(dims, nei = 2, directed = directed)) %>% 
+      as_tidygraph(igraph::make_lattice(dims, nei = 2, directed = directed)) |> 
         add_info(name = "Lattice network")
     } else if (width == 4) {
-      as_tidygraph(igraph::make_lattice(dims, nei = 1, directed = directed)) %>% 
+      as_tidygraph(igraph::make_lattice(dims, nei = 1, directed = directed)) |> 
         add_info(name = "Lattice network")
     } else snet_abort("`max_neighbourhood` expected to be 4, 8, or 12")
   } else {
@@ -474,7 +474,7 @@ create_lattice <- function(n,
     mat[lower.tri(mat)] <- 0
     out <- mat[rowSums(mat) ==2,]
     out <- do.call(rbind, replicate(nrow(mat)/nrow(out), out, simplify=FALSE))
-    as_tidygraph(out) %>% 
+    as_tidygraph(out) |> 
       add_info(name = "Lattice network")
   }
 }
@@ -721,7 +721,7 @@ create_cycle <- function(n, directed = FALSE){
     if(n_modes[1] != n_modes[2]){
       snet_abort("Two-mode cycles require equal number of nodes in each mode.")
     }
-    unimodal_cycle(sum(n_modes)) %>% 
+    unimodal_cycle(sum(n_modes)) |> 
       mutate_nodes(type = rep_len(c(F,T), sum(n_modes)))
   }
   
