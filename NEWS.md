@@ -7,6 +7,7 @@
 - Moved `run_tute()`, `extract_tute()`, and tutorial 0 to `{migraph}`
 - Moved tutorials 3–6 to `{netrics}`
 - Removed `{autograph}`, `{learnr}`, and `{netdiffuseR}` from suggested dependencies
+- Began using functional testing
 
 ## Making
 
