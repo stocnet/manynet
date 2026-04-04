@@ -177,10 +177,10 @@ net_dims.stocnet <- function(.data){
 #'   These functions extract certain attributes from given network data:
 #'   
 #'   - `net_name()` returns the name of the network, if it has one.
-#'   - `net_node_names()` returns a vector of the names of the nodes in a network,
+#'   - `mode_names()` returns a vector of the names of the modes in a network,
 #'   if they have been defined.
 #'   - `net_node_attributes()` returns a vector of nodal attributes in a network.
-#'   - `net_tie_names()` returns a vector of the names of the ties in a network,
+#'   - `layer_names()` returns a vector of the names of the layers in a network,
 #'   if they have been defined.
 #'   - `net_tie_attributes()` returns a vector of tie attributes in a network.
 #'   
@@ -240,19 +240,19 @@ net_name.network <- function(.data, prefix = NULL){
 #' @rdname member_names
 #' @importFrom igraph graph_attr
 #' @examples
-#'   net_node_names(ison_algebra)
+#'   mode_names(ison_algebra)
 #' @export
-net_node_names <- function(.data) UseMethod("net_node_names")
+mode_names <- function(.data) UseMethod("mode_names")
 
 #' @export
-net_node_names.igraph <- function(.data){
+mode_names.igraph <- function(.data){
   igraph::graph_attr(.data, "nodes") %||%
     c(igraph::graph_attr(.data, "grand")$vertex1,
       igraph::graph_attr(.data, "grand")$vertex2)
 }
 
 #' @export
-net_node_names.stocnet <- function(.data){
+mode_names.stocnet <- function(.data){
   .data$info$nodes
 }
 
@@ -276,19 +276,19 @@ net_node_attributes.stocnet <- function(.data){
 #' @rdname member_names
 #' @importFrom igraph graph_attr
 #' @examples
-#'   net_tie_names(ison_algebra)
+#'   layer_names(ison_algebra)
 #' @export
-net_tie_names <- function(.data) UseMethod("net_tie_names")
+layer_names <- function(.data) UseMethod("layer_names")
 
 #' @export
-net_tie_names.igraph <- function(.data){
+layer_names.igraph <- function(.data){
   igraph::graph_attr(.data, "ties") %||%
     c(igraph::graph_attr(.data, "grand")$edge.pos,
       igraph::graph_attr(.data, "grand")$edge.neg)
 }
 
 #' @export
-net_tie_names.stocnet <- function(.data){
+layer_names.stocnet <- function(.data){
   .data$info$ties
 }
 

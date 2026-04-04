@@ -77,10 +77,10 @@ validate_info <- function(.data){
   if(is.null(.data$info)) return(invisible(.data))
   exp_class(.data, "info", "list")
   res_cols(.data, "info", "name", "character")
-  res_cols(.data, "info", "nodes", "character", length = net_modes(.data))
-  res_cols(.data, "info", "ties", "character", length = net_layers(.data))
+  res_cols(.data, "info", "modes", "character", length = net_modes(.data))
+  res_cols(.data, "info", "layers", "character", length = net_layers(.data))
   res_cols(.data, "info", "dependent", "character", length = 1, 
-           match = net_tie_names(.data))
+           match = layer_names(.data))
   invisible(.data)
 }
 

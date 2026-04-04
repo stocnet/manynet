@@ -3,19 +3,19 @@
 \name{member_names}
 \alias{member_names}
 \alias{net_name}
-\alias{net_node_names}
+\alias{mode_names}
 \alias{net_node_attributes}
-\alias{net_tie_names}
+\alias{layer_names}
 \alias{net_tie_attributes}
 \title{Describing network names}
 \usage{
 net_name(.data, prefix = NULL)
 
-net_node_names(.data)
+mode_names(.data)
 
 net_node_attributes(.data)
 
-net_tie_names(.data)
+layer_names(.data)
 
 net_tie_attributes(.data)
 }
@@ -41,10 +41,10 @@ of all node or tie attributes in the network.
 These functions extract certain attributes from given network data:
 \itemize{
 \item \code{net_name()} returns the name of the network, if it has one.
-\item \code{net_node_names()} returns a vector of the names of the nodes in a network,
+\item \code{mode_names()} returns a vector of the names of the modes in a network,
 if they have been defined.
 \item \code{net_node_attributes()} returns a vector of nodal attributes in a network.
-\item \code{net_tie_names()} returns a vector of the names of the ties in a network,
+\item \code{layer_names()} returns a vector of the names of the layers in a network,
 if they have been defined.
 \item \code{net_tie_attributes()} returns a vector of tie attributes in a network.
 }
@@ -53,9 +53,9 @@ These functions are also often used as helpers within other functions.
 }
 \examples{
 net_name(ison_southern_women)
-  net_node_names(ison_algebra)
+  mode_names(ison_algebra)
   net_node_attributes(fict_lotr)
-  net_tie_names(ison_algebra)
+  layer_names(ison_algebra)
   net_tie_attributes(ison_algebra)
 }
 \concept{attributes}

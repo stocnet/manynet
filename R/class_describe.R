@@ -38,7 +38,7 @@ describe_network <- function(.data) {
 #' @export
 describe_nodes <- function(.data){
   nd <- net_dims(.data)
-  nn <- net_node_names(.data)
+  nn <- mode_names(.data)
   if(is.null(nn)) nn <- "nodes"
   nn <- ifelse(nd==1, singularize(nn), pluralize(nn))
   node_name <- paste(nd, nn)
@@ -50,8 +50,8 @@ describe_nodes <- function(.data){
 describe_ties <- function(.data){
   nt <- net_ties(.data)
   tie_name <- ifelse(is_directed(.data), "arcs", "ties") 
-  if(!is.null(net_tie_names(.data))){
-    tie_name <- paste(net_tie_names(.data), tie_name)
+  if(!is.null(layer_names(.data))){
+    tie_name <- paste(layer_names(.data), tie_name)
   } else if(!is.null(tie_attribute(.data, "type"))){
     tab <- table(tie_attribute(.data, "type"))
     parts <- paste0(tab, " ", singularize(names(tab)))

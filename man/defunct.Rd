@@ -18,6 +18,8 @@
 \alias{read_cran}
 \alias{read_pkg}
 \alias{collect_changes}
+\alias{net_node_names}
+\alias{net_tie_names}
 \alias{node_degree}
 \alias{node_deg}
 \alias{net_by_quad}
@@ -250,6 +252,10 @@ read_cran(pkg = "all")
 read_pkg(dir = getwd())
 
 collect_changes(.data, time)
+
+net_node_names(.data)
+
+net_tie_names(.data)
 
 node_degree(...)
 
@@ -691,6 +697,10 @@ wherever possible and update your scripts accordingly.
 \item \code{read_pkg()}: Deprecated on 2026-04-02.
 
 \item \code{collect_changes()}: Deprecated on 2026-04-02.
+
+\item \code{net_node_names()}: Deprecated on 2026-04-04.
+
+\item \code{net_tie_names()}: Deprecated on 2026-04-04.
 
 \item \code{node_degree()}: Deprecated on 2026-03-22.
 

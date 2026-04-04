@@ -100,11 +100,11 @@ to_mode1.tbl_graph <- function(.data, similarity = c("count","jaccard","rand","p
   }
   if(!is.null(net_name(.data))) out <- out |> 
       add_info(name = net_name(.data, prefix = "Projection of"))
-  if(!is.null(net_tie_names(.data))) out <- out |> 
-      add_info(ties = paste0("co-", net_tie_names(.data)))
-  if(!is.null(net_node_names(.data))) out <- out |> 
-      add_info(nodes = net_node_names(.data)[1],
-               ties = paste0("co-", net_node_names(.data)[2]))
+  if(!is.null(layer_names(.data))) out <- out |> 
+      add_info(ties = paste0("co-", layer_names(.data)))
+  if(!is.null(mode_names(.data))) out <- out |> 
+      add_info(nodes = mode_names(.data)[1],
+               ties = paste0("co-", mode_names(.data)[2]))
   out
 }
 
@@ -172,11 +172,11 @@ to_mode2.tbl_graph <- function(.data, similarity = c("count","jaccard","rand","p
   }
   if(!is.null(net_name(.data))) out <- out |> 
       add_info(name = net_name(.data, prefix = "Projection of"))
-  if(!is.null(net_tie_names(.data))) out <- out |> 
-      add_info(ties = paste0("co-", net_tie_names(.data)))
-  if(!is.null(net_node_names(.data))) out <- out |> 
-      add_info(nodes = net_node_names(.data)[2],
-               ties = paste0("co-", net_node_names(.data)[1]))
+  if(!is.null(layer_names(.data))) out <- out |> 
+      add_info(ties = paste0("co-", layer_names(.data)))
+  if(!is.null(mode_names(.data))) out <- out |> 
+      add_info(nodes = mode_names(.data)[2],
+               ties = paste0("co-", mode_names(.data)[1]))
   out
 }
 

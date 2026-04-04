@@ -154,6 +154,22 @@ collect_changes <- function(.data, time) {
   gather_changes(.data, time)
 }
 
+#' @describeIn defunct Deprecated on 2026-04-04.
+#' @export
+net_node_names <- function(.data) {
+  .Deprecated("mode_names", package = "manynet",
+              old = "net_node_names")
+  mode_names(.data)
+}
+
+#' @describeIn defunct Deprecated on 2026-04-04.
+#' @export
+net_tie_names <- function(.data) {
+  .Deprecated("layer_names", package = "manynet",
+              old = "net_tie_names")
+  layer_names(.data)
+}
+
 # Moved to netrics from 2.0.0 ####
 
 #' @describeIn defunct Deprecated on 2026-03-22.

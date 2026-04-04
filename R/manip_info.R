@@ -110,16 +110,16 @@ net_attributes <- function(.data){
   } else snet_success("Network name: {net_name(out)}")
   
   # Nodes
-  if(is_twomode(.data) && is.null(net_node_names(.data))){
+  if(is_twomode(.data) && is.null(mode_names(.data))){
     snet_prompt("This two-mode network does not have names for the nodesets. Please add one.")
     out$nodes <- c(readline(prompt = "Nodeset 1 name: "),
                    readline(prompt = "Nodeset 2 name: "))
   } else if(is_twomode(.data)){
-    snet_success("Nodesets: {net_node_names(out)}")
-  } else if(!is_twomode(.data) && is.null(net_node_names(.data))){
+    snet_success("Nodesets: {mode_names(out)}")
+  } else if(!is_twomode(.data) && is.null(mode_names(.data))){
     snet_prompt("This network does not have a name for the nodes. Please add one.")
     out <- add_info(out, nodes = readline(prompt = "Nodeset name: "))
-  } else snet_success("Nodeset: {net_node_names(out)}")
+  } else snet_success("Nodeset: {mode_names(out)}")
   
   # Source & method
   if(optional){
@@ -139,10 +139,10 @@ net_attributes <- function(.data){
   }
   
   # Ties
-  if(is.null(net_tie_names(.data))){
+  if(is.null(layer_names(.data))){
     snet_prompt("This network does not have a name for the ties. Please add one.")
     out <- add_info(out, ties = readline(prompt = "Ties name: "))
-  } else snet_success("Ties: {net_tie_names(out)}")
+  } else snet_success("Ties: {layer_names(out)}")
 
   out
 }
