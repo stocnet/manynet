@@ -1,3 +1,9 @@
+# manynet 2.0.1
+
+## Package
+
+- Fixed checkmark printing issue
+
 # manynet 2.0.0
 
 ## Package

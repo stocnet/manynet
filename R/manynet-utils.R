@@ -22,7 +22,7 @@ available_methods <- function(fun_vctr) {
   rownames(out) <- NULL
   out <- as.data.frame(out)
   out <- as_matrix(out)
-  out[out == 1] <- "\u2713"
+  out[out == 1] <- "*"
   out[out == 0] <- "" 
   as.data.frame(out)
 }

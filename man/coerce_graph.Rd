@@ -53,23 +53,23 @@ and \code{event}, which can take on the values "I" for an infection event,
 The currently implemented coercions or translations are:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{             data.frame diff_model diffnet igraph list matrix mnet network
-as_diffnet                       ✓                                        
-as_diffusion                     ✓       ✓      ✓                ✓        
-as_graphAM            ✓                         ✓           ✓            ✓
-as_igraph             ✓          ✓       ✓      ✓           ✓            ✓
-as_network            ✓                  ✓      ✓           ✓            ✓
-as_siena                                        ✓                         
-as_stocnet                                      ✓           ✓            ✓
-as_tidygraph          ✓          ✓       ✓      ✓    ✓      ✓            ✓
+as_diffnet                       *                                        
+as_diffusion                     *       *      *                *        
+as_graphAM            *                         *           *            *
+as_igraph             *          *       *      *           *            *
+as_network            *                  *      *           *            *
+as_siena                                        *                         
+as_stocnet                                      *           *            *
+as_tidygraph          *          *       *      *    *      *            *
              network.goldfish networkDynamic siena stocnet tbl_graph
 as_diffnet                                                          
 as_diffusion                                                        
-as_graphAM                  ✓                    ✓       ✓         ✓
-as_igraph                   ✓              ✓     ✓       ✓         ✓
-as_network                  ✓              ✓     ✓       ✓         ✓
-as_siena                                                           ✓
-as_stocnet                                               ✓         ✓
-as_tidygraph                ✓              ✓     ✓       ✓         ✓
+as_graphAM                  *                    *       *         *
+as_igraph                   *              *     *       *         *
+as_network                  *              *     *       *         *
+as_siena                                                           *
+as_stocnet                                               *         *
+as_tidygraph                *              *     *       *         *
 }\if{html}{\out{</div>}}
 
 \code{as_diffusion()} and \code{play_diffusion()} return a 'diff_model' object
