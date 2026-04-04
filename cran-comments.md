@@ -10,5 +10,5 @@
 0 errors | 0 warnings | 0 notes
 
 - Major changes but new versions of downstream dependencies,
-autograph, netrics, and migraph, are being submitted to CRAN concurrently
+  autograph, netrics, and migraph, are being submitted to CRAN concurrently
 - Fixed checkmark printing issue
