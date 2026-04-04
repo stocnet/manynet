@@ -77,11 +77,11 @@ Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame diff_model igraph matrix network tbl_graph
-to_components          ✓                 ✓      ✓       ✓         ✓
-to_egos                ✓                 ✓      ✓       ✓         ✓
-to_slices                                ✓                        ✓
-to_subgraphs                             ✓              ✓         ✓
-to_waves               ✓          ✓      ✓                        ✓
+to_components          *                 *      *       *         *
+to_egos                *                 *      *       *         *
+to_slices                                *                        *
+to_subgraphs                             *              *         *
+to_waves               *          *      *                        *
 }\if{html}{\out{</div>}}
 }
 \examples{

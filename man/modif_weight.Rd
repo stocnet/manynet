@@ -65,10 +65,10 @@ Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame igraph matrix network tbl_graph
-to_signed              ✓      ✓      ✓       ✓         ✓
-to_unsigned            ✓      ✓      ✓       ✓         ✓
-to_unweighted          ✓      ✓      ✓       ✓         ✓
-to_weighted                   ✓              ✓         ✓
+to_signed              *      *      *       *         *
+to_unsigned            *      *      *       *         *
+to_unweighted          *      *      *       *         *
+to_weighted                   *              *         *
 }\if{html}{\out{</div>}}
 }
 \seealso{

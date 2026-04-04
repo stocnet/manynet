@@ -64,11 +64,11 @@ Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{                data.frame igraph matrix network tbl_graph
-to_acyclic               ✓      ✓      ✓       ✓         ✓
-to_directed              ✓      ✓      ✓       ✓         ✓
-to_reciprocated          ✓      ✓      ✓       ✓         ✓
-to_redirected            ✓      ✓      ✓       ✓         ✓
-to_undirected            ✓      ✓      ✓       ✓         ✓
+to_acyclic               *      *      *       *         *
+to_directed              *      *      *       *         *
+to_reciprocated          *      *      *       *         *
+to_redirected            *      *      *       *         *
+to_undirected            *      *      *       *         *
 }\if{html}{\out{</div>}}
 }
 \seealso{
