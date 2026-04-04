@@ -4,19 +4,64 @@
 
 - Moved measuring, marking functions (node marks, tie marks, node selection, nodal diff marks), membership, and motif functions to `{netrics}`
 - Moved defunct functions to `{netrics}`
-- Moved `run_tute()` and `extract_tute()` to `{migraph}`
+- Moved `run_tute()`, `extract_tute()`, and tutorial 0 to `{migraph}`
+- Moved tutorials 3–6 to `{netrics}`
 - Removed `{autograph}`, `{learnr}`, and `{netdiffuseR}` from suggested dependencies
+- Added new `stocnet` class for representing multilevel, multiplex, multimodal, signed, dynamic, or longitudinal networks as a structured list of tibbles and metadata
+- Added `make_stocnet()` for straightforward construction of `stocnet` objects
+- Added `validate_stocnet()` for checking and suggesting improvements to `stocnet` structure
+- Added `as_stocnet.igraph()` for converting igraph objects to `stocnet`, including converting tie types to layers
+- Added `value` class to hold and print values of different classes held in a list vector
+- Changed to R 4.1 syntax including the native pipe (`|>`)
+
+## Making
+
+- Added `net_nodes.matrix()` for extracting node count from matrix objects
+- Added directed parameters to `create_cycle()` and `create_wheel()` (undirected by default)
+- Renamed `create_ego()` to `collect_ego()` to better signal the different input structure expected
+- Dropped `generate_permutation()` as no longer necessary
+
+## Collecting
+
+- Renamed `read_cran()` and `read_pkg()` to `collect_cran()` and `collect_pkg()` for consistency with other collecting functions
+- Renamed `collect_changes()` to `gather_changes()`
 
 ## Modifying
 
 - Improved `add_info()` so that if no further arguments are given it checks to see whether metadata may be added
+- Added `add_info.stocnet()` for adding metadata to `stocnet` objects
 - Internalized `diffnet` coercion so that `{netdiffuseR}` is no longer required
+- Renamed `mutate_net()` to `mutate_info()` for consistency
+- Renamed `net_info()` to `as_infolist()` for clarity
+- Fixed #132 by adding a `network` method for `add_node_attribute()`
 - Fixed `as_matrix.igraph()` for multiplex networks
+- Fixed `as_matrix.network()` and `as_igraph.network()` bugs related to inheriting integer names
 - Fixed `to_ties.igraph()` for unlabelled networks
+- Fixed `to_mode1()` and `to_mode2()` to work with unlabelled networks
+- Fixed `join_nodes()` to work with unlabelled networks
+- Fixed `from_ties()` to be quieter when joining
+- Fixed `play_segregation()` to be less verbose
+- Fixed `to_no_missing()` rlang data pronoun issue
+- Fixed `to_tree()` to use updated igraph function name
+- Added stocnet methods for node and tie attribute extraction
+- Most common read/write methods now add file suffixes if passed filenames without them
+
+## Describing
+
+- Added `seq_nodes()` and `seq_ties()` for indexing network elements, exported for use in other packages
+- Added `net_modes()` and `net_layers()` for describing network structure
+- Made `net_node_attributes()` and `net_tie_attributes()` into generics with stocnet methods
+- Fixed `net_node_names()` and `net_tie_names()` to look for older grand-nested variable names where necessary
+- Added stocnet methods for `net_nodes()`, `net_dims()`, `net_ties()`, `net_name()`, `net_node_names()`, and `net_tie_names()`
+- Added `network` method for `net_name()`
 
 ## Marking
 
 - Fixed `is_egonet()` to return correct value (`FALSE`) for non-netlists
+- Fixed `is_signed()` to no longer expect integers
+- Added `diff_model` method for `is_changing()`
+- `is_manynet()` now recognises the `stocnet` class
+- Added `stocnet` methods for `is_labelled()`, `is_signed()`, `is_complex()`, `is_multiplex()`, `is_changing()`, `is_longitudinal()`, `is_dynamic()`, `is_twomode()`, and `is_directed()`
 
 # manynet 1.7.2
 
