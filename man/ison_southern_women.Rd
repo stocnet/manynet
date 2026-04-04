@@ -6,7 +6,7 @@
 \title{Two-mode southern women (Davis, Gardner and Gardner 1941)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Southern Women Data -------------------------------------------------------
-#> # A labelled, two-mode network of 18 women and 14 social events and 89
+#> # A labelled, two-mode network of 18 womens and 14 social events and 89
 #> participation ties
 #> 
 #> -- Nodes

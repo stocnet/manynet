@@ -170,7 +170,7 @@ play_diffusion <- function(.data,
   if(length(thresholds)==1) thresholds <- rep(thresholds, n)
   if(all(thresholds <= 1) & !all(thresholds == 1)) 
     thresholds <- thresholds * 
-      node_deg(.data)
+      .node_deg(.data)
   if(is.character(seeds)) seeds <- which(node_names(.data)==seeds)
   if(is.logical(seeds)) seeds <- which(seeds)
   if(!is.null(immune)){
@@ -183,8 +183,8 @@ play_diffusion <- function(.data,
   time = 0 # starting at 0
   # initialise events table
   events <- data.frame(t = time, nodes = seeds, event = "I", exposure = NA)
-  if(!is_list(.data)) sinit <- sum(node_is_exposed(.data, infected)) else 
-    if(is_list(.data)) sinit <- sum(node_is_exposed(.data[[1]], infected))
+  if(!is_list(.data)) sinit <- sum(.node_is_exposed(.data, infected)) else 
+    if(is_list(.data)) sinit <- sum(.node_is_exposed(.data[[1]], infected))
   # initialise report table
   report <- data.frame(t = time,
                        n = n,
@@ -223,9 +223,9 @@ play_diffusion <- function(.data,
     net <- as_tidygraph(new_prev)
     
     # at main infection stage, get currently exposed to infection:
-    exposed <- node_is_exposed(net, infected)
+    exposed <- .node_is_exposed(net, infected)
     # count exposures for each node:
-    exposure <- node_exposure(net, infected)
+    exposure <- .node_exposure(net, infected)
     # identify those nodes who are exposed at or above their threshold
     
     open_to_it <- which(exposure >= thresholds)
@@ -285,11 +285,11 @@ play_diffusion <- function(.data,
   if(old_version){
     make_diff_model(events, report, .data)
   } else {
-    .data <- .data %>% mutate_nodes(diffusion = "S")
+    .data <- .data |> mutate_nodes(diffusion = "S")
     changes <- data.frame(time = events$t, node = events$nodes, 
                          var = "diffusion", value = events$event)
     if(fatality > 0)
-      changes <- changes %>% mutate(var = ifelse(value=="D", "active", var),
+      changes <- changes |> mutate(var = ifelse(value=="D", "active", var),
                                     value = ifelse(value=="D", FALSE, value))
     .data <- add_changes(.data, changes)
     .data
@@ -297,6 +297,53 @@ play_diffusion <- function(.data,
 }
 
 # contagion_function = attrib ~ 1 + prevalence + threshold + contact + equivalence
+
+.node_exposure <- function(.data, mark, time = 0){
+  .data <- expect_nodes(.data)
+  if(missing(mark)){ 
+    if(inherits(.data, "diff_model")){
+      mark <- .node_is_infected(.data, time = time)
+      .data <- attr(.data, "network")
+    } else {
+      mark <- .node_is_infected(.data, time = time)
+    }
+  }
+  .data <- manynet::as_tidygraph(.data)
+  if(manynet::is_weighted(.data) || manynet::is_signed(.data)){
+    if(is.numeric(mark)){
+      mk <- rep(FALSE, manynet::net_nodes(.data))
+      mk[mark] <- TRUE
+    } else mk <- mark
+    out <- manynet::as_matrix(.data)
+    out <- colSums(out * matrix(mk, nrow(out), ncol(out)) * 
+                     matrix(!mk, nrow(out), ncol(out), byrow = TRUE))
+  } else {
+    if(is.logical(mark)) mark <- which(mark)
+    if(manynet::is_twomode(.data)){
+      if(mark[1]>manynet::net_dims(.data)[1]){ 
+        dat <- manynet::to_mode2(.data)
+        mark <- mark - manynet::net_dims(.data)[1]
+        contacts <- unlist(lapply(igraph::neighborhood(dat, nodes = mark, mode = "out"),
+                                  function(x) setdiff(x, mark)))
+        contacts <- contacts + manynet::net_dims(.data)[1]
+      } else {
+        dat <- manynet::to_mode1(.data)
+        contacts <- unlist(lapply(igraph::neighborhood(dat),
+                                  function(x) setdiff(x, mark)))
+        contacts <- contacts + manynet::net_dims(.data)[2]
+      }
+    } else {
+      dat <- .data
+      contacts <- unlist(lapply(igraph::neighborhood(dat, nodes = mark, mode = "out"),
+                                function(x) setdiff(x, mark)))
+    }
+    # count exposures for each node:
+    tabcontact <- table(contacts)
+    out <- rep(0, manynet::net_nodes(.data))
+    out[as.numeric(names(tabcontact))] <- unname(tabcontact)
+  }
+  make_node_measure(out, .data)
+}
 
 # Learning ####
 
@@ -425,7 +472,7 @@ play_segregation <- function(.data,
   while(steps > t){
     t <- t+1
     current <- node_attribute(temp, attribute)
-    heterophily_scores <- node_heterophily(temp, attribute)
+    heterophily_scores <- .node_heterophily(temp, attribute)
     dissatisfied <- which(heterophily_scores > heterophily)
     unoccupied <- which(is.na(current))
     dissatisfied <- setdiff(dissatisfied, unoccupied)
@@ -440,7 +487,7 @@ play_segregation <- function(.data,
     options <- vapply(unoccupied, function(u){
       test <- add_node_attribute(temp, "test", 
                                           swtch(current, dissatisfied, u))
-      node_heterophily(test, "test")[u]
+      .node_heterophily(test, "test")[u]
     }, FUN.VALUE = numeric(1))
     if(length(options)==0) next
     move_to <- switch(choice_function,
@@ -450,10 +497,159 @@ play_segregation <- function(.data,
                                                                           igraph::V(temp)[dissatisfied], 
                                                                           igraph::V(temp)[unoccupied]))])
     if(is.na(move_to)) next
-    print(paste("Moving node", dissatisfied, "to node", move_to))
+    snet_minor_info("Moving node {dissatisfied} to node {move_to}")
     temp <- add_node_attribute(temp, attribute, 
                                         swtch(current, dissatisfied, move_to))
     moved <- c(dissatisfied, moved)
   }
   temp
 }
+
+.node_heterophily <- function(.data, attribute){
+  .data <- manynet::expect_nodes(.data)
+  m <- manynet::as_matrix(.data)
+  if (length(attribute) == 1 && is.character(attribute)) {
+    attribute <- manynet::node_attribute(.data, attribute)
+  }
+  if (is.character(attribute) | is.numeric(attribute)) {
+    attribute <- as.factor(attribute)
+  }
+  if(anyNA(attribute)){
+    m[is.na(attribute),] <- NA
+    m[,is.na(attribute)] <- NA
+  }
+  same <- outer(attribute, attribute, "==")
+  nInternal <- rowSums(m * same, na.rm = TRUE)
+  nInternal[is.na(attribute)] <- NA
+  nExternal <- rowSums(m, na.rm = TRUE) - nInternal
+  ei <- (nExternal - nInternal) / rowSums(m, na.rm = TRUE)
+  ei
+}
+
+.node_is_latent <- function(.data, time = 0){
+  if(is_changing(.data)){
+    t <- time
+    latent <- as_changelist(.data) |> 
+      dplyr::filter(time <= t & value %in% c("E", "I")) |>
+      dplyr::group_by(node) |>
+      dplyr::mutate(n = dplyr::n()) |>
+      dplyr::filter(n == 1 & value == "E")
+    if (is_labelled(.data)) {
+      out <- seq_len(net_nodes(.data)) %in% latent$node
+      names(out) <- node_names(.data)
+    } else {
+      out <- seq_len(net_nodes(.data)) %in% latent$node
+    }
+    make_node_mark(out, .data)
+  } else if(inherits(.data, "diff_model")){
+    latent <- summary(.data) |>
+      dplyr::filter(t <= time & event %in% c("E", "I")) |>
+      group_by(nodes) |>
+      mutate(n = dplyr::n()) |>
+      filter(n == 1 & event == "E")
+    net <- attr(.data, "network")
+    if (is_labelled(net)) {
+      out <- seq_len(net_nodes(net)) %in% latent$nodes
+      names(out) <- node_names(net)
+    } else {
+      out <- seq_len(net_nodes(net)) %in% latent$nodes
+    }
+    make_node_mark(out, net)
+  } else {
+    out <- to_time(.data, time)
+    out <- node_attribute(out, "diffusion") == "E"
+    make_node_mark(out, .data)
+  }
+}
+
+.node_is_infected <- function(.data, time = 0) {
+  if(is_changing(.data)){
+    t <- time
+    infected <- as_changelist(.data) |> 
+      dplyr::filter(time <= t & value %in% c("I", "R")) |>
+      dplyr::group_by(node) |>
+      dplyr::mutate(n = dplyr::n()) |>
+      dplyr::filter(n == 1 & value == "I")
+    if (is_labelled(.data)) {
+      out <- seq_len(net_nodes(.data)) %in% infected$node
+      names(out) <- node_names(.data)
+    } else {
+      out <- seq_len(net_nodes(.data)) %in% infected$node
+    }
+    make_node_mark(out, .data)
+  } else if(inherits(.data, "diff_model")){
+    infected <- summary(.data) |> 
+      dplyr::filter(t <= time & event %in% c("I", "R")) |>
+      group_by(nodes) |>
+      mutate(n = dplyr::n()) |>
+      filter(n == 1 & event == "I")
+    net <- attr(.data, "network")
+    if (is_labelled(net)) {
+      out <- seq_len(net_nodes(net)) %in% infected$nodes
+      names(out) <- node_names(net)
+    } else {
+      out <- seq_len(net_nodes(net)) %in% infected$nodes
+    }
+    make_node_mark(out, net)
+  } else {
+    out <- to_time(.data, time)
+    out <- node_attribute(out, "diffusion") == "I"
+    make_node_mark(out, .data)
+  }
+}
+
+.node_is_recovered <- function(.data, time = 0){
+  if(is_changing(.data)){
+    t <- time
+    recovered <- as_changelist(.data) |> 
+      dplyr::filter(time <= t & value %in% c("R")) |>
+      dplyr::group_by(node) |>
+      dplyr::mutate(n = dplyr::n()) |>
+      dplyr::filter(n == 1 & value == "R")
+    if (is_labelled(.data)) {
+      out <- seq_len(net_nodes(.data)) %in% recovered$node
+      names(out) <- node_names(.data)
+    } else {
+      out <- seq_len(net_nodes(.data)) %in% recovered$node
+    }
+    make_node_mark(out, .data)
+  } else if(inherits(.data, "diff_model")){
+    recovered <- summary(.data) |> 
+      dplyr::filter(t <= time & event == "R") |>
+      group_by(nodes) |>
+      mutate(n = dplyr::n()) |>
+      filter(n == 1)
+    net <- attr(.data, "network")
+    if (is_labelled(net)) {
+      out <- seq_len(net_nodes(net)) %in% recovered$nodes
+      names(out) <- node_names(net)
+    } else {
+      out <- seq_len(net_nodes(net)) %in% recovered$nodes
+    }
+    make_node_mark(out, net)
+  } else {
+    out <- to_time(.data, time)
+    out <- node_attribute(out, "diffusion") == "R"
+    make_node_mark(out, .data)
+  }
+}
+
+.node_is_exposed <- function(.data, mark, time = 0){
+  if (missing(mark)){
+    if(is_changing(.data)){
+      t <- time
+      return(make_node_mark(.node_exposure(.data, time = t)>0, .data))
+    } else if(inherits(.data, "diff_model")){
+      mark <- summary(.data) |> 
+        dplyr::filter(t == 0 & event == "I") |> 
+        dplyr::select(nodes) |> unlist()
+      .data <- attr(.data, "network")
+    }    
+  }
+  if(is.logical(mark)) mark <- which(mark)
+  out <- rep(F, manynet::net_nodes(.data))
+  out[unique(setdiff(unlist(igraph::neighborhood(.data, nodes = mark)),
+                     mark))] <- TRUE
+  make_node_mark(out, .data)
+}
+

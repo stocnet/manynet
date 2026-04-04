@@ -1,7 +1,7 @@
 # Network information ####
 
-#' Modifying network data
-#' 
+#' Manipulating network information
+#' @name manip_info
 #' @description
 #'   These functions allow users to add and edit information about the network
 #'   itself.
@@ -9,8 +9,9 @@
 #'   as well as definitions of the nodes and ties in the network.
 #'   Where available, this information is printed for tidygraph-class objects,
 #'   and can be used for printing a grand table in the `{grand}` package.
-#' @name manip_info
-#' @inheritParams mark_is
+#' @template param_data
+#' @family info
+#' @template fam_manip
 #' @param ... Named attributes. The following are currently recognised:
 #'   "name", "year", and "doi" of the network,
 #'   "collection" or "mode" of the network 
@@ -20,7 +21,10 @@
 #' @examples
 #' add_info(ison_algebra, name = "Algebra")
 #' @export
-add_info <- function(.data, ...){
+add_info <- function(.data, ...) UseMethod("add_info")
+
+#' @export
+add_info.igraph <- function(.data, ...){
   
   if(!is.null(igraph::graph_attr(.data)$grand)){ # Updating
     snet_success("Deleting information from previous version(s).")
@@ -28,7 +32,12 @@ add_info <- function(.data, ...){
   }
   
   info <- list(...)
+  if(length(info)==0) return(.check_info(.data))
+  
   unrecog <- setdiff(names(info), c("name", "nodes", "ties", "doi", 
+                                    "source", "method", "location", "date", "system",
+                                    "degree",
+                                    "dependent",
                                     "collection", "year", "mode", "vertex1", 
                                     "vertex1.total", "vertex2", 
                                     "vertex2.total", 
@@ -60,13 +69,21 @@ add_info <- function(.data, ...){
     igraph::graph_attr(out)$year <- info$year
   }
   # return(str(info)) # for debugging
-  
   as_tidygraph(out)
+}
+
+#' @export
+add_info.stocnet <- function(.data, ...){
+  dots <- list(...)
+  for(item in names(dots)){
+    .data$info[[item]] <- dots[[item]]
+  }
+  .data
 }
 
 #' @rdname manip_info
 #' @export
-mutate_net <- function(.data, ...){
+mutate_info <- function(.data, ...){
   info <- list(...)
   out <- as_tidygraph(.data)
   for(item in names(info)){
@@ -77,15 +94,56 @@ mutate_net <- function(.data, ...){
 
 #' @rdname manip_info
 #' @export
-net_info <- function(.data){
-  igraph::graph_attr(as_igraph(.data))
-}
-
-#' @rdname manip_info
-#' @export
 net_attributes <- function(.data){
   names(igraph::graph_attr(as_igraph(.data)))
 }
 
 
+.check_info <- function(.data, optional = FALSE){
+  
+  out <- .data
+  
+  # Names
+  if(is.null(net_name(.data)) || net_name(.data) == ""){
+    snet_prompt("This network does not have a name. Please add one.")
+    out <- add_info(out, name = readline(prompt = "Network name: "))
+  } else snet_success("Network name: {net_name(out)}")
+  
+  # Nodes
+  if(is_twomode(.data) && is.null(mode_names(.data))){
+    snet_prompt("This two-mode network does not have names for the nodesets. Please add one.")
+    out$nodes <- c(readline(prompt = "Nodeset 1 name: "),
+                   readline(prompt = "Nodeset 2 name: "))
+  } else if(is_twomode(.data)){
+    snet_success("Nodesets: {mode_names(out)}")
+  } else if(!is_twomode(.data) && is.null(mode_names(.data))){
+    snet_prompt("This network does not have a name for the nodes. Please add one.")
+    out <- add_info(out, nodes = readline(prompt = "Nodeset name: "))
+  } else snet_success("Nodeset: {mode_names(out)}")
+  
+  # Source & method
+  if(optional){
+    if(!"source" %in% net_attributes(.data)){
+      snet_prompt("This network does not have a source. You may add one.")
+      source_options <- c("Observed", "Synthetic")
+      source <- utils::menu(choices = source_options, title = "Is this network observed or synthetic?")
+      if(source == 1){
+        method_options <- c("Survey", "Interview", "Sensor", "Archival", "Trace", "Ethnography")
+        out <- add_info(out, source = source_options[source],
+                        method = utils::menu(choices = source_options, title = "Method: "))
+      } else if(source == 2){
+        out <- add_info(out, source = source_options[source],
+                        method = readline(prompt = "Model: "))
+      }
+    } else snet_success("Source: {net_info(out)$source}")
+  }
+  
+  # Ties
+  if(is.null(layer_names(.data))){
+    snet_prompt("This network does not have a name for the ties. Please add one.")
+    out <- add_info(out, ties = readline(prompt = "Ties name: "))
+  } else snet_success("Ties: {layer_names(out)}")
+
+  out
+}
 

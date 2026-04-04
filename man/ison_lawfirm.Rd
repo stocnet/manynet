@@ -7,7 +7,7 @@
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Lazega's Lawyers ----------------------------------------------------------
 #> # A multiplex, directed network of 71 attorneys and 892 advice, 1104 cowork,
-#> and 575 friends ties
+#> and 575 friendship ties
 #> 
 #> -- Nodes
 #> # A tibble: 71 x 7

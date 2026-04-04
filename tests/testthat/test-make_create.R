@@ -1,16 +1,33 @@
+create_funs <- funs_objs[grepl("create_", names(funs_objs)) &
+                           !grepl("motif|lattice|explicit|degree", names(funs_objs))]
+
+for(fn in names(create_funs)) {
+  # One-mode
+  test_that(paste(fn, "creates an object with the correct number of nodes"), {
+    expect_values(net_nodes(create_funs[[fn]](10)), 10)
+  })
+  test_that(paste(fn, "creates an object with the correct directedness"), {
+    expect_false(is_directed(create_funs[[fn]](10)))
+    expect_true(is_directed(create_funs[[fn]](10, directed = TRUE)))
+  })
+  skip_if(grepl("wheel|windmill", fn), "Some create functions only create one-mode networks") 
+  test_that(paste(fn, "creates an object with the correct number of nodes"), {
+    expect_values(net_nodes(create_funs[[fn]](c(5,5))), 10)
+  })
+  test_that(paste(fn, "creates an object with the correct modality"), {
+    expect_true(is_twomode(create_funs[[fn]](c(5,5))))
+  })
+}
+
 test_that("create empty graph works", {
   expect_true(is_twomode(create_empty(c(5,5))))
-  expect_s3_class(create_empty(4), "igraph")
   expect_error(create_empty(c(5,5,5)), "single integer")
   expect_length(create_empty(4), 4)
 })
 
 test_that("create filled graph works", {
   expect_true(is_twomode(create_filled(c(5,5))))
-  expect_s3_class(create_filled(4), "igraph")
   expect_error(create_filled(c(5,5,5)), "single integer")
-  expect_false(is_directed(create_filled(6)))
-  expect_false(is_directed(create_filled(c(5,5))))
 })
 
 test_that("ring creation works", {

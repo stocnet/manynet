@@ -1,8 +1,8 @@
 # nocov start
-#' Functions that have been renamed, superseded, or are no longer working
+#' Functions that have been renamed, superseded, moved, or are no longer working
 #' 
 #' `r lifecycle::badge("deprecated")`
-#' Generally these functions have been superseded or renamed.
+#' Generally these functions have been superseded, renamed, and/or moved.
 #' Upon using them, a message is provided directing the user to the new function.
 #' However, at this stage of package development,
 #' we generally clear older defunct functions at each minor release,
@@ -12,420 +12,26 @@
 #' @keywords internal
 NULL
 
+fn_moved <- function(old, new, old_pkg = "manynet", new_pkg = "netrics", 
+                     version = NULL) {
+  if(!is.null(version)) version <- paste0(" ", version)
+  if(is.null(version)) preposition <- "out of" else preposition <- "since"
+  if(!nzchar(system.file(package = new_pkg))) {
+    cli::cli_inform(c(i = "{.fn {old}} was moved {preposition} {.pkg {old_pkg}}{.version {version}} to {.pkg {new_pkg}}."))
+    cli::cli_inform("Install {.pkg {new_pkg}} with: {.code install.packages('{new_pkg}')}")
+  } else {
+    new <- paste0(new_pkg, "::", new)
+    cli::cli_inform(c(i = "{.fn {old}} was moved {preposition} {.pkg {old_pkg}}{.version {version}}. Please use {.fn {new}}"))
+  }
+  stop("Please update your code to use the new function.", call. = FALSE)
+}
+
 #' @describeIn defunct Deprecated on 2024-06-17.
 #' @export
 pkg_data <- function(pkg = "manynet") {
   .Deprecated("table_data", package = "migraph",
               old = "pkg_data")
   table_data(pkg = pkg)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-17.
-#' @export
-node_mode <- function(.data) {
-  .Deprecated("node_is_mode", package = "migraph",
-              old = "node_mode")
-  node_is_mode(.data)
-}
-
-#' #' @describeIn defunct Deprecated on 2024-06-17.
-#' #' @export
-#' autographr <- function(.data, layout, labels = TRUE,
-#'     node_color, node_shape, node_size, node_group,
-#'     edge_color, edge_size, ...) {
-#'   .Deprecated("graphr", package = "migraph",
-#'               old = "autographr")
-#'   graphr(.data, layout, labels,
-#'          node_color, node_shape, node_size, node_group,
-#'          edge_color, edge_size, ...)
-#' }
-
-#' #' @describeIn defunct Deprecated on 2024-06-17.
-#' #' @export
-#' autographs <- function(netlist, waves, based_on = c("first", "last", "both"), ...) {
-#'   .Deprecated("graphs", package = "migraph",
-#'               old = "autographs")
-#'   graphs(netlist, waves, based_on, ...)
-#' }
-
-#' #' @describeIn defunct Deprecated on 2024-06-17.
-#' #' @export
-#' autographd <- function(tlist, layout, labels = TRUE,
-#'     node_color, node_shape, node_size, edge_color, edge_size,
-#'     keep_isolates = TRUE, ...) {
-#'   .Deprecated("grapht", package = "migraph",
-#'               old = "autographd")
-#'   grapht(tlist, layout, labels,
-#'          node_color, node_shape, node_size, edge_color, edge_size,
-#'          keep_isolates, ...)
-#' }
-
-#' @describeIn defunct Deprecated on 2024-06-14.
-#' @export
-node_optimal <- function(.data) {
-  .Deprecated("node_in_optimal", package = "migraph",
-              old = "node_optimal")
-  node_in_optimal(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-14.
-#' @export
-node_kernighanlin <- function(.data) {
-  .Deprecated("node_in_partition", package = "migraph",
-              old = "node_kernighanlin")
-  node_in_partition(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-14.
-#' @export
-node_edge_betweenness <- function(.data) {
-  .Deprecated("node_in_betweenness", package = "migraph",
-              old = "node_edge_betweenness")
-  node_in_betweenness(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-14.
-#' @export
-node_fast_greedy <- function(.data) {
-  .Deprecated("node_in_greedy", package = "migraph",
-              old = "node_fast_greedy")
-  node_in_greedy(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-14.
-#' @export
-node_leading_eigen <- function(.data) {
-  .Deprecated("node_in_eigen", package = "migraph",
-              old = "node_leading_eigen")
-  node_in_eigen(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-14.
-#' @export
-node_walktrap <- function(.data) {
-  .Deprecated("node_in_walktrap", package = "migraph",
-              old = "node_walktrap")
-  node_in_walktrap(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-14.
-#' @export
-node_infomap <- function(.data) {
-  .Deprecated("node_in_infomap", package = "migraph",
-              old = "node_infomap")
-  node_in_infomap(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-14.
-#' @export
-node_spinglass <- function(.data) {
-  .Deprecated("node_in_spinglass", package = "migraph",
-              old = "node_spinglass")
-  node_in_spinglass(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-14.
-#' @export
-node_fluid <- function(.data) {
-  .Deprecated("node_in_fluid", package = "migraph",
-              old = "node_fluid")
-  node_in_fluid(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-14.
-#' @export
-node_leiden <- function(.data) {
-  .Deprecated("node_in_leiden", package = "migraph",
-              old = "node_leiden")
-  node_in_leiden(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-14.
-#' @export
-node_louvain <- function(.data) {
-  .Deprecated("node_in_louvain", package = "migraph",
-              old = "node_louvain")
-  node_in_louvain(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-14.
-#' @export
-node_roulette <- function(.data) {
-  .Deprecated("node_in_roulette", package = "migraph",
-              old = "node_roulette")
-  node_in_roulette(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-14.
-#' @export
-node_components <- function(.data) {
-  .Deprecated("node_in_component", package = "migraph",
-              old = "node_components")
-  node_in_component(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-14.
-#' @export
-node_weak_components <- function(.data) {
-  .Deprecated("node_in_weak", package = "migraph",
-              old = "node_weak_components")
-  node_in_weak(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-14.
-#' @export
-node_strong_components <- function(.data) {
-  .Deprecated("node_in_strong", package = "migraph",
-              old = "node_strong_components")
-  node_in_strong(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-14.
-#' @export
-node_equivalence <- function(.data) {
-  .Deprecated("node_in_equivalence", package = "migraph",
-              old = "node_equivalence")
-  node_in_equivalence(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-14.
-#' @export
-node_structural_equivalence <- function(.data) {
-  .Deprecated("node_in_structural", package = "migraph",
-              old = "node_structural_equivalence")
-  node_in_structural(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-14.
-#' @export
-node_regular_equivalence <- function(.data) {
-  .Deprecated("node_in_regular", package = "migraph",
-              old = "node_regular_equivalence")
-  node_in_regular(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-14.
-#' @export
-node_automorphic_equivalence <- function(.data) {
-  .Deprecated("node_in_automorphic", package = "migraph",
-              old = "node_automorphic_equivalence")
-  node_in_automorphic(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_transmissibility <- function(diff_model) {
-  .Deprecated("net_transmissibility", package = "migraph",
-              old = "network_transmissibility")
-  net_transmissibility(diff_model)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_infection_length <- function(diff_model) {
-  .Deprecated("net_recovery", package = "migraph",
-              old = "network_infection_length")
-  net_recovery(diff_model)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_reproduction <- function(diff_model) {
-  .Deprecated("net_reproduction", package = "migraph",
-              old = "network_reproduction")
-  net_reproduction(diff_model)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_immunity <- function(diff_model, normalized = TRUE) {
-  .Deprecated("net_immunity", package = "migraph",
-              old = "network_immunity")
-  net_immunity(diff_model, normalized)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_hazard <- function(diff_model) {
-  .Deprecated("net_hazard", package = "migraph",
-              old = "network_hazard")
-  net_hazard(diff_model)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_density <- function(.data) {
-  .Deprecated("net_density", package = "migraph",
-              old = "network_density")
-  net_density(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_components <- function(.data) {
-  .Deprecated("net_components", package = "migraph",
-              old = "network_components")
-  net_components(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_cohesion <- function(.data) {
-  .Deprecated("net_cohesion", package = "migraph",
-              old = "network_cohesion")
-  net_cohesion(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_adhesion <- function(.data) {
-  .Deprecated("net_adhesion", package = "migraph",
-              old = "network_adhesion")
-  net_adhesion(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_diameter <- function(.data) {
-  .Deprecated("net_diameter", package = "migraph",
-              old = "network_diameter")
-  net_diameter(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_length <- function(.data) {
-  .Deprecated("net_length", package = "migraph",
-              old = "network_length")
-  net_length(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_independence <- function(.data) {
-  .Deprecated("net_independence", package = "migraph",
-              old = "network_independence")
-  net_independence(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_change <- function(.data, object2) {
-  .Deprecated("net_change", package = "migraph",
-              old = "network_change")
-  net_change(.data, object2)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_stability <- function(.data, object2) {
-  .Deprecated("net_stability", package = "migraph",
-              old = "network_stability")
-  net_stability(.data, object2)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_reciprocity <- function(.data, method = "default") {
-  .Deprecated("net_reciprocity", package = "migraph",
-              old = "network_reciprocity")
-  net_reciprocity(.data, method)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_transitivity <- function(.data) {
-  .Deprecated("net_transitivity", package = "migraph",
-              old = "network_transitivity")
-  net_transitivity(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_equivalency <- function(.data) {
-  .Deprecated("net_equivalency", package = "migraph",
-              old = "network_equivalency")
-  net_equivalency(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_transitivity <- function(.data) {
-  .Deprecated("net_transitivity", package = "migraph",
-              old = "network_transitivity")
-  net_transitivity(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_congruency <- function(.data) {
-  .Deprecated("net_congruency", package = "migraph",
-              old = "network_congruency")
-  net_congruency(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_richness <- function(.data, attribute) {
-  .Deprecated("net_richness", package = "migraph",
-              old = "network_richness")
-  net_richness(.data, attribute)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_diversity <- function(.data, attribute, clusters = NULL) {
-  .Deprecated("net_diversity", package = "migraph",
-              old = "network_diversity")
-  net_diversity(.data, attribute, clusters)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_heterophily <- function(.data, attribute) {
-  .Deprecated("net_heterophily", package = "migraph",
-              old = "network_heterophily")
-  net_heterophily(.data, attribute)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_assortativity <- function(.data) {
-  .Deprecated("net_assortativity", package = "migraph",
-              old = "network_assortativity")
-  net_assortativity(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_spatial <- function(.data, attribute) {
-  .Deprecated("net_spatial", package = "migraph",
-              old = "network_spatial")
-  net_spatial(.data, attribute)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_connectedness <- function(.data) {
-  .Deprecated("net_connectedness", package = "migraph",
-              old = "network_connectedness")
-  net_connectedness(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_efficiency <- function(.data) {
-  .Deprecated("net_efficiency", package = "migraph",
-              old = "network_efficiency")
-  net_efficiency(.data)
-}
-
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_upperbound <- function(.data) {
-  .Deprecated("net_upperbound", package = "migraph",
-              old = "network_upperbound")
-  net_upperbound(.data)
 }
 
 #' @describeIn defunct Deprecated on 2024-06-20.
@@ -500,248 +106,866 @@ network_tie_attributes <- function(.data) {
   net_tie_attributes(.data)
 }
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-network_degree <- function(.data, normalized = TRUE,
-                           direction = c("all", "out", "in")) {
-  .Deprecated("net_degree", package = "migraph",
-              old = "network_degree")
-  net_degree(.data, normalized, direction)
+node_mode <- function(.data) {
+  .Deprecated("node_is_mode", package = "manynet",
+              old = "node_mode")
+  node_is_mode(.data)
 }
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-network_outdegree <- function(.data, normalized = TRUE) {
-  .Deprecated("net_outdegree", package = "migraph",
-              old = "network_outdegree")
-  net_outdegree(.data, normalized)
+mutate_net <- function(.data, ...) {
+  .Deprecated("mutate_info", package = "manynet",
+              old = "mutate_net")
+  mutate_info(.data, ...)
 }
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-network_indegree <- function(.data, normalized = TRUE) {
-  .Deprecated("net_indegree", package = "migraph",
-              old = "network_indegree")
-  net_indegree(.data, normalized)
+net_info <- function(.data) {
+  .Deprecated("as_infolist", package = "manynet",
+              old = "net_info")
+  as_infolist(.data)
 }
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-04-02.
 #' @export
-network_betweenness <- function(.data, normalized = TRUE,
-                                direction = c("all", "out", "in")) {
-  .Deprecated("net_betweenness", package = "migraph",
-              old = "network_betweenness")
-  net_betweenness(.data, normalized, direction)
+read_cran <- function(pkg = "all") {
+  .Deprecated("collect_cran", package = "manynet",
+              old = "read_cran")
+  collect_cran(pkg = pkg)
 }
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-04-02.
 #' @export
-network_closeness <- function(.data, normalized = TRUE,
-                              direction = c("all", "out", "in")) {
-  .Deprecated("net_closeness", package = "migraph",
-              old = "network_closeness")
-  net_closeness(.data, normalized, direction)
+read_pkg <- function(dir = getwd()) {
+  .Deprecated("collect_pkg", package = "manynet",
+              old = "read_pkg")
+  collect_pkg(dir = dir)
 }
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-04-02.
 #' @export
-network_reach <- function(.data, normalized = TRUE, k = 2) {
-  .Deprecated("net_reach", package = "migraph",
-              old = "network_reach")
-  net_reach(.data, normalized, k)
+collect_changes <- function(.data, time) {
+  .Deprecated("gather_changes", package = "manynet",
+              old = "collect_changes")
+  gather_changes(.data, time)
 }
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-04-04.
 #' @export
-network_harmonic <- function(.data, normalized = TRUE, k = 2) {
-  .Deprecated("net_harmonic", package = "migraph",
-              old = "network_harmonic")
-  net_harmonic(.data, normalized, k)
+net_node_names <- function(.data) {
+  .Deprecated("mode_names", package = "manynet",
+              old = "net_node_names")
+  mode_names(.data)
 }
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-04-04.
 #' @export
-network_eigenvector <- function(.data, normalized = TRUE) {
-  .Deprecated("net_eigenvector", package = "migraph",
-              old = "network_eigenvector")
-  net_eigenvector(.data, normalized)
+net_tie_names <- function(.data) {
+  .Deprecated("layer_names", package = "manynet",
+              old = "net_tie_names")
+  layer_names(.data)
 }
 
-#' @describeIn defunct Deprecated on 2024-06-20.
-#' @export
-network_core <- function(.data, mark = NULL) {
-  .Deprecated("net_core", package = "migraph",
-              old = "network_core")
-  net_core(.data, mark)
-}
+# Moved to netrics from 2.0.0 ####
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-network_richclub <- function(.data) {
-  .Deprecated("net_richclub", package = "migraph",
-              old = "network_richclub")
-  net_richclub(.data)
-}
+node_degree <- function(...) fn_moved("node_degree", "node_by_degree", version = "2.0.0")
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-network_factions <- function(.data, membership = NULL) {
-  .Deprecated("net_factions", package = "migraph",
-              old = "network_factions")
-  net_factions(.data, membership)
-}
+node_deg <- function(...) fn_moved("node_deg", "node_by_deg", version = "2.0.0")
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-network_modularity <- function(.data, membership = NULL, resolution = 1) {
-  .Deprecated("net_modularity", package = "migraph",
-              old = "network_modularity")
-  net_modularity(.data, membership, resolution)
-}
+net_by_quad <- function(...) fn_moved("net_by_quad", "net_x_tetrad", version = "2.0.0")
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-network_smallworld <- function(.data, method = c("omega", "sigma", "SWI"),
-                               times = 100) {
-  .Deprecated("net_smallworld", package = "migraph",
-              old = "network_smallworld")
-  net_smallworld(.data, method, times)
-}
+net_hazard <- function(...) fn_moved("net_hazard", "net_x_hazard", version = "2.0.0")
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-network_scalefree <- function(.data) {
-  .Deprecated("net_scalefree", package = "migraph",
-              old = "network_scalefree")
-  net_scalefree(.data)
-}
+node_automorphic_equivalence <- function(...) fn_moved("node_automorphic_equivalence", "node_in_automorphic", version = "2.0.0")
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-network_balance <- function(.data) {
-  .Deprecated("net_balance", package = "migraph",
-              old = "network_balance")
-  net_balance(.data)
-}
+node_brokerage_census <- function(...) fn_moved("node_brokerage_census", "node_x_brokerage", version = "2.0.0")
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-node_tie_census <- function(.data) {
-  .Deprecated("node_by_tie", package = "migraph",
-              old = "node_tie_census")
-  node_by_tie(.data)
-}
+node_brokering <- function(...) fn_moved("node_brokering", "node_in_brokering", version = "2.0.0")
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-node_triad_census <- function(.data) {
-  .Deprecated("node_by_triad", package = "migraph",
-              old = "node_triad_census")
-  node_by_triad(.data)
-}
+node_by_quad <- function(...) fn_moved("node_by_quad", "node_x_tetrad", version = "2.0.0")
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-node_quad_census <- function(.data) {
-  .Deprecated("node_by_quad", package = "migraph",
-              old = "node_quad_census")
-  node_by_quad(.data)
-}
+node_components <- function(...) fn_moved("node_components", "node_in_component", version = "2.0.0")
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-node_path_census <- function(.data) {
-  .Deprecated("node_by_path", package = "migraph",
-              old = "node_path_census")
-  node_by_path(.data)
-}
+node_core <- function(...) fn_moved("node_core", "node_in_core", version = "2.0.0")
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-network_dyad_census <- function(.data) {
-  .Deprecated("net_by_dyad", package = "migraph",
-              old = "network_dyad_census")
-  net_by_dyad(.data)
-}
+node_edge_betweenness <- function(...) fn_moved("node_edge_betweenness", "node_in_betweenness", version = "2.0.0")
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-network_triad_census <- function(.data) {
-  .Deprecated("net_by_triad", package = "migraph",
-              old = "network_triad_census")
-  net_by_triad(.data)
-}
+node_equivalence <- function(...) fn_moved("node_equivalence", "node_in_equivalence", version = "2.0.0")
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-network_mixed_census <- function(.data, object2) {
-  .Deprecated("net_by_mixed", package = "migraph",
-              old = "network_mixed_census")
-  net_by_mixed(.data, object2)
-}
+node_fast_greedy <- function(...) fn_moved("node_fast_greedy", "node_in_greedy", version = "2.0.0")
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-node_brokerage_census <- function(.data, membership, standardized = FALSE) {
-  .Deprecated("node_by_brokerage", package = "migraph",
-              old = "node_brokerage_census")
-  node_by_brokerage(.data, membership, standardized)
-}
+node_fluid <- function(...) fn_moved("node_fluid", "node_in_fluid", version = "2.0.0")
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-network_brokerage_census <- function(.data, membership, standardized = FALSE) {
-  .Deprecated("net_by_brokerage", package = "migraph",
-              old = "network_brokerage_census")
-  net_by_brokerage(.data, membership, standardized = FALSE)
-}
+node_infomap <- function(...) fn_moved("node_infomap", "node_in_infomap", version = "2.0.0")
 
-#' @describeIn defunct Deprecated on 2024-06-20.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-node_brokering <- function(.data, membership) {
-  .Deprecated("node_in_brokering", package = "migraph",
-              old = "node_brokering")
-  node_in_brokering(.data, membership)
-}
+node_kernighanlin <- function(...) fn_moved("node_kernighanlin", "node_in_partition", version = "2.0.0")
 
-#' @describeIn defunct Deprecated on 2024-06-21.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-node_core <- function(.data) {
-  .Deprecated("node_is_core", package = "migraph",
-              old = "node_core")
-  node_is_core(.data)
-}
+node_leading_eigen <- function(...) fn_moved("node_leading_eigen", "node_in_eigen", version = "2.0.0")
 
-#' @describeIn defunct Deprecated on 2024-10-10.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-node_by_quad <- function(.data) {
-  .Deprecated("node_by_tetrad", package = "manynet",
-              old = "node_by_quad")
-  node_by_tetrad(.data)
-}
+node_leiden <- function(...) fn_moved("node_leiden", "node_in_leiden", version = "2.0.0")
 
-#' @describeIn defunct Deprecated on 2024-10-10.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-net_by_quad <- function(.data) {
-  .Deprecated("net_by_tetrad", package = "manynet",
-              old = "net_by_quad")
-  net_by_tetrad(.data)
-}
+node_louvain <- function(...) fn_moved("node_louvain", "node_in_louvain", version = "2.0.0")
 
-#' #' @describeIn defunct Deprecated on 2024-10-10.
-#' #' @export
-#' layout_tbl_graph_quad <- function(.data, circular = FALSE, times = 1000) {
-#'   .Deprecated("layout_tbl_graph_tetrad", package = "manynet",
-#'               old = "layout_tbl_graph_quad")
-#'   layout_tbl_graph_tetrad(.data, circular = circular, times = times)
-#' }
-
-#' @describeIn defunct Deprecated on 2024-12-30.
+#' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-net_hazard <- function(.data) {
-  .Deprecated("net_by_hazard", package = "manynet",
-              old = "net_hazard")
-  net_by_hazard(.data)
-}
+node_optimal <- function(...) fn_moved("node_optimal", "node_in_optimal", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_path_census <- function(...) fn_moved("node_path_census", "node_x_path", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_quad_census <- function(...) fn_moved("node_quad_census", "node_x_tetrad", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_regular_equivalence <- function(...) fn_moved("node_regular_equivalence", "node_in_regular", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_roulette <- function(...) fn_moved("node_roulette", "node_in_roulette", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_spinglass <- function(...) fn_moved("node_spinglass", "node_in_spinglass", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_strong_components <- function(...) fn_moved("node_strong_components", "node_in_strong", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_structural_equivalence <- function(...) fn_moved("node_structural_equivalence", "node_in_structural", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_tie_census <- function(...) fn_moved("node_tie_census", "node_x_tie", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_triad_census <- function(...) fn_moved("node_triad_census", "node_x_triad", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_walktrap <- function(...) fn_moved("node_walktrap", "node_in_walktrap", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_weak_components <- function(...) fn_moved("node_weak_components", "node_in_weak", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_is_core <- function(...) fn_moved("node_is_core", "node_is_core", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_is_cutpoint <- function(...) fn_moved("node_is_cutpoint", "node_is_cutpoint", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_is_exposed <- function(...) fn_moved("node_is_exposed", "node_is_exposed", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_is_fold <- function(...) fn_moved("node_is_fold", "node_is_fold", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_is_independent <- function(...) fn_moved("node_is_independent", "node_is_independent", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_is_infected <- function(...) fn_moved("node_is_infected", "node_is_infected", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_is_isolate <- function(...) fn_moved("node_is_isolate", "node_is_isolate", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_is_latent <- function(...) fn_moved("node_is_latent", "node_is_latent", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_is_max <- function(...) fn_moved("node_is_max", "node_is_max", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_is_mean <- function(...) fn_moved("node_is_mean", "node_is_mean", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_is_mentor <- function(...) fn_moved("node_is_mentor", "node_is_mentor", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_is_min <- function(...) fn_moved("node_is_min", "node_is_min", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_is_neighbor <- function(...) fn_moved("node_is_neighbor", "node_is_neighbor", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_is_pendant <- function(...) fn_moved("node_is_pendant", "node_is_pendant", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_is_random <- function(...) fn_moved("node_is_random", "node_is_random", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_is_recovered <- function(...) fn_moved("node_is_recovered", "node_is_recovered", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_is_universal <- function(...) fn_moved("node_is_universal", "node_is_universal", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_is_bridge <- function(...) fn_moved("tie_is_bridge", "tie_is_bridge", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_is_cyclical <- function(...) fn_moved("tie_is_cyclical", "tie_is_cyclical", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_is_feedback <- function(...) fn_moved("tie_is_feedback", "tie_is_feedback", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_is_imbalanced <- function(...) fn_moved("tie_is_imbalanced", "tie_is_imbalanced", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_is_loop <- function(...) fn_moved("tie_is_loop", "tie_is_loop", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_is_max <- function(...) fn_moved("tie_is_max", "tie_is_max", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_is_min <- function(...) fn_moved("tie_is_min", "tie_is_min", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_is_multiple <- function(...) fn_moved("tie_is_multiple", "tie_is_multiple", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_is_path <- function(...) fn_moved("tie_is_path", "tie_is_path", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_is_random <- function(...) fn_moved("tie_is_random", "tie_is_random", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_is_reciprocated <- function(...) fn_moved("tie_is_reciprocated", "tie_is_reciprocated", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_is_simmelian <- function(...) fn_moved("tie_is_simmelian", "tie_is_simmelian", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_is_transitive <- function(...) fn_moved("tie_is_transitive", "tie_is_transitive", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_is_triangular <- function(...) fn_moved("tie_is_triangular", "tie_is_triangular", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_is_triplet <- function(...) fn_moved("tie_is_triplet", "tie_is_triplet", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_adhesion <- function(...) fn_moved("net_adhesion", "net_by_adhesion", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_assortativity <- function(...) fn_moved("net_assortativity", "net_by_assortativity", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_balance <- function(...) fn_moved("net_balance", "net_by_balance", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_betweenness <- function(...) fn_moved("net_betweenness", "net_by_betweenness", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_change <- function(...) fn_moved("net_change", "net_x_change", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_closeness <- function(...) fn_moved("net_closeness", "net_by_closeness", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_cohesion <- function(...) fn_moved("net_cohesion", "net_by_cohesion", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_components <- function(...) fn_moved("net_components", "net_by_components", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_congruency <- function(...) fn_moved("net_congruency", "net_by_congruency", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_connectedness <- function(...) fn_moved("net_connectedness", "net_by_connectedness", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_core <- function(...) fn_moved("net_core", "net_by_core", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_correlation <- function(...) fn_moved("net_correlation", "net_x_correlation", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_degree <- function(...) fn_moved("net_degree", "net_by_degree", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_density <- function(...) fn_moved("net_density", "net_by_density", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_diameter <- function(...) fn_moved("net_diameter", "net_by_diameter", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_diversity <- function(...) fn_moved("net_diversity", "net_by_diversity", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_efficiency <- function(...) fn_moved("net_efficiency", "net_by_efficiency", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_eigenvector <- function(...) fn_moved("net_eigenvector", "net_by_eigenvector", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_equivalency <- function(...) fn_moved("net_equivalency", "net_by_equivalency", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_factions <- function(...) fn_moved("net_factions", "net_by_factions", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_harmonic <- function(...) fn_moved("net_harmonic", "net_by_harmonic", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_heterophily <- function(...) fn_moved("net_heterophily", "net_by_heterophily", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_homophily <- function(...) fn_moved("net_homophily", "net_by_homophily", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_immunity <- function(...) fn_moved("net_immunity", "net_by_immunity", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_indegree <- function(...) fn_moved("net_indegree", "net_by_indegree", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_independence <- function(...) fn_moved("net_independence", "net_by_independence", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_infection_complete <- function(...) fn_moved("net_infection_complete", "net_by_infection_complete", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_infection_peak <- function(...) fn_moved("net_infection_peak", "net_by_infection_peak", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_infection_total <- function(...) fn_moved("net_infection_total", "net_by_infection_total", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_length <- function(...) fn_moved("net_length", "net_by_length", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_modularity <- function(...) fn_moved("net_modularity", "net_by_modularity", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_outdegree <- function(...) fn_moved("net_outdegree", "net_by_outdegree", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_reach <- function(...) fn_moved("net_reach", "net_by_reach", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_reciprocity <- function(...) fn_moved("net_reciprocity", "net_by_reciprocity", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_recovery <- function(...) fn_moved("net_recovery", "net_by_recovery", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_reproduction <- function(...) fn_moved("net_reproduction", "net_by_reproduction", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_richclub <- function(...) fn_moved("net_richclub", "net_by_richclub", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_richness <- function(...) fn_moved("net_richness", "net_by_richness", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_scalefree <- function(...) fn_moved("net_scalefree", "net_by_scalefree", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_smallworld <- function(...) fn_moved("net_smallworld", "net_by_smallworld", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_spatial <- function(...) fn_moved("net_spatial", "net_by_spatial", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_stability <- function(...) fn_moved("net_stability", "net_x_stability", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_strength <- function(...) fn_moved("net_strength", "net_by_strength", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_toughness <- function(...) fn_moved("net_toughness", "net_by_toughness", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_transitivity <- function(...) fn_moved("net_transitivity", "net_by_transitivity", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_transmissibility <- function(...) fn_moved("net_transmissibility", "net_by_transmissibility", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_upperbound <- function(...) fn_moved("net_upperbound", "net_by_upperbound", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_waves <- function(...) fn_moved("net_waves", "net_by_waves", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_adoption_time <- function(...) fn_moved("node_adoption_time", "node_by_adopt_time", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_alpha <- function(...) fn_moved("node_alpha", "node_by_alpha", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_authority <- function(...) fn_moved("node_authority", "node_by_authority", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_betweenness <- function(...) fn_moved("node_betweenness", "node_by_betweenness", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_bridges <- function(...) fn_moved("node_bridges", "node_by_bridges", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_closeness <- function(...) fn_moved("node_closeness", "node_by_closeness", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_constraint <- function(...) fn_moved("node_constraint", "node_by_constraint", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_coreness <- function(...) fn_moved("node_coreness", "node_by_coreness", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_distance <- function(...) fn_moved("node_distance", "node_by_distance", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_diversity <- function(...) fn_moved("node_diversity", "node_by_diversity", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_eccentricity <- function(...) fn_moved("node_eccentricity", "node_by_eccentricity", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_efficiency <- function(...) fn_moved("node_efficiency", "node_by_efficiency", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_effsize <- function(...) fn_moved("node_effsize", "node_by_effsize", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_eigenvector <- function(...) fn_moved("node_eigenvector", "node_by_eigenvector", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_equivalency <- function(...) fn_moved("node_equivalency", "node_by_equivalency", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_exposure <- function(...) fn_moved("node_exposure", "node_by_adopt_exposure", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_flow <- function(...) fn_moved("node_flow", "node_by_flow", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_harmonic <- function(...) fn_moved("node_harmonic", "node_by_harmonic", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_heterophily <- function(...) fn_moved("node_heterophily", "node_by_heterophily", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_hierarchy <- function(...) fn_moved("node_hierarchy", "node_by_hierarchy", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_homophily <- function(...) fn_moved("node_homophily", "node_by_homophily", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_hub <- function(...) fn_moved("node_hub", "node_by_hub", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_indegree <- function(...) fn_moved("node_indegree", "node_by_indegree", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_induced <- function(...) fn_moved("node_induced", "node_by_induced", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_information <- function(...) fn_moved("node_information", "node_by_information", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_kcoreness <- function(...) fn_moved("node_kcoreness", "node_by_kcoreness", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_leverage <- function(...) fn_moved("node_leverage", "node_by_leverage", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_multidegree <- function(...) fn_moved("node_multidegree", "node_by_multidegree", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_neighbours_degree <- function(...) fn_moved("node_neighbours_degree", "node_by_neighbours_degree", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_outdegree <- function(...) fn_moved("node_outdegree", "node_by_outdegree", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_pagerank <- function(...) fn_moved("node_pagerank", "node_by_pagerank", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_posneg <- function(...) fn_moved("node_posneg", "node_by_posneg", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_power <- function(...) fn_moved("node_power", "node_by_power", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_randomwalk <- function(...) fn_moved("node_randomwalk", "node_by_randomwalk", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_reach <- function(...) fn_moved("node_reach", "node_by_reach", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_reciprocity <- function(...) fn_moved("node_reciprocity", "node_by_reciprocity", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_recovery <- function(...) fn_moved("node_recovery", "node_by_adopt_recovery", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_redundancy <- function(...) fn_moved("node_redundancy", "node_by_redundancy", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_richness <- function(...) fn_moved("node_richness", "node_by_richness", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_stress <- function(...) fn_moved("node_stress", "node_by_stress", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_subgraph <- function(...) fn_moved("node_subgraph", "node_by_subgraph", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_thresholds <- function(...) fn_moved("node_thresholds", "node_by_adopt_threshold", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_transitivity <- function(...) fn_moved("node_transitivity", "node_by_transitivity", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_vitality <- function(...) fn_moved("node_vitality", "node_by_vitality", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_betweenness <- function(...) fn_moved("tie_betweenness", "tie_by_betweenness", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_closeness <- function(...) fn_moved("tie_closeness", "tie_by_closeness", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_cohesion <- function(...) fn_moved("tie_cohesion", "tie_by_cohesion", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_degree <- function(...) fn_moved("tie_degree", "tie_by_degree", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+tie_eigenvector <- function(...) fn_moved("tie_eigenvector", "tie_by_eigenvector", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_adopter <- function(...) fn_moved("node_in_adopter", "node_in_adopter", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_automorphic <- function(...) fn_moved("node_in_automorphic", "node_in_automorphic", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_betweenness <- function(...) fn_moved("node_in_betweenness", "node_in_betweenness", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_brokering <- function(...) fn_moved("node_in_brokering", "node_in_brokering", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_community <- function(...) fn_moved("node_in_community", "node_in_community", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_component <- function(...) fn_moved("node_in_component", "node_in_component", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_core <- function(...) fn_moved("node_in_core", "node_in_core", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_eigen <- function(...) fn_moved("node_in_eigen", "node_in_eigen", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_equivalence <- function(...) fn_moved("node_in_equivalence", "node_in_equivalence", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_fluid <- function(...) fn_moved("node_in_fluid", "node_in_fluid", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_greedy <- function(...) fn_moved("node_in_greedy", "node_in_greedy", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_infomap <- function(...) fn_moved("node_in_infomap", "node_in_infomap", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_leiden <- function(...) fn_moved("node_in_leiden", "node_in_leiden", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_louvain <- function(...) fn_moved("node_in_louvain", "node_in_louvain", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_optimal <- function(...) fn_moved("node_in_optimal", "node_in_optimal", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_partition <- function(...) fn_moved("node_in_partition", "node_in_partition", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_regular <- function(...) fn_moved("node_in_regular", "node_in_regular", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_roulette <- function(...) fn_moved("node_in_roulette", "node_in_roulette", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_spinglass <- function(...) fn_moved("node_in_spinglass", "node_in_spinglass", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_strong <- function(...) fn_moved("node_in_strong", "node_in_strong", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_structural <- function(...) fn_moved("node_in_structural", "node_in_structural", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_walktrap <- function(...) fn_moved("node_in_walktrap", "node_in_walktrap", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_in_weak <- function(...) fn_moved("node_in_weak", "node_in_weak", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_by_brokerage <- function(...) fn_moved("net_by_brokerage", "net_x_brokerage", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_by_dyad <- function(...) fn_moved("net_by_dyad", "net_x_dyad", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_by_hazard <- function(...) fn_moved("net_by_hazard", "net_x_hazard", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_by_hierarchy <- function(...) fn_moved("net_by_hierarchy", "net_x_hierarchy", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_by_mixed <- function(...) fn_moved("net_by_mixed", "net_x_mixed", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_by_tetrad <- function(...) fn_moved("net_by_tetrad", "net_x_tetrad", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+net_by_triad <- function(...) fn_moved("net_by_triad", "net_x_triad", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_brokering_activity <- function(...) fn_moved("node_brokering_activity", "node_by_brokering_activity", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_brokering_exclusivity <- function(...) fn_moved("node_brokering_exclusivity", "node_by_brokering_exclusivity", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_by_brokerage <- function(...) fn_moved("node_by_brokerage", "node_x_brokerage", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_by_dyad <- function(...) fn_moved("node_by_dyad", "node_x_dyad", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_by_exposure <- function(...) fn_moved("node_by_exposure", "node_x_exposure", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_by_path <- function(...) fn_moved("node_by_path", "node_x_path", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_by_tetrad <- function(...) fn_moved("node_by_tetrad", "node_x_tetrad", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_by_tie <- function(...) fn_moved("node_by_tie", "node_x_tie", version = "2.0.0")
+
+#' @describeIn defunct Deprecated on 2026-03-22.
+#' @export
+node_by_triad <- function(...) fn_moved("node_by_triad", "node_x_triad", version = "2.0.0")
 
 # nocov end

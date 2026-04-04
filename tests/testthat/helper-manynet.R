@@ -1,15 +1,11 @@
 options(manynet_verbosity = "quiet")
 options(snet_verbosity = "quiet")
 
-collect_functions <- function(pattern, package = "manynet"){
-  getNamespaceExports(package)[grepl(pattern, getNamespaceExports(package))]
-}
-
 expect_values <- function(object, ref, toler = 3) {
   # 1. Capture object and label
   # act <- quasi_label(rlang::enquo(object), arg = "object")
   act <- list(val = object, label = deparse(substitute(object)))
-  
+
   # 2. Call expect()
   act$n <- round(c(unname(unlist(act$val))), toler)
   ref <- round(c(unname(unlist(ref))), toler)
@@ -17,7 +13,7 @@ expect_values <- function(object, ref, toler = 3) {
     act$n == ref,
     sprintf("%s has values %f, not values %f.", act$lab, act$n, ref)
   )
-  
+
   # 3. Invisibly return the value
   invisible(act$val)
 }
@@ -26,43 +22,104 @@ expect_mark <- function(object, ref, top = 3) {
   # 1. Capture object and label
   # act <- quasi_label(rlang::enquo(object), arg = "object")
   act <- list(val = object, label = deparse(substitute(object)))
-  
+
   # 2. Call expect()
   act$n <- as.character(c(unname(unlist(act$val)))[1:top])
   ref <- as.character(c(unname(unlist(ref)))[1:top])
   expect(
     all(act$n == ref),
-    sprintf("%s has values %s, not values %s.", act$lab, 
-            paste(act$n, collapse = ", "), paste(ref, collapse = ", "))
+    sprintf(
+      "%s has values %s, not values %s.",
+      act$lab,
+      paste(act$n, collapse = ", "),
+      paste(ref, collapse = ", ")
+    )
   )
-  
+
   # 3. Invisibly return the value
   invisible(act$val)
 }
 
 
-top3 <- function(res, dec = 4){
-  if(is.numeric(res)){
-    unname(round(res, dec))[1:3]  
-  } else unname(res)[1:3]
+top3 <- function(res, dec = 4) {
+  if (is.numeric(res)) {
+    unname(round(res, dec))[1:3]
+  } else {
+    unname(res)[1:3]
+  }
 }
 
-bot3 <- function(res, dec = 4){
+bot3 <- function(res, dec = 4) {
   lr <- length(res)
-  if(is.numeric(res)){
-    unname(round(res, dec))[(lr-2):lr]
-  } else unname(res)[(lr-2):lr]
+  if (is.numeric(res)) {
+    unname(round(res, dec))[(lr - 2):lr]
+  } else {
+    unname(res)[(lr - 2):lr]
+  }
 }
 
-top5 <- function(res, dec = 4){
-  if(is.numeric(res)){
+top5 <- function(res, dec = 4) {
+  if (is.numeric(res)) {
     unname(round(res, dec))[1:5]
-  } else unname(res)[1:3]
+  } else {
+    unname(res)[1:3]
+  }
 }
 
-bot5 <- function(res, dec = 4){
+bot5 <- function(res, dec = 4) {
   lr <- length(res)
-  if(is.numeric(res)){
-    unname(round(res, dec))[(lr-4):lr]
-  } else unname(res)[(lr-2):lr]
+  if (is.numeric(res)) {
+    unname(round(res, dec))[(lr - 4):lr]
+  } else {
+    unname(res)[(lr - 2):lr]
+  }
 }
+
+funs_objs <- mget(ls("package:manynet"), inherits = TRUE)
+
+set.seed(1234)
+data_objs <- list(
+  directed = generate_random(12, directed = TRUE),
+  twomode = generate_random(c(6, 6)),
+  labelled = to_signed(add_node_attribute(
+    create_wheel(12),
+    "name",
+    LETTERS[1:12]
+  )),
+  attribute = add_node_attribute(
+    create_ring(12),
+    "group",
+    rep(c("A", "B"), each = 6)
+  ),
+  weighted = add_tie_attribute(
+    create_ring(12),
+    "weight",
+    rep(c(1, 2), each = 6)
+  ),
+  diffusion = play_diffusion(
+    create_ring(12),
+    seeds = 1,
+    steps = 5,
+    latency = 0.75,
+    recovery = 0.25
+  )
+)
+
+# stocnet object
+test_stocnet_obj <- make_stocnet(
+  info = list(name = "Test Dataset", directed = TRUE),
+  nodes = tibble::tibble(
+    id = as.numeric(1:12),
+    group = rep(c("A", "B"), each = 6)
+  ),
+  ties = tibble::tibble(
+    from = as.numeric(1:12),
+    to = as.numeric(c(2:12, 1)),
+    weight = rep(c(1, 2), each = 6)
+  ),
+  changes = tibble::tibble(
+    node = as.numeric(1:12),
+    var = "group",
+    value = rep(c("A", "B"), each = 6)
+  )
+)

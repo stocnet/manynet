@@ -1,7 +1,7 @@
 # Explicit ####
 
 #' Making networks with explicit ties
-#'
+#' @name make_explicit
 #' @description
 #'   This function creates a network from a vector of explicitly named nodes 
 #'   and ties between them.
@@ -16,7 +16,6 @@
 #'   Sets of nodes can be linked to other sets of nodes through use of
 #'   a semi-colon.
 #'   See the example for a demonstration.
-#' @name make_explicit
 #' @family makes
 #' @param ... Arguments passed on to `{igraph}`.
 #' @importFrom igraph make_graph
@@ -115,136 +114,10 @@ create_explicit <- function(...){
   as_tidygraph(res)
 }
 
-# Collections ####
-
-#' Making ego networks through interviewing
-#'
-#' @description
-#'   This function creates an ego network through interactive interview questions.
-#'   It currently only supports a simplex, directed network of one
-#'   or two modes.
-#'   These directed networks can be reformatted as undirected using `to_undirected()`. 
-#'   Multiplex networks can be collected separately and then joined together
-#'   afterwards.
-#'   
-#'   The function supports the use of rosters or a maximum number of
-#'   alters to collect. If a roster is provided it will offer ego all names.
-#'   The function can also prompt ego to interpret each node's attributes,
-#'   or about how ego considers their alters to be related.
-#' @param ego A character string.
-#'   If desired, the name of ego can be declared as an argument.
-#'   Otherwise the first prompt of the function will be to enter a name for ego.
-#' @param max_alters The maximum number of alters to collect.
-#'   By default infinity, but many name generators will expect a maximum of
-#'   e.g. 5 alters to be named.
-#' @param roster A vector of node names to offer as potential alters for ego.
-#' @param interpreter Logical. If TRUE, then it will ask for which attributes
-#'   to collect and give prompts for each attribute for each node in the network.
-#'   By default FALSE.
-#' @param interrelater Logical. If TRUE, then it will ask for the contacts from
-#'   each of the alters perspectives too.
-#' @param twomode Logical. If TRUE, then it will assign ego to the first mode
-#'   and all alters to a second mode.
-#' @name make_ego
-#' @family makes
-#' @export
-create_ego <- function(ego = NULL,
-                       max_alters = Inf,
-                       roster = NULL,
-                       interpreter = FALSE,
-                       interrelater = FALSE,
-                       twomode = FALSE){
-  snet_minor_info("Make sure you assign this function, e.g. {.code obj <- create_ego()}")
-  if(is.null(ego)){
-    snet_prompt("What is ego's name?")
-    ego <- readline()
-    if(!is.null(roster)){
-      if(ego %in% roster) roster <- setdiff(roster, ego)
-    }
-  }
-  snet_prompt("What is the relationship you are collecting?")
-  snet_minor_info("Name the relationship in the singular, e.g. 'friendship'")
-  ties <- readline()
-  # cli::cli_text("Is this a weighted network?")
-  # weighted <- q_yes()
-  alters <- as.character(vector())
-  if(!is.null(roster)){
-    for (alt in roster){
-      snet_prompt("Is {ego} connected by a {ties} tie to {alt}?")
-      alters <- c(alters, q_yes())
-    }
-    alters <- roster[alters]
-  } else {
-    repeat{
-      contacts <- length(alters)
-      snet_prompt("Please name {cli::qty(contacts)} {?a/another/another} {ties} contact of {ego}:")
-      alters <- c(alters, readline())
-      if(length(alters) == max_alters){
-        snet_info("{.code max_alters} reached.")
-        break
-      }
-      if (q_yes("Are these all the contacts?")) break
-    }
-  }
-  out <- as_tidygraph(as.data.frame(cbind(ego, alters)))
-  if(interpreter){
-    attr <- vector()
-    repeat{
-      snet_prompt("Please name an attribute you are collecting, or press [Enter] to continue.")
-      attr <- c(attr, readline())
-      if (attr[length(attr)]==""){
-        attr <- attr[-length(attr)]
-        break
-      } 
-    }
-    if(length(attr)>0){
-      for(att in attr){
-        values <- vector()
-        for (alt in c(ego, alters)){
-          snet_prompt("What value does {alt} have for {att}:")
-          values <- c(values, readline())
-        }
-        out <- add_node_attribute(out, att, values)
-      }
-    }
-  }
-  if(interrelater){
-    for(alt in alters){
-      others <- setdiff(c(ego,alters), alt)
-      extra <- vector()
-      for(oth in others){
-        snet_prompt("Is {alt} connected by {ties} to {oth}?")
-        extra <- c(extra, q_yes())
-      }
-      # cat(c(rbind(alt, others[extra])))
-      out <- add_ties(out, c(rbind(alt, others[extra])))
-    }
-  }
-  if(!is.null(roster) && any(!roster %in% node_names(out))){
-    isolates <- roster[!roster %in% node_names(out)]
-    out <- add_nodes(out, length(isolates), list(name = isolates))
-  }
-  out <- add_info(out, ties = ties, name = paste("Ego network of", ego),
-                  collection = "Interview",
-                  year = format(as.Date(Sys.Date(), format="%d/%m/%Y"),"%Y"))
-  if(twomode) out <- to_twomode(out, c(F, rep(T,net_nodes(out)-1)))
-  out
-}
-
-q_yes <- function(msg = NULL){
-  if(!is.null(msg)) snet_prompt(msg)
-  out <- readline()
-  if(is.logical(out)) return(out)
-  if(out=="") return(FALSE)
-  choices <- c("yes","no","true","false")
-  out <- c(TRUE,FALSE,TRUE,FALSE)[pmatch(tolower(out), tolower(choices))]
-  out
-}
-
 # Sets ####
 
 #' Making motifs
-#'
+#' @name make_motifs
 #' @description
 #'   `create_motifs()` is used to create a list of networks that represent the
 #'   subgraphs or motifs corresponding to a certain number of nodes and direction.
@@ -252,7 +125,6 @@ q_yes <- function(msg = NULL){
 #'   and the latter only for undirected networks.
 #' 
 #' @inheritParams make_create
-#' @name make_motifs
 #' @family makes
 #' @export
 create_motifs <- function(n, directed = FALSE){
@@ -305,7 +177,7 @@ create_motifs <- function(n, directed = FALSE){
                 Z4 = create_explicit(A--B--C--D--A--C),
                 X4 = create_explicit(A--B--C--D--A--C, B--D)))
   } else 
-    cli::cli_alert_warning("Motifs not yet available for that kind of network.")
+    snet_unavailable("Motifs not yet available for that kind of network.")
 }
 
 
@@ -388,7 +260,7 @@ create_empty <- function(n, directed = FALSE) {
     out <- as_igraph(out, twomode = TRUE)
   }
   if (!directed) out <- to_undirected(out)
-  as_tidygraph(out) %>% 
+  as_tidygraph(out) |> 
     add_info(name = "Empty network")
 }
 
@@ -408,7 +280,7 @@ create_filled <- function(n, directed = FALSE) {
     out <- matrix(1, n[1], n[2])
     out <- as_igraph(out, twomode = TRUE)
   }
-  as_tidygraph(out) %>% 
+  as_tidygraph(out) |> 
     add_info(name = "Filled network")
 }
 
@@ -457,7 +329,7 @@ create_ring <- function(n, directed = FALSE, width = 1, ...) {
     mat[mat > 1] <- 1
     out <- as_igraph(mat, twomode = TRUE)
   }
-  as_tidygraph(out) %>% 
+  as_tidygraph(out) |> 
     add_info(name = "Ring network")
 }
 
@@ -482,7 +354,7 @@ create_star <- function(n,
     }
     out <- as_igraph(out, twomode = TRUE)
   }
-  as_tidygraph(out) %>% 
+  as_tidygraph(out) |> 
     add_info(name = "Star network")
 }
 
@@ -577,13 +449,13 @@ create_lattice <- function(n,
       }
       if (!directed)
         nei1.5[lower.tri(nei1.5)] <- t(nei1.5)[lower.tri(nei1.5)]
-      as_tidygraph(nei1.5) %>% 
+      as_tidygraph(nei1.5) |> 
         add_info(name = "Lattice network")
     } else if (width == 12) {
-      as_tidygraph(igraph::make_lattice(dims, nei = 2, directed = directed)) %>% 
+      as_tidygraph(igraph::make_lattice(dims, nei = 2, directed = directed)) |> 
         add_info(name = "Lattice network")
     } else if (width == 4) {
-      as_tidygraph(igraph::make_lattice(dims, nei = 1, directed = directed)) %>% 
+      as_tidygraph(igraph::make_lattice(dims, nei = 1, directed = directed)) |> 
         add_info(name = "Lattice network")
     } else snet_abort("`max_neighbourhood` expected to be 4, 8, or 12")
   } else {
@@ -602,7 +474,7 @@ create_lattice <- function(n,
     mat[lower.tri(mat)] <- 0
     out <- mat[rowSums(mat) ==2,]
     out <- do.call(rbind, replicate(nrow(mat)/nrow(out), out, simplify=FALSE))
-    as_tidygraph(out) %>% 
+    as_tidygraph(out) |> 
       add_info(name = "Lattice network")
   }
 }
@@ -834,7 +706,7 @@ create_windmill <- function(n) {
 #' @examples
 #'   create_cycle(6)
 #' @export
-create_cycle <- function(n){
+create_cycle <- function(n, directed = FALSE){
   # Helper: Create edge list for unimodal cycle
   unimodal_cycle <- function(n_nodes) {
     edges <- data.frame(
@@ -849,7 +721,7 @@ create_cycle <- function(n){
     if(n_modes[1] != n_modes[2]){
       snet_abort("Two-mode cycles require equal number of nodes in each mode.")
     }
-    unimodal_cycle(sum(n_modes)) %>% 
+    unimodal_cycle(sum(n_modes)) |> 
       mutate_nodes(type = rep_len(c(F,T), sum(n_modes)))
   }
   
@@ -863,6 +735,7 @@ create_cycle <- function(n){
   } else {
     snet_abort("Argument 'n' must be a scalar or a vector of length 2.")
   }
+  if(!directed) net <- to_undirected(net)
   return(net)
 }
 
@@ -870,7 +743,7 @@ create_cycle <- function(n){
 #' @examples
 #'   create_wheel(6)
 #' @export
-create_wheel <- function(n) {
+create_wheel <- function(n, directed = FALSE) {
   if (length(n) == 1) {
     if (n < 4) {
       snet_abort("At least 4 nodes required to form a wheel graph.")
@@ -882,7 +755,7 @@ create_wheel <- function(n) {
     # Connect center to each rim node
     center_edges <- cbind(center_node, rim_nodes)
     edges <- rbind(rim_cycle, center_edges)
-    g <- igraph::graph_from_edgelist(edges, directed = FALSE)
+    g <- igraph::graph_from_edgelist(edges, directed = directed)
     return(g)
   } else if (length(n) == 2) {
     snet_abort("Wheel graphs are undefined for two-mode networks",
@@ -947,7 +820,7 @@ infer_directed <- function(n, directed) {
 
 infer_outdegree <- function(n, outdegree) {
   if (is.null(outdegree) && is_manynet(n)){
-    outdegree <- node_deg(n, direction = "out")
+    outdegree <- .node_deg(n, direction = "out")
     if(is_twomode(n)) outdegree <- outdegree[1:net_dims(n)[1]]
   } 
   outdegree
@@ -955,7 +828,7 @@ infer_outdegree <- function(n, outdegree) {
 
 infer_indegree <- function(n, indegree) {
   if (is.null(indegree) && is_manynet(n)){
-    indegree <- node_deg(n, direction = "in")
+    indegree <- .node_deg(n, direction = "in")
     if(is_twomode(n)) indegree <- indegree[(net_dims(n)[1]+1):sum(net_dims(n))]
   } 
   indegree

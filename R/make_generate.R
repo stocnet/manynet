@@ -134,27 +134,38 @@ generate_configuration <- function(.data){
   method1 <- "configuration"
   method2 <- "fast.heur.simple"
   if(is_twomode(.data)){
-    degs <- node_deg(.data)
-    outs <- ifelse(!c(attr(degs, "mode")),c(degs),rep(0,length(degs)))
-    ins <- ifelse(c(attr(degs, "mode")),c(degs),rep(0,length(degs)))
+    modes <- node_attribute(.data, "type")
+    degs <- .node_deg(.data)
+    outs <- ifelse(!modes,c(degs),rep(0,length(degs)))
+    ins <- ifelse(modes,c(degs),rep(0,length(degs)))
     out <- igraph::sample_degseq(outs, ins, method = method2)
-    out <- as_tidygraph(out) %>% mutate(type = c(attr(degs, "mode")))
+    out <- as_tidygraph(out) |> add_node_attribute("type", modes)
   } else {
     if(is_complex(.data) || is_multiplex(.data) && is_directed(.data)) 
-      out <- igraph::sample_degseq(node_deg(.data, direction = "out"), 
-                                   node_deg(.data, direction = "in"),
+      out <- igraph::sample_degseq(.node_deg(.data, direction = "out"), 
+                                   .node_deg(.data, direction = "in"),
                                    method = method1)
     if(is_complex(.data) || is_multiplex(.data) && !is_directed(.data)) 
-      out <- igraph::sample_degseq(node_deg(.data), method = method1)
+      out <- igraph::sample_degseq(.node_deg(.data), method = method1)
     if(!(is_complex(.data) || is_multiplex(.data)) && is_directed(.data)) 
-      out <- igraph::sample_degseq(node_deg(.data, direction = "out"), 
-                                   node_deg(.data, direction = "in"), 
+      out <- igraph::sample_degseq(.node_deg(.data, direction = "out"), 
+                                   .node_deg(.data, direction = "in"), 
                                    method = method2)
     if(!(is_complex(.data) || is_multiplex(.data)) && !is_directed(.data)) 
-      out <- igraph::sample_degseq(node_deg(.data), 
+      out <- igraph::sample_degseq(.node_deg(.data), 
                                    method = method2)
   }
   as_tidygraph(out)
+}
+
+.node_deg <- function(.data, direction = "all"){
+  if(is_twomode(.data)){
+    out <- igraph::degree(as_igraph(.data), mode = ifelse(direction == "out", "out", "in"))
+  } else {
+    out <- igraph::degree(as_igraph(.data), mode = ifelse(direction == "out", "out", 
+                                                  ifelse(direction == "in", "in", "all")))
+  }
+  out
 }
 
 #' @rdname make_random 
@@ -174,12 +185,21 @@ generate_man <- function(n, man = NULL){
   if(!is.null(man) && length(man)==3){
     dcen <- man
   } else if (is_manynet(n)){
-    dcen <- net_by_dyad(n)
+    dcen <- .net_by_dyad(n)
     if(length(dcen)==2) dcen <- c(dcen[1],0,dcen[2])
   } else snet_abort("'man' needs to be specified with a numeric vector of length 3.")
   n <- infer_n(n)
   out <- sna::rguman(1, n, dcen[1], dcen[2], dcen[3])
   as_tidygraph(out)
+}
+
+.net_by_dyad <- function(.data) {
+  .data <- manynet::expect_nodes(.data)
+  out <- suppressWarnings(igraph::dyad_census(manynet::as_igraph(.data)))
+  out <- unlist(out)
+  names(out) <- c("Mutual", "Asymmetric", "Null")
+  if (!manynet::is_directed(.data)) out <- out[c(1, 3)]
+  out
 }
 
 #' @rdname make_random 
@@ -375,10 +395,54 @@ generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1,
                                   islands.size = ceiling(n/islands),
                                   islands.pin = p,
                                   n.inter = bridges)
-    if(net_nodes(out) != n) out <- delete_nodes(out, order(node_constraint(out), decreasing = TRUE)[1:(net_nodes(out)-n)])
+    if(net_nodes(out) != n) out <- delete_nodes(out, 
+          order(.node_constraint(out), decreasing = TRUE)[1:(net_nodes(out)-n)])
     if(directed) out <- to_directed(out)
   }
   as_tidygraph(out)
+}
+
+.node_constraint <- function(.data) {
+  .data <- manynet::expect_nodes(.data)
+  if (manynet::is_twomode(.data)) {
+    get_constraint_scores <- function(mat) {
+      inst <- colnames(mat)
+      rowp <- mat * matrix(1 / rowSums(mat), nrow(mat), ncol(mat))
+      colp <- mat * matrix(1 / colSums(mat), nrow(mat), ncol(mat), byrow = T)
+      res <- vector()
+      for (i in inst) {
+        ci <- 0
+        membs <- names(which(mat[, i] > 0))
+        for (a in membs) {
+          pia <- colp[a, i]
+          oth <- membs[membs != a]
+          pbj <- 0
+          if (length(oth) == 1) {
+            for (j in inst[mat[oth, ] > 0 & inst != i]) {
+              pbj <- sum(pbj, sum(colp[oth, i] * rowp[oth, j] * colp[a, j]))
+            }
+          } else {
+            for (j in inst[colSums(mat[oth, ]) > 0 & inst != i]) {
+              pbj <- sum(pbj, sum(colp[oth, i] * rowp[oth, j] * colp[a, j]))
+            }
+          }
+          cia <- (pia + pbj)^2
+          ci <- sum(ci, cia)
+        }
+        res <- c(res, ci)
+      }
+      names(res) <- inst
+      res
+    }
+    inst.res <- get_constraint_scores(manynet::as_matrix(.data))
+    actr.res <- get_constraint_scores(t(manynet::as_matrix(.data)))
+    res <- c(actr.res, inst.res)
+  } else {
+    res <- igraph::constraint(manynet::as_igraph(.data), 
+                              nodes = igraph::V(.data), 
+                              weights = NULL)
+  }
+  res
 }
 
 #' @rdname make_stochastic 

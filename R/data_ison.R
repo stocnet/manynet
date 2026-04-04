@@ -210,7 +210,7 @@
 #' This network should solely be used
 #' for demonstration purposes as it does not describe a real network.
 #' To convert into the two-mode version, 
-#' assign `ison_brandes %>% rename(type = twomode_type)`.
+#' assign `ison_brandes |> rename(type = twomode_type)`.
 #' @docType data
 #' @keywords datasets
 #' @name ison_brandes

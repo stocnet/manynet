@@ -63,12 +63,11 @@ test_that("net_tie_attributes works", {
 
 net_named <- add_info(ison_adolescents, name = "Adolescents", year = 1994)
 
-test_that("net_info works", {
-  out <- net_info(net_named)
+test_that("as_infolist works", {
+  out <- as_infolist(net_named)
   expect_type(out, "list")
   expect_equal(out$name, "Adolescents")
   expect_equal(out$year, 1994)
-  expect_type(net_info(as_matrix(ison_adolescents)), "list")
 })
 
 test_that("net_attributes works", {

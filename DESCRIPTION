@@ -1,7 +1,7 @@
 Package: manynet
 Title: Many Ways to Make, Modify, Mark, and Measure Myriad Networks
-Version: 1.7.2
-Date: 2026-02-26
+Version: 2.0.0
+Date: 2026-04-04
 Description: Many tools for making, modifying, marking, measuring, 
    and motifs and memberships of many different types of networks.
    All functions operate with matrices, edge lists, and 'igraph', 'network', and 'tidygraph' objects,
@@ -16,7 +16,7 @@ Language: en-GB
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.3
-Depends: R (>= 3.6.0)
+Depends: R (>= 4.1.0)
 Imports:
     cli,
     dplyr (>= 1.1.0),
@@ -25,11 +25,8 @@ Imports:
     pillar,
     tidygraph
 Suggests:
-    autograph,
     knitr,
-    learnr,
     methods,
-    netdiffuseR,
     readxl,
     rmarkdown,
     RSiena,

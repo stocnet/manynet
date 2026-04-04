@@ -5,7 +5,7 @@
 \alias{irps_revere}
 \title{Two-mode network of Paul Revere's (Fischer 1995)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, two-mode network of 261 nodes and 319 ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A labelled, two-mode network of 254 nodes and 7 nodes and 319 ties
 #> 
 #> -- Nodes
 #> # A tibble: 261 x 2

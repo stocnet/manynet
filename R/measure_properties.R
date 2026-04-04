@@ -1,19 +1,14 @@
-#' Describing network properties
-#' 
+# Dimensions ####
+
+#' Describing network dimensions
+#' @name measure_dims
 #' @description 
 #'   These functions extract certain attributes from given network data:
 #'   
-#'   - `net_name()` returns the name of the network, if it has one.
 #'   - `net_nodes()` returns the total number of nodes (of any mode) in a network.
 #'   - `net_ties()` returns the number of ties in a network.
 #'   - `net_dims()` returns the dimensions of a network in a vector
 #'   as long as the number of modes in the network.
-#'   - `net_node_names()` returns a vector of the names of the nodes in a network,
-#'   if they have been defined.
-#'   - `net_node_attributes()` returns a vector of nodal attributes in a network.
-#'   - `net_tie_names()` returns a vector of the names of the ties in a network,
-#'   if they have been defined.
-#'   - `net_tie_attributes()` returns a vector of tie attributes in a network.
 #'   
 #'   These functions are also often used as helpers within other functions.
 #' @return `net_*()` functions always relate to the overall graph or network,
@@ -21,53 +16,104 @@
 #'   `net_dims()` returns an integer of the number of nodes in a one-mode network,
 #'   or two integers representing the number of nodes in each nodeset 
 #'   in the case of a two-mode network.
-#'   `net_*_attributes()` returns a string vector with the names
-#'   of all node or tie attributes in the network.
-#' @name measure_properties
 #' @family measures
-#' @inheritParams mark_is
+#' @template param_data
 NULL
 
-#' @rdname measure_properties
-#' @param prefix An optional string to be added before the name of the network.
-#' @examples
-#' net_name(ison_southern_women)
-#' @export
-net_name <- function(.data, prefix = NULL){
-  existname <- ""
-  if(!is.null(igraph::graph_attr(.data, "name"))) {
-    existname <- igraph::graph_attr(.data, 'name')
-  } else if(is_grand(.data) && 
-            !is.null(igraph::graph_attr(.data, "grand")$name)){
-    existname <- igraph::graph_attr(.data, 'grand')$name
-  }
-  if(existname != "" && !is.null(prefix)) existname <- paste(prefix, existname)
-  existname
-}
-
-#' @rdname measure_properties
+#' @rdname measure_dims
 #' @examples
 #' net_nodes(ison_southern_women)
 #' @export
-net_nodes <- function(.data){
+net_nodes <- function(.data) UseMethod("net_nodes")
+
+#' @export
+net_nodes.stocnet <- function(.data){
+  nrow(.data$nodes)
+}
+
+#' @export
+net_nodes.matrix <- function(.data){
+  if(is_twomode(.data)){
+    sum(dim(.data))
+  } else nrow(.data)
+}
+
+#' @export
+net_nodes.igraph <- function(.data){
   if(is_list(.data)){
     nodes <- vapply(.data, function(x) igraph::vcount(as_igraph(x)), 
-           FUN.VALUE = numeric(1))
+                    FUN.VALUE = numeric(1))
     make_network_measure(max(nodes), .data[[1]], call = deparse(sys.call()))
   } else make_network_measure(igraph::vcount(as_igraph(.data)), .data, 
                               call = deparse(sys.call()))
 }
 
-#' @rdname measure_properties
+#' @export
+net_nodes.tbl <- function(.data){
+  if(is_list(.data)){
+    nodes <- vapply(.data, function(x) igraph::vcount(as_igraph(x)), 
+                    FUN.VALUE = numeric(1))
+    make_network_measure(max(nodes), .data[[1]], call = deparse(sys.call()))
+  } else make_network_measure(igraph::vcount(as_igraph(.data)), .data, 
+                              call = deparse(sys.call()))
+}
+
+#' @rdname measure_dims
+#' @examples
+#' net_modes(ison_southern_women)
+#' @export
+net_modes <- function(.data) UseMethod("net_modes")
+
+#' @export
+net_modes.stocnet <- function(.data){
+  if("mode" %in% names(.data$nodes)){
+    length(unique(.data$nodes$mode))
+  } else 1L
+}
+
+#' @export
+net_modes.igraph <- function(.data){
+  if(is_twomode(.data)) 2L else 1L
+}
+
+#' @rdname measure_dims
 #' @examples
 #' net_ties(ison_southern_women)
 #' @export
-net_ties <- function(.data){
+net_ties <- function(.data) UseMethod("net_ties")
+
+#' @export
+net_ties.stocnet <- function(.data){
+  nrow(.data$ties)
+}
+
+#' @export
+net_ties.igraph <- function(.data){
   make_network_measure(igraph::ecount(as_igraph(.data)), .data,
                        call = deparse(sys.call()))
 }
 
-#' @rdname measure_properties
+#' @rdname measure_dims
+#' @examples
+#' net_layers(ison_southern_women)
+#' @export
+net_layers <- function(.data) UseMethod("net_layers")
+
+#' @export
+net_layers.stocnet <- function(.data){
+  if("layer" %in% names(.data$ties)){
+    length(unique(.data$ties$layer))
+  } else 1L
+}
+
+#' @export
+net_layers.igraph <- function(.data){
+  if("type" %in% net_tie_attributes(.data)){
+    length(unique(tie_attribute(.data, "type")))
+  } else 1L
+}
+
+#' @rdname measure_dims
 #' @examples
 #' net_dims(ison_southern_women)
 #' net_dims(to_mode1(ison_southern_women))
@@ -110,45 +156,156 @@ net_dims.network <- function(.data){
   out <- network::network.size(.data)
   if(is_twomode(.data)){
     bip1 <- network::get.network.attribute(as_network(.data), 
-                                         "bipartite")
+                                           "bipartite")
     out <- c(bip1, out - bip1)
   }
   out
 }
 
-#' @rdname measure_properties
-#' @importFrom igraph graph_attr
-#' @examples
-#'   net_node_names(ison_algebra)
 #' @export
-net_node_names <- function(.data){
-  igraph::graph_attr(.data, "nodes")
+net_dims.stocnet <- function(.data){
+  if(is_twomode(.data)){
+    out <- tabulate(match(.data$nodes$mode, unique(.data$nodes$mode)))
+  } else nrow(.data$nodes)
 }
 
-#' @rdname measure_properties
+# Names ####
+
+#' Describing network names
+#' @name member_names
+#' @description 
+#'   These functions extract certain attributes from given network data:
+#'   
+#'   - `net_name()` returns the name of the network, if it has one.
+#'   - `mode_names()` returns a vector of the names of the modes in a network,
+#'   if they have been defined.
+#'   - `net_node_attributes()` returns a vector of nodal attributes in a network.
+#'   - `layer_names()` returns a vector of the names of the layers in a network,
+#'   if they have been defined.
+#'   - `net_tie_attributes()` returns a vector of tie attributes in a network.
+#'   
+#'   These functions are also often used as helpers within other functions.
+#' @return `net_*()` functions always relate to the overall graph or network,
+#'   usually returning a scalar.
+#'   `net_*_attributes()` returns a string vector with the names
+#'   of all node or tie attributes in the network.
+#' @family attributes
+#' @template param_data
+NULL
+
+#' @rdname member_names
+#' @param prefix An optional string to be added before the name of the network.
+#' @examples
+#' net_name(ison_southern_women)
+#' @export
+net_name <- function(.data, prefix = NULL) UseMethod("net_name")
+
+#' @export
+net_name.stocnet <- function(.data, prefix = NULL){
+  existname <- ""
+  if(!is.null(.data$info$name)) {
+    existname <- .data$info$name
+  }
+  if(existname != "" && !is.null(prefix)) existname <- paste(prefix, existname)
+  existname  
+}
+
+#' @export
+net_name.igraph <- function(.data, prefix = NULL){
+  existname <- ""
+  if(!is.null(igraph::graph_attr(.data, "name"))) {
+    existname <- igraph::graph_attr(.data, 'name')
+  } else if(is_grand(.data) && 
+            !is.null(igraph::graph_attr(.data, "grand")$name)){
+    existname <- igraph::graph_attr(.data, 'grand')$name
+  }
+  if(existname != "" && !is.null(prefix)) existname <- paste(prefix, existname)
+  existname
+}
+
+#' @export
+net_name.network <- function(.data, prefix = NULL){
+  existname <- ""
+  if(!is.null(igraph::graph_attr(.data, "name"))) {
+    existname <- igraph::graph_attr(.data, 'name')
+  } else if(is_grand(.data) && 
+            !is.null(igraph::graph_attr(.data, "grand")$name)){
+    existname <- igraph::graph_attr(.data, 'grand')$name
+  }
+  if(existname != "" && !is.null(prefix)) existname <- paste(prefix, existname)
+  existname
+}
+
+
+#' @rdname member_names
+#' @importFrom igraph graph_attr
+#' @examples
+#'   mode_names(ison_algebra)
+#' @export
+mode_names <- function(.data) UseMethod("mode_names")
+
+#' @export
+mode_names.igraph <- function(.data){
+  igraph::graph_attr(.data, "nodes") %||%
+    c(igraph::graph_attr(.data, "grand")$vertex1,
+      igraph::graph_attr(.data, "grand")$vertex2)
+}
+
+#' @export
+mode_names.stocnet <- function(.data){
+  .data$info$nodes
+}
+
+#' @rdname member_names
 #' @importFrom igraph vertex_attr_names
 #' @examples
 #'   net_node_attributes(fict_lotr)
 #' @export
-net_node_attributes <- function(.data){
-  igraph::vertex_attr_names(as_igraph(.data))
+net_node_attributes <- function(.data) UseMethod("net_node_attributes")
+
+#' @export
+net_node_attributes.igraph <- function(.data){
+  igraph::vertex_attr_names(.data)
 }
 
-#' @rdname measure_properties
+#' @export
+net_node_attributes.stocnet <- function(.data){
+  names(.data$nodes)
+}
+
+#' @rdname member_names
 #' @importFrom igraph graph_attr
 #' @examples
-#'   net_tie_names(ison_algebra)
+#'   layer_names(ison_algebra)
 #' @export
-net_tie_names <- function(.data){
-  igraph::graph_attr(.data, "ties")
+layer_names <- function(.data) UseMethod("layer_names")
+
+#' @export
+layer_names.igraph <- function(.data){
+  igraph::graph_attr(.data, "ties") %||%
+    c(igraph::graph_attr(.data, "grand")$edge.pos,
+      igraph::graph_attr(.data, "grand")$edge.neg)
 }
 
-#' @rdname measure_properties
+#' @export
+layer_names.stocnet <- function(.data){
+  .data$info$ties
+}
+
+#' @rdname member_names
 #' @importFrom igraph edge_attr_names
 #' @examples
 #'   net_tie_attributes(ison_algebra)
 #' @export
-net_tie_attributes <- function(.data){
-  igraph::edge_attr_names(as_igraph(.data))
+net_tie_attributes <- function(.data) UseMethod("net_tie_attributes")
+
+#' @export
+net_tie_attributes.igraph <- function(.data){
+  igraph::edge_attr_names(.data)
+}
+
+#' @export
+net_tie_attributes.stocnet <- function(.data){
+  names(.data$ties)
 }
 

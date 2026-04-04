@@ -8,7 +8,7 @@
 \alias{tie_is_twomode}
 \title{Describing attributes of ties in a network}
 \usage{
-tie_attribute(.data, attribute)
+tie_attribute(.data, attr_name)
 
 tie_weights(.data)
 
@@ -17,7 +17,7 @@ tie_signs(.data)
 tie_is_twomode(.data)
 }
 \arguments{
-\item{.data}{An object of a manynet-consistent class:
+\item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
 \item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
@@ -26,7 +26,8 @@ tie_is_twomode(.data)
 \item tbl_graph, from the \code{{tidygraph}} package
 }}
 
-\item{attribute}{Character string naming an attribute in the object.}
+\item{attr_name}{Character string naming a nodal attribute.
+The attribute itself may be a logical mark, numeric measure, or character membership vector.}
 }
 \description{
 These functions extract certain attributes from network data:
@@ -50,21 +51,6 @@ tie_is_twomode(fict_actually)
 \seealso{
 Other measures: 
 \code{\link{measure_attributes_nodes}},
-\code{\link{measure_central_between}},
-\code{\link{measure_central_close}},
-\code{\link{measure_central_degree}},
-\code{\link{measure_central_eigen}},
-\code{\link{measure_closure}},
-\code{\link{measure_cohesion}},
-\code{\link{measure_diffusion_infection}},
-\code{\link{measure_diffusion_net}},
-\code{\link{measure_diffusion_node}},
-\code{\link{measure_features}},
-\code{\link{measure_heterogeneity}},
-\code{\link{measure_hierarchy}},
-\code{\link{measure_holes}},
-\code{\link{measure_periods}},
-\code{\link{measure_properties}},
-\code{\link{member_diffusion}}
+\code{\link{measure_dims}}
 }
 \concept{measures}

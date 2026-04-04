@@ -53,7 +53,7 @@ test_that("join_ties works", {
 
 test_that("mutate_ties and filter_ties works", {
   orig <- ison_southern_women %>% mutate_ties(year = 1:89)
-  filt <- orig %>% activate(edges) %>% dplyr::filter(year > 5) %>% activate(nodes)
+  filt <- orig %>% filter_ties(year > 5)
   filt1 <- filter_ties(orig, year > 5)
   expect_equal(1:89, igraph::edge_attr(as_igraph(orig), "year"))
   expect_equal(igraph::edge_attr(as_igraph(filt), "year"),
@@ -62,8 +62,8 @@ test_that("mutate_ties and filter_ties works", {
 
 test_that("summarise_ties works", {
   set.seed(1234)
-  orig <- as_tidygraph(ison_southern_women) %>%
-    tidygraph::graph_join(as_tidygraph(ison_southern_women)) %>%
+  orig <- from_ties(list(bloop = as_tidygraph(ison_southern_women),
+                         bleep = as_tidygraph(ison_southern_women))) %>%
     mutate_ties(year = sample(1:3, 178, replace = TRUE))
   sum <- summarise_ties(orig, mean = mean(year))
   expect_length(igraph::edge_attr(sum, "weight"), 89)

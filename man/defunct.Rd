@@ -3,52 +3,6 @@
 \name{defunct}
 \alias{defunct}
 \alias{pkg_data}
-\alias{node_mode}
-\alias{node_optimal}
-\alias{node_kernighanlin}
-\alias{node_edge_betweenness}
-\alias{node_fast_greedy}
-\alias{node_leading_eigen}
-\alias{node_walktrap}
-\alias{node_infomap}
-\alias{node_spinglass}
-\alias{node_fluid}
-\alias{node_leiden}
-\alias{node_louvain}
-\alias{node_roulette}
-\alias{node_components}
-\alias{node_weak_components}
-\alias{node_strong_components}
-\alias{node_equivalence}
-\alias{node_structural_equivalence}
-\alias{node_regular_equivalence}
-\alias{node_automorphic_equivalence}
-\alias{network_transmissibility}
-\alias{network_infection_length}
-\alias{network_reproduction}
-\alias{network_immunity}
-\alias{network_hazard}
-\alias{network_density}
-\alias{network_components}
-\alias{network_cohesion}
-\alias{network_adhesion}
-\alias{network_diameter}
-\alias{network_length}
-\alias{network_independence}
-\alias{network_change}
-\alias{network_stability}
-\alias{network_reciprocity}
-\alias{network_transitivity}
-\alias{network_equivalency}
-\alias{network_congruency}
-\alias{network_richness}
-\alias{network_diversity}
-\alias{network_heterophily}
-\alias{network_assortativity}
-\alias{network_spatial}
-\alias{network_connectedness}
-\alias{network_efficiency}
-\alias{network_upperbound}
 \alias{network_nodes}
 \alias{network_ties}
 \alias{network_dims}
@@ -58,132 +12,216 @@
 \alias{network_dims.network}
 \alias{network_node_attributes}
 \alias{network_tie_attributes}
-\alias{network_degree}
-\alias{network_outdegree}
-\alias{network_indegree}
-\alias{network_betweenness}
-\alias{network_closeness}
-\alias{network_reach}
-\alias{network_harmonic}
-\alias{network_eigenvector}
-\alias{network_core}
-\alias{network_richclub}
-\alias{network_factions}
-\alias{network_modularity}
-\alias{network_smallworld}
-\alias{network_scalefree}
-\alias{network_balance}
-\alias{node_tie_census}
-\alias{node_triad_census}
-\alias{node_quad_census}
-\alias{node_path_census}
-\alias{network_dyad_census}
-\alias{network_triad_census}
-\alias{network_mixed_census}
-\alias{node_brokerage_census}
-\alias{network_brokerage_census}
-\alias{node_brokering}
-\alias{node_core}
-\alias{node_by_quad}
+\alias{node_mode}
+\alias{mutate_net}
+\alias{net_info}
+\alias{read_cran}
+\alias{read_pkg}
+\alias{collect_changes}
+\alias{net_node_names}
+\alias{net_tie_names}
+\alias{node_degree}
+\alias{node_deg}
 \alias{net_by_quad}
 \alias{net_hazard}
-\title{Functions that have been renamed, superseded, or are no longer working}
+\alias{node_automorphic_equivalence}
+\alias{node_brokerage_census}
+\alias{node_brokering}
+\alias{node_by_quad}
+\alias{node_components}
+\alias{node_core}
+\alias{node_edge_betweenness}
+\alias{node_equivalence}
+\alias{node_fast_greedy}
+\alias{node_fluid}
+\alias{node_infomap}
+\alias{node_kernighanlin}
+\alias{node_leading_eigen}
+\alias{node_leiden}
+\alias{node_louvain}
+\alias{node_optimal}
+\alias{node_path_census}
+\alias{node_quad_census}
+\alias{node_regular_equivalence}
+\alias{node_roulette}
+\alias{node_spinglass}
+\alias{node_strong_components}
+\alias{node_structural_equivalence}
+\alias{node_tie_census}
+\alias{node_triad_census}
+\alias{node_walktrap}
+\alias{node_weak_components}
+\alias{node_is_core}
+\alias{node_is_cutpoint}
+\alias{node_is_exposed}
+\alias{node_is_fold}
+\alias{node_is_independent}
+\alias{node_is_infected}
+\alias{node_is_isolate}
+\alias{node_is_latent}
+\alias{node_is_max}
+\alias{node_is_mean}
+\alias{node_is_mentor}
+\alias{node_is_min}
+\alias{node_is_neighbor}
+\alias{node_is_pendant}
+\alias{node_is_random}
+\alias{node_is_recovered}
+\alias{node_is_universal}
+\alias{tie_is_bridge}
+\alias{tie_is_cyclical}
+\alias{tie_is_feedback}
+\alias{tie_is_imbalanced}
+\alias{tie_is_loop}
+\alias{tie_is_max}
+\alias{tie_is_min}
+\alias{tie_is_multiple}
+\alias{tie_is_path}
+\alias{tie_is_random}
+\alias{tie_is_reciprocated}
+\alias{tie_is_simmelian}
+\alias{tie_is_transitive}
+\alias{tie_is_triangular}
+\alias{tie_is_triplet}
+\alias{net_adhesion}
+\alias{net_assortativity}
+\alias{net_balance}
+\alias{net_betweenness}
+\alias{net_change}
+\alias{net_closeness}
+\alias{net_cohesion}
+\alias{net_components}
+\alias{net_congruency}
+\alias{net_connectedness}
+\alias{net_core}
+\alias{net_correlation}
+\alias{net_degree}
+\alias{net_density}
+\alias{net_diameter}
+\alias{net_diversity}
+\alias{net_efficiency}
+\alias{net_eigenvector}
+\alias{net_equivalency}
+\alias{net_factions}
+\alias{net_harmonic}
+\alias{net_heterophily}
+\alias{net_homophily}
+\alias{net_immunity}
+\alias{net_indegree}
+\alias{net_independence}
+\alias{net_infection_complete}
+\alias{net_infection_peak}
+\alias{net_infection_total}
+\alias{net_length}
+\alias{net_modularity}
+\alias{net_outdegree}
+\alias{net_reach}
+\alias{net_reciprocity}
+\alias{net_recovery}
+\alias{net_reproduction}
+\alias{net_richclub}
+\alias{net_richness}
+\alias{net_scalefree}
+\alias{net_smallworld}
+\alias{net_spatial}
+\alias{net_stability}
+\alias{net_strength}
+\alias{net_toughness}
+\alias{net_transitivity}
+\alias{net_transmissibility}
+\alias{net_upperbound}
+\alias{net_waves}
+\alias{node_adoption_time}
+\alias{node_alpha}
+\alias{node_authority}
+\alias{node_betweenness}
+\alias{node_bridges}
+\alias{node_closeness}
+\alias{node_constraint}
+\alias{node_coreness}
+\alias{node_distance}
+\alias{node_diversity}
+\alias{node_eccentricity}
+\alias{node_efficiency}
+\alias{node_effsize}
+\alias{node_eigenvector}
+\alias{node_equivalency}
+\alias{node_exposure}
+\alias{node_flow}
+\alias{node_harmonic}
+\alias{node_heterophily}
+\alias{node_hierarchy}
+\alias{node_homophily}
+\alias{node_hub}
+\alias{node_indegree}
+\alias{node_induced}
+\alias{node_information}
+\alias{node_kcoreness}
+\alias{node_leverage}
+\alias{node_multidegree}
+\alias{node_neighbours_degree}
+\alias{node_outdegree}
+\alias{node_pagerank}
+\alias{node_posneg}
+\alias{node_power}
+\alias{node_randomwalk}
+\alias{node_reach}
+\alias{node_reciprocity}
+\alias{node_recovery}
+\alias{node_redundancy}
+\alias{node_richness}
+\alias{node_stress}
+\alias{node_subgraph}
+\alias{node_thresholds}
+\alias{node_transitivity}
+\alias{node_vitality}
+\alias{tie_betweenness}
+\alias{tie_closeness}
+\alias{tie_cohesion}
+\alias{tie_degree}
+\alias{tie_eigenvector}
+\alias{node_in_adopter}
+\alias{node_in_automorphic}
+\alias{node_in_betweenness}
+\alias{node_in_brokering}
+\alias{node_in_community}
+\alias{node_in_component}
+\alias{node_in_core}
+\alias{node_in_eigen}
+\alias{node_in_equivalence}
+\alias{node_in_fluid}
+\alias{node_in_greedy}
+\alias{node_in_infomap}
+\alias{node_in_leiden}
+\alias{node_in_louvain}
+\alias{node_in_optimal}
+\alias{node_in_partition}
+\alias{node_in_regular}
+\alias{node_in_roulette}
+\alias{node_in_spinglass}
+\alias{node_in_strong}
+\alias{node_in_structural}
+\alias{node_in_walktrap}
+\alias{node_in_weak}
+\alias{net_by_brokerage}
+\alias{net_by_dyad}
+\alias{net_by_hazard}
+\alias{net_by_hierarchy}
+\alias{net_by_mixed}
+\alias{net_by_tetrad}
+\alias{net_by_triad}
+\alias{node_brokering_activity}
+\alias{node_brokering_exclusivity}
+\alias{node_by_brokerage}
+\alias{node_by_dyad}
+\alias{node_by_exposure}
+\alias{node_by_path}
+\alias{node_by_tetrad}
+\alias{node_by_tie}
+\alias{node_by_triad}
+\title{Functions that have been renamed, superseded, moved, or are no longer working}
 \usage{
 pkg_data(pkg = "manynet")
-
-node_mode(.data)
-
-node_optimal(.data)
-
-node_kernighanlin(.data)
-
-node_edge_betweenness(.data)
-
-node_fast_greedy(.data)
-
-node_leading_eigen(.data)
-
-node_walktrap(.data)
-
-node_infomap(.data)
-
-node_spinglass(.data)
-
-node_fluid(.data)
-
-node_leiden(.data)
-
-node_louvain(.data)
-
-node_roulette(.data)
-
-node_components(.data)
-
-node_weak_components(.data)
-
-node_strong_components(.data)
-
-node_equivalence(.data)
-
-node_structural_equivalence(.data)
-
-node_regular_equivalence(.data)
-
-node_automorphic_equivalence(.data)
-
-network_transmissibility(diff_model)
-
-network_infection_length(diff_model)
-
-network_reproduction(diff_model)
-
-network_immunity(diff_model, normalized = TRUE)
-
-network_hazard(diff_model)
-
-network_density(.data)
-
-network_components(.data)
-
-network_cohesion(.data)
-
-network_adhesion(.data)
-
-network_diameter(.data)
-
-network_length(.data)
-
-network_independence(.data)
-
-network_change(.data, object2)
-
-network_stability(.data, object2)
-
-network_reciprocity(.data, method = "default")
-
-network_transitivity(.data)
-
-network_equivalency(.data)
-
-network_transitivity(.data)
-
-network_congruency(.data)
-
-network_richness(.data, attribute)
-
-network_diversity(.data, attribute, clusters = NULL)
-
-network_heterophily(.data, attribute)
-
-network_assortativity(.data)
-
-network_spatial(.data, attribute)
-
-network_connectedness(.data)
-
-network_efficiency(.data)
-
-network_upperbound(.data)
 
 network_nodes(.data)
 
@@ -203,71 +241,423 @@ network_node_attributes(.data)
 
 network_tie_attributes(.data)
 
-network_degree(.data, normalized = TRUE, direction = c("all", "out", "in"))
+node_mode(.data)
 
-network_outdegree(.data, normalized = TRUE)
+mutate_net(.data, ...)
 
-network_indegree(.data, normalized = TRUE)
+net_info(.data)
 
-network_betweenness(
-  .data,
-  normalized = TRUE,
-  direction = c("all", "out", "in")
-)
+read_cran(pkg = "all")
 
-network_closeness(.data, normalized = TRUE, direction = c("all", "out", "in"))
+read_pkg(dir = getwd())
 
-network_reach(.data, normalized = TRUE, k = 2)
+collect_changes(.data, time)
 
-network_harmonic(.data, normalized = TRUE, k = 2)
+net_node_names(.data)
 
-network_eigenvector(.data, normalized = TRUE)
+net_tie_names(.data)
 
-network_core(.data, mark = NULL)
+node_degree(...)
 
-network_richclub(.data)
+node_deg(...)
 
-network_factions(.data, membership = NULL)
+net_by_quad(...)
 
-network_modularity(.data, membership = NULL, resolution = 1)
+net_hazard(...)
 
-network_smallworld(.data, method = c("omega", "sigma", "SWI"), times = 100)
+node_automorphic_equivalence(...)
 
-network_scalefree(.data)
+node_brokerage_census(...)
 
-network_balance(.data)
+node_brokering(...)
 
-node_tie_census(.data)
+node_by_quad(...)
 
-node_triad_census(.data)
+node_components(...)
 
-node_quad_census(.data)
+node_core(...)
 
-node_path_census(.data)
+node_edge_betweenness(...)
 
-network_dyad_census(.data)
+node_equivalence(...)
 
-network_triad_census(.data)
+node_fast_greedy(...)
 
-network_mixed_census(.data, object2)
+node_fluid(...)
 
-node_brokerage_census(.data, membership, standardized = FALSE)
+node_infomap(...)
 
-network_brokerage_census(.data, membership, standardized = FALSE)
+node_kernighanlin(...)
 
-node_brokering(.data, membership)
+node_leading_eigen(...)
 
-node_core(.data)
+node_leiden(...)
 
-node_by_quad(.data)
+node_louvain(...)
 
-net_by_quad(.data)
+node_optimal(...)
 
-net_hazard(.data)
+node_path_census(...)
+
+node_quad_census(...)
+
+node_regular_equivalence(...)
+
+node_roulette(...)
+
+node_spinglass(...)
+
+node_strong_components(...)
+
+node_structural_equivalence(...)
+
+node_tie_census(...)
+
+node_triad_census(...)
+
+node_walktrap(...)
+
+node_weak_components(...)
+
+node_is_core(...)
+
+node_is_cutpoint(...)
+
+node_is_exposed(...)
+
+node_is_fold(...)
+
+node_is_independent(...)
+
+node_is_infected(...)
+
+node_is_isolate(...)
+
+node_is_latent(...)
+
+node_is_max(...)
+
+node_is_mean(...)
+
+node_is_mentor(...)
+
+node_is_min(...)
+
+node_is_neighbor(...)
+
+node_is_pendant(...)
+
+node_is_random(...)
+
+node_is_recovered(...)
+
+node_is_universal(...)
+
+tie_is_bridge(...)
+
+tie_is_cyclical(...)
+
+tie_is_feedback(...)
+
+tie_is_imbalanced(...)
+
+tie_is_loop(...)
+
+tie_is_max(...)
+
+tie_is_min(...)
+
+tie_is_multiple(...)
+
+tie_is_path(...)
+
+tie_is_random(...)
+
+tie_is_reciprocated(...)
+
+tie_is_simmelian(...)
+
+tie_is_transitive(...)
+
+tie_is_triangular(...)
+
+tie_is_triplet(...)
+
+net_adhesion(...)
+
+net_assortativity(...)
+
+net_balance(...)
+
+net_betweenness(...)
+
+net_change(...)
+
+net_closeness(...)
+
+net_cohesion(...)
+
+net_components(...)
+
+net_congruency(...)
+
+net_connectedness(...)
+
+net_core(...)
+
+net_correlation(...)
+
+net_degree(...)
+
+net_density(...)
+
+net_diameter(...)
+
+net_diversity(...)
+
+net_efficiency(...)
+
+net_eigenvector(...)
+
+net_equivalency(...)
+
+net_factions(...)
+
+net_harmonic(...)
+
+net_heterophily(...)
+
+net_homophily(...)
+
+net_immunity(...)
+
+net_indegree(...)
+
+net_independence(...)
+
+net_infection_complete(...)
+
+net_infection_peak(...)
+
+net_infection_total(...)
+
+net_length(...)
+
+net_modularity(...)
+
+net_outdegree(...)
+
+net_reach(...)
+
+net_reciprocity(...)
+
+net_recovery(...)
+
+net_reproduction(...)
+
+net_richclub(...)
+
+net_richness(...)
+
+net_scalefree(...)
+
+net_smallworld(...)
+
+net_spatial(...)
+
+net_stability(...)
+
+net_strength(...)
+
+net_toughness(...)
+
+net_transitivity(...)
+
+net_transmissibility(...)
+
+net_upperbound(...)
+
+net_waves(...)
+
+node_adoption_time(...)
+
+node_alpha(...)
+
+node_authority(...)
+
+node_betweenness(...)
+
+node_bridges(...)
+
+node_closeness(...)
+
+node_constraint(...)
+
+node_coreness(...)
+
+node_distance(...)
+
+node_diversity(...)
+
+node_eccentricity(...)
+
+node_efficiency(...)
+
+node_effsize(...)
+
+node_eigenvector(...)
+
+node_equivalency(...)
+
+node_exposure(...)
+
+node_flow(...)
+
+node_harmonic(...)
+
+node_heterophily(...)
+
+node_hierarchy(...)
+
+node_homophily(...)
+
+node_hub(...)
+
+node_indegree(...)
+
+node_induced(...)
+
+node_information(...)
+
+node_kcoreness(...)
+
+node_leverage(...)
+
+node_multidegree(...)
+
+node_neighbours_degree(...)
+
+node_outdegree(...)
+
+node_pagerank(...)
+
+node_posneg(...)
+
+node_power(...)
+
+node_randomwalk(...)
+
+node_reach(...)
+
+node_reciprocity(...)
+
+node_recovery(...)
+
+node_redundancy(...)
+
+node_richness(...)
+
+node_stress(...)
+
+node_subgraph(...)
+
+node_thresholds(...)
+
+node_transitivity(...)
+
+node_vitality(...)
+
+tie_betweenness(...)
+
+tie_closeness(...)
+
+tie_cohesion(...)
+
+tie_degree(...)
+
+tie_eigenvector(...)
+
+node_in_adopter(...)
+
+node_in_automorphic(...)
+
+node_in_betweenness(...)
+
+node_in_brokering(...)
+
+node_in_community(...)
+
+node_in_component(...)
+
+node_in_core(...)
+
+node_in_eigen(...)
+
+node_in_equivalence(...)
+
+node_in_fluid(...)
+
+node_in_greedy(...)
+
+node_in_infomap(...)
+
+node_in_leiden(...)
+
+node_in_louvain(...)
+
+node_in_optimal(...)
+
+node_in_partition(...)
+
+node_in_regular(...)
+
+node_in_roulette(...)
+
+node_in_spinglass(...)
+
+node_in_strong(...)
+
+node_in_structural(...)
+
+node_in_walktrap(...)
+
+node_in_weak(...)
+
+net_by_brokerage(...)
+
+net_by_dyad(...)
+
+net_by_hazard(...)
+
+net_by_hierarchy(...)
+
+net_by_mixed(...)
+
+net_by_tetrad(...)
+
+net_by_triad(...)
+
+node_brokering_activity(...)
+
+node_brokering_exclusivity(...)
+
+node_by_brokerage(...)
+
+node_by_dyad(...)
+
+node_by_exposure(...)
+
+node_by_path(...)
+
+node_by_tetrad(...)
+
+node_by_tie(...)
+
+node_by_triad(...)
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
-Generally these functions have been superseded or renamed.
+Generally these functions have been superseded, renamed, and/or moved.
 Upon using them, a message is provided directing the user to the new function.
 However, at this stage of package development,
 we generally clear older defunct functions at each minor release,
@@ -277,100 +667,6 @@ wherever possible and update your scripts accordingly.
 \section{Functions}{
 \itemize{
 \item \code{pkg_data()}: Deprecated on 2024-06-17.
-
-\item \code{node_mode()}: Deprecated on 2024-06-17.
-
-\item \code{node_optimal()}: Deprecated on 2024-06-14.
-
-\item \code{node_kernighanlin()}: Deprecated on 2024-06-14.
-
-\item \code{node_edge_betweenness()}: Deprecated on 2024-06-14.
-
-\item \code{node_fast_greedy()}: Deprecated on 2024-06-14.
-
-\item \code{node_leading_eigen()}: Deprecated on 2024-06-14.
-
-\item \code{node_walktrap()}: Deprecated on 2024-06-14.
-
-\item \code{node_infomap()}: Deprecated on 2024-06-14.
-
-\item \code{node_spinglass()}: Deprecated on 2024-06-14.
-
-\item \code{node_fluid()}: Deprecated on 2024-06-14.
-
-\item \code{node_leiden()}: Deprecated on 2024-06-14.
-
-\item \code{node_louvain()}: Deprecated on 2024-06-14.
-
-\item \code{node_roulette()}: Deprecated on 2024-06-14.
-
-\item \code{node_components()}: Deprecated on 2024-06-14.
-
-\item \code{node_weak_components()}: Deprecated on 2024-06-14.
-
-\item \code{node_strong_components()}: Deprecated on 2024-06-14.
-
-\item \code{node_equivalence()}: Deprecated on 2024-06-14.
-
-\item \code{node_structural_equivalence()}: Deprecated on 2024-06-14.
-
-\item \code{node_regular_equivalence()}: Deprecated on 2024-06-14.
-
-\item \code{node_automorphic_equivalence()}: Deprecated on 2024-06-14.
-
-\item \code{network_transmissibility()}: Deprecated on 2024-06-20.
-
-\item \code{network_infection_length()}: Deprecated on 2024-06-20.
-
-\item \code{network_reproduction()}: Deprecated on 2024-06-20.
-
-\item \code{network_immunity()}: Deprecated on 2024-06-20.
-
-\item \code{network_hazard()}: Deprecated on 2024-06-20.
-
-\item \code{network_density()}: Deprecated on 2024-06-20.
-
-\item \code{network_components()}: Deprecated on 2024-06-20.
-
-\item \code{network_cohesion()}: Deprecated on 2024-06-20.
-
-\item \code{network_adhesion()}: Deprecated on 2024-06-20.
-
-\item \code{network_diameter()}: Deprecated on 2024-06-20.
-
-\item \code{network_length()}: Deprecated on 2024-06-20.
-
-\item \code{network_independence()}: Deprecated on 2024-06-20.
-
-\item \code{network_change()}: Deprecated on 2024-06-20.
-
-\item \code{network_stability()}: Deprecated on 2024-06-20.
-
-\item \code{network_reciprocity()}: Deprecated on 2024-06-20.
-
-\item \code{network_transitivity()}: Deprecated on 2024-06-20.
-
-\item \code{network_equivalency()}: Deprecated on 2024-06-20.
-
-\item \code{network_transitivity()}: Deprecated on 2024-06-20.
-
-\item \code{network_congruency()}: Deprecated on 2024-06-20.
-
-\item \code{network_richness()}: Deprecated on 2024-06-20.
-
-\item \code{network_diversity()}: Deprecated on 2024-06-20.
-
-\item \code{network_heterophily()}: Deprecated on 2024-06-20.
-
-\item \code{network_assortativity()}: Deprecated on 2024-06-20.
-
-\item \code{network_spatial()}: Deprecated on 2024-06-20.
-
-\item \code{network_connectedness()}: Deprecated on 2024-06-20.
-
-\item \code{network_efficiency()}: Deprecated on 2024-06-20.
-
-\item \code{network_upperbound()}: Deprecated on 2024-06-20.
 
 \item \code{network_nodes()}: Deprecated on 2024-06-20.
 
@@ -390,63 +686,419 @@ wherever possible and update your scripts accordingly.
 
 \item \code{network_tie_attributes()}: Deprecated on 2024-06-20.
 
-\item \code{network_degree()}: Deprecated on 2024-06-20.
+\item \code{node_mode()}: Deprecated on 2026-03-22.
 
-\item \code{network_outdegree()}: Deprecated on 2024-06-20.
+\item \code{mutate_net()}: Deprecated on 2026-03-22.
 
-\item \code{network_indegree()}: Deprecated on 2024-06-20.
+\item \code{net_info()}: Deprecated on 2026-03-22.
 
-\item \code{network_betweenness()}: Deprecated on 2024-06-20.
+\item \code{read_cran()}: Deprecated on 2026-04-02.
 
-\item \code{network_closeness()}: Deprecated on 2024-06-20.
+\item \code{read_pkg()}: Deprecated on 2026-04-02.
 
-\item \code{network_reach()}: Deprecated on 2024-06-20.
+\item \code{collect_changes()}: Deprecated on 2026-04-02.
 
-\item \code{network_harmonic()}: Deprecated on 2024-06-20.
+\item \code{net_node_names()}: Deprecated on 2026-04-04.
 
-\item \code{network_eigenvector()}: Deprecated on 2024-06-20.
+\item \code{net_tie_names()}: Deprecated on 2026-04-04.
 
-\item \code{network_core()}: Deprecated on 2024-06-20.
+\item \code{node_degree()}: Deprecated on 2026-03-22.
 
-\item \code{network_richclub()}: Deprecated on 2024-06-20.
+\item \code{node_deg()}: Deprecated on 2026-03-22.
 
-\item \code{network_factions()}: Deprecated on 2024-06-20.
+\item \code{net_by_quad()}: Deprecated on 2026-03-22.
 
-\item \code{network_modularity()}: Deprecated on 2024-06-20.
+\item \code{net_hazard()}: Deprecated on 2026-03-22.
 
-\item \code{network_smallworld()}: Deprecated on 2024-06-20.
+\item \code{node_automorphic_equivalence()}: Deprecated on 2026-03-22.
 
-\item \code{network_scalefree()}: Deprecated on 2024-06-20.
+\item \code{node_brokerage_census()}: Deprecated on 2026-03-22.
 
-\item \code{network_balance()}: Deprecated on 2024-06-20.
+\item \code{node_brokering()}: Deprecated on 2026-03-22.
 
-\item \code{node_tie_census()}: Deprecated on 2024-06-20.
+\item \code{node_by_quad()}: Deprecated on 2026-03-22.
 
-\item \code{node_triad_census()}: Deprecated on 2024-06-20.
+\item \code{node_components()}: Deprecated on 2026-03-22.
 
-\item \code{node_quad_census()}: Deprecated on 2024-06-20.
+\item \code{node_core()}: Deprecated on 2026-03-22.
 
-\item \code{node_path_census()}: Deprecated on 2024-06-20.
+\item \code{node_edge_betweenness()}: Deprecated on 2026-03-22.
 
-\item \code{network_dyad_census()}: Deprecated on 2024-06-20.
+\item \code{node_equivalence()}: Deprecated on 2026-03-22.
 
-\item \code{network_triad_census()}: Deprecated on 2024-06-20.
+\item \code{node_fast_greedy()}: Deprecated on 2026-03-22.
 
-\item \code{network_mixed_census()}: Deprecated on 2024-06-20.
+\item \code{node_fluid()}: Deprecated on 2026-03-22.
 
-\item \code{node_brokerage_census()}: Deprecated on 2024-06-20.
+\item \code{node_infomap()}: Deprecated on 2026-03-22.
 
-\item \code{network_brokerage_census()}: Deprecated on 2024-06-20.
+\item \code{node_kernighanlin()}: Deprecated on 2026-03-22.
 
-\item \code{node_brokering()}: Deprecated on 2024-06-20.
+\item \code{node_leading_eigen()}: Deprecated on 2026-03-22.
 
-\item \code{node_core()}: Deprecated on 2024-06-21.
+\item \code{node_leiden()}: Deprecated on 2026-03-22.
 
-\item \code{node_by_quad()}: Deprecated on 2024-10-10.
+\item \code{node_louvain()}: Deprecated on 2026-03-22.
 
-\item \code{net_by_quad()}: Deprecated on 2024-10-10.
+\item \code{node_optimal()}: Deprecated on 2026-03-22.
 
-\item \code{net_hazard()}: Deprecated on 2024-12-30.
+\item \code{node_path_census()}: Deprecated on 2026-03-22.
+
+\item \code{node_quad_census()}: Deprecated on 2026-03-22.
+
+\item \code{node_regular_equivalence()}: Deprecated on 2026-03-22.
+
+\item \code{node_roulette()}: Deprecated on 2026-03-22.
+
+\item \code{node_spinglass()}: Deprecated on 2026-03-22.
+
+\item \code{node_strong_components()}: Deprecated on 2026-03-22.
+
+\item \code{node_structural_equivalence()}: Deprecated on 2026-03-22.
+
+\item \code{node_tie_census()}: Deprecated on 2026-03-22.
+
+\item \code{node_triad_census()}: Deprecated on 2026-03-22.
+
+\item \code{node_walktrap()}: Deprecated on 2026-03-22.
+
+\item \code{node_weak_components()}: Deprecated on 2026-03-22.
+
+\item \code{node_is_core()}: Deprecated on 2026-03-22.
+
+\item \code{node_is_cutpoint()}: Deprecated on 2026-03-22.
+
+\item \code{node_is_exposed()}: Deprecated on 2026-03-22.
+
+\item \code{node_is_fold()}: Deprecated on 2026-03-22.
+
+\item \code{node_is_independent()}: Deprecated on 2026-03-22.
+
+\item \code{node_is_infected()}: Deprecated on 2026-03-22.
+
+\item \code{node_is_isolate()}: Deprecated on 2026-03-22.
+
+\item \code{node_is_latent()}: Deprecated on 2026-03-22.
+
+\item \code{node_is_max()}: Deprecated on 2026-03-22.
+
+\item \code{node_is_mean()}: Deprecated on 2026-03-22.
+
+\item \code{node_is_mentor()}: Deprecated on 2026-03-22.
+
+\item \code{node_is_min()}: Deprecated on 2026-03-22.
+
+\item \code{node_is_neighbor()}: Deprecated on 2026-03-22.
+
+\item \code{node_is_pendant()}: Deprecated on 2026-03-22.
+
+\item \code{node_is_random()}: Deprecated on 2026-03-22.
+
+\item \code{node_is_recovered()}: Deprecated on 2026-03-22.
+
+\item \code{node_is_universal()}: Deprecated on 2026-03-22.
+
+\item \code{tie_is_bridge()}: Deprecated on 2026-03-22.
+
+\item \code{tie_is_cyclical()}: Deprecated on 2026-03-22.
+
+\item \code{tie_is_feedback()}: Deprecated on 2026-03-22.
+
+\item \code{tie_is_imbalanced()}: Deprecated on 2026-03-22.
+
+\item \code{tie_is_loop()}: Deprecated on 2026-03-22.
+
+\item \code{tie_is_max()}: Deprecated on 2026-03-22.
+
+\item \code{tie_is_min()}: Deprecated on 2026-03-22.
+
+\item \code{tie_is_multiple()}: Deprecated on 2026-03-22.
+
+\item \code{tie_is_path()}: Deprecated on 2026-03-22.
+
+\item \code{tie_is_random()}: Deprecated on 2026-03-22.
+
+\item \code{tie_is_reciprocated()}: Deprecated on 2026-03-22.
+
+\item \code{tie_is_simmelian()}: Deprecated on 2026-03-22.
+
+\item \code{tie_is_transitive()}: Deprecated on 2026-03-22.
+
+\item \code{tie_is_triangular()}: Deprecated on 2026-03-22.
+
+\item \code{tie_is_triplet()}: Deprecated on 2026-03-22.
+
+\item \code{net_adhesion()}: Deprecated on 2026-03-22.
+
+\item \code{net_assortativity()}: Deprecated on 2026-03-22.
+
+\item \code{net_balance()}: Deprecated on 2026-03-22.
+
+\item \code{net_betweenness()}: Deprecated on 2026-03-22.
+
+\item \code{net_change()}: Deprecated on 2026-03-22.
+
+\item \code{net_closeness()}: Deprecated on 2026-03-22.
+
+\item \code{net_cohesion()}: Deprecated on 2026-03-22.
+
+\item \code{net_components()}: Deprecated on 2026-03-22.
+
+\item \code{net_congruency()}: Deprecated on 2026-03-22.
+
+\item \code{net_connectedness()}: Deprecated on 2026-03-22.
+
+\item \code{net_core()}: Deprecated on 2026-03-22.
+
+\item \code{net_correlation()}: Deprecated on 2026-03-22.
+
+\item \code{net_degree()}: Deprecated on 2026-03-22.
+
+\item \code{net_density()}: Deprecated on 2026-03-22.
+
+\item \code{net_diameter()}: Deprecated on 2026-03-22.
+
+\item \code{net_diversity()}: Deprecated on 2026-03-22.
+
+\item \code{net_efficiency()}: Deprecated on 2026-03-22.
+
+\item \code{net_eigenvector()}: Deprecated on 2026-03-22.
+
+\item \code{net_equivalency()}: Deprecated on 2026-03-22.
+
+\item \code{net_factions()}: Deprecated on 2026-03-22.
+
+\item \code{net_harmonic()}: Deprecated on 2026-03-22.
+
+\item \code{net_heterophily()}: Deprecated on 2026-03-22.
+
+\item \code{net_homophily()}: Deprecated on 2026-03-22.
+
+\item \code{net_immunity()}: Deprecated on 2026-03-22.
+
+\item \code{net_indegree()}: Deprecated on 2026-03-22.
+
+\item \code{net_independence()}: Deprecated on 2026-03-22.
+
+\item \code{net_infection_complete()}: Deprecated on 2026-03-22.
+
+\item \code{net_infection_peak()}: Deprecated on 2026-03-22.
+
+\item \code{net_infection_total()}: Deprecated on 2026-03-22.
+
+\item \code{net_length()}: Deprecated on 2026-03-22.
+
+\item \code{net_modularity()}: Deprecated on 2026-03-22.
+
+\item \code{net_outdegree()}: Deprecated on 2026-03-22.
+
+\item \code{net_reach()}: Deprecated on 2026-03-22.
+
+\item \code{net_reciprocity()}: Deprecated on 2026-03-22.
+
+\item \code{net_recovery()}: Deprecated on 2026-03-22.
+
+\item \code{net_reproduction()}: Deprecated on 2026-03-22.
+
+\item \code{net_richclub()}: Deprecated on 2026-03-22.
+
+\item \code{net_richness()}: Deprecated on 2026-03-22.
+
+\item \code{net_scalefree()}: Deprecated on 2026-03-22.
+
+\item \code{net_smallworld()}: Deprecated on 2026-03-22.
+
+\item \code{net_spatial()}: Deprecated on 2026-03-22.
+
+\item \code{net_stability()}: Deprecated on 2026-03-22.
+
+\item \code{net_strength()}: Deprecated on 2026-03-22.
+
+\item \code{net_toughness()}: Deprecated on 2026-03-22.
+
+\item \code{net_transitivity()}: Deprecated on 2026-03-22.
+
+\item \code{net_transmissibility()}: Deprecated on 2026-03-22.
+
+\item \code{net_upperbound()}: Deprecated on 2026-03-22.
+
+\item \code{net_waves()}: Deprecated on 2026-03-22.
+
+\item \code{node_adoption_time()}: Deprecated on 2026-03-22.
+
+\item \code{node_alpha()}: Deprecated on 2026-03-22.
+
+\item \code{node_authority()}: Deprecated on 2026-03-22.
+
+\item \code{node_betweenness()}: Deprecated on 2026-03-22.
+
+\item \code{node_bridges()}: Deprecated on 2026-03-22.
+
+\item \code{node_closeness()}: Deprecated on 2026-03-22.
+
+\item \code{node_constraint()}: Deprecated on 2026-03-22.
+
+\item \code{node_coreness()}: Deprecated on 2026-03-22.
+
+\item \code{node_distance()}: Deprecated on 2026-03-22.
+
+\item \code{node_diversity()}: Deprecated on 2026-03-22.
+
+\item \code{node_eccentricity()}: Deprecated on 2026-03-22.
+
+\item \code{node_efficiency()}: Deprecated on 2026-03-22.
+
+\item \code{node_effsize()}: Deprecated on 2026-03-22.
+
+\item \code{node_eigenvector()}: Deprecated on 2026-03-22.
+
+\item \code{node_equivalency()}: Deprecated on 2026-03-22.
+
+\item \code{node_exposure()}: Deprecated on 2026-03-22.
+
+\item \code{node_flow()}: Deprecated on 2026-03-22.
+
+\item \code{node_harmonic()}: Deprecated on 2026-03-22.
+
+\item \code{node_heterophily()}: Deprecated on 2026-03-22.
+
+\item \code{node_hierarchy()}: Deprecated on 2026-03-22.
+
+\item \code{node_homophily()}: Deprecated on 2026-03-22.
+
+\item \code{node_hub()}: Deprecated on 2026-03-22.
+
+\item \code{node_indegree()}: Deprecated on 2026-03-22.
+
+\item \code{node_induced()}: Deprecated on 2026-03-22.
+
+\item \code{node_information()}: Deprecated on 2026-03-22.
+
+\item \code{node_kcoreness()}: Deprecated on 2026-03-22.
+
+\item \code{node_leverage()}: Deprecated on 2026-03-22.
+
+\item \code{node_multidegree()}: Deprecated on 2026-03-22.
+
+\item \code{node_neighbours_degree()}: Deprecated on 2026-03-22.
+
+\item \code{node_outdegree()}: Deprecated on 2026-03-22.
+
+\item \code{node_pagerank()}: Deprecated on 2026-03-22.
+
+\item \code{node_posneg()}: Deprecated on 2026-03-22.
+
+\item \code{node_power()}: Deprecated on 2026-03-22.
+
+\item \code{node_randomwalk()}: Deprecated on 2026-03-22.
+
+\item \code{node_reach()}: Deprecated on 2026-03-22.
+
+\item \code{node_reciprocity()}: Deprecated on 2026-03-22.
+
+\item \code{node_recovery()}: Deprecated on 2026-03-22.
+
+\item \code{node_redundancy()}: Deprecated on 2026-03-22.
+
+\item \code{node_richness()}: Deprecated on 2026-03-22.
+
+\item \code{node_stress()}: Deprecated on 2026-03-22.
+
+\item \code{node_subgraph()}: Deprecated on 2026-03-22.
+
+\item \code{node_thresholds()}: Deprecated on 2026-03-22.
+
+\item \code{node_transitivity()}: Deprecated on 2026-03-22.
+
+\item \code{node_vitality()}: Deprecated on 2026-03-22.
+
+\item \code{tie_betweenness()}: Deprecated on 2026-03-22.
+
+\item \code{tie_closeness()}: Deprecated on 2026-03-22.
+
+\item \code{tie_cohesion()}: Deprecated on 2026-03-22.
+
+\item \code{tie_degree()}: Deprecated on 2026-03-22.
+
+\item \code{tie_eigenvector()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_adopter()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_automorphic()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_betweenness()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_brokering()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_community()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_component()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_core()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_eigen()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_equivalence()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_fluid()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_greedy()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_infomap()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_leiden()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_louvain()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_optimal()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_partition()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_regular()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_roulette()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_spinglass()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_strong()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_structural()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_walktrap()}: Deprecated on 2026-03-22.
+
+\item \code{node_in_weak()}: Deprecated on 2026-03-22.
+
+\item \code{net_by_brokerage()}: Deprecated on 2026-03-22.
+
+\item \code{net_by_dyad()}: Deprecated on 2026-03-22.
+
+\item \code{net_by_hazard()}: Deprecated on 2026-03-22.
+
+\item \code{net_by_hierarchy()}: Deprecated on 2026-03-22.
+
+\item \code{net_by_mixed()}: Deprecated on 2026-03-22.
+
+\item \code{net_by_tetrad()}: Deprecated on 2026-03-22.
+
+\item \code{net_by_triad()}: Deprecated on 2026-03-22.
+
+\item \code{node_brokering_activity()}: Deprecated on 2026-03-22.
+
+\item \code{node_brokering_exclusivity()}: Deprecated on 2026-03-22.
+
+\item \code{node_by_brokerage()}: Deprecated on 2026-03-22.
+
+\item \code{node_by_dyad()}: Deprecated on 2026-03-22.
+
+\item \code{node_by_exposure()}: Deprecated on 2026-03-22.
+
+\item \code{node_by_path()}: Deprecated on 2026-03-22.
+
+\item \code{node_by_tetrad()}: Deprecated on 2026-03-22.
+
+\item \code{node_by_tie()}: Deprecated on 2026-03-22.
+
+\item \code{node_by_triad()}: Deprecated on 2026-03-22.
 
 }}
 \keyword{internal}

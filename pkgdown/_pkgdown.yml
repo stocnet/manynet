@@ -53,11 +53,17 @@ reference:
       directed and undirected, one-mode and two-mode networks.
     contents:
       - make_mnet
+      - make_stocnet
       - make_explicit
-      - make_ego
       - make_motifs
       - make_create
       - starts_with("generate_")
+  - subtitle: "Collecting"
+    desc: |
+      Functions for collecting data from external sources, such as interviews or APIs, 
+      and converting them into networks.
+    contents:
+      - starts_with("collect_")
   - subtitle: "Playing"
     desc: |
       Functions for simulating diffusion or learning processes,
@@ -65,61 +71,76 @@ reference:
     contents:
       - starts_with("play_")
       
+  - title: "Manipulating"
+    desc: |
+      Functions for manipulating aspects within networks,
+      such as their nodes, ties, changes, and network metadata (information).
+      This includes functions to add and delete nodes and ties, 
+      as well as to add and delete nodal and tie attributes.
+  - subtitle: "Info"
+    contents:
+      - starts_with("add_info")
+  - subtitle: "Nodes"
+    contents:
+      - starts_with("manip_nodes")
+  - subtitle: "Changes"
+    contents:
+      - starts_with("add_changes")
+  - subtitle: "Ties"
+    contents:
+      - starts_with("manip_ties")
+
+  - title: "Coercion"
+    desc: |
+      Functions for modifying networks into other classes.
+      All functions for coercing networks into other classes have the prefix `as_`.
+      Those ending in `list` are extractive, and so will result in some information loss,
+      but coercion to and especially between graph classes is as lossless as possible.
+    contents:
+      - starts_with("as_")
+
   - title: "Modifying"
     desc: |
-      Functions for modifying networks into other classes or formats,
-      or modifying their properties or attributes.
+      Functions for modifying networks into other formats.
       This includes functions for reformatting networks into networks
       of the same dimensions but a different type, e.g. from directed to undirected.
       It also includes functions for transforming networks into networks
       with other dimensions, such as from a two-mode network into a one-mode network.
       There are also functions for splitting networks, e.g. into a list of ego networks,
       and rejoining them from such lists.
-  - subtitle: "Coercion"
-    desc: |
-      Functions for modifying networks into other classes.
-    contents:
-      - starts_with("as_")
-  - subtitle: "Attributes"
-    desc: |
-      Functions for modifying nodal and tie attributes.
-      These include tidy-style and igraph-style functions for adding or joining
-      new data on nodes or ties to networks.
-    contents:
-      - starts_with("add_")
-  - subtitle: "Reformatting"
+  - subtitle: "Formatting"
     desc: |
       Functions for reformatting networks, retaining the same network dimensions.
     contents:
-      - manip_preformat
-      - manip_reformat
-      - manip_direction
-      - manip_deformat
+      - modif_direction
+      - modif_weight
+      - modif_labels
+      - modif_plexity
   - subtitle: "Transforming"
     desc: |
       Functions for transforming networks, which may change the network's dimensions.
     contents:
-      - manip_paths
-      - manip_scope
+      - modif_paths
+      - modif_scope
   - subtitle: "Levels"
     desc: |
       Functions for modifying multimodal networks.
     contents:
-      - manip_levels
-      - manip_project
+      - modif_levels
+      - modif_project
   - subtitle: "Converting"
     desc: |
       Functions for permuting networks or constructing a network
       from the nodal correlations of another network.
     contents:
-      - manip_permutation
-      - manip_correlation
+      - modif_permutation
+      - modif_correlation
   - subtitle: "Splits"
     desc: |
       Functions for splitting networks into a list of networks,
       or (re)joining a list of networks into a single network.
     contents:
-      - manip_split
+      - modif_split
       - starts_with("from_")
   - subtitle: "Missing"
     desc: |
@@ -127,85 +148,52 @@ reference:
     contents:
       - starts_with("na_to_")
       
-  - title: "Marking"
+  - title: "Identifying"
     desc: |
-      Functions for identifying properties of networks, nodes, or ties,
-      all returning logical scalars or vectors.
+      Functions for identifying properties of networks,
+      nodes (where the function prefix is `node_`), or ties (where the function prefix is `tie_`).
+  - subtitle: "Network descriptions"
+    desc: |
+      `describe_*()` functions return a character string describing a network.
+    contents:
+      - class_describe
+  - subtitle: "Network measures"
+    desc: |
+      `net_*()` functions return a numeric output.
+    contents:
+      - measure_dims
+  - subtitle: "Network members"
+    desc: |
+      `net_node_*()` and `net_tie_*()` functions return a string vector relating to nodes or ties in the network.
+    contents:
+      - member_names
   - subtitle: "Network marks"
     desc: |
       `is_*()` functions return a single logical value for the network.
     contents:
       - starts_with("is_")
-  - subtitle: "Nodal marks"
+  - subtitle: "Nodal attributes"
     desc: |
-      `node_is_*()` functions return a vector of logical values the length
+      `node_*()` functions return a vector of values the length
       of the nodes in the network.
     contents:
       - starts_with("node_is_")
-  - subtitle: "Tie marks"
+  - subtitle: "Tie attributes"
     desc: |
-      `tie_is_*()` functions return a vector of logical values the length
+      `tie_*()` functions return a vector of values the length
       of the ties in the network.
     contents:
       - starts_with("tie_is_")
     
-  - title: "Measuring"
-    desc: |
-      Functions for measuring networks and returning a numeric vector or value.
-      `net_` measures return one or, in some cases of two-mode measures,
-      two values.
-      All `node_` and `tie_` measures return a single vector,
-      the length of the nodes or ties in the network, respectively.
-  - subtitle: "Description"
-    contents:
-      - starts_with("measure_attributes")
-      - measure_properties
-  - subtitle: "Centrality"
-    contents:
-      - starts_with("measure_central")
-      - measure_holes
-      - measure_hierarchy
-  - subtitle: "Cohesion"
-    contents:
-      - measure_cohesion
-      - measure_closure
-      - measure_features
-      - measure_heterogeneity
-  - subtitle: "Dynamics"
-    contents:
-      - measure_periods
-      - starts_with("measure_diffusion")
-    
-  - title: "Memberships"
-    desc: |
-      Motifs are functions for calculating network subgraphs,
-      always return a matrix or table of nodes as rows and motif or other property as columns,
-      and can be recognised by the `_by_` in the function name.
-      Memberships are functions for identifying community, cluster, or class memberships,
-      always return a string vector the length of the nodes in the network,
-      and can be recognised by the `_in_` in the function name.
-  - subtitle: "Motifs"
-    contents:
-      - contains("_by_")
-  - subtitle: "Members"
-    contents:
-      - contains("_in_")
-      
-  - title: "Methods"
-    desc: "Methods used in other functions but documented here:"
-    contents:
-      - starts_with("model_")
-    
   - title: "Practicing"
-  - subtitle: "Learning"
+  - subtitle: "Interface"
     desc: |
-      Functions for loading and extracting code from tutorials.
-      There is also a function for tabulating the various network data included in the package,
-      providing an overview of their properties.
+      Functions to support new users in learning and interacting with
+      network concepts and data.
     contents:
-      - ends_with("_tute")
       - glossary
       - interface
+      - progress
       
   - title: "Data"
     desc: |

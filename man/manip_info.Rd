@@ -3,21 +3,18 @@
 \name{manip_info}
 \alias{manip_info}
 \alias{add_info}
-\alias{mutate_net}
-\alias{net_info}
+\alias{mutate_info}
 \alias{net_attributes}
-\title{Modifying network data}
+\title{Manipulating network information}
 \usage{
 add_info(.data, ...)
 
-mutate_net(.data, ...)
-
-net_info(.data)
+mutate_info(.data, ...)
 
 net_attributes(.data)
 }
 \arguments{
-\item{.data}{An object of a manynet-consistent class:
+\item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
 \item matrix (adjacency or incidence) from \code{{base}} R
 \item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
@@ -33,6 +30,9 @@ net_attributes(.data)
 "nodes" (a vector of the names of the nodes) or "vertex1"/"vertex2",
 "ties" or "edge.pos"/"edge.neg" for defining the ties.}
 }
+\value{
+A data object of the same class as the function was given.
+}
 \description{
 These functions allow users to add and edit information about the network
 itself.
@@ -44,3 +44,13 @@ and can be used for printing a grand table in the \code{{grand}} package.
 \examples{
 add_info(ison_algebra, name = "Algebra")
 }
+\seealso{
+Other manipulations: 
+\code{\link{manip_changes}},
+\code{\link{manip_nodes_attr}},
+\code{\link{manip_nodes_num}},
+\code{\link{manip_ties_attr}},
+\code{\link{manip_ties_num}}
+}
+\concept{info}
+\concept{manipulations}

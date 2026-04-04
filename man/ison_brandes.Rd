@@ -40,6 +40,6 @@ data(ison_brandes)
 This network should solely be used
 for demonstration purposes as it does not describe a real network.
 To convert into the two-mode version,
-assign \code{ison_brandes \%>\% rename(type = twomode_type)}.
+assign \code{ison_brandes |> rename(type = twomode_type)}.
 }
 \keyword{datasets}

@@ -6,8 +6,9 @@ utils::globalVariables(c(".data", "obs",
                          "nodes","edges","event","exposure",
                          "student","students","colleges",
                          "node","value","var","active","time",
+                         "increment",
                          "A","B","C","D",
-                         "type",
+                         "type","id",
                          "n"))
 
 # Helper function for declaring available methods
@@ -20,7 +21,14 @@ available_methods <- function(fun_vctr) {
   colnames(out) <- c("from","to")
   rownames(out) <- NULL
   out <- as.data.frame(out)
-  as_matrix(out)
+  out <- as_matrix(out)
+  out[out == 1] <- "\u2713"
+  out[out == 0] <- "" 
+  as.data.frame(out)
+}
+
+collect_functions <- function(pattern, package = "manynet"){
+  getNamespaceExports(package)[grepl(pattern, getNamespaceExports(package))]
 }
 
 # Helper function for checking and downloading packages
@@ -35,10 +43,6 @@ thisRequires <- function(pkgname){
   }
 }
 
-seq_nodes <- function(.data){
-  seq.int(net_nodes(.data))
-}
-
 interpolate <- function(values, positions, n, fill = NA) {
   out <- rep(fill, n) 
   out[positions] <- values
@@ -48,6 +52,7 @@ interpolate <- function(values, positions, n, fill = NA) {
 is.scalar <- function(x) {
   is.atomic(x) && length(x) == 1L
 }
+
 
 # #' @export
 # `%||%` <- function(x, y) {
