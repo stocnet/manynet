@@ -33,7 +33,7 @@ object classes, which could otherwise lead to some unexpected results."><meta pr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.1</span>
       </span>
     </div>
 
@@ -143,23 +143,23 @@ and <code>event</code>, which can take on the values "I" for an infection event,
     <h2>Value</h2>
     <p>The currently implemented coercions or translations are:</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>             data.frame diff_model diffnet igraph list matrix mnet network</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>as_diffnet                       ✓</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>as_diffusion                     ✓       ✓      ✓                ✓</span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>as_graphAM            ✓                         ✓           ✓            ✓</span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>as_igraph             ✓          ✓       ✓      ✓           ✓            ✓</span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>as_network            ✓                  ✓      ✓           ✓            ✓</span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>as_siena                                        ✓</span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>as_stocnet                                      ✓           ✓            ✓</span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>as_tidygraph          ✓          ✓       ✓      ✓    ✓      ✓            ✓</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>as_diffnet                       <span class="sc">*</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>as_diffusion                     <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>                <span class="er">*</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>as_graphAM            <span class="sc">*</span>                         <span class="er">*</span>           <span class="er">*</span>            <span class="er">*</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>as_igraph             <span class="sc">*</span>          <span class="er">*</span>       <span class="er">*</span>      <span class="er">*</span>           <span class="er">*</span>            <span class="er">*</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>as_network            <span class="sc">*</span>                  <span class="er">*</span>      <span class="er">*</span>           <span class="er">*</span>            <span class="er">*</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>as_siena                                        <span class="sc">*</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>as_stocnet                                      <span class="sc">*</span>           <span class="er">*</span>            <span class="er">*</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>as_tidygraph          <span class="sc">*</span>          <span class="er">*</span>       <span class="er">*</span>      <span class="er">*</span>    <span class="er">*</span>      <span class="er">*</span>            <span class="er">*</span></span>
 <span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>             network.goldfish networkDynamic siena stocnet tbl_graph</span>
 <span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>as_diffnet</span>
 <span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>as_diffusion</span>
-<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>as_graphAM                  ✓                    ✓       ✓         ✓</span>
-<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>as_igraph                   ✓              ✓     ✓       ✓         ✓</span>
-<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>as_network                  ✓              ✓     ✓       ✓         ✓</span>
-<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>as_siena                                                           ✓</span>
-<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>as_stocnet                                               ✓         ✓</span>
-<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>as_tidygraph                ✓              ✓     ✓       ✓         ✓</span></code></pre><p></p></div>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>as_graphAM                  <span class="sc">*</span>                    <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>as_igraph                   <span class="sc">*</span>              <span class="er">*</span>     <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>as_network                  <span class="sc">*</span>              <span class="er">*</span>     <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>as_siena                                                           <span class="sc">*</span></span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>as_stocnet                                               <span class="sc">*</span>         <span class="er">*</span></span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>as_tidygraph                <span class="sc">*</span>              <span class="er">*</span>     <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span></code></pre><p></p></div>
 <p><code>as_diffusion()</code> and <code><a href="make_play.html">play_diffusion()</a></code> return a 'diff_model' object
 that contains two different tibbles (tables) –
 a table of diffusion events and
@@ -191,9 +191,9 @@ To retrieve the diffusion events table, use <code>summary(...)</code>.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> B 1 0 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> C 1 1 0</span>
 <span class="r-in"><span><span class="fu">as_igraph</span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 85c8540 DN-- 6 5 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH b4d390c DN-- 6 5 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (v/c)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 85c8540 (vertex names):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from b4d390c (vertex names):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] A-&gt;I B-&gt;G B-&gt;I C-&gt;G C-&gt;H</span>
 <span class="r-in"><span><span class="fu">as_tidygraph</span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, directed network of 6 nodes and 5 arcs</span></span>
