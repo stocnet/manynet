@@ -28,7 +28,7 @@ All is_*() functions return a logical scalar (TRUE or FALSE)."><meta property="o
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -67,7 +67,7 @@ All is_*() functions return a logical scalar (TRUE or FALSE)."><meta property="o
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Marking networks classes</h1>
-    <small class="dont-index">Source: <a href="https://github.com/stocnet/manynet/blob/main/R/mark_net.R" class="external-link"><code>R/mark_net.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/stocnet/manynet/blob/main/R/mark_classes.R" class="external-link"><code>R/mark_classes.R</code></a></small>
     <div class="hidden name"><code>mark_is.Rd</code></div>
     </div>
 
@@ -77,9 +77,9 @@ All is_*() functions return a logical scalar (TRUE or FALSE)."><meta property="o
 <li><p><code>is_graph()</code> marks a network TRUE if it contains graph-level information.</p></li>
 <li><p><code>is_list()</code> marks a network TRUE if it is a (non-igraph) list of networks,
 for example a set of ego networks or a dynamic or longitudinal set of networks.</p></li>
-<li><p><code>is_longitudinal()</code> marks a network TRUE if it contains longitudinal, panel data.</p></li>
-<li><p><code>is_dynamic()</code> marks a network TRUE if it contains dynamic, time-stamped data.</p></li>
-<li><p><code>is_changing()</code> marks a network TRUE if it contains changes to nodal attributes.</p></li>
+<li><p><code><a href="mark_format_change.html">is_longitudinal()</a></code> marks a network TRUE if it contains longitudinal, panel data.</p></li>
+<li><p><code><a href="mark_format_change.html">is_dynamic()</a></code> marks a network TRUE if it contains dynamic, time-stamped data.</p></li>
+<li><p><code><a href="mark_format_change.html">is_changing()</a></code> marks a network TRUE if it contains changes to nodal attributes.</p></li>
 </ul><p>All <code>is_*()</code> functions return a logical scalar (TRUE or FALSE).</p>
     </div>
 
@@ -90,13 +90,7 @@ for example a set of ego networks or a dynamic or longitudinal set of networks.<
 <span></span>
 <span><span class="fu">is_edgelist</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">is_list</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">is_longitudinal</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">is_dynamic</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">is_changing</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">is_list</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -104,7 +98,7 @@ for example a set of ego networks or a dynamic or longitudinal set of networks.<
 
 
 <dl><dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
-<dd><p>An object of a manynet-consistent class:</p><ul><li><p>matrix (adjacency or incidence) from <code>{base}</code> R</p></li>
+<dd><p>An object of a <code>{manynet}</code>-consistent class:</p><ul><li><p>matrix (adjacency or incidence) from <code>{base}</code> R</p></li>
 <li><p>edgelist, a data frame from <code>{base}</code> R or tibble from <code>{tibble}</code></p></li>
 <li><p>igraph, from the <code>{igraph}</code> package</p></li>
 <li><p>network, from the <code>{network}</code> package</p></li>
@@ -119,8 +113,7 @@ for example a set of ego networks or a dynamic or longitudinal set of networks.<
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other marking:
-<code><a href="mark_features.html">mark_features</a></code>,
-<code><a href="mark_format.html">mark_format</a></code></p></div>
+<code><a href="mark_features.html">mark_features</a></code></p></div>
     </div>
 
     <div id="ref-examples">
@@ -131,13 +124,7 @@ for example a set of ego networks or a dynamic or longitudinal set of networks.<
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="fu">is_edgelist</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">)</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-in"><span><span class="fu">is_edgelist</span><span class="op">(</span><span class="fu"><a href="manip_as.html">as_edgelist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">)</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"><span><span class="fu">is_longitudinal</span><span class="op">(</span><span class="fu"><a href="make_create.html">create_tree</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-in"><span><span class="fu">is_dynamic</span><span class="op">(</span><span class="fu"><a href="make_create.html">create_tree</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-in"><span><span class="fu">is_changing</span><span class="op">(</span><span class="va">fict_starwars</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">is_edgelist</span><span class="op">(</span><span class="fu"><a href="coerce_list.html">as_edgelist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">)</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 </code></pre></div>
     </div>

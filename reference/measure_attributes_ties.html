@@ -26,7 +26,7 @@ as the number of ties in the network, respectively."><meta property="og:image" c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@ as the number of ties in the network, respectively.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">tie_attribute</span><span class="op">(</span><span class="va">.data</span>, <span class="va">attribute</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">tie_attribute</span><span class="op">(</span><span class="va">.data</span>, <span class="va">attr_name</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">tie_weights</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
@@ -94,7 +94,7 @@ as the number of ties in the network, respectively.</p>
 
 
 <dl><dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
-<dd><p>An object of a manynet-consistent class:</p><ul><li><p>matrix (adjacency or incidence) from <code>{base}</code> R</p></li>
+<dd><p>An object of a <code>{manynet}</code>-consistent class:</p><ul><li><p>matrix (adjacency or incidence) from <code>{base}</code> R</p></li>
 <li><p>edgelist, a data frame from <code>{base}</code> R or tibble from <code>{tibble}</code></p></li>
 <li><p>igraph, from the <code>{igraph}</code> package</p></li>
 <li><p>network, from the <code>{network}</code> package</p></li>
@@ -102,41 +102,27 @@ as the number of ties in the network, respectively.</p>
 </ul></dd>
 
 
-<dt id="arg-attribute">attribute<a class="anchor" aria-label="anchor" href="#arg-attribute"></a></dt>
-<dd><p>Character string naming an attribute in the object.</p></dd>
+<dt id="arg-attr-name">attr_name<a class="anchor" aria-label="anchor" href="#arg-attr-name"></a></dt>
+<dd><p>Character string naming a nodal attribute.
+The attribute itself may be a logical mark, numeric measure, or character membership vector.</p></dd>
 
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other measures:
 <code><a href="measure_attributes_nodes.html">measure_attributes_nodes</a></code>,
-<code><a href="measure_central_between.html">measure_central_between</a></code>,
-<code><a href="measure_central_close.html">measure_central_close</a></code>,
-<code><a href="measure_central_degree.html">measure_central_degree</a></code>,
-<code><a href="measure_central_eigen.html">measure_central_eigen</a></code>,
-<code><a href="measure_closure.html">measure_closure</a></code>,
-<code><a href="measure_cohesion.html">measure_cohesion</a></code>,
-<code><a href="measure_diffusion_infection.html">measure_diffusion_infection</a></code>,
-<code><a href="measure_diffusion_net.html">measure_diffusion_net</a></code>,
-<code><a href="measure_diffusion_node.html">measure_diffusion_node</a></code>,
-<code><a href="measure_features.html">measure_features</a></code>,
-<code><a href="measure_heterogeneity.html">measure_heterogeneity</a></code>,
-<code><a href="measure_hierarchy.html">measure_hierarchy</a></code>,
-<code><a href="measure_holes.html">measure_holes</a></code>,
-<code><a href="measure_periods.html">measure_periods</a></code>,
-<code><a href="measure_properties.html">measure_properties</a></code>,
-<code><a href="member_diffusion.html">member_diffusion</a></code></p></div>
+<code><a href="measure_dims.html">measure_dims</a></code></p></div>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">tie_attribute</span><span class="op">(</span><span class="va">ison_algebra</span>, <span class="st">"task_tie"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
-<span class="r-in"><span><span class="fu">tie_weights</span><span class="op">(</span><span class="fu"><a href="manip_project.html">to_mode1</a></span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">tie_weights</span><span class="op">(</span><span class="fu"><a href="modif_project.html">to_mode1</a></span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   `Evelyn-Laura` `Evelyn-Brenda` `Evelyn-Theresa` `Evelyn-Charlotte`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>              6               6                7                  3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 135 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
-<span class="r-in"><span><span class="fu">tie_signs</span><span class="op">(</span><span class="fu"><a href="manip_deformat.html">to_uniplex</a></span><span class="op">(</span><span class="va">fict_marvel</span>,<span class="st">"relationship"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">tie_signs</span><span class="op">(</span><span class="fu"><a href="modif_plexity.html">to_uniplex</a></span><span class="op">(</span><span class="va">fict_marvel</span>,<span class="st">"relationship"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   `Abomination-Abomination` `Abomination-Beast` `Abomination-Colossus`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>                        -<span style="color: #BB0000;">1</span>                  -<span style="color: #BB0000;">1</span>                     -<span style="color: #BB0000;">1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 555 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>

@@ -26,7 +26,7 @@ or about how ego considers their alters to be related."><meta property="og:image
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -65,7 +65,7 @@ or about how ego considers their alters to be related."><meta property="og:image
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Making ego networks through interviewing</h1>
-    <small class="dont-index">Source: <a href="https://github.com/stocnet/manynet/blob/main/R/make_create.R" class="external-link"><code>R/make_create.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/stocnet/manynet/blob/main/R/make_collect.R" class="external-link"><code>R/make_collect.R</code></a></small>
     <div class="hidden name"><code>make_ego.Rd</code></div>
     </div>
 
@@ -73,7 +73,7 @@ or about how ego considers their alters to be related."><meta property="og:image
     <p>This function creates an ego network through interactive interview questions.
 It currently only supports a simplex, directed network of one
 or two modes.
-These directed networks can be reformatted as undirected using <code><a href="manip_direction.html">to_undirected()</a></code>.
+These directed networks can be reformatted as undirected using <code><a href="modif_direction.html">to_undirected()</a></code>.
 Multiplex networks can be collected separately and then joined together
 afterwards.</p>
 <p>The function supports the use of rosters or a maximum number of
@@ -83,7 +83,7 @@ or about how ego considers their alters to be related.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">create_ego</span><span class="op">(</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">collect_ego</span><span class="op">(</span></span>
 <span>  ego <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_alters <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  roster <span class="op">=</span> <span class="cn">NULL</span>,</span>

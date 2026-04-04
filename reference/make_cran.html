@@ -33,7 +33,7 @@ to functions not defined within the scripts.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -72,19 +72,19 @@ to functions not defined within the scripts.
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Making networks of inter- and intra-package dependencies</h1>
-    <small class="dont-index">Source: <a href="https://github.com/stocnet/manynet/blob/main/R/make_read.R" class="external-link"><code>R/make_read.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/stocnet/manynet/blob/main/R/make_collect.R" class="external-link"><code>R/make_collect.R</code></a></small>
     <div class="hidden name"><code>make_cran.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>These functions read information from CRAN or within an R package's
-working directory to create a networks of a package's dependencies:</p><ul><li><p><code>read_cran()</code> creates a network of a package's dependencies on other
+working directory to create a networks of a package's dependencies:</p><ul><li><p><code><a href="defunct.html">read_cran()</a></code> creates a network of a package's dependencies on other
 packages available on CRAN.
 It looks for the <code>Depends</code>, <code>Imports</code> and <code>Suggests</code> fields
 in the package's DESCRIPTION file
 and creates a network where nodes are packages
 and ties are dependencies.</p></li>
-<li><p><code>read_pkg()</code> creates a network of function dependencies
+<li><p><code><a href="defunct.html">read_pkg()</a></code> creates a network of function dependencies
 from R scripts in a directory.
 It looks for function definitions and function calls
 within the scripts and creates a network
@@ -94,9 +94,9 @@ to functions not defined within the scripts.</p></li>
 </ul></div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_cran</span><span class="op">(</span>pkg <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">collect_cran</span><span class="op">(</span>pkg <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">read_pkg</span><span class="op">(</span>dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">collect_pkg</span><span class="op">(</span>dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="source">
@@ -152,9 +152,9 @@ by <a href="https://github.com/stocnet/manynet/issues" class="external-link">rai
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># mnet &lt;- read_cran()</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># mnet &lt;- collect_cran()</span></span></span>
 <span class="r-in"><span><span class="co"># mnet &lt;- to_ego(mnet, "manynet", max_dist = 2)</span></span></span>
-<span class="r-in"><span><span class="co"># mnet &lt;- read_pkg()</span></span></span>
+<span class="r-in"><span><span class="co"># mnet &lt;- collect_pkg()</span></span></span>
 </code></pre></div>
     </div>
   </div>
