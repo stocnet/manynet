@@ -372,7 +372,7 @@ and we can import them from an Excel file or a `.csv` file.^[Note that if you im
 For the sake of this exercise, we'll import some data, `adols.csv`, that I've pre-saved within the package in the `data/` folder of this tutorial.
 Try the following code chunk. 
 
-```{r importedges, exercise = TRUE}
+```{r importedges, exercise = TRUE, purl=FALSE}
 adolties <- read_edgelist("data/adols.csv")
 flonodes <- read_edgelist("data/flonode.csv")
 ```
@@ -398,13 +398,13 @@ file with a barebones structure that you can overwrite with your own data.
 ```
 
 ```{r exportdata-hint, purl=FALSE}
-write______(ison_marvel_relationships, "_____/marvedges.xlsx")
-write______(ison_marvel_relationships, "_____/marvnodes.xlsx")
+write______(fict_lotr, "_____/lotredges.xlsx")
+write______(fict_lotr, "_____/lotrnodes.xlsx")
 ```
   
-```{r exportdata-solution}
-write_edgelist(ison_marvel_relationships, "data/marvedges.xlsx")
-write_nodelist(ison_marvel_relationships, "data/marvnodes.xlsx")
+```{r exportdata-solution, purl=FALSE}
+write_edgelist(fict_lotr, "data/lotredges.xlsx")
+write_nodelist(fict_lotr, "data/lotrnodes.xlsx")
 ```
 
 <img src="https://www.memesmonkey.com/images/memesmonkey/f4/f44e687f90b8797a8af15ec8ab5f4c90.gif"/>
@@ -430,7 +430,7 @@ Of course, any network data that is imported can be easily coerced into any othe
 Let's say we want to import the adolescents edgelist back in, but we want it in an igraph format.
 There are three ways you might do this:
 
-```{r readcoerce, exercise = TRUE}
+```{r readcoerce, exercise = TRUE, purl=FALSE}
 # 1. Separate steps
 adols <- read_edgelist("data/adols.csv")
 adolsigraph1 <- as_igraph(adols)
@@ -564,7 +564,7 @@ Reimport the `data/adols.csv` file, make it an igraph-class object, and then mak
 
 ```
 
-```{r adolsundir-solution}
+```{r adolsundir-solution, purl=FALSE}
 read_edgelist("data/adols.csv") %>% as_igraph() %>% to_undirected()
 ```
 
