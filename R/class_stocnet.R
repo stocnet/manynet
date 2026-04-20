@@ -5,6 +5,7 @@
 #'   nodes, ties, (nodal) changes, and info metadata about the network as a whole.
 #'   This offers a consistent and flexible structure that enables more complex 
 #'   forms of networks to be contained in a single object.
+#'   
 #'   Unlike 'mnet' objects, 'stocnet' objects are not layered on top of 'igraph' or 'tbl_graph' objects,
 #'   but instead are a list of tibbles and metadata.
 #'   Unlike 'igraph' or 'tbl_graph' objects,
@@ -98,27 +99,32 @@ NULL
 #'  This can include the name of the network, as well as the names of the
 #'  types of nodes and ties in the network.
 #'  For example, the info component could include a 'name' element with the name
-#'  of the network, a 'nodes' element with a character vector of the names of the types of
-#'  nodes in the network, and a 'ties' element with a character vector of
+#'  of the network, 
+#'  a 'modes' element with a character vector of the names of the types of
+#'  nodes in the network, 
+#'  and a 'layers' element with a character vector of
 #'  the names of the types of ties in the network.
 #'  By default NULL.
 #' @param nodes A tibble of nodes in the network, with one row per node
-#'   and one column for the node labels, which should be called 'name'.
-#'   Additional columns can be included for node attributes, such as 'active' for changing networks
-#'   and 'type' for multimodal networks.
+#'   and one column for the node labels, which should be called 'label'.
+#'   Additional columns can be included for node attributes, 
+#'   such as 'active' for changing networks
+#'   and 'mode' for multimodal networks.
 #'   By default NULL.
 #' @param ties A tibble of ties in the network, with one row per tie
 #'   and at least two columns for the node labels of the tie endpoints, which should be
 #'   called 'from' and 'to', even if the network is not directed.
-#'   Additional columns can be included for tie attributes, such as 'weight' for weighted networks
-#'   and 'type' for multiplex networks.
+#'   Additional columns can be included for tie attributes, 
+#'   such as 'weight' for weighted networks
+#'   and 'layer' for multiplex networks.
 #'   By default NULL.
 #' @param changes A tibble of nodal changes in the network, with one row
-#'   per change and at least three columns for the node label of the change, which should be called 'node',
-#'   the variable to which the change applies, which should be called 'var', and the
-#'   new value to be applied, which should be called 'value'.
-#'   Additional columns can be included for the time of the change, such as 'wave'
-#'   or 'time'.
+#'   per change and at least three columns for the node label of the change, 
+#'   which should be called 'node',
+#'   the variable to which the change applies, which should be called 'var', 
+#'   and the new value to be applied, which should be called 'value'.
+#'   Additional columns can be included for the time of the change, 
+#'   such as 'wave' or 'time'.
 #'   By default NULL.
 #' @export
 make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL, changes = NULL) {

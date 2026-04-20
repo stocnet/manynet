@@ -17,30 +17,35 @@ validate_stocnet(.data)
 This can include the name of the network, as well as the names of the
 types of nodes and ties in the network.
 For example, the info component could include a 'name' element with the name
-of the network, a 'nodes' element with a character vector of the names of the types of
-nodes in the network, and a 'ties' element with a character vector of
+of the network,
+a 'modes' element with a character vector of the names of the types of
+nodes in the network,
+and a 'layers' element with a character vector of
 the names of the types of ties in the network.
 By default NULL.}
 
 \item{nodes}{A tibble of nodes in the network, with one row per node
-and one column for the node labels, which should be called 'name'.
-Additional columns can be included for node attributes, such as 'active' for changing networks
-and 'type' for multimodal networks.
+and one column for the node labels, which should be called 'label'.
+Additional columns can be included for node attributes,
+such as 'active' for changing networks
+and 'mode' for multimodal networks.
 By default NULL.}
 
 \item{ties}{A tibble of ties in the network, with one row per tie
 and at least two columns for the node labels of the tie endpoints, which should be
 called 'from' and 'to', even if the network is not directed.
-Additional columns can be included for tie attributes, such as 'weight' for weighted networks
-and 'type' for multiplex networks.
+Additional columns can be included for tie attributes,
+such as 'weight' for weighted networks
+and 'layer' for multiplex networks.
 By default NULL.}
 
 \item{changes}{A tibble of nodal changes in the network, with one row
-per change and at least three columns for the node label of the change, which should be called 'node',
-the variable to which the change applies, which should be called 'var', and the
-new value to be applied, which should be called 'value'.
-Additional columns can be included for the time of the change, such as 'wave'
-or 'time'.
+per change and at least three columns for the node label of the change,
+which should be called 'node',
+the variable to which the change applies, which should be called 'var',
+and the new value to be applied, which should be called 'value'.
+Additional columns can be included for the time of the change,
+such as 'wave' or 'time'.
 By default NULL.}
 
 \item{x}{An object of class "mnet" or "tbl_graph".}
@@ -65,6 +70,7 @@ The 'stocnet' class of network object is a list of four main elements:
 nodes, ties, (nodal) changes, and info metadata about the network as a whole.
 This offers a consistent and flexible structure that enables more complex
 forms of networks to be contained in a single object.
+
 Unlike 'mnet' objects, 'stocnet' objects are not layered on top of 'igraph' or 'tbl_graph' objects,
 but instead are a list of tibbles and metadata.
 Unlike 'igraph' or 'tbl_graph' objects,
@@ -179,3 +185,19 @@ Similarly, if no nodal changes are logged, this information will be skipped
 too.
 }
 
+\examples{
+  out <- make_stocnet(info = list(name = "Example Network", 
+                           modes = c("Person", "Organization"), 
+                           layers = c("Friendship", "Collaboration")),
+    nodes = data.frame(label = c("A", "B", "C"), 
+                       mode = c("Person", "Person", "Organization"),
+                       active = c(TRUE, FALSE, TRUE)),
+    ties = data.frame(from = c("A", "B"),
+                      to = c("B", "C"),
+                      weight = c(1, 2),
+                      layer = c("Friendship", "Collaboration")),
+    changes = data.frame(time = c(1, 2),
+                         node = c("A", "B"),
+                         var = c("active", "active"),
+                         value = c(FALSE, TRUE)))
+}
