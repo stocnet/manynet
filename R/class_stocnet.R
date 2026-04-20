@@ -126,15 +126,51 @@ NULL
 #'   Additional columns can be included for the time of the change, 
 #'   such as 'wave' or 'time'.
 #'   By default NULL.
+#' @examples
+#'   out <- make_stocnet(info = list(name = "Example Network", 
+#'                            modes = c("Person", "Organization"), 
+#'                            layers = c("Friendship", "Collaboration")),
+#'     nodes = data.frame(label = c("A", "B", "C"), 
+#'                        mode = c("Person", "Person", "Organization"),
+#'                        active = c(TRUE, FALSE, TRUE)),
+#'     ties = data.frame(from = c("A", "B"),
+#'                       to = c("B", "C"),
+#'                       weight = c(1, 2),
+#'                       layer = c("Friendship", "Collaboration")),
+#'     changes = data.frame(time = c(1, 2),
+#'                          node = c("A", "B"),
+#'                          var = c("active", "active"),
+#'                          value = c(FALSE, TRUE)))
 #' @export
 make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL, changes = NULL) {
-  list(
+  out <- list(
     info = info,
-    nodes = nodes,
-    ties = ties,
-    changes = changes
-  ) |> 
-    structure(class = "stocnet")
+    nodes = dplyr::tibble(nodes),
+    ties = dplyr::tibble(ties),
+    changes = dplyr::tibble(changes)
+  )
+  # make sure from and to are numeric indices of the nodes, not labels
+  out <- index_ties(out)
+  out <- index_changes(out)
+  out <- structure(out, class = c("stocnet", class(out)))
+  validate_stocnet(out)
+}
+
+index_ties <- function(.data){
+  if(is.character(.data$ties$from) && is.character(.data$ties$to) && is.character(.data$nodes$label)){
+    .data$ties <- .data$ties |>
+      dplyr::mutate(from = as.numeric(match(from, nodes$label)),
+                    to = as.numeric(match(to, nodes$label)))
+  }
+  .data
+}
+
+index_changes <- function(.data){
+  if(is.character(.data$changes$node) && is.character(.data$nodes$label)){
+    .data$changes <- .data$changes |>
+      dplyr::mutate(node = as.numeric(match(node, nodes$label)))
+  }
+  .data
 }
 
 #' @rdname make_stocnet
