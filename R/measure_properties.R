@@ -49,13 +49,18 @@ net_nodes.igraph <- function(.data){
 }
 
 #' @export
-net_nodes.tbl <- function(.data){
+net_nodes.tbl_igraph <- function(.data){
   if(is_list(.data)){
     nodes <- vapply(.data, function(x) igraph::vcount(as_igraph(x)), 
                     FUN.VALUE = numeric(1))
     make_network_measure(max(nodes), .data[[1]], call = deparse(sys.call()))
   } else make_network_measure(igraph::vcount(as_igraph(.data)), .data, 
                               call = deparse(sys.call()))
+}
+
+#' @export
+net_nodes.network <- function(.data){
+  network::network.size(.data)
 }
 
 #' @rdname measure_dims
@@ -273,6 +278,11 @@ net_node_attributes.stocnet <- function(.data){
   names(.data$nodes)
 }
 
+#' @export
+net_node_attributes.network <- function(.data){
+  network::list.vertex.attributes(.data)
+}
+
 #' @rdname member_names
 #' @importFrom igraph graph_attr
 #' @examples
@@ -307,5 +317,10 @@ net_tie_attributes.igraph <- function(.data){
 #' @export
 net_tie_attributes.stocnet <- function(.data){
   names(.data$ties)
+}
+
+#' @export
+net_tie_attributes.network <- function(.data){
+  network::list.edge.attributes(.data)
 }
 
