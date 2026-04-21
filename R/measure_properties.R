@@ -63,6 +63,11 @@ net_nodes.network <- function(.data){
   network::network.size(.data)
 }
 
+#' @export
+net_nodes.data.frame <- function(.data){
+  length(unique(c(.data$from, .data$to)))
+}
+
 #' @rdname measure_dims
 #' @examples
 #' net_modes(ison_southern_women)
