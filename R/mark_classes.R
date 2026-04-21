@@ -54,10 +54,7 @@ manynet_classes <- c("igraph" = "igraph",
 is_graph <- function(.data) UseMethod("is_graph")
 
 #' @export
-is_graph.data.frame <- function(.data){FALSE}
-
-#' @export
-is_graph.matrix <- function(.data){FALSE}
+is_graph.default <- function(.data){FALSE}
 
 #' @export
 is_graph.tbl_graph <- function(.data){TRUE}
@@ -69,7 +66,7 @@ is_graph.igraph <- function(.data){TRUE}
 is_graph.network <- function(.data){TRUE}
 
 #' @export
-is_graph.function <- function(.data){FALSE}
+is_graph.stocnet <- function(.data){TRUE}
 
 #' @rdname mark_is
 #' @examples
@@ -79,21 +76,12 @@ is_graph.function <- function(.data){FALSE}
 is_edgelist <- function(.data) UseMethod("is_edgelist")
   
 #' @export
+is_edgelist.default <- function(.data){FALSE}
+
+#' @export
 is_edgelist.data.frame <- function(.data) {
   ncol(.data) >= 2 & "from" %in% names(.data) & "to" %in% names(.data)
 }
-
-#' @export
-is_edgelist.matrix <- function(.data){FALSE}
-
-#' @export
-is_edgelist.network <- function(.data){FALSE}
-
-#' @export
-is_edgelist.igraph <- function(.data){FALSE}
-
-#' @export
-is_edgelist.tbl_graph <- function(.data){FALSE}
 
 #' @rdname mark_is
 #' @export

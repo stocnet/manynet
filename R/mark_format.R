@@ -25,6 +25,11 @@ NULL
 is_twomode <- function(.data) UseMethod("is_twomode")
 
 #' @export
+is_twomode.default <- function(.data) {
+  is_twomode(as_igraph(.data))
+}
+
+#' @export
 is_twomode.igraph <- function(.data) {
   igraph::is_bipartite(.data)
 }
@@ -81,6 +86,11 @@ is_twomode.list <- function(.data) {
 is_labelled <- function(.data) UseMethod("is_labelled")
 
 #' @export
+is_labelled.default <- function(.data) {
+  is_labelled(as_igraph(.data))
+}
+
+#' @export
 is_labelled.igraph <- function(.data) {
   igraph::is_named(.data)
 }
@@ -122,8 +132,12 @@ is_labelled.list <- function(.data) {
 #' @examples
 #' is_attributed(ison_algebra)
 #' @export
-is_attributed <- function(.data) {
-  length(setdiff(net_node_attributes(.data), c("type","name")))!=0
+is_attributed <- function(.data) UseMethod("is_attributed")
+
+#' @export
+is_attributed.default <- function(.data) {
+  length(setdiff(net_node_attributes(.data), c("type","mode",
+                                               "name","label")))!=0
 }
 
 #' @rdname mark_format_node
@@ -440,7 +454,8 @@ is_changing.igraph <- function(.data) {
 
 #' @export
 is_changing.stocnet <- function(.data) {
-  "changes" %in% names(.data)
+  "changes" %in% names(.data) &&
+    nrow(.data$changes) > 0
 }
 
 #' @export
