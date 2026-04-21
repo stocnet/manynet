@@ -4,7 +4,7 @@ test_that("stocnet validation", {
   expect_s3_class(validate_stocnet(test_stocnet_obj), "stocnet")
   expect_error(exp_class(list(nodes = 1), "nodes", "tbl_df"))
   expect_message(
-    res_cols(
+    reserved_cols(
       .data = list(nodes = tibble::tibble(id = 1)),
       component = "nodes",
       reserved_cols = "label",
@@ -14,7 +14,7 @@ test_that("stocnet validation", {
     "Columns 'id' might be better called label."
   )
   expect_error(
-    res_cols(
+    reserved_cols(
       .data = list(nodes = tibble::tibble(mode = 1)),
       component = "nodes",
       reserved_cols = "mode",
@@ -23,7 +23,7 @@ test_that("stocnet validation", {
     "'mode' must be of class 'character'."
   )
   expect_error(
-    req_cols(
+    required_cols(
       .data = list(nodes = tibble::tibble(nabel = 1)),
       component = "nodes",
       required_cols = "label"
