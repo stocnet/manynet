@@ -145,9 +145,9 @@ NULL
 make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL, changes = NULL) {
   out <- list(
     info = info,
-    nodes = dplyr::tibble(nodes),
-    ties = dplyr::tibble(ties),
-    changes = dplyr::tibble(changes)
+    nodes = `if`(is.null(nodes), NULL, dplyr::tibble(nodes)),
+    ties = `if`(is.null(ties), NULL, dplyr::tibble(ties)),
+    changes = `if`(is.null(changes), NULL, dplyr::tibble(changes))
   )
   # make sure from and to are numeric indices of the nodes, not labels
   out <- index_ties(out)
