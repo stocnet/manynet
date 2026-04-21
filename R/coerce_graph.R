@@ -386,9 +386,18 @@ as_igraph.stocnet <- function(.data, twomode = FALSE) {
     out <- igraph::graph_from_data_frame(as_edgelist(.data))
     out <- to_unnamed(out)
   } else {
+    vertices <- as_nodelist(.data)
+    if(is_labelled(.data)) 
+      vertices <- vertices |> dplyr::mutate(name = label) |>
+        dplyr::select(name, dplyr::everything(), -label)
+    if(is_twomode(.data))
+      vertices <- vertices |> dplyr::mutate(type = mode == unique(mode)[2]) |>
+        dplyr::select(name, dplyr::everything(), -mode)
     out <- igraph::graph_from_data_frame(as_edgelist(.data), 
-                                         vertices = as_nodelist(.data))
+                                         vertices = vertices)
   }
+  if(is_twomode(.data))
+    out <- to_undirected(out)
   igraph::graph_attr(out) <- as_infolist(.data)
   if(!is.null(as_changelist(.data)) && length(as_changelist(.data)) > 0)
     igraph::graph_attr(out, "changes") <- as_changelist(.data)
