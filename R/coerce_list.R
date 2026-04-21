@@ -181,7 +181,12 @@ as_edgelist.siena <- function(.data, twomode = NULL) {
 
 #' @export
 as_edgelist.stocnet <- function(.data, twomode = NULL) {
-  .data$ties
+  out <- .data$ties
+  if(is_labelled(.data)){
+    out$from <- .data$nodes$label[out$from]
+    out$to <- .data$nodes$label[out$to]
+  }
+  out
 }
 
 # Infolists ####
