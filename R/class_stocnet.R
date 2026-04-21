@@ -157,20 +157,23 @@ make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL, changes = NULL)
 }
 
 index_ties <- function(.data){
-  if(is.character(.data$ties$from) && is.character(.data$ties$to) && is.character(.data$nodes$label)){
-    .data$ties <- .data$ties |>
-      dplyr::mutate(from = as.numeric(match(from, nodes$label)),
-                    to = as.numeric(match(to, nodes$label)))
+  out <- .data
+  if(is.character(out$ties$from) && is.character(out$ties$to) && 
+     is.character(out$nodes$label)){
+    out$ties <- out$ties |>
+      dplyr::mutate(from = as.numeric(match(from, out$nodes$label)),
+                    to = as.numeric(match(to, out$nodes$label)))
   }
-  .data
+  out
 }
 
 index_changes <- function(.data){
-  if(is.character(.data$changes$node) && is.character(.data$nodes$label)){
-    .data$changes <- .data$changes |>
-      dplyr::mutate(node = as.numeric(match(node, nodes$label)))
+  out <- .data
+  if(is.character(out$changes$node) && is.character(out$nodes$label)){
+    out$changes <- out$changes |>
+      dplyr::mutate(node = as.numeric(match(node, out$nodes$label)))
   }
-  .data
+  out
 }
 
 #' @rdname make_stocnet

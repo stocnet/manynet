@@ -27,6 +27,11 @@ NULL
 net_nodes <- function(.data) UseMethod("net_nodes")
 
 #' @export
+net_nodes.default <- function(.data){
+  net_nodes(as_igraph(.data))
+}
+
+#' @export
 net_nodes.stocnet <- function(.data){
   nrow(.data$nodes)
 }
@@ -40,16 +45,6 @@ net_nodes.matrix <- function(.data){
 
 #' @export
 net_nodes.igraph <- function(.data){
-  if(is_list(.data)){
-    nodes <- vapply(.data, function(x) igraph::vcount(as_igraph(x)), 
-                    FUN.VALUE = numeric(1))
-    make_network_measure(max(nodes), .data[[1]], call = deparse(sys.call()))
-  } else make_network_measure(igraph::vcount(as_igraph(.data)), .data, 
-                              call = deparse(sys.call()))
-}
-
-#' @export
-net_nodes.tbl_igraph <- function(.data){
   if(is_list(.data)){
     nodes <- vapply(.data, function(x) igraph::vcount(as_igraph(x)), 
                     FUN.VALUE = numeric(1))
@@ -93,13 +88,18 @@ net_modes.igraph <- function(.data){
 net_ties <- function(.data) UseMethod("net_ties")
 
 #' @export
+net_ties.default <- function(.data){
+  net_ties(as_igraph(.data))
+}
+
+#' @export
 net_ties.stocnet <- function(.data){
   nrow(.data$ties)
 }
 
 #' @export
 net_ties.igraph <- function(.data){
-  make_network_measure(igraph::ecount(as_igraph(.data)), .data,
+  make_network_measure(igraph::ecount(.data), .data,
                        call = deparse(sys.call()))
 }
 
@@ -108,6 +108,11 @@ net_ties.igraph <- function(.data){
 #' net_layers(ison_southern_women)
 #' @export
 net_layers <- function(.data) UseMethod("net_layers")
+
+#' @export
+net_layers.default <- function(.data){
+  net_layers(as_igraph(.data))
+}
 
 #' @export
 net_layers.stocnet <- function(.data){
@@ -129,6 +134,11 @@ net_layers.igraph <- function(.data){
 #' net_dims(to_mode1(ison_southern_women))
 #' @export
 net_dims <- function(.data) UseMethod("net_dims")
+
+#' @export
+net_dims.default <- function(.data){
+  net_dims(as_igraph(.data))
+}
 
 #' @export
 net_dims.data.frame <- function(.data){
@@ -211,6 +221,11 @@ NULL
 net_name <- function(.data, prefix = NULL) UseMethod("net_name")
 
 #' @export
+net_name.default <- function(.data, prefix = NULL){
+  net_name(as_igraph(.data), prefix = prefix)
+}
+
+#' @export
 net_name.stocnet <- function(.data, prefix = NULL){
   existname <- ""
   if(!is.null(.data$info$name)) {
@@ -255,6 +270,11 @@ net_name.network <- function(.data, prefix = NULL){
 mode_names <- function(.data) UseMethod("mode_names")
 
 #' @export
+mode_names.default <- function(.data){
+  mode_names(as_igraph(.data))
+}
+
+#' @export
 mode_names.igraph <- function(.data){
   igraph::graph_attr(.data, "nodes") %||%
     c(igraph::graph_attr(.data, "grand")$vertex1,
@@ -272,6 +292,11 @@ mode_names.stocnet <- function(.data){
 #'   net_node_attributes(fict_lotr)
 #' @export
 net_node_attributes <- function(.data) UseMethod("net_node_attributes")
+
+#' @export
+net_node_attributes.default <- function(.data){
+  net_node_attributes(as_igraph(.data))
+}
 
 #' @export
 net_node_attributes.igraph <- function(.data){
@@ -296,6 +321,11 @@ net_node_attributes.network <- function(.data){
 layer_names <- function(.data) UseMethod("layer_names")
 
 #' @export
+layer_names.default <- function(.data){
+  layer_names(as_igraph(.data))
+}
+
+#' @export
 layer_names.igraph <- function(.data){
   igraph::graph_attr(.data, "ties") %||%
     c(igraph::graph_attr(.data, "grand")$edge.pos,
@@ -313,6 +343,11 @@ layer_names.stocnet <- function(.data){
 #'   net_tie_attributes(ison_algebra)
 #' @export
 net_tie_attributes <- function(.data) UseMethod("net_tie_attributes")
+
+#' @export
+net_tie_attributes.default <- function(.data){
+  net_tie_attributes(as_igraph(.data))
+}
 
 #' @export
 net_tie_attributes.igraph <- function(.data){
