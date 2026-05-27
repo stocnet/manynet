@@ -2,7 +2,7 @@
 
 # defining global variables more centrally
 utils::globalVariables(c(".data", "obs",
-                         "from", "to", "name", "weight","sign","wave",
+                         "from", "to", "name", "weight","sign","wave","label",
                          "nodes","edges","event","exposure",
                          "student","students","colleges",
                          "node","value","var","active","time",
@@ -53,6 +53,25 @@ is.scalar <- function(x) {
   is.atomic(x) && length(x) == 1L
 }
 
+preferred_classes <- c("stocnet","tbl_graph","igraph","network","matrix")
+
+as_input <- function(.data, FUN, ...){
+  if(!is_manynet(.data))
+    snet_abort("{.var {substitute(.data)}} must be a manynet-compatible object.")
+  out_class <- class(.data)[1]
+  # snet_minor_info("{.var {substitute(.data)}} is of class {.var {out_class}}.")
+  fun_label <- as.character(substitute(FUN))   # capture symbol
+  avail_classes <- sapply(strsplit(suppressWarnings(utils::methods(fun_label)), 
+                                   split = "\\."), "[[", 2)
+  avail_class <- stats::na.omit(avail_classes[avail_classes %in% manynet_classes][order(manynet_classes)])[1]
+  # snet_minor_info("{.fn {fun_label}} is available for {.var {avail_class}}.")
+  out <- get(paste0("as_",avail_class))(.data)
+  out <- FUN(out, ...)
+  # snet_minor_info("Output is {.var {class(out)[1]}}.",
+  #                 "Converting output to {.var {out_class}}.")
+  snet_minor_info("Using {.var {avail_class}} method for {.fn {fun_label}} and coercing back to {.var {out_class}}.")
+  get(paste0("as_",out_class))(out)
+}
 
 # #' @export
 # `%||%` <- function(x, y) {
