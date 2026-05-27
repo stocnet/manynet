@@ -60,7 +60,9 @@ validate_ties <- function(.data){
   reserved_cols(.data, "ties", "from", "numeric", 
            aka = c("source", "sender", "ego"))
   reserved_cols(.data, "ties", "to", "numeric", 
-           aka = c("receiver", "target", "alter"))
+           aka = c("receiver", "alter"))
+  reserved_cols(.data, "ties", "regarding", "numeric", 
+                aka = c("target", "tertius", "third", "about", "referent"))
   reserved_cols(.data, "ties", "weight", "numeric", 
            aka = c("value", "strength", "val", "sign"))
   reserved_cols(.data, "ties", "time", "character", 
@@ -85,8 +87,11 @@ validate_info <- function(.data){
   reserved_cols(.data, "info", "name", "character")
   reserved_cols(.data, "info", "modes", "character", length = net_modes(.data))
   reserved_cols(.data, "info", "layers", "character", length = net_layers(.data))
-  reserved_cols(.data, "info", "dependent", "character", length = 1, 
-           match = layer_names(.data))
+  reserved_cols(.data, "info", "observation", "character")
+  reserved_cols(.data, "info", "update", "character")
+  reserved_cols(.data, "info", "focal", "character", length = 1, 
+           match = layer_names(.data), aka = c("dependent","dv"))
+  invisible(.data)
 }
 
 validate_global <- function(.data){

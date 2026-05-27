@@ -6,7 +6,13 @@
 \alias{validate_stocnet}
 \title{Multilevel, multiplex, multimodal, signed, dynamic or longitudinal changing networks}
 \usage{
-make_stocnet(info = NULL, nodes = NULL, ties = NULL, changes = NULL)
+make_stocnet(
+  info = NULL,
+  nodes = NULL,
+  ties = NULL,
+  changes = NULL,
+  global = NULL
+)
 
 \method{print}{stocnet}(x, ..., n = 12)
 

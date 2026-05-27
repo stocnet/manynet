@@ -83,11 +83,24 @@ add_info.stocnet <- function(.data, ...){
 
 #' @rdname manip_info
 #' @export
-mutate_info <- function(.data, ...){
+mutate_info <- function(.data, ...) UseMethod("mutate_info")
+
+#' @export
+mutate_info.igraph <- function(.data, ...){
   info <- list(...)
   out <- as_tidygraph(.data)
   for(item in names(info)){
     igraph::graph_attr(out, item) <- info[[item]]
+  }
+  out
+}
+
+#' @export
+mutate_info.stocnet <- function(.data, ...){
+  dots <- list(...)
+  out <- .data
+  for(item in names(dots)){
+    out$info[[item]] <- dots[[item]]
   }
   out
 }
