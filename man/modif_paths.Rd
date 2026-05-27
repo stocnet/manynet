@@ -68,20 +68,20 @@ These functions return tidygraphs containing only special sets of ties:
 \item \code{to_eulerian()} returns only the Eulerian path within some network data.
 \item \code{to_tree()} returns the spanning tree in some network data or,
 if the data is unconnected, a forest of spanning trees.
-\item \code{to_dominating()} returns the dominating tree of the network
+\item \code{to_dominating()} returns the dominating tree of the network.
 }
 }
 \details{
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{             data.frame igraph matrix network tbl_graph
-to_eulerian                  *                        *
-to_matching           *      *      *       *         *
-to_mentoring                 *                        *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{             data.frame default igraph matrix network tbl_graph
+to_eulerian                          *                        *
+to_matching           *       *      *      *       *         *
+to_mentoring                  *      *                         
 }\if{html}{\out{</div>}}
 }
-\section{\code{to_matching()}}{
+\section{Matching}{
 
 This function attempts to solve the stable matching problem,
 also known as the stable marriage problem, upon a given
@@ -106,6 +106,17 @@ Here an implementation of the Gale-Shapley algorithm is used,
 in which an iterative process of proposal and acceptance is repeated until
 all are matched or have exhausted their lists of preferences.
 This is, however, computationally slower.
+}
+
+\section{Mentoring}{
+
+This function returns a network in which each node is tied to its closest mentor.
+The mentors are selected as the top nodes in terms of degree, or those equal
+to the highest rank degree in the network, whichever is the higher.
+The mentees are then tied to the closest mentor in terms of geodesic distance.
+This can be useful for showing the hierarchical structure of a network,
+for example in an organisational context,
+or identifying the most influential nodes in a network.
 }
 
 \examples{

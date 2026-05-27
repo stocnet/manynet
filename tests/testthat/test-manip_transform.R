@@ -7,7 +7,7 @@ for(fn in fun_names) {
   test_that(paste(fn, "works"), {
     skip_if(grepl("twomode|uniplex|time|ego", fn), message = "Some functions need more input")
     skip_if(grepl("mode1|mode2|matching", fn), message = "Some functions expect a two-mode network")
-    skip_if(grepl("mentoring|eulerian|dominating", fn), message = "Some functions have internal errors")
+    skip_if(grepl("eulerian|dominating", fn), message = "Some functions have internal errors")
     expect_no_error(to_funs[[fn]](create_ring(5)))
   })
 }
