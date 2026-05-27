@@ -8,40 +8,9 @@ validate_stocnet <- function(.data) {
   validate_nodes(.data)
   validate_ties(.data)
   validate_changes(.data)
+  validate_global(.data)
   invisible(.data)
 }
-
-reserved_cols <- function(.data, component, reserved_cols, class, 
-                     length = NULL, match = NULL, aka = NULL) {
-  if(reserved_cols %in% names(.data[[component]])){
-    if(!is.null(length)){
-      if(length(.data[[component]][[reserved_cols]]) != length) 
-        snet_abort("'{reserved_cols}' must be of length {length}.")
-    }
-    if(!inherits(.data[[component]][[reserved_cols]], class)) 
-      snet_abort("'{reserved_cols}' must be of class '{class}'.")
-    if(!is.null(match)){
-      if(!all(.data[[component]][[reserved_cols]] %in% match)) 
-        snet_abort("'{reserved_cols}' must be one of {to_phrase(match)}.")
-    }
-  } else if(!is.null(aka)){
-    if(any(aka %in% names(.data[[component]]))){
-      mislabelled <- names(.data[[component]])[names(.data[[component]]) %in% aka]
-      snet_warn("Columns '{mislabelled}' might be better called {reserved_cols}.")
-    }
-  }
-}
-
-required_cols <- function(.data, component, required_cols) {
-  if(!all(required_cols %in% names(.data[[component]]))) 
-    snet_abort("The '{component}' component of a stocnet object must have the following columns: {to_phrase(required_cols)}.")
-}
-
-expect_class <- function(.data, component, expected_class) {
-  if(!inherits(.data[[component]], expected_class)) 
-    snet_abort("The '{component}' component of a stocnet object must be of class '{expected_class}'.")
-}
-
 
 validate_nodes <- function(.data){
   if(is.null(.data$nodes)) return(invisible(.data))
@@ -102,5 +71,38 @@ validate_global <- function(.data){
   required_cols(.data, "changes", c("node", "var", "value"))
   reserved_cols(.data, "changes", "var", "character")
   invisible(.data)
+}
+
+# Helpers ####
+
+reserved_cols <- function(.data, component, reserved_cols, class, 
+                          length = NULL, match = NULL, aka = NULL) {
+  if(reserved_cols %in% names(.data[[component]])){
+    if(!is.null(length)){
+      if(length(.data[[component]][[reserved_cols]]) != length) 
+        snet_abort("'{reserved_cols}' must be of length {length}.")
+    }
+    if(!inherits(.data[[component]][[reserved_cols]], class)) 
+      snet_abort("'{reserved_cols}' must be of class '{class}'.")
+    if(!is.null(match)){
+      if(!all(.data[[component]][[reserved_cols]] %in% match)) 
+        snet_abort("'{reserved_cols}' must be one of {to_phrase(match)}.")
+    }
+  } else if(!is.null(aka)){
+    if(any(aka %in% names(.data[[component]]))){
+      mislabelled <- names(.data[[component]])[names(.data[[component]]) %in% aka]
+      snet_warn("Columns '{mislabelled}' might be better called {reserved_cols}.")
+    }
+  }
+}
+
+required_cols <- function(.data, component, required_cols) {
+  if(!all(required_cols %in% names(.data[[component]]))) 
+    snet_abort("The '{component}' component of a stocnet object must have the following columns: {to_phrase(required_cols)}.")
+}
+
+expect_class <- function(.data, component, expected_class) {
+  if(!inherits(.data[[component]], expected_class)) 
+    snet_abort("The '{component}' component of a stocnet object must be of class '{expected_class}'.")
 }
 

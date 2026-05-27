@@ -126,6 +126,12 @@ NULL
 #'   Additional columns can be included for the time of the change, 
 #'   such as 'wave' or 'time'.
 #'   By default NULL.
+#' @param global A tibble of global variables in the network, with one row
+#'   per change and at least three columns for 
+#'   the variable to which the change applies, which should be called 'var', 
+#'   the time of the change, which should be called 'time',
+#'   and the new value to be applied, which should be called 'value'.
+#'   By default NULL.
 #' @examples
 #'   out <- make_stocnet(info = list(name = "Example Network", 
 #'                            modes = c("Person", "Organization"), 
@@ -142,7 +148,8 @@ NULL
 #'                          var = c("active", "active"),
 #'                          value = c(FALSE, TRUE)))
 #' @export
-make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL, changes = NULL, global = NULL) {
+make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL, 
+                         changes = NULL, global = NULL) {
   out <- list(
     info = info,
     nodes = `if`(is.null(nodes), NULL, dplyr::tibble(nodes)),

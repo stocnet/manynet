@@ -54,6 +54,13 @@ Additional columns can be included for the time of the change,
 such as 'wave' or 'time'.
 By default NULL.}
 
+\item{global}{A tibble of global variables in the network, with one row
+per change and at least three columns for
+the variable to which the change applies, which should be called 'var',
+the time of the change, which should be called 'time',
+and the new value to be applied, which should be called 'value'.
+By default NULL.}
+
 \item{x}{An object of class "mnet" or "tbl_graph".}
 
 \item{...}{Other arguments passed to or from other methods.}
