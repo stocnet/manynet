@@ -133,8 +133,18 @@ add_changes <- function(.data, changes){
 
 #' @rdname manip_changes
 #' @export
-delete_changes <- function(.data){
+delete_changes <- function(.data) UseMethod("delete_changes")
+
+#' @export
+delete_changes.igraph <- function(.data){
   igraph::delete_graph_attr(.data, "changes")
+}
+
+#' @export
+delete_changes.stocnet <- function(.data){
+  out <- .data
+  out$changes <- NULL
+  out
 }
 
 #' @rdname manip_changes
@@ -149,26 +159,59 @@ mutate_changes.tbl_graph <- function(.data, ...){
   .data
 }
 
+#' @export
+mutate_changes.stocnet <- function(.data, ...){
+  out <- .data
+  changes <- out$changes
+  changes <- dplyr::mutate(changes, ...)
+  out$changes <- changes
+  out
+}
+
 #' @rdname manip_changes
 #' @examples
 #' filter_changes(fict_starwars, node == "Anakin")
 #' @export
-filter_changes <- function(.data, ..., .by = NULL){
+filter_changes <- function(.data, ..., .by = NULL) UseMethod("filter_changes")
+
+#' @export
+filter_changes.igraph <- function(.data, ..., .by = NULL){
   changes <- igraph::graph_attr(.data, "changes")
   changes <- tidygraph::filter(changes, ..., .by = .by)
   igraph::graph_attr(.data, "changes") <- changes
   .data
 }
 
+#' @export
+filter_changes.stocnet <- function(.data, ..., .by = NULL){
+  out <- .data
+  changes <- out$changes
+  changes <- dplyr::filter(changes, ..., .by = .by)
+  out$changes <- changes
+  out
+}
+
 #' @rdname manip_changes
 #' @examples
 #' select_changes(fict_starwars, node)
 #' @export
-select_changes <- function(.data, ..., .by = NULL){
+select_changes <- function(.data, ..., .by = NULL) UseMethod("select_changes")
+
+#' @export
+select_changes.igraph <- function(.data, ..., .by = NULL){
   changes <- igraph::graph_attr(.data, "changes")
   changes <- tidygraph::select(changes, ..., .by = .by)
   igraph::graph_attr(.data, "changes") <- changes
   .data
+}
+
+#' @export
+select_changes.stocnet <- function(.data, ..., .by = NULL){
+  out <- .data
+  changes <- out$changes
+  changes <- dplyr::select(changes, ..., .by = .by)
+  out$changes <- changes
+  out
 }
 
 #' @rdname manip_changes
