@@ -87,6 +87,15 @@ validate_info <- function(.data){
   reserved_cols(.data, "info", "layers", "character", length = net_layers(.data))
   reserved_cols(.data, "info", "dependent", "character", length = 1, 
            match = layer_names(.data))
+}
+
+validate_global <- function(.data){
+  if(is.null(.data$global)) return(invisible(.data))
+  expect_class(.data, "global", "tbl_df")
+  reserved_cols(.data, "global", "time", "character", 
+                aka = c("wave", "period", "date", "begin", "end"))
+  required_cols(.data, "changes", c("node", "var", "value"))
+  reserved_cols(.data, "changes", "var", "character")
   invisible(.data)
 }
 
