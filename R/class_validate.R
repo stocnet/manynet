@@ -34,8 +34,9 @@ validate_ties <- function(.data){
                 aka = c("tertius", "third", "about", "referent", "regarding"))
   reserved_cols(.data, "ties", "weight", "numeric", 
            aka = c("value", "strength", "val", "sign"))
-  reserved_cols(.data, "ties", "time", "character", 
-           aka = c("wave", "period", "date", "begin", "end"))
+  reserved_cols(.data, "ties", "time", 
+                class = c("character","numeric","mdate","Date","POSIXct"), 
+                aka = c("wave", "period", "date", "begin", "end"))
   reserved_cols(.data, "ties", "layer", "character", 
            aka = c("type", "plex", "tie"))
   invisible(.data)
@@ -82,7 +83,7 @@ reserved_cols <- function(.data, component, reserved_cols, class,
       if(length(.data[[component]][[reserved_cols]]) != length) 
         snet_abort("'{reserved_cols}' must be of length {length}.")
     }
-    if(!inherits(.data[[component]][[reserved_cols]], class)) 
+    if(length(intersect(class(.data[[component]][[reserved_cols]]), class))==0) 
       snet_abort("'{reserved_cols}' must be of class '{class}'.")
     if(!is.null(match)){
       if(!all(.data[[component]][[reserved_cols]] %in% match)) 
