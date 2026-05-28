@@ -26,12 +26,12 @@ validate_ties <- function(.data){
   if(is.null(.data$ties)) return(invisible(.data))
   expect_class(.data, "ties", "tbl_df")
   required_cols(.data, "ties", c("from", "to"))
-  reserved_cols(.data, "ties", "from", "numeric", 
+  reserved_cols(.data, "ties", "from", "integer", 
            aka = c("source", "sender", "ego"))
-  reserved_cols(.data, "ties", "to", "numeric", 
-           aka = c("receiver", "alter"))
-  reserved_cols(.data, "ties", "regarding", "numeric", 
-                aka = c("target", "tertius", "third", "about", "referent"))
+  reserved_cols(.data, "ties", "to", "integer", 
+           aka = c("target", "receiver", "alter"))
+  reserved_cols(.data, "ties", "by", "integer", 
+                aka = c("tertius", "third", "about", "referent", "regarding"))
   reserved_cols(.data, "ties", "weight", "numeric", 
            aka = c("value", "strength", "val", "sign"))
   reserved_cols(.data, "ties", "time", "character", 
