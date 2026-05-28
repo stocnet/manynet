@@ -8,7 +8,7 @@ make_node_measure <- function(out, .data) {
 make_tie_measure <- function(out, .data) {
   class(out) <- c("tie_measure", class(out))
   if(is_labelled(.data)){
-    tie_names <- attr(igraph::E(.data), "vnames")
+    tie_names <- attr(igraph::E(as_igraph(.data)), "vnames")
     if(is_directed(.data)) 
       names(out) <- gsub("\\|", "->", tie_names) else 
         names(out) <- gsub("\\|", "-", tie_names)
