@@ -59,7 +59,7 @@ as_graphAM            *                         *           *            *
 as_igraph             *          *       *      *           *            *
 as_network            *                  *      *           *            *
 as_siena                                        *                         
-as_stocnet                                      *           *            *
+as_stocnet            *                         *           *            *
 as_tidygraph          *          *       *      *    *      *            *
              network.goldfish networkDynamic siena stocnet tbl_graph
 as_diffnet                                                          
