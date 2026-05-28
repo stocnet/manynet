@@ -7,18 +7,23 @@
 #'   
 #'   - `add_nodes()` adds an additional number of nodes to network data.
 #'   - `delete_nodes()` deletes nodes from network data.
+#'   - `bind_nodes()` adds two nodesets together.
 #'   - `filter_nodes()` subsets nodes based on some nodal attribute-related logical statement.
 #'   
 #'   While `add_*()`/`delete_*()` functions operate similarly as comparable `{igraph}` functions,
-#'   `filter_*()`, works like a `{tidyverse}` or `{dplyr}`-style function.
+#'   `bind_*()` and `filter_*()` works like a `{tidyverse}` or `{dplyr}`-style function.
 #' @details
 #'   Not all functions have methods available for all object classes.
-#'   Below are the currently implemented S3 methods:
+#'   Below are the currently implemented S3 methods for these functions:
 #'  
-#'   |             | igraph| network| tbl_graph|
-#'   |:------------|------:|-------:|---------:|
-#'   |add_nodes    |      1|       1|         1|
-#'   |delete_nodes |      1|       1|         1|
+#'   ```{r, echo = FALSE, comment=""}
+#'   available_methods(collect_functions("add_nodes|delete_nodes|bind_nodes|filter_nodes"))
+#'   ```
+#'   
+#'   If a method is not available for a particular class, but a default method is,
+#'   the default method will attempt to coerce the object to a class for which a method is defined,
+#'   and then coerce the output back to the original class.
+#'   If no method is available for any class, an error will be thrown.
 #' @template param_data
 #' @template param_dots
 #' @template param_by
@@ -35,6 +40,11 @@ NULL
 #' @importFrom igraph add_vertices
 #' @export
 add_nodes <- function(.data, nodes, attribute = NULL) UseMethod("add_nodes")
+
+#' @export
+add_nodes.default <- function(.data, nodes, attribute = NULL){
+  as_input(.data, add_nodes, nodes = nodes, attribute = attribute)
+}
 
 #' @export
 add_nodes.igraph <- function(.data, nodes, attribute = NULL){
@@ -57,6 +67,11 @@ add_nodes.network <- function(.data, nodes, attribute = NULL){
 delete_nodes <- function(.data, nodes) UseMethod("delete_nodes")
 
 #' @export
+delete_nodes.default <- function(.data, nodes, attribute = NULL){
+  as_input(.data, delete_nodes, nodes = nodes, attribute = attribute)
+}
+
+#' @export
 delete_nodes.igraph <- function(.data, nodes){
   igraph::delete_vertices(.data, v = nodes)
 }
@@ -72,9 +87,30 @@ delete_nodes.network <- function(.data, nodes){
 }
 
 #' @rdname manip_nodes_num
+#' @export
+bind_nodes <- function(.data, object2) UseMethod("bind_nodes")
+
+#' @export
+bind_nodes.default <- function(.data, object2){
+  as_input(.data, object2, FUN = bind_nodes)
+}
+
+#' @export
+bind_nodes.stocnet <- function(.data, object2){
+  out <- .data
+  out$nodes <- bind_rows(.data$nodes, object2$nodes)
+  out
+}
+
+#' @rdname manip_nodes_num
 #' @importFrom tidygraph filter
 #' @export
 filter_nodes <- function(.data, ..., .by = NULL) UseMethod("filter_nodes")
+
+#' @export
+filter_nodes.default <- function(.data, ..., .by = NULL){
+  as_input(.data, ..., .by = .by, FUN = filter_nodes)
+}
 
 #' @export
 filter_nodes.tbl_graph <- function(.data, ..., .by = NULL){
@@ -110,14 +146,26 @@ filter_nodes.stocnet <- function(.data, ..., .by = NULL){
 #' @description 
 #'   These functions allow users to add nodes attributes:
 #'   
-#'   - `add_node_attribute()`, `mutate()`, or `mutate_nodes()` offer ways to add 
-#'   a vector of values to a network as a nodal attribute.
-#'   - `rename_nodes()` and `rename()` rename nodal attributes.
-#'   - `bind_node_attributes()` appends all nodal attributes from one network to another,
-#'   and `join_nodes()` merges all nodal attributes from one network to another.
+#'   - `add_node_attribute()` offers an `{igraph}`-style way to add a vector of values to a network as a nodal attribute.
+#'   - `mutate_nodes()` offers a `{tidyverse}`-style way to add one or more vectors of values to a network as nodal attributes.
+#'   - `rename_nodes()` offers a `{tidyverse}`-style way to rename nodal attributes.
+#'   - `select_nodes()` offers a `{tidyverse}`-style way to select a subset of nodal attributes.
+#'   - `join_nodes()` merges all nodal attributes from one network to another.
 #'   
 #'   Note that while `add_*()` functions operate similarly as comparable `{igraph}` functions,
 #'   `mutate*()`, `bind*()`, etc work like `{tidyverse}` or `{dplyr}`-style functions.
+#' @details
+#'   Not all functions have methods available for all object classes.
+#'   Below are the currently implemented S3 methods for these functions:
+#'  
+#'   ```{r, echo = FALSE, comment=""}
+#'   available_methods(collect_functions("add_node_attribute|mutate_nodes|select_nodes|join_nodes"))
+#'   ```
+#'   
+#'   If a method is not available for a particular class, but a default method is,
+#'   the default method will attempt to coerce the object to a class for which a method is defined,
+#'   and then coerce the output back to the original class.
+#'   If no method is available for any class, an error will be thrown.
 #' @template param_data
 #' @template param_dots
 #' @template param_attr
@@ -134,6 +182,11 @@ NULL
 #' @importFrom igraph vertex_attr
 #' @export
 add_node_attribute <- function(.data, attr_name, vector) UseMethod("add_node_attribute")
+
+#' @export
+add_node_attribute.default <- function(.data, attr_name, vector){
+  as_input(.data, add_node_attribute, attr_name = attr_name, vector = vector)
+}
 
 #' @export
 add_node_attribute.igraph <- function(.data, attr_name, vector){
@@ -173,6 +226,11 @@ mutate <- tidygraph::mutate
 mutate_nodes <- function(.data, ...) UseMethod("mutate_nodes")
 
 #' @export
+mutate_nodes.default <- function(.data, ...){
+  as_input(.data, FUN = mutate_nodes, ...)
+}
+
+#' @export
 mutate_nodes.tbl_graph <- function(.data, ...){
   .data |> tidygraph::mutate(...)
 }
@@ -190,14 +248,14 @@ mutate_nodes.network <- function(.data, ...){
 }
 
 #' @rdname manip_nodes_attr
-#' @importFrom tidygraph select
-#' @export
-select <- tidygraph::select
-
-#' @rdname manip_nodes_attr
 #' @importFrom tidygraph mutate
 #' @export
 select_nodes <- function(.data, ...) UseMethod("select_nodes")
+
+#' @export
+select_nodes.default <- function(.data, ...){
+  as_input(.data, FUN = select_nodes, ...)
+}
 
 #' @export
 select_nodes.tbl_graph <- function(.data, ...){
@@ -219,6 +277,16 @@ select_nodes.igraph <- function(.data, ...){
 #'   join_nodes(another, other)
 #' @export
 join_nodes <- function(.data, object2, .by = NULL,
+                       join_type = c("full","left", "right", "inner")) UseMethod("join_nodes")
+
+#' @export
+join_nodes.default <- function(.data, object2, .by = NULL,
+                       join_type = c("full","left", "right", "inner")){
+  as_input(.data, object2, .by = .by, join_type = join_type, FUN = join_nodes)
+}
+
+#' @export
+join_nodes.tbl_graph <- function(.data, object2, .by = NULL,
                        join_type = c("full","left", "right", "inner")){
   join_type <- match.arg(join_type)
   out <- as_tidygraph(.data)
@@ -264,12 +332,15 @@ bind_node_attributes <- function(.data, object2){
 }
 
 #' @rdname manip_nodes_attr
-#' @importFrom tidygraph rename
 #' @export
-rename_nodes <- tidygraph::rename
+rename_nodes <- function(.data, ...) UseMethod("rename_nodes")
 
-#' @rdname manip_nodes_attr
+#' @export
+rename_nodes.default <- function(.data, ...){
+  as_input(.data, FUN = rename_nodes, ...)
+}
+
 #' @importFrom tidygraph rename
 #' @export
-rename <- tidygraph::rename
+rename_nodes.tbl_graph <- tidygraph::rename
 
