@@ -169,8 +169,13 @@ index_ties <- function(.data){
   if(is.character(out$ties$from) && is.character(out$ties$to) && 
      is.character(out$nodes$label)){
     out$ties <- out$ties |>
-      dplyr::mutate(from = as.numeric(match(from, out$nodes$label)),
-                    to = as.numeric(match(to, out$nodes$label)))
+      dplyr::mutate(from = match(from, out$nodes$label),
+                    to = match(to, out$nodes$label))
+  }
+  if(is.numeric(out$ties$from) || is.numeric(out$ties$to)){
+    out$ties <- out$ties |>
+      dplyr::mutate(from = as.integer(from),
+                    to = as.integer(to))
   }
   out
 }
@@ -179,7 +184,7 @@ index_changes <- function(.data){
   out <- .data
   if(is.character(out$changes$node) && is.character(out$nodes$label)){
     out$changes <- out$changes |>
-      dplyr::mutate(node = as.numeric(match(node, out$nodes$label)))
+      dplyr::mutate(node = match(node, out$nodes$label))
   }
   out
 }

@@ -109,16 +109,16 @@ data_objs <- list(
 test_stocnet_obj <- make_stocnet(
   info = list(name = "Test Dataset", directed = TRUE),
   nodes = tibble::tibble(
-    id = as.numeric(1:12),
+    id = 1:12,
     group = rep(c("A", "B"), each = 6)
   ),
   ties = tibble::tibble(
-    from = as.numeric(1:12),
-    to = as.numeric(c(2:12, 1)),
+    from = 1:12,
+    to = c(2:12, 1),
     weight = rep(c(1, 2), each = 6)
   ),
   changes = tibble::tibble(
-    node = as.numeric(1:12),
+    node = 1:12,
     var = "group",
     value = rep(c("A", "B"), each = 6)
   )

@@ -46,7 +46,7 @@ validate_changes <- function(.data){
   if(is.null(.data$changes)) return(invisible(.data))
   expect_class(.data, "changes", "tbl_df")
   required_cols(.data, "changes", c("node", "var", "value"))
-  reserved_cols(.data, "changes", "node", "numeric", aka = c("id"))
+  reserved_cols(.data, "changes", "node", "integer", aka = c("id"))
   reserved_cols(.data, "changes", "var", "character")
   invisible(.data)
 }
