@@ -398,9 +398,12 @@ as_igraph.stocnet <- function(.data, twomode = FALSE) {
   }
   if(is_twomode(.data))
     out <- to_undirected(out)
-  igraph::graph_attr(out) <- as_infolist(.data)
+  if(!is.null(as_infolist(.data)) && length(as_infolist(.data)) > 0)
+    igraph::graph_attr(out) <- as_infolist(.data)
   if(!is.null(as_changelist(.data)) && length(as_changelist(.data)) > 0)
     igraph::graph_attr(out, "changes") <- as_changelist(.data)
+  if(!is.null(as_globallist(.data)) && length(as_globallist(.data)) > 0)
+    igraph::graph_attr(out, "global") <- as_globallist(.data)
   out
 }
 
