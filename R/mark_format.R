@@ -438,7 +438,8 @@ is_longitudinal <- function(.data) {
 #' @export
 is_dynamic <- function(.data) {
   atts <- net_tie_attributes(.data)
-  "time" %in% atts | "beg" %in% atts | "begin" %in% atts | "start" %in% atts
+  ("time" %in% atts && !all(is.na(tie_attribute(.data, "time")))) | 
+    "beg" %in% atts | "begin" %in% atts | "start" %in% atts
 }
 
 #' @rdname mark_format_change
