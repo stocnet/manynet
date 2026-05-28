@@ -6,6 +6,7 @@
 #'   - `as_edgelist()` coerces the object into an edgelist, as data frames or tibbles.
 #'   - `as_nodelist()` coerces the object into a nodelist, as a data frame or tibble.
 #'   - `as_changelist()` coerces the object into a changelist, as a data frame or tibble.
+#'   - `as_globallist()` coerces the object into a globallist, as a data frame or tibble.
 #'   - `as_infolist()` coerces the object into a list of network-level information, 
 #'   such as the names of the nodes and ties, if not given in the nodelist or edgelist.
 #'   - `as_matrix()` coerces the object into an adjacency (one-mode/unipartite) or incidence (two-mode/bipartite) matrix.
@@ -225,6 +226,17 @@ as_infolist.stocnet <- function(.data) {
 #' @export
 as_infolist.network <- function(.data) {
   .data$gal
+}
+
+# Globallists ####
+
+#' @rdname coerce_list
+#' @export
+as_globallist <- function(.data) UseMethod("as_globallist")
+
+#' @export
+as_globallist.stocnet <- function(.data) {
+  .data$global
 }
 
 # Matrices ####

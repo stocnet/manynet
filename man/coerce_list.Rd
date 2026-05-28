@@ -6,6 +6,7 @@
 \alias{as_changelist}
 \alias{as_edgelist}
 \alias{as_infolist}
+\alias{as_globallist}
 \alias{as_matrix}
 \title{Coercing into lists or matrices}
 \usage{
@@ -16,6 +17,8 @@ as_changelist(.data)
 as_edgelist(.data, twomode = FALSE)
 
 as_infolist(.data)
+
+as_globallist(.data)
 
 as_matrix(.data, twomode = NULL)
 }
@@ -40,12 +43,14 @@ The currently implemented coercions or translations are:
 \if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame diff_model igraph matrix network network.goldfish
 as_changelist                            *              *                 
 as_edgelist            *                 *      *       *                *
+as_globallist                                                             
 as_infolist                              *              *                 
 as_matrix              *          *      *      *       *                *
 as_nodelist                              *              *                 
               siena stocnet tbl_graph
 as_changelist             *         *
 as_edgelist       *       *         *
+as_globallist             *          
 as_infolist               *         *
 as_matrix         *       *         *
 as_nodelist               *         *
@@ -58,6 +63,7 @@ and translating the information contained in the original object:
 \item \code{as_edgelist()} coerces the object into an edgelist, as data frames or tibbles.
 \item \code{as_nodelist()} coerces the object into a nodelist, as a data frame or tibble.
 \item \code{as_changelist()} coerces the object into a changelist, as a data frame or tibble.
+\item \code{as_globallist()} coerces the object into a globallist, as a data frame or tibble.
 \item \code{as_infolist()} coerces the object into a list of network-level information,
 such as the names of the nodes and ties, if not given in the nodelist or edgelist.
 \item \code{as_matrix()} coerces the object into an adjacency (one-mode/unipartite) or incidence (two-mode/bipartite) matrix.
