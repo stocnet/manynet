@@ -74,8 +74,33 @@ delete_nodes.network <- function(.data, nodes){
 #' @rdname manip_nodes_num
 #' @importFrom tidygraph filter
 #' @export
-filter_nodes <- function(.data, ..., .by = NULL){
+filter_nodes <- function(.data, ..., .by = NULL) UseMethod("filter_nodes")
+
+#' @export
+filter_nodes.tbl_graph <- function(.data, ..., .by = NULL){
   tidygraph::filter(.data, ..., .by = dplyr::all_of(.by))
+}
+
+#' @export
+filter_nodes.stocnet <- function(.data, ..., .by = NULL){
+  pre_id <- seq_nodes(.data)
+  out <- .data$nodes |> dplyr::filter(..., .by = dplyr::all_of(.by))
+  lookup <- c(pre_id, match(pre_id, seq_nodes(out)))
+  if(!is.null(.data$ties)){
+    out_ties <- .data$ties |> dplyr::filter(from %in% lookup, to %in% lookup)
+    out_ties <- out_ties |> dplyr::mutate(from = match(from, lookup), 
+                                           to = match(to, lookup))
+  } else {
+    out_ties <- NULL
+  }
+  if(!is.null(.data$changes)){
+    out_changes <- .data$changes |> dplyr::filter(node %in% lookup)
+    out_changes <- out_changes |> dplyr::mutate(node = match(node, lookup))
+  } else {
+    out_changes <- NULL
+  } 
+  out_info <- .data$info
+  make_stocnet(nodes = out, ties = out_ties, changes = out_changes, info = out_info)
 }
 
 # Manipulating nodes attributes ####
