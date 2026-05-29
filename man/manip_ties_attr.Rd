@@ -6,7 +6,6 @@
 \alias{mutate_ties}
 \alias{rename_ties}
 \alias{arrange_ties}
-\alias{bind_ties}
 \alias{join_ties}
 \alias{select_ties}
 \alias{summarise_ties}
@@ -19,8 +18,6 @@ mutate_ties(.data, ...)
 rename_ties(.data, ...)
 
 arrange_ties(.data, ...)
-
-bind_ties(.data, ...)
 
 join_ties(.data, object2, attr_name)
 
@@ -56,13 +53,24 @@ These functions allow users to add and delete tie attributes:
 \item \code{add_tie_attribute()} and \code{mutate_ties()} offer ways to add
 a vector of values to a network as a tie attribute.
 \item \code{rename_ties()} renames tie attributes.
-\item \code{bind_ties()} appends the tie data from two networks and
-\code{join_ties()} merges ties from two networks,
+\item \code{join_ties()} merges ties from two networks,
 adding a tie attribute identifying the newly added ties.
 }
 
 Note that while \verb{add_*()}/\verb{delete_*()} functions operate similarly as comparable \code{{igraph}} functions,
 \verb{mutate*()}, \verb{bind*()}, etc work like \code{{tidyverse}} or \code{{dplyr}}-style functions.
+}
+\details{
+Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{                  default igraph tbl_graph
+add_tie_attribute       *      *          
+arrange_ties            *                *
+mutate_ties             *                *
+rename_ties             *                *
+select_ties             *                *
+}\if{html}{\out{</div>}}
 }
 \examples{
   other <- create_filled(4) |> mutate(name = c("A", "B", "C", "D"))

@@ -4,12 +4,15 @@
 \alias{manip_ties_num}
 \alias{add_ties}
 \alias{delete_ties}
+\alias{bind_ties}
 \alias{filter_ties}
 \title{Manipulating number of ties}
 \usage{
 add_ties(.data, ties, attr_list = NULL)
 
 delete_ties(.data, ties)
+
+bind_ties(.data, ...)
 
 filter_ties(.data, ...)
 }
@@ -37,6 +40,7 @@ These functions allow users to add and delete ties:
 \itemize{
 \item \code{add_ties()} adds additional ties to network data
 \item \code{delete_ties()} deletes ties from network data
+\item \code{bind_ties()} appends the tie data from two networks
 \item \code{filter_ties()} subsets ties based on some tie attribute-related logical statement.
 }
 
@@ -47,9 +51,11 @@ While \verb{add_*()}/\verb{delete_*()} functions operate similarly as comparable
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{            igraph network tbl_graph
-add_ties         *       *         *
-delete_ties      *       *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{            default igraph network tbl_graph
+add_ties          *      *       *         *
+bind_ties         *                        *
+delete_ties       *      *       *         *
+filter_ties       *                        *
 }\if{html}{\out{</div>}}
 }
 \examples{

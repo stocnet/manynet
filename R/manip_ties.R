@@ -7,6 +7,7 @@
 #'   
 #'   - `add_ties()` adds additional ties to network data
 #'   - `delete_ties()` deletes ties from network data
+#'   - `bind_ties()` appends the tie data from two networks
 #'   - `filter_ties()` subsets ties based on some tie attribute-related logical statement.
 #'   
 #'   While `add_*()`/`delete_*()` functions operate similarly as comparable `{igraph}` functions,
@@ -20,7 +21,7 @@
 #'   Below are the currently implemented S3 methods:
 #'  
 #'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("(add|del|filter).*ties"))
+#'   available_methods(collect_functions("(add|del|bind|filter).*ties"))
 #'   ```
 #' @examples
 #'   other <- create_filled(4) |> mutate(name = c("A", "B", "C", "D"))
@@ -36,6 +37,11 @@ NULL
 #' ison_adolescents |> add_ties(c("Betty","Tina"))
 #' @export
 add_ties <- function(.data, ties, attr_list = NULL) UseMethod("add_ties")
+
+#' @export
+add_ties.default <- function(.data, ties, attr_list = NULL){
+  as_input(.data, add_ties, ties = ties, attr_list = attr_list)
+}
 
 #' @export
 add_ties.igraph <- function(.data, ties, attr_list = NULL){
@@ -61,6 +67,11 @@ add_ties.network <- function(.data, ties, attr_list = NULL){
 delete_ties <- function(.data, ties) UseMethod("delete_ties")
 
 #' @export
+delete_ties.default <- function(.data, ties){
+  as_input(.data, delete_ties, ties = ties)
+}
+
+#' @export
 delete_ties.igraph <- function(.data, ties){
   igraph::delete_edges(.data, edges = ties)
 }
@@ -75,12 +86,36 @@ delete_ties.network <- function(.data, ties){
   as_network(igraph::delete_edges(as_igraph(.data), edges = ties))
 }
 
+#' @rdname manip_ties_num
+#' @importFrom tidygraph bind_edges
+#' @export
+bind_ties <- function(.data, ...) UseMethod("bind_ties")
+
+#' @export
+bind_ties.default <- function(.data, ...){
+  as_input(.data, bind_ties, ...)
+}
+
+#' @export
+bind_ties.tbl_graph <- function(.data, ...){
+  toAdd <- as_edgelist(...)
+  tidygraph::bind_edges(.data, toAdd) |> 
+    arrange_ties(from, to)
+}
+
 #' @rdname manip_ties_num 
 #' @importFrom dplyr filter
 #' @export
-filter_ties <- function(.data, ...){
-  out <- as_tidygraph(.data)
-  out |> tidygraph::activate(edges) |> 
+filter_ties <- function(.data, ...) UseMethod("filter_ties")
+
+#' @export
+filter_ties.default <- function(.data, ...){
+  as_input(.data, filter_ties, ...)
+}
+
+#' @export
+filter_ties.tbl_graph <- function(.data, ...){
+  .data |> tidygraph::activate(edges) |> 
     dplyr::filter(...) |> 
     tidygraph::activate(nodes)
 }
@@ -95,8 +130,7 @@ filter_ties <- function(.data, ...){
 #'   - `add_tie_attribute()` and `mutate_ties()` offer ways to add 
 #'   a vector of values to a network as a tie attribute.
 #'   - `rename_ties()` renames tie attributes.
-#'   - `bind_ties()` appends the tie data from two networks and 
-#'   `join_ties()` merges ties from two networks,
+#'   - `join_ties()` merges ties from two networks,
 #'   adding a tie attribute identifying the newly added ties.
 #'   
 #'   Note that while `add_*()`/`delete_*()` functions operate similarly as comparable `{igraph}` functions,
@@ -108,6 +142,13 @@ filter_ties <- function(.data, ...){
 #' @template param_obj2
 #' @family ties
 #' @template fam_manip
+#' @details
+#'   Not all functions have methods available for all object classes.
+#'   Below are the currently implemented S3 methods:
+#'  
+#'   ```{r, echo = FALSE, comment=""}
+#'   available_methods(collect_functions("add_tie_attrib|(mutate|rename|arrange|join|select|summarise).*ties"))
+#'   ```
 #' @examples
 #'   other <- create_filled(4) |> mutate(name = c("A", "B", "C", "D"))
 #'   mutate_ties(other, form = 1:6) |> filter_ties(form < 4)
@@ -117,48 +158,66 @@ NULL
 #' @rdname manip_ties_attr
 #' @importFrom igraph edge_attr
 #' @export
-add_tie_attribute <- function(.data, attr_name, vector){
-  out <- as_igraph(.data)
+add_tie_attribute <- function(.data, attr_name, vector) UseMethod("add_tie_attribute")
+
+#' @export
+add_tie_attribute.default <- function(.data, attr_name, vector){
+  as_input(.data, add_tie_attribute, attr_name = attr_name, vector = vector)
+}
+
+#' @export
+add_tie_attribute.igraph <- function(.data, attr_name, vector){
+  out <- .data
   igraph::edge_attr(out, name = attr_name) <- vector
-  if(inherits(.data, "tbl_graph")) as_tidygraph(out) else
-    if(inherits(.data, "igraph")) as_igraph(out) else
-      if(inherits(.data, "igraph")) as_network(out) else
-        if(inherits(.data, "data.frame")) as_edgelist(out) else
-          message(paste("This function only works for",
-                        "igraph, tidygraph, or network objects or data frame edgelists."))
+  out
 }
 
 #' @rdname manip_ties_attr
 #' @importFrom tidygraph activate
 #' @export
-mutate_ties <- function(.data, ...){
-  out <- as_tidygraph(.data)
+mutate_ties <- function(.data, ...) UseMethod("mutate_ties")
+
+#' @export
+mutate_ties.default <- function(.data, ...){
+  as_input(.data, mutate_ties, ...)
+}
+
+#' @export
+mutate_ties.tbl_graph <- function(.data, ...){
+  out <- .data
   out |> tidygraph::activate(edges) |> mutate(...) |> activate(nodes)
 }
 
 #' @rdname manip_ties_attr
 #' @importFrom dplyr rename
 #' @export
-rename_ties <- function(.data, ...){
-  out <- as_tidygraph(.data)
+rename_ties <- function(.data, ...) UseMethod("rename_ties")
+
+#' @export
+rename_ties.default <- function(.data, ...){
+  as_input(.data, rename_ties, ...)
+}
+
+#' @export
+rename_ties.tbl_graph <- function(.data, ...){
+  out <- .data
   out |> tidygraph::activate(edges) |> dplyr::rename(...) |> activate(nodes)
 }
 
 #' @rdname manip_ties_attr
 #' @importFrom dplyr arrange
 #' @export
-arrange_ties <- function(.data, ...){
-  out <- as_tidygraph(.data)
-  out |> tidygraph::activate(edges) |> dplyr::arrange(...) |> activate(nodes)
+arrange_ties <- function(.data, ...) UseMethod("arrange_ties")
+
+#' @export
+arrange_ties.default <- function(.data, ...){
+  as_input(.data, arrange_ties, ...)
 }
 
-#' @rdname manip_ties_attr
-#' @importFrom tidygraph bind_edges
 #' @export
-bind_ties <- function(.data, ...){
-  toAdd <- as_edgelist(...)
-  tidygraph::bind_edges(.data, toAdd) |> 
-    arrange_ties(from, to)
+arrange_ties.tbl_graph <- function(.data, ...){
+  out <- .data
+  out |> tidygraph::activate(edges) |> dplyr::arrange(...) |> activate(nodes)
 }
 
 #' @rdname manip_ties_attr 
@@ -202,8 +261,16 @@ join_ties <- function(.data, object2, attr_name) {
 #' @rdname manip_ties_attr
 #' @importFrom dplyr select
 #' @export
-select_ties <- function(.data, ...){
-  out <- as_tidygraph(.data)
+select_ties <- function(.data, ...) UseMethod("select_ties")
+
+#' @export
+select_ties.default <- function(.data, ...){
+  as_input(.data, select_ties, ...)
+}
+
+#' @export
+select_ties.tbl_graph <- function(.data, ...){
+  out <- .data
   out |> tidygraph::activate(edges) |> dplyr::select(...) |> activate(nodes)
 }
 

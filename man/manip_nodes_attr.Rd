@@ -5,10 +5,10 @@
 \alias{add_node_attribute}
 \alias{mutate}
 \alias{mutate_nodes}
+\alias{rename_nodes}
 \alias{select_nodes}
 \alias{join_nodes}
 \alias{bind_node_attributes}
-\alias{rename_nodes}
 \title{Manipulating node attributes}
 \usage{
 add_node_attribute(.data, attr_name, vector)
@@ -16,6 +16,8 @@ add_node_attribute(.data, attr_name, vector)
 mutate(.data, ...)
 
 mutate_nodes(.data, ...)
+
+rename_nodes(.data, ...)
 
 select_nodes(.data, ...)
 
@@ -27,8 +29,6 @@ join_nodes(
 )
 
 bind_node_attributes(.data, object2)
-
-rename_nodes(.data, ...)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:

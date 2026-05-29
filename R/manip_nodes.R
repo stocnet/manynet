@@ -249,6 +249,21 @@ mutate_nodes.network <- function(.data, ...){
 }
 
 #' @rdname manip_nodes_attr
+#' @export
+rename_nodes <- function(.data, ...) UseMethod("rename_nodes")
+
+#' @export
+rename_nodes.default <- function(.data, ...){
+  as_input(.data, FUN = rename_nodes, ...)
+}
+
+#' @importFrom tidygraph rename
+#' @export
+rename_nodes.tbl_graph <- function(.data, ...){
+  tidygraph::rename(.data, ...)
+}
+
+#' @rdname manip_nodes_attr
 #' @importFrom tidygraph mutate
 #' @export
 select_nodes <- function(.data, ...) UseMethod("select_nodes")
@@ -330,20 +345,5 @@ bind_node_attributes <- function(.data, object2){
                                    value = igraph::vertex_attr(object2, a))
   }
   as_tidygraph(out)
-}
-
-#' @rdname manip_nodes_attr
-#' @export
-rename_nodes <- function(.data, ...) UseMethod("rename_nodes")
-
-#' @export
-rename_nodes.default <- function(.data, ...){
-  as_input(.data, FUN = rename_nodes, ...)
-}
-
-#' @importFrom tidygraph rename
-#' @export
-rename_nodes.tbl_graph <- function(.data, ...){
-  tidygraph::rename(.data, ...)
 }
 
