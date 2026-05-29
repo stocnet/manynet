@@ -30,6 +30,8 @@ filter_nodes(.data, ..., .by = NULL)
 
 \item{attribute}{A named list to be added as tie or node attributes.}
 
+\item{object2}{A second object to copy nodes or ties from.}
+
 \item{...}{Additional parameters and arguments passed on internally.}
 
 \item{.by}{An attribute name to join objects by. By default, NULL.}

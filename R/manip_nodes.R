@@ -27,6 +27,7 @@
 #' @template param_data
 #' @template param_dots
 #' @template param_by
+#' @template param_obj2
 #' @family nodes
 #' @template fam_manip
 #' @param attribute A named list to be added as tie or node attributes.
@@ -67,8 +68,8 @@ add_nodes.network <- function(.data, nodes, attribute = NULL){
 delete_nodes <- function(.data, nodes) UseMethod("delete_nodes")
 
 #' @export
-delete_nodes.default <- function(.data, nodes, attribute = NULL){
-  as_input(.data, delete_nodes, nodes = nodes, attribute = attribute)
+delete_nodes.default <- function(.data, nodes){
+  as_input(.data, delete_nodes, nodes = nodes)
 }
 
 #' @export
@@ -342,5 +343,7 @@ rename_nodes.default <- function(.data, ...){
 
 #' @importFrom tidygraph rename
 #' @export
-rename_nodes.tbl_graph <- tidygraph::rename
+rename_nodes.tbl_graph <- function(.data, ...){
+  tidygraph::rename(.data, ...)
+}
 
