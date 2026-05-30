@@ -257,6 +257,11 @@ to_mentoring.igraph <- function(.data, elites = 0.1){
 to_eulerian <- function(.data) UseMethod("to_eulerian")
 
 #' @export
+to_eulerian.default <- function(.data){
+  as_input(.data, to_eulerian)
+}
+
+#' @export
 to_eulerian.igraph <- function(.data){
   if(!is_eulerian(.data))
     snet_abort("This is not a Eulerian graph.")

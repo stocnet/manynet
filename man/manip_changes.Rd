@@ -9,6 +9,8 @@
 \alias{select_changes}
 \alias{gather_changes}
 \alias{apply_changes}
+\alias{arrange_changes}
+\alias{rename_changes}
 \title{Manipulating changes to nodes over time}
 \usage{
 add_changes(.data, changes)
@@ -24,6 +26,10 @@ select_changes(.data, ..., .by = NULL)
 gather_changes(.data, time)
 
 apply_changes(.data, time)
+
+arrange_changes(.data, ...)
+
+rename_changes(.data, ...)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:

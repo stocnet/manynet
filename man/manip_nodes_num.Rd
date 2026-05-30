@@ -6,6 +6,7 @@
 \alias{delete_nodes}
 \alias{bind_nodes}
 \alias{filter_nodes}
+\alias{arrange_nodes}
 \title{Manipulating number of nodes}
 \usage{
 add_nodes(.data, nodes, attribute = NULL)
@@ -15,6 +16,8 @@ delete_nodes(.data, nodes)
 bind_nodes(.data, object2)
 
 filter_nodes(.data, ..., .by = NULL)
+
+arrange_nodes(.data, ...)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:

@@ -5,6 +5,9 @@
 \alias{add_info}
 \alias{mutate_info}
 \alias{net_attributes}
+\alias{filter_info}
+\alias{select_info}
+\alias{rename_info}
 \title{Manipulating network information}
 \usage{
 add_info(.data, ...)
@@ -12,6 +15,12 @@ add_info(.data, ...)
 mutate_info(.data, ...)
 
 net_attributes(.data)
+
+filter_info(.data, ...)
+
+select_info(.data, ...)
+
+rename_info(.data, ...)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
