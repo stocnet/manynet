@@ -35,6 +35,11 @@ NULL
 to_onemode <- function(.data) UseMethod("to_onemode")
 
 #' @export
+to_onemode.default <- function(.data){
+  as_input(.data, to_onemode)
+}
+
+#' @export
 to_onemode.matrix <- function(.data) {
   if (is_twomode(.data)){
     .data <- rbind(cbind(matrix(0, nrow(.data), nrow(.data)), .data),
@@ -64,6 +69,11 @@ to_onemode.igraph <- function(.data) {
 to_twomode <- function(.data, mark) UseMethod("to_twomode")
 
 #' @export
+to_twomode.default <- function(.data, mark){
+  as_input(.data, to_twomode, mark = mark)
+}
+
+#' @export
 to_twomode.igraph <- function(.data, mark){
   igraph::V(.data)$type <- mark
   to_undirected(.data)
@@ -83,6 +93,11 @@ to_twomode.network <- function(.data, mark){
 #' @importFrom igraph V delete_vertex_attr
 #' @export
 to_multilevel <- function(.data) UseMethod("to_multilevel")
+
+#' @export
+to_multilevel.default <- function(.data){
+  as_input(.data, to_multilevel)
+}
 
 #' @export
 to_multilevel.tbl_graph <- function(.data) {

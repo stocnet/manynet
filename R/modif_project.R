@@ -50,6 +50,11 @@ NULL
 to_mode1 <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) UseMethod("to_mode1")
 
 #' @export
+to_mode1.default <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")){
+  as_input(.data, to_mode1, similarity = similarity)
+}
+
+#' @export
 to_mode1.matrix <- function(.data, 
                             similarity = c("count","jaccard","rand","pearson","yule")) {
   similarity <- match.arg(similarity)
@@ -121,6 +126,11 @@ to_mode1.data.frame <- function(.data, similarity = c("count","jaccard","rand","
 #' @rdname modif_project
 #' @export
 to_mode2 <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) UseMethod("to_mode2")
+
+#' @export
+to_mode2.default <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")){
+  as_input(.data, to_mode2, similarity = similarity)
+}
 
 #' @export
 to_mode2.matrix <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
@@ -196,6 +206,11 @@ to_mode2.data.frame <- function(.data, similarity = c("count","jaccard","rand","
 #' to_ties(ison_adolescents)
 #' @export
 to_ties <- function(.data) UseMethod("to_ties")
+
+#' @export
+to_ties.default <- function(.data){
+  as_input(.data, to_ties)
+}
 
 #' @export
 to_ties.igraph <- function(.data){

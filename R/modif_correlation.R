@@ -24,9 +24,15 @@ NULL
 
 #' @rdname modif_correlation
 #' @export
-to_correlation <- function(.data, method = NULL){
-  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
-  mat <- as_matrix(.data)
+to_correlation <- function(.data, method = NULL) UseMethod("to_correlation")
+
+#' @export
+to_correlation.default <- function(.data, method = NULL){
+  as_input(.data, to_correlation, method = method)
+}
+
+#' @export
+to_correlation.matrix <- function(.data, method = NULL){
   if(is.null(method)) method <- ifelse(is_twomode(.data),
                                        "all",
                                        ifelse(is_complex(.data),
@@ -34,17 +40,25 @@ to_correlation <- function(.data, method = NULL){
                                               ifelse(is_directed(.data),
                                                      "recip", "diag")))
   out <- switch(method,
-                all = .corTwomode(mat),
-                complex = .corComplex(mat),
-                recip = .corRecip(mat),
-                diag = .corDiag(mat))
+                all = .corTwomode(.data),
+                complex = .corComplex(.data),
+                recip = .corRecip(.data),
+                diag = .corDiag(.data))
   out
 }
 
 #' @rdname modif_correlation
 #' @export
-to_cosine <- function(.data){
-  x <- as_matrix(.data)
+to_cosine <- function(.data) UseMethod("to_cosine")
+
+#' @export
+to_cosine.default <- function(.data){
+  as_input(.data, to_cosine)
+}
+
+#' @export
+to_cosine.matrix <- function(.data){
+  x <- .data
   co = array(0, c(ncol(x), ncol(x)))
   f = colnames(x)
   dimnames(co) = list(f, f)
@@ -73,8 +87,16 @@ NULL
 #'   should be retained. 
 #'   By default TRUE. 
 #' @export
-to_permuted <- function(.data, with_attr = TRUE) {
-  out <- as_matrix(.data)
+to_permuted <- function(.data, with_attr = TRUE) UseMethod("to_permuted")
+
+#' @export
+to_permuted.default <- function(.data, with_attr = TRUE){
+  as_input(.data, to_permuted, with_attr = with_attr)
+}
+
+#' @export
+to_permuted.matrix <- function(.data, with_attr = TRUE) {
+  out <- .data
   if(is_twomode(.data)){
     out <- .r2perm(out)
   } else {

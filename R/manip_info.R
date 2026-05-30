@@ -24,6 +24,11 @@
 add_info <- function(.data, ...) UseMethod("add_info")
 
 #' @export
+add_info.default <- function(.data, ...){
+  as_input(.data, add_info, ...)
+}
+
+#' @export
 add_info.igraph <- function(.data, ...){
   
   if(!is.null(igraph::graph_attr(.data)$grand)){ # Updating
@@ -84,6 +89,11 @@ add_info.stocnet <- function(.data, ...){
 #' @rdname manip_info
 #' @export
 mutate_info <- function(.data, ...) UseMethod("mutate_info")
+
+#' @export
+mutate_info.default <- function(.data, ...){
+  as_input(.data, mutate_info, ...)
+}
 
 #' @export
 mutate_info.igraph <- function(.data, ...){

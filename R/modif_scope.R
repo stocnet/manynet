@@ -31,6 +31,11 @@ NULL
 to_no_missing <- function(.data) UseMethod("to_no_missing")
 
 #' @export
+to_no_missing.default <- function(.data){
+  as_input(.data, to_no_missing)
+}
+
+#' @export
 to_no_missing.tbl_graph <- function(.data){
   out <- .data
   nl <- as_nodelist(out)
@@ -51,6 +56,13 @@ to_no_missing.tbl_graph <- function(.data){
 #' @export
 to_ego <- function(.data, node, max_dist = 1, min_dist = 0,
                    direction = c("out","in")) UseMethod("to_ego")
+
+#' @export
+to_ego.default <- function(.data, node, max_dist = 1, min_dist = 0,
+                           direction = c("out","in")){
+  as_input(.data, to_ego, node = node, max_dist = max_dist, 
+           min_dist = min_dist, direction = direction)
+}
 
 #' @export
 to_ego.igraph <- function(.data, node, max_dist = 1, min_dist = 0,
@@ -74,6 +86,11 @@ to_ego.tbl_graph <- function(.data, node, max_dist = 1, min_dist = 0,
 #' @param time A time point or wave at which to present the network.
 #' @export
 to_time <- function(.data, time) UseMethod("to_time")
+
+#' @export
+to_time.default <- function(.data, time){
+  as_input(.data, to_time, time = time)
+}
 
 #' @export
 to_time.tbl_graph <- function(.data, time){
@@ -112,6 +129,11 @@ to_time.tbl_graph <- function(.data, time){
 #' @rdname modif_scope
 #' @export
 to_giant <- function(.data) UseMethod("to_giant")
+
+#' @export
+to_giant.default <- function(.data){
+  as_input(.data, to_giant)
+}
 
 #' @export
 to_giant.igraph <- function(.data) {
@@ -153,6 +175,11 @@ to_giant.matrix <- function(.data) {
 #'   to_no_isolates()
 #' @export
 to_no_isolates <- function(.data) UseMethod("to_no_isolates")
+
+#' @export
+to_no_isolates.default <- function(.data){
+  as_input(.data, to_no_isolates)
+}
 
 #' @export
 to_no_isolates.tbl_graph <- function(.data) {
@@ -199,6 +226,11 @@ to_no_isolates.data.frame <- function(.data) {
 to_subgraph <- function(.data, ...) UseMethod("to_subgraph")
 
 #' @export
+to_subgraph.default <- function(.data, ...){
+  as_input(.data, to_subgraph, ...)
+}
+
+#' @export
 to_subgraph.tbl_graph <- function(.data, ...){
   dplyr::filter(.data = .data, ..., 
                 .preserve = FALSE)
@@ -236,6 +268,11 @@ to_subgraph.matrix <- function(.data, ...){
 #'   `min` or `max`.
 #' @export
 to_blocks <- function(.data, membership, FUN = mean) UseMethod("to_blocks")
+
+#' @export
+to_blocks.default <- function(.data, membership, FUN = mean){
+  as_input(.data, to_blocks, membership = membership, FUN = FUN)
+}
 
 #' @export
 to_blocks.matrix <- function(.data, membership, FUN = mean){

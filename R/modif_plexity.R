@@ -37,6 +37,11 @@ NULL
 to_anti <- function(.data) UseMethod("to_anti")
 
 #' @export
+to_anti.default <- function(.data){
+  as_input(.data, to_anti)
+}
+
+#' @export
 to_anti.matrix <- function(.data){
   matrix(1, nrow(.data), ncol(.data)) - .data
 }
@@ -77,6 +82,11 @@ to_anti.network <- function(.data){
 to_simplex <- function(.data) UseMethod("to_simplex")
 
 #' @export
+to_simplex.default <- function(.data){
+  as_input(.data, to_simplex)
+}
+
+#' @export
 to_simplex.tbl_graph <- function(.data) {
   as_tidygraph(to_simplex(as_igraph(.data)))
 }
@@ -114,6 +124,11 @@ to_simplex.network <- function(.data) {
 #'   to_uniplex("friend")
 #' @export
 to_uniplex <- function(.data, tie) UseMethod("to_uniplex")
+
+#' @export
+to_uniplex.default <- function(.data, tie){
+  as_input(.data, to_uniplex, tie = tie)
+}
 
 #' @export
 to_uniplex.tbl_graph <- function(.data, tie){

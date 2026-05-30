@@ -24,7 +24,10 @@ NULL
 #'   to_subgraphs(attribute = "unicorn") |>
 #'   from_subgraphs()
 #' @export
-from_subgraphs <- function(netlist) {
+from_subgraphs <- function(netlist) UseMethod("from_subgraphs")
+
+#' @export
+from_subgraphs.list <- function(netlist) {
   if (!is.list(netlist[1])) {
     snet_abort("Please declare a list of subgraphs. ")
   }
@@ -49,7 +52,10 @@ from_subgraphs <- function(netlist) {
 #'   to_egos() |>
 #'   from_egos()
 #' @export
-from_egos <- function(netlist) {
+from_egos <- function(netlist) UseMethod("from_egos")
+
+#' @export
+from_egos.list <- function(netlist) {
   if (!is.list(netlist[1])) {
     snet_abort("Please declare a list of egos.")
   }
@@ -69,7 +75,10 @@ from_egos <- function(netlist) {
 #'   to_waves(attribute = "wave") |>
 #'   from_waves()
 #' @export
-from_waves <- function(netlist) {
+from_waves <- function(netlist) UseMethod("from_waves")
+
+#' @export
+from_waves.list <- function(netlist) {
   if (!is.list(netlist[1])) {
     snet_abort("Please declare a list of waves.")
   }
@@ -94,7 +103,10 @@ from_waves <- function(netlist) {
 #'   to_slices(slice = c(5,7)) |>
 #'   from_slices()
 #' @export
-from_slices <- function(netlist, remove.duplicates = FALSE) {
+from_slices <- function(netlist, remove.duplicates = FALSE) UseMethod("from_slices")
+
+#' @export
+from_slices.list <- function(netlist, remove.duplicates = FALSE) {
   if (is.list(netlist[1])) {
     ann <- lapply(netlist, as_igraph)
     out <- igraph::as_data_frame(ann[[1]])
@@ -112,7 +124,10 @@ from_slices <- function(netlist, remove.duplicates = FALSE) {
 
 #' @rdname modif_from
 #' @export
-from_ties <- function(netlist, netnames){
+from_ties <- function(netlist, netnames) UseMethod("from_ties")
+
+#' @export
+from_ties.list <- function(netlist, netnames){
   stopifnot(is_list(netlist))
   if(is.null(names(netlist))){
     if(!missing(netnames)){

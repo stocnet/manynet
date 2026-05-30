@@ -38,6 +38,11 @@ NULL
 add_ties <- function(.data, ties, attr_list = NULL) UseMethod("add_ties")
 
 #' @export
+add_ties.default <- function(.data, ties, attr_list = NULL){
+  as_input(.data, add_ties, ties = ties, attr_list = attr_list)
+}
+
+#' @export
 add_ties.igraph <- function(.data, ties, attr_list = NULL){
   igraph::add_edges(.data, edges = ties, attr = attr_list)
 }
@@ -59,6 +64,11 @@ add_ties.network <- function(.data, ties, attr_list = NULL){
 #' delete_ties(ison_adolescents, "Alice|Sue")
 #' @export
 delete_ties <- function(.data, ties) UseMethod("delete_ties")
+
+#' @export
+delete_ties.default <- function(.data, ties){
+  as_input(.data, delete_ties, ties = ties)
+}
 
 #' @export
 delete_ties.igraph <- function(.data, ties){

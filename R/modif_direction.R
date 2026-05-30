@@ -44,6 +44,11 @@ NULL
 to_directed <- function(.data) UseMethod("to_directed")
 
 #' @export
+to_directed.default <- function(.data){
+  as_input(.data, to_directed)
+}
+
+#' @export
 to_directed.igraph <- function(.data) {
   if(!is_directed.igraph(.data)){
     snet_info("Directions are assigned to existing ties at random.")
@@ -74,6 +79,11 @@ to_directed.data.frame <- function(.data) {
 #' @rdname modif_direction
 #' @export
 to_undirected <- function(.data) UseMethod("to_undirected")
+
+#' @export
+to_undirected.default <- function(.data){
+  as_input(.data, to_undirected)
+}
 
 #' @importFrom igraph as.undirected
 #' @export
@@ -111,6 +121,11 @@ to_undirected.data.frame <- function(.data) {
 to_redirected <- function(.data) UseMethod("to_redirected")
 
 #' @export
+to_redirected.default <- function(.data){
+  as_input(.data, to_redirected)
+}
+
+#' @export
 to_redirected.tbl_graph <- function(.data) {
   as_tidygraph(to_redirected.igraph(.data))
 }
@@ -144,6 +159,11 @@ to_redirected.network <- function(.data) {
 to_reciprocated <- function(.data) UseMethod("to_reciprocated")
 
 #' @export
+to_reciprocated.default <- function(.data){
+  as_input(.data, to_reciprocated)
+}
+
+#' @export
 to_reciprocated.igraph <- function(.data) {
   igraph::as_directed(.data, mode = "mutual")
 }
@@ -172,6 +192,11 @@ to_reciprocated.data.frame <- function(.data) {
 #' @importFrom igraph as_directed feedback_arc_set
 #' @export
 to_acyclic <- function(.data) UseMethod("to_acyclic")
+
+#' @export
+to_acyclic.default <- function(.data){
+  as_input(.data, to_acyclic)
+}
 
 #' @export
 to_acyclic.igraph <- function(.data) {
