@@ -9,6 +9,12 @@
 #'   as well as definitions of the nodes and ties in the network.
 #'   Where available, this information is printed for tidygraph-class objects,
 #'   and can be used for printing a grand table in the `{grand}` package.
+#'   
+#'   - `add_info()` adds information attributes to the network.
+#'   - `mutate_info()` updates information attributes of the network.
+#'   - `select_info()` selects a subset of information attributes.
+#'   - `filter_info()` filters information attributes by name.
+#'   - `rename_info()` renames information attributes.
 #' @template param_data
 #' @family info
 #' @template fam_manip
@@ -119,6 +125,101 @@ mutate_info.stocnet <- function(.data, ...){
 #' @export
 net_attributes <- function(.data){
   names(igraph::graph_attr(as_igraph(.data)))
+}
+
+#' @rdname manip_info
+#' @export
+filter_info <- function(.data, ...) UseMethod("filter_info")
+
+#' @export
+filter_info.default <- function(.data, ...){
+  as_input(.data, filter_info, ...)
+}
+
+#' @export
+filter_info.igraph <- function(.data, ...){
+  keep <- c(...)
+  out <- .data
+  all_attrs <- names(igraph::graph_attr(out))
+  to_remove <- setdiff(all_attrs, keep)
+  for(attr in to_remove){
+    out <- igraph::delete_graph_attr(out, attr)
+  }
+  out
+}
+
+#' @export
+filter_info.stocnet <- function(.data, ...){
+  keep <- c(...)
+  out <- .data
+  out$info <- out$info[intersect(names(out$info), keep)]
+  out
+}
+
+#' @rdname manip_info
+#' @export
+select_info <- function(.data, ...) UseMethod("select_info")
+
+#' @export
+select_info.default <- function(.data, ...){
+  as_input(.data, select_info, ...)
+}
+
+#' @export
+select_info.igraph <- function(.data, ...){
+  keep <- c(...)
+  out <- .data
+  all_attrs <- names(igraph::graph_attr(out))
+  to_remove <- setdiff(all_attrs, keep)
+  for(attr in to_remove){
+    out <- igraph::delete_graph_attr(out, attr)
+  }
+  out
+}
+
+#' @export
+select_info.stocnet <- function(.data, ...){
+  keep <- c(...)
+  out <- .data
+  out$info <- out$info[intersect(names(out$info), keep)]
+  out
+}
+
+#' @rdname manip_info
+#' @export
+rename_info <- function(.data, ...) UseMethod("rename_info")
+
+#' @export
+rename_info.default <- function(.data, ...){
+  as_input(.data, rename_info, ...)
+}
+
+#' @export
+rename_info.igraph <- function(.data, ...){
+  dots <- c(...)
+  out <- .data
+  # dots is named: new_name = "old_name"
+  for(i in seq_along(dots)){
+    old_name <- dots[[i]]
+    new_name <- names(dots)[i]
+    val <- igraph::graph_attr(out, old_name)
+    out <- igraph::delete_graph_attr(out, old_name)
+    igraph::graph_attr(out, new_name) <- val
+  }
+  out
+}
+
+#' @export
+rename_info.stocnet <- function(.data, ...){
+  dots <- c(...)
+  out <- .data
+  for(i in seq_along(dots)){
+    old_name <- dots[[i]]
+    new_name <- names(dots)[i]
+    out$info[[new_name]] <- out$info[[old_name]]
+    out$info[[old_name]] <- NULL
+  }
+  out
 }
 
 

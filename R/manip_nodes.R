@@ -9,6 +9,7 @@
 #'   - `delete_nodes()` deletes nodes from network data.
 #'   - `bind_nodes()` adds two nodesets together.
 #'   - `filter_nodes()` subsets nodes based on some nodal attribute-related logical statement.
+#'   - `arrange_nodes()` reorders nodes based on some nodal attribute.
 #'   
 #'   While `add_*()`/`delete_*()` functions operate similarly as comparable `{igraph}` functions,
 #'   `bind_*()` and `filter_*()` works like a `{tidyverse}` or `{dplyr}`-style function.
@@ -17,7 +18,7 @@
 #'   Below are the currently implemented S3 methods for these functions:
 #'  
 #'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("add_nodes|delete_nodes|bind_nodes|filter_nodes"))
+#'   available_methods(collect_functions("add_nodes|delete_nodes|bind_nodes|filter_nodes|arrange_nodes"))
 #'   ```
 #'   
 #'   If a method is not available for a particular class, but a default method is,
@@ -138,6 +139,50 @@ filter_nodes.stocnet <- function(.data, ..., .by = NULL){
   } 
   out_info <- .data$info
   make_stocnet(nodes = out, ties = out_ties, changes = out_changes, info = out_info)
+}
+
+#' @rdname manip_nodes_num
+#' @importFrom dplyr arrange
+#' @export
+arrange_nodes <- function(.data, ...) UseMethod("arrange_nodes")
+
+#' @export
+arrange_nodes.default <- function(.data, ...){
+  as_input(.data, FUN = arrange_nodes, ...)
+}
+
+#' @export
+arrange_nodes.tbl_graph <- function(.data, ...){
+  .data |> tidygraph::activate(nodes) |> dplyr::arrange(...)
+}
+
+#' @export
+arrange_nodes.stocnet <- function(.data, ...){
+  nodes <- .data$nodes
+  node_df <- dplyr::mutate(nodes, .orig_row = dplyr::row_number())
+  arranged <- dplyr::arrange(node_df, ...)
+  old_to_new <- integer(nrow(nodes))
+  old_to_new[arranged$.orig_row] <- seq_len(nrow(nodes))
+  
+  out_nodes <- dplyr::select(arranged, -.orig_row)
+  
+  if(!is.null(.data$ties) && nrow(.data$ties) > 0){
+    out_ties <- .data$ties |> 
+      dplyr::mutate(from = old_to_new[from],
+                    to = old_to_new[to])
+  } else {
+    out_ties <- .data$ties
+  }
+  
+  if(!is.null(.data$changes) && nrow(.data$changes) > 0){
+    out_changes <- .data$changes |> 
+      dplyr::mutate(node = old_to_new[node])
+  } else {
+    out_changes <- .data$changes
+  }
+  
+  make_stocnet(nodes = out_nodes, ties = out_ties, 
+               changes = out_changes, info = .data$info)
 }
 
 # Manipulating nodes attributes ####

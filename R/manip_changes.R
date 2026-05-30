@@ -10,6 +10,9 @@
 #'   - `add_changes()` adds a table of changes to the nodes of a network.
 #'   - `mutate_changes()` can be used to update network changes.
 #'   - `filter_changes()` is used to subset network changes.
+#'   - `select_changes()` is used to select columns of network changes.
+#'   - `arrange_changes()` reorders network changes.
+#'   - `rename_changes()` renames columns of network changes.
 #'   - `gather_changes()` is similar to `filter_changes()`,
 #'   but collects the cumulative changes up to a time point.
 #'   - `apply_changes()` applies the changes collected up to a time point
@@ -238,6 +241,59 @@ select_changes.stocnet <- function(.data, ..., .by = NULL){
   out <- .data
   changes <- out$changes
   changes <- dplyr::select(changes, ..., .by = .by)
+  out$changes <- changes
+  out
+}
+
+#' @rdname manip_changes
+#' @export
+arrange_changes <- function(.data, ...) UseMethod("arrange_changes")
+
+#' @export
+arrange_changes.default <- function(.data, ...){
+
+  as_input(.data, arrange_changes, ...)
+}
+
+#' @export
+arrange_changes.igraph <- function(.data, ...){
+  changes <- igraph::graph_attr(.data, "changes")
+  changes <- dplyr::arrange(changes, ...)
+  igraph::graph_attr(.data, "changes") <- changes
+  .data
+}
+
+#' @export
+arrange_changes.stocnet <- function(.data, ...){
+  out <- .data
+  changes <- out$changes
+  changes <- dplyr::arrange(changes, ...)
+  out$changes <- changes
+  out
+}
+
+#' @rdname manip_changes
+#' @export
+rename_changes <- function(.data, ...) UseMethod("rename_changes")
+
+#' @export
+rename_changes.default <- function(.data, ...){
+  as_input(.data, rename_changes, ...)
+}
+
+#' @export
+rename_changes.igraph <- function(.data, ...){
+  changes <- igraph::graph_attr(.data, "changes")
+  changes <- dplyr::rename(changes, ...)
+  igraph::graph_attr(.data, "changes") <- changes
+  .data
+}
+
+#' @export
+rename_changes.stocnet <- function(.data, ...){
+  out <- .data
+  changes <- out$changes
+  changes <- dplyr::rename(changes, ...)
   out$changes <- changes
   out
 }
