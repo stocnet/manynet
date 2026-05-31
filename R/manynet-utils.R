@@ -74,6 +74,23 @@ as_input <- function(.data, FUN, ...){
   get(paste0("as_",out_class))(out)
 }
 
+# a function that creates necessary lines for roxygen documentation of available methods for a function family, e.g. add_ties, delete_ties, filter_ties, etc.
+detail_avail <- function(fun_grep) {
+  c(
+    "\\preformatted{", # or use the knitr chunk syntax if using Rd + knitr
+    paste0("@details"),
+    paste0("Not all functions have methods available for all object classes."),
+    paste0("Below are the currently implemented S3 methods for these functions:"),
+    paste0("```{r, echo = FALSE, comment=\"\"}"),
+    paste0("available_methods(collect_functions(\"", fun_grep, "\"))"),
+    "```",
+    paste0("If a method is not available for a particular class, but a default method is,"),
+    paste0("the default method will attempt to coerce the object to a class for which a method is defined,"),
+    paste0("and then coerce the output back to the original class."),
+    paste0("If no method is available for any class, an error will be thrown.")
+  )
+}
+
 # #' @export
 # `%||%` <- function(x, y) {
 #   if (is_null(x)) y else x

@@ -12,18 +12,7 @@
 #'   
 #'   While `add_*()`/`delete_*()` functions operate similarly as comparable `{igraph}` functions,
 #'   `bind_*()` and `filter_*()` works like a `{tidyverse}` or `{dplyr}`-style function.
-#' @details
-#'   Not all functions have methods available for all object classes.
-#'   Below are the currently implemented S3 methods for these functions:
-#'  
-#'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("add_nodes|delete_nodes|bind_nodes|filter_nodes"))
-#'   ```
-#'   
-#'   If a method is not available for a particular class, but a default method is,
-#'   the default method will attempt to coerce the object to a class for which a method is defined,
-#'   and then coerce the output back to the original class.
-#'   If no method is available for any class, an error will be thrown.
+#' @eval detail_avail("add_nodes|delete_nodes|bind_nodes|filter_nodes")
 #' @template param_data
 #' @template param_dots
 #' @template param_by
@@ -155,18 +144,7 @@ filter_nodes.stocnet <- function(.data, ..., .by = NULL){
 #'   
 #'   Note that while `add_*()` functions operate similarly as comparable `{igraph}` functions,
 #'   `mutate*()`, `bind*()`, etc work like `{tidyverse}` or `{dplyr}`-style functions.
-#' @details
-#'   Not all functions have methods available for all object classes.
-#'   Below are the currently implemented S3 methods for these functions:
-#'  
-#'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("add_node_attribute|mutate_nodes|select_nodes|join_nodes"))
-#'   ```
-#'   
-#'   If a method is not available for a particular class, but a default method is,
-#'   the default method will attempt to coerce the object to a class for which a method is defined,
-#'   and then coerce the output back to the original class.
-#'   If no method is available for any class, an error will be thrown.
+#' @eval detail_avail("add_node_attribute|mutate_nodes|select_nodes|join_nodes")
 #' @template param_data
 #' @template param_dots
 #' @template param_attr

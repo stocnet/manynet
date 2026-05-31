@@ -62,7 +62,7 @@ Note that while \verb{add_*()}/\verb{delete_*()} functions operate similarly as 
 }
 \details{
 Not all functions have methods available for all object classes.
-Below are the currently implemented S3 methods:
+Below are the currently implemented S3 methods for these functions:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{                  default igraph tbl_graph
 add_tie_attribute       *      *          
@@ -70,7 +70,13 @@ arrange_ties            *                *
 mutate_ties             *                *
 rename_ties             *                *
 select_ties             *                *
+summarise_ties          *                *
 }\if{html}{\out{</div>}}
+
+If a method is not available for a particular class, but a default method is,
+the default method will attempt to coerce the object to a class for which a method is defined,
+and then coerce the output back to the original class.
+If no method is available for any class, an error will be thrown.
 }
 \examples{
   other <- create_filled(4) |> mutate(name = c("A", "B", "C", "D"))

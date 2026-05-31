@@ -16,13 +16,7 @@
 #' @template param_dots
 #' @family ties
 #' @template fam_manip
-#' @details
-#'   Not all functions have methods available for all object classes.
-#'   Below are the currently implemented S3 methods:
-#'  
-#'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("(add|del|bind|filter).*ties"))
-#'   ```
+#' @eval detail_avail("(add|del|bind|filter).*ties")
 #' @examples
 #'   other <- create_filled(4) |> mutate(name = c("A", "B", "C", "D"))
 #'   mutate_ties(other, form = 1:6) |> filter_ties(form < 4)
@@ -142,13 +136,7 @@ filter_ties.tbl_graph <- function(.data, ...){
 #' @template param_obj2
 #' @family ties
 #' @template fam_manip
-#' @details
-#'   Not all functions have methods available for all object classes.
-#'   Below are the currently implemented S3 methods:
-#'  
-#'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("add_tie_attrib|(mutate|rename|arrange|join|select|summarise).*ties"))
-#'   ```
+#' @eval detail_avail("add_tie_attrib|(mutate|rename|arrange|join|select|summarise).*ties")
 #' @examples
 #'   other <- create_filled(4) |> mutate(name = c("A", "B", "C", "D"))
 #'   mutate_ties(other, form = 1:6) |> filter_ties(form < 4)
@@ -277,7 +265,15 @@ select_ties.tbl_graph <- function(.data, ...){
 #' @rdname manip_ties_attr
 #' @importFrom dplyr summarise
 #' @export
-summarise_ties <- function(.data, ...){
+summarise_ties <- function(.data, ...) UseMethod("summarise_ties")
+
+#' @export
+summarise_ties.default <- function(.data, ...){
+  as_input(.data, summarise_ties, ...)
+}
+
+#' @export
+summarise_ties.tbl_graph <- function(.data, ...){
   out <- as_edgelist(.data) |> 
     dplyr::summarise(..., .by = c("from","to")) |> 
     as_tidygraph(twomode = is_twomode(.data))
