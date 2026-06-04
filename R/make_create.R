@@ -334,8 +334,7 @@ create_ring <- function(n, directed = FALSE, width = 1, ...) {
 }
 
 #' @rdname make_create 
-#' @importFrom igraph graph_from_adjacency_matrix graph_from_biadjacency_matrix
-#'   make_star
+#' @importFrom igraph graph_from_adjacency_matrix graph_from_biadjacency_matrix make_star
 #' @examples
 #' create_star(12)
 #' @export

@@ -79,7 +79,7 @@ collect_changes(fict_starwars, time = 3)
 \seealso{
 \code{\link[=to_time]{to_time()}}
 
-Other manipulations: 
+Other manipulations:
 \code{\link{manip_info}},
 \code{\link{manip_nodes_attr}},
 \code{\link{manip_nodes_num}},

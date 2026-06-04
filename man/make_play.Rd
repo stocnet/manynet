@@ -187,7 +187,7 @@ This can be used in in SEI, SEIS, SEIR, and SEIRS models.
   smeg <- generate_smallworld(15, 0.025)
 }
 \seealso{
-Other makes: 
+Other makes:
 \code{\link{make_cran}},
 \code{\link{make_create}},
 \code{\link{make_ego}},
@@ -199,7 +199,7 @@ Other makes:
 \code{\link{make_stochastic}},
 \code{\link{make_write}}
 
-Other models: 
+Other models:
 \code{\link{make_learning}}
 }
 \concept{diffusion}

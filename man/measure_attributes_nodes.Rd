@@ -44,7 +44,7 @@ node_names(ison_southern_women)
 node_is_mode(ison_southern_women)
 }
 \seealso{
-Other measures: 
+Other measures:
 \code{\link{measure_attributes_ties}},
 \code{\link{measure_dims}}
 }

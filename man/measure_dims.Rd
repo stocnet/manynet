@@ -56,7 +56,7 @@ net_dims(ison_southern_women)
 net_dims(to_mode1(ison_southern_women))
 }
 \seealso{
-Other measures: 
+Other measures:
 \code{\link{measure_attributes_nodes}},
 \code{\link{measure_attributes_ties}}
 }

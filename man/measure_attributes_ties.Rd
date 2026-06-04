@@ -49,7 +49,7 @@ tie_signs(to_uniplex(fict_marvel,"relationship"))
 tie_is_twomode(fict_actually)
 }
 \seealso{
-Other measures: 
+Other measures:
 \code{\link{measure_attributes_nodes}},
 \code{\link{measure_dims}}
 }

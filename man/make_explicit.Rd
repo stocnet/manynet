@@ -29,7 +29,7 @@ See the example for a demonstration.
   create_explicit(A -+ B, B -+ C, A +-+ C, D, E:F:G-+A, E:F+-+G:H)
 }
 \seealso{
-Other makes: 
+Other makes:
 \code{\link{make_cran}},
 \code{\link{make_create}},
 \code{\link{make_ego}},

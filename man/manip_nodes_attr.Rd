@@ -93,10 +93,10 @@ If no method is available for any class, an error will be thrown.
   join_nodes(another, other)
 }
 \seealso{
-Other nodes: 
+Other nodes:
 \code{\link{manip_nodes_num}}
 
-Other manipulations: 
+Other manipulations:
 \code{\link{manip_changes}},
 \code{\link{manip_info}},
 \code{\link{manip_nodes_num}},

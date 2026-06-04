@@ -73,7 +73,7 @@ to_mode2(ison_southern_women)
 to_ties(ison_adolescents)
 }
 \seealso{
-Other modifications: 
+Other modifications:
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},

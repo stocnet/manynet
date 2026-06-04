@@ -30,7 +30,7 @@ Note that currently only \code{n==2} to \code{n==4} is implemented,
 and the latter only for undirected networks.
 }
 \seealso{
-Other makes: 
+Other makes:
 \code{\link{make_cran}},
 \code{\link{make_create}},
 \code{\link{make_ego}},

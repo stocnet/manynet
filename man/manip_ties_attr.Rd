@@ -84,12 +84,12 @@ If no method is available for any class, an error will be thrown.
   add_tie_attribute(other, "weight", c(1, 2, 2, 2, 1, 2))
 }
 \seealso{
-Other ties: 
+Other ties:
 \code{\link{manip_ties_num}},
 \code{\link{modif_direction}},
 \code{\link{modif_weight}}
 
-Other manipulations: 
+Other manipulations:
 \code{\link{manip_changes}},
 \code{\link{manip_info}},
 \code{\link{manip_nodes_attr}},

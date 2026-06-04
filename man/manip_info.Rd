@@ -45,7 +45,7 @@ and can be used for printing a grand table in the \code{{grand}} package.
 add_info(ison_algebra, name = "Algebra")
 }
 \seealso{
-Other manipulations: 
+Other manipulations:
 \code{\link{manip_changes}},
 \code{\link{manip_nodes_attr}},
 \code{\link{manip_nodes_num}},

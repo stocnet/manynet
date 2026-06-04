@@ -64,7 +64,7 @@ as_tidygraph(create_filled(5)) |>
   to_uniplex("friend")
 }
 \seealso{
-Other modifications: 
+Other modifications:
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},

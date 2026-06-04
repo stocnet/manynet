@@ -105,7 +105,7 @@ Golub, Benjamin, and Matthew O. Jackson 2010.
 \doi{10.1257/mic.2.1.112}
 }
 \seealso{
-Other makes: 
+Other makes:
 \code{\link{make_cran}},
 \code{\link{make_create}},
 \code{\link{make_ego}},
@@ -117,7 +117,7 @@ Other makes:
 \code{\link{make_stochastic}},
 \code{\link{make_write}}
 
-Other models: 
+Other models:
 \code{\link{make_play}}
 }
 \concept{makes}

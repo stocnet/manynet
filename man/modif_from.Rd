@@ -64,7 +64,7 @@ ison_adolescents |>
   from_slices()
 }
 \seealso{
-Other modifications: 
+Other modifications:
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_labels}},

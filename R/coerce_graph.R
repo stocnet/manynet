@@ -38,14 +38,12 @@ NULL
 # igraph ####
 
 #' @rdname coerce_graph
-#' @importFrom igraph graph_from_data_frame graph_from_biadjacency_matrix
-#'  graph_from_adjacency_matrix delete_vertex_attr V vertex_attr
-#'  edge_attr delete_edge_attr set_edge_attr
 #' @importFrom network list.edge.attributes as.sociomatrix
 #' @export
 as_igraph <- function(.data,
                       twomode = FALSE) UseMethod("as_igraph")
 
+#' @importFrom igraph graph_from_data_frame 
 #' @export
 as_igraph.data.frame <- function(.data,
                                  twomode = FALSE) {
@@ -70,6 +68,7 @@ as_igraph.data.frame <- function(.data,
   graph
 }
 
+#' @importFrom igraph graph_from_biadjacency_matrix graph_from_adjacency_matrix
 #' @export
 as_igraph.matrix <- function(.data,
                              twomode = FALSE) {

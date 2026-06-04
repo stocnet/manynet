@@ -157,7 +157,7 @@ create_core(6)
 \seealso{
 \link{as}
 
-Other makes: 
+Other makes:
 \code{\link{make_cran}},
 \code{\link{make_ego}},
 \code{\link{make_explicit}},

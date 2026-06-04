@@ -72,12 +72,12 @@ delete_ties(ison_adolescents, 3)
 delete_ties(ison_adolescents, "Alice|Sue")
 }
 \seealso{
-Other ties: 
+Other ties:
 \code{\link{manip_ties_attr}},
 \code{\link{modif_direction}},
 \code{\link{modif_weight}}
 
-Other manipulations: 
+Other manipulations:
 \code{\link{manip_changes}},
 \code{\link{manip_info}},
 \code{\link{manip_nodes_attr}},

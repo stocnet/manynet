@@ -158,7 +158,7 @@ filter_nodes.stocnet <- function(.data, ..., .by = NULL){
 NULL
 
 #' @rdname manip_nodes_attr 
-#' @importFrom igraph vertex_attr
+#' @importFrom igraph V vertex_attr delete_vertex_attr 
 #' @export
 add_node_attribute <- function(.data, attr_name, vector) UseMethod("add_node_attribute")
 

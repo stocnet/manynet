@@ -176,7 +176,7 @@ Prim, R.C. 1957.
 }
 }
 \seealso{
-Other modifications: 
+Other modifications:
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},

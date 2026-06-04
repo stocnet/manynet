@@ -144,7 +144,7 @@ filter_ties.tbl_graph <- function(.data, ...){
 NULL
 
 #' @rdname manip_ties_attr
-#' @importFrom igraph edge_attr
+#' @importFrom igraph edge_attr delete_edge_attr set_edge_attr
 #' @export
 add_tie_attribute <- function(.data, attr_name, vector) UseMethod("add_tie_attribute")
 

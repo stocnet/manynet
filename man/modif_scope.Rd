@@ -108,7 +108,7 @@ ison_adolescents |>
   to_no_isolates()
 }
 \seealso{
-Other modifications: 
+Other modifications:
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},

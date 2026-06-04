@@ -106,8 +106,7 @@ to_simplex.network <- function(.data) {
 
 #' @rdname modif_plexity
 #' @param tie Character string naming a tie attribute to retain from a graph.
-#' @importFrom igraph delete_edges edge_attr_names delete_edge_attr
-#'   E edge_attr_names
+#' @importFrom igraph delete_edges edge_attr_names delete_edge_attr E edge_attr_names
 #' @examples
 #' as_tidygraph(create_filled(5)) |>
 #'   mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) |>

@@ -45,7 +45,7 @@ between the self ties in each pairwise calculation.
 This function runs in \eqn{O(mn^2)} complexity.
 }
 \seealso{
-Other modifications: 
+Other modifications:
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},

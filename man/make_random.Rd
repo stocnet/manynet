@@ -129,7 +129,7 @@ San Francisco: Jossey-Bass.
 }
 }
 \seealso{
-Other makes: 
+Other makes:
 \code{\link{make_cran}},
 \code{\link{make_create}},
 \code{\link{make_ego}},

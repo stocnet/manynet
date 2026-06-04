@@ -31,7 +31,7 @@ on both the rows and columns (for a one-mode network)
 or on each of the rows and columns (for a two-mode network).
 }
 \seealso{
-Other modifications: 
+Other modifications:
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},

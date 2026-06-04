@@ -53,7 +53,7 @@ to_unnamed          *      *      *       *         *
 }\if{html}{\out{</div>}}
 }
 \seealso{
-Other modifications: 
+Other modifications:
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
