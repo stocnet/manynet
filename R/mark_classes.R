@@ -28,15 +28,30 @@ NULL
 #' @examples
 #' is_manynet(create_filled(2))
 #' @export
-is_manynet <- function(.data) {
-  tidygraph::is.tbl_graph(.data) |
-    network::is.network(.data) |
-    igraph::is_igraph(.data) |
-    inherits(.data, "stocnet") |
-    (is.data.frame(.data) & 
-       "from" %in% names(.data) & "to" %in% names(.data)) |
-    (is.matrix(.data) & is.numeric(.data))
+is_manynet <- function(.data) UseMethod("is_manynet")
+
+#' @export
+is_manynet.default <- function(.data){FALSE}
+
+#' @export
+is_manynet.matrix <- function(.data){is.numeric(.data)}
+
+#' @export
+is_manynet.data.frame <- function(.data){
+  "from" %in% names(.data) & "to" %in% names(.data)
 }
+
+#' @export
+is_manynet.igraph <- function(.data){igraph::is_igraph(.data)}
+
+#' @export
+is_manynet.tbl_graph <- function(.data){tidygraph::is.tbl_graph(.data)}
+
+#' @export
+is_manynet.network <- function(.data) {network::is.network(.data)}
+
+#' @export
+is_manynet.stocnet <- function(.data) {inherits(.data, "stocnet")}
 
 manynet_classes <- c("stocnet" = "stocnet",
                      "tidygraph" = "tbl_graph", 
@@ -86,7 +101,13 @@ is_edgelist.data.frame <- function(.data) {
 
 #' @rdname mark_is
 #' @export
-is_list <- function(.data) {
-  inherits(.data, "list") && !is_manynet(.data)
+is_list <- function(.data) UseMethod("is_list")
+
+#' @export
+is_list.default <- function(.data){FALSE}
+
+#' @export
+is_list.list <- function(.data) {
+  !is_manynet(.data)
 }
 

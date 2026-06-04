@@ -144,7 +144,10 @@ is_attributed.default <- function(.data) {
 #' @examples 
 #' is_egonet(fict_starwars)
 #' @export
-is_egonet <- function(.data) {
+is_egonet <- function(.data) UseMethod("is_egonet")
+
+#' @export
+is_egonet.default <- function(.data) {
   if(!is_list(.data)) return(FALSE) else if (all(unique(names(.data)) != "")) {
     length(names(.data)) == length(unique(unlist(unname(lapply(.data, 
                                                                manynet::node_names))))) &
@@ -190,6 +193,11 @@ NULL
 is_weighted <- function(.data) UseMethod("is_weighted")
 
 #' @export
+is_weighted.default <- function(.data) {
+  as_input(.data, is_weighted)
+}
+
+#' @export
 is_weighted.igraph <- function(.data) {
   igraph::is_weighted(.data)
 }
@@ -227,6 +235,11 @@ is_weighted.data.frame <- function(.data) {
 #' is_directed(create_tree(2, directed = TRUE))
 #' @export
 is_directed <- function(.data) UseMethod("is_directed")
+
+#' @export
+is_directed.default <- function(.data) {
+  as_input(.data, is_directed)
+}
 
 #' @export
 is_directed.data.frame <- function(.data) {
@@ -270,6 +283,11 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)
   abs(x - round(x)) < tol
 
 #' @export
+is_signed.default <- function(.data) {
+  as_input(.data, is_signed)
+}
+
+#' @export
 is_signed.data.frame <- function(.data) {
   if(ncol(.data) <= 2) FALSE else 
     any(.data[,3] < 0)
@@ -309,6 +327,11 @@ is_signed.network <- function(.data) {
 #' is_complex(create_lattice(4))
 #' @export
 is_complex <- function(.data) UseMethod("is_complex")
+
+#' @export
+is_complex.default <- function(.data) {
+  as_input(.data, is_complex)
+}
 
 #' @export
 is_complex.igraph <- function(.data) {
@@ -355,6 +378,11 @@ is_complex.list <- function(.data) {
 is_multiplex <- function(.data) UseMethod("is_multiplex")
 
 #' @export
+is_multiplex.default <- function(.data) {
+  as_input(.data, is_multiplex)
+}
+
+#' @export
 is_multiplex.matrix <- function(.data) {
   FALSE
 }
@@ -397,9 +425,16 @@ is_multiplex.data.frame <- function(.data) {
 #' @examples
 #' is_uniplex(create_star(3))
 #' @export
-is_uniplex <- function(.data) {
-  obj <- as_igraph(.data)
-  igraph::is_simple(obj)
+is_uniplex <- function(.data) UseMethod("is_uniplex")
+
+#' @export
+is_uniplex.default <- function(.data) {
+  is_uniplex(as_igraph(.data))
+}
+
+#' @export
+is_uniplex.igraph <- function(.data) {
+  igraph::is_simple(.data)
 }
 
 # Tie Formats ####
@@ -421,22 +456,39 @@ NULL
 #' @examples
 #' is_longitudinal(create_tree(5, 3))
 #' @export
-is_longitudinal <- function(.data) {
-  if(is_manynet(.data)) {
-    # ig <- as_igraph(.data)
-    # catts <- names(igraph::graph_attr(ig, "changes"))
-    return("wave" %in% net_tie_attributes(.data) | 
-             "panel" %in% net_tie_attributes(.data))
-  } else if(is_list(.data)){
+is_longitudinal <- function(.data) UseMethod("is_longitudinal")
+
+#' @export
+is_longitudinal.default <- function(.data) {
+  is_longitudinal(as_igraph(.data))
+}
+
+#' @export
+is_longitudinal.igraph <- function(.data) {
+  "wave" %in% net_tie_attributes(.data) | 
+    "panel" %in% net_tie_attributes(.data)
+}
+
+#' @export
+is_longitudinal.list <- function(.data) {
+  if(is_list(.data)){
     all(lapply(.data, net_nodes)==net_nodes(.data[[1]]))
-  } 
+  } else FALSE
 }
 
 #' @rdname mark_format_change
 #' @examples 
 #' is_dynamic(create_tree(3))
 #' @export
-is_dynamic <- function(.data) {
+is_dynamic <- function(.data) UseMethod("is_dynamic")
+
+#' @export
+is_dynamic.default <- function(.data) {
+  is_dynamic(as_igraph(.data))
+}
+
+#' @export
+is_dynamic.igraph <- function(.data) {
   atts <- net_tie_attributes(.data)
   ("time" %in% atts && !all(is.na(tie_attribute(.data, "time")))) | 
     "beg" %in% atts | "begin" %in% atts | "start" %in% atts
@@ -447,6 +499,11 @@ is_dynamic <- function(.data) {
 #' is_changing(fict_starwars)
 #' @export
 is_changing <- function(.data) UseMethod("is_changing")
+
+#' @export
+is_changing.default <- function(.data) {
+  is_changing(as_igraph(.data))
+}
 
 #' @export
 is_changing.igraph <- function(.data) {

@@ -46,7 +46,7 @@ is_attributed(ison_algebra)
 is_egonet(fict_starwars)
 }
 \seealso{
-Other marks: 
+Other marks:
 \code{\link{mark_format_change}},
 \code{\link{mark_format_tie}}
 }

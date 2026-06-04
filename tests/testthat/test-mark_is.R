@@ -2,6 +2,10 @@ is_funs <- funs_objs[grepl("^is_", names(funs_objs)) &
                            !grepl("bloop", names(funs_objs))]
 
 for(fn in collect_functions("^is_")) {
+  test_that(paste(fn, "has a default method"), {
+    expect_true(any(grepl(paste0("^", fn, "\\.default$"), utils::methods(fn))))
+  })
+  
   if(grepl("twomode|attributed|igraph|connected|labelled|graph|manynet|uniplex", fn)) {
     test_that(paste(fn, "returns TRUE for ison_southern_women"), {
       expect_true(is_funs[[fn]](ison_southern_women))

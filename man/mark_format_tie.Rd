@@ -64,7 +64,7 @@ is_multiplex(create_filled(c(3,3)))
 is_uniplex(create_star(3))
 }
 \seealso{
-Other marks: 
+Other marks:
 \code{\link{mark_format_change}},
 \code{\link{mark_format_node}}
 }

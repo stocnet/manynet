@@ -38,7 +38,7 @@ is_dynamic(create_tree(3))
 is_changing(fict_starwars)
 }
 \seealso{
-Other marks: 
+Other marks:
 \code{\link{mark_format_node}},
 \code{\link{mark_format_tie}}
 }

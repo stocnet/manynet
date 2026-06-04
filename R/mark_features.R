@@ -26,8 +26,16 @@ NULL
 #' @examples
 #' is_connected(ison_southern_women)
 #' @export
-is_connected <- function(.data) {
-  igraph::is_connected(as_igraph(.data), 
+is_connected <- function(.data) UseMethod("is_connected")
+
+#' @export
+is_connected.default <- function(.data) {
+  is_connected(as_igraph(.data))
+}
+
+#' @export
+is_connected.igraph <- function(.data) {
+  igraph::is_connected(.data, 
                        mode = ifelse(is_directed(.data),
                                      "strong", "weak"))
 }
@@ -53,8 +61,15 @@ is_connected <- function(.data) {
 #' @examples
 #' is_perfect_matching(ison_southern_women)
 #' @export
-is_perfect_matching <- function(.data, mark = "type"){
-  .data <- as_igraph(.data)
+is_perfect_matching <- function(.data, mark = "type") UseMethod("is_perfect_matching")
+
+#' @export
+is_perfect_matching.default <- function(.data, mark = "type") {
+  is_perfect_matching(as_igraph(.data), mark = mark)
+}
+
+#' @export
+is_perfect_matching.igraph <- function(.data, mark = "type"){
   if(mark %in% net_node_attributes(.data)){
     matches <- to_matching(.data, mark = mark)
     net_ties(matches)*2 == net_nodes(matches)
@@ -74,8 +89,16 @@ is_perfect_matching <- function(.data, mark = "type"){
 #' @examples
 #' is_eulerian(ison_brandes)
 #' @export
-is_eulerian <- function(.data){
-  igraph::has_eulerian_path(as_igraph(.data))
+is_eulerian <- function(.data) UseMethod("is_eulerian")
+
+#' @export
+is_eulerian.default <- function(.data) {
+  is_eulerian(as_igraph(.data))
+}
+
+#' @export
+is_eulerian.igraph <- function(.data){
+  igraph::has_eulerian_path(.data)
 }
 
 #' @rdname mark_features
@@ -83,9 +106,16 @@ is_eulerian <- function(.data){
 #' @examples 
 #' is_acyclic(ison_algebra)
 #' @export
-is_acyclic <- function(.data){
-  obj <- as_igraph(.data)
-  igraph::is_dag(obj)
+is_acyclic <- function(.data) UseMethod("is_acyclic")
+
+#' @export
+is_acyclic.default <- function(.data) {
+  is_acyclic(as_igraph(.data))
+}
+
+#' @export
+is_acyclic.igraph <- function(.data){
+  igraph::is_dag(.data)
 }
 
 #' @rdname mark_features
@@ -102,16 +132,23 @@ is_acyclic <- function(.data){
 #' @examples 
 #' is_aperiodic(ison_algebra)
 #' @export
-is_aperiodic <- function(.data, max_path_length = 4){
+is_aperiodic <- function(.data, max_path_length = 4) UseMethod("is_aperiodic")
+
+#' @export
+is_aperiodic.default <- function(.data, max_path_length = 4) {
+  is_aperiodic(as_igraph(.data), max_path_length = max_path_length)
+}
+
+#' @export
+is_aperiodic.igraph <- function(.data, max_path_length = 4){
   # thisRequires("minMSE") # >80x faster than e.g. cheapr::gcd()
-  g <- as_igraph(.data)
   snet_info("Obtaining paths no greater than {max_path_length}.")
-  out <- suppressMessages(.quiet(unlist(lapply(1:net_nodes(g), function(v1){
-    if(igraph::degree(g, v1, mode="in") == 0) NULL else {
-      goodNeighbors <- igraph::neighbors(g, igraph::V(g)[v1], mode="out")
-      goodNeighbors <- goodNeighbors[goodNeighbors > igraph::V(g)[v1]]
+  out <- suppressMessages(.quiet(unlist(lapply(1:net_nodes(.data), function(v1){
+    if(igraph::degree(.data, v1, mode="in") == 0) NULL else {
+      goodNeighbors <- igraph::neighbors(.data, igraph::V(.data)[v1], mode="out")
+      goodNeighbors <- goodNeighbors[goodNeighbors > igraph::V(.data)[v1]]
       unlist(lapply(goodNeighbors, function(v2){
-        vapply(igraph::all_simple_paths(g, v2, igraph::V(g)[v1], mode="out", 
+        vapply(igraph::all_simple_paths(.data, v2, igraph::V(.data)[v1], mode="out", 
                                         cutoff = max_path_length), length, 
                FUN.VALUE = numeric(1))
       }))
