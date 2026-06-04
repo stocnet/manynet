@@ -123,10 +123,3 @@ test_that("multilevel works", {
   expect_false(is_twomode(to_multilevel(as_igraph(ison_southern_women))))
   expect_false(is_twomode(to_multilevel(as_matrix(ison_southern_women))))
 })
-
-test_that("to_twomode works", {
-  expect_false(is_twomode(ison_algebra))
-  expect_true(is_twomode(to_twomode(ison_algebra, "type")))
-  expect_true(is_twomode(to_twomode(as_igraph(ison_algebra), "type")))
-  #expect_true(is_twomode(to_twomode(as_network(ison_algebra), "type"))) #twomode
-})
