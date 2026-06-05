@@ -116,7 +116,7 @@ as_network(test)
   add_changes(create_filled(4), events)
 }
 \seealso{
-Other coercions: 
+Other coercions:
 \code{\link{coerce_list}}
 }
 \concept{coercions}

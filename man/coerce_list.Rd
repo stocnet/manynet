@@ -98,7 +98,7 @@ as_tidygraph(test)
 as_network(test)
 }
 \seealso{
-Other coercions: 
+Other coercions:
 \code{\link{coerce_graph}}
 }
 \concept{coercions}

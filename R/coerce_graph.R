@@ -124,6 +124,9 @@ as_igraph.network <- function(.data,
       graph <- network::as.sociomatrix(.data)
       graph <- igraph::graph_from_biadjacency_matrix(graph)
     }
+    graph <- igraph::set_vertex_attr(graph, name = "type",
+                                     value = c(rep(FALSE, .data$gal$bipartite),
+                                rep(TRUE, .data$gal$n - .data$gal$bipartite)))
   } else {
     if ("weight" %in% network::list.edge.attributes(.data)) {
       graph <- network::as.sociomatrix(.data, attrname = "weight")
