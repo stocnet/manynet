@@ -75,7 +75,12 @@ as_nodelist.stocnet <- function(.data) {
 as_nodelist.network <- function(.data) {
   out <- .data
   out <- network::as.data.frame.network(out, unit = "vertices")
-  dplyr::as_tibble(out)
+  if(is_twomode(.data)) out$mode <- c(rep(FALSE, .data$gal$bipartite),
+                                 rep(TRUE, .data$gal$n - .data$gal$bipartite))
+  if(is_labelled(.data)) out$label <- network::network.vertex.names(.data)
+  if("vertex.names" %in% names(out)) out$vertex.names <- NULL
+  dplyr::as_tibble(out) |> 
+    dplyr::select(dplyr::any_of(c("id", "name", "label", "mode")), dplyr::everything())
 }
 
 # Changelists ####
