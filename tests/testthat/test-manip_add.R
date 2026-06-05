@@ -4,7 +4,7 @@ net_node1 <- as_tidygraph(data.frame(
   to = c("B", "C", "D", "E", "A")))
 
 # object with nodal attributes
-net_node2 <- net_node1 %>%
+net_node2 <- net_node1 |> 
   dplyr::mutate(attribute = c("friend", "family", "friend", "friend", "family"))
 
 # object without edge attributes

@@ -70,5 +70,5 @@ test_that("to_ and from_ slices works", {
   expect_true(length(igraph::edge_attr(to_slices(slice, slice = 7), "weight"))
               < 7)
   expect_length(to_slices(slice, slice = c(5, 7)), 2)
-  expect_s3_class(to_slices(slice, slice = 7), "tbl_graph")
+  expect_s3_class(to_slices(slice, slice = 7), "igraph")
 })

@@ -5,6 +5,7 @@ for(fn in names(create_funs)) {
   # One-mode
   test_that(paste(fn, "creates an object with the correct number of nodes"), {
     expect_values(net_nodes(create_funs[[fn]](10)), 10)
+    expect_s3_class(create_funs[[fn]](10), "igraph")
   })
   test_that(paste(fn, "creates an object with the correct directedness"), {
     expect_false(is_directed(create_funs[[fn]](10)))

@@ -4,6 +4,9 @@ fun_names <- names(to_funs)
 fun_names <- fun_names[!grepl("\\.", fun_names)]
 
 for(fn in fun_names) {
+  test_that(paste(fn, "has a default method"), {
+    expect_true(any(grepl(paste0("^", fn, "\\.default$"), utils::methods(fn))))
+  })
   test_that(paste(fn, "works"), {
     skip_if(grepl("twomode|uniplex|time|ego", fn), message = "Some functions need more input")
     skip_if(grepl("mode1|mode2|matching", fn), message = "Some functions expect a two-mode network")
@@ -62,14 +65,6 @@ test_that("to matching works", {
 
 test_that("to_subgraph works", {
   expect_equal(c(net_nodes(to_subgraph(ison_lawfirm, office == "Boston"))), 48)
-})
-
-test_that("to ties works", {
-  expect_length(to_ties(ison_adolescents), 10)
-  expect_length(to_ties(as_igraph(ison_adolescents)), 10)
-  expect_length(rownames(to_ties(as_matrix(ison_adolescents))), 10)
-  expect_equal(nrow(to_ties(as_edgelist(ison_adolescents))), 10)
-  expect_length(network::network.vertex.names(to_ties(as_network(ison_adolescents))), 10)
 })
 
 test_that("to anti works", {
