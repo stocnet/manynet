@@ -163,7 +163,7 @@ add_tie_attribute.igraph <- function(.data, attr_name, vector){
 #' @export
 add_tie_attribute.data.frame <- function(.data, attr_name, vector){
   is_edgelist(.data) || snet_abort("Not an edgelist")
-  dplyr::mutate(.data, !!attr_name := vector)
+  dplyr::mutate(.data, !!!stats::setNames(list(vector), attr_name))
 }
 
 #' @rdname manip_ties_attr

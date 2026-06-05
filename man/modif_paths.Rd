@@ -50,11 +50,11 @@ a tie to themselves (a loop) will be created instead.
 Note that this is a different default behaviour than that
 described in Valente and Davis (1999).}
 
+\item{from}{The index or name of the node from which the path should be traced.}
+
 \item{direction}{Character string, “out” bases the measure on outgoing ties,
 “in” on incoming ties, and "all" on either/the sum of the two.
 By default "all".}
-
-\item{from}{The index or name of the node from which the path should be traced.}
 }
 \value{
 A tidygraph object modified as explained in the function description, details,
