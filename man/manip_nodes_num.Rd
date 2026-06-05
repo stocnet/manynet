@@ -6,6 +6,7 @@
 \alias{delete_nodes}
 \alias{bind_nodes}
 \alias{filter_nodes}
+\alias{arrange_nodes}
 \title{Manipulating number of nodes}
 \usage{
 add_nodes(.data, nodes, attribute = NULL)
@@ -15,15 +16,18 @@ delete_nodes(.data, nodes)
 bind_nodes(.data, object2)
 
 filter_nodes(.data, ..., .by = NULL)
+
+arrange_nodes(.data, ...)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
-\item matrix (adjacency or incidence) from \code{{base}} R
-\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
-\item igraph, from the \code{{igraph}} package
-\item network, from the \code{{network}} package
-\item tbl_graph, from the \code{{tidygraph}} package
+\item adjacency or incidence \code{matrix} from \code{{base}} R
+\item edgelist \code{data.frame} from \code{{base}} R or \code{tbl/tbl_df} from \code{{tibble}}
+\item stocnet \code{stocnet}, from the \code{{manynet}} package
+\item igraph \code{igraph}, from the \code{{igraph}} package
+\item network \code{network}, from the \code{{network}} package
+\item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
 
 \item{nodes}{The number of nodes to be added.}
@@ -46,6 +50,7 @@ These functions allow users to add and delete nodes:
 \item \code{delete_nodes()} deletes nodes from network data.
 \item \code{bind_nodes()} adds two nodesets together.
 \item \code{filter_nodes()} subsets nodes based on some nodal attribute-related logical statement.
+\item \code{arrange_nodes()} reorders nodes based on some nodal attribute.
 }
 
 While \verb{add_*()}/\verb{delete_*()} functions operate similarly as comparable \code{{igraph}} functions,
@@ -55,11 +60,12 @@ While \verb{add_*()}/\verb{delete_*()} functions operate similarly as comparable
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{             default igraph network stocnet tbl_graph
-add_nodes          *      *       *                 *
-bind_nodes         *                      *          
-delete_nodes       *      *       *                 *
-filter_nodes       *                      *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{              default igraph network stocnet tbl_graph
+add_nodes           *      *       *                 *
+arrange_nodes       *                      *         *
+bind_nodes          *                      *          
+delete_nodes        *      *       *                 *
+filter_nodes        *                      *         *
 }\if{html}{\out{</div>}}
 
 If a method is not available for a particular class, but a default method is,

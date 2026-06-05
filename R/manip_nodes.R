@@ -9,10 +9,11 @@
 #'   - `delete_nodes()` deletes nodes from network data.
 #'   - `bind_nodes()` adds two nodesets together.
 #'   - `filter_nodes()` subsets nodes based on some nodal attribute-related logical statement.
+#'   - `arrange_nodes()` reorders nodes based on some nodal attribute.
 #'   
 #'   While `add_*()`/`delete_*()` functions operate similarly as comparable `{igraph}` functions,
 #'   `bind_*()` and `filter_*()` works like a `{tidyverse}` or `{dplyr}`-style function.
-#' @eval detail_avail("add_nodes|delete_nodes|bind_nodes|filter_nodes")
+#' @eval detail_avail("(add|delete|bind|filter|arrange)_nodes")
 #' @template param_data
 #' @template param_dots
 #' @template param_by
@@ -82,7 +83,7 @@ bind_nodes <- function(.data, object2) UseMethod("bind_nodes")
 
 #' @export
 bind_nodes.default <- function(.data, object2){
-  as_input(.data, object2, FUN = bind_nodes)
+  as_input(.data, bind_nodes, object2 = object2)
 }
 
 #' @export
@@ -99,7 +100,7 @@ filter_nodes <- function(.data, ..., .by = NULL) UseMethod("filter_nodes")
 
 #' @export
 filter_nodes.default <- function(.data, ..., .by = NULL){
-  as_input(.data, ..., .by = .by, FUN = filter_nodes)
+  as_input(.data, filter_nodes, ..., .by = .by)
 }
 
 #' @export
@@ -127,6 +128,50 @@ filter_nodes.stocnet <- function(.data, ..., .by = NULL){
   } 
   out_info <- .data$info
   make_stocnet(nodes = out, ties = out_ties, changes = out_changes, info = out_info)
+}
+
+#' @rdname manip_nodes_num
+#' @importFrom dplyr arrange
+#' @export
+arrange_nodes <- function(.data, ...) UseMethod("arrange_nodes")
+
+#' @export
+arrange_nodes.default <- function(.data, ...){
+  as_input(.data, FUN = arrange_nodes, ...)
+}
+
+#' @export
+arrange_nodes.tbl_graph <- function(.data, ...){
+  .data |> tidygraph::activate(nodes) |> dplyr::arrange(...)
+}
+
+#' @export
+arrange_nodes.stocnet <- function(.data, ...){
+  nodes <- .data$nodes
+  node_df <- dplyr::mutate(nodes, .orig_row = dplyr::row_number())
+  arranged <- dplyr::arrange(node_df, ...)
+  old_to_new <- integer(nrow(nodes))
+  old_to_new[arranged$.orig_row] <- seq_len(nrow(nodes))
+  
+  out_nodes <- dplyr::select(arranged, -.orig_row)
+  
+  if(!is.null(.data$ties) && nrow(.data$ties) > 0){
+    out_ties <- .data$ties |> 
+      dplyr::mutate(from = old_to_new[from],
+                    to = old_to_new[to])
+  } else {
+    out_ties <- .data$ties
+  }
+  
+  if(!is.null(.data$changes) && nrow(.data$changes) > 0){
+    out_changes <- .data$changes |> 
+      dplyr::mutate(node = old_to_new[node])
+  } else {
+    out_changes <- .data$changes
+  }
+  
+  make_stocnet(nodes = out_nodes, ties = out_ties, 
+               changes = out_changes, info = .data$info)
 }
 
 # Manipulating nodes attributes ####
@@ -276,7 +321,7 @@ join_nodes <- function(.data, object2, .by = NULL,
 #' @export
 join_nodes.default <- function(.data, object2, .by = NULL,
                        join_type = c("full","left", "right", "inner")){
-  as_input(.data, object2, .by = .by, join_type = join_type, FUN = join_nodes)
+  as_input(.data, join_nodes, object2 = object2, .by = .by, join_type = join_type)
 }
 
 #' @export
