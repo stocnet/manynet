@@ -13,6 +13,7 @@
 #'   - `is_acyclic()` tests whether network is a directed acyclic graph.
 #'   - `is_aperiodic()` tests whether network is aperiodic.
 #' @template param_data
+#' @eval detail_avail("is_(connected|perfect_matching|eulerian|acyclic|aperiodic)")
 #' @return TRUE if the condition is met, or FALSE otherwise.
 #' @family marking
 #' @name mark_features
@@ -119,6 +120,16 @@ is_acyclic.igraph <- function(.data){
 }
 
 #' @rdname mark_features
+#' @section Aperiodicity: 
+#'   Aperiodicity is a property of directed networks that can be interpreted as 
+#'   the absence of cycles of a common length.
+#'   Aperiodicity is a necessary condition for the existence of a 
+#'   unique stationary distribution in Markov chains, and thus is 
+#'   an important property for the analysis of dynamic processes on networks.
+#'   The function `is_aperiodic()` tests for aperiodicity by finding 
+#'   all simple paths from each node back to itself, and then 
+#'   calculating the greatest common divisor of the lengths of these paths. 
+#'   If the greatest common divisor is 1, the network is aperiodic.
 #' @param max_path_length Maximum path length considered.
 #'   If negative, paths of all lengths are considered.
 #'   By default 4, to avoid potentially very long computation times.
@@ -142,8 +153,9 @@ is_aperiodic.default <- function(.data, max_path_length = 4) {
 #' @export
 is_aperiodic.igraph <- function(.data, max_path_length = 4){
   # thisRequires("minMSE") # >80x faster than e.g. cheapr::gcd()
+  if(is_twomode(.data)) return(FALSE)
   snet_info("Obtaining paths no greater than {max_path_length}.")
-  out <- suppressMessages(.quiet(unlist(lapply(1:net_nodes(.data), function(v1){
+  out <- suppressMessages(.quiet(unlist(lapply(seq_nodes(.data), function(v1){
     if(igraph::degree(.data, v1, mode="in") == 0) NULL else {
       goodNeighbors <- igraph::neighbors(.data, igraph::V(.data)[v1], mode="out")
       goodNeighbors <- goodNeighbors[goodNeighbors > igraph::V(.data)[v1]]
@@ -154,6 +166,7 @@ is_aperiodic.igraph <- function(.data, max_path_length = 4){
       }))
     }
   }))))
+  print(out)
   snet_info("Finding greatest common divisor of all paths.")
   out <- unique(sort(out))
   while(out[1]!=1 && length(out)>1){

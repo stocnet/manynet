@@ -54,6 +54,24 @@ sender and receiver.
 \item \code{is_uniplex()} marks networks TRUE if it is neither complex nor multiplex.
 }
 }
+\details{
+Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods for these functions:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{             data.frame default igraph list matrix network stocnet tbl_graph
+is_complex            *       *      *    *      *       *       *         *
+is_directed           *       *      *           *       *       *         *
+is_multiplex          *       *      *           *       *       *         *
+is_signed             *       *      *           *       *       *         *
+is_uniplex                    *      *                                      
+is_weighted           *       *      *           *       *       *         *
+}\if{html}{\out{</div>}}
+
+If a method is not available for a particular class, but a default method is,
+the default method will attempt to coerce the object to a class for which a method is defined,
+and then coerce the output back to the original class.
+If no method is available for any class, an error will be thrown.
+}
 \examples{
 is_weighted(create_tree(3))
 is_directed(create_tree(2))

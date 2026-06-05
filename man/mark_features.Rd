@@ -56,6 +56,23 @@ where that path passes through every tie exactly once.
 \item \code{is_aperiodic()} tests whether network is aperiodic.
 }
 }
+\details{
+Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods for these functions:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{                    default igraph
+is_acyclic                *      *
+is_aperiodic              *      *
+is_connected              *      *
+is_eulerian               *      *
+is_perfect_matching       *      *
+}\if{html}{\out{</div>}}
+
+If a method is not available for a particular class, but a default method is,
+the default method will attempt to coerce the object to a class for which a method is defined,
+and then coerce the output back to the original class.
+If no method is available for any class, an error will be thrown.
+}
 \section{is_connected}{
 
 To test weak connection on a directed network,
@@ -72,6 +89,19 @@ and not all possible subgraphs.
 This is to avoid computationally expensive combinatorial operations,
 but may come at the cost of some edge cases where a one-mode network
 cannot perfectly match as suggested.
+}
+
+\section{Aperiodicity}{
+
+Aperiodicity is a property of directed networks that can be interpreted as
+the absence of cycles of a common length.
+Aperiodicity is a necessary condition for the existence of a
+unique stationary distribution in Markov chains, and thus is
+an important property for the analysis of dynamic processes on networks.
+The function \code{is_aperiodic()} tests for aperiodicity by finding
+all simple paths from each node back to itself, and then
+calculating the greatest common divisor of the lengths of these paths.
+If the greatest common divisor is 1, the network is aperiodic.
 }
 
 \examples{

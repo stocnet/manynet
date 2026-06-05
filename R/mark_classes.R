@@ -16,6 +16,7 @@
 #'   
 #'   All `is_*()` functions return a logical scalar (TRUE or FALSE).
 #' @template param_data
+#' @eval detail_avail("is_(manynet|edgelist|graph|list)")
 #' @return TRUE if the condition is met, or FALSE otherwise.
 #' @family marking
 #' @name mark_is

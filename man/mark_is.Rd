@@ -44,6 +44,22 @@ for example a set of ego networks or a dynamic or longitudinal set of networks.
 
 All \verb{is_*()} functions return a logical scalar (TRUE or FALSE).
 }
+\details{
+Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods for these functions:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{            data.frame default igraph list matrix network stocnet tbl_graph
+is_edgelist          *       *                                             
+is_graph                     *      *                   *       *         *
+is_list                      *           *                                 
+is_manynet           *       *      *           *       *       *         *
+}\if{html}{\out{</div>}}
+
+If a method is not available for a particular class, but a default method is,
+the default method will attempt to coerce the object to a class for which a method is defined,
+and then coerce the output back to the original class.
+If no method is available for any class, an error will be thrown.
+}
 \examples{
 is_manynet(create_filled(2))
 is_graph(create_star(2))

@@ -39,6 +39,27 @@ than 'names' or 'type'.
 network contains only one node and its ties.
 }
 }
+\details{
+Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods for these functions:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default igraph list matrix network numeric stocnet
+is_attributed                  *                                           
+is_egonet                      *                                           
+is_labelled            *       *      *    *      *       *               *
+is_twomode             *       *      *    *      *       *       *       *
+              tbl_graph
+is_attributed          
+is_egonet              
+is_labelled           *
+is_twomode            *
+}\if{html}{\out{</div>}}
+
+If a method is not available for a particular class, but a default method is,
+the default method will attempt to coerce the object to a class for which a method is defined,
+and then coerce the output back to the original class.
+If no method is available for any class, an error will be thrown.
+}
 \examples{
 is_twomode(create_filled(c(2,2)))
 is_labelled(create_empty(3))
