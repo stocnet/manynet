@@ -54,12 +54,12 @@ is.scalar <- function(x) {
   is.atomic(x) && length(x) == 1L
 }
 
-preferred_classes <- c("stocnet","tbl_graph","igraph","network","matrix")
+# preferred_classes <- c("stocnet","tbl_graph","igraph","network","matrix")
 
 as_input <- function(.data, FUN, ...){
   if(!is_manynet(.data))
     snet_abort("{.var {substitute(.data)}} must be a manynet-compatible object.")
-  out_class <- class(.data)[1]
+  out_class <- setdiff(class(.data), c("mnet","tbl_df","tbl"))[1]
   # snet_minor_info("{.var {substitute(.data)}} is of class {.var {out_class}}.")
   fun_label <- as.character(substitute(FUN))   # capture symbol
   avail_classes <- sapply(strsplit(suppressWarnings(utils::methods(fun_label)), 
@@ -71,6 +71,7 @@ as_input <- function(.data, FUN, ...){
   # snet_minor_info("Output is {.var {class(out)[1]}}.",
   #                 "Converting output to {.var {out_class}}.")
   snet_minor_info("Using {.var {avail_class}} method for {.fn {fun_label}} and coercing back to {.var {out_class}}.")
+  if(out_class == "data.frame") out_class <- "edgelist"
   get(paste0("as_",out_class))(out)
 }
 
