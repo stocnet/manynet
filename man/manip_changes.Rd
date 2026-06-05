@@ -7,6 +7,8 @@
 \alias{mutate_changes}
 \alias{filter_changes}
 \alias{select_changes}
+\alias{arrange_changes}
+\alias{rename_changes}
 \alias{gather_changes}
 \alias{apply_changes}
 \title{Manipulating changes to nodes over time}
@@ -20,6 +22,10 @@ mutate_changes(.data, ...)
 filter_changes(.data, ..., .by = NULL)
 
 select_changes(.data, ..., .by = NULL)
+
+arrange_changes(.data, ...)
+
+rename_changes(.data, ...)
 
 gather_changes(.data, time)
 
@@ -72,11 +78,16 @@ nodal attributes.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{               igraph stocnet tbl_graph
-delete_changes      *       *          
-filter_changes      *       *          
-mutate_changes              *         *
-select_changes      *       *          
+\if{html}{\out{<div class="sourceCode">}}\preformatted{                default igraph stocnet tbl_graph
+add_changes           *                        *
+apply_changes         *                        *
+arrange_changes       *      *       *          
+delete_changes        *      *       *          
+filter_changes        *      *       *          
+gather_changes        *      *                  
+mutate_changes        *              *         *
+rename_changes        *      *       *          
+select_changes        *      *       *          
 }\if{html}{\out{</div>}}
 
 If a method is not available for a particular class, but a default method is,

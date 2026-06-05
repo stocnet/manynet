@@ -31,6 +31,11 @@ NULL
 na_to_zero <- function(.data) UseMethod("na_to_zero")
 
 #' @export
+na_to_zero.default <- function(.data){
+  as_input(.data, na_to_zero)
+}
+
+#' @export
 na_to_zero.tbl_graph <- function(.data){
   weight <- NULL
   .data |> filter_ties(!is.na(weight))
@@ -61,6 +66,11 @@ na_to_zero.data.frame <- function(.data){
 #' @rdname modif_miss
 #' @export
 na_to_mean <- function(.data) UseMethod("na_to_mean")
+
+#' @export
+na_to_mean.default <- function(.data){
+  as_input(.data, na_to_mean)
+}
 
 #' @export
 na_to_mean.tbl_graph <- function(.data){

@@ -9,6 +9,10 @@
 #'   as well as definitions of the nodes and ties in the network.
 #'   Where available, this information is printed for tidygraph-class objects,
 #'   and can be used for printing a grand table in the `{grand}` package.
+#'   
+#'   - `add_info()` adds information attributes to the network.
+#'   - `mutate_info()` updates information attributes of the network.
+#'   - `net_attributes()` lists the information attributes of the network.
 #' @template param_data
 #' @family info
 #' @eval detail_avail(".*_info")
@@ -23,6 +27,11 @@
 #' add_info(ison_algebra, name = "Algebra")
 #' @export
 add_info <- function(.data, ...) UseMethod("add_info")
+
+#' @export
+add_info.default <- function(.data, ...){
+  as_input(.data, add_info, ...)
+}
 
 #' @export
 add_info.igraph <- function(.data, ...){
@@ -85,6 +94,11 @@ add_info.stocnet <- function(.data, ...){
 #' @rdname manip_info
 #' @export
 mutate_info <- function(.data, ...) UseMethod("mutate_info")
+
+#' @export
+mutate_info.default <- function(.data, ...){
+  as_input(.data, mutate_info, ...)
+}
 
 #' @export
 mutate_info.igraph <- function(.data, ...){

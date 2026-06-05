@@ -37,8 +37,16 @@ NULL
 #' add_changes(ison_algebra, 
 #'             data.frame(wave = 2, node = 1, var = "active", value = FALSE))
 #' @export
-add_changes <- function(.data, changes){
-  out <- as_tidygraph(.data)
+add_changes <- function(.data, changes) UseMethod("add_changes")
+
+#' @export
+add_changes.default <- function(.data, changes){
+  as_input(.data, add_changes, changes = changes)
+}
+
+#' @export
+add_changes.tbl_graph <- function(.data, changes){
+  out <- .data
   if(length(names(changes)) == 4){
     
     if("active" %in% changes[,3] && !("active" %in% net_node_attributes(.data))){
@@ -137,6 +145,11 @@ add_changes <- function(.data, changes){
 delete_changes <- function(.data) UseMethod("delete_changes")
 
 #' @export
+delete_changes.default <- function(.data){
+  as_input(.data, delete_changes)
+}
+
+#' @export
 delete_changes.igraph <- function(.data){
   igraph::delete_graph_attr(.data, "changes")
 }
@@ -151,6 +164,11 @@ delete_changes.stocnet <- function(.data){
 #' @rdname manip_changes
 #' @export
 mutate_changes <- function(.data, ...) UseMethod("mutate_changes")
+
+#' @export
+mutate_changes.default <- function(.data, ...){
+  as_input(.data, mutate_changes, ...)
+}
 
 #' @export
 mutate_changes.tbl_graph <- function(.data, ...){
@@ -176,6 +194,11 @@ mutate_changes.stocnet <- function(.data, ...){
 filter_changes <- function(.data, ..., .by = NULL) UseMethod("filter_changes")
 
 #' @export
+filter_changes.default <- function(.data, ..., .by = NULL){
+  as_input(.data, filter_changes, ..., .by = .by)
+}
+
+#' @export
 filter_changes.igraph <- function(.data, ..., .by = NULL){
   changes <- igraph::graph_attr(.data, "changes")
   changes <- tidygraph::filter(changes, ..., .by = .by)
@@ -199,6 +222,11 @@ filter_changes.stocnet <- function(.data, ..., .by = NULL){
 select_changes <- function(.data, ..., .by = NULL) UseMethod("select_changes")
 
 #' @export
+select_changes.default <- function(.data, ..., .by = NULL){
+  as_input(.data, select_changes, ..., .by = .by)
+}
+
+#' @export
 select_changes.igraph <- function(.data, ..., .by = NULL){
   changes <- igraph::graph_attr(.data, "changes")
   changes <- tidygraph::select(changes, ..., .by = .by)
@@ -216,11 +244,72 @@ select_changes.stocnet <- function(.data, ..., .by = NULL){
 }
 
 #' @rdname manip_changes
+#' @export
+arrange_changes <- function(.data, ...) UseMethod("arrange_changes")
+
+#' @export
+arrange_changes.default <- function(.data, ...){
+  
+  as_input(.data, arrange_changes, ...)
+}
+
+#' @export
+arrange_changes.igraph <- function(.data, ...){
+  changes <- igraph::graph_attr(.data, "changes")
+  changes <- dplyr::arrange(changes, ...)
+  igraph::graph_attr(.data, "changes") <- changes
+  .data
+}
+
+#' @export
+arrange_changes.stocnet <- function(.data, ...){
+  out <- .data
+  changes <- out$changes
+  changes <- dplyr::arrange(changes, ...)
+  out$changes <- changes
+  out
+}
+
+#' @rdname manip_changes
+#' @export
+rename_changes <- function(.data, ...) UseMethod("rename_changes")
+
+#' @export
+rename_changes.default <- function(.data, ...){
+  as_input(.data, rename_changes, ...)
+}
+
+#' @export
+rename_changes.igraph <- function(.data, ...){
+  changes <- igraph::graph_attr(.data, "changes")
+  changes <- dplyr::rename(changes, ...)
+  igraph::graph_attr(.data, "changes") <- changes
+  .data
+}
+
+#' @export
+rename_changes.stocnet <- function(.data, ...){
+  out <- .data
+  changes <- out$changes
+  changes <- dplyr::rename(changes, ...)
+  out$changes <- changes
+  out
+}
+
+#' @rdname manip_changes
 #' @template param_time
 #' @examples
 #' gather_changes(fict_starwars, time = 3)
 #' @export
-gather_changes <- function(.data, time){
+gather_changes <- function(.data, time) UseMethod("gather_changes")
+
+#' @export
+gather_changes.default <- function(.data, time){
+  gather_changes(as_igraph(.data), time = time)
+}
+
+#' @export
+gather_changes.igraph <- function(.data, time){
   t <- time
   changes <- igraph::graph_attr(.data, "changes")
   changes <- changes |> 
@@ -236,7 +325,15 @@ gather_changes <- function(.data, time){
 #' @examples
 #' collect_changes(fict_starwars, time = 3)
 #' @export
-apply_changes <- function(.data, time){
+apply_changes <- function(.data, time) UseMethod("apply_changes")
+
+#' @export
+apply_changes.default <- function(.data, time){
+  as_input(.data, apply_changes, time = time)
+}
+
+#' @export
+apply_changes.tbl_graph <- function(.data, time){
   out <- as.data.frame(as_nodelist(.data))
   changes <- collect_changes(.data, time)
   if(is.character(changes$node)) 

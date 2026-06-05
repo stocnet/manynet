@@ -40,15 +40,20 @@ This includes the name, year, and mode of collection of the network,
 as well as definitions of the nodes and ties in the network.
 Where available, this information is printed for tidygraph-class objects,
 and can be used for printing a grand table in the \code{{grand}} package.
+\itemize{
+\item \code{add_info()} adds information attributes to the network.
+\item \code{mutate_info()} updates information attributes of the network.
+\item \code{net_attributes()} lists the information attributes of the network.
+}
 }
 \details{
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{            igraph network stocnet tbl_graph
-add_info         *               *          
-as_infolist      *       *       *         *
-mutate_info      *               *          
+\if{html}{\out{<div class="sourceCode">}}\preformatted{            default igraph network stocnet tbl_graph
+add_info          *      *               *          
+as_infolist              *       *       *         *
+mutate_info       *      *               *          
 }\if{html}{\out{</div>}}
 
 If a method is not available for a particular class, but a default method is,
