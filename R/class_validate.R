@@ -87,7 +87,7 @@ reserved_cols <- function(.data, component, reserved_cols, class,
       snet_abort("'{reserved_cols}' must be of class '{class}'.")
     if(!is.null(match)){
       if(!all(.data[[component]][[reserved_cols]] %in% match)) 
-        snet_abort("'{reserved_cols}' must be one of {to_phrase(match)}.")
+        snet_abort("'{reserved_cols}' must be one of {phrase(match)}.")
     }
   } else if(!is.null(aka)){
     if(any(aka %in% names(.data[[component]]))){
@@ -99,7 +99,7 @@ reserved_cols <- function(.data, component, reserved_cols, class,
 
 required_cols <- function(.data, component, required_cols) {
   if(!all(required_cols %in% names(.data[[component]]))) 
-    snet_abort("The '{component}' component of a stocnet object must have the following columns: {to_phrase(required_cols)}.")
+    snet_abort("The '{component}' component of a stocnet object must have the following columns: {phrase(required_cols)}.")
 }
 
 expect_class <- function(.data, component, expected_class) {

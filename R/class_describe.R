@@ -42,7 +42,7 @@ describe_nodes <- function(.data){
   if(is.null(nn)) nn <- "nodes"
   nn <- ifelse(nd==1, singularize(nn), pluralize(nn))
   node_name <- paste(nd, nn)
-  to_phrase(node_name)
+  phrase(node_name)
 }
 
 #' @rdname class_describe
@@ -64,7 +64,7 @@ describe_ties <- function(.data){
     # } else {
     #   result <- parts
     # }
-    return(paste0(to_phrase(parts), " ties"))
+    return(paste0(phrase(parts), " ties"))
   } 
   paste(nt, tie_name)
 }
@@ -116,7 +116,7 @@ singularize <- function(word) {
   }
 }
 
-to_phrase <- function(items) {
+phrase <- function(items) {
   n <- length(items)
   
   if (n == 0) {
