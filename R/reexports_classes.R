@@ -1,7 +1,3 @@
-#' @importFrom igraph is_igraph
-#' @export
-igraph::is_igraph
-
 #' @importFrom tidygraph with_graph
 #' @export
 tidygraph::with_graph

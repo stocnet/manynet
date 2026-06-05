@@ -3,7 +3,6 @@
 \docType{import}
 \name{reexports}
 \alias{reexports}
-\alias{is_igraph}
 \alias{with_graph}
 \alias{is.tbl_graph}
 \alias{.G}
@@ -16,8 +15,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{igraph}{\code{\link[igraph]{is_igraph}}}
-
-  \item{tidygraph}{\code{\link[tidygraph:context_accessors]{.E}}, \code{\link[tidygraph:context_accessors]{.G}}, \code{\link[tidygraph:context_accessors]{.N}}, \code{\link[tidygraph:tbl_graph]{is.tbl_graph}}, \code{\link[tidygraph]{with_graph}}}
+  \item{tidygraph}{\code{\link[tidygraph:.E]{.E()}}, \code{\link[tidygraph:.G]{.G()}}, \code{\link[tidygraph:.N]{.N()}}, \code{\link[tidygraph:is.tbl_graph]{is.tbl_graph()}}, \code{\link[tidygraph:with_graph]{with_graph()}}}
 }}
 
