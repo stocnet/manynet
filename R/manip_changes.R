@@ -23,6 +23,7 @@
 #' @template param_dots
 #' @template param_by
 #' @family changes
+#' @eval detail_avail(".*_changes")
 #' @template fam_manip
 #' @seealso [to_time()]
 NULL

@@ -11,6 +11,7 @@
 #'   and can be used for printing a grand table in the `{grand}` package.
 #' @template param_data
 #' @family info
+#' @eval detail_avail(".*_info")
 #' @template fam_manip
 #' @param ... Named attributes. The following are currently recognised:
 #'   "name", "year", and "doi" of the network,

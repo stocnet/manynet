@@ -68,6 +68,22 @@ composition of a network (when nodes are present or absent over time),
 though the function can flexibly accommodate changes in other
 nodal attributes.
 }
+\details{
+Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods for these functions:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{               igraph stocnet tbl_graph
+delete_changes      *       *          
+filter_changes      *       *          
+mutate_changes              *         *
+select_changes      *       *          
+}\if{html}{\out{</div>}}
+
+If a method is not available for a particular class, but a default method is,
+the default method will attempt to coerce the object to a class for which a method is defined,
+and then coerce the output back to the original class.
+If no method is available for any class, an error will be thrown.
+}
 \examples{
 add_changes(ison_algebra, 
             data.frame(wave = 2, node = 1, var = "active", value = FALSE))
@@ -78,6 +94,9 @@ collect_changes(fict_starwars, time = 3)
 }
 \seealso{
 \code{\link[=to_time]{to_time()}}
+
+Other changes:
+\code{\link{mark_format_change}}
 
 Other manipulations:
 \code{\link{manip_info}},

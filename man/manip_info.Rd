@@ -41,6 +41,21 @@ as well as definitions of the nodes and ties in the network.
 Where available, this information is printed for tidygraph-class objects,
 and can be used for printing a grand table in the \code{{grand}} package.
 }
+\details{
+Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods for these functions:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{            igraph network stocnet tbl_graph
+add_info         *               *          
+as_infolist      *       *       *         *
+mutate_info      *               *          
+}\if{html}{\out{</div>}}
+
+If a method is not available for a particular class, but a default method is,
+the default method will attempt to coerce the object to a class for which a method is defined,
+and then coerce the output back to the original class.
+If no method is available for any class, an error will be thrown.
+}
 \examples{
 add_info(ison_algebra, name = "Algebra")
 }
