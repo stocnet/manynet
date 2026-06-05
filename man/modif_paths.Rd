@@ -17,7 +17,7 @@ to_eulerian(.data)
 
 to_tree(.data)
 
-to_dominating(.data)
+to_dominating(.data, from, direction = c("out", "in"))
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:

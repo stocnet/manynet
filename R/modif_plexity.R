@@ -110,8 +110,8 @@ to_simplex.data.frame <- function(.data) {
 to_uniplex <- function(.data, tie) UseMethod("to_uniplex")
 
 #' @export
-to_uniplex.default <- function(.data) {
-  as_input(.data, to_uniplex)
+to_uniplex.default <- function(.data, tie) {
+  as_input(.data, to_uniplex, tie = tie)
 }
 
 #' @export

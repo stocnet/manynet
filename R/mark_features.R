@@ -157,8 +157,9 @@ is_aperiodic.igraph <- function(.data, max_path_length = 4){
   snet_info("Obtaining paths no greater than {max_path_length}.")
   out <- suppressMessages(.quiet(unlist(lapply(seq_nodes(.data), function(v1){
     if(igraph::degree(.data, v1, mode="in") == 0) NULL else {
-      goodNeighbors <- igraph::neighbors(.data, igraph::V(.data)[v1], mode="out")
-      goodNeighbors <- goodNeighbors[goodNeighbors > igraph::V(.data)[v1]]
+      v1_vertex <- igraph::V(.data)[v1]
+      goodNeighbors <- igraph::neighbors(.data, v1_vertex, mode="out")
+      goodNeighbors <- goodNeighbors[goodNeighbors > v1_vertex]
       unlist(lapply(goodNeighbors, function(v2){
         vapply(igraph::all_simple_paths(.data, v2, igraph::V(.data)[v1], mode="out", 
                                         cutoff = max_path_length), length, 
@@ -166,7 +167,6 @@ is_aperiodic.igraph <- function(.data, max_path_length = 4){
       }))
     }
   }))))
-  print(out)
   snet_info("Finding greatest common divisor of all paths.")
   out <- unique(sort(out))
   while(out[1]!=1 && length(out)>1){

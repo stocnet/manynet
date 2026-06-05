@@ -316,11 +316,11 @@ to_tree.igraph <- function(.data) {
 #' @template param_dir
 #' @param from The index or name of the node from which the path should be traced.
 #' @export
-to_dominating <- function(.data) UseMethod("to_dominating")
+to_dominating <- function(.data, from, direction = c("out","in")) UseMethod("to_dominating")
 
 #' @export
-to_dominating.default <- function(.data){
-  as_input(.data, to_dominating)
+to_dominating.default <- function(.data, from, direction = c("out","in")){
+  as_input(.data, to_dominating, from = from, direction = direction)
 }
 
 #' @export
