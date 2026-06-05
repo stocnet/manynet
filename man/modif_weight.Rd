@@ -64,20 +64,20 @@ only transforming these objects' properties.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame igraph matrix network tbl_graph
-to_signed              *      *      *       *         *
-to_unsigned            *      *      *       *         *
-to_unweighted          *      *      *       *         *
-to_weighted                   *              *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default igraph matrix network tbl_graph
+to_signed              *       *      *      *       *         *
+to_unsigned            *       *      *      *       *         *
+to_unweighted          *       *      *      *       *         *
+to_weighted                    *      *              *         *
 }\if{html}{\out{</div>}}
 }
 \seealso{
-Other ties: 
+Other ties:
 \code{\link{manip_ties_attr}},
 \code{\link{manip_ties_num}},
 \code{\link{modif_direction}}
 
-Other modifications: 
+Other modifications:
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},

@@ -51,10 +51,10 @@ only transforming these objects' properties.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{           data.frame igraph matrix network tbl_graph
-to_anti             *      *      *       *         *
-to_simplex          *      *      *       *         *
-to_uniplex          *      *      *       *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{           data.frame default igraph matrix tbl_graph
+to_anti             *       *      *      *         *
+to_simplex          *       *      *      *          
+to_uniplex                  *                       *
 }\if{html}{\out{</div>}}
 }
 \examples{

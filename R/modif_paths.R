@@ -257,6 +257,12 @@ to_mentoring.igraph <- function(.data, elites = 0.1){
 to_eulerian <- function(.data) UseMethod("to_eulerian")
 
 #' @export
+to_eulerian.default <- function(.data){
+  as_input(.data, to_eulerian)
+}
+
+#' @export
+#' @export
 to_eulerian.igraph <- function(.data){
   if(!is_eulerian(.data))
     snet_abort("This is not a Eulerian graph.")
@@ -294,19 +300,31 @@ to_eulerian.tbl_graph <- function(.data){
 #' _Bell System Technical Journal_ 36(6):1389-1401.
 #' \doi{10.1002/j.1538-7305.1957.tb01515.x}
 #' @export
-to_tree <- function(.data) {
-  .data <- as_igraph(.data)
-  out <- igraph::subgraph_from_edges(.data, igraph::sample_spanning_tree(.data))
-  as_tidygraph(out)
+to_tree <- function(.data) UseMethod("to_tree")
+
+#' @export
+to_tree.default <- function(.data){
+  as_input(.data, to_tree)
+}
+
+#' @export
+to_tree.igraph <- function(.data) {
+  igraph::subgraph_from_edges(.data, igraph::sample_spanning_tree(.data))
 }
 
 #' @rdname modif_paths 
 #' @template param_dir
 #' @param from The index or name of the node from which the path should be traced.
 #' @export
-to_dominating <- function(.data, from, direction = c("out","in")) {
+to_dominating <- function(.data) UseMethod("to_dominating")
+
+#' @export
+to_dominating.default <- function(.data){
+  as_input(.data, to_dominating)
+}
+
+#' @export
+to_dominating.igraph <- function(.data, from, direction = c("out","in")) {
   direction <- match.arg(direction)
-  .data <- as_igraph(.data)
-  out <- igraph::dominator_tree(.data, root = from, mode = direction)$domtree
-  as_tidygraph(out)
+  igraph::dominator_tree(.data, root = from, mode = direction)$domtree
 }

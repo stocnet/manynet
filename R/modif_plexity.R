@@ -37,6 +37,11 @@ NULL
 to_anti <- function(.data) UseMethod("to_anti")
 
 #' @export
+to_anti.default <- function(.data) {
+  as_input(.data, to_anti)
+}
+
+#' @export
 to_anti.matrix <- function(.data){
   matrix(1, nrow(.data), ncol(.data)) - .data
 }
@@ -66,19 +71,14 @@ to_anti.tbl_graph <- function(.data){
   }
 }
 
-#' @export
-to_anti.network <- function(.data){
-  as_network(to_anti(as_igraph(.data)))
-}
-
 #' @rdname modif_plexity
 #' @importFrom igraph simplify
 #' @export
 to_simplex <- function(.data) UseMethod("to_simplex")
 
 #' @export
-to_simplex.tbl_graph <- function(.data) {
-  as_tidygraph(to_simplex(as_igraph(.data)))
+to_simplex.default <- function(.data) {
+  as_input(.data, to_simplex)
 }
 
 #' @export
@@ -99,11 +99,6 @@ to_simplex.data.frame <- function(.data) {
   out
 }
 
-#' @export
-to_simplex.network <- function(.data) {
-  as_network(to_simplex(as_igraph(.data)))
-}
-
 #' @rdname modif_plexity
 #' @param tie Character string naming a tie attribute to retain from a graph.
 #' @importFrom igraph delete_edges edge_attr_names delete_edge_attr E edge_attr_names
@@ -113,6 +108,11 @@ to_simplex.network <- function(.data) {
 #'   to_uniplex("friend")
 #' @export
 to_uniplex <- function(.data, tie) UseMethod("to_uniplex")
+
+#' @export
+to_uniplex.default <- function(.data) {
+  as_input(.data, to_uniplex)
+}
 
 #' @export
 to_uniplex.tbl_graph <- function(.data, tie){
@@ -132,24 +132,4 @@ to_uniplex.tbl_graph <- function(.data, tie){
   }
   out <- out |> mutate_info(ties = tie)
   tidygraph::activate(out, "nodes")
-}
-
-#' @export
-to_uniplex.igraph <- function(.data, tie){
-  as_igraph(to_uniplex(as_tidygraph(.data), tie))
-}
-
-#' @export
-to_uniplex.network <- function(.data, tie){
-  as_network(to_uniplex(as_igraph(.data), tie))
-}
-
-#' @export
-to_uniplex.data.frame <- function(.data, tie){
-  as_edgelist(to_uniplex(as_igraph(.data), tie))
-}
-
-#' @export
-to_uniplex.matrix <- function(.data, tie){
-  as_matrix(to_uniplex(as_igraph(.data), tie))
 }

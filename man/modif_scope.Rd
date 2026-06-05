@@ -83,15 +83,15 @@ i.e. nodes with no missing values.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{               data.frame igraph list matrix network tbl_graph
-to_blocks               *      *           *       *         *
-to_ego                         *                             *
-to_egos                 *      *           *       *         *
-to_giant                *      *           *       *         *
-to_no_isolates          *      *    *      *       *         *
-to_no_missing                                                *
-to_subgraph             *      *           *       *         *
-to_subgraphs                   *                   *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{               data.frame default igraph list matrix network tbl_graph
+to_blocks               *       *      *           *       *         *
+to_ego                          *      *                             *
+to_egos                 *              *           *       *         *
+to_giant                *       *      *           *       *         *
+to_no_isolates          *       *      *    *      *       *         *
+to_no_missing                   *                                    *
+to_subgraph             *       *      *           *       *         *
+to_subgraphs                           *                   *         *
 }\if{html}{\out{</div>}}
 }
 \section{\code{to_blocks()}}{

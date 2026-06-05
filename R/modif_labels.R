@@ -34,6 +34,11 @@ NULL
 to_named <- function(.data, names = NULL) UseMethod("to_named")
 
 #' @export
+to_named.default <- function(.data, names = NULL){
+  as_input(.data, to_named, names = names)
+}
+
+#' @export
 to_named.tbl_graph <- function(.data, names = NULL) {
   if (!is.null(names)) {
     out <- .data |> mutate(name = names)
@@ -104,6 +109,11 @@ to_named.network <- function(.data, names = NULL) {
 #' @importFrom dplyr as_tibble
 #' @export
 to_unnamed <- function(.data) UseMethod("to_unnamed")
+
+#' @export
+to_unnamed.default <- function(.data){
+  as_input(.data, to_unnamed)
+}
 
 #' @export
 to_unnamed.igraph <- function(.data) {

@@ -17,7 +17,7 @@ to_eulerian(.data)
 
 to_tree(.data)
 
-to_dominating(.data, from, direction = c("out", "in"))
+to_dominating(.data)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -50,11 +50,11 @@ a tie to themselves (a loop) will be created instead.
 Note that this is a different default behaviour than that
 described in Valente and Davis (1999).}
 
-\item{from}{The index or name of the node from which the path should be traced.}
-
 \item{direction}{Character string, “out” bases the measure on outgoing ties,
 “in” on incoming ties, and "all" on either/the sum of the two.
 By default "all".}
+
+\item{from}{The index or name of the node from which the path should be traced.}
 }
 \value{
 A tidygraph object modified as explained in the function description, details,
@@ -75,10 +75,12 @@ if the data is unconnected, a forest of spanning trees.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{             data.frame default igraph matrix network tbl_graph
-to_eulerian                          *                        *
-to_matching           *       *      *      *       *         *
-to_mentoring                  *      *                         
+\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default igraph matrix network tbl_graph
+to_dominating                  *      *                         
+to_eulerian                    *      *                        *
+to_matching            *       *      *      *       *         *
+to_mentoring                   *      *                         
+to_tree                        *      *                         
 }\if{html}{\out{</div>}}
 }
 \section{Matching}{
