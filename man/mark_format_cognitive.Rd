@@ -10,15 +10,13 @@ is_cognitive(.data)
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
-\item matrix (adjacency or incidence) from \code{{base}} R
-\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
-\item igraph, from the \code{{igraph}} package
-\item network, from the \code{{network}} package
-\item tbl_graph, from the \code{{tidygraph}} package
+\item adjacency or incidence \code{matrix} from \code{{base}} R
+\item edgelist \code{data.frame} from \code{{base}} R or \code{tbl/tbl_df} from \code{{tibble}}
+\item stocnet \code{stocnet}, from the \code{{manynet}} package
+\item igraph \code{igraph}, from the \code{{igraph}} package
+\item network \code{network}, from the \code{{network}} package
+\item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
-}
-\value{
-TRUE if the condition is met, or FALSE otherwise.
 }
 \description{
 These functions implement logical tests for various network properties.
@@ -33,7 +31,7 @@ each tie, in addition to the 'from' and 'to' columns.
 is_cognitive(create_filled(3))
 }
 \seealso{
-Other marks: 
+Other marks:
 \code{\link{mark_format_change}},
 \code{\link{mark_format_node}},
 \code{\link{mark_format_tie}}

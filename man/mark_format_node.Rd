@@ -70,6 +70,7 @@ is_egonet(fict_starwars)
 \seealso{
 Other marks:
 \code{\link{mark_format_change}},
+\code{\link{mark_format_cognitive}},
 \code{\link{mark_format_tie}}
 }
 \concept{marks}

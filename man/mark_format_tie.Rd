@@ -85,6 +85,7 @@ is_uniplex(create_star(3))
 \seealso{
 Other marks:
 \code{\link{mark_format_change}},
+\code{\link{mark_format_cognitive}},
 \code{\link{mark_format_node}}
 }
 \concept{marks}

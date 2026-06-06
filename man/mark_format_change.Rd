@@ -55,6 +55,7 @@ is_changing(fict_starwars)
 }
 \seealso{
 Other marks:
+\code{\link{mark_format_cognitive}},
 \code{\link{mark_format_node}},
 \code{\link{mark_format_tie}}
 

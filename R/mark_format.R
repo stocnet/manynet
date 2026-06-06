@@ -429,6 +429,16 @@ is_multiplex.data.frame <- function(.data) {
 #' @export
 is_uniplex <- function(.data) UseMethod("is_uniplex")
 
+#' @export
+is_uniplex.default <- function(.data) {
+  is_uniplex(as_igraph(.data))
+}
+
+#' @export
+is_uniplex.igraph <- function(.data) {
+  igraph::is_simple(.data)
+}
+
 # Cognitive Formats ####
 
 #' Marking networks cognitive formats
@@ -451,17 +461,17 @@ NULL
 is_cognitive <- function(.data) UseMethod("is_cognitive")
 
 #' @export
+is_cognitive.default <- function(.data) {
+  is_cognitive.igraph(as_igraph(.data))
+}
+
+#' @export
 is_cognitive.data.frame <- function(.data) {
   all(c("from", "to", "by") %in% names(.data))
 }
 
 #' @export
 is_cognitive.igraph <- function(.data) {
-  "by" %in% igraph::edge_attr_names(.data)
-}
-
-#' @export
-is_cognitive.tbl_graph <- function(.data) {
   "by" %in% igraph::edge_attr_names(.data)
 }
 
@@ -478,17 +488,6 @@ is_cognitive.matrix <- function(.data) {
 #' @export
 is_cognitive.stocnet <- function(.data) {
   "by" %in% names(.data$ties)
-}
-
-
-#' @export
-is_uniplex.default <- function(.data) {
-  is_uniplex(as_igraph(.data))
-}
-
-#' @export
-is_uniplex.igraph <- function(.data) {
-  igraph::is_simple(.data)
 }
 
 # Helper functions ----
