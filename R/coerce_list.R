@@ -10,6 +10,9 @@
 #'   - `as_infolist()` coerces the object into a list of network-level information, 
 #'   such as the names of the nodes and ties, if not given in the nodelist or edgelist.
 #'   - `as_matrix()` coerces the object into an adjacency (one-mode/unipartite) or incidence (two-mode/bipartite) matrix.
+#'   If the network is a cognitive social structure (i.e. the edgelist contains a 'by' column
+#'   indicating who reported/recorded each tie), `as_matrix()` returns a three-dimensional array
+#'   instead, with dimensions for senders, receivers, and reporters.
 #'
 #'   These coercions are extractive in the sense that they will lose any information that cannot be contained in the target format.
 #'   for example, `as_matrix()` will lose any information about edge attributes, such as edge types or weights.
@@ -254,9 +257,49 @@ as_globallist.stocnet <- function(.data) {
 as_matrix <- function(.data,
                       twomode = NULL) UseMethod("as_matrix")
 
+# Helper to convert cognitive social structure edgelist to 3D array
+.cognitive_to_array <- function(.data, twomode = NULL) {
+  if (is.data.frame(.data) && all(c("from", "to", "by") %in% names(.data))) {
+    el <- .data
+  } else {
+    el <- as_edgelist(.data)
+  }
+  if (!"by" %in% names(el)) {
+    stop("Expected a cognitive social structure with a 'by' column in the edgelist.")
+  }
+  reporters <- sort(unique(el$by))
+  from_nodes <- sort(unique(as.character(el$from)))
+  to_nodes <- sort(unique(as.character(el$to)))
+  # Determine if twomode
+  twomode_net <- if (!is.null(twomode)) twomode else is_twomode(.data)
+  if (twomode_net) {
+    row_nodes <- from_nodes
+    col_nodes <- to_nodes
+  } else {
+    all_nodes <- sort(unique(c(from_nodes, to_nodes)))
+    row_nodes <- all_nodes
+    col_nodes <- all_nodes
+  }
+  # Create 3D array: rows x cols x reporters
+
+  out <- array(0L, dim = c(length(row_nodes), length(col_nodes), 
+                           length(reporters)),
+               dimnames = list(row_nodes, col_nodes, reporters))
+  # Fill in the array
+  el_from <- as.character(el$from)
+  el_to <- as.character(el$to)
+  el_by <- as.character(el$by)
+  el_val <- if ("weight" %in% names(el)) el$weight else rep(1L, nrow(el))
+  for (i in seq_len(nrow(el))) {
+    out[el_from[i], el_to[i], el_by[i]] <- el_val[i]
+  }
+  out
+}
+
 #' @export
 as_matrix.data.frame <- function(.data,
                                  twomode = NULL) {
+  if (is_cognitive(.data)) return(.cognitive_to_array(.data, twomode = twomode))
   if ("tbl_df" %in% class(.data)) .data <- as.data.frame(.data)
   if (ncol(.data) == 2 | !is_weighted(.data)) {
     .data <- data.frame(.data) # in case it's a tibble
@@ -303,6 +346,7 @@ as_matrix.matrix <- function(.data,
 #' @export
 as_matrix.igraph <- function(.data,
                              twomode = NULL) {
+  if (is_cognitive(.data)) return(.cognitive_to_array(.data, twomode = twomode))
   if ((!is.null(twomode) && twomode) | 
       (is.null(twomode) & is_twomode(.data) & !is_multiplex(.data))) {
     if (is_weighted(.data) | is_signed(.data)) {
@@ -332,12 +376,14 @@ as_matrix.igraph <- function(.data,
 #' @export
 as_matrix.tbl_graph <- function(.data,
                                 twomode = NULL) {
+  if (is_cognitive(.data)) return(.cognitive_to_array(.data, twomode = twomode))
   as_matrix(as_igraph(.data), twomode = twomode)
 }
 
 #' @export
 as_matrix.network <- function(.data,
                               twomode = NULL) {
+  if (is_cognitive(.data)) return(.cognitive_to_array(.data, twomode = twomode))
   if (network::is.bipartite(.data)) {
     if ("weight" %in% network::list.edge.attributes(.data)) {
       out <- network::as.matrix.network(.data,
@@ -414,6 +460,7 @@ as_matrix.diff_model <- function(.data,
 #' @export
 as_matrix.stocnet <- function(.data,
                                  twomode = FALSE) {
+  if (is_cognitive(.data)) return(.cognitive_to_array(.data, twomode = twomode))
   as_matrix(as_igraph(.data, twomode = twomode))
 }
 
