@@ -40,9 +40,9 @@ and the new value to be applied, which should be called 'value'.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{               default stocnet tbl_graph
-as_globallist                *          
-mutate_globals       *       *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{               default stocnet
+as_globallist                *
+mutate_globals       *       *
 }\if{html}{\out{</div>}}
 
 If a method is not available for a particular class, but a default method is,
@@ -51,8 +51,8 @@ and then coerce the output back to the original class.
 If no method is available for any class, an error will be thrown.
 }
 \examples{
-mutate_globals(ison_algebra, 
-            var = "active", time = 2, value = FALSE)
+as_stocnet(ison_algebra) |> 
+   mutate_globals(time = 2, var = "active", value = FALSE)
 }
 \seealso{
 \code{\link[=to_time]{to_time()}}

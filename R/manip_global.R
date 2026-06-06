@@ -21,8 +21,8 @@ NULL
 
 #' @rdname manip_global
 #' @examples
-#' mutate_globals(ison_algebra, 
-#'             var = "active", time = 2, value = FALSE)
+#' as_stocnet(ison_algebra) |> 
+#'    mutate_globals(time = 2, var = "active", value = FALSE)
 #' @export
 mutate_globals <- function(.data, ...) UseMethod("mutate_globals")
 
@@ -32,18 +32,14 @@ mutate_globals.default <- function(.data, ...){
 }
 
 #' @export
-mutate_globals.tbl_graph <- function(.data, ...){
-  globals <- igraph::graph_attr(.data, "globals")
-  globals <- tidygraph::mutate(globals, ...)
-  igraph::graph_attr(.data, "globals") <- globals
-  .data
-}
-
-#' @export
 mutate_globals.stocnet <- function(.data, ...){
   out <- .data
-  globals <- out$globals
-  globals <- dplyr::mutate(globals, ...)
-  out$globals <- globals
+  if(is.null(out$globals)){
+    out$globals <- tibble::tibble(...)
+  } else {
+    globals <- out$globals
+    globals <- dplyr::mutate(globals, ...)
+    out$globals <- globals
+  }
   out
 }
