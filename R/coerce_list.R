@@ -264,13 +264,12 @@ as_matrix <- function(.data,
                            length(reporters)),
                dimnames = list(row_nodes, col_nodes, reporters))
   # Fill in the array
-
+  el_from <- as.character(el$from)
+  el_to <- as.character(el$to)
+  el_by <- as.character(el$by)
+  el_val <- if ("weight" %in% names(el)) el$weight else rep(1L, nrow(el))
   for (i in seq_len(nrow(el))) {
-    r <- as.character(el$from[i])
-    cc <- as.character(el$to[i])
-    b <- as.character(el$by[i])
-    val <- if ("weight" %in% names(el)) el$weight[i] else 1L
-    out[r, cc, b] <- val
+    out[el_from[i], el_to[i], el_by[i]] <- el_val[i]
   }
   out
 }
