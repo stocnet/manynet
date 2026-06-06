@@ -19,8 +19,6 @@ mutate_globals(.data, ...)
 }}
 
 \item{...}{Additional parameters and arguments passed on internally.}
-
-\item{.by}{An attribute name to join objects by. By default, NULL.}
 }
 \value{
 A data object of the same class as the function was given.
@@ -53,8 +51,8 @@ and then coerce the output back to the original class.
 If no method is available for any class, an error will be thrown.
 }
 \examples{
-add_globals(ison_algebra, 
-            data.frame(wave = 2, node = 1, var = "active", value = FALSE))
+mutate_globals(ison_algebra, 
+            var = "active", time = 2, value = FALSE)
 }
 \seealso{
 \code{\link[=to_time]{to_time()}}

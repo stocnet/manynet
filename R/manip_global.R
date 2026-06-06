@@ -13,7 +13,6 @@
 #'   and the new value to be applied, which should be called 'value'.
 #' @template param_data
 #' @template param_dots
-#' @template param_by
 #' @family global
 #' @eval detail_avail(".*_global")
 #' @template fam_manip
@@ -22,8 +21,8 @@ NULL
 
 #' @rdname manip_global
 #' @examples
-#' add_globals(ison_algebra, 
-#'             data.frame(wave = 2, node = 1, var = "active", value = FALSE))
+#' mutate_globals(ison_algebra, 
+#'             var = "active", time = 2, value = FALSE)
 #' @export
 mutate_globals <- function(.data, ...) UseMethod("mutate_globals")
 
