@@ -111,6 +111,7 @@ Other changes:
 \code{\link{mark_format_change}}
 
 Other manipulations:
+\code{\link{manip_global}},
 \code{\link{manip_info}},
 \code{\link{manip_nodes_attr}},
 \code{\link{manip_nodes_num}},

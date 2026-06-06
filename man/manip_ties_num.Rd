@@ -80,6 +80,7 @@ Other ties:
 
 Other manipulations:
 \code{\link{manip_changes}},
+\code{\link{manip_global}},
 \code{\link{manip_info}},
 \code{\link{manip_nodes_attr}},
 \code{\link{manip_nodes_num}},

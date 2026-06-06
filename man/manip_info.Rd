@@ -68,6 +68,7 @@ add_info(ison_algebra, name = "Algebra")
 \seealso{
 Other manipulations:
 \code{\link{manip_changes}},
+\code{\link{manip_global}},
 \code{\link{manip_nodes_attr}},
 \code{\link{manip_nodes_num}},
 \code{\link{manip_ties_attr}},
