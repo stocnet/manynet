@@ -61,6 +61,9 @@ and translating the information contained in the original object:
 \item \code{as_infolist()} coerces the object into a list of network-level information,
 such as the names of the nodes and ties, if not given in the nodelist or edgelist.
 \item \code{as_matrix()} coerces the object into an adjacency (one-mode/unipartite) or incidence (two-mode/bipartite) matrix.
+If the network is a cognitive social structure (i.e. the edgelist contains a 'by' column
+indicating who reported/recorded each tie), \code{as_matrix()} returns a three-dimensional array
+instead, with dimensions for senders, receivers, and reporters.
 }
 
 These coercions are extractive in the sense that they will lose any information that cannot be contained in the target format.

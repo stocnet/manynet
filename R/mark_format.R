@@ -388,6 +388,57 @@ is_uniplex <- function(.data) {
   igraph::is_simple(obj)
 }
 
+# Cognitive Formats ####
+
+#' Marking networks cognitive formats
+#' @name mark_format_cognitive
+#' @description
+#'   These functions implement logical tests for various network properties.
+#'   All `is_*()` functions return a logical scalar (TRUE or FALSE).
+#'   
+#'   - `is_cognitive()` marks networks TRUE if they are cognitive social structures,
+#'   i.e. where the edgelist contains a 'by' column indicating who reported/recorded
+#'   each tie, in addition to the 'from' and 'to' columns.
+#' @template param_data
+#' @family marks
+NULL
+
+#' @rdname mark_format_cognitive
+#' @examples
+#' is_cognitive(create_filled(3))
+#' @export
+is_cognitive <- function(.data) UseMethod("is_cognitive")
+
+#' @export
+is_cognitive.data.frame <- function(.data) {
+  all(c("from", "to", "by") %in% names(.data))
+}
+
+#' @export
+is_cognitive.igraph <- function(.data) {
+  "by" %in% igraph::edge_attr_names(.data)
+}
+
+#' @export
+is_cognitive.tbl_graph <- function(.data) {
+  "by" %in% igraph::edge_attr_names(.data)
+}
+
+#' @export
+is_cognitive.network <- function(.data) {
+  "by" %in% network::list.edge.attributes(.data)
+}
+
+#' @export
+is_cognitive.matrix <- function(.data) {
+  length(dim(.data)) == 3
+}
+
+#' @export
+is_cognitive.stocnet <- function(.data) {
+  "by" %in% names(.data$ties)
+}
+
 # Tie Formats ####
 
 #' Marking networks change formats
