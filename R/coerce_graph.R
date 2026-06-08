@@ -1025,6 +1025,9 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
     ties$to <- match(ties$to, nodes$name)
     nodes$label <- nodes$name
     nodes$name <- NULL
+  } else {
+    ties$from <- as.integer(ties$from)
+    ties$to <- as.integer(ties$to)
   }
   if(is_twomode(.data)){
     if(!is.null(info$nodes) && length(info$nodes) == 2){
@@ -1042,12 +1045,10 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
   if(!is.null(info$changes)) info$changes <- NULL
   info$directed <- is_directed(.data)
   
-  nodes <- dplyr::select(nodes, 
-                         dplyr::any_of(c("label", "mode")), 
-                         dplyr::everything())
-  # if(ncol(nodes)==0) nodes <- NULL
-  # if(ncol(changes)==0) changes <- NULL
-  if(ncol(ties)==0) ties <- NULL
+  if(!is.null(nodes))
+    nodes <- dplyr::select(nodes, 
+                           dplyr::any_of(c("label", "mode")), 
+                           dplyr::everything())
   
   out <- list(info = info, nodes = nodes, ties = ties, 
               changes = changes, global = global)
