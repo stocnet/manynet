@@ -1,3 +1,43 @@
+# manynet 2.1.0
+
+## Package
+
+- Bumped package metadata for the 2.1.0 release and refreshed generated package files
+- Updated exported registrations and reference documentation for expanded method coverage
+
+## Coercion
+
+- Expanded and hardened `as_stocnet()` coercion for `data.frame` and `tbl_graph` inputs
+- Improved `make_stocnet()` construction, indexing, and validation of nodes, ties, changes, info, and globals
+- Added and refined helper coercion utilities for extracting global metadata
+
+## Manipulating
+
+- Extended `stocnet` support across node, tie, change, and global manipulation verbs
+- Improved node filtering and reindexing behaviour in `stocnet` objects so ties and changes remain aligned
+- Added and refined change-manipulation methods (`add`, `delete`, `mutate`, `filter`, `select`, `arrange`, `rename`, and `gather`)
+
+## Modifying
+
+- Standardized many `to_*()` default methods to coerce through supported graph classes and then restore original classes
+- Fixed default dispatch in scope and transformation helpers, including `to_subgraph()`
+- Improved conversion consistency across direction, projection, paths, plexity, correlation, and weight transformations
+
+## Describing
+
+- Expanded `net_nodes()`, `net_node_attributes()`, and `net_tie_attributes()` coverage for table and network-like inputs
+- Improved network metadata extraction defaults and naming behaviour across classes
+
+## Marking
+
+- Fixed several default `is_*()` methods to return logical values reliably after coercion
+- Improved class, format, and change-mark handling across `stocnet`, `igraph`, and `tbl_graph` inputs
+
+## Tests and docs
+
+- Added and updated regression tests for coercion, stocnet construction, and manipulation workflows
+- Refreshed `.Rd` documentation and tutorial/source materials to reflect the updated behaviour
+
 # manynet 2.0.1
 
 ## Package
