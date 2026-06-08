@@ -39,6 +39,7 @@ to_no_missing.default <- function(.data){
 to_no_missing.tbl_graph <- function(.data){
   out <- .data
   nl <- as_nodelist(out)
+  if(is.null(nl)) return(out)
   delete_nodes(.data, !stats::complete.cases(nl)) |> 
     add_info(name = paste(net_name(.data), "without nodes with missing data"))
 }
