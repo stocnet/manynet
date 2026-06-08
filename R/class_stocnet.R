@@ -164,15 +164,17 @@ make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL,
     global = `if`(is.null(global), NULL, dplyr::tibble(global))
   )
   # make sure from and to are numeric indices of the nodes, not labels
-  out <- index_ties(out)
-  out <- index_changes(out)
+  if(!is.null(out$ties)) out <- index_ties(out)
+  if(!is.null(out$changes)) out <- index_changes(out)
   out <- structure(out, class = c("stocnet", class(out)))
   validate_stocnet(out)
 }
 
 index_ties <- function(.data){
   out <- .data
-  if(is.character(out$ties$from) && is.character(out$ties$to) && 
+  if (is.null(out$ties) || nrow(out$ties) == 0) return(out)
+  if(!is.null(out$nodes) && "label" %in% names(out$nodes) &&
+     is.character(out$ties$from) && is.character(out$ties$to) &&
      is.character(out$nodes$label)){
     out$ties <- out$ties |>
       dplyr::mutate(from = match(from, out$nodes$label),
@@ -188,7 +190,9 @@ index_ties <- function(.data){
 
 index_changes <- function(.data){
   out <- .data
-  if(is.character(out$changes$node) && is.character(out$nodes$label)){
+  if (is.null(out$changes) || nrow(out$changes) == 0) return(out)
+  if(!is.null(out$nodes) && "label" %in% names(out$nodes) &&
+     is.character(out$changes$node) && is.character(out$nodes$label)){
     out$changes <- out$changes |>
       dplyr::mutate(node = match(node, out$nodes$label))
   }

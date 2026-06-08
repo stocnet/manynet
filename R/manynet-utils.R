@@ -65,7 +65,8 @@ as_input <- function(.data, FUN, ...){
   fun_label <- as.character(substitute(FUN))   # capture symbol
   avail_classes <- sapply(strsplit(suppressWarnings(utils::methods(fun_label)), 
                                    split = "\\."), "[[", 2)
-  avail_class <- stats::na.omit(avail_classes[avail_classes %in% manynet_classes][order(manynet_classes)])[1]
+  avail_classes <- stats::na.omit(avail_classes[avail_classes %in% manynet_classes])
+  avail_class <- avail_classes[order(match(avail_classes, unname(manynet_classes)))][1]
   # snet_minor_info("{.fn {fun_label}} is available for {.var {avail_class}}.")
   out <- get(paste0("as_",avail_class))(.data)
   out <- FUN(out, ...)

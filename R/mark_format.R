@@ -286,7 +286,7 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 
 #' @export
 is_signed.default <- function(.data) {
-  as_input(.data, is_signed)
+  is_signed(as_igraph(.data))
 }
 
 #' @export
@@ -332,7 +332,7 @@ is_complex <- function(.data) UseMethod("is_complex")
 
 #' @export
 is_complex.default <- function(.data) {
-  as_input(.data, is_complex)
+  is_complex(as_igraph(.data))
 }
 
 #' @export
@@ -381,7 +381,7 @@ is_multiplex <- function(.data) UseMethod("is_multiplex")
 
 #' @export
 is_multiplex.default <- function(.data) {
-  as_input(.data, is_multiplex)
+  is_multiplex(as_igraph(.data))
 }
 
 #' @export

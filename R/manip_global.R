@@ -34,12 +34,12 @@ mutate_globals.default <- function(.data, ...){
 #' @export
 mutate_globals.stocnet <- function(.data, ...){
   out <- .data
-  if(is.null(out$globals)){
-    out$globals <- tibble::tibble(...)
+  if(is.null(out$global)){
+    out$global <- tibble::tibble(...)
   } else {
-    globals <- out$globals
-    globals <- dplyr::mutate(globals, ...)
-    out$globals <- globals
+    global <- out$global
+    global <- dplyr::mutate(global, ...)
+    out$global <- global
   }
   out
 }

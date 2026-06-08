@@ -228,7 +228,7 @@ to_subgraph <- function(.data, ...) UseMethod("to_subgraph")
 
 #' @export
 to_subgraph.default <- function(.data, ...){
-  as_input(.data, to_subgraphs, ...)
+  as_input(.data, to_subgraph, ...)
 }
 
 #' @export
