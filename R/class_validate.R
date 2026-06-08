@@ -32,7 +32,8 @@ validate_ties <- function(.data){
            aka = c("target", "receiver", "alter"))
   reserved_cols(.data, "ties", "by", "integer", 
                 aka = c("tertius", "third", "about", "referent", "regarding"))
-  reserved_cols(.data, "ties", "weight", "numeric", 
+  reserved_cols(.data, "ties", "weight", 
+                class = c("numeric","integer"), 
            aka = c("value", "strength", "val", "sign"))
   reserved_cols(.data, "ties", "time", 
                 class = c("character","numeric","mdate","Date","POSIXct"), 
@@ -57,8 +58,15 @@ validate_info <- function(.data){
   reserved_cols(.data, "info", "name", "character")
   reserved_cols(.data, "info", "modes", "character", length = net_modes(.data))
   reserved_cols(.data, "info", "layers", "character", length = net_layers(.data))
-  reserved_cols(.data, "info", "observation", "character")
-  reserved_cols(.data, "info", "update", "character")
+  reserved_cols(.data, "info", "observation", "character",
+                match = c("panel", "event", "cross-sectional", "egocentric", 
+                          "cognitive"))
+  reserved_cols(.data, "info", "sender", "character",
+                match = mode_names(.data))
+  reserved_cols(.data, "info", "receiver", "character",
+                match = mode_names(.data))
+  reserved_cols(.data, "info", "update", "character",
+                match = c("increment", "replace"))
   reserved_cols(.data, "info", "focal", "character", length = 1, 
            match = layer_names(.data), aka = c("dependent","dv"))
   invisible(.data)

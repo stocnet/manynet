@@ -60,13 +60,15 @@ as_nodelist <- function(.data) UseMethod("as_nodelist")
 #' @export
 as_nodelist.tbl_graph <- function(.data) {
   out <- .data
-  dplyr::tibble(data.frame(out))
+  out <- dplyr::tibble(data.frame(out))
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
 as_nodelist.igraph <- function(.data) {
   out <- .data
-  dplyr::tibble(data.frame(as_tidygraph(out)))
+  out <- dplyr::tibble(data.frame(as_tidygraph(out)))
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
@@ -82,8 +84,10 @@ as_nodelist.network <- function(.data) {
                                  rep(TRUE, .data$gal$n - .data$gal$bipartite))
   if(is_labelled(.data)) out$label <- network::network.vertex.names(.data)
   if("vertex.names" %in% names(out)) out$vertex.names <- NULL
-  dplyr::as_tibble(out) |> 
-    dplyr::select(dplyr::any_of(c("id", "name", "label", "mode")), dplyr::everything())
+  out <- dplyr::as_tibble(out) |> 
+    dplyr::select(dplyr::any_of(c("id", "name", "label", "mode")), 
+                  dplyr::everything())
+  if(ncol(out)==0) NULL else out
 }
 
 # Changelists ####
@@ -95,13 +99,15 @@ as_changelist <- function(.data) UseMethod("as_changelist")
 #' @export
 as_changelist.tbl_graph <- function(.data) {
   out <- igraph::graph_attr(as_igraph(.data), "changes")
-  dplyr::tibble(data.frame(out))
+  out <- dplyr::tibble(data.frame(out))
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
 as_changelist.igraph <- function(.data) {
   out <- igraph::graph_attr(.data, "changes")
-  dplyr::tibble(data.frame(out))
+  out <- dplyr::tibble(data.frame(out))
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
@@ -112,7 +118,8 @@ as_changelist.stocnet <- function(.data) {
 #' @export
 as_changelist.network <- function(.data) {
   out <- network::get.network.attribute(.data, "changes")
-  dplyr::tibble(data.frame(out))
+  out <- dplyr::tibble(data.frame(out))
+  if(ncol(out)==0) NULL else out
 }
 
 # Edgelists ####
@@ -126,14 +133,16 @@ as_edgelist <- function(.data, twomode = FALSE) UseMethod("as_edgelist")
 
 #' @export
 as_edgelist.igraph <- function(.data, twomode = FALSE) {
-  igraph::as_data_frame(.data, what = "edges") |>
+  out <- igraph::as_data_frame(.data, what = "edges") |>
     dplyr::as_tibble()
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
 as_edgelist.tbl_graph <- function(.data, twomode = FALSE) {
-  igraph::as_data_frame(.data, what = "edges") |> 
+  out <- igraph::as_data_frame(.data, what = "edges") |>
     dplyr::as_tibble()
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
@@ -157,12 +166,14 @@ as_edgelist.network <- function(.data, twomode = FALSE) {
   } else names(edges) <- c("from", "to")
   # Remove weight column if only unity weights.
   if (all(edges$weight == 1)) edges <- edges[, -3]
-  dplyr::arrange(dplyr::as_tibble(edges), from, to)
+  out <- dplyr::arrange(dplyr::as_tibble(edges), from, to)
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
 as_edgelist.matrix <- function(.data, twomode = FALSE) {
-  as_edgelist(as_igraph(.data, twomode = twomode))
+  out <- as_edgelist(as_igraph(.data, twomode = twomode))
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
@@ -180,12 +191,14 @@ as_edgelist.data.frame <- function(.data, twomode = FALSE) {
 
 #' @export
 as_edgelist.network.goldfish <- function(.data, twomode = FALSE) {
-  as_matrix(as_igraph(.data, twomode = twomode))
+  out <- as_matrix(as_igraph(.data, twomode = twomode))
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
 as_edgelist.siena <- function(.data, twomode = NULL) {
-  as_edgelist(as_igraph(.data, twomode = twomode))
+  out <- as_edgelist(as_igraph(.data, twomode = twomode))
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
@@ -195,7 +208,7 @@ as_edgelist.stocnet <- function(.data, twomode = NULL) {
     out$from <- .data$nodes$label[out$from]
     out$to <- .data$nodes$label[out$to]
   }
-  out
+  if(ncol(out)==0) NULL else out
 }
 
 # Infolists ####
