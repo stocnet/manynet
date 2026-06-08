@@ -110,24 +110,30 @@ filter_nodes.tbl_graph <- function(.data, ..., .by = NULL){
 
 #' @export
 filter_nodes.stocnet <- function(.data, ..., .by = NULL){
-  pre_id <- seq_nodes(.data)
-  out <- .data$nodes |> dplyr::filter(..., .by = dplyr::all_of(.by))
-  lookup <- c(pre_id, match(pre_id, seq_nodes(out)))
-  if(!is.null(.data$ties)){
-    out_ties <- .data$ties |> dplyr::filter(from %in% lookup, to %in% lookup)
-    out_ties <- out_ties |> dplyr::mutate(from = match(from, lookup), 
-                                           to = match(to, lookup))
+  if(is.null(.data$nodes) || nrow(.data$nodes) == 0) return(.data)
+
+  node_df <- dplyr::mutate(.data$nodes, .orig_id = dplyr::row_number())
+  kept_nodes <- dplyr::filter(node_df, ..., .by = dplyr::all_of(.by))
+  kept <- kept_nodes$.orig_id
+  out_nodes <- dplyr::select(kept_nodes, -.orig_id)
+
+  if(!is.null(.data$ties) && nrow(.data$ties) > 0){
+    out_ties <- dplyr::filter(.data$ties, from %in% kept, to %in% kept) |>
+      dplyr::mutate(from = match(from, kept),
+                    to = match(to, kept))
   } else {
-    out_ties <- NULL
+    out_ties <- .data$ties
   }
-  if(!is.null(.data$changes)){
-    out_changes <- .data$changes |> dplyr::filter(node %in% lookup)
-    out_changes <- out_changes |> dplyr::mutate(node = match(node, lookup))
+
+  if(!is.null(.data$changes) && nrow(.data$changes) > 0){
+    out_changes <- dplyr::filter(.data$changes, node %in% kept) |>
+      dplyr::mutate(node = match(node, kept))
   } else {
-    out_changes <- NULL
-  } 
-  out_info <- .data$info
-  make_stocnet(nodes = out, ties = out_ties, changes = out_changes, info = out_info)
+    out_changes <- .data$changes
+  }
+
+  make_stocnet(nodes = out_nodes, ties = out_ties, changes = out_changes,
+              global = .data$global, info = .data$info)
 }
 
 #' @rdname manip_nodes_num
