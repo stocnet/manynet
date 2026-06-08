@@ -73,8 +73,7 @@ is_changing.igraph <- function(.data) {
 
 #' @export
 is_changing.stocnet <- function(.data) {
-  "changes" %in% names(.data) &&
-    nrow(.data$changes) > 0
+  "changes" %in% names(.data) && !is.null(.data$changes)
 }
 
 #' @export

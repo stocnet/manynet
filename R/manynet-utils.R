@@ -10,6 +10,7 @@ utils::globalVariables(c(".data", "obs",
                          "increment",
                          "A","B","C","D",
                          "type","id",
+                         ".orig_row",
                          "n"))
 
 # Helper function for declaring available methods
