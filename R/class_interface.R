@@ -204,7 +204,7 @@ col_mnet_pink <- cli::make_ansi_style("#e6298a")
 
 .quiet <- function(x) { 
   sink(tempfile()) 
-  on.exit(sink()) 
+  on.exit(sink(), add = TRUE) 
   invisible(force(x)) 
 }
 # nocov end

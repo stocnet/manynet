@@ -442,7 +442,7 @@ as_matrix.siena <- function(.data,
   # Get the dependent network(s) first
   # Identify all dyadic depvars
   dvs <- lapply(.data$depvars, function(x) is.matrix(x[,,1]) )
-  ddvs <- names(which(dvs == TRUE))
+  ddvs <- names(which(dvs))
   # Add in first wave of first DV network
   out <- .data$depvars[[ddvs[1]]][,,1]
   # Add remaining waves

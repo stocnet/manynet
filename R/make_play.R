@@ -180,7 +180,7 @@ play_diffusion <- function(.data,
   
   infected <- seeds # seeds are initial infected
   latent <- NULL # latent compartment starts empty
-  time = 0 # starting at 0
+  time <- 0 # starting at 0
   # initialise events table
   events <- data.frame(t = time, nodes = seeds, event = "I", exposure = NA)
   if(!is_list(.data)) sinit <- sum(.node_is_exposed(.data, infected)) else 
@@ -403,7 +403,7 @@ play_learning <- function(.data,
   if(is.logical(beliefs)) beliefs <- beliefs*1
   if(missing(steps)) steps <- n
   
-  t = 0
+  t <- 0
   out <- matrix(NA,steps+1,length(beliefs))
   out[1,] <- beliefs
   trust_mat <- as_matrix(.data)/rowSums(as_matrix(.data))
@@ -602,7 +602,7 @@ play_segregation <- function(.data,
   if(is_changing(.data)){
     t <- time
     recovered <- as_changelist(.data) |> 
-      dplyr::filter(time <= t & value %in% c("R")) |>
+      dplyr::filter(time <= t & value %in% "R") |>
       dplyr::group_by(node) |>
       dplyr::mutate(n = dplyr::n()) |>
       dplyr::filter(n == 1 & value == "R")

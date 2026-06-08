@@ -81,14 +81,14 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
     if(with_attr) g <- bind_node_attributes(g, n)
   } else if (length(n) == 1) {
     if(p > 1){
-      if(!as.integer(p)==p) snet_abort("`p` must be an integer if above 1.")
+      if(as.integer(p)!=p) snet_abort("`p` must be an integer if above 1.")
       g <- igraph::sample_gnm(n, m = p, directed = directed)
     } else {
       g <- igraph::sample_gnp(n, p = p, directed = directed)
     }
   } else if (length(n) == 2) {
     if(p > 1){
-      if(!as.integer(p)==p) snet_abort("`p` must be an integer if above 1.")
+      if(as.integer(p)!=p) snet_abort("`p` must be an integer if above 1.")
       if (utils::packageVersion("igraph") >= "2.2.0") {
         g <- igraph::sample_bipartite_gnm(n[1], n[2],
                                           m = p,

@@ -51,6 +51,7 @@ print.node_measure <- function(x, ...,
                  names = list(names(x)),
                  n = n)
   }
+  invisible(x)
 }
 
 #' @export
@@ -72,6 +73,7 @@ print.network_measure <- function(x, ...,
         names(y) <- paste("Mode", seq_along(attr(x, "mode")))
       print(y, digits = digits)
     }
+  invisible(x)
 }
 
 # @param FUN A function by which the values should be aggregated

@@ -179,7 +179,7 @@ as_igraph.diffnet <- function(.data,
   dynamic.attrs <- colnames(graph$vertex.dyn.attrs[[1]])
   out <- vector("list", graph$meta$nper)
   names(out) <- dimnames(graph)[[3]]
-  for (p in 1:length(out)) {
+  for (p in seq_len(out)) {
     tempgraph <- graph$graph[[p]]
     dimnames(tempgraph) <- with(graph$meta, list(ids, ids))
     tempgraph <- igraph::graph_from_adjacency_matrix(adjmatrix = tempgraph, 
@@ -243,7 +243,7 @@ as_igraph.networkDynamic <- function(.data, twomode = FALSE) {
   out <- igraph::graph_from_data_frame(out, vertices = nodes)
   
   # changes
-  changes <- do.call(rbind, lapply(1:length(.data$val), 
+  changes <- do.call(rbind, lapply(seq_len(.data$val), 
                                    function(x) data.frame(node = x, 
                                                           if(is.null(.data$val[[x]]$active)) 
                                                             matrix(c(NA, NA), ncol = 2) else 
@@ -322,10 +322,10 @@ as_igraph.siena <- function(.data, twomode = NULL) {
   # We always get the dependent network(s) first
   # Identify all dyadic and non-dyadic depvars
   dvs <- lapply(.data$depvars, function(x) is.matrix(x[,,1]) )
-  ddvs <- names(which(dvs == TRUE))
+  ddvs <- names(which(dvs))
   # Add in first network as base and add names
   out <- .data$depvars[[ddvs[1]]][,,1] # first wave
-  if (is_twomode(out) == FALSE) {
+  if (!is_twomode(out)) {
     out <- igraph::vertex_attr(out, name = "name",
                                value = as.character(seq_len(igraph::vcount(as_igraph(out)))))
   } else {
@@ -357,8 +357,8 @@ as_igraph.siena <- function(.data, twomode = NULL) {
                                  name = paste0(names(.data$dyvCovars)[k]))
   }
   # Add any behavioral depvars
-  if(length(which(dvs == FALSE)) > 0) {
-    bdvs <- names(which(dvs == FALSE))
+  if(length(which(!dvs)) > 0) {
+    bdvs <- names(which(!dvs))
     for (b in seq_along(bdvs)) {
       out <- .get_attributes(.data$depvars[[bdvs[b]]], out,
                              name = bdvs[b])
@@ -815,14 +815,14 @@ as_diffusion.mnet <- function(.data, twomode = FALSE, events) {
   report[is.na(report)] <- 0
   
   if(all(report$E_new == 0)){
-    report$S = report$n + cumsum(report$S_new - report$I_new)
-    report$E = rep(0, nrow(report))
+    report$S <- report$n + cumsum(report$S_new - report$I_new)
+    report$E <- rep(0, nrow(report))
   } else {
-    report$S = report$n + cumsum(report$S_new - report$E_new) # susceptible decreases as they become exposed
-    report$E = cumsum(report$E_new) - cumsum(report$I_new) # exposed become infectious
+    report$S <- report$n + cumsum(report$S_new - report$E_new) # susceptible decreases as they become exposed
+    report$E <- cumsum(report$E_new) - cumsum(report$I_new) # exposed become infectious
   }
-  report$I = cumsum(report$I_new) - cumsum(report$R_new) # infectious recover
-  report$R = cumsum(report$R_new) - cumsum(report$S_new) # recovered accumulate
+  report$I <- cumsum(report$I_new) - cumsum(report$R_new) # infectious recover
+  report$R <- cumsum(report$R_new) - cumsum(report$S_new) # recovered accumulate
   report$s <- vapply(report$time, function(t){
     twin <- dplyr::filter(events, events$time <= t)
     infected <- dplyr::filter(twin, twin$value == "I")$node

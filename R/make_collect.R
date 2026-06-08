@@ -224,7 +224,7 @@ collect_cran <- function(pkg = "all"){
 #' @export
 collect_pkg <- function(dir = getwd()) {
   
-  variations = c("<- function",
+  variations <- c("<- function",
                  " <- function",
                  "<-function",
                  " <-function")
@@ -650,7 +650,7 @@ collect_pkg <- function(dir = getwd()) {
   # create igraph
   g1 <- igraph::graph_from_adjacency_matrix(
     as.matrix(network),
-    mode = c("directed"),
+    mode = "directed",
     weighted = TRUE,
     diag = TRUE,
     add.colnames = NULL,

@@ -36,6 +36,7 @@ print.node_mark <- function(x, ..., n = NULL) {
     print_tblvec(y = as.logical(x),
                  names = list(names(x)), n = n)
   }
+  invisible(x)
 }
 
 #' @export
@@ -43,6 +44,7 @@ print.tie_mark <- function(x, ..., n = NULL) {
   print_tblvec(y = as.logical(x),
                names = list(names(x)),
                n = n)
+  invisible(x)
 }
 
 # make tblvec ####
