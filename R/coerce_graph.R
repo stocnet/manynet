@@ -1018,6 +1018,7 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
   nodes <- as_nodelist(.data)
   changes <- as_changelist(.data)
   ties <- as_edgelist(.data)
+  global <- as_globallist(.data)
   
   if(is_labelled(.data)){
     ties$from <- match(ties$from, nodes$name)
@@ -1048,17 +1049,11 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
   # if(ncol(changes)==0) changes <- NULL
   if(ncol(ties)==0) ties <- NULL
   
-  out <- list(info = info, nodes = nodes, changes = changes, ties = ties)
+  out <- list(info = info, nodes = nodes, ties = ties, 
+              changes = changes, global = global)
   class(out) <- c("stocnet", class(out))
   out
 }
-
-#' @export
-as_stocnet.tbl_graph <- function(.data,
-                           twomode = FALSE) {
-  as_stocnet(as_igraph(.data, twomode = twomode)) 
-}
-
 
 #' @export
 as_stocnet.matrix <- function(.data,

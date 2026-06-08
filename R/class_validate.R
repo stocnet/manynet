@@ -67,10 +67,12 @@ validate_info <- function(.data){
 validate_global <- function(.data){
   if(is.null(.data$global)) return(invisible(.data))
   expect_class(.data, "global", "tbl_df")
-  reserved_cols(.data, "global", "time", "character", 
+  required_cols(.data, "global", c("var", "value"))
+  reserved_cols(.data, "global", "time", 
+                class = c("character","numeric","mdate","Date","POSIXct"), 
                 aka = c("wave", "period", "date", "begin", "end"))
-  required_cols(.data, "changes", c("node", "var", "value"))
-  reserved_cols(.data, "changes", "var", "character")
+  reserved_cols(.data, "global", "var", "character")
+  reserved_cols(.data, "global", "value", "any")
   invisible(.data)
 }
 

@@ -28,7 +28,7 @@
 #'   - 'directed' should be a logical indicating whether each layer is directed or undirected.
 #'   If there are multiple layers, this can be a named logical vector with the directedness of each layer, 
 #'   where the names correspond to the layer names.
-#'   - 'dependent' should be a character string indicating which layer is the dependent layer in a multiplex network.
+#'   - 'focal' should be a character string indicating which layer is the dependent layer in a multiplex network.
 #'   - 'doi' can be a character string with the DOI of the network, if it is from a published source.
 #'   - 'date' can be an integer of the year or the date the network represents.
 #'   - 'location' can be a character string with the location of the network.
@@ -79,6 +79,12 @@
 #'   and the sign of the tie can be determined from the weight.
 #'   Missing weights can be used to indicate missing ties in a network.
 #'   - 'time' should be a character or date vector of the time at which each tie is active in a longitudinal network.
+#' @section Globals:
+#'   There are several required names for the columns of the ties component of a stocnet object (if one is included).
+#'   - 'var' must be a string vector naming the global variable
+#'   - 'value' must be the new value that should be applied at that change (or incremented, as appropriate).
+#'   There may be an additional column:
+#'   - 'time' should be a character or date vector of the time at which each global attribute is updated.
 #' @section Printing: 
 #'   When printed, 'stocnet' objects will print to the console any information
 #'   stored about the names of the network, its modes, or layers.

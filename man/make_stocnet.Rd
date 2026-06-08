@@ -111,7 +111,7 @@ the ties in a multiplex or multilayer network.
 \item 'directed' should be a logical indicating whether each layer is directed or undirected.
 If there are multiple layers, this can be a named logical vector with the directedness of each layer,
 where the names correspond to the layer names.
-\item 'dependent' should be a character string indicating which layer is the dependent layer in a multiplex network.
+\item 'focal' should be a character string indicating which layer is the dependent layer in a multiplex network.
 \item 'doi' can be a character string with the DOI of the network, if it is from a published source.
 \item 'date' can be an integer of the year or the date the network represents.
 \item 'location' can be a character string with the location of the network.
@@ -180,6 +180,17 @@ If the weight vector includes also negative values, then the network is a signed
 and the sign of the tie can be determined from the weight.
 Missing weights can be used to indicate missing ties in a network.
 \item 'time' should be a character or date vector of the time at which each tie is active in a longitudinal network.
+}
+}
+
+\section{Globals}{
+
+There are several required names for the columns of the ties component of a stocnet object (if one is included).
+\itemize{
+\item 'var' must be a string vector naming the global variable
+\item 'value' must be the new value that should be applied at that change (or incremented, as appropriate).
+There may be an additional column:
+\item 'time' should be a character or date vector of the time at which each global attribute is updated.
 }
 }
 

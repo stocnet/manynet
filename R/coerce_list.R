@@ -247,6 +247,12 @@ as_globallist.stocnet <- function(.data) {
   .data$global
 }
 
+#' @export
+as_globallist.igraph <- function(.data) {
+  out <- igraph::graph_attr(.data, "global")
+  if(is.null(out) || ncol(out)==0) NULL else out
+}
+
 # Matrices ####
 
 #' @rdname coerce_list
