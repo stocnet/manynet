@@ -78,7 +78,7 @@ test_that("to, and from, waves work", {
   waves <- to_waves(orig, attribute = "wave")
   from_wave <- from_waves(waves)
   expect_length(waves, length(unique(tie_attribute(orig, "wave"))))
-  expect_equal(length(from_wave), length(as_igraph(orig)))
+  expect_length(from_wave, length(as_igraph(orig)))
 })
 
 test_that("to and from slices work", {

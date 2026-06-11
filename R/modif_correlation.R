@@ -61,16 +61,16 @@ to_cosine.default <- function(.data){
 #' @export
 to_cosine.matrix <- function(.data){
   x <- as_matrix(.data)
-  co = array(0, c(ncol(x), ncol(x)))
-  f = colnames(x)
-  dimnames(co) = list(f, f)
+  co <- array(0, c(ncol(x), ncol(x)))
+  f <- colnames(x)
+  dimnames(co) <- list(f, f)
   for (i in 2:ncol(x)) {
     for (j in 1:(i - 1)) {
-      co[i, j] = crossprod(x[, i], x[, j])/sqrt(crossprod(x[, i]) * crossprod(x[, j]))
+      co[i, j] <- crossprod(x[, i], x[, j])/sqrt(crossprod(x[, i]) * crossprod(x[, j]))
     }
   }
-  co = co + t(co)
-  diag(co) = 1
+  co <- co + t(co)
+  diag(co) <- 1
   as.matrix(co)
 }
   

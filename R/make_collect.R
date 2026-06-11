@@ -402,7 +402,7 @@ collect_pkg <- function(dir = getwd()) {
     
     # remove row if it is from first to last
     sub_index <- mapply(
-      function(x, y) matrix(x[!apply(x, 1, diff) >= c(y - 2), ], ncol = 2),
+      function(x, y) matrix(x[apply(x, 1, diff) < c(y - 2), ], ncol = 2),
       sub_index, max_length, SIMPLIFY = FALSE)
     
     out <- list()

@@ -60,6 +60,7 @@ print.tie_measure <- function(x, ...,
                                digits = 3) {
   print_tblvec(y = round(as.numeric(x), digits = digits), 
                names = list(names(x)), n = n)
+  invisible(x)
 }
 
 #' @export

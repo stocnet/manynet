@@ -98,6 +98,9 @@ reference:
   - subtitle: "Ties"
     contents:
       - starts_with("manip_ties")
+  - subtitle: "Globals"
+    contents:
+      - starts_with("manip_global")
 
   - title: "Modifying"
     desc: |

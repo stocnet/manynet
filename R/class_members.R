@@ -26,6 +26,7 @@ print.node_member <- function(x, ..., n = NULL) {
                  names = list(names(x)),
                  n = n))
   }
+  invisible(x)
 }
 
 #' @export

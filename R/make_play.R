@@ -415,7 +415,7 @@ play_learning <- function(.data,
     listen_mat[is.nan(listen_mat)] <- 0
     beliefs <- listen_mat %*% beliefs
     if(all(abs(old_beliefs - beliefs) < epsilon)) break
-    t = t+1
+    t <- t+1
     out[t+1,] <- beliefs
     if(t==steps) break
   }
@@ -466,7 +466,7 @@ play_segregation <- function(.data,
   if(length(heterophily)!=n) snet_abort("Heterophily threshold must be the same length as the number of nodes in the network.")
   swtch <- function(x,i,j) {x[c(i,j)] <- x[c(j,i)]; x} 
   
-  t = 0
+  t <- 0
   temp <- .data
   moved <- NULL
   while(steps > t){

@@ -5,8 +5,8 @@ egos <- ison_adolescents %>%
 
 test_that("to_ and from_ egos works", {
   expect_length(to_egos(ison_brandes), length(ison_brandes))
-  expect_equal(length(to_egos(ison_brandes)), length(to_egos(ison_brandes, 2)))
-  expect_equal(length(egos), length(from_egos(to_egos(egos))))
+  expect_length(to_egos(ison_brandes), length(to_egos(ison_brandes, 2)))
+  expect_length(egos, length(from_egos(to_egos(egos))))
   expect_s3_class(to_egos(egos)[[1]], "tbl_graph")
   expect_s3_class(from_egos(to_egos(egos)), "tbl_graph")
 })
@@ -37,7 +37,6 @@ wave <- ison_adolescents %>%
     mutate(wave = sample(1995:1998, 10, replace = TRUE))
 
 test_that("to_waves works", {
-  expect_equal(class(to_waves(wave)), "list")
   expect_length(to_waves(wave), 4)
   expect_length(to_waves(wave, panels = c(1995, 1996)), 2)
   expect_length(from_waves(to_waves(wave)), 8)
