@@ -62,7 +62,7 @@ as_igraph.data.frame <- function(.data,
     graph <- igraph::delete_vertex_attr(graph, "name")
   }
   # length(intersect(c(.data[,1]), c(.data[,2]))) == 0 && length(.data[,1])>1
-  if (twomode) {
+  if (is_twomode(.data) || twomode) {
     igraph::V(graph)$type <- igraph::V(graph)$name %in% .data[,2]
   }
   graph

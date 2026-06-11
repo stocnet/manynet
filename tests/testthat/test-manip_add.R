@@ -48,7 +48,7 @@ test_that("add_tie_attribute works", {
 
 test_that("join_ties works", {
   testmutateedges <- join_ties(ison_southern_women, create_filled(c(3,4)))
-  expect_equal(class(testmutateedges), c("tbl_graph", "igraph"))
+  expect_s3_class(testmutateedges, c("tbl_graph", "igraph"))
 })
 
 test_that("mutate_ties and filter_ties works", {
