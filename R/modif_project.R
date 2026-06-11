@@ -141,6 +141,11 @@ to_mode1.network <- function(.data, similarity = c("count","jaccard","rand","pea
  as_network(to_mode1(as_tidygraph(.data), similarity)) 
 }
 
+#' @export
+to_mode1.data.frame <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
+  as_edgelist(to_mode1(as_tidygraph(.data), similarity)) 
+}
+
 #' @rdname modif_project
 #' @export
 to_mode2 <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) UseMethod("to_mode2")
@@ -212,6 +217,11 @@ to_mode2.tbl_graph <- function(.data, similarity = c("count","jaccard","rand","p
 #' @export
 to_mode2.network <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
   as_network(to_mode2(as_tidygraph(.data), similarity)) 
+}
+
+#' @export
+to_mode2.data.frame <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
+  as_edgelist(to_mode2(as_tidygraph(.data), similarity)) 
 }
 
 #' @rdname modif_project

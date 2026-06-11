@@ -62,10 +62,10 @@ of the second node set's (e.g. columns) joint affiliations to nodes in the first
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{         default igraph matrix network tbl_graph
-to_mode1       *      *      *       *         *
-to_mode2       *      *      *       *         *
-to_ties        *      *                         
+\if{html}{\out{<div class="sourceCode">}}\preformatted{         data.frame default igraph matrix network tbl_graph
+to_mode1          *       *      *      *       *         *
+to_mode2          *       *      *      *       *         *
+to_ties                   *      *                         
 }\if{html}{\out{</div>}}
 }
 \section{Comparison of two-mode projection methods}{
