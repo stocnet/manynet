@@ -2,41 +2,52 @@
 
 ## Package
 
-- Bumped package metadata for the 2.1.0 release and refreshed generated package files
 - Updated exported registrations and reference documentation for expanded method coverage
 
 ## Coercion
 
-- Expanded and hardened `as_stocnet()` coercion for `data.frame` and `tbl_graph` inputs
+- Added `as_globallist()` for extracting global variables from 'igraph' and 'stocnet' objects
+- Added `as_stocnet.data.frame()` for coercing edgelists to stocnet objects
 - Improved `make_stocnet()` construction, indexing, and validation of nodes, ties, changes, info, and globals
-- Added and refined helper coercion utilities for extracting global metadata
+- Improved `as_stocnet()` coercion for `data.frame` and `tbl_graph` inputs
 
 ## Manipulating
 
-- Extended `stocnet` support across node, tie, change, and global manipulation verbs
+- Added `add_tie_attribute()`
+- Added `filter_nodes)`, `filter_ties()`, and `filter_changes()` as generics for filtering nodes, ties, and changes in a network
+- Added `bind_nodes()` for adding nodes and ties from another network
+- Added `arrange_changes()` and `arrange_nodes()` as generics for reordering nodes and ties in a network
+- Added `gather_changes()` as a generic for gathering changes up to a time point
+- Added `rename_changes()` for renaming change variables
+- Added `select_changes()` for selecting change variables
+- Added `select_ties()` for selecting tie variables
+- Added `summarise_ties()` for summarising tie variables
 - Improved node filtering and reindexing behaviour in `stocnet` objects so ties and changes remain aligned
-- Added and refined change-manipulation methods (`add`, `delete`, `mutate`, `filter`, `select`, `arrange`, `rename`, and `gather`)
+- Improved all manipulating generics by adding .default methods that coerce to supported graph classes and then restore original classes, improving consistency across classes and reducing the need for users to coerce before manipulating
 
 ## Modifying
 
-- Standardized many `to_*()` default methods to coerce through supported graph classes and then restore original classes
-- Fixed default dispatch in scope and transformation helpers, including `to_subgraph()`
+- Added `join_nodes()` for joining two nodelists
+- Added new 'stocnet' methods for common modifications
+- Added `mutate_globals()` for mutating global variables in a network
+- Improved many `to_*()` default methods to coerce through supported graph classes and then restore original classes
 - Improved conversion consistency across direction, projection, paths, plexity, correlation, and weight transformations
+- Fixed default dispatch in scope and transformation helpers, including `to_subgraph()`
+
+## Marking
+
+- Added `is_cognitive()` for identifying cognitive social structure networks
+- Added `is_egonet()` for identifying egocentric networks
 
 ## Describing
 
-- Expanded `net_nodes()`, `net_node_attributes()`, and `net_tie_attributes()` coverage for table and network-like inputs
+- Improved `net_nodes()`, `net_node_attributes()`, and `net_tie_attributes()` coverage for table and network-like inputs
 - Improved network metadata extraction defaults and naming behaviour across classes
 
 ## Marking
 
+- Improved `is_*()` handling across `stocnet`, `igraph`, and `tbl_graph` inputs
 - Fixed several default `is_*()` methods to return logical values reliably after coercion
-- Improved class, format, and change-mark handling across `stocnet`, `igraph`, and `tbl_graph` inputs
-
-## Tests and docs
-
-- Added and updated regression tests for coercion, stocnet construction, and manipulation workflows
-- Refreshed `.Rd` documentation and tutorial/source materials to reflect the updated behaviour
 
 # manynet 2.0.1
 
