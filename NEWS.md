@@ -22,6 +22,12 @@
 - Added `select_changes()` for selecting change variables
 - Added `select_ties()` for selecting tie variables
 - Added `summarise_ties()` for summarising tie variables
+- Added `join_nodes.stocnet()` for joining a nodelist to a stocnet object
+- Added 'stocnet' methods for `arrange_ties()`, `bind_ties()`, `mutate_nodes()`, `mutate_ties()`, and `rename_nodes()`
+- Renamed `add_changes()` to `bind_changes.tbl_graph()`
+- Added `bind_changes.stocnet()` for binding on groups of changes to a stocnet object
+- Improved `from_ties()` to accept named arguments instead of a named list, improving consistency with other modifying functions
+- Added `from_ties.stocnet()` for creating a multiplex stocnet object from more than one network, including handling of tie types as layers and carrying forward nodal attributes
 - Improved node filtering and reindexing behaviour in `stocnet` objects so ties and changes remain aligned
 - Improved all manipulating generics by adding .default methods that coerce to supported graph classes and then restore original classes, improving consistency across classes and reducing the need for users to coerce before manipulating
 
