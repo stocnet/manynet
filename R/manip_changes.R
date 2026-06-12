@@ -7,7 +7,7 @@
 #'   change over time. 
 #'   They include:
 #'   
-#'   - `add_changes()` adds a table of changes to the nodes of a network.
+#'   - `bind_changes()` adds a table of changes to the nodes of a network.
 #'   - `mutate_changes()` can be used to update network changes.
 #'   - `filter_changes()` is used to subset network changes.
 #'   - `gather_changes()` is similar to `filter_changes()`,
@@ -27,117 +27,6 @@
 #' @template fam_manip
 #' @seealso [to_time()]
 NULL
-
-#' @rdname manip_changes
-#' @param changes A data frame of changes.
-#'   Ideally this will be in the form of "wave", "node", "var", and "value",
-#'   but there are internal routines from some otherwise common formats.
-#'   A data frame of composition change can be just two columns.
-#' @examples
-#' add_changes(ison_algebra, 
-#'             data.frame(wave = 2, node = 1, var = "active", value = FALSE))
-#' @export
-add_changes <- function(.data, changes) UseMethod("add_changes")
-
-#' @export
-add_changes.default <- function(.data, changes){
-  as_input(.data, add_changes, changes = changes)
-}
-
-#' @export
-add_changes.tbl_graph <- function(.data, changes){
-  out <- .data
-  if(length(names(changes)) == 4){
-    
-    if("active" %in% changes[,3] && !("active" %in% net_node_attributes(.data))){
-      out <- .infer_active(out, changes)
-      # changes <- changes[changes[,1] != min(changes[,1]),]
-    }
-    if("diffusion" %in% changes[,3] && !("diffusion" %in% net_node_attributes(.data))){
-      out <- .infer_susceptible(out, changes)
-    }
-    .check_changevars(changes)
-    .check_varexists(out, changes)
-    
-  } else {
-    
-    if("active" %in% net_node_attributes(out))
-      snet_unavailable("There is already an `active` nodal attribute.")
-    
-    if(nrow(changes) == net_nodes(out) && ncol(changes)==2){
-      # converting a begin-end composition table for all nodes
-      out <- out |> mutate_nodes(active = as.logi(changes[,1] == min(changes[,1])))
-      changes <- data.frame(node = 1:nrow(changes), 
-                            begin = changes[,1], end = changes[,2])
-    }
-    if(all(names(changes) == c("node", "begin", "end"))){
-      # inferring starting positions
-      first <- changes[!duplicated(changes[,1]),]
-      out <- out |> mutate_nodes(active = interpolate(first[,2] == min(first[,2]),
-                                                       first[,1],
-                                                       net_nodes(out),
-                                                       fill = TRUE))
-      
-    } else snet_unavailable()
-    
-    changes <- stats::reshape(changes,
-                              varying = colnames(changes)[-1],
-                              v.names = "wave",
-                              times = colnames(changes)[-1],
-                              timevar = "value", direction = "long")
-    changes <- changes |> dplyr::mutate(wave = wave, node = node, 
-                                         var = "active", value = value=="begin") |> 
-      dplyr::select(wave, node, var, value) |> dplyr::arrange(wave, node) |> 
-      dplyr::filter(wave != 1)
-  }
-  
-  igraph::graph_attr(out)$changes <- changes
-  as_tidygraph(out)
-}
-
-.check_changevars <- function(changes){
-  required <- c("time", "node", "var", "value")
-  if(!setequal(names(changes), required)){
-    notexist <- setdiff(names(changes), required)
-    snet_abort(paste("The following column names are in the changelist",
-                     "but are not recognised:", phrase(notexist)))
-  }
-}
-
-.check_varexists <- function(.data, changes){
-  if(!all(unique(changes$var) %in% net_node_attributes(.data))){
-    notexist <- unique(changes$var)[which(!unique(changes$var) %in% 
-                                            net_node_attributes(.data))]
-    snet_abort(paste("The following variables are in the changelist",
-                     "but not among the nodal attributes in the network:",
-                     "{notexist}"))
-  }
-}
-
-.infer_active <- function(.data, changes){
-  
-  if(length(unique(changes$node))==net_nodes(.data)){ # if table of when active
-    out <- .data |> mutate_nodes(active = as.logi(changes[,1] == min(changes[,1])))
-    
-  } else { # if some actives
-    if(all(changes[changes[,3]=="active",4])){
-      starts <- rep(FALSE, net_nodes(.data))
-    } else if(all(!changes[changes[,3]=="active",4])) {
-      starts <- rep(TRUE, net_nodes(.data))
-    } else if(changes[order(changes[,1]),4][1]){
-      starts <- rep(NA, net_nodes(.data))
-      first <- changes[changes[,1] == min(changes[,1]),]
-      starts[first[,2]] <- first[,4]
-      starts[is.na(starts) & changes[changes$var == "active" & changes$value == TRUE & changes$wave > min(changes$wave),2]] <- FALSE
-    } else snet_unavailable()
-    out <- .data |> mutate_nodes(active = starts)
-  }
-  out
-}
-
-.infer_susceptible <- function(.data, changes){
-  .data |> mutate_nodes(diffusion = "S")
-}
 
 #' @rdname manip_changes
 #' @export
@@ -193,6 +82,101 @@ bind_changes <- function(.data, changes, var, ...) UseMethod("bind_changes")
 #' @export
 bind_changes.default <- function(.data, changes, var, ...){
   as_input(.data, bind_changes, changes, var, ...)
+}
+
+#' @export
+bind_changes.tbl_graph <- function(.data, changes){
+  out <- .data
+  if(length(names(changes)) == 4){
+    
+    if("active" %in% changes[,3] && !("active" %in% net_node_attributes(.data))){
+      out <- .infer_active(out, changes)
+      # changes <- changes[changes[,1] != min(changes[,1]),]
+    }
+    if("diffusion" %in% changes[,3] && !("diffusion" %in% net_node_attributes(.data))){
+      out <- .infer_susceptible(out, changes)
+    }
+    .check_changevars(changes)
+    .check_varexists(out, changes)
+    
+  } else {
+    
+    if("active" %in% net_node_attributes(out))
+      snet_unavailable("There is already an `active` nodal attribute.")
+    
+    if(nrow(changes) == net_nodes(out) && ncol(changes)==2){
+      # converting a begin-end composition table for all nodes
+      out <- out |> mutate_nodes(active = as.logi(changes[,1] == min(changes[,1])))
+      changes <- data.frame(node = 1:nrow(changes), 
+                            begin = changes[,1], end = changes[,2])
+    }
+    if(all(names(changes) == c("node", "begin", "end"))){
+      # inferring starting positions
+      first <- changes[!duplicated(changes[,1]),]
+      out <- out |> mutate_nodes(active = interpolate(first[,2] == min(first[,2]),
+                                                      first[,1],
+                                                      net_nodes(out),
+                                                      fill = TRUE))
+      
+    } else snet_unavailable()
+    
+    changes <- stats::reshape(changes,
+                              varying = colnames(changes)[-1],
+                              v.names = "wave",
+                              times = colnames(changes)[-1],
+                              timevar = "value", direction = "long")
+    changes <- changes |> dplyr::mutate(wave = wave, node = node, 
+                                        var = "active", value = value=="begin") |> 
+      dplyr::select(wave, node, var, value) |> dplyr::arrange(wave, node) |> 
+      dplyr::filter(wave != 1)
+  }
+  
+  igraph::graph_attr(out)$changes <- changes
+  as_tidygraph(out)
+}
+
+.check_changevars <- function(changes){
+  required <- c("time", "node", "var", "value")
+  if(!setequal(names(changes), required)){
+    notexist <- setdiff(names(changes), required)
+    snet_abort(paste("The following column names are in the changelist",
+                     "but are not recognised:", phrase(notexist)))
+  }
+}
+
+.check_varexists <- function(.data, changes){
+  if(!all(unique(changes$var) %in% net_node_attributes(.data))){
+    notexist <- unique(changes$var)[which(!unique(changes$var) %in% 
+                                            net_node_attributes(.data))]
+    snet_abort(paste("The following variables are in the changelist",
+                     "but not among the nodal attributes in the network:",
+                     "{notexist}"))
+  }
+}
+
+.infer_active <- function(.data, changes){
+  
+  if(length(unique(changes$node))==net_nodes(.data)){ # if table of when active
+    out <- .data |> mutate_nodes(active = as.logi(changes[,1] == min(changes[,1])))
+    
+  } else { # if some actives
+    if(all(changes[changes[,3]=="active",4])){
+      starts <- rep(FALSE, net_nodes(.data))
+    } else if(all(!changes[changes[,3]=="active",4])) {
+      starts <- rep(TRUE, net_nodes(.data))
+    } else if(changes[order(changes[,1]),4][1]){
+      starts <- rep(NA, net_nodes(.data))
+      first <- changes[changes[,1] == min(changes[,1]),]
+      starts[first[,2]] <- first[,4]
+      starts[is.na(starts) & changes[changes$var == "active" & changes$value == TRUE & changes$wave > min(changes$wave),2]] <- FALSE
+    } else snet_unavailable()
+    out <- .data |> mutate_nodes(active = starts)
+  }
+  out
+}
+
+.infer_susceptible <- function(.data, changes){
+  .data |> mutate_nodes(diffusion = "S")
 }
 
 #' @export

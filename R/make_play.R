@@ -291,7 +291,7 @@ play_diffusion <- function(.data,
     if(fatality > 0)
       changes <- changes |> mutate(var = ifelse(value=="D", "active", var),
                                     value = ifelse(value=="D", FALSE, value))
-    .data <- add_changes(.data, changes)
+    .data <- bind_changes(.data, changes)
     .data
   }
 }

@@ -2,7 +2,6 @@
 % Please edit documentation in R/manip_changes.R
 \name{manip_changes}
 \alias{manip_changes}
-\alias{add_changes}
 \alias{delete_changes}
 \alias{mutate_changes}
 \alias{bind_changes}
@@ -14,8 +13,6 @@
 \alias{apply_changes}
 \title{Manipulating changes to nodes over time}
 \usage{
-add_changes(.data, changes)
-
 delete_changes(.data)
 
 mutate_changes(.data, ...)
@@ -45,11 +42,6 @@ apply_changes(.data, time)
 \item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
 
-\item{changes}{A data frame of changes.
-Ideally this will be in the form of "wave", "node", "var", and "value",
-but there are internal routines from some otherwise common formats.
-A data frame of composition change can be just two columns.}
-
 \item{...}{Additional parameters and arguments passed on internally.}
 
 \item{.by}{An attribute name to join objects by. By default, NULL.}
@@ -64,7 +56,7 @@ These functions offer ways to modify data held about how nodes
 change over time.
 They include:
 \itemize{
-\item \code{add_changes()} adds a table of changes to the nodes of a network.
+\item \code{bind_changes()} adds a table of changes to the nodes of a network.
 \item \code{mutate_changes()} can be used to update network changes.
 \item \code{filter_changes()} is used to subset network changes.
 \item \code{gather_changes()} is similar to \code{filter_changes()},
@@ -83,10 +75,9 @@ Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{                default igraph stocnet tbl_graph
-add_changes           *                        *
 apply_changes         *                        *
 arrange_changes       *      *       *          
-bind_changes          *              *          
+bind_changes          *              *         *
 delete_changes        *      *       *          
 filter_changes        *      *       *          
 gather_changes        *      *                  
@@ -101,8 +92,6 @@ and then coerce the output back to the original class.
 If no method is available for any class, an error will be thrown.
 }
 \examples{
-add_changes(ison_algebra, 
-            data.frame(wave = 2, node = 1, var = "active", value = FALSE))
 filter_changes(fict_starwars, node == "Anakin")
 select_changes(fict_starwars, node)
 gather_changes(fict_starwars, time = 3)

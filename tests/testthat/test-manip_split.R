@@ -11,8 +11,8 @@ test_that("to_ and from_ egos works", {
   expect_s3_class(from_egos(to_egos(egos)), "tbl_graph")
 })
 
-unicorn <- ison_adolescents %>%
-    tidygraph::activate(nodes) %>%
+unicorn <- ison_adolescents |> 
+    tidygraph::activate(nodes) |> 
     mutate(unicorn = rep(c("yes", "no"), 4))
 
 test_that("to_ and from_ subgraphs works", {
