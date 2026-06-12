@@ -76,7 +76,7 @@ Below are the currently implemented S3 methods for these functions:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{                   default igraph network stocnet tbl_graph
 add_node_attribute       *      *       *                 *
-join_nodes               *                      *         *
+join_nodes               *      *               *          
 mutate_nodes             *      *       *       *         *
 select_nodes             *      *                         *
 }\if{html}{\out{</div>}}

@@ -348,7 +348,7 @@ join_nodes.default <- function(.data, object2, .by = NULL,
 }
 
 #' @export
-join_nodes.tbl_graph <- function(.data, object2, .by = NULL,
+join_nodes.igraph <- function(.data, object2, .by = NULL,
                        join_type = c("full","left", "right", "inner")){
   join_type <- match.arg(join_type)
   out <- as_tidygraph(.data)
