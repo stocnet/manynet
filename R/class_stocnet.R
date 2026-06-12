@@ -191,12 +191,16 @@ index_ties <- function(.data){
 index_changes <- function(.data){
   out <- .data
   if (is.null(out$changes) || nrow(out$changes) == 0) return(out)
-  if(!is.null(out$nodes) && "label" %in% names(out$nodes) &&
-     is.character(out$changes$node) && is.character(out$nodes$label)){
-    out$changes <- out$changes |>
-      dplyr::mutate(node = match(node, out$nodes$label))
-  }
+  out$changes <- .match_node_labels(out$nodes, out$changes, "node")
   out
+}
+
+.match_node_labels <- function(nodes, x, col){
+  if(!is.null(nodes) && "label" %in% names(nodes) &&
+     is.character(x[[col]]) && is.character(nodes$label)){
+    x[[col]] <- match(x[[col]], nodes$label)
+  }
+  x
 }
 
 #' @rdname make_stocnet
@@ -228,7 +232,10 @@ print.stocnet <- function(x, ..., n = 12) {
   if(!is.null(x$changes) && ncol(x$changes) >0){
     cli::cli_par()
     cli::cli_h3("Changes")
-    print(dplyr::as_tibble(x$changes),
+    changes <- dplyr::as_tibble(x$changes)
+    if("value" %in% names(changes))
+      changes$value <- as.value(changes$value)
+    print(dplyr::as_tibble(changes),
           n = n)
     cli::cli_end()
   }
@@ -274,28 +281,39 @@ type_sum.value <- function(x, ...) {
 #' @noRd
 #' @export
 pillar_shaft.value <- function(x, ...) {
-  # Determine underlying class
-  underlying_class <- sapply(x, function(y) class(y[[1]]))
-  underlying_class <- dplyr::replace_values(underlying_class, 
-                                            "logical" ~ "lgl",
-                                            "character" ~ "chr",
-                                            "numeric" ~ "dbl",
-                                            "integer" ~ "int")
   
-  lengths <- sapply(x, length)
+  first_val <- function(y) {
+    if (is.list(y) && length(y) > 0) y[[1]] else y
+  }
   
-  # Value to print (only first element)
-  value_text <- lapply(x, function(y) if(length(y) == 1) y else "...")
+  underlying_class <- vapply(
+    x,
+    function(y) class(first_val(y))[1],
+    character(1)
+  )
   
-  # Type label exactly like tibble uses
+  underlying_class <- dplyr::replace_values(
+    underlying_class,
+    "logical"   ~ "lgl",
+    "character" ~ "chr",
+    "numeric"   ~ "dbl",
+    "integer"   ~ "int"
+  )
+  
+  value_text <- vapply(
+    x,
+    function(y) {
+      val <- first_val(y)
+      if(length(y) == 1) as.character(val) else "..."
+    },
+    character(1)
+  )
+  
   type_label <- paste0("<", underlying_class, ">")
-  
-  # Pillar requires the type label to be a *named* vector
-  type_vec <- c(type = pillar::style_subtle(type_label))
+  type_label <- pillar::style_subtle(type_label)
   
   pillar::new_pillar_shaft_simple(
-    paste0(value_text, type_vec),
+    paste0(value_text, type_label),
     align = "right"
   )
 }
-
