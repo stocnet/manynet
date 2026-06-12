@@ -17,7 +17,7 @@ from_waves(netlist)
 
 from_slices(netlist, remove.duplicates = FALSE)
 
-from_ties(netlist, netnames)
+from_ties(..., layer_names)
 }
 \arguments{
 \item{netlist}{A list of network, igraph, tidygraph, matrix, or edgelist objects.}
@@ -26,7 +26,7 @@ from_ties(netlist, netnames)
 By default FALSE.
 If TRUE, duplicated edges are removed.}
 
-\item{netnames}{A character vector of names for the different network objects,
+\item{layer_names}{A character vector of names for the different network objects,
 if not already named within the list.}
 }
 \value{
