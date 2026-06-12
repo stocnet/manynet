@@ -5,6 +5,7 @@
 \alias{add_changes}
 \alias{delete_changes}
 \alias{mutate_changes}
+\alias{bind_changes}
 \alias{filter_changes}
 \alias{select_changes}
 \alias{arrange_changes}
@@ -18,6 +19,8 @@ add_changes(.data, changes)
 delete_changes(.data)
 
 mutate_changes(.data, ...)
+
+bind_changes(.data, changes, var, ...)
 
 filter_changes(.data, ..., .by = NULL)
 
@@ -83,6 +86,7 @@ Below are the currently implemented S3 methods for these functions:
 add_changes           *                        *
 apply_changes         *                        *
 arrange_changes       *      *       *          
+bind_changes          *              *          
 delete_changes        *      *       *          
 filter_changes        *      *       *          
 gather_changes        *      *                  

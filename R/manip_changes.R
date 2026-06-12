@@ -96,12 +96,11 @@ add_changes.tbl_graph <- function(.data, changes){
 }
 
 .check_changevars <- function(changes){
-  if(!(all(names(changes) == c("wave", "node", "var", "value")) || 
-       all(names(changes) == c("time", "node", "var", "value")))){
-    notexist <- setdiff(names(changes), c("time", "wave", "node", "var", "value"))
+  required <- c("time", "node", "var", "value")
+  if(!setequal(names(changes), required)){
+    notexist <- setdiff(names(changes), required)
     snet_abort(paste("The following column names are in the changelist",
-                     "but are not recognised:",
-                     "{notexist}"))
+                     "but are not recognised:", phrase(notexist)))
   }
 }
 
@@ -185,6 +184,77 @@ mutate_changes.stocnet <- function(.data, ...){
   changes <- dplyr::mutate(changes, ...)
   out$changes <- changes
   out
+}
+
+#' @rdname manip_changes
+#' @export
+bind_changes <- function(.data, changes, var, ...) UseMethod("bind_changes")
+
+#' @export
+bind_changes.default <- function(.data, changes, var, ...){
+  as_input(.data, bind_changes, changes, var, ...)
+}
+
+#' @export
+bind_changes.stocnet <- function(.data, changes, var, ...){
+  out <- .data
+  changes <- dplyr::as_tibble(changes)
+  
+  ## 1. Rename columns to stocnet conventions --------------------------------
+  rename_map <- c(wave = "time", period = "time", date = "time",
+                  begin = "time", end = "time",
+                  replace = "value", increment = "value", val = "value")
+  update_type <- NULL
+  for(old in names(rename_map)){
+    if(old %in% names(changes)){
+      if(old %in% c("replace", "increment")) update_type <- old
+      new <- rename_map[[old]]
+      if(!(new %in% names(changes)))
+        names(changes)[names(changes) == old] <- new
+    }
+  }
+  
+  ## 2. Add 'var' if not already present --------------------------------------
+  if(!"var" %in% names(changes)){
+    if(missing(var))
+      snet_abort(paste("Please specify which nodal variable these changes",
+                       "apply to via 'var ='."))
+    changes$var <- var
+  }
+  
+  ## 3. Reindex node labels onto .data's existing node indexing ----------------
+  changes <- .match_node_labels(out$nodes, changes, "node")
+  
+  ## 4. Reorder to (time, node, var, value) and validate column names ----------
+  changes <- changes |> dplyr::select(time, node, var, value)
+  .check_changevars(changes)
+  
+  ## 5. Special-case inference for 'active'/'diffusion' -------------------------
+  if("active" %in% changes$var && !("active" %in% net_node_attributes(out)))
+    out <- .infer_active(out, changes)
+  if("diffusion" %in% changes$var && !("diffusion" %in% net_node_attributes(out)))
+    out <- .infer_susceptible(out, changes)
+  
+  .check_varexists(out, changes)
+  
+  ## 6. Wrap 'value' as a list-column of class 'value' for storage -------------
+  changes$value <- as.list(changes$value)
+  
+  ## 7. Bind onto any existing changes, and re-sort ------------------------------
+  out$changes <- dplyr::bind_rows(out$changes, changes)
+  out$changes$value <- out$changes$value
+  out$changes <- out$changes |> dplyr::arrange(time, node)
+  
+  ## 8. Record update type (increment/replace) per variable ----------------------
+  if(!is.null(update_type)){
+    upd_value <- if(update_type == "increment") "increment" else "replace"
+    for(v in unique(changes$var)){
+      if(is.null(out$info[[v]])) out$info[[v]] <- list()
+      out$info[[v]]$update <- upd_value
+    }
+  }
+  
+  validate_stocnet(out)
 }
 
 #' @rdname manip_changes
