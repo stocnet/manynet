@@ -60,7 +60,7 @@ test_that("to matching works", {
   sw <- as_edgelist(to_matching(ison_southern_women))
   expect_values(net_nodes(to_matching(ison_southern_women)),
                net_nodes(ison_southern_women))
-  expect_true(nrow(sw) == nrow(dplyr::distinct(sw)))
+  expect_equal(nrow(sw), nrow(dplyr::distinct(sw)))
 })
 
 test_that("to_subgraph works", {
@@ -110,7 +110,7 @@ test_that("to no isolates works", {
 test_that("to eulerian works", {
   expect_true(is_eulerian(delete_nodes(ison_koenigsberg, "Lomse")))
   expect_error(to_eulerian(ison_koenigsberg), "This is not a Eulerian graph.")
-  expect_true(length(delete_nodes(ison_koenigsberg, "Lomse")) ==
+  expect_length(delete_nodes(ison_koenigsberg, "Lomse"),
                 length(to_eulerian(delete_nodes(ison_koenigsberg, "Lomse"))))
   expect_true(is_connected(to_eulerian(delete_nodes(ison_koenigsberg, "Lomse"))))
 })

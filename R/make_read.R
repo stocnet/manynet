@@ -43,10 +43,8 @@
 #' @details There are a number of repositories for network data
 #'   that hold various datasets in different formats. See for example:
 #'
-#'   - [UCINET data](https://sites.google.com/site/ucinetsoftware/datasets?authuser=0)
 #'   - [networkdata](https://schochastics.github.io/networkdata/)
 #'   - [GML datasets](http://www-personal.umich.edu/~mejn/netdata/)
-#'   - UCIrvine Network Data Repository
 #'   - [SNAP Stanford Large Network Dataset Collection](http://snap.stanford.edu/data/)
 #'
 #'   Please let us know if you identify any further repositories

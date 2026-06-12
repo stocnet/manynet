@@ -17,7 +17,7 @@ unicorn <- ison_adolescents %>%
 
 test_that("to_ and from_ subgraphs works", {
   expect_length(to_subgraphs(unicorn, "unicorn"), 2)
-  expect_equal(length(from_subgraphs(to_subgraphs(unicorn, "unicorn"))),
+  expect_length(from_subgraphs(to_subgraphs(unicorn, "unicorn")),
                length(unicorn))
   expect_s3_class(to_subgraphs(unicorn, "unicorn")[[1]],
                   "tbl_graph")
@@ -66,8 +66,7 @@ slice <- ison_adolescents %>%
 
 test_that("to_ and from_ slices works", {
   expect_length(to_slices(slice, slice = 7), length(ison_adolescents))
-  expect_true(length(igraph::edge_attr(to_slices(slice, slice = 7), "weight"))
-              < 7)
+  expect_lt(length(igraph::edge_attr(to_slices(slice, slice = 7), "weight")), 7)
   expect_length(to_slices(slice, slice = c(5, 7)), 2)
   expect_s3_class(to_slices(slice, slice = 7), "igraph")
 })
