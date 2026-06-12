@@ -170,6 +170,14 @@ net_tie_names <- function(.data) {
   layer_names(.data)
 }
 
+#' @describeIn defunct Deprecated on 2026-06-12.
+#' @export
+add_changes <- function(.data, changes) {
+  .Deprecated("bind_changes", package = "manynet",
+              old = "add_changes")
+  bind_changes(.data, changes)
+}
+
 # Moved to netrics from 2.0.0 ####
 
 #' @describeIn defunct Deprecated on 2026-03-22.

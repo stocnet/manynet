@@ -11,8 +11,6 @@
 #'   a dynamic tidygraph.
 #'   - `from_ties()` modifies a list of different ties into a multiplex tidygraph
 #' @param netlist A list of network, igraph, tidygraph, matrix, or edgelist objects.
-#' @param layer_names A character vector of names for the different network objects,
-#'   if not already named within the list.
 #' @template fam_modif
 NULL
 
@@ -111,6 +109,11 @@ from_slices <- function(netlist, remove.duplicates = FALSE) {
 }
 
 #' @rdname modif_from
+#' @param ... Two or more tidygraph or stocnet objects to be merged, 
+#'   each representing a different set of ties to be combined into a single
+#'   multiplex network.
+#' @param layer_names A character vector of names for the different network objects,
+#'   if not already named within the list.
 #' @export
 from_ties <- function(..., layer_names) UseMethod("from_ties")
 
@@ -159,7 +162,7 @@ from_ties.stocnet <- function(..., layer_names){
     layers_i <- .get_layers(net, layer_names[i])
     clash <- intersect(layers_i, seen_layers)
     if(length(clash)){
-      rn <- setNames(paste0(layer_names[i], ".", clash), clash)
+      rn <- stats::setNames(paste0(layer_names[i], ".", clash), clash)
       net <- .rename_layers(net, rn)
       layers_i[layers_i %in% clash] <- unname(rn[layers_i[layers_i %in% clash]])
       snet_warn(paste0("Layer name(s) ", phrase(clash),
@@ -248,7 +251,7 @@ from_ties.stocnet <- function(..., layer_names){
   if(length(layers) == 1){
     for(field in c("directed", "observation", "update")){
       v <- info[[field]]
-      if(!is.null(v) && is.null(names(v))) info[[field]] <- setNames(v, layers)
+      if(!is.null(v) && is.null(names(v))) info[[field]] <- stats::setNames(v, layers)
     }
   }
   
@@ -414,9 +417,9 @@ from_ties.stocnet <- function(..., layer_names){
     all_modes <- unique(stats::na.omit(merged_nodes$mode))
   for(net in netlist) all_modes <- union(all_modes, net$info$modes)
   
-  directed_vec    <- setNames(rep(NA, length(all_layers)), all_layers)
-  observation_vec <- setNames(rep(NA_character_, length(all_layers)), all_layers)
-  update_vec      <- setNames(rep(NA_character_, length(all_layers)), all_layers)
+  directed_vec    <- stats::setNames(rep(NA, length(all_layers)), all_layers)
+  observation_vec <- stats::setNames(rep(NA_character_, length(all_layers)), all_layers)
+  update_vec      <- stats::setNames(rep(NA_character_, length(all_layers)), all_layers)
   
   for(net in netlist){
     for(ly in net$info$layers){

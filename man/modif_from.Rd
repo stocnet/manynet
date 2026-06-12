@@ -26,6 +26,10 @@ from_ties(..., layer_names)
 By default FALSE.
 If TRUE, duplicated edges are removed.}
 
+\item{...}{Two or more tidygraph or stocnet objects to be merged,
+each representing a different set of ties to be combined into a single
+multiplex network.}
+
 \item{layer_names}{A character vector of names for the different network objects,
 if not already named within the list.}
 }

@@ -76,6 +76,13 @@ mutate_changes.stocnet <- function(.data, ...){
 }
 
 #' @rdname manip_changes
+#' @param changes A data frame containing the changes to be added. 
+#'   This should have columns `time`, `node` (labelled), 
+#'   `var` (referencing an existing nodal attribute), 
+#'   and `value` (which can be of any class). 
+#' @param var A character string specifying the nodal variable to which the changes apply,
+#'  if not already specified in the `changes` data frame. This is only used
+#'  when the `changes` data frame does not already have a `var` column, and is ignored otherwise.
 #' @export
 bind_changes <- function(.data, changes, var, ...) UseMethod("bind_changes")
 
@@ -85,7 +92,7 @@ bind_changes.default <- function(.data, changes, var, ...){
 }
 
 #' @export
-bind_changes.tbl_graph <- function(.data, changes){
+bind_changes.tbl_graph <- function(.data, changes, var, ...){
   out <- .data
   if(length(names(changes)) == 4){
     

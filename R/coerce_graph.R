@@ -252,7 +252,7 @@ as_igraph.networkDynamic <- function(.data, twomode = FALSE) {
   names(changes) <- c("node","begin","end")
   changes <- stats::na.omit(changes)
   
-  as_igraph(add_changes(out, changes))
+  as_igraph(bind_changes(out, changes))
 }
 
 #' @export
@@ -791,7 +791,7 @@ as_graphAM.stocnet <- function(.data, twomode = NULL) {
 #'                        node = c(1,2,3,2,4),
 #'                        var = "diffusion", 
 #'                        value = c("I","I","I","R","I"))
-#'   add_changes(create_filled(4), events)
+#'   bind_changes(create_filled(4), events)
 #' @export
 as_diffusion <- function(.data, twomode = FALSE, events) UseMethod("as_diffusion")
 

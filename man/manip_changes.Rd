@@ -44,6 +44,15 @@ apply_changes(.data, time)
 
 \item{...}{Additional parameters and arguments passed on internally.}
 
+\item{changes}{A data frame containing the changes to be added.
+This should have columns \code{time}, \code{node} (labelled),
+\code{var} (referencing an existing nodal attribute),
+and \code{value} (which can be of any class).}
+
+\item{var}{A character string specifying the nodal variable to which the changes apply,
+if not already specified in the \code{changes} data frame. This is only used
+when the \code{changes} data frame does not already have a \code{var} column, and is ignored otherwise.}
+
 \item{.by}{An attribute name to join objects by. By default, NULL.}
 
 \item{time}{A time point or wave at which to present the network.}
