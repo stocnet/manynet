@@ -277,6 +277,14 @@ mutate_nodes.network <- function(.data, ...){
     tidygraph::mutate(...) |> as_network()
 }
 
+#' @export
+mutate_nodes.stocnet <- function(.data, ...){
+  out <- .data
+  out$nodes <- out$nodes |> 
+    dplyr::mutate(...)
+  out
+}
+
 #' @rdname manip_nodes_attr
 #' @export
 rename_nodes <- function(.data, ...) UseMethod("rename_nodes")
@@ -290,6 +298,15 @@ rename_nodes.default <- function(.data, ...){
 #' @export
 rename_nodes.tbl_graph <- function(.data, ...){
   tidygraph::rename(.data, ...)
+}
+
+#' @importFrom tidygraph rename
+#' @export
+rename_nodes.stocnet <- function(.data, ...){
+  out <- .data
+  out$nodes <- out$nodes |> 
+    dplyr::rename(...)
+  out
 }
 
 #' @rdname manip_nodes_attr
@@ -357,6 +374,24 @@ join_nodes.tbl_graph <- function(.data, object2, .by = NULL,
   if(!is_labelled(.data) && !is_labelled(object2)){
     out <- out |> select(-id)
   }
+  out
+}
+
+#' @export
+join_nodes.stocnet <- function(.data, object2, .by = NULL,
+                                 join_type = c("full","left", "right", "inner")){
+  join_type <- match.arg(join_type)
+  out <- .data
+  if(inherits(object2, "stocnet")) nodelist <- as_nodelist(object2) else
+    nodelist <- object2
+  if(is.null(.data$nodes) && net_nodes(.data) == nrow(nodelist)) 
+    return(make_stocnet(info = .data$info, nodes = nodelist, ties = .data$ties, 
+                        changes = .data$changes, global = .data$global))
+  out$nodes <- switch(join_type,
+                       "full" = dplyr::full_join(.data$nodes, nodelist, by = .by, copy = TRUE),
+                       "left" = dplyr::left_join(.data$nodes, nodelist, by = .by, copy = TRUE),
+                       "right" = dplyr::right_join(.data$nodes, nodelist, by = .by, copy = TRUE),
+                       "inner" = dplyr::inner_join(.data$nodes, nodelist, by = .by, copy = TRUE))
   out
 }
 

@@ -74,11 +74,11 @@ Note that while \verb{add_*()} functions operate similarly as comparable \code{{
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{                   default igraph network tbl_graph
-add_node_attribute       *      *       *         *
-join_nodes               *                        *
-mutate_nodes             *      *       *         *
-select_nodes             *      *                 *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{                   default igraph network stocnet tbl_graph
+add_node_attribute       *      *       *                 *
+join_nodes               *                      *         *
+mutate_nodes             *      *       *       *         *
+select_nodes             *      *                         *
 }\if{html}{\out{</div>}}
 
 If a method is not available for a particular class, but a default method is,
