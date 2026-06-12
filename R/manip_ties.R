@@ -97,6 +97,93 @@ bind_ties.tbl_graph <- function(.data, ...){
     arrange_ties(from, to)
 }
 
+#' @export
+bind_ties.stocnet <- function(.data, edges, ...){
+  out <- .data
+  toAdd <- dplyr::as_tibble(edges)
+  
+  # Track whether these are incremental changes rather than a full replacement
+  was_increment <- "increment" %in% names(toAdd)
+  was_replacement <- "replace" %in% names(toAdd)
+  
+  # Rename to stocnet conventions, following the same aliases recognised
+  # by validate_ties()
+  rename_map <- c(sender = "from", source = "from", ego = "from",
+                  receiver = "to", target = "to", alter = "to",
+                  increment = "weight", value = "weight", replace = "weight",
+                  strength = "weight", val = "weight", sign = "weight",
+                  type = "layer", plex = "layer", tie = "layer",
+                  wave = "time", period = "time", date = "time",
+                  begin = "time", end = "time")
+  for(old in names(rename_map)){
+    new <- rename_map[[old]]
+    if(old %in% names(toAdd) && !(new %in% names(toAdd)))
+      names(toAdd)[names(toAdd) == old] <- new
+  }
+  
+  if(!all(c("from", "to") %in% names(toAdd)))
+    snet_abort(paste("The data to bind must identify the sender and",
+                     "receiver of each tie (e.g. as 'from'/'to',",
+                     "'sender'/'receiver', etc.)."))
+  
+  ## Map labelled endpoints onto .data's existing node indexing -----------
+  if(is.character(toAdd$from) || is.character(toAdd$to)){
+    if(is.null(out$nodes) || !"label" %in% names(out$nodes))
+      snet_abort(paste("Cannot match labelled ties to a network",
+                       "without node labels."))
+    new_from <- match(toAdd$from, out$nodes$label)
+    new_to   <- match(toAdd$to,   out$nodes$label)
+    if(anyNA(new_from) || anyNA(new_to))
+      snet_warn(paste("Some labels in the data to bind do not match node",
+                      "labels in '.data'; these ties will have missing",
+                      "endpoints."))
+    toAdd$from <- new_from
+    toAdd$to   <- new_to
+  }
+  toAdd$from <- as.integer(toAdd$from)
+  toAdd$to   <- as.integer(toAdd$to)
+  
+  ## If .data is single-layer with a 'layer' column, tag the new ties -----
+  if("layer" %in% names(out$ties) && !"layer" %in% names(toAdd) &&
+     length(out$info$layers) == 1)
+    toAdd$layer <- out$info$layers
+  
+  ## Align 'time' column type if .data$ties$time is currently all-NA logical
+  if("time" %in% names(toAdd) && "time" %in% names(out$ties) &&
+     is.logical(out$ties$time) && all(is.na(out$ties$time)) &&
+     !is.logical(toAdd$time)){
+    out$ties$time <- rep(toAdd$time[NA_integer_], nrow(out$ties))
+  }
+  
+  ## Bind, ordering columns as in .data$ties (new columns appended after) -
+  out$ties <- dplyr::bind_rows(out$ties, toAdd)
+  col_order <- union(names(.data$ties), names(out$ties))
+  out$ties <- out$ties[, col_order]
+  
+  out <- arrange_ties(out, from, to)
+  
+  ## Record update behaviour for the relevant layer -----------
+  if(was_increment || was_replacement){
+    updateyo <- if(was_increment) "increment" else "replace"
+    layers <- out$info$layers
+    if(is.null(layers) && "layer" %in% names(out$ties))
+      layers <- unique(stats::na.omit(out$ties$layer))
+    if(length(layers) == 1){
+      ly <- layers
+      if(is.null(out$info[[ly]])) out$info[[ly]] <- list()
+      out$info[[ly]]$update <- updateyo
+      upd <- out$info$update
+      if(is.null(upd)) upd <- stats::setNames(updateyo, ly)
+      else upd[ly] <- updateyo
+      out$info$update <- upd
+    } else {
+      out$info$update <- updateyo
+    }
+  }
+  
+  out
+}
+
 #' @rdname manip_ties_num 
 #' @importFrom dplyr filter
 #' @export
