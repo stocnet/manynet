@@ -11,7 +11,7 @@
 #'   a dynamic tidygraph.
 #'   - `from_ties()` modifies a list of different ties into a multiplex tidygraph
 #' @param netlist A list of network, igraph, tidygraph, matrix, or edgelist objects.
-#' @param netnames A character vector of names for the different network objects,
+#' @param layer_names A character vector of names for the different network objects,
 #'   if not already named within the list.
 #' @template fam_modif
 NULL
@@ -112,13 +112,19 @@ from_slices <- function(netlist, remove.duplicates = FALSE) {
 
 #' @rdname modif_from
 #' @export
-from_ties <- function(netlist, netnames){
-  stopifnot(is_list(netlist))
+from_ties <- function(..., layer_names) UseMethod("from_ties")
+
+#' @export
+from_ties.tbl_graph <- function(..., layer_names){
+  netlist <- list(...)
+  stopifnot(length(netlist) >= 2)
   if(is.null(names(netlist))){
-    if(!missing(netnames)){
-      names(netlist) <- netnames
-    } else snet_abort(paste("Please name the elements of the list of networks",
-                      "or provide a vector of names for them."))
+    if(!missing(layer_names)){
+      names(netlist) <- layer_names
+    } else snet_abort("Please name the layers of the networks to be merged,",
+                            "either by naming the list elements or",
+                            "by providing a vector of names to 'layer_names'.")
+    
   }
   netlist <- lapply(seq_along(netlist), 
                     function(x) if(is_multiplex(netlist[[x]])){
