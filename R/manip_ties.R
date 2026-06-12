@@ -182,6 +182,14 @@ mutate_ties.tbl_graph <- function(.data, ...){
   out |> tidygraph::activate(edges) |> mutate(...) |> activate(nodes)
 }
 
+#' @export
+mutate_ties.stocnet <- function(.data, ...){
+  out <- .data
+  out$ties <- out$ties |> 
+    dplyr::mutate(...)
+  out
+}
+
 #' @rdname manip_ties_attr
 #' @importFrom dplyr rename
 #' @export
@@ -212,6 +220,18 @@ arrange_ties.default <- function(.data, ...){
 arrange_ties.tbl_graph <- function(.data, ...){
   out <- .data
   out |> tidygraph::activate(edges) |> dplyr::arrange(...) |> activate(nodes)
+}
+
+#' @export
+arrange_ties.stocnet <- function(.data, ...){
+  out <- .data
+  if(...length() == 0){
+    default_cols <- intersect(c("from", "to", "by", "time"), names(out$ties))
+    out$ties <- out$ties |> dplyr::arrange(dplyr::across(dplyr::all_of(default_cols)))
+  } else {
+    out$ties <- out$ties |> dplyr::arrange(...)
+  }
+  out
 }
 
 #' @rdname manip_ties_attr 

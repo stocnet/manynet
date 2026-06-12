@@ -65,13 +65,13 @@ Note that while \verb{add_*()}/\verb{delete_*()} functions operate similarly as 
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{                  data.frame default igraph tbl_graph
-add_tie_attribute          *       *      *          
-arrange_ties                       *                *
-mutate_ties                        *                *
-rename_ties                        *                *
-select_ties                        *                *
-summarise_ties                     *                *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{                  data.frame default igraph stocnet tbl_graph
+add_tie_attribute          *       *      *                  
+arrange_ties                       *              *         *
+mutate_ties                        *              *         *
+rename_ties                        *                        *
+select_ties                        *                        *
+summarise_ties                     *                        *
 }\if{html}{\out{</div>}}
 
 If a method is not available for a particular class, but a default method is,
