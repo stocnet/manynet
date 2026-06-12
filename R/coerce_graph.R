@@ -977,39 +977,45 @@ as_stocnet.stocnet <- function(.data, twomode = FALSE) {
 
 #' @export
 as_stocnet.data.frame <- function(.data, twomode = FALSE) {
+  out <- .data
   # make sure that the data frame has the right columns, rename them if necessary,
   # and then reorder them if necessary
-   if (!all(c("from", "to") %in% colnames(.data))) {
-     if (all(c("source", "target") %in% colnames(.data))) {
+   if (!all(c("from", "to") %in% colnames(out))) {
+     if (all(c("source", "target") %in% colnames(out))) {
        snet_minor_info("Renaming 'source' and 'target' columns to 'from' and 'to'.")
-       .data <- .data |> dplyr::rename(from = source, to = target)
-     } else if (all(c("sender", "receiver") %in% colnames(.data))) {
+       out <- out |> dplyr::rename(from = source, to = target)
+     } else if (all(c("sender", "receiver") %in% colnames(out))) {
        snet_minor_info("Renaming 'sender' and 'receiver' columns to 'from' and 'to'.")
-       .data <- .data |> dplyr::rename(from = sender, to = receiver)
-     } else if (all(c("ego", "alter") %in% colnames(.data))) {
+       out <- out |> dplyr::rename(from = sender, to = receiver)
+     } else if (all(c("ego", "alter") %in% colnames(out))) {
        snet_minor_info("Renaming 'ego' and 'alter' columns to 'from' and 'to'.")
-       .data <- .data |> dplyr::rename(from = ego, to = alter)
+       out <- out |> dplyr::rename(from = ego, to = alter)
      } else snet_abort("Edgelist must have columns named 'from' and 'to'.")
    }
-  if (!"weight" %in% colnames(.data)) {
-    if ("replace" %in% colnames(.data)) {
+  if (!"weight" %in% colnames(out)) {
+    if ("replace" %in% colnames(out)) {
        snet_minor_info("Renaming 'replace' column to 'weight'.")
-      .data <- .data |> dplyr::rename(weight = replace)
-    } else if ("increment" %in% colnames(.data)) {
+      out <- out |> dplyr::rename(weight = replace)
+    } else if ("increment" %in% colnames(out)) {
       snet_minor_info("Renaming 'increment' column to 'weight'.")
-      .data <- .data |> dplyr::rename(weight = increment)
-    } else if ("value" %in% colnames(.data)) {
+      out <- out |> dplyr::rename(weight = increment)
+    } else if ("value" %in% colnames(out)) {
        snet_minor_info("Renaming 'value' column to 'weight'.")
-      .data <- .data |> dplyr::rename(weight = value)
+      out <- out |> dplyr::rename(weight = value)
     }
   }
-  .data <- .data |> dplyr::select(from, to, dplyr::everything())
-  if(!is.numeric(.data$from) || !is.numeric(.data$to)){
-   nodes <- unique(c(.data$from, .data$to))
-   .data <- .data |> dplyr::mutate(from = match(from, nodes),
-                                   to = match(to, nodes))
-   make_stocnet(ties = .data, nodes = data.frame(label = nodes))
-  } else make_stocnet(ties = .data)
+  out <- out |> dplyr::select(from, to, dplyr::everything())
+  if(!is.numeric(out$from) || !is.numeric(out$to)){
+   nodes <- unique(c(out$from, out$to))
+   out <- out |> dplyr::mutate(from = match(from, nodes),
+                              to = match(to, nodes))
+   out <- make_stocnet(ties = out, nodes = data.frame(label = nodes))
+  } else out <- make_stocnet(ties = out)
+  if("increment" %in% colnames(.data)) out <- out |> 
+    mutate_info(update = "increment")
+  if("replace" %in% colnames(.data)) out <- out |> 
+    mutate_info(update = "replace")
+  out
 }
 
 #' @export
