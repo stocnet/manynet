@@ -93,7 +93,8 @@ reserved_cols <- function(.data, component, reserved_cols, class,
       if(length(.data[[component]][[reserved_cols]]) != length) 
         snet_abort("'{reserved_cols}' must be of length {length}.")
     }
-    if(length(intersect(class(.data[[component]][[reserved_cols]]), class))==0) 
+    if(!missing(class) && 
+       length(intersect(class(.data[[component]][[reserved_cols]]), class))==0) 
       snet_abort("'{reserved_cols}' must be of class '{class}'.")
     if(!is.null(match)){
       if(!all(.data[[component]][[reserved_cols]] %in% match)) 

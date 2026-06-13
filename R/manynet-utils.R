@@ -62,19 +62,22 @@ as_input <- function(.data, FUN, ...){
     snet_abort("{.var {substitute(.data)}} must be a manynet-compatible object.")
   out_class <- setdiff(class(.data), c("mnet","tbl_df","tbl"))[1]
   # snet_minor_info("{.var {substitute(.data)}} is of class {.var {out_class}}.")
+  if(out_class == "data.frame") out_class <- "edgelist"
+  if(out_class == "tbl_graph") out_class <- "tidygraph"
+  
   fun_label <- as.character(substitute(FUN))   # capture symbol
   avail_classes <- sapply(strsplit(suppressWarnings(utils::methods(fun_label)), 
                                    split = "\\."), "[[", 2)
   avail_classes <- stats::na.omit(avail_classes[avail_classes %in% manynet_classes])
+  if(length(avail_classes) == 0)
+    snet_abort("No supported S3 methods found for {.fn {fun_label}}.")
   avail_class <- avail_classes[order(match(avail_classes, unname(manynet_classes)))][1]
   avail_class <- names(manynet_classes)[match(avail_class, manynet_classes)]
   # snet_minor_info("{.fn {fun_label}} is available for {.var {avail_class}}.")
   out <- get(paste0("as_",avail_class))(.data)
   out <- FUN(out, ...)
-  # snet_minor_info("Output is {.var {class(out)[1]}}.",
-  #                 "Converting output to {.var {out_class}}.")
+
   snet_minor_info("Using {.var {avail_class}} method for {.fn {fun_label}} and coercing back to {.var {out_class}}.")
-  if(out_class == "data.frame") out_class <- "edgelist"
   get(paste0("as_",out_class))(out)
 }
 

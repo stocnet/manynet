@@ -89,7 +89,7 @@ bind_nodes.default <- function(.data, object2){
 #' @export
 bind_nodes.stocnet <- function(.data, object2){
   out <- .data
-  out$nodes <- bind_rows(.data$nodes, object2$nodes)
+  out$nodes <- dplyr::bind_rows(.data$nodes, object2$nodes)
   out
 }
 

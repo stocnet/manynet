@@ -179,7 +179,7 @@ as_igraph.diffnet <- function(.data,
   dynamic.attrs <- colnames(graph$vertex.dyn.attrs[[1]])
   out <- vector("list", graph$meta$nper)
   names(out) <- dimnames(graph)[[3]]
-  for (p in seq_len(out)) {
+  for (p in seq_along(out)) {
     tempgraph <- graph$graph[[p]]
     dimnames(tempgraph) <- with(graph$meta, list(ids, ids))
     tempgraph <- igraph::graph_from_adjacency_matrix(adjmatrix = tempgraph, 
@@ -291,7 +291,7 @@ as_igraph.siena <- function(.data, twomode = NULL) {
         }
       } else {
         # add names for one-mode y
-        y <- igraph::vertex_attr(y, name = "name",
+        y <- igraph::set_vertex_attr(y, name = "name",
                                  value = as.character(seq_len(igraph::vcount(as_igraph(y)))))
         # join ties
         if (isTRUE(is_twomode(x))) { # x is twomode but y is onemode
@@ -314,7 +314,7 @@ as_igraph.siena <- function(.data, twomode = NULL) {
   }
   .get_attributes <- function(ndy, x, name = NULL) {
     for(d in seq_len(dim(ndy)[2])) {
-      x <- igraph::vertex_attr(x, name = paste0(name, "_", "t", d),
+      x <- igraph::set_vertex_attr(x, name = paste0(name, "_", "t", d),
                                value = as.vector(ndy[,d]))
     }
     x
@@ -326,7 +326,7 @@ as_igraph.siena <- function(.data, twomode = NULL) {
   # Add in first network as base and add names
   out <- .data$depvars[[ddvs[1]]][,,1] # first wave
   if (!is_twomode(out)) {
-    out <- igraph::vertex_attr(out, name = "name",
+    out <- igraph::set_vertex_attr(out, name = "name",
                                value = as.character(seq_len(igraph::vcount(as_igraph(out)))))
   } else {
     rownames(out) <- as.character(seq_len(nrow(out)))
@@ -366,12 +366,12 @@ as_igraph.siena <- function(.data, twomode = NULL) {
   }
   # Add composition change
   for (k in seq_along(.data$compositionChange)) {
-    out <- igraph::vertex_attr(out, name =  paste0(names(.data$compositionChange)[k]),
+    out <- igraph::set_vertex_attr(out, name =  paste0(names(.data$compositionChange)[k]),
                                value = as.vector(.data$compositionChange[[k]]))
   }
   # Add cCovar
   for (k in seq_along(.data$cCovars)) {
-    out <- igraph::vertex_attr(out, name = paste0(names(.data$cCovars)[k]),
+    out <- igraph::set_vertex_attr(out, name = paste0(names(.data$cCovars)[k]),
                                value = as.vector(.data$cCovars[[k]]))
   }
   # Add vCovar
