@@ -69,7 +69,7 @@ Below are the currently implemented S3 methods for these functions:
 add_tie_attribute          *       *      *                  
 arrange_ties                       *              *         *
 mutate_ties                        *              *         *
-rename_ties                        *                        *
+rename_ties                *       *              *         *
 select_ties                        *                        *
 summarise_ties                     *                        *
 }\if{html}{\out{</div>}}

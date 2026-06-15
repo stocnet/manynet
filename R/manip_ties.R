@@ -98,9 +98,9 @@ bind_ties.tbl_graph <- function(.data, ...){
 }
 
 #' @export
-bind_ties.stocnet <- function(.data, edges, ...){
+bind_ties.stocnet <- function(.data, ...){
   out <- .data
-  toAdd <- dplyr::as_tibble(edges)
+  toAdd <- as_edgelist(...)
   
   # Track whether these are incremental changes rather than a full replacement
   was_increment <- "increment" %in% names(toAdd)
@@ -291,6 +291,44 @@ rename_ties.default <- function(.data, ...){
 rename_ties.tbl_graph <- function(.data, ...){
   out <- .data
   out |> tidygraph::activate(edges) |> dplyr::rename(...) |> activate(nodes)
+}
+
+#' @export
+rename_ties.data.frame <- function(.data, ...){
+  out <- .data
+  if(...length() == 0){
+    aka <- list(
+      from   = c("sender", "ego", "source", "caller"),
+      to     = c("recipient", "receiver", "alter", "target", "callee"),
+      weight = c("value", "strength", "increment", "replace", "sign")
+    )
+    
+    current_names <- names(out)
+    rename_map <- c()
+    
+    for(expected in names(aka)){
+      if(!expected %in% current_names){
+        match <- intersect(aka[[expected]], current_names)
+        if(length(match) > 0){
+          rename_map[expected] <- match[1]  # take the first match if multiple
+        }
+      }
+    }
+    
+    if(length(rename_map) > 0){
+      snet_minor_info("Renaming tie attributes to stocnet conventions:",
+                      "{paste(rename_map, '->', names(rename_map), collapse = ', ')}")
+      out <- out |> dplyr::rename(any_of(rename_map))
+    }
+  } else out <- out |> dplyr::rename(...)
+  out
+}
+
+#' @export
+rename_ties.stocnet <- function(.data, ...){
+  out <- .data
+  out$ties <- rename_ties(out$ties, ...)
+  out
 }
 
 #' @rdname manip_ties_attr

@@ -30,6 +30,7 @@
 - Added `from_ties.stocnet()` for creating a multiplex stocnet object from more than one network, including handling of tie types as layers and carrying forward nodal attributes
 - Improved node filtering and reindexing behaviour in `stocnet` objects so ties and changes remain aligned
 - Improved all manipulating generics by adding .default methods that coerce to supported graph classes and then restore original classes, improving consistency across classes and reducing the need for users to coerce before manipulating
+- Improved `rename_nodes.data.frame()` and `rename_ties.data.frame()` to translate variable names into stocnet defaults if not passed any argument
 
 ## Modifying
 

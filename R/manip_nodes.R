@@ -300,12 +300,40 @@ rename_nodes.tbl_graph <- function(.data, ...){
   tidygraph::rename(.data, ...)
 }
 
-#' @importFrom tidygraph rename
+#' @export
+rename_nodes.data.frame <- function(.data, ...){
+  out <- .data
+  if(...length() == 0){
+    aka <- list(
+      label   = c("name","id"),
+      active  = c("present","presence")
+    )
+    
+    current_names <- names(out)
+    rename_map <- c()
+    
+    for(expected in names(aka)){
+      if(!expected %in% current_names){
+        match <- intersect(aka[[expected]], current_names)
+        if(length(match) > 0){
+          rename_map[expected] <- match[1]  # take the first match if multiple
+        }
+      }
+    }
+    
+    if(length(rename_map) > 0){
+      snet_minor_info("Renaming node attributes to stocnet conventions:",
+                      "{paste(rename_map, '->', names(rename_map), collapse = ', ')}")
+      out <- out |> dplyr::rename(any_of(rename_map))
+    }
+  } else out <- out |> dplyr::rename(...)
+  out
+}
+
 #' @export
 rename_nodes.stocnet <- function(.data, ...){
   out <- .data
-  out$nodes <- out$nodes |> 
-    dplyr::rename(...)
+  out$nodes <- rename_nodes(out$nodes, ...)
   out
 }
 
