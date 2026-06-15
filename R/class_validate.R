@@ -36,7 +36,7 @@ validate_ties <- function(.data){
                 class = c("numeric","integer"), 
            aka = c("value", "strength", "val", "sign"))
   reserved_cols(.data, "ties", "time", 
-                class = c("character","numeric","mdate","Date","POSIXct"), 
+                class = c("character","numeric","integer","mdate","Date","POSIXct","POSIXlt"), 
                 aka = c("wave", "period", "date", "begin", "end"))
   reserved_cols(.data, "ties", "layer", "character", 
            aka = c("type", "plex", "tie"))
@@ -46,8 +46,11 @@ validate_ties <- function(.data){
 validate_changes <- function(.data){
   if(is.null(.data$changes)) return(invisible(.data))
   expect_class(.data, "changes", "tbl_df")
-  required_cols(.data, "changes", c("node", "var", "value"))
+  required_cols(.data, "changes", c("node", "time", "var", "value"))
   reserved_cols(.data, "changes", "node", "integer", aka = "id")
+  reserved_cols(.data, "changes", "time", 
+                class = c("character","numeric","integer","mdate","Date","POSIXct","POSIXlt"), 
+                aka = c("wave", "period", "date", "begin", "end"))
   reserved_cols(.data, "changes", "var", "character")
   invisible(.data)
 }
@@ -77,7 +80,7 @@ validate_global <- function(.data){
   expect_class(.data, "global", "tbl_df")
   required_cols(.data, "global", c("var", "value"))
   reserved_cols(.data, "global", "time", 
-                class = c("character","numeric","mdate","Date","POSIXct"), 
+                class = c("character","numeric","integer","mdate","Date","POSIXct","POSIXlt"), 
                 aka = c("wave", "period", "date", "begin", "end"))
   reserved_cols(.data, "global", "var", "character")
   reserved_cols(.data, "global", "value")
