@@ -33,7 +33,8 @@ net_nodes.default <- function(.data){
 
 #' @export
 net_nodes.stocnet <- function(.data){
-  nrow(.data$nodes)
+  dplyr::coalesce(nrow(.data$nodes),
+                  length(unique(c(.data$ties$from, .data$ties$to))))
 }
 
 #' @export
@@ -186,7 +187,7 @@ net_dims.network <- function(.data){
 net_dims.stocnet <- function(.data){
   if(is_twomode(.data)){
     out <- tabulate(match(.data$nodes$mode, unique(.data$nodes$mode)))
-  } else nrow(.data$nodes)
+  } else net_nodes(.data)
 }
 
 # Names ####
