@@ -119,6 +119,7 @@ test_stocnet_obj <- make_stocnet(
   ),
   changes = tibble::tibble(
     node = 1:12,
+    time = rep(1:6, each = 2),
     var = "group",
     value = rep(c("A", "B"), each = 6)
   )
