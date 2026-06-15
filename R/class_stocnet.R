@@ -239,6 +239,16 @@ print.stocnet <- function(x, ..., n = 12) {
           n = n)
     cli::cli_end()
   }
+  if(!is.null(x$global) && ncol(x$global) >0){
+    cli::cli_par()
+    cli::cli_h3("Global")
+    global <- dplyr::as_tibble(x$global)
+    if("value" %in% names(global))
+      global$value <- as.value(global$value)
+    print(dplyr::as_tibble(global),
+          n = n)
+    cli::cli_end()
+  }
   if (!is.null(bottom) && ncol(bottom)>0){
     # cli::cli_par()
     cli::cli_h3("Ties")

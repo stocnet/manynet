@@ -48,6 +48,7 @@
 
 ## Describing
 
+- Added printing of the globals list for stocnet objects
 - Improved `net_nodes()`, `net_node_attributes()`, and `net_tie_attributes()` coverage for table and network-like inputs
 - Improved network metadata extraction defaults and naming behaviour across classes
 
