@@ -55,6 +55,13 @@ is_dynamic.igraph <- function(.data) {
     "beg" %in% atts | "begin" %in% atts | "start" %in% atts
 }
 
+#' @export
+is_dynamic.stocnet <- function(.data) {
+  atts <- net_tie_attributes(.data)
+  ("time" %in% atts && !all(is.na(tie_attribute(.data, "time")))) | 
+    "beg" %in% atts | "begin" %in% atts | "start" %in% atts
+}
+
 #' @rdname mark_format_change
 #' @examples 
 #' is_changing(fict_starwars)
