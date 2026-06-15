@@ -80,7 +80,7 @@ validate_global <- function(.data){
                 class = c("character","numeric","mdate","Date","POSIXct"), 
                 aka = c("wave", "period", "date", "begin", "end"))
   reserved_cols(.data, "global", "var", "character")
-  reserved_cols(.data, "global", "value", "any")
+  reserved_cols(.data, "global", "value")
   invisible(.data)
 }
 
