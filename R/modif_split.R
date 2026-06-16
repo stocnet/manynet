@@ -42,6 +42,13 @@ to_egos <- function(.data,
                     direction = c("out","in")) UseMethod("to_egos")
 
 #' @export
+to_egos.default <- function(.data, max_dist = 1, min_dist = 0,
+                            direction = c("out","in")){
+  as_input(.data, to_egos, max_dist = max_dist, min_dist = min_dist,
+           direction = direction)
+}
+
+#' @export
 to_egos.igraph <- function(.data, 
                            max_dist = 1, 
                            min_dist = 0,
@@ -114,6 +121,11 @@ to_egos.data.frame <- function(.data,
 to_subgraphs <- function(.data, attribute) UseMethod("to_subgraphs")
 
 #' @export
+to_subgraphs.default <- function(.data, attribute){
+  as_input(.data, to_subgraphs, attribute = attribute)
+}
+
+#' @export
 to_subgraphs.igraph <- function(.data, attribute){
   types <- unique(node_attribute(.data, attribute))
   lapply(types, function(x) igraph::induced_subgraph(.data, 
@@ -135,6 +147,11 @@ to_subgraphs.network <- function(.data, attribute){
 #'   to_components(to_uniplex(fict_marvel, "relationship"))
 #' @export
 to_components <- function(.data) UseMethod("to_components")
+
+#' @export
+to_components.default <- function(.data){
+  as_input(.data, to_components)
+}
 
 #' @importFrom igraph decompose
 #' @export
@@ -182,6 +199,13 @@ to_components.data.frame <- function(.data){
 #' @export
 to_waves <- function(.data, attribute = "wave", panels = NULL,
                      cumulative = FALSE) UseMethod("to_waves")
+
+#' @export
+to_waves.default <- function(.data, attribute = "wave", panels = NULL,
+                             cumulative = FALSE){
+  as_input(.data, to_waves, attribute = attribute, panels = panels,
+           cumulative = cumulative)
+}
 
 #' @importFrom tidygraph to_subgraph as_tbl_graph
 #' @export
@@ -368,6 +392,11 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
 #'   to_slices(slice = 7)
 #' @export
 to_slices <- function(.data, attribute = "time", slice = NULL) UseMethod("to_slices")
+
+#' @export
+to_slices.default <- function(.data, attribute = "time", slice = NULL){
+  as_input(.data, to_slices, attribute = attribute, slice = slice)
+}
 
 #' @export
 to_slices.tbl_graph <- function(.data, attribute = "time", slice = NULL) {

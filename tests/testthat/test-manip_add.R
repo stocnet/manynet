@@ -4,7 +4,7 @@ net_node1 <- as_tidygraph(data.frame(
   to = c("B", "C", "D", "E", "A")))
 
 # object with nodal attributes
-net_node2 <- net_node1 %>%
+net_node2 <- net_node1 |> 
   dplyr::mutate(attribute = c("friend", "family", "friend", "friend", "family"))
 
 # object without edge attributes
@@ -48,7 +48,7 @@ test_that("add_tie_attribute works", {
 
 test_that("join_ties works", {
   testmutateedges <- join_ties(ison_southern_women, create_filled(c(3,4)))
-  expect_equal(class(testmutateedges), c("tbl_graph", "igraph"))
+  expect_s3_class(testmutateedges, c("tbl_graph", "igraph"))
 })
 
 test_that("mutate_ties and filter_ties works", {
@@ -62,8 +62,8 @@ test_that("mutate_ties and filter_ties works", {
 
 test_that("summarise_ties works", {
   set.seed(1234)
-  orig <- from_ties(list(bloop = as_tidygraph(ison_southern_women),
-                         bleep = as_tidygraph(ison_southern_women))) %>%
+  orig <- from_ties(bloop = as_tidygraph(ison_southern_women),
+                    bleep = as_tidygraph(ison_southern_women)) %>%
     mutate_ties(year = sample(1:3, 178, replace = TRUE))
   sum <- summarise_ties(orig, mean = mean(year))
   expect_length(igraph::edge_attr(sum, "weight"), 89)

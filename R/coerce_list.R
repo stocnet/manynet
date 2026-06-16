@@ -6,9 +6,13 @@
 #'   - `as_edgelist()` coerces the object into an edgelist, as data frames or tibbles.
 #'   - `as_nodelist()` coerces the object into a nodelist, as a data frame or tibble.
 #'   - `as_changelist()` coerces the object into a changelist, as a data frame or tibble.
+#'   - `as_globallist()` coerces the object into a globallist, as a data frame or tibble.
 #'   - `as_infolist()` coerces the object into a list of network-level information, 
 #'   such as the names of the nodes and ties, if not given in the nodelist or edgelist.
 #'   - `as_matrix()` coerces the object into an adjacency (one-mode/unipartite) or incidence (two-mode/bipartite) matrix.
+#'   If the network is a cognitive social structure (i.e. the edgelist contains a 'by' column
+#'   indicating who reported/recorded each tie), `as_matrix()` returns a three-dimensional array
+#'   instead, with dimensions for senders, receivers, and reporters.
 #'
 #'   These coercions are extractive in the sense that they will lose any information that cannot be contained in the target format.
 #'   for example, `as_matrix()` will lose any information about edge attributes, such as edge types or weights.
@@ -56,13 +60,15 @@ as_nodelist <- function(.data) UseMethod("as_nodelist")
 #' @export
 as_nodelist.tbl_graph <- function(.data) {
   out <- .data
-  dplyr::tibble(data.frame(out))
+  out <- dplyr::tibble(data.frame(out))
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
 as_nodelist.igraph <- function(.data) {
   out <- .data
-  dplyr::tibble(data.frame(as_tidygraph(out)))
+  out <- dplyr::tibble(data.frame(as_tidygraph(out)))
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
@@ -74,7 +80,14 @@ as_nodelist.stocnet <- function(.data) {
 as_nodelist.network <- function(.data) {
   out <- .data
   out <- network::as.data.frame.network(out, unit = "vertices")
-  dplyr::as_tibble(out)
+  if(is_twomode(.data)) out$mode <- c(rep(FALSE, .data$gal$bipartite),
+                                 rep(TRUE, .data$gal$n - .data$gal$bipartite))
+  if(is_labelled(.data)) out$label <- network::network.vertex.names(.data)
+  if("vertex.names" %in% names(out)) out$vertex.names <- NULL
+  out <- dplyr::as_tibble(out) |> 
+    dplyr::select(dplyr::any_of(c("id", "name", "label", "mode")), 
+                  dplyr::everything())
+  if(ncol(out)==0) NULL else out
 }
 
 # Changelists ####
@@ -86,13 +99,15 @@ as_changelist <- function(.data) UseMethod("as_changelist")
 #' @export
 as_changelist.tbl_graph <- function(.data) {
   out <- igraph::graph_attr(as_igraph(.data), "changes")
-  dplyr::tibble(data.frame(out))
+  out <- dplyr::tibble(data.frame(out))
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
 as_changelist.igraph <- function(.data) {
   out <- igraph::graph_attr(.data, "changes")
-  dplyr::tibble(data.frame(out))
+  out <- dplyr::tibble(data.frame(out))
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
@@ -103,7 +118,8 @@ as_changelist.stocnet <- function(.data) {
 #' @export
 as_changelist.network <- function(.data) {
   out <- network::get.network.attribute(.data, "changes")
-  dplyr::tibble(data.frame(out))
+  out <- dplyr::tibble(data.frame(out))
+  if(ncol(out)==0) NULL else out
 }
 
 # Edgelists ####
@@ -117,14 +133,16 @@ as_edgelist <- function(.data, twomode = FALSE) UseMethod("as_edgelist")
 
 #' @export
 as_edgelist.igraph <- function(.data, twomode = FALSE) {
-  igraph::as_data_frame(.data, what = "edges") |>
+  out <- igraph::as_data_frame(.data, what = "edges") |>
     dplyr::as_tibble()
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
 as_edgelist.tbl_graph <- function(.data, twomode = FALSE) {
-  igraph::as_data_frame(.data, what = "edges") |> 
+  out <- igraph::as_data_frame(.data, what = "edges") |>
     dplyr::as_tibble()
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
@@ -148,12 +166,14 @@ as_edgelist.network <- function(.data, twomode = FALSE) {
   } else names(edges) <- c("from", "to")
   # Remove weight column if only unity weights.
   if (all(edges$weight == 1)) edges <- edges[, -3]
-  dplyr::arrange(dplyr::as_tibble(edges), from, to)
+  out <- dplyr::arrange(dplyr::as_tibble(edges), from, to)
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
 as_edgelist.matrix <- function(.data, twomode = FALSE) {
-  as_edgelist(as_igraph(.data, twomode = twomode))
+  out <- as_edgelist(as_igraph(.data, twomode = twomode))
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
@@ -171,17 +191,24 @@ as_edgelist.data.frame <- function(.data, twomode = FALSE) {
 
 #' @export
 as_edgelist.network.goldfish <- function(.data, twomode = FALSE) {
-  as_matrix(as_igraph(.data, twomode = twomode))
+  out <- as_matrix(as_igraph(.data, twomode = twomode))
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
 as_edgelist.siena <- function(.data, twomode = NULL) {
-  as_edgelist(as_igraph(.data, twomode = twomode))
+  out <- as_edgelist(as_igraph(.data, twomode = twomode))
+  if(ncol(out)==0) NULL else out
 }
 
 #' @export
 as_edgelist.stocnet <- function(.data, twomode = NULL) {
-  .data$ties
+  out <- .data$ties
+  if(is_labelled(.data)){
+    out$from <- .data$nodes$label[out$from]
+    out$to <- .data$nodes$label[out$to]
+  }
+  if(ncol(out)==0) NULL else out
 }
 
 # Infolists ####
@@ -222,6 +249,23 @@ as_infolist.network <- function(.data) {
   .data$gal
 }
 
+# Globallists ####
+
+#' @rdname coerce_list
+#' @export
+as_globallist <- function(.data) UseMethod("as_globallist")
+
+#' @export
+as_globallist.stocnet <- function(.data) {
+  .data$global
+}
+
+#' @export
+as_globallist.igraph <- function(.data) {
+  out <- igraph::graph_attr(.data, "global")
+  if(is.null(out) || ncol(out)==0) NULL else out
+}
+
 # Matrices ####
 
 #' @rdname coerce_list
@@ -232,9 +276,49 @@ as_infolist.network <- function(.data) {
 as_matrix <- function(.data,
                       twomode = NULL) UseMethod("as_matrix")
 
+# Helper to convert cognitive social structure edgelist to 3D array
+.cognitive_to_array <- function(.data, twomode = NULL) {
+  if (is.data.frame(.data) && all(c("from", "to", "by") %in% names(.data))) {
+    el <- .data
+  } else {
+    el <- as_edgelist(.data)
+  }
+  if (!"by" %in% names(el)) {
+    stop("Expected a cognitive social structure with a 'by' column in the edgelist.")
+  }
+  reporters <- sort(unique(el$by))
+  from_nodes <- sort(unique(as.character(el$from)))
+  to_nodes <- sort(unique(as.character(el$to)))
+  # Determine if twomode
+  twomode_net <- if (!is.null(twomode)) twomode else is_twomode(.data)
+  if (twomode_net) {
+    row_nodes <- from_nodes
+    col_nodes <- to_nodes
+  } else {
+    all_nodes <- sort(unique(c(from_nodes, to_nodes)))
+    row_nodes <- all_nodes
+    col_nodes <- all_nodes
+  }
+  # Create 3D array: rows x cols x reporters
+
+  out <- array(0L, dim = c(length(row_nodes), length(col_nodes), 
+                           length(reporters)),
+               dimnames = list(row_nodes, col_nodes, reporters))
+  # Fill in the array
+  el_from <- as.character(el$from)
+  el_to <- as.character(el$to)
+  el_by <- as.character(el$by)
+  el_val <- if ("weight" %in% names(el)) el$weight else rep(1L, nrow(el))
+  for (i in seq_len(nrow(el))) {
+    out[el_from[i], el_to[i], el_by[i]] <- el_val[i]
+  }
+  out
+}
+
 #' @export
 as_matrix.data.frame <- function(.data,
                                  twomode = NULL) {
+  if (is_cognitive(.data)) return(.cognitive_to_array(.data, twomode = twomode))
   if ("tbl_df" %in% class(.data)) .data <- as.data.frame(.data)
   if (ncol(.data) == 2 | !is_weighted(.data)) {
     .data <- data.frame(.data) # in case it's a tibble
@@ -281,6 +365,7 @@ as_matrix.matrix <- function(.data,
 #' @export
 as_matrix.igraph <- function(.data,
                              twomode = NULL) {
+  if (is_cognitive(.data)) return(.cognitive_to_array(.data, twomode = twomode))
   if ((!is.null(twomode) && twomode) | 
       (is.null(twomode) & is_twomode(.data) & !is_multiplex(.data))) {
     if (is_weighted(.data) | is_signed(.data)) {
@@ -310,12 +395,14 @@ as_matrix.igraph <- function(.data,
 #' @export
 as_matrix.tbl_graph <- function(.data,
                                 twomode = NULL) {
+  if (is_cognitive(.data)) return(.cognitive_to_array(.data, twomode = twomode))
   as_matrix(as_igraph(.data), twomode = twomode)
 }
 
 #' @export
 as_matrix.network <- function(.data,
                               twomode = NULL) {
+  if (is_cognitive(.data)) return(.cognitive_to_array(.data, twomode = twomode))
   if (network::is.bipartite(.data)) {
     if ("weight" %in% network::list.edge.attributes(.data)) {
       out <- network::as.matrix.network(.data,
@@ -355,7 +442,7 @@ as_matrix.siena <- function(.data,
   # Get the dependent network(s) first
   # Identify all dyadic depvars
   dvs <- lapply(.data$depvars, function(x) is.matrix(x[,,1]) )
-  ddvs <- names(which(dvs == TRUE))
+  ddvs <- names(which(dvs))
   # Add in first wave of first DV network
   out <- .data$depvars[[ddvs[1]]][,,1]
   # Add remaining waves
@@ -392,6 +479,7 @@ as_matrix.diff_model <- function(.data,
 #' @export
 as_matrix.stocnet <- function(.data,
                                  twomode = FALSE) {
+  if (is_cognitive(.data)) return(.cognitive_to_array(.data, twomode = twomode))
   as_matrix(as_igraph(.data, twomode = twomode))
 }
 

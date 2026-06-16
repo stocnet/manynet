@@ -4,28 +4,37 @@
 \alias{manip_nodes_num}
 \alias{add_nodes}
 \alias{delete_nodes}
+\alias{bind_nodes}
 \alias{filter_nodes}
+\alias{arrange_nodes}
 \title{Manipulating number of nodes}
 \usage{
 add_nodes(.data, nodes, attribute = NULL)
 
 delete_nodes(.data, nodes)
 
+bind_nodes(.data, object2)
+
 filter_nodes(.data, ..., .by = NULL)
+
+arrange_nodes(.data, ...)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
-\item matrix (adjacency or incidence) from \code{{base}} R
-\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
-\item igraph, from the \code{{igraph}} package
-\item network, from the \code{{network}} package
-\item tbl_graph, from the \code{{tidygraph}} package
+\item adjacency or incidence \code{matrix} from \code{{base}} R
+\item edgelist \code{data.frame} from \code{{base}} R or \code{tbl/tbl_df} from \code{{tibble}}
+\item stocnet \code{stocnet}, from the \code{{manynet}} package
+\item igraph \code{igraph}, from the \code{{igraph}} package
+\item network \code{network}, from the \code{{network}} package
+\item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
 
 \item{nodes}{The number of nodes to be added.}
 
 \item{attribute}{A named list to be added as tie or node attributes.}
+
+\item{object2}{A second object to copy nodes or ties from.}
 
 \item{...}{Additional parameters and arguments passed on internally.}
 
@@ -39,30 +48,42 @@ These functions allow users to add and delete nodes:
 \itemize{
 \item \code{add_nodes()} adds an additional number of nodes to network data.
 \item \code{delete_nodes()} deletes nodes from network data.
+\item \code{bind_nodes()} adds two nodesets together.
 \item \code{filter_nodes()} subsets nodes based on some nodal attribute-related logical statement.
+\item \code{arrange_nodes()} reorders nodes based on some nodal attribute.
 }
 
 While \verb{add_*()}/\verb{delete_*()} functions operate similarly as comparable \code{{igraph}} functions,
-\verb{filter_*()}, works like a \code{{tidyverse}} or \code{{dplyr}}-style function.
+\verb{bind_*()} and \verb{filter_*()} works like a \code{{tidyverse}} or \code{{dplyr}}-style function.
 }
 \details{
 Not all functions have methods available for all object classes.
-Below are the currently implemented S3 methods:\tabular{lrrr}{
-    \tab igraph \tab network \tab tbl_graph \cr
-   add_nodes \tab 1 \tab 1 \tab 1 \cr
-   delete_nodes \tab 1 \tab 1 \tab 1 \cr
-}
+Below are the currently implemented S3 methods for these functions:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{              default igraph network stocnet tbl_graph
+add_nodes           *      *       *                 *
+arrange_nodes       *                      *         *
+bind_nodes          *                      *          
+delete_nodes        *      *       *                 *
+filter_nodes        *                      *         *
+}\if{html}{\out{</div>}}
+
+If a method is not available for a particular class, but a default method is,
+the default method will attempt to coerce the object to a class for which a method is defined,
+and then coerce the output back to the original class.
+If no method is available for any class, an error will be thrown.
 }
 \examples{
   other <- create_filled(4) |> mutate(name = c("A", "B", "C", "D"))
   add_nodes(other, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))
 }
 \seealso{
-Other nodes: 
+Other nodes:
 \code{\link{manip_nodes_attr}}
 
-Other manipulations: 
+Other manipulations:
 \code{\link{manip_changes}},
+\code{\link{manip_global}},
 \code{\link{manip_info}},
 \code{\link{manip_nodes_attr}},
 \code{\link{manip_ties_attr}},

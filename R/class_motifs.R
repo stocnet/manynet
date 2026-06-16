@@ -32,6 +32,7 @@ print.node_motif <- function(x, ...,
     } else x <- as.data.frame(x)
     print(dplyr::tibble(x), n = n)
   }
+  invisible(x)
 }
 
 

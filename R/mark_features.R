@@ -13,6 +13,7 @@
 #'   - `is_acyclic()` tests whether network is a directed acyclic graph.
 #'   - `is_aperiodic()` tests whether network is aperiodic.
 #' @template param_data
+#' @eval detail_avail("is_(connected|perfect_matching|eulerian|acyclic|aperiodic)")
 #' @return TRUE if the condition is met, or FALSE otherwise.
 #' @family marking
 #' @name mark_features
@@ -26,8 +27,16 @@ NULL
 #' @examples
 #' is_connected(ison_southern_women)
 #' @export
-is_connected <- function(.data) {
-  igraph::is_connected(as_igraph(.data), 
+is_connected <- function(.data) UseMethod("is_connected")
+
+#' @export
+is_connected.default <- function(.data) {
+  is_connected(as_igraph(.data))
+}
+
+#' @export
+is_connected.igraph <- function(.data) {
+  igraph::is_connected(.data, 
                        mode = ifelse(is_directed(.data),
                                      "strong", "weak"))
 }
@@ -53,8 +62,15 @@ is_connected <- function(.data) {
 #' @examples
 #' is_perfect_matching(ison_southern_women)
 #' @export
-is_perfect_matching <- function(.data, mark = "type"){
-  .data <- as_igraph(.data)
+is_perfect_matching <- function(.data, mark = "type") UseMethod("is_perfect_matching")
+
+#' @export
+is_perfect_matching.default <- function(.data, mark = "type") {
+  is_perfect_matching(as_igraph(.data), mark = mark)
+}
+
+#' @export
+is_perfect_matching.igraph <- function(.data, mark = "type"){
   if(mark %in% net_node_attributes(.data)){
     matches <- to_matching(.data, mark = mark)
     net_ties(matches)*2 == net_nodes(matches)
@@ -74,8 +90,16 @@ is_perfect_matching <- function(.data, mark = "type"){
 #' @examples
 #' is_eulerian(ison_brandes)
 #' @export
-is_eulerian <- function(.data){
-  igraph::has_eulerian_path(as_igraph(.data))
+is_eulerian <- function(.data) UseMethod("is_eulerian")
+
+#' @export
+is_eulerian.default <- function(.data) {
+  is_eulerian(as_igraph(.data))
+}
+
+#' @export
+is_eulerian.igraph <- function(.data){
+  igraph::has_eulerian_path(.data)
 }
 
 #' @rdname mark_features
@@ -83,12 +107,29 @@ is_eulerian <- function(.data){
 #' @examples 
 #' is_acyclic(ison_algebra)
 #' @export
-is_acyclic <- function(.data){
-  obj <- as_igraph(.data)
-  igraph::is_dag(obj)
+is_acyclic <- function(.data) UseMethod("is_acyclic")
+
+#' @export
+is_acyclic.default <- function(.data) {
+  is_acyclic(as_igraph(.data))
+}
+
+#' @export
+is_acyclic.igraph <- function(.data){
+  igraph::is_dag(.data)
 }
 
 #' @rdname mark_features
+#' @section Aperiodicity: 
+#'   Aperiodicity is a property of directed networks that can be interpreted as 
+#'   the absence of cycles of a common length.
+#'   Aperiodicity is a necessary condition for the existence of a 
+#'   unique stationary distribution in Markov chains, and thus is 
+#'   an important property for the analysis of dynamic processes on networks.
+#'   The function `is_aperiodic()` tests for aperiodicity by finding 
+#'   all simple paths from each node back to itself, and then 
+#'   calculating the greatest common divisor of the lengths of these paths. 
+#'   If the greatest common divisor is 1, the network is aperiodic.
 #' @param max_path_length Maximum path length considered.
 #'   If negative, paths of all lengths are considered.
 #'   By default 4, to avoid potentially very long computation times.
@@ -102,16 +143,25 @@ is_acyclic <- function(.data){
 #' @examples 
 #' is_aperiodic(ison_algebra)
 #' @export
-is_aperiodic <- function(.data, max_path_length = 4){
+is_aperiodic <- function(.data, max_path_length = 4) UseMethod("is_aperiodic")
+
+#' @export
+is_aperiodic.default <- function(.data, max_path_length = 4) {
+  is_aperiodic(as_igraph(.data), max_path_length = max_path_length)
+}
+
+#' @export
+is_aperiodic.igraph <- function(.data, max_path_length = 4){
   # thisRequires("minMSE") # >80x faster than e.g. cheapr::gcd()
-  g <- as_igraph(.data)
+  if(is_twomode(.data)) return(FALSE)
   snet_info("Obtaining paths no greater than {max_path_length}.")
-  out <- suppressMessages(.quiet(unlist(lapply(1:net_nodes(g), function(v1){
-    if(igraph::degree(g, v1, mode="in") == 0) NULL else {
-      goodNeighbors <- igraph::neighbors(g, igraph::V(g)[v1], mode="out")
-      goodNeighbors <- goodNeighbors[goodNeighbors > igraph::V(g)[v1]]
+  out <- suppressMessages(.quiet(unlist(lapply(seq_nodes(.data), function(v1){
+    if(igraph::degree(.data, v1, mode="in") == 0) NULL else {
+      v1_vertex <- igraph::V(.data)[v1]
+      goodNeighbors <- igraph::neighbors(.data, v1_vertex, mode="out")
+      goodNeighbors <- goodNeighbors[goodNeighbors > v1_vertex]
       unlist(lapply(goodNeighbors, function(v2){
-        vapply(igraph::all_simple_paths(g, v2, igraph::V(g)[v1], mode="out", 
+        vapply(igraph::all_simple_paths(.data, v2, igraph::V(.data)[v1], mode="out", 
                                         cutoff = max_path_length), length, 
                FUN.VALUE = numeric(1))
       }))

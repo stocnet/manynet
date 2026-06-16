@@ -59,7 +59,7 @@ by \href{https://github.com/stocnet/manynet/issues}{raising an issue on Github}.
 \seealso{
 \link{as}
 
-Other makes: 
+Other makes:
 \code{\link{make_create}},
 \code{\link{make_ego}},
 \code{\link{make_explicit}},

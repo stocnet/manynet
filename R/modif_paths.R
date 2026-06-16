@@ -10,7 +10,7 @@
 #'   - `to_eulerian()` returns only the Eulerian path within some network data.
 #'   - `to_tree()` returns the spanning tree in some network data or, 
 #'   if the data is unconnected, a forest of spanning trees.
-#'   - `to_dominating()` returns the dominating tree of the network
+#'   - `to_dominating()` returns the dominating tree of the network.
 #' @details
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
@@ -23,7 +23,7 @@
 NULL
 
 #' @rdname modif_paths
-#' @section `to_matching()`:
+#' @section Matching:
 #'   This function attempts to solve the stable matching problem,
 #'   also known as the stable marriage problem, upon a given
 #'   two-mode network (or other network with a binary mark).  
@@ -70,6 +70,12 @@ NULL
 #' @export
 to_matching <- function(.data, mark = "type", 
                         capacities = NULL) UseMethod("to_matching")
+
+#' @export
+to_matching.default <- function(.data, mark = "type", 
+                                capacities = NULL){
+  as_input(.data, to_matching, mark = mark, capacities = capacities)
+}
 
 #' @export
 to_matching.igraph <- function(.data, mark = "type", capacities = NULL){
@@ -153,6 +159,14 @@ to_matching.matrix <- function(.data, mark = "type", capacities = NULL){
 }
 
 #' @rdname modif_paths 
+#' @section Mentoring: 
+#'   This function returns a network in which each node is tied to its closest mentor.
+#'   The mentors are selected as the top nodes in terms of degree, or those equal
+#'   to the highest rank degree in the network, whichever is the higher.
+#'   The mentees are then tied to the closest mentor in terms of geodesic distance.
+#'   This can be useful for showing the hierarchical structure of a network, 
+#'   for example in an organisational context, 
+#'   or identifying the most influential nodes in a network.
 #' @param elites The proportion of nodes to be selected as mentors.
 #'   By default this is set at 0.1.
 #'   This means that the top 10% of nodes in terms of degree,
@@ -176,10 +190,15 @@ to_matching.matrix <- function(.data, mark = "type", capacities = NULL){
 to_mentoring <- function(.data, elites = 0.1) UseMethod("to_mentoring")
 
 #' @export
-to_mentoring.tbl_graph <- function(.data, elites = 0.1){
-  as_tidygraph(to_mentoring.igraph(.data, elites = elites)) |> 
-    add_info(name = paste(net_name(.data), "mentorship"))
+to_mentoring.default <- function(.data, elites = 0.1){
+  as_input(.data, to_mentoring, elites = elites)
 }
+
+# #' @export
+# to_mentoring.tbl_graph <- function(.data, elites = 0.1){
+#   as_tidygraph(to_mentoring.igraph(.data, elites = elites)) |> 
+#     add_info(name = paste(net_name(.data), "mentorship"))
+# }
 
 #' @export
 to_mentoring.igraph <- function(.data, elites = 0.1){
@@ -187,6 +206,8 @@ to_mentoring.igraph <- function(.data, elites = 0.1){
   if(!is_labelled(.data)) rownames(md) <- colnames(md) <- seq_len(nrow(md))
   ranks <- sort(colSums(md), decreasing = TRUE) # get rank order of indegrees
   mentors <- ranks[ranks == max(ranks)]
+  if(length(mentors) == length(ranks)) 
+    mentors <- ranks[1:max(1, round(length(ranks)*elites))] # if no mentors, select the top node
   if(length(mentors) < length(ranks)*elites)
     mentors <- ranks[seq_len(length(ranks)*elites)]
   dists <- igraph::distances(.data) # compute geodesic matrix
@@ -214,6 +235,7 @@ to_mentoring.igraph <- function(.data, elites = 0.1){
   }
   out <- data.frame(from = names(out),
                     to = as.character(out), row.names = NULL)
+  if(!is_labelled(.data)) out <- to_unnamed(out)
   as_igraph(out)
 }
 
@@ -234,6 +256,12 @@ to_mentoring.igraph <- function(.data, elites = 0.1){
 #' @export
 to_eulerian <- function(.data) UseMethod("to_eulerian")
 
+#' @export
+to_eulerian.default <- function(.data){
+  as_input(.data, to_eulerian)
+}
+
+#' @export
 #' @export
 to_eulerian.igraph <- function(.data){
   if(!is_eulerian(.data))
@@ -272,19 +300,31 @@ to_eulerian.tbl_graph <- function(.data){
 #' _Bell System Technical Journal_ 36(6):1389-1401.
 #' \doi{10.1002/j.1538-7305.1957.tb01515.x}
 #' @export
-to_tree <- function(.data) {
-  .data <- as_igraph(.data)
-  out <- igraph::subgraph_from_edges(.data, igraph::sample_spanning_tree(.data))
-  as_tidygraph(out)
+to_tree <- function(.data) UseMethod("to_tree")
+
+#' @export
+to_tree.default <- function(.data){
+  as_input(.data, to_tree)
+}
+
+#' @export
+to_tree.igraph <- function(.data) {
+  igraph::subgraph_from_edges(.data, igraph::sample_spanning_tree(.data))
 }
 
 #' @rdname modif_paths 
 #' @template param_dir
 #' @param from The index or name of the node from which the path should be traced.
 #' @export
-to_dominating <- function(.data, from, direction = c("out","in")) {
+to_dominating <- function(.data, from, direction = c("out","in")) UseMethod("to_dominating")
+
+#' @export
+to_dominating.default <- function(.data, from, direction = c("out","in")){
+  as_input(.data, to_dominating, from = from, direction = direction)
+}
+
+#' @export
+to_dominating.igraph <- function(.data, from, direction = c("out","in")) {
   direction <- match.arg(direction)
-  .data <- as_igraph(.data)
-  out <- igraph::dominator_tree(.data, root = from, mode = direction)$domtree
-  as_tidygraph(out)
+  igraph::dominator_tree(.data, root = from, mode = direction)$domtree
 }

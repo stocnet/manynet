@@ -38,14 +38,12 @@ NULL
 # igraph ####
 
 #' @rdname coerce_graph
-#' @importFrom igraph graph_from_data_frame graph_from_biadjacency_matrix
-#'  graph_from_adjacency_matrix delete_vertex_attr V vertex_attr
-#'  edge_attr delete_edge_attr set_edge_attr
 #' @importFrom network list.edge.attributes as.sociomatrix
 #' @export
 as_igraph <- function(.data,
                       twomode = FALSE) UseMethod("as_igraph")
 
+#' @importFrom igraph graph_from_data_frame 
 #' @export
 as_igraph.data.frame <- function(.data,
                                  twomode = FALSE) {
@@ -64,12 +62,13 @@ as_igraph.data.frame <- function(.data,
     graph <- igraph::delete_vertex_attr(graph, "name")
   }
   # length(intersect(c(.data[,1]), c(.data[,2]))) == 0 && length(.data[,1])>1
-  if (twomode) {
+  if (is_twomode(.data) || twomode) {
     igraph::V(graph)$type <- igraph::V(graph)$name %in% .data[,2]
   }
   graph
 }
 
+#' @importFrom igraph graph_from_biadjacency_matrix graph_from_adjacency_matrix
 #' @export
 as_igraph.matrix <- function(.data,
                              twomode = FALSE) {
@@ -125,6 +124,9 @@ as_igraph.network <- function(.data,
       graph <- network::as.sociomatrix(.data)
       graph <- igraph::graph_from_biadjacency_matrix(graph)
     }
+    graph <- igraph::set_vertex_attr(graph, name = "type",
+                                     value = c(rep(FALSE, .data$gal$bipartite),
+                                rep(TRUE, .data$gal$n - .data$gal$bipartite)))
   } else {
     if ("weight" %in% network::list.edge.attributes(.data)) {
       graph <- network::as.sociomatrix(.data, attrname = "weight")
@@ -177,7 +179,7 @@ as_igraph.diffnet <- function(.data,
   dynamic.attrs <- colnames(graph$vertex.dyn.attrs[[1]])
   out <- vector("list", graph$meta$nper)
   names(out) <- dimnames(graph)[[3]]
-  for (p in 1:length(out)) {
+  for (p in seq_along(out)) {
     tempgraph <- graph$graph[[p]]
     dimnames(tempgraph) <- with(graph$meta, list(ids, ids))
     tempgraph <- igraph::graph_from_adjacency_matrix(adjmatrix = tempgraph, 
@@ -241,7 +243,7 @@ as_igraph.networkDynamic <- function(.data, twomode = FALSE) {
   out <- igraph::graph_from_data_frame(out, vertices = nodes)
   
   # changes
-  changes <- do.call(rbind, lapply(1:length(.data$val), 
+  changes <- do.call(rbind, lapply(seq_len(.data$val), 
                                    function(x) data.frame(node = x, 
                                                           if(is.null(.data$val[[x]]$active)) 
                                                             matrix(c(NA, NA), ncol = 2) else 
@@ -250,7 +252,7 @@ as_igraph.networkDynamic <- function(.data, twomode = FALSE) {
   names(changes) <- c("node","begin","end")
   changes <- stats::na.omit(changes)
   
-  as_igraph(add_changes(out, changes))
+  as_igraph(bind_changes(out, changes))
 }
 
 #' @export
@@ -289,7 +291,7 @@ as_igraph.siena <- function(.data, twomode = NULL) {
         }
       } else {
         # add names for one-mode y
-        y <- igraph::vertex_attr(y, name = "name",
+        y <- igraph::set_vertex_attr(y, name = "name",
                                  value = as.character(seq_len(igraph::vcount(as_igraph(y)))))
         # join ties
         if (isTRUE(is_twomode(x))) { # x is twomode but y is onemode
@@ -312,7 +314,7 @@ as_igraph.siena <- function(.data, twomode = NULL) {
   }
   .get_attributes <- function(ndy, x, name = NULL) {
     for(d in seq_len(dim(ndy)[2])) {
-      x <- igraph::vertex_attr(x, name = paste0(name, "_", "t", d),
+      x <- igraph::set_vertex_attr(x, name = paste0(name, "_", "t", d),
                                value = as.vector(ndy[,d]))
     }
     x
@@ -320,11 +322,11 @@ as_igraph.siena <- function(.data, twomode = NULL) {
   # We always get the dependent network(s) first
   # Identify all dyadic and non-dyadic depvars
   dvs <- lapply(.data$depvars, function(x) is.matrix(x[,,1]) )
-  ddvs <- names(which(dvs == TRUE))
+  ddvs <- names(which(dvs))
   # Add in first network as base and add names
   out <- .data$depvars[[ddvs[1]]][,,1] # first wave
-  if (is_twomode(out) == FALSE) {
-    out <- igraph::vertex_attr(out, name = "name",
+  if (!is_twomode(out)) {
+    out <- igraph::set_vertex_attr(out, name = "name",
                                value = as.character(seq_len(igraph::vcount(as_igraph(out)))))
   } else {
     rownames(out) <- as.character(seq_len(nrow(out)))
@@ -355,8 +357,8 @@ as_igraph.siena <- function(.data, twomode = NULL) {
                                  name = paste0(names(.data$dyvCovars)[k]))
   }
   # Add any behavioral depvars
-  if(length(which(dvs == FALSE)) > 0) {
-    bdvs <- names(which(dvs == FALSE))
+  if(length(which(!dvs)) > 0) {
+    bdvs <- names(which(!dvs))
     for (b in seq_along(bdvs)) {
       out <- .get_attributes(.data$depvars[[bdvs[b]]], out,
                              name = bdvs[b])
@@ -364,12 +366,12 @@ as_igraph.siena <- function(.data, twomode = NULL) {
   }
   # Add composition change
   for (k in seq_along(.data$compositionChange)) {
-    out <- igraph::vertex_attr(out, name =  paste0(names(.data$compositionChange)[k]),
+    out <- igraph::set_vertex_attr(out, name =  paste0(names(.data$compositionChange)[k]),
                                value = as.vector(.data$compositionChange[[k]]))
   }
   # Add cCovar
   for (k in seq_along(.data$cCovars)) {
-    out <- igraph::vertex_attr(out, name = paste0(names(.data$cCovars)[k]),
+    out <- igraph::set_vertex_attr(out, name = paste0(names(.data$cCovars)[k]),
                                value = as.vector(.data$cCovars[[k]]))
   }
   # Add vCovar
@@ -386,12 +388,24 @@ as_igraph.stocnet <- function(.data, twomode = FALSE) {
     out <- igraph::graph_from_data_frame(as_edgelist(.data))
     out <- to_unnamed(out)
   } else {
+    vertices <- as_nodelist(.data)
+    if(is_labelled(.data)) 
+      vertices <- vertices |> dplyr::mutate(name = label) |>
+        dplyr::select(name, dplyr::everything(), -label)
+    if(is_twomode(.data))
+      vertices <- vertices |> dplyr::mutate(type = mode == unique(mode)[2]) |>
+        dplyr::select(name, dplyr::everything(), -mode)
     out <- igraph::graph_from_data_frame(as_edgelist(.data), 
-                                         vertices = as_nodelist(.data))
+                                         vertices = vertices)
   }
-  igraph::graph_attr(out) <- as_infolist(.data)
+  if(is_twomode(.data))
+    out <- to_undirected(out)
+  if(!is.null(as_infolist(.data)) && length(as_infolist(.data)) > 0)
+    igraph::graph_attr(out) <- as_infolist(.data)
   if(!is.null(as_changelist(.data)) && length(as_changelist(.data)) > 0)
     igraph::graph_attr(out, "changes") <- as_changelist(.data)
+  if(!is.null(as_globallist(.data)) && length(as_globallist(.data)) > 0)
+    igraph::graph_attr(out, "global") <- as_globallist(.data)
   out
 }
 
@@ -777,7 +791,7 @@ as_graphAM.stocnet <- function(.data, twomode = NULL) {
 #'                        node = c(1,2,3,2,4),
 #'                        var = "diffusion", 
 #'                        value = c("I","I","I","R","I"))
-#'   add_changes(create_filled(4), events)
+#'   bind_changes(create_filled(4), events)
 #' @export
 as_diffusion <- function(.data, twomode = FALSE, events) UseMethod("as_diffusion")
 
@@ -801,14 +815,14 @@ as_diffusion.mnet <- function(.data, twomode = FALSE, events) {
   report[is.na(report)] <- 0
   
   if(all(report$E_new == 0)){
-    report$S = report$n + cumsum(report$S_new - report$I_new)
-    report$E = rep(0, nrow(report))
+    report$S <- report$n + cumsum(report$S_new - report$I_new)
+    report$E <- rep(0, nrow(report))
   } else {
-    report$S = report$n + cumsum(report$S_new - report$E_new) # susceptible decreases as they become exposed
-    report$E = cumsum(report$E_new) - cumsum(report$I_new) # exposed become infectious
+    report$S <- report$n + cumsum(report$S_new - report$E_new) # susceptible decreases as they become exposed
+    report$E <- cumsum(report$E_new) - cumsum(report$I_new) # exposed become infectious
   }
-  report$I = cumsum(report$I_new) - cumsum(report$R_new) # infectious recover
-  report$R = cumsum(report$R_new) - cumsum(report$S_new) # recovered accumulate
+  report$I <- cumsum(report$I_new) - cumsum(report$R_new) # infectious recover
+  report$R <- cumsum(report$R_new) - cumsum(report$S_new) # recovered accumulate
   report$s <- vapply(report$time, function(t){
     twin <- dplyr::filter(events, events$time <= t)
     infected <- dplyr::filter(twin, twin$value == "I")$node
@@ -962,23 +976,72 @@ as_stocnet.stocnet <- function(.data, twomode = FALSE) {
 }
 
 #' @export
+as_stocnet.data.frame <- function(.data, twomode = FALSE) {
+  out <- .data
+  # make sure that the data frame has the right columns, rename them if necessary,
+  # and then reorder them if necessary
+   if (!all(c("from", "to") %in% colnames(out))) {
+     if (all(c("source", "target") %in% colnames(out))) {
+       snet_minor_info("Renaming 'source' and 'target' columns to 'from' and 'to'.")
+       out <- out |> dplyr::rename(from = source, to = target)
+     } else if (all(c("sender", "receiver") %in% colnames(out))) {
+       snet_minor_info("Renaming 'sender' and 'receiver' columns to 'from' and 'to'.")
+       out <- out |> dplyr::rename(from = sender, to = receiver)
+     } else if (all(c("ego", "alter") %in% colnames(out))) {
+       snet_minor_info("Renaming 'ego' and 'alter' columns to 'from' and 'to'.")
+       out <- out |> dplyr::rename(from = ego, to = alter)
+     } else snet_abort("Edgelist must have columns named 'from' and 'to'.")
+   }
+  if (!"weight" %in% colnames(out)) {
+    if ("replace" %in% colnames(out)) {
+       snet_minor_info("Renaming 'replace' column to 'weight'.")
+      out <- out |> dplyr::rename(weight = replace)
+    } else if ("increment" %in% colnames(out)) {
+      snet_minor_info("Renaming 'increment' column to 'weight'.")
+      out <- out |> dplyr::rename(weight = increment)
+    } else if ("value" %in% colnames(out)) {
+       snet_minor_info("Renaming 'value' column to 'weight'.")
+      out <- out |> dplyr::rename(weight = value)
+    }
+  }
+  out <- out |> dplyr::select(from, to, dplyr::everything())
+  if(!is.numeric(out$from) || !is.numeric(out$to)){
+   nodes <- unique(c(out$from, out$to))
+   out <- out |> dplyr::mutate(from = match(from, nodes),
+                              to = match(to, nodes))
+   out <- make_stocnet(ties = out, nodes = data.frame(label = nodes))
+  } else out <- make_stocnet(ties = out)
+  if("increment" %in% colnames(.data)) out <- out |> 
+    mutate_info(update = "increment")
+  if("replace" %in% colnames(.data)) out <- out |> 
+    mutate_info(update = "replace")
+  out
+}
+
+#' @export
 as_stocnet.igraph <- function(.data, twomode = FALSE) {
   info <- as_infolist(.data)
   nodes <- as_nodelist(.data)
   changes <- as_changelist(.data)
   ties <- as_edgelist(.data)
+  global <- as_globallist(.data)
   
   if(is_labelled(.data)){
     ties$from <- match(ties$from, nodes$name)
     ties$to <- match(ties$to, nodes$name)
     nodes$label <- nodes$name
     nodes$name <- NULL
+  } else {
+    ties$from <- as.integer(ties$from)
+    ties$to <- as.integer(ties$to)
   }
   if(is_twomode(.data)){
     if(!is.null(info$nodes) && length(info$nodes) == 2){
       nodes$mode <- info$nodes[(nodes$type*1+1)]
-      nodes$type <- NULL
+    } else {
+      nodes$mode <- as.character(nodes$type)
     }
+    nodes$type <- NULL
   }
   if(is_multiplex(.data)){
     ties$layer <- ties$type
@@ -990,24 +1053,18 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
   if(!is.null(info$changes)) info$changes <- NULL
   info$directed <- is_directed(.data)
   
-  nodes <- dplyr::select(nodes, 
-                         dplyr::any_of(c("label", "mode")), 
-                         dplyr::everything())
-  # if(ncol(nodes)==0) nodes <- NULL
-  # if(ncol(changes)==0) changes <- NULL
-  if(ncol(ties)==0) ties <- NULL
+  if(!is.null(nodes))
+    nodes <- dplyr::select(nodes, 
+                           dplyr::any_of(c("label", "mode")), 
+                           dplyr::everything())
   
-  out <- list(info = info, nodes = nodes, changes = changes, ties = ties)
+  out <- list(info = info, nodes = nodes, ties = ties, 
+              changes = changes, global = global)
   class(out) <- c("stocnet", class(out))
+  out <- rename_nodes(out)
+  out <- rename_ties(out)
   out
 }
-
-#' @export
-as_stocnet.tbl_graph <- function(.data,
-                           twomode = FALSE) {
-  as_stocnet(as_igraph(.data, twomode = twomode)) 
-}
-
 
 #' @export
 as_stocnet.matrix <- function(.data,

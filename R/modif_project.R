@@ -18,6 +18,28 @@
 #'   ```{r, echo = FALSE, comment=""}
 #'   available_methods(collect_functions("to_.*(mode[0-9]|ties|galois)"))
 #'   ```
+#' @section Comparison of two-mode projection methods:
+#'
+#' | Category | Feature | `manynet::to_mode1()`/`to_mode2()` | `igraph::bipartite_projection()` | `network`/`sna` manual |
+#' |---|---|---|---|---|
+#' | **Input** | Dedicated function | yes | yes | no |
+#' | | Accepted input classes | igraph, network, tidygraph, matrix, edgelist | igraph only | any (manual extraction) |
+#' | | Detects mode membership from | `mode` node attribute | `type` vertex attribute | `bipartite` network attr (positional) |
+#' | **Projection** | Returns both projections at once | no — one per call | yes — list of two | two manual calls |
+#' | | Projects mode 1 (actors) | `to_mode1()` | `which = "true"` | `A %*% t(A)` |
+#' | | Projects mode 2 (events) | `to_mode2()` | `which = "false"` | `t(A) %*% A` |
+#' | **Weights** | Raw co-membership counts | yes | yes (`multiplicity = TRUE`) | yes |
+#' | | Binary (unweighted) output | yes | yes (`multiplicity = FALSE`) | threshold manually |
+#' | | Jaccard normalisation | yes | no | code manually |
+#' | | Cosine normalisation | yes | no | code manually |
+#' | **Attributes** | Retains node attributes | yes | yes | no — lost in matrix round-trip |
+#' | | Retains edge attributes | weight only | weight only | no |
+#' | | Removes self-loops automatically | yes | yes | `diag(P) <- 0` manually |
+#' | **Output** | Output class matches input | yes | no | no  |
+#' | | Directed projection support | limited | no — undirected only | yes — asymmetric matrix |
+#' | **Usability** | Lines of code (basic case) | 1 | 1 | 4–6 |
+#' | | Lines of code (Jaccard weights) | 1 | ~8 manual | ~8 manual |
+#' | | Pipe-friendly | yes | with wrappers | no |
 #' @template param_data
 #' @template fam_modif
 NULL
@@ -48,6 +70,12 @@ NULL
 #' to_mode2(ison_southern_women)
 #' @export
 to_mode1 <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) UseMethod("to_mode1")
+
+#' @export
+to_mode1.default <- function(.data, 
+                             similarity = c("count","jaccard","rand","pearson","yule")){
+  as_input(.data, to_mode1, similarity = similarity)
+}
 
 #' @export
 to_mode1.matrix <- function(.data, 
@@ -110,17 +138,23 @@ to_mode1.tbl_graph <- function(.data, similarity = c("count","jaccard","rand","p
 
 #' @export
 to_mode1.network <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
-  as_network(to_mode1(as_matrix(.data), similarity = similarity))
+ as_network(to_mode1(as_tidygraph(.data), similarity)) 
 }
 
 #' @export
 to_mode1.data.frame <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
-  as_edgelist(to_mode1(as_matrix(.data), similarity = similarity))
+  as_edgelist(to_mode1(as_tidygraph(.data), similarity)) 
 }
 
 #' @rdname modif_project
 #' @export
 to_mode2 <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) UseMethod("to_mode2")
+
+#' @export
+to_mode2.default <- function(.data, 
+                             similarity = c("count","jaccard","rand","pearson","yule")){
+  as_input(.data, to_mode2, similarity = similarity)
+}
 
 #' @export
 to_mode2.matrix <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
@@ -182,12 +216,12 @@ to_mode2.tbl_graph <- function(.data, similarity = c("count","jaccard","rand","p
 
 #' @export
 to_mode2.network <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
-  as_network(to_mode2(as_matrix(.data), similarity))
+  as_network(to_mode2(as_tidygraph(.data), similarity)) 
 }
 
 #' @export
 to_mode2.data.frame <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
-  as_edgelist(to_mode2(as_matrix(.data), similarity))
+  as_edgelist(to_mode2(as_tidygraph(.data), similarity)) 
 }
 
 #' @rdname modif_project
@@ -196,6 +230,11 @@ to_mode2.data.frame <- function(.data, similarity = c("count","jaccard","rand","
 #' to_ties(ison_adolescents)
 #' @export
 to_ties <- function(.data) UseMethod("to_ties")
+
+#' @export
+to_ties.default <- function(.data){
+  as_input(.data, to_ties)
+}
 
 #' @export
 to_ties.igraph <- function(.data){
@@ -209,26 +248,6 @@ to_ties.igraph <- function(.data){
   }
   igraph::V(out)$name <- gsub("\\|", "-", igraph::V(out)$name)
   out
-}
-
-#' @export
-to_ties.tbl_graph <- function(.data){
-  as_tidygraph(to_ties(as_igraph(.data)))
-}
-
-#' @export
-to_ties.network <- function(.data){
-  as_network(to_ties(as_igraph(.data)))
-}
-
-#' @export
-to_ties.data.frame <- function(.data){
-  as_edgelist(to_ties(as_igraph(.data)))
-}
-
-#' @export
-to_ties.matrix <- function(.data){
-  as_matrix(to_ties(as_igraph(.data)))
 }
 
 .net_waves <- function(.data){

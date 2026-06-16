@@ -23,6 +23,7 @@ print.diff_model <- function(x, ..., verbose = FALSE){
     x$R_new <- NULL
   }
   print(dplyr::tibble(x, ...))
+  invisible(x)
 }
 
 #' @export
@@ -43,6 +44,7 @@ make_learn_model <- function(out, .data) {
 #' @export
 print.learn_model <- function(x, ...){
   print(dplyr::tibble(x))
+  invisible(x)
 }
 
 #' @export

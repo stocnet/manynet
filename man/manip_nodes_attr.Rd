@@ -5,12 +5,10 @@
 \alias{add_node_attribute}
 \alias{mutate}
 \alias{mutate_nodes}
-\alias{select}
+\alias{rename_nodes}
 \alias{select_nodes}
 \alias{join_nodes}
 \alias{bind_node_attributes}
-\alias{rename_nodes}
-\alias{rename}
 \title{Manipulating node attributes}
 \usage{
 add_node_attribute(.data, attr_name, vector)
@@ -19,7 +17,7 @@ mutate(.data, ...)
 
 mutate_nodes(.data, ...)
 
-select(.data, ...)
+rename_nodes(.data, ...)
 
 select_nodes(.data, ...)
 
@@ -31,19 +29,16 @@ join_nodes(
 )
 
 bind_node_attributes(.data, object2)
-
-rename_nodes(.data, ...)
-
-rename(.data, ...)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
-\item matrix (adjacency or incidence) from \code{{base}} R
-\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
-\item igraph, from the \code{{igraph}} package
-\item network, from the \code{{network}} package
-\item tbl_graph, from the \code{{tidygraph}} package
+\item adjacency or incidence \code{matrix} from \code{{base}} R
+\item edgelist \code{data.frame} from \code{{base}} R or \code{tbl/tbl_df} from \code{{tibble}}
+\item stocnet \code{stocnet}, from the \code{{manynet}} package
+\item igraph \code{igraph}, from the \code{{igraph}} package
+\item network \code{network}, from the \code{{network}} package
+\item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
 
 \item{attr_name}{Character string naming a nodal attribute.
@@ -65,15 +60,31 @@ A data object of the same class as the function was given.
 \description{
 These functions allow users to add nodes attributes:
 \itemize{
-\item \code{add_node_attribute()}, \code{mutate()}, or \code{mutate_nodes()} offer ways to add
-a vector of values to a network as a nodal attribute.
-\item \code{rename_nodes()} and \code{rename()} rename nodal attributes.
-\item \code{bind_node_attributes()} appends all nodal attributes from one network to another,
-and \code{join_nodes()} merges all nodal attributes from one network to another.
+\item \code{add_node_attribute()} offers an \code{{igraph}}-style way to add a vector of values to a network as a nodal attribute.
+\item \code{mutate_nodes()} offers a \code{{tidyverse}}-style way to add one or more vectors of values to a network as nodal attributes.
+\item \code{rename_nodes()} offers a \code{{tidyverse}}-style way to rename nodal attributes.
+\item \code{select_nodes()} offers a \code{{tidyverse}}-style way to select a subset of nodal attributes.
+\item \code{join_nodes()} merges all nodal attributes from one network to another.
 }
 
 Note that while \verb{add_*()} functions operate similarly as comparable \code{{igraph}} functions,
 \verb{mutate*()}, \verb{bind*()}, etc work like \code{{tidyverse}} or \code{{dplyr}}-style functions.
+}
+\details{
+Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods for these functions:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{                   data.frame default igraph network stocnet tbl_graph
+add_node_attribute                  *      *       *                 *
+join_nodes                          *      *               *          
+mutate_nodes                        *      *       *       *         *
+select_nodes                *       *      *               *         *
+}\if{html}{\out{</div>}}
+
+If a method is not available for a particular class, but a default method is,
+the default method will attempt to coerce the object to a class for which a method is defined,
+and then coerce the output back to the original class.
+If no method is available for any class, an error will be thrown.
 }
 \examples{
   other <- create_filled(4) |> mutate(name = c("A", "B", "C", "D"))
@@ -83,11 +94,12 @@ Note that while \verb{add_*()} functions operate similarly as comparable \code{{
   join_nodes(another, other)
 }
 \seealso{
-Other nodes: 
+Other nodes:
 \code{\link{manip_nodes_num}}
 
-Other manipulations: 
+Other manipulations:
 \code{\link{manip_changes}},
+\code{\link{manip_global}},
 \code{\link{manip_info}},
 \code{\link{manip_nodes_num}},
 \code{\link{manip_ties_attr}},

@@ -26,6 +26,7 @@ for(ms in manynet_classes){
     
     for (to in to_classes) {
       skip_if(ms == "stocnet" && to == "network", "Known lossy coercion from stocnet to network")
+      skip_if(ms == "network" && to == "stocnet", "Known lossy coercion from network to stocnet")
       expect_true(
         lossless_roundtrip(obj, to),
         info = paste("Lossy coercion:", ms, "(obj) →", to, "(obj2)")

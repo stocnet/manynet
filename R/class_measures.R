@@ -8,7 +8,7 @@ make_node_measure <- function(out, .data) {
 make_tie_measure <- function(out, .data) {
   class(out) <- c("tie_measure", class(out))
   if(is_labelled(.data)){
-    tie_names <- attr(igraph::E(.data), "vnames")
+    tie_names <- attr(igraph::E(as_igraph(.data)), "vnames")
     if(is_directed(.data)) 
       names(out) <- gsub("\\|", "->", tie_names) else 
         names(out) <- gsub("\\|", "-", tie_names)
@@ -51,6 +51,7 @@ print.node_measure <- function(x, ...,
                  names = list(names(x)),
                  n = n)
   }
+  invisible(x)
 }
 
 #' @export
@@ -59,6 +60,7 @@ print.tie_measure <- function(x, ...,
                                digits = 3) {
   print_tblvec(y = round(as.numeric(x), digits = digits), 
                names = list(names(x)), n = n)
+  invisible(x)
 }
 
 #' @export
@@ -72,6 +74,7 @@ print.network_measure <- function(x, ...,
         names(y) <- paste("Mode", seq_along(attr(x, "mode")))
       print(y, digits = digits)
     }
+  invisible(x)
 }
 
 # @param FUN A function by which the values should be aggregated

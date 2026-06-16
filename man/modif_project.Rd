@@ -16,11 +16,12 @@ to_ties(.data)
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
-\item matrix (adjacency or incidence) from \code{{base}} R
-\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
-\item igraph, from the \code{{igraph}} package
-\item network, from the \code{{network}} package
-\item tbl_graph, from the \code{{tidygraph}} package
+\item adjacency or incidence \code{matrix} from \code{{base}} R
+\item edgelist \code{data.frame} from \code{{base}} R or \code{tbl/tbl_df} from \code{{tibble}}
+\item stocnet \code{stocnet}, from the \code{{manynet}} package
+\item igraph \code{igraph}, from the \code{{igraph}} package
+\item network \code{network}, from the \code{{network}} package
+\item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
 
 \item{similarity}{Method for establishing ties,
@@ -61,19 +62,43 @@ of the second node set's (e.g. columns) joint affiliations to nodes in the first
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{         data.frame igraph matrix network tbl_graph
-to_mode1          *      *      *       *         *
-to_mode2          *      *      *       *         *
-to_ties           *      *      *       *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{         data.frame default igraph matrix network tbl_graph
+to_mode1          *       *      *      *       *         *
+to_mode2          *       *      *      *       *         *
+to_ties                   *      *                         
 }\if{html}{\out{</div>}}
 }
+\section{Comparison of two-mode projection methods}{
+\tabular{lllll}{
+   Category \tab Feature \tab \code{manynet::to_mode1()}/\code{to_mode2()} \tab \code{igraph::bipartite_projection()} \tab \code{network}/\code{sna} manual \cr
+   \strong{Input} \tab Dedicated function \tab yes \tab yes \tab no \cr
+    \tab Accepted input classes \tab igraph, network, tidygraph, matrix, edgelist \tab igraph only \tab any (manual extraction) \cr
+    \tab Detects mode membership from \tab \code{mode} node attribute \tab \code{type} vertex attribute \tab \code{bipartite} network attr (positional) \cr
+   \strong{Projection} \tab Returns both projections at once \tab no — one per call \tab yes — list of two \tab two manual calls \cr
+    \tab Projects mode 1 (actors) \tab \code{to_mode1()} \tab \code{which = "true"} \tab \code{A \%*\% t(A)} \cr
+    \tab Projects mode 2 (events) \tab \code{to_mode2()} \tab \code{which = "false"} \tab \code{t(A) \%*\% A} \cr
+   \strong{Weights} \tab Raw co-membership counts \tab yes \tab yes (\code{multiplicity = TRUE}) \tab yes \cr
+    \tab Binary (unweighted) output \tab yes \tab yes (\code{multiplicity = FALSE}) \tab threshold manually \cr
+    \tab Jaccard normalisation \tab yes \tab no \tab code manually \cr
+    \tab Cosine normalisation \tab yes \tab no \tab code manually \cr
+   \strong{Attributes} \tab Retains node attributes \tab yes \tab yes \tab no — lost in matrix round-trip \cr
+    \tab Retains edge attributes \tab weight only \tab weight only \tab no \cr
+    \tab Removes self-loops automatically \tab yes \tab yes \tab \code{diag(P) <- 0} manually \cr
+   \strong{Output} \tab Output class matches input \tab yes \tab no \tab no \cr
+    \tab Directed projection support \tab limited \tab no — undirected only \tab yes — asymmetric matrix \cr
+   \strong{Usability} \tab Lines of code (basic case) \tab 1 \tab 1 \tab 4–6 \cr
+    \tab Lines of code (Jaccard weights) \tab 1 \tab ~8 manual \tab ~8 manual \cr
+    \tab Pipe-friendly \tab yes \tab with wrappers \tab no \cr
+}
+}
+
 \examples{
 to_mode1(ison_southern_women)
 to_mode2(ison_southern_women)
 to_ties(ison_adolescents)
 }
 \seealso{
-Other modifications: 
+Other modifications:
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},

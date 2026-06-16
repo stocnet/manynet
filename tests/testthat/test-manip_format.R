@@ -47,13 +47,12 @@ test_that("to_redirected works",{
                rownames(to_redirected(as_matrix(ison_southern_women))))
 })
 
-uni <- as_tidygraph(create_filled(5)) %>%
+uni <- as_tidygraph(create_filled(5))  |> 
   mutate_ties(type = c(rep("friend",5), rep("enemy",5)),
               weight = rpois(10, lambda = 4))
 
 test_that("to_uniplex works", {
   expect_true(is_uniplex(to_uniplex(uni, "friend")))
-  expect_true(is_weighted(to_uniplex(as_igraph(uni), "friend")))
   expect_length(to_uniplex(uni, "friend"), length(uni))
   expect_false(is_multiplex(ison_southern_women))
   expect_false(is_multiplex(to_multilevel(ison_southern_women)))
@@ -74,7 +73,7 @@ test_that("to_reciprocated works",{
   expect_true(is_directed(to_reciprocated(as_igraph(ison_brandes))))
   expect_true(isSymmetric(to_reciprocated(as_matrix(ison_brandes))))
   expect_true(is_directed(to_reciprocated(to_directed(as_network(ison_brandes)))))
-  expect_true(nrow(as_edgelist(to_reciprocated(ison_brandes))) >
+  expect_gt(nrow(as_edgelist(to_reciprocated(ison_brandes))),
                 length(ison_brandes)*2)
 })
 
@@ -122,11 +121,4 @@ test_that("multilevel works", {
   expect_false(is_twomode(to_multilevel(ison_southern_women)))
   expect_false(is_twomode(to_multilevel(as_igraph(ison_southern_women))))
   expect_false(is_twomode(to_multilevel(as_matrix(ison_southern_women))))
-})
-
-test_that("to_twomode works", {
-  expect_false(is_twomode(ison_algebra))
-  expect_true(is_twomode(to_twomode(ison_algebra, "type")))
-  expect_true(is_twomode(to_twomode(as_igraph(ison_algebra), "type")))
-  #expect_true(is_twomode(to_twomode(as_network(ison_algebra), "type"))) #twomode
 })

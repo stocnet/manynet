@@ -4,6 +4,7 @@
 \alias{manip_ties_num}
 \alias{add_ties}
 \alias{delete_ties}
+\alias{bind_ties}
 \alias{filter_ties}
 \title{Manipulating number of ties}
 \usage{
@@ -11,16 +12,19 @@ add_ties(.data, ties, attr_list = NULL)
 
 delete_ties(.data, ties)
 
+bind_ties(.data, ...)
+
 filter_ties(.data, ...)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
-\item matrix (adjacency or incidence) from \code{{base}} R
-\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
-\item igraph, from the \code{{igraph}} package
-\item network, from the \code{{network}} package
-\item tbl_graph, from the \code{{tidygraph}} package
+\item adjacency or incidence \code{matrix} from \code{{base}} R
+\item edgelist \code{data.frame} from \code{{base}} R or \code{tbl/tbl_df} from \code{{tibble}}
+\item stocnet \code{stocnet}, from the \code{{manynet}} package
+\item igraph \code{igraph}, from the \code{{igraph}} package
+\item network \code{network}, from the \code{{network}} package
+\item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
 
 \item{ties}{The number of ties to be added or an even list of ties.}
@@ -37,6 +41,7 @@ These functions allow users to add and delete ties:
 \itemize{
 \item \code{add_ties()} adds additional ties to network data
 \item \code{delete_ties()} deletes ties from network data
+\item \code{bind_ties()} appends the tie data from two networks
 \item \code{filter_ties()} subsets ties based on some tie attribute-related logical statement.
 }
 
@@ -45,12 +50,19 @@ While \verb{add_*()}/\verb{delete_*()} functions operate similarly as comparable
 }
 \details{
 Not all functions have methods available for all object classes.
-Below are the currently implemented S3 methods:
+Below are the currently implemented S3 methods for these functions:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{            igraph network tbl_graph
-add_ties         *       *         *
-delete_ties      *       *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{            default igraph network stocnet tbl_graph
+add_ties          *      *       *                 *
+bind_ties         *                      *         *
+delete_ties       *      *       *                 *
+filter_ties       *                                *
 }\if{html}{\out{</div>}}
+
+If a method is not available for a particular class, but a default method is,
+the default method will attempt to coerce the object to a class for which a method is defined,
+and then coerce the output back to the original class.
+If no method is available for any class, an error will be thrown.
 }
 \examples{
   other <- create_filled(4) |> mutate(name = c("A", "B", "C", "D"))
@@ -61,13 +73,14 @@ delete_ties(ison_adolescents, 3)
 delete_ties(ison_adolescents, "Alice|Sue")
 }
 \seealso{
-Other ties: 
+Other ties:
 \code{\link{manip_ties_attr}},
 \code{\link{modif_direction}},
 \code{\link{modif_weight}}
 
-Other manipulations: 
+Other manipulations:
 \code{\link{manip_changes}},
+\code{\link{manip_global}},
 \code{\link{manip_info}},
 \code{\link{manip_nodes_attr}},
 \code{\link{manip_nodes_num}},

@@ -49,7 +49,7 @@ The function can also prompt ego to interpret each node's attributes,
 or about how ego considers their alters to be related.
 }
 \seealso{
-Other makes: 
+Other makes:
 \code{\link{make_cran}},
 \code{\link{make_create}},
 \code{\link{make_explicit}},

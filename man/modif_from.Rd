@@ -17,7 +17,7 @@ from_waves(netlist)
 
 from_slices(netlist, remove.duplicates = FALSE)
 
-from_ties(netlist, netnames)
+from_ties(..., layer_names)
 }
 \arguments{
 \item{netlist}{A list of network, igraph, tidygraph, matrix, or edgelist objects.}
@@ -26,7 +26,11 @@ from_ties(netlist, netnames)
 By default FALSE.
 If TRUE, duplicated edges are removed.}
 
-\item{netnames}{A character vector of names for the different network objects,
+\item{...}{Two or more tidygraph or stocnet objects to be merged,
+each representing a different set of ties to be combined into a single
+multiplex network.}
+
+\item{layer_names}{A character vector of names for the different network objects,
 if not already named within the list.}
 }
 \value{
@@ -64,7 +68,7 @@ ison_adolescents |>
   from_slices()
 }
 \seealso{
-Other modifications: 
+Other modifications:
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_labels}},

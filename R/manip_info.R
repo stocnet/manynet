@@ -9,8 +9,13 @@
 #'   as well as definitions of the nodes and ties in the network.
 #'   Where available, this information is printed for tidygraph-class objects,
 #'   and can be used for printing a grand table in the `{grand}` package.
+#'   
+#'   - `add_info()` adds information attributes to the network.
+#'   - `mutate_info()` updates information attributes of the network.
+#'   - `net_attributes()` lists the information attributes of the network.
 #' @template param_data
 #' @family info
+#' @eval detail_avail(".*_info")
 #' @template fam_manip
 #' @param ... Named attributes. The following are currently recognised:
 #'   "name", "year", and "doi" of the network,
@@ -22,6 +27,11 @@
 #' add_info(ison_algebra, name = "Algebra")
 #' @export
 add_info <- function(.data, ...) UseMethod("add_info")
+
+#' @export
+add_info.default <- function(.data, ...){
+  as_input(.data, add_info, ...)
+}
 
 #' @export
 add_info.igraph <- function(.data, ...){
@@ -83,11 +93,29 @@ add_info.stocnet <- function(.data, ...){
 
 #' @rdname manip_info
 #' @export
-mutate_info <- function(.data, ...){
+mutate_info <- function(.data, ...) UseMethod("mutate_info")
+
+#' @export
+mutate_info.default <- function(.data, ...){
+  as_input(.data, mutate_info, ...)
+}
+
+#' @export
+mutate_info.igraph <- function(.data, ...){
   info <- list(...)
   out <- as_tidygraph(.data)
   for(item in names(info)){
     igraph::graph_attr(out, item) <- info[[item]]
+  }
+  out
+}
+
+#' @export
+mutate_info.stocnet <- function(.data, ...){
+  dots <- list(...)
+  out <- .data
+  for(item in names(dots)){
+    out$info[[item]] <- dots[[item]]
   }
   out
 }

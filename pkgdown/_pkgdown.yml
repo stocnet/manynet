@@ -71,6 +71,15 @@ reference:
     contents:
       - starts_with("play_")
       
+  - title: "Coercion"
+    desc: |
+      Functions for modifying networks into other classes.
+      All functions for coercing networks into other classes have the prefix `as_`.
+      Those ending in `list` are extractive, and so will result in some information loss,
+      but coercion to and especially between graph classes is as lossless as possible.
+    contents:
+      - starts_with("as_")
+
   - title: "Manipulating"
     desc: |
       Functions for manipulating aspects within networks,
@@ -82,22 +91,18 @@ reference:
       - starts_with("add_info")
   - subtitle: "Nodes"
     contents:
-      - starts_with("manip_nodes")
+      - manip_nodes_num
+      - manip_nodes_attr
   - subtitle: "Changes"
     contents:
-      - starts_with("add_changes")
+      - starts_with("manip_changes")
   - subtitle: "Ties"
     contents:
-      - starts_with("manip_ties")
-
-  - title: "Coercion"
-    desc: |
-      Functions for modifying networks into other classes.
-      All functions for coercing networks into other classes have the prefix `as_`.
-      Those ending in `list` are extractive, and so will result in some information loss,
-      but coercion to and especially between graph classes is as lossless as possible.
+      - manip_ties_num
+      - manip_ties_attr
+  - subtitle: "Globals"
     contents:
-      - starts_with("as_")
+      - starts_with("manip_global")
 
   - title: "Modifying"
     desc: |

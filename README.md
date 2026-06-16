@@ -31,17 +31,16 @@ vocabulary, syntax, and expected formats for data inputs and analytic
 outputs. Many of these packages only work on *some* types of networks
 (usually one-mode, simple, directed or undirected networks) for *some*
 types of analysis; if you want to analyse a different type of network or
-try a different analysis, a different package is needed. And they can
-rely on a very different visual language (and sometimes plotting
-engine), which can mess up your pretty presentation or paper. This can
-make learning and using network analysis tools in R challenging.
+try a different analysis, a different package is needed. This can make
+learning and using network analysis tools in R challenging.
 
 By contrast, `{manynet}` offers *many* analytic tools that work on
 *many* (if not most) types and kinds of networks. It helps researchers
 make, modify, mark, measure, and identify nodes’ motifs and memberships
 in networks. For graph drawing see
-[`{autograph}`](https://stocnet.github.io/autograph/), and for further
-testing and modelling capabilities see
+[`{autograph}`](https://stocnet.github.io/autograph/), for network
+analysis see [`{netrics}`](https://stocnet.github.io/netrics/) and for
+further testing and modelling capabilities see
 [`{migraph}`](https://stocnet.github.io/migraph/) and the other
 [stocnet](https://github.com/stocnet) packages.
 
@@ -197,12 +196,23 @@ directed to undirected via `to_undirected()`.
 
 <img src="https://www.jameshollway.com/post/manynet/README-directed_egs-1.png" alt="Graphs illustrating modification of a network's directedness"/>
 
+See also `to_directed()`, `to_named()`, `to_permuted()`,
+`to_reciprocated()`, `to_redirected()`, `to_signed()`,
+`to_undirected()`, `to_unnamed()`, `to_unsigned()`, `to_unweighted()`,
+`to_weighted()`.
+
 ### Transforming
 
 Transforming means changing the dimensions of the network, e.g. from a
-two-mode network to a one-mode projection via `to_mode1()`.
+two-mode network to a one-mode projection via `to_mode1()` or
+`to_mode2()`.
 
 <img src="https://www.jameshollway.com/post/manynet/README-projection_egs-1.png" alt="Graphs illustrating decomposition of a two-mode network into its projections"/>
+
+Compared with other packages, `{manynet}`’s `to_mode1()` and
+`to_mode2()` functions are more flexible and efficient, work with all
+input classes, offer additional weighting options (such as Jaccard or
+cosine normalisation), and retain node and edge attributes.
 
 ### Splitting and Joining
 
@@ -216,17 +226,10 @@ distinguishable as those `to_*()` functions that are named in the
 plural. Split data can be rejoined using the `from_*()` family of
 functions.
 
-See also `to_acyclic()`, `to_anti()`, `to_blocks()`, `to_components()`,
-`to_correlation()`, `to_cosine()`, `to_directed()`, `to_dominating()`,
-`to_ego()`, `to_egos()`, `to_eulerian()`, `to_giant()`, `to_matching()`,
-`to_mentoring()`, `to_mode1()`, `to_mode2()`, `to_multilevel()`,
-`to_named()`, `to_no_isolates()`, `to_no_missing()`, `to_onemode()`,
-`to_permuted()`, `to_reciprocated()`, `to_redirected()`, `to_signed()`,
-`to_simplex()`, `to_slices()`, `to_subgraph()`, `to_subgraphs()`,
-`to_ties()`, `to_time()`, `to_tree()`, `to_twomode()`,
-`to_undirected()`, `to_uniplex()`, `to_unnamed()`, `to_unsigned()`,
-`to_unweighted()`, `to_waves()`, `to_weighted()` and `from_egos()`,
-`from_slices()`, `from_subgraphs()`, `from_ties()`, `from_waves()`.
+See also `to_blocks()`, `to_components()`, `to_egos()`,
+`to_no_isolates()`, `to_slices()`, `to_subgraphs()`, `to_ties()`,
+`to_waves()` and `from_egos()`, `from_slices()`, `from_subgraphs()`,
+`from_ties()`, `from_waves()`.
 
 ## Installation
 
@@ -287,8 +290,10 @@ and uses the quickest `{igraph}` or `{network}` routines where
 available.
 
 `{manynet}` has inherited most of its core functionality from its
-maternal package, `{migraph}`. `{migraph}` continues to offer more
-analytic and modelling functions that builds upon the architecture
+maternal package, `{migraph}`, but has also devolved its visualisation
+capabilities to its sibling package, `{autograph}`, and its network
+analytic capabilities to its sibling package, `{netrics}`. `{migraph}`
+continues to offer modelling functions that builds upon the architecture
 provided by `{manynet}`. For more, please check out `{migraph}`
 directly.
 

@@ -1,3 +1,64 @@
+# manynet 2.1.0
+
+## Package
+
+- Updated exported registrations and reference documentation for expanded method coverage
+
+## Coercion
+
+- Added `as_globallist()` for extracting global variables from 'igraph' and 'stocnet' objects
+- Added `as_stocnet.data.frame()` for coercing edgelists to stocnet objects (closes #138)
+- Improved `make_stocnet()` construction, indexing, and validation of nodes, ties, changes, info, and globals
+- Improved `as_stocnet()` coercion for `data.frame` and `tbl_graph` inputs
+- Fixed #137 by extending time variable class validation to include integer and POSIXlt (thanks @auzaheta)
+- Fixed #140 and #141 by making sure `make_stocnet()` aborts early and informatively when node labels do not match (thanks @auzaheta)
+
+## Manipulating
+
+- Added `add_tie_attribute()`
+- Added `bind_nodes()` for adding nodes and ties from another network
+- Added `arrange_changes()` and `arrange_nodes()` as generics for reordering nodes and ties in a network
+- Added `gather_changes()` as a generic for gathering changes up to a time point
+- Added `rename_changes()` for renaming change variables and `rename_globals()` for renaming global variables
+  - Improved 'data.frame' and by extenion 'stocnet' `rename_*()` methods to rename variables when no arguments given
+- Added `select_ties()`, `select_changes()`, and `select_globals()` for selecting variables
+  - Improved 'data.frame' and by extenion 'stocnet' `select_*()` methods to reorder variables when no arguments given
+- Added `filter_nodes()`, `filter_ties()`, and `filter_changes()` as generics for filtering nodes, ties, and changes in a network
+- Added `summarise_ties()` for summarising tie variables
+- Added `join_nodes.stocnet()` for joining a nodelist to a stocnet object
+- Added 'stocnet' methods for `arrange_ties()`, `bind_ties()`, `mutate_nodes()`, `mutate_ties()`, and `rename_nodes()`
+- Renamed `add_changes()` to `bind_changes.tbl_graph()`
+  - Added `bind_changes.stocnet()` for binding on groups of changes to a stocnet object
+- Improved `from_ties()` to accept named arguments instead of a named list, improving consistency with other modifying functions
+  - Added `from_ties.stocnet()` for creating a multiplex stocnet object from more than one network, including handling of tie types as layers and carrying forward nodal attributes
+- Improved node filtering and reindexing behaviour in `stocnet` objects so ties and changes remain aligned
+- Improved all manipulating generics by adding .default methods that coerce to supported graph classes and then restore original classes, improving consistency across classes and reducing the need for users to coerce before manipulating
+
+## Modifying
+
+- Added `join_nodes()` for joining two nodelists
+- Added new 'stocnet' methods for common modifications
+- Added `mutate_globals()` for mutating global variables in a network
+- Improved many `to_*()` default methods to coerce through supported graph classes and then restore original classes
+- Improved conversion consistency across direction, projection, paths, plexity, correlation, and weight transformations
+- Fixed default dispatch in scope and transformation helpers, including `to_subgraph()`
+
+## Marking
+
+- Added `is_cognitive()` for identifying cognitive social structure networks
+- Added `is_egonet()` for identifying egocentric networks
+- Improved `is_*()` handling across `stocnet`, `igraph`, and `tbl_graph` inputs
+- Fixed several default `is_*()` methods to return logical values reliably after coercion
+- Fixed `is_dynamic.stocnet()` to look for more time-type variables
+- Fixed #135, which was due to faulty two-mode test (thanks @schochastics)
+
+## Describing
+
+- Added printing of the globals list for stocnet objects (closed #139)
+- Improved `net_nodes()`, `net_node_attributes()`, and `net_tie_attributes()` coverage for table and network-like inputs
+- Improved network metadata extraction defaults and naming behaviour across classes
+- Fixed `net_nodes.stocnet()` and `net_dims.stocnet()` to work with unlabelled networks
+
 # manynet 2.0.1
 
 ## Package

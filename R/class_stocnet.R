@@ -5,6 +5,7 @@
 #'   nodes, ties, (nodal) changes, and info metadata about the network as a whole.
 #'   This offers a consistent and flexible structure that enables more complex 
 #'   forms of networks to be contained in a single object.
+#'   
 #'   Unlike 'mnet' objects, 'stocnet' objects are not layered on top of 'igraph' or 'tbl_graph' objects,
 #'   but instead are a list of tibbles and metadata.
 #'   Unlike 'igraph' or 'tbl_graph' objects,
@@ -27,7 +28,7 @@
 #'   - 'directed' should be a logical indicating whether each layer is directed or undirected.
 #'   If there are multiple layers, this can be a named logical vector with the directedness of each layer, 
 #'   where the names correspond to the layer names.
-#'   - 'dependent' should be a character string indicating which layer is the dependent layer in a multiplex network.
+#'   - 'focal' should be a character string indicating which layer is the dependent layer in a multiplex network.
 #'   - 'doi' can be a character string with the DOI of the network, if it is from a published source.
 #'   - 'date' can be an integer of the year or the date the network represents.
 #'   - 'location' can be a character string with the location of the network.
@@ -78,6 +79,12 @@
 #'   and the sign of the tie can be determined from the weight.
 #'   Missing weights can be used to indicate missing ties in a network.
 #'   - 'time' should be a character or date vector of the time at which each tie is active in a longitudinal network.
+#' @section Globals:
+#'   There are several required names for the columns of the ties component of a stocnet object (if one is included).
+#'   - 'var' must be a string vector naming the global variable
+#'   - 'value' must be the new value that should be applied at that change (or incremented, as appropriate).
+#'   There may be an additional column:
+#'   - 'time' should be a character or date vector of the time at which each global attribute is updated.
 #' @section Printing: 
 #'   When printed, 'stocnet' objects will print to the console any information
 #'   stored about the names of the network, its modes, or layers.
@@ -98,37 +105,112 @@ NULL
 #'  This can include the name of the network, as well as the names of the
 #'  types of nodes and ties in the network.
 #'  For example, the info component could include a 'name' element with the name
-#'  of the network, a 'nodes' element with a character vector of the names of the types of
-#'  nodes in the network, and a 'ties' element with a character vector of
+#'  of the network, 
+#'  a 'modes' element with a character vector of the names of the types of
+#'  nodes in the network, 
+#'  and a 'layers' element with a character vector of
 #'  the names of the types of ties in the network.
 #'  By default NULL.
 #' @param nodes A tibble of nodes in the network, with one row per node
-#'   and one column for the node labels, which should be called 'name'.
-#'   Additional columns can be included for node attributes, such as 'active' for changing networks
-#'   and 'type' for multimodal networks.
+#'   and one column for the node labels, which should be called 'label'.
+#'   Additional columns can be included for node attributes, 
+#'   such as 'active' for changing networks
+#'   and 'mode' for multimodal networks.
 #'   By default NULL.
 #' @param ties A tibble of ties in the network, with one row per tie
 #'   and at least two columns for the node labels of the tie endpoints, which should be
 #'   called 'from' and 'to', even if the network is not directed.
-#'   Additional columns can be included for tie attributes, such as 'weight' for weighted networks
-#'   and 'type' for multiplex networks.
+#'   Additional columns can be included for tie attributes, 
+#'   such as 'weight' for weighted networks
+#'   and 'layer' for multiplex networks.
 #'   By default NULL.
 #' @param changes A tibble of nodal changes in the network, with one row
-#'   per change and at least three columns for the node label of the change, which should be called 'node',
-#'   the variable to which the change applies, which should be called 'var', and the
-#'   new value to be applied, which should be called 'value'.
-#'   Additional columns can be included for the time of the change, such as 'wave'
-#'   or 'time'.
+#'   per change and at least three columns for the node label of the change, 
+#'   which should be called 'node',
+#'   the variable to which the change applies, which should be called 'var', 
+#'   and the new value to be applied, which should be called 'value'.
+#'   Additional columns can be included for the time of the change, 
+#'   such as 'wave' or 'time'.
 #'   By default NULL.
+#' @param global A tibble of global variables in the network, with one row
+#'   per change and at least three columns for 
+#'   the variable to which the change applies, which should be called 'var', 
+#'   the time of the change, which should be called 'time',
+#'   and the new value to be applied, which should be called 'value'.
+#'   By default NULL.
+#' @examples
+#'   out <- make_stocnet(info = list(name = "Example Network", 
+#'                            modes = c("Person", "Organization"), 
+#'                            layers = c("Friendship", "Collaboration")),
+#'     nodes = data.frame(label = c("A", "B", "C"), 
+#'                        mode = c("Person", "Person", "Organization"),
+#'                        active = c(TRUE, FALSE, TRUE)),
+#'     ties = data.frame(from = c("A", "B"),
+#'                       to = c("B", "C"),
+#'                       weight = c(1, 2),
+#'                       layer = c("Friendship", "Collaboration")),
+#'     changes = data.frame(time = c(1, 2),
+#'                          node = c("A", "B"),
+#'                          var = c("active", "active"),
+#'                          value = c(FALSE, TRUE)))
 #' @export
-make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL, changes = NULL) {
-  list(
+make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL, 
+                         changes = NULL, global = NULL) {
+  out <- list(
     info = info,
-    nodes = nodes,
-    ties = ties,
-    changes = changes
-  ) |> 
-    structure(class = "stocnet")
+    nodes = `if`(is.null(nodes), NULL, dplyr::tibble(nodes)),
+    ties = `if`(is.null(ties), NULL, dplyr::tibble(ties)),
+    changes = `if`(is.null(changes), NULL, dplyr::tibble(changes)),
+    global = `if`(is.null(global), NULL, dplyr::tibble(global))
+  )
+  # make sure from and to are numeric indices of the nodes, not labels
+  if(!is.null(out$ties)) out <- index_ties(out)
+  if(!is.null(out$changes)) out <- index_changes(out)
+  out <- structure(out, class = c("stocnet", class(out)))
+  validate_stocnet(out)
+}
+
+index_ties <- function(.data){
+  out <- .data
+  if (is.null(out$ties) || nrow(out$ties) == 0) return(out)
+  if(!is.null(out$nodes) && "label" %in% names(out$nodes) &&
+     is.character(out$ties$from) && is.character(out$ties$to) &&
+     is.character(out$nodes$label)){
+    out$ties <- out$ties |>
+      dplyr::mutate(from = match(from, out$nodes$label),
+                    to = match(to, out$nodes$label))
+    if(anyNA(c(out$ties$from, out$ties$to))){
+      missing_nodes <- unique(c(.data$ties$from[is.na(out$ties$from)],
+                                .data$ties$to[is.na(out$ties$to)]))
+      snet_abort("Tie labels {missing_nodes} do not match existing node labels.")
+    }
+  }
+  if(is.numeric(out$ties$from) || is.numeric(out$ties$to)){
+    out$ties <- out$ties |>
+      dplyr::mutate(from = as.integer(from),
+                    to = as.integer(to))
+  }
+  out
+}
+
+index_changes <- function(.data){
+  out <- .data
+  if (is.null(out$changes) || nrow(out$changes) == 0) return(out)
+  out$changes <- .match_node_labels(out$nodes, out$changes, "node")
+  out
+}
+
+.match_node_labels <- function(nodes, x, col){
+  if(!is.null(nodes) && "label" %in% names(nodes) &&
+     is.character(x[[col]]) && is.character(nodes$label)){
+    existing_labels <- x[[col]]
+    x[[col]] <- match(x[[col]], nodes$label)
+    if(anyNA(x[[col]])) {
+      missing_nodes <- unique(existing_labels[is.na(x[[col]])])
+      snet_abort("Change nodes {missing_nodes} do not match existing node labels.")
+    }
+  }
+  x
 }
 
 #' @rdname make_stocnet
@@ -160,7 +242,20 @@ print.stocnet <- function(x, ..., n = 12) {
   if(!is.null(x$changes) && ncol(x$changes) >0){
     cli::cli_par()
     cli::cli_h3("Changes")
-    print(dplyr::as_tibble(x$changes),
+    changes <- dplyr::as_tibble(x$changes)
+    if("value" %in% names(changes))
+      changes$value <- as.value(changes$value)
+    print(dplyr::as_tibble(changes),
+          n = n)
+    cli::cli_end()
+  }
+  if(!is.null(x$global) && ncol(x$global) >0){
+    cli::cli_par()
+    cli::cli_h3("Global")
+    global <- dplyr::as_tibble(x$global)
+    if("value" %in% names(global))
+      global$value <- as.value(global$value)
+    print(dplyr::as_tibble(global),
           n = n)
     cli::cli_end()
   }
@@ -206,28 +301,39 @@ type_sum.value <- function(x, ...) {
 #' @noRd
 #' @export
 pillar_shaft.value <- function(x, ...) {
-  # Determine underlying class
-  underlying_class <- sapply(x, function(y) class(y[[1]]))
-  underlying_class <- dplyr::replace_values(underlying_class, 
-                                            "logical" ~ "lgl",
-                                            "character" ~ "chr",
-                                            "numeric" ~ "dbl",
-                                            "integer" ~ "int")
   
-  lengths <- sapply(x, length)
+  first_val <- function(y) {
+    if (is.list(y) && length(y) > 0) y[[1]] else y
+  }
   
-  # Value to print (only first element)
-  value_text <- lapply(x, function(y) if(length(y) == 1) y else "...")
+  underlying_class <- vapply(
+    x,
+    function(y) class(first_val(y))[1],
+    character(1)
+  )
   
-  # Type label exactly like tibble uses
+  underlying_class <- dplyr::replace_values(
+    underlying_class,
+    "logical"   ~ "lgl",
+    "character" ~ "chr",
+    "numeric"   ~ "dbl",
+    "integer"   ~ "int"
+  )
+  
+  value_text <- vapply(
+    x,
+    function(y) {
+      val <- first_val(y)
+      if(length(y) == 1) as.character(val) else "..."
+    },
+    character(1)
+  )
+  
   type_label <- paste0("<", underlying_class, ">")
-  
-  # Pillar requires the type label to be a *named* vector
-  type_vec <- c(type = pillar::style_subtle(type_label))
+  type_label <- pillar::style_subtle(type_label)
   
   pillar::new_pillar_shaft_simple(
-    paste0(value_text, type_vec),
+    paste0(value_text, type_label),
     align = "right"
   )
 }
-

@@ -224,7 +224,7 @@ collect_cran <- function(pkg = "all"){
 #' @export
 collect_pkg <- function(dir = getwd()) {
   
-  variations = c("<- function",
+  variations <- c("<- function",
                  " <- function",
                  "<-function",
                  " <-function")
@@ -402,7 +402,7 @@ collect_pkg <- function(dir = getwd()) {
     
     # remove row if it is from first to last
     sub_index <- mapply(
-      function(x, y) matrix(x[!apply(x, 1, diff) >= c(y - 2), ], ncol = 2),
+      function(x, y) matrix(x[apply(x, 1, diff) < c(y - 2), ], ncol = 2),
       sub_index, max_length, SIMPLIFY = FALSE)
     
     out <- list()
@@ -650,7 +650,7 @@ collect_pkg <- function(dir = getwd()) {
   # create igraph
   g1 <- igraph::graph_from_adjacency_matrix(
     as.matrix(network),
-    mode = c("directed"),
+    mode = "directed",
     weighted = TRUE,
     diag = TRUE,
     add.colnames = NULL,

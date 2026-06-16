@@ -180,7 +180,7 @@ play_diffusion <- function(.data,
   
   infected <- seeds # seeds are initial infected
   latent <- NULL # latent compartment starts empty
-  time = 0 # starting at 0
+  time <- 0 # starting at 0
   # initialise events table
   events <- data.frame(t = time, nodes = seeds, event = "I", exposure = NA)
   if(!is_list(.data)) sinit <- sum(.node_is_exposed(.data, infected)) else 
@@ -291,7 +291,7 @@ play_diffusion <- function(.data,
     if(fatality > 0)
       changes <- changes |> mutate(var = ifelse(value=="D", "active", var),
                                     value = ifelse(value=="D", FALSE, value))
-    .data <- add_changes(.data, changes)
+    .data <- bind_changes(.data, changes)
     .data
   }
 }
@@ -403,7 +403,7 @@ play_learning <- function(.data,
   if(is.logical(beliefs)) beliefs <- beliefs*1
   if(missing(steps)) steps <- n
   
-  t = 0
+  t <- 0
   out <- matrix(NA,steps+1,length(beliefs))
   out[1,] <- beliefs
   trust_mat <- as_matrix(.data)/rowSums(as_matrix(.data))
@@ -415,7 +415,7 @@ play_learning <- function(.data,
     listen_mat[is.nan(listen_mat)] <- 0
     beliefs <- listen_mat %*% beliefs
     if(all(abs(old_beliefs - beliefs) < epsilon)) break
-    t = t+1
+    t <- t+1
     out[t+1,] <- beliefs
     if(t==steps) break
   }
@@ -466,7 +466,7 @@ play_segregation <- function(.data,
   if(length(heterophily)!=n) snet_abort("Heterophily threshold must be the same length as the number of nodes in the network.")
   swtch <- function(x,i,j) {x[c(i,j)] <- x[c(j,i)]; x} 
   
-  t = 0
+  t <- 0
   temp <- .data
   moved <- NULL
   while(steps > t){
@@ -602,7 +602,7 @@ play_segregation <- function(.data,
   if(is_changing(.data)){
     t <- time
     recovered <- as_changelist(.data) |> 
-      dplyr::filter(time <= t & value %in% c("R")) |>
+      dplyr::filter(time <= t & value %in% "R") |>
       dplyr::group_by(node) |>
       dplyr::mutate(n = dplyr::n()) |>
       dplyr::filter(n == 1 & value == "R")

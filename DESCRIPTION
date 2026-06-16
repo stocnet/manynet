@@ -1,7 +1,6 @@
 Package: manynet
 Title: Many Ways to Make, Modify, Mark, and Measure Myriad Networks
-Version: 2.0.1
-Date: 2026-04-04
+Version: 2.1.0
 Description: Many tools for making, modifying, marking, measuring, 
    and motifs and memberships of many different types of networks.
    All functions operate with matrices, edge lists, and 'igraph', 'network', and 'tidygraph' objects,
@@ -15,7 +14,6 @@ License: MIT + file LICENSE
 Language: en-GB
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.3
 Depends: R (>= 4.1.0)
 Imports:
     cli,
@@ -46,6 +44,9 @@ Authors@R:
              comment = c(ORCID = "0000-0003-3420-6085")),
       person(given = "Christian",
              family = "Steglich",
+             role = "ctb"),
+      person(given = "Alvaro",
+             family = "Uzaheta",
              role = "ctb")
     )
 Roxygen: list(markdown = TRUE, roclets = c("namespace", "rd"))
@@ -61,3 +62,4 @@ Config/Needs/website:
 Config/testthat/parallel: true
 Config/testthat/edition: 3
 Config/testthat/start-first: mark_is 
+Config/roxygen2/version: 8.0.0

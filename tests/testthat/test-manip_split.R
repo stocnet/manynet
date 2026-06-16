@@ -5,19 +5,19 @@ egos <- ison_adolescents %>%
 
 test_that("to_ and from_ egos works", {
   expect_length(to_egos(ison_brandes), length(ison_brandes))
-  expect_equal(length(to_egos(ison_brandes)), length(to_egos(ison_brandes, 2)))
-  expect_equal(length(egos), length(from_egos(to_egos(egos))))
+  expect_length(to_egos(ison_brandes), length(to_egos(ison_brandes, 2)))
+  expect_length(egos, length(from_egos(to_egos(egos))))
   expect_s3_class(to_egos(egos)[[1]], "tbl_graph")
   expect_s3_class(from_egos(to_egos(egos)), "tbl_graph")
 })
 
-unicorn <- ison_adolescents %>%
-    tidygraph::activate(nodes) %>%
+unicorn <- ison_adolescents |> 
+    tidygraph::activate(nodes) |> 
     mutate(unicorn = rep(c("yes", "no"), 4))
 
 test_that("to_ and from_ subgraphs works", {
   expect_length(to_subgraphs(unicorn, "unicorn"), 2)
-  expect_equal(length(from_subgraphs(to_subgraphs(unicorn, "unicorn"))),
+  expect_length(from_subgraphs(to_subgraphs(unicorn, "unicorn")),
                length(unicorn))
   expect_s3_class(to_subgraphs(unicorn, "unicorn")[[1]],
                   "tbl_graph")
@@ -37,7 +37,6 @@ wave <- ison_adolescents %>%
     mutate(wave = sample(1995:1998, 10, replace = TRUE))
 
 test_that("to_waves works", {
-  expect_equal(class(to_waves(wave)), "list")
   expect_length(to_waves(wave), 4)
   expect_length(to_waves(wave, panels = c(1995, 1996)), 2)
   expect_length(from_waves(to_waves(wave)), 8)
@@ -67,8 +66,7 @@ slice <- ison_adolescents %>%
 
 test_that("to_ and from_ slices works", {
   expect_length(to_slices(slice, slice = 7), length(ison_adolescents))
-  expect_true(length(igraph::edge_attr(to_slices(slice, slice = 7), "weight"))
-              < 7)
+  expect_lt(length(igraph::edge_attr(to_slices(slice, slice = 7), "weight")), 7)
   expect_length(to_slices(slice, slice = c(5, 7)), 2)
-  expect_s3_class(to_slices(slice, slice = 7), "tbl_graph")
+  expect_s3_class(to_slices(slice, slice = 7), "igraph")
 })

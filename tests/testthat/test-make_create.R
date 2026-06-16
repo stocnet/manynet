@@ -5,6 +5,7 @@ for(fn in names(create_funs)) {
   # One-mode
   test_that(paste(fn, "creates an object with the correct number of nodes"), {
     expect_values(net_nodes(create_funs[[fn]](10)), 10)
+    expect_s3_class(create_funs[[fn]](10), "igraph")
   })
   test_that(paste(fn, "creates an object with the correct directedness"), {
     expect_false(is_directed(create_funs[[fn]](10)))
@@ -62,7 +63,7 @@ test_that("create_wheel works", {
 })
 
 test_that("star creation works", {
-  expect_true(!is_twomode(create_star(5)))
+  expect_false(is_twomode(create_star(5)))
   expect_true(is_twomode(create_star(c(5,5))))
   expect_equal(unname(as_matrix(create_star(c(2,2), FALSE))),
                matrix(c(1,1,0,0),2,2))
@@ -72,7 +73,7 @@ test_that("star creation works", {
 })
 
 test_that("tree creation works", {
-  expect_true(!is_twomode(create_tree(5)))
+  expect_false(is_twomode(create_tree(5)))
   expect_true(is_twomode(create_tree(c(5,6))))
   expect_equal(unname(as_matrix(create_tree(c(2,2)))), matrix(c(1,1,1,0),2,2))
   expect_error(create_tree(c(5,5,5)), "single integer")

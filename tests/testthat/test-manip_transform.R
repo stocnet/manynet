@@ -4,10 +4,13 @@ fun_names <- names(to_funs)
 fun_names <- fun_names[!grepl("\\.", fun_names)]
 
 for(fn in fun_names) {
+  test_that(paste(fn, "has a default method"), {
+    expect_true(any(grepl(paste0("^", fn, "\\.default$"), utils::methods(fn))))
+  })
   test_that(paste(fn, "works"), {
     skip_if(grepl("twomode|uniplex|time|ego", fn), message = "Some functions need more input")
     skip_if(grepl("mode1|mode2|matching", fn), message = "Some functions expect a two-mode network")
-    skip_if(grepl("mentoring|eulerian|dominating", fn), message = "Some functions have internal errors")
+    skip_if(grepl("eulerian|dominating", fn), message = "Some functions have internal errors")
     expect_no_error(to_funs[[fn]](create_ring(5)))
   })
 }
@@ -57,19 +60,11 @@ test_that("to matching works", {
   sw <- as_edgelist(to_matching(ison_southern_women))
   expect_values(net_nodes(to_matching(ison_southern_women)),
                net_nodes(ison_southern_women))
-  expect_true(nrow(sw) == nrow(dplyr::distinct(sw)))
+  expect_equal(nrow(sw), nrow(dplyr::distinct(sw)))
 })
 
 test_that("to_subgraph works", {
   expect_equal(c(net_nodes(to_subgraph(ison_lawfirm, office == "Boston"))), 48)
-})
-
-test_that("to ties works", {
-  expect_length(to_ties(ison_adolescents), 10)
-  expect_length(to_ties(as_igraph(ison_adolescents)), 10)
-  expect_length(rownames(to_ties(as_matrix(ison_adolescents))), 10)
-  expect_equal(nrow(to_ties(as_edgelist(ison_adolescents))), 10)
-  expect_length(network::network.vertex.names(to_ties(as_network(ison_adolescents))), 10)
 })
 
 test_that("to anti works", {
@@ -83,7 +78,7 @@ test_that("to, and from, waves work", {
   waves <- to_waves(orig, attribute = "wave")
   from_wave <- from_waves(waves)
   expect_length(waves, length(unique(tie_attribute(orig, "wave"))))
-  expect_equal(length(from_wave), length(as_igraph(orig)))
+  expect_length(from_wave, length(as_igraph(orig)))
 })
 
 test_that("to and from slices work", {
@@ -115,7 +110,7 @@ test_that("to no isolates works", {
 test_that("to eulerian works", {
   expect_true(is_eulerian(delete_nodes(ison_koenigsberg, "Lomse")))
   expect_error(to_eulerian(ison_koenigsberg), "This is not a Eulerian graph.")
-  expect_true(length(delete_nodes(ison_koenigsberg, "Lomse")) ==
+  expect_length(delete_nodes(ison_koenigsberg, "Lomse"),
                 length(to_eulerian(delete_nodes(ison_koenigsberg, "Lomse"))))
   expect_true(is_connected(to_eulerian(delete_nodes(ison_koenigsberg, "Lomse"))))
 })

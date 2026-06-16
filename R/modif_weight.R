@@ -38,6 +38,11 @@ to_unsigned <- function(.data,
                         keep = c("positive", "negative")) UseMethod("to_unsigned")
 
 #' @export
+to_unsigned.default <- function(.data, keep = c("positive", "negative")){
+  as_input(.data, to_unsigned, keep = keep)
+}
+
+#' @export
 to_unsigned.matrix <- function(.data, 
                                keep = c("positive", "negative")){
   keep <- match.arg(keep)
@@ -104,6 +109,11 @@ to_unsigned.network <- function(.data,
 to_unweighted <- function(.data, threshold = 1) UseMethod("to_unweighted")
 
 #' @export
+to_unweighted.default <- function(.data, threshold = 1){
+  as_input(.data, to_unweighted, threshold = threshold)
+}
+
+#' @export
 to_unweighted.tbl_graph <- function(.data, threshold = 1) {
   if(is_weighted(.data)){
     edges <- weight <- NULL
@@ -138,6 +148,11 @@ to_unweighted.data.frame <- function(.data, threshold = 1) {
 #' @param mark A mark (logical vector) the length of the ties in the network.
 #' @export
 to_signed <- function(.data, mark = NULL) UseMethod("to_signed")
+
+#' @export
+to_signed.default <- function(.data, mark = NULL){
+  as_input(.data, to_signed, mark = mark)
+}
 
 #' @export
 to_signed.matrix <- function(.data, mark = NULL){
@@ -187,6 +202,11 @@ to_signed.network <- function(.data, mark = NULL){
 #'   Poisson distribution with \eqn{\lambda = 4}.
 #' @export
 to_weighted <- function(.data, measure = NULL) UseMethod("to_weighted")
+
+#' @export
+to_weighted.default <- function(.data, measure = NULL){
+  as_input(.data, to_weighted, measure = measure)
+}
 
 #' @export
 to_weighted.tbl_graph <- function(.data, measure = NULL){

@@ -19,8 +19,8 @@ for(fn in names(gen_funs)) {
 }
 
 test_that("random creation works", {
-  expect_false(isTRUE(all.equal(generate_random(4,.3), generate_random(4,.3))))
-  expect_false(isTRUE(all.equal(generate_random(c(2,4),.3), generate_random(c(2,4),.3))))
+  expect_false(isTRUE(all.equal(generate_random(4,0.3), generate_random(4,0.3))))
+  expect_false(isTRUE(all.equal(generate_random(c(2,4),0.3), generate_random(c(2,4),0.3))))
   expect_error(generate_random(c(1,2,3)), "must be of length")
   # Bipartite graph
   expect_s3_class(generate_random(ison_southern_women, 0.4), "igraph")

@@ -6,6 +6,7 @@
 \alias{as_changelist}
 \alias{as_edgelist}
 \alias{as_infolist}
+\alias{as_globallist}
 \alias{as_matrix}
 \title{Coercing into lists or matrices}
 \usage{
@@ -17,16 +18,19 @@ as_edgelist(.data, twomode = FALSE)
 
 as_infolist(.data)
 
+as_globallist(.data)
+
 as_matrix(.data, twomode = NULL)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
-\item matrix (adjacency or incidence) from \code{{base}} R
-\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
-\item igraph, from the \code{{igraph}} package
-\item network, from the \code{{network}} package
-\item tbl_graph, from the \code{{tidygraph}} package
+\item adjacency or incidence \code{matrix} from \code{{base}} R
+\item edgelist \code{data.frame} from \code{{base}} R or \code{tbl/tbl_df} from \code{{tibble}}
+\item stocnet \code{stocnet}, from the \code{{manynet}} package
+\item igraph \code{igraph}, from the \code{{igraph}} package
+\item network \code{network}, from the \code{{network}} package
+\item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
 
 \item{twomode}{Logical option used to override heuristics for
@@ -40,12 +44,14 @@ The currently implemented coercions or translations are:
 \if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame diff_model igraph matrix network network.goldfish
 as_changelist                            *              *                 
 as_edgelist            *                 *      *       *                *
+as_globallist                            *                                
 as_infolist                              *              *                 
 as_matrix              *          *      *      *       *                *
 as_nodelist                              *              *                 
               siena stocnet tbl_graph
 as_changelist             *         *
 as_edgelist       *       *         *
+as_globallist             *          
 as_infolist               *         *
 as_matrix         *       *         *
 as_nodelist               *         *
@@ -58,9 +64,13 @@ and translating the information contained in the original object:
 \item \code{as_edgelist()} coerces the object into an edgelist, as data frames or tibbles.
 \item \code{as_nodelist()} coerces the object into a nodelist, as a data frame or tibble.
 \item \code{as_changelist()} coerces the object into a changelist, as a data frame or tibble.
+\item \code{as_globallist()} coerces the object into a globallist, as a data frame or tibble.
 \item \code{as_infolist()} coerces the object into a list of network-level information,
 such as the names of the nodes and ties, if not given in the nodelist or edgelist.
 \item \code{as_matrix()} coerces the object into an adjacency (one-mode/unipartite) or incidence (two-mode/bipartite) matrix.
+If the network is a cognitive social structure (i.e. the edgelist contains a 'by' column
+indicating who reported/recorded each tie), \code{as_matrix()} returns a three-dimensional array
+instead, with dimensions for senders, receivers, and reporters.
 }
 
 These coercions are extractive in the sense that they will lose any information that cannot be contained in the target format.
@@ -92,7 +102,7 @@ as_tidygraph(test)
 as_network(test)
 }
 \seealso{
-Other coercions: 
+Other coercions:
 \code{\link{coerce_graph}}
 }
 \concept{coercions}

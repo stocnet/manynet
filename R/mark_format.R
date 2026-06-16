@@ -14,6 +14,7 @@
 #'   - `is_egonet()` marks networks TRUE if it is a list of networks where each
 #'   network contains only one node and its ties.
 #' @template param_data
+#' @eval detail_avail("is_(twomode|labelled|attributed|egonet)")
 #' @family marks
 NULL
 
@@ -23,6 +24,11 @@ NULL
 #' is_twomode(create_filled(c(2,2)))
 #' @export
 is_twomode <- function(.data) UseMethod("is_twomode")
+
+#' @export
+is_twomode.default <- function(.data) {
+  is_twomode(as_igraph(.data))
+}
 
 #' @export
 is_twomode.igraph <- function(.data) {
@@ -81,6 +87,11 @@ is_twomode.list <- function(.data) {
 is_labelled <- function(.data) UseMethod("is_labelled")
 
 #' @export
+is_labelled.default <- function(.data) {
+  is_labelled(as_igraph(.data))
+}
+
+#' @export
 is_labelled.igraph <- function(.data) {
   igraph::is_named(.data)
 }
@@ -122,15 +133,22 @@ is_labelled.list <- function(.data) {
 #' @examples
 #' is_attributed(ison_algebra)
 #' @export
-is_attributed <- function(.data) {
-  length(setdiff(net_node_attributes(.data), c("type","name")))!=0
+is_attributed <- function(.data) UseMethod("is_attributed")
+
+#' @export
+is_attributed.default <- function(.data) {
+  length(setdiff(net_node_attributes(.data), c("type","mode",
+                                               "name","label")))!=0
 }
 
 #' @rdname mark_format_node
 #' @examples 
 #' is_egonet(fict_starwars)
 #' @export
-is_egonet <- function(.data) {
+is_egonet <- function(.data) UseMethod("is_egonet")
+
+#' @export
+is_egonet.default <- function(.data) {
   if(!is_list(.data)) return(FALSE) else if (all(unique(names(.data)) != "")) {
     length(names(.data)) == length(unique(unlist(unname(lapply(.data, 
                                                                manynet::node_names))))) &
@@ -165,6 +183,7 @@ is_egonet <- function(.data) {
 #'   sender and receiver.
 #'   - `is_uniplex()` marks networks TRUE if it is neither complex nor multiplex.
 #' @template param_data
+#' @eval detail_avail("is_(weighted|directed|signed|complex|multiplex|uniplex)")
 #' @family marks
 NULL
 
@@ -174,6 +193,11 @@ NULL
 #' is_weighted(create_tree(3))
 #' @export
 is_weighted <- function(.data) UseMethod("is_weighted")
+
+#' @export
+is_weighted.default <- function(.data) {
+  as_input(.data, is_weighted)
+}
 
 #' @export
 is_weighted.igraph <- function(.data) {
@@ -213,6 +237,11 @@ is_weighted.data.frame <- function(.data) {
 #' is_directed(create_tree(2, directed = TRUE))
 #' @export
 is_directed <- function(.data) UseMethod("is_directed")
+
+#' @export
+is_directed.default <- function(.data) {
+  as_input(.data, is_directed)
+}
 
 #' @export
 is_directed.data.frame <- function(.data) {
@@ -256,6 +285,11 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)
   abs(x - round(x)) < tol
 
 #' @export
+is_signed.default <- function(.data) {
+  is_signed(as_igraph(.data))
+}
+
+#' @export
 is_signed.data.frame <- function(.data) {
   if(ncol(.data) <= 2) FALSE else 
     any(.data[,3] < 0)
@@ -295,6 +329,11 @@ is_signed.network <- function(.data) {
 #' is_complex(create_lattice(4))
 #' @export
 is_complex <- function(.data) UseMethod("is_complex")
+
+#' @export
+is_complex.default <- function(.data) {
+  is_complex(as_igraph(.data))
+}
 
 #' @export
 is_complex.igraph <- function(.data) {
@@ -341,6 +380,11 @@ is_complex.list <- function(.data) {
 is_multiplex <- function(.data) UseMethod("is_multiplex")
 
 #' @export
+is_multiplex.default <- function(.data) {
+  is_multiplex(as_igraph(.data))
+}
+
+#' @export
 is_multiplex.matrix <- function(.data) {
   FALSE
 }
@@ -383,69 +427,67 @@ is_multiplex.data.frame <- function(.data) {
 #' @examples
 #' is_uniplex(create_star(3))
 #' @export
-is_uniplex <- function(.data) {
-  obj <- as_igraph(.data)
-  igraph::is_simple(obj)
+is_uniplex <- function(.data) UseMethod("is_uniplex")
+
+#' @export
+is_uniplex.default <- function(.data) {
+  is_uniplex(as_igraph(.data))
 }
 
-# Tie Formats ####
+#' @export
+is_uniplex.igraph <- function(.data) {
+  igraph::is_simple(.data)
+}
 
-#' Marking networks change formats
-#' @name mark_format_change
+# Cognitive Formats ####
+
+#' Marking networks cognitive formats
+#' @name mark_format_cognitive
 #' @description
 #'   These functions implement logical tests for various network properties.
 #'   All `is_*()` functions return a logical scalar (TRUE or FALSE).
 #'   
-#'   - `is_longitudinal()` marks networks TRUE if they contain multiple waves of data.
-#'   - `is_dynamic()` marks networks TRUE if they contain time-stamped data.
-#'   - `is_changing()` marks networks TRUE if they contain any nodal changes.
+#'   - `is_cognitive()` marks networks TRUE if they are cognitive social structures,
+#'   i.e. where the edgelist contains a 'by' column indicating who reported/recorded
+#'   each tie, in addition to the 'from' and 'to' columns.
 #' @template param_data
 #' @family marks
 NULL
 
-#' @rdname mark_format_change
+#' @rdname mark_format_cognitive
 #' @examples
-#' is_longitudinal(create_tree(5, 3))
+#' is_cognitive(create_filled(3))
 #' @export
-is_longitudinal <- function(.data) {
-  if(is_manynet(.data)) {
-    # ig <- as_igraph(.data)
-    # catts <- names(igraph::graph_attr(ig, "changes"))
-    return("wave" %in% net_tie_attributes(.data) | 
-             "panel" %in% net_tie_attributes(.data))
-  } else if(is_list(.data)){
-    all(lapply(.data, net_nodes)==net_nodes(.data[[1]]))
-  } 
-}
-
-#' @rdname mark_format_change
-#' @examples 
-#' is_dynamic(create_tree(3))
-#' @export
-is_dynamic <- function(.data) {
-  atts <- net_tie_attributes(.data)
-  "time" %in% atts | "beg" %in% atts | "begin" %in% atts | "start" %in% atts
-}
-
-#' @rdname mark_format_change
-#' @examples 
-#' is_changing(fict_starwars)
-#' @export
-is_changing <- function(.data) UseMethod("is_changing")
+is_cognitive <- function(.data) UseMethod("is_cognitive")
 
 #' @export
-is_changing.igraph <- function(.data) {
-  "changes" %in% igraph::graph_attr_names(.data)
+is_cognitive.default <- function(.data) {
+  is_cognitive.igraph(as_igraph(.data))
 }
 
 #' @export
-is_changing.stocnet <- function(.data) {
-  "changes" %in% names(.data)
+is_cognitive.data.frame <- function(.data) {
+  all(c("from", "to", "by") %in% names(.data))
 }
 
 #' @export
-is_changing.diff_model <- function(.data) {
-  is_changing.igraph(as_igraph(.data))
+is_cognitive.igraph <- function(.data) {
+  "by" %in% igraph::edge_attr_names(.data)
+}
+
+#' @export
+is_cognitive.network <- function(.data) {
+  "by" %in% network::list.edge.attributes(.data)
+}
+
+#' @export
+is_cognitive.matrix <- function(.data) {
+  length(dim(.data)) == 3
+}
+
+#' @export
+is_cognitive.stocnet <- function(.data) {
+  "by" %in% names(.data$ties)
 }
 
 # Helper functions ----

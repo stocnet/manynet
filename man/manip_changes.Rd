@@ -2,24 +2,30 @@
 % Please edit documentation in R/manip_changes.R
 \name{manip_changes}
 \alias{manip_changes}
-\alias{add_changes}
 \alias{delete_changes}
 \alias{mutate_changes}
+\alias{bind_changes}
 \alias{filter_changes}
 \alias{select_changes}
+\alias{arrange_changes}
+\alias{rename_changes}
 \alias{gather_changes}
 \alias{apply_changes}
 \title{Manipulating changes to nodes over time}
 \usage{
-add_changes(.data, changes)
-
 delete_changes(.data)
 
 mutate_changes(.data, ...)
 
+bind_changes(.data, changes, var, ...)
+
 filter_changes(.data, ..., .by = NULL)
 
 select_changes(.data, ..., .by = NULL)
+
+arrange_changes(.data, ...)
+
+rename_changes(.data, ...)
 
 gather_changes(.data, time)
 
@@ -28,19 +34,24 @@ apply_changes(.data, time)
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
-\item matrix (adjacency or incidence) from \code{{base}} R
-\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
-\item igraph, from the \code{{igraph}} package
-\item network, from the \code{{network}} package
-\item tbl_graph, from the \code{{tidygraph}} package
+\item adjacency or incidence \code{matrix} from \code{{base}} R
+\item edgelist \code{data.frame} from \code{{base}} R or \code{tbl/tbl_df} from \code{{tibble}}
+\item stocnet \code{stocnet}, from the \code{{manynet}} package
+\item igraph \code{igraph}, from the \code{{igraph}} package
+\item network \code{network}, from the \code{{network}} package
+\item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
 
-\item{changes}{A data frame of changes.
-Ideally this will be in the form of "wave", "node", "var", and "value",
-but there are internal routines from some otherwise common formats.
-A data frame of composition change can be just two columns.}
-
 \item{...}{Additional parameters and arguments passed on internally.}
+
+\item{changes}{A data frame containing the changes to be added.
+This should have columns \code{time}, \code{node} (labelled),
+\code{var} (referencing an existing nodal attribute),
+and \code{value} (which can be of any class).}
+
+\item{var}{A character string specifying the nodal variable to which the changes apply,
+if not already specified in the \code{changes} data frame. This is only used
+when the \code{changes} data frame does not already have a \code{var} column, and is ignored otherwise.}
 
 \item{.by}{An attribute name to join objects by. By default, NULL.}
 
@@ -54,7 +65,7 @@ These functions offer ways to modify data held about how nodes
 change over time.
 They include:
 \itemize{
-\item \code{add_changes()} adds a table of changes to the nodes of a network.
+\item \code{bind_changes()} adds a table of changes to the nodes of a network.
 \item \code{mutate_changes()} can be used to update network changes.
 \item \code{filter_changes()} is used to subset network changes.
 \item \code{gather_changes()} is similar to \code{filter_changes()},
@@ -68,9 +79,28 @@ composition of a network (when nodes are present or absent over time),
 though the function can flexibly accommodate changes in other
 nodal attributes.
 }
+\details{
+Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods for these functions:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{                data.frame default igraph stocnet tbl_graph
+apply_changes                    *                        *
+arrange_changes                  *      *       *          
+bind_changes                     *              *         *
+delete_changes                   *      *       *          
+filter_changes                   *      *       *          
+gather_changes                   *      *                  
+mutate_changes                   *              *         *
+rename_changes           *       *      *       *          
+select_changes           *       *      *       *          
+}\if{html}{\out{</div>}}
+
+If a method is not available for a particular class, but a default method is,
+the default method will attempt to coerce the object to a class for which a method is defined,
+and then coerce the output back to the original class.
+If no method is available for any class, an error will be thrown.
+}
 \examples{
-add_changes(ison_algebra, 
-            data.frame(wave = 2, node = 1, var = "active", value = FALSE))
 filter_changes(fict_starwars, node == "Anakin")
 select_changes(fict_starwars, node)
 gather_changes(fict_starwars, time = 3)
@@ -79,7 +109,11 @@ collect_changes(fict_starwars, time = 3)
 \seealso{
 \code{\link[=to_time]{to_time()}}
 
-Other manipulations: 
+Other changes:
+\code{\link{mark_format_change}}
+
+Other manipulations:
+\code{\link{manip_global}},
 \code{\link{manip_info}},
 \code{\link{manip_nodes_attr}},
 \code{\link{manip_nodes_num}},

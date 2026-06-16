@@ -44,6 +44,11 @@ NULL
 to_directed <- function(.data) UseMethod("to_directed")
 
 #' @export
+to_directed.default <- function(.data){
+  as_input(.data, to_directed)
+}
+
+#' @export
 to_directed.igraph <- function(.data) {
   if(!is_directed.igraph(.data)){
     snet_info("Directions are assigned to existing ties at random.")
@@ -51,39 +56,19 @@ to_directed.igraph <- function(.data) {
   } else .data
 }
 
-#' @export
-to_directed.tbl_graph <- function(.data) {
-  as_tidygraph(to_directed(as_igraph(.data)))
-}
-
-#' @export
-to_directed.matrix <- function(.data) {
-  as_matrix(to_directed(as_igraph(.data)))
-}
-
-#' @export
-to_directed.network <- function(.data) {
-  as_network(to_directed(as_igraph(.data)))
-}
-
-#' @export
-to_directed.data.frame <- function(.data) {
-  as_edgelist(to_directed(as_igraph(.data)))
-}
-
 #' @rdname modif_direction
 #' @export
 to_undirected <- function(.data) UseMethod("to_undirected")
+
+#' @export
+to_undirected.default <- function(.data){
+  as_input(.data, to_undirected)
+}
 
 #' @importFrom igraph as.undirected
 #' @export
 to_undirected.igraph <- function(.data) {
   igraph::as_undirected(.data)
-}
-
-#' @export
-to_undirected.tbl_graph <- function(.data) {
-  as_tidygraph(igraph::as_undirected(.data))
 }
 
 #' @export
@@ -99,11 +84,6 @@ to_undirected.matrix <- function(.data) {
   } else ((.data + t(.data)) > 0) * 1
 }
 
-#' @export
-to_undirected.data.frame <- function(.data) {
-  as_edgelist(to_undirected(as_igraph(.data)))
-}
-
 #' @rdname modif_direction 
 #' @importFrom igraph reverse_edges
 #' @importFrom tidygraph reroute
@@ -111,8 +91,8 @@ to_undirected.data.frame <- function(.data) {
 to_redirected <- function(.data) UseMethod("to_redirected")
 
 #' @export
-to_redirected.tbl_graph <- function(.data) {
-  as_tidygraph(to_redirected.igraph(.data))
+to_redirected.default <- function(.data){
+  as_input(.data, to_redirected)
 }
 
 #' @export
@@ -133,15 +113,15 @@ to_redirected.matrix <- function(.data) {
   t(.data)
 }
 
-#' @export
-to_redirected.network <- function(.data) {
-  as_network(to_redirected(as_igraph(.data)))
-}
-
 #' @rdname modif_direction
 #' @importFrom igraph as_directed
 #' @export
 to_reciprocated <- function(.data) UseMethod("to_reciprocated")
+
+#' @export
+to_reciprocated.default <- function(.data){
+  as_input(.data, to_reciprocated)
+}
 
 #' @export
 to_reciprocated.igraph <- function(.data) {
@@ -149,23 +129,8 @@ to_reciprocated.igraph <- function(.data) {
 }
 
 #' @export
-to_reciprocated.tbl_graph <- function(.data) {
-  as_tidygraph(to_reciprocated(as_igraph(.data)))
-}
-
-#' @export
 to_reciprocated.matrix <- function(.data) {
   .data + t(.data)
-}
-
-#' @export
-to_reciprocated.network <- function(.data) {
-  as_network(to_reciprocated(as_igraph(.data)))
-}
-
-#' @export
-to_reciprocated.data.frame <- function(.data) {
-  as_edgelist(to_reciprocated(as_igraph(.data)))
 }
 
 #' @rdname modif_direction
@@ -174,29 +139,14 @@ to_reciprocated.data.frame <- function(.data) {
 to_acyclic <- function(.data) UseMethod("to_acyclic")
 
 #' @export
+to_acyclic.default <- function(.data){
+  as_input(.data, to_acyclic)
+}
+
+#' @export
 to_acyclic.igraph <- function(.data) {
   if(is_directed(.data)){
     delete_ties(.data, igraph::feedback_arc_set(.data))
   } else igraph::as_directed(.data, mode = "acyclic")
-}
-
-#' @export
-to_acyclic.tbl_graph <- function(.data) {
-  as_tidygraph(to_acyclic(as_igraph(.data)))
-}
-
-#' @export
-to_acyclic.matrix <- function(.data) {
-  as_matrix(to_acyclic(as_igraph(.data)))
-}
-
-#' @export
-to_acyclic.data.frame <- function(.data) {
-  as_edgelist(to_acyclic(as_igraph(.data)))
-}
-
-#' @export
-to_acyclic.network <- function(.data) {
-  as_network(to_acyclic(as_igraph(.data)))
 }
 

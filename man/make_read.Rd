@@ -87,10 +87,8 @@ by \href{https://github.com/stocnet/manynet/issues}{raising an issue on Github}.
 There are a number of repositories for network data
 that hold various datasets in different formats. See for example:
 \itemize{
-\item \href{https://sites.google.com/site/ucinetsoftware/datasets?authuser=0}{UCINET data}
 \item \href{https://schochastics.github.io/networkdata/}{networkdata}
 \item \href{http://www-personal.umich.edu/~mejn/netdata/}{GML datasets}
-\item UCIrvine Network Data Repository
 \item \href{http://snap.stanford.edu/data/}{SNAP Stanford Large Network Dataset Collection}
 }
 
@@ -106,7 +104,7 @@ you will need to unpack them and convert them one by one.
 \seealso{
 \link{as}
 
-Other makes: 
+Other makes:
 \code{\link{make_cran}},
 \code{\link{make_create}},
 \code{\link{make_ego}},

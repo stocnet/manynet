@@ -19,11 +19,12 @@ is_list(.data)
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
-\item matrix (adjacency or incidence) from \code{{base}} R
-\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
-\item igraph, from the \code{{igraph}} package
-\item network, from the \code{{network}} package
-\item tbl_graph, from the \code{{tidygraph}} package
+\item adjacency or incidence \code{matrix} from \code{{base}} R
+\item edgelist \code{data.frame} from \code{{base}} R or \code{tbl/tbl_df} from \code{{tibble}}
+\item stocnet \code{stocnet}, from the \code{{manynet}} package
+\item igraph \code{igraph}, from the \code{{igraph}} package
+\item network \code{network}, from the \code{{network}} package
+\item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
 }
 \value{
@@ -44,6 +45,22 @@ for example a set of ego networks or a dynamic or longitudinal set of networks.
 
 All \verb{is_*()} functions return a logical scalar (TRUE or FALSE).
 }
+\details{
+Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods for these functions:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{            data.frame default igraph list matrix network stocnet tbl_graph
+is_edgelist          *       *                                             
+is_graph                     *      *                   *       *         *
+is_list                      *           *                                 
+is_manynet           *       *      *           *       *       *         *
+}\if{html}{\out{</div>}}
+
+If a method is not available for a particular class, but a default method is,
+the default method will attempt to coerce the object to a class for which a method is defined,
+and then coerce the output back to the original class.
+If no method is available for any class, an error will be thrown.
+}
 \examples{
 is_manynet(create_filled(2))
 is_graph(create_star(2))
@@ -51,7 +68,7 @@ is_edgelist(matrix(c(2,2), 1, 2))
 is_edgelist(as_edgelist(matrix(c(2,2), 1, 2)))
 }
 \seealso{
-Other marking: 
+Other marking:
 \code{\link{mark_features}}
 }
 \concept{marking}

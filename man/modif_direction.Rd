@@ -22,11 +22,12 @@ to_acyclic(.data)
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
-\item matrix (adjacency or incidence) from \code{{base}} R
-\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
-\item igraph, from the \code{{igraph}} package
-\item network, from the \code{{network}} package
-\item tbl_graph, from the \code{{tidygraph}} package
+\item adjacency or incidence \code{matrix} from \code{{base}} R
+\item edgelist \code{data.frame} from \code{{base}} R or \code{tbl/tbl_df} from \code{{tibble}}
+\item stocnet \code{stocnet}, from the \code{{manynet}} package
+\item igraph \code{igraph}, from the \code{{igraph}} package
+\item network \code{network}, from the \code{{network}} package
+\item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
 }
 \value{
@@ -63,21 +64,21 @@ only transforming these objects' properties.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{                data.frame igraph matrix network tbl_graph
-to_acyclic               *      *      *       *         *
-to_directed              *      *      *       *         *
-to_reciprocated          *      *      *       *         *
-to_redirected            *      *      *       *         *
-to_undirected            *      *      *       *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{                data.frame default igraph matrix network
+to_acyclic                       *      *               
+to_directed                      *      *               
+to_reciprocated                  *      *      *        
+to_redirected            *       *      *      *        
+to_undirected                    *      *      *       *
 }\if{html}{\out{</div>}}
 }
 \seealso{
-Other ties: 
+Other ties:
 \code{\link{manip_ties_attr}},
 \code{\link{manip_ties_num}},
 \code{\link{modif_weight}}
 
-Other modifications: 
+Other modifications:
 \code{\link{modif_correlation}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},

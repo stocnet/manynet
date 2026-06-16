@@ -43,10 +43,8 @@
 #' @details There are a number of repositories for network data
 #'   that hold various datasets in different formats. See for example:
 #'
-#'   - [UCINET data](https://sites.google.com/site/ucinetsoftware/datasets?authuser=0)
 #'   - [networkdata](https://schochastics.github.io/networkdata/)
 #'   - [GML datasets](http://www-personal.umich.edu/~mejn/netdata/)
-#'   - UCIrvine Network Data Repository
 #'   - [SNAP Stanford Large Network Dataset Collection](http://snap.stanford.edu/data/)
 #'
 #'   Please let us know if you identify any further repositories
@@ -646,7 +644,7 @@ write_ucinet <- function(.data,
   mat <- as_matrix(.data)
   # start with UCINET header file:
   UCINET.header <- file(paste(filename, ".##h", sep = ""), "wb")
-  writeBin(as.integer(5), UCINET.header, size = 1)
+  writeBin(5L, UCINET.header, size = 1)
   writeBin(charToRaw("V"), UCINET.header, size = 1)
   writeBin(charToRaw("6"), UCINET.header, size = 1)
   writeBin(charToRaw("4"), UCINET.header, size = 1)
@@ -668,10 +666,10 @@ write_ucinet <- function(.data,
     "Sun"
   ) == substr(date(), 1, 3))
   writeBin(dow, UCINET.header, size = 2)
-  writeBin(as.integer(3), UCINET.header, size = 2)
+  writeBin(3L, UCINET.header, size = 2)
   # labtype, unused in V6404 files
-  writeBin(as.integer(7), UCINET.header, size = 1) # infile.dt = 7 'longintdt'
-  writeBin(as.integer(2), UCINET.header, size = 2) # ndim = 2 for matrix
+  writeBin(7L, UCINET.header, size = 1) # infile.dt = 7 'longintdt'
+  writeBin(2L, UCINET.header, size = 2) # ndim = 2 for matrix
   writeBin(ncol(mat), UCINET.header, size = 4) # number of columns of matrix
   writeBin(nrow(mat), UCINET.header, size = 4) # number of rows of matrix
   writeBin(nchar(name), UCINET.header, size = 1) # length of matrix name

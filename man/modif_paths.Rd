@@ -22,11 +22,12 @@ to_dominating(.data, from, direction = c("out", "in"))
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
-\item matrix (adjacency or incidence) from \code{{base}} R
-\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
-\item igraph, from the \code{{igraph}} package
-\item network, from the \code{{network}} package
-\item tbl_graph, from the \code{{tidygraph}} package
+\item adjacency or incidence \code{matrix} from \code{{base}} R
+\item edgelist \code{data.frame} from \code{{base}} R or \code{tbl/tbl_df} from \code{{tibble}}
+\item stocnet \code{stocnet}, from the \code{{manynet}} package
+\item igraph \code{igraph}, from the \code{{igraph}} package
+\item network \code{network}, from the \code{{network}} package
+\item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
 
 \item{mark}{A logical vector marking two types or modes.
@@ -68,20 +69,22 @@ These functions return tidygraphs containing only special sets of ties:
 \item \code{to_eulerian()} returns only the Eulerian path within some network data.
 \item \code{to_tree()} returns the spanning tree in some network data or,
 if the data is unconnected, a forest of spanning trees.
-\item \code{to_dominating()} returns the dominating tree of the network
+\item \code{to_dominating()} returns the dominating tree of the network.
 }
 }
 \details{
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{             data.frame igraph matrix network tbl_graph
-to_eulerian                  *                        *
-to_matching           *      *      *       *         *
-to_mentoring                 *                        *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default igraph matrix network tbl_graph
+to_dominating                  *      *                         
+to_eulerian                    *      *                        *
+to_matching            *       *      *      *       *         *
+to_mentoring                   *      *                         
+to_tree                        *      *                         
 }\if{html}{\out{</div>}}
 }
-\section{\code{to_matching()}}{
+\section{Matching}{
 
 This function attempts to solve the stable matching problem,
 also known as the stable marriage problem, upon a given
@@ -106,6 +109,17 @@ Here an implementation of the Gale-Shapley algorithm is used,
 in which an iterative process of proposal and acceptance is repeated until
 all are matched or have exhausted their lists of preferences.
 This is, however, computationally slower.
+}
+
+\section{Mentoring}{
+
+This function returns a network in which each node is tied to its closest mentor.
+The mentors are selected as the top nodes in terms of degree, or those equal
+to the highest rank degree in the network, whichever is the higher.
+The mentees are then tied to the closest mentor in terms of geodesic distance.
+This can be useful for showing the hierarchical structure of a network,
+for example in an organisational context,
+or identifying the most influential nodes in a network.
 }
 
 \examples{
@@ -165,7 +179,7 @@ Prim, R.C. 1957.
 }
 }
 \seealso{
-Other modifications: 
+Other modifications:
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},

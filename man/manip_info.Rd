@@ -16,11 +16,12 @@ net_attributes(.data)
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
-\item matrix (adjacency or incidence) from \code{{base}} R
-\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
-\item igraph, from the \code{{igraph}} package
-\item network, from the \code{{network}} package
-\item tbl_graph, from the \code{{tidygraph}} package
+\item adjacency or incidence \code{matrix} from \code{{base}} R
+\item edgelist \code{data.frame} from \code{{base}} R or \code{tbl/tbl_df} from \code{{tibble}}
+\item stocnet \code{stocnet}, from the \code{{manynet}} package
+\item igraph \code{igraph}, from the \code{{igraph}} package
+\item network \code{network}, from the \code{{network}} package
+\item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
 
 \item{...}{Named attributes. The following are currently recognised:
@@ -40,13 +41,34 @@ This includes the name, year, and mode of collection of the network,
 as well as definitions of the nodes and ties in the network.
 Where available, this information is printed for tidygraph-class objects,
 and can be used for printing a grand table in the \code{{grand}} package.
+\itemize{
+\item \code{add_info()} adds information attributes to the network.
+\item \code{mutate_info()} updates information attributes of the network.
+\item \code{net_attributes()} lists the information attributes of the network.
+}
+}
+\details{
+Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods for these functions:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{            default igraph network stocnet tbl_graph
+add_info          *      *               *          
+as_infolist              *       *       *         *
+mutate_info       *      *               *          
+}\if{html}{\out{</div>}}
+
+If a method is not available for a particular class, but a default method is,
+the default method will attempt to coerce the object to a class for which a method is defined,
+and then coerce the output back to the original class.
+If no method is available for any class, an error will be thrown.
 }
 \examples{
 add_info(ison_algebra, name = "Algebra")
 }
 \seealso{
-Other manipulations: 
+Other manipulations:
 \code{\link{manip_changes}},
+\code{\link{manip_global}},
 \code{\link{manip_nodes_attr}},
 \code{\link{manip_nodes_num}},
 \code{\link{manip_ties_attr}},

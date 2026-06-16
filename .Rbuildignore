@@ -19,3 +19,5 @@ vignettes/precompile\.R
 ^README\.Rmd$
 ^.mailmap$
 man-roxygen
+^\.positai$
+^\.claude$

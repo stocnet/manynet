@@ -31,11 +31,12 @@ as_stocnet(.data, twomode = FALSE)
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
 \itemize{
-\item matrix (adjacency or incidence) from \code{{base}} R
-\item edgelist, a data frame from \code{{base}} R or tibble from \code{{tibble}}
-\item igraph, from the \code{{igraph}} package
-\item network, from the \code{{network}} package
-\item tbl_graph, from the \code{{tidygraph}} package
+\item adjacency or incidence \code{matrix} from \code{{base}} R
+\item edgelist \code{data.frame} from \code{{base}} R or \code{tbl/tbl_df} from \code{{tibble}}
+\item stocnet \code{stocnet}, from the \code{{manynet}} package
+\item igraph \code{igraph}, from the \code{{igraph}} package
+\item network \code{network}, from the \code{{network}} package
+\item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
 
 \item{twomode}{Logical option used to override heuristics for
@@ -59,7 +60,7 @@ as_graphAM            *                         *           *            *
 as_igraph             *          *       *      *           *            *
 as_network            *                  *      *           *            *
 as_siena                                        *                         
-as_stocnet                                      *           *            *
+as_stocnet            *                         *           *            *
 as_tidygraph          *          *       *      *    *      *            *
              network.goldfish networkDynamic siena stocnet tbl_graph
 as_diffnet                                                          
@@ -68,7 +69,7 @@ as_graphAM                  *                    *       *         *
 as_igraph                   *              *     *       *         *
 as_network                  *              *     *       *         *
 as_siena                                                           *
-as_stocnet                                               *         *
+as_stocnet                                               *          
 as_tidygraph                *              *     *       *         *
 }\if{html}{\out{</div>}}
 
@@ -113,10 +114,10 @@ as_network(test)
                        node = c(1,2,3,2,4),
                        var = "diffusion", 
                        value = c("I","I","I","R","I"))
-  add_changes(create_filled(4), events)
+  bind_changes(create_filled(4), events)
 }
 \seealso{
-Other coercions: 
+Other coercions:
 \code{\link{coerce_list}}
 }
 \concept{coercions}

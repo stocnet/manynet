@@ -2,13 +2,15 @@
 
 # defining global variables more centrally
 utils::globalVariables(c(".data", "obs",
-                         "from", "to", "name", "weight","sign","wave",
+                         "from", "to", "name", "weight","sign","wave","label",
                          "nodes","edges","event","exposure",
                          "student","students","colleges",
                          "node","value","var","active","time",
+                         "sender","target","receiver","ego","alter",
                          "increment",
                          "A","B","C","D",
                          "type","id",
+                         ".orig_row",".orig_id",
                          "n"))
 
 # Helper function for declaring available methods
@@ -53,6 +55,48 @@ is.scalar <- function(x) {
   is.atomic(x) && length(x) == 1L
 }
 
+# preferred_classes <- c("stocnet","tbl_graph","igraph","network","matrix")
+
+as_input <- function(.data, FUN, ...){
+  if(!is_manynet(.data))
+    snet_abort("{.var {substitute(.data)}} must be a manynet-compatible object.")
+  out_class <- setdiff(class(.data), c("mnet","tbl_df","tbl"))[1]
+  # snet_minor_info("{.var {substitute(.data)}} is of class {.var {out_class}}.")
+  if(out_class == "data.frame") out_class <- "edgelist"
+  if(out_class == "tbl_graph") out_class <- "tidygraph"
+  
+  fun_label <- as.character(substitute(FUN))   # capture symbol
+  avail_classes <- sapply(strsplit(suppressWarnings(utils::methods(fun_label)), 
+                                   split = "\\."), "[[", 2)
+  avail_classes <- stats::na.omit(avail_classes[avail_classes %in% manynet_classes])
+  if(length(avail_classes) == 0)
+    snet_abort("No supported S3 methods found for {.fn {fun_label}}.")
+  avail_class <- avail_classes[order(match(avail_classes, unname(manynet_classes)))][1]
+  avail_class <- names(manynet_classes)[match(avail_class, manynet_classes)]
+  # snet_minor_info("{.fn {fun_label}} is available for {.var {avail_class}}.")
+  out <- get(paste0("as_",avail_class))(.data)
+  out <- FUN(out, ...)
+
+  snet_minor_info("Using {.var {avail_class}} method for {.fn {fun_label}} and coercing back to {.var {out_class}}.")
+  get(paste0("as_",out_class))(out)
+}
+
+# a function that creates necessary lines for roxygen documentation of available methods for a function family, e.g. add_ties, delete_ties, filter_ties, etc.
+detail_avail <- function(fun_grep) {
+  c(
+    "\\preformatted{", # or use the knitr chunk syntax if using Rd + knitr
+    paste0("@details"),
+    paste0("Not all functions have methods available for all object classes."),
+    paste0("Below are the currently implemented S3 methods for these functions:"),
+    paste0("```{r, echo = FALSE, comment=\"\"}"),
+    paste0("available_methods(collect_functions(\"", fun_grep, "\"))"),
+    "```",
+    paste0("If a method is not available for a particular class, but a default method is,"),
+    paste0("the default method will attempt to coerce the object to a class for which a method is defined,"),
+    paste0("and then coerce the output back to the original class."),
+    paste0("If no method is available for any class, an error will be thrown.")
+  )
+}
 
 # #' @export
 # `%||%` <- function(x, y) {
