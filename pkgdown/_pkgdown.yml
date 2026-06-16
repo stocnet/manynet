@@ -94,7 +94,7 @@ reference:
       - starts_with("manip_nodes")
   - subtitle: "Changes"
     contents:
-      - starts_with("add_changes")
+      - starts_with("manip_changes")
   - subtitle: "Ties"
     contents:
       - starts_with("manip_ties")

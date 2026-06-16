@@ -11,7 +11,7 @@
 - Improved `make_stocnet()` construction, indexing, and validation of nodes, ties, changes, info, and globals
 - Improved `as_stocnet()` coercion for `data.frame` and `tbl_graph` inputs
 - Fixed #137 by extending time variable class validation to include integer and POSIXlt (thanks @auzaheta)
-- Fixed #140 by making sure `make_stocnet()` aborts early and informatively when node labels do not match (thanks @auzaheta)
+- Fixed #140 and #141 by making sure `make_stocnet()` aborts early and informatively when node labels do not match (thanks @auzaheta)
 
 ## Manipulating
 

@@ -74,7 +74,7 @@ validate_info <- function(.data){
                 pool = mode_names(.data))
   reserved_cols(.data, "info", "update", "character",
                 pool = c("increment", "replace"))
-  reserved_cols(.data, "info", "focal", "character", length = 1, 
+  reserved_cols(.data, "info", "focal", "character", len = 1, 
                 pool = layer_names(.data), aka = c("dependent","dv"))
   invisible(.data)
 }
