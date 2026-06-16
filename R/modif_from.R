@@ -174,9 +174,7 @@ from_ties.stocnet <- function(..., layer_names){
   }
   
   ## 3. Merge labelled node tables ------------------------------------------
-  labelled <- vapply(netlist, function(x)
-    !is.null(x$nodes) && "label" %in% names(x$nodes) && !any(is.na(x$nodes$label)),
-    logical(1))
+  labelled <- vapply(netlist, function(x) is_labelled(x), logical(1))
   
   merged_nodes <- .merge_node_tables(lapply(netlist[labelled], function(x) x$nodes))
   
@@ -208,6 +206,11 @@ from_ties.stocnet <- function(..., layer_names){
   
   ## 7. Combine info ----------------------------------------------------------
   merged_info <- .merge_info(netlist, merged_nodes)
+  if (!is.null(merged_nodes) &&
+      "label" %in% names(merged_nodes) &&
+      all(is.na(merged_nodes$label))) {
+    merged_nodes$label <- NULL
+  }
   
   ## 8. Assemble ----------------------------------------------------------------
   out <- make_stocnet(info = merged_info, nodes = merged_nodes,
@@ -355,9 +358,9 @@ from_ties.stocnet <- function(..., layer_names){
   }
 }
 
-# Match each unlabelled block to an existing label==NA pool in merged_nodes
-# (matching on size, and on mode where known); append new NA-label rows
-# if no unambiguous match is found.
+# Match each unlabelled block to an existing label==NA pool in merged_nodes,
+# primarily by size; 'mode' is used only to disambiguate when there are
+# multiple same-sized candidates, and to fill in unknown mode info.
 .match_anon_blocks <- function(blocks, merged_nodes){
   sizes <- vapply(blocks, function(b) b$size, numeric(1))
   offsets <- cumsum(c(0, sizes))
@@ -379,17 +382,25 @@ from_ties.stocnet <- function(..., layer_names){
         for(k in unique(keys)){
           idx <- pool_idx[keys == k]
           pm <- if(k == "\u0001NA\u0001") NA_character_ else k
-          if(length(idx) == b$size &&
-             (is.na(b$mode) || is.na(pm) || pm == b$mode))
+          # match on size alone; mode is not a hard requirement
+          if(length(idx) == b$size)
             candidates[[length(candidates) + 1]] <- list(idx = idx, mode = pm)
         }
       }
     }
     
+    if(length(candidates) > 1 && !is.na(b$mode)){
+      # if several same-sized pools exist, prefer one whose mode matches
+      # (or is unknown) over one with a known, differing mode
+      compatible <- vapply(candidates, function(cand)
+        is.na(cand$mode) || cand$mode == b$mode, logical(1))
+      if(any(compatible)) candidates <- candidates[compatible]
+    }
+    
     if(length(candidates) == 1){
       claim <- candidates[[1]]
       new_idx[rng] <- claim$idx
-      if(!is.na(b$mode)){
+      if(is.na(claim$mode) && !is.na(b$mode)){
         if(!("mode" %in% names(merged_nodes))) merged_nodes$mode <- NA_character_
         merged_nodes$mode[claim$idx] <- b$mode
       }
@@ -400,7 +411,8 @@ from_ties.stocnet <- function(..., layer_names){
                          "rather than guessing."))
       add <- dplyr::tibble(label = rep(NA_character_, b$size))
       if(!is.na(b$mode)) add$mode <- b$mode
-      merged_nodes <- if(is.null(merged_nodes)) add else dplyr::bind_rows(merged_nodes, add)
+      merged_nodes <- if(is.null(merged_nodes)) add else 
+        dplyr::bind_rows(merged_nodes, add)
       new_idx[rng] <- (nrow(merged_nodes) - b$size + 1):nrow(merged_nodes)
     }
   }
