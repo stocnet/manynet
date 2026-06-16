@@ -27,11 +27,14 @@ validate_ties <- function(.data){
   expect_class(.data, "ties", "tbl_df")
   required_cols(.data, "ties", c("from", "to"))
   reserved_cols(.data, "ties", "from", "integer", 
-           aka = c("source", "sender", "ego"))
+           aka = c("source", "sender", "ego"),
+           pool = seq_nodes(.data))
   reserved_cols(.data, "ties", "to", "integer", 
-           aka = c("target", "receiver", "alter"))
+           aka = c("target", "receiver", "alter"),
+           pool = seq_nodes(.data))
   reserved_cols(.data, "ties", "by", "integer", 
-                aka = c("tertius", "third", "about", "referent", "regarding"))
+                aka = c("tertius", "third", "about", "referent", "regarding"),
+                pool = seq_nodes(.data))
   reserved_cols(.data, "ties", "weight", 
                 class = c("numeric","integer"), 
            aka = c("value", "strength", "val", "sign"))
@@ -47,7 +50,8 @@ validate_changes <- function(.data){
   if(is.null(.data$changes)) return(invisible(.data))
   expect_class(.data, "changes", "tbl_df")
   required_cols(.data, "changes", c("node", "time", "var", "value"))
-  reserved_cols(.data, "changes", "node", "integer", aka = "id")
+  reserved_cols(.data, "changes", "node", "integer", aka = "id",
+                pool = seq_nodes(.data))
   reserved_cols(.data, "changes", "time", 
                 class = c("character","numeric","integer","mdate","Date","POSIXct","POSIXlt"), 
                 aka = c("wave", "period", "date", "begin", "end"))
@@ -59,19 +63,19 @@ validate_info <- function(.data){
   if(is.null(.data$info)) return(invisible(.data))
   expect_class(.data, "info", "list")
   reserved_cols(.data, "info", "name", "character")
-  reserved_cols(.data, "info", "modes", "character", length = net_modes(.data))
-  reserved_cols(.data, "info", "layers", "character", length = net_layers(.data))
+  reserved_cols(.data, "info", "modes", "character", len = net_modes(.data))
+  reserved_cols(.data, "info", "layers", "character", len = net_layers(.data))
   reserved_cols(.data, "info", "observation", "character",
-                match = c("panel", "event", "cross-sectional", "egocentric", 
+                pool = c("panel", "event", "cross-sectional", "egocentric", 
                           "cognitive"))
   reserved_cols(.data, "info", "sender", "character",
-                match = mode_names(.data))
+                pool = mode_names(.data))
   reserved_cols(.data, "info", "receiver", "character",
-                match = mode_names(.data))
+                pool = mode_names(.data))
   reserved_cols(.data, "info", "update", "character",
-                match = c("increment", "replace"))
+                pool = c("increment", "replace"))
   reserved_cols(.data, "info", "focal", "character", length = 1, 
-           match = layer_names(.data), aka = c("dependent","dv"))
+                pool = layer_names(.data), aka = c("dependent","dv"))
   invisible(.data)
 }
 
@@ -89,24 +93,29 @@ validate_global <- function(.data){
 
 # Helpers ####
 
-reserved_cols <- function(.data, component, reserved_cols, class, 
-                          length = NULL, match = NULL, aka = NULL) {
-  if(reserved_cols %in% names(.data[[component]])){
-    if(!is.null(length)){
-      if(length(.data[[component]][[reserved_cols]]) != length) 
-        snet_abort("'{reserved_cols}' must be of length {length}.")
+reserved_cols <- function(.data, component, column, class, 
+                          len = NULL, pool = NULL, aka = NULL) {
+  if(column %in% names(.data[[component]])){
+    if(!is.null(len)){
+      if(length(.data[[component]][[column]]) != len) 
+        snet_abort("'{component}${column}' must be of length {len}.")
     }
     if(!missing(class) && 
-       length(intersect(class(.data[[component]][[reserved_cols]]), class))==0) 
-      snet_abort("'{reserved_cols}' must be of class '{class}'.")
-    if(!is.null(match)){
-      if(!all(.data[[component]][[reserved_cols]] %in% match)) 
-        snet_abort("'{reserved_cols}' must be one of {phrase(match)}.")
+       length(intersect(class(.data[[component]][[column]]), class))==0) 
+      snet_abort("'{component}${column}' must be of class '{class}'.")
+    if(!is.null(pool)){
+      if(!all(.data[[component]][[column]] %in% pool)){
+        values <- unique(as.character(.data[[component]][[column]]))
+        unmatched <- values[which(!values %in% pool)]
+        if(is.na(unmatched)) unmatched <- "NA (probably unmatched ids)"
+        snet_abort("'{component}${column}' includes {phrase(unmatched)},",
+                   "which must be one of {phrase(pool)}.")
+      } 
     }
   } else if(!is.null(aka)){
     if(any(aka %in% names(.data[[component]]))){
       mislabelled <- names(.data[[component]])[names(.data[[component]]) %in% aka]
-      snet_warn("Columns '{mislabelled}' might be better called {reserved_cols}.")
+      snet_warn("'{component}${mislabelled}' might be better called {component}${column}.")
     }
   }
 }

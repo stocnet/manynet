@@ -7,9 +7,11 @@
 ## Coercion
 
 - Added `as_globallist()` for extracting global variables from 'igraph' and 'stocnet' objects
-- Added `as_stocnet.data.frame()` for coercing edgelists to stocnet objects
+- Added `as_stocnet.data.frame()` for coercing edgelists to stocnet objects (closes #138)
 - Improved `make_stocnet()` construction, indexing, and validation of nodes, ties, changes, info, and globals
 - Improved `as_stocnet()` coercion for `data.frame` and `tbl_graph` inputs
+- Fixed #137 by extending time variable class validation to include integer and POSIXlt (thanks @auzaheta)
+- Fixed #140 by making sure `make_stocnet()` aborts early and informatively when node labels do not match (thanks @auzaheta)
 
 ## Manipulating
 
@@ -45,17 +47,17 @@
 
 - Added `is_cognitive()` for identifying cognitive social structure networks
 - Added `is_egonet()` for identifying egocentric networks
+- Improved `is_*()` handling across `stocnet`, `igraph`, and `tbl_graph` inputs
+- Fixed several default `is_*()` methods to return logical values reliably after coercion
+- Fixed `is_dynamic.stocnet()` to look for more time-type variables
+- Fixed #135, which was due to faulty two-mode test (thanks @schochastics)
 
 ## Describing
 
-- Added printing of the globals list for stocnet objects
+- Added printing of the globals list for stocnet objects (closed #139)
 - Improved `net_nodes()`, `net_node_attributes()`, and `net_tie_attributes()` coverage for table and network-like inputs
 - Improved network metadata extraction defaults and naming behaviour across classes
-
-## Marking
-
-- Improved `is_*()` handling across `stocnet`, `igraph`, and `tbl_graph` inputs
-- Fixed several default `is_*()` methods to return logical values reliably after coercion
+- Fixed `net_nodes.stocnet()` and `net_dims.stocnet()` to work with unlabelled networks
 
 # manynet 2.0.1
 

@@ -179,6 +179,11 @@ index_ties <- function(.data){
     out$ties <- out$ties |>
       dplyr::mutate(from = match(from, out$nodes$label),
                     to = match(to, out$nodes$label))
+    if(anyNA(c(out$ties$from, out$ties$to))){
+      missing_nodes <- unique(c(.data$ties$from[is.na(out$ties$from)],
+                                .data$ties$to[is.na(out$ties$to)]))
+      snet_abort("Tie labels {missing_nodes} do not match existing node labels.")
+    }
   }
   if(is.numeric(out$ties$from) || is.numeric(out$ties$to)){
     out$ties <- out$ties |>
@@ -198,7 +203,12 @@ index_changes <- function(.data){
 .match_node_labels <- function(nodes, x, col){
   if(!is.null(nodes) && "label" %in% names(nodes) &&
      is.character(x[[col]]) && is.character(nodes$label)){
+    existing_labels <- x[[col]]
     x[[col]] <- match(x[[col]], nodes$label)
+    if(anyNA(x[[col]])) {
+      missing_nodes <- unique(existing_labels[is.na(x[[col]])])
+      snet_abort("Change nodes {missing_nodes} do not match existing node labels.")
+    }
   }
   x
 }

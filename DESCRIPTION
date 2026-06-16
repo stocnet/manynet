@@ -44,6 +44,9 @@ Authors@R:
              comment = c(ORCID = "0000-0003-3420-6085")),
       person(given = "Christian",
              family = "Steglich",
+             role = "ctb"),
+      person(given = "Alvaro",
+             family = "Uzaheta",
              role = "ctb")
     )
 Roxygen: list(markdown = TRUE, roclets = c("namespace", "rd"))
