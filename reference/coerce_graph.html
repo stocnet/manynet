@@ -33,7 +33,7 @@ object classes, which could otherwise lead to some unexpected results."><meta pr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
       </span>
     </div>
 
@@ -116,11 +116,12 @@ object classes, which could otherwise lead to some unexpected results.</p>
 
 
 <dl><dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
-<dd><p>An object of a <code>{manynet}</code>-consistent class:</p><ul><li><p>matrix (adjacency or incidence) from <code>{base}</code> R</p></li>
-<li><p>edgelist, a data frame from <code>{base}</code> R or tibble from <code>{tibble}</code></p></li>
-<li><p>igraph, from the <code>{igraph}</code> package</p></li>
-<li><p>network, from the <code>{network}</code> package</p></li>
-<li><p>tbl_graph, from the <code>{tidygraph}</code> package</p></li>
+<dd><p>An object of a <code>{manynet}</code>-consistent class:</p><ul><li><p>adjacency or incidence <code>matrix</code> from <code>{base}</code> R</p></li>
+<li><p>edgelist <code>data.frame</code> from <code>{base}</code> R or <code>tbl/tbl_df</code> from <code>{tibble}</code></p></li>
+<li><p>stocnet <code>stocnet</code>, from the <code>{manynet}</code> package</p></li>
+<li><p>igraph <code>igraph</code>, from the <code>{igraph}</code> package</p></li>
+<li><p>network <code>network</code>, from the <code>{network}</code> package</p></li>
+<li><p>tidygraph <code>tbl_graph</code>, from the <code>{tidygraph}</code> package</p></li>
 </ul></dd>
 
 
@@ -149,7 +150,7 @@ and <code>event</code>, which can take on the values "I" for an infection event,
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>as_igraph             <span class="sc">*</span>          <span class="er">*</span>       <span class="er">*</span>      <span class="er">*</span>           <span class="er">*</span>            <span class="er">*</span></span>
 <span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>as_network            <span class="sc">*</span>                  <span class="er">*</span>      <span class="er">*</span>           <span class="er">*</span>            <span class="er">*</span></span>
 <span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>as_siena                                        <span class="sc">*</span></span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>as_stocnet                                      <span class="sc">*</span>           <span class="er">*</span>            <span class="er">*</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>as_stocnet            <span class="sc">*</span>                         <span class="er">*</span>           <span class="er">*</span>            <span class="er">*</span></span>
 <span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>as_tidygraph          <span class="sc">*</span>          <span class="er">*</span>       <span class="er">*</span>      <span class="er">*</span>    <span class="er">*</span>      <span class="er">*</span>            <span class="er">*</span></span>
 <span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>             network.goldfish networkDynamic siena stocnet tbl_graph</span>
 <span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>as_diffnet</span>
@@ -158,7 +159,7 @@ and <code>event</code>, which can take on the values "I" for an infection event,
 <span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>as_igraph                   <span class="sc">*</span>              <span class="er">*</span>     <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
 <span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>as_network                  <span class="sc">*</span>              <span class="er">*</span>     <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
 <span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>as_siena                                                           <span class="sc">*</span></span>
-<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>as_stocnet                                               <span class="sc">*</span>         <span class="er">*</span></span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>as_stocnet                                               <span class="sc">*</span></span>
 <span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>as_tidygraph                <span class="sc">*</span>              <span class="er">*</span>     <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span></code></pre><p></p></div>
 <p><code>as_diffusion()</code> and <code><a href="make_play.html">play_diffusion()</a></code> return a 'diff_model' object
 that contains two different tibbles (tables) –
@@ -191,23 +192,23 @@ To retrieve the diffusion events table, use <code>summary(...)</code>.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> B 1 0 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> C 1 1 0</span>
 <span class="r-in"><span><span class="fu">as_igraph</span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH b4d390c DN-- 6 5 -- </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (v/c)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from b4d390c (vertex names):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 981d505 DN-B 6 5 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (v/c), type (v/l)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 981d505 (vertex names):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] A-&gt;I B-&gt;G B-&gt;I C-&gt;G C-&gt;H</span>
 <span class="r-in"><span><span class="fu">as_tidygraph</span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, directed network of 6 nodes and 5 arcs</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, two-mode network of 3 nodes and 3 nodes and 5 ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   name </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> B    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> C    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> I    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> G    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> H    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   name  type </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A     FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> B     FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> C     FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> I     TRUE </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> G     TRUE </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> H     TRUE </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 2</span></span>
@@ -240,7 +241,7 @@ To retrieve the diffusion events table, use <code>summary(...)</code>.</p>
 <span class="r-in"><span>                       node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">2</span>,<span class="fl">4</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                       var <span class="op">=</span> <span class="st">"diffusion"</span>, </span></span>
 <span class="r-in"><span>                       value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"I"</span>,<span class="st">"I"</span>,<span class="st">"I"</span>,<span class="st">"R"</span>,<span class="st">"I"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="manip_changes.html">add_changes</a></span><span class="op">(</span><span class="fu"><a href="make_create.html">create_filled</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>, <span class="va">events</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="manip_changes.html">bind_changes</a></span><span class="op">(</span><span class="fu"><a href="make_create.html">create_filled</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>, <span class="va">events</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Filled network</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────────</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A undirected network of 4 nodes and 6 ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>

@@ -23,7 +23,7 @@ is_changing() marks networks TRUE if they contain any nodal changes.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
       </span>
     </div>
 
@@ -62,7 +62,7 @@ is_changing() marks networks TRUE if they contain any nodal changes.
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Marking networks change formats</h1>
-    <small class="dont-index">Source: <a href="https://github.com/stocnet/manynet/blob/main/R/mark_format.R" class="external-link"><code>R/mark_format.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/stocnet/manynet/blob/main/R/mark_changes.R" class="external-link"><code>R/mark_changes.R</code></a></small>
     <div class="hidden name"><code>mark_format_change.Rd</code></div>
     </div>
 
@@ -86,19 +86,36 @@ All <code>is_*()</code> functions return a logical scalar (TRUE or FALSE).</p><u
 
 
 <dl><dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
-<dd><p>An object of a <code>{manynet}</code>-consistent class:</p><ul><li><p>matrix (adjacency or incidence) from <code>{base}</code> R</p></li>
-<li><p>edgelist, a data frame from <code>{base}</code> R or tibble from <code>{tibble}</code></p></li>
-<li><p>igraph, from the <code>{igraph}</code> package</p></li>
-<li><p>network, from the <code>{network}</code> package</p></li>
-<li><p>tbl_graph, from the <code>{tidygraph}</code> package</p></li>
+<dd><p>An object of a <code>{manynet}</code>-consistent class:</p><ul><li><p>adjacency or incidence <code>matrix</code> from <code>{base}</code> R</p></li>
+<li><p>edgelist <code>data.frame</code> from <code>{base}</code> R or <code>tbl/tbl_df</code> from <code>{tibble}</code></p></li>
+<li><p>stocnet <code>stocnet</code>, from the <code>{manynet}</code> package</p></li>
+<li><p>igraph <code>igraph</code>, from the <code>{igraph}</code> package</p></li>
+<li><p>network <code>network</code>, from the <code>{network}</code> package</p></li>
+<li><p>tidygraph <code>tbl_graph</code>, from the <code>{tidygraph}</code> package</p></li>
 </ul></dd>
 
 </dl></div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods for these functions:</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>                default diff_model igraph list stocnet</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>is_changing           <span class="sc">*</span>          <span class="er">*</span>      <span class="er">*</span>            <span class="er">*</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>is_dynamic            <span class="sc">*</span>                 <span class="er">*</span>            <span class="er">*</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>is_longitudinal       <span class="sc">*</span>                 <span class="er">*</span>    <span class="er">*</span></span></code></pre><p></p></div>
+<p>If a method is not available for a particular class, but a default method is,
+the default method will attempt to coerce the object to a class for which a method is defined,
+and then coerce the output back to the original class.
+If no method is available for any class, an error will be thrown.</p>
+    </div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other marks:
+<code><a href="mark_format_cognitive.html">mark_format_cognitive</a></code>,
 <code><a href="mark_format_node.html">mark_format_node</a></code>,
-<code><a href="mark_format_tie.html">mark_format_tie</a></code></p></div>
+<code><a href="mark_format_tie.html">mark_format_tie</a></code></p>
+<p>Other changes:
+<code><a href="manip_changes.html">manip_changes</a></code></p></div>
     </div>
 
     <div id="ref-examples">

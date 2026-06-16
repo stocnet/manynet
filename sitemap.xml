@@ -60,6 +60,7 @@
 <url><loc>https://stocnet.github.io/manynet/reference/make_stocnet.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/make_write.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_changes.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/manip_global.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_info.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_nodes_attr.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_nodes_num.html</loc></url>
@@ -67,6 +68,7 @@
 <url><loc>https://stocnet.github.io/manynet/reference/manip_ties_num.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/mark_features.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/mark_format_change.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/mark_format_cognitive.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/mark_format_node.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/mark_format_tie.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/mark_is.html</loc></url>

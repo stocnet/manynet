@@ -5,7 +5,7 @@ to_mentoring() returns only ties to nodes' closest mentors.
 to_eulerian() returns only the Eulerian path within some network data.
 to_tree() returns the spanning tree in some network data or,
 if the data is unconnected, a forest of spanning trees.
-to_dominating() returns the dominating tree of the network
+to_dominating() returns the dominating tree of the network.
 
 "><meta property="og:image" content="https://stocnet.github.io/manynet/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -25,7 +25,7 @@ to_dominating() returns the dominating tree of the network
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
       </span>
     </div>
 
@@ -74,7 +74,7 @@ to_dominating() returns the dominating tree of the network
 <li><p><code>to_eulerian()</code> returns only the Eulerian path within some network data.</p></li>
 <li><p><code>to_tree()</code> returns the spanning tree in some network data or,
 if the data is unconnected, a forest of spanning trees.</p></li>
-<li><p><code>to_dominating()</code> returns the dominating tree of the network</p></li>
+<li><p><code>to_dominating()</code> returns the dominating tree of the network.</p></li>
 </ul></div>
 
     <div id="ref-usage">
@@ -94,11 +94,12 @@ if the data is unconnected, a forest of spanning trees.</p></li>
 
 
 <dl><dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
-<dd><p>An object of a <code>{manynet}</code>-consistent class:</p><ul><li><p>matrix (adjacency or incidence) from <code>{base}</code> R</p></li>
-<li><p>edgelist, a data frame from <code>{base}</code> R or tibble from <code>{tibble}</code></p></li>
-<li><p>igraph, from the <code>{igraph}</code> package</p></li>
-<li><p>network, from the <code>{network}</code> package</p></li>
-<li><p>tbl_graph, from the <code>{tidygraph}</code> package</p></li>
+<dd><p>An object of a <code>{manynet}</code>-consistent class:</p><ul><li><p>adjacency or incidence <code>matrix</code> from <code>{base}</code> R</p></li>
+<li><p>edgelist <code>data.frame</code> from <code>{base}</code> R or <code>tbl/tbl_df</code> from <code>{tibble}</code></p></li>
+<li><p>stocnet <code>stocnet</code>, from the <code>{manynet}</code> package</p></li>
+<li><p>igraph <code>igraph</code>, from the <code>{igraph}</code> package</p></li>
+<li><p>network <code>network</code>, from the <code>{network}</code> package</p></li>
+<li><p>tidygraph <code>tbl_graph</code>, from the <code>{tidygraph}</code> package</p></li>
 </ul></dd>
 
 
@@ -147,13 +148,15 @@ or section.</p>
     <h2>Details</h2>
     <p>Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>             data.frame igraph matrix network tbl_graph</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>to_eulerian                  <span class="sc">*</span>                        <span class="er">*</span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>to_matching           <span class="sc">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>to_mentoring                 <span class="sc">*</span>                        <span class="er">*</span></span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>              data.frame default igraph matrix network tbl_graph</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>to_dominating                  <span class="sc">*</span>      <span class="er">*</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>to_eulerian                    <span class="sc">*</span>      <span class="er">*</span>                        <span class="er">*</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>to_matching            <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>to_mentoring                   <span class="sc">*</span>      <span class="er">*</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>to_tree                        <span class="sc">*</span>      <span class="er">*</span></span></code></pre><p></p></div>
     </div>
-    <div id="to-matching-">
-    <h2><code>to_matching()</code></h2>
+    <div id="matching">
+    <h2>Matching</h2>
 
 
 <p>This function attempts to solve the stable matching problem,
@@ -177,6 +180,18 @@ Here an implementation of the Gale-Shapley algorithm is used,
 in which an iterative process of proposal and acceptance is repeated until
 all are matched or have exhausted their lists of preferences.
 This is, however, computationally slower.</p>
+    </div>
+    <div id="mentoring">
+    <h2>Mentoring</h2>
+
+
+<p>This function returns a network in which each node is tied to its closest mentor.
+The mentors are selected as the top nodes in terms of degree, or those equal
+to the highest rank degree in the network, whichever is the higher.
+The mentees are then tied to the closest mentor in terms of geodesic distance.
+This can be useful for showing the hierarchical structure of a network,
+for example in an organisational context,
+or identifying the most influential nodes in a network.</p>
     </div>
     <div id="references">
     <h2>References</h2>

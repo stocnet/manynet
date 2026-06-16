@@ -24,7 +24,7 @@ to_ties() projects a network to one where the ties become nodes and incident nod
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
       </span>
     </div>
 
@@ -88,11 +88,12 @@ of the second node set's (e.g. columns) joint affiliations to nodes in the first
 
 
 <dl><dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
-<dd><p>An object of a <code>{manynet}</code>-consistent class:</p><ul><li><p>matrix (adjacency or incidence) from <code>{base}</code> R</p></li>
-<li><p>edgelist, a data frame from <code>{base}</code> R or tibble from <code>{tibble}</code></p></li>
-<li><p>igraph, from the <code>{igraph}</code> package</p></li>
-<li><p>network, from the <code>{network}</code> package</p></li>
-<li><p>tbl_graph, from the <code>{tidygraph}</code> package</p></li>
+<dd><p>An object of a <code>{manynet}</code>-consistent class:</p><ul><li><p>adjacency or incidence <code>matrix</code> from <code>{base}</code> R</p></li>
+<li><p>edgelist <code>data.frame</code> from <code>{base}</code> R or <code>tbl/tbl_df</code> from <code>{tibble}</code></p></li>
+<li><p>stocnet <code>stocnet</code>, from the <code>{manynet}</code> package</p></li>
+<li><p>igraph <code>igraph</code>, from the <code>{igraph}</code> package</p></li>
+<li><p>network <code>network</code>, from the <code>{network}</code> package</p></li>
+<li><p>tidygraph <code>tbl_graph</code>, from the <code>{tidygraph}</code> package</p></li>
 </ul></dd>
 
 
@@ -125,11 +126,15 @@ or section.</p>
     <h2>Details</h2>
     <p>Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>         data.frame igraph matrix network tbl_graph</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>to_mode1          <span class="sc">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>to_mode2          <span class="sc">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>to_ties           <span class="sc">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>         data.frame default igraph matrix network tbl_graph</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>to_mode1          <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>to_mode2          <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>to_ties                   <span class="sc">*</span>      <span class="er">*</span></span></code></pre><p></p></div>
     </div>
+    <div id="comparison-of-two-mode-projection-methods">
+    <h2>Comparison of two-mode projection methods</h2>
+
+<table class="table table"><tr><td>Category</td><td>Feature</td><td><code>manynet::to_mode1()</code>/<code>to_mode2()</code></td><td><code><a href="https://r.igraph.org/reference/bipartite_projection.html" class="external-link">igraph::bipartite_projection()</a></code></td><td><code>network</code>/<code>sna</code> manual</td></tr><tr><td><strong>Input</strong></td><td>Dedicated function</td><td>yes</td><td>yes</td><td>no</td></tr><tr><td></td><td>Accepted input classes</td><td>igraph, network, tidygraph, matrix, edgelist</td><td>igraph only</td><td>any (manual extraction)</td></tr><tr><td></td><td>Detects mode membership from</td><td><code>mode</code> node attribute</td><td><code>type</code> vertex attribute</td><td><code>bipartite</code> network attr (positional)</td></tr><tr><td><strong>Projection</strong></td><td>Returns both projections at once</td><td>no — one per call</td><td>yes — list of two</td><td>two manual calls</td></tr><tr><td></td><td>Projects mode 1 (actors)</td><td><code>to_mode1()</code></td><td><code>which = "true"</code></td><td><code>A %*% t(A)</code></td></tr><tr><td></td><td>Projects mode 2 (events)</td><td><code>to_mode2()</code></td><td><code>which = "false"</code></td><td><code>t(A) %*% A</code></td></tr><tr><td><strong>Weights</strong></td><td>Raw co-membership counts</td><td>yes</td><td>yes (<code>multiplicity = TRUE</code>)</td><td>yes</td></tr><tr><td></td><td>Binary (unweighted) output</td><td>yes</td><td>yes (<code>multiplicity = FALSE</code>)</td><td>threshold manually</td></tr><tr><td></td><td>Jaccard normalisation</td><td>yes</td><td>no</td><td>code manually</td></tr><tr><td></td><td>Cosine normalisation</td><td>yes</td><td>no</td><td>code manually</td></tr><tr><td><strong>Attributes</strong></td><td>Retains node attributes</td><td>yes</td><td>yes</td><td>no — lost in matrix round-trip</td></tr><tr><td></td><td>Retains edge attributes</td><td>weight only</td><td>weight only</td><td>no</td></tr><tr><td></td><td>Removes self-loops automatically</td><td>yes</td><td>yes</td><td><code>diag(P) &lt;- 0</code> manually</td></tr><tr><td><strong>Output</strong></td><td>Output class matches input</td><td>yes</td><td>no</td><td>no</td></tr><tr><td></td><td>Directed projection support</td><td>limited</td><td>no — undirected only</td><td>yes — asymmetric matrix</td></tr><tr><td><strong>Usability</strong></td><td>Lines of code (basic case)</td><td>1</td><td>1</td><td>4–6</td></tr><tr><td></td><td>Lines of code (Jaccard weights)</td><td>1</td><td>~8 manual</td><td>~8 manual</td></tr><tr><td></td><td>Pipe-friendly</td><td>yes</td><td>with wrappers</td><td>no</td></tr></table></div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other modifications:
@@ -209,33 +214,16 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 60 more rows</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu">to_ties</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Line graph</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 10 nodes and 20 ties</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   name      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Betty-Sue </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Sue-Alice </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Alice-Jane</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Sue-Dale  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Alice-Dale</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Jane-Dale </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more rows</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 20 × 2</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1     4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     2     4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     4     5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2     5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 14 more rows</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH f582625 UN-- 10 20 -- Line graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), name (v/c)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from f582625 (vertex names):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] Betty-Sue --Sue-Alice  Sue-Alice --Alice-Jane Betty-Sue --Sue-Dale  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] Sue-Alice --Sue-Dale   Sue-Dale  --Alice-Dale Sue-Alice --Alice-Dale</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] Alice-Jane--Alice-Dale Sue-Dale  --Jane-Dale  Alice-Dale--Jane-Dale </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10] Alice-Jane--Jane-Dale  Betty-Sue --Sue-Pam    Sue-Alice --Sue-Pam   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] Sue-Dale  --Sue-Pam    Sue-Pam   --Alice-Pam  Sue-Alice --Alice-Pam </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [16] Alice-Jane--Alice-Pam  Alice-Dale--Alice-Pam  Sue-Pam   --Pam-Carol </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19] Alice-Pam --Pam-Carol  Pam-Carol --Carol-Tina</span>
 </code></pre></div>
     </div>
   </div>

@@ -28,7 +28,7 @@ time slice(s).
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
       </span>
     </div>
 
@@ -100,11 +100,12 @@ time slice(s).</p></li>
 
 
 <dl><dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
-<dd><p>An object of a <code>{manynet}</code>-consistent class:</p><ul><li><p>matrix (adjacency or incidence) from <code>{base}</code> R</p></li>
-<li><p>edgelist, a data frame from <code>{base}</code> R or tibble from <code>{tibble}</code></p></li>
-<li><p>igraph, from the <code>{igraph}</code> package</p></li>
-<li><p>network, from the <code>{network}</code> package</p></li>
-<li><p>tbl_graph, from the <code>{tidygraph}</code> package</p></li>
+<dd><p>An object of a <code>{manynet}</code>-consistent class:</p><ul><li><p>adjacency or incidence <code>matrix</code> from <code>{base}</code> R</p></li>
+<li><p>edgelist <code>data.frame</code> from <code>{base}</code> R or <code>tbl/tbl_df</code> from <code>{tibble}</code></p></li>
+<li><p>stocnet <code>stocnet</code>, from the <code>{manynet}</code> package</p></li>
+<li><p>igraph <code>igraph</code>, from the <code>{igraph}</code> package</p></li>
+<li><p>network <code>network</code>, from the <code>{network}</code> package</p></li>
+<li><p>tidygraph <code>tbl_graph</code>, from the <code>{tidygraph}</code> package</p></li>
 </ul></dd>
 
 
@@ -156,12 +157,12 @@ or section.</p>
     <h2>Details</h2>
     <p>Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>              data.frame diff_model igraph matrix network tbl_graph</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>to_components          <span class="sc">*</span>                 <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>to_egos                <span class="sc">*</span>                 <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>to_slices                                <span class="sc">*</span>                        <span class="er">*</span></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>to_subgraphs                             <span class="sc">*</span>              <span class="er">*</span>         <span class="er">*</span></span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>to_waves               <span class="sc">*</span>          <span class="er">*</span>      <span class="er">*</span>                        <span class="er">*</span></span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>              data.frame default diff_model igraph matrix network tbl_graph</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>to_components          <span class="sc">*</span>       <span class="er">*</span>                 <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>to_egos                <span class="sc">*</span>       <span class="er">*</span>                 <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>to_slices                      <span class="sc">*</span>                 <span class="er">*</span>                        <span class="er">*</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>to_subgraphs                   <span class="sc">*</span>                 <span class="er">*</span>              <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>to_waves               <span class="sc">*</span>       <span class="er">*</span>          <span class="er">*</span>      <span class="er">*</span>                        <span class="er">*</span></span></code></pre><p></p></div>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -573,31 +574,11 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-in"><span>  <span class="fu"><a href="manip_ties_attr.html">mutate_ties</a></span><span class="op">(</span>time <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, increment <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>  <span class="fu"><a href="manip_ties_num.html">add_ties</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>time <span class="op">=</span> <span class="fl">3</span>, increment <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>  <span class="fu">to_slices</span><span class="op">(</span>slice <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, weighted, undirected network of 8 nodes and 6 ties</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 8 × 1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   name </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Betty</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Sue  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Alice</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Jane </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Dale </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Pam  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more rows</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to weight</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     2     3      1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     3     4      1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     2     5      1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     3     5      1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     4     5      1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2     6      1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 345b03e UNW- 8 6 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (v/c), weight (e/n)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 345b03e (vertex names):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Sue  --Alice Alice--Jane  Sue  --Dale  Alice--Dale  Jane --Dale </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6] Sue  --Pam  </span>
 </code></pre></div>
     </div>
   </div>

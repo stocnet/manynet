@@ -26,7 +26,7 @@ from_ties() modifies a list of different ties into a multiplex tidygraph
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@ a dynamic tidygraph.</p></li>
 <span></span>
 <span><span class="fu">from_slices</span><span class="op">(</span><span class="va">netlist</span>, remove.duplicates <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">from_ties</span><span class="op">(</span><span class="va">netlist</span>, <span class="va">netnames</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">from_ties</span><span class="op">(</span><span class="va">...</span>, <span class="va">layer_names</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -105,7 +105,13 @@ By default FALSE.
 If TRUE, duplicated edges are removed.</p></dd>
 
 
-<dt id="arg-netnames">netnames<a class="anchor" aria-label="anchor" href="#arg-netnames"></a></dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Two or more tidygraph or stocnet objects to be merged,
+each representing a different set of ties to be combined into a single
+multiplex network.</p></dd>
+
+
+<dt id="arg-layer-names">layer_names<a class="anchor" aria-label="anchor" href="#arg-layer-names"></a></dt>
 <dd><p>A character vector of names for the different network objects,
 if not already named within the list.</p></dd>
 

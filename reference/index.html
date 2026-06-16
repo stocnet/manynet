@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
       </span>
     </div>
 
@@ -131,6 +131,18 @@
         </td>
         <td><p>Making diffusion models on networks</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="coercion">Coercion <a href="#coercion" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Functions for modifying networks into other classes. All functions for coercing networks into other classes have the prefix <code>as_</code>. Those ending in <code>list</code> are extractive, and so will result in some information loss, but coercion to and especially between graph classes is as lossless as possible.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="coerce_graph.html">as_igraph()</a></code> <code><a href="coerce_graph.html">as_tidygraph()</a></code> <code><a href="coerce_graph.html">as_network()</a></code> <code><a href="coerce_graph.html">as_siena()</a></code> <code><a href="coerce_graph.html">as_graphAM()</a></code> <code><a href="coerce_graph.html">as_diffusion()</a></code> <code><a href="coerce_graph.html">as_diffnet()</a></code> <code><a href="coerce_graph.html">as_stocnet()</a></code> </p>
+        </td>
+        <td><p>Coercing into graph objects</p></td>
+      </tr><tr><td>
+          <p><code><a href="coerce_list.html">as_nodelist()</a></code> <code><a href="coerce_list.html">as_changelist()</a></code> <code><a href="coerce_list.html">as_edgelist()</a></code> <code><a href="coerce_list.html">as_infolist()</a></code> <code><a href="coerce_list.html">as_globallist()</a></code> <code><a href="coerce_list.html">as_matrix()</a></code> </p>
+        </td>
+        <td><p>Coercing into lists or matrices</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="manipulating">Manipulating <a href="#manipulating" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Functions for manipulating aspects within networks, such as their nodes, ties, changes, and network metadata (information). This includes functions to add and delete nodes and ties, as well as to add and delete nodal and tie attributes.</p>
         </th>
@@ -147,19 +159,19 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="manip_nodes_attr.html">add_node_attribute()</a></code> <code><a href="manip_nodes_attr.html">mutate()</a></code> <code><a href="manip_nodes_attr.html">mutate_nodes()</a></code> <code><a href="manip_nodes_attr.html">select()</a></code> <code><a href="manip_nodes_attr.html">select_nodes()</a></code> <code><a href="manip_nodes_attr.html">join_nodes()</a></code> <code><a href="manip_nodes_attr.html">bind_node_attributes()</a></code> <code><a href="manip_nodes_attr.html">rename_nodes()</a></code> <code><a href="manip_nodes_attr.html">rename()</a></code> </p>
-        </td>
-        <td><p>Manipulating node attributes</p></td>
-      </tr><tr><td>
-          <p><code><a href="manip_nodes_num.html">add_nodes()</a></code> <code><a href="manip_nodes_num.html">delete_nodes()</a></code> <code><a href="manip_nodes_num.html">filter_nodes()</a></code> </p>
+          <p><code><a href="manip_nodes_num.html">add_nodes()</a></code> <code><a href="manip_nodes_num.html">delete_nodes()</a></code> <code><a href="manip_nodes_num.html">bind_nodes()</a></code> <code><a href="manip_nodes_num.html">filter_nodes()</a></code> <code><a href="manip_nodes_num.html">arrange_nodes()</a></code> </p>
         </td>
         <td><p>Manipulating number of nodes</p></td>
+      </tr><tr><td>
+          <p><code><a href="manip_nodes_attr.html">add_node_attribute()</a></code> <code><a href="manip_nodes_attr.html">mutate()</a></code> <code><a href="manip_nodes_attr.html">mutate_nodes()</a></code> <code><a href="manip_nodes_attr.html">rename_nodes()</a></code> <code><a href="manip_nodes_attr.html">select_nodes()</a></code> <code><a href="manip_nodes_attr.html">join_nodes()</a></code> <code><a href="manip_nodes_attr.html">bind_node_attributes()</a></code> </p>
+        </td>
+        <td><p>Manipulating node attributes</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h3 id="changes">Changes <a href="#changes" class="anchor" aria-hidden="true"></a></h3>
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="manip_changes.html">add_changes()</a></code> <code><a href="manip_changes.html">delete_changes()</a></code> <code><a href="manip_changes.html">mutate_changes()</a></code> <code><a href="manip_changes.html">filter_changes()</a></code> <code><a href="manip_changes.html">select_changes()</a></code> <code><a href="manip_changes.html">gather_changes()</a></code> <code><a href="manip_changes.html">apply_changes()</a></code> </p>
+          <p><code><a href="manip_changes.html">delete_changes()</a></code> <code><a href="manip_changes.html">mutate_changes()</a></code> <code><a href="manip_changes.html">bind_changes()</a></code> <code><a href="manip_changes.html">filter_changes()</a></code> <code><a href="manip_changes.html">select_changes()</a></code> <code><a href="manip_changes.html">arrange_changes()</a></code> <code><a href="manip_changes.html">rename_changes()</a></code> <code><a href="manip_changes.html">gather_changes()</a></code> <code><a href="manip_changes.html">apply_changes()</a></code> </p>
         </td>
         <td><p>Manipulating changes to nodes over time</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -167,25 +179,21 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="manip_ties_attr.html">add_tie_attribute()</a></code> <code><a href="manip_ties_attr.html">mutate_ties()</a></code> <code><a href="manip_ties_attr.html">rename_ties()</a></code> <code><a href="manip_ties_attr.html">arrange_ties()</a></code> <code><a href="manip_ties_attr.html">bind_ties()</a></code> <code><a href="manip_ties_attr.html">join_ties()</a></code> <code><a href="manip_ties_attr.html">select_ties()</a></code> <code><a href="manip_ties_attr.html">summarise_ties()</a></code> </p>
-        </td>
-        <td><p>Manipulating tie attributes</p></td>
-      </tr><tr><td>
-          <p><code><a href="manip_ties_num.html">add_ties()</a></code> <code><a href="manip_ties_num.html">delete_ties()</a></code> <code><a href="manip_ties_num.html">filter_ties()</a></code> </p>
+          <p><code><a href="manip_ties_num.html">add_ties()</a></code> <code><a href="manip_ties_num.html">delete_ties()</a></code> <code><a href="manip_ties_num.html">bind_ties()</a></code> <code><a href="manip_ties_num.html">filter_ties()</a></code> </p>
         </td>
         <td><p>Manipulating number of ties</p></td>
+      </tr><tr><td>
+          <p><code><a href="manip_ties_attr.html">add_tie_attribute()</a></code> <code><a href="manip_ties_attr.html">mutate_ties()</a></code> <code><a href="manip_ties_attr.html">rename_ties()</a></code> <code><a href="manip_ties_attr.html">arrange_ties()</a></code> <code><a href="manip_ties_attr.html">join_ties()</a></code> <code><a href="manip_ties_attr.html">select_ties()</a></code> <code><a href="manip_ties_attr.html">summarise_ties()</a></code> </p>
+        </td>
+        <td><p>Manipulating tie attributes</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
-          <h2 id="coercion">Coercion <a href="#coercion" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p><p>Functions for modifying networks into other classes. All functions for coercing networks into other classes have the prefix <code>as_</code>. Those ending in <code>list</code> are extractive, and so will result in some information loss, but coercion to and especially between graph classes is as lossless as possible.</p>
+          <h3 id="globals">Globals <a href="#globals" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="coerce_graph.html">as_igraph()</a></code> <code><a href="coerce_graph.html">as_tidygraph()</a></code> <code><a href="coerce_graph.html">as_network()</a></code> <code><a href="coerce_graph.html">as_siena()</a></code> <code><a href="coerce_graph.html">as_graphAM()</a></code> <code><a href="coerce_graph.html">as_diffusion()</a></code> <code><a href="coerce_graph.html">as_diffnet()</a></code> <code><a href="coerce_graph.html">as_stocnet()</a></code> </p>
+          <p><code><a href="manip_global.html">mutate_globals()</a></code> <code><a href="manip_global.html">rename_globals()</a></code> <code><a href="manip_global.html">select_globals()</a></code> </p>
         </td>
-        <td><p>Coercing into graph objects</p></td>
-      </tr><tr><td>
-          <p><code><a href="coerce_list.html">as_nodelist()</a></code> <code><a href="coerce_list.html">as_changelist()</a></code> <code><a href="coerce_list.html">as_edgelist()</a></code> <code><a href="coerce_list.html">as_infolist()</a></code> <code><a href="coerce_list.html">as_matrix()</a></code> </p>
-        </td>
-        <td><p>Coercing into lists or matrices</p></td>
+        <td><p>Manipulating global attributes</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="modifying">Modifying <a href="#modifying" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Functions for modifying networks into other formats. This includes functions for reformatting networks into networks of the same dimensions but a different type, e.g. from directed to undirected. It also includes functions for transforming networks into networks with other dimensions, such as from a two-mode network into a one-mode network. There are also functions for splitting networks, e.g. into a list of ego networks, and rejoining them from such lists.</p>
@@ -306,6 +314,10 @@
           <p><code><a href="mark_format_change.html">is_longitudinal()</a></code> <code><a href="mark_format_change.html">is_dynamic()</a></code> <code><a href="mark_format_change.html">is_changing()</a></code> </p>
         </td>
         <td><p>Marking networks change formats</p></td>
+      </tr><tr><td>
+          <p><code><a href="mark_format_cognitive.html">is_cognitive()</a></code> </p>
+        </td>
+        <td><p>Marking networks cognitive formats</p></td>
       </tr><tr><td>
           <p><code><a href="mark_format_node.html">is_twomode()</a></code> <code><a href="mark_format_node.html">is_labelled()</a></code> <code><a href="mark_format_node.html">is_attributed()</a></code> <code><a href="mark_format_node.html">is_egonet()</a></code> </p>
         </td>

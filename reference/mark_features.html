@@ -28,7 +28,7 @@ is_aperiodic() tests whether network is aperiodic.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
       </span>
     </div>
 
@@ -104,11 +104,12 @@ where that path passes through every tie exactly once.</p></li>
 
 
 <dl><dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
-<dd><p>An object of a <code>{manynet}</code>-consistent class:</p><ul><li><p>matrix (adjacency or incidence) from <code>{base}</code> R</p></li>
-<li><p>edgelist, a data frame from <code>{base}</code> R or tibble from <code>{tibble}</code></p></li>
-<li><p>igraph, from the <code>{igraph}</code> package</p></li>
-<li><p>network, from the <code>{network}</code> package</p></li>
-<li><p>tbl_graph, from the <code>{tidygraph}</code> package</p></li>
+<dd><p>An object of a <code>{manynet}</code>-consistent class:</p><ul><li><p>adjacency or incidence <code>matrix</code> from <code>{base}</code> R</p></li>
+<li><p>edgelist <code>data.frame</code> from <code>{base}</code> R or <code>tbl/tbl_df</code> from <code>{tibble}</code></p></li>
+<li><p>stocnet <code>stocnet</code>, from the <code>{manynet}</code> package</p></li>
+<li><p>igraph <code>igraph</code>, from the <code>{igraph}</code> package</p></li>
+<li><p>network <code>network</code>, from the <code>{network}</code> package</p></li>
+<li><p>tidygraph <code>tbl_graph</code>, from the <code>{tidygraph}</code> package</p></li>
 </ul></dd>
 
 
@@ -126,6 +127,21 @@ By default 4, to avoid potentially very long computation times.</p></dd>
     <div id="value">
     <h2>Value</h2>
     <p>TRUE if the condition is met, or FALSE otherwise.</p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>Not all functions have methods available for all object classes.
+Below are the currently implemented S3 methods for these functions:</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>                    default igraph</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>is_acyclic                <span class="sc">*</span>      <span class="er">*</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>is_aperiodic              <span class="sc">*</span>      <span class="er">*</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>is_connected              <span class="sc">*</span>      <span class="er">*</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>is_eulerian               <span class="sc">*</span>      <span class="er">*</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>is_perfect_matching       <span class="sc">*</span>      <span class="er">*</span></span></code></pre><p></p></div>
+<p>If a method is not available for a particular class, but a default method is,
+the default method will attempt to coerce the object to a class for which a method is defined,
+and then coerce the output back to the original class.
+If no method is available for any class, an error will be thrown.</p>
     </div>
     <div id="is-connected">
     <h2>is_connected</h2>
@@ -146,6 +162,20 @@ and not all possible subgraphs.
 This is to avoid computationally expensive combinatorial operations,
 but may come at the cost of some edge cases where a one-mode network
 cannot perfectly match as suggested.</p>
+    </div>
+    <div id="aperiodicity">
+    <h2>Aperiodicity</h2>
+
+
+<p>Aperiodicity is a property of directed networks that can be interpreted as
+the absence of cycles of a common length.
+Aperiodicity is a necessary condition for the existence of a
+unique stationary distribution in Markov chains, and thus is
+an important property for the analysis of dynamic processes on networks.
+The function <code>is_aperiodic()</code> tests for aperiodicity by finding
+all simple paths from each node back to itself, and then
+calculating the greatest common divisor of the lengths of these paths.
+If the greatest common divisor is 1, the network is aperiodic.</p>
     </div>
     <div id="references">
     <h2>References</h2>

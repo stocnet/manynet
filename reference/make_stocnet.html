@@ -28,7 +28,7 @@ but also network modelling."><meta property="og:image" content="https://stocnet.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
       </span>
     </div>
 
@@ -75,8 +75,8 @@ but also network modelling."><meta property="og:image" content="https://stocnet.
     <p>The 'stocnet' class of network object is a list of four main elements:
 nodes, ties, (nodal) changes, and info metadata about the network as a whole.
 This offers a consistent and flexible structure that enables more complex
-forms of networks to be contained in a single object.
-Unlike 'mnet' objects, 'stocnet' objects are not layered on top of 'igraph' or 'tbl_graph' objects,
+forms of networks to be contained in a single object.</p>
+<p>Unlike 'mnet' objects, 'stocnet' objects are not layered on top of 'igraph' or 'tbl_graph' objects,
 but instead are a list of tibbles and metadata.
 Unlike 'igraph' or 'tbl_graph' objects,
 'stocnet' objects typically include more complex multimodal, longitudinal, or dynamic networks.
@@ -87,7 +87,13 @@ but also network modelling.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">make_stocnet</span><span class="op">(</span>info <span class="op">=</span> <span class="cn">NULL</span>, nodes <span class="op">=</span> <span class="cn">NULL</span>, ties <span class="op">=</span> <span class="cn">NULL</span>, changes <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">make_stocnet</span><span class="op">(</span></span>
+<span>  info <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  nodes <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ties <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  changes <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  global <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'stocnet'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, n <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
@@ -104,17 +110,20 @@ but also network modelling.</p>
 This can include the name of the network, as well as the names of the
 types of nodes and ties in the network.
 For example, the info component could include a 'name' element with the name
-of the network, a 'nodes' element with a character vector of the names of the types of
-nodes in the network, and a 'ties' element with a character vector of
+of the network,
+a 'modes' element with a character vector of the names of the types of
+nodes in the network,
+and a 'layers' element with a character vector of
 the names of the types of ties in the network.
 By default NULL.</p></dd>
 
 
 <dt id="arg-nodes">nodes<a class="anchor" aria-label="anchor" href="#arg-nodes"></a></dt>
 <dd><p>A tibble of nodes in the network, with one row per node
-and one column for the node labels, which should be called 'name'.
-Additional columns can be included for node attributes, such as 'active' for changing networks
-and 'type' for multimodal networks.
+and one column for the node labels, which should be called 'label'.
+Additional columns can be included for node attributes,
+such as 'active' for changing networks
+and 'mode' for multimodal networks.
 By default NULL.</p></dd>
 
 
@@ -122,18 +131,29 @@ By default NULL.</p></dd>
 <dd><p>A tibble of ties in the network, with one row per tie
 and at least two columns for the node labels of the tie endpoints, which should be
 called 'from' and 'to', even if the network is not directed.
-Additional columns can be included for tie attributes, such as 'weight' for weighted networks
-and 'type' for multiplex networks.
+Additional columns can be included for tie attributes,
+such as 'weight' for weighted networks
+and 'layer' for multiplex networks.
 By default NULL.</p></dd>
 
 
 <dt id="arg-changes">changes<a class="anchor" aria-label="anchor" href="#arg-changes"></a></dt>
 <dd><p>A tibble of nodal changes in the network, with one row
-per change and at least three columns for the node label of the change, which should be called 'node',
-the variable to which the change applies, which should be called 'var', and the
-new value to be applied, which should be called 'value'.
-Additional columns can be included for the time of the change, such as 'wave'
-or 'time'.
+per change and at least three columns for the node label of the change,
+which should be called 'node',
+the variable to which the change applies, which should be called 'var',
+and the new value to be applied, which should be called 'value'.
+Additional columns can be included for the time of the change,
+such as 'wave' or 'time'.
+By default NULL.</p></dd>
+
+
+<dt id="arg-global">global<a class="anchor" aria-label="anchor" href="#arg-global"></a></dt>
+<dd><p>A tibble of global variables in the network, with one row
+per change and at least three columns for
+the variable to which the change applies, which should be called 'var',
+the time of the change, which should be called 'time',
+and the new value to be applied, which should be called 'value'.
 By default NULL.</p></dd>
 
 
@@ -152,11 +172,12 @@ By default 12.</p></dd>
 
 
 <dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
-<dd><p>An object of a <code>{manynet}</code>-consistent class:</p><ul><li><p>matrix (adjacency or incidence) from <code>{base}</code> R</p></li>
-<li><p>edgelist, a data frame from <code>{base}</code> R or tibble from <code>{tibble}</code></p></li>
-<li><p>igraph, from the <code>{igraph}</code> package</p></li>
-<li><p>network, from the <code>{network}</code> package</p></li>
-<li><p>tbl_graph, from the <code>{tidygraph}</code> package</p></li>
+<dd><p>An object of a <code>{manynet}</code>-consistent class:</p><ul><li><p>adjacency or incidence <code>matrix</code> from <code>{base}</code> R</p></li>
+<li><p>edgelist <code>data.frame</code> from <code>{base}</code> R or <code>tbl/tbl_df</code> from <code>{tibble}</code></p></li>
+<li><p>stocnet <code>stocnet</code>, from the <code>{manynet}</code> package</p></li>
+<li><p>igraph <code>igraph</code>, from the <code>{igraph}</code> package</p></li>
+<li><p>network <code>network</code>, from the <code>{network}</code> package</p></li>
+<li><p>tidygraph <code>tbl_graph</code>, from the <code>{tidygraph}</code> package</p></li>
 </ul></dd>
 
 </dl></div>
@@ -178,7 +199,7 @@ the ties in a multiplex or multilayer network.</p></li>
 <li><p>'directed' should be a logical indicating whether each layer is directed or undirected.
 If there are multiple layers, this can be a named logical vector with the directedness of each layer,
 where the names correspond to the layer names.</p></li>
-<li><p>'dependent' should be a character string indicating which layer is the dependent layer in a multiplex network.</p></li>
+<li><p>'focal' should be a character string indicating which layer is the dependent layer in a multiplex network.</p></li>
 <li><p>'doi' can be a character string with the DOI of the network, if it is from a published source.</p></li>
 <li><p>'date' can be an integer of the year or the date the network represents.</p></li>
 <li><p>'location' can be a character string with the location of the network.</p></li>
@@ -233,6 +254,15 @@ and the sign of the tie can be determined from the weight.
 Missing weights can be used to indicate missing ties in a network.</p></li>
 <li><p>'time' should be a character or date vector of the time at which each tie is active in a longitudinal network.</p></li>
 </ul></div>
+    <div id="globals">
+    <h2>Globals</h2>
+
+
+<p>There are several required names for the columns of the ties component of a stocnet object (if one is included).</p><ul><li><p>'var' must be a string vector naming the global variable</p></li>
+<li><p>'value' must be the new value that should be applied at that change (or incremented, as appropriate).
+There may be an additional column:</p></li>
+<li><p>'time' should be a character or date vector of the time at which each global attribute is updated.</p></li>
+</ul></div>
     <div id="printing">
     <h2>Printing</h2>
 
@@ -250,6 +280,24 @@ Similarly, if no nodal changes are logged, this information will be skipped
 too.</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span>  <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">make_stocnet</span><span class="op">(</span>info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Example Network"</span>, </span></span>
+<span class="r-in"><span>                           modes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Person"</span>, <span class="st">"Organization"</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>                           layers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Friendship"</span>, <span class="st">"Collaboration"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    nodes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>                       mode <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Person"</span>, <span class="st">"Person"</span>, <span class="st">"Organization"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                       active <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    ties <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                      to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"B"</span>, <span class="st">"C"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                      weight <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                      layer <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Friendship"</span>, <span class="st">"Collaboration"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    changes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                         var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"active"</span>, <span class="st">"active"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                         value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
       </span>
     </div>
 
@@ -60,7 +60,76 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="2.0.1" id="manynet-201">manynet 2.0.1<a class="anchor" aria-label="anchor" href="#manynet-201"></a></h2>
+<h2 class="page-header" data-toc-text="2.1.0" id="manynet-210">manynet 2.1.0<a class="anchor" aria-label="anchor" href="#manynet-210"></a></h2>
+<div class="section level3">
+<h3 id="package-2-1-0">Package<a class="anchor" aria-label="anchor" href="#package-2-1-0"></a></h3>
+<ul><li>Updated exported registrations and reference documentation for expanded method coverage</li>
+</ul></div>
+<div class="section level3">
+<h3 id="coercion-2-1-0">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-1-0"></a></h3>
+<ul><li>Added <code><a href="../reference/coerce_list.html">as_globallist()</a></code> for extracting global variables from ‘igraph’ and ‘stocnet’ objects</li>
+<li>Added <code>as_stocnet.data.frame()</code> for coercing edgelists to stocnet objects (closes <a href="https://github.com/stocnet/manynet/issues/138" class="external-link">#138</a>)</li>
+<li>Improved <code><a href="../reference/make_stocnet.html">make_stocnet()</a></code> construction, indexing, and validation of nodes, ties, changes, info, and globals</li>
+<li>Improved <code><a href="../reference/coerce_graph.html">as_stocnet()</a></code> coercion for <code>data.frame</code> and <code>tbl_graph</code> inputs</li>
+<li>Fixed <a href="https://github.com/stocnet/manynet/issues/137" class="external-link">#137</a> by extending time variable class validation to include integer and POSIXlt (thanks <a href="https://github.com/auzaheta" class="external-link">@auzaheta</a>)</li>
+<li>Fixed <a href="https://github.com/stocnet/manynet/issues/140" class="external-link">#140</a> and <a href="https://github.com/stocnet/manynet/issues/141" class="external-link">#141</a> by making sure <code><a href="../reference/make_stocnet.html">make_stocnet()</a></code> aborts early and informatively when node labels do not match (thanks <a href="https://github.com/auzaheta" class="external-link">@auzaheta</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="manipulating-2-1-0">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-2-1-0"></a></h3>
+<ul><li>Added <code><a href="../reference/manip_ties_attr.html">add_tie_attribute()</a></code>
+</li>
+<li>Added <code><a href="../reference/manip_nodes_num.html">bind_nodes()</a></code> for adding nodes and ties from another network</li>
+<li>Added <code><a href="../reference/manip_changes.html">arrange_changes()</a></code> and <code><a href="../reference/manip_nodes_num.html">arrange_nodes()</a></code> as generics for reordering nodes and ties in a network</li>
+<li>Added <code><a href="../reference/manip_changes.html">gather_changes()</a></code> as a generic for gathering changes up to a time point</li>
+<li>Added <code><a href="../reference/manip_changes.html">rename_changes()</a></code> for renaming change variables and <code><a href="../reference/manip_global.html">rename_globals()</a></code> for renaming global variables
+<ul><li>Improved ‘data.frame’ and by extenion ‘stocnet’ <code>rename_*()</code> methods to rename variables when no arguments given</li>
+</ul></li>
+<li>Added <code><a href="../reference/manip_ties_attr.html">select_ties()</a></code>, <code><a href="../reference/manip_changes.html">select_changes()</a></code>, and <code><a href="../reference/manip_global.html">select_globals()</a></code> for selecting variables
+<ul><li>Improved ‘data.frame’ and by extenion ‘stocnet’ <code>select_*()</code> methods to reorder variables when no arguments given</li>
+</ul></li>
+<li>Added <code><a href="../reference/manip_nodes_num.html">filter_nodes()</a></code>, <code><a href="../reference/manip_ties_num.html">filter_ties()</a></code>, and <code><a href="../reference/manip_changes.html">filter_changes()</a></code> as generics for filtering nodes, ties, and changes in a network</li>
+<li>Added <code><a href="../reference/manip_ties_attr.html">summarise_ties()</a></code> for summarising tie variables</li>
+<li>Added <code>join_nodes.stocnet()</code> for joining a nodelist to a stocnet object</li>
+<li>Added ‘stocnet’ methods for <code><a href="../reference/manip_ties_attr.html">arrange_ties()</a></code>, <code><a href="../reference/manip_ties_num.html">bind_ties()</a></code>, <code><a href="../reference/manip_nodes_attr.html">mutate_nodes()</a></code>, <code><a href="../reference/manip_ties_attr.html">mutate_ties()</a></code>, and <code><a href="../reference/manip_nodes_attr.html">rename_nodes()</a></code>
+</li>
+<li>Renamed <code><a href="../reference/defunct.html">add_changes()</a></code> to <code>bind_changes.tbl_graph()</code>
+<ul><li>Added <code>bind_changes.stocnet()</code> for binding on groups of changes to a stocnet object</li>
+</ul></li>
+<li>Improved <code><a href="../reference/modif_from.html">from_ties()</a></code> to accept named arguments instead of a named list, improving consistency with other modifying functions
+<ul><li>Added <code>from_ties.stocnet()</code> for creating a multiplex stocnet object from more than one network, including handling of tie types as layers and carrying forward nodal attributes</li>
+</ul></li>
+<li>Improved node filtering and reindexing behaviour in <code>stocnet</code> objects so ties and changes remain aligned</li>
+<li>Improved all manipulating generics by adding .default methods that coerce to supported graph classes and then restore original classes, improving consistency across classes and reducing the need for users to coerce before manipulating</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-2-1-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-2-1-0"></a></h3>
+<ul><li>Added <code><a href="../reference/manip_nodes_attr.html">join_nodes()</a></code> for joining two nodelists</li>
+<li>Added new ‘stocnet’ methods for common modifications</li>
+<li>Added <code><a href="../reference/manip_global.html">mutate_globals()</a></code> for mutating global variables in a network</li>
+<li>Improved many <code>to_*()</code> default methods to coerce through supported graph classes and then restore original classes</li>
+<li>Improved conversion consistency across direction, projection, paths, plexity, correlation, and weight transformations</li>
+<li>Fixed default dispatch in scope and transformation helpers, including <code><a href="../reference/modif_scope.html">to_subgraph()</a></code>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="marking-2-1-0">Marking<a class="anchor" aria-label="anchor" href="#marking-2-1-0"></a></h3>
+<ul><li>Added <code><a href="../reference/mark_format_cognitive.html">is_cognitive()</a></code> for identifying cognitive social structure networks</li>
+<li>Added <code><a href="../reference/mark_format_node.html">is_egonet()</a></code> for identifying egocentric networks</li>
+<li>Improved <code>is_*()</code> handling across <code>stocnet</code>, <code>igraph</code>, and <code>tbl_graph</code> inputs</li>
+<li>Fixed several default <code>is_*()</code> methods to return logical values reliably after coercion</li>
+<li>Fixed <code>is_dynamic.stocnet()</code> to look for more time-type variables</li>
+<li>Fixed <a href="https://github.com/stocnet/manynet/issues/135" class="external-link">#135</a>, which was due to faulty two-mode test (thanks <a href="https://github.com/schochastics" class="external-link">@schochastics</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="describing-2-1-0">Describing<a class="anchor" aria-label="anchor" href="#describing-2-1-0"></a></h3>
+<ul><li>Added printing of the globals list for stocnet objects (closed <a href="https://github.com/stocnet/manynet/issues/139" class="external-link">#139</a>)</li>
+<li>Improved <code><a href="../reference/measure_dims.html">net_nodes()</a></code>, <code><a href="../reference/member_names.html">net_node_attributes()</a></code>, and <code><a href="../reference/member_names.html">net_tie_attributes()</a></code> coverage for table and network-like inputs</li>
+<li>Improved network metadata extraction defaults and naming behaviour across classes</li>
+<li>Fixed <code>net_nodes.stocnet()</code> and <code>net_dims.stocnet()</code> to work with unlabelled networks</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.0.1" id="manynet-201">manynet 2.0.1<small>2026-04-04</small><a class="anchor" aria-label="anchor" href="#manynet-201"></a></h2>
 <div class="section level3">
 <h3 id="package-2-0-1">Package<a class="anchor" aria-label="anchor" href="#package-2-0-1"></a></h3>
 <ul><li>Fixed checkmark printing issue</li>
@@ -194,7 +263,7 @@
 <li>Improved <code><a href="../reference/modif_project.html">to_mode1()</a></code> and <code><a href="../reference/modif_project.html">to_mode2()</a></code> to drop unnecessary nodal information</li>
 <li>Improved <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> to handle multimodal multiplex filtering correctly and retain tie type information</li>
 <li>Fixed <a href="https://github.com/stocnet/manynet/issues/123" class="external-link">#123</a> by inserting NAs before converting networkDynamic to igraph</li>
-<li>Fixed <code><a href="../reference/manip_changes.html">add_changes()</a></code> to work with tbl_graph</li>
+<li>Fixed <code><a href="../reference/defunct.html">add_changes()</a></code> to work with tbl_graph</li>
 <li>Fixed <code><a href="../reference/manip_nodes_num.html">filter_nodes()</a></code> to use <code><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">dplyr::all_of()</a></code>
 </li>
 <li>Added <code>interpolate()</code> helper for injecting missing data</li>
@@ -553,7 +622,7 @@
 <li>Added <code>as_diffusion.mnet()</code> for maintaining backward compatibility for diffusion measures</li>
 <li>Added <code>as_tidygraph.networkDynamic()</code> and <code>as_igraph.networkDynamic()</code> for coercing ‘networkDynamic’ objects into ‘mnet’, ‘tidygraph’, and ‘igraph’ objects</li>
 <li>Added functions for adding and working with network changes, i.e. changes to network nodes
-<ul><li>Added <code><a href="../reference/manip_changes.html">add_changes()</a></code> for adding changes to a network, including checks and imputing activity and susceptibility</li>
+<ul><li>Added <code><a href="../reference/defunct.html">add_changes()</a></code> for adding changes to a network, including checks and imputing activity and susceptibility</li>
 <li>Added <code><a href="../reference/manip_changes.html">mutate_changes()</a></code> to mutate changes</li>
 <li>Added <code><a href="../reference/manip_changes.html">select_changes()</a></code> to select change variables</li>
 <li>Added <code><a href="../reference/manip_changes.html">filter_changes()</a></code> to filter changes</li>
@@ -953,7 +1022,7 @@
 <li>
 <code><a href="../reference/make_mnet.html">print.mnet()</a></code> uses ‘grand’ data if available</li>
 </ul></li>
-<li>Improved <code><a href="../reference/manip_ties_attr.html">bind_ties()</a></code> to be more flexible about the input it accepts, converting all input into the required edgelist</li>
+<li>Improved <code><a href="../reference/manip_ties_num.html">bind_ties()</a></code> to be more flexible about the input it accepts, converting all input into the required edgelist</li>
 <li>Added <code><a href="../reference/modif_scope.html">to_ego()</a></code> for obtaining a single neighbourhood</li>
 <li>Added tbl_graph and network methods for <code><a href="../reference/manip_nodes_num.html">delete_nodes()</a></code> and <code><a href="../reference/manip_ties_num.html">delete_ties()</a></code>
 </li>
@@ -1380,7 +1449,7 @@
 </li>
 </ul></li>
 <li>Completed a full range of tidy and igraph verbs for ties
-<ul><li>Added <code><a href="../reference/manip_ties_attr.html">bind_ties()</a></code>
+<ul><li>Added <code><a href="../reference/manip_ties_num.html">bind_ties()</a></code>
 </li>
 <li>Added <code><a href="../reference/manip_ties_num.html">delete_ties()</a></code>
 </li>
@@ -1390,7 +1459,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="marking-0-4-0">Marking<a class="anchor" aria-label="anchor" href="#marking-0-4-0"></a></h3>
-<ul><li>Renamed <code>is.igraph()</code> to <code><a href="https://r.igraph.org/reference/is_igraph.html" class="external-link">is_igraph()</a></code> for igraph v2.0.0</li>
+<ul><li>Renamed <code>is.igraph()</code> to <code>is_igraph()</code> for igraph v2.0.0</li>
 <li>Added <code><a href="../reference/mark_is.html">is_list()</a></code> for identifying a list of networks</li>
 <li>Migrated <code><a href="../reference/defunct.html">node_is_core()</a></code>, <code><a href="../reference/defunct.html">node_is_cutpoint()</a></code>, <code><a href="../reference/defunct.html">node_is_fold()</a></code>, <code><a href="../reference/defunct.html">node_is_isolate()</a></code>, <code><a href="../reference/defunct.html">node_is_mentor()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
 </li>
