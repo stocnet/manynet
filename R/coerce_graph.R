@@ -1038,8 +1038,10 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
   if(is_twomode(.data)){
     if(!is.null(info$nodes) && length(info$nodes) == 2){
       nodes$mode <- info$nodes[(nodes$type*1+1)]
-      nodes$type <- NULL
+    } else {
+      nodes$mode <- as.character(nodes$type)
     }
+    nodes$type <- NULL
   }
   if(is_multiplex(.data)){
     ties$layer <- ties$type
@@ -1059,6 +1061,8 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
   out <- list(info = info, nodes = nodes, ties = ties, 
               changes = changes, global = global)
   class(out) <- c("stocnet", class(out))
+  out <- rename_nodes(out)
+  out <- rename_ties(out)
   out
 }
 
