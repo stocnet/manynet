@@ -308,7 +308,7 @@ select_changes.data.frame <- function(.data, ..., .by = NULL){
 #' @export
 select_changes.stocnet <- function(.data, ..., .by = NULL){
   out <- .data
-  out$changes <- select_changes(out$changes, ..., .by = .by)
+  out$changes <- select_changes.data.frame(out$changes, ..., .by = .by)
   out
 }
 
@@ -391,7 +391,7 @@ rename_changes.data.frame <- function(.data, ...){
 #' @export
 rename_changes.stocnet <- function(.data, ...){
   out <- .data
-  out$changes <- rename_changes(out$changes, ...)
+  out$changes <- rename_changes.data.frame(out$changes, ...)
   out
 }
 

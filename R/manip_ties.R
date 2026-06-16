@@ -327,7 +327,7 @@ rename_ties.data.frame <- function(.data, ...){
 #' @export
 rename_ties.stocnet <- function(.data, ...){
   out <- .data
-  out$ties <- rename_ties(out$ties, ...)
+  out$ties <- rename_ties.data.frame(out$ties, ...)
   out
 }
 
@@ -426,7 +426,7 @@ select_ties.data.frame <- function(.data, ...){
 #' @export
 select_ties.stocnet <- function(.data, ...){
   out <- .data
-  out$ties <- select_ties(out$ties, ...)
+  out$ties <- select_ties.data.frame(out$ties, ...)
   out
 }
 

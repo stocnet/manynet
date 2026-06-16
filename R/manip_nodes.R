@@ -306,7 +306,8 @@ rename_nodes.data.frame <- function(.data, ...){
   if(...length() == 0){
     aka <- list(
       label   = c("name","id"),
-      active  = c("present","presence")
+      active  = c("present","presence"),
+      mode    = c("type","class","category")
     )
     
     current_names <- names(out)
@@ -333,7 +334,7 @@ rename_nodes.data.frame <- function(.data, ...){
 #' @export
 rename_nodes.stocnet <- function(.data, ...){
   out <- .data
-  out$nodes <- rename_nodes(out$nodes, ...)
+  out$nodes <- rename_nodes.data.frame(out$nodes, ...)
   out
 }
 
@@ -371,7 +372,7 @@ select_nodes.data.frame <- function(.data, ...){
 #' @export
 select_nodes.stocnet <- function(.data, ...){
   out <- .data
-  out$nodes <- select_nodes(out$nodes, ...)
+  out$nodes <- select_nodes.data.frame(out$nodes, ...)
   out
 }
 

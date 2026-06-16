@@ -89,7 +89,7 @@ rename_globals.data.frame <- function(.data, ...){
 #' @export
 rename_globals.stocnet <- function(.data, ...){
   out <- .data
-  out$global <- rename_globals(out$global, ...)
+  out$global <- rename_globals.data.frame(out$global, ...)
   out
 }
 
@@ -114,7 +114,7 @@ select_globals.data.frame <- function(.data, ...){
 #' @export
 select_globals.stocnet <- function(.data, ...){
   out <- .data
-  out$global <- select_globals(out$global, ...)
+  out$global <- select_globals.data.frame(out$global, ...)
   out
 }
 
