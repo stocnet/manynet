@@ -318,7 +318,7 @@ rename_ties.data.frame <- function(.data, ...){
     if(length(rename_map) > 0){
       snet_minor_info("Renaming tie attributes to stocnet conventions:",
                       "{paste(rename_map, '->', names(rename_map), collapse = ', ')}")
-      out <- out |> dplyr::rename(any_of(rename_map))
+      out <- out |> dplyr::rename(dplyr::any_of(rename_map))
     }
   } else out <- out |> dplyr::rename(...)
   out
@@ -411,6 +411,23 @@ select_ties.default <- function(.data, ...){
 select_ties.tbl_graph <- function(.data, ...){
   out <- .data
   out |> tidygraph::activate(edges) |> dplyr::select(...) |> activate(nodes)
+}
+
+#' @export
+select_ties.data.frame <- function(.data, ...){
+  out <- .data
+  if(...length() == 0){
+    out <- dplyr::select(out, dplyr::any_of(c("from","to","by", "layer", "time","weight")),
+                         dplyr::everything())
+  } else out <- dplyr::select(out, ...)
+  out
+}
+
+#' @export
+select_ties.stocnet <- function(.data, ...){
+  out <- .data
+  out$ties <- select_ties(out$ties, ...)
+  out
 }
 
 #' @rdname manip_ties_attr

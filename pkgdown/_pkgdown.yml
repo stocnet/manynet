@@ -91,13 +91,15 @@ reference:
       - starts_with("add_info")
   - subtitle: "Nodes"
     contents:
-      - starts_with("manip_nodes")
+      - manip_nodes_num
+      - manip_nodes_attr
   - subtitle: "Changes"
     contents:
       - starts_with("manip_changes")
   - subtitle: "Ties"
     contents:
-      - starts_with("manip_ties")
+      - manip_ties_num
+      - manip_ties_attr
   - subtitle: "Globals"
     contents:
       - starts_with("manip_global")

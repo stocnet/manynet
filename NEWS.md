@@ -16,23 +16,23 @@
 ## Manipulating
 
 - Added `add_tie_attribute()`
-- Added `filter_nodes)`, `filter_ties()`, and `filter_changes()` as generics for filtering nodes, ties, and changes in a network
 - Added `bind_nodes()` for adding nodes and ties from another network
 - Added `arrange_changes()` and `arrange_nodes()` as generics for reordering nodes and ties in a network
 - Added `gather_changes()` as a generic for gathering changes up to a time point
-- Added `rename_changes()` for renaming change variables
-- Added `select_changes()` for selecting change variables
-- Added `select_ties()` for selecting tie variables
+- Added `rename_changes()` for renaming change variables and `rename_globals()` for renaming global variables
+  - Improved 'data.frame' and by extenion 'stocnet' `rename_*()` methods to rename variables when no arguments given
+- Added `select_ties()`, `select_changes()`, and `select_globals()` for selecting variables
+  - Improved 'data.frame' and by extenion 'stocnet' `select_*()` methods to reorder variables when no arguments given
+- Added `filter_nodes()`, `filter_ties()`, and `filter_changes()` as generics for filtering nodes, ties, and changes in a network
 - Added `summarise_ties()` for summarising tie variables
 - Added `join_nodes.stocnet()` for joining a nodelist to a stocnet object
 - Added 'stocnet' methods for `arrange_ties()`, `bind_ties()`, `mutate_nodes()`, `mutate_ties()`, and `rename_nodes()`
 - Renamed `add_changes()` to `bind_changes.tbl_graph()`
-- Added `bind_changes.stocnet()` for binding on groups of changes to a stocnet object
+  - Added `bind_changes.stocnet()` for binding on groups of changes to a stocnet object
 - Improved `from_ties()` to accept named arguments instead of a named list, improving consistency with other modifying functions
-- Added `from_ties.stocnet()` for creating a multiplex stocnet object from more than one network, including handling of tie types as layers and carrying forward nodal attributes
+  - Added `from_ties.stocnet()` for creating a multiplex stocnet object from more than one network, including handling of tie types as layers and carrying forward nodal attributes
 - Improved node filtering and reindexing behaviour in `stocnet` objects so ties and changes remain aligned
 - Improved all manipulating generics by adding .default methods that coerce to supported graph classes and then restore original classes, improving consistency across classes and reducing the need for users to coerce before manipulating
-- Improved `rename_nodes.data.frame()` and `rename_ties.data.frame()` to translate variable names into stocnet defaults if not passed any argument
 
 ## Modifying
 

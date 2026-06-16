@@ -296,11 +296,19 @@ select_changes.igraph <- function(.data, ..., .by = NULL){
 }
 
 #' @export
+select_changes.data.frame <- function(.data, ..., .by = NULL){
+  out <- .data
+  if(...length() == 0){
+    out <- dplyr::select(out, dplyr::any_of(c("node", "time", "var", "value")), 
+                         .by = .by)
+  } else out <- dplyr::select(out, ..., .by = .by)
+  out
+}
+
+#' @export
 select_changes.stocnet <- function(.data, ..., .by = NULL){
   out <- .data
-  changes <- out$changes
-  changes <- dplyr::select(changes, ..., .by = .by)
-  out$changes <- changes
+  out$changes <- select_changes(out$changes, ..., .by = .by)
   out
 }
 
@@ -349,11 +357,41 @@ rename_changes.igraph <- function(.data, ...){
 }
 
 #' @export
+rename_changes.data.frame <- function(.data, ...){
+  out <- .data
+  if(...length() == 0){
+    aka <- list(
+      node   = c("id", "actor", "vertex", "ego", "alter"),
+      time   = c("wave", "period", "date", "begin"),
+      var   = c("variable", "attribute"),
+      value = c("weight", "strength", "increment", "replace", "sign")
+    )
+    
+    current_names <- names(out)
+    rename_map <- c()
+    
+    for(expected in names(aka)){
+      if(!expected %in% current_names){
+        match <- intersect(aka[[expected]], current_names)
+        if(length(match) > 0){
+          rename_map[expected] <- match[1]  # take the first match if multiple
+        }
+      }
+    }
+    
+    if(length(rename_map) > 0){
+      snet_minor_info("Renaming change columns to stocnet conventions:",
+                      "{paste(rename_map, '->', names(rename_map), collapse = ', ')}")
+      out <- out |> dplyr::rename(dplyr::any_of(rename_map))
+    }
+  } else out <- out |> dplyr::rename(...)
+  out
+}
+
+#' @export
 rename_changes.stocnet <- function(.data, ...){
   out <- .data
-  changes <- out$changes
-  changes <- dplyr::rename(changes, ...)
-  out$changes <- changes
+  out$changes <- rename_changes(out$changes, ...)
   out
 }
 

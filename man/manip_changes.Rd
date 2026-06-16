@@ -83,16 +83,16 @@ nodal attributes.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{                default igraph stocnet tbl_graph
-apply_changes         *                        *
-arrange_changes       *      *       *          
-bind_changes          *              *         *
-delete_changes        *      *       *          
-filter_changes        *      *       *          
-gather_changes        *      *                  
-mutate_changes        *              *         *
-rename_changes        *      *       *          
-select_changes        *      *       *          
+\if{html}{\out{<div class="sourceCode">}}\preformatted{                data.frame default igraph stocnet tbl_graph
+apply_changes                    *                        *
+arrange_changes                  *      *       *          
+bind_changes                     *              *         *
+delete_changes                   *      *       *          
+filter_changes                   *      *       *          
+gather_changes                   *      *                  
+mutate_changes                   *              *         *
+rename_changes           *       *      *       *          
+select_changes           *       *      *       *          
 }\if{html}{\out{</div>}}
 
 If a method is not available for a particular class, but a default method is,

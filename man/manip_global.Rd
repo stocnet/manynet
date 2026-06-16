@@ -3,9 +3,15 @@
 \name{manip_global}
 \alias{manip_global}
 \alias{mutate_globals}
+\alias{rename_globals}
+\alias{select_globals}
 \title{Manipulating global attributes}
 \usage{
 mutate_globals(.data, ...)
+
+rename_globals(.data, ...)
+
+select_globals(.data, ...)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -29,6 +35,8 @@ or variables that are not tied to a particular node or tie.
 They include:
 \itemize{
 \item \code{mutate_globals()} adds a table of global variables to the network.
+\item \code{rename_globals()} renames columns in the global variables table.
+\item \code{select_globals()} selects columns in the global variables table.
 }
 
 It expects three columns for
@@ -40,9 +48,10 @@ and the new value to be applied, which should be called 'value'.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{               default igraph stocnet
-as_globallist               *       *
-mutate_globals       *              *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{               data.frame default stocnet
+mutate_globals                  *       *
+rename_globals          *       *       *
+select_globals          *       *       *
 }\if{html}{\out{</div>}}
 
 If a method is not available for a particular class, but a default method is,

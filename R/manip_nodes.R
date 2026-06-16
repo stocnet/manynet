@@ -324,7 +324,7 @@ rename_nodes.data.frame <- function(.data, ...){
     if(length(rename_map) > 0){
       snet_minor_info("Renaming node attributes to stocnet conventions:",
                       "{paste(rename_map, '->', names(rename_map), collapse = ', ')}")
-      out <- out |> dplyr::rename(any_of(rename_map))
+      out <- out |> dplyr::rename(dplyr::any_of(rename_map))
     }
   } else out <- out |> dplyr::rename(...)
   out
@@ -356,6 +356,23 @@ select_nodes.tbl_graph <- function(.data, ...){
 select_nodes.igraph <- function(.data, ...){
   .data |> as_tidygraph() |> 
     tidygraph::select(...) |> as_igraph()
+}
+
+#' @export
+select_nodes.data.frame <- function(.data, ...){
+  out <- .data
+  if(...length() == 0){
+    out <- dplyr::select(out, dplyr::any_of(c("label","active")),
+                         dplyr::everything())
+  } else out <- dplyr::select(out, ...)
+  out
+}
+
+#' @export
+select_nodes.stocnet <- function(.data, ...){
+  out <- .data
+  out$nodes <- select_nodes(out$nodes, ...)
+  out
 }
 
 #' @rdname manip_nodes_attr 
