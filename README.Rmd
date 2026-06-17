@@ -49,7 +49,7 @@ a different package is needed.
 This can make learning and using network analysis tools in R challenging.
 
 By contrast, `{manynet}` offers _many_ tools that work on _many_ (if not most) types and kinds of networks.
-It helps researchers **make**, **manipulate**, **modify**, **mark**, and **measure** networks,
+It helps researchers **make**, **modify**, **mark**, and **measure** networks,
 as well as identify nodes' **motifs** and **memberships**.
 `{manynet}` works with one-mode and two-mode (bipartite) networks,
 directed and undirected, weighted and unweighted, signed, multiplex, and dynamic (longitudinal) networks.
@@ -258,13 +258,13 @@ making network manipulation intuitive for R users:
 ```{r manip-example, eval = FALSE}
 ison_southern_women %>%
   mutate_ties(weight = 1) %>%
-  filter_nodes(node_is_mode(ison_southern_women)) %>%
+  filter_nodes(node_is_isolate(ison_southern_women)) %>%
   select_nodes(name)
 ```
 
-Available verbs for manipulating **nodes**: `mutate_nodes()`, `filter_nodes()`, `select_nodes()`, `rename_nodes()`, `arrange_nodes()`, `bind_nodes()`, `add_nodes()`, `delete_nodes()`, `join_nodes()`
+Available verbs for manipulating **nodes**: `r list_functions("^(mutate|filter|select|rename|arrange|bind|add|delete|join)_nodes$")`
 
-Available verbs for manipulating **ties**: `mutate_ties()`, `filter_ties()`, `select_ties()`, `rename_ties()`, `arrange_ties()`, `bind_ties()`, `add_ties()`, `delete_ties()`, `join_ties()`
+Available verbs for manipulating **ties**: `r list_functions("^(mutate|filter|select|rename|arrange|bind|add|delete|join)_ties$")`
 
 ## Modifying
 
@@ -439,7 +439,7 @@ Available membership algorithms: `r list_functions("^node_in_")`
 
 The easiest way to install the latest stable version of `{manynet}` is via CRAN.
 Simply open the R console and enter:
- 
+
 `install.packages('manynet')`
 
 `library(manynet)` will then load the package and make the data and tutorials (see below) contained within the package available.
