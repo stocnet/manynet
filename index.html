@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.1</span>
       </span>
     </div>
 
@@ -93,7 +93,7 @@
 <h2 id="about-the-package">About the package<a class="anchor" aria-label="anchor" href="#about-the-package"></a>
 </h2>
 <p>While many awesome packages for network analysis exist for R, all with their own offerings and advantages, they also all have their own vocabulary, syntax, and expected formats for data inputs and analytic outputs. Many of these packages only work on <em>some</em> types of networks (usually one-mode, simple, directed or undirected networks) for <em>some</em> types of analysis; if you want to analyse a different type of network or try a different analysis, a different package is needed. This can make learning and using network analysis tools in R challenging.</p>
-<p>By contrast, <a href="https://stocnet.github.io/manynet/">manynet</a> offers <em>many</em> analytic tools that work on <em>many</em> (if not most) types and kinds of networks. It helps researchers make, modify, mark, measure, and identify nodes’ motifs and memberships in networks. For graph drawing see <a href="https://stocnet.github.io/autograph/" class="external-link"><code>{autograph}</code></a>, for network analysis see <a href="https://stocnet.github.io/netrics/" class="external-link"><code>{netrics}</code></a> and for further testing and modelling capabilities see <a href="https://stocnet.github.io/migraph/" class="external-link"><code>{migraph}</code></a> and the other <a href="https://github.com/stocnet" class="external-link">stocnet</a> packages.</p>
+<p>By contrast, <a href="https://stocnet.github.io/manynet/">manynet</a> offers <em>many</em> tools that help researchers make, manipulate, and modify <em>many</em> (if not most) types and kinds of networks, including matrices, edgelists, and objects from other packages such as <a href="https://r.igraph.org/" class="external-link">igraph</a>, <a href="https://statnet.org/" class="external-link">network</a>, <a href="https://tidygraph.data-imaginist.com" class="external-link">tidygraph</a>, <code>{diffnet}</code>, and <code>{siena}</code>, as well as one-mode and two-mode, directed and undirected, weighted, unweighted, and signed, longitudinal and dynamic networks. If you have social network data, <a href="https://stocnet.github.io/manynet/">manynet</a> probably has the tools to help you work with it.</p>
 <ul>
 <li>
 <a href="#making">Making</a>
@@ -101,6 +101,11 @@
 <li><a href="#importing-network-data">Importing network data</a></li>
 <li><a href="#identifying-network-data">Identifying network data</a></li>
 <li><a href="#inventing-network-data">Inventing network data</a></li>
+</ul>
+</li>
+<li>
+<a href="#manipulating">Manipulating</a>
+<ul>
 <li><a href="#translating-network-data">Translating network data</a></li>
 </ul>
 </li>
@@ -131,7 +136,7 @@
 <div class="section level4">
 <h4 id="importing-network-data">Importing network data<a class="anchor" aria-label="anchor" href="#importing-network-data"></a>
 </h4>
-<p><a href="https://stocnet.github.io/manynet/">manynet</a> offers a number of options for importing network data found in other repositories. Besides importing and exporting to Excel edgelists, nodelists, and (bi)adjacency matrices, there are specific routines included for <a href="http://www.analytictech.com/archive/ucinet.htm" class="external-link">UCINET</a>, <a href="http://mrvar.fdv.uni-lj.si/pajek/" class="external-link">Pajek</a>, and <a href="http://graphml.graphdrawing.org" class="external-link">GraphML</a> files, e.g.:</p>
+<p><a href="https://stocnet.github.io/manynet/">manynet</a> offers a number of options for importing network data found in other repositories. Besides importing and exporting to Excel edgelists, nodelists, and (bi)adjacency matrices, there are specific routines included for <a href="http://www.analytictech.com/archive/ucinet.htm" class="external-link">UCINET</a>, <a href="http://mrvar.fdv.uni-lj.si/pajek/" class="external-link">Pajek</a>, and GraphML files, e.g.:</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-import-graph-1.png" alt="Graph of manynet input/output formats"></p>
 <p>If you cannot remember the file name/path, then just run <code>read_*()</code> with the parentheses empty, and a file selection popup will open so that you can browse through your file system to find the file. Usually both <code>read_*()</code> and <code>write_*()</code> are offered to make sure that <a href="https://stocnet.github.io/manynet/">manynet</a> is compatible with your larger project and analytic workflow.</p>
 <ul>
@@ -148,7 +153,15 @@
 </h4>
 <p>There may be no need to import network data though, if that network data already exists in a package in R. To facilitate testing and to contribute to an ecosystem of easily accessible network data, particularly for pedagogical purposes, we include a number of classical and instructional network datasets, all thoroughly documented and ready for analysis. Here are just a few examples, all available in <a href="https://stocnet.github.io/manynet/">manynet</a>:</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-ison_egs-1.png" alt="Graphs illustrating several of the classic networks included in the package"></p>
-<p>Here are some others: <code>ison_adolescents</code>, <code>ison_algebra</code>, <code>ison_brandes</code>, <code>ison_dolphins</code>, <code>ison_emotions</code>, <code>ison_hightech</code>, <code>ison_judo_moves</code>, <code>ison_karateka</code>, <code>ison_koenigsberg</code>, <code>ison_laterals</code>, <code>ison_lawfirm</code>, <code>ison_monks</code>, <code>ison_networkers</code>, <code>ison_physicians</code>, <code>ison_southern_women</code></p>
+<p>The package includes three families of network data:</p>
+<ul>
+<li>Classic/instructional networks: <code>ison_adolescents</code>, <code>ison_algebra</code>, <code>ison_brandes</code>, <code>ison_dolphins</code>, <code>ison_emotions</code>, <code>ison_hightech</code>, <code>ison_judo_moves</code>, <code>ison_karateka</code>, <code>ison_koenigsberg</code>, <code>ison_laterals</code>, <code>ison_lawfirm</code>, <code>ison_monks</code>, <code>ison_networkers</code>, <code>ison_physicians</code>, <code>ison_southern_women</code>
+</li>
+<li>Fictional networks: <code>fict_actually</code>, <code>fict_friends</code>, <code>fict_greys</code>, <code>fict_lotr</code>, <code>fict_marvel</code>, <code>fict_potter</code>, <code>fict_starwars</code>, <code>fict_thrones</code>
+</li>
+<li>International/political networks: <code>irps_911</code>, <code>irps_blogs</code>, <code>irps_books</code>, <code>irps_nuclear</code>, <code>irps_revere</code>, <code>irps_usgeo</code>, <code>irps_wwi</code>
+</li>
+</ul>
 </div>
 <div class="section level4">
 <h4 id="inventing-network-data">Inventing network data<a class="anchor" aria-label="anchor" href="#inventing-network-data"></a>
@@ -159,33 +172,52 @@
 <p>The <code>generate_*</code> group of functions generate networks from generative mechanisms that may include some random aspect, and so will return a different output each time they are run, e.g.:</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-generate_egs-1.png" alt="Graphs of small-world and scale-free networks of 15 nodes"></p>
 <p>See also <code><a href="reference/make_stochastic.html">generate_citations()</a></code>, <code><a href="reference/make_random.html">generate_configuration()</a></code>, <code><a href="reference/make_stochastic.html">generate_fire()</a></code>, <code><a href="reference/make_stochastic.html">generate_islands()</a></code>, <code><a href="reference/make_random.html">generate_man()</a></code>, <code><a href="reference/make_random.html">generate_random()</a></code>, <code><a href="reference/make_stochastic.html">generate_scalefree()</a></code>, <code><a href="reference/make_stochastic.html">generate_smallworld()</a></code>, <code><a href="reference/make_random.html">generate_utilities()</a></code>.</p>
-<p>Note that all these functions can create directed or undirected, one-mode or two-mode networks. Creating two-mode networks is as easy as passing the first argument (<code>n</code>) a vector of two integers instead of one. For example, while <code>n = 15</code> will create a one-mode network of 10 nodes, whereas <code>n = c(10,5)</code> will create a two-mode network of 10 nodes in the first mode, and 5 nodes in the second mode. Some of these functions wrap existing algorithms in other packages, while others are unique offerings or add additional formats, e.g. two-mode networks.</p>
+<p>Note that all these functions can create directed or undirected, one-mode or two-mode networks. Creating two-mode networks is as easy as passing the first argument (<code>n</code>) a vector of two integers instead of one. For example, while <code>n = 15</code> will create a one-mode network of 15 nodes, whereas <code>n = c(10,5)</code> will create a two-mode network of 10 nodes in the first mode, and 5 nodes in the second mode. Some of these functions wrap existing algorithms in other packages, while others are unique offerings or add additional formats, e.g. two-mode networks.</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-generate_tm-1.png" alt="Graphs of generated one- and two-mode small-world networks"></p>
 </div>
 <div class="section level4">
 <h4 id="inventing-data-on-networks">Inventing data on networks<a class="anchor" aria-label="anchor" href="#inventing-data-on-networks"></a>
 </h4>
-<p>Lastly, <a href="https://stocnet.github.io/manynet/">manynet</a> also includes functions for simulating diffusion or learning processes over a given network:</p>
+<p><a href="https://stocnet.github.io/manynet/">manynet</a> also includes functions for simulating diffusion or learning processes over a given network:</p>
 <ul>
 <li>
 <code><a href="reference/make_play.html">play_diffusion()</a></code>, <code><a href="reference/make_learning.html">play_learning()</a></code>, <code><a href="reference/make_learning.html">play_segregation()</a></code>
 </li>
 </ul>
-<p>The diffusion models include not only SI and threshold models, but also SIS, SIR, SIRS, SEIR, and SEIRS.</p>
+<p>The diffusion models include not only SI and threshold models, but also SIS, SIR, SIRS, SEIR, and SEIRS. These simulations return results that can be analysed with the network-level and node-level diffusion measures in <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="modifying">Modifying<a class="anchor" aria-label="anchor" href="#modifying"></a>
+<h2 id="manipulating">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating"></a>
 </h2>
-<p>Before or during analysis, you may need to modify the network you are analysing in various ways. Different packages have different syntaxes and vocabulary for such actions; <a href="https://stocnet.github.io/manynet/">manynet</a>’s <code>to_*()</code> functions can be used on any class object to reformat, transform, or split networks into networks with other properties.</p>
+<p><a href="https://stocnet.github.io/manynet/">manynet</a> offers comprehensive tools for manipulating networks, including coercing between formats and using familiar dplyr-style verbs to work with nodes, ties, and their attributes.</p>
 <div class="section level4">
 <h4 id="translating-network-data">Translating network data<a class="anchor" aria-label="anchor" href="#translating-network-data"></a>
 </h4>
 <p>Once you have imported network data, identified network data in this or other packages in R, or invented your own, you may need to translate this data into another class for analysis. <a href="https://stocnet.github.io/manynet/">manynet</a>’s <code>as_*()</code> functions can be used to coerce objects from one of many common classes into any other. Below is a directed graph showing the currently available options:</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-coercion-graph-1.png" alt="Graph of coercible relationships between classes"></p>
 <p>These functions are designed to be as intuitive and lossless as possible, outperforming many other class-coercion packages.</p>
-<p>We use these functions internally in every <a href="https://stocnet.github.io/manynet/">manynet</a> and <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a> function to (1) allow them to be run on any compatible network format and (2) use the most efficient algorithm available. This makes <a href="https://stocnet.github.io/manynet/">manynet</a> and <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a> compatible with your existing workflow, whether you use base R matrices or edgelists as data frames, <a href="https://igraph.org/r/" class="external-link"><code>{igraph}</code></a>, <a href="https://statnet.org" class="external-link"><code>{network}</code></a>, or <a href="https://tidygraph.data-imaginist.com/index.html" class="external-link"><code>{tidygraph}</code></a>, and extensible by developments in those other packages too.</p>
+<p>We use these functions internally in every <a href="https://stocnet.github.io/manynet/">manynet</a>, <a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a>, <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>, and <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a> function to (1) allow them to be run on any compatible network format and (2) use the most efficient algorithm available. This makes all these packages compatible with your existing workflow, whether you use base R matrices or edgelists as data frames, <a href="https://igraph.org/r/" class="external-link"><code>{igraph}</code></a>, <a href="https://statnet.org" class="external-link"><code>{network}</code></a>, or <a href="https://tidygraph.data-imaginist.com/index.html" class="external-link"><code>{tidygraph}</code></a>, and extensible by developments in those other packages too.</p>
 </div>
+<div class="section level4">
+<h4 id="wrangling-with-dplyr-style-verbs">Wrangling with dplyr-style verbs<a class="anchor" aria-label="anchor" href="#wrangling-with-dplyr-style-verbs"></a>
+</h4>
+<p><a href="https://stocnet.github.io/manynet/">manynet</a> offers a set of dplyr-inspired verbs for working directly with network nodes, ties, and their attributes. These verbs follow the familiar tidyverse grammar, making network manipulation intuitive for R users:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ison_southern_women</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu"><a href="reference/manip_ties_attr.html">mutate_ties</a></span><span class="op">(</span>weight <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu"><a href="reference/manip_nodes_num.html">filter_nodes</a></span><span class="op">(</span><span class="fu"><a href="reference/measure_attributes_nodes.html">node_is_mode</a></span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu"><a href="reference/manip_nodes_attr.html">select_nodes</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span></span></code></pre></div>
+<p>Available verbs for manipulating <strong>nodes</strong>: <code><a href="reference/manip_nodes_attr.html">mutate_nodes()</a></code>, <code><a href="reference/manip_nodes_num.html">filter_nodes()</a></code>, <code><a href="reference/manip_nodes_attr.html">select_nodes()</a></code>, <code><a href="reference/manip_nodes_attr.html">rename_nodes()</a></code>, <code><a href="reference/manip_nodes_num.html">arrange_nodes()</a></code>, <code><a href="reference/manip_nodes_num.html">bind_nodes()</a></code>, <code><a href="reference/manip_nodes_num.html">add_nodes()</a></code>, <code><a href="reference/manip_nodes_num.html">delete_nodes()</a></code>, <code><a href="reference/manip_nodes_attr.html">join_nodes()</a></code></p>
+<p>Available verbs for manipulating <strong>ties</strong>: <code><a href="reference/manip_ties_attr.html">mutate_ties()</a></code>, <code><a href="reference/manip_ties_num.html">filter_ties()</a></code>, <code><a href="reference/manip_ties_attr.html">select_ties()</a></code>, <code><a href="reference/manip_ties_attr.html">rename_ties()</a></code>, <code><a href="reference/manip_ties_attr.html">arrange_ties()</a></code>, <code><a href="reference/manip_ties_num.html">bind_ties()</a></code>, <code><a href="reference/manip_ties_num.html">add_ties()</a></code>, <code><a href="reference/manip_ties_num.html">delete_ties()</a></code>, <code><a href="reference/manip_ties_attr.html">join_ties()</a></code></p>
+<p>Available verbs for manipulating <strong>changes</strong>: <code><a href="reference/defunct.html">add_changes()</a></code>, <code><a href="reference/manip_changes.html">apply_changes()</a></code>, <code><a href="reference/manip_changes.html">arrange_changes()</a></code>, <code><a href="reference/manip_changes.html">bind_changes()</a></code>, <code><a href="reference/defunct.html">collect_changes()</a></code>, <code><a href="reference/manip_changes.html">delete_changes()</a></code>, <code><a href="reference/class_describe.html">describe_changes()</a></code>, <code><a href="reference/manip_changes.html">filter_changes()</a></code>, <code><a href="reference/manip_changes.html">gather_changes()</a></code>, <code><a href="reference/manip_changes.html">mutate_changes()</a></code>, <code><a href="reference/manip_changes.html">rename_changes()</a></code>, <code><a href="reference/manip_changes.html">select_changes()</a></code></p>
+<p>Available verbs for manipulating <strong>globals</strong>: <code><a href="reference/manip_global.html">mutate_globals()</a></code>, <code><a href="reference/manip_global.html">rename_globals()</a></code>, <code><a href="reference/manip_global.html">select_globals()</a></code></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="modifying">Modifying<a class="anchor" aria-label="anchor" href="#modifying"></a>
+</h2>
+<p>Before or during analysis, you may need to modify the structure of the network you are analysing. <a href="https://stocnet.github.io/manynet/">manynet</a>’s <code>to_*()</code> functions can be used on any class object to reformat, transform, or split networks into networks with other properties.</p>
 <div class="section level3">
 <h3 id="reformatting">Reformatting<a class="anchor" aria-label="anchor" href="#reformatting"></a>
 </h3>
@@ -252,7 +284,7 @@
 <p>This package stands on the shoulders of several incredible packages.</p>
 <p>In terms of the objects it works with, this package aims to provide an updated, more comprehensive replacement for <a href="https://mbojan.github.io/intergraph/" class="external-link">intergraph</a>. As such it works with objects in <a href="https://r.igraph.org/" class="external-link">igraph</a> and <a href="https://statnet.org/" class="external-link">network</a> formats, but also equally well with base matrices and edgelists (data frames), and formats from several other packages.</p>
 <p>The user interface is inspired in some ways by Thomas Lin Pedersen’s excellent <a href="https://tidygraph.data-imaginist.com" class="external-link">tidygraph</a> package, though makes some different decisions, and uses the quickest <a href="https://r.igraph.org/" class="external-link">igraph</a> or <a href="https://statnet.org/" class="external-link">network</a> routines where available.</p>
-<p><a href="https://stocnet.github.io/manynet/">manynet</a> has inherited most of its core functionality from its maternal package, <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>, but has also devolved its visualisation capabilities to its sibling package, <a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a>, and its network analytic capabilities to its sibling package, <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>. <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a> continues to offer modelling functions that builds upon the architecture provided by <a href="https://stocnet.github.io/manynet/">manynet</a>. For more, please check out <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a> directly.</p>
+<p><a href="https://stocnet.github.io/manynet/">manynet</a> has inherited most of its core functionality from its maternal package, <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>, but has also devolved its visualisation capabilities to its sibling package, <a href="https://stocnet.github.io/autograph/" class="external-link"><code>{autograph}</code></a>, and its network analytic capabilities to its sibling package, <a href="https://stocnet.github.io/netrics/" class="external-link"><code>{netrics}</code></a>. <a href="https://stocnet.github.io/migraph/" class="external-link"><code>{migraph}</code></a> continues to offer modelling functions that builds upon the architecture provided by <a href="https://stocnet.github.io/manynet/">manynet</a>. For more, please check out <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a> and the other <a href="https://github.com/stocnet" class="external-link">stocnet</a> packages directly.</p>
 </div>
 <div class="section level2">
 <h2 id="funding-details">Funding details<a class="anchor" aria-label="anchor" href="#funding-details"></a>
