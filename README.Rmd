@@ -87,7 +87,7 @@ Besides importing and exporting to Excel edgelists, nodelists, and (bi)adjacency
 there are specific routines included for 
 [UCINET](http://www.analytictech.com/archive/ucinet.htm), 
 [Pajek](http://mrvar.fdv.uni-lj.si/pajek/),
-and [GraphML](https://w.wiki/_cgC5) files, e.g.:
+and GraphML files, e.g.:
 
 <img src="https://www.jameshollway.com/post/manynet/README-import-graph-1.png" alt="Graph of manynet input/output formats"/>
 
