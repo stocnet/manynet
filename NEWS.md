@@ -1,3 +1,9 @@
+# manynet 2.1.1
+
+## Package
+
+- Updated README for CRAN submission
+
 # manynet 2.1.0
 
 ## Package
