@@ -49,11 +49,12 @@ with it.
   - [Inventing network data](#inventing-network-data)
 - [Manipulating](#manipulating)
   - [Translating network data](#translating-network-data)
+  - [Wrangling with dplyr-style
+    verbs](#wrangling-with-dplyr-style-verbs)
 - [Modifying](#modifying)
   - [Reformatting](#reformatting)
   - [Transforming](#transforming)
   - [Splitting and Joining](#splitting-and-joining)
-  - [Extracting](#extracting)
 - [Installation](#installation)
   - [Stable](#stable)
   - [Development](#development)
