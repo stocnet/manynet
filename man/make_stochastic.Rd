@@ -126,14 +126,15 @@ Watts, Duncan J., and Steven H. Strogatz. 1998.
 Barabasi, Albert-Laszlo, and Reka Albert. 1999.
 “Emergence of Scaling in Random Networks.”
 \emph{Science} 286(5439):509–12.
-\doi{10.1126/science.286.5439.509}.
+\doi{10.1126/science.286.5439.509}
 }
 
 \subsection{On the forest-fire model}{
 
 Leskovec, Jure, Jon Kleinberg, and Christos Faloutsos. 2007.
-"\href{https://www.cs.cmu.edu/~jure/pubs/powergrowth-tkdd.pdf}{Graph evolution: Densification and shrinking diameters}".
+"Graph evolution: Densification and shrinking diameters".
 \emph{ACM transactions on Knowledge Discovery from Data}, 1(1): 2-es.
+\doi{10.1145/1217299.1217301}
 }
 }
 \seealso{
