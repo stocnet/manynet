@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Many Ways to Make, Modify, Mark, and Measure Myriad Networks • manynet</title>
+<title>Many Ways to Make, Manipulate, and Modify Myriad Networks • manynet</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png">
 <link rel="icon" type="”image/svg+xml”" href="favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -16,8 +16,8 @@
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Many Ways to Make, Modify, Mark, and Measure Myriad Networks">
-<meta property="og:description" content="Many tools for making, modifying, marking, measuring, and motifs and memberships of many different types of networks. All functions operate with matrices, edge lists, and igraph, network, and tidygraph objects, on directed, multiplex, multimodal, signed, and other networks. The package includes functions for importing and exporting, creating and generating networks, modifying networks and node and tie attributes, and describing networks with sensible defaults.">
+<script src="pkgdown.js"></script><meta property="og:title" content="Many Ways to Make, Manipulate, and Modify Myriad Networks">
+<meta property="og:description" content="Many tools for making, manipulating, and modifying many different types of networks. All functions operate with matrices, edge lists, and igraph, network, and tidygraph objects, on directed, multiplex, multimodal, signed, and other networks. The package includes functions for importing and exporting, creating and generating networks, modifying networks and node and tie attributes, and describing networks with sensible defaults.">
 <meta property="og:image" content="https://stocnet.github.io/manynet/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.2</span>
       </span>
     </div>
 
@@ -94,6 +94,7 @@
 </h2>
 <p>While many awesome packages for network analysis exist for R, all with their own offerings and advantages, they also all have their own vocabulary, syntax, and expected formats for data inputs and analytic outputs. Many of these packages only work on <em>some</em> types of networks (usually one-mode, simple, directed or undirected networks) for <em>some</em> types of analysis; if you want to analyse a different type of network or try a different analysis, a different package is needed. This can make learning and using network analysis tools in R challenging.</p>
 <p>By contrast, <a href="https://stocnet.github.io/manynet/">manynet</a> offers <em>many</em> tools that help researchers make, manipulate, and modify <em>many</em> (if not most) types and kinds of networks, including matrices, edgelists, and objects from other packages such as <a href="https://r.igraph.org/" class="external-link">igraph</a>, <a href="https://statnet.org/" class="external-link">network</a>, <a href="https://tidygraph.data-imaginist.com" class="external-link">tidygraph</a>, <code>{diffnet}</code>, and <code>{siena}</code>, as well as one-mode and two-mode, directed and undirected, weighted, unweighted, and signed, longitudinal and dynamic networks. If you have social network data, <a href="https://stocnet.github.io/manynet/">manynet</a> probably has the tools to help you work with it.</p>
+<p>NB: If you are looking for the visualisation functions that used to be in <a href="https://stocnet.github.io/manynet/">manynet</a>, these have been migrated to their own package <a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a>. If you are looking for the network analytic functions that used to be in <a href="https://stocnet.github.io/manynet/">manynet</a>, these have been migrated to their own package <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>. If you install and load <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>, all these packages will be installed and loaded and you can use all functionality, past and present.</p>
 <ul>
 <li>
 <a href="#making">Making</a>
@@ -107,6 +108,7 @@
 <a href="#manipulating">Manipulating</a>
 <ul>
 <li><a href="#translating-network-data">Translating network data</a></li>
+<li><a href="#wrangling-with-dplyr-style-verbs">Wrangling with dplyr-style verbs</a></li>
 </ul>
 </li>
 <li>
@@ -115,7 +117,6 @@
 <li><a href="#reformatting">Reformatting</a></li>
 <li><a href="#transforming">Transforming</a></li>
 <li><a href="#splitting-and-joining">Splitting and Joining</a></li>
-<li><a href="#extracting">Extracting</a></li>
 </ul>
 </li>
 <li>

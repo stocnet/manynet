@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.2</span>
       </span>
     </div>
 
@@ -59,6 +59,41 @@
       <small>Source: <a href="https://github.com/stocnet/manynet/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.1.2" id="manynet-212">manynet 2.1.2<a class="anchor" aria-label="anchor" href="#manynet-212"></a></h2>
+<div class="section level3">
+<h3 id="package-2-1-2">Package<a class="anchor" aria-label="anchor" href="#package-2-1-2"></a></h3>
+<ul><li>Updated title/description text</li>
+<li>Updated README
+<ul><li>Updated TOC to include new wrangling section</li>
+<li>Added package migration note to README</li>
+</ul></li>
+<li>Updated startup messages with migration notesand links to <a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a>, <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>, and <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
+</li>
+<li>Removed a set of defunct wrappers for moved/retired functions</li>
+</ul></div>
+<div class="section level3">
+<h3 id="making-2-1-2">Making<a class="anchor" aria-label="anchor" href="#making-2-1-2"></a></h3>
+<ul><li>Fixed reference formatting of DOI and citation text</li>
+</ul></div>
+<div class="section level3">
+<h3 id="coercion-2-1-2">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-1-2"></a></h3>
+<ul><li>Improved <code><a href="../reference/expect.html">expect_nodes()</a></code>/<code><a href="../reference/expect.html">expect_ties()</a></code> and introduces internal active-context helpers</li>
+<li>Fixed <code>as_diffusion.igraph()</code> to derive diffusion events from changelists</li>
+</ul></div>
+<div class="section level3">
+<h3 id="manipulating-2-1-2">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-2-1-2"></a></h3>
+<ul><li>Added <code>filter_ties.igraph()</code> and <code>filter_ties.stocnet()</code>
+</li>
+<li>Improved active context inference across <code>mutate_nodes.stocnet()</code>, <code>mutate_ties.stocnet()</code>, <code>filter_nodes.stocnet()</code>, and <code>filter_ties.stocnet()</code>
+</li>
+<li>Added <code>bind_changes.igraph()</code> and delegated ‘tbl_graph’ method to it</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-2-1-2">Modifying<a class="anchor" aria-label="anchor" href="#modifying-2-1-2"></a></h3>
+<ul><li>Added <code>to_correlation.matrix()</code> S3 method</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.1.1" id="manynet-211">manynet 2.1.1<a class="anchor" aria-label="anchor" href="#manynet-211"></a></h2>
 <div class="section level3">
@@ -242,8 +277,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="marking-1-7-2">Marking<a class="anchor" aria-label="anchor" href="#marking-1-7-2"></a></h3>
-<ul><li>Fixed <code><a href="../reference/defunct.html">node_is_isolate()</a></code> to work with signed networks</li>
-<li>Fixed <code><a href="../reference/defunct.html">node_is_pendant()</a></code> to work with signed networks</li>
+<ul><li>Fixed <code>node_is_isolate()</code> to work with signed networks</li>
+<li>Fixed <code>node_is_pendant()</code> to work with signed networks</li>
 </ul></div>
 <div class="section level3">
 <h3 id="tutorials-1-7-2">Tutorials<a class="anchor" aria-label="anchor" href="#tutorials-1-7-2"></a></h3>
@@ -322,8 +357,8 @@
 <li>Geary’s C as a measure of homophily for numeric attributes</li>
 </ul></li>
 <li>Updated documentation for richness, diversity, and homophily measures</li>
-<li>Fixed <code><a href="../reference/defunct.html">node_is_latent()</a></code>, <code><a href="../reference/defunct.html">node_is_infected()</a></code>, <code>node_is_recoverd()</code> to work with changing networks</li>
-<li>Improved <code><a href="../reference/defunct.html">node_is_exposed()</a></code> to work with changing networks and now accepts a time argument</li>
+<li>Fixed <code>node_is_latent()</code>, <code>node_is_infected()</code>, <code>node_is_recoverd()</code> to work with changing networks</li>
+<li>Improved <code>node_is_exposed()</code> to work with changing networks and now accepts a time argument</li>
 </ul></div>
 <div class="section level3">
 <h3 id="tutorials-1-7-0">Tutorials<a class="anchor" aria-label="anchor" href="#tutorials-1-7-0"></a></h3>
@@ -421,7 +456,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="memberships-1-6-2">Memberships<a class="anchor" aria-label="anchor" href="#memberships-1-6-2"></a></h3>
-<ul><li>Added <code><a href="../reference/defunct.html">node_in_core()</a></code> for categorising nodes into 2+ core/periphery groups</li>
+<ul><li>Added <code>node_in_core()</code> for categorising nodes into 2+ core/periphery groups</li>
 </ul></div>
 <div class="section level3">
 <h3 id="motifs-1-6-2">Motifs<a class="anchor" aria-label="anchor" href="#motifs-1-6-2"></a></h3>
@@ -568,7 +603,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="memberships-1-5-0">Memberships<a class="anchor" aria-label="anchor" href="#memberships-1-5-0"></a></h3>
-<ul><li>Fixed <code><a href="../reference/defunct.html">node_in_leiden()</a></code> to use resolution parameter in call to igraph</li>
+<ul><li>Fixed <code>node_in_leiden()</code> to use resolution parameter in call to igraph</li>
 </ul></div>
 <div class="section level3">
 <h3 id="data-1-5-0">Data<a class="anchor" aria-label="anchor" href="#data-1-5-0"></a></h3>
@@ -601,7 +636,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="marking-1-4-1">Marking<a class="anchor" aria-label="anchor" href="#marking-1-4-1"></a></h3>
-<ul><li>Added <code><a href="../reference/defunct.html">node_is_universal()</a></code>
+<ul><li>Added <code>node_is_universal()</code>
 </li>
 </ul></div>
 <div class="section level3">
@@ -643,7 +678,7 @@
 <div class="section level3">
 <h3 id="marking-1-4-0">Marking<a class="anchor" aria-label="anchor" href="#marking-1-4-0"></a></h3>
 <ul><li>Added <code><a href="../reference/mark_format_change.html">is_changing()</a></code> for identifying networks with a change component</li>
-<li>Added <code><a href="../reference/defunct.html">node_is_mean()</a></code> for identifying typical nodes</li>
+<li>Added <code>node_is_mean()</code> for identifying typical nodes</li>
 <li>Updated <code>node_is_*()</code> diffusion marks to work with new .data output</li>
 <li>Internally added expect_mark test helper</li>
 </ul></div>
@@ -671,9 +706,9 @@
 </ul></div>
 <div class="section level3">
 <h3 id="learning-1-4-0">Learning<a class="anchor" aria-label="anchor" href="#learning-1-4-0"></a></h3>
-<ul><li>Updated ‘community’ tutorial with guidance on <code><a href="../reference/defunct.html">node_in_community()</a></code>
+<ul><li>Updated ‘community’ tutorial with guidance on <code>node_in_community()</code>
 </li>
-<li>Updated ‘position’ tutorial with guidance on <code><a href="../reference/defunct.html">tie_is_bridge()</a></code> and <code><a href="../reference/defunct.html">node_bridges()</a></code>
+<li>Updated ‘position’ tutorial with guidance on <code>tie_is_bridge()</code> and <code><a href="../reference/defunct.html">node_bridges()</a></code>
 </li>
 <li>Moved ‘diffusion’ tutorial to <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a> to help with dependencies</li>
 </ul></div>
@@ -770,9 +805,9 @@
 </ul></div>
 <div class="section level3">
 <h3 id="marking-1-3-0">Marking<a class="anchor" aria-label="anchor" href="#marking-1-3-0"></a></h3>
-<ul><li>Added <code><a href="../reference/defunct.html">node_is_pendant()</a></code> for identifying pendant nodes</li>
-<li>Added <code><a href="../reference/defunct.html">node_is_neighbor()</a></code> for identifying adjacent nodes</li>
-<li>Added <code><a href="../reference/defunct.html">tie_is_imbalanced()</a></code> for identifying ties in imbalanced configurations</li>
+<ul><li>Added <code>node_is_pendant()</code> for identifying pendant nodes</li>
+<li>Added <code>node_is_neighbor()</code> for identifying adjacent nodes</li>
+<li>Added <code>tie_is_imbalanced()</code> for identifying ties in imbalanced configurations</li>
 </ul></div>
 <div class="section level3">
 <h3 id="measuring-1-3-0">Measuring<a class="anchor" aria-label="anchor" href="#measuring-1-3-0"></a></h3>
@@ -785,10 +820,10 @@
 <h3 id="memberships-1-3-0">Memberships<a class="anchor" aria-label="anchor" href="#memberships-1-3-0"></a></h3>
 <ul><li>Improved community detection options for new users
 <ul><li>Community detection algorithms now reformat networks as necessary or suggest that it be used on only the giant component</li>
-<li>Added <code><a href="../reference/defunct.html">node_in_community()</a></code> which runs through most salient community detection algorithms to find and return the one with the highest modularity</li>
+<li>Added <code>node_in_community()</code> which runs through most salient community detection algorithms to find and return the one with the highest modularity</li>
 <li>Updated documentation on resolution parameters</li>
 </ul></li>
-<li>Improved <code><a href="../reference/defunct.html">node_in_regular()</a></code> to inform user which census is being used</li>
+<li>Improved <code>node_in_regular()</code> to inform user which census is being used</li>
 <li>Renamed <code><a href="../reference/defunct.html">node_by_quad()</a></code> to <code><a href="../reference/defunct.html">node_by_tetrad()</a></code> to be more consistent with Greek origins
 <ul><li>Restored and updated documentation about the various configurations</li>
 </ul></li>
@@ -960,7 +995,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="members-1-2-0">Members<a class="anchor" aria-label="anchor" href="#members-1-2-0"></a></h3>
-<ul><li>Fixed <code><a href="../reference/defunct.html">node_in_equivalence()</a></code> to use census directly</li>
+<ul><li>Fixed <code>node_in_equivalence()</code> to use census directly</li>
 </ul></div>
 <div class="section level3">
 <h3 id="motifs-1-2-0">Motifs<a class="anchor" aria-label="anchor" href="#motifs-1-2-0"></a></h3>
@@ -1041,12 +1076,12 @@
 <ul><li>tie_marks are now named vectors
 <ul><li>Printing vectors no longer requires unique names</li>
 </ul></li>
-<li>Added <code><a href="../reference/defunct.html">tie_is_path()</a></code> for tracing the ties on a particular path</li>
-<li>Added <code><a href="../reference/defunct.html">tie_is_triplet()</a></code> for returning all the ties that are members of transitive triplets</li>
+<li>Added <code>tie_is_path()</code> for tracing the ties on a particular path</li>
+<li>Added <code>tie_is_triplet()</code> for returning all the ties that are members of transitive triplets</li>
 <li>Added <code>tie_is_forbidden()</code> for identifying ties in forbidden triads</li>
-<li>Improved <code><a href="../reference/defunct.html">tie_is_transitive()</a></code> efficiency, now only retrieves the edgelist once</li>
+<li>Improved <code>tie_is_transitive()</code> efficiency, now only retrieves the edgelist once</li>
 <li>Improved <code><a href="../reference/mark_features.html">is_aperiodic()</a></code> to remove <a href="https://www.sebastianoschneider.com" class="external-link">minMSE</a> dependency and offer a progress bar if it takes longer than 2 seconds</li>
-<li>Fixed bug in <code><a href="../reference/defunct.html">tie_is_triangular()</a></code> to do with altpath naming</li>
+<li>Fixed bug in <code>tie_is_triangular()</code> to do with altpath naming</li>
 </ul></div>
 <div class="section level3">
 <h3 id="measuring-1-1-0">Measuring<a class="anchor" aria-label="anchor" href="#measuring-1-1-0"></a></h3>
@@ -1076,10 +1111,10 @@
 </ul></div>
 <div class="section level3">
 <h3 id="marking-1-0-5">Marking<a class="anchor" aria-label="anchor" href="#marking-1-0-5"></a></h3>
-<ul><li>Added <code><a href="../reference/defunct.html">tie_is_triangular()</a></code> for identifying ties in triangles</li>
-<li>Added <code><a href="../reference/defunct.html">tie_is_cyclical()</a></code> for identifying ties in cycles</li>
-<li>Added <code><a href="../reference/defunct.html">tie_is_transitive()</a></code> for identifying ties involved in transitive closure</li>
-<li>Added <code><a href="../reference/defunct.html">tie_is_simmelian()</a></code> for identifying Simmelian ties</li>
+<ul><li>Added <code>tie_is_triangular()</code> for identifying ties in triangles</li>
+<li>Added <code>tie_is_cyclical()</code> for identifying ties in cycles</li>
+<li>Added <code>tie_is_transitive()</code> for identifying ties involved in transitive closure</li>
+<li>Added <code>tie_is_simmelian()</code> for identifying Simmelian ties</li>
 </ul></div>
 <div class="section level3">
 <h3 id="manipulating-1-0-5">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-1-0-5"></a></h3>
@@ -1218,11 +1253,11 @@
 <h3 id="marking-1-0-0">Marking<a class="anchor" aria-label="anchor" href="#marking-1-0-0"></a></h3>
 <ul><li>
 <code>node_is_*()</code> functions now infer network data context</li>
-<li>Added <code><a href="../reference/defunct.html">node_is_independent()</a></code> for identifying nodes among largest independent sets</li>
+<li>Added <code>node_is_independent()</code> for identifying nodes among largest independent sets</li>
 <li>
 <code><a href="../reference/mark_format_tie.html">is_multiplex()</a></code> now excludes reserved tie attribute names other than type, such as “weight”, “sign”, or “wave”</li>
 <li>Added <code><a href="../reference/mark_format_node.html">is_attributed()</a></code> to check for non-name nodal attributes</li>
-<li>Fixed issues with ordering in <code><a href="../reference/defunct.html">node_is_latent()</a></code>, <code><a href="../reference/defunct.html">node_is_recovered()</a></code>, and <code><a href="../reference/defunct.html">node_is_infected()</a></code> (closes <a href="https://github.com/stocnet/manynet/issues/71" class="external-link">#71</a>)</li>
+<li>Fixed issues with ordering in <code>node_is_latent()</code>, <code>node_is_recovered()</code>, and <code>node_is_infected()</code> (closes <a href="https://github.com/stocnet/manynet/issues/71" class="external-link">#71</a>)</li>
 <li>Added list methods for <code><a href="../reference/mark_format_node.html">is_twomode()</a></code>, <code><a href="../reference/mark_format_node.html">is_labelled()</a></code>, and <code><a href="../reference/mark_format_tie.html">is_complex()</a></code>
 </li>
 </ul></div>
@@ -1302,15 +1337,15 @@
 <div class="section level3">
 <h3 id="members-1-0-0">Members<a class="anchor" aria-label="anchor" href="#members-1-0-0"></a></h3>
 <ul><li>Migrated members from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
-<ul><li>Cliques memberships <code><a href="../reference/defunct.html">node_in_roulette()</a></code> (previously <code><a href="../reference/defunct.html">node_roulette()</a></code>)</li>
-<li>Community and hierarchical memberships includes <code><a href="../reference/defunct.html">node_in_optimal()</a></code>, <code><a href="../reference/defunct.html">node_in_partition()</a></code> (previously <code>node_kernaghinlin()</code>), <code><a href="../reference/defunct.html">node_in_infomap()</a></code>, <code><a href="../reference/defunct.html">node_in_spinglass()</a></code>, <code><a href="../reference/defunct.html">node_in_fluid()</a></code>, <code><a href="../reference/defunct.html">node_in_louvain()</a></code>, <code><a href="../reference/defunct.html">node_in_leiden()</a></code>, <code><a href="../reference/defunct.html">node_in_betweenness()</a></code>, <code><a href="../reference/defunct.html">node_in_greedy()</a></code>, <code><a href="../reference/defunct.html">node_in_eigen()</a></code>, and <code><a href="../reference/defunct.html">node_in_walktrap()</a></code>
+<ul><li>Cliques memberships <code>node_in_roulette()</code> (previously <code><a href="../reference/defunct.html">node_roulette()</a></code>)</li>
+<li>Community and hierarchical memberships includes <code>node_in_optimal()</code>, <code>node_in_partition()</code> (previously <code>node_kernaghinlin()</code>), <code>node_in_infomap()</code>, <code>node_in_spinglass()</code>, <code>node_in_fluid()</code>, <code>node_in_louvain()</code>, <code>node_in_leiden()</code>, <code>node_in_betweenness()</code>, <code>node_in_greedy()</code>, <code>node_in_eigen()</code>, and <code>node_in_walktrap()</code>
 </li>
-<li>Components’ memberships include <code><a href="../reference/defunct.html">node_in_component()</a></code>, <code><a href="../reference/defunct.html">node_in_weak()</a></code>, and <code><a href="../reference/defunct.html">node_in_strong()</a></code> (NB: <code><a href="../reference/defunct.html">node_in_component()</a></code> is no longer phrased in the plural)</li>
-<li>Core-periphery memberships include <code><a href="../reference/defunct.html">node_is_core()</a></code> and <code><a href="../reference/defunct.html">node_coreness()</a></code>
+<li>Components’ memberships include <code>node_in_component()</code>, <code>node_in_weak()</code>, and <code>node_in_strong()</code> (NB: <code>node_in_component()</code> is no longer phrased in the plural)</li>
+<li>Core-periphery memberships include <code>node_is_core()</code> and <code><a href="../reference/defunct.html">node_coreness()</a></code>
 </li>
-<li>Diffusion memberships include <code><a href="../reference/defunct.html">node_in_adopter()</a></code>
+<li>Diffusion memberships include <code>node_in_adopter()</code>
 </li>
-<li>Equivalence memberships include <code><a href="../reference/defunct.html">node_in_equivalence()</a></code>, <code><a href="../reference/defunct.html">node_in_structural()</a></code>, <code><a href="../reference/defunct.html">node_in_regular()</a></code>, and <code><a href="../reference/defunct.html">node_in_automorphic()</a></code>
+<li>Equivalence memberships include <code>node_in_equivalence()</code>, <code>node_in_structural()</code>, <code>node_in_regular()</code>, and <code>node_in_automorphic()</code>
 </li>
 <li>Note that these functions were previously named <code>node_*()</code>, but including the preposition <code>_in_</code> is more consistent.</li>
 </ul></li>
@@ -1382,7 +1417,7 @@
 <ul><li>Fixed issues with <code>autographr()</code> examples that were taking too long to run</li>
 <li>Separated documentation for <code>autographr()</code>, <code>autographs()</code>, and <code>autographd()</code> functions</li>
 <li>Closed <a href="https://github.com/stocnet/manynet/issues/64" class="external-link">#64</a> by adding aliases for <code>autographr()</code>, <code>autographs()</code>, and <code>autographd()</code> functions</li>
-<li>Closed <a href="https://github.com/stocnet/manynet/issues/65" class="external-link">#65</a> by fixing bugs with how <code><a href="../reference/defunct.html">node_is_infected()</a></code>, <code>node_is_recovery()</code>, <code><a href="../reference/defunct.html">node_is_latent()</a></code> work for network lists</li>
+<li>Closed <a href="https://github.com/stocnet/manynet/issues/65" class="external-link">#65</a> by fixing bugs with how <code>node_is_infected()</code>, <code>node_is_recovery()</code>, <code>node_is_latent()</code> work for network lists</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -1468,19 +1503,19 @@
 <h3 id="marking-0-4-0">Marking<a class="anchor" aria-label="anchor" href="#marking-0-4-0"></a></h3>
 <ul><li>Renamed <code>is.igraph()</code> to <code>is_igraph()</code> for igraph v2.0.0</li>
 <li>Added <code><a href="../reference/mark_is.html">is_list()</a></code> for identifying a list of networks</li>
-<li>Migrated <code><a href="../reference/defunct.html">node_is_core()</a></code>, <code><a href="../reference/defunct.html">node_is_cutpoint()</a></code>, <code><a href="../reference/defunct.html">node_is_fold()</a></code>, <code><a href="../reference/defunct.html">node_is_isolate()</a></code>, <code><a href="../reference/defunct.html">node_is_mentor()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
+<li>Migrated <code>node_is_core()</code>, <code>node_is_cutpoint()</code>, <code>node_is_fold()</code>, <code>node_is_isolate()</code>, <code>node_is_mentor()</code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
 </li>
-<li>Migrated <code><a href="../reference/defunct.html">node_is_exposed()</a></code>, <code><a href="../reference/defunct.html">node_is_infected()</a></code>, <code><a href="../reference/defunct.html">node_is_latent()</a></code>, <code><a href="../reference/defunct.html">node_is_recovered()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
+<li>Migrated <code>node_is_exposed()</code>, <code>node_is_infected()</code>, <code>node_is_latent()</code>, <code>node_is_recovered()</code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
 </li>
-<li>Migrated <code><a href="../reference/defunct.html">node_is_max()</a></code>, <code><a href="../reference/defunct.html">node_is_min()</a></code>, <code><a href="../reference/defunct.html">node_is_random()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
+<li>Migrated <code>node_is_max()</code>, <code>node_is_min()</code>, <code>node_is_random()</code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
 </li>
-<li>Migrated <code><a href="../reference/defunct.html">tie_is_bridge()</a></code>, <code><a href="../reference/defunct.html">tie_is_loop()</a></code>, <code><a href="../reference/defunct.html">tie_is_multiple()</a></code>, <code><a href="../reference/defunct.html">tie_is_reciprocated()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
+<li>Migrated <code>tie_is_bridge()</code>, <code>tie_is_loop()</code>, <code>tie_is_multiple()</code>, <code>tie_is_reciprocated()</code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
 </li>
-<li>Added <code><a href="../reference/defunct.html">tie_is_feedback()</a></code>
+<li>Added <code>tie_is_feedback()</code>
 </li>
-<li>Migrated <code><a href="../reference/defunct.html">tie_is_max()</a></code>, <code><a href="../reference/defunct.html">tie_is_min()</a></code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
+<li>Migrated <code>tie_is_max()</code>, <code>tie_is_min()</code> from <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
 </li>
-<li>Added <code><a href="../reference/defunct.html">tie_is_random()</a></code>
+<li>Added <code>tie_is_random()</code>
 </li>
 </ul></div>
 <div class="section level3">
@@ -1526,7 +1561,7 @@
 <h3 id="modifying-0-3-1">Modifying<a class="anchor" aria-label="anchor" href="#modifying-0-3-1"></a></h3>
 <ul><li>
 <code>to_waves.diff_model()</code> now adds three logical vectors as variables, “Infected”, “Exposed”, and “Recovered”
-<ul><li>Relies on parallels to migraph’s <code><a href="../reference/defunct.html">node_is_latent()</a></code>, <code><a href="../reference/defunct.html">node_is_infected()</a></code>, and <code><a href="../reference/defunct.html">node_is_recovered()</a></code>
+<ul><li>Relies on parallels to migraph’s <code>node_is_latent()</code>, <code>node_is_infected()</code>, and <code>node_is_recovered()</code>
 </li>
 <li>Fixed bug in wave naming</li>
 </ul></li>
