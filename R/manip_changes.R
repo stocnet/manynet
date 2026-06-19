@@ -93,6 +93,11 @@ bind_changes.default <- function(.data, changes, var, ...){
 
 #' @export
 bind_changes.tbl_graph <- function(.data, changes, var, ...){
+  as_tidygraph(bind_changes.igraph(.data, changes, var, ...))
+}
+
+#' @export
+bind_changes.igraph <- function(.data, changes, var, ...){
   out <- .data
   if(length(names(changes)) == 4){
     
@@ -139,7 +144,7 @@ bind_changes.tbl_graph <- function(.data, changes, var, ...){
   }
   
   igraph::graph_attr(out)$changes <- changes
-  as_tidygraph(out)
+  out
 }
 
 .check_changevars <- function(changes){
