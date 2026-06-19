@@ -32,6 +32,21 @@ to_correlation.default <- function(.data, method = NULL){
 }
 
 #' @export
+to_correlation.matrix <- function(.data, method = NULL){
+  if(is.null(method)) method <- ifelse(is_twomode(.data),
+                                       "all",
+                                       ifelse(is_complex(.data),
+                                              "complex",
+                                              ifelse(is_directed(.data),
+                                                     "recip", "diag")))
+  switch(method,
+         all = .corTwomode(.data),
+         complex = .corComplex(.data),
+         recip = .corRecip(.data),
+         diag = .corDiag(.data))
+}
+    
+#' @export
 to_correlation.tbl_graph <- function(.data, method = NULL){
   if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
   mat <- as_matrix(.data)
