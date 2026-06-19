@@ -86,7 +86,7 @@ Below are the currently implemented S3 methods for these functions:
 \if{html}{\out{<div class="sourceCode">}}\preformatted{                data.frame default igraph stocnet tbl_graph
 apply_changes                    *                        *
 arrange_changes                  *      *       *          
-bind_changes                     *              *         *
+bind_changes                     *      *       *         *
 delete_changes                   *      *       *          
 filter_changes                   *      *       *          
 gather_changes                   *      *                  

@@ -43,6 +43,14 @@ unweighted, and signed, longitudinal and dynamic networks. If you have
 social network data, `{manynet}` probably has the tools to help you work
 with it.
 
+NB: If you are looking for the visualisation functions that used to be
+in `{manynet}`, these have been migrated to their own package
+`{autograph}`. If you are looking for the network analytic functions
+that used to be in `{manynet}`, these have been migrated to their own
+package `{netrics}`. If you install and load `{migraph}`, all these
+packages will be installed and loaded and you can use all functionality,
+past and present.
+
 - [Making](#making)
   - [Importing network data](#importing-network-data)
   - [Identifying network data](#identifying-network-data)
