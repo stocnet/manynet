@@ -282,6 +282,7 @@ mutate_nodes.network <- function(.data, ...){
 #' @export
 mutate_nodes.stocnet <- function(.data, ...){
   with_active_context(.data, "nodes", {
+    if (is.null(.data$nodes) || nrow(.data$nodes) == 0) return(.data)
     out <- .data
     out$nodes <- out$nodes |> 
       dplyr::mutate(...)

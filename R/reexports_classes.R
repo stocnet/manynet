@@ -109,7 +109,11 @@ active_network <- function(required = NULL) {
     if (!is.null(required) &&
         !identical(ctx$active, required)) {
       snet_abort(
-        paste0("This call requires ", required, " to be active"),
+        paste0(
+          "This call requires ",
+          if (identical(required, "edges")) "ties" else required,
+          " to be active"
+        ),
         call. = FALSE
       )
     }
@@ -126,7 +130,11 @@ active_network <- function(required = NULL) {
       if (!is.null(required) &&
           active != required) {
         snet_abort(
-          paste0("This call requires ", required, " to be active"),
+          paste0(
+            "This call requires ",
+            if (identical(required, "edges")) "ties" else required,
+            " to be active"
+          ),
           call. = FALSE
         )
       }
