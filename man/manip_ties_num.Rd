@@ -56,7 +56,7 @@ Below are the currently implemented S3 methods for these functions:
 add_ties          *      *       *                 *
 bind_ties         *                      *         *
 delete_ties       *      *       *                 *
-filter_ties       *                                *
+filter_ties       *                      *         *
 }\if{html}{\out{</div>}}
 
 If a method is not available for a particular class, but a default method is,
