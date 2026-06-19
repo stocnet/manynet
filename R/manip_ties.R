@@ -195,6 +195,14 @@ filter_ties.default <- function(.data, ...){
 }
 
 #' @export
+filter_ties.igraph <- function(.data, ...){
+  as_tidygraph(.data) |> tidygraph::activate(edges) |> 
+    tidygraph::filter(...) |> 
+    tidygraph::activate(nodes) |> 
+    as_igraph()
+}
+
+#' @export
 filter_ties.tbl_graph <- function(.data, ...){
   .data |> tidygraph::activate(edges) |> 
     dplyr::filter(...) |> 
