@@ -1,3 +1,33 @@
+# manynet 2.1.2
+
+## Package
+
+- Updated title/description text
+- Updated README
+  - Updated TOC to include new wrangling section
+  - Added package migration note to README
+- Updated startup messages with migration notesand links to `{autograph}`, `{netrics}`, and `{migraph}`
+- Removed a set of defunct wrappers for moved/retired functions
+
+## Making
+
+- Fixed reference formatting of DOI and citation text
+
+## Coercion
+
+- Improved `expect_nodes()`/`expect_ties()` and introduces internal active-context helpers
+- Fixed `as_diffusion.igraph()` to derive diffusion events from changelists
+
+## Manipulating
+
+- Added `filter_ties.igraph()` and `filter_ties.stocnet()`
+- Improved active context inference across `mutate_nodes.stocnet()`, `mutate_ties.stocnet()`, `filter_nodes.stocnet()`, and `filter_ties.stocnet()`
+- Added `bind_changes.igraph()` and delegated 'tbl_graph' method to it
+
+## Modifying
+
+- Added `to_correlation.matrix()` S3 method
+
 # manynet 2.1.1
 
 ## Package

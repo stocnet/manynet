@@ -52,38 +52,6 @@
 \alias{node_triad_census}
 \alias{node_walktrap}
 \alias{node_weak_components}
-\alias{node_is_core}
-\alias{node_is_cutpoint}
-\alias{node_is_exposed}
-\alias{node_is_fold}
-\alias{node_is_independent}
-\alias{node_is_infected}
-\alias{node_is_isolate}
-\alias{node_is_latent}
-\alias{node_is_max}
-\alias{node_is_mean}
-\alias{node_is_mentor}
-\alias{node_is_min}
-\alias{node_is_neighbor}
-\alias{node_is_pendant}
-\alias{node_is_random}
-\alias{node_is_recovered}
-\alias{node_is_universal}
-\alias{tie_is_bridge}
-\alias{tie_is_cyclical}
-\alias{tie_is_feedback}
-\alias{tie_is_imbalanced}
-\alias{tie_is_loop}
-\alias{tie_is_max}
-\alias{tie_is_min}
-\alias{tie_is_multiple}
-\alias{tie_is_path}
-\alias{tie_is_random}
-\alias{tie_is_reciprocated}
-\alias{tie_is_simmelian}
-\alias{tie_is_transitive}
-\alias{tie_is_triangular}
-\alias{tie_is_triplet}
 \alias{net_adhesion}
 \alias{net_assortativity}
 \alias{net_balance}
@@ -181,29 +149,6 @@
 \alias{tie_cohesion}
 \alias{tie_degree}
 \alias{tie_eigenvector}
-\alias{node_in_adopter}
-\alias{node_in_automorphic}
-\alias{node_in_betweenness}
-\alias{node_in_brokering}
-\alias{node_in_community}
-\alias{node_in_component}
-\alias{node_in_core}
-\alias{node_in_eigen}
-\alias{node_in_equivalence}
-\alias{node_in_fluid}
-\alias{node_in_greedy}
-\alias{node_in_infomap}
-\alias{node_in_leiden}
-\alias{node_in_louvain}
-\alias{node_in_optimal}
-\alias{node_in_partition}
-\alias{node_in_regular}
-\alias{node_in_roulette}
-\alias{node_in_spinglass}
-\alias{node_in_strong}
-\alias{node_in_structural}
-\alias{node_in_walktrap}
-\alias{node_in_weak}
 \alias{net_by_brokerage}
 \alias{net_by_dyad}
 \alias{net_by_hazard}
@@ -321,70 +266,6 @@ node_triad_census(...)
 node_walktrap(...)
 
 node_weak_components(...)
-
-node_is_core(...)
-
-node_is_cutpoint(...)
-
-node_is_exposed(...)
-
-node_is_fold(...)
-
-node_is_independent(...)
-
-node_is_infected(...)
-
-node_is_isolate(...)
-
-node_is_latent(...)
-
-node_is_max(...)
-
-node_is_mean(...)
-
-node_is_mentor(...)
-
-node_is_min(...)
-
-node_is_neighbor(...)
-
-node_is_pendant(...)
-
-node_is_random(...)
-
-node_is_recovered(...)
-
-node_is_universal(...)
-
-tie_is_bridge(...)
-
-tie_is_cyclical(...)
-
-tie_is_feedback(...)
-
-tie_is_imbalanced(...)
-
-tie_is_loop(...)
-
-tie_is_max(...)
-
-tie_is_min(...)
-
-tie_is_multiple(...)
-
-tie_is_path(...)
-
-tie_is_random(...)
-
-tie_is_reciprocated(...)
-
-tie_is_simmelian(...)
-
-tie_is_transitive(...)
-
-tie_is_triangular(...)
-
-tie_is_triplet(...)
 
 net_adhesion(...)
 
@@ -580,52 +461,6 @@ tie_degree(...)
 
 tie_eigenvector(...)
 
-node_in_adopter(...)
-
-node_in_automorphic(...)
-
-node_in_betweenness(...)
-
-node_in_brokering(...)
-
-node_in_community(...)
-
-node_in_component(...)
-
-node_in_core(...)
-
-node_in_eigen(...)
-
-node_in_equivalence(...)
-
-node_in_fluid(...)
-
-node_in_greedy(...)
-
-node_in_infomap(...)
-
-node_in_leiden(...)
-
-node_in_louvain(...)
-
-node_in_optimal(...)
-
-node_in_partition(...)
-
-node_in_regular(...)
-
-node_in_roulette(...)
-
-node_in_spinglass(...)
-
-node_in_strong(...)
-
-node_in_structural(...)
-
-node_in_walktrap(...)
-
-node_in_weak(...)
-
 net_by_brokerage(...)
 
 net_by_dyad(...)
@@ -768,70 +603,6 @@ wherever possible and update your scripts accordingly.
 \item \code{node_walktrap()}: Deprecated on 2026-03-22.
 
 \item \code{node_weak_components()}: Deprecated on 2026-03-22.
-
-\item \code{node_is_core()}: Deprecated on 2026-03-22.
-
-\item \code{node_is_cutpoint()}: Deprecated on 2026-03-22.
-
-\item \code{node_is_exposed()}: Deprecated on 2026-03-22.
-
-\item \code{node_is_fold()}: Deprecated on 2026-03-22.
-
-\item \code{node_is_independent()}: Deprecated on 2026-03-22.
-
-\item \code{node_is_infected()}: Deprecated on 2026-03-22.
-
-\item \code{node_is_isolate()}: Deprecated on 2026-03-22.
-
-\item \code{node_is_latent()}: Deprecated on 2026-03-22.
-
-\item \code{node_is_max()}: Deprecated on 2026-03-22.
-
-\item \code{node_is_mean()}: Deprecated on 2026-03-22.
-
-\item \code{node_is_mentor()}: Deprecated on 2026-03-22.
-
-\item \code{node_is_min()}: Deprecated on 2026-03-22.
-
-\item \code{node_is_neighbor()}: Deprecated on 2026-03-22.
-
-\item \code{node_is_pendant()}: Deprecated on 2026-03-22.
-
-\item \code{node_is_random()}: Deprecated on 2026-03-22.
-
-\item \code{node_is_recovered()}: Deprecated on 2026-03-22.
-
-\item \code{node_is_universal()}: Deprecated on 2026-03-22.
-
-\item \code{tie_is_bridge()}: Deprecated on 2026-03-22.
-
-\item \code{tie_is_cyclical()}: Deprecated on 2026-03-22.
-
-\item \code{tie_is_feedback()}: Deprecated on 2026-03-22.
-
-\item \code{tie_is_imbalanced()}: Deprecated on 2026-03-22.
-
-\item \code{tie_is_loop()}: Deprecated on 2026-03-22.
-
-\item \code{tie_is_max()}: Deprecated on 2026-03-22.
-
-\item \code{tie_is_min()}: Deprecated on 2026-03-22.
-
-\item \code{tie_is_multiple()}: Deprecated on 2026-03-22.
-
-\item \code{tie_is_path()}: Deprecated on 2026-03-22.
-
-\item \code{tie_is_random()}: Deprecated on 2026-03-22.
-
-\item \code{tie_is_reciprocated()}: Deprecated on 2026-03-22.
-
-\item \code{tie_is_simmelian()}: Deprecated on 2026-03-22.
-
-\item \code{tie_is_transitive()}: Deprecated on 2026-03-22.
-
-\item \code{tie_is_triangular()}: Deprecated on 2026-03-22.
-
-\item \code{tie_is_triplet()}: Deprecated on 2026-03-22.
 
 \item \code{net_adhesion()}: Deprecated on 2026-03-22.
 
@@ -1026,52 +797,6 @@ wherever possible and update your scripts accordingly.
 \item \code{tie_degree()}: Deprecated on 2026-03-22.
 
 \item \code{tie_eigenvector()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_adopter()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_automorphic()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_betweenness()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_brokering()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_community()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_component()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_core()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_eigen()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_equivalence()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_fluid()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_greedy()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_infomap()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_leiden()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_louvain()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_optimal()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_partition()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_regular()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_roulette()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_spinglass()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_strong()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_structural()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_walktrap()}: Deprecated on 2026-03-22.
-
-\item \code{node_in_weak()}: Deprecated on 2026-03-22.
 
 \item \code{net_by_brokerage()}: Deprecated on 2026-03-22.
 

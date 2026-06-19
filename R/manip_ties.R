@@ -195,10 +195,28 @@ filter_ties.default <- function(.data, ...){
 }
 
 #' @export
+filter_ties.igraph <- function(.data, ...){
+  as_tidygraph(.data) |> tidygraph::activate(edges) |> 
+    tidygraph::filter(...) |> 
+    tidygraph::activate(nodes) |> 
+    as_igraph()
+}
+
+#' @export
 filter_ties.tbl_graph <- function(.data, ...){
   .data |> tidygraph::activate(edges) |> 
     dplyr::filter(...) |> 
     tidygraph::activate(nodes)
+}
+
+#' @export
+filter_ties.stocnet <- function(.data, ...){
+  with_active_context(.data, "edges", {
+    if (is.null(.data$ties) || nrow(.data$ties) == 0) return(.data)
+    out <- .data
+    out$ties <- out$ties |> dplyr::filter(...)
+    out
+  })
 }
 
 # Manipulating ties attributes ####
@@ -271,10 +289,13 @@ mutate_ties.tbl_graph <- function(.data, ...){
 
 #' @export
 mutate_ties.stocnet <- function(.data, ...){
-  out <- .data
-  out$ties <- out$ties |> 
-    dplyr::mutate(...)
-  out
+  with_active_context(.data, "edges", {
+    if (is.null(.data$ties) || nrow(.data$ties) == 0) return(.data)
+    out <- .data
+    out$ties <- out$ties |> 
+      dplyr::mutate(...)
+    out
+  })
 }
 
 #' @rdname manip_ties_attr

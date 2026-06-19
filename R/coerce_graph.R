@@ -846,6 +846,16 @@ as_diffusion.mnet <- function(.data, twomode = FALSE, events) {
 #' @export
 as_diffusion.igraph <- function(.data, twomode = FALSE, events) {
   net <- as_tidygraph(.data)
+  if (missing(events)) {
+    events <- as_changelist(.data)
+  }
+  events <- events |>
+    dplyr::filter(var == "diffusion") |>
+    dplyr::transmute(
+      t = time,
+      nodes = node,
+      event = value
+    )
   event <- NULL
   sumchanges <- events |> dplyr::group_by(t) |> 
     dplyr::reframe(I_new = sum(event == "I"),

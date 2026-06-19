@@ -110,7 +110,8 @@ filter_nodes.tbl_graph <- function(.data, ..., .by = NULL){
 
 #' @export
 filter_nodes.stocnet <- function(.data, ..., .by = NULL){
-  if(is.null(.data$nodes) || nrow(.data$nodes) == 0) return(.data)
+  with_active_context(.data, "nodes", {
+    if(is.null(.data$nodes) || nrow(.data$nodes) == 0) return(.data)
 
   node_df <- dplyr::mutate(.data$nodes, .orig_id = dplyr::row_number())
   kept_nodes <- dplyr::filter(node_df, ..., .by = dplyr::all_of(.by))
@@ -134,6 +135,7 @@ filter_nodes.stocnet <- function(.data, ..., .by = NULL){
 
   make_stocnet(nodes = out_nodes, ties = out_ties, changes = out_changes,
               global = .data$global, info = .data$info)
+  })
 }
 
 #' @rdname manip_nodes_num
@@ -279,10 +281,13 @@ mutate_nodes.network <- function(.data, ...){
 
 #' @export
 mutate_nodes.stocnet <- function(.data, ...){
-  out <- .data
-  out$nodes <- out$nodes |> 
-    dplyr::mutate(...)
-  out
+  with_active_context(.data, "nodes", {
+    if (is.null(.data$nodes) || nrow(.data$nodes) == 0) return(.data)
+    out <- .data
+    out$nodes <- out$nodes |> 
+      dplyr::mutate(...)
+    out
+  })
 }
 
 #' @rdname manip_nodes_attr
