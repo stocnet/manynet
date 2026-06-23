@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.3</span>
       </span>
     </div>
 
@@ -60,7 +60,28 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="2.1.2" id="manynet-212">manynet 2.1.2<a class="anchor" aria-label="anchor" href="#manynet-212"></a></h2>
+<h2 class="page-header" data-toc-text="2.1.3" id="manynet-213">manynet 2.1.3<a class="anchor" aria-label="anchor" href="#manynet-213"></a></h2>
+<div class="section level3">
+<h3 id="class-2-1-3">Class<a class="anchor" aria-label="anchor" href="#class-2-1-3"></a></h3>
+<ul><li>Fixed stocnet validation test issue</li>
+</ul></div>
+<div class="section level3">
+<h3 id="describing-2-1-3">Describing<a class="anchor" aria-label="anchor" href="#describing-2-1-3"></a></h3>
+<ul><li>Fixed <code>mode_names.stocnet()</code> and <code>layer_names.stocnet()</code> to look up correct info names</li>
+</ul></div>
+<div class="section level3">
+<h3 id="manipulating-2-1-3">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-2-1-3"></a></h3>
+<ul><li>Improved <code><a href="../reference/manip_info.html">add_info()</a></code>
+<ul><li>
+<code>add_info(.data)</code> (so no further arguments) now checks to see whether metadata may be added and prompts the user to add it if so</li>
+<li>
+<code>add_info(.data, optional = TRUE)</code> extends this to further, optional metadata</li>
+<li>This includes prompting the user by layer for multiplex networks</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.1.2" id="manynet-212">manynet 2.1.2<small>2026-06-21</small><a class="anchor" aria-label="anchor" href="#manynet-212"></a></h2>
 <div class="section level3">
 <h3 id="package-2-1-2">Package<a class="anchor" aria-label="anchor" href="#package-2-1-2"></a></h3>
 <ul><li>Updated title/description text</li>
