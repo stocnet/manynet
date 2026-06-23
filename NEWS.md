@@ -1,8 +1,13 @@
 # manynet 2.1.3
 
-## Package
+## Class
 
 - Fixed stocnet validation test issue
+
+## Describing
+
+- Fixed `mode_names.stocnet()` and `layer_names.stocnet()` to look up correct info names
+
 
 # manynet 2.1.2
 
