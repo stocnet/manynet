@@ -9,5 +9,4 @@
 
 0 errors | 0 warnings | 0 notes
 
-- Fixed README link issue
-- Together with parallel submissions of 'netrics' and 'migraph', should pass all reverse dependency checks now too
+- Fixed intermittent validation test error

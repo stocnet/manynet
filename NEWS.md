@@ -1,3 +1,9 @@
+# manynet 2.1.3
+
+## Package
+
+- Fixed stocnet validation test issue
+
 # manynet 2.1.2
 
 ## Package
