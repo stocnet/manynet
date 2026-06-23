@@ -284,7 +284,7 @@ mode_names.igraph <- function(.data){
 
 #' @export
 mode_names.stocnet <- function(.data){
-  .data$info$nodes
+  .data$info$modes
 }
 
 #' @rdname member_names
@@ -335,7 +335,7 @@ layer_names.igraph <- function(.data){
 
 #' @export
 layer_names.stocnet <- function(.data){
-  .data$info$ties
+  .data$info$layers %||% unique(.data$ties$layer)
 }
 
 #' @rdname member_names

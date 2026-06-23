@@ -7,7 +7,7 @@ test_that("stocnet validation", {
     reserved_cols(
       .data = list(nodes = tibble::tibble(id = 1)),
       component = "nodes",
-      reserved_cols = "label",
+      column = "label",
       class = "character",
       aka = c("name", "id")
     ),
@@ -17,7 +17,7 @@ test_that("stocnet validation", {
     reserved_cols(
       .data = list(nodes = tibble::tibble(mode = 1)),
       component = "nodes",
-      reserved_cols = "mode",
+      column = "mode",
       class = "character"
     ),
     "'mode' must be of class 'character'."
@@ -26,7 +26,7 @@ test_that("stocnet validation", {
     required_cols(
       .data = list(nodes = tibble::tibble(nabel = 1)),
       component = "nodes",
-      required_cols = "label"
+      column = "label"
     ),
     "The 'nodes' component of a stocnet object must have the following columns: label."
   )

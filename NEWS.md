@@ -1,3 +1,20 @@
+# manynet 2.1.3
+
+## Class
+
+- Fixed stocnet validation test issue
+
+## Describing
+
+- Fixed `mode_names.stocnet()` and `layer_names.stocnet()` to look up correct info names
+
+## Manipulating
+
+- Improved `add_info()`
+  - `add_info(.data)` (so no further arguments) now checks to see whether metadata may be added and prompts the user to add it if so
+  - `add_info(.data, optional = TRUE)` extends this to further, optional metadata
+  - This includes prompting the user by layer for multiplex networks
+
 # manynet 2.1.2
 
 ## Package

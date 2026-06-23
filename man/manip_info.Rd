@@ -25,11 +25,28 @@ net_attributes(.data)
 }}
 
 \item{...}{Named attributes. The following are currently recognised:
-"name", "year", and "doi" of the network,
-"collection" or "mode" of the network
-("survey", "interview","sensor","observation","archival", or "simulation"),
-"nodes" (a vector of the names of the nodes) or "vertex1"/"vertex2",
-"ties" or "edge.pos"/"edge.neg" for defining the ties.}
+\itemize{
+\item "name" is the name of the network
+\item "modes" is the name(s) of the nodeset(s)
+\item "layers" is the name(s) of the tie type(s)
+\item "directed" is a logical vector indicating whether each layer is directed
+\item "source" is the source of the network ("empirical" or "synthetic")
+\item "method" is the method of data collection or model used
+(e.g. "survey", "interview","sensor","observation","archival", or "simulation")
+\item "location" is the geographic, institutional, or digital location of the network
+\item "date" is the date of data collection or model run
+\item "boundary" is the boundary specification of the network ("ego", "roster", or "snowball")
+\item "observation" is the observation type of the network ("cross-sectional",
+"panel", or "event")
+\item "update" is the update type of the network ("increment" or "replacement")
+\item "max_degree" is the maximum degree of the network
+\item "min_degree" is the minimum degree of the network
+\item "doi" is the DOI or URL of the network
+}
+
+If no arguments are used,
+the function will check for missing information and prompt the user to add it.
+If \code{optional = TRUE} is specified, the function will also prompt for optional information.}
 }
 \value{
 A data object of the same class as the function was given.
@@ -37,8 +54,6 @@ A data object of the same class as the function was given.
 \description{
 These functions allow users to add and edit information about the network
 itself.
-This includes the name, year, and mode of collection of the network,
-as well as definitions of the nodes and ties in the network.
 Where available, this information is printed for tidygraph-class objects,
 and can be used for printing a grand table in the \code{{grand}} package.
 \itemize{
@@ -66,6 +81,9 @@ If no method is available for any class, an error will be thrown.
 add_info(ison_algebra, name = "Algebra")
 }
 \seealso{
+\href{https://grand-statement.org}{GRAND statement} for more
+information on the Guidelines for Reporting About Network Data (GRAND).
+
 Other manipulations:
 \code{\link{manip_changes}},
 \code{\link{manip_global}},
