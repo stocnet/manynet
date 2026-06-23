@@ -8,6 +8,10 @@
 
 - Fixed `mode_names.stocnet()` and `layer_names.stocnet()` to look up correct info names
 
+## Manipulating
+
+- Improved `add_info()`
+  - `add_info(.data)` (so no further arguments) now checks to see whether metadata may be added and prompts the user to add it if so
 
 # manynet 2.1.2
 

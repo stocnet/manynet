@@ -30,6 +30,10 @@ net_attributes(.data)
 ("survey", "interview","sensor","observation","archival", or "simulation"),
 "nodes" (a vector of the names of the nodes) or "vertex1"/"vertex2",
 "ties" or "edge.pos"/"edge.neg" for defining the ties.}
+
+If no arguments are used,
+the function will check for missing information and prompt the user to add it.
+If \code{optional = TRUE} is specified, the function will also prompt for optional information.}
 }
 \value{
 A data object of the same class as the function was given.

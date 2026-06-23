@@ -42,7 +42,9 @@ add_info.igraph <- function(.data, ...){
   }
   
   info <- list(...)
-  if(length(info)==0) return(.check_info(.data))
+  optional <- info$optional %||% FALSE
+  info$optional <- NULL
+  if(length(info)==0) return(.check_info(.data, optional = optional))
   
   unrecog <- setdiff(names(info), c("name", "nodes", "ties", "doi", 
                                     "source", "method", "location", "date", "system",
@@ -85,6 +87,12 @@ add_info.igraph <- function(.data, ...){
 #' @export
 add_info.stocnet <- function(.data, ...){
   dots <- list(...)
+  # if dots contains optional = FALSE/TRUE
+  optional <- dots$optional %||% FALSE
+  dots$optional <- NULL
+  if(length(dots) == 0){
+    return(.check_info(.data, optional = optional))
+  }
   for(item in names(dots)){
     .data$info[[item]] <- dots[[item]]
   }
