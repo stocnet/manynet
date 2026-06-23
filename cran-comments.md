@@ -9,4 +9,4 @@
 
 0 errors | 0 warnings | 0 notes
 
-- Fixed intermittent validation test error
+- Though less than 10 days, this version fixes intermittent validation test error on CRAN
