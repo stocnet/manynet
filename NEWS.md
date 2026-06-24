@@ -4,9 +4,14 @@
 
 - Removed stocnet validation tests
 
+## Modifying
+
+- Added `to_hypergraph()` for converting one-mode or two-mode networks to hypergraph representations
+
 ## Attributes
 
 - Added `node_attribute.network()` and `tie_attribute.network()` for extracting node and tie attributes from 'network' objects
+- Improved `add_info()` to ask for a focal layer if the network is multiplex and no layer is specified
 
 # manynet 2.1.3
 

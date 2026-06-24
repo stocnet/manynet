@@ -238,6 +238,10 @@ net_attributes <- function(.data){
           out$info$update[match(layer, layer_names(out))] <- stats::setNames(upd_options[update], layer)
         }
       }
+      if(is_multiplex(out) && !"focal" %in% net_attributes(out)){
+        out$info$focal <- utils::menu(choices = layer_names(out), 
+                                      title = "The focal ties are: ")
+      }
     }
     if("source" %in% net_attributes(out)) snet_success("Source: {as_infolist(out)$source}")
     if("method" %in% net_attributes(out)) snet_success("Method/Model: {as_infolist(out)$method}")
