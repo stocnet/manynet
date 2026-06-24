@@ -1,3 +1,9 @@
+# manynet 2.1.4
+
+## Class
+
+- Removed stocnet validation tests
+
 # manynet 2.1.3
 
 ## Class
