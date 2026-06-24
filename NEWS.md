@@ -4,6 +4,10 @@
 
 - Removed stocnet validation tests
 
+## Attributes
+
+- Added `node_attribute.network()` and `tie_attribute.network()` for extracting node and tie attributes from 'network' objects
+
 # manynet 2.1.3
 
 ## Class
