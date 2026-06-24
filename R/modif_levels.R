@@ -5,10 +5,17 @@
 #' @description
 #'   These functions reformat the levels in manynet-consistent network data.
 #' 
-#'   - `to_onemode()` reformats two-mode network data into one-mode network data by simply removing the nodeset 'type' information.
-#'   Note that this is not the same as `to_mode1()` or `to_mode2()`.
-#'   - `to_twomode()` reformats one-mode network data into two-mode network data, using a mark to distinguish the two sets of nodes.
-#'   - `to_multilevel()` reformats two-mode network data into multimodal network data, which allows for more levels and ties within modes.
+#'   - `to_onemode()` reformats two-mode network data into one-mode network data 
+#'   by simply removing the nodeset 'type' information.
+#'   Note that this is not the same as `to_mode1()` or `to_mode2()`;
+#'   it does not project the two-mode network into one of its modes, 
+#'   but rather simply removes the distinction between the two modes.
+#'   - `to_twomode()` reformats one-mode network data into two-mode network data, 
+#'   using a mark to distinguish the two sets of nodes.
+#'   - `to_multilevel()` reformats two-mode network data into multimodal network data, 
+#'   which allows for more levels and ties within modes.
+#'   - `to_hypergraph()` reformats one-mode or two-mode network data into hypergraph data, 
+#'   where ties can connect more than two nodes.
 #' 
 #'   If the format condition is not met,
 #'   for example `to_onemode()` is used on a network that is already one-mode,
@@ -119,6 +126,37 @@ to_multilevel.matrix <- function(.data) {
   bottom <- cbind(t(.data), matrix(0, ncol(.data), ncol(.data)))
   out <- rbind(top, bottom)
   colnames(out) <- rownames(out)
+  out
+}
+
+#' @rdname modif_levels 
+#' @export
+to_hypergraph <- function(.data) UseMethod("to_hypergraph")
+
+#' @export
+to_hypergraph.default <- function(.data){
+  as_input(.data, to_hypergraph)
+}
+
+#' @importFrom igraph maximal.cliques
+#' @export
+to_hypergraph.stocnet <- function(.data) {
+  
+  out <- .data
+  if (is_twomode(.data)) {
+    # Each 'to' node becomes a hyperedge
+    out$ties <- out$ties  |> 
+      dplyr::distinct(from, to) |> 
+      dplyr::group_by(to) |> 
+      dplyr::summarise(from = list(unique(from)), .groups = "drop") |> 
+      dplyr::select(from, to, dplyr::everything())
+  } else {
+    cliques <- igraph::maximal.cliques(as_igraph(.data))
+    out$ties <- out$ties |> 
+      dplyr::tibble(from = lapply(cliques, names),
+                              to = LETTERS[seq_along(cliques)]) |> 
+      dplyr::select(from, to, dplyr::everything())
+  }
   out
 }
 
