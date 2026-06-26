@@ -3,9 +3,12 @@
 \name{measure_missingness}
 \alias{measure_missingness}
 \alias{net_node_missing}
+\alias{net_tie_missing}
 \title{Describing network missingness}
 \usage{
 net_node_missing(.data)
+
+net_tie_missing(.data)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:

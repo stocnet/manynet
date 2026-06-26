@@ -377,6 +377,9 @@ net_tie_attributes.network <- function(.data){
 #' @family missingness
 #' @template param_data
 #' @return `net_node_missing()` and `net_tie_missing()` return a scalar
+NULL
+
+#' @rdname measure_missingness
 #' @export
 net_node_missing <- function(.data) UseMethod("net_node_missing")
 
@@ -391,6 +394,7 @@ net_node_missing.stocnet <- function(.data){
   mean(.data$nodes$na)
 }
 
+#' @rdname measure_missingness
 #' @export
 net_tie_missing <- function(.data) UseMethod("net_tie_missing")
 

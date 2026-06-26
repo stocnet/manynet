@@ -296,12 +296,12 @@ to_hypergraph.igraph <- function(.data){
   if(!is_twomode(.data)){
     cl <- suppressWarnings(igraph::max_cliques(out))
     if(is_labelled(.data)){
-      lst <- setNames(lapply(cl, names), LETTERS[seq_along(cl)])
+      lst <- stats::setNames(lapply(cl, names), LETTERS[seq_along(cl)])
     } else {
-      lst <- setNames(lapply(cl, as.integer), LETTERS[seq_along(cl)])
+      lst <- stats::setNames(lapply(cl, as.integer), LETTERS[seq_along(cl)])
     }
-    incidence <- data.frame(from = stack(lst)$values,
-                            to   = stack(lst)$ind)
+    incidence <- data.frame(from = utils::stack(lst)$values,
+                            to   = utils::stack(lst)$ind)
     out <- igraph::graph_from_data_frame(incidence, directed = FALSE)
   }
   out
