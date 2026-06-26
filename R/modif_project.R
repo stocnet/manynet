@@ -10,6 +10,8 @@
 #'   - `to_mode2()` projects a two-mode network to a one-mode network
 #'   of the second node set's (e.g. columns) joint affiliations to nodes in the first node set (rows).
 #'   - `to_ties()` projects a network to one where the ties become nodes and incident nodes become their ties.
+#'   - `to_hypergraph()` projects one-mode or two-mode network data into hypergraph data, 
+#'   where ties can connect more than two nodes.
 # #'   - `to_galois()` projects a network to its Galois derivation.
 #' @details
 #'   Not all functions have methods available for all object classes.
@@ -259,6 +261,75 @@ to_ties.igraph <- function(.data){
   } else chg_waves <- 1
   max(tie_waves, chg_waves)
 }
+
+#' @rdname modif_project
+#' @section Hypergraphs: 
+#'   This function projects one-mode or two-mode network data into hypergraph data,
+#'   where ties can connect more than two nodes.
+#'   The projection differs depending on whether the network is one-mode or two-mode,
+#'   and the output can differ by class of the input/output data.
+#'   
+#'   For two-mode networks, the hyperedges are the nodes of the second mode, 
+#'   and the nodes of the first mode are connected to them if they share a tie.
+#'   In a 'stocnet' object, the hyperedges are stored in the `ties` data frame, 
+#'   with the `from` column containing a list of nodes connected to each hyperedge.
+#'   This is thus a compact representation of the hypergraph.
+#'   igraph-like objects do not have a native representation of hyperedges, 
+#'   so the output is a two-mode graph where the hyperedges are represented 
+#'   as nodes of the second mode.
+#'   
+#'   For one-mode networks, the hyperedges are the maximal cliques of the network. 
+#'   Again, while 'stocnet' objects can store the hyperedges in a compact form,
+#'   igraph-like objects represent them as nodes of the second mode in a two-mode graph.
+#'   
+#' @export
+to_hypergraph <- function(.data) UseMethod("to_hypergraph")
+
+#' @export
+to_hypergraph.default <- function(.data){
+  as_input(.data, to_hypergraph)
+}
+
+#' @export
+to_hypergraph.igraph <- function(.data){
+  out <- .data
+  if(!is_twomode(.data)){
+    cl <- suppressWarnings(igraph::max_cliques(out))
+    if(is_labelled(.data)){
+      lst <- setNames(lapply(cl, names), LETTERS[seq_along(cl)])
+    } else {
+      lst <- setNames(lapply(cl, as.integer), LETTERS[seq_along(cl)])
+    }
+    incidence <- data.frame(from = stack(lst)$values,
+                            to   = stack(lst)$ind)
+    out <- igraph::graph_from_data_frame(incidence, directed = FALSE)
+  }
+  out
+}
+
+#' @importFrom igraph maximal.cliques
+#' @export
+to_hypergraph.stocnet <- function(.data) {
+  
+  out <- .data
+  if (is_twomode(.data)) {
+    # Each 'to' node becomes a hyperedge
+    out$ties <- out$ties  |> 
+      dplyr::distinct(from, to) |> 
+      dplyr::group_by(to) |> 
+      dplyr::summarise(from = list(unique(from)), .groups = "drop") |> 
+      dplyr::select(from, to, dplyr::everything())
+  } else {
+    cliques <- suppressWarnings(igraph::max_cliques(as_igraph(.data)))
+    out$ties <- out$ties |> 
+      dplyr::mutate(from = lapply(cliques, function(x) as.integer(x)),
+                    to = LETTERS[seq_along(cliques)]) |> 
+      dplyr::select(from, to, dplyr::everything())
+  }
+  out
+}
+
+
 
 # #' @rdname manip_project
 # #' @section Galois lattices: 
