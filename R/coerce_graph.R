@@ -646,6 +646,8 @@ as_network.stocnet <- function(.data, twomode = FALSE) {
   out$gal <- as_infolist(.data)
   if(!is.null(as_changelist(.data)) && length(as_changelist(.data)) > 0)
     network::set.network.attribute(out, "changes", as_changelist(.data))
+  if(!is.null(as_globallist(.data)) && length(as_globallist(.data)) > 0)
+    network::set.network.attribute(out, "global", as_globallist(.data))
   out
 }
 
