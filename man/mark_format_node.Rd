@@ -3,12 +3,15 @@
 \name{mark_format_node}
 \alias{mark_format_node}
 \alias{is_twomode}
+\alias{is_hypergraph}
 \alias{is_labelled}
 \alias{is_attributed}
 \alias{is_egonet}
 \title{Marking networks nodal formats}
 \usage{
 is_twomode(.data)
+
+is_hypergraph(.data)
 
 is_labelled(.data)
 
@@ -63,6 +66,7 @@ If no method is available for any class, an error will be thrown.
 }
 \examples{
 is_twomode(create_filled(c(2,2)))
+is_hypergraph(create_empty(3))
 is_labelled(create_empty(3))
 is_attributed(ison_algebra)
 is_egonet(fict_starwars)

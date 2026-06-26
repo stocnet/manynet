@@ -366,3 +366,41 @@ net_tie_attributes.network <- function(.data){
   network::list.edge.attributes(.data)
 }
 
+# Missingness ####
+
+#' Describing network missingness
+#' @name measure_missingness
+#' @description
+#'  These functions describe the missingness in network data:
+#'  - `net_node_missing()` returns the proportion of nodes that are missing in a network.
+#'  - `net_tie_missing()` returns the proportion of ties that are missing in a network.
+#' @family missingness
+#' @template param_data
+#' @return `net_node_missing()` and `net_tie_missing()` return a scalar
+#' @export
+net_node_missing <- function(.data) UseMethod("net_node_missing")
+
+#' @export
+net_node_missing.default <- function(.data){
+  net_node_missing(as_stocnet(.data))
+}
+
+#' @export
+net_node_missing.stocnet <- function(.data){
+  if(!"na" %in% names(.data$nodes)) return(0)
+  mean(.data$nodes$na)
+}
+
+#' @export
+net_tie_missing <- function(.data) UseMethod("net_tie_missing")
+
+#' @export
+net_tie_missing.default <- function(.data){
+  net_tie_missing(as_matrix(.data))
+}
+
+#' @export
+net_tie_missing.matrix <- function(.data){
+  mean(is.na(.data)) %||% 0
+}
+
