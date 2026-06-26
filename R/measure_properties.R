@@ -329,13 +329,14 @@ layer_names.default <- function(.data){
 #' @export
 layer_names.igraph <- function(.data){
   igraph::graph_attr(.data, "ties") %||%
+    igraph::graph_attr(.data, "layers") %||%
     c(igraph::graph_attr(.data, "grand")$edge.pos,
       igraph::graph_attr(.data, "grand")$edge.neg)
 }
 
 #' @export
 layer_names.stocnet <- function(.data){
-  .data$info$layers %||% unique(.data$ties$layer)
+  .data$info$layers %||% unique(.data$ties[["layer"]])
 }
 
 #' @rdname member_names

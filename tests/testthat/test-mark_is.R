@@ -6,7 +6,7 @@ for(fn in collect_functions("^is_")) {
     expect_true(any(grepl(paste0("^", fn, "\\.default$"), utils::methods(fn))))
   })
   
-  if(grepl("twomode|attributed|igraph|connected|labelled|graph|manynet|uniplex", fn)) {
+  if(grepl("twomode|attributed|igraph|connected|labelled|(?<!hyper)graph|manynet|uniplex", fn, perl = TRUE)) {
     test_that(paste(fn, "returns TRUE for ison_southern_women"), {
       expect_true(is_funs[[fn]](ison_southern_women))
       if(!grepl("igraph", fn)){
