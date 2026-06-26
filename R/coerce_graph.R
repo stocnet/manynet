@@ -664,6 +664,128 @@ as_network.networkDynamic <- function(.data, twomode = FALSE) {
   out
 }
 
+# stocnet ####
+
+#' @rdname coerce_graph
+#' @export
+as_stocnet <- function(.data,
+                    twomode = FALSE) UseMethod("as_stocnet")
+
+#' @export
+as_stocnet.stocnet <- function(.data, twomode = FALSE) {
+  .data
+}
+
+#' @export
+as_stocnet.data.frame <- function(.data, twomode = FALSE) {
+  out <- .data
+  # make sure that the data frame has the right columns, rename them if necessary,
+  # and then reorder them if necessary
+   if (!all(c("from", "to") %in% colnames(out))) {
+     if (all(c("source", "target") %in% colnames(out))) {
+       snet_minor_info("Renaming 'source' and 'target' columns to 'from' and 'to'.")
+       out <- out |> dplyr::rename(from = source, to = target)
+     } else if (all(c("sender", "receiver") %in% colnames(out))) {
+       snet_minor_info("Renaming 'sender' and 'receiver' columns to 'from' and 'to'.")
+       out <- out |> dplyr::rename(from = sender, to = receiver)
+     } else if (all(c("ego", "alter") %in% colnames(out))) {
+       snet_minor_info("Renaming 'ego' and 'alter' columns to 'from' and 'to'.")
+       out <- out |> dplyr::rename(from = ego, to = alter)
+     } else snet_abort("Edgelist must have columns named 'from' and 'to'.")
+   }
+  if (!"weight" %in% colnames(out)) {
+    if ("replace" %in% colnames(out)) {
+       snet_minor_info("Renaming 'replace' column to 'weight'.")
+      out <- out |> dplyr::rename(weight = replace)
+    } else if ("increment" %in% colnames(out)) {
+      snet_minor_info("Renaming 'increment' column to 'weight'.")
+      out <- out |> dplyr::rename(weight = increment)
+    } else if ("value" %in% colnames(out)) {
+       snet_minor_info("Renaming 'value' column to 'weight'.")
+      out <- out |> dplyr::rename(weight = value)
+    }
+  }
+  out <- out |> dplyr::select(from, to, dplyr::everything())
+  if(!is.numeric(out$from) || !is.numeric(out$to)){
+   nodes <- unique(c(out$from, out$to))
+   out <- out |> dplyr::mutate(from = match(from, nodes),
+                              to = match(to, nodes))
+   out <- make_stocnet(ties = out, nodes = data.frame(label = nodes))
+  } else out <- make_stocnet(ties = out)
+  if("increment" %in% colnames(.data)) out <- out |> 
+    mutate_info(update = "increment")
+  if("replace" %in% colnames(.data)) out <- out |> 
+    mutate_info(update = "replace")
+  out
+}
+
+#' @export
+as_stocnet.igraph <- function(.data, twomode = FALSE) {
+  info <- as_infolist(.data)
+  nodes <- as_nodelist(.data)
+  changes <- as_changelist(.data)
+  ties <- as_edgelist(.data)
+  global <- as_globallist(.data)
+  
+  if(is_labelled(.data)){
+    ties$from <- match(ties$from, nodes$name)
+    ties$to <- match(ties$to, nodes$name)
+    nodes$label <- nodes$name
+    nodes$name <- NULL
+  } else {
+    ties$from <- as.integer(ties$from)
+    ties$to <- as.integer(ties$to)
+  }
+  if(is_twomode(.data)){
+    if(!is.null(info$nodes) && length(info$nodes) == 2){
+      nodes$mode <- info$nodes[(nodes$type*1+1)]
+    } else {
+      nodes$mode <- as.character(nodes$type)
+    }
+    nodes$type <- NULL
+  }
+  if(is_multiplex(.data)){
+    ties$layer <- ties$type
+    ties$type <- NULL
+    if(is.null(info$ties)){
+      info$ties <- unique(ties$layer)
+    }
+  }
+  if(!is.null(info$changes)) info$changes <- NULL
+  info$directed <- is_directed(.data)
+  
+  if(!is.null(nodes))
+    nodes <- dplyr::select(nodes, 
+                           dplyr::any_of(c("label", "mode")), 
+                           dplyr::everything())
+  
+  out <- list(info = info, nodes = nodes, ties = ties, 
+              changes = changes, global = global)
+  class(out) <- c("stocnet", class(out))
+  out <- rename_nodes(out)
+  out <- rename_ties(out)
+  out
+}
+
+#' @export
+as_stocnet.matrix <- function(.data,
+                           twomode = FALSE) {
+ as_stocnet(as_tidygraph(.data, twomode = twomode)) 
+}
+  
+#' @export
+as_stocnet.network <- function(.data,
+                           twomode = FALSE) {
+  out <- list(info = as_infolist(.data), 
+              nodes = as_nodelist(.data), 
+              changes = as_changelist(.data), 
+              ties = as_edgelist(.data))
+  class(out) <- c("stocnet", class(out))
+  if(inherits(network::network.vertex.names(.data), "integer"))
+    out$nodes$vertex.names <- NULL
+  out
+}
+
 # RSiena ####
 
 #' @rdname coerce_graph
@@ -734,47 +856,18 @@ setClass("graphAM", contains="graph",
          slots = c(adjMat="matrix", edgemode="character"))
 
 #' @export
+as_graphAM.default <- function(.data, twomode = NULL) {
+  as_graphAM(as_matrix(.data), twomode)
+}
+
+#' @export
 as_graphAM.matrix <- function(.data, twomode = NULL) {
   thisRequires("methods")
   methods::new("graphAM", adjMat = to_onemode(.data), 
                edgemode = ifelse(is_directed(.data), "directed", "undirected"))
 }
 
-#' @export
-as_graphAM.igraph <- function(.data, twomode = NULL) {
-  as_graphAM(as_matrix(.data), twomode)
-}
-
-#' @export
-as_graphAM.tbl_graph <- function(.data, twomode = NULL) {
-  as_graphAM(as_matrix(.data), twomode)
-}
-
-#' @export
-as_graphAM.network <- function(.data, twomode = NULL) {
-  as_graphAM(as_matrix(.data), twomode)
-}
-
-#' @export
-as_graphAM.data.frame <- function(.data, twomode = NULL) {
-  as_graphAM(as_matrix(.data), twomode)
-}
-
-#' @export
-as_graphAM.siena <- function(.data, twomode = NULL) {
-  as_graphAM(as_matrix(.data), twomode)
-}
-
-#' @export
-as_graphAM.network.goldfish <- function(.data, twomode = NULL) {
-  as_graphAM(as_matrix(.data), twomode)
-}
-
-#' @export
-as_graphAM.stocnet <- function(.data, twomode = NULL) {
-  as_graphAM(as_matrix(.data), twomode)
-}
-
+# nocov start
 # Diffusion ####
 
 #' @rdname coerce_graph
@@ -980,125 +1073,5 @@ as_diffnet.diff_model <- function(.data,
     }
     
 }
+# nocov end
 
-# stocnet ####
-
-#' @rdname coerce_graph
-#' @export
-as_stocnet <- function(.data,
-                    twomode = FALSE) UseMethod("as_stocnet")
-
-#' @export
-as_stocnet.stocnet <- function(.data, twomode = FALSE) {
-  .data
-}
-
-#' @export
-as_stocnet.data.frame <- function(.data, twomode = FALSE) {
-  out <- .data
-  # make sure that the data frame has the right columns, rename them if necessary,
-  # and then reorder them if necessary
-   if (!all(c("from", "to") %in% colnames(out))) {
-     if (all(c("source", "target") %in% colnames(out))) {
-       snet_minor_info("Renaming 'source' and 'target' columns to 'from' and 'to'.")
-       out <- out |> dplyr::rename(from = source, to = target)
-     } else if (all(c("sender", "receiver") %in% colnames(out))) {
-       snet_minor_info("Renaming 'sender' and 'receiver' columns to 'from' and 'to'.")
-       out <- out |> dplyr::rename(from = sender, to = receiver)
-     } else if (all(c("ego", "alter") %in% colnames(out))) {
-       snet_minor_info("Renaming 'ego' and 'alter' columns to 'from' and 'to'.")
-       out <- out |> dplyr::rename(from = ego, to = alter)
-     } else snet_abort("Edgelist must have columns named 'from' and 'to'.")
-   }
-  if (!"weight" %in% colnames(out)) {
-    if ("replace" %in% colnames(out)) {
-       snet_minor_info("Renaming 'replace' column to 'weight'.")
-      out <- out |> dplyr::rename(weight = replace)
-    } else if ("increment" %in% colnames(out)) {
-      snet_minor_info("Renaming 'increment' column to 'weight'.")
-      out <- out |> dplyr::rename(weight = increment)
-    } else if ("value" %in% colnames(out)) {
-       snet_minor_info("Renaming 'value' column to 'weight'.")
-      out <- out |> dplyr::rename(weight = value)
-    }
-  }
-  out <- out |> dplyr::select(from, to, dplyr::everything())
-  if(!is.numeric(out$from) || !is.numeric(out$to)){
-   nodes <- unique(c(out$from, out$to))
-   out <- out |> dplyr::mutate(from = match(from, nodes),
-                              to = match(to, nodes))
-   out <- make_stocnet(ties = out, nodes = data.frame(label = nodes))
-  } else out <- make_stocnet(ties = out)
-  if("increment" %in% colnames(.data)) out <- out |> 
-    mutate_info(update = "increment")
-  if("replace" %in% colnames(.data)) out <- out |> 
-    mutate_info(update = "replace")
-  out
-}
-
-#' @export
-as_stocnet.igraph <- function(.data, twomode = FALSE) {
-  info <- as_infolist(.data)
-  nodes <- as_nodelist(.data)
-  changes <- as_changelist(.data)
-  ties <- as_edgelist(.data)
-  global <- as_globallist(.data)
-  
-  if(is_labelled(.data)){
-    ties$from <- match(ties$from, nodes$name)
-    ties$to <- match(ties$to, nodes$name)
-    nodes$label <- nodes$name
-    nodes$name <- NULL
-  } else {
-    ties$from <- as.integer(ties$from)
-    ties$to <- as.integer(ties$to)
-  }
-  if(is_twomode(.data)){
-    if(!is.null(info$nodes) && length(info$nodes) == 2){
-      nodes$mode <- info$nodes[(nodes$type*1+1)]
-    } else {
-      nodes$mode <- as.character(nodes$type)
-    }
-    nodes$type <- NULL
-  }
-  if(is_multiplex(.data)){
-    ties$layer <- ties$type
-    ties$type <- NULL
-    if(is.null(info$ties)){
-      info$ties <- unique(ties$layer)
-    }
-  }
-  if(!is.null(info$changes)) info$changes <- NULL
-  info$directed <- is_directed(.data)
-  
-  if(!is.null(nodes))
-    nodes <- dplyr::select(nodes, 
-                           dplyr::any_of(c("label", "mode")), 
-                           dplyr::everything())
-  
-  out <- list(info = info, nodes = nodes, ties = ties, 
-              changes = changes, global = global)
-  class(out) <- c("stocnet", class(out))
-  out <- rename_nodes(out)
-  out <- rename_ties(out)
-  out
-}
-
-#' @export
-as_stocnet.matrix <- function(.data,
-                           twomode = FALSE) {
- as_stocnet(as_tidygraph(.data, twomode = twomode)) 
-}
-  
-#' @export
-as_stocnet.network <- function(.data,
-                           twomode = FALSE) {
-  out <- list(info = as_infolist(.data), 
-              nodes = as_nodelist(.data), 
-              changes = as_changelist(.data), 
-              ties = as_edgelist(.data))
-  class(out) <- c("stocnet", class(out))
-  if(inherits(network::network.vertex.names(.data), "integer"))
-    out$nodes$vertex.names <- NULL
-  out
-}
