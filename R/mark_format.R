@@ -80,6 +80,22 @@ is_twomode.list <- function(.data) {
 }
 
 #' @rdname mark_format_node
+#' @examples
+#' is_hypergraph(create_empty(3))
+#' @export
+is_hypergraph <- function(.data) UseMethod("is_hypergraph")
+
+#' @export
+is_hypergraph.default <- function(.data) {
+  is_hypergraph(as_stocnet(.data))
+}
+
+#' @export
+is_hypergraph.stocnet <- function(.data) {
+  is.list(.data$ties$from)
+}
+
+#' @rdname mark_format_node
 #' @importFrom igraph is_named
 #' @examples
 #' is_labelled(create_empty(3))

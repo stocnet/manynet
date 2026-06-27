@@ -19,6 +19,7 @@ validate_nodes <- function(.data){
            aka = c("name", "id"))
   reserved_cols(.data, "nodes", "mode", "character")
   reserved_cols(.data, "nodes", "active", "logical")
+  reserved_cols(.data, "nodes", "na", "logical")
   invisible(.data)
 }
 

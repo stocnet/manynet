@@ -1,6 +1,6 @@
 Package: manynet
 Title: Many Ways to Make, Manipulate, and Modify Myriad Networks
-Version: 2.1.3
+Version: 2.1.4
 Description: Many tools for making, manipulating, and modifying many different types of networks.
    All functions operate with matrices, edge lists, and 'igraph', 'network', and 'tidygraph' objects,
    on directed, multiplex, multimodal, signed, and other networks.

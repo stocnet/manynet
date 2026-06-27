@@ -5,11 +5,11 @@
 \alias{as_igraph}
 \alias{as_tidygraph}
 \alias{as_network}
+\alias{as_stocnet}
 \alias{as_siena}
 \alias{as_graphAM}
 \alias{as_diffusion}
 \alias{as_diffnet}
-\alias{as_stocnet}
 \title{Coercing into graph objects}
 \usage{
 as_igraph(.data, twomode = FALSE)
@@ -18,6 +18,8 @@ as_tidygraph(.data, twomode = FALSE)
 
 as_network(.data, twomode = FALSE)
 
+as_stocnet(.data, twomode = FALSE)
+
 as_siena(.data, twomode = FALSE)
 
 as_graphAM(.data, twomode = NULL)
@@ -25,8 +27,6 @@ as_graphAM(.data, twomode = NULL)
 as_diffusion(.data, twomode = FALSE, events)
 
 as_diffnet(.data, twomode = FALSE)
-
-as_stocnet(.data, twomode = FALSE)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -53,24 +53,24 @@ and \code{event}, which can take on the values "I" for an infection event,
 \value{
 The currently implemented coercions or translations are:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{             data.frame diff_model diffnet igraph list matrix mnet network
-as_diffnet                       *                                        
-as_diffusion                     *       *      *                *        
-as_graphAM            *                         *           *            *
-as_igraph             *          *       *      *           *            *
-as_network            *                  *      *           *            *
-as_siena                                        *                         
-as_stocnet            *                         *           *            *
-as_tidygraph          *          *       *      *    *      *            *
-             network.goldfish networkDynamic siena stocnet tbl_graph
-as_diffnet                                                          
-as_diffusion                                                        
-as_graphAM                  *                    *       *         *
-as_igraph                   *              *     *       *         *
-as_network                  *              *     *       *         *
-as_siena                                                           *
-as_stocnet                                               *          
-as_tidygraph                *              *     *       *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{             data.frame default diff_model diffnet igraph list matrix mnet
+as_diffnet                               *                                
+as_diffusion                             *       *      *                *
+as_graphAM                    *                                     *     
+as_igraph             *                  *       *      *           *     
+as_network            *                          *      *           *     
+as_siena                                                *                 
+as_stocnet            *                                 *           *     
+as_tidygraph          *                  *       *      *    *      *     
+             network network.goldfish networkDynamic siena stocnet tbl_graph
+as_diffnet                                                                  
+as_diffusion                                                                
+as_graphAM                                                                  
+as_igraph          *                *              *     *       *         *
+as_network         *                *              *     *       *         *
+as_siena                                                                   *
+as_stocnet         *                                             *          
+as_tidygraph       *                *              *     *       *         *
 }\if{html}{\out{</div>}}
 
 \code{as_diffusion()} and \code{play_diffusion()} return a 'diff_model' object

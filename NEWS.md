@@ -1,3 +1,31 @@
+# manynet 2.1.4
+
+## Class
+
+- Removed stocnet validation tests
+
+## Coercion
+
+- Fixed how missing node data was carried over from network to nodelist/stocnet objects
+- Fixed how globals were carried over from stocnet to network objects
+- Fixed how `as_igraph.stocnet()` handled unlabelled two-mode networks
+
+## Modifying
+
+- Added `to_hypergraph()` for converting one-mode or two-mode networks to hypergraph representations (closed #145)
+  - Added methods for 'igraph' and 'stocnet', though they differ in how hyperedges are represented
+  
+## Marking
+
+- Added `is_hypergraph()` for identifying hypergraph representations
+
+## Attributes
+
+- Added `node_attribute.network()` and `tie_attribute.network()` for extracting node and tie attributes from 'network' objects
+- Added `net_node_missing()` and `net_tie_missing()` for identifying missing nodes and ties in networks (closed #144)
+- Improved `add_info()` to ask for a focal layer if the network is multiplex and no layer is specified
+- Fixed `layer_names()` to be more robust to missing references
+
 # manynet 2.1.3
 
 ## Class

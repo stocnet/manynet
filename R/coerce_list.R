@@ -79,7 +79,9 @@ as_nodelist.stocnet <- function(.data) {
 #' @export
 as_nodelist.network <- function(.data) {
   out <- .data
-  out <- network::as.data.frame.network(out, unit = "vertices")
+  out <- network::as.data.frame.network(out, unit = "vertices", 
+                                        attrs_to_ignore = NULL)
+  if("na" %in% names(out) && sum(out$names)==0) out$na <- NULL
   if(is_twomode(.data)) out$mode <- c(rep(FALSE, .data$gal$bipartite),
                                  rep(TRUE, .data$gal$n - .data$gal$bipartite))
   if(is_labelled(.data)) out$label <- network::network.vertex.names(.data)

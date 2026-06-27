@@ -5,10 +5,15 @@
 #' @description
 #'   These functions reformat the levels in manynet-consistent network data.
 #' 
-#'   - `to_onemode()` reformats two-mode network data into one-mode network data by simply removing the nodeset 'type' information.
-#'   Note that this is not the same as `to_mode1()` or `to_mode2()`.
-#'   - `to_twomode()` reformats one-mode network data into two-mode network data, using a mark to distinguish the two sets of nodes.
-#'   - `to_multilevel()` reformats two-mode network data into multimodal network data, which allows for more levels and ties within modes.
+#'   - `to_onemode()` reformats two-mode network data into one-mode network data 
+#'   by simply removing the nodeset 'type' information.
+#'   Note that this is not the same as `to_mode1()` or `to_mode2()`;
+#'   it does not project the two-mode network into one of its modes, 
+#'   but rather simply removes the distinction between the two modes.
+#'   - `to_twomode()` reformats one-mode network data into two-mode network data, 
+#'   using a mark to distinguish the two sets of nodes.
+#'   - `to_multilevel()` reformats two-mode network data into multimodal network data, 
+#'   which allows for more levels and ties within modes.
 #' 
 #'   If the format condition is not met,
 #'   for example `to_onemode()` is used on a network that is already one-mode,

@@ -35,6 +35,11 @@ node_attribute.stocnet <- function(.data, attr_name){
   if(is.numeric(out)) make_node_measure(out, .data) else out
 }
 
+#' @export
+node_attribute.network <- function(.data, attr_name){
+  network::get.vertex.attribute(.data, attr_name)
+}
+
 #' @rdname measure_attributes_nodes
 #' @examples 
 #' node_names(ison_southern_women)
@@ -102,6 +107,11 @@ tie_attribute.default <- function(.data, attr_name){
 tie_attribute.stocnet <- function(.data, attr_name){
   out <- .data$ties[[attr_name]]
   if(is.numeric(out)) make_tie_measure(out, .data) else out
+}
+
+#' @export
+tie_attribute.network <- function(.data, attr_name){
+  network::get.edge.attribute(.data, attr_name)
 }
 
 #' @rdname measure_attributes_ties
