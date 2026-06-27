@@ -455,6 +455,7 @@ as_tidygraph.matrix <- function(.data, twomode = FALSE) {
 #' @export
 as_tidygraph.igraph <- function(.data, twomode = FALSE) {
   out <- tidygraph::as_tbl_graph(.data)
+  make_mnet(out)
 }
 
 #' @export
