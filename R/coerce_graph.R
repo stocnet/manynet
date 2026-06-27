@@ -166,6 +166,40 @@ as_igraph.network <- function(.data,
 }
 
 #' @export
+as_igraph.stocnet <- function(.data, twomode = FALSE) {
+  if(is.null(as_nodelist(.data)) || length(as_nodelist(.data)) == 0){
+    out <- igraph::graph_from_data_frame(as_edgelist(.data))
+    out <- to_unnamed(out)
+  } else {
+    vertices <- as_nodelist(.data)
+    if(is_labelled(.data))
+      vertices <- vertices |> dplyr::mutate(name = label) |>
+        dplyr::select(name, dplyr::everything(), -label)
+    if(is_twomode(.data))
+      vertices <- vertices |> dplyr::mutate(type = mode == unique(mode)[2]) |>
+        dplyr::select(dplyr::any_of("name"), dplyr::everything(), -mode)
+    if(is_labelled(.data)){
+      out <- igraph::graph_from_data_frame(as_edgelist(.data), 
+                                           vertices = vertices)
+    } else {
+      out <- igraph::graph_from_data_frame(as_edgelist(.data)) |>
+        bind_node_attributes(vertices)
+    }
+    
+  }
+  if(is_twomode(.data))
+    out <- to_undirected(out)
+  if(!is.null(as_infolist(.data)) && length(as_infolist(.data)) > 0)
+    igraph::graph_attr(out) <- as_infolist(.data)
+  if(!is.null(as_changelist(.data)) && length(as_changelist(.data)) > 0)
+    igraph::graph_attr(out, "changes") <- as_changelist(.data)
+  if(!is.null(as_globallist(.data)) && length(as_globallist(.data)) > 0)
+    igraph::graph_attr(out, "global") <- as_globallist(.data)
+  out
+}
+
+# nocov start
+#' @export
 as_igraph.diff_model <- function(.data,
                                  twomode = FALSE) {
   as_igraph(attr(.data, "network"))
@@ -381,39 +415,7 @@ as_igraph.siena <- function(.data, twomode = NULL) {
   }
   out
 }
-
-#' @export
-as_igraph.stocnet <- function(.data, twomode = FALSE) {
-  if(is.null(as_nodelist(.data)) || length(as_nodelist(.data)) == 0){
-    out <- igraph::graph_from_data_frame(as_edgelist(.data))
-    out <- to_unnamed(out)
-  } else {
-    vertices <- as_nodelist(.data)
-    if(is_labelled(.data))
-      vertices <- vertices |> dplyr::mutate(name = label) |>
-        dplyr::select(name, dplyr::everything(), -label)
-    if(is_twomode(.data))
-      vertices <- vertices |> dplyr::mutate(type = mode == unique(mode)[2]) |>
-        dplyr::select(dplyr::any_of("name"), dplyr::everything(), -mode)
-    if(is_labelled(.data)){
-      out <- igraph::graph_from_data_frame(as_edgelist(.data), 
-                                           vertices = vertices)
-    } else {
-      out <- igraph::graph_from_data_frame(as_edgelist(.data)) |>
-        bind_node_attributes(vertices)
-    }
-      
-  }
-  if(is_twomode(.data))
-    out <- to_undirected(out)
-  if(!is.null(as_infolist(.data)) && length(as_infolist(.data)) > 0)
-    igraph::graph_attr(out) <- as_infolist(.data)
-  if(!is.null(as_changelist(.data)) && length(as_changelist(.data)) > 0)
-    igraph::graph_attr(out, "changes") <- as_changelist(.data)
-  if(!is.null(as_globallist(.data)) && length(as_globallist(.data)) > 0)
-    igraph::graph_attr(out, "global") <- as_globallist(.data)
-  out
-}
+# nocov end
 
 # tidygraph ####
 
@@ -453,7 +455,6 @@ as_tidygraph.matrix <- function(.data, twomode = FALSE) {
 #' @export
 as_tidygraph.igraph <- function(.data, twomode = FALSE) {
   out <- tidygraph::as_tbl_graph(.data)
-  make_mnet(out)
 }
 
 #' @export
@@ -468,6 +469,12 @@ as_tidygraph.network <- function(.data, twomode = FALSE) {
   make_mnet(out)
 }
 
+#' @export
+as_tidygraph.stocnet <- function(.data, twomode = FALSE) {
+  as_tidygraph(as_igraph.stocnet(.data, twomode = twomode))
+}
+
+# nocov start
 #' @export
 as_tidygraph.network.goldfish <- function(.data,
                                           twomode = FALSE) {
@@ -538,11 +545,7 @@ make_mnet <- function(out){
 as_tidygraph.networkDynamic <- function(.data, twomode = FALSE) {
   as_tidygraph(as_igraph.networkDynamic(.data, twomode = twomode))
 }
-
-#' @export
-as_tidygraph.stocnet <- function(.data, twomode = FALSE) {
-  as_tidygraph(as_igraph.stocnet(.data, twomode = twomode))
-}
+# nocov end
 
 # Network ####
 
@@ -619,6 +622,18 @@ as_network.data.frame <- function(.data,
 }
 
 #' @export
+as_network.stocnet <- function(.data, twomode = FALSE) {
+  out <- as_network(as_igraph.stocnet(.data))
+  out$gal <- as_infolist(.data)
+  if(!is.null(as_changelist(.data)) && length(as_changelist(.data)) > 0)
+    network::set.network.attribute(out, "changes", as_changelist(.data))
+  if(!is.null(as_globallist(.data)) && length(as_globallist(.data)) > 0)
+    network::set.network.attribute(out, "global", as_globallist(.data))
+  out
+}
+
+# nocov start
+#' @export
 as_network.network.goldfish <- function(.data,
                                         twomode = FALSE) {
   as_network(as_igraph(.data, twomode = twomode))
@@ -647,22 +662,12 @@ as_network.siena <- function(.data, twomode = FALSE) {
 }
 
 #' @export
-as_network.stocnet <- function(.data, twomode = FALSE) {
-  out <- as_network(as_igraph.stocnet(.data))
-  out$gal <- as_infolist(.data)
-  if(!is.null(as_changelist(.data)) && length(as_changelist(.data)) > 0)
-    network::set.network.attribute(out, "changes", as_changelist(.data))
-  if(!is.null(as_globallist(.data)) && length(as_globallist(.data)) > 0)
-    network::set.network.attribute(out, "global", as_globallist(.data))
-  out
-}
-
-#' @export
 as_network.networkDynamic <- function(.data, twomode = FALSE) {
   out <- .data
   class(out) <- setdiff(class(out), "networkDynamic")
   out
 }
+# nocov end
 
 # stocnet ####
 
