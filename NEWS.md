@@ -1,5 +1,9 @@
 # manynet 2.1.5
 
+## Describing
+
+- Reinstated `net_waves()`, an S3 generic reporting the number of waves/panels in a longitudinal network (closes #152), following the `net_layers()` pattern and consistent with `is_longitudinal()`'s wave/panel definition
+
 ## Making
 
 - Added `write_gml()`, `write_gdf()`, and `write_dynetml()` as export counterparts to `read_gml()`, `read_gdf()`, and `read_dynetml()`

@@ -99,7 +99,6 @@
 \alias{net_transitivity}
 \alias{net_transmissibility}
 \alias{net_upperbound}
-\alias{net_waves}
 \alias{node_adoption_time}
 \alias{node_alpha}
 \alias{node_authority}
@@ -360,8 +359,6 @@ net_transitivity(...)
 net_transmissibility(...)
 
 net_upperbound(...)
-
-net_waves(...)
 
 node_adoption_time(...)
 
@@ -697,8 +694,6 @@ wherever possible and update your scripts accordingly.
 \item \code{net_transmissibility()}: Deprecated on 2026-03-22.
 
 \item \code{net_upperbound()}: Deprecated on 2026-03-22.
-
-\item \code{net_waves()}: Deprecated on 2026-03-22.
 
 \item \code{node_adoption_time()}: Deprecated on 2026-03-22.
 

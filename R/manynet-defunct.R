@@ -494,10 +494,6 @@ net_upperbound <- function(...) fn_moved("net_upperbound", "net_by_upperbound", 
 
 #' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
-net_waves <- function(...) fn_moved("net_waves", "net_by_waves", version = "2.0.0")
-
-#' @describeIn defunct Deprecated on 2026-03-22.
-#' @export
 node_adoption_time <- function(...) fn_moved("node_adoption_time", "node_by_adopt_time", version = "2.0.0")
 
 #' @describeIn defunct Deprecated on 2026-03-22.

@@ -51,6 +51,11 @@ test_that("net_dims works", {
   expect_equal(net_dims(ison_southern_women), c(18,14))
 })
 
+test_that("net_waves works", {
+  expect_equal(net_waves(ison_monks), 3)
+  expect_equal(net_waves(ison_karateka), 1)
+})
+
 test_that("net_node_attributes works", {
   expect_equal(net_node_attributes(net), c("name", "gender"))
   expect_length(net_node_attributes(net), 2)

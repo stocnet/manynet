@@ -9,7 +9,10 @@
 #'   - `net_ties()` returns the number of ties in a network.
 #'   - `net_dims()` returns the dimensions of a network in a vector
 #'   as long as the number of modes in the network.
-#'   
+#'   - `net_layers()` returns the number of layers in a multiplex network.
+#'   - `net_waves()` returns the number of waves/panels in a longitudinal network,
+#'   see [is_longitudinal()].
+#'
 #'   These functions are also often used as helpers within other functions.
 #' @return `net_*()` functions always relate to the overall graph or network,
 #'   usually returning a scalar.
@@ -126,6 +129,36 @@ net_layers.stocnet <- function(.data){
 net_layers.igraph <- function(.data){
   if("type" %in% net_tie_attributes(.data)){
     length(unique(tie_attribute(.data, "type")))
+  } else 1L
+}
+
+#' @rdname measure_dims
+#' @examples
+#' net_waves(ison_monks)
+#' @export
+net_waves <- function(.data) UseMethod("net_waves")
+
+#' @export
+net_waves.default <- function(.data){
+  net_waves(as_igraph(.data))
+}
+
+#' @export
+net_waves.stocnet <- function(.data){
+  if("wave" %in% names(.data$ties)){
+    length(unique(.data$ties$wave))
+  } else if("panel" %in% names(.data$ties)){
+    length(unique(.data$ties$panel))
+  } else 1L
+}
+
+#' @export
+net_waves.igraph <- function(.data){
+  atts <- net_tie_attributes(.data)
+  if("wave" %in% atts){
+    length(unique(tie_attribute(.data, "wave")))
+  } else if("panel" %in% atts){
+    length(unique(tie_attribute(.data, "panel")))
   } else 1L
 }
 
