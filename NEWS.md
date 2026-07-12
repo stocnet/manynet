@@ -1,3 +1,16 @@
+# manynet 2.1.5
+
+## Making
+
+- Added `write_gml()`, `write_gdf()`, and `write_dynetml()` as export counterparts to `read_gml()`, `read_gdf()`, and `read_dynetml()`
+  - `write_dynetml()` records the network's directedness in the `isDirected` attribute of the DyNetML `<network>` element, and `read_dynetml()` now respects it when reconstructing the graph
+  - Fixed `read_gdf()` dropping node attribute names when a GDF file defines only a single node attribute column
+
+
+## Glossary
+
+- Added glossary entries for 'directed', 'edgelist', 'nodelist', 'projection', and 'twomode'
+
 # manynet 2.1.4
 
 ## Class
