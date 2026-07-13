@@ -3,11 +3,14 @@
 \name{measure_attributes_nodes}
 \alias{measure_attributes_nodes}
 \alias{node_attribute}
+\alias{node_labels}
 \alias{node_names}
 \alias{node_is_mode}
 \title{Describing attributes of nodes in a network}
 \usage{
 node_attribute(.data, attr_name)
+
+node_labels(.data)
 
 node_names(.data)
 
@@ -31,7 +34,7 @@ The attribute itself may be a logical mark, numeric measure, or character member
 These functions extract certain attributes from network data:
 \itemize{
 \item \code{node_attribute()} returns an attribute's values for the nodes in a network.
-\item \code{node_names()} returns the names of the nodes in a network.
+\item \code{node_labels()} returns the names of the nodes in a network.
 \item \code{node_is_mode()} returns the mode of the nodes in a network.
 }
 
@@ -41,7 +44,7 @@ as the number of nodes in the network.
 }
 \examples{
 node_attribute(fict_lotr, "Race")
-node_names(ison_southern_women)
+node_labels(ison_southern_women)
 node_is_mode(ison_southern_women)
 }
 \seealso{

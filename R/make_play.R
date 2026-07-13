@@ -171,7 +171,7 @@ play_diffusion <- function(.data,
   if(all(thresholds <= 1) & !all(thresholds == 1)) 
     thresholds <- thresholds * 
       .node_deg(.data)
-  if(is.character(seeds)) seeds <- which(node_names(.data)==seeds)
+  if(is.character(seeds)) seeds <- which(node_labels(.data)==seeds)
   if(is.logical(seeds)) seeds <- which(seeds)
   if(!is.null(immune)){
     if(is.logical(immune)) immune <- which(immune)
@@ -536,7 +536,7 @@ play_segregation <- function(.data,
       dplyr::filter(n == 1 & value == "E")
     if (is_labelled(.data)) {
       out <- seq_len(net_nodes(.data)) %in% latent$node
-      names(out) <- node_names(.data)
+      names(out) <- node_labels(.data)
     } else {
       out <- seq_len(net_nodes(.data)) %in% latent$node
     }
@@ -550,7 +550,7 @@ play_segregation <- function(.data,
     net <- attr(.data, "network")
     if (is_labelled(net)) {
       out <- seq_len(net_nodes(net)) %in% latent$nodes
-      names(out) <- node_names(net)
+      names(out) <- node_labels(net)
     } else {
       out <- seq_len(net_nodes(net)) %in% latent$nodes
     }
@@ -572,7 +572,7 @@ play_segregation <- function(.data,
       dplyr::filter(n == 1 & value == "I")
     if (is_labelled(.data)) {
       out <- seq_len(net_nodes(.data)) %in% infected$node
-      names(out) <- node_names(.data)
+      names(out) <- node_labels(.data)
     } else {
       out <- seq_len(net_nodes(.data)) %in% infected$node
     }
@@ -586,7 +586,7 @@ play_segregation <- function(.data,
     net <- attr(.data, "network")
     if (is_labelled(net)) {
       out <- seq_len(net_nodes(net)) %in% infected$nodes
-      names(out) <- node_names(net)
+      names(out) <- node_labels(net)
     } else {
       out <- seq_len(net_nodes(net)) %in% infected$nodes
     }
@@ -608,7 +608,7 @@ play_segregation <- function(.data,
       dplyr::filter(n == 1 & value == "R")
     if (is_labelled(.data)) {
       out <- seq_len(net_nodes(.data)) %in% recovered$node
-      names(out) <- node_names(.data)
+      names(out) <- node_labels(.data)
     } else {
       out <- seq_len(net_nodes(.data)) %in% recovered$node
     }
@@ -622,7 +622,7 @@ play_segregation <- function(.data,
     net <- attr(.data, "network")
     if (is_labelled(net)) {
       out <- seq_len(net_nodes(net)) %in% recovered$nodes
-      names(out) <- node_names(net)
+      names(out) <- node_labels(net)
     } else {
       out <- seq_len(net_nodes(net)) %in% recovered$nodes
     }

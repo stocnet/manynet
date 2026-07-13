@@ -35,7 +35,7 @@ summary.diff_model <- function(object, ...) {
 make_learn_model <- function(out, .data) {
   out <- as.data.frame(out)
   if(is_labelled(.data))
-    names(out) <- node_names(.data)
+    names(out) <- node_labels(.data)
   class(out) <- c("learn_model", class(out))
   attr(out, "mode") <- node_is_mode(.data)
   out

@@ -1,7 +1,9 @@
-# manynet 2.1.5
+# manynet 2.2.0
 
 ## Describing
 
+- Renamed `node_names()` to `node_labels()` for consistency with `is_labelled()` and `to_labelled()`; `node_names()` remains available as an alias since it is relied upon by other `stocnet` packages
+- Renamed `net_dims()` to `mode_nodes()` for consistency with `mode_names()` and `net_modes()`; `net_dims()` remains available as an alias since it is relied upon by other `stocnet` packages
 - Reinstated `net_waves()`, an S3 generic reporting the number of waves/panels in a longitudinal network (closes #152), following the `net_layers()` pattern and consistent with `is_longitudinal()`'s wave/panel definition
 
 ## Making

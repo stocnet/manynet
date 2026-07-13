@@ -102,8 +102,8 @@ collect_ego <- function(ego = NULL,
       out <- add_ties(out, c(rbind(alt, others[extra])))
     }
   }
-  if(!is.null(roster) && any(!roster %in% node_names(out))){
-    isolates <- roster[!roster %in% node_names(out)]
+  if(!is.null(roster) && any(!roster %in% node_labels(out))){
+    isolates <- roster[!roster %in% node_labels(out)]
     out <- add_nodes(out, length(isolates), list(name = isolates))
   }
   out <- add_info(out, ties = ties, name = paste("Ego network of", ego),
@@ -206,7 +206,7 @@ collect_cran <- function(pkg = "all"){
   out <- as_tidygraph(out)
   compile <- cranInfoDF$NeedsCompilation
   out <- out |> 
-    mutate_nodes(Compilation = compile[match(node_names(out),
+    mutate_nodes(Compilation = compile[match(node_labels(out),
                                              cranInfoDF$Package)]=="yes")
   out
 }

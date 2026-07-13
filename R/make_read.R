@@ -775,6 +775,17 @@ write_gml <- function(.data,
   }
   if(!grepl("\\.gml$", filename)) filename <- paste0(filename, ".gml")
   g <- as_igraph(.data)
+  # igraph's GML writer warns when converting logical attributes to numeric;
+  # convert them ourselves first so the export is silent
+  for(a in igraph::graph_attr_names(g))
+    if(is.logical(igraph::graph_attr(g, a)))
+      igraph::graph_attr(g, a) <- as.integer(igraph::graph_attr(g, a))
+  for(a in igraph::vertex_attr_names(g))
+    if(is.logical(igraph::vertex_attr(g, a)))
+      igraph::vertex_attr(g, a) <- as.integer(igraph::vertex_attr(g, a))
+  for(a in igraph::edge_attr_names(g))
+    if(is.logical(igraph::edge_attr(g, a)))
+      igraph::edge_attr(g, a) <- as.integer(igraph::edge_attr(g, a))
   igraph::write_graph(g,
                       filename,
                       format = "gml",
@@ -792,7 +803,7 @@ write_gdf <- function(.data,
   }
   if(!grepl("\\.gdf$", filename)) filename <- paste0(filename, ".gdf")
   g <- as_igraph(.data)
-  ids <- node_names(g)
+  ids <- node_labels(g)
   nodes <- data.frame(name = ids)
   edges <- as.data.frame(igraph::as_edgelist(g, names = FALSE))
   edges <- data.frame(node1 = ids[edges[,1]],
@@ -818,7 +829,7 @@ write_dynetml <- function(.data,
   if(!grepl("\\.xml$", filename)) filename <- paste0(filename, ".xml")
   thisRequires("xml2")
   g <- as_igraph(.data)
-  ids <- node_names(g)
+  ids <- node_labels(g)
   el <- igraph::as_edgelist(g, names = FALSE)
   doc <- xml2::xml_new_root("DynamicNetwork")
   metanetwork <- xml2::xml_add_child(doc, "MetaNetwork")

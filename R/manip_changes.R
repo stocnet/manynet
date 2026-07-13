@@ -441,7 +441,7 @@ apply_changes.tbl_graph <- function(.data, time){
   out <- as.data.frame(as_nodelist(.data))
   changes <- collect_changes(.data, time)
   if(is.character(changes$node)) 
-    changes$node <- match(changes$node, node_names(.data))
+    changes$node <- match(changes$node, node_labels(.data))
   if(is.character(changes$var)) 
     changes$var <- match(changes$var, net_node_attributes(.data))
   for(i in cli::cli_progress_along(1:nrow(changes), "Applying changes")){
