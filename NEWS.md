@@ -6,6 +6,10 @@
 - Renamed `net_dims()` to `mode_nodes()` for consistency with `mode_names()` and `net_modes()`; `net_dims()` remains available as an alias since it is relied upon by other `stocnet` packages
 - Reinstated `net_waves()`, an S3 generic reporting the number of waves/panels in a longitudinal network (closes #152), following the `net_layers()` pattern and consistent with `is_longitudinal()`'s wave/panel definition
 
+## Modifying
+
+- Renamed `to_named()` to `to_labelled()` and `to_unnamed()` to `to_unlabelled()` for consistency with `is_labelled()` and `node_labels()`; `to_named()` and `to_unnamed()` remain available as aliases since they are relied upon by other `stocnet` packages
+
 ## Making
 
 - Added `write_gml()`, `write_gdf()`, and `write_dynetml()` as export counterparts to `read_gml()`, `read_gdf()`, and `read_dynetml()`

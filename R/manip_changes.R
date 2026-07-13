@@ -454,6 +454,6 @@ apply_changes.tbl_graph <- function(.data, time){
   if(!is_labelled(.data)) out <- cbind(1:nrow(out), out)
   out <- as_tidygraph(igraph::graph_from_data_frame(as_edgelist(.data), 
                                                     vertices = out))
-  if(!is_labelled(.data)) out <- to_unnamed(out)
+  if(!is_labelled(.data)) out <- to_unlabelled(out)
   out
 }

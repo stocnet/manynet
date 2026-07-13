@@ -235,7 +235,7 @@ to_mentoring.igraph <- function(.data, elites = 0.1){
   }
   out <- data.frame(from = names(out),
                     to = as.character(out), row.names = NULL)
-  if(!is_labelled(.data)) out <- to_unnamed(out)
+  if(!is_labelled(.data)) out <- to_unlabelled(out)
   as_igraph(out)
 }
 
