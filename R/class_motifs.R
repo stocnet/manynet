@@ -8,7 +8,7 @@ make_node_motif <- function(out, .data) {
 
 make_network_motif <- function(out, .data) {
   class(out) <- c("network_motif", class(out))
-  attr(out, "mode") <- net_dims(.data)
+  attr(out, "mode") <- mode_nodes(.data)
   attr(out, "call") <- deparse(sys.calls())
   out
 }

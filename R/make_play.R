@@ -320,17 +320,17 @@ play_diffusion <- function(.data,
   } else {
     if(is.logical(mark)) mark <- which(mark)
     if(manynet::is_twomode(.data)){
-      if(mark[1]>manynet::net_dims(.data)[1]){ 
+      if(mark[1]>manynet::mode_nodes(.data)[1]){ 
         dat <- manynet::to_mode2(.data)
-        mark <- mark - manynet::net_dims(.data)[1]
+        mark <- mark - manynet::mode_nodes(.data)[1]
         contacts <- unlist(lapply(igraph::neighborhood(dat, nodes = mark, mode = "out"),
                                   function(x) setdiff(x, mark)))
-        contacts <- contacts + manynet::net_dims(.data)[1]
+        contacts <- contacts + manynet::mode_nodes(.data)[1]
       } else {
         dat <- manynet::to_mode1(.data)
         contacts <- unlist(lapply(igraph::neighborhood(dat),
                                   function(x) setdiff(x, mark)))
-        contacts <- contacts + manynet::net_dims(.data)[2]
+        contacts <- contacts + manynet::mode_nodes(.data)[2]
       }
     } else {
       dat <- .data

@@ -23,7 +23,7 @@ make_tie_measure <- function(out, .data) {
 
 make_network_measure <- function(out, .data, call) {
   class(out) <- c("network_measure", class(out))
-  attr(out, "mode") <- net_dims(.data)
+  attr(out, "mode") <- mode_nodes(.data)
   attr(out, "call") <- call
   out
 }

@@ -61,14 +61,14 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
     directed <- is_directed(n)
     if(is_twomode(n)){
       if (utils::packageVersion("igraph") >= "2.2.0") {
-        g <- igraph::sample_bipartite_gnm(net_dims(n)[1],
-                                          net_dims(n)[2],
+        g <- igraph::sample_bipartite_gnm(mode_nodes(n)[1],
+                                          mode_nodes(n)[2],
                                           m = m,
                                           directed = directed,
                                           mode = "out")
       } else {
-        g <- igraph::sample_bipartite(net_dims(n)[1], 
-                                      net_dims(n)[2],
+        g <- igraph::sample_bipartite(mode_nodes(n)[1], 
+                                      mode_nodes(n)[2],
                                       m = m, type = "gnm",
                                       directed = directed,
                                       mode = "out")

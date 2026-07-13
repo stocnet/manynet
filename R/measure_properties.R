@@ -7,7 +7,7 @@
 #'   
 #'   - `net_nodes()` returns the total number of nodes (of any mode) in a network.
 #'   - `net_ties()` returns the number of ties in a network.
-#'   - `net_dims()` returns the dimensions of a network in a vector
+#'   - `mode_nodes()` returns the dimensions of a network in a vector
 #'   as long as the number of modes in the network.
 #'   - `net_layers()` returns the number of layers in a multiplex network.
 #'   - `net_waves()` returns the number of waves/panels in a longitudinal network,
@@ -16,8 +16,8 @@
 #'   These functions are also often used as helpers within other functions.
 #' @return `net_*()` functions always relate to the overall graph or network,
 #'   usually returning a scalar.
-#'   `net_dims()` returns an integer of the number of nodes in a one-mode network,
-#'   or two integers representing the number of nodes in each nodeset 
+#'   `mode_nodes()` returns an integer of the number of nodes in a one-mode network,
+#'   or two integers representing the number of nodes in each nodeset
 #'   in the case of a two-mode network.
 #' @family measures
 #' @template param_data
@@ -164,18 +164,18 @@ net_waves.igraph <- function(.data){
 
 #' @rdname measure_dims
 #' @examples
-#' net_dims(ison_southern_women)
-#' net_dims(to_mode1(ison_southern_women))
+#' mode_nodes(ison_southern_women)
+#' mode_nodes(to_mode1(ison_southern_women))
 #' @export
-net_dims <- function(.data) UseMethod("net_dims")
+mode_nodes <- function(.data) UseMethod("mode_nodes")
 
 #' @export
-net_dims.default <- function(.data){
-  net_dims(as_igraph(.data))
+mode_nodes.default <- function(.data){
+  mode_nodes(as_igraph(.data))
 }
 
 #' @export
-net_dims.data.frame <- function(.data){
+mode_nodes.data.frame <- function(.data){
   if(is_twomode(.data)){
     c(length(unique(.data[,1])),
       length(unique(.data[,2])))
@@ -185,7 +185,7 @@ net_dims.data.frame <- function(.data){
 }
 
 #' @export
-net_dims.matrix <- function(.data){
+mode_nodes.matrix <- function(.data){
   if(is_twomode(.data)){
     c(nrow(.data),
       ncol(.data))
@@ -195,7 +195,7 @@ net_dims.matrix <- function(.data){
 }
 
 #' @export
-net_dims.igraph <- function(.data){
+mode_nodes.igraph <- function(.data){
   if(is_twomode(.data)){
     c(sum(!igraph::V(.data)$type),
       sum(igraph::V(.data)$type))
@@ -206,10 +206,10 @@ net_dims.igraph <- function(.data){
 
 #' @importFrom network network.size get.network.attribute
 #' @export
-net_dims.network <- function(.data){
+mode_nodes.network <- function(.data){
   out <- network::network.size(.data)
   if(is_twomode(.data)){
-    bip1 <- network::get.network.attribute(as_network(.data), 
+    bip1 <- network::get.network.attribute(as_network(.data),
                                            "bipartite")
     out <- c(bip1, out - bip1)
   }
@@ -217,11 +217,15 @@ net_dims.network <- function(.data){
 }
 
 #' @export
-net_dims.stocnet <- function(.data){
+mode_nodes.stocnet <- function(.data){
   if(is_twomode(.data)){
     out <- tabulate(match(.data$nodes$mode, unique(.data$nodes$mode)))
   } else net_nodes(.data)
 }
+
+#' @rdname measure_dims
+#' @export
+net_dims <- mode_nodes
 
 # Names ####
 

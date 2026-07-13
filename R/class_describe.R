@@ -37,7 +37,7 @@ describe_network <- function(.data) {
 #' @rdname class_describe
 #' @export
 describe_nodes <- function(.data){
-  nd <- net_dims(.data)
+  nd <- mode_nodes(.data)
   nn <- mode_names(.data)
   if(is.null(nn)) nn <- "nodes"
   nn <- ifelse(nd==1, singularize(nn), pluralize(nn))

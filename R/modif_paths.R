@@ -92,13 +92,13 @@ to_matching.igraph <- function(.data, mark = "type", capacities = NULL){
     out <- to_twomode(out, node_attribute(.data, mark))
   } else {
     if(length(capacities) == 1) 
-      capacities <- rep(capacities, net_dims(.data)[2])
+      capacities <- rep(capacities, mode_nodes(.data)[2])
     as_matrix(.data)
     
-    unmatched_m1 <- 1:net_dims(.data)[1]  # First mode nodes who haven't been matched yet
+    unmatched_m1 <- 1:mode_nodes(.data)[1]  # First mode nodes who haven't been matched yet
     m1_matches <- list()  # Student -> College mapping
     m2_matches <- list()  # College -> Students mapping
-    for (m2 in 1:net_dims(.data)[2]) {
+    for (m2 in 1:mode_nodes(.data)[2]) {
       m2_matches[[m2]] <- c()
     }
     
