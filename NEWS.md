@@ -4,6 +4,7 @@
 
 - Renamed `node_names()` to `node_labels()` for consistency with `is_labelled()` and `to_labelled()`; `node_names()` remains available as an alias since it is relied upon by other `stocnet` packages
 - Renamed `net_dims()` to `mode_nodes()` for consistency with `mode_names()` and `net_modes()`; `net_dims()` remains available as an alias since it is relied upon by other `stocnet` packages
+- Added `layer_ties()`, reporting the number of ties in each layer of a multiplex network (in `layer_names()` order), mirroring how `mode_nodes()` reports nodes per mode
 - Fixed the multiplex tie description in `print()`/`describe_ties()` reporting the total tie count for every layer (e.g. "1241 relationship ties and 1241 affiliation ties" for `fict_marvel`) instead of the per-layer counts ("558 relationship ties and 683 affiliation ties")
 - Reinstated `net_waves()`, an S3 generic reporting the number of waves/panels in a longitudinal network (closes #152), following the `net_layers()` pattern and consistent with `is_longitudinal()`'s wave/panel definition
 

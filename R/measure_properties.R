@@ -10,6 +10,8 @@
 #'   - `mode_nodes()` returns the dimensions of a network in a vector
 #'   as long as the number of modes in the network.
 #'   - `net_layers()` returns the number of layers in a multiplex network.
+#'   - `layer_ties()` returns the number of ties in a vector
+#'   as long as the number of layers in the network.
 #'   - `net_waves()` returns the number of waves/panels in a longitudinal network,
 #'   see [is_longitudinal()].
 #'
@@ -19,6 +21,9 @@
 #'   `mode_nodes()` returns an integer of the number of nodes in a one-mode network,
 #'   or two integers representing the number of nodes in each nodeset
 #'   in the case of a two-mode network.
+#'   `layer_ties()` returns an integer of the number of ties in a single-layer
+#'   network, or one integer per layer (in `layer_names()` order)
+#'   in the case of a multiplex network.
 #' @family measures
 #' @template param_data
 NULL
@@ -130,6 +135,42 @@ net_layers.igraph <- function(.data){
   if("type" %in% net_tie_attributes(.data)){
     length(unique(tie_attribute(.data, "type")))
   } else 1L
+}
+
+#' @rdname measure_dims
+#' @examples
+#' layer_ties(fict_marvel)
+#' @export
+layer_ties <- function(.data) UseMethod("layer_ties")
+
+#' @export
+layer_ties.default <- function(.data){
+  layer_ties(as_igraph(.data))
+}
+
+#' @export
+layer_ties.igraph <- function(.data){
+  types <- if("type" %in% net_tie_attributes(.data))
+    tie_attribute(.data, "type") else NULL
+  .layer_ties(layer_names(.data), types, net_ties(.data))
+}
+
+#' @export
+layer_ties.stocnet <- function(.data){
+  types <- .data$ties[["type"]] %||% .data$ties[["layer"]]
+  .layer_ties(layer_names(.data), types, net_ties(.data))
+}
+
+# Counts ties per layer, aligned to `lnames`.
+# Only subdivides by the `type`/`layer` values when these correspond one-to-one
+# with the layer names; otherwise (e.g. a single curated layer name grouping
+# finer tie types, as in `fict_thrones`) returns the total tie count.
+.layer_ties <- function(lnames, types, nt){
+  if(is.null(lnames) || is.null(types)) return(as.integer(nt))
+  utypes <- unique(types)
+  if(length(utypes) == length(lnames) && all(utypes %in% lnames)){
+    as.integer(table(factor(types, levels = lnames)))
+  } else as.integer(nt)
 }
 
 #' @rdname measure_dims
@@ -368,7 +409,9 @@ layer_names.igraph <- function(.data){
   igraph::graph_attr(.data, "ties") %||%
     igraph::graph_attr(.data, "layers") %||%
     c(igraph::graph_attr(.data, "grand")$edge.pos,
-      igraph::graph_attr(.data, "grand")$edge.neg)
+      igraph::graph_attr(.data, "grand")$edge.neg) %||%
+    (if (is_multiplex(.data) && "type" %in% igraph::edge_attr_names(.data))
+      unique(igraph::edge_attr(.data, "type")))
 }
 
 #' @export
