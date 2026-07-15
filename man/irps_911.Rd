@@ -6,8 +6,8 @@
 \title{One-mode multiplex network of relationships between 9/11 hijackers (Krebs 2002)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # 911 Terrorist network -----------------------------------------------------
-#> # A labelled, complex, multiplex, undirected network of 60 terrorists and 153
-#> association ties and 153 trust ties
+#> # A labelled, complex, multiplex, undirected network of 60 terrorists and 126
+#> association ties and 27 trust ties
 #> 
 #> -- Nodes
 #> # A tibble: 60 x 3

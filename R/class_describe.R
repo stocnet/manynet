@@ -49,23 +49,16 @@ describe_nodes <- function(.data){
 #' @export
 describe_ties <- function(.data){
   nt <- net_ties(.data)
-  tie_name <- ifelse(is_directed(.data), "arcs", "ties") 
+  tie_name <- ifelse(is_directed(.data), "arcs", "ties")
   if(!is.null(layer_names(.data))){
-    tie_name <- paste(layer_names(.data), tie_name)
+    parts <- paste0(layer_ties(.data), " ", singularize(layer_names(.data)),
+                    " ", tie_name)
+    return(phrase(parts))
   } else if(!is.null(tie_attribute(.data, "type"))){
     tab <- table(tie_attribute(.data, "type"))
     parts <- paste0(tab, " ", singularize(names(tab)))
-    # if (length(parts) > 1) {
-    #   result <- paste(
-    #     paste(parts[-length(parts)], collapse = ", "),
-    #     parts[length(parts)],
-    #     sep = ", and "
-    #   )
-    # } else {
-    #   result <- parts
-    # }
-    return(paste0(phrase(parts), " ties"))
-  } 
+    return(paste0(phrase(parts), " ", tie_name))
+  }
   paste(nt, tie_name)
 }
 

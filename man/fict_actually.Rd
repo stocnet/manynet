@@ -6,8 +6,9 @@
 \title{Two-mode network of Love Actually characters and their scene appearances (Robinson 2015)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Love actually interactions ------------------------------------------------
-#> # A labelled, multiplex, two-mode network of 20 characters and 76 scenes and
-#> 162 appearance, 3 family, 7 friendship, 10 professional, and 7 romance ties
+#> # A labelled, multiplex, two-mode network of 20 characters and 76 scenes and 7
+#> romance ties, 162 appearance ties, 7 friendship ties, 10 professional ties, and
+#> 3 family ties
 #> 
 #> -- Nodes
 #> # A tibble: 96 x 6

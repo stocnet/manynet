@@ -4,6 +4,7 @@
 
 - Renamed `node_names()` to `node_labels()` for consistency with `is_labelled()` and `to_labelled()`; `node_names()` remains available as an alias since it is relied upon by other `stocnet` packages
 - Renamed `net_dims()` to `mode_nodes()` for consistency with `mode_names()` and `net_modes()`; `net_dims()` remains available as an alias since it is relied upon by other `stocnet` packages
+- Fixed the multiplex tie description in `print()`/`describe_ties()` reporting the total tie count for every layer (e.g. "1241 relationship ties and 1241 affiliation ties" for `fict_marvel`) instead of the per-layer counts ("558 relationship ties and 683 affiliation ties")
 - Reinstated `net_waves()`, an S3 generic reporting the number of waves/panels in a longitudinal network (closes #152), following the `net_layers()` pattern and consistent with `is_longitudinal()`'s wave/panel definition
 
 ## Modifying
@@ -14,6 +15,7 @@
 
 - Added `write_gml()`, `write_gdf()`, and `write_dynetml()` as export counterparts to `read_gml()`, `read_gdf()`, and `read_dynetml()`
   - `write_dynetml()` records the network's directedness in the `isDirected` attribute of the DyNetML `<network>` element, and `read_dynetml()` now respects it when reconstructing the graph
+  - `write_gml()` converts any logical graph/vertex/edge attributes to integer before export, avoiding igraph's "boolean attribute was converted to numeric" warning
   - Fixed `read_gdf()` dropping node attribute names when a GDF file defines only a single node attribute column
 
 
