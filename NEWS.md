@@ -11,6 +11,7 @@
 ## Modifying
 
 - Renamed `to_named()` to `to_labelled()` and `to_unnamed()` to `to_unlabelled()` for consistency with `is_labelled()` and `node_labels()`; `to_named()` and `to_unnamed()` remain available as aliases since they are relied upon by other `stocnet` packages
+- Added `delete_node_attribute()` and `delete_tie_attribute()`, the `{igraph}`-style counterparts to `add_node_attribute()`/`add_tie_attribute()`, so that attributes added the `{igraph}` way can also be removed that way (deletion via `mutate_*(attr = NULL)` remains the `{tidyverse}`-style route); each accepts a character vector to remove several attributes at once
 
 ## Making
 
