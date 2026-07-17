@@ -111,12 +111,14 @@ to_matching.igraph <- function(.data, mark = "type", capacities = NULL){
     # Derive preference orderings from tie weights (higher weight = more
     # preferred); only existing (non-zero) ties are acceptable matches.
     m1_prefs <- lapply(seq_len(n1), function(i){
-      ord <- order(m[i, ], decreasing = TRUE)
-      ord[m[i, ord] > 0]
+      ord <- order(m[i, ], decreasing = TRUE, na.last = TRUE)
+      w <- m[i, ord]
+      ord[!is.na(w) & w > 0]
     })
     m2_prefs <- lapply(seq_len(n2), function(j){
-      ord <- order(m[, j], decreasing = TRUE)
-      ord[m[ord, j] > 0]
+      ord <- order(m[, j], decreasing = TRUE, na.last = TRUE)
+      w <- m[ord, j]
+      ord[!is.na(w) & w > 0]
     })
 
     # Gale-Shapley (college admissions / many-to-one) algorithm
