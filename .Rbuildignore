@@ -8,6 +8,7 @@
 data.csv
 vignettes/*\.Rmd\.orig
 vignettes/precompile\.R
+^vignettes/articles$
 ^docs$
 ^cache$
 ^pkgdown$
