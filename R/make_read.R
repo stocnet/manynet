@@ -826,7 +826,7 @@ write_dynetml <- function(.data,
     filename <- paste0(getwd(), "/", deparse(substitute(.data)), ".xml")
     snet_success("Writing to {.file {filename}}")
   }
-  if(!grepl("\\.xml$", filename)) filename <- paste0(filename, ".xml")
+  if(!grepl("\\.xml$", filename, ignore.case = TRUE)) filename <- paste0(filename, ".xml")
   thisRequires("xml2")
   g <- as_igraph(.data)
   ids <- node_labels(g)
