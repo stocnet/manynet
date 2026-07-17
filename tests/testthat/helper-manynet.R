@@ -135,9 +135,15 @@ find_pkg_tutorial_paths <- function(pkg) {
 }
 
 check_tute_rendering <- function(path, quiet = TRUE){
-  
+
   skip_if_not_installed("rmarkdown")
   skip_if_not_installed("shiny")
+  # Rendering shiny_prerendered learnr tutorials against a covr-instrumented
+  # namespace is fragile and adds no coverage value (check_tute_functions()
+  # exercises the tutorial code itself); skip under covr to avoid a
+  # coverage-only failure on CI.
+  skip_if(as.logical(Sys.getenv("R_COVR", "false")),
+          "tutorial rendering not tested under covr")
   stopifnot(all(file.exists(path)))
   
   for(i in path){
