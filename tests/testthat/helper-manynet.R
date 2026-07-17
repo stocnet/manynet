@@ -167,23 +167,19 @@ check_tute_functions <- function(path, skip = "ergm\\(", quiet = TRUE){
   exprs <- parse(tmp)  # your purled file
   env <- new.env(parent = globalenv())
   
-  skip_rest <- FALSE
   is_skipped_call <- function(expr) {
     any(grepl(skip, deparse(expr)))
   }
-  
+
   for (i in seq_along(exprs)) {
-    if (skip_rest) {
-      skip(paste("Skipping dependent expressions in", basename(path)))
-      next
-    }
-    
+    # Stop at the first slow call: it and any later (dependent) expressions
+    # are skipped, but we return normally so the caller's loop over the
+    # remaining tutorials continues. Using skip() here would unwind to the
+    # enclosing test_that() and abort every subsequent tutorial too.
     if (is_skipped_call(exprs[[i]])) {
-      skip_rest <- TRUE
-      skip(paste("Skipping slow functions in", basename(path)))
-      next
+      break
     }
-    
+
     w <- NULL
     e <- NULL
     m <- NULL
