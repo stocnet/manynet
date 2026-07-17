@@ -169,7 +169,7 @@ as_igraph.network <- function(.data,
 as_igraph.stocnet <- function(.data, twomode = FALSE) {
   if(is.null(as_nodelist(.data)) || length(as_nodelist(.data)) == 0){
     out <- igraph::graph_from_data_frame(as_edgelist(.data))
-    out <- to_unnamed(out)
+    out <- to_unlabelled(out)
   } else {
     vertices <- as_nodelist(.data)
     if(is_labelled(.data))
@@ -1040,7 +1040,7 @@ as_diffusion.diffnet <- function(.data, twomode = FALSE, events) {
   if (any(report$R + report$I + report$E + report$S != report$n)) {
     snet_abort("Oops, something is wrong")
   }
-  if(is_labelled(net)) events$nodes <- match(events$nodes, node_names(net))
+  if(is_labelled(net)) events$nodes <- match(events$nodes, node_labels(net))
   events <- events |> dplyr::arrange(t)
   report <- dplyr::select(report, dplyr::any_of(c("t", "n", "S", "s", "E", "E_new", "I", "I_new", "R", "R_new")))
   make_diff_model(events, report, net)
@@ -1061,7 +1061,7 @@ as_diffnet.diff_model <- function(.data,
     dplyr::select(nodes,t)
   if(!is_labelled(as_igraph(.data)))
     out <- dplyr::arrange(out, nodes) else if (is.numeric(out$nodes))
-      out$nodes <- node_names(as_igraph(.data))[out$nodes]
+      out$nodes <- node_labels(as_igraph(.data))[out$nodes]
     toa <- stats::setNames(out$t, out$nodes)
     if(is_dynamic(.data)){
       snet_unavailable()

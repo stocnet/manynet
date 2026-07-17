@@ -427,7 +427,7 @@ gather_changes.igraph <- function(.data, time){
 
 #' @rdname manip_changes
 #' @examples
-#' collect_changes(fict_starwars, time = 3)
+#' apply_changes(fict_starwars, time = 3)
 #' @export
 apply_changes <- function(.data, time) UseMethod("apply_changes")
 
@@ -439,7 +439,7 @@ apply_changes.default <- function(.data, time){
 #' @export
 apply_changes.tbl_graph <- function(.data, time){
   out <- as.data.frame(as_nodelist(.data))
-  changes <- collect_changes(.data, time)
+  changes <- gather_changes(.data, time)
   if(is.character(changes$node)) 
     changes$node <- match(changes$node, node_labels(.data))
   if(is.character(changes$var)) 

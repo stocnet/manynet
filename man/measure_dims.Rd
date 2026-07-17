@@ -6,6 +6,7 @@
 \alias{net_modes}
 \alias{net_ties}
 \alias{net_layers}
+\alias{layer_ties}
 \alias{net_waves}
 \alias{mode_nodes}
 \alias{net_dims}
@@ -18,6 +19,8 @@ net_modes(.data)
 net_ties(.data)
 
 net_layers(.data)
+
+layer_ties(.data)
 
 net_waves(.data)
 
@@ -42,6 +45,9 @@ usually returning a scalar.
 \code{mode_nodes()} returns an integer of the number of nodes in a one-mode network,
 or two integers representing the number of nodes in each nodeset
 in the case of a two-mode network.
+\code{layer_ties()} returns an integer of the number of ties in a single-layer
+network, or one integer per layer (in \code{layer_names()} order)
+in the case of a multiplex network.
 }
 \description{
 These functions extract certain attributes from given network data:
@@ -51,6 +57,8 @@ These functions extract certain attributes from given network data:
 \item \code{mode_nodes()} returns the dimensions of a network in a vector
 as long as the number of modes in the network.
 \item \code{net_layers()} returns the number of layers in a multiplex network.
+\item \code{layer_ties()} returns the number of ties in a vector
+as long as the number of layers in the network.
 \item \code{net_waves()} returns the number of waves/panels in a longitudinal network,
 see \code{\link[=is_longitudinal]{is_longitudinal()}}.
 }
@@ -62,6 +70,7 @@ net_nodes(ison_southern_women)
 net_modes(ison_southern_women)
 net_ties(ison_southern_women)
 net_layers(ison_southern_women)
+layer_ties(fict_marvel)
 net_waves(ison_monks)
 mode_nodes(ison_southern_women)
 mode_nodes(to_mode1(ison_southern_women))
