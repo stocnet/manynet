@@ -8,7 +8,7 @@
 \alias{snet_progress_nodes}
 \alias{seq_nodes}
 \alias{seq_ties}
-\title{Console command line interface}
+\title{Sequence and progress functions}
 \usage{
 snet_progress_step(..., .envir = parent.frame())
 

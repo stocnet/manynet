@@ -171,7 +171,7 @@ reference:
     contents:
       - starts_with("na_to_")
       
-  - title: "Identifying"
+  - title: "Describing"
     desc: |
       Functions for identifying properties of networks,
       nodes (where the function prefix is `node_`), or ties (where the function prefix is `tie_`).
