@@ -354,7 +354,7 @@ read_ucinet <- function(file = file.choose()) {
 #' @export
 read_dynetml <- function(file = file.choose()) {
   if(missing(file)) cli::cli_alert_success("Executing: read_dynetml('{file}')")
-  if(!grepl("\\.xml$", file)) file <- paste0(file, ".xml")
+  if(!grepl("\\.xml$", file, ignore.case = TRUE)) file <- paste0(file, ".xml")
   thisRequires("xml2")
   name <- type <- nodeset <- target <- value <- NULL
   xmlfile <- xml2::read_xml(file)
