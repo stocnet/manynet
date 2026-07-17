@@ -47,7 +47,7 @@ test_that("add_tie_attribute works", {
 })
 
 test_that("delete_node_attribute works", {
-  net <- ison_adolescents %>% mutate_nodes(age = 11:18, sex = rep("F", 8))
+  net <- ison_adolescents |> mutate_nodes(age = 11:18, sex = rep("F", 8))
   expect_true(all(c("age", "sex") %in% net_node_attributes(net)))
   # Removes a single attribute
   expect_false("age" %in% net_node_attributes(delete_node_attribute(net, "age")))
@@ -63,7 +63,7 @@ test_that("delete_node_attribute works", {
 })
 
 test_that("delete_tie_attribute works", {
-  net <- ison_adolescents %>% mutate_ties(weight = 1:10, kind = rep("x", 10))
+  net <- ison_adolescents |> mutate_ties(weight = 1:10, kind = rep("x", 10))
   expect_true(all(c("weight", "kind") %in% net_tie_attributes(net)))
   expect_false("weight" %in% net_tie_attributes(delete_tie_attribute(net, "weight")))
   expect_equal(net_tie_attributes(delete_tie_attribute(net, c("weight", "kind"))),
