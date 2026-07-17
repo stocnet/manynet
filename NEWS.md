@@ -12,6 +12,12 @@
 
 - Renamed `to_named()` to `to_labelled()` and `to_unnamed()` to `to_unlabelled()` for consistency with `is_labelled()` and `node_labels()`; `to_named()` and `to_unnamed()` remain available as aliases since they are relied upon by other `stocnet` packages
 - Added `delete_node_attribute()` and `delete_tie_attribute()`, the `{igraph}`-style counterparts to `add_node_attribute()`/`add_tie_attribute()`, so that attributes added the `{igraph}` way can also be removed that way (deletion via `mutate_*(attr = NULL)` remains the `{tidyverse}`-style route); each accepts a character vector to remove several attributes at once
+- Fixed `to_uniplex()` throwing an error on unsigned multiplex networks (e.g. `to_uniplex(irps_911, "trust")`) due to an operator precedence bug in the check for dropping an all-positive/all-`NA` `sign` column
+- Fixed `apply_changes()` emitting a spurious deprecation warning by calling the defunct `collect_changes()` internally instead of its replacement, `gather_changes()`
+
+## Describing
+
+- Fixed `layer_names()` returning nothing for multiplex networks that store their tie types only in a `type` tie attribute (e.g. `ison_lawfirm`, `irps_911`) rather than a graph-level attribute; it now falls back to the unique values of `type` when present
 
 ## Making
 
@@ -19,6 +25,17 @@
   - `write_dynetml()` records the network's directedness in the `isDirected` attribute of the DyNetML `<network>` element, and `read_dynetml()` now respects it when reconstructing the graph
   - `write_gml()` converts any logical graph/vertex/edge attributes to integer before export, avoiding igraph's "boolean attribute was converted to numeric" warning
   - Fixed `read_gdf()` dropping node attribute names when a GDF file defines only a single node attribute column
+
+
+## Coercion
+
+- Added lossless coercion between 'stocnet' and 'RSiena' 'sienadata' objects via `as_stocnet()` and `as_siena()`
+  - `as_stocnet()` now unpacks the full contents of a 'sienadata' object: multiple dependent networks (as tie layers), behavioural dependents and varying covariates (as nodal changes), constant covariates (as nodal attributes), constant and varying dyadic covariates (as tie layers), composition change (as nodal changes), and multiple node sets (as modes), preserving node labels and missing values
+  - `as_siena.stocnet()` reconstructs an equivalent 'sienadata' object, round-tripping values exactly (including covariate centering, which RSiena stores mean-centered)
+  - Fixed the `as_igraph()`/`as_tidygraph()`/`as_network()` coercions of 'sienadata' objects, which previously did not dispatch because RSiena objects are classed `sienadata` rather than `siena`; these now route through the richer 'stocnet' path
+  - Introduced reserved `info` slots to support this: `focal` (now a character vector naming all dependent variables), `centered` (a named logical vector of covariate centering), and `siena` (a sublist carrying RSiena-specific estimation metadata)
+  - `as_siena()` now routes any coercible object (igraph, tidygraph/mnet, matrix, network, ...) through the 'stocnet' path via a single `as_siena.default()` method, so multiplex layers, waves, and covariates are carried across; longitudinal networks whose waves are held in a `wave`/`time` tie attribute now convert directly
+  - `as_siena()` gives clearer errors: a helpful message when a network has fewer than two waves (e.g. `as_siena(ison_adolescents)`) or when a dependent network is valued/signed rather than binary (suggesting `to_unweighted()`), and passes categorical nodal attributes to SIENA as numeric-coded covariates
 
 
 ## Glossary

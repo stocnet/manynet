@@ -59,18 +59,27 @@ as_diffusion                             *       *      *                *
 as_graphAM                    *                                     *     
 as_igraph             *                  *       *      *           *     
 as_network            *                          *      *           *     
-as_siena                                                *                 
+as_siena                      *                                           
 as_stocnet            *                                 *           *     
 as_tidygraph          *                  *       *      *    *      *     
-             network network.goldfish networkDynamic siena stocnet tbl_graph
+             network network.goldfish networkDynamic siena sienadata stocnet
 as_diffnet                                                                  
 as_diffusion                                                                
 as_graphAM                                                                  
-as_igraph          *                *              *     *       *         *
-as_network         *                *              *     *       *         *
+as_igraph          *                *              *     *         *       *
+as_network         *                *              *     *         *       *
 as_siena                                                                   *
-as_stocnet         *                                             *          
-as_tidygraph       *                *              *     *       *         *
+as_stocnet         *                                               *       *
+as_tidygraph       *                *              *     *         *       *
+             tbl_graph
+as_diffnet            
+as_diffusion          
+as_graphAM            
+as_igraph            *
+as_network           *
+as_siena              
+as_stocnet            
+as_tidygraph         *
 }\if{html}{\out{</div>}}
 
 \code{as_diffusion()} and \code{play_diffusion()} return a 'diff_model' object

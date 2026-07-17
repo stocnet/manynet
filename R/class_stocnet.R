@@ -28,7 +28,19 @@
 #'   - 'directed' should be a logical indicating whether each layer is directed or undirected.
 #'   If there are multiple layers, this can be a named logical vector with the directedness of each layer, 
 #'   where the names correspond to the layer names.
-#'   - 'focal' should be a character string indicating which layer is the dependent layer in a multiplex network.
+#'   - 'focal' should be a character vector indicating which variables are
+#'   dependent (endogenous). These may be tie layers (dependent networks) and/or
+#'   nodal variables recorded in the changes component (dependent behaviours),
+#'   as used when modelling with e.g. 'RSiena'.
+#'   - 'centered' should be a named logical vector indicating, for each covariate
+#'   (nodal or dyadic), whether it should be centered when modelling.
+#'   The names correspond to the covariate variable or layer names.
+#'   - 'siena' can hold a list of metadata specific to 'RSiena' 'sienadata' objects
+#'   that has no native meaning elsewhere (e.g. the 'allowOnly', 'uponly', and
+#'   'downonly' estimation constraints of dependent variables, the composition
+#'   change option, node set relations, and the originating 'RSiena' version).
+#'   This is populated by `as_stocnet()` and consumed by `as_siena()` so that
+#'   coercion to and from 'sienadata' objects is lossless.
 #'   - 'doi' can be a character string with the DOI of the network, if it is from a published source.
 #'   - 'date' can be an integer of the year or the date the network represents.
 #'   - 'location' can be a character string with the location of the network.
