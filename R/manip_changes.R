@@ -61,7 +61,7 @@ mutate_changes.default <- function(.data, ...){
 #' @export
 mutate_changes.tbl_graph <- function(.data, ...){
   changes <- igraph::graph_attr(.data, "changes")
-  changes <- tidygraph::mutate(changes, ...)
+  changes <- dplyr::mutate(changes, ...)
   igraph::graph_attr(.data, "changes") <- changes
   .data
 }
@@ -267,7 +267,7 @@ filter_changes.default <- function(.data, ..., .by = NULL){
 #' @export
 filter_changes.igraph <- function(.data, ..., .by = NULL){
   changes <- igraph::graph_attr(.data, "changes")
-  changes <- tidygraph::filter(changes, ..., .by = .by)
+  changes <- dplyr::filter(changes, ..., .by = .by)
   igraph::graph_attr(.data, "changes") <- changes
   .data
 }
@@ -295,7 +295,7 @@ select_changes.default <- function(.data, ..., .by = NULL){
 #' @export
 select_changes.igraph <- function(.data, ..., .by = NULL){
   changes <- igraph::graph_attr(.data, "changes")
-  changes <- tidygraph::select(changes, ..., .by = .by)
+  changes <- dplyr::select(changes, ..., .by = .by)
   igraph::graph_attr(.data, "changes") <- changes
   .data
 }

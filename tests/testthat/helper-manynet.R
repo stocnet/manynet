@@ -137,6 +137,7 @@ find_pkg_tutorial_paths <- function(pkg) {
 check_tute_rendering <- function(path, quiet = TRUE){
   
   skip_if_not_installed("rmarkdown")
+  skip_if_not_installed("shiny")
   stopifnot(all(file.exists(path)))
   
   for(i in path){
