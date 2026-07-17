@@ -774,6 +774,7 @@ write_gml <- function(.data,
     snet_success("Writing to {.file {filename}}")
   }
   if(!grepl("\\.gml$", filename, ignore.case = TRUE)) filename <- paste0(filename, ".gml")
+  g <- as_igraph(.data)
   # igraph's GML writer warns when converting logical attributes to numeric;
   # convert them ourselves first so the export is silent
   for(a in igraph::graph_attr_names(g))
