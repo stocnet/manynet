@@ -1,5 +1,5 @@
 to_funs <- funs_objs[grepl("to_", names(funs_objs))]
-to_funs <- to_funs[!grepl("^na_|s$", names(to_funs))]
+to_funs <- to_funs[!grepl("^na_|s$|^to_named$|^to_unnamed$|^to_wave$|^to_component$", names(to_funs))]
 fun_names <- names(to_funs)
 fun_names <- fun_names[!grepl("\\.", fun_names)]
 
@@ -24,6 +24,18 @@ test_that("to_giant works",{
   # expect_equal(c(net_nodes(to_giant(as_matrix(fict_marvel)))), 50)
   # expect_equal(c(net_nodes(to_giant(as_network(fict_marvel)))), 50)
   expect_equal(c(net_nodes(to_giant(as_edgelist(fm)))), 50)
+})
+
+test_that("to_component is an alias of to_giant",{
+  fm <- to_uniplex(fict_marvel, tie = "relationship")
+  expect_identical(as_matrix(to_component(fm)), as_matrix(to_giant(fm)))
+})
+
+test_that("to_wave is an alias of to_time",{
+  expect_identical(as_matrix(to_wave(fict_potter, 3)),
+                   as_matrix(to_time(fict_potter, 3)))
+  expect_equal(c(net_nodes(to_wave(fict_potter, 3))),
+               c(net_nodes(to_time(fict_potter, 3))))
 })
 
 test_that("matrix projected correctly by rows",{

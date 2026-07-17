@@ -12,6 +12,8 @@
 
 - Renamed `to_named()` to `to_labelled()` and `to_unnamed()` to `to_unlabelled()` for consistency with `is_labelled()` and `node_labels()`; `to_named()` and `to_unnamed()` remain available as aliases since they are relied upon by other `stocnet` packages
 - Added `delete_node_attribute()` and `delete_tie_attribute()`, the `{igraph}`-style counterparts to `add_node_attribute()`/`add_tie_attribute()`, so that attributes added the `{igraph}` way can also be removed that way (deletion via `mutate_*(attr = NULL)` remains the `{tidyverse}`-style route); each accepts a character vector to remove several attributes at once
+- Added `to_wave()` as an alias of `to_time()`, matching the wave-based vocabulary of `net_waves()` and `to_waves()` when extracting a single wave of a longitudinal network
+- Added `to_component()` as an alias of `to_giant()`, giving the "keep the one main component" verb a singular name that corresponds to the plural `to_components()` (which returns a list of all components), following the `to_subgraph()`/`to_subgraphs()` pattern
 - Fixed `to_uniplex()` throwing an error on unsigned multiplex networks (e.g. `to_uniplex(irps_911, "trust")`) due to an operator precedence bug in the check for dropping an all-positive/all-`NA` `sign` column
 - Fixed `apply_changes()` emitting a spurious deprecation warning by calling the defunct `collect_changes()` internally instead of its replacement, `gather_changes()`
 
