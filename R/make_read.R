@@ -801,7 +801,7 @@ write_gdf <- function(.data,
     filename <- paste0(getwd(), "/", deparse(substitute(.data)), ".gdf")
     snet_success("Writing to {.file {filename}}")
   }
-  if(!grepl("\\.gdf$", filename)) filename <- paste0(filename, ".gdf")
+  if(!grepl("\\.gdf$", filename, ignore.case = TRUE)) filename <- paste0(filename, ".gdf")
   g <- as_igraph(.data)
   ids <- node_labels(g)
   nodes <- data.frame(name = ids)
