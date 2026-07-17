@@ -1,48 +1,81 @@
 # manynet 2.2.0
 
-## Describing
+## Package
 
-- Renamed `node_names()` to `node_labels()` for consistency with `is_labelled()` and `to_labelled()`; `node_names()` remains available as an alias since it is relied upon by other `stocnet` packages
-- Renamed `net_dims()` to `mode_nodes()` for consistency with `mode_names()` and `net_modes()`; `net_dims()` remains available as an alias since it is relied upon by other `stocnet` packages
-- Added `layer_ties()`, reporting the number of ties in each layer of a multiplex network (in `layer_names()` order), mirroring how `mode_nodes()` reports nodes per mode
-- Fixed the multiplex tie description in `print()`/`describe_ties()` reporting the total tie count for every layer (e.g. "1241 relationship ties and 1241 affiliation ties" for `fict_marvel`) instead of the per-layer counts ("558 relationship ties and 683 affiliation ties")
-- Reinstated `net_waves()`, an S3 generic reporting the number of waves/panels in a longitudinal network (closes #152), following the `net_layers()` pattern and consistent with `is_longitudinal()`'s wave/panel definition
-
-## Modifying
-
-- Renamed `to_named()` to `to_labelled()` and `to_unnamed()` to `to_unlabelled()` for consistency with `is_labelled()` and `node_labels()`; `to_named()` and `to_unnamed()` remain available as aliases since they are relied upon by other `stocnet` packages
-- Added `delete_node_attribute()` and `delete_tie_attribute()`, the `{igraph}`-style counterparts to `add_node_attribute()`/`add_tie_attribute()`, so that attributes added the `{igraph}` way can also be removed that way (deletion via `mutate_*(attr = NULL)` remains the `{tidyverse}`-style route); each accepts a character vector to remove several attributes at once
-- Added `to_wave()` as an alias of `to_time()`, matching the wave-based vocabulary of `net_waves()` and `to_waves()` when extracting a single wave of a longitudinal network
-- Added `to_component()` as an alias of `to_giant()`, giving the "keep the one main component" verb a singular name that corresponds to the plural `to_components()` (which returns a list of all components), following the `to_subgraph()`/`to_subgraphs()` pattern
-- Fixed `to_uniplex()` throwing an error on unsigned multiplex networks (e.g. `to_uniplex(irps_911, "trust")`) due to an operator precedence bug in the check for dropping an all-positive/all-`NA` `sign` column
-- Fixed `apply_changes()` emitting a spurious deprecation warning by calling the defunct `collect_changes()` internally instead of its replacement, `gather_changes()`
-
-## Describing
-
-- Fixed `layer_names()` returning nothing for multiplex networks that store their tie types only in a `type` tie attribute (e.g. `ison_lawfirm`, `irps_911`) rather than a graph-level attribute; it now falls back to the unique values of `type` when present
+- Renamed the website's "Identifying" reference section to "Describing" and retitled the sequence/progress helper documentation, aligning the website with the package's function families
+- Added static (article) versions of both tutorials to the pkgdown website, so they can be read without a running R/learnr session
 
 ## Making
 
-- Added `write_gml()`, `write_gdf()`, and `write_dynetml()` as export counterparts to `read_gml()`, `read_gdf()`, and `read_dynetml()`
+- Added `write_gml()`, `write_gdf()`, and `write_dynetml()` as export counterparts to `read_gml()`, `read_gdf()`, and `read_dynetml()` (closing #148)
   - `write_dynetml()` records the network's directedness in the `isDirected` attribute of the DyNetML `<network>` element, and `read_dynetml()` now respects it when reconstructing the graph
   - `write_gml()` converts any logical graph/vertex/edge attributes to integer before export, avoiding igraph's "boolean attribute was converted to numeric" warning
   - Fixed `read_gdf()` dropping node attribute names when a GDF file defines only a single node attribute column
-
 
 ## Coercion
 
 - Added lossless coercion between 'stocnet' and 'RSiena' 'sienadata' objects via `as_stocnet()` and `as_siena()`
   - `as_stocnet()` now unpacks the full contents of a 'sienadata' object: multiple dependent networks (as tie layers), behavioural dependents and varying covariates (as nodal changes), constant covariates (as nodal attributes), constant and varying dyadic covariates (as tie layers), composition change (as nodal changes), and multiple node sets (as modes), preserving node labels and missing values
   - `as_siena.stocnet()` reconstructs an equivalent 'sienadata' object, round-tripping values exactly (including covariate centering, which RSiena stores mean-centered)
-  - Fixed the `as_igraph()`/`as_tidygraph()`/`as_network()` coercions of 'sienadata' objects, which previously did not dispatch because RSiena objects are classed `sienadata` rather than `siena`; these now route through the richer 'stocnet' path
   - Introduced reserved `info` slots to support this: `focal` (now a character vector naming all dependent variables), `centered` (a named logical vector of covariate centering), and `siena` (a sublist carrying RSiena-specific estimation metadata)
   - `as_siena()` now routes any coercible object (igraph, tidygraph/mnet, matrix, network, ...) through the 'stocnet' path via a single `as_siena.default()` method, so multiplex layers, waves, and covariates are carried across; longitudinal networks whose waves are held in a `wave`/`time` tie attribute now convert directly
   - `as_siena()` gives clearer errors: a helpful message when a network has fewer than two waves (e.g. `as_siena(ison_adolescents)`) or when a dependent network is valued/signed rather than binary (suggesting `to_unweighted()`), and passes categorical nodal attributes to SIENA as numeric-coded covariates
+  - Fixed the `as_igraph()`/`as_tidygraph()`/`as_network()` coercions of 'sienadata' objects, which previously did not dispatch because RSiena objects are classed `sienadata` rather than `siena`; these now route through the richer 'stocnet' path
+- Fixed `as_nodelist.network()` retaining a spurious all-`FALSE` `na` column, caused by testing a non-existent `names` field instead of the `na` column when deciding whether to drop it
 
+## Manipulating
+
+- Added `delete_node_attribute()` and `delete_tie_attribute()`, the `{igraph}`-style counterparts to `add_node_attribute()`/`add_tie_attribute()`, so that attributes added the `{igraph}` way can also be removed that way (deletion via `mutate_*(attr = NULL)` remains the `{tidyverse}`-style route); each accepts a character vector to remove several attributes at once
+- Fixed `apply_changes()` emitting a spurious deprecation warning by calling the defunct `collect_changes()` internally instead of its replacement, `gather_changes()`
+- Updated the documentation of the node and tie attribute manipulation functions
+
+## Modifying
+
+- Renamed `to_named()` to `to_labelled()` and `to_unnamed()` to `to_unlabelled()` for consistency with `is_labelled()` and `node_labels()`; `to_named()` and `to_unnamed()` remain available as aliases since they are relied upon by other `stocnet` packages
+- Added `to_wave()` as an alias of `to_time()`, matching the wave-based vocabulary of `net_waves()` and `to_waves()` when extracting a single wave of a longitudinal network
+- Added `to_component()` as an alias of `to_giant()`, giving the "keep the one main component" verb a singular name that corresponds to the plural `to_components()` (which returns a list of all components), following the `to_subgraph()`/`to_subgraphs()` pattern
+- Fixed `to_uniplex()` throwing an error on unsigned multiplex networks (e.g. `to_uniplex(irps_911, "trust")`) due to an operator precedence bug in the check for dropping an all-positive/all-`NA` `sign` column
+
+## Describing
+
+- Renamed `node_names()` to `node_labels()` for consistency with `is_labelled()` and `to_labelled()`; `node_names()` remains available as an alias since it is relied upon by other `stocnet` packages
+- Renamed `net_dims()` to `mode_nodes()` for consistency with `mode_names()` and `net_modes()`; `net_dims()` remains available as an alias since it is relied upon by other `stocnet` packages
+- Added `layer_ties()`, reporting the number of ties in each layer of a multiplex network (in `layer_names()` order), mirroring how `mode_nodes()` reports nodes per mode
+- Reinstated `net_waves()`, an S3 generic reporting the number of waves/panels in a longitudinal network (closes #152), following the `net_layers()` pattern and consistent with `is_longitudinal()`'s wave/panel definition
+- Fixed the multiplex tie description in `print()`/`describe_ties()` reporting the total tie count for every layer (e.g. "1241 relationship ties and 1241 affiliation ties" for `fict_marvel`) instead of the per-layer counts ("558 relationship ties and 683 affiliation ties")
+- Fixed `layer_names()` returning nothing for multiplex networks that store their tie types only in a `type` tie attribute (e.g. `ison_lawfirm`, `irps_911`) rather than a graph-level attribute; it now falls back to the unique values of `type` when present
 
 ## Glossary
 
-- Added glossary entries for 'directed', 'edgelist', 'nodelist', 'projection', and 'twomode'
+- Added glossary entries for 'directed', 'edgelist', 'node', 'nodelist', 'projection', 'tie', and 'twomode'
+
+## Tutorials
+
+- Split the "Data" tutorial into two shorter tutorials in response to student feedback, named `manynet1` and `manynet2` (package-prefixed rather than numbered `tutorial1a`/`tutorial1b`, to avoid renumbering clashes with tutorials in sibling packages):
+  - "Making Data" (manynet1) covers finding packaged data, describing networks, class coercion, and importing/exporting external data
+  - "Manipulating Data" (manynet2) covers modifying nodes/ties/attributes, reformatting, and transforming networks
+- Improved tutorial styling for readability and consistent branding
+  - Added tick-box learning aims at the start of each tutorial
+  - Replaced the bright Bootstrap alert boxes ("Beginner note", "In brief") with a lighter `.callout` style using a thin border and label text in the tutorial theme's accent colour (manynet's mustard yellow, `#D6A929`, sampled from the hex logo), rather than a filled background box
+  - Increased the base font size (115%) for readability, and coloured the tutorial title, sidebar topic list, content hyperlinks, and "Run Code" buttons in the same mustard yellow
+  - Task instructions are now bolded throughout the tutorials
+  - Added recap boxes at the end of each section, summary tables of functions introduced, expected-output self-checks after exercises, and beginner notes (including an explanation of pipes at first use)
+  - Added explanations to all quiz answer options, more hint chunks, and made fill-in-the-blank hints paste-safe by commenting them
+  - Added "choose your own data" personalization: a running invitation to swap in classic (`ison_*`), fictional (`fict_*`), or real-world (`irps_*`) networks, with curated per-flavour dataset menus and structural self-checks at each free-play exercise, and an optional "Going deeper" data-tidying section in the manipulating tutorial
+  - Added an italicised "On this page" jump list of anchor links under each long section, since learnr's sidebar only navigates by top-level (`##`) topics and cannot nest `###` subsections; these scroll within the current topic via JavaScript rather than `#anchor` links, since learnr's own router intercepts any hash navigation and resets to the first topic if the hash isn't a registered topic id
+  - Added hover-over glossary definitions via `gloss()` and a printed glossary at the end of each tutorial
+- Improved the "Making Network Data" tutorial (manynet1) 
+  - Now introduces the `stocnet` class and its anatomy (info/nodes/ties/changes/globals) before moving on to importing/exporting external data
+  - Now cover the full range of packaged datasets, including the new `fict_marvel` multiplex network
+  - Added a "Making a network by hand" section, placed before "Packaged data" so that new users meet nodes and ties concretely before turning to bundled/imported data, covering `create_explicit()` (with an undirected and a directed exercise), and describing `collect_ego()` for interactive ego-network collection (noted as console-only, since it cannot run inside the tutorial window)
+  - Fixed the two-mode datasets quiz question by computing its answer options dynamically from `table_data()` at render time, so they no longer go stale as datasets are added
+  - Fixed the nodelist import example to use `read_nodelist()` instead of `read_edgelist()`
+  - Export examples now write to `tempdir()` to avoid permission errors on installed packages
+- Improved the "Manipulating Data" tutorial (manynet2) around the parts of a network rather than the reformatting/transforming distinction, so students can jump straight to the section matching their data: Operating on networks (the `[`/`[[`/`$` operators); Nodal properties (adding/removing nodes, labels, attributes); Tie properties (adding/removing ties, attributes, direction, weights, signs); Multiplex networks (joining, layers); Multimodal networks (modes); Dynamic networks (waves, changes); and a closing Selecting and cleaning section (subgraph filtering, isolates/giant/simplex) that narrows the fully built-up object down before the summary pipeline. The reformatting/transforming vocabulary is kept as a callout rather than the organising structure, and each element's composition verbs (`add_nodes()`/`delete_nodes()`, `add_ties()`/`delete_ties()`) lead into that element's own section
+  - Added a "Changing networks" section covering `is_longitudinal()`/`is_dynamic()`/`is_changing()`, `net_waves()`, `to_time()`, `to_waves()`, and the `*_changes()` family (`filter_changes()`, `apply_changes()`), previously untreated in the tutorials
+  - Extended the opening `[`/`[[` operators section with `$` get/set, and cross-referenced it as the do-it-yourself alternative alongside named functions throughout (e.g. `net$name <-` beside `to_labelled()`)
+  - Added `layer_names()`/`to_uniplex()` (multiplex layers) and `to_onemode()`/`to_twomode()`/`to_multilevel()` (mode conversion) coverage alongside the existing two-mode projection material
+  - Added `signed`, `longitudinal`, and `dynamic` glossary entries to support the new sections' hover-term definitions
 
 # manynet 2.1.4
 

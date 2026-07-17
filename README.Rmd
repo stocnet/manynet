@@ -104,7 +104,7 @@ library(ggplot2)
 imports <- igraph::graph_from_literal(ucinet:pajek+--+tidygraph,
                                       matrix:dynetml--+tidygraph,
                                       edgelist:nodelist+--+tibble)
-imports <- imports %>% mutate(type = ifelse(node_names(imports)%in% c("tidygraph","tibble"), TRUE, FALSE))
+imports <- imports %>% mutate(type = ifelse(node_labels(imports)%in% c("tidygraph","tibble"), TRUE, FALSE))
 graphr(imports, node_size = 4)
 ```
 
@@ -128,9 +128,9 @@ Here are just a few examples, all available in `{manynet}`:
 <img src="https://www.jameshollway.com/post/manynet/README-ison_egs-1.png" alt="Graphs illustrating several of the classic networks included in the package"/>
 
 ```{r ison_egs, echo = FALSE, dpi = 250, message=FALSE, fig.height=3, eval=FALSE}
-graphr(to_unnamed(ison_karateka)) + ggtitle("Karateka", subtitle = "Zachary 1977") + 
+graphr(to_unlabelled(ison_karateka)) + ggtitle("Karateka", subtitle = "Zachary 1977") + 
     graphr(ison_algebra, labels = FALSE) + ggtitle("Algebra", subtitle = "McFarland 2001") +
-  graphr(to_unnamed(ison_southern_women)) + ggtitle("Southern Women", subtitle = "Davis et al 1941")
+  graphr(to_unlabelled(ison_southern_women)) + ggtitle("Southern Women", subtitle = "Davis et al 1941")
 #/
   # (graphr(ison_lawfirm) + ggtitle("Law Firm", subtitle = "Lazega 2001") + 
 ```
@@ -320,7 +320,7 @@ e.g. from a whole network to the various ego networks via `to_egos()`.
 
 ```{r splitting_egs, echo = FALSE, dpi = 250, fig.height=4, warning=FALSE, message=FALSE, eval=FALSE}
 graphr(ison_adolescents) + ggtitle("Original", subtitle = "ison_adolescents") + 
-    graphs(lapply(to_egos(ison_adolescents), to_unnamed)) + ggtitle("Ego Splitting", subtitle = "to_egos(ison_adolescents)")
+    graphs(lapply(to_egos(ison_adolescents), to_unlabelled)) + ggtitle("Ego Splitting", subtitle = "to_egos(ison_adolescents)")
 ```
 
 Those functions that split a network into a list of networks are

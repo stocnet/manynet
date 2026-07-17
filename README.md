@@ -98,8 +98,9 @@ compatible with your larger project and analytic workflow.
 - `read_cran()`, `read_dynetml()`, `read_edgelist()`, `read_gdf()`,
   `read_gml()`, `read_graphml()`, `read_matrix()`, `read_nodelist()`,
   `read_pajek()`, `read_pkg()`, `read_ucinet()`
-- `write_edgelist()`, `write_graphml()`, `write_matrix()`,
-  `write_nodelist()`, `write_pajek()`, `write_ucinet()`
+- `write_dynetml()`, `write_edgelist()`, `write_gdf()`, `write_gml()`,
+  `write_graphml()`, `write_matrix()`, `write_nodelist()`,
+  `write_pajek()`, `write_ucinet()`
 
 #### Identifying network data
 
@@ -249,10 +250,10 @@ directed to undirected via `to_undirected()`.
 
 <img src="https://www.jameshollway.com/post/manynet/README-directed_egs-1.png" alt="Graphs illustrating modification of a network's directedness"/>
 
-See also `to_directed()`, `to_named()`, `to_permuted()`,
+See also `to_directed()`, `to_labelled()`, `to_named()`, `to_permuted()`,
 `to_reciprocated()`, `to_redirected()`, `to_signed()`,
-`to_undirected()`, `to_unnamed()`, `to_unsigned()`, `to_unweighted()`,
-`to_weighted()`.
+`to_undirected()`, `to_unlabelled()`, `to_unnamed()`, `to_unsigned()`,
+`to_unweighted()`, `to_weighted()`.
 
 ### Transforming
 
