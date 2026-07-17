@@ -430,7 +430,7 @@ read_gml <- function(file = file.choose()) {
 #' @export
 read_gdf <- function(file = file.choose()) {
   if(missing(file)) cli::cli_alert_success("Executing: read_gdf('{file}')")
-  if(!grepl("\\.gdf$", file)) file <- paste0(file, ".gdf")
+  if(!grepl("\\.gdf$", file, ignore.case = TRUE)) file <- paste0(file, ".gdf")
   gdf <- readLines(file)
   
   edge_place <- grep("edgedef>", gdf)
