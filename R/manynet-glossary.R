@@ -43,7 +43,7 @@ clear_glossary <- function(){
 }
 
 ## Definitions ####
-
+# NB: Don't include an apostrophe in the glossary definition, as this will break the HTML output.
 glossies <- list(
   acyclic = "An acyclic network is a network without any cycles.",
   aperiodic = "An aperiodic network is a network where the greatest common divisor of the lengths of its cycles is one.",
@@ -59,7 +59,7 @@ glossies <- list(
   bridge = "A bridge or isthmus is a tie whose deletion increases the number of components.",
   centralization = "A measure of how unequal the centralities of the nodes in a network are.",
   changing = "A changing network is one where nodal attributes, including whether the nodes are present or not, can change.",
-  circumference = "A network's circumference is the length of its longest simple cycle.",
+  circumference = "The circumference of a network is the length of its longest simple cycle.",
   clique = "A clique is a set of mutually adjacent nodes.",
   closeness = "The closeness centrality of a node is the reciprocal of the sum of its distances to all other nodes.",
   cohesion = "The minimum number of nodes to remove to increase the number of components.",
@@ -123,7 +123,7 @@ glossies <- list(
   multilevel = "A network of more than one set of nodes that includes ties both between and within the different node sets.",
   multimodal = "A network that includes more than one set of nodes.",
   multiplex = "A network that includes multiple types of tie.",
-  neighborhood = "A node's neighborhood is the set of other nodes to which that node is connected.",
+  neighborhood = "The neighborhood of a node is the set of other nodes to which that node is connected.",
   network = "A network comprises one or more sets of nodes, one or more sets of ties among them, and potentially some node, tie, or network-level attributes.",
   node = "A node or vertex is an entity or actor within a network.",
   nodelist = "A nodelist is a table listing the nodes in a network, with their names in the first column and any nodal attributes in further columns.",
