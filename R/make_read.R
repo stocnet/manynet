@@ -422,7 +422,7 @@ read_graphml <- function(file = file.choose()) {
 #' @export
 read_gml <- function(file = file.choose()) {
   if(missing(file)) cli::cli_alert_success("Executing: read_gml('{file}')")
-  if(!grepl("\\.gml$", file)) file <- paste0(file, ".gml")
+  if(!grepl("\\.gml$", file, ignore.case = TRUE)) file <- paste0(file, ".gml")
   as_tidygraph(igraph::read_graph(file, format = "gml"))
 }
 
