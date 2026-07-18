@@ -4,6 +4,9 @@
 
 - Renamed the website's "Identifying" reference section to "Describing" and retitled the sequence/progress helper documentation, aligning the website with the package's function families
 - Added static (article) versions of both tutorials to the pkgdown website, so they can be read without a running R/learnr session
+- Added a functional testing infrastructure (`tests/testthat/test-functional_*.R`) that automatically enumerates exported functions by family prefix (`to_*`, `from_*`, `is_*`, `net_*`/`node_*`/`tie_*`, `as_*list`, `create_*`/`generate_*`/`play_*`, and the `add_*`/`mutate_*`/`filter_*`/etc. manipulation verbs) and audits each across a standard grid of fixture networks (directed, two-mode, weighted, signed, multiplex, longitudinal) and object classes (tidygraph, igraph, matrix, network, edgelist, stocnet), raising package test coverage from ~52% to over 70%
+  - New functions added to a family are picked up and tested automatically, enforcing family conventions (`.data`-first arguments, default methods, name-implied invariants such as `!is_directed(to_undirected(x))`, per-node/per-tie result lengths, and cross-class agreement)
+  - Function/fixture combinations that are not (yet) conformant are skipped with a structured, greppable `AUDIT [...]` message rather than failed, marking where implementations still need work
 
 ## Making
 
