@@ -29,6 +29,7 @@
 - Fixed `apply_changes()` emitting a spurious deprecation warning by calling the defunct `collect_changes()` internally instead of its replacement, `gather_changes()`
 - Fixed `filter_changes()` and `select_changes()` emitting a tidyselect deprecation warning by passing `.by` (and, for `select_changes()`, a spurious `.by`) as an external vector into a selection context
 - Improved `filter_changes()` to accept node labels as well as indices, so a changelog can be subset by name, e.g. `filter_changes(fict_starwars, node == "Anakin")`
+- Fixed `select_ties()` on 'stocnet' objects dropping the mandatory `from`/`to` columns when they are not among the selected columns; they are now always retained, as tidygraph does when selecting among edge attributes
 - Updated the documentation of the node and tie attribute manipulation functions
 
 ## Modifying

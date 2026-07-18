@@ -477,7 +477,13 @@ select_ties.data.frame <- function(.data, ...){
 #' @export
 select_ties.stocnet <- function(.data, ...){
   out <- .data
-  out$ties <- select_ties.data.frame(out$ties, ...)
+  sel <- select_ties.data.frame(out$ties, ...)
+  # the ties table always retains its from/to columns, as tidygraph does
+  ft <- setdiff(intersect(c("from","to"), names(.data$ties)), names(sel))
+  if(length(ft) > 0)
+    sel <- dplyr::bind_cols(.data$ties[, ft, drop = FALSE], sel)
+  out$ties <- dplyr::select(sel, dplyr::any_of(c("from","to")),
+                            dplyr::everything())
   out
 }
 
