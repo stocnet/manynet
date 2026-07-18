@@ -38,6 +38,9 @@
 - Added `to_component()` as an alias of `to_giant()`, giving the "keep the one main component" verb a singular name that corresponds to the plural `to_components()` (which returns a list of all components), following the `to_subgraph()`/`to_subgraphs()` pattern
 - Fixed `to_uniplex()` throwing an error on unsigned multiplex networks (e.g. `to_uniplex(irps_911, "trust")`) due to an operator precedence bug in the check for dropping an all-positive/all-`NA` `sign` column
 - Improved `to_mode1()` and `to_mode2()` to return one-mode networks unchanged, so projection is a no-op rather than an error when the network is already one-mode
+- Fixed `from_waves()` and `from_slices()` dropping isolates and node attributes when reassembling labelled networks, by binding the waves'/slices' node tables as well as their tie tables (e.g. `from_waves(to_waves(fict_potter))` now recovers all 64 nodes rather than only the 39 with ties)
+- Fixed `from_ties()` warning "NAs introduced by coercion" when the merged networks record different DOIs; the first DOI is now kept (dates still keep the earliest)
+- Fixed `from_ties()` on tidygraph objects reporting the first input's tie-type metadata (e.g. "friendships") from `layer_names()` instead of the newly created layers; the merged network now records its layers as tie-type metadata
 
 ## Describing
 
