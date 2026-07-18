@@ -1,24 +1,6 @@
-create_funs <- funs_objs[grepl("create_", names(funs_objs)) &
-                           !grepl("motif|lattice|explicit|degree", names(funs_objs))]
-
-for(fn in names(create_funs)) {
-  # One-mode
-  test_that(paste(fn, "creates an object with the correct number of nodes"), {
-    expect_values(net_nodes(create_funs[[fn]](10)), 10)
-    expect_s3_class(create_funs[[fn]](10), "igraph")
-  })
-  test_that(paste(fn, "creates an object with the correct directedness"), {
-    expect_false(is_directed(create_funs[[fn]](10)))
-    expect_true(is_directed(create_funs[[fn]](10, directed = TRUE)))
-  })
-  skip_if(grepl("wheel|windmill", fn), "Some create functions only create one-mode networks") 
-  test_that(paste(fn, "creates an object with the correct number of nodes"), {
-    expect_values(net_nodes(create_funs[[fn]](c(5,5))), 10)
-  })
-  test_that(paste(fn, "creates an object with the correct modality"), {
-    expect_true(is_twomode(create_funs[[fn]](c(5,5))))
-  })
-}
+# Family-wide conventions (node counts, one-/two-mode `n`, directedness,
+# output class) are tested generically for every create_*() function in
+# test-functional_makes.R; here we test each function's specific semantics.
 
 test_that("create empty graph works", {
   expect_true(is_twomode(create_empty(c(5,5))))
