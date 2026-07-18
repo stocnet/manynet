@@ -71,7 +71,11 @@ NULL
 #' to_mode1(ison_southern_women)
 #' to_mode2(ison_southern_women)
 #' @export
-to_mode1 <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) UseMethod("to_mode1")
+to_mode1 <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
+  # projecting a network that is already one-mode is a no-op
+  if(!is_twomode(.data)) return(.data)
+  UseMethod("to_mode1")
+}
 
 #' @export
 to_mode1.default <- function(.data, 
@@ -150,7 +154,11 @@ to_mode1.data.frame <- function(.data, similarity = c("count","jaccard","rand","
 
 #' @rdname modif_project
 #' @export
-to_mode2 <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) UseMethod("to_mode2")
+to_mode2 <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
+  # projecting a network that is already one-mode is a no-op
+  if(!is_twomode(.data)) return(.data)
+  UseMethod("to_mode2")
+}
 
 #' @export
 to_mode2.default <- function(.data, 

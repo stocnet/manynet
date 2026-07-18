@@ -37,6 +37,7 @@
 - Added `to_wave()` as an alias of `to_time()`, matching the wave-based vocabulary of `net_waves()` and `to_waves()` when extracting a single wave of a longitudinal network
 - Added `to_component()` as an alias of `to_giant()`, giving the "keep the one main component" verb a singular name that corresponds to the plural `to_components()` (which returns a list of all components), following the `to_subgraph()`/`to_subgraphs()` pattern
 - Fixed `to_uniplex()` throwing an error on unsigned multiplex networks (e.g. `to_uniplex(irps_911, "trust")`) due to an operator precedence bug in the check for dropping an all-positive/all-`NA` `sign` column
+- Improved `to_mode1()` and `to_mode2()` to return one-mode networks unchanged, so projection is a no-op rather than an error when the network is already one-mode
 
 ## Describing
 
