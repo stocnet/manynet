@@ -22,6 +22,7 @@
   - `as_siena()` gives clearer errors: a helpful message when a network has fewer than two waves (e.g. `as_siena(ison_adolescents)`) or when a dependent network is valued/signed rather than binary (suggesting `to_unweighted()`), and passes categorical nodal attributes to SIENA as numeric-coded covariates
   - Fixed the `as_igraph()`/`as_tidygraph()`/`as_network()` coercions of 'sienadata' objects, which previously did not dispatch because RSiena objects are classed `sienadata` rather than `siena`; these now route through the richer 'stocnet' path
 - Fixed `as_nodelist.network()` retaining a spurious all-`FALSE` `na` column, caused by testing a non-existent `names` field instead of the `na` column when deciding whether to drop it
+- Fixed `as_stocnet()` warning about an unknown `type` column when coercing an igraph-like network that counts as multiplex only by virtue of carrying a non-reserved tie attribute; the `type`-to-`layer` renaming now only runs when a `type` column is present
 
 ## Manipulating
 
@@ -38,6 +39,7 @@
 - Added `to_wave()` as an alias of `to_time()`, matching the wave-based vocabulary of `net_waves()` and `to_waves()` when extracting a single wave of a longitudinal network
 - Added `to_component()` as an alias of `to_giant()`, giving the "keep the one main component" verb a singular name that corresponds to the plural `to_components()` (which returns a list of all components), following the `to_subgraph()`/`to_subgraphs()` pattern
 - Fixed `to_uniplex()` throwing an error on unsigned multiplex networks (e.g. `to_uniplex(irps_911, "trust")`) due to an operator precedence bug in the check for dropping an all-positive/all-`NA` `sign` column
+- Fixed `to_hypergraph()` crashing the R session ("segfault from C stack overflow") on directed networks, by converting to undirected before the maximal clique search; the crash is an upstream igraph 2.3.3 bug triggered when `igraph::max_cliques()` is called on a directed graph after `igraph::any_multiple()`
 - Improved `to_mode1()` and `to_mode2()` to return one-mode networks unchanged, so projection is a no-op rather than an error when the network is already one-mode
 - Fixed `from_waves()` and `from_slices()` dropping isolates and node attributes when reassembling labelled networks, by binding the waves'/slices' node tables as well as their tie tables (e.g. `from_waves(to_waves(fict_potter))` now recovers all 64 nodes rather than only the 39 with ties)
 - Fixed `from_ties()` warning "NAs introduced by coercion" when the merged networks record different DOIs; the first DOI is now kept (dates still keep the earliest)

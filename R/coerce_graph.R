@@ -812,7 +812,9 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
     }
     nodes$type <- NULL
   }
-  if(is_multiplex(.data)){
+  # is_multiplex() is also TRUE for networks with any non-reserved tie
+  # attribute, which have no 'type' column to rename to 'layer'
+  if(is_multiplex(.data) && "type" %in% names(ties)){
     ties$layer <- ties$type
     ties$type <- NULL
     if(is.null(info$ties)){
