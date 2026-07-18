@@ -13,6 +13,11 @@ meas_families <- list(
   mode  = alive_functions("^mode_")
 )
 
+# Metadata accessors for which NULL is the intended return when a network
+# carries no such information (in stocnet info metadata or as type/mode/layer
+# variables on nodes or ties); a NULL from these is a pass, not an audit.
+meas_nullable <- c("net_name", "layer_names", "mode_names")
+
 # How to construct required arguments from the network under test.
 meas_argmakers <- list(
   node_attribute = function(net) {
@@ -44,6 +49,10 @@ for (family in names(meas_families)) {
         } else list()
         out <- run_or_skip(do.call(f, c(list(net), args)), fn, fx)
         if (is.null(out)) {
+          if (fn %in% meas_nullable) {
+            succeed()
+            return(invisible())
+          }
           skip(paste0("AUDIT [", fn, " x ", fx, "]: returns NULL"))
         }
         if (family == "node") {
@@ -74,3 +83,21 @@ for (fx in names(func_fixtures)) {
     expect_length(as.numeric(net_dims(net)), as.numeric(net_modes(net)))
   })
 }
+
+# Metadata accessors return NULL exactly when the information is absent:
+# NULL on a plain synthetic network, non-NULL where the network carries
+# type/mode/layer variables or stocnet info metadata.
+test_that("layer_names() and mode_names() are NULL only without metadata", {
+  plain <- create_ring(6)
+  expect_null(layer_names(plain))
+  expect_null(mode_names(plain))
+  # (create_*() networks are named, so net_name() is checked on a bare
+  # matrix; note it currently returns "" rather than NULL when unnamed)
+  unnamed <- net_name(as_igraph(matrix(c(0, 1, 1, 0), 2, 2)))
+  expect_true(is.null(unnamed) || !nzchar(unnamed))
+  expect_false(is.null(layer_names(func_fixtures$multiplex)))
+  expect_false(is.null(mode_names(add_info(ison_southern_women,
+                                           nodes = c("women", "events")))))
+  sn <- as_stocnet(ison_southern_women)
+  expect_false(is.null(mode_names(sn)))
+})

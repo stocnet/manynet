@@ -362,7 +362,11 @@ mode_names.igraph <- function(.data){
 
 #' @export
 mode_names.stocnet <- function(.data){
-  .data$info$modes
+  out <- .data$info$modes %||%
+    (if(!is.null(.data$nodes) && "mode" %in% names(.data$nodes))
+      unique(.data$nodes$mode))
+  out <- out[!is.na(out)]
+  if(length(out) == 0) NULL else out
 }
 
 #' @rdname member_names
