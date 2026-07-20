@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.1</span>
       </span>
     </div>
 
@@ -72,6 +72,18 @@
       <small>Source: <a href="https://github.com/stocnet/manynet/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.2.1" id="manynet-221">manynet 2.2.1<a class="anchor" aria-label="anchor" href="#manynet-221"></a></h2>
+<div class="section level3">
+<h3 id="package-2-2-1">Package<a class="anchor" aria-label="anchor" href="#package-2-2-1"></a></h3>
+<ul><li>Added <code>revdep/</code> to <code>.Rbuildignore</code> so that reverse-dependency check artefacts are no longer bundled into the source tarball, resolving CRAN NOTEs about a non-standard top-level directory, an over-large tarball, and a stray <code>CITATION</code> file</li>
+<li>Added reverse-dependency check results to GitHub Actions workflow</li>
+</ul></div>
+<div class="section level3">
+<h3 id="coercion-2-2-1">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-2-1"></a></h3>
+<ul><li>Fixed <code><a href="../reference/coerce_list.html">as_matrix()</a></code> on two-mode networks constructing the incidence matrix via <code><a href="https://rdrr.io/r/base/structure.html" class="external-link">structure()</a></code> with the deprecated special names <code>.Dim</code>/<code>.Dimnames</code>, which now use <code>dim</code>/<code>dimnames</code> (resolving a CRAN NOTE)</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.2.0" id="manynet-220">manynet 2.2.0<a class="anchor" aria-label="anchor" href="#manynet-220"></a></h2>
 <div class="section level3">
