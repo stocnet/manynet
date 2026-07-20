@@ -21,3 +21,6 @@ toadd/*
 .data.csv
 cache/*
 .positai
+CLAUDE.md
+.claude/launch.json
+revdep/

@@ -73,7 +73,6 @@ reference:
       - make_mnet
       - make_stocnet
       - make_explicit
-      - make_motifs
       - make_create
       - starts_with("generate_")
   - subtitle: "Collecting"
@@ -164,6 +163,7 @@ reference:
       or (re)joining a list of networks into a single network.
     contents:
       - modif_split
+      - modif_motifs
       - starts_with("from_")
   - subtitle: "Missing"
     desc: |

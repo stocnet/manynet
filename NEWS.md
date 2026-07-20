@@ -38,6 +38,13 @@
 
 ## Modifying
 
+- Renamed `create_motifs()` to `to_motifs()`, since unlike the other `create_*()` functions it does not return a single network but a named list of small networks (one per motif), joining the `to_*()` functions (such as `to_components()` and `to_subgraphs()`) that return lists of networks
+  - `to_motifs()` takes `.data` as its first argument, which accepts either a network (whose size, direction, and signedness are inferred) or a plain integer number of nodes, so that e.g. `to_motifs(3)` lists all three-node undirected motifs for teaching
+  - Added an `n` argument to `to_motifs()`, so that either or both of `.data` and `n` may be given: passing only `.data` infers `n` from the network, passing only `n` builds motifs of that size directly, and passing both uses the network for the kind of motif while `n` selects the size (e.g. the dyadic, triadic, or tetradic motifs of an undirected network)
+  - Added a `signed` argument to `to_motifs()`, enumerating the signed motifs of undirected networks for `n=2` (`+`, `-`) and `n=3` (the structural-balance triads `+++`, `++-`, `+--`, `---` and their incomplete forms)
+  - Added the six signed directed dyads (`to_motifs(2, directed = TRUE, signed = TRUE)`): the Holland-Leinhardt dyad census (`Null`, `Asymmetric`, `Mutual`) refined by arc sign into `Asymmetric+/-` and `Mutual++/--/+-`, documented alongside their correspondence to the dyadic reciprocity motifs of Gallo et al. (2025)
+  - Added the two-mode bipartite motifs up to four nodes, labelled by their `bmotif` dictionary IDs (Simmons et al. 2019), returned for two-mode input (which previously errored, caused by a length-two vector reaching a scalar `if()` size check)
+  - Kept `create_motifs()` as an alias of `to_motifs()`, since it is relied upon by other `stocnet` packages (e.g. `autograph`)
 - Renamed `to_named()` to `to_labelled()` and `to_unnamed()` to `to_unlabelled()` for consistency with `is_labelled()` and `node_labels()`; `to_named()` and `to_unnamed()` remain available as aliases since they are relied upon by other `stocnet` packages
 - Added `to_wave()` as an alias of `to_time()`, matching the wave-based vocabulary of `net_waves()` and `to_waves()` when extracting a single wave of a longitudinal network
 - Added `to_component()` as an alias of `to_giant()`, giving the "keep the one main component" verb a singular name that corresponds to the plural `to_components()` (which returns a list of all components), following the `to_subgraph()`/`to_subgraphs()` pattern
@@ -56,6 +63,7 @@
 - Reinstated `net_waves()`, an S3 generic reporting the number of waves/panels in a longitudinal network (closes #152), following the `net_layers()` pattern and consistent with `is_longitudinal()`'s wave/panel definition
 - Fixed the multiplex tie description in `print()`/`describe_ties()` reporting the total tie count for every layer (e.g. "1241 relationship ties and 1241 affiliation ties" for `fict_marvel`) instead of the per-layer counts ("558 relationship ties and 683 affiliation ties")
 - Fixed `layer_names()` returning nothing for multiplex networks that store their tie types only in a `type` tie attribute (e.g. `ison_lawfirm`, `irps_911`) rather than a graph-level attribute; it now falls back to the unique values of `type` when present
+- Fixed `mode_names()` returning nothing for two-mode 'stocnet' objects whose mode names are recorded only in the nodes table's `mode` variable rather than in the `info$modes` metadata; it now falls back to the unique values of `mode`, mirroring `layer_names()`'s fallback to the `layer` tie variable
 
 ## Glossary
 

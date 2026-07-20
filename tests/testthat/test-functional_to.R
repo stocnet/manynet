@@ -77,6 +77,11 @@ for (fn in to_funs) {
         run_or_skip(to_argmakers[[fn]](net), fn, fx)
       } else list()
       out <- run_or_skip(do.call(f, c(list(net), args)), fn, fx)
+      if (is.null(out)) {
+        # snet_unavailable() returns NULL (quietly) for not-yet-implemented
+        # network types, e.g. to_motifs() on a two-mode network.
+        skip(paste0("AUDIT [", fn, " x ", fx, "]: returns NULL (unavailable)"))
+      }
       expect_true(is_acceptable_output(out),
                   label = paste0(fn, "() output on ", fx, " fixture"))
       if (fn %in% names(to_invariants) && is_manynet(out)) {

@@ -178,6 +178,7 @@ add_changes <- function(.data, changes) {
   bind_changes(.data, changes)
 }
 
+
 # Moved to netrics from 2.0.0 ####
 
 #' @describeIn defunct Deprecated on 2026-03-22.
