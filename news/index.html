@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.0</span>
       </span>
     </div>
 
@@ -31,6 +31,19 @@
 <li>
   <a href="../reference/index.html">Function Overview</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Tutorials
+
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/making-network-data.html">Making Network Data</a>
+    </li>
+    <li>
+      <a href="../articles/manipulating-network-data.html">Manipulating Network Data</a>
+    </li>
+  </ul></li>
 <li>
   <a href="../news/index.html">News</a>
 </li>
@@ -60,7 +73,160 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="2.1.3" id="manynet-213">manynet 2.1.3<a class="anchor" aria-label="anchor" href="#manynet-213"></a></h2>
+<h2 class="page-header" data-toc-text="2.2.0" id="manynet-220">manynet 2.2.0<a class="anchor" aria-label="anchor" href="#manynet-220"></a></h2>
+<div class="section level3">
+<h3 id="package-2-2-0">Package<a class="anchor" aria-label="anchor" href="#package-2-2-0"></a></h3>
+<ul><li>Added a cheat sheet summarising how the package’s function families fit together
+<ul><li>The editable LaTeX source and build script live in <code>data-raw/cheatsheet/</code>; <code>Rscript data-raw/cheatsheet/build.R</code> recompiles the PDF and one PNG per page and distributes them to <code>inst/figures/</code>, <code>man/figures/</code>, and the pkgdown site</li>
+<li>Linked cheat sheet (clicking through to the PDF) from a new “Cheat sheet” section in the README</li>
+</ul></li>
+<li>Renamed the website’s “Identifying” reference section to “Describing” and retitled the sequence/progress helper documentation, aligning the website with the package’s function families</li>
+<li>Added static (article) versions of both tutorials to the pkgdown website, so they can be read without a running R/learnr session</li>
+<li>Added a functional testing infrastructure (<code>tests/testthat/test-functional_*.R</code>) that automatically enumerates exported functions by family prefix (<code>to_*</code>, <code>from_*</code>, <code>is_*</code>, <code>net_*</code>/<code>node_*</code>/<code>tie_*</code>, <code>as_*list</code>, <code>create_*</code>/<code>generate_*</code>/<code>play_*</code>, and the <code>add_*</code>/<code>mutate_*</code>/<code>filter_*</code>/etc. manipulation verbs) and audits each across a standard grid of fixture networks (directed, two-mode, weighted, signed, multiplex, longitudinal) and object classes (tidygraph, igraph, matrix, network, edgelist, stocnet), raising package test coverage from ~52% to over 70%
+<ul><li>New functions added to a family are picked up and tested automatically, enforcing family conventions (<code>.data</code>-first arguments, default methods, name-implied invariants such as <code>!is_directed(to_undirected(x))</code>, per-node/per-tie result lengths, and cross-class agreement)</li>
+<li>Function/fixture combinations that are not (yet) conformant are skipped with a structured, greppable <code>AUDIT [...]</code> message rather than failed, marking where implementations still need work</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="making-2-2-0">Making<a class="anchor" aria-label="anchor" href="#making-2-2-0"></a></h3>
+<ul><li>Added <code><a href="../reference/make_write.html">write_gml()</a></code>, <code><a href="../reference/make_write.html">write_gdf()</a></code>, and <code><a href="../reference/make_write.html">write_dynetml()</a></code> as export counterparts to <code><a href="../reference/make_read.html">read_gml()</a></code>, <code><a href="../reference/make_read.html">read_gdf()</a></code>, and <code><a href="../reference/make_read.html">read_dynetml()</a></code> (closes <a href="https://github.com/stocnet/manynet/issues/148" class="external-link">#148</a>)
+<ul><li>
+<code><a href="../reference/make_write.html">write_dynetml()</a></code> records the network’s directedness in the <code>isDirected</code> attribute of the DyNetML <code>&lt;network&gt;</code> element, and <code><a href="../reference/make_read.html">read_dynetml()</a></code> now respects it when reconstructing the graph</li>
+<li>
+<code><a href="../reference/make_write.html">write_gml()</a></code> converts any logical graph/vertex/edge attributes to integer before export, avoiding igraph’s “boolean attribute was converted to numeric” warning</li>
+<li>Fixed <code><a href="../reference/make_read.html">read_gdf()</a></code> dropping node attribute names when a GDF file defines only a single node attribute column</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="coercion-2-2-0">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-2-0"></a></h3>
+<ul><li>Added lossless coercion between ‘stocnet’ and ‘RSiena’ ‘sienadata’ objects via <code><a href="../reference/coerce_graph.html">as_stocnet()</a></code> and <code><a href="../reference/coerce_graph.html">as_siena()</a></code>
+<ul><li>
+<code><a href="../reference/coerce_graph.html">as_stocnet()</a></code> now unpacks the full contents of a ‘sienadata’ object: multiple dependent networks (as tie layers), behavioural dependents and varying covariates (as nodal changes), constant covariates (as nodal attributes), constant and varying dyadic covariates (as tie layers), composition change (as nodal changes), and multiple node sets (as modes), preserving node labels and missing values</li>
+<li>
+<code>as_siena.stocnet()</code> reconstructs an equivalent ‘sienadata’ object, round-tripping values exactly (including covariate centering, which RSiena stores mean-centered)</li>
+<li>Introduced reserved <code>info</code> slots to support this: <code>focal</code> (now a character vector naming all dependent variables), <code>centered</code> (a named logical vector of covariate centering), and <code>siena</code> (a sublist carrying RSiena-specific estimation metadata)</li>
+<li>
+<code><a href="../reference/coerce_graph.html">as_siena()</a></code> now routes any coercible object (igraph, tidygraph/mnet, matrix, network, …) through the ‘stocnet’ path via a single <code>as_siena.default()</code> method, so multiplex layers, waves, and covariates are carried across; longitudinal networks whose waves are held in a <code>wave</code>/<code>time</code> tie attribute now convert directly</li>
+<li>
+<code><a href="../reference/coerce_graph.html">as_siena()</a></code> gives clearer errors: a helpful message when a network has fewer than two waves (e.g. <code>as_siena(ison_adolescents)</code>) or when a dependent network is valued/signed rather than binary (suggesting <code><a href="../reference/modif_weight.html">to_unweighted()</a></code>), and passes categorical nodal attributes to SIENA as numeric-coded covariates</li>
+<li>Fixed the <code><a href="../reference/coerce_graph.html">as_igraph()</a></code>/<code><a href="../reference/coerce_graph.html">as_tidygraph()</a></code>/<code><a href="../reference/coerce_graph.html">as_network()</a></code> coercions of ‘sienadata’ objects, which previously did not dispatch because RSiena objects are classed <code>sienadata</code> rather than <code>siena</code>; these now route through the richer ‘stocnet’ path</li>
+</ul></li>
+<li>Fixed <code>as_nodelist.network()</code> retaining a spurious all-<code>FALSE</code> <code>na</code> column, caused by testing a non-existent <code>names</code> field instead of the <code>na</code> column when deciding whether to drop it</li>
+<li>Fixed <code><a href="../reference/coerce_graph.html">as_stocnet()</a></code> warning about an unknown <code>type</code> column when coercing an igraph-like network that counts as multiplex only by virtue of carrying a non-reserved tie attribute; the <code>type</code>-to-<code>layer</code> renaming now only runs when a <code>type</code> column is present</li>
+</ul></div>
+<div class="section level3">
+<h3 id="manipulating-2-2-0">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-2-2-0"></a></h3>
+<ul><li>Added <code><a href="../reference/manip_nodes_attr.html">delete_node_attribute()</a></code> and <code><a href="../reference/manip_ties_attr.html">delete_tie_attribute()</a></code>, the <a href="https://r.igraph.org/" class="external-link">igraph</a>-style counterparts to <code><a href="../reference/manip_nodes_attr.html">add_node_attribute()</a></code>/<code><a href="../reference/manip_ties_attr.html">add_tie_attribute()</a></code>, so that attributes added the <a href="https://r.igraph.org/" class="external-link">igraph</a> way can also be removed that way (deletion via <code>mutate_*(attr = NULL)</code> remains the <a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a>-style route); each accepts a character vector to remove several attributes at once</li>
+<li>Fixed <code><a href="../reference/manip_changes.html">apply_changes()</a></code> emitting a spurious deprecation warning by calling the defunct <code><a href="../reference/defunct.html">collect_changes()</a></code> internally instead of its replacement, <code><a href="../reference/manip_changes.html">gather_changes()</a></code>
+</li>
+<li>Fixed <code><a href="../reference/manip_changes.html">filter_changes()</a></code> and <code><a href="../reference/manip_changes.html">select_changes()</a></code> emitting a tidyselect deprecation warning by passing <code>.by</code> (and, for <code><a href="../reference/manip_changes.html">select_changes()</a></code>, a spurious <code>.by</code>) as an external vector into a selection context</li>
+<li>Improved <code><a href="../reference/manip_changes.html">filter_changes()</a></code> to accept node labels as well as indices, so a changelog can be subset by name, e.g. <code>filter_changes(fict_starwars, node == "Anakin")</code>
+</li>
+<li>Fixed <code><a href="../reference/manip_ties_attr.html">select_ties()</a></code> on ‘stocnet’ objects dropping the mandatory <code>from</code>/<code>to</code> columns when they are not among the selected columns; they are now always retained, as tidygraph does when selecting among edge attributes</li>
+<li>Updated the documentation of the node and tie attribute manipulation functions</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-2-2-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-2-2-0"></a></h3>
+<ul><li>Renamed <code><a href="../reference/modif_motifs.html">create_motifs()</a></code> to <code><a href="../reference/modif_motifs.html">to_motifs()</a></code>, since unlike the other <code>create_*()</code> functions it does not return a single network but a named list of small networks (one per motif), joining the <code>to_*()</code> functions (such as <code><a href="../reference/modif_split.html">to_components()</a></code> and <code><a href="../reference/modif_split.html">to_subgraphs()</a></code>) that return lists of networks
+<ul><li>
+<code><a href="../reference/modif_motifs.html">to_motifs()</a></code> takes <code>.data</code> as its first argument, which accepts either a network (whose size, direction, and signedness are inferred) or a plain integer number of nodes, so that e.g. <code>to_motifs(3)</code> lists all three-node undirected motifs for teaching</li>
+<li>Added an <code>n</code> argument to <code><a href="../reference/modif_motifs.html">to_motifs()</a></code>, so that either or both of <code>.data</code> and <code>n</code> may be given: passing only <code>.data</code> infers <code>n</code> from the network, passing only <code>n</code> builds motifs of that size directly, and passing both uses the network for the kind of motif while <code>n</code> selects the size (e.g. the dyadic, triadic, or tetradic motifs of an undirected network)</li>
+<li>Added a <code>signed</code> argument to <code><a href="../reference/modif_motifs.html">to_motifs()</a></code>, enumerating the signed motifs of undirected networks for <code>n=2</code> (<code>+</code>, <code>-</code>) and <code>n=3</code> (the structural-balance triads <code>+++</code>, <code>++-</code>, <code>+--</code>, <code>---</code> and their incomplete forms)</li>
+<li>Added the six signed directed dyads (<code>to_motifs(2, directed = TRUE, signed = TRUE)</code>): the Holland-Leinhardt dyad census (<code>Null</code>, <code>Asymmetric</code>, <code>Mutual</code>) refined by arc sign into <code>Asymmetric+/-</code> and <code>Mutual++/--/+-</code>, documented alongside their correspondence to the dyadic reciprocity motifs of Gallo et al. (2025)</li>
+<li>Added the two-mode bipartite motifs up to four nodes, labelled by their <code>bmotif</code> dictionary IDs (Simmons et al. 2019), returned for two-mode input (which previously errored, caused by a length-two vector reaching a scalar <code>if()</code> size check)</li>
+<li>Kept <code><a href="../reference/modif_motifs.html">create_motifs()</a></code> as an alias of <code><a href="../reference/modif_motifs.html">to_motifs()</a></code>, since it is relied upon by other <code>stocnet</code> packages (e.g. <code>autograph</code>)</li>
+</ul></li>
+<li>Renamed <code><a href="../reference/modif_labels.html">to_named()</a></code> to <code><a href="../reference/modif_labels.html">to_labelled()</a></code> and <code><a href="../reference/modif_labels.html">to_unnamed()</a></code> to <code><a href="../reference/modif_labels.html">to_unlabelled()</a></code> for consistency with <code><a href="../reference/mark_format_node.html">is_labelled()</a></code> and <code><a href="../reference/measure_attributes_nodes.html">node_labels()</a></code>; <code><a href="../reference/modif_labels.html">to_named()</a></code> and <code><a href="../reference/modif_labels.html">to_unnamed()</a></code> remain available as aliases since they are relied upon by other <code>stocnet</code> packages</li>
+<li>Added <code><a href="../reference/modif_scope.html">to_wave()</a></code> as an alias of <code><a href="../reference/modif_scope.html">to_time()</a></code>, matching the wave-based vocabulary of <code><a href="../reference/measure_dims.html">net_waves()</a></code> and <code><a href="../reference/modif_split.html">to_waves()</a></code> when extracting a single wave of a longitudinal network</li>
+<li>Added <code><a href="../reference/modif_scope.html">to_component()</a></code> as an alias of <code><a href="../reference/modif_scope.html">to_giant()</a></code>, giving the “keep the one main component” verb a singular name that corresponds to the plural <code><a href="../reference/modif_split.html">to_components()</a></code> (which returns a list of all components), following the <code><a href="../reference/modif_scope.html">to_subgraph()</a></code>/<code><a href="../reference/modif_split.html">to_subgraphs()</a></code> pattern</li>
+<li>Fixed <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> throwing an error on unsigned multiplex networks (e.g. <code>to_uniplex(irps_911, "trust")</code>) due to an operator precedence bug in the check for dropping an all-positive/all-<code>NA</code> <code>sign</code> column</li>
+<li>Fixed <code><a href="../reference/modif_project.html">to_hypergraph()</a></code> crashing the R session (“segfault from C stack overflow”) on directed networks, by converting to undirected before the maximal clique search; the crash is an upstream igraph 2.3.3 bug triggered when <code><a href="https://r.igraph.org/reference/cliques.html" class="external-link">igraph::max_cliques()</a></code> is called on a directed graph after <code><a href="https://r.igraph.org/reference/which_multiple.html" class="external-link">igraph::any_multiple()</a></code>
+</li>
+<li>Improved <code><a href="../reference/modif_project.html">to_mode1()</a></code> and <code><a href="../reference/modif_project.html">to_mode2()</a></code> to return one-mode networks unchanged, so projection is a no-op rather than an error when the network is already one-mode</li>
+<li>Fixed <code><a href="../reference/modif_from.html">from_waves()</a></code> and <code><a href="../reference/modif_from.html">from_slices()</a></code> dropping isolates and node attributes when reassembling labelled networks, by binding the waves’/slices’ node tables as well as their tie tables (e.g. <code>from_waves(to_waves(fict_potter))</code> now recovers all 64 nodes rather than only the 39 with ties)</li>
+<li>Fixed <code><a href="../reference/modif_from.html">from_ties()</a></code> warning “NAs introduced by coercion” when the merged networks record different DOIs; the first DOI is now kept (dates still keep the earliest)</li>
+<li>Fixed <code><a href="../reference/modif_from.html">from_ties()</a></code> on tidygraph objects reporting the first input’s tie-type metadata (e.g. “friendships”) from <code><a href="../reference/member_names.html">layer_names()</a></code> instead of the newly created layers; the merged network now records its layers as tie-type metadata</li>
+</ul></div>
+<div class="section level3">
+<h3 id="describing-2-2-0">Describing<a class="anchor" aria-label="anchor" href="#describing-2-2-0"></a></h3>
+<ul><li>Renamed <code><a href="../reference/measure_attributes_nodes.html">node_names()</a></code> to <code><a href="../reference/measure_attributes_nodes.html">node_labels()</a></code> for consistency with <code><a href="../reference/mark_format_node.html">is_labelled()</a></code> and <code><a href="../reference/modif_labels.html">to_labelled()</a></code>; <code><a href="../reference/measure_attributes_nodes.html">node_names()</a></code> remains available as an alias since it is relied upon by other <code>stocnet</code> packages</li>
+<li>Renamed <code><a href="../reference/measure_dims.html">net_dims()</a></code> to <code><a href="../reference/measure_dims.html">mode_nodes()</a></code> for consistency with <code><a href="../reference/member_names.html">mode_names()</a></code> and <code><a href="../reference/measure_dims.html">net_modes()</a></code>; <code><a href="../reference/measure_dims.html">net_dims()</a></code> remains available as an alias since it is relied upon by other <code>stocnet</code> packages</li>
+<li>Added <code><a href="../reference/measure_dims.html">layer_ties()</a></code>, reporting the number of ties in each layer of a multiplex network (in <code><a href="../reference/member_names.html">layer_names()</a></code> order), mirroring how <code><a href="../reference/measure_dims.html">mode_nodes()</a></code> reports nodes per mode</li>
+<li>Reinstated <code><a href="../reference/measure_dims.html">net_waves()</a></code>, an S3 generic reporting the number of waves/panels in a longitudinal network (closes <a href="https://github.com/stocnet/manynet/issues/152" class="external-link">#152</a>), following the <code><a href="../reference/measure_dims.html">net_layers()</a></code> pattern and consistent with <code><a href="../reference/mark_format_change.html">is_longitudinal()</a></code>’s wave/panel definition</li>
+<li>Fixed the multiplex tie description in <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>/<code><a href="../reference/class_describe.html">describe_ties()</a></code> reporting the total tie count for every layer (e.g. “1241 relationship ties and 1241 affiliation ties” for <code>fict_marvel</code>) instead of the per-layer counts (“558 relationship ties and 683 affiliation ties”)</li>
+<li>Fixed <code><a href="../reference/member_names.html">layer_names()</a></code> returning nothing for multiplex networks that store their tie types only in a <code>type</code> tie attribute (e.g. <code>ison_lawfirm</code>, <code>irps_911</code>) rather than a graph-level attribute; it now falls back to the unique values of <code>type</code> when present</li>
+<li>Fixed <code><a href="../reference/member_names.html">mode_names()</a></code> returning nothing for two-mode ‘stocnet’ objects whose mode names are recorded only in the nodes table’s <code>mode</code> variable rather than in the <code>info$modes</code> metadata; it now falls back to the unique values of <code>mode</code>, mirroring <code><a href="../reference/member_names.html">layer_names()</a></code>’s fallback to the <code>layer</code> tie variable</li>
+</ul></div>
+<div class="section level3">
+<h3 id="glossary-2-2-0">Glossary<a class="anchor" aria-label="anchor" href="#glossary-2-2-0"></a></h3>
+<ul><li>Added glossary entries for ‘directed’, ‘edgelist’, ‘node’, ‘nodelist’, ‘projection’, ‘tie’, and ‘twomode’</li>
+</ul></div>
+<div class="section level3">
+<h3 id="tutorials-2-2-0">Tutorials<a class="anchor" aria-label="anchor" href="#tutorials-2-2-0"></a></h3>
+<ul><li>Split the “Data” tutorial into two shorter tutorials in response to student feedback, named <code>manynet1</code> and <code>manynet2</code> (package-prefixed rather than numbered <code>tutorial1a</code>/<code>tutorial1b</code>, to avoid renumbering clashes with tutorials in sibling packages):
+<ul><li>“Making Data” (manynet1) covers finding packaged data, describing networks, class coercion, and importing/exporting external data</li>
+<li>“Manipulating Data” (manynet2) covers modifying nodes/ties/attributes, reformatting, and transforming networks</li>
+</ul></li>
+<li>Improved tutorial styling for readability and consistent branding
+<ul><li>Added tick-box learning aims at the start of each tutorial</li>
+<li>Replaced the bright Bootstrap alert boxes (“Beginner note”, “In brief”) with a lighter <code>.callout</code> style using a thin border and label text in the tutorial theme’s accent colour (manynet’s mustard yellow, <code>#D6A929</code>, sampled from the hex logo), rather than a filled background box</li>
+<li>Increased the base font size (115%) for readability, and coloured the tutorial title, sidebar topic list, content hyperlinks, and “Run Code” buttons in the same mustard yellow</li>
+<li>Task instructions are now bolded throughout the tutorials</li>
+<li>Added recap boxes at the end of each section, summary tables of functions introduced, expected-output self-checks after exercises, and beginner notes (including an explanation of pipes at first use)</li>
+<li>Added explanations to all quiz answer options, more hint chunks, and made fill-in-the-blank hints paste-safe by commenting them</li>
+<li>Added “choose your own data” personalization: a running invitation to swap in classic (<code>ison_*</code>), fictional (<code>fict_*</code>), or real-world (<code>irps_*</code>) networks, with curated per-flavour dataset menus and structural self-checks at each free-play exercise, and an optional “Going deeper” data-tidying section in the manipulating tutorial</li>
+<li>Added an italicised “On this page” jump list of anchor links under each long section, since learnr’s sidebar only navigates by top-level (<code>##</code>) topics and cannot nest <code>###</code> subsections; these scroll within the current topic via JavaScript rather than <code>#anchor</code> links, since learnr’s own router intercepts any hash navigation and resets to the first topic if the hash isn’t a registered topic id</li>
+<li>Added hover-over glossary definitions via <code><a href="../reference/glossary.html">gloss()</a></code> and a printed glossary at the end of each tutorial</li>
+</ul></li>
+<li>Improved the “Making Network Data” tutorial (manynet1)
+<ul><li>Now introduces the <code>stocnet</code> class and its anatomy (info/nodes/ties/changes/globals) before moving on to importing/exporting external data</li>
+<li>Now cover the full range of packaged datasets, including the new <code>fict_marvel</code> multiplex network</li>
+<li>Added a “Making a network by hand” section, placed before “Packaged data” so that new users meet nodes and ties concretely before turning to bundled/imported data, covering <code><a href="../reference/make_explicit.html">create_explicit()</a></code> (with an undirected and a directed exercise), and describing <code><a href="../reference/make_ego.html">collect_ego()</a></code> for interactive ego-network collection (noted as console-only, since it cannot run inside the tutorial window)</li>
+<li>Fixed the two-mode datasets quiz question by computing its answer options dynamically from <code><a href="../reference/data_overview.html">table_data()</a></code> at render time, so they no longer go stale as datasets are added</li>
+<li>Fixed the nodelist import example to use <code><a href="../reference/make_read.html">read_nodelist()</a></code> instead of <code><a href="../reference/make_read.html">read_edgelist()</a></code>
+</li>
+<li>Export examples now write to <code><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir()</a></code> to avoid permission errors on installed packages</li>
+</ul></li>
+<li>Improved the “Manipulating Data” tutorial (manynet2) around the parts of a network rather than the reformatting/transforming distinction, so students can jump straight to the section matching their data: Operating on networks (the <code>[</code>/<code>[[</code>/<code>$</code> operators); Nodal properties (adding/removing nodes, labels, attributes); Tie properties (adding/removing ties, attributes, direction, weights, signs); Multiplex networks (joining, layers); Multimodal networks (modes); Dynamic networks (waves, changes); and a closing Selecting and cleaning section (subgraph filtering, isolates/giant/simplex) that narrows the fully built-up object down before the summary pipeline. The reformatting/transforming vocabulary is kept as a callout rather than the organising structure, and each element’s composition verbs (<code><a href="../reference/manip_nodes_num.html">add_nodes()</a></code>/<code><a href="../reference/manip_nodes_num.html">delete_nodes()</a></code>, <code><a href="../reference/manip_ties_num.html">add_ties()</a></code>/<code><a href="../reference/manip_ties_num.html">delete_ties()</a></code>) lead into that element’s own section
+<ul><li>Added a “Changing networks” section covering <code><a href="../reference/mark_format_change.html">is_longitudinal()</a></code>/<code><a href="../reference/mark_format_change.html">is_dynamic()</a></code>/<code><a href="../reference/mark_format_change.html">is_changing()</a></code>, <code><a href="../reference/measure_dims.html">net_waves()</a></code>, <code><a href="../reference/modif_scope.html">to_time()</a></code>, <code><a href="../reference/modif_split.html">to_waves()</a></code>, and the <code>*_changes()</code> family (<code><a href="../reference/manip_changes.html">filter_changes()</a></code>, <code><a href="../reference/manip_changes.html">apply_changes()</a></code>), previously untreated in the tutorials</li>
+<li>Extended the opening <code>[</code>/<code>[[</code> operators section with <code>$</code> get/set, and cross-referenced it as the do-it-yourself alternative alongside named functions throughout (e.g. <code>net$name &lt;-</code> beside <code><a href="../reference/modif_labels.html">to_labelled()</a></code>)</li>
+<li>Added <code><a href="../reference/member_names.html">layer_names()</a></code>/<code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> (multiplex layers) and <code><a href="../reference/modif_levels.html">to_onemode()</a></code>/<code><a href="../reference/modif_levels.html">to_twomode()</a></code>/<code><a href="../reference/modif_levels.html">to_multilevel()</a></code> (mode conversion) coverage alongside the existing two-mode projection material</li>
+<li>Added <code>signed</code>, <code>longitudinal</code>, and <code>dynamic</code> glossary entries to support the new sections’ hover-term definitions</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.1.4" id="manynet-214">manynet 2.1.4<small>2026-06-29</small><a class="anchor" aria-label="anchor" href="#manynet-214"></a></h2>
+<div class="section level3">
+<h3 id="class-2-1-4">Class<a class="anchor" aria-label="anchor" href="#class-2-1-4"></a></h3>
+<ul><li>Removed stocnet validation tests</li>
+</ul></div>
+<div class="section level3">
+<h3 id="coercion-2-1-4">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-1-4"></a></h3>
+<ul><li>Fixed how missing node data was carried over from network to nodelist/stocnet objects</li>
+<li>Fixed how globals were carried over from stocnet to network objects</li>
+<li>Fixed how <code>as_igraph.stocnet()</code> handled unlabelled two-mode networks</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-2-1-4">Modifying<a class="anchor" aria-label="anchor" href="#modifying-2-1-4"></a></h3>
+<ul><li>Added <code><a href="../reference/modif_project.html">to_hypergraph()</a></code> for converting one-mode or two-mode networks to hypergraph representations (closed <a href="https://github.com/stocnet/manynet/issues/145" class="external-link">#145</a>)
+<ul><li>Added methods for ‘igraph’ and ‘stocnet’, though they differ in how hyperedges are represented</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="marking-2-1-4">Marking<a class="anchor" aria-label="anchor" href="#marking-2-1-4"></a></h3>
+<ul><li>Added <code><a href="../reference/mark_format_node.html">is_hypergraph()</a></code> for identifying hypergraph representations</li>
+</ul></div>
+<div class="section level3">
+<h3 id="attributes-2-1-4">Attributes<a class="anchor" aria-label="anchor" href="#attributes-2-1-4"></a></h3>
+<ul><li>Added <code>node_attribute.network()</code> and <code>tie_attribute.network()</code> for extracting node and tie attributes from ‘network’ objects</li>
+<li>Added <code><a href="../reference/measure_missingness.html">net_node_missing()</a></code> and <code><a href="../reference/measure_missingness.html">net_tie_missing()</a></code> for identifying missing nodes and ties in networks (closed <a href="https://github.com/stocnet/manynet/issues/144" class="external-link">#144</a>)</li>
+<li>Improved <code><a href="../reference/manip_info.html">add_info()</a></code> to ask for a focal layer if the network is multiplex and no layer is specified</li>
+<li>Fixed <code><a href="../reference/member_names.html">layer_names()</a></code> to be more robust to missing references</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.1.3" id="manynet-213">manynet 2.1.3<small>2026-06-24</small><a class="anchor" aria-label="anchor" href="#manynet-213"></a></h2>
 <div class="section level3">
 <h3 id="class-2-1-3">Class<a class="anchor" aria-label="anchor" href="#class-2-1-3"></a></h3>
 <ul><li>Fixed stocnet validation test issue</li>
@@ -294,7 +460,7 @@
 <h3 id="modifying-1-7-2">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-7-2"></a></h3>
 <ul><li>Added <code><a href="../reference/manip_info.html">net_attributes()</a></code> for returning the names of graph attributes</li>
 <li>Added <code><a href="../reference/defunct.html">net_info()</a></code> for returning the list of graph attributes</li>
-<li>Improved <code><a href="../reference/defunct.html">net_waves()</a></code> to now return waves = 1 for cross-sectional networks</li>
+<li>Improved <code><a href="../reference/measure_dims.html">net_waves()</a></code> to now return waves = 1 for cross-sectional networks</li>
 </ul></div>
 <div class="section level3">
 <h3 id="marking-1-7-2">Marking<a class="anchor" aria-label="anchor" href="#marking-1-7-2"></a></h3>
@@ -711,7 +877,7 @@
 </li>
 <li>Updated <code>node_*()</code> diffusion measures to work with new .data output</li>
 <li>Improved <code><a href="../reference/defunct.html">net_modularity()</a></code> by informing users when a bipartition is used</li>
-<li>Added <code><a href="../reference/defunct.html">net_waves()</a></code> for measuring the number of waves in a network</li>
+<li>Added <code><a href="../reference/measure_dims.html">net_waves()</a></code> for measuring the number of waves in a network</li>
 </ul></div>
 <div class="section level3">
 <h3 id="motifs-1-4-0">Motifs<a class="anchor" aria-label="anchor" href="#motifs-1-4-0"></a></h3>
@@ -987,7 +1153,7 @@
 <li>Indicating whether nodes should be interpreted, i.e. nodal attributes collected</li>
 <li>Indicating whether ties between alters should be requested</li>
 </ul></li>
-<li>Added <code><a href="../reference/make_motifs.html">create_motifs()</a></code> for creating networks that correspond to the isomorphic subgraphs of certain size and format</li>
+<li>Added <code><a href="../reference/modif_motifs.html">create_motifs()</a></code> for creating networks that correspond to the isomorphic subgraphs of certain size and format</li>
 </ul></div>
 <div class="section level3">
 <h3 id="modifying-1-2-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-2-0"></a></h3>
@@ -1020,7 +1186,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="motifs-1-2-0">Motifs<a class="anchor" aria-label="anchor" href="#motifs-1-2-0"></a></h3>
-<ul><li>Added plot methods for network_motif and node_motif classes that use <code><a href="../reference/make_motifs.html">create_motifs()</a></code>
+<ul><li>Added plot methods for network_motif and node_motif classes that use <code><a href="../reference/modif_motifs.html">create_motifs()</a></code>
 </li>
 <li>Added <code><a href="../reference/defunct.html">node_by_dyad()</a></code> for node level dyad census</li>
 <li>Added <code><a href="../reference/defunct.html">net_by_quad()</a></code> for network level quad census</li>
@@ -2037,7 +2203,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

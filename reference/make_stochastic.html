@@ -35,7 +35,7 @@ and the number of modes, nodes, and directedness will be inferred."><meta proper
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.0</span>
       </span>
     </div>
 
@@ -49,6 +49,19 @@ and the number of modes, nodes, and directedness will be inferred."><meta proper
 <li>
   <a href="../reference/index.html">Function Overview</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Tutorials
+
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/making-network-data.html">Making Network Data</a>
+    </li>
+    <li>
+      <a href="../articles/manipulating-network-data.html">Manipulating Network Data</a>
+    </li>
+  </ul></li>
 <li>
   <a href="../news/index.html">News</a>
 </li>
@@ -237,7 +250,6 @@ In two-mode networks, the directed argument is ignored.</p>
 <code><a href="make_ego.html">make_ego</a></code>,
 <code><a href="make_explicit.html">make_explicit</a></code>,
 <code><a href="make_learning.html">make_learning</a></code>,
-<code><a href="make_motifs.html">make_motifs</a></code>,
 <code><a href="make_play.html">make_play</a></code>,
 <code><a href="make_random.html">make_random</a></code>,
 <code><a href="make_read.html">make_read</a></code>,
@@ -247,33 +259,33 @@ In two-mode networks, the directed argument is ignored.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">generate_smallworld</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">0.025</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 4553912 U--- 12 24 -- Watts-Strogatz random graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 5287c47 U--- 12 24 -- Watts-Strogatz random graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), dim (g/n), size (g/n), nei (g/n), p (g/n), loops</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | (g/l), multiple (g/l)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 4553912:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 5287c47:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 2  2-- 3  3-- 4  4-- 5  5-- 6  6-- 7  7-- 8  8-- 9  6-- 9 10--11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11] 11--12  8--12  3--12  1--11  2--12  2-- 4  3-- 5  4-- 6  5-- 7  6-- 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [21]  7-- 9  8--10  9--11 10--12</span>
 <span class="r-in"><span><span class="fu">generate_smallworld</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">0.25</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 084792c U--- 12 24 -- Watts-Strogatz random graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH c6f5e6f U--- 12 24 -- Watts-Strogatz random graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), dim (g/n), size (g/n), nei (g/n), p (g/n), loops</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | (g/l), multiple (g/l)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 084792c:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from c6f5e6f:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  2--10  3-- 8  4-- 9  4-- 5  5-- 6  6-- 7  7-- 8  8-- 9  9--10 10--11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11]  9--12  1--12  1-- 3  1--11  2--12  2-- 7  3-- 5  4-- 6  5-- 7  6-- 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [21]  7-- 9  8--10  1-- 9 10--12</span>
 <span class="r-in"><span><span class="fu">generate_scalefree</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">0.25</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 474b674 U--- 12 11 -- Barabasi graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 1456c2c U--- 12 11 -- Barabasi graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), power (g/n), m (g/n), zero.appeal (g/n), algorithm</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | (g/c)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 474b674:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 1456c2c:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 2  1-- 3  1-- 4  3-- 5  4-- 6  2-- 7  3-- 8  6-- 9  7--10 10--11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11]  5--12</span>
 <span class="r-in"><span><span class="fu">generate_scalefree</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">1.25</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 2089c2b U--- 12 11 -- Barabasi graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH e23d3b8 U--- 12 11 -- Barabasi graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), power (g/n), m (g/n), zero.appeal (g/n), algorithm</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | (g/c)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 2089c2b:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from e23d3b8:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1-- 2 2-- 3 1-- 4 2-- 5 5-- 6 4-- 7 6-- 8 5-- 9 6--10 4--11 9--12</span>
 <span class="r-in"><span><span class="fu">generate_fire</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -338,7 +350,7 @@ In two-mode networks, the directed argument is ignored.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

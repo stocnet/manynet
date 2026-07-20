@@ -4,6 +4,9 @@
 <url><loc>https://stocnet.github.io/manynet/CONTRIBUTING.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/LICENSE-text.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/LICENSE.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/articles/index.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/articles/making-network-data.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/articles/manipulating-network-data.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/authors.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/index.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/news/index.html</loc></url>
@@ -52,7 +55,6 @@
 <url><loc>https://stocnet.github.io/manynet/reference/make_explicit.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/make_learning.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/make_mnet.html</loc></url>
-<url><loc>https://stocnet.github.io/manynet/reference/make_motifs.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/make_play.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/make_random.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/make_read.html</loc></url>
@@ -75,6 +77,7 @@
 <url><loc>https://stocnet.github.io/manynet/reference/measure_attributes_nodes.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/measure_attributes_ties.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/measure_dims.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/measure_missingness.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/member_names.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/modif_correlation.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/modif_direction.html</loc></url>
@@ -82,6 +85,7 @@
 <url><loc>https://stocnet.github.io/manynet/reference/modif_labels.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/modif_levels.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/modif_miss.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/modif_motifs.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/modif_paths.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/modif_permutation.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/modif_plexity.html</loc></url>

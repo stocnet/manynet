@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.0</span>
       </span>
     </div>
 
@@ -53,6 +53,21 @@
 </li>
 <li>
   <a href="reference/index.html">Function Overview</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Tutorials
+
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/making-network-data.html">Making Network Data</a>
+    </li>
+    <li>
+      <a href="articles/manipulating-network-data.html">Manipulating Network Data</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="news/index.html">News</a>
@@ -145,7 +160,7 @@
 <code><a href="reference/defunct.html">read_cran()</a></code>, <code><a href="reference/make_read.html">read_dynetml()</a></code>, <code><a href="reference/make_read.html">read_edgelist()</a></code>, <code><a href="reference/make_read.html">read_gdf()</a></code>, <code><a href="reference/make_read.html">read_gml()</a></code>, <code><a href="reference/make_read.html">read_graphml()</a></code>, <code><a href="reference/make_read.html">read_matrix()</a></code>, <code><a href="reference/make_read.html">read_nodelist()</a></code>, <code><a href="reference/make_read.html">read_pajek()</a></code>, <code><a href="reference/defunct.html">read_pkg()</a></code>, <code><a href="reference/make_read.html">read_ucinet()</a></code>
 </li>
 <li>
-<code><a href="reference/make_write.html">write_edgelist()</a></code>, <code><a href="reference/make_write.html">write_graphml()</a></code>, <code><a href="reference/make_write.html">write_matrix()</a></code>, <code><a href="reference/make_write.html">write_nodelist()</a></code>, <code><a href="reference/make_write.html">write_pajek()</a></code>, <code><a href="reference/make_write.html">write_ucinet()</a></code>
+<code><a href="reference/make_write.html">write_dynetml()</a></code>, <code><a href="reference/make_write.html">write_edgelist()</a></code>, <code><a href="reference/make_write.html">write_gdf()</a></code>, <code><a href="reference/make_write.html">write_gml()</a></code>, <code><a href="reference/make_write.html">write_graphml()</a></code>, <code><a href="reference/make_write.html">write_matrix()</a></code>, <code><a href="reference/make_write.html">write_nodelist()</a></code>, <code><a href="reference/make_write.html">write_pajek()</a></code>, <code><a href="reference/make_write.html">write_ucinet()</a></code>
 </li>
 </ul>
 </div>
@@ -169,7 +184,7 @@
 </h4>
 <p><a href="https://stocnet.github.io/manynet/">manynet</a> includes functions for making networks algorithmically. The <code>create_*</code> group of functions create networks with a particular structure, and will always create the same format from the same inputs, e.g.:</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-create_egs-1.png" alt="Graphs illustrating the creation of lattices and tree networks"></p>
-<p>See also <code><a href="reference/make_create.html">create_components()</a></code>, <code><a href="reference/make_create.html">create_core()</a></code>, <code><a href="reference/make_create.html">create_cycle()</a></code>, <code><a href="reference/make_create.html">create_degree()</a></code>, <code><a href="reference/make_create.html">create_empty()</a></code>, <code><a href="reference/make_explicit.html">create_explicit()</a></code>, <code><a href="reference/make_create.html">create_filled()</a></code>, <code><a href="reference/make_create.html">create_lattice()</a></code>, <code><a href="reference/make_motifs.html">create_motifs()</a></code>, <code><a href="reference/make_create.html">create_ring()</a></code>, <code><a href="reference/make_create.html">create_star()</a></code>, <code><a href="reference/make_create.html">create_tree()</a></code>, <code><a href="reference/make_create.html">create_wheel()</a></code>, <code><a href="reference/make_create.html">create_windmill()</a></code>.</p>
+<p>See also <code><a href="reference/make_create.html">create_components()</a></code>, <code><a href="reference/make_create.html">create_core()</a></code>, <code><a href="reference/make_create.html">create_cycle()</a></code>, <code><a href="reference/make_create.html">create_degree()</a></code>, <code><a href="reference/make_create.html">create_empty()</a></code>, <code><a href="reference/make_explicit.html">create_explicit()</a></code>, <code><a href="reference/make_create.html">create_filled()</a></code>, <code><a href="reference/make_create.html">create_lattice()</a></code>, <code><a href="reference/modif_motifs.html">create_motifs()</a></code>, <code><a href="reference/make_create.html">create_ring()</a></code>, <code><a href="reference/make_create.html">create_star()</a></code>, <code><a href="reference/make_create.html">create_tree()</a></code>, <code><a href="reference/make_create.html">create_wheel()</a></code>, <code><a href="reference/make_create.html">create_windmill()</a></code>.</p>
 <p>The <code>generate_*</code> group of functions generate networks from generative mechanisms that may include some random aspect, and so will return a different output each time they are run, e.g.:</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-generate_egs-1.png" alt="Graphs of small-world and scale-free networks of 15 nodes"></p>
 <p>See also <code><a href="reference/make_stochastic.html">generate_citations()</a></code>, <code><a href="reference/make_random.html">generate_configuration()</a></code>, <code><a href="reference/make_stochastic.html">generate_fire()</a></code>, <code><a href="reference/make_stochastic.html">generate_islands()</a></code>, <code><a href="reference/make_random.html">generate_man()</a></code>, <code><a href="reference/make_random.html">generate_random()</a></code>, <code><a href="reference/make_stochastic.html">generate_scalefree()</a></code>, <code><a href="reference/make_stochastic.html">generate_smallworld()</a></code>, <code><a href="reference/make_random.html">generate_utilities()</a></code>.</p>
@@ -224,7 +239,7 @@
 </h3>
 <p>Reformatting means changing the format of the network, e.g. from directed to undirected via <code><a href="reference/modif_direction.html">to_undirected()</a></code>.</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-directed_egs-1.png" alt="Graphs illustrating modification of a network's directedness"></p>
-<p>See also <code><a href="reference/modif_direction.html">to_directed()</a></code>, <code><a href="reference/modif_labels.html">to_named()</a></code>, <code><a href="reference/modif_permutation.html">to_permuted()</a></code>, <code><a href="reference/modif_direction.html">to_reciprocated()</a></code>, <code><a href="reference/modif_direction.html">to_redirected()</a></code>, <code><a href="reference/modif_weight.html">to_signed()</a></code>, <code><a href="reference/modif_direction.html">to_undirected()</a></code>, <code><a href="reference/modif_labels.html">to_unnamed()</a></code>, <code><a href="reference/modif_weight.html">to_unsigned()</a></code>, <code><a href="reference/modif_weight.html">to_unweighted()</a></code>, <code><a href="reference/modif_weight.html">to_weighted()</a></code>.</p>
+<p>See also <code><a href="reference/modif_direction.html">to_directed()</a></code>, <code><a href="reference/modif_labels.html">to_labelled()</a></code>, <code><a href="reference/modif_labels.html">to_named()</a></code>, <code><a href="reference/modif_permutation.html">to_permuted()</a></code>, <code><a href="reference/modif_direction.html">to_reciprocated()</a></code>, <code><a href="reference/modif_direction.html">to_redirected()</a></code>, <code><a href="reference/modif_weight.html">to_signed()</a></code>, <code><a href="reference/modif_direction.html">to_undirected()</a></code>, <code><a href="reference/modif_labels.html">to_unlabelled()</a></code>, <code><a href="reference/modif_labels.html">to_unnamed()</a></code>, <code><a href="reference/modif_weight.html">to_unsigned()</a></code>, <code><a href="reference/modif_weight.html">to_unweighted()</a></code>, <code><a href="reference/modif_weight.html">to_weighted()</a></code>.</p>
 </div>
 <div class="section level3">
 <h3 id="transforming">Transforming<a class="anchor" aria-label="anchor" href="#transforming"></a>
@@ -239,8 +254,14 @@
 <p>Splitting means separating a network, e.g. from a whole network to the various ego networks via <code><a href="reference/modif_split.html">to_egos()</a></code>.</p>
 <p><img src="https://www.jameshollway.com/post/manynet/README-splitting_egs-1.png" alt="Graphs illustrating decomposition of a network into egonets"></p>
 <p>Those functions that split a network into a list of networks are distinguishable as those <code>to_*()</code> functions that are named in the plural. Split data can be rejoined using the <code>from_*()</code> family of functions.</p>
-<p>See also <code><a href="reference/modif_scope.html">to_blocks()</a></code>, <code><a href="reference/modif_split.html">to_components()</a></code>, <code><a href="reference/modif_split.html">to_egos()</a></code>, <code><a href="reference/modif_scope.html">to_no_isolates()</a></code>, <code><a href="reference/modif_split.html">to_slices()</a></code>, <code><a href="reference/modif_split.html">to_subgraphs()</a></code>, <code><a href="reference/modif_project.html">to_ties()</a></code>, <code><a href="reference/modif_split.html">to_waves()</a></code> and <code><a href="reference/modif_from.html">from_egos()</a></code>, <code><a href="reference/modif_from.html">from_slices()</a></code>, <code><a href="reference/modif_from.html">from_subgraphs()</a></code>, <code><a href="reference/modif_from.html">from_ties()</a></code>, <code><a href="reference/modif_from.html">from_waves()</a></code>.</p>
+<p>See also <code><a href="reference/modif_scope.html">to_blocks()</a></code>, <code><a href="reference/modif_split.html">to_components()</a></code>, <code><a href="reference/modif_split.html">to_egos()</a></code>, <code><a href="reference/modif_motifs.html">to_motifs()</a></code>, <code><a href="reference/modif_scope.html">to_no_isolates()</a></code>, <code><a href="reference/modif_split.html">to_slices()</a></code>, <code><a href="reference/modif_split.html">to_subgraphs()</a></code>, <code><a href="reference/modif_project.html">to_ties()</a></code>, <code><a href="reference/modif_split.html">to_waves()</a></code> and <code><a href="reference/modif_from.html">from_egos()</a></code>, <code><a href="reference/modif_from.html">from_slices()</a></code>, <code><a href="reference/modif_from.html">from_subgraphs()</a></code>, <code><a href="reference/modif_from.html">from_ties()</a></code>, <code><a href="reference/modif_from.html">from_waves()</a></code>.</p>
 </div>
+</div>
+<div class="section level2">
+<h2 id="cheat-sheet">Cheat sheet<a class="anchor" aria-label="anchor" href="#cheat-sheet"></a>
+</h2>
+<p>The cheat sheet below summarises how <a href="https://stocnet.github.io/manynet/">manynet</a>’s functions are organised. Click to download the PDF to print or keep at hand, and see <a href="https://stocnet.github.io/manynet/">the manynet website</a> for more.</p>
+<p><a href="https://github.com/stocnet/manynet/blob/main/inst/figures/cheatsheet.pdf" class="external-link"><img src="https://raw.githubusercontent.com/stocnet/manynet/main/man/figures/cheatsheet.png" alt="manynet cheatsheet page 1" width="49%"></a></p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -350,7 +371,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer>

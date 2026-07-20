@@ -5,6 +5,8 @@ of the first node set's (e.g. rows) joint affiliations to nodes in the second no
 to_mode2() projects a two-mode network to a one-mode network
 of the second node set's (e.g. columns) joint affiliations to nodes in the first node set (rows).
 to_ties() projects a network to one where the ties become nodes and incident nodes become their ties.
+to_hypergraph() projects one-mode or two-mode network data into hypergraph data,
+where ties can connect more than two nodes.
 
 "><meta property="og:image" content="https://stocnet.github.io/manynet/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -24,7 +26,7 @@ to_ties() projects a network to one where the ties become nodes and incident nod
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.0</span>
       </span>
     </div>
 
@@ -38,6 +40,19 @@ to_ties() projects a network to one where the ties become nodes and incident nod
 <li>
   <a href="../reference/index.html">Function Overview</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Tutorials
+
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/making-network-data.html">Making Network Data</a>
+    </li>
+    <li>
+      <a href="../articles/manipulating-network-data.html">Manipulating Network Data</a>
+    </li>
+  </ul></li>
 <li>
   <a href="../news/index.html">News</a>
 </li>
@@ -73,6 +88,8 @@ of the first node set's (e.g. rows) joint affiliations to nodes in the second no
 <li><p><code>to_mode2()</code> projects a two-mode network to a one-mode network
 of the second node set's (e.g. columns) joint affiliations to nodes in the first node set (rows).</p></li>
 <li><p><code>to_ties()</code> projects a network to one where the ties become nodes and incident nodes become their ties.</p></li>
+<li><p><code>to_hypergraph()</code> projects one-mode or two-mode network data into hypergraph data,
+where ties can connect more than two nodes.</p></li>
 </ul></div>
 
     <div id="ref-usage">
@@ -80,7 +97,9 @@ of the second node set's (e.g. columns) joint affiliations to nodes in the first
 <span></span>
 <span><span class="fu">to_mode2</span><span class="op">(</span><span class="va">.data</span>, similarity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"count"</span>, <span class="st">"jaccard"</span>, <span class="st">"rand"</span>, <span class="st">"pearson"</span>, <span class="st">"yule"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">to_ties</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">to_ties</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">to_hypergraph</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -135,6 +154,26 @@ Below are the currently implemented S3 methods:</p>
     <h2>Comparison of two-mode projection methods</h2>
 
 <table class="table table"><tr><td>Category</td><td>Feature</td><td><code>manynet::to_mode1()</code>/<code>to_mode2()</code></td><td><code><a href="https://r.igraph.org/reference/bipartite_projection.html" class="external-link">igraph::bipartite_projection()</a></code></td><td><code>network</code>/<code>sna</code> manual</td></tr><tr><td><strong>Input</strong></td><td>Dedicated function</td><td>yes</td><td>yes</td><td>no</td></tr><tr><td></td><td>Accepted input classes</td><td>igraph, network, tidygraph, matrix, edgelist</td><td>igraph only</td><td>any (manual extraction)</td></tr><tr><td></td><td>Detects mode membership from</td><td><code>mode</code> node attribute</td><td><code>type</code> vertex attribute</td><td><code>bipartite</code> network attr (positional)</td></tr><tr><td><strong>Projection</strong></td><td>Returns both projections at once</td><td>no — one per call</td><td>yes — list of two</td><td>two manual calls</td></tr><tr><td></td><td>Projects mode 1 (actors)</td><td><code>to_mode1()</code></td><td><code>which = "true"</code></td><td><code>A %*% t(A)</code></td></tr><tr><td></td><td>Projects mode 2 (events)</td><td><code>to_mode2()</code></td><td><code>which = "false"</code></td><td><code>t(A) %*% A</code></td></tr><tr><td><strong>Weights</strong></td><td>Raw co-membership counts</td><td>yes</td><td>yes (<code>multiplicity = TRUE</code>)</td><td>yes</td></tr><tr><td></td><td>Binary (unweighted) output</td><td>yes</td><td>yes (<code>multiplicity = FALSE</code>)</td><td>threshold manually</td></tr><tr><td></td><td>Jaccard normalisation</td><td>yes</td><td>no</td><td>code manually</td></tr><tr><td></td><td>Cosine normalisation</td><td>yes</td><td>no</td><td>code manually</td></tr><tr><td><strong>Attributes</strong></td><td>Retains node attributes</td><td>yes</td><td>yes</td><td>no — lost in matrix round-trip</td></tr><tr><td></td><td>Retains edge attributes</td><td>weight only</td><td>weight only</td><td>no</td></tr><tr><td></td><td>Removes self-loops automatically</td><td>yes</td><td>yes</td><td><code>diag(P) &lt;- 0</code> manually</td></tr><tr><td><strong>Output</strong></td><td>Output class matches input</td><td>yes</td><td>no</td><td>no</td></tr><tr><td></td><td>Directed projection support</td><td>limited</td><td>no — undirected only</td><td>yes — asymmetric matrix</td></tr><tr><td><strong>Usability</strong></td><td>Lines of code (basic case)</td><td>1</td><td>1</td><td>4–6</td></tr><tr><td></td><td>Lines of code (Jaccard weights)</td><td>1</td><td>~8 manual</td><td>~8 manual</td></tr><tr><td></td><td>Pipe-friendly</td><td>yes</td><td>with wrappers</td><td>no</td></tr></table></div>
+    <div id="hypergraphs">
+    <h2>Hypergraphs</h2>
+
+
+<p>This function projects one-mode or two-mode network data into hypergraph data,
+where ties can connect more than two nodes.
+The projection differs depending on whether the network is one-mode or two-mode,
+and the output can differ by class of the input/output data.</p>
+<p>For two-mode networks, the hyperedges are the nodes of the second mode,
+and the nodes of the first mode are connected to them if they share a tie.
+In a 'stocnet' object, the hyperedges are stored in the <code>ties</code> data frame,
+with the <code>from</code> column containing a list of nodes connected to each hyperedge.
+This is thus a compact representation of the hypergraph.
+igraph-like objects do not have a native representation of hyperedges,
+so the output is a two-mode graph where the hyperedges are represented
+as nodes of the second mode.</p>
+<p>For one-mode networks, the hyperedges are the maximal cliques of the network.
+Again, while 'stocnet' objects can store the hyperedges in a compact form,
+igraph-like objects represent them as nodes of the second mode in a two-mode graph.</p>
+    </div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other modifications:
@@ -144,6 +183,7 @@ Below are the currently implemented S3 methods:</p>
 <code><a href="modif_labels.html">modif_labels</a></code>,
 <code><a href="modif_levels.html">modif_levels</a></code>,
 <code><a href="modif_miss.html">modif_miss</a></code>,
+<code><a href="modif_motifs.html">modif_motifs</a></code>,
 <code><a href="modif_paths.html">modif_paths</a></code>,
 <code><a href="modif_permutation.html">modif_permutation</a></code>,
 <code><a href="modif_plexity.html">modif_plexity</a></code>,
@@ -157,8 +197,8 @@ Below are the currently implemented S3 methods:</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">to_mode1</span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Projection of Southern Women Data</span> <span style="color: #00BBBB;">─────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, weighted, undirected network of 18 womens and 139 co-social</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">events ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, weighted, undirected network of 18 womens and 139 co-social event</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 18 × 3</span></span>
@@ -214,9 +254,9 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 60 more rows</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu">to_ties</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 0ff62e7 UN-- 10 20 -- Line graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 6458709 UN-- 10 20 -- Line graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), name (v/c)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 0ff62e7 (vertex names):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 6458709 (vertex names):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] Betty-Sue --Sue-Alice  Sue-Alice --Alice-Jane Betty-Sue --Sue-Dale  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [4] Sue-Alice --Sue-Dale   Sue-Dale  --Alice-Dale Sue-Alice --Alice-Dale</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [7] Alice-Jane--Alice-Dale Sue-Dale  --Jane-Dale  Alice-Dale--Jane-Dale </span>
@@ -238,7 +278,7 @@ Below are the currently implemented S3 methods:</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

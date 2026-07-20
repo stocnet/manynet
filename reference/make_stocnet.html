@@ -28,7 +28,7 @@ but also network modelling."><meta property="og:image" content="https://stocnet.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.0</span>
       </span>
     </div>
 
@@ -42,6 +42,19 @@ but also network modelling."><meta property="og:image" content="https://stocnet.
 <li>
   <a href="../reference/index.html">Function Overview</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Tutorials
+
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/making-network-data.html">Making Network Data</a>
+    </li>
+    <li>
+      <a href="../articles/manipulating-network-data.html">Manipulating Network Data</a>
+    </li>
+  </ul></li>
 <li>
   <a href="../news/index.html">News</a>
 </li>
@@ -199,7 +212,19 @@ the ties in a multiplex or multilayer network.</p></li>
 <li><p>'directed' should be a logical indicating whether each layer is directed or undirected.
 If there are multiple layers, this can be a named logical vector with the directedness of each layer,
 where the names correspond to the layer names.</p></li>
-<li><p>'focal' should be a character string indicating which layer is the dependent layer in a multiplex network.</p></li>
+<li><p>'focal' should be a character vector indicating which variables are
+dependent (endogenous). These may be tie layers (dependent networks) and/or
+nodal variables recorded in the changes component (dependent behaviours),
+as used when modelling with e.g. 'RSiena'.</p></li>
+<li><p>'centered' should be a named logical vector indicating, for each covariate
+(nodal or dyadic), whether it should be centered when modelling.
+The names correspond to the covariate variable or layer names.</p></li>
+<li><p>'siena' can hold a list of metadata specific to 'RSiena' 'sienadata' objects
+that has no native meaning elsewhere (e.g. the 'allowOnly', 'uponly', and
+'downonly' estimation constraints of dependent variables, the composition
+change option, node set relations, and the originating 'RSiena' version).
+This is populated by <code><a href="coerce_graph.html">as_stocnet()</a></code> and consumed by <code><a href="coerce_graph.html">as_siena()</a></code> so that
+coercion to and from 'sienadata' objects is lossless.</p></li>
 <li><p>'doi' can be a character string with the DOI of the network, if it is from a published source.</p></li>
 <li><p>'date' can be an integer of the year or the date the network represents.</p></li>
 <li><p>'location' can be a character string with the location of the network.</p></li>
@@ -310,7 +335,7 @@ too.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

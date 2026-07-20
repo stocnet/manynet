@@ -28,7 +28,7 @@ time slice(s).
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.0</span>
       </span>
     </div>
 
@@ -42,6 +42,19 @@ time slice(s).
 <li>
   <a href="../reference/index.html">Function Overview</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Tutorials
+
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/making-network-data.html">Making Network Data</a>
+    </li>
+    <li>
+      <a href="../articles/manipulating-network-data.html">Manipulating Network Data</a>
+    </li>
+  </ul></li>
 <li>
   <a href="../news/index.html">News</a>
 </li>
@@ -173,6 +186,7 @@ Below are the currently implemented S3 methods:</p>
 <code><a href="modif_labels.html">modif_labels</a></code>,
 <code><a href="modif_levels.html">modif_levels</a></code>,
 <code><a href="modif_miss.html">modif_miss</a></code>,
+<code><a href="modif_motifs.html">modif_motifs</a></code>,
 <code><a href="modif_paths.html">modif_paths</a></code>,
 <code><a href="modif_permutation.html">modif_permutation</a></code>,
 <code><a href="modif_plexity.html">modif_plexity</a></code>,
@@ -187,7 +201,7 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Betty</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># The Adolescent Society</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 2 adolescents and 1 friendships ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 2 adolescents and 1 friendship ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 1</span></span>
@@ -205,7 +219,7 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Sue</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># The Adolescent Society</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 5 adolescents and 6 friendships ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 5 adolescents and 6 friendship ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 1</span></span>
@@ -231,7 +245,7 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Alice</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># The Adolescent Society</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 5 adolescents and 7 friendships ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 5 adolescents and 7 friendship ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 1</span></span>
@@ -258,7 +272,7 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Jane</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># The Adolescent Society</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 3 adolescents and 3 friendships ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 3 adolescents and 3 friendship ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 1</span></span>
@@ -279,7 +293,7 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Dale</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># The Adolescent Society</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 4 adolescents and 5 friendships ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 4 adolescents and 5 friendship ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 1</span></span>
@@ -303,7 +317,7 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Pam</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># The Adolescent Society</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 4 adolescents and 4 friendships ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 4 adolescents and 4 friendship ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 1</span></span>
@@ -326,7 +340,7 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Carol</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># The Adolescent Society</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 3 adolescents and 2 friendships ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 3 adolescents and 2 friendship ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 1</span></span>
@@ -346,7 +360,7 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Tina</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># The Adolescent Society</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 2 adolescents and 1 friendships ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 2 adolescents and 1 friendship ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 1</span></span>
@@ -369,7 +383,7 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-in"><span>  <span class="fu">to_subgraphs</span><span class="op">(</span>attribute <span class="op">=</span> <span class="st">"unicorn"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># The Adolescent Society</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 5 adolescents and 2 friendships ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 5 adolescents and 2 friendship ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 2</span></span>
@@ -391,7 +405,7 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># The Adolescent Society</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 3 adolescents and 1 friendships ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 3 adolescents and 1 friendship ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 2</span></span>
@@ -494,7 +508,7 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`1995`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># The Adolescent Society</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A longitudinal, labelled, undirected network of 8 adolescents and 4</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">friendships ties over 1995 waves</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">friendship ties over 1995 waves</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 8 × 1</span></span>
@@ -521,7 +535,7 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`1996`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># The Adolescent Society</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A longitudinal, labelled, undirected network of 8 adolescents and 2</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">friendships ties over 1996 waves</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">friendship ties over 1996 waves</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 8 × 1</span></span>
@@ -546,7 +560,7 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`1998`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># The Adolescent Society</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A longitudinal, labelled, undirected network of 8 adolescents and 4</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">friendships ties over 1998 waves</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">friendship ties over 1998 waves</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 8 × 1</span></span>
@@ -574,9 +588,9 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-in"><span>  <span class="fu"><a href="manip_ties_attr.html">mutate_ties</a></span><span class="op">(</span>time <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, increment <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>  <span class="fu"><a href="manip_ties_num.html">add_ties</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>time <span class="op">=</span> <span class="fl">3</span>, increment <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>  <span class="fu">to_slices</span><span class="op">(</span>slice <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH aa194ee UNW- 8 6 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 8fcec64 UNW- 8 6 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (v/c), weight (e/n)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from aa194ee (vertex names):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 8fcec64 (vertex names):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] Sue  --Alice Alice--Jane  Sue  --Dale  Alice--Dale  Jane --Dale </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6] Sue  --Pam  </span>
 </code></pre></div>
@@ -593,7 +607,7 @@ Below are the currently implemented S3 methods:</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>
