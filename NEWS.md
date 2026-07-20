@@ -2,6 +2,9 @@
 
 ## Package
 
+- Added a cheat sheet summarising how the package's function families fit together
+  - The editable LaTeX source and build script live in `data-raw/cheatsheet/`; `Rscript data-raw/cheatsheet/build.R` recompiles the PDF and one PNG per page and distributes them to `inst/figures/`, `man/figures/`, and the pkgdown site
+  - Linked cheat sheet (clicking through to the PDF) from a new "Cheat sheet" section in the README
 - Renamed the website's "Identifying" reference section to "Describing" and retitled the sequence/progress helper documentation, aligning the website with the package's function families
 - Added static (article) versions of both tutorials to the pkgdown website, so they can be read without a running R/learnr session
 - Added a functional testing infrastructure (`tests/testthat/test-functional_*.R`) that automatically enumerates exported functions by family prefix (`to_*`, `from_*`, `is_*`, `net_*`/`node_*`/`tie_*`, `as_*list`, `create_*`/`generate_*`/`play_*`, and the `add_*`/`mutate_*`/`filter_*`/etc. manipulation verbs) and audits each across a standard grid of fixture networks (directed, two-mode, weighted, signed, multiplex, longitudinal) and object classes (tidygraph, igraph, matrix, network, edgelist, stocnet), raising package test coverage from ~52% to over 70%

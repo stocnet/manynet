@@ -5,6 +5,9 @@ inst/doc
 .Ruserdata
 .DS_Store
 data-raw/*
+!data-raw/cheatsheet/
+data-raw/cheatsheet/cheatsheet.aux
+data-raw/cheatsheet/cheatsheet.log
 docs/
 working/*
 /doc/
