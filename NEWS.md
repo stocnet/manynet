@@ -13,7 +13,7 @@
 
 ## Making
 
-- Added `write_gml()`, `write_gdf()`, and `write_dynetml()` as export counterparts to `read_gml()`, `read_gdf()`, and `read_dynetml()` (closing #148)
+- Added `write_gml()`, `write_gdf()`, and `write_dynetml()` as export counterparts to `read_gml()`, `read_gdf()`, and `read_dynetml()` (closes #148)
   - `write_dynetml()` records the network's directedness in the `isDirected` attribute of the DyNetML `<network>` element, and `read_dynetml()` now respects it when reconstructing the graph
   - `write_gml()` converts any logical graph/vertex/edge attributes to integer before export, avoiding igraph's "boolean attribute was converted to numeric" warning
   - Fixed `read_gdf()` dropping node attribute names when a GDF file defines only a single node attribute column
