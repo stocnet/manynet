@@ -354,6 +354,7 @@ read_ucinet <- function(file = file.choose()) {
 #' @export
 read_dynetml <- function(file = file.choose()) {
   if(missing(file)) cli::cli_alert_success("Executing: read_dynetml('{file}')")
+  if(!grepl("\\.xml$", file, ignore.case = TRUE)) file <- paste0(file, ".xml")
   thisRequires("xml2")
   name <- type <- nodeset <- target <- value <- NULL
   xmlfile <- xml2::read_xml(file)
@@ -400,7 +401,12 @@ read_dynetml <- function(file = file.choose()) {
   edgelist$value <- as.numeric(edgelist$value)
   edgelist <- dplyr::filter(edgelist, source %in% nodes$name & target %in% nodes$name)
   edgelist <- dplyr::filter(edgelist, value != 0)
-  as_tidygraph(list(nodes = nodes, ties = edgelist))
+  out <- as_tidygraph(list(nodes = nodes, ties = edgelist))
+  net_el <- xml2::xml_find_first(xmlfile, ".//network")
+  if(!is.na(xml2::xml_attr(net_el, "isDirected")) &&
+     tolower(xml2::xml_attr(net_el, "isDirected")) %in% c("false","0"))
+    out <- to_undirected(out)
+  out
 }
 
 #' @rdname make_read
@@ -416,6 +422,7 @@ read_graphml <- function(file = file.choose()) {
 #' @export
 read_gml <- function(file = file.choose()) {
   if(missing(file)) cli::cli_alert_success("Executing: read_gml('{file}')")
+  if(!grepl("\\.gml$", file, ignore.case = TRUE)) file <- paste0(file, ".gml")
   as_tidygraph(igraph::read_graph(file, format = "gml"))
 }
 
@@ -423,6 +430,7 @@ read_gml <- function(file = file.choose()) {
 #' @export
 read_gdf <- function(file = file.choose()) {
   if(missing(file)) cli::cli_alert_success("Executing: read_gdf('{file}')")
+  if(!grepl("\\.gdf$", file, ignore.case = TRUE)) file <- paste0(file, ".gdf")
   gdf <- readLines(file)
   
   edge_place <- grep("edgedef>", gdf)
@@ -478,7 +486,7 @@ read_gdf <- function(file = file.choose()) {
   if (length(node_data) > 1) {
     node_data <- data.frame(do.call(rbind, strsplit(node_data, ",")))
     names(node_data) <- node_data[1,]
-    node_data <- node_data[-1, ]
+    node_data <- node_data[-1, , drop = FALSE]
   } else {
     snet_minor_info("No node data found.")
     node_data <- data.frame()
@@ -502,7 +510,10 @@ read_gdf <- function(file = file.choose()) {
 #'   - `write_nodelist()` exports a nodelist to a .csv file.
 #'   - `write_pajek()` exports Pajek .net files.
 #'   - `write_ucinet()` exports a pair of UCINET files in V6404 file format (.##h, .##d).
+#'   - `write_dynetml()` exports DyNetML interchange format files.
 #'   - `write_graphml()` exports GraphML files.
+#'   - `write_gml()` exports GML files.
+#'   - `write_gdf()` exports GDF files.
 #' @details
 #'   Note that these functions are not as actively maintained as others
 #'   in the package, so please let us know if any are not currently working
@@ -750,6 +761,94 @@ write_graphml <- function(.data,
   igraph::write_graph(as_igraph(.data),
                       filename,
                       format = "graphml")
+}
+
+#' @rdname make_write
+#' @importFrom igraph write_graph
+#' @export
+write_gml <- function(.data,
+                      filename,
+                      ...) {
+  if (missing(filename)){
+    filename <- paste0(getwd(), "/", deparse(substitute(.data)), ".gml")
+    snet_success("Writing to {.file {filename}}")
+  }
+  if(!grepl("\\.gml$", filename, ignore.case = TRUE)) filename <- paste0(filename, ".gml")
+  g <- as_igraph(.data)
+  # igraph's GML writer warns when converting logical attributes to numeric;
+  # convert them ourselves first so the export is silent
+  for(a in igraph::graph_attr_names(g))
+    if(is.logical(igraph::graph_attr(g, a)))
+      igraph::graph_attr(g, a) <- as.integer(igraph::graph_attr(g, a))
+  for(a in igraph::vertex_attr_names(g))
+    if(is.logical(igraph::vertex_attr(g, a)))
+      igraph::vertex_attr(g, a) <- as.integer(igraph::vertex_attr(g, a))
+  for(a in igraph::edge_attr_names(g))
+    if(is.logical(igraph::edge_attr(g, a)))
+      igraph::edge_attr(g, a) <- as.integer(igraph::edge_attr(g, a))
+  igraph::write_graph(g,
+                      filename,
+                      format = "gml",
+                      id = seq_len(igraph::vcount(g)) - 1)
+}
+
+#' @rdname make_write
+#' @export
+write_gdf <- function(.data,
+                      filename,
+                      ...) {
+  if (missing(filename)){
+    filename <- paste0(getwd(), "/", deparse(substitute(.data)), ".gdf")
+    snet_success("Writing to {.file {filename}}")
+  }
+  if(!grepl("\\.gdf$", filename, ignore.case = TRUE)) filename <- paste0(filename, ".gdf")
+  g <- as_igraph(.data)
+  ids <- node_labels(g)
+  nodes <- data.frame(name = ids)
+  edges <- as.data.frame(igraph::as_edgelist(g, names = FALSE))
+  edges <- data.frame(node1 = ids[edges[,1]],
+                      node2 = ids[edges[,2]])
+  node_header <- "nodedef>name VARCHAR"
+  edge_header <- "edgedef>node1 VARCHAR,node2 VARCHAR"
+  writeLines(c(node_header,
+              apply(nodes, 1, paste, collapse = ","),
+              edge_header,
+              apply(edges, 1, paste, collapse = ",")),
+            filename)
+}
+
+#' @rdname make_write
+#' @export
+write_dynetml <- function(.data,
+                          filename,
+                          ...) {
+  if (missing(filename)){
+    filename <- paste0(getwd(), "/", deparse(substitute(.data)), ".xml")
+    snet_success("Writing to {.file {filename}}")
+  }
+  if(!grepl("\\.xml$", filename, ignore.case = TRUE)) filename <- paste0(filename, ".xml")
+  thisRequires("xml2")
+  g <- as_igraph(.data)
+  ids <- node_labels(g)
+  el <- igraph::as_edgelist(g, names = FALSE)
+  doc <- xml2::xml_new_root("DynamicNetwork")
+  metanetwork <- xml2::xml_add_child(doc, "MetaNetwork")
+  nodesxml <- xml2::xml_add_child(metanetwork, "nodes")
+  nodeclass <- xml2::xml_add_child(nodesxml, "nodeclass",
+                                   type = "agent", id = "agent")
+  for (id in ids) xml2::xml_add_child(nodeclass, "node", id = id)
+  networksxml <- xml2::xml_add_child(metanetwork, "networks")
+  networkxml <- xml2::xml_add_child(networksxml, "network",
+                                    id = "network",
+                                    sourceType = "agent", targetType = "agent",
+                                    isDirected = tolower(as.character(is_directed(g))))
+  for (i in seq_len(nrow(el))) {
+    xml2::xml_add_child(networkxml, "edge",
+                        source = ids[el[i, 1]],
+                        target = ids[el[i, 2]],
+                        value = "1")
+  }
+  xml2::write_xml(doc, filename)
 }
 
 # nocov end

@@ -12,6 +12,7 @@ navbar:
     - home
     - intro
     - reference
+    - tutorials
     - news
     right:
     - search
@@ -25,6 +26,13 @@ navbar:
     reference:
       text: Function Overview
       href: reference/index.html
+    tutorials:
+      text: Tutorials
+      menu:
+      - text: Making Network Data
+        href: articles/making-network-data.html
+      - text: Manipulating Network Data
+        href: articles/manipulating-network-data.html
     news:
       text: News
       href: news/index.html
@@ -36,6 +44,16 @@ navbar:
       icon: "fab fa-r-project"
       href: https://cloud.r-project.org/package=manynet
       aria-label: View on CRAN
+
+articles:
+  - title: Tutorials
+    desc: |
+      Static, read-only versions of the interactive `learnr` tutorials
+      bundled with the package. Install the package and run `run_tute()`
+      for the full interactive experience.
+    contents:
+      - "`articles/making-network-data`"
+      - "`articles/manipulating-network-data`"
 reference:
   - title: "Making"
     desc: |
@@ -55,7 +73,6 @@ reference:
       - make_mnet
       - make_stocnet
       - make_explicit
-      - make_motifs
       - make_create
       - starts_with("generate_")
   - subtitle: "Collecting"
@@ -146,6 +163,7 @@ reference:
       or (re)joining a list of networks into a single network.
     contents:
       - modif_split
+      - modif_motifs
       - starts_with("from_")
   - subtitle: "Missing"
     desc: |
@@ -153,7 +171,7 @@ reference:
     contents:
       - starts_with("na_to_")
       
-  - title: "Identifying"
+  - title: "Describing"
     desc: |
       Functions for identifying properties of networks,
       nodes (where the function prefix is `node_`), or ties (where the function prefix is `tie_`).
@@ -167,6 +185,7 @@ reference:
       `net_*()` functions return a numeric output.
     contents:
       - measure_dims
+      - measure_missingness
   - subtitle: "Network members"
     desc: |
       `net_node_*()` and `net_tie_*()` functions return a string vector relating to nodes or ties in the network.

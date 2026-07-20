@@ -2,11 +2,17 @@
 % Please edit documentation in R/modif_labels.R
 \name{modif_labels}
 \alias{modif_labels}
+\alias{to_labelled}
 \alias{to_named}
+\alias{to_unlabelled}
 \alias{to_unnamed}
 \title{Modifying node labels}
 \usage{
+to_labelled(.data, names = NULL)
+
 to_named(.data, names = NULL)
+
+to_unlabelled(.data)
 
 to_unnamed(.data)
 }
@@ -30,9 +36,9 @@ or section.
 \description{
 These functions add some format to manynet-consistent data.
 \itemize{
-\item \code{to_named()} reformats unlabelled network data to labelled network data
+\item \code{to_labelled()} reformats unlabelled network data to labelled network data
 from a vector of names or random baby names.
-\item \code{to_unnamed()} reformats labelled network data to unlabelled network data.
+\item \code{to_unlabelled()} reformats labelled network data to unlabelled network data.
 }
 
 If the format condition is not met,
@@ -48,9 +54,9 @@ only transforming these objects' properties.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{           data.frame default igraph matrix network tbl_graph
-to_named            *       *      *      *       *         *
-to_unnamed          *       *      *      *       *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default igraph matrix network tbl_graph
+to_labelled            *       *      *      *       *         *
+to_unlabelled          *       *      *      *       *         *
 }\if{html}{\out{</div>}}
 }
 \seealso{
@@ -60,6 +66,7 @@ Other modifications:
 \code{\link{modif_from}},
 \code{\link{modif_levels}},
 \code{\link{modif_miss}},
+\code{\link{modif_motifs}},
 \code{\link{modif_paths}},
 \code{\link{modif_permutation}},
 \code{\link{modif_plexity}},

@@ -25,8 +25,6 @@ for(ms in manynet_classes){
     )
     
     for (to in to_classes) {
-      skip_if(ms == "stocnet" && to == "network", "Known lossy coercion from stocnet to network")
-      skip_if(ms == "network" && to == "stocnet", "Known lossy coercion from network to stocnet")
       expect_true(
         lossless_roundtrip(obj, to),
         info = paste("Lossy coercion:", ms, "(obj) →", to, "(obj2)")
@@ -34,6 +32,44 @@ for(ms in manynet_classes){
     }
   })
 }
+
+test_that("stocnet <-> network round-trip retains multiplex/multi-wave ties", {
+  sn <- make_stocnet(nodes = data.frame(label = as.character(1:4)),
+    ties = data.frame(from = c(1,2,3,1,2,4), to = c(2,3,1,3,4,1),
+                      layer = "net", weight = 1, time = c(1,1,1,2,2,2)))
+  nw <- as_network(sn)
+  # The network representation should carry the tie attributes, not just 'na'.
+  expect_true(all(c("layer", "time") %in% network::list.edge.attributes(nw)))
+  # Reading the network back should not error and should recover the ties.
+  back <- as_stocnet(nw)
+  expect_s3_class(back, "stocnet")
+  expect_true(all(c("layer", "time") %in% names(back$ties)))
+  expect_equal(nrow(back$ties), nrow(sn$ties))
+  expect_equal(sort(back$ties$time), sort(sn$ties$time))
+  expect_identical(as_matrix(sn), as_matrix(back))
+})
+
+test_that("two-mode stocnet <-> network round-trip retains ties and attributes", {
+  # A two-mode network with a tie attribute (date/wave) including a repeated
+  # dyad across waves, which requires a multi-edge bipartite network.
+  sn <- make_stocnet(
+    nodes = data.frame(label = c("a1","a2","a3","e1","e2"),
+                       mode  = c("actor","actor","actor","event","event")),
+    ties  = data.frame(from = c("a1","a2","a1","a3"),
+                       to   = c("e1","e2","e1","e1"),
+                       time = c(1,1,2,2)))
+  expect_true(is_twomode(sn))
+  nw <- as_network(sn)
+  expect_true(network::is.bipartite(nw))
+  expect_true("time" %in% network::list.edge.attributes(nw))
+  back <- as_stocnet(nw)
+  expect_s3_class(back, "stocnet")
+  expect_true(is_twomode(back))
+  expect_equal(nrow(back$ties), nrow(sn$ties))
+  expect_true("time" %in% names(back$ties))
+  expect_equal(sort(back$ties$time), sort(sn$ties$time))
+  expect_identical(as_matrix(sn), as_matrix(back))
+})
 
 # Tests for the as_ conversion methods
 mat1 <- matrix(c(0,1,0,0,1,0,1,0,0,1,0,1,0,0,0,0),4,4, byrow = TRUE)
@@ -121,10 +157,77 @@ test_that("as_network converts correctly",{
 })
 
 # test conversion of siena objects
-# test_that("as_tidygraph.siena converts correctly", {
-#   expect_equal(net_nodes(as_igraph(sienadata)), net_nodes(as_matrix(sienadata)))
-#   expect_equal(net_nodes(as_igraph(sienadata)), length(sienadata[["nodeSets"]][["Actors"]]))
-# })
+test_that("stocnet <-> sienadata coercion is lossless", {
+  skip_if_not_installed("RSiena")
+  set.seed(42)
+  n <- 7; w <- 3
+  arr <- array(sample(0:1, n * n * w, replace = TRUE, prob = c(.7, .3)),
+               dim = c(n, n, w))
+  for (i in seq_len(w)) diag(arr[, , i]) <- 0
+  dimnames(arr) <- list(paste0("A", seq_len(n)), paste0("A", seq_len(n)), NULL)
+  fr <- RSiena::sienaDependent(arr)
+  sm <- RSiena::sienaDependent(matrix(sample(1:5, n * w, replace = TRUE), n, w),
+                               type = "behavior")
+  ag <- RSiena::coCovar(c(1, 2, NA, 4, 5, 6, 7))
+  alc <- RSiena::varCovar(matrix(stats::rnorm(n * (w - 1)), n, w - 1))
+  prox <- RSiena::coDyadCovar(matrix(stats::rnorm(n * n), n, n))
+  vd <- RSiena::varDyadCovar(array(stats::rnorm(n * n * (w - 1)),
+                                   dim = c(n, n, w - 1)))
+  orig <- RSiena::sienaDataCreate(fr, sm, ag, alc, prox, vd)
+
+  sn <- as_stocnet(orig)
+  expect_s3_class(sn, "stocnet")
+  # dependent networks and behaviours are recorded as focal
+  expect_setequal(sn$info$focal, c("fr", "sm"))
+  # covariate centering is carried in a named logical vector
+  expect_type(sn$info$centered, "logical")
+
+  back <- as_siena(sn)
+  expect_s3_class(back, "sienadata")
+  expect_equal(back$observations, orig$observations)
+  expect_equal(names(orig$depvars), names(back$depvars))
+  expect_equal(names(orig$cCovars), names(back$cCovars))
+  expect_equal(names(orig$vCovars), names(back$vCovars))
+  expect_equal(names(orig$dycCovars), names(back$dycCovars))
+  expect_equal(names(orig$dyvCovars), names(back$dyvCovars))
+  # values round-trip exactly (including missing and node labels)
+  expect_equal(as.vector(orig$depvars$fr), as.vector(back$depvars$fr))
+  expect_equal(as.vector(orig$depvars$sm), as.vector(back$depvars$sm))
+  expect_equal(as.vector(orig$cCovars$ag), as.vector(back$cCovars$ag))
+  expect_equal(as.vector(orig$vCovars$alc), as.vector(back$vCovars$alc))
+  expect_equal(as.vector(orig$dycCovars$prox), as.vector(back$dycCovars$prox))
+  expect_equal(as.vector(orig$dyvCovars$vd), as.vector(back$dyvCovars$vd))
+  expect_equal(dimnames(orig$depvars$fr)[[1]], dimnames(back$depvars$fr)[[1]])
+})
+
+test_that("sienadata coerces through the wider coercion family", {
+  skip_if_not_installed("RSiena")
+  set.seed(1); n <- 6; w <- 2
+  a <- array(sample(0:1, n * n * w, replace = TRUE), dim = c(n, n, w))
+  for (i in seq_len(w)) diag(a[, , i]) <- 0
+  d <- RSiena::sienaDataCreate(RSiena::sienaDependent(a))
+  expect_s3_class(as_igraph(d), "igraph")
+  expect_s3_class(as_tidygraph(d), "tbl_graph")
+  expect_s3_class(as_network(d), "network")
+})
+
+test_that("as_siena errors clearly for a single-wave network", {
+  skip_if_not_installed("RSiena")
+  expect_error(as_siena(as_stocnet(generate_random(6))), "at least two waves")
+  expect_error(as_siena(ison_adolescents), "at least two waves")
+})
+
+test_that("as_siena routes any coercible object through stocnet", {
+  skip_if_not_installed("RSiena")
+  # a longitudinal manynet network (waves encoded as a 'wave' tie attribute)
+  # reaches SIENA through the stocnet path
+  d <- as_siena(fict_potter)
+  expect_s3_class(d, "sienadata")
+  expect_gt(d$observations, 1)
+  expect_false(is.null(d$compositionChange))
+  # valued/signed dependent networks are refused with a helpful message
+  expect_error(as_siena(ison_monks), "binary")
+})
 
 test_that("conversion of diff_model object works correctly", {
   skip_on_cran()

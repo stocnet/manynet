@@ -8,6 +8,9 @@
 \alias{write_pajek}
 \alias{write_ucinet}
 \alias{write_graphml}
+\alias{write_gml}
+\alias{write_gdf}
+\alias{write_dynetml}
 \title{Making networks to external files}
 \source{
 \code{write_ucinet()} kindly supplied by Christian Steglich,
@@ -25,6 +28,12 @@ write_pajek(.data, filename, ...)
 write_ucinet(.data, filename, name)
 
 write_graphml(.data, filename, ...)
+
+write_gml(.data, filename, ...)
+
+write_gdf(.data, filename, ...)
+
+write_dynetml(.data, filename, ...)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -63,7 +72,10 @@ file formats:
 \item \code{write_nodelist()} exports a nodelist to a .csv file.
 \item \code{write_pajek()} exports Pajek .net files.
 \item \code{write_ucinet()} exports a pair of UCINET files in V6404 file format (.##h, .##d).
+\item \code{write_dynetml()} exports DyNetML interchange format files.
 \item \code{write_graphml()} exports GraphML files.
+\item \code{write_gml()} exports GML files.
+\item \code{write_gdf()} exports GDF files.
 }
 }
 \details{
@@ -81,7 +93,6 @@ Other makes:
 \code{\link{make_ego}},
 \code{\link{make_explicit}},
 \code{\link{make_learning}},
-\code{\link{make_motifs}},
 \code{\link{make_play}},
 \code{\link{make_random}},
 \code{\link{make_read}},

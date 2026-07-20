@@ -166,11 +166,11 @@ is_egonet <- function(.data) UseMethod("is_egonet")
 #' @export
 is_egonet.default <- function(.data) {
   if(!is_list(.data)) return(FALSE) else if (all(unique(names(.data)) != "")) {
-    length(names(.data)) == length(unique(unlist(unname(lapply(.data, 
-                                                               manynet::node_names))))) &
+    length(names(.data)) == length(unique(unlist(unname(lapply(.data,
+                                                               manynet::node_labels))))) &
       all(.order_alphabetically(names(.data)) ==
-            .order_alphabetically(unique(unlist(unname(lapply(.data, 
-                                                              manynet::node_names))))))
+            .order_alphabetically(unique(unlist(unname(lapply(.data,
+                                                              manynet::node_labels))))))
   } else FALSE
 }
 

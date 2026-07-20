@@ -98,8 +98,9 @@ compatible with your larger project and analytic workflow.
 - `read_cran()`, `read_dynetml()`, `read_edgelist()`, `read_gdf()`,
   `read_gml()`, `read_graphml()`, `read_matrix()`, `read_nodelist()`,
   `read_pajek()`, `read_pkg()`, `read_ucinet()`
-- `write_edgelist()`, `write_graphml()`, `write_matrix()`,
-  `write_nodelist()`, `write_pajek()`, `write_ucinet()`
+- `write_dynetml()`, `write_edgelist()`, `write_gdf()`, `write_gml()`,
+  `write_graphml()`, `write_matrix()`, `write_nodelist()`,
+  `write_pajek()`, `write_ucinet()`
 
 #### Identifying network data
 
@@ -249,10 +250,10 @@ directed to undirected via `to_undirected()`.
 
 <img src="https://www.jameshollway.com/post/manynet/README-directed_egs-1.png" alt="Graphs illustrating modification of a network's directedness"/>
 
-See also `to_directed()`, `to_named()`, `to_permuted()`,
-`to_reciprocated()`, `to_redirected()`, `to_signed()`,
-`to_undirected()`, `to_unnamed()`, `to_unsigned()`, `to_unweighted()`,
-`to_weighted()`.
+See also `to_directed()`, `to_labelled()`, `to_named()`,
+`to_permuted()`, `to_reciprocated()`, `to_redirected()`, `to_signed()`,
+`to_undirected()`, `to_unlabelled()`, `to_unnamed()`, `to_unsigned()`,
+`to_unweighted()`, `to_weighted()`.
 
 ### Transforming
 
@@ -279,10 +280,18 @@ distinguishable as those `to_*()` functions that are named in the
 plural. Split data can be rejoined using the `from_*()` family of
 functions.
 
-See also `to_blocks()`, `to_components()`, `to_egos()`,
+See also `to_blocks()`, `to_components()`, `to_egos()`, `to_motifs()`,
 `to_no_isolates()`, `to_slices()`, `to_subgraphs()`, `to_ties()`,
 `to_waves()` and `from_egos()`, `from_slices()`, `from_subgraphs()`,
 `from_ties()`, `from_waves()`.
+
+## Cheat sheet
+
+The cheat sheet below summarises how `{manynet}`’s functions are
+organised. Click to download the PDF to print or keep at hand, and see
+[the manynet website](https://stocnet.github.io/manynet/) for more.
+
+<a href="https://github.com/stocnet/manynet/blob/main/inst/figures/cheatsheet.pdf"><img src="https://raw.githubusercontent.com/stocnet/manynet/main/man/figures/cheatsheet.png" alt="manynet cheatsheet page 1" width="49%"/></a>
 
 ## Installation
 

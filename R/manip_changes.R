@@ -61,7 +61,7 @@ mutate_changes.default <- function(.data, ...){
 #' @export
 mutate_changes.tbl_graph <- function(.data, ...){
   changes <- igraph::graph_attr(.data, "changes")
-  changes <- tidygraph::mutate(changes, ...)
+  changes <- dplyr::mutate(changes, ...)
   igraph::graph_attr(.data, "changes") <- changes
   .data
 }
@@ -267,7 +267,7 @@ filter_changes.default <- function(.data, ..., .by = NULL){
 #' @export
 filter_changes.igraph <- function(.data, ..., .by = NULL){
   changes <- igraph::graph_attr(.data, "changes")
-  changes <- tidygraph::filter(changes, ..., .by = .by)
+  changes <- filter_changes_df(changes, node_labels(.data), ..., .by = .by)
   igraph::graph_attr(.data, "changes") <- changes
   .data
 }
@@ -275,10 +275,23 @@ filter_changes.igraph <- function(.data, ..., .by = NULL){
 #' @export
 filter_changes.stocnet <- function(.data, ..., .by = NULL){
   out <- .data
-  changes <- out$changes
-  changes <- dplyr::filter(changes, ..., .by = .by)
-  out$changes <- changes
+  out$changes <- filter_changes_df(out$changes, node_labels(out), ..., .by = .by)
   out
+}
+
+# Subsets a changes changelog, evaluating the filter predicates with the
+# integer `node` column temporarily mapped to node labels (when the network is
+# labelled) so that changes can be filtered by name, e.g. `node == "Anakin"`.
+# The original (integer) rows are returned so the stored changelog is unchanged.
+filter_changes_df <- function(changes, labels = NULL, ..., .by = NULL){
+  if(is.null(changes) || nrow(changes) == 0)
+    return(dplyr::filter(changes, ..., .by = dplyr::all_of(.by)))
+  masked <- changes
+  if(length(labels) > 0 && is.numeric(masked[["node"]]))
+    masked[["node"]] <- labels[masked[["node"]]]
+  masked[[".filter_row"]] <- seq_len(nrow(changes))
+  kept <- dplyr::filter(masked, ..., .by = dplyr::all_of(.by))[[".filter_row"]]
+  changes[kept, , drop = FALSE]
 }
 
 #' @rdname manip_changes
@@ -295,7 +308,7 @@ select_changes.default <- function(.data, ..., .by = NULL){
 #' @export
 select_changes.igraph <- function(.data, ..., .by = NULL){
   changes <- igraph::graph_attr(.data, "changes")
-  changes <- tidygraph::select(changes, ..., .by = .by)
+  changes <- dplyr::select(changes, ...)
   igraph::graph_attr(.data, "changes") <- changes
   .data
 }
@@ -304,9 +317,8 @@ select_changes.igraph <- function(.data, ..., .by = NULL){
 select_changes.data.frame <- function(.data, ..., .by = NULL){
   out <- .data
   if(...length() == 0){
-    out <- dplyr::select(out, dplyr::any_of(c("node", "time", "var", "value")), 
-                         .by = .by)
-  } else out <- dplyr::select(out, ..., .by = .by)
+    out <- dplyr::select(out, dplyr::any_of(c("node", "time", "var", "value")))
+  } else out <- dplyr::select(out, ...)
   out
 }
 
@@ -427,7 +439,7 @@ gather_changes.igraph <- function(.data, time){
 
 #' @rdname manip_changes
 #' @examples
-#' collect_changes(fict_starwars, time = 3)
+#' apply_changes(fict_starwars, time = 3)
 #' @export
 apply_changes <- function(.data, time) UseMethod("apply_changes")
 
@@ -439,9 +451,9 @@ apply_changes.default <- function(.data, time){
 #' @export
 apply_changes.tbl_graph <- function(.data, time){
   out <- as.data.frame(as_nodelist(.data))
-  changes <- collect_changes(.data, time)
+  changes <- gather_changes(.data, time)
   if(is.character(changes$node)) 
-    changes$node <- match(changes$node, node_names(.data))
+    changes$node <- match(changes$node, node_labels(.data))
   if(is.character(changes$var)) 
     changes$var <- match(changes$var, net_node_attributes(.data))
   for(i in cli::cli_progress_along(1:nrow(changes), "Applying changes")){
@@ -454,6 +466,6 @@ apply_changes.tbl_graph <- function(.data, time){
   if(!is_labelled(.data)) out <- cbind(1:nrow(out), out)
   out <- as_tidygraph(igraph::graph_from_data_frame(as_edgelist(.data), 
                                                     vertices = out))
-  if(!is_labelled(.data)) out <- to_unnamed(out)
+  if(!is_labelled(.data)) out <- to_unlabelled(out)
   out
 }

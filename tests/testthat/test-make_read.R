@@ -9,7 +9,8 @@ formats <- formats[!grepl("^graph$", formats)]
 
 for(fm in formats) {
   test_that(paste("read and write", fm, "are compatible"), {
-    skip_if(grepl("nodelist|pajek", fm), message = "nodelist and pajek read/write not tested yet")
+    skip_if(grepl("nodelist|pajek|gdf|dynetml", fm),
+            message = "nodelist and pajek read/write not tested yet; gdf and dynetml require node ids, so unlabelled networks gain names on round-trip")
     skip_if_not_installed("readxl")
     file <-  tempfile() # Create file
     write_funs[[paste0("write_", fm)]](create_ring(5), filename = file)

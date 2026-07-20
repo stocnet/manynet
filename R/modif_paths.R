@@ -79,8 +79,12 @@ to_matching.default <- function(.data, mark = "type",
 
 #' @export
 to_matching.igraph <- function(.data, mark = "type", capacities = NULL){
-  if(length(unique(node_attribute(.data, mark)))>2)
-    snet_abort("This function currently only works with binary attributes.")
+  if(!is_twomode(.data) && identical(mark, "type"))
+    snet_abort(paste0("`to_matching()` requires a two-mode (bipartite) network, ",
+                      "or a binary nodal attribute passed to `mark` that ",
+                      "splits the nodes into two sides to match across."))
+  if(length(unique(node_attribute(.data, mark))) != 2)
+    snet_abort("`mark` must identify exactly two types or modes of nodes to match across.")
   if(is.null(capacities)){
     el <- igraph::max_bipartite_match(.data, 
                                       types = node_attribute(.data, mark))$matching
@@ -91,48 +95,68 @@ to_matching.igraph <- function(.data, mark = "type", capacities = NULL){
     out <- igraph::delete_vertices(out, "dummy")
     out <- to_twomode(out, node_attribute(.data, mark))
   } else {
-    if(length(capacities) == 1) 
-      capacities <- rep(capacities, net_dims(.data)[2])
-    as_matrix(.data)
-    
-    unmatched_m1 <- 1:net_dims(.data)[1]  # First mode nodes who haven't been matched yet
-    m1_matches <- list()  # Student -> College mapping
-    m2_matches <- list()  # College -> Students mapping
-    for (m2 in 1:net_dims(.data)[2]) {
-      m2_matches[[m2]] <- c()
-    }
-    
-    # Gale-Shapley Algorithm
-    while (length(unmatched_m1) > 0) {
-      m1 <- unmatched_m1[1]
-      student_prefs <- students[[student]]
-      
-      for (college in student_prefs) {
-        # If the college has capacity, admit the student
-        if (length(college_matches[[college]]) < capacities[[college]]) {
-          college_matches[[college]] <- c(college_matches[[college]], student)
-          student_matches[[student]] <- college
-          unmatched_students <- unmatched_students[-1]  # Remove the matched student
-          break
-        } else {
-          # If college is full, check if the student can replace a current match
-          current_students <- college_matches[[college]]
-          college_prefs <- colleges[[college]]
-          
-          # Check if the college prefers this student over any current matches
-          worst_student <- current_students[which.max(sapply(current_students, function(s) which(college_prefs == s)))]
-          if (which(college_prefs == student) < which(college_prefs == worst_student)) {
-            # Replace the worst student
-            college_matches[[college]] <- setdiff(current_students, worst_student)
-            college_matches[[college]] <- c(college_matches[[college]], student)
-            student_matches[[student]] <- college
-            unmatched_students <- c(unmatched_students, worst_student)
-            unmatched_students <- unmatched_students[unmatched_students != student]
-            break
-          }
+    m <- as_matrix(.data)
+    n1 <- mode_nodes(.data)[1]  # proposing mode (e.g. students)
+    n2 <- mode_nodes(.data)[2]  # receiving mode with capacities (e.g. colleges)
+    if(length(capacities) == 1)
+      capacities <- rep(capacities, n2)
+    if(length(capacities) != n2)
+      snet_abort(paste0("`capacities` must be length 1 or ", n2,
+                        ", the number of nodes in the second mode."))
+    if(is.null(rownames(m))) rownames(m) <- seq_len(n1)
+    if(is.null(colnames(m))) colnames(m) <- seq_len(n2)
+    m1_labs <- rownames(m)
+    m2_labs <- colnames(m)
+
+    # Derive preference orderings from tie weights (higher weight = more
+    # preferred); only existing (non-zero) ties are acceptable matches.
+    m1_prefs <- lapply(seq_len(n1), function(i){
+      ord <- order(m[i, ], decreasing = TRUE, na.last = TRUE)
+      w <- m[i, ord]
+      ord[!is.na(w) & w > 0]
+    })
+    m2_prefs <- lapply(seq_len(n2), function(j){
+      ord <- order(m[, j], decreasing = TRUE, na.last = TRUE)
+      w <- m[ord, j]
+      ord[!is.na(w) & w > 0]
+    })
+
+    # Gale-Shapley (college admissions / many-to-one) algorithm
+    m1_match <- rep(NA_integer_, n1)      # proposer -> receiver
+    m2_matches <- vector("list", n2)      # receiver -> proposers currently held
+    next_prop <- rep(1L, n1)              # next preference index per proposer
+    unmatched <- which(lengths(m1_prefs) > 0)
+    while(length(unmatched) > 0){
+      i <- unmatched[1]
+      prefs <- m1_prefs[[i]]
+      if(next_prop[i] > length(prefs)){   # proposer exhausted its preferences
+        unmatched <- unmatched[-1]
+        next
+      }
+      j <- prefs[next_prop[i]]
+      next_prop[i] <- next_prop[i] + 1L
+      if(!(i %in% m2_prefs[[j]])) next     # receiver finds proposer unacceptable
+      if(length(m2_matches[[j]]) < capacities[j]){
+        m2_matches[[j]] <- c(m2_matches[[j]], i)
+        m1_match[i] <- j
+        unmatched <- unmatched[-1]
+      } else {
+        held <- m2_matches[[j]]
+        rank_of <- function(s) match(s, m2_prefs[[j]])
+        worst <- held[which.max(vapply(held, rank_of, numeric(1)))]
+        if(rank_of(i) < rank_of(worst)){   # receiver prefers i to its worst hold
+          m2_matches[[j]] <- c(setdiff(held, worst), i)
+          m1_match[i] <- j
+          m1_match[worst] <- NA_integer_
+          unmatched <- c(unmatched[-1], worst)
         }
+        # otherwise i stays unmatched and proposes to its next preference
       }
     }
+
+    res <- matrix(0, nrow = n1, ncol = n2, dimnames = list(m1_labs, m2_labs))
+    for(i in which(!is.na(m1_match))) res[i, m1_match[i]] <- 1
+    out <- as_igraph(res, twomode = TRUE)
   }
   out
 }
@@ -235,7 +259,7 @@ to_mentoring.igraph <- function(.data, elites = 0.1){
   }
   out <- data.frame(from = names(out),
                     to = as.character(out), row.names = NULL)
-  if(!is_labelled(.data)) out <- to_unnamed(out)
+  if(!is_labelled(.data)) out <- to_unlabelled(out)
   as_igraph(out)
 }
 

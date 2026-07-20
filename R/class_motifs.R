@@ -2,13 +2,13 @@
 make_node_motif <- function(out, .data) {
   class(out) <- c("node_motif", class(out))
   if(is_twomode(.data)) attr(out, "mode") <- node_is_mode(.data)
-  if(is_labelled(.data)) attr(out, "dimnames")[[1]] <- node_names(.data)
+  if(is_labelled(.data)) attr(out, "dimnames")[[1]] <- node_labels(.data)
   out
 }
 
 make_network_motif <- function(out, .data) {
   class(out) <- c("network_motif", class(out))
-  attr(out, "mode") <- net_dims(.data)
+  attr(out, "mode") <- mode_nodes(.data)
   attr(out, "call") <- deparse(sys.calls())
   out
 }

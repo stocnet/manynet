@@ -115,11 +115,11 @@ is_grand <- function(.data){
     return(out)
   } else {
     name <- sub(".*\\$", "", name)
-    if (name %in% igraph::list.vertex.attributes(x)) {
+    if (name %in% igraph::vertex_attr_names(x)) {
       return(igraph::vertex_attr(x, name))
-    } else if (name %in% igraph::list.edge.attributes(x)) {
+    } else if (name %in% igraph::edge_attr_names(x)) {
       return(igraph::edge_attr(x, name))
-    } else if (name %in% igraph::list.graph.attributes(x)) {
+    } else if (name %in% igraph::graph_attr_names(x)) {
       return(igraph::graph_attr(x, name))
     } else {
       snet_abort("No attribute {.var name} found in this object")
@@ -149,7 +149,7 @@ is_grand <- function(.data){
   attrs <- c(
     paste0("node$", net_node_attributes(x)),
     paste0("tie$", net_tie_attributes(x)),
-    paste0("net$", igraph::list.graph.attributes(x))
+    paste0("net$", igraph::graph_attr_names(x))
   )
   # Filter by the pattern (so typing g$co will suggest "color")
   grep(pattern, attrs, value = TRUE)

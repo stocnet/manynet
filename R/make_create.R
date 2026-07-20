@@ -114,73 +114,6 @@ create_explicit <- function(...){
   as_tidygraph(res)
 }
 
-# Sets ####
-
-#' Making motifs
-#' @name make_motifs
-#' @description
-#'   `create_motifs()` is used to create a list of networks that represent the
-#'   subgraphs or motifs corresponding to a certain number of nodes and direction.
-#'   Note that currently only `n==2` to `n==4` is implemented,
-#'   and the latter only for undirected networks.
-#' 
-#' @inheritParams make_create
-#' @family makes
-#' @export
-create_motifs <- function(n, directed = FALSE){
-  directed <- infer_directed(n, directed)
-  n <- infer_n(n)
-  if(!directed & n==2){
-    return(list(Null = mutate_nodes(create_empty(2),
-                                 name = c("A","B")),
-                M = create_explicit(A--B)))
-  } else if(directed & n==2){
-    return(list(Null = mutate_nodes(create_empty(2, directed = TRUE),
-                                 name = c("A","B")),
-                Asymmetric = create_explicit(A-+B),
-                Mutual = create_explicit(A++B)))
-  } else if(!directed & n==3){
-    return(list(Empty = mutate_nodes(create_empty(3),
-                                     names = c("A","B","C")),
-                Edge = create_explicit(A--B, C),
-                Path = create_explicit(A--B--C),
-                Triangle = create_explicit(A--B--C--A)))
-  } else if(directed & n==3){
-    return(list(`003` = mutate_nodes(create_empty(3, directed = TRUE),
-                                     names = c("A","B","C")),
-                `012` = create_explicit(A-+B, C),
-                `102` = create_explicit(A++B, C),
-                `021D` = create_explicit(A-+B, A-+C),
-                `021U` = create_explicit(A+-B, A+-C),
-                `021C` = create_explicit(A-+B, B-+C),
-                `111D` = create_explicit(A++B, C-+B),
-                `111U` = create_explicit(A++B, B-+C),
-                `030T` = create_explicit(A-+B, A-+C, B-+C),
-                `030C` = create_explicit(A-+B, B-+C, C-+A),
-                `201` = create_explicit(A++B, B++C),
-                `120D` = create_explicit(A++B, C-+A:B),
-                `120U` = create_explicit(A++B, A:B-+C),
-                `120C` = create_explicit(A++B, A-+C-+B),
-                `210` = create_explicit(A++B, B++C, A-+C),
-                `300` = create_explicit(A++B++C++A)))
-  } else if(!directed & n==4){
-    return(list(E4 = mutate_nodes(create_empty(4),
-                                  name = c("A","B","C","D")),
-                I4 = create_explicit(A--B, C, D),
-                H4 = create_explicit(A--B, C--D),
-                L4 = create_explicit(A--B--C, D),
-                D4 = create_explicit(A--B--C--A, D),
-                U4 = create_explicit(A--B--C--D),
-                Y4 = create_explicit(A--B--C, B--D),
-                P4 = create_explicit(A--B--C, B--D--C),
-                C4 = create_explicit(A--B--C--D--A),
-                Z4 = create_explicit(A--B--C--D--A--C),
-                X4 = create_explicit(A--B--C--D--A--C, B--D)))
-  } else 
-    snet_unavailable("Motifs not yet available for that kind of network.")
-}
-
-
 # Defined ####
 
 #' Making networks with defined structures
@@ -612,7 +545,7 @@ create_core <- function(n, directed = FALSE, mark = NULL) {
 #'   create_windmill(6)
 #' @export
 create_windmill <- function(n) {
-  total_nodes <- n
+  total_nodes <- infer_n(n)
   
   if (length(total_nodes) == 1) {
 
@@ -706,6 +639,7 @@ create_windmill <- function(n) {
 #'   create_cycle(6)
 #' @export
 create_cycle <- function(n, directed = FALSE){
+  n <- infer_n(n)
   # Helper: Create edge list for unimodal cycle
   unimodal_cycle <- function(n_nodes) {
     edges <- data.frame(
@@ -743,6 +677,7 @@ create_cycle <- function(n, directed = FALSE){
 #'   create_wheel(6)
 #' @export
 create_wheel <- function(n, directed = FALSE) {
+  n <- infer_n(n)
   if (length(n) == 1) {
     if (n < 4) {
       snet_abort("At least 4 nodes required to form a wheel graph.")
@@ -805,8 +740,13 @@ infer_dims <- function(object) {
   }
 }
 
-infer_n <- function(n) {
-  if (is_manynet(n)) n <- infer_dims(n)
+infer_n <- function(n, data = NULL) {
+  if (is.null(n)) {
+    if (is.null(data))
+      snet_abort(paste("Please provide either a network (to `.data`)",
+                       "or a number of nodes (to `n`)."))
+    n <- infer_dims(data)
+  } else if (is_manynet(n)) n <- infer_dims(n)
   if (length(n) > 2) snet_abort(paste("`n` should be a single integer for a one-mode network or",
                              "a vector of two integers for a two-mode network."))
   n
@@ -817,10 +757,15 @@ infer_directed <- function(n, directed) {
   directed
 }
 
+infer_signed <- function(n, signed) {
+  if(is_manynet(n)) signed <- is_signed(n)
+  signed
+}
+
 infer_outdegree <- function(n, outdegree) {
   if (is.null(outdegree) && is_manynet(n)){
     outdegree <- .node_deg(n, direction = "out")
-    if(is_twomode(n)) outdegree <- outdegree[1:net_dims(n)[1]]
+    if(is_twomode(n)) outdegree <- outdegree[1:mode_nodes(n)[1]]
   } 
   outdegree
 }
@@ -828,7 +773,7 @@ infer_outdegree <- function(n, outdegree) {
 infer_indegree <- function(n, indegree) {
   if (is.null(indegree) && is_manynet(n)){
     indegree <- .node_deg(n, direction = "in")
-    if(is_twomode(n)) indegree <- indegree[(net_dims(n)[1]+1):sum(net_dims(n))]
+    if(is_twomode(n)) indegree <- indegree[(mode_nodes(n)[1]+1):sum(mode_nodes(n))]
   } 
   indegree
 }

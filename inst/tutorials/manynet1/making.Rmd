@@ -1,0 +1,822 @@
+---
+title: "Making Network Data"
+author: "by James Hollway"
+output:
+  learnr::tutorial:
+    theme: flatly
+runtime: shiny_prerendered
+description: >
+  This tutorial covers several ways to make network data,
+  including identifying data bundled in manynet and other packages,
+  importing and exporting data from outside of R,
+  and coercing that data between the many classes used for network analysis in R.
+---
+
+```{r setup, include=FALSE, purl=FALSE}
+library(learnr)
+library(manynet)
+library(network)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+<style>
+html { font-size: 115%; }
+.callout {
+  border-left: 3px solid #D6A929;
+  padding: 0.1em 1em;
+  margin: 1.2em 0;
+}
+.callout-label { color: #D6A929; }
+.page-toc { font-style: italic; }
+.page-toc-link { color: #D6A929; cursor: pointer; text-decoration: underline; }
+.tutorialTitle { color: #D6A929 !important; }
+#tutorial-topic .nav-link { color: #D6A929 !important; }
+.section a:not(.btn) { color: #D6A929; }
+.section a:not(.btn):hover { color: #B8901F; }
+.btn-tutorial-run,
+.btn-tutorial-run:hover,
+.btn-tutorial-run:focus,
+.btn-tutorial-run:active {
+  background-color: #D6A929;
+  border-color: #D6A929;
+  color: #fff;
+}
+</style>
+
+## Introduction
+
+<img src="https://c.tenor.com/bibDxkkQ0YAAAAAd/tenor.gif" alt="gif of man trashing own computer"/>
+
+Most network analysts want to use network analysis to better understand empirical networks,
+but before turning to ready-made datasets, it helps to see what a network actually
+_is_, stripped down to its simplest form.
+This tutorial starts by building a tiny network entirely by hand,
+so that nodes and ties stop being abstract jargon and become something concrete.
+
+From there, `{manynet}` offers various functions for finding, importing, and
+coercing networks into formats you can use. This tutorial covers:
+
+- writing a small network out by hand
+- using data bundled in `{manynet}`, `{migraph}`, or other packages
+- importing and exporting data from outside of R
+
+It also covers how to _describe_ that data once you have it,
+and how to _coerce_ it between the many different classes
+(matrices, edgelists, `igraph`, `network`, `tidygraph` objects)
+used for network analysis in R.
+
+One might additionally create structured networks algorithmically
+(lattices, rings, stars, and the like) or stochastically generate random ones,
+and `{manynet}` includes functions for this too,
+but we cover these in the later tutorials on topology and diffusion
+(found in the `{netrics}` and `{migraph}` packages respectively).
+A companion tutorial, "Manipulating Data",
+covers how to modify, reformat, and transform network data once you have collected it.
+Tutorials on visualising networks can be found in the `{autograph}` package.
+
+### Aims
+
+By the end of this tutorial, you should be able to:
+
+- [ ] &nbsp; Build a small network by hand with `create_explicit()`
+- [ ] &nbsp; Find and load the network datasets bundled in a package
+- [ ] &nbsp; Read a network's printout and describe its size and type
+- [ ] &nbsp; Coerce networks between classes with the `as_*()` functions
+- [ ] &nbsp; Import network data from edgelists, nodelists, and other file formats
+- [ ] &nbsp; Export a network to work with it outside R
+
+## Making a network by hand
+
+Let's start from scratch. 
+Stripped to its essentials, a `r gloss("network")` is simply a set of 
+`r gloss("nodes","node")` (also called vertices or actors) and the 
+`r gloss("ties","tie")` (also called edges or links) connecting them.
+There may be other features, such as nodal or tie attributes, 
+but the without these two elements, there is no network.
+
+::: {.callout}
+<span class="callout-label">**New to network vocabulary?**:</span> 
+Throughout this tutorial, key terms are italicised:
+hover over them for a definition,
+and a full glossary of the terms used appears at the end of the tutorial.
+:::
+
+The quickest way to get a feel for how a network is constructed is to type one out yourself.
+`{manynet}`'s `create_explicit()` lets you do just that,
+naming nodes and ties directly in a compact formula.
+Ties are written with a dash, `-`, between two node names,
+and separate ties are divided by commas.
+So `create_explicit(A-B, B-C, C-A)` makes a triangle between A, B, and C.
+You can add an unconnected node (an `r gloss("isolate")`) just by naming it
+after a comma, e.g. `create_explicit(A-B, C)`.
+**Run the following to build a small friendship network by hand.**
+
+```{r explicit, exercise = TRUE}
+create_explicit(Amir-Bao, Bao-Chen, Chen-Amir, Dara)
+```
+
+Notice the printout describes a `r gloss("labelled,", "label")` `r gloss("undirected")` network of 4 nodes and 3 ties:
+the three names joined by dashes, plus Dara as an `r gloss("isolate")`.
+
+To make a `r gloss("directed")` network instead,
+add a `+` on the arrowhead end of a tie:
+`A-+B` points from A to B, `A+-B` points from B to A,
+and `A+-+B` makes a mutual (`r gloss("reciprocated","reciprocity")`) pair.
+**Try defining a network where Amir nominates the others.**
+
+```{r explicit-dir, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r explicit-dir-hint-1, purl=FALSE}
+# Replace each dash with -+ pointing away from Amir, e.g.:
+# create_explicit(Amir-+Bao, ...)
+```
+
+```{r explicit-dir-solution}
+create_explicit(Amir-+Bao, Amir-+Chen, Amir-+Dara)
+# Advanced: You could also write this as:
+# create_explicit(Amir-+Bao:Chen:Dara)
+```
+
+The printout should now say _directed_, and report _arcs_ rather than ties
+(an `r gloss("arc")` is a directed tie).
+
+::: {.callout}
+<span class="callout-label">**Going further**:</span> 
+`{manynet}` can even help you _collect_ an ego network through an interactive interview, 
+with `collect_ego()`.
+It asks you, at the R console, for ego's name, the relationship,
+and each of ego's contacts (alters) in turn, then builds the network for you.
+Because it works by asking questions and waiting for your (or your respondents') typed replies,
+it cannot run inside this tutorial window —
+but try `obj <- collect_ego()` in your own R console sometime to see it work!
+:::
+
+Typing out ties like this is manageable for very small networks,
+but imagine doing it for networks of 100 nodes or more...
+it would be tedious, slow, and easy to get wrong.
+Fortunately, there are lots of data already collected and available for use in R packages, 
+or that can be imported from files.
+Let's see what `{manynet}` already has on offer.
+
+::: {.callout}
+<span class="callout-label">**In brief**:</span> `create_explicit()` builds a small network from a formula of named
+ties — `-` for an (undirected) tie, `-+`/`+-`/`+-+` for directed arcs,
+and a lone name for an isolate, separated by commas.
+For larger hand-collected data you would usually import an edgelist (see below),
+and `collect_ego()` can gather an ego network interactively at the console.
+:::
+
+## Packaged data
+
+<span class="page-toc">On this page:
+<span class="page-toc-link" onclick="document.getElementById('section-packaged-finding-the-data').scrollIntoView({behavior:'auto',block:'start'});">Finding the data</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-calling-the-data').scrollIntoView({behavior:'auto',block:'start'});">Calling the data</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-packaged-free-play').scrollIntoView({behavior:'auto',block:'start'});">Free play</span></span>
+
+As many R packages do, `{manynet}` includes a number of datasets used for
+teaching and testing the functions contained in the package.
+These are sometimes classical network datasets,
+such as the [Southern Women](https://stocnet.github.io/manynet/reference/ison_southern_women.html) dataset
+or Zachary's [Karateka](https://stocnet.github.io/manynet/reference/ison_karateka.html) dataset,
+and sometimes new data with neat themes, features, or attributes that make
+them exemplar teaching or testing data.
+
+### Finding the data {#packaged-finding-the-data}
+
+To see what data is in the package,
+you can explore the documentation available on the website  (see [here](https://stocnet.github.io/manynet/reference/index.html#data))
+or use a function in R to list the data available in the package.
+
+One function, available in base R (with no added packages), is `data(package = "manynet")`.
+**Type this in to the box below to see what datasets are available in the package.**
+There are buttons to start over, receive any hints/solutions available,
+as well as to run the code you have entered to discover its effects.
+Try it out now!
+
+```{r pkgdata, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r pkgdata-solution}
+data(package = "manynet")
+```
+
+On the left of the output are the names of the objects
+(starting with `fict_*` for fictional networks, `irps_*` for networks from
+international relations and political science, and `ison_*` for classical
+networks in the teaching literature).
+On the right is a brief description of the networks and their canonical source.
+Do you recognise any of the datasets?
+
+`{manynet}` also includes its own way of identifying network data in a package.
+`table_data()` returns a table of the network datasets in a package,
+along with information about the number of nodes, ties, and various other features.
+**Run the following code to see this in action.**
+
+```{r table_data, exercise=TRUE}
+table_data()
+```
+
+Let's say that we are only interested in `r gloss("two-mode","twomode")` network data,
+that is, networks where the nodes belong to two different sets
+(such as people and the events they attend)
+and ties connect only nodes from different sets.
+How can we filter this table so that only those networks that are two-mode are retained?
+`table_data()` returns a regular tibble (data frame),
+so we can use `{dplyr}`'s `filter()` on any of its logical columns.
+
+::: {.callout}
+<span class="callout-label">**Beginner note**:</span> The `|>` symbol below is called a 'pipe'.
+It passes the result of the function on its left on to the function on its right,
+so `table_data() |> dplyr::filter(twomode)` means
+"take the table of datasets, _then_ keep only the rows where `twomode` is TRUE".
+Piping or 'chaining' functions like this is very common in modern R,
+and we will use it throughout these tutorials.
+:::
+
+```{r twomode-filter, exercise=TRUE}
+table_data() |> dplyr::filter(twomode)
+```
+
+```{r twomode-question, echo = FALSE, purl=FALSE}
+tdat <- table_data()
+n2m <- sum(tdat$twomode)
+question("How many two-mode networks are available in the manynet and migraph packages together? (Hint: count the rows of the filtered table, or note the dimensions that tibbles print above the table.)",
+  answer(as.character(n2m),
+         correct = TRUE,
+         message = paste("The filtered table has", n2m, "rows, one per two-mode dataset.")),
+  answer(as.character(nrow(tdat)),
+         message = paste("This is the total number of datasets across the two packages;",
+                         "only some of them are two-mode.")),
+  answer(as.character(sum(!tdat$twomode)),
+         message = "This is the number of datasets that are _not_ two-mode."),
+  answer(as.character(sum(tdat$directed)),
+         message = "This is the number of _directed_ datasets, not two-mode ones."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
+### Calling the data
+
+Ok, so we can see that there are a number of very interesting datasets
+available in this package.
+How do we access and use this data?
+
+The easiest way to call the data is just to make sure that the package
+is loaded using the command `library(manynet)`,
+and then use the selected dataset as named above.
+^[Alternatively, the data can be called directly out of the package like this:
+`example_name <- manynet::ison_adolescents`, but since we think
+you will probably want all of the other functions available in `{manynet}`
+at your disposal, you may as well just load the package entirely.]
+**Try calling `ison_adolescents` by first loading the `{manynet}` 'library'
+and then just typing `ison_adolescents` to see what happens.**
+
+```{r calldata, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r calldata-hint-1, purl=FALSE}
+# First load the package with library(),
+# then type the name of the dataset on its own line.
+```
+
+```{r calldata-solution}
+library(manynet)
+ison_adolescents
+```
+
+If it worked, you should see a printout describing an undirected network
+of 8 nodes and 10 ties, followed by tables of its nodes and ties.
+We will learn how to read this printout in the next section.
+
+**Choose your own data**: The worked examples below use small, clean, classical
+datasets so that the output is easy to read.
+But wherever you see a **"Your turn"** or **"Free play"** box,
+you are encouraged to swap in a network that interests _you_.
+The datasets in `{manynet}` come in three flavours,
+and you can think of them as a rough difficulty ladder:
+
+- **Classic** (`ison_*`) — small, tidy, textbook networks. _Easiest to read._
+- **Fiction** (`fict_*`) — mid-sized networks from film and TV
+  (Lord of the Rings, Grey's Anatomy, Star Wars, ...). _A step up._
+- **Real-world** (`irps_*`) — larger networks from international relations and
+  political science. _Closest to real analysis._
+
+Because every `{manynet}` function works on any network of any class or type,
+you can substitute any of these datasets into the exercises and everything
+will still work — only the numbers will change.
+To browse what is on offer, and even filter by flavour, use `table_data()`
+to list the two-mode fiction networks, for example:
+
+```{r fict2-solution, echo=TRUE}
+table_data() |> dplyr::filter(twomode) |> dplyr::filter(grepl("fict", dataset))
+```
+
+### Free play {#packaged-free-play}
+
+**See whether you can call up other datasets now too.**
+You won't need to load the `{manynet}` package again (it'll stay loaded),
+but identify a network that interests you and then call/print it.
+Not sure which to pick? Here is one suggestion per flavour —
+choose whichever appeals, or find your own with `table_data()`:
+
+| Classic (small, easy) | Fiction (moderate) | Real-world (larger) |
+|---|---|---|
+| `ison_adolescents` (8 nodes) | `fict_lotr` (36 nodes) | `irps_usgeo` (50 nodes) |
+| `ison_brandes` (11 nodes) | `fict_greys` (53 nodes) | `irps_books` (105 nodes) |
+
+```{r freecall, exercise = TRUE, purl=FALSE}
+
+```
+
+Whichever you choose, the printout has the same shape you saw above:
+a one-line summary, then a table of nodes and a table of ties.
+Try running `net_nodes()` and `net_ties()` on your chosen network too
+(we meet these functions properly in the next section).
+
+::: {.callout}
+<span class="callout-label">**In brief**:</span> `data(package = "manynet")` and `table_data()` list the datasets
+bundled with a package, and `table_data()` additionally reports their
+main features in a filterable table.
+Once the package is loaded with `library(manynet)`,
+any dataset can be used just by typing its name.
+:::
+
+## Describing networks
+
+<span class="page-toc">On this page:
+<span class="page-toc-link" onclick="document.getElementById('section-reading-prints').scrollIntoView({behavior:'auto',block:'start'});">Reading prints</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-grabbing-details').scrollIntoView({behavior:'auto',block:'start'});">Grabbing details</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-describing-free-play').scrollIntoView({behavior:'auto',block:'start'});">Free play</span></span>
+
+### Reading prints
+
+All of the network data available in `{manynet}` (and `{migraph}`) are in a
+special `tbl_graph` format, from the `{tidygraph}` package,
+that makes it compatible, flexible, and transparent.
+When you call one of these data objects, some information about the type of network it is,
+how many nodes and ties it has, and the first few examples of nodes and ties is given.
+Let's see whether we can make sense of the main features of this network.
+**Run the following line and then answer the questions below.**
+
+```{r calldatad, exercise=TRUE}
+ison_adolescents
+```
+
+The first line of the printout summarises the network's type and dimensions. 
+The 'Nodes' table then lists the nodes and any nodal attributes,
+and the 'Ties' table lists which node each tie goes 'from' and 'to'.
+Only the first few rows of each table are shown.
+Look for the '... with x more' note beneath each table to get the full counts.
+
+```{r tblgraph-nodes, echo = FALSE, purl=FALSE}
+question("How many nodes does this network have?",
+  answer(8,
+         correct = TRUE,
+         message = "Six nodes are listed plus the footer notes '2 more'."),
+  answer(10,
+         message = "There are 10 ties."),
+  answer(1,
+         message = "There is one nodal variable ('name')."),
+  answer(2,
+         message = "There are two more nodes beyond what is listed."),
+  answer(6,
+         message = "There are six nodes/names shown, but the info underneath says there are 2 more."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
+```{r tblgraph-ties, echo = FALSE, purl=FALSE}
+question("How many ties does this network have?",
+  answer(4,
+         message = "There are four more ties beyond the six that are listed."),
+  answer(10,
+         correct = TRUE,
+         message = "There are 10 ties: six listed plus the '4 more' in the footer."),
+  answer(1,
+         message = "There is one network/graph."),
+  answer(2,
+         message = "There are two tie variables listing the nodes the tie is sent from and to."),
+  answer(6,
+         message = "There are six ties shown, but the info underneath says there are 4 more."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
+```{r tblgraph-type, echo = FALSE, purl=FALSE}
+question("What kind of network is this? Choose all that apply.",
+  answer("Undirected",
+         correct = TRUE,
+         message = "Correct: the description says 'undirected' and the ties have no direction."),
+  answer("Labelled",
+         correct = TRUE,
+         message = "Correct: the nodes have names, so the network is labelled."),
+  answer("Two-mode",
+         message = "There is only one set of nodes here (adolescents), so it is one-mode."),
+  answer("Complex",
+         message = "A complex network would contain self-ties (loops), and none appear here."),
+  answer("Signed",
+         message = "A signed network's ties would carry a positive/negative 'sign' attribute."),
+  answer("Weighted",
+         message = "A weighted network's ties would carry a numeric 'weight' attribute."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
+You can now describe the main dimensions and type of network.
+In the visualisation tutorial (in the `{autograph}` package),
+we will see how we can describe such networks visually.
+
+### Grabbing details
+
+We can ask other questions of this data too.
+`{manynet}` uses a simple function naming convention so that
+you always know what you can expect a function to return:
+
+- `net_*()` functions usually return one value for the network or graph,
+whether that be a string like `Evelyn` or some number like `3` or `-0.003`
+- `node_*()` functions always return a vector of values
+as long as the number of nodes or vertices in the network (of any mode)
+- `tie_*()` functions always return a vector of values
+as long as the number of ties or edges in the network (of any sign or type)
+- `mode_*()` functions always return a vector of values
+as long as the number of modes or nodesets in the network
+- `layer_*()` functions always return a vector of values
+as long as the number of layers or types of ties in a network
+
+To find out how many nodes are in the network, use `net_nodes()`.
+To find out how many nodes are in each mode, use `mode_nodes()`.
+To find out the names of those nodes, use `node_labels()`.
+**Use such functions to find out:**
+
+a) how many nodes are in the `ison_southern_women` network
+b) how many nodes are in each mode
+c) how many ties are in the network
+d) what nodal attributes there are in the network
+e) what the names of the nodes are
+
+```{r properties, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r properties-hint-1, purl=FALSE}
+# Each answer uses one function on the same dataset, e.g.:
+# net_nodes(ison_southern_women)
+# For (c) and (d), guess the function names from the convention above:
+# ties are counted with net_ties(),
+# and nodal attributes listed with net_node_attributes().
+```
+
+```{r properties-solution}
+net_nodes(ison_southern_women)
+mode_nodes(ison_southern_women)
+net_ties(ison_southern_women)
+net_node_attributes(ison_southern_women)
+node_labels(ison_southern_women)
+```
+
+To check your results: this network has 32 nodes in total,
+18 in the first mode and 14 in the second,
+and 89 ties between them.
+
+There are a bunch of logical checks for many common properties or features of networks.
+For example, one can check whether a network `is_twomode()`, `is_directed()`, or `is_labelled()`.
+Remember, all `is_*()` functions work on any compatible class.
+
+### Free play {#describing-free-play}
+
+**Your turn**: `ison_southern_women` is a _two-mode_ (or bipartite) network,
+one of the more interesting network types.
+Run the same battery of functions on another two-mode network to compare.
+Pick whichever flavour appeals:
+
+| Classic | Real-world |
+|---|---|
+| `ison_southern_women` (women × events) | `irps_revere` (Paul Revere: people × organisations) |
+
+```{r descr-free-play, exercise = TRUE, purl=FALSE}
+
+```
+
+(The fiction two-mode networks such as `fict_actually` are also _multiplex_,
+which adds a complication we set aside for now.)
+Whatever you choose, `is_twomode()` should return `TRUE`,
+and `mode_nodes()` should return two numbers rather than one.
+
+::: {.callout}
+<span class="callout-label">**In brief**:</span> When printed, networks report their type, dimensions,
+and tables of nodes and ties.
+`net_*()` functions return one value about the whole network,
+`node_*()` functions return one value per node,
+`tie_*()` functions return one value per tie,
+`mode_*()` functions return one value per mode,
+`layer_*()` functions return one value per layer,
+and `is_*()` functions return TRUE/FALSE checks of network properties.
+:::
+
+## From class to class
+
+<span class="page-toc">On this page:
+<span class="page-toc-link" onclick="document.getElementById('section-network-class-objects').scrollIntoView({behavior:'auto',block:'start'});">Network class objects</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-class-coercion').scrollIntoView({behavior:'auto',block:'start'});">Class coercion</span></span>
+
+### Network class objects
+
+We can describe and work with networks from other R packages too,
+not just those in the `tbl_graph` format.
+For example, another commonly used package in network analysis is `{network}`,
+which includes a few example datasets of its own.
+**Can you remember how to find out which data are available in this package?
+Find out, and call the last dataset in the list.**
+
+```{r netdata, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r netdata-hint-1, purl=FALSE}
+# You may need to call the data out of this package directly,
+# such as:
+# data(flo, package = "network")
+```
+
+```{r netdata-solution}
+data(package = "network")
+data(flo, package = "network")
+flo
+```
+
+This data uses quite a different class to what we encountered above.
+It prints out the full adjacency matrix of the Florentine network,
+but as a `network`-class object (i.e. from the `{network}` package).
+This is no problem for `{manynet}` (or `{migraph}`),
+since every included function works the same on any of the compatible classes,
+but in case you would like to work with a network in a particular class,
+or it needs to be in a particular format for further work (e.g. for use with `{ergm}`),
+then `{manynet}` has you covered for that too.
+
+### Class coercion
+
+Coercing networks between different classes of objects uses the `as_*()` functions.
+'Coercion' just means converting an object from one class to another,
+here for example from a `network`-class object to an `igraph` or `tbl_graph` object.
+These functions will do their best to coerce data from the current class of the object
+to the class named in the function.
+Some classes have 'slots' or recognition for some kinds of information
+that others don't.
+For example, coercing a `tbl_graph` into an edgelist will sacrifice all the information
+about nodal attributes.
+Still, we aim for these functions to be as lossless as possible and welcome feedback
+that highlights how these translations can be improved.
+**Let's see whether we can coerce our 'flo' network into a `tbl_graph` ('tidygraph') class object.**
+Print the object before and after coercing it, so that you can see what has changed.
+
+```{r nettotbl, exercise = TRUE, exercise.setup = "netdata", purl=FALSE}
+
+```
+
+```{r nettotbl-hint-1, purl=FALSE}
+# Fill in the blanks (this is a template, not runnable code):
+# flo                          # print the original
+# _____ <- as_t_____(_____)    # coerce it
+```
+
+```{r nettotbl-hint-2, purl=FALSE}
+# Fill in the blank (this is a template, not runnable code):
+# flo <- as_tidygraph(_____)
+```
+
+```{r nettotbl-solution}
+flo
+flo <- as_tidygraph(flo)
+flo
+```
+
+Compare the two printouts:
+the same network that printed as a large adjacency matrix of 0s and 1s
+now prints as a compact description with separate tables of nodes and ties.
+No information about the network itself has been lost —
+only the 'container' has changed.
+
+```{r nettotblquest, echo = FALSE, purl=FALSE}
+question("What are there 16 of in this network?",
+  answer("Nodes",
+         correct = TRUE,
+         message = "The printout reports 16 nodes (the Florentine families)."),
+  answer("Ties",
+         message = "The printout reports 20 ties among these families."),
+  answer("Reciprocated ties",
+         message = "This network is undirected, so reciprocation is not defined here."),
+  answer("Loops",
+         message = "There are no self-ties in this network."),
+  answer("Components",
+         message = "Almost all these nodes are connected in a single component."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
+Other packages that include network data include
+David Schoch's descriptively named [`{networkdata}`](http://networkdata.schochastics.net/) package.
+The data in this package are `{igraph}`-class objects.
+Can you coerce one of the datasets in this package
+into a tidygraph format? Into a network format?
+Into a matrix? Into an edgelist?
+
+::: {.callout}
+<span class="callout-label">**In brief**:</span> The `as_*()` functions (`as_igraph()`, `as_tidygraph()`,
+`as_network()`, `as_matrix()`, `as_edgelist()`) coerce network data
+from any compatible class into the named class,
+as losslessly as possible.
+Since all `{manynet}` functions work on all compatible classes,
+you rarely _need_ to coerce, but it is there when another package expects
+a specific format.
+:::
+
+## External data
+
+<span class="page-toc">On this page:
+<span class="page-toc-link" onclick="document.getElementById('section-external-finding-data').scrollIntoView({behavior:'auto',block:'start'});">Finding data</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-importing-edgelists').scrollIntoView({behavior:'auto',block:'start'});">Importing edgelists</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-exporting-edgelists').scrollIntoView({behavior:'auto',block:'start'});">Exporting edgelists</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-importing-other-formats').scrollIntoView({behavior:'auto',block:'start'});">Importing other formats</span></span>
+
+### Finding data {#external-finding-data}
+
+Researchers will regularly find themselves needing to import and work
+with network data from outside of R.
+There are a great number of networks datasets and data resources available online.
+Some of these are specifically social networks datasets,
+while others are more general datasets that can (also) be analysed as networks.
+Some strong collections of networks datasets can be found at the following locations:
+
+- [UCINET data](https://sites.google.com/site/ucinetsoftware/datasets?authuser=0)
+- [Pajek data](http://vlado.fmf.uni-lj.si/pub/networks/data/)
+- [GML datasets](http://www-personal.umich.edu/~mejn/netdata/)
+- [UCIrvine Network Data Repository](http://networkdata.ics.uci.edu/)
+- [KONECT project](http://konect.cc/)
+- [SNAP Stanford Large Network Dataset Collection](http://snap.stanford.edu/data/)
+
+These resources contain data in a range of different formats though.
+Some are specifically made to work with certain software,
+others rely on open standards,
+and still others keep data in a very standard edgelist (and perhaps nodelist) format
+in .csv files or similar.
+Fortunately, `{manynet}` has functions to help with importing data from such formats too.
+
+### Importing edgelists
+
+One format most users are long familiar with is Excel.
+In Excel, users are typically collecting network data as edgelists, nodelists, or both.
+Recall that an `r gloss("edgelist")` tabulates the senders/from and receivers/to of each tie
+in the first two columns and any other edge- or tie-related attributes as additional columns.
+There may optionally also be a `r gloss("nodelist")` that tabulates the nodes in the network
+along with any nodal attributes.
+Edgelists are typically the main object to be imported,
+and we can import them from an Excel file or a `.csv` file.^[Note that if you import from a .csv file, please specify whether the separation value should be commas (`sv = "comma"`) or semi-colons (`sv = "semi-colon"`). The function expects comma separated values by default.]
+For the sake of this exercise, we'll import some data, `adols.csv`, that I've pre-saved within the package in the `data/` folder of this tutorial.
+**Try the following code chunk.**
+
+```{r importedges, exercise = TRUE, purl=FALSE}
+adolties <- read_edgelist("data/adols.csv")
+adolties
+flonodes <- read_nodelist("data/flonode.csv")
+flonodes
+```
+
+If you do not specify a particular file name,
+a helpful popup will open that assists you with locating and importing a file
+from your operating system.
+Importing a nodelist of nodal attributes operates very similarly,
+with `read_nodelist()`.
+
+### Exporting edgelists
+
+In some cases, users will be faced with having to collect data themselves,
+or wish to first manipulate the data in Excel before importing it,
+but may be uncertain about the expected format of an edgelist.
+Here it may be useful to try exporting one of the built-in datasets
+in `{manynet}` to see how complete network data looks.
+If this is potentially complex,
+calling `write_edgelist()` without any arguments will export a test
+file with a barebones structure that you can overwrite with your own data.
+**Try exporting the ties and the nodes of the `fict_lotr` network
+to Excel files in R's temporary directory.**
+(Feel free to substitute a network of your own choosing —
+try one with richer nodal attributes, such as `ison_lawfirm` or `irps_usgeo`,
+to see more columns in the exported nodelist.)
+
+```{r exportdata, exercise=TRUE, purl=FALSE}
+
+```
+
+```{r exportdata-hint, purl=FALSE}
+# Fill in the blanks (this is a template, not runnable code):
+# write______(fict_lotr, file.path(tempdir(), "lotredges.xlsx"))
+# write______(fict_lotr, file.path(tempdir(), "lotrnodes.xlsx"))
+```
+
+```{r exportdata-solution, purl=FALSE}
+write_edgelist(fict_lotr, file.path(tempdir(), "lotredges.xlsx"))
+write_nodelist(fict_lotr, file.path(tempdir(), "lotrnodes.xlsx"))
+```
+
+To check your results: no output means it worked!
+The two files are written to a temporary folder
+(run `tempdir()` to see where that is on your computer);
+in your own projects you would give a path in your own working directory instead.
+
+### Importing other formats
+
+Since network data can be complex,
+edgelists (and nodelists) may not be sufficient to structure all the information
+necessary to represent the network.
+For this reason, a variety of other external formats have been proposed and used.
+As such, you may find network data of interest that is in another format.
+Here are some examples:
+
+- `read_pajek()` and `write_pajek()` for importing and exporting .net or .paj files
+- `read_ucinet()` and `write_ucinet()` for importing and exporting .##h files (.##d files are automatically imported alongside them)
+- `read_graphml()` and `write_graphml()` for importing and exporting .graphml files
+- `read_dynetml()` for importing .dynetml files
+
+For more information on any of these functions, you can ask for help by typing `?read_pajek` in the console.
+Whereas `read_edgelist()` and `read_nodelist()` will import into a tibble/data frame class,
+`read_pajek()` and `read_ucinet()` will import the network into a tidygraph format (see above).
+Of course, any network data that is imported can be easily coerced into any other compatible class.
+Let's say we want to import the adolescents edgelist back in, but we want it in an igraph format.
+**There are three ways you might do this — run the code and compare the three results.**
+
+```{r readcoerce, exercise = TRUE, purl=FALSE}
+# 1. Separate steps
+adols <- read_edgelist("data/adols.csv")
+adolsigraph1 <- as_igraph(adols)
+adolsigraph1
+# 2. Nested steps
+adolsigraph2 <- as_igraph(read_edgelist("data/adols.csv"))
+adolsigraph2
+# 3. Chained steps
+adolsigraph3 <- read_edgelist("data/adols.csv") %>% as_igraph()
+adolsigraph3
+```
+
+All three ways produce exactly the same result;
+which one you use in your own work is a matter of taste and readability.
+How does the result compare to the original `ison_adolescents`?
+
+```{r adols-question, echo = FALSE, purl=FALSE}
+question("Which versions are labelled?",
+  answer("ison_adolescents (the original)",
+         correct = TRUE,
+         message = "All four are labelled: the node names survived the export to .csv and the re-import."),
+  answer("adolsigraph1",
+         correct = TRUE),
+  answer("adolsigraph2",
+         correct = TRUE),
+  answer("adolsigraph3",
+         correct = TRUE),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
+::: {.callout}
+<span class="callout-label">**In brief**:</span> `read_*()`/`write_*()` functions import and export edgelists and
+nodelists (from/to .csv or Excel) as well as Pajek, UCINET, GraphML,
+and DyNetML formats.
+Whatever the import class, the `as_*()` coercion functions
+will get the data into whatever class you need next.
+:::
+
+## Summary
+
+Well done — you have completed the tutorial on making network data!
+Along the way, you have learned to use these functions:
+
+| Function | What it does |
+|---|---|
+| `table_data()` | lists a package's network datasets and their features |
+| `create_explicit()` | build a small network by hand from a formula of named ties |
+| `collect_ego()` | gather an ego network interactively at the console |
+| `net_nodes()`, `net_ties()`, `mode_nodes()` | count a network's nodes, ties, and nodes per mode |
+| `node_labels()`, `net_node_attributes()` | list node names and nodal attributes |
+| `is_twomode()`, `is_directed()`, `is_labelled()`, ... | TRUE/FALSE checks of network properties |
+| `as_igraph()`, `as_tidygraph()`, `as_network()`, `as_matrix()`, `as_edgelist()` | coerce networks between classes |
+| `read_edgelist()`, `read_nodelist()`, `write_edgelist()`, `write_nodelist()` | import/export edgelists and nodelists |
+| `read_pajek()`, `read_ucinet()`, `read_graphml()`, `read_dynetml()`, ... | import/export other network formats |
+
+When you are ready, continue with the companion tutorial "Manipulating Data",
+which covers how to modify, reformat, and transform the networks
+you now know how to collect.
+
+### Glossary
+
+Here are some of the terms that we have covered in this tutorial:
+
+`r print_glossary()`

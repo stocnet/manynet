@@ -118,7 +118,7 @@ to_uniplex.default <- function(.data, tie) {
 to_uniplex.tbl_graph <- function(.data, tie){
   out <- dplyr::filter(.data = tidygraph::activate(.data, "edges"), 
                        type == tie) |> dplyr::select(-type)
-  if(is_signed(out) && all(tie_signs(out)==1) || all(is.na(tie_signs(out)))) 
+  if(is_signed(out) && (all(tie_signs(out)==1) || all(is.na(tie_signs(out)))))
     out <- out |> dplyr::select(-sign)
   if(is_weighted(out) && all(tie_weights(out)==1)) 
     out <- out |> dplyr::select(-weight)

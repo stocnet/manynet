@@ -72,11 +72,25 @@ from_waves <- function(netlist) {
     snet_abort("Please declare a list of waves.")
   }
   ann <- lapply(netlist, as_igraph)
-  out <- igraph::as_data_frame(ann[[1]])
-  for (i in seq_along(ann)[-1]){
-    out <- rbind(out, igraph::as_data_frame(ann[[i]]))
+  .rebind_netlist(ann)
+}
+
+# Reassemble a list of igraphs into one network, keeping isolates and node
+# attributes by binding the vertex tables as well as the edge tables.
+# For nodes whose attributes differ between waves/slices (e.g. 'active'),
+# the first appearance wins.
+.rebind_netlist <- function(ann, distinct_ties = FALSE) {
+  ties <- do.call(rbind, lapply(ann, igraph::as_data_frame, what = "edges"))
+  if (isTRUE(distinct_ties)) ties <- dplyr::distinct(ties)
+  if (all(vapply(ann, is_labelled, logical(1)))) {
+    nodes <- do.call(rbind, lapply(ann, igraph::as_data_frame,
+                                   what = "vertices"))
+    nodes <- nodes[!duplicated(nodes$name), , drop = FALSE]
+    as_tidygraph(igraph::graph_from_data_frame(ties, vertices = nodes))
+  } else {
+    # unlabelled networks offer no node identity across waves beyond ties
+    as_tidygraph(igraph::graph_from_data_frame(ties))
   }
-  as_tidygraph(igraph::graph_from_data_frame(out))
 }
 
 #' @rdname modif_from 
@@ -95,14 +109,7 @@ from_waves <- function(netlist) {
 from_slices <- function(netlist, remove.duplicates = FALSE) {
   if (is.list(netlist[1])) {
     ann <- lapply(netlist, as_igraph)
-    out <- igraph::as_data_frame(ann[[1]])
-    for (i in seq_along(ann)[-1]){
-      out <- rbind(out, igraph::as_data_frame(ann[[i]]))
-    }
-    if (isTRUE(remove.duplicates)) {
-      out <- dplyr::distinct(out)
-    }
-    as_tidygraph(igraph::graph_from_data_frame(out))
+    .rebind_netlist(ann, distinct_ties = remove.duplicates)
   } else {
     message("Only one slice is available, cannot be joined.")
   }
@@ -134,7 +141,13 @@ from_ties.tbl_graph <- function(..., layer_names){
                       netlist[[x]] } else { 
                         mutate_ties(netlist[[x]], type = names(netlist)[x])
                         })
-  suppressMessages(Reduce(tidygraph::graph_join, netlist))
+  out <- suppressMessages(Reduce(tidygraph::graph_join, netlist))
+  # record the layers as tie-type metadata; otherwise metadata inherited
+  # from the (single-layer) inputs would shadow them in layer_names()
+  if("type" %in% igraph::edge_attr_names(out))
+    out <- igraph::set_graph_attr(out, "ties",
+                                  unique(igraph::edge_attr(out, "type")))
+  as_tidygraph(out)
 }
 
 #' @export
@@ -485,8 +498,9 @@ from_ties.stocnet <- function(..., layer_names){
       uvals <- unlist(vals)
       if(length(unique(uvals)) > 1)
         snet_warn(paste0("Networks specify different '", key,
-                         "' values; using the earliest."))
-      merged_info[[key]] <- if(key == "date") min(uvals) else uvals[which.min(uvals)]
+                         "' values; using the ",
+                         ifelse(key == "date", "earliest", "first"), "."))
+      merged_info[[key]] <- if(key == "date") min(uvals) else uvals[[1]]
     }
   }
   

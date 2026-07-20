@@ -41,9 +41,34 @@ test_that("bind_node_attributes works", {
 })
 
 test_that("add_tie_attribute works", {
-  expect_equal(unname(unlist(add_tie_attribute(net_edge1, "weight", c(1,2,1,2,1))[,"weight"])), 
+  expect_equal(unname(unlist(add_tie_attribute(net_edge1, "weight", c(1,2,1,2,1))[,"weight"])),
                c(1,2,1,2,1))
   expect_s3_class(add_tie_attribute(net_edge1, "weight", c(1,2,1,2,1)), "data.frame")
+})
+
+test_that("delete_node_attribute works", {
+  net <- ison_adolescents |> mutate_nodes(age = 11:18, sex = rep("F", 8))
+  expect_true(all(c("age", "sex") %in% net_node_attributes(net)))
+  # Removes a single attribute
+  expect_false("age" %in% net_node_attributes(delete_node_attribute(net, "age")))
+  expect_true("sex" %in% net_node_attributes(delete_node_attribute(net, "age")))
+  # Removes several at once
+  expect_equal(net_node_attributes(delete_node_attribute(net, c("age", "sex"))), "name")
+  # Returns the same class it was given
+  expect_s3_class(delete_node_attribute(net, "age"), "tbl_graph")
+  expect_s3_class(delete_node_attribute(as_igraph(net), "age"), "igraph")
+  # Same result as the tidyverse-style NULL assignment
+  expect_equal(net_node_attributes(delete_node_attribute(net, "age")),
+               net_node_attributes(mutate_nodes(net, age = NULL)))
+})
+
+test_that("delete_tie_attribute works", {
+  net <- ison_adolescents |> mutate_ties(weight = 1:10, kind = rep("x", 10))
+  expect_true(all(c("weight", "kind") %in% net_tie_attributes(net)))
+  expect_false("weight" %in% net_tie_attributes(delete_tie_attribute(net, "weight")))
+  expect_equal(net_tie_attributes(delete_tie_attribute(net, c("weight", "kind"))),
+               character(0))
+  expect_s3_class(delete_tie_attribute(net, "weight"), "tbl_graph")
 })
 
 test_that("join_ties works", {

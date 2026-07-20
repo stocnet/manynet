@@ -1,0 +1,1250 @@
+---
+title: "Manipulating Network Data"
+author: "by James Hollway"
+output:
+  learnr::tutorial:
+    theme: flatly
+runtime: shiny_prerendered
+description: >
+  This tutorial covers how to manipulate and modify network data,
+  organised around common tasks and network properties:
+  working with labels, direction, weights, and signs,
+  growing and pruning networks,
+  handling multiplex and multimodal formats,
+  and working with networks that change over time.
+---
+
+```{r setup, include=FALSE, purl=FALSE}
+library(learnr)
+library(manynet)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+<style>
+html { font-size: 115%; }
+.callout {
+  border-left: 3px solid #D6A929;
+  padding: 0.1em 1em;
+  margin: 1.2em 0;
+}
+.callout-label { color: #D6A929; }
+.page-toc { font-style: italic; }
+.page-toc-link { color: #D6A929; cursor: pointer; text-decoration: underline; }
+.tutorialTitle { color: #D6A929 !important; }
+#tutorial-topic .nav-link { color: #D6A929 !important; }
+.section a:not(.btn) { color: #D6A929; }
+.section a:not(.btn):hover { color: #B8901F; }
+.btn-tutorial-run,
+.btn-tutorial-run:hover,
+.btn-tutorial-run:focus,
+.btn-tutorial-run:active {
+  background-color: #D6A929;
+  border-color: #D6A929;
+  color: #fff;
+}
+</style>
+
+## Introduction
+
+In the companion tutorial "Making Network Data",
+we saw how to identify network data bundled in packages,
+import it from external files,
+and coerce it between the many classes used for network analysis in R
+using the `as_*()` functions.
+
+Collected data is rarely in exactly the shape needed for analysis, though.
+Perhaps the nodes need naming or anonymising,
+the ties are directed where they should not be,
+weights need thresholding,
+or a two-mode network needs projecting before a one-mode method can be applied.
+This tutorial is organised around such **tasks**:
+each section takes one part of a network —
+its nodes, its ties, its layers, modes, and waves —
+and shows how to build it up, change its properties, and understand the consequences,
+before a final section on narrowing a network down to what matters.
+
+Along the way you will meet three recurring families of functions:
+
+- `is_*()` functions _check_ whether a network has some property,
+  returning `TRUE` or `FALSE`
+- `to_*()` functions _change_ that property,
+  returning the modified network (in the same class it arrived in)
+- `add_*()`/`delete_*()` and the `{dplyr}`-style verbs
+  (`mutate_*()`, `filter_*()`, `select_*()`, `rename_*()`, `join_*()`)
+  _grow and prune_ networks' nodes, ties, and attributes
+
+::: {.callout}
+<span class="callout-label">**Vocabulary**:</span>
+`{manynet}` distinguishes _reformatting_ —
+changing a network's type (direction, weights, signs, etc.)
+while keeping the same number of nodes —
+from _transforming_ — changing the network's `r gloss("order")`
+(its number of nodes), as projection does.
+Both are done by `to_*()` functions,
+and each section below notes which is happening,
+because it tells you whether your nodes will survive the operation intact.
+:::
+
+### Aims
+
+By the end of this tutorial, you should be able to:
+
+- [ ] &nbsp; Examine and subset a network with the `[`, `[[`, and `$` operators
+- [ ] &nbsp; Label, unlabel, and relabel a network's nodes
+- [ ] &nbsp; Change a network's direction, weights, and signs, and know why you might
+- [ ] &nbsp; Grow and prune networks by adding, joining, deleting, and filtering
+  nodes, ties, and attributes
+- [ ] &nbsp; Extract a single layer from a multiplex network
+- [ ] &nbsp; Project a two-mode network to one of its modes, and understand the consequences
+- [ ] &nbsp; Split a longitudinal network into waves and apply recorded changes
+
+**Choose your own data**: As in the "Making Network Data" tutorial,
+the worked examples use small, clean networks so the output is easy to read,
+but every **"Your turn"** and **"Free play"** box invites you to bring your own.
+Remember the three flavours as a rough difficulty ladder —
+**Classic** (`ison_*`, small & tidy),
+**Fiction** (`fict_*`, mid-sized & fun),
+**Real-world** (`irps_*`, larger & realistic) —
+and that every function here works on any of them.
+Each "Your turn" box suggests datasets that have the right
+structure for the task (e.g. a _weighted_ network for `to_unweighted()`),
+but you can always browse the full list with `table_data()`.
+
+<img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExeWY3dTI5c3V6cDg5aHIzd2d0dG9xeXprN3cwdm01ZDd5Zms4Z2h6biZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/REHnG6v0yICy6l9QT2/giphy.gif" alt="gif of doctor getting ready"/>
+
+## Operating on networks
+
+Before changing anything, it helps to know how to look inside a network object,
+and this same syntax turns out to offer a do-it-yourself alternative
+to many of the named functions we meet later.
+Because the data in the `{manynet}` package are either igraph objects at their core,
+or stocnet data,
+we can query (and manipulate) them using the same `[`, `[[`, and `$` operators
+used for matrices, lists, and data frames elsewhere in R.
+**Run the following code and inspect the two outputs.**
+
+```{r examine-recall, exercise = TRUE}
+ison_adolescents[1:3, 1:3]
+ison_adolescents[[2]]
+```
+
+The first line returns the corner of the network's adjacency matrix,
+where a `1` indicates a tie between the row node and the column node
+and a `.` indicates no tie (because this is a sparse matrix representation;
+a 'normal' matrix representation would represent absence of a tie as a 0).
+The second line returns the second node's `r gloss("neighborhood")`:
+the set of nodes to which it is tied.
+
+The `$` operator extracts a named attribute,
+whether it belongs to the nodes, the ties, or the network itself.
+`{manynet}` is set to try and autocomplete the attribute name for you,
+so you can type `ison_adolescents$` and then hit the Tab key to see the available attributes.
+^[Note though that for igraph/tidygraph objects, since the internal list elements
+are not named, the autocomplete necessarily braces the attribute names in backticks.
+This is not the case for stocnet objects, which are named lists.]
+
+```{r examine-dollar, exercise = TRUE}
+ison_adolescents$name
+```
+
+The same operators can also be used to _assign_ new values.
+Here the first line removes all of the first node's ties,
+and the second adds a new nodal attribute
+(the vector is 8 values long, matching the 8 nodes,
+which is how `{manynet}` knows it belongs to the nodes):
+
+```{r examine-assign, exercise = TRUE}
+test <- ison_adolescents
+test[1, ] <- FALSE
+test$smoker <- c(TRUE, FALSE, FALSE, TRUE, FALSE, TRUE, TRUE, FALSE)
+test[1:3, 1:3]
+test
+```
+
+Note that because this is an undirected network,
+removing the tie from node 1 to node 2 means there is also now no reciprocal tie
+from node 2 to node 1.
+
+Throughout this tutorial, keep this assignment syntax in mind:
+many of the named functions we meet have an assignment equivalent,
+and we will point these out as we go.
+The named functions are usually clearer and safer
+(they check and update the network's type for you),
+but the operators are handy for quick, surgical changes.
+
+<img src="https://media3.giphy.com/media/VDY6QaBBCfsDpb2Esd/giphy.gif" alt="gif of surgeon fistbumping"/>
+
+::: {.callout}
+<span class="callout-label">**In brief**:</span> For igraph/tidygraph objects, 
+`[` indexes a network like its adjacency matrix,
+`[[` returns a node's neighbourhood,
+and `$` gets or sets a named node, tie, or network attribute.
+All three can be used with `<-` to modify a network directly.
+:::
+
+## Nodal properties
+
+<span class="page-toc">On this page:
+<span class="page-toc-link" onclick="document.getElementById('section-node-composition').scrollIntoView({behavior:'auto',block:'start'});">Adding &amp; removing</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-labels').scrollIntoView({behavior:'auto',block:'start'});">Labels</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-attributes').scrollIntoView({behavior:'auto',block:'start'});">Attributes</span></span>
+
+The previous page showed how to _read_ a network with operators.
+Now we start changing it, one element at a time,
+beginning with the nodes:
+which nodes are present (adding and removing them),
+the names that identify them (labels),
+and the other variables they carry (attributes).
+
+### Adding & removing {#node-composition}
+
+Sometimes you need to change which nodes a network contains.
+`add_nodes()` adds one or more (unconnected) nodes,
+while `delete_nodes()` removes nodes by index or by name.
+**Run the code and check the node count in each printout.**
+
+```{r addnodes, exercise = TRUE}
+add_nodes(ison_adolescents, 1)
+delete_nodes(ison_adolescents, "Sue")
+```
+
+A freshly added node has no ties yet —
+you would connect it with `add_ties()`, which we meet in the next section —
+and `delete_nodes()` also drops any ties attached to the nodes it removes.
+
+### Labels {#labels}
+
+Whether a network is `r gloss("labelled","label")`or not
+matters for how easily you can read results,
+but also for research ethics:
+collected social network data sometimes must be _anonymised_
+before it is shared or published.
+`is_labelled()` checks whether a network is labelled,
+and `node_labels()` retrieves the labels themselves.
+
+`ison_algebra` records interactions among 16 anonymous students in an algebra class.
+Since working with indices gets confusing quickly, 
+especially when discussing what we are seeing with others ---
+node 1 is not the same as node 2, and so on ---
+we want to give the nodes names.
+
+The assignment equivalent sets the names directly:
+`net$label <- letters[1:8]` relabels an 8-node network,
+because a value with one entry per node is stored as a nodal attribute,
+and `label` is the reserved attribute for labels.
+
+we can use `to_labelled()` to assign (random) names to the nodes.
+The function allows your chosen labels to be added, of course,
+but if called without further arguments it assigns random (U.S.) children's names.
+**Check whether `ison_algebra` is labelled, and then label it randomly.**
+
+```{r labelling, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r labelling-hint-1, purl=FALSE}
+# First check with is_labelled(),
+# then pipe the network to to_labelled() and print the result.
+```
+
+```{r labelling-solution}
+is_labelled(ison_algebra)
+ison_algebra |> to_labelled()
+```
+
+To check your result: the printout should now say _labelled_,
+and the nodes table should have gained a `name` column
+of alphabetically ordered first names.
+Since these names are random, they are useful for _telling nodes apart_,
+not for identifying real people.
+Did you notice how the names are drawn in alphabetic sequence?
+
+The reverse operation, `to_unlabelled()`, strips all names from a network.
+This is a one-step anonymiser.
+**Anonymise `ison_adolescents`, and then relabel it with letters using `$`.**
+
+```{r anonymise, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r anonymise-hint-1, purl=FALSE}
+# Two separate steps:
+# to_unlabelled(_____)
+# Then assign to a copy and relabel:
+# test <- ison_adolescents
+# test$name <- _____
+# (letters[1:8] gives the first eight lowercase letters)
+```
+
+```{r anonymise-solution}
+to_unlabelled(ison_adolescents)
+test <- ison_adolescents
+test$name <- letters[1:8]
+test
+```
+
+Note that `to_unlabelled()` removes the identifying labels
+but leaves any other attributes in place —
+full anonymisation of your data may require deleting
+or coarsening other attributes too,
+which brings us to attributes just below.
+
+<img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3Zjdnh3djM1M2F5Y3V5anhod2V0eWduYTY0ZWk2dXVoaXdycXVrNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/JdUEslEi7YhOL9vULv/giphy.gif" alt="gif of a doctor with arms crossed saying 'wait a minute'"/>
+
+### Attributes {#attributes}
+
+Adding nodal attributes to a given network is relatively straightforward.
+An 'attribute' is just a variable attached to the nodes (or ties) of a network,
+such as people's age or the strength of their friendships.
+`{manynet}` offers a more `{igraph}`-like syntax, e.g. `add_node_attribute()`,
+as well as a more `{dplyr}`-like syntax, e.g. `mutate_nodes()`,
+for those already familiar with these tools in R.
+**Run the following code and find the new columns in the printout.**
+
+```{r mutate, exercise = TRUE}
+ison_adolescents |>
+  mutate_nodes(colour = "red",
+               degree = 1:8)
+```
+
+One can also rename attributes with `rename_nodes()`
+(which works like `{dplyr}`'s `rename(new = old)`),
+and delete them in one of two equivalent ways:
+the `{dplyr}` way, by assigning `NULL` inside `mutate_nodes()`,
+or the `{igraph}` way, with `delete_node_attribute()`.
+**Compare the printouts before and after the changes below.**
+
+```{r mutnull, exercise = TRUE}
+ison_southern_women
+ison_southern_women |>
+  delete_node_attribute("Surname") |>
+  rename_nodes(Honorific = Title)
+```
+
+Each of these `_nodes` verbs has a `_ties` counterpart
+(`mutate_ties()`, `rename_ties()`, `delete_tie_attribute()`, and so on)
+that does the same for tie attributes;
+since a tie's weight and sign are just special tie attributes,
+we pick these up at the start of the next section on tie properties.
+
+::: {.callout}
+<span class="callout-label">**In brief**:</span> `add_nodes()`/`delete_nodes()` change which nodes are present,
+`to_labelled()`/`to_unlabelled()` name and anonymise them
+(check with `is_labelled()`, or set names directly with `$<-`),
+and `mutate_nodes()` adds or changes nodal attributes
+(`rename_nodes()` renames them, and assigning `NULL` deletes them).
+:::
+
+<img src="https://gifdb.com/images/high/doctor-dancing-joyfully-p0ymupoam9p0198w.gif" alt="gif of a doctor in scrubs dancing joyfully in a hospital room"/>
+
+## Tie properties
+
+<span class="page-toc">On this page:
+<span class="page-toc-link" onclick="document.getElementById('section-tie-composition').scrollIntoView({behavior:'auto',block:'start'});">Adding &amp; removing</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-tie-attributes').scrollIntoView({behavior:'auto',block:'start'});">Attributes</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-direction').scrollIntoView({behavior:'auto',block:'start'});">Direction</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-weights').scrollIntoView({behavior:'auto',block:'start'});">Weights</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-signs').scrollIntoView({behavior:'auto',block:'start'});">Signs</span></span>
+
+Having dealt with the nodes, we turn to the _ties_ —
+first which ties are present (adding and removing them),
+then the attributes they carry.
+Like nodes, ties can carry attributes of any kind;
+and three tie attributes are common and consequential enough
+to get their own reserved names and verbs —
+a tie's `r gloss("direction","directed")`,
+its `r gloss("weight","weighted")`, and its `r gloss("sign","signed")`.
+These three are _reformatting_ properties —
+changing them never changes the number of nodes —
+and for each we also show how to _simplify_ it away,
+since many methods expect a plain, undirected, unweighted, unsigned network.
+
+### Adding & removing {#tie-composition}
+
+`add_ties()` adds ties between named or indexed nodes,
+and `delete_ties()` removes them — by index,
+or by naming the tie with `|` between its two endpoints.
+**Add a tie between the first and third adolescents,
+then delete the tie between Carol and Tina.**
+
+```{r addties, exercise = TRUE}
+add_ties(ison_adolescents, list(1, 3))
+delete_ties(ison_adolescents, "Carol|Tina")
+```
+
+With the ties in place, we can turn to what they carry.
+
+### Attributes {#tie-attributes}
+
+Just as `mutate_nodes()` attaches variables to nodes,
+`mutate_ties()` attaches them to ties —
+a strength, a date, a category, whatever your data records
+(`add_tie_attribute()` is the more `{igraph}`-like alternative).
+**Add a `weight` to each of the adolescents' 10 friendships.**
+
+```{r mutateties, exercise = TRUE}
+ison_adolescents |> mutate_ties(weight = 1:10)
+```
+
+The `_ties` suffix carries across the `{dplyr}`-style verbs
+(`mutate_ties()`, `rename_ties()`, `filter_ties()`, `select_ties()`),
+just as `_nodes` does for nodes,
+and assigning `NULL` deletes a tie attribute.
+The weight we just added is one of the special tie attributes
+that `{manynet}` reserves a name and verbs for;
+the next three subsections cover direction, weight, and sign in turn.
+
+### Direction {#direction}
+
+Ties either have a direction — who nominated whom, who exports to whom —
+or they do not.
+An `r gloss("undirected")` network treats every tie as mutual,
+while a `r gloss("directed")` network distinguishes each `r gloss("arc")`'s
+sender and receiver.
+This matters practically because many measures and models
+are only defined for one or the other.
+
+A common task is fixing direction after import.
+When an edgelist is imported, `{manynet}` cannot always tell whether ties
+are meant to be directed,
+and a heuristic used during the import may return a _directed_ network
+where an _undirected_ one was intended.
+**Import the `data/adols.csv` file with `read_edgelist()`,
+make it an igraph-class object, and then make it undirected.**
+
+```{r adolsundir, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r adolsundir-hint-1, purl=FALSE}
+# Chain the three steps with pipes:
+# read the edgelist, then coerce with as_igraph(),
+# then reformat with to_undirected().
+```
+
+```{r adolsundir-solution, purl=FALSE}
+read_edgelist("data/adols.csv") |> as_igraph() |> to_undirected()
+```
+
+To check your result: the printout should describe an _undirected_ network
+with 8 nodes and 10 ties,
+matching the original `ison_adolescents`.
+
+`{manynet}` includes a full set of direction verbs:
+
+- `to_undirected()` merges arcs into undirected ties
+  (a tie appears if an arc exists in either direction)
+- `to_directed()` makes undirected ties directed
+  (or, if already directed, does nothing)
+- `to_redirected()` swaps the direction of every arc —
+  useful when "who asks whom for advice" should become "who gives advice to whom"
+- `to_reciprocated()` adds a reciprocal arc for every existing arc,
+  so that all ties become mutual (see `r gloss("reciprocity")`)
+- `to_acyclic()` removes just enough arcs to eliminate all cycles
+
+Direction interacts with tie counts in ways worth seeing for yourself.
+`ison_networkers` is a directed network of messages among 32 researchers.
+**Check how many (directed) ties it has,
+and how many remain after `to_undirected()`.**
+
+```{r netwdir, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r netwdir-hint-1, purl=FALSE}
+# net_ties() counts ties; run it on the original network
+# and on its to_undirected() version.
+```
+
+```{r netwdir-solution}
+net_ties(ison_networkers)
+net_ties(to_undirected(ison_networkers))
+```
+
+```{r netwdir-question, echo = FALSE, purl=FALSE}
+question("440 arcs became 266 undirected ties. Why did the number drop?",
+  answer("Pairs who messaged each other in both directions now share a single undirected tie.",
+         correct = TRUE,
+         message = "Exactly: each reciprocated pair of arcs merges into one tie, so only unreciprocated arcs keep a tie to themselves. <img src='https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExYWNnN3ZnN25kb3JoaGl4Nmhjbm1zcGcxb2U0ajRoNmx1cTQwa2czdyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/X4jI9lYU27AvSM9ZBp/giphy.gif' alt='gif of a doctor conceding you were right'/>"),
+  answer("to_undirected() deletes weak ties.",
+         message = "Direction verbs never consult tie weights; use to_unweighted() for thresholding."),
+  answer("Some nodes were removed from the network.",
+         message = "Reformatting functions never change the number of nodes — check net_nodes() before and after."),
+  answer("Half of all ties are always dropped when undirecting.",
+         message = "It is not a fixed proportion: only reciprocated pairs merge, and here 174 of the 440 arcs had a reciprocal."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
+### Weights {#weights}
+
+In a `r gloss("weighted")` network, ties carry a numeric value —
+a count of messages, a volume of trade, a strength of friendship.
+`is_weighted()` checks for weights,
+and `tie_weights()` returns them as a vector, one value per tie.
+
+Many methods expect a binary network though,
+and even when weights can be used,
+you may want to concentrate on the strongest ties.
+`to_unweighted()` binarises (dichotomises) a network:
+by default it keeps every tie with weight at least 1,
+but the `threshold` argument lets you choose the cut-off.
+**Explore the weights of `ison_networkers`,
+then keep only the pairs who exchanged at least 100 messages.**
+
+```{r weights, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r weights-hint-1, purl=FALSE}
+# Try summary(tie_weights(_____)) to see the distribution,
+# then to_unweighted(_____, threshold = 100).
+```
+
+```{r weights-solution}
+summary(tie_weights(ison_networkers))
+to_unweighted(ison_networkers, threshold = 100)
+```
+
+To check your results: the weights range from 2 to 559 messages,
+and thresholding at 100 leaves a much sparser network of 32 ties —
+the backbone of heavy correspondents.
+
+<img src="https://gifdb.com/images/high/doctor-wide-smile-31g68iglmnl1m5w7.gif" alt="gif of a wide-eyed doctor in scrubs looking pleasantly surprised"/>
+
+Going the other way, `to_weighted()` adds a weight attribute,
+and weights can also be assigned directly:
+`mutate_ties(net, weight = ...)` (the general tie-attribute tool from just above)
+or the operator shorthand `net$weight <- ...`,
+which works because a value with one entry per tie
+is stored as a tie attribute.
+
+### Signs {#signs}
+
+In a `r gloss("signed")` network, every tie is marked positive or negative.
+`irps_wwi` is a classic example:
+the shifting alliances (`+`) and enmities (`-`) among the six great powers
+of Europe before the First World War.
+`is_signed()` checks for signs, and `tie_signs()` retrieves them
+(`1` for positive, `-1` for negative).
+**Print the network and retrieve its signs.**
+
+```{r wwi, exercise = TRUE}
+irps_wwi
+tie_signs(irps_wwi)
+```
+
+Many measures are only defined for unsigned networks,
+and sometimes the positive and negative ties are best analysed
+as separate networks — friendship networks and conflict networks
+often obey quite different logics.
+`to_unsigned()` extracts one or the other, via its `keep` argument.
+**Split the WWI network into its alliance network and its conflict network,
+and compare their tie counts.**
+
+```{r unsigned, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r unsigned-hint-1, purl=FALSE}
+# to_unsigned(_____, keep = "positive")
+# to_unsigned(_____, keep = "negative")
+# net_ties() counts each network's ties.
+```
+
+```{r unsigned-solution}
+to_unsigned(irps_wwi, keep = "positive")
+to_unsigned(irps_wwi, keep = "negative")
+```
+
+```{r signs-question, echo = FALSE, purl=FALSE}
+question("Of this network's 20 (dyadic, over time) ties, how many are negative?",
+  answer("12",
+         correct = TRUE,
+         message = "Correct: 12 enmities to 8 alliances. Europe's road to war shows in the data. <img src='https://media1.giphy.com/media/JqKBwVHEv0A2rAJmlP/source.gif' alt='gif of two doctors reacting that something is very troubling'/>"),
+  answer("8",
+         message = "8 is the number of _positive_ ties (alliances)."),
+  answer("20",
+         message = "20 is the total number of ties, positive and negative together."),
+  answer("6",
+         message = "6 is the number of nodes (the great powers), not the negative ties."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
+The reverse, `to_signed()`, adds signs to an unsigned network,
+either from a logical `mark` vector or (without one) at random.
+
+**Your turn**: reformatting is easiest to _see_ on a network that already has
+the property you are changing.
+Here is one network carrying weight or sign per flavour —
+check it with `is_weighted()` or `is_signed()`,
+simplify it with `to_unweighted()` or `to_unsigned()`,
+and confirm the change with the same check:
+
+| Classic | Fiction | Real-world |
+|---|---|---|
+| `ison_networkers` (weighted) | `fict_marvel` (signed) | `irps_wwi` (signed) |
+
+```{r reformat-free, exercise = TRUE, purl=FALSE}
+
+```
+
+After `to_unweighted()`, `is_weighted()` should flip from `TRUE` to `FALSE`;
+after `to_unsigned()`, `is_signed()` should do the same;
+and `net_nodes()` should never budge —
+reformatting never changes the node count.
+(Signed networks are relatively rare;
+`fict_marvel` pairs its signs with other complications,
+so `irps_wwi` is the cleanest one to experiment on.)
+
+::: {.callout}
+<span class="callout-label">**In brief**:</span> `add_ties()`/`delete_ties()` change which ties are present,
+`mutate_ties()` attaches attributes to them,
+`to_undirected()`/`to_directed()`/`to_redirected()`/`to_reciprocated()`
+reformat tie direction,
+`to_unweighted()` binarises weighted ties around a chosen `threshold`
+(and `to_weighted()` adds weights),
+and `to_unsigned(keep = )` splits a signed network into its positive or
+negative ties (and `to_signed()` adds signs).
+Check each property with `is_directed()`/`is_weighted()`/`is_signed()`,
+and inspect values with `tie_weights()`/`tie_signs()`.
+:::
+
+## Multiplex networks
+
+<span class="page-toc">On this page:
+<span class="page-toc-link" onclick="document.getElementById('section-joining-networks').scrollIntoView({behavior:'auto',block:'start'});">Joining networks</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-layers').scrollIntoView({behavior:'auto',block:'start'});">Layers</span></span>
+
+So far each network has had a single kind of tie.
+A `r gloss("multiplex")` network instead carries several _types_ of tie
+among the same nodes — friendship _and_ advice, alliance _and_ trade.
+This page shows one way such networks arise —
+by _joining_ two networks together —
+and then how to inspect their layers and pull a single one back out.
+
+<img src="https://gifdb.com/images/high/i-concur-doctors-agree-operating-room-m9xh3qvynshaozsb.gif" alt="gif of masked surgeons in an operating room asking 'do you concur?'"/>
+
+### Joining networks {#joining-networks}
+
+What if the extra ties you want to add are already collected
+as a second network among the same nodes?
+`join_ties()` merges another network's ties into the current one
+as an additional _type_ of tie.
+**Join a ring network's ties to the adolescents' friendships and
+inspect the resulting tie table.**
+
+```{r jointies, exercise = TRUE}
+ison_adolescents |> join_ties(create_ring(8), attr_name = "ring")
+```
+
+The printout now reports a _multiplex_ network:
+the `type` column distinguishes the original ties (`orig`)
+from the ring ties we joined.
+We look at how to inspect and extract these types of tie
+in the next subsection, Layers.
+There are also `bind_*` equivalents (e.g. `bind_ties()`)
+that stack extra rows onto the existing nodes or ties
+without creating a new type,
+and `join_nodes()` for merging in a second network's nodes.
+
+### Layers {#layers}
+
+A `r gloss("multiplex")` network contains several _types_ of tie
+among the same nodes — remember the multiplex network we just built
+with `join_ties()` above.
+`is_multiplex()` checks for multiple tie types,
+and `layer_names()` lists them.
+`ison_lawfirm` records three kinds of relationship
+among the partners and associates of a New England law firm.
+**Find out what they are.**
+
+```{r layers, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r layers-hint-1, purl=FALSE}
+# is_multiplex(_____) checks, layer_names(_____) lists.
+```
+
+```{r layers-solution}
+is_multiplex(ison_lawfirm)
+layer_names(ison_lawfirm)
+```
+
+Most analyses of multiplex networks proceed one layer at a time,
+and `to_uniplex()` extracts a single layer by name.
+**Extract the friendship layer from `ison_lawfirm`.**
+
+```{r uniplex, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r uniplex-hint-1, purl=FALSE}
+# to_uniplex(_____, tie = "friends")
+```
+
+```{r uniplex-solution}
+to_uniplex(ison_lawfirm, "friends")
+```
+
+To check your result: the friendship layer has 575 of the
+original network's 2571 ties,
+and the printout no longer describes the network as multiplex.
+Note that the corresponding do-it-yourself route is
+`filter_ties(ison_lawfirm, type == "friends")` —
+`to_uniplex()` does this and additionally tidies up
+the now-redundant type information.
+
+**Your turn**: try the other layers of `ison_lawfirm`,
+or explore another multiplex network:
+
+| Classic | Fiction | Real-world |
+|---|---|---|
+| `ison_algebra` (3 layers) | `fict_thrones` (marriage/other) | `irps_911` (association/trust) |
+
+```{r layers-free, exercise = TRUE, purl=FALSE}
+
+```
+
+::: {.callout}
+<span class="callout-label">**In brief**:</span> `join_ties()` merges a second network's ties in as a new
+_type_, producing a multiplex network.
+`is_multiplex()` checks for multiple tie types and `layer_names()` lists them,
+while `to_uniplex(tie = )` extracts a single layer by name
+(the do-it-yourself equivalent of `filter_ties(type == ...)`).
+:::
+
+<img src="https://gifdb.com/images/high/doctors-doing-hand-gestures-pu47xo2ice3pvsk2.gif" alt="gif of two doctors in scrubs doing a synchronised celebratory hand gesture"/>
+
+## Multimodal networks
+
+Where the previous page bundled several kinds of _tie_ among one set of nodes,
+a `r gloss("multimodal")` network has more than one _kind of node_.
+The commonest case is a `r gloss("two-mode","twomode")` (or bipartite) network,
+where ties connect two distinct node sets —
+such as people and the events they attend.
+Since most network methods assume a single set of nodes,
+the key task is moving from two modes to one,
+usually by `r gloss("projection")`.
+
+### Modes {#modes}
+
+<img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExYnR1dTZoNTRkenhrajZmOGNsbWMxbzVhaXpxdWdqNmd2emN3aHpjNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Hq8O099eDBP4PEIZLP/giphy.gif" alt="gif of a doctor considering something sceptically"/>
+
+`is_twomode()` checks whether a network has two modes,
+and projection transforms it into ties among just one of them:
+`to_mode1()` projects onto shared ties among the first node set,
+and `to_mode2()` onto the second.
+For more information on projection,
+see for example Knoke et al. ([2021](https://doi.org/10.1017/9781108985000)).
+Note that these are _transforming_ functions:
+projection changes the number of nodes.
+
+**Let's try this out on a classic two-mode network, `ison_southern_women`.**
+Assign and name the transformed networks something sensible using e.g.
+`women <- to_mode...` so that we can continue working with this data afterwards.
+To assign and immediately print the result, wrap the line in parentheses.
+
+```{r southproj, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r southproj-hint-1, purl=FALSE}
+# Print the original first, then project it both ways:
+# ison_southern_women
+# (s_women <- to_mode1(_____))
+# (s_events <- to_mode2(_____))
+```
+
+```{r southproj-solution}
+ison_southern_women
+(s_women <- to_mode1(ison_southern_women))
+(s_events <- to_mode2(ison_southern_women))
+```
+
+Compare the three printouts:
+the original two-mode network of women attending events has become
+(1) a one-mode network among the women,
+where a tie means two women attended one or more of the same events,
+and (2) a one-mode network among the events,
+where a tie means two events shared one or more attendees.
+
+```{r namemode1, purl=FALSE}
+question("The first mode of the two-mode network consists of...",
+  answer("women named Evelyn, Laura, Theresa, etc",
+         correct = TRUE,
+         message = "The first mode is the set of women; `to_mode1()` returns the network among them."),
+  answer("events called E1, E2, E3, etc",
+         message = "The events are the second mode; that is what `to_mode2()` returns."),
+  answer("southern cities named Dunedin, Invercargill, Bluff, etc",
+         message = "There are no cities in this network (and these are in southern New Zealand!). <img src='https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExd2JhNm1icXZpbHBibjRyZ254MDh6cGcwdWx5anF1dHA1em11c29tOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3uffo1TRvrCUXS4fBD/giphy.gif' alt='gif of a surgeon saying maybe not you'/>"),
+  answer("events called Christmas Ball, End-of-year, Mardi Gras, etc",
+         message = "The events in this dataset are unnamed, appearing just as E1, E2, etc."),
+  answer("women named Gertrude, Sally, Agnes, etc",
+         message = "Check the printed node names again: the first names listed are Evelyn, Laura, Theresa, etc."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
+**Now use describing functions from the "Making Network Data" tutorial
+on the two projections you have created to find out:**
+
+a. how many nodes there are in each of these networks,
+b. what the names of the nodes are, and
+c. what tie attributes there are in the networks.
+
+```{r projprop-setup, purl=FALSE}
+s_women <- to_mode1(ison_southern_women)
+s_events <- to_mode2(ison_southern_women)
+```
+
+```{r projprop, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r projprop-hint-1, purl=FALSE}
+# Recall the naming convention:
+# net_nodes() counts nodes, node_labels() lists names,
+# and tie attributes are listed with net_tie_attributes().
+```
+
+```{r projprop-solution}
+net_nodes(s_women)
+net_nodes(s_events)
+node_labels(s_women)
+node_labels(s_events)
+net_tie_attributes(s_women)
+net_tie_attributes(s_events)
+```
+
+To check your results: the women projection has 18 nodes and
+the events projection 14, together the 32 nodes of the original network.
+
+So we can see that the `to_mode*()` functions have created a network of only one of the modes in the network.
+The ties in these projected networks,
+representing shared connections to nodes of the other mode, are `r gloss("weighted")` —
+which connects back to the Weights section:
+everything you learned there
+(`tie_weights()`, `to_unweighted()`, thresholds) applies to projections too.
+
+**Retrieve the tie weights from your women projection.
+Find the average (mean) of this vector of tie weights,
+and the average (mean) tie weight overall.**
+
+```{r womenweights, exercise = TRUE, exercise.setup = "projprop-setup", purl=FALSE}
+
+```
+
+```{r womenweights-hint-1, purl=FALSE}
+# Fill in the blank (this is a template, not runnable code):
+# tie_weights(_____)
+```
+
+```{r womenweights-hint-2, purl=FALSE}
+# Fill in the blank (this is a template, not runnable code):
+# mean(tie_weights(_____))
+```
+
+```{r womenweights-hint-3, purl=FALSE}
+# For the overall average, include also the pairs with no tie,
+# by taking the mean over the whole (weighted) adjacency matrix:
+# mean(as_matrix(_____))
+```
+
+```{r womenweights-solution}
+tie_weights(s_women)
+mean(tie_weights(s_women))
+mean(as_matrix(s_women))
+```
+
+```{r womenweightsq, purl=FALSE}
+question(paste(round(mean(tie_weights(to_mode1(ison_southern_women))), 6), "is..."),
+  answer("the average frequency of events shared by women who shared any events.",
+         correct = TRUE,
+         message = "`tie_weights()` only includes existing ties, i.e. pairs of women who shared at least one event."),
+  answer("the average frequency of events shared by women.",
+         message = "That would be the mean over _all_ pairs of women, including those who shared no events — the `mean(as_matrix(...))` value."),
+  answer("how many shared events there are in the original two-mode network.",
+         message = "It is an average, not a count — and it was computed on the projection, not the original. <img src='https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExc245cHFrNGt0dnFydzNicnNoYjIxZmEzYWF5b3FkaTM1cmJyNXhvZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/EgNGnFYMvYEo2LVuE2/giphy.gif' alt='gif of a doctor saying that was hypothetical'/>"),
+  answer("how many women there are in the projected network.",
+         message = "There are 18 women in the projection; this number is an average tie weight."),
+  answer("how many shared events there are in the projected network.",
+         message = "It is an average of the tie weights, not a count of them."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
+Ok, so now we know that projection transforms an (unweighted) two-mode network
+into a weighted one-mode network and what these weights represent.
+Note though that counting the frequency of shared ties to nodes in the other mode
+is just one (albeit the default) option for how ties in the projection are weighted.
+The `similarity` argument to `to_mode1()`/`to_mode2()` also offers
+the Jaccard index, Rand simple matching coefficient, Pearson coefficient, and Yule's Q.
+These may be of interest if, for example, overlap should be weighted by participation.
+
+Projection is not the only way between modes:
+
+- `to_onemode()` simply _forgets_ the mode distinction,
+  returning all 32 nodes in a single set —
+  useful for methods that need a one-mode object but should keep both node sets
+- `to_multilevel()` similarly retains all nodes but keeps the mode information,
+  treating the network as `r gloss("multilevel")` so that within-mode ties may be added
+- `to_twomode()` goes the other way,
+  splitting a one-mode network into two modes according to a logical `mark` vector
+
+**Your turn**: project a different two-mode network and inspect its modes.
+`irps_revere` is a famous historical example
+(Paul Revere's ties to Boston organisations on the eve of the American Revolution):
+
+| Classic | Real-world |
+|---|---|
+| `ison_southern_women` (women × events) | `irps_revere` (people × organisations) |
+
+Whatever you pick, `is_twomode()` should return `TRUE` before projection and
+`FALSE` after, and `is_weighted()` should return `TRUE` on the projection.
+(The fiction two-mode networks such as `fict_actually` are _multiplex_,
+so projecting them first needs a single tie type extracted with `to_uniplex()` —
+you now know how!)
+
+```{r modes-free, exercise = TRUE, purl=FALSE}
+
+```
+
+::: {.callout}
+<span class="callout-label">**In brief**:</span> `is_twomode()` checks for two modes,
+and `to_mode1()`/`to_mode2()` project a two-mode network into a
+weighted one-mode network of shared ties.
+`to_onemode()`, `to_twomode()`, and `to_multilevel()` move between modes
+without projecting.
+:::
+
+## Dynamic networks
+
+<span class="page-toc">On this page:
+<span class="page-toc-link" onclick="document.getElementById('section-waves').scrollIntoView({behavior:'auto',block:'start'});">Waves</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-changes').scrollIntoView({behavior:'auto',block:'start'});">Changes</span></span>
+
+Networks are rarely static: friendships form and fade,
+democracy diffuses, characters die.
+`{manynet}` distinguishes three ways time can enter a network:
+
+- a `r gloss("longitudinal")` network is observed in discrete waves or panels,
+  recorded in a `wave` tie attribute — check with `is_longitudinal()`
+- a `r gloss("dynamic")` network has ties appearing and disappearing
+  in continuous time, e.g. with `begin`/`end` attributes — check with `is_dynamic()`
+- a `r gloss("changing")` network is where one or more nodal attributes are 
+  changing over time
+
+### Waves {#waves}
+
+`fict_potter` records support ties among Harry Potter characters
+across all the books in the series.
+**Print it, check that it is longitudinal, and count its waves with `net_waves()`.**
+
+```{r potterwaves, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r potterwaves-hint-1, purl=FALSE}
+# fict_potter
+# is_longitudinal(_____)
+# net_waves(_____)
+```
+
+```{r potterwaves-solution}
+fict_potter
+is_longitudinal(fict_potter)
+net_waves(fict_potter)
+```
+
+Note the `wave` column in the ties table
+and the `active` column in the nodes table —
+the two reserved attributes doing the longitudinal work here —
+as well as the changes table between them (more on that below).
+
+```{r waves-question, echo = FALSE, purl=FALSE}
+question("How many waves does fict_potter contain?",
+  answer("6",
+         correct = TRUE,
+         message = "One wave per book (the seventh book is merged with the sixth in this dataset)."),
+  answer("7",
+         message = "A good guess given seven books, but check net_waves(): this dataset uses 6 waves. <img src='https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExMWtuYjB2cjlvMjh1ODV3OXphdXExcWF4M3RzaWxzNjRwYjUwOWt6ZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ljSCQY0guNIeZ61s1G/giphy.gif' alt='gif of a doctor asking where the expected ding was'/>"),
+  answer("64",
+         message = "64 is the number of characters (nodes), not waves."),
+  answer("1",
+         message = "A single wave would make the network cross-sectional; the printout says otherwise."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
+Two functions extract time-specific data from a longitudinal network:
+
+- `to_time()` returns the network as it stood at one wave —
+  a single, ordinary network you can analyse with everything above
+  (`to_wave()` is an alias, if you prefer the wave-based wording)
+- `to_waves()` splits the network into a _list_ of networks, one per wave,
+  handy for comparing or looping over periods
+
+**Extract the network as it stood in the third book,
+and then split the whole series into waves.**
+
+```{r pottertime, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r pottertime-hint-1, purl=FALSE}
+# to_time(fict_potter, 3)
+# pott_waves <- to_waves(fict_potter)
+# length(pott_waves)
+```
+
+```{r pottertime-solution}
+to_time(fict_potter, 3)
+pott_waves <- to_waves(fict_potter)
+length(pott_waves)
+```
+
+To check your results: the wave-3 network has 48 nodes —
+fewer than the full cast of 64,
+because only characters _active_ in that book are retained —
+and `to_waves()` returns a list of 6 networks.
+
+### Changes {#changes}
+
+Where do those 'active' switches come from?
+Longitudinal `{manynet}` networks can carry a _changelog_:
+a table of node changes with columns
+`time`, `node`, `var`, and `value`,
+each row recording that a node's attribute takes a new value from some time on.
+`fict_starwars` records who converses with whom in the Star Wars films,
+with changes tracking characters' comings, goings,
+and even Anakin's changing allegiances.
+The changelog prints between the node and tie tables,
+and can be manipulated with the `*_changes()` family of verbs
+(`filter_changes()`, `mutate_changes()`, `select_changes()`, etc.).
+**Print the network, then filter its changes to see Anakin's trajectory.**
+
+```{r changes, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r changes-hint-1, purl=FALSE}
+# fict_starwars
+# filter_changes(fict_starwars, node == "Anakin")
+```
+
+```{r changes-solution}
+fict_starwars
+filter_changes(fict_starwars, node == "Anakin")
+```
+
+To make the changes take effect,
+`apply_changes()` returns the network with all changes up to a given
+time applied to the node attributes
+(`gather_changes()` shows the same information as a table without applying it,
+and `to_time()` does the applying and tie-filtering in one step).
+**Apply the changes up to episode 3 and check what Anakin has become.**
+
+```{r applychanges, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r applychanges-hint-1, purl=FALSE}
+# eps3 <- apply_changes(fict_starwars, time = 3)
+# then inspect e.g. the faction attribute:
+# eps3 |> filter_nodes(name == "Anakin")
+```
+
+```{r applychanges-solution}
+eps3 <- apply_changes(fict_starwars, time = 3)
+eps3 |> filter_nodes(name == "Anakin")
+```
+
+Changes can also be _added_: `add_changes()` and `bind_changes()`
+record new node changes on a network you are constructing yourself,
+using the same `time`/`node`/`var`/`value` structure.
+Together with `to_waves()` this is the foundation for the
+dynamic and diffusion analyses covered in later tutorials
+(in the `{netrics}` and `{migraph}` packages).
+
+<img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExczBlMXFtNnprbWZqbTh6eHYyMGM5emJuZ2R1MWd2dHplczFqaXhvOCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1wqblZCf2zPpxywZKa/giphy.gif" alt="gif of a doctor warning 'I will deal with you later'"/>
+
+::: {.callout}
+<span class="callout-label">**Going further**:</span>
+In stocnet objects, there is also a 'globals' section that carries globally
+changing variables e.g. a variable that is constant across all nodes/ties
+in the network, but that changes over time.
+:::
+
+::: {.callout}
+<span class="callout-label">**In brief**:</span> Longitudinal networks store panel observations in a `wave`
+tie attribute and node changes in a changelog.
+`net_waves()` counts the waves,
+`to_time()` extracts the network at one time point,
+`to_waves()` splits it into a list of per-wave networks,
+and `filter_changes()`/`apply_changes()` inspect and apply
+the recorded node changes.
+:::
+
+## Modifying networks
+
+<span class="page-toc">On this page:
+<span class="page-toc-link" onclick="document.getElementById('section-subgraphs').scrollIntoView({behavior:'auto',block:'start'});">Subgraphs</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-isolates').scrollIntoView({behavior:'auto',block:'start'});">Isolates</span></span>
+
+By now you can build up a network with all of its properties —
+labels and attributes, direction, weights and signs, layers, modes, and dynamics.
+Analysis often needs the opposite move:
+taking that comprehensive object and narrowing it down
+to just the part that matters.
+The verbs on this page all take a whole network
+and hand back a smaller or cleaner one.
+
+<img src="https://media1.tenor.com/m/uUpPHC_dxe0AAAAC/gloves-on-im-ready.gif" alt="gif of a doctor reassuring 'don't worry, I'm a doctor'"/>
+
+### Subgraphs {#subgraphs}
+
+Earlier, `delete_nodes()` and `delete_ties()` removed elements you named.
+More often you want to _keep_ elements that satisfy a condition,
+which is what the `filter_*()` verbs and `to_subgraph()` do —
+usually the more useful direction for analysis.
+**Keep only the Gryffindors from `fict_potter`,
+a network of support among Harry Potter characters.**
+
+```{r filternodes, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r filternodes-hint-1, purl=FALSE}
+# The nodes have a "house" attribute:
+# filter_nodes(fict_potter, house == "Gryffindor")
+# to_subgraph(fict_potter, house == "Gryffindor") is equivalent.
+```
+
+```{r filternodes-solution}
+fict_potter |> filter_nodes(house == "Gryffindor")
+```
+
+To check your result: 25 of the 64 characters remain,
+along with only the ties among them
+(this is called an `r gloss("induced")` `r gloss("subgraph")`).
+Filtering on tie attributes instead uses `filter_ties()`.
+
+### Isolates {#isolates}
+
+<img src="https://media1.tenor.com/m/UlWgg8a56EMAAAAC/mr-bean-mr-bean-ok.gif" alt="gif of a wide-eyed surgeon pulling down his mask, ready to operate"/>
+
+Deleting or filtering ties can leave nodes stranded without any ties.
+Depending on your question, such `r gloss("isolates","isolate")` may be
+important actors (who is _not_ integrated?) or clutter.
+Two transforming functions prune them:
+
+- `to_no_isolates()` drops all nodes without ties
+- `to_giant()` keeps only the largest `r gloss("component")`,
+  dropping smaller disconnected fragments as well as isolates
+
+**Betty's only friendship is with Sue.
+Delete that tie and watch the node count before and after `to_no_isolates()`.**
+
+```{r noisolates, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r noisolates-hint-1, purl=FALSE}
+# stranded <- delete_ties(ison_adolescents, "Betty|Sue")
+# then compare net_nodes(stranded) with
+# net_nodes(to_no_isolates(stranded))
+```
+
+```{r noisolates-solution}
+stranded <- delete_ties(ison_adolescents, "Betty|Sue")
+net_nodes(stranded)
+net_nodes(to_no_isolates(stranded))
+```
+
+A related cleaning task concerns `r gloss("loops","loop")` (self-ties):
+`to_simplex()` removes them,
+turning a `r gloss("complex")` network into a `r gloss("simplex")` one.
+
+::: {.callout}
+<span class="callout-label">**In brief**:</span> `filter_nodes()`/`filter_ties()` and `to_subgraph()`
+keep only the elements satisfying a condition,
+while `to_no_isolates()`, `to_giant()`, and `to_simplex()` prune
+stranded nodes, minor components, and self-ties —
+all taking a whole network and returning a narrower or cleaner one.
+:::
+
+## Summary
+
+### Putting it together
+
+<img src="https://bestanimations.com/Careers/Medical/grey-anatomy-doctor-animated-gif-1.gif" alt="gif of a surgeon in the operating room saying 'it's a beautiful night to save lives'"/>
+
+Real-world data often needs several of this tutorial's verbs in sequence.
+`irps_blogs` is a large directed network of 1490 political blogs.
+Suppose we only want the well-connected core, as a simple undirected network.
+We can chain reformatting and transforming verbs to get there.
+**Run this and watch the tie and node counts fall as the network is tidied.**
+
+```{r cleaning, exercise = TRUE}
+irps_blogs
+irps_blogs |> to_undirected() |> to_giant()
+```
+
+Notice how `to_undirected()` keeps all 1490 nodes but merges reciprocal ties,
+while `to_giant()` then drops every node outside the main component.
+This kind of short pipeline — coerce, reformat, transform — is the everyday
+work of getting real network data into shape.
+
+**One last free play**: build your own cleaning pipeline.
+Pick any dataset from `table_data()` and chain at least three verbs
+from different sections of this tutorial —
+for example extract a layer, undirect it, threshold its weights,
+and drop the isolates — checking with `is_*()`, `net_nodes()`,
+and `net_ties()` at each step that it did what you expected.
+
+```{r pipeline-free, exercise = TRUE, purl=FALSE}
+
+```
+
+### Function overview
+
+<img src="https://gifdb.com/images/high/standing-ovation-congratulations-doctor-chicago-med-mnr588ssjqckmmzc.gif" alt="gif of doctor getting standing ovation"/>
+
+Well done — you have completed the tutorial on manipulating network data!
+Along the way, you have learned to use these functions:
+
+| Function | What it does |
+|---|---|
+| `[`, `[[`, `$` | examine and assign into a network directly |
+| `add_nodes()`, `add_ties()`, `delete_nodes()`, `delete_ties()` | add/remove nodes and ties |
+| `filter_nodes()`, `filter_ties()`, `to_subgraph()` | keep elements satisfying a condition |
+| `to_no_isolates()`, `to_giant()`/`to_component()`, `to_simplex()` | prune isolates, minor components, self-ties |
+| `to_labelled()`, `to_unlabelled()` | name or anonymise nodes |
+| `mutate_nodes()`/`mutate_ties()`, `rename_nodes()`/`rename_ties()`, `delete_node_attribute()`/`delete_tie_attribute()` | add, change, rename, or delete attributes |
+| `to_undirected()`, `to_directed()`, `to_redirected()`, `to_reciprocated()`, `to_acyclic()` | reformat tie direction |
+| `to_unweighted()`, `to_weighted()` | binarise (around a `threshold`) or weight ties |
+| `to_unsigned(keep = )`, `to_signed()`, `tie_signs()` | split or create signed networks |
+| `join_ties()`, `bind_ties()`, `join_nodes()` | merge another network's ties or nodes in |
+| `to_uniplex(tie = )`, `layer_names()` | extract a layer from a multiplex network |
+| `to_mode1()`, `to_mode2()`, `to_onemode()`, `to_twomode()`, `to_multilevel()` | move between modes |
+| `net_waves()`, `to_time()`/`to_wave()`, `to_waves()` | count and extract waves of a longitudinal network |
+| `filter_changes()`, `apply_changes()`, `add_changes()` | inspect and apply node changes over time |
+| `is_labelled()`, `is_directed()`, `is_weighted()`, `is_signed()`, `is_multiplex()`, `is_twomode()`, `is_longitudinal()`, ... | check any of these properties |
+
+From here, you can continue with the tutorials on visualising networks
+(in the `{autograph}` package)
+or on measuring and analysing them (in the `{netrics}` package).
+
+### Glossary
+
+Here are some of the terms that we have covered in this tutorial:
+
+`r print_glossary()`

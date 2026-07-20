@@ -79,7 +79,7 @@ snet_unavailable <- function(..., .envir = parent.frame()){
 
 # Progress ####
 
-#' Console command line interface
+#' Sequence and progress functions
 #' @description
 #'   These functions wrap `{cli}` functions and elements
 #'   to build an attractive command line interface (CLI).

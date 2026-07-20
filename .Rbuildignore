@@ -8,6 +8,7 @@
 data.csv
 vignettes/*\.Rmd\.orig
 vignettes/precompile\.R
+^vignettes/articles$
 ^docs$
 ^cache$
 ^pkgdown$
@@ -21,3 +22,4 @@ vignettes/precompile\.R
 man-roxygen
 ^\.positai$
 ^\.claude$
+^CLAUDE\.md$

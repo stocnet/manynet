@@ -75,8 +75,11 @@ validate_info <- function(.data){
                 pool = mode_names(.data))
   reserved_cols(.data, "info", "update", "character",
                 pool = c("increment", "replace"))
-  reserved_cols(.data, "info", "focal", "character", len = 1, 
-                pool = layer_names(.data), aka = c("dependent","dv"))
+  focal_pool <- unique(c(layer_names(.data), net_node_attributes(.data),
+                         as.character(.data$changes$var)))
+  reserved_cols(.data, "info", "focal", "character",
+                pool = focal_pool, aka = c("dependent","dv"))
+  reserved_cols(.data, "info", "centered", "logical")
   invisible(.data)
 }
 

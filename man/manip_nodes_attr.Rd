@@ -3,6 +3,7 @@
 \name{manip_nodes_attr}
 \alias{manip_nodes_attr}
 \alias{add_node_attribute}
+\alias{delete_node_attribute}
 \alias{mutate}
 \alias{mutate_nodes}
 \alias{rename_nodes}
@@ -12,6 +13,8 @@
 \title{Manipulating node attributes}
 \usage{
 add_node_attribute(.data, attr_name, vector)
+
+delete_node_attribute(.data, attr_name)
 
 mutate(.data, ...)
 
@@ -61,24 +64,28 @@ A data object of the same class as the function was given.
 These functions allow users to add nodes attributes:
 \itemize{
 \item \code{add_node_attribute()} offers an \code{{igraph}}-style way to add a vector of values to a network as a nodal attribute.
+\item \code{delete_node_attribute()} offers an \code{{igraph}}-style way to remove one or more named nodal attributes from a network.
 \item \code{mutate_nodes()} offers a \code{{tidyverse}}-style way to add one or more vectors of values to a network as nodal attributes.
 \item \code{rename_nodes()} offers a \code{{tidyverse}}-style way to rename nodal attributes.
 \item \code{select_nodes()} offers a \code{{tidyverse}}-style way to select a subset of nodal attributes.
 \item \code{join_nodes()} merges all nodal attributes from one network to another.
 }
 
-Note that while \verb{add_*()} functions operate similarly as comparable \code{{igraph}} functions,
+Note that while \verb{add_*()}/\verb{delete_*()} functions operate similarly as comparable \code{{igraph}} functions,
 \verb{mutate*()}, \verb{bind*()}, etc work like \code{{tidyverse}} or \code{{dplyr}}-style functions.
+A nodal attribute can equally be deleted the \code{{tidyverse}} way by assigning it \code{NULL}
+in \code{mutate_nodes()}.
 }
 \details{
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{                   data.frame default igraph network stocnet tbl_graph
-add_node_attribute                  *      *       *                 *
-join_nodes                          *      *               *          
-mutate_nodes                        *      *       *       *         *
-select_nodes                *       *      *               *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{                      data.frame default igraph network stocnet tbl_graph
+add_node_attribute                     *      *       *                 *
+delete_node_attribute                  *      *       *                 *
+join_nodes                             *      *               *          
+mutate_nodes                           *      *       *       *         *
+select_nodes                   *       *      *               *         *
 }\if{html}{\out{</div>}}
 
 If a method is not available for a particular class, but a default method is,

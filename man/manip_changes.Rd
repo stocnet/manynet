@@ -104,7 +104,7 @@ If no method is available for any class, an error will be thrown.
 filter_changes(fict_starwars, node == "Anakin")
 select_changes(fict_starwars, node)
 gather_changes(fict_starwars, time = 3)
-collect_changes(fict_starwars, time = 3)
+apply_changes(fict_starwars, time = 3)
 }
 \seealso{
 \code{\link[=to_time]{to_time()}}

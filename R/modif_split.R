@@ -60,7 +60,7 @@ to_egos.igraph <- function(.data,
                                 mindist = min_dist,
                                 mode = match.arg(direction))
   if(is_labelled(.data)) 
-    names(out) <- node_names(.data)
+    names(out) <- node_labels(.data)
   out
 }
 

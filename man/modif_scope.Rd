@@ -5,7 +5,9 @@
 \alias{to_no_missing}
 \alias{to_ego}
 \alias{to_time}
+\alias{to_wave}
 \alias{to_giant}
+\alias{to_component}
 \alias{to_no_isolates}
 \alias{to_subgraph}
 \alias{to_blocks}
@@ -17,7 +19,11 @@ to_ego(.data, node, max_dist = 1, min_dist = 0, direction = c("out", "in"))
 
 to_time(.data, time)
 
+to_wave(.data, time)
+
 to_giant(.data)
+
+to_component(.data)
 
 to_no_isolates(.data)
 
@@ -73,6 +79,10 @@ than the original object.
 \itemize{
 \item \code{to_ego()} scopes a network into the local neighbourhood of a given node.
 \item \code{to_giant()} scopes a network into one including only the main component and no smaller components or isolates.
+\code{to_component()} is an alias, naming the single component that is retained
+(the singular counterpart of \code{to_components()}, which returns a list of all of them).
+\item \code{to_time()} scopes a longitudinal network to the network as it stood at a given wave or time point.
+\code{to_wave()} is an alias, using the wave-based vocabulary of \code{net_waves()} and \code{to_waves()}.
 \item \code{to_no_isolates()} scopes a network into one excluding all nodes without ties.
 \item \code{to_no_missing()} scopes a network to one retaining only complete cases,
 i.e. nodes with no missing values.
@@ -116,6 +126,7 @@ Other modifications:
 \code{\link{modif_labels}},
 \code{\link{modif_levels}},
 \code{\link{modif_miss}},
+\code{\link{modif_motifs}},
 \code{\link{modif_paths}},
 \code{\link{modif_permutation}},
 \code{\link{modif_plexity}},

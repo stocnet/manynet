@@ -6,7 +6,7 @@
 #'   These functions extract certain attributes from network data:
 #'   
 #'   - `node_attribute()` returns an attribute's values for the nodes in a network.
-#'   - `node_names()` returns the names of the nodes in a network.
+#'   - `node_labels()` returns the names of the nodes in a network.
 #'   - `node_is_mode()` returns the mode of the nodes in a network.
 #'   
 #'   These functions are also often used as helpers within other functions.
@@ -41,17 +41,21 @@ node_attribute.network <- function(.data, attr_name){
 }
 
 #' @rdname measure_attributes_nodes
-#' @examples 
-#' node_names(ison_southern_women)
+#' @examples
+#' node_labels(ison_southern_women)
 #' @export
-node_names <- function(.data){
+node_labels <- function(.data){
   if(is_labelled(.data)){
-    igraph::vertex_attr(as_igraph(.data), "name")  
+    igraph::vertex_attr(as_igraph(.data), "name")
   } else {
     indices <- seq.int(net_nodes(.data))
     paste0("N", gsub("\\s", "0", format(indices, width=max(nchar(indices)))))
   }
 }
+
+#' @rdname measure_attributes_nodes
+#' @export
+node_names <- node_labels
 
 #' @rdname measure_attributes_nodes
 #' @examples 
@@ -66,7 +70,7 @@ node_is_mode <- function(.data){
   # cannot use make_node_mark here because then eternal loop
   class(out) <- c("node_mark", class(out))
   if(is.null(names(out)) & is_labelled(.data))
-    names(out) <- node_names(.data)
+    names(out) <- node_labels(.data)
   attr(out, "mode") <- out
   out
 }

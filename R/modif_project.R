@@ -71,7 +71,11 @@ NULL
 #' to_mode1(ison_southern_women)
 #' to_mode2(ison_southern_women)
 #' @export
-to_mode1 <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) UseMethod("to_mode1")
+to_mode1 <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
+  # projecting a network that is already one-mode is a no-op
+  if(!is_twomode(.data)) return(.data)
+  UseMethod("to_mode1")
+}
 
 #' @export
 to_mode1.default <- function(.data, 
@@ -150,7 +154,11 @@ to_mode1.data.frame <- function(.data, similarity = c("count","jaccard","rand","
 
 #' @rdname modif_project
 #' @export
-to_mode2 <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) UseMethod("to_mode2")
+to_mode2 <- function(.data, similarity = c("count","jaccard","rand","pearson","yule")) {
+  # projecting a network that is already one-mode is a no-op
+  if(!is_twomode(.data)) return(.data)
+  UseMethod("to_mode2")
+}
 
 #' @export
 to_mode2.default <- function(.data, 
@@ -294,7 +302,12 @@ to_hypergraph.default <- function(.data){
 to_hypergraph.igraph <- function(.data){
   out <- .data
   if(!is_twomode(.data)){
-    cl <- suppressWarnings(igraph::max_cliques(out))
+    # Directions are ignored for maximal clique calculations anyway, but
+    # converting explicitly avoids both the igraph warning and a segfault in
+    # igraph 2.3.3 when max_cliques() is called on a directed graph after
+    # any_multiple() (see https://github.com/igraph/rigraph):
+    # any_multiple(g); max_cliques(g) # crashes with C stack overflow
+    cl <- igraph::max_cliques(igraph::as_undirected(out, mode = "collapse"))
     if(is_labelled(.data)){
       lst <- stats::setNames(lapply(cl, names), LETTERS[seq_along(cl)])
     } else {
@@ -320,7 +333,9 @@ to_hypergraph.stocnet <- function(.data) {
       dplyr::summarise(from = list(unique(from)), .groups = "drop") |> 
       dplyr::select(from, to, dplyr::everything())
   } else {
-    cliques <- suppressWarnings(igraph::max_cliques(as_igraph(.data)))
+    # as_undirected() avoids an igraph 2.3.3 segfault; see to_hypergraph.igraph()
+    cliques <- igraph::max_cliques(
+      igraph::as_undirected(as_igraph(.data), mode = "collapse"))
     out$ties <- out$ties |> 
       dplyr::mutate(from = lapply(cliques, function(x) as.integer(x)),
                     to = LETTERS[seq_along(cliques)]) |> 

@@ -74,6 +74,7 @@ Other modifications:
 \code{\link{modif_labels}},
 \code{\link{modif_levels}},
 \code{\link{modif_miss}},
+\code{\link{modif_motifs}},
 \code{\link{modif_paths}},
 \code{\link{modif_permutation}},
 \code{\link{modif_plexity}},

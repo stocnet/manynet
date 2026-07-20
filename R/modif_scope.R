@@ -10,6 +10,10 @@
 #' 
 #'   - `to_ego()` scopes a network into the local neighbourhood of a given node.
 #'   - `to_giant()` scopes a network into one including only the main component and no smaller components or isolates.
+#'   `to_component()` is an alias, naming the single component that is retained
+#'   (the singular counterpart of `to_components()`, which returns a list of all of them).
+#'   - `to_time()` scopes a longitudinal network to the network as it stood at a given wave or time point.
+#'   `to_wave()` is an alias, using the wave-based vocabulary of `net_waves()` and `to_waves()`.
 #'   - `to_no_isolates()` scopes a network into one excluding all nodes without ties.
 #'   - `to_no_missing()` scopes a network to one retaining only complete cases,
 #'   i.e. nodes with no missing values.
@@ -117,15 +121,19 @@ to_time.tbl_graph <- function(.data, time){
       }
     }
     if("wave" %in% net_tie_attributes(out)){
-      out |> 
+      out |>
         # trim ties
-        filter_ties(wave == time) |> 
+        filter_ties(wave == time) |>
         select_ties(-wave)
     } else out
   } else {
     .data
   }
 }
+
+#' @rdname modif_scope
+#' @export
+to_wave <- to_time
 
 #' @rdname modif_scope
 #' @export
@@ -165,6 +173,10 @@ to_giant.data.frame <- function(.data) {
 to_giant.matrix <- function(.data) {
   as_matrix(to_giant(as_igraph(.data)))
 }
+
+#' @rdname modif_scope
+#' @export
+to_component <- to_giant
 
 #' @rdname modif_scope
 #' @importFrom tidygraph node_is_isolated

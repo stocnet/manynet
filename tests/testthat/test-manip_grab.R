@@ -51,6 +51,30 @@ test_that("net_dims works", {
   expect_equal(net_dims(ison_southern_women), c(18,14))
 })
 
+test_that("layer_ties works", {
+  # single-layer network returns the total tie count
+  expect_equal(layer_ties(ison_southern_women), c(net_ties(ison_southern_women)))
+  # multiplex network returns per-layer counts aligned to layer_names()
+  lt <- layer_ties(fict_marvel)
+  expect_length(lt, length(layer_names(fict_marvel)))
+  expect_equal(sum(lt), c(net_ties(fict_marvel)))
+  expect_equal(lt[match("affiliation", layer_names(fict_marvel))], 683L)
+  expect_equal(lt[match("relationship", layer_names(fict_marvel))], 558L)
+  # a curated single layer name not matching finer tie types returns the total
+  expect_equal(layer_ties(fict_thrones), c(net_ties(fict_thrones)))
+})
+
+test_that("describe_ties reports per-layer counts for multiplex networks", {
+  expect_match(describe_ties(fict_marvel), "558 relationship ties")
+  expect_match(describe_ties(fict_marvel), "683 affiliation ties")
+  expect_no_match(describe_ties(fict_marvel), "1241")
+})
+
+test_that("net_waves works", {
+  expect_equal(net_waves(ison_monks), 3)
+  expect_equal(net_waves(ison_karateka), 1)
+})
+
 test_that("net_node_attributes works", {
   expect_equal(net_node_attributes(net), c("name", "gender"))
   expect_length(net_node_attributes(net), 2)

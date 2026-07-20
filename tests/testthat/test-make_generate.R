@@ -1,22 +1,7 @@
-# Tests for the generate family of functions
-
-gen_funs <- funs_objs[grepl("generate_", names(funs_objs)) &
-                           !grepl("permutation|utilities|man|islands|fire|config|citation", names(funs_objs))]
-
-for(fn in names(gen_funs)) {
-  test_that(paste(fn, "creates an object of the correct class"), {
-    expect_s3_class(gen_funs[[fn]](10), "igraph")
-    expect_s3_class(gen_funs[[fn]](c(10,10)), "igraph")
-  })
-  test_that(paste(fn, "creates an object with the correct number of nodes"), {
-    expect_values(net_nodes(gen_funs[[fn]](10)), 10)
-    expect_values(net_nodes(gen_funs[[fn]](c(5,5))), 10)
-  })
-  test_that(paste(fn, "creates an object with the correct directedness"), {
-    expect_false(is_directed(gen_funs[[fn]](10)))
-    expect_true(is_directed(gen_funs[[fn]](10, directed = TRUE)))
-  })
-}
+# Tests for the generate family of functions.
+# Family-wide conventions (node counts, one-/two-mode `n`, directedness,
+# output class) are tested generically for every generate_*() function in
+# test-functional_makes.R; here we test each function's specific semantics.
 
 test_that("random creation works", {
   expect_false(isTRUE(all.equal(generate_random(4,0.3), generate_random(4,0.3))))

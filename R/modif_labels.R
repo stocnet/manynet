@@ -2,25 +2,25 @@
 #' @name modif_labels
 #' @description
 #'   These functions add some format to manynet-consistent data.
-#' 
-#'   - `to_named()` reformats unlabelled network data to labelled network data 
+#'
+#'   - `to_labelled()` reformats unlabelled network data to labelled network data
 #'   from a vector of names or random baby names.
-#'   - `to_unnamed()` reformats labelled network data to unlabelled network data.
-#' 
+#'   - `to_unlabelled()` reformats labelled network data to unlabelled network data.
+#'
 #'   If the format condition is not met,
 #'   for example `to_undirected()` is used on a network that is already undirected,
 #'   the network data is returned unaltered.
 #'   No warning is given so that these functions can be used to ensure conformance.
-#'   
+#'
 #'   Unlike the `as_*()` group of functions,
 #'   these functions always return the same class as they are given,
 #'   only transforming these objects' properties.
 #' @details
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
-#'  
+#'
 #'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("to_.*(named)"))
+#'   available_methods(collect_functions("to_.*(labelled)"))
 #'   ```
 #' @template param_data
 #' @template fam_modif
@@ -31,15 +31,15 @@ NULL
 #' @importFrom dplyr mutate
 #' @importFrom igraph vcount V
 #' @export
-to_named <- function(.data, names = NULL) UseMethod("to_named")
+to_labelled <- function(.data, names = NULL) UseMethod("to_labelled")
 
 #' @export
-to_named.default <- function(.data, names = NULL){
-  as_input(.data, to_named, names = names)
+to_labelled.default <- function(.data, names = NULL){
+  as_input(.data, to_labelled, names = names)
 }
 
 #' @export
-to_named.tbl_graph <- function(.data, names = NULL) {
+to_labelled.tbl_graph <- function(.data, names = NULL) {
   if (!is.null(names)) {
     out <- .data |> mutate(name = names)
   } else {
@@ -51,7 +51,7 @@ to_named.tbl_graph <- function(.data, names = NULL) {
 }
 
 #' @export
-to_named.igraph <- function(.data, names = NULL) {
+to_labelled.igraph <- function(.data, names = NULL) {
   if (!is.null(names)) {
     igraph::V(.data)$name  <- names
   } else {
@@ -61,7 +61,7 @@ to_named.igraph <- function(.data, names = NULL) {
 }
 
 #' @export
-to_named.data.frame <- function(.data, names = NULL) {
+to_labelled.data.frame <- function(.data, names = NULL) {
   if (!is.null(names)) {
     .data[,1]  <- names[as.numeric(.data[,1])]
     .data[,2]  <- names[as.numeric(.data[,2])]
@@ -73,7 +73,7 @@ to_named.data.frame <- function(.data, names = NULL) {
 }
 
 #' @export
-to_named.matrix <- function(.data, names = NULL) {
+to_labelled.matrix <- function(.data, names = NULL) {
   if(is.null(names)) names <- .get_babynames(net_nodes(.data))
   if(is_twomode(.data)){
     rownames(.data)  <- names[seq_len(nrow(.data))]
@@ -86,9 +86,13 @@ to_named.matrix <- function(.data, names = NULL) {
 }
 
 #' @export
-to_named.network <- function(.data, names = NULL) {
-  as_network(to_named(as_igraph(.data), names))
+to_labelled.network <- function(.data, names = NULL) {
+  as_network(to_labelled(as_igraph(.data), names))
 }
+
+#' @rdname modif_labels
+#' @export
+to_named <- to_labelled
 
 .get_babynames <- function(n){
   indic <- seq(from=1, length.out=n) %% 26
@@ -108,35 +112,35 @@ to_named.network <- function(.data, names = NULL) {
 #' @importFrom network delete.vertex.attribute
 #' @importFrom dplyr as_tibble
 #' @export
-to_unnamed <- function(.data) UseMethod("to_unnamed")
+to_unlabelled <- function(.data) UseMethod("to_unlabelled")
 
 #' @export
-to_unnamed.default <- function(.data){
-  as_input(.data, to_unnamed)
+to_unlabelled.default <- function(.data){
+  as_input(.data, to_unlabelled)
 }
 
 #' @export
-to_unnamed.igraph <- function(.data) {
+to_unlabelled.igraph <- function(.data) {
   if ("name" %in% igraph::vertex_attr_names(.data)) {
     igraph::delete_vertex_attr(.data, "name")
   } else .data
 }
 
 #' @export
-to_unnamed.tbl_graph <- function(.data) {
+to_unlabelled.tbl_graph <- function(.data) {
   if ("name" %in% igraph::vertex_attr_names(.data)) {
     as_tidygraph(igraph::delete_vertex_attr(.data, "name"))
   } else .data
 }
 
 #' @export
-to_unnamed.network <- function(.data) {
+to_unlabelled.network <- function(.data) {
   out <- network::delete.vertex.attribute(.data, "vertex.names")
   out
 }
 
 #' @export
-to_unnamed.matrix <- function(.data) {
+to_unlabelled.matrix <- function(.data) {
   out <- .data
   rownames(out) <- NULL
   colnames(out) <- NULL
@@ -144,11 +148,15 @@ to_unnamed.matrix <- function(.data) {
 }
 
 #' @export
-to_unnamed.data.frame <- function(.data) {
+to_unlabelled.data.frame <- function(.data) {
   out <- .data
   names <- unique(unlist(c(out[,1],out[,2])))
   out[,1] <- match(unlist(.data[,1]), names)
   out[,2] <- match(unlist(.data[,2]), names)
   dplyr::as_tibble(out)
 }
+
+#' @rdname modif_labels
+#' @export
+to_unnamed <- to_unlabelled
 

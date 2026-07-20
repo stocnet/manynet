@@ -226,14 +226,17 @@ filter_ties.stocnet <- function(.data, ...){
 #' @description 
 #'   These functions allow users to add and delete tie attributes:
 #'   
-#'   - `add_tie_attribute()` and `mutate_ties()` offer ways to add 
+#'   - `add_tie_attribute()` and `mutate_ties()` offer ways to add
 #'   a vector of values to a network as a tie attribute.
+#'   - `delete_tie_attribute()` offers an `{igraph}`-style way to remove one or more named tie attributes.
 #'   - `rename_ties()` renames tie attributes.
 #'   - `join_ties()` merges ties from two networks,
 #'   adding a tie attribute identifying the newly added ties.
-#'   
+#'
 #'   Note that while `add_*()`/`delete_*()` functions operate similarly as comparable `{igraph}` functions,
 #'   `mutate*()`, `bind*()`, etc work like `{tidyverse}` or `{dplyr}`-style functions.
+#'   A tie attribute can equally be deleted the `{tidyverse}` way by assigning it `NULL`
+#'   in `mutate_ties()`.
 #' @template param_data
 #' @template param_dots
 #' @template param_attr
@@ -241,7 +244,7 @@ filter_ties.stocnet <- function(.data, ...){
 #' @template param_obj2
 #' @family ties
 #' @template fam_manip
-#' @eval detail_avail("add_tie_attrib|(mutate|rename|arrange|join|select|summarise).*ties")
+#' @eval detail_avail("(add|delete)_tie_attrib|(mutate|rename|arrange|join|select|summarise).*ties")
 #' @examples
 #'   other <- create_filled(4) |> mutate(name = c("A", "B", "C", "D"))
 #'   mutate_ties(other, form = 1:6) |> filter_ties(form < 4)
@@ -269,6 +272,33 @@ add_tie_attribute.igraph <- function(.data, attr_name, vector){
 add_tie_attribute.data.frame <- function(.data, attr_name, vector){
   is_edgelist(.data) || snet_abort("Not an edgelist")
   dplyr::mutate(.data, !!!stats::setNames(list(vector), attr_name))
+}
+
+#' @rdname manip_ties_attr
+#' @importFrom igraph delete_edge_attr edge_attr_names
+#' @export
+delete_tie_attribute <- function(.data, attr_name) UseMethod("delete_tie_attribute")
+
+#' @export
+delete_tie_attribute.default <- function(.data, attr_name){
+  as_input(.data, delete_tie_attribute, attr_name = attr_name)
+}
+
+#' @export
+delete_tie_attribute.igraph <- function(.data, attr_name){
+  out <- .data
+  for(a in attr_name){
+    if(a %in% igraph::edge_attr_names(out)){
+      out <- igraph::delete_edge_attr(out, a)
+    } else snet_warn("There is no tie attribute '{a}' to delete.")
+  }
+  out
+}
+
+#' @export
+delete_tie_attribute.data.frame <- function(.data, attr_name){
+  is_edgelist(.data) || snet_abort("Not an edgelist")
+  dplyr::select(.data, -dplyr::any_of(attr_name))
 }
 
 #' @rdname manip_ties_attr
@@ -447,7 +477,13 @@ select_ties.data.frame <- function(.data, ...){
 #' @export
 select_ties.stocnet <- function(.data, ...){
   out <- .data
-  out$ties <- select_ties.data.frame(out$ties, ...)
+  sel <- select_ties.data.frame(out$ties, ...)
+  # the ties table always retains its from/to columns, as tidygraph does
+  ft <- setdiff(intersect(c("from","to"), names(.data$ties)), names(sel))
+  if(length(ft) > 0)
+    sel <- dplyr::bind_cols(.data$ties[, ft, drop = FALSE], sel)
+  out$ties <- dplyr::select(sel, dplyr::any_of(c("from","to")),
+                            dplyr::everything())
   out
 }
 

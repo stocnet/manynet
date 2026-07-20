@@ -169,7 +169,7 @@ as_igraph.network <- function(.data,
 as_igraph.stocnet <- function(.data, twomode = FALSE) {
   if(is.null(as_nodelist(.data)) || length(as_nodelist(.data)) == 0){
     out <- igraph::graph_from_data_frame(as_edgelist(.data))
-    out <- to_unnamed(out)
+    out <- to_unlabelled(out)
   } else {
     vertices <- as_nodelist(.data)
     if(is_labelled(.data))
@@ -196,6 +196,11 @@ as_igraph.stocnet <- function(.data, twomode = FALSE) {
   if(!is.null(as_globallist(.data)) && length(as_globallist(.data)) > 0)
     igraph::graph_attr(out, "global") <- as_globallist(.data)
   out
+}
+
+#' @export
+as_igraph.sienadata <- function(.data, twomode = FALSE) {
+  as_igraph(as_stocnet.sienadata(.data), twomode = twomode)
 }
 
 # nocov start
@@ -475,6 +480,11 @@ as_tidygraph.stocnet <- function(.data, twomode = FALSE) {
   as_tidygraph(as_igraph.stocnet(.data, twomode = twomode))
 }
 
+#' @export
+as_tidygraph.sienadata <- function(.data, twomode = FALSE) {
+  as_tidygraph(as_stocnet.sienadata(.data), twomode = twomode)
+}
+
 # nocov start
 #' @export
 as_tidygraph.network.goldfish <- function(.data,
@@ -624,13 +634,65 @@ as_network.data.frame <- function(.data,
 
 #' @export
 as_network.stocnet <- function(.data, twomode = FALSE) {
-  out <- as_network(as_igraph.stocnet(.data))
-  out$gal <- as_infolist(.data)
+  # Networks are constructed directly from the node and tie tables so that
+  # multiple edges (multiplex/multi-wave) and their tie attributes (e.g. layer,
+  # time, weight) are retained rather than collapsed into a sociomatrix.
+  nodes <- .data$nodes
+  ties <- .data$ties
+  # For two-mode networks the 'bipartite' count is the number of first-mode
+  # nodes. manynet orders nodes first-mode-first, with ties running from the
+  # first mode ('from') to the second ('to'), matching network's convention.
+  bipartite <- FALSE
+  skip_cols <- "na"
+  if (is_twomode(.data)) {
+    bipartite <- sum(nodes$mode == unique(nodes$mode)[1])
+    # 'mode' is implied by the bipartite structure, so it is not stored as a
+    # vertex attribute (it is reconstructed on the way back).
+    skip_cols <- c(skip_cols, "mode")
+  }
+  # Multiple edges are needed for multiplex networks and for any repeated dyad
+  # (e.g. the same tie observed across several waves).
+  has_multiedges <- is_multiplex(.data) ||
+    (!is.null(ties) && nrow(ties) > 0 &&
+       anyDuplicated(ties[c("from", "to")]) > 0)
+  out <- network::network.initialize(net_nodes(.data),
+                                     directed = is_directed(.data),
+                                     bipartite = bipartite,
+                                     loops = !is.null(ties) &&
+                                       any(ties$from == ties$to),
+                                     multiple = has_multiedges)
+  if (!is.null(ties) && nrow(ties) > 0) {
+    out <- network::add.edges(out, tail = as.integer(ties$from),
+                              head = as.integer(ties$to))
+    for (col in setdiff(names(ties), c("from", "to"))) {
+      out <- network::set.edge.attribute(out, col, as.vector(ties[[col]]))
+    }
+  }
+  if (!is.null(nodes)) {
+    for (col in setdiff(names(nodes), skip_cols)) {
+      if (col == "label") {
+        out <- network::set.vertex.attribute(out, "vertex.names",
+                                              as.character(nodes$label))
+      } else {
+        out <- network::set.vertex.attribute(out, col, nodes[[col]])
+      }
+    }
+  }
+  # Merge the info list into (rather than replace) the network attribute list,
+  # so that core network attributes such as n, directed, and bipartite survive.
+  info <- as_infolist(.data)
+  if (!is.null(info) && length(info) > 0)
+    out$gal <- utils::modifyList(out$gal, info)
   if(!is.null(as_changelist(.data)) && length(as_changelist(.data)) > 0)
-    network::set.network.attribute(out, "changes", as_changelist(.data))
+    out <- network::set.network.attribute(out, "changes", as_changelist(.data))
   if(!is.null(as_globallist(.data)) && length(as_globallist(.data)) > 0)
-    network::set.network.attribute(out, "global", as_globallist(.data))
+    out <- network::set.network.attribute(out, "global", as_globallist(.data))
   out
+}
+
+#' @export
+as_network.sienadata <- function(.data, twomode = FALSE) {
+  as_network(as_stocnet.sienadata(.data))
 }
 
 # nocov start
@@ -750,7 +812,9 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
     }
     nodes$type <- NULL
   }
-  if(is_multiplex(.data)){
+  # is_multiplex() is also TRUE for networks with any non-reserved tie
+  # attribute, which have no 'type' column to rename to 'layer'
+  if(is_multiplex(.data) && "type" %in% names(ties)){
     ties$layer <- ties$type
     ties$type <- NULL
     if(is.null(info$ties)){
@@ -782,13 +846,34 @@ as_stocnet.matrix <- function(.data,
 #' @export
 as_stocnet.network <- function(.data,
                            twomode = FALSE) {
-  out <- list(info = as_infolist(.data), 
-              nodes = as_nodelist(.data), 
-              changes = as_changelist(.data), 
-              ties = as_edgelist(.data))
+  # Read edges together with all their attributes in a single, aligned pass so
+  # that tie attributes (e.g. layer, time, weight) stay matched to their edges.
+  edf <- network::as.data.frame.network(.data, unit = "edges", na.rm = FALSE)
+  if (nrow(edf) == 0) {
+    ties <- dplyr::tibble(from = integer(0), to = integer(0))
+  } else {
+    # `.tail`/`.head` are reported as vertex names; convert them back to the
+    # integer node indices that stocnet ties tables use.
+    vnames <- as.character(network::network.vertex.names(.data))
+    edf$from <- match(as.character(edf$.tail), vnames)
+    edf$to <- match(as.character(edf$.head), vnames)
+    edf[c(".tail", ".head", "na")] <- NULL
+    # Drop the weight column when all weights are unity (an unweighted network).
+    if ("weight" %in% names(edf) && all(edf$weight == 1)) edf[["weight"]] <- NULL
+    ties <- dplyr::as_tibble(edf) |>
+      dplyr::select("from", "to", dplyr::everything())
+  }
+  out <- list(info = list(directed = is_directed(.data)),
+              nodes = as_nodelist(.data),
+              changes = as_changelist(.data),
+              ties = ties)
   class(out) <- c("stocnet", class(out))
-  if(inherits(network::network.vertex.names(.data), "integer"))
-    out$nodes$vertex.names <- NULL
+  # Integer vertex names are anonymous node ids, not real labels, so drop them.
+  if(!is.null(out$nodes) &&
+     inherits(network::network.vertex.names(.data), "integer")){
+    out$nodes$label <- NULL
+    if(ncol(out$nodes) == 0) out$nodes <- NULL
+  }
   out
 }
 
@@ -800,35 +885,414 @@ as_siena <- function(.data,
                      twomode = FALSE) UseMethod("as_siena")
 
 #' @export
-as_siena.igraph <- function(.data, twomode = FALSE) {
-  thisRequires("RSiena")
-  # First separate out the dependent ties
-  nets <- igraph::edge_attr_names(as_igraph(.data))
-  ties <- unique(gsub("_t[0-9]","", nets))
-  waves <- max(vapply(strsplit(nets, "_t"), function(t)
-    as.numeric(t[2]), numeric(1)))
-  depnet <- ties[1]
-  depnetArray <- simplify2array(lapply(1:waves, function(t)
-    as_matrix(to_uniplex(.data, paste0(depnet, "_t", t)))))
-  depnet <- RSiena::sienaDependent(depnetArray, 
-                                   type = ifelse(is_twomode(.data) | twomode,
-                                                 "bipartite", "oneMode"))
-  # nodeatts <- net_node_attributes(.data)
-  # nodeatts <- nodeatts[nodeatts != "name"]
-  # # Add constant covariates
-  # consatts <- nodeatts[!grepl("_t[0-9]",nodeatts)]
-  # consvars <- lapply(consatts, function(cons) 
-  #   RSiena::coCovar(node_attribute(.data, cons)))
-  # names(consvars) <- consatts
-  # .newEnv <- new.env(parent=globalenv())
-  # list2env(consvars, envir = .newEnv)
-  # RSiena::varCovar()
-  RSiena::sienaDataCreate(list("depnet" = depnet))
+as_siena.default <- function(.data, twomode = FALSE) {
+  # Any object that can be coerced to a 'stocnet' (igraph, tidygraph/mnet,
+  # matrix, network, edgelist, ...) reaches SIENA through that richer path,
+  # so that multiplex layers, waves, covariates, etc. are carried across.
+  as_siena(as_stocnet(.data, twomode = twomode), twomode = twomode)
 }
 
 #' @export
-as_siena.tbl_graph <- function(.data, twomode = FALSE) {
-  as_siena.igraph(.data, twomode = twomode)
+as_siena.stocnet <- function(.data, twomode = FALSE) {
+  thisRequires("RSiena")
+  x <- .data
+  # The longitudinal column may arrive as 'wave' (mnet convention) or 'time'.
+  x$ties <- .siena_wave_to_time(x$ties)
+  x$changes <- .siena_wave_to_time(x$changes)
+  info <- x$info %||% list()
+  smeta <- info$siena %||% list()
+  svars <- smeta$vars %||% list()
+  focal <- info$focal %||% character(0)
+  centered <- info$centered %||% logical(0)
+  nodes <- x$nodes %||% dplyr::tibble(label = character(0))
+  # Node sets (modes) ----
+  if ("mode" %in% names(nodes)) {
+    set_names <- unique(as.character(nodes[["mode"]]))
+    sizes <- vapply(set_names, function(m) sum(nodes[["mode"]] == m), integer(1))
+  } else {
+    set_names <- (info$modes %||% "Actors")[1]
+    sizes <- stats::setNames(nrow(nodes), set_names)
+  }
+  offsets <- stats::setNames(cumsum(c(0, sizes))[seq_along(sizes)], set_names)
+  labelled <- isTRUE(smeta$labelled)
+  labs_of <- function(m) if (labelled)
+    as.character(nodes$label[.siena_mode_rows(nodes, m, set_names)]) else NULL
+  nodeSetObjs <- lapply(set_names, function(m)
+    RSiena::sienaNodeSet(unname(sizes[m]), nodeSetName = m, names = labs_of(m)))
+  W <- smeta$observations %||% .siena_infer_waves(x)
+  cent_of <- function(nm) if (nm %in% names(centered)) unname(centered[nm]) else TRUE
+  ns_of <- function(nm, default) svars[[nm]]$nodeSet %||% default
+  objs <- list()
+  # Tie layers: dependent networks, or dyadic covariates ----
+  if (!is.null(x$ties) && nrow(x$ties)) {
+    has_layer <- "layer" %in% names(x$ties)
+    tie_layers <- if (has_layer) unique(as.character(x$ties$layer)) else "network"
+    # With no declared dependent, treat the first tie layer as the dependent net.
+    if (!length(focal)) focal <- tie_layers[1]
+    for (L in tie_layers) {
+      sub <- if (has_layer) x$ties[as.character(x$ties$layer) == L, , drop = FALSE] else x$ties
+      meta <- svars[[L]]
+      ns <- ns_of(L, set_names[1])
+      off_from <- unname(offsets[ns[1]]); off_to <- unname(offsets[ns[length(ns)]])
+      sz_from <- unname(sizes[ns[1]]);   sz_to <- unname(sizes[ns[length(ns)]])
+      if (L %in% focal) { # dependent network
+        if (W < 2)
+          snet_abort(c("A SIENA dependent network requires at least two waves,",
+                       "i" = "but the '{L}' layer has only one.",
+                       "i" = paste("Add a 'time'/'wave' column to the ties, or",
+                                   "mark the longitudinal layer(s) via info$focal.")))
+        type <- meta$type %||% if (length(ns) > 1 || twomode) "bipartite" else "oneMode"
+        arr <- .siena_ties_to_array(sub, W, sz_from, sz_to, off_from, off_to,
+                                    onemode = identical(type, "oneMode"))
+        if (!all(arr %in% c(0, 1, 10, 11) | is.na(arr)))
+          snet_abort(c("A SIENA dependent network must have binary ties,",
+                       "x" = "but the '{L}' layer is valued or signed.",
+                       "i" = "Dichotomise it first with `to_unweighted()`."))
+        if (labelled) dimnames(arr) <- list(labs_of(ns[1]), labs_of(ns[length(ns)]), NULL)
+        objs[[L]] <- RSiena::sienaDependent(arr, type = type, nodeSet = ns,
+                                            allowOnly = meta$allowOnly %||% TRUE)
+      } else { # dyadic covariate
+        has_time <- "time" %in% names(sub) && any(!is.na(sub$time))
+        if (has_time) {
+          arr <- .siena_ties_to_array(sub, max(1, W - 1), sz_from, sz_to,
+                                      off_from, off_to, onemode = FALSE)
+          objs[[L]] <- RSiena::varDyadCovar(arr, nodeSets = ns,
+                                            centered = cent_of(L))
+        } else {
+          m <- .siena_ties_to_array(sub, 1, sz_from, sz_to, off_from, off_to,
+                                    onemode = FALSE)[, , 1]
+          objs[[L]] <- RSiena::coDyadCovar(m, nodeSets = ns, centered = cent_of(L))
+        }
+      }
+    }
+  }
+  # Change variables: behavioural dependents, or varying covariates ----
+  chvars <- setdiff(unique(as.character(x$changes$var)), "active")
+  for (V in chvars) {
+    ns <- ns_of(V, set_names[1])
+    rows <- .siena_mode_rows(nodes, ns[1], set_names)
+    off <- unname(offsets[ns[1]]); sz <- unname(sizes[ns[1]])
+    if (V %in% focal) { # behavioural dependent [n, 1, W]
+      mat <- .siena_changes_to_matrix(x$changes, V, sz, off, W)
+      arr <- array(mat, dim = c(sz, 1, W))
+      objs[[V]] <- RSiena::sienaDependent(arr, type = "behavior", nodeSet = ns[1],
+                                          allowOnly = svars[[V]]$allowOnly %||% TRUE)
+    } else { # varying covariate [n, W-1]
+      mat <- .siena_changes_to_matrix(x$changes, V, sz, off, NULL)
+      objs[[V]] <- RSiena::varCovar(mat, nodeSet = ns[1], centered = cent_of(V))
+    }
+  }
+  # Constant covariates from (non-reserved) nodal columns ----
+  reserved <- c("label", "mode", "active", "na", "type", "name")
+  for (C in setdiff(names(nodes), reserved)) {
+    ns <- ns_of(C, set_names[1])
+    rows <- .siena_mode_rows(nodes, ns[1], set_names)
+    vals <- nodes[[C]][rows]
+    # SIENA covariates must be plain numeric vectors, so encode any categorical
+    # attribute as numeric codes and strip stray attributes/classes.
+    vals <- if (is.numeric(vals)) as.vector(vals) else as.numeric(as.factor(vals))
+    objs[[C]] <- RSiena::coCovar(vals, nodeSet = ns[1], centered = cent_of(C))
+  }
+  # Composition change (from active-variable changes) ----
+  comp <- .siena_build_composition(x, sizes, offsets, set_names, W, smeta)
+  args <- objs
+  if (!is.null(comp)) args <- c(args, list(comp))
+  args <- c(args, list(nodeSets = nodeSetObjs))
+  do.call(RSiena::sienaDataCreate, args)
+}
+
+# stocnet from sienadata ####
+
+#' @export
+as_stocnet.sienadata <- function(.data, twomode = FALSE) {
+  thisRequires("RSiena")
+  sd <- .data
+  W <- sd$observations
+  nsets <- sd$nodeSets
+  set_names <- names(nsets)
+  set_sizes <- stats::setNames(vapply(nsets, length, integer(1)), set_names)
+  offsets <- stats::setNames(cumsum(c(0, set_sizes))[seq_along(set_sizes)],
+                             set_names)
+  labs <- .siena_node_labels(sd, set_names, set_sizes)
+  labelled <- any(vapply(seq_along(set_names), function(i)
+    !identical(labs[[i]], as.character(seq_len(set_sizes[i]))), logical(1)))
+  multimode <- length(set_names) > 1
+  nodes <- dplyr::tibble(label = unlist(labs, use.names = FALSE))
+  if (multimode) nodes$mode <- rep(set_names, set_sizes)
+  ties <- list(); changes <- list()
+  focal <- character(0); centered <- logical(0)
+  directed <- logical(0); svars <- list()
+  # Dependent variables ----
+  for (nm in names(sd$depvars)) {
+    dv <- sd$depvars[[nm]]
+    type <- attr(dv, "type"); ns <- attr(dv, "nodeSet")
+    focal <- c(focal, nm)
+    svars[[nm]] <- .siena_prune(list(role = "dependent", type = type, nodeSet = ns,
+                                     allowOnly = attr(dv, "allowOnly"),
+                                     uponly = attr(dv, "uponly"),
+                                     downonly = attr(dv, "downonly"),
+                                     sparse = attr(dv, "sparse")))
+    if (identical(type, "behavior")) {
+      changes[[nm]] <- .siena_behavior_to_changes(dv, nm, offsets[ns[1]], W)
+    } else {
+      directed[nm] <- !isTRUE(attr(dv, "symmetric"))
+      ties[[nm]] <- .siena_array_to_ties(dv, nm, ns, offsets, W,
+                                         onemode = identical(type, "oneMode"))
+    }
+  }
+  # Constant covariates -> nodal columns ----
+  for (nm in names(sd$cCovars)) {
+    cc <- sd$cCovars[[nm]]; ns <- attr(cc, "nodeSet")
+    col <- rep(NA_real_, nrow(nodes))
+    col[.siena_mode_rows(nodes, ns, set_names)] <- .siena_uncenter(cc)
+    nodes[[nm]] <- col
+    centered[nm] <- isTRUE(attr(cc, "centered"))
+    svars[[nm]] <- .siena_prune(list(role = "covar", kind = "coCovar", nodeSet = ns))
+  }
+  # Varying covariates -> change rows ----
+  for (nm in names(sd$vCovars)) {
+    vc <- sd$vCovars[[nm]]; ns <- attr(vc, "nodeSet")
+    changes[[paste0(".vc_", nm)]] <- .siena_matrix_to_changes(
+      matrix(.siena_uncenter(vc), nrow = dim(vc)[1]), nm, offsets[ns[1]])
+    centered[nm] <- isTRUE(attr(vc, "centered"))
+    svars[[nm]] <- .siena_prune(list(role = "covar", kind = "varCovar", nodeSet = ns))
+  }
+  # Constant dyadic covariates -> tie layer (no time) ----
+  for (nm in names(sd$dycCovars)) {
+    dc <- sd$dycCovars[[nm]]; ns <- attr(dc, "nodeSet")
+    ties[[nm]] <- .siena_matrix_to_ties(dc, nm, ns, offsets)
+    centered[nm] <- isTRUE(attr(dc, "centered"))
+    svars[[nm]] <- .siena_prune(list(role = "covar", kind = "coDyadCovar",
+                                     nodeSet = ns, type = attr(dc, "type"),
+                                     sparse = attr(dc, "sparse")))
+  }
+  # Varying dyadic covariates -> tie layer (with time) ----
+  for (nm in names(sd$dyvCovars)) {
+    vd <- sd$dyvCovars[[nm]]; ns <- attr(vd, "nodeSet")
+    ties[[nm]] <- .siena_array_to_ties(vd, nm, ns, offsets, dim(vd)[3],
+                                       onemode = FALSE)
+    centered[nm] <- isTRUE(attr(vd, "centered"))
+    svars[[nm]] <- .siena_prune(list(role = "covar", kind = "varDyadCovar",
+                                     nodeSet = ns, type = attr(vd, "type"),
+                                     sparse = attr(vd, "sparse")))
+  }
+  # Composition change -> active change rows ----
+  siena_meta <- list(version = attr(sd, "version"), observations = W,
+                     labelled = labelled, vars = svars,
+                     nodeSetRelations = .siena_prune(
+                       list(higher = attr(sd, "higher"),
+                            disjoint = attr(sd, "disjoint"),
+                            atLeastOne = attr(sd, "atLeastOne"))))
+  if (length(sd$compositionChange)) {
+    ccobj <- sd$compositionChange[[1]]
+    ns <- attr(ccobj, "nodeSet") %||% set_names[1]
+    changes[["active"]] <- .siena_composition_to_changes(ccobj, ns, offsets, W)
+    siena_meta$ccOption <- attr(sd$compositionChange, "ccOption")
+    siena_meta$compositionNodeSet <- ns
+  }
+  # Assemble info ----
+  info <- list(modes = set_names)
+  tie_layers <- names(ties)
+  if (length(tie_layers)) info$layers <- tie_layers
+  if (length(directed)) info$directed <- directed
+  if (length(focal)) info$focal <- focal
+  if (length(centered)) info$centered <- centered
+  info$siena <- siena_meta
+  ties_tbl <- if (length(ties)) dplyr::bind_rows(ties) else NULL
+  changes_tbl <- if (length(changes)) dplyr::bind_rows(changes) else NULL
+  make_stocnet(info = info, nodes = nodes, ties = ties_tbl,
+               changes = changes_tbl)
+}
+
+# siena coercion helpers ####
+
+# Rows of the (global) node table belonging to a given mode/nodeSet.
+.siena_mode_rows <- function(nodes, mode, set_names) {
+  if ("mode" %in% names(nodes)) which(as.character(nodes[["mode"]]) == mode) else
+    seq_len(nrow(nodes))
+}
+
+# Drop NULL and empty elements from a metadata list.
+.siena_prune <- function(x) x[!vapply(x, function(e) is.null(e) || length(e) == 0,
+                                      logical(1))]
+
+# Recover the raw (uncentered) values of a nodal siena covariate. RSiena stores
+# nodal covariates mean-centered; adding the stored mean back recovers the input
+# so that re-centering on the way out reproduces the original exactly.
+.siena_uncenter <- function(cov) {
+  vals <- as.vector(cov)
+  m <- attr(cov, "mean")
+  if (isTRUE(attr(cov, "centered")) && !is.null(m)) vals <- vals + m
+  vals
+}
+
+# Treat a 'wave' column as the canonical 'time' column.
+.siena_wave_to_time <- function(tbl) {
+  if (is.null(tbl)) return(tbl)
+  if ("wave" %in% names(tbl) && !"time" %in% names(tbl))
+    tbl <- dplyr::rename(tbl, time = "wave")
+  tbl
+}
+
+# Infer the number of observations (waves) from the ties/changes of a stocnet.
+.siena_infer_waves <- function(x) {
+  tt <- if (!is.null(x$ties) && "time" %in% names(x$ties)) x$ties$time else NULL
+  ct <- if (!is.null(x$changes) && "time" %in% names(x$changes)) x$changes$time else NULL
+  suppressWarnings(max(c(1, as.numeric(tt), as.numeric(ct)), na.rm = TRUE))
+}
+
+# Collect node labels per node set from depvar/covar dimnames.
+.siena_node_labels <- function(sd, set_names, set_sizes) {
+  labs <- stats::setNames(lapply(set_names, function(m)
+    as.character(seq_len(set_sizes[m]))), set_names)
+  for (dv in sd$depvars) {
+    ns <- attr(dv, "nodeSet"); dn <- dimnames(dv)
+    if (is.null(dn)) next
+    if (!is.null(dn[[1]]) && length(dn[[1]]) == set_sizes[ns[1]])
+      labs[[ns[1]]] <- dn[[1]]
+    if (length(ns) > 1 && length(dn) > 1 && !is.null(dn[[2]]) &&
+        length(dn[[2]]) == set_sizes[ns[2]]) labs[[ns[2]]] <- dn[[2]]
+  }
+  labs
+}
+
+# A [n, n(/m), W] siena array -> tie tibble (from, to, layer, weight, time).
+.siena_array_to_ties <- function(arr, nm, ns, offsets, W, onemode) {
+  off_from <- unname(offsets[ns[1]]); off_to <- unname(offsets[ns[length(ns)]])
+  rows <- lapply(seq_len(W), function(w) {
+    g <- if (length(dim(arr)) == 3) arr[, , w] else arr
+    if (onemode) diag(g) <- 0
+    idx <- which(g != 0 | is.na(g), arr.ind = TRUE)
+    if (!nrow(idx)) return(NULL)
+    dplyr::tibble(from = off_from + idx[, 1], to = off_to + idx[, 2],
+                  layer = nm, weight = as.vector(g[idx]), time = w)
+  })
+  dplyr::bind_rows(rows)
+}
+
+# A constant [n, n] siena matrix -> tie tibble (no time).
+.siena_matrix_to_ties <- function(m, nm, ns, offsets) {
+  m <- as.matrix(m)
+  off_from <- unname(offsets[ns[1]]); off_to <- unname(offsets[ns[length(ns)]])
+  idx <- which(m != 0 | is.na(m), arr.ind = TRUE)
+  if (!nrow(idx)) return(NULL)
+  dplyr::tibble(from = off_from + idx[, 1], to = off_to + idx[, 2],
+                layer = nm, weight = as.vector(m[idx]))
+}
+
+# A behaviour [n, 1, W] siena array -> change rows for all waves.
+.siena_behavior_to_changes <- function(dv, nm, off, W) {
+  off <- unname(off)
+  rows <- lapply(seq_len(W), function(w) {
+    v <- as.vector(dv[, 1, w])
+    dplyr::tibble(time = w, node = as.integer(off + seq_along(v)), var = nm,
+                  value = as.list(v))
+  })
+  dplyr::bind_rows(rows)
+}
+
+# A varying covariate [n, periods] matrix -> change rows.
+.siena_matrix_to_changes <- function(vc, nm, off) {
+  off <- unname(off); vc <- as.matrix(vc)
+  rows <- lapply(seq_len(ncol(vc)), function(p) {
+    v <- vc[, p]
+    dplyr::tibble(time = p, node = as.integer(off + seq_along(v)), var = nm,
+                  value = as.list(v))
+  })
+  dplyr::bind_rows(rows)
+}
+
+# Composition change list -> active change rows (only non-trivial nodes).
+.siena_composition_to_changes <- function(cclist, ns, offsets, W) {
+  off <- unname(offsets[ns])
+  rows <- lapply(seq_along(cclist), function(i) {
+    v <- as.numeric(cclist[[i]])
+    if (identical(v, c(1, W))) return(NULL)
+    dplyr::tibble(time = v[1], node = as.integer(off + i), var = "active",
+                  value = list(v))
+  })
+  dplyr::bind_rows(rows)
+}
+
+# Tie rows -> a [sz_from, sz_to, W] array (weights, preserving NA).
+.siena_ties_to_array <- function(sub, W, sz_from, sz_to, off_from, off_to,
+                                 onemode) {
+  arr <- array(0, dim = c(sz_from, sz_to, W))
+  if (nrow(sub)) {
+    tv <- if ("time" %in% names(sub)) sub$time else rep(1, nrow(sub))
+    wv <- if ("weight" %in% names(sub)) sub$weight else rep(1, nrow(sub))
+    for (r in seq_len(nrow(sub))) {
+      w <- if (is.na(tv[r])) 1 else as.integer(tv[r])
+      if (w >= 1 && w <= W)
+        arr[sub$from[r] - off_from, sub$to[r] - off_to, w] <- wv[r]
+    }
+  }
+  if (onemode) for (w in seq_len(W)) diag(arr[, , w]) <- 0
+  arr
+}
+
+# Change rows for one variable -> a [sz, W] matrix (NULL W -> infer periods).
+.siena_changes_to_matrix <- function(chg, V, sz, off, W) {
+  sub <- chg[as.character(chg$var) == V, , drop = FALSE]
+  periods <- if (is.null(W)) max(as.numeric(sub$time)) else W
+  mat <- matrix(NA_real_, nrow = sz, ncol = periods)
+  for (r in seq_len(nrow(sub))) {
+    val <- sub$value[[r]]
+    mat[sub$node[r] - off, as.integer(sub$time[r])] <- as.numeric(val)[1]
+  }
+  mat
+}
+
+# Build a sienaCompositionChange from active-variable change rows. Two encodings
+# are supported: the interval encoding produced by as_stocnet.sienadata (each
+# value a numeric c(enter, leave, ...) vector), and the native manynet encoding
+# (initial presence in nodes$active plus per-wave logical 'active' changes).
+.siena_build_composition <- function(x, sizes, offsets, set_names, W, smeta) {
+  if (is.null(x$changes) || !any(as.character(x$changes$var) == "active"))
+    return(NULL)
+  ns <- smeta$compositionNodeSet %||% set_names[1]
+  off <- unname(offsets[ns]); sz <- unname(sizes[ns])
+  sub <- x$changes[as.character(x$changes$var) == "active", , drop = FALSE]
+  option <- smeta$ccOption %||% 1
+  interval_encoded <- any(vapply(sub$value,
+                                 function(v) length(as.numeric(unlist(v))) >= 2,
+                                 logical(1)))
+  if (interval_encoded) {
+    changelist <- lapply(seq_len(sz), function(i) c(1, W)) # default present
+    for (r in seq_len(nrow(sub))) {
+      local <- sub$node[r] - off
+      if (local >= 1 && local <= sz)
+        changelist[[local]] <- as.numeric(unlist(sub$value[[r]]))
+    }
+  } else { # native per-wave presence -> intervals
+    initial <- rep(TRUE, sz)
+    if ("active" %in% names(x$nodes)) {
+      av <- as.logical(x$nodes[["active"]])[.siena_mode_rows(x$nodes, ns, set_names)]
+      if (length(av) == sz) initial <- av
+    }
+    present <- matrix(rep(initial, W), nrow = sz)
+    ord <- order(as.numeric(sub$time))
+    for (r in ord) {
+      local <- sub$node[r] - off; w <- as.integer(sub$time[r])
+      if (local >= 1 && local <= sz && !is.na(w) && w >= 1 && w <= W)
+        present[local, w:W] <- as.logical(sub$value[[r]])[1]
+    }
+    changelist <- lapply(seq_len(sz), function(i)
+      .siena_presence_to_interval(present[i, ], W))
+  }
+  RSiena::sienaCompositionChange(changelist, nodeSet = ns, option = option)
+}
+
+# A logical presence vector across waves -> RSiena (enter, leave, ...) intervals.
+.siena_presence_to_interval <- function(p, W) {
+  if (!any(p)) return(c(1, 1))
+  r <- rle(p); times <- numeric(0); pos <- 1
+  for (k in seq_along(r$lengths)) {
+    len <- r$lengths[k]
+    if (isTRUE(r$values[k])) times <- c(times, pos, pos + len - 1)
+    pos <- pos + len
+  }
+  times
 }
 
 # graphAM ####
@@ -1040,7 +1504,7 @@ as_diffusion.diffnet <- function(.data, twomode = FALSE, events) {
   if (any(report$R + report$I + report$E + report$S != report$n)) {
     snet_abort("Oops, something is wrong")
   }
-  if(is_labelled(net)) events$nodes <- match(events$nodes, node_names(net))
+  if(is_labelled(net)) events$nodes <- match(events$nodes, node_labels(net))
   events <- events |> dplyr::arrange(t)
   report <- dplyr::select(report, dplyr::any_of(c("t", "n", "S", "s", "E", "E_new", "I", "I_new", "R", "R_new")))
   make_diff_model(events, report, net)
@@ -1061,7 +1525,7 @@ as_diffnet.diff_model <- function(.data,
     dplyr::select(nodes,t)
   if(!is_labelled(as_igraph(.data)))
     out <- dplyr::arrange(out, nodes) else if (is.numeric(out$nodes))
-      out$nodes <- node_names(as_igraph(.data))[out$nodes]
+      out$nodes <- node_labels(as_igraph(.data))[out$nodes]
     toa <- stats::setNames(out$t, out$nodes)
     if(is_dynamic(.data)){
       snet_unavailable()

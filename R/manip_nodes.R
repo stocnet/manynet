@@ -190,14 +190,17 @@ arrange_nodes.stocnet <- function(.data, ...){
 #'   These functions allow users to add nodes attributes:
 #'   
 #'   - `add_node_attribute()` offers an `{igraph}`-style way to add a vector of values to a network as a nodal attribute.
+#'   - `delete_node_attribute()` offers an `{igraph}`-style way to remove one or more named nodal attributes from a network.
 #'   - `mutate_nodes()` offers a `{tidyverse}`-style way to add one or more vectors of values to a network as nodal attributes.
 #'   - `rename_nodes()` offers a `{tidyverse}`-style way to rename nodal attributes.
 #'   - `select_nodes()` offers a `{tidyverse}`-style way to select a subset of nodal attributes.
 #'   - `join_nodes()` merges all nodal attributes from one network to another.
-#'   
-#'   Note that while `add_*()` functions operate similarly as comparable `{igraph}` functions,
+#'
+#'   Note that while `add_*()`/`delete_*()` functions operate similarly as comparable `{igraph}` functions,
 #'   `mutate*()`, `bind*()`, etc work like `{tidyverse}` or `{dplyr}`-style functions.
-#' @eval detail_avail("add_node_attribute|mutate_nodes|select_nodes|join_nodes")
+#'   A nodal attribute can equally be deleted the `{tidyverse}` way by assigning it `NULL`
+#'   in `mutate_nodes()`.
+#' @eval detail_avail("add_node_attribute|delete_node_attribute|mutate_nodes|select_nodes|join_nodes")
 #' @template param_data
 #' @template param_dots
 #' @template param_attr
@@ -245,6 +248,39 @@ add_node_attribute.network <- function(.data, attr_name, vector){
 #' @export
 add_node_attribute.tbl_graph <- function(.data, attr_name, vector){
   as_igraph(.data) |> add_node_attribute(attr_name, vector) |> as_tidygraph()
+}
+
+#' @rdname manip_nodes_attr
+#' @importFrom igraph delete_vertex_attr vertex_attr_names
+#' @export
+delete_node_attribute <- function(.data, attr_name) UseMethod("delete_node_attribute")
+
+#' @export
+delete_node_attribute.default <- function(.data, attr_name){
+  as_input(.data, delete_node_attribute, attr_name = attr_name)
+}
+
+#' @export
+delete_node_attribute.igraph <- function(.data, attr_name){
+  out <- .data
+  for(a in attr_name){
+    if(a %in% igraph::vertex_attr_names(out)){
+      out <- igraph::delete_vertex_attr(out, a)
+    } else snet_warn("There is no nodal attribute '{a}' to delete.")
+  }
+  out
+}
+
+#' @export
+delete_node_attribute.network <- function(.data, attr_name){
+  out <- .data
+  for(a in attr_name) out <- network::delete.vertex.attribute(out, a)
+  out
+}
+
+#' @export
+delete_node_attribute.tbl_graph <- function(.data, attr_name){
+  as_igraph(.data) |> delete_node_attribute(attr_name) |> as_tidygraph()
 }
 
 #' @rdname manip_nodes_attr

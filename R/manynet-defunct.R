@@ -53,41 +53,41 @@ network_ties <- function(.data) {
 #' @describeIn defunct Deprecated on 2024-06-20.
 #' @export
 network_dims <- function(.data) {
-  .Deprecated("net_dims", package = "manynet",
+  .Deprecated("mode_nodes", package = "manynet",
               old = "network_dims")
-  net_dims(.data)
+  mode_nodes(.data)
 }
 
 #' @describeIn defunct Deprecated on 2024-06-20.
 #' @export
 network_dims.data.frame <- function(.data) {
-  .Deprecated("net_dims.data.frame", package = "manynet",
+  .Deprecated("mode_nodes.data.frame", package = "manynet",
               old = "network_dims.data.frame")
-  net_dims.data.frame(.data)
+  mode_nodes.data.frame(.data)
 }
 
 #' @describeIn defunct Deprecated on 2024-06-20.
 #' @export
 network_dims.matrix <- function(.data) {
-  .Deprecated("net_dims.matrix", package = "manynet",
+  .Deprecated("mode_nodes.matrix", package = "manynet",
               old = "network_dims.matrix")
-  net_dims.matrix(.data)
+  mode_nodes.matrix(.data)
 }
 
 #' @describeIn defunct Deprecated on 2024-06-20.
 #' @export
 network_dims.igraph <- function(.data) {
-  .Deprecated("net_dims.igraph", package = "manynet",
+  .Deprecated("mode_nodes.igraph", package = "manynet",
               old = "network_dims.igraph")
-  net_dims.igraph(.data)
+  mode_nodes.igraph(.data)
 }
 
 #' @describeIn defunct Deprecated on 2024-06-20.
 #' @export
 network_dims.network <- function(.data) {
-  .Deprecated("net_dims.network", package = "manynet",
+  .Deprecated("mode_nodes.network", package = "manynet",
               old = "network_dims.network")
-  net_dims.network(.data)
+  mode_nodes.network(.data)
 }
 
 #' @describeIn defunct Deprecated on 2024-06-20.
@@ -177,6 +177,7 @@ add_changes <- function(.data, changes) {
               old = "add_changes")
   bind_changes(.data, changes)
 }
+
 
 # Moved to netrics from 2.0.0 ####
 
@@ -491,10 +492,6 @@ net_transmissibility <- function(...) fn_moved("net_transmissibility", "net_by_t
 #' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
 net_upperbound <- function(...) fn_moved("net_upperbound", "net_by_upperbound", version = "2.0.0")
-
-#' @describeIn defunct Deprecated on 2026-03-22.
-#' @export
-net_waves <- function(...) fn_moved("net_waves", "net_by_waves", version = "2.0.0")
 
 #' @describeIn defunct Deprecated on 2026-03-22.
 #' @export
