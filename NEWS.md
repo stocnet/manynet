@@ -1,3 +1,9 @@
+# manynet 2.2.1
+
+## Package
+
+- Added `revdep/` to `.Rbuildignore` so that reverse-dependency check artefacts are no longer bundled into the source tarball, resolving CRAN NOTEs about a non-standard top-level directory, an over-large tarball, and a stray `CITATION` file
+
 # manynet 2.2.0
 
 ## Package
