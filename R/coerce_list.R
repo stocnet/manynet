@@ -349,9 +349,9 @@ as_matrix.data.frame <- function(.data,
                              as.character(.data$to),
                              as.character(.data$from))
     .data <- structure(as.numeric(.data[,3]),
-                     .Dim = c(as.integer(length(nodes1)),
-                              as.integer(length(nodes2))),
-                     .Dimnames = list(nodes1, nodes2))
+                     dim = c(as.integer(length(nodes1)),
+                             as.integer(length(nodes2))),
+                     dimnames = list(nodes1, nodes2))
   }
   if(!is_twomode(.data) && all(rownames(.data) == as.character(seq_nodes(.data)))) attr(.data, "dimnames") <- NULL
   if(!is_twomode(.data) && sum(.data[lower.tri(.data)])==0) .data <- .data + t(.data)

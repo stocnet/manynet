@@ -1,3 +1,14 @@
+# manynet 2.2.1
+
+## Package
+
+- Added `revdep/` to `.Rbuildignore` so that reverse-dependency check artefacts are no longer bundled into the source tarball, resolving CRAN NOTEs about a non-standard top-level directory, an over-large tarball, and a stray `CITATION` file
+- Added reverse-dependency check results to GitHub Actions workflow
+
+## Coercion
+
+- Fixed `as_matrix()` on two-mode networks constructing the incidence matrix via `structure()` with the deprecated special names `.Dim`/`.Dimnames`, which now use `dim`/`dimnames` (resolving a CRAN NOTE)
+
 # manynet 2.2.0
 
 ## Package
