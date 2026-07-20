@@ -3,6 +3,7 @@
 ## Package
 
 - Added `revdep/` to `.Rbuildignore` so that reverse-dependency check artefacts are no longer bundled into the source tarball, resolving CRAN NOTEs about a non-standard top-level directory, an over-large tarball, and a stray `CITATION` file
+- Added reverse-dependency check results to GitHub Actions workflow
 
 ## Coercion
 
