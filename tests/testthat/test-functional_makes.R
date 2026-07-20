@@ -4,7 +4,10 @@
 # and checked against family conventions: correct node counts, mode handling,
 # and manynet-compatible output. Non-supported combinations skip informatively.
 
-create_funs <- alive_functions("^create_")
+# `create_motifs` is an alias of `to_motifs`: despite the `create_` prefix it
+# belongs to the `to_*` family (returns a named list of motif networks, not a
+# single sized network), so it is audited by test-functional_to.R instead.
+create_funs <- setdiff(alive_functions("^create_"), "create_motifs")
 generate_funs <- alive_functions("^generate_")
 
 # Functions whose first argument is data, not a size
