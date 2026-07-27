@@ -77,6 +77,16 @@ as_nodelist.stocnet <- function(.data) {
 }
 
 #' @export
+as_nodelist.matrix <- function(.data) {
+  as_nodelist(as_igraph(.data))
+}
+
+#' @export
+as_nodelist.data.frame <- function(.data) {
+  as_nodelist(as_igraph(.data))
+}
+
+#' @export
 as_nodelist.network <- function(.data) {
   out <- .data
   out <- network::as.data.frame.network(out, unit = "vertices", 
@@ -123,6 +133,13 @@ as_changelist.network <- function(.data) {
   out <- dplyr::tibble(data.frame(out))
   if(ncol(out)==0) NULL else out
 }
+
+# Matrices and edgelists have nowhere to hold a changelist
+#' @export
+as_changelist.matrix <- function(.data) NULL
+
+#' @export
+as_changelist.data.frame <- function(.data) NULL
 
 # Edgelists ####
 
@@ -251,6 +268,13 @@ as_infolist.network <- function(.data) {
   .data$gal
 }
 
+# Matrices and edgelists have nowhere to hold network-level information
+#' @export
+as_infolist.matrix <- function(.data) NULL
+
+#' @export
+as_infolist.data.frame <- function(.data) NULL
+
 # Globallists ####
 
 #' @rdname coerce_list
@@ -267,6 +291,19 @@ as_globallist.igraph <- function(.data) {
   out <- igraph::graph_attr(.data, "global")
   if(is.null(out) || ncol(out)==0) NULL else out
 }
+
+#' @export
+as_globallist.network <- function(.data) {
+  out <- network::get.network.attribute(.data, "global")
+  if(is.null(out) || ncol(out)==0) NULL else out
+}
+
+# Matrices and edgelists have nowhere to hold a globallist
+#' @export
+as_globallist.matrix <- function(.data) NULL
+
+#' @export
+as_globallist.data.frame <- function(.data) NULL
 
 # Matrices ####
 

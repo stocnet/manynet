@@ -10,17 +10,22 @@ for (fn in list_funs) {
     test_that(paste0(fn, "() works on the ", fx, " fixture"), {
       net <- func_fixtures[[fx]]
       out <- run_or_skip(f(net), fn, fx)
-      if (is.null(out)) {
-        skip(paste0("AUDIT [", fn, " x ", fx, "]: returns NULL"))
-      }
-      expect_true(is.data.frame(out) || is.list(out),
-                  label = paste0(fn, "() output on ", fx))
-      if (fn == "as_nodelist" && is.data.frame(out)) {
-        expect_equal(nrow(out), as.numeric(net_nodes(net)))
-      }
-      if (fn == "as_edgelist" && is.data.frame(out)) {
-        expect_equal(nrow(out), as.numeric(net_ties(net)))
-        expect_identical(names(out)[1:2], c("from", "to"))
+      if (!list_holds_info(fn, net)) {
+        # Nothing of this kind to extract: NULL is the expected return
+        expect_null(out)
+      } else {
+        if (is.null(out)) {
+          skip(paste0("AUDIT [", fn, " x ", fx, "]: returns NULL"))
+        }
+        expect_true(is.data.frame(out) || is.list(out),
+                    label = paste0(fn, "() output on ", fx))
+        if (fn == "as_nodelist" && is.data.frame(out)) {
+          expect_equal(nrow(out), as.numeric(net_nodes(net)))
+        }
+        if (fn == "as_edgelist" && is.data.frame(out)) {
+          expect_equal(nrow(out), as.numeric(net_ties(net)))
+          expect_identical(names(out)[1:2], c("from", "to"))
+        }
       }
     })
   }
@@ -30,12 +35,17 @@ for (fn in list_funs) {
 for (fn in list_funs) {
   f <- get(fn, envir = asNamespace("manynet"))
   test_that(paste0(fn, "() works across object classes"), {
-    for (cl in names(class_versions(canonical_net))) {
-      out <- tryCatch(f(class_versions(canonical_net)[[cl]]),
-                      error = function(e) e)
+    versions <- class_versions(canonical_net)
+    for (cl in names(versions)) {
+      out <- tryCatch(f(versions[[cl]]), error = function(e) e)
       if (inherits(out, "error")) {
         skip(paste0("AUDIT [", fn, " x ", cl, "]: ",
                     conditionMessage(out)))
+      }
+      if (is.null(out) &&
+          list_holds_info(fn, canonical_net) &&
+          list_class_holds_info(fn, cl)) {
+        skip(paste0("AUDIT [", fn, " x ", cl, "]: returns NULL"))
       }
     }
     succeed()

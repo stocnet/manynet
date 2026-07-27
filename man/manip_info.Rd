@@ -66,10 +66,10 @@ and can be used for printing a grand table in the \code{{grand}} package.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{            default igraph network stocnet tbl_graph
-add_info          *      *               *          
-as_infolist              *       *       *         *
-mutate_info       *      *               *          
+\if{html}{\out{<div class="sourceCode">}}\preformatted{            data.frame default igraph matrix network stocnet tbl_graph
+add_info                     *      *                      *          
+as_infolist          *              *      *       *       *         *
+mutate_info                  *      *                      *          
 }\if{html}{\out{</div>}}
 
 If a method is not available for a particular class, but a default method is,

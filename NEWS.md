@@ -12,10 +12,13 @@
   - The tutorial tests now extract tutorial code with a small internal helper instead of `knitr::purl()`, and no longer render the `{learnr}` tutorials (a fragile check that added no coverage beyond running the tutorial code itself)
   - Added `{learnr}` to `Config/Needs/website`
 - Moved package architecture documentation into `.github/CONTRIBUTING.md` so that it is available to all contributors
+- Improved the functional tests of the `as_*list()` family to expect `NULL` where a network or object class genuinely holds no such information, instead of reporting these as audit items
 
 ## Coercion
 
 - Fixed `as_network()` assigning the whole vector of a nodal attribute to every node where the network had just one such attribute, which also made the resulting object impossible to coerce back
+- Added `as_changelist()`, `as_globallist()`, `as_infolist()`, and `as_nodelist()` methods for matrices and edgelists, which now return `NULL` instead of raising a "no applicable method" error, since these formats have nowhere to hold network-level information (matrices and edgelists do carry node labels, so `as_nodelist()` returns those where present)
+- Added `as_globallist.network()`, so that a globallist stored on a `network` object by `as_network()` can be retrieved again
 
 ## Manipulating
 

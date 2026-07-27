@@ -65,6 +65,29 @@ class_versions <- function(net) {
 # A small, labelled, undirected canonical network for cross-class tests
 canonical_net <- ison_adolescents
 
+# Does this network actually hold the information that `fn` extracts?
+# as_changelist()/as_globallist() return NULL where the network holds no
+# changes/global attributes, and as_nodelist() returns NULL where there are
+# no nodal attributes, not even labels. NULL is then expected behaviour
+# rather than something to audit.
+list_holds_info <- function(fn, net) {
+  g <- as_igraph(net)
+  switch(fn,
+         as_changelist = "changes" %in% igraph::graph_attr_names(g),
+         as_globallist = "global" %in% igraph::graph_attr_names(g),
+         as_nodelist = length(igraph::vertex_attr_names(g)) > 0,
+         TRUE)
+}
+
+# Can this object class hold the information that `fn` extracts?
+# Matrices and edgelists have nowhere to keep network-level information,
+# so as_infolist()/as_changelist()/as_globallist() correctly return NULL
+# for them (node labels do survive, so as_nodelist() is not excused).
+list_class_holds_info <- function(fn, cl) {
+  !(cl %in% c("matrix", "edgelist") &&
+      fn %in% c("as_infolist", "as_changelist", "as_globallist"))
+}
+
 # Is `out` an acceptable return for a modif/manip function? Either a
 # manynet-compatible object, a list of them, or tabular/matrix output.
 is_acceptable_output <- function(out) {
