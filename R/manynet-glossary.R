@@ -4,7 +4,9 @@
 #' 
 #' @description 
 #'   This function adds a glossary item, useful in tutorials.
-#'   
+#'   Where no glossary entry exists for the term,
+#'   the text is simply returned italicised.
+#'
 #' @param text The text to appear.
 #' @param ref The name of the glossary item to index.
 #'   If NULL, then the function will search the glossary for 'text' instead.
@@ -15,8 +17,8 @@ NULL
 #' @export
 gloss <- function(text, ref = NULL){
   if(is.null(ref)) ref <- tolower(text)
-  if(!ref %in% names(glossies)) 
-    snet_abort("No glossary entry for '{text}' exists.") else {
+  if(!ref %in% names(glossies))
+    paste0("<em>", text, "</em>") else {
       defn <- glossies[which(names(glossies)==ref)]
       options(mnet_glossary = unique(c(ref, getOption("mnet_glossary", default = ""))))
       paste(paste0("<abbr><dfn title='", defn, "'>"), text, "</dfn></abbr>")
@@ -77,7 +79,7 @@ glossies <- list(
   degree = "The degree of a node is the number of connections it has.",
   dendrogram = "A dendrogram is a tree diagram that records the sequences of merges or splits from some, say, hierarchical clustering.",
   density = "The density of a network is the proportion of possible ties that are present.",
-  diameter = "A network's diameter is the maximum length of any shortest path.",
+  diameter = "The diameter of a network is the maximum length of any shortest path.",
   directed = "A directed network is a network where the ties have a direction, from a sender to a receiver.",
   distribution = "A degree distribution is the frequency distribution of the degrees of the nodes in a network.",
   distance = "The distance between two nodes is the length of the shortest path between them.",
@@ -85,7 +87,7 @@ glossies <- list(
   dominating = "A dominating set is the set of nodes that includes or is adjacent to every node in the network.",
   dyad = "A dyad is a pair of nodes and the ties between them.",
   dynamic = "A dynamic network is one where ties appear or disappear at recorded points in continuous time.",
-  eccentricity = "A node's eccentricity is the maximum distance from that node to any other node.",
+  eccentricity = "The eccentricity of a node is the maximum distance from that node to any other node.",
   edgelist = "An edgelist is a table listing the ties in a network, with the sending node in the first column and the receiving node in the second, and any tie attributes in further columns.",
   ego = "An ego is a focal node in a network.",
   eigenvector = "The eigenvector centrality of a node is the corresponding value in the dominant eigenvector of the adjacency matrix.",
@@ -93,7 +95,7 @@ glossies <- list(
   Eulerian = "An Eulerian path is a walk that uses each tie in a network exactly once.",
   geodesic = "A geodesic is a shortest path between two nodes.",
   giant = "The giant component is the component that includes the most nodes in the network.",
-  girth = "A network's girth is the length of its shortest cycle.",
+  girth = "The girth of a network is the length of its shortest cycle.",
   graphlet = "A graphlet is a small, connected, induced, non-isomorphic subgraphs.",
   height = "The height of a network is the maximum length of any directed path.",
   heterogeneity = "A measure of how varied the nodes in a network are.",
@@ -137,7 +139,7 @@ glossies <- list(
   projection = "A projection reduces a two-mode network to a one-mode network of shared ties to the other mode among one set of its nodes.",
   property = "A network property depends only on the structure and not on any labelled or attribute information.",
   qap = "A quadratic assignment procedure (QAP) is a permutation test for network data.",
-  radius = "A network's radius is the minimum eccentricity of any node.",
+  radius = "The radius of a network is the minimum eccentricity of any node.",
   random = "A random network is one where ties are placed among nodes according to some probability distribution.",
   reachability = "The ability of reach one node from another in a network.",
   reciprocity = "A measure of how often nodes in a directed network are mutually linked.",
@@ -155,13 +157,13 @@ glossies <- list(
   spanning = "A spanning subgraph includes all nodes from the original network.",
   sparse = "A sparse network has relatively few ties for its number of nodes.",
   star = "A star network has one internal, dominating, universal node.",
-  strength = "A network's strength is the minimum ratio of removed ties to components created.",
+  strength = "The strength of a network is the minimum ratio of removed ties to components created.",
   structeq = "Two or more nodes are structurally equivalent if they have similar ties to and from all other nodes in the network.",
   structfold = "A structural fold is an overlap between two or more cohesive groups in a network.",
   structhole = "A structural hole is a gap between two parts of a network that would benefit from being connected.",
   subgraph = "A subgraph comprises a subset of the nodes and ties in a network.",
   supergraph = "A supergraph is formed by adding nodes, ties, or both to a network.",
-  toughness = "A network's toughness is the minimum ratio of removed nodes to components created.",
+  toughness = "The toughness of a network is the minimum ratio of removed nodes to components created.",
   transitivity = "Triadic closure is where if the connections A-B and A-C exist among three nodes, there is a tendency for B-C also to be formed.",
   threshold = "A threshold is a limit over which behaviour is expected to vary.",
   tie = "A tie, edge, or link is a connection or relationship between two nodes.",

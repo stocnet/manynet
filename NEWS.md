@@ -1,3 +1,10 @@
+# manynet 2.2.2
+
+
+## Learning
+
+- Improved `gloss()` to return the requested term italicised where no glossary entry exists instead of raising an error
+
 # manynet 2.2.1
 
 ## Package
