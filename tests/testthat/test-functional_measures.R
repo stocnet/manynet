@@ -19,9 +19,8 @@ meas_families <- list(
 meas_nullable <- c("net_name", "layer_names", "mode_names")
 
 # How to construct required arguments from the network under test.
-# Returning NULL means the function is not applicable to this fixture (there
-# is no attribute to ask for), which is a gap in fixture coverage rather than
-# in the implementation, so it is skipped without an AUDIT flag.
+# Returning NULL means there is no attribute on this fixture to ask for; the
+# accessor is then expected to return NULL for any name, which is a pass.
 meas_argmakers <- list(
   node_attribute = function(net) {
     attrs <- setdiff(net_node_attributes(net), c("name", "type", "active"))
@@ -49,9 +48,11 @@ for (family in names(meas_families)) {
         net <- func_fixtures[[fx]]
         args <- if (fn %in% names(meas_argmakers)) {
           made <- run_or_skip(meas_argmakers[[fn]](net), fn, fx)
-          if (is.null(made))
-            skip(paste0(fn, "() not applicable to the ", fx,
-                        " fixture: no such attribute"))
+          if (is.null(made)) {
+            # Nothing to ask for: asking anyway should just return NULL
+            expect_null(run_or_skip(f(net, "not_an_attribute"), fn, fx))
+            return(invisible())
+          }
           made
         } else list()
         out <- run_or_skip(do.call(f, c(list(net), args)), fn, fx)
