@@ -31,6 +31,9 @@
 - Fixed `as_network()` assigning the whole vector of a nodal attribute to every node where the network had just one such attribute, which also made the resulting object impossible to coerce back
 - Added `as_changelist()`, `as_globallist()`, `as_infolist()`, and `as_nodelist()` methods for matrices and edgelists, which now return `NULL` instead of raising a "no applicable method" error, since these formats have nowhere to hold network-level information (matrices and edgelists do carry node labels, so `as_nodelist()` returns those where present)
 - Added `as_globallist.network()`, so that a globallist stored on a `network` object by `as_network()` can be retrieved again
+- Fixed `as_network()` dropping all tie attributes other than the weight, since networks were constructed from a sociomatrix; other tie attributes are now copied across dyad by dyad, so e.g. `add_tie_attribute()` on a `network` object now returns an object holding that attribute
+- Fixed `as_igraph.network()` copying `network`'s internal `vertex.names` attribute across as an ordinary nodal attribute, which shadowed the node labels when coercing back to a `network` (e.g. adding nodes to a `network` returned an object with missing names), and copying the internal `na` attribute where it was not the first attribute
+- Fixed `is_twomode()` on partially labelled matrices raising a "missing value where TRUE/FALSE needed" error, since comparing missing row and column names returned `NA`; such matrices are now treated as one-mode
 
 ## Manipulating
 
