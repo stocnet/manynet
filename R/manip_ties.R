@@ -24,32 +24,164 @@
 NULL
 
 #' @rdname manip_ties_num
-#' @param ties The number of ties to be added or an even list of ties.
+#' @param ties The ties to add. Several forms are accepted:
+#'
+#'   - a single number, e.g. `3`, in which case that number of ties
+#'     is added at random among those dyads not already tied
+#'     (respecting whether the network is directed or two-mode)
+#'   - an even vector of node names or indices, e.g. `c("Betty","Tina")`,
+#'     interpreted pairwise as sender and receiver
+#'   - a two-column matrix, edgelist, or data frame of node names or indices,
+#'     each row of which is interpreted as a tie
+#'   - an explicit tie formula in the same syntax as `create_explicit()`,
+#'     e.g. `Betty -+ Tina` or `1 -+ 3` for an arc from the first to the third
+#'     node, `Betty +-+ Tina` or `1 ++ 3` for both arcs, and
+#'     `Betty -- Tina` or `1 -- 3` for a tie between them.
+#'     Note that both ends of the tie operator must be marked with
+#'     `-` or `+`, so that `1-3` remains arithmetic while `1--3` is a tie.
+#'     Several ties can be added at once by wrapping them in `c()`,
+#'     e.g. `c(Betty -+ Tina, Sue -+ Pam)`, and node sets can be linked
+#'     using `:`, e.g. `Betty:Sue -+ Tina`.
+#'     Such formulae can also be passed as one-sided formulas,
+#'     e.g. `~ Betty -+ Tina`, which is useful when passing them around
+#'     programmatically.
+#'
+#'   Note that in a directed network an undirected tie operator,
+#'   like an even vector, adds a single arc from the first to the second node.
 #' @param attr_list A list of attributes to be added to the new ties.
+#'   Where the network is weighted but no weight is given here,
+#'   the new ties are given a weight of 1.
 #' @importFrom igraph add_edges
 #' @examples
 #' ison_adolescents |> add_ties(c("Betty","Tina"))
+#' ison_adolescents |> add_ties(Betty -+ Tina)
+#' ison_adolescents |> add_ties(c(Betty -+ Tina, Sue -+ Pam))
+#' ison_adolescents |> add_ties(3)
 #' @export
 add_ties <- function(.data, ties, attr_list = NULL) UseMethod("add_ties")
 
 #' @export
 add_ties.default <- function(.data, ties, attr_list = NULL){
+  ties <- interpret_ties(substitute(ties), ties, .data)
   as_input(.data, add_ties, ties = ties, attr_list = attr_list)
 }
 
 #' @export
 add_ties.igraph <- function(.data, ties, attr_list = NULL){
-  igraph::add_edges(.data, edges = ties, attr = attr_list)
+  ties <- interpret_ties(substitute(ties), ties, .data)
+  out <- igraph::add_edges(.data, edges = ties, attr = attr_list)
+  # new ties would otherwise carry a missing weight,
+  # which is not representable in e.g. matrix or network formats
+  if(is_weighted(.data) && !"weight" %in% names(attr_list)){
+    wt <- igraph::edge_attr(out, "weight")
+    wt[seq(igraph::ecount(.data) + 1, igraph::ecount(out))] <- 1
+    out <- igraph::set_edge_attr(out, "weight", value = wt)
+  }
+  out
 }
 
 #' @export
 add_ties.tbl_graph <- function(.data, ties, attr_list = NULL){
+  ties <- interpret_ties(substitute(ties), ties, .data)
   as_tidygraph(add_ties(as_igraph(.data), ties, attr_list))
 }
 
 #' @export
 add_ties.network <- function(.data, ties, attr_list = NULL){
+  ties <- interpret_ties(substitute(ties), ties, .data)
   as_network(add_ties(as_igraph(.data), ties, attr_list))
+}
+
+# Interpreting the various forms in which ties can be declared.
+# `expr` is the unevaluated `ties` argument and `ties` its (lazy) value,
+# which is only forced where the expression is not itself tie syntax.
+interpret_ties <- function(expr, ties, .data){
+  if(is_tie_syntax(expr)) return(ties_from_syntax(expr, .data))
+  if(inherits(ties, "formula")){
+    if(length(ties) != 2)
+      snet_abort("Ties should be declared as a one-sided formula, e.g. {.code ~ A -+ B}.")
+    return(ties_from_syntax(ties[[2]], .data))
+  }
+  if(is.data.frame(ties) || is.matrix(ties)){
+    if(ncol(ties) != 2)
+      snet_abort("Where ties are given as a matrix or data frame, it must have two columns.")
+    return(match_nodes(c(t(as.matrix(ties))), .data))
+  }
+  if(is.numeric(ties) && length(ties) == 1){
+    if(ties < 0 || ties != round(ties))
+      snet_abort("Where a single number of ties is given, it must be a non-negative integer.")
+    return(sample_ties(ties, .data))
+  }
+  if(length(ties) %% 2 != 0)
+    snet_abort(paste("Ties should be declared as an even vector of nodes,",
+                     "a two-column matrix, a number of ties to add at random,",
+                     "or an explicit tie formula such as {.code A -+ B}."))
+  match_nodes(ties, .data)
+}
+
+# Tie syntax is a call in which at least one end of the operator joining
+# two nodes is a unary `+` or `-`, e.g. `A -+ B`, `A -- B`, or `A +-+ B`.
+# This keeps ordinary arithmetic such as `n - 1` unambiguous.
+is_tie_syntax <- function(expr){
+  if(!is.call(expr)) return(FALSE)
+  op <- as.character(expr[[1]])
+  if(op == "~") return(TRUE)
+  if(op %in% c("c", "list") && length(expr) > 1)
+    return(all(vapply(as.list(expr)[-1], is_tie_syntax, logical(1))))
+  if(!op %in% c("-", "+") || length(expr) != 3) return(FALSE)
+  rhs <- expr[[3]]
+  is.call(rhs) && length(rhs) == 2 && as.character(rhs[[1]]) %in% c("-", "+")
+}
+
+# Each tie declaration is parsed on its own, so that the directedness of one
+# does not affect the others, and then matched onto the nodes in `.data`.
+ties_from_syntax <- function(expr, .data){
+  if(is.call(expr) && as.character(expr[[1]]) == "~") expr <- expr[[2]]
+  terms <- if(is.call(expr) && as.character(expr[[1]]) %in% c("c", "list"))
+    as.list(expr)[-1] else list(expr)
+  out <- lapply(terms, function(term){
+    el <- as_edgelist(do.call(create_explicit, list(term)))
+    if(nrow(el) == 0)
+      snet_abort("No ties were declared in {.code {deparse(term)}}.")
+    c(t(as.matrix(el[,1:2])))
+  })
+  match_nodes(unlist(out), .data)
+}
+
+# Nodes may be identified by name or by index, in either case returning
+# the indices igraph expects.
+match_nodes <- function(nodes, .data){
+  if(is.factor(nodes)) nodes <- as.character(nodes)
+  if(!is.character(nodes)) return(nodes)
+  out <- match(nodes, node_names(.data))
+  if(anyNA(out)){
+    unmatched <- is.na(out)
+    numbered <- suppressWarnings(as.integer(nodes[unmatched]))
+    invalid <- is.na(numbered) | numbered < 1 | numbered > net_nodes(.data)
+    if(any(invalid))
+      snet_abort("Node{?s} {.val {unique(nodes[unmatched][invalid])}} {?was/were} not found in the network.")
+    out[unmatched] <- numbered
+  }
+  out
+}
+
+# Sampling `n` ties from those dyads not already tied.
+sample_ties <- function(n, .data){
+  if(n == 0) return(integer(0))
+  mat <- as_matrix(.data)
+  if(is_twomode(.data)){
+    dyads <- which(mat == 0, arr.ind = TRUE)
+    dyads[,2] <- dyads[,2] + nrow(mat)
+  } else {
+    dyads <- which(mat == 0 & !diag(TRUE, nrow(mat)), arr.ind = TRUE)
+    if(!is_directed(.data)) dyads <- dyads[dyads[,1] < dyads[,2], , drop = FALSE]
+  }
+  if(nrow(dyads) < n)
+    snet_abort(paste("There {cli::qty(nrow(dyads))} {?is/are} only",
+                     "{nrow(dyads)} dyad{?s} in the network not already tied,",
+                     "so {n} tie{?s} cannot be added."))
+  dyads <- dyads[sample(nrow(dyads), n), , drop = FALSE]
+  c(t(dyads))
 }
 
 #' @rdname manip_ties_num

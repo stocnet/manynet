@@ -103,3 +103,73 @@ test_that("delete_nodes works", {
 test_that("$ works", {
   expect_length(ison_adolescents$`node$name`, 8)
 })
+
+test_that("add_ties accepts an even vector of nodes", {
+  expect_equal(as.numeric(net_ties(add_ties(ison_adolescents, c("Betty", "Tina")))), 11)
+  expect_equal(as.numeric(net_ties(add_ties(ison_adolescents, c(1, 5)))), 11)
+  expect_equal(as_edgelist(add_ties(ison_adolescents, c("Betty", "Tina")))[11,],
+               dplyr::tibble(from = "Betty", to = "Tina"))
+  expect_error(add_ties(ison_adolescents, c(1, 2, 3)), "even vector")
+  expect_error(add_ties(ison_adolescents, c("Betty", "Nobody")), "not found")
+})
+
+test_that("add_ties accepts explicit tie syntax", {
+  expect_equal(as_edgelist(add_ties(ison_adolescents, Betty -+ Tina))[11,],
+               dplyr::tibble(from = "Betty", to = "Tina"))
+  # numbers are interpreted as node indices
+  expect_equal(as_edgelist(add_ties(ison_adolescents, 1 -+ 3))[11,],
+               dplyr::tibble(from = "Betty", to = "Alice"))
+  # several ties can be added at once, and node sets linked
+  expect_equal(as.numeric(net_ties(add_ties(ison_adolescents,
+                                 c(Betty -+ Tina, Sue -+ Pam)))), 12)
+  expect_equal(as.numeric(net_ties(add_ties(ison_adolescents, Betty:Sue -+ Tina))), 12)
+  # one-sided formulae are equivalent
+  expect_equal(as_edgelist(add_ties(ison_adolescents, ~ Betty -- Tina))[11,],
+               dplyr::tibble(from = "Betty", to = "Tina"))
+  # in a directed network, mutual syntax adds both arcs
+  dir <- to_directed(create_ring(4))
+  expect_equal(as.numeric(net_ties(add_ties(dir, 1 -+ 3))), as.numeric(net_ties(dir)) + 1)
+  expect_equal(as.numeric(net_ties(add_ties(dir, 1 +-+ 3))), as.numeric(net_ties(dir)) + 2)
+  # subtraction is still arithmetic, not tie syntax
+  expect_equal(as.numeric(net_ties(add_ties(ison_adolescents, c(4 - 3, 5)))), 11)
+})
+
+test_that("add_ties adds a number of ties at random", {
+  set.seed(123)
+  expect_equal(as.numeric(net_ties(add_ties(ison_adolescents, 3))), 13)
+  expect_equal(as.numeric(net_ties(add_ties(ison_adolescents, 0))), 10)
+  expect_true(is_twomode(add_ties(ison_southern_women, 5)))
+  expect_equal(as.numeric(net_ties(add_ties(ison_southern_women, 5))), 94)
+  # no more ties can be added than there are dyads left untied
+  expect_error(add_ties(create_filled(4), 1), "not already tied")
+  expect_error(add_ties(ison_adolescents, 2.5), "non-negative integer")
+})
+
+test_that("add_ties accepts a two-column matrix or edgelist", {
+  expect_equal(as_edgelist(add_ties(ison_adolescents,
+                                    matrix(c(1, 3, 2, 4), 2)))[11:12,],
+               dplyr::tibble(from = c("Betty", "Alice"),
+                             to = c("Sue", "Jane")))
+  expect_error(add_ties(ison_adolescents, matrix(1:9, 3)), "two columns")
+})
+
+test_that("add_ties works across classes and keeps new ties weighted", {
+  wtd <- add_tie_attribute(ison_adolescents, "weight", 1:10)
+  for (cl in c("tidygraph", "igraph", "matrix", "network", "edgelist")) {
+    x <- get(paste0("as_", cl))(wtd)
+    expect_equal(as.numeric(net_ties(add_ties(x, c(1, 5)))), 11,
+                 label = paste0("add_ties() on ", cl))
+  }
+  # new ties are given a weight of 1 rather than a missing weight
+  expect_false(anyNA(as_matrix(add_ties(as_matrix(wtd), c(1, 5)))))
+  expect_equal(igraph::edge_attr(add_ties(wtd, c(1, 5)), "weight")[11], 1)
+  expect_equal(igraph::edge_attr(add_ties(wtd, c(1, 5),
+                                          list(weight = 7)), "weight")[11], 7)
+})
+
+test_that("as_network() keeps a single node attribute per node", {
+  out <- as_network(add_node_attribute(ison_adolescents, "group",
+                                       rep(c("A", "B"), 4)))
+  expect_equal(network::get.vertex.attribute(out, "group"),
+               rep(c("A", "B"), 4))
+})

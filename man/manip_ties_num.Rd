@@ -27,9 +27,35 @@ filter_ties(.data, ...)
 \item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
 
-\item{ties}{The number of ties to be added or an even list of ties.}
+\item{ties}{The ties to add. Several forms are accepted:
+\itemize{
+\item a single number, e.g. \code{3}, in which case that number of ties
+is added at random among those dyads not already tied
+(respecting whether the network is directed or two-mode)
+\item an even vector of node names or indices, e.g. \code{c("Betty","Tina")},
+interpreted pairwise as sender and receiver
+\item a two-column matrix, edgelist, or data frame of node names or indices,
+each row of which is interpreted as a tie
+\item an explicit tie formula in the same syntax as \code{create_explicit()},
+e.g. \code{Betty -+ Tina} or \code{1 -+ 3} for an arc from the first to the third
+node, \code{Betty +-+ Tina} or \code{1 ++ 3} for both arcs, and
+\code{Betty -- Tina} or \code{1 -- 3} for a tie between them.
+Note that both ends of the tie operator must be marked with
+\code{-} or \code{+}, so that \code{1-3} remains arithmetic while \code{1--3} is a tie.
+Several ties can be added at once by wrapping them in \code{c()},
+e.g. \code{c(Betty -+ Tina, Sue -+ Pam)}, and node sets can be linked
+using \code{:}, e.g. \code{Betty:Sue -+ Tina}.
+Such formulae can also be passed as one-sided formulas,
+e.g. \code{~ Betty -+ Tina}, which is useful when passing them around
+programmatically.
+}
 
-\item{attr_list}{A list of attributes to be added to the new ties.}
+Note that in a directed network an undirected tie operator,
+like an even vector, adds a single arc from the first to the second node.}
+
+\item{attr_list}{A list of attributes to be added to the new ties.
+Where the network is weighted but no weight is given here,
+the new ties are given a weight of 1.}
 
 \item{...}{Additional parameters and arguments passed on internally.}
 }
@@ -69,6 +95,9 @@ If no method is available for any class, an error will be thrown.
   mutate_ties(other, form = 1:6) |> filter_ties(form < 4)
   add_tie_attribute(other, "weight", c(1, 2, 2, 2, 1, 2))
 ison_adolescents |> add_ties(c("Betty","Tina"))
+ison_adolescents |> add_ties(Betty -+ Tina)
+ison_adolescents |> add_ties(c(Betty -+ Tina, Sue -+ Pam))
+ison_adolescents |> add_ties(3)
 delete_ties(ison_adolescents, 3)
 delete_ties(ison_adolescents, "Alice|Sue")
 }
