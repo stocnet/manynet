@@ -29,6 +29,7 @@
   - the previous even vector of nodes, e.g. `add_ties(net, c("Betty","Tina"))`, continues to work, as does ordinary arithmetic in the argument, since tie syntax requires `+` or `-` at both ends of the operator
 - Fixed `add_ties()` on weighted networks giving the new ties a missing weight, which is not representable in matrix or `{network}` formats; they are now given a weight of 1 unless one is passed in `attr_list`
 - Fixed `add_ties()` and `delete_ties()` raising errors for `network` objects with a single nodal attribute (see the `as_network()` fix above)
+- Fixed `bind_changes()` on `stocnet` objects raising a "Can't combine `..1$value` <character> and `..2$value` <list>" error, since it wrapped the incoming `value` column in a list but changelogs already on the object store `value` as an atomic vector; the two changelogs' `value` columns are now reconciled before binding, falling back to a list-column (or to character) only where the values genuinely cannot be held in one vector
 - Fixed `to_waves()` to honour an explicitly named `attribute` when the network is not marked longitudinal, i.e. when the tie attribute is not called "wave" or "panel" (fixing the silent no-op behind stocnet/autograph#40)
 - Fixed `to_waves()` to return waves in the natural (sorted) order of the attribute values, so numeric waves such as 1:12 no longer sort lexicographically ("1", "10", "11", ..., "2", ...)
 - Fixed `to_waves(cumulative = TRUE)` to no longer mangle single-wave results
