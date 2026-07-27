@@ -13,6 +13,10 @@
   - Added `{learnr}` to `Config/Needs/website`
 - Moved package architecture documentation into `.github/CONTRIBUTING.md` so that it is available to all contributors
 
+## Coercion
+
+- Fixed `as_network()` assigning the whole vector of a nodal attribute to every node where the network had just one such attribute, which also made the resulting object impossible to coerce back
+
 ## Manipulating
 
 - Fixed `to_waves()` to honour an explicitly named `attribute` when the network is not marked longitudinal, i.e. when the tie attribute is not called "wave" or "panel" (fixing the silent no-op behind stocnet/autograph#40)

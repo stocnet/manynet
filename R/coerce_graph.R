@@ -600,9 +600,7 @@ as_network.igraph <- function(.data,
   if ("name" %in% colnames(attr)) attr <- subset(attr, select = c(-name))
   if ("type" %in% colnames(attr)) attr <- subset(attr, select = c(-type))
   out <- as_network(as_matrix(.data))
-  if (length(attr) > 0) {
-    out <- network::set.vertex.attribute(out, names(attr), attr)
-  }
+  out <- set_network_node_attributes(out, attr)
   out
 }
 
@@ -614,9 +612,16 @@ as_network.tbl_graph <- function(.data,
   if ("name" %in% colnames(attr)) attr <- subset(attr, select = c(-name))
   if ("type" %in% colnames(attr)) attr <- subset(attr, select = c(-type))
   out <- as_network(as_matrix(.data))
-  if (length(attr) > 0) {
-    out <- network::set.vertex.attribute(out, names(attr), attr)
-  }
+  out <- set_network_node_attributes(out, attr)
+  out
+}
+
+# `network::set.vertex.attribute()` interprets a single-column data frame as
+# one value (the whole column) to be assigned to every vertex,
+# so attributes are set one at a time.
+set_network_node_attributes <- function(out, attr) {
+  for (a in names(attr))
+    out <- network::set.vertex.attribute(out, a, attr[[a]])
   out
 }
 
