@@ -41,6 +41,7 @@
   - the previous even vector of nodes, e.g. `add_ties(net, c("Betty","Tina"))`, continues to work, as does ordinary arithmetic in the argument, since tie syntax requires `+` or `-` at both ends of the operator
 - Fixed `add_ties()` on weighted networks giving the new ties a missing weight, which is not representable in matrix or `{network}` formats; they are now given a weight of 1 unless one is passed in `attr_list`
 - Fixed `add_ties()` and `delete_ties()` raising errors for `network` objects with a single nodal attribute (see the `as_network()` fix above)
+- Improved `add_nodes()` so that nodes added to a labelled network are labelled too, e.g. "N9" and "N10" where eight nodes were already named, since partially labelled networks are ambiguous for other functions and other classes (previously such networks raised a "missing value where TRUE/FALSE needed" error when coerced to a matrix or `network` object)
 - Fixed `bind_changes()` on `stocnet` objects raising a "Can't combine `..1$value` <character> and `..2$value` <list>" error, since it wrapped the incoming `value` column in a list but changelogs already on the object store `value` as an atomic vector; the two changelogs' `value` columns are now reconciled before binding, falling back to a list-column (or to character) only where the values genuinely cannot be held in one vector
 
 ## Modifying
