@@ -1,5 +1,17 @@
 # manynet 2.2.2
 
+## Package
+
+- Updated the GitHub Actions workflows to the latest major action versions (`actions/checkout@v7`, `actions/upload-artifact@v7`, `actions/download-artifact@v8`), replacing some long-outdated `@v2` pins
+- Added a "Tutorial articles are in sync" job to the PR checks, which regenerates `vignettes/articles/` from `inst/tutorials/` and fails if the committed articles have drifted
+  - `data-raw/build_tutorial_articles.R` is now tracked in the repository (it was previously excluded by `.gitignore`) so that the check can run
+- Added PR metadata checks to the PR checks, automating the DESCRIPTION version bump, PR title, and PR description conventions, and removed the corresponding manual items from the pull request template
+- Fixed the website deployment job installing the `check` rather than the `website` dependencies
+- Added a "Related Packages" menu to the website navigation bar, linking to `{netrics}`, `{autograph}`, and `{migraph}`
+- Removed `{knitr}` and `{rmarkdown}` from `Suggests`, since neither was used by the package or its tests
+  - The tutorial tests now extract tutorial code with a small internal helper instead of `knitr::purl()`, and no longer render the `{learnr}` tutorials (a fragile check that added no coverage beyond running the tutorial code itself)
+  - Added `{learnr}` to `Config/Needs/website`
+- Moved package architecture documentation into `.github/CONTRIBUTING.md` so that it is available to all contributors
 
 ## Learning
 

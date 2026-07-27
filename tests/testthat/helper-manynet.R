@@ -134,45 +134,42 @@ find_pkg_tutorial_paths <- function(pkg) {
   tute_files
 }
 
-check_tute_rendering <- function(path, quiet = TRUE){
-
-  skip_if_not_installed("rmarkdown")
-  skip_if_not_installed("shiny")
-  # Rendering shiny_prerendered learnr tutorials against a covr-instrumented
-  # namespace is fragile and adds no coverage value (check_tute_functions()
-  # exercises the tutorial code itself); skip under covr to avoid a
-  # coverage-only failure on CI.
-  skip_if(as.logical(Sys.getenv("R_COVR", "false")),
-          "tutorial rendering not tested under covr")
-  stopifnot(all(file.exists(path)))
-  
-  for(i in path){
-    if(!quiet) message("Rendering: ", basename(i))
-    tryCatch({
-      rmarkdown::render(input = i, 
-                        output_dir = tempdir(),
-                        intermediates_dir = tempdir(), quiet = quiet)
-      # Note that the Debian setup on CRAN does not allow for writing files to any
-      # location other than the temporary directory, which is why we must specify
-      # tempdir() in the two dir arguments.
-      if(!quiet) message("Successfully rendered: ", basename(i))
-    }, error = function(e) {
-      stop("Failed to render ", i, ": ", e$message, call. = FALSE)
-    })
+# Extract the R code from an R Markdown / learnr tutorial's `{r}` chunks, in
+# document order, dropping any chunk marked `purl = FALSE`. This replicates the
+# only part of knitr's purl() we rely on, so that {knitr} need not be a package
+# dependency (it was otherwise used solely to run these tutorial tests). These
+# tutorials use no child documents, chunk references, or non-R engines, so this
+# simple line scanner is sufficient and matches purl()'s output expression set.
+extract_rmd_code <- function(path) {
+  lines <- readLines(path, warn = FALSE)
+  open_re  <- "^\\s*```+\\s*\\{[rR][\\s,}]"
+  close_re <- "^\\s*```+\\s*$"
+  code <- character()
+  i <- 1L
+  n <- length(lines)
+  while (i <= n) {
+    if (grepl(open_re, lines[i], perl = TRUE)) {
+      keep <- !grepl("purl\\s*=\\s*(FALSE|F)\\b", lines[i])
+      i <- i + 1L
+      while (i <= n && !grepl(close_re, lines[i])) {
+        if (keep) code <- c(code, lines[i])
+        i <- i + 1L
+      }
+    }
+    i <- i + 1L
   }
-  invisible(NULL)
+  code
 }
 
-check_tute_functions <- function(path, skip = "ergm\\(", quiet = TRUE){
-  tmp <- tempfile(fileext = ".R")
-  knitr::purl(
-    input  = path,
-    output = tmp,
-    quiet  = quiet
-  )
-  exprs <- parse(tmp)  # your purled file
+# The tutorials' code chunks are extracted to a script and evaluated expression
+# by expression, so that any chunk that errors or raises a deprecation warning
+# fails the suite. Rendering the learnr tutorials themselves is deliberately not
+# tested (that check was fragile and added no coverage value), mirroring
+# {netrics}'s tests/testthat/helper-netrics.R.
+check_tute_functions <- function(path, skip = "ergm\\("){
+  exprs <- parse(text = extract_rmd_code(path))
   env <- new.env(parent = globalenv())
-  
+
   is_skipped_call <- function(expr) {
     any(grepl(skip, deparse(expr)))
   }

@@ -13,6 +13,7 @@ navbar:
     - intro
     - reference
     - tutorials
+    - family
     - news
     right:
     - search
@@ -33,6 +34,15 @@ navbar:
         href: articles/making-network-data.html
       - text: Manipulating Network Data
         href: articles/manipulating-network-data.html
+    family:
+      text: Related Packages
+      menu:
+      - text: netrics
+        href: https://stocnet.github.io/netrics/
+      - text: autograph
+        href: https://stocnet.github.io/autograph/
+      - text: migraph
+        href: https://stocnet.github.io/migraph/
     news:
       text: News
       href: news/index.html

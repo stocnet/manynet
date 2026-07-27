@@ -24,7 +24,7 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v7
 
       - uses: r-lib/actions/setup-r@v2
         with:
@@ -54,7 +54,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Save binary artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.config.asset_name }}
           path: build/
@@ -73,6 +73,71 @@ jobs:
         run: spelling::spell_check_package()
         shell: Rscript {0}
 
+  articles-in-sync:
+    name: Tutorial articles are in sync
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: r-lib/actions/setup-r@v2
+
+      - name: Regenerate tutorial articles
+        run: Rscript data-raw/build_tutorial_articles.R
+
+      - name: Check for drift
+        run: |
+          if ! git diff --exit-code -- vignettes/articles/; then
+            echo "::error::vignettes/articles/*.Rmd are out of date with inst/tutorials/*.Rmd. Run 'Rscript data-raw/build_tutorial_articles.R' and commit the result."
+            exit 1
+          fi
+
+  pr-metadata:
+    name: PR metadata checks
+    runs-on: macOS-latest
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Check DESCRIPTION version is bumped
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          BASE_VERSION=$(git show "$BASE_SHA:DESCRIPTION" | grep -m1 '^Version:' | sed 's/Version: *//')
+          HEAD_VERSION=$(grep -m1 '^Version:' DESCRIPTION | sed 's/Version: *//')
+          echo "Base version: $BASE_VERSION"
+          echo "Head version: $HEAD_VERSION"
+          if [ "$BASE_VERSION" = "$HEAD_VERSION" ]; then
+            echo "::error::DESCRIPTION Version has not been bumped from $BASE_VERSION"
+            exit 1
+          fi
+          HIGHEST=$(printf '%s\n%s\n' "$BASE_VERSION" "$HEAD_VERSION" | sort -V | tail -n1)
+          if [ "$HIGHEST" != "$HEAD_VERSION" ]; then
+            echo "::error::DESCRIPTION Version $HEAD_VERSION is not greater than base version $BASE_VERSION"
+            exit 1
+          fi
+
+      - name: Check PR title mentions the new version number
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          HEAD_VERSION=$(grep -m1 '^Version:' DESCRIPTION | sed 's/Version: *//')
+          if [[ "$PR_TITLE" != *"$HEAD_VERSION"* ]]; then
+            echo "::error::PR title does not mention the new version number ($HEAD_VERSION): \"$PR_TITLE\""
+            exit 1
+          fi
+
+      - name: Check PR description itemizes changes under subsection titles
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if ! grep -qE '^##[[:space:]]' <<< "$PR_BODY"; then
+            echo "::error::PR description does not itemize changes under subsection titles (e.g. \"## Data\")"
+            exit 1
+          fi
+
   revdep:
     name: Reverse dependencies
     runs-on: ubuntu-latest
@@ -81,7 +146,7 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: r-lib/actions/setup-r@v2
         with:
