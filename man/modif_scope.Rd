@@ -17,9 +17,9 @@ to_no_missing(.data)
 
 to_ego(.data, node, max_dist = 1, min_dist = 0, direction = c("out", "in"))
 
-to_time(.data, time)
+to_time(.data, time = NULL)
 
-to_wave(.data, time)
+to_wave(.data, time = NULL)
 
 to_giant(.data)
 
@@ -56,7 +56,10 @@ and 2 excludes ego's direct alters.}
 “in” on incoming ties, and "all" on either/the sum of the two.
 By default "all".}
 
-\item{time}{A time point or wave at which to present the network.}
+\item{time}{A time point or wave at which to present the network.
+For an interval (spell) network that records tie \code{begin}/\code{end} lifespans,
+\code{time} may be omitted, in which case a list of slices is returned,
+one per change point (each moment at which some tie begins or ends).}
 
 \item{...}{Arguments passed on to dplyr::filter}
 
@@ -83,6 +86,9 @@ than the original object.
 (the singular counterpart of \code{to_components()}, which returns a list of all of them).
 \item \code{to_time()} scopes a longitudinal network to the network as it stood at a given wave or time point.
 \code{to_wave()} is an alias, using the wave-based vocabulary of \code{net_waves()} and \code{to_waves()}.
+For interval (spell) networks with tie \code{begin}/\code{end} lifespans, \code{to_time()}
+returns the ties active at that moment, or -- when \code{time} is omitted -- a
+list of slices, one per change point (each tie beginning or end).
 \item \code{to_no_isolates()} scopes a network into one excluding all nodes without ties.
 \item \code{to_no_missing()} scopes a network to one retaining only complete cases,
 i.e. nodes with no missing values.
@@ -104,6 +110,14 @@ to_no_missing                   *                                    *
 to_subgraph             *       *      *           *       *         *
 to_subgraphs                    *      *                   *         *
 }\if{html}{\out{</div>}}
+
+For interval (spell) networks, whose ties carry \code{begin}/\code{end} lifespans
+(e.g. \code{irps_wwi}), \code{to_time()} scopes to the ties active at \code{time}, using
+the half-open convention (\verb{begin <= time < end}) shared with
+\code{network::networkDynamic}. When \code{time} is omitted, one such slice is
+returned for each distinct change point (every moment at which some tie
+begins or ends), as a named list, so that the evolving network can be
+iterated over or animated (e.g. with \code{autograph::grapht()}).
 }
 \section{\code{to_blocks()}}{
 
@@ -113,6 +127,10 @@ while preserving the topology of the original structures.
 }
 
 \examples{
+  # A single snapshot of the ties active in a given year:
+  to_time(irps_wwi, 1901)
+  # Or one slice per change point (each tie beginning or end):
+  length(to_time(irps_wwi))
 ison_adolescents |>
   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) |>
   to_waves(attribute = "wave") |>

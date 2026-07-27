@@ -13,6 +13,14 @@
   - Added `{learnr}` to `Config/Needs/website`
 - Moved package architecture documentation into `.github/CONTRIBUTING.md` so that it is available to all contributors
 
+## Manipulating
+
+- Fixed `to_waves()` to honour an explicitly named `attribute` when the network is not marked longitudinal, i.e. when the tie attribute is not called "wave" or "panel" (fixing the silent no-op behind stocnet/autograph#40)
+- Fixed `to_waves()` to return waves in the natural (sorted) order of the attribute values, so numeric waves such as 1:12 no longer sort lexicographically ("1", "10", "11", ..., "2", ...)
+- Fixed `to_waves(cumulative = TRUE)` to no longer mangle single-wave results
+- Improved `to_time()` to handle interval (spell) networks whose ties carry `begin`/`end` lifespans (e.g. `irps_wwi`): supplying a `time` returns the ties active at that moment (using the half-open `begin <= time < end` convention shared with `network::networkDynamic`), while omitting `time` returns a list of slices, one per change point (each moment at which some tie begins or ends). Previously `to_time()` reported such networks as unavailable
+- Added `to_time.igraph()`, and `time` now defaults to missing so the slice-generating form can be called as `to_time(net)`
+
 ## Learning
 
 - Improved `gloss()` to return the requested term italicised where no glossary entry exists instead of raising an error

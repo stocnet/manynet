@@ -273,8 +273,11 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
     })
     names(waves) <- paste("Wave", times)
     out <- waves
-  } else if(is_longitudinal(.data)){
-    wp <- unique(tie_attribute(.data, attribute))
+  } else if(is_longitudinal(.data) ||
+            attribute %in% net_tie_attributes(.data)){
+    # An explicitly named tie attribute is honoured even if the network is not
+    # marked longitudinal (i.e. the attribute is not called "wave" or "panel").
+    wp <- sort(unique(tie_attribute(.data, attribute)))
     if(!is.null(panels))
       wp <- intersect(panels, wp)
     if(length(wp) > 1) {
@@ -285,10 +288,13 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
     } else {
       out <- filter_ties(.data, !!as.name(attribute) == wp)
     }
-    if (isTRUE(cumulative)) {
+    if (isTRUE(cumulative) && is.list(out) && !is_manynet(out)) {
       out <- .cumulative_ties(out, attribute)
+      # Waves keep the natural (sorted) order of the attribute values;
+      # ordering by names(out) here would sort numeric waves
+      # lexicographically ("1", "10", "11", ..., "2", ...).
+      out <- out[order(match(names(out), as.character(wp)))]
     }
-    out <- out[order(names(out))]
   }
   if(is.null(out)) .data else out
 }
@@ -373,7 +379,7 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
     }
   }
   for (k in names(a)) {
-    x[[k]] <- igraph::add.edges(
+    x[[k]] <- igraph::add_edges(
       x[[k]], c(a[[k]]$to, a[[k]]$from)[order(c(ceiling(seq_along(a[[k]]$to)/1),
                                                 seq_along(a[[k]]$from)))],
       attr = a[[k]][3])
