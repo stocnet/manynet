@@ -67,15 +67,22 @@ assigned to two, equally sized partitions.}
 
 \item{outdegree}{Numeric scalar or vector indicating the
 desired outdegree distribution.
-By default NULL and is required.
+Note that a scalar (single number) will result in a k-regular graph.
+By default NULL.
 If \code{n} is an existing network object and the outdegree is not specified,
 then the outdegree distribution will be inferred from that of the network.
-Note that a scalar (single number) will result in a k-regular graph.}
+If only the indegree is specified, then in one-mode networks the outdegree
+will mirror it, and in two-mode networks the same number of ties will be
+spread as evenly as possible across the nodes in the first mode.
+If neither is specified, the sparsest connected structure is created:
+a cycle in one-mode networks, and in two-mode networks one in which the
+larger mode is 1-regular.}
 
 \item{indegree}{Numeric vector indicating the desired indegree distribution.
 By default NULL but not required unless a directed network is desired.
 If \code{n} is an existing directed network object and the indegree is not specified,
-then the indegree distribution will be inferred from that of the network.}
+then the indegree distribution will be inferred from that of the network.
+Otherwise it is filled in from the outdegree as described above.}
 
 \item{mark}{A logical vector the length of the nodes in the network.
 This can be created by, among other things, any \verb{node_is_*()} function.}
@@ -149,6 +156,8 @@ create_tree(c(7,8))
 create_lattice(12, width = 4)
 create_components(10, membership = c(1,1,1,2,2,2,3,3,3,3))
 create_degree(10, outdegree = rep(1:5, 2))
+create_degree(10)
+create_degree(c(6,4))
 create_core(6)
   create_windmill(6)
   create_cycle(6)

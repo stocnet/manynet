@@ -14,6 +14,14 @@
 - Moved package architecture documentation into `.github/CONTRIBUTING.md` so that it is available to all contributors
 - Improved the functional tests of the `as_*list()` family to expect `NULL` where a network or object class genuinely holds no such information, instead of reporting these as audit items
 
+## Making
+
+- Improved `create_degree()` so that it no longer raises an uninformative error where no degree sequence is given
+  - Where neither `outdegree` nor `indegree` is given, the sparsest connected structure of that size is created: a cycle for one-mode networks, and for two-mode networks one in which the larger mode is 1-regular and the ties are spread as evenly as possible across the smaller mode
+  - Where only one of the two is given for a directed one-mode network, the other now mirrors it, and for a two-mode network the same number of ties is spread as evenly as possible across the other mode
+  - Degree sequences of the wrong length now report which argument was the wrong length and what length was expected, instead of a `stopifnot()` message
+- Fixed `create_degree()` returning two-mode networks with the modes reversed, e.g. `create_degree(c(6,4))` returned a network with 4 nodes in the first mode and 6 in the second
+
 ## Coercion
 
 - Fixed `as_network()` assigning the whole vector of a nodal attribute to every node where the network had just one such attribute, which also made the resulting object impossible to coerce back

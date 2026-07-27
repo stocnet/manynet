@@ -475,41 +475,52 @@ create_components <- function(n, directed = FALSE, membership = NULL) {
 }
 
 #' @rdname make_create 
-#' @param outdegree Numeric scalar or vector indicating the 
+#' @param outdegree Numeric scalar or vector indicating the
 #'   desired outdegree distribution.
-#'   By default NULL and is required.
-#'   If `n` is an existing network object and the outdegree is not specified, 
-#'   then the outdegree distribution will be inferred from that of the network.
 #'   Note that a scalar (single number) will result in a k-regular graph.
+#'   By default NULL.
+#'   If `n` is an existing network object and the outdegree is not specified,
+#'   then the outdegree distribution will be inferred from that of the network.
+#'   If only the indegree is specified, then in one-mode networks the outdegree
+#'   will mirror it, and in two-mode networks the same number of ties will be
+#'   spread as evenly as possible across the nodes in the first mode.
+#'   If neither is specified, the sparsest connected structure is created:
+#'   a cycle in one-mode networks, and in two-mode networks one in which the
+#'   larger mode is 1-regular.
 #' @param indegree Numeric vector indicating the desired indegree distribution.
 #'   By default NULL but not required unless a directed network is desired.
-#'   If `n` is an existing directed network object and the indegree is not specified, 
+#'   If `n` is an existing directed network object and the indegree is not specified,
 #'   then the indegree distribution will be inferred from that of the network.
+#'   Otherwise it is filled in from the outdegree as described above.
 #' @importFrom igraph realize_degseq realize_bipartite_degseq
 #' @examples
 #' create_degree(10, outdegree = rep(1:5, 2))
+#' create_degree(10)
+#' create_degree(c(6,4))
 #' @export
 create_degree <- function(n, outdegree = NULL, indegree = NULL) {
   directed <- infer_directed(n, !is.null(indegree))
   outdegree <- infer_outdegree(n, outdegree)
   indegree <- infer_indegree(n, indegree)
   n <- infer_n(n)
+  degs <- default_degree(n, outdegree, indegree, directed)
+  outdegree <- degs$outdegree
+  indegree <- degs$indegree
   if (length(n) == 1) {
+    outdegree <- recycle_degree(outdegree, n, "outdegree")
     if(!directed){
-      if(length(outdegree)==1) outdegree <- rep(outdegree, n)
-      stopifnot(n == length(outdegree))
       out <- igraph::realize_degseq(outdegree)
     } else {
-      if(length(outdegree)==1) outdegree <- rep(outdegree, n)
-      if(length(indegree)==1) indegree <- rep(indegree, n)
-      stopifnot(n == length(outdegree), n == length(indegree))
+      indegree <- recycle_degree(indegree, n, "indegree")
       out <- igraph::realize_degseq(outdegree, indegree)
     }
   } else if (length(n) == 2) {
-    if(length(outdegree)==1) outdegree <- rep(outdegree, n[1])
-    if(length(indegree)==1) indegree <- rep(indegree, n[2])
-    stopifnot(n[1] == length(outdegree), n[2] == length(indegree))
+    outdegree <- recycle_degree(outdegree, n[1], "outdegree")
+    indegree <- recycle_degree(indegree, n[2], "indegree")
     out <- igraph::realize_bipartite_degseq(outdegree, indegree)
+    # igraph assigns the first degree sequence to type TRUE,
+    # but the first mode is expected to be type FALSE here
+    out <- igraph::set_vertex_attr(out, "type", value = !igraph::V(out)$type)
   }
   as_tidygraph(out)
 }
@@ -766,7 +777,7 @@ infer_outdegree <- function(n, outdegree) {
   if (is.null(outdegree) && is_manynet(n)){
     outdegree <- .node_deg(n, direction = "out")
     if(is_twomode(n)) outdegree <- outdegree[1:mode_nodes(n)[1]]
-  } 
+  }
   outdegree
 }
 
@@ -774,8 +785,51 @@ infer_indegree <- function(n, indegree) {
   if (is.null(indegree) && is_manynet(n)){
     indegree <- .node_deg(n, direction = "in")
     if(is_twomode(n)) indegree <- indegree[(mode_nodes(n)[1]+1):sum(mode_nodes(n))]
-  } 
+  }
   indegree
+}
+
+recycle_degree <- function(degree, k, name) {
+  if (length(degree) == 1) degree <- rep(degree, k)
+  if (length(degree) != k)
+    snet_abort("`{name}` should be a single number or a vector of length {k},",
+               "but a vector of length {length(degree)} was given.")
+  degree
+}
+
+# Spreads `ties` ties as evenly as possible across `k` nodes,
+# e.g. 6 ties across 4 nodes gives c(2,2,1,1).
+spread_degree <- function(ties, k) {
+  rep(ties %/% k, k) + c(rep(1, ties %% k), rep(0, k - ties %% k))
+}
+
+# Where one or both degree sequences are missing, defaults to the sparsest
+# connected structure available: a cycle for one-mode networks, and for
+# two-mode networks one in which the larger mode is 1-regular and the
+# smaller mode's ties are spread as evenly as possible.
+default_degree <- function(n, outdegree, indegree, directed) {
+  if (!is.null(outdegree) && !is.null(indegree))
+    return(list(outdegree = outdegree, indegree = indegree))
+  neither <- is.null(outdegree) && is.null(indegree)
+  if (length(n) == 1) {
+    if (neither) {
+      deg <- if (n < 2) 0 else if (directed || n < 3) 1 else 2
+      snet_info("No degree sequence given,",
+                "so creating a {deg}-regular network.")
+      outdegree <- indegree <- deg
+    } else if (is.null(outdegree)) outdegree <- indegree else
+      indegree <- outdegree
+  } else if (length(n) == 2) {
+    ties <- if (neither) max(n) else
+      if (is.null(indegree)) sum(rep(outdegree, length.out = n[1])) else
+        sum(rep(indegree, length.out = n[2]))
+    if (neither)
+      snet_info("No degree sequence given, so spreading {ties} tie{?s}",
+                "as evenly as possible across the nodes in each mode.")
+    if (is.null(outdegree)) outdegree <- spread_degree(ties, n[1])
+    if (is.null(indegree)) indegree <- spread_degree(ties, n[2])
+  }
+  list(outdegree = outdegree, indegree = indegree)
 }
 
 infer_membership <- function(n, membership) {
