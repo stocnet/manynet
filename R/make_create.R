@@ -133,6 +133,21 @@ create_explicit <- function(...){
 #'   are densely tied to each other, and the rest peripheral, tied only to the core.
 #'   - `create_degree()` creates a network with a given (out/in)degree sequence,
 #'   which can also be used to create k-regular networks.
+#'   - `create_cycle()` creates a network in which all the nodes form
+#'   a single closed chain.
+#'   - `create_wheel()` creates a network in which a single dominant node
+#'   is tied to all the nodes in a cycle.
+#'
+#'   Some of these structures are constrained in two-mode networks.
+#'   Since ties in two-mode networks can only run between the modes,
+#'   a two-mode cycle must alternate between them, and so can only be as long
+#'   as twice the number of nodes in the smaller mode.
+#'   Similarly, the rim of a two-mode wheel alternates between the modes,
+#'   and its hub, drawn from the first mode, can only be tied to the
+#'   second mode's rim nodes.
+#'   Where `n` is larger than such a structure can accommodate,
+#'   the largest such structure is created and the surplus nodes are
+#'   added as isolates, with a message.
 #'
 #'   These functions can create either one-mode or two-mode networks.
 #'   To create a one-mode network, pass the main argument `n` a single integer,
@@ -648,6 +663,7 @@ create_windmill <- function(n) {
 #' @rdname make_create
 #' @examples
 #'   create_cycle(6)
+#'   create_cycle(c(4,6))
 #' @export
 create_cycle <- function(n, directed = FALSE){
   n <- infer_n(n)
@@ -662,11 +678,25 @@ create_cycle <- function(n, directed = FALSE){
   
   # Helper: Create edge list for bimodal cycle
   bimodal_cycle <- function(n_modes) {
-    if(n_modes[1] != n_modes[2]){
-      snet_abort("Two-mode cycles require equal number of nodes in each mode.")
+    a <- n_modes[1]
+    b <- n_modes[2]
+    # A two-mode cycle alternates between the modes, so it can only be as long
+    # as twice the smaller mode; any surplus nodes are added as isolates.
+    m <- min(a, b)
+    if(m < 2)
+      snet_abort("Two-mode cycles require at least two nodes in each mode.")
+    if(a != b){
+      extra <- a + b - 2*m
+      snet_info("Two-mode cycles require an equal number of nodes in each mode,",
+                "so a cycle of {2*m} nodes has been created",
+                "and the remaining {extra} node{?s} added as isolate{?s}.")
     }
-    unimodal_cycle(sum(n_modes)) |> 
-      mutate_nodes(type = rep_len(c(F,T), sum(n_modes)))
+    edges <- vapply(seq_len(m), function(i)
+      c(i, a + i, a + i, if(i < m) i + 1 else 1), numeric(4))
+    igraph::make_empty_graph(n = a + b, directed = TRUE) |>
+      igraph::add_edges(as.vector(edges)) |>
+      igraph::set_vertex_attr("type", value = rep(c(FALSE, TRUE), c(a, b))) |>
+      as_tidygraph()
   }
   
   # Main logic
@@ -679,13 +709,14 @@ create_cycle <- function(n, directed = FALSE){
   } else {
     snet_abort("Argument 'n' must be a scalar or a vector of length 2.")
   }
-  if(!directed) net <- to_undirected(net)
+  if(!directed || length(n) == 2) net <- to_undirected(net)
   return(net)
 }
 
 #' @rdname make_create
 #' @examples
 #'   create_wheel(6)
+#'   create_wheel(c(4,6))
 #' @export
 create_wheel <- function(n, directed = FALSE) {
   n <- infer_n(n)
@@ -703,9 +734,30 @@ create_wheel <- function(n, directed = FALSE) {
     g <- igraph::graph_from_edgelist(edges, directed = directed)
     return(g)
   } else if (length(n) == 2) {
-    snet_abort("Wheel graphs are undefined for two-mode networks",
-               "because the rim nodes cannot be adjacent to both neighbouring",
-               "rim nodes and the dominant node in the centre.")
+    a <- n[1]
+    b <- n[2]
+    # Since rim nodes cannot be adjacent to both their neighbouring rim nodes
+    # and the hub, the rim alternates between the modes and the hub, drawn from
+    # the first mode, is tied to the second mode's rim nodes only.
+    # The rim can thus only be as long as twice the smaller of the first mode
+    # (excluding the hub) and the second mode; surplus nodes are isolates.
+    m <- min(a - 1, b)
+    if (m < 2)
+      snet_abort("Two-mode wheels require at least three nodes in the first mode",
+                 "and two nodes in the second mode.")
+    if (a - 1 != b) {
+      extra <- a + b - (2*m + 1)
+      snet_info("Two-mode wheels require one more node in the first mode",
+                "than in the second, so a wheel of {2*m+1} nodes has been created",
+                "and the remaining {extra} node{?s} added as isolate{?s}.")
+    }
+    rim <- vapply(seq_len(m), function(i)
+      c(i + 1, a + i, a + i, if(i < m) i + 2 else 2), numeric(4))
+    spokes <- rbind(1, a + seq_len(m))
+    igraph::make_empty_graph(n = a + b, directed = TRUE) |>
+      igraph::add_edges(c(as.vector(rim), as.vector(spokes))) |>
+      igraph::set_vertex_attr("type", value = rep(c(FALSE, TRUE), c(a, b))) |>
+      as_tidygraph() |> to_undirected()
   } else snet_abort("Argument 'n' must be a scalar or vector of length 2.")
 }
 

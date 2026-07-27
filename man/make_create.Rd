@@ -115,7 +115,22 @@ neighbours form a clique.
 are densely tied to each other, and the rest peripheral, tied only to the core.
 \item \code{create_degree()} creates a network with a given (out/in)degree sequence,
 which can also be used to create k-regular networks.
+\item \code{create_cycle()} creates a network in which all the nodes form
+a single closed chain.
+\item \code{create_wheel()} creates a network in which a single dominant node
+is tied to all the nodes in a cycle.
 }
+
+Some of these structures are constrained in two-mode networks.
+Since ties in two-mode networks can only run between the modes,
+a two-mode cycle must alternate between them, and so can only be as long
+as twice the number of nodes in the smaller mode.
+Similarly, the rim of a two-mode wheel alternates between the modes,
+and its hub, drawn from the first mode, can only be tied to the
+second mode's rim nodes.
+Where \code{n} is larger than such a structure can accommodate,
+the largest such structure is created and the surplus nodes are
+added as isolates, with a message.
 
 These functions can create either one-mode or two-mode networks.
 To create a one-mode network, pass the main argument \code{n} a single integer,
@@ -161,7 +176,9 @@ create_degree(c(6,4))
 create_core(6)
   create_windmill(6)
   create_cycle(6)
+  create_cycle(c(4,6))
   create_wheel(6)
+  create_wheel(c(4,6))
 }
 \seealso{
 \link{as}

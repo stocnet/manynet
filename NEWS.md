@@ -21,6 +21,10 @@
   - Where only one of the two is given for a directed one-mode network, the other now mirrors it, and for a two-mode network the same number of ties is spread as evenly as possible across the other mode
   - Degree sequences of the wrong length now report which argument was the wrong length and what length was expected, instead of a `stopifnot()` message
 - Fixed `create_degree()` returning two-mode networks with the modes reversed, e.g. `create_degree(c(6,4))` returned a network with 4 nodes in the first mode and 6 in the second
+- Improved `create_cycle()` and `create_wheel()` on two-mode networks so that, instead of raising an error where the requested number of nodes cannot form such a structure, the largest such structure is created and the surplus nodes are added as isolates, with a message explaining this
+  - Since ties in two-mode networks run only between the modes, a two-mode cycle alternates between them and can be at most twice as long as the smaller mode, e.g. `create_cycle(c(4,6))` now returns an 8-cycle and two isolates
+  - Similarly, the rim of a two-mode wheel alternates between the modes and its hub, drawn from the first mode, is tied only to the second mode's rim nodes, e.g. `create_wheel(c(4,6))` now returns a wheel on 7 nodes and three isolates
+  - `create_cycle()` and `create_wheel()` are now also listed and described in the documentation for the defined structures, where they were previously only aliased
 
 ## Coercion
 

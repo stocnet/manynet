@@ -63,9 +63,27 @@ test_that("create_cycle works", {
   expect_values(net_ties(create_cycle(c(5,5))), 10)
 })
 
+test_that("create_cycle adds surplus two-mode nodes as isolates", {
+  out <- create_cycle(c(4,6))
+  expect_true(is_twomode(out))
+  expect_values(net_nodes(out), 10)
+  expect_values(net_ties(out), 8)
+  expect_values(sum(igraph::degree(as_igraph(out)) == 0), 2)
+  expect_error(create_cycle(c(4,1)), "at least two nodes")
+})
+
 test_that("create_wheel works", {
   expect_values(net_ties(create_wheel(5)), 8)
-  expect_error(create_wheel(c(5,5)))
+  expect_values(net_ties(create_wheel(c(5,5))), 12)
+})
+
+test_that("create_wheel adds surplus two-mode nodes as isolates", {
+  out <- create_wheel(c(4,6))
+  expect_true(is_twomode(out))
+  expect_values(net_nodes(out), 10)
+  expect_values(net_ties(out), 9)
+  expect_values(sum(igraph::degree(as_igraph(out)) == 0), 3)
+  expect_error(create_wheel(c(2,6)), "at least three nodes")
 })
 
 test_that("star creation works", {
