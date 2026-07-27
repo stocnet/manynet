@@ -38,9 +38,21 @@
 - Fixed `add_ties()` on weighted networks giving the new ties a missing weight, which is not representable in matrix or `{network}` formats; they are now given a weight of 1 unless one is passed in `attr_list`
 - Fixed `add_ties()` and `delete_ties()` raising errors for `network` objects with a single nodal attribute (see the `as_network()` fix above)
 - Fixed `bind_changes()` on `stocnet` objects raising a "Can't combine `..1$value` <character> and `..2$value` <list>" error, since it wrapped the incoming `value` column in a list but changelogs already on the object store `value` as an atomic vector; the two changelogs' `value` columns are now reconciled before binding, falling back to a list-column (or to character) only where the values genuinely cannot be held in one vector
-- Fixed `to_waves()` to honour an explicitly named `attribute` when the network is not marked longitudinal, i.e. when the tie attribute is not called "wave" or "panel" (fixing the silent no-op behind stocnet/autograph#40)
-- Fixed `to_waves()` to return waves in the natural (sorted) order of the attribute values, so numeric waves such as 1:12 no longer sort lexicographically ("1", "10", "11", ..., "2", ...)
-- Fixed `to_waves(cumulative = TRUE)` to no longer mangle single-wave results
+
+## Modifying
+
+- Fixed several bugs in `to_waves()`:
+  - it now honours an explicitly named `attribute` when the network is not marked longitudinal, i.e. when the tie attribute is not called "wave" or "panel" (fixing the silent no-op behind stocnet/autograph#40)
+  - it now returns waves in the natural (sorted) order of the attribute values, so numeric waves such as 1:12 no longer sort lexicographically ("1", "10", "11", ..., "2", ...)
+  - `to_waves(cumulative = TRUE)` no longer mangles single-wave results
+  - it no longer raises an "undefined columns selected" error on igraph objects with no waves to split on, where a single network was iterated over as though it were a list of waves
+  - it no longer raises an "object 'out' not found" error on edgelists, and no longer splits them on the wrong column where the attribute is present
+  - it no longer raises a "Can't combine `..1` <character> and `..2` <logical>" error on changing networks, since changelogs store values as character but the nodal attributes they update need not be; applied values are now coerced back to the type of the attribute they update
+  - it now applies every changing variable rather than only the last of them, taking the latest value per node *and* variable rather than per node
+  - for networks that are both changing and longitudinal, it now takes its waves from the tie attribute rather than from the times at which nodes change, so that waves in which no node changes are no longer dropped (e.g. `to_waves(fict_starwars)` now returns all seven waves rather than six) and each wave holds the ties of that wave (previously `to_waves(fict_potter)` returned an empty last wave)
+- Fixed `to_slices()` erroring on networks it cannot slice:
+  - networks holding no such time attribute raised an "In argument: `time <= moments`" error, and are now returned unchanged, as in `to_waves()`
+  - unweighted networks raised an "In argument: `weight != 0`" error, since ties can only be dropped for summing to zero where they carry a weight
 - Improved `to_time()` to handle interval (spell) networks whose ties carry `begin`/`end` lifespans (e.g. `irps_wwi`): supplying a `time` returns the ties active at that moment (using the half-open `begin <= time < end` convention shared with `network::networkDynamic`), while omitting `time` returns a list of slices, one per change point (each moment at which some tie begins or ends). Previously `to_time()` reported such networks as unavailable
 - Added `to_time.igraph()`, and `time` now defaults to missing so the slice-generating form can be called as `to_time(net)`
 

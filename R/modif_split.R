@@ -214,63 +214,27 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
   out <- NULL
   if(is_changing(.data) && is_longitudinal(.data)){
     cl <- as_changelist(.data)
-    el <- as_edgelist(.data)
-    
-    # Get all unique times in order
-    times <- sort(unique(cl$time))
+    # Waves are defined by the tie attribute; the changes recorded up to each
+    # wave are then applied to that wave's nodes.
+    if(!attribute %in% net_tie_attributes(.data))
+      attribute <- intersect(c("wave", "panel", "time"),
+                             net_tie_attributes(.data))[1]
+    times <- sort(unique(tie_attribute(.data, attribute)))
     if(!is.null(panels))
       times <- intersect(panels, times)
-    
     waves <- lapply(times, function(t) {
-      # Latest changes by time t
-      changes <- cl |> 
-        dplyr::filter(time <= t) |> 
-        dplyr::group_by(node) |> 
-        dplyr::reframe(var = var,
-                         latest_value = value[which.max(time)],
-                         .groups = "drop")
-      for(v in unique(changes$var)){
-        upd <- rep(NA, net_nodes(.data))
-        upd[changes[var = v,]$node] <- changes[var = v,]$latest_value
-        old <- node_attribute(.data, v)
-        if(inherits(old, "logi")) old <- as.logical(old)
-        out <- add_node_attribute(.data, v, dplyr::coalesce(upd, old))
-      }
-      out <- delete_changes(out)
-      out <- filter_ties(out, wave == t)
-      out
+      out <- .apply_changes_upto(.data, cl, t)
+      filter_ties(out, !!as.name(attribute) == t)
     })
     names(waves) <- paste("Wave", times)
     out <- waves
   } else if(is_changing(.data)){
     cl <- as_changelist(.data)
-    if(!attribute %in% names(cl) && "time" %in% names(cl)){
-      attribute <- "time"
-    }
     # Get all unique times in order
     times <- sort(unique(cl$time))
     if(!is.null(panels))
       times <- intersect(panels, times)
-
-    # Iterate over times
-    waves <- lapply(times, function(t) {
-      # Latest changes by time t
-      changes <- cl |> 
-        dplyr::filter(time <= t) |> 
-        dplyr::group_by(node) |> 
-        dplyr::reframe(var = var,
-                         latest_value = value[which.max(time)],
-                         .groups = "drop")
-      for(v in unique(changes$var)){
-        upd <- rep(NA, net_nodes(.data))
-        upd[changes[var = v,]$node] <- changes[var = v,]$latest_value
-        old <- node_attribute(.data, v)
-        if(inherits(old, "logi")) old <- as.logical(old)
-        out <- add_node_attribute(.data, v, dplyr::coalesce(upd, old))
-      }
-      out <- delete_changes(out)
-      out
-    })
+    waves <- lapply(times, function(t) .apply_changes_upto(.data, cl, t))
     names(waves) <- paste("Wave", times)
     out <- waves
   } else if(is_longitudinal(.data) ||
@@ -303,23 +267,32 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
 to_waves.igraph <- function(.data, attribute = "wave", panels = NULL,
                             cumulative = FALSE) {
   out <- to_waves(as_tidygraph(.data), attribute, panels, cumulative)
-  if(length(out) > 1) lapply(out, as_igraph) else as_igraph(out)
+  # A single network is returned as a single network, not iterated over;
+  # note that length() of a network is its number of nodes, so a list of
+  # waves must be identified by class rather than by length.
+  if(is.list(out) && !is_manynet(out)) lapply(out, as_igraph) else as_igraph(out)
 }
 
 #' @export
 to_waves.data.frame <- function(.data, attribute = "wave", panels = NULL,
                                 cumulative = FALSE) {
-  wp <- unique(tie_attribute(.data, attribute))
+  if(!attribute %in% names(.data)) return(.data)
+  wp <- sort(unique(.data[[attribute]]))
   if(!is.null(panels)) wp <- intersect(panels, wp)
   if(length(wp) > 1) {
-    out <- lapply(wp, function(l) .data[,attribute == l])
+    # Cumulative waves gather the ties of all earlier waves too, relabelled
+    # to the wave they are gathered into. Edgelists are accumulated directly
+    # rather than via .cumulative_ties(), since coercing a three-column
+    # edgelist to a network would read the wave column as a tie weight.
+    out <- lapply(seq_along(wp), function(k){
+      keep <- if(isTRUE(cumulative)) .data[[attribute]] %in% wp[seq_len(k)] else
+        .data[[attribute]] == wp[k]
+      rows <- .data[keep, , drop = FALSE]
+      if(isTRUE(cumulative)) rows[[attribute]] <- wp[k]
+      rows
+    })
     names(out) <- wp
-  } else if(length(wp) > 1) {
-    out <- .data[,attribute == wp]
-  }
-  if (isTRUE(cumulative)) {
-    out <- .cumulative_ties(out, attribute)
-  }
+  } else out <- .data[.data[[attribute]] %in% wp, , drop = FALSE]
   out
 }
 
@@ -343,6 +316,45 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
     out <- .cumulative_ties(out, attribute)
   }
   out
+}
+
+# Applies to a network the changes recorded in its changelist up to and
+# including time `t`, and then drops the changelist. For each nodal variable
+# the latest change per node wins; changelist values are stored as character
+# (or as a list-column) where changed variables are of different types, so
+# they are coerced back to the type of the attribute they update.
+.apply_changes_upto <- function(.data, changes, t){
+  out <- .data
+  changes <- changes[changes$time <= t, , drop = FALSE]
+  if(nrow(changes)){
+    changes <- changes[order(changes$time), , drop = FALSE]
+    if(is.character(changes$node))
+      changes$node <- match(changes$node, node_labels(.data))
+    for(v in unique(changes$var)){
+      upd <- changes[changes$var == v, , drop = FALSE]
+      # Where a node changes more than once by time t, the latest wins
+      upd <- upd[!duplicated(upd$node, fromLast = TRUE), , drop = FALSE]
+      old <- node_attribute(out, v)
+      new <- if(is.null(old)) rep(NA, net_nodes(out)) else
+        if(is.factor(old)) old else as.vector(old)
+      new[upd$node] <- .match_attribute_type(upd$value, old)
+      out <- add_node_attribute(out, v, new)
+    }
+  }
+  delete_changes(out)
+}
+
+# Coerces changelist values to the type of the nodal attribute they update,
+# so that e.g. an "active" attribute stays logical rather than becoming
+# character (or failing to combine at all).
+.match_attribute_type <- function(value, old){
+  if(is.list(value) && all(lengths(value) == 1L))
+    value <- unlist(value, use.names = FALSE)
+  if(is.null(old)) value
+  else if(is.logical(old)) as.logical(value)
+  else if(is.numeric(old)) as.numeric(value)
+  else if(is.factor(old)) factor(as.character(value), levels = levels(old))
+  else as.character(value)
 }
 
 .cumulative_ties <- function(x, attribute) {
@@ -406,17 +418,24 @@ to_slices.default <- function(.data, attribute = "time", slice = NULL){
 
 #' @export
 to_slices.tbl_graph <- function(.data, attribute = "time", slice = NULL) {
+  # Without the time attribute there is nothing to slice on, so the network
+  # is returned unchanged rather than filtering on a non-existent variable.
+  if(!attribute %in% net_tie_attributes(.data)) return(.data)
   incremented <- "increment" %in% net_tie_attributes(.data)
   updated <- "replace" %in% net_tie_attributes(.data)
   if(!is.null(slice))
-    moments <- slice else 
+    moments <- slice else
       moments <- unique(tie_attribute(.data, attr_name = attribute))
+  # Summarising ties introduces a weight, but ties can only be dropped for
+  # having summed to zero where such a weight exists.
+  drop_zeroes <- function(x)
+    if(is_weighted(x)) filter_ties(x, weight != 0) else x
   if(length(moments)>1){
     out <- lapply(moments, function(tm){
       snap <- filter_ties(.data, !!as.name(attribute) <= tm)
       if(incremented) snap <- summarise_ties(snap, sum(increment))
       if(updated) snap <- summarise_ties(snap, dplyr::last(replace))
-      snap <- filter_ties(snap, weight != 0)
+      snap <- drop_zeroes(snap)
       snap
     })
     names(out) <- moments
@@ -424,7 +443,7 @@ to_slices.tbl_graph <- function(.data, attribute = "time", slice = NULL) {
     out <- filter_ties(.data, !!as.name(attribute) <= moments)
     if(incremented) out <- summarise_ties(out, sum(increment))
     if(updated) out <- summarise_ties(out, dplyr::last(replace))
-    out <- filter_ties(out, weight != 0)
+    out <- drop_zeroes(out)
   }
   out
 }
@@ -432,7 +451,7 @@ to_slices.tbl_graph <- function(.data, attribute = "time", slice = NULL) {
 #' @export
 to_slices.igraph <- function(.data, attribute = "time", slice = NULL) {
   out <- to_slices(as_tidygraph(.data), attribute, slice)
-  if(is.list(out) & !is_graph(out)) 
+  if(is.list(out) && !is_manynet(out))
     lapply(out, function(ea) as_igraph(ea)) else
       as_igraph(out)
 }
