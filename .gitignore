@@ -6,6 +6,7 @@ inst/doc
 .DS_Store
 data-raw/*
 !data-raw/cheatsheet/
+!data-raw/build_tutorial_articles.R
 data-raw/cheatsheet/cheatsheet.aux
 data-raw/cheatsheet/cheatsheet.log
 docs/

@@ -27,6 +27,30 @@ test_that("ring creation works", {
 test_that("create_degree works", {
   expect_values(net_ties(create_degree(10, outdegree = rep(1:5, 2))), 15)
   expect_values(net_ties(create_degree(c(5,5), outdegree = 2, indegree = 2)), 10)
+  expect_error(create_degree(10, outdegree = c(1,2,3)), "length 10")
+})
+
+test_that("create_degree defaults to the sparsest connected structure", {
+  expect_values(net_ties(create_degree(10)), 10) # a cycle
+  expect_values(net_ties(create_degree(11)), 11)
+  expect_equal(net_dims(create_degree(c(6,4))), c(6,4))
+  expect_values(net_ties(create_degree(c(6,4))), 6) # larger mode 1-regular
+  expect_equal(unname(rowSums(as_matrix(create_degree(c(6,4))))), rep(1,6))
+  expect_equal(unname(colSums(as_matrix(create_degree(c(6,4))))), c(2,2,1,1))
+})
+
+test_that("create_degree fills in the missing degree sequence", {
+  expect_true(is_directed(create_degree(10, indegree = 2)))
+  expect_equal(unname(rowSums(as_matrix(create_degree(10, indegree = 2)))), rep(2,10))
+  expect_equal(unname(colSums(as_matrix(create_degree(c(6,4), outdegree = 2)))), rep(3,4))
+  expect_equal(unname(rowSums(as_matrix(create_degree(c(6,4), indegree = 3)))), rep(2,6))
+})
+
+test_that("create_degree can infer the degree sequence from a network", {
+  expect_equal(net_dims(create_degree(ison_southern_women)),
+               net_dims(ison_southern_women))
+  expect_values(net_ties(create_degree(ison_southern_women)),
+                net_ties(ison_southern_women))
 })
 
 test_that("create_windmill works", {
@@ -39,9 +63,27 @@ test_that("create_cycle works", {
   expect_values(net_ties(create_cycle(c(5,5))), 10)
 })
 
+test_that("create_cycle adds surplus two-mode nodes as isolates", {
+  out <- create_cycle(c(4,6))
+  expect_true(is_twomode(out))
+  expect_values(net_nodes(out), 10)
+  expect_values(net_ties(out), 8)
+  expect_values(sum(igraph::degree(as_igraph(out)) == 0), 2)
+  expect_error(create_cycle(c(4,1)), "at least two nodes")
+})
+
 test_that("create_wheel works", {
   expect_values(net_ties(create_wheel(5)), 8)
-  expect_error(create_wheel(c(5,5)))
+  expect_values(net_ties(create_wheel(c(5,5))), 12)
+})
+
+test_that("create_wheel adds surplus two-mode nodes as isolates", {
+  out <- create_wheel(c(4,6))
+  expect_true(is_twomode(out))
+  expect_values(net_nodes(out), 10)
+  expect_values(net_ties(out), 9)
+  expect_values(sum(igraph::degree(as_igraph(out)) == 0), 3)
+  expect_error(create_wheel(c(2,6)), "at least three nodes")
 })
 
 test_that("star creation works", {

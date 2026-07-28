@@ -14,6 +14,9 @@
 #'   (the singular counterpart of `to_components()`, which returns a list of all of them).
 #'   - `to_time()` scopes a longitudinal network to the network as it stood at a given wave or time point.
 #'   `to_wave()` is an alias, using the wave-based vocabulary of `net_waves()` and `to_waves()`.
+#'   For interval (spell) networks with tie `begin`/`end` lifespans, `to_time()`
+#'   returns the ties active at that moment, or -- when `time` is omitted -- a
+#'   list of slices, one per change point (each tie beginning or end).
 #'   - `to_no_isolates()` scopes a network into one excluding all nodes without ties.
 #'   - `to_no_missing()` scopes a network to one retaining only complete cases,
 #'   i.e. nodes with no missing values.
@@ -89,16 +92,49 @@ to_ego.tbl_graph <- function(.data, node, max_dist = 1, min_dist = 0,
 
 #' @rdname modif_scope
 #' @param time A time point or wave at which to present the network.
+#'   For an interval (spell) network that records tie `begin`/`end` lifespans,
+#'   `time` may be omitted, in which case a list of slices is returned,
+#'   one per change point (each moment at which some tie begins or ends).
+#' @details
+#'   For interval (spell) networks, whose ties carry `begin`/`end` lifespans
+#'   (e.g. `irps_wwi`), `to_time()` scopes to the ties active at `time`, using
+#'   the half-open convention (`begin <= time < end`) shared with
+#'   `network::networkDynamic`. When `time` is omitted, one such slice is
+#'   returned for each distinct change point (every moment at which some tie
+#'   begins or ends), as a named list, so that the evolving network can be
+#'   iterated over or animated (e.g. with `autograph::grapht()`).
+#' @examples
+#'   # A single snapshot of the ties active in a given year:
+#'   to_time(irps_wwi, 1901)
+#'   # Or one slice per change point (each tie beginning or end):
+#'   length(to_time(irps_wwi))
 #' @export
-to_time <- function(.data, time) UseMethod("to_time")
+to_time <- function(.data, time = NULL) UseMethod("to_time")
 
 #' @export
-to_time.default <- function(.data, time){
+to_time.default <- function(.data, time = NULL){
   as_input(.data, to_time, time = time)
 }
 
 #' @export
-to_time.tbl_graph <- function(.data, time){
+to_time.igraph <- function(.data, time = NULL){
+  out <- to_time(as_tidygraph(.data), time)
+  if(is.list(out) && !is_graph(out))
+    lapply(out, as_igraph) else as_igraph(out)
+}
+
+#' @export
+to_time.tbl_graph <- function(.data, time = NULL){
+  # Interval/spell networks (begin/end tie lifespans) are handled first: with
+  # `time` given, scope to the ties active then; with `time` omitted, return
+  # one slice per change point. This precedes the wave-count guard below, which
+  # is meaningless for spell networks and would error on a missing `time`.
+  if(is_dynamic(.data) &&
+     all(c("begin", "end") %in% net_tie_attributes(.data))){
+    return(.to_time_spell(.data, time))
+  }
+  if(is.null(time))
+    snet_abort("Please supply a {.arg time} (wave or time point) to scope to.")
   if(time > .net_waves(.data)){
     snet_info("Sorry, there are not that many waves in this dataset.",
               "Reverting to the maximum wave:", .net_waves(.data))
@@ -134,6 +170,26 @@ to_time.tbl_graph <- function(.data, time){
 #' @rdname modif_scope
 #' @export
 to_wave <- to_time
+
+# Scopes an interval (spell) network -- one whose ties carry `begin`/`end`
+# lifespans -- to the ties active at a moment `t` (begin <= t < end, the
+# half-open convention that `network::networkDynamic` uses, so a tie that ends
+# and one that begins at the same instant do not overlap). A tie with a missing
+# `end` is treated as right-censored (active from its `begin` onwards).
+# With `time` supplied, the single such snapshot is returned; with `time` NULL,
+# one snapshot per change point (each distinct tie `begin` or `end`) is returned
+# as a named list, ordered in time.
+.to_time_spell <- function(.data, time = NULL){
+  begin <- end <- NULL # bound within filter_ties()' tie data mask
+  active_at <- function(t)
+    filter_ties(.data, begin <= t & (is.na(end) | end > t))
+  if(!is.null(time)) return(active_at(time))
+  moments <- sort(unique(stats::na.omit(c(tie_attribute(.data, "begin"),
+                                          tie_attribute(.data, "end")))))
+  out <- lapply(moments, active_at)
+  names(out) <- as.character(moments)
+  if(length(out) == 1) out[[1]] else out
+}
 
 #' @rdname modif_scope
 #' @export

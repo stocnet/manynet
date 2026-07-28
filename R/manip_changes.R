@@ -187,6 +187,34 @@ bind_changes.igraph <- function(.data, changes, var, ...){
   out
 }
 
+# Changelogs store 'value' as an atomic vector where all the changed values
+# share a type, but as a list-column where they do not. Since a changelog being
+# bound on need not be stored the same way as the changelog already there,
+# this reconciles the two 'value' columns so that they can be bound together.
+.align_change_values <- function(old, new){
+  if(is.null(old) || nrow(old) == 0 || is.null(new) || nrow(new) == 0)
+    return(list(old = old, new = new))
+  unnest <- function(v) if(is.list(v) && all(lengths(v) == 1L))
+    unlist(v, use.names = FALSE) else v
+  old$value <- unnest(old$value)
+  new$value <- unnest(new$value)
+  if(is.list(old$value) || is.list(new$value)){
+    old$value <- as.list(old$value)
+    new$value <- as.list(new$value)
+  } else if(!.same_value_type(old$value, new$value)){
+    old$value <- as.character(old$value)
+    new$value <- as.character(new$value)
+  }
+  list(old = old, new = new)
+}
+
+# Logicals, integers, and doubles can be bound together into a single vector,
+# but anything else must match to avoid coercion to character.
+.same_value_type <- function(x, y){
+  type <- function(v) if(is.numeric(v) || is.logical(v)) "numeric" else class(v)[1]
+  type(x) == type(y)
+}
+
 .infer_susceptible <- function(.data, changes){
   .data |> mutate_nodes(diffusion = "S")
 }
@@ -233,15 +261,12 @@ bind_changes.stocnet <- function(.data, changes, var, ...){
   
   .check_varexists(out, changes)
   
-  ## 6. Wrap 'value' as a list-column of class 'value' for storage -------------
-  changes$value <- as.list(changes$value)
-  
-  ## 7. Bind onto any existing changes, and re-sort ------------------------------
-  out$changes <- dplyr::bind_rows(out$changes, changes)
-  out$changes$value <- out$changes$value
+  ## 6. Bind onto any existing changes, and re-sort ------------------------------
+  binding <- .align_change_values(out$changes, changes)
+  out$changes <- dplyr::bind_rows(binding$old, binding$new)
   out$changes <- out$changes |> dplyr::arrange(time, node)
   
-  ## 8. Record update type (increment/replace) per variable ----------------------
+  ## 7. Record update type (increment/replace) per variable ----------------------
   if(!is.null(update_type)){
     upd_value <- if(update_type == "increment") "increment" else "replace"
     for(v in unique(changes$var)){

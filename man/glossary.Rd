@@ -21,4 +21,6 @@ If NULL, then the function will search the glossary for 'text' instead.}
 }
 \description{
 This function adds a glossary item, useful in tutorials.
+Where no glossary entry exists for the term,
+the text is simply returned italicised.
 }

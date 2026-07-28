@@ -39,6 +39,15 @@ add_nodes.default <- function(.data, nodes, attribute = NULL){
 
 #' @export
 add_nodes.igraph <- function(.data, nodes, attribute = NULL){
+  # Where the network is labelled, new nodes are named too,
+  # since partially labelled networks (with NA names) are ambiguous
+  # for many downstream functions and other classes.
+  if (is_labelled(.data) && !"name" %in% names(attribute)) {
+    taken <- igraph::vertex_attr(.data, "name")
+    new <- paste0("N", igraph::vcount(.data) + seq_len(nodes))
+    while (any(new %in% taken)) new <- paste0(new, "*")
+    attribute <- c(attribute, list(name = new))
+  }
   igraph::add_vertices(.data, nv = nodes, attr = attribute)
 }
 

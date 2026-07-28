@@ -22,7 +22,7 @@ it work.
 - Real entrepreneurs ship, not slip.
 - Some things need to be believed to be seen.
 
-## Git and Bitbucket
+## Git
 
 `stocnet` projects are maintained using the git version control system.
 A plain-English introduction to git can be found [here](https://blog.red-badger.com/2016/11/29/gitgithub-in-plain-english).
@@ -36,7 +36,7 @@ but I recommend [Fork](https://git-fork.com) software for Mac and Windows.
 This allows mostly visual management of commits, diffs, branches, etc.
 There are various other git software packages available, but this one is fairly fully featured.
 
-The Github page allows to access the issues assigned to you and check the commits.
+The GitHub page allows to access the issues assigned to you and check the commits.
 You can also access the documents in the repository, 
 although this won't be necessary after you have cloned it on your computer via Fork.
 
@@ -44,6 +44,165 @@ although this won't be necessary after you have cloned it on your computer via F
 
 In terms of style, we are aiming for pleasant predictability in terms of user experience.
 To that end, we have a regular syntax that users can rely on producing expected effects.
+Functions in the same family (`as_*()`, `is_*()`, `create_*()`, etc.) should share
+argument order and naming, so that behaviour is guessable across the family.
+
+## Package architecture
+
+### Project overview
+
+`manynet` is an R package (part of the [stocnet](https://github.com/stocnet) ecosystem)
+providing the *data layer* for network analysis: tools to make, manipulate, and modify
+many kinds of networks — one-mode/two-mode, directed/undirected, weighted, signed,
+multiplex, multimodal, and longitudinal/dynamic.
+Functions work across representations (matrices, edgelists, `{igraph}`, `{network}`,
+`{tidygraph}`) via a lossless coercion layer,
+so most functions call `as_igraph()`/`as_tidygraph()` etc. internally
+rather than assuming a single class.
+Division of labour to keep in mind when adding functions:
+
+- `{manynet}` (this package): network classes/coercion (`as_*()`), making and reading
+  networks, manipulating and modifying nodes, ties and attributes,
+  and network-level logical tests (e.g. `is_directed()`, `is_twomode()`).
+- `{netrics}`: everything analytic — marks, measures, memberships, motifs —
+  at the node, tie, and network level.
+- `{autograph}`: functions for drawing graphs and plotting network analytic or
+  modelling results and diagnostics, along with deep (often institutional) theming.
+  All plot methods should live there.
+- `{migraph}`: functions for testing and modelling, e.g. QAP/MRQAP and diffusion models.
+
+### Common commands
+
+This is a standard R package developed with `devtools`/`roxygen2`.
+Run these from an R console with the working directory set to the package root
+(or via `Rscript -e`).
+
+- Install dependencies / load for development: `devtools::load_all()`
+- Regenerate docs & NAMESPACE after editing roxygen comments: `devtools::document()`
+- Run full test suite: `devtools::test()`
+- Run a single test file: `devtools::test(filter = "coercion")` (matches `test-coercion.R`),
+  or `testthat::test_file("tests/testthat/test-make_create.R")`
+- Full package check (mirrors CI): `devtools::check()` or `rcmdcheck::rcmdcheck()`
+- Lint: `lintr::lint_package()`
+- Spell check: `spelling::spell_check_package()`
+- Code coverage: `covr::package_coverage()`
+- Build pkgdown site locally: `pkgdown::build_site()`
+
+There is no non-R build system — no package.json/Makefile.
+
+Note that `README.md` is generated from `README.Rmd` — edit `README.Rmd` and re-knit,
+never edit `README.md` directly.
+Similarly, `vignettes/articles/*.Rmd` (the static pkgdown versions of the `{learnr}`
+tutorials) are generated from `inst/tutorials/*/*.Rmd` by
+[data-raw/build_tutorial_articles.R](../data-raw/build_tutorial_articles.R) —
+after editing a tutorial, re-run that script and commit the regenerated files
+rather than editing them directly (CI checks that the two are in sync).
+
+### File organization (file naming = function family)
+
+`R/` files are prefixed by the verb-family of the functions they contain,
+not by data structure. When looking for a function, search by what it *does*:
+
+| Prefix | Contains |
+|---|---|
+| `make_*.R` | creating/reading/generating networks: `create_*()` (deterministic structures), `generate_*()` (stochastic mechanisms), `read_*()`/`write_*()` (import/export), `play_*()` (diffusion/learning simulations), `data_*`/`manynet-data.R` (bundled datasets: `ison_*` classic/instructional, `fict_*` fictional, `irps_*` international-relations) |
+| `coerce_graph.R`, `coerce_list.R` | the `as_*()` translation layer between representations (`as_igraph()`, `as_tidygraph()`, `as_network()`, `as_matrix()`, `as_edgelist()`, `as_siena()`, `as_diffnet()`, …), implemented as S3 methods dispatching on input class |
+| `class_*.R` | the `mnet` S3 class itself (`class_networks.R`: `print.mnet`, `$`/`$<-` accessors, node/tie/change data model), related result classes (`class_measures.R`, `class_members.R`, `class_motifs.R`, `class_models.R`), the `snet_*()` CLI layer (`class_interface.R`), input validation (`class_validate.R`), and the `describe_*()` helpers behind `print.mnet` (`class_describe.R`) |
+| `manip_*.R` | dplyr-style verbs for manipulating nodes/ties/attributes (`manip_nodes.R`, `manip_ties.R`, `manip_global.R`, `manip_info.R`, `manip_changes.R`) |
+| `mark_*.R` | logical/predicate functions returning `TRUE`/`FALSE` or marks about a network, e.g. the `is_*()` family (`mark_classes.R`, `mark_features.R`, `mark_format.R`, `mark_changes.R`) |
+| `modif_*.R` | structural transformations/reformatting: direction, weighting, projection, splitting/joining, path/level operations, missing data (`modif_direction.R`, `modif_project.R`, `modif_split.R`, `modif_miss.R`, …) |
+| `measure_*.R` | descriptive/attribute measures (`measure_attributes.R`, `measure_properties.R`); heavier network-analytic measures live in `{netrics}` |
+| `reexports_classes.R` | re-exports of classes/generics from `{igraph}`/`{tidygraph}`/`{network}` so users need not load those packages directly |
+| `manynet-utils.R`, `manynet-glossary.R`, `manynet-defunct.R` | shared internal helpers, the `gloss()`/glossary system used in tutorials and docs, and defunct-function shims |
+
+Shared roxygen documentation blocks live in `man-roxygen/` as `@template` fragments —
+reuse these via `@template` tags instead of re-writing standard `@param`/`@returns` docs.
+
+### The `mnet` object model
+
+`mnet` is layered on top of `{igraph}`/`tbl_graph` (see [R/class_networks.R](../R/class_networks.R)).
+Conventions to preserve when writing or editing functions:
+
+- Node table: first column is always `name`; reserved columns are `active`
+  (changing networks) and `type` (multimodal/two-mode).
+- Tie table: first two columns are always `from` and `to` (even for undirected
+  networks); reserved columns are `weight`, `wave` (longitudinal), `type` (multiplex),
+  and `sign` (signed).
+- Changes (a longitudinal changelog) are stored as a graph attribute, not as extra
+  rows in nodes/ties, with columns `wave`/`time`, `node`, `var`, `value`.
+- Because an `mnet` object is simultaneously a valid `igraph` and `tbl_graph` object,
+  prefer writing new functions against `{igraph}`/`{tidygraph}` primitives
+  (via the `as_igraph()`/`as_tidygraph()` coercions)
+  rather than hand-rolling data structure access.
+
+### Two-mode networks
+
+Many `create_*()`/`generate_*()` functions take an `n` argument that can be a single
+integer (one-mode network) or a length-2 integer vector (two-mode network, the sizes of
+each mode). Coercion functions detect and handle two-mode structure via the `twomode`
+argument and the `type` vertex attribute.
+
+### Console messaging
+
+All user-facing messages go through the `snet_*()` wrappers in
+[R/class_interface.R](../R/class_interface.R) — `snet_info()`, `snet_warn()`,
+`snet_abort()`, `snet_success()`, `snet_prompt()`, `snet_unavailable()`,
+plus `snet_progress_*()` — rather than base `message()`/`stop()`/`warning()`.
+These respect `options(snet_verbosity = "quiet")` and give consistent `{cli}`-styled
+output. Use `snet_unavailable()` for not-yet-implemented features.
+
+### Tests
+
+Tests in `tests/testthat/` mirror the `R/` files (e.g. `test-make_create.R`,
+`test-manip_split.R`), alongside `test-functional_*.R` harnesses that sweep whole
+function families.
+`tests/testthat/helper-manynet.R` defines the shared fixtures and helpers used across
+tests, and `tests/testthat/helper-functional.R` the family-sweeping machinery.
+Test fixtures (Pajek, UCINET, GraphML, xlsx, etc.) live under `tests/testthat/sheets/`.
+
+`testthat` edition 3 with parallel execution is configured in `DESCRIPTION`
+(`Config/testthat/parallel: true`);
+`Config/testthat/start-first` prioritises `tutorials_manynet, mark_is`.
+
+### `NEWS.md` conventions
+
+`NEWS.md` groups each version's changes under `##` headings that mirror the website
+function overview (`pkgdown/_pkgdown.yml` `reference:` titles).
+Lead with `## Package` (package-wide/website/infrastructure changes),
+then the function families in overview order:
+`## Making`, `## Coercion`, `## Manipulating`, `## Modifying`, `## Describing`,
+`## Practicing`.
+Put `## Glossary` and `## Tutorials` near the end,
+with `## Tutorials` immediately before any `## Data` section,
+so that tutorials and data usually close the list.
+Each heading appears at most once per version.
+`## Manipulating` covers the `manip_*` verbs (nodes/ties/attributes/changes/info/globals);
+`## Modifying` covers the `modif_*` transformations (`to_*()`, projection, splits, etc.).
+Keep the two distinct, as the website does.
+
+Start each bullet with a verb matching the change type:
+
+- `Added ...` — new functionality
+- `Fixed ...` — bug fixes; if it relates to a GitHub issue, suffix with `(closing #123)`
+- `Renamed ... to ...` — function or data name migrations
+- `Improved ...` — functional updates to existing behaviour
+- `Updated ...` — documentation changes
+
+If a cited GitHub issue was **not** authored by @jhollway, thank the author with an
+`@`-tag in the bullet.
+Cluster related changes (e.g. several fixes to the same function, or sub-points of one
+feature) as indented sub-bullets under a lead bullet, to improve readability.
+
+### Branching and CI
+
+- `main` is the release branch; `develop` is the working branch (clone/work on `develop`).
+- PRs into `main` trigger [prchecks.yml](workflows/prchecks.yml): R CMD check
+  (macOS/Windows/Linux), binary build, codecov, lintr, spell check, a reverse-dependency
+  check, a check that the tutorial articles are in sync with the tutorials,
+  and PR metadata checks (DESCRIPTION version bump, PR title/description conventions).
+- Merges/pushes to `main` trigger [pushrelease.yml](workflows/pushrelease.yml):
+  check, auto-bump version tag, GitHub release with binaries, then pkgdown site deploy.
+- Commits should reference an existing GitHub issue number (`#123`), see below.
 
 ## Fork
 
@@ -76,7 +235,7 @@ it is important to select this branch when pushing to origin/main.
 
 ## Issues and tests
 
-Please use the issues tracker on Github to identify any function-related issues.
+Please use the issues tracker on GitHub to identify any function-related issues.
 You can use these issues to track progress on the issue and 
 to comment or continue a conversation on that issue.
 Currently issue tracking is only open to those involved in the project.
@@ -94,7 +253,7 @@ When writing new code, please follow
 It can help to use packages such as `lintr`, `goodpractice` and `formatR` 
 to ensure these are followed.
 
-Currently, commits can only be pushed to Bitbucket where they reference an existing issue.
+Currently, commits can only be pushed to GitHub where they reference an existing issue.
 If no issue exists for the code you have developed, please add an issue first before pushing.
 Once the issue exists, you will need to mention the issue number (preceded by a hash symbol: #)
 in the commit description:

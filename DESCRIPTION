@@ -1,6 +1,6 @@
 Package: manynet
 Title: Many Ways to Make, Manipulate, and Modify Myriad Networks
-Version: 2.2.1
+Version: 2.2.2
 Description: Many tools for making, manipulating, and modifying many different types of networks.
    All functions operate with matrices, edge lists, and 'igraph', 'network', and 'tidygraph' objects,
    on directed, multiplex, multimodal, signed, and other networks.
@@ -22,10 +22,8 @@ Imports:
     pillar,
     tidygraph
 Suggests:
-    knitr,
     methods,
     readxl,
-    rmarkdown,
     RSiena,
     sna,
     testthat (>= 3.0.0),
@@ -57,8 +55,9 @@ Config/Needs/check:
     lintr,
     spelling
 Config/Needs/website:
-    pkgdown
+    pkgdown,
+    learnr
 Config/testthat/parallel: true
 Config/testthat/edition: 3
-Config/testthat/start-first: mark_is 
+Config/testthat/start-first: tutorials_manynet, mark_is
 Config/roxygen2/version: 8.0.0

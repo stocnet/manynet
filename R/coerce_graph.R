@@ -151,12 +151,13 @@ as_igraph.network <- function(.data,
                                                                  "max"))
     }
   }
-  # Add remaining node level attributes
-  if (length(attr) > 2) {
-    for (a in attr[2:length(attr)]) {
-      graph <- igraph::set_vertex_attr(graph, name = a,
-                                       value = sapply(.data[[3]], "[[", a))
-    }
+  # Add remaining node level attributes.
+  # 'na' and 'vertex.names' are network's internal bookkeeping:
+  # the latter is already carried by the sociomatrix's dimnames as 'name',
+  # so copying it again would shadow those labels on the way back.
+  for (a in setdiff(attr, c("na", "vertex.names"))) {
+    graph <- igraph::set_vertex_attr(graph, name = a,
+                                     value = sapply(.data[[3]], "[[", a))
   }
   # because network can have vertex names that are integers (i.e. just node IDs), 
   # we remove them since they are really anonymous.
@@ -600,9 +601,8 @@ as_network.igraph <- function(.data,
   if ("name" %in% colnames(attr)) attr <- subset(attr, select = c(-name))
   if ("type" %in% colnames(attr)) attr <- subset(attr, select = c(-type))
   out <- as_network(as_matrix(.data))
-  if (length(attr) > 0) {
-    out <- network::set.vertex.attribute(out, names(attr), attr)
-  }
+  out <- set_network_node_attributes(out, attr)
+  out <- set_network_tie_attributes(out, .data)
   out
 }
 
@@ -614,8 +614,39 @@ as_network.tbl_graph <- function(.data,
   if ("name" %in% colnames(attr)) attr <- subset(attr, select = c(-name))
   if ("type" %in% colnames(attr)) attr <- subset(attr, select = c(-type))
   out <- as_network(as_matrix(.data))
-  if (length(attr) > 0) {
-    out <- network::set.vertex.attribute(out, names(attr), attr)
+  out <- set_network_node_attributes(out, attr)
+  out <- set_network_tie_attributes(out, as_igraph(.data))
+  out
+}
+
+# `network::set.vertex.attribute()` interprets a single-column data frame as
+# one value (the whole column) to be assigned to every vertex,
+# so attributes are set one at a time.
+set_network_node_attributes <- function(out, attr) {
+  for (a in names(attr))
+    out <- network::set.vertex.attribute(out, a, attr[[a]])
+  out
+}
+
+# Since networks are constructed from a sociomatrix, which only carries the
+# weight, any other tie attributes are copied across dyad by dyad.
+set_network_tie_attributes <- function(out, .data) {
+  attrs <- setdiff(igraph::edge_attr_names(.data), c("weight", "na"))
+  if (length(attrs) == 0) return(out)
+  el <- igraph::as_edgelist(.data, names = FALSE)
+  nbhd <- ifelse(network::is.directed(out), "out", "combined")
+  eids <- vapply(seq_len(nrow(el)), function(e) {
+    ids <- network::get.edgeIDs(out, v = el[e,1], alter = el[e,2],
+                                neighborhood = nbhd)
+    if (length(ids) == 1) ids else NA_integer_
+  }, integer(1))
+  for (a in attrs) {
+    vals <- igraph::edge_attr(.data, a)
+    keep <- !is.na(eids)
+    # A list is passed since `network` rejects classed vectors (e.g. dates).
+    if (any(keep))
+      out <- network::set.edge.attribute(out, a, as.list(vals[keep]),
+                                         e = eids[keep])
   }
   out
 }

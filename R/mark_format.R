@@ -43,8 +43,10 @@ is_twomode.tbl_graph <- function(.data) {
 #' @export
 is_twomode.matrix <- function(.data) {
   out <- dim(.data)[1] != dim(.data)[2]
+  # `isTRUE()` guards against partially labelled matrices,
+  # where comparing NA names would otherwise return NA.
   if(!out & is_labelled(.data))
-    out <- !all(rownames(.data)==colnames(.data))
+    out <- isTRUE(!all(rownames(.data)==colnames(.data)))
   out
 }
 

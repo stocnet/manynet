@@ -1,3 +1,73 @@
+# manynet 2.2.2
+
+## Package
+
+- Updated the GitHub Actions workflows to the latest major action versions (`actions/checkout@v7`, `actions/upload-artifact@v7`, `actions/download-artifact@v8`), replacing some long-outdated `@v2` pins
+- Added a "Tutorial articles are in sync" job to the PR checks, which regenerates `vignettes/articles/` from `inst/tutorials/` and fails if the committed articles have drifted
+  - `data-raw/build_tutorial_articles.R` is now tracked in the repository (it was previously excluded by `.gitignore`) so that the check can run
+- Added PR metadata checks to the PR checks, automating the DESCRIPTION version bump, PR title, and PR description conventions, and removed the corresponding manual items from the pull request template
+- Fixed the website deployment job installing the `check` rather than the `website` dependencies
+- Added a "Related Packages" menu to the website navigation bar, linking to `{netrics}`, `{autograph}`, and `{migraph}`
+- Removed `{knitr}` and `{rmarkdown}` from `Suggests`, since neither was used by the package or its tests
+  - The tutorial tests now extract tutorial code with a small internal helper instead of `knitr::purl()`, and no longer render the `{learnr}` tutorials (a fragile check that added no coverage beyond running the tutorial code itself)
+  - Added `{learnr}` to `Config/Needs/website`
+- Moved package architecture documentation into `.github/CONTRIBUTING.md` so that it is available to all contributors
+- Improved the functional tests of the `as_*list()` family to expect `NULL` where a network or object class genuinely holds no such information, instead of reporting these as audit items
+
+## Making
+
+- Improved `create_degree()` so that it no longer raises an uninformative error where no degree sequence is given
+  - Where neither `outdegree` nor `indegree` is given, the sparsest connected structure of that size is created: a cycle for one-mode networks, and for two-mode networks one in which the larger mode is 1-regular and the ties are spread as evenly as possible across the smaller mode
+  - Where only one of the two is given for a directed one-mode network, the other now mirrors it, and for a two-mode network the same number of ties is spread as evenly as possible across the other mode
+  - Degree sequences of the wrong length now report which argument was the wrong length and what length was expected, instead of a `stopifnot()` message
+- Fixed `create_degree()` returning two-mode networks with the modes reversed, e.g. `create_degree(c(6,4))` returned a network with 4 nodes in the first mode and 6 in the second
+- Improved `create_cycle()` and `create_wheel()` on two-mode networks so that, instead of raising an error where the requested number of nodes cannot form such a structure, the largest such structure is created and the surplus nodes are added as isolates, with a message explaining this
+  - Since ties in two-mode networks run only between the modes, a two-mode cycle alternates between them and can be at most twice as long as the smaller mode, e.g. `create_cycle(c(4,6))` now returns an 8-cycle and two isolates
+  - Similarly, the rim of a two-mode wheel alternates between the modes and its hub, drawn from the first mode, is tied only to the second mode's rim nodes, e.g. `create_wheel(c(4,6))` now returns a wheel on 7 nodes and three isolates
+  - `create_cycle()` and `create_wheel()` are now also listed and described in the documentation for the defined structures, where they were previously only aliased
+
+## Coercion
+
+- Fixed `as_network()` assigning the whole vector of a nodal attribute to every node where the network had just one such attribute, which also made the resulting object impossible to coerce back
+- Added `as_changelist()`, `as_globallist()`, `as_infolist()`, and `as_nodelist()` methods for matrices and edgelists, which now return `NULL` instead of raising a "no applicable method" error, since these formats have nowhere to hold network-level information (matrices and edgelists do carry node labels, so `as_nodelist()` returns those where present)
+- Added `as_globallist.network()`, so that a globallist stored on a `network` object by `as_network()` can be retrieved again
+- Fixed `as_network()` dropping all tie attributes other than the weight, since networks were constructed from a sociomatrix; other tie attributes are now copied across dyad by dyad, so e.g. `add_tie_attribute()` on a `network` object now returns an object holding that attribute
+- Fixed `as_igraph.network()` copying `network`'s internal `vertex.names` attribute across as an ordinary nodal attribute, which shadowed the node labels when coercing back to a `network` (e.g. adding nodes to a `network` returned an object with missing names), and copying the internal `na` attribute where it was not the first attribute
+- Fixed `is_twomode()` on partially labelled matrices raising a "missing value where TRUE/FALSE needed" error, since comparing missing row and column names returned `NA`; such matrices are now treated as one-mode
+
+## Manipulating
+
+- Improved `add_ties()` to accept several ways of declaring ties, so that what is documented is now what is possible:
+  - a single number, e.g. `add_ties(net, 3)`, adds that number of ties at random among the dyads not already tied (respecting directedness and two-modeness), which was previously documented but not implemented
+  - explicit tie formulae in the same syntax as `create_explicit()`, e.g. `add_ties(net, Betty -+ Tina)`, `add_ties(net, 1 ++ 3)`, or `add_ties(net, Betty:Sue -+ Tina)`, with several ties declared at once by wrapping them in `c()`, and one-sided formulae, e.g. `~ Betty -+ Tina`, accepted for programmatic use
+  - a two-column matrix, edgelist, or data frame of node names or indices
+  - the previous even vector of nodes, e.g. `add_ties(net, c("Betty","Tina"))`, continues to work, as does ordinary arithmetic in the argument, since tie syntax requires `+` or `-` at both ends of the operator
+- Fixed `add_ties()` on weighted networks giving the new ties a missing weight, which is not representable in matrix or `{network}` formats; they are now given a weight of 1 unless one is passed in `attr_list`
+- Fixed `add_ties()` and `delete_ties()` raising errors for `network` objects with a single nodal attribute (see the `as_network()` fix above)
+- Improved `add_nodes()` so that nodes added to a labelled network are labelled too, e.g. "N9" and "N10" where eight nodes were already named, since partially labelled networks are ambiguous for other functions and other classes (previously such networks raised a "missing value where TRUE/FALSE needed" error when coerced to a matrix or `network` object)
+- Fixed `bind_changes()` on `stocnet` objects raising a "Can't combine `..1$value` <character> and `..2$value` <list>" error, since it wrapped the incoming `value` column in a list but changelogs already on the object store `value` as an atomic vector; the two changelogs' `value` columns are now reconciled before binding, falling back to a list-column (or to character) only where the values genuinely cannot be held in one vector
+
+## Modifying
+
+- Fixed several bugs in `to_waves()`:
+  - it now honours an explicitly named `attribute` when the network is not marked longitudinal, i.e. when the tie attribute is not called "wave" or "panel" (fixing the silent no-op behind stocnet/autograph#40)
+  - it now returns waves in the natural (sorted) order of the attribute values, so numeric waves such as 1:12 no longer sort lexicographically ("1", "10", "11", ..., "2", ...)
+  - `to_waves(cumulative = TRUE)` no longer mangles single-wave results
+  - it no longer raises an "undefined columns selected" error on igraph objects with no waves to split on, where a single network was iterated over as though it were a list of waves
+  - it no longer raises an "object 'out' not found" error on edgelists, and no longer splits them on the wrong column where the attribute is present
+  - it no longer raises a "Can't combine `..1` <character> and `..2` <logical>" error on changing networks, since changelogs store values as character but the nodal attributes they update need not be; applied values are now coerced back to the type of the attribute they update
+  - it now applies every changing variable rather than only the last of them, taking the latest value per node *and* variable rather than per node
+  - for networks that are both changing and longitudinal, it now takes its waves from the tie attribute rather than from the times at which nodes change, so that waves in which no node changes are no longer dropped (e.g. `to_waves(fict_starwars)` now returns all seven waves rather than six) and each wave holds the ties of that wave (previously `to_waves(fict_potter)` returned an empty last wave)
+- Fixed `to_slices()` erroring on networks it cannot slice:
+  - networks holding no such time attribute raised an "In argument: `time <= moments`" error, and are now returned unchanged, as in `to_waves()`
+  - unweighted networks raised an "In argument: `weight != 0`" error, since ties can only be dropped for summing to zero where they carry a weight
+- Improved `to_time()` to handle interval (spell) networks whose ties carry `begin`/`end` lifespans (e.g. `irps_wwi`): supplying a `time` returns the ties active at that moment (using the half-open `begin <= time < end` convention shared with `network::networkDynamic`), while omitting `time` returns a list of slices, one per change point (each moment at which some tie begins or ends). Previously `to_time()` reported such networks as unavailable
+- Added `to_time.igraph()`, and `time` now defaults to missing so the slice-generating form can be called as `to_time(net)`
+
+## Learning
+
+- Improved `gloss()` to return the requested term italicised where no glossary entry exists instead of raising an error
+
 # manynet 2.2.1
 
 ## Package

@@ -19,15 +19,17 @@ meas_families <- list(
 meas_nullable <- c("net_name", "layer_names", "mode_names")
 
 # How to construct required arguments from the network under test.
+# Returning NULL means there is no attribute on this fixture to ask for; the
+# accessor is then expected to return NULL for any name, which is a pass.
 meas_argmakers <- list(
   node_attribute = function(net) {
     attrs <- setdiff(net_node_attributes(net), c("name", "type", "active"))
-    if (!length(attrs)) stop("fixture has no non-reserved node attribute")
+    if (!length(attrs)) return(NULL)
     list(attr_name = attrs[1])
   },
   tie_attribute = function(net) {
     attrs <- setdiff(net_tie_attributes(net), c("from", "to"))
-    if (!length(attrs)) stop("fixture has no tie attribute")
+    if (!length(attrs)) return(NULL)
     list(attr_name = attrs[1])
   }
 )
@@ -45,7 +47,13 @@ for (family in names(meas_families)) {
       test_that(paste0(fn, "() works on the ", fx, " fixture"), {
         net <- func_fixtures[[fx]]
         args <- if (fn %in% names(meas_argmakers)) {
-          run_or_skip(meas_argmakers[[fn]](net), fn, fx)
+          made <- run_or_skip(meas_argmakers[[fn]](net), fn, fx)
+          if (is.null(made)) {
+            # Nothing to ask for: asking anyway should just return NULL
+            expect_null(run_or_skip(f(net, "not_an_attribute"), fn, fx))
+            return(invisible())
+          }
+          made
         } else list()
         out <- run_or_skip(do.call(f, c(list(net), args)), fn, fx)
         if (is.null(out)) {

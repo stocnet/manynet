@@ -67,15 +67,22 @@ assigned to two, equally sized partitions.}
 
 \item{outdegree}{Numeric scalar or vector indicating the
 desired outdegree distribution.
-By default NULL and is required.
+Note that a scalar (single number) will result in a k-regular graph.
+By default NULL.
 If \code{n} is an existing network object and the outdegree is not specified,
 then the outdegree distribution will be inferred from that of the network.
-Note that a scalar (single number) will result in a k-regular graph.}
+If only the indegree is specified, then in one-mode networks the outdegree
+will mirror it, and in two-mode networks the same number of ties will be
+spread as evenly as possible across the nodes in the first mode.
+If neither is specified, the sparsest connected structure is created:
+a cycle in one-mode networks, and in two-mode networks one in which the
+larger mode is 1-regular.}
 
 \item{indegree}{Numeric vector indicating the desired indegree distribution.
 By default NULL but not required unless a directed network is desired.
 If \code{n} is an existing directed network object and the indegree is not specified,
-then the indegree distribution will be inferred from that of the network.}
+then the indegree distribution will be inferred from that of the network.
+Otherwise it is filled in from the outdegree as described above.}
 
 \item{mark}{A logical vector the length of the nodes in the network.
 This can be created by, among other things, any \verb{node_is_*()} function.}
@@ -108,7 +115,22 @@ neighbours form a clique.
 are densely tied to each other, and the rest peripheral, tied only to the core.
 \item \code{create_degree()} creates a network with a given (out/in)degree sequence,
 which can also be used to create k-regular networks.
+\item \code{create_cycle()} creates a network in which all the nodes form
+a single closed chain.
+\item \code{create_wheel()} creates a network in which a single dominant node
+is tied to all the nodes in a cycle.
 }
+
+Some of these structures are constrained in two-mode networks.
+Since ties in two-mode networks can only run between the modes,
+a two-mode cycle must alternate between them, and so can only be as long
+as twice the number of nodes in the smaller mode.
+Similarly, the rim of a two-mode wheel alternates between the modes,
+and its hub, drawn from the first mode, can only be tied to the
+second mode's rim nodes.
+Where \code{n} is larger than such a structure can accommodate,
+the largest such structure is created and the surplus nodes are
+added as isolates, with a message.
 
 These functions can create either one-mode or two-mode networks.
 To create a one-mode network, pass the main argument \code{n} a single integer,
@@ -149,10 +171,14 @@ create_tree(c(7,8))
 create_lattice(12, width = 4)
 create_components(10, membership = c(1,1,1,2,2,2,3,3,3,3))
 create_degree(10, outdegree = rep(1:5, 2))
+create_degree(10)
+create_degree(c(6,4))
 create_core(6)
   create_windmill(6)
   create_cycle(6)
+  create_cycle(c(4,6))
   create_wheel(6)
+  create_wheel(c(4,6))
 }
 \seealso{
 \link{as}
