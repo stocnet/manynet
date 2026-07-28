@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.2</span>
       </span>
     </div>
 
@@ -42,6 +42,22 @@
     </li>
     <li>
       <a href="articles/manipulating-network-data.html">Manipulating Network Data</a>
+    </li>
+  </ul></li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Related Packages
+
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>
+    </li>
+    <li>
+      <a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a>
+    </li>
+    <li>
+      <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
     </li>
   </ul></li>
 <li>
@@ -90,14 +106,130 @@
 <li>Some things need to be believed to be seen.</li>
 </ul></div>
 <div class="section level2">
-<h2 id="git-and-bitbucket">Git and Bitbucket<a class="anchor" aria-label="anchor" href="#git-and-bitbucket"></a></h2>
+<h2 id="git">Git<a class="anchor" aria-label="anchor" href="#git"></a></h2>
 <p><code>stocnet</code> projects are maintained using the git version control system. A plain-English introduction to git can be found <a href="https://blog.red-badger.com/2016/11/29/gitgithub-in-plain-english" class="external-link">here</a>. I recommend you read this before continuing. A more recent motivation can be found <a href="https://www.r-bloggers.com/2024/04/git-gud-version-control-best-practices/" class="external-link">here</a>. It will explain the basics of git version control, committing and repos, pulling and pushing, branching and merging.</p>
 <p>Using git from the command line on your lap- or desktop can be intimidating, but I recommend <a href="https://git-fork.com" class="external-link">Fork</a> software for Mac and Windows. This allows mostly visual management of commits, diffs, branches, etc. There are various other git software packages available, but this one is fairly fully featured.</p>
-<p>The Github page allows to access the issues assigned to you and check the commits. You can also access the documents in the repository, although this won’t be necessary after you have cloned it on your computer via Fork.</p>
+<p>The GitHub page allows to access the issues assigned to you and check the commits. You can also access the documents in the repository, although this won’t be necessary after you have cloned it on your computer via Fork.</p>
 </div>
 <div class="section level2">
 <h2 id="style">Style<a class="anchor" aria-label="anchor" href="#style"></a></h2>
-<p>In terms of style, we are aiming for pleasant predictability in terms of user experience. To that end, we have a regular syntax that users can rely on producing expected effects.</p>
+<p>In terms of style, we are aiming for pleasant predictability in terms of user experience. To that end, we have a regular syntax that users can rely on producing expected effects. Functions in the same family (<code>as_*()</code>, <code>is_*()</code>, <code>create_*()</code>, etc.) should share argument order and naming, so that behaviour is guessable across the family.</p>
+</div>
+<div class="section level2">
+<h2 id="package-architecture">Package architecture<a class="anchor" aria-label="anchor" href="#package-architecture"></a></h2>
+<div class="section level3">
+<h3 id="project-overview">Project overview<a class="anchor" aria-label="anchor" href="#project-overview"></a></h3>
+<p><code>manynet</code> is an R package (part of the <a href="https://github.com/stocnet" class="external-link">stocnet</a> ecosystem) providing the <em>data layer</em> for network analysis: tools to make, manipulate, and modify many kinds of networks — one-mode/two-mode, directed/undirected, weighted, signed, multiplex, multimodal, and longitudinal/dynamic. Functions work across representations (matrices, edgelists, <a href="https://r.igraph.org/" class="external-link">igraph</a>, <a href="https://statnet.org/" class="external-link">network</a>, <a href="https://tidygraph.data-imaginist.com" class="external-link">tidygraph</a>) via a lossless coercion layer, so most functions call <code><a href="reference/coerce_graph.html">as_igraph()</a></code>/<code><a href="reference/coerce_graph.html">as_tidygraph()</a></code> etc. internally rather than assuming a single class. Division of labour to keep in mind when adding functions:</p>
+<ul><li>
+<a href="https://stocnet.github.io/manynet/">manynet</a> (this package): network classes/coercion (<code>as_*()</code>), making and reading networks, manipulating and modifying nodes, ties and attributes, and network-level logical tests (e.g. <code><a href="reference/mark_format_tie.html">is_directed()</a></code>, <code><a href="reference/mark_format_node.html">is_twomode()</a></code>).</li>
+<li>
+<a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>: everything analytic — marks, measures, memberships, motifs — at the node, tie, and network level.</li>
+<li>
+<a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a>: functions for drawing graphs and plotting network analytic or modelling results and diagnostics, along with deep (often institutional) theming. All plot methods should live there.</li>
+<li>
+<a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>: functions for testing and modelling, e.g. QAP/MRQAP and diffusion models.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="common-commands">Common commands<a class="anchor" aria-label="anchor" href="#common-commands"></a></h3>
+<p>This is a standard R package developed with <code>devtools</code>/<code>roxygen2</code>. Run these from an R console with the working directory set to the package root (or via <code>Rscript -e</code>).</p>
+<ul><li>Install dependencies / load for development: <code><a href="https://devtools.r-lib.org/reference/load_all.html" class="external-link">devtools::load_all()</a></code>
+</li>
+<li>Regenerate docs &amp; NAMESPACE after editing roxygen comments: <code><a href="https://devtools.r-lib.org/reference/document.html" class="external-link">devtools::document()</a></code>
+</li>
+<li>Run full test suite: <code><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">devtools::test()</a></code>
+</li>
+<li>Run a single test file: <code>devtools::test(filter = "coercion")</code> (matches <code>test-coercion.R</code>), or <code>testthat::test_file("tests/testthat/test-make_create.R")</code>
+</li>
+<li>Full package check (mirrors CI): <code><a href="https://devtools.r-lib.org/reference/check.html" class="external-link">devtools::check()</a></code> or <code><a href="http://r-lib.github.io/rcmdcheck/reference/rcmdcheck.html" class="external-link">rcmdcheck::rcmdcheck()</a></code>
+</li>
+<li>Lint: <code><a href="https://lintr.r-lib.org/reference/lint.html" class="external-link">lintr::lint_package()</a></code>
+</li>
+<li>Spell check: <code><a href="https://docs.ropensci.org/spelling//reference/spell_check_package.html" class="external-link">spelling::spell_check_package()</a></code>
+</li>
+<li>Code coverage: <code><a href="http://covr.r-lib.org/reference/package_coverage.html" class="external-link">covr::package_coverage()</a></code>
+</li>
+<li>Build pkgdown site locally: <code><a href="https://pkgdown.r-lib.org/reference/build_site.html" class="external-link">pkgdown::build_site()</a></code>
+</li>
+</ul><p>There is no non-R build system — no package.json/Makefile.</p>
+<p>Note that <code>README.md</code> is generated from <code>README.Rmd</code> — edit <code>README.Rmd</code> and re-knit, never edit <code>README.md</code> directly. Similarly, <code>vignettes/articles/*.Rmd</code> (the static pkgdown versions of the <a href="https://rstudio.github.io/learnr/" class="external-link">learnr</a> tutorials) are generated from <code>inst/tutorials/*/*.Rmd</code> by <a href="../data-raw/build_tutorial_articles.R">data-raw/build_tutorial_articles.R</a> — after editing a tutorial, re-run that script and commit the regenerated files rather than editing them directly (CI checks that the two are in sync).</p>
+</div>
+<div class="section level3">
+<h3 id="file-organization-file-naming--function-family">File organization (file naming = function family)<a class="anchor" aria-label="anchor" href="#file-organization-file-naming--function-family"></a></h3>
+<p><code>R/</code> files are prefixed by the verb-family of the functions they contain, not by data structure. When looking for a function, search by what it <em>does</em>:</p>
+<table class="table"><colgroup><col width="50%"><col width="50%"></colgroup><thead><tr><th>Prefix</th>
+<th>Contains</th>
+</tr></thead><tbody><tr><td><code>make_*.R</code></td>
+<td>creating/reading/generating networks: <code>create_*()</code> (deterministic structures), <code>generate_*()</code> (stochastic mechanisms), <code>read_*()</code>/<code>write_*()</code> (import/export), <code>play_*()</code> (diffusion/learning simulations), <code>data_*</code>/<code>manynet-data.R</code> (bundled datasets: <code>ison_*</code> classic/instructional, <code>fict_*</code> fictional, <code>irps_*</code> international-relations)</td>
+</tr><tr><td>
+<code>coerce_graph.R</code>, <code>coerce_list.R</code>
+</td>
+<td>the <code>as_*()</code> translation layer between representations (<code><a href="reference/coerce_graph.html">as_igraph()</a></code>, <code><a href="reference/coerce_graph.html">as_tidygraph()</a></code>, <code><a href="reference/coerce_graph.html">as_network()</a></code>, <code><a href="reference/coerce_list.html">as_matrix()</a></code>, <code><a href="reference/coerce_list.html">as_edgelist()</a></code>, <code><a href="reference/coerce_graph.html">as_siena()</a></code>, <code><a href="reference/coerce_graph.html">as_diffnet()</a></code>, …), implemented as S3 methods dispatching on input class</td>
+</tr><tr><td><code>class_*.R</code></td>
+<td>the <code>mnet</code> S3 class itself (<code>class_networks.R</code>: <code>print.mnet</code>, <code>$</code>/<code>$&lt;-</code> accessors, node/tie/change data model), related result classes (<code>class_measures.R</code>, <code>class_members.R</code>, <code>class_motifs.R</code>, <code>class_models.R</code>), the <code>snet_*()</code> CLI layer (<code>class_interface.R</code>), input validation (<code>class_validate.R</code>), and the <code>describe_*()</code> helpers behind <code>print.mnet</code> (<code>class_describe.R</code>)</td>
+</tr><tr><td><code>manip_*.R</code></td>
+<td>dplyr-style verbs for manipulating nodes/ties/attributes (<code>manip_nodes.R</code>, <code>manip_ties.R</code>, <code>manip_global.R</code>, <code>manip_info.R</code>, <code>manip_changes.R</code>)</td>
+</tr><tr><td><code>mark_*.R</code></td>
+<td>logical/predicate functions returning <code>TRUE</code>/<code>FALSE</code> or marks about a network, e.g. the <code>is_*()</code> family (<code>mark_classes.R</code>, <code>mark_features.R</code>, <code>mark_format.R</code>, <code>mark_changes.R</code>)</td>
+</tr><tr><td><code>modif_*.R</code></td>
+<td>structural transformations/reformatting: direction, weighting, projection, splitting/joining, path/level operations, missing data (<code>modif_direction.R</code>, <code>modif_project.R</code>, <code>modif_split.R</code>, <code>modif_miss.R</code>, …)</td>
+</tr><tr><td><code>measure_*.R</code></td>
+<td>descriptive/attribute measures (<code>measure_attributes.R</code>, <code>measure_properties.R</code>); heavier network-analytic measures live in <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>
+</td>
+</tr><tr><td><code>reexports_classes.R</code></td>
+<td>re-exports of classes/generics from <a href="https://r.igraph.org/" class="external-link">igraph</a>/<a href="https://tidygraph.data-imaginist.com" class="external-link">tidygraph</a>/<a href="https://statnet.org/" class="external-link">network</a> so users need not load those packages directly</td>
+</tr><tr><td>
+<code>manynet-utils.R</code>, <code>manynet-glossary.R</code>, <code>manynet-defunct.R</code>
+</td>
+<td>shared internal helpers, the <code><a href="reference/glossary.html">gloss()</a></code>/glossary system used in tutorials and docs, and defunct-function shims</td>
+</tr></tbody></table><p>Shared roxygen documentation blocks live in <code>man-roxygen/</code> as <code>@template</code> fragments — reuse these via <code>@template</code> tags instead of re-writing standard <code>@param</code>/<code>@returns</code> docs.</p>
+</div>
+<div class="section level3">
+<h3 id="the-mnet-object-model">The <code>mnet</code> object model<a class="anchor" aria-label="anchor" href="#the-mnet-object-model"></a></h3>
+<p><code>mnet</code> is layered on top of <a href="https://r.igraph.org/" class="external-link">igraph</a>/<code>tbl_graph</code> (see <a href="../R/class_networks.R">R/class_networks.R</a>). Conventions to preserve when writing or editing functions:</p>
+<ul><li>Node table: first column is always <code>name</code>; reserved columns are <code>active</code> (changing networks) and <code>type</code> (multimodal/two-mode).</li>
+<li>Tie table: first two columns are always <code>from</code> and <code>to</code> (even for undirected networks); reserved columns are <code>weight</code>, <code>wave</code> (longitudinal), <code>type</code> (multiplex), and <code>sign</code> (signed).</li>
+<li>Changes (a longitudinal changelog) are stored as a graph attribute, not as extra rows in nodes/ties, with columns <code>wave</code>/<code>time</code>, <code>node</code>, <code>var</code>, <code>value</code>.</li>
+<li>Because an <code>mnet</code> object is simultaneously a valid <code>igraph</code> and <code>tbl_graph</code> object, prefer writing new functions against <a href="https://r.igraph.org/" class="external-link">igraph</a>/<a href="https://tidygraph.data-imaginist.com" class="external-link">tidygraph</a> primitives (via the <code><a href="reference/coerce_graph.html">as_igraph()</a></code>/<code><a href="reference/coerce_graph.html">as_tidygraph()</a></code> coercions) rather than hand-rolling data structure access.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="two-mode-networks">Two-mode networks<a class="anchor" aria-label="anchor" href="#two-mode-networks"></a></h3>
+<p>Many <code>create_*()</code>/<code>generate_*()</code> functions take an <code>n</code> argument that can be a single integer (one-mode network) or a length-2 integer vector (two-mode network, the sizes of each mode). Coercion functions detect and handle two-mode structure via the <code>twomode</code> argument and the <code>type</code> vertex attribute.</p>
+</div>
+<div class="section level3">
+<h3 id="console-messaging">Console messaging<a class="anchor" aria-label="anchor" href="#console-messaging"></a></h3>
+<p>All user-facing messages go through the <code>snet_*()</code> wrappers in <a href="../R/class_interface.R">R/class_interface.R</a> — <code><a href="reference/interface.html">snet_info()</a></code>, <code><a href="reference/interface.html">snet_warn()</a></code>, <code><a href="reference/interface.html">snet_abort()</a></code>, <code><a href="reference/interface.html">snet_success()</a></code>, <code><a href="reference/interface.html">snet_prompt()</a></code>, <code><a href="reference/interface.html">snet_unavailable()</a></code>, plus <code>snet_progress_*()</code> — rather than base <code><a href="https://rdrr.io/r/base/message.html" class="external-link">message()</a></code>/<code><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop()</a></code>/<code><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning()</a></code>. These respect <code>options(snet_verbosity = "quiet")</code> and give consistent <a href="https://cli.r-lib.org" class="external-link">cli</a>-styled output. Use <code><a href="reference/interface.html">snet_unavailable()</a></code> for not-yet-implemented features.</p>
+</div>
+<div class="section level3">
+<h3 id="tests">Tests<a class="anchor" aria-label="anchor" href="#tests"></a></h3>
+<p>Tests in <code>tests/testthat/</code> mirror the <code>R/</code> files (e.g. <code>test-make_create.R</code>, <code>test-manip_split.R</code>), alongside <code>test-functional_*.R</code> harnesses that sweep whole function families. <code>tests/testthat/helper-manynet.R</code> defines the shared fixtures and helpers used across tests, and <code>tests/testthat/helper-functional.R</code> the family-sweeping machinery. Test fixtures (Pajek, UCINET, GraphML, xlsx, etc.) live under <code>tests/testthat/sheets/</code>.</p>
+<p><code>testthat</code> edition 3 with parallel execution is configured in <code>DESCRIPTION</code> (<code>Config/testthat/parallel: true</code>); <code>Config/testthat/start-first</code> prioritises <code>tutorials_manynet, mark_is</code>.</p>
+</div>
+<div class="section level3">
+<h3 id="newsmd-conventions">
+<code>NEWS.md</code> conventions<a class="anchor" aria-label="anchor" href="#newsmd-conventions"></a></h3>
+<p><code>NEWS.md</code> groups each version’s changes under <code>##</code> headings that mirror the website function overview (<code>pkgdown/_pkgdown.yml</code> <code>reference:</code> titles). Lead with <code>## Package</code> (package-wide/website/infrastructure changes), then the function families in overview order: <code>## Making</code>, <code>## Coercion</code>, <code>## Manipulating</code>, <code>## Modifying</code>, <code>## Describing</code>, <code>## Practicing</code>. Put <code>## Glossary</code> and <code>## Tutorials</code> near the end, with <code>## Tutorials</code> immediately before any <code>## Data</code> section, so that tutorials and data usually close the list. Each heading appears at most once per version. <code>## Manipulating</code> covers the <code>manip_*</code> verbs (nodes/ties/attributes/changes/info/globals); <code>## Modifying</code> covers the <code>modif_*</code> transformations (<code>to_*()</code>, projection, splits, etc.). Keep the two distinct, as the website does.</p>
+<p>Start each bullet with a verb matching the change type:</p>
+<ul><li>
+<code>Added ...</code> — new functionality</li>
+<li>
+<code>Fixed ...</code> — bug fixes; if it relates to a GitHub issue, suffix with <code>(closing #123)</code>
+</li>
+<li>
+<code>Renamed ... to ...</code> — function or data name migrations</li>
+<li>
+<code>Improved ...</code> — functional updates to existing behaviour</li>
+<li>
+<code>Updated ...</code> — documentation changes</li>
+</ul><p>If a cited GitHub issue was <strong>not</strong> authored by @jhollway, thank the author with an <code>@</code>-tag in the bullet. Cluster related changes (e.g. several fixes to the same function, or sub-points of one feature) as indented sub-bullets under a lead bullet, to improve readability.</p>
+</div>
+<div class="section level3">
+<h3 id="branching-and-ci">Branching and CI<a class="anchor" aria-label="anchor" href="#branching-and-ci"></a></h3>
+<ul><li>
+<code>main</code> is the release branch; <code>develop</code> is the working branch (clone/work on <code>develop</code>).</li>
+<li>PRs into <code>main</code> trigger <a href="workflows/prchecks.yml">prchecks.yml</a>: R CMD check (macOS/Windows/Linux), binary build, codecov, lintr, spell check, a reverse-dependency check, a check that the tutorial articles are in sync with the tutorials, and PR metadata checks (DESCRIPTION version bump, PR title/description conventions).</li>
+<li>Merges/pushes to <code>main</code> trigger <a href="workflows/pushrelease.yml">pushrelease.yml</a>: check, auto-bump version tag, GitHub release with binaries, then pkgdown site deploy.</li>
+<li>Commits should reference an existing GitHub issue number (<code>#123</code>), see below.</li>
+</ul></div>
 </div>
 <div class="section level2">
 <h2 id="fork">Fork<a class="anchor" aria-label="anchor" href="#fork"></a></h2>
@@ -116,13 +248,13 @@
 </div>
 <div class="section level2">
 <h2 id="issues-and-tests">Issues and tests<a class="anchor" aria-label="anchor" href="#issues-and-tests"></a></h2>
-<p>Please use the issues tracker on Github to identify any function-related issues. You can use these issues to track progress on the issue and to comment or continue a conversation on that issue. Currently issue tracking is only open to those involved in the project.</p>
+<p>Please use the issues tracker on GitHub to identify any function-related issues. You can use these issues to track progress on the issue and to comment or continue a conversation on that issue. Currently issue tracking is only open to those involved in the project.</p>
 <p>The most useful issues are ones that precisely identify an error, or propose a test that should pass but instead fails. This package uses the <code>testthat</code> package for testing functions. Please see the <a href="https://testthat.r-lib.org" class="external-link">testthat website</a> for more details.</p>
 </div>
 <div class="section level2">
 <h2 id="bug-fixing-or-adding-new-code">Bug fixing or adding new code<a class="anchor" aria-label="anchor" href="#bug-fixing-or-adding-new-code"></a></h2>
 <p>Independent or assigned code contributions are most welcome. When writing new code, please follow <a href="https://www.r-bloggers.com/%F0%9F%96%8A-r-coding-style-guide/" class="external-link">standard R guidelines</a>. It can help to use packages such as <code>lintr</code>, <code>goodpractice</code> and <code>formatR</code> to ensure these are followed.</p>
-<p>Currently, commits can only be pushed to Bitbucket where they reference an existing issue. If no issue exists for the code you have developed, please add an issue first before pushing. Once the issue exists, you will need to mention the issue number (preceded by a hash symbol: #) in the commit description:</p>
+<p>Currently, commits can only be pushed to GitHub where they reference an existing issue. If no issue exists for the code you have developed, please add an issue first before pushing. Once the issue exists, you will need to mention the issue number (preceded by a hash symbol: #) in the commit description:</p>
 <p><code>Resolved #31 by adding a new function that does things, also updated documentation</code></p>
 <p>Where the issue hash (i.e. #31) is preceded by <code>resolve</code>, <code>resolves</code>, <code>resolved</code>, <code>close</code>, <code>closes</code>, <code>closed</code>, <code>fix</code>, <code>fixes</code>, or <code>fixed</code> (capitalised or not), Github will automatically updated the status of the issue(s) mentioned.</p>
 <p>Our current syntactical standard is to mention the issue first and then provide a short description of what the committed changes do in relation to that issue. Any ancillary changes can be mentioned after a comma.</p>

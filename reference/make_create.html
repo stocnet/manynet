@@ -12,8 +12,22 @@ create_core() creates a network in which a certain proportion of 'core' nodes
 are densely tied to each other, and the rest peripheral, tied only to the core.
 create_degree() creates a network with a given (out/in)degree sequence,
 which can also be used to create k-regular networks.
+create_cycle() creates a network in which all the nodes form
+a single closed chain.
+create_wheel() creates a network in which a single dominant node
+is tied to all the nodes in a cycle.
 
 
+Some of these structures are constrained in two-mode networks.
+Since ties in two-mode networks can only run between the modes,
+a two-mode cycle must alternate between them, and so can only be as long
+as twice the number of nodes in the smaller mode.
+Similarly, the rim of a two-mode wheel alternates between the modes,
+and its hub, drawn from the first mode, can only be tied to the
+second mode's rim nodes.
+Where n is larger than such a structure can accommodate,
+the largest such structure is created and the surplus nodes are
+added as isolates, with a message.
 These functions can create either one-mode or two-mode networks.
 To create a one-mode network, pass the main argument n a single integer,
 indicating the number of nodes in the network.
@@ -39,7 +53,7 @@ and the number of modes, nodes, and directedness will be inferred."><meta proper
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.2</span>
       </span>
     </div>
 
@@ -64,6 +78,22 @@ and the number of modes, nodes, and directedness will be inferred."><meta proper
     </li>
     <li>
       <a href="../articles/manipulating-network-data.html">Manipulating Network Data</a>
+    </li>
+  </ul></li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Related Packages
+
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>
+    </li>
+    <li>
+      <a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a>
+    </li>
+    <li>
+      <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
     </li>
   </ul></li>
 <li>
@@ -108,7 +138,21 @@ neighbours form a clique.</p></li>
 are densely tied to each other, and the rest peripheral, tied only to the core.</p></li>
 <li><p><code>create_degree()</code> creates a network with a given (out/in)degree sequence,
 which can also be used to create k-regular networks.</p></li>
-</ul><p>These functions can create either one-mode or two-mode networks.
+<li><p><code>create_cycle()</code> creates a network in which all the nodes form
+a single closed chain.</p></li>
+<li><p><code>create_wheel()</code> creates a network in which a single dominant node
+is tied to all the nodes in a cycle.</p></li>
+</ul><p>Some of these structures are constrained in two-mode networks.
+Since ties in two-mode networks can only run between the modes,
+a two-mode cycle must alternate between them, and so can only be as long
+as twice the number of nodes in the smaller mode.
+Similarly, the rim of a two-mode wheel alternates between the modes,
+and its hub, drawn from the first mode, can only be tied to the
+second mode's rim nodes.
+Where <code>n</code> is larger than such a structure can accommodate,
+the largest such structure is created and the surplus nodes are
+added as isolates, with a message.</p>
+<p>These functions can create either one-mode or two-mode networks.
 To create a one-mode network, pass the main argument <code>n</code> a single integer,
 indicating the number of nodes in the network.
 To create a two-mode network, pass <code>n</code> a vector of <em>two</em> integers,
@@ -183,17 +227,24 @@ assigned to two, equally sized partitions.</p></dd>
 <dt id="arg-outdegree">outdegree<a class="anchor" aria-label="anchor" href="#arg-outdegree"></a></dt>
 <dd><p>Numeric scalar or vector indicating the
 desired outdegree distribution.
-By default NULL and is required.
+Note that a scalar (single number) will result in a k-regular graph.
+By default NULL.
 If <code>n</code> is an existing network object and the outdegree is not specified,
 then the outdegree distribution will be inferred from that of the network.
-Note that a scalar (single number) will result in a k-regular graph.</p></dd>
+If only the indegree is specified, then in one-mode networks the outdegree
+will mirror it, and in two-mode networks the same number of ties will be
+spread as evenly as possible across the nodes in the first mode.
+If neither is specified, the sparsest connected structure is created:
+a cycle in one-mode networks, and in two-mode networks one in which the
+larger mode is 1-regular.</p></dd>
 
 
 <dt id="arg-indegree">indegree<a class="anchor" aria-label="anchor" href="#arg-indegree"></a></dt>
 <dd><p>Numeric vector indicating the desired indegree distribution.
 By default NULL but not required unless a directed network is desired.
 If <code>n</code> is an existing directed network object and the indegree is not specified,
-then the indegree distribution will be inferred from that of the network.</p></dd>
+then the indegree distribution will be inferred from that of the network.
+Otherwise it is filled in from the outdegree as described above.</p></dd>
 
 
 <dt id="arg-mark">mark<a class="anchor" aria-label="anchor" href="#arg-mark"></a></dt>
@@ -383,6 +434,49 @@ Prime numbers of nodes will return a chain.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2     4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 9 more rows</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">create_degree</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Graph from degree sequence</span> <span style="color: #00BBBB;">────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A undirected network of 10 nodes and 10 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     9    10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     8    10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     7     8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     6     7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     5     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     4     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">create_degree</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span>,<span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Bipartite graph from degree sequence</span> <span style="color: #00BBBB;">──────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A two-mode network of 6 nodes and 4 nodes and 6 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   type </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     6     7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     5     8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     4     8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     3     7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     2     9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     1    10</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu">create_core</span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A undirected network of 6 nodes and 12 ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -399,17 +493,27 @@ Prime numbers of nodes will return a chain.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 6 more rows</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span>  <span class="fu">create_windmill</span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH d2f1fbc U--- 6 15 -- </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from d2f1fbc:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 9500a01 U--- 6 15 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 9500a01:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 2--3 2--4 2--5 2--6 3--4 3--5 3--6 4--5 4--6 5--6 1--2 1--3 1--4 1--5 1--6</span>
 <span class="r-in"><span>  <span class="fu">create_cycle</span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 698a965 U--- 6 6 -- </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 698a965:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH f1e4823 U--- 6 6 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from f1e4823:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1--2 2--3 3--4 4--5 1--6 5--6</span>
+<span class="r-in"><span>  <span class="fu">create_cycle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 2a3c7df U--B 10 8 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + attr: type (v/l)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 2a3c7df:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1--5 2--5 2--6 3--6 3--7 4--7 1--8 4--8</span>
 <span class="r-in"><span>  <span class="fu">create_wheel</span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH ae54d3b U--- 6 10 -- </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from ae54d3b:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 664c079 U--- 6 10 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 664c079:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 2--3 3--4 4--5 5--6 2--6 1--2 1--3 1--4 1--5 1--6</span>
+<span class="r-in"><span>  <span class="fu">create_wheel</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 68e73ff U--B 10 9 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + attr: type (v/l)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 68e73ff:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1--5 2--5 3--5 1--6 3--6 4--6 1--7 2--7 4--7</span>
 </code></pre></div>
     </div>
   </div>

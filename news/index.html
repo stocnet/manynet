@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.2</span>
       </span>
     </div>
 
@@ -42,6 +42,22 @@
     </li>
     <li>
       <a href="../articles/manipulating-network-data.html">Manipulating Network Data</a>
+    </li>
+  </ul></li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Related Packages
+
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>
+    </li>
+    <li>
+      <a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a>
+    </li>
+    <li>
+      <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
     </li>
   </ul></li>
 <li>
@@ -73,7 +89,93 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="2.2.1" id="manynet-221">manynet 2.2.1<a class="anchor" aria-label="anchor" href="#manynet-221"></a></h2>
+<h2 class="page-header" data-toc-text="2.2.2" id="manynet-222">manynet 2.2.2<a class="anchor" aria-label="anchor" href="#manynet-222"></a></h2>
+<div class="section level3">
+<h3 id="package-2-2-2">Package<a class="anchor" aria-label="anchor" href="#package-2-2-2"></a></h3>
+<ul><li>Updated the GitHub Actions workflows to the latest major action versions (<code>actions/checkout@v7</code>, <code>actions/upload-artifact@v7</code>, <code>actions/download-artifact@v8</code>), replacing some long-outdated <code>@v2</code> pins</li>
+<li>Added a “Tutorial articles are in sync” job to the PR checks, which regenerates <code>vignettes/articles/</code> from <code>inst/tutorials/</code> and fails if the committed articles have drifted
+<ul><li>
+<code>data-raw/build_tutorial_articles.R</code> is now tracked in the repository (it was previously excluded by <code>.gitignore</code>) so that the check can run</li>
+</ul></li>
+<li>Added PR metadata checks to the PR checks, automating the DESCRIPTION version bump, PR title, and PR description conventions, and removed the corresponding manual items from the pull request template</li>
+<li>Fixed the website deployment job installing the <code>check</code> rather than the <code>website</code> dependencies</li>
+<li>Added a “Related Packages” menu to the website navigation bar, linking to <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>, <a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a>, and <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
+</li>
+<li>Removed <a href="https://yihui.org/knitr/" class="external-link">knitr</a> and <a href="https://github.com/rstudio/rmarkdown" class="external-link">rmarkdown</a> from <code>Suggests</code>, since neither was used by the package or its tests
+<ul><li>The tutorial tests now extract tutorial code with a small internal helper instead of <code><a href="https://rdrr.io/pkg/knitr/man/knit.html" class="external-link">knitr::purl()</a></code>, and no longer render the <a href="https://rstudio.github.io/learnr/" class="external-link">learnr</a> tutorials (a fragile check that added no coverage beyond running the tutorial code itself)</li>
+<li>Added <a href="https://rstudio.github.io/learnr/" class="external-link">learnr</a> to <code>Config/Needs/website</code>
+</li>
+</ul></li>
+<li>Moved package architecture documentation into <code>.github/CONTRIBUTING.md</code> so that it is available to all contributors</li>
+<li>Improved the functional tests of the <code>as_*list()</code> family to expect <code>NULL</code> where a network or object class genuinely holds no such information, instead of reporting these as audit items</li>
+</ul></div>
+<div class="section level3">
+<h3 id="making-2-2-2">Making<a class="anchor" aria-label="anchor" href="#making-2-2-2"></a></h3>
+<ul><li>Improved <code><a href="../reference/make_create.html">create_degree()</a></code> so that it no longer raises an uninformative error where no degree sequence is given
+<ul><li>Where neither <code>outdegree</code> nor <code>indegree</code> is given, the sparsest connected structure of that size is created: a cycle for one-mode networks, and for two-mode networks one in which the larger mode is 1-regular and the ties are spread as evenly as possible across the smaller mode</li>
+<li>Where only one of the two is given for a directed one-mode network, the other now mirrors it, and for a two-mode network the same number of ties is spread as evenly as possible across the other mode</li>
+<li>Degree sequences of the wrong length now report which argument was the wrong length and what length was expected, instead of a <code><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot()</a></code> message</li>
+</ul></li>
+<li>Fixed <code><a href="../reference/make_create.html">create_degree()</a></code> returning two-mode networks with the modes reversed, e.g. <code>create_degree(c(6,4))</code> returned a network with 4 nodes in the first mode and 6 in the second</li>
+<li>Improved <code><a href="../reference/make_create.html">create_cycle()</a></code> and <code><a href="../reference/make_create.html">create_wheel()</a></code> on two-mode networks so that, instead of raising an error where the requested number of nodes cannot form such a structure, the largest such structure is created and the surplus nodes are added as isolates, with a message explaining this
+<ul><li>Since ties in two-mode networks run only between the modes, a two-mode cycle alternates between them and can be at most twice as long as the smaller mode, e.g. <code>create_cycle(c(4,6))</code> now returns an 8-cycle and two isolates</li>
+<li>Similarly, the rim of a two-mode wheel alternates between the modes and its hub, drawn from the first mode, is tied only to the second mode’s rim nodes, e.g. <code>create_wheel(c(4,6))</code> now returns a wheel on 7 nodes and three isolates</li>
+<li>
+<code><a href="../reference/make_create.html">create_cycle()</a></code> and <code><a href="../reference/make_create.html">create_wheel()</a></code> are now also listed and described in the documentation for the defined structures, where they were previously only aliased</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="coercion-2-2-2">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-2-2"></a></h3>
+<ul><li>Fixed <code><a href="../reference/coerce_graph.html">as_network()</a></code> assigning the whole vector of a nodal attribute to every node where the network had just one such attribute, which also made the resulting object impossible to coerce back</li>
+<li>Added <code><a href="../reference/coerce_list.html">as_changelist()</a></code>, <code><a href="../reference/coerce_list.html">as_globallist()</a></code>, <code><a href="../reference/coerce_list.html">as_infolist()</a></code>, and <code><a href="../reference/coerce_list.html">as_nodelist()</a></code> methods for matrices and edgelists, which now return <code>NULL</code> instead of raising a “no applicable method” error, since these formats have nowhere to hold network-level information (matrices and edgelists do carry node labels, so <code><a href="../reference/coerce_list.html">as_nodelist()</a></code> returns those where present)</li>
+<li>Added <code>as_globallist.network()</code>, so that a globallist stored on a <code>network</code> object by <code><a href="../reference/coerce_graph.html">as_network()</a></code> can be retrieved again</li>
+<li>Fixed <code><a href="../reference/coerce_graph.html">as_network()</a></code> dropping all tie attributes other than the weight, since networks were constructed from a sociomatrix; other tie attributes are now copied across dyad by dyad, so e.g. <code><a href="../reference/manip_ties_attr.html">add_tie_attribute()</a></code> on a <code>network</code> object now returns an object holding that attribute</li>
+<li>Fixed <code>as_igraph.network()</code> copying <code>network</code>’s internal <code>vertex.names</code> attribute across as an ordinary nodal attribute, which shadowed the node labels when coercing back to a <code>network</code> (e.g. adding nodes to a <code>network</code> returned an object with missing names), and copying the internal <code>na</code> attribute where it was not the first attribute</li>
+<li>Fixed <code><a href="../reference/mark_format_node.html">is_twomode()</a></code> on partially labelled matrices raising a “missing value where TRUE/FALSE needed” error, since comparing missing row and column names returned <code>NA</code>; such matrices are now treated as one-mode</li>
+</ul></div>
+<div class="section level3">
+<h3 id="manipulating-2-2-2">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-2-2-2"></a></h3>
+<ul><li>Improved <code><a href="../reference/manip_ties_num.html">add_ties()</a></code> to accept several ways of declaring ties, so that what is documented is now what is possible:
+<ul><li>a single number, e.g. <code>add_ties(net, 3)</code>, adds that number of ties at random among the dyads not already tied (respecting directedness and two-modeness), which was previously documented but not implemented</li>
+<li>explicit tie formulae in the same syntax as <code><a href="../reference/make_explicit.html">create_explicit()</a></code>, e.g. <code>add_ties(net, Betty -+ Tina)</code>, <code>add_ties(net, 1 ++ 3)</code>, or <code>add_ties(net, Betty:Sue -+ Tina)</code>, with several ties declared at once by wrapping them in <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code>, and one-sided formulae, e.g. <code>~ Betty -+ Tina</code>, accepted for programmatic use</li>
+<li>a two-column matrix, edgelist, or data frame of node names or indices</li>
+<li>the previous even vector of nodes, e.g. <code>add_ties(net, c("Betty","Tina"))</code>, continues to work, as does ordinary arithmetic in the argument, since tie syntax requires <code>+</code> or <code>-</code> at both ends of the operator</li>
+</ul></li>
+<li>Fixed <code><a href="../reference/manip_ties_num.html">add_ties()</a></code> on weighted networks giving the new ties a missing weight, which is not representable in matrix or <a href="https://statnet.org/" class="external-link">network</a> formats; they are now given a weight of 1 unless one is passed in <code>attr_list</code>
+</li>
+<li>Fixed <code><a href="../reference/manip_ties_num.html">add_ties()</a></code> and <code><a href="../reference/manip_ties_num.html">delete_ties()</a></code> raising errors for <code>network</code> objects with a single nodal attribute (see the <code><a href="../reference/coerce_graph.html">as_network()</a></code> fix above)</li>
+<li>Improved <code><a href="../reference/manip_nodes_num.html">add_nodes()</a></code> so that nodes added to a labelled network are labelled too, e.g. “N9” and “N10” where eight nodes were already named, since partially labelled networks are ambiguous for other functions and other classes (previously such networks raised a “missing value where TRUE/FALSE needed” error when coerced to a matrix or <code>network</code> object)</li>
+<li>Fixed <code><a href="../reference/manip_changes.html">bind_changes()</a></code> on <code>stocnet</code> objects raising a “Can’t combine <code>..1$value</code> <character> and <code>..2$value</code> <list>” error, since it wrapped the incoming <code>value</code> column in a list but changelogs already on the object store <code>value</code> as an atomic vector; the two changelogs’ <code>value</code> columns are now reconciled before binding, falling back to a list-column (or to character) only where the values genuinely cannot be held in one vector</list></character></li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-2-2-2">Modifying<a class="anchor" aria-label="anchor" href="#modifying-2-2-2"></a></h3>
+<ul><li>Fixed several bugs in <code><a href="../reference/modif_split.html">to_waves()</a></code>:
+<ul><li>it now honours an explicitly named <code>attribute</code> when the network is not marked longitudinal, i.e. when the tie attribute is not called “wave” or “panel” (fixing the silent no-op behind stocnet/autograph#40)</li>
+<li>it now returns waves in the natural (sorted) order of the attribute values, so numeric waves such as 1:12 no longer sort lexicographically (“1”, “10”, “11”, …, “2”, …)</li>
+<li>
+<code>to_waves(cumulative = TRUE)</code> no longer mangles single-wave results</li>
+<li>it no longer raises an “undefined columns selected” error on igraph objects with no waves to split on, where a single network was iterated over as though it were a list of waves</li>
+<li>it no longer raises an “object ‘out’ not found” error on edgelists, and no longer splits them on the wrong column where the attribute is present</li>
+<li>it no longer raises a “Can’t combine <code>..1</code> <character> and <code>..2</code> <logical>” error on changing networks, since changelogs store values as character but the nodal attributes they update need not be; applied values are now coerced back to the type of the attribute they update</logical></character></li>
+<li>it now applies every changing variable rather than only the last of them, taking the latest value per node <em>and</em> variable rather than per node</li>
+<li>for networks that are both changing and longitudinal, it now takes its waves from the tie attribute rather than from the times at which nodes change, so that waves in which no node changes are no longer dropped (e.g. <code>to_waves(fict_starwars)</code> now returns all seven waves rather than six) and each wave holds the ties of that wave (previously <code>to_waves(fict_potter)</code> returned an empty last wave)</li>
+</ul></li>
+<li>Fixed <code><a href="../reference/modif_split.html">to_slices()</a></code> erroring on networks it cannot slice:
+<ul><li>networks holding no such time attribute raised an “In argument: <code>time &lt;= moments</code>” error, and are now returned unchanged, as in <code><a href="../reference/modif_split.html">to_waves()</a></code>
+</li>
+<li>unweighted networks raised an “In argument: <code>weight != 0</code>” error, since ties can only be dropped for summing to zero where they carry a weight</li>
+</ul></li>
+<li>Improved <code><a href="../reference/modif_scope.html">to_time()</a></code> to handle interval (spell) networks whose ties carry <code>begin</code>/<code>end</code> lifespans (e.g. <code>irps_wwi</code>): supplying a <code>time</code> returns the ties active at that moment (using the half-open <code>begin &lt;= time &lt; end</code> convention shared with <code>network::networkDynamic</code>), while omitting <code>time</code> returns a list of slices, one per change point (each moment at which some tie begins or ends). Previously <code><a href="../reference/modif_scope.html">to_time()</a></code> reported such networks as unavailable</li>
+<li>Added <code>to_time.igraph()</code>, and <code>time</code> now defaults to missing so the slice-generating form can be called as <code>to_time(net)</code>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="learning-2-2-2">Learning<a class="anchor" aria-label="anchor" href="#learning-2-2-2"></a></h3>
+<ul><li>Improved <code><a href="../reference/glossary.html">gloss()</a></code> to return the requested term italicised where no glossary entry exists instead of raising an error</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.2.1" id="manynet-221">manynet 2.2.1<small>2026-07-20</small><a class="anchor" aria-label="anchor" href="#manynet-221"></a></h2>
 <div class="section level3">
 <h3 id="package-2-2-1">Package<a class="anchor" aria-label="anchor" href="#package-2-2-1"></a></h3>
 <ul><li>Added <code>revdep/</code> to <code>.Rbuildignore</code> so that reverse-dependency check artefacts are no longer bundled into the source tarball, resolving CRAN NOTEs about a non-standard top-level directory, an over-large tarball, and a stray <code>CITATION</code> file</li>
