@@ -99,9 +99,21 @@ to_simplex.data.frame <- function(.data) {
   out
 }
 
+# Layers are held in a 'type' tie attribute in tidygraph/igraph objects and in
+# a 'layer' column in stocnet objects; both survive coercion. Note that
+# layer_names() returns the names of the layers, not the tie attribute in
+# which they are held, and falls back to the network's tie label where there
+# are no layers, so it cannot be used to detect this.
+.layer_attribute <- function(.data) {
+  intersect(c("type", "layer"), net_tie_attributes(.data))[1]
+}
+
 #' @rdname modif_plexity
-#' @param tie Character string naming a tie attribute to retain from a graph.
-#' @importFrom igraph delete_edges edge_attr_names delete_edge_attr E edge_attr_names
+#' @param tie Character string naming one of the tie types, or layers,
+#'   in the network, i.e. one of those returned by `layer_names()`,
+#'   to which the network should be reduced.
+#'   Where a network holds no tie types, it is already uniplex
+#'   and is returned unchanged.
 #' @examples
 #' as_tidygraph(create_filled(5)) |>
 #'   mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) |>
@@ -116,14 +128,29 @@ to_uniplex.default <- function(.data, tie) {
 
 #' @export
 to_uniplex.tbl_graph <- function(.data, tie){
-  out <- dplyr::filter(.data = tidygraph::activate(.data, "edges"), 
-                       type == tie) |> dplyr::select(-type)
+  layer_attr <- .layer_attribute(.data)
+  if(is.na(layer_attr)){
+    snet_info("This network holds no tie types, so is already uniplex.")
+    return(.data)
+  }
+  types <- tie_attribute(.data, layer_attr)
+  ties_avail <- unique(types)
+  if(missing(tie) || is.null(tie) || length(tie) != 1){
+    snet_abort("Please name the tie type to which the network should be",
+               "reduced, one of {.val {ties_avail}} (see {.fn layer_names}).")
+  } else if(!tie %in% ties_avail){
+    snet_abort("There is no tie type {.val {tie}} in this network.",
+               "Please name one of {.val {ties_avail}}",
+               "(see {.fn layer_names}).")
+  }
+  out <- delete_ties(.data, which(!types %in% tie))
+  out <- delete_tie_attribute(out, layer_attr)
   if(is_signed(out) && (all(tie_signs(out)==1) || all(is.na(tie_signs(out)))))
-    out <- out |> dplyr::select(-sign)
-  if(is_weighted(out) && all(tie_weights(out)==1)) 
-    out <- out |> dplyr::select(-weight)
-  if(is_longitudinal(out) && length(unique(tie_attribute(out, "wave")))==1) 
-    out <- out |> dplyr::select(-wave)
+    out <- delete_tie_attribute(out, "sign")
+  if(is_weighted(out) && all(tie_weights(out)==1))
+    out <- delete_tie_attribute(out, "weight")
+  if(is_longitudinal(out) && length(unique(tie_attribute(out, "wave")))==1)
+    out <- delete_tie_attribute(out, "wave")
   if(is_twomode(out) && all(!tie_is_twomode(out))){ # if only one-mode left
     retain <- node_is_mode(out)[igraph::as_edgelist(out, names = FALSE)[1,1]]
     out <- tidygraph::activate(out, "nodes") |> 

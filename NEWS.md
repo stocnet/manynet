@@ -63,6 +63,11 @@
   - unweighted networks raised an "In argument: `weight != 0`" error, since ties can only be dropped for summing to zero where they carry a weight
 - Improved `to_time()` to handle interval (spell) networks whose ties carry `begin`/`end` lifespans (e.g. `irps_wwi`): supplying a `time` returns the ties active at that moment (using the half-open `begin <= time < end` convention shared with `network::networkDynamic`), while omitting `time` returns a list of slices, one per change point (each moment at which some tie begins or ends). Previously `to_time()` reported such networks as unavailable
 - Added `to_time.igraph()`, and `time` now defaults to missing so the slice-generating form can be called as `to_time(net)`
+- Fixed `to_uniplex()` erroring on networks it cannot reduce, and generalised where it looks for the tie types:
+  - networks holding no tie types raised an "In argument: `type == tie`" error, and are now returned unchanged, as in `to_waves()` and `to_slices()`
+  - where a tie type is requested that the network does not hold, or none is given at all, the available tie types are now reported instead of raising an uninformative error while printing the (empty) result
+  - tie types are now recognised whether they are held in a "type" tie attribute, as in tidygraph objects, or in a "layer" column, as in stocnet objects, so that e.g. `to_uniplex(as_stocnet(ison_algebra), "tasks")` now works
+  - ties are now selected by index rather than by filtering on a bare `type` column, so a tie attribute named "tie" no longer shadows the `tie` argument
 
 ## Learning
 

@@ -24,7 +24,11 @@ to_uniplex(.data, tie)
 \item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
 
-\item{tie}{Character string naming a tie attribute to retain from a graph.}
+\item{tie}{Character string naming one of the tie types, or layers,
+in the network, i.e. one of those returned by \code{layer_names()},
+to which the network should be reduced.
+Where a network holds no tie types, it is already uniplex
+and is returned unchanged.}
 }
 \value{
 A tidygraph object modified as explained in the function description, details,

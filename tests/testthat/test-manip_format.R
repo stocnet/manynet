@@ -60,6 +60,23 @@ test_that("to_uniplex works", {
   expect_false(is_twomode(to_uniplex(fict_actually, "romance")))
 })
 
+test_that("to_uniplex handles networks without tie types", {
+  expect_equal(as_matrix(to_uniplex(create_ring(8), "friend")),
+               as_matrix(create_ring(8)))
+  expect_equal(as_matrix(to_uniplex(ison_southern_women, "participation")),
+               as_matrix(ison_southern_women))
+})
+
+test_that("to_uniplex reports the available tie types", {
+  expect_error(to_uniplex(uni, "nope"), "friend")
+  expect_error(to_uniplex(uni), "friend")
+})
+
+test_that("to_uniplex works where layers are held in a layer column", {
+  expect_equal(as_matrix(to_uniplex(as_stocnet(ison_algebra), "tasks")),
+               as_matrix(to_uniplex(ison_algebra, "tasks")))
+})
+
 test_that("to_acylic works", {
   expect_false(is_directed(as_igraph(ison_brandes)))
   expect_true(is_directed(to_acyclic(ison_brandes)))
