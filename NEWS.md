@@ -1,3 +1,13 @@
+# manynet 2.2.3
+
+## Making
+
+- Improved `generate_man()` so that it no longer raises an error where no dyad census is given
+  - Where `n` is a number of nodes rather than an existing network, `man` now defaults to `c(0.25, 0.5, 0.25)`, the dyad distribution of a random digraph in which each arc is present with probability 0.5, so that `generate_man(6)` is now possible and returns the same distribution of networks as `generate_random(6, 0.5, directed = TRUE)`
+  - Added support for two-mode networks, e.g. `generate_man(c(4,6))`, where the dyad census is conditioned on the dyads between the modes; since ties in two-mode networks are undirected, mutual and asymmetric dyads are both realised as a tie
+  - A `man` of the wrong length now reports what was expected and what was given, instead of the message for `man` not having been given at all
+  - Corrected the documentation for `man`, which promised that a count such as `c(10,0,20)` would be treated as a count; such vectors are normalised into proportions, so the dyad census of an existing network is reproduced in expectation rather than exactly
+
 # manynet 2.2.2
 
 ## Package
@@ -63,11 +73,6 @@
   - unweighted networks raised an "In argument: `weight != 0`" error, since ties can only be dropped for summing to zero where they carry a weight
 - Improved `to_time()` to handle interval (spell) networks whose ties carry `begin`/`end` lifespans (e.g. `irps_wwi`): supplying a `time` returns the ties active at that moment (using the half-open `begin <= time < end` convention shared with `network::networkDynamic`), while omitting `time` returns a list of slices, one per change point (each moment at which some tie begins or ends). Previously `to_time()` reported such networks as unavailable
 - Added `to_time.igraph()`, and `time` now defaults to missing so the slice-generating form can be called as `to_time(net)`
-- Fixed `to_uniplex()` erroring on networks it cannot reduce, and generalised where it looks for the tie types:
-  - networks holding no tie types raised an "In argument: `type == tie`" error, and are now returned unchanged, as in `to_waves()` and `to_slices()`
-  - where a tie type is requested that the network does not hold, or none is given at all, the available tie types are now reported instead of raising an uninformative error while printing the (empty) result
-  - tie types are now recognised whether they are held in a "type" tie attribute, as in tidygraph objects, or in a "layer" column, as in stocnet objects, so that e.g. `to_uniplex(as_stocnet(ison_algebra), "tasks")` now works
-  - ties are now selected by index rather than by filtering on a bare `type` column, so a tie attribute named "tie" no longer shadows the `tie` argument
 
 ## Learning
 

@@ -47,9 +47,19 @@ By default TRUE.}
 }}
 
 \item{man}{Vector of Mutual, Asymmetric, and Null dyads, respectively.
-Can be specified as proportions, e.g. \code{c(0.5, 0.5, 0.5)},
-or as a count, e.g. \code{c(10,0,20)}.
-Is inferred from \code{n} if it is an existing network object.}
+These are treated as proportions, e.g. \code{c(0.25, 0.5, 0.25)};
+counts such as \code{c(10,0,20)} are read as relative weights and normalised,
+so the dyad census is reproduced in expectation rather than exactly.
+Is inferred from \code{n} if it is an existing network object,
+and otherwise defaults to \code{c(0.25, 0.5, 0.25)},
+which is the dyad distribution of a random (Erdős-Rényi) digraph
+in which each arc is present with probability 0.5.
+
+For two-mode networks, \code{man} is conditioned on the dyads between
+the modes.
+Since ties in two-mode networks are undirected,
+both mutual and asymmetric dyads are realised as a tie,
+so only their sum is consequential there.}
 
 \item{steps}{Number of simulation steps to run.
 By default 1: a single, one-shot simulation.
@@ -105,6 +115,8 @@ and the number of modes, nodes, and directedness will be inferred.
 \examples{
 generate_random(12, 0.4)
 # generate_random(c(6, 6), 0.4)
+generate_man(6)
+generate_man(c(4, 6))
 }
 \references{
 \subsection{On random networks}{
@@ -131,7 +143,7 @@ San Francisco: Jossey-Bass.
 }
 \seealso{
 Other makes:
-\code{\link{make_cran}},
+\code{\link{make_collect}},
 \code{\link{make_create}},
 \code{\link{make_ego}},
 \code{\link{make_explicit}},
