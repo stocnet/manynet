@@ -75,19 +75,28 @@ to_ego.default <- function(.data, node, max_dist = 1, min_dist = 0,
 #' @export
 to_ego.igraph <- function(.data, node, max_dist = 1, min_dist = 0,
                           direction = c("out","in")){
-  egos <- to_egos(.data, max_dist = max_dist, min_dist = min_dist,
-                  direction = direction)
-  as_igraph(egos[[node]])
+  as_igraph(.to_ego_subgraph(.data, node, max_dist, min_dist, direction))
 }
 
 #' @export
 to_ego.tbl_graph <- function(.data, node, max_dist = 1, min_dist = 0,
                              direction = c("out","in")){
-  egos <- to_egos(.data, max_dist = max_dist, min_dist = min_dist,
-                  direction = direction)
   existname <- net_name(.data, prefix = "from")
-  out <- as_tidygraph(egos[[node]])
+  out <- as_tidygraph(.to_ego_subgraph(.data, node, max_dist, min_dist,
+                                       direction))
   add_info(out, name = paste("Ego network of", node, existname))
+}
+
+# Obtains the neighbourhood of just this node.
+# Note that to_egos() would obtain the neighbourhood of every node in the
+# network before discarding all but this one, which does not scale.
+.to_ego_subgraph <- function(.data, node, max_dist, min_dist, direction){
+  direction <- match.arg(direction, c("out","in"))
+  if(is_twomode(.data)) max_dist <- max_dist*2
+  out <- igraph::make_ego_graph(as_igraph(.data), order = max_dist,
+                                nodes = node, mindist = min_dist,
+                                mode = direction)[[1]]
+  out
 }
 
 #' @rdname modif_scope

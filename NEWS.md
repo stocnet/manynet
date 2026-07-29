@@ -34,6 +34,7 @@
   - where a tie type is requested that the network does not hold, or none is given at all, the available tie types are now reported instead of raising an uninformative error while printing the (empty) result
   - tie types are now recognised whether they are held in a "type" tie attribute, as in tidygraph objects, or in a "layer" column, as in stocnet objects, so that e.g. `to_uniplex(as_stocnet(ison_algebra), "tasks")` now works
   - ties are now selected by index rather than by filtering on a bare `type` column, so a tie attribute named "tie" no longer shadows the `tie` argument
+- Fixed `to_ego()` obtaining the neighbourhood of every node in the network before discarding all but one, which made it prohibitively slow on larger networks
 
 # manynet 2.2.2
 
