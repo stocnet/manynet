@@ -21,6 +21,18 @@ for(fn in collect_functions("^is_")) {
   }
 }
 
+test_that("is_connected respects connectivity", {
+  # fict_starwars is weakly but not strongly connected
+  expect_false(is_connected(fict_starwars))
+  expect_false(is_connected(fict_starwars, connectivity = "strong"))
+  expect_true(is_connected(fict_starwars, connectivity = "weak"))
+  # the two notions coincide for undirected networks
+  expect_true(is_connected(ison_adolescents))
+  expect_true(is_connected(ison_adolescents, connectivity = "weak"))
+  expect_true(is_connected(ison_adolescents, connectivity = "strong"))
+  expect_error(is_connected(ison_adolescents, connectivity = "bloop"))
+})
+
 
   # manyis <- collect_functions("^is_")
   # manyds <- pkg_data() |> 

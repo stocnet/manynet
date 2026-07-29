@@ -12,7 +12,7 @@
 https://stackoverflow.com/questions/55091438/r-igraph-find-all-cycles
 }
 \usage{
-is_connected(.data)
+is_connected(.data, connectivity = c("strong", "weak"))
 
 is_perfect_matching(.data, mark = "type")
 
@@ -33,6 +33,14 @@ is_aperiodic(.data, max_path_length = 4)
 \item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
 
+\item{connectivity}{Character string, "weak" treats a directed network's
+components as if the network were undirected, and "strong" requires ties
+in both directions between members.
+This is ignored for undirected networks, where the two notions coincide.
+Note that the default differs by function: marks that assert
+connectedness default to "strong", while functions that scope or split a
+network into components default to "weak".}
+
 \item{mark}{A logical vector marking two types or modes.
 By default "type".}
 
@@ -47,8 +55,9 @@ TRUE if the condition is met, or FALSE otherwise.
 These functions implement logical tests for various network
 features.
 \itemize{
-\item \code{is_connected()} tests whether network is strongly connected,
-or weakly connected if undirected.
+\item \code{is_connected()} tests whether network is connected,
+by default in the strong sense where ties are directed.
+Pass \code{connectivity = "weak"} to ignore tie direction.
 \item \code{is_perfect_matching()} tests whether there is a matching
 for a network that covers every node in the network.
 \item \code{is_eulerian()} tests whether there is a Eulerian path for a network
@@ -74,12 +83,6 @@ the default method will attempt to coerce the object to a class for which a meth
 and then coerce the output back to the original class.
 If no method is available for any class, an error will be thrown.
 }
-\section{is_connected}{
-
-To test weak connection on a directed network,
-please see \code{to_undirected()}.
-}
-
 \section{is_perfect_matching}{
 
 For two-mode or bipartite networks, \code{to_matching()} is used
@@ -107,6 +110,7 @@ If the greatest common divisor is 1, the network is aperiodic.
 
 \examples{
 is_connected(ison_southern_women)
+is_connected(ison_algebra, connectivity = "weak")
 is_perfect_matching(ison_southern_women)
 is_eulerian(ison_brandes)
 is_acyclic(ison_algebra)

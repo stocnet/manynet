@@ -4,8 +4,9 @@
 #'   These functions implement logical tests for various network
 #'   features.
 #'   
-#'   - `is_connected()` tests whether network is strongly connected, 
-#'   or weakly connected if undirected.
+#'   - `is_connected()` tests whether network is connected,
+#'   by default in the strong sense where ties are directed.
+#'   Pass `connectivity = "weak"` to ignore tie direction.
 #'   - `is_perfect_matching()` tests whether there is a matching 
 #'   for a network that covers every node in the network.
 #'   - `is_eulerian()` tests whether there is a Eulerian path for a network
@@ -13,6 +14,7 @@
 #'   - `is_acyclic()` tests whether network is a directed acyclic graph.
 #'   - `is_aperiodic()` tests whether network is aperiodic.
 #' @template param_data
+#' @template param_connectivity
 #' @eval detail_avail("is_(connected|perfect_matching|eulerian|acyclic|aperiodic)")
 #' @return TRUE if the condition is met, or FALSE otherwise.
 #' @family marking
@@ -20,25 +22,23 @@
 NULL
 
 #' @rdname mark_features
-#' @section is_connected: 
-#'   To test weak connection on a directed network,
-#'   please see `to_undirected()`.
 #' @importFrom igraph is_connected
 #' @examples
 #' is_connected(ison_southern_women)
+#' is_connected(ison_algebra, connectivity = "weak")
 #' @export
-is_connected <- function(.data) UseMethod("is_connected")
+is_connected <- function(.data,
+                         connectivity = c("strong", "weak")) UseMethod("is_connected")
 
 #' @export
-is_connected.default <- function(.data) {
-  is_connected(as_igraph(.data))
+is_connected.default <- function(.data, connectivity = c("strong", "weak")) {
+  is_connected(as_igraph(.data), connectivity = connectivity)
 }
 
 #' @export
-is_connected.igraph <- function(.data) {
-  igraph::is_connected(.data, 
-                       mode = ifelse(is_directed(.data),
-                                     "strong", "weak"))
+is_connected.igraph <- function(.data, connectivity = c("strong", "weak")) {
+  # igraph ignores mode for undirected networks, where the notions coincide.
+  igraph::is_connected(.data, mode = match.arg(connectivity))
 }
 
 #' @rdname mark_features
