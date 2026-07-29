@@ -169,6 +169,13 @@ is_aperiodic.igraph <- function(.data, max_path_length = 4){
   }))))
   snet_info("Finding greatest common divisor of all paths.")
   out <- unique(sort(out))
+  if(!length(out)){
+    # No cycles at all, so there is no period to divide; following the
+    # Markov-chain convention, treat a graph with no return paths as aperiodic
+    # rather than returning the NA the gcd loop would otherwise produce.
+    snet_info("No cycles found within {max_path_length} steps; treating as aperiodic.")
+    return(TRUE)
+  }
   while(out[1]!=1 && length(out)>1){
     cd <- .gcd(out[1], out[2])
     if(length(out)==2) out <- cd else
