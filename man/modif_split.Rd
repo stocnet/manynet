@@ -13,7 +13,7 @@ to_egos(.data, max_dist = 1, min_dist = 0, direction = c("out", "in"))
 
 to_subgraphs(.data, attribute)
 
-to_components(.data)
+to_components(.data, connectivity = c("weak", "strong"))
 
 to_waves(.data, attribute = "wave", panels = NULL, cumulative = FALSE)
 
@@ -44,6 +44,14 @@ By default "all".}
 
 \item{attribute}{One or two attributes used to slice data.}
 
+\item{connectivity}{Character string, "weak" treats a directed network's
+components as if the network were undirected, and "strong" requires ties
+in both directions between members.
+This is ignored for undirected networks, where the two notions coincide.
+Note that the default differs by function: marks that assert
+connectedness default to "strong", while functions that scope or split a
+network into components default to "weak".}
+
 \item{panels}{Would you like to select certain waves?
 NULL by default.
 That is, a list of networks for every available wave is returned.
@@ -66,7 +74,9 @@ These functions offer tools for splitting manynet-consistent objects
 \item \code{to_egos()} splits a network into ego (or focal) networks.
 \item \code{to_subgraphs()} splits a network into subgraphs on some given node
 attribute.
-\item \code{to_components()} splits a network into its components.
+\item \code{to_components()} splits a network into its components,
+ordered from the largest to the smallest.
+Use \code{to_component()} to retain just one of them.
 \item \code{to_waves()} splits a network with some discrete observations over time
 into a list of those observations.
 \item \code{to_slices()} splits a network with some continuous time variable at some
@@ -93,6 +103,7 @@ ison_adolescents |>
                           replace = TRUE)) |>
   to_subgraphs(attribute = "unicorn")
   to_components(to_uniplex(fict_marvel, "relationship"))
+  to_components(fict_starwars, connectivity = "strong")
 ison_adolescents |>
   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) |>
   to_waves(attribute = "wave")

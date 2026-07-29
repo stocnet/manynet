@@ -37,6 +37,7 @@
 
 ## Modifying
 
+- Improved `to_components()` to return its components ordered from largest to smallest, so that `to_components(.data)[[n]]` is `to_component(.data, n)`; `igraph::decompose()` returns them in discovery order
 - Fixed `to_uniplex()` erroring on networks it cannot reduce, and generalised where it looks for the tie types:
   - Uniplex networks raised an "In argument: `type == tie`" error, and are now returned unchanged, as in `to_waves()` and `to_slices()`
   - Where a non-existent layer is requested or none is given, available layers are now reported instead of raising an uninformative error while printing the (empty) result

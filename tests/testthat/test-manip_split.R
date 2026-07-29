@@ -31,6 +31,21 @@ test_that("to_components works", {
   expect_s3_class(to_components(ison_adolescents)[[1]], "tbl_graph")
 })
 
+test_that("to_components is ordered from largest to smallest", {
+  sizes <- vapply(to_components(to_uniplex(fict_marvel,"relationship")),
+                  function(x) c(net_nodes(x)), numeric(1))
+  expect_equal(sizes, c(50, 1, 1, 1))
+  expect_false(is.unsorted(rev(sizes)))
+})
+
+test_that("to_components respects connectivity", {
+  # fict_starwars is a single weak component, but not strongly connected
+  expect_length(to_components(fict_starwars), 1)
+  expect_length(to_components(fict_starwars, connectivity = "strong"), 64)
+  expect_equal(c(net_nodes(to_components(fict_starwars,
+                                         connectivity = "strong")[[1]])), 46)
+})
+
 set.seed(1234)
 wave <- ison_adolescents %>%
     tidygraph::activate(edges) %>%
