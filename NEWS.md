@@ -37,11 +37,14 @@
 ## Modifying
 
 - Fixed `to_uniplex()` erroring on networks it cannot reduce, and generalised where it looks for the tie types:
-  - networks holding no tie types raised an "In argument: `type == tie`" error, and are now returned unchanged, as in `to_waves()` and `to_slices()`
-  - where a tie type is requested that the network does not hold, or none is given at all, the available tie types are now reported instead of raising an uninformative error while printing the (empty) result
-  - tie types are now recognised whether they are held in a "type" tie attribute, as in tidygraph objects, or in a "layer" column, as in stocnet objects, so that e.g. `to_uniplex(as_stocnet(ison_algebra), "tasks")` now works
-  - ties are now selected by index rather than by filtering on a bare `type` column, so a tie attribute named "tie" no longer shadows the `tie` argument
+  - Uniplex networks raised an "In argument: `type == tie`" error, and are now returned unchanged, as in `to_waves()` and `to_slices()`
+  - Where a non-existent layer is requested or none is given, available layers are now reported instead of raising an uninformative error while printing the (empty) result
+  - Layers now recognised whether they are held in a "type" tie attribute, as in tidygraph objects, or in a "layer" column, as in stocnet objects, so that e.g. `to_uniplex(as_stocnet(ison_algebra), "tasks")` now works
+  - Layers now selected by index rather than by filtering on a bare `type` column, so a tie attribute named "tie" no longer shadows the `tie` argument
 - Fixed `to_ego()` obtaining the neighbourhood of every node in the network before discarding all but one, which made it prohibitively slow on larger networks
+- Fixed `to_labelled()`/`to_named()` on edgelists, which extracted the node columns with `[, 1]`, so that a tibble edgelist raised a "'list' object cannot be coerced to type 'double'" error
+  - Already labelled edgelists are now relabelled by matching their existing labels, rather than coercing those labels to `NA` with `as.numeric()`
+
 
 # manynet 2.2.2
 
