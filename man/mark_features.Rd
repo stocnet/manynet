@@ -121,6 +121,18 @@ Tutte, William T. 1950.
 \doi{10.4153/cjm-1950-005-2}
 }
 
+\subsection{On Eulerian cycles and paths}{
+
+Euler, Leonard. 1736.
+"Solutio problematis ad geometriam situs pertinentis".
+\emph{Comment. Academiae Sci. I. Petropolitanae} 8: 128–140.
+
+Hierholzer, Carl. 1873.
+"Ueber die Möglichkeit, einen Linienzug ohne Wiederholung und ohne Unterbrechung zu umfahren".
+\emph{Mathematische Annalen}, 6(1): 30–32.
+\doi{10.1007/BF01442866}
+}
+
 \subsection{On aperiodicity}{
 
 Jarvis, J.P, and D.R. Shier. 1996.

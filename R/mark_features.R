@@ -87,6 +87,16 @@ is_perfect_matching.igraph <- function(.data, mark = "type"){
 
 #' @rdname mark_features
 #' @importFrom igraph has_eulerian_path
+#' @references
+#' ## On Eulerian cycles and paths
+#' Euler, Leonard. 1736.
+#' "Solutio problematis ad geometriam situs pertinentis". 
+#' _Comment. Academiae Sci. I. Petropolitanae_ 8: 128–140.
+#' 
+#' Hierholzer, Carl. 1873. 
+#' "Ueber die Möglichkeit, einen Linienzug ohne Wiederholung und ohne Unterbrechung zu umfahren".
+#' _Mathematische Annalen_, 6(1): 30–32.
+#' \doi{10.1007/BF01442866}
 #' @examples
 #' is_eulerian(ison_brandes)
 #' @export

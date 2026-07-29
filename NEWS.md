@@ -45,6 +45,7 @@
 - Fixed `to_ego()` obtaining the neighbourhood of every node in the network before discarding all but one, which made it prohibitively slow on larger networks
 - Fixed `to_labelled()`/`to_named()` on edgelists, which extracted the node columns with `[, 1]`, so that a tibble edgelist raised a "'list' object cannot be coerced to type 'double'" error
   - Already labelled edgelists are now relabelled by matching their existing labels, rather than coercing those labels to `NA` with `as.numeric()`
+- Removed `to_eulerian()` as of limited value outside of producing one example of `is_eulerian()`
 
 ## Marking
 
