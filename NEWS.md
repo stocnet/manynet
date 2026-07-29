@@ -26,6 +26,7 @@
   - `collect_pkg()` now reports through the usual console interface rather than base `warning()`, no longer raises a "number of items to replace is not a multiple of replacement length" error, and returns a network rather than a list where no functions are found
   - Scripts that cannot be parsed are now named, instead of the whole directory silently returning a mangled network
 - Renamed the documentation topic `make_cran` to `make_collect`, and corrected it where it still described `collect_cran()` and `collect_pkg()` under their former names `read_cran()` and `read_pkg()`
+- Fixed `create_cycle(n, directed = TRUE)` to construct its cycle directed rather than relying on edgelist coercion to do so
 
 ## Coercing
 

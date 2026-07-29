@@ -669,11 +669,10 @@ create_cycle <- function(n, directed = FALSE){
   n <- infer_n(n)
   # Helper: Create edge list for unimodal cycle
   unimodal_cycle <- function(n_nodes) {
-    edges <- data.frame(
-      from = 1:n_nodes,
-      to = c(2:n_nodes, 1)
-    )
-    as_tidygraph(edges)
+    # Constructed directed explicitly rather than via an edgelist: an edgelist
+    # carries no directedness flag, so coercing one infers direction from
+    # reciprocity, and a directed cycle has none.
+    as_tidygraph(igraph::make_ring(n_nodes, directed = TRUE))
   }
   
   # Helper: Create edge list for bimodal cycle
