@@ -61,6 +61,13 @@ manynet_classes <- c("stocnet" = "stocnet",
                      "matrix" = "matrix"
                      )
 
+# Structural or bookkeeping node attributes that do not count as substantive
+# attributes. `vertex.names` and `na` are {network}'s internal bookkeeping
+# (cf. the same exclusion in as_igraph.network()), so without them
+# `is_attributed()` reports TRUE for every network object.
+manynet_reserved_node_attributes <- c("type", "mode", "name", "label",
+                                      "vertex.names", "na")
+
 #' @rdname mark_is
 #' @importFrom igraph is_igraph
 #' @importFrom tidygraph is.tbl_graph

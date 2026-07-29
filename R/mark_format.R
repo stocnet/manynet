@@ -155,8 +155,8 @@ is_attributed <- function(.data) UseMethod("is_attributed")
 
 #' @export
 is_attributed.default <- function(.data) {
-  length(setdiff(net_node_attributes(.data), c("type","mode",
-                                               "name","label")))!=0
+  length(setdiff(net_node_attributes(.data),
+                 manynet_reserved_node_attributes))!=0
 }
 
 #' @rdname mark_format_node

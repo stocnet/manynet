@@ -45,6 +45,9 @@
 - Fixed `to_labelled()`/`to_named()` on edgelists, which extracted the node columns with `[, 1]`, so that a tibble edgelist raised a "'list' object cannot be coerced to type 'double'" error
   - Already labelled edgelists are now relabelled by matching their existing labels, rather than coercing those labels to `NA` with `as.numeric()`
 
+## Marking
+
+- Fixed `is_attributed()` returning `TRUE` for every `network` object because `vertex.names` and `na`, that class's internal bookkeeping, were counted as substantive nodal attributes
 
 # manynet 2.2.2
 
