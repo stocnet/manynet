@@ -139,7 +139,7 @@ Leskovec, Jure, Jon Kleinberg, and Christos Faloutsos. 2007.
 }
 \seealso{
 Other makes:
-\code{\link{make_cran}},
+\code{\link{make_collect}},
 \code{\link{make_create}},
 \code{\link{make_ego}},
 \code{\link{make_explicit}},

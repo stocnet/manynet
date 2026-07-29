@@ -7,6 +7,33 @@
   - Added support for two-mode networks, e.g. `generate_man(c(4,6))`, where the dyad census is conditioned on the dyads between the modes; since ties in two-mode networks are undirected, mutual and asymmetric dyads are both realised as a tie
   - A `man` of the wrong length now reports what was expected and what was given, instead of the message for `man` not having been given at all
   - Corrected the documentation for `man`, which promised that a count such as `c(10,0,20)` would be treated as a count; such vectors are normalised into proportions, so the dyad census of an existing network is reproduced in expectation rather than exactly
+- Improved `collect_cran()` so that it returns a scoped, correctly parsed network of package dependencies
+  - Added `dependencies`, which selects the fields to collect and defaults to `c("Depends", "Imports", "LinkingTo")`, the dependencies that must be installed alongside a package, as in `install.packages()`; `Suggests` is no longer collected by default, since including it grows the dependency closure of `manynet` from 28 packages to 2348
+  - `LinkingTo` and `Enhances` can now be collected, where they were previously ignored altogether
+  - Added `max_dist` and `direction`, so that dependencies can be collected to a given number of steps and in either direction, e.g. `collect_cran("manynet", direction = "in", max_dist = 1)` returns the packages that depend directly upon `manynet`
+  - `pkg` now accepts a vector of package names, where more than one name previously raised a "the condition has length > 1" error, and names that are not on CRAN are now reported instead of silently returning an empty network
+  - Fixed the parsing of the dependency fields, which dropped any dependency written without a space before its version constraint, admitted malformed nodes such as "Matrix(< 1.8-0)" and "<= 3.6.1)", and left a leading newline or space on 14 names, so that e.g. "\ndplyr" was a separate node from "dplyr"
+  - Fixed `collect_cran()` raising a "trying to use CRAN without setting a mirror" error wherever no repository is set, as in non-interactive sessions, which had made it impossible to test
+  - Nodes now record `version`, `published`, `compiled`, `priority`, `license`, and `on_cran`, the last of which distinguishes the several hundred dependencies, mostly Bioconductor packages, that are not themselves on CRAN; `Compilation` is renamed `compiled` and is no longer missing for every node
+  - Ties now record which field declared them, so that e.g. `to_uniplex(net, "Imports")` scopes the network to one kind of dependency
+- Improved `collect_pkg()` to use R's own parser rather than regular expressions to find function definitions and calls
+  - Calls are now identified from the parsed tokens, so they are no longer counted inside comments, roxygen prose, or strings, and no longer attributed by substring collision; `to_ego()` previously had an in-degree of 10 in `manynet`'s own network, where it is in fact called nowhere
+  - Functions assigned with `=`, defined as a `\(x)` lambda, or whose `function` keyword falls on a later line are now found, where only four hardcoded spacings of `<- function` were recognised
+  - Calls are attributed to the innermost function enclosing them, however deeply nested, replacing the brace-counting used to find sub-functions
+  - Added ties from each generic to its methods, read from `NAMESPACE`, together with a `generic` nodal attribute, so that dispatch is represented and `to_blocks(net, node_attribute(net, "generic"))` collapses the network onto its generics
+  - Added `external`, `FALSE` by default, so that calls to functions defined outside the directory are no longer included as nodes; namespaced calls are now qualified, so that e.g. `igraph::V()` cannot be confused with a locally defined `V()`
+  - Nodes now record `file`, `lines`, `exported`, and `generic`, and ties are weighted by the number of call sites
+  - `collect_pkg()` now reports through the usual console interface rather than base `warning()`, no longer raises a "number of items to replace is not a multiple of replacement length" error, and returns a network rather than a list where no functions are found
+  - Scripts that cannot be parsed are now named, instead of the whole directory silently returning a mangled network
+- Renamed the documentation topic `make_cran` to `make_collect`, and corrected it where it still described `collect_cran()` and `collect_pkg()` under their former names `read_cran()` and `read_pkg()`
+
+## Modifying
+
+- Fixed `to_uniplex()` erroring on networks it cannot reduce, and generalised where it looks for the tie types:
+  - networks holding no tie types raised an "In argument: `type == tie`" error, and are now returned unchanged, as in `to_waves()` and `to_slices()`
+  - where a tie type is requested that the network does not hold, or none is given at all, the available tie types are now reported instead of raising an uninformative error while printing the (empty) result
+  - tie types are now recognised whether they are held in a "type" tie attribute, as in tidygraph objects, or in a "layer" column, as in stocnet objects, so that e.g. `to_uniplex(as_stocnet(ison_algebra), "tasks")` now works
+  - ties are now selected by index rather than by filtering on a bare `type` column, so a tie attribute named "tie" no longer shadows the `tie` argument
 
 # manynet 2.2.2
 
