@@ -41,9 +41,15 @@ test_that("CRAN nodes record which dependencies are on CRAN", {
 
 test_that("collect_cran() collects readable dependency networks", {
   skip_on_cran()
-  skip_if_offline()
   op <- options(repos = c(CRAN = "https://cloud.r-project.org"))
   on.exit(options(op), add = TRUE)
+  # Skip where CRAN cannot be reached, rather than using
+  # testthat::skip_if_offline(), which requires {curl}.
+  # available.packages() warns and returns nothing where the download fails,
+  # and caches the index for an hour, so this probe is almost free.
+  reachable <- tryCatch(nrow(suppressWarnings(.cran_db())) > 0,
+                        error = function(e) FALSE)
+  skip_if_not(reachable, "CRAN could not be reached")
   out <- collect_cran("manynet")
   expect_true(is_manynet(out))
   expect_true("manynet" %in% node_labels(out))
