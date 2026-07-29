@@ -100,13 +100,12 @@ test_that("to_motifs() infers direction from a network passed as .data", {
 test_that("to_motifs() works across object classes for the same network", {
   net <- create_ring(6)                 # one-mode, undirected, 6 nodes -> n=4
   ref <- names(to_motifs(net))
-  # igraph, matrix, and network preserve undirectedness; a bare edgelist
-  # cannot encode it, so is inferred as directed (a coercion property, not a
-  # to_motifs() one), and so is checked only for returning a valid motif list.
-  for (obj in list(as_igraph(net), as_matrix(net), as_network(net))) {
+  # An edgelist has no directedness flag of its own, but as_igraph() infers it
+  # from reciprocity, so an undirected network survives the round trip.
+  for (obj in list(as_igraph(net), as_matrix(net), as_network(net),
+                   as_edgelist(net))) {
     expect_named(to_motifs(obj), ref)
   }
-  expect_motif_list(to_motifs(as_edgelist(net)), 3)
 })
 
 test_that("to_motifs() returns the bmotif bipartite motifs up to four nodes", {

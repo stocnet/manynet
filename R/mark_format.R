@@ -59,8 +59,10 @@ is_twomode.network <- function(.data) {
 
 #' @export
 is_twomode.data.frame <- function(.data) {
-  is_edgelist(.data) && 
-    length(intersect(.data[,1], .data[,2])) == 0
+  # `[[` rather than `[` because `as_edgelist()` returns a tibble, for which
+  # `.data[,1]` is a one-column tibble rather than the column vector.
+  is_edgelist(.data) &&
+    length(intersect(.data[[1]], .data[[2]])) == 0
 }
 
 #' @export
@@ -131,7 +133,9 @@ is_labelled.network <- function(.data) {
 
 #' @export
 is_labelled.data.frame <- function(.data) {
-  is.character(.data[,1]) & is.character(.data[,2])
+  # `[[` rather than `[` because `as_edgelist()` returns a tibble, for which
+  # `.data[,1]` is a one-column tibble rather than the column vector.
+  is.character(.data[[1]]) & is.character(.data[[2]])
 }
 
 #' @export

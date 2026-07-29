@@ -48,6 +48,7 @@
 
 ## Marking
 
+- Fixed `is_labelled()` and `is_twomode()` extracting edgelist columns with `[, 1]`, returning a one-column tibble rather than a vector so that every labelled edgelist was reported as unlabelled and as two-mode
 - Fixed `is_attributed()` returning `TRUE` for every `network` object because `vertex.names` and `na`, that class's internal bookkeeping, were counted as substantive nodal attributes
 - Fixed `is_complex.stocnet()` looking for `from` and `to` at the top level rather than in `ties`, which always returned `FALSE`
 
