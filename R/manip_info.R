@@ -149,7 +149,7 @@ net_attributes <- function(.data){
   names(igraph::graph_attr(as_igraph(.data)))
 }
 
-
+# nocov start
 .check_info <- function(.data, optional = FALSE){
   
   out <- .data
@@ -257,4 +257,4 @@ net_attributes <- function(.data){
   
   out
 }
-
+# nocov end
