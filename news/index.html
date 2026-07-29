@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
       </span>
     </div>
 
@@ -51,10 +51,10 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>
+      <a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a>
     </li>
     <li>
-      <a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a>
+      <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>
     </li>
     <li>
       <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
@@ -88,6 +88,101 @@
       <small>Source: <a href="https://github.com/stocnet/manynet/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.2.3" id="manynet-223">manynet 2.2.3<a class="anchor" aria-label="anchor" href="#manynet-223"></a></h2>
+<div class="section level3">
+<h3 id="making-2-2-3">Making<a class="anchor" aria-label="anchor" href="#making-2-2-3"></a></h3>
+<ul><li>Improved <code><a href="../reference/make_random.html">generate_man()</a></code> so that it no longer raises an error where no dyad census is given
+<ul><li>Where <code>n</code> is a number of nodes rather than an existing network, <code>man</code> now defaults to <code>c(0.25, 0.5, 0.25)</code>, the dyad distribution of a random digraph in which each arc is present with probability 0.5, so that <code>generate_man(6)</code> is now possible and returns the same distribution of networks as <code>generate_random(6, 0.5, directed = TRUE)</code>
+</li>
+<li>Added support for two-mode networks, e.g. <code>generate_man(c(4,6))</code>, where the dyad census is conditioned on the dyads between the modes; since ties in two-mode networks are undirected, mutual and asymmetric dyads are both realised as a tie</li>
+<li>A <code>man</code> of the wrong length now reports what was expected and what was given, instead of the message for <code>man</code> not having been given at all</li>
+<li>Corrected the documentation for <code>man</code>, which promised that a count such as <code>c(10,0,20)</code> would be treated as a count; such vectors are normalised into proportions, so the dyad census of an existing network is reproduced in expectation rather than exactly</li>
+</ul></li>
+<li>Improved <code><a href="../reference/make_collect.html">collect_cran()</a></code> so that it returns a scoped, correctly parsed network of package dependencies
+<ul><li>Added <code>dependencies</code>, which selects the fields to collect and defaults to <code>c("Depends", "Imports", "LinkingTo")</code>, the dependencies that must be installed alongside a package, as in <code><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages()</a></code>; <code>Suggests</code> is no longer collected by default, since including it grows the dependency closure of <code>manynet</code> from 28 packages to 2348</li>
+<li>
+<code>LinkingTo</code> and <code>Enhances</code> can now be collected, where they were previously ignored altogether</li>
+<li>Added <code>max_dist</code> and <code>direction</code>, so that dependencies can be collected to a given number of steps and in either direction, e.g. <code>collect_cran("manynet", direction = "in", max_dist = 1)</code> returns the packages that depend directly upon <code>manynet</code>
+</li>
+<li>
+<code>pkg</code> now accepts a vector of package names, where more than one name previously raised a “the condition has length &gt; 1” error, and names that are not on CRAN are now reported instead of silently returning an empty network</li>
+<li>Fixed the parsing of the dependency fields, which dropped any dependency written without a space before its version constraint, admitted malformed nodes such as “Matrix(&lt; 1.8-0)” and “&lt;= 3.6.1)”, and left a leading newline or space on 14 names, so that e.g. “” was a separate node from “dplyr”</li>
+<li>Fixed <code><a href="../reference/make_collect.html">collect_cran()</a></code> raising a “trying to use CRAN without setting a mirror” error wherever no repository is set, as in non-interactive sessions, which had made it impossible to test</li>
+<li>Nodes now record <code>version</code>, <code>published</code>, <code>compiled</code>, <code>priority</code>, <code>license</code>, and <code>on_cran</code>, the last of which distinguishes the several hundred dependencies, mostly Bioconductor packages, that are not themselves on CRAN; <code>Compilation</code> is renamed <code>compiled</code> and is no longer missing for every node</li>
+<li>Ties now record which field declared them, so that e.g. <code>to_uniplex(net, "Imports")</code> scopes the network to one kind of dependency</li>
+</ul></li>
+<li>Improved <code><a href="../reference/make_collect.html">collect_pkg()</a></code> to use R’s own parser rather than regular expressions to find function definitions and calls
+<ul><li>Calls are now identified from the parsed tokens, so they are no longer counted inside comments, roxygen prose, or strings, and no longer attributed by substring collision; <code><a href="../reference/modif_scope.html">to_ego()</a></code> previously had an in-degree of 10 in <code>manynet</code>’s own network, where it is in fact called nowhere</li>
+<li>Functions assigned with <code>=</code>, defined as a <code>\(x)</code> lambda, or whose <code>function</code> keyword falls on a later line are now found, where only four hardcoded spacings of <code>&lt;- function</code> were recognised</li>
+<li>Calls are attributed to the innermost function enclosing them, however deeply nested, replacing the brace-counting used to find sub-functions</li>
+<li>Added ties from each generic to its methods, read from <code>NAMESPACE</code>, together with a <code>generic</code> nodal attribute, so that dispatch is represented and <code>to_blocks(net, node_attribute(net, "generic"))</code> collapses the network onto its generics</li>
+<li>Added <code>external</code>, <code>FALSE</code> by default, so that calls to functions defined outside the directory are no longer included as nodes; namespaced calls are now qualified, so that e.g. <code><a href="https://r.igraph.org/reference/V.html" class="external-link">igraph::V()</a></code> cannot be confused with a locally defined <code>V()</code>
+</li>
+<li>Nodes now record <code>file</code>, <code>lines</code>, <code>exported</code>, and <code>generic</code>, and ties are weighted by the number of call sites</li>
+<li>
+<code><a href="../reference/make_collect.html">collect_pkg()</a></code> now reports through the usual console interface rather than base <code><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning()</a></code>, no longer raises a “number of items to replace is not a multiple of replacement length” error, and returns a network rather than a list where no functions are found</li>
+<li>Scripts that cannot be parsed are now named, instead of the whole directory silently returning a mangled network</li>
+</ul></li>
+<li>Renamed the documentation topic <code>make_cran</code> to <code>make_collect</code>, and corrected it where it still described <code><a href="../reference/make_collect.html">collect_cran()</a></code> and <code><a href="../reference/make_collect.html">collect_pkg()</a></code> under their former names <code><a href="../reference/defunct.html">read_cran()</a></code> and <code><a href="../reference/defunct.html">read_pkg()</a></code>
+</li>
+<li>Fixed <code>create_cycle(n, directed = TRUE)</code> to construct its cycle directed rather than relying on edgelist coercion to do so</li>
+</ul></div>
+<div class="section level3">
+<h3 id="coercing-2-2-3">Coercing<a class="anchor" aria-label="anchor" href="#coercing-2-2-3"></a></h3>
+<ul><li>Fixed <code><a href="../reference/coerce_graph.html">as_igraph()</a></code> always returning a <em>directed</em> graph for edgelist or stocnet objects, discarding the network’s own directedness
+<ul><li>
+<code><a href="../reference/mark_features.html">is_acyclic()</a></code> now returns <code>FALSE</code> and <code><a href="../reference/mark_features.html">is_connected()</a></code> returns <code>TRUE</code> for undirected networks through <code><a href="../reference/coerce_list.html">as_edgelist()</a></code>
+</li>
+<li>Directedness now inferred from reciprocity for edgelists, as <code><a href="../reference/mark_format_tie.html">is_directed()</a></code> already did</li>
+<li>Directedness now read from <code>info$directed</code> for stocnet objects</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-2-2-3">Modifying<a class="anchor" aria-label="anchor" href="#modifying-2-2-3"></a></h3>
+<ul><li>Improved <code><a href="../reference/modif_scope.html">to_component()</a></code> so that it returns a single, chosen component, instead of being an alias of <code><a href="../reference/modif_scope.html">to_giant()</a></code>
+<ul><li>
+<code>component</code> selects the component to retain, by default 1, i.e. the largest (giant) component, with 2 the second largest, and so on</li>
+<li>
+<code>component</code> may alternatively name a node, in which case the component containing that node is retained, e.g. <code>to_component(fict_greys, "Miranda Bailey")</code>
+</li>
+<li>
+<code><a href="../reference/modif_scope.html">to_giant()</a></code> is now a wrapper, such that <code>to_giant(.data)</code> is <code>to_component(.data, component = 1)</code>, and is no longer generic</li>
+</ul></li>
+<li>Improved <code><a href="../reference/modif_split.html">to_components()</a></code> to return its components ordered from largest to smallest, so that <code>to_components(.data)[[n]]</code> is <code>to_component(.data, n)</code>; <code><a href="https://r.igraph.org/reference/decompose.html" class="external-link">igraph::decompose()</a></code> returns them in discovery order</li>
+<li>Added a <code>connectivity</code> argument to <code><a href="../reference/modif_scope.html">to_component()</a></code>, <code><a href="../reference/modif_split.html">to_components()</a></code>, and <code><a href="../reference/modif_scope.html">to_giant()</a></code>, “weak” by default since a giant component is conventionally the weak one, and “strong” where ties must run in both directions between members
+<ul><li>Argument is named <code>connectivity</code> rather than igraph’s <code>mode</code>, which is reserved in this package for one- and two-mode networks</li>
+<li>Connectivity type, if applicable, is now reported in the network’s name, e.g. <code>to_giant(fict_starwars, connectivity = "strong")</code> is a “Giant strong component of Star Wars network data”</li>
+</ul></li>
+<li>Fixed <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> erroring on networks it cannot reduce, and generalised where it looks for the tie types:
+<ul><li>Uniplex networks raised an “In argument: <code>type == tie</code>” error, and are now returned unchanged, as in <code><a href="../reference/modif_split.html">to_waves()</a></code> and <code><a href="../reference/modif_split.html">to_slices()</a></code>
+</li>
+<li>Where a non-existent layer is requested or none is given, available layers are now reported instead of raising an uninformative error while printing the (empty) result</li>
+<li>Layers now recognised whether they are held in a “type” tie attribute, as in tidygraph objects, or in a “layer” column, as in stocnet objects, so that e.g. <code>to_uniplex(as_stocnet(ison_algebra), "tasks")</code> now works</li>
+<li>Layers now selected by index rather than by filtering on a bare <code>type</code> column, so a tie attribute named “tie” no longer shadows the <code>tie</code> argument</li>
+</ul></li>
+<li>Fixed <code><a href="../reference/modif_scope.html">to_ego()</a></code> obtaining the neighbourhood of every node in the network before discarding all but one, which made it prohibitively slow on larger networks</li>
+<li>Fixed <code><a href="../reference/modif_labels.html">to_labelled()</a></code>/<code><a href="../reference/modif_labels.html">to_named()</a></code> on edgelists, which extracted the node columns with <code>[, 1]</code>, so that a tibble edgelist raised a “‘list’ object cannot be coerced to type ‘double’” error
+<ul><li>Already labelled edgelists are now relabelled by matching their existing labels, rather than coercing those labels to <code>NA</code> with <code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric()</a></code>
+</li>
+</ul></li>
+<li>Removed <code>to_eulerian()</code> as of limited value outside of producing one example of <code><a href="../reference/mark_features.html">is_eulerian()</a></code>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="marking-2-2-3">Marking<a class="anchor" aria-label="anchor" href="#marking-2-2-3"></a></h3>
+<ul><li>Added a <code>connectivity</code> argument to <code><a href="../reference/mark_features.html">is_connected()</a></code>, so that weak connectivity can be tested directly rather than by calling <code><a href="../reference/modif_direction.html">to_undirected()</a></code> first just to ask the question
+<ul><li>“strong” by default, which reproduces the previous behaviour exactly: igraph ignores this distinction for undirected networks, where the two notions coincide</li>
+</ul></li>
+<li>Fixed <code><a href="../reference/mark_format_node.html">is_labelled()</a></code> and <code><a href="../reference/mark_format_node.html">is_twomode()</a></code> extracting edgelist columns with <code>[, 1]</code>, returning a one-column tibble rather than a vector so that every labelled edgelist was reported as unlabelled and as two-mode</li>
+<li>Fixed <code><a href="../reference/mark_format_node.html">is_attributed()</a></code> returning <code>TRUE</code> for every <code>network</code> object because <code>vertex.names</code> and <code>na</code>, that class’s internal bookkeeping, were counted as substantive nodal attributes</li>
+<li>Fixed <code>is_complex.stocnet()</code> looking for <code>from</code> and <code>to</code> at the top level rather than in <code>ties</code>, which always returned <code>FALSE</code>
+</li>
+<li>Fixed <code><a href="../reference/mark_features.html">is_aperiodic()</a></code> returning <code>NA</code> for networks with no cycles, such as directed acyclic graphs, where the greatest common divisor of an empty set of cycle lengths is undefined
+<ul><li>Such networks are now reported as aperiodic</li>
+</ul></li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.2.2" id="manynet-222">manynet 2.2.2<a class="anchor" aria-label="anchor" href="#manynet-222"></a></h2>
 <div class="section level3">
@@ -495,7 +590,7 @@
 <div class="section level3">
 <h3 id="making-2-0-0">Making<a class="anchor" aria-label="anchor" href="#making-2-0-0"></a></h3>
 <ul><li>Renamed <code>create_ego()</code> to <code><a href="../reference/make_ego.html">collect_ego()</a></code> to better signal the different input structure expected</li>
-<li>Renamed <code><a href="../reference/defunct.html">read_cran()</a></code> and <code><a href="../reference/defunct.html">read_pkg()</a></code> to <code><a href="../reference/make_cran.html">collect_cran()</a></code> and <code><a href="../reference/make_cran.html">collect_pkg()</a></code> for consistency with other collecting functions</li>
+<li>Renamed <code><a href="../reference/defunct.html">read_cran()</a></code> and <code><a href="../reference/defunct.html">read_pkg()</a></code> to <code><a href="../reference/make_collect.html">collect_cran()</a></code> and <code><a href="../reference/make_collect.html">collect_pkg()</a></code> for consistency with other collecting functions</li>
 <li>Added directed parameters to <code><a href="../reference/make_create.html">create_cycle()</a></code> and <code><a href="../reference/make_create.html">create_wheel()</a></code> (undirected by default)</li>
 <li>Dropped <code>generate_permutation()</code> as no longer necessary</li>
 <li>Fixed <code><a href="../reference/make_learning.html">play_segregation()</a></code> to be less verbose</li>
@@ -844,7 +939,7 @@
 <li>Improved <code><a href="../reference/modif_paths.html">to_matching()</a></code> to record matching</li>
 <li>Fixed <code><a href="../reference/modif_paths.html">to_matching()</a></code> triggering warnings from handling NAs (thanks <a href="https://github.com/schochastics" class="external-link">@schochastics</a> for fixing <a href="https://github.com/stocnet/manynet/issues/109" class="external-link">#109</a>)</li>
 <li>Improved <code><a href="../reference/modif_paths.html">to_mentoring()</a></code> to record mentoring</li>
-<li>Improved <code><a href="../reference/modif_paths.html">to_eulerian()</a></code> to record Eulerian pathing</li>
+<li>Improved <code>to_eulerian()</code> to record Eulerian pathing</li>
 </ul></div>
 <div class="section level3">
 <h3 id="measuring-1-6-0">Measuring<a class="anchor" aria-label="anchor" href="#measuring-1-6-0"></a></h3>
@@ -2156,7 +2251,7 @@
 <div class="section level3">
 <h3 id="manip-0-2-0">Manip<a class="anchor" aria-label="anchor" href="#manip-0-2-0"></a></h3>
 <ul><li>Added <code><a href="../reference/manip_nodes_num.html">delete_nodes()</a></code> for deleting specific nodes</li>
-<li>Added <code><a href="../reference/modif_paths.html">to_eulerian()</a></code> function that returns a Eulerian path network, if available, from a given network</li>
+<li>Added <code>to_eulerian()</code> function that returns a Eulerian path network, if available, from a given network</li>
 </ul></div>
 <div class="section level3">
 <h3 id="map-0-2-0">Map<a class="anchor" aria-label="anchor" href="#map-0-2-0"></a></h3>

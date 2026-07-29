@@ -30,7 +30,7 @@ only transforming these objects' properties."><meta property="og:image" content=
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
       </span>
     </div>
 
@@ -64,10 +64,10 @@ only transforming these objects' properties."><meta property="og:image" content=
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>
+      <a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a>
     </li>
     <li>
-      <a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a>
+      <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>
     </li>
     <li>
       <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
@@ -139,7 +139,11 @@ only transforming these objects' properties.</p>
 
 
 <dt id="arg-tie">tie<a class="anchor" aria-label="anchor" href="#arg-tie"></a></dt>
-<dd><p>Character string naming a tie attribute to retain from a graph.</p></dd>
+<dd><p>Character string naming one of the tie types, or layers,
+in the network, i.e. one of those returned by <code><a href="member_names.html">layer_names()</a></code>,
+to which the network should be reduced.
+Where a network holds no tie types, it is already uniplex
+and is returned unchanged.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -207,14 +211,16 @@ Below are the currently implemented S3 methods:</p>
 <span class="r-in"><span>  <span class="fu"><a href="manip_ties_attr.html">mutate_ties</a></span><span class="op">(</span>type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"friend"</span>, <span class="st">"enemy"</span><span class="op">)</span>, <span class="fl">10</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">to_uniplex</span><span class="op">(</span><span class="st">"friend"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Filled network</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A undirected network of 5 nodes and 2 friend ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A undirected network of 5 nodes and 4 friend ties</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     2     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     3     4</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>

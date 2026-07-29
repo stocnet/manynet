@@ -36,7 +36,7 @@ and the number of modes, nodes, and directedness will be inferred."><meta proper
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
       </span>
     </div>
 
@@ -70,10 +70,10 @@ and the number of modes, nodes, and directedness will be inferred."><meta proper
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>
+      <a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a>
     </li>
     <li>
-      <a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a>
+      <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>
     </li>
     <li>
       <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
@@ -179,9 +179,18 @@ By default TRUE.</p></dd>
 
 <dt id="arg-man">man<a class="anchor" aria-label="anchor" href="#arg-man"></a></dt>
 <dd><p>Vector of Mutual, Asymmetric, and Null dyads, respectively.
-Can be specified as proportions, e.g. <code>c(0.5, 0.5, 0.5)</code>,
-or as a count, e.g. <code>c(10,0,20)</code>.
-Is inferred from <code>n</code> if it is an existing network object.</p></dd>
+These are treated as proportions, e.g. <code>c(0.25, 0.5, 0.25)</code>;
+counts such as <code>c(10,0,20)</code> are read as relative weights and normalised,
+so the dyad census is reproduced in expectation rather than exactly.
+Is inferred from <code>n</code> if it is an existing network object,
+and otherwise defaults to <code>c(0.25, 0.5, 0.25)</code>,
+which is the dyad distribution of a random (Erdős-Rényi) digraph
+in which each arc is present with probability 0.5.</p>
+<p>For two-mode networks, <code>man</code> is conditioned on the dyads between
+the modes.
+Since ties in two-mode networks are undirected,
+both mutual and asymmetric dyads are realised as a tie,
+so only their sum is consequential there.</p></dd>
 
 
 <dt id="arg-steps">steps<a class="anchor" aria-label="anchor" href="#arg-steps"></a></dt>
@@ -253,7 +262,7 @@ San Francisco: Jossey-Bass.</p>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other makes:
-<code><a href="make_cran.html">make_cran</a></code>,
+<code><a href="make_collect.html">make_collect</a></code>,
 <code><a href="make_create.html">make_create</a></code>,
 <code><a href="make_ego.html">make_ego</a></code>,
 <code><a href="make_explicit.html">make_explicit</a></code>,
@@ -267,13 +276,55 @@ San Francisco: Jossey-Bass.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">generate_random</span><span class="op">(</span><span class="fl">12</span>, <span class="fl">0.4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 3d9c412 U--- 12 21 -- Erdos-Renyi (gnp) graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH aaeb717 U--- 12 21 -- Erdos-Renyi (gnp) graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), type (g/c), loops (g/l), p (g/n)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 3d9c412:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from aaeb717:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 2  1-- 3  1-- 4  2-- 4  4-- 5  5-- 6  5-- 7  5-- 8  7-- 8  2-- 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11]  4-- 9  1--10  2--10  7--10  1--11  2--11  3--11  7--11  9--11  6--12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [21] 11--12</span>
 <span class="r-in"><span><span class="co"># generate_random(c(6, 6), 0.4)</span></span></span>
+<span class="r-in"><span><span class="fu">generate_man</span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A directed network of 6 nodes and 17 arcs</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 17 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     2     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     2     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     2     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     3     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 11 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">generate_man</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A two-mode network of 4 nodes and 6 nodes and 17 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   type </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> TRUE </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> TRUE </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 17 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1     7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     1    10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     2     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2     7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 11 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
   </div>

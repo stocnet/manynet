@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
       </span>
     </div>
 
@@ -51,10 +51,10 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>
+      <a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a>
     </li>
     <li>
-      <a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a>
+      <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>
     </li>
     <li>
       <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>
@@ -91,25 +91,29 @@
 
 <p>Contributions to <code>manynet</code>, whether in the form of issue identification, bug fixes, new code or documentation are encouraged and welcome.</p>
 <div class="section level2">
-<h2 id="aims">Aims<a class="anchor" aria-label="anchor" href="#aims"></a></h2>
-<p>Here is some things that Guy Kawasaki, Silicon Valley venture capitalist, learned from Steve Jobs:</p>
-<ul><li>“Experts” are clueless. Especially self-declared ones.</li>
-<li>Customers cannot tell you what they need. They can help with evolution, but not revolution.</li>
-<li>Biggest challenges beget the best work.</li>
-<li>Design counts. Users will see the skin/UI of your product, not the great algorithms.</li>
-<li>Big graphics, big fonts.</li>
-<li>Jump curves—do things 10 times better, not 10 percent.</li>
-<li>All that truly matters is whether something works or doesn’t work. Open or close, iPhone or Android, car or train, doesn’t matter—make it work.</li>
-<li>“Value” is different from “price”. There is a class of people who do care about value. Ease of use -&gt; less support costs. You have to create a unique and valuable product as an engineer.</li>
-<li>Real CEOs can demo. If you can’t demo your own product, then quit.</li>
-<li>Real entrepreneurs ship, not slip.</li>
-<li>Some things need to be believed to be seen.</li>
-</ul></div>
-<div class="section level2">
 <h2 id="git">Git<a class="anchor" aria-label="anchor" href="#git"></a></h2>
 <p><code>stocnet</code> projects are maintained using the git version control system. A plain-English introduction to git can be found <a href="https://blog.red-badger.com/2016/11/29/gitgithub-in-plain-english" class="external-link">here</a>. I recommend you read this before continuing. A more recent motivation can be found <a href="https://www.r-bloggers.com/2024/04/git-gud-version-control-best-practices/" class="external-link">here</a>. It will explain the basics of git version control, committing and repos, pulling and pushing, branching and merging.</p>
 <p>Using git from the command line on your lap- or desktop can be intimidating, but I recommend <a href="https://git-fork.com" class="external-link">Fork</a> software for Mac and Windows. This allows mostly visual management of commits, diffs, branches, etc. There are various other git software packages available, but this one is fairly fully featured.</p>
 <p>The GitHub page allows to access the issues assigned to you and check the commits. You can also access the documents in the repository, although this won’t be necessary after you have cloned it on your computer via Fork.</p>
+<div class="section level3">
+<h3 id="cloning">Cloning<a class="anchor" aria-label="anchor" href="#cloning"></a></h3>
+<p>Once you have downloaded Fork, the first thing you have to do is to clone the remote repository on your computer. Before cloning, you will be able to choose on which <code>branch</code> you want to work: develop or main.</p>
+</div>
+<div class="section level3">
+<h3 id="pull">Pull<a class="anchor" aria-label="anchor" href="#pull"></a></h3>
+<p>This command allows you to <code>pull</code> changes from the remote repository to your local repository on Sourcetree. Make sure you do that before starting working on your files so you have the newest versions. When pulling, make sure you choose master or develop, depending on the branch you decided to work with. Once you pulled, you have now all the new commits and files and you can start working on your assigned tasks. Note that you can access and open the files either from the Finder or from Fork. Some documents might be stored using Large File Storage (LFS) to save space on the repository.</p>
+</div>
+<div class="section level3">
+<h3 id="commit-and-push">Commit and Push<a class="anchor" aria-label="anchor" href="#commit-and-push"></a></h3>
+<p>Once you have made modifications on a file and saved them, it will appear in your <code>commit</code> window. Here you can control one last time your file, write the commit message with the issue reference (see below) and commit. Once your commit is ready, you can <code>push</code> them to the origin/main repository. Note that you can click the “push immediately” box in the commit window if you don’t want to do it in two steps. If you are working on a separate branch, it is important to select this branch when pushing to origin/main.</p>
+</div>
+<div class="section level3">
+<h3 id="branching-and-ci">Branching and CI<a class="anchor" aria-label="anchor" href="#branching-and-ci"></a></h3>
+<ul><li>
+<code>main</code> is the release branch; <code>develop</code> is the working branch (clone/work on <code>develop</code>).</li>
+<li>PRs into <code>main</code> trigger <a href="workflows/prchecks.yml">prchecks.yml</a>: R CMD check (macOS/Windows/Linux), binary build, codecov, lintr, spell check, a reverse-dependency check, a check that the tutorial articles are in sync with the tutorials, and PR metadata checks (DESCRIPTION version bump, PR title/description conventions).</li>
+<li>Merges/pushes to <code>main</code> trigger <a href="workflows/pushrelease.yml">pushrelease.yml</a>: check, auto-bump version tag, GitHub release with binaries, then pkgdown site deploy.</li>
+</ul></div>
 </div>
 <div class="section level2">
 <h2 id="style">Style<a class="anchor" aria-label="anchor" href="#style"></a></h2>
@@ -197,10 +201,11 @@
 </div>
 <div class="section level3">
 <h3 id="console-messaging">Console messaging<a class="anchor" aria-label="anchor" href="#console-messaging"></a></h3>
-<p>All user-facing messages go through the <code>snet_*()</code> wrappers in <a href="../R/class_interface.R">R/class_interface.R</a> — <code><a href="reference/interface.html">snet_info()</a></code>, <code><a href="reference/interface.html">snet_warn()</a></code>, <code><a href="reference/interface.html">snet_abort()</a></code>, <code><a href="reference/interface.html">snet_success()</a></code>, <code><a href="reference/interface.html">snet_prompt()</a></code>, <code><a href="reference/interface.html">snet_unavailable()</a></code>, plus <code>snet_progress_*()</code> — rather than base <code><a href="https://rdrr.io/r/base/message.html" class="external-link">message()</a></code>/<code><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop()</a></code>/<code><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning()</a></code>. These respect <code>options(snet_verbosity = "quiet")</code> and give consistent <a href="https://cli.r-lib.org" class="external-link">cli</a>-styled output. Use <code><a href="reference/interface.html">snet_unavailable()</a></code> for not-yet-implemented features.</p>
+<p>All user-facing messages go through the <code>snet_*()</code> wrappers in <a href="../R/class_interface.R">R/class_interface.R</a> — <code><a href="reference/interface.html">snet_info()</a></code>, <code><a href="reference/interface.html">snet_warn()</a></code>, <code><a href="reference/interface.html">snet_abort()</a></code>, <code><a href="reference/interface.html">snet_success()</a></code>, <code><a href="reference/interface.html">snet_prompt()</a></code>, <code><a href="reference/interface.html">snet_unavailable()</a></code>, plus <code>snet_progress_*()</code> — rather than base <code><a href="https://rdrr.io/r/base/message.html" class="external-link">message()</a></code>/<code><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop()</a></code>/<code><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning()</a></code>. These respect <code>options(snet_verbosity = "quiet")</code> and give consistent <a href="https://cli.r-lib.org" class="external-link">cli</a>-styled output. Use <code><a href="reference/interface.html">snet_unavailable()</a></code> for not-yet-implemented features. Note that these functions wrap <a href="https://cli.r-lib.org" class="external-link">cli</a> functionality, so braces can be used instead of <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste()</a></code> to add variables/values to the output. The <code>snet_*()</code> wrappers additionally allow multiline input.</p>
 </div>
 <div class="section level3">
 <h3 id="tests">Tests<a class="anchor" aria-label="anchor" href="#tests"></a></h3>
+<p>This package uses the <code>testthat</code> package for testing functions. Please see the <a href="https://testthat.r-lib.org" class="external-link">testthat website</a> for more details.</p>
 <p>Tests in <code>tests/testthat/</code> mirror the <code>R/</code> files (e.g. <code>test-make_create.R</code>, <code>test-manip_split.R</code>), alongside <code>test-functional_*.R</code> harnesses that sweep whole function families. <code>tests/testthat/helper-manynet.R</code> defines the shared fixtures and helpers used across tests, and <code>tests/testthat/helper-functional.R</code> the family-sweeping machinery. Test fixtures (Pajek, UCINET, GraphML, xlsx, etc.) live under <code>tests/testthat/sheets/</code>.</p>
 <p><code>testthat</code> edition 3 with parallel execution is configured in <code>DESCRIPTION</code> (<code>Config/testthat/parallel: true</code>); <code>Config/testthat/start-first</code> prioritises <code>tutorials_manynet, mark_is</code>.</p>
 </div>
@@ -222,42 +227,11 @@
 <code>Updated ...</code> — documentation changes</li>
 </ul><p>If a cited GitHub issue was <strong>not</strong> authored by @jhollway, thank the author with an <code>@</code>-tag in the bullet. Cluster related changes (e.g. several fixes to the same function, or sub-points of one feature) as indented sub-bullets under a lead bullet, to improve readability.</p>
 </div>
-<div class="section level3">
-<h3 id="branching-and-ci">Branching and CI<a class="anchor" aria-label="anchor" href="#branching-and-ci"></a></h3>
-<ul><li>
-<code>main</code> is the release branch; <code>develop</code> is the working branch (clone/work on <code>develop</code>).</li>
-<li>PRs into <code>main</code> trigger <a href="workflows/prchecks.yml">prchecks.yml</a>: R CMD check (macOS/Windows/Linux), binary build, codecov, lintr, spell check, a reverse-dependency check, a check that the tutorial articles are in sync with the tutorials, and PR metadata checks (DESCRIPTION version bump, PR title/description conventions).</li>
-<li>Merges/pushes to <code>main</code> trigger <a href="workflows/pushrelease.yml">pushrelease.yml</a>: check, auto-bump version tag, GitHub release with binaries, then pkgdown site deploy.</li>
-<li>Commits should reference an existing GitHub issue number (<code>#123</code>), see below.</li>
-</ul></div>
-</div>
-<div class="section level2">
-<h2 id="fork">Fork<a class="anchor" aria-label="anchor" href="#fork"></a></h2>
-<div class="section level3">
-<h3 id="cloning">Cloning<a class="anchor" aria-label="anchor" href="#cloning"></a></h3>
-<p>Once you have downloaded Fork, the first thing you have to do is to clone the remote repository on your computer. Before cloning, you will be able to choose on which <code>branch</code> you want to work: develop or main.</p>
-</div>
-<div class="section level3">
-<h3 id="pull">Pull<a class="anchor" aria-label="anchor" href="#pull"></a></h3>
-<p>This command allows you to <code>pull</code> changes from the remote repository to your local repository on Sourcetree. Make sure you do that before starting working on your files so you have the newest versions. When pulling, make sure you choose master or develop, depending on the branch you decided to work with. Once you pulled, you have now all the new commits and files and you can start working on your assigned tasks. Note that you can access and open the files either from the Finder or from Fork. Some documents might be stored using Large File Storage (LFS) to save space on the repository.</p>
-</div>
-<div class="section level3">
-<h3 id="commit-and-push">Commit and Push<a class="anchor" aria-label="anchor" href="#commit-and-push"></a></h3>
-<p>Once you have made modifications on a file and saved them, it will appear in your <code>commit</code> window. Here you can control one last time your file, write the commit message with the issue reference (see below) and commit. Once your commit is ready, you can <code>push</code> them to the origin/main repository. Note that you can click the “push immediately” box in the commit window if you don’t want to do it in two steps. If you are working on a separate branch, it is important to select this branch when pushing to origin/main.</p>
-</div>
 </div>
 <div class="section level2">
 <h2 id="issues-and-tests">Issues and tests<a class="anchor" aria-label="anchor" href="#issues-and-tests"></a></h2>
 <p>Please use the issues tracker on GitHub to identify any function-related issues. You can use these issues to track progress on the issue and to comment or continue a conversation on that issue. Currently issue tracking is only open to those involved in the project.</p>
-<p>The most useful issues are ones that precisely identify an error, or propose a test that should pass but instead fails. This package uses the <code>testthat</code> package for testing functions. Please see the <a href="https://testthat.r-lib.org" class="external-link">testthat website</a> for more details.</p>
-</div>
-<div class="section level2">
-<h2 id="bug-fixing-or-adding-new-code">Bug fixing or adding new code<a class="anchor" aria-label="anchor" href="#bug-fixing-or-adding-new-code"></a></h2>
-<p>Independent or assigned code contributions are most welcome. When writing new code, please follow <a href="https://www.r-bloggers.com/%F0%9F%96%8A-r-coding-style-guide/" class="external-link">standard R guidelines</a>. It can help to use packages such as <code>lintr</code>, <code>goodpractice</code> and <code>formatR</code> to ensure these are followed.</p>
-<p>Currently, commits can only be pushed to GitHub where they reference an existing issue. If no issue exists for the code you have developed, please add an issue first before pushing. Once the issue exists, you will need to mention the issue number (preceded by a hash symbol: #) in the commit description:</p>
-<p><code>Resolved #31 by adding a new function that does things, also updated documentation</code></p>
-<p>Where the issue hash (i.e. #31) is preceded by <code>resolve</code>, <code>resolves</code>, <code>resolved</code>, <code>close</code>, <code>closes</code>, <code>closed</code>, <code>fix</code>, <code>fixes</code>, or <code>fixed</code> (capitalised or not), Github will automatically updated the status of the issue(s) mentioned.</p>
-<p>Our current syntactical standard is to mention the issue first and then provide a short description of what the committed changes do in relation to that issue. Any ancillary changes can be mentioned after a comma.</p>
+<p>The most useful issues are ones that precisely identify an error, or propose a test that should pass but instead fails.</p>
 </div>
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a></h2>
