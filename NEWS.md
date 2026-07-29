@@ -49,6 +49,7 @@
 ## Marking
 
 - Fixed `is_attributed()` returning `TRUE` for every `network` object because `vertex.names` and `na`, that class's internal bookkeeping, were counted as substantive nodal attributes
+- Fixed `is_complex.stocnet()` looking for `from` and `to` at the top level rather than in `ties`, which always returned `FALSE`
 
 # manynet 2.2.2
 

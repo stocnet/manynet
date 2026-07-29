@@ -370,12 +370,13 @@ is_complex.matrix <- function(.data) {
 
 #' @export
 is_complex.data.frame <- function(.data) {
-  any(.data[,1] == .data[,2])
+  any(.data[[1]] == .data[[2]])
 }
 
 #' @export
 is_complex.stocnet <- function(.data) {
-  any(.data$from == .data$to)
+  # a stocnet keeps its ties in `.data$ties`, not at the top level
+  if(is.null(.data$ties)) FALSE else any(.data$ties$from == .data$ties$to)
 }
 
 #' @export
