@@ -7,7 +7,6 @@
 #' 
 #'   - `to_matching()` returns only the matching ties in some network data.
 #'   - `to_mentoring()` returns only ties to nodes' closest mentors.
-#'   - `to_eulerian()` returns only the Eulerian path within some network data.
 #'   - `to_tree()` returns the spanning tree in some network data or, 
 #'   if the data is unconnected, a forest of spanning trees.
 #'   - `to_dominating()` returns the dominating tree of the network.
@@ -16,7 +15,7 @@
 #'   Below are the currently implemented S3 methods:
 #'  
 #'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("to_.*(match|mentor|euler|tree|dominat)"))
+#'   available_methods(collect_functions("to_.*(match|mentor|tree|dominat)"))
 #'   ```
 #' @template param_data
 #' @template fam_modif
@@ -261,50 +260,6 @@ to_mentoring.igraph <- function(.data, elites = 0.1){
                     to = as.character(out), row.names = NULL)
   if(!is_labelled(.data)) out <- to_unlabelled(out)
   as_igraph(out)
-}
-
-#' @rdname modif_paths
-#' @importFrom igraph eulerian_path
-#' @references
-#' ## On Eulerian trails
-#' Euler, Leonard. 1736.
-#' "Solutio problematis ad geometriam situs pertinentis". 
-#' _Comment. Academiae Sci. I. Petropolitanae_ 8: 128–140.
-#' 
-#' Hierholzer, Carl. 1873. 
-#' "Ueber die Möglichkeit, einen Linienzug ohne Wiederholung und ohne Unterbrechung zu umfahren".
-#' _Mathematische Annalen_, 6(1): 30–32.
-#' \doi{10.1007/BF01442866}
-#' @examples
-#'   to_eulerian(delete_nodes(ison_koenigsberg, "Lomse"))
-#' @export
-to_eulerian <- function(.data) UseMethod("to_eulerian")
-
-#' @export
-to_eulerian.default <- function(.data){
-  as_input(.data, to_eulerian)
-}
-
-#' @export
-#' @export
-to_eulerian.igraph <- function(.data){
-  if(!is_eulerian(.data))
-    snet_abort("This is not a Eulerian graph.")
-  out <- paste(attr(igraph::eulerian_path(.data)$vpath, "names"), 
-               collapse = "-+")
-  out <- create_explicit(out)
-  as_igraph(out)
-}
-
-#' @export
-to_eulerian.tbl_graph <- function(.data){
-  if(!is_eulerian(.data))
-    snet_abort("This is not a Eulerian graph.")
-  out <- paste(attr(igraph::eulerian_path(.data)$vpath, "names"), 
-               collapse = "-+")
-  out <- create_explicit(out)
-  out |> 
-    add_info(name = paste(net_name(.data, prefix = "Eulerian path of")))
 }
 
 #' @rdname modif_paths 

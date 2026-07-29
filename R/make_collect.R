@@ -122,547 +122,431 @@ q_yes <- function(msg = NULL){
   out <- c(TRUE,FALSE,TRUE,FALSE)[pmatch(tolower(out), tolower(choices))]
   out
 }
+# nocov end
 
 # Dependencies ####
 
 #' Making networks of inter- and intra-package dependencies
 #'
 #' @description
-#' These functions read information from CRAN or within an R package's
-#' working directory to create a networks of a package's dependencies:
+#' These functions create networks of the dependencies between or within
+#' R packages:
 #'
-#' - `read_cran()` creates a network of a package's dependencies on other
-#'    packages available on CRAN.
-#'    It looks for the `Depends`, `Imports` and `Suggests` fields
-#'    in the package's DESCRIPTION file
-#'    and creates a network where nodes are packages
-#'    and ties are dependencies.
-#' - `read_pkg()` creates a network of function dependencies
-#'    from R scripts in a directory.
-#'    It looks for function definitions and function calls
-#'    within the scripts and creates a network
-#'    where nodes are functions and edges are function calls.
-#'    It can also include function calls
-#'    to functions not defined within the scripts.
+#' - `collect_cran()` creates a network of the dependencies among the packages
+#'    available on CRAN.
+#'    It reads the `Depends`, `Imports`, `LinkingTo`, `Suggests`,
+#'    and `Enhances` fields of each package's DESCRIPTION file,
+#'    and creates a network in which the nodes are packages
+#'    and the ties are dependencies of a given type.
+#' - `collect_pkg()` creates a network of the dependencies among the functions
+#'    defined in a directory of R scripts.
+#'    It uses R's own parser to establish where each function is defined
+#'    and which functions it calls,
+#'    and creates a network in which the nodes are functions
+#'    and the ties are calls.
 #' @details
+#'   Dependency networks grow quickly, and are most useful once scoped.
+#'   `collect_cran()` therefore collects only the `Depends`, `Imports`,
+#'   and `LinkingTo` fields by default, since these are the dependencies that
+#'   must be installed alongside a package, as in `utils::install.packages()`.
+#'   Adding `Suggests` grows the dependency closure of a package by
+#'   two orders of magnitude.
+#'   For the same reason, `collect_pkg()` collects only calls to the functions
+#'   defined in the directory by default.
+#'
+#'   Both return networks that can be scoped further using, for example,
+#'   [to_ego()], [to_uniplex()], [to_giant()], [to_no_isolates()],
+#'   [to_blocks()], or [to_subgraph()].
+#'
+#'   `collect_cran()` relies on `utils::available.packages()`,
+#'   which caches the repository index for an hour by default.
+#'   Set `options(max.repo.cache.age = )` for a fresher or staler snapshot.
+#'
 #'   Note that these functions are not as actively maintained as others
 #'   in the package, so please let us know if any are not currently working
-#'   for you or if there are missing import routines 
+#'   for you or if there are missing import routines
 #'   by [raising an issue on Github](https://github.com/stocnet/manynet/issues).
-#' @param pkg The name 
 #' @return A `tidygraph` object representing the network of package dependencies
 #'   or function dependencies in a package.
-#' @source 
-#' https://www.r-bloggers.com/2016/01/r-graph-objects-igraph-vs-network/
-#' @importFrom utils available.packages contrib.url
-#' @name make_cran
+#' @importFrom utils available.packages contrib.url getParseData
+#' @name make_collect
 #' @family makes
-#' @seealso [as]
+#' @seealso [to_ego()], [to_uniplex()], [to_no_isolates()]
 NULL
 
-#' @rdname make_cran
+#' @rdname make_collect
+#' @param pkg A character vector of one or more package names,
+#'   from which dependencies are collected.
+#'   By default "all", which collects the dependencies among all the packages
+#'   currently available on CRAN.
+#' @param dependencies A character vector naming the dependency fields to
+#'   collect, from "Depends", "Imports", "LinkingTo", "Suggests",
+#'   and "Enhances".
+#'   By default `c("Depends", "Imports", "LinkingTo")`,
+#'   the dependencies that must be installed alongside a package.
+#' @param max_dist The maximum number of steps from `pkg` to collect.
+#'   By default infinite, i.e. the whole dependency closure.
+#' @param direction Whether to collect the packages that `pkg` depends upon,
+#'   "out" by default, the packages that depend upon `pkg`, "in",
+#'   or both, "all".
+#' @source
+#' https://www.r-bloggers.com/2016/01/r-graph-objects-igraph-vs-network/
 #' @examples
-#' # mnet <- collect_cran()
-#' # mnet <- to_ego(mnet, "manynet", max_dist = 2)
+#' \dontrun{
+#' # The packages {manynet} depends upon, directly and indirectly:
+#' collect_cran("manynet")
+#' # The packages that depend directly upon {manynet}:
+#' collect_cran("manynet", direction = "in", max_dist = 1)
+#' }
 #' @export
-collect_cran <- function(pkg = "all"){
+collect_cran <- function(pkg = "all",
+                         dependencies = c("Depends", "Imports", "LinkingTo"),
+                         max_dist = Inf,
+                         direction = c("out", "in", "all")) {
+  direction <- match.arg(direction)
+  fields <- match.arg(dependencies,
+                      c("Depends", "Imports", "LinkingTo",
+                        "Suggests", "Enhances"),
+                      several.ok = TRUE)
+  everything <- is.null(pkg) || (length(pkg) == 1L && pkg == "all")
   snet_progress_step("Downloading data about available packages from CRAN")
-  cranInfoDF <- as.data.frame(utils::available.packages(
-    utils::contrib.url(getOption("repos"), type = "source")))
-  if(pkg=="all") new <- cranInfoDF$Package else
-    new <- pkg
-  done <- c()
-  out <- data.frame()
-  continue <- TRUE
-  while(!all(new %in% done) && continue){
-    toAdd <- dplyr::bind_rows(lapply(new, function(x) {
-      # print(paste("I am", x))
-      sections <- cranInfoDF[cranInfoDF$Package==x, 
-                             c('Depends','Imports','Suggests')]
-      if(nrow(sections)>0){
-        deps <- sections[!is.na(sections)]
-        names(deps) <- names(sections)[!is.na(sections)]
-        deps <- lapply(deps, function(y) {
-          l <- strsplit(y, split="(,|, |,\n|\n,| ,| , )| \\(")
-          if(is.list(l)) l <- l[[1]]
-          l <- l[!c(sapply(l, grepl, pattern = ">=", fixed = TRUE))]
-          l <- l[!c(sapply(l, grepl, pattern = ">", fixed = TRUE))]
-          l <- l[!c(sapply(l, grepl, pattern = "==", fixed = TRUE))]
-          l <- l[!l %in% c("R","base","compiler","datasets","graphics",
-                           "grDevices","grid","methods","parallel","splines",
-                           "stats","stats4","tcltk","tools","translations",
-                           "utils")]
-          l[!is.na(l)]
-        })
-        deps <- unlist(deps)
-        if(length(deps)>0)
-          data.frame(from = x, to = deps, type = gsub("[0-9]", "", names(deps)))
-      } }))
-    done <- c(done, new)
-    new <- setdiff(unique(toAdd$to), done)
-    if(pkg=="all") continue <- FALSE
-    out <- rbind(out, toAdd)
+  db <- .cran_db()
+  ties <- .parse_cran_deps(db, fields)
+  nodes <- .cran_nodes(db, ties)
+  out <- as_tidygraph(list(nodes = nodes, ties = ties))
+  if (!everything) {
+    unknown <- setdiff(pkg, nodes$name)
+    if (length(unknown) > 0)
+      snet_abort("{.val {unknown}} could not be found on CRAN.")
+    out <- .scope_cran(out, pkg, max_dist, direction)
   }
-  out <- as_tidygraph(out)
-  compile <- cranInfoDF$NeedsCompilation
-  out <- out |> 
-    mutate_nodes(Compilation = compile[match(node_labels(out),
-                                             cranInfoDF$Package)]=="yes")
+  observed <- unique(as.character(tie_attribute(out, "type")))
+  # Only mark the network as multiplex where more than one kind of tie remains.
+  if (length(observed) < 2 && "type" %in% igraph::edge_attr_names(out))
+    out <- delete_tie_attribute(out, "type")
+  info <- list(out,
+               name = if (everything) "CRAN dependency network" else
+                 paste("Dependency network of", paste(pkg, collapse = ", ")),
+               collection = "CRAN")
+  if (length(observed) > 0) info$ties <- observed
+  out <- do.call(add_info, info)
+  if (everything)
+    snet_info("Collected {net_nodes(out)} packages and {net_ties(out)}",
+              "dependencies. Consider scoping this network with e.g.",
+              "{.fn to_ego}, {.fn to_giant}, {.fn to_no_isolates},",
+              "or {.fn to_uniplex}.")
   out
 }
 
-#' @rdname make_cran
-#' @importFrom dplyr bind_rows mutate filter select everything
-#' @importFrom igraph graph_from_data_frame
-#' @param dir Character string or vector of character strings
-#'   with the directory or directories to search for R scripts.
-#'   If `NULL` (the default), the current working directory is used.
-#' @author Jakob Gepp
-#' @source https://github.com/STATWORX/helfRlein/blob/master/R/get_network.R
-#' @examples
-#' # mnet <- collect_pkg()
-#' @export
-collect_pkg <- function(dir = getwd()) {
-  
-  variations <- c("<- function",
-                 " <- function",
-                 "<-function",
-                 " <-function")
-  
-  # check if dir exists
-  if(!grepl(".*R$", dir)){
-    dir <- paste0(dir, "/R")
+# Returns the CRAN package database, defaulting the repository where none is
+# set, as is the case in non-interactive sessions.
+.cran_db <- function() {
+  repos <- getOption("repos")
+  if (is.null(repos) || length(repos) == 0 ||
+        any(repos == "@CRAN@") || !nzchar(repos[[1]])) {
+    repos <- c(CRAN = "https://cloud.r-project.org")
   }
-  if (!is.null(dir) && all(!dir.exists(dir))) {
-    stop(paste0(dir, " does not exists"))
-  }
-  
-  # get files and folder within dir
-  files_path <- list.files(file.path(dir),
-                           pattern = "\\.R$",
-                           recursive = TRUE,
-                           full.names = TRUE)
-  files_path <- files_path[!grepl("testthat", files_path)]
-  files_path <- files_path[!grepl("zzz", files_path)]
-  files_path <- files_path[!grepl("defunct", files_path)]
-  if (length(files_path) == 0) {
-    snet_abort("No files with the given pattern")
-  }
-  
-  # common_base_path <- function(paths) {
-  #   # Split each path into its components
-  #   split_paths <- strsplit(paths, "/")
-  #   
-  #   # Find the common path
-  #   common_path <- Reduce(function(x, y) {
-  #     # Get the length of the shorter vector
-  #     min_length <- min(length(x), length(y))
-  #     # Only compare the elements up to the length of the shorter vector
-  #     common <- x[seq_len(min_length)] == y[seq_len(min_length)]
-  #     # If there's a FALSE in common, only keep the elements before it
-  #     if (any(!common)) x[seq_len(which(!common)[1] - 1)]
-  #     else x
-  #   }, split_paths)
-  #   
-  #   # Combine the common path components back into a single string
-  #   common_path <- paste(common_path, collapse = "/")
-  #   
-  #   return(common_path)
-  # }
-  # 
-  # dir_base <- common_base_path(paths = dir)
-  # folder <- dirname(gsub(paste0(dir_base, "/"), "", files_path))
-  folder <- paste0(dirname(files_path)[1], "/")
-  
-  # Get all scripts ####
-  all_scripts <- lapply(files_path, readLines, warn = FALSE)
-  # set names of scripts
-  names(all_scripts) <- gsub("\\.R$", "", basename(files_path))
-  snet_minor_info("Found {length(all_scripts)} scripts")
-  
-  # Check for empty scripts ####
-  indx <- sapply(all_scripts, length) == 0
-  if (any(indx)) {
-    warning(paste0("Removing empty scripts: ",
-                   paste0(names(all_scripts)[indx], collapse = ", ")))
-    all_scripts <- all_scripts[!indx]
-    folder <- folder[!indx]
-  }
-  
-  # remove variations with "
-  # this is done so that strings like "<- function" will not be counted
-  for (i_var in variations) {
-    all_scripts <- lapply(all_scripts,
-                          function(x) gsub(paste0("\"", i_var), "", x))
-  }
-  
-  # remove method / functions that start with [
-  # otherwise the regular expression will be messed up later
-  keep <- !startsWith(names(all_scripts), "[")
-  snet_minor_info("Removing {sum(!keep)} scripts that start with [")
-  all_scripts <- all_scripts[keep]
-  # folder <- folder[keep]
-  
-  # remove leading spaces
-  all_scripts <- lapply(all_scripts, function(x)  sub("^\\s+", "", x))
-  
-  # split before #
-  # all_scripts <- lapply(all_scripts, 
-  #                       function(x) unlist(strsplit(x = x, split = "#")[1]))
-  # remove comments #
-  all_scripts <- lapply(all_scripts, function(x) subset(x, !startsWith(x, "#")))
-  
-  # check for empty scripts
-  indx <- sapply(all_scripts, length) == 0
-  if (any(indx)) {
-    warning(paste0("Removing empty scripts: ",
-                   paste0(names(all_scripts)[indx], collapse = ", ")))
-    all_scripts <- all_scripts[!indx]
-    folder <- folder[!indx]
-  }
-  
-  # # split before { and }
-  # all_scripts <- lapply(all_scripts,
-  #                       function(x) unlist(strsplit(x = x, split = "[\\{\\}]")[1]))
-  # # split after { and }
-  # all_scripts <- lapply(all_scripts,
-  #                       function(x) unlist(strsplit(x = x, split = "[\\{\\}]")[2]))
-  
-  # remove leading spaces again
-  all_scripts <- lapply(all_scripts, function(x)  sub("^\\s+", "", x))
-  
-  # remove empty lines
-  all_scripts <- lapply(all_scripts, function(x) x[x != ""])
-  
-  # check for empty scripts
-  indx <- sapply(all_scripts, length) == 0
-  if (any(indx)) {
-    warning(paste0("Removing empty scripts: ",
-                   paste0(names(all_scripts)[indx], collapse = ", ")))
-    all_scripts <- all_scripts[!indx]
-    folder <- folder[!indx]
-  }
-  
-  # filter only those with functions (variations) in it
-  index_functions <- unique(unlist(sapply(variations, grep, all_scripts)))
-  main_functions  <- all_scripts[index_functions]
-  # folder_main     <- folder[index_functions]
-  scripts         <- all_scripts[-index_functions]
-  # folder_scripts  <- folder[-index_functions]
-  
-  snet_minor_info("Found {length(index_functions)} scripts containing function definitions")
-  
-  # get subfunctions
-  getsubindex <- function(funlist,
-                          variations) {
-    def_function_index <-
-      lapply(funlist,
-             function(x) {
-               sort(unique(unlist(
-                 lapply(variations,
-                        function(y) which(grepl(pattern = y, x))))
-               ))
-             }
-      )
-    
-    # get internal functions
-    with_internal <- which(sapply(def_function_index, length) > 1)
-    internal <- funlist[with_internal]
-    def_internal <- lapply(def_function_index[with_internal],
-                           function(x) sort(x))
-    
-    open  <- lapply(internal, function(x) as.numeric(grepl("\\{", x)))
-    close <- lapply(internal, function(x) as.numeric(grepl("\\}", x)))
-    both <- mapply(function(x, y) cumsum(x - y), open, close, SIMPLIFY = FALSE)
-    
-    sub_index_end <- mapply(function(x, z) {
-      sapply(z, function(y) {
-        tmp <- which(x == x[y])
-        tmp <- tmp[tmp > y]
-        if (length(tmp) == 1) {
-          tmp
-        } else {
-          if (all(diff(tmp) == 1)) {
-            suppressWarnings(min(tmp, na.rm = TRUE))
-          } else {
-            suppressWarnings(min(tmp[c(diff(c(y, tmp)) > 1)], na.rm = TRUE))
-          }
-        }
-      })},
-      both, def_internal, SIMPLIFY = FALSE)
-    
-    
-    # set Inf to max length
-    max_length <- lapply(internal, length)
-    sub_index_end <- mapply(function(x, y) ifelse(x == Inf, y, x),
-                            sub_index_end, max_length, SIMPLIFY = FALSE)
-    
-    sub_index <- mapply(function(x, y) cbind(x, y),
-                        def_internal, sub_index_end, SIMPLIFY = FALSE)
-    
-    # remove row if it is from first to last
-    sub_index <- mapply(
-      function(x, y) matrix(x[apply(x, 1, diff) < c(y - 2), ], ncol = 2),
-      sub_index, max_length, SIMPLIFY = FALSE)
-    
-    out <- list()
-    out$sub_index <- sub_index
-    out$internal <- internal
-    
-    return(out)
-  }
-  
-  tmp <- getsubindex(funlist = main_functions,
-                     variations = variations)
-  sub_index <- tmp$sub_index
-  internal  <- tmp$internal
-  
-  
-  sub_functions <-
-    mapply(function(i, s) {
-      lapply(seq_len(nrow(s)), function(t) i[s[t, 1]:s[t, 2]])
-    },
-    internal, sub_index, SIMPLIFY = FALSE)
-  sub_functions <- do.call("c", sub_functions)
-  
-  # folder for sub_functions
-  folder_index <- which(names(main_functions) %in% names(sub_index))
-  # folder_sub <- rep(folder_main[folder_index], sapply(sub_index, nrow))
-  
-  snet_minor_info("Found {length(sub_functions)} sub-functions")
-  
-  def_sub_functions <-
-    unlist(lapply(seq_along(sub_functions),
-                  function(x) sub_functions[[x]][1]))
-  
-  
-  if (!is.null(def_sub_functions)) {
-    names(sub_functions) <-
-      unlist(gsub(" ", "",
-                  lapply(base::strsplit(def_sub_functions, "<-"), "[[", 1)))
-  }
-  
-  
-  # combine sub to all functions
-  all_functions <- c(main_functions, sub_functions)
-  # all_folder <- folder_main
-  # all_folder    <- c(folder_main, folder_sub)
-  snet_minor_info("Found {length(all_functions)} functions")
-  
-  # remove duplicates
-  index <- !duplicated(all_functions)
-  all_functions <- all_functions[index]
-  # all_folder    <-  all_folder[index]
-  snet_minor_info("{sum(!index)} duplicated functions")
-  
-  dup_names <- duplicated(names(all_functions))
-  if (any(dup_names)) {
-    warning(paste0("multiple function: ",
-                   paste0(unique(names(all_functions)[dup_names]),
-                          collapse = ", "),
-                   " Using only the first!"))
-    all_functions <- all_functions[!dup_names]
-    # all_folder    <- all_folder[!dup_names]
-  }
-  
-  # remove sub_functions from functions
-  tmp <- getsubindex(funlist = all_functions,
-                     variations = variations)
-  
-  for (i_name in names(tmp$sub_index)) {
-    i_num <- which(names(all_functions) == i_name)
-    s <- tmp$sub_index[[i_name]]
-    if (nrow(s) == 0) next
-    remove_index <- unique(unlist(sapply(seq_len(nrow(s)),
-                                         function(t) s[t, 1]:s[t, 2])))
-    all_functions[[i_num]][remove_index] <- ""
-  }
-  
-  # remove empty lines
-  all_functions <- lapply(all_functions, function(x) x[x != ""])
-  
-  # combine sub to all functions
-  all_files  <- c(all_functions, scripts)
-  # all_folder <- c(all_folder, folder_scripts)
-  snet_minor_info("Found {length(all_files)} files")
-  
-  # check if there are functions
-  if (length(all_files) == 0) {
-    warning("no functions found")
-    return(list(matrix = NULL, igraph = NULL))
-  }
-  
-  # get number of line per function
-  lines <- sapply(all_files, length)
-  
-  # update function definition
-  def_function_index <-
-    lapply(
-      all_files,
-      function(x) {
-        unique(unlist(
-          lapply(variations,
-                 function(y) which(grepl(pattern = y, x))))
-        )
-      }
-    )
-  
-  def_functions <- lapply(
-    seq_along(all_files),
-    function(x) all_files[[x]][def_function_index[[x]]]
-  )
-  tmp_def_idx <- sapply(def_functions, function(x) length(x) == 0)
-  def_functions[tmp_def_idx] <- ""
-  
-  
-  def_functions[!tmp_def_idx] <- gsub(
-    pattern = " ",
-    replacement = "",
-    lapply(base::strsplit(unlist(def_functions[!tmp_def_idx]), "<-"), "[[", 1))
-  
-  tmp_def_idx2 <- def_functions == "" & !tmp_def_idx
-  # check for empty entries
-  if (any(tmp_def_idx2)) {
-    warning(paste0("Missing function name. ",
-                   "This would have led to missleading plots. ",
-                   "Removed from script(s): '",
-                   paste0(names(all_files)[tmp_def_idx2],
-                          collapse = "', '"), "'"))
-  }
-  def_functions <- unique(unlist(
-    def_functions[def_functions != "" & !tmp_def_idx]
+  as.data.frame(utils::available.packages(
+    utils::contrib.url(repos, type = "source")
   ))
-  
-  
-  
-  # used for later adjustments of the network matrix
-  def_functions2 <-
-    lapply(seq_along(all_files),
-           function(x) all_files[[x]][def_function_index[[x]]])
-  
-  # check for non characters
-  def_functions2 <-
-    lapply(def_functions2, function(x) {
-      if (is.character(x)) {
-        x
-      } else {
-        character(0)
-      }
-    })
-  
-  
-  def_functions2 <-
-    lapply(def_functions2,
-           function(x) {
-             gsub(" ", "", sapply(base::strsplit(x, "<-"), "[[", 1))
-           }
-    )
-  
-  def_functions2 <-
-    lapply(seq_along(def_functions2),
-           function(x) {
-             ifelse(length(def_functions2[[x]]) == 0,
-                    names(all_files)[x],
-                    def_functions2[[x]])
-           }
-    )
-  
-  # remove function definition
-  keep_lines <- mapply(function(x, y) which(!1:y %in% x),
-                       def_function_index, lapply(all_files, length),
-                       SIMPLIFY = FALSE)
-  
-  
-  clean_functions <- all_files
-  clean_functions <-
-    lapply(seq_along(clean_functions),
-           function(x) clean_functions[[x]][keep_lines[[x]]])
-  names(clean_functions) <- names(all_files)
-  snet_minor_info("Check length: {length(clean_functions)} clean_functions")
-  
-  # remove duplicated names
-  dub_rows <- !duplicated(names(clean_functions))
-  if (!all(dub_rows)) {
-    warning(paste0("Removing duplicates: ",
-                   paste0(names(clean_functions)[!dub_rows], collapse = ", ")))
-    clean_functions <- clean_functions[dub_rows]
-    lines <- lines[dub_rows]
-    # all_folder <- all_folder[dub_rows]
-    def_functions2 <- def_functions2[dub_rows]
-  }
-  
-  # create adjacency matrix: network
-  network <-
-    lapply(clean_functions,
-           function(z) {
-             sapply(paste0(def_functions), #, "\\("
-                    function(x, y = z) sum(grepl(x, y), na.rm = TRUE))
-           })
-  
-  network <- as.data.frame(do.call(rbind, network))
-  snet_minor_info("Initial network has {nrow(network)} rows and {ncol(network)} cols")
-  
-  # adjust networks rows and columns
-  names(network) <- gsub("\\\\\\(", "", names(network))
-  new_columns <- rownames(network)[
-    which(!rownames(network) %in% colnames(network))]
-  new_rows <- colnames(network)[
-    which(!colnames(network) %in% rownames(network))]
-  network[, new_columns] <- 0
-  network[new_rows, ] <- 0
-  network <- network[rownames(network)]
-  snet_minor_info("Adding {length(new_rows)} new rows and {length(new_columns)} new cols")
-  snet_minor_info("Adjusted network has {nrow(network)} rows and {ncol(network)} cols")
-  
-  # adjust lines, folders
-  old_names <- names(lines)
-  lines <- c(lines, rep(0, length(new_rows)))
-  names(lines) <- c(old_names, new_rows)
-  snet_minor_info("Check length: {length(lines)} lines")
-  
-  # remove duplicated functions within def_functions2
-  if (sum(duplicated(def_functions2)) > 0) {
-    snet_minor_info("There are {sum(duplicated(def_functions2))} inner functions with the same name. Keeping only the first.")
-  }
-  
-  tmp_index <- unlist(lapply(
-    new_rows,
-    function(y) {
-      which(lapply(def_functions2, function(x) x == y) == TRUE)[1]
-    }
-  ))
-  if (length(tmp_index) == 0) {
-    tmp_index <- NULL
-  }
-  
-  # all_folder <- c(all_folder, all_folder[tmp_index])
-  # snet_minor_info("check length: {length(all_folder)} all_folder")
-  
-  # simplify - removing functions with no connections ####
-  # if (simplify) {
-  #   calls <- apply(1, X = network, FUN = sum) + apply(2, X = network, FUN = sum)
-  #   keep <- which(calls != 0)
-  #   network <- network[keep, keep]
-  #   all_folder <- all_folder[keep]
-  #   lines <- lines[keep]
-  # }
-  
-  # create igraph
-  g1 <- igraph::graph_from_adjacency_matrix(
-    as.matrix(network),
-    mode = "directed",
-    weighted = TRUE,
-    diag = TRUE,
-    add.colnames = NULL,
-    add.rownames = NA)
-  
-  igraph::V(g1)$label <- names(lines)
-  igraph::V(g1)$lines <- lines
-  # igraph::V(g1)$folder <- all_folder
-  # igraph::V(g1)$color  <- as.numeric(as.factor(all_folder))
-  
-  # output
-  return(as_tidygraph(g1))
 }
 
-# nocov end
+# Returns an edgelist of the dependencies declared in the named fields.
+# Version constraints are stripped whatever their spacing, so that both
+# "Matrix (>= 1.8-0)" and "Matrix(>= 1.8-0)" yield "Matrix".
+.parse_cran_deps <- function(db, fields) {
+  base_pkgs <- c("R", "base", "compiler", "datasets", "graphics", "grDevices",
+                 "grid", "methods", "parallel", "splines", "stats", "stats4",
+                 "tcltk", "tools", "translations", "utils")
+  out <- lapply(fields, function(fl) {
+    v <- db[[fl]]
+    if (is.null(v)) return(NULL)
+    keep <- !is.na(v) & nzchar(v)
+    if (!any(keep)) return(NULL)
+    spl <- strsplit(v[keep], ",", fixed = TRUE)
+    to <- trimws(sub("[(].*", "", unlist(spl, use.names = FALSE)))
+    from <- rep(db$Package[keep], lengths(spl))
+    ok <- nzchar(to) & !to %in% base_pkgs & from != to
+    data.frame(from = from[ok], to = to[ok], type = fl,
+               stringsAsFactors = FALSE)
+  })
+  out <- unique(do.call(rbind, out))
+  out$type <- factor(out$type, levels = fields)
+  out
+}
+
+# Returns a nodelist of every package in the database, together with any
+# dependency targets that are not themselves on CRAN.
+.cran_nodes <- function(db, ties) {
+  labs <- unique(c(db$Package, ties$from, ties$to))
+  idx <- match(labs, db$Package)
+  cols <- function(x) {
+    if (is.null(db[[x]])) rep(NA_character_, length(idx)) else db[[x]][idx]
+  }
+  needs <- cols("NeedsCompilation")
+  data.frame(name = labs,
+             on_cran = !is.na(idx),
+             version = cols("Version"),
+             published = as.Date(cols("Published")),
+             compiled = ifelse(is.na(idx), NA, !is.na(needs) & needs == "yes"),
+             priority = cols("Priority"),
+             license = cols("License"),
+             stringsAsFactors = FALSE)
+}
+
+# Scopes the network to the neighbourhoods of the seed packages.
+# This touches only the seeds, where to_ego() would materialise the
+# neighbourhood of every node in the network.
+.scope_cran <- function(.data, seeds, max_dist, direction) {
+  order <- if (is.infinite(max_dist)) igraph::vcount(.data) else max_dist
+  vs <- unique(unlist(igraph::ego(.data, order = order, nodes = seeds,
+                                  mode = direction)))
+  as_tidygraph(igraph::induced_subgraph(.data, vs))
+}
+
+#' @rdname make_collect
+#' @param dir Character string with the path of the directory in which to
+#'   look for R scripts.
+#'   By default the current working directory.
+#'   Where `dir` holds a DESCRIPTION file and an R folder, as a package does,
+#'   the R folder is searched.
+#' @param external Logical.
+#'   Where TRUE, calls to functions that are not defined in `dir`,
+#'   such as those from other packages, are included as nodes too.
+#'   By default FALSE, since these are numerous and rarely of interest.
+#' @source
+#'   Inspired by Jakob Gepp's `helfRlein::get_network()`,
+#'   https://github.com/STATWORX/helfRlein/blob/master/R/get_network.R
+#' @examples
+#' \dontrun{
+#' # The network of calls among the functions in the working directory:
+#' collect_pkg()
+#' # Collapsed onto generics, where the directory is a package:
+#' # to_blocks(collect_pkg(), node_attribute(collect_pkg(), "generic"))
+#' }
+#' @export
+collect_pkg <- function(dir = getwd(), external = FALSE) {
+  dir <- .pkg_resolve_dir(dir)
+  files <- list.files(dir, pattern = "[.][Rr]$",
+                      recursive = TRUE, full.names = TRUE)
+  if (length(files) == 0)
+    snet_abort("No R scripts were found in {.path {dir}}.")
+  snet_progress_step("Parsing {length(files)} R scripts")
+  parsed <- lapply(files, .pkg_parse_file)
+  failed <- vapply(parsed, is.null, logical(1))
+  if (any(failed))
+    snet_warn("{.path {basename(files[failed])}} could not be parsed.")
+  parsed <- parsed[!failed]
+  if (length(parsed) == 0)
+    snet_abort("None of the R scripts in {.path {dir}} could be parsed.")
+  defs <- do.call(rbind, lapply(parsed, function(x) x$defs))
+  calls <- do.call(rbind, lapply(parsed, function(x) x$calls))
+  if (is.null(defs) || nrow(defs) == 0)
+    snet_abort("No function definitions were found in {.path {dir}}.")
+  dups <- duplicated(defs$name)
+  if (any(dups))
+    snet_minor_info("Merging {sum(dups)} function{?s} defined more than once")
+  defs <- defs[!dups, ]
+  nodes <- .pkg_nodes(defs, .pkg_exports(dir))
+  ties <- .pkg_ties(calls, nodes, external)
+  if (external) {
+    extra <- setdiff(unique(ties$to), nodes$name)
+    if (length(extra) > 0)
+      nodes <- rbind(nodes, data.frame(name = extra, file = NA_character_,
+                                       lines = NA_integer_,
+                                       exported = NA, generic = extra))
+    nodes$internal <- !nodes$name %in% extra
+  }
+  ties <- ties[ties$from %in% nodes$name & ties$to %in% nodes$name, ]
+  out <- as_tidygraph(list(nodes = nodes, ties = ties))
+  add_info(out, name = paste("Function network of", basename(dirname(dir))),
+           collection = "Parsed")
+}
+
+# Resolves dir to the folder that holds the R scripts.
+.pkg_resolve_dir <- function(dir) {
+  if (length(dir) != 1)
+    snet_abort("Please provide a single directory.")
+  if (!dir.exists(dir))
+    snet_abort("{.path {dir}} does not exist.")
+  if (file.exists(file.path(dir, "DESCRIPTION")) &&
+        dir.exists(file.path(dir, "R"))) {
+    file.path(dir, "R")
+  } else {
+    dir
+  }
+}
+
+# Extracts the function definitions and the calls within them from one script,
+# using R's own parser so that neither comments nor strings are counted and
+# names are matched exactly rather than as substrings.
+# Returns NULL where the script cannot be parsed.
+.pkg_parse_file <- function(path) {
+  pd <- tryCatch(utils::getParseData(parse(path, keep.source = TRUE)),
+                 error = function(e) NULL)
+  if (is.null(pd) || nrow(pd) == 0) return(NULL)
+  # The parser numbers rows bottom up, so reorder to get children in source
+  # order before splitting them by their parent.
+  pd <- pd[order(pd$line1, pd$col1, -pd$line2, -pd$col2), ]
+  row_of <- seq_len(nrow(pd))
+  names(row_of) <- as.character(pd$id)
+  kids <- split(pd$id, pd$parent)
+  defs <- .pkg_defs(pd, row_of, kids, path)
+  calls <- .pkg_calls(pd, row_of, kids, defs)
+  list(defs = defs[, c("name", "file", "lines")], calls = calls)
+}
+
+# Identifies assignments whose value is a function, covering `<-`, `<<-`, `=`,
+# lambdas, and definitions whose `function` keyword falls on a later line.
+.pkg_defs <- function(pd, row_of, kids, path) {
+  assigns <- which(pd$token %in% c("LEFT_ASSIGN", "EQ_ASSIGN"))
+  found <- lapply(assigns, function(i) {
+    sibs <- kids[[as.character(pd$parent[i])]]
+    if (length(sibs) != 3 || sibs[2] != pd$id[i]) return(NULL)
+    rhs <- row_of[as.character(sibs[3])]
+    if (is.na(rhs)) return(NULL)
+    grandkids <- kids[[as.character(sibs[3])]]
+    if (length(grandkids) == 0) return(NULL)
+    first <- row_of[as.character(grandkids[1])]
+    if (is.na(first)) return(NULL)
+    # The lambda token is named "\\", so match on its text rather than token.
+    if (!(pd$token[first] == "FUNCTION" || pd$text[first] == "\\")) return(NULL)
+    nm <- .pkg_symbol(pd, row_of, kids, sibs[1])
+    if (is.na(nm)) return(NULL)
+    data.frame(name = nm, id = sibs[3], file = path,
+               lines = pd$line2[rhs] - pd$line1[rhs] + 1,
+               stringsAsFactors = FALSE)
+  })
+  found <- do.call(rbind, found)
+  if (is.null(found)) found <- data.frame(name = character(0), id = numeric(0),
+                                          file = character(0),
+                                          lines = integer(0))
+  found
+}
+
+# Resolves the left hand side of an assignment to a single name, stripping the
+# backticks or quotes that non-syntactic names such as `print.mnet` arrive with.
+.pkg_symbol <- function(pd, row_of, kids, id) {
+  i <- row_of[as.character(id)]
+  if (is.na(i)) return(NA_character_)
+  if (!pd$token[i] %in% c("SYMBOL", "STR_CONST")) {
+    inner <- kids[[as.character(id)]]
+    if (length(inner) != 1) return(NA_character_)
+    i <- row_of[as.character(inner)]
+    if (is.na(i) || !pd$token[i] %in% c("SYMBOL", "STR_CONST"))
+      return(NA_character_)
+  }
+  gsub("^[`'\"]+|[`'\"]+$", "", pd$text[i])
+}
+
+# Attributes each call to the innermost function definition enclosing it,
+# by walking up the parse tree. Calls that reach the top level are dropped.
+.pkg_calls <- function(pd, row_of, kids, defs) {
+  sites <- which(pd$token == "SYMBOL_FUNCTION_CALL")
+  if (length(sites) == 0 || nrow(defs) == 0)
+    return(data.frame(from = character(0), to = character(0)))
+  def_name <- defs$name
+  names(def_name) <- as.character(defs$id)
+  found <- lapply(sites, function(i) {
+    to <- .pkg_callee(pd, row_of, kids, i)
+    p <- pd$parent[i]
+    while (!is.na(p) && p > 0) {
+      key <- as.character(p)
+      if (key %in% names(def_name))
+        return(data.frame(from = unname(def_name[key]), to = to,
+                          stringsAsFactors = FALSE))
+      p <- unname(pd$parent[row_of[key]])
+    }
+    NULL
+  })
+  found <- do.call(rbind, found)
+  if (is.null(found)) found <- data.frame(from = character(0),
+                                          to = character(0))
+  found
+}
+
+# Qualifies a call with its package where it was made with :: or :::,
+# so that e.g. igraph::V() is not confused with a locally defined V().
+.pkg_callee <- function(pd, row_of, kids, i) {
+  sibs <- kids[[as.character(pd$parent[i])]]
+  pos <- match(pd$id[i], sibs)
+  if (!is.na(pos) && pos > 2) {
+    op <- row_of[as.character(sibs[pos - 1])]
+    ns <- row_of[as.character(sibs[pos - 2])]
+    if (!is.na(op) && !is.na(ns) &&
+          pd$token[op] %in% c("NS_GET", "NS_GET_INT") &&
+          pd$token[ns] == "SYMBOL_PACKAGE")
+      return(paste0(pd$text[ns], "::", pd$text[i]))
+  }
+  pd$text[i]
+}
+
+# Reads the export and S3 method registrations from a package's NAMESPACE,
+# which is authoritative where splitting a name on its first dot is not.
+.pkg_exports <- function(dir) {
+  path <- file.path(dirname(dir), "NAMESPACE")
+  if (!file.exists(path)) path <- file.path(dir, "NAMESPACE")
+  if (!file.exists(path)) return(NULL)
+  ns <- tryCatch(parse(path), error = function(e) NULL)
+  if (is.null(ns)) return(NULL)
+  txt <- function(x) {
+    if (is.character(x)) x else paste(deparse(x), collapse = "")
+  }
+  exports <- character(0)
+  methods <- data.frame(generic = character(0), method = character(0))
+  for (e in ns) {
+    if (!is.call(e)) next
+    directive <- as.character(e[[1]])
+    args <- as.list(e)[-1]
+    if (directive == "export" && length(args) > 0) {
+      exports <- c(exports, vapply(args, txt, character(1)))
+    } else if (directive == "S3method" && length(args) >= 2) {
+      generic <- txt(args[[1]])
+      method <- if (length(args) >= 3) txt(args[[3]]) else
+        paste0(generic, ".", txt(args[[2]]))
+      methods <- rbind(methods, data.frame(generic = generic, method = method,
+                                           stringsAsFactors = FALSE))
+    }
+  }
+  list(exports = unique(exports), methods = unique(methods))
+}
+
+# Assembles the nodelist, recording where each function is defined, how long
+# it is, whether it is exported, and which generic it is a method for.
+.pkg_nodes <- function(defs, ns) {
+  generic <- defs$name
+  exported <- rep(NA, nrow(defs))
+  if (!is.null(ns)) {
+    exported <- defs$name %in% ns$exports | defs$name %in% ns$methods$method
+    hit <- match(defs$name, ns$methods$method)
+    generic[!is.na(hit)] <- ns$methods$generic[hit[!is.na(hit)]]
+  }
+  data.frame(name = defs$name, file = basename(defs$file), lines = defs$lines,
+             exported = exported, generic = generic, stringsAsFactors = FALSE)
+}
+
+# Assembles the tielist, weighting each tie by the number of call sites and
+# adding a tie from each generic to its methods where both are defined here.
+.pkg_ties <- function(calls, nodes, external) {
+  if (is.null(calls) || nrow(calls) == 0)
+    calls <- data.frame(from = character(0), to = character(0))
+  if (!external) calls <- calls[calls$to %in% nodes$name, ]
+  ties <- data.frame(from = character(0), to = character(0),
+                     weight = integer(0), type = character(0))
+  if (nrow(calls) > 0) {
+    tab <- table(paste(calls$from, calls$to, sep = "\r"))
+    parts <- do.call(rbind, strsplit(names(tab), "\r", fixed = TRUE))
+    ties <- data.frame(from = parts[, 1], to = parts[, 2],
+                       weight = as.integer(tab), type = "call",
+                       stringsAsFactors = FALSE)
+  }
+  dispatch <- nodes[nodes$generic != nodes$name &
+                      nodes$generic %in% nodes$name, ]
+  if (nrow(dispatch) > 0)
+    ties <- rbind(ties, data.frame(from = dispatch$generic, to = dispatch$name,
+                                   weight = 1L, type = "dispatch",
+                                   stringsAsFactors = FALSE))
+  # Only mark the network as multiplex where both kinds of tie are present.
+  if (length(unique(ties$type)) < 2) ties$type <- NULL
+  ties
+}

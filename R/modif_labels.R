@@ -62,13 +62,14 @@ to_labelled.igraph <- function(.data, names = NULL) {
 
 #' @export
 to_labelled.data.frame <- function(.data, names = NULL) {
-  if (!is.null(names)) {
-    .data[,1]  <- names[as.numeric(.data[,1])]
-    .data[,2]  <- names[as.numeric(.data[,2])]
-  } else {
-    .data[,1]  <- .get_babynames(net_nodes(.data))[as.numeric(.data[,1])]
-    .data[,2]  <- .get_babynames(net_nodes(.data))[as.numeric(.data[,2])]
-  }
+  # Nodes in an edgelist may be indices or existing labels. Indices imply the
+  # node set 1:max, whereas labels are ordered by appearance, matching how
+  # `as_igraph.data.frame()` constructs the nodes in each case.
+  nodes <- unique(c(.data[[1]], .data[[2]]))
+  if (is.numeric(nodes)) nodes <- seq_len(max(nodes))
+  if (is.null(names)) names <- .get_babynames(length(nodes))
+  .data[[1]] <- names[match(.data[[1]], nodes)]
+  .data[[2]] <- names[match(.data[[2]], nodes)]
   .data
 }
 

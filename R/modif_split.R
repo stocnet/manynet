@@ -7,7 +7,9 @@
 #'   - `to_egos()` splits a network into ego (or focal) networks.
 #'   - `to_subgraphs()` splits a network into subgraphs on some given node
 #'   attribute.
-#'   - `to_components()` splits a network into its components.
+#'   - `to_components()` splits a network into its components,
+#'   ordered from the largest to the smallest.
+#'   Use `to_component()` to retain just one of them.
 #'   - `to_waves()` splits a network with some discrete observations over time
 #'   into a list of those observations.
 #'   - `to_slices()` splits a network with some continuous time variable at some
@@ -21,6 +23,7 @@
 #'   ```
 #' @template param_data
 #' @template param_dir
+#' @template param_connectivity
 #' @template fam_modif
 NULL
 
@@ -143,43 +146,48 @@ to_subgraphs.network <- function(.data, attribute){
 }
 
 #' @rdname modif_split
-#' @examples 
+#' @examples
 #'   to_components(to_uniplex(fict_marvel, "relationship"))
+#'   to_components(fict_starwars, connectivity = "strong")
 #' @export
-to_components <- function(.data) UseMethod("to_components")
+to_components <- function(.data,
+                          connectivity = c("weak", "strong")) UseMethod("to_components")
 
 #' @export
-to_components.default <- function(.data){
-  as_input(.data, to_components)
+to_components.default <- function(.data, connectivity = c("weak", "strong")){
+  as_input(.data, to_components, connectivity = connectivity)
 }
 
-#' @importFrom igraph decompose
+#' @importFrom igraph decompose vcount
 #' @export
-to_components.igraph <- function(.data){
-  igraph::decompose(.data)
+to_components.igraph <- function(.data, connectivity = c("weak", "strong")){
+  out <- igraph::decompose(.data, mode = match.arg(connectivity))
+  # igraph returns components in discovery order, not size order,
+  # so that to_components(.data)[[n]] matches to_component(.data, n).
+  out[order(vapply(out, igraph::vcount, numeric(1)), decreasing = TRUE)]
 }
 
 #' @export
-to_components.tbl_graph <- function(.data){
-  out <- to_components.igraph(as_igraph(.data))
+to_components.tbl_graph <- function(.data, connectivity = c("weak", "strong")){
+  out <- to_components.igraph(as_igraph(.data), connectivity)
   lapply(out, function(x) as_tidygraph(x))
 }
 
 #' @export
-to_components.network <- function(.data){
-  out <- to_components.igraph(as_igraph(.data))
+to_components.network <- function(.data, connectivity = c("weak", "strong")){
+  out <- to_components.igraph(as_igraph(.data), connectivity)
   lapply(out, function(x) as_network(x))
 }
 
 #' @export
-to_components.matrix <- function(.data){
-  out <- to_components.igraph(as_igraph(.data))
+to_components.matrix <- function(.data, connectivity = c("weak", "strong")){
+  out <- to_components.igraph(as_igraph(.data), connectivity)
   lapply(out, function(x) as_matrix(x))
 }
 
 #' @export
-to_components.data.frame <- function(.data){
-  out <- to_components.igraph(as_igraph(.data))
+to_components.data.frame <- function(.data, connectivity = c("weak", "strong")){
+  out <- to_components.igraph(as_igraph(.data), connectivity)
   lapply(out, function(x) as_edgelist(x))
 }
 

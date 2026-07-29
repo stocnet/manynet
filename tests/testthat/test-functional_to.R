@@ -33,7 +33,9 @@ to_invariants <- list(
   to_unlabelled = function(o) !is_labelled(o),
   to_onemode    = function(o) !is_twomode(o),
   to_twomode    = function(o) is_twomode(o),
-  to_giant      = function(o) is_connected(o),
+  # These default to weak components, so weak connectivity is what they promise.
+  to_giant      = function(o) is_connected(o, "weak"),
+  to_component  = function(o) is_connected(o, "weak"),
   to_simplex    = function(o) !is_complex(o),
   to_uniplex    = function(o) !is_multiplex(o)
 )

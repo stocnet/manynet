@@ -170,31 +170,67 @@ generate_configuration <- function(.data){
 
 #' @rdname make_random 
 #' @param man Vector of Mutual, Asymmetric, and Null dyads, respectively.
-#'   Can be specified as proportions, e.g. `c(0.5, 0.5, 0.5)`, 
-#'   or as a count, e.g. `c(10,0,20)`.
-#'   Is inferred from `n` if it is an existing network object.
+#'   These are treated as proportions, e.g. `c(0.25, 0.5, 0.25)`;
+#'   counts such as `c(10,0,20)` are read as relative weights and normalised,
+#'   so the dyad census is reproduced in expectation rather than exactly.
+#'   Is inferred from `n` if it is an existing network object,
+#'   and otherwise defaults to `c(0.25, 0.5, 0.25)`,
+#'   which is the dyad distribution of a random (Erdős-Rényi) digraph
+#'   in which each arc is present with probability 0.5.
+#'
+#'   For two-mode networks, `man` is conditioned on the dyads between
+#'   the modes.
+#'   Since ties in two-mode networks are undirected,
+#'   both mutual and asymmetric dyads are realised as a tie,
+#'   so only their sum is consequential there.
 #' @references
 #' ## On dyad-census conditioned networks
-#' Holland, Paul W., and Samuel Leinhardt. 1976. 
-#' “Local Structure in Social Networks.” 
-#' In D. Heise (Ed.), _Sociological Methodology_, pp 1-45. 
+#' Holland, Paul W., and Samuel Leinhardt. 1976.
+#' “Local Structure in Social Networks.”
+#' In D. Heise (Ed.), _Sociological Methodology_, pp 1-45.
 #' San Francisco: Jossey-Bass.
+#' @examples
+#' generate_man(6)
+#' generate_man(c(4, 6))
 #' @export
 generate_man <- function(n, man = NULL){
   thisRequires("sna")
-  if(!is.null(man) && length(man)==3){
+  if(!is.null(man)){
+    if(length(man)!=3)
+      snet_abort(paste("`man` should be a numeric vector of length 3,",
+                       "giving the Mutual, Asymmetric, and Null dyads,",
+                       "but a vector of length", length(man), "was given."))
     dcen <- man
   } else if (is_manynet(n)){
     dcen <- .net_by_dyad(n)
     if(length(dcen)==2) dcen <- c(dcen[1],0,dcen[2])
-  } else snet_abort("'man' needs to be specified with a numeric vector of length 3.")
+  } else dcen <- c(0.25, 0.5, 0.25)
   n <- infer_n(n)
-  out <- sna::rguman(1, n, dcen[1], dcen[2], dcen[3])
-  as_tidygraph(out)
+  if(length(n)==2) .rgbman(n[1], n[2], dcen) else
+    as_tidygraph(sna::rguman(1, n, dcen[1], dcen[2], dcen[3]))
+}
+
+# Two-mode counterpart to `sna::rguman()`, which is defined only for
+# square (one-mode) networks. Each of the dyads between the modes is
+# tied with the probability that it is not null, since mutual and
+# asymmetric dyads are indistinguishable where ties are undirected.
+.rgbman <- function(n1, n2, dcen) {
+  p <- (dcen[1] + dcen[2]) / sum(dcen)
+  out <- matrix(stats::rbinom(n1*n2, 1, p), n1, n2)
+  # `twomode` is declared since a square matrix would otherwise be
+  # coerced into a one-mode network
+  as_tidygraph(as_igraph(out, twomode = TRUE))
 }
 
 .net_by_dyad <- function(.data) {
   .data <- manynet::expect_nodes(.data)
+  if (manynet::is_twomode(.data)) {
+    # `igraph::dyad_census()` counts every pair of nodes, including those
+    # within the modes, which are not dyads in a two-mode network
+    mat <- manynet::as_matrix(.data)
+    ties <- sum(mat != 0)
+    return(c(Mutual = ties, Asymmetric = 0, Null = length(mat) - ties))
+  }
   out <- suppressWarnings(igraph::dyad_census(manynet::as_igraph(.data)))
   out <- unlist(out)
   names(out) <- c("Mutual", "Asymmetric", "Null")

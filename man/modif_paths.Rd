@@ -4,7 +4,6 @@
 \alias{modif_paths}
 \alias{to_matching}
 \alias{to_mentoring}
-\alias{to_eulerian}
 \alias{to_tree}
 \alias{to_dominating}
 \title{Modifying networks paths}
@@ -12,8 +11,6 @@
 to_matching(.data, mark = "type", capacities = NULL)
 
 to_mentoring(.data, elites = 0.1)
-
-to_eulerian(.data)
 
 to_tree(.data)
 
@@ -66,7 +63,6 @@ These functions return tidygraphs containing only special sets of ties:
 \itemize{
 \item \code{to_matching()} returns only the matching ties in some network data.
 \item \code{to_mentoring()} returns only ties to nodes' closest mentors.
-\item \code{to_eulerian()} returns only the Eulerian path within some network data.
 \item \code{to_tree()} returns the spanning tree in some network data or,
 if the data is unconnected, a forest of spanning trees.
 \item \code{to_dominating()} returns the dominating tree of the network.
@@ -78,7 +74,6 @@ Below are the currently implemented S3 methods:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default igraph matrix network tbl_graph
 to_dominating                  *      *                         
-to_eulerian                    *      *                        *
 to_matching            *       *      *      *       *         *
 to_mentoring                   *      *                         
 to_tree                        *      *                         
@@ -124,7 +119,6 @@ or identifying the most influential nodes in a network.
 
 \examples{
 to_matching(ison_southern_women)
-  to_eulerian(delete_nodes(ison_koenigsberg, "Lomse"))
 }
 \references{
 \subsection{On matching}{
@@ -147,18 +141,6 @@ Valente, Thomas, and Rebecca Davis. 1999.
 "Accelerating the Diffusion of Innovations Using Opinion Leaders",
 \emph{Annals of the American Academy of Political and Social Science} 566: 56-67.
 \doi{10.1177/000271629956600105}
-}
-
-\subsection{On Eulerian trails}{
-
-Euler, Leonard. 1736.
-"Solutio problematis ad geometriam situs pertinentis".
-\emph{Comment. Academiae Sci. I. Petropolitanae} 8: 128–140.
-
-Hierholzer, Carl. 1873.
-"Ueber die Möglichkeit, einen Linienzug ohne Wiederholung und ohne Unterbrechung zu umfahren".
-\emph{Mathematische Annalen}, 6(1): 30–32.
-\doi{10.1007/BF01442866}
 }
 
 \subsection{On minimum spanning trees}{

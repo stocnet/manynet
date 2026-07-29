@@ -1,5 +1,7 @@
 to_funs <- funs_objs[grepl("to_", names(funs_objs))]
-to_funs <- to_funs[!grepl("^na_|s$|^to_named$|^to_unnamed$|^to_wave$|^to_component$", names(to_funs))]
+# to_wave() is an alias of to_time(), and to_giant() is a plain wrapper for
+# to_component(), so neither has methods of its own to sweep here.
+to_funs <- to_funs[!grepl("^na_|s$|^to_named$|^to_unnamed$|^to_wave$|^to_giant$", names(to_funs))]
 fun_names <- names(to_funs)
 fun_names <- fun_names[!grepl("\\.", fun_names)]
 
@@ -26,9 +28,53 @@ test_that("to_giant works",{
   expect_equal(c(net_nodes(to_giant(as_edgelist(fm)))), 50)
 })
 
-test_that("to_component is an alias of to_giant",{
+test_that("to_giant is a wrapper for the first component",{
   fm <- to_uniplex(fict_marvel, tie = "relationship")
   expect_identical(as_matrix(to_component(fm)), as_matrix(to_giant(fm)))
+  expect_identical(as_matrix(to_component(fm, component = 1)),
+                   as_matrix(to_giant(fm)))
+})
+
+test_that("to_component selects by size rank",{
+  fm <- to_uniplex(fict_marvel, tie = "relationship")
+  expect_equal(c(net_nodes(to_component(fm, 1))), 50)
+  expect_equal(c(net_nodes(to_component(fm, 2))), 1)
+  expect_error(to_component(fm, 99), "between 1 and 4")
+  expect_error(to_component(fm, c(1, 2)), "between 1 and 4")
+})
+
+test_that("to_component selects by node name",{
+  fm <- to_uniplex(fict_marvel, tie = "relationship")
+  # Cable is an isolate, and so its own component
+  expect_equal(c(net_nodes(to_component(fm, "Cable"))), 1)
+  expect_true("Cable" %in% node_names(to_component(fm, "Cable")))
+  expect_identical(as_matrix(to_component(fm, "Beast")),
+                   as_matrix(to_giant(fm)))
+  expect_error(to_component(fm, "Nobody"), "not the name of a node")
+  expect_error(to_component(create_ring(8), "Nobody"), "labelled network")
+})
+
+test_that("to_component and to_giant name the sense of connection",{
+  # only directed networks are qualified, since the notions coincide otherwise
+  expect_equal(net_name(to_giant(fict_starwars)),
+               "Giant weak component of Star Wars network data")
+  expect_equal(net_name(to_giant(fict_starwars, connectivity = "strong")),
+               "Giant strong component of Star Wars network data")
+  expect_equal(net_name(to_component(fict_starwars, 2, "strong")),
+               "Strong component 2 of Star Wars network data")
+  expect_match(net_name(to_component(fict_starwars, "Anakin", "strong")),
+               "^Strong component containing Anakin of ")
+  expect_equal(net_name(to_giant(fict_greys)),
+               "Giant component of Grey's Anatomy")
+  expect_equal(net_name(to_component(fict_greys, 2)),
+               "Component 2 of Grey's Anatomy")
+})
+
+test_that("to_component and to_giant respect connectivity",{
+  # fict_starwars is weakly but not strongly connected
+  expect_equal(c(net_nodes(to_giant(fict_starwars))), 110)
+  expect_equal(c(net_nodes(to_giant(fict_starwars, connectivity = "strong"))), 46)
+  expect_equal(c(net_nodes(to_component(fict_starwars, 1, "strong"))), 46)
 })
 
 test_that("to_wave is an alias of to_time",{
@@ -119,10 +165,3 @@ test_that("to no isolates works", {
   expect_equal(nrow(to_no_isolates(as_edgelist(isolate))), 5)
 })
 
-test_that("to eulerian works", {
-  expect_true(is_eulerian(delete_nodes(ison_koenigsberg, "Lomse")))
-  expect_error(to_eulerian(ison_koenigsberg), "This is not a Eulerian graph.")
-  expect_length(delete_nodes(ison_koenigsberg, "Lomse"),
-                length(to_eulerian(delete_nodes(ison_koenigsberg, "Lomse"))))
-  expect_true(is_connected(to_eulerian(delete_nodes(ison_koenigsberg, "Lomse"))))
-})

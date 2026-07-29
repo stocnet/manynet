@@ -88,7 +88,7 @@ by \href{https://github.com/stocnet/manynet/issues}{raising an issue on Github}.
 \link{as}
 
 Other makes:
-\code{\link{make_cran}},
+\code{\link{make_collect}},
 \code{\link{make_create}},
 \code{\link{make_ego}},
 \code{\link{make_explicit}},

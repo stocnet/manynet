@@ -37,10 +37,10 @@ navbar:
     family:
       text: Related Packages
       menu:
-      - text: netrics
-        href: https://stocnet.github.io/netrics/
       - text: autograph
         href: https://stocnet.github.io/autograph/
+      - text: netrics
+        href: https://stocnet.github.io/netrics/
       - text: migraph
         href: https://stocnet.github.io/migraph/
     news:

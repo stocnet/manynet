@@ -30,6 +30,17 @@ test_that("generate_configuration works", {
 
 test_that("generate_man works", {
   expect_s3_class(generate_man(ison_adolescents), "igraph")
+  expect_s3_class(generate_man(ison_southern_women), "igraph")
+})
+
+test_that("generate_man works without a dyad census", {
+  onemode <- generate_man(6)
+  expect_equal(as.numeric(net_nodes(onemode)), 6)
+  expect_false(is_twomode(onemode))
+  twomode <- generate_man(c(4, 6))
+  expect_equal(as.numeric(net_nodes(twomode)), 10)
+  expect_true(is_twomode(twomode))
+  expect_error(generate_man(6, man = c(1, 2)), "length 3")
 })
 
 test_that("generate_fire works", {

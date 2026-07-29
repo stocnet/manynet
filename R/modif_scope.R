@@ -9,9 +9,13 @@
 #'   than the original object.
 #' 
 #'   - `to_ego()` scopes a network into the local neighbourhood of a given node.
-#'   - `to_giant()` scopes a network into one including only the main component and no smaller components or isolates.
-#'   `to_component()` is an alias, naming the single component that is retained
-#'   (the singular counterpart of `to_components()`, which returns a list of all of them).
+#'   - `to_component()` scopes a network to a single one of its components,
+#'   either the `component`th largest or the one containing a named node.
+#'   It is the singular counterpart of `to_components()`,
+#'   which returns a list of all of them, largest first.
+#'   - `to_giant()` scopes a network into one including only the main component
+#'   and no smaller components or isolates.
+#'   It is a wrapper, such that `to_giant(.data)` is `to_component(.data, 1)`.
 #'   - `to_time()` scopes a longitudinal network to the network as it stood at a given wave or time point.
 #'   `to_wave()` is an alias, using the wave-based vocabulary of `net_waves()` and `to_waves()`.
 #'   For interval (spell) networks with tie `begin`/`end` lifespans, `to_time()`
@@ -27,7 +31,7 @@
 #'   Below are the currently implemented S3 methods:
 #'  
 #'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("to_.*(no_|ego|giant|subgraph|blocks)"))
+#'   available_methods(collect_functions("to_.*(no_|ego|component$|subgraph|blocks)"))
 #'   ```
 #' @template param_data
 #' @template fam_modif
@@ -75,19 +79,28 @@ to_ego.default <- function(.data, node, max_dist = 1, min_dist = 0,
 #' @export
 to_ego.igraph <- function(.data, node, max_dist = 1, min_dist = 0,
                           direction = c("out","in")){
-  egos <- to_egos(.data, max_dist = max_dist, min_dist = min_dist,
-                  direction = direction)
-  as_igraph(egos[[node]])
+  as_igraph(.to_ego_subgraph(.data, node, max_dist, min_dist, direction))
 }
 
 #' @export
 to_ego.tbl_graph <- function(.data, node, max_dist = 1, min_dist = 0,
                              direction = c("out","in")){
-  egos <- to_egos(.data, max_dist = max_dist, min_dist = min_dist,
-                  direction = direction)
   existname <- net_name(.data, prefix = "from")
-  out <- as_tidygraph(egos[[node]])
+  out <- as_tidygraph(.to_ego_subgraph(.data, node, max_dist, min_dist,
+                                       direction))
   add_info(out, name = paste("Ego network of", node, existname))
+}
+
+# Obtains the neighbourhood of just this node.
+# Note that to_egos() would obtain the neighbourhood of every node in the
+# network before discarding all but this one, which does not scale.
+.to_ego_subgraph <- function(.data, node, max_dist, min_dist, direction){
+  direction <- match.arg(direction, c("out","in"))
+  if(is_twomode(.data)) max_dist <- max_dist*2
+  out <- igraph::make_ego_graph(as_igraph(.data), order = max_dist,
+                                nodes = node, mindist = min_dist,
+                                mode = direction)[[1]]
+  out
 }
 
 #' @rdname modif_scope
@@ -192,47 +205,107 @@ to_wave <- to_time
 }
 
 #' @rdname modif_scope
+#' @param component Which component to retain.
+#'   By default 1, i.e. the largest (giant) component,
+#'   with 2 the second largest, and so on.
+#'   Alternatively, the name of a node,
+#'   in which case the component containing that node is retained.
+#' @template param_connectivity
+#' @examples
+#'   to_component(fict_greys, 2)
+#'   to_component(fict_greys, "Miranda Bailey")
 #' @export
-to_giant <- function(.data) UseMethod("to_giant")
+to_component <- function(.data, component = 1,
+                         connectivity = c("weak", "strong")) UseMethod("to_component")
 
 #' @export
-to_giant.default <- function(.data){
-  as_input(.data, to_giant)
+to_component.default <- function(.data, component = 1,
+                                 connectivity = c("weak", "strong")){
+  as_input(.data, to_component, component = component,
+           connectivity = connectivity)
 }
 
 #' @export
-to_giant.igraph <- function(.data) {
-  comps <- igraph::components(.data)
-  max.comp <- which.max(comps$csize)
-  igraph::delete_vertices(.data, comps$membership != max.comp)
+to_component.igraph <- function(.data, component = 1,
+                                connectivity = c("weak", "strong")) {
+  igraph::delete_vertices(.data,
+                          !.to_component_ids(.data, component, connectivity))
 }
 
 #' @export
-to_giant.network <- function(.data) {
-  comps <- igraph::components(as_igraph(.data))
-  network::delete.vertices(.data, 
-                           which(comps$membership != which.max(comps$csize)))
+to_component.network <- function(.data, component = 1,
+                                 connectivity = c("weak", "strong")) {
+  keep <- .to_component_ids(as_igraph(.data), component, connectivity)
+  network::delete.vertices(.data, which(!keep))
 }
 
 #' @export
-to_giant.tbl_graph <- function(.data) {
-  as_tidygraph(to_giant(as_igraph(.data))) |> 
-    add_info(name = paste(net_name(.data, prefix = "Giant component of")))
+to_component.tbl_graph <- function(.data, component = 1,
+                                   connectivity = c("weak", "strong")) {
+  out <- as_tidygraph(to_component(as_igraph(.data), component, connectivity))
+  qual <- .connectivity_word(.data, connectivity)
+  noun <- if(qual == "") "Component" else
+    paste0(toupper(substring(qual, 1, 1)), substring(qual, 2), " component")
+  prefix <- if(is.character(component))
+    paste0(noun, " containing ", component, " of") else
+      paste0(noun, " ", component, " of")
+  add_info(out, name = paste(net_name(.data, prefix = prefix)))
 }
 
 #' @export
-to_giant.data.frame <- function(.data) {
-  as_edgelist(to_giant(as_igraph(.data)))
+to_component.data.frame <- function(.data, component = 1,
+                                    connectivity = c("weak", "strong")) {
+  as_edgelist(to_component(as_igraph(.data), component, connectivity))
 }
 
 #' @export
-to_giant.matrix <- function(.data) {
-  as_matrix(to_giant(as_igraph(.data)))
+to_component.matrix <- function(.data, component = 1,
+                                connectivity = c("weak", "strong")) {
+  as_matrix(to_component(as_igraph(.data), component, connectivity))
+}
+
+# Names the sense in which a component is connected, for reporting.
+# Only directed networks are qualified, since the two notions coincide
+# for undirected networks, where naming either would be misleading.
+.connectivity_word <- function(.data, connectivity) {
+  if(!is_directed(.data)) return("")
+  match.arg(connectivity, c("weak", "strong"))
+}
+
+# Identifies which nodes belong to the requested component,
+# whether named by size rank or by a node it contains.
+.to_component_ids <- function(.data, component, connectivity) {
+  comps <- igraph::components(.data, mode = match.arg(connectivity,
+                                                      c("weak", "strong")))
+  if(is.character(component)) {
+    if(!is_labelled(.data))
+      snet_abort("{.arg component} can only name a node in a labelled network.")
+    idx <- match(component, node_labels(.data))
+    if(length(component) != 1 || is.na(idx))
+      snet_abort("{.val {component}} is not the name of a node in this network.")
+    comps$membership == comps$membership[idx]
+  } else {
+    if(length(component) != 1 || component < 1 || component > comps$no)
+      snet_abort(paste("{.arg component} must be a single number between 1 and",
+                       "{comps$no}, the number of components in this network."))
+    comps$membership == order(comps$csize, decreasing = TRUE)[component]
+  }
 }
 
 #' @rdname modif_scope
+#' @examples
+#'   to_giant(fict_greys)
 #' @export
-to_component <- to_giant
+to_giant <- function(.data, connectivity = c("weak", "strong")) {
+  out <- to_component(.data, component = 1, connectivity = connectivity)
+  if(inherits(out, "tbl_graph")) {
+    qual <- .connectivity_word(.data, connectivity)
+    prefix <- paste0("Giant ", if(qual == "") "" else paste0(qual, " "),
+                     "component of")
+    out <- add_info(out, name = paste(net_name(.data, prefix = prefix)))
+  }
+  out
+}
 
 #' @rdname modif_scope
 #' @importFrom tidygraph node_is_isolated

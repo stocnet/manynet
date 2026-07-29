@@ -58,6 +58,21 @@ as_igraph.data.frame <- function(.data,
     graph <- igraph::graph_from_data_frame(.data,
                                            vertices = data.frame(name = 1:max(c(.data$from, .data$to))))
   } else graph <- igraph::graph_from_data_frame(.data)
+  # An edgelist carries no directedness flag of its own, so directedness is
+  # inferred from reciprocity, matching `is_directed.data.frame()`. That mark
+  # cannot be called here because it routes back through `as_igraph()`, so
+  # reciprocity is read off the graph just constructed. Without this the
+  # coercion always returns a directed graph, and marks such as `is_acyclic()`
+  # then disagree with every other representation of the same network.
+  recip <- igraph::reciprocity(graph, mode = "default")
+  if (isTRUE(recip == 0)) {
+    # no mutual dyads, so no edges to merge: `each` keeps tie attributes
+    graph <- igraph::as_undirected(graph, mode = "each")
+  } else if (isTRUE(recip == 1)) {
+    # every dyad is listed in both directions, so collapse the duplicates
+    graph <- igraph::as_undirected(graph, mode = "collapse",
+                                   edge.attr.comb = "first")
+  }
   if (!is_labelled(.data)) {
     graph <- igraph::delete_vertex_attr(graph, "name")
   }
@@ -168,8 +183,11 @@ as_igraph.network <- function(.data,
 
 #' @export
 as_igraph.stocnet <- function(.data, twomode = FALSE) {
+  # `.data$info$directed` is authoritative here, so use it rather than letting
+  # graph_from_data_frame() default every stocnet to a directed graph.
+  directed <- is_directed(.data)
   if(is.null(as_nodelist(.data)) || length(as_nodelist(.data)) == 0){
-    out <- igraph::graph_from_data_frame(as_edgelist(.data))
+    out <- igraph::graph_from_data_frame(as_edgelist(.data), directed = directed)
     out <- to_unlabelled(out)
   } else {
     vertices <- as_nodelist(.data)
@@ -180,10 +198,12 @@ as_igraph.stocnet <- function(.data, twomode = FALSE) {
       vertices <- vertices |> dplyr::mutate(type = mode == unique(mode)[2]) |>
         dplyr::select(dplyr::any_of("name"), dplyr::everything(), -mode)
     if(is_labelled(.data)){
-      out <- igraph::graph_from_data_frame(as_edgelist(.data), 
+      out <- igraph::graph_from_data_frame(as_edgelist(.data),
+                                           directed = directed,
                                            vertices = vertices)
     } else {
-      out <- igraph::graph_from_data_frame(as_edgelist(.data)) |>
+      out <- igraph::graph_from_data_frame(as_edgelist(.data),
+                                           directed = directed) |>
         bind_node_attributes(vertices)
     }
     

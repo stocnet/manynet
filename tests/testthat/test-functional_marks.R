@@ -21,7 +21,29 @@ for (fn in is_funs) {
 # Marks should not depend on the class the network is represented in
 mark_classes <- class_versions(canonical_net)
 
-for (fn in is_funs) {
+# ... except the class predicates, which describe the container rather than the
+# network, and so are expected to vary. Pin their expected pattern instead of
+# requiring agreement, so the behaviour stays covered rather than skipped.
+mark_class_patterns <- list(
+  is_graph    = c(tidygraph = TRUE,  igraph = TRUE,  matrix = FALSE,
+                  network = TRUE,    edgelist = FALSE, stocnet = TRUE),
+  is_edgelist = c(tidygraph = FALSE, igraph = FALSE, matrix = FALSE,
+                  network = FALSE,   edgelist = TRUE,  stocnet = FALSE)
+)
+
+for (fn in names(mark_class_patterns)) {
+  local({
+    fn <- fn
+    f <- get(fn, envir = asNamespace("manynet"))
+    pattern <- mark_class_patterns[[fn]]
+    test_that(paste0(fn, "() varies by object class as expected"), {
+      out <- vapply(mark_classes, f, logical(1))
+      expect_equal(out[names(pattern)], pattern)
+    })
+  })
+}
+
+for (fn in setdiff(is_funs, names(mark_class_patterns))) {
   f <- get(fn, envir = asNamespace("manynet"))
   test_that(paste0(fn, "() agrees across object classes"), {
     outs <- lapply(mark_classes, function(x) {
