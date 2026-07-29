@@ -27,6 +27,13 @@
   - Scripts that cannot be parsed are now named, instead of the whole directory silently returning a mangled network
 - Renamed the documentation topic `make_cran` to `make_collect`, and corrected it where it still described `collect_cran()` and `collect_pkg()` under their former names `read_cran()` and `read_pkg()`
 
+## Coercing
+
+- Fixed `as_igraph()` always returning a *directed* graph for edgelist or stocnet objects, discarding the network's own directedness
+  - `is_acyclic()` now returns `FALSE` and `is_connected()` returns `TRUE` for undirected networks through `as_edgelist()`
+  - Directedness now inferred from reciprocity for edgelists, as `is_directed()` already did
+  - Directedness now read from `info$directed` for stocnet objects
+
 ## Modifying
 
 - Fixed `to_uniplex()` erroring on networks it cannot reduce, and generalised where it looks for the tie types:
