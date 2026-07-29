@@ -37,7 +37,14 @@
 
 ## Modifying
 
+- Improved `to_component()` so that it returns a single, chosen component, instead of being an alias of `to_giant()`
+  - `component` selects the component to retain, by default 1, i.e. the largest (giant) component, with 2 the second largest, and so on
+  - `component` may alternatively name a node, in which case the component containing that node is retained, e.g. `to_component(fict_greys, "Miranda Bailey")`
+  - `to_giant()` is now a wrapper, such that `to_giant(.data)` is `to_component(.data, component = 1)`, and is no longer generic
 - Improved `to_components()` to return its components ordered from largest to smallest, so that `to_components(.data)[[n]]` is `to_component(.data, n)`; `igraph::decompose()` returns them in discovery order
+- Added a `connectivity` argument to `to_component()`, `to_components()`, and `to_giant()`, "weak" by default since a giant component is conventionally the weak one, and "strong" where ties must run in both directions between members
+  - Argument is named `connectivity` rather than igraph's `mode`, which is reserved in this package for one- and two-mode networks
+  - Connectivity type, if applicable, is now reported in the network's name, e.g. `to_giant(fict_starwars, connectivity = "strong")` is a "Giant strong component of Star Wars network data"
 - Fixed `to_uniplex()` erroring on networks it cannot reduce, and generalised where it looks for the tie types:
   - Uniplex networks raised an "In argument: `type == tie`" error, and are now returned unchanged, as in `to_waves()` and `to_slices()`
   - Where a non-existent layer is requested or none is given, available layers are now reported instead of raising an uninformative error while printing the (empty) result
