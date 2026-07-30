@@ -293,6 +293,22 @@ to_tree.igraph <- function(.data) {
 
 #' @rdname modif_paths 
 #' @template param_dir
+#' @section Dominating: 
+#'   This function returns a network in which each node is tied to its closest dominating node.
+#'   A dominating set \eqn{D} in a graph \eqn{G} is a subset of nodes such that every node 
+#'   not in \eqn{D} is adjacent to at least one node in \eqn{D}. 
+#'   The domination number, \eqn{\gamma(G)}, is the size of the smallest such set. 
+#'   This concept underpins many practical network problems: 
+#'   facility location, sensor placement, control theory applied to networks, 
+#'   and backbone selection in ad hoc wireless routing.
+#' @references
+#' ## On dominating sets
+#' Bange, David W., Anthony E. Barkauskas, and Peter J. Slater. 1988. 
+#' "Efficient dominating sets in graphs." 
+#' In _Applications of Discrete Mathematics_, SIAM, pp. 189–99.
+#' 
+#' Haynes, Teresa W., Stephen T. Hedetniemi, and Peter J. Slater. 1998. 
+#' _Fundamentals of Domination in Graphs_. CRC Press.
 #' @param from The index or name of the node from which the path should be traced.
 #' @export
 to_dominating <- function(.data, from, direction = c("out","in")) UseMethod("to_dominating")
