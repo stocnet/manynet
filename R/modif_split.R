@@ -148,7 +148,9 @@ to_subgraphs.network <- function(.data, attribute){
 #' @rdname modif_split
 #' @examples
 #'   to_components(to_uniplex(fict_marvel, "relationship"))
-#'   to_components(fict_starwars, connectivity = "strong")
+#'   # Strong decomposition of a directed network returns many small components,
+#'   # ordered here from largest to smallest, so just the largest is shown:
+#'   to_components(fict_starwars, connectivity = "strong")[[1]]
 #' @export
 to_components <- function(.data,
                           connectivity = c("weak", "strong")) UseMethod("to_components")

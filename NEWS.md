@@ -5,6 +5,7 @@
 - Added `to_permuted.matrix()` to permute the matrix directly instead of coercing it to a `tbl_graph` and back
   - The coercion, and not the permutation, was where nearly all of the time went, so that permuting a 17x17 weighted matrix is now around 500 times faster, which matters for the permutation loops in e.g. `migraph::net_regression()`
   - Permutation is unchanged, drawing one `sample()` for one-mode networks and two for two-mode networks, in that order, so that seeded results are the same as before
+- Updated strong connectivity example to print only the largest component to reduce CRAN's example timing
 
 # manynet 2.2.3
 

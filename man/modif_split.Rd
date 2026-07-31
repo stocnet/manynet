@@ -103,7 +103,9 @@ ison_adolescents |>
                           replace = TRUE)) |>
   to_subgraphs(attribute = "unicorn")
   to_components(to_uniplex(fict_marvel, "relationship"))
-  to_components(fict_starwars, connectivity = "strong")
+  # Strong decomposition of a directed network returns many small components,
+  # ordered here from largest to smallest, so just the largest is shown:
+  to_components(fict_starwars, connectivity = "strong")[[1]]
 ison_adolescents |>
   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) |>
   to_waves(attribute = "wave")
