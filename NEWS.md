@@ -1,5 +1,10 @@
 # manynet 2.2.4
 
+## Package
+
+- Removed the CRAN version check from `.onAttach()`, making `library(manynet)` noticeably faster to attach
+  - It now runs once, for the whole stack, in `{migraph}`, where it is also cached and checks GitHub as well as CRAN
+
 ## Modifying
 
 - Added `to_permuted.matrix()` to permute the matrix directly instead of coercing it to a `tbl_graph` and back
