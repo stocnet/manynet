@@ -77,7 +77,12 @@ network into components default to "weak".}
 
 \item{...}{Arguments passed on to dplyr::filter}
 
-\item{membership}{A vector of partition memberships.}
+\item{membership}{A vector of partition memberships.
+For two-mode networks this is a single vector covering the nodes in
+both modes, and not one vector per mode;
+the blocks of each mode are established separately from it,
+so that the result has one row per block of the first mode and
+one column per block of the second.}
 
 \item{FUN}{A function for summarising block content.
 By default \code{mean}.

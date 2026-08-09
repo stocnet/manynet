@@ -165,3 +165,34 @@ test_that("to no isolates works", {
   expect_equal(nrow(to_no_isolates(as_edgelist(isolate))), 5)
 })
 
+test_that("to_blocks summarises the blocks of a two-mode network", {
+  sw <- as_matrix(ison_southern_women)
+  out <- to_blocks(sw, c(rep(1, 9), rep(2, 9), rep(1, 7), rep(2, 7)))
+  # one row per block of the first mode, one column per block of the second
+  expect_equal(dim(out), c(2L, 2L))
+  expect_equal(unname(out),
+               matrix(c(mean(sw[1:9, 1:7]), mean(sw[10:18, 1:7]),
+                        mean(sw[1:9, 8:14]), mean(sw[10:18, 8:14])),
+                      nrow = 2, ncol = 2))
+})
+
+test_that("to_blocks handles two-mode memberships that are not 1...k", {
+  # regression test: the block matrix used to be dimensioned by the group
+  # labels themselves rather than by how many groups there were
+  sw <- as_matrix(ison_southern_women)
+  contiguous <- to_blocks(sw, c(rep(1, 9), rep(2, 9), rep(1, 7), rep(2, 7)))
+  expect_equal(to_blocks(sw, c(rep(3, 9), rep(7, 9), rep(5, 7), rep(9, 7))),
+               contiguous)
+  expect_equal(to_blocks(sw, c(rep("a", 9), rep("b", 9),
+                               rep("x", 7), rep("y", 7))),
+               contiguous)
+  # the two modes are partitioned separately, so labels may be shared
+  expect_equal(dim(to_blocks(sw, c(rep(2, 9), rep(4, 9), rep(4, 14)))),
+               c(2L, 1L))
+})
+
+test_that("to_blocks expects one membership vector across both modes", {
+  sw <- as_matrix(ison_southern_women)
+  expect_error(to_blocks(sw, c(rep(1, 9), rep(2, 9))), "length 32")
+})
+

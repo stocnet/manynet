@@ -2,14 +2,16 @@
 
 ## Package
 
-- Removed the CRAN version check from `.onAttach()`, making `library(manynet)` noticeably faster to attach
-  - It now runs once, for the whole stack, in `{migraph}`, where it is also cached and checks GitHub as well as CRAN
+- Removed CRAN version check from `.onAttach()` making `library(manynet)` noticeably faster to attach
+  - Now runs once, for the whole stack, in `{migraph}`, where it is also cached and checks GitHub as well as CRAN
+
 
 ## Modifying
 
 - Added `to_permuted.matrix()` to permute the matrix directly instead of coercing it to a `tbl_graph` and back
   - The coercion, and not the permutation, was where nearly all of the time went, so that permuting a 17x17 weighted matrix is now around 500 times faster, which matters for the permutation loops in e.g. `migraph::net_regression()`
   - Permutation is unchanged, drawing one `sample()` for one-mode networks and two for two-mode networks, in that order, so that seeded results are the same as before
+- Fixed `to_blocks()` for two-mode networks, where the block matrix was dimensioned by the group labels themselves rather than by how many groups there were, so that memberships not labelled 1...k returned a matrix of the wrong size, or an "invalid 'ncol' value" error
 - Updated strong connectivity example to print only the largest component to reduce CRAN's example timing
 
 # manynet 2.2.3

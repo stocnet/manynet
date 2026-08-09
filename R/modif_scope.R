@@ -404,6 +404,11 @@ to_subgraph.matrix <- function(.data, ...){
 #'   by collapsing groups of connected nodes into single nodes 
 #'   while preserving the topology of the original structures.
 #' @param membership A vector of partition memberships.
+#'   For two-mode networks this is a single vector covering the nodes in
+#'   both modes, and not one vector per mode;
+#'   the blocks of each mode are established separately from it,
+#'   so that the result has one row per block of the first mode and
+#'   one column per block of the second.
 #' @param FUN A function for summarising block content.
 #'   By default `mean`.
 #'   Other recommended options include `median`, `sum`,
@@ -419,20 +424,28 @@ to_blocks.default <- function(.data, membership, FUN = mean){
 #' @export
 to_blocks.matrix <- function(.data, membership, FUN = mean){
   if(is_twomode(.data)){
-    mat <- to_onemode(.data)
-    m1_membs <- membership[!node_is_mode(.data)]
-    m2_membs <- membership[node_is_mode(.data)]
-    x <- length(unique(m1_membs))
-    y <- length(unique(m2_membs))
-    out <- matrix(nrow = unique(m1_membs)[x],
-                  ncol = unique(m2_membs)[y])
-    membership <- as.numeric(as.factor(membership))
-    for(i in unique(m1_membs)) for (j in unique(m2_membs))
-      out[i, j] <- FUN(mat[membership == i, 
-                           membership == j, drop = FALSE], 
+    # The incidence matrix already has the first mode in its rows and the
+    # second in its columns, so blocks are read off it directly.
+    mat <- .data
+    modes <- node_is_mode(.data)
+    if(length(membership) != length(modes))
+      cli::cli_abort(paste("{.arg membership} should be a single vector of",
+                           "length {length(modes)}, giving the partition of",
+                           "the nodes in both modes,",
+                           "but it is of length {length(membership)}."))
+    # Each mode is recoded separately so that shared labels across the modes,
+    # or labels that are not 1...k, still index the block matrix correctly.
+    m1_membs <- as.factor(membership[!modes])
+    m2_membs <- as.factor(membership[modes])
+    x <- length(levels(m1_membs))
+    y <- length(levels(m2_membs))
+    out <- matrix(nrow = x, ncol = y)
+    for(i in seq_len(x)) for (j in seq_len(y))
+      out[i, j] <- FUN(mat[as.integer(m1_membs) == i,
+                           as.integer(m2_membs) == j, drop = FALSE],
                        na.rm = TRUE)
-    rownames(out) <- paste("Block", seq_len(unique(m1_membs)[x]))
-    colnames(out) <- paste("Block", seq_len(unique(m2_membs)[y]))
+    rownames(out) <- paste("Block", seq_len(x))
+    colnames(out) <- paste("Block", seq_len(y))
   } else {
     mat <- .data
     membership <- as.numeric(as.factor(membership))
