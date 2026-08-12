@@ -17,6 +17,7 @@
 
 ## Data
 
+- Improved `table_data()` to skip TRUE/FALSE `multiplex` in favour of number of `layers`
 - Added `ison_florentine` for Padgett's multiplex business and marriage ties among 16 Renaissance Florentine families, with their wealth, priorates, and degree in the larger 116-family dataset
 
 # manynet 2.2.3
