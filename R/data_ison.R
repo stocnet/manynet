@@ -476,3 +476,52 @@
 #'   ```
 "ison_emotions"
 
+## Florentine families ####
+
+#' One-mode multiplex network of Florentine families (Padgett and Ansell 1993)
+#'
+#' @description
+#'   Marriage alliances and business dealings among 16 Renaissance Florentine
+#'   families, coded by John Padgett from historical documents and analysed by
+#'   Padgett and Ansell (1993) as an account of how the Medici came to control
+#'   the city around 1430. Two factions dominated that struggle, one around the
+#'   Medici and one around the Strozzi.
+#'
+#'   Two types of tie are recorded:
+#'
+#'   - _business_: recorded financial ties such as loans, credits,
+#'   and joint partnerships
+#'   - _marriage_: marriage alliances between the families
+#'
+#'   Three nodal attributes are included:
+#'
+#'   - _wealth_: each family's net wealth in 1427, in thousands of lira
+#'   - _priorates_: the number of seats on the civic council held between
+#'   1282 and 1344
+#'   - _totalties_: the number of business or marriage ties the family has in
+#'   the larger dataset of 116 families used by Breiger and Pattison (1986)
+#' @details
+#'   Both relations are recorded symmetrically here, as in the original coding.
+#'   As Breiger & Pattison (1986) point out, this is defensible for marriage ties 
+#'   but unfortunate for the financial ties, which were almost certainly directed. 
+#'   The Pucci family is an isolate in both relations.
+#' @docType data
+#' @keywords datasets
+#' @name ison_florentine
+#' @references
+#'   Padgett, John F., and Christopher K. Ansell. 1993.
+#'   "Robust Action and the Rise of the Medici, 1400-1434".
+#'   _American Journal of Sociology_ 98(6): 1259-1319.
+#'   \doi{10.1086/230190}
+#'   
+#'   Breiger, Ron, and Philippa Pattison. 1986. 
+#'   "Cumulated social roles: The duality of persons and their algebras." 
+#'   _Social Networks_, 8: 215-256.
+#'   \doi{10.1016/0378-8733(86)90006-7}
+#' @usage data(ison_florentine)
+#' @format
+#'   ```{r, echo = FALSE}
+#'   ison_florentine
+#'   ```
+"ison_florentine"
+

@@ -15,6 +15,10 @@
 - Fixed `to_blocks()` for two-mode networks, where the block matrix was dimensioned by the group labels themselves rather than by how many groups there were, so that memberships not labelled 1...k returned a matrix of the wrong size, or an "invalid 'ncol' value" error
 - Updated strong connectivity example to print only the largest component to reduce CRAN's example timing
 
+## Data
+
+- Added `ison_florentine` for Padgett's multiplex business and marriage ties among 16 Renaissance Florentine families, with their wealth, priorates, and degree in the larger 116-family dataset
+
 # manynet 2.2.3
 
 ## Making
