@@ -13,6 +13,7 @@
   - The coercion, and not the permutation, was where nearly all of the time went, so that permuting a 17x17 weighted matrix is now around 500 times faster, which matters for the permutation loops in e.g. `migraph::net_regression()`
   - Permutation is unchanged, drawing one `sample()` for one-mode networks and two for two-mode networks, in that order, so that seeded results are the same as before
 - Fixed `to_blocks()` for two-mode networks, where the block matrix was dimensioned by the group labels themselves rather than by how many groups there were, so that memberships not labelled 1...k returned a matrix of the wrong size, or an "invalid 'ncol' value" error
+- Renamed `to_ties()` to `to_linegraph()`, since it returns the line graph of a network, where ties become nodes
 - Updated strong connectivity example to print only the largest component to reduce CRAN's example timing
 
 ## Data

@@ -178,6 +178,14 @@ add_changes <- function(.data, changes) {
   bind_changes(.data, changes)
 }
 
+#' @describeIn defunct Deprecated on 2026-08-09.
+#' @export
+to_ties <- function(.data) {
+  .Deprecated("to_linegraph", package = "manynet",
+              old = "to_ties")
+  to_linegraph(.data)
+}
+
 
 # Moved to netrics from 2.0.0 ####
 

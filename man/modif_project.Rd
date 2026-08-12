@@ -4,7 +4,7 @@
 \alias{modif_project}
 \alias{to_mode1}
 \alias{to_mode2}
-\alias{to_ties}
+\alias{to_linegraph}
 \alias{to_hypergraph}
 \title{Modifying networks projection}
 \usage{
@@ -12,7 +12,7 @@ to_mode1(.data, similarity = c("count", "jaccard", "rand", "pearson", "yule"))
 
 to_mode2(.data, similarity = c("count", "jaccard", "rand", "pearson", "yule"))
 
-to_ties(.data)
+to_linegraph(.data)
 
 to_hypergraph(.data)
 }
@@ -58,7 +58,8 @@ These functions offer tools for projecting manynet-consistent data:
 of the first node set's (e.g. rows) joint affiliations to nodes in the second node set (columns).
 \item \code{to_mode2()} projects a two-mode network to a one-mode network
 of the second node set's (e.g. columns) joint affiliations to nodes in the first node set (rows).
-\item \code{to_ties()} projects a network to one where the ties become nodes and incident nodes become their ties.
+\item \code{to_linegraph()} projects a network to its line graph,
+where the ties become nodes and incident nodes become their ties.
 \item \code{to_hypergraph()} projects one-mode or two-mode network data into hypergraph data,
 where ties can connect more than two nodes.
 }
@@ -67,10 +68,11 @@ where ties can connect more than two nodes.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{         data.frame default igraph matrix network tbl_graph
-to_mode1          *       *      *      *       *         *
-to_mode2          *       *      *      *       *         *
-to_ties                   *      *                         
+\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default igraph matrix network stocnet tbl_graph
+to_hypergraph                  *      *                      *          
+to_linegraph                   *      *                                 
+to_mode1               *       *      *      *       *                 *
+to_mode2               *       *      *      *       *                 *
 }\if{html}{\out{</div>}}
 }
 \section{Comparison of two-mode projection methods}{

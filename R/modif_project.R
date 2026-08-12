@@ -9,7 +9,8 @@
 #'   of the first node set's (e.g. rows) joint affiliations to nodes in the second node set (columns). 
 #'   - `to_mode2()` projects a two-mode network to a one-mode network
 #'   of the second node set's (e.g. columns) joint affiliations to nodes in the first node set (rows).
-#'   - `to_ties()` projects a network to one where the ties become nodes and incident nodes become their ties.
+#'   - `to_linegraph()` projects a network to its line graph,
+#'   where the ties become nodes and incident nodes become their ties.
 #'   - `to_hypergraph()` projects one-mode or two-mode network data into hypergraph data, 
 #'   where ties can connect more than two nodes.
 # #'   - `to_galois()` projects a network to its Galois derivation.
@@ -18,7 +19,7 @@
 #'   Below are the currently implemented S3 methods:
 #'  
 #'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("to_.*(mode[0-9]|ties|galois)"))
+#'   available_methods(collect_functions("to_.*(mode[0-9]|linegraph|hypergraph)"))
 #'   ```
 #' @section Comparison of two-mode projection methods:
 #'
@@ -34,6 +35,7 @@
 #' | | Binary (unweighted) output | yes | yes (`multiplicity = FALSE`) | threshold manually |
 #' | | Jaccard normalisation | yes | no | code manually |
 #' | | Cosine normalisation | yes | no | code manually |
+#' | | Other similarity measures | 18 in all, see `similarity` | no | code manually |
 #' | **Attributes** | Retains node attributes | yes | yes | no — lost in matrix round-trip |
 #' | | Retains edge attributes | weight only | weight only | no |
 #' | | Removes self-loops automatically | yes | yes | `diag(P) <- 0` manually |
@@ -237,17 +239,17 @@ to_mode2.data.frame <- function(.data, similarity = c("count","jaccard","rand","
 #' @rdname modif_project
 #' @importFrom igraph make_line_graph E
 #' @examples
-#' to_ties(ison_adolescents)
+#' to_linegraph(ison_adolescents)
 #' @export
-to_ties <- function(.data) UseMethod("to_ties")
+to_linegraph <- function(.data) UseMethod("to_linegraph")
 
 #' @export
-to_ties.default <- function(.data){
-  as_input(.data, to_ties)
+to_linegraph.default <- function(.data){
+  as_input(.data, to_linegraph)
 }
 
 #' @export
-to_ties.igraph <- function(.data){
+to_linegraph.igraph <- function(.data){
   out <- igraph::make_line_graph(.data)
   if(!is_labelled(.data)) {
     igraph::V(out)$name <- paste0(igraph::as_edgelist(.data)[,1], 
