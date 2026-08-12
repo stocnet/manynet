@@ -965,128 +965,146 @@ export(write_matrix)
 export(write_nodelist)
 export(write_pajek)
 export(write_ucinet)
-importFrom(cli,cli_div)
-importFrom(cli,cli_end)
-importFrom(cli,cli_inform)
-importFrom(cli,spark_bar)
-importFrom(dplyr,across)
-importFrom(dplyr,arrange)
-importFrom(dplyr,as_tibble)
-importFrom(dplyr,bind_rows)
-importFrom(dplyr,coalesce)
-importFrom(dplyr,distinct)
-importFrom(dplyr,everything)
-importFrom(dplyr,filter)
-importFrom(dplyr,group_by)
-importFrom(dplyr,mutate)
-importFrom(dplyr,rename)
-importFrom(dplyr,select)
-importFrom(dplyr,summarise)
-importFrom(dplyr,tibble)
-importFrom(dplyr,ungroup)
-importFrom(igraph,E)
-importFrom(igraph,V)
-importFrom(igraph,add_edges)
-importFrom(igraph,add_vertices)
-importFrom(igraph,any_loop)
-importFrom(igraph,any_multiple)
-importFrom(igraph,as.directed)
-importFrom(igraph,as.undirected)
-importFrom(igraph,as_adjacency_matrix)
-importFrom(igraph,as_biadjacency_matrix)
-importFrom(igraph,as_data_frame)
-importFrom(igraph,as_directed)
-importFrom(igraph,bipartite_projection)
-importFrom(igraph,complementer)
-importFrom(igraph,decompose)
-importFrom(igraph,delete_edge_attr)
-importFrom(igraph,delete_edges)
-importFrom(igraph,delete_vertex_attr)
-importFrom(igraph,delete_vertices)
-importFrom(igraph,edge_attr)
-importFrom(igraph,edge_attr_names)
-importFrom(igraph,feedback_arc_set)
-importFrom(igraph,graph_attr)
-importFrom(igraph,graph_from_adjacency_matrix)
-importFrom(igraph,graph_from_biadjacency_matrix)
-importFrom(igraph,graph_from_data_frame)
-importFrom(igraph,has_eulerian_path)
-importFrom(igraph,induced_subgraph)
-importFrom(igraph,is_bipartite)
-importFrom(igraph,is_connected)
-importFrom(igraph,is_dag)
-importFrom(igraph,is_directed)
-importFrom(igraph,is_igraph)
-importFrom(igraph,is_named)
-importFrom(igraph,is_simple)
-importFrom(igraph,is_weighted)
-importFrom(igraph,make_ego_graph)
-importFrom(igraph,make_graph)
-importFrom(igraph,make_lattice)
-importFrom(igraph,make_line_graph)
-importFrom(igraph,make_star)
-importFrom(igraph,make_tree)
-importFrom(igraph,max_bipartite_match)
-importFrom(igraph,maximal.cliques)
-importFrom(igraph,read_graph)
-importFrom(igraph,realize_bipartite_degseq)
-importFrom(igraph,realize_degseq)
-importFrom(igraph,reverse_edges)
-importFrom(igraph,sample_degseq)
-importFrom(igraph,sample_forestfire)
-importFrom(igraph,sample_islands)
-importFrom(igraph,sample_last_cit)
-importFrom(igraph,sample_pa)
-importFrom(igraph,sample_smallworld)
-importFrom(igraph,set_edge_attr)
-importFrom(igraph,set_vertex_attr)
-importFrom(igraph,simplify)
-importFrom(igraph,vcount)
-importFrom(igraph,vertex_attr)
-importFrom(igraph,vertex_attr_names)
-importFrom(igraph,write_graph)
-importFrom(network,as.edgelist)
-importFrom(network,as.matrix.network)
-importFrom(network,as.network)
-importFrom(network,as.sociomatrix)
-importFrom(network,delete.vertex.attribute)
-importFrom(network,get.edge.attribute)
-importFrom(network,get.network.attribute)
-importFrom(network,is.bipartite)
-importFrom(network,is.network)
-importFrom(network,list.edge.attributes)
-importFrom(network,network.size)
-importFrom(network,read.paj)
-importFrom(network,set.vertex.attribute)
-importFrom(pillar,pillar_shaft)
-importFrom(pillar,style_subtle)
-importFrom(pillar,tbl_format_body)
-importFrom(pillar,tbl_format_setup)
-importFrom(pillar,type_sum)
-importFrom(stats,cor)
-importFrom(tidygraph,.E)
-importFrom(tidygraph,.G)
-importFrom(tidygraph,.N)
-importFrom(tidygraph,activate)
-importFrom(tidygraph,as_tbl_graph)
-importFrom(tidygraph,bind_edges)
-importFrom(tidygraph,filter)
-importFrom(tidygraph,is.tbl_graph)
-importFrom(tidygraph,mutate)
-importFrom(tidygraph,node_is_isolated)
-importFrom(tidygraph,rename)
-importFrom(tidygraph,reroute)
-importFrom(tidygraph,tbl_graph)
-importFrom(tidygraph,to_subgraph)
-importFrom(tidygraph,with_graph)
-importFrom(utils,.DollarNames)
-importFrom(utils,askYesNo)
-importFrom(utils,available.packages)
-importFrom(utils,contrib.url)
-importFrom(utils,getParseData)
-importFrom(utils,read.csv)
-importFrom(utils,read.csv2)
-importFrom(utils,read.delim)
-importFrom(utils,read.table)
-importFrom(utils,write.csv)
-importFrom(utils,write.csv2)
+importFrom(cli,
+  cli_div,
+  cli_end,
+  cli_inform,
+  spark_bar
+)
+importFrom(dplyr,
+  across,
+  arrange,
+  as_tibble,
+  bind_rows,
+  coalesce,
+  distinct,
+  everything,
+  filter,
+  group_by,
+  mutate,
+  rename,
+  select,
+  summarise,
+  tibble,
+  ungroup
+)
+importFrom(igraph,
+  E,
+  V,
+  add_edges,
+  add_vertices,
+  any_loop,
+  any_multiple,
+  as.directed,
+  as.undirected,
+  as_adjacency_matrix,
+  as_biadjacency_matrix,
+  as_data_frame,
+  as_directed,
+  bipartite_projection,
+  complementer,
+  decompose,
+  delete_edge_attr,
+  delete_edges,
+  delete_vertex_attr,
+  delete_vertices,
+  edge_attr,
+  edge_attr_names,
+  feedback_arc_set,
+  graph_attr,
+  graph_from_adjacency_matrix,
+  graph_from_biadjacency_matrix,
+  graph_from_data_frame,
+  has_eulerian_path,
+  induced_subgraph,
+  is_bipartite,
+  is_connected,
+  is_dag,
+  is_directed,
+  is_igraph,
+  is_named,
+  is_simple,
+  is_weighted,
+  make_ego_graph,
+  make_graph,
+  make_lattice,
+  make_line_graph,
+  make_star,
+  make_tree,
+  max_bipartite_match,
+  maximal.cliques,
+  realize_bipartite_degseq,
+  realize_degseq,
+  reverse_edges,
+  sample_degseq,
+  sample_forestfire,
+  sample_islands,
+  sample_last_cit,
+  sample_pa,
+  sample_smallworld,
+  set_edge_attr,
+  set_graph_attr,
+  set_vertex_attr,
+  simplify,
+  vcount,
+  vertex_attr,
+  vertex_attr_names,
+  write_graph
+)
+importFrom(network,
+  as.edgelist,
+  as.matrix.network,
+  as.network,
+  as.sociomatrix,
+  delete.vertex.attribute,
+  get.edge.attribute,
+  get.network.attribute,
+  is.bipartite,
+  is.network,
+  list.edge.attributes,
+  network.size,
+  read.paj,
+  set.vertex.attribute
+)
+importFrom(pillar,
+  pillar_shaft,
+  style_subtle,
+  tbl_format_body,
+  tbl_format_setup,
+  type_sum
+)
+importFrom(stats,
+  cor,
+  cov,
+  dist
+)
+importFrom(tidygraph,
+  .E,
+  .G,
+  .N,
+  activate,
+  as_tbl_graph,
+  bind_edges,
+  filter,
+  is.tbl_graph,
+  mutate,
+  node_is_isolated,
+  rename,
+  reroute,
+  tbl_graph,
+  to_subgraph,
+  with_graph
+)
+importFrom(utils,
+  .DollarNames,
+  askYesNo,
+  available.packages,
+  contrib.url,
+  getParseData,
+  read.csv,
+  read.csv2,
+  read.delim,
+  read.table,
+  write.csv,
+  write.csv2
+)

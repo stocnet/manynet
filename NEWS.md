@@ -1,9 +1,10 @@
-# manynet 2.2.4
+# manynet 2.3.0
 
 ## Package
 
 - Removed CRAN version check from `.onAttach()` making `library(manynet)` noticeably faster to attach
   - Now runs once, for the whole stack, in `{migraph}`, where it is also cached and checks GitHub as well as CRAN
+- Updated CONTRIBUTING with more details about console messaging, README, and the website
 
 
 ## Modifying

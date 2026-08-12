@@ -4,6 +4,10 @@ Contributions to `manynet`,
 whether in the form of issue identification, bug fixes, new code or documentation 
 are encouraged and welcome.
 
+Please note that the `manynet` project is released with a 
+[Contributor Code of Conduct](CODE_OF_CONDUCT.md). 
+By contributing to this project, you agree to abide by its terms.
+
 ## Git
 
 `stocnet` projects are maintained using the git version control system.
@@ -22,6 +26,15 @@ The GitHub page allows to access the issues assigned to you and check the commit
 You can also access the documents in the repository, 
 although this won't be necessary after you have cloned it on your computer via Fork.
 
+### Identifying issues
+
+Please use the issues tracker on GitHub to identify any function-related issues.
+You can use these issues to track progress on the issue and 
+to comment or continue a conversation on that issue.
+The most useful issues are ones that precisely identify an error,
+or propose a test that should pass but instead fails.
+Examples for documentation are also most welcome.
+
 ### Cloning
 
 Once you have downloaded Fork, the first thing you have to do is to 
@@ -30,9 +43,10 @@ Before cloning, you will be able to choose on which `branch` you want to work:
 develop or main. 
 
 ### Pull 
-This command allows you to `pull` changes from the remote repository to your local repository on Sourcetree.
+
+This command allows you to `pull` changes from the remote repository to your local repository in Fork.
 Make sure you do that before starting working on your files so you have the newest versions. 
-When pulling, make sure you choose master or develop, 
+When pulling, make sure you choose main or develop, 
 depending on the branch you decided to work with. 
 Once you pulled, you have now all the new commits and files and 
 you can start working on your assigned tasks.
@@ -44,11 +58,11 @@ Some documents might be stored using Large File Storage (LFS) to save space on t
 Once you have made modifications on a file and saved them, it will appear in your `commit` window. 
 Here you can control one last time your file, write the commit message with the 
 issue reference (see below) and commit. 
-Once your commit is ready, you can `push` them to the origin/main repository.
+Once your commit is ready, you can `push` it to the remote repository.
 Note that you can click the "push immediately" box in the commit window 
 if you don't want to do it in two steps. 
 If you are working on a separate branch, 
-it is important to select this branch when pushing to origin/main.
+it is important to select this branch when pushing.
 
 ### Branching and CI
 
@@ -59,13 +73,6 @@ it is important to select this branch when pushing to origin/main.
   and PR metadata checks (DESCRIPTION version bump, PR title/description conventions).
 - Merges/pushes to `main` trigger [pushrelease.yml](workflows/pushrelease.yml):
   check, auto-bump version tag, GitHub release with binaries, then pkgdown site deploy.
-
-## Style
-
-In terms of style, we are aiming for pleasant predictability in terms of user experience.
-To that end, we have a regular syntax that users can rely on producing expected effects.
-Functions in the same family (`as_*()`, `is_*()`, `create_*()`, etc.) should share
-argument order and naming, so that behaviour is guessable across the family.
 
 ## Package architecture
 
@@ -91,6 +98,13 @@ Division of labour to keep in mind when adding functions:
   All plot methods should live there.
 - `{migraph}`: functions for testing and modelling, e.g. QAP/MRQAP and diffusion models.
 
+## Style
+
+In terms of style, we are aiming for pleasant predictability in terms of user experience.
+To that end, we have a regular syntax that users can rely on producing expected effects.
+Functions in the same family (`as_*()`, `is_*()`, `create_*()`, etc.) should share
+argument order and naming, so that behaviour is guessable across the family.
+
 ### Common commands
 
 This is a standard R package developed with `devtools`/`roxygen2`.
@@ -110,13 +124,9 @@ Run these from an R console with the working directory set to the package root
 
 There is no non-R build system — no package.json/Makefile.
 
-Note that `README.md` is generated from `README.Rmd` — edit `README.Rmd` and re-knit,
-never edit `README.md` directly.
-Similarly, `vignettes/articles/*.Rmd` (the static pkgdown versions of the `{learnr}`
-tutorials) are generated from `inst/tutorials/*/*.Rmd` by
-[data-raw/build_tutorial_articles.R](../data-raw/build_tutorial_articles.R) —
-after editing a tutorial, re-run that script and commit the regenerated files
-rather than editing them directly (CI checks that the two are in sync).
+Some files are generated rather than edited directly — `README.md`, the tutorial
+articles in `vignettes/articles/`, and the cheatsheet.
+See [README and Website](#readme-and-website) below for which source each is built from.
 
 ### File organization (file naming = function family)
 
@@ -127,7 +137,7 @@ not by data structure. When looking for a function, search by what it *does*:
 |---|---|
 | `make_*.R` | creating/reading/generating networks: `create_*()` (deterministic structures), `generate_*()` (stochastic mechanisms), `read_*()`/`write_*()` (import/export), `play_*()` (diffusion/learning simulations), `data_*`/`manynet-data.R` (bundled datasets: `ison_*` classic/instructional, `fict_*` fictional, `irps_*` international-relations) |
 | `coerce_graph.R`, `coerce_list.R` | the `as_*()` translation layer between representations (`as_igraph()`, `as_tidygraph()`, `as_network()`, `as_matrix()`, `as_edgelist()`, `as_siena()`, `as_diffnet()`, …), implemented as S3 methods dispatching on input class |
-| `class_*.R` | the `mnet` S3 class itself (`class_networks.R`: `print.mnet`, `$`/`$<-` accessors, node/tie/change data model), related result classes (`class_measures.R`, `class_members.R`, `class_motifs.R`, `class_models.R`), the `snet_*()` CLI layer (`class_interface.R`), input validation (`class_validate.R`), and the `describe_*()` helpers behind `print.mnet` (`class_describe.R`) |
+| `class_*.R` | the network classes themselves (`class_stocnet.R`: `make_stocnet()`, `print.stocnet()`, the info/nodes/ties/changes/global data model; `class_networks.R`: the legacy `mnet` class, `print.mnet`, `$`/`$<-` accessors), related result classes (`class_measures.R`, `class_members.R`, `class_motifs.R`, `class_models.R`), the `snet_*()` CLI layer (`class_interface.R`), input validation (`class_validate.R`: `validate_stocnet()` and its component validators), and the `describe_*()` helpers behind the print methods (`class_describe.R`) |
 | `manip_*.R` | dplyr-style verbs for manipulating nodes/ties/attributes (`manip_nodes.R`, `manip_ties.R`, `manip_global.R`, `manip_info.R`, `manip_changes.R`) |
 | `mark_*.R` | logical/predicate functions returning `TRUE`/`FALSE` or marks about a network, e.g. the `is_*()` family (`mark_classes.R`, `mark_features.R`, `mark_format.R`, `mark_changes.R`) |
 | `modif_*.R` | structural transformations/reformatting: direction, weighting, projection, splitting/joining, path/level operations, missing data (`modif_direction.R`, `modif_project.R`, `modif_split.R`, `modif_miss.R`, …) |
@@ -138,22 +148,54 @@ not by data structure. When looking for a function, search by what it *does*:
 Shared roxygen documentation blocks live in `man-roxygen/` as `@template` fragments —
 reuse these via `@template` tags instead of re-writing standard `@param`/`@returns` docs.
 
-### The `mnet` object model
+### The `stocnet` object model
 
-`mnet` is layered on top of `{igraph}`/`tbl_graph` (see [R/class_networks.R](../R/class_networks.R)).
+`stocnet` is the package's native class for richer networks
+(see [R/class_stocnet.R](../R/class_stocnet.R)),
+constructed with `make_stocnet()` or coerced to with `as_stocnet()`.
+It is **not** layered on top of `{igraph}`/`tbl_graph`;
+it is a plain list of tibbles plus metadata, with five components —
+`info`, `nodes`, `ties`, `changes`, and `global` — any of which may be `NULL`.
+This is what allows multimodal, multiplex, longitudinal/dynamic and modelling-oriented
+networks (e.g. round-tripping `{RSiena}` `sienadata` objects) to live in one object.
 Conventions to preserve when writing or editing functions:
 
-- Node table: first column is always `name`; reserved columns are `active`
-  (changing networks) and `type` (multimodal/two-mode).
-- Tie table: first two columns are always `from` and `to` (even for undirected
-  networks); reserved columns are `weight`, `wave` (longitudinal), `type` (multiplex),
-  and `sign` (signed).
-- Changes (a longitudinal changelog) are stored as a graph attribute, not as extra
-  rows in nodes/ties, with columns `wave`/`time`, `node`, `var`, `value`.
-- Because an `mnet` object is simultaneously a valid `igraph` and `tbl_graph` object,
-  prefer writing new functions against `{igraph}`/`{tidygraph}` primitives
-  (via the `as_igraph()`/`as_tidygraph()` coercions)
-  rather than hand-rolling data structure access.
+- `info`: a list of network-level metadata. Reserved elements include `name`, `modes`,
+  `layers`, `directed` (logical, optionally named per layer), `focal` (dependent
+  variables), `centered`, `siena` (RSiena-specific metadata), plus provenance fields
+  `doi`, `date`, `location`, and `source`. Per-layer entries are named after a layer and
+  may carry `sender`, `recipient`, and `update`. Several of these follow the GRAND
+  project's FAIR-aligned metadata standards.
+- `nodes`: one row per node. The label column is `label` (not `name`); reserved columns
+  are `mode` (multimodal/two-mode), `active`/`present` (changing networks), and `na`.
+- `ties`: one row per tie. `from` and `to` are required (even for undirected networks)
+  and are stored as *integer indices* into `nodes`, not labels — `make_stocnet()`
+  matches labels to indices on construction. Reserved columns are `layer` (multiplex),
+  `weight` (negative weights mean a signed network, missing weights missing ties),
+  `time` (longitudinal), and `by` (triadic/tertius ties).
+- `changes`: a nodal changelog, held as its own component rather than as extra rows in
+  `nodes`/`ties`, with columns `time`, `node`, `var`, and `value`. `value` is stored as a
+  list-column so changes of any class/length can be logged, but prints as a value plus a
+  type label.
+- `global`: network-level variables over time, with columns `var`, `value`, and
+  optionally `time`.
+- Structure is enforced by `validate_stocnet()`
+  (see [R/class_validate.R](../R/class_validate.R)),
+  which `make_stocnet()` calls on construction.
+  It checks required columns, coerces reserved columns to their expected classes, and
+  renames common aliases (e.g. `name`/`id` → `label`, `sender`/`ego` → `from`) with an
+  informative message. Extend the validators there rather than re-checking structure
+  inside individual functions.
+- Because `stocnet` is a list rather than an `igraph`, do not reach for `{igraph}`
+  primitives on it. Either write an S3 method operating on the tibbles directly
+  (`.data$nodes`, `.data$ties`, …), or coerce with `as_igraph()`/`as_tidygraph()` where
+  the operation is genuinely graph-theoretic. Return a `stocnet` when you were given one:
+  rebuild with `make_stocnet()` so validation and indexing re-run.
+
+The older `mnet` class ([R/class_networks.R](../R/class_networks.R)) — a thin class over
+`igraph`/`tbl_graph`, with `name`-first nodes, `type`/`wave`/`sign` tie attributes, and
+changes stored as a graph attribute — is being progressively deprecated in favour of
+`stocnet`. Keep its methods working, but write new functionality against `stocnet`.
 
 ### Two-mode networks
 
@@ -165,14 +207,42 @@ argument and the `type` vertex attribute.
 ### Console messaging
 
 All user-facing messages go through the `snet_*()` wrappers in
-[R/class_interface.R](../R/class_interface.R) — `snet_info()`, `snet_warn()`,
-`snet_abort()`, `snet_success()`, `snet_prompt()`, `snet_unavailable()`,
-plus `snet_progress_*()` — rather than base `message()`/`stop()`/`warning()`.
-These respect `options(snet_verbosity = "quiet")` and give consistent `{cli}`-styled
-output. Use `snet_unavailable()` for not-yet-implemented features.
-Note that these functions wrap `{cli}` functionality,
-so braces can be used instead of `paste()` to add variables/values to the output.
-The `snet_*()` wrappers additionally allow multiline input.
+[R/class_interface.R](../R/class_interface.R),
+rather than base `message()`/`stop()`/`warning()` or `{cli}` calls directly:
+
+| Wrapper | Use for |
+|---|---|
+| `snet_abort()` | errors: the function cannot proceed |
+| `snet_warn()` | the function proceeds, but the user should know something |
+| `snet_info()` | notable information about what was done, e.g. a defaulted argument |
+| `snet_minor_info()` | incidental detail, e.g. tidying node attributes to `stocnet` conventions |
+| `snet_success()` | confirmation that a requested operation completed |
+| `snet_prompt()` | interactive questions to the user |
+| `snet_unavailable()` | not-yet-implemented features |
+| `snet_progress_step()`, `snet_progress_along()`, `snet_progress_seq()`, `snet_progress_nodes()` | progress reporting in longer-running loops |
+
+Every wrapper except `snet_abort()` (and `snet_prompt()`) is silenced by
+`options(snet_verbosity = "quiet")`, which is the *default* —
+so informational output must never be load-bearing,
+and errors must carry everything the user needs to act.
+Users opt in with e.g. `options(snet_verbosity = "verbose")`.
+
+These wrappers pass their input to `{cli}`, so:
+
+- Braces interpolate, replacing `paste()`: `snet_abort("{.val {unknown}} could not be
+  found on CRAN.")`.
+- Use `{cli}` inline classes to mark up what you refer to — `{.fn}` for functions,
+  `{.arg}`/`{.var}` for arguments and variables, `{.val}` for values,
+  `{.url}` for links — so that styling stays consistent across the ecosystem.
+- Use `{cli}`'s pluralisation rather than hand-written branches:
+  `snet_abort("Node{?s} {.val {missing}} {?was/were} not found in the network.")`.
+- Multiple strings can be passed as separate arguments for multiline messages.
+
+Messages, warnings, and errors should be written in a way that is useful for new and advanced users alike.
+This might include listing likely causes, mentioning objects or variables explicitly,
+and indicating next actions clearly.
+Prefer "`{.arg n}` must be a single integer or a length-2 vector for a two-mode network"
+over "invalid input".
 
 ### Tests
 
@@ -189,6 +259,42 @@ Test fixtures (Pajek, UCINET, GraphML, xlsx, etc.) live under `tests/testthat/sh
 `testthat` edition 3 with parallel execution is configured in `DESCRIPTION`
 (`Config/testthat/parallel: true`);
 `Config/testthat/start-first` prioritises `tutorials_manynet, mark_is`.
+
+### README and Website
+
+The README offers a landing page for new users, both on the Github repository
+as well as on the website.
+As such, it should make a compelling case for the value added of the package,
+and not drift out of date.
+Note that `README.md` is generated from `README.Rmd` — edit `README.Rmd` and re-knit
+(`devtools::build_readme()`), never edit `README.md` directly.
+
+The website is created by pkgdown from [pkgdown/_pkgdown.yml](../pkgdown/_pkgdown.yml),
+and is deployed automatically when changes reach `main`.
+Please make sure that the pkgdown website will build correctly:
+run `pkgdown::build_site()` locally before opening a PR.
+The most common failure is a new exported function that is not picked up under the
+function overview (the `reference:` section of `_pkgdown.yml`) —
+pkgdown requires *every* exported topic to appear there exactly once, or it will not build.
+Where possible, add functions to an existing subtitle's `starts_with()` pattern
+(e.g. a new `to_*()` function needs no change), and only list the topic explicitly
+where it does not fit a pattern.
+These `reference:` titles are also the headings used in `NEWS.md` (see below),
+so keep the two in step.
+
+Two further sets of files are generated rather than edited directly:
+
+- `vignettes/articles/*.Rmd`, the static pkgdown versions of the `{learnr}` tutorials,
+  are built from `inst/tutorials/*/*.Rmd` by
+  [data-raw/build_tutorial_articles.R](../data-raw/build_tutorial_articles.R).
+  After editing a tutorial, re-run that script and commit the regenerated articles;
+  CI checks that the two are in sync.
+  New tutorials also need an entry under `articles:` and in the navbar's `tutorials`
+  menu in `_pkgdown.yml`.
+- The cheatsheet is built from [data-raw/cheatsheet/](../data-raw/cheatsheet)
+  into `man/figures/cheatsheet.png` and `inst/figures/cheatsheet.pdf`.
+  It might not cover all functionality as the package develops,
+  but should at least not use deprecated or renamed function names.
 
 ### `NEWS.md` conventions
 
@@ -218,24 +324,4 @@ If a cited GitHub issue was **not** authored by @jhollway, thank the author with
 `@`-tag in the bullet.
 Cluster related changes (e.g. several fixes to the same function, or sub-points of one
 feature) as indented sub-bullets under a lead bullet, to improve readability.
-
-## Issues and tests
-
-Please use the issues tracker on GitHub to identify any function-related issues.
-You can use these issues to track progress on the issue and 
-to comment or continue a conversation on that issue.
-Currently issue tracking is only open to those involved in the project.
-
-The most useful issues are ones that precisely identify an error,
-or propose a test that should pass but instead fails.
-
-## Documentation
-
-A final way of contributing to the package is in developing the 
-vignettes/articles that illustrate the value added in the package. 
-Please contact me with any proposals here.
-
-Please note that the `manynet` project is released with a 
-[Contributor Code of Conduct](CODE_OF_CONDUCT.md). 
-By contributing to this project, you agree to abide by its terms.
 
