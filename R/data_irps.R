@@ -218,3 +218,51 @@
 #'   ```
 "irps_nuclear"
 
+
+## Gahuku-Gama tribes ####
+
+#' One-mode signed network of Gahuku-Gama sub-tribes (Read 1954)
+#'
+#' @description
+#'   Political relations among 16 Gahuku-Gama sub-tribes of the central
+#'   highlands of New Guinea, as reported in Read's (1954) ethnography.
+#'   This is one of the canonical datasets for the study of structural balance
+#'   and of networks containing negative ties, since the sub-tribes stand in
+#'   one of two mutually exclusive relations:
+#'
+#'   - `weight > 0` records _rova_, a relation of political alliance
+#'   - `weight < 0` records _hina_, a relation of political opposition
+#'
+#'   Each relation holds between 29 pairs of sub-tribes.
+#'   No pair of sub-tribes stands in both relations, and pairs with no
+#'   recorded political relation are simply absent.
+#' @details
+#'   The network is held as a 'stocnet' object, so that the metadata reported
+#'   in the GRAND statement can be recorded in its info component,
+#'   including where and when the relations were observed and by what method.
+#'   As is the convention for 'stocnet' objects, the sign of each relation is
+#'   held as a negative or positive weight rather than in a separate 'sign'
+#'   column.
+#' @docType data
+#' @keywords datasets
+#' @name irps_tribes
+#' @references
+#'   Read, Kenneth E. 1954.
+#'   "Cultures of the Central Highlands, New Guinea".
+#'   _Southwestern Journal of Anthropology_ 10(1): 1-43.
+#'   \doi{10.1086/soutjanth.10.1.3629074}
+#'
+#'   Everett, Martin G., and Stephen P. Borgatti. 2014.
+#'   "Networks containing negative ties".
+#'   _Social Networks_ 38: 111-120.
+#'   \doi{10.1016/j.socnet.2014.03.005}
+#' @source
+#'   Sub-tribe names have been title-cased.
+#'   The date recorded is that of Read's publication;
+#'   his fieldwork in the Asaro valley preceded it by some years.
+#' @usage data(irps_tribes)
+#' @format
+#'   ```{r, echo = FALSE}
+#'   irps_tribes
+#'   ```
+"irps_tribes"

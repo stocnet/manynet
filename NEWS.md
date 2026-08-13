@@ -20,6 +20,7 @@
 
 - Improved `table_data()` to skip TRUE/FALSE `multiplex` in favour of number of `layers`
 - Added `ison_florentine` for Padgett's multiplex business and marriage ties among 16 Renaissance Florentine families, with their wealth, priorates, and degree in the larger 116-family dataset
+- Added `irps_tribes` for Read's signed alliance and opposition relations among 16 Gahuku-Gama sub-tribes
 
 # manynet 2.2.3
 
