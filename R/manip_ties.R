@@ -72,7 +72,8 @@ add_ties.igraph <- function(.data, ties, attr_list = NULL){
   out <- igraph::add_edges(.data, edges = ties, attr = attr_list)
   # new ties would otherwise carry a missing weight,
   # which is not representable in e.g. matrix or network formats
-  if(is_weighted(.data) && !"weight" %in% names(attr_list)){
+  if("weight" %in% igraph::edge_attr_names(.data) &&
+     !"weight" %in% names(attr_list)){
     wt <- igraph::edge_attr(out, "weight")
     wt[seq(igraph::ecount(.data) + 1, igraph::ecount(out))] <- 1
     out <- igraph::set_edge_attr(out, "weight", value = wt)

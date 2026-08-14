@@ -136,6 +136,10 @@ tie_weights <- function(.data){
 tie_signs <- function(.data){
   .data <- as_igraph(.data)
   out <- igraph::edge_attr(.data, "sign")
+  # signs can also be held as negative weights, as they are in 'stocnet'
+  # objects, in which case the sign is the sign of the weight
+  if(is.null(out) && is_signed(.data))
+    out <- sign(igraph::edge_attr(.data, "weight"))
   if(is.null(out)) out <- rep(1, net_ties(.data))
   make_tie_measure(out, .data)
 }

@@ -49,7 +49,7 @@ as_igraph.data.frame <- function(.data,
                                  twomode = FALSE) {
   if (inherits(.data, "tbl_df")) .data <- as.data.frame(.data)
   # Warn if no column named weight and weight set to true
-  if (is_weighted(.data) & !("weight" %in% names(.data))) {
+  if ((is_weighted(.data) | is_signed(.data)) & !("weight" %in% names(.data))) {
     if(!names(.data)[3] %in% c("begin","sign","date"))
       names(.data)[3] <- "weight"
     # snet_abort("Please rename the weight column of your dataframe to 'weight'")
@@ -607,9 +607,11 @@ as_network.matrix <- function(.data,
                                            nrow(.data),
                                            FALSE),
                       loops = ifelse(sum(diag(out)) > 0, TRUE, FALSE),
-                      ignore.eval = ifelse(is_weighted(.data),
+                      # a signed matrix's values are carried as weights too,
+                      # so that the signs survive the coercion
+                      ignore.eval = ifelse(is_weighted(.data) | is_signed(.data),
                                            FALSE, TRUE),
-                      names.eval  = ifelse(is_weighted(.data),
+                      names.eval  = ifelse(is_weighted(.data) | is_signed(.data),
                                            "weight", NULL))
 }
 

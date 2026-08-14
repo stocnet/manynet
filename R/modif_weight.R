@@ -81,18 +81,27 @@ to_unsigned.tbl_graph <- function(.data,
 }
 
 #' @export
-to_unsigned.igraph <- function(.data, 
+to_unsigned.igraph <- function(.data,
                                keep = c("positive", "negative")){
   if (is_signed(.data)) {
     keep <- match.arg(keep)
+    # signs may be held either in a 'sign' attribute or as negative weights
+    signs <- as.numeric(tie_signs(.data))
     if (keep == "positive") {
-      out <- igraph::delete_edges(.data, 
-                                  which(igraph::E(.data)$sign < 0))
+      out <- igraph::delete_edges(.data, which(signs < 0))
     } else {
-      out <- igraph::delete_edges(.data, 
-                                  which(igraph::E(.data)$sign > 0))
+      out <- igraph::delete_edges(.data, which(signs > 0))
     }
-    out <- igraph::delete_edge_attr(out, "sign")
+    if ("sign" %in% igraph::edge_attr_names(out))
+      out <- igraph::delete_edge_attr(out, "sign")
+    if ("weight" %in% igraph::edge_attr_names(out)) {
+      # the weights that remain carry the magnitude of the relation, not its
+      # direction, so an unsigned network keeps them positive
+      wts <- abs(igraph::edge_attr(out, "weight"))
+      out <- if (all(wts == 1, na.rm = TRUE))
+        igraph::delete_edge_attr(out, "weight") else
+          igraph::set_edge_attr(out, "weight", value = wts)
+    }
     out
   } else .data
 }

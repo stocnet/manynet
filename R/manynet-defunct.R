@@ -186,6 +186,21 @@ to_ties <- function(.data) {
   to_linegraph(.data)
 }
 
+#' @describeIn defunct Deprecated on 2026-08-09.
+#' @export
+to_no_isolates <- function(.data) {
+  .Deprecated("delete_isolates", package = "manynet",
+              old = "to_no_isolates")
+  delete_isolates(.data)
+}
+
+#' @describeIn defunct Deprecated on 2026-08-09.
+#' @export
+to_no_missing <- function(.data) {
+  .Deprecated("delete_incomplete", package = "manynet",
+              old = "to_no_missing")
+  delete_incomplete(.data)
+}
 
 #' @describeIn defunct Deprecated on 2026-08-09.
 #' @export

@@ -178,13 +178,13 @@ as_edgelist.network <- function(.data, twomode = FALSE) {
     edges[,1] <- names[edges[,1]]
     edges[,2] <- names[edges[,2]]
   }
-  # Handle edge weights
-  if (is_weighted(.data)) {
+  # Handle edge weights, which where a network is signed may hold only signs
+  if ("weight" %in% network::list.edge.attributes(.data)) {
     edges[,3] <- network::get.edge.attribute(.data, "weight")
     names(edges) <- c("from", "to", "weight")
+    # Remove weight column if only unity weights.
+    if (all(edges$weight == 1)) edges <- edges[, -3]
   } else names(edges) <- c("from", "to")
-  # Remove weight column if only unity weights.
-  if (all(edges$weight == 1)) edges <- edges[, -3]
   out <- dplyr::arrange(dplyr::as_tibble(edges), from, to)
   if(ncol(out)==0) NULL else out
 }
@@ -359,7 +359,7 @@ as_matrix.data.frame <- function(.data,
                                  twomode = NULL) {
   if (is_cognitive(.data)) return(.cognitive_to_array(.data, twomode = twomode))
   if ("tbl_df" %in% class(.data)) .data <- as.data.frame(.data)
-  if (ncol(.data) == 2 | !is_weighted(.data)) {
+  if (ncol(.data) == 2 | !(is_weighted(.data) | is_signed(.data))) {
     .data <- data.frame(.data) # in case it's a tibble
     .data <- as.data.frame(table(c(.data[,1]), c(.data[,2])))
     names(.data) <- c("from","to","weight")
@@ -401,6 +401,15 @@ as_matrix.matrix <- function(.data,
   .data
 }
 
+# A matrix can hold just one value per tie, so where a network is weighted or
+# signed the cells take whichever of these attributes the network actually has,
+# preferring the weights where it has both.
+.tie_value_attribute <- function(.data){
+  attrs <- igraph::edge_attr_names(.data)
+  if("weight" %in% attrs) "weight" else
+    if("sign" %in% attrs) "sign" else NULL
+}
+
 #' @export
 as_matrix.igraph <- function(.data,
                              twomode = NULL) {
@@ -409,8 +418,7 @@ as_matrix.igraph <- function(.data,
       (is.null(twomode) & is_twomode(.data) & !is_multiplex(.data))) {
     if (is_weighted(.data) | is_signed(.data)) {
       mat <- igraph::as_biadjacency_matrix(.data, sparse = FALSE,
-                                           attr = ifelse(is_weighted(.data), "weight", 
-                                                         ifelse(is_signed(.data), "sign", NULL)))
+                                           attr = .tie_value_attribute(.data))
     } else {
       mat <- igraph::as_biadjacency_matrix(.data, sparse = FALSE,
                                            attr = NULL)
@@ -418,8 +426,7 @@ as_matrix.igraph <- function(.data,
   } else {
     if (is_weighted(.data) | is_signed(.data)) {
       mat <- igraph::as_adjacency_matrix(.data, sparse = FALSE,
-                                         attr = ifelse(is_weighted(.data), "weight", 
-                                                       ifelse(is_signed(.data), "sign", NULL)))
+                                         attr = .tie_value_attribute(.data))
       # Where multiplex network 
       if(anyNA(mat) && is_multiplex(.data)) mat[is.na(mat)] <- 1
     } else {
