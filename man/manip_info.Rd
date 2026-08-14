@@ -42,6 +42,13 @@ net_attributes(.data)
 \item "max_degree" is the maximum degree of the network
 \item "min_degree" is the minimum degree of the network
 \item "doi" is the DOI or URL of the network
+\item "transform" records how the network has been transformed since it was
+collected or generated, e.g. "mode-1 projection (jaccard)".
+Unlike the other fields this one accumulates rather than replaces,
+so that successive transformations leave a trail that can be read back.
+The \verb{to_*()} functions add to it themselves, so it rarely needs to be set
+by hand. Note that this records what has been done to the network,
+where "method" records how the network was collected or modelled.
 }
 
 If no arguments are used,

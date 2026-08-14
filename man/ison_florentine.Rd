@@ -6,7 +6,7 @@
 \title{One-mode multiplex network of Florentine families (Padgett and Ansell 1993)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Florentine Families -------------------------------------------------------
-#> # A labelled, multiplex, undirected network of 16 families and 15 busines ties
+#> # A labelled, multiplex, undirected network of 16 families and 15 business ties
 #> and 20 marriage ties
 #> 
 #> -- Nodes

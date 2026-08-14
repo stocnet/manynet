@@ -93,6 +93,7 @@ that hold various datasets in different formats. See for example:
 \item \href{https://schochastics.github.io/networkdata/}{networkdata}
 \item \href{http://www-personal.umich.edu/~mejn/netdata/}{GML datasets}
 \item \href{http://snap.stanford.edu/data/}{SNAP Stanford Large Network Dataset Collection}
+\item \href{https://icon.colorado.edu}{Colorado Index of Complex Networks}
 }
 
 Please let us know if you identify any further repositories

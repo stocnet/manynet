@@ -32,8 +32,15 @@
 #'   - "max_degree" is the maximum degree of the network
 #'   - "min_degree" is the minimum degree of the network
 #'   - "doi" is the DOI or URL of the network
-#'   
-#'   If no arguments are used, 
+#'   - "transform" records how the network has been transformed since it was
+#'   collected or generated, e.g. "mode-1 projection (jaccard)".
+#'   Unlike the other fields this one accumulates rather than replaces,
+#'   so that successive transformations leave a trail that can be read back.
+#'   The `to_*()` functions add to it themselves, so it rarely needs to be set
+#'   by hand. Note that this records what has been done to the network,
+#'   where "method" records how the network was collected or modelled.
+#'
+#'   If no arguments are used,
 #'   the function will check for missing information and prompt the user to add it.
 #'   If `optional = TRUE` is specified, the function will also prompt for optional information.
 #' @seealso \href{https://grand-statement.org}{GRAND statement} for more 
@@ -61,14 +68,15 @@ add_info.igraph <- function(.data, ...){
   info$optional <- NULL
   if(length(info)==0) return(.check_info(.data, optional = optional))
   
-  unrecog <- setdiff(names(info), c("name", "nodes", "ties", "doi", 
+  unrecog <- setdiff(names(info), c("name", "nodes", "ties", "doi",
                                     "source", "method", "location", "date", "system",
                                     "degree",
                                     "dependent",
-                                    "collection", "year", "mode", "vertex1", 
-                                    "vertex1.total", "vertex2", 
-                                    "vertex2.total", 
-                                    "edge.pos", "edge.neg", "positive", "negative"))
+                                    "collection", "year", "mode", "vertex1",
+                                    "vertex1.total", "vertex2",
+                                    "vertex2.total",
+                                    "edge.pos", "edge.neg", "positive", "negative",
+                                    "transform"))
   if(length(unrecog)>0) 
     snet_warn("{unrecog} are not recognised fields.")
   
@@ -95,6 +103,12 @@ add_info.igraph <- function(.data, ...){
   if("year" %in% names(info)){
     igraph::graph_attr(out)$year <- info$year
   }
+  if("transform" %in% names(info)){
+    # appends rather than replaces, so that a network transformed more than
+    # once reports each step in the order it was applied
+    igraph::graph_attr(out)$transform <- c(igraph::graph_attr(.data)$transform,
+                                           info$transform)
+  }
   # return(str(info)) # for debugging
   as_tidygraph(out)
 }
@@ -109,7 +123,11 @@ add_info.stocnet <- function(.data, ...){
     return(.check_info(.data, optional = optional))
   }
   for(item in names(dots)){
-    .data$info[[item]] <- dots[[item]]
+    # "transform" accumulates rather than replaces, as in the igraph method,
+    # so that successive transformations leave a trail
+    if(item == "transform"){
+      .data$info[[item]] <- c(.data$info[[item]], dots[[item]])
+    } else .data$info[[item]] <- dots[[item]]
   }
   .data
 }

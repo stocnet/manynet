@@ -20,6 +20,49 @@ for(fm in formats) {
   })
 }
 
+test_that("read_graphml reads all graphs and all key scopes", {
+  skip_if_not_installed("xml2")
+  nc <- read_graphml(testthat::test_path("sheets", "networkcanvas.graphml"))
+  # both sessions are read, not just the first as igraph's reader does
+  expect_equal(as.numeric(net_nodes(nc)), 6)
+  expect_setequal(node_attribute(nc, "name"),
+                  c("Joshua", "Michael", "Jimbo", "Sarah", "Michelle", "Sophie"))
+  # networkCanvasType is declared for="all", which igraph discards entirely
+  expect_setequal(node_attribute(nc, "nodeset"),
+                  c("Person", "Organisation", "ego"))
+  expect_true("Friends" %in% tie_attribute(nc, "type"))
+  # session metadata is retained
+  expect_setequal(node_attribute(nc, "sessionUUID"), c("aaaa-1111", "bbbb-2222"))
+})
+
+test_that("read_graphml records Network Canvas egos as reporters", {
+  skip_if_not_installed("xml2")
+  nc <- read_graphml(testthat::test_path("sheets", "networkcanvas.graphml"))
+  expect_true(is_cognitive(nc))
+  egos <- which(node_attribute(nc, "ego"))
+  expect_length(egos, 2)
+  expect_true(all(tie_attribute(nc, "by") %in% egos))
+  # ego is tied to each of its own alters
+  expect_equal(sum(tie_attribute(nc, "type") == "ego"), 4)
+  noego <- read_graphml(testthat::test_path("sheets", "networkcanvas.graphml"),
+                        ego = FALSE)
+  expect_equal(as.numeric(net_nodes(noego)), 4)
+  expect_false(is_cognitive(noego))
+})
+
+test_that("read_graphml collapses only single-select categoricals", {
+  skip_if_not_installed("xml2")
+  nc <- read_graphml(testthat::test_path("sheets", "networkcanvas.graphml"))
+  # closeness is single-select, so is collapsed using the declared option names
+  expect_s3_class(node_attribute(nc, "closeness"), "factor")
+  expect_equal(levels(node_attribute(nc, "closeness")), c("close", "very close"))
+  # support is multi-select, so is left as indicators rather than dropped
+  expect_true(all(c("support_emotional", "support_financial") %in%
+                    net_node_attributes(nc)))
+  # layout variables are exposed for plotting
+  expect_true(all(c("x", "y") %in% net_node_attributes(nc)))
+})
+
 # test_that("read_edgelist works", {
 #   expect_equal(read_edgelist(testthat::test_path("sheets", "testCSVComma.csv"),
 #                              sv = "comma"),

@@ -18,6 +18,15 @@ manip_ops <- list(
   delete_nodes = list(
     call  = function(x) delete_nodes(x, 1),
     check = function(o, x) n_nodes(o) == n_nodes(x) - 1),
+  # manip_canonical has no isolates and no missing values, so these two are
+  # no-ops here; they exercise the machinery across classes, while the exact
+  # counts are asserted in test-manip_nodes.R against fixtures that do.
+  delete_isolates = list(
+    call  = function(x) delete_isolates(x),
+    check = function(o, x) n_nodes(o) == n_nodes(x)),
+  delete_incomplete = list(
+    call  = function(x) delete_incomplete(x),
+    check = function(o, x) n_nodes(o) == n_nodes(x)),
   add_ties = list(
     call  = function(x) add_ties(x, c(1, 5)),
     check = function(o, x) n_ties(o) == n_ties(x) + 1),

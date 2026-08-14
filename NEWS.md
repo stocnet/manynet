@@ -33,15 +33,15 @@
 
 - Renamed `to_no_isolates()` to `delete_isolates()`, a named specialisation of `delete_nodes()`
 - Renamed `to_no_missing()` to `delete_incomplete()`, since "missing" at tie level is already `net_tie_missing()` and the `na_to_*()` family, whereas incompleteness is a property of a node's record
+- Improved `add_info()` to cumulatively record how a network has been "transform"ed since it was collected or generated, e.g. "mode-1 projection (jaccard)"
 
 ## Modifying
 
-- Added `to_permuted.matrix()` to permute the matrix directly instead of coercing it to a `tbl_graph` and back
-  - The coercion, and not the permutation, was where nearly all of the time went, so that permuting a 17x17 weighted matrix is now around 500 times faster, which matters for the permutation loops in e.g. `migraph::net_regression()`
-  - Permutation is unchanged, drawing one `sample()` for one-mode networks and two for two-mode networks, in that order, so that seeded results are the same as before
-- Fixed `to_blocks()` for two-mode networks, where the block matrix was dimensioned by the group labels themselves rather than by how many groups there were, so that memberships not labelled 1...k returned a matrix of the wrong size, or an "invalid 'ncol' value" error
-- Renamed `to_ties()` to `to_linegraph()`, since it returns the line graph of a network, where ties become nodes
-- Renamed `to_blocks()` to `to_blockmodel()`, using the established term for the reduced graph it returns
+- Improved predictability of `to_*s()` methods by renaming them
+  - Renamed `to_ties()` to `to_linegraph()`, since it returns the line graph of a network, where ties become nodes
+  - Renamed `to_blocks()` to `to_blockmodel()`, using the established term for the reduced graph it returns
+  - Fixed `to_blocks()` for two-mode networks memberships not labelled 1...k returning a matrix of the wrong size or an "invalid 'ncol' value" error
+- Added `to_permuted.matrix()` to permute the matrix directly instead of coercing it to a `tbl_graph` and back, so permuting a 17x17 weighted matrix is now around 500 times faster
 - Added `to_multilevel.stocnet()` to return an unaltered network as levels are held in the 'mode' variable of the nodes table
 - Added `to_layers()`, which splits a multiplex network into a named list of its layers, one per tie type
 - Added `to_layer()` as an alias of `to_uniplex()`, using the layer-based vocabulary of `layer_names()`, `net_layers()`, and `to_layers()`
