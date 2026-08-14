@@ -10,6 +10,28 @@ test_that("to_unweight works", {
   expect_false(is_weighted(to_unweighted(as_edgelist(st))))
 })
 
+test_that("signed-only networks are not marked weighted in any format", {
+  # `irps_tribes` holds its signs as weights of -1 and 1, so that no sign is
+  # lost when coercing between formats, but records no magnitudes
+  expect_true(is_signed(irps_tribes))
+  for(net in list(irps_tribes, as_igraph(irps_tribes), as_tidygraph(irps_tribes),
+                  as_matrix(irps_tribes), as_network(irps_tribes),
+                  as_edgelist(irps_tribes))){
+    expect_false(is_weighted(net))
+    expect_true(is_signed(net))
+  }
+  # weights that vary in magnitude are weights again, signed or not
+  wtd <- igraph::set_edge_attr(as_igraph(irps_tribes), "weight",
+                               value = c(-2, rep(1, net_ties(irps_tribes) - 1)))
+  expect_true(is_weighted(wtd))
+  expect_true(is_weighted(as_matrix(wtd)))
+  # as are weights complementing a separate 'sign' attribute
+  both <- igraph::set_edge_attr(wtd, "sign",
+                                value = sign(tie_weights(wtd)))
+  expect_true(is_weighted(igraph::set_edge_attr(both, "weight",
+                                                value = tie_signs(both))))
+})
+
 test_that("to_unnamed works",{
   expect_true(is_labelled(ison_southern_women))
   expect_false(is_labelled(to_unnamed(ison_southern_women)))
@@ -138,4 +160,68 @@ test_that("multilevel works", {
   expect_false(is_twomode(to_multilevel(ison_southern_women)))
   expect_false(is_twomode(to_multilevel(as_igraph(ison_southern_women))))
   expect_false(is_twomode(to_multilevel(as_matrix(ison_southern_women))))
+})
+
+# Symmetrisation ####
+
+# A weighted digraph with a reciprocated dyad whose directions disagree, which
+# is the case that told the three to_undirected() methods apart.
+asym <- local({
+  m <- matrix(0, 5, 5, dimnames = list(LETTERS[1:5], LETTERS[1:5]))
+  m[1, 2] <- 3; m[2, 1] <- 6; m[3, 4] <- 2; m[4, 5] <- 1
+  m
+})
+
+test_that("to_undirected agrees across classes for every rule", {
+  # regression test: the matrix method binarised tie weights, the igraph
+  # method summed them, and the network method returned an asymmetric matrix
+  # while reporting the network as undirected
+  for (r in c("collapse", "min", "max", "mean", "sum", "product")) {
+    from_matrix <- to_undirected(asym, rule = r)
+    expect_equal(unname(as_matrix(to_undirected(as_igraph(asym), rule = r))),
+                 unname(from_matrix), label = paste0("igraph, rule = ", r))
+    expect_equal(unname(as_matrix(to_undirected(as_network(asym), rule = r))),
+                 unname(from_matrix), label = paste0("network, rule = ", r))
+    expect_true(isSymmetric(unname(from_matrix)),
+                label = paste0("symmetry, rule = ", r))
+  }
+})
+
+test_that("to_undirected reconciles tie values as each rule promises", {
+  expect_equal(to_undirected(asym, rule = "collapse")[1, 2], 9)
+  expect_equal(to_undirected(asym, rule = "sum")[1, 2], 9)
+  expect_equal(to_undirected(asym, rule = "min")[1, 2], 3)
+  expect_equal(to_undirected(asym, rule = "max")[1, 2], 6)
+  expect_equal(to_undirected(asym, rule = "mean")[1, 2], 4.5)
+  expect_equal(to_undirected(asym, rule = "product")[1, 2], 18)
+  # a tie in one direction only is kept by every rule but min and product
+  expect_equal(to_undirected(asym, rule = "max")[3, 4], 2)
+  expect_equal(to_undirected(asym, rule = "min")[3, 4], 0)
+  expect_equal(to_undirected(asym, rule = "product")[3, 4], 0)
+})
+
+test_that("to_undirected leaves an already undirected network alone", {
+  expect_identical(as_matrix(to_undirected(ison_adolescents)),
+                   as_matrix(ison_adolescents))
+  expect_identical(as_matrix(to_undirected(ison_adolescents, rule = "min")),
+                   as_matrix(ison_adolescents))
+})
+
+test_that("to_undirected keeps tie attributes other than the weight", {
+  # igraph's default combination rule discards everything but the weight
+  signed <- to_signed(generate_random(8, directed = TRUE))
+  expect_true(is_signed(to_undirected(signed)))
+})
+
+test_that("to_undirected does not treat a missing tie as agreement", {
+  miss <- asym
+  miss[1, 2] <- NA
+  expect_true(is.na(to_undirected(miss, rule = "min")[1, 2]))
+  expect_true(is.na(to_undirected(miss, rule = "collapse")[1, 2]))
+})
+
+test_that("to_undirected records the rule used", {
+  expect_match(igraph::graph_attr(to_undirected(as_tidygraph(asym),
+                                                rule = "min"), "transform"),
+               "symmetrised (min)", fixed = TRUE)
 })

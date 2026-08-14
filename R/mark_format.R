@@ -260,6 +260,10 @@ is_egonet.default <- function(.data) {
 #'   
 #'   - `is_twomode()` marks networks TRUE if they contain two sets of nodes.
 #'   - `is_weighted()` marks networks TRUE if they contain tie weights.
+#'   Note that signed networks often hold their signs as weights of -1 and 1,
+#'   so that no sign is lost when coercing between formats;
+#'   since such a 'weight' records only the sign of each tie,
+#'   these networks are marked FALSE unless the weights vary in magnitude.
 #'   - `is_directed()` marks networks TRUE if the ties specify which node
 #'   is the sender and which the receiver.
 #'   - `is_labelled()` marks networks TRUE if there is a 'names' attribute
@@ -268,6 +272,8 @@ is_egonet.default <- function(.data) {
 #'   than 'names' or 'type'.
 #'   - `is_signed()` marks networks TRUE if the ties can be either positive
 #'   or negative.
+#'   This is the case where the ties have a 'sign' attribute,
+#'   and also where they are weighted and any of those weights are negative.
 #'   - `is_complex()` marks networks TRUE if any ties are loops,
 #'   with the sender and receiver being the same node.
 #'   - `is_multiplex()` marks networks TRUE if it contains multiple types 
@@ -286,6 +292,15 @@ NULL
 #' @export
 is_weighted <- function(.data) UseMethod("is_weighted")
 
+# A signed network's ties are often held compactly as weights of -1 and 1,
+# so that coercion from one format to another does not lose the sign.
+# Such a 'weight' column records only signs and not weights,
+# unless there is a separate 'sign' attribute for it to complement.
+.holds_only_signs <- function(wts, has_sign = FALSE){
+  !has_sign && !is.null(wts) && length(wts) > 0 &&
+    any(wts < 0, na.rm = TRUE) && all(abs(wts) == 1, na.rm = TRUE)
+}
+
 #' @export
 is_weighted.default <- function(.data) {
   as_input(.data, is_weighted)
@@ -293,33 +308,41 @@ is_weighted.default <- function(.data) {
 
 #' @export
 is_weighted.igraph <- function(.data) {
-  igraph::is_weighted(.data)
+  igraph::is_weighted(.data) &&
+    !.holds_only_signs(igraph::edge_attr(.data, "weight"),
+                       "sign" %in% igraph::edge_attr_names(.data))
 }
 
 #' @export
 is_weighted.tbl_graph <- function(.data) {
-  igraph::is_weighted(.data)
+  is_weighted.igraph(.data)
 }
 
 #' @export
 is_weighted.stocnet <- function(.data) {
-  "weight" %in% names(.data$ties)
+  "weight" %in% names(.data$ties) &&
+    !.holds_only_signs(.data$ties$weight, "sign" %in% names(.data$ties))
 }
 
 #' @export
 is_weighted.matrix <- function(.data) {
-  !all(.data == 0 | .data == 1)
+  !all(.data == 0 | .data == 1) &&
+    !.holds_only_signs(c(.data)[c(.data) != 0])
 }
 
 #' @export
 is_weighted.network <- function(.data) {
-  "weight" %in% network::list.edge.attributes(.data)
+  "weight" %in% network::list.edge.attributes(.data) &&
+    !.holds_only_signs(unlist(network::get.edge.attribute(.data, "weight")),
+                       "sign" %in% network::list.edge.attributes(.data))
 }
 
 #' @export
 is_weighted.data.frame <- function(.data) {
-  ncol(.data)>=3 && 
-    ("weight" %in% names(.data) | is.numeric(.data[,3]))
+  if(!(ncol(.data)>=3 &&
+       ("weight" %in% names(.data) | is.numeric(.data[,3])))) return(FALSE)
+  wts <- if("weight" %in% names(.data)) .data[["weight"]] else .data[[3]]
+  !.holds_only_signs(wts, "sign" %in% names(.data))
 }
 
 #' @rdname mark_format_tie
@@ -394,25 +417,31 @@ is_signed.matrix <- function(.data) {
 
 #' @export
 is_signed.igraph <- function(.data) {
-  "sign" %in% igraph::edge_attr_names(.data)
+  if("sign" %in% igraph::edge_attr_names(.data)) return(TRUE)
+  # a signed network can also be held as negative weights, as it is in
+  # 'stocnet' objects, so that coercion from one does not lose the sign
+  "weight" %in% igraph::edge_attr_names(.data) &&
+    any(igraph::edge_attr(.data, "weight") < 0, na.rm = TRUE)
 }
 
 #' @export
 is_signed.stocnet <- function(.data) {
   if("sign" %in% net_tie_attributes(.data)) return(TRUE) else
-    if("weight" %in% net_tie_attributes(.data)) 
-      return(any(.data$ties$weight < 0)) else 
+    if("weight" %in% net_tie_attributes(.data))
+      return(any(.data$ties$weight < 0, na.rm = TRUE)) else
         FALSE
 }
 
 #' @export
 is_signed.tbl_graph <- function(.data) {
-  "sign" %in% igraph::edge_attr_names(.data)
+  is_signed.igraph(.data)
 }
 
 #' @export
 is_signed.network <- function(.data) {
-  "sign" %in% network::list.edge.attributes(.data)
+  if("sign" %in% network::list.edge.attributes(.data)) return(TRUE)
+  "weight" %in% network::list.edge.attributes(.data) &&
+    any(unlist(network::get.edge.attribute(.data, "weight")) < 0, na.rm = TRUE)
 }
 
 #' @rdname mark_format_tie

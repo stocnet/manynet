@@ -39,6 +39,10 @@ All \verb{is_*()} functions return a logical scalar (TRUE or FALSE).
 \itemize{
 \item \code{is_twomode()} marks networks TRUE if they contain two sets of nodes.
 \item \code{is_weighted()} marks networks TRUE if they contain tie weights.
+Note that signed networks often hold their signs as weights of -1 and 1,
+so that no sign is lost when coercing between formats;
+since such a 'weight' records only the sign of each tie,
+these networks are marked FALSE unless the weights vary in magnitude.
 \item \code{is_directed()} marks networks TRUE if the ties specify which node
 is the sender and which the receiver.
 \item \code{is_labelled()} marks networks TRUE if there is a 'names' attribute
@@ -47,6 +51,8 @@ for the nodes.
 than 'names' or 'type'.
 \item \code{is_signed()} marks networks TRUE if the ties can be either positive
 or negative.
+This is the case where the ties have a 'sign' attribute,
+and also where they are weighted and any of those weights are negative.
 \item \code{is_complex()} marks networks TRUE if any ties are loops,
 with the sender and receiver being the same node.
 \item \code{is_multiplex()} marks networks TRUE if it contains multiple types
