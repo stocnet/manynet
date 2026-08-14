@@ -10,27 +10,19 @@
   options(cli.theme = manynet_console_theme())
   options(cli.progress_clear = TRUE)
   
-  # pkgs <- as.data.frame(utils::available.packages(utils::contrib.url(getOption("repos"))))
-  # 
-  # cran_version <- pkgs[pkgs$Package == "manynet","Version"]
-
   local_version <- utils::packageVersion("manynet")
   snet_info("You are using {.mnet manynet} version {.version {local_version}}.")
 
   greet_startup_cli <- function() {
     tips <- c(
-      "i" = "Contribute to {.mnet manynet} at {.url https://github.com/stocnet/manynet/}.",
-      "i" = "Don't hesitate to share bugs, issues, or feature requests at {.url https://github.com/stocnet/manynet/issues}.",
-      # "i" = "To suppress package startup messages, use: `suppressPackageStartupMessages(library({.pkg manynet}))`.",
-      "i" = "If too many messages appear in the console, run `options(snet_verbosity = 'quiet')`",
-      "i" = "Explore changes since the last version with {.code news(package = 'manynet')}.",
-      "i" = "Visualisation functions have been moved to {.pkg autograph}. Install everything with `install.packages('migraph')`.",
-      "i" = "Analytic functions have been moved to {.pkg netrics}. Install everything with `install.packages('migraph')`.",
+      "i" = "Share bugs, issues, or feature requests at {.url https://github.com/stocnet/manynet/issues}.",
+      "i" = "If too many messages appear in the console, run {.run base::options(snet_verbosity = 'quiet')}",
+      "i" = "Explore changes since the last version with {.run [news(package = 'manynet')](utils::news(package = 'manynet'))}.",
+      "i" = "Visualisation functions are in {.auto autograph}. Install everything with {.run [install.packages('migraph')](utils::install.packages('migraph'))}.",
+      "i" = "Analytic functions are in {.tric netrics}. Install everything with {.run [install.packages('migraph')](utils::install.packages('migraph'))}.",
       "i" = "Visit {.url https://stocnet.github.io/manynet/} to learn more.",
       "i" = "Discover new functions at: {.url https://stocnet.github.io/manynet/reference/index.html}.",
-      "i" = "Discover {.emph stocnet} R packages at {.url https://github.com/stocnet/}.",
-      # "i" = "Star me at {.url https://github.com/users/follow?target=jhollway}.",
-      "i" = "List the tutorials available using {.fn run_tute}, and run them too!"
+      "i" = "Discover {.emph stocnet} R packages at {.url https://github.com/stocnet/}."
     )
     snet_info(sample(tips, 1))
   }

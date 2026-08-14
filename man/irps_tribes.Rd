@@ -35,7 +35,6 @@
 }\if{html}{\out{</div>}}
 }
 \source{
-The UCINET standard dataset collection, as distributed in \code{{xUCINET}}.
 Sub-tribe names have been title-cased.
 The date recorded is that of Read's publication;
 his fieldwork in the Asaro valley preceded it by some years.

@@ -4,6 +4,7 @@
 
 - Removed CRAN version check from `.onAttach()` making `library(manynet)` noticeably faster to attach
   - Now runs once, for the whole stack, in `{migraph}`, where it is also cached and checks GitHub as well as CRAN
+- Updated startup message to include executable functions, though they are not yet working due to an RStudio bug
 - Updated CONTRIBUTING with more details about console messaging, README, and the website
 
 
