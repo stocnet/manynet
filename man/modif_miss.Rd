@@ -32,7 +32,20 @@ Currently two options are available:
 \item \code{na_to_zero()} replaces any missing values with zeros,
 which are the modal value in sparse social networks.
 \item \code{na_to_mean()} replaces missing values with the average non-missing value.
+Where the network is binary, so that an average would not be a value the
+network could hold, each missing tie is instead drawn from a Bernoulli
+distribution at the observed density.
+This makes \code{na_to_mean()} stochastic for binary networks,
+so use \code{set.seed()} where the result needs to be reproducible.
 }
+
+Where the network is one-mode and simplex, the diagonal is excluded when
+establishing the average or density, since a node's tie to itself is not
+usually a tie that could have been observed.
+
+If there are no missing values,
+the network data is returned unaltered and no warning is given,
+so that these functions can be used to ensure conformance.
 }
 \examples{
 missTest <- ison_adolescents |> 
@@ -53,6 +66,7 @@ Krause, Robert, Mark Huisman, Christian Steglich, and Tom A.B. Snijders. 2020.
 }
 \seealso{
 Other modifications:
+\code{\link{modif_combine}},
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
