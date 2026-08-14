@@ -83,7 +83,7 @@ describe_changes <- function(.data){
 
 pluralize <- function(word) {
   if(length(word) > 1) return(sapply(word, pluralize))
-  if (grepl("(us|x|z|ch|sh)$", word)) {
+  if (grepl("(us|ss|x|z|ch|sh)$", word)) {
     paste0(word, "es")
   } else if (grepl("[^aeiou]y$", word)) {
     sub("y$", "ies", word)
@@ -102,6 +102,8 @@ singularize <- function(word) {
     sub("ies$", "y", word)
   } else if (grepl("(xes|ses|zes|ches|shes)$", word)) {
     sub("es$", "", word)
+  } else if (grepl("(ss|us|is)$", word)) {
+    word
   } else if (grepl("s$", word)) {
     sub("s$", "", word)
   } else {
