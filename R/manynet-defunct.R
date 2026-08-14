@@ -187,6 +187,15 @@ to_ties <- function(.data) {
 }
 
 
+#' @describeIn defunct Deprecated on 2026-08-09.
+#' @export
+to_blocks <- function(.data, membership, FUN = mean) {
+  .Deprecated("to_blockmodel", package = "manynet",
+              old = "to_blocks")
+  to_blockmodel(.data, membership, FUN)
+}
+
+
 # Moved to netrics from 2.0.0 ####
 
 #' @describeIn defunct Deprecated on 2026-03-22.

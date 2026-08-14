@@ -21,40 +21,19 @@
 #'   For interval (spell) networks with tie `begin`/`end` lifespans, `to_time()`
 #'   returns the ties active at that moment, or -- when `time` is omitted -- a
 #'   list of slices, one per change point (each tie beginning or end).
-#'   - `to_no_isolates()` scopes a network into one excluding all nodes without ties.
-#'   - `to_no_missing()` scopes a network to one retaining only complete cases,
-#'   i.e. nodes with no missing values.
 #'   - `to_subgraph()` scopes a network into a subgraph by filtering on some node-related logical statement.
-#'   - `to_blocks()` reduces a network to ties between a given partition membership vector.
+#'   - `to_blockmodel()` reduces a network to the ties between the blocks of a
+#'   given partition membership vector.
 #' @details
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
 #'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("to_.*(no_|ego|component$|subgraph|blocks)"))
+#'   available_methods(collect_functions("to_.*(ego|component$|subgraph|blockmodel)"))
 #'   ```
 #' @template param_data
 #' @template fam_modif
 NULL
-
-#' @rdname modif_scope
-#' @export
-to_no_missing <- function(.data) UseMethod("to_no_missing")
-
-#' @export
-to_no_missing.default <- function(.data){
-  as_input(.data, to_no_missing)
-}
-
-#' @export
-to_no_missing.tbl_graph <- function(.data){
-  out <- .data
-  nl <- as_nodelist(out)
-  if(is.null(nl)) return(out)
-  delete_nodes(.data, !stats::complete.cases(nl)) |> 
-    add_info(name = paste(net_name(.data), "without nodes with missing data"))
-}
-
 
 #' @rdname modif_scope
 #' @param node Name or index of node.
@@ -308,60 +287,6 @@ to_giant <- function(.data, connectivity = c("weak", "strong")) {
 }
 
 #' @rdname modif_scope
-#' @importFrom tidygraph node_is_isolated
-#' @importFrom dplyr filter
-#' @examples
-#' ison_adolescents |>
-#'   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) |>
-#'   to_waves(attribute = "wave") |>
-#'   to_no_isolates()
-#' @export
-to_no_isolates <- function(.data) UseMethod("to_no_isolates")
-
-#' @export
-to_no_isolates.default <- function(.data){
-  as_input(.data, to_no_isolates)
-}
-
-#' @export
-to_no_isolates.tbl_graph <- function(.data) {
-  nodes <- NULL
-  # Delete edges not present vertices
-  .data |> tidygraph::activate(nodes) |> 
-    dplyr::filter(!tidygraph::node_is_isolated()) |> 
-    add_info(name = paste(net_name(.data), "without isolates"))
-}
-
-#' @export
-to_no_isolates.list <- function(.data) {
-  nodes <- NULL
-  # Delete edges not present vertices in each list
-  lapply(.data, function(x) {
-    x |> tidygraph::activate(nodes) |> dplyr::filter(!tidygraph::node_is_isolated())
-  })
-}
-
-#' @export
-to_no_isolates.igraph <- function(.data) {
-  as_igraph(to_no_isolates(as_tidygraph(.data)))
-}
-
-#' @export
-to_no_isolates.matrix <- function(.data) {
-  as_matrix(to_no_isolates(as_tidygraph(.data)))
-}
-
-#' @export
-to_no_isolates.network <- function(.data) {
-  as_network(to_no_isolates(as_tidygraph(.data)))
-}
-
-#' @export
-to_no_isolates.data.frame <- function(.data) {
-  as_edgelist(to_no_isolates(as_tidygraph(.data)))
-}
-
-#' @rdname modif_scope
 #' @param ... Arguments passed on to dplyr::filter
 #' @importFrom dplyr filter
 #' @export
@@ -399,10 +324,15 @@ to_subgraph.matrix <- function(.data, ...){
 }
 
 #' @rdname modif_scope
-#' @section `to_blocks()`: 
+#' @section `to_blockmodel()`: 
 #'   Reduced graphs provide summary representations of network structures 
-#'   by collapsing groups of connected nodes into single nodes 
+#'   by collapsing groups of connected nodes into single nodes
 #'   while preserving the topology of the original structures.
+#'   Like the other scoping functions, the reduced graph is returned in the
+#'   same class as the input: a blockmodel matrix of summarised block content
+#'   for matrix input, and the corresponding weighted network otherwise.
+#'   Memberships are usually obtained from one of the `node_in_*()` functions
+#'   in `{netrics}`.
 #' @param membership A vector of partition memberships.
 #'   For two-mode networks this is a single vector covering the nodes in
 #'   both modes, and not one vector per mode;
@@ -414,15 +344,15 @@ to_subgraph.matrix <- function(.data, ...){
 #'   Other recommended options include `median`, `sum`,
 #'   `min` or `max`.
 #' @export
-to_blocks <- function(.data, membership, FUN = mean) UseMethod("to_blocks")
+to_blockmodel <- function(.data, membership, FUN = mean) UseMethod("to_blockmodel")
 
 #' @export
-to_blocks.default <- function(.data, membership, FUN = mean){
-  as_input(.data, to_blocks, membership, FUN)
+to_blockmodel.default <- function(.data, membership, FUN = mean){
+  as_input(.data, to_blockmodel, membership, FUN)
 }
 
 #' @export
-to_blocks.matrix <- function(.data, membership, FUN = mean){
+to_blockmodel.matrix <- function(.data, membership, FUN = mean){
   if(is_twomode(.data)){
     # The incidence matrix already has the first mode in its rows and the
     # second in its columns, so blocks are read off it directly.
@@ -464,22 +394,22 @@ to_blocks.matrix <- function(.data, membership, FUN = mean){
 }
 
 #' @export
-to_blocks.igraph <- function(.data, membership, FUN = mean){
-  as_igraph(to_blocks(as_matrix(.data), membership, FUN))
+to_blockmodel.igraph <- function(.data, membership, FUN = mean){
+  as_igraph(to_blockmodel(as_matrix(.data), membership, FUN))
 }
 
 #' @export
-to_blocks.network <- function(.data, membership, FUN = mean){
-  as_network(to_blocks(as_matrix(.data), membership, FUN))
+to_blockmodel.network <- function(.data, membership, FUN = mean){
+  as_network(to_blockmodel(as_matrix(.data), membership, FUN))
 }
 
 #' @export
-to_blocks.data.frame <- function(.data, membership, FUN = mean){
-  as_edgelist(to_blocks(as_matrix(.data), membership, FUN))
+to_blockmodel.data.frame <- function(.data, membership, FUN = mean){
+  as_edgelist(to_blockmodel(as_matrix(.data), membership, FUN))
 }
 
 #' @export
-to_blocks.tbl_graph <- function(.data, membership, FUN = mean){
-  as_tidygraph(to_blocks(as_matrix(.data), membership, FUN))
+to_blockmodel.tbl_graph <- function(.data, membership, FUN = mean){
+  as_tidygraph(to_blockmodel(as_matrix(.data), membership, FUN))
 }
 
