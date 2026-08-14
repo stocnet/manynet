@@ -119,6 +119,16 @@ to_multilevel.igraph <- function(.data) {
 }
 
 #' @export
+to_multilevel.stocnet <- function(.data) {
+  # A 'stocnet' records its levels in the 'mode' variable of its nodes table,
+  # which already allows two or more levels and puts no bipartite constraint
+  # on the ties table, so there is nothing here to reformat. The 'lvl' variable
+  # that `to_multilevel.igraph()` writes is a `{graphlayouts}` convention that
+  # igraph needs only because its 'type' attribute forbids ties within a mode.
+  .data
+}
+
+#' @export
 to_multilevel.matrix <- function(.data) {
   top <- cbind(matrix(0, nrow(.data), nrow(.data)), .data)
   bottom <- cbind(t(.data), matrix(0, ncol(.data), ncol(.data)))

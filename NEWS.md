@@ -42,10 +42,7 @@
 - Fixed `to_blocks()` for two-mode networks, where the block matrix was dimensioned by the group labels themselves rather than by how many groups there were, so that memberships not labelled 1...k returned a matrix of the wrong size, or an "invalid 'ncol' value" error
 - Renamed `to_ties()` to `to_linegraph()`, since it returns the line graph of a network, where ties become nodes
 - Renamed `to_blocks()` to `to_blockmodel()`, using the established term for the reduced graph it returns
-- Added `to_multilevel.stocnet()`, which returns the network unaltered
-  - A 'stocnet' holds its levels in the 'mode' variable of its nodes table, which already allows two or more levels, and its ties table already allows ties within a mode, so there is nothing to reformat
-  - The 'lvl' variable that `to_multilevel.igraph()` writes is a `{graphlayouts}` convention that igraph needs only because its 'type' attribute forbids ties within a mode
-  - Previously a 'stocnet' was coerced to an 'igraph' and back, which replaced its 'mode' variable with 'lvl', so that `net_modes()` reported 1 rather than 2 and `is_twomode()` returned FALSE
+- Added `to_multilevel.stocnet()` to return an unaltered network as levels are held in the 'mode' variable of the nodes table
 - Added `to_layers()`, which splits a multiplex network into a named list of its layers, one per tie type
 - Added `to_layer()` as an alias of `to_uniplex()`, using the layer-based vocabulary of `layer_names()`, `net_layers()`, and `to_layers()`
 - Updated strong connectivity example to print only the largest component to reduce CRAN's example timing
@@ -75,9 +72,7 @@
 
 ## Marking
 
-- Added `is_multilevel()`, which marks TRUE those networks whose nodes belong to two or more levels tied both within and between levels, such as `fict_marvel` or `fict_actually`
-  - Added `is_multilevel.stocnet()`, which reads the levels from the 'mode' variable of the nodes table instead of coercing the network to an 'igraph'
-  - Since a 'mode' variable can name more than the two levels an igraph 'type' attribute allows, networks of three or more levels are now also marked TRUE
+- Added `is_multilevel()` to mark TRUE those networks whose nodes belong to two or more levels tied both within and between levels
 - Added 'lvl' to the reserved node attributes, since it records the levels of a network rather than any property of its nodes, so that `is_attributed()` no longer marks a network TRUE for it alone
 - Improved `describe_network()` so that signed networks whose weights are all -1 or 1 are no longer also described as weighted, since such weights record only the sign of each tie
   - Signed networks with weights of other magnitudes, such as `ison_bankwiring`, are still described as weighted

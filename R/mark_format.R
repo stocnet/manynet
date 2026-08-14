@@ -7,6 +7,8 @@
 #'   All `is_*()` functions return a logical scalar (TRUE or FALSE).
 #'   
 #'   - `is_twomode()` marks networks TRUE if they contain two sets of nodes.
+#'   - `is_multilevel()` marks networks TRUE if they contain two or more levels
+#'   of nodes that are tied both within and between levels.
 #'   - `is_labelled()` marks networks TRUE if there is a 'names' attribute
 #'   for the nodes.
 #'   - `is_attributed()` marks networks TRUE if there are other nodal attributes
@@ -14,7 +16,7 @@
 #'   - `is_egonet()` marks networks TRUE if it is a list of networks where each
 #'   network contains only one node and its ties.
 #' @template param_data
-#' @eval detail_avail("is_(twomode|labelled|attributed|egonet)")
+#' @eval detail_avail("is_(twomode|multilevel|labelled|attributed|egonet)")
 #' @family marks
 NULL
 
@@ -81,6 +83,74 @@ is_twomode.list <- function(.data) {
   if(is_list(.data)){
     is_twomode(.data[[1]])
   }
+}
+
+#' @rdname mark_format_node
+#' @details
+#'   A multilevel network is one in which the nodes belong to two or more
+#'   levels, or nodesets, that are tied not only to each other but also among
+#'   themselves. `fict_marvel`, for instance, interlocks a one-mode layer of
+#'   ties among its characters with a two-mode layer of affiliations between
+#'   those characters and their teams. Such networks are distinguished from
+#'   plain two-mode networks, such as `ison_southern_women`, in which ties
+#'   run only between the two nodesets and never within them.
+#' @examples
+#' is_multilevel(fict_marvel)
+#' is_multilevel(ison_southern_women)
+#' @export
+is_multilevel <- function(.data) UseMethod("is_multilevel")
+
+#' @export
+is_multilevel.default <- function(.data) {
+  is_multilevel(as_igraph(.data))
+}
+
+#' @export
+is_multilevel.igraph <- function(.data) {
+  # `to_multilevel()` records levels in a 'lvl' attribute and deletes 'type',
+  # so a network that has already been converted is no longer two-mode and
+  # has to be recognised by its levels instead.
+  if ("lvl" %in% igraph::vertex_attr_names(.data))
+    return(length(unique(igraph::vertex_attr(.data, "lvl"))) > 1)
+  if (!is_twomode(.data)) return(FALSE)
+  # Levels have to be tied both within and between to interlock: a two-mode
+  # network whose ties all run between the modes, as `ison_southern_women`'s
+  # do, is not multilevel, and neither is one whose ties all fall within them,
+  # since then the modes are two networks rather than two levels of one. A
+  # network without any ties is neither, and is returned early because
+  # `tie_is_twomode()` cannot name an empty measure.
+  if (net_ties(.data) == 0) return(FALSE)
+  between <- tie_is_twomode(.data)
+  any(between) && any(!between)
+}
+
+#' @export
+is_multilevel.tbl_graph <- function(.data) {
+  is_multilevel(as_igraph(.data))
+}
+
+#' @export
+is_multilevel.stocnet <- function(.data) {
+  # A 'stocnet' records its levels in the 'mode' variable of its nodes table,
+  # to which `as_stocnet()` maps an igraph 'type' or 'lvl' attribute. Unlike
+  # either of those, this variable can name more than two levels, so this
+  # method marks a three-level network TRUE too.
+  if (is.null(.data$nodes) || !"mode" %in% names(.data$nodes)) return(FALSE)
+  if (net_modes(.data) < 2) return(FALSE)
+  if (is.null(.data$ties) || nrow(.data$ties) == 0) return(FALSE)
+  # The ties table holds node indices, so the modes of the two ends of each
+  # tie are the modes of the nodes at those rows. Levels have to be tied both
+  # within and between to interlock.
+  modes <- .data$nodes$mode
+  between <- modes[.data$ties$from] != modes[.data$ties$to]
+  any(between) && any(!between)
+}
+
+#' @export
+is_multilevel.list <- function(.data) {
+  # A `stocnet` is itself a list, and is dispatched by its own method above;
+  # here a list is a list of networks, marked by its first.
+  if(is_list(.data)) is_multilevel(.data[[1]]) else FALSE
 }
 
 #' @rdname mark_format_node
