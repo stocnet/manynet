@@ -7,6 +7,11 @@
 - Updated startup message to include executable functions, though they are not yet working due to an RStudio bug
 - Updated CONTRIBUTING with more details about console messaging, README, and the website
 
+## Classes
+
+- Improved `print.node_measure()`, `print.tie_measure()`, and `print.network_measure()` so they use new `measure`, `range`, and `normalization` attributes to print a concise, subtle header description in sentence case
+  - See changes in netrics v1.0.0 for more
+
 ## Making
 
 - Improved `read_graphml()` to read files using `{xml2}` rather than delegating to `igraph::read_graph()`

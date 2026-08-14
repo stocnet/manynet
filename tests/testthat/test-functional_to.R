@@ -8,7 +8,7 @@ to_funs <- alive_functions("^to_")
 # network being tested. Functions with required arguments not listed here are
 # skipped with an audit message so the map can be extended.
 to_argmakers <- list(
-  to_blocks     = function(net) list(membership = rep(c(1, 2),
+  to_blockmodel = function(net) list(membership = rep(c(1, 2),
                     length.out = as.numeric(net_nodes(net)))),
   to_dominating = function(net) list(from = 1),
   to_ego        = function(net) list(node = 1),

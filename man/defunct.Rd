@@ -21,6 +21,8 @@
 \alias{net_node_names}
 \alias{net_tie_names}
 \alias{add_changes}
+\alias{to_ties}
+\alias{to_blocks}
 \alias{node_degree}
 \alias{node_deg}
 \alias{net_by_quad}
@@ -203,6 +205,11 @@ net_node_names(.data)
 net_tie_names(.data)
 
 add_changes(.data, changes)
+
+to_ties(.data)
+
+
+to_blocks(.data, membership, FUN = mean)
 
 node_degree(...)
 
@@ -538,6 +545,11 @@ wherever possible and update your scripts accordingly.
 \item \code{net_tie_names()}: Deprecated on 2026-04-04.
 
 \item \code{add_changes()}: Deprecated on 2026-06-12.
+
+\item \code{to_ties()}: Deprecated on 2026-08-09.
+
+
+\item \code{to_blocks()}: Deprecated on 2026-08-09.
 
 \item \code{node_degree()}: Deprecated on 2026-03-22.
 

@@ -2,19 +2,15 @@
 % Please edit documentation in R/modif_scope.R
 \name{modif_scope}
 \alias{modif_scope}
-\alias{to_no_missing}
 \alias{to_ego}
 \alias{to_time}
 \alias{to_wave}
 \alias{to_component}
 \alias{to_giant}
-\alias{to_no_isolates}
 \alias{to_subgraph}
-\alias{to_blocks}
+\alias{to_blockmodel}
 \title{Modifying networks scope}
 \usage{
-to_no_missing(.data)
-
 to_ego(.data, node, max_dist = 1, min_dist = 0, direction = c("out", "in"))
 
 to_time(.data, time = NULL)
@@ -25,11 +21,9 @@ to_component(.data, component = 1, connectivity = c("weak", "strong"))
 
 to_giant(.data, connectivity = c("weak", "strong"))
 
-to_no_isolates(.data)
-
 to_subgraph(.data, ...)
 
-to_blocks(.data, membership, FUN = mean)
+to_blockmodel(.data, membership, FUN = mean)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -112,26 +106,22 @@ It is a wrapper, such that \code{to_giant(.data)} is \code{to_component(.data, 1
 For interval (spell) networks with tie \code{begin}/\code{end} lifespans, \code{to_time()}
 returns the ties active at that moment, or -- when \code{time} is omitted -- a
 list of slices, one per change point (each tie beginning or end).
-\item \code{to_no_isolates()} scopes a network into one excluding all nodes without ties.
-\item \code{to_no_missing()} scopes a network to one retaining only complete cases,
-i.e. nodes with no missing values.
 \item \code{to_subgraph()} scopes a network into a subgraph by filtering on some node-related logical statement.
-\item \code{to_blocks()} reduces a network to ties between a given partition membership vector.
+\item \code{to_blockmodel()} reduces a network to the ties between the blocks of a
+given partition membership vector.
 }
 }
 \details{
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{               data.frame default igraph list matrix network tbl_graph
-to_blocks               *       *      *           *       *         *
-to_component            *       *      *           *       *         *
-to_ego                          *      *                             *
-to_egos                 *       *      *           *       *         *
-to_no_isolates          *       *      *    *      *       *         *
-to_no_missing                   *                                    *
-to_subgraph             *       *      *           *       *         *
-to_subgraphs                    *      *                   *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default igraph matrix network tbl_graph
+to_blockmodel          *       *      *      *       *         *
+to_component           *       *      *      *       *         *
+to_ego                         *      *                        *
+to_egos                *       *      *      *       *         *
+to_subgraph            *       *      *      *       *         *
+to_subgraphs                   *      *              *         *
 }\if{html}{\out{</div>}}
 
 For interval (spell) networks, whose ties carry \code{begin}/\code{end} lifespans
@@ -142,11 +132,16 @@ returned for each distinct change point (every moment at which some tie
 begins or ends), as a named list, so that the evolving network can be
 iterated over or animated (e.g. with \code{autograph::grapht()}).
 }
-\section{\code{to_blocks()}}{
+\section{\code{to_blockmodel()}}{
 
 Reduced graphs provide summary representations of network structures
 by collapsing groups of connected nodes into single nodes
 while preserving the topology of the original structures.
+Like the other scoping functions, the reduced graph is returned in the
+same class as the input: a blockmodel matrix of summarised block content
+for matrix input, and the corresponding weighted network otherwise.
+Memberships are usually obtained from one of the \verb{node_in_*()} functions
+in \code{{netrics}}.
 }
 
 \examples{
@@ -157,13 +152,10 @@ while preserving the topology of the original structures.
   to_component(fict_greys, 2)
   to_component(fict_greys, "Miranda Bailey")
   to_giant(fict_greys)
-ison_adolescents |>
-  mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) |>
-  to_waves(attribute = "wave") |>
-  to_no_isolates()
 }
 \seealso{
 Other modifications:
+\code{\link{modif_combine}},
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},

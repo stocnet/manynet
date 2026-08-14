@@ -11,6 +11,15 @@ expect_prints <- function(x, label) {
   invisible(c(out, msgs))
 }
 
+# Returns the (unstyled) metadata header a measure object prints, or NA if it
+# prints none. The header is always the first line; the "# ... and n more
+# values" footer of print_tblvec() also begins with "#", so is excluded.
+measure_header_of <- function(x) {
+  out <- cli::ansi_strip(expect_prints(x, "measure header"))
+  if (length(out) > 0 && grepl("^# ", out[1]) && !grepl("^# \\.\\.\\.", out[1]))
+    trimws(out[1]) else NA_character_
+}
+
 test_that("print.mnet() prints all network components", {
   for (d in list(ison_adolescents, ison_southern_women, ison_algebra,
                  fict_starwars)) {
@@ -77,6 +86,83 @@ test_that("network_measure class prints", {
                                       "net_thing(ison_adolescents)")
   expect_s3_class(m, "network_measure")
   expect_no_error(expect_prints(m, "network_measure"))
+})
+
+test_that("measure classes print interpretive metadata when present", {
+  net <- ison_adolescents
+  # measures made without the metadata print exactly as before:
+  # no header line, no NULLs, no blank first line
+  bare <- manynet:::make_node_measure(stats::rnorm(8), net)
+  expect_true(is.na(measure_header_of(bare)))
+
+  # a measure rescaled in no way is given its range alone
+  # (the label is capitalised here, so netrics need only record the name)
+  m <- bare
+  attr(m, "measure") <- "strength centrality"
+  attr(m, "range") <- c(0, Inf)
+  attr(m, "normalization") <- "none"
+  expect_identical(measure_header_of(m), "# Strength centrality [0, Inf)")
+
+  # a rescaled one names the rescaling first, in netrics' own words,
+  # which are surfaced as given rather than translated here
+  attr(m, "range") <- c(0, 1)
+  for (norm in c("normalised", "scaled", "proportion")) {
+    attr(m, "normalization") <- norm
+    expect_identical(measure_header_of(m),
+                     paste0("# Strength centrality, ", norm, " [0, 1]"))
+  }
+
+  # so vocabulary this version has never heard of still surfaces
+  attr(m, "normalization") <- "sum to one"
+  expect_identical(measure_header_of(m),
+                   "# Strength centrality, sum to one [0, 1]")
+
+  # partial metadata yields a partial header
+  partial <- bare
+  attr(partial, "measure") <- "eigenvector centrality"
+  expect_identical(measure_header_of(partial), "# Eigenvector centrality")
+
+  # a label given already capitalised, or irregularly cased, is left alone
+  attr(partial, "measure") <- "PageRank"
+  expect_identical(measure_header_of(partial), "# PageRank")
+
+  # a normalisation without a range still reads as a phrase
+  attr(partial, "normalization") <- "normalised"
+  expect_identical(measure_header_of(partial), "# PageRank, normalised")
+
+  # a character range is bracketed unless it brackets itself
+  ranged <- bare
+  attr(ranged, "range") <- "0-1"
+  expect_identical(measure_header_of(ranged), "# [0-1]")
+  attr(ranged, "range") <- "(0, 1]"
+  expect_identical(measure_header_of(ranged), "# (0, 1]")
+
+  # two-mode node measures print one header, not one per mode
+  twomode <- manynet:::make_node_measure(
+    stats::rnorm(as.numeric(net_nodes(ison_southern_women))),
+    ison_southern_women)
+  attr(twomode, "measure") <- "degree"
+  out <- cli::ansi_strip(expect_prints(twomode, "node_measure twomode header"))
+  expect_length(grep("^# Degree", out), 1)
+
+  # tie and network measures carry the same header
+  tm <- manynet:::make_tie_measure(stats::rnorm(10), net)
+  expect_true(is.na(measure_header_of(tm)))
+  attr(tm, "measure") <- "edge betweenness"
+  attr(tm, "range") <- c(0, 1)
+  expect_identical(measure_header_of(tm), "# Edge betweenness [0, 1]")
+
+  nm <- manynet:::make_network_measure(0.42, net, "net_thing(net)")
+  expect_true(is.na(measure_header_of(nm)))
+  attr(nm, "measure") <- "degree centralization"
+  attr(nm, "normalization") <- "normalised"
+  expect_match(measure_header_of(nm), "Degree centralization")
+
+  # mode_measure objects (made by netrics) inherit the network_measure method
+  mode <- nm
+  class(mode) <- c("mode_measure", class(mode))
+  attr(mode, "mode") <- c(10, 8)
+  expect_match(measure_header_of(mode), "Degree centralization")
 })
 
 test_that("node_mark and tie_mark classes print", {

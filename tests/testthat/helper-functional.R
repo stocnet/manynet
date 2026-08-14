@@ -65,6 +65,23 @@ class_versions <- function(net) {
 # A small, labelled, undirected canonical network for cross-class tests
 canonical_net <- ison_adolescents
 
+# A small, labelled, weighted, directed canonical network, with reciprocated
+# dyads whose two directions carry different weights. Cross-class tests run
+# over this as well as `canonical_net`, since a function can agree across
+# classes on an unweighted, undirected network while disagreeing entirely on
+# a weighted, directed one: `to_undirected()` did exactly that, binarising on
+# a matrix, summing on an igraph, and leaving a network object asymmetric.
+canonical_weighted <- local({
+  m <- matrix(0, 5, 5, dimnames = list(LETTERS[1:5], LETTERS[1:5]))
+  m[1, 2] <- 3; m[2, 1] <- 6   # reciprocated, unequal
+  m[2, 3] <- 1; m[3, 4] <- 2   # asymmetric
+  m[4, 5] <- 1; m[5, 1] <- 4
+  as_tidygraph(m)
+})
+
+canonical_nets <- list(canonical = canonical_net,
+                       weighted_directed = canonical_weighted)
+
 # Does this network actually hold the information that `fn` extracts?
 # as_changelist()/as_globallist() return NULL where the network holds no
 # changes/global attributes, and as_nodelist() returns NULL where there are
