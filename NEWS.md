@@ -7,6 +7,17 @@
 - Updated startup message to include executable functions, though they are not yet working due to an RStudio bug
 - Updated CONTRIBUTING with more details about console messaging, README, and the website
 
+## Making
+
+- Improved `read_graphml()` to read files using `{xml2}` rather than delegating to `igraph::read_graph()`
+  - Keys now read `for="all"`; igraph discards them entirely, which silently dropped both node and tie types
+  - Files holding 2+ graphs now combined into a single network, distinguished by a 'graph' node attribute; igraph silently returned only the first graph
+  - Graph-level attributes, `<default>` declarations, and the declared attribute types are now respected, and a missing value is now `NA` of the appropriate type rather than `NaN`
+- Improved `read_graphml()` support for reading Network Canvas exports specifically (closed #153)
+  - Session metadata, node and tie types, entity UUIDs are all retained
+  - Layout variables retained as 'x' and 'y' for direct use in plotting
+  - Sessions combined into a single network with ego added as a node tied to each of its alters and each tie recording the ego that reported it in a 'by' column
+  - Categorical variables are collapsed into a single factor, unlike `ideanet::nc_read()` which drops any variable where a respondent selected more than one option
 
 ## Modifying
 

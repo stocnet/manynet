@@ -29,7 +29,7 @@ read_ucinet(file = file.choose())
 
 read_dynetml(file = file.choose())
 
-read_graphml(file = file.choose())
+read_graphml(file = file.choose(), ego = TRUE)
 
 read_gml(file = file.choose())
 
@@ -43,12 +43,19 @@ if it exists and that it is currently not possible to import multiple
 networks from a single UCINET file. Please convert these one by one.}
 
 \item{sv}{Allows users to specify whether their csv file is
-\code{"comma"} (English) or \code{"semi-colon"} (European) separated.}
+\code{"comma"} (English, the default) or \code{"semi-colon"} (European) separated.}
 
 \item{...}{Additional parameters passed to the read/write function.}
 
 \item{ties}{A character string indicating the ties/network,
 where the data contains several.}
+
+\item{ego}{Logical, whether to add ego as a node in ego-centric formats
+such as Network Canvas, where ego is otherwise only recorded at the level
+of the network. By default TRUE.
+Where ego is added, ties from ego to each of its alters are also added,
+and every tie gains a 'by' column identifying the ego that reported it,
+which makes the network a cognitive social structure (see \code{\link[=is_cognitive]{is_cognitive()}}).}
 }
 \value{
 \code{read_edgelist()} and \code{read_nodelist()} will import
@@ -73,17 +80,13 @@ can work with:
 \item \code{read_pajek()} imports Pajek (.net or .paj) files.
 \item \code{read_ucinet()} imports UCINET files from the header (.##h).
 \item \code{read_dynetml()} imports DyNetML interchange format for rich social network data.
-\item \code{read_graphml()} imports GraphML files.
+\item \code{read_graphml()} imports GraphML files,
+including those exported by Network Canvas.
 \item \code{read_gml()} imports GML files.
 \item \code{read_gdf()} imports GDF files.
 }
 }
 \details{
-Note that these functions are not as actively maintained as others
-in the package, so please let us know if any are not currently working
-for you or if there are missing import routines
-by \href{https://github.com/stocnet/manynet/issues}{raising an issue on Github}.
-
 There are a number of repositories for network data
 that hold various datasets in different formats. See for example:
 \itemize{
@@ -100,6 +103,29 @@ file formats, e.g. type 6406 files.
 To import earlier UCINET file types, you will need to update them first.
 To import multiple matrices packed into a single UCINET file,
 you will need to unpack them and convert them one by one.
+
+\code{read_graphml()} reads the file itself rather than relying on igraph,
+so that keys declared \verb{for="all"} and files holding more than one graph
+are read rather than quietly discarded.
+Where several graphs are present, they are combined into a single network
+and distinguished by a 'graph' node attribute.
+
+Network Canvas exports are recognised by their namespace and read
+accordingly.
+Each interview session is exported as a separate graph, so the sessions are
+combined into one network in which each session is a component.
+Since ego is recorded at the level of the graph rather than as a node,
+and ego-alter ties are left implicit,
+ego is added as a node with ties to each of its alters,
+and every tie records the ego that reported it in a 'by' column,
+making the result a cognitive social structure (see \code{\link[=is_cognitive]{is_cognitive()}}).
+Use \code{ego = FALSE} to keep just the alters and the ties between them.
+Note that node types are reported in a character 'nodeset' column rather
+than a logical 'type' column, because ego networks are not two-mode:
+ties within a nodeset are exactly what is collected.
+Note too that, since alters are particular to a session,
+the sessions share no nodes, so \code{as_matrix()} on such a network returns a
+large and very sparse three-dimensional array.
 }
 \seealso{
 \link{as}

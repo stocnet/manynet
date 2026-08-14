@@ -14,21 +14,17 @@
 #'   - `read_pajek()` imports Pajek (.net or .paj) files.
 #'   - `read_ucinet()` imports UCINET files from the header (.##h).
 #'   - `read_dynetml()` imports DyNetML interchange format for rich social network data.
-#'   - `read_graphml()` imports GraphML files.
+#'   - `read_graphml()` imports GraphML files,
+#'   including those exported by Network Canvas.
 #'   - `read_gml()` imports GML files.
 #'   - `read_gdf()` imports GDF files.
-#' @details
-#'   Note that these functions are not as actively maintained as others
-#'   in the package, so please let us know if any are not currently working
-#'   for you or if there are missing import routines 
-#'   by [raising an issue on Github](https://github.com/stocnet/manynet/issues).
 #' @param file A character string with the system path to the file to import.
 #'   If left unspecified, an OS-specific file picker is opened to help users select it.
 #'   Note that in `read_ucinet()` the file path should be to the header file (.##h),
 #'   if it exists and that it is currently not possible to import multiple
 #'   networks from a single UCINET file. Please convert these one by one.
 #' @param sv Allows users to specify whether their csv file is
-#'   `"comma"` (English) or `"semi-colon"` (European) separated.
+#'   `"comma"` (English, the default) or `"semi-colon"` (European) separated.
 #' @param ... Additional parameters passed to the read/write function.
 #' @return `read_edgelist()` and `read_nodelist()` will import
 #'   into edgelist (tibble) format which can then be coerced or combined into
@@ -46,6 +42,7 @@
 #'   - [networkdata](https://schochastics.github.io/networkdata/)
 #'   - [GML datasets](http://www-personal.umich.edu/~mejn/netdata/)
 #'   - [SNAP Stanford Large Network Dataset Collection](http://snap.stanford.edu/data/)
+#'   - [Colorado Index of Complex Networks](https://icon.colorado.edu)
 #'
 #'   Please let us know if you identify any further repositories
 #'   of social or political networks and we would be happy to add them here.
@@ -55,8 +52,31 @@
 #'   To import earlier UCINET file types, you will need to update them first.
 #'   To import multiple matrices packed into a single UCINET file,
 #'   you will need to unpack them and convert them one by one.
-#' @source 
-#' `read_ucinet()` kindly supplied by Christian Steglich, 
+#'   
+#'   `read_graphml()` reads the file itself rather than relying on igraph,
+#'   so that keys declared `for="all"` and files holding more than one graph
+#'   are read rather than quietly discarded.
+#'   Where several graphs are present, they are combined into a single network
+#'   and distinguished by a 'graph' node attribute.
+#'
+#'   Network Canvas exports are recognised by their namespace and read
+#'   accordingly.
+#'   Each interview session is exported as a separate graph, so the sessions are
+#'   combined into one network in which each session is a component.
+#'   Since ego is recorded at the level of the graph rather than as a node,
+#'   and ego-alter ties are left implicit,
+#'   ego is added as a node with ties to each of its alters,
+#'   and every tie records the ego that reported it in a 'by' column,
+#'   making the result a cognitive social structure (see [is_cognitive()]).
+#'   Use `ego = FALSE` to keep just the alters and the ties between them.
+#'   Note that node types are reported in a character 'nodeset' column rather
+#'   than a logical 'type' column, because ego networks are not two-mode:
+#'   ties within a nodeset are exactly what is collected.
+#'   Note too that, since alters are particular to a session,
+#'   the sessions share no nodes, so `as_matrix()` on such a network returns a
+#'   large and very sparse three-dimensional array.
+#' @source
+#' `read_ucinet()` kindly supplied by Christian Steglich,
 #' constructed on 18 June 2015.
 #' @importFrom utils read.csv read.csv2 read.table
 #' @name make_read
@@ -410,12 +430,333 @@ read_dynetml <- function(file = file.choose()) {
 }
 
 #' @rdname make_read
-#' @importFrom igraph read_graph
+#' @param ego Logical, whether to add ego as a node in ego-centric formats
+#'   such as Network Canvas, where ego is otherwise only recorded at the level
+#'   of the network. By default TRUE.
+#'   Where ego is added, ties from ego to each of its alters are also added,
+#'   and every tie gains a 'by' column identifying the ego that reported it,
+#'   which makes the network a cognitive social structure (see [is_cognitive()]).
+#' @importFrom igraph set_graph_attr
 #' @export
-read_graphml <- function(file = file.choose()) {
-  if(missing(file)) cli::cli_alert_success("Executing: read_graphml('{file}')")
-  if(!grepl("\\.graphml$", file)) file <- paste0(file, ".graphml")
-  as_tidygraph(igraph::read_graph(file, format = "graphml"))
+read_graphml <- function(file = file.choose(), ego = TRUE) {
+  if(missing(file)) snet_success("Executing: read_graphml('{file}')")
+  if(!grepl("\\.graphml$", file, ignore.case = TRUE))
+    file <- paste0(file, ".graphml")
+  thisRequires("xml2")
+  xmlfile <- xml2::read_xml(file)
+  # Network Canvas is identified by its namespace before it is stripped
+  netcanvas <- any(grepl("schema.networkcanvas.com",
+                         as.character(xml2::xml_ns(xmlfile)), fixed = TRUE))
+  xml2::xml_ns_strip(xmlfile)
+  key_map <- .graphml_keys(xmlfile)
+  graphs <- xml2::xml_find_all(xmlfile, "/graphml/graph")
+  if(length(graphs) == 0) snet_abort("No graphs found in {.file {file}}.")
+  parsed <- lapply(graphs, .graphml_parse, key_map = key_map)
+  if(netcanvas) {
+    snet_minor_info("Reading {length(parsed)} Network Canvas session{?s}.")
+    .netcanvas_build(parsed, key_map = key_map, ego = ego)
+  } else .graphml_build(parsed)
+}
+
+# Maps each <key> declaration to its human-readable name, type, scope, and
+# default. GraphML requires key ids to be NMTOKENs, so exporters such as
+# Network Canvas put variable UUIDs in `id` and the readable name in
+# `attr.name`; we always report the latter.
+.graphml_keys <- function(xmlfile) {
+  keys <- xml2::xml_find_all(xmlfile, "/graphml/key")
+  if(length(keys) == 0) return(list())
+  ids <- xml2::xml_attr(keys, "id")
+  nms <- xml2::xml_attr(keys, "attr.name")
+  nms[is.na(nms)] <- ids[is.na(nms)]
+  typs <- xml2::xml_attr(keys, "attr.type")
+  typs[is.na(typs)] <- "string"
+  fors <- xml2::xml_attr(keys, "for")
+  fors[is.na(fors)] <- "all"
+  defs <- vapply(keys, function(k) {
+    d <- xml2::xml_find_first(k, "./default")
+    if(inherits(d, "xml_missing")) NA_character_ else xml2::xml_text(d)
+  }, character(1))
+  out <- lapply(seq_along(ids), function(i)
+    list(name = nms[i], type = typs[i], scope = fors[i], default = defs[i]))
+  stats::setNames(out, ids)
+}
+
+.graphml_cast <- function(x, type) {
+  switch(type,
+         boolean = ,
+         bool = ifelse(is.na(x), NA, tolower(trimws(x)) %in% c("true", "1")),
+         int = ,
+         integer = ,
+         long = suppressWarnings(as.integer(x)),
+         float = ,
+         double = suppressWarnings(as.numeric(x)),
+         as.character(x))
+}
+
+# Collects the <data> children of a set of elements into a data frame,
+# one column per applicable <key>. Note that keys declared for="all" apply to
+# both nodes and ties; igraph's reader discards these entirely.
+.graphml_data <- function(els, key_map, scope) {
+  if(length(els) == 0 || length(key_map) == 0) return(NULL)
+  valid <- names(key_map)[vapply(key_map, function(k)
+    k$scope %in% c("all", scope), logical(1))]
+  if(length(valid) == 0) return(NULL)
+  vals <- lapply(els, function(e) {
+    d <- xml2::xml_find_all(e, "./data")
+    if(length(d) == 0) return(stats::setNames(character(0), character(0)))
+    stats::setNames(xml2::xml_text(d), xml2::xml_attr(d, "key"))
+  })
+  present <- unique(unlist(lapply(vals, names)))
+  defaulted <- valid[vapply(key_map[valid], function(k)
+    !is.na(k$default), logical(1))]
+  used <- union(intersect(valid, present), defaulted)
+  if(length(used) == 0) return(NULL)
+  cols <- lapply(used, function(k) {
+    raw <- vapply(vals, function(v)
+      if(k %in% names(v)) v[[k]] else NA_character_, character(1))
+    if(!is.na(key_map[[k]]$default)) raw[is.na(raw)] <- key_map[[k]]$default
+    .graphml_cast(raw, key_map[[k]]$type)
+  })
+  names(cols) <- make.unique(vapply(key_map[used], function(k)
+    k$name, character(1)))
+  data.frame(cols, check.names = FALSE, stringsAsFactors = FALSE)
+}
+
+.graphml_parse <- function(g, key_map) {
+  nds <- xml2::xml_find_all(g, "./node")
+  eds <- xml2::xml_find_all(g, "./edge")
+  list(ids = xml2::xml_attr(nds, "id"),
+       nodes = .graphml_data(nds, key_map, "node"),
+       ties = .graphml_data(eds, key_map, "edge"),
+       from = xml2::xml_attr(eds, "source"),
+       to = xml2::xml_attr(eds, "target"),
+       info = .graphml_data(list(g), key_map, "graph"),
+       meta = xml2::xml_attrs(g),
+       directed = !identical(xml2::xml_attr(g, "edgedefault"), "undirected"))
+}
+
+# Assembles ordinary (non-Network Canvas) GraphML. Where a file holds several
+# graphs, all are retained as components rather than silently dropping all but
+# the first, as igraph's reader does.
+.graphml_build <- function(parsed) {
+  if(length(parsed) > 1) {
+    snet_minor_info(paste("Found {length(parsed)} graphs;",
+                          "combining them into a single network,",
+                          "distinguished by a 'graph' node attribute."))
+    for(i in seq_along(parsed)) {
+      parsed[[i]]$ids <- paste0(i, ":", parsed[[i]]$ids)
+      parsed[[i]]$from <- paste0(i, ":", parsed[[i]]$from)
+      parsed[[i]]$to <- paste0(i, ":", parsed[[i]]$to)
+      gid <- parsed[[i]]$meta[["id"]] %||% as.character(i)
+      parsed[[i]]$nodes <- .bind_col(parsed[[i]]$nodes,
+                                     "graph", gid, length(parsed[[i]]$ids))
+    }
+  }
+  ids <- unlist(lapply(parsed, `[[`, "ids"))
+  nodes <- dplyr::bind_rows(lapply(parsed, `[[`, "nodes"))
+  ties <- dplyr::bind_rows(lapply(parsed, `[[`, "ties"))
+  from <- unlist(lapply(parsed, `[[`, "from"))
+  to <- unlist(lapply(parsed, `[[`, "to"))
+  # Only label the network where the file actually names its nodes;
+  # node ids alone are an export artefact, and promoting them to names would
+  # spuriously label otherwise unlabelled networks.
+  if(is.null(nodes) || ncol(nodes) == 0)
+    nodes <- data.frame(row.names = seq_along(ids))
+  # Retained for parity with igraph's reader, and so that nodes can be traced
+  # back to the file, but only where it says something the names do not.
+  if(!"id" %in% names(nodes) && !identical(ids, as.character(seq_along(ids))))
+    nodes$id <- ids
+  if(any(c("name", "label") %in% names(nodes))) {
+    if(!"name" %in% names(nodes)) nodes$name <- nodes$label
+    nodes$name <- make.unique(as.character(nodes$name))
+    nodes <- nodes[, c("name", setdiff(names(nodes), "name")), drop = FALSE]
+    idmap <- stats::setNames(nodes$name, ids)
+    el <- data.frame(from = unname(idmap[from]), to = unname(idmap[to]),
+                     stringsAsFactors = FALSE)
+  } else el <- data.frame(from = match(from, ids), to = match(to, ids))
+  if(!is.null(ties) && nrow(ties) == nrow(el))
+    el <- cbind(el, ties[, setdiff(names(ties), c("from", "to")), drop = FALSE])
+  # Constructed undirected directly rather than via to_undirected(), which
+  # collapses ties using igraph's default edge.attr.comb and so would discard
+  # every tie attribute read above.
+  out <- .graphml_graph(nodes, el,
+                        any(vapply(parsed, `[[`, logical(1), "directed")))
+  info <- parsed[[1]]$info
+  if(!is.null(info)) for(nm in names(info))
+    out <- igraph::set_graph_attr(out, nm, info[[1, nm]])
+  make_mnet(out)
+}
+
+#' @importFrom tidygraph tbl_graph
+.graphml_graph <- function(nodes, ties, directed) {
+  make_mnet(tidygraph::tbl_graph(nodes = nodes, edges = ties,
+                                 directed = directed))
+}
+
+.bind_col <- function(df, name, value, n) {
+  if(is.null(df)) df <- data.frame(row.names = seq_len(n))
+  df[[name]] <- value
+  df
+}
+
+.rename_col <- function(df, from, to) {
+  if(!is.null(df) && from %in% names(df)) names(df)[names(df) == from] <- to
+  df
+}
+
+# Network Canvas ####
+
+# Network Canvas exports one <graph> per interview session, holding that
+# session's alters and the ties between them. Ego is recorded not as a node but
+# as <data> on the graph itself, and ego-alter ties are left implicit.
+# Since every tie in a session was reported by that session's ego, the sessions
+# can be combined into one network in which the reporter of each tie is
+# recorded in a 'by' column, i.e. a cognitive social structure.
+.netcanvas_build <- function(parsed, key_map, ego = TRUE) {
+  sessions <- lapply(seq_along(parsed), function(i)
+    .netcanvas_session(parsed[[i]], i, ego))
+  nodes <- dplyr::bind_rows(lapply(sessions, `[[`, "nodes"))
+  ties <- dplyr::bind_rows(lapply(sessions, `[[`, "ties"))
+  # Node ids are only unique within a session, and alters in different sessions
+  # are different people even where they share a name, so names are
+  # disambiguated before ties are resolved against them.
+  nodes$name <- make.unique(as.character(nodes$name))
+  ties$from <- nodes$name[match(ties$from, nodes$.key)]
+  ties$to <- nodes$name[match(ties$to, nodes$.key)]
+  if(ego) {
+    ties$by <- match(ties$by, nodes$.key)
+    ties <- ties[, c("from", "to", "by",
+                     setdiff(names(ties), c("from", "to", "by"))),
+                 drop = FALSE]
+  }
+  nodes$.key <- NULL
+  if(!ego) nodes$ego <- NULL
+  nodes <- .netcanvas_categories(nodes, key_map)
+  nodes <- .netcanvas_layout(nodes)
+  nodes <- nodes[, c("name", setdiff(names(nodes), "name")), drop = FALSE]
+  out <- .graphml_graph(nodes, ties,
+                        any(vapply(parsed, `[[`, logical(1), "directed")))
+  if(length(parsed) == 1) {
+    meta <- parsed[[1]]$meta
+    out <- add_info(out, method = "interview", boundary = "ego",
+                    source = "empirical",
+                    name = meta[["protocolName"]] %||% NULL)
+  }
+  out
+}
+
+.netcanvas_session <- function(p, i, ego) {
+  n <- length(p$ids)
+  nodes <- p$nodes
+  if(is.null(nodes)) nodes <- data.frame(row.names = seq_len(n))
+  nodes$name <- if("name" %in% names(nodes)) as.character(nodes$name) else
+    if("label" %in% names(nodes)) as.character(nodes$label) else p$ids
+  nodes$label <- NULL
+  # Node and tie types are declared for="all" in Network Canvas exports, which
+  # is precisely what igraph's reader discards.
+  nodes <- .rename_col(nodes, "networkCanvasType", "nodeset")
+  nodes <- .rename_col(nodes, "networkCanvasUUID", "uuid")
+  nodes$.key <- paste0(i, ":", p$ids)
+  nodes$ego <- FALSE
+  el <- data.frame(from = paste0(i, ":", p$from), to = paste0(i, ":", p$to),
+                   stringsAsFactors = FALSE)
+  if(!is.null(p$ties)) {
+    p$ties <- .rename_col(p$ties, "networkCanvasType", "type")
+    p$ties <- .rename_col(p$ties, "networkCanvasUUID", "uuid")
+    el <- cbind(el, p$ties[, setdiff(names(p$ties), c("from", "to")),
+                           drop = FALSE])
+  }
+  if(ego) {
+    egokey <- paste0(i, ":ego")
+    egorow <- p$info
+    if(is.null(egorow)) egorow <- data.frame(row.names = 1L)
+    egorow <- .rename_col(egorow, "networkCanvasUUID", "uuid")
+    egorow$name <- as.character(egorow$ego_name %||%
+                                  p$meta[["caseId"]] %||% paste0("ego", i))
+    egorow$ego_name <- NULL
+    egorow$.key <- egokey
+    egorow$ego <- TRUE
+    egorow$nodeset <- "ego"
+    nodes <- dplyr::bind_rows(nodes, egorow)
+    egoties <- data.frame(from = egokey, to = paste0(i, ":", p$ids),
+                          stringsAsFactors = FALSE)
+    # Distinguished as their own layer, since eliciting an alter is not the
+    # same relation as any of the tie types collected between alters.
+    if("type" %in% names(el)) egoties$type <- "ego"
+    el <- dplyr::bind_rows(el, egoties)
+    el$by <- egokey
+  }
+  # Session metadata is carried on the nodes so that it survives combination
+  # with the other sessions.
+  meta <- p$meta[setdiff(names(p$meta), c("edgedefault", "id"))]
+  for(nm in names(meta)) nodes[[nm]] <- unname(meta[[nm]])
+  list(nodes = nodes, ties = el)
+}
+
+# Network Canvas expands every categorical variable into one boolean key per
+# option, since its categoricals are natively multi-select. The option groups
+# are recovered exactly from the <key> declarations -- ids are
+# '<variable uuid>_<hash of option>' while names are '<variable>_<option>' --
+# rather than guessed from patterns in the column names. Groups are collapsed to
+# a factor only where no case selected more than one option; genuinely
+# multi-select variables are left as they are rather than dropped.
+.netcanvas_categories <- function(nodes, key_map) {
+  ids <- names(key_map)
+  cand <- ids[vapply(key_map, function(k)
+    identical(k$type, "boolean"), logical(1)) & grepl("_", ids)]
+  if(length(cand) < 2) return(nodes)
+  groups <- split(cand, sub("_[^_]+$", "", cand))
+  groups <- groups[lengths(groups) > 1]
+  wide <- character(0)
+  for(grp in groups) {
+    nms <- vapply(key_map[grp], function(k) k$name, character(1))
+    stem <- sub("_+$", "", .common_prefix(nms))
+    if(stem == "" || !all(nms %in% names(nodes))) next
+    opts <- substring(nms, nchar(stem) + 2L)
+    if(any(opts == "")) next
+    mat <- as.matrix(nodes[, nms, drop = FALSE]) == TRUE
+    mat[is.na(mat)] <- FALSE
+    if(any(rowSums(mat) > 1)) {
+      wide <- c(wide, stem)
+      next
+    }
+    picked <- apply(mat, 1, function(r)
+      if(any(r)) opts[which(r)[1]] else NA_character_)
+    nodes[nms] <- NULL
+    nodes[[stem]] <- factor(picked, levels = opts)
+  }
+  if(length(wide) > 0)
+    snet_minor_info(paste("Multiple selections found for {.var {wide}};",
+                          "left as indicator columns."))
+  nodes
+}
+
+.common_prefix <- function(x) {
+  if(length(x) == 1) return(x)
+  chars <- strsplit(x, "", fixed = TRUE)
+  k <- 0L
+  for(j in seq_len(min(lengths(chars)))) {
+    if(length(unique(vapply(chars, `[`, character(1), j))) == 1L) k <- j else break
+  }
+  substr(x[1], 1L, k)
+}
+
+# Network Canvas splits layout variables into '<name>_X' and '<name>_Y' keys.
+# These are lowercased to match its CSV export, and a lone layout is exposed as
+# plain 'x' and 'y' so that it can be used directly when plotting.
+.netcanvas_layout <- function(nodes) {
+  xs <- grep("_X$", names(nodes), value = TRUE)
+  ys <- grep("_Y$", names(nodes), value = TRUE)
+  stems <- intersect(sub("_X$", "", xs), sub("_Y$", "", ys))
+  if(length(stems) == 0) return(nodes)
+  if(length(stems) == 1 && !any(c("x", "y") %in% names(nodes))) {
+    nodes <- .rename_col(nodes, paste0(stems, "_X"), "x")
+    nodes <- .rename_col(nodes, paste0(stems, "_Y"), "y")
+  } else for(s in stems) {
+    nodes <- .rename_col(nodes, paste0(s, "_X"), paste0(s, "_x"))
+    nodes <- .rename_col(nodes, paste0(s, "_Y"), paste0(s, "_y"))
+  }
+  nodes
 }
 
 #' @rdname make_read
