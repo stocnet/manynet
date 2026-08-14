@@ -7,6 +7,9 @@
 #'   - `to_egos()` splits a network into ego (or focal) networks.
 #'   - `to_subgraphs()` splits a network into subgraphs on some given node
 #'   attribute.
+#'   - `to_layers()` splits a multiplex network into its layers,
+#'   i.e. a list of uniplex networks, one per tie type.
+#'   Use `to_uniplex()`, or its alias `to_layer()`, to retain just one of them.
 #'   - `to_components()` splits a network into its components,
 #'   ordered from the largest to the smallest.
 #'   Use `to_component()` to retain just one of them.
@@ -19,7 +22,7 @@
 #'   Below are the currently implemented S3 methods:
 #'  
 #'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("to_.*(components|subgraphs|egos|waves|slices)"))
+#'   available_methods(collect_functions("to_.*(components|subgraphs|egos|waves|slices|layers)"))
 #'   ```
 #' @template param_data
 #' @template param_dir
@@ -143,6 +146,57 @@ to_subgraphs.tbl_graph <- function(.data, attribute){
 #' @export
 to_subgraphs.network <- function(.data, attribute){
   lapply(to_subgraphs(as_igraph(.data), attribute), as_network)
+}
+
+#' @rdname modif_split
+#' @section `to_layers()`:
+#'   The layers of a multiplex network are held in a tie attribute,
+#'   `type` in tidygraph/igraph objects and `layer` in 'stocnet' objects.
+#'   Each layer is extracted by `to_uniplex()`, so that the layers returned
+#'   here are the same networks as retrieving them one at a time,
+#'   and the returned list is named by the tie types found in the network.
+#'   Where a network holds no tie types it is already uniplex,
+#'   and a list of length one is returned.
+#' @examples
+#' as_tidygraph(create_filled(5)) |>
+#'   mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) |>
+#'   to_layers()
+#' @export
+to_layers <- function(.data) UseMethod("to_layers")
+
+#' @export
+to_layers.default <- function(.data){
+  as_input(.data, to_layers)
+}
+
+#' @export
+to_layers.tbl_graph <- function(.data){
+  # layer_names() falls back to the network's tie label where there are no
+  # layers, so the tie attribute is what detects multiplexity here.
+  layer_attr <- .layer_attribute(.data)
+  if(is.na(layer_attr)){
+    snet_info("This network holds no tie types, so is already uniplex.")
+    # With no layers, layer_names() falls back to the network's tie label,
+    # which is the right name for the single layer returned here.
+    return(stats::setNames(list(.data), layer_names(.data)[1] %||% "ties"))
+  }
+  types <- unique(tie_attribute(.data, layer_attr))
+  stats::setNames(lapply(types, function(x) to_uniplex(.data, x)), types)
+}
+
+#' @export
+to_layers.igraph <- function(.data){
+  lapply(to_layers(as_tidygraph(.data)), as_igraph)
+}
+
+#' @export
+to_layers.network <- function(.data){
+  lapply(to_layers(as_tidygraph(.data)), as_network)
+}
+
+#' @export
+to_layers.data.frame <- function(.data){
+  lapply(to_layers(as_tidygraph(.data)), as_edgelist)
 }
 
 #' @rdname modif_split

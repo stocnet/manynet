@@ -27,6 +27,7 @@
 - Fixed `to_blocks()` for two-mode networks, where the block matrix was dimensioned by the group labels themselves rather than by how many groups there were, so that memberships not labelled 1...k returned a matrix of the wrong size, or an "invalid 'ncol' value" error
 - Renamed `to_ties()` to `to_linegraph()`, since it returns the line graph of a network, where ties become nodes
 - Renamed `to_blocks()` to `to_blockmodel()`, using the established term for the reduced graph it returns
+- Added `to_layers()`, which splits a multiplex network into a named list of its layers, one per tie type
 - Added `to_layer()` as an alias of `to_uniplex()`, using the layer-based vocabulary of `layer_names()`, `net_layers()`, and `to_layers()`
 - Updated strong connectivity example to print only the largest component to reduce CRAN's example timing
 

@@ -4,6 +4,7 @@
 \alias{modif_split}
 \alias{to_egos}
 \alias{to_subgraphs}
+\alias{to_layers}
 \alias{to_components}
 \alias{to_waves}
 \alias{to_slices}
@@ -12,6 +13,8 @@
 to_egos(.data, max_dist = 1, min_dist = 0, direction = c("out", "in"))
 
 to_subgraphs(.data, attribute)
+
+to_layers(.data)
 
 to_components(.data, connectivity = c("weak", "strong"))
 
@@ -74,6 +77,9 @@ These functions offer tools for splitting manynet-consistent objects
 \item \code{to_egos()} splits a network into ego (or focal) networks.
 \item \code{to_subgraphs()} splits a network into subgraphs on some given node
 attribute.
+\item \code{to_layers()} splits a multiplex network into its layers,
+i.e. a list of uniplex networks, one per tie type.
+Use \code{to_uniplex()}, or its alias \code{to_layer()}, to retain just one of them.
 \item \code{to_components()} splits a network into its components,
 ordered from the largest to the smallest.
 Use \code{to_component()} to retain just one of them.
@@ -90,11 +96,23 @@ Below are the currently implemented S3 methods:
 \if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default diff_model igraph matrix network tbl_graph
 to_components          *       *                 *      *       *         *
 to_egos                *       *                 *      *       *         *
+to_layers              *       *                 *              *         *
 to_slices                      *                 *                        *
 to_subgraphs                   *                 *              *         *
 to_waves               *       *          *      *                        *
 }\if{html}{\out{</div>}}
 }
+\section{\code{to_layers()}}{
+
+The layers of a multiplex network are held in a tie attribute,
+\code{type} in tidygraph/igraph objects and \code{layer} in 'stocnet' objects.
+Each layer is extracted by \code{to_uniplex()}, so that the layers returned
+here are the same networks as retrieving them one at a time,
+and the returned list is named by the tie types found in the network.
+Where a network holds no tie types it is already uniplex,
+and a list of length one is returned.
+}
+
 \examples{
   to_egos(ison_adolescents)
   # graphs(to_egos(ison_adolescents,2))
@@ -102,6 +120,9 @@ ison_adolescents |>
   mutate(unicorn = sample(c("yes", "no"), 8,
                           replace = TRUE)) |>
   to_subgraphs(attribute = "unicorn")
+as_tidygraph(create_filled(5)) |>
+  mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) |>
+  to_layers()
   to_components(to_uniplex(fict_marvel, "relationship"))
   # Strong decomposition of a directed network returns many small components,
   # ordered here from largest to smallest, so just the largest is shown:
@@ -116,6 +137,7 @@ ison_adolescents |>
 }
 \seealso{
 Other modifications:
+\code{\link{modif_combine}},
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
