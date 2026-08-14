@@ -5,6 +5,7 @@
 \alias{to_anti}
 \alias{to_simplex}
 \alias{to_uniplex}
+\alias{to_layer}
 \title{Modifying network complexity}
 \usage{
 to_anti(.data)
@@ -12,6 +13,8 @@ to_anti(.data)
 to_simplex(.data)
 
 to_uniplex(.data, tie)
+
+to_layer(.data, tie)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -41,6 +44,9 @@ These functions reformat manynet-consistent data.
 are included in the new network.
 \item \code{to_simplex()} reformats complex network data, containing loops, to simplex network data, without any loops.
 \item \code{to_uniplex()} reformats multiplex network data to a single type of tie.
+\code{to_layer()} is an alias, using the layer-based vocabulary of
+\code{layer_names()}, \code{net_layers()}, and \code{to_layers()}.
+Use \code{to_layers()} to split a network into all of its layers at once.
 }
 
 If the format condition is not met,
@@ -56,10 +62,14 @@ only transforming these objects' properties.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{           data.frame default igraph matrix tbl_graph
+\if{html}{\out{<div class="sourceCode">}}\preformatted{Warning in utils::.S3methods(f): generic function 'to_layer' dispatches methods
+for generic 'to_uniplex'
+Warning in utils::.S3methods(f): generic function 'to_layer' dispatches methods
+for generic 'to_uniplex'
+           data.frame default igraph matrix tbl_graph
 to_anti             *       *      *      *         *
 to_simplex          *       *      *      *          
-to_uniplex                  *                       *
+to_uniplex                  2                       2
 }\if{html}{\out{</div>}}
 }
 \examples{
@@ -70,6 +80,7 @@ as_tidygraph(create_filled(5)) |>
 }
 \seealso{
 Other modifications:
+\code{\link{modif_combine}},
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},

@@ -9,6 +9,9 @@
 #'   are included in the new network.
 #'   - `to_simplex()` reformats complex network data, containing loops, to simplex network data, without any loops.
 #'   - `to_uniplex()` reformats multiplex network data to a single type of tie.
+#'   `to_layer()` is an alias, using the layer-based vocabulary of
+#'   `layer_names()`, `net_layers()`, and `to_layers()`.
+#'   Use `to_layers()` to split a network into all of its layers at once.
 #' 
 #'   If the format condition is not met,
 #'   for example `to_undirected()` is used on a network that is already undirected,
@@ -23,7 +26,7 @@
 #'   Below are the currently implemented S3 methods:
 #'  
 #'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("to_.*(anti|plex)"))
+#'   available_methods(collect_functions("to_.*(anti|plex|layer$)"))
 #'   ```
 #' @template param_data
 #' @template fam_modif
@@ -145,7 +148,8 @@ to_uniplex.tbl_graph <- function(.data, tie){
   }
   out <- delete_ties(.data, which(!types %in% tie))
   out <- delete_tie_attribute(out, layer_attr)
-  if(is_signed(out) && (all(tie_signs(out)==1) || all(is.na(tie_signs(out)))))
+  if(is_signed(out) && "sign" %in% net_tie_attributes(out) &&
+     (all(tie_signs(out)==1) || all(is.na(tie_signs(out)))))
     out <- delete_tie_attribute(out, "sign")
   if(is_weighted(out) && all(tie_weights(out)==1))
     out <- delete_tie_attribute(out, "weight")
@@ -160,3 +164,7 @@ to_uniplex.tbl_graph <- function(.data, tie){
   out <- out |> mutate_info(ties = tie)
   tidygraph::activate(out, "nodes")
 }
+
+#' @rdname modif_plexity
+#' @export
+to_layer <- to_uniplex
