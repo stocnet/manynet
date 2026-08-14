@@ -22,6 +22,8 @@
 \alias{net_tie_names}
 \alias{add_changes}
 \alias{to_ties}
+\alias{to_no_isolates}
+\alias{to_no_missing}
 \alias{to_blocks}
 \alias{node_degree}
 \alias{node_deg}
@@ -208,6 +210,9 @@ add_changes(.data, changes)
 
 to_ties(.data)
 
+to_no_isolates(.data)
+
+to_no_missing(.data)
 
 to_blocks(.data, membership, FUN = mean)
 
@@ -548,6 +553,9 @@ wherever possible and update your scripts accordingly.
 
 \item \code{to_ties()}: Deprecated on 2026-08-09.
 
+\item \code{to_no_isolates()}: Deprecated on 2026-08-09.
+
+\item \code{to_no_missing()}: Deprecated on 2026-08-09.
 
 \item \code{to_blocks()}: Deprecated on 2026-08-09.
 

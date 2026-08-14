@@ -45,7 +45,6 @@
 - Added `to_multilevel.stocnet()` to return an unaltered network as levels are held in the 'mode' variable of the nodes table
 - Added `to_layers()`, which splits a multiplex network into a named list of its layers, one per tie type
 - Added `to_layer()` as an alias of `to_uniplex()`, using the layer-based vocabulary of `layer_names()`, `net_layers()`, and `to_layers()`
-- Updated strong connectivity example to print only the largest component to reduce CRAN's example timing
 - Added thirteen further measures to `to_mode1()` and `to_mode2()`, so that all of the one-mode projections UCINET offers are now available
   - Six of these were already implemented but unreachable, since they were missing from the argument's list of choices: "ochiai" (the cosine), "czekanowski" (Dice), "sokalsneath", "ochiai2" (Sokal and Sneath's fifth measure), "rogerstanimoto", and "hamann"
   - The branch computing Hamann's coefficient was named "gowerlegendre"; Gower and Legendre's S is `(a+d)/(a+0.5(b+c)+d)`, a different measure, so it has been renamed. The two Sokal-Sneath branches were numbered 1 and 2, matching neither the literature nor each other, and are now "sokalsneath" and "ochiai2"
@@ -56,9 +55,9 @@
   - The documentation now groups the measures by what they are sensitive to, since several are monotone transformations of one another and so rank dyads identically: "rand", "hamann", and "rogerstanimoto" are all functions of `(a+d)/n`; "jaccard", "czekanowski", and "sokalsneath" of `a/(a+b+c)`; and "yule" and "bonacich" of the odds ratio
   - Measures defined only for binary data now dichotomise a valued network and say so, where they previously computed `1 - x` on tie values and returned nonsense without comment
   - The co-occurrence counts are no longer computed where the chosen measure does not use them, so that "count" and "pearson" no longer pay for four matrix products they discard
-- Added `rule` to `to_undirected()`, offering "min", "max", "mean", "sum", and "product" alongside the existing "collapse", which remains the default
-  - Fixed `to_undirected()` returning a different network for each class it was given: the matrix method binarised tie weights, the igraph method summed them, and the network method declared the network undirected while leaving its dyads asymmetric. All classes now sum, as the igraph method always did, so that only weighted matrices and `network` objects change
-  - Tie attributes other than the weight, such as the sign or the layer, now survive collapsing, where igraph's default combination rule had discarded them
+- Improved `to_undirected()` with a `rule` argument offering "min", "max", "mean", "sum", and "product" alongside the existing default "collapse"
+  - Fixed `to_undirected()` returning a different network for each class it was given: .matrix binarised tie weights, .igraph summed them, and .network method declared network undirected while leaving its dyads asymmetric; all classes now sum
+  - Fixed tie attributes other than the weight, such as the sign or the layer, not surviving collapsing as igraph's default combination rule discarded them
 - Added `to_combined()`, which combines two networks over the same nodes into one, cell by cell, by "min", "max", "mean", "sum", "product", or "unique"
   - Nodes are matched by name rather than by position, and combined over the union of the two node sets, so that networks recording the same nodes in a different order, or naming different subsets of them, are still combined correctly
   - Where `join_ties()` adds one network's ties to another's, this reconciles the two networks' values for each dyad, so that a dyad tied in only one of them counts as untied in the other, which is what makes "min" and "product" meaningful
@@ -69,13 +68,13 @@
 - Fixed `na_to_zero()` raising an "`..1` must be of size 10 or 1, not size 0" error on any unweighted network, which is now returned unaltered, since a network without tie values has none that can be missing
 - Fixed `na_to_mean()` raising a "missing value where TRUE/FALSE needed" error on the example given in its own documentation, where a missing weight made the test for valued data itself missing
 - Fixed `na_to_mean()` never imputing anything for binary networks held as `tbl_graph`s, where the imputation iterated over the indices of the weights rather than over the weights themselves
+- Updated strong connectivity example to print only the largest component to reduce CRAN's example timing
 
 ## Marking
 
 - Added `is_multilevel()` to mark TRUE those networks whose nodes belong to two or more levels tied both within and between levels
 - Added 'lvl' to the reserved node attributes, since it records the levels of a network rather than any property of its nodes, so that `is_attributed()` no longer marks a network TRUE for it alone
 - Improved `describe_network()` so that signed networks whose weights are all -1 or 1 are no longer also described as weighted, since such weights record only the sign of each tie
-  - Signed networks with weights of other magnitudes, such as `ison_bankwiring`, are still described as weighted
 - Improved `is_signed()` for 'igraph', 'tbl_graph', and 'network' objects, which now also mark as signed those networks that hold their signs as negative weights, and not only those with a 'sign' attribute
   - This is how 'stocnet' objects hold signs, and `as_stocnet()` renames a 'sign' attribute to 'weight', so a signed network coerced to a stocnet and back was no longer marked as signed, even though none of its values had changed
   - Networks whose weights are all non-negative remain unsigned, and missing weights are ignored rather than returning `NA`
