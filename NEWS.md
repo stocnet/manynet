@@ -11,6 +11,7 @@
 
 - Improved `print.node_measure()`, `print.tie_measure()`, and `print.network_measure()` so they use new `measure`, `range`, and `normalization` attributes to print a concise, subtle header description in sentence case
   - See changes in netrics v1.0.0 for more
+- Improved `as_stocnet.igraph()` so that it maps a 'lvl' attribute onto the 'mode' variable of the nodes table, naming the levels from the network's info where there is a name for each
 
 ## Making
 
@@ -32,15 +33,74 @@
 - Fixed `to_blocks()` for two-mode networks, where the block matrix was dimensioned by the group labels themselves rather than by how many groups there were, so that memberships not labelled 1...k returned a matrix of the wrong size, or an "invalid 'ncol' value" error
 - Renamed `to_ties()` to `to_linegraph()`, since it returns the line graph of a network, where ties become nodes
 - Renamed `to_blocks()` to `to_blockmodel()`, using the established term for the reduced graph it returns
+- Added `to_multilevel.stocnet()`, which returns the network unaltered
+  - A 'stocnet' holds its levels in the 'mode' variable of its nodes table, which already allows two or more levels, and its ties table already allows ties within a mode, so there is nothing to reformat
+  - The 'lvl' variable that `to_multilevel.igraph()` writes is a `{graphlayouts}` convention that igraph needs only because its 'type' attribute forbids ties within a mode
+  - Previously a 'stocnet' was coerced to an 'igraph' and back, which replaced its 'mode' variable with 'lvl', so that `net_modes()` reported 1 rather than 2 and `is_twomode()` returned FALSE
 - Added `to_layers()`, which splits a multiplex network into a named list of its layers, one per tie type
 - Added `to_layer()` as an alias of `to_uniplex()`, using the layer-based vocabulary of `layer_names()`, `net_layers()`, and `to_layers()`
 - Updated strong connectivity example to print only the largest component to reduce CRAN's example timing
+- Added thirteen further measures to `to_mode1()` and `to_mode2()`, so that all of the one-mode projections UCINET offers are now available
+  - Six of these were already implemented but unreachable, since they were missing from the argument's list of choices: "ochiai" (the cosine), "czekanowski" (Dice), "sokalsneath", "ochiai2" (Sokal and Sneath's fifth measure), "rogerstanimoto", and "hamann"
+  - The branch computing Hamann's coefficient was named "gowerlegendre"; Gower and Legendre's S is `(a+d)/(a+0.5(b+c)+d)`, a different measure, so it has been renamed. The two Sokal-Sneath branches were numbered 1 and 2, matching neither the literature nor each other, and are now "sokalsneath" and "ochiai2"
+  - Added "match", "overlap", "crossmin", "maxcrossmin", "sqdiff", "covariance", and "bonacich", each checked against UCINET
+  - Bonacich's (1972) measure is computed as `sqrt(ad)/(sqrt(ad)+sqrt(bc))`, which is algebraically identical to the usual formulation but needs no loop over pairs of nodes, and shows the measure to be Yule's Y rescaled onto the unit interval
+  - "match", "crossmin", "maxcrossmin", and "sqdiff" are likewise computed by matrix arithmetic rather than by iterating over pairs of nodes, giving identical results in a fraction of the time
+  - "sqdiff" is offered as `1/(1+d)` rather than as the raw sum of squared differences, so that larger means more alike for every value of `similarity` and not merely most of them; recover UCINET's figure as `1/x - 1`
+  - The documentation now groups the measures by what they are sensitive to, since several are monotone transformations of one another and so rank dyads identically: "rand", "hamann", and "rogerstanimoto" are all functions of `(a+d)/n`; "jaccard", "czekanowski", and "sokalsneath" of `a/(a+b+c)`; and "yule" and "bonacich" of the odds ratio
+  - Measures defined only for binary data now dichotomise a valued network and say so, where they previously computed `1 - x` on tie values and returned nonsense without comment
+  - The co-occurrence counts are no longer computed where the chosen measure does not use them, so that "count" and "pearson" no longer pay for four matrix products they discard
+- Added `rule` to `to_undirected()`, offering "min", "max", "mean", "sum", and "product" alongside the existing "collapse", which remains the default
+  - Fixed `to_undirected()` returning a different network for each class it was given: the matrix method binarised tie weights, the igraph method summed them, and the network method declared the network undirected while leaving its dyads asymmetric. All classes now sum, as the igraph method always did, so that only weighted matrices and `network` objects change
+  - Tie attributes other than the weight, such as the sign or the layer, now survive collapsing, where igraph's default combination rule had discarded them
+- Added `to_combined()`, which combines two networks over the same nodes into one, cell by cell, by "min", "max", "mean", "sum", "product", or "unique"
+  - Nodes are matched by name rather than by position, and combined over the union of the two node sets, so that networks recording the same nodes in a different order, or naming different subsets of them, are still combined correctly
+  - Where `join_ties()` adds one network's ties to another's, this reconciles the two networks' values for each dyad, so that a dyad tied in only one of them counts as untied in the other, which is what makes "min" and "product" meaningful
+- Improved `na_to_mean()` so that it excludes the diagonal when establishing the average or density of a one-mode simplex network, since a node's tie to itself is not usually a tie that could have been observed
+  - Counting the diagonal biased the figure down by a factor of `(n-1)/n`, which is slight for a large network but not for the eight-node examples in the documentation
+  - Documented that `na_to_mean()` draws from a Bernoulli distribution at the observed density where the network is binary, which it has always done but never said, and that this makes it stochastic unless a seed is set
+- Fixed `na_to_zero()` deleting ties whose weight was missing instead of setting that weight to zero, which contradicted both its documentation and its own matrix and edgelist methods
+- Fixed `na_to_zero()` raising an "`..1` must be of size 10 or 1, not size 0" error on any unweighted network, which is now returned unaltered, since a network without tie values has none that can be missing
+- Fixed `na_to_mean()` raising a "missing value where TRUE/FALSE needed" error on the example given in its own documentation, where a missing weight made the test for valued data itself missing
+- Fixed `na_to_mean()` never imputing anything for binary networks held as `tbl_graph`s, where the imputation iterated over the indices of the weights rather than over the weights themselves
+
+## Manipulating
+
+- Renamed `to_no_isolates()` to `delete_isolates()` and `to_no_missing()` to `delete_incomplete()`, moving both from the `to_*()` modifications into the node manipulation verbs, deprecating the old names
+  - Both are named specialisations of `delete_nodes()`, which they already called internally, so they are now documented alongside it and the retired `to_no_*()` pattern needs no adjectival replacement
+  - `delete_incomplete()` rather than `delete_missing()`, since "missing" at tie level is already `net_tie_missing()` and the `na_to_*()` family, whereas incompleteness is a property of a node's record
+  - Both gained `stocnet` methods that subset the nodelist and reindex ties and changes directly, rather than coercing to `{igraph}` and back
+  - The old names still work but warn, and will be removed at a future minor release
+- Added a "transform" field to `add_info()`, recording how a network has been transformed since it was collected or generated, e.g. "mode-1 projection (jaccard)"
+  - Unlike the other fields this one accumulates rather than replaces, so that a network transformed more than once reports each step in the order it was applied, and it is printed beneath the network's description
+  - `to_mode1()`, `to_mode2()`, `to_undirected()`, and `to_combined()` each record what they did, so that a Jaccard projection can be told apart from a count projection, which was not previously possible from the result alone
+
+## Marking
+
+- Added `is_multilevel()`, which marks TRUE those networks whose nodes belong to two or more levels tied both within and between levels, such as `fict_marvel` or `fict_actually`
+  - Added `is_multilevel.stocnet()`, which reads the levels from the 'mode' variable of the nodes table instead of coercing the network to an 'igraph'
+  - Since a 'mode' variable can name more than the two levels an igraph 'type' attribute allows, networks of three or more levels are now also marked TRUE
+- Added 'lvl' to the reserved node attributes, since it records the levels of a network rather than any property of its nodes, so that `is_attributed()` no longer marks a network TRUE for it alone
+- Improved `describe_network()` so that signed networks whose weights are all -1 or 1 are no longer also described as weighted, since such weights record only the sign of each tie
+  - Signed networks with weights of other magnitudes, such as `ison_bankwiring`, are still described as weighted
+- Improved `is_signed()` for 'igraph', 'tbl_graph', and 'network' objects, which now also mark as signed those networks that hold their signs as negative weights, and not only those with a 'sign' attribute
+  - This is how 'stocnet' objects hold signs, and `as_stocnet()` renames a 'sign' attribute to 'weight', so a signed network coerced to a stocnet and back was no longer marked as signed, even though none of its values had changed
+  - Networks whose weights are all non-negative remain unsigned, and missing weights are ignored rather than returning `NA`
+- Fixed `is_weighted()` to return FALSE for signed-only networks, such as `irps_tribes`, `irps_wwi`, or `fict_marvel`, whose signs are held compactly as weights of -1 and 1 so that no sign is lost when coercing between formats
+  - Such a 'weight' records only the sign of each tie and not its magnitude, so marking these networks as weighted overstated what the data held, e.g. in `table_data()`
+  - A network is marked weighted again as soon as its weights vary in magnitude, or where it has both a 'sign' attribute and weights, since the weights are then a value in their own right
+  - `describe_network()` had special-cased this already and is now simply consistent with the mark, while the coercion, missing data, and tie-adding functions that used `is_weighted()` to ask whether ties carried values now ask that question directly, so that signs continue to survive coercion between every format
 
 ## Data
 
 - Improved `table_data()` to skip TRUE/FALSE `multiplex` in favour of number of `layers`
 - Added `ison_florentine` for Padgett's multiplex business and marriage ties among 16 Renaissance Florentine families, with their wealth, priorates, and degree in the larger 116-family dataset
 - Added `irps_tribes` for Read's signed alliance and opposition relations among 16 Gahuku-Gama sub-tribes
+  - `ison_fraternity` holds Newcomb's 17 men ranking one another weekly over 16 weeks, as a longitudinal weighted network recording both the raw `rank` and a reversed `weight`
+  - `ison_bankwiring` holds the six Hawthorne bank wiring room relations as a multiplex signed network, with friendship, games, help, and trades positive and antagonism and conflict negative
+  - `ison_tailorshop` holds Kapferer's instrumental and sociational ties among 39 Zambian tailors, multiplex across two waves bracketing an abortive and then a successful strike
+  - `ison_classmates` holds Knecht's four waves of friendship among 26 Dutch pupils, with primary-school acquaintance as a second tie type and delinquency and alcohol use as nodal changes
+  - `ison_supremecourt` holds ten terms of the Rehnquist court as a two-mode network of 376 cases and 9 justices, weighted by full or partial concurrence with the majority
 
 # manynet 2.2.3
 

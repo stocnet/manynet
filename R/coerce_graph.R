@@ -862,6 +862,15 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
       nodes$mode <- as.character(nodes$type)
     }
     nodes$type <- NULL
+  } else if(!is.null(nodes) && "lvl" %in% names(nodes)){
+    # `to_multilevel.igraph()` records the levels of a network in a 'lvl'
+    # attribute, since an igraph 'type' attribute forbids ties within a mode.
+    # A 'stocnet' has no such constraint and names its levels in 'mode',
+    # which, unlike 'lvl', more than two levels can also share.
+    lvls <- sort(unique(nodes$lvl))
+    nodes$mode <- if(!is.null(info$nodes) && length(info$nodes) == length(lvls))
+      info$nodes[match(nodes$lvl, lvls)] else as.character(nodes$lvl)
+    nodes$lvl <- NULL
   }
   # is_multiplex() is also TRUE for networks with any non-reserved tie
   # attribute, which have no 'type' column to rename to 'layer'
