@@ -11,7 +11,6 @@
 
 - Improved `print.node_measure()`, `print.tie_measure()`, and `print.network_measure()` so they use new `measure`, `range`, and `normalization` attributes to print a concise, subtle header description in sentence case
   - See changes in netrics v1.0.0 for more
-- Improved `as_stocnet.igraph()` so that it maps a 'lvl' attribute onto the 'mode' variable of the nodes table, naming the levels from the network's info where there is a name for each
 
 ## Making
 
@@ -24,6 +23,15 @@
   - Layout variables retained as 'x' and 'y' for direct use in plotting
   - Sessions combined into a single network with ego added as a node tied to each of its alters and each tie recording the ego that reported it in a 'by' column
   - Categorical variables are collapsed into a single factor, unlike `ideanet::nc_read()` which drops any variable where a respondent selected more than one option
+
+## Coercion
+
+- Improved `as_stocnet.igraph()` so that it maps a 'lvl' attribute onto the 'mode' variable of the nodes table, naming the levels from the network's info where there is a name for each
+
+## Manipulating
+
+- Renamed `to_no_isolates()` to `delete_isolates()`, a named specialisation of `delete_nodes()`
+- Renamed `to_no_missing()` to `delete_incomplete()`, since "missing" at tie level is already `net_tie_missing()` and the `na_to_*()` family, whereas incompleteness is a property of a node's record
 
 ## Modifying
 
@@ -63,17 +71,6 @@
 - Fixed `na_to_zero()` raising an "`..1` must be of size 10 or 1, not size 0" error on any unweighted network, which is now returned unaltered, since a network without tie values has none that can be missing
 - Fixed `na_to_mean()` raising a "missing value where TRUE/FALSE needed" error on the example given in its own documentation, where a missing weight made the test for valued data itself missing
 - Fixed `na_to_mean()` never imputing anything for binary networks held as `tbl_graph`s, where the imputation iterated over the indices of the weights rather than over the weights themselves
-
-## Manipulating
-
-- Renamed `to_no_isolates()` to `delete_isolates()` and `to_no_missing()` to `delete_incomplete()`, moving both from the `to_*()` modifications into the node manipulation verbs, deprecating the old names
-  - Both are named specialisations of `delete_nodes()`, which they already called internally, so they are now documented alongside it and the retired `to_no_*()` pattern needs no adjectival replacement
-  - `delete_incomplete()` rather than `delete_missing()`, since "missing" at tie level is already `net_tie_missing()` and the `na_to_*()` family, whereas incompleteness is a property of a node's record
-  - Both gained `stocnet` methods that subset the nodelist and reindex ties and changes directly, rather than coercing to `{igraph}` and back
-  - The old names still work but warn, and will be removed at a future minor release
-- Added a "transform" field to `add_info()`, recording how a network has been transformed since it was collected or generated, e.g. "mode-1 projection (jaccard)"
-  - Unlike the other fields this one accumulates rather than replaces, so that a network transformed more than once reports each step in the order it was applied, and it is printed beneath the network's description
-  - `to_mode1()`, `to_mode2()`, `to_undirected()`, and `to_combined()` each record what they did, so that a Jaccard projection can be told apart from a count projection, which was not previously possible from the result alone
 
 ## Marking
 

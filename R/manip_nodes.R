@@ -7,13 +7,16 @@
 #'   
 #'   - `add_nodes()` adds an additional number of nodes to network data.
 #'   - `delete_nodes()` deletes nodes from network data.
+#'   - `delete_isolates()` deletes all nodes without ties.
+#'   - `delete_incomplete()` deletes nodes with any missing attribute values,
+#'   retaining only the complete cases.
 #'   - `bind_nodes()` adds two nodesets together.
 #'   - `filter_nodes()` subsets nodes based on some nodal attribute-related logical statement.
 #'   - `arrange_nodes()` reorders nodes based on some nodal attribute.
-#'   
+#'
 #'   While `add_*()`/`delete_*()` functions operate similarly as comparable `{igraph}` functions,
 #'   `bind_*()` and `filter_*()` works like a `{tidyverse}` or `{dplyr}`-style function.
-#' @eval detail_avail("(add|delete|bind|filter|arrange)_nodes")
+#' @eval detail_avail("(add|delete|bind|filter|arrange)_nodes|delete_(isolates|incomplete)")
 #' @template param_data
 #' @template param_dots
 #' @template param_by
@@ -87,6 +90,98 @@ delete_nodes.network <- function(.data, nodes){
 }
 
 #' @rdname manip_nodes_num
+#' @importFrom tidygraph node_is_isolated
+#' @importFrom dplyr filter
+#' @examples
+#' ison_adolescents |>
+#'   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) |>
+#'   to_waves(attribute = "wave") |>
+#'   delete_isolates()
+#' @export
+delete_isolates <- function(.data) UseMethod("delete_isolates")
+
+#' @export
+delete_isolates.default <- function(.data){
+  as_input(.data, delete_isolates)
+}
+
+#' @export
+delete_isolates.tbl_graph <- function(.data) {
+  nodes <- NULL
+  # Delete edges not present vertices
+  .data |> tidygraph::activate(nodes) |>
+    dplyr::filter(!tidygraph::node_is_isolated()) |>
+    add_info(name = paste(net_name(.data), "without isolates"))
+}
+
+#' @export
+delete_isolates.list <- function(.data) {
+  nodes <- NULL
+  # Delete edges not present vertices in each list
+  lapply(.data, function(x) {
+    x |> tidygraph::activate(nodes) |> dplyr::filter(!tidygraph::node_is_isolated())
+  })
+}
+
+#' @export
+delete_isolates.stocnet <- function(.data) {
+  if(is.null(.data$nodes) || nrow(.data$nodes) == 0) return(.data)
+  # A node tied at any wave is not an isolate, so changes count as well as ties
+  tied <- c(.data$ties$from, .data$ties$to)
+  if(!is.null(.data$changes) && nrow(.data$changes) > 0)
+    tied <- c(tied, .data$changes$node)
+  kept <- which(seq_len(nrow(.data$nodes)) %in% tied)
+  keep_nodes(.data, kept) |>
+    add_info(name = paste(net_name(.data), "without isolates"))
+}
+
+#' @export
+delete_isolates.igraph <- function(.data) {
+  as_igraph(delete_isolates(as_tidygraph(.data)))
+}
+
+#' @export
+delete_isolates.matrix <- function(.data) {
+  as_matrix(delete_isolates(as_tidygraph(.data)))
+}
+
+#' @export
+delete_isolates.network <- function(.data) {
+  as_network(delete_isolates(as_tidygraph(.data)))
+}
+
+#' @export
+delete_isolates.data.frame <- function(.data) {
+  as_edgelist(delete_isolates(as_tidygraph(.data)))
+}
+
+#' @rdname manip_nodes_num
+#' @export
+delete_incomplete <- function(.data) UseMethod("delete_incomplete")
+
+#' @export
+delete_incomplete.default <- function(.data){
+  as_input(.data, delete_incomplete)
+}
+
+#' @export
+delete_incomplete.tbl_graph <- function(.data){
+  out <- .data
+  nl <- as_nodelist(out)
+  if(is.null(nl)) return(out)
+  delete_nodes(.data, !stats::complete.cases(nl)) |>
+    add_info(name = paste(net_name(.data), "without nodes with missing data"))
+}
+
+#' @export
+delete_incomplete.stocnet <- function(.data){
+  if(is.null(.data$nodes) || nrow(.data$nodes) == 0) return(.data)
+  kept <- which(stats::complete.cases(.data$nodes))
+  keep_nodes(.data, kept) |>
+    add_info(name = paste(net_name(.data), "without nodes with missing data"))
+}
+
+#' @rdname manip_nodes_num
 #' @export
 bind_nodes <- function(.data, object2) UseMethod("bind_nodes")
 
@@ -122,10 +217,20 @@ filter_nodes.stocnet <- function(.data, ..., .by = NULL){
   with_active_context(.data, "nodes", {
     if(is.null(.data$nodes) || nrow(.data$nodes) == 0) return(.data)
 
-  node_df <- dplyr::mutate(.data$nodes, .orig_id = dplyr::row_number())
-  kept_nodes <- dplyr::filter(node_df, ..., .by = dplyr::all_of(.by))
-  kept <- kept_nodes$.orig_id
-  out_nodes <- dplyr::select(kept_nodes, -.orig_id)
+    node_df <- dplyr::mutate(.data$nodes, .orig_id = dplyr::row_number())
+    kept <- dplyr::filter(node_df, ..., .by = dplyr::all_of(.by))$.orig_id
+    keep_nodes(.data, kept)
+  })
+}
+
+# Rebuilds a stocnet retaining only `kept`, a vector of node indices into the
+# original nodelist, in the order they should appear. Ties to dropped nodes are
+# removed and the from/to and changes indices remapped onto the new nodelist,
+# so that every caller that drops nodes reindexes the same way.
+keep_nodes <- function(.data, kept){
+  if(is.null(.data$nodes) || nrow(.data$nodes) == 0) return(.data)
+
+  out_nodes <- .data$nodes[kept, , drop = FALSE]
 
   if(!is.null(.data$ties) && nrow(.data$ties) > 0){
     out_ties <- dplyr::filter(.data$ties, from %in% kept, to %in% kept) |>
@@ -143,8 +248,7 @@ filter_nodes.stocnet <- function(.data, ..., .by = NULL){
   }
 
   make_stocnet(nodes = out_nodes, ties = out_ties, changes = out_changes,
-              global = .data$global, info = .data$info)
-  })
+               global = .data$global, info = .data$info)
 }
 
 #' @rdname manip_nodes_num

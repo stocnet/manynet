@@ -1146,12 +1146,12 @@ Depending on your question, such `r gloss("isolates","isolate")` may be
 important actors (who is _not_ integrated?) or clutter.
 Two transforming functions prune them:
 
-- `to_no_isolates()` drops all nodes without ties
+- `delete_isolates()` drops all nodes without ties
 - `to_giant()` keeps only the largest `r gloss("component")`,
   dropping smaller disconnected fragments as well as isolates
 
 **Betty's only friendship is with Sue.
-Delete that tie and watch the node count before and after `to_no_isolates()`.**
+Delete that tie and watch the node count before and after `delete_isolates()`.**
 
 ```{r noisolates, exercise = TRUE, purl=FALSE}
 
@@ -1160,13 +1160,13 @@ Delete that tie and watch the node count before and after `to_no_isolates()`.**
 ```{r noisolates-hint-1, purl=FALSE}
 # stranded <- delete_ties(ison_adolescents, "Betty|Sue")
 # then compare net_nodes(stranded) with
-# net_nodes(to_no_isolates(stranded))
+# net_nodes(delete_isolates(stranded))
 ```
 
 ```{r noisolates-solution}
 stranded <- delete_ties(ison_adolescents, "Betty|Sue")
 net_nodes(stranded)
-net_nodes(to_no_isolates(stranded))
+net_nodes(delete_isolates(stranded))
 ```
 
 A related cleaning task concerns `r gloss("loops","loop")` (self-ties):
@@ -1176,7 +1176,7 @@ turning a `r gloss("complex")` network into a `r gloss("simplex")` one.
 ::: {.callout}
 <span class="callout-label">**In brief**:</span> `filter_nodes()`/`filter_ties()` and `to_subgraph()`
 keep only the elements satisfying a condition,
-while `to_no_isolates()`, `to_giant()`, and `to_simplex()` prune
+while `delete_isolates()`, `to_giant()`, and `to_simplex()` prune
 stranded nodes, minor components, and self-ties —
 all taking a whole network and returning a narrower or cleaner one.
 :::
@@ -1226,7 +1226,7 @@ Along the way, you have learned to use these functions:
 | `[`, `[[`, `$` | examine and assign into a network directly |
 | `add_nodes()`, `add_ties()`, `delete_nodes()`, `delete_ties()` | add/remove nodes and ties |
 | `filter_nodes()`, `filter_ties()`, `to_subgraph()` | keep elements satisfying a condition |
-| `to_no_isolates()`, `to_giant()`/`to_component()`, `to_simplex()` | prune isolates, minor components, self-ties |
+| `delete_isolates()`, `to_giant()`/`to_component()`, `to_simplex()` | prune isolates, minor components, self-ties |
 | `to_labelled()`, `to_unlabelled()` | name or anonymise nodes |
 | `mutate_nodes()`/`mutate_ties()`, `rename_nodes()`/`rename_ties()`, `delete_node_attribute()`/`delete_tie_attribute()` | add, change, rename, or delete attributes |
 | `to_undirected()`, `to_directed()`, `to_redirected()`, `to_reciprocated()`, `to_acyclic()` | reformat tie direction |
