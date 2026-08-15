@@ -79,6 +79,11 @@ net_nodes.data.frame <- function(.data){
 net_modes <- function(.data) UseMethod("net_modes")
 
 #' @export
+net_modes.default <- function(.data){
+  net_modes(as_igraph(.data))
+}
+
+#' @export
 net_modes.stocnet <- function(.data){
   if("mode" %in% names(.data$nodes)){
     length(unique(.data$nodes$mode))

@@ -55,6 +55,7 @@
   - The documentation now groups the measures by what they are sensitive to, since several are monotone transformations of one another and so rank dyads identically: "rand", "hamann", and "rogerstanimoto" are all functions of `(a+d)/n`; "jaccard", "czekanowski", and "sokalsneath" of `a/(a+b+c)`; and "yule" and "bonacich" of the odds ratio
   - Measures defined only for binary data now dichotomise a valued network and say so, where they previously computed `1 - x` on tie values and returned nonsense without comment
   - The co-occurrence counts are no longer computed where the chosen measure does not use them, so that "count" and "pearson" no longer pay for four matrix products they discard
+- Added `net_modes.default()`, so that `net_modes()` works for a matrix, edgelist, or `network` object
 - Improved `to_undirected()` with a `rule` argument offering "min", "max", "mean", "sum", and "product" alongside the existing default "collapse"
   - Fixed `to_undirected()` returning a different network for each class it was given: .matrix binarised tie weights, .igraph summed them, and .network method declared network undirected while leaving its dyads asymmetric; all classes now sum
   - Fixed tie attributes other than the weight, such as the sign or the layer, not surviving collapsing as igraph's default combination rule discarded them
