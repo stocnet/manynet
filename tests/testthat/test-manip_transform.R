@@ -6,10 +6,11 @@ to_funs <- to_funs[!vapply(to_funs, function(f)
   is.function(f) && grepl("Deprecated|Defunct|fn_moved",
                           paste(deparse(body(f)), collapse = " ")),
   logical(1))]
-# to_wave() is an alias of to_time(), to_layer() of to_uniplex(), and
-# to_giant() is a plain wrapper for to_component(), so none of them has
-# methods of its own to sweep here.
-to_funs <- to_funs[!grepl("^na_|s$|^to_named$|^to_unnamed$|^to_wave$|^to_giant$|^to_layer$", names(to_funs))]
+# to_wave() is an alias of to_time(), to_layer() of to_uniplex(),
+# to_giant() is a plain wrapper for to_component(), and to_mode() is a plain
+# wrapper for to_mode1()/to_mode2(), so none of them has methods of its own
+# to sweep here.
+to_funs <- to_funs[!grepl("^na_|s$|^to_named$|^to_unnamed$|^to_wave$|^to_giant$|^to_layer$|^to_mode$", names(to_funs))]
 fun_names <- names(to_funs)
 fun_names <- fun_names[!grepl("\\.", fun_names)]
 
@@ -120,6 +121,72 @@ test_that("matrix projected correctly by columns",{
   expect_values(net_nodes(to_mode2(ison_southern_women, "count")), net_nodes(to_mode2(ison_southern_women, "jaccard")))
   expect_true(is_weighted(to_mode2(ison_southern_women, "pearson")))
   expect_false(tie_weights(to_mode2(ison_southern_women, "rand"))[1] == tie_weights(to_mode2(ison_southern_women, "count"))[1])
+})
+
+test_that("mode selected by index projects as the numbered function does",{
+  expect_equal(as_matrix(to_mode(ison_southern_women, 1)),
+               as_matrix(to_mode1(ison_southern_women)))
+  expect_equal(as_matrix(to_mode(ison_southern_women, 2)),
+               as_matrix(to_mode2(ison_southern_women)))
+  # mode 1 is the default, as for the rows of a matrix
+  expect_equal(as_matrix(to_mode(ison_southern_women)),
+               as_matrix(to_mode1(ison_southern_women)))
+  # a one-mode network is returned unchanged, as by to_mode1()
+  expect_equal(as_matrix(to_mode(create_ring(5))),
+               as_matrix(create_ring(5)))
+})
+
+test_that("mode selected by name projects as the numbered function does",{
+  expect_equal(mode_names(ison_southern_women), c("women", "social events"))
+  expect_equal(as_matrix(to_mode(ison_southern_women, "women")),
+               as_matrix(to_mode1(ison_southern_women)))
+  expect_equal(as_matrix(to_mode(ison_southern_women, "social events")),
+               as_matrix(to_mode2(ison_southern_women)))
+  # just one word of the name is enough, in any case and either number
+  expect_equal(as_matrix(to_mode(ison_southern_women, "events")),
+               as_matrix(to_mode2(ison_southern_women)))
+  expect_equal(as_matrix(to_mode(ison_southern_women, "event")),
+               as_matrix(to_mode2(ison_southern_women)))
+  expect_equal(as_matrix(to_mode(ison_southern_women, "Social Events")),
+               as_matrix(to_mode2(ison_southern_women)))
+})
+
+test_that("to_mode passes the similarity through",{
+  expect_equal(as_matrix(to_mode(ison_southern_women, "events", "jaccard")),
+               as_matrix(to_mode2(ison_southern_women, "jaccard")))
+  expect_equal(as_matrix(to_mode(ison_southern_women, 1, "pearson")),
+               as_matrix(to_mode1(ison_southern_women, "pearson")))
+})
+
+test_that("to_mode reports an unusable mode",{
+  # cli wraps these messages, so match a phrase short enough to survive it
+  expect_error(to_mode(ison_southern_women, 3), "must be 1 or 2")
+  expect_error(to_mode(ison_southern_women, c(1,2)), "must be 1 or 2")
+  expect_error(to_mode(ison_southern_women, "cats"), "must be an index")
+  # the modes of this network are not named, so only an index will do
+  expect_error(to_mode(create_ring(c(5,3)), "events"), "not named")
+})
+
+test_that("to_mode reports a name matching both modes",{
+  two <- add_info(ison_southern_women, nodes = c("work events",
+                                                 "social events"))
+  expect_error(to_mode(two, "events"), "more than one mode")
+  # each mode is still reachable by the word that tells them apart
+  expect_equal(as_matrix(to_mode(two, "work")),
+               as_matrix(to_mode1(ison_southern_women)))
+  expect_equal(as_matrix(to_mode(two, "social")),
+               as_matrix(to_mode2(ison_southern_women)))
+})
+
+test_that("to_mode refuses a network of three or more modes",{
+  # the only three-mode object the package can hold, built as in test-mark_is.R
+  three <- as_stocnet(fict_marvel)
+  three$nodes$mode[1:5] <- "third"
+  expect_equal(net_modes(three), 3)
+  expect_error(to_mode(three, 1), "3 modes")
+  # two-mode and one-mode networks are unaffected by that check
+  expect_equal(net_modes(ison_southern_women), 2)
+  expect_equal(net_modes(create_ring(5)), 1)
 })
 
 test_that("to matching works", {
