@@ -45,16 +45,15 @@
 - Added `to_multilevel.stocnet()` to return an unaltered network as levels are held in the 'mode' variable of the nodes table
 - Added `to_layers()`, which splits a multiplex network into a named list of its layers, one per tie type
 - Added `to_layer()` as an alias of `to_uniplex()`, using the layer-based vocabulary of `layer_names()`, `net_layers()`, and `to_layers()`
-- Added thirteen further measures to `to_mode1()` and `to_mode2()`, so that all of the one-mode projections UCINET offers are now available
-  - Six of these were already implemented but unreachable, since they were missing from the argument's list of choices: "ochiai" (the cosine), "czekanowski" (Dice), "sokalsneath", "ochiai2" (Sokal and Sneath's fifth measure), "rogerstanimoto", and "hamann"
-  - The branch computing Hamann's coefficient was named "gowerlegendre"; Gower and Legendre's S is `(a+d)/(a+0.5(b+c)+d)`, a different measure, so it has been renamed. The two Sokal-Sneath branches were numbered 1 and 2, matching neither the literature nor each other, and are now "sokalsneath" and "ochiai2"
-  - Added "match", "overlap", "crossmin", "maxcrossmin", "sqdiff", "covariance", and "bonacich", each checked against UCINET
-  - Bonacich's (1972) measure is computed as `sqrt(ad)/(sqrt(ad)+sqrt(bc))`, which is algebraically identical to the usual formulation but needs no loop over pairs of nodes, and shows the measure to be Yule's Y rescaled onto the unit interval
-  - "match", "crossmin", "maxcrossmin", and "sqdiff" are likewise computed by matrix arithmetic rather than by iterating over pairs of nodes, giving identical results in a fraction of the time
-  - "sqdiff" is offered as `1/(1+d)` rather than as the raw sum of squared differences, so that larger means more alike for every value of `similarity` and not merely most of them; recover UCINET's figure as `1/x - 1`
-  - The documentation now groups the measures by what they are sensitive to, since several are monotone transformations of one another and so rank dyads identically: "rand", "hamann", and "rogerstanimoto" are all functions of `(a+d)/n`; "jaccard", "czekanowski", and "sokalsneath" of `a/(a+b+c)`; and "yule" and "bonacich" of the odds ratio
-  - Measures defined only for binary data now dichotomise a valued network and say so, where they previously computed `1 - x` on tie values and returned nonsense without comment
-  - The co-occurrence counts are no longer computed where the chosen measure does not use them, so that "count" and "pearson" no longer pay for four matrix products they discard
+- Added `to_mode()` to select mode to project by a `mode` argument
+  - `to_mode(.data, 1)` is `to_mode1(.data)` and `to_mode(.data, 2)` is `to_mode2(.data)`
+  - `mode` also accepts the name of a mode, for users who recall what a mode is called but not which position it holds, e.g. `to_mode(ison_southern_women, "events")`
+  - The name is matched against `mode_names()`, ignoring case, plurals, and any other words in the name, so that "events", "event", and "Social Events" all select the "social events" mode
+- Added 13 further similarity measures to `to_mode1()` and `to_mode2()`
+  - 6 were already implemented but unreachable: "ochiai" (the cosine), "czekanowski" (Dice), "sokalsneath", "ochiai2" (Sokal and Sneath's fifth measure), "rogerstanimoto", and "hamann"
+  - Added 7 more: "match", "overlap", "crossmin", "maxcrossmin", "sqdiff", "covariance", and "bonacich" (as `sqrt(ad)/(sqrt(ad)+sqrt(bc))`)
+  - Where possible, measures computed by matrix arithmetic rather than by iterating over pairs of nodes, giving identical results in a fraction of the time, 
+  and co-occurrence counts are no longer computed where the chosen measure does not use them
 - Added `net_modes.default()`, so that `net_modes()` works for a matrix, edgelist, or `network` object
 - Improved `to_undirected()` with a `rule` argument offering "min", "max", "mean", "sum", and "product" alongside the existing default "collapse"
   - Fixed `to_undirected()` returning a different network for each class it was given: .matrix binarised tie weights, .igraph summed them, and .network method declared network undirected while leaving its dyads asymmetric; all classes now sum

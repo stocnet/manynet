@@ -4,13 +4,32 @@
 \alias{modif_project}
 \alias{to_mode1}
 \alias{to_mode2}
+\alias{to_mode}
 \alias{to_linegraph}
 \alias{to_hypergraph}
 \title{Modifying networks projection}
 \usage{
-to_mode1(.data, similarity = c("count", "jaccard", "rand", "pearson", "yule"))
+to_mode1(
+  .data,
+  similarity = c("count", "jaccard", "rand", "pearson", "yule", "match", "overlap",
+    "crossmin", "maxcrossmin", "sqdiff", "covariance", "bonacich", "ochiai", "ochiai2",
+    "czekanowski", "sokalsneath", "hamann", "rogerstanimoto")
+)
 
-to_mode2(.data, similarity = c("count", "jaccard", "rand", "pearson", "yule"))
+to_mode2(
+  .data,
+  similarity = c("count", "jaccard", "rand", "pearson", "yule", "match", "overlap",
+    "crossmin", "maxcrossmin", "sqdiff", "covariance", "bonacich", "ochiai", "ochiai2",
+    "czekanowski", "sokalsneath", "hamann", "rogerstanimoto")
+)
+
+to_mode(
+  .data,
+  mode = 1,
+  similarity = c("count", "jaccard", "rand", "pearson", "yule", "match", "overlap",
+    "crossmin", "maxcrossmin", "sqdiff", "covariance", "bonacich", "ochiai", "ochiai2",
+    "czekanowski", "sokalsneath", "hamann", "rogerstanimoto")
+)
 
 to_linegraph(.data)
 
@@ -27,25 +46,97 @@ to_hypergraph(.data)
 \item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
 
-\item{similarity}{Method for establishing ties,
-currently "count" (default), "jaccard", or "rand".
+\item{similarity}{Method for establishing ties in the projection,
+"count" by default.
+
+The measures are grouped below by what they are sensitive to.
+Within a group they are monotone transformations of one another,
+and so rank dyads identically, differing only in their scale.
+Choosing between the groups therefore matters rather more than
+choosing within one.
+
+Measures defined for valued as well as binary data:
 \itemize{
-\item "count" calculates the number of coinciding ties,
-and can be interpreted as indicating the degree of opportunities
-between nodes.
-\item "jaccard" uses this count as the numerator in a proportion,
-where the denominator consists of any cell where either node has a tie.
-It can be interpreted as opportunity weighted by participation.
-\item "rand", or the Simple Matching Coefficient,
-is a proportion where the numerator consists of the count of cells where
-both nodes are present or both are absent,
-over all possible cells.
-It can be interpreted as the (weighted) degree of behavioral mirroring
-between two nodes.
-\item "pearson" (Pearson's coefficient) and "yule" (Yule's Q)
-produce correlations for valued and binary data, respectively.
-Note that Yule's Q has a straightforward interpretation related to the odds ratio.
+\item "count" counts the coinciding ties, the cross-product \eqn{XX'}.
+For valued data it sums the products of tie strengths.
+Interpret it as the degree of opportunity between two nodes.
+This is the default, and the quickest, since it can use
+\code{igraph::bipartite_projection()} directly.
+\item "match" counts the cells in which two nodes hold exactly the same
+value, joint absences included. For binary data this is "rand" multiplied
+by the number of nodes in the other mode, but for valued data it is the
+more general measure, since it registers agreement at any tie strength.
+Use it where the level of involvement is meaningful in itself.
+\item "overlap" divides the count by the smaller of the two nodes' total tie
+strength, the Szymkiewicz-Simpson coefficient. Use it where one node is
+much more active than the other, and the less active node's rarity should
+not depress the score.
+\item "crossmin" sums the smaller of each pair of tie strengths.
+Interpret it as the capacity two nodes could jointly bring to bear.
+For binary data it reduces to "count".
+\item "maxcrossmin" takes the largest such minimum rather than their sum,
+so that a single strong shared affiliation stands for the pair.
+For binary data it collapses to an indicator of any shared affiliation,
+and so is of little use there.
+\item "sqdiff" inverts the sum of squared differences in tie strength,
+as \eqn{1/(1+d)}, so that identical rows give 1 and larger values mean
+more alike, as for every other measure here.
+Recover the raw sum of squared differences as \eqn{1/x - 1}.
+\item "pearson" gives Pearson's product-moment correlation and "covariance"
+its unstandardised counterpart. Use "covariance" where the variance in
+involvement is itself of interest, and "pearson" where it is not.
+}
+
+Measures defined for binary data only, where a valued network is
+dichotomised at zero with a warning. Writing \eqn{a} for the cells in
+which both nodes are present, \eqn{b} and \eqn{c} for those in which just
+one is, and \eqn{d} for those in which neither is:
+\itemize{
+\item Sensitive to co-presence, ignoring joint absence: "jaccard" is
+\eqn{a/(a+b+c)}, opportunity weighted by participation; "czekanowski"
+(the Dice or Sorensen coefficient) is \eqn{2a/(2a+b+c)}, which
+double-weights co-presence; and "sokalsneath" is \eqn{a/(a+2(b+c))},
+which instead double-weights mismatch. Use these where joint
+non-participation says nothing, as in a sparse affiliation network with
+many events.
+\item Sensitive to matching, counting joint absence as evidence: "rand",
+the Simple Matching Coefficient, is \eqn{(a+d)/(a+b+c+d)}; "hamann" is
+\eqn{((a+d)-(b+c))/(a+b+c+d)}, the same quantity rescaled onto
+\eqn{[-1,1]} so that its sign reports whether matches outnumber
+mismatches; and "rogerstanimoto" is \eqn{(a+d)/(a+2(b+c)+d)}, which
+double-weights mismatch. Interpret these as the degree of behavioural
+mirroring between two nodes, and use them where not attending is as
+informative as attending.
+\item Sensitive to association, through the odds ratio \eqn{ad/bc}: "yule"
+is Yule's Q, \eqn{(ad-bc)/(ad+bc)}, which has a straightforward reading
+as a rescaled odds ratio; and "bonacich" is
+\eqn{\sqrt{ad}/(\sqrt{ad}+\sqrt{bc})}, which is Yule's Y rescaled onto
+\eqn{[0,1]}. Both saturate at 1 wherever \eqn{b} or \eqn{c} is zero.
+\item Geometric: "ochiai" is \eqn{a/\sqrt{(a+b)(a+c)}}, the cosine of the
+angle between two nodes' affiliation vectors, and "ochiai2" (also known
+as Sokal and Sneath's fifth measure) is
+\eqn{ad/\sqrt{(a+b)(a+c)(d+b)(d+c)}}, its counterpart including joint
+absence. Neither is monotone in any of the above, so both are worth
+trying alongside them.
 }}
+
+\item{mode}{Which mode to project the network to,
+either as an index, 1 or 2, or as the name of the mode.
+Mode 1 is the first node set, e.g. the rows, and is the default.
+
+A name is matched against the names of the modes,
+which \code{mode_names()} returns and \code{add_info()} sets.
+The match ignores case, plurals, and any other words in the name,
+so that a network whose modes are named "women" and "social events"
+can be projected with either "social events", "events", or "event".
+Where a name matches both modes, as "events" would where they are named
+"social events" and "work events", the function reports the ambiguity
+and asks for a name that tells them apart, or an index.
+
+The network must have two modes.
+Projecting one mode of a network of three or more would need a second
+mode to project through, which this function does not yet accept,
+so it reports the modes it found instead.}
 }
 \value{
 A tidygraph object modified as explained in the function description, details,
@@ -54,6 +145,9 @@ or section.
 \description{
 These functions offer tools for projecting manynet-consistent data:
 \itemize{
+\item \code{to_mode()} projects a two-mode network to a one-mode network
+of the node set given by the \code{mode} argument, which accepts either the
+index of the mode or its name.
 \item \code{to_mode1()} projects a two-mode network to a one-mode network
 of the first node set's (e.g. rows) joint affiliations to nodes in the second node set (columns).
 \item \code{to_mode2()} projects a two-mode network to a one-mode network
@@ -88,6 +182,7 @@ to_mode2               *       *      *      *       *                 *
     \tab Binary (unweighted) output \tab yes \tab yes (\code{multiplicity = FALSE}) \tab threshold manually \cr
     \tab Jaccard normalisation \tab yes \tab no \tab code manually \cr
     \tab Cosine normalisation \tab yes \tab no \tab code manually \cr
+    \tab Other similarity measures \tab 18 in all, see \code{similarity} \tab no \tab code manually \cr
    \strong{Attributes} \tab Retains node attributes \tab yes \tab yes \tab no — lost in matrix round-trip \cr
     \tab Retains edge attributes \tab weight only \tab weight only \tab no \cr
     \tab Removes self-loops automatically \tab yes \tab yes \tab \code{diag(P) <- 0} manually \cr
@@ -123,10 +218,29 @@ igraph-like objects represent them as nodes of the second mode in a two-mode gra
 \examples{
 to_mode1(ison_southern_women)
 to_mode2(ison_southern_women)
-to_ties(ison_adolescents)
+to_mode(ison_southern_women, 2)
+to_mode(ison_southern_women, "events")
+to_linegraph(ison_adolescents)
+}
+\references{
+\subsection{On two-mode projection}{
+
+Borgatti, Stephen P., and Daniel S. Halgin. 2011.
+"Analyzing affiliation networks".
+In \emph{The SAGE Handbook of Social Network Analysis}, 417-433. London: SAGE.
+
+Bonacich, Phillip. 1972.
+"Technique for analyzing overlapping memberships".
+\emph{Sociological Methodology} 4: 176-185.
+\doi{10.2307/270732}
+}
 }
 \seealso{
+\code{\link[=to_cosine]{to_cosine()}}, which takes the cosine over the columns of a
+matrix without projecting it.
+
 Other modifications:
+\code{\link{modif_combine}},
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
