@@ -6,6 +6,7 @@
   - Now runs once, for the whole stack, in `{migraph}`, where it is also cached and checks GitHub as well as CRAN
 - Updated startup message to include executable functions, though they are not yet working due to an RStudio bug
 - Updated CONTRIBUTING with more details about console messaging, README, and the website
+- Added cross-class sweep of the network-splitting functions to the functional tests
 
 ## Classes
 

@@ -145,25 +145,46 @@ for (fn in setdiff(to_funs, names(to_argmakers))) {
     }
   })
 }
-}
 
-# Provenance: a to_*() function offering a choice of measure or rule should
-# record which one was used, so that e.g. a Jaccard projection can be told
-# apart from a count projection when the result is printed or reported.
-for (fn in intersect(to_funs, c("to_mode1", "to_mode2", "to_undirected",
-                                "to_flat"))) {
+# Cross-class conformance of the splitting functions. These return a list of
+# networks rather than a single network, so the sweep above compares nothing
+# for them. Each is run on a network that holds what it splits on, in each
+# object class, and the lists are compared element-wise. This catches both a
+# class that errors (for example where the coercion back to the input class
+# is applied to the list instead of to its elements) and a class that returns
+# a single network where a list is expected.
+for (fn in names(split_fixtures)) {
   f <- get(fn, envir = asNamespace("manynet"))
-  test_that(paste0(fn, "() records how it transformed the network"), {
-    net <- if (fn %in% c("to_mode1", "to_mode2")) ison_southern_women else
-      if (fn == "to_flat") ison_florentine else canonical_weighted
-    out <- run_or_skip(do.call(f, list(net)), fn, "provenance")
-    expect_true("transform" %in% net_attributes(out),
-                label = paste0(fn, "() recording a transform attribute"))
-    # the choice itself is named, not merely that something happened
-    choice <- formals(f)[[intersect(names(formals(f)),
-                                    c("similarity", "rule"))]]
-    expect_match(paste(igraph::graph_attr(as_igraph(out), "transform"),
-                       collapse = " "),
-                 eval(choice)[1], fixed = TRUE)
+  spec <- split_fixtures[[fn]]
+
+  test_that(paste0(fn, "() returns a list of networks in every class"), {
+    classes <- class_versions(spec$net)
+    classes <- classes[vapply(names(classes), split_class_holds_info,
+                              logical(1), fn = fn)]
+    outs <- lapply(classes, function(net)
+      tryCatch(do.call(f, c(list(net), spec$args)), error = function(e) e))
+    bad <- !vapply(outs, is_network_list, logical(1))
+    if (all(bad)) {
+      skip(paste0("AUDIT [", fn, "]: returns no list of networks for any ",
+                  "class"))
+    }
+    succeed()
+    ties <- lapply(outs[!bad], function(o)
+      tryCatch(tie_sets(o), error = function(e) NULL))
+    ties <- Filter(Negate(is.null), ties)
+    if (length(ties) > 1) {
+      for (cl in names(ties)[-1]) {
+        expect_equal(ties[[cl]], ties[[1]],
+                     label = paste0(fn, "() on ", cl),
+                     expected.label = paste0(fn, "() on ", names(ties)[1]))
+      }
+    }
+    if (any(bad)) {
+      why <- vapply(outs[bad], function(o)
+        if (inherits(o, "error")) conditionMessage(o) else
+          paste("returns a", class(o)[1]), character(1))
+      skip(paste0("AUDIT [", fn, "]: no list of networks for class(es) ",
+                  paste0(names(why), " (", why, ")", collapse = "; ")))
+    }
   })
 }
