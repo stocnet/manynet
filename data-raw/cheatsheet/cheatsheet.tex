@@ -417,7 +417,8 @@ also \code|to_redirected()| (swap), \code|to_reciprocated()|, \code|to_acyclic()
 \item weights \& signs: \code|to_weighted()|, \code|to_unweighted()|,
 \code|to_signed()|, \code|to_unsigned()|
 \item names: \code|to_named()|, \code|to_unnamed()|;
-loops \& layers: \code|to_simplex()|, \code|to_uniplex(net, tie)|
+loops \& layers: \code|to_simplex()|, \code|to_uniplex(net, layer)|,
+\code|to_flat(net, rule)|
 \item \code|to_anti()| — complement; \code|to_permuted()| — shuffled
 \end{itemize}
 \end{mnbox}
@@ -443,7 +444,8 @@ functions join them back up:
 \item \code|to_components()|: one network per component
 \item \code|to_waves()| / \code|from_waves()|: longitudinal panels
 \item \code|to_slices(net, times)| / \code|from_slices()|: continuous time
-\item \code|from_ties()|: join tie types into a multiplex network
+\item \code|to_layers()| / \code|from_layers()|: split into layers or
+join networks as layers
 \end{itemize}
 \end{mnbox}
 

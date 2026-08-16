@@ -86,6 +86,11 @@
   - A network is marked weighted again as soon as its weights vary in magnitude, or where it has both a 'sign' attribute and weights, since the weights are then a value in their own right
   - `describe_network()` had special-cased this already and is now simply consistent with the mark, while the coercion, missing data, and tie-adding functions that used `is_weighted()` to ask whether ties carried values now ask that question directly, so that signs continue to survive coercion between every format
 
+## Learning
+
+- Updated the "Manipulating Network Data" tutorial's Layers page to cover `to_layers()`, `from_layers()`, and `to_flat()` alongside `to_uniplex()`, with `ison_lawfirm` flattened by "sum" to count how many of its three relationships each pair holds
+- Updated the tutorial and cheatsheet references to `to_uniplex()` to use its `layer` argument
+
 ## Data
 
 - Improved `table_data()` to skip TRUE/FALSE `multiplex` in favour of number of `layers`

@@ -95,7 +95,8 @@ By the end of this tutorial, you should be able to:
 - [ ] &nbsp; Change a network's direction, weights, and signs, and know why you might
 - [ ] &nbsp; Grow and prune networks by adding, joining, deleting, and filtering
   nodes, ties, and attributes
-- [ ] &nbsp; Extract a single layer from a multiplex network
+- [ ] &nbsp; Extract a single layer from a multiplex network, split it into all
+  of its layers, or flatten those layers back into one relation
 - [ ] &nbsp; Project a two-mode network to one of its modes, and understand the consequences
 - [ ] &nbsp; Split a longitudinal network into waves and apply recorded changes
 
@@ -565,6 +566,47 @@ Note that the corresponding do-it-yourself route is
 `to_uniplex()` does this and additionally tidies up
 the now-redundant type information.
 
+`to_uniplex()` works one layer at a time.
+`to_layers()` splits a multiplex network into all of them at once,
+returning a named list with one network per layer,
+and `from_layers()` puts such a list back together again.
+**Split `ison_lawfirm` into its layers.**
+
+```{r tolayers}
+to_layers(ison_lawfirm)
+```
+
+Sometimes you want a single network that keeps what _every_ layer records,
+rather than one layer or a list of them.
+`to_flat()` combines the layers dyad by dyad, according to a `rule`:
+"max" counts a tie in any layer as a tie,
+"min" keeps only the ties present in every layer,
+and "sum" adds the layers up.
+**Flatten `ison_lawfirm` so that each tie records how many of the three
+relationships that pair holds.**
+
+
+To check your result: the flattened network is weighted,
+and 824 pairs share one relationship, 503 share two, and 247 share all three.
+
+`from_layers()` does the same for networks you collected separately.
+Give it two or more networks over the same nodes and it makes each one a layer,
+which is the other way to build a multiplex network:
+`join_ties()` marks where each tie came from, and `from_layers()` names layers.
+Either way, `to_flat()` then combines them.
+**Keep only the pairs who are both friends and advisors.**
+
+```{r fromlayers}
+friends <- to_uniplex(ison_lawfirm, "friends")
+advice <- to_uniplex(ison_lawfirm, "advice")
+from_layers(friends = friends, advice = advice)
+from_layers(friends = friends, advice = advice) |> to_flat(rule = "min")
+```
+
+The last line keeps the 358 pairs tied in both layers.
+Nodes are matched by name where the networks are labelled,
+and by position where they are not and are the same size.
+
 **Your turn**: try the other layers of `ison_lawfirm`,
 or explore another multiplex network:
 
@@ -577,8 +619,12 @@ or explore another multiplex network:
 <span class="callout-label">**In brief**:</span> `join_ties()` merges a second network's ties in as a new
 _type_, producing a multiplex network.
 `is_multiplex()` checks for multiple tie types and `layer_names()` lists them,
-while `to_uniplex(tie = )` extracts a single layer by name
+while `to_uniplex(layer = )` extracts a single layer by name
 (the do-it-yourself equivalent of `filter_ties(type == ...)`).
+`to_layers()` splits a network into all of its layers and
+`from_layers()` reassembles them, or joins networks collected separately
+as layers, while `to_flat()` combines the layers of any multiplex network
+into one relation by a `rule`.
 :::
 
 <img src="https://gifdb.com/images/high/doctors-doing-hand-gestures-pu47xo2ice3pvsk2.gif" alt="gif of two doctors in scrubs doing a synchronised celebratory hand gesture"/>
@@ -901,7 +947,8 @@ Along the way, you have learned to use these functions:
 | `to_unweighted()`, `to_weighted()` | binarise (around a `threshold`) or weight ties |
 | `to_unsigned(keep = )`, `to_signed()`, `tie_signs()` | split or create signed networks |
 | `join_ties()`, `bind_ties()`, `join_nodes()` | merge another network's ties or nodes in |
-| `to_uniplex(tie = )`, `layer_names()` | extract a layer from a multiplex network |
+| `to_uniplex(layer = )`, `layer_names()` | extract a layer from a multiplex network |
+| `to_layers()`, `from_layers()`, `to_flat(rule = )` | split a network into its layers, join networks as layers, or combine those layers into one relation |
 | `to_mode1()`, `to_mode2()`, `to_onemode()`, `to_twomode()`, `to_multilevel()` | move between modes |
 | `net_waves()`, `to_time()`/`to_wave()`, `to_waves()` | count and extract waves of a longitudinal network |
 | `filter_changes()`, `apply_changes()`, `add_changes()` | inspect and apply node changes over time |
