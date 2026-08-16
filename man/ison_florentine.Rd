@@ -45,7 +45,7 @@ Padgett and Ansell (1993) as an account of how the Medici came to control
 the city around 1430. Two factions dominated that struggle, one around the
 Medici and one around the Strozzi.
 
-Two types of tie are recorded:
+Two layers of tie are recorded:
 \itemize{
 \item \emph{business}: recorded financial ties such as loans, credits,
 and joint partnerships
@@ -65,6 +65,8 @@ the larger dataset of 116 families used by Breiger and Pattison (1986)
 Both relations are recorded symmetrically here, as in the original coding.
 As Breiger & Pattison (1986) point out, this is defensible for marriage ties
 but unfortunate for the financial ties, which were almost certainly directed.
+Because both layers are symmetric, each tie is stored once per dyad rather
+than as a pair of reciprocated arcs.
 The Pucci family is an isolate in both relations.
 }
 \references{
