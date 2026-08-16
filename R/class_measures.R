@@ -7,6 +7,18 @@ make_node_measure <- function(out, .data) {
 
 make_tie_measure <- function(out, .data) {
   class(out) <- c("tie_measure", class(out))
+  # A stocnet holds its ties in its own table, and coercion may reciprocate
+  # its undirected layers, so name from that table rather than a coerced copy.
+  if(inherits(.data, "stocnet")){
+    from <- .data$ties$from
+    to <- .data$ties$to
+    if(is_labelled(.data)){
+      from <- .data$nodes$label[from]
+      to <- .data$nodes$label[to]
+    }
+    names(out) <- paste0(from, if(is_directed(.data)) "->" else "-", to)
+    return(out)
+  }
   if(is_labelled(.data)){
     tie_names <- attr(igraph::E(as_igraph(.data)), "vnames")
     if(is_directed(.data)) 
