@@ -177,7 +177,35 @@ to_uniplex.tbl_graph <- function(.data, layer, tie){
       mutate_nodes(type = NULL)
   }
   out <- out |> mutate_info(ties = layer)
+  out <- .retain_layer_info(out, layer, setdiff(ties_avail, layer))
+  # A network with both directed and undirected layers is directed as a whole,
+  # and holds its undirected layers as reciprocated arcs. Once only such a
+  # layer is left, the result is an undirected network, so the arcs collapse
+  # back to one tie per dyad.
+  if(isFALSE(unname(igraph::graph_attr(out, "directed")[layer])))
+    out <- to_undirected(out)
   tidygraph::activate(out, "nodes")
+}
+
+# Reduce the per-layer info to the one layer that `to_uniplex()` retains.
+# Without this, 'layers' and the named 'directed'/'observation'/'update'
+# vectors keep describing layers that are no longer in the network, which
+# `validate_stocnet()` rejects once the result is coerced back to a stocnet.
+.retain_layer_info <- function(.data, layer, dropped){
+  out <- .data
+  if("layers" %in% igraph::graph_attr_names(out))
+    igraph::graph_attr(out, "layers") <- layer
+  for(field in c("directed", "observation", "update")){
+    vals <- igraph::graph_attr(out, field)
+    if(!is.null(vals) && !is.null(names(vals)) && layer %in% names(vals))
+      igraph::graph_attr(out, field) <- vals[layer]
+  }
+  focal <- igraph::graph_attr(out, "focal")
+  if(!is.null(focal)){
+    focal <- setdiff(focal, dropped)
+    igraph::graph_attr(out, "focal") <- if(length(focal) > 0) focal else NULL
+  }
+  out
 }
 
 #' @rdname modif_plexity

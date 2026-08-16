@@ -50,6 +50,9 @@
 - Added `to_multilevel.stocnet()` to return an unaltered network as levels are held in the 'mode' variable of the nodes table
 - Added `to_layers()`, which splits a multiplex network into a named list of its layers, one per tie type
 - Added `to_layer()` as an alias of `to_uniplex()`, using the layer-based vocabulary of `layer_names()`, `net_layers()`, and `to_layers()`
+- Fixed `to_uniplex()` leaving the network's info describing the layers it dropped, so `layers`, `focal`, and any per-layer `directed`, `observation`, or `update` vector now cover only the layer retained
+  - Previously a stocnet object with multiple named layers could fail `validate_stocnet()` with "'info$layers' must be of length 1" once the result was recombined, e.g. by `from_layers()`
+  - Now also returns an undirected network where the layer retained is recorded as undirected, e.g. `to_uniplex(ison_bankwiring, "friendship")`, since the rest of the network is no longer there to make it directed
 - Added `to_mode()` to select mode to project by a `mode` argument
   - `to_mode(.data, 1)` is `to_mode1(.data)` and `to_mode(.data, 2)` is `to_mode2(.data)`
   - `mode` also accepts the name of a mode, for users who recall what a mode is called but not which position it holds, e.g. `to_mode(ison_southern_women, "events")`
