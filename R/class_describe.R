@@ -51,8 +51,13 @@ describe_ties <- function(.data){
   nt <- net_ties(.data)
   tie_name <- ifelse(is_directed(.data), "arcs", "ties")
   if(!is.null(layer_names(.data))){
+    # Where a network records the directedness of each layer, an undirected
+    # layer of an otherwise directed network holds ties rather than arcs.
+    directed <- as_infolist(.data)$directed
+    layer_name <- if(!is.null(directed) && !is.null(names(directed)))
+      ifelse(directed[layer_names(.data)], "arcs", "ties") else tie_name
     parts <- paste0(layer_ties(.data), " ", singularize(layer_names(.data)),
-                    " ", tie_name)
+                    " ", layer_name)
     return(phrase(parts))
   } else if(!is.null(tie_attribute(.data, "type"))){
     tab <- table(tie_attribute(.data, "type"))

@@ -13,6 +13,7 @@
 - Improved `print.node_measure()`, `print.tie_measure()`, and `print.network_measure()` so they use new `measure`, `range`, and `normalization` attributes to print a concise, subtle header description in sentence case
   - See changes in netrics v1.0.0 for more
 - Fixed pluralize helper to except non-plural words like "business"
+- Improved `describe_ties()` to name the ties of each layer by that layer's own directedness, so a symmetric layer of an otherwise directed network is described as holding ties rather than arcs
 
 ## Making
 
