@@ -26,8 +26,15 @@
 #'   - 'layers' should be a character vector of the names of the layers of
 #'   the ties in a multiplex or multilayer network.
 #'   - 'directed' should be a logical indicating whether each layer is directed or undirected.
-#'   If there are multiple layers, this can be a named logical vector with the directedness of each layer, 
+#'   If there are multiple layers, this can be a named logical vector with the directedness of each layer,
 #'   where the names correspond to the layer names.
+#'   An undirected layer holds one row per dyad in the ties component,
+#'   whether or not the other layers are directed.
+#'   Since an 'igraph' or 'network' object is directed or undirected as a whole,
+#'   coercion reciprocates the undirected layers of a network that has any
+#'   directed layer, and coercion back collapses them again.
+#'   This keeps the degree of a node in an undirected layer the same in every
+#'   class, and makes the round trip lossless.
 #'   - 'focal' should be a character vector indicating which variables are
 #'   dependent (endogenous). These may be tie layers (dependent networks) and/or
 #'   nodal variables recorded in the changes component (dependent behaviours),

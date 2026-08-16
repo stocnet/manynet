@@ -181,6 +181,77 @@ as_igraph.network <- function(.data,
   graph
 }
 
+# Undirected layers ####
+
+# A stocnet holds each undirected tie once, on the dyad rather than on the arc.
+# Other classes are directed or undirected as a whole, though, so a network
+# with both directed and undirected layers must be coerced to a directed one.
+# A single row would then read as a one-way arc, halving the degree of every
+# node in that layer. These two helpers therefore reciprocate the undirected
+# layers on the way out and collapse them again on the way back, so that a
+# round trip returns the network it started from.
+
+.reciprocate_layers <- function(.data){
+  ties <- .data$ties
+  directed <- .data$info$directed
+  if(is.null(ties) || nrow(ties) == 0 || !"layer" %in% names(ties)) return(ties)
+  if(is.null(directed) || is.null(names(directed))) return(ties)
+  # Where the network is coerced as undirected anyway, one row per dyad is
+  # already what the target class expects.
+  if(!is_directed(.data)) return(ties)
+  undirected <- names(directed)[!directed]
+  add <- ties[ties$layer %in% undirected & ties$from != ties$to, , drop = FALSE]
+  if(nrow(add) == 0) return(ties)
+  add[c("from", "to")] <- add[c("to", "from")]
+  # A layer marked undirected should not already hold both directions, but if
+  # it does, the reverse tie is kept only once.
+  add <- add[!.dyad_key(add) %in% .dyad_key(ties), , drop = FALSE]
+  dplyr::bind_rows(ties, add)
+}
+
+.collapse_layers <- function(ties, directed, directed_object){
+  # Without a record of which layer is which, there is nothing to collapse and
+  # the caller falls back to describing the network as directed or not.
+  if(is.null(directed) || is.null(names(directed))) return(NULL)
+  if(is.null(ties) || nrow(ties) == 0 || !"layer" %in% names(ties))
+    return(list(ties = ties, directed = directed))
+  # An undirected object holds one row per dyad in every layer already, so no
+  # layer of it can be directed and none needs collapsing.
+  if(!directed_object){
+    directed[] <- FALSE
+    return(list(ties = ties, directed = directed))
+  }
+  for(layer in names(directed)[!directed]){
+    rows <- which(ties$layer %in% layer)
+    if(length(rows) == 0) next
+    keys <- .dyad_key(ties[rows, , drop = FALSE], ordered = FALSE)
+    sizes <- table(keys)
+    loops <- ties$from[rows] == ties$to[rows]
+    # Only a fully reciprocated layer can be collapsed without losing a tie.
+    # Where it is not, the layer is directed after all, whatever info claims.
+    if(!all(sizes[keys[!loops]] == 2)){
+      directed[layer] <- TRUE
+      next
+    }
+    ties <- ties[-rows[duplicated(keys)], , drop = FALSE]
+  }
+  list(ties = ties, directed = directed)
+}
+
+# Identify a tie by its dyad, and by any layer or time that distinguishes it
+# from another tie on the same dyad. `ordered = FALSE` ignores the direction.
+.dyad_key <- function(ties, ordered = TRUE){
+  from <- ties$from
+  to <- ties$to
+  if(!ordered){
+    from <- pmin(ties$from, ties$to)
+    to <- pmax(ties$from, ties$to)
+  }
+  extra <- lapply(intersect(c("layer", "time"), names(ties)),
+                  function(col) as.character(ties[[col]]))
+  do.call(paste, c(list(from, to), extra, list(sep = "\r")))
+}
+
 #' @export
 as_igraph.stocnet <- function(.data, twomode = FALSE) {
   # `.data$info$directed` is authoritative here, so use it rather than letting
@@ -701,7 +772,9 @@ as_network.stocnet <- function(.data, twomode = FALSE) {
   # multiple edges (multiplex/multi-wave) and their tie attributes (e.g. layer,
   # time, weight) are retained rather than collapsed into a sociomatrix.
   nodes <- .data$nodes
-  ties <- .data$ties
+  # As for igraph, a layer held once per dyad is reciprocated here, since a
+  # 'network' object is directed or undirected as a whole.
+  ties <- .reciprocate_layers(.data)
   # For two-mode networks the 'bipartite' count is the number of first-mode
   # nodes. manynet orders nodes first-mode-first, with ties running from the
   # first mode ('from') to the second ('to'), matching network's convention.
@@ -743,7 +816,19 @@ as_network.stocnet <- function(.data, twomode = FALSE) {
   }
   # Merge the info list into (rather than replace) the network attribute list,
   # so that core network attributes such as n, directed, and bipartite survive.
+  # 'network' requires these to be single values that describe the whole
+  # network, so an info entry of the same name is dropped rather than merged.
+  # A per-layer 'directed' vector, for example, would otherwise replace the
+  # scalar set above and break every 'network' method that reads it.
   info <- as_infolist(.data)
+  # A 'network' object has no place for per-layer directedness, so the vector
+  # is carried in an attribute of its own, which `as_stocnet.network()` reads
+  # back as 'directed'. Without it the round trip could not tell an undirected
+  # layer from a directed one whose ties happen to be reciprocated.
+  if (!is.null(info$directed) && !is.null(names(info$directed)))
+    out <- network::set.network.attribute(out, "layer_directed", info$directed)
+  info <- info[setdiff(names(info), c("n", "mnext", "directed", "hyper",
+                                      "loops", "multiple", "bipartite"))]
   if (!is.null(info) && length(info) > 0)
     out$gal <- utils::modifyList(out$gal, info)
   if(!is.null(as_changelist(.data)) && length(as_changelist(.data)) > 0)
@@ -894,8 +979,16 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
     }
   }
   if(!is.null(info$changes)) info$changes <- NULL
-  info$directed <- is_directed(.data)
-  
+  # Where the network came from a stocnet with undirected layers, those layers
+  # were reciprocated on the way out and are collapsed again here, so that the
+  # per-layer record of directedness survives the round trip. Otherwise the
+  # network is simply as directed as the object it came from.
+  collapsed <- .collapse_layers(ties, info$directed, is_directed(.data))
+  if(is.null(collapsed)) info$directed <- is_directed(.data) else {
+    ties <- collapsed$ties
+    info$directed <- collapsed$directed
+  }
+
   if(!is.null(nodes))
     nodes <- dplyr::select(nodes, 
                            dplyr::any_of(c("label", "mode")), 
@@ -935,7 +1028,21 @@ as_stocnet.network <- function(.data,
     ties <- dplyr::as_tibble(edf) |>
       dplyr::select("from", "to", dplyr::everything())
   }
-  out <- list(info = list(directed = is_directed(.data)),
+  # Read back the network attributes that `as_network()` wrote, less those
+  # that belong to the structure of a 'network' object rather than to the
+  # network it describes, and less those held as their own components.
+  info <- .data$gal[setdiff(names(.data$gal),
+                            c("n", "mnext", "directed", "hyper", "loops",
+                              "multiple", "bipartite", "changes", "global",
+                              "layer_directed"))]
+  # As for igraph, an undirected layer reciprocated on the way out is
+  # collapsed again here, so that the round trip is lossless.
+  collapsed <- .collapse_layers(ties, .data$gal$layer_directed, is_directed(.data))
+  if(is.null(collapsed)) info$directed <- is_directed(.data) else {
+    ties <- collapsed$ties
+    info$directed <- collapsed$directed
+  }
+  out <- list(info = info,
               nodes = as_nodelist(.data),
               changes = as_changelist(.data),
               ties = ties)

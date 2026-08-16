@@ -224,7 +224,10 @@ as_edgelist.siena <- function(.data, twomode = NULL) {
 
 #' @export
 as_edgelist.stocnet <- function(.data, twomode = NULL) {
-  out <- .data$ties
+  # An edgelist lists arcs where the network is directed, so any layer held
+  # once per dyad is reciprocated here. This also serves `as_igraph.stocnet()`
+  # and, through it, every other class coerced to via igraph.
+  out <- .reciprocate_layers(.data)
   if(is_labelled(.data)){
     out$from <- .data$nodes$label[out$from]
     out$to <- .data$nodes$label[out$to]

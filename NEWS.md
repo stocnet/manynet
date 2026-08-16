@@ -32,6 +32,11 @@
 - Improved `as_stocnet.igraph()` so that it maps a 'lvl' attribute onto the 'mode' variable of the nodes table, naming the levels from the network's info where there is a name for each
 - Fixed `as_igraph()` erroring on an unlabelled stocnet object with nodal attributes, e.g. `as_igraph(as_stocnet(create_ring(8)))`
 - Fixed `as_nodelist()` returning the edgelist of a tbl_graph whose ties are active, which made `as_stocnet()` warn "Unknown or uninitialised column: `name`" and drop the node labels, e.g. `to_unweighted()` on a weighted stocnet object
+- Fixed `as_network()` overwriting core network attributes of the result with same-named entries from the network's info, so that a per-layer `directed` vector no longer replaces the single logical that `{network}` requires, e.g. `as_igraph(as_network(ison_bankwiring))` erroring with "the condition has length > 1"
+- Improved coercion of a stocnet object that records the directedness of each layer, so that an undirected layer can be held once per dyad even where another layer is directed
+  - An 'igraph' or 'network' object is directed or undirected as a whole, so coercion out reciprocates any undirected layer of an otherwise directed network, and coercion back collapses it again
+  - This halves how many ties such a network stores: `ison_bankwiring` holds 110 rather than 189, and `ison_tailorshop` 637 rather than 1018
+- Improved `as_stocnet.network()` to read the network's attributes back into its info component, rather than keeping only whether it is directed
 
 ## Manipulating
 

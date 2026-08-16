@@ -129,3 +129,68 @@ test_that("to_flat does not treat a missing tie as untied", {
   expect_true(is.na(manynet:::.combine_matrices(miss, comb_b, "sum")[1, 2]))
   expect_true(is.na(manynet:::.combine_matrices(miss, comb_b, "max")[1, 2]))
 })
+
+# Undirected layers of a directed network ------------------------------------
+
+test_that("an undirected layer is reciprocated on coercion and collapsed back", {
+  # `ison_bankwiring` is directed as a whole, since `help` and `trades` are
+  # asymmetric, but holds its four symmetric layers once per dyad
+  expect_false(all(ison_bankwiring$info$directed))
+  expect_true(is_directed(ison_bankwiring))
+  ties <- nrow(ison_bankwiring$ties)
+  expect_gt(igraph::ecount(as_igraph(ison_bankwiring)), ties)
+  # the round trip returns the network it started from, in either class
+  for(back in list(as_stocnet(as_igraph(ison_bankwiring)),
+                   as_stocnet(as_network(ison_bankwiring)))){
+    expect_equal(nrow(back$ties), ties)
+    expect_equal(back$info$directed, ison_bankwiring$info$directed)
+  }
+})
+
+test_that("an undirected network keeps every layer undirected on a round trip", {
+  # both layers of `ison_florentine` are undirected, and nothing about a round
+  # trip should make either of them directed
+  for(back in list(as_stocnet(as_igraph(ison_florentine)),
+                   as_stocnet(as_network(ison_florentine)))){
+    expect_equal(nrow(back$ties), nrow(ison_florentine$ties))
+    expect_equal(back$info$directed, ison_florentine$info$directed)
+  }
+})
+
+test_that("a node keeps its degree in an undirected layer across classes", {
+  friends <- to_uniplex(ison_bankwiring, "friendship")
+  # nothing directed is left, so the layer is undirected again
+  expect_false(is_directed(friends))
+  expect_true(isSymmetric(as_matrix(friends)))
+  expect_equal(igraph::ecount(as_igraph(friends)), nrow(friends$ties))
+  expect_equal(as_matrix(friends), as_matrix(to_uniplex(as_igraph(ison_bankwiring),
+                                                        "friendship")))
+})
+
+test_that("a layer that is not fully reciprocated is not collapsed", {
+  # a directed graph that claims `b` is undirected, but holds a one-way arc in
+  # it: collapsing that layer would lose a tie, so `b` is directed after all
+  net <- igraph::graph_from_data_frame(
+    data.frame(from = c("A", "A", "B", "B"), to = c("B", "B", "A", "C"),
+               layer = c("a", "b", "b", "b")),
+    directed = TRUE)
+  igraph::graph_attr(net, "layers") <- c("a", "b")
+  igraph::graph_attr(net, "directed") <- c(a = TRUE, b = FALSE)
+  back <- as_stocnet(net)
+  expect_equal(nrow(back$ties), 4)
+  expect_true(back$info$directed[["b"]])
+})
+
+test_that("a duplicated tie in an undirected layer is not doubled", {
+  # `A-B` is recorded twice, once in each direction, though one row per dyad
+  # is all an undirected layer needs
+  net <- make_stocnet(
+    info = list(layers = c("a", "b"), directed = c(a = TRUE, b = FALSE)),
+    nodes = dplyr::tibble(label = LETTERS[1:3]),
+    ties = dplyr::tibble(from = c(1L, 1L, 2L, 2L), to = c(2L, 2L, 1L, 3L),
+                         layer = c("a", "b", "b", "b"))
+  )
+  # 1 arc in `a`, and 2 dyads in `b` reciprocated into 4 arcs
+  expect_equal(igraph::ecount(as_igraph(net)), 5)
+  expect_equal(nrow(as_stocnet(as_igraph(net))$ties), 3)
+})
