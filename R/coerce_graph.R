@@ -202,9 +202,19 @@ as_igraph.stocnet <- function(.data, twomode = FALSE) {
                                            directed = directed,
                                            vertices = vertices)
     } else {
+      # The nodelist is a table of nodal attributes rather than a network,
+      # so it is passed to graph_from_data_frame() as vertices under
+      # temporary index names; bind_node_attributes() would instead coerce
+      # it as if it were an edgelist. The temporary names keep the nodes in
+      # nodelist order, rather than in order of appearance in the ties, and
+      # are dropped again once the attributes are attached.
+      vertices <- dplyr::mutate(vertices,
+                                name = as.character(seq_len(nrow(vertices))))
+      vertices <- dplyr::select(vertices, name, dplyr::everything())
       out <- igraph::graph_from_data_frame(as_edgelist(.data),
-                                           directed = directed) |>
-        bind_node_attributes(vertices)
+                                           directed = directed,
+                                           vertices = vertices)
+      out <- to_unlabelled(out)
     }
     
   }
