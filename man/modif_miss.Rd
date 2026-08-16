@@ -66,7 +66,6 @@ Krause, Robert, Mark Huisman, Christian Steglich, and Tom A.B. Snijders. 2020.
 }
 \seealso{
 Other modifications:
-\code{\link{modif_combine}},
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},

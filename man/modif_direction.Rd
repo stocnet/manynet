@@ -108,11 +108,9 @@ to_undirected(ison_networkers, rule = "min")
 Other ties:
 \code{\link{manip_ties_attr}},
 \code{\link{manip_ties_num}},
-\code{\link{modif_combine}},
 \code{\link{modif_weight}}
 
 Other modifications:
-\code{\link{modif_combine}},
 \code{\link{modif_correlation}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},

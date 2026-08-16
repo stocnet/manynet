@@ -6,15 +6,18 @@
 \alias{to_simplex}
 \alias{to_uniplex}
 \alias{to_layer}
+\alias{to_flat}
 \title{Modifying network complexity}
 \usage{
 to_anti(.data)
 
 to_simplex(.data)
 
-to_uniplex(.data, tie)
+to_uniplex(.data, layer, tie)
 
-to_layer(.data, tie)
+to_layer(.data, layer, tie)
+
+to_flat(.data, rule = c("max", "min", "mean", "sum", "product"))
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -27,11 +30,33 @@ to_layer(.data, tie)
 \item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
 
-\item{tie}{Character string naming one of the tie types, or layers,
+\item{layer}{Character string naming one of the layers, or tie types,
 in the network, i.e. one of those returned by \code{layer_names()},
 to which the network should be reduced.
 Where a network holds no tie types, it is already uniplex
 and is returned unchanged.}
+
+\item{tie}{Deprecated name for \code{layer}, retained for one version.}
+
+\item{rule}{How the networks' tie values are reconciled into a single value
+per dyad. A dyad tied in only one of the networks counts as untied in the
+others, which is what makes rules such as "min" and "product" meaningful.
+\itemize{
+\item "max" (the default) takes the largest of the values,
+so that a tie in any of the networks is a tie in the result.
+This is the union of the networks.
+\item "min" takes the smallest, so that only ties present in all of them
+survive. This is their intersection.
+\item "mean" averages the values, treating the networks as several readings
+of one underlying relationship.
+\item "sum" adds them, so that ties reinforce one another.
+\item "product" multiplies them, so that a tie survives only where every
+network records one, and strong ties are rewarded disproportionately.
+}
+
+Missing values propagate rather than being ignored, so that a dyad
+unobserved in any of the networks is unobserved in the result.
+Use the \verb{na_to_*()} functions first to state a different assumption.}
 }
 \value{
 A tidygraph object modified as explained in the function description, details,
@@ -47,6 +72,10 @@ are included in the new network.
 \code{to_layer()} is an alias, using the layer-based vocabulary of
 \code{layer_names()}, \code{net_layers()}, and \code{to_layers()}.
 Use \code{to_layers()} to split a network into all of its layers at once.
+\item \code{to_flat()} reduces multiplex network data to a single relation by
+combining the values of all its layers, dyad by dyad, according to a rule.
+Where \code{to_uniplex()} selects one layer and discards the rest,
+\code{to_flat()} retains what every layer records.
 }
 
 If the format condition is not met,
@@ -68,6 +97,7 @@ Warning in utils::.S3methods(f): generic function 'to_layer' dispatches methods
 for generic 'to_uniplex'
            data.frame default igraph matrix tbl_graph
 to_anti             *       *      *      *         *
+to_flat                     *                       *
 to_simplex          *       *      *      *          
 to_uniplex                  2                       2
 }\if{html}{\out{</div>}}
@@ -77,10 +107,10 @@ to_anti(ison_southern_women)
 as_tidygraph(create_filled(5)) |>
   mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) |>
   to_uniplex("friend")
+to_flat(ison_florentine, rule = "sum")
 }
 \seealso{
 Other modifications:
-\code{\link{modif_combine}},
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},

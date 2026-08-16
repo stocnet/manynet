@@ -58,9 +58,8 @@
 - Improved `to_undirected()` with a `rule` argument offering "min", "max", "mean", "sum", and "product" alongside the existing default "collapse"
   - Fixed `to_undirected()` returning a different network for each class it was given: .matrix binarised tie weights, .igraph summed them, and .network method declared network undirected while leaving its dyads asymmetric; all classes now sum
   - Fixed tie attributes other than the weight, such as the sign or the layer, not surviving collapsing as igraph's default combination rule discarded them
-- Added `to_combined()`, which combines two networks over the same nodes into one, cell by cell, by "min", "max", "mean", "sum", "product", or "unique"
-  - Nodes are matched by name rather than by position, and combined over the union of the two node sets, so that networks recording the same nodes in a different order, or naming different subsets of them, are still combined correctly
-  - Where `join_ties()` adds one network's ties to another's, this reconciles the two networks' values for each dyad, so that a dyad tied in only one of them counts as untied in the other, which is what makes "min" and "product" meaningful
+- Added `to_flat()`, which reduces a multiplex network to a single relation by combining the values of all its layers by "max", "min", "mean", "sum", or "product"
+  - Missing values propagate rather than being ignored
 - Renamed `tie` argument of `to_uniplex()` to `layer` to agree with layer-based vocabulary; `tie` still works but warns (closed #159)
 - Improved `na_to_mean()` so that it excludes the diagonal when establishing the average or density of a one-mode simplex network, since a node's tie to itself is not usually a tie that could have been observed
   - Counting the diagonal biased the figure down by a factor of `(n-1)/n`, which is slight for a large network but not for the eight-node examples in the documentation

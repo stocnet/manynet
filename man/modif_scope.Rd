@@ -155,7 +155,6 @@ in \code{{netrics}}.
 }
 \seealso{
 Other modifications:
-\code{\link{modif_combine}},
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},

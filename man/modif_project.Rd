@@ -240,7 +240,6 @@ Bonacich, Phillip. 1972.
 matrix without projecting it.
 
 Other modifications:
-\code{\link{modif_combine}},
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},

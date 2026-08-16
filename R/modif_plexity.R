@@ -12,6 +12,10 @@
 #'   `to_layer()` is an alias, using the layer-based vocabulary of
 #'   `layer_names()`, `net_layers()`, and `to_layers()`.
 #'   Use `to_layers()` to split a network into all of its layers at once.
+#'   - `to_flat()` reduces multiplex network data to a single relation by
+#'   combining the values of all its layers, dyad by dyad, according to a rule.
+#'   Where `to_uniplex()` selects one layer and discards the rest,
+#'   `to_flat()` retains what every layer records.
 #' 
 #'   If the format condition is not met,
 #'   for example `to_undirected()` is used on a network that is already undirected,
@@ -26,7 +30,7 @@
 #'   Below are the currently implemented S3 methods:
 #'  
 #'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("to_.*(anti|plex|layer$)"))
+#'   available_methods(collect_functions("to_.*(anti|plex|layer$|flat$)"))
 #'   ```
 #' @template param_data
 #' @template fam_modif
@@ -179,3 +183,121 @@ to_uniplex.tbl_graph <- function(.data, layer, tie){
 #' @rdname modif_plexity
 #' @export
 to_layer <- to_uniplex
+
+#' @rdname modif_plexity
+#' @template param_rule
+#' @examples
+#' to_flat(ison_florentine, rule = "sum")
+#' @export
+to_flat <- function(.data, rule = c("max","min","mean","sum",
+                                    "product")) UseMethod("to_flat")
+
+#' @export
+to_flat.default <- function(.data, rule = c("max","min","mean","sum",
+                                            "product")) {
+  rule <- match.arg(rule)
+  as_input(.data, to_flat, rule = rule)
+}
+
+#' @export
+to_flat.tbl_graph <- function(.data, rule = c("max","min","mean","sum",
+                                              "product")) {
+  rule <- match.arg(rule)
+  layers <- to_layers(.data)
+  if(length(layers) > 1) return(.combine_networks(layers, rule))
+  # `join_ties()` marks each network's ties in a column of its own rather than
+  # naming them all in one 'type' column, and `is_multiplex()` counts such a
+  # network as multiplex, so those columns are its layers
+  marks <- setdiff(net_tie_attributes(.data), reserved_tie_attr)
+  if(length(marks) > 1) return(.combine_marks(.data, marks, rule))
+  # a network holding no tie types is already flat; `to_layers()` says so
+  .data
+}
+
+# Combining ####
+
+# Where the layers are marked one column each, as `join_ties()` marks them,
+# each column gives the tie values of one layer. A tie the column does not
+# mark is untied in that layer.
+.combine_marks <- function(.data, marks, rule){
+  el <- as_edgelist(.data)
+  n <- as.numeric(net_nodes(.data))
+  # an edgelist names its nodes only where the network is labelled
+  labels <- if(is_labelled(.data)) node_names(.data) else NULL
+  idx <- if(is.character(el$from))
+    cbind(match(el$from, labels), match(el$to, labels)) else
+      cbind(as.integer(el$from), as.integer(el$to))
+  mats <- lapply(marks, function(m){
+    v <- el[[m]]
+    v[is.na(v)] <- 0
+    out <- matrix(0, n, n, dimnames = if(is.null(labels)) NULL else
+      list(labels, labels))
+    out[idx] <- v
+    if(!is_directed(.data)) out[idx[, 2:1, drop = FALSE]] <- v
+    out
+  })
+  out <- .combine_networks(mats, rule)
+  as_tidygraph(out) |> bind_node_attributes(.data) |>
+    add_info(transform = paste0("combined (", rule, ")"))
+}
+
+# Reconciles networks' tie values into a single value per dyad, cell by cell,
+# and returns the result in the class of the first network given. This is the
+# engine behind `to_flat()`, which combines one network's layers, and
+# `join_ties(rule = )`, which combines two networks.
+.combine_networks <- function(netlist, rule){
+  first <- netlist[[1]]
+  out <- Reduce(function(x, y) .combine_matrices(x, y, rule),
+                lapply(netlist, as_matrix))
+  if(is.matrix(first)) return(out)
+  if(is.data.frame(first) && !inherits(first, "stocnet"))
+    return(as_edgelist(out))
+  net <- bind_node_attributes(as_tidygraph(out), as_tidygraph(first)) |>
+    add_info(transform = paste0("combined (", rule, ")"))
+  if(inherits(first, "stocnet")) as_stocnet(net)
+  else if(inherits(first, "network")) as_network(net)
+  else if(inherits(first, "tbl_graph")) net
+  else if(inherits(first, "igraph")) as_igraph(net)
+  else net
+}
+
+.combine_matrices <- function(x, y, rule) {
+  # nodes are matched by name where both networks are labelled, since two
+  # networks recording the same nodes in a different order would otherwise
+  # be combined cell by cell and give a result for dyads that do not exist.
+  # Combining over the union of the two node sets also means an edgelist,
+  # which carries only the nodes that happen to be tied, can be combined
+  # with one that names a different subset of the same nodes.
+  if(is_labelled(x) && is_labelled(y)){
+    rn <- union(rownames(x), rownames(y))
+    cn <- union(colnames(x), colnames(y))
+    if(!setequal(rownames(x), rownames(y)) ||
+       !setequal(colnames(x), colnames(y)))
+      snet_info(paste0("The networks name different nodes, ",
+                       "so they are combined over all {length(rn)} of them, ",
+                       "counting a node absent from one as untied there."))
+    x <- .align_matrix(x, rn, cn)
+    y <- .align_matrix(y, rn, cn)
+  } else if(!identical(dim(x), dim(y)))
+    snet_abort(paste0("The two networks must be the same size, ",
+                      "or else labelled so that their nodes can be matched, ",
+                      "but they are {nrow(x)}x{ncol(x)} and ",
+                      "{nrow(y)}x{ncol(y)}."))
+  out <- switch(rule,
+                "max"     = pmax(x, y),
+                "min"     = pmin(x, y),
+                "mean"    = (x + y)/2,
+                "sum"     = x + y,
+                "product" = x * y)
+  # `pmin()` and `pmax()` return a vector, so the shape is restored here
+  matrix(out, nrow(x), ncol(x), dimnames = dimnames(x))
+}
+
+# Places a matrix into one spanning the given row and column names, so that
+# two networks over overlapping but unequal node sets can be combined. Nodes
+# a matrix does not name are absent from it, and so untied.
+.align_matrix <- function(x, rn, cn){
+  out <- matrix(0, length(rn), length(cn), dimnames = list(rn, cn))
+  out[rownames(x), colnames(x)] <- x
+  out
+}
