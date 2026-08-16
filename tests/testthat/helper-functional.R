@@ -65,6 +65,19 @@ class_versions <- function(net) {
 # A small, labelled, undirected canonical network for cross-class tests
 canonical_net <- ison_adolescents
 
+# The canonical networks the cross-class sweep runs over. The plain network
+# catches the common case. The weighted, directed network catches the cases
+# where the classes diverge, since tie values and tie directions are what the
+# classes record differently.
+canonical_nets <- local({
+  dir <- to_directed(canonical_net)
+  list(
+    plain = canonical_net,
+    `weighted, directed` = add_tie_attribute(
+      dir, "weight", rep(c(1, 2), length.out = as.numeric(net_ties(dir))))
+  )
+})
+
 # Networks and arguments for the to_*() functions that split a network into a
 # list of networks. Each network holds the attribute that the function splits
 # on, so that the function returns a list of networks rather than the network

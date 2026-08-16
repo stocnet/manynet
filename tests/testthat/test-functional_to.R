@@ -145,6 +145,7 @@ for (fn in setdiff(to_funs, names(to_argmakers))) {
     }
   })
 }
+}
 
 # Cross-class conformance of the splitting functions. These return a list of
 # networks rather than a single network, so the sweep above compares nothing

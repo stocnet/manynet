@@ -30,6 +30,7 @@
 
 - Improved `as_stocnet.igraph()` so that it maps a 'lvl' attribute onto the 'mode' variable of the nodes table, naming the levels from the network's info where there is a name for each
 - Fixed `as_igraph()` erroring on an unlabelled stocnet object with nodal attributes, e.g. `as_igraph(as_stocnet(create_ring(8)))`
+- Fixed `as_nodelist()` returning the edgelist of a tbl_graph whose ties are active, which made `as_stocnet()` warn "Unknown or uninitialised column: `name`" and drop the node labels, e.g. `to_unweighted()` on a weighted stocnet object
 
 ## Manipulating
 

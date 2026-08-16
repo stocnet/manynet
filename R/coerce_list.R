@@ -57,18 +57,20 @@ NULL
 #' @export
 as_nodelist <- function(.data) UseMethod("as_nodelist")
 
+# `data.frame()` on a 'tbl_graph' returns whichever part of the network is
+# active, so the nodes are activated first. Otherwise a network left with its
+# ties active by an earlier function returns a tielist here instead.
 #' @export
 as_nodelist.tbl_graph <- function(.data) {
-  out <- .data
-  out <- dplyr::tibble(data.frame(out))
+  nodes <- NULL
+  out <- data.frame(activate(.data, nodes))
+  out <- dplyr::tibble(out)
   if(ncol(out)==0) NULL else out
 }
 
 #' @export
 as_nodelist.igraph <- function(.data) {
-  out <- .data
-  out <- dplyr::tibble(data.frame(as_tidygraph(out)))
-  if(ncol(out)==0) NULL else out
+  as_nodelist(as_tidygraph(.data))
 }
 
 #' @export
