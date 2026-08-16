@@ -19,7 +19,7 @@ for(fn in fun_names) {
     expect_true(any(grepl(paste0("^", fn, "\\.default$"), utils::methods(fn))))
   })
   test_that(paste(fn, "works"), {
-    skip_if(grepl("twomode|uniplex|time|ego|blockmodel|combined", fn), message = "Some functions need more input")
+    skip_if(grepl("twomode|uniplex|time|ego|blockmodel", fn), message = "Some functions need more input")
     skip_if(grepl("mode1|mode2|matching", fn), message = "Some functions expect a two-mode network")
     skip_if(grepl("eulerian|dominating", fn), message = "Some functions have internal errors")
     expect_no_error(to_funs[[fn]](create_ring(5)))
@@ -28,7 +28,7 @@ for(fn in fun_names) {
 # Test transform functions
 
 test_that("to_giant works",{
-  fm <- to_uniplex(fict_marvel, tie = "relationship")
+  fm <- to_uniplex(fict_marvel, layer = "relationship")
   expect_equal(c(net_nodes(fm)), 53)
   expect_equal(c(net_nodes(to_giant(fm))), 50)
   expect_equal(c(net_nodes(to_giant(as_igraph(fm)))), 50)
@@ -38,14 +38,14 @@ test_that("to_giant works",{
 })
 
 test_that("to_giant is a wrapper for the first component",{
-  fm <- to_uniplex(fict_marvel, tie = "relationship")
+  fm <- to_uniplex(fict_marvel, layer = "relationship")
   expect_identical(as_matrix(to_component(fm)), as_matrix(to_giant(fm)))
   expect_identical(as_matrix(to_component(fm, component = 1)),
                    as_matrix(to_giant(fm)))
 })
 
 test_that("to_component selects by size rank",{
-  fm <- to_uniplex(fict_marvel, tie = "relationship")
+  fm <- to_uniplex(fict_marvel, layer = "relationship")
   expect_equal(c(net_nodes(to_component(fm, 1))), 50)
   expect_equal(c(net_nodes(to_component(fm, 2))), 1)
   expect_error(to_component(fm, 99), "between 1 and 4")
@@ -53,7 +53,7 @@ test_that("to_component selects by size rank",{
 })
 
 test_that("to_component selects by node name",{
-  fm <- to_uniplex(fict_marvel, tie = "relationship")
+  fm <- to_uniplex(fict_marvel, layer = "relationship")
   # Cable is an isolate, and so its own component
   expect_equal(c(net_nodes(to_component(fm, "Cable"))), 1)
   expect_true("Cable" %in% node_names(to_component(fm, "Cable")))

@@ -15,7 +15,8 @@ to_argmakers <- list(
   to_subgraphs  = function(net) list(attribute = "group"),
   to_time       = function(net) list(time = 1),
   to_wave       = function(net) list(time = 1),
-  to_uniplex    = function(net) list(tie = layer_names(net)[1])
+  to_uniplex    = function(net) list(layer = layer_names(net)[1]),
+  to_layer      = function(net) list(layer = layer_names(net)[1])
 )
 
 # Name-implied invariants that the output of a to_*() function must satisfy.
@@ -37,7 +38,8 @@ to_invariants <- list(
   to_giant      = function(o) is_connected(o, "weak"),
   to_component  = function(o) is_connected(o, "weak"),
   to_simplex    = function(o) !is_complex(o),
-  to_uniplex    = function(o) !is_multiplex(o)
+  to_uniplex    = function(o) !is_multiplex(o),
+  to_flat       = function(o) !is_multiplex(o)
 )
 
 .required_args <- function(fn) {
@@ -102,12 +104,16 @@ for (fn in to_funs) {
 # Cross-class conformance: applying a to_*() function to the same network
 # represented in different classes should not error, and graph-like results
 # should agree (via as_matrix) across classes.
-canonical_classes <- class_versions(canonical_net)
+# This runs over a weighted, directed network as well as the plain canonical
+# one, since tie values and directions are where the classes tend to diverge.
+for (cnet in names(canonical_nets)) {
+canonical_classes <- class_versions(canonical_nets[[cnet]])
 
 for (fn in setdiff(to_funs, names(to_argmakers))) {
   if (length(.required_args(fn))) next
   f <- get(fn, envir = asNamespace("manynet"))
-  test_that(paste0(fn, "() is consistent across object classes"), {
+  test_that(paste0(fn, "() is consistent across object classes on the ",
+                   cnet, " network"), {
     outs <- list()
     for (cl in names(canonical_classes)) {
       outs[[cl]] <- tryCatch(f(canonical_classes[[cl]]),
@@ -137,5 +143,27 @@ for (fn in setdiff(to_funs, names(to_argmakers))) {
       skip(paste0("AUDIT [", fn, "]: no method succeeds for class(es) ",
                   paste(errs, collapse = ", ")))
     }
+  })
+}
+}
+
+# Provenance: a to_*() function offering a choice of measure or rule should
+# record which one was used, so that e.g. a Jaccard projection can be told
+# apart from a count projection when the result is printed or reported.
+for (fn in intersect(to_funs, c("to_mode1", "to_mode2", "to_undirected",
+                                "to_flat"))) {
+  f <- get(fn, envir = asNamespace("manynet"))
+  test_that(paste0(fn, "() records how it transformed the network"), {
+    net <- if (fn %in% c("to_mode1", "to_mode2")) ison_southern_women else
+      if (fn == "to_flat") ison_florentine else canonical_weighted
+    out <- run_or_skip(do.call(f, list(net)), fn, "provenance")
+    expect_true("transform" %in% net_attributes(out),
+                label = paste0(fn, "() recording a transform attribute"))
+    # the choice itself is named, not merely that something happened
+    choice <- formals(f)[[intersect(names(formals(f)),
+                                    c("similarity", "rule"))]]
+    expect_match(paste(igraph::graph_attr(as_igraph(out), "transform"),
+                       collapse = " "),
+                 eval(choice)[1], fixed = TRUE)
   })
 }

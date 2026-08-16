@@ -58,6 +58,9 @@
 - Improved `to_undirected()` with a `rule` argument offering "min", "max", "mean", "sum", and "product" alongside the existing default "collapse"
   - Fixed `to_undirected()` returning a different network for each class it was given: .matrix binarised tie weights, .igraph summed them, and .network method declared network undirected while leaving its dyads asymmetric; all classes now sum
   - Fixed tie attributes other than the weight, such as the sign or the layer, not surviving collapsing as igraph's default combination rule discarded them
+- Renamed `from_ties()` to `from_layers()` to match counterpart, `to_layers()`, and layer-based vocabulary; `from_ties()` is retained as an alias
+  - Accepts a list of networks as well as networks given one by one, and matches unlabelled networks of equal size by position
+  - Fixed `from_layers()` returning a directed network via `tidygraph::graph_join()`
 - Added `to_flat()`, which reduces a multiplex network to a single relation by combining the values of all its layers by "max", "min", "mean", "sum", or "product"
   - Missing values propagate rather than being ignored
 - Renamed `tie` argument of `to_uniplex()` to `layer` to agree with layer-based vocabulary; `tie` still works but warns (closed #159)

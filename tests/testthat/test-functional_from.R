@@ -4,7 +4,7 @@
 # to_*() function (including the splitting ones) produces *valid output* on
 # every fixture and object class; this file tests *invertibility* — that each
 # from_*() undoes its to_*() counterpart — plus the deeper branches of the
-# from_ties() merge engine, which only fire on special inputs.
+# from_layers() merge engine, which only fire on special inputs.
 
 # 1. Pair roundtrips -----------------------------------------------------------
 # Every exported from_*() function is automatically paired with its to_*()
@@ -19,6 +19,9 @@ from_funs <- alive_functions("^from_")
 # network; unlabelled nodes cannot be re-identified across the pieces).
 pair_fixture_makers <- list(
   default        = function() ison_adolescents,
+  # a genuinely multiplex network, as a tidygraph since to_layers() has no
+  # method for the stocnet class
+  from_layers    = function() as_tidygraph(ison_florentine),
   from_waves     = function() fict_potter,
   from_slices    = function() mutate_ties(ison_adolescents,
                                           time = seq_len(10) %% 3 + 1),
@@ -30,6 +33,11 @@ pair_fixture_makers <- list(
 pair_to_argmakers <- list(
   to_subgraphs = function(net) list(attribute = "group")
 )
+
+# Aliases are the same function under another name, and are tested with the
+# name they alias; from_ties() would otherwise be paired with the defunct
+# to_ties().
+from_funs <- setdiff(from_funs, "from_ties")
 
 for (fn in from_funs) {
   to_fn <- sub("^from_", "to_", fn)
@@ -66,99 +74,99 @@ test_that("from_waves() and from_slices() insist on a list of networks", {
   expect_message(from_slices(as_matrix(ison_adolescents)), "one slice")
 })
 
-# 2. from_ties() layering ------------------------------------------------------
-# from_ties() pairs networks by named argument rather than taking a netlist,
-# so its layering behaviour is tested directly. (Unlabelled tidygraphs cannot
+# 2. from_layers() layering ------------------------------------------------------
+# from_layers() takes networks one by one as well as in a list, and names the
+# layers from the argument names, so its layering behaviour is tested directly. (Unlabelled tidygraphs cannot
 # be layered as their nodes cannot be matched; that limit surfaces as an
 # AUDIT skip in the pair loop above.)
 
-test_that("from_ties() layers labelled networks into a multiplex network", {
+test_that("from_layers() layers labelled networks into a multiplex network", {
   net1 <- ison_adolescents
   net2 <- add_tie_attribute(ison_adolescents, "weight", seq_len(10))
-  out <- run_or_skip(from_ties(friends = net1, weighted = net2),
-                     "from_ties", "two labelled networks")
+  out <- run_or_skip(from_layers(friends = net1, weighted = net2),
+                     "from_layers", "two labelled networks")
   expect_true(is_manynet(out))
   expect_true(is_multiplex(out))
   expect_equal(as.numeric(net_nodes(out)), as.numeric(net_nodes(net1)))
   expect_setequal(layer_names(out), c("friends", "weighted"))
 })
 
-test_that("from_ties() layers stocnet objects", {
+test_that("from_layers() layers stocnet objects", {
   sn1 <- as_stocnet(create_ring(6))
   sn2 <- as_stocnet(create_star(6))
-  out <- run_or_skip(from_ties(friends = sn1, advice = sn2),
-                     "from_ties", "stocnet")
+  out <- run_or_skip(from_layers(friends = sn1, advice = sn2),
+                     "from_layers", "stocnet")
   expect_s3_class(out, "stocnet")
   expect_true(is_multiplex(out))
   expect_setequal(unique(out$ties$layer), c("friends", "advice"))
 })
 
-test_that("from_ties() accepts layer_names in place of named arguments", {
-  out <- run_or_skip(from_ties(as_stocnet(create_ring(6)),
+test_that("from_layers() accepts layer_names in place of named arguments", {
+  out <- run_or_skip(from_layers(as_stocnet(create_ring(6)),
                                as_stocnet(create_star(6)),
                                layer_names = c("rings", "stars")),
-                     "from_ties", "layer_names")
+                     "from_layers", "layer_names")
   expect_setequal(unique(out$ties$layer), c("rings", "stars"))
-  expect_error(from_ties(as_stocnet(create_ring(6)),
+  expect_error(from_layers(as_stocnet(create_ring(6)),
                          as_stocnet(create_star(6))),
                "name the layers")
 })
 
-# 3. from_ties() stocnet merge engine ------------------------------------------
+# 3. from_layers() stocnet merge engine ------------------------------------------
 
-test_that("from_ties() renames clashing layer names", {
+test_that("from_layers() renames clashing layer names", {
   sn1 <- as_stocnet(ison_adolescents)
   sn2 <- as_stocnet(ison_adolescents)
   sn1$ties$layer <- "friends"
   sn2$ties$layer <- "friends"
-  out <- run_or_skip(from_ties(a = sn1, b = sn2), "from_ties", "layer clash")
+  out <- run_or_skip(from_layers(a = sn1, b = sn2), "from_layers", "layer clash")
   expect_length(unique(out$ties$layer), 2)
   expect_true("friends" %in% out$ties$layer)
 })
 
-test_that("from_ties() merges node tables by label, coalescing attributes", {
+test_that("from_layers() merges node tables by label, coalescing attributes", {
   sn1 <- as_stocnet(add_node_attribute(ison_adolescents, "colour",
                                        rep("red", 8)))
   sn2 <- as_stocnet(add_node_attribute(ison_adolescents, "colour",
                                        rep("blue", 8)))
-  out <- run_or_skip(from_ties(a = sn1, b = sn2), "from_ties",
+  out <- run_or_skip(from_layers(a = sn1, b = sn2), "from_layers",
                      "attribute conflict")
   # conflicting values keep the first network's values
   expect_true(all(out$nodes$colour == "red"))
   # disjoint node sets union
-  out2 <- run_or_skip(from_ties(a = as_stocnet(ison_adolescents),
+  out2 <- run_or_skip(from_layers(a = as_stocnet(ison_adolescents),
                                 b = as_stocnet(mutate_nodes(
                                   ison_adolescents,
                                   name = paste0(name, "2")))),
-                      "from_ties", "disjoint labels")
+                      "from_layers", "disjoint labels")
   expect_equal(nrow(out2$nodes), 16)
 })
 
-test_that("from_ties() adds unlabelled nodes rather than guessing labels", {
+test_that("from_layers() adds unlabelled nodes rather than guessing labels", {
   # anonymous blocks only merge onto other unlabelled pools of the same
   # size (see the rings/stars test above); merged with a *labelled*
   # network, they are appended as new nodes instead of guessing identities
-  out <- run_or_skip(from_ties(l = as_stocnet(ison_adolescents),
+  out <- run_or_skip(from_layers(l = as_stocnet(ison_adolescents),
                                u = as_stocnet(create_ring(8))),
-                     "from_ties", "mixed labelled/unlabelled")
+                     "from_layers", "mixed labelled/unlabelled")
   expect_equal(nrow(out$nodes), 16)
   expect_equal(sum(is.na(out$nodes$label)), 8)
 })
 
-test_that("from_ties() carries changes tables through the merge", {
+test_that("from_layers() carries changes tables through the merge", {
   sn1 <- as_stocnet(fict_starwars)
   sn2 <- as_stocnet(delete_changes(fict_starwars))
-  out <- run_or_skip(from_ties(a = sn1, b = sn2), "from_ties", "changes")
+  out <- run_or_skip(from_layers(a = sn1, b = sn2), "from_layers", "changes")
   expect_s3_class(out, "stocnet")
   expect_false(is.null(out$changes))
 })
 
-test_that("from_ties() resolves conflicting dates and DOIs without warnings", {
+test_that("from_layers() resolves conflicting dates and DOIs without warnings", {
   sn1 <- add_info(as_stocnet(ison_adolescents), date = "2001",
                   doi = "10.1/first")
   sn2 <- add_info(as_stocnet(create_star(8)), date = "1999",
                   doi = "10.1/second")
-  expect_no_warning(out <- from_ties(a = sn1, b = sn2))
+  expect_no_warning(out <- from_layers(a = sn1, b = sn2))
   expect_identical(out$info$date, "1999")
   expect_identical(out$info$doi, "10.1/first")
 })
