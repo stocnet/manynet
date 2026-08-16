@@ -112,25 +112,36 @@ to_simplex.data.frame <- function(.data) {
 }
 
 #' @rdname modif_plexity
-#' @param tie Character string naming one of the tie types, or layers,
+#' @param layer Character string naming one of the layers, or tie types,
 #'   in the network, i.e. one of those returned by `layer_names()`,
 #'   to which the network should be reduced.
 #'   Where a network holds no tie types, it is already uniplex
 #'   and is returned unchanged.
+#' @param tie Deprecated name for `layer`, retained for one version.
 #' @examples
 #' as_tidygraph(create_filled(5)) |>
 #'   mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) |>
 #'   to_uniplex("friend")
 #' @export
-to_uniplex <- function(.data, tie) UseMethod("to_uniplex")
+to_uniplex <- function(.data, layer, tie) UseMethod("to_uniplex")
 
 #' @export
-to_uniplex.default <- function(.data, tie) {
-  as_input(.data, to_uniplex, tie = tie)
+to_uniplex.default <- function(.data, layer, tie) {
+  # `tie` was the name of this argument until version 2.3.0, when it was
+  # renamed to agree with `to_layers()`, `from_layers()`, and `layer_names()`
+  if(missing(layer) && !missing(tie)){
+    snet_warn("The {.arg tie} argument is now called {.arg layer}.")
+    layer <- tie
+  } else if(missing(layer)) layer <- NULL
+  as_input(.data, to_uniplex, layer = layer)
 }
 
 #' @export
-to_uniplex.tbl_graph <- function(.data, tie){
+to_uniplex.tbl_graph <- function(.data, layer, tie){
+  if(missing(layer) && !missing(tie)){
+    snet_warn("The {.arg tie} argument is now called {.arg layer}.")
+    layer <- tie
+  } else if(missing(layer)) layer <- NULL
   layer_attr <- .layer_attribute(.data)
   if(is.na(layer_attr)){
     snet_info("This network holds no tie types, so is already uniplex.")
@@ -138,15 +149,15 @@ to_uniplex.tbl_graph <- function(.data, tie){
   }
   types <- tie_attribute(.data, layer_attr)
   ties_avail <- unique(types)
-  if(missing(tie) || is.null(tie) || length(tie) != 1){
-    snet_abort("Please name the tie type to which the network should be",
+  if(is.null(layer) || length(layer) != 1){
+    snet_abort("Please name the layer to which the network should be",
                "reduced, one of {.val {ties_avail}} (see {.fn layer_names}).")
-  } else if(!tie %in% ties_avail){
-    snet_abort("There is no tie type {.val {tie}} in this network.",
+  } else if(!layer %in% ties_avail){
+    snet_abort("There is no layer {.val {layer}} in this network.",
                "Please name one of {.val {ties_avail}}",
                "(see {.fn layer_names}).")
   }
-  out <- delete_ties(.data, which(!types %in% tie))
+  out <- delete_ties(.data, which(!types %in% layer))
   out <- delete_tie_attribute(out, layer_attr)
   if(is_signed(out) && "sign" %in% net_tie_attributes(out) &&
      (all(tie_signs(out)==1) || all(is.na(tie_signs(out)))))
@@ -161,7 +172,7 @@ to_uniplex.tbl_graph <- function(.data, tie){
       filter_nodes(type == retain) |> 
       mutate_nodes(type = NULL)
   }
-  out <- out |> mutate_info(ties = tie)
+  out <- out |> mutate_info(ties = layer)
   tidygraph::activate(out, "nodes")
 }
 
