@@ -87,26 +87,30 @@ as_igraph.data.frame <- function(.data,
 #' @export
 as_igraph.matrix <- function(.data,
                              twomode = FALSE) {
-  if (nrow(.data) != ncol(.data) | twomode) {
-    if (!(all(.data %in% c(0, 1)))) {
-      graph <- igraph::graph_from_biadjacency_matrix(.data,
-                                                     weighted = TRUE,
-                                                     directed = FALSE)
-    } else {
-      graph <- igraph::graph_from_biadjacency_matrix(.data,
-                                                     directed = FALSE)
-    }
+  # A missing cell records a tie observed as missing, which igraph will not
+  # accept in a matrix it builds a graph from. Such a cell is filled with one,
+  # so that the tie is made, and its weight is set missing again afterwards.
+  na_cells <- is.na(.data)
+  missing_ties <- any(na_cells)
+  if (missing_ties) .data[na_cells] <- 1
+  twomode <- nrow(.data) != ncol(.data) | twomode
+  valued <- missing_ties || !all(.data %in% c(0, 1))
+  if (twomode) {
+    graph <- igraph::graph_from_biadjacency_matrix(.data,
+                                                   weighted = if(valued) TRUE else NULL,
+                                                   directed = FALSE)
   } else {
-    if (!(all(.data %in% c(0, 1)))) {
-      graph <- igraph::graph_from_adjacency_matrix(.data, 
-                                                   mode = ifelse(all(.data == t(.data)),
-                                                                 "max", "directed"),
-                                                   weighted = TRUE)
-    } else {
-      graph <- igraph::graph_from_adjacency_matrix(.data,
-                                                   mode = ifelse(all(.data == t(.data)),
-                                                                 "max", "directed"))
-    }
+    graph <- igraph::graph_from_adjacency_matrix(.data,
+                                                 mode = ifelse(all(.data == t(.data)),
+                                                               "max", "directed"),
+                                                 weighted = if(valued) TRUE else NULL)
+  }
+  if (missing_ties) {
+    el <- igraph::as_edgelist(graph, names = FALSE)
+    # The nodes of a two-mode graph are numbered across both modes, whereas the
+    # columns of the matrix they came from are numbered within the second.
+    if (twomode) el[, 2] <- el[, 2] - nrow(.data)
+    igraph::E(graph)$weight[na_cells[el]] <- NA
   }
   graph
 }
@@ -128,6 +132,12 @@ as_igraph.tbl_graph <- function(.data,
 #' @export
 as_igraph.network <- function(.data,
                               twomode = FALSE) {
+  # A 'network' object holds the ties it records as missing among its edges,
+  # which a sociomatrix reports as missing cells and igraph refuses to build a
+  # graph from. Those take the richer path, where they become a graph
+  # attribute rather than edges, as igraph can mark no edge as missing.
+  if (!is.null(as_missinglist(.data)))
+    return(as_igraph(as_stocnet(.data), twomode = twomode))
   # Extract node attributes
   attr <- names(.data[[3]][[1]])
   # Convert to igraph
@@ -209,6 +219,34 @@ as_igraph.network <- function(.data,
   dplyr::bind_rows(ties, add)
 }
 
+# The ties a network records as missing, labelled where the network is, so that
+# they can be written into whichever form the target class holds them in.
+.missing_out <- function(.data){
+  out <- as_missinglist(.data)
+  if(is.null(out) || !nrow(out)) return(NULL)
+  if(all(is.na(out$layer))) out$layer <- NULL
+  if(all(is.na(out$time))) out$time <- NULL
+  if(is_labelled(.data)){
+    out$from <- .data$nodes$label[out$from]
+    out$to <- .data$nodes$label[out$to]
+  }
+  out
+}
+
+# The reverse, for coercion back into a stocnet: the labels are matched to node
+# indices again, so that the list can be compressed against the nodes.
+.missing_in <- function(missing, nodes){
+  if(is.null(missing) || !nrow(missing)) return(NULL)
+  missing <- dplyr::as_tibble(missing)
+  if(!is.numeric(missing$from) && !is.null(nodes[["label"]])){
+    missing$from <- match(as.character(missing$from), nodes$label)
+    missing$to <- match(as.character(missing$to), nodes$label)
+  }
+  missing$from <- as.integer(missing$from)
+  missing$to <- as.integer(missing$to)
+  missing[!is.na(missing$from) & !is.na(missing$to), , drop = FALSE]
+}
+
 .collapse_layers <- function(ties, directed, directed_object){
   # Without a record of which layer is which, there is nothing to collapse and
   # the caller falls back to describing the network as directed or not.
@@ -257,7 +295,10 @@ as_igraph.stocnet <- function(.data, twomode = FALSE) {
   # `.data$info$directed` is authoritative here, so use it rather than letting
   # graph_from_data_frame() default every stocnet to a directed graph.
   directed <- is_directed(.data)
-  if(is.null(as_nodelist(.data)) || length(as_nodelist(.data)) == 0){
+  # Note that the nodes are counted by their rows and not by their columns,
+  # since a table of rows without columns is how a stocnet records the size of
+  # a network whose nodes have no attributes, isolates included.
+  if(is.null(as_nodelist(.data)) || nrow(as_nodelist(.data)) == 0){
     out <- igraph::graph_from_data_frame(as_edgelist(.data), directed = directed)
     out <- to_unlabelled(out)
   } else {
@@ -296,7 +337,14 @@ as_igraph.stocnet <- function(.data, twomode = FALSE) {
   if(!is.null(as_changelist(.data)) && length(as_changelist(.data)) > 0)
     igraph::graph_attr(out, "changes") <- as_changelist(.data)
   if(!is.null(as_globallist(.data)) && length(as_globallist(.data)) > 0)
-    igraph::graph_attr(out, "global") <- as_globallist(.data)
+    igraph::graph_attr(out, "globals") <- as_globallist(.data)
+  # igraph has no way to mark an edge as missing, so the ties recorded as
+  # missing travel as a graph attribute rather than as edges. This keeps them
+  # out of every count and every tie vector, where they are not ties.
+  missing <- .missing_out(.data)
+  if(!is.null(missing)) igraph::graph_attr(out, "missings") <- missing else
+    if("missings" %in% igraph::graph_attr_names(out))
+      out <- igraph::delete_graph_attr(out, "missings")
   out
 }
 
