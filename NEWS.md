@@ -112,6 +112,7 @@
 - Fixed `na_to_zero()` raising an "`..1` must be of size 10 or 1, not size 0" error on any unweighted network, which is now returned unaltered, since a network without tie values has none that can be missing
 - Fixed `na_to_mean()` raising a "missing value where TRUE/FALSE needed" error on the example given in its own documentation, where a missing weight made the test for valued data itself missing
 - Fixed `na_to_mean()` never imputing anything for binary networks held as `tbl_graph`s, where the imputation iterated over the indices of the weights rather than over the weights themselves
+- Fixed `to_unweighted()` silently dropping the ties of a network whose weights are missing, which discarded the ties it records as missing rather than dichotomising the rest around them
 - Updated strong connectivity example to print only the largest component to reduce CRAN's example timing
 
 ## Marking
