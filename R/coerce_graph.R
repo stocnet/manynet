@@ -730,18 +730,18 @@ as_network.matrix <- function(.data,
   if (is_twomode(.data)) {
     out <- to_multilevel(.data)
   } else out <- .data
+  valued <- is_weighted(.data) | is_signed(.data) | anyNA(.data)
   network::as.network(out,
                       directed = is_directed(.data),
                       bipartite   = ifelse(is_twomode(.data),
                                            nrow(.data),
                                            FALSE),
-                      loops = ifelse(sum(diag(out)) > 0, TRUE, FALSE),
+                      loops = ifelse(sum(diag(out), na.rm = TRUE) > 0, TRUE, FALSE),
                       # a signed matrix's values are carried as weights too,
-                      # so that the signs survive the coercion
-                      ignore.eval = ifelse(is_weighted(.data) | is_signed(.data),
-                                           FALSE, TRUE),
-                      names.eval  = ifelse(is_weighted(.data) | is_signed(.data),
-                                           "weight", NULL))
+                      # so that the signs survive the coercion, as are the
+                      # missing values of a matrix holding ties recorded as missing
+                      ignore.eval = ifelse(valued, FALSE, TRUE),
+                      names.eval  = ifelse(valued, "weight", NULL))
 }
 
 #' @export
@@ -823,6 +823,16 @@ as_network.stocnet <- function(.data, twomode = FALSE) {
   # As for igraph, a layer held once per dyad is reciprocated here, since a
   # 'network' object is directed or undirected as a whole.
   ties <- .reciprocate_layers(.data)
+  # A 'network' object is the one class that can mark an edge as missing, in
+  # its reserved 'na' attribute, which is the format `{ergm}` and the rest of
+  # statnet expect. So the ties recorded as missing are added as edges here,
+  # marked as such, and `network`'s own functions omit them as they should.
+  missing <- as_missinglist(.data)
+  if(!is.null(missing) && nrow(missing)){
+    missing <- missing[intersect(names(ties), names(missing))]
+    missing$na <- TRUE
+    ties <- dplyr::bind_rows(dplyr::mutate(ties, na = FALSE), missing)
+  }
   # For two-mode networks the 'bipartite' count is the number of first-mode
   # nodes. manynet orders nodes first-mode-first, with ties running from the
   # first mode ('from') to the second ('to'), matching network's convention.
@@ -882,7 +892,7 @@ as_network.stocnet <- function(.data, twomode = FALSE) {
   if(!is.null(as_changelist(.data)) && length(as_changelist(.data)) > 0)
     out <- network::set.network.attribute(out, "changes", as_changelist(.data))
   if(!is.null(as_globallist(.data)) && length(as_globallist(.data)) > 0)
-    out <- network::set.network.attribute(out, "global", as_globallist(.data))
+    out <- network::set.network.attribute(out, "globals", as_globallist(.data))
   out
 }
 

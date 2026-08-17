@@ -56,6 +56,7 @@
   - Fixed how `as_igraph.stocnet()` handles unlabelled networks with nodal attributes
   - Fixed how `as_igraph.network()`reads missing data
   - Fixed how `as_igraph.matrix()`reads missing data
+- Fixed `as_network()` overwriting core network attributes of the result with same-named entries from the network's info, so that a per-layer `directed` vector no longer replaces the single logical that `{network}` requires, e.g. `as_igraph(as_network(ison_bankwiring))` erroring with "the condition has length > 1"
 - Improved how `as_siena.stocnet()` carries missing data to RSiena
 
 ## Manipulating
