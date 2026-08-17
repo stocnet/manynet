@@ -51,6 +51,7 @@
 - Fixed `as_nodelist()` returning the edgelist of a tbl_graph whose ties are active, which made `as_stocnet()` warn "Unknown or uninitialised column: `name`" and drop the node labels, e.g. `to_unweighted()` on a weighted stocnet object
 - Fixed `as_matrix()` filling every missing cell in a multiplex network with 1
 - Improved `as_stocnet.network()` to read the network's attributes back into its info component, rather than keeping only whether it is directed
+- Improved how `as_siena.stocnet()` carries missing data to RSiena
 
 ## Manipulating
 

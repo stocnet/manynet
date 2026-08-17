@@ -1075,6 +1075,10 @@ as_siena.default <- function(.data, twomode = FALSE) {
 as_siena.stocnet <- function(.data, twomode = FALSE) {
   thisRequires("RSiena")
   x <- .data
+  # SIENA holds a missing tie as a missing cell of the array, which it imputes,
+  # so the ties recorded as missing join the ties here, marked as such, and the
+  # array builder writes them out as missing rather than as observed non-ties.
+  x$ties <- .join_missing_ties(x)
   # The longitudinal column may arrive as 'wave' (mnet convention) or 'time'.
   x$ties <- .siena_wave_to_time(x$ties)
   x$changes <- .siena_wave_to_time(x$changes)
@@ -1164,12 +1168,20 @@ as_siena.stocnet <- function(.data, twomode = FALSE) {
   # Constant covariates from (non-reserved) nodal columns ----
   reserved <- c("label", "mode", "active", "na", "type", "name")
   for (C in setdiff(names(nodes), reserved)) {
+    # A variable measured at every wave is held both as a nodal column, for the
+    # first wave, and as changes, for the rest. The changes cover every wave,
+    # so the object built from them stands and the column is passed over.
+    if (C %in% names(objs)) next
     ns <- ns_of(C, set_names[1])
     rows <- .siena_mode_rows(nodes, ns[1], set_names)
     vals <- nodes[[C]][rows]
     # SIENA covariates must be plain numeric vectors, so encode any categorical
     # attribute as numeric codes and strip stray attributes/classes.
     vals <- if (is.numeric(vals)) as.vector(vals) else as.numeric(as.factor(vals))
+    if (all(is.na(vals))) {
+      snet_info("Dropping the '{C}' attribute, since it holds no observed values.")
+      next
+    }
     objs[[C]] <- RSiena::coCovar(vals, nodeSet = ns[1], centered = cent_of(C))
   }
   # Composition change (from active-variable changes) ----
@@ -1277,7 +1289,14 @@ as_stocnet.sienadata <- function(.data, twomode = FALSE) {
   if (length(focal)) info$focal <- focal
   if (length(centered)) info$centered <- centered
   info$siena <- siena_meta
-  ties_tbl <- if (length(ties)) dplyr::bind_rows(ties) else NULL
+  # SIENA holds a dyad observed as missing as a missing value, which a stocnet
+  # records in a column of its own. This is done over the layers together,
+  # since binding them would otherwise leave an unvalued layer missing weights.
+  # SIENA holds a missing tie as a missing value, which `make_stocnet()` reads
+  # from an 'na' column and compresses into nonresponse records. Marking them
+  # over the layers together stops a layer without values, bound beside one
+  # with them, being read as missing throughout.
+  ties_tbl <- if (length(ties)) .mark_missing_weights(dplyr::bind_rows(ties)) else NULL
   changes_tbl <- if (length(changes)) dplyr::bind_rows(changes) else NULL
   make_stocnet(info = info, nodes = nodes, ties = ties_tbl,
                changes = changes_tbl)
@@ -1400,6 +1419,9 @@ as_stocnet.sienadata <- function(.data, twomode = FALSE) {
   if (nrow(sub)) {
     tv <- if ("time" %in% names(sub)) sub$time else rep(1, nrow(sub))
     wv <- if ("weight" %in% names(sub)) sub$weight else rep(1, nrow(sub))
+    # A dyad recorded as missing is missing to SIENA too, which imputes it,
+    # rather than an observed non-tie, which would bias the estimates.
+    if ("na" %in% names(sub)) wv[!is.na(sub$na) & sub$na] <- NA
     for (r in seq_len(nrow(sub))) {
       w <- if (is.na(tv[r])) 1 else as.integer(tv[r])
       if (w >= 1 && w <= W)
