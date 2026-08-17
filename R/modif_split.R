@@ -491,9 +491,11 @@ to_slices.tbl_graph <- function(.data, attribute = "time", slice = NULL) {
     moments <- slice else
       moments <- unique(tie_attribute(.data, attr_name = attribute))
   # Summarising ties introduces a weight, but ties can only be dropped for
-  # having summed to zero where such a weight exists.
+  # having summed to zero where such a weight exists. The question here is
+  # whether the ties carry a value at all, and not whether that value varies,
+  # so the attribute is asked for directly rather than through `is_weighted()`.
   drop_zeroes <- function(x)
-    if(is_weighted(x)) filter_ties(x, weight != 0) else x
+    if("weight" %in% net_tie_attributes(x)) filter_ties(x, weight != 0) else x
   if(length(moments)>1){
     out <- lapply(moments, function(tm){
       snap <- filter_ties(.data, !!as.name(attribute) <= tm)

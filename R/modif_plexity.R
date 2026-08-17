@@ -166,7 +166,10 @@ to_uniplex.tbl_graph <- function(.data, layer, tie){
   if(is_signed(out) && "sign" %in% net_tie_attributes(out) &&
      (all(tie_signs(out)==1) || all(is.na(tie_signs(out)))))
     out <- delete_tie_attribute(out, "sign")
-  if(is_weighted(out) && all(tie_weights(out)==1))
+  # Weights of nothing but ones record no more than the ties themselves do,
+  # unless some of them are missing, which records which ties are missing
+  if("weight" %in% net_tie_attributes(out) && !anyNA(tie_weights(out)) &&
+     all(tie_weights(out)==1))
     out <- delete_tie_attribute(out, "weight")
   if(is_longitudinal(out) && length(unique(tie_attribute(out, "wave")))==1)
     out <- delete_tie_attribute(out, "wave")

@@ -301,6 +301,14 @@ is_weighted <- function(.data) UseMethod("is_weighted")
     any(wts < 0, na.rm = TRUE) && all(abs(wts) == 1, na.rm = TRUE)
 }
 
+# A binary network's ties are also sometimes held as weights of 1,
+# so that a tie recorded as missing can be held alongside them as a weight of NA.
+# Such a 'weight' column records only which ties are present and not their values,
+# so a network holding it is no more weighted than a matrix of zeros and ones is.
+.holds_only_binary <- function(wts){
+  !is.null(wts) && length(wts) > 0 && all(wts %in% c(0, 1) | is.na(wts))
+}
+
 #' @export
 is_weighted.default <- function(.data) {
   as_input(.data, is_weighted)
@@ -309,6 +317,7 @@ is_weighted.default <- function(.data) {
 #' @export
 is_weighted.igraph <- function(.data) {
   igraph::is_weighted(.data) &&
+    !.holds_only_binary(igraph::edge_attr(.data, "weight")) &&
     !.holds_only_signs(igraph::edge_attr(.data, "weight"),
                        "sign" %in% igraph::edge_attr_names(.data))
 }
@@ -321,18 +330,20 @@ is_weighted.tbl_graph <- function(.data) {
 #' @export
 is_weighted.stocnet <- function(.data) {
   "weight" %in% names(.data$ties) &&
+    !.holds_only_binary(.data$ties$weight) &&
     !.holds_only_signs(.data$ties$weight, "sign" %in% names(.data$ties))
 }
 
 #' @export
 is_weighted.matrix <- function(.data) {
-  !all(.data == 0 | .data == 1) &&
-    !.holds_only_signs(c(.data)[c(.data) != 0])
+  !.holds_only_binary(c(.data)) &&
+    !.holds_only_signs(c(.data)[which(c(.data) != 0)])
 }
 
 #' @export
 is_weighted.network <- function(.data) {
   "weight" %in% network::list.edge.attributes(.data) &&
+    !.holds_only_binary(unlist(network::get.edge.attribute(.data, "weight"))) &&
     !.holds_only_signs(unlist(network::get.edge.attribute(.data, "weight")),
                        "sign" %in% network::list.edge.attributes(.data))
 }

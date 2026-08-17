@@ -248,7 +248,7 @@ keep_nodes <- function(.data, kept){
   }
 
   make_stocnet(nodes = out_nodes, ties = out_ties, changes = out_changes,
-               global = .data$global, info = .data$info)
+               globals = .data$globals, missings = .data$missings, info = .data$info)
 }
 
 #' @rdname manip_nodes_num
@@ -590,7 +590,7 @@ join_nodes.stocnet <- function(.data, object2, .by = NULL,
     nodelist <- object2
   if(is.null(.data$nodes) && net_nodes(.data) == nrow(nodelist)) 
     return(make_stocnet(info = .data$info, nodes = nodelist, ties = .data$ties, 
-                        changes = .data$changes, global = .data$global))
+                        changes = .data$changes, globals = .data$globals, missings = .data$missings))
   out$nodes <- switch(join_type,
                        "full" = dplyr::full_join(.data$nodes, nodelist, by = .by, copy = TRUE),
                        "left" = dplyr::left_join(.data$nodes, nodelist, by = .by, copy = TRUE),

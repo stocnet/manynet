@@ -36,8 +36,10 @@
   - `validate_changes()` now reserves a 'layer' column where a change applies only to a single layer
 - Improved description
   - Fixed pluralize helper to except non-plural words like "business"
-  - Improved `describe_ties()` to name the ties of each layer by that layer's own directedness, so a symmetric layer of an otherwise directed network is described as holding ties rather than arcs
-- Improved `print.node_measure()`, `print.tie_measure()`, and `print.network_measure()` so they use new `measure`, `range`, and `normalization` attributes to print a concise, subtle header description in sentence case
+  - Improved `describe_ties()` to name the ties of each layer by that layer's own directedness
+  - Improved `describe_network()` so signed networks whose weights are all -1 or 1 are no longer also described as weighted
+- Improved `print.node_measure()`, `print.tie_measure()`, and `print.network_measure()` 
+  to use new `measure`, `range`, and `normalization` attributes to print a concise, subtle header description in sentence case
   - See changes in netrics v1.0.0 for more
 
 ## Coercion
@@ -119,15 +121,11 @@
 
 - Fixed `is_longitudinal()` returning FALSE for a stocnet object with waves, since a stocnet is a list and was marked as if it were a list of networks
 - Added `is_multilevel()` to mark TRUE those networks whose nodes belong to two or more levels tied both within and between levels
-- Added 'lvl' to the reserved node attributes, since it records the levels of a network rather than any property of its nodes, so that `is_attributed()` no longer marks a network TRUE for it alone
-- Improved `describe_network()` so that signed networks whose weights are all -1 or 1 are no longer also described as weighted, since such weights record only the sign of each tie
-- Improved `is_signed()` for 'igraph', 'tbl_graph', and 'network' objects, which now also mark as signed those networks that hold their signs as negative weights, and not only those with a 'sign' attribute
-  - This is how 'stocnet' objects hold signs, and `as_stocnet()` renames a 'sign' attribute to 'weight', so a signed network coerced to a stocnet and back was no longer marked as signed, even though none of its values had changed
-  - Networks whose weights are all non-negative remain unsigned, and missing weights are ignored rather than returning `NA`
-- Fixed `is_weighted()` to return FALSE for signed-only networks, such as `irps_tribes`, `irps_wwi`, or `fict_marvel`, whose signs are held compactly as weights of -1 and 1 so that no sign is lost when coercing between formats
-  - Such a 'weight' records only the sign of each tie and not its magnitude, so marking these networks as weighted overstated what the data held, e.g. in `table_data()`
-  - A network is marked weighted again as soon as its weights vary in magnitude, or where it has both a 'sign' attribute and weights, since the weights are then a value in their own right
-  - `describe_network()` had special-cased this already and is now simply consistent with the mark, while the coercion, missing data, and tie-adding functions that used `is_weighted()` to ask whether ties carried values now ask that question directly, so that signs continue to survive coercion between every format
+- Fixed `is_attributed.igraph()` returning TRUE for a network with 'lvl' alone
+- Improved `is_signed()` for 'igraph', 'tbl_graph', and 'network' objects
+  - Networks that hold their signs as negative weights, not only those with a 'sign' attribute, marked TRUE
+- Improved `is_weighted()` for 'stocnet', 'igraph', 'tbl_graph', and 'network' objects
+  - Networks that hold absolute binary weights, not only those with a 'weight' attribute, marked FALSE
 
 ## Measuring
 
