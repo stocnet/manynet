@@ -30,6 +30,10 @@
   - Missing ties due to nonresponse are treated through `nodes$na` and `changes`
   - Ties with missing data, such as weight, are listed in `ties` with `NA` in the relevant column
   - Added `missings` component to hold individual, residual unrecorded ties
+- Improved `validate_stocnet()` 
+  - Added `validate_globals()` and `validate_missings()`
+  - `validate_ties()` now reserves 'begin' and 'end' tie columns, which mark when a tie is present rather than a time named some other way
+  - `validate_changes()` now reserves a 'layer' column where a change applies only to a single layer
 
 ## Coercion
 

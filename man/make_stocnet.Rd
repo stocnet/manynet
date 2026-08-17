@@ -11,7 +11,8 @@ make_stocnet(
   nodes = NULL,
   ties = NULL,
   changes = NULL,
-  global = NULL
+  globals = NULL,
+  missings = NULL
 )
 
 \method{print}{stocnet}(x, ..., n = 12)
@@ -54,11 +55,18 @@ Additional columns can be included for the time of the change,
 such as 'wave' or 'time'.
 By default NULL.}
 
-\item{global}{A tibble of global variables in the network, with one row
+\item{globals}{A tibble of global variables in the network, with one row
 per change and at least three columns for
 the variable to which the change applies, which should be called 'var',
 the time of the change, which should be called 'time',
 and the new value to be applied, which should be called 'value'.
+By default NULL.}
+
+\item{missings}{A tibble of the ties the network could have observed and did
+not, with one row per tie and at least two columns for its endpoints,
+which should be called 'from' and 'to'.
+Only the ties that no node's non-response implies need be listed here;
+see the Missingness section.
 By default NULL.}
 
 \item{x}{An object of class "mnet" or "tbl_graph".}
@@ -80,8 +88,11 @@ By default 12.}
 }}
 }
 \description{
-The 'stocnet' class of network object is a list of four main elements:
-nodes, ties, (nodal) changes, and info metadata about the network as a whole.
+The 'stocnet' class of network object is a list of six elements:
+nodes, ties, (nodal) changes, globals, missings,
+and info metadata about the network as a whole.
+Every element but info is a table, which is what its plural name signifies,
+and any of them may be NULL.
 This offers a consistent and flexible structure that enables more complex
 forms of networks to be contained in a single object.
 
@@ -161,10 +172,13 @@ There are several reserved names for the columns of the nodes component of a sto
 \itemize{
 \item 'label' should be a character vector of the labels of the nodes in the network.
 \item 'mode' should be a character vector of the modes of the nodes in a multimodal network.
-\item 'present' should be a logical vector indicating the initial active status of the node in changing networks.
-It can also be used to indicate missing nodes in a network,
-if the network is not changing but some nodes are missing,
-or the network is changing but some nodes never appear.
+\item 'active' should be a logical vector indicating the initial status of nodes in changing networks.
+Inactive nodes are not in the network, so cannot hold incoming nor outgoing ties.
+\item 'na' should be a logical vector indicating which nodes were non-responsive,
+despite being in the network.
+Non-responsive nodes are in the network, so can hold incoming ties,
+but cannot report outgoing ties.
+See \code{\link[=as_missinglist]{as_missinglist()}}.
 }
 }
 
@@ -180,6 +194,18 @@ Note that the value column can be of any class, such as logical for changes to a
 or numeric for changes to a nodal attribute.
 These values are held internally as a list within the tibble, so that they can be of any class and length,
 but printed as a tibble with a 'value' column that shows the first value and a type label for the class of the value.
+}
+
+A change states what a variable becomes from that moment on,
+so it is carried forward until another change states otherwise.
+A node that does not report at one wave and reports again at the next
+therefore holds two changes of the 'na' variable, one each way.
+
+There is one reserved name for a further column.
+\itemize{
+\item 'layer' should be a character vector naming the layer a change applies to,
+where it applies to one layer and not to others.
+A change that names no layer applies to every layer.
 }
 }
 
@@ -197,20 +223,41 @@ There are also several reserved names for the columns of the ties component of a
 \item 'weight' should be a numeric vector of the weights of the ties in a weighted network
 If the weight vector includes also negative values, then the network is a signed network,
 and the sign of the tie can be determined from the weight.
-Missing weights can be used to indicate missing ties in a network.
+Missing values, \code{NA}, in the weight vector indicate that the tie value is missing,
+not the tie itself, which is still present in the network.
+For individual missing ties beyond those implied by inactive or non-responsive nodes,
+please add them to the missings component as an edgelist.
 \item 'time' should be a character or date vector of the time at which each tie is active in a longitudinal network.
 }
 }
 
 \section{Globals}{
 
-There are several required names for the columns of the ties component of a stocnet object (if one is included).
+There are several required names for the columns of the globals component of a stocnet object (if one is included).
 \itemize{
 \item 'var' must be a string vector naming the global variable
 \item 'value' must be the new value that should be applied at that change (or incremented, as appropriate).
 There may be an additional column:
 \item 'time' should be a character or date vector of the time at which each global attribute is updated.
 }
+}
+
+\section{Missings}{
+
+The missings component lists the ties the network could have observed and
+did not, one row each, where these are not already implied by an inactive
+or a non-responsive node.
+It takes the same columns as the ties component:
+\itemize{
+\item 'from' and 'to' must be integer vectors of the nodes at each end
+\item 'layer' and 'time' should name the layer and moment the tie was missing
+from, where the network records them.
+}
+
+Since most missing tie data is a node that did not report,
+this component is usually NULL.
+\code{\link[=as_missinglist]{as_missinglist()}} returns what it holds together with the ties that the
+non-responsive nodes imply, which is nearly always the larger part.
 }
 
 \section{Printing}{
