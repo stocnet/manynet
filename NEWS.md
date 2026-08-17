@@ -140,6 +140,7 @@
 
 - Improved `table_data()` to skip TRUE/FALSE `multiplex` in favour of number of `layers`
 - Added `ison_bankwiring` as a stocnet for the six Hawthorne bank wiring room relations as a multiplex signed network, with friendship, games, help, and trades positive and antagonism and conflict negative
+- Added `ison_classmates` as a stocnet for Knecht's four waves of friendship among 26 Dutch pupils, with primary-school acquaintance as a second tie type and delinquency, alcohol use, and leaving the class as nodal changes
 - Added `ison_florentine` as a stocnet for Padgett's multiplex business and marriage ties among 16 Renaissance Florentine families, with their wealth, priorates, and degree in the larger 116-family dataset
 - Added `irps_supremecourt` as a stocnet for the ten terms of the Rehnquist court as a two-mode, weighted network of 376 cases and 9 justices
 - Added `irps_tribes` as a stocnet for Read's signed alliance and opposition relations among 16 Gahuku-Gama sub-tribes
