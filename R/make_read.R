@@ -27,14 +27,16 @@
 #' @param sv Allows users to specify whether their csv file is
 #'   `"comma"` (English, the default) or `"semi-colon"` (European) separated.
 #' @param ... Additional parameters passed to the read/write function.
-#' @return `read_edgelist()` and `read_nodelist()` will import
-#'   into edgelist (tibble) format which can then be coerced or combined into
-#'   different graph objects from there.
+#' @return `read_edgelist()` and `read_nodelist()` import a list rather than a
+#'   network, so they return a tibble,
+#'   which can then be coerced or combined into a network from there.
 #'
-#'   `read_pajek()` and `read_ucinet()` will import into
-#'   a tidygraph format, since they already contain both edge and attribute data.
-#'   `read_matrix()` will import into tidygraph format too.
-#'   Note that all graphs can be easily coerced into other formats
+#'   Every other `read_*()` function returns a stocnet object (see
+#'   [make_stocnet()]).
+#'   This is the class that holds the most of what a file can contain,
+#'   such as the network's metadata, more than two modes, several layers,
+#'   and the times at which nodes and ties are present.
+#'   Note that a network can be coerced into any other format
 #'   with `{manynet}`'s `as_` methods.
 #' @family makes
 #' @details There are a number of repositories for network data
@@ -123,7 +125,7 @@ read_matrix <- function(file = file.choose(),
     rownames(out) <- colnames(out)
   out <- as.matrix(out)
   if(is.null(rownames(out)) && colnames(out)[1] == "V1") colnames(out) <- NULL
-  as_tidygraph(out)
+  as_stocnet(out)
 }
 
 #' @rdname make_read 
@@ -209,11 +211,11 @@ read_pajek <- function(file = file.choose(),
   #     vct <- gsub(" ", "", vct, fixed = TRUE)
   #     vct <- vct[!grepl("^$", vct)]
   #     if(all(grepl("^-?[0-9.]+$", vct))) vct <- as.numeric(vct)
-  #     out <- set_vertex_attr(out, name = strsplit(namo[i], " |\\.")[[1]][2], 
+  #     out <- set_vertex_attr(out, name = strsplit(namo[i], " |\\.")[[1]][2],
   #                            value = vct)
   #   }
-  # } 
-  out
+  # }
+  as_stocnet(out)
 }
 
 #' @rdname make_read
@@ -377,8 +379,8 @@ read_ucinet <- function(file = file.choose()) {
   attr(mat, "date") <- header$date
   # attr(mat,'labtype') <- header$labtype
   # attr(mat,'infile.dt') <- header$infile.dt
-  # Convert the adjacency matrix to a tidygraph object
-  as_tidygraph(mat)
+  # Convert the adjacency matrix to a stocnet object
+  as_stocnet(mat)
 }
 
 #' @rdname make_read 
@@ -438,7 +440,7 @@ read_dynetml <- function(file = file.choose()) {
   if(!is.na(xml2::xml_attr(net_el, "isDirected")) &&
      tolower(xml2::xml_attr(net_el, "isDirected")) %in% c("false","0"))
     out <- to_undirected(out)
-  out
+  as_stocnet(out)
 }
 
 #' @rdname make_read
@@ -464,10 +466,12 @@ read_graphml <- function(file = file.choose(), ego = TRUE) {
   graphs <- xml2::xml_find_all(xmlfile, "/graphml/graph")
   if(length(graphs) == 0) snet_abort("No graphs found in {.file {file}}.")
   parsed <- lapply(graphs, .graphml_parse, key_map = key_map)
+  # The builders return an igraph, since they are written against it,
+  # and the network is coerced once here, at the boundary of the function.
   if(netcanvas) {
     snet_minor_info("Reading {length(parsed)} Network Canvas session{?s}.")
-    .netcanvas_build(parsed, key_map = key_map, ego = ego)
-  } else .graphml_build(parsed)
+    as_stocnet(.netcanvas_build(parsed, key_map = key_map, ego = ego))
+  } else as_stocnet(.graphml_build(parsed))
 }
 
 # Maps each <key> declaration to its human-readable name, type, scope, and
@@ -776,7 +780,7 @@ read_graphml <- function(file = file.choose(), ego = TRUE) {
 read_gml <- function(file = file.choose()) {
   if(missing(file)) cli::cli_alert_success("Executing: read_gml('{file}')")
   if(!grepl("\\.gml$", file, ignore.case = TRUE)) file <- paste0(file, ".gml")
-  as_tidygraph(igraph::read_graph(file, format = "gml"))
+  as_stocnet(igraph::read_graph(file, format = "gml"))
 }
 
 #' @rdname make_read
@@ -846,7 +850,9 @@ read_gdf <- function(file = file.choose()) {
     has_node_data <- FALSE
   }
   
-  as_tidygraph(list(nodes = node_data, ties = edge_data))
+  as_stocnet(as_tidygraph(list(nodes = node_data, ties = edge_data)))
+}
+
 # GEXF ####
 
 #' @rdname make_read

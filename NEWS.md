@@ -18,9 +18,11 @@
 ## Making
 
 - Added `read_gexf()` and `write_gexf()` for GEXF files such as via Gephi
+- Improved `read_*()` functions to return stocnet objects, which hold more of what a file says
+  - `read_edgelist()` and `read_nodelist()` still return a tibble, since they read a list rather than a network
 - Improved `read_graphml()` to read files using `{xml2}` rather than delegating to `igraph::read_graph()`
   - Keys now read `for="all"`; igraph discards them entirely, which silently dropped both node and tie types
-  - Files holding 2+ graphs now combined into a single network, distinguished by a 'graph' node attribute; igraph silently returned only the first graph
+  - Files holding 2+ graphs now combined into a single network; igraph silently returned only the first graph
   - Graph-level attributes, `<default>` declarations, and the declared attribute types are now respected, and a missing value is now `NA` of the appropriate type rather than `NaN`
 - Improved `read_graphml()` support for reading Network Canvas exports specifically (closed #153)
   - Session metadata, node and tie types, entity UUIDs are all retained
