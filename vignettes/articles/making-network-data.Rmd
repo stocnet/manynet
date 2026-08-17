@@ -555,11 +555,14 @@ Here are some examples:
 - `read_pajek()` and `write_pajek()` for importing and exporting .net or .paj files
 - `read_ucinet()` and `write_ucinet()` for importing and exporting .##h files (.##d files are automatically imported alongside them)
 - `read_graphml()` and `write_graphml()` for importing and exporting .graphml files
+- `read_gexf()` and `write_gexf()` for importing and exporting .gexf files, such as those Gephi reads and writes
 - `read_dynetml()` for importing .dynetml files
 
 For more information on any of these functions, you can ask for help by typing `?read_pajek` in the console.
 Whereas `read_edgelist()` and `read_nodelist()` will import into a tibble/data frame class,
-`read_pajek()` and `read_ucinet()` will import the network into a tidygraph format (see above).
+`read_pajek()` and `read_ucinet()` will import the network into a stocnet format (see above).
+A stocnet holds the most of what a file can contain,
+such as the network's metadata, its modes, its layers, and when its ties are present.
 Of course, any network data that is imported can be easily coerced into any other compatible class.
 Let's say we want to import the adolescents edgelist back in, but we want it in an igraph format.
 **There are three ways you might do this — run the code and compare the three results.**
@@ -588,7 +591,7 @@ How does the result compare to the original `ison_adolescents`?
 ::: {.callout}
 <span class="callout-label">**In brief**:</span> `read_*()`/`write_*()` functions import and export edgelists and
 nodelists (from/to .csv or Excel) as well as Pajek, UCINET, GraphML,
-and DyNetML formats.
+GEXF, and DyNetML formats.
 Whatever the import class, the `as_*()` coercion functions
 will get the data into whatever class you need next.
 :::

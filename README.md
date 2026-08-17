@@ -85,7 +85,8 @@ in other repositories. Besides importing and exporting to Excel
 edgelists, nodelists, and (bi)adjacency matrices, there are specific
 routines included for
 [UCINET](http://www.analytictech.com/archive/ucinet.htm),
-[Pajek](http://mrvar.fdv.uni-lj.si/pajek/), and GraphML files, e.g.:
+[Pajek](http://mrvar.fdv.uni-lj.si/pajek/), [Gephi](https://gephi.org),
+and GraphML files, e.g.:
 
 <img src="https://www.jameshollway.com/post/manynet/README-import-graph-1.png" alt="Graph of manynet input/output formats"/>
 
@@ -96,11 +97,11 @@ can browse through your file system to find the file. Usually both
 compatible with your larger project and analytic workflow.
 
 - `read_cran()`, `read_dynetml()`, `read_edgelist()`, `read_gdf()`,
-  `read_gml()`, `read_graphml()`, `read_matrix()`, `read_nodelist()`,
-  `read_pajek()`, `read_pkg()`, `read_ucinet()`
-- `write_dynetml()`, `write_edgelist()`, `write_gdf()`, `write_gml()`,
-  `write_graphml()`, `write_matrix()`, `write_nodelist()`,
-  `write_pajek()`, `write_ucinet()`
+  `read_gexf()`, `read_gml()`, `read_graphml()`, `read_matrix()`,
+  `read_nodelist()`, `read_pajek()`, `read_pkg()`, `read_ucinet()`
+- `write_dynetml()`, `write_edgelist()`, `write_gdf()`, `write_gexf()`,
+  `write_gml()`, `write_graphml()`, `write_matrix()`,
+  `write_nodelist()`, `write_pajek()`, `write_ucinet()`
 
 #### Identifying network data
 
@@ -117,15 +118,18 @@ for analysis. Here are just a few examples, all available in
 The package includes three families of network data:
 
 - Classic/instructional networks: `ison_adolescents`, `ison_algebra`,
-  `ison_brandes`, `ison_dolphins`, `ison_emotions`, `ison_hightech`,
-  `ison_judo_moves`, `ison_karateka`, `ison_koenigsberg`,
-  `ison_laterals`, `ison_lawfirm`, `ison_monks`, `ison_networkers`,
-  `ison_physicians`, `ison_southern_women`
+  `ison_bankwiring`, `ison_brandes`, `ison_classmates`, `ison_dolphins`,
+  `ison_emotions`, `ison_florentine`, `ison_fraternity`,
+  `ison_hightech`, `ison_judo_moves`, `ison_karateka`,
+  `ison_koenigsberg`, `ison_laterals`, `ison_lawfirm`, `ison_monks`,
+  `ison_networkers`, `ison_physicians`, `ison_southern_women`,
+  `ison_tailorshop`
 - Fictional networks: `fict_actually`, `fict_friends`, `fict_greys`,
   `fict_lotr`, `fict_marvel`, `fict_potter`, `fict_starwars`,
   `fict_thrones`
 - International/political networks: `irps_911`, `irps_blogs`,
-  `irps_books`, `irps_nuclear`, `irps_revere`, `irps_usgeo`, `irps_wwi`
+  `irps_books`, `irps_nuclear`, `irps_revere`, `irps_supremecourt`,
+  `irps_tribes`, `irps_usgeo`, `irps_wwi`
 
 #### Inventing network data
 
@@ -280,10 +284,10 @@ distinguishable as those `to_*()` functions that are named in the
 plural. Split data can be rejoined using the `from_*()` family of
 functions.
 
-See also `to_blocks()`, `to_components()`, `to_egos()`, `to_motifs()`,
-`to_no_isolates()`, `to_slices()`, `to_subgraphs()`, `to_ties()`,
-`to_waves()` and `from_egos()`, `from_slices()`, `from_subgraphs()`,
-`from_ties()`, `from_waves()`.
+See also `to_blocks()`, `to_components()`, `to_egos()`, `to_layers()`,
+`to_motifs()`, `to_no_isolates()`, `to_slices()`, `to_subgraphs()`,
+`to_ties()`, `to_waves()` and `from_egos()`, `from_layers()`,
+`from_slices()`, `from_subgraphs()`, `from_ties()`, `from_waves()`.
 
 ## Cheat sheet
 

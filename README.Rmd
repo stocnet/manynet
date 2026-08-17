@@ -94,6 +94,7 @@ Besides importing and exporting to Excel edgelists, nodelists, and (bi)adjacency
 there are specific routines included for 
 [UCINET](http://www.analytictech.com/archive/ucinet.htm), 
 [Pajek](http://mrvar.fdv.uni-lj.si/pajek/),
+[Gephi](https://gephi.org),
 and GraphML files, e.g.:
 
 <img src="https://www.jameshollway.com/post/manynet/README-import-graph-1.png" alt="Graph of manynet input/output formats"/>
@@ -101,10 +102,11 @@ and GraphML files, e.g.:
 ```{r import-graph, echo = FALSE, dpi = 300, fig.height=2.5, eval=FALSE}
 library(patchwork)
 library(ggplot2)
-imports <- igraph::graph_from_literal(ucinet:pajek+--+tidygraph,
-                                      matrix:dynetml--+tidygraph,
+imports <- igraph::graph_from_literal(ucinet:pajek+--+stocnet,
+                                      matrix:graphml:gexf+--+stocnet,
+                                      dynetml--+stocnet,
                                       edgelist:nodelist+--+tibble)
-imports <- imports %>% mutate(type = ifelse(node_labels(imports)%in% c("tidygraph","tibble"), TRUE, FALSE))
+imports <- imports %>% mutate(type = ifelse(node_labels(imports)%in% c("stocnet","tibble"), TRUE, FALSE))
 graphr(imports, node_size = 4)
 ```
 
