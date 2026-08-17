@@ -150,7 +150,7 @@ list_holds_info <- function(fn, net) {
   g <- as_igraph(net)
   switch(fn,
          as_changelist = "changes" %in% igraph::graph_attr_names(g),
-         as_globallist = "global" %in% igraph::graph_attr_names(g),
+         as_globallist = "globals" %in% igraph::graph_attr_names(g),
          as_nodelist = length(igraph::vertex_attr_names(g)) > 0,
          TRUE)
 }

@@ -48,9 +48,16 @@
   - `as_missinglist.matrix()` holds each as a missing cell
   - `as_missinglist.stocnet()` derives them from the nodes that did not report and adds them to those in a 'missings' component
 - Fixed `as_infolist()` dropping a network's other attributes when it has a 'grand' one
-- Fixed `as_nodelist()` returning the edgelist of a tbl_graph whose ties are active, which made `as_stocnet()` warn "Unknown or uninitialised column: `name`" and drop the node labels, e.g. `to_unweighted()` on a weighted stocnet object
+- Fixed `as_nodelist()` returning the edgelist of a tbl_graph whose ties are active on e.g. a weighted stocnet object
 - Fixed `as_matrix()` filling every missing cell in a multiplex network with 1
+- Improved `as_stocnet.igraph()`
+  - Fixed mapping of 'lvl' onto 'mode'
+  - Fixed per-layer directedness roundtripping
 - Improved `as_stocnet.network()` to read the network's attributes back into its info component, rather than keeping only whether it is directed
+  - Fixed per-layer directedness roundtripping
+  - Fixed "missing value where TRUE/FALSE needed" error on networks with missing weights
+- Fixed `as_stocnet()` losing a network's isolates, which appear in no tie
+- Fixed `as_stocnet()` taking a file's node ids for node names
 - Improved `as_igraph()`
   - Fixed how `as_igraph.stocnet()` was losing isolates
   - Fixed how `as_igraph.stocnet()` handles unlabelled networks with nodal attributes
