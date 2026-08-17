@@ -311,18 +311,22 @@ as_globallist <- function(.data) UseMethod("as_globallist")
 
 #' @export
 as_globallist.stocnet <- function(.data) {
-  .data$global
+  .data$globals
 }
 
+# The attribute was named 'global' before the component was renamed 'globals',
+# so objects saved by an earlier version are still read here.
 #' @export
 as_globallist.igraph <- function(.data) {
-  out <- igraph::graph_attr(.data, "global")
+  out <- igraph::graph_attr(.data, "globals") %||%
+    igraph::graph_attr(.data, "global")
   if(is.null(out) || ncol(out)==0) NULL else out
 }
 
 #' @export
 as_globallist.network <- function(.data) {
-  out <- network::get.network.attribute(.data, "global")
+  out <- network::get.network.attribute(.data, "globals") %||%
+    network::get.network.attribute(.data, "global")
   if(is.null(out) || ncol(out)==0) NULL else out
 }
 
@@ -503,7 +507,12 @@ as_matrix.data.frame <- function(.data,
                                  twomode = NULL) {
   if (is_cognitive(.data)) return(.cognitive_to_array(.data, twomode = twomode))
   if ("tbl_df" %in% class(.data)) .data <- as.data.frame(.data)
-  if (ncol(.data) == 2 | !(is_weighted(.data) | is_signed(.data))) {
+  # A third column of nothing but ones and zeroes is not a weight, but where
+  # any of its values are missing it still has to be read, since a tie recorded
+  # as missing cannot be recovered from a count of the ties.
+  valued <- ncol(.data) >= 3 &&
+    (is_weighted(.data) | is_signed(.data) | anyNA(.data[, 3]))
+  if (!valued) {
     .data <- data.frame(.data) # in case it's a tibble
     .data <- as.data.frame(table(c(.data[,1]), c(.data[,2])))
     names(.data) <- c("from","to","weight")
@@ -554,13 +563,58 @@ as_matrix.matrix <- function(.data,
     if("sign" %in% attrs) "sign" else NULL
 }
 
+# A network holds a tie recorded as missing as a tie of missing value,
+# so the cells of such ties must be filled from that attribute and not left
+# to a count of the ties, which would report them as present.
+.holds_missing_ties <- function(.data){
+  val <- .tie_value_attribute(.data)
+  !is.null(val) && anyNA(igraph::edge_attr(.data, val))
+}
+
+# In a multiplex network, a layer that records no values at all leaves its
+# ties without one, which igraph reports as a missing value just as it does a
+# tie recorded as missing. The two are told apart by their layer: a layer
+# holding some values but not others has ties that are genuinely missing,
+# while a layer holding none simply records which of its ties are present.
+.unvalued_layer_ties <- function(.data){
+  attrs <- igraph::edge_attr_names(.data)
+  layer <- if("layer" %in% attrs) "layer" else if("type" %in% attrs) "type" else NULL
+  val <- .tie_value_attribute(.data)
+  # Without layers, or without values, no tie is left without a value it might
+  # otherwise have held.
+  if(is.null(layer) || is.null(val)) return(integer(0))
+  vals <- igraph::edge_attr(.data, val)
+  lyr <- as.character(igraph::edge_attr(.data, layer))
+  valued <- vapply(split(!is.na(vals), lyr), any, logical(1))
+  which(lyr %in% names(valued)[!valued])
+}
+
+# A matrix marks a missing tie by holding nothing in that cell, which is the
+# only thing it can say and all that `net_tie_missing()` needs from it.
+.blank_missing <- function(mat, .data){
+  missing <- as_missinglist(.data)
+  if(is.null(missing) || !nrow(missing)) return(mat)
+  from <- missing$from; to <- missing$to
+  if(!is.numeric(from)){
+    from <- match(as.character(from), rownames(mat))
+    to <- match(as.character(to), colnames(mat))
+  } else if(!is.null(dim(mat)) && nrow(mat) != ncol(mat)) to <- to - nrow(mat)
+  idx <- cbind(from, to)
+  idx <- idx[!is.na(idx[, 1]) & !is.na(idx[, 2]) &
+               idx[, 1] <= nrow(mat) & idx[, 2] <= ncol(mat), , drop = FALSE]
+  if(nrow(idx)) mat[idx] <- NA
+  if(!is_directed(.data) && nrow(idx) && nrow(mat) == ncol(mat))
+    mat[idx[, c(2, 1), drop = FALSE]] <- NA
+  mat
+}
+
 #' @export
 as_matrix.igraph <- function(.data,
                              twomode = NULL) {
   if (is_cognitive(.data)) return(.cognitive_to_array(.data, twomode = twomode))
-  if ((!is.null(twomode) && twomode) | 
+  if ((!is.null(twomode) && twomode) |
       (is.null(twomode) & is_twomode(.data) & !is_multiplex(.data))) {
-    if (is_weighted(.data) | is_signed(.data)) {
+    if (is_weighted(.data) | is_signed(.data) | .holds_missing_ties(.data)) {
       mat <- igraph::as_biadjacency_matrix(.data, sparse = FALSE,
                                            attr = .tie_value_attribute(.data))
     } else {
@@ -568,16 +622,23 @@ as_matrix.igraph <- function(.data,
                                            attr = NULL)
     }
   } else {
-    if (is_weighted(.data) | is_signed(.data)) {
+    if (is_weighted(.data) | is_signed(.data) | .holds_missing_ties(.data)) {
       mat <- igraph::as_adjacency_matrix(.data, sparse = FALSE,
                                          attr = .tie_value_attribute(.data))
-      # Where multiplex network 
-      if(anyNA(mat) && is_multiplex(.data)) mat[is.na(mat)] <- 1
+      if(anyNA(mat) && is_multiplex(.data)){
+        el <- igraph::as_edgelist(.data, names = FALSE)[.unvalued_layer_ties(.data), ,
+                                                        drop = FALSE]
+        if(nrow(el)){
+          mat[el] <- 1
+          if(!igraph::is_directed(.data)) mat[el[, c(2, 1), drop = FALSE]] <- 1
+        }
+      }
     } else {
       mat <- igraph::as_adjacency_matrix(.data, sparse = FALSE,
                                          attr = NULL)
     }
   }
+  mat <- .blank_missing(mat, .data)
   if(!is_labelled(.data)) attr(mat, "dimnames") <- NULL
   mat
 }
