@@ -7,6 +7,8 @@
 #'   - `as_nodelist()` coerces the object into a nodelist, as a data frame or tibble.
 #'   - `as_changelist()` coerces the object into a changelist, as a data frame or tibble.
 #'   - `as_globallist()` coerces the object into a globallist, as a data frame or tibble.
+#'   - `as_missinglist()` coerces the object into a list of the ties it records
+#'   as missing, as a tibble.
 #'   - `as_infolist()` coerces the object into a list of network-level information, 
 #'   such as the names of the nodes and ties, if not given in the nodelist or edgelist.
 #'   - `as_matrix()` coerces the object into an adjacency (one-mode/unipartite) or incidence (two-mode/bipartite) matrix.
@@ -309,6 +311,122 @@ as_globallist.matrix <- function(.data) NULL
 
 #' @export
 as_globallist.data.frame <- function(.data) NULL
+
+# Missinglists ####
+
+#' @rdname coerce_list
+#' @section Missing ties:
+#'   A missing tie is one that could have been observed and was not,
+#'   which is neither a tie nor the absence of one.
+#'   `as_missinglist()` returns them as a tibble of 'from' and 'to',
+#'   with 'layer' and 'time' where the network records them.
+#'   
+#'   Compared to an **observed** tie, in which a tie is observed to be present
+#'   or absent, with only present ties appearing as rows in the ties component, 
+#'   a **missing** tie is one that could have been observed but was not.
+#'   There are four different reasons a tie could be missing, 
+#'   and they are treated differently depending on the context.
+#'
+#'   First, there are the nodal reasons a tie could be missing, 
+#'   which are recorded in the nodes and changes components.
+#'   1. **Non-availability**. A node was not in the network and so cannot
+#'   send or receive ties.
+#'   This is recorded in the 'active' column of the nodes component,
+#'   and can change over time through the changes component.
+#'   Note that this renders all outgoing and incoming ties missing.
+#'   2. **Non-response**. A node was in the network but chose not to respond
+#'   or report its ties. 
+#'   This is recorded in the 'na' column of the nodes component,
+#'   and can also change over time through the changes component.
+#'   Note that this renders only outgoing ties missing for a directed layer,
+#'   and both directions for an undirected layer.
+#'   
+#'   Second, a tie might be missing or missing some information,
+#'   even though both nodes were in the network. This is recorded in the ties.
+#'   1. **Unobserved tie**. One or more specific ties could have been reported
+#'   and were not, such as one name a respondent skipped.
+#'   These are held in the missings component,
+#'   as a tibble of 'from' and 'to', with 'layer' and 'time' where available.
+#'   2. **Unobserved weight**. One or more ties are reported as existing,
+#'   but the strength of the tie is not known. 
+#'   This is recorded as an `NA` in the 'weight' column of the ties component.
+#'
+#'   Note that missing ties are not ties. 
+#'   `net_ties()` does not count them,
+#'   `as_edgelist()` does not return them, 
+#'   and they are not drawn or measured unless a function asks for them by name.
+#'   Where necessary, `as_missinglist()` returns a list of all missing ties together.
+#'   `net_tie_missing()` reports how many there are,
+#'   and `na_to_zero()` and `na_to_mean()` impute them.
+#'
+#'   Each class holds them differently.
+#'   A stocnet object records which nodes did not report,
+#'   from which `as_missinglist()` derives the ties;
+#'   see `make_stocnet()` for how those records are held.
+#'   So, unlike the other `as_*list()` functions,
+#'   this one does not return a component verbatim:
+#'   it returns the missings component together with the ties that the
+#'   non-responsive nodes imply, which is nearly always the larger part.
+#'   An 'igraph' or 'tbl_graph' object carries the list in a graph attribute,
+#'   since igraph has no way to mark an edge as missing.
+#'   A 'network' object holds each as an edge marked in the reserved 'na'
+#'   attribute, which is that package's own format and the one `{ergm}` expects.
+#'   A matrix holds each as a missing cell.
+#' @examples
+#' as_missinglist(ison_classmates)
+#' @export
+as_missinglist <- function(.data) UseMethod("as_missinglist")
+
+#' @export
+as_missinglist.stocnet <- function(.data) {
+  out <- .expand_missing(.data)
+  if(!nrow(out)) NULL else out
+}
+
+#' @export
+as_missinglist.igraph <- function(.data) {
+  out <- igraph::graph_attr(.data, "missings")
+  if(is.null(out) || !nrow(out)) NULL else dplyr::as_tibble(out)
+}
+
+#' @export
+as_missinglist.tbl_graph <- function(.data) {
+  as_missinglist(as_igraph(.data))
+}
+
+#' @export
+as_missinglist.network <- function(.data) {
+  if(!"na" %in% network::list.edge.attributes(.data)) return(NULL)
+  edf <- network::as.data.frame.network(.data, unit = "edges", na.rm = FALSE)
+  na <- unlist(network::get.edge.attribute(.data, "na", null.na = FALSE))
+  if(!any(na)) return(NULL)
+  out <- edf[na, , drop = FALSE]
+  vnames <- as.character(network::network.vertex.names(.data))
+  out$from <- match(as.character(out$.tail), vnames)
+  out$to <- match(as.character(out$.head), vnames)
+  out[c(".tail", ".head", "na")] <- NULL
+  dplyr::as_tibble(out) |>
+    dplyr::select("from", "to", dplyr::everything())
+}
+
+#' @export
+as_missinglist.matrix <- function(.data) {
+  idx <- which(is.na(.data), arr.ind = TRUE)
+  if(!nrow(idx)) return(NULL)
+  to <- idx[, 2]
+  # A two-mode matrix numbers its columns within the second mode, whereas a
+  # nodelist numbers every node across both.
+  if(is_twomode(.data)) to <- to + nrow(.data)
+  dplyr::tibble(from = as.integer(idx[, 1]), to = as.integer(to))
+}
+
+#' @export
+as_missinglist.data.frame <- function(.data) NULL
+
+#' @export
+as_missinglist.default <- function(.data) {
+  as_missinglist(as_igraph(.data))
+}
 
 # Matrices ####
 

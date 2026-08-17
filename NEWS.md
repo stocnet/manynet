@@ -42,6 +42,11 @@
 
 ## Coercion
 
+- Added `as_missinglist()` to return the ties a network could have observed and did not
+  - `as_missinglist.igraph()` carries the list in a graph attribute since igraph can mark no edge as missing
+  - `as_missinglist.network()` marks each as an edge in its own reserved 'na' attribute, which is the format `{ergm}` expects
+  - `as_missinglist.matrix()` holds each as a missing cell
+  - `as_missinglist.stocnet()` derives them from the nodes that did not report and adds them to those in a 'missings' component
 - Fixed `as_nodelist()` returning the edgelist of a tbl_graph whose ties are active, which made `as_stocnet()` warn "Unknown or uninitialised column: `name`" and drop the node labels, e.g. `to_unweighted()` on a weighted stocnet object
 - Improved `as_stocnet.network()` to read the network's attributes back into its info component, rather than keeping only whether it is directed
 
