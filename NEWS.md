@@ -34,6 +34,11 @@
   - Added `validate_globals()` and `validate_missings()`
   - `validate_ties()` now reserves 'begin' and 'end' tie columns, which mark when a tie is present rather than a time named some other way
   - `validate_changes()` now reserves a 'layer' column where a change applies only to a single layer
+- Improved description
+  - Fixed pluralize helper to except non-plural words like "business"
+  - Improved `describe_ties()` to name the ties of each layer by that layer's own directedness, so a symmetric layer of an otherwise directed network is described as holding ties rather than arcs
+- Improved `print.node_measure()`, `print.tie_measure()`, and `print.network_measure()` so they use new `measure`, `range`, and `normalization` attributes to print a concise, subtle header description in sentence case
+  - See changes in netrics v1.0.0 for more
 
 ## Coercion
 

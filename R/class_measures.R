@@ -7,6 +7,8 @@ make_node_measure <- function(out, .data) {
 
 make_tie_measure <- function(out, .data) {
   class(out) <- c("tie_measure", class(out))
+  # A network without ties has no tie names to give the measure either.
+  if(length(out) == 0) return(out)
   # A stocnet holds its ties in its own table, and coercion may reciprocate
   # its undirected layers, so name from that table rather than a coerced copy.
   if(inherits(.data, "stocnet")){

@@ -138,7 +138,7 @@ not by data structure. When looking for a function, search by what it *does*:
 | `make_*.R` | creating/reading/generating networks: `create_*()` (deterministic structures), `generate_*()` (stochastic mechanisms), `read_*()`/`write_*()` (import/export), `play_*()` (diffusion/learning simulations), `data_*`/`manynet-data.R` (bundled datasets: `ison_*` classic/instructional, `fict_*` fictional, `irps_*` international-relations) |
 | `coerce_graph.R`, `coerce_list.R` | the `as_*()` translation layer between representations (`as_igraph()`, `as_tidygraph()`, `as_network()`, `as_matrix()`, `as_edgelist()`, `as_siena()`, `as_diffnet()`, …), implemented as S3 methods dispatching on input class |
 | `class_*.R` | the network classes themselves (`class_stocnet.R`: `make_stocnet()`, `print.stocnet()`, the info/nodes/ties/changes/global data model; `class_networks.R`: the legacy `mnet` class, `print.mnet`, `$`/`$<-` accessors), related result classes (`class_measures.R`, `class_members.R`, `class_motifs.R`, `class_models.R`), the `snet_*()` CLI layer (`class_interface.R`), input validation (`class_validate.R`: `validate_stocnet()` and its component validators), and the `describe_*()` helpers behind the print methods (`class_describe.R`) |
-| `manip_*.R` | dplyr-style verbs for manipulating nodes/ties/attributes (`manip_nodes.R`, `manip_ties.R`, `manip_global.R`, `manip_info.R`, `manip_changes.R`) |
+| `manip_*.R` | dplyr-style verbs for manipulating nodes/ties/attributes (`manip_nodes.R`, `manip_ties.R`, `manip_globals.R`, `manip_info.R`, `manip_changes.R`) |
 | `mark_*.R` | logical/predicate functions returning `TRUE`/`FALSE` or marks about a network, e.g. the `is_*()` family (`mark_classes.R`, `mark_features.R`, `mark_format.R`, `mark_changes.R`) |
 | `modif_*.R` | structural transformations/reformatting: direction, weighting, projection, splitting/joining, path/level operations, missing data (`modif_direction.R`, `modif_project.R`, `modif_split.R`, `modif_miss.R`, …) |
 | `measure_*.R` | descriptive/attribute measures (`measure_attributes.R`, `measure_properties.R`); heavier network-analytic measures live in `{netrics}` |
@@ -154,8 +154,9 @@ reuse these via `@template` tags instead of re-writing standard `@param`/`@retur
 (see [R/class_stocnet.R](../R/class_stocnet.R)),
 constructed with `make_stocnet()` or coerced to with `as_stocnet()`.
 It is **not** layered on top of `{igraph}`/`tbl_graph`;
-it is a plain list of tibbles plus metadata, with five components —
-`info`, `nodes`, `ties`, `changes`, and `global` — any of which may be `NULL`.
+it is a plain list of tibbles plus metadata, with six components —
+`info`, `nodes`, `ties`, `changes`, `globals`, and `missings` — any of which may be
+`NULL`. Every component but `info` is a table, which is what the plural name signifies.
 This is what allows multimodal, multiplex, longitudinal/dynamic and modelling-oriented
 networks (e.g. round-tripping `{RSiena}` `sienadata` objects) to live in one object.
 Conventions to preserve when writing or editing functions:
@@ -171,14 +172,34 @@ Conventions to preserve when writing or editing functions:
 - `ties`: one row per tie. `from` and `to` are required (even for undirected networks)
   and are stored as *integer indices* into `nodes`, not labels — `make_stocnet()`
   matches labels to indices on construction. Reserved columns are `layer` (multiplex),
-  `weight` (negative weights mean a signed network, missing weights missing ties),
-  `time` (longitudinal), and `by` (triadic/tertius ties).
+  `weight` (negative weights mean a signed network, a missing weight a tie of unknown
+  value), `time` (longitudinal), and `by` (triadic/tertius ties).
+  Every row is a tie: the ties a network records as *missing* are held elsewhere (below).
+  `make_stocnet()` does accept an `na` column marking which rows are missing ties, since
+  that is how the data often arrives, but it splits those rows out rather than storing
+  them.
 - `changes`: a nodal changelog, held as its own component rather than as extra rows in
-  `nodes`/`ties`, with columns `time`, `node`, `var`, and `value`. `value` is stored as a
+  `nodes`/`ties`, with columns `time`, `node`, `var`, and `value`, plus an optional
+  `layer` where a change applies to one layer and not others. `value` is stored as a
   list-column so changes of any class/length can be logged, but prints as a value plus a
-  type label.
-- `global`: network-level variables over time, with columns `var`, `value`, and
+  type label. A change states what the variable becomes *from that moment on*, so it is
+  carried forward until another change says otherwise — a node that stops reporting and
+  starts again therefore holds two changes.
+- `globals`: network-level variables over time, with columns `var`, `value`, and
   optionally `time`.
+- `missings`: the ties the network could have observed and did not, with the same
+  columns as `ties` — usually `NULL`, see below.
+- **Missingness** is recorded as the *nodes that did not report*, not as one record per
+  tie, since that is nearly always what the data means: `nodes$na` where a node reports
+  at no point, and a change of the `na` variable where it varies over time. Every tie
+  such a node would report is then missing — those it sends where the layer is directed,
+  both directions where it is undirected. The `missings` component holds only the
+  residual, for ties no node's nonresponse implies.
+  `as_missinglist()` derives the whole set, and everything else goes through it.
+  See `?make_stocnet` for the four states a tie can be in, and keep them apart: a tie to
+  an *inactive* node is not missing, and a tie of `NA` weight is present but unvalued.
+  Missing ties are not ties, so nothing counts, returns, draws, or measures them unless
+  it asks for them by name.
 - Structure is enforced by `validate_stocnet()`
   (see [R/class_validate.R](../R/class_validate.R)),
   which `make_stocnet()` calls on construction.
