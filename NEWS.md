@@ -8,13 +8,6 @@
 - Updated CONTRIBUTING with more details about console messaging, README, and the website
 - Added cross-class sweep of the network-splitting functions to the functional tests
 
-## Classes
-
-- Improved `print.node_measure()`, `print.tie_measure()`, and `print.network_measure()` so they use new `measure`, `range`, and `normalization` attributes to print a concise, subtle header description in sentence case
-  - See changes in netrics v1.0.0 for more
-- Fixed pluralize helper to except non-plural words like "business"
-- Improved `describe_ties()` to name the ties of each layer by that layer's own directedness, so a symmetric layer of an otherwise directed network is described as holding ties rather than arcs
-
 ## Making
 
 - Improved `read_*()` functions to return stocnet objects, which hold more of what a file says
@@ -29,15 +22,18 @@
   - Sessions combined into a single network with ego added as a node tied to each of its alters and each tie recording the ego that reported it in a 'by' column
   - Categorical variables are collapsed into a single factor, unlike `ideanet::nc_read()` which drops any variable where a respondent selected more than one option
 
+## Classes
+
+- Improved the stocnet object to hold six components: `info`, `nodes`, `ties`, `changes`, `globals`, and `missings`
+  - Renamed `global` component to `globals`, such that all components with plural names are tables
+  - Missing ties due to absence are treated through `nodes$active` and `changes`
+  - Missing ties due to nonresponse are treated through `nodes$na` and `changes`
+  - Ties with missing data, such as weight, are listed in `ties` with `NA` in the relevant column
+  - Added `missings` component to hold individual, residual unrecorded ties
+
 ## Coercion
 
-- Improved `as_stocnet.igraph()` so that it maps a 'lvl' attribute onto the 'mode' variable of the nodes table, naming the levels from the network's info where there is a name for each
-- Fixed `as_igraph()` erroring on an unlabelled stocnet object with nodal attributes, e.g. `as_igraph(as_stocnet(create_ring(8)))`
 - Fixed `as_nodelist()` returning the edgelist of a tbl_graph whose ties are active, which made `as_stocnet()` warn "Unknown or uninitialised column: `name`" and drop the node labels, e.g. `to_unweighted()` on a weighted stocnet object
-- Fixed `as_network()` overwriting core network attributes of the result with same-named entries from the network's info, so that a per-layer `directed` vector no longer replaces the single logical that `{network}` requires, e.g. `as_igraph(as_network(ison_bankwiring))` erroring with "the condition has length > 1"
-- Improved coercion of a stocnet object that records the directedness of each layer, so that an undirected layer can be held once per dyad even where another layer is directed
-  - An 'igraph' or 'network' object is directed or undirected as a whole, so coercion out reciprocates any undirected layer of an otherwise directed network, and coercion back collapses it again
-  - This halves how many ties such a network stores: `ison_bankwiring` holds 110 rather than 189, and `ison_tailorshop` 637 rather than 1018
 - Improved `as_stocnet.network()` to read the network's attributes back into its info component, rather than keeping only whether it is directed
 
 ## Manipulating
