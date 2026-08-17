@@ -11,6 +11,7 @@
 \alias{read_graphml}
 \alias{read_gml}
 \alias{read_gdf}
+\alias{read_gexf}
 \title{Making networks from external files}
 \source{
 \code{read_ucinet()} kindly supplied by Christian Steglich,
@@ -34,6 +35,8 @@ read_graphml(file = file.choose(), ego = TRUE)
 read_gml(file = file.choose())
 
 read_gdf(file = file.choose())
+
+read_gexf(file = file.choose())
 }
 \arguments{
 \item{file}{A character string with the system path to the file to import.
@@ -58,14 +61,16 @@ and every tie gains a 'by' column identifying the ego that reported it,
 which makes the network a cognitive social structure (see \code{\link[=is_cognitive]{is_cognitive()}}).}
 }
 \value{
-\code{read_edgelist()} and \code{read_nodelist()} will import
-into edgelist (tibble) format which can then be coerced or combined into
-different graph objects from there.
+\code{read_edgelist()} and \code{read_nodelist()} import a list rather than a
+network, so they return a tibble,
+which can then be coerced or combined into a network from there.
 
-\code{read_pajek()} and \code{read_ucinet()} will import into
-a tidygraph format, since they already contain both edge and attribute data.
-\code{read_matrix()} will import into tidygraph format too.
-Note that all graphs can be easily coerced into other formats
+Every other \verb{read_*()} function returns a stocnet object (see
+\code{\link[=make_stocnet]{make_stocnet()}}).
+This is the class that holds the most of what a file can contain,
+such as the network's metadata, more than two modes, several layers,
+and the times at which nodes and ties are present.
+Note that a network can be coerced into any other format
 with \code{{manynet}}'s \code{as_} methods.
 }
 \description{
@@ -84,6 +89,7 @@ can work with:
 including those exported by Network Canvas.
 \item \code{read_gml()} imports GML files.
 \item \code{read_gdf()} imports GDF files.
+\item \code{read_gexf()} imports GEXF files, such as those exported by Gephi.
 }
 }
 \details{
@@ -127,6 +133,17 @@ ties within a nodeset are exactly what is collected.
 Note too that, since alters are particular to a session,
 the sessions share no nodes, so \code{as_matrix()} on such a network returns a
 large and very sparse three-dimensional array.
+
+\code{read_gexf()} reads the node and tie attributes declared in the file,
+as well as the visualisation elements Gephi adds,
+so that positions are available as 'x' and 'y' node attributes,
+and sizes and colours as 'size' and 'color'.
+Nodes are named from their labels where the file gives them,
+since node ids are required by the format and so are an export artefact.
+Dynamic files are read with their 'start' and 'end' times,
+which makes the result a dynamic network (see \code{\link[=is_dynamic]{is_dynamic()}}).
+Where a directed network contains ties declared undirected or mutual,
+those ties are reciprocated, since a network is directed or not as a whole.
 }
 \seealso{
 \link{as}

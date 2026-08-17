@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gexf xmlns="http://www.gexf.net/1.2draft" version="1.2">
+  <meta lastmodifieddate="2026-02-01">
+    <creator>manynet test</creator>
+  </meta>
+  <graph defaultedgetype="undirected" mode="dynamic" timeformat="double">
+    <attributes>
+      <attribute id="a0" title="role" type="string"/>
+    </attributes>
+    <nodes>
+      <node id="n0" label="Aoi" start="1.0" end="4.0">
+        <attvalues>
+          <attvalue title="role" value="chair"/>
+        </attvalues>
+        <nodes>
+          <node id="n1" label="Bea" start="1.0" end="3.0">
+            <attvalues>
+              <attvalue for="a0" value="member"/>
+            </attvalues>
+          </node>
+        </nodes>
+      </node>
+      <node id="n2" label="Cai">
+        <spells>
+          <spell start="2.0" end="4.0"/>
+        </spells>
+      </node>
+      <node id="n3" label="Dev" pid="n2" start="3.0"/>
+    </nodes>
+    <edges>
+      <edge id="e0" source="n0" target="n1" start="1.0" end="3.0"/>
+      <edge id="e1" source="n0" target="n2" start="2.0"/>
+      <edge id="e2" source="n2" target="n9" start="2.0"/>
+    </edges>
+  </graph>
+</gexf>

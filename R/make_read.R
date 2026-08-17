@@ -18,6 +18,7 @@
 #'   including those exported by Network Canvas.
 #'   - `read_gml()` imports GML files.
 #'   - `read_gdf()` imports GDF files.
+#'   - `read_gexf()` imports GEXF files, such as those exported by Gephi.
 #' @param file A character string with the system path to the file to import.
 #'   If left unspecified, an OS-specific file picker is opened to help users select it.
 #'   Note that in `read_ucinet()` the file path should be to the header file (.##h),
@@ -75,6 +76,17 @@
 #'   Note too that, since alters are particular to a session,
 #'   the sessions share no nodes, so `as_matrix()` on such a network returns a
 #'   large and very sparse three-dimensional array.
+#'
+#'   `read_gexf()` reads the node and tie attributes declared in the file,
+#'   as well as the visualisation elements Gephi adds,
+#'   so that positions are available as 'x' and 'y' node attributes,
+#'   and sizes and colours as 'size' and 'color'.
+#'   Nodes are named from their labels where the file gives them,
+#'   since node ids are required by the format and so are an export artefact.
+#'   Dynamic files are read with their 'start' and 'end' times,
+#'   which makes the result a dynamic network (see [is_dynamic()]).
+#'   Where a directed network contains ties declared undirected or mutual,
+#'   those ties are reciprocated, since a network is directed or not as a whole.
 #' @source
 #' `read_ucinet()` kindly supplied by Christian Steglich,
 #' constructed on 18 June 2015.
@@ -835,6 +847,215 @@ read_gdf <- function(file = file.choose()) {
   }
   
   as_tidygraph(list(nodes = node_data, ties = edge_data))
+# GEXF ####
+
+#' @rdname make_read
+#' @importFrom igraph set_graph_attr
+#' @export
+read_gexf <- function(file = file.choose()) {
+  if(missing(file)) snet_success("Executing: read_gexf('{file}')")
+  if(!grepl("\\.gexf$", file, ignore.case = TRUE)) file <- paste0(file, ".gexf")
+  thisRequires("xml2")
+  xmlfile <- xml2::read_xml(file)
+  xml2::xml_ns_strip(xmlfile)
+  graph <- xml2::xml_find_first(xmlfile, "/gexf/graph")
+  if(inherits(graph, "xml_missing"))
+    snet_abort("No graph found in {.file {file}}.")
+  decl <- .gexf_declarations(graph)
+  nds <- xml2::xml_find_all(graph, "./nodes//node")
+  eds <- xml2::xml_find_all(graph, "./edges//edge")
+  if(length(nds) == 0) snet_abort("No nodes found in {.file {file}}.")
+  ids <- xml2::xml_attr(nds, "id")
+  nodes <- .gexf_values(nds, decl$node)
+  nodes <- .gexf_when(nds, nodes)
+  nodes <- .gexf_viz(nds, nodes)
+  nodes <- .gexf_parents(nds, nodes)
+  nodes <- .gexf_label(nds, nodes, ids)
+  # An isolate appears in no tie, so a network whose nodes say nothing else
+  # still needs a row for each of them to keep its size.
+  if(is.null(nodes) || ncol(nodes) == 0)
+    nodes <- data.frame(row.names = seq_along(ids))
+  ties <- .gexf_ties(eds, decl$edge, ids, graph)
+  out <- .graphml_graph(nodes, ties$el, ties$directed)
+  meta <- xml2::xml_find_first(xmlfile, "/gexf/meta")
+  if(!inherits(meta, "xml_missing"))
+    for(ch in xml2::xml_children(meta))
+      out <- igraph::set_graph_attr(out, xml2::xml_name(ch), xml2::xml_text(ch))
+  as_stocnet(out)
+}
+
+# Maps each <attribute> declaration to its title, type, and default.
+# GEXF keys attvalues by the declaration's id, and holds the readable name in
+# `title`; we always report the latter. Where the class is not declared,
+# the specification takes the declarations to be for nodes.
+.gexf_declarations <- function(graph) {
+  out <- lapply(c(node = "node", edge = "edge"), function(cls) {
+    path <- paste0("./attributes[@class='", cls, "']/attribute")
+    if(cls == "node")
+      path <- paste0(path, " | ./attributes[not(@class)]/attribute")
+    at <- xml2::xml_find_all(graph, path)
+    if(length(at) == 0) return(list())
+    ids <- xml2::xml_attr(at, "id")
+    ttl <- xml2::xml_attr(at, "title")
+    ttl[is.na(ttl)] <- ids[is.na(ttl)]
+    typ <- xml2::xml_attr(at, "type")
+    typ[is.na(typ)] <- "string"
+    def <- vapply(at, function(a) {
+      d <- xml2::xml_find_first(a, "./default")
+      if(inherits(d, "xml_missing")) NA_character_ else xml2::xml_text(d)
+    }, character(1))
+    stats::setNames(lapply(seq_along(ids), function(i)
+      list(name = ttl[i], type = typ[i], default = def[i])), ids)
+  })
+  out
+}
+
+# Collects the <attvalue> children of a set of elements into a data frame,
+# one column per declared attribute. A dynamic file records one attvalue per
+# spell, so only the first value of each attribute is taken.
+.gexf_values <- function(els, decl) {
+  if(length(els) == 0 || length(decl) == 0) return(NULL)
+  titles <- vapply(decl, function(d) d$name, character(1))
+  vals <- lapply(els, function(e) {
+    a <- xml2::xml_find_all(e, "./attvalues/attvalue")
+    if(length(a) == 0) return(stats::setNames(character(0), character(0)))
+    k <- xml2::xml_attr(a, "for")
+    # some exporters key each attvalue by title rather than by id
+    k[is.na(k)] <- names(decl)[match(xml2::xml_attr(a, "title")[is.na(k)],
+                                     titles)]
+    v <- xml2::xml_attr(a, "value")
+    ok <- !is.na(k) & !duplicated(k)
+    stats::setNames(v[ok], k[ok])
+  })
+  present <- unique(unlist(lapply(vals, names)))
+  defaulted <- names(decl)[vapply(decl, function(d)
+    !is.na(d$default), logical(1))]
+  used <- union(intersect(names(decl), present), defaulted)
+  if(length(used) == 0) return(NULL)
+  cols <- lapply(used, function(k) {
+    raw <- vapply(vals, function(v)
+      if(k %in% names(v)) v[[k]] else NA_character_, character(1))
+    if(!is.na(decl[[k]]$default)) raw[is.na(raw)] <- decl[[k]]$default
+    .graphml_cast(raw, decl[[k]]$type)
+  })
+  names(cols) <- make.unique(unname(titles[used]))
+  data.frame(cols, check.names = FALSE, stringsAsFactors = FALSE)
+}
+
+# Dynamic files time-stamp nodes and ties either on the element itself or in
+# one or more <spell> children; the first spell is taken where both are given.
+.gexf_when <- function(els, df) {
+  n <- length(els)
+  if(n == 0) return(df)
+  for(w in c("start", "end")) {
+    v <- vapply(els, function(e) {
+      x <- xml2::xml_attr(e, w)
+      if(is.na(x)) {
+        s <- xml2::xml_find_first(e, "./spells/spell")
+        if(!inherits(s, "xml_missing")) x <- xml2::xml_attr(s, w)
+      }
+      x
+    }, character(1))
+    if(all(is.na(v))) next
+    num <- suppressWarnings(as.numeric(v))
+    df <- .bind_col(df, w, if(identical(is.na(num), is.na(v))) num else v, n)
+  }
+  df
+}
+
+# Gephi records layout, size, and colour in the viz namespace rather than as
+# declared attributes. Positions are exposed as 'x' and 'y' so that they can be
+# used directly when plotting.
+.gexf_viz <- function(els, df) {
+  n <- length(els)
+  if(n == 0) return(df)
+  # Matched by local name, since the viz namespace survives xml_ns_strip(),
+  # which strips only the default namespace.
+  vizattr <- function(el, val) vapply(els, function(e) {
+    p <- xml2::xml_find_first(e, paste0("./*[local-name()='", el, "']"))
+    if(inherits(p, "xml_missing")) NA_character_ else xml2::xml_attr(p, val)
+  }, character(1))
+  for(w in c("x", "y", "z")) {
+    v <- suppressWarnings(as.numeric(vizattr("position", w)))
+    if(!all(is.na(v))) df <- .bind_col(df, w, v, n)
+  }
+  size <- suppressWarnings(as.numeric(vizattr("size", "value")))
+  if(!all(is.na(size))) df <- .bind_col(df, "size", size, n)
+  rgb <- lapply(c("r", "g", "b"), function(w)
+    suppressWarnings(as.integer(vizattr("color", w))))
+  if(!all(is.na(rgb[[1]]))) {
+    col <- sprintf("#%02X%02X%02X", rgb[[1]], rgb[[2]], rgb[[3]])
+    col[is.na(rgb[[1]]) | is.na(rgb[[2]]) | is.na(rgb[[3]])] <- NA_character_
+    df <- .bind_col(df, "color", col, n)
+  }
+  df
+}
+
+# GEXF nests nodes to record a hierarchy, and also allows a node to point at
+# its parent with a 'pid'. Either way the parent is retained as an attribute.
+.gexf_parents <- function(els, df) {
+  n <- length(els)
+  if(n == 0) return(df)
+  pid <- xml2::xml_attr(els, "pid")
+  nested <- vapply(els, function(e) {
+    p <- xml2::xml_parent(xml2::xml_parent(e))
+    if(identical(xml2::xml_name(p), "node")) xml2::xml_attr(p, "id") else
+      NA_character_
+  }, character(1))
+  pid[is.na(pid)] <- nested[is.na(pid)]
+  if(all(is.na(pid))) return(df)
+  .bind_col(df, "parent", pid, n)
+}
+
+# Node ids are required by the format, so they are an export artefact rather
+# than names; only labels name the nodes, as in read_graphml().
+.gexf_label <- function(els, df, ids) {
+  labs <- xml2::xml_attr(els, "label")
+  if(all(is.na(labs))) return(df)
+  labs[is.na(labs)] <- ids[is.na(labs)]
+  df <- .bind_col(df, "name", make.unique(labs), length(ids))
+  df[, c("name", setdiff(names(df), "name")), drop = FALSE]
+}
+
+.gexf_ties <- function(els, decl, ids, graph) {
+  n <- length(els)
+  defdir <- xml2::xml_attr(graph, "defaultedgetype")
+  if(is.na(defdir)) defdir <- "undirected"
+  if(n == 0) return(list(el = data.frame(from = integer(0), to = integer(0)),
+                         directed = defdir %in% c("directed", "mutual")))
+  el <- data.frame(from = match(xml2::xml_attr(els, "source"), ids),
+                   to = match(xml2::xml_attr(els, "target"), ids))
+  weight <- suppressWarnings(as.numeric(xml2::xml_attr(els, "weight")))
+  if(!all(is.na(weight))) {
+    weight[is.na(weight)] <- 1
+    el$weight <- weight
+  }
+  vals <- .gexf_values(els, decl)
+  if(!is.null(vals))
+    el <- cbind(el, vals[, setdiff(names(vals), names(el)), drop = FALSE])
+  el <- .gexf_when(els, el)
+  types <- xml2::xml_attr(els, "type")
+  types[is.na(types)] <- defdir
+  keep <- !is.na(el$from) & !is.na(el$to)
+  if(any(!keep)) {
+    snet_minor_info("Dropped {sum(!keep)} tie{?s} with unmatched endpoints.")
+    el <- el[keep, , drop = FALSE]
+    types <- types[keep]
+  }
+  directed <- any(types %in% c("directed", "mutual"))
+  # A network is directed or not as a whole, so ties the file declares
+  # undirected or mutual are reciprocated where the rest are directed.
+  if(directed) {
+    both <- types != "directed" & el$from != el$to
+    if(any(both)) {
+      snet_minor_info(paste("Reciprocating {sum(both)} tie{?s}",
+                            "declared undirected or mutual."))
+      rec <- el[both, , drop = FALSE]
+      rec[c("from", "to")] <- rec[c("to", "from")]
+      el <- rbind(el, rec)
+    }
+  }
+  list(el = el, directed = directed)
 }
 
 # Write ####
@@ -855,11 +1076,22 @@ read_gdf <- function(file = file.choose()) {
 #'   - `write_graphml()` exports GraphML files.
 #'   - `write_gml()` exports GML files.
 #'   - `write_gdf()` exports GDF files.
+#'   - `write_gexf()` exports GEXF files, for example for use in Gephi.
 #' @details
 #'   Note that these functions are not as actively maintained as others
 #'   in the package, so please let us know if any are not currently working
-#'   for you or if there are missing import routines 
+#'   for you or if there are missing import routines
 #'   by [raising an issue on Github](https://github.com/stocnet/manynet/issues).
+#'
+#'   `write_gexf()` writes the node and tie attributes as declared attributes,
+#'   except that 'x', 'y', 'z', 'size', and 'color' are written as the
+#'   visualisation elements Gephi reads,
+#'   and 'start' and 'end' are written as times, which makes the file dynamic.
+#'   Only a hexadecimal colour is written as a visualisation element.
+#'   A colour named some other way, such as "red",
+#'   is written as an ordinary attribute, which reads back unchanged.
+#'   Node names are written as labels, since node ids are required by the format
+#'   and so are written as positions in the network.
 #' @inheritParams mark_is
 #' @param filename Character string filename.
 #'   If missing, the files will have the same name as the object
@@ -1116,6 +1348,11 @@ write_gml <- function(.data,
   }
   if(!grepl("\\.gml$", filename, ignore.case = TRUE)) filename <- paste0(filename, ".gml")
   g <- as_igraph(.data)
+  # The GML format keeps 'directed' for the network's own directedness, which
+  # the file already records, so an attribute of that name is dropped here
+  # rather than left for igraph's writer to warn that it ignored.
+  if("directed" %in% igraph::graph_attr_names(g))
+    g <- igraph::delete_graph_attr(g, "directed")
   # igraph's GML writer warns when converting logical attributes to numeric;
   # convert them ourselves first so the export is silent
   for(a in igraph::graph_attr_names(g))
@@ -1156,6 +1393,171 @@ write_gdf <- function(.data,
               edge_header,
               apply(edges, 1, paste, collapse = ",")),
             filename)
+}
+
+#' @rdname make_write
+#' @export
+write_gexf <- function(.data,
+                       filename,
+                       ...) {
+  if (missing(filename)){
+    filename <- paste0(getwd(), "/", deparse(substitute(.data)), ".gexf")
+    snet_success("Writing to {.file {filename}}")
+  }
+  if(!grepl("\\.gexf$", filename, ignore.case = TRUE))
+    filename <- paste0(filename, ".gexf")
+  thisRequires("xml2")
+  g <- as_igraph(.data)
+  ids <- as.character(seq_len(igraph::vcount(g)) - 1)
+  el <- igraph::as_edgelist(g, names = FALSE)
+  # These are written as visualisation elements and as times instead,
+  # so they are not also declared as attributes.
+  # An attribute the format cannot hold, such as a colour R does not know,
+  # is declared as an ordinary attribute rather than dropped.
+  viz <- .gexf_vizable(g)
+  nodeatts <- setdiff(igraph::vertex_attr_names(g),
+                      c("name", viz, "start", "end"))
+  tieatts <- setdiff(igraph::edge_attr_names(g), c("weight", "start", "end"))
+  dynamic <- any(c("start", "end") %in% c(igraph::vertex_attr_names(g),
+                                          igraph::edge_attr_names(g)))
+  doc <- xml2::xml_new_root("gexf", version = "1.2",
+                            xmlns = "http://www.gexf.net/1.2draft",
+                            "xmlns:viz" = "http://www.gexf.net/1.2draft/viz")
+  meta <- xml2::xml_add_child(doc, "meta",
+                              lastmodifieddate = format(Sys.Date()))
+  xml2::xml_add_child(meta, "creator", "manynet")
+  graph <- xml2::xml_add_child(doc, "graph",
+                               mode = if(dynamic) "dynamic" else "static",
+                               defaultedgetype = if(is_directed(g))
+                                 "directed" else "undirected")
+  if(dynamic) xml2::xml_set_attr(graph, "timeformat", "double")
+  .gexf_declare(graph, g, nodeatts, "node")
+  .gexf_declare(graph, g, tieatts, "edge")
+  nodesxml <- xml2::xml_add_child(graph, "nodes")
+  nodevals <- .gexf_strings(g, nodeatts, "node")
+  labs <- if(is_labelled(g)) node_labels(g) else NULL
+  for (i in seq_along(ids)) {
+    nd <- xml2::xml_add_child(nodesxml, "node", id = ids[i])
+    if(!is.null(labs)) xml2::xml_set_attr(nd, "label", labs[i])
+    .gexf_write_when(nd, g, i, "node")
+    .gexf_write_values(nd, nodevals, i)
+    .gexf_write_viz(nd, g, i, viz)
+  }
+  edgesxml <- xml2::xml_add_child(graph, "edges")
+  tievals <- .gexf_strings(g, tieatts, "edge")
+  weights <- if(is_weighted(g))
+    as.character(igraph::edge_attr(g, "weight")) else NULL
+  for (i in seq_len(nrow(el))) {
+    ed <- xml2::xml_add_child(edgesxml, "edge", id = as.character(i - 1),
+                              source = ids[el[i, 1]], target = ids[el[i, 2]])
+    if(!is.null(weights)) xml2::xml_set_attr(ed, "weight", weights[i])
+    .gexf_write_when(ed, g, i, "edge")
+    .gexf_write_values(ed, tievals, i)
+  }
+  xml2::write_xml(doc, filename)
+}
+
+.gexf_attr <- function(g, class, a) {
+  if(class == "node") igraph::vertex_attr(g, a) else igraph::edge_attr(g, a)
+}
+
+.gexf_declare <- function(graph, g, atts, class) {
+  if(length(atts) == 0) return(invisible(NULL))
+  blk <- xml2::xml_add_child(graph, "attributes", class = class)
+  for (a in atts) {
+    v <- .gexf_attr(g, class, a)
+    xml2::xml_add_child(blk, "attribute", id = a, title = a,
+                        type = if(is.logical(v)) "boolean" else
+                          if(is.integer(v)) "integer" else
+                            if(is.numeric(v)) "double" else "string")
+  }
+}
+
+.gexf_strings <- function(g, atts, class) {
+  out <- lapply(atts, function(a) {
+    v <- .gexf_attr(g, class, a)
+    if(is.logical(v)) tolower(as.character(v)) else as.character(v)
+  })
+  stats::setNames(out, atts)
+}
+
+.gexf_write_values <- function(el, vals, i) {
+  used <- names(vals)[vapply(vals, function(v) !is.na(v[i]), logical(1))]
+  if(length(used) == 0) return(invisible(NULL))
+  av <- xml2::xml_add_child(el, "attvalues")
+  for (a in used)
+    xml2::xml_add_child(av, "attvalue", "for" = a, value = vals[[a]][i])
+}
+
+.gexf_write_when <- function(el, g, i, class) {
+  for (w in c("start", "end")) {
+    v <- .gexf_attr(g, class, w)
+    if(is.null(v) || is.na(v[i])) next
+    xml2::xml_set_attr(el, w, as.character(v[i]))
+  }
+}
+
+# The red, green, and blue values a colour gives, or NA where it gives none.
+# Only hexadecimal colours are read, since these are what the format holds and
+# what `read_gexf()` returns. A colour named some other way is written as an
+# ordinary attribute instead, which reads back unchanged.
+# An eight digit colour is left to that path too, since a `<viz:color>` holds
+# no alpha value and so would drop it.
+.hex2rgb <- function(x) {
+  out <- matrix(NA_integer_, nrow = 3, ncol = length(x))
+  ok <- !is.na(x) & grepl("^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$", x)
+  if(any(ok)) {
+    hex <- sub("^#", "", x[ok])
+    short <- nchar(hex) == 3L
+    if(any(short)) hex[short] <- paste0(substr(hex[short], 1, 1),
+                                        substr(hex[short], 1, 1),
+                                        substr(hex[short], 2, 2),
+                                        substr(hex[short], 2, 2),
+                                        substr(hex[short], 3, 3),
+                                        substr(hex[short], 3, 3))
+    out[, ok] <- vapply(hex, function(h)
+      strtoi(substring(h, c(1, 3, 5), c(2, 4, 6)), 16L), integer(3))
+  }
+  out
+}
+
+# The attributes the visualisation elements can hold: positions and sizes must
+# be numeric, and colours must be hexadecimal. Any other attribute of the same
+# name is left to be declared as an ordinary attribute instead.
+.gexf_vizable <- function(g) {
+  out <- character(0)
+  for (w in c("x", "y", "z", "size")) {
+    v <- igraph::vertex_attr(g, w)
+    if(!is.null(v) && is.numeric(v)) out <- c(out, w)
+  }
+  col <- igraph::vertex_attr(g, "color")
+  if(!is.null(col) && !anyNA(.hex2rgb(col[!is.na(col)])[1, ]))
+    out <- c(out, "color")
+  out
+}
+
+.gexf_write_viz <- function(el, g, i, viz) {
+  pos <- lapply(c("x", "y", "z"), function(w)
+    if(w %in% viz) igraph::vertex_attr(g, w)[i] else numeric(0))
+  names(pos) <- c("x", "y", "z")
+  if(!all(vapply(pos, function(v) length(v) == 0 || is.na(v), logical(1)))) {
+    # The format expects a position to give both x and y,
+    # so a missing coordinate is written as zero rather than left out.
+    if(length(pos$z) == 0 || is.na(pos$z)) pos$z <- NULL
+    pos <- lapply(pos, function(v)
+      if(length(v) == 0 || is.na(v)) "0" else as.character(v))
+    do.call(xml2::xml_add_child, c(list(el, "viz:position"), pos))
+  }
+  size <- if("size" %in% viz) igraph::vertex_attr(g, "size") else NULL
+  if(!is.null(size) && !is.na(size[i]))
+    xml2::xml_add_child(el, "viz:size", value = as.character(size[i]))
+  col <- if("color" %in% viz) igraph::vertex_attr(g, "color") else NULL
+  if(!is.null(col) && !is.na(col[i])) {
+    rgb <- .hex2rgb(col[i])
+    if(!is.na(rgb[1]))
+      xml2::xml_add_child(el, "viz:color", r = as.character(rgb[1]),
+                          g = as.character(rgb[2]), b = as.character(rgb[3]))
+  }
 }
 
 #' @rdname make_write

@@ -17,6 +17,7 @@
 
 ## Making
 
+- Added `read_gexf()` and `write_gexf()` for GEXF files such as via Gephi
 - Improved `read_graphml()` to read files using `{xml2}` rather than delegating to `igraph::read_graph()`
   - Keys now read `for="all"`; igraph discards them entirely, which silently dropped both node and tie types
   - Files holding 2+ graphs now combined into a single network, distinguished by a 'graph' node attribute; igraph silently returned only the first graph

@@ -458,8 +458,12 @@ rename_nodes.tbl_graph <- function(.data, ...){
 rename_nodes.data.frame <- function(.data, ...){
   out <- .data
   if(...length() == 0){
+    # Note that an 'id' is not among the names for a label here.
+    # A file format requires an id of its own, such as the node ids of a
+    # GraphML, GML, or GEXF file, so taking it for a label would name the nodes
+    # of a network that the file never named.
     aka <- list(
-      label   = c("name","id"),
+      label   = "name",
       active  = c("present","presence"),
       mode    = c("type","class","category")
     )
