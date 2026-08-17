@@ -85,6 +85,13 @@ S3method(as_matrix,network.goldfish)
 S3method(as_matrix,siena)
 S3method(as_matrix,stocnet)
 S3method(as_matrix,tbl_graph)
+S3method(as_missinglist,data.frame)
+S3method(as_missinglist,default)
+S3method(as_missinglist,igraph)
+S3method(as_missinglist,matrix)
+S3method(as_missinglist,network)
+S3method(as_missinglist,stocnet)
+S3method(as_missinglist,tbl_graph)
 S3method(as_network,data.frame)
 S3method(as_network,diffnet)
 S3method(as_network,igraph)
@@ -611,6 +618,7 @@ export(as_graphAM)
 export(as_igraph)
 export(as_infolist)
 export(as_matrix)
+export(as_missinglist)
 export(as_network)
 export(as_nodelist)
 export(as_siena)
@@ -1130,6 +1138,7 @@ importFrom(utils,
   available.packages,
   contrib.url,
   getParseData,
+  modifyList,
   read.csv,
   read.csv2,
   read.delim,

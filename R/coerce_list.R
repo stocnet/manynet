@@ -240,28 +240,49 @@ as_edgelist.stocnet <- function(.data, twomode = NULL) {
 # Infolists ####
 
 #' @rdname coerce_list
+#' @importFrom utils modifyList
 #' @export
 as_infolist <- function(.data) UseMethod("as_infolist")
 
 #' @export
 as_infolist.igraph <- function(.data){
   out <- igraph::graph_attr(.data)
-  if("grand" %in% names(out)){ 
-    out <- out$grand 
-    if("mode" %in% names(out)) out$mode <- NULL
+  # A 'grand' attribute holds the network's metadata as a list of its own,
+  # which is merged with the other attributes rather than replacing them,
+  # since those are network metadata too.
+  if("grand" %in% names(out)){
+    grand <- out$grand
+    out <- out[setdiff(names(out), "grand")]
+    if(is.list(grand)){
+      if("mode" %in% names(grand)) grand$mode <- NULL
+      out <- utils::modifyList(out, grand)
+    }
   }
   if("changes" %in% names(out)) out$changes <- NULL
+  if("missings" %in% names(out)) out$missings <- NULL
+  if("globals" %in% names(out)) out$globals <- NULL
+  if("global" %in% names(out)) out$global <- NULL
   out
 }
 
 #' @export
 as_infolist.tbl_graph <- function(.data){
   out <- igraph::graph_attr(.data)
-  if("grand" %in% names(out)){ 
-    out <- out$grand 
-    if("mode" %in% names(out)) out$mode <- NULL
+  # A 'grand' attribute holds the network's metadata as a list of its own,
+  # which is merged with the other attributes rather than replacing them,
+  # since those are network metadata too.
+  if("grand" %in% names(out)){
+    grand <- out$grand
+    out <- out[setdiff(names(out), "grand")]
+    if(is.list(grand)){
+      if("mode" %in% names(grand)) grand$mode <- NULL
+      out <- utils::modifyList(out, grand)
+    }
   }
   if("changes" %in% names(out)) out$changes <- NULL
+  if("missings" %in% names(out)) out$missings <- NULL
+  if("globals" %in% names(out)) out$globals <- NULL
+  if("global" %in% names(out)) out$global <- NULL
   out
 }
 
