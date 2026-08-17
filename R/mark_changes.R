@@ -37,6 +37,14 @@ is_longitudinal.list <- function(.data) {
   } else FALSE
 }
 
+# A stocnet object is a list, so it needs a method of its own to keep it from
+# being marked by the list method above.
+#' @export
+is_longitudinal.stocnet <- function(.data) {
+  "wave" %in% net_tie_attributes(.data) |
+    "panel" %in% net_tie_attributes(.data)
+}
+
 #' @rdname mark_format_change
 #' @examples 
 #' is_dynamic(create_tree(3))

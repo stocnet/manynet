@@ -40,7 +40,7 @@ Below are the currently implemented S3 methods for these functions:
 \if{html}{\out{<div class="sourceCode">}}\preformatted{                default diff_model igraph list stocnet
 is_changing           *          *      *            *
 is_dynamic            *                 *            *
-is_longitudinal       *                 *    *        
+is_longitudinal       *                 *    *       *
 }\if{html}{\out{</div>}}
 
 If a method is not available for a particular class, but a default method is,

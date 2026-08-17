@@ -17,16 +17,15 @@
 
 ## Making
 
-- Added `read_gexf()` and `write_gexf()` for GEXF files such as via Gephi
 - Improved `read_*()` functions to return stocnet objects, which hold more of what a file says
-  - `read_edgelist()` and `read_nodelist()` still return a tibble, since they read a list rather than a network
+  - `read_edgelist()` and `read_nodelist()` still return tibbles
+- Added `read_gexf()` and `write_gexf()` for GEXF files such as via Gephi
 - Improved `read_graphml()` to read files using `{xml2}` rather than delegating to `igraph::read_graph()`
   - Keys now read `for="all"`; igraph discards them entirely, which silently dropped both node and tie types
   - Files holding 2+ graphs now combined into a single network; igraph silently returned only the first graph
   - Graph-level attributes, `<default>` declarations, and the declared attribute types are now respected, and a missing value is now `NA` of the appropriate type rather than `NaN`
 - Improved `read_graphml()` support for reading Network Canvas exports specifically (closed #153)
-  - Session metadata, node and tie types, entity UUIDs are all retained
-  - Layout variables retained as 'x' and 'y' for direct use in plotting
+  - Session metadata, node and tie types, entity UUIDs, layout coordinates are all retained
   - Sessions combined into a single network with ego added as a node tied to each of its alters and each tie recording the ego that reported it in a 'by' column
   - Categorical variables are collapsed into a single factor, unlike `ideanet::nc_read()` which drops any variable where a respondent selected more than one option
 
@@ -91,6 +90,7 @@
 
 ## Marking
 
+- Fixed `is_longitudinal()` returning FALSE for a stocnet object with waves, since a stocnet is a list and was marked as if it were a list of networks
 - Added `is_multilevel()` to mark TRUE those networks whose nodes belong to two or more levels tied both within and between levels
 - Added 'lvl' to the reserved node attributes, since it records the levels of a network rather than any property of its nodes, so that `is_attributed()` no longer marks a network TRUE for it alone
 - Improved `describe_network()` so that signed networks whose weights are all -1 or 1 are no longer also described as weighted, since such weights record only the sign of each tie

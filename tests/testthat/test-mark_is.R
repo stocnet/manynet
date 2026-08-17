@@ -67,6 +67,15 @@ test_that("is_multilevel and to_multilevel keep a stocnet's modes", {
   expect_true(is_multilevel(levelled))
 })
 
+test_that("is_longitudinal marks a stocnet object with waves", {
+  # a stocnet object is a list, so without a method of its own it is marked
+  # as if it were a list of networks
+  expect_equal(is_longitudinal(as_stocnet(fict_starwars)),
+               is_longitudinal(fict_starwars))
+  expect_true(is_longitudinal(as_stocnet(fict_starwars)))
+  expect_false(is_longitudinal(as_stocnet(ison_adolescents)))
+})
+
 test_that("is_connected respects connectivity", {
   # fict_starwars is weakly but not strongly connected
   expect_false(is_connected(fict_starwars))
