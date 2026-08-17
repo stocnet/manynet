@@ -274,7 +274,8 @@ from_ties <- from_layers
   }
   merged_ties    <- bind_or_null(lapply(netlist, function(x) x$ties))
   merged_changes <- bind_or_null(lapply(netlist, function(x) x$changes))
-  merged_global  <- bind_or_null(lapply(netlist, function(x) x$global))
+  merged_globals <- bind_or_null(lapply(netlist, function(x) x$globals))
+  merged_missings <- bind_or_null(lapply(netlist, function(x) x$missings))
   
   ## 7. Combine info ----------------------------------------------------------
   merged_info <- .merge_info(netlist, merged_nodes)
@@ -287,7 +288,7 @@ from_ties <- from_layers
   ## 8. Assemble ----------------------------------------------------------------
   out <- make_stocnet(info = merged_info, nodes = merged_nodes,
                ties = merged_ties, changes = merged_changes,
-               global = merged_global)
+               globals = merged_globals, missings = merged_missings)
   out
 }
 

@@ -162,12 +162,12 @@ test_that("mutate_globals(), rename_globals() and select_globals() work", {
                                    time = 2, var = "active", value = FALSE),
                     "mutate_globals", "stocnet")
   expect_s3_class(sn, "stocnet")
-  expect_true(all(c("time", "var", "value") %in% names(sn$global)))
+  expect_true(all(c("time", "var", "value") %in% names(sn$globals)))
   sn2 <- run_or_skip(rename_globals(sn, when = time),
                      "rename_globals", "stocnet")
-  expect_true("when" %in% names(sn2$global))
+  expect_true("when" %in% names(sn2$globals))
   sn3 <- run_or_skip(select_globals(sn), "select_globals", "stocnet")
-  expect_true(all(names(sn3$global) %in% c("var", "time", "value")))
+  expect_true(all(names(sn3$globals) %in% c("var", "time", "value")))
 })
 
 test_that("rename_globals() renames aliases to stocnet conventions", {
