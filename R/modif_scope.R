@@ -67,7 +67,9 @@ to_ego.tbl_graph <- function(.data, node, max_dist = 1, min_dist = 0,
   existname <- net_name(.data, prefix = "from")
   out <- as_tidygraph(.to_ego_subgraph(.data, node, max_dist, min_dist,
                                        direction))
-  add_info(out, name = paste("Ego network of", node, existname))
+  add_info(out, name = paste("Ego network of", node, existname)) |>
+    .record_exclusion(.data, paste("outside the ego network of", node),
+                      "nodes")
 }
 
 # Obtains the neighbourhood of just this node.
@@ -222,6 +224,7 @@ to_component.network <- function(.data, component = 1,
 to_component.tbl_graph <- function(.data, component = 1,
                                    connectivity = c("weak", "strong")) {
   out <- as_tidygraph(to_component(as_igraph(.data), component, connectivity))
+  .name_component(out, .data, component, connectivity)
   qual <- .connectivity_word(.data, connectivity)
   noun <- if(qual == "") "Component" else
     paste0(toupper(substring(qual, 1, 1)), substring(qual, 2), " component")
@@ -299,8 +302,13 @@ to_subgraph.default <- function(.data, ...){
 
 #' @export
 to_subgraph.tbl_graph <- function(.data, ...){
-  dplyr::filter(.data = .data, ..., 
-                .preserve = FALSE)
+  out <- dplyr::filter(.data = .data, ..., 
+                       .preserve = FALSE)
+  # the conditions themselves are the exclusion criteria GRAND asks for, so
+  # they are deparsed rather than summarised, and negated because they say
+  # which nodes were kept where the record says which were excluded
+  .record_exclusion(out, .data, paste("not", .deparse_conditions(...)),
+                    "nodes")
 }
 
 #' @export
@@ -395,12 +403,27 @@ to_blockmodel.matrix <- function(.data, membership, FUN = mean){
 
 #' @export
 to_blockmodel.igraph <- function(.data, membership, FUN = mean){
-  as_igraph(to_blockmodel(as_matrix(.data), membership, FUN))
+  as_igraph(.blockmodel_info(as_tidygraph(to_blockmodel(as_matrix(.data),
+                                                        membership, FUN)),
+                             .data, membership, FUN))
 }
 
 #' @export
 to_blockmodel.network <- function(.data, membership, FUN = mean){
-  as_network(to_blockmodel(as_matrix(.data), membership, FUN))
+  as_network(.blockmodel_info(as_tidygraph(to_blockmodel(as_matrix(.data),
+                                                         membership, FUN)),
+                              .data, membership, FUN))
+}
+
+# The reduced graph is built from a matrix, which holds nothing about the
+# network it came from, so what that network recorded about itself is carried
+# over rather than lost, and the aggregation recorded on top of it as GRAND
+# item 4.5 asks.
+.blockmodel_info <- function(out, .data, membership, FUN){
+  .carry_info(out, .data) |>
+    .record_transformation("aggregation",
+                           paste0("nodes into ", length(unique(membership)),
+                                  " blocks (", .fun_name(FUN), ")"))
 }
 
 #' @export
@@ -410,6 +433,8 @@ to_blockmodel.data.frame <- function(.data, membership, FUN = mean){
 
 #' @export
 to_blockmodel.tbl_graph <- function(.data, membership, FUN = mean){
-  as_tidygraph(to_blockmodel(as_matrix(.data), membership, FUN))
+  .blockmodel_info(as_tidygraph(to_blockmodel(as_matrix(.data), membership,
+                                              FUN)),
+                   .data, membership, FUN)
 }
 

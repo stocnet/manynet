@@ -77,7 +77,8 @@ to_unsigned.tbl_graph <- function(.data,
                                   keep = c("positive", "negative")){
   keep <- match.arg(keep)
   out <- to_unsigned(as_igraph(.data), keep = keep)
-  as_tidygraph(out)
+  dropped <- if(keep == "positive") "negative ties" else "positive ties"
+  as_tidygraph(out) |> .record_exclusion(.data, dropped, "ties")
 }
 
 #' @export
@@ -124,17 +125,19 @@ to_unweighted.default <- function(.data, threshold = 1){
 
 #' @export
 to_unweighted.tbl_graph <- function(.data, threshold = 1) {
-  if(is_weighted(.data)){
-    edges <- weight <- NULL
-    # A tie recorded as missing has no value to compare with the threshold,
-    # and so is kept as missing rather than dropped. The weights are then kept
-    # too, since they are all that records which ties those are.
-    out <- .data |> activate(edges) |>
-      dplyr::filter(is.na(weight) | weight >= threshold)
-    if(anyNA(tie_weights(out)))
-      dplyr::mutate(out, weight = ifelse(is.na(weight), NA_real_, 1))
-    else dplyr::select(out, -c(weight))
-  } else .data
+  if(!is_weighted(.data)) return(.data)
+  edges <- weight <- NULL
+  # A tie recorded as missing has no value to compare with the threshold,
+  # and so is kept as missing rather than dropped. The weights are then kept
+  # too, since they are all that records which ties those are.
+  out <- .data |> activate(edges) |>
+    dplyr::filter(is.na(weight) | weight >= threshold)
+  out <- if(anyNA(tie_weights(out)))
+    dplyr::mutate(out, weight = ifelse(is.na(weight), NA_real_, 1)) else
+      dplyr::select(out, -c(weight))
+  .record_dichotomisation(out, .data, threshold)
+}
+
 }
 
 #' @export

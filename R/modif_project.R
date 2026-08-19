@@ -215,7 +215,7 @@ to_mode1.tbl_graph <- function(.data, similarity = c("count", "jaccard", "rand",
   if(!is.null(mode_names(.data))) out <- out |> 
       add_info(nodes = mode_names(.data)[1],
                ties = paste0("co-", mode_names(.data)[2]))
-  out |> add_info(transform = paste0("mode-1 projection (", similarity, ")"))
+  out |> .record_transformation("projection", paste0("mode 1 (", similarity, ")"))
 }
 
 #' @export
@@ -312,7 +312,7 @@ to_mode2.tbl_graph <- function(.data, similarity = c("count", "jaccard", "rand",
   if(!is.null(mode_names(.data))) out <- out |> 
       add_info(nodes = mode_names(.data)[2],
                ties = paste0("co-", mode_names(.data)[1]))
-  out |> add_info(transform = paste0("mode-2 projection (", similarity, ")"))
+  out |> .record_transformation("projection", paste0("mode 2 (", similarity, ")"))
 }
 
 #' @export

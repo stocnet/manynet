@@ -122,6 +122,20 @@
     layer, not surviving collapsing as igraph's default combination rule
     discarded them
   - Added percent of non-reciprocal connected dyads to what it records, per GRAND item 4.1
+- Improved layer-vocabulary consistency
+  - Renamed `from_ties()` to `from_layers()`; `from_ties()` retained as an alias
+    - Accepts list of networks now too, matching equal-sized, unlabelled networks by position
+    - Fixed `from_layers()` returning a directed network via `tidygraph::graph_join()`
+  - Added `to_layers()` to split multiplex networks into a named list of its layers
+  - Added `to_layer()` as a vocabulary-consistent alias of `to_uniplex()`
+    - Fixed `to_uniplex()` to keep info only about the retained layer
+    - Fixed `to_uniplex()` to return undirected network where retained layer retained is undirected
+  - Added `to_flat()` to reduce a multiplex network to a uniplex one 
+    - `rule` includes "max", "min", "mean", "sum", or "product"
+    - Missing values propagate rather than being ignored
+    - Records the method used in `info$transformations$summarization` per GRAND item 4.5
+  - Renamed `tie` argument of `to_uniplex()` to `layer` for layer-vocabulary consistency; 
+    `tie` still works but warns (closed #159)
 - Added `impute_ties()` to replace `na_to_zero()` and `na_to_mean()`
   - `rule` names imputation rule, recalling argument used elsewhere:
     - "zero" treats every missing tie as absent, essentially removing missings
@@ -140,6 +154,13 @@
   - `rule` by their "modal", "mean", "median", or "neighbourhood" value 
   - Imputation recorded in `info$transformations$imputation` per GRAND item 4.6
 - Added `to_imputed()`, which runs `impute_nodes()` and `impute_ties()` in a single call
+- Improved `to_unweighted()`
+  - Fixed it silently dropping incomplete ties
+  - Records threshold and number of ties deleted per GRAND item 4.2
+- Added `to_simplex.tbl_graph()` and `to_acyclic.tbl_graph()`
+- Added `to_permuted.matrix()` to permute matrices directly; 
+  permuting a 17x17 weighted matrix is now around 500 times faster
+- Added `net_modes.default()` for a matrix, edgelist, or `network` object
 - Updated strong connectivity example to print only the largest
   component to reduce CRAN's example timing
 

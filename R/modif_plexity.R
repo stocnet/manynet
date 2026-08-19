@@ -191,6 +191,12 @@ to_uniplex.tbl_graph <- function(.data, layer, tie){
   }
   out <- out |> mutate_info(ties = layer)
   out <- .retain_layer_info(out, layer, setdiff(ties_avail, layer))
+  # the ties of the other layers and, where a two-mode network is left with
+  # one mode, the nodes of the mode that went with them, are two exclusions by
+  # two criteria, so each is recorded on its own
+  out <- .record_exclusion(out, .data,
+                           paste0("layers other than '", layer, "'"), "ties") |>
+    .record_exclusion(.data, paste0("not tied by '", layer, "'"), "nodes")
   # A network with both directed and undirected layers is directed as a whole,
   # and holds its undirected layers as reciprocated arcs. Once only such a
   # layer is left, the result is an undirected network, so the arcs collapse
@@ -206,18 +212,17 @@ to_uniplex.tbl_graph <- function(.data, layer, tie){
 # `validate_stocnet()` rejects once the result is coerced back to a stocnet.
 .retain_layer_info <- function(.data, layer, dropped){
   out <- .data
-  if("layers" %in% igraph::graph_attr_names(out))
-    igraph::graph_attr(out, "layers") <- layer
-  for(field in c("directed", "observation", "update")){
-    vals <- igraph::graph_attr(out, field)
-    if(!is.null(vals) && !is.null(names(vals)) && layer %in% names(vals))
-      igraph::graph_attr(out, field) <- vals[layer]
-  }
-  focal <- igraph::graph_attr(out, "focal")
-  if(!is.null(focal)){
-    focal <- setdiff(focal, dropped)
-    igraph::graph_attr(out, "focal") <- if(length(focal) > 0) focal else NULL
-  }
+  fields <- intersect(c("layers", "directed", "observation", "update", "focal"),
+                      igraph::graph_attr_names(out))
+  info <- igraph::graph_attr(out)[fields]
+  # `.prune_layer_info()` reads the layers from the information it prunes, so
+  # where the network names none they are named here for it, and the network
+  # is left without them again afterwards.
+  had_layers <- "layers" %in% fields
+  if(!had_layers) info$layers <- unique(c(layer, dropped))
+  info <- .prune_layer_info(info, layer)
+  if(!had_layers) info$layers <- NULL
+  for(field in fields) igraph::graph_attr(out, field) <- info[[field]]
   out
 }
 
@@ -279,7 +284,7 @@ to_flat.tbl_graph <- function(.data, rule = c("max","min","mean","sum",
   })
   out <- .combine_networks(mats, rule)
   as_tidygraph(out) |> bind_node_attributes(.data) |>
-    add_info(transform = paste0("combined (", rule, ")"))
+    .record_transformation("aggregation", paste0("layers (", rule, ")"))
 }
 
 # Reconciles networks' tie values into a single value per dyad, cell by cell,
@@ -294,7 +299,7 @@ to_flat.tbl_graph <- function(.data, rule = c("max","min","mean","sum",
   if(is.data.frame(first) && !inherits(first, "stocnet"))
     return(as_edgelist(out))
   net <- bind_node_attributes(as_tidygraph(out), as_tidygraph(first)) |>
-    add_info(transform = paste0("combined (", rule, ")"))
+    .record_transformation("aggregation", paste0("layers (", rule, ")"))
   if(inherits(first, "stocnet")) as_stocnet(net)
   else if(inherits(first, "network")) as_network(net)
   else if(inherits(first, "tbl_graph")) net

@@ -78,7 +78,10 @@ to_egos.tbl_graph <- function(.data,
   out <- to_egos(as_igraph(.data), 
                        max_dist, 
                        min_dist, direction)
-  lapply(out, function(x) as_tidygraph(x))
+  out <- lapply(out, function(x) as_tidygraph(x))
+  .record_exclusions(out, .data,
+                     paste("outside the ego network of",
+                           names(out) %||% seq_along(out)), "nodes")
 }
 
 #' @export
@@ -140,7 +143,10 @@ to_subgraphs.igraph <- function(.data, attribute){
 
 #' @export
 to_subgraphs.tbl_graph <- function(.data, attribute){
-  lapply(to_subgraphs(as_igraph(.data), attribute), as_tidygraph)
+  types <- unique(node_attribute(.data, attribute))
+  out <- lapply(to_subgraphs(as_igraph(.data), attribute), as_tidygraph)
+  .record_exclusions(out, .data,
+                     paste0(attribute, " != ", types), "nodes")
 }
 
 #' @export
@@ -226,7 +232,11 @@ to_components.igraph <- function(.data, connectivity = c("weak", "strong")){
 #' @export
 to_components.tbl_graph <- function(.data, connectivity = c("weak", "strong")){
   out <- to_components.igraph(as_igraph(.data), connectivity)
-  lapply(out, function(x) as_tidygraph(x))
+  out <- lapply(out, function(x) as_tidygraph(x))
+  # the components come back ordered by size, so the nth here is the nth that
+  # `to_component()` returns, and the two name the same criterion
+  .record_exclusions(out, .data,
+                     paste("not in component", seq_along(out)), "nodes")
 }
 
 #' @export
@@ -291,7 +301,8 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
       filter_ties(out, !!as.name(attribute) == t)
     })
     names(waves) <- paste("Wave", times)
-    out <- waves
+    out <- .record_exclusions(waves, .data,
+                              paste("not tied at wave", times), "ties")
   } else if(is_changing(.data)){
     cl <- as_changelist(.data)
     # Get all unique times in order
@@ -300,7 +311,8 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
       times <- intersect(panels, times)
     waves <- lapply(times, function(t) .apply_changes_upto(.data, cl, t))
     names(waves) <- paste("Wave", times)
-    out <- waves
+    out <- .record_exclusions(waves, .data,
+                              paste("not present at wave", times), "nodes")
   } else if(is_longitudinal(.data) ||
             attribute %in% net_tie_attributes(.data)){
     # An explicitly named tie attribute is honoured even if the network is not
@@ -323,6 +335,12 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
       # lexicographically ("1", "10", "11", ..., "2", ...).
       out <- out[order(match(names(out), as.character(wp)))]
     }
+    # recorded after any cumulation, which changes what each wave leaves out
+    crit <- if(isTRUE(cumulative)) paste("not tied by wave", wp) else
+      paste("not tied at wave", wp)
+    out <- if(is.list(out) && !is_manynet(out))
+      .record_exclusions(out, .data, crit, "ties") else
+        .record_exclusion(out, .data, crit[1], "ties")
   }
   if(is.null(out)) .data else out
 }
@@ -505,11 +523,15 @@ to_slices.tbl_graph <- function(.data, attribute = "time", slice = NULL) {
       snap
     })
     names(out) <- moments
+    # a slice holds every tie up to its moment, so what it leaves out is what
+    # came after it
+    out <- .record_exclusions(out, .data, paste("after", moments), "ties")
   } else {
     out <- filter_ties(.data, !!as.name(attribute) <= moments)
     if(incremented) out <- summarise_ties(out, sum(increment))
     if(updated) out <- summarise_ties(out, dplyr::last(replace))
     out <- drop_zeroes(out)
+    out <- .record_exclusion(out, .data, paste("after", moments), "ties")
   }
   out
 }
