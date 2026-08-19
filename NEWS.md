@@ -42,28 +42,28 @@
 
 ## Coercion
 
-- Added `as_missinglist()` to return the ties a network could have observed and did not
-  - `as_missinglist.igraph()` carries the list in a graph attribute since igraph can mark no edge as missing
-  - `as_missinglist.network()` marks each as an edge in its own reserved 'na' attribute, which is the format `{ergm}` expects
-  - `as_missinglist.matrix()` holds each as a missing cell
-  - `as_missinglist.stocnet()` derives them from the nodes that did not report and adds them to those in a 'missings' component
-- Fixed `as_infolist()` dropping a network's other attributes when it has a 'grand' one
-- Fixed `as_nodelist()` returning the edgelist of a tbl_graph whose ties are active on e.g. a weighted stocnet object
-- Fixed `as_matrix()` filling every missing cell in a multiplex network with 1
+- Added `as_missinglist()` to return a list of observable but unobserved ties
+  - `as_missinglist.matrix()` lists each missing cell
+  - `as_missinglist.network()` lists edges from 'na' attribute, which `{ergm}` expects
+  - `as_missinglist.stocnet()` derives them from nonresponsive nodes and adds them to `missings`
+  - `as_missinglist.igraph()` lists from an ad hoc graph attribute
+- Fixed `as_infolist.tbl_graph()` dropping other attributes when dropping 'grand'
+- Fixed `as_nodelist.tbl_graph()` returning an edgelist on e.g. a weighted stocnet object
+- Fixed `as_matrix()` filling missing cells in multiplex networks with 1
 - Improved `as_stocnet.igraph()`
   - Fixed mapping of 'lvl' onto 'mode'
+  - Fixed isolate loss
+  - Fixed reading node ids as labels
   - Fixed per-layer directedness roundtripping
-- Improved `as_stocnet.network()` to read the network's attributes back into its info component, rather than keeping only whether it is directed
+- Improved `as_stocnet.network()` to read network attributes back into `info`
   - Fixed per-layer directedness roundtripping
-  - Fixed "missing value where TRUE/FALSE needed" error on networks with missing weights
-- Fixed `as_stocnet()` losing a network's isolates, which appear in no tie
-- Fixed `as_stocnet()` taking a file's node ids for node names
+  - Fixed "missing value where TRUE/FALSE needed" error with missing weights
 - Improved `as_igraph()`
   - Fixed how `as_igraph.stocnet()` was losing isolates
-  - Fixed how `as_igraph.stocnet()` handles unlabelled networks with nodal attributes
+  - Fixed how `as_igraph.stocnet()` handles unlabelled, attributed networks
   - Fixed how `as_igraph.network()`reads missing data
   - Fixed how `as_igraph.matrix()`reads missing data
-- Fixed `as_network()` overwriting core network attributes of the result with same-named entries from the network's info, so that a per-layer `directed` vector no longer replaces the single logical that `{network}` requires, e.g. `as_igraph(as_network(ison_bankwiring))` erroring with "the condition has length > 1"
+- Fixed `as_network.stocnet()` collison of `directed` vector with single expectation
 - Improved how `as_siena.stocnet()` carries missing data to RSiena
 
 ## Manipulating
