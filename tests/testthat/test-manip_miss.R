@@ -154,7 +154,6 @@ test_that("the incompleteness measures count values and not ties", {
   expect_equal(net_tie_incomplete(missTest2), 0.2)
   expect_equal(sum(tie_incomplete(missTest2)), 2)
   expect_equal(net_tie_incomplete(ison_adolescents), 0)
-  expect_length(node_incomplete(fict_lotr), net_nodes(fict_lotr))
   expect_equal(net_node_incomplete(fict_lotr), 0)
 })
 

@@ -547,6 +547,29 @@ net_tie_missing.stocnet <- function(.data){
   nodes[setdiff(names(nodes), manynet_reserved_node_attributes)]
 }
 
+# Structural or bookkeeping tie attributes that do not count as substantive
+# attributes. A weight is not among them, since a weight of `NA` marks a tie
+# whose value is not known and so an incomplete tie.
+manynet_reserved_tie_attributes <- c("from", "to", "by", "time", "wave",
+                                     "begin", "end", "layer", "na")
+
+# A network's tie attributes, without the columns that are bookkeeping rather
+# than something observed about a tie.
+.tie_attribute_table <- function(.data){
+  ties <- if(inherits(.data, "stocnet")) .data$ties else
+    tibble::as_tibble(as_tidygraph(.data), active = "edges")
+  ties[setdiff(names(ties), manynet_reserved_tie_attributes)]
+}
+
+# For each tie, the proportion of its attribute values that are not known.
+# A network with no tie attributes gives a zero for each tie, since nothing
+# about those ties is unknown.
+tie_incomplete <- function(.data){
+  ties <- .tie_attribute_table(.data)
+  if(!ncol(ties)) return(rep(0, net_ties(.data)))
+  rowMeans(is.na(as.data.frame(ties)))
+}
+
 #' @rdname measure_missingness
 #' @examples
 #' net_node_incomplete(fict_lotr)
