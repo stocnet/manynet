@@ -352,7 +352,7 @@
 #'   structure forming from scratch.
 #'
 #'   Each week, every man ranked all 16 others from most to least preferred.
-#'   No ties in rank were allowed, so each wave is a complete directed network.
+#'   No ties in rank were allowed; each wave is a complete directed network.
 #'   Two tie attributes record this:
 #'
 #'   - _rank_: the raw ranking given, where `1` is the respondent's
@@ -381,8 +381,6 @@
 #'   "Social Structure from Multiple Networks. I. Blockmodels of Roles and Positions".
 #'   _American Journal of Sociology_ 81(4): 730-780.
 #'   \doi{10.1086/226141}
-#' @source
-#'   The UCINET standard dataset collection, as distributed in `{xUCINET}`.
 #' @usage data(ison_fraternity)
 #' @format
 #'   ```{r, echo = FALSE}
@@ -748,13 +746,13 @@
 #'   after the second, so the two waves bracket a change in the workers'
 #'   collective capacity.
 #' @details
-#'   The network is directed as a whole because the `instrumental` relation is
-#'   asymmetric.
-#'   The symmetric `sociational` relation is held once per dyad,
-#'   and the info component records the directedness of each layer.
+#'   Worker names have been title-cased.
+#'   While the network as a whole is listed as directed,
+#'   only the `instrumental` layer is directed. 
+#'   The `sociational` layer is symmetric.
+#'   The info component records the directedness of each layer.
 #'   Coercion to another class reciprocates that layer again,
-#'   because an 'igraph' or 'network' object is directed or undirected as a
-#'   whole. `to_uniplex()` returns an undirected network for it.
+#'   because 'igraph' or 'network' objects can only be directed or undirected. 
 #' @docType data
 #' @keywords datasets
 #' @name ison_tailorshop
@@ -767,11 +765,6 @@
 #'   "Kapferer (1972): Strategy and Transaction in an African Factory".
 #'   In _Schlüsselwerke der Netzwerkforschung_, 249-252. Wiesbaden: Springer.
 #'   \doi{10.1007/978-3-658-21742-6_66}
-#' @source
-#'   The UCINET standard dataset collection, as distributed in `{xUCINET}`.
-#'   Worker names have been title-cased.
-#'   Kapferer's monograph has no DOI, so a DOI-bearing scholarly commentary on
-#'   the same study is given alongside it.
 #' @usage data(ison_tailorshop)
 #' @format
 #'   ```{r, echo = FALSE}
