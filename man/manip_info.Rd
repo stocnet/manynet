@@ -42,12 +42,9 @@ net_attributes(.data)
 \item "max_degree" is the maximum degree of the network
 \item "min_degree" is the minimum degree of the network
 \item "doi" is the DOI or URL of the network
-\item "transform" records how the network has been transformed since it was
-collected or generated, e.g. "mode-1 projection (jaccard)".
-Unlike the other fields this one accumulates rather than replaces,
-so that successive transformations leave a trail that can be read back.
-The \verb{to_*()} functions add to it themselves, so it rarely needs to be set
-by hand. Note that this records what has been done to the network,
+\item "transformations" records how the network has been transformed since it
+was collected or generated. See the Transformations section.
+Note that this records what has been done to the network,
 where "method" records how the network was collected or modelled.
 }
 
@@ -84,6 +81,41 @@ the default method will attempt to coerce the object to a class for which a meth
 and then coerce the output back to the original class.
 If no method is available for any class, an error will be thrown.
 }
+\section{Transformations}{
+
+The "transformations" field implements section 4 of the GRAND guidelines,
+which names six ways raw data is turned into analytic data.
+It holds a named list, one element for each of them:
+\itemize{
+\item "symmetrisation" (GRAND 4.1), which \code{to_undirected()} sets.
+\item "dichotomisation" (4.2), which \code{to_unweighted()} sets.
+\item "projection" (4.3), which \code{to_mode1()} and \code{to_mode2()} set.
+\item "exclusion" (4.4), which the functions that drop nodes or ties set,
+such as \code{delete_isolates()}, \code{to_component()}, and \code{to_uniplex()}.
+\item "aggregation" (4.5), which \code{to_flat()}, \code{join_ties()},
+and \code{to_blockmodel()} set.
+\item "imputation" (4.6), which \code{impute_ties()} and \code{impute_nodes()} set.
+}
+
+A name that is absent means that transformation was not applied,
+so \code{"symmetrisation" \%in\% names(net_transformations(.data))} answers
+whether a network was symmetrised
+without reading past everything else done to it.
+
+Each element is a character vector naming the method first,
+and, where the guidelines ask for an amount too,
+its consequence in parentheses:
+\code{list(symmetrisation = "collapse", imputation = "reciprocity (73 missing ties)")}.
+An element accumulates rather than replaces,
+so a network imputed in more than one step reports each of them,
+and the order of the names is the order the transformations were applied.
+
+The \verb{to_*()} and \verb{impute_*()} functions set this themselves,
+so it rarely needs to be set by hand.
+Where it does, \code{add_info()} takes a named list and merges it in,
+and refuses a name that is not one of the six.
+}
+
 \examples{
 add_info(ison_algebra, name = "Algebra")
 }

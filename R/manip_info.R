@@ -32,17 +32,45 @@
 #'   - "max_degree" is the maximum degree of the network
 #'   - "min_degree" is the minimum degree of the network
 #'   - "doi" is the DOI or URL of the network
-#'   - "transform" records how the network has been transformed since it was
-#'   collected or generated, e.g. "mode-1 projection (jaccard)".
-#'   Unlike the other fields this one accumulates rather than replaces,
-#'   so that successive transformations leave a trail that can be read back.
-#'   The `to_*()` functions add to it themselves, so it rarely needs to be set
-#'   by hand. Note that this records what has been done to the network,
+#'   - "transformations" records how the network has been transformed since it
+#'   was collected or generated. See the Transformations section.
+#'   Note that this records what has been done to the network,
 #'   where "method" records how the network was collected or modelled.
 #'
 #'   If no arguments are used,
 #'   the function will check for missing information and prompt the user to add it.
 #'   If `optional = TRUE` is specified, the function will also prompt for optional information.
+#' @section Transformations:
+#'   The "transformations" field implements section 4 of the GRAND guidelines,
+#'   which names six ways raw data is turned into analytic data.
+#'   It holds a named list, one element for each of them:
+#'
+#'   - "symmetrisation" (GRAND 4.1), which `to_undirected()` sets.
+#'   - "dichotomisation" (4.2), which `to_unweighted()` sets.
+#'   - "projection" (4.3), which `to_mode1()` and `to_mode2()` set.
+#'   - "exclusion" (4.4), which the functions that drop nodes or ties set,
+#'   such as `delete_isolates()`, `to_component()`, and `to_uniplex()`.
+#'   - "aggregation" (4.5), which `to_flat()`, `join_ties()`,
+#'   and `to_blockmodel()` set.
+#'   - "imputation" (4.6), which `impute_ties()` and `impute_nodes()` set.
+#'
+#'   A name that is absent means that transformation was not applied,
+#'   so `"symmetrisation" %in% names(net_transformations(.data))` answers
+#'   whether a network was symmetrised
+#'   without reading past everything else done to it.
+#'
+#'   Each element is a character vector naming the method first,
+#'   and, where the guidelines ask for an amount too,
+#'   its consequence in parentheses:
+#'   `list(symmetrisation = "collapse", imputation = "reciprocity (73 missing ties)")`.
+#'   An element accumulates rather than replaces,
+#'   so a network imputed in more than one step reports each of them,
+#'   and the order of the names is the order the transformations were applied.
+#'
+#'   The `to_*()` and `impute_*()` functions set this themselves,
+#'   so it rarely needs to be set by hand.
+#'   Where it does, `add_info()` takes a named list and merges it in,
+#'   and refuses a name that is not one of the six.
 #' @seealso \href{https://grand-statement.org}{GRAND statement} for more 
 #'   information on the Guidelines for Reporting About Network Data (GRAND).
 #' @examples
@@ -76,7 +104,7 @@ add_info.igraph <- function(.data, ...){
                                     "vertex1.total", "vertex2",
                                     "vertex2.total",
                                     "edge.pos", "edge.neg", "positive", "negative",
-                                    "transform"))
+                                    "transformations"))
   if(length(unrecog)>0) 
     snet_warn("{unrecog} are not recognised fields.")
   
@@ -103,11 +131,12 @@ add_info.igraph <- function(.data, ...){
   if("year" %in% names(info)){
     igraph::graph_attr(out)$year <- info$year
   }
-  if("transform" %in% names(info)){
-    # appends rather than replaces, so that a network transformed more than
-    # once reports each step in the order it was applied
-    igraph::graph_attr(out)$transform <- c(igraph::graph_attr(.data)$transform,
-                                           info$transform)
+  if("transformations" %in% names(info)){
+    # merges rather than replaces, so that a network transformed more than once
+    # reports each step
+    igraph::graph_attr(out)$transformations <-
+      .merge_transformations(igraph::graph_attr(.data)$transformations,
+                             info$transformations)
   }
   # return(str(info)) # for debugging
   as_tidygraph(out)
@@ -123,10 +152,11 @@ add_info.stocnet <- function(.data, ...){
     return(.check_info(.data, optional = optional))
   }
   for(item in names(dots)){
-    # "transform" accumulates rather than replaces, as in the igraph method,
+    # "transformations" merges rather than replaces, as in the igraph method,
     # so that successive transformations leave a trail
-    if(item == "transform"){
-      .data$info[[item]] <- c(.data$info[[item]], dots[[item]])
+    if(item == "transformations"){
+      .data$info[[item]] <- .merge_transformations(.data$info[[item]],
+                                                   dots[[item]])
     } else .data$info[[item]] <- dots[[item]]
   }
   .data
@@ -159,6 +189,121 @@ mutate_info.stocnet <- function(.data, ...){
     out$info[[item]] <- dots[[item]]
   }
   out
+}
+
+# GRAND section 4 names six ways raw data is turned into analytic data, and
+# each is recorded under its own name so that a reader can ask whether a
+# network was symmetrised without reading past everything else done to it.
+# A name that is absent means that transformation was not applied.
+grand_transformations <- c("symmetrisation", "dichotomisation", "projection",
+                           "exclusion", "aggregation", "imputation")
+
+# Merges new entries into the transformations already recorded. An element
+# accumulates rather than replaces, so a network transformed twice in the same
+# way reports both, and a named list keeps its names in the order they were
+# added, which is the order the transformations were applied.
+.merge_transformations <- function(old, new){
+  if(!is.list(new) || is.null(names(new)))
+    snet_abort("{.arg transformations} must be a named list, one name for each transformation applied.")
+  unrecognised <- setdiff(names(new), grand_transformations)
+  if(length(unrecognised))
+    snet_abort(c(x = "{.val {unrecognised}} {?is/are} not {?a transformation/transformations} GRAND names.",
+                 i = "The six are {.val {grand_transformations}}."))
+  out <- old %||% list()
+  for(item in names(new)) out[[item]] <- c(out[[item]], new[[item]])
+  out
+}
+
+# Recording one transformation, for the `to_*()` and `impute_*()` functions to
+# call. A matrix or an edgelist has nowhere to hold information about itself,
+# so there is nothing to record on and it is returned as it is.
+.record_transformation <- function(.data, item, entry){
+  if(is.matrix(.data) || is.data.frame(.data) && !inherits(.data, "stocnet"))
+    return(.data)
+  add_info(.data, transformations = stats::setNames(list(entry), item))
+}
+
+# The counts these helpers take differences of come from `net_nodes()` and
+# `net_ties()`, whose igraph methods return a network measure rather than a
+# bare number, so each is unwrapped before the arithmetic.
+.count_of <- function(.data, unit){
+  count <- tryCatch(if(unit == "nodes") net_nodes(.data) else net_ties(.data),
+                    error = function(e) NA_real_)
+  as.numeric(count %||% NA_real_)
+}
+
+# GRAND item 4.4 asks for the exclusion criteria and the number of nodes or
+# ties that were excluded, so the criterion leads and the count of what it
+# removed follows. Nothing is recorded where nothing was excluded, since a
+# function that had nothing to do did not transform the network.
+.record_exclusion <- function(out, .data, criterion,
+                              unit = c("nodes", "ties")){
+  unit <- match.arg(unit)
+  count <- .count_of(.data, unit) - .count_of(out, unit)
+  if(is.na(count) || count <= 0) return(out)
+  if(count == 1) unit <- sub("s$", "", unit)
+  .record_transformation(out, "exclusion",
+                         paste0(criterion, " (", count, " ", unit,
+                                " excluded)"))
+}
+
+# Names a summarising function for reporting. The `default` methods pass the
+# function itself through `as_input()`, which loses the symbol the user wrote,
+# so it is recognised by what it is rather than by what it was called.
+.fun_name <- function(FUN){
+  known <- list(mean = mean, median = stats::median, sum = sum,
+                min = min, max = max)
+  hit <- vapply(known, function(f) identical(f, FUN), logical(1))
+  if(any(hit)) names(known)[which(hit)[1]] else "custom"
+}
+
+# Copies a network's information onto another network, for the functions that
+# build their result from a matrix and so start with none of it. The
+# transformations merge rather than overwrite, as they do everywhere else.
+.carry_info <- function(out, .data){
+  info <- as_infolist(.data)
+  transformations <- info$transformations
+  info$transformations <- NULL
+  if(length(info)) out <- do.call(mutate_info, c(list(out), info))
+  if(length(transformations))
+    out <- add_info(out, transformations = transformations)
+  out
+}
+
+# The splitting functions return a list of networks, each of which leaves out
+# what the others hold, so every element records its own exclusion against the
+# network they were all split from.
+.record_exclusions <- function(out, .data, criteria, unit = c("nodes", "ties")){
+  unit <- match.arg(unit)
+  out[] <- Map(function(x, criterion)
+    .record_exclusion(x, .data, criterion, unit), out, criteria)
+  out
+}
+
+# GRAND item 4.2 asks for the dichotomising method and the number of ties that
+# were deleted by it. The guidelines say "deleted" here and "excluded" in item
+# 4.4, and the two words are kept apart so that a reader can tell which item an
+# entry answers. This records even where no tie fell below the threshold, since
+# the dichotomisation happened either way.
+.record_dichotomisation <- function(out, .data, threshold){
+  count <- .count_of(.data, "ties") - .count_of(out, "ties")
+  if(is.na(count)) return(out)
+  ties <- if(count == 1) "tie" else "ties"
+  .record_transformation(out, "dichotomisation",
+                         paste0("threshold ", threshold, " (", count, " ",
+                                ties, " deleted)"))
+}
+
+# GRAND item 4.1 asks for the percent of connected dyads that had
+# non-reciprocal ties before the network was symmetrised, which is the
+# asymmetric dyads over the dyads that were connected at all. Returns NULL
+# where the question does not arise, so that the caller reports the rule alone.
+.non_reciprocal_percent <- function(.data){
+  if(!is_directed(.data)) return(NULL)
+  census <- .net_by_dyad(as_igraph(.data))
+  connected <- unname(census["Mutual"] + census["Asymmetric"])
+  if(is.na(connected) || connected == 0) return(NULL)
+  round(unname(census["Asymmetric"]) / connected * 100)
 }
 
 #' @rdname manip_info
@@ -276,3 +421,30 @@ net_attributes <- function(.data){
   out
 }
 # nocov end
+
+# A network that loses nodes can lose every tie of a layer with them, and one
+# that is reduced to a single layer leaves the other layers behind. The
+# per-layer information then still describes layers that the network no longer
+# holds, which `validate_stocnet()` rejects, so it is cut back to the layers
+# that remain. `focal` names layers and variables together, so only the layers
+# it names are taken out of it.
+.prune_layer_info <- function(info, layers){
+  if(is.null(info)) return(info)
+  dropped <- setdiff(info$layers, layers)
+  if(length(dropped) == 0) return(info)
+  info$layers <- if(length(layers) > 0) layers else NULL
+  for(field in c("directed", "observation", "update")){
+    vals <- info[[field]]
+    if(is.null(vals) || is.null(names(vals))) next
+    keep <- intersect(names(vals), layers)
+    # A vector that names none of the layers is not keyed by layer, so it is
+    # left as it is rather than emptied.
+    if(length(keep) == 0 && length(layers) > 0) next
+    info[[field]] <- if(length(keep) > 0) vals[keep] else NULL
+  }
+  if(!is.null(info$focal)){
+    focal <- setdiff(info$focal, dropped)
+    info$focal <- if(length(focal) > 0) focal else NULL
+  }
+  info
+}

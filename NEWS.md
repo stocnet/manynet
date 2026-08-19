@@ -68,10 +68,15 @@
 
 ## Manipulating
 
-- Renamed `to_no_isolates()` to `delete_isolates()`, a named specialisation of `delete_nodes()`
-- Renamed `to_no_missing()` to `delete_incomplete()`, since "missing" at tie level is already `net_tie_missing()` and the `na_to_*()` family, whereas incompleteness is a property of a node's record
-- Improved `add_info()` to cumulatively record how a network has been "transform"ed since it was collected or generated, e.g. "mode-1 projection (jaccard)"
-- Fixed every network-splitting function erroring on stocnet objects, and `to_subgraphs()` on matrices, with a "no applicable method for 'as_stocnet' applied to an object of class \"list\"" error
+- Added element to `add_info()` to record network "transformations"
+  - This implements section 4 of the GRAND reporting guidelines:
+    - "symmetrization" (4.1)
+    - "dichotomization" (4.2)
+    - "projection" (4.3)
+    - "exclusion" (4.4)
+    - "aggregation" (4.5)
+    - "imputation" (4.6)
+  - Each element accumulates rather than replaces, ordered by sequence
 
 ## Modifying
 
