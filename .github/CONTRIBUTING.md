@@ -323,12 +323,18 @@ Two further sets of files are generated rather than edited directly:
 function overview (`pkgdown/_pkgdown.yml` `reference:` titles).
 Lead with `## Package` (package-wide/website/infrastructure changes),
 then the function families in overview order:
-`## Making`, `## Coercion`, `## Manipulating`, `## Modifying`, `## Describing`,
-`## Practicing`.
+`## Making`, `## Classes`, `## Coercion`, `## Manipulating`, `## Modifying`,
+`## Describing`, `## Practicing`.
+`## Classes` is not a website title, but collects changes to the stocnet object
+itself (its components, `validate_*()`, and the description and print methods).
+Where a release changes what downstream packages report,
+`## Marking`, `## Measuring`, and `## Learning` follow the same pattern
+after `## Modifying`.
 Put `## Glossary` and `## Tutorials` near the end,
 with `## Tutorials` immediately before any `## Data` section,
 so that tutorials and data usually close the list.
 Each heading appears at most once per version.
+Spell the coercion heading `## Coercion`, not `## Coercing`.
 `## Manipulating` covers the `manip_*` verbs (nodes/ties/attributes/changes/info/globals);
 `## Modifying` covers the `modif_*` transformations (`to_*()`, projection, splits, etc.).
 Keep the two distinct, as the website does.
@@ -336,13 +342,39 @@ Keep the two distinct, as the website does.
 Start each bullet with a verb matching the change type:
 
 - `Added ...` — new functionality
-- `Fixed ...` — bug fixes; if it relates to a GitHub issue, suffix with `(closing #123)`
+- `Fixed ...` — bug fixes; if it relates to a GitHub issue, suffix with `(closed #123)`
 - `Renamed ... to ...` — function or data name migrations
 - `Improved ...` — functional updates to existing behaviour
 - `Updated ...` — documentation changes
+- `Removed ...` / `Dropped ...` — functionality or dependencies taken out
+- `Moved ...` / `Migrated ...` — functionality relocated to another package or file
+- `Split ...` — one function or file divided into several
+
+Any of these verbs can also lead a sub-bullet.
+
+Keep every bullet to one line of fewer than 81 characters ideally (a few more or less is fine).
+If a bullet wraps, it holds too much:
+shorten it, or split it into a lead bullet and sub-bullets.
+Each bullet stands on its own, and states what changed, not why or how unless there is space for context.
+Explanation belongs in the function documentation or the vignettes.
+
+Where several bullets describe parallel changes, reuse the sentence structure,
+so that a reader sees the parallelism at a glance.
+Use one word for one thing throughout a version's entries,
+rather than varying the wording for effect.
 
 If a cited GitHub issue was **not** authored by @jhollway, thank the author with an
 `@`-tag in the bullet.
 Cluster related changes (e.g. several fixes to the same function, or sub-points of one
 feature) as indented sub-bullets under a lead bullet, to improve readability.
+Where several changes concern one function, lead with an `Improved ...` bullet that
+names the function, and put the individual `Fixed ...`/`Added ...` points beneath it,
+so the cluster groups by function rather than by change type.
+Under an `Improved ...` lead bullet, do not name the function again in the
+sub-bullets, since the lead bullet already carries it.
+Sub-bullets indent by two spaces, and nest at most one level further (four spaces).
+A sub-bullet does not need a verb: it can state the consequence, the previous
+behaviour, or an example call.
+The more entries a version holds, the more this structure matters,
+so group first and only then write the bullets.
 
