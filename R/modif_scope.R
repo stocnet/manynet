@@ -117,9 +117,18 @@ to_ego.stocnet <- function(.data, node, max_dist = 1, min_dist = 0,
 #'   returned for each distinct change point (every moment at which some tie
 #'   begins or ends), as a named list, so that the evolving network can be
 #'   iterated over or animated (e.g. with `autograph::grapht()`).
+#'   
+#'   Other longitudinal networks record the moment of each tie in a single
+#'   column: panel networks number their waves in a `wave` column, and
+#'   timestamped networks (e.g. `ison_fraternity`) date their ties in a `time`
+#'   column. `to_time()` scopes such a network to the ties recorded at `time`,
+#'   and drops that column, since a network scoped to one moment no longer
+#'   varies in time. A `time` beyond the last recorded reverts to the last.
 #' @examples
 #'   # A single snapshot of the ties active in a given year:
 #'   to_time(irps_wwi, 1901)
+#'   # Or of the ties recorded in a given wave:
+#'   to_time(ison_fraternity, 3)
 #'   # Or one slice per change point (each tie beginning or end):
 #'   length(to_time(irps_wwi))
 #' @export
@@ -149,14 +158,20 @@ to_time.tbl_graph <- function(.data, time = NULL){
   }
   if(is.null(time))
     snet_abort("Please supply a {.arg time} (wave or time point) to scope to.")
-  if(time > .net_waves(.data)){
+  # Panel networks number their ties by `wave`, and run from 1 to the wave
+  # count. Other longitudinal networks stamp each tie with the `time` at which
+  # it is observed, and these stamps need not be a count from 1 (they may be
+  # years, for example), so the last of them bounds `time` instead.
+  stamp <- if("wave" %in% net_tie_attributes(.data)) "wave" else
+    if("time" %in% net_tie_attributes(.data)) "time" else NA_character_
+  last <- if(identical(stamp, "time"))
+    max(stats::na.omit(tie_attribute(.data, "time"))) else .net_waves(.data)
+  if(time > last){
     snet_info("Sorry, there are not that many waves in this dataset.",
-              "Reverting to the maximum wave:", .net_waves(.data))
-    time <- .net_waves(.data)
+              "Reverting to the maximum wave:", last)
+    time <- last
   }
-  if(is_dynamic(.data)){
-    snet_unavailable()
-  } else if(is_longitudinal(.data)){
+  if(is_longitudinal(.data) | is_dynamic(.data) | is_changing(.data)){
     out <- .data
     if(is_changing(out)){
       if(any(time >= as_changelist(.data)$time)){
@@ -170,12 +185,25 @@ to_time.tbl_graph <- function(.data, time = NULL){
           select_nodes(-active)
       }
     }
-    if("wave" %in% net_tie_attributes(out)){
-      out |>
+    # `at` holds the moment separately, because a tie attribute of the same
+    # name as `time` would mask the argument inside filter_ties()' data mask
+    at <- time
+    if(identical(stamp, "wave")){
+      out <- out |>
         # trim ties
-        filter_ties(wave == time) |>
+        filter_ties(wave == at) |>
         select_ties(-wave)
-    } else out
+    } else if(identical(stamp, "time")){
+      out <- out |>
+        # trim ties
+        filter_ties(time == at) |>
+        select_ties(-time)
+    }
+    # the nodes and the ties are dropped by two different criteria, so each
+    # is recorded on its own rather than summed into one figure
+    out |>
+      .record_exclusion(.data, paste("not present at time", time), "nodes") |>
+      .record_exclusion(.data, paste("not tied at time", time), "ties")
   } else {
     .data
   }
@@ -196,7 +224,8 @@ to_wave <- to_time
 .to_time_spell <- function(.data, time = NULL){
   begin <- end <- NULL # bound within filter_ties()' tie data mask
   active_at <- function(t)
-    filter_ties(.data, begin <= t & (is.na(end) | end > t))
+    filter_ties(.data, begin <= t & (is.na(end) | end > t)) |>
+      .record_exclusion(.data, paste("not active at", t), "ties")
   if(!is.null(time)) return(active_at(time))
   moments <- sort(unique(stats::na.omit(c(tie_attribute(.data, "begin"),
                                           tie_attribute(.data, "end")))))

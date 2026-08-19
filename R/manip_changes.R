@@ -479,8 +479,13 @@ apply_changes.tbl_graph <- function(.data, time){
   changes <- gather_changes(.data, time)
   if(is.character(changes$node)) 
     changes$node <- match(changes$node, node_labels(.data))
+  # A change may name a node attribute that the network does not yet carry,
+  # such as the reserved `na` column that marks a node as missing at a wave.
+  # Such a column is added here, so that the change has somewhere to land.
+  new_vars <- setdiff(unique(as.character(changes$var)), names(out))
+  for(v in new_vars) out[[v]] <- if(v == "na") FALSE else NA
   if(is.character(changes$var)) 
-    changes$var <- match(changes$var, net_node_attributes(.data))
+    changes$var <- match(changes$var, names(out))
   for(i in cli::cli_progress_along(1:nrow(changes), "Applying changes")){
     if(is.numeric(out[,changes$var[i]])){
       out[changes$node[i], changes$var[i]] <- as.numeric(changes$value[i])

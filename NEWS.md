@@ -165,6 +165,7 @@
   permuting a 17x17 weighted matrix is now around 500 times faster
 - Added `to_multilevel.stocnet()` to pass through an unaltered, multimodal network
 - Added `net_modes.default()` for a matrix, edgelist, or `network` object
+- Fixed `to_time()` erroring on timestamped ties, e.g. `to_time(ison_fraternity, 3)`
 - Updated strong connectivity example to print only the largest
   component to reduce CRAN's example timing
 

@@ -193,6 +193,16 @@ sample_ties <- function(n, .data){
 #' @export
 delete_ties <- function(.data, ties) UseMethod("delete_ties")
 
+# Rebuilds a stocnet retaining only the rows of the ties table given by `kept`,
+# the counterpart of `keep_nodes()` for the functions that drop ties. The nodes
+# are untouched, since a node with no tie left is still a node of the network.
+keep_ties <- function(.data, kept){
+  if(is.null(.data$ties) || nrow(.data$ties) == 0) return(.data)
+  out <- .data
+  out$ties <- .data$ties[kept, , drop = FALSE]
+  out
+}
+
 #' @export
 delete_ties.default <- function(.data, ties){
   as_input(.data, delete_ties, ties = ties)
