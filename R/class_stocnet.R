@@ -298,6 +298,17 @@ print.stocnet <- function(x, ..., n = 12) {
   cli_div(theme = list(.emph = list(color = "#4576B5")))
   cli::cli_text("{.emph # {net_desc} of {node_desc} and {tie_desc}{change_desc}}")
   cli::cli_end()
+  # on its own line, since the line above describes what the network is and
+  # this describes what has been done to it
+  trans_header <- "# Transformed by "
+  trans_desc <- describe_transformations(x,
+                  width = cli::console_width() - nchar(trans_header))
+  if(nzchar(trans_desc)){
+    cli::cli_par()
+    cli_div(theme = list(.emph = list(color = "#4576B5")))
+    cli::cli_text("{.emph {trans_header}{trans_desc}}")
+    cli::cli_end()
+  }
   top <- x$nodes
   bottom <- x$ties
   if(!is.null(x$changes) && ncol(x$changes) >0) n <- ceiling(n/3) else 

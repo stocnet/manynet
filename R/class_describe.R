@@ -12,7 +12,9 @@
 #'   and, if available, names the different types of ties.
 #'   - `describe_changes()` describes the changing features of a network,
 #'   if any, such as how many waves there are.
-#'   
+#'   - `describe_transformations()` describes how the network has been
+#'   transformed since it was collected or generated, if at all.
+#'
 #'   These descriptions are constructed to be GRAND-consistent.
 #' @template param_data
 NULL
@@ -84,6 +86,46 @@ describe_changes <- function(.data){
     }
     
   }
+}
+
+#' @rdname class_describe
+#' @param details Logical. Where FALSE, the default, the description is given
+#'   at whichever level of detail fits the width of the console. Where TRUE,
+#'   every method and its consequence is named whatever the width.
+#' @param width Integer. The number of characters the description may fill,
+#'   by default the width of the console. Where a caller adds words of its own,
+#'   such as the header `print()` puts this in, it passes what is left.
+#' @examples
+#' describe_transformations(to_undirected(ison_southern_women))
+#' @export
+describe_transformations <- function(.data, details = FALSE,
+                                     width = cli::console_width()){
+  trans <- as_infolist(.data)$transformations
+  if(!length(trans) || is.null(names(trans))) return("")
+  full <- phrase(.transformation_parts(trans, "full"))
+  if(details) return(full)
+  # GRAND asks for the method and the amount, but a console too narrow to hold
+  # them is better given less than given a wrapped and unreadable line, so the
+  # consequences go first and then the methods, leaving the names as the least
+  # that still reports that the network was transformed at all.
+  if(nchar(full) <= width) return(full)
+  methods <- phrase(.transformation_parts(trans, "methods"))
+  if(nchar(methods) <= width) return(methods)
+  phrase(.transformation_parts(trans, "names"))
+}
+
+# One item for each transformation recorded, at one of three levels of detail.
+# An element accumulates, so a network transformed twice in the same way names
+# both, joined in the order they were applied.
+.transformation_parts <- function(trans, level){
+  vapply(names(trans), function(nm){
+    if(level == "names") return(nm)
+    entries <- trans[[nm]]
+    # each entry names the method first and its consequence in parentheses
+    if(level == "methods") entries <- trimws(sub("\\s*\\([^()]*\\)$", "",
+                                                 entries))
+    paste0(nm, ": ", paste(entries, collapse = " then "))
+  }, character(1), USE.NAMES = FALSE)
 }
 
 pluralize <- function(word) {

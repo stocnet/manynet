@@ -98,9 +98,10 @@ and \code{to_blockmodel()} set.
 }
 
 A name that is absent means that transformation was not applied,
-so \code{"symmetrisation" \%in\% names(net_transformations(.data))} answers
-whether a network was symmetrised
+so \code{"symmetrisation" \%in\% names(as_infolist(.data)$transformations)}
+answers whether a network was symmetrised
 without reading past everything else done to it.
+\code{describe_transformations()} reports the same thing as a phrase.
 
 Each element is a character vector naming the method first,
 and, where the guidelines ask for an amount too,

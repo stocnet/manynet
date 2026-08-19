@@ -36,9 +36,10 @@
 - Improved description
   - Fixed pluralize helper to except non-plural words like "business"
   - Improved `describe_ties()` to describe each layer by its own directedness
+  - Added `describe_transformations()` to include transformations in print
 - Improved measure printing methods to use `measure`, `range`, and `normalization` 
   attributes to print a concise, subtle header description in sentence case
-  - See changes in netrics v1.0.0 for more
+  - See netrics v1.0.0 NEWS for more
 
 ## Coercion
 
@@ -77,6 +78,7 @@
     - "aggregation" (4.5)
     - "imputation" (4.6)
   - Each element accumulates rather than replaces, ordered by sequence
+  - Each element names the method first and then consequeces in parentheses
 
 ## Modifying
 
