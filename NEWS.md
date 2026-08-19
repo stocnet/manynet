@@ -5,7 +5,7 @@
 - Removed CRAN version check from `.onAttach()` so `library(manynet)` loads faster
   - Now runs once, for the whole stack, in `{migraph}`, where it is also cached and checks GitHub as well as CRAN
 - Updated startup message to include executable functions, not yet working due to an RStudio bug
-- Updated CONTRIBUTING with more details about console messaging, README, and website
+- Updated CONTRIBUTING on messaging, README, website, and NEWS conventions
 - Added cross-class sweep of the network-splitting functions to the functional tests
 
 ## Making
@@ -92,14 +92,11 @@
 
 ## Modifying
 
-- Added `to_simplex.tbl_graph()` and `to_acyclic.tbl_graph()`
 - Improved predictability of `to_*s()` methods by renaming them
   - Renamed `to_ties()` to `to_linegraph()`, where ties become nodes
   - Renamed `to_blocks()` to `to_blockmodel()`, an established term
-  - Fixed `to_blockmodel()` for unlabelled, two-mode networks returning a matrix 
-    of the wrong size or an "invalid 'ncol' value" error
-- Added `to_permuted.matrix()` to permute matrices directly; 
-  permuting a 17x17 weighted matrix is now around 500 times faster
+    - Fixed it returning wrong-size matrix for unlabelled, two-mode networks
+    - Recorded aggregation method per GRAND item 4.5
 - Added `to_mode()` to select mode to project by a `mode` argument
   - `to_mode(.data, 1)` is `to_mode1(.data)` and `to_mode(.data, 2)` is
     `to_mode2(.data)`
@@ -116,6 +113,15 @@
     "sqdiff", "covariance", and "bonacich"
   - Where possible, measures computed by matrix arithmetic for speed, 
     and co-occurrence no longer counted where chosen measure does not use them
+  - Records the method used in `info$transformations$projection` per GRAND item 4.3
+- Improved `to_undirected()`
+  - Added `rule` argument offering "min", "max", "mean", "sum", and "product" alongside existing default "collapse"
+  - Fixed per-class variation: .matrix binarised tie weights, .igraph summed them,
+    and .network method left dyads asymmetric; all classes now sum
+  - Fixed tie attributes other than the weight, such as the sign or the
+    layer, not surviving collapsing as igraph's default combination rule
+    discarded them
+  - Added percent of non-reciprocal connected dyads to what it records, per GRAND item 4.1
 - Added `impute_ties()` to replace `na_to_zero()` and `na_to_mean()`
   - `rule` names imputation rule, recalling argument used elsewhere:
     - "zero" treats every missing tie as absent, essentially removing missings

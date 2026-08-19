@@ -124,8 +124,12 @@ to_undirected.igraph <- function(.data,
 to_undirected.tbl_graph <- function(.data,
                                     rule = c("collapse","min","max","mean","sum","product")) {
   rule <- match.arg(rule)
+  # the percent is of the network as it was, so it is taken before the collapse
+  pct <- .non_reciprocal_percent(.data)
+  entry <- if(is.null(pct)) rule else
+    paste0(rule, " (", pct, "% of connected dyads non-reciprocal)")
   as_tidygraph(to_undirected(as_igraph(.data), rule = rule)) |>
-    add_info(transform = paste0("symmetrised (", rule, ")"))
+    .record_transformation("symmetrisation", entry)
 }
 
 #' @export
