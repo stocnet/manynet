@@ -92,6 +92,7 @@
 
 ## Modifying
 
+- Added `to_simplex.tbl_graph()` and `to_acyclic.tbl_graph()`
 - Improved predictability of `to_*s()` methods by renaming them
   - Renamed `to_ties()` to `to_linegraph()`, where ties become nodes
   - Renamed `to_blocks()` to `to_blockmodel()`, an established term

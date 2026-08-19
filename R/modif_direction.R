@@ -220,6 +220,15 @@ to_acyclic.default <- function(.data){
   as_input(.data, to_acyclic)
 }
 
+
+#' @export
+to_acyclic.tbl_graph <- function(.data){
+  # only the directed branch excludes anything: for an undirected network
+  # `to_acyclic()` orients the ties that are there rather than dropping any
+  as_tidygraph(to_acyclic(as_igraph(.data))) |>
+    .record_exclusion(.data, "feedback arcs", "ties")
+}
+
 #' @export
 to_acyclic.igraph <- function(.data) {
   if(is_directed(.data)){

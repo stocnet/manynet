@@ -93,6 +93,16 @@ to_simplex.igraph <- function(.data) {
   igraph::simplify(.data)
 }
 
+
+#' @export
+to_simplex.tbl_graph <- function(.data) {
+  # the record is written here rather than in the igraph method because
+  # `.record_transformation()` returns a 'tbl_graph', which would change what
+  # the igraph method gives back to the methods that delegate to it
+  as_tidygraph(to_simplex(as_igraph(.data))) |>
+    .record_exclusion(.data, "loops and multiple ties", "ties")
+}
+
 #' @export
 to_simplex.matrix <- function(.data) {
   out <- .data
