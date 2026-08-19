@@ -115,13 +115,13 @@ given partition membership vector.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default igraph matrix network tbl_graph
-to_blockmodel          *       *      *      *       *         *
-to_component           *       *      *      *       *         *
-to_ego                         *      *                        *
-to_egos                *       *      *      *       *         *
-to_subgraph            *       *      *      *       *         *
-to_subgraphs                   *      *              *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default igraph matrix network stocnet tbl_graph
+to_blockmodel          *       *      *      *       *                 *
+to_component           *       *      *      *       *       *         *
+to_ego                         *      *                      *         *
+to_egos                *       *      *      *       *       *         *
+to_subgraph            *       *      *      *       *       *         *
+to_subgraphs                   *      *              *       *         *
 }\if{html}{\out{</div>}}
 
 For interval (spell) networks, whose ties carry \code{begin}/\code{end} lifespans
@@ -131,6 +131,13 @@ the half-open convention (\verb{begin <= time < end}) shared with
 returned for each distinct change point (every moment at which some tie
 begins or ends), as a named list, so that the evolving network can be
 iterated over or animated (e.g. with \code{autograph::grapht()}).
+
+Other longitudinal networks record the moment of each tie in a single
+column: panel networks number their waves in a \code{wave} column, and
+timestamped networks (e.g. \code{ison_fraternity}) date their ties in a \code{time}
+column. \code{to_time()} scopes such a network to the ties recorded at \code{time},
+and drops that column, since a network scoped to one moment no longer
+varies in time. A \code{time} beyond the last recorded reverts to the last.
 }
 \section{\code{to_blockmodel()}}{
 
@@ -147,6 +154,8 @@ in \code{{netrics}}.
 \examples{
   # A single snapshot of the ties active in a given year:
   to_time(irps_wwi, 1901)
+  # Or of the ties recorded in a given wave:
+  to_time(ison_fraternity, 3)
   # Or one slice per change point (each tie beginning or end):
   length(to_time(irps_wwi))
   to_component(fict_greys, 2)

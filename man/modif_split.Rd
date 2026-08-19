@@ -93,13 +93,20 @@ time slice(s).
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default diff_model igraph matrix network tbl_graph
-to_components          *       *                 *      *       *         *
-to_egos                *       *                 *      *       *         *
-to_layers              *       *                 *              *         *
-to_slices                      *                 *                        *
-to_subgraphs                   *                 *              *         *
-to_waves               *       *          *      *                        *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default diff_model igraph matrix network stocnet
+to_components          *       *                 *      *       *       *
+to_egos                *       *                 *      *       *       *
+to_layers              *       *                 *              *        
+to_slices                      *                 *                       
+to_subgraphs                   *                 *              *       *
+to_waves               *       *          *      *                       
+              tbl_graph
+to_components         *
+to_egos               *
+to_layers             *
+to_slices             *
+to_subgraphs          *
+to_waves              *
 }\if{html}{\out{</div>}}
 }
 \section{\code{to_layers()}}{

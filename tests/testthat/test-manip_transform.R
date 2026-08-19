@@ -405,10 +405,128 @@ test_that("every projection measure works across classes", {
 })
 
 test_that("projections record which measure was used", {
-  expect_match(igraph::graph_attr(to_mode1(ison_southern_women, "jaccard"),
-                                  "transform"),
-               "mode-1 projection (jaccard)", fixed = TRUE)
-  expect_match(igraph::graph_attr(to_mode2(ison_southern_women, "bonacich"),
-                                  "transform"),
-               "mode-2 projection (bonacich)", fixed = TRUE)
+  # GRAND item 4.3, recorded under the "projection" name of the transformations
+  expect_equal(as_infolist(to_mode1(ison_southern_women,
+                                            "jaccard"))$transformations$projection,
+               "mode 1 (jaccard)")
+  expect_equal(as_infolist(to_mode2(ison_southern_women,
+                                            "bonacich"))$transformations$projection,
+               "mode 2 (bonacich)")
+  # a transformation that was not applied leaves no name behind
+  expect_false("symmetrisation" %in%
+                 names(as_infolist(to_mode1(ison_southern_women))$transformations))
+})
+
+# What exclusion records ####
+
+test_that("the scoping functions record what they left out", {
+  # GRAND item 4.4 asks for the criteria and the number of nodes or ties
+  # excluded, recorded under the "exclusion" name of the transformations
+  expect_equal(as_infolist(to_component(fict_greys, 2))$transformations$exclusion,
+               "not in component 2 (47 nodes excluded)")
+  expect_equal(as_infolist(to_subgraph(fict_greys,
+                                               sex == "F"))$transformations$exclusion,
+               "not sex == \"F\" (23 nodes excluded)")
+  expect_match(as_infolist(to_ego(fict_greys,
+                                          "Alex Karev"))$transformations$exclusion,
+               "^outside the ego network of Alex Karev \\([0-9]+ nodes excluded\\)$")
+  expect_equal(as_infolist(delete_isolates(delete_ties(fict_greys,
+                                                               1:5)))$transformations$exclusion,
+               "isolates (4 nodes excluded)")
+  incomplete <- ison_adolescents |> mutate_nodes(age = c(NA, NA, 13:18))
+  expect_equal(as_infolist(delete_incomplete(incomplete))$transformations$exclusion,
+               "incomplete node data (2 nodes excluded)")
+})
+
+test_that("to_giant records once, not twice", {
+  # it delegates to to_component(), whose entry already names component 1,
+  # and the element accumulates rather than replaces
+  out <- as_infolist(to_giant(fict_greys))$transformations$exclusion
+  expect_length(out, 1)
+  expect_equal(out, "not in component 1 (13 nodes excluded)")
+})
+
+test_that("the tie-dropping functions record what they left out", {
+  expect_equal(as_infolist(to_acyclic(ison_networkers))$transformations$exclusion,
+               "feedback arcs (180 ties excluded)")
+  expect_match(as_infolist(to_unsigned(fict_marvel))$transformations$exclusion,
+               "^negative ties \\([0-9]+ ties excluded\\)$")
+  expect_match(as_infolist(to_unsigned(fict_marvel,
+                                               "negative"))$transformations$exclusion,
+               "^positive ties \\([0-9]+ ties excluded\\)$")
+})
+
+test_that("nothing is recorded where nothing was excluded", {
+  # a function with nothing to drop did not transform the network
+  expect_length(as_infolist(delete_isolates(ison_adolescents))$transformations, 0)
+  expect_length(as_infolist(to_simplex(ison_adolescents))$transformations, 0)
+  # a matrix or an edgelist has nowhere to hold information about itself
+  expect_true(is.matrix(to_component(as_matrix(fict_greys), 2)))
+  expect_true(is.data.frame(to_component(as_edgelist(fict_greys), 2)))
+})
+
+test_that("the transformations accumulate in the order applied", {
+  # the added node is tied to nothing, so there is an isolate to exclude
+  out <- as_infolist(delete_isolates(to_unweighted(
+    to_undirected(add_nodes(ison_networkers, 1)))))$transformations
+  expect_equal(names(out),
+               c("symmetrisation", "dichotomisation", "exclusion"))
+})
+
+test_that("to_blockmodel records its aggregation and keeps the network's info", {
+  # GRAND item 4.5, recorded under the "aggregation" name
+  membs <- rep(1:3, length.out = net_nodes(fict_greys))
+  out <- to_blockmodel(fict_greys, membs)
+  expect_equal(as_infolist(out)$transformations$aggregation,
+               "nodes into 3 blocks (mean)")
+  expect_equal(as_infolist(to_blockmodel(fict_greys, membs,
+                                                 median))$transformations$aggregation,
+               "nodes into 3 blocks (median)")
+  # the reduced graph is built from a matrix, so the information the network
+  # held about itself has to be carried over rather than lost
+  expect_equal(net_name(out), net_name(fict_greys))
+  # and an earlier transformation is kept beside the aggregation
+  both <- as_infolist(to_blockmodel(to_giant(fict_greys),
+                                            rep(1:3, length.out = 40)))$transformations
+  expect_equal(names(both), c("exclusion", "aggregation"))
+})
+
+test_that("the stocnet methods record without a round trip", {
+  # stocnet$info is where this metadata belongs, so these functions record on
+  # the class itself rather than on a coerced copy
+  g <- as_stocnet(fict_greys)
+  for (out in list(to_component(g, 2), to_subgraph(g, sex == "F"),
+                   to_ego(g, "Alex Karev"), to_giant(g),
+                   to_unweighted(as_stocnet(ison_networkers)),
+                   to_acyclic(as_stocnet(ison_networkers)),
+                   to_unsigned(as_stocnet(fict_marvel)),
+                   delete_isolates(as_stocnet(delete_ties(fict_greys, 1:5))),
+                   delete_incomplete(as_stocnet(ison_adolescents |>
+                                       mutate_nodes(age = c(NA, NA, 13:18)))))) {
+    expect_s3_class(out, "stocnet")
+    expect_length(as_infolist(out)$transformations, 1)
+  }
+})
+
+test_that("the stocnet methods return what the other classes return", {
+  for (f in list(to_giant, to_simplex, to_acyclic, to_unweighted)) {
+    expect_equal(c(net_nodes(f(ison_networkers))),
+                 c(net_nodes(f(as_stocnet(ison_networkers)))))
+    expect_equal(c(net_ties(f(ison_networkers))),
+                 c(net_ties(f(as_stocnet(ison_networkers)))))
+  }
+  expect_equal(c(net_ties(to_unsigned(fict_marvel))),
+               c(net_ties(to_unsigned(as_stocnet(fict_marvel)))))
+})
+
+test_that("to_uniplex keeps the information of the layer it retains", {
+  # to_uniplex() and a node drop prune the per-layer information by the same
+  # rule, so both sides of that rule are tested.
+  out <- to_uniplex(ison_classmates, layer = "friends")
+  expect_equal(net_layers(out), 1)
+  expect_equal(layer_names(out), "friends")
+  info <- as_infolist(out)
+  expect_equal(info$directed, c(friends = TRUE))
+  expect_false("primary" %in% info$focal)
+  expect_no_error(validate_stocnet(as_stocnet(out)))
 })

@@ -85,6 +85,20 @@ to_egos.tbl_graph <- function(.data,
 }
 
 #' @export
+to_egos.stocnet <- function(.data, 
+                            max_dist = 1, 
+                            min_dist = 0,
+                            direction = c("out","in")){
+  nodes <- if(is_labelled(.data)) node_labels(.data) else
+    seq_len(net_nodes(.data))
+  out <- lapply(nodes, function(x)
+    keep_nodes(.data, .to_ego_ids(.data, x, max_dist, min_dist, direction)))
+  names(out) <- nodes
+  .record_exclusions(out, .data,
+                     paste("outside the ego network of", nodes), "nodes")
+}
+
+#' @export
 to_egos.network <- function(.data, 
                               max_dist = 1, 
                               min_dist = 0,
@@ -147,6 +161,14 @@ to_subgraphs.tbl_graph <- function(.data, attribute){
   out <- lapply(to_subgraphs(as_igraph(.data), attribute), as_tidygraph)
   .record_exclusions(out, .data,
                      paste0(attribute, " != ", types), "nodes")
+}
+
+#' @export
+to_subgraphs.stocnet <- function(.data, attribute){
+  values <- node_attribute(.data, attribute)
+  types <- unique(values)
+  out <- lapply(types, function(x) keep_nodes(.data, which(values == x)))
+  .record_exclusions(out, .data, paste0(attribute, " != ", types), "nodes")
 }
 
 #' @export
@@ -235,6 +257,19 @@ to_components.tbl_graph <- function(.data, connectivity = c("weak", "strong")){
   out <- lapply(out, function(x) as_tidygraph(x))
   # the components come back ordered by size, so the nth here is the nth that
   # `to_component()` returns, and the two name the same criterion
+  .record_exclusions(out, .data,
+                     paste("not in component", seq_along(out)), "nodes")
+}
+
+#' @export
+to_components.stocnet <- function(.data, connectivity = c("weak", "strong")){
+  comps <- igraph::components(as_igraph(.data),
+                              mode = match.arg(connectivity))
+  # ordered largest first, so that the nth here is the nth `to_component()`
+  # returns, and the two name the same criterion
+  order <- order(comps$csize, decreasing = TRUE)
+  out <- lapply(order, function(i)
+    keep_nodes(.data, which(comps$membership == i)))
   .record_exclusions(out, .data,
                      paste("not in component", seq_along(out)), "nodes")
 }

@@ -220,8 +220,28 @@ test_that("to_undirected does not treat a missing tie as agreement", {
   expect_true(is.na(to_undirected(miss, rule = "collapse")[1, 2]))
 })
 
-test_that("to_undirected records the rule used", {
-  expect_match(igraph::graph_attr(to_undirected(as_tidygraph(asym),
-                                                rule = "min"), "transform"),
-               "symmetrised (min)", fixed = TRUE)
+test_that("to_undirected records the rule and how much it reconciled", {
+  # GRAND item 4.1 asks for the rule and the percent of connected dyads that
+  # were non-reciprocal before, recorded under the "symmetrisation" name
+  expect_equal(as_infolist(to_undirected(as_tidygraph(asym),
+                                                 rule = "min"))$transformations$symmetrisation,
+               "min (67% of connected dyads non-reciprocal)")
+  # an undirected network has no such percent to report, so the rule stands
+  # on its own rather than claiming a figure of zero
+  expect_equal(as_infolist(to_undirected(ison_adolescents))$transformations$symmetrisation,
+               "collapse")
+})
+
+test_that("to_unweighted records the threshold and the ties it deleted", {
+  # GRAND item 4.2, recorded under the "dichotomisation" name
+  w <- ison_adolescents |> mutate_ties(weight = c(1:9, 10))
+  expect_equal(as_infolist(to_unweighted(w, threshold = 5))$transformations$dichotomisation,
+               "threshold 5 (4 ties deleted)")
+  # the dichotomisation happened even where no tie fell below the threshold
+  expect_equal(as_infolist(to_unweighted(w))$transformations$dichotomisation,
+               "threshold 1 (0 ties deleted)")
+  # a network with no weights was not dichotomised, so nothing is recorded
+  expect_length(as_infolist(to_unweighted(ison_adolescents))$transformations, 0)
+  # a matrix has nowhere to hold information about itself
+  expect_true(is.matrix(to_unweighted(as_matrix(w), threshold = 5)))
 })

@@ -157,9 +157,13 @@
 - Improved `to_unweighted()`
   - Fixed it silently dropping incomplete ties
   - Records threshold and number of ties deleted per GRAND item 4.2
+- Added `stocnet` methods to `to_ego()`, `to_component()`,
+  `to_subgraph()`, `to_egos()`, `to_subgraphs()`, `to_components()`,
+  `to_unweighted()`, `to_unsigned()`, `to_simplex()`, and `to_acyclic()`
 - Added `to_simplex.tbl_graph()` and `to_acyclic.tbl_graph()`
 - Added `to_permuted.matrix()` to permute matrices directly; 
   permuting a 17x17 weighted matrix is now around 500 times faster
+- Added `to_multilevel.stocnet()` to pass through an unaltered, multimodal network
 - Added `net_modes.default()` for a matrix, edgelist, or `network` object
 - Updated strong connectivity example to print only the largest
   component to reduce CRAN's example timing

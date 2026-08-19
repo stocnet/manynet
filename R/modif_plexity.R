@@ -93,6 +93,19 @@ to_simplex.igraph <- function(.data) {
   igraph::simplify(.data)
 }
 
+#' @export
+to_simplex.stocnet <- function(.data) {
+  if(is.null(.data$ties) || nrow(.data$ties) == 0) return(.data)
+  ties <- .data$ties
+  # A stocnet holds its layers and its waves in the ties table, so a second
+  # tie between a dyad is only a repetition where those agree too. This is
+  # narrower than igraph's `simplify()`, which has no such columns to consult.
+  key <- ties[intersect(c("from", "to", "layer", "type", "wave", "time"),
+                        names(ties))]
+  keep <- ties$from != ties$to & !duplicated(key)
+  keep_ties(.data, which(keep)) |>
+    .record_exclusion(.data, "loops and multiple ties", "ties")
+}
 
 #' @export
 to_simplex.tbl_graph <- function(.data) {

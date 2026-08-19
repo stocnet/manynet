@@ -116,9 +116,17 @@ test_that("to_flat returns the class it was given", {
 })
 
 test_that("to_flat records the rule used", {
-  expect_match(igraph::graph_attr(to_flat(as_tidygraph(ison_florentine), "sum"),
-                                  "transform"),
-               "combined (sum)", fixed = TRUE)
+  # GRAND item 4.5, recorded under the "aggregation" name of the transformations
+  expect_equal(as_infolist(to_flat(as_tidygraph(ison_florentine),
+                                           "sum"))$transformations$aggregation,
+               "layers (sum)")
+})
+
+test_that("to_uniplex records the ties the other layers held", {
+  # GRAND item 4.4, recorded under the "exclusion" name of the transformations
+  out <- to_uniplex(ison_bankwiring, "friendship")
+  expect_match(as_infolist(out)$transformations$exclusion,
+               "^layers other than 'friendship' \\([0-9]+ ties excluded\\)$")
 })
 
 test_that("to_flat does not treat a missing tie as untied", {

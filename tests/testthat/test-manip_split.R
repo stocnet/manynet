@@ -199,3 +199,59 @@ test_that("to_time slices an interval (begin/end) network at each change", {
   expect_length(sli, length(changes))
   expect_s3_class(sli[[1]], "igraph")
 })
+
+test_that("to_time scopes a timestamped network to one time point", {
+  # ison_fraternity stamps each tie with the wave it was observed in, in a
+  # `time` column rather than the `wave` column that panel networks use.
+  one <- to_time(ison_fraternity, 3)
+  expect_s3_class(one, "stocnet")
+  expect_equal(as.numeric(net_ties(one)),
+               sum(tie_attribute(ison_fraternity, "time") == 3))
+  # The moment is no longer a variable of a network scoped to one moment.
+  expect_false("time" %in% net_tie_attributes(one))
+  expect_false(is_dynamic(one))
+  # Asking for a moment beyond the last reverts to the last.
+  expect_equal(as_matrix(to_time(ison_fraternity, 99)),
+               as_matrix(to_time(ison_fraternity,
+                                 max(tie_attribute(ison_fraternity, "time")))))
+})
+
+# What exclusion records ####
+
+test_that("the splitting functions record what each piece left out", {
+  # GRAND item 4.4: each piece leaves out what the others hold, so each
+  # records its own exclusion against the network they were split from
+  comps <- to_components(fict_greys)
+  expect_equal(as_infolist(comps[[1]])$transformations$exclusion,
+               "not in component 1 (13 nodes excluded)")
+  expect_equal(as_infolist(comps[[2]])$transformations$exclusion,
+               "not in component 2 (47 nodes excluded)")
+  subs <- to_subgraphs(fict_greys, "sex")
+  expect_match(as_infolist(subs[[1]])$transformations$exclusion,
+               "^sex != [FM] \\([0-9]+ nodes excluded\\)$")
+  egos <- to_egos(ison_adolescents)
+  expect_match(as_infolist(egos[[1]])$transformations$exclusion,
+               "^outside the ego network of [A-Za-z]+ \\([0-9]+ nodes excluded\\)$")
+})
+
+test_that("the splitting functions record which moment each piece holds", {
+  waves <- ison_adolescents |> mutate_ties(wave = rep(1:2, 5)) |> to_waves()
+  expect_equal(as_infolist(waves[[1]])$transformations$exclusion,
+               "not tied at wave 1 (5 ties excluded)")
+  slices <- ison_adolescents |> mutate_ties(time = rep(1:2, 5)) |> to_slices()
+  expect_equal(as_infolist(slices[[1]])$transformations$exclusion,
+               "after 1 (5 ties excluded)")
+  # the last slice holds every tie, so it left nothing out
+  expect_length(as_infolist(slices[[2]])$transformations, 0)
+})
+
+test_that("the splitting stocnet methods record without a round trip", {
+  g <- as_stocnet(fict_greys)
+  for (out in list(to_components(g)[[2]], to_subgraphs(g, "sex")[[1]],
+                   to_egos(g)[[1]])) {
+    expect_s3_class(out, "stocnet")
+    expect_length(as_infolist(out)$transformations, 1)
+  }
+  expect_equal(c(net_nodes(to_components(g)[[1]])),
+               c(net_nodes(to_components(fict_greys)[[1]])))
+})

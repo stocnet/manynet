@@ -224,6 +224,15 @@ to_acyclic.default <- function(.data){
   as_input(.data, to_acyclic)
 }
 
+#' @export
+to_acyclic.stocnet <- function(.data){
+  if(!is_directed(.data)) return(as_stocnet(to_acyclic(as_tidygraph(.data))))
+  # the ties table is the order igraph is built from, so the edge ids the
+  # feedback arc set names index its rows
+  arcs <- as.integer(igraph::feedback_arc_set(as_igraph(.data)))
+  keep_ties(.data, setdiff(seq_len(nrow(.data$ties)), arcs)) |>
+    .record_exclusion(.data, "feedback arcs", "ties")
+}
 
 #' @export
 to_acyclic.tbl_graph <- function(.data){

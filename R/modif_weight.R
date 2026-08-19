@@ -82,6 +82,25 @@ to_unsigned.tbl_graph <- function(.data,
 }
 
 #' @export
+to_unsigned.stocnet <- function(.data,
+                                keep = c("positive", "negative")){
+  if(!is_signed(.data)) return(.data)
+  keep <- match.arg(keep)
+  # signs may be held either in a 'sign' column or as negative weights.
+  # The ties to drop are named rather than the ties to keep, so that a tie
+  # with no sign is kept, as it is in the igraph method.
+  signs <- as.numeric(tie_signs(.data))
+  dropped <- which(if(keep == "positive") signs < 0 else signs > 0)
+  out <- keep_ties(.data, setdiff(seq_len(nrow(.data$ties)), dropped))
+  out$ties$sign <- NULL
+  # the weights that remain carry the magnitude of the relation, not its
+  # direction, so an unsigned network keeps them positive
+  if(!is.null(out$ties$weight)) out$ties$weight <- abs(out$ties$weight)
+  dropped <- if(keep == "positive") "negative ties" else "positive ties"
+  .record_exclusion(out, .data, dropped, "ties")
+}
+
+#' @export
 to_unsigned.igraph <- function(.data,
                                keep = c("positive", "negative")){
   if (is_signed(.data)) {
@@ -138,6 +157,16 @@ to_unweighted.tbl_graph <- function(.data, threshold = 1) {
   .record_dichotomisation(out, .data, threshold)
 }
 
+#' @export
+to_unweighted.stocnet <- function(.data, threshold = 1) {
+  if(!is_weighted(.data)) return(.data)
+  weights <- .data$ties$weight
+  # A tie recorded as missing has no value to compare with the threshold, and
+  # so is kept as missing rather than dropped, as in the tbl_graph method.
+  out <- keep_ties(.data, which(is.na(weights) | weights >= threshold))
+  out$ties$weight <- if(anyNA(out$ties$weight))
+    ifelse(is.na(out$ties$weight), NA_real_, 1) else NULL
+  .record_dichotomisation(out, .data, threshold)
 }
 
 #' @export

@@ -95,11 +95,11 @@ Below are the currently implemented S3 methods:
 for generic 'to_uniplex'
 Warning in utils::.S3methods(f): generic function 'to_layer' dispatches methods
 for generic 'to_uniplex'
-           data.frame default igraph matrix tbl_graph
-to_anti             *       *      *      *         *
-to_flat                     *                       *
-to_simplex          *       *      *      *          
-to_uniplex                  2                       2
+           data.frame default igraph matrix stocnet tbl_graph
+to_anti             *       *      *      *                 *
+to_flat                     *                               *
+to_simplex          *       *      *      *       *         *
+to_uniplex                  2                               2
 }\if{html}{\out{</div>}}
 }
 \examples{

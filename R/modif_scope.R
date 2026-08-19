@@ -72,6 +72,26 @@ to_ego.tbl_graph <- function(.data, node, max_dist = 1, min_dist = 0,
                       "nodes")
 }
 
+#' @export
+to_ego.stocnet <- function(.data, node, max_dist = 1, min_dist = 0,
+                           direction = c("out","in")){
+  existname <- net_name(.data, prefix = "from")
+  keep_nodes(.data, .to_ego_ids(.data, node, max_dist, min_dist, direction)) |>
+    add_info(name = paste("Ego network of", node, existname)) |>
+    .record_exclusion(.data, paste("outside the ego network of", node),
+                      "nodes")
+}
+
+# The indices of the nodes in the neighbourhood, for the classes that rebuild
+# from a nodelist rather than from a graph.
+.to_ego_ids <- function(.data, node, max_dist, min_dist, direction){
+  direction <- match.arg(direction, c("out","in"))
+  if(is_twomode(.data)) max_dist <- max_dist*2
+  sort(as.integer(igraph::ego(as_igraph(.data), order = max_dist,
+                              nodes = node, mindist = min_dist,
+                              mode = direction)[[1]]))
+}
+
 # Obtains the neighbourhood of just this node.
 # Note that to_egos() would obtain the neighbourhood of every node in the
 # network before discarding all but this one, which does not scale.
@@ -225,13 +245,31 @@ to_component.tbl_graph <- function(.data, component = 1,
                                    connectivity = c("weak", "strong")) {
   out <- as_tidygraph(to_component(as_igraph(.data), component, connectivity))
   .name_component(out, .data, component, connectivity)
+}
+
+#' @export
+to_component.stocnet <- function(.data, component = 1,
+                                 connectivity = c("weak", "strong")) {
+  keep <- .to_component_ids(as_igraph(.data), component, connectivity)
+  .name_component(keep_nodes(.data, which(keep)), .data, component,
+                  connectivity)
+}
+
+# Names the component retained and records what was left outside it. The
+# criterion names the same component the name does, so that `to_giant()`,
+# which delegates here for component 1, needs no entry of its own.
+.name_component <- function(out, .data, component, connectivity){
   qual <- .connectivity_word(.data, connectivity)
   noun <- if(qual == "") "Component" else
     paste0(toupper(substring(qual, 1, 1)), substring(qual, 2), " component")
   prefix <- if(is.character(component))
     paste0(noun, " containing ", component, " of") else
       paste0(noun, " ", component, " of")
-  add_info(out, name = paste(net_name(.data, prefix = prefix)))
+  criterion <- if(is.character(component))
+    paste0("not in the ", tolower(noun), " containing ", component) else
+      paste0("not in ", tolower(noun), " ", component)
+  add_info(out, name = paste(net_name(.data, prefix = prefix))) |>
+    .record_exclusion(.data, criterion, "nodes")
 }
 
 #' @export
@@ -309,6 +347,26 @@ to_subgraph.tbl_graph <- function(.data, ...){
   # which nodes were kept where the record says which were excluded
   .record_exclusion(out, .data, paste("not", .deparse_conditions(...)),
                     "nodes")
+}
+
+#' @export
+to_subgraph.stocnet <- function(.data, ...){
+  if(is.null(.data$nodes) || nrow(.data$nodes) == 0) return(.data)
+  with_active_context(.data, "nodes", {
+    node_df <- dplyr::mutate(.data$nodes, .orig_id = dplyr::row_number())
+    kept <- dplyr::filter(node_df, ...)$.orig_id
+    keep_nodes(.data, kept) |>
+      .record_exclusion(.data, paste("not", .deparse_conditions(...)), "nodes")
+  })
+}
+
+# Renders the conditions given to a filtering function back into the text the
+# user wrote, for recording which nodes or ties an exclusion kept.
+.deparse_conditions <- function(...){
+  conds <- vapply(as.list(substitute(list(...)))[-1],
+                  function(x) paste(deparse(x), collapse = " "), character(1))
+  if(length(conds) == 0) return("a filter")
+  paste(conds, collapse = " & ")
 }
 
 #' @export
