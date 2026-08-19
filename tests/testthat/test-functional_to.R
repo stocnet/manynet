@@ -39,7 +39,8 @@ to_invariants <- list(
   to_component  = function(o) is_connected(o, "weak"),
   to_simplex    = function(o) !is_complex(o),
   to_uniplex    = function(o) !is_multiplex(o),
-  to_flat       = function(o) !is_multiplex(o)
+  to_flat       = function(o) !is_multiplex(o),
+  to_imputed    = function(o) as.numeric(net_tie_missing(o)) == 0
 )
 
 .required_args <- function(fn) {

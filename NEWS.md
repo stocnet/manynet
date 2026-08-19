@@ -29,6 +29,12 @@
   - `info`, `nodes`, `ties`, `changes` as before
   - Renamed `global` to `globals`, so components with plural names are tables
   - Added `missings` component to hold individual, residual unrecorded ties
+- Improved clarity of how missing data is managed in stocnet objects
+  - Missing ties due to absence are implied through `nodes$active` and `changes`
+  - Missing ties due to nonresponse are implied through `nodes$na` and `changes`
+  - Residual missing ties are recorded in `missings`
+  - Incomplete nodal data is represented with an `NA` in the relevant column
+  - Incomplete tie data is represented with an `NA` in the relevant column
 - Improved `validate_stocnet()`
   - Added `validate_globals()` and `validate_missings()`
   - `validate_ties()` now reserves 'begin' and 'end' tie columns for spells
@@ -87,44 +93,48 @@
 ## Modifying
 
 - Improved predictability of `to_*s()` methods by renaming them
-  - Renamed `to_ties()` to `to_linegraph()`, since it returns the line graph of a network, where ties become nodes
-  - Renamed `to_blocks()` to `to_blockmodel()`, using the established term for the reduced graph it returns
-  - Fixed `to_blocks()` for two-mode networks memberships not labelled 1...k returning a matrix of the wrong size or an "invalid 'ncol' value" error
-- Added `to_permuted.matrix()` to permute the matrix directly instead of coercing it to a `tbl_graph` and back, so permuting a 17x17 weighted matrix is now around 500 times faster
-- Added `to_multilevel.stocnet()` to return an unaltered network as levels are held in the 'mode' variable of the nodes table
-- Added `to_layers()`, which splits a multiplex network into a named list of its layers, one per tie type
-- Added `to_layer()` as an alias of `to_uniplex()`, using the layer-based vocabulary of `layer_names()`, `net_layers()`, and `to_layers()`
-- Fixed `to_uniplex()` leaving the network's info describing the layers it dropped, so `layers`, `focal`, and any per-layer `directed`, `observation`, or `update` vector now cover only the layer retained
-  - Previously a stocnet object with multiple named layers could fail `validate_stocnet()` with "'info$layers' must be of length 1" once the result was recombined, e.g. by `from_layers()`
-  - Now also returns an undirected network where the layer retained is recorded as undirected, e.g. `to_uniplex(ison_bankwiring, "friendship")`, since the rest of the network is no longer there to make it directed
+  - Renamed `to_ties()` to `to_linegraph()`, where ties become nodes
+  - Renamed `to_blocks()` to `to_blockmodel()`, an established term
+  - Fixed `to_blockmodel()` for unlabelled, two-mode networks returning a matrix 
+    of the wrong size or an "invalid 'ncol' value" error
+- Added `to_permuted.matrix()` to permute matrices directly; 
+  permuting a 17x17 weighted matrix is now around 500 times faster
 - Added `to_mode()` to select mode to project by a `mode` argument
-  - `to_mode(.data, 1)` is `to_mode1(.data)` and `to_mode(.data, 2)` is `to_mode2(.data)`
-  - `mode` also accepts the name of a mode, for users who recall what a mode is called but not which position it holds, e.g. `to_mode(ison_southern_women, "events")`
-  - The name is matched against `mode_names()`, ignoring case, plurals, and any other words in the name, so that "events", "event", and "Social Events" all select the "social events" mode
-- Added 13 further similarity measures to `to_mode1()` and `to_mode2()`
-  - 6 were already implemented but unreachable: "ochiai" (the cosine), "czekanowski" (Dice), "sokalsneath", "ochiai2" (Sokal and Sneath's fifth measure), "rogerstanimoto", and "hamann"
-  - Added 7 more: "match", "overlap", "crossmin", "maxcrossmin", "sqdiff", "covariance", and "bonacich" (as `sqrt(ad)/(sqrt(ad)+sqrt(bc))`)
-  - Where possible, measures computed by matrix arithmetic rather than by iterating over pairs of nodes, giving identical results in a fraction of the time, 
-  and co-occurrence counts are no longer computed where the chosen measure does not use them
-- Added `net_modes.default()`, so that `net_modes()` works for a matrix, edgelist, or `network` object
-- Improved `to_undirected()` with a `rule` argument offering "min", "max", "mean", "sum", and "product" alongside the existing default "collapse"
-  - Fixed `to_undirected()` returning a different network for each class it was given: .matrix binarised tie weights, .igraph summed them, and .network method declared network undirected while leaving its dyads asymmetric; all classes now sum
-  - Fixed tie attributes other than the weight, such as the sign or the layer, not surviving collapsing as igraph's default combination rule discarded them
-- Renamed `from_ties()` to `from_layers()` to match counterpart, `to_layers()`, and layer-based vocabulary; `from_ties()` is retained as an alias
-  - Accepts a list of networks as well as networks given one by one, and matches unlabelled networks of equal size by position
-  - Fixed `from_layers()` returning a directed network via `tidygraph::graph_join()`
-- Added `to_flat()`, which reduces a multiplex network to a single relation by combining the values of all its layers by "max", "min", "mean", "sum", or "product"
-  - Missing values propagate rather than being ignored
-- Renamed `tie` argument of `to_uniplex()` to `layer` to agree with layer-based vocabulary; `tie` still works but warns (closed #159)
-- Improved `na_to_mean()` so that it excludes the diagonal when establishing the average or density of a one-mode simplex network, since a node's tie to itself is not usually a tie that could have been observed
-  - Counting the diagonal biased the figure down by a factor of `(n-1)/n`, which is slight for a large network but not for the eight-node examples in the documentation
-  - Documented that `na_to_mean()` draws from a Bernoulli distribution at the observed density where the network is binary, which it has always done but never said, and that this makes it stochastic unless a seed is set
-- Fixed `na_to_zero()` deleting ties whose weight was missing instead of setting that weight to zero, which contradicted both its documentation and its own matrix and edgelist methods
-- Fixed `na_to_zero()` raising an "`..1` must be of size 10 or 1, not size 0" error on any unweighted network, which is now returned unaltered, since a network without tie values has none that can be missing
-- Fixed `na_to_mean()` raising a "missing value where TRUE/FALSE needed" error on the example given in its own documentation, where a missing weight made the test for valued data itself missing
-- Fixed `na_to_mean()` never imputing anything for binary networks held as `tbl_graph`s, where the imputation iterated over the indices of the weights rather than over the weights themselves
-- Fixed `to_unweighted()` silently dropping the ties of a network whose weights are missing, which discarded the ties it records as missing rather than dichotomising the rest around them
-- Updated strong connectivity example to print only the largest component to reduce CRAN's example timing
+  - `to_mode(.data, 1)` is `to_mode1(.data)` and `to_mode(.data, 2)` is
+    `to_mode2(.data)`
+  - `mode` also accepts the name of a mode, for users who recall what a
+    mode is called but not which position it holds, e.g.
+    `to_mode(ison_southern_women, "events")`
+  - The name is matched against `mode_names()`, ignoring case, plurals,
+    and any other words in the name, so that "events", "event", and
+    "Social Events" all select the "social events" mode
+- Improved `to_mode1()` and `to_mode2()` with 13 further similarity measures
+  - 6 were already implemented but unreachable: "ochiai", "czekanowski", 
+    "sokalsneath", "ochiai2", "rogerstanimoto", and "hamann"
+  - Added 7 more: "match", "overlap", "crossmin", "maxcrossmin",
+    "sqdiff", "covariance", and "bonacich"
+  - Where possible, measures computed by matrix arithmetic for speed, 
+    and co-occurrence no longer counted where chosen measure does not use them
+- Added `impute_ties()` to replace `na_to_zero()` and `na_to_mean()`
+  - `rule` names imputation rule, recalling argument used elsewhere:
+    - "zero" treats every missing tie as absent, essentially removing missings
+    - "density" draws it at the density observed over the layer and moment it was missing from
+    - "reciprocity" reconstructs it from what the other node reported
+    - "indegree" draws it at the proportion of the responding nodes that named it
+    - "mean" draws it at the mean of the observed tie values over the layer and moment it was missing from
+    - "median" draws it at the median of the observed tie values over the layer and moment it was missing from
+    - "modal" draws it at the mode of the observed tie values over the layer and moment it was missing from
+  - `which` names one or more missing grounds to impute:
+    - "nonresponse" for ties that were not reported because the node was nonresponsive
+    - "unrecorded" for ties that were otherwise not observed
+    - "incomplete" for observed ties whose value is missing
+  - Imputation recorded in `info$transformations$imputation` per GRAND item 4.6
+- Added `impute_nodes()` to impute incomplete nodal attributes (closed #151)
+  - `rule` by their "modal", "mean", "median", or "neighbourhood" value 
+  - Imputation recorded in `info$transformations$imputation` per GRAND item 4.6
+- Added `to_imputed()`, which runs `impute_nodes()` and `impute_ties()` in a single call
+- Updated strong connectivity example to print only the largest
+  component to reduce CRAN's example timing
 
 ## Marking
 

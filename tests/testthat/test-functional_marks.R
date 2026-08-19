@@ -67,19 +67,18 @@ for (fn in setdiff(is_funs, names(mark_class_patterns))) {
   })
 }
 
-# na_to_*() imputation ---------------------------------------------------------
+# impute_ties() imputation -----------------------------------------------------
 
-test_that("na_to_zero() and na_to_mean() impute missing tie data", {
+test_that("every rule of impute_ties() imputes missing tie data", {
   miss <- ison_adolescents |>
     add_tie_attribute("weight", c(1, NA, NA, 1, 1, 1, NA, NA, 1, 1))
-  for (fn in c("na_to_zero", "na_to_mean")) {
-    f <- get(fn, envir = asNamespace("manynet"))
-    outm <- run_or_skip(f(as_matrix(miss)), fn, "matrix")
+  for (rule in c("zero", "density", "mean", "median", "modal")) {
+    outm <- run_or_skip(impute_ties(as_matrix(miss), rule), rule, "matrix")
     expect_false(anyNA(outm))
-    outg <- run_or_skip(f(miss), fn, "tidygraph")
+    outg <- run_or_skip(impute_ties(miss, rule), rule, "tidygraph")
     expect_false(anyNA(tie_attribute(outg, "weight")))
   }
-  expect_equal(sum(na_to_zero(as_matrix(miss)) == 0) -
+  expect_equal(sum(impute_ties(as_matrix(miss), "zero") == 0) -
                  sum(as_matrix(miss) == 0, na.rm = TRUE),
                sum(is.na(as_matrix(miss))))
 })

@@ -59,6 +59,44 @@ test_that("describe_*() helpers return informative strings", {
   expect_null(describe_changes(ison_adolescents))
 })
 
+test_that("describe_transformations() says nothing where nothing is recorded", {
+  expect_equal(describe_transformations(ison_adolescents), "")
+  # a function with nothing to drop did not transform the network
+  expect_equal(describe_transformations(delete_isolates(ison_adolescents)), "")
+})
+
+test_that("describe_transformations() gives the detail the console fits", {
+  out <- to_component(fict_greys, 2)
+  op <- options(cli.width = 60)
+  on.exit(options(op), add = TRUE)
+  expect_equal(describe_transformations(out),
+               "exclusion: not in component 2 (47 nodes excluded)")
+  # too narrow for the consequence, but wide enough for the method
+  options(cli.width = 40)
+  expect_equal(describe_transformations(out),
+               "exclusion: not in component 2")
+  # too narrow for either, so the name alone reports that it happened
+  options(cli.width = 20)
+  expect_equal(describe_transformations(out), "exclusion")
+})
+
+test_that("describe_transformations() details override the console width", {
+  out <- to_component(fict_greys, 2)
+  op <- options(cli.width = 20)
+  on.exit(options(op), add = TRUE)
+  expect_equal(describe_transformations(out, details = TRUE),
+               "exclusion: not in component 2 (47 nodes excluded)")
+})
+
+test_that("describe_transformations() lists them in the order applied", {
+  out <- delete_isolates(to_unweighted(
+    to_undirected(add_nodes(ison_networkers, 1))))
+  op <- options(cli.width = 30)
+  on.exit(options(op), add = TRUE)
+  expect_equal(describe_transformations(out),
+               "symmetrisation, dichotomisation, and exclusion")
+})
+
 test_that("node_measure class prints and summarises", {
   net <- ison_adolescents
   m <- manynet:::make_node_measure(stats::rnorm(8), net)

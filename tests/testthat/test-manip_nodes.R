@@ -88,3 +88,69 @@ test_that("delete_incomplete leaves complete networks untouched", {
   expect_equal(as_matrix(delete_incomplete(ison_adolescents)),
                as_matrix(ison_adolescents))
 })
+
+test_that("delete_incomplete ignores a column that is missing for every node", {
+  # 'alcohol' is a placeholder for a variable that ison_classmates records as
+  # changes, so it is NA for all 26 nodes. Reading it as missing data would
+  # delete every node.
+  out <- delete_incomplete(ison_classmates)
+  expect_equal(net_nodes(out), 21)
+  expect_true("alcohol" %in% net_node_attributes(out))
+  expect_equal(net_layers(out), 2)
+  expect_no_error(validate_stocnet(out))
+})
+
+test_that("a node drop that empties a layer drops that layer's information", {
+  sn <- make_stocnet(
+    nodes = tibble::tibble(label = c("A", "B", "C", "D"),
+                           group = c(NA, "x", "y", "z")),
+    ties = tibble::tibble(from = c(2L, 1L), to = c(3L, 4L),
+                          layer = c("friends", "kin")),
+    info = list(layers = c("friends", "kin"),
+                directed = c(friends = TRUE, kin = FALSE),
+                observation = c(friends = "panel", kin = "cross-sectional"),
+                update = c(friends = "replace", kin = "replace"),
+                focal = c("kin", "group"))
+  )
+  # dropping node A takes the only 'kin' tie with it
+  out <- delete_incomplete(sn)
+  expect_equal(net_layers(out), 1)
+  expect_equal(out$info$layers, "friends")
+  expect_equal(out$info$directed, c(friends = TRUE))
+  expect_equal(out$info$observation, c(friends = "panel"))
+  expect_equal(out$info$update, c(friends = "replace"))
+  # 'group' is a node attribute rather than a layer, so it stays focal
+  expect_equal(out$info$focal, "group")
+  expect_no_error(validate_stocnet(out))
+})
+
+test_that("a node drop that empties the network gives an empty network", {
+  sn <- make_stocnet(
+    nodes = tibble::tibble(label = c("A", "B"), group = c(NA, "x"),
+                           school = c("y", NA)),
+    ties = tibble::tibble(from = 1L, to = 2L, layer = "friends"),
+    info = list(layers = "friends", directed = c(friends = TRUE))
+  )
+  # each node misses a value in a column that other nodes hold a value in
+  out <- delete_incomplete(sn)
+  expect_equal(net_nodes(out), 0)
+  expect_equal(net_ties(out), 0)
+  expect_null(out$info$layers)
+  expect_no_error(validate_stocnet(out))
+  # snet_info() is silent under the default quiet verbosity
+  old <- options(snet_verbosity = "verbose")
+  on.exit(options(old))
+  expect_message(delete_incomplete(sn), "network is now empty")
+})
+
+test_that("filter_nodes empties a layer without error", {
+  sn <- make_stocnet(
+    nodes = tibble::tibble(label = c("A", "B", "C", "D")),
+    ties = tibble::tibble(from = c(2L, 1L), to = c(3L, 4L),
+                          layer = c("friends", "kin")),
+    info = list(layers = c("friends", "kin"))
+  )
+  out <- filter_nodes(sn, label != "A")
+  expect_equal(out$info$layers, "friends")
+  expect_no_error(validate_stocnet(out))
+})
