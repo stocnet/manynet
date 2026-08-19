@@ -838,6 +838,140 @@ and `filter_changes()`/`apply_changes()` inspect and apply
 the recorded node changes.
 :::
 
+## Missing data
+
+<span class="page-toc">On this page:
+<span class="page-toc-link" onclick="document.getElementById('section-four-states').scrollIntoView({behavior:'auto',block:'start'});">Four states</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-finding-missing').scrollIntoView({behavior:'auto',block:'start'});">Finding it</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-imputing').scrollIntoView({behavior:'auto',block:'start'});">Imputing it</span></span>
+
+Somebody skips the questionnaire. Somebody joins the class in March.
+Both leave holes in a network, and they are not the same hole.
+Treating either as "no tie" invents data,
+and most network measures have no way of telling you that you did.
+
+<img src="https://media1.tenor.com/m/rIvLmUu5rGkAAAAd/i-know-nothing-jon-snow.gif" alt="gif of Jon Snow being told he knows nothing"/>
+
+### Four states {#four-states}
+
+A tie in `{manynet}` can be in one of four states, and they are kept apart:
+
+1. **Not observed.** The tie could have been reported and was not.
+2. **Not possible.** One of the nodes was not in the network at that moment,
+   so there was nothing there to miss.
+3. **Observed.** A tie, or the absence of one.
+4. **Observed but unvalued.** The tie is there and its strength is unknown.
+
+`ison_classmates` holds the first three.
+It records four waves of friendship among 26 Dutch pupils,
+and its source distinguishes a nomination that is missing
+from one that is structurally missing.
+**Print the network's changes and see how each is recorded.**
+
+
+Three pupils did not answer at a wave, logged as a change of their `na` status,
+and one pupil left the class, logged as a change of their `active` status.
+Note that each `na` change is followed by a change back:
+a change says what a variable becomes _from that moment on_,
+so a pupil who answers again the following wave needs to say so.
+
+### Finding it {#finding-missing}
+
+Nothing above lists the missing ties themselves,
+because a network holds who did not report rather than one record per tie.
+`as_missinglist()` derives them.
+**List the missing ties, and count how many fall at each wave.**
+
+
+73 nominations were never given: 25 at wave 2 and 48 at wave 3.
+Six records stand in for all of them.
+Two things are worth noticing.
+Only the nominations those pupils would have _given_ are missing,
+since the others still nominated them.
+And the two pupils who did not answer at wave 3 miss 24 nominations each
+rather than 25, because the pupil who left the class is not there to nominate.
+
+None of this makes them ties.
+**Check that `net_ties()` does not count them,
+and see what proportion `net_tie_missing()` reports.**
+
+
+Each class carries this information in whatever way it can.
+An `igraph` object cannot mark an edge as missing,
+so the list travels beside the edges;
+a `network` object marks them among its edges in its own `na` attribute,
+which is what `{ergm}` expects;
+and a matrix holds each as a missing cell.
+`as_missinglist()` reads all of them.
+
+### Imputing it {#imputing}
+
+Once you know what is missing, you can decide what to do about it.
+`impute_ties()` takes a `rule` saying how it should decide,
+and a `which` saying which of the states to treat.
+
+Some rules answer whether a tie exists:
+
+- `"zero"` treats every missing tie as absent,
+  which is the modal state in a sparse network
+- `"density"` draws each missing tie at the density observed
+  over the layer and the moment it was missing from
+- `"reciprocity"` reconstructs a missing tie from what the other pupil
+  reported, drawing it at the proportion of observed friendships
+  that run both ways
+- `"indegree"` draws a missing tie at the proportion of the pupils
+  who did answer that named that classmate
+
+Others answer what a tie's value is, for a tie that is there
+but whose strength is not known: `"mean"`, `"median"`, and `"modal"`.
+
+The first four draw at random, so set a seed if you need them reproducible.
+
+**Impute the missing nominations three ways
+and compare how many ties each leaves.**
+
+
+Neither is a neutral choice, which is the point of keeping the record.
+`"zero"` assumes every pupil who did not answer had no friends,
+which is why it leaves the tie count untouched.
+`"reciprocity"` assumes instead that a pupil who was named by a classmate
+was likely to have named them back, at the rate the answering pupils did.
+
+Whichever you choose, the network remembers.
+`impute_ties()` and `impute_nodes()` record what they imputed,
+how much of it, and by which rule,
+which `net_transformations()` returns under the name "imputed":
+
+```{r imputerecord, purl=FALSE}
+net_transformations(to_imputed(ison_classmates))
+```
+
+This is item 4.6 of the GRAND reporting guidelines,
+which name six ways raw data is turned into analytic data.
+Each has a name of its own, so a later reader can see
+how much of the network is manufactured rather than observed,
+without reading past everything else that was done to it.
+
+Nodes can be incomplete too, where a node is there
+but an attribute of it is not known.
+`net_node_incomplete()` reports how much of the nodal data is unknown,
+and `impute_nodes()` fills it.
+`to_imputed()` runs both in a single call.
+
+::: {.callout}
+<span class="callout-label">**In brief**:</span> A tie may be unavailable, unreported,
+unrecorded, or incomplete, and `{manynet}` keeps the four apart.
+A network is *missing* a tie where the tie itself was not observed;
+a tie or a node is *incomplete* where it is there
+but an attribute of it is not known.
+Missing ties are recorded as the nodes that did not report,
+so they cost almost nothing to store,
+and `as_missinglist()` derives them where you need them.
+They are not counted as ties by `net_ties()`;
+`net_tie_missing()` reports how many there are,
+and `impute_ties()` imputes them.
+:::
+
 ## Modifying networks
 
 <span class="page-toc">On this page:

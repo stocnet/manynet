@@ -122,13 +122,11 @@
 
 ## Marking
 
-- Fixed `is_longitudinal()` returning FALSE for a stocnet object with waves, since a stocnet is a list and was marked as if it were a list of networks
-- Added `is_multilevel()` to mark TRUE those networks whose nodes belong to two or more levels tied both within and between levels
-- Fixed `is_attributed.igraph()` returning TRUE for a network with 'lvl' alone
-- Improved `is_signed()` for 'igraph', 'tbl_graph', and 'network' objects
-  - Networks that hold their signs as negative weights, not only those with a 'sign' attribute, marked TRUE
-- Improved `is_weighted()` for 'stocnet', 'igraph', 'tbl_graph', and 'network' objects
-  - Networks that hold absolute binary weights, not only those with a 'weight' attribute, marked FALSE
+- Added `is_multilevel()` to mark TRUE multimodal, multiplex networks
+- Fixed `is_longitudinal.stocnet()` returning FALSE for a stocnet list
+- Fixed `is_attributed.igraph()` returning TRUE for multilevel networks
+- Fixed `is_signed()` to mark networks holding signs as negative weights TRUE
+- Fixed `is_weighted()` to mark networks holding absolute binary weights FALSE
 
 ## Measuring
 
@@ -136,8 +134,9 @@
 
 ## Learning
 
-- Updated the "Manipulating Network Data" tutorial's Layers page to cover `to_layers()`, `from_layers()`, and `to_flat()` alongside `to_uniplex()`, with `ison_lawfirm` flattened by "sum" to count how many of its three relationships each pair holds
-- Updated the tutorial and cheatsheet references to `to_uniplex()` to use its `layer` argument
+- Added "Missing data" page to the "Manipulating" tutorial with `ison_classmates` example
+- Updated "Manipulating" tutorial's "Layers" page to cover layer-vocabulary with `ison_lawfirm` example
+- Updated tutorial and cheatsheet references to `to_uniplex()` to use `layer` argument
 
 ## Data
 
