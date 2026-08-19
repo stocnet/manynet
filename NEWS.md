@@ -2,44 +2,42 @@
 
 ## Package
 
-- Removed CRAN version check from `.onAttach()` making `library(manynet)` noticeably faster to attach
+- Removed CRAN version check from `.onAttach()` so `library(manynet)` loads faster
   - Now runs once, for the whole stack, in `{migraph}`, where it is also cached and checks GitHub as well as CRAN
-- Updated startup message to include executable functions, though they are not yet working due to an RStudio bug
-- Updated CONTRIBUTING with more details about console messaging, README, and the website
+- Updated startup message to include executable functions, not yet working due to an RStudio bug
+- Updated CONTRIBUTING with more details about console messaging, README, and website
 - Added cross-class sweep of the network-splitting functions to the functional tests
 
 ## Making
 
-- Improved `read_*()` functions to return stocnet objects, which hold more of what a file says
+- Improved `read_*()` to return stocnet objects, which hold more metadata
   - `read_edgelist()` and `read_nodelist()` still return tibbles
 - Added `read_gexf()` and `write_gexf()` for GEXF files such as via Gephi
-- Improved `read_graphml()` to read files using `{xml2}` rather than delegating to `igraph::read_graph()`
-  - Keys now read `for="all"`; igraph discards them entirely, which silently dropped both node and tie types
-  - Files holding 2+ graphs now combined into a single network; igraph silently returned only the first graph
-  - Graph-level attributes, `<default>` declarations, and the declared attribute types are now respected, and a missing value is now `NA` of the appropriate type rather than `NaN`
-- Improved `read_graphml()` support for reading Network Canvas exports specifically (closed #153)
-  - Session metadata, node and tie types, entity UUIDs, layout coordinates are all retained
-  - Sessions combined into a single network with ego added as a node tied to each of its alters and each tie recording the ego that reported it in a 'by' column
-  - Categorical variables are collapsed into a single factor, unlike `ideanet::nc_read()` which drops any variable where a respondent selected more than one option
+- Improved `read_graphml()` to use `{xml2}` rather than `igraph::read_graph()`
+  - Files holding 2+ graphs now included and combined into a single network
+  - Ego added as a node tied to each of its alters and added as 'by' column
+  - Session metadata and graph-level attributes now carried over
+  - `<default>` and declared attribute types now respected
+  - Node and tie types, entity UUIDs, layout coordinates now retained
+  - Missing values now `NA` rather than `NaN`
+  - Multichoice categorical variables collapse, not dropped like `ideanet::nc_read()`
+  - Above changes improve support for reading Network Canvas (closed #153)
 
 ## Classes
 
-- Improved the stocnet object to hold six components: `info`, `nodes`, `ties`, `changes`, `globals`, and `missings`
-  - Renamed `global` component to `globals`, such that all components with plural names are tables
-  - Missing ties due to absence are treated through `nodes$active` and `changes`
-  - Missing ties due to nonresponse are treated through `nodes$na` and `changes`
-  - Ties with missing data, such as weight, are listed in `ties` with `NA` in the relevant column
+- Improved the stocnet object to hold six components: 
+  - `info`, `nodes`, `ties`, `changes` as before
+  - Renamed `global` to `globals`, so components with plural names are tables
   - Added `missings` component to hold individual, residual unrecorded ties
-- Improved `validate_stocnet()` 
+- Improved `validate_stocnet()`
   - Added `validate_globals()` and `validate_missings()`
-  - `validate_ties()` now reserves 'begin' and 'end' tie columns, which mark when a tie is present rather than a time named some other way
-  - `validate_changes()` now reserves a 'layer' column where a change applies only to a single layer
+  - `validate_ties()` now reserves 'begin' and 'end' tie columns for spells
+  - `validate_changes()` now reserves a 'layer' column for single-layer changes
 - Improved description
   - Fixed pluralize helper to except non-plural words like "business"
-  - Improved `describe_ties()` to name the ties of each layer by that layer's own directedness
-  - Improved `describe_network()` so signed networks whose weights are all -1 or 1 are no longer also described as weighted
-- Improved `print.node_measure()`, `print.tie_measure()`, and `print.network_measure()` 
-  to use new `measure`, `range`, and `normalization` attributes to print a concise, subtle header description in sentence case
+  - Improved `describe_ties()` to describe each layer by its own directedness
+- Improved measure printing methods to use `measure`, `range`, and `normalization` 
+  attributes to print a concise, subtle header description in sentence case
   - See changes in netrics v1.0.0 for more
 
 ## Coercion
