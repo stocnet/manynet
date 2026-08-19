@@ -57,6 +57,9 @@ These functions allow users to add and delete nodes:
 \item \code{delete_isolates()} deletes all nodes without ties.
 \item \code{delete_incomplete()} deletes nodes with any missing attribute values,
 retaining only the complete cases.
+A node attribute that is missing for every node is not read as missing
+data, since in a dynamic network such an attribute is a placeholder for
+one whose values are all recorded as changes.
 \item \code{bind_nodes()} adds two nodesets together.
 \item \code{filter_nodes()} subsets nodes based on some nodal attribute-related logical statement.
 \item \code{arrange_nodes()} reorders nodes based on some nodal attribute.

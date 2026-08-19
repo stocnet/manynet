@@ -10,6 +10,9 @@
 #'   - `delete_isolates()` deletes all nodes without ties.
 #'   - `delete_incomplete()` deletes nodes with any missing attribute values,
 #'   retaining only the complete cases.
+#'   A node attribute that is missing for every node is not read as missing
+#'   data, since in a dynamic network such an attribute is a placeholder for
+#'   one whose values are all recorded as changes.
 #'   - `bind_nodes()` adds two nodesets together.
 #'   - `filter_nodes()` subsets nodes based on some nodal attribute-related logical statement.
 #'   - `arrange_nodes()` reorders nodes based on some nodal attribute.
@@ -111,7 +114,8 @@ delete_isolates.tbl_graph <- function(.data) {
   # Delete edges not present vertices
   .data |> tidygraph::activate(nodes) |>
     dplyr::filter(!tidygraph::node_is_isolated()) |>
-    add_info(name = paste(net_name(.data), "without isolates"))
+    add_info(name = paste(net_name(.data), "without isolates")) |>
+    .record_exclusion(.data, "isolates", "nodes")
 }
 
 #' @export
@@ -119,7 +123,9 @@ delete_isolates.list <- function(.data) {
   nodes <- NULL
   # Delete edges not present vertices in each list
   lapply(.data, function(x) {
-    x |> tidygraph::activate(nodes) |> dplyr::filter(!tidygraph::node_is_isolated())
+    x |> tidygraph::activate(nodes) |>
+      dplyr::filter(!tidygraph::node_is_isolated()) |>
+      .record_exclusion(x, "isolates", "nodes")
   })
 }
 
@@ -132,7 +138,8 @@ delete_isolates.stocnet <- function(.data) {
     tied <- c(tied, .data$changes$node)
   kept <- which(seq_len(nrow(.data$nodes)) %in% tied)
   keep_nodes(.data, kept) |>
-    add_info(name = paste(net_name(.data), "without isolates"))
+    add_info(name = paste(net_name(.data), "without isolates")) |>
+    .record_exclusion(.data, "isolates", "nodes")
 }
 
 #' @export
@@ -169,16 +176,31 @@ delete_incomplete.tbl_graph <- function(.data){
   out <- .data
   nl <- as_nodelist(out)
   if(is.null(nl)) return(out)
-  delete_nodes(.data, !stats::complete.cases(nl)) |>
-    add_info(name = paste(net_name(.data), "without nodes with missing data"))
+  delete_nodes(.data, !.nodes_are_complete(nl)) |>
+    add_info(name = paste(net_name(.data), "without nodes with missing data")) |>
+    .record_exclusion(.data, "incomplete node data", "nodes")
 }
 
 #' @export
 delete_incomplete.stocnet <- function(.data){
   if(is.null(.data$nodes) || nrow(.data$nodes) == 0) return(.data)
-  kept <- which(stats::complete.cases(.data$nodes))
+  kept <- which(.nodes_are_complete(.data$nodes))
+  if(length(kept) == 0)
+    snet_info("No node has complete data, so the network is now empty.")
   keep_nodes(.data, kept) |>
-    add_info(name = paste(net_name(.data), "without nodes with missing data"))
+    add_info(name = paste(net_name(.data), "without nodes with missing data")) |>
+    .record_exclusion(.data, "incomplete node data", "nodes")
+}
+
+# Which nodes hold a value for every node attribute that holds any value at
+# all. A column that is missing for every node says nothing about any one of
+# them. In a dynamic network such a column is a placeholder for a variable
+# whose values are all recorded as changes, so counting it as missing data
+# would delete every node.
+.nodes_are_complete <- function(nodes){
+  informative <- vapply(nodes, function(x) !all(is.na(x)), logical(1))
+  if(!any(informative)) return(rep(TRUE, nrow(nodes)))
+  stats::complete.cases(nodes[, informative, drop = FALSE])
 }
 
 #' @rdname manip_nodes_num
@@ -247,8 +269,15 @@ keep_nodes <- function(.data, kept){
     out_changes <- .data$changes
   }
 
+  # Dropping nodes can drop the last tie of a layer, and the information on
+  # that layer goes with it.
+  out_info <- if(!is.null(out_ties) && "layer" %in% names(out_ties)){
+    .prune_layer_info(.data$info,
+                      intersect(.data$info$layers, unique(out_ties$layer)))
+  } else .data$info
+
   make_stocnet(nodes = out_nodes, ties = out_ties, changes = out_changes,
-               globals = .data$globals, missings = .data$missings, info = .data$info)
+               globals = .data$globals, missings = .data$missings, info = out_info)
 }
 
 #' @rdname manip_nodes_num

@@ -69,6 +69,10 @@
 
 ## Manipulating
 
+- Renamed `to_no_isolates()` to `delete_isolates()`, specialising `delete_nodes()`
+- Renamed `to_no_missing()` to `delete_incomplete()` as a property of a node's record
+  - Fixed `delete_incomplete()` deleting initialised missings, 
+    e.g. `delete_incomplete(ison_classmates)`
 - Added element to `add_info()` to record network "transformations"
   - This implements section 4 of the GRAND reporting guidelines:
     - "symmetrization" (4.1)
