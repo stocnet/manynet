@@ -230,7 +230,7 @@ test_that("missing ties survive the stocnet <-> sienadata round trip", {
   expect_equal(as.vector(orig$depvars$fr), as.vector(back$depvars$fr))
   expect_equal(sum(is.na(back$depvars$fr)), 2)
   # treating them as absent ties clears the record and adds no tie
-  zeroed <- na_to_zero(sn)
+  zeroed <- impute_ties(sn, "zero")
   expect_null(as_missinglist(zeroed))
   expect_equal(nrow(zeroed$ties), nrow(sn$ties))
   expect_false(anyNA(as_matrix(zeroed)))

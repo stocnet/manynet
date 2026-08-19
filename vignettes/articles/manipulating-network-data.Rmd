@@ -940,10 +940,10 @@ was likely to have named them back, at the rate the answering pupils did.
 Whichever you choose, the network remembers.
 `impute_ties()` and `impute_nodes()` record what they imputed,
 how much of it, and by which rule,
-which `net_transformations()` returns under the name "imputed":
+which they record under the name "imputation":
 
 ```{r imputerecord, purl=FALSE}
-net_transformations(to_imputed(ison_classmates))
+describe_transformations(to_imputed(ison_classmates), details = TRUE)
 ```
 
 This is item 4.6 of the GRAND reporting guidelines,

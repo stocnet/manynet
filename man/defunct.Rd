@@ -168,6 +168,8 @@
 \alias{node_by_tetrad}
 \alias{node_by_tie}
 \alias{node_by_triad}
+\alias{na_to_zero}
+\alias{na_to_mean}
 \title{Functions that have been renamed, superseded, moved, or are no longer working}
 \usage{
 pkg_data(pkg = "manynet")
@@ -501,6 +503,10 @@ node_by_tetrad(...)
 node_by_tie(...)
 
 node_by_triad(...)
+
+na_to_zero(.data)
+
+na_to_mean(.data)
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
@@ -844,6 +850,10 @@ wherever possible and update your scripts accordingly.
 \item \code{node_by_tie()}: Deprecated on 2026-03-22.
 
 \item \code{node_by_triad()}: Deprecated on 2026-03-22.
+
+\item \code{na_to_zero()}: Deprecated on 2026-08-18.
+
+\item \code{na_to_mean()}: Deprecated on 2026-08-18.
 
 }}
 \keyword{internal}

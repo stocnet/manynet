@@ -146,7 +146,10 @@
 
 ## Measuring
 
-- Fixed `tie_attribute()` on a stocnet object naming its result from a coerced copy of the network, which errored with "'names' attribute [1018] must be the same length as the vector [637]" where coercion reciprocated an undirected layer
+- Added `net_ties.network()` to use `network::network.edgecount()` which omits missing edges
+- Added `net_tie_missing.stocnet()` to report missing ties
+- Fixed `tie_*()` measures erroring on networks without ties
+- Added `net_node_incomplete()` and `net_tie_incomplete()` to report missing attribute values
 
 ## Learning
 

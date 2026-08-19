@@ -117,6 +117,15 @@ net_ties.igraph <- function(.data){
                        call = deparse(sys.call()))
 }
 
+#' @export
+net_ties.network <- function(.data){
+  # A 'network' object is the one class that holds the ties it records as
+  # missing among its edges, so those are omitted here, as `{network}` omits
+  # them itself. `net_tie_missing()` counts them instead.
+  make_network_measure(network::network.edgecount(.data), .data,
+                       call = deparse(sys.call()))
+}
+
 #' @rdname measure_dims
 #' @examples
 #' net_layers(ison_southern_women)
@@ -462,10 +471,34 @@ net_tie_attributes.network <- function(.data){
 #' @description
 #'  These functions describe the missingness in network data:
 #'  - `net_node_missing()` returns the proportion of nodes that are missing in a network.
+#'  - `net_node_incomplete()` returns the proportion of the network's node
+#'  attribute values that are unknown.
 #'  - `net_tie_missing()` returns the proportion of ties that are missing in a network.
+#'  - `net_tie_incomplete()` returns the proportion of the network's ties whose
+#'  value is unknown.
+#'
+#'  A network is *missing* a tie where the tie itself was not observed,
+#'  so that whether it exists is not known.
+#'  A tie or a node is *incomplete* where it is there and observed,
+#'  but an attribute of it is not known.
+#'  A weight of `NA` therefore marks an incomplete tie and not a missing one.
+#'  [impute_ties()] and [impute_nodes()] impute each of these states.
+#'
+#'  A tie recorded as missing is one that could have been observed and was not.
+#'  It is not a tie, so `net_ties()` does not count it,
+#'  and it is not the absence of a tie either.
+#'  See [as_missinglist()] for how each class records them,
+#'  and `make_stocnet()` for how they differ from a node's absence
+#'  and from a tie of unknown value.
+#'
+#'  For a multiplex or longitudinal network, `net_tie_missing()` counts the ties
+#'  that could have been observed over each layer and each moment the network
+#'  records. Coercing such a network to a matrix first gives a higher
+#'  proportion, since a matrix holds only one cell for each dyad.
 #' @family missingness
 #' @template param_data
-#' @return `net_node_missing()` and `net_tie_missing()` return a scalar
+#' @return `net_node_missing()`, `net_tie_missing()`, `net_node_incomplete()`,
+#'   and `net_tie_incomplete()` return a scalar.
 NULL
 
 #' @rdname measure_missingness
@@ -495,5 +528,62 @@ net_tie_missing.default <- function(.data){
 #' @export
 net_tie_missing.matrix <- function(.data){
   mean(is.na(.data)) %||% 0
+}
+
+#' @export
+net_tie_missing.stocnet <- function(.data){
+  miss <- nrow(as_missinglist(.data))
+  if(is.null(miss) || miss == 0) return(0)
+  miss / .stocnet_dyads(.data)
+}
+
+# Incompleteness ####
+
+# A network's node attributes, without the columns that are bookkeeping rather
+# than something observed about a node.
+.node_attribute_table <- function(.data){
+  nodes <- if(inherits(.data, "stocnet")) .data$nodes else
+    tibble::as_tibble(as_tidygraph(.data), active = "nodes")
+  nodes[setdiff(names(nodes), manynet_reserved_node_attributes)]
+}
+
+#' @rdname measure_missingness
+#' @examples
+#' net_node_incomplete(fict_lotr)
+#' @export
+net_node_incomplete <- function(.data) UseMethod("net_node_incomplete")
+
+#' @export
+net_node_incomplete.default <- function(.data){
+  nodes <- .node_attribute_table(.data)
+  if(!ncol(nodes)) return(0)
+  mean(is.na(as.data.frame(nodes)))
+}
+
+#' @rdname measure_missingness
+#' @examples
+#' net_tie_incomplete(ison_adolescents)
+#' @export
+net_tie_incomplete <- function(.data) UseMethod("net_tie_incomplete")
+
+#' @export
+net_tie_incomplete.default <- function(.data){
+  out <- tie_incomplete(.data)
+  if(!length(out)) return(0)
+  mean(out)
+}
+
+# How many ties a stocnet could have observed on one occasion, an occasion
+# being one layer at one moment.
+.stocnet_dyads_each <- function(.data) .dyads_possible(.data)
+
+# How many ties a stocnet could have observed altogether. Counted over each
+# layer and each moment the network records, since a matrix holds one cell per
+# dyad and so cannot hold the several ties a multiplex or longitudinal network
+# holds for each of them.
+.stocnet_dyads <- function(.data){
+  cols <- intersect(c("layer", "time"), names(.data$ties))
+  occasions <- if(length(cols)) nrow(unique(.data$ties[cols])) else 1L
+  .stocnet_dyads_each(.data) * max(1L, occasions)
 }
 

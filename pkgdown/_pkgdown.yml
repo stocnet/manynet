@@ -179,7 +179,7 @@ reference:
     desc: |
       Functions for modifying how missing data is treated.
     contents:
-      - starts_with("na_to_")
+      - modif_miss
       
   - title: "Describing"
     desc: |
