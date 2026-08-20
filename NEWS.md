@@ -186,6 +186,8 @@
 - Added `net_tie_missing.stocnet()` to report missing ties
 - Fixed `tie_*()` measures erroring on networks without ties
 - Added `net_node_incomplete()` and `net_tie_incomplete()` to report missing attribute values
+- Added `net_times()` to count the moments a network records however recorded
+- Fixed `net_waves()` reporting one wave when waves appeared in a `time` column
 
 ## Learning
 

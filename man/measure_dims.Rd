@@ -8,6 +8,7 @@
 \alias{net_layers}
 \alias{layer_ties}
 \alias{net_waves}
+\alias{net_times}
 \alias{mode_nodes}
 \alias{net_dims}
 \title{Describing network dimensions}
@@ -23,6 +24,8 @@ net_layers(.data)
 layer_ties(.data)
 
 net_waves(.data)
+
+net_times(.data)
 
 mode_nodes(.data)
 
@@ -59,8 +62,12 @@ as long as the number of modes in the network.
 \item \code{net_layers()} returns the number of layers in a multiplex network.
 \item \code{layer_ties()} returns the number of ties in a vector
 as long as the number of layers in the network.
-\item \code{net_waves()} returns the number of waves/panels in a longitudinal network,
-see \code{\link[=is_longitudinal]{is_longitudinal()}}.
+\item \code{net_waves()} returns the number of waves a panel network records,
+see \code{\link[=is_longitudinal]{is_longitudinal()}}. A network that is not a panel has one wave.
+\item \code{net_times()} returns the number of distinct moments a network records,
+however it records them: the waves of a panel, the events of a dynamic
+network, or the moments an interval network begins and ends a tie at.
+See the Time section of \code{\link[=to_time]{to_time()}}.
 }
 
 These functions are also often used as helpers within other functions.
@@ -72,6 +79,7 @@ net_ties(ison_southern_women)
 net_layers(ison_southern_women)
 layer_ties(fict_marvel)
 net_waves(ison_monks)
+net_times(irps_wwi)
 mode_nodes(ison_southern_women)
 mode_nodes(to_mode1(ison_southern_women))
 }

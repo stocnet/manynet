@@ -12,8 +12,12 @@
 #'   - `net_layers()` returns the number of layers in a multiplex network.
 #'   - `layer_ties()` returns the number of ties in a vector
 #'   as long as the number of layers in the network.
-#'   - `net_waves()` returns the number of waves/panels in a longitudinal network,
-#'   see [is_longitudinal()].
+#'   - `net_waves()` returns the number of waves a panel network records,
+#'   see [is_longitudinal()]. A network that is not a panel has one wave.
+#'   - `net_times()` returns the number of distinct moments a network records,
+#'   however it records them: the waves of a panel, the events of a dynamic
+#'   network, or the moments an interval network begins and ends a tie at.
+#'   See the Time section of [to_time()].
 #'
 #'   These functions are also often used as helpers within other functions.
 #' @return `net_*()` functions always relate to the overall graph or network,
@@ -199,23 +203,38 @@ net_waves.default <- function(.data){
 }
 
 #' @export
-net_waves.stocnet <- function(.data){
-  if("wave" %in% names(.data$ties)){
-    length(unique(.data$ties$wave))
-  } else if("panel" %in% names(.data$ties)){
-    length(unique(.data$ties$panel))
-  } else 1L
+net_waves.igraph <- function(.data){
+  # A network that is not a panel holds one observation of itself. The waves
+  # are counted from the ties alone: a change recorded after the last wave
+  # states what became of a node, and does not add a wave to observe it in.
+  if(!is_longitudinal(.data)) return(1L)
+  moments <- .time_moments(.data, changes = FALSE)
+  if(is.null(moments)) 1L else length(moments)
 }
 
 #' @export
-net_waves.igraph <- function(.data){
-  atts <- net_tie_attributes(.data)
-  if("wave" %in% atts){
-    length(unique(tie_attribute(.data, "wave")))
-  } else if("panel" %in% atts){
-    length(unique(tie_attribute(.data, "panel")))
-  } else 1L
+net_waves.stocnet <- net_waves.igraph
+
+#' @rdname measure_dims
+#' @examples
+#' net_times(irps_wwi)
+#' @export
+net_times <- function(.data) UseMethod("net_times")
+
+#' @export
+net_times.default <- function(.data){
+  net_times(as_igraph(.data))
 }
+
+#' @export
+net_times.igraph <- function(.data){
+  # A network that records no moment records itself at one.
+  moments <- .time_moments(.data)
+  if(is.null(moments)) 1L else length(moments)
+}
+
+#' @export
+net_times.stocnet <- net_times.igraph
 
 #' @rdname measure_dims
 #' @examples
