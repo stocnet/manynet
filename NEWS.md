@@ -170,7 +170,17 @@
   permuting a 17x17 weighted matrix is now around 500 times faster
 - Added `to_multilevel.stocnet()` to pass through an unaltered, multimodal network
 - Added `net_modes.default()` for a matrix, edgelist, or `network` object
-- Fixed `to_time()` erroring on timestamped ties, e.g. `to_time(ison_fraternity, 3)`
+- Consolidated how time is recorded, documented in the "Time" section
+  - how frequently/universally moments are *observed* declared in `info$observation` ("panel" or "event")
+  - time is *represented* as points (`time` column) or intervals (`begin`/`end` columns)
+  - how moments *stack* is declared in `info$update` ("replace" or "increment")
+  - `time` is now the moment column in every class; `wave` is renamed to it on
+    coercion, as the SIENA path already did, and `panel` is now only an alias
+- Improved `to_time()` to return the network as it stood at a moment, however recorded
+  - Fixed erroring on timestamped ties
+  - Added `to_time.stocnet()` to avoid loss of `info` and `changes`
+  - "cross-sectional" layers are now carried into every moment
+  - Note that `to_time()` with no `time` now errors, suggesting `to_times()` instead
 - Updated strong connectivity example to print only the largest
   component to reduce CRAN's example timing
 

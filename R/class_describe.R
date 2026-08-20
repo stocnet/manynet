@@ -73,9 +73,9 @@ describe_ties <- function(.data){
 #' @export
 describe_changes <- function(.data){
   if(is_longitudinal(.data)){
-    waves <- tie_attribute(.data, "wave")
-    if(is.null(waves)) waves <- as_changelist(.data)$time
-    paste(" over", max(waves), "waves")
+    # The count of the waves, and not the last of them, since a panel may
+    # number its waves by the year or the week it observed them in.
+    paste(" over", net_waves(.data), "waves")
   } else if (is_dynamic(.data)){
     if("time" %in% net_tie_attributes(.data)){
       paste(" from", min(tie_attribute(.data, "time"), na.rm = TRUE), 

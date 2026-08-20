@@ -16,11 +16,11 @@
 #'   - `to_giant()` scopes a network into one including only the main component
 #'   and no smaller components or isolates.
 #'   It is a wrapper, such that `to_giant(.data)` is `to_component(.data, 1)`.
-#'   - `to_time()` scopes a longitudinal network to the network as it stood at a given wave or time point.
-#'   `to_wave()` is an alias, using the wave-based vocabulary of `net_waves()` and `to_waves()`.
-#'   For interval (spell) networks with tie `begin`/`end` lifespans, `to_time()`
-#'   returns the ties active at that moment, or -- when `time` is omitted -- a
-#'   list of slices, one per change point (each tie beginning or end).
+#'   - `to_time()` scopes a network to the network as it stood at a given
+#'   moment, in whichever of the ways set out in the Time section it records
+#'   time. `to_wave()` is an alias, using the wave-based vocabulary of
+#'   `net_waves()` and `to_waves()`. For one network per moment, see
+#'   [to_times()].
 #'   - `to_subgraph()` scopes a network into a subgraph by filtering on some node-related logical statement.
 #'   - `to_blockmodel()` reduces a network to the ties between the blocks of a
 #'   given partition membership vector.
@@ -105,32 +105,55 @@ to_ego.stocnet <- function(.data, node, max_dist = 1, min_dist = 0,
 }
 
 #' @rdname modif_scope
-#' @param time A time point or wave at which to present the network.
-#'   For an interval (spell) network that records tie `begin`/`end` lifespans,
-#'   `time` may be omitted, in which case a list of slices is returned,
-#'   one per change point (each moment at which some tie begins or ends).
-#' @details
-#'   For interval (spell) networks, whose ties carry `begin`/`end` lifespans
-#'   (e.g. `irps_wwi`), `to_time()` scopes to the ties active at `time`, using
-#'   the half-open convention (`begin <= time < end`) shared with
-#'   `network::networkDynamic`. When `time` is omitted, one such slice is
-#'   returned for each distinct change point (every moment at which some tie
-#'   begins or ends), as a named list, so that the evolving network can be
-#'   iterated over or animated (e.g. with `autograph::grapht()`).
-#'   
-#'   Other longitudinal networks record the moment of each tie in a single
-#'   column: panel networks number their waves in a `wave` column, and
-#'   timestamped networks (e.g. `ison_fraternity`) date their ties in a `time`
-#'   column. `to_time()` scopes such a network to the ties recorded at `time`,
-#'   and drops that column, since a network scoped to one moment no longer
-#'   varies in time. A `time` beyond the last recorded reverts to the last.
+#' @param time A moment at which to present the network.
+#'   A moment beyond the last one the network records reverts to the last,
+#'   except in an interval network, which is defined between the moments it
+#'   records as well as at them.
+#' @section Time:
+#'   Two things about how a network records time are independent of each
+#'   other, and the network is scoped to a moment by both of them.
+#'
+#'   How a moment is *represented* can be read from the ties. A network either
+#'   stamps each tie with the point it was recorded at, in a 'time' column, or
+#'   states the interval each tie lasts over, in 'begin' and 'end' columns.
+#'
+#'   How a moment *relates to the one before it* cannot be read from the ties,
+#'   and the network declares it in `info$update`. Where this is "replace",
+#'   which it is by default, each moment re-states the ties, so the network at
+#'   a moment is the ties stamped with it. Where it is "increment", each row
+#'   is a change to a tie's value, so the network at a moment is every row up
+#'   to and including it, accumulated, and a tie that has accumulated to zero
+#'   is no longer a tie. An interval tie carries its own lifespan, so nothing
+#'   is declared about it: it is active at a moment where it began at or
+#'   before that moment and has not yet ended (`begin <= time < end`, the
+#'   half-open convention shared with `network::networkDynamic`, so a tie that
+#'   ends and one that begins at the same instant do not overlap). A tie with
+#'   no 'end' is right-censored, and active from its beginning onwards.
+#'
+#'   `info$observation` records a third thing, how densely the network is
+#'   observed: a "panel" of a few complete re-observations, or a stream of
+#'   many "event" records. This describes a network rather than scoping it.
+#'   The two go together without entailing each other: a panel re-observes
+#'   the whole network at each wave and so is usually "replace", and an event
+#'   stream is often "increment", but an event that states a value afresh is
+#'   "replace" too. `is_longitudinal()` marks the first, `is_dynamic()` the
+#'   second, and no network is both.
+#'
+#'   In every case the nodal changes recorded up to the moment are applied,
+#'   and a layer that states something holding throughout is carried into
+#'   whichever moment is asked for, since such a layer is a constant covariate
+#'   rather than an observation of that moment. A layer holds throughout where
+#'   the network declares it "cross-sectional", or where it records that layer
+#'   at a single moment while another layer spans several.
+#' @seealso [to_times()] for one network per moment, and [net_times()] for how
+#'   many moments there are to ask for.
 #' @examples
-#'   # A single snapshot of the ties active in a given year:
+#'   # The ties a panel observed in a given wave:
+#'   to_time(ison_monks, 2)
+#'   # The ties an interval network held in a given year:
 #'   to_time(irps_wwi, 1901)
-#'   # Or of the ties recorded in a given wave:
-#'   to_time(ison_fraternity, 3)
-#'   # Or one slice per change point (each tie beginning or end):
-#'   length(to_time(irps_wwi))
+#'   # The state an event network had accumulated to by a given day:
+#'   to_time(irps_nuclear, as.Date("2011-04-01"))
 #' @export
 to_time <- function(.data, time = NULL) UseMethod("to_time")
 
@@ -141,98 +164,128 @@ to_time.default <- function(.data, time = NULL){
 
 #' @export
 to_time.igraph <- function(.data, time = NULL){
-  out <- to_time(as_tidygraph(.data), time)
-  if(is.list(out) && !is_graph(out))
-    lapply(out, as_igraph) else as_igraph(out)
+  as_igraph(.to_time(as_tidygraph(.data), time))
 }
 
 #' @export
 to_time.tbl_graph <- function(.data, time = NULL){
-  # Interval/spell networks (begin/end tie lifespans) are handled first: with
-  # `time` given, scope to the ties active then; with `time` omitted, return
-  # one slice per change point. This precedes the wave-count guard below, which
-  # is meaningless for spell networks and would error on a missing `time`.
-  if(is_dynamic(.data) &&
-     all(c("begin", "end") %in% net_tie_attributes(.data))){
-    return(.to_time_spell(.data, time))
-  }
-  if(is.null(time))
-    snet_abort("Please supply a {.arg time} (wave or time point) to scope to.")
-  # Panel networks number their ties by `wave`, and run from 1 to the wave
-  # count. Other longitudinal networks stamp each tie with the `time` at which
-  # it is observed, and these stamps need not be a count from 1 (they may be
-  # years, for example), so the last of them bounds `time` instead.
-  stamp <- if("wave" %in% net_tie_attributes(.data)) "wave" else
-    if("time" %in% net_tie_attributes(.data)) "time" else NA_character_
-  last <- if(identical(stamp, "time"))
-    max(stats::na.omit(tie_attribute(.data, "time"))) else .net_waves(.data)
-  if(time > last){
-    snet_info("Sorry, there are not that many waves in this dataset.",
-              "Reverting to the maximum wave:", last)
-    time <- last
-  }
-  if(is_longitudinal(.data) | is_dynamic(.data) | is_changing(.data)){
-    out <- .data
-    if(is_changing(out)){
-      if(any(time >= as_changelist(.data)$time)){
-        out <- apply_changes(out, time)
-      } else {
-        igraph::graph_attr(out, "changes") <- NULL
-      } 
-      if("active" %in% net_node_attributes(out)){
-        out <- out |> 
-          filter_nodes(active) |> 
-          select_nodes(-active)
-      }
-    }
-    # `at` holds the moment separately, because a tie attribute of the same
-    # name as `time` would mask the argument inside filter_ties()' data mask
-    at <- time
-    if(identical(stamp, "wave")){
-      out <- out |>
-        # trim ties
-        filter_ties(wave == at) |>
-        select_ties(-wave)
-    } else if(identical(stamp, "time")){
-      out <- out |>
-        # trim ties
-        filter_ties(time == at) |>
-        select_ties(-time)
-    }
-    # the nodes and the ties are dropped by two different criteria, so each
-    # is recorded on its own rather than summed into one figure
-    out |>
-      .record_exclusion(.data, paste("not present at time", time), "nodes") |>
-      .record_exclusion(.data, paste("not tied at time", time), "ties")
-  } else {
-    .data
-  }
+  .to_time(.data, time)
+}
+
+#' @export
+to_time.stocnet <- function(.data, time = NULL){
+  # A stocnet holds what it knows about itself alongside its ties, so it is
+  # scoped in place rather than routed through another class and back, which
+  # is what would otherwise drop its info, its changes, and its missings.
+  out <- .to_time(.data, time)
+  if(is.null(out$missings) || !"time" %in% names(out$missings)) return(out)
+  # The missings list the moments they were missing from the same way the ties
+  # list the moments they were observed at, so they are scoped the same way.
+  out$missings <- out$missings[out$missings$time == time, , drop = FALSE]
+  # A component that holds nothing is NULL rather than an empty table, as it
+  # is everywhere else a stocnet is built.
+  if(!nrow(out$missings)) out$missings <- NULL else out$missings$time <- NULL
+  out
 }
 
 #' @rdname modif_scope
 #' @export
 to_wave <- to_time
 
-# Scopes an interval (spell) network -- one whose ties carry `begin`/`end`
-# lifespans -- to the ties active at a moment `t` (begin <= t < end, the
-# half-open convention that `network::networkDynamic` uses, so a tie that ends
-# and one that begins at the same instant do not overlap). A tie with a missing
-# `end` is treated as right-censored (active from its `begin` onwards).
-# With `time` supplied, the single such snapshot is returned; with `time` NULL,
-# one snapshot per change point (each distinct tie `begin` or `end`) is returned
-# as a named list, ordered in time.
-.to_time_spell <- function(.data, time = NULL){
-  begin <- end <- NULL # bound within filter_ties()' tie data mask
-  active_at <- function(t)
-    filter_ties(.data, begin <= t & (is.na(end) | end > t)) |>
-      .record_exclusion(.data, paste("not active at", t), "ties")
-  if(!is.null(time)) return(active_at(time))
-  moments <- sort(unique(stats::na.omit(c(tie_attribute(.data, "begin"),
-                                          tie_attribute(.data, "end")))))
-  out <- lapply(moments, active_at)
-  names(out) <- as.character(moments)
-  if(length(out) == 1) out[[1]] else out
+# The network as it stood at a moment, whichever way it records time.
+# The representation is tested first, since an interval tie carries its own
+# lifespan and so says nothing about how it relates to the moment before it.
+.to_time <- function(.data, time = NULL){
+  if(is.null(time))
+    snet_abort(paste("Please supply a {.arg time} to scope to,",
+                     "or use {.fn to_times} for one network per moment."))
+  rule <- .time_rule(.data)
+  if(rule == "none") return(.data)
+  out <- .apply_changes_at(.data, time)
+  at <- .clamp_time(.data, time, rule)
+  out <- switch(rule,
+                interval = .active_at(out, at),
+                increment = .slice_at(out, .stamp_of(out), at),
+                replace = .stamped_at(out, at))
+  # the nodes and the ties are dropped by two different criteria, so each
+  # is recorded on its own rather than summed into one figure
+  out |>
+    .record_exclusion(.data, paste("not present at time", time), "nodes") |>
+    .record_exclusion(.data, paste("not tied at time", time), "ties")
 }
+
+# The nodes as they stood at a moment: the changes recorded up to then applied,
+# the changelist dropped, and the nodes that are not in the network at that
+# moment taken out with the 'active' column that said so.
+.apply_changes_at <- function(.data, time){
+  if(!is_changing(.data)) return(.data)
+  out <- .apply_changes_upto(.data, as_changelist(.data), time)
+  if("active" %in% net_node_attributes(out))
+    out <- out |> filter_nodes(active) |> select_nodes(-active)
+  out
+}
+
+# A moment beyond the last one a network records is the last one it records,
+# for the ways of recording time whose moments are the observations themselves.
+# An interval network is defined between its change points as well as at them,
+# so it is not clamped: a tie can be active at a moment none begins or ends at.
+.clamp_time <- function(.data, time, rule){
+  if(rule == "interval") return(time)
+  moments <- .time_moments(.data, changes = FALSE)
+  if(is.null(moments)) return(time)
+  last <- moments[length(moments)]
+  if(!isTRUE(time > last)) return(time)
+  snet_info("Sorry, there are not that many moments in this dataset.",
+            "Reverting to the last:", last)
+  last
+}
+
+# The column a network stamps its moments in.
+.stamp_of <- function(.data){
+  intersect(c("time", "wave", "panel"), net_tie_attributes(.data))[1]
+}
+
+# A network that re-states its ties at each moment holds, at a moment, the ties
+# stamped with it. The stamp goes with them, since a network scoped to one
+# moment no longer varies in time. A layer that states something holding
+# throughout is carried in whichever moment is asked for.
+.stamped_at <- function(.data, at){
+  stamp <- .stamp_of(.data)
+  if(is.na(stamp)) return(.data)
+  invariant <- .invariant_layers(.data)
+  layer <- intersect(c("layer", "type"), net_tie_attributes(.data))[1]
+  keep <- .bare_time(tie_attribute(.data, stamp)) == at
+  if(length(invariant) && !is.na(layer))
+    keep <- keep | as.character(tie_attribute(.data, layer)) %in% invariant
+  .keep_ties_of(.data, which(keep)) |>
+    select_ties(-dplyr::all_of(stamp))
+}
+
+# A network whose ties carry the interval each lasts over holds, at a moment,
+# the ties active then: begun by then and not yet ended. This is the half-open
+# convention (begin <= time < end) that `network::networkDynamic` uses, so a
+# tie that ends and one that begins at the same instant do not overlap. A tie
+# with no end is right-censored, and active from its beginning onwards.
+.active_at <- function(.data, at){
+  atts <- net_tie_attributes(.data)
+  begin <- .bare_time(tie_attribute(.data,
+                                    intersect(c("begin", "beg", "start"), atts)[1]))
+  end <- if("end" %in% atts) .bare_time(tie_attribute(.data, "end")) else
+    rep(NA, length(begin))
+  .keep_ties_of(.data, which(begin <= at & (is.na(end) | end > at)))
+}
+
+# Ties are kept by position, so that the moment being matched on is never
+# looked up inside `filter_ties()`, whose data mask a tie attribute of the
+# same name would otherwise mask.
+.keep_ties_of <- function(.data, kept){
+  if(inherits(.data, "stocnet")) return(keep_ties(.data, kept))
+  # The vector is built before the call, since `filter_ties()` evaluates its
+  # condition in a data mask where '.data' is the rlang pronoun instead.
+  keep <- seq_len(as.numeric(net_ties(.data))) %in% kept
+  filter_ties(.data, keep)
+}
+
 
 #' @rdname modif_scope
 #' @param component Which component to retain.
@@ -347,7 +400,9 @@ to_component.matrix <- function(.data, component = 1,
 #' @export
 to_giant <- function(.data, connectivity = c("weak", "strong")) {
   out <- to_component(.data, component = 1, connectivity = connectivity)
-  if(inherits(out, "tbl_graph")) {
+  # A matrix or an edgelist has nowhere to hold a name; every other class
+  # names the component the giant one rather than the first one.
+  if(inherits(out, c("tbl_graph", "stocnet", "network"))) {
     qual <- .connectivity_word(.data, connectivity)
     prefix <- paste0("Giant ", if(qual == "") "" else paste0(qual, " "),
                      "component of")

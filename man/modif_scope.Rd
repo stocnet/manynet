@@ -50,10 +50,10 @@ and 2 excludes ego's direct alters.}
 “in” on incoming ties, and "all" on either/the sum of the two.
 By default "all".}
 
-\item{time}{A time point or wave at which to present the network.
-For an interval (spell) network that records tie \code{begin}/\code{end} lifespans,
-\code{time} may be omitted, in which case a list of slices is returned,
-one per change point (each moment at which some tie begins or ends).}
+\item{time}{A moment at which to present the network.
+A moment beyond the last one the network records reverts to the last,
+except in an interval network, which is defined between the moments it
+records as well as at them.}
 
 \item{component}{Which component to retain.
 By default 1, i.e. the largest (giant) component,
@@ -101,11 +101,11 @@ which returns a list of all of them, largest first.
 \item \code{to_giant()} scopes a network into one including only the main component
 and no smaller components or isolates.
 It is a wrapper, such that \code{to_giant(.data)} is \code{to_component(.data, 1)}.
-\item \code{to_time()} scopes a longitudinal network to the network as it stood at a given wave or time point.
-\code{to_wave()} is an alias, using the wave-based vocabulary of \code{net_waves()} and \code{to_waves()}.
-For interval (spell) networks with tie \code{begin}/\code{end} lifespans, \code{to_time()}
-returns the ties active at that moment, or -- when \code{time} is omitted -- a
-list of slices, one per change point (each tie beginning or end).
+\item \code{to_time()} scopes a network to the network as it stood at a given
+moment, in whichever of the ways set out in the Time section it records
+time. \code{to_wave()} is an alias, using the wave-based vocabulary of
+\code{net_waves()} and \code{to_waves()}. For one network per moment, see
+\code{\link[=to_times]{to_times()}}.
 \item \code{to_subgraph()} scopes a network into a subgraph by filtering on some node-related logical statement.
 \item \code{to_blockmodel()} reduces a network to the ties between the blocks of a
 given partition membership vector.
@@ -123,22 +123,46 @@ to_egos                *       *      *      *       *       *         *
 to_subgraph            *       *      *      *       *       *         *
 to_subgraphs                   *      *              *       *         *
 }\if{html}{\out{</div>}}
-
-For interval (spell) networks, whose ties carry \code{begin}/\code{end} lifespans
-(e.g. \code{irps_wwi}), \code{to_time()} scopes to the ties active at \code{time}, using
-the half-open convention (\verb{begin <= time < end}) shared with
-\code{network::networkDynamic}. When \code{time} is omitted, one such slice is
-returned for each distinct change point (every moment at which some tie
-begins or ends), as a named list, so that the evolving network can be
-iterated over or animated (e.g. with \code{autograph::grapht()}).
-
-Other longitudinal networks record the moment of each tie in a single
-column: panel networks number their waves in a \code{wave} column, and
-timestamped networks (e.g. \code{ison_fraternity}) date their ties in a \code{time}
-column. \code{to_time()} scopes such a network to the ties recorded at \code{time},
-and drops that column, since a network scoped to one moment no longer
-varies in time. A \code{time} beyond the last recorded reverts to the last.
 }
+\section{Time}{
+
+Two things about how a network records time are independent of each
+other, and the network is scoped to a moment by both of them.
+
+How a moment is \emph{represented} can be read from the ties. A network either
+stamps each tie with the point it was recorded at, in a 'time' column, or
+states the interval each tie lasts over, in 'begin' and 'end' columns.
+
+How a moment \emph{relates to the one before it} cannot be read from the ties,
+and the network declares it in \code{info$update}. Where this is "replace",
+which it is by default, each moment re-states the ties, so the network at
+a moment is the ties stamped with it. Where it is "increment", each row
+is a change to a tie's value, so the network at a moment is every row up
+to and including it, accumulated, and a tie that has accumulated to zero
+is no longer a tie. An interval tie carries its own lifespan, so nothing
+is declared about it: it is active at a moment where it began at or
+before that moment and has not yet ended (\verb{begin <= time < end}, the
+half-open convention shared with \code{network::networkDynamic}, so a tie that
+ends and one that begins at the same instant do not overlap). A tie with
+no 'end' is right-censored, and active from its beginning onwards.
+
+\code{info$observation} records a third thing, how densely the network is
+observed: a "panel" of a few complete re-observations, or a stream of
+many "event" records. This describes a network rather than scoping it.
+The two go together without entailing each other: a panel re-observes
+the whole network at each wave and so is usually "replace", and an event
+stream is often "increment", but an event that states a value afresh is
+"replace" too. \code{is_longitudinal()} marks the first, \code{is_dynamic()} the
+second, and no network is both.
+
+In every case the nodal changes recorded up to the moment are applied,
+and a layer that states something holding throughout is carried into
+whichever moment is asked for, since such a layer is a constant covariate
+rather than an observation of that moment. A layer holds throughout where
+the network declares it "cross-sectional", or where it records that layer
+at a single moment while another layer spans several.
+}
+
 \section{\code{to_blockmodel()}}{
 
 Reduced graphs provide summary representations of network structures
@@ -152,17 +176,20 @@ in \code{{netrics}}.
 }
 
 \examples{
-  # A single snapshot of the ties active in a given year:
+  # The ties a panel observed in a given wave:
+  to_time(ison_monks, 2)
+  # The ties an interval network held in a given year:
   to_time(irps_wwi, 1901)
-  # Or of the ties recorded in a given wave:
-  to_time(ison_fraternity, 3)
-  # Or one slice per change point (each tie beginning or end):
-  length(to_time(irps_wwi))
+  # The state an event network had accumulated to by a given day:
+  to_time(irps_nuclear, as.Date("2011-04-01"))
   to_component(fict_greys, 2)
   to_component(fict_greys, "Miranda Bailey")
   to_giant(fict_greys)
 }
 \seealso{
+\code{\link[=to_times]{to_times()}} for one network per moment, and \code{\link[=net_times]{net_times()}} for how
+many moments there are to ask for.
+
 Other modifications:
 \code{\link{modif_correlation}},
 \code{\link{modif_direction}},

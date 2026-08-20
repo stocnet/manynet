@@ -70,9 +70,40 @@ test_that("describe_ties reports per-layer counts for multiplex networks", {
   expect_no_match(describe_ties(fict_marvel), "1241")
 })
 
-test_that("net_waves works", {
+test_that("net_waves counts the waves of a panel, however it stamps them", {
   expect_equal(net_waves(ison_monks), 3)
   expect_equal(net_waves(ison_karateka), 1)
+  # The waves come from the ties, so a change recorded after the last wave
+  # states what became of a node without adding a wave to observe it in.
+  expect_equal(net_waves(fict_potter), 6)
+  # A panel that dates its waves in a 'time' column is still a panel
+  expect_equal(net_waves(ison_tailorshop), 2)
+  expect_equal(net_waves(ison_classmates), 4)
+  # ison_fraternity records no moment 10, so it holds 15 waves and not 16
+  expect_equal(net_waves(ison_fraternity), 15)
+  # A dynamic network is not a panel, and observes itself once
+  expect_equal(net_waves(irps_nuclear), 1)
+  expect_equal(net_waves(irps_wwi), 1)
+})
+
+test_that("net_times counts the moments a network records, in any form", {
+  temporal <- list(fict_potter, fict_starwars, ison_monks, ison_tailorshop,
+                   ison_classmates, ison_fraternity, irps_nuclear, irps_wwi,
+                   ison_karateka)
+  # what `to_times()` returns one of is what `net_times()` counts
+  for(x in temporal) expect_equal(net_times(x), length(to_times(x)))
+  expect_equal(net_times(ison_tailorshop), 2)
+  expect_equal(net_times(irps_nuclear),
+               length(unique(tie_attribute(irps_nuclear, "time"))))
+  # an interval network changes at every tie beginning and ending
+  expect_equal(net_times(irps_wwi),
+               length(unique(c(tie_attribute(irps_wwi, "begin"),
+                               tie_attribute(irps_wwi, "end")))))
+  # a network that records no moment records itself at one
+  expect_equal(net_times(ison_karateka), 1)
+  # nodal changes are moments too, which is where these two part company
+  expect_equal(net_times(fict_potter), 7)
+  expect_equal(net_waves(fict_potter), 6)
 })
 
 test_that("net_node_attributes works", {

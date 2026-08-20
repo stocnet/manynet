@@ -113,8 +113,9 @@ changes_ops <- list(
   arrange_changes = function(x) arrange_changes(x, time),
   mutate_changes  = function(x) mutate_changes(x, tst = 1),
   delete_changes  = function(x) delete_changes(x),
-  apply_changes   = function(x) apply_changes(x, time = 2),
-  gather_changes  = function(x) gather_changes(x, time = 2)
+  # `apply_changes()` and `gather_changes()` are deprecated in favour of
+  # `to_time()`, swept over by the to_* tests, and `as_changelist(time =)`.
+  as_changelist   = function(x) as_changelist(x, time = 2)
 )
 
 changes_classes <- list(tidygraph = fict_starwars,

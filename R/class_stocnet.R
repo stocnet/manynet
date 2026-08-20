@@ -69,7 +69,23 @@
 #'   There are some reserved names for these elements too:
 #'   - 'sender' should be a character string naming the type of node that sends ties in this layer.
 #'   - 'recipient' should be a character string naming the type of node that receives ties in this layer.
-#'   - 'update' should be a character string indicating whether layer changes are by "increment" or "replace".
+#'   - 'observation' should be a character string naming how the network was
+#'   observed: "cross-sectional" for a single observation, "panel" for a few
+#'   complete re-observations, "event" for a stream of many records, and
+#'   "egocentric" or "cognitive" for the two designs that ask each respondent
+#'   about a network of their own. Where the layers were observed differently,
+#'   this can be a layer-named character vector.
+#'   A layer named "cross-sectional" in an otherwise longitudinal or dynamic
+#'   network states something that holds throughout, a constant dyadic
+#'   covariate, and is carried into every moment the network is scoped to.
+#'   - 'update' should be a character string indicating how each record of a
+#'   tie relates to the record before it: "replace", where each states the
+#'   tie's value afresh, or "increment", where each adds to it.
+#'   Where the layers are updated differently, this can be a layer-named
+#'   character vector.
+#'   This says nothing about a tie recorded as an interval, in 'begin' and
+#'   'end' columns, since such a tie carries its own lifespan.
+#'   See the Time section of [to_time()] for how the two are scoped.
 #'   
 #' @section Nodes:
 #'   There are several reserved names for the columns of the nodes component of a stocnet object.
@@ -97,6 +113,10 @@
 #'   so it is carried forward until another change states otherwise.
 #'   A node that does not report at one wave and reports again at the next
 #'   therefore holds two changes of the 'na' variable, one each way.
+#'   Unlike the ties, then, changes are always recorded at a moment and always
+#'   carried forward: an interval over which a nodal variable holds is stated
+#'   as two changes, one at each end, and there is no 'update' to declare.
+#'   [as_changelist()] takes a `time` and returns the changes in force at it.
 #'
 #'   There is one reserved name for a further column.
 #'   - 'layer' should be a character vector naming the layer a change applies to,
@@ -116,13 +136,26 @@
 #'   not the tie itself, which is still present in the network.
 #'   For individual missing ties beyond those implied by inactive or non-responsive nodes,
 #'   please add them to the missings component as an edgelist.
-#'   - 'time' should be a character or date vector of the time at which each tie is active in a longitudinal network.
+#'   - 'time' should be a numeric, character, or date vector of the moment at
+#'   which each tie was recorded.
+#'   - 'begin' and 'end' should instead give the interval over which each tie
+#'   lasts, where the network records that rather than a moment.
+#'   - 'increment' and 'replace' should give the change each record makes to a
+#'   tie's value, where the network records a stream of such changes.
+#'   These are renamed to 'weight' on coercion, and what they said is kept in
+#'   `info$update`.
+#'
+#'   How a network records time in its ties, and what each of these columns
+#'   therefore means, is set out in the Time section of [to_time()].
 #' @section Globals:
 #'   There are several required names for the columns of the globals component of a stocnet object (if one is included).
 #'   - 'var' must be a string vector naming the global variable
-#'   - 'value' must be the new value that should be applied at that change (or incremented, as appropriate).
+#'   - 'value' must be the value the variable takes from that moment on.
 #'   There may be an additional column:
-#'   - 'time' should be a character or date vector of the time at which each global attribute is updated.
+#'   - 'time' should be a numeric, character, or date vector of the moment at
+#'   which each global attribute is updated.
+#'   Globals are carried forward the way changes are: a value holds from the
+#'   moment it is recorded at until another value states otherwise.
 #' @section Missings:
 #'   The missings component lists the ties the network could have observed and
 #'   did not, one row each, where these are not already implied by an inactive

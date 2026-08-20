@@ -93,6 +93,57 @@ test_that("to_wave is an alias of to_time",{
                c(net_nodes(to_time(fict_potter, 3))))
 })
 
+test_that("to_time returns the network as it stood, however it records time", {
+  # A panel that numbers its waves: the ties stamped with the wave asked for
+  expect_equal(as.numeric(net_ties(to_time(ison_monks, 2))),
+               sum(tie_attribute(ison_monks, "time") == 2) +
+                 # the wave-1-only layers state something holding throughout,
+                 # so they are carried into every wave
+                 sum(tie_attribute(ison_monks, "time") == 1 &
+                       tie_attribute(ison_monks, "layer") != "like"))
+  expect_false("time" %in% net_tie_attributes(to_time(ison_monks, 2)))
+  # A panel that dates its waves, in a stocnet: the ties observed then, and
+  # not those observed by then
+  w2 <- to_time(ison_tailorshop, 2)
+  expect_s3_class(w2, "stocnet")
+  expect_equal(as.numeric(net_ties(w2)), sum(ison_tailorshop$ties$time == 2))
+  expect_false("time" %in% net_tie_attributes(w2))
+  # A dynamic network that increments its ties: accumulated up to the moment,
+  # which is what to_slices() returns for the same moment
+  d <- sort(unique(tie_attribute(irps_nuclear, "time")))[20]
+  expect_equal(as.numeric(net_ties(to_time(irps_nuclear, d))),
+               as.numeric(net_ties(to_slices(irps_nuclear, slice = d))))
+  # An interval network: the ties active then, on the half-open convention
+  expect_equal(as.numeric(net_ties(to_time(irps_wwi, 1901))),
+               sum(tie_attribute(irps_wwi, "begin") <= 1901 &
+                     tie_attribute(irps_wwi, "end") > 1901))
+  # A network that records no time is returned unchanged
+  expect_equal(as_matrix(to_time(ison_karateka, 1)), as_matrix(ison_karateka))
+})
+
+test_that("to_time carries a time-invariant layer into every moment", {
+  # 'primary' is declared cross-sectional, and is recorded at wave 1 only,
+  # so it states something that holds at every wave
+  out <- to_time(ison_classmates, 2)
+  expect_equal(as.numeric(net_ties(out)),
+               sum(ison_classmates$ties$time == 2) +
+                 sum(ison_classmates$ties$layer == "primary"))
+  expect_equal(layer_names(out), layer_names(ison_classmates))
+  expect_setequal(unique(out$ties$layer), c("friends", "primary"))
+})
+
+test_that("to_time reverts a moment past the last, except for intervals", {
+  expect_equal(as_matrix(suppressMessages(to_time(ison_monks, 99))),
+               as_matrix(to_time(ison_monks, 3)))
+  # irps_wwi is defined after its last change point, where no tie is active
+  expect_equal(as.numeric(net_ties(to_time(irps_wwi, 3000))), 0)
+})
+
+test_that("to_time without a time points at to_times", {
+  expect_error(to_time(irps_wwi), "to_times")
+  expect_error(to_time(ison_monks), "to_times")
+})
+
 test_that("matrix projected correctly by rows",{
   expect_false(is_weighted(ison_southern_women))
   expect_true(is_weighted(to_mode1(ison_southern_women)))
