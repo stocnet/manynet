@@ -52,6 +52,10 @@ describe_nodes <- function(.data){
 describe_ties <- function(.data){
   nt <- net_ties(.data)
   tie_name <- ifelse(is_directed(.data), "arcs", "ties")
+  # Parallel ties are reported as a count and not as a property of the network,
+  # since a network holds them without every tie in it running parallel.
+  npar <- sum(tie_is_parallel(.data))
+  parallel <- if(npar) paste0(" (", npar, " parallel)") else ""
   if(!is.null(layer_names(.data))){
     # Where a network records the directedness of each layer, an undirected
     # layer of an otherwise directed network holds ties rather than arcs.
@@ -60,13 +64,13 @@ describe_ties <- function(.data){
       ifelse(directed[layer_names(.data)], "arcs", "ties") else tie_name
     parts <- paste0(layer_ties(.data), " ", singularize(layer_names(.data)),
                     " ", layer_name)
-    return(phrase(parts))
+    return(paste0(phrase(parts), parallel))
   } else if(!is.null(tie_attribute(.data, "type"))){
     tab <- table(tie_attribute(.data, "type"))
     parts <- paste0(tab, " ", singularize(names(tab)))
-    return(paste0(phrase(parts), " ", tie_name))
+    return(paste0(phrase(parts), " ", tie_name, parallel))
   }
-  paste(nt, tie_name)
+  paste0(nt, " ", tie_name, parallel)
 }
 
 #' @rdname class_describe

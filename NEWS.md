@@ -42,6 +42,7 @@
 - Improved description
   - Fixed pluralize helper to except non-plural words like "business"
   - Improved `describe_ties()` to describe each layer by its own directedness
+  - Improved `describe_ties()` to report the parallel count in parentheses
   - Added `describe_transformations()` to include transformations in print
 - Improved measure printing methods to use `measure`, `range`, and `normalization` 
   attributes to print a concise, subtle header description in sentence case
