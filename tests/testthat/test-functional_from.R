@@ -23,6 +23,7 @@ pair_fixture_makers <- list(
   # method for the stocnet class
   from_layers    = function() as_tidygraph(ison_florentine),
   from_waves     = function() fict_potter,
+  from_times     = function() ison_tailorshop,
   from_slices    = function() mutate_ties(ison_adolescents,
                                           time = seq_len(10) %% 3 + 1),
   from_subgraphs = function() add_node_attribute(ison_adolescents, "group",

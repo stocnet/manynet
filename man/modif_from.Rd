@@ -6,6 +6,7 @@
 \alias{from_egos}
 \alias{from_waves}
 \alias{from_slices}
+\alias{from_times}
 \alias{from_layers}
 \alias{from_ties}
 \title{Joining lists of networks, graphs, and matrices}
@@ -17,6 +18,8 @@ from_egos(netlist)
 from_waves(netlist)
 
 from_slices(netlist, remove.duplicates = FALSE)
+
+from_times(netlist)
 
 from_layers(..., layer_names)
 
@@ -48,6 +51,10 @@ Each reverses one of the \code{to_*s()} functions that splits a network apart.
 \itemize{
 \item \code{from_subgraphs()} modifies a list of subgraphs into a single tidygraph.
 \item \code{from_egos()} modifies a list of ego networks into a whole tidygraph
+\item \code{from_times()} modifies a list of the network at each moment, as
+\code{to_times()} returns, back into one network that records time.
+This is where new work on rejoining a network over time belongs;
+\code{from_waves()} and \code{from_slices()} are the older, form-specific spellings.
 \item \code{from_waves()} modifies a list of network waves into a longitudinal tidygraph.
 \item \code{from_slices()} modifies a list of time slices of a network into
 a dynamic tidygraph.
@@ -59,6 +66,13 @@ Where \code{to_layers()} splits a multiplex network into its layers,
 To combine the networks' tie values into a single value per dyad instead,
 use \code{to_flat()} on the result, or \code{join_ties()} for two networks.
 }
+}
+\details{
+\code{from_times()} rejoins what \code{\link[=to_times]{to_times()}} returns, stamping each network's
+ties with the moment it names before binding them, and so inverts it for
+a network that stamps its moments. Where the networks carry the interval
+each tie lasts over, the moment is already in those ties, so they are
+bound and deduplicated rather than stamped again.
 }
 \examples{
 ison_adolescents |>
@@ -77,6 +91,7 @@ ison_adolescents |>
   add_ties(c(1,2), list(time = 3, increment = -1)) |> 
   to_slices(slice = c(5,7)) |>
   from_slices()
+from_times(to_times(ison_tailorshop))
 marriage <- to_uniplex(ison_florentine, "marriage")
 business <- to_uniplex(ison_florentine, "business")
 from_layers(marriage = marriage, business = business)

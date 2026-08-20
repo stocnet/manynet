@@ -991,12 +991,23 @@ Networks are rarely static: friendships form and fade,
 democracy diffuses, characters die.
 `{manynet}` distinguishes three ways time can enter a network:
 
-- a `r gloss("longitudinal")` network is observed in discrete waves or panels,
-  recorded in a `wave` tie attribute — check with `is_longitudinal()`
-- a `r gloss("dynamic")` network has ties appearing and disappearing
-  in continuous time, e.g. with `begin`/`end` attributes — check with `is_dynamic()`
+- a `r gloss("longitudinal")` network is a panel, observed in a few discrete
+  waves, each of which re-states the ties. The moment each tie was observed at
+  is recorded in a `time` tie attribute (`wave` in the older classes) --
+  check with `is_longitudinal()`
+- a `r gloss("dynamic")` network records a stream of events rather than a set
+  of observations. Either each row increments a tie's value, in an `increment`
+  attribute, or each tie states the interval it lasts over, in `begin`/`end`
+  attributes -- check with `is_dynamic()`
 - a `r gloss("changing")` network is where one or more nodal attributes are 
   changing over time
+
+A network is longitudinal or dynamic, never both.
+Which one it is decides what "the network at a moment" means, and so what
+`to_time()` returns: the ties observed at that wave, the ties accumulated up
+to that event, or the ties active over that interval.
+`net_times()` counts the moments a network records, however it records them,
+and `to_times()` returns the network at each of them.
 
 ### Waves {#waves}
 
@@ -1103,25 +1114,25 @@ filter_changes(fict_starwars, node == "Anakin")
 ```
 
 To make the changes take effect,
-`apply_changes()` returns the network with all changes up to a given
-time applied to the node attributes
-(`gather_changes()` shows the same information as a table without applying it,
-and `to_time()` does the applying and tie-filtering in one step).
-**Apply the changes up to episode 3 and check what Anakin has become.**
+`to_time()` returns the network as it stood at a given time,
+with all the changes up to then applied to the node attributes
+(`as_changelist()` takes the same `time` and shows those changes
+as a table, without applying them).
+**Scope the network to episode 3 and check what Anakin has become.**
 
 ```{r applychanges, exercise = TRUE, purl=FALSE}
 
 ```
 
 ```{r applychanges-hint-1, purl=FALSE}
-# eps3 <- apply_changes(fict_starwars, time = 3)
+# eps3 <- to_time(fict_starwars, time = 3)
 # then inspect e.g. the faction attribute:
-# eps3 |> filter_nodes(name == "Anakin")
+# eps3 |> filter_nodes(label == "Anakin")
 ```
 
 ```{r applychanges-solution}
-eps3 <- apply_changes(fict_starwars, time = 3)
-eps3 |> filter_nodes(name == "Anakin")
+eps3 <- to_time(fict_starwars, time = 3)
+eps3 |> filter_nodes(label == "Anakin")
 ```
 
 Changes can also be _added_: `add_changes()` and `bind_changes()`
@@ -1143,10 +1154,11 @@ in the network, but that changes over time.
 ::: {.callout}
 <span class="callout-label">**In brief**:</span> Longitudinal networks store panel observations in a `wave`
 tie attribute and node changes in a changelog.
-`net_waves()` counts the waves,
-`to_time()` extracts the network at one time point,
-`to_waves()` splits it into a list of per-wave networks,
-and `filter_changes()`/`apply_changes()` inspect and apply
+`net_waves()` counts the waves and `net_times()` the moments of a network of
+any kind, `to_time()` extracts the network as it stood at one of them,
+`to_times()` returns the network at each of them,
+`to_waves()` is the panel-specific spelling of the same,
+and `filter_changes()`/`to_time()` inspect and apply
 the recorded node changes.
 :::
 
@@ -1484,8 +1496,9 @@ Along the way, you have learned to use these functions:
 | `to_uniplex(layer = )`, `layer_names()` | extract a layer from a multiplex network |
 | `to_layers()`, `from_layers()`, `to_flat(rule = )` | split a network into its layers, join networks as layers, or combine those layers into one relation |
 | `to_mode1()`, `to_mode2()`, `to_onemode()`, `to_twomode()`, `to_multilevel()` | move between modes |
-| `net_waves()`, `to_time()`/`to_wave()`, `to_waves()` | count and extract waves of a longitudinal network |
-| `filter_changes()`, `apply_changes()`, `add_changes()` | inspect and apply node changes over time |
+| `net_times()`, `to_time()`, `to_times()`, `from_times()` | count, extract, and rejoin the moments of a network of any kind |
+| `net_waves()`, `to_wave()`, `to_waves()`, `to_slices()` | the same, in the wave and slice vocabularies |
+| `filter_changes()`, `add_changes()`, `as_changelist()` | inspect and record node changes over time |
 | `is_labelled()`, `is_directed()`, `is_weighted()`, `is_signed()`, `is_multiplex()`, `is_twomode()`, `is_longitudinal()`, ... | check any of these properties |
 
 From here, you can continue with the tutorials on visualising networks

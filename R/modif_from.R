@@ -7,6 +7,10 @@
 #'
 #'   - `from_subgraphs()` modifies a list of subgraphs into a single tidygraph.
 #'   - `from_egos()` modifies a list of ego networks into a whole tidygraph
+#'   - `from_times()` modifies a list of the network at each moment, as
+#'   `to_times()` returns, back into one network that records time.
+#'   This is where new work on rejoining a network over time belongs;
+#'   `from_waves()` and `from_slices()` are the older, form-specific spellings.
 #'   - `from_waves()` modifies a list of network waves into a longitudinal tidygraph.
 #'   - `from_slices()` modifies a list of time slices of a network into
 #'   a dynamic tidygraph.
@@ -120,6 +124,46 @@ from_slices <- function(netlist, remove.duplicates = FALSE) {
   } else {
     message("Only one slice is available, cannot be joined.")
   }
+}
+
+#' @rdname modif_from
+#' @details
+#'   `from_times()` rejoins what [to_times()] returns, stamping each network's
+#'   ties with the moment it names before binding them, and so inverts it for
+#'   a network that stamps its moments. Where the networks carry the interval
+#'   each tie lasts over, the moment is already in those ties, so they are
+#'   bound and deduplicated rather than stamped again.
+#' @examples
+#' from_times(to_times(ison_tailorshop))
+#' @export
+from_times <- function(netlist) {
+  if(!is.list(netlist) || !length(netlist))
+    snet_abort("Please declare a list of networks, as {.fn to_times} returns.")
+  intervals <- any(c("begin", "beg", "start") %in%
+                     net_tie_attributes(netlist[[1]]))
+  if(intervals) return(from_slices(netlist, remove.duplicates = TRUE))
+  moments <- names(netlist)
+  if(is.null(moments)) moments <- as.character(seq_along(netlist))
+  # The names are the moments as characters, and a moment counted or dated is
+  # not a character, so they are read back as what they were written from.
+  moments <- utils::type.convert(moments, as.is = TRUE)
+  stamped <- Map(function(net, at) mutate_ties(net, time = at),
+                 netlist, moments)
+  if(all(vapply(netlist, function(x) inherits(x, "stocnet"), logical(1))))
+    return(.rebind_stocnets(stamped))
+  .rebind_netlist(lapply(stamped, as_igraph))
+}
+
+# Rejoins a list of stocnets over the same nodes into one, binding the tie
+# tables and keeping what the first of them knows about the network, since
+# each was scoped from the same network and so knows the same things.
+.rebind_stocnets <- function(netlist){
+  out <- netlist[[1]]
+  out$ties <- dplyr::bind_rows(lapply(netlist, function(x) x$ties))
+  out$missings <- dplyr::bind_rows(lapply(netlist, function(x) x$missings))
+  if(!nrow(out$missings)) out$missings <- NULL
+  out$info$transformations <- NULL
+  out
 }
 
 #' @rdname modif_from
