@@ -805,3 +805,19 @@ na_to_mean <- function(.data) {
 }
 
 # nocov end
+
+#' @describeIn defunct Deprecated on 2026-08-20.
+#' @param .data A manynet-consistent network.
+#' @param time A moment to gather the changes in force at.
+#' @export
+gather_changes <- function(.data, time) {
+  .Deprecated("as_changelist", package = "manynet", old = "gather_changes")
+  as_changelist(.data, time = time)
+}
+
+#' @describeIn defunct Deprecated on 2026-08-20.
+#' @export
+apply_changes <- function(.data, time) {
+  .Deprecated("to_time", package = "manynet", old = "apply_changes")
+  .apply_changes_upto(.data, as_changelist(.data), time)
+}

@@ -75,10 +75,6 @@
 
 ## Manipulating
 
-- Renamed `to_no_isolates()` to `delete_isolates()`, specialising `delete_nodes()`
-- Renamed `to_no_missing()` to `delete_incomplete()` as a property of a node's record
-  - Fixed `delete_incomplete()` deleting initialised missings, 
-    e.g. `delete_incomplete(ison_classmates)`
 - Added element to `add_info()` to record network "transformations"
   - This implements section 4 of the GRAND reporting guidelines:
     - "symmetrization" (4.1)
@@ -89,6 +85,12 @@
     - "imputation" (4.6)
   - Each element accumulates rather than replaces, ordered by sequence
   - Each element names the method first and then consequeces in parentheses
+- Renamed `to_no_isolates()` to `delete_isolates()`, specialising `delete_nodes()`
+- Renamed `to_no_missing()` to `delete_incomplete()` as a property of a node's record
+  - Fixed e.g. `delete_incomplete(ison_classmates)` deleting initialised missings
+- Deprecated `apply_changes()` in favour of more general `to_time()`
+- Deprecated `gather_changes()` in favour of `as_changelist()`
+  - Added `time` argument that returns the changes in force at it
 
 ## Modifying
 

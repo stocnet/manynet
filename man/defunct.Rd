@@ -170,6 +170,8 @@
 \alias{node_by_triad}
 \alias{na_to_zero}
 \alias{na_to_mean}
+\alias{gather_changes}
+\alias{apply_changes}
 \title{Functions that have been renamed, superseded, moved, or are no longer working}
 \usage{
 pkg_data(pkg = "manynet")
@@ -507,6 +509,15 @@ node_by_triad(...)
 na_to_zero(.data)
 
 na_to_mean(.data)
+
+gather_changes(.data, time)
+
+apply_changes(.data, time)
+}
+\arguments{
+\item{.data}{A manynet-consistent network.}
+
+\item{time}{A moment to gather the changes in force at.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
@@ -854,6 +865,10 @@ wherever possible and update your scripts accordingly.
 \item \code{na_to_zero()}: Deprecated on 2026-08-18.
 
 \item \code{na_to_mean()}: Deprecated on 2026-08-18.
+
+\item \code{gather_changes()}: Deprecated on 2026-08-20.
+
+\item \code{apply_changes()}: Deprecated on 2026-08-20.
 
 }}
 \keyword{internal}
