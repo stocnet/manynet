@@ -3,12 +3,13 @@
 \docType{data}
 \name{fict_actually}
 \alias{fict_actually}
-\title{Two-mode network of Love Actually characters and their scene appearances (Robinson 2015)}
+\title{Multilevel network of Love Actually characters, their relationships, and
+their scene appearances (Robinson 2015)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Love actually interactions ------------------------------------------------
-#> # A labelled, multiplex, two-mode network of 20 characters and 76 scenes and 7
-#> romance ties, 162 appearance ties, 7 friendship ties, 10 professional ties, and
-#> 3 family ties
+#> # A labelled, multiplex, multilevel network of 20 characters and 76 scenes and
+#> 7 romance ties, 162 appearance ties, 7 friendship ties, 10 professional ties,
+#> and 3 family ties
 #> 
 #> -- Nodes
 #> # A tibble: 96 x 6
@@ -48,6 +49,10 @@ Added to this are multiplex, one-mode networks of character relationships,
 including "romantic", "family", "friendship", and "professional" ties.
 These were added by Korakot Janteerasakul from the following source:
 \url{https://en.wikipedia.org/wiki/Love_Actually#/media/File:Love_Actually_(2003)_Interconnections.svg}.
+
+Unlike \code{fict_marvel}, the layers here are not simply the levels: four of
+the five run within the characters, so the network is multiplex as well
+as multilevel, and \code{describe_network()} reports both.
 }
 \references{
 Robinson, David. 2015.

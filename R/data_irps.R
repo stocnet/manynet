@@ -75,6 +75,22 @@
 #'   "Conservative" (or right leaning), sourced from blog directories.
 #'   Some blogs were labelled manually, 
 #'   based on incoming and outgoing links and posts.
+#' @details
+#'   Adamic and Glance gathered the blog URLs from the eTalkingHead,
+#'   BlogCatalog, CampaignLine, and Blogarama directories, which the 'Source'
+#'   nodal attribute records. They retrieved a single front page for each blog
+#'   on 8 February 2005, added the blogs those pages cited 17 or more times,
+#'   and retrieved a front page for each of those on 22 February 2005.
+#'   Libertarian, independent, and moderate blogs were not gathered.
+#'   
+#'   A tie is any link from one blog's front page to another's, whether it
+#'   appeared in a post or in the blogroll in the sidebar, and the two are not
+#'   distinguished.
+#'   
+#'   Note that 65 of the 19090 arcs repeat an arc already in the network,
+#'   with nothing recorded to tell the two apart, so `tie_is_parallel()`
+#'   marks 130 ties and `as_matrix()` reports two rather than one in those
+#'   cells.
 #' @docType data
 #' @keywords datasets
 #' @name irps_blogs
@@ -102,6 +118,18 @@
 #'   and their claims about nuclear energy and German nuclear energy policy.
 #'   These claims were with respect to 54 concepts coded,
 #'   and could be supportive or critical, and could also be repeated.
+#' @details
+#'   Each tie is one claim by one speaker about one concept on one day, so the
+#'   network records a stream of events and not a panel.
+#'   The day is held in a 'time' column, and whether the claim was supportive
+#'   or critical in a 'weight' column of 1 or -1.
+#'   
+#'   A speaker may claim the same concept on more than one day, and 152 of the
+#'   speaker-concept pairs do, one of them 15 times. Such claims follow one
+#'   another rather than coexist, so they are repetitions and not parallel
+#'   ties.
+#'   Eight speaker-concept pairs make more than one claim on a single day,
+#'   which `tie_is_parallel()` marks, covering 16 of the 1164 ties.
 #' @docType data
 #' @keywords datasets
 #' @name irps_nuclear
