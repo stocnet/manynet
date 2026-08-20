@@ -13,16 +13,19 @@
 #'   - `to_components()` splits a network into its components,
 #'   ordered from the largest to the smallest.
 #'   Use `to_component()` to retain just one of them.
-#'   - `to_waves()` splits a network with some discrete observations over time
-#'   into a list of those observations.
-#'   - `to_slices()` splits a network with some continuous time variable at some
-#'   time slice(s).
+#'   - `to_times()` splits a network into the network as it stood at each
+#'   moment it records, however it records time.
+#'   This is where new work on splitting a network by time belongs;
+#'   `to_waves()` and `to_slices()` are the older, form-specific spellings.
+#'   - `to_waves()` splits a panel network into a list of its waves.
+#'   - `to_slices()` splits a network that increments its ties into the state
+#'   it had accumulated to at each of the given time slice(s).
 #' @details
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
 #'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("to_.*(components|subgraphs|egos|waves|slices|layers)"))
+#'   available_methods(collect_functions("to_.*(components|subgraphs|egos|waves|slices|times|layers)"))
 #'   ```
 #' @template param_data
 #' @template param_dir
@@ -452,8 +455,12 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
       # Where a node changes more than once by time t, the latest wins
       upd <- upd[!duplicated(upd$node, fromLast = TRUE), , drop = FALSE]
       old <- node_attribute(out, v)
-      new <- if(is.null(old)) rep(NA, net_nodes(out)) else
-        if(is.factor(old)) old else as.vector(old)
+      # A change may name a nodal variable the network does not yet carry,
+      # such as the reserved 'na' that marks a node as not having reported.
+      # A node the changelist says nothing about did report, so 'na' starts
+      # FALSE where every other new variable starts missing.
+      new <- if(is.null(old)) rep(if(v == "na") FALSE else NA, net_nodes(out))
+        else if(is.factor(old)) old else as.vector(old)
       new[upd$node] <- .match_attribute_type(upd$value, old)
       out <- add_node_attribute(out, v, new)
     }
@@ -517,6 +524,52 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
 }
 
 #' @rdname modif_split
+#' @param times The moments to return the network at.
+#'   By default `NULL`, in which case every moment the network records is
+#'   returned, as `net_times()` counts them.
+#' @details
+#'   `to_times()` returns the network as it stood at each moment it records,
+#'   whichever way it records time, by calling [to_time()] on each in turn.
+#'   `to_waves()` and `to_slices()` are the older, form-specific spellings:
+#'   `to_waves()` splits a panel by its waves, and `to_slices()` accumulates
+#'   an event network up to each of its moments.
+#'   Unlike them, `to_times()` always returns a list, named by the moments and
+#'   ordered by them, even where the network records only one, so that
+#'   `net_times(.data)` and `length(to_times(.data))` always agree.
+#' @examples
+#'   length(to_times(irps_wwi))
+#'   to_times(ison_tailorshop)
+#' @export
+to_times <- function(.data, times = NULL) UseMethod("to_times")
+
+#' @export
+to_times.default <- function(.data, times = NULL){
+  as_input(.data, to_times, times = times)
+}
+
+.to_times <- function(.data, times = NULL){
+  moments <- if(is.null(times)) .time_moments(.data) else times
+  # A network that records no moment records itself at one, and is returned
+  # as a list of that one, since the length of what this returns is what
+  # `net_times()` counts.
+  if(is.null(moments)) return(stats::setNames(list(.data), "1"))
+  out <- lapply(moments, function(t) to_time(.data, t))
+  names(out) <- as.character(moments)
+  out
+}
+
+#' @export
+to_times.tbl_graph <- .to_times
+
+#' @export
+to_times.stocnet <- .to_times
+
+#' @export
+to_times.igraph <- function(.data, times = NULL){
+  lapply(.to_times(as_tidygraph(.data), times), as_igraph)
+}
+
+#' @rdname modif_split
 #' @param attribute One or two attributes used to slice data.
 #' @param slice Character string or character list indicating the date(s)
 #'   or integer(s) range used to slice data (e.g slice = c(1:2, 3:4)).
@@ -538,6 +591,13 @@ to_slices.tbl_graph <- function(.data, attribute = "time", slice = NULL) {
   # Without the time attribute there is nothing to slice on, so the network
   # is returned unchanged rather than filtering on a non-existent variable.
   if(!attribute %in% net_tie_attributes(.data)) return(.data)
+  # A slice accumulates every tie up to its moment, which is what an event
+  # network wants and a panel does not: each wave of a panel re-states the
+  # ties, so accumulating them stacks one wave on the next.
+  if(identical(.time_rule(.data), "replace"))
+    snet_info("This network re-states its ties at each moment,",
+              "so its moments do not accumulate.",
+              "Consider {.fn to_times} or {.fn to_waves} instead.")
   incremented <- "increment" %in% net_tie_attributes(.data)
   updated <- "replace" %in% net_tie_attributes(.data)
   if(!is.null(slice))
@@ -550,24 +610,33 @@ to_slices.tbl_graph <- function(.data, attribute = "time", slice = NULL) {
   drop_zeroes <- function(x)
     if("weight" %in% net_tie_attributes(x)) filter_ties(x, weight != 0) else x
   if(length(moments)>1){
-    out <- lapply(moments, function(tm){
-      snap <- filter_ties(.data, !!as.name(attribute) <= tm)
-      if(incremented) snap <- summarise_ties(snap, sum(increment))
-      if(updated) snap <- summarise_ties(snap, dplyr::last(replace))
-      snap <- drop_zeroes(snap)
-      snap
-    })
+    out <- lapply(moments, function(tm) .slice_at(.data, attribute, tm))
     names(out) <- moments
     # a slice holds every tie up to its moment, so what it leaves out is what
     # came after it
     out <- .record_exclusions(out, .data, paste("after", moments), "ties")
   } else {
-    out <- filter_ties(.data, !!as.name(attribute) <= moments)
-    if(incremented) out <- summarise_ties(out, sum(increment))
-    if(updated) out <- summarise_ties(out, dplyr::last(replace))
-    out <- drop_zeroes(out)
+    out <- .slice_at(.data, attribute, moments)
     out <- .record_exclusion(out, .data, paste("after", moments), "ties")
   }
+  out
+}
+
+# The state a network's ties have accumulated to at a moment: every row up to
+# and including it, summed where each row increments a tie's value and carried
+# forward where each states it afresh. A tie that has accumulated to zero is
+# not a tie.
+# Summarising ties introduces a weight, but ties can only be dropped for having
+# summed to zero where such a weight exists. The question is whether the ties
+# carry a value at all, and not whether that value varies, so the attribute is
+# asked for directly rather than through `is_weighted()`.
+.slice_at <- function(.data, attribute, tm){
+  out <- filter_ties(.data, !!as.name(attribute) <= tm)
+  if("increment" %in% net_tie_attributes(.data))
+    out <- summarise_ties(out, sum(increment))
+  if("replace" %in% net_tie_attributes(.data))
+    out <- summarise_ties(out, dplyr::last(replace))
+  if("weight" %in% net_tie_attributes(out)) out <- filter_ties(out, weight != 0)
   out
 }
 

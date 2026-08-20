@@ -100,7 +100,10 @@ split_fixtures <- local({
                                                  rep(1:2, each = 4)),
                          args = list(attribute = "wave")),
     to_slices     = list(net = add_tie_attribute(ring, "time", 1:8),
-                         args = list(slice = c(3, 6)))
+                         args = list(slice = c(3, 6))),
+    to_times      = list(net = add_tie_attribute(ring, "time",
+                                                 rep(1:2, each = 4)),
+                         args = list())
   )
 })
 
@@ -109,7 +112,8 @@ split_fixtures <- local({
 # records no nodal attributes, so for these classes returning the network
 # unchanged (or an empty list) is correct rather than something to audit.
 split_class_holds_info <- function(fn, cl) {
-  !(cl == "matrix" && fn %in% c("to_subgraphs", "to_waves", "to_slices")) &&
+  !(cl == "matrix" && fn %in% c("to_subgraphs", "to_waves", "to_slices",
+                                "to_times")) &&
     !(cl == "edgelist" && fn == "to_subgraphs")
 }
 

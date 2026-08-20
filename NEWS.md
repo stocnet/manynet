@@ -181,6 +181,10 @@
   - Added `to_time.stocnet()` to avoid loss of `info` and `changes`
   - "cross-sectional" layers are now carried into every moment
   - Note that `to_time()` with no `time` now errors, suggesting `to_times()` instead
+- Added `to_times()` to return the network at each moment
+  - Always returns a named list, so `net_times()==length(to_times())`
+- Fixed `to_waves()` returning all ties of e.g. `ison_classmates`, in each wave
+- Improved `to_giant()` to name its result "Giant component of" for every class
 - Updated strong connectivity example to print only the largest
   component to reduce CRAN's example timing
 

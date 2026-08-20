@@ -103,7 +103,7 @@ test_that("to_waves returns a single network for a single wave", {
 test_that("to_waves splits changing longitudinal networks by their ties", {
   waves <- to_waves(fict_starwars)
   # Waves are the waves of the ties, not just those in which nodes change
-  expect_length(waves, length(unique(tie_attribute(fict_starwars, "wave"))))
+  expect_length(waves, net_waves(fict_starwars))
   expect_equal(sum(vapply(waves, net_ties, numeric(1))),
                as.numeric(net_ties(fict_starwars)))
   expect_false(any(vapply(waves, is_changing, logical(1))))
@@ -174,11 +174,11 @@ test_that("to_slices works on unweighted, unincremented networks", {
   expect_s3_class(from_slices(sl), "tbl_graph")
 })
 
-test_that("to_time slices an interval (begin/end) network at each change", {
-  # irps_wwi is a spell network: ties carry begin/end lifespans, not a `time`.
+test_that("to_times slices an interval (begin/end) network at each change", {
+  # irps_wwi is an interval network: ties carry begin/end lifespans.
   changes <- sort(unique(c(tie_attribute(irps_wwi, "begin"),
                            tie_attribute(irps_wwi, "end"))))
-  sl <- to_time(irps_wwi)
+  sl <- to_times(irps_wwi)
   # One slice per change point (each tie beginning or end), named and in order.
   expect_type(sl, "list")
   expect_length(sl, length(changes))
@@ -195,7 +195,7 @@ test_that("to_time slices an interval (begin/end) network at each change", {
                sum(tie_attribute(irps_wwi, "begin") <= 1901 &
                      tie_attribute(irps_wwi, "end") > 1901))
   # igraph input yields a list of igraphs (mirroring to_slices()/to_waves()).
-  sli <- to_time(as_igraph(irps_wwi))
+  sli <- to_times(as_igraph(irps_wwi))
   expect_length(sli, length(changes))
   expect_s3_class(sli[[1]], "igraph")
 })
@@ -214,6 +214,87 @@ test_that("to_time scopes a timestamped network to one time point", {
   expect_equal(as_matrix(to_time(ison_fraternity, 99)),
                as_matrix(to_time(ison_fraternity,
                                  max(tie_attribute(ison_fraternity, "time")))))
+})
+
+test_that("to_times returns one network per moment, always as a list", {
+  ts <- to_times(ison_tailorshop)
+  expect_type(ts, "list")
+  expect_length(ts, 2)
+  expect_equal(names(ts), c("1", "2"))
+  expect_s3_class(ts[[1]], "stocnet")
+  expect_equal(as_matrix(ts[[2]]), as_matrix(to_time(ison_tailorshop, 2)))
+  # a subset of the moments, and a single moment, are still a list
+  expect_length(to_times(ison_fraternity, 1:3), 3)
+  expect_type(to_times(ison_fraternity, 1), "list")
+  expect_length(to_times(ison_fraternity, 1), 1)
+  # a network that records no moment records itself at one
+  expect_length(to_times(ison_karateka), 1)
+  # every class returns its own
+  expect_s3_class(to_times(as_igraph(ison_monks))[[1]], "igraph")
+  expect_s3_class(to_times(as_tidygraph(ison_monks))[[1]], "tbl_graph")
+})
+
+test_that("from_times rejoins what to_times returns", {
+  out <- from_times(to_times(ison_tailorshop))
+  expect_s3_class(out, "stocnet")
+  expect_equal(as.numeric(net_ties(out)),
+               as.numeric(net_ties(ison_tailorshop)))
+  expect_equal(net_name(out), net_name(ison_tailorshop))
+  expect_true("time" %in% net_tie_attributes(out))
+  expect_setequal(out$ties$time, ison_tailorshop$ties$time)
+  # an interval network already holds its moments in its ties
+  expect_equal(as.numeric(net_ties(from_times(to_times(irps_wwi)))),
+               as.numeric(net_ties(irps_wwi)))
+})
+
+test_that("to_slices and to_waves are unchanged by the time-form work", {
+  # to_slices() accumulates an event network, one state per moment
+  d <- sort(unique(tie_attribute(irps_nuclear, "time")))[c(10, 50)]
+  sl <- to_slices(irps_nuclear, slice = d)
+  expect_length(sl, 2)
+  expect_named(sl, as.character(d))
+  expect_lt(as.numeric(net_ties(sl[[1]])), as.numeric(net_ties(sl[[2]])))
+  # to_waves() splits a changing panel by its tie waves
+  wv <- to_waves(fict_starwars)
+  expect_length(wv, net_waves(fict_starwars))
+  expect_equal(names(wv), paste("Wave", 1:7))
+})
+
+test_that("the temporal family keeps what a stocnet knows about itself", {
+  # A fixture built for this, since no shipped stocnet holds a missings
+  # table, and the missings are what a round trip through another class
+  # silently drops.
+  x <- make_stocnet(
+    info = list(name = "Fixture", layers = c("a", "b"),
+                directed = c(a = TRUE, b = FALSE),
+                observation = "panel", update = "replace"),
+    nodes = data.frame(label = c("A", "B", "C", "D")),
+    ties = data.frame(from = c(1, 2, 1, 2, 3),
+                      to   = c(2, 3, 3, 3, 4),
+                      layer = c("a", "a", "b", "b", "a"),
+                      time = c(1, 1, 1, 2, 2)),
+    missings = data.frame(from = 1, to = 4, layer = "a", time = 1))
+  outs <- list(to_time = to_time(x, 1),
+               to_wave = to_wave(x, 1),
+               to_times = to_times(x)[["1"]])
+  for(nm in names(outs)){
+    out <- outs[[nm]]
+    expect_s3_class(out, "stocnet")
+    expect_equal(net_name(out), "Fixture", label = nm)
+    expect_equal(layer_names(out), c("a", "b"), label = nm)
+    expect_equal(as_infolist(out)$directed, c(a = TRUE, b = FALSE), label = nm)
+    # what was scoped away is recorded, per GRAND item 4.4
+    expect_match(as_infolist(out)$transformations$exclusion,
+                 "not tied at time 1", label = nm)
+  }
+  # the missings are scoped the way the ties are, and not dropped
+  expect_equal(nrow(to_time(x, 1)$missings), 1)
+  expect_null(to_time(x, 2)$missings)
+  # and the multiplex, changing case the round trip loses today
+  y <- to_time(ison_classmates, 2)
+  expect_equal(net_name(y), net_name(ison_classmates))
+  expect_equal(layer_names(y), layer_names(ison_classmates))
+  expect_false(is.null(as_infolist(y)$observation))
 })
 
 # What exclusion records ####

@@ -7,6 +7,7 @@
 \alias{to_layers}
 \alias{to_components}
 \alias{to_waves}
+\alias{to_times}
 \alias{to_slices}
 \title{Splitting networks into lists}
 \usage{
@@ -19,6 +20,8 @@ to_layers(.data)
 to_components(.data, connectivity = c("weak", "strong"))
 
 to_waves(.data, attribute = "wave", panels = NULL, cumulative = FALSE)
+
+to_times(.data, times = NULL)
 
 to_slices(.data, attribute = "time", slice = NULL)
 }
@@ -63,6 +66,10 @@ Users can also list specific waves they want to select.}
 \item{cumulative}{Whether to make wave ties cumulative.
 FALSE by default. That is, each wave is treated isolated.}
 
+\item{times}{The moments to return the network at.
+By default \code{NULL}, in which case every moment the network records is
+returned, as \code{net_times()} counts them.}
+
 \item{slice}{Character string or character list indicating the date(s)
 or integer(s) range used to slice data (e.g slice = c(1:2, 3:4)).}
 }
@@ -83,10 +90,13 @@ Use \code{to_uniplex()}, or its alias \code{to_layer()}, to retain just one of t
 \item \code{to_components()} splits a network into its components,
 ordered from the largest to the smallest.
 Use \code{to_component()} to retain just one of them.
-\item \code{to_waves()} splits a network with some discrete observations over time
-into a list of those observations.
-\item \code{to_slices()} splits a network with some continuous time variable at some
-time slice(s).
+\item \code{to_times()} splits a network into the network as it stood at each
+moment it records, however it records time.
+This is where new work on splitting a network by time belongs;
+\code{to_waves()} and \code{to_slices()} are the older, form-specific spellings.
+\item \code{to_waves()} splits a panel network into a list of its waves.
+\item \code{to_slices()} splits a network that increments its ties into the state
+it had accumulated to at each of the given time slice(s).
 }
 }
 \details{
@@ -99,6 +109,7 @@ to_egos                *       *                 *      *       *       *
 to_layers              *       *                 *              *        
 to_slices                      *                 *                       
 to_subgraphs                   *                 *              *       *
+to_times                       *                 *                      *
 to_waves               *       *          *      *                       
               tbl_graph
 to_components         *
@@ -106,8 +117,18 @@ to_egos               *
 to_layers             *
 to_slices             *
 to_subgraphs          *
+to_times              *
 to_waves              *
 }\if{html}{\out{</div>}}
+
+\code{to_times()} returns the network as it stood at each moment it records,
+whichever way it records time, by calling \code{\link[=to_time]{to_time()}} on each in turn.
+\code{to_waves()} and \code{to_slices()} are the older, form-specific spellings:
+\code{to_waves()} splits a panel by its waves, and \code{to_slices()} accumulates
+an event network up to each of its moments.
+Unlike them, \code{to_times()} always returns a list, named by the moments and
+ordered by them, even where the network records only one, so that
+\code{net_times(.data)} and \code{length(to_times(.data))} always agree.
 }
 \section{\code{to_layers()}}{
 
@@ -137,6 +158,8 @@ as_tidygraph(create_filled(5)) |>
 ison_adolescents |>
   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) |>
   to_waves(attribute = "wave")
+  length(to_times(irps_wwi))
+  to_times(ison_tailorshop)
 ison_adolescents |>
   mutate_ties(time = 1:10, increment = 1) |> 
   add_ties(c(1,2), list(time = 3, increment = -1)) |> 
