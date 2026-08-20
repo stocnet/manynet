@@ -392,6 +392,17 @@ add_node_attribute.tbl_graph <- function(.data, attr_name, vector){
   as_igraph(.data) |> add_node_attribute(attr_name, vector) |> as_tidygraph()
 }
 
+#' @export
+add_node_attribute.stocnet <- function(.data, attr_name, vector){
+  out <- .data
+  if(is.null(out$nodes)) out$nodes <- dplyr::tibble(.rows = net_nodes(.data))
+  if(length(vector) != nrow(out$nodes))
+    snet_abort(paste("The vector must be as long as the network has nodes:",
+                     "{nrow(out$nodes)}, not {length(vector)}."))
+  out$nodes[[attr_name]] <- vector
+  out
+}
+
 #' @rdname manip_nodes_attr
 #' @importFrom igraph delete_vertex_attr vertex_attr_names
 #' @export

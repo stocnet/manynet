@@ -91,6 +91,8 @@
 - Deprecated `apply_changes()` in favour of more general `to_time()`
 - Deprecated `gather_changes()` in favour of `as_changelist()`
   - Added `time` argument that returns the changes in force at it
+- Added `add_node_attribute.stocnet()` to avoid rerouting through another class
+- Improved `rename_ties.stocnet()` to record update information before renaming to `weight`
 
 ## Modifying
 

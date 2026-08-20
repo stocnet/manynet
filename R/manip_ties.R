@@ -494,6 +494,9 @@ rename_ties.data.frame <- function(.data, ...){
     aka <- list(
       from   = c("sender", "ego", "source", "caller"),
       to     = c("recipient", "receiver", "alter", "target", "callee"),
+      # 'time' is the moment a tie is recorded at, in every class. 'wave' is
+      # the name an 'mnet' gives it, and 'panel' a name no dataset uses.
+      time   = c("wave", "panel"),
       weight = c("value", "strength", "increment", "replace", "sign")
     )
     
@@ -521,6 +524,14 @@ rename_ties.data.frame <- function(.data, ...){
 #' @export
 rename_ties.stocnet <- function(.data, ...){
   out <- .data
+  # An 'increment' or 'replace' column says how each row relates to the row
+  # before it, and renaming it to 'weight' is what would otherwise lose that.
+  # The network records it as `info$update` instead, where it is not already
+  # recorded, before the column is renamed.
+  if(...length() == 0 && is.null(as_infolist(out)$update)){
+    update <- intersect(c("increment", "replace"), names(out$ties))
+    if(length(update)) out <- mutate_info(out, update = update[1])
+  }
   out$ties <- rename_ties.data.frame(out$ties, ...)
   out
 }
