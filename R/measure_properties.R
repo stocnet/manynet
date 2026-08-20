@@ -388,7 +388,10 @@ mode_names.default <- function(.data){
 
 #' @export
 mode_names.igraph <- function(.data){
+  # 'nodes' was the name an mnet gave the modes, before 'modes' was reserved
+  # for them, so a network coerced from a stocnet is read under either.
   igraph::graph_attr(.data, "nodes") %||%
+    igraph::graph_attr(.data, "modes") %||%
     c(igraph::graph_attr(.data, "grand")$vertex1,
       igraph::graph_attr(.data, "grand")$vertex2)
 }

@@ -63,6 +63,7 @@
 - Fixed `as_matrix()` filling missing cells in multiplex networks with 1
 - Improved `as_stocnet.igraph()`
   - Fixed mapping of 'lvl' onto 'mode'
+  - Fixed loss when reading the mode and layer names only from the 'nodes' and 'ties' info fields
   - Fixed isolate loss
   - Fixed reading node ids as labels
   - Fixed per-layer directedness roundtripping
@@ -74,6 +75,7 @@
   - Fixed how `as_igraph.stocnet()` handles unlabelled, attributed networks
   - Fixed how `as_igraph.network()`reads missing data
   - Fixed how `as_igraph.matrix()`reads missing data
+- Fixed `mode_names.igraph()` reading only 'nodes' info leading to `as_igraph.stocnet()` losing mode names
 - Fixed `as_network.stocnet()` collison of `directed` vector with single expectation
 - Improved how `as_siena.stocnet()` carries missing data to RSiena
 

@@ -1015,9 +1015,14 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
     ties$from <- as.integer(ties$from)
     ties$to <- as.integer(ties$to)
   }
+  # 'nodes' and 'ties' were the names an mnet gave the mode and layer names,
+  # before 'modes' and 'layers' were reserved for them, so a network coerced
+  # from a stocnet names its modes and layers under either.
+  modes <- info$nodes %||% info$modes
+  layers <- info$ties %||% info$layers
   if(is_twomode(.data)){
-    if(!is.null(info$nodes) && length(info$nodes) == 2){
-      nodes$mode <- info$nodes[(nodes$type*1+1)]
+    if(!is.null(modes) && length(modes) == 2){
+      nodes$mode <- modes[(nodes$type*1+1)]
     } else {
       nodes$mode <- as.character(nodes$type)
     }
@@ -1028,8 +1033,8 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
     # A 'stocnet' has no such constraint and names its levels in 'mode',
     # which, unlike 'lvl', more than two levels can also share.
     lvls <- sort(unique(nodes$lvl))
-    nodes$mode <- if(!is.null(info$nodes) && length(info$nodes) == length(lvls))
-      info$nodes[match(nodes$lvl, lvls)] else as.character(nodes$lvl)
+    nodes$mode <- if(!is.null(modes) && length(modes) == length(lvls))
+      modes[match(nodes$lvl, lvls)] else as.character(nodes$lvl)
     nodes$lvl <- NULL
   }
   # is_multiplex() is also TRUE for networks with any non-reserved tie
@@ -1037,7 +1042,7 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
   if(is_multiplex(.data) && "type" %in% names(ties)){
     ties$layer <- ties$type
     ties$type <- NULL
-    if(is.null(info$ties)){
+    if(is.null(layers)){
       info$ties <- unique(ties$layer)
     }
   }
