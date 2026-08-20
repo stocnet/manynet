@@ -186,8 +186,7 @@
 - Added `from_times()` to rejoin networks from different moments
 - Fixed `to_waves()` returning all ties of e.g. `ison_classmates`, in each wave
 - Improved `to_giant()` to name its result "Giant component of" for every class
-- Updated strong connectivity example to print only the largest
-  component to reduce CRAN's example timing
+- Updated strong connectivity example to print only largest component to reduce CRAN's timing
 
 ## Marking
 

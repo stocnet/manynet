@@ -509,10 +509,10 @@ to_blockmodel.matrix <- function(.data, membership, FUN = mean){
     mat <- .data
     modes <- node_is_mode(.data)
     if(length(membership) != length(modes))
-      cli::cli_abort(paste("{.arg membership} should be a single vector of",
-                           "length {length(modes)}, giving the partition of",
-                           "the nodes in both modes,",
-                           "but it is of length {length(membership)}."))
+      snet_abort(paste("{.arg membership} should be a single vector of",
+                       "length {length(modes)}, giving the partition of",
+                       "the nodes in both modes,",
+                       "but it is of length {length(membership)}."))
     # Each mode is recoded separately so that shared labels across the modes,
     # or labels that are not 1...k, still index the block matrix correctly.
     m1_membs <- as.factor(membership[!modes])
