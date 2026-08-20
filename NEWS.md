@@ -39,10 +39,12 @@
   - Added `validate_globals()` and `validate_missings()`
   - `validate_ties()` now reserves 'begin' and 'end' tie columns for spells
   - `validate_changes()` now reserves a 'layer' column for single-layer changes
-- Improved description
+- Improved stocnet descriptions
   - Fixed pluralize helper to except non-plural words like "business"
   - Improved `describe_ties()` to describe each layer by its own directedness
   - Improved `describe_ties()` to report the parallel count in parentheses
+  - Improved `describe_network()` to report multilevel networks as multilevel rather than two-mode
+  - Improved `describe_network()` to drop "multiplex" where a network's layers are its levels
   - Added `describe_transformations()` to include transformations in print
 - Improved measure printing methods to use `measure`, `range`, and `normalization` 
   attributes to print a concise, subtle header description in sentence case

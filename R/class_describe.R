@@ -27,13 +27,63 @@ describe_network <- function(.data) {
          ifelse(is_longitudinal(.data), "longitudinal, ", ""),
          ifelse(is_labelled(.data), "labelled, ", ""),
          ifelse(is_complex(.data), "complex, ", ""),
-         ifelse(is_multiplex(.data), "multiplex, ", ""),
+         # A multilevel network whose layers are its levels is multiplex only
+         # because it is multilevel, so reporting both says the same thing
+         # twice. A layer that is not a level, such as one of the four kinds
+         # of tie within `fict_actually`'s characters, still earns the word.
+         ifelse(is_multiplex(.data) && !.layers_are_levels(.data),
+                "multiplex, ", ""),
          ifelse(is_signed(.data), "signed, ", ""),
          ifelse(is_weighted(.data), "weighted, ", ""),
-         ifelse(is_twomode(.data), "two-mode", 
-                ifelse(is_directed(.data), "directed", "undirected")),
+         # A multilevel network has more than one mode, so naming it
+         # multilevel already says that it is not one-mode, and says more
+         # besides: that its levels are tied within as well as between.
+         ifelse(is_multilevel(.data), "multilevel",
+                ifelse(is_twomode(.data), "two-mode", 
+                       ifelse(is_directed(.data), "directed", "undirected"))),
          " network"
   )
+}
+
+# The level each tie occupies: "between", where its ends are in different
+# levels, and otherwise the level both of its ends are in.
+.tie_positions <- function(.data){
+  if(inherits(.data, "stocnet")){
+    if(is.null(.data$nodes) || !"mode" %in% names(.data$nodes)) return(NULL)
+    modes <- as.character(.data$nodes$mode)
+    from <- .data$ties$from
+    to <- .data$ties$to
+  } else {
+    graph <- as_igraph(.data)
+    modes <- if("lvl" %in% igraph::vertex_attr_names(graph))
+      as.character(igraph::vertex_attr(graph, "lvl")) else
+        if(is_twomode(graph)) as.character(node_is_mode(graph)) else NULL
+    if(is.null(modes)) return(NULL)
+    el <- igraph::as_edgelist(graph, names = FALSE)
+    from <- el[,1]
+    to <- el[,2]
+  }
+  ifelse(modes[from] != modes[to], "between", modes[from])
+}
+
+# Whether a network's layers are its levels: every layer sits at one level
+# position, and no two layers share a position. Where that holds, the network
+# is multiplex only in that its levels are tied within as well as between,
+# which is what marking it multilevel already reports.
+.layers_are_levels <- function(.data){
+  if(!isTRUE(tryCatch(is_multilevel(.data), error = function(e) FALSE)))
+    return(FALSE)
+  atts <- net_tie_attributes(.data)
+  layer <- intersect(c("layer", "type"), atts)[1]
+  if(is.na(layer)) return(FALSE)
+  layers <- as.character(tie_attribute(.data, layer))
+  positions <- .tie_positions(.data)
+  if(is.null(positions) || length(positions) != length(layers)) return(FALSE)
+  # A layer spanning more than one position is not a level.
+  if(any(tapply(positions, layers, function(p) length(unique(p))) > 1))
+    return(FALSE)
+  # Two layers at one position are two kinds of tie there, not two levels.
+  !anyDuplicated(tapply(positions, layers, function(p) p[[1]]))
 }
 
 #' @rdname class_describe
