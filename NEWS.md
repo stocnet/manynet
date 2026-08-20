@@ -172,7 +172,10 @@
 ## Marking
 
 - Added `is_multilevel()` to mark TRUE multimodal, multiplex networks
-- Fixed `is_longitudinal.stocnet()` returning FALSE for a stocnet list
+- Improved `is_longitudinal()` and `is_dynamic()` to mark how time is recorded not column name
+  - `is_longitudinal()` marks panels that re-state ties TRUE
+  - `is_dynamic()` marks a stream of events, whether incrementing or a spell
+  - Fixed `is_longitudinal.stocnet()` returning FALSE for a stocnet list
 - Fixed `is_attributed.igraph()` returning TRUE for multilevel networks
 - Fixed `is_signed()` to mark networks holding signs as negative weights TRUE
 - Fixed `is_weighted()` to mark networks holding absolute binary weights FALSE
