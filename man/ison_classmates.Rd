@@ -6,8 +6,8 @@
 \title{One-mode longitudinal network of Dutch classmates (Knecht 2008)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Knecht's Classmates -------------------------------------------------------
-#> # A dynamic, labelled, multiplex, directed network of 26 pupils and 460
-#> friendship arcs and 86 primary arcs from 1 to 4
+#> # A longitudinal, labelled, multiplex, directed network of 26 pupils and 460
+#> friendship arcs and 86 primary arcs over 4 waves
 #> 
 #> -- Nodes
 #> # A tibble: 26 x 7

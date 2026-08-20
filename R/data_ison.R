@@ -577,13 +577,17 @@
 #'   preparing to join the monastic order.
 #'   
 #'   - `type = "like"` records whom novices said they liked most at three time points/waves
-#'   - `type = "esteem"` records whom novices said they held in esteem (sign > 0) and disesteem (sign < 0)
-#'   - `type = "praise"` records whom novices said they praised (sign > 0) and blamed (sign < 0)
-#'   - `type = "influence"` records whom novices said were a positive influence (sign > 0) and negative influence (sign < 0)
+#'   - `type = "esteem"` records whom novices said they held in esteem (weight > 0) and disesteem (weight < 0)
+#'   - `type = "praise"` records whom novices said they praised (weight > 0) and blamed (weight < 0)
+#'   - `type = "influence"` records whom novices said were a positive influence (weight > 0) and negative influence (weight < 0)
 #'   
 #'   All networks are weighted.
 #'   Novices' first choices are weighted 3, the second 2, and third choices 1.
 #'   Some subjects offered tied ranks for their top four choices.
+#'   The sign of each tie is held as the sign of its weight,
+#'   so that the weights run from -3 to 3
+#'   and neither the valence nor the rank is lost when the network is
+#'   coerced to another class.
 #'   
 #'   In addition to node names,
 #'   a 'groups' variable records the four groups that Sampson observed during his time there:

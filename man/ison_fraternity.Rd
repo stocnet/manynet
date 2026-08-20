@@ -6,8 +6,8 @@
 \title{One-mode longitudinal network of fraternity preferences (Newcomb 1961)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Newcomb's Fraternity ------------------------------------------------------
-#> # A dynamic, labelled, weighted, directed network of 17 mens and 4080
-#> preference arcs from 1 to 16
+#> # A longitudinal, labelled, weighted, directed network of 17 mens and 4080
+#> preference arcs over 15 waves
 #> 
 #> -- Nodes
 #> # A tibble: 17 x 1

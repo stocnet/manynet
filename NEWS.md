@@ -209,6 +209,7 @@
 - Added `irps_tribes` as a signed stocnet for Read's Gahuku-Gama sub-tribe alliances and oppositions
 - Added `ison_fraternity` as a longitudinal, ranked stocnet for Newcomb's fraternity men
 - Added `ison_tailorshop` as a stocnet for Kapferer's instrumental and sociational ties among 39 Zambian tailors, multiplex across two waves bracketing an abortive and then a successful strike
+- Converted `fict_potter`, `fict_starwars`, and `ison_monks` to 'stocnet' objects
 
 # manynet 2.2.3
 

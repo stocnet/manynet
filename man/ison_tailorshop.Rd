@@ -6,8 +6,8 @@
 \title{One-mode multiplex, longitudinal network of a Zambian tailor shop (Kapferer 1972)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Kapferer's Tailor Shop ----------------------------------------------------
-#> # A dynamic, labelled, multiplex, directed network of 39 workers and 256
-#> instrumental arcs and 381 sociational ties from 1 to 2
+#> # A longitudinal, labelled, multiplex, directed network of 39 workers and 256
+#> instrumental arcs and 381 sociational ties over 2 waves
 #> 
 #> -- Nodes
 #> # A tibble: 39 x 1
