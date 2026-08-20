@@ -56,6 +56,7 @@
   - `as_missinglist.igraph()` lists from an ad hoc graph attribute
 - Fixed `as_infolist.tbl_graph()` dropping other attributes when dropping 'grand'
 - Fixed `as_nodelist.tbl_graph()` returning an edgelist on e.g. a weighted stocnet object
+- Improved `as_changelist()` to take a `time` argument, replacing `gather_changes()`
 - Fixed `as_matrix()` filling missing cells in multiplex networks with 1
 - Improved `as_stocnet.igraph()`
   - Fixed mapping of 'lvl' onto 'mode'

@@ -13,7 +13,7 @@
 \usage{
 as_nodelist(.data)
 
-as_changelist(.data)
+as_changelist(.data, time = NULL)
 
 as_edgelist(.data, twomode = FALSE)
 
@@ -35,6 +35,13 @@ as_matrix(.data, twomode = NULL)
 \item network \code{network}, from the \code{{network}} package
 \item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
+
+\item{time}{A moment to gather the changes in force at.
+By default \code{NULL}, in which case every change the network records is
+returned. Where a moment is given, only the changes recorded up to and
+including it are returned, one for each nodal variable a node changes,
+since a change states what a variable becomes from that moment on and is
+carried forward until another change states otherwise.}
 
 \item{twomode}{Logical option used to override heuristics for
 distinguishing incidence (two-mode/bipartite) from

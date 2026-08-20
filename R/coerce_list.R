@@ -109,41 +109,66 @@ as_nodelist.network <- function(.data) {
 # Changelists ####
 
 #' @rdname coerce_list
+#' @param time A moment to gather the changes in force at.
+#'   By default `NULL`, in which case every change the network records is
+#'   returned. Where a moment is given, only the changes recorded up to and
+#'   including it are returned, one for each nodal variable a node changes,
+#'   since a change states what a variable becomes from that moment on and is
+#'   carried forward until another change states otherwise.
 #' @export
-as_changelist <- function(.data) UseMethod("as_changelist")
+as_changelist <- function(.data, time = NULL) UseMethod("as_changelist")
 
 #' @export
-as_changelist.tbl_graph <- function(.data) {
-  out <- igraph::graph_attr(as_igraph(.data), "changes")
-  out <- dplyr::tibble(data.frame(out))
-  if(ncol(out)==0) NULL else out
+as_changelist.tbl_graph <- function(.data, time = NULL) {
+  .gathered_at(.graph_changes(as_igraph(.data)), time)
 }
 
 #' @export
-as_changelist.igraph <- function(.data) {
-  out <- igraph::graph_attr(.data, "changes")
-  out <- dplyr::tibble(data.frame(out))
-  if(ncol(out)==0) NULL else out
+as_changelist.igraph <- function(.data, time = NULL) {
+  .gathered_at(.graph_changes(.data), time)
 }
 
 #' @export
-as_changelist.stocnet <- function(.data) {
-  .data$changes
+as_changelist.stocnet <- function(.data, time = NULL) {
+  .gathered_at(.data$changes, time)
 }
 
 #' @export
-as_changelist.network <- function(.data) {
+as_changelist.network <- function(.data, time = NULL) {
   out <- network::get.network.attribute(.data, "changes")
   out <- dplyr::tibble(data.frame(out))
-  if(ncol(out)==0) NULL else out
+  .gathered_at(if(ncol(out)==0) NULL else out, time)
 }
 
 # Matrices and edgelists have nowhere to hold a changelist
 #' @export
-as_changelist.matrix <- function(.data) NULL
+as_changelist.matrix <- function(.data, time = NULL) NULL
 
 #' @export
-as_changelist.data.frame <- function(.data) NULL
+as_changelist.data.frame <- function(.data, time = NULL) NULL
+
+# The parameter is not named '.data', because `dplyr::tibble()` evaluates its
+# arguments in a data mask where that name is the rlang pronoun instead.
+.graph_changes <- function(x){
+  out <- igraph::graph_attr(x, "changes")
+  out <- dplyr::tibble(data.frame(out))
+  if(ncol(out)==0) NULL else out
+}
+
+# The changes in force at a moment: those recorded up to and including it,
+# reduced to the last value each node takes for each variable, since a change
+# is carried forward until another change states otherwise.
+.gathered_at <- function(changes, time){
+  if(is.null(time) || is.null(changes) || !nrow(changes)) return(changes)
+  t <- time
+  changes |>
+    dplyr::filter(time <= t) |>
+    dplyr::arrange(node, var, time) |>
+    dplyr::group_by(node, var) |>
+    dplyr::mutate(value = dplyr::last(value)) |>
+    dplyr::distinct(node, var, value) |>
+    dplyr::ungroup()
+}
 
 # Edgelists ####
 
