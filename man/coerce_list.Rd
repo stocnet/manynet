@@ -85,6 +85,10 @@ such as the names of the nodes and ties, if not given in the nodelist or edgelis
 If the network is a cognitive social structure (i.e. the edgelist contains a 'by' column
 indicating who reported/recorded each tie), \code{as_matrix()} returns a three-dimensional array
 instead, with dimensions for senders, receivers, and reporters.
+Where a network holds parallel ties, i.e. where \code{tie_is_parallel()} is TRUE
+for any tie, the cells of the matrix report how many ties join each pair
+of nodes, and so may be greater than one even where the network is
+neither weighted nor signed.
 }
 
 These coercions are extractive in the sense that they will lose any information that cannot be contained in the target format.

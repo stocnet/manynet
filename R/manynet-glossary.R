@@ -139,6 +139,7 @@ glossies <- list(
   nodelist = "A nodelist is a table listing the nodes in a network, with their names in the first column and any nodal attributes in further columns.",
   orbit = "An orbit is a unique position in a subgraph.",
   order = "The order of a network is the number of its nodes.",
+  parallel = "Parallel ties, also called multi-edges, are two or more ties of one type that join the same pair of nodes at the same moment.",
   pagerank = "The pagerank centrality of a node is how often a random walker that follows ties and occasionally teleports to a random node would visit it.",
   partition = "A partition is a division of the nodes in a network into mutually exclusive groups.",
   path = "A path is a walk without repeated nodes.",

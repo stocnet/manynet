@@ -132,3 +132,52 @@ test_that("net_attributes works", {
   expect_true("year" %in% out)
   expect_type(net_attributes(as_matrix(ison_adolescents)), "character")
 })
+
+test_that("tie_is_parallel marks ties that coexist on a pair of nodes", {
+  # The Koenigsberg bridges are the classic case: two distinct bridges join
+  # the same pair of banks at the same moment, so all four of the bridges in
+  # the two bundles are parallel, and not just the second of each pair.
+  out <- tie_is_parallel(ison_koenigsberg)
+  expect_type(as.vector(out), "logical")
+  expect_length(out, net_ties(ison_koenigsberg))
+  expect_equal(sum(out), 4)
+  expect_equal(unname(which(as.logical(out))), c(1, 2, 5, 6))
+  # Every class the network can be held in agrees.
+  expect_equal(sum(tie_is_parallel(as_igraph(ison_koenigsberg))), 4)
+  expect_equal(sum(tie_is_parallel(as_tidygraph(ison_koenigsberg))), 4)
+  expect_equal(sum(tie_is_parallel(as_stocnet(ison_koenigsberg))), 4)
+  # A simple network has no parallel ties, and a network without ties is not
+  # an error.
+  expect_false(any(tie_is_parallel(ison_adolescents)))
+  expect_length(tie_is_parallel(create_empty(3)), 0)
+})
+
+test_that("tie_is_parallel does not mark ties recorded at different moments", {
+  # A panel re-states its ties at every wave, so a tie observed in two waves
+  # follows itself rather than runs alongside itself. See #158.
+  expect_false(any(tie_is_parallel(fict_potter)))
+  expect_false(any(tie_is_parallel(ison_fraternity)))
+  # Spells that abut, one beginning in the year the other ends, are
+  # consecutive. Every repeated dyad in irps_wwi is of this kind.
+  expect_false(any(tie_is_parallel(irps_wwi)))
+  # Two events on one pair of nodes with one timestamp do coexist, though.
+  expect_equal(sum(tie_is_parallel(irps_nuclear)), 16)
+  # Where a network records no time at all, repeated ties are parallel.
+  expect_equal(sum(tie_is_parallel(irps_blogs)), 130)
+})
+
+test_that("tie_is_parallel does not mark ties of different types", {
+  # Several types of tie between a pair of nodes is what is_multiplex()
+  # marks, so counting them here would report the same thing twice.
+  expect_true(is_multiplex(ison_monks))
+  expect_false(any(tie_is_parallel(ison_monks)))
+  expect_false(any(tie_is_parallel(ison_bankwiring)))
+  expect_false(any(tie_is_parallel(ison_tailorshop)))
+  expect_false(any(tie_is_parallel(fict_actually)))
+})
+
+test_that("describe_ties counts the parallel ties", {
+  expect_match(describe_ties(ison_koenigsberg), "\\(4 parallel\\)")
+  expect_no_match(describe_ties(ison_adolescents), "parallel")
+  expect_no_match(describe_ties(ison_monks), "parallel")
+})

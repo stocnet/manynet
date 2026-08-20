@@ -15,6 +15,10 @@
 #'   If the network is a cognitive social structure (i.e. the edgelist contains a 'by' column
 #'   indicating who reported/recorded each tie), `as_matrix()` returns a three-dimensional array
 #'   instead, with dimensions for senders, receivers, and reporters.
+#'   Where a network holds parallel ties, i.e. where `tie_is_parallel()` is TRUE
+#'   for any tie, the cells of the matrix report how many ties join each pair
+#'   of nodes, and so may be greater than one even where the network is
+#'   neither weighted nor signed.
 #'
 #'   These coercions are extractive in the sense that they will lose any information that cannot be contained in the target format.
 #'   for example, `as_matrix()` will lose any information about edge attributes, such as edge types or weights.

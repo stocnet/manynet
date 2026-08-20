@@ -198,6 +198,8 @@
 - Fixed `is_attributed.igraph()` returning TRUE for multilevel networks
 - Fixed `is_signed()` to mark networks holding signs as negative weights TRUE
 - Fixed `is_weighted()` to mark networks holding absolute binary weights FALSE
+- Added `tie_is_parallel()` to mark ties coexisting parallel to another tie of the same layer (closed #158)
+  - `any(tie_is_parallel())` gives the network-level test
 
 ## Measuring
 
