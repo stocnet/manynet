@@ -167,7 +167,6 @@ ison_adolescents |>
 }
 \seealso{
 Other modifications:
-\code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},
@@ -178,6 +177,7 @@ Other modifications:
 \code{\link{modif_permutation}},
 \code{\link{modif_plexity}},
 \code{\link{modif_project}},
+\code{\link{modif_proximity}},
 \code{\link{modif_scope}},
 \code{\link{modif_weight}}
 }

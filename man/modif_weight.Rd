@@ -68,22 +68,21 @@ Missing values propagate rather than being ignored,
 so that a node with an unobserved tie has all its values unobserved.
 Use \code{impute_ties()} first to state a different assumption.}
 
-\item{across}{Which margin each value is rescaled against.
-\itemize{
-\item "both" (the default) divides by the square root of the row and column
-denominators multiplied together. A symmetric network stays symmetric,
-so this is the only option that never changes a network's directedness.
-\item "rows" divides by the sending node's denominator,
-so that a value says what share of \eqn{i}'s ties goes to \eqn{j}.
-\item "columns" divides by the receiving node's denominator instead.
-}
-
-Rescaling a one-mode network across its rows or columns makes it
-asymmetric, since what \eqn{i} sends \eqn{j} is generally not what \eqn{j}
-sends \eqn{i}. Where such a network is undirected, each tie is therefore
-split into two, and the network is returned directed.
+\item{across}{Which margin of the network the operation is taken over.
+"rows" is the sending margin, so that each node is treated by the ties it
+sends; "columns" is the receiving margin; and "both" combines them.
+The two margins coincide for an undirected network,
+where all three options therefore agree.
 A two-mode network raises no such question,
-so "rows" and "columns" there are just the two nodesets.}
+so "rows" and "columns" there are just the two nodesets.
+
+Note that both the default and what "both" combines differ by function.
+\code{to_normalised()} defaults to "both", where it divides by the square root
+of the two denominators multiplied together, since that is the only
+rescaling that preserves a network's symmetry.
+\code{to_proximity()} defaults to "rows", the conventional profile for
+structural equivalence, and there "both" compares each node's sent and
+received ties together.}
 }
 \value{
 A tidygraph object modified as explained in the function description, details,
@@ -120,6 +119,15 @@ to_unsigned            *       *      *      *       *       *         *
 to_unweighted          *       *      *      *       *       *         *
 to_weighted                    *      *              *                 *
 }\if{html}{\out{</div>}}
+
+\code{to_normalised()} divides by the sending node's denominator for "rows",
+so that a value says what share of \eqn{i}'s ties goes to \eqn{j},
+and by the receiving node's denominator for "columns".
+
+Rescaling a one-mode network across its rows or columns makes it
+asymmetric, since what \eqn{i} sends \eqn{j} is generally not what \eqn{j}
+sends \eqn{i}. Where such a network is undirected, each tie is therefore
+split into two, and the network is returned directed.
 }
 \examples{
 to_normalised(ison_networkers, rule = "sum", across = "rows")
@@ -131,7 +139,6 @@ Other ties:
 \code{\link{modif_direction}}
 
 Other modifications:
-\code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},
@@ -142,6 +149,7 @@ Other modifications:
 \code{\link{modif_permutation}},
 \code{\link{modif_plexity}},
 \code{\link{modif_project}},
+\code{\link{modif_proximity}},
 \code{\link{modif_scope}},
 \code{\link{modif_split}}
 }

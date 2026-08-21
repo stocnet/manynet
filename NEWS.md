@@ -119,7 +119,12 @@
   - The name is matched against `mode_names()`, ignoring case, plurals,
     and any other words in the name, so that "events", "event", and
     "Social Events" all select the "social events" mode
-- Improved `to_mode1()` and `to_mode2()` with 13 further similarity measures
+- Added `to_proximity()` to construct a matrix of how alike nodes' ties are
+  - `similarity` takes the same measures as `to_mode1()`, both comparing pairs of rows
+  - `across` selects the profile compared: "rows", "columns", or "both"
+  - `dyad` states how compared pair's own cells are treated:
+    "exclude", "reciprocal", "complex", or "include"
+  - Documented alongside are wrappers `to_correlation()` and `to_cosine()`
   - 6 were already implemented but unreachable: "ochiai", "czekanowski", 
     "sokalsneath", "ochiai2", "rogerstanimoto", and "hamann"
   - Added 7 more: "match", "overlap", "crossmin", "maxcrossmin",
@@ -127,6 +132,11 @@
   - Where possible, measures computed by matrix arithmetic for speed, 
     and co-occurrence no longer counted where chosen measure does not use them
   - Records the method used in `info$transformations$projection` per GRAND item 4.3
+- Added `to_normalised()`/`to_normalized()` to rescale tie values (closed #162)
+  - `rule` divides by largest ("max", default), "mean", or "sum" of those values
+  - `across` rescales by "rows", "columns", or "both" (square root of two denominators multiplied, default)
+  - Isolates left alone rather than becoming `NaN` or `-Inf`
+  - Records rule and margin used in `info$transformations$normalisation`
 - Improved `to_undirected()`
   - Added `rule` argument offering "min", "max", "mean", "sum", and "product" alongside existing default "collapse"
   - Fixed per-class variation: .matrix binarised tie weights, .igraph summed them,
@@ -149,11 +159,6 @@
     - Records the method used in `info$transformations$summarization` per GRAND item 4.5
   - Renamed `tie` argument of `to_uniplex()` to `layer` for layer-vocabulary consistency; 
     `tie` still works but warns (closed #159)
-- Added `to_normalised()`/`to_normalized()` to rescale tie values (closed #162)
-  - `rule` divides by largest ("max", default), "mean", or "sum" of those values
-  - `across` rescales by "rows", "columns", or "both" (square root of two denominators multiplied, default)
-  - Isolates left alone rather than becoming `NaN` or `-Inf`
-  - Records rule and margin used in `info$transformations$normalisation`
 - Added `impute_ties()` to replace `na_to_zero()` and `na_to_mean()`
   - `rule` names imputation rule, recalling argument used elsewhere:
     - "zero" treats every missing tie as absent, essentially removing missings

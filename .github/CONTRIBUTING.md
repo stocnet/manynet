@@ -98,6 +98,16 @@ Division of labour to keep in mind when adding functions:
   All plot methods should live there.
 - `{migraph}`: functions for testing and modelling, e.g. QAP/MRQAP and diffusion models.
 
+Where a function computes how alike two nodes are, the line between `{manynet}`
+and `{netrics}` runs as follows.
+Arithmetic over a network's own cells — comparing two nodes' profiles of ties or
+affiliations, as `to_mode1()` and `to_proximity()` do — is a transformation of
+the data, and belongs here as a `to_*()` function.
+Algorithms that iterate or recurse to a fixed point — RoleSim, REGE, CONCOR —
+are analytic, and belong in `{netrics}`,
+which calls into this package's `to_*()` functions for the profile arithmetic
+they need.
+
 ## Style
 
 In terms of style, we are aiming for pleasant predictability in terms of user experience.

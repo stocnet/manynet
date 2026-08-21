@@ -291,20 +291,16 @@ to_weighted.network <- function(.data, measure = NULL){
 #'   Missing values propagate rather than being ignored,
 #'   so that a node with an unobserved tie has all its values unobserved.
 #'   Use `impute_ties()` first to state a different assumption.
-#' @param across Which margin each value is rescaled against.
-#'   - "both" (the default) divides by the square root of the row and column
-#'   denominators multiplied together. A symmetric network stays symmetric,
-#'   so this is the only option that never changes a network's directedness.
-#'   - "rows" divides by the sending node's denominator,
-#'   so that a value says what share of \eqn{i}'s ties goes to \eqn{j}.
-#'   - "columns" divides by the receiving node's denominator instead.
+#' @template param_across
+#' @details
+#'   `to_normalised()` divides by the sending node's denominator for "rows",
+#'   so that a value says what share of \eqn{i}'s ties goes to \eqn{j},
+#'   and by the receiving node's denominator for "columns".
 #'
 #'   Rescaling a one-mode network across its rows or columns makes it
 #'   asymmetric, since what \eqn{i} sends \eqn{j} is generally not what \eqn{j}
 #'   sends \eqn{i}. Where such a network is undirected, each tie is therefore
 #'   split into two, and the network is returned directed.
-#'   A two-mode network raises no such question,
-#'   so "rows" and "columns" there are just the two nodesets.
 #' @examples
 #' to_normalised(ison_networkers, rule = "sum", across = "rows")
 #' @export
