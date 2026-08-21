@@ -14,4 +14,4 @@
 #'
 #'   Missing values propagate rather than being ignored, so that a dyad
 #'   unobserved in any of the networks is unobserved in the result.
-#'   Use the `na_to_*()` functions first to state a different assumption.
+#'   Use `impute_ties()` first to state a different assumption.

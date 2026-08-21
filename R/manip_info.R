@@ -54,6 +54,12 @@
 #'   and `to_blockmodel()` set.
 #'   - "imputation" (4.6), which `impute_ties()` and `impute_nodes()` set.
 #'
+#'   One further name, "normalisation", records what `to_normalised()` does.
+#'   The guidelines do not name it, since rescaling tie values neither
+#'   dichotomises them (4.2 ends in an unweighted network)
+#'   nor aggregates them (4.5 combines what was separate),
+#'   but it changes the analytic network and so is recorded too.
+#'
 #'   A name that is absent means that transformation was not applied,
 #'   so `"symmetrisation" %in% names(as_infolist(.data)$transformations)`
 #'   answers whether a network was symmetrised
@@ -71,7 +77,7 @@
 #'   The `to_*()` and `impute_*()` functions set this themselves,
 #'   so it rarely needs to be set by hand.
 #'   Where it does, `add_info()` takes a named list and merges it in,
-#'   and refuses a name that is not one of the six.
+#'   and refuses a name that is not one of those above.
 #' @seealso \href{https://grand-statement.org}{GRAND statement} for more 
 #'   information on the Guidelines for Reporting About Network Data (GRAND).
 #' @examples
@@ -199,6 +205,13 @@ mutate_info.stocnet <- function(.data, ...){
 grand_transformations <- c("symmetrisation", "dichotomisation", "projection",
                            "exclusion", "aggregation", "imputation")
 
+# Rescaling tie values changes the analytic network too, but the guidelines do
+# not name it: it is neither a dichotomisation, which ends in an unweighted
+# network, nor an aggregation, which combines what was separate. So it is
+# recorded under a name of its own, kept apart from the six so that the GRAND
+# vector stays a faithful list of the guidelines' items.
+manynet_transformations <- c(grand_transformations, "normalisation")
+
 # Merges new entries into the transformations already recorded. An element
 # accumulates rather than replaces, so a network transformed twice in the same
 # way reports both, and a named list keeps its names in the order they were
@@ -206,10 +219,11 @@ grand_transformations <- c("symmetrisation", "dichotomisation", "projection",
 .merge_transformations <- function(old, new){
   if(!is.list(new) || is.null(names(new)))
     snet_abort("{.arg transformations} must be a named list, one name for each transformation applied.")
-  unrecognised <- setdiff(names(new), grand_transformations)
+  unrecognised <- setdiff(names(new), manynet_transformations)
   if(length(unrecognised))
-    snet_abort(c(x = "{.val {unrecognised}} {?is/are} not {?a transformation/transformations} GRAND names.",
-                 i = "The six are {.val {grand_transformations}}."))
+    snet_abort(c(x = "{.val {unrecognised}} {?is/are} not {?a recognised transformation/recognised transformations}.",
+                 i = "The six GRAND names are {.val {grand_transformations}}.",
+                 i = "{.val {setdiff(manynet_transformations, grand_transformations)}} {?is/are} also recorded."))
   out <- old %||% list()
   for(item in names(new)) out[[item]] <- c(out[[item]], new[[item]])
   out

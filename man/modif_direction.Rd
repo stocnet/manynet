@@ -54,7 +54,7 @@ directions are non-zero, and strong ties are rewarded disproportionately.
 
 Values missing in one direction are not treated as agreement:
 they propagate, so that \code{NA} in either direction gives \code{NA}.
-Use the \verb{na_to_*()} functions first to state a different assumption.}
+Use \code{impute_ties()} first to state a different assumption.}
 }
 \value{
 A tidygraph object modified as explained in the function description, details,

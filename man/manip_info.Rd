@@ -97,6 +97,12 @@ and \code{to_blockmodel()} set.
 \item "imputation" (4.6), which \code{impute_ties()} and \code{impute_nodes()} set.
 }
 
+One further name, "normalisation", records what \code{to_normalised()} does.
+The guidelines do not name it, since rescaling tie values neither
+dichotomises them (4.2 ends in an unweighted network)
+nor aggregates them (4.5 combines what was separate),
+but it changes the analytic network and so is recorded too.
+
 A name that is absent means that transformation was not applied,
 so \code{"symmetrisation" \%in\% names(as_infolist(.data)$transformations)}
 answers whether a network was symmetrised
@@ -114,7 +120,7 @@ and the order of the names is the order the transformations were applied.
 The \verb{to_*()} and \verb{impute_*()} functions set this themselves,
 so it rarely needs to be set by hand.
 Where it does, \code{add_info()} takes a named list and merges it in,
-and refuses a name that is not one of the six.
+and refuses a name that is not one of those above.
 }
 
 \examples{

@@ -188,8 +188,8 @@
 #'   The nominations they received are not missing, since the other pupils
 #'   still answered. Recording them this way, rather than as the absence of a
 #'   tie, keeps a nomination nobody gave from being read as one somebody
-#'   withheld. `na_to_zero()` treats them as absent ties, and `na_to_mean()`
-#'   imputes them.
+#'   withheld. `impute_ties()` treats them as absent ties, with
+#'   `rule = "zero"`, or imputes them, with one of its other rules.
 #'
 #'   A structurally missing nomination says only that one pupil was not in the
 #'   class, from wave 3 onwards. That pupil leaving is logged as a change of

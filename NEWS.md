@@ -91,6 +91,7 @@
     - "exclusion" (4.4)
     - "aggregation" (4.5)
     - "imputation" (4.6)
+    - "normalisation", not currently in the GRAND guidelines
   - Each element accumulates rather than replaces, ordered by sequence
   - Each element names the method first and then consequeces in parentheses
 - Renamed `to_no_isolates()` to `delete_isolates()`, specialising `delete_nodes()`
@@ -148,6 +149,11 @@
     - Records the method used in `info$transformations$summarization` per GRAND item 4.5
   - Renamed `tie` argument of `to_uniplex()` to `layer` for layer-vocabulary consistency; 
     `tie` still works but warns (closed #159)
+- Added `to_normalised()`/`to_normalized()` to rescale tie values (closed #162)
+  - `rule` divides by largest ("max", default), "mean", or "sum" of those values
+  - `across` rescales by "rows", "columns", or "both" (square root of two denominators multiplied, default)
+  - Isolates left alone rather than becoming `NaN` or `-Inf`
+  - Records rule and margin used in `info$transformations$normalisation`
 - Added `impute_ties()` to replace `na_to_zero()` and `na_to_mean()`
   - `rule` names imputation rule, recalling argument used elsewhere:
     - "zero" treats every missing tie as absent, essentially removing missings

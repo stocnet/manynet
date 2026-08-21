@@ -557,3 +557,87 @@ test_that("to_uniplex keeps the information of the layer it retains", {
   expect_false("primary" %in% info$focal)
   expect_no_error(validate_stocnet(as_stocnet(out)))
 })
+
+# A small matrix whose normalised values can be read off by hand. It is
+# symmetric, so the row and column totals agree: 3, 1, 2, and then 0 for the
+# fourth node, an isolate, which is what a zero denominator looks like.
+norm_mat <- matrix(c(0, 1, 2, 0,
+                     1, 0, 0, 0,
+                     2, 0, 0, 0,
+                     0, 0, 0, 0), 4, 4, byrow = TRUE)
+
+test_that("to_normalised rescales by each rule", {
+  expect_equal(to_normalised(norm_mat, rule = "sum", across = "rows")[1, ],
+               c(0, 1/3, 2/3, 0))
+  expect_equal(to_normalised(norm_mat, rule = "max", across = "rows")[1, ],
+               c(0, 0.5, 1, 0))
+  # the mean counts every dyad and not just those tied, so the divisor is 3/4
+  expect_equal(to_normalised(norm_mat, rule = "mean", across = "rows")[1, ],
+               c(0, 4/3, 8/3, 0))
+  expect_equal(to_normalized, to_normalised)
+})
+
+test_that("to_normalised across both keeps a symmetric network symmetric", {
+  expect_true(isSymmetric(to_normalised(norm_mat, rule = "sum")))
+  expect_false(isSymmetric(to_normalised(norm_mat, rule = "sum",
+                                         across = "rows")))
+  # each value is divided by the square root of the two totals multiplied
+  expect_equal(to_normalised(norm_mat, rule = "sum")[1, 2], 1/sqrt(3 * 1))
+  cols <- to_normalised(norm_mat, rule = "sum", across = "columns")
+  expect_equal(colSums(cols)[1:3], c(1, 1, 1), ignore_attr = TRUE)
+  expect_equal(cols[1, ], c(0, 1, 1, 0))
+})
+
+test_that("to_normalised leaves a node with nothing to scale against", {
+  out <- to_normalised(norm_mat, rule = "sum", across = "rows")
+  expect_equal(out[4, ], c(0, 0, 0, 0))
+  expect_false(anyNA(out))
+  expect_true(all(is.finite(out)))
+  expect_true(all(is.finite(to_normalised(norm_mat, rule = "max",
+                                          across = "rows"))))
+  options(snet_verbosity = "verbose")
+  expect_message(to_normalised(norm_mat, rule = "sum", across = "rows"),
+                 "no value to be scaled against")
+  options(snet_verbosity = "quiet")
+})
+
+test_that("to_normalised returns a directed network where it must", {
+  # Rescaling rows makes what i sends j differ from what j sends i, which an
+  # undirected network cannot hold, so each tie is split into two.
+  rows <- to_normalised(ison_adolescents, rule = "sum", across = "rows")
+  expect_true(is_directed(rows))
+  expect_equal(c(net_ties(rows)), c(net_ties(ison_adolescents)) * 2)
+  expect_equal(unname(rowSums(as_matrix(rows))), rep(1, 8))
+  # "both" is symmetric, so it leaves the network as it found it
+  both <- to_normalised(ison_adolescents, rule = "sum")
+  expect_false(is_directed(both))
+  expect_equal(c(net_ties(both)), c(net_ties(ison_adolescents)))
+})
+
+test_that("to_normalised treats the two modes of a two-mode network as the margins", {
+  out <- to_normalised(ison_southern_women, rule = "sum", across = "rows")
+  expect_true(is_twomode(out))
+  expect_false(is_directed(out))
+  expect_equal(unname(rowSums(as_matrix(out))), rep(1, 18))
+  cols <- to_normalised(ison_southern_women, rule = "sum", across = "columns")
+  expect_equal(unname(colSums(as_matrix(cols))), rep(1, 14))
+})
+
+test_that("to_normalised records the transformation", {
+  out <- to_normalised(ison_networkers, rule = "sum", across = "rows")
+  expect_equal(as_infolist(out)$transformations$normalisation,
+               "sum across rows")
+  expect_match(describe_transformations(out), "normalisation")
+  # a matrix has nowhere to record it, and is returned as a matrix
+  expect_true(is.matrix(to_normalised(norm_mat)))
+})
+
+test_that("to_normalised keeps what the stocnet class holds", {
+  net <- as_stocnet(ison_networkers)
+  out <- to_normalised(net, rule = "sum", across = "rows")
+  expect_s3_class(out, "stocnet")
+  expect_equal(nrow(out$nodes), nrow(net$nodes))
+  expect_equal(net_name(out), net_name(net))
+  expect_equal(unname(rowSums(as_matrix(out))), rep(1, nrow(net$nodes)))
+  expect_no_error(validate_stocnet(out))
+})

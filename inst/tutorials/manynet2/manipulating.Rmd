@@ -91,7 +91,8 @@ By the end of this tutorial, you should be able to:
 
 - [ ] &nbsp; Examine and subset a network with the `[`, `[[`, and `$` operators
 - [ ] &nbsp; Label, unlabel, and relabel a network's nodes
-- [ ] &nbsp; Change a network's direction, weights, and signs, and know why you might
+- [ ] &nbsp; Change a network's direction, weights, and signs, rescale its tie
+  values, and know why you might
 - [ ] &nbsp; Grow and prune networks by adding, joining, deleting, and filtering
   nodes, ties, and attributes
 - [ ] &nbsp; Extract a single layer from a multiplex network, split it into all
@@ -590,6 +591,52 @@ and weights can also be assigned directly:
 or the operator shorthand `net$weight <- ...`,
 which works because a value with one entry per tie
 is stored as a tie attribute.
+
+Weights are often easier to read once they are put in proportion.
+`to_normalised()` rescales each tie against the other ties of the same node,
+so that a value says what _share_ of a node's ties goes to that partner,
+rather than how many messages or dollars or minutes it carries.
+The `rule` argument chooses what to divide by —
+`"sum"` for a share, `"max"` for a value read against the node's strongest tie,
+`"mean"` for one read against a tie of typical strength —
+and `across` chooses whether to divide by the row, the column, or both.
+**Rescale `ison_networkers` so that each researcher's ties
+show what share of their messages went to each recipient.**
+
+```{r normalise, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r normalise-hint-1, purl=FALSE}
+# Try to_normalised(_____, rule = "sum", across = "rows"),
+# then rowSums(as_matrix(_____)) to check.
+```
+
+```{r normalise-solution}
+to_normalised(ison_networkers, rule = "sum", across = "rows")
+rowSums(as_matrix(to_normalised(ison_networkers, rule = "sum", across = "rows")))
+```
+
+To check your results: every row now sums to 1,
+so Lin Freeman's 0.15 to Doug White says that
+about a seventh of Freeman's messages went to White —
+a comparison that the raw counts, which range from 2 to 559, make hard.
+
+```{r normalise-question, echo = FALSE, purl=FALSE}
+question("Why does `across = \"rows\"` return a *directed* network, while the default `across = \"both\"` does not?",
+  answer("Because dividing each row by its own total makes what *i* sends *j* differ from what *j* sends *i*",
+         correct = TRUE,
+         message = "Correct: an undirected network cannot hold two different values for one tie, so each tie is split in two. `across = \"both\"` divides by the row and column totals together, which keeps a symmetric network symmetric. <img src='https://gifdb.com/images/high/doctor-wide-smile-31g68iglmnl1m5w7.gif' alt='gif of a wide-eyed doctor in scrubs looking pleasantly surprised'/>"),
+  answer("Because `to_normalised()` always returns a directed network",
+         message = "It does not. Try `is_directed(to_normalised(ison_adolescents))` with the default `across`."),
+  answer("Because the weights become decimals rather than counts",
+         message = "Direction has nothing to do with whether values are whole numbers."),
+  answer("Because `ison_networkers` was already directed",
+         message = "True of `ison_networkers`, but try it on the undirected `ison_adolescents` and the same thing happens."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
 
 ### Signs {#signs}
 

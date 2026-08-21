@@ -40,7 +40,16 @@ to_invariants <- list(
   to_simplex    = function(o) !is_complex(o),
   to_uniplex    = function(o) !is_multiplex(o),
   to_flat       = function(o) !is_multiplex(o),
-  to_imputed    = function(o) as.numeric(net_tie_missing(o)) == 0
+  to_imputed    = function(o) as.numeric(net_tie_missing(o)) == 0,
+  # Normalising a binary network by its row maximum leaves every value at 1,
+  # so `is_weighted()` is not what the name promises here. What it does promise
+  # is that no value is left undefined: a denominator of zero would otherwise
+  # give NaN, or -Inf where the largest of an empty row is taken. A value
+  # missing in the data is a different thing, and stays missing.
+  to_normalised = function(o) all(is.finite(tie_weights(o)) |
+                                    is.na(tie_weights(o))),
+  to_normalized = function(o) all(is.finite(tie_weights(o)) |
+                                    is.na(tie_weights(o)))
 )
 
 .required_args <- function(fn) {

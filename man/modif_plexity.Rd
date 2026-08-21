@@ -56,7 +56,7 @@ network records one, and strong ties are rewarded disproportionately.
 
 Missing values propagate rather than being ignored, so that a dyad
 unobserved in any of the networks is unobserved in the result.
-Use the \verb{na_to_*()} functions first to state a different assumption.}
+Use \code{impute_ties()} first to state a different assumption.}
 }
 \value{
 A tidygraph object modified as explained in the function description, details,

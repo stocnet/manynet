@@ -78,7 +78,7 @@ to_directed.igraph <- function(.data) {
 #'
 #'   Values missing in one direction are not treated as agreement:
 #'   they propagate, so that `NA` in either direction gives `NA`.
-#'   Use the `na_to_*()` functions first to state a different assumption.
+#'   Use `impute_ties()` first to state a different assumption.
 #' @examples
 #' to_undirected(ison_networkers)
 #' to_undirected(ison_networkers, rule = "min")

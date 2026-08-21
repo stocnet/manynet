@@ -411,7 +411,7 @@ as_globallist.data.frame <- function(.data) NULL
 #'   and they are not drawn or measured unless a function asks for them by name.
 #'   Where necessary, `as_missinglist()` returns a list of all missing ties together.
 #'   `net_tie_missing()` reports how many there are,
-#'   and `na_to_zero()` and `na_to_mean()` impute them.
+#'   and `impute_ties()` imputes them.
 #'
 #'   Each class holds them differently.
 #'   A stocnet object records which nodes did not report,

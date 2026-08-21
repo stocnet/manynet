@@ -158,7 +158,7 @@ Note that missing ties are not ties.
 and they are not drawn or measured unless a function asks for them by name.
 Where necessary, \code{as_missinglist()} returns a list of all missing ties together.
 \code{net_tie_missing()} reports how many there are,
-and \code{na_to_zero()} and \code{na_to_mean()} impute them.
+and \code{impute_ties()} imputes them.
 
 Each class holds them differently.
 A stocnet object records which nodes did not report,
