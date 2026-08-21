@@ -109,7 +109,6 @@ test_that("as_matrix converts correctly",{
   expect_vector(as_matrix(mat1))
   expect_vector(as_matrix(ison_southern_women))
   expect_vector(ison_southern_women |> as_matrix())
-  expect_vector(ison_southern_women |> as_matrix())
   expect_equal(as_matrix(as_network(ison_southern_women)),
                as_matrix(ison_southern_women))
 })
@@ -148,8 +147,6 @@ test_that("as_network converts correctly",{
                as_network(ison_southern_women))
   expect_equal(igraph::vcount(as_igraph(as_network(dplyr::as_tibble(data2)))),
                igraph::vcount(as_igraph(as_network(data2))))
-  expect_equal(is_directed(ison_southern_women),
-               is_directed(as_network(ison_southern_women)))
   expect_equal(is_directed(ison_southern_women),
                is_directed(as_network(ison_southern_women)))
   # NB: ordering of edges is a little different when converting from network

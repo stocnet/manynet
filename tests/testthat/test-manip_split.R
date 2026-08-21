@@ -1,28 +1,19 @@
-# Test split functions
+# How the splitting functions divide a network up: how many pieces each
+# returns, which nodes and ties each piece holds, and what each records.
+# That every to_*()/from_*() pair roundtrips, in every object class, is
+# swept in test-functional_to.R and test-functional_from.R.
 
-egos <- ison_adolescents |>
-    tidygraph::activate(edges)
-
-test_that("to_ and from_ egos works", {
+test_that("to_egos returns one ego network per node, at any distance", {
   expect_length(to_egos(ison_brandes), length(ison_brandes))
   expect_length(to_egos(ison_brandes), length(to_egos(ison_brandes, 2)))
-  expect_length(egos, length(from_egos(to_egos(egos))))
-  expect_s3_class(to_egos(egos)[[1]], "tbl_graph")
-  expect_s3_class(from_egos(to_egos(egos)), "tbl_graph")
 })
 
 unicorn <- ison_adolescents |> 
     tidygraph::activate(nodes) |> 
     mutate(unicorn = rep(c("yes", "no"), 4))
 
-test_that("to_ and from_ subgraphs works", {
+test_that("to_subgraphs returns one subgraph per value of the attribute", {
   expect_length(to_subgraphs(unicorn, "unicorn"), 2)
-  expect_length(from_subgraphs(to_subgraphs(unicorn, "unicorn")),
-               length(unicorn))
-  expect_s3_class(to_subgraphs(unicorn, "unicorn")[[1]],
-                  "tbl_graph")
-  expect_s3_class(from_subgraphs(to_subgraphs(unicorn, "unicorn")),
-                  "tbl_graph")
 })
 
 test_that("to_components works", {

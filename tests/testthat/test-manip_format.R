@@ -1,14 +1,6 @@
-test_that("to_unweight works", {
-  expect_false(is_weighted(ison_southern_women))
-  st <- igraph::set_edge_attr(ison_southern_women, "weight",
-                                   value = sample(1:89, 89))
-  expect_true(is_weighted(st))
-  expect_false(is_weighted(to_unweighted(st)))
-  expect_false(is_weighted(to_unweighted(as_igraph(st))))
-  expect_false(is_weighted(to_unweighted(as_matrix(st))))
-  expect_false(is_weighted(to_unweighted(as_network(st))))
-  expect_false(is_weighted(to_unweighted(as_edgelist(st))))
-})
+# What the to_*() invariant and cross-class sweep in test-functional_to.R
+# cannot assert: the arguments the reformatting functions take, the values
+# they reconcile ties to, and what they record having done.
 
 test_that("signed-only networks are not marked weighted in any format", {
   # `irps_tribes` holds its signs as weights of -1 and 1, so that no sign is
@@ -30,33 +22,6 @@ test_that("signed-only networks are not marked weighted in any format", {
                                 value = sign(tie_weights(wtd)))
   expect_true(is_weighted(igraph::set_edge_attr(both, "weight",
                                                 value = tie_signs(both))))
-})
-
-test_that("to_unnamed works",{
-  expect_true(is_labelled(ison_southern_women))
-  expect_false(is_labelled(to_unnamed(ison_southern_women)))
-  expect_false(is_labelled(to_unnamed(as_igraph(ison_southern_women))))
-  expect_false(is_labelled(to_unnamed(as_matrix(ison_southern_women))))
-  expect_false(is_labelled(to_unnamed(as_network(ison_southern_women))))
-  expect_false(is_labelled(to_unnamed(as_edgelist(ison_southern_women))))
-})
-
-test_that("to_undirected works",{
-  expect_false(is_directed(ison_southern_women))
-  expect_false(is_directed(to_undirected(ison_southern_women)))
-  expect_false(is_directed(to_undirected(as_igraph(ison_southern_women))))
-  expect_false(is_directed(to_undirected(as_matrix(ison_southern_women))))
-  expect_false(is_directed(to_undirected(as_network(ison_southern_women))))
-  expect_false(is_directed(to_undirected(as_edgelist(ison_southern_women))))
-})
-
-test_that("to_directed works",{
-  expect_false(is_directed(ison_brandes))
-  expect_true(is_directed(to_directed(ison_brandes)))
-  expect_true(is_directed(to_directed(as_igraph(ison_brandes))))
-  expect_true(is_directed(to_directed(as_matrix(ison_brandes))))
-  expect_true(is_directed(to_directed(as_network(ison_brandes))))
-  #expect_true(is_directed(to_directed(ison_southern_women))) # twomode?
 })
 
 test_that("to_redirected works",{
@@ -99,14 +64,6 @@ test_that("to_uniplex works where layers are held in a layer column", {
                as_matrix(to_uniplex(ison_algebra, "tasks")))
 })
 
-test_that("to_acylic works", {
-  expect_false(is_directed(as_igraph(ison_brandes)))
-  expect_true(is_directed(to_acyclic(ison_brandes)))
-  expect_true(is_directed(to_acyclic(as_igraph(ison_brandes))))
-  expect_true(is_directed(to_acyclic(as_matrix(ison_brandes))))
-  expect_true(is_directed(to_acyclic(as_network(ison_brandes))))
-})
-
 test_that("to_reciprocated works",{
   expect_true(is_directed(to_reciprocated(ison_brandes)))
   expect_true(is_directed(to_reciprocated(as_igraph(ison_brandes))))
@@ -125,31 +82,12 @@ test_that("to_onemode works",{
                  igraph::delete_vertex_attr(ison_southern_women, "type"))))
 })
 
-test_that("to_simplex works", {
-  expect_true(is_complex(fict_lotr))
-  expect_false(is_complex(to_simplex(fict_lotr)))
-  expect_false(is_complex(to_simplex(as_igraph(fict_lotr))))
-  expect_false(is_complex(to_simplex(as_matrix(fict_lotr))))
-  expect_false(is_complex(to_simplex(as_igraph(fict_lotr))))
-})
-
-test_that("to_unsigned works", {
-  expect_false(is_signed(ison_southern_women))
-  expect_false(is_signed(to_unsigned(ison_southern_women)))
-  expect_false(is_signed(to_unsigned(as_igraph(ison_southern_women))))
-  expect_false(is_signed(to_unsigned(as_matrix(ison_southern_women))))
-  expect_false(is_signed(to_unsigned(as_network(ison_southern_women))))
+test_that("to_unsigned keeps the ties of the sign it is asked for", {
   expect_false(all(as_matrix(to_unsigned(ison_southern_women, "positive")) != 
                  as_matrix(to_unsigned(ison_southern_women, "negative"))))
 })
 
-test_that("to_named works", {
-  expect_true(is_labelled(ison_southern_women))
-  expect_false(is_labelled(to_unnamed(ison_southern_women)))
-  expect_false(is_labelled(to_unnamed(as_igraph(ison_southern_women))))
-  expect_false(is_labelled(to_unnamed(as_matrix(ison_southern_women))))
-  expect_false(is_labelled(to_unnamed(as_network(ison_southern_women))))
-  expect_false(is_labelled(to_unnamed(as_edgelist(ison_southern_women))))
+test_that("to_named relabels an unlabelled network, or with names given", {
   expect_true(is_labelled(to_named(to_unnamed(ison_southern_women))))
   expect_true(is_labelled(to_named(ison_southern_women,
                                    seq_len(igraph::vcount(ison_southern_women)))))

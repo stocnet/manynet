@@ -1,12 +1,29 @@
 # Functional tests for the is_*() mark family across the fixture grid and
-# object classes. (test-mark_is.R checks default methods and the
-# ison_southern_women contract; here every is_*() function must return a
-# single non-NA logical for every fixture and agree across object classes.)
+# object classes. Every is_*() function must have a default method, return a
+# single non-NA logical for every fixture, mark the twomode fixture as its
+# name implies, and agree across object classes.
+# (test-mark_is.R holds only what this sweep cannot assert: what distinguishes
+# the marks that a single fixture cannot tell apart.)
 
 is_funs <- setdiff(alive_functions("^is_"), "is_manynet")
 
+# Which is_*() functions the twomode fixture, ison_southern_women, satisfies.
+# A two-mode network of women's attendance at events is labelled, attributed,
+# connected, uniplex, and held as a graph, and is none of the other things a
+# mark names. Matching on the name rather than listing the functions keeps a
+# newly added mark covered without an entry here.
+.twomode_marks <- paste0("twomode|attributed|igraph|connected|labelled|",
+                         "(?<!hyper)graph|manynet|uniplex")
+
 for (fn in is_funs) {
   f <- get(fn, envir = asNamespace("manynet"))
+
+  test_that(paste0(fn, "() follows family conventions"), {
+    expect_true(any(grepl(paste0("^", fn, "\\.default$"),
+                          suppressWarnings(utils::methods(fn)))),
+                label = paste0(fn, "() having a default method"))
+  })
+
   for (fx in names(func_fixtures)) {
     test_that(paste0(fn, "() returns a single logical on the ", fx,
                      " fixture"), {
@@ -16,6 +33,16 @@ for (fn in is_funs) {
       expect_false(is.na(out), label = paste0(fn, "() on ", fx))
     })
   }
+
+  test_that(paste0(fn, "() marks the twomode fixture as its name implies"), {
+    expected <- grepl(.twomode_marks, fn, perl = TRUE)
+    expect_equal(f(func_fixtures$twomode), expected,
+                 label = paste0(fn, "() on ison_southern_women"))
+    if (!grepl("igraph", fn)) {
+      expect_equal(f(as_stocnet(func_fixtures$twomode)), expected,
+                   label = paste0(fn, "() on ison_southern_women as a stocnet"))
+    }
+  })
 }
 
 # Marks should not depend on the class the network is represented in

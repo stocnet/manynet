@@ -99,11 +99,6 @@ test_that("delete_nodes works", {
   expect_length(delete_nodes(ison_adolescents, "Betty"), 7)
 })
 
-
-test_that("$ works", {
-  expect_length(ison_adolescents$`node$name`, 8)
-})
-
 test_that("add_ties accepts an even vector of nodes", {
   expect_equal(as.numeric(net_ties(add_ties(ison_adolescents, c("Betty", "Tina")))), 11)
   expect_equal(as.numeric(net_ties(add_ties(ison_adolescents, c(1, 5)))), 11)

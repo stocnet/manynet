@@ -46,6 +46,9 @@ func_fixtures <- local({
     attributed   = add_node_attribute(create_ring(8), "group",
                                       rep(c("A", "B"), each = 4)),
     multiplex    = ison_algebra,
+    # A network with loops, so that to_simplex() and is_complex() are put to
+    # work rather than passed a network that is already simple.
+    complex      = fict_lotr,
     longitudinal = fict_starwars
   )
 })
@@ -74,7 +77,14 @@ canonical_nets <- local({
   list(
     plain = canonical_net,
     `weighted, directed` = add_tie_attribute(
-      dir, "weight", rep(c(1, 2), length.out = as.numeric(net_ties(dir))))
+      dir, "weight", rep(c(1, 2), length.out = as.numeric(net_ties(dir)))),
+    # A two-mode network reaches the branches that every class keeps for the
+    # case of two node sets, which a one-mode network never runs. It is
+    # weighted as well, since the classes record a two-mode network's tie
+    # values through yet another branch again.
+    `weighted, twomode` = add_tie_attribute(
+      ison_southern_women, "weight",
+      rep(c(1, 2), length.out = as.numeric(net_ties(ison_southern_women))))
   )
 })
 

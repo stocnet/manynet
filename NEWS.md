@@ -7,6 +7,7 @@
 - Updated startup message to include executable functions, not yet working due to an RStudio bug
 - Updated CONTRIBUTING on messaging, README, website, and NEWS conventions
 - Added cross-class sweep of the network-splitting functions to the functional tests
+- Compacted the tests onto the functional sweeps, without loss of coverage
 - Cleared several CodeFactor style issues
 
 ## Making

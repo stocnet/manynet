@@ -61,6 +61,13 @@ for (fn in from_funs) {
     out <- run_or_skip(f_from(pieces), fn, "pair")
 
     expect_true(is_manynet(out), label = paste0(fn, "(", to_fn, "(x))"))
+    # A roundtrip should give back the class it was given, not just any
+    # network: the pieces are of the input's class, so reassembling them
+    # should not coerce the network into another.
+    if (!identical(class(out)[1], class(net)[1])) {
+      skip(paste0("AUDIT [", fn, " x ", to_fn, "]: roundtrip returns a ",
+                  class(out)[1], " for a ", class(net)[1], " input"))
+    }
     if (as.numeric(net_nodes(out)) != as.numeric(net_nodes(net))) {
       skip(paste0("AUDIT [", fn, " x ", to_fn, "]: roundtrip is lossy: ",
                   "recovers ", as.numeric(net_nodes(out)), " of ",

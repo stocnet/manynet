@@ -1,31 +1,7 @@
-to_funs <- funs_objs[grepl("to_", names(funs_objs))]
-# Deprecated shims just warn and forward to their replacement, so they carry no
-# methods of their own. Drop them by body, as alive_functions() does for the
-# functional sweep, so that deprecating a to_*() function does not break this.
-to_funs <- to_funs[!vapply(to_funs, function(f)
-  is.function(f) && grepl("Deprecated|Defunct|fn_moved",
-                          paste(deparse(body(f)), collapse = " ")),
-  logical(1))]
-# to_wave() is an alias of to_time(), to_layer() of to_uniplex(),
-# to_giant() is a plain wrapper for to_component(), and to_mode() is a plain
-# wrapper for to_mode1()/to_mode2(), so none of them has methods of its own
-# to sweep here.
-to_funs <- to_funs[!grepl("^na_|s$|^to_named$|^to_unnamed$|^to_wave$|^to_giant$|^to_layer$|^to_mode$", names(to_funs))]
-fun_names <- names(to_funs)
-fun_names <- fun_names[!grepl("\\.", fun_names)]
+# Behaviour of the to_*() transformation functions that the fixture and
+# cross-class sweep in test-functional_to.R cannot assert: which nodes or
+# ties each keeps, the arguments each takes, and what each records.
 
-for(fn in fun_names) {
-  test_that(paste(fn, "has a default method"), {
-    expect_true(any(grepl(paste0("^", fn, "\\.default$"), utils::methods(fn))))
-  })
-  test_that(paste(fn, "works"), {
-    skip_if(grepl("twomode|uniplex|time|ego|blockmodel", fn), message = "Some functions need more input")
-    skip_if(grepl("mode1|mode2|matching", fn), message = "Some functions expect a two-mode network")
-    skip_if(grepl("eulerian|dominating", fn), message = "Some functions have internal errors")
-    expect_no_error(to_funs[[fn]](create_ring(5)))
-  })
-}
-# Test transform functions
 
 test_that("to_giant works",{
   fm <- to_uniplex(fict_marvel, layer = "relationship")
