@@ -222,6 +222,9 @@
 - Added "Missing data" page to the "Manipulating" tutorial with `ison_classmates` example
 - Updated "Manipulating" tutorial's "Layers" page to cover layer-vocabulary with `ison_lawfirm` example
 - Updated tutorial and cheatsheet references to `to_uniplex()` to use `layer` argument
+- Moved gifs to question feedback and added more questions:
+  - "Making" tutorial gains question on reading files
+  - "Manipulating" tutorial gains questions on operators, layers, missing data, and more
 
 ## Data
 

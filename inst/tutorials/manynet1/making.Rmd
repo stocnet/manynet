@@ -45,8 +45,6 @@ html { font-size: 115%; }
 
 ## Introduction
 
-<img src="https://c.tenor.com/bibDxkkQ0YAAAAAd/tenor.gif" alt="gif of man trashing own computer"/>
-
 Most network analysts want to use network analysis to better understand empirical networks,
 but before turning to ready-made datasets, it helps to see what a network actually
 _is_, stripped down to its simplest form.
@@ -748,6 +746,23 @@ Here are some examples:
 - `read_dynetml()` for importing .dynetml files
 
 For more information on any of these functions, you can ask for help by typing `?read_pajek` in the console.
+
+```{r formats-question, echo = FALSE, purl=FALSE}
+question("A colleague sends you a Pajek .net file. Which function imports it?",
+  answer("read_pajek()",
+         correct = TRUE,
+         message = "Correct: it imports .net and .paj files into a stocnet object."),
+  answer("read_edgelist()",
+         message = "That expects a .csv or Excel edgelist, and cannot read a .net file. <img src='https://c.tenor.com/bibDxkkQ0YAAAAAd/tenor.gif' alt='gif of man trashing own computer'/>"),
+  answer("read_ucinet()",
+         message = "That reads UCINET .##h files (and the .##d files beside them)."),
+  answer("read_graphml()",
+         message = "That reads .graphml files."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
 Whereas `read_edgelist()` and `read_nodelist()` will import into a tibble/data frame class,
 `read_pajek()` and `read_ucinet()` will import the network into a stocnet format (see above).
 A stocnet holds the most of what a file can contain,

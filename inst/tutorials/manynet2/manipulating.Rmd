@@ -111,8 +111,6 @@ Each "Your turn" box suggests datasets that have the right
 structure for the task (e.g. a _weighted_ network for `to_unweighted()`),
 but you can always browse the full list with `table_data()`.
 
-<img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExeWY3dTI5c3V6cDg5aHIzd2d0dG9xeXprN3cwdm01ZDd5Zms4Z2h6biZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/REHnG6v0yICy6l9QT2/giphy.gif" alt="gif of doctor getting ready"/>
-
 ## Operating on networks
 
 Before changing anything, it helps to know how to look inside a network object,
@@ -173,7 +171,37 @@ The named functions are usually clearer and safer
 (they check and update the network's type for you),
 but the operators are handy for quick, surgical changes.
 
-<img src="https://media3.giphy.com/media/VDY6QaBBCfsDpb2Esd/giphy.gif" alt="gif of surgeon fistbumping"/>
+```{r operators-question, echo = FALSE, purl=FALSE}
+question("What does `ison_adolescents[[2]]` return?",
+  answer("The set of nodes that the second node is tied to",
+         correct = TRUE,
+         message = "Correct: `[[` returns a node's neighbourhood. Gloves on: you are ready to operate. <img src='https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExeWY3dTI5c3V6cDg5aHIzd2d0dG9xeXprN3cwdm01ZDd5Zms4Z2h6biZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/REHnG6v0yICy6l9QT2/giphy.gif' alt='gif of doctor getting ready'/>"),
+  answer("The second row of the adjacency matrix",
+         message = "That is what `ison_adolescents[2, ]` returns."),
+  answer("The second nodal attribute",
+         message = "`$` extracts an attribute by name, as in `ison_adolescents$name`."),
+  answer("The second tie of the network",
+         message = "`[[` indexes nodes, not ties."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
+```{r assign-question, echo = FALSE, purl=FALSE}
+question("After `test[1, ] <- FALSE`, how many ties does the first node have?",
+  answer("None, in either direction",
+         correct = TRUE,
+         message = "Correct: the network is undirected, so the ties to that node go too. <img src='https://media3.giphy.com/media/VDY6QaBBCfsDpb2Esd/giphy.gif' alt='gif of surgeon fistbumping'/>"),
+  answer("None sent, but the ties received remain",
+         message = "That would hold in a directed network. Here the matrix is symmetric, so both go."),
+  answer("The same as before, because `FALSE` is not `0`",
+         message = "`FALSE` counts as 0 here, so the ties are removed."),
+  answer("One to each of the other nodes",
+         message = "Assigning `FALSE` removes ties rather than adding them."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
 
 ::: {.callout}
 <span class="callout-label">**In brief**:</span> For igraph/tidygraph objects, 
@@ -290,7 +318,21 @@ full anonymisation of your data may require deleting
 or coarsening other attributes too,
 which brings us to attributes just below.
 
-<img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3Zjdnh3djM1M2F5Y3V5anhod2V0eWduYTY0ZWk2dXVoaXdycXVrNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/JdUEslEi7YhOL9vULv/giphy.gif" alt="gif of a doctor with arms crossed saying 'wait a minute'"/>
+```{r anonymise-question, echo = FALSE, purl=FALSE}
+question("Is a network anonymous once you have run `to_unlabelled()` on it?",
+  answer("No, because the other nodal attributes are still there",
+         correct = TRUE,
+         message = "Correct: `to_unlabelled()` removes the names only. Age, school, or role can still identify somebody."),
+  answer("Yes, because the names are gone",
+         message = "Wait a minute: the names are gone, but every other attribute still describes each node. <img src='https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3Zjdnh3djM1M2F5Y3V5anhod2V0eWduYTY0ZWk2dXVoaXdycXVrNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/JdUEslEi7YhOL9vULv/giphy.gif' alt='gif of a doctor with arms crossed saying wait a minute'/>"),
+  answer("Yes, as long as the network is also unweighted",
+         message = "Weights have nothing to do with it. The remaining nodal attributes do."),
+  answer("No, because `to_unlabelled()` keeps the names and adds indices",
+         message = "It removes the names. Check the result with `is_labelled()`."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
 
 ### Attributes {#attributes}
 
@@ -336,7 +378,21 @@ and `mutate_nodes()` adds or changes nodal attributes
 (`rename_nodes()` renames them, and assigning `NULL` deletes them).
 :::
 
-<img src="https://gifdb.com/images/high/doctor-dancing-joyfully-p0ymupoam9p0198w.gif" alt="gif of a doctor in scrubs dancing joyfully in a hospital room"/>
+```{r attributes-question, echo = FALSE, purl=FALSE}
+question("Which function removes a nodal attribute but keeps every node?",
+  answer("delete_node_attribute()",
+         correct = TRUE,
+         message = "Correct: it drops the named attribute, and assigning NULL in mutate_nodes() does the same. <img src='https://gifdb.com/images/high/doctor-dancing-joyfully-p0ymupoam9p0198w.gif' alt='gif of a doctor in scrubs dancing joyfully in a hospital room'/>"),
+  answer("delete_nodes()",
+         message = "That removes nodes, together with their ties."),
+  answer("rename_nodes()",
+         message = "That renames an attribute rather than removing it."),
+  answer("filter_nodes()",
+         message = "That keeps the nodes that satisfy a condition. The attributes all stay."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
 
 ## Tie properties
 
@@ -512,7 +568,21 @@ To check your results: the weights range from 2 to 559 messages,
 and thresholding at 100 leaves a much sparser network of 32 ties —
 the backbone of heavy correspondents.
 
-<img src="https://gifdb.com/images/high/doctor-wide-smile-31g68iglmnl1m5w7.gif" alt="gif of a wide-eyed doctor in scrubs looking pleasantly surprised"/>
+```{r weights-question, echo = FALSE, purl=FALSE}
+question("Thresholding `ison_networkers` at 100 leaves 32 ties. What else changed?",
+  answer("The network is no longer weighted",
+         correct = TRUE,
+         message = "Correct: `to_unweighted()` binarises the ties, so `is_weighted()` now returns FALSE. <img src='https://gifdb.com/images/high/doctor-wide-smile-31g68iglmnl1m5w7.gif' alt='gif of a wide-eyed doctor in scrubs looking pleasantly surprised'/>"),
+  answer("The weights stay, but the small ones are set to zero",
+         message = "The weight attribute is dropped altogether. Check with `is_weighted()`."),
+  answer("The nodes with no heavy ties were removed",
+         message = "`to_unweighted()` acts on ties only. `delete_isolates()` removes stranded nodes."),
+  answer("The network became undirected",
+         message = "Direction is untouched. `ison_networkers` is directed before and after."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
 
 Going the other way, `to_weighted()` adds a weight attribute,
 and weights can also be assigned directly:
@@ -627,8 +697,6 @@ This page shows one way such networks arise —
 by _joining_ two networks together —
 and then how to inspect their layers and pull a single one back out.
 
-<img src="https://gifdb.com/images/high/i-concur-doctors-agree-operating-room-m9xh3qvynshaozsb.gif" alt="gif of masked surgeons in an operating room asking 'do you concur?'"/>
-
 ### Joining networks {#joining-networks}
 
 What if the extra ties you want to add are already collected
@@ -674,6 +742,22 @@ among the partners and associates of a New England law firm.
 ```{r layers-solution}
 is_multiplex(ison_lawfirm)
 layer_names(ison_lawfirm)
+```
+
+```{r layers-question, echo = FALSE, purl=FALSE}
+question("How many kinds of relationship does `ison_lawfirm` record?",
+  answer("Three: friends, advice, and cowork",
+         correct = TRUE,
+         message = "Correct: `layer_names()` lists all three. Do you concur? <img src='https://gifdb.com/images/high/i-concur-doctors-agree-operating-room-m9xh3qvynshaozsb.gif' alt='gif of masked surgeons in an operating room asking do you concur?'/>"),
+  answer("One, since every tie joins the same pair of partners",
+         message = "`is_multiplex()` returns TRUE, so there is more than one type of tie."),
+  answer("Two: friends and advice",
+         message = "Those are the first two. `layer_names()` lists a third."),
+  answer("As many as there are partners in the firm",
+         message = "Layers are types of tie, not nodes."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
 ```
 
 Most analyses of multiplex networks proceed one layer at a time,
@@ -752,6 +836,22 @@ The last line keeps the 358 pairs tied in both layers.
 Nodes are matched by name where the networks are labelled,
 and by position where they are not and are the same size.
 
+```{r flat-question, echo = FALSE, purl=FALSE}
+question("Flattening the two layers with the min rule keeps 358 pairs. Who are they?",
+  answer("The pairs who are both friends and advisors",
+         correct = TRUE,
+         message = "Correct: the min rule keeps only the ties that every layer holds. <img src='https://gifdb.com/images/high/doctors-doing-hand-gestures-pu47xo2ice3pvsk2.gif' alt='gif of two doctors in scrubs doing a synchronised celebratory hand gesture'/>"),
+  answer("The pairs who are either friends or advisors",
+         message = "That is the max rule, which counts a tie in any layer as a tie."),
+  answer("The pairs who are friends but not advisors",
+         message = "No rule works this way. Filter one layer and compare it with the other for that."),
+  answer("The pairs with the highest combined tie weight",
+         message = "The sum rule adds the layers up, but it drops no pair."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
 **Your turn**: try the other layers of `ison_lawfirm`,
 or explore another multiplex network:
 
@@ -775,8 +875,6 @@ as layers, while `to_flat()` combines the layers of any multiplex network
 into one relation by a `rule`.
 :::
 
-<img src="https://gifdb.com/images/high/doctors-doing-hand-gestures-pu47xo2ice3pvsk2.gif" alt="gif of two doctors in scrubs doing a synchronised celebratory hand gesture"/>
-
 ## Multimodal networks
 
 Where the previous page bundled several kinds of _tie_ among one set of nodes,
@@ -789,8 +887,6 @@ the key task is moving from two modes to one,
 usually by `r gloss("projection")`.
 
 ### Modes {#modes}
-
-<img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExYnR1dTZoNTRkenhrajZmOGNsbWMxbzVhaXpxdWdqNmd2emN3aHpjNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Hq8O099eDBP4PEIZLP/giphy.gif" alt="gif of a doctor considering something sceptically"/>
 
 `is_twomode()` checks whether a network has two modes,
 and projection transforms it into ties among just one of them:
@@ -842,7 +938,7 @@ question("The first mode of the two-mode network consists of...",
   answer("events called Christmas Ball, End-of-year, Mardi Gras, etc",
          message = "The events in this dataset are unnamed, appearing just as E1, E2, etc."),
   answer("women named Gertrude, Sally, Agnes, etc",
-         message = "Check the printed node names again: the first names listed are Evelyn, Laura, Theresa, etc."),
+         message = "Check the printed node names again: the first names listed are Evelyn, Laura, Theresa, etc. <img src='https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExYnR1dTZoNTRkenhrajZmOGNsbWMxbzVhaXpxdWdqNmd2emN3aHpjNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Hq8O099eDBP4PEIZLP/giphy.gif' alt='gif of a doctor considering something sceptically'/>"),
   random_answer_order = TRUE,
   allow_retry = TRUE
 )
@@ -1142,7 +1238,21 @@ Together with `to_waves()` this is the foundation for the
 dynamic and diffusion analyses covered in later tutorials
 (in the `{netrics}` and `{migraph}` packages).
 
-<img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExczBlMXFtNnprbWZqbTh6eHYyMGM5emJuZ2R1MWd2dHplczFqaXhvOCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1wqblZCf2zPpxywZKa/giphy.gif" alt="gif of a doctor warning 'I will deal with you later'"/>
+```{r changes-question, echo = FALSE, purl=FALSE}
+question("A changelog row says that Anakin's faction becomes 'Empire' at time 3. When does the network show it?",
+  answer("From time 3 on, once `to_time()` applies it",
+         correct = TRUE,
+         message = "Correct: the changelog records the change, and `to_time()` deals with it when you ask for that moment. <img src='https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExczBlMXFtNnprbWZqbTh6eHYyMGM5emJuZ2R1MWd2dHplczFqaXhvOCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1wqblZCf2zPpxywZKa/giphy.gif' alt='gif of a doctor warning I will deal with you later'/>"),
+  answer("Straight away, in the printed node table",
+         message = "The node table holds the starting values. The changelog prints separately, between the node and tie tables."),
+  answer("At time 3 only, and not afterwards",
+         message = "A change holds from that moment on, until another change says otherwise."),
+  answer("Never, since a changelog is a record only",
+         message = "`to_time()` applies the recorded changes to the node attributes."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
 
 ::: {.callout}
 <span class="callout-label">**Going further**:</span>
@@ -1173,8 +1283,6 @@ Somebody skips the questionnaire. Somebody joins the class in March.
 Both leave holes in a network, and they are not the same hole.
 Treating either as "no tie" invents data,
 and most network measures have no way of telling you that you did.
-
-<img src="https://media1.tenor.com/m/rIvLmUu5rGkAAAAd/i-know-nothing-jon-snow.gif" alt="gif of Jon Snow being told he knows nothing"/>
 
 ### Four states {#four-states}
 
@@ -1212,6 +1320,22 @@ and one pupil left the class, logged as a change of their `active` status.
 Note that each `na` change is followed by a change back:
 a change says what a variable becomes _from that moment on_,
 so a pupil who answers again the following wave needs to say so.
+
+```{r missing-question, echo = FALSE, purl=FALSE}
+question("A pupil skipped the questionnaire at wave 2. How does this differ from a pupil who named nobody?",
+  answer("We know nothing about who they would have named",
+         correct = TRUE,
+         message = "Correct: those ties are not observed, rather than observed to be absent. Recording them as absent invents data."),
+  answer("It does not differ, since neither pupil gives a nomination",
+         message = "One answer is unknown and the other is known to be empty. `{manynet}` keeps the two apart."),
+  answer("The pupil is not in the network at that wave",
+         message = "That is the 'not possible' state, logged as a change of the `active` status. This pupil is present but did not answer."),
+  answer("Their ties are known, but their strength is not",
+         message = "That is the 'observed but unvalued' state, which is a tie without a weight."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
 
 ### Finding it {#finding-missing}
 
@@ -1367,8 +1491,6 @@ to just the part that matters.
 The verbs on this page all take a whole network
 and hand back a smaller or cleaner one.
 
-<img src="https://media1.tenor.com/m/uUpPHC_dxe0AAAAC/gloves-on-im-ready.gif" alt="gif of a doctor reassuring 'don't worry, I'm a doctor'"/>
-
 ### Subgraphs {#subgraphs}
 
 Earlier, `delete_nodes()` and `delete_ties()` removed elements you named.
@@ -1397,9 +1519,23 @@ along with only the ties among them
 (this is called an `r gloss("induced")` `r gloss("subgraph")`).
 Filtering on tie attributes instead uses `filter_ties()`.
 
-### Isolates {#isolates}
+```{r subgraph-question, echo = FALSE, purl=FALSE}
+question("Filtering `fict_potter` to the Gryffindors keeps 25 of the 64 characters. What happens to their ties to the other houses?",
+  answer("They are dropped",
+         correct = TRUE,
+         message = "Correct: an induced subgraph keeps only the ties whose both ends remain. <img src='https://media1.tenor.com/m/uUpPHC_dxe0AAAAC/gloves-on-im-ready.gif' alt='gif of a doctor reassuring dont worry, Im a doctor'/>"),
+  answer("They are kept, pointing at the characters that were removed",
+         message = "A tie needs both of its ends, so the ties to removed nodes go too."),
+  answer("They are kept, and recorded as missing",
+         message = "Filtering removes them. A missing tie is one that was never observed."),
+  answer("They become self-ties on the Gryffindors",
+         message = "Nothing is merged. `to_simplex()` is what removes self-ties."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
 
-<img src="https://media1.tenor.com/m/UlWgg8a56EMAAAAC/mr-bean-mr-bean-ok.gif" alt="gif of a wide-eyed surgeon pulling down his mask, ready to operate"/>
+### Isolates {#isolates}
 
 Deleting or filtering ties can leave nodes stranded without any ties.
 Depending on your question, such `r gloss("isolates","isolate")` may be
@@ -1429,6 +1565,22 @@ net_nodes(stranded)
 net_nodes(delete_isolates(stranded))
 ```
 
+```{r isolates-question, echo = FALSE, purl=FALSE}
+question("The stranded network holds 8 nodes, and `delete_isolates()` leaves 7. Which node went?",
+  answer("Betty, whose only friendship was the tie we deleted",
+         correct = TRUE,
+         message = "Correct: Sue keeps her other friendships, so Betty alone is left without a tie. <img src='https://media1.tenor.com/m/UlWgg8a56EMAAAAC/mr-bean-mr-bean-ok.gif' alt='gif of a wide-eyed surgeon pulling down his mask, ready to operate'/>"),
+  answer("Both Betty and Sue",
+         message = "Sue has other friends in this network, so she is not an isolate."),
+  answer("Sue, who lost a friendship",
+         message = "Losing one tie is not enough. `delete_isolates()` drops the nodes with no ties at all."),
+  answer("None, since `delete_isolates()` removes ties rather than nodes",
+         message = "It removes nodes without ties, which is why the count falls to 7."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
 A related cleaning task concerns `r gloss("loops","loop")` (self-ties):
 `to_simplex()` removes them,
 turning a `r gloss("complex")` network into a `r gloss("simplex")` one.
@@ -1444,8 +1596,6 @@ all taking a whole network and returning a narrower or cleaner one.
 ## Summary
 
 ### Putting it together
-
-<img src="https://bestanimations.com/Careers/Medical/grey-anatomy-doctor-animated-gif-1.gif" alt="gif of a surgeon in the operating room saying 'it's a beautiful night to save lives'"/>
 
 Real-world data often needs several of this tutorial's verbs in sequence.
 `irps_blogs` is a large directed network of 1490 political blogs.
@@ -1463,6 +1613,22 @@ while `to_giant()` then drops every node outside the main component.
 This kind of short pipeline — coerce, reformat, transform — is the everyday
 work of getting real network data into shape.
 
+```{r cleaning-question, echo = FALSE, purl=FALSE}
+question("In `irps_blogs |> to_undirected() |> to_giant()`, which step changes the node count?",
+  answer("`to_giant()`, which drops the 268 nodes outside the main component",
+         correct = TRUE,
+         message = "Correct: `to_undirected()` merges reciprocated ties and keeps all 1490 nodes, and `to_giant()` then prunes the rest. <img src='https://bestanimations.com/Careers/Medical/grey-anatomy-doctor-animated-gif-1.gif' alt='gif of a surgeon in the operating room saying its a beautiful night to save lives'/>"),
+  answer("`to_undirected()`, which merges the nodes of reciprocated ties",
+         message = "It merges ties, not nodes. All 1490 nodes survive that step."),
+  answer("Both steps",
+         message = "Only the second one does. Compare `net_nodes()` after each step."),
+  answer("Neither, since only the tie count changes",
+         message = "The node count falls from 1490 to 1222 at `to_giant()`."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
 **One last free play**: build your own cleaning pipeline.
 Pick any dataset from `table_data()` and chain at least three verbs
 from different sections of this tutorial —
@@ -1474,9 +1640,23 @@ and `net_ties()` at each step that it did what you expected.
 
 ```
 
-### Function overview
+```{r wrapup-question, echo = FALSE, purl=FALSE}
+question("A colleague hands you a multiplex, directed network and wants the advice layer, undirected and without isolates. Which pipeline does this?",
+  answer("`to_uniplex(layer = \"advice\")`, then `to_undirected()`, then `delete_isolates()`",
+         correct = TRUE,
+         message = "Correct: extract the layer, reformat the direction, then prune whatever that leaves stranded. <img src='https://gifdb.com/images/high/standing-ovation-congratulations-doctor-chicago-med-mnr588ssjqckmmzc.gif' alt='gif of doctor getting standing ovation'/>"),
+  answer("`to_flat()`, then `to_undirected()`, then `delete_isolates()`",
+         message = "`to_flat()` combines every layer into one relation rather than picking out the advice layer."),
+  answer("`delete_isolates()`, then `to_uniplex(layer = \"advice\")`, then `to_undirected()`",
+         message = "Pruning first is too early: dropping the other layers can strand further nodes."),
+  answer("`to_undirected()`, then `to_giant()`, then `to_uniplex(layer = \"advice\")`",
+         message = "`to_giant()` drops minor components as well as isolates, which is more than was asked."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
 
-<img src="https://gifdb.com/images/high/standing-ovation-congratulations-doctor-chicago-med-mnr588ssjqckmmzc.gif" alt="gif of doctor getting standing ovation"/>
+### Function overview
 
 Well done — you have completed the tutorial on manipulating network data!
 Along the way, you have learned to use these functions:

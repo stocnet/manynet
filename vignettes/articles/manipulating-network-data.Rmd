@@ -112,8 +112,6 @@ Each "Your turn" box suggests datasets that have the right
 structure for the task (e.g. a _weighted_ network for `to_unweighted()`),
 but you can always browse the full list with `table_data()`.
 
-<img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExeWY3dTI5c3V6cDg5aHIzd2d0dG9xeXprN3cwdm01ZDd5Zms4Z2h6biZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/REHnG6v0yICy6l9QT2/giphy.gif" alt="gif of doctor getting ready"/>
-
 ## Operating on networks
 
 Before changing anything, it helps to know how to look inside a network object,
@@ -174,7 +172,9 @@ The named functions are usually clearer and safer
 (they check and update the network's type for you),
 but the operators are handy for quick, surgical changes.
 
-<img src="https://media3.giphy.com/media/VDY6QaBBCfsDpb2Esd/giphy.gif" alt="gif of surgeon fistbumping"/>
+::: {.callout}
+<span class="callout-label">**Try it yourself**:</span> This section includes an interactive quiz in the live tutorial — run `run_tute()` at the R console to try it.
+:::
 
 ::: {.callout}
 <span class="callout-label">**In brief**:</span> For igraph/tidygraph objects, 
@@ -259,7 +259,9 @@ full anonymisation of your data may require deleting
 or coarsening other attributes too,
 which brings us to attributes just below.
 
-<img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3Zjdnh3djM1M2F5Y3V5anhod2V0eWduYTY0ZWk2dXVoaXdycXVrNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/JdUEslEi7YhOL9vULv/giphy.gif" alt="gif of a doctor with arms crossed saying 'wait a minute'"/>
+::: {.callout}
+<span class="callout-label">**Try it yourself**:</span> This section includes an interactive quiz in the live tutorial — run `run_tute()` at the R console to try it.
+:::
 
 ### Attributes {#attributes}
 
@@ -305,7 +307,9 @@ and `mutate_nodes()` adds or changes nodal attributes
 (`rename_nodes()` renames them, and assigning `NULL` deletes them).
 :::
 
-<img src="https://gifdb.com/images/high/doctor-dancing-joyfully-p0ymupoam9p0198w.gif" alt="gif of a doctor in scrubs dancing joyfully in a hospital room"/>
+::: {.callout}
+<span class="callout-label">**Try it yourself**:</span> This section includes an interactive quiz in the live tutorial — run `run_tute()` at the R console to try it.
+:::
 
 ## Tie properties
 
@@ -430,7 +434,9 @@ To check your results: the weights range from 2 to 559 messages,
 and thresholding at 100 leaves a much sparser network of 32 ties —
 the backbone of heavy correspondents.
 
-<img src="https://gifdb.com/images/high/doctor-wide-smile-31g68iglmnl1m5w7.gif" alt="gif of a wide-eyed doctor in scrubs looking pleasantly surprised"/>
+::: {.callout}
+<span class="callout-label">**Try it yourself**:</span> This section includes an interactive quiz in the live tutorial — run `run_tute()` at the R console to try it.
+:::
 
 Going the other way, `to_weighted()` adds a weight attribute,
 and weights can also be assigned directly:
@@ -516,8 +522,6 @@ This page shows one way such networks arise —
 by _joining_ two networks together —
 and then how to inspect their layers and pull a single one back out.
 
-<img src="https://gifdb.com/images/high/i-concur-doctors-agree-operating-room-m9xh3qvynshaozsb.gif" alt="gif of masked surgeons in an operating room asking 'do you concur?'"/>
-
 ### Joining networks {#joining-networks}
 
 What if the extra ties you want to add are already collected
@@ -552,6 +556,10 @@ and `layer_names()` lists them.
 among the partners and associates of a New England law firm.
 **Find out what they are.**
 
+
+::: {.callout}
+<span class="callout-label">**Try it yourself**:</span> This section includes an interactive quiz in the live tutorial — run `run_tute()` at the R console to try it.
+:::
 
 Most analyses of multiplex networks proceed one layer at a time,
 and `to_uniplex()` extracts a single layer by name.
@@ -607,6 +615,10 @@ The last line keeps the 358 pairs tied in both layers.
 Nodes are matched by name where the networks are labelled,
 and by position where they are not and are the same size.
 
+::: {.callout}
+<span class="callout-label">**Try it yourself**:</span> This section includes an interactive quiz in the live tutorial — run `run_tute()` at the R console to try it.
+:::
+
 **Your turn**: try the other layers of `ison_lawfirm`,
 or explore another multiplex network:
 
@@ -627,8 +639,6 @@ as layers, while `to_flat()` combines the layers of any multiplex network
 into one relation by a `rule`.
 :::
 
-<img src="https://gifdb.com/images/high/doctors-doing-hand-gestures-pu47xo2ice3pvsk2.gif" alt="gif of two doctors in scrubs doing a synchronised celebratory hand gesture"/>
-
 ## Multimodal networks
 
 Where the previous page bundled several kinds of _tie_ among one set of nodes,
@@ -641,8 +651,6 @@ the key task is moving from two modes to one,
 usually by `r gloss("projection")`.
 
 ### Modes {#modes}
-
-<img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExYnR1dTZoNTRkenhrajZmOGNsbWMxbzVhaXpxdWdqNmd2emN3aHpjNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Hq8O099eDBP4PEIZLP/giphy.gif" alt="gif of a doctor considering something sceptically"/>
 
 `is_twomode()` checks whether a network has two modes,
 and projection transforms it into ties among just one of them:
@@ -830,7 +838,9 @@ Together with `to_waves()` this is the foundation for the
 dynamic and diffusion analyses covered in later tutorials
 (in the `{netrics}` and `{migraph}` packages).
 
-<img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExczBlMXFtNnprbWZqbTh6eHYyMGM5emJuZ2R1MWd2dHplczFqaXhvOCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1wqblZCf2zPpxywZKa/giphy.gif" alt="gif of a doctor warning 'I will deal with you later'"/>
+::: {.callout}
+<span class="callout-label">**Try it yourself**:</span> This section includes an interactive quiz in the live tutorial — run `run_tute()` at the R console to try it.
+:::
 
 ::: {.callout}
 <span class="callout-label">**Going further**:</span>
@@ -862,8 +872,6 @@ Both leave holes in a network, and they are not the same hole.
 Treating either as "no tie" invents data,
 and most network measures have no way of telling you that you did.
 
-<img src="https://media1.tenor.com/m/rIvLmUu5rGkAAAAd/i-know-nothing-jon-snow.gif" alt="gif of Jon Snow being told he knows nothing"/>
-
 ### Four states {#four-states}
 
 A tie in `{manynet}` can be in one of four states, and they are kept apart:
@@ -886,6 +894,10 @@ and one pupil left the class, logged as a change of their `active` status.
 Note that each `na` change is followed by a change back:
 a change says what a variable becomes _from that moment on_,
 so a pupil who answers again the following wave needs to say so.
+
+::: {.callout}
+<span class="callout-label">**Try it yourself**:</span> This section includes an interactive quiz in the live tutorial — run `run_tute()` at the R console to try it.
+:::
 
 ### Finding it {#finding-missing}
 
@@ -998,8 +1010,6 @@ to just the part that matters.
 The verbs on this page all take a whole network
 and hand back a smaller or cleaner one.
 
-<img src="https://media1.tenor.com/m/uUpPHC_dxe0AAAAC/gloves-on-im-ready.gif" alt="gif of a doctor reassuring 'don't worry, I'm a doctor'"/>
-
 ### Subgraphs {#subgraphs}
 
 Earlier, `delete_nodes()` and `delete_ties()` removed elements you named.
@@ -1015,9 +1025,11 @@ along with only the ties among them
 (this is called an `r gloss("induced")` `r gloss("subgraph")`).
 Filtering on tie attributes instead uses `filter_ties()`.
 
-### Isolates {#isolates}
+::: {.callout}
+<span class="callout-label">**Try it yourself**:</span> This section includes an interactive quiz in the live tutorial — run `run_tute()` at the R console to try it.
+:::
 
-<img src="https://media1.tenor.com/m/UlWgg8a56EMAAAAC/mr-bean-mr-bean-ok.gif" alt="gif of a wide-eyed surgeon pulling down his mask, ready to operate"/>
+### Isolates {#isolates}
 
 Deleting or filtering ties can leave nodes stranded without any ties.
 Depending on your question, such `r gloss("isolates","isolate")` may be
@@ -1031,6 +1043,10 @@ Two transforming functions prune them:
 **Betty's only friendship is with Sue.
 Delete that tie and watch the node count before and after `delete_isolates()`.**
 
+
+::: {.callout}
+<span class="callout-label">**Try it yourself**:</span> This section includes an interactive quiz in the live tutorial — run `run_tute()` at the R console to try it.
+:::
 
 A related cleaning task concerns `r gloss("loops","loop")` (self-ties):
 `to_simplex()` removes them,
@@ -1048,8 +1064,6 @@ all taking a whole network and returning a narrower or cleaner one.
 
 ### Putting it together
 
-<img src="https://bestanimations.com/Careers/Medical/grey-anatomy-doctor-animated-gif-1.gif" alt="gif of a surgeon in the operating room saying 'it's a beautiful night to save lives'"/>
-
 Real-world data often needs several of this tutorial's verbs in sequence.
 `irps_blogs` is a large directed network of 1490 political blogs.
 Suppose we only want the well-connected core, as a simple undirected network.
@@ -1066,6 +1080,10 @@ while `to_giant()` then drops every node outside the main component.
 This kind of short pipeline — coerce, reformat, transform — is the everyday
 work of getting real network data into shape.
 
+::: {.callout}
+<span class="callout-label">**Try it yourself**:</span> This section includes an interactive quiz in the live tutorial — run `run_tute()` at the R console to try it.
+:::
+
 **One last free play**: build your own cleaning pipeline.
 Pick any dataset from `table_data()` and chain at least three verbs
 from different sections of this tutorial —
@@ -1074,9 +1092,11 @@ and drop the isolates — checking with `is_*()`, `net_nodes()`,
 and `net_ties()` at each step that it did what you expected.
 
 
-### Function overview
+::: {.callout}
+<span class="callout-label">**Try it yourself**:</span> This section includes an interactive quiz in the live tutorial — run `run_tute()` at the R console to try it.
+:::
 
-<img src="https://gifdb.com/images/high/standing-ovation-congratulations-doctor-chicago-med-mnr588ssjqckmmzc.gif" alt="gif of doctor getting standing ovation"/>
+### Function overview
 
 Well done — you have completed the tutorial on manipulating network data!
 Along the way, you have learned to use these functions:
