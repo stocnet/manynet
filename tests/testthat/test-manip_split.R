@@ -1,6 +1,6 @@
 # Test split functions
 
-egos <- ison_adolescents %>%
+egos <- ison_adolescents |>
     tidygraph::activate(edges)
 
 test_that("to_ and from_ egos works", {
@@ -47,8 +47,8 @@ test_that("to_components respects connectivity", {
 })
 
 set.seed(1234)
-wave <- ison_adolescents %>%
-    tidygraph::activate(edges) %>%
+wave <- ison_adolescents |>
+    tidygraph::activate(edges) |>
     mutate(wave = sample(1995:1998, 10, replace = TRUE))
 
 test_that("to_waves works", {
@@ -60,8 +60,8 @@ test_that("to_waves works", {
 })
 
 set.seed(1234)
-yearly <- ison_adolescents %>%
-    tidygraph::activate(edges) %>%
+yearly <- ison_adolescents |>
+    tidygraph::activate(edges) |>
     mutate(year = sample(1:12, 10, replace = TRUE))
 
 test_that("to_waves honours an explicitly named attribute (stocnet/autograph#40)", {
@@ -143,8 +143,8 @@ test_that("to_waves works for diff_model objects", {
   expect_false(node_attribute(to_waves(wave_diff)[[10]], "Recovered")[1])
 })
 
-slice <- ison_adolescents %>%
-    mutate_ties(time = 1:10, increment = 1) %>%
+slice <- ison_adolescents |>
+    mutate_ties(time = 1:10, increment = 1) |>
     add_ties(c(1,2), list(time = 3, increment = -1))
 
 test_that("to_ and from_ slices works", {

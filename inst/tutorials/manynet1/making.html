@@ -1912,7 +1912,7 @@ output$`tutorial-exercise-readcoerce-output` <- renderUI({
 learnr:::store_exercise_cache(structure(list(label = "readcoerce", global_setup = structure(c("library(learnr)", 
 "library(manynet)", "library(network)", "knitr::opts_chunk$set(echo = FALSE)"
 ), chunk_opts = list(label = "setup", include = FALSE, purl = FALSE)), 
-    setup = NULL, chunks = list(list(label = "readcoerce", code = "# 1. Separate steps\nadols <- read_edgelist(\"data/adols.csv\")\nadolsigraph1 <- as_igraph(adols)\nadolsigraph1\n# 2. Nested steps\nadolsigraph2 <- as_igraph(read_edgelist(\"data/adols.csv\"))\nadolsigraph2\n# 3. Chained steps\nadolsigraph3 <- read_edgelist(\"data/adols.csv\") %>% as_igraph()\nadolsigraph3", 
+    setup = NULL, chunks = list(list(label = "readcoerce", code = "# 1. Separate steps\nadols <- read_edgelist(\"data/adols.csv\")\nadolsigraph1 <- as_igraph(adols)\nadolsigraph1\n# 2. Nested steps\nadolsigraph2 <- as_igraph(read_edgelist(\"data/adols.csv\"))\nadolsigraph2\n# 3. Chained steps\nadolsigraph3 <- read_edgelist(\"data/adols.csv\") |> as_igraph()\nadolsigraph3", 
         opts = list(label = "\"readcoerce\"", exercise = "TRUE", 
             purl = "FALSE"), engine = "r")), code_check = NULL, 
     error_check = NULL, check = NULL, solution = NULL, tests = NULL, 
@@ -1936,7 +1936,7 @@ learnr:::store_exercise_cache(structure(list(label = "readcoerce", global_setup 
         code = c("# 1. Separate steps", "adols <- read_edgelist(\"data/adols.csv\")", 
         "adolsigraph1 <- as_igraph(adols)", "adolsigraph1", "# 2. Nested steps", 
         "adolsigraph2 <- as_igraph(read_edgelist(\"data/adols.csv\"))", 
-        "adolsigraph2", "# 3. Chained steps", "adolsigraph3 <- read_edgelist(\"data/adols.csv\") %>% as_igraph()", 
+        "adolsigraph2", "# 3. Chained steps", "adolsigraph3 <- read_edgelist(\"data/adols.csv\") |> as_igraph()", 
         "adolsigraph3"), out.width.px = 624, out.height.px = 384, 
         params.src = "readcoerce, exercise = TRUE, purl=FALSE", 
         fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 

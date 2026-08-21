@@ -217,9 +217,9 @@ familiar tidyverse grammar, making network manipulation intuitive for R
 users:
 
 ``` r
-ison_southern_women %>%
-  mutate_ties(weight = 1) %>%
-  filter_nodes(node_is_mode(ison_southern_women)) %>%
+ison_southern_women |>
+  mutate_ties(weight = 1) |>
+  filter_nodes(node_is_mode(ison_southern_women)) |>
   select_nodes(name)
 ```
 
@@ -254,7 +254,7 @@ directed to undirected via `to_undirected()`.
 
 <img src="https://www.jameshollway.com/post/manynet/README-directed_egs-1.png" alt="Graphs illustrating modification of a network's directedness"/>
 
-See also `to_directed()`, `to_labelled()`, `to_named()`,
+See also `to_directed()`, `to_imputed()`, `to_labelled()`, `to_named()`,
 `to_permuted()`, `to_reciprocated()`, `to_redirected()`, `to_signed()`,
 `to_undirected()`, `to_unlabelled()`, `to_unnamed()`, `to_unsigned()`,
 `to_unweighted()`, `to_weighted()`.
@@ -286,8 +286,9 @@ functions.
 
 See also `to_blocks()`, `to_components()`, `to_egos()`, `to_layers()`,
 `to_motifs()`, `to_no_isolates()`, `to_slices()`, `to_subgraphs()`,
-`to_ties()`, `to_waves()` and `from_egos()`, `from_layers()`,
-`from_slices()`, `from_subgraphs()`, `from_ties()`, `from_waves()`.
+`to_ties()`, `to_times()`, `to_waves()` and `from_egos()`,
+`from_layers()`, `from_slices()`, `from_subgraphs()`, `from_ties()`,
+`from_times()`, `from_waves()`.
 
 ## Cheat sheet
 

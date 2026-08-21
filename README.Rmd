@@ -106,7 +106,7 @@ imports <- igraph::graph_from_literal(ucinet:pajek+--+stocnet,
                                       matrix:graphml:gexf+--+stocnet,
                                       dynetml--+stocnet,
                                       edgelist:nodelist+--+tibble)
-imports <- imports %>% mutate(type = ifelse(node_labels(imports)%in% c("stocnet","tibble"), TRUE, FALSE))
+imports <- imports |> mutate(type = ifelse(node_labels(imports)%in% c("stocnet","tibble"), TRUE, FALSE))
 graphr(imports, node_size = 4)
 ```
 
@@ -262,9 +262,9 @@ These verbs follow the familiar tidyverse grammar,
 making network manipulation intuitive for R users:
 
 ```{r manip-example, eval = FALSE}
-ison_southern_women %>%
-  mutate_ties(weight = 1) %>%
-  filter_nodes(node_is_mode(ison_southern_women)) %>%
+ison_southern_women |>
+  mutate_ties(weight = 1) |>
+  filter_nodes(node_is_mode(ison_southern_women)) |>
   select_nodes(name)
 ```
 

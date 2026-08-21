@@ -1,12 +1,12 @@
 names <- c("Lisa", "John", "Lily", "Ben", "Adam")
 net <- as_tidygraph(data.frame(from = c("A", "B", "C", "D","E"),
-                               to = c("B", "C", "D", "E", "A"))) %>%
-  mutate(name = names) %>%
+                               to = c("B", "C", "D", "E", "A"))) |>
+  mutate(name = names) |>
   mutate(gender = c("female", "male", "female", "male", "male"))
 
 net2 <- as_tidygraph(data.frame(from = c("A", "B", "C", "D","E"),
-                                to = c("B", "C", "D", "E", "A"))) %>%
-  mutate(friends = c("yes", "yes", "no", "no", "yes")) %>%
+                                to = c("B", "C", "D", "E", "A"))) |>
+  mutate(friends = c("yes", "yes", "no", "no", "yes")) |>
   igraph::set_edge_attr("weight", value = 1:5)
 
 net3 <- as_matrix(data.frame(from = c("A", "A", "B", "C", "D", "D", "E", "E"),

@@ -339,7 +339,7 @@ read_ucinet <- function(file = file.choose()) {
       haslab <- haslab[1:2]
       dim.labels <- dim.labels[1:2]
     }
-    return(list(
+    list(
       headerversion = headerversion,
       date = paste(dow, paste(day, month, year, sep = "-")),
       labtype = labtype,
@@ -349,7 +349,7 @@ read_ucinet <- function(file = file.choose()) {
       titl = titl,
       haslab = haslab,
       dim.labels = dim.labels
-    ))
+    )
   }
   # Start of main function code:
   header <- read_ucinet_header(file)

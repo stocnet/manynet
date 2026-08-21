@@ -213,7 +213,7 @@ to_permuted.tbl_graph <- function(.data, with_attr = TRUE) {
 
 .makeSymm <- function(m) {
   m[upper.tri(m)] <- t(m)[upper.tri(m)]
-  return(m)
+  m
 }
 
 

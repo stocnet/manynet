@@ -1,10 +1,10 @@
 # Test missing
 
-missTest <- ison_adolescents %>%
-  add_tie_attribute("weight", c(1,NA,NA,1,1,1,NA,NA,1,1)) %>%
-  as_matrix
+missTest <- ison_adolescents |>
+  add_tie_attribute("weight", c(1,NA,NA,1,1,1,NA,NA,1,1)) |>
+  as_matrix()
 
-missTest2 <- ison_adolescents %>%
+missTest2 <- ison_adolescents |>
   mutate_ties(weight = c(1:8, NA, NA))
 
 test_that("missing values are imputed correctly",{

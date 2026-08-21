@@ -10,8 +10,8 @@ test_that("delete_isolates removes nodes without ties", {
                as.numeric(net_ties(stranded)))
 })
 
-isolate <- ison_adolescents %>%
-  activate(edges) %>%
+isolate <- ison_adolescents |>
+  activate(edges) |>
   to_subgraph(from == 1:5)
 
 test_that("delete_isolates returns the class it was given", {

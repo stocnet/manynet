@@ -108,8 +108,8 @@ test_that("data frame converted to matrix correctly",{
 test_that("as_matrix converts correctly",{
   expect_vector(as_matrix(mat1))
   expect_vector(as_matrix(ison_southern_women))
-  expect_vector(ison_southern_women %>% as_matrix())
-  expect_vector(ison_southern_women %>% as_matrix())
+  expect_vector(ison_southern_women |> as_matrix())
+  expect_vector(ison_southern_women |> as_matrix())
   expect_equal(as_matrix(as_network(ison_southern_women)),
                as_matrix(ison_southern_women))
 })

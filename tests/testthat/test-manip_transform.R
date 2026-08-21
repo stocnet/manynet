@@ -257,7 +257,7 @@ test_that("to anti works", {
 })
 
 test_that("to, and from, waves work", {
-  orig <- ison_adolescents %>%
+  orig <- ison_adolescents |>
     mutate_ties(wave = sample(1995:1998, 10, replace = TRUE))
   waves <- to_waves(orig, attribute = "wave")
   from_wave <- from_waves(waves)
@@ -266,15 +266,15 @@ test_that("to, and from, waves work", {
 })
 
 test_that("to and from slices work", {
-  orig <- ison_adolescents %>%
-    mutate_ties(time = 1:10, increment = 1) %>%
+  orig <- ison_adolescents |>
+    mutate_ties(time = 1:10, increment = 1) |>
     add_ties(c(1,2), list(time = 3, increment = -1))
   slice <- to_slices(orig, slice = 7)
   expect_length(slice, length(orig))
   #expect_false(is.null(tie_attribute(slice, "time")))
   ##should attribute names change?
-  slices <- ison_adolescents %>%
-    mutate_ties(time = 1:10, increment = 1) %>%
+  slices <- ison_adolescents |>
+    mutate_ties(time = 1:10, increment = 1) |>
     to_slices(slice = c(5,8))
   expect_length(slices, 2)
 })

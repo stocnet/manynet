@@ -112,15 +112,15 @@ is_grand <- function(.data){
                   tie = tie_attribute(x, name),
                   net = igraph::graph_attr(x, name))
     if(is.null(out)) snet_abort("No {.var type} attribute {.var name} found in this object")
-    return(out)
+    out
   } else {
     name <- sub(".*\\$", "", name)
     if (name %in% igraph::vertex_attr_names(x)) {
-      return(igraph::vertex_attr(x, name))
+      igraph::vertex_attr(x, name)
     } else if (name %in% igraph::edge_attr_names(x)) {
-      return(igraph::edge_attr(x, name))
+      igraph::edge_attr(x, name)
     } else if (name %in% igraph::graph_attr_names(x)) {
-      return(igraph::graph_attr(x, name))
+      igraph::graph_attr(x, name)
     } else {
       snet_abort("No attribute {.var name} found in this object")
     }
@@ -138,7 +138,7 @@ is_grand <- function(.data){
   } else {
     snet_abort("Length of value does not match the length of the nodes, ties, or is not 1")
   }
-  return(x)
+  x
 }
 
 # nocov start

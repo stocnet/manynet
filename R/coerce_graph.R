@@ -1869,12 +1869,12 @@ as_diffnet.diff_model <- function(.data,
       graph <- as_tidygraph(.data) |> mutate(toa = as.numeric(toa)) |> as_igraph()
       # suppressWarnings(netdiffuseR::igraph_to_diffnet(graph = graph,
       #                               toavar = "toa"))
-      return(structure(list(graph = graph, toa = toa#, 
-                            # adopt = adopt, 
-                            # cumadopt = cumadopt, vertex.static.attrs = vertex.static.attrs, 
-                            # vertex.dyn.attrs = vertex.dyn.attrs, graph.attrs = graph.attrs, 
-                            # meta = meta
-      ), class = "diffnet"))
+      structure(list(graph = graph, toa = toa#, 
+                     # adopt = adopt, 
+                     # cumadopt = cumadopt, vertex.static.attrs = vertex.static.attrs, 
+                     # vertex.dyn.attrs = vertex.dyn.attrs, graph.attrs = graph.attrs, 
+                     # meta = meta
+      ), class = "diffnet")
     }
     
 }

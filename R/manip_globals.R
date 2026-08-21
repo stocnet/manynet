@@ -66,7 +66,7 @@ rename_globals.data.frame <- function(.data, ...){
     )
     
     current_names <- names(out)
-    rename_map <- c()
+    rename_map <- character()
     
     for(expected in names(aka)){
       if(!expected %in% current_names){

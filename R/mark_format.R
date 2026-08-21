@@ -69,13 +69,14 @@ is_twomode.data.frame <- function(.data) {
 
 #' @export
 is_twomode.stocnet <- function(.data) {
-  if(is.null(.data$nodes)) return(FALSE) else if (!"mode" %in% names(.data$nodes)) 
-    return(FALSE) else length(unique(.data$nodes$mode)) == 2
+  if(is.null(.data$nodes)) return(FALSE)
+  if(!"mode" %in% names(.data$nodes)) return(FALSE)
+  length(unique(.data$nodes$mode)) == 2
 }
 
 #' @export
 is_twomode.numeric <- function(.data) {
-  return(FALSE)
+  FALSE
 }
 
 #' @export
@@ -241,7 +242,8 @@ is_egonet <- function(.data) UseMethod("is_egonet")
 
 #' @export
 is_egonet.default <- function(.data) {
-  if(!is_list(.data)) return(FALSE) else if (all(unique(names(.data)) != "")) {
+  if(!is_list(.data)) return(FALSE)
+  if(all(unique(names(.data)) != "")) {
     length(names(.data)) == length(unique(unlist(unname(lapply(.data,
                                                                manynet::node_labels))))) &
       all(.order_alphabetically(names(.data)) ==
@@ -437,10 +439,9 @@ is_signed.igraph <- function(.data) {
 
 #' @export
 is_signed.stocnet <- function(.data) {
-  if("sign" %in% net_tie_attributes(.data)) return(TRUE) else
-    if("weight" %in% net_tie_attributes(.data))
-      return(any(.data$ties$weight < 0, na.rm = TRUE)) else
-        FALSE
+  if("sign" %in% net_tie_attributes(.data)) return(TRUE)
+  "weight" %in% net_tie_attributes(.data) &&
+    any(.data$ties$weight < 0, na.rm = TRUE)
 }
 
 #' @export

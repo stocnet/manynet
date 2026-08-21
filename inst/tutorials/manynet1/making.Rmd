@@ -765,7 +765,7 @@ adolsigraph1
 adolsigraph2 <- as_igraph(read_edgelist("data/adols.csv"))
 adolsigraph2
 # 3. Chained steps
-adolsigraph3 <- read_edgelist("data/adols.csv") %>% as_igraph()
+adolsigraph3 <- read_edgelist("data/adols.csv") |> as_igraph()
 adolsigraph3
 ```
 
