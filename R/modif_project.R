@@ -38,7 +38,7 @@
 #' | | Binary (unweighted) output | yes | yes (`multiplicity = FALSE`) | threshold manually |
 #' | | Jaccard normalisation | yes | no | code manually |
 #' | | Cosine normalisation | yes | no | code manually |
-#' | | Other similarity measures | 18 in all, see `similarity` | no | code manually |
+#' | | Other similarity measures | 24 in all, see `similarity` | no | code manually |
 #' | **Attributes** | Retains node attributes | yes | yes | no — lost in matrix round-trip |
 #' | | Retains edge attributes | weight only | weight only | no |
 #' | | Removes self-loops automatically | yes | yes | `diag(P) <- 0` manually |
@@ -91,6 +91,23 @@ NULL
 #'   - "pearson" gives Pearson's product-moment correlation and "covariance"
 #'   its unstandardised counterpart. Use "covariance" where the variance in
 #'   involvement is itself of interest, and "pearson" where it is not.
+#'   - "spearman" and "kendall" are the rank counterparts of "pearson".
+#'   Use them where tie strengths order the affiliations reliably but their
+#'   spacing does not, as with ordinal ratings.
+#'   - "cosine" gives the cosine of the angle between two nodes' rows.
+#'   It differs from "pearson" in not centring them first, so that it reads
+#'   two nodes as alike where their involvements are proportional rather than
+#'   where they depart from the average in the same direction.
+#'   For binary data it agrees with "ochiai", except that a node with no ties
+#'   at all is reported as no more similar to another than any other node,
+#'   where "ochiai" would divide by zero.
+#'   - "euclidean" and "manhattan" invert the straight-line and the
+#'   city-block distance between two rows, again as \eqn{1/(1+d)}.
+#'   "manhattan" sums the absolute differences in tie strength, so that a
+#'   large discrepancy on one affiliation counts no more than the same total
+#'   spread over several; "euclidean" penalises the concentrated discrepancy
+#'   more heavily, as "sqdiff" does. Recover either raw distance as
+#'   \eqn{1/x - 1}.
 #'
 #'   Measures defined for binary data only, where a valued network is
 #'   dichotomised at zero with a warning. Writing \eqn{a} for the cells in
@@ -123,7 +140,15 @@ NULL
 #'   \eqn{ad/\sqrt{(a+b)(a+c)(d+b)(d+c)}}, its counterpart including joint
 #'   absence. Neither is monotone in any of the above, so both are worth
 #'   trying alongside them.
-#' @seealso [to_cosine()], which takes the cosine over the columns of a
+#'   - "hamming" inverts the Hamming distance, the number of cells in which
+#'   the two nodes differ, as \eqn{1/(1+d)}. It is a monotone transformation
+#'   of "rand", and so ranks dyads identically, but states the disagreement
+#'   as a count rather than as a proportion of agreement.
+#' @seealso [to_proximity()], which applies these same measures to a one-mode
+#'   network, comparing nodes on their ties to one another rather than on
+#'   their affiliations to a second mode.
+#'
+#'   [to_cosine()], which takes the cosine over the columns of a
 #'   matrix without projecting it.
 #' @references
 #' ## On two-mode projection
@@ -145,7 +170,8 @@ to_mode1 <- function(.data, similarity = c("count", "jaccard", "rand", "pearson"
                                  "match", "overlap", "crossmin", "maxcrossmin",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
-                                 "hamann", "rogerstanimoto")) {
+                                 "hamann", "rogerstanimoto", "euclidean", "manhattan",
+                                 "hamming", "cosine", "spearman", "kendall")) {
   # projecting a network that is already one-mode is a no-op
   if(!is_twomode(.data)) return(.data)
   UseMethod("to_mode1")
@@ -157,7 +183,8 @@ to_mode1.default <- function(.data,
                                  "match", "overlap", "crossmin", "maxcrossmin",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
-                                 "hamann", "rogerstanimoto")){
+                                 "hamann", "rogerstanimoto", "euclidean", "manhattan",
+                                 "hamming", "cosine", "spearman", "kendall")){
   as_input(.data, to_mode1, similarity = similarity)
 }
 
@@ -166,7 +193,8 @@ to_mode1.matrix <- function(.data, similarity = c("count", "jaccard", "rand", "p
                                  "match", "overlap", "crossmin", "maxcrossmin",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
-                                 "hamann", "rogerstanimoto")) {
+                                 "hamann", "rogerstanimoto", "euclidean", "manhattan",
+                                 "hamming", "cosine", "spearman", "kendall")) {
   # the rows are already the mode being projected
   .project(.data, match.arg(similarity))
 }
@@ -176,7 +204,8 @@ to_mode1.igraph <- function(.data, similarity = c("count", "jaccard", "rand", "p
                                  "match", "overlap", "crossmin", "maxcrossmin",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
-                                 "hamann", "rogerstanimoto")) {
+                                 "hamann", "rogerstanimoto", "euclidean", "manhattan",
+                                 "hamming", "cosine", "spearman", "kendall")) {
   similarity <- match.arg(similarity)
   if(similarity == "count") igraph::bipartite_projection(.data)$proj1 else {
     if(!is_labelled(.data)){
@@ -199,10 +228,11 @@ to_mode1.tbl_graph <- function(.data, similarity = c("count", "jaccard", "rand",
                                  "match", "overlap", "crossmin", "maxcrossmin",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
-                                 "hamann", "rogerstanimoto")) {
+                                 "hamann", "rogerstanimoto", "euclidean", "manhattan",
+                                 "hamming", "cosine", "spearman", "kendall")) {
   similarity <- match.arg(similarity)
   out <- as_tidygraph(to_mode1(as_igraph(.data), similarity = similarity))
-  if(similarity %in% c("pearson","yule","covariance","hamann")){
+  if(similarity %in% .proj_signed){
     # an isolate gives NaN under several measures, and `NaN < 0` is NA,
     # which would otherwise leave the sign missing rather than positive
     wt <- tie_weights(out)
@@ -223,7 +253,8 @@ to_mode1.network <- function(.data, similarity = c("count", "jaccard", "rand", "
                                  "match", "overlap", "crossmin", "maxcrossmin",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
-                                 "hamann", "rogerstanimoto")) {
+                                 "hamann", "rogerstanimoto", "euclidean", "manhattan",
+                                 "hamming", "cosine", "spearman", "kendall")) {
  as_network(to_mode1(as_tidygraph(.data), similarity)) 
 }
 
@@ -232,7 +263,8 @@ to_mode1.data.frame <- function(.data, similarity = c("count", "jaccard", "rand"
                                  "match", "overlap", "crossmin", "maxcrossmin",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
-                                 "hamann", "rogerstanimoto")) {
+                                 "hamann", "rogerstanimoto", "euclidean", "manhattan",
+                                 "hamming", "cosine", "spearman", "kendall")) {
   as_edgelist(to_mode1(as_tidygraph(.data), similarity)) 
 }
 
@@ -242,7 +274,8 @@ to_mode2 <- function(.data, similarity = c("count", "jaccard", "rand", "pearson"
                                  "match", "overlap", "crossmin", "maxcrossmin",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
-                                 "hamann", "rogerstanimoto")) {
+                                 "hamann", "rogerstanimoto", "euclidean", "manhattan",
+                                 "hamming", "cosine", "spearman", "kendall")) {
   # projecting a network that is already one-mode is a no-op
   if(!is_twomode(.data)) return(.data)
   UseMethod("to_mode2")
@@ -254,7 +287,8 @@ to_mode2.default <- function(.data,
                                  "match", "overlap", "crossmin", "maxcrossmin",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
-                                 "hamann", "rogerstanimoto")){
+                                 "hamann", "rogerstanimoto", "euclidean", "manhattan",
+                                 "hamming", "cosine", "spearman", "kendall")){
   as_input(.data, to_mode2, similarity = similarity)
 }
 
@@ -263,7 +297,8 @@ to_mode2.matrix <- function(.data, similarity = c("count", "jaccard", "rand", "p
                                  "match", "overlap", "crossmin", "maxcrossmin",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
-                                 "hamann", "rogerstanimoto")) {
+                                 "hamann", "rogerstanimoto", "euclidean", "manhattan",
+                                 "hamming", "cosine", "spearman", "kendall")) {
   # transposed so that the columns become the rows being projected
   .project(t(.data), match.arg(similarity))
 }
@@ -273,7 +308,8 @@ to_mode2.igraph <- function(.data, similarity = c("count", "jaccard", "rand", "p
                                  "match", "overlap", "crossmin", "maxcrossmin",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
-                                 "hamann", "rogerstanimoto")) {
+                                 "hamann", "rogerstanimoto", "euclidean", "manhattan",
+                                 "hamming", "cosine", "spearman", "kendall")) {
   similarity <- match.arg(similarity)
   if(similarity == "count") igraph::bipartite_projection(.data)$proj2 else {
     if(!is_labelled(.data)){
@@ -296,10 +332,11 @@ to_mode2.tbl_graph <- function(.data, similarity = c("count", "jaccard", "rand",
                                  "match", "overlap", "crossmin", "maxcrossmin",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
-                                 "hamann", "rogerstanimoto")) {
+                                 "hamann", "rogerstanimoto", "euclidean", "manhattan",
+                                 "hamming", "cosine", "spearman", "kendall")) {
   similarity <- match.arg(similarity)
   out <- as_tidygraph(to_mode2(as_igraph(.data), similarity = similarity))
-  if(similarity %in% c("pearson","yule","covariance","hamann")){
+  if(similarity %in% .proj_signed){
     # an isolate gives NaN under several measures, and `NaN < 0` is NA,
     # which would otherwise leave the sign missing rather than positive
     wt <- tie_weights(out)
@@ -320,7 +357,8 @@ to_mode2.network <- function(.data, similarity = c("count", "jaccard", "rand", "
                                  "match", "overlap", "crossmin", "maxcrossmin",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
-                                 "hamann", "rogerstanimoto")) {
+                                 "hamann", "rogerstanimoto", "euclidean", "manhattan",
+                                 "hamming", "cosine", "spearman", "kendall")) {
   as_network(to_mode2(as_tidygraph(.data), similarity)) 
 }
 
@@ -329,7 +367,8 @@ to_mode2.data.frame <- function(.data, similarity = c("count", "jaccard", "rand"
                                  "match", "overlap", "crossmin", "maxcrossmin",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
-                                 "hamann", "rogerstanimoto")) {
+                                 "hamann", "rogerstanimoto", "euclidean", "manhattan",
+                                 "hamming", "cosine", "spearman", "kendall")) {
   as_edgelist(to_mode2(as_tidygraph(.data), similarity))
 }
 
@@ -360,7 +399,8 @@ to_mode <- function(.data, mode = 1,
                                  "match", "overlap", "crossmin", "maxcrossmin",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
-                                 "hamann", "rogerstanimoto")) {
+                                 "hamann", "rogerstanimoto", "euclidean", "manhattan",
+                                 "hamming", "cosine", "spearman", "kendall")) {
   # a network of three or more modes would otherwise fall through the one-mode
   # no-op below and be returned unchanged, since it is not two-mode either
   if(net_modes(.data) > 2)
@@ -554,12 +594,20 @@ to_hypergraph.stocnet <- function(.data) {
 .proj_measures <- c("count","jaccard","rand","pearson","yule",
                     "match","overlap","crossmin","maxcrossmin","sqdiff",
                     "covariance","bonacich","ochiai","ochiai2",
-                    "czekanowski","sokalsneath","hamann","rogerstanimoto")
+                    "czekanowski","sokalsneath","hamann","rogerstanimoto",
+                    "euclidean","manhattan","hamming","cosine",
+                    "spearman","kendall")
+
+# Those that can return a negative value, and so need the projection's ties
+# labelled with a sign as well as a weight.
+.proj_signed <- c("pearson","yule","covariance","hamann",
+                  "spearman","kendall","cosine")
 
 # Those defined for binary data only, since they count cells in which both,
 # one, or neither node is present. A valued network is dichotomised for these.
 .proj_binary <- c("jaccard","rand","hamann","rogerstanimoto","czekanowski",
-                  "ochiai","ochiai2","sokalsneath","yule","bonacich")
+                  "ochiai","ochiai2","sokalsneath","yule","bonacich",
+                  "hamming")
 
 # The co-occurrence counts: cells where both nodes are present (a), where just
 # one is (b and c), and where neither is (d). Computed only where the chosen
@@ -624,6 +672,24 @@ to_hypergraph.stocnet <- function(.data) {
                 # inverted, so that larger means more alike as for every other
                 # measure here; UCINET's raw sum of squared differences is 1/x - 1
                 "sqdiff" = 1/(1 + as.matrix(stats::dist(X))^2),
+                # the distances are inverted on the same principle, and their
+                # raw values are likewise recoverable as 1/x - 1
+                "euclidean" = 1/(1 + as.matrix(stats::dist(X))),
+                "manhattan" = ,
+                # `hamming` reaches here already dichotomised, where the
+                # Manhattan distance counts the cells the two rows differ in
+                "hamming" = 1/(1 + as.matrix(stats::dist(X,
+                                                     method = "manhattan"))),
+                "spearman" = stats::cor(t(X), method = "spearman"),
+                "kendall" = stats::cor(t(X), method = "kendall"),
+                # the cosine of the angle between two rows. A row of zeroes has
+                # no direction, so its length is left at 1 to give 0 rather than
+                # NaN against every other row
+                "cosine" = {
+                  len <- sqrt(rowSums(X^2))
+                  len[len == 0] <- 1
+                  (X %*% t(X))/outer(len, len)
+                },
                 # xUCINET documents this denominator as the sum of the pairwise
                 # minima but computes the smaller of the two row totals, which
                 # is the Szymkiewicz-Simpson coefficient; the code is followed

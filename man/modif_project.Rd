@@ -13,14 +13,16 @@ to_mode1(
   .data,
   similarity = c("count", "jaccard", "rand", "pearson", "yule", "match", "overlap",
     "crossmin", "maxcrossmin", "sqdiff", "covariance", "bonacich", "ochiai", "ochiai2",
-    "czekanowski", "sokalsneath", "hamann", "rogerstanimoto")
+    "czekanowski", "sokalsneath", "hamann", "rogerstanimoto", "euclidean", "manhattan",
+    "hamming", "cosine", "spearman", "kendall")
 )
 
 to_mode2(
   .data,
   similarity = c("count", "jaccard", "rand", "pearson", "yule", "match", "overlap",
     "crossmin", "maxcrossmin", "sqdiff", "covariance", "bonacich", "ochiai", "ochiai2",
-    "czekanowski", "sokalsneath", "hamann", "rogerstanimoto")
+    "czekanowski", "sokalsneath", "hamann", "rogerstanimoto", "euclidean", "manhattan",
+    "hamming", "cosine", "spearman", "kendall")
 )
 
 to_mode(
@@ -28,7 +30,8 @@ to_mode(
   mode = 1,
   similarity = c("count", "jaccard", "rand", "pearson", "yule", "match", "overlap",
     "crossmin", "maxcrossmin", "sqdiff", "covariance", "bonacich", "ochiai", "ochiai2",
-    "czekanowski", "sokalsneath", "hamann", "rogerstanimoto")
+    "czekanowski", "sokalsneath", "hamann", "rogerstanimoto", "euclidean", "manhattan",
+    "hamming", "cosine", "spearman", "kendall")
 )
 
 to_linegraph(.data)
@@ -85,6 +88,23 @@ Recover the raw sum of squared differences as \eqn{1/x - 1}.
 \item "pearson" gives Pearson's product-moment correlation and "covariance"
 its unstandardised counterpart. Use "covariance" where the variance in
 involvement is itself of interest, and "pearson" where it is not.
+\item "spearman" and "kendall" are the rank counterparts of "pearson".
+Use them where tie strengths order the affiliations reliably but their
+spacing does not, as with ordinal ratings.
+\item "cosine" gives the cosine of the angle between two nodes' rows.
+It differs from "pearson" in not centring them first, so that it reads
+two nodes as alike where their involvements are proportional rather than
+where they depart from the average in the same direction.
+For binary data it agrees with "ochiai", except that a node with no ties
+at all is reported as no more similar to another than any other node,
+where "ochiai" would divide by zero.
+\item "euclidean" and "manhattan" invert the straight-line and the
+city-block distance between two rows, again as \eqn{1/(1+d)}.
+"manhattan" sums the absolute differences in tie strength, so that a
+large discrepancy on one affiliation counts no more than the same total
+spread over several; "euclidean" penalises the concentrated discrepancy
+more heavily, as "sqdiff" does. Recover either raw distance as
+\eqn{1/x - 1}.
 }
 
 Measures defined for binary data only, where a valued network is
@@ -118,6 +138,10 @@ as Sokal and Sneath's fifth measure) is
 \eqn{ad/\sqrt{(a+b)(a+c)(d+b)(d+c)}}, its counterpart including joint
 absence. Neither is monotone in any of the above, so both are worth
 trying alongside them.
+\item "hamming" inverts the Hamming distance, the number of cells in which
+the two nodes differ, as \eqn{1/(1+d)}. It is a monotone transformation
+of "rand", and so ranks dyads identically, but states the disagreement
+as a count rather than as a proportion of agreement.
 }}
 
 \item{mode}{Which mode to project the network to,
@@ -182,7 +206,7 @@ to_mode2               *       *      *      *       *                 *
     \tab Binary (unweighted) output \tab yes \tab yes (\code{multiplicity = FALSE}) \tab threshold manually \cr
     \tab Jaccard normalisation \tab yes \tab no \tab code manually \cr
     \tab Cosine normalisation \tab yes \tab no \tab code manually \cr
-    \tab Other similarity measures \tab 18 in all, see \code{similarity} \tab no \tab code manually \cr
+    \tab Other similarity measures \tab 24 in all, see \code{similarity} \tab no \tab code manually \cr
    \strong{Attributes} \tab Retains node attributes \tab yes \tab yes \tab no — lost in matrix round-trip \cr
     \tab Retains edge attributes \tab weight only \tab weight only \tab no \cr
     \tab Removes self-loops automatically \tab yes \tab yes \tab \code{diag(P) <- 0} manually \cr
@@ -236,11 +260,14 @@ Bonacich, Phillip. 1972.
 }
 }
 \seealso{
+\code{\link[=to_proximity]{to_proximity()}}, which applies these same measures to a one-mode
+network, comparing nodes on their ties to one another rather than on
+their affiliations to a second mode.
+
 \code{\link[=to_cosine]{to_cosine()}}, which takes the cosine over the columns of a
 matrix without projecting it.
 
 Other modifications:
-\code{\link{modif_correlation}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},
@@ -250,6 +277,7 @@ Other modifications:
 \code{\link{modif_paths}},
 \code{\link{modif_permutation}},
 \code{\link{modif_plexity}},
+\code{\link{modif_proximity}},
 \code{\link{modif_scope}},
 \code{\link{modif_split}},
 \code{\link{modif_weight}}

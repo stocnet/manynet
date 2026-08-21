@@ -125,10 +125,14 @@
   - `dyad` states how compared pair's own cells are treated:
     "exclude", "reciprocal", "complex", or "include"
   - Documented alongside are wrappers `to_correlation()` and `to_cosine()`
+- Improved `to_mode1()`, `to_mode2()`, and `to_proximity()` with further 
+  similarity measures, bringing shared vocabulary to 24:
   - 6 were already implemented but unreachable: "ochiai", "czekanowski", 
     "sokalsneath", "ochiai2", "rogerstanimoto", and "hamann"
   - Added 7 more: "match", "overlap", "crossmin", "maxcrossmin",
     "sqdiff", "covariance", and "bonacich"
+  - Added 6 more (inverted) distance measures: "euclidean", "manhattan", 
+    "hamming", "cosine", "spearman", and "kendall"
   - Where possible, measures computed by matrix arithmetic for speed, 
     and co-occurrence no longer counted where chosen measure does not use them
   - Records the method used in `info$transformations$projection` per GRAND item 4.3
