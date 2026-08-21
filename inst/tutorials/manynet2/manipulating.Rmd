@@ -1084,9 +1084,24 @@ Ok, so now we know that projection transforms an (unweighted) two-mode network
 into a weighted one-mode network and what these weights represent.
 Note though that counting the frequency of shared ties to nodes in the other mode
 is just one (albeit the default) option for how ties in the projection are weighted.
-The `similarity` argument to `to_mode1()`/`to_mode2()` also offers
-the Jaccard index, Rand simple matching coefficient, Pearson coefficient, and Yule's Q.
-These may be of interest if, for example, overlap should be weighted by participation.
+The `similarity` argument to `to_mode1()`/`to_mode2()` offers 24 measures in all,
+which `?to_mode1` groups by what they are sensitive to.
+Among them are the Jaccard index, which weights overlap by participation;
+the Rand simple matching coefficient, which counts joint _absences_ as evidence
+too; Yule's Q, which reads the association between two nodes as an odds ratio;
+and the Pearson coefficient, which asks whether two nodes depart from the
+average level of involvement in the same direction.
+Measures within a group rank pairs identically and differ only in their scale,
+so choosing between the groups matters rather more than choosing within one.
+
+The same measures compare the nodes of a network that is already one-mode.
+`to_proximity()` asks how alike two nodes' _ties_ are, rather than how alike
+their affiliations are, and returns a square node-by-node matrix —
+the structural equivalence of the nodes.
+Because a node's tie to the node it is being compared with cannot be compared
+where it lies, the `dyad` argument states what to do with those cells,
+and `across` chooses whether nodes are compared on the ties they send,
+those they receive, or both.
 
 Projection is not the only way between modes:
 
@@ -1120,6 +1135,8 @@ you now know how!)
 <span class="callout-label">**In brief**:</span> `is_twomode()` checks for two modes,
 and `to_mode1()`/`to_mode2()` project a two-mode network into a
 weighted one-mode network of shared ties.
+`to_proximity()` applies the same `similarity` measures to a one-mode network,
+comparing nodes on their ties rather than their affiliations.
 `to_onemode()`, `to_twomode()`, and `to_multilevel()` move between modes
 without projecting.
 :::
@@ -1723,6 +1740,7 @@ Along the way, you have learned to use these functions:
 | `to_uniplex(layer = )`, `layer_names()` | extract a layer from a multiplex network |
 | `to_layers()`, `from_layers()`, `to_flat(rule = )` | split a network into its layers, join networks as layers, or combine those layers into one relation |
 | `to_mode1()`, `to_mode2()`, `to_onemode()`, `to_twomode()`, `to_multilevel()` | move between modes |
+| `to_proximity(similarity = )`, `to_correlation()`, `to_cosine()` | measure how alike a one-mode network's nodes are |
 | `net_times()`, `to_time()`, `to_times()`, `from_times()` | count, extract, and rejoin the moments of a network of any kind |
 | `net_waves()`, `to_wave()`, `to_waves()`, `to_slices()` | the same, in the wave and slice vocabularies |
 | `filter_changes()`, `add_changes()`, `as_changelist()` | inspect and record node changes over time |
