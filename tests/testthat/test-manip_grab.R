@@ -64,6 +64,20 @@ test_that("layer_ties works", {
   expect_equal(layer_ties(fict_thrones), c(net_ties(fict_thrones)))
 })
 
+test_that("net_layers and layer_ties agree across network forms", {
+  # layers are held in a 'type' tie attribute in igraph/tidygraph objects
+  # and in a 'layer' column in stocnet objects, so both must be read
+  for (nw in list(fict_marvel, ison_monks, ison_algebra)) {
+    forms <- list(nw, as_igraph(nw), as_stocnet(nw), as_igraph(as_stocnet(nw)))
+    layers <- vapply(forms, net_layers, numeric(1))
+    expect_equal(layers, rep(net_layers(nw), length(forms)))
+    for (form in forms) {
+      expect_equal(layer_ties(form), layer_ties(nw))
+      expect_equal(layer_names(form), layer_names(nw))
+    }
+  }
+})
+
 test_that("describe_ties reports per-layer counts for multiplex networks", {
   expect_match(describe_ties(fict_marvel), "558 relationship ties")
   expect_match(describe_ties(fict_marvel), "683 affiliation ties")

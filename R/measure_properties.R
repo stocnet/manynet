@@ -143,15 +143,17 @@ net_layers.default <- function(.data){
 
 #' @export
 net_layers.stocnet <- function(.data){
-  if("layer" %in% names(.data$ties)){
-    length(unique(.data$ties$layer))
+  lattr <- .layer_attribute(.data)
+  if(!is.na(lattr)){
+    length(unique(.data$ties[[lattr]]))
   } else 1L
 }
 
 #' @export
 net_layers.igraph <- function(.data){
-  if("type" %in% net_tie_attributes(.data)){
-    length(unique(tie_attribute(.data, "type")))
+  lattr <- .layer_attribute(.data)
+  if(!is.na(lattr)){
+    length(unique(tie_attribute(.data, lattr)))
   } else 1L
 }
 
@@ -168,14 +170,15 @@ layer_ties.default <- function(.data){
 
 #' @export
 layer_ties.igraph <- function(.data){
-  types <- if("type" %in% net_tie_attributes(.data))
-    tie_attribute(.data, "type") else NULL
+  lattr <- .layer_attribute(.data)
+  types <- if(!is.na(lattr)) tie_attribute(.data, lattr) else NULL
   .layer_ties(layer_names(.data), types, net_ties(.data))
 }
 
 #' @export
 layer_ties.stocnet <- function(.data){
-  types <- .data$ties[["type"]] %||% .data$ties[["layer"]]
+  lattr <- .layer_attribute(.data)
+  types <- if(!is.na(lattr)) .data$ties[[lattr]] else NULL
   .layer_ties(layer_names(.data), types, net_ties(.data))
 }
 
@@ -450,8 +453,8 @@ layer_names.igraph <- function(.data){
     igraph::graph_attr(.data, "layers") %||%
     c(igraph::graph_attr(.data, "grand")$edge.pos,
       igraph::graph_attr(.data, "grand")$edge.neg) %||%
-    (if (is_multiplex(.data) && "type" %in% igraph::edge_attr_names(.data))
-      unique(igraph::edge_attr(.data, "type")))
+    (if (is_multiplex(.data) && !is.na(.layer_attribute(.data)))
+      unique(igraph::edge_attr(.data, .layer_attribute(.data))))
 }
 
 #' @export

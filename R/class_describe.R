@@ -115,8 +115,8 @@ describe_ties <- function(.data){
     parts <- paste0(layer_ties(.data), " ", singularize(layer_names(.data)),
                     " ", layer_name)
     return(paste0(phrase(parts), parallel))
-  } else if(!is.null(tie_attribute(.data, "type"))){
-    tab <- table(tie_attribute(.data, "type"))
+  } else if(!is.na(.layer_attribute(.data))){
+    tab <- table(tie_attribute(.data, .layer_attribute(.data)))
     parts <- paste0(tab, " ", singularize(names(tab)))
     return(paste0(phrase(parts), " ", tie_name, parallel))
   }

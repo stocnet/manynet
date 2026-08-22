@@ -125,7 +125,9 @@ add_info.igraph <- function(.data, ...){
     igraph::graph_attr(out)$nodes <- info$nodes
   }
   if("ties" %in% names(info)){
-    if(is_multiplex(.data) && length(info$ties) != length(unique(tie_attribute(.data, "type")))) 
+    lattr <- .layer_attribute(.data)
+    nlayers <- if(!is.na(lattr)) length(unique(tie_attribute(.data, lattr))) else 0L
+    if(is_multiplex(.data) && length(info$ties) != nlayers) 
       snet_abort("Please name all types of tie in a multiplex network.")
     igraph::graph_attr(out)$ties <- info$ties
   }
