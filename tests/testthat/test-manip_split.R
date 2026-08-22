@@ -132,6 +132,23 @@ test_that("to_waves splits a panel whose waves are named 'time'", {
   expect_length(to_waves(ison_monks, attribute = "time"), length(waves))
 })
 
+test_that("the fallback covers every panel that names its waves 'time'", {
+  # Each of these panels is longitudinal but not changing, so it takes the
+  # branch that has no fallback of its own.
+  expect_length(to_waves(ison_tailorshop),
+                length(unique(tie_attribute(ison_tailorshop, "time"))))
+  expect_length(to_waves(ison_fraternity),
+                length(unique(tie_attribute(ison_fraternity, "time"))))
+  # The found attribute names the same waves as the attribute named outright
+  expect_named(to_waves(ison_monks),
+               names(to_waves(ison_monks, attribute = "time")))
+  # Selected panels are selected from the found attribute too
+  expect_length(to_waves(ison_monks, panels = c(1, 2)), 2)
+  # An attribute the panel does not hold gives way to the one it does
+  expect_named(to_waves(ison_monks, attribute = "nonesuch"),
+               names(to_waves(ison_monks)))
+})
+
 test_that("applied changes keep their type and cover every changing variable", {
   waves <- to_waves(fict_starwars)
   cl <- as_changelist(fict_starwars)
