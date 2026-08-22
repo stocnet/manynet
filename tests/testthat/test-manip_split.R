@@ -101,6 +101,37 @@ test_that("to_waves splits changing longitudinal networks by their ties", {
   expect_s3_class(to_waves(as_igraph(fict_starwars))[[1]], "igraph")
 })
 
+test_that("to_waves splits a changing network with no wave attribute", {
+  # A diffusion result is both changing and longitudinal, but carries no tie
+  # attributes at all, so its waves come from its changelist.
+  set.seed(123)
+  diff <- play_diffusion(create_ring(8), seeds = 1)
+  expect_equal(net_tie_attributes(diff), character(0))
+  waves <- to_waves(diff)
+  expect_length(waves, length(unique(as_changelist(diff)$time)))
+  expect_named(waves, paste("Wave", sort(unique(as_changelist(diff)$time))))
+  expect_false(any(vapply(waves, is_changing, logical(1))))
+  # Every wave keeps the whole network, and the seed is infected throughout
+  expect_true(all(vapply(waves, function(w) as.numeric(net_nodes(w)),
+                         numeric(1)) == 8))
+  expect_true(all(vapply(waves, function(w)
+    node_attribute(w, "diffusion")[1], character(1)) == "I"))
+  expect_s3_class(to_waves(as_igraph(diff))[[1]], "igraph")
+})
+
+test_that("to_waves splits a panel whose waves are named 'time'", {
+  # "time" marks a panel longitudinal as much as "wave" does, so a network
+  # spelling its waves that way splits by them rather than erroring.
+  expect_true(is_longitudinal(ison_monks))
+  waves <- to_waves(ison_monks)
+  expect_length(waves, length(unique(tie_attribute(ison_monks, "time"))))
+  expect_equal(sum(vapply(waves, net_ties, numeric(1))),
+               as.numeric(net_ties(ison_monks)))
+  expect_s3_class(waves[[1]], class(ison_monks)[1])
+  # Naming the attribute gives the same waves as letting it be found
+  expect_length(to_waves(ison_monks, attribute = "time"), length(waves))
+})
+
 test_that("applied changes keep their type and cover every changing variable", {
   waves <- to_waves(fict_starwars)
   cl <- as_changelist(fict_starwars)

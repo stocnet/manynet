@@ -324,13 +324,17 @@ to_waves.default <- function(.data, attribute = "wave", panels = NULL,
 to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
                                cumulative = FALSE) {
   out <- NULL
-  if(is_changing(.data) && is_longitudinal(.data)){
+  # A panel does not always spell its waves "wave", so where the named
+  # attribute is absent the other wave-like names stand in for it. This is
+  # NA where a panel records no wave-like tie attribute at all, as a
+  # diffusion result does, since its moments live in its changelist.
+  if(is_longitudinal(.data) && !attribute %in% net_tie_attributes(.data))
+    attribute <- intersect(c("wave", "panel", "time"),
+                           net_tie_attributes(.data))[1]
+  if(is_changing(.data) && is_longitudinal(.data) && !is.na(attribute)){
     cl <- as_changelist(.data)
     # Waves are defined by the tie attribute; the changes recorded up to each
     # wave are then applied to that wave's nodes.
-    if(!attribute %in% net_tie_attributes(.data))
-      attribute <- intersect(c("wave", "panel", "time"),
-                             net_tie_attributes(.data))[1]
     times <- sort(unique(tie_attribute(.data, attribute)))
     if(!is.null(panels))
       times <- intersect(panels, times)
@@ -351,7 +355,7 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
     names(waves) <- paste("Wave", times)
     out <- .record_exclusions(waves, .data,
                               paste("not present at wave", times), "nodes")
-  } else if(is_longitudinal(.data) ||
+  } else if(!is.na(attribute) &&
             attribute %in% net_tie_attributes(.data)){
     # An explicitly named tie attribute is honoured even if the network is not
     # marked longitudinal (i.e. the attribute is not called "wave" or "panel").

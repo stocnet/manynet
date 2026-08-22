@@ -207,6 +207,9 @@
   - Always returns a named list, so `net_times()==length(to_times())`
 - Added `from_times()` to rejoin networks from different moments
 - Fixed `to_waves()` returning all ties of e.g. `ison_classmates`, in each wave
+- Fixed `to_waves()` erroring where a network records no "wave" tie attribute
+  - Networks that are changing but hold no wave-like tie attribute, such as a `play_diffusion()` result, now take their waves from their changelist instead of raising a "`name` must be a single string" error
+  - Panels whose waves are named "time" or "panel", such as `ison_monks`, now split by that attribute instead of raising an "object 'wave' not found" error
 - Improved `to_giant()` to name its result "Giant component of" for every class
 - Updated strong connectivity example to print only largest component to reduce CRAN's timing
 
