@@ -278,6 +278,40 @@
 #'   ```
 "irps_tribes"
 
+## Rath affair ####
+
+#' One-mode multiplex network of the Czech Rath corruption affair
+#'
+#' @description
+#'   This network reconstructs the Czech political corruption case known as
+#'   the Rath affair using publicly available archival data.
+#'
+#'   The network contains 11 actors connected through three binary,
+#'   undirected types of ties: collaboration, resource transfer, and
+#'   pre-existing ties. Collaboration includes communication and jointly
+#'   carrying out tasks. Resource transfer includes bribes and other transfers.
+#'   Pre-existing ties include kinship, friendship, and shared political or
+#'   professional affiliations.
+#'
+#'   The network also includes two binary node attributes. `politician`
+#'   distinguishes politicians (1) from other actors (0), while `gender`
+#'   distinguishes women (1) from men (0).
+#' @docType data
+#' @keywords datasets
+#' @name irps_rath
+#' @references
+#' Diviák, Tomáš, Jan Kornelis Dijkstra, and Tom A. B. Snijders. 2019.
+#' "Structure, multiplexity, and centrality in a corruption network:
+#' The Czech Rath affair".
+#' _Trends in Organized Crime_ 22(3): 274-297.
+#' \doi{10.1007/s12117-018-9334-y}
+#' @usage data(irps_rath)
+#' @format
+#'   ```{r, echo = FALSE}
+#'   irps_rath
+#'   ```
+"irps_rath"
+
 ## US States ####
 
 #' One-mode undirected network of US state contiguity (Meghanathan 2017)
