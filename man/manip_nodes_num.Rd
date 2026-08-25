@@ -4,6 +4,8 @@
 \alias{manip_nodes_num}
 \alias{add_nodes}
 \alias{delete_nodes}
+\alias{delete_isolates}
+\alias{delete_incomplete}
 \alias{bind_nodes}
 \alias{filter_nodes}
 \alias{arrange_nodes}
@@ -12,6 +14,10 @@
 add_nodes(.data, nodes, attribute = NULL)
 
 delete_nodes(.data, nodes)
+
+delete_isolates(.data)
+
+delete_incomplete(.data)
 
 bind_nodes(.data, object2)
 
@@ -48,6 +54,12 @@ These functions allow users to add and delete nodes:
 \itemize{
 \item \code{add_nodes()} adds an additional number of nodes to network data.
 \item \code{delete_nodes()} deletes nodes from network data.
+\item \code{delete_isolates()} deletes all nodes without ties.
+\item \code{delete_incomplete()} deletes nodes with any missing attribute values,
+retaining only the complete cases.
+A node attribute that is missing for every node is not read as missing
+data, since in a dynamic network such an attribute is a placeholder for
+one whose values are all recorded as changes.
 \item \code{bind_nodes()} adds two nodesets together.
 \item \code{filter_nodes()} subsets nodes based on some nodal attribute-related logical statement.
 \item \code{arrange_nodes()} reorders nodes based on some nodal attribute.
@@ -60,12 +72,22 @@ While \verb{add_*()}/\verb{delete_*()} functions operate similarly as comparable
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{              default igraph network stocnet tbl_graph
-add_nodes           *      *       *                 *
-arrange_nodes       *                      *         *
-bind_nodes          *                      *          
-delete_nodes        *      *       *                 *
-filter_nodes        *                      *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{                  data.frame default igraph list matrix network stocnet
+add_nodes                          *      *                   *        
+arrange_nodes                      *                                  *
+bind_nodes                         *                                  *
+delete_incomplete                  *                                  *
+delete_isolates            *       *      *    *      *       *       *
+delete_nodes                       *      *                   *        
+filter_nodes                       *                                  *
+                  tbl_graph
+add_nodes                 *
+arrange_nodes             *
+bind_nodes                 
+delete_incomplete         *
+delete_isolates           *
+delete_nodes              *
+filter_nodes              *
 }\if{html}{\out{</div>}}
 
 If a method is not available for a particular class, but a default method is,
@@ -76,6 +98,10 @@ If no method is available for any class, an error will be thrown.
 \examples{
   other <- create_filled(4) |> mutate(name = c("A", "B", "C", "D"))
   add_nodes(other, 4, list(name = c("Matthew", "Mark", "Luke", "Tim")))
+ison_adolescents |>
+  mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) |>
+  to_waves(attribute = "wave") |>
+  delete_isolates()
 }
 \seealso{
 Other nodes:
@@ -83,7 +109,7 @@ Other nodes:
 
 Other manipulations:
 \code{\link{manip_changes}},
-\code{\link{manip_global}},
+\code{\link{manip_globals}},
 \code{\link{manip_info}},
 \code{\link{manip_nodes_attr}},
 \code{\link{manip_ties_attr}},

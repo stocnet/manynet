@@ -7,18 +7,21 @@
 \alias{as_edgelist}
 \alias{as_infolist}
 \alias{as_globallist}
+\alias{as_missinglist}
 \alias{as_matrix}
 \title{Coercing into lists or matrices}
 \usage{
 as_nodelist(.data)
 
-as_changelist(.data)
+as_changelist(.data, time = NULL)
 
 as_edgelist(.data, twomode = FALSE)
 
 as_infolist(.data)
 
 as_globallist(.data)
+
+as_missinglist(.data)
 
 as_matrix(.data, twomode = NULL)
 }
@@ -33,6 +36,13 @@ as_matrix(.data, twomode = NULL)
 \item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
 
+\item{time}{A moment to gather the changes in force at.
+By default \code{NULL}, in which case every change the network records is
+returned. Where a moment is given, only the changes recorded up to and
+including it are returned, one for each nodal variable a node changes,
+since a change states what a variable becomes from that moment on and is
+carried forward until another change states otherwise.}
+
 \item{twomode}{Logical option used to override heuristics for
 distinguishing incidence (two-mode/bipartite) from
 adjacency (one-mode/unipartite) networks.
@@ -41,20 +51,22 @@ By default FALSE.}
 \value{
 The currently implemented coercions or translations are:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame diff_model igraph matrix network network.goldfish
-as_changelist          *                 *      *       *                 
-as_edgelist            *                 *      *       *                *
-as_globallist          *                 *      *       *                 
-as_infolist            *                 *      *       *                 
-as_matrix              *          *      *      *       *                *
-as_nodelist            *                 *      *       *                 
-              siena stocnet tbl_graph
-as_changelist             *         *
-as_edgelist       *       *         *
-as_globallist             *          
-as_infolist               *         *
-as_matrix         *       *         *
-as_nodelist               *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{               data.frame default diff_model igraph matrix network
+as_changelist           *                         *      *       *
+as_edgelist             *                         *      *       *
+as_globallist           *                         *      *       *
+as_infolist             *                         *      *       *
+as_matrix               *                  *      *      *       *
+as_missinglist          *       *                 *      *       *
+as_nodelist             *                         *      *       *
+               network.goldfish siena stocnet tbl_graph
+as_changelist                               *         *
+as_edgelist                   *     *       *         *
+as_globallist                               *          
+as_infolist                                 *         *
+as_matrix                     *     *       *         *
+as_missinglist                              *         *
+as_nodelist                                 *         *
 }\if{html}{\out{</div>}}
 }
 \description{
@@ -65,12 +77,18 @@ and translating the information contained in the original object:
 \item \code{as_nodelist()} coerces the object into a nodelist, as a data frame or tibble.
 \item \code{as_changelist()} coerces the object into a changelist, as a data frame or tibble.
 \item \code{as_globallist()} coerces the object into a globallist, as a data frame or tibble.
+\item \code{as_missinglist()} coerces the object into a list of the ties it records
+as missing, as a tibble.
 \item \code{as_infolist()} coerces the object into a list of network-level information,
 such as the names of the nodes and ties, if not given in the nodelist or edgelist.
 \item \code{as_matrix()} coerces the object into an adjacency (one-mode/unipartite) or incidence (two-mode/bipartite) matrix.
 If the network is a cognitive social structure (i.e. the edgelist contains a 'by' column
 indicating who reported/recorded each tie), \code{as_matrix()} returns a three-dimensional array
 instead, with dimensions for senders, receivers, and reporters.
+Where a network holds parallel ties, i.e. where \code{tie_is_parallel()} is TRUE
+for any tie, the cells of the matrix report how many ties join each pair
+of nodes, and so may be greater than one even where the network is
+neither weighted nor signed.
 }
 
 These coercions are extractive in the sense that they will lose any information that cannot be contained in the target format.
@@ -93,6 +111,70 @@ but since in rare cases a matrix with equal dimensions may still
 be an incidence matrix, an additional argument \code{twomode} can be
 specified to override this heuristic.
 }
+\section{Missing ties}{
+
+A missing tie is one that could have been observed and was not,
+which is neither a tie nor the absence of one.
+\code{as_missinglist()} returns them as a tibble of 'from' and 'to',
+with 'layer' and 'time' where the network records them.
+
+Compared to an \strong{observed} tie, in which a tie is observed to be present
+or absent, with only present ties appearing as rows in the ties component,
+a \strong{missing} tie is one that could have been observed but was not.
+There are four different reasons a tie could be missing,
+and they are treated differently depending on the context.
+
+First, there are the nodal reasons a tie could be missing,
+which are recorded in the nodes and changes components.
+\enumerate{
+\item \strong{Non-availability}. A node was not in the network and so cannot
+send or receive ties.
+This is recorded in the 'active' column of the nodes component,
+and can change over time through the changes component.
+Note that this renders all outgoing and incoming ties missing.
+\item \strong{Non-response}. A node was in the network but chose not to respond
+or report its ties.
+This is recorded in the 'na' column of the nodes component,
+and can also change over time through the changes component.
+Note that this renders only outgoing ties missing for a directed layer,
+and both directions for an undirected layer.
+}
+
+Second, a tie might be missing or missing some information,
+even though both nodes were in the network. This is recorded in the ties.
+\enumerate{
+\item \strong{Unobserved tie}. One or more specific ties could have been reported
+and were not, such as one name a respondent skipped.
+These are held in the missings component,
+as a tibble of 'from' and 'to', with 'layer' and 'time' where available.
+\item \strong{Unobserved weight}. One or more ties are reported as existing,
+but the strength of the tie is not known.
+This is recorded as an \code{NA} in the 'weight' column of the ties component.
+}
+
+Note that missing ties are not ties.
+\code{net_ties()} does not count them,
+\code{as_edgelist()} does not return them,
+and they are not drawn or measured unless a function asks for them by name.
+Where necessary, \code{as_missinglist()} returns a list of all missing ties together.
+\code{net_tie_missing()} reports how many there are,
+and \code{impute_ties()} imputes them.
+
+Each class holds them differently.
+A stocnet object records which nodes did not report,
+from which \code{as_missinglist()} derives the ties;
+see \code{make_stocnet()} for how those records are held.
+So, unlike the other \code{as_*list()} functions,
+this one does not return a component verbatim:
+it returns the missings component together with the ties that the
+non-responsive nodes imply, which is nearly always the larger part.
+An 'igraph' or 'tbl_graph' object carries the list in a graph attribute,
+since igraph has no way to mark an edge as missing.
+A 'network' object holds each as an edge marked in the reserved 'na'
+attribute, which is that package's own format and the one \code{{ergm}} expects.
+A matrix holds each as a missing cell.
+}
+
 \examples{
 test <- data.frame(from = c("A","B","B","C","C"), to = c("I","G","I","G","H"))
 as_edgelist(test)
@@ -100,6 +182,7 @@ as_matrix(test)
 as_igraph(test)
 as_tidygraph(test)
 as_network(test)
+as_missinglist(ison_classmates)
 }
 \seealso{
 Other coercions:

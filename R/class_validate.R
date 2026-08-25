@@ -8,7 +8,8 @@ validate_stocnet <- function(.data) {
   validate_nodes(.data)
   validate_ties(.data)
   validate_changes(.data)
-  validate_global(.data)
+  validate_globals(.data)
+  validate_missings(.data)
   invisible(.data)
 }
 
@@ -39,10 +40,13 @@ validate_ties <- function(.data){
   reserved_cols(.data, "ties", "weight", 
                 class = c("numeric","integer"), 
            aka = c("value", "strength", "val", "sign"))
-  reserved_cols(.data, "ties", "time", 
-                class = c("character","numeric","integer","mdate","Date","POSIXct","POSIXlt"), 
-                aka = c("wave", "period", "date", "begin", "end"))
-  reserved_cols(.data, "ties", "layer", "character", 
+  # Note that 'begin' and 'end' are not among the names for a time here.
+  # These mark the span over which a tie is present, which `is_dynamic()`
+  # reads as such, rather than a time that is named some other way.
+  reserved_cols(.data, "ties", "time",
+                class = c("character","numeric","integer","mdate","Date","POSIXct","POSIXlt"),
+                aka = c("wave", "period", "date"))
+  reserved_cols(.data, "ties", "layer", "character",
            aka = c("type", "plex", "tie"))
   invisible(.data)
 }
@@ -57,6 +61,9 @@ validate_changes <- function(.data){
                 class = c("character","numeric","integer","mdate","Date","POSIXct","POSIXlt"), 
                 aka = c("wave", "period", "date", "begin", "end"))
   reserved_cols(.data, "changes", "var", "character")
+  # No pool is checked here, since a change to a variable that is not a tie
+  # layer, such as a nodal attribute, names no layer and so holds NA.
+  reserved_cols(.data, "changes", "layer", "character")
   invisible(.data)
 }
 
@@ -83,15 +90,34 @@ validate_info <- function(.data){
   invisible(.data)
 }
 
-validate_global <- function(.data){
-  if(is.null(.data$global)) return(invisible(.data))
-  expect_class(.data, "global", "tbl_df")
-  required_cols(.data, "global", c("var", "value"))
-  reserved_cols(.data, "global", "time", 
-                class = c("character","numeric","integer","mdate","Date","POSIXct","POSIXlt"), 
+validate_globals <- function(.data){
+  if(is.null(.data$globals)) return(invisible(.data))
+  expect_class(.data, "globals", "tbl_df")
+  required_cols(.data, "globals", c("var", "value"))
+  reserved_cols(.data, "globals", "time",
+                class = c("character","numeric","integer","mdate","Date","POSIXct","POSIXlt"),
                 aka = c("wave", "period", "date", "begin", "end"))
-  reserved_cols(.data, "global", "var", "character")
-  reserved_cols(.data, "global", "value")
+  reserved_cols(.data, "globals", "var", "character")
+  reserved_cols(.data, "globals", "value")
+  invisible(.data)
+}
+
+# The missings component lists dyads, so it takes the same columns as the ties.
+validate_missings <- function(.data){
+  if(is.null(.data$missings)) return(invisible(.data))
+  expect_class(.data, "missings", "tbl_df")
+  required_cols(.data, "missings", c("from", "to"))
+  reserved_cols(.data, "missings", "from", "integer",
+                aka = c("source", "sender", "ego"),
+                pool = seq_nodes(.data))
+  reserved_cols(.data, "missings", "to", "integer",
+                aka = c("target", "receiver", "alter"),
+                pool = seq_nodes(.data))
+  reserved_cols(.data, "missings", "layer", "character",
+                aka = c("type", "plex", "tie"))
+  reserved_cols(.data, "missings", "time",
+                class = c("character","numeric","integer","mdate","Date","POSIXct","POSIXlt"),
+                aka = c("wave", "period", "date"))
   invisible(.data)
 }
 

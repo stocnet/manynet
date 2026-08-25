@@ -10,6 +10,7 @@
 \alias{write_graphml}
 \alias{write_gml}
 \alias{write_gdf}
+\alias{write_gexf}
 \alias{write_dynetml}
 \title{Making networks to external files}
 \source{
@@ -32,6 +33,8 @@ write_graphml(.data, filename, ...)
 write_gml(.data, filename, ...)
 
 write_gdf(.data, filename, ...)
+
+write_gexf(.data, filename, ...)
 
 write_dynetml(.data, filename, ...)
 }
@@ -76,6 +79,7 @@ file formats:
 \item \code{write_graphml()} exports GraphML files.
 \item \code{write_gml()} exports GML files.
 \item \code{write_gdf()} exports GDF files.
+\item \code{write_gexf()} exports GEXF files, for example for use in Gephi.
 }
 }
 \details{
@@ -83,6 +87,16 @@ Note that these functions are not as actively maintained as others
 in the package, so please let us know if any are not currently working
 for you or if there are missing import routines
 by \href{https://github.com/stocnet/manynet/issues}{raising an issue on Github}.
+
+\code{write_gexf()} writes the node and tie attributes as declared attributes,
+except that 'x', 'y', 'z', 'size', and 'color' are written as the
+visualisation elements Gephi reads,
+and 'start' and 'end' are written as times, which makes the file dynamic.
+Only a hexadecimal colour is written as a visualisation element.
+A colour named some other way, such as "red",
+is written as an ordinary attribute, which reads back unchanged.
+Node names are written as labels, since node ids are required by the format
+and so are written as positions in the network.
 }
 \seealso{
 \link{as}

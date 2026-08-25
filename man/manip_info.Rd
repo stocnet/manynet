@@ -42,6 +42,10 @@ net_attributes(.data)
 \item "max_degree" is the maximum degree of the network
 \item "min_degree" is the minimum degree of the network
 \item "doi" is the DOI or URL of the network
+\item "transformations" records how the network has been transformed since it
+was collected or generated. See the Transformations section.
+Note that this records what has been done to the network,
+where "method" records how the network was collected or modelled.
 }
 
 If no arguments are used,
@@ -77,6 +81,48 @@ the default method will attempt to coerce the object to a class for which a meth
 and then coerce the output back to the original class.
 If no method is available for any class, an error will be thrown.
 }
+\section{Transformations}{
+
+The "transformations" field implements section 4 of the GRAND guidelines,
+which names six ways raw data is turned into analytic data.
+It holds a named list, one element for each of them:
+\itemize{
+\item "symmetrisation" (GRAND 4.1), which \code{to_undirected()} sets.
+\item "dichotomisation" (4.2), which \code{to_unweighted()} sets.
+\item "projection" (4.3), which \code{to_mode1()} and \code{to_mode2()} set.
+\item "exclusion" (4.4), which the functions that drop nodes or ties set,
+such as \code{delete_isolates()}, \code{to_component()}, and \code{to_uniplex()}.
+\item "aggregation" (4.5), which \code{to_flat()}, \code{join_ties()},
+and \code{to_blockmodel()} set.
+\item "imputation" (4.6), which \code{impute_ties()} and \code{impute_nodes()} set.
+}
+
+One further name, "normalisation", records what \code{to_normalised()} does.
+The guidelines do not name it, since rescaling tie values neither
+dichotomises them (4.2 ends in an unweighted network)
+nor aggregates them (4.5 combines what was separate),
+but it changes the analytic network and so is recorded too.
+
+A name that is absent means that transformation was not applied,
+so \code{"symmetrisation" \%in\% names(as_infolist(.data)$transformations)}
+answers whether a network was symmetrised
+without reading past everything else done to it.
+\code{describe_transformations()} reports the same thing as a phrase.
+
+Each element is a character vector naming the method first,
+and, where the guidelines ask for an amount too,
+its consequence in parentheses:
+\code{list(symmetrisation = "collapse", imputation = "reciprocity (73 missing ties)")}.
+An element accumulates rather than replaces,
+so a network imputed in more than one step reports each of them,
+and the order of the names is the order the transformations were applied.
+
+The \verb{to_*()} and \verb{impute_*()} functions set this themselves,
+so it rarely needs to be set by hand.
+Where it does, \code{add_info()} takes a named list and merges it in,
+and refuses a name that is not one of those above.
+}
+
 \examples{
 add_info(ison_algebra, name = "Algebra")
 }
@@ -86,7 +132,7 @@ information on the Guidelines for Reporting About Network Data (GRAND).
 
 Other manipulations:
 \code{\link{manip_changes}},
-\code{\link{manip_global}},
+\code{\link{manip_globals}},
 \code{\link{manip_nodes_attr}},
 \code{\link{manip_nodes_num}},
 \code{\link{manip_ties_attr}},

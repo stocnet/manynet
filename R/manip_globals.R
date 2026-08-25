@@ -1,5 +1,5 @@
 #' Manipulating global attributes
-#' @name manip_global
+#' @name manip_globals
 #' @description
 #'   These functions offer ways to manipulate network-level data constants
 #'   or variables that are not tied to a particular node or tie.
@@ -21,7 +21,7 @@
 #' @seealso [to_time()]
 NULL
 
-#' @rdname manip_global
+#' @rdname manip_globals
 #' @examples
 #' as_stocnet(ison_algebra) |> 
 #'    mutate_globals(time = 2, var = "active", value = FALSE)
@@ -36,17 +36,17 @@ mutate_globals.default <- function(.data, ...){
 #' @export
 mutate_globals.stocnet <- function(.data, ...){
   out <- .data
-  if(is.null(out$global)){
-    out$global <- tibble::tibble(...)
+  if(is.null(out$globals)){
+    out$globals <- tibble::tibble(...)
   } else {
-    global <- out$global
-    global <- dplyr::mutate(global, ...)
-    out$global <- global
+    globals <- out$globals
+    globals <- dplyr::mutate(globals, ...)
+    out$globals <- globals
   }
   out
 }
 
-#' @rdname manip_global
+#' @rdname manip_globals
 #' @export
 rename_globals <- function(.data, ...) UseMethod("rename_globals")
 
@@ -66,7 +66,7 @@ rename_globals.data.frame <- function(.data, ...){
     )
     
     current_names <- names(out)
-    rename_map <- c()
+    rename_map <- character()
     
     for(expected in names(aka)){
       if(!expected %in% current_names){
@@ -89,11 +89,11 @@ rename_globals.data.frame <- function(.data, ...){
 #' @export
 rename_globals.stocnet <- function(.data, ...){
   out <- .data
-  out$global <- rename_globals.data.frame(out$global, ...)
+  out$globals <- rename_globals.data.frame(out$globals, ...)
   out
 }
 
-#' @rdname manip_global
+#' @rdname manip_globals
 #' @export
 select_globals <- function(.data, ...) UseMethod("select_globals")
 
@@ -114,7 +114,7 @@ select_globals.data.frame <- function(.data, ...){
 #' @export
 select_globals.stocnet <- function(.data, ...){
   out <- .data
-  out$global <- select_globals.data.frame(out$global, ...)
+  out$globals <- select_globals.data.frame(out$globals, ...)
   out
 }
 

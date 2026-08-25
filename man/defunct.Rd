@@ -21,6 +21,10 @@
 \alias{net_node_names}
 \alias{net_tie_names}
 \alias{add_changes}
+\alias{to_ties}
+\alias{to_no_isolates}
+\alias{to_no_missing}
+\alias{to_blocks}
 \alias{node_degree}
 \alias{node_deg}
 \alias{net_by_quad}
@@ -164,6 +168,10 @@
 \alias{node_by_tetrad}
 \alias{node_by_tie}
 \alias{node_by_triad}
+\alias{na_to_zero}
+\alias{na_to_mean}
+\alias{gather_changes}
+\alias{apply_changes}
 \title{Functions that have been renamed, superseded, moved, or are no longer working}
 \usage{
 pkg_data(pkg = "manynet")
@@ -203,6 +211,14 @@ net_node_names(.data)
 net_tie_names(.data)
 
 add_changes(.data, changes)
+
+to_ties(.data)
+
+to_no_isolates(.data)
+
+to_no_missing(.data)
+
+to_blocks(.data, membership, FUN = mean)
 
 node_degree(...)
 
@@ -489,6 +505,19 @@ node_by_tetrad(...)
 node_by_tie(...)
 
 node_by_triad(...)
+
+na_to_zero(.data)
+
+na_to_mean(.data)
+
+gather_changes(.data, time)
+
+apply_changes(.data, time)
+}
+\arguments{
+\item{.data}{A manynet-consistent network.}
+
+\item{time}{A moment to gather the changes in force at.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
@@ -538,6 +567,14 @@ wherever possible and update your scripts accordingly.
 \item \code{net_tie_names()}: Deprecated on 2026-04-04.
 
 \item \code{add_changes()}: Deprecated on 2026-06-12.
+
+\item \code{to_ties()}: Deprecated on 2026-08-09.
+
+\item \code{to_no_isolates()}: Deprecated on 2026-08-09.
+
+\item \code{to_no_missing()}: Deprecated on 2026-08-09.
+
+\item \code{to_blocks()}: Deprecated on 2026-08-09.
 
 \item \code{node_degree()}: Deprecated on 2026-03-22.
 
@@ -824,6 +861,14 @@ wherever possible and update your scripts accordingly.
 \item \code{node_by_tie()}: Deprecated on 2026-03-22.
 
 \item \code{node_by_triad()}: Deprecated on 2026-03-22.
+
+\item \code{na_to_zero()}: Deprecated on 2026-08-18.
+
+\item \code{na_to_mean()}: Deprecated on 2026-08-18.
+
+\item \code{gather_changes()}: Deprecated on 2026-08-20.
+
+\item \code{apply_changes()}: Deprecated on 2026-08-20.
 
 }}
 \keyword{internal}

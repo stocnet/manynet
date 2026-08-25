@@ -6,6 +6,7 @@
 \alias{describe_nodes}
 \alias{describe_ties}
 \alias{describe_changes}
+\alias{describe_transformations}
 \title{Describe a network}
 \usage{
 describe_network(.data)
@@ -15,6 +16,8 @@ describe_nodes(.data)
 describe_ties(.data)
 
 describe_changes(.data)
+
+describe_transformations(.data, details = FALSE, width = cli::console_width())
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -26,6 +29,14 @@ describe_changes(.data)
 \item network \code{network}, from the \code{{network}} package
 \item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
+
+\item{details}{Logical. Where FALSE, the default, the description is given
+at whichever level of detail fits the width of the console. Where TRUE,
+every method and its consequence is named whatever the width.}
+
+\item{width}{Integer. The number of characters the description may fill,
+by default the width of the console. Where a caller adds words of its own,
+such as the header \code{print()} puts this in, it passes what is left.}
 }
 \description{
 These functions are used to describe components of a given network
@@ -39,7 +50,12 @@ and, if available, names the different nodesets or modes.
 and, if available, names the different types of ties.
 \item \code{describe_changes()} describes the changing features of a network,
 if any, such as how many waves there are.
+\item \code{describe_transformations()} describes how the network has been
+transformed since it was collected or generated, if at all.
 }
 
 These descriptions are constructed to be GRAND-consistent.
+}
+\examples{
+describe_transformations(to_undirected(ison_southern_women))
 }

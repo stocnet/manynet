@@ -9,7 +9,9 @@
 #'   - `to_undirected()` reformats directed network data to an undirected network,
 #'   so that any pair of nodes with at least one directed edge will be
 #'   connected by an undirected edge in the new network.
-#'   This is equivalent to the "collapse" mode in `{igraph}`..
+#'   By default this is equivalent to the "collapse" mode in `{igraph}`,
+#'   but `rule` offers the other ways of reconciling a pair of ties running in
+#'   opposite directions, which matters where the network is weighted.
 #'   - `to_redirected()` formats directed network data by flipping/transposing
 #'   any existing direction such that senders become receivers and
 #'   receivers become senders.
@@ -57,31 +59,110 @@ to_directed.igraph <- function(.data) {
 }
 
 #' @rdname modif_direction
+#' @param rule How the values of a pair of ties running in opposite directions
+#'   are reconciled into the single value of an undirected tie:
+#'   - "collapse" (the default) sums them, so that a tie exists wherever a tie
+#'   existed in either direction. For an unweighted network this is igraph's
+#'   "collapse" mode, since a tie in either direction gives 1 either way.
+#'   - "sum" is the same operation, named for the arithmetic rather than
+#'   the intent.
+#'   - "min" takes the smaller of the two values, so that a tie is only as
+#'   strong as the weaker direction. Use where a relationship needs to be
+#'   confirmed from both sides, as in a mutual friendship nomination.
+#'   - "max" takes the larger, so that the stronger direction stands for
+#'   the pair. Use where a single report is taken as sufficient evidence.
+#'   - "mean" averages them, treating the two directions as two readings
+#'   of one underlying quantity.
+#'   - "product" multiplies them, so that a tie survives only where both
+#'   directions are non-zero, and strong ties are rewarded disproportionately.
+#'
+#'   Values missing in one direction are not treated as agreement:
+#'   they propagate, so that `NA` in either direction gives `NA`.
+#'   Use `impute_ties()` first to state a different assumption.
+#' @examples
+#' to_undirected(ison_networkers)
+#' to_undirected(ison_networkers, rule = "min")
 #' @export
-to_undirected <- function(.data) UseMethod("to_undirected")
+to_undirected <- function(.data,
+                          rule = c("collapse","min","max","mean","sum","product")) {
+  # note that whether there is anything to reconcile is judged by each method
+  # rather than here, since `is_directed()` reports on the network rather than
+  # on how it happens to be stored: a graph igraph holds as directed, with
+  # every dyad listed in both directions, is undirected by that measure while
+  # still carrying the pairs of ties that need collapsing
+  UseMethod("to_undirected")
+}
 
 #' @export
-to_undirected.default <- function(.data){
-  as_input(.data, to_undirected)
+to_undirected.default <- function(.data,
+                                  rule = c("collapse","min","max","mean","sum","product")){
+  as_input(.data, to_undirected, rule = rule)
 }
 
 #' @importFrom igraph as.undirected
 #' @export
-to_undirected.igraph <- function(.data) {
-  igraph::as_undirected(.data)
+to_undirected.igraph <- function(.data,
+                                 rule = c("collapse","min","max","mean","sum","product")) {
+  rule <- match.arg(rule)
+  # igraph's own flag, rather than `is_directed()`, since it is igraph's
+  # representation that says whether opposing pairs of ties are still held
+  if(!igraph::is_directed(.data)) return(.data)
+  if(rule %in% c("collapse","sum")){
+    # igraph's default combination rule discards every tie attribute other
+    # than the weight, so sign, type, and time are named explicitly
+    igraph::as_undirected(.data, mode = "collapse",
+                          edge.attr.comb = .undirected_attr_comb())
+  } else {
+    # igraph offers no minimum, mean, or product combination, so the
+    # arithmetic is done on the matrix and the node attributes restored
+    as_igraph(to_undirected(as_matrix(.data), rule = rule)) |>
+      bind_node_attributes(.data)
+  }
 }
 
 #' @export
-to_undirected.network <- function(.data) {
-  .data$gal$directed <- FALSE
-  .data
+to_undirected.tbl_graph <- function(.data,
+                                    rule = c("collapse","min","max","mean","sum","product")) {
+  rule <- match.arg(rule)
+  # the percent is of the network as it was, so it is taken before the collapse
+  pct <- .non_reciprocal_percent(.data)
+  entry <- if(is.null(pct)) rule else
+    paste0(rule, " (", pct, "% of connected dyads non-reciprocal)")
+  as_tidygraph(to_undirected(as_igraph(.data), rule = rule)) |>
+    .record_transformation("symmetrisation", entry)
 }
 
 #' @export
-to_undirected.matrix <- function(.data) {
-  if (is_twomode(.data)) {
-    .data
-  } else ((.data + t(.data)) > 0) * 1
+to_undirected.network <- function(.data,
+                                  rule = c("collapse","min","max","mean","sum","product")) {
+  # this delegates rather than setting `$gal$directed`, which would declare
+  # the network undirected while leaving its asymmetric dyads untouched
+  as_network(to_undirected(as_tidygraph(.data), rule = rule))
+}
+
+#' @export
+to_undirected.data.frame <- function(.data,
+                                     rule = c("collapse","min","max","mean","sum","product")) {
+  as_edgelist(to_undirected(as_tidygraph(.data), rule = rule))
+}
+
+#' @export
+to_undirected.matrix <- function(.data,
+                                 rule = c("collapse","min","max","mean","sum","product")) {
+  rule <- match.arg(rule)
+  if (is_twomode(.data)) return(.data)
+  # a symmetric matrix already holds one value per dyad, so reconciling it
+  # again would e.g. double every tie value under the default rule
+  if (isSymmetric(unname(.data))) return(.data)
+  out <- switch(rule,
+                "collapse" = ,
+                "sum"      = .data + t(.data),
+                "min"      = pmin(.data, t(.data)),
+                "max"      = pmax(.data, t(.data)),
+                "mean"     = (.data + t(.data))/2,
+                "product"  = .data * t(.data))
+  # `pmin()` and `pmax()` return a vector, so the shape is restored here
+  matrix(out, nrow(.data), ncol(.data), dimnames = dimnames(.data))
 }
 
 #' @rdname modif_direction 
@@ -144,9 +225,37 @@ to_acyclic.default <- function(.data){
 }
 
 #' @export
+to_acyclic.stocnet <- function(.data){
+  if(!is_directed(.data)) return(as_stocnet(to_acyclic(as_tidygraph(.data))))
+  # the ties table is the order igraph is built from, so the edge ids the
+  # feedback arc set names index its rows
+  arcs <- as.integer(igraph::feedback_arc_set(as_igraph(.data)))
+  keep_ties(.data, setdiff(seq_len(nrow(.data$ties)), arcs)) |>
+    .record_exclusion(.data, "feedback arcs", "ties")
+}
+
+#' @export
+to_acyclic.tbl_graph <- function(.data){
+  # only the directed branch excludes anything: for an undirected network
+  # `to_acyclic()` orients the ties that are there rather than dropping any
+  as_tidygraph(to_acyclic(as_igraph(.data))) |>
+    .record_exclusion(.data, "feedback arcs", "ties")
+}
+
+#' @export
 to_acyclic.igraph <- function(.data) {
   if(is_directed(.data)){
     delete_ties(.data, igraph::feedback_arc_set(.data))
   } else igraph::as_directed(.data, mode = "acyclic")
 }
 
+
+# Helper functions ------------------
+
+# How tie attributes are combined when a pair of opposing ties is collapsed
+# into one. igraph's default is list(weight = "sum", name = "concat",
+# "ignore"), which silently discards sign, type, time, and everything else,
+# so those are kept by taking the first of the pair.
+.undirected_attr_comb <- function(){
+  list(weight = "sum", name = "concat", "first")
+}

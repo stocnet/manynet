@@ -4,11 +4,17 @@
 \alias{measure_missingness}
 \alias{net_node_missing}
 \alias{net_tie_missing}
+\alias{net_node_incomplete}
+\alias{net_tie_incomplete}
 \title{Describing network missingness}
 \usage{
 net_node_missing(.data)
 
 net_tie_missing(.data)
+
+net_node_incomplete(.data)
+
+net_tie_incomplete(.data)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -22,13 +28,41 @@ net_tie_missing(.data)
 }}
 }
 \value{
-\code{net_node_missing()} and \code{net_tie_missing()} return a scalar
+\code{net_node_missing()}, \code{net_tie_missing()}, \code{net_node_incomplete()},
+and \code{net_tie_incomplete()} return a scalar.
 }
 \description{
 These functions describe the missingness in network data:
 \itemize{
 \item \code{net_node_missing()} returns the proportion of nodes that are missing in a network.
+\item \code{net_node_incomplete()} returns the proportion of the network's node
+attribute values that are unknown.
 \item \code{net_tie_missing()} returns the proportion of ties that are missing in a network.
+\item \code{net_tie_incomplete()} returns the proportion of the network's ties whose
+value is unknown.
 }
+
+A network is \emph{missing} a tie where the tie itself was not observed,
+so that whether it exists is not known.
+A tie or a node is \emph{incomplete} where it is there and observed,
+but an attribute of it is not known.
+A weight of \code{NA} therefore marks an incomplete tie and not a missing one.
+\code{\link[=impute_ties]{impute_ties()}} and \code{\link[=impute_nodes]{impute_nodes()}} impute each of these states.
+
+A tie recorded as missing is one that could have been observed and was not.
+It is not a tie, so \code{net_ties()} does not count it,
+and it is not the absence of a tie either.
+See \code{\link[=as_missinglist]{as_missinglist()}} for how each class records them,
+and \code{make_stocnet()} for how they differ from a node's absence
+and from a tie of unknown value.
+
+For a multiplex or longitudinal network, \code{net_tie_missing()} counts the ties
+that could have been observed over each layer and each moment the network
+records. Coercing such a network to a matrix first gives a higher
+proportion, since a matrix holds only one cell for each dyad.
+}
+\examples{
+net_node_incomplete(fict_lotr)
+net_tie_incomplete(ison_adolescents)
 }
 \concept{missingness}

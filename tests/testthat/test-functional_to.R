@@ -8,14 +8,15 @@ to_funs <- alive_functions("^to_")
 # network being tested. Functions with required arguments not listed here are
 # skipped with an audit message so the map can be extended.
 to_argmakers <- list(
-  to_blocks     = function(net) list(membership = rep(c(1, 2),
+  to_blockmodel = function(net) list(membership = rep(c(1, 2),
                     length.out = as.numeric(net_nodes(net)))),
   to_dominating = function(net) list(from = 1),
   to_ego        = function(net) list(node = 1),
   to_subgraphs  = function(net) list(attribute = "group"),
   to_time       = function(net) list(time = 1),
   to_wave       = function(net) list(time = 1),
-  to_uniplex    = function(net) list(tie = layer_names(net)[1])
+  to_uniplex    = function(net) list(layer = layer_names(net)[1]),
+  to_layer      = function(net) list(layer = layer_names(net)[1])
 )
 
 # Name-implied invariants that the output of a to_*() function must satisfy.
@@ -37,7 +38,18 @@ to_invariants <- list(
   to_giant      = function(o) is_connected(o, "weak"),
   to_component  = function(o) is_connected(o, "weak"),
   to_simplex    = function(o) !is_complex(o),
-  to_uniplex    = function(o) !is_multiplex(o)
+  to_uniplex    = function(o) !is_multiplex(o),
+  to_flat       = function(o) !is_multiplex(o),
+  to_imputed    = function(o) as.numeric(net_tie_missing(o)) == 0,
+  # Normalising a binary network by its row maximum leaves every value at 1,
+  # so `is_weighted()` is not what the name promises here. What it does promise
+  # is that no value is left undefined: a denominator of zero would otherwise
+  # give NaN, or -Inf where the largest of an empty row is taken. A value
+  # missing in the data is a different thing, and stays missing.
+  to_normalised = function(o) all(is.finite(tie_weights(o)) |
+                                    is.na(tie_weights(o))),
+  to_normalized = function(o) all(is.finite(tie_weights(o)) |
+                                    is.na(tie_weights(o)))
 )
 
 .required_args <- function(fn) {
@@ -102,12 +114,16 @@ for (fn in to_funs) {
 # Cross-class conformance: applying a to_*() function to the same network
 # represented in different classes should not error, and graph-like results
 # should agree (via as_matrix) across classes.
-canonical_classes <- class_versions(canonical_net)
+# This runs over a weighted, directed network as well as the plain canonical
+# one, since tie values and directions are where the classes tend to diverge.
+for (cnet in names(canonical_nets)) {
+canonical_classes <- class_versions(canonical_nets[[cnet]])
 
 for (fn in setdiff(to_funs, names(to_argmakers))) {
   if (length(.required_args(fn))) next
   f <- get(fn, envir = asNamespace("manynet"))
-  test_that(paste0(fn, "() is consistent across object classes"), {
+  test_that(paste0(fn, "() is consistent across object classes on the ",
+                   cnet, " network"), {
     outs <- list()
     for (cl in names(canonical_classes)) {
       outs[[cl]] <- tryCatch(f(canonical_classes[[cl]]),
@@ -136,6 +152,50 @@ for (fn in setdiff(to_funs, names(to_argmakers))) {
     if (length(errs)) {
       skip(paste0("AUDIT [", fn, "]: no method succeeds for class(es) ",
                   paste(errs, collapse = ", ")))
+    }
+  })
+}
+}
+
+# Cross-class conformance of the splitting functions. These return a list of
+# networks rather than a single network, so the sweep above compares nothing
+# for them. Each is run on a network that holds what it splits on, in each
+# object class, and the lists are compared element-wise. This catches both a
+# class that errors (for example where the coercion back to the input class
+# is applied to the list instead of to its elements) and a class that returns
+# a single network where a list is expected.
+for (fn in names(split_fixtures)) {
+  f <- get(fn, envir = asNamespace("manynet"))
+  spec <- split_fixtures[[fn]]
+
+  test_that(paste0(fn, "() returns a list of networks in every class"), {
+    classes <- class_versions(spec$net)
+    classes <- classes[vapply(names(classes), split_class_holds_info,
+                              logical(1), fn = fn)]
+    outs <- lapply(classes, function(net)
+      tryCatch(do.call(f, c(list(net), spec$args)), error = function(e) e))
+    bad <- !vapply(outs, is_network_list, logical(1))
+    if (all(bad)) {
+      skip(paste0("AUDIT [", fn, "]: returns no list of networks for any ",
+                  "class"))
+    }
+    succeed()
+    ties <- lapply(outs[!bad], function(o)
+      tryCatch(tie_sets(o), error = function(e) NULL))
+    ties <- Filter(Negate(is.null), ties)
+    if (length(ties) > 1) {
+      for (cl in names(ties)[-1]) {
+        expect_equal(ties[[cl]], ties[[1]],
+                     label = paste0(fn, "() on ", cl),
+                     expected.label = paste0(fn, "() on ", names(ties)[1]))
+      }
+    }
+    if (any(bad)) {
+      why <- vapply(outs[bad], function(o)
+        if (inherits(o, "error")) conditionMessage(o) else
+          paste("returns a", class(o)[1]), character(1))
+      skip(paste0("AUDIT [", fn, "]: no list of networks for class(es) ",
+                  paste0(names(why), " (", why, ")", collapse = "; ")))
     }
   })
 }

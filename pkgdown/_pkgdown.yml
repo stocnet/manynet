@@ -163,10 +163,10 @@ reference:
   - subtitle: "Converting"
     desc: |
       Functions for permuting networks or constructing a network
-      from the nodal correlations of another network.
+      from how alike another network's nodes are.
     contents:
       - modif_permutation
-      - modif_correlation
+      - modif_proximity
   - subtitle: "Splits"
     desc: |
       Functions for splitting networks into a list of networks,
@@ -179,7 +179,7 @@ reference:
     desc: |
       Functions for modifying how missing data is treated.
     contents:
-      - starts_with("na_to_")
+      - modif_miss
       
   - title: "Describing"
     desc: |

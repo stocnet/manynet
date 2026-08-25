@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"
+  xmlns:nc="http://schema.networkcanvas.com/xmlns">
+  <key id="ego_name" attr.name="ego_name" attr.type="string" for="graph"/>
+  <key id="networkCanvasUUID" attr.name="networkCanvasUUID" attr.type="string" for="all"/>
+  <key id="networkCanvasType" attr.name="networkCanvasType" attr.type="string" for="all"/>
+  <key id="networkCanvasSourceUUID" attr.name="networkCanvasSourceUUID" attr.type="string" for="edge"/>
+  <key id="networkCanvasTargetUUID" attr.name="networkCanvasTargetUUID" attr.type="string" for="edge"/>
+  <key id="label" attr.name="label" attr.type="string" for="all"/>
+  <key id="4cf5c68d-e2f1-4c9e-9a5a-111111111111" attr.name="name" attr.type="string" for="node"/>
+  <key id="4cf5c68d-e2f1-4c9e-9a5a-222222222222" attr.name="age" attr.type="double" for="node"/>
+  <key id="4cf5c68d-e2f1-4c9e-9a5a-333333333333_5f2b" attr.name="support_emotional" attr.type="boolean" for="node"/>
+  <key id="4cf5c68d-e2f1-4c9e-9a5a-333333333333_9a1c" attr.name="support_financial" attr.type="boolean" for="node"/>
+  <key id="4cf5c68d-e2f1-4c9e-9a5a-444444444444_X" attr.name="layout_X" attr.type="double" for="node"/>
+  <key id="4cf5c68d-e2f1-4c9e-9a5a-444444444444_Y" attr.name="layout_Y" attr.type="double" for="node"/>
+  <key id="4cf5c68d-e2f1-4c9e-9a5a-555555555555_1a2b" attr.name="closeness_close" attr.type="boolean" for="node"/>
+  <key id="4cf5c68d-e2f1-4c9e-9a5a-555555555555_3c4d" attr.name="closeness_very close" attr.type="boolean" for="node"/>
+  <graph edgedefault="undirected" nc:caseId="case1" nc:sessionUUID="aaaa-1111" nc:protocolName="MyProtocol" nc:protocolUID="p-123" nc:codebookHash="abc" nc:sessionExportTime="2026-01-01T00:00:00Z" nc:sessionStartTime="2026-01-01T00:00:00Z" nc:sessionFinishTime="2026-01-01T00:10:00Z">
+    <data key="ego_name">Jimbo</data>
+    <data key="networkCanvasUUID">ego-uuid-1</data>
+    <node id="n0">
+      <data key="label">Joshua</data>
+      <data key="networkCanvasUUID">u-n0</data>
+      <data key="networkCanvasType">Person</data>
+      <data key="4cf5c68d-e2f1-4c9e-9a5a-111111111111">Joshua</data>
+      <data key="4cf5c68d-e2f1-4c9e-9a5a-222222222222">34</data>
+      <data key="4cf5c68d-e2f1-4c9e-9a5a-333333333333_5f2b">true</data>
+      <data key="4cf5c68d-e2f1-4c9e-9a5a-333333333333_9a1c">false</data>
+      <data key="4cf5c68d-e2f1-4c9e-9a5a-444444444444_X">0.25</data>
+      <data key="4cf5c68d-e2f1-4c9e-9a5a-444444444444_Y">0.75</data>
+      <data key="4cf5c68d-e2f1-4c9e-9a5a-555555555555_1a2b">false</data>
+      <data key="4cf5c68d-e2f1-4c9e-9a5a-555555555555_3c4d">true</data>
+    </node>
+    <node id="n1">
+      <data key="label">Michael</data>
+      <data key="networkCanvasUUID">u-n1</data>
+      <data key="networkCanvasType">Organisation</data>
+      <data key="4cf5c68d-e2f1-4c9e-9a5a-111111111111">Michael</data>
+      <data key="4cf5c68d-e2f1-4c9e-9a5a-333333333333_5f2b">true</data>
+      <data key="4cf5c68d-e2f1-4c9e-9a5a-333333333333_9a1c">true</data>
+      <data key="4cf5c68d-e2f1-4c9e-9a5a-555555555555_1a2b">true</data>
+      <data key="4cf5c68d-e2f1-4c9e-9a5a-555555555555_3c4d">false</data>
+    </node>
+    <edge source="n0" target="n1" id="e0">
+      <data key="networkCanvasUUID">u-e0</data>
+      <data key="networkCanvasType">Friends</data>
+      <data key="networkCanvasSourceUUID">u-n0</data>
+      <data key="networkCanvasTargetUUID">u-n1</data>
+    </edge>
+  </graph>
+  <graph edgedefault="undirected" nc:caseId="case2" nc:sessionUUID="bbbb-2222" nc:protocolName="MyProtocol" nc:protocolUID="p-123" nc:codebookHash="abc" nc:sessionExportTime="2026-01-02T00:00:00Z">
+    <data key="ego_name">Sophie</data>
+    <data key="networkCanvasUUID">ego-uuid-2</data>
+    <node id="n0">
+      <data key="label">Sarah</data>
+      <data key="networkCanvasUUID">u-n2</data>
+      <data key="networkCanvasType">Person</data>
+      <data key="4cf5c68d-e2f1-4c9e-9a5a-111111111111">Sarah</data>
+    </node>
+    <node id="n1">
+      <data key="label">Michelle</data>
+      <data key="networkCanvasUUID">u-n3</data>
+      <data key="networkCanvasType">Person</data>
+      <data key="4cf5c68d-e2f1-4c9e-9a5a-111111111111">Michelle</data>
+    </node>
+    <edge source="n0" target="n1" id="e0">
+      <data key="networkCanvasUUID">u-e1</data>
+      <data key="networkCanvasType">Friends</data>
+    </edge>
+  </graph>
+</graphml>

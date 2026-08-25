@@ -72,7 +72,8 @@ add_ties.igraph <- function(.data, ties, attr_list = NULL){
   out <- igraph::add_edges(.data, edges = ties, attr = attr_list)
   # new ties would otherwise carry a missing weight,
   # which is not representable in e.g. matrix or network formats
-  if(is_weighted(.data) && !"weight" %in% names(attr_list)){
+  if("weight" %in% igraph::edge_attr_names(.data) &&
+     !"weight" %in% names(attr_list)){
     wt <- igraph::edge_attr(out, "weight")
     wt[seq(igraph::ecount(.data) + 1, igraph::ecount(out))] <- 1
     out <- igraph::set_edge_attr(out, "weight", value = wt)
@@ -191,6 +192,16 @@ sample_ties <- function(n, .data){
 #' delete_ties(ison_adolescents, "Alice|Sue")
 #' @export
 delete_ties <- function(.data, ties) UseMethod("delete_ties")
+
+# Rebuilds a stocnet retaining only the rows of the ties table given by `kept`,
+# the counterpart of `keep_nodes()` for the functions that drop ties. The nodes
+# are untouched, since a node with no tie left is still a node of the network.
+keep_ties <- function(.data, kept){
+  if(is.null(.data$ties) || nrow(.data$ties) == 0) return(.data)
+  out <- .data
+  out$ties <- .data$ties[kept, , drop = FALSE]
+  out
+}
 
 #' @export
 delete_ties.default <- function(.data, ties){
@@ -483,11 +494,14 @@ rename_ties.data.frame <- function(.data, ...){
     aka <- list(
       from   = c("sender", "ego", "source", "caller"),
       to     = c("recipient", "receiver", "alter", "target", "callee"),
+      # 'time' is the moment a tie is recorded at, in every class. 'wave' is
+      # the name an 'mnet' gives it, and 'panel' a name no dataset uses.
+      time   = c("wave", "panel"),
       weight = c("value", "strength", "increment", "replace", "sign")
     )
     
     current_names <- names(out)
-    rename_map <- c()
+    rename_map <- character()
     
     for(expected in names(aka)){
       if(!expected %in% current_names){
@@ -510,6 +524,14 @@ rename_ties.data.frame <- function(.data, ...){
 #' @export
 rename_ties.stocnet <- function(.data, ...){
   out <- .data
+  # An 'increment' or 'replace' column says how each row relates to the row
+  # before it, and renaming it to 'weight' is what would otherwise lose that.
+  # The network records it as `info$update` instead, where it is not already
+  # recorded, before the column is renamed.
+  if(...length() == 0 && is.null(as_infolist(out)$update)){
+    update <- intersect(c("increment", "replace"), names(out$ties))
+    if(length(update)) out <- mutate_info(out, update = update[1])
+  }
   out$ties <- rename_ties.data.frame(out$ties, ...)
   out
 }

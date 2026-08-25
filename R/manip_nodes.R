@@ -7,13 +7,19 @@
 #'   
 #'   - `add_nodes()` adds an additional number of nodes to network data.
 #'   - `delete_nodes()` deletes nodes from network data.
+#'   - `delete_isolates()` deletes all nodes without ties.
+#'   - `delete_incomplete()` deletes nodes with any missing attribute values,
+#'   retaining only the complete cases.
+#'   A node attribute that is missing for every node is not read as missing
+#'   data, since in a dynamic network such an attribute is a placeholder for
+#'   one whose values are all recorded as changes.
 #'   - `bind_nodes()` adds two nodesets together.
 #'   - `filter_nodes()` subsets nodes based on some nodal attribute-related logical statement.
 #'   - `arrange_nodes()` reorders nodes based on some nodal attribute.
-#'   
+#'
 #'   While `add_*()`/`delete_*()` functions operate similarly as comparable `{igraph}` functions,
 #'   `bind_*()` and `filter_*()` works like a `{tidyverse}` or `{dplyr}`-style function.
-#' @eval detail_avail("(add|delete|bind|filter|arrange)_nodes")
+#' @eval detail_avail("(add|delete|bind|filter|arrange)_nodes|delete_(isolates|incomplete)")
 #' @template param_data
 #' @template param_dots
 #' @template param_by
@@ -87,6 +93,117 @@ delete_nodes.network <- function(.data, nodes){
 }
 
 #' @rdname manip_nodes_num
+#' @importFrom tidygraph node_is_isolated
+#' @importFrom dplyr filter
+#' @examples
+#' ison_adolescents |>
+#'   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) |>
+#'   to_waves(attribute = "wave") |>
+#'   delete_isolates()
+#' @export
+delete_isolates <- function(.data) UseMethod("delete_isolates")
+
+#' @export
+delete_isolates.default <- function(.data){
+  as_input(.data, delete_isolates)
+}
+
+#' @export
+delete_isolates.tbl_graph <- function(.data) {
+  nodes <- NULL
+  # Delete edges not present vertices
+  .data |> tidygraph::activate(nodes) |>
+    dplyr::filter(!tidygraph::node_is_isolated()) |>
+    add_info(name = paste(net_name(.data), "without isolates")) |>
+    .record_exclusion(.data, "isolates", "nodes")
+}
+
+#' @export
+delete_isolates.list <- function(.data) {
+  nodes <- NULL
+  # Delete edges not present vertices in each list
+  lapply(.data, function(x) {
+    x |> tidygraph::activate(nodes) |>
+      dplyr::filter(!tidygraph::node_is_isolated()) |>
+      .record_exclusion(x, "isolates", "nodes")
+  })
+}
+
+#' @export
+delete_isolates.stocnet <- function(.data) {
+  if(is.null(.data$nodes) || nrow(.data$nodes) == 0) return(.data)
+  # A node tied at any wave is not an isolate, so changes count as well as ties
+  tied <- c(.data$ties$from, .data$ties$to)
+  if(!is.null(.data$changes) && nrow(.data$changes) > 0)
+    tied <- c(tied, .data$changes$node)
+  kept <- which(seq_len(nrow(.data$nodes)) %in% tied)
+  keep_nodes(.data, kept) |>
+    add_info(name = paste(net_name(.data), "without isolates")) |>
+    .record_exclusion(.data, "isolates", "nodes")
+}
+
+#' @export
+delete_isolates.igraph <- function(.data) {
+  as_igraph(delete_isolates(as_tidygraph(.data)))
+}
+
+#' @export
+delete_isolates.matrix <- function(.data) {
+  as_matrix(delete_isolates(as_tidygraph(.data)))
+}
+
+#' @export
+delete_isolates.network <- function(.data) {
+  as_network(delete_isolates(as_tidygraph(.data)))
+}
+
+#' @export
+delete_isolates.data.frame <- function(.data) {
+  as_edgelist(delete_isolates(as_tidygraph(.data)))
+}
+
+#' @rdname manip_nodes_num
+#' @export
+delete_incomplete <- function(.data) UseMethod("delete_incomplete")
+
+#' @export
+delete_incomplete.default <- function(.data){
+  as_input(.data, delete_incomplete)
+}
+
+#' @export
+delete_incomplete.tbl_graph <- function(.data){
+  out <- .data
+  nl <- as_nodelist(out)
+  if(is.null(nl)) return(out)
+  delete_nodes(.data, !.nodes_are_complete(nl)) |>
+    add_info(name = paste(net_name(.data), "without nodes with missing data")) |>
+    .record_exclusion(.data, "incomplete node data", "nodes")
+}
+
+#' @export
+delete_incomplete.stocnet <- function(.data){
+  if(is.null(.data$nodes) || nrow(.data$nodes) == 0) return(.data)
+  kept <- which(.nodes_are_complete(.data$nodes))
+  if(length(kept) == 0)
+    snet_info("No node has complete data, so the network is now empty.")
+  keep_nodes(.data, kept) |>
+    add_info(name = paste(net_name(.data), "without nodes with missing data")) |>
+    .record_exclusion(.data, "incomplete node data", "nodes")
+}
+
+# Which nodes hold a value for every node attribute that holds any value at
+# all. A column that is missing for every node says nothing about any one of
+# them. In a dynamic network such a column is a placeholder for a variable
+# whose values are all recorded as changes, so counting it as missing data
+# would delete every node.
+.nodes_are_complete <- function(nodes){
+  informative <- vapply(nodes, function(x) !all(is.na(x)), logical(1))
+  if(!any(informative)) return(rep(TRUE, nrow(nodes)))
+  stats::complete.cases(nodes[, informative, drop = FALSE])
+}
+
+#' @rdname manip_nodes_num
 #' @export
 bind_nodes <- function(.data, object2) UseMethod("bind_nodes")
 
@@ -122,10 +239,20 @@ filter_nodes.stocnet <- function(.data, ..., .by = NULL){
   with_active_context(.data, "nodes", {
     if(is.null(.data$nodes) || nrow(.data$nodes) == 0) return(.data)
 
-  node_df <- dplyr::mutate(.data$nodes, .orig_id = dplyr::row_number())
-  kept_nodes <- dplyr::filter(node_df, ..., .by = dplyr::all_of(.by))
-  kept <- kept_nodes$.orig_id
-  out_nodes <- dplyr::select(kept_nodes, -.orig_id)
+    node_df <- dplyr::mutate(.data$nodes, .orig_id = dplyr::row_number())
+    kept <- dplyr::filter(node_df, ..., .by = dplyr::all_of(.by))$.orig_id
+    keep_nodes(.data, kept)
+  })
+}
+
+# Rebuilds a stocnet retaining only `kept`, a vector of node indices into the
+# original nodelist, in the order they should appear. Ties to dropped nodes are
+# removed and the from/to and changes indices remapped onto the new nodelist,
+# so that every caller that drops nodes reindexes the same way.
+keep_nodes <- function(.data, kept){
+  if(is.null(.data$nodes) || nrow(.data$nodes) == 0) return(.data)
+
+  out_nodes <- .data$nodes[kept, , drop = FALSE]
 
   if(!is.null(.data$ties) && nrow(.data$ties) > 0){
     out_ties <- dplyr::filter(.data$ties, from %in% kept, to %in% kept) |>
@@ -142,9 +269,15 @@ filter_nodes.stocnet <- function(.data, ..., .by = NULL){
     out_changes <- .data$changes
   }
 
+  # Dropping nodes can drop the last tie of a layer, and the information on
+  # that layer goes with it.
+  out_info <- if(!is.null(out_ties) && "layer" %in% names(out_ties)){
+    .prune_layer_info(.data$info,
+                      intersect(.data$info$layers, unique(out_ties$layer)))
+  } else .data$info
+
   make_stocnet(nodes = out_nodes, ties = out_ties, changes = out_changes,
-              global = .data$global, info = .data$info)
-  })
+               globals = .data$globals, missings = .data$missings, info = out_info)
 }
 
 #' @rdname manip_nodes_num
@@ -259,6 +392,17 @@ add_node_attribute.tbl_graph <- function(.data, attr_name, vector){
   as_igraph(.data) |> add_node_attribute(attr_name, vector) |> as_tidygraph()
 }
 
+#' @export
+add_node_attribute.stocnet <- function(.data, attr_name, vector){
+  out <- .data
+  if(is.null(out$nodes)) out$nodes <- dplyr::tibble(.rows = net_nodes(.data))
+  if(length(vector) != nrow(out$nodes))
+    snet_abort(paste("The vector must be as long as the network has nodes:",
+                     "{nrow(out$nodes)}, not {length(vector)}."))
+  out$nodes[[attr_name]] <- vector
+  out
+}
+
 #' @rdname manip_nodes_attr
 #' @importFrom igraph delete_vertex_attr vertex_attr_names
 #' @export
@@ -354,14 +498,18 @@ rename_nodes.tbl_graph <- function(.data, ...){
 rename_nodes.data.frame <- function(.data, ...){
   out <- .data
   if(...length() == 0){
+    # Note that an 'id' is not among the names for a label here.
+    # A file format requires an id of its own, such as the node ids of a
+    # GraphML, GML, or GEXF file, so taking it for a label would name the nodes
+    # of a network that the file never named.
     aka <- list(
-      label   = c("name","id"),
+      label   = "name",
       active  = c("present","presence"),
       mode    = c("type","class","category")
     )
     
     current_names <- names(out)
-    rename_map <- c()
+    rename_map <- character()
     
     for(expected in names(aka)){
       if(!expected %in% current_names){
@@ -482,7 +630,7 @@ join_nodes.stocnet <- function(.data, object2, .by = NULL,
     nodelist <- object2
   if(is.null(.data$nodes) && net_nodes(.data) == nrow(nodelist)) 
     return(make_stocnet(info = .data$info, nodes = nodelist, ties = .data$ties, 
-                        changes = .data$changes, global = .data$global))
+                        changes = .data$changes, globals = .data$globals, missings = .data$missings))
   out$nodes <- switch(join_type,
                        "full" = dplyr::full_join(.data$nodes, nodelist, by = .by, copy = TRUE),
                        "left" = dplyr::left_join(.data$nodes, nodelist, by = .by, copy = TRUE),

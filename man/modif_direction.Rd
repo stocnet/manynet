@@ -11,7 +11,10 @@
 \usage{
 to_directed(.data)
 
-to_undirected(.data)
+to_undirected(
+  .data,
+  rule = c("collapse", "min", "max", "mean", "sum", "product")
+)
 
 to_redirected(.data)
 
@@ -29,6 +32,29 @@ to_acyclic(.data)
 \item network \code{network}, from the \code{{network}} package
 \item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
+
+\item{rule}{How the values of a pair of ties running in opposite directions
+are reconciled into the single value of an undirected tie:
+\itemize{
+\item "collapse" (the default) sums them, so that a tie exists wherever a tie
+existed in either direction. For an unweighted network this is igraph's
+"collapse" mode, since a tie in either direction gives 1 either way.
+\item "sum" is the same operation, named for the arithmetic rather than
+the intent.
+\item "min" takes the smaller of the two values, so that a tie is only as
+strong as the weaker direction. Use where a relationship needs to be
+confirmed from both sides, as in a mutual friendship nomination.
+\item "max" takes the larger, so that the stronger direction stands for
+the pair. Use where a single report is taken as sufficient evidence.
+\item "mean" averages them, treating the two directions as two readings
+of one underlying quantity.
+\item "product" multiplies them, so that a tie survives only where both
+directions are non-zero, and strong ties are rewarded disproportionately.
+}
+
+Values missing in one direction are not treated as agreement:
+they propagate, so that \code{NA} in either direction gives \code{NA}.
+Use \code{impute_ties()} first to state a different assumption.}
 }
 \value{
 A tidygraph object modified as explained in the function description, details,
@@ -41,7 +67,9 @@ These functions reformat manynet-consistent data.
 \item \code{to_undirected()} reformats directed network data to an undirected network,
 so that any pair of nodes with at least one directed edge will be
 connected by an undirected edge in the new network.
-This is equivalent to the "collapse" mode in \code{{igraph}}..
+By default this is equivalent to the "collapse" mode in \code{{igraph}},
+but \code{rule} offers the other ways of reconciling a pair of ties running in
+opposite directions, which matters where the network is weighted.
 \item \code{to_redirected()} formats directed network data by flipping/transposing
 any existing direction such that senders become receivers and
 receivers become senders.
@@ -64,13 +92,17 @@ only transforming these objects' properties.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{                data.frame default igraph matrix network
-to_acyclic                       *      *               
-to_directed                      *      *               
-to_reciprocated                  *      *      *        
-to_redirected            *       *      *      *        
-to_undirected                    *      *      *       *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{                data.frame default igraph matrix network stocnet tbl_graph
+to_acyclic                       *      *                      *         *
+to_directed                      *      *                                 
+to_reciprocated                  *      *      *                          
+to_redirected            *       *      *      *                          
+to_undirected            *       *      *      *       *                 *
 }\if{html}{\out{</div>}}
+}
+\examples{
+to_undirected(ison_networkers)
+to_undirected(ison_networkers, rule = "min")
 }
 \seealso{
 Other ties:
@@ -79,7 +111,6 @@ Other ties:
 \code{\link{modif_weight}}
 
 Other modifications:
-\code{\link{modif_correlation}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},
 \code{\link{modif_levels}},
@@ -89,6 +120,7 @@ Other modifications:
 \code{\link{modif_permutation}},
 \code{\link{modif_plexity}},
 \code{\link{modif_project}},
+\code{\link{modif_proximity}},
 \code{\link{modif_scope}},
 \code{\link{modif_split}},
 \code{\link{modif_weight}}

@@ -9,8 +9,6 @@
 \alias{select_changes}
 \alias{arrange_changes}
 \alias{rename_changes}
-\alias{gather_changes}
-\alias{apply_changes}
 \title{Manipulating changes to nodes over time}
 \usage{
 delete_changes(.data)
@@ -26,10 +24,6 @@ select_changes(.data, ..., .by = NULL)
 arrange_changes(.data, ...)
 
 rename_changes(.data, ...)
-
-gather_changes(.data, time)
-
-apply_changes(.data, time)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -54,8 +48,6 @@ if not already specified in the \code{changes} data frame. This is only used
 when the \code{changes} data frame does not already have a \code{var} column, and is ignored otherwise.}
 
 \item{.by}{An attribute name to join objects by. By default, NULL.}
-
-\item{time}{A time point or wave at which to present the network.}
 }
 \value{
 A data object of the same class as the function was given.
@@ -84,12 +76,10 @@ Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{                data.frame default igraph stocnet tbl_graph
-apply_changes                    *                        *
 arrange_changes                  *      *       *          
 bind_changes                     *      *       *         *
 delete_changes                   *      *       *          
 filter_changes                   *      *       *          
-gather_changes                   *      *                  
 mutate_changes                   *              *         *
 rename_changes           *       *      *       *          
 select_changes           *       *      *       *          
@@ -103,8 +93,6 @@ If no method is available for any class, an error will be thrown.
 \examples{
 filter_changes(fict_starwars, node == "Anakin")
 select_changes(fict_starwars, node)
-gather_changes(fict_starwars, time = 3)
-apply_changes(fict_starwars, time = 3)
 }
 \seealso{
 \code{\link[=to_time]{to_time()}}
@@ -113,7 +101,7 @@ Other changes:
 \code{\link{mark_format_change}}
 
 Other manipulations:
-\code{\link{manip_global}},
+\code{\link{manip_globals}},
 \code{\link{manip_info}},
 \code{\link{manip_nodes_attr}},
 \code{\link{manip_nodes_num}},

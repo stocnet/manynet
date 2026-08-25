@@ -108,8 +108,7 @@ test_that("data frame converted to matrix correctly",{
 test_that("as_matrix converts correctly",{
   expect_vector(as_matrix(mat1))
   expect_vector(as_matrix(ison_southern_women))
-  expect_vector(ison_southern_women %>% as_matrix())
-  expect_vector(ison_southern_women %>% as_matrix())
+  expect_vector(ison_southern_women |> as_matrix())
   expect_equal(as_matrix(as_network(ison_southern_women)),
                as_matrix(ison_southern_women))
 })
@@ -148,8 +147,6 @@ test_that("as_network converts correctly",{
                as_network(ison_southern_women))
   expect_equal(igraph::vcount(as_igraph(as_network(dplyr::as_tibble(data2)))),
                igraph::vcount(as_igraph(as_network(data2))))
-  expect_equal(is_directed(ison_southern_women),
-               is_directed(as_network(ison_southern_women)))
   expect_equal(is_directed(ison_southern_women),
                is_directed(as_network(ison_southern_women)))
   # NB: ordering of edges is a little different when converting from network
@@ -198,6 +195,216 @@ test_that("stocnet <-> sienadata coercion is lossless", {
   expect_equal(as.vector(orig$dycCovars$prox), as.vector(back$dycCovars$prox))
   expect_equal(as.vector(orig$dyvCovars$vd), as.vector(back$dyvCovars$vd))
   expect_equal(dimnames(orig$depvars$fr)[[1]], dimnames(back$depvars$fr)[[1]])
+})
+
+test_that("missing ties survive the stocnet <-> sienadata round trip", {
+  skip_if_not_installed("RSiena")
+  set.seed(7)
+  n <- 6; w <- 2
+  arr <- array(sample(0:1, n * n * w, replace = TRUE, prob = c(.7, .3)),
+               dim = c(n, n, w))
+  for (i in seq_len(w)) diag(arr[, , i]) <- 0
+  arr[1, 2, 2] <- NA
+  arr[3, 4, 2] <- NA
+  fr <- RSiena::sienaDependent(arr)
+  orig <- RSiena::sienaDataCreate(fr)
+
+  sn <- as_stocnet(orig)
+  # a tie recorded as missing is neither a row of the ties nor the absence of
+  # one, which would record an observed non-tie
+  expect_equal(nrow(as_missinglist(sn)), 2)
+  expect_false(any(is.na(sn$ties[["weight"]])))
+  # scattered over the ties as they are, they stay in the registry
+  expect_equal(nrow(sn$missings), 2)
+  # the network is no more weighted for holding them
+  expect_false(is_weighted(sn))
+  expect_false(is_weighted(as_igraph(sn)))
+  # a matrix holds them as missing cells
+  expect_true(anyNA(as_matrix(sn)))
+  expect_equal(net_tie_missing(as_matrix(sn)), 2 / (n * n))
+
+  back <- as_siena(sn)
+  expect_equal(as.vector(orig$depvars$fr), as.vector(back$depvars$fr))
+  expect_equal(sum(is.na(back$depvars$fr)), 2)
+  # treating them as absent ties clears the record and adds no tie
+  zeroed <- impute_ties(sn, "zero")
+  expect_null(as_missinglist(zeroed))
+  expect_equal(nrow(zeroed$ties), nrow(sn$ties))
+  expect_false(anyNA(as_matrix(zeroed)))
+})
+
+test_that("a matrix holding missing ties coerces to every other class", {
+  m <- as_matrix(ison_adolescents)
+  m[2, 3] <- NA; m[3, 2] <- NA
+  # igraph refuses an adjacency matrix holding a missing value, so the tie is
+  # made and its weight set missing rather than the coercion erroring
+  g <- as_igraph(m)
+  expect_equal(sum(is.na(igraph::E(g)$weight)), 1)
+  expect_false(is_weighted(g))
+  expect_equal(as_matrix(g), m)
+  expect_equal(as_matrix(as_network(m)), m)
+  expect_equal(as_matrix(as_stocnet(m)), m)
+  # a directed matrix keeps the direction its missing tie was recorded in
+  d <- matrix(c(0, 1, NA, 0, 0, 1, 1, 0, 0), 3, 3, byrow = TRUE)
+  expect_equal(as_matrix(as_igraph(d)), d)
+  # as does a two-mode one
+  tm <- as_matrix(ison_southern_women)
+  tm[1, 2] <- NA
+  expect_equal(as_matrix(as_igraph(tm)), tm)
+})
+
+test_that("as_stocnet() keeps a network's isolates", {
+  # an isolate appears in no tie, so it is lost unless the nodes record it
+  g <- igraph::disjoint_union(as_igraph(create_ring(5)),
+                              igraph::make_empty_graph(2, directed = FALSE))
+  sn <- as_stocnet(g)
+  expect_equal(as.numeric(net_nodes(sn)), 7)
+  expect_equal(igraph::vcount(as_igraph(sn)), 7)
+  expect_false(is_labelled(sn))
+  expect_equal(as_matrix(sn), as_matrix(g))
+})
+
+test_that("as_stocnet() keeps what it cannot use out of its way", {
+  # a 'grand' attribute is one of several, not a replacement for the rest
+  g <- igraph::set_graph_attr(as_igraph(create_ring(3)), "grand",
+                              list(name = "A network"))
+  g <- igraph::set_graph_attr(g, "creator", "Gephi")
+  expect_equal(as_infolist(g)$creator, "Gephi")
+  expect_equal(as_infolist(g)$name, "A network")
+  # a file can record anything at the network level, including a name that is
+  # not a character string, which must not break the functions that follow
+  h <- igraph::set_graph_attr(as_igraph(create_ring(3)), "name", 2019)
+  sn <- as_stocnet(h)
+  expect_null(sn$info$name)
+  expect_s3_class(make_stocnet(info = sn$info, nodes = sn$nodes,
+                               ties = sn$ties), "stocnet")
+})
+
+test_that("ison_classmates records the pupils who did not report", {
+  x <- ison_classmates
+  # three pupils did not answer at a wave, each logged as a change of their
+  # response and a change back at the wave they answer again
+  na <- x$changes[x$changes$var == "na", ]
+  expect_equal(nrow(na), 6)
+  expect_equal(na$node, c(2L, 2L, 16L, 19L, 16L, 19L))
+  expect_equal(unlist(na$value), c(TRUE, FALSE, TRUE, TRUE, FALSE, FALSE))
+  # the pupil who leaves the class is a change of activity instead
+  active <- x$changes[x$changes$var == "active", ]
+  expect_equal(nrow(active), 1)
+  expect_equal(active$time, 3)
+  expect_false(is_weighted(x))
+})
+
+test_that("ties recorded as missing are not ties", {
+  x <- ison_classmates
+  # the ties hold the ties, so nothing counts them that should not
+  expect_equal(nrow(x$ties), 546)
+  expect_equal(c(net_ties(x)), 546)
+  expect_equal(c(net_ties(as_igraph(x))), 546)
+  expect_equal(sum(layer_ties(x)), 546)
+  expect_match(describe_ties(x), "460 friendship arcs")
+  # 73 nominations were not observed: 25 at wave 2 and 48 at wave 3
+  miss <- as_missinglist(x)
+  expect_equal(nrow(miss), 73)
+  expect_equal(sum(miss$time == 2), 25)
+  expect_equal(sum(miss$time == 3), 48)
+  expect_setequal(miss$from, c(2, 16, 19))
+  # the pupil who is not in the class from wave 3 misses nothing then, since
+  # there was nothing there to miss, but is a receiver while still present
+  expect_equal(sum(miss$time == 3 & miss$to == 21), 0)
+  expect_equal(sum(miss$time == 2 & miss$to == 21), 1)
+  # a network recording no missing ties is unaffected
+  expect_equal(c(net_ties(ison_adolescents)), 10)
+  expect_null(as_missinglist(ison_adolescents))
+})
+
+test_that("every class carries the missing ties its own way", {
+  x <- ison_classmates
+  # igraph cannot mark an edge as missing, so they travel beside the edges
+  g <- as_igraph(x)
+  expect_equal(igraph::ecount(g), 546)
+  expect_equal(nrow(as_missinglist(g)), 73)
+  # a network object marks them among its edges, as {ergm} expects, and its
+  # own count omits them
+  nw <- as_network(x)
+  expect_equal(network::network.edgecount(nw), 546)
+  expect_equal(network::network.edgecount(nw, na.omit = FALSE), 619)
+  expect_equal(c(net_ties(nw)), 546)
+  expect_equal(nrow(as_missinglist(nw)), 73)
+  # a matrix marks them as missing cells
+  expect_equal(sum(is.na(as_matrix(x))), 73)
+  # and each is read back into the same records
+  for (back in list(as_stocnet(g), as_stocnet(nw))) {
+    expect_equal(nrow(back$ties), 546)
+    expect_equal(nrow(as_missinglist(back)), 73)
+    expect_equal(sum(back$changes$var == "na"), 6)
+    expect_null(back$missings)
+  }
+})
+
+test_that("net_tie_missing counts the ties a network could have observed", {
+  # 73 missing nominations over 26 pupils and the five layer-waves recorded,
+  # so 26*25 ties on each of those five occasions
+  expect_equal(net_tie_missing(ison_classmates), 73 / (26 * 25 * 5))
+  # a matrix holds one cell per dyad, so it cannot hold the several ties a
+  # longitudinal multiplex network holds for each, and reports more missing
+  expect_gt(net_tie_missing(as_matrix(ison_classmates)),
+            net_tie_missing(ison_classmates))
+  expect_equal(net_tie_missing(ison_adolescents), 0)
+})
+
+test_that("a stocnet holds six components, of which every table is plural", {
+  expect_named(ison_classmates,
+               c("info", "nodes", "ties", "changes", "globals", "missings"))
+  # the missings component holds the ties no node's non-response implies
+  sn <- make_stocnet(nodes = data.frame(label = LETTERS[1:4]),
+                     ties = data.frame(from = c("A", "A", "B"),
+                                       to = c("B", "C", "C"),
+                                       na = c(TRUE, FALSE, FALSE)))
+  expect_equal(nrow(sn$missings), 1)
+  expect_null(sn$nodes$na)
+  expect_equal(nrow(as_missinglist(sn)), 1)
+  # and takes node labels, which are indexed as the ties are
+  sn2 <- make_stocnet(nodes = data.frame(label = LETTERS[1:4]),
+                      ties = data.frame(from = "A", to = "C"),
+                      missings = data.frame(from = "A", to = "B"))
+  expect_equal(sn2$missings$from, 1L)
+  expect_equal(sn2$missings$to, 2L)
+  expect_equal(nrow(as_stocnet(as_igraph(sn2))$missings), 1)
+})
+
+test_that("globals survive the round trip through every class", {
+  sn <- mutate_globals(as_stocnet(ison_algebra),
+                       time = 1, var = "term", value = 1)
+  expect_named(sn$globals, c("time", "var", "value"))
+  expect_true("globals" %in% igraph::graph_attr_names(as_igraph(sn)))
+  expect_equal(nrow(as_stocnet(as_igraph(sn))$globals), 1)
+  expect_equal(nrow(as_stocnet(as_network(sn))$globals), 1)
+  # the attribute was called 'global' before the component was renamed
+  old <- igraph::set_graph_attr(as_igraph(ison_algebra), "global", sn$globals)
+  expect_equal(nrow(as_globallist(old)), 1)
+})
+
+test_that("make_stocnet compresses a ties table marking its missing ties", {
+  # handing over one row per missing tie is a reasonable way to give the data,
+  # and is how the other classes hold it, so it is accepted and compressed
+  sn <- make_stocnet(
+    nodes = data.frame(label = LETTERS[1:4]),
+    ties = data.frame(from = c("A", "A", "A", "B"), to = c("B", "C", "D", "C"),
+                      na = c(TRUE, TRUE, TRUE, FALSE)))
+  expect_equal(nrow(sn$ties), 1)
+  expect_true(sn$nodes$na[1])
+  expect_false(any(sn$nodes$na[2:4]))
+  expect_null(sn$missings)
+  expect_equal(nrow(as_missinglist(sn)), 3)
+})
+
+test_that("as_siena renders the classmates' missing nominations as missing", {
+  skip_if_not_installed("RSiena")
+  d <- as_siena(ison_classmates)
+  expect_equal(sum(is.na(d$depvars$friends[, , 2])), 25)
+  expect_equal(sum(is.na(d$depvars$friends[, , 3])), 48)
+  expect_false(is.null(d$compositionChange))
 })
 
 test_that("sienadata coerces through the wider coercion family", {

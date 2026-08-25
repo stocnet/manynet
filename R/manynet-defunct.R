@@ -178,6 +178,38 @@ add_changes <- function(.data, changes) {
   bind_changes(.data, changes)
 }
 
+#' @describeIn defunct Deprecated on 2026-08-09.
+#' @export
+to_ties <- function(.data) {
+  .Deprecated("to_linegraph", package = "manynet",
+              old = "to_ties")
+  to_linegraph(.data)
+}
+
+#' @describeIn defunct Deprecated on 2026-08-09.
+#' @export
+to_no_isolates <- function(.data) {
+  .Deprecated("delete_isolates", package = "manynet",
+              old = "to_no_isolates")
+  delete_isolates(.data)
+}
+
+#' @describeIn defunct Deprecated on 2026-08-09.
+#' @export
+to_no_missing <- function(.data) {
+  .Deprecated("delete_incomplete", package = "manynet",
+              old = "to_no_missing")
+  delete_incomplete(.data)
+}
+
+#' @describeIn defunct Deprecated on 2026-08-09.
+#' @export
+to_blocks <- function(.data, membership, FUN = mean) {
+  .Deprecated("to_blockmodel", package = "manynet",
+              old = "to_blocks")
+  to_blockmodel(.data, membership, FUN)
+}
+
 
 # Moved to netrics from 2.0.0 ####
 
@@ -753,4 +785,39 @@ node_by_tie <- function(...) fn_moved("node_by_tie", "node_x_tie", version = "2.
 #' @export
 node_by_triad <- function(...) fn_moved("node_by_triad", "node_x_triad", version = "2.0.0")
 
+#' @describeIn defunct Deprecated on 2026-08-18.
+#' @export
+na_to_zero <- function(.data) {
+  .Deprecated("impute_ties", package = "manynet", old = "na_to_zero")
+  impute_ties(.data, rule = "zero")
+}
+
+#' @describeIn defunct Deprecated on 2026-08-18.
+#' @export
+na_to_mean <- function(.data) {
+  .Deprecated("impute_ties", package = "manynet", old = "na_to_mean")
+  # It did one of two jobs depending on the network: it filled an unknown
+  # value with the observed average where the network was weighted, and drew a
+  # missing tie at the observed density where it was not. Each of those is now
+  # a rule of its own.
+  if (is_weighted(.data)) impute_ties(.data, rule = "mean") else
+    impute_ties(.data, rule = "density")
+}
+
 # nocov end
+
+#' @describeIn defunct Deprecated on 2026-08-20.
+#' @param .data A manynet-consistent network.
+#' @param time A moment to gather the changes in force at.
+#' @export
+gather_changes <- function(.data, time) {
+  .Deprecated("as_changelist", package = "manynet", old = "gather_changes")
+  as_changelist(.data, time = time)
+}
+
+#' @describeIn defunct Deprecated on 2026-08-20.
+#' @export
+apply_changes <- function(.data, time) {
+  .Deprecated("to_time", package = "manynet", old = "apply_changes")
+  .apply_changes_upto(.data, as_changelist(.data), time)
+}

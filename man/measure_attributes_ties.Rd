@@ -6,6 +6,7 @@
 \alias{tie_weights}
 \alias{tie_signs}
 \alias{tie_is_twomode}
+\alias{tie_is_parallel}
 \title{Describing attributes of ties in a network}
 \usage{
 tie_attribute(.data, attr_name)
@@ -15,6 +16,8 @@ tie_weights(.data)
 tie_signs(.data)
 
 tie_is_twomode(.data)
+
+tie_is_parallel(.data)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -37,17 +40,53 @@ These functions extract certain attributes from network data:
 \item \code{tie_weights()} returns the weights of the ties in a network.
 \item \code{tie_signs()} returns the signs of the ties in a network.
 \item \code{tie_is_twomode()} returns whether each tie in a network is a cross-mode tie.
+\item \code{tie_is_parallel()} returns whether each tie in a network runs parallel
+to another, i.e. whether another tie joins the same pair of nodes at the
+same moment.
 }
 
 These functions are also often used as helpers within other functions.
 \verb{tie_*()} always return vectors the same length
 as the number of ties in the network, respectively.
 }
+\section{Parallel ties}{
+
+Parallel ties, also called multi-edges, are two or more ties that join
+the same pair of nodes at the same moment.
+Ties that join the same pair of nodes at different moments follow one
+another rather than run alongside one another,
+and so are not parallel.
+How a network records time therefore decides which ties coexist:
+\itemize{
+\item Where a network is a panel, ties are parallel where they share a wave.
+\item Where a network records a stream of events, ties are parallel where
+they share a moment.
+\item Where a network records the interval each tie lasts over,
+ties are parallel where those intervals overlap.
+Intervals that merely abut, one beginning as the other ends, do not.
+\item Where a network records no time at all, any two ties on a pair of
+nodes are parallel.
+}
+
+Ties of different types are likewise not parallel.
+Several types of tie between a pair of nodes is what \code{is_multiplex()}
+marks; \code{tie_is_parallel()} marks several ties of one type.
+
+Every tie in such a bundle is marked, and not just the repetitions,
+so \code{sum(tie_is_parallel(ison_koenigsberg))} counts four of the seven
+bridges and not two.
+
+Note that \code{as_matrix()} reports how many ties join each pair of nodes,
+so a network with parallel ties gives a matrix with cells greater than
+one even where it is neither weighted nor signed.
+}
+
 \examples{
 tie_attribute(ison_algebra, "task_tie")
 tie_weights(to_mode1(ison_southern_women))
 tie_signs(to_uniplex(fict_marvel,"relationship"))
 tie_is_twomode(fict_actually)
+tie_is_parallel(ison_koenigsberg)
 }
 \seealso{
 Other measures:
