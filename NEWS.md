@@ -1,4 +1,8 @@
-# manynet 2.2.3
+# manynet 2.2.4
+
+## Data
+
+  - Added `irps_rath`, a multiplex network of the Czech Rath corruption affair, resolving #164
 
 ## Making
 
