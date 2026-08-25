@@ -2,7 +2,7 @@
 
 ## Data
 
-  - Added `irps_rath`, a multiplex network of the Czech Rath corruption affair, resolving #164
+- Added `irps_rath`, an undirected multiplex network of 11 actors in the Czech Rath corruption affair, with collaboration, resource-transfer, and pre-existing-tie layers and two binary node attributes, resolving #164
 
 ## Making
 
