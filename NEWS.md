@@ -137,7 +137,7 @@
   - Where possible, measures computed by matrix arithmetic for speed, 
     and co-occurrence no longer counted where chosen measure does not use them
   - Records the method used in `info$transformations$projection` per GRAND item 4.3
-- Added `to_backbone()` to reduce a network to the ties a local null model retains
+- Added `to_backbone()` to reduce a network to the ties a local null model retains (closes #7)
   - `filter=` chooses among: 
     - "lans", default for weighted networks because it assumes nothing about the shape of the weights
     - "disparity"
@@ -147,7 +147,7 @@
   - `threshold=` sets cutoff below which a tie is retained
   - `endpoints=` sets whether a tie must pass at "either" of endpoint or "both"
   - Recorded the filter and threshold as an exclusion per GRAND item 4.4
-- Added `to_normalised()`/`to_normalized()` to rescale tie values (closed #162)
+- Added `to_normalised()`/`to_normalized()` to rescale tie values (closes #162)
   - `rule` divides by largest ("max", default), "mean", or "sum" of those values
   - `across` rescales by "rows", "columns", or "both" (square root of two denominators multiplied, default)
   - Isolates left alone rather than becoming `NaN` or `-Inf`
