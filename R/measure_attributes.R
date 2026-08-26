@@ -31,12 +31,17 @@ node_attribute.default <- function(.data, attr_name){
 
 #' @export
 node_attribute.stocnet <- function(.data, attr_name){
+  # `igraph::vertex_attr()` returns every attribute where none is named,
+  # so every other class returns every attribute there too.
+  if(missing(attr_name)) return(as.list(.data$nodes))
   out <- .data$nodes[[attr_name]]
   if(is.numeric(out)) make_node_measure(out, .data) else out
 }
 
 #' @export
 node_attribute.network <- function(.data, attr_name){
+  if(missing(attr_name)) return(.all_attributes(.data, node_attribute,
+                                                net_node_attributes(.data)))
   network::get.vertex.attribute(.data, attr_name)
 }
 
@@ -115,13 +120,26 @@ tie_attribute.default <- function(.data, attr_name){
 
 #' @export
 tie_attribute.stocnet <- function(.data, attr_name){
+  # `igraph::edge_attr()` returns every attribute where none is named,
+  # so every other class returns every attribute there too.
+  # 'from' and 'to' identify a tie rather than describe it, so they are dropped.
+  if(missing(attr_name))
+    return(as.list(.data$ties[setdiff(names(.data$ties), c("from", "to"))]))
   out <- .data$ties[[attr_name]]
   if(is.numeric(out)) make_tie_measure(out, .data) else out
 }
 
 #' @export
 tie_attribute.network <- function(.data, attr_name){
+  if(missing(attr_name)) return(.all_attributes(.data, tie_attribute,
+                                                net_tie_attributes(.data)))
   network::get.edge.attribute(.data, attr_name)
+}
+
+# Collects every named attribute into a list, as `igraph::vertex_attr()` and
+# `igraph::edge_attr()` do where the caller names no attribute.
+.all_attributes <- function(.data, FUN, attr_names){
+  stats::setNames(lapply(attr_names, function(x) FUN(.data, x)), attr_names)
 }
 
 #' @rdname measure_attributes_ties

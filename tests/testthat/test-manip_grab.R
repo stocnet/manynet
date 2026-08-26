@@ -195,3 +195,36 @@ test_that("describe_ties counts the parallel ties", {
   expect_no_match(describe_ties(ison_adolescents), "parallel")
   expect_no_match(describe_ties(ison_monks), "parallel")
 })
+
+test_that("tie_attribute and node_attribute return every attribute where none is named", {
+  # `igraph::edge_attr()` and `igraph::vertex_attr()` do this, so the other
+  # classes' methods do too.
+  expect_type(tie_attribute(irps_nuclear), "list")
+  expect_equal(names(tie_attribute(irps_nuclear)),
+               names(tie_attribute(as_igraph(irps_nuclear))))
+  expect_equal(names(node_attribute(as_igraph(irps_nuclear))),
+               net_node_attributes(as_igraph(irps_nuclear)))
+  # 'from' and 'to' identify a tie rather than describe it, so a stocnet
+  # object reports the attributes alone.
+  expect_false(any(c("from", "to") %in% names(tie_attribute(irps_nuclear))))
+  expect_equal(names(tie_attribute(as_network(irps_nuclear))),
+               net_tie_attributes(as_network(irps_nuclear)))
+})
+
+test_that("a mark inside filter_ties reads the filtered network", {
+  # `filter_ties()` on an igraph object sets a tidygraph context, which names
+  # a nearer network than any context an outer stocnet call has stored.
+  like <- to_uniplex(ison_monks, "like")
+  seen <- NULL
+  count_ties <- function() {
+    seen <<- as.integer(net_ties(expect_ties()))
+    TRUE
+  }
+  wave1 <- filter_ties(as_igraph(like), time == 1)
+  expect_lt(net_ties(wave1), net_ties(like))
+  mutate_ties(like, all = {
+    filter_ties(wave1, count_ties())
+    TRUE
+  })
+  expect_equal(seen, as.integer(net_ties(wave1)))
+})
