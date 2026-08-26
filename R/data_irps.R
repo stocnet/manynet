@@ -278,39 +278,69 @@
 #'   ```
 "irps_tribes"
 
-## Rath affair ####
+## Corruption ####
 
-#' One-mode multiplex network of the Czech Rath corruption affair
+#' One-mode multiplex network of the Czech Rath corruption affair (Diviak et al. 2019)
 #'
 #' @description
-#'   This network reconstructs the Czech political corruption case known as
-#'   the Rath affair using publicly available archival data.
+#'   This network reconstructs a Czech political corruption case,
+#'   known as the Rath affair, from publicly available archival data.
+#'   David Rath was a Social Democrat politician who served as
+#'   Minister of Health and then as governor of the Central Bohemian region.
+#'   The police arrested him on 14 May 2012 as he carried a wine box that
+#'   held seven million Czech crowns in cash.
+#'   He and his associates manipulated public tenders in the region,
+#'   several of them funded by the European Union,
+#'   and took bribes from the firms that won them.
+#'   The courts convicted Rath and most of his co-defendants,
+#'   and he began a seven year prison sentence in 2019.
 #'
 #'   The network contains 11 actors connected through three binary,
-#'   undirected types of ties: collaboration, resource transfer, and
-#'   pre-existing ties. Collaboration includes communication and jointly
-#'   carrying out tasks. Resource transfer includes bribes and other transfers.
-#'   Pre-existing ties include kinship, friendship, and shared political or
-#'   professional affiliations.
+#'   undirected layers.
+#'   The "collaboration" layer records communication and tasks that two actors
+#'   carried out together.
+#'   The "transfers" layer records bribes and other transfers of resources.
+#'   The "preexisting" layer records the ties that predate the affair,
+#'   such as kinship, friendship,
+#'   and shared political or professional affiliations.
 #'
-#'   The network also includes two binary node attributes. `politician`
-#'   distinguishes politicians (1) from other actors (0), while `gender`
-#'   distinguishes women (1) from men (0).
+#'   The network also includes two node attributes.
+#'   `politician` marks the actors who held political office,
+#'   and `gender` records whether an actor is "male" or "female".
+#'
+#'   Diviak and colleagues use these data to show that the network is small,
+#'   sparse, and centralised on Rath and two other actors,
+#'   and that the preexisting ties underpin the criminal ones.
+#'   This is a trade-off that covert networks face:
+#'   ties that are already there are safe to use, but they also concentrate
+#'   the network on a few actors and make it easier to disrupt.
+#' @details
+#'   The actor names are those that the court and media records use.
+#'   Diacritics are removed from them, so "Drazdansky" appears here for
+#'   "Drážďanský".
 #' @docType data
 #' @keywords datasets
-#' @name irps_rath
+#' @name irps_corruption
+#' @author Tomáš Diviák
 #' @references
 #' Diviák, Tomáš, Jan Kornelis Dijkstra, and Tom A. B. Snijders. 2019.
 #' "Structure, multiplexity, and centrality in a corruption network:
 #' The Czech Rath affair".
 #' _Trends in Organized Crime_ 22(3): 274-297.
 #' \doi{10.1007/s12117-018-9334-y}
-#' @usage data(irps_rath)
+#' @source
+#'   The layer names shorten those that the article uses, so that each is
+#'   a single word: "transfers" for resource transfer, and "preexisting"
+#'   for pre-existing ties.
+#'   The two node attributes are coded 0/1 in the source data.
+#'   Here `politician` is logical, and `gender` is "male" for 0 and
+#'   "female" for 1.
+#' @usage data(irps_corruption)
 #' @format
 #'   ```{r, echo = FALSE}
-#'   irps_rath
+#'   irps_corruption
 #'   ```
-"irps_rath"
+"irps_corruption"
 
 ## US States ####
 

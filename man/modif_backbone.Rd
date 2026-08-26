@@ -62,8 +62,8 @@ By default \code{NULL}, which uses whichever of these the filter calls for.}
 
 \item{endpoints}{Whether a tie is retained where it passes the filter at
 "either" of its endpoints, by default, or only where it passes at "both".
-"both" is the more severe, since a tie must be locally salient to the
-sender and to the receiver.
+"both" is the more demanding, since a tie must be locally salient to both
+the sender and the receiver.
 Applies to the "disparity" and "lans" filters only,
 since the others weigh both endpoints at once.}
 }

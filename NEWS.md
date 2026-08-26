@@ -268,7 +268,7 @@
 - Added `irps_tribes` as a signed stocnet for Read's Gahuku-Gama sub-tribe alliances and oppositions
 - Added `ison_fraternity` as a longitudinal, ranked stocnet for Newcomb's fraternity men
 - Added `ison_tailorshop` as a stocnet for Kapferer's instrumental and sociational ties among 39 Zambian tailors, multiplex across two waves bracketing an abortive and then a successful strike
-- Added `irps_rath`, an undirected multiplex network of 11 actors in the Czech Rath corruption affair, with collaboration, resource-transfer, and pre-existing-tie layers and two binary node attributes, resolving #164
+- Added `irps_corruption`, an undirected multiplex stocnet of 11 actors in the Czech Rath corruption affair, with "collaboration", "transfers", and "preexisting" layers (closes #164)
 - Converted `fict_marvel`, `fict_potter`, and `fict_starwars` to 'stocnet' objects
 - Converted `irps_blogs`, `irps_nuclear`, and `ison_koenigsberg` to 'stocnet' objects
 - Converted `ison_monks` to 'stocnet' object
