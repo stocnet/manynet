@@ -41,8 +41,9 @@ and by position where they are not and are the same size.}
 if not already named within the list.}
 }
 \value{
-A tidygraph object modified as explained in the function description, details,
-or section.
+An object of the same class as the function was given,
+modified as explained in the function description, details, or section.
+Functions that split a network return a list of such objects.
 }
 \description{
 These functions offer tools for joining lists of manynet-consistent objects
@@ -98,6 +99,7 @@ from_layers(marriage = marriage, business = business)
 }
 \seealso{
 Other modifications:
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}},
 \code{\link{modif_labels}},
 \code{\link{modif_levels}},

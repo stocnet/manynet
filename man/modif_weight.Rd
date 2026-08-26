@@ -85,8 +85,9 @@ structural equivalence, and there "both" compares each node's sent and
 received ties together.}
 }
 \value{
-A tidygraph object modified as explained in the function description, details,
-or section.
+An object of the same class as the function was given,
+modified as explained in the function description, details, or section.
+Functions that split a network return a list of such objects.
 }
 \description{
 These functions reformat tie attributes like their weight or sign:
@@ -136,9 +137,11 @@ to_normalised(ison_networkers, rule = "sum", across = "rows")
 Other ties:
 \code{\link{manip_ties_attr}},
 \code{\link{manip_ties_num}},
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}}
 
 Other modifications:
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},

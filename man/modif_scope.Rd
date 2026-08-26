@@ -84,8 +84,9 @@ Other recommended options include \code{median}, \code{sum},
 \code{min} or \code{max}.}
 }
 \value{
-A tidygraph object modified as explained in the function description, details,
-or section.
+An object of the same class as the function was given,
+modified as explained in the function description, details, or section.
+Functions that split a network return a list of such objects.
 }
 \description{
 These functions offer tools for transforming manynet-consistent objects
@@ -191,6 +192,7 @@ in \code{{netrics}}.
 many moments there are to ask for.
 
 Other modifications:
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},

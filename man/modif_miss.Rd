@@ -51,8 +51,9 @@ or NULL to leave the ties alone.}
 or NULL to leave the nodes alone.}
 }
 \value{
-A tidygraph object modified as explained in the function description, details,
-or section.
+An object of the same class as the function was given,
+modified as explained in the function description, details, or section.
+Functions that split a network return a list of such objects.
 }
 \description{
 These functions impute what a network did not observe:
@@ -122,6 +123,7 @@ Krause, Robert, Mark Huisman, Christian Steglich, and Tom A.B. Snijders. 2020.
 }
 \seealso{
 Other modifications:
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},

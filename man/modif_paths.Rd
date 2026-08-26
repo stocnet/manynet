@@ -55,8 +55,9 @@ described in Valente and Davis (1999).}
 By default "all".}
 }
 \value{
-A tidygraph object modified as explained in the function description, details,
-or section.
+An object of the same class as the function was given,
+modified as explained in the function description, details, or section.
+Functions that split a network return a list of such objects.
 }
 \description{
 These functions return tidygraphs containing only special sets of ties:
@@ -183,6 +184,7 @@ Haynes, Teresa W., Stephen T. Hedetniemi, and Peter J. Slater. 1998.
 }
 \seealso{
 Other modifications:
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},

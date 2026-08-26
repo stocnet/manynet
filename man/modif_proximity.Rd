@@ -182,8 +182,9 @@ The two therefore agree for an undirected network but not for a
 directed one.}
 }
 \value{
-A tidygraph object modified as explained in the function description, details,
-or section.
+An object of the same class as the function was given,
+modified as explained in the function description, details, or section.
+Functions that split a network return a list of such objects.
 }
 \description{
 These functions construct a square, node-by-node matrix of how alike
@@ -252,6 +253,7 @@ Lorrain, Francois, and Harrison C. White. 1971.
 network, comparing nodes on their affiliations rather than on their ties.
 
 Other modifications:
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},

@@ -74,8 +74,9 @@ returned, as \code{net_times()} counts them.}
 or integer(s) range used to slice data (e.g slice = c(1:2, 3:4)).}
 }
 \value{
-A tidygraph object modified as explained in the function description, details,
-or section.
+An object of the same class as the function was given,
+modified as explained in the function description, details, or section.
+Functions that split a network return a list of such objects.
 }
 \description{
 These functions offer tools for splitting manynet-consistent objects
@@ -167,6 +168,7 @@ ison_adolescents |>
 }
 \seealso{
 Other modifications:
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},

@@ -163,8 +163,9 @@ mode to project through, which this function does not yet accept,
 so it reports the modes it found instead.}
 }
 \value{
-A tidygraph object modified as explained in the function description, details,
-or section.
+An object of the same class as the function was given,
+modified as explained in the function description, details, or section.
+Functions that split a network return a list of such objects.
 }
 \description{
 These functions offer tools for projecting manynet-consistent data:
@@ -268,6 +269,7 @@ their affiliations to a second mode.
 matrix without projecting it.
 
 Other modifications:
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},
