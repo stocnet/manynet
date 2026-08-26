@@ -70,3 +70,17 @@ test_that("is_connected respects connectivity", {
   expect_true(is_connected(ison_adolescents, connectivity = "strong"))
   expect_error(is_connected(ison_adolescents, connectivity = "bloop"))
 })
+
+test_that("is_longitudinal does not mark a network whose ties carry no moment", {
+  # A panel re-observes the ties, so the ties carry the stamp. A diffusion
+  # records only how the nodes change, on a network whose ties never change,
+  # so it is not a panel.
+  diff <- play_diffusion(create_ring(12), seeds = 1)
+  expect_true(is_changing(diff))
+  expect_equal(net_tie_attributes(diff), character(0))
+  expect_false(is_longitudinal(diff))
+  # The panels still mark TRUE, whether or not they also record changes.
+  expect_true(is_longitudinal(ison_monks))
+  expect_true(is_longitudinal(ison_classmates))
+  expect_true(is_longitudinal(fict_starwars))
+})

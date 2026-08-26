@@ -33,7 +33,11 @@ is_longitudinal.default <- function(.data) {
 is_longitudinal.igraph <- function(.data) {
   # A panel network re-observes the whole network at each moment, so each
   # moment replaces the one before it. See `.time_rule()`.
-  identical(.time_rule(.data), "replace") && !is.null(.time_moments(.data))
+  # It re-observes the ties too, so the ties carry the stamp. A network that
+  # records only nodal changes, such as a diffusion on a static network,
+  # is therefore not a panel.
+  identical(.time_rule(.data), "replace") && !is.null(.time_moments(.data)) &&
+    any(c("time", "wave", "panel") %in% net_tie_attributes(.data))
 }
 
 #' @export

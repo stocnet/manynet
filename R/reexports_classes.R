@@ -102,25 +102,10 @@ clear_active_context <- function() {
 
 active_network <- function(required = NULL) {
   
-  ctx <- get_active_context()
-  
-  if (!is.null(ctx$data)) {
-    
-    if (!is.null(required) &&
-        !identical(ctx$active, required)) {
-      snet_abort(
-        paste0(
-          "This call requires ",
-          if (identical(required, "edges")) "ties" else required,
-          " to be active"
-        ),
-        call. = FALSE
-      )
-    }
-    
-    return(ctx$data)
-  }
-  
+  # A tidygraph context is set only inside a tidygraph verb, so where one is
+  # set it names a nearer network than the stored context does. Reading it
+  # first keeps a nested call, such as a mark inside `filter_ties()`, from
+  # resolving against the outer network.
   tg <- tryCatch({
     
     if (!tidygraph::.graph_context$free()) {
@@ -146,7 +131,28 @@ active_network <- function(required = NULL) {
     
   }, error = function(e) NULL)
   
-  tg
+  if (!is.null(tg)) return(tg)
+  
+  ctx <- get_active_context()
+  
+  if (!is.null(ctx$data)) {
+    
+    if (!is.null(required) &&
+        !identical(ctx$active, required)) {
+      snet_abort(
+        paste0(
+          "This call requires ",
+          if (identical(required, "edges")) "ties" else required,
+          " to be active"
+        ),
+        call. = FALSE
+      )
+    }
+    
+    return(ctx$data)
+  }
+  
+  NULL
 }
 
 with_active_context <- function(data, active, expr) {

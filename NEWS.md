@@ -1,3 +1,19 @@
+# manynet 2.3.1
+
+## Marking
+
+- Fixed `is_longitudinal()` marking a network whose ties carry no moments
+
+## Measures
+
+- Fixed `tie_attribute.stocnet)` and `node_attribute.stocnet())`
+  - Returns every attribute where no attribute is named, as `.igraph` method already did
+  - Reports tie attributes without 'from' and 'to', which identify a tie rather than describe it
+
+## Manipulating
+
+- Fixed a mark inside `filter_ties()` or `mutate_ties()` reading correct `{tidygraph}` context
+
 # manynet 2.3.0
 
 ## Package
