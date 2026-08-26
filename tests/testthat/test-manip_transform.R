@@ -641,3 +641,127 @@ test_that("to_normalised keeps what the stocnet class holds", {
   expect_equal(unname(rowSums(as_matrix(out))), rep(1, nrow(net$nodes)))
   expect_no_error(validate_stocnet(out))
 })
+
+# Backbone ####
+
+# The counts below were cross-validated against the {backbone} package
+# (v3.0.4) by comparing `tie_is_backbone()` tie for tie with the p-values that
+# `backbone:::.disparity()`, `.lans()` and `.mlf()` return, retained at
+# `p < alpha` as `backbone:::.retain()` does. All three agreed exactly on
+# `ison_networkers` both as it is and symmetrised. The values are pinned here
+# rather than recomputed, so that {backbone} is not needed to run the tests.
+test_that("the statistical filters match their published definitions", {
+  net <- ison_networkers
+  expect_equal(sum(tie_is_backbone(net, filter = "disparity")), 47)
+  expect_equal(sum(tie_is_backbone(net, filter = "mlf")), 159)
+  und <- to_undirected(net)
+  expect_equal(sum(tie_is_backbone(und, filter = "disparity")), 35)
+  expect_equal(sum(tie_is_backbone(und, filter = "lans")), 37)
+  expect_equal(sum(tie_is_backbone(und, filter = "mlf")), 92)
+})
+
+test_that("to_backbone deletes the ties tie_is_backbone does not mark", {
+  net <- ison_networkers
+  expect_equal(c(net_ties(to_backbone(net))),
+               sum(tie_is_backbone(net)))
+  # every class reaches the stocnet method and comes back as it went in
+  expect_s3_class(to_backbone(as_igraph(net)), "igraph")
+  expect_s3_class(to_backbone(as_tidygraph(net)), "tbl_graph")
+  expect_s3_class(to_backbone(as_stocnet(net)), "stocnet")
+  expect_no_error(validate_stocnet(to_backbone(as_stocnet(net))))
+})
+
+test_that("requiring both endpoints is never less severe than either", {
+  net <- ison_networkers
+  for (f in c("disparity", "lans")) {
+    both <- sum(tie_is_backbone(net, filter = f, endpoints = "both"))
+    either <- sum(tie_is_backbone(net, filter = f, endpoints = "either"))
+    expect_lte(both, either)
+  }
+})
+
+test_that("the filter and threshold default to what the network allows", {
+  # a weighted network is filtered on its weights, an unweighted one cannot be
+  expect_equal(sum(tie_is_backbone(ison_networkers)),
+               sum(tie_is_backbone(ison_networkers, filter = "lans")))
+  expect_equal(sum(tie_is_backbone(ison_adolescents)),
+               sum(tie_is_backbone(ison_adolescents, filter = "simmelian")))
+  # each filter's own default threshold is the one used where none is given
+  expect_equal(sum(tie_is_backbone(ison_networkers)),
+               sum(tie_is_backbone(ison_networkers, threshold = 0.05)))
+  expect_equal(sum(tie_is_backbone(ison_adolescents)),
+               sum(tie_is_backbone(ison_adolescents, threshold = 0.5)))
+  # a higher threshold retains at least as many ties as a lower one
+  expect_gte(sum(tie_is_backbone(ison_networkers, threshold = 0.2)),
+             sum(tie_is_backbone(ison_networkers, threshold = 0.05)))
+})
+
+test_that("to_backbone refuses what it cannot filter", {
+  expect_error(to_backbone(fict_marvel), "signed network cannot be")
+  expect_error(to_backbone(ison_adolescents, filter = "disparity"),
+               "needs a weighted network")
+  expect_error(to_backbone(ison_networkers, filter = "sparsest"), "arg")
+  expect_error(to_backbone(ison_networkers, threshold = c(0.1, 0.2)),
+               "single number")
+  # the marginal likelihood filter reads weights as counts of events
+  frac <- mutate_ties(ison_adolescents, weight = c(1.5, 2:10))
+  expect_error(to_backbone(frac, filter = "mlf"), "whole-number weights")
+})
+
+test_that("a tie whose weight was never recorded is marked as retained", {
+  # there is no value to test against the null model, so the tie is kept
+  # rather than deleted on the strength of a weight it does not have
+  net <- mutate_ties(ison_adolescents, weight = c(1, 2, 3, NA, 5:10))
+  expect_true(tie_is_backbone(net)[4])
+})
+
+test_that("to_backbone records the exclusion and names the result", {
+  # GRAND item 4.4, recorded under the "exclusion" name with the filter and
+  # the threshold that together decided which ties went
+  out <- to_backbone(ison_networkers, filter = "lans", threshold = 0.2)
+  expect_equal(as_infolist(out)$transformations$exclusion,
+               paste0("not in the lans backbone at threshold 0.2 (",
+                      c(net_ties(ison_networkers)) - c(net_ties(out)),
+                      " ties excluded)"))
+  expect_match(net_name(out), "^lans backbone of")
+  # a matrix has nowhere to record it, and is returned as a matrix
+  expect_true(is.matrix(to_backbone(as_matrix(ison_networkers))))
+})
+
+test_that("the simmelian filter reads structure rather than weights", {
+  # it is the only filter an unweighted network can use, and it returns the
+  # same marks whether or not weights are present to ignore
+  bare <- sum(tie_is_backbone(ison_adolescents, filter = "simmelian"))
+  weighted <- mutate_ties(ison_adolescents, weight = 1:10)
+  expect_equal(sum(tie_is_backbone(weighted, filter = "simmelian")), bare)
+  expect_lte(bare, c(net_ties(ison_adolescents)))
+})
+
+test_that("the default filter retains something where disparity cannot", {
+  # The disparity filter's null model expects heavy-tailed weights. Where
+  # weights are more even, every tie takes about 1/k of its node's strength,
+  # the p-value approaches 1/e, and nothing is retained at all. This was
+  # confirmed against {backbone} (v3.0.4), which returns an empty backbone
+  # here too, so it is the filter's behaviour and not this implementation's.
+  expect_equal(sum(tie_is_backbone(ison_karateka, filter = "disparity")), 0)
+  expect_gt(sum(tie_is_backbone(ison_karateka)), 0)
+  # LANS scores each node's heaviest tie at zero, so no node is ever stranded
+  expect_equal(c(net_nodes(delete_isolates(to_backbone(ison_karateka)))),
+               c(net_nodes(ison_karateka)))
+})
+
+test_that("to_backbone reports what would otherwise pass unnoticed", {
+  # `snet_warn()` is silent at the default verbosity, so it is raised here
+  before <- options(snet_verbosity = "verbose")
+  on.exit(options(before), add = TRUE)
+  # every filter builds its null model from the ties as the network holds
+  # them, so a tie restated at each wave is tested once per wave
+  repeated <- to_uniplex(ison_monks, layer = "like")
+  expect_true(any(grepl("more than once",
+                        capture_messages(tie_is_backbone(repeated)))))
+  expect_false(any(grepl("more than once",
+                         capture_messages(tie_is_backbone(ison_networkers)))))
+  # a threshold that deletes every tie is more likely a mismatch than a finding
+  expect_true(any(grepl("retains no tie",
+    capture_messages(to_backbone(ison_karateka, filter = "disparity")))))
+})

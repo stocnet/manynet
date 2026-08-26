@@ -57,6 +57,7 @@ glossies <- list(
   arc = "An ordered pair of nodes indicating a directed tie or edge from a tail to a head.",
   authority = "An authority is a node pointed to by many hubs.",
   automorphiceq = "Two or more nodes are automorphically equivalent if they can be interchanged without changing the structure of the network.",
+  backbone = "The backbone of a network comprises the ties that carry more weight, or hold more structure, than a null model local to their endpoints expects.",
   betweenness = "The betweenness centrality of a node is the proportion of shortest paths between all pairs of nodes that pass through that node.",
   blockmodel = "A blockmodel reduces a network to a smaller comprehensible structure of the roles positions take with respect to one another.",
   bridge = "A bridge or isthmus is a tie whose deletion increases the number of components.",

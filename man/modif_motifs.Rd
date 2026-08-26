@@ -103,6 +103,7 @@ Tiziano Squartini. 2025.
 }
 \seealso{
 Other modifications:
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},

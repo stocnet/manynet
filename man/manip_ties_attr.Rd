@@ -94,6 +94,7 @@ If no method is available for any class, an error will be thrown.
 \seealso{
 Other ties:
 \code{\link{manip_ties_num}},
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}},
 \code{\link{modif_weight}}
 

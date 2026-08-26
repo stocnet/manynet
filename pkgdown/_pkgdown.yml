@@ -152,6 +152,7 @@ reference:
     desc: |
       Functions for transforming networks, which may change the network's dimensions.
     contents:
+      - modif_backbone
       - modif_paths
       - modif_scope
   - subtitle: "Levels"

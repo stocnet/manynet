@@ -104,6 +104,7 @@ delete_ties(ison_adolescents, "Alice|Sue")
 \seealso{
 Other ties:
 \code{\link{manip_ties_attr}},
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}},
 \code{\link{modif_weight}}
 
