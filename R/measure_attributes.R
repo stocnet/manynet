@@ -89,6 +89,9 @@ node_is_mode <- function(.data){
 #'   - `tie_is_parallel()` returns whether each tie in a network runs parallel
 #'   to another, i.e. whether another tie joins the same pair of nodes at the
 #'   same moment.
+#'   - `tie_is_backbone()` returns whether each tie in a network is retained by
+#'   a backbone filter, i.e. whether it carries more weight, or holds more
+#'   structure, than a null model local to its endpoints expects.
 #'   
 #'   These functions are also often used as helpers within other functions.
 #'   `tie_*()` always return vectors the same length
@@ -158,7 +161,7 @@ tie_is_twomode <- function(.data){
     el[,2] <- node_is_mode(.data)[el[,2]]
     out <- el[,1] != el[,2]
   } else out <- rep(FALSE, net_ties(.data))
-  make_tie_measure(out, .data)
+  make_tie_mark(out, .data)
 }
 
 #' @rdname measure_attributes_ties
@@ -195,6 +198,19 @@ tie_is_twomode <- function(.data){
 #' @export
 tie_is_parallel <- function(.data){
   make_tie_mark(.parallel_ties(.data), .data)
+}
+
+#' @rdname measure_attributes_ties
+#' @inheritParams to_backbone
+#' @seealso [to_backbone()], which deletes the ties this does not mark,
+#'   and which documents each filter and the works they come from.
+#' @examples
+#' tie_is_backbone(ison_networkers)
+#' @export
+tie_is_backbone <- function(.data, filter = NULL, threshold = NULL,
+                            endpoints = c("either", "both")){
+  spec <- .backbone_spec(.data, filter, threshold)
+  make_tie_mark(.backbone_keep(.data, spec, endpoints), .data)
 }
 
 # Which ties run parallel to another tie. A pair of nodes joined twice at two
