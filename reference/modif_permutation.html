@@ -19,7 +19,7 @@ or on each of the rows and columns (for a two-mode network)."><meta property="og
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -87,7 +87,7 @@ or on each of the rows and columns (for a two-mode network)."><meta property="og
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Network permutation</h1>
-    <small class="dont-index">Source: <a href="https://github.com/stocnet/manynet/blob/main/R/modif_correlation.R" class="external-link"><code>R/modif_correlation.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/stocnet/manynet/blob/main/R/modif_permutation.R" class="external-link"><code>R/modif_permutation.R</code></a></small>
     <div class="hidden name"><code>modif_permutation.Rd</code></div>
     </div>
 
@@ -123,13 +123,14 @@ By default TRUE.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A tidygraph object modified as explained in the function description, details,
-or section.</p>
+    <p>An object of the same class as the function was given,
+modified as explained in the function description, details, or section.
+Functions that split a network return a list of such objects.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other modifications:
-<code><a href="modif_correlation.html">modif_correlation</a></code>,
+<code><a href="modif_backbone.html">modif_backbone</a></code>,
 <code><a href="modif_direction.html">modif_direction</a></code>,
 <code><a href="modif_from.html">modif_from</a></code>,
 <code><a href="modif_labels.html">modif_labels</a></code>,
@@ -139,6 +140,7 @@ or section.</p>
 <code><a href="modif_paths.html">modif_paths</a></code>,
 <code><a href="modif_plexity.html">modif_plexity</a></code>,
 <code><a href="modif_project.html">modif_project</a></code>,
+<code><a href="modif_proximity.html">modif_proximity</a></code>,
 <code><a href="modif_scope.html">modif_scope</a></code>,
 <code><a href="modif_split.html">modif_split</a></code>,
 <code><a href="modif_weight.html">modif_weight</a></code></p></div>

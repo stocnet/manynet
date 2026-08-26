@@ -25,7 +25,7 @@ filter*(), etc work like {tidyverse} or {dplyr}-style functions."><meta property
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -186,11 +186,12 @@ If no method is available for any class, an error will be thrown.</p>
     <h2>See also</h2>
     <div class="dont-index"><p>Other ties:
 <code><a href="manip_ties_attr.html">manip_ties_attr</a></code>,
+<code><a href="modif_backbone.html">modif_backbone</a></code>,
 <code><a href="modif_direction.html">modif_direction</a></code>,
 <code><a href="modif_weight.html">modif_weight</a></code></p>
 <p>Other manipulations:
 <code><a href="manip_changes.html">manip_changes</a></code>,
-<code><a href="manip_global.html">manip_global</a></code>,
+<code><a href="manip_globals.html">manip_globals</a></code>,
 <code><a href="manip_info.html">manip_info</a></code>,
 <code><a href="manip_nodes_attr.html">manip_nodes_attr</a></code>,
 <code><a href="manip_nodes_num.html">manip_nodes_num</a></code>,
@@ -304,7 +305,8 @@ If no method is available for any class, an error will be thrown.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="va">ison_adolescents</span> <span class="op">|&gt;</span> <span class="fu">add_ties</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Betty</span> <span class="op">-</span><span class="op">+</span> <span class="va">Tina</span>, <span class="va">Sue</span> <span class="op">-</span><span class="op">+</span> <span class="va">Pam</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># The Adolescent Society</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 8 adolescents and 12 friendship ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 8 adolescents and 12 friendship ties (2</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">parallel)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 8 × 1</span></span>

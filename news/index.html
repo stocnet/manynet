@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -89,7 +89,355 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="2.2.3" id="manynet-223">manynet 2.2.3<a class="anchor" aria-label="anchor" href="#manynet-223"></a></h2>
+<h2 class="page-header" data-toc-text="2.3.0" id="manynet-230">manynet 2.3.0<a class="anchor" aria-label="anchor" href="#manynet-230"></a></h2>
+<div class="section level3">
+<h3 id="package-2-3-0">Package<a class="anchor" aria-label="anchor" href="#package-2-3-0"></a></h3>
+<ul><li>Removed CRAN version check from <code>.onAttach()</code> so <code><a href="https://stocnet.github.io/manynet/">library(manynet)</a></code> loads faster
+<ul><li>Now runs once, for the whole stack, in <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>, where it is also cached and checks GitHub as well as CRAN</li>
+</ul></li>
+<li>Updated startup message to include executable functions, not yet working due to an RStudio bug</li>
+<li>Updated CONTRIBUTING on messaging, README, website, and NEWS conventions</li>
+<li>Added cross-class sweep of the network-splitting functions to the functional tests</li>
+<li>Compacted the tests onto the functional sweeps, without loss of coverage</li>
+<li>Cleared several CodeFactor style issues</li>
+</ul></div>
+<div class="section level3">
+<h3 id="making-2-3-0">Making<a class="anchor" aria-label="anchor" href="#making-2-3-0"></a></h3>
+<ul><li>Improved <code>read_*()</code> to return stocnet objects, which hold more metadata
+<ul><li>
+<code><a href="../reference/make_read.html">read_edgelist()</a></code> and <code><a href="../reference/make_read.html">read_nodelist()</a></code> still return tibbles</li>
+</ul></li>
+<li>Added <code><a href="../reference/make_read.html">read_gexf()</a></code> and <code><a href="../reference/make_write.html">write_gexf()</a></code> for GEXF files such as via Gephi</li>
+<li>Improved <code><a href="../reference/make_read.html">read_graphml()</a></code> to use <a href="https://xml2.r-lib.org" class="external-link">xml2</a> rather than <code><a href="https://r.igraph.org/reference/read_graph.html" class="external-link">igraph::read_graph()</a></code>
+<ul><li>Files holding 2+ graphs now included and combined into a single network</li>
+<li>Ego added as a node tied to each of its alters and added as ‘by’ column</li>
+<li>Session metadata and graph-level attributes now carried over</li>
+<li>
+<code>&lt;default&gt;</code> and declared attribute types now respected</li>
+<li>Node and tie types, entity UUIDs, layout coordinates now retained</li>
+<li>Missing values now <code>NA</code> rather than <code>NaN</code>
+</li>
+<li>Multichoice categorical variables collapse, not dropped like <code>ideanet::nc_read()</code>
+</li>
+<li>Above changes improve support for reading Network Canvas (closed <a href="https://github.com/stocnet/manynet/issues/153" class="external-link">#153</a>)</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="classes-2-3-0">Classes<a class="anchor" aria-label="anchor" href="#classes-2-3-0"></a></h3>
+<ul><li>Improved the stocnet object to hold six components:
+<ul><li>
+<code>info</code>, <code>nodes</code>, <code>ties</code>, <code>changes</code> as before</li>
+<li>Renamed <code>global</code> to <code>globals</code>, so components with plural names are tables</li>
+<li>Added <code>missings</code> component to hold individual, residual unrecorded ties</li>
+</ul></li>
+<li>Improved clarity of how missing data is managed in stocnet objects
+<ul><li>Missing ties due to absence are implied through <code>nodes$active</code> and <code>changes</code>
+</li>
+<li>Missing ties due to nonresponse are implied through <code>nodes$na</code> and <code>changes</code>
+</li>
+<li>Residual missing ties are recorded in <code>missings</code>
+</li>
+<li>Incomplete nodal data is represented with an <code>NA</code> in the relevant column</li>
+<li>Incomplete tie data is represented with an <code>NA</code> in the relevant column</li>
+</ul></li>
+<li>Improved <code><a href="../reference/make_stocnet.html">validate_stocnet()</a></code>
+<ul><li>Added <code>validate_globals()</code> and <code>validate_missings()</code>
+</li>
+<li>
+<code>validate_ties()</code> now reserves ‘begin’ and ‘end’ tie columns for spells</li>
+<li>
+<code>validate_changes()</code> now reserves a ‘layer’ column for single-layer changes</li>
+</ul></li>
+<li>Improved stocnet descriptions
+<ul><li>Fixed pluralize helper to except non-plural words like “business”</li>
+<li>Improved <code><a href="../reference/class_describe.html">describe_ties()</a></code> to describe each layer by its own directedness</li>
+<li>Improved <code><a href="../reference/class_describe.html">describe_ties()</a></code> to report the parallel count in parentheses</li>
+<li>Improved <code><a href="../reference/class_describe.html">describe_network()</a></code> to report multilevel networks as multilevel rather than two-mode</li>
+<li>Improved <code><a href="../reference/class_describe.html">describe_network()</a></code> to drop “multiplex” where a network’s layers are its levels</li>
+<li>Added <code><a href="../reference/class_describe.html">describe_transformations()</a></code> to include transformations in print</li>
+</ul></li>
+<li>Improved measure printing methods to use <code>measure</code>, <code>range</code>, and <code>normalization</code> attributes to print a concise, subtle header description in sentence case
+<ul><li>See netrics v1.0.0 NEWS for more</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="coercion-2-3-0">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-3-0"></a></h3>
+<ul><li>Added <code><a href="../reference/coerce_list.html">as_missinglist()</a></code> to return a list of observable but unobserved ties
+<ul><li>
+<code>as_missinglist.matrix()</code> lists each missing cell</li>
+<li>
+<code>as_missinglist.network()</code> lists edges from ‘na’ attribute, which <a href="https://statnet.org" class="external-link">ergm</a> expects</li>
+<li>
+<code>as_missinglist.stocnet()</code> derives them from nonresponsive nodes and adds them to <code>missings</code>
+</li>
+<li>
+<code>as_missinglist.igraph()</code> lists from an ad hoc graph attribute</li>
+</ul></li>
+<li>Fixed <code>as_infolist.tbl_graph()</code> dropping other attributes when dropping ‘grand’</li>
+<li>Fixed <code>as_nodelist.tbl_graph()</code> returning an edgelist on e.g. a weighted stocnet object</li>
+<li>Improved <code><a href="../reference/coerce_list.html">as_changelist()</a></code> to take a <code>time</code> argument, replacing <code><a href="../reference/defunct.html">gather_changes()</a></code>
+</li>
+<li>Fixed <code><a href="../reference/coerce_list.html">as_matrix()</a></code> filling missing cells in multiplex networks with 1</li>
+<li>Improved <code>as_stocnet.igraph()</code>
+<ul><li>Fixed mapping of ‘lvl’ onto ‘mode’</li>
+<li>Fixed loss when reading the mode and layer names only from the ‘nodes’ and ‘ties’ info fields</li>
+<li>Fixed isolate loss</li>
+<li>Fixed reading node ids as labels</li>
+<li>Fixed per-layer directedness roundtripping</li>
+</ul></li>
+<li>Improved <code>as_stocnet.network()</code> to read network attributes back into <code>info</code>
+<ul><li>Fixed per-layer directedness roundtripping</li>
+<li>Fixed “missing value where TRUE/FALSE needed” error with missing weights</li>
+</ul></li>
+<li>Improved <code><a href="../reference/coerce_graph.html">as_igraph()</a></code>
+<ul><li>Fixed how <code>as_igraph.stocnet()</code> was losing isolates</li>
+<li>Fixed how <code>as_igraph.stocnet()</code> handles unlabelled, attributed networks</li>
+<li>Fixed how <code>as_igraph.network()</code>reads missing data</li>
+<li>Fixed how <code>as_igraph.matrix()</code>reads missing data</li>
+</ul></li>
+<li>Fixed <code>mode_names.igraph()</code> reading only ‘nodes’ info leading to <code>as_igraph.stocnet()</code> losing mode names</li>
+<li>Fixed <code>as_network.stocnet()</code> collison of <code>directed</code> vector with single expectation</li>
+<li>Improved how <code>as_siena.stocnet()</code> carries missing data to RSiena</li>
+</ul></div>
+<div class="section level3">
+<h3 id="manipulating-2-3-0">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-2-3-0"></a></h3>
+<ul><li>Added element to <code><a href="../reference/manip_info.html">add_info()</a></code> to record network “transformations”
+<ul><li>This implements section 4 of the GRAND reporting guidelines:
+<ul><li>“symmetrization” (4.1)</li>
+<li>“dichotomization” (4.2)</li>
+<li>“projection” (4.3)</li>
+<li>“exclusion” (4.4)</li>
+<li>“aggregation” (4.5)</li>
+<li>“imputation” (4.6)</li>
+<li>“normalisation”, not currently in the GRAND guidelines</li>
+</ul></li>
+<li>Each element accumulates rather than replaces, ordered by sequence</li>
+<li>Each element names the method first and then consequeces in parentheses</li>
+</ul></li>
+<li>Renamed <code><a href="../reference/defunct.html">to_no_isolates()</a></code> to <code><a href="../reference/manip_nodes_num.html">delete_isolates()</a></code>, specialising <code><a href="../reference/manip_nodes_num.html">delete_nodes()</a></code>
+</li>
+<li>Renamed <code><a href="../reference/defunct.html">to_no_missing()</a></code> to <code><a href="../reference/manip_nodes_num.html">delete_incomplete()</a></code> as a property of a node’s record
+<ul><li>Fixed e.g. <code>delete_incomplete(ison_classmates)</code> deleting initialised missings</li>
+</ul></li>
+<li>Deprecated <code><a href="../reference/defunct.html">apply_changes()</a></code> in favour of more general <code><a href="../reference/modif_scope.html">to_time()</a></code>
+</li>
+<li>Deprecated <code><a href="../reference/defunct.html">gather_changes()</a></code> in favour of <code><a href="../reference/coerce_list.html">as_changelist()</a></code>
+<ul><li>Added <code>time</code> argument that returns the changes in force at it</li>
+</ul></li>
+<li>Added <code>add_node_attribute.stocnet()</code> to avoid rerouting through another class</li>
+<li>Improved <code>rename_ties.stocnet()</code> to record update information before renaming to <code>weight</code>
+</li>
+<li>Fixed the interactive branch of <code><a href="../reference/manip_info.html">add_info()</a></code> to record valid values</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-2-3-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-2-3-0"></a></h3>
+<ul><li>Fixed documented return value of every modification</li>
+<li>Improved predictability of <code>to_*s()</code> methods by renaming them
+<ul><li>Renamed <code><a href="../reference/defunct.html">to_ties()</a></code> to <code><a href="../reference/modif_project.html">to_linegraph()</a></code>, where ties become nodes</li>
+<li>Renamed <code><a href="../reference/defunct.html">to_blocks()</a></code> to <code><a href="../reference/modif_scope.html">to_blockmodel()</a></code>, an established term
+<ul><li>Fixed it returning wrong-size matrix for unlabelled, two-mode networks</li>
+<li>Recorded aggregation method per GRAND item 4.5</li>
+</ul></li>
+</ul></li>
+<li>Added <code><a href="../reference/modif_project.html">to_mode()</a></code> to select mode to project by a <code>mode</code> argument
+<ul><li>
+<code>to_mode(.data, 1)</code> is <code>to_mode1(.data)</code> and <code>to_mode(.data, 2)</code> is <code>to_mode2(.data)</code>
+</li>
+<li>
+<code>mode</code> also accepts the name of a mode, for users who recall what a mode is called but not which position it holds, e.g. <code>to_mode(ison_southern_women, "events")</code>
+</li>
+<li>The name is matched against <code><a href="../reference/member_names.html">mode_names()</a></code>, ignoring case, plurals, and any other words in the name, so that “events”, “event”, and “Social Events” all select the “social events” mode</li>
+</ul></li>
+<li>Added <code><a href="../reference/modif_proximity.html">to_proximity()</a></code> to construct a matrix of how alike nodes’ ties are
+<ul><li>
+<code>similarity</code> takes the same measures as <code><a href="../reference/modif_project.html">to_mode1()</a></code>, both comparing pairs of rows</li>
+<li>
+<code>across</code> selects the profile compared: “rows”, “columns”, or “both”</li>
+<li>
+<code>dyad</code> states how compared pair’s own cells are treated: “exclude”, “reciprocal”, “complex”, or “include”</li>
+<li>Documented alongside are wrappers <code><a href="../reference/modif_proximity.html">to_correlation()</a></code> and <code><a href="../reference/modif_proximity.html">to_cosine()</a></code>
+</li>
+</ul></li>
+<li>Improved <code><a href="../reference/modif_project.html">to_mode1()</a></code>, <code><a href="../reference/modif_project.html">to_mode2()</a></code>, and <code><a href="../reference/modif_proximity.html">to_proximity()</a></code> with further similarity measures, bringing shared vocabulary to 24:
+<ul><li>6 were already implemented but unreachable: “ochiai”, “czekanowski”, “sokalsneath”, “ochiai2”, “rogerstanimoto”, and “hamann”</li>
+<li>Added 7 more: “match”, “overlap”, “crossmin”, “maxcrossmin”, “sqdiff”, “covariance”, and “bonacich”</li>
+<li>Added 6 more (inverted) distance measures: “euclidean”, “manhattan”, “hamming”, “cosine”, “spearman”, and “kendall”</li>
+<li>Where possible, measures computed by matrix arithmetic for speed, and co-occurrence no longer counted where chosen measure does not use them</li>
+<li>Records the method used in <code>info$transformations$projection</code> per GRAND item 4.3</li>
+</ul></li>
+<li>Added <code><a href="../reference/modif_backbone.html">to_backbone()</a></code> to reduce a network to the ties a local null model retains (closes <a href="https://github.com/stocnet/manynet/issues/7" class="external-link">#7</a>)
+<ul><li>
+<code>filter=</code> chooses among:
+<ul><li>“lans”, default for weighted networks because it assumes nothing about the shape of the weights</li>
+<li>“disparity”</li>
+<li>“noise”</li>
+<li>“mlf”</li>
+<li>“simmelian”, default for unweighted networks</li>
+</ul></li>
+<li>
+<code>threshold=</code> sets cutoff below which a tie is retained</li>
+<li>
+<code>endpoints=</code> sets whether a tie must pass at “either” of endpoint or “both”</li>
+<li>Recorded the filter and threshold as an exclusion per GRAND item 4.4</li>
+</ul></li>
+<li>Added <code><a href="../reference/modif_weight.html">to_normalised()</a></code>/<code><a href="../reference/modif_weight.html">to_normalized()</a></code> to rescale tie values (closes <a href="https://github.com/stocnet/manynet/issues/162" class="external-link">#162</a>)
+<ul><li>
+<code>rule</code> divides by largest (“max”, default), “mean”, or “sum” of those values</li>
+<li>
+<code>across</code> rescales by “rows”, “columns”, or “both” (square root of two denominators multiplied, default)</li>
+<li>Isolates left alone rather than becoming <code>NaN</code> or <code>-Inf</code>
+</li>
+<li>Records rule and margin used in <code>info$transformations$normalisation</code>
+</li>
+</ul></li>
+<li>Improved <code><a href="../reference/modif_direction.html">to_undirected()</a></code>
+<ul><li>Added <code>rule</code> argument offering “min”, “max”, “mean”, “sum”, and “product” alongside existing default “collapse”</li>
+<li>Fixed per-class variation: .matrix binarised tie weights, .igraph summed them, and .network method left dyads asymmetric; all classes now sum</li>
+<li>Fixed tie attributes other than the weight, such as the sign or the layer, not surviving collapsing as igraph’s default combination rule discarded them</li>
+<li>Added percent of non-reciprocal connected dyads to what it records, per GRAND item 4.1</li>
+</ul></li>
+<li>Improved layer-vocabulary consistency
+<ul><li>Renamed <code><a href="../reference/modif_from.html">from_ties()</a></code> to <code><a href="../reference/modif_from.html">from_layers()</a></code>; <code><a href="../reference/modif_from.html">from_ties()</a></code> retained as an alias
+<ul><li>Accepts list of networks now too, matching equal-sized, unlabelled networks by position</li>
+<li>Fixed <code><a href="../reference/modif_from.html">from_layers()</a></code> returning a directed network via <code><a href="https://tidygraph.data-imaginist.com/reference/graph_join.html" class="external-link">tidygraph::graph_join()</a></code>
+</li>
+</ul></li>
+<li>Added <code><a href="../reference/modif_split.html">to_layers()</a></code> to split multiplex networks into a named list of its layers</li>
+<li>Added <code><a href="../reference/modif_plexity.html">to_layer()</a></code> as a vocabulary-consistent alias of <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code>
+<ul><li>Fixed <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> to keep info only about the retained layer</li>
+<li>Fixed <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> to return undirected network where retained layer retained is undirected</li>
+</ul></li>
+<li>Added <code><a href="../reference/modif_plexity.html">to_flat()</a></code> to reduce a multiplex network to a uniplex one
+<ul><li>
+<code>rule</code> includes “max”, “min”, “mean”, “sum”, or “product”</li>
+<li>Missing values propagate rather than being ignored</li>
+<li>Records the method used in <code>info$transformations$summarization</code> per GRAND item 4.5</li>
+</ul></li>
+<li>Renamed <code>tie</code> argument of <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> to <code>layer</code> for layer-vocabulary consistency; <code>tie</code> still works but warns (closed <a href="https://github.com/stocnet/manynet/issues/159" class="external-link">#159</a>)</li>
+</ul></li>
+<li>Added <code><a href="../reference/modif_miss.html">impute_ties()</a></code> to replace <code><a href="../reference/defunct.html">na_to_zero()</a></code> and <code><a href="../reference/defunct.html">na_to_mean()</a></code>
+<ul><li>
+<code>rule</code> names imputation rule, recalling argument used elsewhere:
+<ul><li>“zero” treats every missing tie as absent, essentially removing missings</li>
+<li>“density” draws it at the density observed over the layer and moment it was missing from</li>
+<li>“reciprocity” reconstructs it from what the other node reported</li>
+<li>“indegree” draws it at the proportion of the responding nodes that named it</li>
+<li>“mean” draws it at the mean of the observed tie values over the layer and moment it was missing from</li>
+<li>“median” draws it at the median of the observed tie values over the layer and moment it was missing from</li>
+<li>“modal” draws it at the mode of the observed tie values over the layer and moment it was missing from</li>
+</ul></li>
+<li>
+<code>which</code> names one or more missing grounds to impute:
+<ul><li>“nonresponse” for ties that were not reported because the node was nonresponsive</li>
+<li>“unrecorded” for ties that were otherwise not observed</li>
+<li>“incomplete” for observed ties whose value is missing</li>
+</ul></li>
+<li>Imputation recorded in <code>info$transformations$imputation</code> per GRAND item 4.6</li>
+</ul></li>
+<li>Added <code><a href="../reference/modif_miss.html">impute_nodes()</a></code> to impute incomplete nodal attributes (closed <a href="https://github.com/stocnet/manynet/issues/151" class="external-link">#151</a>)
+<ul><li>
+<code>rule</code> by their “modal”, “mean”, “median”, or “neighbourhood” value</li>
+<li>Imputation recorded in <code>info$transformations$imputation</code> per GRAND item 4.6</li>
+</ul></li>
+<li>Added <code><a href="../reference/modif_miss.html">to_imputed()</a></code>, which runs <code><a href="../reference/modif_miss.html">impute_nodes()</a></code> and <code><a href="../reference/modif_miss.html">impute_ties()</a></code> in a single call</li>
+<li>Improved <code><a href="../reference/modif_weight.html">to_unweighted()</a></code>
+<ul><li>Fixed it silently dropping incomplete ties</li>
+<li>Records threshold and number of ties deleted per GRAND item 4.2</li>
+</ul></li>
+<li>Added <code>stocnet</code> methods to <code><a href="../reference/modif_scope.html">to_ego()</a></code>, <code><a href="../reference/modif_scope.html">to_component()</a></code>, <code><a href="../reference/modif_scope.html">to_subgraph()</a></code>, <code><a href="../reference/modif_split.html">to_egos()</a></code>, <code><a href="../reference/modif_split.html">to_subgraphs()</a></code>, <code><a href="../reference/modif_split.html">to_components()</a></code>, <code><a href="../reference/modif_weight.html">to_unweighted()</a></code>, <code><a href="../reference/modif_weight.html">to_unsigned()</a></code>, <code><a href="../reference/modif_plexity.html">to_simplex()</a></code>, and <code><a href="../reference/modif_direction.html">to_acyclic()</a></code>
+</li>
+<li>Added <code>to_simplex.tbl_graph()</code> and <code>to_acyclic.tbl_graph()</code>
+</li>
+<li>Added <code>to_permuted.matrix()</code> to permute matrices directly; permuting a 17x17 weighted matrix is now around 500 times faster</li>
+<li>Added <code>to_multilevel.stocnet()</code> to pass through an unaltered, multimodal network</li>
+<li>Added <code>net_modes.default()</code> for a matrix, edgelist, or <code>network</code> object</li>
+<li>Consolidated how time is recorded, documented in the “Time” section
+<ul><li>how frequently/universally moments are <em>observed</em> declared in <code>info$observation</code> (“panel” or “event”)</li>
+<li>time is <em>represented</em> as points (<code>time</code> column) or intervals (<code>begin</code>/<code>end</code> columns)</li>
+<li>how moments <em>stack</em> is declared in <code>info$update</code> (“replace” or “increment”)</li>
+<li>
+<code>time</code> is now the moment column in every class; <code>wave</code> is renamed to it on coercion, as the SIENA path already did, and <code>panel</code> is now only an alias</li>
+</ul></li>
+<li>Improved <code><a href="../reference/modif_scope.html">to_time()</a></code> to return the network as it stood at a moment, however recorded
+<ul><li>Fixed erroring on timestamped ties</li>
+<li>Added <code>to_time.stocnet()</code> to avoid loss of <code>info</code> and <code>changes</code>
+</li>
+<li>“cross-sectional” layers are now carried into every moment</li>
+<li>Note that <code><a href="../reference/modif_scope.html">to_time()</a></code> with no <code>time</code> now errors, suggesting <code><a href="../reference/modif_split.html">to_times()</a></code> instead</li>
+</ul></li>
+<li>Added <code><a href="../reference/modif_split.html">to_times()</a></code> to return the network at each moment
+<ul><li>Always returns a named list, so <code>net_times()==length(to_times())</code>
+</li>
+</ul></li>
+<li>Added <code><a href="../reference/modif_from.html">from_times()</a></code> to rejoin networks from different moments</li>
+<li>Fixed <code><a href="../reference/modif_split.html">to_waves()</a></code> returning all ties of e.g. <code>ison_classmates</code>, in each wave</li>
+<li>Fixed <code><a href="../reference/modif_split.html">to_waves()</a></code> erroring where a network records no “wave” tie attribute
+<ul><li>Networks that are changing but hold no wave-like tie attribute, such as a <code><a href="../reference/make_play.html">play_diffusion()</a></code> result, now take their waves from their changelist instead of raising a “<code>name</code> must be a single string” error</li>
+<li>Panels whose waves are named “time” or “panel”, such as <code>ison_monks</code>, now split by that attribute instead of raising an “object ‘wave’ not found” error</li>
+</ul></li>
+<li>Improved <code><a href="../reference/modif_scope.html">to_giant()</a></code> to name its result “Giant component of” for every class</li>
+<li>Updated strong connectivity example to print only largest component to reduce CRAN’s timing</li>
+</ul></div>
+<div class="section level3">
+<h3 id="marking-2-3-0">Marking<a class="anchor" aria-label="anchor" href="#marking-2-3-0"></a></h3>
+<ul><li>Added <code><a href="../reference/mark_format_node.html">is_multilevel()</a></code> to mark TRUE multimodal, multiplex networks</li>
+<li>Improved <code><a href="../reference/mark_format_change.html">is_longitudinal()</a></code> and <code><a href="../reference/mark_format_change.html">is_dynamic()</a></code> to mark how time is recorded not column name
+<ul><li>
+<code><a href="../reference/mark_format_change.html">is_longitudinal()</a></code> marks panels that re-state ties TRUE</li>
+<li>
+<code><a href="../reference/mark_format_change.html">is_dynamic()</a></code> marks a stream of events, whether incrementing or a spell</li>
+<li>Fixed <code>is_longitudinal.stocnet()</code> returning FALSE for a stocnet list</li>
+</ul></li>
+<li>Fixed <code>is_attributed.igraph()</code> returning TRUE for multilevel networks</li>
+<li>Fixed <code><a href="../reference/mark_format_tie.html">is_signed()</a></code> to mark networks holding signs as negative weights TRUE</li>
+<li>Fixed <code><a href="../reference/mark_format_tie.html">is_weighted()</a></code> to mark networks holding absolute binary weights FALSE</li>
+<li>Added <code><a href="../reference/measure_attributes_ties.html">tie_is_parallel()</a></code> to mark ties coexisting parallel to another tie of the same layer (closed <a href="https://github.com/stocnet/manynet/issues/158" class="external-link">#158</a>)
+<ul><li>
+<code>any(tie_is_parallel())</code> gives the network-level test</li>
+</ul></li>
+<li>Added <code><a href="../reference/measure_attributes_ties.html">tie_is_backbone()</a></code> to mark the ties a backbone filter retains</li>
+</ul></div>
+<div class="section level3">
+<h3 id="measuring-2-3-0">Measuring<a class="anchor" aria-label="anchor" href="#measuring-2-3-0"></a></h3>
+<ul><li>Added <code>net_ties.network()</code> to use <code><a href="https://rdrr.io/pkg/network/man/network.edgecount.html" class="external-link">network::network.edgecount()</a></code> which omits missing edges</li>
+<li>Added <code>net_tie_missing.stocnet()</code> to report missing ties</li>
+<li>Fixed <code>tie_*()</code> measures erroring on networks without ties</li>
+<li>Added <code><a href="../reference/measure_missingness.html">net_node_incomplete()</a></code> and <code><a href="../reference/measure_missingness.html">net_tie_incomplete()</a></code> to report missing attribute values</li>
+<li>Added <code><a href="../reference/measure_dims.html">net_times()</a></code> to count the moments a network records however recorded</li>
+<li>Fixed <code><a href="../reference/measure_dims.html">net_waves()</a></code> reporting one wave when waves appeared in a <code>time</code> column</li>
+<li>Fixed <code><a href="../reference/measure_dims.html">net_layers()</a></code> and <code><a href="../reference/measure_dims.html">layer_ties()</a></code> not counting layers in igraph objects that record in <code>layer</code>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="learning-2-3-0">Learning<a class="anchor" aria-label="anchor" href="#learning-2-3-0"></a></h3>
+<ul><li>Added “Missing data” page to the “Manipulating” tutorial with <code>ison_classmates</code> example</li>
+<li>Added “Backbones” section to the “Manipulating” tutorial’s “Modifying networks” page</li>
+<li>Updated “Manipulating” tutorial’s “Layers” page to cover layer-vocabulary with <code>ison_lawfirm</code> example</li>
+<li>Updated tutorial and cheatsheet references to <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> to use <code>layer</code> argument</li>
+<li>Moved gifs to question feedback and added more questions:
+<ul><li>“Making” tutorial gains question on reading files</li>
+<li>“Manipulating” tutorial gains questions on operators, layers, missing data, and more</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="data-2-3-0">Data<a class="anchor" aria-label="anchor" href="#data-2-3-0"></a></h3>
+<ul><li>Improved <code><a href="../reference/data_overview.html">table_data()</a></code> to skip TRUE/FALSE <code>multiplex</code> in favour of number of <code>layers</code>
+</li>
+<li>Added <code>ison_bankwiring</code> as a multiplex, signed stocnet of Hawthorne’s bank wiring room relations</li>
+<li>Added <code>ison_classmates</code> as a longitudinal, multiplex, changing stocnet of Knecht’s four waves of friendship among Dutch pupils</li>
+<li>Added <code>ison_florentine</code> as a multiplex, attributed stocnet for Padgett’s Renaissance Florentine families</li>
+<li>Added <code>irps_supremecourt</code> as a two-mode, weighted stocnet for the ten terms of the Rehnquist court</li>
+<li>Added <code>irps_tribes</code> as a signed stocnet for Read’s Gahuku-Gama sub-tribe alliances and oppositions</li>
+<li>Added <code>ison_fraternity</code> as a longitudinal, ranked stocnet for Newcomb’s fraternity men</li>
+<li>Added <code>ison_tailorshop</code> as a stocnet for Kapferer’s instrumental and sociational ties among 39 Zambian tailors, multiplex across two waves bracketing an abortive and then a successful strike</li>
+<li>Added <code>irps_corruption</code>, an undirected multiplex stocnet of 11 actors in the Czech Rath corruption affair, with “collaboration”, “transfers”, and “preexisting” layers (closes <a href="https://github.com/stocnet/manynet/issues/164" class="external-link">#164</a>)</li>
+<li>Converted <code>fict_marvel</code>, <code>fict_potter</code>, and <code>fict_starwars</code> to ‘stocnet’ objects</li>
+<li>Converted <code>irps_blogs</code>, <code>irps_nuclear</code>, and <code>ison_koenigsberg</code> to ‘stocnet’ objects</li>
+<li>Converted <code>ison_monks</code> to ‘stocnet’ object</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.2.3" id="manynet-223">manynet 2.2.3<small>2026-07-30</small><a class="anchor" aria-label="anchor" href="#manynet-223"></a></h2>
 <div class="section level3">
 <h3 id="making-2-2-3">Making<a class="anchor" aria-label="anchor" href="#making-2-2-3"></a></h3>
 <ul><li>Improved <code><a href="../reference/make_random.html">generate_man()</a></code> so that it no longer raises an error where no dyad census is given
@@ -326,7 +674,7 @@
 <div class="section level3">
 <h3 id="manipulating-2-2-0">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-2-2-0"></a></h3>
 <ul><li>Added <code><a href="../reference/manip_nodes_attr.html">delete_node_attribute()</a></code> and <code><a href="../reference/manip_ties_attr.html">delete_tie_attribute()</a></code>, the <a href="https://r.igraph.org/" class="external-link">igraph</a>-style counterparts to <code><a href="../reference/manip_nodes_attr.html">add_node_attribute()</a></code>/<code><a href="../reference/manip_ties_attr.html">add_tie_attribute()</a></code>, so that attributes added the <a href="https://r.igraph.org/" class="external-link">igraph</a> way can also be removed that way (deletion via <code>mutate_*(attr = NULL)</code> remains the <a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a>-style route); each accepts a character vector to remove several attributes at once</li>
-<li>Fixed <code><a href="../reference/manip_changes.html">apply_changes()</a></code> emitting a spurious deprecation warning by calling the defunct <code><a href="../reference/defunct.html">collect_changes()</a></code> internally instead of its replacement, <code><a href="../reference/manip_changes.html">gather_changes()</a></code>
+<li>Fixed <code><a href="../reference/defunct.html">apply_changes()</a></code> emitting a spurious deprecation warning by calling the defunct <code><a href="../reference/defunct.html">collect_changes()</a></code> internally instead of its replacement, <code><a href="../reference/defunct.html">gather_changes()</a></code>
 </li>
 <li>Fixed <code><a href="../reference/manip_changes.html">filter_changes()</a></code> and <code><a href="../reference/manip_changes.html">select_changes()</a></code> emitting a tidyselect deprecation warning by passing <code>.by</code> (and, for <code><a href="../reference/manip_changes.html">select_changes()</a></code>, a spurious <code>.by</code>) as an external vector into a selection context</li>
 <li>Improved <code><a href="../reference/manip_changes.html">filter_changes()</a></code> to accept node labels as well as indices, so a changelog can be subset by name, e.g. <code>filter_changes(fict_starwars, node == "Anakin")</code>
@@ -397,7 +745,7 @@
 <li>Export examples now write to <code><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir()</a></code> to avoid permission errors on installed packages</li>
 </ul></li>
 <li>Improved the “Manipulating Data” tutorial (manynet2) around the parts of a network rather than the reformatting/transforming distinction, so students can jump straight to the section matching their data: Operating on networks (the <code>[</code>/<code>[[</code>/<code>$</code> operators); Nodal properties (adding/removing nodes, labels, attributes); Tie properties (adding/removing ties, attributes, direction, weights, signs); Multiplex networks (joining, layers); Multimodal networks (modes); Dynamic networks (waves, changes); and a closing Selecting and cleaning section (subgraph filtering, isolates/giant/simplex) that narrows the fully built-up object down before the summary pipeline. The reformatting/transforming vocabulary is kept as a callout rather than the organising structure, and each element’s composition verbs (<code><a href="../reference/manip_nodes_num.html">add_nodes()</a></code>/<code><a href="../reference/manip_nodes_num.html">delete_nodes()</a></code>, <code><a href="../reference/manip_ties_num.html">add_ties()</a></code>/<code><a href="../reference/manip_ties_num.html">delete_ties()</a></code>) lead into that element’s own section
-<ul><li>Added a “Changing networks” section covering <code><a href="../reference/mark_format_change.html">is_longitudinal()</a></code>/<code><a href="../reference/mark_format_change.html">is_dynamic()</a></code>/<code><a href="../reference/mark_format_change.html">is_changing()</a></code>, <code><a href="../reference/measure_dims.html">net_waves()</a></code>, <code><a href="../reference/modif_scope.html">to_time()</a></code>, <code><a href="../reference/modif_split.html">to_waves()</a></code>, and the <code>*_changes()</code> family (<code><a href="../reference/manip_changes.html">filter_changes()</a></code>, <code><a href="../reference/manip_changes.html">apply_changes()</a></code>), previously untreated in the tutorials</li>
+<ul><li>Added a “Changing networks” section covering <code><a href="../reference/mark_format_change.html">is_longitudinal()</a></code>/<code><a href="../reference/mark_format_change.html">is_dynamic()</a></code>/<code><a href="../reference/mark_format_change.html">is_changing()</a></code>, <code><a href="../reference/measure_dims.html">net_waves()</a></code>, <code><a href="../reference/modif_scope.html">to_time()</a></code>, <code><a href="../reference/modif_split.html">to_waves()</a></code>, and the <code>*_changes()</code> family (<code><a href="../reference/manip_changes.html">filter_changes()</a></code>, <code><a href="../reference/defunct.html">apply_changes()</a></code>), previously untreated in the tutorials</li>
 <li>Extended the opening <code>[</code>/<code>[[</code> operators section with <code>$</code> get/set, and cross-referenced it as the do-it-yourself alternative alongside named functions throughout (e.g. <code>net$name &lt;-</code> beside <code><a href="../reference/modif_labels.html">to_labelled()</a></code>)</li>
 <li>Added <code><a href="../reference/member_names.html">layer_names()</a></code>/<code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> (multiplex layers) and <code><a href="../reference/modif_levels.html">to_onemode()</a></code>/<code><a href="../reference/modif_levels.html">to_twomode()</a></code>/<code><a href="../reference/modif_levels.html">to_multilevel()</a></code> (mode conversion) coverage alongside the existing two-mode projection material</li>
 <li>Added <code>signed</code>, <code>longitudinal</code>, and <code>dynamic</code> glossary entries to support the new sections’ hover-term definitions</li>
@@ -518,11 +866,11 @@
 </li>
 <li>Added <code><a href="../reference/manip_nodes_num.html">bind_nodes()</a></code> for adding nodes and ties from another network</li>
 <li>Added <code><a href="../reference/manip_changes.html">arrange_changes()</a></code> and <code><a href="../reference/manip_nodes_num.html">arrange_nodes()</a></code> as generics for reordering nodes and ties in a network</li>
-<li>Added <code><a href="../reference/manip_changes.html">gather_changes()</a></code> as a generic for gathering changes up to a time point</li>
-<li>Added <code><a href="../reference/manip_changes.html">rename_changes()</a></code> for renaming change variables and <code><a href="../reference/manip_global.html">rename_globals()</a></code> for renaming global variables
+<li>Added <code><a href="../reference/defunct.html">gather_changes()</a></code> as a generic for gathering changes up to a time point</li>
+<li>Added <code><a href="../reference/manip_changes.html">rename_changes()</a></code> for renaming change variables and <code><a href="../reference/manip_globals.html">rename_globals()</a></code> for renaming global variables
 <ul><li>Improved ‘data.frame’ and by extenion ‘stocnet’ <code>rename_*()</code> methods to rename variables when no arguments given</li>
 </ul></li>
-<li>Added <code><a href="../reference/manip_ties_attr.html">select_ties()</a></code>, <code><a href="../reference/manip_changes.html">select_changes()</a></code>, and <code><a href="../reference/manip_global.html">select_globals()</a></code> for selecting variables
+<li>Added <code><a href="../reference/manip_ties_attr.html">select_ties()</a></code>, <code><a href="../reference/manip_changes.html">select_changes()</a></code>, and <code><a href="../reference/manip_globals.html">select_globals()</a></code> for selecting variables
 <ul><li>Improved ‘data.frame’ and by extenion ‘stocnet’ <code>select_*()</code> methods to reorder variables when no arguments given</li>
 </ul></li>
 <li>Added <code><a href="../reference/manip_nodes_num.html">filter_nodes()</a></code>, <code><a href="../reference/manip_ties_num.html">filter_ties()</a></code>, and <code><a href="../reference/manip_changes.html">filter_changes()</a></code> as generics for filtering nodes, ties, and changes in a network</li>
@@ -543,7 +891,7 @@
 <h3 id="modifying-2-1-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-2-1-0"></a></h3>
 <ul><li>Added <code><a href="../reference/manip_nodes_attr.html">join_nodes()</a></code> for joining two nodelists</li>
 <li>Added new ‘stocnet’ methods for common modifications</li>
-<li>Added <code><a href="../reference/manip_global.html">mutate_globals()</a></code> for mutating global variables in a network</li>
+<li>Added <code><a href="../reference/manip_globals.html">mutate_globals()</a></code> for mutating global variables in a network</li>
 <li>Improved many <code>to_*()</code> default methods to coerce through supported graph classes and then restore original classes</li>
 <li>Improved conversion consistency across direction, projection, paths, plexity, correlation, and weight transformations</li>
 <li>Fixed default dispatch in scope and transformation helpers, including <code><a href="../reference/modif_scope.html">to_subgraph()</a></code>
@@ -610,7 +958,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="manipulating-2-0-0">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-2-0-0"></a></h3>
-<ul><li>Renamed <code><a href="../reference/defunct.html">collect_changes()</a></code> to <code><a href="../reference/manip_changes.html">gather_changes()</a></code>
+<ul><li>Renamed <code><a href="../reference/defunct.html">collect_changes()</a></code> to <code><a href="../reference/defunct.html">gather_changes()</a></code>
 </li>
 <li>Improved <code><a href="../reference/manip_info.html">add_info()</a></code> so that if no further arguments are given it checks to see whether metadata may be added
 <ul><li>Added <code>add_info.stocnet()</code> for adding metadata to <code>stocnet</code> objects</li>
@@ -626,7 +974,7 @@
 <h3 id="modifying-2-0-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-2-0-0"></a></h3>
 <ul><li>Fixed <code>to_ties.igraph()</code> for unlabelled networks</li>
 <li>Fixed <code><a href="../reference/modif_project.html">to_mode1()</a></code> and <code><a href="../reference/modif_project.html">to_mode2()</a></code> to work with unlabelled networks</li>
-<li>Fixed <code><a href="../reference/modif_scope.html">to_no_missing()</a></code> rlang data pronoun issue</li>
+<li>Fixed <code><a href="../reference/defunct.html">to_no_missing()</a></code> rlang data pronoun issue</li>
 <li>Fixed <code><a href="../reference/modif_paths.html">to_tree()</a></code> to use updated igraph function name</li>
 <li>Fixed <code><a href="../reference/modif_from.html">from_ties()</a></code> to be quieter when joining</li>
 </ul></div>
@@ -933,8 +1281,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="modifying-1-6-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-6-0"></a></h3>
-<ul><li>Improved <code><a href="../reference/modif_scope.html">to_no_missing()</a></code> to record missing removal</li>
-<li>Improved <code><a href="../reference/modif_scope.html">to_no_isolates()</a></code> to record isolate removal</li>
+<ul><li>Improved <code><a href="../reference/defunct.html">to_no_missing()</a></code> to record missing removal</li>
+<li>Improved <code><a href="../reference/defunct.html">to_no_isolates()</a></code> to record isolate removal</li>
 <li>Improved <code><a href="../reference/modif_scope.html">to_giant()</a></code> to record giant component scoping</li>
 <li>Improved <code><a href="../reference/modif_paths.html">to_matching()</a></code> to record matching</li>
 <li>Fixed <code><a href="../reference/modif_paths.html">to_matching()</a></code> triggering warnings from handling NAs (thanks <a href="https://github.com/schochastics" class="external-link">@schochastics</a> for fixing <a href="https://github.com/stocnet/manynet/issues/109" class="external-link">#109</a>)</li>
@@ -989,7 +1337,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="modifying-1-5-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-5-0"></a></h3>
-<ul><li>Added <code><a href="../reference/modif_scope.html">to_no_missing()</a></code> for removing nodes with missing data</li>
+<ul><li>Added <code><a href="../reference/defunct.html">to_no_missing()</a></code> for removing nodes with missing data</li>
 <li>Fixed <code>as_diffusion.mnet()</code> so that it includes “diff_model” class</li>
 </ul></div>
 <div class="section level3">
@@ -1065,7 +1413,7 @@
 <li>Added <code><a href="../reference/manip_changes.html">select_changes()</a></code> to select change variables</li>
 <li>Added <code><a href="../reference/manip_changes.html">filter_changes()</a></code> to filter changes</li>
 <li>Added <code><a href="../reference/defunct.html">collect_changes()</a></code> to collect changes up to a time point</li>
-<li>Added <code><a href="../reference/manip_changes.html">apply_changes()</a></code> to apply collected changes to a time point</li>
+<li>Added <code><a href="../reference/defunct.html">apply_changes()</a></code> to apply collected changes to a time point</li>
 </ul></li>
 <li>Added <code><a href="../reference/modif_scope.html">to_time()</a></code> for scoping a longitudinal network to a time point, including nodal and/or tie changes</li>
 <li>Added <code><a href="../reference/manip_nodes_attr.html">select_nodes()</a></code> for selecting only some nodal variables</li>
@@ -1176,7 +1524,7 @@
 <h3 id="modifying-1-3-0">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-3-0"></a></h3>
 <ul><li>Fixed how <code><a href="../reference/coerce_list.html">as_matrix()</a></code> handles signed networks</li>
 <li>Added <code><a href="../reference/coerce_list.html">as_nodelist()</a></code> for extracting nodelists from networks into tibbles</li>
-<li>Added <code><a href="../reference/modif_correlation.html">to_cosine()</a></code>
+<li>Added <code><a href="../reference/modif_proximity.html">to_cosine()</a></code>
 </li>
 <li>Dropped <code>to_galois()</code> until it can be refactored</li>
 <li>Split reformatting documentation into format, reformat, and deformat groups of functions
@@ -1546,7 +1894,7 @@
 <h3 id="modifying-1-0-4">Modifying<a class="anchor" aria-label="anchor" href="#modifying-1-0-4"></a></h3>
 <ul><li>
 <code>as_matrix.igraph()</code> now only draws from the “weight” attribute and not, e.g. “type”</li>
-<li>Fixed bug in <code><a href="../reference/modif_scope.html">to_blocks()</a></code> related to categorical membership variables</li>
+<li>Fixed bug in <code><a href="../reference/defunct.html">to_blocks()</a></code> related to categorical membership variables</li>
 </ul></div>
 <div class="section level3">
 <h3 id="marks-1-0-4">Marks<a class="anchor" aria-label="anchor" href="#marks-1-0-4"></a></h3>
@@ -1674,9 +2022,9 @@
 <code><a href="../reference/modif_labels.html">to_named()</a></code> now randomly generates and adds an alphabetic sequence of names, where previously this was just a random sample, which may assist pedagogical use
 <ul><li>baby_names (internal) now includes a few extra “Q” and “U” names</li>
 </ul></li>
-<li>Added <code><a href="../reference/modif_correlation.html">to_correlation()</a></code> that implements pairwise correlation on network</li>
+<li>Added <code><a href="../reference/modif_proximity.html">to_correlation()</a></code> that implements pairwise correlation on network</li>
 <li>Added <code><a href="../reference/manip_ties_attr.html">arrange_ties()</a></code> for <a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a>-like reordering of ties based on some attribute</li>
-<li>Added <code><a href="../reference/modif_correlation.html">to_correlation()</a></code> for calculating the Pearson correlation
+<li>Added <code><a href="../reference/modif_proximity.html">to_correlation()</a></code> for calculating the Pearson correlation
 <ul><li>This takes a method argument for “all”, “diag”, “recip”, or “complex”</li>
 <li>These are similar to functions implemented by Ron Breiger and shared by him in correspondence</li>
 </ul></li>
@@ -1777,14 +2125,14 @@
 </ul></li>
 <li>Several improvements to <code>cluster_concor()</code>
 <ul><li>
-<code>cluster_concor()</code> now uses <code><a href="../reference/modif_correlation.html">to_correlation()</a></code> for initial correlation</li>
+<code>cluster_concor()</code> now uses <code><a href="../reference/modif_proximity.html">to_correlation()</a></code> for initial correlation</li>
 <li>It still uses <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">stats::cor()</a></code> for subsequent iterations</li>
 <li>Fixed how <code>cluster_concor()</code> handles unlabelled networks</li>
 <li>Fixed how <code>cluster_concor()</code> handles two-mode networks</li>
 <li>Fixed bug where <code>cluster_concor()</code> cutoff resulted in unsplit groups</li>
 </ul></li>
 <li>
-<code>cluster_hierarchical()</code> now also uses <code><a href="../reference/modif_correlation.html">to_correlation()</a></code>
+<code>cluster_hierarchical()</code> now also uses <code><a href="../reference/modif_proximity.html">to_correlation()</a></code>
 </li>
 </ul></div>
 <div class="section level3">

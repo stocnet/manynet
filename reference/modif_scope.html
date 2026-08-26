@@ -11,16 +11,14 @@ which returns a list of all of them, largest first.
 to_giant() scopes a network into one including only the main component
 and no smaller components or isolates.
 It is a wrapper, such that to_giant(.data) is to_component(.data, 1).
-to_time() scopes a longitudinal network to the network as it stood at a given wave or time point.
-to_wave() is an alias, using the wave-based vocabulary of net_waves() and to_waves().
-For interval (spell) networks with tie begin/end lifespans, to_time()
-returns the ties active at that moment, or – when time is omitted – a
-list of slices, one per change point (each tie beginning or end).
-to_no_isolates() scopes a network into one excluding all nodes without ties.
-to_no_missing() scopes a network to one retaining only complete cases,
-i.e. nodes with no missing values.
+to_time() scopes a network to the network as it stood at a given
+moment, in whichever of the ways set out in the Time section it records
+time. to_wave() is an alias, using the wave-based vocabulary of
+net_waves() and to_waves(). For one network per moment, see
+to_times().
 to_subgraph() scopes a network into a subgraph by filtering on some node-related logical statement.
-to_blocks() reduces a network to ties between a given partition membership vector.
+to_blockmodel() reduces a network to the ties between the blocks of a
+given partition membership vector.
 
 "><meta property="og:image" content="https://stocnet.github.io/manynet/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -40,7 +38,7 @@ to_blocks() reduces a network to ties between a given partition membership vecto
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -124,22 +122,18 @@ which returns a list of all of them, largest first.</p></li>
 <li><p><code>to_giant()</code> scopes a network into one including only the main component
 and no smaller components or isolates.
 It is a wrapper, such that <code>to_giant(.data)</code> is <code>to_component(.data, 1)</code>.</p></li>
-<li><p><code>to_time()</code> scopes a longitudinal network to the network as it stood at a given wave or time point.
-<code>to_wave()</code> is an alias, using the wave-based vocabulary of <code><a href="measure_dims.html">net_waves()</a></code> and <code><a href="modif_split.html">to_waves()</a></code>.
-For interval (spell) networks with tie <code>begin</code>/<code>end</code> lifespans, <code>to_time()</code>
-returns the ties active at that moment, or – when <code>time</code> is omitted – a
-list of slices, one per change point (each tie beginning or end).</p></li>
-<li><p><code>to_no_isolates()</code> scopes a network into one excluding all nodes without ties.</p></li>
-<li><p><code>to_no_missing()</code> scopes a network to one retaining only complete cases,
-i.e. nodes with no missing values.</p></li>
+<li><p><code>to_time()</code> scopes a network to the network as it stood at a given
+moment, in whichever of the ways set out in the Time section it records
+time. <code>to_wave()</code> is an alias, using the wave-based vocabulary of
+<code><a href="measure_dims.html">net_waves()</a></code> and <code><a href="modif_split.html">to_waves()</a></code>. For one network per moment, see
+<code><a href="modif_split.html">to_times()</a></code>.</p></li>
 <li><p><code>to_subgraph()</code> scopes a network into a subgraph by filtering on some node-related logical statement.</p></li>
-<li><p><code>to_blocks()</code> reduces a network to ties between a given partition membership vector.</p></li>
+<li><p><code>to_blockmodel()</code> reduces a network to the ties between the blocks of a
+given partition membership vector.</p></li>
 </ul></div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">to_no_missing</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">to_ego</span><span class="op">(</span><span class="va">.data</span>, <span class="va">node</span>, max_dist <span class="op">=</span> <span class="fl">1</span>, min_dist <span class="op">=</span> <span class="fl">0</span>, direction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"out"</span>, <span class="st">"in"</span><span class="op">)</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">to_ego</span><span class="op">(</span><span class="va">.data</span>, <span class="va">node</span>, max_dist <span class="op">=</span> <span class="fl">1</span>, min_dist <span class="op">=</span> <span class="fl">0</span>, direction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"out"</span>, <span class="st">"in"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">to_time</span><span class="op">(</span><span class="va">.data</span>, time <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
@@ -149,11 +143,9 @@ i.e. nodes with no missing values.</p></li>
 <span></span>
 <span><span class="fu">to_giant</span><span class="op">(</span><span class="va">.data</span>, connectivity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"weak"</span>, <span class="st">"strong"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">to_no_isolates</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu">to_subgraph</span><span class="op">(</span><span class="va">.data</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">to_blocks</span><span class="op">(</span><span class="va">.data</span>, <span class="va">membership</span>, FUN <span class="op">=</span> <span class="va">mean</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">to_blockmodel</span><span class="op">(</span><span class="va">.data</span>, <span class="va">membership</span>, FUN <span class="op">=</span> <span class="va">mean</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -193,10 +185,10 @@ By default "all".</p></dd>
 
 
 <dt id="arg-time">time<a class="anchor" aria-label="anchor" href="#arg-time"></a></dt>
-<dd><p>A time point or wave at which to present the network.
-For an interval (spell) network that records tie <code>begin</code>/<code>end</code> lifespans,
-<code>time</code> may be omitted, in which case a list of slices is returned,
-one per change point (each moment at which some tie begins or ends).</p></dd>
+<dd><p>A moment at which to present the network.
+A moment beyond the last one the network records reverts to the last,
+except in an interval network, which is defined between the moments it
+records as well as at them.</p></dd>
 
 
 <dt id="arg-component">component<a class="anchor" aria-label="anchor" href="#arg-component"></a></dt>
@@ -222,7 +214,12 @@ network into components default to "weak".</p></dd>
 
 
 <dt id="arg-membership">membership<a class="anchor" aria-label="anchor" href="#arg-membership"></a></dt>
-<dd><p>A vector of partition memberships.</p></dd>
+<dd><p>A vector of partition memberships.
+For two-mode networks this is a single vector covering the nodes in
+both modes, and not one vector per mode;
+the blocks of each mode are established separately from it,
+so that the result has one row per block of the first mode and
+one column per block of the second.</p></dd>
 
 
 <dt id="arg-fun">FUN<a class="anchor" aria-label="anchor" href="#arg-fun"></a></dt>
@@ -234,42 +231,77 @@ Other recommended options include <code>median</code>, <code>sum</code>,
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A tidygraph object modified as explained in the function description, details,
-or section.</p>
+    <p>An object of the same class as the function was given,
+modified as explained in the function description, details, or section.
+Functions that split a network return a list of such objects.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
     <p>Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>               data.frame default igraph list matrix network tbl_graph</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>to_blocks               <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>           <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>to_component            <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>           <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>to_ego                          <span class="sc">*</span>      <span class="er">*</span>                             <span class="er">*</span></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>to_egos                 <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>           <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>to_no_isolates          <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>    <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>to_no_missing                   <span class="sc">*</span>                                    <span class="er">*</span></span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>to_subgraph             <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>           <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>to_subgraphs                    <span class="sc">*</span>      <span class="er">*</span>                   <span class="er">*</span>         <span class="er">*</span></span></code></pre><p></p></div>
-<p>For interval (spell) networks, whose ties carry <code>begin</code>/<code>end</code> lifespans
-(e.g. <code>irps_wwi</code>), <code>to_time()</code> scopes to the ties active at <code>time</code>, using
-the half-open convention (<code>begin &lt;= time &lt; end</code>) shared with
-<code>network::networkDynamic</code>. When <code>time</code> is omitted, one such slice is
-returned for each distinct change point (every moment at which some tie
-begins or ends), as a named list, so that the evolving network can be
-iterated over or animated (e.g. with <code>autograph::grapht()</code>).</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>              data.frame default igraph matrix network stocnet tbl_graph</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>to_blockmodel          <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>                 <span class="er">*</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>to_component           <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>to_ego                         <span class="sc">*</span>      <span class="er">*</span>                      <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>to_egos                <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>to_subgraph            <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>to_subgraphs                   <span class="sc">*</span>      <span class="er">*</span>              <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span></code></pre><p></p></div>
     </div>
-    <div id="to-blocks-">
-    <h2><code>to_blocks()</code></h2>
+    <div id="time">
+    <h2>Time</h2>
+
+
+<p>Two things about how a network records time are independent of each
+other, and the network is scoped to a moment by both of them.</p>
+<p>How a moment is <em>represented</em> can be read from the ties. A network either
+stamps each tie with the point it was recorded at, in a 'time' column, or
+states the interval each tie lasts over, in 'begin' and 'end' columns.</p>
+<p>How a moment <em>relates to the one before it</em> cannot be read from the ties,
+and the network declares it in <code>info$update</code>. Where this is "replace",
+which it is by default, each moment re-states the ties, so the network at
+a moment is the ties stamped with it. Where it is "increment", each row
+is a change to a tie's value, so the network at a moment is every row up
+to and including it, accumulated, and a tie that has accumulated to zero
+is no longer a tie. An interval tie carries its own lifespan, so nothing
+is declared about it: it is active at a moment where it began at or
+before that moment and has not yet ended (<code>begin &lt;= time &lt; end</code>, the
+half-open convention shared with <code>network::networkDynamic</code>, so a tie that
+ends and one that begins at the same instant do not overlap). A tie with
+no 'end' is right-censored, and active from its beginning onwards.</p>
+<p><code>info$observation</code> records a third thing, how densely the network is
+observed: a "panel" of a few complete re-observations, or a stream of
+many "event" records. This describes a network rather than scoping it.
+The two go together without entailing each other: a panel re-observes
+the whole network at each wave and so is usually "replace", and an event
+stream is often "increment", but an event that states a value afresh is
+"replace" too. <code><a href="mark_format_change.html">is_longitudinal()</a></code> marks the first, <code><a href="mark_format_change.html">is_dynamic()</a></code> the
+second, and no network is both.</p>
+<p>In every case the nodal changes recorded up to the moment are applied,
+and a layer that states something holding throughout is carried into
+whichever moment is asked for, since such a layer is a constant covariate
+rather than an observation of that moment. A layer holds throughout where
+the network declares it "cross-sectional", or where it records that layer
+at a single moment while another layer spans several.</p>
+    </div>
+    <div id="to-blockmodel-">
+    <h2><code>to_blockmodel()</code></h2>
 
 
 <p>Reduced graphs provide summary representations of network structures
 by collapsing groups of connected nodes into single nodes
-while preserving the topology of the original structures.</p>
+while preserving the topology of the original structures.
+Like the other scoping functions, the reduced graph is returned in the
+same class as the input: a blockmodel matrix of summarised block content
+for matrix input, and the corresponding weighted network otherwise.
+Memberships are usually obtained from one of the <code>node_in_*()</code> functions
+in <code>{netrics}</code>.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p>Other modifications:
-<code><a href="modif_correlation.html">modif_correlation</a></code>,
+    <div class="dont-index"><p><code><a href="modif_split.html">to_times()</a></code> for one network per moment, and <code><a href="measure_dims.html">net_times()</a></code> for how
+many moments there are to ask for.</p>
+<p>Other modifications:
+<code><a href="modif_backbone.html">modif_backbone</a></code>,
 <code><a href="modif_direction.html">modif_direction</a></code>,
 <code><a href="modif_from.html">modif_from</a></code>,
 <code><a href="modif_labels.html">modif_labels</a></code>,
@@ -280,18 +312,49 @@ while preserving the topology of the original structures.</p>
 <code><a href="modif_permutation.html">modif_permutation</a></code>,
 <code><a href="modif_plexity.html">modif_plexity</a></code>,
 <code><a href="modif_project.html">modif_project</a></code>,
+<code><a href="modif_proximity.html">modif_proximity</a></code>,
 <code><a href="modif_split.html">modif_split</a></code>,
 <code><a href="modif_weight.html">modif_weight</a></code></p></div>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span>  <span class="co"># A single snapshot of the ties active in a given year:</span></span></span>
-<span class="r-in"><span>  <span class="fu">to_time</span><span class="op">(</span><span class="va">irps_wwi</span>, <span class="fl">1901</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span>  <span class="co"># The ties a panel observed in a given wave:</span></span></span>
+<span class="r-in"><span>  <span class="fu">to_time</span><span class="op">(</span><span class="va">ison_monks</span>, <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># World War I Protagonists</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A dynamic, labelled, signed, undirected network of 6 European major powers</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">and 11 relationship ties from 1872 to 1918</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Sampson's Monks</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, multiplex, signed, weighted, directed network of 18 nodes and 57</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">like arcs, 112 esteem arcs, 103 influence arcs, and 80 praise arcs</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># Transformed by exclusion: not tied at time 2 (111 ties excluded)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 18 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   label       groups        left</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Romuald     Interstitial     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Bonaventure Loyal            4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Ambrose     Loyal            4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Berthold    Loyal            4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Peter       Loyal            3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Louis       Loyal            4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 12 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 352 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to weight layer    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2      1 like     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     5      3 like     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1    15      2 like     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     2     3      1 esteem   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     2     5      3 esteem   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     2     5      3 influence</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 346 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span>  <span class="co"># The ties an interval network held in a given year:</span></span></span>
+<span class="r-in"><span>  <span class="fu">to_time</span><span class="op">(</span><span class="va">irps_wwi</span>, <span class="fl">1901</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A dynamic, labelled, signed, undirected network of 6 nodes and 11 ties from</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">1872 to 1918</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 1</span></span>
@@ -316,9 +379,37 @@ while preserving the topology of the original structures.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     4     5     1  <span style="text-decoration: underline;">1</span>872  <span style="text-decoration: underline;">1</span>918</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 5 more rows</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span>  <span class="co"># Or one slice per change point (each tie beginning or end):</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu">to_time</span><span class="op">(</span><span class="va">irps_wwi</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 7</span>
+<span class="r-in"><span>  <span class="co"># The state an event network had accumulated to by a given day:</span></span></span>
+<span class="r-in"><span>  <span class="fu">to_time</span><span class="op">(</span><span class="va">irps_nuclear</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2011-04-01"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># German nuclear discourse network</span> <span style="color: #00BBBB;">──────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A dynamic, labelled, signed, two-mode network of 337 speakers and 54 concepts</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">and 449 claim ties (8 parallel) from 2011-03-11 to 2011-04-01</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># Transformed by exclusion: not tied at time 2011-04-01 (715 ties excluded)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 391 × 10</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   label         mode  active politician govt  coalition office org   party power</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> VfEW          spea… TRUE   FALSE      FALSE <span style="color: #BB0000;">NA</span>        FALSE  VfEW  <span style="color: #BB0000;">NA</span>        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Angela Merkel spea… TRUE   TRUE       TRUE  TRUE      TRUE   CDU   31        2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Sunday Times  spea… TRUE   FALSE      FALSE <span style="color: #BB0000;">NA</span>        FALSE  Sund… <span style="color: #BB0000;">NA</span>        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> SPD           spea… TRUE   TRUE       FALSE FALSE     FALSE  SPD   32        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Norbert Rött… spea… TRUE   TRUE       TRUE  TRUE      TRUE   CDU   31        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Torsten Krau… spea… TRUE   FALSE      FALSE <span style="color: #BB0000;">NA</span>        FALSE  Die … <span style="color: #BB0000;">NA</span>        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 385 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 449 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to time       weight default</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1   338 2011-03-11     -<span style="color: #BB0000;">1</span> FALSE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2   339 2011-03-12      1 TRUE   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     3   340 2011-03-13     -<span style="color: #BB0000;">1</span> FALSE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     4   341 2011-03-13      1 TRUE   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     2   342 2011-03-13     -<span style="color: #BB0000;">1</span> TRUE   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     5   343 2011-03-13      1 TRUE   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 443 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span>  <span class="fu">to_component</span><span class="op">(</span><span class="va">fict_greys</span>, <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Component 2 of Grey's Anatomy</span> <span style="color: #00BBBB;">─────────────────────────────────────────────</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, undirected network of 6 nodes and 5 ties</span></span>
@@ -393,98 +484,6 @@ while preserving the topology of the original structures.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>    16    30</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 40 more rows</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="va">ison_adolescents</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="manip_ties_attr.html">mutate_ties</a></span><span class="op">(</span>wave <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1995</span><span class="op">:</span><span class="fl">1998</span>, <span class="fl">10</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="modif_split.html">to_waves</a></span><span class="op">(</span>attribute <span class="op">=</span> <span class="st">"wave"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu">to_no_isolates</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $`1995`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># The Adolescent Society</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A longitudinal, labelled, undirected network of 5 adolescents and 5</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">friendship ties over 1995 waves</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   name </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Betty</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Sue  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Alice</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Dale </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Pam  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to  wave</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2  <span style="text-decoration: underline;">1</span>995</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     3  <span style="text-decoration: underline;">1</span>995</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     3     4  <span style="text-decoration: underline;">1</span>995</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     2     5  <span style="text-decoration: underline;">1</span>995</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     3     5  <span style="text-decoration: underline;">1</span>995</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $`1996`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># The Adolescent Society</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A longitudinal, labelled, undirected network of 2 adolescents and 1</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">friendship ties over 1996 waves</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   name </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Jane </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Dale </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to  wave</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2  <span style="text-decoration: underline;">1</span>996</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $`1997`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># The Adolescent Society</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A longitudinal, labelled, undirected network of 2 adolescents and 1</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">friendship ties over 1997 waves</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   name </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Sue  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Dale </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to  wave</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2  <span style="text-decoration: underline;">1</span>997</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $`1998`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># The Adolescent Society</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A longitudinal, labelled, undirected network of 5 adolescents and 3</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">friendship ties over 1998 waves</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   name </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Alice</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Jane </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Pam  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Carol</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Tina </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to  wave</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2  <span style="text-decoration: underline;">1</span>998</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     3     4  <span style="text-decoration: underline;">1</span>998</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     4     5  <span style="text-decoration: underline;">1</span>998</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
   </div>

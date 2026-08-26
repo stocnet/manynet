@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -164,7 +164,6 @@ seeing the results, and getting hints, solutions, and quizzes.</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p><img src="https://c.tenor.com/bibDxkkQ0YAAAAAd/tenor.gif" alt="gif of man trashing own computer"></p>
 <p>Most network analysts want to use network analysis to better
 understand empirical networks, but before turning to ready-made
 datasets, it helps to see what a network actually <em>is</em>, stripped
@@ -762,18 +761,28 @@ imported alongside them)</li>
 <code><a href="../reference/make_read.html">read_graphml()</a></code> and <code><a href="../reference/make_write.html">write_graphml()</a></code> for
 importing and exporting .graphml files</li>
 <li>
+<code><a href="../reference/make_read.html">read_gexf()</a></code> and <code><a href="../reference/make_write.html">write_gexf()</a></code> for importing
+and exporting .gexf files, such as those Gephi reads and writes</li>
+<li>
 <code><a href="../reference/make_read.html">read_dynetml()</a></code> for importing .dynetml files</li>
 </ul>
 <p>For more information on any of these functions, you can ask for help
-by typing <code><a href="../reference/make_read.html">?read_pajek</a></code> in the console. Whereas
-<code><a href="../reference/make_read.html">read_edgelist()</a></code> and <code><a href="../reference/make_read.html">read_nodelist()</a></code> will
-import into a tibble/data frame class, <code><a href="../reference/make_read.html">read_pajek()</a></code> and
-<code><a href="../reference/make_read.html">read_ucinet()</a></code> will import the network into a tidygraph
-format (see above). Of course, any network data that is imported can be
-easily coerced into any other compatible class. Let’s say we want to
-import the adolescents edgelist back in, but we want it in an igraph
-format. <strong>There are three ways you might do this — run the code
-and compare the three results.</strong></p>
+by typing <code><a href="../reference/make_read.html">?read_pajek</a></code> in the console.</p>
+<div class="callout">
+<p><span class="callout-label"><strong>Try it yourself</strong>:</span>
+This section includes an interactive quiz in the live tutorial — run
+<code>run_tute()</code> at the R console to try it.</p>
+</div>
+<p>Whereas <code><a href="../reference/make_read.html">read_edgelist()</a></code> and <code><a href="../reference/make_read.html">read_nodelist()</a></code>
+will import into a tibble/data frame class, <code><a href="../reference/make_read.html">read_pajek()</a></code>
+and <code><a href="../reference/make_read.html">read_ucinet()</a></code> will import the network into a stocnet
+format (see above). A stocnet holds the most of what a file can contain,
+such as the network’s metadata, its modes, its layers, and when its ties
+are present. Of course, any network data that is imported can be easily
+coerced into any other compatible class. Let’s say we want to import the
+adolescents edgelist back in, but we want it in an igraph format.
+<strong>There are three ways you might do this — run the code and
+compare the three results.</strong></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># 1. Separate steps</span></span>
 <span><span class="va">adols</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_read.html">read_edgelist</a></span><span class="op">(</span><span class="st">"data/adols.csv"</span><span class="op">)</span></span>
@@ -783,7 +792,7 @@ and compare the three results.</strong></p>
 <span><span class="va">adolsigraph2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/coerce_graph.html">as_igraph</a></span><span class="op">(</span><span class="fu"><a href="../reference/make_read.html">read_edgelist</a></span><span class="op">(</span><span class="st">"data/adols.csv"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">adolsigraph2</span></span>
 <span><span class="co"># 3. Chained steps</span></span>
-<span><span class="va">adolsigraph3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_read.html">read_edgelist</a></span><span class="op">(</span><span class="st">"data/adols.csv"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/coerce_graph.html">as_igraph</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">adolsigraph3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_read.html">read_edgelist</a></span><span class="op">(</span><span class="st">"data/adols.csv"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/coerce_graph.html">as_igraph</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">adolsigraph3</span></span></code></pre></div>
 <p>All three ways produce exactly the same result; which one you use in
 your own work is a matter of taste and readability. How does the result
@@ -797,9 +806,9 @@ This section includes an interactive quiz in the live tutorial — run
 <p><span class="callout-label"><strong>In brief</strong>:</span>
 <code>read_*()</code>/<code>write_*()</code> functions import and export
 edgelists and nodelists (from/to .csv or Excel) as well as Pajek,
-UCINET, GraphML, and DyNetML formats. Whatever the import class, the
-<code>as_*()</code> coercion functions will get the data into whatever
-class you need next.</p>
+UCINET, GraphML, GEXF, and DyNetML formats. Whatever the import class,
+the <code>as_*()</code> coercion functions will get the data into
+whatever class you need next.</p>
 </div>
 </div>
 </div>

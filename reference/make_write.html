@@ -11,6 +11,7 @@ write_dynetml() exports DyNetML interchange format files.
 write_graphml() exports GraphML files.
 write_gml() exports GML files.
 write_gdf() exports GDF files.
+write_gexf() exports GEXF files, for example for use in Gephi.
 
 "><meta property="og:image" content="https://stocnet.github.io/manynet/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -30,7 +31,7 @@ write_gdf() exports GDF files.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -114,6 +115,7 @@ file formats:</p><ul><li><p><code>write_matrix()</code> exports an adjacency mat
 <li><p><code>write_graphml()</code> exports GraphML files.</p></li>
 <li><p><code>write_gml()</code> exports GML files.</p></li>
 <li><p><code>write_gdf()</code> exports GDF files.</p></li>
+<li><p><code>write_gexf()</code> exports GEXF files, for example for use in Gephi.</p></li>
 </ul></div>
 
     <div id="ref-usage">
@@ -132,6 +134,8 @@ file formats:</p><ul><li><p><code>write_matrix()</code> exports an adjacency mat
 <span><span class="fu">write_gml</span><span class="op">(</span><span class="va">.data</span>, <span class="va">filename</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">write_gdf</span><span class="op">(</span><span class="va">.data</span>, <span class="va">filename</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">write_gexf</span><span class="op">(</span><span class="va">.data</span>, <span class="va">filename</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">write_dynetml</span><span class="op">(</span><span class="va">.data</span>, <span class="va">filename</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -183,6 +187,15 @@ depending on the function.</p>
 in the package, so please let us know if any are not currently working
 for you or if there are missing import routines
 by <a href="https://github.com/stocnet/manynet/issues" class="external-link">raising an issue on Github</a>.</p>
+<p><code>write_gexf()</code> writes the node and tie attributes as declared attributes,
+except that 'x', 'y', 'z', 'size', and 'color' are written as the
+visualisation elements Gephi reads,
+and 'start' and 'end' are written as times, which makes the file dynamic.
+Only a hexadecimal colour is written as a visualisation element.
+A colour named some other way, such as "red",
+is written as an ordinary attribute, which reads back unchanged.
+Node names are written as labels, since node ids are required by the format
+and so are written as positions in the network.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>

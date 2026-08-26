@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -96,11 +96,11 @@
           <p class="section-desc"></p><p>Functions for importing and exporting networks from and to a range of external formats.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="make_read.html">read_matrix()</a></code> <code><a href="make_read.html">read_edgelist()</a></code> <code><a href="make_read.html">read_nodelist()</a></code> <code><a href="make_read.html">read_pajek()</a></code> <code><a href="make_read.html">read_ucinet()</a></code> <code><a href="make_read.html">read_dynetml()</a></code> <code><a href="make_read.html">read_graphml()</a></code> <code><a href="make_read.html">read_gml()</a></code> <code><a href="make_read.html">read_gdf()</a></code> </p>
+          <p><code><a href="make_read.html">read_matrix()</a></code> <code><a href="make_read.html">read_edgelist()</a></code> <code><a href="make_read.html">read_nodelist()</a></code> <code><a href="make_read.html">read_pajek()</a></code> <code><a href="make_read.html">read_ucinet()</a></code> <code><a href="make_read.html">read_dynetml()</a></code> <code><a href="make_read.html">read_graphml()</a></code> <code><a href="make_read.html">read_gml()</a></code> <code><a href="make_read.html">read_gdf()</a></code> <code><a href="make_read.html">read_gexf()</a></code> </p>
         </td>
         <td><p>Making networks from external files</p></td>
       </tr><tr><td>
-          <p><code><a href="make_write.html">write_matrix()</a></code> <code><a href="make_write.html">write_edgelist()</a></code> <code><a href="make_write.html">write_nodelist()</a></code> <code><a href="make_write.html">write_pajek()</a></code> <code><a href="make_write.html">write_ucinet()</a></code> <code><a href="make_write.html">write_graphml()</a></code> <code><a href="make_write.html">write_gml()</a></code> <code><a href="make_write.html">write_gdf()</a></code> <code><a href="make_write.html">write_dynetml()</a></code> </p>
+          <p><code><a href="make_write.html">write_matrix()</a></code> <code><a href="make_write.html">write_edgelist()</a></code> <code><a href="make_write.html">write_nodelist()</a></code> <code><a href="make_write.html">write_pajek()</a></code> <code><a href="make_write.html">write_ucinet()</a></code> <code><a href="make_write.html">write_graphml()</a></code> <code><a href="make_write.html">write_gml()</a></code> <code><a href="make_write.html">write_gdf()</a></code> <code><a href="make_write.html">write_gexf()</a></code> <code><a href="make_write.html">write_dynetml()</a></code> </p>
         </td>
         <td><p>Making networks to external files</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -164,7 +164,7 @@
         </td>
         <td><p>Coercing into graph objects</p></td>
       </tr><tr><td>
-          <p><code><a href="coerce_list.html">as_nodelist()</a></code> <code><a href="coerce_list.html">as_changelist()</a></code> <code><a href="coerce_list.html">as_edgelist()</a></code> <code><a href="coerce_list.html">as_infolist()</a></code> <code><a href="coerce_list.html">as_globallist()</a></code> <code><a href="coerce_list.html">as_matrix()</a></code> </p>
+          <p><code><a href="coerce_list.html">as_nodelist()</a></code> <code><a href="coerce_list.html">as_changelist()</a></code> <code><a href="coerce_list.html">as_edgelist()</a></code> <code><a href="coerce_list.html">as_infolist()</a></code> <code><a href="coerce_list.html">as_globallist()</a></code> <code><a href="coerce_list.html">as_missinglist()</a></code> <code><a href="coerce_list.html">as_matrix()</a></code> </p>
         </td>
         <td><p>Coercing into lists or matrices</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -184,7 +184,7 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="manip_nodes_num.html">add_nodes()</a></code> <code><a href="manip_nodes_num.html">delete_nodes()</a></code> <code><a href="manip_nodes_num.html">bind_nodes()</a></code> <code><a href="manip_nodes_num.html">filter_nodes()</a></code> <code><a href="manip_nodes_num.html">arrange_nodes()</a></code> </p>
+          <p><code><a href="manip_nodes_num.html">add_nodes()</a></code> <code><a href="manip_nodes_num.html">delete_nodes()</a></code> <code><a href="manip_nodes_num.html">delete_isolates()</a></code> <code><a href="manip_nodes_num.html">delete_incomplete()</a></code> <code><a href="manip_nodes_num.html">bind_nodes()</a></code> <code><a href="manip_nodes_num.html">filter_nodes()</a></code> <code><a href="manip_nodes_num.html">arrange_nodes()</a></code> </p>
         </td>
         <td><p>Manipulating number of nodes</p></td>
       </tr><tr><td>
@@ -196,7 +196,7 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="manip_changes.html">delete_changes()</a></code> <code><a href="manip_changes.html">mutate_changes()</a></code> <code><a href="manip_changes.html">bind_changes()</a></code> <code><a href="manip_changes.html">filter_changes()</a></code> <code><a href="manip_changes.html">select_changes()</a></code> <code><a href="manip_changes.html">arrange_changes()</a></code> <code><a href="manip_changes.html">rename_changes()</a></code> <code><a href="manip_changes.html">gather_changes()</a></code> <code><a href="manip_changes.html">apply_changes()</a></code> </p>
+          <p><code><a href="manip_changes.html">delete_changes()</a></code> <code><a href="manip_changes.html">mutate_changes()</a></code> <code><a href="manip_changes.html">bind_changes()</a></code> <code><a href="manip_changes.html">filter_changes()</a></code> <code><a href="manip_changes.html">select_changes()</a></code> <code><a href="manip_changes.html">arrange_changes()</a></code> <code><a href="manip_changes.html">rename_changes()</a></code> </p>
         </td>
         <td><p>Manipulating changes to nodes over time</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -216,7 +216,7 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="manip_global.html">mutate_globals()</a></code> <code><a href="manip_global.html">rename_globals()</a></code> <code><a href="manip_global.html">select_globals()</a></code> </p>
+          <p><code><a href="manip_globals.html">mutate_globals()</a></code> <code><a href="manip_globals.html">rename_globals()</a></code> <code><a href="manip_globals.html">select_globals()</a></code> </p>
         </td>
         <td><p>Manipulating global attributes</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -232,7 +232,7 @@
         </td>
         <td><p>Modifying networks by formatting their directionality</p></td>
       </tr><tr><td>
-          <p><code><a href="modif_weight.html">to_unsigned()</a></code> <code><a href="modif_weight.html">to_unweighted()</a></code> <code><a href="modif_weight.html">to_signed()</a></code> <code><a href="modif_weight.html">to_weighted()</a></code> </p>
+          <p><code><a href="modif_weight.html">to_unsigned()</a></code> <code><a href="modif_weight.html">to_unweighted()</a></code> <code><a href="modif_weight.html">to_signed()</a></code> <code><a href="modif_weight.html">to_weighted()</a></code> <code><a href="modif_weight.html">to_normalised()</a></code> <code><a href="modif_weight.html">to_normalized()</a></code> </p>
         </td>
         <td><p>Modifying tie weight formats</p></td>
       </tr><tr><td>
@@ -240,7 +240,7 @@
         </td>
         <td><p>Modifying node labels</p></td>
       </tr><tr><td>
-          <p><code><a href="modif_plexity.html">to_anti()</a></code> <code><a href="modif_plexity.html">to_simplex()</a></code> <code><a href="modif_plexity.html">to_uniplex()</a></code> </p>
+          <p><code><a href="modif_plexity.html">to_anti()</a></code> <code><a href="modif_plexity.html">to_simplex()</a></code> <code><a href="modif_plexity.html">to_uniplex()</a></code> <code><a href="modif_plexity.html">to_layer()</a></code> <code><a href="modif_plexity.html">to_flat()</a></code> </p>
         </td>
         <td><p>Modifying network complexity</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -248,11 +248,15 @@
           <p class="section-desc"></p><p>Functions for transforming networks, which may change the network’s dimensions.</p>
         </th>
       </tr></tbody><tbody><tr><td>
+          <p><code><a href="modif_backbone.html">to_backbone()</a></code> </p>
+        </td>
+        <td><p>Modifying networks to their backbone</p></td>
+      </tr><tr><td>
           <p><code><a href="modif_paths.html">to_matching()</a></code> <code><a href="modif_paths.html">to_mentoring()</a></code> <code><a href="modif_paths.html">to_tree()</a></code> <code><a href="modif_paths.html">to_dominating()</a></code> </p>
         </td>
         <td><p>Modifying networks paths</p></td>
       </tr><tr><td>
-          <p><code><a href="modif_scope.html">to_no_missing()</a></code> <code><a href="modif_scope.html">to_ego()</a></code> <code><a href="modif_scope.html">to_time()</a></code> <code><a href="modif_scope.html">to_wave()</a></code> <code><a href="modif_scope.html">to_component()</a></code> <code><a href="modif_scope.html">to_giant()</a></code> <code><a href="modif_scope.html">to_no_isolates()</a></code> <code><a href="modif_scope.html">to_subgraph()</a></code> <code><a href="modif_scope.html">to_blocks()</a></code> </p>
+          <p><code><a href="modif_scope.html">to_ego()</a></code> <code><a href="modif_scope.html">to_time()</a></code> <code><a href="modif_scope.html">to_wave()</a></code> <code><a href="modif_scope.html">to_component()</a></code> <code><a href="modif_scope.html">to_giant()</a></code> <code><a href="modif_scope.html">to_subgraph()</a></code> <code><a href="modif_scope.html">to_blockmodel()</a></code> </p>
         </td>
         <td><p>Modifying networks scope</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -264,27 +268,27 @@
         </td>
         <td><p>Modifying network levels</p></td>
       </tr><tr><td>
-          <p><code><a href="modif_project.html">to_mode1()</a></code> <code><a href="modif_project.html">to_mode2()</a></code> <code><a href="modif_project.html">to_ties()</a></code> <code><a href="modif_project.html">to_hypergraph()</a></code> </p>
+          <p><code><a href="modif_project.html">to_mode1()</a></code> <code><a href="modif_project.html">to_mode2()</a></code> <code><a href="modif_project.html">to_mode()</a></code> <code><a href="modif_project.html">to_linegraph()</a></code> <code><a href="modif_project.html">to_hypergraph()</a></code> </p>
         </td>
         <td><p>Modifying networks projection</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h3 id="converting">Converting <a href="#converting" class="anchor" aria-hidden="true"></a></h3>
-          <p class="section-desc"></p><p>Functions for permuting networks or constructing a network from the nodal correlations of another network.</p>
+          <p class="section-desc"></p><p>Functions for permuting networks or constructing a network from how alike another network’s nodes are.</p>
         </th>
       </tr></tbody><tbody><tr><td>
           <p><code><a href="modif_permutation.html">to_permuted()</a></code> </p>
         </td>
         <td><p>Network permutation</p></td>
       </tr><tr><td>
-          <p><code><a href="modif_correlation.html">to_correlation()</a></code> <code><a href="modif_correlation.html">to_cosine()</a></code> </p>
+          <p><code><a href="modif_proximity.html">to_proximity()</a></code> <code><a href="modif_proximity.html">to_correlation()</a></code> <code><a href="modif_proximity.html">to_cosine()</a></code> </p>
         </td>
-        <td><p>Node correlation</p></td>
+        <td><p>Node proximity</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h3 id="splits">Splits <a href="#splits" class="anchor" aria-hidden="true"></a></h3>
           <p class="section-desc"></p><p>Functions for splitting networks into a list of networks, or (re)joining a list of networks into a single network.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="modif_split.html">to_egos()</a></code> <code><a href="modif_split.html">to_subgraphs()</a></code> <code><a href="modif_split.html">to_components()</a></code> <code><a href="modif_split.html">to_waves()</a></code> <code><a href="modif_split.html">to_slices()</a></code> </p>
+          <p><code><a href="modif_split.html">to_egos()</a></code> <code><a href="modif_split.html">to_subgraphs()</a></code> <code><a href="modif_split.html">to_layers()</a></code> <code><a href="modif_split.html">to_components()</a></code> <code><a href="modif_split.html">to_waves()</a></code> <code><a href="modif_split.html">to_times()</a></code> <code><a href="modif_split.html">to_slices()</a></code> </p>
         </td>
         <td><p>Splitting networks into lists</p></td>
       </tr><tr><td>
@@ -292,7 +296,7 @@
         </td>
         <td><p>Listing the motifs a network can contain</p></td>
       </tr><tr><td>
-          <p><code><a href="modif_from.html">from_subgraphs()</a></code> <code><a href="modif_from.html">from_egos()</a></code> <code><a href="modif_from.html">from_waves()</a></code> <code><a href="modif_from.html">from_slices()</a></code> <code><a href="modif_from.html">from_ties()</a></code> </p>
+          <p><code><a href="modif_from.html">from_subgraphs()</a></code> <code><a href="modif_from.html">from_egos()</a></code> <code><a href="modif_from.html">from_waves()</a></code> <code><a href="modif_from.html">from_slices()</a></code> <code><a href="modif_from.html">from_times()</a></code> <code><a href="modif_from.html">from_layers()</a></code> <code><a href="modif_from.html">from_ties()</a></code> </p>
         </td>
         <td><p>Joining lists of networks, graphs, and matrices</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -300,9 +304,9 @@
           <p class="section-desc"></p><p>Functions for modifying how missing data is treated.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="modif_miss.html">na_to_zero()</a></code> <code><a href="modif_miss.html">na_to_mean()</a></code> </p>
+          <p><code><a href="modif_miss.html">impute_ties()</a></code> <code><a href="modif_miss.html">impute_nodes()</a></code> <code><a href="modif_miss.html">to_imputed()</a></code> </p>
         </td>
-        <td><p>Modifying missing tie data</p></td>
+        <td><p>Imputing missing and incomplete network data</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="describing">Describing <a href="#describing" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Functions for identifying properties of networks, nodes (where the function prefix is <code>node_</code>), or ties (where the function prefix is <code>tie_</code>).</p>
@@ -312,7 +316,7 @@
           <p class="section-desc"></p><p><code>describe_*()</code> functions return a character string describing a network.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="class_describe.html">describe_network()</a></code> <code><a href="class_describe.html">describe_nodes()</a></code> <code><a href="class_describe.html">describe_ties()</a></code> <code><a href="class_describe.html">describe_changes()</a></code> </p>
+          <p><code><a href="class_describe.html">describe_network()</a></code> <code><a href="class_describe.html">describe_nodes()</a></code> <code><a href="class_describe.html">describe_ties()</a></code> <code><a href="class_describe.html">describe_changes()</a></code> <code><a href="class_describe.html">describe_transformations()</a></code> </p>
         </td>
         <td><p>Describe a network</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -320,11 +324,11 @@
           <p class="section-desc"></p><p><code>net_*()</code> functions return a numeric output.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="measure_dims.html">net_nodes()</a></code> <code><a href="measure_dims.html">net_modes()</a></code> <code><a href="measure_dims.html">net_ties()</a></code> <code><a href="measure_dims.html">net_layers()</a></code> <code><a href="measure_dims.html">layer_ties()</a></code> <code><a href="measure_dims.html">net_waves()</a></code> <code><a href="measure_dims.html">mode_nodes()</a></code> <code><a href="measure_dims.html">net_dims()</a></code> </p>
+          <p><code><a href="measure_dims.html">net_nodes()</a></code> <code><a href="measure_dims.html">net_modes()</a></code> <code><a href="measure_dims.html">net_ties()</a></code> <code><a href="measure_dims.html">net_layers()</a></code> <code><a href="measure_dims.html">layer_ties()</a></code> <code><a href="measure_dims.html">net_waves()</a></code> <code><a href="measure_dims.html">net_times()</a></code> <code><a href="measure_dims.html">mode_nodes()</a></code> <code><a href="measure_dims.html">net_dims()</a></code> </p>
         </td>
         <td><p>Describing network dimensions</p></td>
       </tr><tr><td>
-          <p><code><a href="measure_missingness.html">net_node_missing()</a></code> <code><a href="measure_missingness.html">net_tie_missing()</a></code> </p>
+          <p><code><a href="measure_missingness.html">net_node_missing()</a></code> <code><a href="measure_missingness.html">net_tie_missing()</a></code> <code><a href="measure_missingness.html">net_node_incomplete()</a></code> <code><a href="measure_missingness.html">net_tie_incomplete()</a></code> </p>
         </td>
         <td><p>Describing network missingness</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -352,7 +356,7 @@
         </td>
         <td><p>Marking networks cognitive formats</p></td>
       </tr><tr><td>
-          <p><code><a href="mark_format_node.html">is_twomode()</a></code> <code><a href="mark_format_node.html">is_hypergraph()</a></code> <code><a href="mark_format_node.html">is_labelled()</a></code> <code><a href="mark_format_node.html">is_attributed()</a></code> <code><a href="mark_format_node.html">is_egonet()</a></code> </p>
+          <p><code><a href="mark_format_node.html">is_twomode()</a></code> <code><a href="mark_format_node.html">is_multilevel()</a></code> <code><a href="mark_format_node.html">is_hypergraph()</a></code> <code><a href="mark_format_node.html">is_labelled()</a></code> <code><a href="mark_format_node.html">is_attributed()</a></code> <code><a href="mark_format_node.html">is_egonet()</a></code> </p>
         </td>
         <td><p>Marking networks nodal formats</p></td>
       </tr><tr><td>
@@ -376,7 +380,7 @@
           <p class="section-desc"></p><p><code>tie_*()</code> functions return a vector of values the length of the ties in the network.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="measure_attributes_ties.html">tie_attribute()</a></code> <code><a href="measure_attributes_ties.html">tie_weights()</a></code> <code><a href="measure_attributes_ties.html">tie_signs()</a></code> <code><a href="measure_attributes_ties.html">tie_is_twomode()</a></code> </p>
+          <p><code><a href="measure_attributes_ties.html">tie_attribute()</a></code> <code><a href="measure_attributes_ties.html">tie_weights()</a></code> <code><a href="measure_attributes_ties.html">tie_signs()</a></code> <code><a href="measure_attributes_ties.html">tie_is_twomode()</a></code> <code><a href="measure_attributes_ties.html">tie_is_parallel()</a></code> <code><a href="measure_attributes_ties.html">tie_is_backbone()</a></code> </p>
         </td>
         <td><p>Describing attributes of ties in a network</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
@@ -420,9 +424,17 @@
         </td>
         <td><p>Multiplex graph object of friends, social, and task ties (McFarland 2001)</p></td>
       </tr><tr><td>
+          <p><code><a href="ison_bankwiring.html">ison_bankwiring</a></code> </p>
+        </td>
+        <td><p>One-mode multiplex, signed network of the bank wiring room (Roethlisberger and Dickson 1939)</p></td>
+      </tr><tr><td>
           <p><code><a href="ison_brandes.html">ison_brandes</a></code> </p>
         </td>
         <td><p>One-mode and two-mode centrality demonstration networks</p></td>
+      </tr><tr><td>
+          <p><code><a href="ison_classmates.html">ison_classmates</a></code> </p>
+        </td>
+        <td><p>One-mode longitudinal network of Dutch classmates (Knecht 2008)</p></td>
       </tr><tr><td>
           <p><code><a href="ison_dolphins.html">ison_dolphins</a></code> </p>
         </td>
@@ -431,6 +443,14 @@
           <p><code><a href="ison_emotions.html">ison_emotions</a></code> </p>
         </td>
         <td><p>One-mode, weighted network of emotional transitions (Trampe et al. 2015)</p></td>
+      </tr><tr><td>
+          <p><code><a href="ison_florentine.html">ison_florentine</a></code> </p>
+        </td>
+        <td><p>One-mode multiplex network of Florentine families (Padgett and Ansell 1993)</p></td>
+      </tr><tr><td>
+          <p><code><a href="ison_fraternity.html">ison_fraternity</a></code> </p>
+        </td>
+        <td><p>One-mode longitudinal network of fraternity preferences (Newcomb 1961)</p></td>
       </tr><tr><td>
           <p><code><a href="ison_hightech.html">ison_hightech</a></code> </p>
         </td>
@@ -471,6 +491,10 @@
           <p><code><a href="ison_southern_women.html">ison_southern_women</a></code> </p>
         </td>
         <td><p>Two-mode southern women (Davis, Gardner and Gardner 1941)</p></td>
+      </tr><tr><td>
+          <p><code><a href="ison_tailorshop.html">ison_tailorshop</a></code> </p>
+        </td>
+        <td><p>One-mode multiplex, longitudinal network of a Zambian tailor shop (Kapferer 1972)</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h3 id="fictional-data">Fictional data <a href="#fictional-data" class="anchor" aria-hidden="true"></a></h3>
           <p class="section-desc"></p><p><code>fict_</code> data are popular fictional datasets, treating recognisable themes, and often have more attributes coded.</p>
@@ -478,7 +502,7 @@
       </tr></tbody><tbody><tr><td>
           <p><code><a href="fict_actually.html">fict_actually</a></code> </p>
         </td>
-        <td><p>Two-mode network of Love Actually characters and their scene appearances (Robinson 2015)</p></td>
+        <td><p>Multilevel network of Love Actually characters, their relationships, and their scene appearances (Robinson 2015)</p></td>
       </tr><tr><td>
           <p><code><a href="fict_friends.html">fict_friends</a></code> </p>
         </td>
@@ -494,7 +518,7 @@
       </tr><tr><td>
           <p><code><a href="fict_marvel.html">fict_marvel</a></code> </p>
         </td>
-        <td><p>Multiplex two-mode affiliation and one-mode signed relationship network of Marvel comic book characters (Yuksel 2017)</p></td>
+        <td><p>Multilevel signed network of Marvel comic book characters and their teams (Yuksel 2017)</p></td>
       </tr><tr><td>
           <p><code><a href="fict_potter.html">fict_potter</a></code> </p>
         </td>
@@ -524,6 +548,10 @@
         </td>
         <td><p>One-mode undirected network of co-purchased books about US politics on Amazon</p></td>
       </tr><tr><td>
+          <p><code><a href="irps_corruption.html">irps_corruption</a></code> </p>
+        </td>
+        <td><p>One-mode multiplex network of the Czech Rath corruption affair (Diviak et al. 2019)</p></td>
+      </tr><tr><td>
           <p><code><a href="irps_nuclear.html">irps_nuclear</a></code> </p>
         </td>
         <td><p>Two-mode dynamic discourse network of Germany's nuclear energy phase-out (Haunss and Hollway 2023)</p></td>
@@ -531,6 +559,14 @@
           <p><code><a href="irps_revere.html">irps_revere</a></code> </p>
         </td>
         <td><p>Two-mode network of Paul Revere's (Fischer 1995)</p></td>
+      </tr><tr><td>
+          <p><code><a href="irps_supremecourt.html">irps_supremecourt</a></code> </p>
+        </td>
+        <td><p>Two-mode network of votes on the Rehnquist court (Spaeth 1990)</p></td>
+      </tr><tr><td>
+          <p><code><a href="irps_tribes.html">irps_tribes</a></code> </p>
+        </td>
+        <td><p>One-mode signed network of Gahuku-Gama sub-tribes (Read 1954)</p></td>
       </tr><tr><td>
           <p><code><a href="irps_usgeo.html">irps_usgeo</a></code> </p>
         </td>

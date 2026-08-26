@@ -32,7 +32,7 @@ and the ties are calls.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -198,8 +198,8 @@ two orders of magnitude.
 For the same reason, <code>collect_pkg()</code> collects only calls to the functions
 defined in the directory by default.</p>
 <p>Both return networks that can be scoped further using, for example,
-<code><a href="modif_scope.html">to_ego()</a></code>, <code><a href="modif_plexity.html">to_uniplex()</a></code>, <code><a href="modif_scope.html">to_giant()</a></code>, <code><a href="modif_scope.html">to_no_isolates()</a></code>,
-<code><a href="modif_scope.html">to_blocks()</a></code>, or <code><a href="modif_scope.html">to_subgraph()</a></code>.</p>
+<code><a href="modif_scope.html">to_ego()</a></code>, <code><a href="modif_plexity.html">to_uniplex()</a></code>, <code><a href="modif_scope.html">to_giant()</a></code>, <code><a href="manip_nodes_num.html">delete_isolates()</a></code>,
+<code><a href="modif_scope.html">to_blockmodel()</a></code>, or <code><a href="modif_scope.html">to_subgraph()</a></code>.</p>
 <p><code>collect_cran()</code> relies on <code><a href="https://rdrr.io/r/utils/available.packages.html" class="external-link">utils::available.packages()</a></code>,
 which caches the repository index for an hour by default.
 Set <code>options(max.repo.cache.age = )</code> for a fresher or staler snapshot.</p>
@@ -210,7 +210,7 @@ by <a href="https://github.com/stocnet/manynet/issues" class="external-link">rai
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="modif_scope.html">to_ego()</a></code>, <code><a href="modif_plexity.html">to_uniplex()</a></code>, <code><a href="modif_scope.html">to_no_isolates()</a></code></p>
+    <div class="dont-index"><p><code><a href="modif_scope.html">to_ego()</a></code>, <code><a href="modif_plexity.html">to_uniplex()</a></code>, <code><a href="manip_nodes_num.html">delete_isolates()</a></code></p>
 <p>Other makes:
 <code><a href="make_create.html">make_create</a></code>,
 <code><a href="make_ego.html">make_ego</a></code>,
@@ -235,7 +235,7 @@ by <a href="https://github.com/stocnet/manynet/issues" class="external-link">rai
 <span class="r-in"><span><span class="co"># The network of calls among the functions in the working directory:</span></span></span>
 <span class="r-in"><span><span class="fu">collect_pkg</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Collapsed onto generics, where the directory is a package:</span></span></span>
-<span class="r-in"><span><span class="co"># to_blocks(collect_pkg(), node_attribute(collect_pkg(), "generic"))</span></span></span>
+<span class="r-in"><span><span class="co"># to_blockmodel(collect_pkg(), node_attribute(collect_pkg(), "generic"))</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -90,22 +90,27 @@
 <div id="contributing" class="section level1">
 
 <p>Contributions to <code>manynet</code>, whether in the form of issue identification, bug fixes, new code or documentation are encouraged and welcome.</p>
+<p>Please note that the <code>manynet</code> project is released with a <a href="CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 <div class="section level2">
 <h2 id="git">Git<a class="anchor" aria-label="anchor" href="#git"></a></h2>
 <p><code>stocnet</code> projects are maintained using the git version control system. A plain-English introduction to git can be found <a href="https://blog.red-badger.com/2016/11/29/gitgithub-in-plain-english" class="external-link">here</a>. I recommend you read this before continuing. A more recent motivation can be found <a href="https://www.r-bloggers.com/2024/04/git-gud-version-control-best-practices/" class="external-link">here</a>. It will explain the basics of git version control, committing and repos, pulling and pushing, branching and merging.</p>
 <p>Using git from the command line on your lap- or desktop can be intimidating, but I recommend <a href="https://git-fork.com" class="external-link">Fork</a> software for Mac and Windows. This allows mostly visual management of commits, diffs, branches, etc. There are various other git software packages available, but this one is fairly fully featured.</p>
 <p>The GitHub page allows to access the issues assigned to you and check the commits. You can also access the documents in the repository, although this won’t be necessary after you have cloned it on your computer via Fork.</p>
 <div class="section level3">
+<h3 id="identifying-issues">Identifying issues<a class="anchor" aria-label="anchor" href="#identifying-issues"></a></h3>
+<p>Please use the issues tracker on GitHub to identify any function-related issues. You can use these issues to track progress on the issue and to comment or continue a conversation on that issue. The most useful issues are ones that precisely identify an error, or propose a test that should pass but instead fails. Examples for documentation are also most welcome.</p>
+</div>
+<div class="section level3">
 <h3 id="cloning">Cloning<a class="anchor" aria-label="anchor" href="#cloning"></a></h3>
 <p>Once you have downloaded Fork, the first thing you have to do is to clone the remote repository on your computer. Before cloning, you will be able to choose on which <code>branch</code> you want to work: develop or main.</p>
 </div>
 <div class="section level3">
 <h3 id="pull">Pull<a class="anchor" aria-label="anchor" href="#pull"></a></h3>
-<p>This command allows you to <code>pull</code> changes from the remote repository to your local repository on Sourcetree. Make sure you do that before starting working on your files so you have the newest versions. When pulling, make sure you choose master or develop, depending on the branch you decided to work with. Once you pulled, you have now all the new commits and files and you can start working on your assigned tasks. Note that you can access and open the files either from the Finder or from Fork. Some documents might be stored using Large File Storage (LFS) to save space on the repository.</p>
+<p>This command allows you to <code>pull</code> changes from the remote repository to your local repository in Fork. Make sure you do that before starting working on your files so you have the newest versions. When pulling, make sure you choose main or develop, depending on the branch you decided to work with. Once you pulled, you have now all the new commits and files and you can start working on your assigned tasks. Note that you can access and open the files either from the Finder or from Fork. Some documents might be stored using Large File Storage (LFS) to save space on the repository.</p>
 </div>
 <div class="section level3">
 <h3 id="commit-and-push">Commit and Push<a class="anchor" aria-label="anchor" href="#commit-and-push"></a></h3>
-<p>Once you have made modifications on a file and saved them, it will appear in your <code>commit</code> window. Here you can control one last time your file, write the commit message with the issue reference (see below) and commit. Once your commit is ready, you can <code>push</code> them to the origin/main repository. Note that you can click the “push immediately” box in the commit window if you don’t want to do it in two steps. If you are working on a separate branch, it is important to select this branch when pushing to origin/main.</p>
+<p>Once you have made modifications on a file and saved them, it will appear in your <code>commit</code> window. Here you can control one last time your file, write the commit message with the issue reference (see below) and commit. Once your commit is ready, you can <code>push</code> it to the remote repository. Note that you can click the “push immediately” box in the commit window if you don’t want to do it in two steps. If you are working on a separate branch, it is important to select this branch when pushing.</p>
 </div>
 <div class="section level3">
 <h3 id="branching-and-ci">Branching and CI<a class="anchor" aria-label="anchor" href="#branching-and-ci"></a></h3>
@@ -114,10 +119,6 @@
 <li>PRs into <code>main</code> trigger <a href="workflows/prchecks.yml">prchecks.yml</a>: R CMD check (macOS/Windows/Linux), binary build, codecov, lintr, spell check, a reverse-dependency check, a check that the tutorial articles are in sync with the tutorials, and PR metadata checks (DESCRIPTION version bump, PR title/description conventions).</li>
 <li>Merges/pushes to <code>main</code> trigger <a href="workflows/pushrelease.yml">pushrelease.yml</a>: check, auto-bump version tag, GitHub release with binaries, then pkgdown site deploy.</li>
 </ul></div>
-</div>
-<div class="section level2">
-<h2 id="style">Style<a class="anchor" aria-label="anchor" href="#style"></a></h2>
-<p>In terms of style, we are aiming for pleasant predictability in terms of user experience. To that end, we have a regular syntax that users can rely on producing expected effects. Functions in the same family (<code>as_*()</code>, <code>is_*()</code>, <code>create_*()</code>, etc.) should share argument order and naming, so that behaviour is guessable across the family.</p>
 </div>
 <div class="section level2">
 <h2 id="package-architecture">Package architecture<a class="anchor" aria-label="anchor" href="#package-architecture"></a></h2>
@@ -132,7 +133,12 @@
 <a href="https://stocnet.github.io/autograph/" class="external-link">autograph</a>: functions for drawing graphs and plotting network analytic or modelling results and diagnostics, along with deep (often institutional) theming. All plot methods should live there.</li>
 <li>
 <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a>: functions for testing and modelling, e.g. QAP/MRQAP and diffusion models.</li>
-</ul></div>
+</ul><p>Where a function computes how alike two nodes are, the line between <a href="https://stocnet.github.io/manynet/">manynet</a> and <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a> runs as follows. Arithmetic over a network’s own cells — comparing two nodes’ profiles of ties or affiliations, as <code><a href="reference/modif_project.html">to_mode1()</a></code> and <code><a href="reference/modif_proximity.html">to_proximity()</a></code> do — is a transformation of the data, and belongs here as a <code>to_*()</code> function. Algorithms that iterate or recurse to a fixed point — RoleSim, REGE, CONCOR — are analytic, and belong in <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a>, which calls into this package’s <code>to_*()</code> functions for the profile arithmetic they need.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="style">Style<a class="anchor" aria-label="anchor" href="#style"></a></h2>
+<p>In terms of style, we are aiming for pleasant predictability in terms of user experience. To that end, we have a regular syntax that users can rely on producing expected effects. Functions in the same family (<code>as_*()</code>, <code>is_*()</code>, <code>create_*()</code>, etc.) should share argument order and naming, so that behaviour is guessable across the family.</p>
 <div class="section level3">
 <h3 id="common-commands">Common commands<a class="anchor" aria-label="anchor" href="#common-commands"></a></h3>
 <p>This is a standard R package developed with <code>devtools</code>/<code>roxygen2</code>. Run these from an R console with the working directory set to the package root (or via <code>Rscript -e</code>).</p>
@@ -155,7 +161,7 @@
 <li>Build pkgdown site locally: <code><a href="https://pkgdown.r-lib.org/reference/build_site.html" class="external-link">pkgdown::build_site()</a></code>
 </li>
 </ul><p>There is no non-R build system — no package.json/Makefile.</p>
-<p>Note that <code>README.md</code> is generated from <code>README.Rmd</code> — edit <code>README.Rmd</code> and re-knit, never edit <code>README.md</code> directly. Similarly, <code>vignettes/articles/*.Rmd</code> (the static pkgdown versions of the <a href="https://rstudio.github.io/learnr/" class="external-link">learnr</a> tutorials) are generated from <code>inst/tutorials/*/*.Rmd</code> by <a href="../data-raw/build_tutorial_articles.R">data-raw/build_tutorial_articles.R</a> — after editing a tutorial, re-run that script and commit the regenerated files rather than editing them directly (CI checks that the two are in sync).</p>
+<p>Some files are generated rather than edited directly — <code>README.md</code>, the tutorial articles in <code>vignettes/articles/</code>, and the cheatsheet. See <a href="#readme-and-website">README and Website</a> below for which source each is built from.</p>
 </div>
 <div class="section level3">
 <h3 id="file-organization-file-naming--function-family">File organization (file naming = function family)<a class="anchor" aria-label="anchor" href="#file-organization-file-naming--function-family"></a></h3>
@@ -169,9 +175,9 @@
 </td>
 <td>the <code>as_*()</code> translation layer between representations (<code><a href="reference/coerce_graph.html">as_igraph()</a></code>, <code><a href="reference/coerce_graph.html">as_tidygraph()</a></code>, <code><a href="reference/coerce_graph.html">as_network()</a></code>, <code><a href="reference/coerce_list.html">as_matrix()</a></code>, <code><a href="reference/coerce_list.html">as_edgelist()</a></code>, <code><a href="reference/coerce_graph.html">as_siena()</a></code>, <code><a href="reference/coerce_graph.html">as_diffnet()</a></code>, …), implemented as S3 methods dispatching on input class</td>
 </tr><tr><td><code>class_*.R</code></td>
-<td>the <code>mnet</code> S3 class itself (<code>class_networks.R</code>: <code>print.mnet</code>, <code>$</code>/<code>$&lt;-</code> accessors, node/tie/change data model), related result classes (<code>class_measures.R</code>, <code>class_members.R</code>, <code>class_motifs.R</code>, <code>class_models.R</code>), the <code>snet_*()</code> CLI layer (<code>class_interface.R</code>), input validation (<code>class_validate.R</code>), and the <code>describe_*()</code> helpers behind <code>print.mnet</code> (<code>class_describe.R</code>)</td>
+<td>the network classes themselves (<code>class_stocnet.R</code>: <code><a href="reference/make_stocnet.html">make_stocnet()</a></code>, <code><a href="reference/make_stocnet.html">print.stocnet()</a></code>, the info/nodes/ties/changes/global data model; <code>class_networks.R</code>: the legacy <code>mnet</code> class, <code>print.mnet</code>, <code>$</code>/<code>$&lt;-</code> accessors), related result classes (<code>class_measures.R</code>, <code>class_members.R</code>, <code>class_motifs.R</code>, <code>class_models.R</code>), the <code>snet_*()</code> CLI layer (<code>class_interface.R</code>), input validation (<code>class_validate.R</code>: <code><a href="reference/make_stocnet.html">validate_stocnet()</a></code> and its component validators), and the <code>describe_*()</code> helpers behind the print methods (<code>class_describe.R</code>)</td>
 </tr><tr><td><code>manip_*.R</code></td>
-<td>dplyr-style verbs for manipulating nodes/ties/attributes (<code>manip_nodes.R</code>, <code>manip_ties.R</code>, <code>manip_global.R</code>, <code>manip_info.R</code>, <code>manip_changes.R</code>)</td>
+<td>dplyr-style verbs for manipulating nodes/ties/attributes (<code>manip_nodes.R</code>, <code>manip_ties.R</code>, <code>manip_globals.R</code>, <code>manip_info.R</code>, <code>manip_changes.R</code>)</td>
 </tr><tr><td><code>mark_*.R</code></td>
 <td>logical/predicate functions returning <code>TRUE</code>/<code>FALSE</code> or marks about a network, e.g. the <code>is_*()</code> family (<code>mark_classes.R</code>, <code>mark_features.R</code>, <code>mark_format.R</code>, <code>mark_changes.R</code>)</td>
 </tr><tr><td><code>modif_*.R</code></td>
@@ -188,20 +194,60 @@
 </tr></tbody></table><p>Shared roxygen documentation blocks live in <code>man-roxygen/</code> as <code>@template</code> fragments — reuse these via <code>@template</code> tags instead of re-writing standard <code>@param</code>/<code>@returns</code> docs.</p>
 </div>
 <div class="section level3">
-<h3 id="the-mnet-object-model">The <code>mnet</code> object model<a class="anchor" aria-label="anchor" href="#the-mnet-object-model"></a></h3>
-<p><code>mnet</code> is layered on top of <a href="https://r.igraph.org/" class="external-link">igraph</a>/<code>tbl_graph</code> (see <a href="../R/class_networks.R">R/class_networks.R</a>). Conventions to preserve when writing or editing functions:</p>
-<ul><li>Node table: first column is always <code>name</code>; reserved columns are <code>active</code> (changing networks) and <code>type</code> (multimodal/two-mode).</li>
-<li>Tie table: first two columns are always <code>from</code> and <code>to</code> (even for undirected networks); reserved columns are <code>weight</code>, <code>wave</code> (longitudinal), <code>type</code> (multiplex), and <code>sign</code> (signed).</li>
-<li>Changes (a longitudinal changelog) are stored as a graph attribute, not as extra rows in nodes/ties, with columns <code>wave</code>/<code>time</code>, <code>node</code>, <code>var</code>, <code>value</code>.</li>
-<li>Because an <code>mnet</code> object is simultaneously a valid <code>igraph</code> and <code>tbl_graph</code> object, prefer writing new functions against <a href="https://r.igraph.org/" class="external-link">igraph</a>/<a href="https://tidygraph.data-imaginist.com" class="external-link">tidygraph</a> primitives (via the <code><a href="reference/coerce_graph.html">as_igraph()</a></code>/<code><a href="reference/coerce_graph.html">as_tidygraph()</a></code> coercions) rather than hand-rolling data structure access.</li>
-</ul></div>
+<h3 id="the-stocnet-object-model">The <code>stocnet</code> object model<a class="anchor" aria-label="anchor" href="#the-stocnet-object-model"></a></h3>
+<p><code>stocnet</code> is the package’s native class for richer networks (see <a href="../R/class_stocnet.R">R/class_stocnet.R</a>), constructed with <code><a href="reference/make_stocnet.html">make_stocnet()</a></code> or coerced to with <code><a href="reference/coerce_graph.html">as_stocnet()</a></code>. It is <strong>not</strong> layered on top of <a href="https://r.igraph.org/" class="external-link">igraph</a>/<code>tbl_graph</code>; it is a plain list of tibbles plus metadata, with six components — <code>info</code>, <code>nodes</code>, <code>ties</code>, <code>changes</code>, <code>globals</code>, and <code>missings</code> — any of which may be <code>NULL</code>. Every component but <code>info</code> is a table, which is what the plural name signifies. This is what allows multimodal, multiplex, longitudinal/dynamic and modelling-oriented networks (e.g. round-tripping <a href="https://www.stats.ox.ac.uk/~snijders/siena/" class="external-link">RSiena</a> <code>sienadata</code> objects) to live in one object. Conventions to preserve when writing or editing functions:</p>
+<ul><li>
+<code>info</code>: a list of network-level metadata. Reserved elements include <code>name</code>, <code>modes</code>, <code>layers</code>, <code>directed</code> (logical, optionally named per layer), <code>focal</code> (dependent variables), <code>centered</code>, <code>siena</code> (RSiena-specific metadata), plus provenance fields <code>doi</code>, <code>date</code>, <code>location</code>, and <code>source</code>. Per-layer entries are named after a layer and may carry <code>sender</code>, <code>recipient</code>, and <code>update</code>. Several of these follow the GRAND project’s FAIR-aligned metadata standards.</li>
+<li>
+<code>nodes</code>: one row per node. The label column is <code>label</code> (not <code>name</code>); reserved columns are <code>mode</code> (multimodal/two-mode), <code>active</code>/<code>present</code> (changing networks), and <code>na</code>.</li>
+<li>
+<code>ties</code>: one row per tie. <code>from</code> and <code>to</code> are required (even for undirected networks) and are stored as <em>integer indices</em> into <code>nodes</code>, not labels — <code><a href="reference/make_stocnet.html">make_stocnet()</a></code> matches labels to indices on construction. Reserved columns are <code>layer</code> (multiplex), <code>weight</code> (negative weights mean a signed network, a missing weight a tie of unknown value), <code>time</code> (longitudinal), and <code>by</code> (triadic/tertius ties). Every row is a tie: the ties a network records as <em>missing</em> are held elsewhere (below). <code><a href="reference/make_stocnet.html">make_stocnet()</a></code> does accept an <code>na</code> column marking which rows are missing ties, since that is how the data often arrives, but it splits those rows out rather than storing them.</li>
+<li>
+<code>changes</code>: a nodal changelog, held as its own component rather than as extra rows in <code>nodes</code>/<code>ties</code>, with columns <code>time</code>, <code>node</code>, <code>var</code>, and <code>value</code>, plus an optional <code>layer</code> where a change applies to one layer and not others. <code>value</code> is stored as a list-column so changes of any class/length can be logged, but prints as a value plus a type label. A change states what the variable becomes <em>from that moment on</em>, so it is carried forward until another change says otherwise — a node that stops reporting and starts again therefore holds two changes.</li>
+<li>
+<code>globals</code>: network-level variables over time, with columns <code>var</code>, <code>value</code>, and optionally <code>time</code>.</li>
+<li>
+<code>missings</code>: the ties the network could have observed and did not, with the same columns as <code>ties</code> — usually <code>NULL</code>, see below.</li>
+<li>
+<strong>Missingness</strong> is recorded as the <em>nodes that did not report</em>, not as one record per tie, since that is nearly always what the data means: <code>nodes$na</code> where a node reports at no point, and a change of the <code>na</code> variable where it varies over time. Every tie such a node would report is then missing — those it sends where the layer is directed, both directions where it is undirected. The <code>missings</code> component holds only the residual, for ties no node’s nonresponse implies. <code><a href="reference/coerce_list.html">as_missinglist()</a></code> derives the whole set, and everything else goes through it. See <code><a href="reference/make_stocnet.html">?make_stocnet</a></code> for the four states a tie can be in, and keep them apart: a tie to an <em>inactive</em> node is not missing, and a tie of <code>NA</code> weight is present but unvalued. Missing ties are not ties, so nothing counts, returns, draws, or measures them unless it asks for them by name.</li>
+<li>Structure is enforced by <code><a href="reference/make_stocnet.html">validate_stocnet()</a></code> (see <a href="../R/class_validate.R">R/class_validate.R</a>), which <code><a href="reference/make_stocnet.html">make_stocnet()</a></code> calls on construction. It checks required columns, coerces reserved columns to their expected classes, and renames common aliases (e.g. <code>name</code>/<code>id</code> → <code>label</code>, <code>sender</code>/<code>ego</code> → <code>from</code>) with an informative message. Extend the validators there rather than re-checking structure inside individual functions.</li>
+<li>Because <code>stocnet</code> is a list rather than an <code>igraph</code>, do not reach for <a href="https://r.igraph.org/" class="external-link">igraph</a> primitives on it. Either write an S3 method operating on the tibbles directly (<code>.data$nodes</code>, <code>.data$ties</code>, …), or coerce with <code><a href="reference/coerce_graph.html">as_igraph()</a></code>/<code><a href="reference/coerce_graph.html">as_tidygraph()</a></code> where the operation is genuinely graph-theoretic. Return a <code>stocnet</code> when you were given one: rebuild with <code><a href="reference/make_stocnet.html">make_stocnet()</a></code> so validation and indexing re-run.</li>
+</ul><p>The older <code>mnet</code> class (<a href="../R/class_networks.R">R/class_networks.R</a>) — a thin class over <code>igraph</code>/<code>tbl_graph</code>, with <code>name</code>-first nodes, <code>type</code>/<code>wave</code>/<code>sign</code> tie attributes, and changes stored as a graph attribute — is being progressively deprecated in favour of <code>stocnet</code>. Keep its methods working, but write new functionality against <code>stocnet</code>.</p>
+</div>
 <div class="section level3">
 <h3 id="two-mode-networks">Two-mode networks<a class="anchor" aria-label="anchor" href="#two-mode-networks"></a></h3>
 <p>Many <code>create_*()</code>/<code>generate_*()</code> functions take an <code>n</code> argument that can be a single integer (one-mode network) or a length-2 integer vector (two-mode network, the sizes of each mode). Coercion functions detect and handle two-mode structure via the <code>twomode</code> argument and the <code>type</code> vertex attribute.</p>
 </div>
 <div class="section level3">
 <h3 id="console-messaging">Console messaging<a class="anchor" aria-label="anchor" href="#console-messaging"></a></h3>
-<p>All user-facing messages go through the <code>snet_*()</code> wrappers in <a href="../R/class_interface.R">R/class_interface.R</a> — <code><a href="reference/interface.html">snet_info()</a></code>, <code><a href="reference/interface.html">snet_warn()</a></code>, <code><a href="reference/interface.html">snet_abort()</a></code>, <code><a href="reference/interface.html">snet_success()</a></code>, <code><a href="reference/interface.html">snet_prompt()</a></code>, <code><a href="reference/interface.html">snet_unavailable()</a></code>, plus <code>snet_progress_*()</code> — rather than base <code><a href="https://rdrr.io/r/base/message.html" class="external-link">message()</a></code>/<code><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop()</a></code>/<code><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning()</a></code>. These respect <code>options(snet_verbosity = "quiet")</code> and give consistent <a href="https://cli.r-lib.org" class="external-link">cli</a>-styled output. Use <code><a href="reference/interface.html">snet_unavailable()</a></code> for not-yet-implemented features. Note that these functions wrap <a href="https://cli.r-lib.org" class="external-link">cli</a> functionality, so braces can be used instead of <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste()</a></code> to add variables/values to the output. The <code>snet_*()</code> wrappers additionally allow multiline input.</p>
+<p>All user-facing messages go through the <code>snet_*()</code> wrappers in <a href="../R/class_interface.R">R/class_interface.R</a>, rather than base <code><a href="https://rdrr.io/r/base/message.html" class="external-link">message()</a></code>/<code><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop()</a></code>/<code><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning()</a></code> or <a href="https://cli.r-lib.org" class="external-link">cli</a> calls directly:</p>
+<table class="table"><colgroup><col width="50%"><col width="50%"></colgroup><thead><tr><th>Wrapper</th>
+<th>Use for</th>
+</tr></thead><tbody><tr><td><code><a href="reference/interface.html">snet_abort()</a></code></td>
+<td>errors: the function cannot proceed</td>
+</tr><tr><td><code><a href="reference/interface.html">snet_warn()</a></code></td>
+<td>the function proceeds, but the user should know something</td>
+</tr><tr><td><code><a href="reference/interface.html">snet_info()</a></code></td>
+<td>notable information about what was done, e.g. a defaulted argument</td>
+</tr><tr><td><code><a href="reference/interface.html">snet_minor_info()</a></code></td>
+<td>incidental detail, e.g. tidying node attributes to <code>stocnet</code> conventions</td>
+</tr><tr><td><code><a href="reference/interface.html">snet_success()</a></code></td>
+<td>confirmation that a requested operation completed</td>
+</tr><tr><td><code><a href="reference/interface.html">snet_prompt()</a></code></td>
+<td>interactive questions to the user</td>
+</tr><tr><td><code><a href="reference/interface.html">snet_unavailable()</a></code></td>
+<td>not-yet-implemented features</td>
+</tr><tr><td>
+<code><a href="reference/progress.html">snet_progress_step()</a></code>, <code><a href="reference/progress.html">snet_progress_along()</a></code>, <code><a href="reference/progress.html">snet_progress_seq()</a></code>, <code><a href="reference/progress.html">snet_progress_nodes()</a></code>
+</td>
+<td>progress reporting in longer-running loops</td>
+</tr></tbody></table><p>Every wrapper except <code><a href="reference/interface.html">snet_abort()</a></code> (and <code><a href="reference/interface.html">snet_prompt()</a></code>) is silenced by <code>options(snet_verbosity = "quiet")</code>, which is the <em>default</em> — so informational output must never be load-bearing, and errors must carry everything the user needs to act. Users opt in with e.g. <code>options(snet_verbosity = "verbose")</code>.</p>
+<p>These wrappers pass their input to <a href="https://cli.r-lib.org" class="external-link">cli</a>, so:</p>
+<ul><li>Braces interpolate, replacing <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste()</a></code>: <code>snet_abort("{.val {unknown}} could not be found on CRAN.")</code>.</li>
+<li>Use <a href="https://cli.r-lib.org" class="external-link">cli</a> inline classes to mark up what you refer to — <code>{.fn}</code> for functions, <code>{.arg}</code>/<code>{.var}</code> for arguments and variables, <code>{.val}</code> for values, <code>{.url}</code> for links — so that styling stays consistent across the ecosystem.</li>
+<li>Use <a href="https://cli.r-lib.org" class="external-link">cli</a>’s pluralisation rather than hand-written branches: <code>snet_abort("Node{?s} {.val {missing}} {?was/were} not found in the network.")</code>.</li>
+<li>Multiple strings can be passed as separate arguments for multiline messages.</li>
+</ul><p>Messages, warnings, and errors should be written in a way that is useful for new and advanced users alike. This might include listing likely causes, mentioning objects or variables explicitly, and indicating next actions clearly. Prefer “<code>{.arg n}</code> must be a single integer or a length-2 vector for a two-mode network” over “invalid input”.</p>
 </div>
 <div class="section level3">
 <h3 id="tests">Tests<a class="anchor" aria-label="anchor" href="#tests"></a></h3>
@@ -210,14 +256,23 @@
 <p><code>testthat</code> edition 3 with parallel execution is configured in <code>DESCRIPTION</code> (<code>Config/testthat/parallel: true</code>); <code>Config/testthat/start-first</code> prioritises <code>tutorials_manynet, mark_is</code>.</p>
 </div>
 <div class="section level3">
+<h3 id="readme-and-website">README and Website<a class="anchor" aria-label="anchor" href="#readme-and-website"></a></h3>
+<p>The README offers a landing page for new users, both on the Github repository as well as on the website. As such, it should make a compelling case for the value added of the package, and not drift out of date. Note that <code>README.md</code> is generated from <code>README.Rmd</code> — edit <code>README.Rmd</code> and re-knit (<code><a href="https://devtools.r-lib.org/reference/build_readme.html" class="external-link">devtools::build_readme()</a></code>), never edit <code>README.md</code> directly.</p>
+<p>The website is created by pkgdown from <a href="../pkgdown/_pkgdown.yml">pkgdown/_pkgdown.yml</a>, and is deployed automatically when changes reach <code>main</code>. Please make sure that the pkgdown website will build correctly: run <code><a href="https://pkgdown.r-lib.org/reference/build_site.html" class="external-link">pkgdown::build_site()</a></code> locally before opening a PR. The most common failure is a new exported function that is not picked up under the function overview (the <code>reference:</code> section of <code>_pkgdown.yml</code>) — pkgdown requires <em>every</em> exported topic to appear there exactly once, or it will not build. Where possible, add functions to an existing subtitle’s <code>starts_with()</code> pattern (e.g. a new <code>to_*()</code> function needs no change), and only list the topic explicitly where it does not fit a pattern. These <code>reference:</code> titles are also the headings used in <code>NEWS.md</code> (see below), so keep the two in step.</p>
+<p>Two further sets of files are generated rather than edited directly:</p>
+<ul><li>
+<code>vignettes/articles/*.Rmd</code>, the static pkgdown versions of the <a href="https://rstudio.github.io/learnr/" class="external-link">learnr</a> tutorials, are built from <code>inst/tutorials/*/*.Rmd</code> by <a href="../data-raw/build_tutorial_articles.R">data-raw/build_tutorial_articles.R</a>. After editing a tutorial, re-run that script and commit the regenerated articles; CI checks that the two are in sync. New tutorials also need an entry under <code>articles:</code> and in the navbar’s <code>tutorials</code> menu in <code>_pkgdown.yml</code>.</li>
+<li>The cheatsheet is built from <a href="../data-raw/cheatsheet">data-raw/cheatsheet/</a> into <code>man/figures/cheatsheet.png</code> and <code>inst/figures/cheatsheet.pdf</code>. It might not cover all functionality as the package develops, but should at least not use deprecated or renamed function names.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="newsmd-conventions">
 <code>NEWS.md</code> conventions<a class="anchor" aria-label="anchor" href="#newsmd-conventions"></a></h3>
-<p><code>NEWS.md</code> groups each version’s changes under <code>##</code> headings that mirror the website function overview (<code>pkgdown/_pkgdown.yml</code> <code>reference:</code> titles). Lead with <code>## Package</code> (package-wide/website/infrastructure changes), then the function families in overview order: <code>## Making</code>, <code>## Coercion</code>, <code>## Manipulating</code>, <code>## Modifying</code>, <code>## Describing</code>, <code>## Practicing</code>. Put <code>## Glossary</code> and <code>## Tutorials</code> near the end, with <code>## Tutorials</code> immediately before any <code>## Data</code> section, so that tutorials and data usually close the list. Each heading appears at most once per version. <code>## Manipulating</code> covers the <code>manip_*</code> verbs (nodes/ties/attributes/changes/info/globals); <code>## Modifying</code> covers the <code>modif_*</code> transformations (<code>to_*()</code>, projection, splits, etc.). Keep the two distinct, as the website does.</p>
+<p><code>NEWS.md</code> groups each version’s changes under <code>##</code> headings that mirror the website function overview (<code>pkgdown/_pkgdown.yml</code> <code>reference:</code> titles). Lead with <code>## Package</code> (package-wide/website/infrastructure changes), then the function families in overview order: <code>## Making</code>, <code>## Classes</code>, <code>## Coercion</code>, <code>## Manipulating</code>, <code>## Modifying</code>, <code>## Describing</code>, <code>## Practicing</code>. <code>## Classes</code> is not a website title, but collects changes to the stocnet object itself (its components, <code>validate_*()</code>, and the description and print methods). Where a release changes what downstream packages report, <code>## Marking</code>, <code>## Measuring</code>, and <code>## Learning</code> follow the same pattern after <code>## Modifying</code>. Put <code>## Glossary</code> and <code>## Tutorials</code> near the end, with <code>## Tutorials</code> immediately before any <code>## Data</code> section, so that tutorials and data usually close the list. Each heading appears at most once per version. Spell the coercion heading <code>## Coercion</code>, not <code>## Coercing</code>. <code>## Manipulating</code> covers the <code>manip_*</code> verbs (nodes/ties/attributes/changes/info/globals); <code>## Modifying</code> covers the <code>modif_*</code> transformations (<code>to_*()</code>, projection, splits, etc.). Keep the two distinct, as the website does.</p>
 <p>Start each bullet with a verb matching the change type:</p>
 <ul><li>
 <code>Added ...</code> — new functionality</li>
 <li>
-<code>Fixed ...</code> — bug fixes; if it relates to a GitHub issue, suffix with <code>(closing #123)</code>
+<code>Fixed ...</code> — bug fixes; if it relates to a GitHub issue, suffix with <code>(closed #123)</code>
 </li>
 <li>
 <code>Renamed ... to ...</code> — function or data name migrations</li>
@@ -225,18 +280,17 @@
 <code>Improved ...</code> — functional updates to existing behaviour</li>
 <li>
 <code>Updated ...</code> — documentation changes</li>
-</ul><p>If a cited GitHub issue was <strong>not</strong> authored by @jhollway, thank the author with an <code>@</code>-tag in the bullet. Cluster related changes (e.g. several fixes to the same function, or sub-points of one feature) as indented sub-bullets under a lead bullet, to improve readability.</p>
+<li>
+<code>Removed ...</code> / <code>Dropped ...</code> — functionality or dependencies taken out</li>
+<li>
+<code>Moved ...</code> / <code>Migrated ...</code> — functionality relocated to another package or file</li>
+<li>
+<code>Split ...</code> — one function or file divided into several</li>
+</ul><p>Any of these verbs can also lead a sub-bullet.</p>
+<p>Keep every bullet to one line of fewer than 81 characters ideally (a few more or less is fine). If a bullet wraps, it holds too much: shorten it, or split it into a lead bullet and sub-bullets. Each bullet stands on its own, and states what changed, not why or how unless there is space for context. Explanation belongs in the function documentation or the vignettes.</p>
+<p>Where several bullets describe parallel changes, reuse the sentence structure, so that a reader sees the parallelism at a glance. Use one word for one thing throughout a version’s entries, rather than varying the wording for effect.</p>
+<p>If a cited GitHub issue was <strong>not</strong> authored by @jhollway, thank the author with an <code>@</code>-tag in the bullet. Cluster related changes (e.g. several fixes to the same function, or sub-points of one feature) as indented sub-bullets under a lead bullet, to improve readability. Where several changes concern one function, lead with an <code>Improved ...</code> bullet that names the function, and put the individual <code>Fixed ...</code>/<code>Added ...</code> points beneath it, so the cluster groups by function rather than by change type. Under an <code>Improved ...</code> lead bullet, do not name the function again in the sub-bullets, since the lead bullet already carries it. Sub-bullets indent by two spaces, and nest at most one level further (four spaces). A sub-bullet does not need a verb: it can state the consequence, the previous behaviour, or an example call. The more entries a version holds, the more this structure matters, so group first and only then write the bullets.</p>
 </div>
-</div>
-<div class="section level2">
-<h2 id="issues-and-tests">Issues and tests<a class="anchor" aria-label="anchor" href="#issues-and-tests"></a></h2>
-<p>Please use the issues tracker on GitHub to identify any function-related issues. You can use these issues to track progress on the issue and to comment or continue a conversation on that issue. Currently issue tracking is only open to those involved in the project.</p>
-<p>The most useful issues are ones that precisely identify an error, or propose a test that should pass but instead fails.</p>
-</div>
-<div class="section level2">
-<h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a></h2>
-<p>A final way of contributing to the package is in developing the vignettes/articles that illustrate the value added in the package. Please contact me with any proposals here.</p>
-<p>Please note that the <code>manynet</code> project is released with a <a href="CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
 </div>
 

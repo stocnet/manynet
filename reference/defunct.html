@@ -23,7 +23,7 @@ wherever possible and update your scripts accordingly."><meta property="og:image
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -143,6 +143,14 @@ wherever possible and update your scripts accordingly.</p>
 <span><span class="fu">net_tie_names</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">add_changes</span><span class="op">(</span><span class="va">.data</span>, <span class="va">changes</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">to_ties</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">to_no_isolates</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">to_no_missing</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">to_blocks</span><span class="op">(</span><span class="va">.data</span>, <span class="va">membership</span>, FUN <span class="op">=</span> <span class="va">mean</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">node_degree</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
 <span></span>
@@ -428,9 +436,29 @@ wherever possible and update your scripts accordingly.</p>
 <span></span>
 <span><span class="fu">node_by_tie</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">node_by_triad</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">node_by_triad</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">na_to_zero</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">na_to_mean</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">gather_changes</span><span class="op">(</span><span class="va">.data</span>, <span class="va">time</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">apply_changes</span><span class="op">(</span><span class="va">.data</span>, <span class="va">time</span><span class="op">)</span></span></code></pre></div>
     </div>
 
+    <div id="arguments">
+    <h2>Arguments</h2>
+
+
+<dl><dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
+<dd><p>A manynet-consistent network.</p></dd>
+
+
+<dt id="arg-time">time<a class="anchor" aria-label="anchor" href="#arg-time"></a></dt>
+<dd><p>A moment to gather the changes in force at.</p></dd>
+
+</dl></div>
     <div id="functions">
     <h2>Functions</h2>
 
@@ -453,6 +481,10 @@ wherever possible and update your scripts accordingly.</p>
 <li><p><code>net_node_names()</code>: Deprecated on 2026-04-04.</p></li>
 <li><p><code>net_tie_names()</code>: Deprecated on 2026-04-04.</p></li>
 <li><p><code>add_changes()</code>: Deprecated on 2026-06-12.</p></li>
+<li><p><code>to_ties()</code>: Deprecated on 2026-08-09.</p></li>
+<li><p><code>to_no_isolates()</code>: Deprecated on 2026-08-09.</p></li>
+<li><p><code>to_no_missing()</code>: Deprecated on 2026-08-09.</p></li>
+<li><p><code>to_blocks()</code>: Deprecated on 2026-08-09.</p></li>
 <li><p><code>node_degree()</code>: Deprecated on 2026-03-22.</p></li>
 <li><p><code>node_deg()</code>: Deprecated on 2026-03-22.</p></li>
 <li><p><code>net_by_quad()</code>: Deprecated on 2026-03-22.</p></li>
@@ -596,6 +628,10 @@ wherever possible and update your scripts accordingly.</p>
 <li><p><code>node_by_tetrad()</code>: Deprecated on 2026-03-22.</p></li>
 <li><p><code>node_by_tie()</code>: Deprecated on 2026-03-22.</p></li>
 <li><p><code>node_by_triad()</code>: Deprecated on 2026-03-22.</p></li>
+<li><p><code>na_to_zero()</code>: Deprecated on 2026-08-18.</p></li>
+<li><p><code>na_to_mean()</code>: Deprecated on 2026-08-18.</p></li>
+<li><p><code>gather_changes()</code>: Deprecated on 2026-08-20.</p></li>
+<li><p><code>apply_changes()</code>: Deprecated on 2026-08-20.</p></li>
 </ul></div>
 
   </div>

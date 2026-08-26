@@ -7,8 +7,12 @@ as long as the number of modes in the network.
 net_layers() returns the number of layers in a multiplex network.
 layer_ties() returns the number of ties in a vector
 as long as the number of layers in the network.
-net_waves() returns the number of waves/panels in a longitudinal network,
-see is_longitudinal().
+net_waves() returns the number of waves a panel network records,
+see is_longitudinal(). A network that is not a panel has one wave.
+net_times() returns the number of distinct moments a network records,
+however it records them: the waves of a panel, the events of a dynamic
+network, or the moments an interval network begins and ends a tie at.
+See the Time section of to_time().
 
 
 These functions are also often used as helpers within other functions."><meta property="og:image" content="https://stocnet.github.io/manynet/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -29,7 +33,7 @@ These functions are also often used as helpers within other functions."><meta pr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -109,8 +113,12 @@ as long as the number of modes in the network.</p></li>
 <li><p><code>net_layers()</code> returns the number of layers in a multiplex network.</p></li>
 <li><p><code>layer_ties()</code> returns the number of ties in a vector
 as long as the number of layers in the network.</p></li>
-<li><p><code>net_waves()</code> returns the number of waves/panels in a longitudinal network,
-see <code><a href="mark_format_change.html">is_longitudinal()</a></code>.</p></li>
+<li><p><code>net_waves()</code> returns the number of waves a panel network records,
+see <code><a href="mark_format_change.html">is_longitudinal()</a></code>. A network that is not a panel has one wave.</p></li>
+<li><p><code>net_times()</code> returns the number of distinct moments a network records,
+however it records them: the waves of a panel, the events of a dynamic
+network, or the moments an interval network begins and ends a tie at.
+See the Time section of <code><a href="modif_scope.html">to_time()</a></code>.</p></li>
 </ul><p>These functions are also often used as helpers within other functions.</p>
     </div>
 
@@ -126,6 +134,8 @@ see <code><a href="mark_format_change.html">is_longitudinal()</a></code>.</p></l
 <span><span class="fu">layer_ties</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">net_waves</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">net_times</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">mode_nodes</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
@@ -178,6 +188,8 @@ in the case of a multiplex network.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 558 683</span>
 <span class="r-in"><span><span class="fu">net_waves</span><span class="op">(</span><span class="va">ison_monks</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3</span>
+<span class="r-in"><span><span class="fu">net_times</span><span class="op">(</span><span class="va">irps_wwi</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 7</span>
 <span class="r-in"><span><span class="fu">mode_nodes</span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 18 14</span>
 <span class="r-in"><span><span class="fu">mode_nodes</span><span class="op">(</span><span class="fu"><a href="modif_project.html">to_mode1</a></span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span><span class="op">)</span></span></span>

@@ -32,7 +32,7 @@ nodal attributes."><meta property="og:image" content="https://stocnet.github.io/
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -110,9 +110,9 @@ change over time.
 They include:</p><ul><li><p><code>bind_changes()</code> adds a table of changes to the nodes of a network.</p></li>
 <li><p><code>mutate_changes()</code> can be used to update network changes.</p></li>
 <li><p><code>filter_changes()</code> is used to subset network changes.</p></li>
-<li><p><code>gather_changes()</code> is similar to <code>filter_changes()</code>,
+<li><p><code><a href="defunct.html">gather_changes()</a></code> is similar to <code>filter_changes()</code>,
 but collects the cumulative changes up to a time point.</p></li>
-<li><p><code>apply_changes()</code> applies the changes collected up to a time point
+<li><p><code><a href="defunct.html">apply_changes()</a></code> applies the changes collected up to a time point
 to a network, removing the changes.</p></li>
 </ul><p>An example of when this might be useful is to track change in the
 composition of a network (when nodes are present or absent over time),
@@ -133,11 +133,7 @@ nodal attributes.</p>
 <span></span>
 <span><span class="fu">arrange_changes</span><span class="op">(</span><span class="va">.data</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">rename_changes</span><span class="op">(</span><span class="va">.data</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">gather_changes</span><span class="op">(</span><span class="va">.data</span>, <span class="va">time</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">apply_changes</span><span class="op">(</span><span class="va">.data</span>, <span class="va">time</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">rename_changes</span><span class="op">(</span><span class="va">.data</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -174,10 +170,6 @@ when the <code>changes</code> data frame does not already have a <code>var</code
 <dt id="arg--by">.by<a class="anchor" aria-label="anchor" href="#arg--by"></a></dt>
 <dd><p>An attribute name to join objects by. By default, NULL.</p></dd>
 
-
-<dt id="arg-time">time<a class="anchor" aria-label="anchor" href="#arg-time"></a></dt>
-<dd><p>A time point or wave at which to present the network.</p></dd>
-
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -188,15 +180,13 @@ when the <code>changes</code> data frame does not already have a <code>var</code
     <p>Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>                data.frame default igraph stocnet tbl_graph</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>apply_changes                    <span class="sc">*</span>                        <span class="er">*</span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>arrange_changes                  <span class="sc">*</span>      <span class="er">*</span>       <span class="er">*</span></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>bind_changes                     <span class="sc">*</span>      <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>delete_changes                   <span class="sc">*</span>      <span class="er">*</span>       <span class="er">*</span></span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>filter_changes                   <span class="sc">*</span>      <span class="er">*</span>       <span class="er">*</span></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>gather_changes                   <span class="sc">*</span>      <span class="er">*</span></span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>mutate_changes                   <span class="sc">*</span>              <span class="er">*</span>         <span class="er">*</span></span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>rename_changes           <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>select_changes           <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span></span></code></pre><p></p></div>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>arrange_changes                  <span class="sc">*</span>      <span class="er">*</span>       <span class="er">*</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>bind_changes                     <span class="sc">*</span>      <span class="er">*</span>       <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>delete_changes                   <span class="sc">*</span>      <span class="er">*</span>       <span class="er">*</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>filter_changes                   <span class="sc">*</span>      <span class="er">*</span>       <span class="er">*</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>mutate_changes                   <span class="sc">*</span>              <span class="er">*</span>         <span class="er">*</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>rename_changes           <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>select_changes           <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span></span></code></pre><p></p></div>
 <p>If a method is not available for a particular class, but a default method is,
 the default method will attempt to coerce the object to a class for which a method is defined,
 and then coerce the output back to the original class.
@@ -208,7 +198,7 @@ If no method is available for any class, an error will be thrown.</p>
 <p>Other changes:
 <code><a href="mark_format_change.html">mark_format_change</a></code></p>
 <p>Other manipulations:
-<code><a href="manip_global.html">manip_global</a></code>,
+<code><a href="manip_globals.html">manip_globals</a></code>,
 <code><a href="manip_info.html">manip_info</a></code>,
 <code><a href="manip_nodes_attr.html">manip_nodes_attr</a></code>,
 <code><a href="manip_nodes_num.html">manip_nodes_num</a></code>,
@@ -226,7 +216,7 @@ If no method is available for any class, an error will be thrown.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 110 × 12</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   name            species homeworld sex   height hair_color eye_color skin_color</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   label           species homeworld sex   height hair_color eye_color skin_color</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Admiral Ackbar  Mon Ca… Mon Cala  male     180 none       orange    brown mot…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Admiral Statura Human   Garel     male     172 black      brown     light     </span>
@@ -237,17 +227,17 @@ If no method is available for any class, an error will be thrown.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Changes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 8 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    time  node var        value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     3     3 faction    Sith </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     3     3 height     202  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     3     3 mass       136  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     3     3 hair_color none </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    time  node var            value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;list&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     3     3 faction    Sith<span style="color: #949494;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     3     3 height      202<span style="color: #949494;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     3     3 mass        136<span style="color: #949494;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     3     3 hair_color none<span style="color: #949494;">&lt;chr&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more rows</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 563 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to weight  wave</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to weight  time</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>    80    73     11     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>    80    79     14     1</span>
@@ -257,12 +247,15 @@ If no method is available for any class, an error will be thrown.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu">select_changes</span><span class="op">(</span><span class="va">fict_starwars</span>, <span class="va">node</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># Star Wars network data</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────</span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Unknown or uninitialised column: `time`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Unknown or uninitialised column: `time`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Unknown or uninitialised column: `time`.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A longitudinal, labelled, complex, weighted, directed network of 110</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">characters and 563 interaction arcs over 7 waves</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 110 × 12</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   name            species homeworld sex   height hair_color eye_color skin_color</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   label           species homeworld sex   height hair_color eye_color skin_color</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Admiral Ackbar  Mon Ca… Mon Cala  male     180 none       orange    brown mot…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Admiral Statura Human   Garel     male     172 black      brown     light     </span>
@@ -283,58 +276,13 @@ If no method is available for any class, an error will be thrown.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 563 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to weight  wave</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to weight  time</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>    80    73     11     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>    80    79     14     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>    80     3     16     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>    80   106      3     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 559 more rows</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="fu">gather_changes</span><span class="op">(</span><span class="va">fict_starwars</span>, time <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 59 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Groups:   node, var [59]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     node var        value </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     3 eye_color  yellow</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     3 faction    Sith  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     3 hair_color none  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     3 height     202   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     3 mass       136   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     3 skin_color white </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     7 active     FALSE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>    10 active     FALSE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>    11 active     FALSE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>    13 active     FALSE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 49 more rows</span></span>
-<span class="r-in"><span><span class="fu">apply_changes</span><span class="op">(</span><span class="va">fict_starwars</span>, time <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A longitudinal, labelled, complex, weighted, directed network of 110 nodes</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;">and 563 arcs over 7 waves</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 110 × 12</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   name            species homeworld sex   height hair_color eye_color skin_color</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Admiral Ackbar  Mon Ca… Mon Cala  male     180 none       orange    brown mot…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Admiral Statura Human   Garel     male     172 black      brown     light     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Anakin          Human   Tatooine  male     202 none       yellow    white     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Bail Organa     Human   Alderaan  male     191 black      brown     tan       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Bala-Tik        <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>        male     180 brown      brown     light     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Bb-8            Droid   Hosnian … none      67 none       black     none      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 104 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: birth_year &lt;dbl&gt;, mass &lt;dbl&gt;, faction &lt;chr&gt;, active &lt;lgl&gt;</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 563 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to weight  wave</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>    80    73     11     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>    80    79     14     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>    80     3     16     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>    80   106      3     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>    80    15      2     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>    80    53      2     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 557 more rows</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>

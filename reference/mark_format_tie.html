@@ -3,6 +3,10 @@
 All is_*() functions return a logical scalar (TRUE or FALSE).
 is_twomode() marks networks TRUE if they contain two sets of nodes.
 is_weighted() marks networks TRUE if they contain tie weights.
+Note that signed networks often hold their signs as weights of -1 and 1,
+so that no sign is lost when coercing between formats;
+since such a 'weight' records only the sign of each tie,
+these networks are marked FALSE unless the weights vary in magnitude.
 is_directed() marks networks TRUE if the ties specify which node
 is the sender and which the receiver.
 is_labelled() marks networks TRUE if there is a 'names' attribute
@@ -11,6 +15,8 @@ is_attributed() marks networks TRUE if there are other nodal attributes
 than 'names' or 'type'.
 is_signed() marks networks TRUE if the ties can be either positive
 or negative.
+This is the case where the ties have a 'sign' attribute,
+and also where they are weighted and any of those weights are negative.
 is_complex() marks networks TRUE if any ties are loops,
 with the sender and receiver being the same node.
 is_multiplex() marks networks TRUE if it contains multiple types
@@ -36,7 +42,7 @@ is_uniplex() marks networks TRUE if it is neither complex nor multiplex.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -111,7 +117,11 @@ is_uniplex() marks networks TRUE if it is neither complex nor multiplex.
     <div class="ref-description">
     <p>These functions implement logical tests for various network properties.
 All <code>is_*()</code> functions return a logical scalar (TRUE or FALSE).</p><ul><li><p><code><a href="mark_format_node.html">is_twomode()</a></code> marks networks TRUE if they contain two sets of nodes.</p></li>
-<li><p><code>is_weighted()</code> marks networks TRUE if they contain tie weights.</p></li>
+<li><p><code>is_weighted()</code> marks networks TRUE if they contain tie weights.
+Note that signed networks often hold their signs as weights of -1 and 1,
+so that no sign is lost when coercing between formats;
+since such a 'weight' records only the sign of each tie,
+these networks are marked FALSE unless the weights vary in magnitude.</p></li>
 <li><p><code>is_directed()</code> marks networks TRUE if the ties specify which node
 is the sender and which the receiver.</p></li>
 <li><p><code><a href="mark_format_node.html">is_labelled()</a></code> marks networks TRUE if there is a 'names' attribute
@@ -119,7 +129,9 @@ for the nodes.</p></li>
 <li><p><code><a href="mark_format_node.html">is_attributed()</a></code> marks networks TRUE if there are other nodal attributes
 than 'names' or 'type'.</p></li>
 <li><p><code>is_signed()</code> marks networks TRUE if the ties can be either positive
-or negative.</p></li>
+or negative.
+This is the case where the ties have a 'sign' attribute,
+and also where they are weighted and any of those weights are negative.</p></li>
 <li><p><code>is_complex()</code> marks networks TRUE if any ties are loops,
 with the sender and receiver being the same node.</p></li>
 <li><p><code>is_multiplex()</code> marks networks TRUE if it contains multiple types

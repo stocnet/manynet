@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -216,12 +216,14 @@ operators</label></li>
 <li><label><input type="checkbox">  Label, unlabel, and relabel a
 network’s nodes</label></li>
 <li><label><input type="checkbox">  Change a network’s direction,
-weights, and signs, and know why you might</label></li>
+weights, and signs, rescale its tie values, and know why you
+might</label></li>
 <li><label><input type="checkbox">  Grow and prune networks by adding,
 joining, deleting, and filtering nodes, ties, and
 attributes</label></li>
 <li><label><input type="checkbox">  Extract a single layer from a
-multiplex network</label></li>
+multiplex network, split it into all of its layers, or flatten those
+layers back into one relation</label></li>
 <li><label><input type="checkbox">  Project a two-mode network to one
 of its modes, and understand the consequences</label></li>
 <li><label><input type="checkbox">  Split a longitudinal network into
@@ -240,7 +242,6 @@ realistic) — and that every function here works on any of them. Each
 task (e.g. a <em>weighted</em> network for
 <code><a href="../reference/modif_weight.html">to_unweighted()</a></code>), but you can always browse the full list
 with <code><a href="../reference/data_overview.html">table_data()</a></code>.</p>
-<p><img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExeWY3dTI5c3V6cDg5aHIzd2d0dG9xeXprN3cwdm01ZDd5Zms4Z2h6biZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/REHnG6v0yICy6l9QT2/giphy.gif" alt="gif of doctor getting ready"></p>
 </div>
 </div>
 <div class="section level2">
@@ -291,7 +292,11 @@ of the named functions we meet have an assignment equivalent, and we
 will point these out as we go. The named functions are usually clearer
 and safer (they check and update the network’s type for you), but the
 operators are handy for quick, surgical changes.</p>
-<p><img src="https://media3.giphy.com/media/VDY6QaBBCfsDpb2Esd/giphy.gif" alt="gif of surgeon fistbumping"></p>
+<div class="callout">
+<p><span class="callout-label"><strong>Try it yourself</strong>:</span>
+This section includes an interactive quiz in the live tutorial — run
+<code>run_tute()</code> at the R console to try it.</p>
+</div>
 <div class="callout">
 <p><span class="callout-label"><strong>In brief</strong>:</span> For
 igraph/tidygraph objects, <code>[</code> indexes a network like its
@@ -366,7 +371,11 @@ from a network. This is a one-step anonymiser. <strong>Anonymise
 but leaves any other attributes in place — full anonymisation of your
 data may require deleting or coarsening other attributes too, which
 brings us to attributes just below.</p>
-<p><img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3Zjdnh3djM1M2F5Y3V5anhod2V0eWduYTY0ZWk2dXVoaXdycXVrNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/JdUEslEi7YhOL9vULv/giphy.gif" alt="gif of a doctor with arms crossed saying 'wait a minute'"></p>
+<div class="callout">
+<p><span class="callout-label"><strong>Try it yourself</strong>:</span>
+This section includes an interactive quiz in the live tutorial — run
+<code>run_tute()</code> at the R console to try it.</p>
+</div>
 </div>
 <div class="section level3">
 <h3 id="attributes">Attributes<a class="anchor" aria-label="anchor" href="#attributes"></a>
@@ -413,7 +422,11 @@ names directly with <code>$&lt;-</code>), and
 (<code><a href="../reference/manip_nodes_attr.html">rename_nodes()</a></code> renames them, and assigning
 <code>NULL</code> deletes them).</p>
 </div>
-<p><img src="https://gifdb.com/images/high/doctor-dancing-joyfully-p0ymupoam9p0198w.gif" alt="gif of a doctor in scrubs dancing joyfully in a hospital room"></p>
+<div class="callout">
+<p><span class="callout-label"><strong>Try it yourself</strong>:</span>
+This section includes an interactive quiz in the live tutorial — run
+<code>run_tute()</code> at the R console to try it.</p>
+</div>
 </div>
 </div>
 <div class="section level2">
@@ -545,13 +558,37 @@ only the pairs who exchanged at least 100 messages.</strong></p>
 <p>To check your results: the weights range from 2 to 559 messages, and
 thresholding at 100 leaves a much sparser network of 32 ties — the
 backbone of heavy correspondents.</p>
-<p><img src="https://gifdb.com/images/high/doctor-wide-smile-31g68iglmnl1m5w7.gif" alt="gif of a wide-eyed doctor in scrubs looking pleasantly surprised"></p>
+<div class="callout">
+<p><span class="callout-label"><strong>Try it yourself</strong>:</span>
+This section includes an interactive quiz in the live tutorial — run
+<code>run_tute()</code> at the R console to try it.</p>
+</div>
 <p>Going the other way, <code><a href="../reference/modif_weight.html">to_weighted()</a></code> adds a weight
 attribute, and weights can also be assigned directly:
 <code>mutate_ties(net, weight = ...)</code> (the general tie-attribute
 tool from just above) or the operator shorthand
 <code>net$weight &lt;- ...</code>, which works because a value with one
 entry per tie is stored as a tie attribute.</p>
+<p>Weights are often easier to read once they are put in proportion.
+<code><a href="../reference/modif_weight.html">to_normalised()</a></code> rescales each tie against the other ties of
+the same node, so that a value says what <em>share</em> of a node’s ties
+goes to that partner, rather than how many messages or dollars or
+minutes it carries. The <code>rule</code> argument chooses what to
+divide by — <code>"sum"</code> for a share, <code>"max"</code> for a
+value read against the node’s strongest tie, <code>"mean"</code> for one
+read against a tie of typical strength — and <code>across</code> chooses
+whether to divide by the row, the column, or both. <strong>Rescale
+<code>ison_networkers</code> so that each researcher’s ties show what
+share of their messages went to each recipient.</strong></p>
+<p>To check your results: every row now sums to 1, so Lin Freeman’s 0.15
+to Doug White says that about a seventh of Freeman’s messages went to
+White — a comparison that the raw counts, which range from 2 to 559,
+make hard.</p>
+<div class="callout">
+<p><span class="callout-label"><strong>Try it yourself</strong>:</span>
+This section includes an interactive quiz in the live tutorial — run
+<code>run_tute()</code> at the R console to try it.</p>
+</div>
 </div>
 <div class="section level3">
 <h3 id="signs">Signs<a class="anchor" aria-label="anchor" href="#signs"></a>
@@ -645,7 +682,6 @@ of tie among the same nodes — friendship <em>and</em> advice, alliance
 <em>and</em> trade. This page shows one way such networks arise — by
 <em>joining</em> two networks together — and then how to inspect their
 layers and pull a single one back out.</p>
-<p><img src="https://gifdb.com/images/high/i-concur-doctors-agree-operating-room-m9xh3qvynshaozsb.gif" alt="gif of masked surgeons in an operating room asking 'do you concur?'"></p>
 <div class="section level3">
 <h3 id="joining-networks">Joining networks<a class="anchor" aria-label="anchor" href="#joining-networks"></a>
 </h3>
@@ -677,6 +713,11 @@ multiple tie types, and <code><a href="../reference/member_names.html">layer_nam
 <code>ison_lawfirm</code> records three kinds of relationship among the
 partners and associates of a New England law firm. <strong>Find out what
 they are.</strong></p>
+<div class="callout">
+<p><span class="callout-label"><strong>Try it yourself</strong>:</span>
+This section includes an interactive quiz in the live tutorial — run
+<code>run_tute()</code> at the R console to try it.</p>
+</div>
 <p>Most analyses of multiplex networks proceed one layer at a time, and
 <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> extracts a single layer by name.
 <strong>Extract the friendship layer from
@@ -687,6 +728,43 @@ multiplex. Note that the corresponding do-it-yourself route is
 <code>filter_ties(ison_lawfirm, type == "friends")</code> —
 <code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> does this and additionally tidies up the
 now-redundant type information.</p>
+<p><code><a href="../reference/modif_plexity.html">to_uniplex()</a></code> works one layer at a time.
+<code><a href="../reference/modif_split.html">to_layers()</a></code> splits a multiplex network into all of them at
+once, returning a named list with one network per layer, and
+<code><a href="../reference/modif_from.html">from_layers()</a></code> puts such a list back together again.
+<strong>Split <code>ison_lawfirm</code> into its layers.</strong></p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/modif_split.html">to_layers</a></span><span class="op">(</span><span class="va">ison_lawfirm</span><span class="op">)</span></span></code></pre></div>
+<p>Sometimes you want a single network that keeps what <em>every</em>
+layer records, rather than one layer or a list of them.
+<code><a href="../reference/modif_plexity.html">to_flat()</a></code> combines the layers dyad by dyad, according to a
+<code>rule</code>: “max” counts a tie in any layer as a tie, “min” keeps
+only the ties present in every layer, and “sum” adds the layers up.
+<strong>Flatten <code>ison_lawfirm</code> so that each tie records how
+many of the three relationships that pair holds.</strong></p>
+<p>To check your result: the flattened network is weighted, and 824
+pairs share one relationship, 503 share two, and 247 share all
+three.</p>
+<p><code><a href="../reference/modif_from.html">from_layers()</a></code> does the same for networks you collected
+separately. Give it two or more networks over the same nodes and it
+makes each one a layer, which is the other way to build a multiplex
+network: <code><a href="../reference/manip_ties_attr.html">join_ties()</a></code> marks where each tie came from, and
+<code><a href="../reference/modif_from.html">from_layers()</a></code> names layers. Either way,
+<code><a href="../reference/modif_plexity.html">to_flat()</a></code> then combines them. <strong>Keep only the pairs
+who are both friends and advisors.</strong></p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">friends</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modif_plexity.html">to_uniplex</a></span><span class="op">(</span><span class="va">ison_lawfirm</span>, <span class="st">"friends"</span><span class="op">)</span></span>
+<span><span class="va">advice</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modif_plexity.html">to_uniplex</a></span><span class="op">(</span><span class="va">ison_lawfirm</span>, <span class="st">"advice"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/modif_from.html">from_layers</a></span><span class="op">(</span>friends <span class="op">=</span> <span class="va">friends</span>, advice <span class="op">=</span> <span class="va">advice</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/modif_from.html">from_layers</a></span><span class="op">(</span>friends <span class="op">=</span> <span class="va">friends</span>, advice <span class="op">=</span> <span class="va">advice</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/modif_plexity.html">to_flat</a></span><span class="op">(</span>rule <span class="op">=</span> <span class="st">"min"</span><span class="op">)</span></span></code></pre></div>
+<p>The last line keeps the 358 pairs tied in both layers. Nodes are
+matched by name where the networks are labelled, and by position where
+they are not and are the same size.</p>
+<div class="callout">
+<p><span class="callout-label"><strong>Try it yourself</strong>:</span>
+This section includes an interactive quiz in the live tutorial — run
+<code>run_tute()</code> at the R console to try it.</p>
+</div>
 <p><strong>Your turn</strong>: try the other layers of
 <code>ison_lawfirm</code>, or explore another multiplex network:</p>
 <table class="table">
@@ -715,10 +793,13 @@ now-redundant type information.</p>
 <em>type</em>, producing a multiplex network.
 <code><a href="../reference/mark_format_tie.html">is_multiplex()</a></code> checks for multiple tie types and
 <code><a href="../reference/member_names.html">layer_names()</a></code> lists them, while
-<code>to_uniplex(tie = )</code> extracts a single layer by name (the
-do-it-yourself equivalent of <code>filter_ties(type == ...)</code>).</p>
+<code>to_uniplex(layer = )</code> extracts a single layer by name (the
+do-it-yourself equivalent of <code>filter_ties(type == ...)</code>).
+<code><a href="../reference/modif_split.html">to_layers()</a></code> splits a network into all of its layers and
+<code><a href="../reference/modif_from.html">from_layers()</a></code> reassembles them, or joins networks collected
+separately as layers, while <code><a href="../reference/modif_plexity.html">to_flat()</a></code> combines the layers
+of any multiplex network into one relation by a <code>rule</code>.</p>
 </div>
-<p><img src="https://gifdb.com/images/high/doctors-doing-hand-gestures-pu47xo2ice3pvsk2.gif" alt="gif of two doctors in scrubs doing a synchronised celebratory hand gesture"></p>
 </div>
 </div>
 <div class="section level2">
@@ -739,7 +820,6 @@ projection </dfn></abbr>.</p>
 <div class="section level3">
 <h3 id="modes">Modes<a class="anchor" aria-label="anchor" href="#modes"></a>
 </h3>
-<p><img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExYnR1dTZoNTRkenhrajZmOGNsbWMxbzVhaXpxdWdqNmd2emN3aHpjNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Hq8O099eDBP4PEIZLP/giphy.gif" alt="gif of a doctor considering something sceptically"></p>
 <p><code><a href="../reference/mark_format_node.html">is_twomode()</a></code> checks whether a network has two modes, and
 projection transforms it into ties among just one of them:
 <code><a href="../reference/modif_project.html">to_mode1()</a></code> projects onto shared ties among the first node
@@ -795,10 +875,24 @@ two-mode network into a weighted one-mode network and what these weights
 represent. Note though that counting the frequency of shared ties to
 nodes in the other mode is just one (albeit the default) option for how
 ties in the projection are weighted. The <code>similarity</code>
-argument to <code><a href="../reference/modif_project.html">to_mode1()</a></code>/<code><a href="../reference/modif_project.html">to_mode2()</a></code> also offers
-the Jaccard index, Rand simple matching coefficient, Pearson
-coefficient, and Yule’s Q. These may be of interest if, for example,
-overlap should be weighted by participation.</p>
+argument to <code><a href="../reference/modif_project.html">to_mode1()</a></code>/<code><a href="../reference/modif_project.html">to_mode2()</a></code> offers 24
+measures in all, which <code><a href="../reference/modif_project.html">?to_mode1</a></code> groups by what they are
+sensitive to. Among them are the Jaccard index, which weights overlap by
+participation; the Rand simple matching coefficient, which counts joint
+<em>absences</em> as evidence too; Yule’s Q, which reads the association
+between two nodes as an odds ratio; and the Pearson coefficient, which
+asks whether two nodes depart from the average level of involvement in
+the same direction. Measures within a group rank pairs identically and
+differ only in their scale, so choosing between the groups matters
+rather more than choosing within one.</p>
+<p>The same measures compare the nodes of a network that is already
+one-mode. <code><a href="../reference/modif_proximity.html">to_proximity()</a></code> asks how alike two nodes’
+<em>ties</em> are, rather than how alike their affiliations are, and
+returns a square node-by-node matrix — the structural equivalence of the
+nodes. Because a node’s tie to the node it is being compared with cannot
+be compared where it lies, the <code>dyad</code> argument states what to
+do with those cells, and <code>across</code> chooses whether nodes are
+compared on the ties they send, those they receive, or both.</p>
 <p>Projection is not the only way between modes:</p>
 <ul>
 <li>
@@ -847,8 +941,11 @@ you now know how!)</p>
 <code><a href="../reference/mark_format_node.html">is_twomode()</a></code> checks for two modes, and
 <code><a href="../reference/modif_project.html">to_mode1()</a></code>/<code><a href="../reference/modif_project.html">to_mode2()</a></code> project a two-mode
 network into a weighted one-mode network of shared ties.
-<code><a href="../reference/modif_levels.html">to_onemode()</a></code>, <code><a href="../reference/modif_levels.html">to_twomode()</a></code>, and
-<code><a href="../reference/modif_levels.html">to_multilevel()</a></code> move between modes without projecting.</p>
+<code><a href="../reference/modif_proximity.html">to_proximity()</a></code> applies the same <code>similarity</code>
+measures to a one-mode network, comparing nodes on their ties rather
+than their affiliations. <code><a href="../reference/modif_levels.html">to_onemode()</a></code>,
+<code><a href="../reference/modif_levels.html">to_twomode()</a></code>, and <code><a href="../reference/modif_levels.html">to_multilevel()</a></code> move between
+modes without projecting.</p>
 </div>
 </div>
 </div>
@@ -863,21 +960,32 @@ ways time can enter a network:</p>
 <ul>
 <li>a
 <abbr><dfn title="A longitudinal network is one observed in two or more discrete waves or panels over time.">
-longitudinal </dfn></abbr> network is observed in discrete waves or
-panels, recorded in a <code>wave</code> tie attribute — check with
+longitudinal </dfn></abbr> network is a panel, observed in a few
+discrete waves, each of which re-states the ties. The moment each tie
+was observed at is recorded in a <code>time</code> tie attribute
+(<code>wave</code> in the older classes) – check with
 <code><a href="../reference/mark_format_change.html">is_longitudinal()</a></code>
 </li>
 <li>a
 <abbr><dfn title="A dynamic network is one where ties appear or disappear at recorded points in continuous time.">
-dynamic </dfn></abbr> network has ties appearing and disappearing in
-continuous time, e.g. with <code>begin</code>/<code>end</code>
-attributes — check with <code><a href="../reference/mark_format_change.html">is_dynamic()</a></code>
+dynamic </dfn></abbr> network records a stream of events rather than a
+set of observations. Either each row increments a tie’s value, in an
+<code>increment</code> attribute, or each tie states the interval it
+lasts over, in <code>begin</code>/<code>end</code> attributes – check
+with <code><a href="../reference/mark_format_change.html">is_dynamic()</a></code>
 </li>
 <li>a
 <abbr><dfn title="A changing network is one where nodal attributes, including whether the nodes are present or not, can change.">
 changing </dfn></abbr> network is where one or more nodal attributes are
 changing over time</li>
 </ul>
+<p>A network is longitudinal or dynamic, never both. Which one it is
+decides what “the network at a moment” means, and so what
+<code><a href="../reference/modif_scope.html">to_time()</a></code> returns: the ties observed at that wave, the ties
+accumulated up to that event, or the ties active over that interval.
+<code><a href="../reference/measure_dims.html">net_times()</a></code> counts the moments a network records, however
+it records them, and <code><a href="../reference/modif_split.html">to_times()</a></code> returns the network at each
+of them.</p>
 <div class="section level3">
 <h3 id="waves">Waves<a class="anchor" aria-label="anchor" href="#waves"></a>
 </h3>
@@ -929,12 +1037,12 @@ family of verbs (<code><a href="../reference/manip_changes.html">filter_changes(
 <code><a href="../reference/manip_changes.html">mutate_changes()</a></code>, <code><a href="../reference/manip_changes.html">select_changes()</a></code>, etc.).
 <strong>Print the network, then filter its changes to see Anakin’s
 trajectory.</strong></p>
-<p>To make the changes take effect, <code><a href="../reference/manip_changes.html">apply_changes()</a></code> returns
-the network with all changes up to a given time applied to the node
-attributes (<code><a href="../reference/manip_changes.html">gather_changes()</a></code> shows the same information as
-a table without applying it, and <code><a href="../reference/modif_scope.html">to_time()</a></code> does the
-applying and tie-filtering in one step). <strong>Apply the changes up to
-episode 3 and check what Anakin has become.</strong></p>
+<p>To make the changes take effect, <code><a href="../reference/modif_scope.html">to_time()</a></code> returns the
+network as it stood at a given time, with all the changes up to then
+applied to the node attributes (<code><a href="../reference/coerce_list.html">as_changelist()</a></code> takes the
+same <code>time</code> and shows those changes as a table, without
+applying them). <strong>Scope the network to episode 3 and check what
+Anakin has become.</strong></p>
 <p>Changes can also be <em>added</em>: <code><a href="../reference/defunct.html">add_changes()</a></code> and
 <code><a href="../reference/manip_changes.html">bind_changes()</a></code> record new node changes on a network you are
 constructing yourself, using the same
@@ -942,7 +1050,11 @@ constructing yourself, using the same
 structure. Together with <code><a href="../reference/modif_split.html">to_waves()</a></code> this is the foundation
 for the dynamic and diffusion analyses covered in later tutorials (in
 the <a href="https://stocnet.github.io/netrics/" class="external-link">netrics</a> and <a href="https://stocnet.github.io/migraph/" class="external-link">migraph</a> packages).</p>
-<p><img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExczBlMXFtNnprbWZqbTh6eHYyMGM5emJuZ2R1MWd2dHplczFqaXhvOCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1wqblZCf2zPpxywZKa/giphy.gif" alt="gif of a doctor warning 'I will deal with you later'"></p>
+<div class="callout">
+<p><span class="callout-label"><strong>Try it yourself</strong>:</span>
+This section includes an interactive quiz in the live tutorial — run
+<code>run_tute()</code> at the R console to try it.</p>
+</div>
 <div class="callout">
 <p><span class="callout-label"><strong>Going further</strong>:</span> In
 stocnet objects, there is also a ‘globals’ section that carries globally
@@ -953,10 +1065,146 @@ nodes/ties in the network, but that changes over time.</p>
 <p><span class="callout-label"><strong>In brief</strong>:</span>
 Longitudinal networks store panel observations in a <code>wave</code>
 tie attribute and node changes in a changelog. <code><a href="../reference/measure_dims.html">net_waves()</a></code>
-counts the waves, <code><a href="../reference/modif_scope.html">to_time()</a></code> extracts the network at one
-time point, <code><a href="../reference/modif_split.html">to_waves()</a></code> splits it into a list of per-wave
-networks, and <code><a href="../reference/manip_changes.html">filter_changes()</a></code>/<code><a href="../reference/manip_changes.html">apply_changes()</a></code>
-inspect and apply the recorded node changes.</p>
+counts the waves and <code><a href="../reference/measure_dims.html">net_times()</a></code> the moments of a network
+of any kind, <code><a href="../reference/modif_scope.html">to_time()</a></code> extracts the network as it stood at
+one of them, <code><a href="../reference/modif_split.html">to_times()</a></code> returns the network at each of
+them, <code><a href="../reference/modif_split.html">to_waves()</a></code> is the panel-specific spelling of the
+same, and <code><a href="../reference/manip_changes.html">filter_changes()</a></code>/<code><a href="../reference/modif_scope.html">to_time()</a></code> inspect
+and apply the recorded node changes.</p>
+</div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="missing-data">Missing data<a class="anchor" aria-label="anchor" href="#missing-data"></a>
+</h2>
+<p><span class="page-toc">On this page: <span class="page-toc-link" onclick="document.getElementById('section-four-states').scrollIntoView({behavior:'auto',block:'start'});">Four
+states</span> · <span class="page-toc-link" onclick="document.getElementById('section-finding-missing').scrollIntoView({behavior:'auto',block:'start'});">Finding
+it</span> · <span class="page-toc-link" onclick="document.getElementById('section-imputing').scrollIntoView({behavior:'auto',block:'start'});">Imputing
+it</span></span></p>
+<p>Somebody skips the questionnaire. Somebody joins the class in March.
+Both leave holes in a network, and they are not the same hole. Treating
+either as “no tie” invents data, and most network measures have no way
+of telling you that you did.</p>
+<div class="section level3">
+<h3 id="four-states">Four states<a class="anchor" aria-label="anchor" href="#four-states"></a>
+</h3>
+<p>A tie in <a href="https://stocnet.github.io/manynet/">manynet</a> can be in one of four states, and
+they are kept apart:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Not observed.</strong> The tie could have been reported and
+was not.</li>
+<li>
+<strong>Not possible.</strong> One of the nodes was not in the
+network at that moment, so there was nothing there to miss.</li>
+<li>
+<strong>Observed.</strong> A tie, or the absence of one.</li>
+<li>
+<strong>Observed but unvalued.</strong> The tie is there and its
+strength is unknown.</li>
+</ol>
+<p><code>ison_classmates</code> holds the first three. It records four
+waves of friendship among 26 Dutch pupils, and its source distinguishes
+a nomination that is missing from one that is structurally missing.
+<strong>Print the network’s changes and see how each is
+recorded.</strong></p>
+<p>Three pupils did not answer at a wave, logged as a change of their
+<code>na</code> status, and one pupil left the class, logged as a change
+of their <code>active</code> status. Note that each <code>na</code>
+change is followed by a change back: a change says what a variable
+becomes <em>from that moment on</em>, so a pupil who answers again the
+following wave needs to say so.</p>
+<div class="callout">
+<p><span class="callout-label"><strong>Try it yourself</strong>:</span>
+This section includes an interactive quiz in the live tutorial — run
+<code>run_tute()</code> at the R console to try it.</p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="finding-missing">Finding it<a class="anchor" aria-label="anchor" href="#finding-missing"></a>
+</h3>
+<p>Nothing above lists the missing ties themselves, because a network
+holds who did not report rather than one record per tie.
+<code><a href="../reference/coerce_list.html">as_missinglist()</a></code> derives them. <strong>List the missing
+ties, and count how many fall at each wave.</strong></p>
+<p>73 nominations were never given: 25 at wave 2 and 48 at wave 3. Six
+records stand in for all of them. Two things are worth noticing. Only
+the nominations those pupils would have <em>given</em> are missing,
+since the others still nominated them. And the two pupils who did not
+answer at wave 3 miss 24 nominations each rather than 25, because the
+pupil who left the class is not there to nominate.</p>
+<p>None of this makes them ties. <strong>Check that
+<code><a href="../reference/measure_dims.html">net_ties()</a></code> does not count them, and see what proportion
+<code><a href="../reference/measure_missingness.html">net_tie_missing()</a></code> reports.</strong></p>
+<p>Each class carries this information in whatever way it can. An
+<code>igraph</code> object cannot mark an edge as missing, so the list
+travels beside the edges; a <code>network</code> object marks them among
+its edges in its own <code>na</code> attribute, which is what
+<a href="https://statnet.org" class="external-link">ergm</a> expects; and a matrix holds each as a missing cell.
+<code><a href="../reference/coerce_list.html">as_missinglist()</a></code> reads all of them.</p>
+</div>
+<div class="section level3">
+<h3 id="imputing">Imputing it<a class="anchor" aria-label="anchor" href="#imputing"></a>
+</h3>
+<p>Once you know what is missing, you can decide what to do about it.
+<code><a href="../reference/modif_miss.html">impute_ties()</a></code> takes a <code>rule</code> saying how it
+should decide, and a <code>which</code> saying which of the states to
+treat.</p>
+<p>Some rules answer whether a tie exists:</p>
+<ul>
+<li>
+<code>"zero"</code> treats every missing tie as absent, which is the
+modal state in a sparse network</li>
+<li>
+<code>"density"</code> draws each missing tie at the density
+observed over the layer and the moment it was missing from</li>
+<li>
+<code>"reciprocity"</code> reconstructs a missing tie from what the
+other pupil reported, drawing it at the proportion of observed
+friendships that run both ways</li>
+<li>
+<code>"indegree"</code> draws a missing tie at the proportion of the
+pupils who did answer that named that classmate</li>
+</ul>
+<p>Others answer what a tie’s value is, for a tie that is there but
+whose strength is not known: <code>"mean"</code>, <code>"median"</code>,
+and <code>"modal"</code>.</p>
+<p>The first four draw at random, so set a seed if you need them
+reproducible.</p>
+<p><strong>Impute the missing nominations three ways and compare how
+many ties each leaves.</strong></p>
+<p>Neither is a neutral choice, which is the point of keeping the
+record. <code>"zero"</code> assumes every pupil who did not answer had
+no friends, which is why it leaves the tie count untouched.
+<code>"reciprocity"</code> assumes instead that a pupil who was named by
+a classmate was likely to have named them back, at the rate the
+answering pupils did.</p>
+<p>Whichever you choose, the network remembers.
+<code><a href="../reference/modif_miss.html">impute_ties()</a></code> and <code><a href="../reference/modif_miss.html">impute_nodes()</a></code> record what
+they imputed, how much of it, and by which rule, which they record under
+the name “imputation”:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/class_describe.html">describe_transformations</a></span><span class="op">(</span><span class="fu"><a href="../reference/modif_miss.html">to_imputed</a></span><span class="op">(</span><span class="va">ison_classmates</span><span class="op">)</span>, details <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>This is item 4.6 of the GRAND reporting guidelines, which name six
+ways raw data is turned into analytic data. Each has a name of its own,
+so a later reader can see how much of the network is manufactured rather
+than observed, without reading past everything else that was done to
+it.</p>
+<p>Nodes can be incomplete too, where a node is there but an attribute
+of it is not known. <code><a href="../reference/measure_missingness.html">net_node_incomplete()</a></code> reports how much
+of the nodal data is unknown, and <code><a href="../reference/modif_miss.html">impute_nodes()</a></code> fills it.
+<code><a href="../reference/modif_miss.html">to_imputed()</a></code> runs both in a single call.</p>
+<div class="callout">
+<p><span class="callout-label"><strong>In brief</strong>:</span> A tie
+may be unavailable, unreported, unrecorded, or incomplete, and
+<a href="https://stocnet.github.io/manynet/">manynet</a> keeps the four apart. A network is
+<em>missing</em> a tie where the tie itself was not observed; a tie or a
+node is <em>incomplete</em> where it is there but an attribute of it is
+not known. Missing ties are recorded as the nodes that did not report,
+so they cost almost nothing to store, and <code><a href="../reference/coerce_list.html">as_missinglist()</a></code>
+derives them where you need them. They are not counted as ties by
+<code><a href="../reference/measure_dims.html">net_ties()</a></code>; <code><a href="../reference/measure_missingness.html">net_tie_missing()</a></code> reports how many
+there are, and <code><a href="../reference/modif_miss.html">impute_ties()</a></code> imputes them.</p>
 </div>
 </div>
 </div>
@@ -964,14 +1212,14 @@ inspect and apply the recorded node changes.</p>
 <h2 id="modifying-networks">Modifying networks<a class="anchor" aria-label="anchor" href="#modifying-networks"></a>
 </h2>
 <p><span class="page-toc">On this page: <span class="page-toc-link" onclick="document.getElementById('section-subgraphs').scrollIntoView({behavior:'auto',block:'start'});">Subgraphs</span>
-· <span class="page-toc-link" onclick="document.getElementById('section-isolates').scrollIntoView({behavior:'auto',block:'start'});">Isolates</span></span></p>
+· <span class="page-toc-link" onclick="document.getElementById('section-isolates').scrollIntoView({behavior:'auto',block:'start'});">Isolates</span>
+· <span class="page-toc-link" onclick="document.getElementById('section-backbones').scrollIntoView({behavior:'auto',block:'start'});">Backbones</span></span></p>
 <p>By now you can build up a network with all of its properties — labels
 and attributes, direction, weights and signs, layers, modes, and
 dynamics. Analysis often needs the opposite move: taking that
 comprehensive object and narrowing it down to just the part that
 matters. The verbs on this page all take a whole network and hand back a
 smaller or cleaner one.</p>
-<p><img src="https://media1.tenor.com/m/uUpPHC_dxe0AAAAC/gloves-on-im-ready.gif" alt="gif of a doctor reassuring 'don't worry, I'm a doctor'"></p>
 <div class="section level3">
 <h3 id="subgraphs">Subgraphs<a class="anchor" aria-label="anchor" href="#subgraphs"></a>
 </h3>
@@ -989,11 +1237,15 @@ induced </dfn></abbr>
 <abbr><dfn title="A subgraph comprises a subset of the nodes and ties in a network.">
 subgraph </dfn></abbr>). Filtering on tie attributes instead uses
 <code><a href="../reference/manip_ties_num.html">filter_ties()</a></code>.</p>
+<div class="callout">
+<p><span class="callout-label"><strong>Try it yourself</strong>:</span>
+This section includes an interactive quiz in the live tutorial — run
+<code>run_tute()</code> at the R console to try it.</p>
+</div>
 </div>
 <div class="section level3">
 <h3 id="isolates">Isolates<a class="anchor" aria-label="anchor" href="#isolates"></a>
 </h3>
-<p><img src="https://media1.tenor.com/m/UlWgg8a56EMAAAAC/mr-bean-mr-bean-ok.gif" alt="gif of a wide-eyed surgeon pulling down his mask, ready to operate"></p>
 <p>Deleting or filtering ties can leave nodes stranded without any ties.
 Depending on your question, such
 <abbr><dfn title="An isolate is a node with degree equal to zero.">
@@ -1001,7 +1253,7 @@ isolates </dfn></abbr> may be important actors (who is <em>not</em>
 integrated?) or clutter. Two transforming functions prune them:</p>
 <ul>
 <li>
-<code><a href="../reference/modif_scope.html">to_no_isolates()</a></code> drops all nodes without ties</li>
+<code><a href="../reference/manip_nodes_num.html">delete_isolates()</a></code> drops all nodes without ties</li>
 <li>
 <code><a href="../reference/modif_scope.html">to_giant()</a></code> keeps only the largest
 <abbr><dfn title="A component is a connected subgraph not part of a larger connected subgraph.">
@@ -1010,7 +1262,12 @@ as isolates</li>
 </ul>
 <p><strong>Betty’s only friendship is with Sue. Delete that tie and
 watch the node count before and after
-<code><a href="../reference/modif_scope.html">to_no_isolates()</a></code>.</strong></p>
+<code><a href="../reference/manip_nodes_num.html">delete_isolates()</a></code>.</strong></p>
+<div class="callout">
+<p><span class="callout-label"><strong>Try it yourself</strong>:</span>
+This section includes an interactive quiz in the live tutorial — run
+<code>run_tute()</code> at the R console to try it.</p>
+</div>
 <p>A related cleaning task concerns
 <abbr><dfn title="A loop is a self-tie with a single node as both endpoints, forming a cycle of length 1.">
 loops </dfn></abbr> (self-ties): <code><a href="../reference/modif_plexity.html">to_simplex()</a></code> removes them,
@@ -1023,10 +1280,66 @@ simplex </dfn></abbr> one.</p>
 <p><span class="callout-label"><strong>In brief</strong>:</span>
 <code><a href="../reference/manip_nodes_num.html">filter_nodes()</a></code>/<code><a href="../reference/manip_ties_num.html">filter_ties()</a></code> and
 <code><a href="../reference/modif_scope.html">to_subgraph()</a></code> keep only the elements satisfying a
-condition, while <code><a href="../reference/modif_scope.html">to_no_isolates()</a></code>, <code><a href="../reference/modif_scope.html">to_giant()</a></code>,
-and <code><a href="../reference/modif_plexity.html">to_simplex()</a></code> prune stranded nodes, minor components,
-and self-ties — all taking a whole network and returning a narrower or
-cleaner one.</p>
+condition, while <code><a href="../reference/manip_nodes_num.html">delete_isolates()</a></code>,
+<code><a href="../reference/modif_scope.html">to_giant()</a></code>, and <code><a href="../reference/modif_plexity.html">to_simplex()</a></code> prune stranded
+nodes, minor components, and self-ties — all taking a whole network and
+returning a narrower or cleaner one.</p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="backbones">Backbones<a class="anchor" aria-label="anchor" href="#backbones"></a>
+</h3>
+<p>Back on the <a href="#weights">weights</a> page, we thresholded
+<code>ison_networkers</code> at 100 messages. That is a <em>global</em>
+cut-off: every remaining tie met the same number. The trouble is that a
+global threshold reads volume rather than importance, which will keep
+the busiest correspondents and drop the rest.</p>
+<p>The
+<abbr><dfn title="The backbone of a network comprises the ties that carry more weight, or hold more structure, than a null model local to their endpoints expects.">
+backbone </dfn></abbr> of a network identifies and retains the ties that
+are important locally, giving a cleaner network that reveals more
+structure than activity. Each tie is compared with a null model built
+from its own two endpoints, so a tie that is small overall but large for
+the people it joins is nonetheless kept. <code><a href="../reference/measure_attributes_ties.html">tie_is_backbone()</a></code>
+marks ties that comprise the ‘backbone’ of the network, and
+<code><a href="../reference/modif_backbone.html">to_backbone()</a></code> returns the network reduced to those
+ties.</p>
+<p>The <code>filter=</code> argument chooses which null model to use.
+For a weighted network it defaults to <code>"lans"</code>, which
+compares a tie with the other weights of its own two nodes, and so
+assumes nothing about how those weights are distributed. For an
+unweighted network it defaults to <code>"simmelian"</code>, which reads
+shared neighbours rather than weights. The <code>threshold</code>
+argument sets how demanding the test is, just as it does for
+<code><a href="../reference/modif_weight.html">to_unweighted()</a></code>.</p>
+<p><strong>Extract the backbone of <code>ison_networkers</code>, and
+compare it with the global threshold of 100 you used
+earlier.</strong></p>
+<p>To check your results: the backbone holds 71 of the 440 ties, against
+the 32 the global threshold left. More telling is who is left: those 71
+ties reach all 32 researchers, where the global threshold reached only
+12. Both reductions are severe, yet only one of them keeps the shape of
+the whole network.</p>
+<div class="callout">
+<p><span class="callout-label"><strong>Try it yourself</strong>:</span>
+This section includes an interactive quiz in the live tutorial — run
+<code>run_tute()</code> at the R console to try it.</p>
+</div>
+<p>Other filters are available through <code>filter</code>, including
+<code>"disparity"</code>, <code>"noise"</code>, and <code>"mlf"</code>,
+and <code><a href="../reference/modif_backbone.html">to_backbone()</a></code> documents what each one asks of a tie.
+<code>"disparity"</code> is the best known of them, but be careful with
+it: its null model expects a few very heavy ties among many light ones,
+and where weights are more even it retains nothing at all. For backbone
+models that resample a null distribution instead, such as those for
+<em>twomode</em> projections, see the <a href="https://rbackbone.net" class="external-link">backbone</a>
+package.</p>
+<div class="callout">
+<p><span class="callout-label"><strong>In brief</strong>:</span>
+<code>to_unweighted(threshold = )</code> cuts every tie against the same
+number, while <code><a href="../reference/modif_backbone.html">to_backbone()</a></code> cuts each tie against a null
+model local to its own endpoints, which keeps the shape of the network
+rather than just its heaviest part.</p>
 </div>
 </div>
 </div>
@@ -1036,14 +1349,13 @@ cleaner one.</p>
 <div class="section level3">
 <h3 id="putting-it-together">Putting it together<a class="anchor" aria-label="anchor" href="#putting-it-together"></a>
 </h3>
-<p><img src="https://bestanimations.com/Careers/Medical/grey-anatomy-doctor-animated-gif-1.gif" alt="gif of a surgeon in the operating room saying 'it's a beautiful night to save lives'"></p>
 <p>Real-world data often needs several of this tutorial’s verbs in
 sequence. <code>irps_blogs</code> is a large directed network of 1490
 political blogs. Suppose we only want the well-connected core, as a
 simple undirected network. We can chain reformatting and transforming
 verbs to get there. <strong>Run this and watch the tie and node counts
 fall as the network is tidied.</strong></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">irps_blogs</span></span>
 <span><span class="va">irps_blogs</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/modif_direction.html">to_undirected</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/modif_scope.html">to_giant</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Notice how <code><a href="../reference/modif_direction.html">to_undirected()</a></code> keeps all 1490 nodes but
@@ -1051,6 +1363,11 @@ merges reciprocal ties, while <code><a href="../reference/modif_scope.html">to_g
 node outside the main component. This kind of short pipeline — coerce,
 reformat, transform — is the everyday work of getting real network data
 into shape.</p>
+<div class="callout">
+<p><span class="callout-label"><strong>Try it yourself</strong>:</span>
+This section includes an interactive quiz in the live tutorial — run
+<code>run_tute()</code> at the R console to try it.</p>
+</div>
 <p><strong>One last free play</strong>: build your own cleaning
 pipeline. Pick any dataset from <code><a href="../reference/data_overview.html">table_data()</a></code> and chain at
 least three verbs from different sections of this tutorial — for example
@@ -1058,11 +1375,15 @@ extract a layer, undirect it, threshold its weights, and drop the
 isolates — checking with <code>is_*()</code>, <code><a href="../reference/measure_dims.html">net_nodes()</a></code>,
 and <code><a href="../reference/measure_dims.html">net_ties()</a></code> at each step that it did what you
 expected.</p>
+<div class="callout">
+<p><span class="callout-label"><strong>Try it yourself</strong>:</span>
+This section includes an interactive quiz in the live tutorial — run
+<code>run_tute()</code> at the R console to try it.</p>
+</div>
 </div>
 <div class="section level3">
 <h3 id="function-overview">Function overview<a class="anchor" aria-label="anchor" href="#function-overview"></a>
 </h3>
-<p><img src="https://gifdb.com/images/high/standing-ovation-congratulations-doctor-chicago-med-mnr588ssjqckmmzc.gif" alt="gif of doctor getting standing ovation"></p>
 <p>Well done — you have completed the tutorial on manipulating network
 data! Along the way, you have learned to use these functions:</p>
 <table class="table">
@@ -1097,7 +1418,7 @@ data! Along the way, you have learned to use these functions:</p>
 </tr>
 <tr class="even">
 <td>
-<code><a href="../reference/modif_scope.html">to_no_isolates()</a></code>,
+<code><a href="../reference/manip_nodes_num.html">delete_isolates()</a></code>,
 <code><a href="../reference/modif_scope.html">to_giant()</a></code>/<code><a href="../reference/modif_scope.html">to_component()</a></code>,
 <code><a href="../reference/modif_plexity.html">to_simplex()</a></code>
 </td>
@@ -1147,11 +1468,19 @@ data! Along the way, you have learned to use these functions:</p>
 </tr>
 <tr class="odd">
 <td>
-<code>to_uniplex(tie = )</code>, <code><a href="../reference/member_names.html">layer_names()</a></code>
+<code>to_uniplex(layer = )</code>, <code><a href="../reference/member_names.html">layer_names()</a></code>
 </td>
 <td>extract a layer from a multiplex network</td>
 </tr>
 <tr class="even">
+<td>
+<code><a href="../reference/modif_split.html">to_layers()</a></code>, <code><a href="../reference/modif_from.html">from_layers()</a></code>,
+<code>to_flat(rule = )</code>
+</td>
+<td>split a network into its layers, join networks as layers, or combine
+those layers into one relation</td>
+</tr>
+<tr class="odd">
 <td>
 <code><a href="../reference/modif_project.html">to_mode1()</a></code>, <code><a href="../reference/modif_project.html">to_mode2()</a></code>,
 <code><a href="../reference/modif_levels.html">to_onemode()</a></code>, <code><a href="../reference/modif_levels.html">to_twomode()</a></code>,
@@ -1159,22 +1488,35 @@ data! Along the way, you have learned to use these functions:</p>
 </td>
 <td>move between modes</td>
 </tr>
+<tr class="even">
+<td>
+<code>to_proximity(similarity = )</code>,
+<code><a href="../reference/modif_proximity.html">to_correlation()</a></code>, <code><a href="../reference/modif_proximity.html">to_cosine()</a></code>
+</td>
+<td>measure how alike a one-mode network’s nodes are</td>
+</tr>
 <tr class="odd">
 <td>
-<code><a href="../reference/measure_dims.html">net_waves()</a></code>,
-<code><a href="../reference/modif_scope.html">to_time()</a></code>/<code><a href="../reference/modif_scope.html">to_wave()</a></code>,
-<code><a href="../reference/modif_split.html">to_waves()</a></code>
+<code><a href="../reference/measure_dims.html">net_times()</a></code>, <code><a href="../reference/modif_scope.html">to_time()</a></code>,
+<code><a href="../reference/modif_split.html">to_times()</a></code>, <code><a href="../reference/modif_from.html">from_times()</a></code>
 </td>
-<td>count and extract waves of a longitudinal network</td>
+<td>count, extract, and rejoin the moments of a network of any kind</td>
 </tr>
 <tr class="even">
 <td>
-<code><a href="../reference/manip_changes.html">filter_changes()</a></code>, <code><a href="../reference/manip_changes.html">apply_changes()</a></code>,
-<code><a href="../reference/defunct.html">add_changes()</a></code>
+<code><a href="../reference/measure_dims.html">net_waves()</a></code>, <code><a href="../reference/modif_scope.html">to_wave()</a></code>,
+<code><a href="../reference/modif_split.html">to_waves()</a></code>, <code><a href="../reference/modif_split.html">to_slices()</a></code>
 </td>
-<td>inspect and apply node changes over time</td>
+<td>the same, in the wave and slice vocabularies</td>
 </tr>
 <tr class="odd">
+<td>
+<code><a href="../reference/manip_changes.html">filter_changes()</a></code>, <code><a href="../reference/defunct.html">add_changes()</a></code>,
+<code><a href="../reference/coerce_list.html">as_changelist()</a></code>
+</td>
+<td>inspect and record node changes over time</td>
+</tr>
+<tr class="even">
 <td>
 <code><a href="../reference/mark_format_node.html">is_labelled()</a></code>, <code><a href="../reference/mark_format_tie.html">is_directed()</a></code>,
 <code><a href="../reference/mark_format_tie.html">is_weighted()</a></code>, <code><a href="../reference/mark_format_tie.html">is_signed()</a></code>,
@@ -1199,6 +1541,13 @@ Arc
 <dd>
 An ordered pair of nodes indicating a directed tie or edge from a tail
 to a head.
+</dd>
+<dt>
+Backbone
+</dt>
+<dd>
+The backbone of a network comprises the ties that carry more weight, or
+hold more structure, than a null model local to their endpoints expects.
 </dd>
 <dt>
 Changing

@@ -4,7 +4,9 @@ to_directed() reformats undirected network data to a directed network.
 to_undirected() reformats directed network data to an undirected network,
 so that any pair of nodes with at least one directed edge will be
 connected by an undirected edge in the new network.
-This is equivalent to the &quot;collapse&quot; mode in {igraph}..
+By default this is equivalent to the &quot;collapse&quot; mode in {igraph},
+but rule offers the other ways of reconciling a pair of ties running in
+opposite directions, which matters where the network is weighted.
 to_redirected() formats directed network data by flipping/transposing
 any existing direction such that senders become receivers and
 receivers become senders.
@@ -38,7 +40,7 @@ only transforming these objects' properties."><meta property="og:image" content=
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -115,7 +117,9 @@ only transforming these objects' properties."><meta property="og:image" content=
 <li><p><code>to_undirected()</code> reformats directed network data to an undirected network,
 so that any pair of nodes with at least one directed edge will be
 connected by an undirected edge in the new network.
-This is equivalent to the "collapse" mode in <code>{igraph}</code>..</p></li>
+By default this is equivalent to the "collapse" mode in <code>{igraph}</code>,
+but <code>rule</code> offers the other ways of reconciling a pair of ties running in
+opposite directions, which matters where the network is weighted.</p></li>
 <li><p><code>to_redirected()</code> formats directed network data by flipping/transposing
 any existing direction such that senders become receivers and
 receivers become senders.
@@ -135,7 +139,10 @@ only transforming these objects' properties.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">to_directed</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">to_undirected</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span><span class="fu">to_undirected</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"collapse"</span>, <span class="st">"min"</span>, <span class="st">"max"</span>, <span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"product"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">to_redirected</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
@@ -157,31 +164,54 @@ only transforming these objects' properties.</p>
 <li><p>tidygraph <code>tbl_graph</code>, from the <code>{tidygraph}</code> package</p></li>
 </ul></dd>
 
+
+<dt id="arg-rule">rule<a class="anchor" aria-label="anchor" href="#arg-rule"></a></dt>
+<dd><p>How the values of a pair of ties running in opposite directions
+are reconciled into the single value of an undirected tie:</p><ul><li><p>"collapse" (the default) sums them, so that a tie exists wherever a tie
+existed in either direction. For an unweighted network this is igraph's
+"collapse" mode, since a tie in either direction gives 1 either way.</p></li>
+<li><p>"sum" is the same operation, named for the arithmetic rather than
+the intent.</p></li>
+<li><p>"min" takes the smaller of the two values, so that a tie is only as
+strong as the weaker direction. Use where a relationship needs to be
+confirmed from both sides, as in a mutual friendship nomination.</p></li>
+<li><p>"max" takes the larger, so that the stronger direction stands for
+the pair. Use where a single report is taken as sufficient evidence.</p></li>
+<li><p>"mean" averages them, treating the two directions as two readings
+of one underlying quantity.</p></li>
+<li><p>"product" multiplies them, so that a tie survives only where both
+directions are non-zero, and strong ties are rewarded disproportionately.</p></li>
+</ul><p>Values missing in one direction are not treated as agreement:
+they propagate, so that <code>NA</code> in either direction gives <code>NA</code>.
+Use <code><a href="modif_miss.html">impute_ties()</a></code> first to state a different assumption.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A tidygraph object modified as explained in the function description, details,
-or section.</p>
+    <p>An object of the same class as the function was given,
+modified as explained in the function description, details, or section.
+Functions that split a network return a list of such objects.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
     <p>Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>                data.frame default igraph matrix network</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>to_acyclic                       <span class="sc">*</span>      <span class="er">*</span></span>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>                data.frame default igraph matrix network stocnet tbl_graph</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>to_acyclic                       <span class="sc">*</span>      <span class="er">*</span>                      <span class="er">*</span>         <span class="er">*</span></span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>to_directed                      <span class="sc">*</span>      <span class="er">*</span></span>
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>to_reciprocated                  <span class="sc">*</span>      <span class="er">*</span>      <span class="er">*</span></span>
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>to_redirected            <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span></span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>to_undirected                    <span class="sc">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span></span></code></pre><p></p></div>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>to_undirected            <span class="sc">*</span>       <span class="er">*</span>      <span class="er">*</span>      <span class="er">*</span>       <span class="er">*</span>                 <span class="er">*</span></span></code></pre><p></p></div>
     </div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other ties:
 <code><a href="manip_ties_attr.html">manip_ties_attr</a></code>,
 <code><a href="manip_ties_num.html">manip_ties_num</a></code>,
+<code><a href="modif_backbone.html">modif_backbone</a></code>,
 <code><a href="modif_weight.html">modif_weight</a></code></p>
 <p>Other modifications:
-<code><a href="modif_correlation.html">modif_correlation</a></code>,
+<code><a href="modif_backbone.html">modif_backbone</a></code>,
 <code><a href="modif_from.html">modif_from</a></code>,
 <code><a href="modif_labels.html">modif_labels</a></code>,
 <code><a href="modif_levels.html">modif_levels</a></code>,
@@ -191,11 +221,72 @@ Below are the currently implemented S3 methods:</p>
 <code><a href="modif_permutation.html">modif_permutation</a></code>,
 <code><a href="modif_plexity.html">modif_plexity</a></code>,
 <code><a href="modif_project.html">modif_project</a></code>,
+<code><a href="modif_proximity.html">modif_proximity</a></code>,
 <code><a href="modif_scope.html">modif_scope</a></code>,
 <code><a href="modif_split.html">modif_split</a></code>,
 <code><a href="modif_weight.html">modif_weight</a></code></p></div>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">to_undirected</span><span class="op">(</span><span class="va">ison_networkers</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;"># EIES Networkers</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, weighted, undirected network of 32 nodes and 266 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 32 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   name               Discipline   Citations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Lin Freeman        Sociology           19</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Doug White         Anthropology         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Ev Rogers          Other              170</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Richard Alba       Sociology           23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Phipps Arabie      Other               16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Carol Barner-Barry Other                6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 26 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 266 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2    852</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     3     32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     2     3     22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     1     4    117</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     2     4     47</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     1     5     46</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 260 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">to_undirected</span><span class="op">(</span><span class="va">ison_networkers</span>, rule <span class="op">=</span> <span class="st">"min"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #5F87D7; font-style: italic;"># A labelled, weighted, undirected network of 32 nodes and 174 ties</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Nodes </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 32 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   name               Discipline   Citations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Lin Freeman        Sociology           19</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Doug White         Anthropology         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Ev Rogers          Other              170</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Richard Alba       Sociology           23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Phipps Arabie      Other               16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Carol Barner-Barry Other                6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 26 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── Ties </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 174 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    from    to weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     2    364</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1     3      4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     1     4     52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     1     5     20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     1     6     65</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     1     7     14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 168 more rows</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

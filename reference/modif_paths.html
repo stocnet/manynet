@@ -24,7 +24,7 @@ to_dominating() returns the dominating tree of the network.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -166,8 +166,9 @@ By default "all".</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A tidygraph object modified as explained in the function description, details,
-or section.</p>
+    <p>An object of the same class as the function was given,
+modified as explained in the function description, details, or section.
+Functions that split a network return a list of such objects.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -217,6 +218,18 @@ This can be useful for showing the hierarchical structure of a network,
 for example in an organisational context,
 or identifying the most influential nodes in a network.</p>
     </div>
+    <div id="dominating">
+    <h2>Dominating</h2>
+
+
+<p>This function returns a network in which each node is tied to its closest dominating node.
+A dominating set \(D\) in a graph \(G\) is a subset of nodes such that every node
+not in \(D\) is adjacent to at least one node in \(D\).
+The domination number, \(\gamma(G)\), is the size of the smallest such set.
+This concept underpins many practical network problems:
+facility location, sensor placement, control theory applied to networks,
+and backbone selection in ad hoc wireless routing.</p>
+    </div>
     <div id="references">
     <h2>References</h2>
 
@@ -262,11 +275,22 @@ or identifying the most influential nodes in a network.</p>
 <a href="https://doi.org/10.1002/j.1538-7305.1957.tb01515.x" class="external-link">doi:10.1002/j.1538-7305.1957.tb01515.x</a></p>
 </div>
 
+<div class="section">
+<h3 id="on-dominating-sets">On dominating sets<a class="anchor" aria-label="anchor" href="#on-dominating-sets"></a></h3>
+
+
+<p>Bange, David W., Anthony E. Barkauskas, and Peter J. Slater. 1988.
+"Efficient dominating sets in graphs."
+In <em>Applications of Discrete Mathematics</em>, SIAM, pp. 189–99.</p>
+<p>Haynes, Teresa W., Stephen T. Hedetniemi, and Peter J. Slater. 1998.
+<em>Fundamentals of Domination in Graphs</em>. CRC Press.</p>
+</div>
+
     </div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other modifications:
-<code><a href="modif_correlation.html">modif_correlation</a></code>,
+<code><a href="modif_backbone.html">modif_backbone</a></code>,
 <code><a href="modif_direction.html">modif_direction</a></code>,
 <code><a href="modif_from.html">modif_from</a></code>,
 <code><a href="modif_labels.html">modif_labels</a></code>,
@@ -276,6 +300,7 @@ or identifying the most influential nodes in a network.</p>
 <code><a href="modif_permutation.html">modif_permutation</a></code>,
 <code><a href="modif_plexity.html">modif_plexity</a></code>,
 <code><a href="modif_project.html">modif_project</a></code>,
+<code><a href="modif_proximity.html">modif_proximity</a></code>,
 <code><a href="modif_scope.html">modif_scope</a></code>,
 <code><a href="modif_split.html">modif_split</a></code>,
 <code><a href="modif_weight.html">modif_weight</a></code></p></div>

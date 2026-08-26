@@ -25,7 +25,7 @@ net_attributes() lists the information attributes of the network.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -141,10 +141,14 @@ and can be used for printing a grand table in the <code>{grand}</code> package.<
 <li><p>"boundary" is the boundary specification of the network ("ego", "roster", or "snowball")</p></li>
 <li><p>"observation" is the observation type of the network ("cross-sectional",
 "panel", or "event")</p></li>
-<li><p>"update" is the update type of the network ("increment" or "replacement")</p></li>
+<li><p>"update" is the update type of the network ("increment" or "replace")</p></li>
 <li><p>"max_degree" is the maximum degree of the network</p></li>
 <li><p>"min_degree" is the minimum degree of the network</p></li>
 <li><p>"doi" is the DOI or URL of the network</p></li>
+<li><p>"transformations" records how the network has been transformed since it
+was collected or generated. See the Transformations section.
+Note that this records what has been done to the network,
+where "method" records how the network was collected or modelled.</p></li>
 </ul><p>If no arguments are used,
 the function will check for missing information and prompt the user to add it.
 If <code>optional = TRUE</code> is specified, the function will also prompt for optional information.</p></dd>
@@ -167,13 +171,49 @@ the default method will attempt to coerce the object to a class for which a meth
 and then coerce the output back to the original class.
 If no method is available for any class, an error will be thrown.</p>
     </div>
+    <div id="transformations">
+    <h2>Transformations</h2>
+
+
+<p>The "transformations" field implements section 4 of the GRAND guidelines,
+which names six ways raw data is turned into analytic data.
+It holds a named list, one element for each of them:</p><ul><li><p>"symmetrisation" (GRAND 4.1), which <code><a href="modif_direction.html">to_undirected()</a></code> sets.</p></li>
+<li><p>"dichotomisation" (4.2), which <code><a href="modif_weight.html">to_unweighted()</a></code> sets.</p></li>
+<li><p>"projection" (4.3), which <code><a href="modif_project.html">to_mode1()</a></code> and <code><a href="modif_project.html">to_mode2()</a></code> set.</p></li>
+<li><p>"exclusion" (4.4), which the functions that drop nodes or ties set,
+such as <code><a href="manip_nodes_num.html">delete_isolates()</a></code>, <code><a href="modif_scope.html">to_component()</a></code>, and <code><a href="modif_plexity.html">to_uniplex()</a></code>.</p></li>
+<li><p>"aggregation" (4.5), which <code><a href="modif_plexity.html">to_flat()</a></code>, <code><a href="manip_ties_attr.html">join_ties()</a></code>,
+and <code><a href="modif_scope.html">to_blockmodel()</a></code> set.</p></li>
+<li><p>"imputation" (4.6), which <code><a href="modif_miss.html">impute_ties()</a></code> and <code><a href="modif_miss.html">impute_nodes()</a></code> set.</p></li>
+</ul><p>One further name, "normalisation", records what <code><a href="modif_weight.html">to_normalised()</a></code> does.
+The guidelines do not name it, since rescaling tie values neither
+dichotomises them (4.2 ends in an unweighted network)
+nor aggregates them (4.5 combines what was separate),
+but it changes the analytic network and so is recorded too.</p>
+<p>A name that is absent means that transformation was not applied,
+so <code>"symmetrisation" %in% names(as_infolist(.data)$transformations)</code>
+answers whether a network was symmetrised
+without reading past everything else done to it.
+<code><a href="class_describe.html">describe_transformations()</a></code> reports the same thing as a phrase.</p>
+<p>Each element is a character vector naming the method first,
+and, where the guidelines ask for an amount too,
+its consequence in parentheses:
+<code>list(symmetrisation = "collapse", imputation = "reciprocity (73 missing ties)")</code>.
+An element accumulates rather than replaces,
+so a network imputed in more than one step reports each of them,
+and the order of the names is the order the transformations were applied.</p>
+<p>The <code>to_*()</code> and <code>impute_*()</code> functions set this themselves,
+so it rarely needs to be set by hand.
+Where it does, <code>add_info()</code> takes a named list and merges it in,
+and refuses a name that is not one of those above.</p>
+    </div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><a href="https://grand-statement.org" class="external-link">GRAND statement</a> for more
 information on the Guidelines for Reporting About Network Data (GRAND).</p>
 <p>Other manipulations:
 <code><a href="manip_changes.html">manip_changes</a></code>,
-<code><a href="manip_global.html">manip_global</a></code>,
+<code><a href="manip_globals.html">manip_globals</a></code>,
 <code><a href="manip_nodes_attr.html">manip_nodes_attr</a></code>,
 <code><a href="manip_nodes_num.html">manip_nodes_num</a></code>,
 <code><a href="manip_ties_attr.html">manip_ties_attr</a></code>,

@@ -23,7 +23,7 @@ and could be supportive or critical, and could also be repeated."><meta property
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -112,33 +112,46 @@ and could be supportive or critical, and could also be repeated.</p>
     <div id="format">
     <h2>Format</h2>
     <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co">#&gt; -- # German nuclear discourse network ------------------------------------------</span></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#&gt; # A dynamic, labelled, two-mode network of 337 speakers and 54 concepts and</span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt; 1164 claim ties from 2011-03-11 to 2011-06-30</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#&gt; # A dynamic, labelled, signed, two-mode network of 337 speakers and 54 concepts</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt; and 1164 claim ties (16 parallel) from 2011-03-11 to 2011-06-30</span></span>
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt;</span></span>
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co">#&gt; -- Nodes</span></span>
 <span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co">#&gt; # A tibble: 391 x 10</span></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">#&gt;   name         type  present politician govt  coalition office org   party power</span></span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;        &lt;lgl&gt; &lt;lgl&gt;   &lt;lgl&gt;      &lt;lgl&gt; &lt;lgl&gt;     &lt;lgl&gt;  &lt;chr&gt; &lt;chr&gt; &lt;int&gt;</span></span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">#&gt; 1 VfEW         FALSE TRUE    FALSE      FALSE NA        FALSE  VfEW  &lt;NA&gt;      0</span></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co">#&gt; 2 Angela Merk~ FALSE TRUE    TRUE       TRUE  TRUE      TRUE   CDU   31        2</span></span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co">#&gt; 3 Sunday Times FALSE TRUE    FALSE      FALSE NA        FALSE  Sund~ &lt;NA&gt;      0</span></span>
-<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co">#&gt; 4 SPD          FALSE TRUE    TRUE       FALSE FALSE     FALSE  SPD   32        1</span></span>
-<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co">#&gt; 5 Norbert Röt~ FALSE TRUE    TRUE       TRUE  TRUE      TRUE   CDU   31        1</span></span>
-<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co">#&gt; 6 Torsten Kra~ FALSE TRUE    FALSE      FALSE NA        FALSE  Die ~ &lt;NA&gt;      0</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">#&gt;   label         mode  active politician govt  coalition office org   party power</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;         &lt;chr&gt; &lt;lgl&gt;  &lt;lgl&gt;      &lt;lgl&gt; &lt;lgl&gt;     &lt;lgl&gt;  &lt;chr&gt; &lt;chr&gt; &lt;int&gt;</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">#&gt; 1 VfEW          spea~ TRUE   FALSE      FALSE NA        FALSE  VfEW  &lt;NA&gt;      0</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co">#&gt; 2 Angela Merkel spea~ TRUE   TRUE       TRUE  TRUE      TRUE   CDU   31        2</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co">#&gt; 3 Sunday Times  spea~ TRUE   FALSE      FALSE NA        FALSE  Sund~ &lt;NA&gt;      0</span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co">#&gt; 4 SPD           spea~ TRUE   TRUE       FALSE FALSE     FALSE  SPD   32        1</span></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co">#&gt; 5 Norbert Rött~ spea~ TRUE   TRUE       TRUE  TRUE      TRUE   CDU   31        1</span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co">#&gt; 6 Torsten Krau~ spea~ TRUE   FALSE      FALSE NA        FALSE  Die ~ &lt;NA&gt;      0</span></span>
 <span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="co">#&gt; # i 385 more rows</span></span>
 <span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a><span class="co">#&gt;</span></span>
 <span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a><span class="co">#&gt; -- Ties</span></span>
 <span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1,164 x 5</span></span>
-<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="co">#&gt;    from    to time       increment default</span></span>
-<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;date&gt;         &lt;int&gt; &lt;lgl&gt;</span></span>
-<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a><span class="co">#&gt; 1     1   338 2011-03-11        -1 FALSE</span></span>
-<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a><span class="co">#&gt; 2     2   339 2011-03-12         1 TRUE</span></span>
-<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a><span class="co">#&gt; 3     3   340 2011-03-13        -1 FALSE</span></span>
-<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a><span class="co">#&gt; 4     4   341 2011-03-13         1 TRUE</span></span>
-<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a><span class="co">#&gt; 5     2   342 2011-03-13        -1 TRUE</span></span>
-<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a><span class="co">#&gt; 6     5   343 2011-03-13         1 TRUE</span></span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="co">#&gt;    from    to time       weight default</span></span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;date&gt;      &lt;int&gt; &lt;lgl&gt;</span></span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a><span class="co">#&gt; 1     1   338 2011-03-11     -1 FALSE</span></span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a><span class="co">#&gt; 2     2   339 2011-03-12      1 TRUE</span></span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a><span class="co">#&gt; 3     3   340 2011-03-13     -1 FALSE</span></span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a><span class="co">#&gt; 4     4   341 2011-03-13      1 TRUE</span></span>
+<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a><span class="co">#&gt; 5     2   342 2011-03-13     -1 TRUE</span></span>
+<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a><span class="co">#&gt; 6     5   343 2011-03-13      1 TRUE</span></span>
 <span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a><span class="co">#&gt; # i 1,158 more rows</span></span>
 <span id="cb1-28"><a href="#cb1-28" tabindex="-1"></a><span class="co">#&gt;</span></span></code></pre><p></p></div>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>Each tie is one claim by one speaker about one concept on one day, so the
+network records a stream of events and not a panel.
+The day is held in a 'time' column, and whether the claim was supportive
+or critical in a 'weight' column of 1 or -1.</p>
+<p>A speaker may claim the same concept on more than one day, and 152 of the
+speaker-concept pairs do, one of them 15 times. Such claims follow one
+another rather than coexist, so they are repetitions and not parallel
+ties.
+Eight speaker-concept pairs make more than one claim on a single day,
+which <code><a href="measure_attributes_ties.html">tie_is_parallel()</a></code> marks, covering 16 of the 1164 ties.</p>
     </div>
     <div id="references">
     <h2>References</h2>

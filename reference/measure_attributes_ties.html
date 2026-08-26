@@ -4,6 +4,12 @@ tie_attribute() returns an attribute's values for the ties in a network.
 tie_weights() returns the weights of the ties in a network.
 tie_signs() returns the signs of the ties in a network.
 tie_is_twomode() returns whether each tie in a network is a cross-mode tie.
+tie_is_parallel() returns whether each tie in a network runs parallel
+to another, i.e. whether another tie joins the same pair of nodes at the
+same moment.
+tie_is_backbone() returns whether each tie in a network is retained by
+a backbone filter, i.e. whether it carries more weight, or holds more
+structure, than a null model local to its endpoints expects.
 
 
 These functions are also often used as helpers within other functions.
@@ -26,7 +32,7 @@ as the number of ties in the network, respectively."><meta property="og:image" c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -103,6 +109,12 @@ as the number of ties in the network, respectively."><meta property="og:image" c
 <li><p><code>tie_weights()</code> returns the weights of the ties in a network.</p></li>
 <li><p><code>tie_signs()</code> returns the signs of the ties in a network.</p></li>
 <li><p><code>tie_is_twomode()</code> returns whether each tie in a network is a cross-mode tie.</p></li>
+<li><p><code>tie_is_parallel()</code> returns whether each tie in a network runs parallel
+to another, i.e. whether another tie joins the same pair of nodes at the
+same moment.</p></li>
+<li><p><code>tie_is_backbone()</code> returns whether each tie in a network is retained by
+a backbone filter, i.e. whether it carries more weight, or holds more
+structure, than a null model local to its endpoints expects.</p></li>
 </ul><p>These functions are also often used as helpers within other functions.
 <code>tie_*()</code> always return vectors the same length
 as the number of ties in the network, respectively.</p>
@@ -115,7 +127,16 @@ as the number of ties in the network, respectively.</p>
 <span></span>
 <span><span class="fu">tie_signs</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">tie_is_twomode</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">tie_is_twomode</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">tie_is_parallel</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">tie_is_backbone</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  filter <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  threshold <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  endpoints <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"either"</span>, <span class="st">"both"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -136,10 +157,85 @@ as the number of ties in the network, respectively.</p>
 <dd><p>Character string naming a nodal attribute.
 The attribute itself may be a logical mark, numeric measure, or character membership vector.</p></dd>
 
+
+<dt id="arg-filter">filter<a class="anchor" aria-label="anchor" href="#arg-filter"></a></dt>
+<dd><p>Which backbone filter to apply, one of:</p><ul><li><p>"disparity": the disparity filter of Serrano et al. (2009), which tests
+a tie's share of its node's strength against a null model in which that
+strength is divided at random. Assumes heavy-tailed weights.</p></li>
+<li><p>"lans": locally adaptive network sparsification, Foti et al. (2011),
+which replaces that null model with the empirical distribution of the
+node's own tie weights, and so assumes nothing about their shape.</p></li>
+<li><p>"noise": the noise-corrected filter of Coscia and Neffke (2017), which
+tests a tie's weight against the strengths of both its endpoints and
+allows for the uncertainty of the null itself. Corrects the disparity
+filter's bias towards hubs.</p></li>
+<li><p>"mlf": the marginal likelihood filter of Dianati (2016), which reads
+the weights as counts of independent events and tests each against a
+maximum-entropy null. Requires whole-number weights.</p></li>
+<li><p>"simmelian": the Simmelian backbone of Nick et al. (2013), which ranks
+each node's neighbours by how embedded the tie is and retains the ties
+whose endpoints rank each other similarly. Ignores tie weights, and so is
+the only filter available for an unweighted network. Reads a directed
+network as an undirected one, since it counts shared neighbours.</p></li>
+</ul><p>By default <code>NULL</code>, which uses "lans" where the network is weighted and
+"simmelian" where it is not. "lans" leads because it assumes nothing about
+the shape of the weights, and because it retains each node's strongest tie
+whatever that shape is. "disparity" is the better known filter, but its
+null model expects heavy-tailed weights: where weights are more even, a
+tie's share of its node's strength approaches 1/k for every tie, the
+p-value approaches 1/e, and the filter retains nothing at all.</p></dd>
+
+
+<dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
+<dd><p>The cutoff below which a tie is retained.
+For the four statistical filters this is a significance level,
+by default 0.05.
+For "simmelian" it is instead one minus the similarity of the two
+endpoints' rankings, by default 0.5.
+By default <code>NULL</code>, which uses whichever of these the filter calls for.</p></dd>
+
+
+<dt id="arg-endpoints">endpoints<a class="anchor" aria-label="anchor" href="#arg-endpoints"></a></dt>
+<dd><p>Whether a tie is retained where it passes the filter at
+"either" of its endpoints, by default, or only where it passes at "both".
+"both" is the more demanding, since a tie must be locally salient to both
+the sender and the receiver.
+Applies to the "disparity" and "lans" filters only,
+since the others weigh both endpoints at once.</p></dd>
+
 </dl></div>
+    <div id="parallel-ties">
+    <h2>Parallel ties</h2>
+
+
+<p>Parallel ties, also called multi-edges, are two or more ties that join
+the same pair of nodes at the same moment.
+Ties that join the same pair of nodes at different moments follow one
+another rather than run alongside one another,
+and so are not parallel.
+How a network records time therefore decides which ties coexist:</p><ul><li><p>Where a network is a panel, ties are parallel where they share a wave.</p></li>
+<li><p>Where a network records a stream of events, ties are parallel where
+they share a moment.</p></li>
+<li><p>Where a network records the interval each tie lasts over,
+ties are parallel where those intervals overlap.
+Intervals that merely abut, one beginning as the other ends, do not.</p></li>
+<li><p>Where a network records no time at all, any two ties on a pair of
+nodes are parallel.</p></li>
+</ul><p>Ties of different types are likewise not parallel.
+Several types of tie between a pair of nodes is what <code><a href="mark_format_tie.html">is_multiplex()</a></code>
+marks; <code>tie_is_parallel()</code> marks several ties of one type.</p>
+<p>Every tie in such a bundle is marked, and not just the repetitions,
+so <code>sum(tie_is_parallel(ison_koenigsberg))</code> counts four of the seven
+bridges and not two.</p>
+<p>Note that <code><a href="coerce_list.html">as_matrix()</a></code> reports how many ties join each pair of nodes,
+so a network with parallel ties gives a matrix with cells greater than
+one even where it is neither weighted nor signed.</p>
+    </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p>Other measures:
+    <div class="dont-index"><p><code><a href="modif_backbone.html">to_backbone()</a></code>, which deletes the ties this does not mark,
+and which documents each filter and the works they come from.</p>
+<p>Other measures:
 <code><a href="measure_attributes_nodes.html">measure_attributes_nodes</a></code>,
 <code><a href="measure_dims.html">measure_dims</a></code></p></div>
     </div>
@@ -158,8 +254,16 @@ The attribute itself may be a logical mark, numeric measure, or character member
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 555 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
 <span class="r-in"><span><span class="fu">tie_is_twomode</span><span class="op">(</span><span class="va">fict_actually</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   `Aurelia-Jamie` `Aurelia-Scene 32` `Aurelia-Scene 38` `Aurelia-Scene 39`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>               0                  1                  1                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> FALSE           TRUE               TRUE               TRUE              </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 185 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
+<span class="r-in"><span><span class="fu">tie_is_parallel</span><span class="op">(</span><span class="va">ison_koenigsberg</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `Altstadt-Kneiphof` `Altstadt-Kneiphof` `Altstadt-Lomse` `Kneiphof-Lomse`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> TRUE                TRUE                FALSE            FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 3 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
+<span class="r-in"><span><span class="fu">tie_is_backbone</span><span class="op">(</span><span class="va">ison_networkers</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `Lin Freeman-&gt;Doug White` `Lin Freeman-&gt;Ev Rogers` `Lin Freeman-&gt;Richard Alba`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> TRUE                      TRUE                     TRUE                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... and 437 more values from this nodeset. Use `print_all(...)` to print all values.</span></span>
 </code></pre></div>
     </div>
   </div>

@@ -3,14 +3,18 @@
 Various sociometric data was collected of the novices attending the minor seminary of 'Cloisterville'
 preparing to join the monastic order.
 type = &quot;like&quot; records whom novices said they liked most at three time points/waves
-type = &quot;esteem&quot; records whom novices said they held in esteem (sign &amp;gt; 0) and disesteem (sign &amp;lt; 0)
-type = &quot;praise&quot; records whom novices said they praised (sign &amp;gt; 0) and blamed (sign &amp;lt; 0)
-type = &quot;influence&quot; records whom novices said were a positive influence (sign &amp;gt; 0) and negative influence (sign &amp;lt; 0)
+type = &quot;esteem&quot; records whom novices said they held in esteem (weight &amp;gt; 0) and disesteem (weight &amp;lt; 0)
+type = &quot;praise&quot; records whom novices said they praised (weight &amp;gt; 0) and blamed (weight &amp;lt; 0)
+type = &quot;influence&quot; records whom novices said were a positive influence (weight &amp;gt; 0) and negative influence (weight &amp;lt; 0)
 
 
 All networks are weighted.
 Novices' first choices are weighted 3, the second 2, and third choices 1.
 Some subjects offered tied ranks for their top four choices.
+The sign of each tie is held as the sign of its weight,
+so that the weights run from -3 to 3
+and neither the valence nor the rank is lost when the network is
+coerced to another class.
 In addition to node names,
 a 'groups' variable records the four groups that Sampson observed during his time there:
 The Loyal Opposition consists of novices who entered the monastery first and defended existing practices
@@ -42,7 +46,7 @@ or remained (4) are given in the nodal attribute &quot;left&quot;."><meta proper
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -118,12 +122,16 @@ or remained (4) are given in the nodal attribute &quot;left&quot;."><meta proper
     <p>The data were collected for an ethnographic study of community structure in a New England monastery.
 Various sociometric data was collected of the novices attending the minor seminary of 'Cloisterville'
 preparing to join the monastic order.</p><ul><li><p><code>type = "like"</code> records whom novices said they liked most at three time points/waves</p></li>
-<li><p><code>type = "esteem"</code> records whom novices said they held in esteem (sign &gt; 0) and disesteem (sign &lt; 0)</p></li>
-<li><p><code>type = "praise"</code> records whom novices said they praised (sign &gt; 0) and blamed (sign &lt; 0)</p></li>
-<li><p><code>type = "influence"</code> records whom novices said were a positive influence (sign &gt; 0) and negative influence (sign &lt; 0)</p></li>
+<li><p><code>type = "esteem"</code> records whom novices said they held in esteem (weight &gt; 0) and disesteem (weight &lt; 0)</p></li>
+<li><p><code>type = "praise"</code> records whom novices said they praised (weight &gt; 0) and blamed (weight &lt; 0)</p></li>
+<li><p><code>type = "influence"</code> records whom novices said were a positive influence (weight &gt; 0) and negative influence (weight &lt; 0)</p></li>
 </ul><p>All networks are weighted.
 Novices' first choices are weighted 3, the second 2, and third choices 1.
-Some subjects offered tied ranks for their top four choices.</p>
+Some subjects offered tied ranks for their top four choices.
+The sign of each tie is held as the sign of its weight,
+so that the weights run from -3 to 3
+and neither the valence nor the rank is lost when the network is
+coerced to another class.</p>
 <p>In addition to node names,
 a 'groups' variable records the four groups that Sampson observed during his time there:</p><ul><li><p>The <em>Loyal</em> Opposition consists of novices who entered the monastery first and defended existing practices</p></li>
 <li><p>The <em>Young Turks</em> arrived later during a period of change and questioned practices in the monastery</p></li>
@@ -150,7 +158,7 @@ or remained (4) are given in the nodal attribute "left".</p>
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co">#&gt;</span></span>
 <span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co">#&gt; -- Nodes</span></span>
 <span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">#&gt; # A tibble: 18 x 3</span></span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt;   name        groups        left</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt;   label       groups        left</span></span>
 <span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;       &lt;chr&gt;        &lt;dbl&gt;</span></span>
 <span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co">#&gt; 1 Romuald     Interstitial     3</span></span>
 <span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co">#&gt; 2 Bonaventure Loyal            4</span></span>
@@ -161,15 +169,15 @@ or remained (4) are given in the nodal attribute "left".</p>
 <span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a><span class="co">#&gt; # i 12 more rows</span></span>
 <span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a><span class="co">#&gt;</span></span>
 <span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a><span class="co">#&gt; -- Ties</span></span>
-<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="co">#&gt; # A tibble: 463 x 6</span></span>
-<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="co">#&gt;    from    to  sign type  weight  wave</span></span>
-<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a><span class="co">#&gt; 1     1     2     1 like       1     2</span></span>
-<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a><span class="co">#&gt; 2     1     2     1 like       1     3</span></span>
-<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a><span class="co">#&gt; 3     1     3     1 like       1     3</span></span>
-<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a><span class="co">#&gt; 4     1     5     1 like       3     1</span></span>
-<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a><span class="co">#&gt; 5     1     5     1 like       3     2</span></span>
-<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a><span class="co">#&gt; 6     1     5     1 like       3     3</span></span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="co">#&gt; # A tibble: 463 x 5</span></span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="co">#&gt;    from    to weight  time layer</span></span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt; &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;</span></span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a><span class="co">#&gt; 1     1     2      1     2 like</span></span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a><span class="co">#&gt; 2     1     2      1     3 like</span></span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a><span class="co">#&gt; 3     1     3      1     3 like</span></span>
+<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a><span class="co">#&gt; 4     1     5      3     1 like</span></span>
+<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a><span class="co">#&gt; 5     1     5      3     2 like</span></span>
+<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a><span class="co">#&gt; 6     1     5      3     3 like</span></span>
 <span id="cb1-28"><a href="#cb1-28" tabindex="-1"></a><span class="co">#&gt; # i 457 more rows</span></span>
 <span id="cb1-29"><a href="#cb1-29" tabindex="-1"></a><span class="co">#&gt;</span></span></code></pre><p></p></div>
     </div>

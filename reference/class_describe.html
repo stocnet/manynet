@@ -9,6 +9,8 @@ describe_ties() describes how many of each type of ties there are
 and, if available, names the different types of ties.
 describe_changes() describes the changing features of a network,
 if any, such as how many waves there are.
+describe_transformations() describes how the network has been
+transformed since it was collected or generated, if at all.
 
 
 These descriptions are constructed to be GRAND-consistent."><meta property="og:image" content="https://stocnet.github.io/manynet/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -29,7 +31,7 @@ These descriptions are constructed to be GRAND-consistent."><meta property="og:i
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -111,6 +113,8 @@ and, if available, names the different nodesets or modes.</p></li>
 and, if available, names the different types of ties.</p></li>
 <li><p><code>describe_changes()</code> describes the changing features of a network,
 if any, such as how many waves there are.</p></li>
+<li><p><code>describe_transformations()</code> describes how the network has been
+transformed since it was collected or generated, if at all.</p></li>
 </ul><p>These descriptions are constructed to be GRAND-consistent.</p>
     </div>
 
@@ -121,7 +125,9 @@ if any, such as how many waves there are.</p></li>
 <span></span>
 <span><span class="fu">describe_ties</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">describe_changes</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">describe_changes</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">describe_transformations</span><span class="op">(</span><span class="va">.data</span>, details <span class="op">=</span> <span class="cn">FALSE</span>, width <span class="op">=</span> <span class="fu">cli</span><span class="fu">::</span><span class="fu"><a href="https://cli.r-lib.org/reference/console_width.html" class="external-link">console_width</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -137,8 +143,26 @@ if any, such as how many waves there are.</p></li>
 <li><p>tidygraph <code>tbl_graph</code>, from the <code>{tidygraph}</code> package</p></li>
 </ul></dd>
 
+
+<dt id="arg-details">details<a class="anchor" aria-label="anchor" href="#arg-details"></a></dt>
+<dd><p>Logical. Where FALSE, the default, the description is given
+at whichever level of detail fits the width of the console. Where TRUE,
+every method and its consequence is named whatever the width.</p></dd>
+
+
+<dt id="arg-width">width<a class="anchor" aria-label="anchor" href="#arg-width"></a></dt>
+<dd><p>Integer. The number of characters the description may fill,
+by default the width of the console. Where a caller adds words of its own,
+such as the header <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> puts this in, it passes what is left.</p></dd>
+
 </dl></div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">describe_transformations</span><span class="op">(</span><span class="fu"><a href="modif_direction.html">to_undirected</a></span><span class="op">(</span><span class="va">ison_southern_women</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "symmetrisation: collapse"</span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

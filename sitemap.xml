@@ -30,15 +30,22 @@
 <url><loc>https://stocnet.github.io/manynet/reference/irps_911.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/irps_blogs.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/irps_books.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/irps_corruption.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/irps_nuclear.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/irps_revere.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/irps_supremecourt.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/irps_tribes.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/irps_usgeo.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/irps_wwi.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/ison_adolescents.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/ison_algebra.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_bankwiring.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/ison_brandes.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_classmates.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/ison_dolphins.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/ison_emotions.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_florentine.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_fraternity.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/ison_hightech.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/ison_judo_moves.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/ison_karateka.html</loc></url>
@@ -49,6 +56,7 @@
 <url><loc>https://stocnet.github.io/manynet/reference/ison_networkers.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/ison_physicians.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/ison_southern_women.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/ison_tailorshop.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/make_collect.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/make_create.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/make_ego.html</loc></url>
@@ -62,7 +70,7 @@
 <url><loc>https://stocnet.github.io/manynet/reference/make_stocnet.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/make_write.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_changes.html</loc></url>
-<url><loc>https://stocnet.github.io/manynet/reference/manip_global.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/manip_globals.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_info.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_nodes_attr.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/manip_nodes_num.html</loc></url>
@@ -79,7 +87,7 @@
 <url><loc>https://stocnet.github.io/manynet/reference/measure_dims.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/measure_missingness.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/member_names.html</loc></url>
-<url><loc>https://stocnet.github.io/manynet/reference/modif_correlation.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/modif_backbone.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/modif_direction.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/modif_from.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/modif_labels.html</loc></url>
@@ -90,6 +98,7 @@
 <url><loc>https://stocnet.github.io/manynet/reference/modif_permutation.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/modif_plexity.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/modif_project.html</loc></url>
+<url><loc>https://stocnet.github.io/manynet/reference/modif_proximity.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/modif_scope.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/modif_split.html</loc></url>
 <url><loc>https://stocnet.github.io/manynet/reference/modif_weight.html</loc></url>

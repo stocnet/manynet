@@ -9,9 +9,11 @@ read_nodelist() imports nodelists from Excel/csv files.
 read_pajek() imports Pajek (.net or .paj) files.
 read_ucinet() imports UCINET files from the header (.##h).
 read_dynetml() imports DyNetML interchange format for rich social network data.
-read_graphml() imports GraphML files.
+read_graphml() imports GraphML files,
+including those exported by Network Canvas.
 read_gml() imports GML files.
 read_gdf() imports GDF files.
+read_gexf() imports GEXF files, such as those exported by Gephi.
 
 "><meta property="og:image" content="https://stocnet.github.io/manynet/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -31,7 +33,7 @@ read_gdf() imports GDF files.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
       </span>
     </div>
 
@@ -113,9 +115,11 @@ can work with:</p><ul><li><p><code>read_matrix()</code> imports adjacency matric
 <li><p><code>read_pajek()</code> imports Pajek (.net or .paj) files.</p></li>
 <li><p><code>read_ucinet()</code> imports UCINET files from the header (.##h).</p></li>
 <li><p><code>read_dynetml()</code> imports DyNetML interchange format for rich social network data.</p></li>
-<li><p><code>read_graphml()</code> imports GraphML files.</p></li>
+<li><p><code>read_graphml()</code> imports GraphML files,
+including those exported by Network Canvas.</p></li>
 <li><p><code>read_gml()</code> imports GML files.</p></li>
 <li><p><code>read_gdf()</code> imports GDF files.</p></li>
+<li><p><code>read_gexf()</code> imports GEXF files, such as those exported by Gephi.</p></li>
 </ul></div>
 
     <div id="ref-usage">
@@ -131,11 +135,13 @@ can work with:</p><ul><li><p><code>read_matrix()</code> imports adjacency matric
 <span></span>
 <span><span class="fu">read_dynetml</span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">read_graphml</span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">read_graphml</span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span>, ego <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">read_gml</span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">read_gdf</span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">read_gdf</span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">read_gexf</span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="source">
@@ -157,7 +163,7 @@ networks from a single UCINET file. Please convert these one by one.</p></dd>
 
 <dt id="arg-sv">sv<a class="anchor" aria-label="anchor" href="#arg-sv"></a></dt>
 <dd><p>Allows users to specify whether their csv file is
-<code>"comma"</code> (English) or <code>"semi-colon"</code> (European) separated.</p></dd>
+<code>"comma"</code> (English, the default) or <code>"semi-colon"</code> (European) separated.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -168,28 +174,36 @@ networks from a single UCINET file. Please convert these one by one.</p></dd>
 <dd><p>A character string indicating the ties/network,
 where the data contains several.</p></dd>
 
+
+<dt id="arg-ego">ego<a class="anchor" aria-label="anchor" href="#arg-ego"></a></dt>
+<dd><p>Logical, whether to add ego as a node in ego-centric formats
+such as Network Canvas, where ego is otherwise only recorded at the level
+of the network. By default TRUE.
+Where ego is added, ties from ego to each of its alters are also added,
+and every tie gains a 'by' column identifying the ego that reported it,
+which makes the network a cognitive social structure (see <code><a href="mark_format_cognitive.html">is_cognitive()</a></code>).</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>read_edgelist()</code> and <code>read_nodelist()</code> will import
-into edgelist (tibble) format which can then be coerced or combined into
-different graph objects from there.</p>
-<p><code>read_pajek()</code> and <code>read_ucinet()</code> will import into
-a tidygraph format, since they already contain both edge and attribute data.
-<code>read_matrix()</code> will import into tidygraph format too.
-Note that all graphs can be easily coerced into other formats
+    <p><code>read_edgelist()</code> and <code>read_nodelist()</code> import a list rather than a
+network, so they return a tibble,
+which can then be coerced or combined into a network from there.</p>
+<p>Every other <code>read_*()</code> function returns a stocnet object (see
+<code><a href="make_stocnet.html">make_stocnet()</a></code>).
+This is the class that holds the most of what a file can contain,
+such as the network's metadata, more than two modes, several layers,
+and the times at which nodes and ties are present.
+Note that a network can be coerced into any other format
 with <code>{manynet}</code>'s <code>as_</code> methods.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>Note that these functions are not as actively maintained as others
-in the package, so please let us know if any are not currently working
-for you or if there are missing import routines
-by <a href="https://github.com/stocnet/manynet/issues" class="external-link">raising an issue on Github</a>.</p>
-<p>There are a number of repositories for network data
+    <p>There are a number of repositories for network data
 that hold various datasets in different formats. See for example:</p><ul><li><p><a href="https://schochastics.github.io/networkdata/" class="external-link">networkdata</a></p></li>
 <li><p><a href="http://www-personal.umich.edu/~mejn/netdata/" class="external-link">GML datasets</a></p></li>
 <li><p><a href="http://snap.stanford.edu/data/" class="external-link">SNAP Stanford Large Network Dataset Collection</a></p></li>
+<li><p><a href="https://icon.colorado.edu" class="external-link">Colorado Index of Complex Networks</a></p></li>
 </ul><p>Please let us know if you identify any further repositories
 of social or political networks and we would be happy to add them here.</p>
 <p>The <code>_ucinet</code> functions only work with relatively recent UCINET
@@ -197,6 +211,37 @@ file formats, e.g. type 6406 files.
 To import earlier UCINET file types, you will need to update them first.
 To import multiple matrices packed into a single UCINET file,
 you will need to unpack them and convert them one by one.</p>
+<p><code>read_graphml()</code> reads the file itself rather than relying on igraph,
+so that keys declared <code>for="all"</code> and files holding more than one graph
+are read rather than quietly discarded.
+Where several graphs are present, they are combined into a single network
+and distinguished by a 'graph' node attribute.</p>
+<p>Network Canvas exports are recognised by their namespace and read
+accordingly.
+Each interview session is exported as a separate graph, so the sessions are
+combined into one network in which each session is a component.
+Since ego is recorded at the level of the graph rather than as a node,
+and ego-alter ties are left implicit,
+ego is added as a node with ties to each of its alters,
+and every tie records the ego that reported it in a 'by' column,
+making the result a cognitive social structure (see <code><a href="mark_format_cognitive.html">is_cognitive()</a></code>).
+Use <code>ego = FALSE</code> to keep just the alters and the ties between them.
+Note that node types are reported in a character 'nodeset' column rather
+than a logical 'type' column, because ego networks are not two-mode:
+ties within a nodeset are exactly what is collected.
+Note too that, since alters are particular to a session,
+the sessions share no nodes, so <code><a href="coerce_list.html">as_matrix()</a></code> on such a network returns a
+large and very sparse three-dimensional array.</p>
+<p><code>read_gexf()</code> reads the node and tie attributes declared in the file,
+as well as the visualisation elements Gephi adds,
+so that positions are available as 'x' and 'y' node attributes,
+and sizes and colours as 'size' and 'color'.
+Nodes are named from their labels where the file gives them,
+since node ids are required by the format and so are an export artefact.
+Dynamic files are read with their 'start' and 'end' times,
+which makes the result a dynamic network (see <code><a href="mark_format_change.html">is_dynamic()</a></code>).
+Where a directed network contains ties declared undirected or mutual,
+those ties are reciprocated, since a network is directed or not as a whole.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
