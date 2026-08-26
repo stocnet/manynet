@@ -28,7 +28,7 @@
 #'   - "boundary" is the boundary specification of the network ("ego", "roster", or "snowball")
 #'   - "observation" is the observation type of the network ("cross-sectional",
 #'   "panel", or "event")
-#'   - "update" is the update type of the network ("increment" or "replacement")
+#'   - "update" is the update type of the network ("increment" or "replace")
 #'   - "max_degree" is the maximum degree of the network
 #'   - "min_degree" is the minimum degree of the network
 #'   - "doi" is the DOI or URL of the network
@@ -329,13 +329,22 @@ net_attributes <- function(.data){
   names(igraph::graph_attr(as_igraph(.data)))
 }
 
+# These two wrappers exist so that the prompt path can be tested.
+snet_readline <- function(prompt) readline(prompt)
+
+snet_menu <- function(choices, title) utils::menu(choices = choices, title = title)
+
 # nocov start
 .check_info <- function(.data, optional = FALSE){
   
   out <- .data
   read_optional <- function(prompt) {
-    x <- readline(prompt)
+    x <- snet_readline(prompt)
     if (x == "") NULL else x
+  }
+  read_menu <- function(title, options, values = tolower(options)) {
+    chosen <- snet_menu(choices = options, title = title)
+    if (chosen == 0) NULL else values[chosen]
   }
   
   # Names
@@ -367,8 +376,8 @@ net_attributes <- function(.data){
     if(net_layers(out) > 1){
       snet_prompt("This network has multiple layers. Please specify whether they are directed or undirected.")
       for (layer in layer_names(out)) {
-        directed <- utils::menu(choices = c("Directed", "Undirected"), 
-                                title = paste0("Is the layer '", layer, "' directed or undirected?"))
+        directed <- snet_menu(choices = c("Directed", "Undirected"), 
+                              title = paste0("Is the layer '", layer, "' directed or undirected?"))
         out$info$directed[match(layer, layer_names(out))] <- stats::setNames(directed == 1, layer)
       }
     } else out <- add_info(out, directed = is_directed(.data))
@@ -379,18 +388,19 @@ net_attributes <- function(.data){
   if(optional){
     if(!"source" %in% net_attributes(out)){
       snet_prompt("This network does not have a source. You may add one.")
-      source_options <- c("Empirical", "Synthetic")
-      source <- utils::menu(choices = source_options, title = "Is this network empirical or synthetic?")
-      if(source == 1){
-        method_options <- c("Survey", "Interview", "Sensor", "Archival", "Trace", "Ethnography")
-        out <- add_info(out, source = source_options[source],
-                        method = utils::menu(choices = method_options, title = "Method: "))
+      source <- read_menu("Is this network empirical or synthetic?",
+                          c("Empirical", "Synthetic"))
+      if(!is.null(source) && source == "empirical"){
+        out <- add_info(out, source = source,
+                        method = read_menu("Method: ",
+                                           c("Survey", "Interview", "Sensor",
+                                             "Archival", "Trace", "Ethnography")))
         out <- add_info(out, location = read_optional(prompt = "Location: "))
         out <- add_info(out, date = read_optional(prompt = "Date: "))
-        bound_options <- c("Ego", "Roster", "Snowball")
-        out <- add_info(out, boundary = utils::menu(choices = bound_options, title = "Boundary: "))
-      } else if(source == 2){
-        out <- add_info(out, source = source_options[source],
+        out <- add_info(out, boundary = read_menu("Boundary: ",
+                                                  c("Ego", "Roster", "Snowball")))
+      } else if(!is.null(source) && source == "synthetic"){
+        out <- add_info(out, source = source,
                         method = read_optional(prompt = "Model: "))
       }
       if(!"doi" %in% net_attributes(out)){
@@ -403,24 +413,25 @@ net_attributes <- function(.data){
         out <- add_info(out, min_degree = read_optional(prompt = "Minimum degree: "))
       }
       if(!"observation" %in% net_attributes(out)){
-        obs_options <- c("Cross-sectional", "Panel", "Event")
         for (layer in layer_names(out)) {
-          observation <- utils::menu(choices = obs_options, 
-                                  title = paste0("The layer '", layer, "' is observed as: "))
-          out$info$observation[match(layer, layer_names(out))] <- stats::setNames(obs_options[observation], layer)
+          observation <- read_menu(paste0("The layer '", layer, "' is observed as: "),
+                                   c("Cross-sectional", "Panel", "Event"))
+          if(!is.null(observation))
+            out$info$observation[match(layer, layer_names(out))] <- stats::setNames(observation, layer)
         }
       }
       if(is_weighted(out) && !"update" %in% net_attributes(out)){
-        upd_options <- c("Increment", "Replacement")
         for (layer in layer_names(out)) {
-          update <- utils::menu(choices = upd_options, 
-                                     title = paste0("The layer '", layer, "' is updated by: "))
-          out$info$update[match(layer, layer_names(out))] <- stats::setNames(upd_options[update], layer)
+          update <- read_menu(paste0("The layer '", layer, "' is updated by: "),
+                              c("Increment", "Replacement"),
+                              values = c("increment", "replace"))
+          if(!is.null(update))
+            out$info$update[match(layer, layer_names(out))] <- stats::setNames(update, layer)
         }
       }
       if(is_multiplex(out) && !"focal" %in% net_attributes(out)){
-        out$info$focal <- utils::menu(choices = layer_names(out), 
-                                      title = "The focal ties are: ")
+        out$info$focal <- read_menu("The focal ties are: ",
+                                    layer_names(out), values = layer_names(out))
       }
     }
     if("source" %in% net_attributes(out)) snet_success("Source: {as_infolist(out)$source}")

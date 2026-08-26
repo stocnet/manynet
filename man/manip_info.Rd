@@ -38,7 +38,7 @@ net_attributes(.data)
 \item "boundary" is the boundary specification of the network ("ego", "roster", or "snowball")
 \item "observation" is the observation type of the network ("cross-sectional",
 "panel", or "event")
-\item "update" is the update type of the network ("increment" or "replacement")
+\item "update" is the update type of the network ("increment" or "replace")
 \item "max_degree" is the maximum degree of the network
 \item "min_degree" is the minimum degree of the network
 \item "doi" is the DOI or URL of the network

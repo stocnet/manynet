@@ -102,6 +102,11 @@
   - Added `time` argument that returns the changes in force at it
 - Added `add_node_attribute.stocnet()` to avoid rerouting through another class
 - Improved `rename_ties.stocnet()` to record update information before renaming to `weight`
+- Fixed the interactive branch of `add_info()`, which recorded values that `validate_stocnet()` then rejected
+  - `observation` and `update` are now recorded in the lowercase vocabulary that `validate_info()` enforces, e.g. "cross-sectional" and "replace", instead of "Cross-sectional" and "Replacement"
+  - `method`, `boundary`, and `focal` now record the chosen option rather than the number of the menu entry, so that e.g. the focal layer is recorded by its name
+  - `source` and `boundary` are now recorded in lowercase, for consistency with the vocabulary used elsewhere
+  - Choosing no menu entry now leaves the field unset instead of recording an empty value
 
 ## Modifying
 
