@@ -6,7 +6,7 @@
 
 ## Measures
 
-- Fixed `tie_attribute.stocnet)` and `node_attribute.stocnet())`
+- Fixed `tie_attribute.stocnet()` and `node_attribute.stocnet()`
   - Returns every attribute where no attribute is named, as `.igraph` method already did
   - Reports tie attributes without 'from' and 'to', which identify a tie rather than describe it
 
