@@ -5,12 +5,12 @@
 \alias{ison_koenigsberg}
 \title{One-mode Seven Bridges of Koenigsberg network (Euler 1741)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Seven Bridges of Koenigsberg network --------------------------------------
-#> # A labelled, undirected network of 4 landmasses and 7 bridge ties
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Seven Bridges of Koenigsberg ----------------------------------------------
+#> # A labelled, undirected network of 4 landmasses and 7 bridge ties (4 parallel)
 #> 
 #> -- Nodes
 #> # A tibble: 4 x 3
-#>   name       lat   lon
+#>   label      lat   lon
 #>   <chr>    <dbl> <dbl>
 #> 1 Altstadt  54.7  20.5
 #> 2 Kneiphof  54.7  20.5
@@ -32,7 +32,10 @@
 }\if{html}{\out{</div>}}
 }
 \source{
-\code{{igraphdata}}
+\code{{igraphdata}}.
+Euler presented the solution to the St Petersburg Academy on
+26 August 1735; it was published in 1741 and is catalogued as
+Eneström 53.
 }
 \usage{
 data(ison_koenigsberg)
@@ -46,6 +49,14 @@ The islands could not be reached by any route other than the bridges,
 and every bridge must have been crossed completely every time
 (one could not walk half way onto the bridge and then turn around and later cross the other half from the other side).
 In 1735, Leonard Euler proved that the problem has no solution.
+
+Two pairs of the seven bridges run parallel, joining the same two
+landmasses: the Kraemer and Schmiede bridges join the Altstadt to the
+Kneiphof, and the Gruene and Koettel bridges join the Kneiphof to the
+Vorstadt. These parallel bridges are the problem and not an artefact of
+the data, so \code{tie_is_parallel()} marks four of the seven ties, and
+\code{as_matrix()} reports two rather than one in those cells.
+Each tie is named for the bridge it stands for in a 'name' column.
 }
 \references{
 Euler, Leonard. 1741. “Solutio problematis ad geometriam situs pertinentis.”

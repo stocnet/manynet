@@ -6,6 +6,8 @@
 \alias{tie_weights}
 \alias{tie_signs}
 \alias{tie_is_twomode}
+\alias{tie_is_parallel}
+\alias{tie_is_backbone}
 \title{Describing attributes of ties in a network}
 \usage{
 tie_attribute(.data, attr_name)
@@ -15,6 +17,15 @@ tie_weights(.data)
 tie_signs(.data)
 
 tie_is_twomode(.data)
+
+tie_is_parallel(.data)
+
+tie_is_backbone(
+  .data,
+  filter = NULL,
+  threshold = NULL,
+  endpoints = c("either", "both")
+)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -29,6 +40,50 @@ tie_is_twomode(.data)
 
 \item{attr_name}{Character string naming a nodal attribute.
 The attribute itself may be a logical mark, numeric measure, or character membership vector.}
+
+\item{filter}{Which backbone filter to apply, one of:
+\itemize{
+\item "disparity": the disparity filter of Serrano et al. (2009), which tests
+a tie's share of its node's strength against a null model in which that
+strength is divided at random. Assumes heavy-tailed weights.
+\item "lans": locally adaptive network sparsification, Foti et al. (2011),
+which replaces that null model with the empirical distribution of the
+node's own tie weights, and so assumes nothing about their shape.
+\item "noise": the noise-corrected filter of Coscia and Neffke (2017), which
+tests a tie's weight against the strengths of both its endpoints and
+allows for the uncertainty of the null itself. Corrects the disparity
+filter's bias towards hubs.
+\item "mlf": the marginal likelihood filter of Dianati (2016), which reads
+the weights as counts of independent events and tests each against a
+maximum-entropy null. Requires whole-number weights.
+\item "simmelian": the Simmelian backbone of Nick et al. (2013), which ranks
+each node's neighbours by how embedded the tie is and retains the ties
+whose endpoints rank each other similarly. Ignores tie weights, and so is
+the only filter available for an unweighted network. Reads a directed
+network as an undirected one, since it counts shared neighbours.
+}
+
+By default \code{NULL}, which uses "lans" where the network is weighted and
+"simmelian" where it is not. "lans" leads because it assumes nothing about
+the shape of the weights, and because it retains each node's strongest tie
+whatever that shape is. "disparity" is the better known filter, but its
+null model expects heavy-tailed weights: where weights are more even, a
+tie's share of its node's strength approaches 1/k for every tie, the
+p-value approaches 1/e, and the filter retains nothing at all.}
+
+\item{threshold}{The cutoff below which a tie is retained.
+For the four statistical filters this is a significance level,
+by default 0.05.
+For "simmelian" it is instead one minus the similarity of the two
+endpoints' rankings, by default 0.5.
+By default \code{NULL}, which uses whichever of these the filter calls for.}
+
+\item{endpoints}{Whether a tie is retained where it passes the filter at
+"either" of its endpoints, by default, or only where it passes at "both".
+"both" is the more demanding, since a tie must be locally salient to both
+the sender and the receiver.
+Applies to the "disparity" and "lans" filters only,
+since the others weigh both endpoints at once.}
 }
 \description{
 These functions extract certain attributes from network data:
@@ -37,19 +92,62 @@ These functions extract certain attributes from network data:
 \item \code{tie_weights()} returns the weights of the ties in a network.
 \item \code{tie_signs()} returns the signs of the ties in a network.
 \item \code{tie_is_twomode()} returns whether each tie in a network is a cross-mode tie.
+\item \code{tie_is_parallel()} returns whether each tie in a network runs parallel
+to another, i.e. whether another tie joins the same pair of nodes at the
+same moment.
+\item \code{tie_is_backbone()} returns whether each tie in a network is retained by
+a backbone filter, i.e. whether it carries more weight, or holds more
+structure, than a null model local to its endpoints expects.
 }
 
 These functions are also often used as helpers within other functions.
 \verb{tie_*()} always return vectors the same length
 as the number of ties in the network, respectively.
 }
+\section{Parallel ties}{
+
+Parallel ties, also called multi-edges, are two or more ties that join
+the same pair of nodes at the same moment.
+Ties that join the same pair of nodes at different moments follow one
+another rather than run alongside one another,
+and so are not parallel.
+How a network records time therefore decides which ties coexist:
+\itemize{
+\item Where a network is a panel, ties are parallel where they share a wave.
+\item Where a network records a stream of events, ties are parallel where
+they share a moment.
+\item Where a network records the interval each tie lasts over,
+ties are parallel where those intervals overlap.
+Intervals that merely abut, one beginning as the other ends, do not.
+\item Where a network records no time at all, any two ties on a pair of
+nodes are parallel.
+}
+
+Ties of different types are likewise not parallel.
+Several types of tie between a pair of nodes is what \code{is_multiplex()}
+marks; \code{tie_is_parallel()} marks several ties of one type.
+
+Every tie in such a bundle is marked, and not just the repetitions,
+so \code{sum(tie_is_parallel(ison_koenigsberg))} counts four of the seven
+bridges and not two.
+
+Note that \code{as_matrix()} reports how many ties join each pair of nodes,
+so a network with parallel ties gives a matrix with cells greater than
+one even where it is neither weighted nor signed.
+}
+
 \examples{
 tie_attribute(ison_algebra, "task_tie")
 tie_weights(to_mode1(ison_southern_women))
 tie_signs(to_uniplex(fict_marvel,"relationship"))
 tie_is_twomode(fict_actually)
+tie_is_parallel(ison_koenigsberg)
+tie_is_backbone(ison_networkers)
 }
 \seealso{
+\code{\link[=to_backbone]{to_backbone()}}, which deletes the ties this does not mark,
+and which documents each filter and the works they come from.
+
 Other measures:
 \code{\link{measure_attributes_nodes}},
 \code{\link{measure_dims}}

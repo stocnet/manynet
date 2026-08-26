@@ -55,8 +55,9 @@ described in Valente and Davis (1999).}
 By default "all".}
 }
 \value{
-A tidygraph object modified as explained in the function description, details,
-or section.
+An object of the same class as the function was given,
+modified as explained in the function description, details, or section.
+Functions that split a network return a list of such objects.
 }
 \description{
 These functions return tidygraphs containing only special sets of ties:
@@ -117,6 +118,17 @@ for example in an organisational context,
 or identifying the most influential nodes in a network.
 }
 
+\section{Dominating}{
+
+This function returns a network in which each node is tied to its closest dominating node.
+A dominating set \eqn{D} in a graph \eqn{G} is a subset of nodes such that every node
+not in \eqn{D} is adjacent to at least one node in \eqn{D}.
+The domination number, \eqn{\gamma(G)}, is the size of the smallest such set.
+This concept underpins many practical network problems:
+facility location, sensor placement, control theory applied to networks,
+and backbone selection in ad hoc wireless routing.
+}
+
 \examples{
 to_matching(ison_southern_women)
 }
@@ -159,10 +171,20 @@ Prim, R.C. 1957.
 \emph{Bell System Technical Journal} 36(6):1389-1401.
 \doi{10.1002/j.1538-7305.1957.tb01515.x}
 }
+
+\subsection{On dominating sets}{
+
+Bange, David W., Anthony E. Barkauskas, and Peter J. Slater. 1988.
+"Efficient dominating sets in graphs."
+In \emph{Applications of Discrete Mathematics}, SIAM, pp. 189–99.
+
+Haynes, Teresa W., Stephen T. Hedetniemi, and Peter J. Slater. 1998.
+\emph{Fundamentals of Domination in Graphs}. CRC Press.
+}
 }
 \seealso{
 Other modifications:
-\code{\link{modif_correlation}},
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},
@@ -172,6 +194,7 @@ Other modifications:
 \code{\link{modif_permutation}},
 \code{\link{modif_plexity}},
 \code{\link{modif_project}},
+\code{\link{modif_proximity}},
 \code{\link{modif_scope}},
 \code{\link{modif_split}},
 \code{\link{modif_weight}}

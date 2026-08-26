@@ -28,8 +28,15 @@ is_changing(.data)
 These functions implement logical tests for various network properties.
 All \verb{is_*()} functions return a logical scalar (TRUE or FALSE).
 \itemize{
-\item \code{is_longitudinal()} marks networks TRUE if they contain multiple waves of data.
-\item \code{is_dynamic()} marks networks TRUE if they contain time-stamped data.
+\item \code{is_longitudinal()} marks networks TRUE if they are panels, i.e. if each
+moment they record re-observes the whole network.
+\item \code{is_dynamic()} marks networks TRUE if they record a stream of events,
+either as increments to the ties or as the interval each tie lasts over.
+}
+
+A network records time in one way or the other, so the two marks do not
+overlap. See the Time section of \code{\link[=to_time]{to_time()}} for what separates them.
+\itemize{
 \item \code{is_changing()} marks networks TRUE if they contain any nodal changes.
 }
 }
@@ -40,7 +47,7 @@ Below are the currently implemented S3 methods for these functions:
 \if{html}{\out{<div class="sourceCode">}}\preformatted{                default diff_model igraph list stocnet
 is_changing           *          *      *            *
 is_dynamic            *                 *            *
-is_longitudinal       *                 *    *        
+is_longitudinal       *                 *    *       *
 }\if{html}{\out{</div>}}
 
 If a method is not available for a particular class, but a default method is,

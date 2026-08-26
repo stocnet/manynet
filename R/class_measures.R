@@ -7,6 +7,20 @@ make_node_measure <- function(out, .data) {
 
 make_tie_measure <- function(out, .data) {
   class(out) <- c("tie_measure", class(out))
+  # A network without ties has no tie names to give the measure either.
+  if(length(out) == 0) return(out)
+  # A stocnet holds its ties in its own table, and coercion may reciprocate
+  # its undirected layers, so name from that table rather than a coerced copy.
+  if(inherits(.data, "stocnet")){
+    from <- .data$ties$from
+    to <- .data$ties$to
+    if(is_labelled(.data)){
+      from <- .data$nodes$label[from]
+      to <- .data$nodes$label[to]
+    }
+    names(out) <- paste0(from, if(is_directed(.data)) "->" else "-", to)
+    return(out)
+  }
   if(is_labelled(.data)){
     tie_names <- attr(igraph::E(as_igraph(.data)), "vnames")
     if(is_directed(.data)) 
@@ -29,10 +43,73 @@ make_network_measure <- function(out, .data, call) {
 }
 
 # Printing ####
+
+# Prints a concise, subtle one-line header describing what was measured,
+# how the values were rescaled, and the range they can fall within, e.g.
+# "# Strength centrality [0, Inf)" or "# Degree centrality, normalised [0, 1]".
+# Measure objects made by older versions of the measure-making packages,
+# or by other packages, will not carry these attributes,
+# in which case nothing is printed.
+measure_header <- function(x) {
+  out <- paste0(measure_label(attr(x, "measure")),
+                measure_scale(attr(x, "normalization"), attr(x, "range")))
+  out <- trimws(out)
+  if(!nzchar(out)) return(invisible(NULL))
+  # the making packages record what was measured, e.g. "strength centrality";
+  # how that reads in a header is a question of presentation, so it is
+  # capitalised here rather than there. Only the first character is touched,
+  # leaving names such as "PageRank" or "E-I index" as they were given.
+  out <- paste0(toupper(substring(out, 1, 1)), substring(out, 2))
+  cat(pillar::style_subtle(paste0("# ", out, "\n")))
+  invisible(NULL)
+}
+
+measure_label <- function(measure) {
+  if(is.null(measure) || all(is.na(measure))) return("")
+  as.character(measure)[1]
+}
+
+# How the values were rescaled is named by the measure-making package,
+# e.g. "normalised", "scaled", or "proportion", and is surfaced here as
+# given rather than translated, so that its vocabulary can grow without
+# this method having to know about it. A measure rescaled in no way is
+# given its range alone, e.g. "Strength centrality [0, Inf)", while one
+# that was says so first, e.g. "Degree centrality, normalised [0, 1]".
+measure_scale <- function(normalization, range) {
+  range <- measure_range(range)
+  normalization <- measure_norm(normalization)
+  if(!nzchar(normalization))
+    return(if(nzchar(range)) paste0(" ", range) else "")
+  paste0(", ", trimws(paste(normalization, range)))
+}
+
+# Ranges may be given as a numeric pair, e.g. `c(0,1)`, in which case
+# infinite bounds are printed as open, or as a ready-made string.
+measure_range <- function(range) {
+  if(is.null(range) || all(is.na(range))) return("")
+  if(is.numeric(range) && length(range) == 2){
+    paste0(ifelse(is.finite(range[1]), "[", "("),
+           format(range[1]), ", ", format(range[2]),
+           ifelse(is.finite(range[2]), "]", ")"))
+  } else {
+    range <- paste(as.character(range), collapse = ", ")
+    if(!nzchar(range) || grepl("^[\\[(]", range)) range else
+      paste0("[", range, "]")
+  }
+}
+
+# "none" is the absence of any rescaling, so goes unmentioned.
+measure_norm <- function(normalization) {
+  if(is.null(normalization) || all(is.na(normalization))) return("")
+  normalization <- as.character(normalization)[1]
+  if(tolower(normalization) == "none") "" else normalization
+}
+
 #' @importFrom cli spark_bar
 #' @export
 print.node_measure <- function(x, ...,
                           n = NULL, digits = 3, spark = TRUE){
+  measure_header(x)
   if(spark && cli::is_utf8_output()){
     counts <- graphics::hist(x, plot = FALSE)$counts
     cat(cli::spark_bar(counts/sum(counts)), "\n")
@@ -58,7 +135,8 @@ print.node_measure <- function(x, ...,
 print.tie_measure <- function(x, ...,
                                n = NULL,
                                digits = 3) {
-  print_tblvec(y = round(as.numeric(x), digits = digits), 
+  measure_header(x)
+  print_tblvec(y = round(as.numeric(x), digits = digits),
                names = list(names(x)), n = n)
   invisible(x)
 }
@@ -66,6 +144,7 @@ print.tie_measure <- function(x, ...,
 #' @export
 print.network_measure <- function(x, ...,
                                digits = 3) {
+    measure_header(x)
     if (length(attr(x, "mode")) == 1) {
       print(as.numeric(x), digits = digits)
     } else {

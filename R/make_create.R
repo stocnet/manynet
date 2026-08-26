@@ -29,9 +29,9 @@ create_explicit <- function(...){
   } else mf <- as.list(match.call())[-1]
   f <- function(x) {
     if (is.call(x)) {
-      return(list(as.character(x[[1]]), lapply(x[-1], f)))
+      list(as.character(x[[1]]), lapply(x[-1], f))
     }
-    else return(NULL)
+    else NULL
   }
   ops <- unlist(lapply(mf, f))
   if (all(ops %in% c("-", ":"))) {
@@ -46,15 +46,15 @@ create_explicit <- function(...){
   f <- function(x) {
     if (is.call(x)) {
       if (length(x) == 3) {
-        return(list(f(x[[2]]), op = as.character(x[[1]]), 
-                    f(x[[3]])))
+        list(f(x[[2]]), op = as.character(x[[1]]), 
+             f(x[[3]]))
       }
       else {
-        return(list(op = as.character(x[[1]]), f(x[[2]])))
+        list(op = as.character(x[[1]]), f(x[[2]]))
       }
     }
     else {
-      return(c(sym = as.character(x)))
+      c(sym = as.character(x))
     }
   }
   ret <- lapply(mf, function(x) unlist(f(x)))
@@ -614,7 +614,7 @@ create_windmill <- function(n) {
       current_node <- current_node + n - 1
     }
     
-    return(g)
+    g
     
   } else if (length(total_nodes) == 2) {
 
@@ -654,7 +654,7 @@ create_windmill <- function(n) {
     g <- igraph::add_edges(g, unlist(edges))
     g <- igraph::set_vertex_attr(g, "type", value = c(rep(TRUE, a), rep(FALSE, b)))  # Bipartite flag
     
-    return(g)
+    g
     
   } else snet_abort("Sorry, that's not possible.")
   
@@ -709,7 +709,7 @@ create_cycle <- function(n, directed = FALSE){
     snet_abort("Argument 'n' must be a scalar or a vector of length 2.")
   }
   if(!directed || length(n) == 2) net <- to_undirected(net)
-  return(net)
+  net
 }
 
 #' @rdname make_create
@@ -731,7 +731,7 @@ create_wheel <- function(n, directed = FALSE) {
     center_edges <- cbind(center_node, rim_nodes)
     edges <- rbind(rim_cycle, center_edges)
     g <- igraph::graph_from_edgelist(edges, directed = directed)
-    return(g)
+    g
   } else if (length(n) == 2) {
     a <- n[1]
     b <- n[2]

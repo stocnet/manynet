@@ -84,8 +84,8 @@ For the same reason, \code{collect_pkg()} collects only calls to the functions
 defined in the directory by default.
 
 Both return networks that can be scoped further using, for example,
-\code{\link[=to_ego]{to_ego()}}, \code{\link[=to_uniplex]{to_uniplex()}}, \code{\link[=to_giant]{to_giant()}}, \code{\link[=to_no_isolates]{to_no_isolates()}},
-\code{\link[=to_blocks]{to_blocks()}}, or \code{\link[=to_subgraph]{to_subgraph()}}.
+\code{\link[=to_ego]{to_ego()}}, \code{\link[=to_uniplex]{to_uniplex()}}, \code{\link[=to_giant]{to_giant()}}, \code{\link[=delete_isolates]{delete_isolates()}},
+\code{\link[=to_blockmodel]{to_blockmodel()}}, or \code{\link[=to_subgraph]{to_subgraph()}}.
 
 \code{collect_cran()} relies on \code{utils::available.packages()},
 which caches the repository index for an hour by default.
@@ -107,11 +107,11 @@ collect_cran("manynet", direction = "in", max_dist = 1)
 # The network of calls among the functions in the working directory:
 collect_pkg()
 # Collapsed onto generics, where the directory is a package:
-# to_blocks(collect_pkg(), node_attribute(collect_pkg(), "generic"))
+# to_blockmodel(collect_pkg(), node_attribute(collect_pkg(), "generic"))
 }
 }
 \seealso{
-\code{\link[=to_ego]{to_ego()}}, \code{\link[=to_uniplex]{to_uniplex()}}, \code{\link[=to_no_isolates]{to_no_isolates()}}
+\code{\link[=to_ego]{to_ego()}}, \code{\link[=to_uniplex]{to_uniplex()}}, \code{\link[=delete_isolates]{delete_isolates()}}
 
 Other makes:
 \code{\link{make_create}},

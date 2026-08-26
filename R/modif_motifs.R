@@ -170,53 +170,53 @@ to_motifs <- function(.data = NULL, n = NULL, directed = FALSE, signed = FALSE){
     snet_info("Motifs for undirected networks are only available for n=2, n=3, and n=4. Returning n=4 motifs.")
   }
   if(!directed & n==2){ # 2, undirected, unsigned ####
-    return(list(Null = mutate_nodes(create_empty(2),
-                                    name = c("A","B")),
-                M = create_explicit(A--B)))
+    list(Null = mutate_nodes(create_empty(2),
+                             name = c("A","B")),
+         M = create_explicit(A--B))
   } else if(directed & n==2){ # 2, directed, unsigned ####
-    return(list(Null = mutate_nodes(create_empty(2, directed = TRUE),
-                                    name = c("A","B")),
-                Asymmetric = create_explicit(A-+B),
-                Mutual = create_explicit(A++B)))
+    list(Null = mutate_nodes(create_empty(2, directed = TRUE),
+                             name = c("A","B")),
+         Asymmetric = create_explicit(A-+B),
+         Mutual = create_explicit(A++B))
   } else if(!directed & n==3){ # 3, undirected, unsigned ####
-    return(list(Empty = mutate_nodes(create_empty(3),
-                                     name = c("A","B","C")),
-                Edge = create_explicit(A--B, C),
-                Path = create_explicit(A--B--C),
-                Triangle = create_explicit(A--B--C--A)))
+    list(Empty = mutate_nodes(create_empty(3),
+                              name = c("A","B","C")),
+         Edge = create_explicit(A--B, C),
+         Path = create_explicit(A--B--C),
+         Triangle = create_explicit(A--B--C--A))
   } else if(directed & n==3){ # 3, directed, unsigned ####
-    return(list(`003` = mutate_nodes(create_empty(3, directed = TRUE),
-                                     name = c("A","B","C")),
-                `012` = create_explicit(A-+B, C),
-                `102` = create_explicit(A++B, C),
-                `021D` = create_explicit(A-+B, A-+C),
-                `021U` = create_explicit(A+-B, A+-C),
-                `021C` = create_explicit(A-+B, B-+C),
-                `111D` = create_explicit(A++B, C-+B),
-                `111U` = create_explicit(A++B, B-+C),
-                `030T` = create_explicit(A-+B, A-+C, B-+C),
-                `030C` = create_explicit(A-+B, B-+C, C-+A),
-                `201` = create_explicit(A++B, B++C),
-                `120D` = create_explicit(A++B, C-+A:B),
-                `120U` = create_explicit(A++B, A:B-+C),
-                `120C` = create_explicit(A++B, A-+C-+B),
-                `210` = create_explicit(A++B, B++C, A-+C),
-                `300` = create_explicit(A++B++C++A)))
+    list(`003` = mutate_nodes(create_empty(3, directed = TRUE),
+                              name = c("A","B","C")),
+         `012` = create_explicit(A-+B, C),
+         `102` = create_explicit(A++B, C),
+         `021D` = create_explicit(A-+B, A-+C),
+         `021U` = create_explicit(A+-B, A+-C),
+         `021C` = create_explicit(A-+B, B-+C),
+         `111D` = create_explicit(A++B, C-+B),
+         `111U` = create_explicit(A++B, B-+C),
+         `030T` = create_explicit(A-+B, A-+C, B-+C),
+         `030C` = create_explicit(A-+B, B-+C, C-+A),
+         `201` = create_explicit(A++B, B++C),
+         `120D` = create_explicit(A++B, C-+A:B),
+         `120U` = create_explicit(A++B, A:B-+C),
+         `120C` = create_explicit(A++B, A-+C-+B),
+         `210` = create_explicit(A++B, B++C, A-+C),
+         `300` = create_explicit(A++B++C++A))
   } else if(!directed & n==4){ # 4, undirected, unsigned ####
-    return(list(E4 = mutate_nodes(create_empty(4),
-                                  name = c("A","B","C","D")),
-                I4 = create_explicit(A--B, C, D),
-                H4 = create_explicit(A--B, C--D),
-                L4 = create_explicit(A--B--C, D),
-                D4 = create_explicit(A--B--C--A, D),
-                U4 = create_explicit(A--B--C--D),
-                Y4 = create_explicit(A--B--C, B--D),
-                P4 = create_explicit(A--B--C, B--D--C),
-                C4 = create_explicit(A--B--C--D--A),
-                Z4 = create_explicit(A--B--C--D--A--C),
-                X4 = create_explicit(A--B--C--D--A--C, B--D)))
+    list(E4 = mutate_nodes(create_empty(4),
+                           name = c("A","B","C","D")),
+         I4 = create_explicit(A--B, C, D),
+         H4 = create_explicit(A--B, C--D),
+         L4 = create_explicit(A--B--C, D),
+         D4 = create_explicit(A--B--C--A, D),
+         U4 = create_explicit(A--B--C--D),
+         Y4 = create_explicit(A--B--C, B--D),
+         P4 = create_explicit(A--B--C, B--D--C),
+         C4 = create_explicit(A--B--C--D--A),
+         Z4 = create_explicit(A--B--C--D--A--C),
+         X4 = create_explicit(A--B--C--D--A--C, B--D))
   } else
-    return(snet_unavailable("Motifs not yet available for that kind of network."))
+    snet_unavailable("Motifs not yet available for that kind of network.")
 }
 
 #' @rdname modif_motifs

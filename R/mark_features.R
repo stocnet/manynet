@@ -191,7 +191,7 @@ is_aperiodic.igraph <- function(.data, max_path_length = 4){
     if(length(out)==2) out <- cd else
       out <- c(cd, out[2:length(out)])
   }
-  return(as.logical(out[1]==1))
+  as.logical(out[1]==1)
 }
 
 .gcd <- function(x, y){

@@ -78,7 +78,12 @@ as_input <- function(.data, FUN, ...){
   out <- FUN(out, ...)
 
   snet_minor_info("Using {.var {avail_class}} method for {.fn {fun_label}} and coercing back to {.var {out_class}}.")
-  get(paste0("as_",out_class))(out)
+  coerce_out <- get(paste0("as_",out_class))
+  # The splitting functions (to_egos(), to_components(), etc.) return a list
+  # of networks rather than a single network, so the coercion back to the
+  # input class is mapped over the list instead of applied to it.
+  if(is_list(out) && all(vapply(out, is_manynet, logical(1))))
+    lapply(out, coerce_out) else coerce_out(out)
 }
 
 # a function that creates necessary lines for roxygen documentation of available methods for a function family, e.g. add_ties, delete_ties, filter_ties, etc.

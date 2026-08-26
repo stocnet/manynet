@@ -410,7 +410,7 @@ rename_changes.data.frame <- function(.data, ...){
     )
     
     current_names <- names(out)
-    rename_map <- c()
+    rename_map <- character()
     
     for(expected in names(aka)){
       if(!expected %in% current_names){
@@ -437,60 +437,4 @@ rename_changes.stocnet <- function(.data, ...){
   out
 }
 
-#' @rdname manip_changes
-#' @template param_time
-#' @examples
-#' gather_changes(fict_starwars, time = 3)
-#' @export
-gather_changes <- function(.data, time) UseMethod("gather_changes")
 
-#' @export
-gather_changes.default <- function(.data, time){
-  gather_changes(as_igraph(.data), time = time)
-}
-
-#' @export
-gather_changes.igraph <- function(.data, time){
-  t <- time
-  changes <- igraph::graph_attr(.data, "changes")
-  changes <- changes |> 
-    dplyr::filter(time <= t) |> 
-    dplyr::arrange(node, var, time) |> 
-    dplyr::group_by(node, var) |> 
-    dplyr::mutate(value = dplyr::last(value)) |> 
-    dplyr::distinct(node, var, value)
-  changes
-}
-
-#' @rdname manip_changes
-#' @examples
-#' apply_changes(fict_starwars, time = 3)
-#' @export
-apply_changes <- function(.data, time) UseMethod("apply_changes")
-
-#' @export
-apply_changes.default <- function(.data, time){
-  as_input(.data, apply_changes, time = time)
-}
-
-#' @export
-apply_changes.tbl_graph <- function(.data, time){
-  out <- as.data.frame(as_nodelist(.data))
-  changes <- gather_changes(.data, time)
-  if(is.character(changes$node)) 
-    changes$node <- match(changes$node, node_labels(.data))
-  if(is.character(changes$var)) 
-    changes$var <- match(changes$var, net_node_attributes(.data))
-  for(i in cli::cli_progress_along(1:nrow(changes), "Applying changes")){
-    if(is.numeric(out[,changes$var[i]])){
-      out[changes$node[i], changes$var[i]] <- as.numeric(changes$value[i])
-    } else if (is.logical(out[,changes$var[i]])){
-      out[changes$node[i], changes$var[i]] <- as.logical(changes$value[i])
-    } else out[changes$node[i], changes$var[i]] <- changes$value[i]
-  }
-  if(!is_labelled(.data)) out <- cbind(1:nrow(out), out)
-  out <- as_tidygraph(igraph::graph_from_data_frame(as_edgelist(.data), 
-                                                    vertices = out))
-  if(!is_labelled(.data)) out <- to_unlabelled(out)
-  out
-}

@@ -6,6 +6,8 @@
 \alias{to_unweighted}
 \alias{to_signed}
 \alias{to_weighted}
+\alias{to_normalised}
+\alias{to_normalized}
 \title{Modifying tie weight formats}
 \usage{
 to_unsigned(.data, keep = c("positive", "negative"))
@@ -15,6 +17,18 @@ to_unweighted(.data, threshold = 1)
 to_signed(.data, mark = NULL)
 
 to_weighted(.data, measure = NULL)
+
+to_normalised(
+  .data,
+  rule = c("max", "mean", "sum"),
+  across = c("both", "rows", "columns")
+)
+
+to_normalized(
+  .data,
+  rule = c("max", "mean", "sum"),
+  across = c("both", "rows", "columns")
+)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -38,10 +52,42 @@ the "positive" or "negative" ties.}
 weights to the network.
 If this is NULL, then the tie weights will be drawn from a
 Poisson distribution with \eqn{\lambda = 4}.}
+
+\item{rule}{How each tie value is rescaled, relative to the other values
+recorded for the same node.
+\itemize{
+\item "max" (the default) divides by the largest of them, so that a node's
+strongest tie is 1 and its others are read against that.
+\item "mean" divides by the average of them, counting every dyad and not just
+those tied, so that 1 marks a tie of typical strength.
+\item "sum" divides by the total of them, so that they add to 1 and each reads
+as the share of the node's ties that goes to that partner.
+}
+
+Missing values propagate rather than being ignored,
+so that a node with an unobserved tie has all its values unobserved.
+Use \code{impute_ties()} first to state a different assumption.}
+
+\item{across}{Which margin of the network the operation is taken over.
+"rows" is the sending margin, so that each node is treated by the ties it
+sends; "columns" is the receiving margin; and "both" combines them.
+The two margins coincide for an undirected network,
+where all three options therefore agree.
+A two-mode network raises no such question,
+so "rows" and "columns" there are just the two nodesets.
+
+Note that both the default and what "both" combines differ by function.
+\code{to_normalised()} defaults to "both", where it divides by the square root
+of the two denominators multiplied together, since that is the only
+rescaling that preserves a network's symmetry.
+\code{to_proximity()} defaults to "rows", the conventional profile for
+structural equivalence, and there "both" compares each node's sent and
+received ties together.}
 }
 \value{
-A tidygraph object modified as explained in the function description, details,
-or section.
+An object of the same class as the function was given,
+modified as explained in the function description, details, or section.
+Functions that split a network return a list of such objects.
 }
 \description{
 These functions reformat tie attributes like their weight or sign:
@@ -50,6 +96,8 @@ These functions reformat tie attributes like their weight or sign:
 data, with all tie weights removed.
 \item \code{to_unsigned()} reformats signed network data to unsigned network data
 keeping just the "positive" or "negative" ties.
+\item \code{to_normalised()} rescales tie weights relative to the other ties of the
+same node, so that a value reads as a share rather than a count.
 }
 
 If the format condition is not met,
@@ -65,21 +113,35 @@ only transforming these objects' properties.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default igraph matrix network tbl_graph
-to_signed              *       *      *      *       *         *
-to_unsigned            *       *      *      *       *         *
-to_unweighted          *       *      *      *       *         *
-to_weighted                    *      *              *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default igraph matrix network stocnet tbl_graph
+to_normalised          *       *      *      *       *       *         *
+to_signed              *       *      *      *       *                 *
+to_unsigned            *       *      *      *       *       *         *
+to_unweighted          *       *      *      *       *       *         *
+to_weighted                    *      *              *                 *
 }\if{html}{\out{</div>}}
+
+\code{to_normalised()} divides by the sending node's denominator for "rows",
+so that a value says what share of \eqn{i}'s ties goes to \eqn{j},
+and by the receiving node's denominator for "columns".
+
+Rescaling a one-mode network across its rows or columns makes it
+asymmetric, since what \eqn{i} sends \eqn{j} is generally not what \eqn{j}
+sends \eqn{i}. Where such a network is undirected, each tie is therefore
+split into two, and the network is returned directed.
+}
+\examples{
+to_normalised(ison_networkers, rule = "sum", across = "rows")
 }
 \seealso{
 Other ties:
 \code{\link{manip_ties_attr}},
 \code{\link{manip_ties_num}},
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}}
 
 Other modifications:
-\code{\link{modif_correlation}},
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},
@@ -90,6 +152,7 @@ Other modifications:
 \code{\link{modif_permutation}},
 \code{\link{modif_plexity}},
 \code{\link{modif_project}},
+\code{\link{modif_proximity}},
 \code{\link{modif_scope}},
 \code{\link{modif_split}}
 }

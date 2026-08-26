@@ -155,8 +155,8 @@ q_yes <- function(msg = NULL){
 #'   defined in the directory by default.
 #'
 #'   Both return networks that can be scoped further using, for example,
-#'   [to_ego()], [to_uniplex()], [to_giant()], [to_no_isolates()],
-#'   [to_blocks()], or [to_subgraph()].
+#'   [to_ego()], [to_uniplex()], [to_giant()], [delete_isolates()],
+#'   [to_blockmodel()], or [to_subgraph()].
 #'
 #'   `collect_cran()` relies on `utils::available.packages()`,
 #'   which caches the repository index for an hour by default.
@@ -171,7 +171,7 @@ q_yes <- function(msg = NULL){
 #' @importFrom utils available.packages contrib.url getParseData
 #' @name make_collect
 #' @family makes
-#' @seealso [to_ego()], [to_uniplex()], [to_no_isolates()]
+#' @seealso [to_ego()], [to_uniplex()], [delete_isolates()]
 NULL
 
 #' @rdname make_collect
@@ -233,7 +233,7 @@ collect_cran <- function(pkg = "all",
   if (everything)
     snet_info("Collected {net_nodes(out)} packages and {net_ties(out)}",
               "dependencies. Consider scoping this network with e.g.",
-              "{.fn to_ego}, {.fn to_giant}, {.fn to_no_isolates},",
+              "{.fn to_ego}, {.fn to_giant}, {.fn delete_isolates},",
               "or {.fn to_uniplex}.")
   out
 }
@@ -322,7 +322,7 @@ collect_cran <- function(pkg = "all",
 #' # The network of calls among the functions in the working directory:
 #' collect_pkg()
 #' # Collapsed onto generics, where the directory is a package:
-#' # to_blocks(collect_pkg(), node_attribute(collect_pkg(), "generic"))
+#' # to_blockmodel(collect_pkg(), node_attribute(collect_pkg(), "generic"))
 #' }
 #' @export
 collect_pkg <- function(dir = getwd(), external = FALSE) {

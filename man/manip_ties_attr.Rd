@@ -94,12 +94,13 @@ If no method is available for any class, an error will be thrown.
 \seealso{
 Other ties:
 \code{\link{manip_ties_num}},
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}},
 \code{\link{modif_weight}}
 
 Other manipulations:
 \code{\link{manip_changes}},
-\code{\link{manip_global}},
+\code{\link{manip_globals}},
 \code{\link{manip_info}},
 \code{\link{manip_nodes_attr}},
 \code{\link{manip_nodes_num}},

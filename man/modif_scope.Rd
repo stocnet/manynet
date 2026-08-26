@@ -2,19 +2,15 @@
 % Please edit documentation in R/modif_scope.R
 \name{modif_scope}
 \alias{modif_scope}
-\alias{to_no_missing}
 \alias{to_ego}
 \alias{to_time}
 \alias{to_wave}
 \alias{to_component}
 \alias{to_giant}
-\alias{to_no_isolates}
 \alias{to_subgraph}
-\alias{to_blocks}
+\alias{to_blockmodel}
 \title{Modifying networks scope}
 \usage{
-to_no_missing(.data)
-
 to_ego(.data, node, max_dist = 1, min_dist = 0, direction = c("out", "in"))
 
 to_time(.data, time = NULL)
@@ -25,11 +21,9 @@ to_component(.data, component = 1, connectivity = c("weak", "strong"))
 
 to_giant(.data, connectivity = c("weak", "strong"))
 
-to_no_isolates(.data)
-
 to_subgraph(.data, ...)
 
-to_blocks(.data, membership, FUN = mean)
+to_blockmodel(.data, membership, FUN = mean)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -56,10 +50,10 @@ and 2 excludes ego's direct alters.}
 “in” on incoming ties, and "all" on either/the sum of the two.
 By default "all".}
 
-\item{time}{A time point or wave at which to present the network.
-For an interval (spell) network that records tie \code{begin}/\code{end} lifespans,
-\code{time} may be omitted, in which case a list of slices is returned,
-one per change point (each moment at which some tie begins or ends).}
+\item{time}{A moment at which to present the network.
+A moment beyond the last one the network records reverts to the last,
+except in an interval network, which is defined between the moments it
+records as well as at them.}
 
 \item{component}{Which component to retain.
 By default 1, i.e. the largest (giant) component,
@@ -77,7 +71,12 @@ network into components default to "weak".}
 
 \item{...}{Arguments passed on to dplyr::filter}
 
-\item{membership}{A vector of partition memberships.}
+\item{membership}{A vector of partition memberships.
+For two-mode networks this is a single vector covering the nodes in
+both modes, and not one vector per mode;
+the blocks of each mode are established separately from it,
+so that the result has one row per block of the first mode and
+one column per block of the second.}
 
 \item{FUN}{A function for summarising block content.
 By default \code{mean}.
@@ -85,8 +84,9 @@ Other recommended options include \code{median}, \code{sum},
 \code{min} or \code{max}.}
 }
 \value{
-A tidygraph object modified as explained in the function description, details,
-or section.
+An object of the same class as the function was given,
+modified as explained in the function description, details, or section.
+Functions that split a network return a list of such objects.
 }
 \description{
 These functions offer tools for transforming manynet-consistent objects
@@ -102,64 +102,97 @@ which returns a list of all of them, largest first.
 \item \code{to_giant()} scopes a network into one including only the main component
 and no smaller components or isolates.
 It is a wrapper, such that \code{to_giant(.data)} is \code{to_component(.data, 1)}.
-\item \code{to_time()} scopes a longitudinal network to the network as it stood at a given wave or time point.
-\code{to_wave()} is an alias, using the wave-based vocabulary of \code{net_waves()} and \code{to_waves()}.
-For interval (spell) networks with tie \code{begin}/\code{end} lifespans, \code{to_time()}
-returns the ties active at that moment, or -- when \code{time} is omitted -- a
-list of slices, one per change point (each tie beginning or end).
-\item \code{to_no_isolates()} scopes a network into one excluding all nodes without ties.
-\item \code{to_no_missing()} scopes a network to one retaining only complete cases,
-i.e. nodes with no missing values.
+\item \code{to_time()} scopes a network to the network as it stood at a given
+moment, in whichever of the ways set out in the Time section it records
+time. \code{to_wave()} is an alias, using the wave-based vocabulary of
+\code{net_waves()} and \code{to_waves()}. For one network per moment, see
+\code{\link[=to_times]{to_times()}}.
 \item \code{to_subgraph()} scopes a network into a subgraph by filtering on some node-related logical statement.
-\item \code{to_blocks()} reduces a network to ties between a given partition membership vector.
+\item \code{to_blockmodel()} reduces a network to the ties between the blocks of a
+given partition membership vector.
 }
 }
 \details{
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{               data.frame default igraph list matrix network tbl_graph
-to_blocks               *       *      *           *       *         *
-to_component            *       *      *           *       *         *
-to_ego                          *      *                             *
-to_egos                 *       *      *           *       *         *
-to_no_isolates          *       *      *    *      *       *         *
-to_no_missing                   *                                    *
-to_subgraph             *       *      *           *       *         *
-to_subgraphs                    *      *                   *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default igraph matrix network stocnet tbl_graph
+to_blockmodel          *       *      *      *       *                 *
+to_component           *       *      *      *       *       *         *
+to_ego                         *      *                      *         *
+to_egos                *       *      *      *       *       *         *
+to_subgraph            *       *      *      *       *       *         *
+to_subgraphs                   *      *              *       *         *
 }\if{html}{\out{</div>}}
-
-For interval (spell) networks, whose ties carry \code{begin}/\code{end} lifespans
-(e.g. \code{irps_wwi}), \code{to_time()} scopes to the ties active at \code{time}, using
-the half-open convention (\verb{begin <= time < end}) shared with
-\code{network::networkDynamic}. When \code{time} is omitted, one such slice is
-returned for each distinct change point (every moment at which some tie
-begins or ends), as a named list, so that the evolving network can be
-iterated over or animated (e.g. with \code{autograph::grapht()}).
 }
-\section{\code{to_blocks()}}{
+\section{Time}{
+
+Two things about how a network records time are independent of each
+other, and the network is scoped to a moment by both of them.
+
+How a moment is \emph{represented} can be read from the ties. A network either
+stamps each tie with the point it was recorded at, in a 'time' column, or
+states the interval each tie lasts over, in 'begin' and 'end' columns.
+
+How a moment \emph{relates to the one before it} cannot be read from the ties,
+and the network declares it in \code{info$update}. Where this is "replace",
+which it is by default, each moment re-states the ties, so the network at
+a moment is the ties stamped with it. Where it is "increment", each row
+is a change to a tie's value, so the network at a moment is every row up
+to and including it, accumulated, and a tie that has accumulated to zero
+is no longer a tie. An interval tie carries its own lifespan, so nothing
+is declared about it: it is active at a moment where it began at or
+before that moment and has not yet ended (\verb{begin <= time < end}, the
+half-open convention shared with \code{network::networkDynamic}, so a tie that
+ends and one that begins at the same instant do not overlap). A tie with
+no 'end' is right-censored, and active from its beginning onwards.
+
+\code{info$observation} records a third thing, how densely the network is
+observed: a "panel" of a few complete re-observations, or a stream of
+many "event" records. This describes a network rather than scoping it.
+The two go together without entailing each other: a panel re-observes
+the whole network at each wave and so is usually "replace", and an event
+stream is often "increment", but an event that states a value afresh is
+"replace" too. \code{is_longitudinal()} marks the first, \code{is_dynamic()} the
+second, and no network is both.
+
+In every case the nodal changes recorded up to the moment are applied,
+and a layer that states something holding throughout is carried into
+whichever moment is asked for, since such a layer is a constant covariate
+rather than an observation of that moment. A layer holds throughout where
+the network declares it "cross-sectional", or where it records that layer
+at a single moment while another layer spans several.
+}
+
+\section{\code{to_blockmodel()}}{
 
 Reduced graphs provide summary representations of network structures
 by collapsing groups of connected nodes into single nodes
 while preserving the topology of the original structures.
+Like the other scoping functions, the reduced graph is returned in the
+same class as the input: a blockmodel matrix of summarised block content
+for matrix input, and the corresponding weighted network otherwise.
+Memberships are usually obtained from one of the \verb{node_in_*()} functions
+in \code{{netrics}}.
 }
 
 \examples{
-  # A single snapshot of the ties active in a given year:
+  # The ties a panel observed in a given wave:
+  to_time(ison_monks, 2)
+  # The ties an interval network held in a given year:
   to_time(irps_wwi, 1901)
-  # Or one slice per change point (each tie beginning or end):
-  length(to_time(irps_wwi))
+  # The state an event network had accumulated to by a given day:
+  to_time(irps_nuclear, as.Date("2011-04-01"))
   to_component(fict_greys, 2)
   to_component(fict_greys, "Miranda Bailey")
   to_giant(fict_greys)
-ison_adolescents |>
-  mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) |>
-  to_waves(attribute = "wave") |>
-  to_no_isolates()
 }
 \seealso{
+\code{\link[=to_times]{to_times()}} for one network per moment, and \code{\link[=net_times]{net_times()}} for how
+many moments there are to ask for.
+
 Other modifications:
-\code{\link{modif_correlation}},
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},
@@ -170,6 +203,7 @@ Other modifications:
 \code{\link{modif_permutation}},
 \code{\link{modif_plexity}},
 \code{\link{modif_project}},
+\code{\link{modif_proximity}},
 \code{\link{modif_split}},
 \code{\link{modif_weight}}
 }

@@ -18,6 +18,15 @@ manip_ops <- list(
   delete_nodes = list(
     call  = function(x) delete_nodes(x, 1),
     check = function(o, x) n_nodes(o) == n_nodes(x) - 1),
+  # manip_canonical has no isolates and no missing values, so these two are
+  # no-ops here; they exercise the machinery across classes, while the exact
+  # counts are asserted in test-manip_nodes.R against fixtures that do.
+  delete_isolates = list(
+    call  = function(x) delete_isolates(x),
+    check = function(o, x) n_nodes(o) == n_nodes(x)),
+  delete_incomplete = list(
+    call  = function(x) delete_incomplete(x),
+    check = function(o, x) n_nodes(o) == n_nodes(x)),
   add_ties = list(
     call  = function(x) add_ties(x, c(1, 5)),
     check = function(o, x) n_ties(o) == n_ties(x) + 1),
@@ -104,8 +113,9 @@ changes_ops <- list(
   arrange_changes = function(x) arrange_changes(x, time),
   mutate_changes  = function(x) mutate_changes(x, tst = 1),
   delete_changes  = function(x) delete_changes(x),
-  apply_changes   = function(x) apply_changes(x, time = 2),
-  gather_changes  = function(x) gather_changes(x, time = 2)
+  # `apply_changes()` and `gather_changes()` are deprecated in favour of
+  # `to_time()`, swept over by the to_* tests, and `as_changelist(time =)`.
+  as_changelist   = function(x) as_changelist(x, time = 2)
 )
 
 changes_classes <- list(tidygraph = fict_starwars,
@@ -153,12 +163,12 @@ test_that("mutate_globals(), rename_globals() and select_globals() work", {
                                    time = 2, var = "active", value = FALSE),
                     "mutate_globals", "stocnet")
   expect_s3_class(sn, "stocnet")
-  expect_true(all(c("time", "var", "value") %in% names(sn$global)))
+  expect_true(all(c("time", "var", "value") %in% names(sn$globals)))
   sn2 <- run_or_skip(rename_globals(sn, when = time),
                      "rename_globals", "stocnet")
-  expect_true("when" %in% names(sn2$global))
+  expect_true("when" %in% names(sn2$globals))
   sn3 <- run_or_skip(select_globals(sn), "select_globals", "stocnet")
-  expect_true(all(names(sn3$global) %in% c("var", "time", "value")))
+  expect_true(all(names(sn3$globals) %in% c("var", "time", "value")))
 })
 
 test_that("rename_globals() renames aliases to stocnet conventions", {

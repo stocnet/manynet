@@ -12,7 +12,7 @@
 #> 
 #> -- Nodes
 #> # A tibble: 18 x 3
-#>   name        groups        left
+#>   label       groups        left
 #>   <chr>       <chr>        <dbl>
 #> 1 Romuald     Interstitial     3
 #> 2 Bonaventure Loyal            4
@@ -23,15 +23,15 @@
 #> # i 12 more rows
 #> 
 #> -- Ties
-#> # A tibble: 463 x 6
-#>    from    to  sign type  weight  wave
-#>   <int> <int> <dbl> <chr>  <dbl> <dbl>
-#> 1     1     2     1 like       1     2
-#> 2     1     2     1 like       1     3
-#> 3     1     3     1 like       1     3
-#> 4     1     5     1 like       3     1
-#> 5     1     5     1 like       3     2
-#> 6     1     5     1 like       3     3
+#> # A tibble: 463 x 5
+#>    from    to weight  time layer
+#>   <int> <int>  <dbl> <dbl> <chr>
+#> 1     1     2      1     2 like 
+#> 2     1     2      1     3 like 
+#> 3     1     3      1     3 like 
+#> 4     1     5      3     1 like 
+#> 5     1     5      3     2 like 
+#> 6     1     5      3     3 like 
 #> # i 457 more rows
 #> 
 }\if{html}{\out{</div>}}
@@ -45,14 +45,18 @@ Various sociometric data was collected of the novices attending the minor semina
 preparing to join the monastic order.
 \itemize{
 \item \code{type = "like"} records whom novices said they liked most at three time points/waves
-\item \code{type = "esteem"} records whom novices said they held in esteem (sign > 0) and disesteem (sign < 0)
-\item \code{type = "praise"} records whom novices said they praised (sign > 0) and blamed (sign < 0)
-\item \code{type = "influence"} records whom novices said were a positive influence (sign > 0) and negative influence (sign < 0)
+\item \code{type = "esteem"} records whom novices said they held in esteem (weight > 0) and disesteem (weight < 0)
+\item \code{type = "praise"} records whom novices said they praised (weight > 0) and blamed (weight < 0)
+\item \code{type = "influence"} records whom novices said were a positive influence (weight > 0) and negative influence (weight < 0)
 }
 
 All networks are weighted.
 Novices' first choices are weighted 3, the second 2, and third choices 1.
 Some subjects offered tied ranks for their top four choices.
+The sign of each tie is held as the sign of its weight,
+so that the weights run from -3 to 3
+and neither the valence nor the rank is lost when the network is
+coerced to another class.
 
 In addition to node names,
 a 'groups' variable records the four groups that Sampson observed during his time there:

@@ -81,7 +81,7 @@ Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{                      data.frame default igraph network stocnet tbl_graph
-add_node_attribute                     *      *       *                 *
+add_node_attribute                     *      *       *       *         *
 delete_node_attribute                  *      *       *                 *
 join_nodes                             *      *               *          
 mutate_nodes                           *      *       *       *         *
@@ -106,7 +106,7 @@ Other nodes:
 
 Other manipulations:
 \code{\link{manip_changes}},
-\code{\link{manip_global}},
+\code{\link{manip_globals}},
 \code{\link{manip_info}},
 \code{\link{manip_nodes_num}},
 \code{\link{manip_ties_attr}},

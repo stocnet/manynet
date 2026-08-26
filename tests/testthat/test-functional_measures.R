@@ -67,10 +67,11 @@ for (family in names(meas_families)) {
           expect_length(c(unclass(out)), as.numeric(net_nodes(net)))
         } else if (family == "tie") {
           expect_length(c(unclass(out)), as.numeric(net_ties(net)))
-        } else if (grepl("attributes|names|missing", fn)) {
-          # listings may legitimately be empty (e.g. no attributes)
-          expect_true(is.atomic(unclass(out)),
-                      label = paste0(fn, "() returning an atomic listing"))
+        } else if (grepl("attributes|names|missing|transformations", fn)) {
+          # listings may legitimately be empty (e.g. no attributes, or a
+          # network that has not been transformed since it was collected)
+          expect_true(is.atomic(unclass(out)) || is.list(unclass(out)),
+                      label = paste0(fn, "() returning a listing"))
         } else {
           # net_/layer_/mode_ functions return a scalar or a short
           # per-mode/per-layer/per-attribute summary, never per-node output

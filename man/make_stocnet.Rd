@@ -11,7 +11,8 @@ make_stocnet(
   nodes = NULL,
   ties = NULL,
   changes = NULL,
-  global = NULL
+  globals = NULL,
+  missings = NULL
 )
 
 \method{print}{stocnet}(x, ..., n = 12)
@@ -54,11 +55,18 @@ Additional columns can be included for the time of the change,
 such as 'wave' or 'time'.
 By default NULL.}
 
-\item{global}{A tibble of global variables in the network, with one row
+\item{globals}{A tibble of global variables in the network, with one row
 per change and at least three columns for
 the variable to which the change applies, which should be called 'var',
 the time of the change, which should be called 'time',
 and the new value to be applied, which should be called 'value'.
+By default NULL.}
+
+\item{missings}{A tibble of the ties the network could have observed and did
+not, with one row per tie and at least two columns for its endpoints,
+which should be called 'from' and 'to'.
+Only the ties that no node's non-response implies need be listed here;
+see the Missingness section.
 By default NULL.}
 
 \item{x}{An object of class "mnet" or "tbl_graph".}
@@ -80,8 +88,11 @@ By default 12.}
 }}
 }
 \description{
-The 'stocnet' class of network object is a list of four main elements:
-nodes, ties, (nodal) changes, and info metadata about the network as a whole.
+The 'stocnet' class of network object is a list of six elements:
+nodes, ties, (nodal) changes, globals, missings,
+and info metadata about the network as a whole.
+Every element but info is a table, which is what its plural name signifies,
+and any of them may be NULL.
 This offers a consistent and flexible structure that enables more complex
 forms of networks to be contained in a single object.
 
@@ -111,6 +122,13 @@ the ties in a multiplex or multilayer network.
 \item 'directed' should be a logical indicating whether each layer is directed or undirected.
 If there are multiple layers, this can be a named logical vector with the directedness of each layer,
 where the names correspond to the layer names.
+An undirected layer holds one row per dyad in the ties component,
+whether or not the other layers are directed.
+Since an 'igraph' or 'network' object is directed or undirected as a whole,
+coercion reciprocates the undirected layers of a network that has any
+directed layer, and coercion back collapses them again.
+This keeps the degree of a node in an undirected layer the same in every
+class, and makes the round trip lossless.
 \item 'focal' should be a character vector indicating which variables are
 dependent (endogenous). These may be tie layers (dependent networks) and/or
 nodal variables recorded in the changes component (dependent behaviours),
@@ -144,7 +162,23 @@ There are some reserved names for these elements too:
 \itemize{
 \item 'sender' should be a character string naming the type of node that sends ties in this layer.
 \item 'recipient' should be a character string naming the type of node that receives ties in this layer.
-\item 'update' should be a character string indicating whether layer changes are by "increment" or "replace".
+\item 'observation' should be a character string naming how the network was
+observed: "cross-sectional" for a single observation, "panel" for a few
+complete re-observations, "event" for a stream of many records, and
+"egocentric" or "cognitive" for the two designs that ask each respondent
+about a network of their own. Where the layers were observed differently,
+this can be a layer-named character vector.
+A layer named "cross-sectional" in an otherwise longitudinal or dynamic
+network states something that holds throughout, a constant dyadic
+covariate, and is carried into every moment the network is scoped to.
+\item 'update' should be a character string indicating how each record of a
+tie relates to the record before it: "replace", where each states the
+tie's value afresh, or "increment", where each adds to it.
+Where the layers are updated differently, this can be a layer-named
+character vector.
+This says nothing about a tie recorded as an interval, in 'begin' and
+'end' columns, since such a tie carries its own lifespan.
+See the Time section of \code{\link[=to_time]{to_time()}} for how the two are scoped.
 }
 }
 
@@ -154,10 +188,13 @@ There are several reserved names for the columns of the nodes component of a sto
 \itemize{
 \item 'label' should be a character vector of the labels of the nodes in the network.
 \item 'mode' should be a character vector of the modes of the nodes in a multimodal network.
-\item 'present' should be a logical vector indicating the initial active status of the node in changing networks.
-It can also be used to indicate missing nodes in a network,
-if the network is not changing but some nodes are missing,
-or the network is changing but some nodes never appear.
+\item 'active' should be a logical vector indicating the initial status of nodes in changing networks.
+Inactive nodes are not in the network, so cannot hold incoming nor outgoing ties.
+\item 'na' should be a logical vector indicating which nodes were non-responsive,
+despite being in the network.
+Non-responsive nodes are in the network, so can hold incoming ties,
+but cannot report outgoing ties.
+See \code{\link[=as_missinglist]{as_missinglist()}}.
 }
 }
 
@@ -173,6 +210,22 @@ Note that the value column can be of any class, such as logical for changes to a
 or numeric for changes to a nodal attribute.
 These values are held internally as a list within the tibble, so that they can be of any class and length,
 but printed as a tibble with a 'value' column that shows the first value and a type label for the class of the value.
+}
+
+A change states what a variable becomes from that moment on,
+so it is carried forward until another change states otherwise.
+A node that does not report at one wave and reports again at the next
+therefore holds two changes of the 'na' variable, one each way.
+Unlike the ties, then, changes are always recorded at a moment and always
+carried forward: an interval over which a nodal variable holds is stated
+as two changes, one at each end, and there is no 'update' to declare.
+\code{\link[=as_changelist]{as_changelist()}} takes a \code{time} and returns the changes in force at it.
+
+There is one reserved name for a further column.
+\itemize{
+\item 'layer' should be a character vector naming the layer a change applies to,
+where it applies to one layer and not to others.
+A change that names no layer applies to every layer.
 }
 }
 
@@ -190,20 +243,54 @@ There are also several reserved names for the columns of the ties component of a
 \item 'weight' should be a numeric vector of the weights of the ties in a weighted network
 If the weight vector includes also negative values, then the network is a signed network,
 and the sign of the tie can be determined from the weight.
-Missing weights can be used to indicate missing ties in a network.
-\item 'time' should be a character or date vector of the time at which each tie is active in a longitudinal network.
+Missing values, \code{NA}, in the weight vector indicate that the tie value is missing,
+not the tie itself, which is still present in the network.
+For individual missing ties beyond those implied by inactive or non-responsive nodes,
+please add them to the missings component as an edgelist.
+\item 'time' should be a numeric, character, or date vector of the moment at
+which each tie was recorded.
+\item 'begin' and 'end' should instead give the interval over which each tie
+lasts, where the network records that rather than a moment.
+\item 'increment' and 'replace' should give the change each record makes to a
+tie's value, where the network records a stream of such changes.
+These are renamed to 'weight' on coercion, and what they said is kept in
+\code{info$update}.
 }
+
+How a network records time in its ties, and what each of these columns
+therefore means, is set out in the Time section of \code{\link[=to_time]{to_time()}}.
 }
 
 \section{Globals}{
 
-There are several required names for the columns of the ties component of a stocnet object (if one is included).
+There are several required names for the columns of the globals component of a stocnet object (if one is included).
 \itemize{
 \item 'var' must be a string vector naming the global variable
-\item 'value' must be the new value that should be applied at that change (or incremented, as appropriate).
+\item 'value' must be the value the variable takes from that moment on.
 There may be an additional column:
-\item 'time' should be a character or date vector of the time at which each global attribute is updated.
+\item 'time' should be a numeric, character, or date vector of the moment at
+which each global attribute is updated.
+Globals are carried forward the way changes are: a value holds from the
+moment it is recorded at until another value states otherwise.
 }
+}
+
+\section{Missings}{
+
+The missings component lists the ties the network could have observed and
+did not, one row each, where these are not already implied by an inactive
+or a non-responsive node.
+It takes the same columns as the ties component:
+\itemize{
+\item 'from' and 'to' must be integer vectors of the nodes at each end
+\item 'layer' and 'time' should name the layer and moment the tie was missing
+from, where the network records them.
+}
+
+Since most missing tie data is a node that did not report,
+this component is usually NULL.
+\code{\link[=as_missinglist]{as_missinglist()}} returns what it holds together with the ties that the
+non-responsive nodes imply, which is nearly always the larger part.
 }
 
 \section{Printing}{

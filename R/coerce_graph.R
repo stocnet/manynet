@@ -49,7 +49,7 @@ as_igraph.data.frame <- function(.data,
                                  twomode = FALSE) {
   if (inherits(.data, "tbl_df")) .data <- as.data.frame(.data)
   # Warn if no column named weight and weight set to true
-  if (is_weighted(.data) & !("weight" %in% names(.data))) {
+  if ((is_weighted(.data) | is_signed(.data)) & !("weight" %in% names(.data))) {
     if(!names(.data)[3] %in% c("begin","sign","date"))
       names(.data)[3] <- "weight"
     # snet_abort("Please rename the weight column of your dataframe to 'weight'")
@@ -87,26 +87,30 @@ as_igraph.data.frame <- function(.data,
 #' @export
 as_igraph.matrix <- function(.data,
                              twomode = FALSE) {
-  if (nrow(.data) != ncol(.data) | twomode) {
-    if (!(all(.data %in% c(0, 1)))) {
-      graph <- igraph::graph_from_biadjacency_matrix(.data,
-                                                     weighted = TRUE,
-                                                     directed = FALSE)
-    } else {
-      graph <- igraph::graph_from_biadjacency_matrix(.data,
-                                                     directed = FALSE)
-    }
+  # A missing cell records a tie observed as missing, which igraph will not
+  # accept in a matrix it builds a graph from. Such a cell is filled with one,
+  # so that the tie is made, and its weight is set missing again afterwards.
+  na_cells <- is.na(.data)
+  missing_ties <- any(na_cells)
+  if (missing_ties) .data[na_cells] <- 1
+  twomode <- nrow(.data) != ncol(.data) | twomode
+  valued <- missing_ties || !all(.data %in% c(0, 1))
+  if (twomode) {
+    graph <- igraph::graph_from_biadjacency_matrix(.data,
+                                                   weighted = if(valued) TRUE else NULL,
+                                                   directed = FALSE)
   } else {
-    if (!(all(.data %in% c(0, 1)))) {
-      graph <- igraph::graph_from_adjacency_matrix(.data, 
-                                                   mode = ifelse(all(.data == t(.data)),
-                                                                 "max", "directed"),
-                                                   weighted = TRUE)
-    } else {
-      graph <- igraph::graph_from_adjacency_matrix(.data,
-                                                   mode = ifelse(all(.data == t(.data)),
-                                                                 "max", "directed"))
-    }
+    graph <- igraph::graph_from_adjacency_matrix(.data,
+                                                 mode = ifelse(all(.data == t(.data)),
+                                                               "max", "directed"),
+                                                 weighted = if(valued) TRUE else NULL)
+  }
+  if (missing_ties) {
+    el <- igraph::as_edgelist(graph, names = FALSE)
+    # The nodes of a two-mode graph are numbered across both modes, whereas the
+    # columns of the matrix they came from are numbered within the second.
+    if (twomode) el[, 2] <- el[, 2] - nrow(.data)
+    igraph::E(graph)$weight[na_cells[el]] <- NA
   }
   graph
 }
@@ -128,6 +132,12 @@ as_igraph.tbl_graph <- function(.data,
 #' @export
 as_igraph.network <- function(.data,
                               twomode = FALSE) {
+  # A 'network' object holds the ties it records as missing among its edges,
+  # which a sociomatrix reports as missing cells and igraph refuses to build a
+  # graph from. Those take the richer path, where they become a graph
+  # attribute rather than edges, as igraph can mark no edge as missing.
+  if (!is.null(as_missinglist(.data)))
+    return(as_igraph(as_stocnet(.data), twomode = twomode))
   # Extract node attributes
   attr <- names(.data[[3]][[1]])
   # Convert to igraph
@@ -181,12 +191,114 @@ as_igraph.network <- function(.data,
   graph
 }
 
+# Undirected layers ####
+
+# A stocnet holds each undirected tie once, on the dyad rather than on the arc.
+# Other classes are directed or undirected as a whole, though, so a network
+# with both directed and undirected layers must be coerced to a directed one.
+# A single row would then read as a one-way arc, halving the degree of every
+# node in that layer. These two helpers therefore reciprocate the undirected
+# layers on the way out and collapse them again on the way back, so that a
+# round trip returns the network it started from.
+
+.reciprocate_layers <- function(.data){
+  ties <- .data$ties
+  directed <- .data$info$directed
+  if(is.null(ties) || nrow(ties) == 0 || !"layer" %in% names(ties)) return(ties)
+  if(is.null(directed) || is.null(names(directed))) return(ties)
+  # Where the network is coerced as undirected anyway, one row per dyad is
+  # already what the target class expects.
+  if(!is_directed(.data)) return(ties)
+  undirected <- names(directed)[!directed]
+  add <- ties[ties$layer %in% undirected & ties$from != ties$to, , drop = FALSE]
+  if(nrow(add) == 0) return(ties)
+  add[c("from", "to")] <- add[c("to", "from")]
+  # A layer marked undirected should not already hold both directions, but if
+  # it does, the reverse tie is kept only once.
+  add <- add[!.dyad_key(add) %in% .dyad_key(ties), , drop = FALSE]
+  dplyr::bind_rows(ties, add)
+}
+
+# The ties a network records as missing, labelled where the network is, so that
+# they can be written into whichever form the target class holds them in.
+.missing_out <- function(.data){
+  out <- as_missinglist(.data)
+  if(is.null(out) || !nrow(out)) return(NULL)
+  if(all(is.na(out$layer))) out$layer <- NULL
+  if(all(is.na(out$time))) out$time <- NULL
+  if(is_labelled(.data)){
+    out$from <- .data$nodes$label[out$from]
+    out$to <- .data$nodes$label[out$to]
+  }
+  out
+}
+
+# The reverse, for coercion back into a stocnet: the labels are matched to node
+# indices again, so that the list can be compressed against the nodes.
+.missing_in <- function(missing, nodes){
+  if(is.null(missing) || !nrow(missing)) return(NULL)
+  missing <- dplyr::as_tibble(missing)
+  if(!is.numeric(missing$from) && !is.null(nodes[["label"]])){
+    missing$from <- match(as.character(missing$from), nodes$label)
+    missing$to <- match(as.character(missing$to), nodes$label)
+  }
+  missing$from <- as.integer(missing$from)
+  missing$to <- as.integer(missing$to)
+  missing[!is.na(missing$from) & !is.na(missing$to), , drop = FALSE]
+}
+
+.collapse_layers <- function(ties, directed, directed_object){
+  # Without a record of which layer is which, there is nothing to collapse and
+  # the caller falls back to describing the network as directed or not.
+  if(is.null(directed) || is.null(names(directed))) return(NULL)
+  if(is.null(ties) || nrow(ties) == 0 || !"layer" %in% names(ties))
+    return(list(ties = ties, directed = directed))
+  # An undirected object holds one row per dyad in every layer already, so no
+  # layer of it can be directed and none needs collapsing.
+  if(!directed_object){
+    directed[] <- FALSE
+    return(list(ties = ties, directed = directed))
+  }
+  for(layer in names(directed)[!directed]){
+    rows <- which(ties$layer %in% layer)
+    if(length(rows) == 0) next
+    keys <- .dyad_key(ties[rows, , drop = FALSE], ordered = FALSE)
+    sizes <- table(keys)
+    loops <- ties$from[rows] == ties$to[rows]
+    # Only a fully reciprocated layer can be collapsed without losing a tie.
+    # Where it is not, the layer is directed after all, whatever info claims.
+    if(!all(sizes[keys[!loops]] == 2)){
+      directed[layer] <- TRUE
+      next
+    }
+    ties <- ties[-rows[duplicated(keys)], , drop = FALSE]
+  }
+  list(ties = ties, directed = directed)
+}
+
+# Identify a tie by its dyad, and by any layer or time that distinguishes it
+# from another tie on the same dyad. `ordered = FALSE` ignores the direction.
+.dyad_key <- function(ties, ordered = TRUE){
+  from <- ties$from
+  to <- ties$to
+  if(!ordered){
+    from <- pmin(ties$from, ties$to)
+    to <- pmax(ties$from, ties$to)
+  }
+  extra <- lapply(intersect(c("layer", "time"), names(ties)),
+                  function(col) as.character(ties[[col]]))
+  do.call(paste, c(list(from, to), extra, list(sep = "\r")))
+}
+
 #' @export
 as_igraph.stocnet <- function(.data, twomode = FALSE) {
   # `.data$info$directed` is authoritative here, so use it rather than letting
   # graph_from_data_frame() default every stocnet to a directed graph.
   directed <- is_directed(.data)
-  if(is.null(as_nodelist(.data)) || length(as_nodelist(.data)) == 0){
+  # Note that the nodes are counted by their rows and not by their columns,
+  # since a table of rows without columns is how a stocnet records the size of
+  # a network whose nodes have no attributes, isolates included.
+  if(is.null(as_nodelist(.data)) || nrow(as_nodelist(.data)) == 0){
     out <- igraph::graph_from_data_frame(as_edgelist(.data), directed = directed)
     out <- to_unlabelled(out)
   } else {
@@ -202,9 +314,19 @@ as_igraph.stocnet <- function(.data, twomode = FALSE) {
                                            directed = directed,
                                            vertices = vertices)
     } else {
+      # The nodelist is a table of nodal attributes rather than a network,
+      # so it is passed to graph_from_data_frame() as vertices under
+      # temporary index names; bind_node_attributes() would instead coerce
+      # it as if it were an edgelist. The temporary names keep the nodes in
+      # nodelist order, rather than in order of appearance in the ties, and
+      # are dropped again once the attributes are attached.
+      vertices <- dplyr::mutate(vertices,
+                                name = as.character(seq_len(nrow(vertices))))
+      vertices <- dplyr::select(vertices, name, dplyr::everything())
       out <- igraph::graph_from_data_frame(as_edgelist(.data),
-                                           directed = directed) |>
-        bind_node_attributes(vertices)
+                                           directed = directed,
+                                           vertices = vertices)
+      out <- to_unlabelled(out)
     }
     
   }
@@ -215,7 +337,14 @@ as_igraph.stocnet <- function(.data, twomode = FALSE) {
   if(!is.null(as_changelist(.data)) && length(as_changelist(.data)) > 0)
     igraph::graph_attr(out, "changes") <- as_changelist(.data)
   if(!is.null(as_globallist(.data)) && length(as_globallist(.data)) > 0)
-    igraph::graph_attr(out, "global") <- as_globallist(.data)
+    igraph::graph_attr(out, "globals") <- as_globallist(.data)
+  # igraph has no way to mark an edge as missing, so the ties recorded as
+  # missing travel as a graph attribute rather than as edges. This keeps them
+  # out of every count and every tie vector, where they are not ties.
+  missing <- .missing_out(.data)
+  if(!is.null(missing)) igraph::graph_attr(out, "missings") <- missing else
+    if("missings" %in% igraph::graph_attr_names(out))
+      out <- igraph::delete_graph_attr(out, "missings")
   out
 }
 
@@ -601,16 +730,18 @@ as_network.matrix <- function(.data,
   if (is_twomode(.data)) {
     out <- to_multilevel(.data)
   } else out <- .data
+  valued <- is_weighted(.data) | is_signed(.data) | anyNA(.data)
   network::as.network(out,
                       directed = is_directed(.data),
                       bipartite   = ifelse(is_twomode(.data),
                                            nrow(.data),
                                            FALSE),
-                      loops = ifelse(sum(diag(out)) > 0, TRUE, FALSE),
-                      ignore.eval = ifelse(is_weighted(.data),
-                                           FALSE, TRUE),
-                      names.eval  = ifelse(is_weighted(.data),
-                                           "weight", NULL))
+                      loops = ifelse(sum(diag(out), na.rm = TRUE) > 0, TRUE, FALSE),
+                      # a signed matrix's values are carried as weights too,
+                      # so that the signs survive the coercion, as are the
+                      # missing values of a matrix holding ties recorded as missing
+                      ignore.eval = ifelse(valued, FALSE, TRUE),
+                      names.eval  = ifelse(valued, "weight", NULL))
 }
 
 #' @export
@@ -689,7 +820,19 @@ as_network.stocnet <- function(.data, twomode = FALSE) {
   # multiple edges (multiplex/multi-wave) and their tie attributes (e.g. layer,
   # time, weight) are retained rather than collapsed into a sociomatrix.
   nodes <- .data$nodes
-  ties <- .data$ties
+  # As for igraph, a layer held once per dyad is reciprocated here, since a
+  # 'network' object is directed or undirected as a whole.
+  ties <- .reciprocate_layers(.data)
+  # A 'network' object is the one class that can mark an edge as missing, in
+  # its reserved 'na' attribute, which is the format `{ergm}` and the rest of
+  # statnet expect. So the ties recorded as missing are added as edges here,
+  # marked as such, and `network`'s own functions omit them as they should.
+  missing <- as_missinglist(.data)
+  if(!is.null(missing) && nrow(missing)){
+    missing <- missing[intersect(names(ties), names(missing))]
+    missing$na <- TRUE
+    ties <- dplyr::bind_rows(dplyr::mutate(ties, na = FALSE), missing)
+  }
   # For two-mode networks the 'bipartite' count is the number of first-mode
   # nodes. manynet orders nodes first-mode-first, with ties running from the
   # first mode ('from') to the second ('to'), matching network's convention.
@@ -731,13 +874,25 @@ as_network.stocnet <- function(.data, twomode = FALSE) {
   }
   # Merge the info list into (rather than replace) the network attribute list,
   # so that core network attributes such as n, directed, and bipartite survive.
+  # 'network' requires these to be single values that describe the whole
+  # network, so an info entry of the same name is dropped rather than merged.
+  # A per-layer 'directed' vector, for example, would otherwise replace the
+  # scalar set above and break every 'network' method that reads it.
   info <- as_infolist(.data)
+  # A 'network' object has no place for per-layer directedness, so the vector
+  # is carried in an attribute of its own, which `as_stocnet.network()` reads
+  # back as 'directed'. Without it the round trip could not tell an undirected
+  # layer from a directed one whose ties happen to be reciprocated.
+  if (!is.null(info$directed) && !is.null(names(info$directed)))
+    out <- network::set.network.attribute(out, "layer_directed", info$directed)
+  info <- info[setdiff(names(info), c("n", "mnext", "directed", "hyper",
+                                      "loops", "multiple", "bipartite"))]
   if (!is.null(info) && length(info) > 0)
     out$gal <- utils::modifyList(out$gal, info)
   if(!is.null(as_changelist(.data)) && length(as_changelist(.data)) > 0)
     out <- network::set.network.attribute(out, "changes", as_changelist(.data))
   if(!is.null(as_globallist(.data)) && length(as_globallist(.data)) > 0)
-    out <- network::set.network.attribute(out, "global", as_globallist(.data))
+    out <- network::set.network.attribute(out, "globals", as_globallist(.data))
   out
 }
 
@@ -844,8 +999,13 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
   nodes <- as_nodelist(.data)
   changes <- as_changelist(.data)
   ties <- as_edgelist(.data)
-  global <- as_globallist(.data)
-  
+  globals <- as_globallist(.data)
+  # A network whose nodes have neither names nor attributes has no nodelist,
+  # and its isolates appear in no tie, so its size is recorded as a table of
+  # rows without columns rather than lost.
+  if(is.null(nodes) || ncol(nodes) == 0)
+    nodes <- dplyr::tibble(.rows = igraph::vcount(.data))
+
   if(is_labelled(.data)){
     ties$from <- match(ties$from, nodes$name)
     ties$to <- match(ties$to, nodes$name)
@@ -855,36 +1015,112 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
     ties$from <- as.integer(ties$from)
     ties$to <- as.integer(ties$to)
   }
+  # 'nodes' and 'ties' were the names an mnet gave the mode and layer names,
+  # before 'modes' and 'layers' were reserved for them, so a network coerced
+  # from a stocnet names its modes and layers under either.
+  modes <- info$nodes %||% info$modes
+  layers <- info$ties %||% info$layers
   if(is_twomode(.data)){
-    if(!is.null(info$nodes) && length(info$nodes) == 2){
-      nodes$mode <- info$nodes[(nodes$type*1+1)]
+    if(!is.null(modes) && length(modes) == 2){
+      nodes$mode <- modes[(nodes$type*1+1)]
     } else {
       nodes$mode <- as.character(nodes$type)
     }
     nodes$type <- NULL
+  } else if(!is.null(nodes) && "lvl" %in% names(nodes)){
+    # `to_multilevel.igraph()` records the levels of a network in a 'lvl'
+    # attribute, since an igraph 'type' attribute forbids ties within a mode.
+    # A 'stocnet' has no such constraint and names its levels in 'mode',
+    # which, unlike 'lvl', more than two levels can also share.
+    lvls <- sort(unique(nodes$lvl))
+    nodes$mode <- if(!is.null(modes) && length(modes) == length(lvls))
+      modes[match(nodes$lvl, lvls)] else as.character(nodes$lvl)
+    nodes$lvl <- NULL
   }
   # is_multiplex() is also TRUE for networks with any non-reserved tie
   # attribute, which have no 'type' column to rename to 'layer'
   if(is_multiplex(.data) && "type" %in% names(ties)){
     ties$layer <- ties$type
     ties$type <- NULL
-    if(is.null(info$ties)){
+    if(is.null(layers)){
       info$ties <- unique(ties$layer)
     }
   }
   if(!is.null(info$changes)) info$changes <- NULL
-  info$directed <- is_directed(.data)
-  
+  missing <- as_missinglist(.data)
+  # Where the network came from a stocnet with undirected layers, those layers
+  # were reciprocated on the way out and are collapsed again here, so that the
+  # per-layer record of directedness survives the round trip. Otherwise the
+  # network is simply as directed as the object it came from.
+  collapsed <- .collapse_layers(ties, info$directed, is_directed(.data))
+  if(is.null(collapsed)) info$directed <- is_directed(.data) else {
+    ties <- collapsed$ties
+    info$directed <- collapsed$directed
+  }
   if(!is.null(nodes))
     nodes <- dplyr::select(nodes, 
                            dplyr::any_of(c("label", "mode")), 
                            dplyr::everything())
   
-  out <- list(info = info, nodes = nodes, ties = ties, 
-              changes = changes, global = global)
+  if(is.null(missing)){
+    # Without an attribute recording them, a missing weight is the only mark a
+    # tie recorded as missing can carry, which is how a matrix holds one. Where
+    # the attribute is there, a missing weight is a tie of unknown value
+    # instead, and is left among the ties as such.
+    split <- .split_missing_input(.mark_missing_weights(ties))
+    ties <- split$ties
+    missing <- split$missing
+  }
+  out <- list(info = info, nodes = nodes, ties = ties,
+              changes = changes, globals = globals, missings = NULL)
   class(out) <- c("stocnet", class(out))
+  # The ties recorded as missing are held as the nodes that did not report
+  # them, so that a round trip through another class does not return one
+  # record for every tie.
+  out <- .compress_missing(out, .missing_in(missing, nodes))
   out <- rename_nodes(out)
   out <- rename_ties(out)
+  out <- .conform_info(out)
+  validate_stocnet(out)
+  out
+}
+
+# The info of a network read from a file holds whatever that file recorded
+# about the network as a whole, which need not follow the conventions a stocnet
+# expects of a name it reserves. Such an entry is dropped here, since keeping it
+# would build an object that any later call rebuilding it would abort on.
+.conform_info <- function(out) {
+  info <- out$info
+  if(is.null(info) || length(info) == 0) return(out)
+  conforms <- function(nm, class, len = NULL, pool = NULL) {
+    if(!nm %in% names(info)) return(TRUE)
+    value <- info[[nm]]
+    if(length(intersect(class(value), class)) == 0) return(FALSE)
+    if(!is.null(len) && length(value) != len) return(FALSE)
+    if(!is.null(pool) && !all(value %in% pool)) return(FALSE)
+    TRUE
+  }
+  keeps <- c(
+    name = conforms("name", "character"),
+    modes = conforms("modes", "character", len = net_modes(out)),
+    layers = conforms("layers", "character", len = net_layers(out)),
+    observation = conforms("observation", "character",
+                           pool = c("panel", "event", "cross-sectional",
+                                    "egocentric", "cognitive")),
+    sender = conforms("sender", "character", pool = mode_names(out)),
+    receiver = conforms("receiver", "character", pool = mode_names(out)),
+    update = conforms("update", "character",
+                      pool = c("increment", "replace")),
+    focal = conforms("focal", "character",
+                     pool = unique(c(layer_names(out),
+                                     net_node_attributes(out),
+                                     as.character(out$changes$var)))),
+    centered = conforms("centered", "logical"))
+  dropped <- names(keeps)[!keeps]
+  if(length(dropped) == 0) return(out)
+  snet_minor_info(paste("Dropped {length(dropped)} network attribute{?s}",
+                        "that a stocnet object reserves: {.val {dropped}}."))
+  out$info[dropped] <- NULL
   out
 }
 
@@ -900,6 +1136,9 @@ as_stocnet.network <- function(.data,
   # Read edges together with all their attributes in a single, aligned pass so
   # that tie attributes (e.g. layer, time, weight) stay matched to their edges.
   edf <- network::as.data.frame.network(.data, unit = "edges", na.rm = FALSE)
+  # An edge marked in the reserved 'na' attribute records a missing tie rather
+  # than a tie, so it is read out of the edges here and compressed below.
+  missing <- as_missinglist(.data)
   if (nrow(edf) == 0) {
     ties <- dplyr::tibble(from = integer(0), to = integer(0))
   } else {
@@ -908,16 +1147,39 @@ as_stocnet.network <- function(.data,
     vnames <- as.character(network::network.vertex.names(.data))
     edf$from <- match(as.character(edf$.tail), vnames)
     edf$to <- match(as.character(edf$.head), vnames)
+    # 'na' is not among the columns `as.data.frame.network()` reports, since
+    # `{network}` treats it as bookkeeping of its own, so it is read directly.
+    na <- if ("na" %in% network::list.edge.attributes(.data))
+      unlist(network::get.edge.attribute(.data, "na", null.na = FALSE)) else NULL
     edf[c(".tail", ".head", "na")] <- NULL
-    # Drop the weight column when all weights are unity (an unweighted network).
-    if ("weight" %in% names(edf) && all(edf$weight == 1)) edf[["weight"]] <- NULL
+    if (!is.null(na) && length(na) == nrow(edf))
+      edf <- edf[!(!is.na(na) & na), , drop = FALSE]
+    # Drop the weight column when all weights are unity (an unweighted network)
+    if ("weight" %in% names(edf) && !anyNA(edf$weight) && all(edf$weight == 1))
+      edf[["weight"]] <- NULL
     ties <- dplyr::as_tibble(edf) |>
       dplyr::select("from", "to", dplyr::everything())
   }
-  out <- list(info = list(directed = is_directed(.data)),
+  # Read back the network attributes that `as_network()` wrote, less those
+  # that belong to the structure of a 'network' object rather than to the
+  # network it describes, and less those held as their own components.
+  info <- .data$gal[setdiff(names(.data$gal),
+                            c("n", "mnext", "directed", "hyper", "loops",
+                              "multiple", "bipartite", "changes", "globals", "global",
+                              "layer_directed"))]
+  # As for igraph, an undirected layer reciprocated on the way out is
+  # collapsed again here, so that the round trip is lossless.
+  collapsed <- .collapse_layers(ties, .data$gal$layer_directed, is_directed(.data))
+  if(is.null(collapsed)) info$directed <- is_directed(.data) else {
+    ties <- collapsed$ties
+    info$directed <- collapsed$directed
+  }
+  out <- list(info = info,
               nodes = as_nodelist(.data),
+              ties = ties,
               changes = as_changelist(.data),
-              ties = ties)
+              globals = as_globallist(.data),
+              missings = NULL)
   class(out) <- c("stocnet", class(out))
   # Integer vertex names are anonymous node ids, not real labels, so drop them.
   if(!is.null(out$nodes) &&
@@ -925,7 +1187,7 @@ as_stocnet.network <- function(.data,
     out$nodes$label <- NULL
     if(ncol(out$nodes) == 0) out$nodes <- NULL
   }
-  out
+  .compress_missing(out, .missing_in(missing, out$nodes))
 }
 
 # RSiena ####
@@ -947,6 +1209,10 @@ as_siena.default <- function(.data, twomode = FALSE) {
 as_siena.stocnet <- function(.data, twomode = FALSE) {
   thisRequires("RSiena")
   x <- .data
+  # SIENA holds a missing tie as a missing cell of the array, which it imputes,
+  # so the ties recorded as missing join the ties here, marked as such, and the
+  # array builder writes them out as missing rather than as observed non-ties.
+  x$ties <- .join_missing_ties(x)
   # The longitudinal column may arrive as 'wave' (mnet convention) or 'time'.
   x$ties <- .siena_wave_to_time(x$ties)
   x$changes <- .siena_wave_to_time(x$changes)
@@ -1036,12 +1302,20 @@ as_siena.stocnet <- function(.data, twomode = FALSE) {
   # Constant covariates from (non-reserved) nodal columns ----
   reserved <- c("label", "mode", "active", "na", "type", "name")
   for (C in setdiff(names(nodes), reserved)) {
+    # A variable measured at every wave is held both as a nodal column, for the
+    # first wave, and as changes, for the rest. The changes cover every wave,
+    # so the object built from them stands and the column is passed over.
+    if (C %in% names(objs)) next
     ns <- ns_of(C, set_names[1])
     rows <- .siena_mode_rows(nodes, ns[1], set_names)
     vals <- nodes[[C]][rows]
     # SIENA covariates must be plain numeric vectors, so encode any categorical
     # attribute as numeric codes and strip stray attributes/classes.
     vals <- if (is.numeric(vals)) as.vector(vals) else as.numeric(as.factor(vals))
+    if (all(is.na(vals))) {
+      snet_info("Dropping the '{C}' attribute, since it holds no observed values.")
+      next
+    }
     objs[[C]] <- RSiena::coCovar(vals, nodeSet = ns[1], centered = cent_of(C))
   }
   # Composition change (from active-variable changes) ----
@@ -1149,7 +1423,14 @@ as_stocnet.sienadata <- function(.data, twomode = FALSE) {
   if (length(focal)) info$focal <- focal
   if (length(centered)) info$centered <- centered
   info$siena <- siena_meta
-  ties_tbl <- if (length(ties)) dplyr::bind_rows(ties) else NULL
+  # SIENA holds a dyad observed as missing as a missing value, which a stocnet
+  # records in a column of its own. This is done over the layers together,
+  # since binding them would otherwise leave an unvalued layer missing weights.
+  # SIENA holds a missing tie as a missing value, which `make_stocnet()` reads
+  # from an 'na' column and compresses into nonresponse records. Marking them
+  # over the layers together stops a layer without values, bound beside one
+  # with them, being read as missing throughout.
+  ties_tbl <- if (length(ties)) .mark_missing_weights(dplyr::bind_rows(ties)) else NULL
   changes_tbl <- if (length(changes)) dplyr::bind_rows(changes) else NULL
   make_stocnet(info = info, nodes = nodes, ties = ties_tbl,
                changes = changes_tbl)
@@ -1272,6 +1553,9 @@ as_stocnet.sienadata <- function(.data, twomode = FALSE) {
   if (nrow(sub)) {
     tv <- if ("time" %in% names(sub)) sub$time else rep(1, nrow(sub))
     wv <- if ("weight" %in% names(sub)) sub$weight else rep(1, nrow(sub))
+    # A dyad recorded as missing is missing to SIENA too, which imputes it,
+    # rather than an observed non-tie, which would bias the estimates.
+    if ("na" %in% names(sub)) wv[!is.na(sub$na) & sub$na] <- NA
     for (r in seq_len(nrow(sub))) {
       w <- if (is.na(tv[r])) 1 else as.integer(tv[r])
       if (w >= 1 && w <= W)
@@ -1585,12 +1869,12 @@ as_diffnet.diff_model <- function(.data,
       graph <- as_tidygraph(.data) |> mutate(toa = as.numeric(toa)) |> as_igraph()
       # suppressWarnings(netdiffuseR::igraph_to_diffnet(graph = graph,
       #                               toavar = "toa"))
-      return(structure(list(graph = graph, toa = toa#, 
-                            # adopt = adopt, 
-                            # cumadopt = cumadopt, vertex.static.attrs = vertex.static.attrs, 
-                            # vertex.dyn.attrs = vertex.dyn.attrs, graph.attrs = graph.attrs, 
-                            # meta = meta
-      ), class = "diffnet"))
+      structure(list(graph = graph, toa = toa#, 
+                     # adopt = adopt, 
+                     # cumadopt = cumadopt, vertex.static.attrs = vertex.static.attrs, 
+                     # vertex.dyn.attrs = vertex.dyn.attrs, graph.attrs = graph.attrs, 
+                     # meta = meta
+      ), class = "diffnet")
     }
     
 }

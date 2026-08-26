@@ -6,11 +6,12 @@
 \title{One-mode directed network of links between US political blogs (Adamic and Glance 2005)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # US political blogosphere circa 2004 ---------------------------------------
-#> # A labelled, complex, directed network of 1490 blogs and 19090 link arcs
+#> # A labelled, complex, directed network of 1490 blogs and 19090 link arcs (130
+#> parallel)
 #> 
 #> -- Nodes
 #> # A tibble: 1,490 x 3
-#>   name                       Leaning Source               
+#>   label                      Leaning Source               
 #>   <chr>                      <chr>   <chr>                
 #> 1 100monkeystyping.com       Liberal Blogarama            
 #> 2 12thharmonic.com/wordpress Liberal BlogCatalog          
@@ -47,6 +48,23 @@ Political leaning is indicated as "Liberal" (or left leaning) or
 "Conservative" (or right leaning), sourced from blog directories.
 Some blogs were labelled manually,
 based on incoming and outgoing links and posts.
+}
+\details{
+Adamic and Glance gathered the blog URLs from the eTalkingHead,
+BlogCatalog, CampaignLine, and Blogarama directories, which the 'Source'
+nodal attribute records. They retrieved a single front page for each blog
+on 8 February 2005, added the blogs those pages cited 17 or more times,
+and retrieved a front page for each of those on 22 February 2005.
+Libertarian, independent, and moderate blogs were not gathered.
+
+A tie is any link from one blog's front page to another's, whether it
+appeared in a post or in the blogroll in the sidebar, and the two are not
+distinguished.
+
+Note that 65 of the 19090 arcs repeat an arc already in the network,
+with nothing recorded to tell the two apart, so \code{tie_is_parallel()}
+marks 130 ties and \code{as_matrix()} reports two rather than one in those
+cells.
 }
 \references{
 Adamic, Lada, and Natalie Glance. 2005.

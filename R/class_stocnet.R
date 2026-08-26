@@ -1,9 +1,12 @@
 #' Multilevel, multiplex, multimodal, signed, dynamic or longitudinal changing networks
 #' @name make_stocnet
 #' @description
-#'   The 'stocnet' class of network object is a list of four main elements:
-#'   nodes, ties, (nodal) changes, and info metadata about the network as a whole.
-#'   This offers a consistent and flexible structure that enables more complex 
+#'   The 'stocnet' class of network object is a list of six elements:
+#'   nodes, ties, (nodal) changes, globals, missings,
+#'   and info metadata about the network as a whole.
+#'   Every element but info is a table, which is what its plural name signifies,
+#'   and any of them may be NULL.
+#'   This offers a consistent and flexible structure that enables more complex
 #'   forms of networks to be contained in a single object.
 #'   
 #'   Unlike 'mnet' objects, 'stocnet' objects are not layered on top of 'igraph' or 'tbl_graph' objects,
@@ -26,8 +29,15 @@
 #'   - 'layers' should be a character vector of the names of the layers of
 #'   the ties in a multiplex or multilayer network.
 #'   - 'directed' should be a logical indicating whether each layer is directed or undirected.
-#'   If there are multiple layers, this can be a named logical vector with the directedness of each layer, 
+#'   If there are multiple layers, this can be a named logical vector with the directedness of each layer,
 #'   where the names correspond to the layer names.
+#'   An undirected layer holds one row per dyad in the ties component,
+#'   whether or not the other layers are directed.
+#'   Since an 'igraph' or 'network' object is directed or undirected as a whole,
+#'   coercion reciprocates the undirected layers of a network that has any
+#'   directed layer, and coercion back collapses them again.
+#'   This keeps the degree of a node in an undirected layer the same in every
+#'   class, and makes the round trip lossless.
 #'   - 'focal' should be a character vector indicating which variables are
 #'   dependent (endogenous). These may be tie layers (dependent networks) and/or
 #'   nodal variables recorded in the changes component (dependent behaviours),
@@ -59,26 +69,59 @@
 #'   There are some reserved names for these elements too:
 #'   - 'sender' should be a character string naming the type of node that sends ties in this layer.
 #'   - 'recipient' should be a character string naming the type of node that receives ties in this layer.
-#'   - 'update' should be a character string indicating whether layer changes are by "increment" or "replace".
+#'   - 'observation' should be a character string naming how the network was
+#'   observed: "cross-sectional" for a single observation, "panel" for a few
+#'   complete re-observations, "event" for a stream of many records, and
+#'   "egocentric" or "cognitive" for the two designs that ask each respondent
+#'   about a network of their own. Where the layers were observed differently,
+#'   this can be a layer-named character vector.
+#'   A layer named "cross-sectional" in an otherwise longitudinal or dynamic
+#'   network states something that holds throughout, a constant dyadic
+#'   covariate, and is carried into every moment the network is scoped to.
+#'   - 'update' should be a character string indicating how each record of a
+#'   tie relates to the record before it: "replace", where each states the
+#'   tie's value afresh, or "increment", where each adds to it.
+#'   Where the layers are updated differently, this can be a layer-named
+#'   character vector.
+#'   This says nothing about a tie recorded as an interval, in 'begin' and
+#'   'end' columns, since such a tie carries its own lifespan.
+#'   See the Time section of [to_time()] for how the two are scoped.
 #'   
 #' @section Nodes:
 #'   There are several reserved names for the columns of the nodes component of a stocnet object.
 #'   - 'label' should be a character vector of the labels of the nodes in the network.
 #'   - 'mode' should be a character vector of the modes of the nodes in a multimodal network.
-#'   - 'present' should be a logical vector indicating the initial active status of the node in changing networks.
-#'   It can also be used to indicate missing nodes in a network, 
-#'   if the network is not changing but some nodes are missing,
-#'   or the network is changing but some nodes never appear.
-#' @section Changes: 
+#'   - 'active' should be a logical vector indicating the initial status of nodes in changing networks.
+#'   Inactive nodes are not in the network, so cannot hold incoming nor outgoing ties.
+#'   - 'na' should be a logical vector indicating which nodes were non-responsive,
+#'   despite being in the network.
+#'   Non-responsive nodes are in the network, so can hold incoming ties, 
+#'   but cannot report outgoing ties.
+#'   See [as_missinglist()].
+#' @section Changes:
 #'   There are several required names for the columns of the changes component of a stocnet object (if one is included).
 #'   - 'time' can be an integer (e.g. for a wave) or date (e.g. POSIXct or mdate) vector of the times at which changes occur.
 #'   - 'node' must be an index (or names) of the node to which the change applies.
 #'   - 'var' must be a string vector naming the variable to which the change applies, such as 'active' for changing networks.
 #'   - 'value' must be the new value that should be applied at that change (or incremented, as appropriate).
-#'   Note that the value column can be of any class, such as logical for changes to active status, 
+#'   Note that the value column can be of any class, such as logical for changes to active status,
 #'   or numeric for changes to a nodal attribute.
-#'   These values are held internally as a list within the tibble, so that they can be of any class and length, 
+#'   These values are held internally as a list within the tibble, so that they can be of any class and length,
 #'   but printed as a tibble with a 'value' column that shows the first value and a type label for the class of the value.
+#'
+#'   A change states what a variable becomes from that moment on,
+#'   so it is carried forward until another change states otherwise.
+#'   A node that does not report at one wave and reports again at the next
+#'   therefore holds two changes of the 'na' variable, one each way.
+#'   Unlike the ties, then, changes are always recorded at a moment and always
+#'   carried forward: an interval over which a nodal variable holds is stated
+#'   as two changes, one at each end, and there is no 'update' to declare.
+#'   [as_changelist()] takes a `time` and returns the changes in force at it.
+#'
+#'   There is one reserved name for a further column.
+#'   - 'layer' should be a character vector naming the layer a change applies to,
+#'   where it applies to one layer and not to others.
+#'   A change that names no layer applies to every layer.
 #' @section Ties:
 #'   There are several required names for the columns of the ties component of a stocnet object (if one is included).
 #'   - 'from' must be an integer vector of the nodes sending each tie
@@ -89,14 +132,43 @@
 #'   - 'weight' should be a numeric vector of the weights of the ties in a weighted network
 #'   If the weight vector includes also negative values, then the network is a signed network, 
 #'   and the sign of the tie can be determined from the weight.
-#'   Missing weights can be used to indicate missing ties in a network.
-#'   - 'time' should be a character or date vector of the time at which each tie is active in a longitudinal network.
+#'   Missing values, `NA`, in the weight vector indicate that the tie value is missing,
+#'   not the tie itself, which is still present in the network.
+#'   For individual missing ties beyond those implied by inactive or non-responsive nodes,
+#'   please add them to the missings component as an edgelist.
+#'   - 'time' should be a numeric, character, or date vector of the moment at
+#'   which each tie was recorded.
+#'   - 'begin' and 'end' should instead give the interval over which each tie
+#'   lasts, where the network records that rather than a moment.
+#'   - 'increment' and 'replace' should give the change each record makes to a
+#'   tie's value, where the network records a stream of such changes.
+#'   These are renamed to 'weight' on coercion, and what they said is kept in
+#'   `info$update`.
+#'
+#'   How a network records time in its ties, and what each of these columns
+#'   therefore means, is set out in the Time section of [to_time()].
 #' @section Globals:
-#'   There are several required names for the columns of the ties component of a stocnet object (if one is included).
+#'   There are several required names for the columns of the globals component of a stocnet object (if one is included).
 #'   - 'var' must be a string vector naming the global variable
-#'   - 'value' must be the new value that should be applied at that change (or incremented, as appropriate).
+#'   - 'value' must be the value the variable takes from that moment on.
 #'   There may be an additional column:
-#'   - 'time' should be a character or date vector of the time at which each global attribute is updated.
+#'   - 'time' should be a numeric, character, or date vector of the moment at
+#'   which each global attribute is updated.
+#'   Globals are carried forward the way changes are: a value holds from the
+#'   moment it is recorded at until another value states otherwise.
+#' @section Missings:
+#'   The missings component lists the ties the network could have observed and
+#'   did not, one row each, where these are not already implied by an inactive
+#'   or a non-responsive node.
+#'   It takes the same columns as the ties component:
+#'   - 'from' and 'to' must be integer vectors of the nodes at each end
+#'   - 'layer' and 'time' should name the layer and moment the tie was missing
+#'   from, where the network records them.
+#'
+#'   Since most missing tie data is a node that did not report,
+#'   this component is usually NULL.
+#'   [as_missinglist()] returns what it holds together with the ties that the
+#'   non-responsive nodes imply, which is nearly always the larger part.
 #' @section Printing: 
 #'   When printed, 'stocnet' objects will print to the console any information
 #'   stored about the names of the network, its modes, or layers.
@@ -144,11 +216,17 @@ NULL
 #'   Additional columns can be included for the time of the change, 
 #'   such as 'wave' or 'time'.
 #'   By default NULL.
-#' @param global A tibble of global variables in the network, with one row
-#'   per change and at least three columns for 
-#'   the variable to which the change applies, which should be called 'var', 
+#' @param globals A tibble of global variables in the network, with one row
+#'   per change and at least three columns for
+#'   the variable to which the change applies, which should be called 'var',
 #'   the time of the change, which should be called 'time',
 #'   and the new value to be applied, which should be called 'value'.
+#'   By default NULL.
+#' @param missings A tibble of the ties the network could have observed and did
+#'   not, with one row per tie and at least two columns for its endpoints,
+#'   which should be called 'from' and 'to'.
+#'   Only the ties that no node's non-response implies need be listed here;
+#'   see the Missingness section.
 #'   By default NULL.
 #' @examples
 #'   out <- make_stocnet(info = list(name = "Example Network", 
@@ -166,42 +244,54 @@ NULL
 #'                          var = c("active", "active"),
 #'                          value = c(FALSE, TRUE)))
 #' @export
-make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL, 
-                         changes = NULL, global = NULL) {
+make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL,
+                         changes = NULL, globals = NULL, missings = NULL) {
   out <- list(
     info = info,
     nodes = `if`(is.null(nodes), NULL, dplyr::tibble(nodes)),
     ties = `if`(is.null(ties), NULL, dplyr::tibble(ties)),
     changes = `if`(is.null(changes), NULL, dplyr::tibble(changes)),
-    global = `if`(is.null(global), NULL, dplyr::tibble(global))
+    globals = `if`(is.null(globals), NULL, dplyr::tibble(globals)),
+    missings = `if`(is.null(missings), NULL, dplyr::tibble(missings))
   )
   # make sure from and to are numeric indices of the nodes, not labels
   if(!is.null(out$ties)) out <- index_ties(out)
+  if(!is.null(out$missings)) out <- index_ties(out, "missings")
   if(!is.null(out$changes)) out <- index_changes(out)
   out <- structure(out, class = c("stocnet", class(out)))
+  # The ties may arrive with an 'na' column marking which of their rows record
+  # a missing tie rather than a tie. Those rows are held instead as the nodes
+  # that did not report them, which is both smaller and truer to the data.
+  split <- .split_missing_input(out$ties)
+  out$ties <- split$ties
+  given <- dplyr::bind_rows(out$missings, split$missing)
+  if(nrow(given)) out <- .compress_missing(out, given)
   validate_stocnet(out)
 }
 
-index_ties <- function(.data){
+# The ties and the missings both list dyads, so both are indexed the same way.
+index_ties <- function(.data, component = "ties"){
   out <- .data
-  if (is.null(out$ties) || nrow(out$ties) == 0) return(out)
+  dyads <- out[[component]]
+  if (is.null(dyads) || nrow(dyads) == 0) return(out)
   if(!is.null(out$nodes) && "label" %in% names(out$nodes) &&
-     is.character(out$ties$from) && is.character(out$ties$to) &&
+     is.character(dyads$from) && is.character(dyads$to) &&
      is.character(out$nodes$label)){
-    out$ties <- out$ties |>
+    dyads <- dyads |>
       dplyr::mutate(from = match(from, out$nodes$label),
                     to = match(to, out$nodes$label))
-    if(anyNA(c(out$ties$from, out$ties$to))){
-      missing_nodes <- unique(c(.data$ties$from[is.na(out$ties$from)],
-                                .data$ties$to[is.na(out$ties$to)]))
+    if(anyNA(c(dyads$from, dyads$to))){
+      missing_nodes <- unique(c(.data[[component]]$from[is.na(dyads$from)],
+                                .data[[component]]$to[is.na(dyads$to)]))
       snet_abort("Tie labels {missing_nodes} do not match existing node labels.")
     }
   }
-  if(is.numeric(out$ties$from) || is.numeric(out$ties$to)){
-    out$ties <- out$ties |>
+  if(is.numeric(dyads$from) || is.numeric(dyads$to)){
+    dyads <- dyads |>
       dplyr::mutate(from = as.integer(from),
                     to = as.integer(to))
   }
+  out[[component]] <- dyads
   out
 }
 
@@ -241,6 +331,17 @@ print.stocnet <- function(x, ..., n = 12) {
   cli_div(theme = list(.emph = list(color = "#4576B5")))
   cli::cli_text("{.emph # {net_desc} of {node_desc} and {tie_desc}{change_desc}}")
   cli::cli_end()
+  # on its own line, since the line above describes what the network is and
+  # this describes what has been done to it
+  trans_header <- "# Transformed by "
+  trans_desc <- describe_transformations(x,
+                  width = cli::console_width() - nchar(trans_header))
+  if(nzchar(trans_desc)){
+    cli::cli_par()
+    cli_div(theme = list(.emph = list(color = "#4576B5")))
+    cli::cli_text("{.emph {trans_header}{trans_desc}}")
+    cli::cli_end()
+  }
   top <- x$nodes
   bottom <- x$ties
   if(!is.null(x$changes) && ncol(x$changes) >0) n <- ceiling(n/3) else 
@@ -261,14 +362,20 @@ print.stocnet <- function(x, ..., n = 12) {
           n = n)
     cli::cli_end()
   }
-  if(!is.null(x$global) && ncol(x$global) >0){
+  if(!is.null(x$globals) && ncol(x$globals) >0){
     cli::cli_par()
-    cli::cli_h3("Global")
-    global <- dplyr::as_tibble(x$global)
-    if("value" %in% names(global))
-      global$value <- as.value(global$value)
-    print(dplyr::as_tibble(global),
+    cli::cli_h3("Globals")
+    globals <- dplyr::as_tibble(x$globals)
+    if("value" %in% names(globals))
+      globals$value <- as.value(globals$value)
+    print(dplyr::as_tibble(globals),
           n = n)
+    cli::cli_end()
+  }
+  if(!is.null(x$missings) && ncol(x$missings) >0){
+    cli::cli_par()
+    cli::cli_h3("Missings")
+    print(dplyr::as_tibble(x$missings), n = n)
     cli::cli_end()
   }
   if (!is.null(bottom) && ncol(bottom)>0){

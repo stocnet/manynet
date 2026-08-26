@@ -1,3 +1,279 @@
+# manynet 2.3.0
+
+## Package
+
+- Removed CRAN version check from `.onAttach()` so `library(manynet)` loads faster
+  - Now runs once, for the whole stack, in `{migraph}`, where it is also cached and checks GitHub as well as CRAN
+- Updated startup message to include executable functions, not yet working due to an RStudio bug
+- Updated CONTRIBUTING on messaging, README, website, and NEWS conventions
+- Added cross-class sweep of the network-splitting functions to the functional tests
+- Compacted the tests onto the functional sweeps, without loss of coverage
+- Cleared several CodeFactor style issues
+
+## Making
+
+- Improved `read_*()` to return stocnet objects, which hold more metadata
+  - `read_edgelist()` and `read_nodelist()` still return tibbles
+- Added `read_gexf()` and `write_gexf()` for GEXF files such as via Gephi
+- Improved `read_graphml()` to use `{xml2}` rather than `igraph::read_graph()`
+  - Files holding 2+ graphs now included and combined into a single network
+  - Ego added as a node tied to each of its alters and added as 'by' column
+  - Session metadata and graph-level attributes now carried over
+  - `<default>` and declared attribute types now respected
+  - Node and tie types, entity UUIDs, layout coordinates now retained
+  - Missing values now `NA` rather than `NaN`
+  - Multichoice categorical variables collapse, not dropped like `ideanet::nc_read()`
+  - Above changes improve support for reading Network Canvas (closed #153)
+
+## Classes
+
+- Improved the stocnet object to hold six components: 
+  - `info`, `nodes`, `ties`, `changes` as before
+  - Renamed `global` to `globals`, so components with plural names are tables
+  - Added `missings` component to hold individual, residual unrecorded ties
+- Improved clarity of how missing data is managed in stocnet objects
+  - Missing ties due to absence are implied through `nodes$active` and `changes`
+  - Missing ties due to nonresponse are implied through `nodes$na` and `changes`
+  - Residual missing ties are recorded in `missings`
+  - Incomplete nodal data is represented with an `NA` in the relevant column
+  - Incomplete tie data is represented with an `NA` in the relevant column
+- Improved `validate_stocnet()`
+  - Added `validate_globals()` and `validate_missings()`
+  - `validate_ties()` now reserves 'begin' and 'end' tie columns for spells
+  - `validate_changes()` now reserves a 'layer' column for single-layer changes
+- Improved stocnet descriptions
+  - Fixed pluralize helper to except non-plural words like "business"
+  - Improved `describe_ties()` to describe each layer by its own directedness
+  - Improved `describe_ties()` to report the parallel count in parentheses
+  - Improved `describe_network()` to report multilevel networks as multilevel rather than two-mode
+  - Improved `describe_network()` to drop "multiplex" where a network's layers are its levels
+  - Added `describe_transformations()` to include transformations in print
+- Improved measure printing methods to use `measure`, `range`, and `normalization` 
+  attributes to print a concise, subtle header description in sentence case
+  - See netrics v1.0.0 NEWS for more
+
+## Coercion
+
+- Added `as_missinglist()` to return a list of observable but unobserved ties
+  - `as_missinglist.matrix()` lists each missing cell
+  - `as_missinglist.network()` lists edges from 'na' attribute, which `{ergm}` expects
+  - `as_missinglist.stocnet()` derives them from nonresponsive nodes and adds them to `missings`
+  - `as_missinglist.igraph()` lists from an ad hoc graph attribute
+- Fixed `as_infolist.tbl_graph()` dropping other attributes when dropping 'grand'
+- Fixed `as_nodelist.tbl_graph()` returning an edgelist on e.g. a weighted stocnet object
+- Improved `as_changelist()` to take a `time` argument, replacing `gather_changes()`
+- Fixed `as_matrix()` filling missing cells in multiplex networks with 1
+- Improved `as_stocnet.igraph()`
+  - Fixed mapping of 'lvl' onto 'mode'
+  - Fixed loss when reading the mode and layer names only from the 'nodes' and 'ties' info fields
+  - Fixed isolate loss
+  - Fixed reading node ids as labels
+  - Fixed per-layer directedness roundtripping
+- Improved `as_stocnet.network()` to read network attributes back into `info`
+  - Fixed per-layer directedness roundtripping
+  - Fixed "missing value where TRUE/FALSE needed" error with missing weights
+- Improved `as_igraph()`
+  - Fixed how `as_igraph.stocnet()` was losing isolates
+  - Fixed how `as_igraph.stocnet()` handles unlabelled, attributed networks
+  - Fixed how `as_igraph.network()`reads missing data
+  - Fixed how `as_igraph.matrix()`reads missing data
+- Fixed `mode_names.igraph()` reading only 'nodes' info leading to `as_igraph.stocnet()` losing mode names
+- Fixed `as_network.stocnet()` collison of `directed` vector with single expectation
+- Improved how `as_siena.stocnet()` carries missing data to RSiena
+
+## Manipulating
+
+- Added element to `add_info()` to record network "transformations"
+  - This implements section 4 of the GRAND reporting guidelines:
+    - "symmetrization" (4.1)
+    - "dichotomization" (4.2)
+    - "projection" (4.3)
+    - "exclusion" (4.4)
+    - "aggregation" (4.5)
+    - "imputation" (4.6)
+    - "normalisation", not currently in the GRAND guidelines
+  - Each element accumulates rather than replaces, ordered by sequence
+  - Each element names the method first and then consequeces in parentheses
+- Renamed `to_no_isolates()` to `delete_isolates()`, specialising `delete_nodes()`
+- Renamed `to_no_missing()` to `delete_incomplete()` as a property of a node's record
+  - Fixed e.g. `delete_incomplete(ison_classmates)` deleting initialised missings
+- Deprecated `apply_changes()` in favour of more general `to_time()`
+- Deprecated `gather_changes()` in favour of `as_changelist()`
+  - Added `time` argument that returns the changes in force at it
+- Added `add_node_attribute.stocnet()` to avoid rerouting through another class
+- Improved `rename_ties.stocnet()` to record update information before renaming to `weight`
+- Fixed the interactive branch of `add_info()` to record valid values
+
+## Modifying
+
+- Fixed documented return value of every modification
+- Improved predictability of `to_*s()` methods by renaming them
+  - Renamed `to_ties()` to `to_linegraph()`, where ties become nodes
+  - Renamed `to_blocks()` to `to_blockmodel()`, an established term
+    - Fixed it returning wrong-size matrix for unlabelled, two-mode networks
+    - Recorded aggregation method per GRAND item 4.5
+- Added `to_mode()` to select mode to project by a `mode` argument
+  - `to_mode(.data, 1)` is `to_mode1(.data)` and `to_mode(.data, 2)` is
+    `to_mode2(.data)`
+  - `mode` also accepts the name of a mode, for users who recall what a
+    mode is called but not which position it holds, e.g.
+    `to_mode(ison_southern_women, "events")`
+  - The name is matched against `mode_names()`, ignoring case, plurals,
+    and any other words in the name, so that "events", "event", and
+    "Social Events" all select the "social events" mode
+- Added `to_proximity()` to construct a matrix of how alike nodes' ties are
+  - `similarity` takes the same measures as `to_mode1()`, both comparing pairs of rows
+  - `across` selects the profile compared: "rows", "columns", or "both"
+  - `dyad` states how compared pair's own cells are treated:
+    "exclude", "reciprocal", "complex", or "include"
+  - Documented alongside are wrappers `to_correlation()` and `to_cosine()`
+- Improved `to_mode1()`, `to_mode2()`, and `to_proximity()` with further 
+  similarity measures, bringing shared vocabulary to 24:
+  - 6 were already implemented but unreachable: "ochiai", "czekanowski", 
+    "sokalsneath", "ochiai2", "rogerstanimoto", and "hamann"
+  - Added 7 more: "match", "overlap", "crossmin", "maxcrossmin",
+    "sqdiff", "covariance", and "bonacich"
+  - Added 6 more (inverted) distance measures: "euclidean", "manhattan", 
+    "hamming", "cosine", "spearman", and "kendall"
+  - Where possible, measures computed by matrix arithmetic for speed, 
+    and co-occurrence no longer counted where chosen measure does not use them
+  - Records the method used in `info$transformations$projection` per GRAND item 4.3
+- Added `to_backbone()` to reduce a network to the ties a local null model retains (closes #7)
+  - `filter=` chooses among: 
+    - "lans", default for weighted networks because it assumes nothing about the shape of the weights
+    - "disparity"
+    - "noise"
+    - "mlf"
+    - "simmelian", default for unweighted networks
+  - `threshold=` sets cutoff below which a tie is retained
+  - `endpoints=` sets whether a tie must pass at "either" of endpoint or "both"
+  - Recorded the filter and threshold as an exclusion per GRAND item 4.4
+- Added `to_normalised()`/`to_normalized()` to rescale tie values (closes #162)
+  - `rule` divides by largest ("max", default), "mean", or "sum" of those values
+  - `across` rescales by "rows", "columns", or "both" (square root of two denominators multiplied, default)
+  - Isolates left alone rather than becoming `NaN` or `-Inf`
+  - Records rule and margin used in `info$transformations$normalisation`
+- Improved `to_undirected()`
+  - Added `rule` argument offering "min", "max", "mean", "sum", and "product" alongside existing default "collapse"
+  - Fixed per-class variation: .matrix binarised tie weights, .igraph summed them,
+    and .network method left dyads asymmetric; all classes now sum
+  - Fixed tie attributes other than the weight, such as the sign or the
+    layer, not surviving collapsing as igraph's default combination rule
+    discarded them
+  - Added percent of non-reciprocal connected dyads to what it records, per GRAND item 4.1
+- Improved layer-vocabulary consistency
+  - Renamed `from_ties()` to `from_layers()`; `from_ties()` retained as an alias
+    - Accepts list of networks now too, matching equal-sized, unlabelled networks by position
+    - Fixed `from_layers()` returning a directed network via `tidygraph::graph_join()`
+  - Added `to_layers()` to split multiplex networks into a named list of its layers
+  - Added `to_layer()` as a vocabulary-consistent alias of `to_uniplex()`
+    - Fixed `to_uniplex()` to keep info only about the retained layer
+    - Fixed `to_uniplex()` to return undirected network where retained layer retained is undirected
+  - Added `to_flat()` to reduce a multiplex network to a uniplex one 
+    - `rule` includes "max", "min", "mean", "sum", or "product"
+    - Missing values propagate rather than being ignored
+    - Records the method used in `info$transformations$summarization` per GRAND item 4.5
+  - Renamed `tie` argument of `to_uniplex()` to `layer` for layer-vocabulary consistency; 
+    `tie` still works but warns (closed #159)
+- Added `impute_ties()` to replace `na_to_zero()` and `na_to_mean()`
+  - `rule` names imputation rule, recalling argument used elsewhere:
+    - "zero" treats every missing tie as absent, essentially removing missings
+    - "density" draws it at the density observed over the layer and moment it was missing from
+    - "reciprocity" reconstructs it from what the other node reported
+    - "indegree" draws it at the proportion of the responding nodes that named it
+    - "mean" draws it at the mean of the observed tie values over the layer and moment it was missing from
+    - "median" draws it at the median of the observed tie values over the layer and moment it was missing from
+    - "modal" draws it at the mode of the observed tie values over the layer and moment it was missing from
+  - `which` names one or more missing grounds to impute:
+    - "nonresponse" for ties that were not reported because the node was nonresponsive
+    - "unrecorded" for ties that were otherwise not observed
+    - "incomplete" for observed ties whose value is missing
+  - Imputation recorded in `info$transformations$imputation` per GRAND item 4.6
+- Added `impute_nodes()` to impute incomplete nodal attributes (closed #151)
+  - `rule` by their "modal", "mean", "median", or "neighbourhood" value 
+  - Imputation recorded in `info$transformations$imputation` per GRAND item 4.6
+- Added `to_imputed()`, which runs `impute_nodes()` and `impute_ties()` in a single call
+- Improved `to_unweighted()`
+  - Fixed it silently dropping incomplete ties
+  - Records threshold and number of ties deleted per GRAND item 4.2
+- Added `stocnet` methods to `to_ego()`, `to_component()`,
+  `to_subgraph()`, `to_egos()`, `to_subgraphs()`, `to_components()`,
+  `to_unweighted()`, `to_unsigned()`, `to_simplex()`, and `to_acyclic()`
+- Added `to_simplex.tbl_graph()` and `to_acyclic.tbl_graph()`
+- Added `to_permuted.matrix()` to permute matrices directly; 
+  permuting a 17x17 weighted matrix is now around 500 times faster
+- Added `to_multilevel.stocnet()` to pass through an unaltered, multimodal network
+- Added `net_modes.default()` for a matrix, edgelist, or `network` object
+- Consolidated how time is recorded, documented in the "Time" section
+  - how frequently/universally moments are *observed* declared in `info$observation` ("panel" or "event")
+  - time is *represented* as points (`time` column) or intervals (`begin`/`end` columns)
+  - how moments *stack* is declared in `info$update` ("replace" or "increment")
+  - `time` is now the moment column in every class; `wave` is renamed to it on
+    coercion, as the SIENA path already did, and `panel` is now only an alias
+- Improved `to_time()` to return the network as it stood at a moment, however recorded
+  - Fixed erroring on timestamped ties
+  - Added `to_time.stocnet()` to avoid loss of `info` and `changes`
+  - "cross-sectional" layers are now carried into every moment
+  - Note that `to_time()` with no `time` now errors, suggesting `to_times()` instead
+- Added `to_times()` to return the network at each moment
+  - Always returns a named list, so `net_times()==length(to_times())`
+- Added `from_times()` to rejoin networks from different moments
+- Fixed `to_waves()` returning all ties of e.g. `ison_classmates`, in each wave
+- Fixed `to_waves()` erroring where a network records no "wave" tie attribute
+  - Networks that are changing but hold no wave-like tie attribute, such as a `play_diffusion()` result, now take their waves from their changelist instead of raising a "`name` must be a single string" error
+  - Panels whose waves are named "time" or "panel", such as `ison_monks`, now split by that attribute instead of raising an "object 'wave' not found" error
+- Improved `to_giant()` to name its result "Giant component of" for every class
+- Updated strong connectivity example to print only largest component to reduce CRAN's timing
+
+## Marking
+
+- Added `is_multilevel()` to mark TRUE multimodal, multiplex networks
+- Improved `is_longitudinal()` and `is_dynamic()` to mark how time is recorded not column name
+  - `is_longitudinal()` marks panels that re-state ties TRUE
+  - `is_dynamic()` marks a stream of events, whether incrementing or a spell
+  - Fixed `is_longitudinal.stocnet()` returning FALSE for a stocnet list
+- Fixed `is_attributed.igraph()` returning TRUE for multilevel networks
+- Fixed `is_signed()` to mark networks holding signs as negative weights TRUE
+- Fixed `is_weighted()` to mark networks holding absolute binary weights FALSE
+- Added `tie_is_parallel()` to mark ties coexisting parallel to another tie of the same layer (closed #158)
+  - `any(tie_is_parallel())` gives the network-level test
+- Added `tie_is_backbone()` to mark the ties a backbone filter retains
+
+## Measuring
+
+- Added `net_ties.network()` to use `network::network.edgecount()` which omits missing edges
+- Added `net_tie_missing.stocnet()` to report missing ties
+- Fixed `tie_*()` measures erroring on networks without ties
+- Added `net_node_incomplete()` and `net_tie_incomplete()` to report missing attribute values
+- Added `net_times()` to count the moments a network records however recorded
+- Fixed `net_waves()` reporting one wave when waves appeared in a `time` column
+- Fixed `net_layers()` and `layer_ties()` not counting layers in igraph objects that record  in `layer`
+
+## Learning
+
+- Added "Missing data" page to the "Manipulating" tutorial with `ison_classmates` example
+- Added "Backbones" section to the "Manipulating" tutorial's "Modifying networks" page
+- Updated "Manipulating" tutorial's "Layers" page to cover layer-vocabulary with `ison_lawfirm` example
+- Updated tutorial and cheatsheet references to `to_uniplex()` to use `layer` argument
+- Moved gifs to question feedback and added more questions:
+  - "Making" tutorial gains question on reading files
+  - "Manipulating" tutorial gains questions on operators, layers, missing data, and more
+
+## Data
+
+- Improved `table_data()` to skip TRUE/FALSE `multiplex` in favour of number of `layers`
+- Added `ison_bankwiring` as a multiplex, signed stocnet of Hawthorne's bank wiring room relations
+- Added `ison_classmates` as a longitudinal, multiplex, changing stocnet of Knecht's four waves of friendship among Dutch pupils
+- Added `ison_florentine` as a multiplex, attributed stocnet for Padgett's Renaissance Florentine families
+- Added `irps_supremecourt` as a two-mode, weighted stocnet for the ten terms of the Rehnquist court
+- Added `irps_tribes` as a signed stocnet for Read's Gahuku-Gama sub-tribe alliances and oppositions
+- Added `ison_fraternity` as a longitudinal, ranked stocnet for Newcomb's fraternity men
+- Added `ison_tailorshop` as a stocnet for Kapferer's instrumental and sociational ties among 39 Zambian tailors, multiplex across two waves bracketing an abortive and then a successful strike
+- Added `irps_corruption`, an undirected multiplex stocnet of 11 actors in the Czech Rath corruption affair, with "collaboration", "transfers", and "preexisting" layers (closes #164)
+- Converted `fict_marvel`, `fict_potter`, and `fict_starwars` to 'stocnet' objects
+- Converted `irps_blogs`, `irps_nuclear`, and `ison_koenigsberg` to 'stocnet' objects
+- Converted `ison_monks` to 'stocnet' object
+
 # manynet 2.2.3
 
 ## Making

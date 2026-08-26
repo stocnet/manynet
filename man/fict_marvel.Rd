@@ -3,37 +3,37 @@
 \docType{data}
 \name{fict_marvel}
 \alias{fict_marvel}
-\title{Multiplex two-mode affiliation and one-mode signed relationship network of
-Marvel comic book characters (Yuksel 2017)}
+\title{Multilevel signed network of Marvel comic book characters and their teams
+(Yuksel 2017)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> 
 #> -- # Marvel universe -----------------------------------------------------------
-#> # A labelled, complex, multiplex, signed, two-mode network of 53 characters and
-#> 141 teams and 558 relationship ties and 683 affiliation ties
+#> # A labelled, complex, signed, multilevel network of 53 characters and 141
+#> teams and 558 relationship ties and 683 affiliation ties (138 parallel)
 #> 
 #> -- Nodes
 #> # A tibble: 194 x 11
-#>   type  name          Gender Appearances Attractive  Rich Intellect Omnilingual
-#>   <lgl> <chr>         <chr>        <int>      <int> <int>     <int>       <int>
-#> 1 FALSE Abomination   Male           427          0     0         1           1
-#> 2 FALSE Ant-Man       Male           589          1     0         1           0
-#> 3 FALSE Apocalypse    Male          1207          0     0         1           1
-#> 4 FALSE Beast         Male          7609          1     0         1           0
-#> 5 FALSE Black Panther Male          2189          1     1         1           0
-#> 6 FALSE Black Widow   Female        2907          1     0         1           0
+#>   label         mode   Gender Appearances Attractive  Rich Intellect Omnilingual
+#>   <chr>         <chr>  <chr>        <int>      <int> <int>     <int>       <int>
+#> 1 Abomination   chara~ Male           427          0     0         1           1
+#> 2 Ant-Man       chara~ Male           589          1     0         1           0
+#> 3 Apocalypse    chara~ Male          1207          0     0         1           1
+#> 4 Beast         chara~ Male          7609          1     0         1           0
+#> 5 Black Panther chara~ Male          2189          1     1         1           0
+#> 6 Black Widow   chara~ Female        2907          1     0         1           0
 #> # i 188 more rows
 #> # i 3 more variables: PowerOrigin <chr>, UnarmedCombat <int>, ArmedCombat <int>
 #> 
 #> -- Ties
 #> # A tibble: 1,241 x 4
-#>    from    to type          sign
-#>   <int> <int> <chr>        <dbl>
-#> 1     1     1 relationship    -1
-#> 2     1     4 relationship    -1
-#> 3     1    11 relationship    -1
-#> 4     1    12 relationship    -1
-#> 5     1    23 relationship    -1
-#> 6     1    24 relationship    -1
+#>    from    to weight layer       
+#>   <int> <int>  <dbl> <chr>       
+#> 1     1     1     -1 relationship
+#> 2     1     4     -1 relationship
+#> 3     1    11     -1 relationship
+#> 4     1    12     -1 relationship
+#> 5     1    23     -1 relationship
+#> 6     1    24     -1 relationship
 #> # i 1,235 more rows
 #> 
 }\if{html}{\out{</div>}}
@@ -45,14 +45,28 @@ Umut Yuksel, 31 March 2017
 data(fict_marvel)
 }
 \description{
-This multiplex network contains two types of ties related to the
-Marvel \emph{comic book} universe.
+This multilevel network ties 53 Marvel \emph{comic book} characters to each
+other and to the teams they belong to.
 The "affiliation" ties offer a two-mode affiliation network of 53
 Marvel comic book characters and their affiliations to 141 teams.
 The "relationship" ties offer a one-mode signed network
 of friendships and enmities between the 53 Marvel comic book characters.
 Friendships are indicated by a positive sign in the tie \code{sign} attribute,
 whereas enmities are indicated by a negative sign in this edge attribute.
+
+The two layers are the two levels of the network: the relationships run
+within the characters, and the affiliations between the characters and
+the teams. Since the layers are the levels, \code{describe_network()} reports
+the network as multilevel and not also as multiplex or two-mode,
+though \code{is_multiplex()} and \code{is_twomode()} both mark it TRUE.
+
+Note that 69 pairs of characters hold two relationship ties rather than
+one, which \code{tie_is_parallel()} marks, covering 138 of the 1241 ties.
+Since \code{as_matrix()} sums the signs of the ties joining a pair of nodes,
+the 68 pairs holding both a friendship and an enmity report 0 in the
+matrix, which is indistinguishable from an absent tie, and the one pair
+holding two enmities reports -2.
+Read these relationships from the ties table rather than from a matrix.
 }
 \details{
 Additional nodal variables have been coded and included by Dr Umut Yuksel:

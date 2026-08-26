@@ -7,19 +7,25 @@
 #'   - `to_egos()` splits a network into ego (or focal) networks.
 #'   - `to_subgraphs()` splits a network into subgraphs on some given node
 #'   attribute.
+#'   - `to_layers()` splits a multiplex network into its layers,
+#'   i.e. a list of uniplex networks, one per tie type.
+#'   Use `to_uniplex()`, or its alias `to_layer()`, to retain just one of them.
 #'   - `to_components()` splits a network into its components,
 #'   ordered from the largest to the smallest.
 #'   Use `to_component()` to retain just one of them.
-#'   - `to_waves()` splits a network with some discrete observations over time
-#'   into a list of those observations.
-#'   - `to_slices()` splits a network with some continuous time variable at some
-#'   time slice(s).
+#'   - `to_times()` splits a network into the network as it stood at each
+#'   moment it records, however it records time.
+#'   This is where new work on splitting a network by time belongs;
+#'   `to_waves()` and `to_slices()` are the older, form-specific spellings.
+#'   - `to_waves()` splits a panel network into a list of its waves.
+#'   - `to_slices()` splits a network that increments its ties into the state
+#'   it had accumulated to at each of the given time slice(s).
 #' @details
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
 #'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("to_.*(components|subgraphs|egos|waves|slices)"))
+#'   available_methods(collect_functions("to_.*(components|subgraphs|egos|waves|slices|times|layers)"))
 #'   ```
 #' @template param_data
 #' @template param_dir
@@ -75,7 +81,24 @@ to_egos.tbl_graph <- function(.data,
   out <- to_egos(as_igraph(.data), 
                        max_dist, 
                        min_dist, direction)
-  lapply(out, function(x) as_tidygraph(x))
+  out <- lapply(out, function(x) as_tidygraph(x))
+  .record_exclusions(out, .data,
+                     paste("outside the ego network of",
+                           names(out) %||% seq_along(out)), "nodes")
+}
+
+#' @export
+to_egos.stocnet <- function(.data, 
+                            max_dist = 1, 
+                            min_dist = 0,
+                            direction = c("out","in")){
+  nodes <- if(is_labelled(.data)) node_labels(.data) else
+    seq_len(net_nodes(.data))
+  out <- lapply(nodes, function(x)
+    keep_nodes(.data, .to_ego_ids(.data, x, max_dist, min_dist, direction)))
+  names(out) <- nodes
+  .record_exclusions(out, .data,
+                     paste("outside the ego network of", nodes), "nodes")
 }
 
 #' @export
@@ -137,7 +160,18 @@ to_subgraphs.igraph <- function(.data, attribute){
 
 #' @export
 to_subgraphs.tbl_graph <- function(.data, attribute){
-  lapply(to_subgraphs(as_igraph(.data), attribute), as_tidygraph)
+  types <- unique(node_attribute(.data, attribute))
+  out <- lapply(to_subgraphs(as_igraph(.data), attribute), as_tidygraph)
+  .record_exclusions(out, .data,
+                     paste0(attribute, " != ", types), "nodes")
+}
+
+#' @export
+to_subgraphs.stocnet <- function(.data, attribute){
+  values <- node_attribute(.data, attribute)
+  types <- unique(values)
+  out <- lapply(types, function(x) keep_nodes(.data, which(values == x)))
+  .record_exclusions(out, .data, paste0(attribute, " != ", types), "nodes")
 }
 
 #' @export
@@ -146,9 +180,62 @@ to_subgraphs.network <- function(.data, attribute){
 }
 
 #' @rdname modif_split
+#' @section `to_layers()`:
+#'   The layers of a multiplex network are held in a tie attribute,
+#'   `type` in tidygraph/igraph objects and `layer` in 'stocnet' objects.
+#'   Each layer is extracted by `to_uniplex()`, so that the layers returned
+#'   here are the same networks as retrieving them one at a time,
+#'   and the returned list is named by the tie types found in the network.
+#'   Where a network holds no tie types it is already uniplex,
+#'   and a list of length one is returned.
+#' @examples
+#' as_tidygraph(create_filled(5)) |>
+#'   mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) |>
+#'   to_layers()
+#' @export
+to_layers <- function(.data) UseMethod("to_layers")
+
+#' @export
+to_layers.default <- function(.data){
+  as_input(.data, to_layers)
+}
+
+#' @export
+to_layers.tbl_graph <- function(.data){
+  # layer_names() falls back to the network's tie label where there are no
+  # layers, so the tie attribute is what detects multiplexity here.
+  layer_attr <- .layer_attribute(.data)
+  if(is.na(layer_attr)){
+    snet_info("This network holds no tie types, so is already uniplex.")
+    # With no layers, layer_names() falls back to the network's tie label,
+    # which is the right name for the single layer returned here.
+    return(stats::setNames(list(.data), layer_names(.data)[1] %||% "ties"))
+  }
+  types <- unique(tie_attribute(.data, layer_attr))
+  stats::setNames(lapply(types, function(x) to_uniplex(.data, x)), types)
+}
+
+#' @export
+to_layers.igraph <- function(.data){
+  lapply(to_layers(as_tidygraph(.data)), as_igraph)
+}
+
+#' @export
+to_layers.network <- function(.data){
+  lapply(to_layers(as_tidygraph(.data)), as_network)
+}
+
+#' @export
+to_layers.data.frame <- function(.data){
+  lapply(to_layers(as_tidygraph(.data)), as_edgelist)
+}
+
+#' @rdname modif_split
 #' @examples
 #'   to_components(to_uniplex(fict_marvel, "relationship"))
-#'   to_components(fict_starwars, connectivity = "strong")
+#'   # Strong decomposition of a directed network returns many small components,
+#'   # ordered here from largest to smallest, so just the largest is shown:
+#'   to_components(fict_starwars, connectivity = "strong")[[1]]
 #' @export
 to_components <- function(.data,
                           connectivity = c("weak", "strong")) UseMethod("to_components")
@@ -170,7 +257,24 @@ to_components.igraph <- function(.data, connectivity = c("weak", "strong")){
 #' @export
 to_components.tbl_graph <- function(.data, connectivity = c("weak", "strong")){
   out <- to_components.igraph(as_igraph(.data), connectivity)
-  lapply(out, function(x) as_tidygraph(x))
+  out <- lapply(out, function(x) as_tidygraph(x))
+  # the components come back ordered by size, so the nth here is the nth that
+  # `to_component()` returns, and the two name the same criterion
+  .record_exclusions(out, .data,
+                     paste("not in component", seq_along(out)), "nodes")
+}
+
+#' @export
+to_components.stocnet <- function(.data, connectivity = c("weak", "strong")){
+  comps <- igraph::components(as_igraph(.data),
+                              mode = match.arg(connectivity))
+  # ordered largest first, so that the nth here is the nth `to_component()`
+  # returns, and the two name the same criterion
+  order <- order(comps$csize, decreasing = TRUE)
+  out <- lapply(order, function(i)
+    keep_nodes(.data, which(comps$membership == i)))
+  .record_exclusions(out, .data,
+                     paste("not in component", seq_along(out)), "nodes")
 }
 
 #' @export
@@ -220,13 +324,17 @@ to_waves.default <- function(.data, attribute = "wave", panels = NULL,
 to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
                                cumulative = FALSE) {
   out <- NULL
-  if(is_changing(.data) && is_longitudinal(.data)){
+  # A panel does not always spell its waves "wave", so where the named
+  # attribute is absent the other wave-like names stand in for it. This is
+  # NA where a panel records no wave-like tie attribute at all, as a
+  # diffusion result does, since its moments live in its changelist.
+  if(is_longitudinal(.data) && !attribute %in% net_tie_attributes(.data))
+    attribute <- intersect(c("wave", "panel", "time"),
+                           net_tie_attributes(.data))[1]
+  if(is_changing(.data) && is_longitudinal(.data) && !is.na(attribute)){
     cl <- as_changelist(.data)
     # Waves are defined by the tie attribute; the changes recorded up to each
     # wave are then applied to that wave's nodes.
-    if(!attribute %in% net_tie_attributes(.data))
-      attribute <- intersect(c("wave", "panel", "time"),
-                             net_tie_attributes(.data))[1]
     times <- sort(unique(tie_attribute(.data, attribute)))
     if(!is.null(panels))
       times <- intersect(panels, times)
@@ -235,7 +343,8 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
       filter_ties(out, !!as.name(attribute) == t)
     })
     names(waves) <- paste("Wave", times)
-    out <- waves
+    out <- .record_exclusions(waves, .data,
+                              paste("not tied at wave", times), "ties")
   } else if(is_changing(.data)){
     cl <- as_changelist(.data)
     # Get all unique times in order
@@ -244,8 +353,9 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
       times <- intersect(panels, times)
     waves <- lapply(times, function(t) .apply_changes_upto(.data, cl, t))
     names(waves) <- paste("Wave", times)
-    out <- waves
-  } else if(is_longitudinal(.data) ||
+    out <- .record_exclusions(waves, .data,
+                              paste("not present at wave", times), "nodes")
+  } else if(!is.na(attribute) &&
             attribute %in% net_tie_attributes(.data)){
     # An explicitly named tie attribute is honoured even if the network is not
     # marked longitudinal (i.e. the attribute is not called "wave" or "panel").
@@ -267,6 +377,12 @@ to_waves.tbl_graph <- function(.data, attribute = "wave", panels = NULL,
       # lexicographically ("1", "10", "11", ..., "2", ...).
       out <- out[order(match(names(out), as.character(wp)))]
     }
+    # recorded after any cumulation, which changes what each wave leaves out
+    crit <- if(isTRUE(cumulative)) paste("not tied by wave", wp) else
+      paste("not tied at wave", wp)
+    out <- if(is.list(out) && !is_manynet(out))
+      .record_exclusions(out, .data, crit, "ties") else
+        .record_exclusion(out, .data, crit[1], "ties")
   }
   if(is.null(out)) .data else out
 }
@@ -343,8 +459,12 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
       # Where a node changes more than once by time t, the latest wins
       upd <- upd[!duplicated(upd$node, fromLast = TRUE), , drop = FALSE]
       old <- node_attribute(out, v)
-      new <- if(is.null(old)) rep(NA, net_nodes(out)) else
-        if(is.factor(old)) old else as.vector(old)
+      # A change may name a nodal variable the network does not yet carry,
+      # such as the reserved 'na' that marks a node as not having reported.
+      # A node the changelist says nothing about did report, so 'na' starts
+      # FALSE where every other new variable starts missing.
+      new <- if(is.null(old)) rep(if(v == "na") FALSE else NA, net_nodes(out))
+        else if(is.factor(old)) old else as.vector(old)
       new[upd$node] <- .match_attribute_type(upd$value, old)
       out <- add_node_attribute(out, v, new)
     }
@@ -408,6 +528,52 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
 }
 
 #' @rdname modif_split
+#' @param times The moments to return the network at.
+#'   By default `NULL`, in which case every moment the network records is
+#'   returned, as `net_times()` counts them.
+#' @details
+#'   `to_times()` returns the network as it stood at each moment it records,
+#'   whichever way it records time, by calling [to_time()] on each in turn.
+#'   `to_waves()` and `to_slices()` are the older, form-specific spellings:
+#'   `to_waves()` splits a panel by its waves, and `to_slices()` accumulates
+#'   an event network up to each of its moments.
+#'   Unlike them, `to_times()` always returns a list, named by the moments and
+#'   ordered by them, even where the network records only one, so that
+#'   `net_times(.data)` and `length(to_times(.data))` always agree.
+#' @examples
+#'   length(to_times(irps_wwi))
+#'   to_times(ison_tailorshop)
+#' @export
+to_times <- function(.data, times = NULL) UseMethod("to_times")
+
+#' @export
+to_times.default <- function(.data, times = NULL){
+  as_input(.data, to_times, times = times)
+}
+
+.to_times <- function(.data, times = NULL){
+  moments <- if(is.null(times)) .time_moments(.data) else times
+  # A network that records no moment records itself at one, and is returned
+  # as a list of that one, since the length of what this returns is what
+  # `net_times()` counts.
+  if(is.null(moments)) return(stats::setNames(list(.data), "1"))
+  out <- lapply(moments, function(t) to_time(.data, t))
+  names(out) <- as.character(moments)
+  out
+}
+
+#' @export
+to_times.tbl_graph <- .to_times
+
+#' @export
+to_times.stocnet <- .to_times
+
+#' @export
+to_times.igraph <- function(.data, times = NULL){
+  lapply(.to_times(as_tidygraph(.data), times), as_igraph)
+}
+
+#' @rdname modif_split
 #' @param attribute One or two attributes used to slice data.
 #' @param slice Character string or character list indicating the date(s)
 #'   or integer(s) range used to slice data (e.g slice = c(1:2, 3:4)).
@@ -429,30 +595,52 @@ to_slices.tbl_graph <- function(.data, attribute = "time", slice = NULL) {
   # Without the time attribute there is nothing to slice on, so the network
   # is returned unchanged rather than filtering on a non-existent variable.
   if(!attribute %in% net_tie_attributes(.data)) return(.data)
+  # A slice accumulates every tie up to its moment, which is what an event
+  # network wants and a panel does not: each wave of a panel re-states the
+  # ties, so accumulating them stacks one wave on the next.
+  if(identical(.time_rule(.data), "replace"))
+    snet_info("This network re-states its ties at each moment,",
+              "so its moments do not accumulate.",
+              "Consider {.fn to_times} or {.fn to_waves} instead.")
   incremented <- "increment" %in% net_tie_attributes(.data)
   updated <- "replace" %in% net_tie_attributes(.data)
   if(!is.null(slice))
     moments <- slice else
       moments <- unique(tie_attribute(.data, attr_name = attribute))
   # Summarising ties introduces a weight, but ties can only be dropped for
-  # having summed to zero where such a weight exists.
+  # having summed to zero where such a weight exists. The question here is
+  # whether the ties carry a value at all, and not whether that value varies,
+  # so the attribute is asked for directly rather than through `is_weighted()`.
   drop_zeroes <- function(x)
-    if(is_weighted(x)) filter_ties(x, weight != 0) else x
+    if("weight" %in% net_tie_attributes(x)) filter_ties(x, weight != 0) else x
   if(length(moments)>1){
-    out <- lapply(moments, function(tm){
-      snap <- filter_ties(.data, !!as.name(attribute) <= tm)
-      if(incremented) snap <- summarise_ties(snap, sum(increment))
-      if(updated) snap <- summarise_ties(snap, dplyr::last(replace))
-      snap <- drop_zeroes(snap)
-      snap
-    })
+    out <- lapply(moments, function(tm) .slice_at(.data, attribute, tm))
     names(out) <- moments
+    # a slice holds every tie up to its moment, so what it leaves out is what
+    # came after it
+    out <- .record_exclusions(out, .data, paste("after", moments), "ties")
   } else {
-    out <- filter_ties(.data, !!as.name(attribute) <= moments)
-    if(incremented) out <- summarise_ties(out, sum(increment))
-    if(updated) out <- summarise_ties(out, dplyr::last(replace))
-    out <- drop_zeroes(out)
+    out <- .slice_at(.data, attribute, moments)
+    out <- .record_exclusion(out, .data, paste("after", moments), "ties")
   }
+  out
+}
+
+# The state a network's ties have accumulated to at a moment: every row up to
+# and including it, summed where each row increments a tie's value and carried
+# forward where each states it afresh. A tie that has accumulated to zero is
+# not a tie.
+# Summarising ties introduces a weight, but ties can only be dropped for having
+# summed to zero where such a weight exists. The question is whether the ties
+# carry a value at all, and not whether that value varies, so the attribute is
+# asked for directly rather than through `is_weighted()`.
+.slice_at <- function(.data, attribute, tm){
+  out <- filter_ties(.data, !!as.name(attribute) <= tm)
+  if("increment" %in% net_tie_attributes(.data))
+    out <- summarise_ties(out, sum(increment))
+  if("replace" %in% net_tie_attributes(.data))
+    out <- summarise_ties(out, dplyr::last(replace))
+  if("weight" %in% net_tie_attributes(out)) out <- filter_ties(out, weight != 0)
   out
 }
 

@@ -2,18 +2,32 @@
 
 ## Marvel ####
 
-#' Multiplex two-mode affiliation and one-mode signed relationship network of 
-#' Marvel comic book characters (Yuksel 2017)
+#' Multilevel signed network of Marvel comic book characters and their teams
+#' (Yuksel 2017)
 #'
 #' @description
-#'   This multiplex network contains two types of ties related to the 
-#'   Marvel _comic book_ universe.
+#'   This multilevel network ties 53 Marvel _comic book_ characters to each
+#'   other and to the teams they belong to.
 #'   The "affiliation" ties offer a two-mode affiliation network of 53
 #'   Marvel comic book characters and their affiliations to 141 teams.
 #'   The "relationship" ties offer a one-mode signed network
 #'   of friendships and enmities between the 53 Marvel comic book characters.
 #'   Friendships are indicated by a positive sign in the tie `sign` attribute,
 #'   whereas enmities are indicated by a negative sign in this edge attribute.
+#'   
+#'   The two layers are the two levels of the network: the relationships run
+#'   within the characters, and the affiliations between the characters and
+#'   the teams. Since the layers are the levels, `describe_network()` reports
+#'   the network as multilevel and not also as multiplex or two-mode,
+#'   though `is_multiplex()` and `is_twomode()` both mark it TRUE.
+#'   
+#'   Note that 69 pairs of characters hold two relationship ties rather than
+#'   one, which `tie_is_parallel()` marks, covering 138 of the 1241 ties.
+#'   Since `as_matrix()` sums the signs of the ties joining a pair of nodes,
+#'   the 68 pairs holding both a friendship and an enmity report 0 in the
+#'   matrix, which is indistinguishable from an absent tie, and the one pair
+#'   holding two enmities reports -2.
+#'   Read these relationships from the ties table rather than from a matrix.
 #' @details
 #' Additional nodal variables have been coded and included by Dr Umut Yuksel:
 #'
@@ -238,7 +252,8 @@
 
 ## Love Actually ####
 
-#' Two-mode network of Love Actually characters and their scene appearances (Robinson 2015)
+#' Multilevel network of Love Actually characters, their relationships, and 
+#' their scene appearances (Robinson 2015)
 #'
 #' @description
 #'   Love Actually is a 2003 British romantic comedy film.
@@ -249,6 +264,10 @@
 #'   including "romantic", "family", "friendship", and "professional" ties.
 #'   These were added by Korakot Janteerasakul from the following source:
 #'   \url{https://en.wikipedia.org/wiki/Love_Actually#/media/File:Love_Actually_(2003)_Interconnections.svg}.
+#'   
+#'   Unlike `fict_marvel`, the layers here are not simply the levels: four of
+#'   the five run within the characters, so the network is multiplex as well
+#'   as multilevel, and `describe_network()` reports both.
 #'   
 #' @docType data
 #' @keywords datasets

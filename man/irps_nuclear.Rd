@@ -6,31 +6,31 @@
 \title{Two-mode dynamic discourse network of Germany's nuclear energy phase-out (Haunss and Hollway 2023)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # German nuclear discourse network ------------------------------------------
-#> # A dynamic, labelled, two-mode network of 337 speakers and 54 concepts and
-#> 1164 claim ties from 2011-03-11 to 2011-06-30
+#> # A dynamic, labelled, signed, two-mode network of 337 speakers and 54 concepts
+#> and 1164 claim ties (16 parallel) from 2011-03-11 to 2011-06-30
 #> 
 #> -- Nodes
 #> # A tibble: 391 x 10
-#>   name         type  present politician govt  coalition office org   party power
-#>   <chr>        <lgl> <lgl>   <lgl>      <lgl> <lgl>     <lgl>  <chr> <chr> <int>
-#> 1 VfEW         FALSE TRUE    FALSE      FALSE NA        FALSE  VfEW  <NA>      0
-#> 2 Angela Merk~ FALSE TRUE    TRUE       TRUE  TRUE      TRUE   CDU   31        2
-#> 3 Sunday Times FALSE TRUE    FALSE      FALSE NA        FALSE  Sund~ <NA>      0
-#> 4 SPD          FALSE TRUE    TRUE       FALSE FALSE     FALSE  SPD   32        1
-#> 5 Norbert Röt~ FALSE TRUE    TRUE       TRUE  TRUE      TRUE   CDU   31        1
-#> 6 Torsten Kra~ FALSE TRUE    FALSE      FALSE NA        FALSE  Die ~ <NA>      0
+#>   label         mode  active politician govt  coalition office org   party power
+#>   <chr>         <chr> <lgl>  <lgl>      <lgl> <lgl>     <lgl>  <chr> <chr> <int>
+#> 1 VfEW          spea~ TRUE   FALSE      FALSE NA        FALSE  VfEW  <NA>      0
+#> 2 Angela Merkel spea~ TRUE   TRUE       TRUE  TRUE      TRUE   CDU   31        2
+#> 3 Sunday Times  spea~ TRUE   FALSE      FALSE NA        FALSE  Sund~ <NA>      0
+#> 4 SPD           spea~ TRUE   TRUE       FALSE FALSE     FALSE  SPD   32        1
+#> 5 Norbert Rött~ spea~ TRUE   TRUE       TRUE  TRUE      TRUE   CDU   31        1
+#> 6 Torsten Krau~ spea~ TRUE   FALSE      FALSE NA        FALSE  Die ~ <NA>      0
 #> # i 385 more rows
 #> 
 #> -- Ties
 #> # A tibble: 1,164 x 5
-#>    from    to time       increment default
-#>   <int> <int> <date>         <int> <lgl>  
-#> 1     1   338 2011-03-11        -1 FALSE  
-#> 2     2   339 2011-03-12         1 TRUE   
-#> 3     3   340 2011-03-13        -1 FALSE  
-#> 4     4   341 2011-03-13         1 TRUE   
-#> 5     2   342 2011-03-13        -1 TRUE   
-#> 6     5   343 2011-03-13         1 TRUE   
+#>    from    to time       weight default
+#>   <int> <int> <date>      <int> <lgl>  
+#> 1     1   338 2011-03-11     -1 FALSE  
+#> 2     2   339 2011-03-12      1 TRUE   
+#> 3     3   340 2011-03-13     -1 FALSE  
+#> 4     4   341 2011-03-13      1 TRUE   
+#> 5     2   342 2011-03-13     -1 TRUE   
+#> 6     5   343 2011-03-13      1 TRUE   
 #> # i 1,158 more rows
 #> 
 }\if{html}{\out{</div>}}
@@ -46,6 +46,19 @@ including individual politicians, experts, parties, and the media,
 and their claims about nuclear energy and German nuclear energy policy.
 These claims were with respect to 54 concepts coded,
 and could be supportive or critical, and could also be repeated.
+}
+\details{
+Each tie is one claim by one speaker about one concept on one day, so the
+network records a stream of events and not a panel.
+The day is held in a 'time' column, and whether the claim was supportive
+or critical in a 'weight' column of 1 or -1.
+
+A speaker may claim the same concept on more than one day, and 152 of the
+speaker-concept pairs do, one of them 15 times. Such claims follow one
+another rather than coexist, so they are repetitions and not parallel
+ties.
+Eight speaker-concept pairs make more than one claim on a single day,
+which \code{tie_is_parallel()} marks, covering 16 of the 1164 ties.
 }
 \references{
 Haunss Sebastian, James Hollway. 2023.

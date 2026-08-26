@@ -30,8 +30,9 @@ to_unnamed(.data)
 \item{names}{Character vector of the node names. NULL by default.}
 }
 \value{
-A tidygraph object modified as explained in the function description, details,
-or section.
+An object of the same class as the function was given,
+modified as explained in the function description, details, or section.
+Functions that split a network return a list of such objects.
 }
 \description{
 These functions add some format to manynet-consistent data.
@@ -61,7 +62,7 @@ to_unlabelled          *       *      *      *       *         *
 }
 \seealso{
 Other modifications:
-\code{\link{modif_correlation}},
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
 \code{\link{modif_levels}},
@@ -71,6 +72,7 @@ Other modifications:
 \code{\link{modif_permutation}},
 \code{\link{modif_plexity}},
 \code{\link{modif_project}},
+\code{\link{modif_proximity}},
 \code{\link{modif_scope}},
 \code{\link{modif_split}},
 \code{\link{modif_weight}}

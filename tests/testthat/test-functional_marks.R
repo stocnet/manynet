@@ -1,12 +1,29 @@
 # Functional tests for the is_*() mark family across the fixture grid and
-# object classes. (test-mark_is.R checks default methods and the
-# ison_southern_women contract; here every is_*() function must return a
-# single non-NA logical for every fixture and agree across object classes.)
+# object classes. Every is_*() function must have a default method, return a
+# single non-NA logical for every fixture, mark the twomode fixture as its
+# name implies, and agree across object classes.
+# (test-mark_is.R holds only what this sweep cannot assert: what distinguishes
+# the marks that a single fixture cannot tell apart.)
 
 is_funs <- setdiff(alive_functions("^is_"), "is_manynet")
 
+# Which is_*() functions the twomode fixture, ison_southern_women, satisfies.
+# A two-mode network of women's attendance at events is labelled, attributed,
+# connected, uniplex, and held as a graph, and is none of the other things a
+# mark names. Matching on the name rather than listing the functions keeps a
+# newly added mark covered without an entry here.
+.twomode_marks <- paste0("twomode|attributed|igraph|connected|labelled|",
+                         "(?<!hyper)graph|manynet|uniplex")
+
 for (fn in is_funs) {
   f <- get(fn, envir = asNamespace("manynet"))
+
+  test_that(paste0(fn, "() follows family conventions"), {
+    expect_true(any(grepl(paste0("^", fn, "\\.default$"),
+                          suppressWarnings(utils::methods(fn)))),
+                label = paste0(fn, "() having a default method"))
+  })
+
   for (fx in names(func_fixtures)) {
     test_that(paste0(fn, "() returns a single logical on the ", fx,
                      " fixture"), {
@@ -16,6 +33,16 @@ for (fn in is_funs) {
       expect_false(is.na(out), label = paste0(fn, "() on ", fx))
     })
   }
+
+  test_that(paste0(fn, "() marks the twomode fixture as its name implies"), {
+    expected <- grepl(.twomode_marks, fn, perl = TRUE)
+    expect_equal(f(func_fixtures$twomode), expected,
+                 label = paste0(fn, "() on ison_southern_women"))
+    if (!grepl("igraph", fn)) {
+      expect_equal(f(as_stocnet(func_fixtures$twomode)), expected,
+                   label = paste0(fn, "() on ison_southern_women as a stocnet"))
+    }
+  })
 }
 
 # Marks should not depend on the class the network is represented in
@@ -67,19 +94,18 @@ for (fn in setdiff(is_funs, names(mark_class_patterns))) {
   })
 }
 
-# na_to_*() imputation ---------------------------------------------------------
+# impute_ties() imputation -----------------------------------------------------
 
-test_that("na_to_zero() and na_to_mean() impute missing tie data", {
+test_that("every rule of impute_ties() imputes missing tie data", {
   miss <- ison_adolescents |>
     add_tie_attribute("weight", c(1, NA, NA, 1, 1, 1, NA, NA, 1, 1))
-  for (fn in c("na_to_zero", "na_to_mean")) {
-    f <- get(fn, envir = asNamespace("manynet"))
-    outm <- run_or_skip(f(as_matrix(miss)), fn, "matrix")
+  for (rule in c("zero", "density", "mean", "median", "modal")) {
+    outm <- run_or_skip(impute_ties(as_matrix(miss), rule), rule, "matrix")
     expect_false(anyNA(outm))
-    outg <- run_or_skip(f(miss), fn, "tidygraph")
+    outg <- run_or_skip(impute_ties(miss, rule), rule, "tidygraph")
     expect_false(anyNA(tie_attribute(outg, "weight")))
   }
-  expect_equal(sum(na_to_zero(as_matrix(miss)) == 0) -
+  expect_equal(sum(impute_ties(as_matrix(miss), "zero") == 0) -
                  sum(as_matrix(miss) == 0, na.rm = TRUE),
                sum(is.na(as_matrix(miss))))
 })

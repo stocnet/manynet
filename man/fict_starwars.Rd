@@ -11,7 +11,7 @@
 #> 
 #> -- Nodes
 #> # A tibble: 110 x 12
-#>   name            species homeworld sex   height hair_color eye_color skin_color
+#>   label           species homeworld sex   height hair_color eye_color skin_color
 #>   <chr>           <chr>   <chr>     <chr>  <int> <chr>      <chr>     <chr>     
 #> 1 Admiral Ackbar  Mon Ca~ Mon Cala  male     180 none       orange    brown mot~
 #> 2 Admiral Statura Human   Garel     male     172 black      brown     light     
@@ -22,17 +22,17 @@
 #> 
 #> -- Changes
 #> # A tibble: 184 x 4
-#>    time  node var    value
-#>   <int> <int> <chr>  <chr>
-#> 1     2     7 active TRUE 
-#> 2     2    10 active TRUE 
-#> 3     2    11 active FALSE
-#> 4     2    13 active FALSE
+#>    time  node var         value
+#>   <int> <int> <chr>      <list>
+#> 1     2     7 active  TRUE<chr>
+#> 2     2    10 active  TRUE<chr>
+#> 3     2    11 active FALSE<chr>
+#> 4     2    13 active FALSE<chr>
 #> # i 180 more rows
 #> 
 #> -- Ties
 #> # A tibble: 563 x 4
-#>    from    to weight  wave
+#>    from    to weight  time
 #>   <int> <int>  <int> <int>
 #> 1    80    73     11     1
 #> 2    80    79     14     1

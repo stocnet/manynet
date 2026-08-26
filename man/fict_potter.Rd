@@ -11,7 +11,7 @@
 #> 
 #> -- Nodes
 #> # A tibble: 64 x 5
-#>   name              schoolyear gender house      active
+#>   label             schoolyear gender house      active
 #>   <chr>                  <int> <chr>  <chr>      <logi>
 #> 1 Adrian Pucey            1989 male   Slytherin  TRUE  
 #> 2 Alicia Spinnet          1989 female Gryffindor TRUE  
@@ -21,17 +21,17 @@
 #> 
 #> -- Changes
 #> # A tibble: 81 x 4
-#>    time  node var    value
-#>   <int> <int> <chr>  <lgl>
-#> 1     2     9 active TRUE 
-#> 2     2    21 active TRUE 
-#> 3     2    35 active TRUE 
-#> 4     2    39 active FALSE
+#>    time  node var         value
+#>   <int> <int> <chr>      <list>
+#> 1     2     9 active  TRUE<lgl>
+#> 2     2    21 active  TRUE<lgl>
+#> 3     2    35 active  TRUE<lgl>
+#> 4     2    39 active FALSE<lgl>
 #> # i 77 more rows
 #> 
 #> -- Ties
 #> # A tibble: 544 x 3
-#>    from    to  wave
+#>    from    to  time
 #>   <int> <int> <dbl>
 #> 1    11    11     1
 #> 2    11    25     1

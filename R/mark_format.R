@@ -7,6 +7,8 @@
 #'   All `is_*()` functions return a logical scalar (TRUE or FALSE).
 #'   
 #'   - `is_twomode()` marks networks TRUE if they contain two sets of nodes.
+#'   - `is_multilevel()` marks networks TRUE if they contain two or more levels
+#'   of nodes that are tied both within and between levels.
 #'   - `is_labelled()` marks networks TRUE if there is a 'names' attribute
 #'   for the nodes.
 #'   - `is_attributed()` marks networks TRUE if there are other nodal attributes
@@ -14,7 +16,7 @@
 #'   - `is_egonet()` marks networks TRUE if it is a list of networks where each
 #'   network contains only one node and its ties.
 #' @template param_data
-#' @eval detail_avail("is_(twomode|labelled|attributed|egonet)")
+#' @eval detail_avail("is_(twomode|multilevel|labelled|attributed|egonet)")
 #' @family marks
 NULL
 
@@ -67,13 +69,14 @@ is_twomode.data.frame <- function(.data) {
 
 #' @export
 is_twomode.stocnet <- function(.data) {
-  if(is.null(.data$nodes)) return(FALSE) else if (!"mode" %in% names(.data$nodes)) 
-    return(FALSE) else length(unique(.data$nodes$mode)) == 2
+  if(is.null(.data$nodes)) return(FALSE)
+  if(!"mode" %in% names(.data$nodes)) return(FALSE)
+  length(unique(.data$nodes$mode)) == 2
 }
 
 #' @export
 is_twomode.numeric <- function(.data) {
-  return(FALSE)
+  FALSE
 }
 
 #' @export
@@ -81,6 +84,74 @@ is_twomode.list <- function(.data) {
   if(is_list(.data)){
     is_twomode(.data[[1]])
   }
+}
+
+#' @rdname mark_format_node
+#' @details
+#'   A multilevel network is one in which the nodes belong to two or more
+#'   levels, or nodesets, that are tied not only to each other but also among
+#'   themselves. `fict_marvel`, for instance, interlocks a one-mode layer of
+#'   ties among its characters with a two-mode layer of affiliations between
+#'   those characters and their teams. Such networks are distinguished from
+#'   plain two-mode networks, such as `ison_southern_women`, in which ties
+#'   run only between the two nodesets and never within them.
+#' @examples
+#' is_multilevel(fict_marvel)
+#' is_multilevel(ison_southern_women)
+#' @export
+is_multilevel <- function(.data) UseMethod("is_multilevel")
+
+#' @export
+is_multilevel.default <- function(.data) {
+  is_multilevel(as_igraph(.data))
+}
+
+#' @export
+is_multilevel.igraph <- function(.data) {
+  # `to_multilevel()` records levels in a 'lvl' attribute and deletes 'type',
+  # so a network that has already been converted is no longer two-mode and
+  # has to be recognised by its levels instead.
+  if ("lvl" %in% igraph::vertex_attr_names(.data))
+    return(length(unique(igraph::vertex_attr(.data, "lvl"))) > 1)
+  if (!is_twomode(.data)) return(FALSE)
+  # Levels have to be tied both within and between to interlock: a two-mode
+  # network whose ties all run between the modes, as `ison_southern_women`'s
+  # do, is not multilevel, and neither is one whose ties all fall within them,
+  # since then the modes are two networks rather than two levels of one. A
+  # network without any ties is neither, and is returned early because
+  # `tie_is_twomode()` cannot name an empty measure.
+  if (net_ties(.data) == 0) return(FALSE)
+  between <- tie_is_twomode(.data)
+  any(between) && any(!between)
+}
+
+#' @export
+is_multilevel.tbl_graph <- function(.data) {
+  is_multilevel(as_igraph(.data))
+}
+
+#' @export
+is_multilevel.stocnet <- function(.data) {
+  # A 'stocnet' records its levels in the 'mode' variable of its nodes table,
+  # to which `as_stocnet()` maps an igraph 'type' or 'lvl' attribute. Unlike
+  # either of those, this variable can name more than two levels, so this
+  # method marks a three-level network TRUE too.
+  if (is.null(.data$nodes) || !"mode" %in% names(.data$nodes)) return(FALSE)
+  if (net_modes(.data) < 2) return(FALSE)
+  if (is.null(.data$ties) || nrow(.data$ties) == 0) return(FALSE)
+  # The ties table holds node indices, so the modes of the two ends of each
+  # tie are the modes of the nodes at those rows. Levels have to be tied both
+  # within and between to interlock.
+  modes <- .data$nodes$mode
+  between <- modes[.data$ties$from] != modes[.data$ties$to]
+  any(between) && any(!between)
+}
+
+#' @export
+is_multilevel.list <- function(.data) {
+  # A `stocnet` is itself a list, and is dispatched by its own method above;
+  # here a list is a list of networks, marked by its first.
+  if(is_list(.data)) is_multilevel(.data[[1]]) else FALSE
 }
 
 #' @rdname mark_format_node
@@ -171,7 +242,8 @@ is_egonet <- function(.data) UseMethod("is_egonet")
 
 #' @export
 is_egonet.default <- function(.data) {
-  if(!is_list(.data)) return(FALSE) else if (all(unique(names(.data)) != "")) {
+  if(!is_list(.data)) return(FALSE)
+  if(all(unique(names(.data)) != "")) {
     length(names(.data)) == length(unique(unlist(unname(lapply(.data,
                                                                manynet::node_labels))))) &
       all(.order_alphabetically(names(.data)) ==
@@ -190,6 +262,10 @@ is_egonet.default <- function(.data) {
 #'   
 #'   - `is_twomode()` marks networks TRUE if they contain two sets of nodes.
 #'   - `is_weighted()` marks networks TRUE if they contain tie weights.
+#'   Note that signed networks often hold their signs as weights of -1 and 1,
+#'   so that no sign is lost when coercing between formats;
+#'   since such a 'weight' records only the sign of each tie,
+#'   these networks are marked FALSE unless the weights vary in magnitude.
 #'   - `is_directed()` marks networks TRUE if the ties specify which node
 #'   is the sender and which the receiver.
 #'   - `is_labelled()` marks networks TRUE if there is a 'names' attribute
@@ -198,6 +274,8 @@ is_egonet.default <- function(.data) {
 #'   than 'names' or 'type'.
 #'   - `is_signed()` marks networks TRUE if the ties can be either positive
 #'   or negative.
+#'   This is the case where the ties have a 'sign' attribute,
+#'   and also where they are weighted and any of those weights are negative.
 #'   - `is_complex()` marks networks TRUE if any ties are loops,
 #'   with the sender and receiver being the same node.
 #'   - `is_multiplex()` marks networks TRUE if it contains multiple types 
@@ -216,6 +294,23 @@ NULL
 #' @export
 is_weighted <- function(.data) UseMethod("is_weighted")
 
+# A signed network's ties are often held compactly as weights of -1 and 1,
+# so that coercion from one format to another does not lose the sign.
+# Such a 'weight' column records only signs and not weights,
+# unless there is a separate 'sign' attribute for it to complement.
+.holds_only_signs <- function(wts, has_sign = FALSE){
+  !has_sign && !is.null(wts) && length(wts) > 0 &&
+    any(wts < 0, na.rm = TRUE) && all(abs(wts) == 1, na.rm = TRUE)
+}
+
+# A binary network's ties are also sometimes held as weights of 1,
+# so that a tie recorded as missing can be held alongside them as a weight of NA.
+# Such a 'weight' column records only which ties are present and not their values,
+# so a network holding it is no more weighted than a matrix of zeros and ones is.
+.holds_only_binary <- function(wts){
+  !is.null(wts) && length(wts) > 0 && all(wts %in% c(0, 1) | is.na(wts))
+}
+
 #' @export
 is_weighted.default <- function(.data) {
   as_input(.data, is_weighted)
@@ -223,33 +318,44 @@ is_weighted.default <- function(.data) {
 
 #' @export
 is_weighted.igraph <- function(.data) {
-  igraph::is_weighted(.data)
+  igraph::is_weighted(.data) &&
+    !.holds_only_binary(igraph::edge_attr(.data, "weight")) &&
+    !.holds_only_signs(igraph::edge_attr(.data, "weight"),
+                       "sign" %in% igraph::edge_attr_names(.data))
 }
 
 #' @export
 is_weighted.tbl_graph <- function(.data) {
-  igraph::is_weighted(.data)
+  is_weighted.igraph(.data)
 }
 
 #' @export
 is_weighted.stocnet <- function(.data) {
-  "weight" %in% names(.data$ties)
+  "weight" %in% names(.data$ties) &&
+    !.holds_only_binary(.data$ties$weight) &&
+    !.holds_only_signs(.data$ties$weight, "sign" %in% names(.data$ties))
 }
 
 #' @export
 is_weighted.matrix <- function(.data) {
-  !all(.data == 0 | .data == 1)
+  !.holds_only_binary(c(.data)) &&
+    !.holds_only_signs(c(.data)[which(c(.data) != 0)])
 }
 
 #' @export
 is_weighted.network <- function(.data) {
-  "weight" %in% network::list.edge.attributes(.data)
+  "weight" %in% network::list.edge.attributes(.data) &&
+    !.holds_only_binary(unlist(network::get.edge.attribute(.data, "weight"))) &&
+    !.holds_only_signs(unlist(network::get.edge.attribute(.data, "weight")),
+                       "sign" %in% network::list.edge.attributes(.data))
 }
 
 #' @export
 is_weighted.data.frame <- function(.data) {
-  ncol(.data)>=3 && 
-    ("weight" %in% names(.data) | is.numeric(.data[,3]))
+  if(!(ncol(.data)>=3 &&
+       ("weight" %in% names(.data) | is.numeric(.data[,3])))) return(FALSE)
+  wts <- if("weight" %in% names(.data)) .data[["weight"]] else .data[[3]]
+  !.holds_only_signs(wts, "sign" %in% names(.data))
 }
 
 #' @rdname mark_format_tie
@@ -324,25 +430,30 @@ is_signed.matrix <- function(.data) {
 
 #' @export
 is_signed.igraph <- function(.data) {
-  "sign" %in% igraph::edge_attr_names(.data)
+  if("sign" %in% igraph::edge_attr_names(.data)) return(TRUE)
+  # a signed network can also be held as negative weights, as it is in
+  # 'stocnet' objects, so that coercion from one does not lose the sign
+  "weight" %in% igraph::edge_attr_names(.data) &&
+    any(igraph::edge_attr(.data, "weight") < 0, na.rm = TRUE)
 }
 
 #' @export
 is_signed.stocnet <- function(.data) {
-  if("sign" %in% net_tie_attributes(.data)) return(TRUE) else
-    if("weight" %in% net_tie_attributes(.data)) 
-      return(any(.data$ties$weight < 0)) else 
-        FALSE
+  if("sign" %in% net_tie_attributes(.data)) return(TRUE)
+  "weight" %in% net_tie_attributes(.data) &&
+    any(.data$ties$weight < 0, na.rm = TRUE)
 }
 
 #' @export
 is_signed.tbl_graph <- function(.data) {
-  "sign" %in% igraph::edge_attr_names(.data)
+  is_signed.igraph(.data)
 }
 
 #' @export
 is_signed.network <- function(.data) {
-  "sign" %in% network::list.edge.attributes(.data)
+  if("sign" %in% network::list.edge.attributes(.data)) return(TRUE)
+  "weight" %in% network::list.edge.attributes(.data) &&
+    any(unlist(network::get.edge.attribute(.data, "weight")) < 0, na.rm = TRUE)
 }
 
 #' @rdname mark_format_tie

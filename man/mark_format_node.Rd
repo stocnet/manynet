@@ -3,6 +3,7 @@
 \name{mark_format_node}
 \alias{mark_format_node}
 \alias{is_twomode}
+\alias{is_multilevel}
 \alias{is_hypergraph}
 \alias{is_labelled}
 \alias{is_attributed}
@@ -10,6 +11,8 @@
 \title{Marking networks nodal formats}
 \usage{
 is_twomode(.data)
+
+is_multilevel(.data)
 
 is_hypergraph(.data)
 
@@ -35,6 +38,8 @@ These functions implement logical tests for various network properties.
 All \verb{is_*()} functions return a logical scalar (TRUE or FALSE).
 \itemize{
 \item \code{is_twomode()} marks networks TRUE if they contain two sets of nodes.
+\item \code{is_multilevel()} marks networks TRUE if they contain two or more levels
+of nodes that are tied both within and between levels.
 \item \code{is_labelled()} marks networks TRUE if there is a 'names' attribute
 for the nodes.
 \item \code{is_attributed()} marks networks TRUE if there are other nodal attributes
@@ -51,11 +56,13 @@ Below are the currently implemented S3 methods for these functions:
 is_attributed                  *                                           
 is_egonet                      *                                           
 is_labelled            *       *      *    *      *       *               *
+is_multilevel                  *      *    *                              *
 is_twomode             *       *      *    *      *       *       *       *
               tbl_graph
 is_attributed          
 is_egonet              
 is_labelled           *
+is_multilevel         *
 is_twomode            *
 }\if{html}{\out{</div>}}
 
@@ -63,9 +70,19 @@ If a method is not available for a particular class, but a default method is,
 the default method will attempt to coerce the object to a class for which a method is defined,
 and then coerce the output back to the original class.
 If no method is available for any class, an error will be thrown.
+
+A multilevel network is one in which the nodes belong to two or more
+levels, or nodesets, that are tied not only to each other but also among
+themselves. \code{fict_marvel}, for instance, interlocks a one-mode layer of
+ties among its characters with a two-mode layer of affiliations between
+those characters and their teams. Such networks are distinguished from
+plain two-mode networks, such as \code{ison_southern_women}, in which ties
+run only between the two nodesets and never within them.
 }
 \examples{
 is_twomode(create_filled(c(2,2)))
+is_multilevel(fict_marvel)
+is_multilevel(ison_southern_women)
 is_hypergraph(create_empty(3))
 is_labelled(create_empty(3))
 is_attributed(ison_algebra)

@@ -4,8 +4,10 @@
 \alias{modif_split}
 \alias{to_egos}
 \alias{to_subgraphs}
+\alias{to_layers}
 \alias{to_components}
 \alias{to_waves}
+\alias{to_times}
 \alias{to_slices}
 \title{Splitting networks into lists}
 \usage{
@@ -13,9 +15,13 @@ to_egos(.data, max_dist = 1, min_dist = 0, direction = c("out", "in"))
 
 to_subgraphs(.data, attribute)
 
+to_layers(.data)
+
 to_components(.data, connectivity = c("weak", "strong"))
 
 to_waves(.data, attribute = "wave", panels = NULL, cumulative = FALSE)
+
+to_times(.data, times = NULL)
 
 to_slices(.data, attribute = "time", slice = NULL)
 }
@@ -60,12 +66,17 @@ Users can also list specific waves they want to select.}
 \item{cumulative}{Whether to make wave ties cumulative.
 FALSE by default. That is, each wave is treated isolated.}
 
+\item{times}{The moments to return the network at.
+By default \code{NULL}, in which case every moment the network records is
+returned, as \code{net_times()} counts them.}
+
 \item{slice}{Character string or character list indicating the date(s)
 or integer(s) range used to slice data (e.g slice = c(1:2, 3:4)).}
 }
 \value{
-A tidygraph object modified as explained in the function description, details,
-or section.
+An object of the same class as the function was given,
+modified as explained in the function description, details, or section.
+Functions that split a network return a list of such objects.
 }
 \description{
 These functions offer tools for splitting manynet-consistent objects
@@ -74,27 +85,63 @@ These functions offer tools for splitting manynet-consistent objects
 \item \code{to_egos()} splits a network into ego (or focal) networks.
 \item \code{to_subgraphs()} splits a network into subgraphs on some given node
 attribute.
+\item \code{to_layers()} splits a multiplex network into its layers,
+i.e. a list of uniplex networks, one per tie type.
+Use \code{to_uniplex()}, or its alias \code{to_layer()}, to retain just one of them.
 \item \code{to_components()} splits a network into its components,
 ordered from the largest to the smallest.
 Use \code{to_component()} to retain just one of them.
-\item \code{to_waves()} splits a network with some discrete observations over time
-into a list of those observations.
-\item \code{to_slices()} splits a network with some continuous time variable at some
-time slice(s).
+\item \code{to_times()} splits a network into the network as it stood at each
+moment it records, however it records time.
+This is where new work on splitting a network by time belongs;
+\code{to_waves()} and \code{to_slices()} are the older, form-specific spellings.
+\item \code{to_waves()} splits a panel network into a list of its waves.
+\item \code{to_slices()} splits a network that increments its ties into the state
+it had accumulated to at each of the given time slice(s).
 }
 }
 \details{
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default diff_model igraph matrix network tbl_graph
-to_components          *       *                 *      *       *         *
-to_egos                *       *                 *      *       *         *
-to_slices                      *                 *                        *
-to_subgraphs                   *                 *              *         *
-to_waves               *       *          *      *                        *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default diff_model igraph matrix network stocnet
+to_components          *       *                 *      *       *       *
+to_egos                *       *                 *      *       *       *
+to_layers              *       *                 *              *        
+to_slices                      *                 *                       
+to_subgraphs                   *                 *              *       *
+to_times                       *                 *                      *
+to_waves               *       *          *      *                       
+              tbl_graph
+to_components         *
+to_egos               *
+to_layers             *
+to_slices             *
+to_subgraphs          *
+to_times              *
+to_waves              *
 }\if{html}{\out{</div>}}
+
+\code{to_times()} returns the network as it stood at each moment it records,
+whichever way it records time, by calling \code{\link[=to_time]{to_time()}} on each in turn.
+\code{to_waves()} and \code{to_slices()} are the older, form-specific spellings:
+\code{to_waves()} splits a panel by its waves, and \code{to_slices()} accumulates
+an event network up to each of its moments.
+Unlike them, \code{to_times()} always returns a list, named by the moments and
+ordered by them, even where the network records only one, so that
+\code{net_times(.data)} and \code{length(to_times(.data))} always agree.
 }
+\section{\code{to_layers()}}{
+
+The layers of a multiplex network are held in a tie attribute,
+\code{type} in tidygraph/igraph objects and \code{layer} in 'stocnet' objects.
+Each layer is extracted by \code{to_uniplex()}, so that the layers returned
+here are the same networks as retrieving them one at a time,
+and the returned list is named by the tie types found in the network.
+Where a network holds no tie types it is already uniplex,
+and a list of length one is returned.
+}
+
 \examples{
   to_egos(ison_adolescents)
   # graphs(to_egos(ison_adolescents,2))
@@ -102,11 +149,18 @@ ison_adolescents |>
   mutate(unicorn = sample(c("yes", "no"), 8,
                           replace = TRUE)) |>
   to_subgraphs(attribute = "unicorn")
+as_tidygraph(create_filled(5)) |>
+  mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) |>
+  to_layers()
   to_components(to_uniplex(fict_marvel, "relationship"))
-  to_components(fict_starwars, connectivity = "strong")
+  # Strong decomposition of a directed network returns many small components,
+  # ordered here from largest to smallest, so just the largest is shown:
+  to_components(fict_starwars, connectivity = "strong")[[1]]
 ison_adolescents |>
   mutate_ties(wave = sample(1995:1998, 10, replace = TRUE)) |>
   to_waves(attribute = "wave")
+  length(to_times(irps_wwi))
+  to_times(ison_tailorshop)
 ison_adolescents |>
   mutate_ties(time = 1:10, increment = 1) |> 
   add_ties(c(1,2), list(time = 3, increment = -1)) |> 
@@ -114,7 +168,7 @@ ison_adolescents |>
 }
 \seealso{
 Other modifications:
-\code{\link{modif_correlation}},
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},
@@ -125,6 +179,7 @@ Other modifications:
 \code{\link{modif_permutation}},
 \code{\link{modif_plexity}},
 \code{\link{modif_project}},
+\code{\link{modif_proximity}},
 \code{\link{modif_scope}},
 \code{\link{modif_weight}}
 }

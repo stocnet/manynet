@@ -11,6 +11,7 @@
 \alias{read_graphml}
 \alias{read_gml}
 \alias{read_gdf}
+\alias{read_gexf}
 \title{Making networks from external files}
 \source{
 \code{read_ucinet()} kindly supplied by Christian Steglich,
@@ -29,11 +30,13 @@ read_ucinet(file = file.choose())
 
 read_dynetml(file = file.choose())
 
-read_graphml(file = file.choose())
+read_graphml(file = file.choose(), ego = TRUE)
 
 read_gml(file = file.choose())
 
 read_gdf(file = file.choose())
+
+read_gexf(file = file.choose())
 }
 \arguments{
 \item{file}{A character string with the system path to the file to import.
@@ -43,22 +46,31 @@ if it exists and that it is currently not possible to import multiple
 networks from a single UCINET file. Please convert these one by one.}
 
 \item{sv}{Allows users to specify whether their csv file is
-\code{"comma"} (English) or \code{"semi-colon"} (European) separated.}
+\code{"comma"} (English, the default) or \code{"semi-colon"} (European) separated.}
 
 \item{...}{Additional parameters passed to the read/write function.}
 
 \item{ties}{A character string indicating the ties/network,
 where the data contains several.}
+
+\item{ego}{Logical, whether to add ego as a node in ego-centric formats
+such as Network Canvas, where ego is otherwise only recorded at the level
+of the network. By default TRUE.
+Where ego is added, ties from ego to each of its alters are also added,
+and every tie gains a 'by' column identifying the ego that reported it,
+which makes the network a cognitive social structure (see \code{\link[=is_cognitive]{is_cognitive()}}).}
 }
 \value{
-\code{read_edgelist()} and \code{read_nodelist()} will import
-into edgelist (tibble) format which can then be coerced or combined into
-different graph objects from there.
+\code{read_edgelist()} and \code{read_nodelist()} import a list rather than a
+network, so they return a tibble,
+which can then be coerced or combined into a network from there.
 
-\code{read_pajek()} and \code{read_ucinet()} will import into
-a tidygraph format, since they already contain both edge and attribute data.
-\code{read_matrix()} will import into tidygraph format too.
-Note that all graphs can be easily coerced into other formats
+Every other \verb{read_*()} function returns a stocnet object (see
+\code{\link[=make_stocnet]{make_stocnet()}}).
+This is the class that holds the most of what a file can contain,
+such as the network's metadata, more than two modes, several layers,
+and the times at which nodes and ties are present.
+Note that a network can be coerced into any other format
 with \code{{manynet}}'s \code{as_} methods.
 }
 \description{
@@ -73,23 +85,21 @@ can work with:
 \item \code{read_pajek()} imports Pajek (.net or .paj) files.
 \item \code{read_ucinet()} imports UCINET files from the header (.##h).
 \item \code{read_dynetml()} imports DyNetML interchange format for rich social network data.
-\item \code{read_graphml()} imports GraphML files.
+\item \code{read_graphml()} imports GraphML files,
+including those exported by Network Canvas.
 \item \code{read_gml()} imports GML files.
 \item \code{read_gdf()} imports GDF files.
+\item \code{read_gexf()} imports GEXF files, such as those exported by Gephi.
 }
 }
 \details{
-Note that these functions are not as actively maintained as others
-in the package, so please let us know if any are not currently working
-for you or if there are missing import routines
-by \href{https://github.com/stocnet/manynet/issues}{raising an issue on Github}.
-
 There are a number of repositories for network data
 that hold various datasets in different formats. See for example:
 \itemize{
 \item \href{https://schochastics.github.io/networkdata/}{networkdata}
 \item \href{http://www-personal.umich.edu/~mejn/netdata/}{GML datasets}
 \item \href{http://snap.stanford.edu/data/}{SNAP Stanford Large Network Dataset Collection}
+\item \href{https://icon.colorado.edu}{Colorado Index of Complex Networks}
 }
 
 Please let us know if you identify any further repositories
@@ -100,6 +110,40 @@ file formats, e.g. type 6406 files.
 To import earlier UCINET file types, you will need to update them first.
 To import multiple matrices packed into a single UCINET file,
 you will need to unpack them and convert them one by one.
+
+\code{read_graphml()} reads the file itself rather than relying on igraph,
+so that keys declared \verb{for="all"} and files holding more than one graph
+are read rather than quietly discarded.
+Where several graphs are present, they are combined into a single network
+and distinguished by a 'graph' node attribute.
+
+Network Canvas exports are recognised by their namespace and read
+accordingly.
+Each interview session is exported as a separate graph, so the sessions are
+combined into one network in which each session is a component.
+Since ego is recorded at the level of the graph rather than as a node,
+and ego-alter ties are left implicit,
+ego is added as a node with ties to each of its alters,
+and every tie records the ego that reported it in a 'by' column,
+making the result a cognitive social structure (see \code{\link[=is_cognitive]{is_cognitive()}}).
+Use \code{ego = FALSE} to keep just the alters and the ties between them.
+Note that node types are reported in a character 'nodeset' column rather
+than a logical 'type' column, because ego networks are not two-mode:
+ties within a nodeset are exactly what is collected.
+Note too that, since alters are particular to a session,
+the sessions share no nodes, so \code{as_matrix()} on such a network returns a
+large and very sparse three-dimensional array.
+
+\code{read_gexf()} reads the node and tie attributes declared in the file,
+as well as the visualisation elements Gephi adds,
+so that positions are available as 'x' and 'y' node attributes,
+and sizes and colours as 'size' and 'color'.
+Nodes are named from their labels where the file gives them,
+since node ids are required by the format and so are an export artefact.
+Dynamic files are read with their 'start' and 'end' times,
+which makes the result a dynamic network (see \code{\link[=is_dynamic]{is_dynamic()}}).
+Where a directed network contains ties declared undirected or mutual,
+those ties are reciprocated, since a network is directed or not as a whole.
 }
 \seealso{
 \link{as}

@@ -2,13 +2,24 @@
 % Please edit documentation in R/modif_miss.R
 \name{modif_miss}
 \alias{modif_miss}
-\alias{na_to_zero}
-\alias{na_to_mean}
-\title{Modifying missing tie data}
+\alias{impute_ties}
+\alias{impute_nodes}
+\alias{to_imputed}
+\title{Imputing missing and incomplete network data}
 \usage{
-na_to_zero(.data)
+impute_ties(
+  .data,
+  rule = c("zero", "density", "reciprocity", "indegree", "mean", "median", "modal"),
+  which = c("nonresponse", "unrecorded", "incomplete")
+)
 
-na_to_mean(.data)
+impute_nodes(
+  .data,
+  rule = c("modal", "mean", "median", "neighbourhood"),
+  attribute = NULL
+)
+
+to_imputed(.data, ties = "zero", nodes = "modal")
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -20,27 +31,86 @@ na_to_mean(.data)
 \item network \code{network}, from the \code{{network}} package
 \item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
 }}
+
+\item{rule}{How the imputed value is arrived at.
+See the Rules section for the options and what each does.
+By default "zero".}
+
+\item{which}{Which of the states a tie can be in to impute,
+one or more of "nonresponse", "unrecorded", and "incomplete".
+See the four states section.
+By default all three.}
+
+\item{attribute}{A character vector naming the node attributes to impute.
+By default NULL, which imputes every attribute that holds a missing value.}
+
+\item{ties}{The rule \code{to_imputed()} passes to \code{impute_ties()},
+or NULL to leave the ties alone.}
+
+\item{nodes}{The rule \code{to_imputed()} passes to \code{impute_nodes()},
+or NULL to leave the nodes alone.}
 }
 \value{
-A tidygraph object modified as explained in the function description, details,
-or section.
+An object of the same class as the function was given,
+modified as explained in the function description, details, or section.
+Functions that split a network return a list of such objects.
 }
 \description{
-These functions offer tools for imputing missing tie data.
-Currently two options are available:
+These functions impute what a network did not observe:
 \itemize{
-\item \code{na_to_zero()} replaces any missing values with zeros,
-which are the modal value in sparse social networks.
-\item \code{na_to_mean()} replaces missing values with the average non-missing value.
+\item \code{impute_ties()} imputes the ties a network records as missing,
+and the values of the ties it records as incomplete.
+\item \code{impute_nodes()} imputes the attributes of the nodes it records as
+incomplete.
+\item \code{to_imputed()} runs both in a single call.
 }
+
+A network is \emph{missing} a tie where the tie itself was not observed,
+so that whether it exists is not known.
+A tie or a node is \emph{incomplete} where it is there and observed,
+but an attribute of it is not known,
+such as the strength of a tie or the age of a node.
+Imputing the first is a question of existence, and imputing the second is
+a question of value, so each takes its own rules.
+
+If there is nothing to impute,
+the network data is returned unaltered and no warning is given,
+so that these functions can be used to ensure conformance.
 }
+\section{What is recorded}{
+
+Imputation manufactures data, so what was imputed, how much of it, and by
+which rule is recorded under the "imputation" name of the network's
+transformations, which \code{describe_transformations()} describes.
+Item 4.6 of the GRAND guidelines asks for the imputation method and the
+number of nodes or ties that were imputed, and places it among the
+transformations of raw data into analytic data,
+beside symmetrising, dichotomising, projecting, and aggregating,
+which is where the other \verb{to_*()} functions record themselves.
+
+One entry is added for the missing ties, one for the incomplete tie
+values, and one for each node attribute, so that a reader can tell which
+attributes hold manufactured values and which were observed throughout:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{as_infolist(to_imputed(ison_classmates))$transformations$imputation
+#> "73 missing ties (zero)"  "4 incomplete 'religion' values (modal)" ...
+}\if{html}{\out{</div>}}
+
+The element accumulates rather than replaces,
+so a network imputed in more than one step reports each of them in order.
+A matrix or an edgelist has nowhere to hold information about itself,
+so nothing is recorded for those two classes.
+}
+
 \examples{
-missTest <- ison_adolescents |> 
-   add_tie_attribute("weight", c(1,NA,NA,1,1,1,NA,NA,1,1)) |> 
+missTest <- ison_adolescents |>
+   add_tie_attribute("weight", c(1,NA,NA,1,1,1,NA,NA,1,1)) |>
    as_matrix()
 missTest
-na_to_zero(missTest)
-na_to_mean(missTest)
+impute_ties(missTest)
+impute_ties(missTest, "mean")
+impute_nodes(fict_lotr, "modal", "Race")
+to_imputed(ison_classmates)
 }
 \references{
 \subsection{On missing data}{
@@ -53,7 +123,7 @@ Krause, Robert, Mark Huisman, Christian Steglich, and Tom A.B. Snijders. 2020.
 }
 \seealso{
 Other modifications:
-\code{\link{modif_correlation}},
+\code{\link{modif_backbone}},
 \code{\link{modif_direction}},
 \code{\link{modif_from}},
 \code{\link{modif_labels}},
@@ -63,6 +133,7 @@ Other modifications:
 \code{\link{modif_permutation}},
 \code{\link{modif_plexity}},
 \code{\link{modif_project}},
+\code{\link{modif_proximity}},
 \code{\link{modif_scope}},
 \code{\link{modif_split}},
 \code{\link{modif_weight}}
