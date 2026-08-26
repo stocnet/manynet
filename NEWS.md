@@ -251,6 +251,7 @@
 ## Learning
 
 - Added "Missing data" page to the "Manipulating" tutorial with `ison_classmates` example
+- Added "Backbones" section to the "Manipulating" tutorial's "Modifying networks" page
 - Updated "Manipulating" tutorial's "Layers" page to cover layer-vocabulary with `ison_lawfirm` example
 - Updated tutorial and cheatsheet references to `to_uniplex()` to use `layer` argument
 - Moved gifs to question feedback and added more questions:

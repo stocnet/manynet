@@ -1545,7 +1545,8 @@ and `impute_ties()` imputes them.
 
 <span class="page-toc">On this page:
 <span class="page-toc-link" onclick="document.getElementById('section-subgraphs').scrollIntoView({behavior:'auto',block:'start'});">Subgraphs</span> ·
-<span class="page-toc-link" onclick="document.getElementById('section-isolates').scrollIntoView({behavior:'auto',block:'start'});">Isolates</span></span>
+<span class="page-toc-link" onclick="document.getElementById('section-isolates').scrollIntoView({behavior:'auto',block:'start'});">Isolates</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-backbones').scrollIntoView({behavior:'auto',block:'start'});">Backbones</span></span>
 
 By now you can build up a network with all of its properties —
 labels and attributes, direction, weights and signs, layers, modes, and dynamics.
@@ -1655,6 +1656,90 @@ keep only the elements satisfying a condition,
 while `delete_isolates()`, `to_giant()`, and `to_simplex()` prune
 stranded nodes, minor components, and self-ties —
 all taking a whole network and returning a narrower or cleaner one.
+:::
+
+### Backbones {#backbones}
+
+Back on the [weights](#weights) page, 
+we thresholded `ison_networkers` at 100 messages.
+That is a _global_ cut-off: every remaining tie met the same number.
+The trouble is that a global threshold reads volume rather than importance,
+which will keep the busiest correspondents and drop the rest.
+
+The `r gloss("backbone")` of a network identifies and retains the ties that 
+are important locally, 
+giving a cleaner network that reveals more structure than activity.
+Each tie is compared with a null model built from its own two endpoints,
+so a tie that is small overall but large for the people it joins is nonetheless kept.
+`tie_is_backbone()` marks ties that comprise the 'backbone' of the network,
+and `to_backbone()` returns the network reduced to those ties.
+
+The `filter=` argument chooses which null model to use.
+For a weighted network it defaults to `"lans"`,
+which compares a tie with the other weights of its own two nodes,
+and so assumes nothing about how those weights are distributed.
+For an unweighted network it defaults to `"simmelian"`,
+which reads shared neighbours rather than weights.
+The `threshold` argument sets how demanding the test is,
+just as it does for `to_unweighted()`.
+
+**Extract the backbone of `ison_networkers`,
+and compare it with the global threshold of 100 you used earlier.**
+
+```{r backbone, exercise = TRUE, purl=FALSE}
+
+```
+
+```{r backbone-hint-1, purl=FALSE}
+# to_backbone(ison_networkers) uses the LANS filter by default.
+# Count the nodes that still have ties in each with
+# net_nodes(delete_isolates(_____)).
+```
+
+```{r backbone-solution}
+net_ties(to_backbone(ison_networkers))
+net_nodes(delete_isolates(to_backbone(ison_networkers)))
+net_nodes(delete_isolates(to_unweighted(ison_networkers, threshold = 100)))
+```
+
+To check your results: the backbone holds 71 of the 440 ties,
+against the 32 the global threshold left.
+More telling is who is left: those 71 ties reach all 32 researchers,
+where the global threshold reached only 12.
+Both reductions are severe, yet only one of them
+keeps the shape of the whole network.
+
+```{r backbone-question, echo = FALSE, purl=FALSE}
+question("Why does the backbone span more nodes than the global threshold, despite holding a similar number of ties?",
+  answer("It judges each tie against its own endpoints rather than against every other tie",
+         correct = TRUE,
+         message = "Correct: a modest correspondent's most important tie can still be locally significant, so the periphery is not deleted wholesale. <img src='https://media1.tenor.com/m/UlWgg8a56EMAAAAC/mr-bean-mr-bean-ok.gif' alt='gif of a man nodding in approval'/>"),
+  answer("It adds ties back to nodes that would otherwise be isolated",
+         message = "`to_backbone()` only ever deletes ties. It never adds any."),
+  answer("It ignores the weights altogether",
+         message = "The LANS filter reads the weights closely. It is only `filter = \"simmelian\"` that ignores them."),
+  answer("It keeps the largest component, as `to_giant()` does",
+         message = "It selects ties by significance, not by component. The result may well be disconnected."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
+Other filters are available through `filter`,
+including `"disparity"`, `"noise"`, and `"mlf"`,
+and `to_backbone()` documents what each one asks of a tie.
+`"disparity"` is the best known of them, but be careful with it:
+its null model expects a few very heavy ties among many light ones,
+and where weights are more even it retains nothing at all.
+For backbone models that resample a null distribution instead,
+such as those for `r gloss("twomode","two-mode")` projections,
+see the `{backbone}` package.
+
+::: {.callout}
+<span class="callout-label">**In brief**:</span> `to_unweighted(threshold = )` cuts every tie
+against the same number, while `to_backbone()` cuts each tie against a null
+model local to its own endpoints, which keeps the shape of the network
+rather than just its heaviest part.
 :::
 
 ## Summary
