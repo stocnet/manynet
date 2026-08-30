@@ -23,8 +23,8 @@
 #' @return `net_*()` functions always relate to the overall graph or network,
 #'   usually returning a scalar.
 #'   `mode_nodes()` returns an integer of the number of nodes in a one-mode network,
-#'   or two integers representing the number of nodes in each nodeset
-#'   in the case of a two-mode network.
+#'   or one integer per mode (in `mode_names()` order) in the case of a
+#'   two-mode, three-mode, or other multimodal network.
 #'   `layer_ties()` returns an integer of the number of ties in a single-layer
 #'   network, or one integer per layer (in `layer_names()` order)
 #'   in the case of a multiplex network.
@@ -96,6 +96,11 @@ net_modes.stocnet <- function(.data){
 
 #' @export
 net_modes.igraph <- function(.data){
+  # `to_multilevel()` records the modes in a 'lvl' attribute and deletes
+  # 'type', so a network converted that way, which may hold more than two
+  # modes, is counted by its levels instead.
+  if("lvl" %in% igraph::vertex_attr_names(.data))
+    return(length(unique(igraph::vertex_attr(.data, "lvl"))))
   if(is_twomode(.data)) 2L else 1L
 }
 
@@ -276,6 +281,10 @@ mode_nodes.igraph <- function(.data){
   if(is_twomode(.data)){
     c(sum(!igraph::V(.data)$type),
       sum(igraph::V(.data)$type))
+  } else if("lvl" %in% igraph::vertex_attr_names(.data)){
+    # A 'lvl' attribute can name more than the two modes a 'type' attribute
+    # can, so each of its levels is counted here.
+    .count_modes(igraph::vertex_attr(.data, "lvl"), mode_names(.data))
   } else {
     igraph::vcount(.data)
   }
@@ -295,9 +304,26 @@ mode_nodes.network <- function(.data){
 
 #' @export
 mode_nodes.stocnet <- function(.data){
-  if(is_twomode(.data)){
-    out <- tabulate(match(.data$nodes$mode, unique(.data$nodes$mode)))
+  # A 'stocnet' holds its modes in the 'mode' variable of its nodes table,
+  # which can name three or more modes, so every mode is counted and not
+  # only the two a two-mode network holds.
+  if(net_modes(.data) > 1){
+    .count_modes(.data$nodes$mode, mode_names(.data))
   } else net_nodes(.data)
+}
+
+# The number of nodes in each mode, given the mode of each node.
+# The counts are returned in the order `mode_names()` names the modes,
+# so that each count is reported under its own name.
+.count_modes <- function(modes, nms = NULL){
+  lvls <- unique(modes)
+  # A mode recorded as a number, such as the 'lvl' attribute holds, is
+  # ordered by its value, since the names are given in that order. A mode
+  # recorded by its name is matched to the names where every name matches,
+  # and is otherwise ordered by where it first appears.
+  if(!is.character(lvls)) lvls <- sort(lvls) else
+    if(!is.null(nms) && setequal(nms, lvls)) lvls <- nms
+  as.integer(tabulate(match(modes, lvls), nbins = length(lvls)))
 }
 
 #' @rdname measure_dims
