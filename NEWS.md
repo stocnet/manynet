@@ -3,13 +3,11 @@
 ## Classes
 
 - Improved `describe_nodes()` on networks of three or more modes (closed #174)
-  - Names each mode instead of naming every node after the first mode
-  - Reports a node count for each mode, not one count for the whole network
 
 ## Measuring
 
-- Improved `mode_nodes()` to count the nodes in each of three or more modes
-- Improved `net_modes()` to count the levels an igraph 'lvl' attribute records
+- Fixed `mode_nodes()` to count the nodes in each of three or more modes
+- Fixed `net_modes.igraph()` to count the levels an igraph 'lvl' attribute records
 
 # manynet 2.3.1
 

@@ -362,6 +362,12 @@ Start each bullet with a verb matching the change type:
 
 Any of these verbs can also lead a sub-bullet.
 
+Name a function by the generic, e.g. `net_modes()`, where the change reaches
+every class it dispatches on.
+Where it reaches only one method, spell that method out in full,
+e.g. `net_modes.igraph()`,
+so that a reader knows which classes the change applies to.
+
 Keep every bullet to one line of fewer than 81 characters ideally (a few more or less is fine).
 If a bullet wraps, it holds too much:
 shorten it, or split it into a lead bullet and sub-bullets.
