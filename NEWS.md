@@ -4,6 +4,12 @@
 
 - Improved `describe_nodes()` on networks of three or more modes (closed #174)
 
+## Marking
+
+- Improved `is_directed()` on a network tied within a level as well as between
+- Fixed `is_multilevel.igraph()` looping through `tie_is_twomode()`
+- Added `layer_is_directed()`, reporting each layer of a network (closed #171)
+
 ## Measuring
 
 - Fixed `mode_nodes()` to count the nodes in each of three or more modes

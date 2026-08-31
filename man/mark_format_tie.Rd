@@ -65,13 +65,22 @@ sender and receiver.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{             data.frame default igraph list matrix network stocnet tbl_graph
-is_complex            *       *      *    *      *       *       *         *
-is_directed           *       *      *           *       *       *         *
-is_multiplex          *       *      *           *       *       *         *
-is_signed             *       *      *           *       *       *         *
-is_uniplex                    *      *                                      
-is_weighted           *       *      *           *       *       *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{                  data.frame default igraph list matrix network stocnet
+is_complex                 *       *      *    *      *       *       *
+is_directed                *       *      *           *       *       *
+is_multiplex               *       *      *           *       *       *
+is_signed                  *       *      *           *       *       *
+is_uniplex                         *      *                            
+is_weighted                *       *      *           *       *       *
+layer_is_directed                  *      *                           *
+                  tbl_graph
+is_complex                *
+is_directed               *
+is_multiplex              *
+is_signed                 *
+is_uniplex                 
+is_weighted               *
+layer_is_directed          
 }\if{html}{\out{</div>}}
 
 If a method is not available for a particular class, but a default method is,

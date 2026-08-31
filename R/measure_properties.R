@@ -343,6 +343,8 @@ net_dims <- mode_nodes
 #'   - `net_node_attributes()` returns a vector of nodal attributes in a network.
 #'   - `layer_names()` returns a vector of the names of the layers in a network,
 #'   if they have been defined.
+#'   - `layer_is_directed()` returns whether each layer of a network is
+#'   directed, named by layer.
 #'   - `net_tie_attributes()` returns a vector of tie attributes in a network.
 #'   
 #'   These functions are also often used as helpers within other functions.
@@ -486,6 +488,53 @@ layer_names.igraph <- function(.data){
 #' @export
 layer_names.stocnet <- function(.data){
   .data$info$layers %||% unique(.data$ties[["layer"]])
+}
+
+#' @rdname member_names
+#' @param layer An optional character string naming one of the layers,
+#'   one of those returned by `layer_names()`.
+#'   Where a layer is named, a single value is returned for that layer;
+#'   otherwise a value is returned for every layer, named by layer.
+#' @details
+#'   A network can be directed in one layer and undirected in another,
+#'   as a network of interstate trade and of state membership in
+#'   intergovernmental organisations is.
+#'   `is_directed()` marks such a network TRUE, since it holds arcs,
+#'   and `layer_is_directed()` says which of its layers those arcs are in.
+#'   Where a network records nothing about a layer,
+#'   the network's own direction is reported for it.
+#' @examples
+#'   layer_is_directed(ison_algebra)
+#' @export
+layer_is_directed <- function(.data, layer = NULL) UseMethod("layer_is_directed")
+
+#' @export
+layer_is_directed.default <- function(.data, layer = NULL){
+  layer_is_directed(as_igraph(.data), layer = layer)
+}
+
+#' @export
+layer_is_directed.igraph <- function(.data, layer = NULL){
+  .layers_directed(igraph::graph_attr(.data, "directed"), .data, layer)
+}
+
+#' @export
+layer_is_directed.stocnet <- function(.data, layer = NULL){
+  .layers_directed(.data$info$directed, .data, layer)
+}
+
+# A network records the direction of each of its layers in a logical vector
+# named by layer. Where it records none, or none for the layer asked about,
+# the direction of the network as a whole is the best answer available.
+.layers_directed <- function(directed, .data, layer = NULL){
+  if(is.null(names(directed))) directed <- NULL
+  known <- function(l) if(!is.null(directed) && !is.na(l) &&
+                          l %in% names(directed))
+    unname(directed[[l]]) else is_directed(.data)
+  if(!is.null(layer)) return(vapply(layer, known, logical(1), USE.NAMES = FALSE))
+  layers <- layer_names(.data)
+  if(is.null(layers) || length(layers) == 0) return(is_directed(.data))
+  stats::setNames(vapply(layers, known, logical(1), USE.NAMES = FALSE), layers)
 }
 
 #' @rdname member_names
