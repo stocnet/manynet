@@ -96,7 +96,7 @@ to_motifs <- function(.data = NULL, n = NULL, directed = FALSE, signed = FALSE){
   n <- infer_n(n, .data)
   if(length(n) > 1){ # two-mode ####
     if(signed)
-      return(snet_unavailable("Signed motifs are not yet available for two-mode networks."))
+      snet_unavailable("Signed motifs are not yet available for two-mode networks.")
     # The bipartite motifs up to four nodes (Simmons et al. 2019, `bmotif`),
     # labelled by their `bmotif` dictionary IDs. Rows are one mode, columns the
     # other; the 2x2 four-cycle (motif 6) needs `twomode` to disambiguate it
@@ -158,7 +158,7 @@ to_motifs <- function(.data = NULL, n = NULL, directed = FALSE, signed = FALSE){
                   `+--` = mutate_ties(create_explicit(A--B--C--A), sign = c(1, -1, -1)),
                   `---` = mutate_ties(create_explicit(A--B--C--A), sign = c(-1, -1, -1))))
     } else
-      return(snet_unavailable("Signed motifs not yet available for that kind of network."))
+      snet_unavailable("Signed motifs not yet available for that kind of network.")
   }
 
   if(n>3 && directed){

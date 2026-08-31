@@ -202,3 +202,25 @@ test_that("a duplicated tie in an undirected layer is not doubled", {
   expect_equal(igraph::ecount(as_igraph(net)), 5)
   expect_equal(nrow(as_stocnet(as_igraph(net))$ties), 3)
 })
+
+test_that("to_layer keeps the endpoints of each arc (#170)", {
+  net <- make_stocnet(
+    info = list(modes = c("states", "IGOs"),
+                layers = c("trade", "membership"),
+                directed = c(trade = TRUE, membership = FALSE)),
+    nodes = tibble::tibble(label = c("a", "b", "x"),
+                           mode = c("states", "states", "IGOs")),
+    ties = tibble::tibble(from = c(1L, 2L, 1L), to = c(2L, 1L, 3L),
+                          weight = c(5, 9, 1),
+                          layer = c("trade", "trade", "membership"))
+  )
+  out <- to_layer(net, "trade")
+  # `b -> a` used to be reindexed onto `a -> b`, which `as_matrix()` then
+  # summed with the arc already there
+  expect_equal(out$ties$from, c(1L, 2L))
+  expect_equal(out$ties$to, c(2L, 1L))
+  expect_equal(out$ties$weight, c(5, 9))
+  mat <- as_matrix(out)
+  expect_equal(mat["a", "b"], 5)
+  expect_equal(mat["b", "a"], 9)
+})

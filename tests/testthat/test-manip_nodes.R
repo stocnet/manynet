@@ -154,3 +154,30 @@ test_that("filter_nodes empties a layer without error", {
   expect_equal(out$info$layers, "friends")
   expect_no_error(validate_stocnet(out))
 })
+
+test_that("dropping nodes drops and renumbers the missings (#173)", {
+  sn <- as_stocnet(ison_adolescents)
+  # two dyads the network could have observed and did not
+  sn$missings <- tibble::tibble(from = c(6L, 7L), to = c(8L, 1L))
+  sn <- validate_stocnet(sn)
+  # keeping every node leaves the missings as they were
+  expect_equal(to_subgraph(sn, seq_len(8) <= 8)$missings, sn$missings)
+  # dropping either end of a dyad drops the dyad with it
+  out <- to_subgraph(sn, seq_len(8) <= 4)
+  expect_no_error(validate_stocnet(out))
+  expect_null(out$missings)
+  # a dyad both of whose ends remain is renumbered onto the nodes that are left
+  sn$missings <- tibble::tibble(from = c(3L, 7L), to = c(4L, 1L))
+  sn <- validate_stocnet(sn)
+  kept <- to_subgraph(sn, seq_len(8) >= 3)
+  expect_equal(kept$missings$from, 1L)
+  expect_equal(kept$missings$to, 2L)
+  expect_true(all(unlist(kept$missings) <= nrow(kept$nodes)))
+})
+
+test_that("validate_stocnet names every out-of-range id (#173)", {
+  sn <- as_stocnet(ison_adolescents)
+  sn$missings <- tibble::tibble(from = c(20L, 30L), to = c(1L, 2L))
+  # two unmatched ids used to make the message builder itself error
+  expect_error(validate_stocnet(sn), "20 and 30")
+})

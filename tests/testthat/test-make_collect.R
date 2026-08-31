@@ -138,9 +138,7 @@ test_that("collect_pkg() only includes external functions where asked", {
 
 test_that("collect_pkg() reports scripts it cannot parse", {
   dir <- fixture_pkg(broken = TRUE)
-  op <- options(snet_verbosity = "verbose")
-  on.exit(options(op), add = TRUE)
-  expect_message(out <- collect_pkg(dir), "b.R")
+  expect_warning(out <- collect_pkg(dir), "b.R")
   # The scripts that do parse are still collected
   expect_true("foo" %in% node_labels(out))
 })

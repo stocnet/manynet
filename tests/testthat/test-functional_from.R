@@ -169,12 +169,13 @@ test_that("from_layers() carries changes tables through the merge", {
   expect_false(is.null(out$changes))
 })
 
-test_that("from_layers() resolves conflicting dates and DOIs without warnings", {
+test_that("from_layers() warns about conflicting dates and DOIs it resolves", {
   sn1 <- add_info(as_stocnet(ison_adolescents), date = "2001",
                   doi = "10.1/first")
   sn2 <- add_info(as_stocnet(create_star(8)), date = "1999",
                   doi = "10.1/second")
-  expect_no_warning(out <- from_layers(a = sn1, b = sn2))
+  expect_warning(out <- from_layers(a = sn1, b = sn2), "different 'date'")
+  out <- suppressWarnings(from_layers(a = sn1, b = sn2))
   expect_identical(out$info$date, "1999")
   expect_identical(out$info$doi, "10.1/first")
 })

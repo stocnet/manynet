@@ -12,6 +12,8 @@
 - Improved `describe_nodes()` on networks of three or more modes (closed #174)
 - Fixed `keep_nodes()` to drop and reindex `$missings` (closed #173)
   - `reserved_cols()` now names every out-of-range id, instead of erroring
+- Improved `validate_stocnet()` on names it reserves but does not rename
+
 
 ## Modifying
 

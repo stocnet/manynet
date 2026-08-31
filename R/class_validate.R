@@ -16,8 +16,11 @@ validate_stocnet <- function(.data) {
 validate_nodes <- function(.data){
   if(is.null(.data$nodes)) return(invisible(.data))
   expect_class(.data, "nodes", "tbl_df")
+  # Note that an 'id' is not among the names for a label here, for the reason
+  # `rename_nodes()` gives: a file format requires an id of its own, so taking
+  # it for a label would name nodes the file never named.
   reserved_cols(.data, "nodes", "label", "character", 
-           aka = c("name", "id"))
+           aka = "name")
   reserved_cols(.data, "nodes", "mode", "character")
   reserved_cols(.data, "nodes", "active", "logical")
   reserved_cols(.data, "nodes", "na", "logical")
@@ -43,9 +46,13 @@ validate_ties <- function(.data){
   # Note that 'begin' and 'end' are not among the names for a time here.
   # These mark the span over which a tie is present, which `is_dynamic()`
   # reads as such, rather than a time that is named some other way.
+  # Note that a 'date' is not among the names for a time here, for the reason
+  # `is_longitudinal()` gives: it reads a moment under 'time', 'wave', or
+  # 'panel' and not under 'date', so a network of dated events, such as
+  # `ison_southern_women`, records those dates as the attribute they are.
   reserved_cols(.data, "ties", "time",
                 class = c("character","numeric","integer","mdate","Date","POSIXct","POSIXlt"),
-                aka = c("wave", "period", "date"))
+                aka = c("wave", "period", "panel"))
   reserved_cols(.data, "ties", "layer", "character",
            aka = c("type", "plex", "tie"))
   invisible(.data)
@@ -137,7 +144,9 @@ reserved_cols <- function(.data, component, column, class,
       if(!all(.data[[component]][[column]] %in% pool)){
         values <- unique(as.character(.data[[component]][[column]]))
         unmatched <- values[which(!values %in% pool)]
-        if(is.na(unmatched)) unmatched <- "NA (probably unmatched ids)"
+        # More than one value can be unmatched, so the NA is named elementwise
+        # rather than in a condition that only a single value would satisfy.
+        unmatched[is.na(unmatched)] <- "NA (probably unmatched ids)"
         snet_abort("'{component}${column}' includes {phrase(unmatched)},",
                    "which must be one of {phrase(pool)}.")
       } 
