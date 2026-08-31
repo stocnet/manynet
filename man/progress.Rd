@@ -50,6 +50,7 @@ to build an attractive command line interface (CLI).
 \item \code{snet_progress_nodes()} for progress along the nodes of a network.
 }
 
-If you wish to receive fewer messages in the console,
-run \code{options(snet_verbosity = 'quiet')}.
+A progress bar reports what a function did and not what it decided,
+so it shows only where \code{options(snet_verbosity = 'verbose')}.
+See the verbosity section of \link{interface}.
 }

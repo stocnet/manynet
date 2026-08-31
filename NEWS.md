@@ -1,5 +1,12 @@
 # manynet 2.3.2
 
+## Package
+
+- Added three `snet_verbosity` levels, 'quiet', 'normal', and 'verbose'
+  - `snet_info()` and `snet_success()` report from 'normal'
+  - `snet_minor_info()` and the `snet_progress_*()` functions report from 'verbose'
+- Improved `snet_warn()` and `snet_unavailable()` so that neither is silenced (closed #169)
+
 ## Classes
 
 - Improved `describe_nodes()` on networks of three or more modes (closed #174)
