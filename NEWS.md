@@ -14,6 +14,9 @@
   - `reserved_cols()` now names every out-of-range id, instead of erroring
 - Improved `validate_stocnet()` on names it reserves but does not rename
 
+## Coercion
+
+- Fixed `as_igraph.stocnet()` on multimodal and multilevel networks (closed #170)
 
 ## Modifying
 

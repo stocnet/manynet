@@ -478,3 +478,44 @@ test_that("mnet objects printed correctly", {
 #   class(sample_net)
 #   expect_no_failure(as_igraph(sample_net))
 # })
+
+test_that("a directed multilevel network round trips through igraph", {
+  net <- make_stocnet(
+    info = list(modes = c("states", "IGOs"),
+                layers = c("trade", "membership"),
+                directed = c(trade = TRUE, membership = FALSE)),
+    nodes = tibble::tibble(label = c("a", "b", "x"),
+                           mode = c("states", "states", "IGOs")),
+    ties = tibble::tibble(from = c(1L, 2L, 1L), to = c(2L, 1L, 3L),
+                          weight = c(5, 9, 1),
+                          layer = c("trade", "trade", "membership"))
+  )
+  ig <- as_igraph(net)
+  # the network holds arcs, so it does not reach igraph as an undirected graph
+  expect_true(igraph::is_directed(ig))
+  # the undirected layer travels as a reciprocated pair, and collapses again
+  expect_equal(igraph::ecount(ig), 4)
+  back <- as_stocnet(ig)
+  expect_equal(back$ties$from, net$ties$from)
+  expect_equal(back$ties$to, net$ties$to)
+  expect_equal(back$info$directed, net$info$directed)
+})
+
+test_that("a network of three modes keeps them through igraph", {
+  net <- make_stocnet(
+    info = list(modes = c("A", "B", "C")),
+    nodes = tibble::tibble(label = c("a", "b", "x", "z"),
+                           mode = c("A", "A", "B", "C")),
+    ties = tibble::tibble(from = c(1L, 1L, 3L), to = c(2L, 3L, 4L))
+  )
+  ig <- as_igraph(net)
+  # igraph records two modes as 'type' and more as 'lvl', which is what
+  # net_modes() and is_multilevel() read; a bare 'mode' attribute is read by
+  # neither, so the modes would be lost
+  expect_true("lvl" %in% igraph::vertex_attr_names(ig))
+  expect_false("mode" %in% igraph::vertex_attr_names(ig))
+  expect_equal(net_modes(ig), 3)
+  expect_equal(mode_nodes(ig), c(2L, 1L, 1L))
+  expect_true(is_multilevel(ig))
+  expect_equal(as_stocnet(ig)$nodes$mode, net$nodes$mode)
+})
