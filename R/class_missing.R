@@ -79,13 +79,6 @@
   alters
 }
 
-# Whether each layer is directed, named by layer.
-.layer_directed <- function(.data, layer){
-  directed <- .data$info$directed
-  if(!is.null(directed) && !is.null(names(directed)) && !is.na(layer) &&
-     layer %in% names(directed)) unname(directed[layer]) else is_directed(.data)
-}
-
 # The ties a network records as missing, derived from its nonresponse records.
 .expand_missing <- function(.data){
   empty <- dplyr::tibble(from = integer(0), to = integer(0),
@@ -103,7 +96,7 @@
     absent <- which(na_state[, at] & act_state[, at])
     absent <- .layer_absent(.data, absent, layer, time)
     if(!length(absent)) return(NULL)
-    directed <- .layer_directed(.data, layer)
+    directed <- layer_is_directed(.data, layer)
     pairs <- lapply(absent, function(node){
       alters <- .stocnet_alters(.data, node, act_state[, at])
       if(!length(alters)) return(NULL)
@@ -179,7 +172,7 @@
     at <- if(is.na(time)) 1L else match(time, times)
     if(is.na(at)) at <- 1L
     sub <- missing[.same_occasion(missing, layer, time), , drop = FALSE]
-    directed <- .layer_directed(x, layer)
+    directed <- layer_is_directed(x, layer)
     for(node in unique(c(sub$from, if(!directed) sub$to))){
       alters <- .stocnet_alters(x, node, act_state[, at])
       held <- if(directed) sub$to[sub$from == node] else
@@ -209,7 +202,7 @@
   covered <- rep(FALSE, nrow(missing))
   for(r in seq_len(nrow(found))){
     same <- .same_occasion(missing, found$layer[[r]], found$time[[r]])
-    directed <- .layer_directed(x, found$layer[[r]])
+    directed <- layer_is_directed(x, found$layer[[r]])
     covered <- covered | (same & (missing$from == found$node[[r]] |
                                     (!directed & missing$to == found$node[[r]])))
   }

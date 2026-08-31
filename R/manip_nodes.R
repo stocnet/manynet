@@ -269,6 +269,17 @@ keep_nodes <- function(.data, kept){
     out_changes <- .data$changes
   }
 
+  # The missings list dyads, so dropping nodes drops the dyads either of whose
+  # ends is gone, and renumbers the rest, exactly as it does for the ties.
+  if(!is.null(.data$missings) && nrow(.data$missings) > 0){
+    out_missings <- dplyr::filter(.data$missings, from %in% kept, to %in% kept) |>
+      dplyr::mutate(from = match(from, kept),
+                    to = match(to, kept))
+    if(nrow(out_missings) == 0) out_missings <- NULL
+  } else {
+    out_missings <- .data$missings
+  }
+
   # Dropping nodes can drop the last tie of a layer, and the information on
   # that layer goes with it.
   out_info <- if(!is.null(out_ties) && "layer" %in% names(out_ties)){
@@ -277,7 +288,7 @@ keep_nodes <- function(.data, kept){
   } else .data$info
 
   make_stocnet(nodes = out_nodes, ties = out_ties, changes = out_changes,
-               globals = .data$globals, missings = .data$missings, info = out_info)
+               globals = .data$globals, missings = out_missings, info = out_info)
 }
 
 #' @rdname manip_nodes_num

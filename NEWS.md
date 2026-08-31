@@ -10,6 +10,12 @@
 ## Classes
 
 - Improved `describe_nodes()` on networks of three or more modes (closed #174)
+- Fixed `keep_nodes()` to drop and reindex `$missings` (closed #173)
+  - `reserved_cols()` now names every out-of-range id, instead of erroring
+
+## Modifying
+
+- Fixed `to_layer()` pointing arcs at the wrong nodes (closed #170)
 
 ## Marking
 
