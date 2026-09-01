@@ -10,7 +10,7 @@
 \alias{to_normalized}
 \title{Modifying tie weight formats}
 \usage{
-to_unsigned(.data, keep = c("positive", "negative"))
+to_unsigned(.data, keep = c("positive", "negative", "both"))
 
 to_unweighted(.data, threshold = 1)
 
@@ -42,7 +42,8 @@ to_normalized(
 }}
 
 \item{keep}{In the case of a signed network, whether to retain
-the "positive" or "negative" ties.}
+the "positive" or the "negative" ties, or "both",
+which retains every tie but replaces its sign with its magnitude.}
 
 \item{threshold}{For a matrix, the threshold to binarise/dichotomise at.}
 
@@ -94,8 +95,9 @@ These functions reformat tie attributes like their weight or sign:
 \itemize{
 \item \code{to_unweighted()} reformats weighted network data to unweighted network
 data, with all tie weights removed.
-\item \code{to_unsigned()} reformats signed network data to unsigned network data
-keeping just the "positive" or "negative" ties.
+\item \code{to_unsigned()} reformats signed network data to unsigned network data,
+keeping just the "positive" or the "negative" ties, or "both",
+which keeps every tie but replaces its sign with its magnitude.
 \item \code{to_normalised()} rescales tie weights relative to the other ties of the
 same node, so that a value reads as a share rather than a count.
 }
@@ -131,6 +133,9 @@ sends \eqn{i}. Where such a network is undirected, each tie is therefore
 split into two, and the network is returned directed.
 }
 \examples{
+marvel <- to_uniplex(fict_marvel, "relationship")
+to_unsigned(marvel, "positive")
+to_unsigned(marvel, "both")
 to_normalised(ison_networkers, rule = "sum", across = "rows")
 }
 \seealso{

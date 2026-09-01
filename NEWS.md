@@ -20,6 +20,11 @@
 
 ## Modifying
 
+- Added `keep = "both"` to `to_unsigned()`, which keeps every tie but not its sign
+- Fixed `to_unsigned.data.frame()` erroring on a signed edgelist
+  - now drops the ties of the other sign, as the other methods do
+  - now reads signs held as negative weights as well as in a 'sign' column
+- Fixed `to_unsigned.network()` ignoring its `keep` argument
 - Fixed `to_layer()` pointing arcs at the wrong nodes (closed #170)
 
 ## Marking

@@ -87,10 +87,52 @@ test_that("to_unsigned keeps the ties of the sign it is asked for", {
                  as_matrix(to_unsigned(ison_southern_women, "negative"))))
 })
 
+test_that("to_unsigned keeps every tie's magnitude where 'both' is asked for", {
+  # the mark is given so that the ring is signed the same way on every run
+  ring <- to_signed(create_ring(8), mark = rep(c(TRUE, FALSE), 4))
+  for(x in list(ring, as_igraph(ring), as_tidygraph(ring), as_network(ring))){
+    both <- to_unsigned(x, "both")
+    expect_false(is_signed(both))
+    expect_equal(as.numeric(net_ties(both)), as.numeric(net_ties(x)))
+    expect_equal(as.numeric(net_ties(both)),
+                 as.numeric(net_ties(to_unsigned(x, "positive"))) +
+                   as.numeric(net_ties(to_unsigned(x, "negative"))))
+  }
+  # 'fict_marvel' holds its signs in a 'sign' attribute, where the ring holds
+  # them as negative weights, so both representations are covered
+  marvel <- to_uniplex(fict_marvel, "relationship")
+  both <- to_unsigned(marvel, "both")
+  expect_false(is_signed(both))
+  expect_equal(as.numeric(net_ties(both)), as.numeric(net_ties(marvel)))
+  expect_true(all(as_matrix(both) >= 0))
+  expect_false("sign" %in% igraph::edge_attr_names(as_igraph(both)))
+})
+
+test_that("to_unsigned reads a signed edgelist of either representation", {
+  # a sign can be held in a 'sign' column or as a negative weight
+  el <- data.frame(from = c("a","b","c"), to = c("b","c","a"),
+                   sign = c(1,-1,1))
+  el2 <- data.frame(from = c("a","b"), to = c("b","c"), weight = c(2,-3))
+  expect_equal(nrow(to_unsigned(el, "positive")), 2)
+  expect_equal(nrow(to_unsigned(el, "negative")), 1)
+  expect_equal(nrow(to_unsigned(el, "both")), 3)
+  expect_false("sign" %in% names(to_unsigned(el, "both")))
+  expect_equal(to_unsigned(el2, "positive")$weight, 2)
+  # the magnitude of the relation is kept, not its direction
+  expect_equal(to_unsigned(el2, "negative")$weight, 3)
+  expect_equal(to_unsigned(el2, "both")$weight, c(2,3))
+})
+
+test_that("to_unsigned.network keeps the sign it is asked for", {
+  n <- as_network(to_signed(create_ring(8), mark = rep(c(TRUE, FALSE), 4)))
+  expect_equal(as.numeric(net_ties(to_unsigned(n, "positive"))), 4)
+  expect_equal(as.numeric(net_ties(to_unsigned(n, "negative"))), 4)
+})
+
 test_that("to_named relabels an unlabelled network, or with names given", {
   expect_true(is_labelled(to_named(to_unnamed(ison_southern_women))))
   expect_true(is_labelled(to_named(ison_southern_women,
-                                   seq_len(igraph::vcount(ison_southern_women)))))
+                                   seq_len(net_nodes(ison_southern_women)))))
 })
 
 test_that("multilevel works", {
