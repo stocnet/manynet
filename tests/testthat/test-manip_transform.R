@@ -420,10 +420,14 @@ test_that("binary-only measures dichotomise valued networks", {
 })
 
 test_that("every projection measure works across classes", {
+  # a `to_*()` function returns the class it was given, so the fixture's own
+  # class is what each projection of it should come back as
   for (s in c("match", "overlap", "crossmin", "bonacich", "covariance")) {
-    expect_s3_class(to_mode1(ison_southern_women, s), "tbl_graph")
+    expect_s3_class(to_mode1(ison_southern_women, s), class(ison_southern_women)[1])
     expect_true(is.matrix(to_mode1(sw_mat, s)))
-    expect_s3_class(to_mode2(ison_southern_women, s), "tbl_graph")
+    expect_s3_class(to_mode2(ison_southern_women, s), class(ison_southern_women)[1])
+    expect_s3_class(to_mode1(as_tidygraph(ison_southern_women), s), "tbl_graph")
+    expect_s3_class(to_mode2(as_tidygraph(ison_southern_women), s), "tbl_graph")
   }
 })
 

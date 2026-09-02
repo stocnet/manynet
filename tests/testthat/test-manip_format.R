@@ -75,11 +75,14 @@ test_that("to_reciprocated works",{
 
 test_that("to_onemode works",{
   expect_false(is_twomode(to_onemode(ison_southern_women)))
-  expect_equal(c(to_onemode(ison_southern_women))[3],
-               c(igraph::delete_vertex_attr(ison_southern_women, "type"))[3])
+  # 'type' is how an igraph marks the two modes, so the comparison is made in
+  # that class rather than on whichever class the fixture happens to be
+  sw_ig <- as_igraph(ison_southern_women)
+  expect_equal(c(to_onemode(sw_ig))[3],
+               c(igraph::delete_vertex_attr(sw_ig, "type"))[3])
   expect_equal(as_matrix(to_onemode(as_tidygraph(ison_southern_women))),
                as_matrix(as_tidygraph(
-                 igraph::delete_vertex_attr(ison_southern_women, "type"))))
+                 igraph::delete_vertex_attr(sw_ig, "type"))))
 })
 
 test_that("to_unsigned keeps the ties of the sign it is asked for", {
