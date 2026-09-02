@@ -1,3 +1,10 @@
+# manynet 2.4.0
+
+## Data
+
+- Improved `ison_southern_women` into a 'stocnet', which holds more of what it
+  knows about itself: how it was collected, where, when, and by what boundary
+
 # manynet 2.3.3
 
 ## Package
