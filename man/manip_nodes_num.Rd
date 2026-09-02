@@ -78,7 +78,7 @@ arrange_nodes                      *                                  *
 bind_nodes                         *                                  *
 delete_incomplete                  *                                  *
 delete_isolates            *       *      *    *      *       *       *
-delete_nodes                       *      *                   *        
+delete_nodes                       *      *                   *       *
 filter_nodes                       *                                  *
                   tbl_graph
 add_nodes                 *
