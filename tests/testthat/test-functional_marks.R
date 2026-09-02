@@ -9,11 +9,12 @@ is_funs <- setdiff(alive_functions("^is_"), "is_manynet")
 
 # Which is_*() functions the twomode fixture, ison_southern_women, satisfies.
 # A two-mode network of women's attendance at events is labelled, attributed,
-# connected, uniplex, and held as a graph, and is none of the other things a
-# mark names. Matching on the name rather than listing the functions keeps a
-# newly added mark covered without an entry here.
+# connected, uniplex, and held as a graph. Each event enters the network on the
+# date it is held, which the changes record, so it is also changing, and it is
+# none of the other things a mark names. Matching on the name rather than
+# listing the functions keeps a newly added mark covered without an entry here.
 .twomode_marks <- paste0("twomode|attributed|igraph|connected|labelled|",
-                         "(?<!hyper)graph|manynet|uniplex")
+                         "(?<!hyper)graph|manynet|uniplex|changing")
 
 for (fn in is_funs) {
   f <- get(fn, envir = asNamespace("manynet"))
