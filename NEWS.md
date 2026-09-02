@@ -12,14 +12,22 @@
 - Improved `describe_nodes()` on networks of three or more modes (closed #174)
 - Fixed `keep_nodes()` to drop and reindex `$missings` (closed #173)
   - `reserved_cols()` now names every out-of-range id, instead of erroring
-- Improved `validate_stocnet()` on names it reserves but does not rename
+- Improved `validate_stocnet()` to read a node 'id' as an id and not a label
+- Improved `validate_stocnet()` to read a tie 'date' as another name for a time
 
 ## Coercion
 
 - Fixed `as_igraph.stocnet()` on multimodal and multilevel networks (closed #170)
 
+## Manipulating
+
+- Added `delete_nodes.stocnet()`, which reindexes every component it keeps
+  - Deleting nodes used to leave the changes naming nodes that were gone
+
 ## Modifying
 
+- Added `to_mode1.stocnet()` and `to_mode2.stocnet()`, which prune the changes
+  - A projection discards a mode, so a change about it describes no node
 - Added `keep = "both"` to `to_unsigned()`, which keeps every tie but not its sign
 - Fixed `to_unsigned.data.frame()` erroring on a signed edgelist
   - now drops the ties of the other sign, as the other methods do
@@ -37,6 +45,12 @@
 
 - Fixed `mode_nodes()` to count the nodes in each of three or more modes
 - Fixed `net_modes.igraph()` to count the levels an igraph 'lvl' attribute records
+
+## Data
+
+- Improved `ison_southern_women` to record when each of its events is held
+  - `is_changing()` now marks it TRUE, as each event enters on its own date
+  - The dates move from a tie attribute to the changes, where they describe the event
 
 # manynet 2.3.1
 
