@@ -46,13 +46,13 @@ validate_ties <- function(.data){
   # Note that 'begin' and 'end' are not among the names for a time here.
   # These mark the span over which a tie is present, which `is_dynamic()`
   # reads as such, rather than a time that is named some other way.
-  # Note that a 'date' is not among the names for a time here, for the reason
-  # `is_longitudinal()` gives: it reads a moment under 'time', 'wave', or
-  # 'panel' and not under 'date', so a network of dated events, such as
-  # `ison_southern_women`, records those dates as the attribute they are.
+  # A 'date' is among the names for a time because a moment is a moment however
+  # it is written. How a moment relates to the one before it is a separate
+  # question, which `info$update` answers, so naming a column 'time' does not
+  # by itself make a network a panel. See `.time_rule()`.
   reserved_cols(.data, "ties", "time",
                 class = c("character","numeric","integer","mdate","Date","POSIXct","POSIXlt"),
-                aka = c("wave", "period", "panel"))
+                aka = c("wave", "period", "panel", "date"))
   reserved_cols(.data, "ties", "layer", "character",
            aka = c("type", "plex", "tie"))
   invisible(.data)
