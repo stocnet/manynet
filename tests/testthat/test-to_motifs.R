@@ -132,7 +132,9 @@ test_that("to_motifs() returns the bmotif bipartite motifs up to four nodes", {
 })
 
 test_that("to_motifs() does not (yet) return signed two-mode motifs", {
-  expect_null(to_motifs(c(4, 6), signed = TRUE))
+  # the guard aborts whatever the verbosity, so that the code it guards does
+  # not run on and return something wrong instead
+  expect_error(to_motifs(c(4, 6), signed = TRUE), "two-mode")
 })
 
 # Signed motifs --------------------------------------------------------------

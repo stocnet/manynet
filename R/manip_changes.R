@@ -130,7 +130,8 @@ bind_changes.igraph <- function(.data, changes, var, ...){
                                                       net_nodes(out),
                                                       fill = TRUE))
       
-    } else snet_unavailable()
+    } else snet_unavailable("A composition table must name its columns",
+                            "{.val node}, {.val begin}, and {.val end}.")
     
     changes <- stats::reshape(changes,
                               varying = colnames(changes)[-1],
@@ -181,7 +182,8 @@ bind_changes.igraph <- function(.data, changes, var, ...){
       first <- changes[changes[,1] == min(changes[,1]),]
       starts[first[,2]] <- first[,4]
       starts[is.na(starts) & changes[changes$var == "active" & changes$value == TRUE & changes$wave > min(changes$wave),2]] <- FALSE
-    } else snet_unavailable()
+    } else snet_unavailable("Inferring which nodes start active is not yet",
+                            "available for this changelog.")
     out <- .data |> mutate_nodes(active = starts)
   }
   out

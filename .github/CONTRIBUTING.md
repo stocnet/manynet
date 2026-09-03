@@ -110,7 +110,13 @@ they need.
 
 ## Style
 
-In terms of style, we are aiming for pleasant predictability in terms of user experience.
+In terms of style, we are aiming for:
+
+- "declarative simplicity". Functions should not have many arguments,
+as this requires that the user read the documentation carefully to understand
+what all of the options imply.
+Functions should be named after what they do, not their (often insider) reference to their progenitor.
+- "pleasant predictability" in terms of user experience.
 To that end, we have a regular syntax that users can rely on producing expected effects.
 Functions in the same family (`as_*()`, `is_*()`, `create_*()`, etc.) should share
 argument order and naming, so that behaviour is guessable across the family.
@@ -361,6 +367,12 @@ Start each bullet with a verb matching the change type:
 - `Split ...` — one function or file divided into several
 
 Any of these verbs can also lead a sub-bullet.
+
+Name a function by the generic, e.g. `net_modes()`, where the change reaches
+every class it dispatches on.
+Where it reaches only one method, spell that method out in full,
+e.g. `net_modes.igraph()`,
+so that a reader knows which classes the change applies to.
 
 Keep every bullet to one line of fewer than 81 characters ideally (a few more or less is fine).
 If a bullet wraps, it holds too much:

@@ -409,13 +409,9 @@ test_that("binary-only measures dichotomise valued networks", {
   set.seed(1234)
   valued <- sw_mat
   valued[valued == 1] <- sample(1:3, sum(valued == 1), replace = TRUE)
-  # snet_warn() emits a cli alert, which is a message rather than a warning,
-  # and cli alerts are silenced unless manynet is set to be verbose
-  op <- options(snet_verbosity = "verbose")
-  on.exit(options(op), add = TRUE)
-  expect_message(to_mode1(valued, "jaccard"), "binary")
-  # dichotomising is what the message says it does
-  expect_equal(suppressMessages(to_mode1(valued, "jaccard")),
+  expect_warning(to_mode1(valued, "jaccard"), "binary")
+  # dichotomising is what the warning says it does
+  expect_equal(suppressWarnings(to_mode1(valued, "jaccard")),
                to_mode1((valued > 0) * 1, "jaccard"))
   # whereas a measure defined for valued data uses the values
   expect_silent(to_mode1(valued, "crossmin"))
@@ -424,10 +420,14 @@ test_that("binary-only measures dichotomise valued networks", {
 })
 
 test_that("every projection measure works across classes", {
+  # a `to_*()` function returns the class it was given, so the fixture's own
+  # class is what each projection of it should come back as
   for (s in c("match", "overlap", "crossmin", "bonacich", "covariance")) {
-    expect_s3_class(to_mode1(ison_southern_women, s), "tbl_graph")
+    expect_s3_class(to_mode1(ison_southern_women, s), class(ison_southern_women)[1])
     expect_true(is.matrix(to_mode1(sw_mat, s)))
-    expect_s3_class(to_mode2(ison_southern_women, s), "tbl_graph")
+    expect_s3_class(to_mode2(ison_southern_women, s), class(ison_southern_women)[1])
+    expect_s3_class(to_mode1(as_tidygraph(ison_southern_women), s), "tbl_graph")
+    expect_s3_class(to_mode2(as_tidygraph(ison_southern_women), s), "tbl_graph")
   }
 })
 
@@ -595,10 +595,8 @@ test_that("to_normalised leaves a node with nothing to scale against", {
   expect_true(all(is.finite(out)))
   expect_true(all(is.finite(to_normalised(norm_mat, rule = "max",
                                           across = "rows"))))
-  options(snet_verbosity = "verbose")
-  expect_message(to_normalised(norm_mat, rule = "sum", across = "rows"),
+  expect_warning(to_normalised(norm_mat, rule = "sum", across = "rows"),
                  "no value to be scaled against")
-  options(snet_verbosity = "quiet")
 })
 
 test_that("to_normalised returns a directed network where it must", {
@@ -752,16 +750,14 @@ test_that("the default filter retains something where disparity cannot", {
 
 test_that("to_backbone reports what would otherwise pass unnoticed", {
   # `snet_warn()` is silent at the default verbosity, so it is raised here
-  before <- options(snet_verbosity = "verbose")
-  on.exit(options(before), add = TRUE)
   # every filter builds its null model from the ties as the network holds
   # them, so a tie restated at each wave is tested once per wave
   repeated <- to_uniplex(ison_monks, layer = "like")
   expect_true(any(grepl("more than once",
-                        capture_messages(tie_is_backbone(repeated)))))
+                        capture_warnings(tie_is_backbone(repeated)))))
   expect_false(any(grepl("more than once",
-                         capture_messages(tie_is_backbone(ison_networkers)))))
+                         capture_warnings(tie_is_backbone(ison_networkers)))))
   # a threshold that deletes every tie is more likely a mismatch than a finding
   expect_true(any(grepl("retains no tie",
-    capture_messages(to_backbone(ison_karateka, filter = "disparity")))))
+    capture_warnings(to_backbone(ison_karateka, filter = "disparity")))))
 })

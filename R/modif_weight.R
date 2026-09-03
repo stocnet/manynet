@@ -5,8 +5,9 @@
 #' 
 #'   - `to_unweighted()` reformats weighted network data to unweighted network 
 #'   data, with all tie weights removed.
-#'   - `to_unsigned()` reformats signed network data to unsigned network data
-#'   keeping just the "positive" or "negative" ties.
+#'   - `to_unsigned()` reformats signed network data to unsigned network data,
+#'   keeping just the "positive" or the "negative" ties, or "both",
+#'   which keeps every tie but replaces its sign with its magnitude.
 #'   - `to_normalised()` rescales tie weights relative to the other ties of the
 #'   same node, so that a value reads as a share rather than a count.
 #' 
@@ -33,20 +34,27 @@ NULL
 
 #' @rdname modif_weight
 #' @param keep In the case of a signed network, whether to retain
-#'   the "positive" or "negative" ties.
+#'   the "positive" or the "negative" ties, or "both",
+#'   which retains every tie but replaces its sign with its magnitude.
 #' @importFrom igraph delete_edges E delete_edge_attr
+#' @examples
+#' marvel <- to_uniplex(fict_marvel, "relationship")
+#' to_unsigned(marvel, "positive")
+#' to_unsigned(marvel, "both")
 #' @export
 to_unsigned <- function(.data, 
-                        keep = c("positive", "negative")) UseMethod("to_unsigned")
+                        keep = c("positive", "negative",
+                                 "both")) UseMethod("to_unsigned")
 
 #' @export
-to_unsigned.default <- function(.data, keep = c("positive", "negative")){
+to_unsigned.default <- function(.data, keep = c("positive", "negative",
+                                                "both")){
   as_input(.data, to_unsigned, keep = keep)
 }
 
 #' @export
 to_unsigned.matrix <- function(.data, 
-                               keep = c("positive", "negative")){
+                               keep = c("positive", "negative", "both")){
   keep <- match.arg(keep)
   out <- .data
   if(keep == "positive"){
@@ -54,66 +62,82 @@ to_unsigned.matrix <- function(.data,
   } else if (keep == "negative"){
     out[out > 0] <- 0
     out <- abs(out)
-  } else snet_abort("Indicate whether 'positive' or 'negative' ties should be kept.")
+  } else out <- abs(out)
   out
 }
 
 #' @export
 to_unsigned.data.frame <- function(.data, 
-                                   keep = c("positive", "negative")){
+                                   keep = c("positive", "negative", "both")){
+  if(!is_signed(.data)) return(.data)
   keep <- match.arg(keep)
-  out <- .data
-  if(is_signed(.data)){
-    if(keep == "positive"){
-      out$sign[out$sign < 0] <- 0
-    } else if (keep == "negative"){
-      out$sign[out$sign > 0] <- 0
-      out$sign <- out$sign(out)
-    } else snet_abort("Indicate whether 'positive' or 'negative' ties should be kept.")
-  }
+  # signs may be held either in a 'sign' column or as negative weights.
+  # The ties of the other sign are dropped rather than zeroed, so that an
+  # edgelist reads as the other methods' networks do.
+  # a tibble warns where `$` names a column it does not have, so `[[` is used
+  signs <- if(!is.null(.data[["sign"]])) sign(.data[["sign"]]) else
+    sign(.data[["weight"]])
+  out <- .data[switch(keep,
+                      positive = signs >= 0,
+                      negative = signs <= 0,
+                      both = rep(TRUE, length(signs))), , drop = FALSE]
+  rownames(out) <- NULL
+  out$sign <- NULL
+  # the weights that remain carry the magnitude of the relation, not its
+  # direction, so an unsigned network keeps them positive
+  if(!is.null(out[["weight"]])) out$weight <- abs(out[["weight"]])
   out
 }
 
 #' @export
 to_unsigned.tbl_graph <- function(.data, 
-                                  keep = c("positive", "negative")){
+                                  keep = c("positive", "negative", "both")){
   keep <- match.arg(keep)
   out <- to_unsigned(as_igraph(.data), keep = keep)
-  dropped <- if(keep == "positive") "negative ties" else "positive ties"
+  dropped <- switch(keep, positive = "negative ties",
+                    negative = "positive ties", both = "no ties")
+  # 'both' excludes no tie, so this records nothing. Taking the magnitude of a
+  # weight is not an exclusion, and none of the transformation items names it,
+  # so it goes unrecorded until one does.
   as_tidygraph(out) |> .record_exclusion(.data, dropped, "ties")
 }
 
 #' @export
 to_unsigned.stocnet <- function(.data,
-                                keep = c("positive", "negative")){
+                                keep = c("positive", "negative", "both")){
   if(!is_signed(.data)) return(.data)
   keep <- match.arg(keep)
   # signs may be held either in a 'sign' column or as negative weights.
   # The ties to drop are named rather than the ties to keep, so that a tie
   # with no sign is kept, as it is in the igraph method.
   signs <- as.numeric(tie_signs(.data))
-  dropped <- which(if(keep == "positive") signs < 0 else signs > 0)
+  dropped <- switch(keep, positive = which(signs < 0),
+                    negative = which(signs > 0), both = integer(0))
   out <- keep_ties(.data, setdiff(seq_len(nrow(.data$ties)), dropped))
   out$ties$sign <- NULL
   # the weights that remain carry the magnitude of the relation, not its
   # direction, so an unsigned network keeps them positive
   if(!is.null(out$ties$weight)) out$ties$weight <- abs(out$ties$weight)
-  dropped <- if(keep == "positive") "negative ties" else "positive ties"
+  dropped <- switch(keep, positive = "negative ties",
+                    negative = "positive ties", both = "no ties")
+  # 'both' excludes no tie, so this records nothing. Taking the magnitude of a
+  # weight is not an exclusion, and none of the transformation items names it,
+  # so it goes unrecorded until one does.
   .record_exclusion(out, .data, dropped, "ties")
 }
 
 #' @export
 to_unsigned.igraph <- function(.data,
-                               keep = c("positive", "negative")){
+                               keep = c("positive", "negative", "both")){
   if (is_signed(.data)) {
     keep <- match.arg(keep)
     # signs may be held either in a 'sign' attribute or as negative weights
     signs <- as.numeric(tie_signs(.data))
-    if (keep == "positive") {
-      out <- igraph::delete_edges(.data, which(signs < 0))
-    } else {
-      out <- igraph::delete_edges(.data, which(signs > 0))
-    }
+    out <- if (keep == "positive") {
+      igraph::delete_edges(.data, which(signs < 0))
+    } else if (keep == "negative") {
+      igraph::delete_edges(.data, which(signs > 0))
+    } else .data
     if ("sign" %in% igraph::edge_attr_names(out))
       out <- igraph::delete_edge_attr(out, "sign")
     if ("weight" %in% igraph::edge_attr_names(out)) {
@@ -130,8 +154,9 @@ to_unsigned.igraph <- function(.data,
 
 #' @export
 to_unsigned.network <- function(.data,
-                                keep = c("positive", "negative")){
-  as_network(to_unsigned(as_igraph(.data)))
+                                keep = c("positive", "negative", "both")){
+  keep <- match.arg(keep)
+  as_network(to_unsigned(as_igraph(.data), keep = keep))
 }
 
 #' @rdname modif_weight

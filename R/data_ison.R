@@ -725,8 +725,13 @@
 #'   By convention, the nodes are named by the women's first names 
 #'   and the code numbers of the events,
 #'   but the women's surnames and titles (Miss, Mrs.) are recorded here too.
-#'   The events' dates are recorded in place of the Surname,
-#'   and these dates are also offered as a tie attribute.
+#'   The events' dates are recorded in place of the Surname.
+#'   A date describes the event and not the attendance,
+#'   so each event enters the network on the date it is held,
+#'   which the changes component records.
+#'   `is_changing()` therefore marks this network TRUE,
+#'   and `to_time()` returns the events held up to a given moment,
+#'   without the women who attended no event by then.
 #' @docType data
 #' @keywords datasets
 #' @name ison_southern_women

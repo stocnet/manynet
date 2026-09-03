@@ -46,8 +46,8 @@ net_dims(.data)
 \verb{net_*()} functions always relate to the overall graph or network,
 usually returning a scalar.
 \code{mode_nodes()} returns an integer of the number of nodes in a one-mode network,
-or two integers representing the number of nodes in each nodeset
-in the case of a two-mode network.
+or one integer per mode (in \code{mode_names()} order) in the case of a
+two-mode, three-mode, or other multimodal network.
 \code{layer_ties()} returns an integer of the number of ties in a single-layer
 network, or one integer per layer (in \code{layer_names()} order)
 in the case of a multiplex network.

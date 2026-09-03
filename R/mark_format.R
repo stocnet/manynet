@@ -121,7 +121,13 @@ is_multilevel.igraph <- function(.data) {
   # network without any ties is neither, and is returned early because
   # `tie_is_twomode()` cannot name an empty measure.
   if (net_ties(.data) == 0) return(FALSE)
-  between <- tie_is_twomode(.data)
+  # `tie_is_twomode()` would name its result through `make_tie_mark()`, which
+  # asks `is_directed()`, which asks this function: the same loop that
+  # `node_is_mode()` notes. The modes of the two ends of each tie are read
+  # directly instead, as `is_multilevel.stocnet()` reads them.
+  modes <- igraph::vertex_attr(.data, "type")
+  el <- igraph::as_edgelist(.data, names = FALSE)
+  between <- modes[el[, 1]] != modes[el[, 2]]
   any(between) && any(!between)
 }
 
@@ -377,19 +383,27 @@ is_directed.data.frame <- function(.data) {
       .infer_net_reciprocity(.data) == 1)
 }
 
+# A single bipartite relation runs between the modes and has no direction to
+# report, but a multilevel network also ties within a level, and those ties can
+# be directed. Such a network is therefore exempt from the two-mode rule, and
+# is marked by whatever its underlying object or its info records.
+.twomode_undirected <- function(.data) {
+  is_twomode(.data) && !is_multilevel(.data)
+}
+
 #' @export
 is_directed.igraph <- function(.data) {
-  if(is_twomode(.data)) FALSE else igraph::is_directed(.data)
+  if(.twomode_undirected(.data)) FALSE else igraph::is_directed(.data)
 }
 
 #' @export
 is_directed.stocnet <- function(.data) {
-  if(is_twomode(.data)) FALSE else any(.data$info$directed)
+  if(.twomode_undirected(.data)) FALSE else any(.data$info$directed)
 }
 
 #' @export
 is_directed.tbl_graph <- function(.data) {
-  if(is_twomode(.data)) FALSE else igraph::is_directed(.data)
+  if(.twomode_undirected(.data)) FALSE else igraph::is_directed(.data)
 }
 
 #' @export

@@ -84,3 +84,46 @@ test_that("is_longitudinal does not mark a network whose ties carry no moment", 
   expect_true(is_longitudinal(ison_classmates))
   expect_true(is_longitudinal(fict_starwars))
 })
+
+# A network of interstate trade and of state membership in intergovernmental
+# organisations: two modes, a directed within-level layer, an undirected
+# between-level one. See #170 and #171.
+trade_igos <- function(){
+  make_stocnet(
+    info = list(modes = c("states", "IGOs"),
+                layers = c("trade", "membership"),
+                directed = c(trade = TRUE, membership = FALSE)),
+    nodes = tibble::tibble(label = c("a", "b", "x"),
+                           mode = c("states", "states", "IGOs")),
+    ties = tibble::tibble(from = c(1L, 2L, 1L), to = c(2L, 1L, 3L),
+                          weight = c(5, 9, 1),
+                          layer = c("trade", "trade", "membership"))
+  )
+}
+
+test_that("is_directed marks a multilevel network by its layers", {
+  net <- trade_igos()
+  # two modes, but tied within a level as well as between
+  expect_true(is_twomode(net))
+  expect_true(is_multilevel(net))
+  expect_true(is_directed(net))
+  # and the same once coerced
+  expect_true(is_directed(as_igraph(net)))
+  expect_true(is_directed(as_tidygraph(net)))
+  # a network tied only between its modes has no direction to report
+  expect_false(is_directed(ison_southern_women))
+  expect_false(is_directed(as_igraph(ison_southern_women)))
+})
+
+test_that("layer_is_directed reports each layer of a mixed network", {
+  net <- trade_igos()
+  expect_equal(layer_is_directed(net),
+               c(trade = TRUE, membership = FALSE))
+  expect_equal(layer_is_directed(as_igraph(net)),
+               c(trade = TRUE, membership = FALSE))
+  # a single layer can be asked about on its own
+  expect_true(layer_is_directed(net, "trade"))
+  expect_false(layer_is_directed(net, "membership"))
+  # where a network records nothing per layer, it reports its own direction
+  expect_equal(unname(layer_is_directed(ison_adolescents)), FALSE)
+})

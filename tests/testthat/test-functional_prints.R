@@ -48,6 +48,29 @@ test_that("print.stocnet() prints stocnet objects", {
   expect_no_error(expect_prints(as_stocnet(ison_southern_women), "stocnet"))
 })
 
+test_that("describe_nodes() names every mode of a three-mode network", {
+  # A 'stocnet' holds its modes in 'mode', which can name three or more,
+  # and each of them is counted and named, see #174.
+  three <- as_stocnet(fict_marvel)
+  three$nodes$mode[1:5] <- "third"
+  three$info$modes <- NULL
+  expect_length(as.numeric(mode_nodes(three)), 3)
+  expect_equal(sum(as.numeric(mode_nodes(three))),
+               as.numeric(net_nodes(three)))
+  desc <- describe_nodes(three)
+  for (nm in mode_names(three))
+    expect_match(desc, nm)
+  # An igraph records more than two modes in 'lvl' rather than in 'type'.
+  levelled <- to_multilevel(as_igraph(fict_marvel))
+  levelled <- igraph::set_vertex_attr(levelled, "lvl",
+                                      index = 1:5, value = 3)
+  levelled <- igraph::set_graph_attr(levelled, "modes",
+                                     c("hero", "team", "third"))
+  expect_equal(as.numeric(net_modes(levelled)), 3)
+  expect_length(as.numeric(mode_nodes(levelled)), 3)
+  expect_match(describe_nodes(levelled), "third")
+})
+
 test_that("describe_*() helpers return informative strings", {
   for (d in list(ison_adolescents, ison_southern_women, ison_algebra,
                  fict_starwars)) {

@@ -91,8 +91,16 @@ describe_network <- function(.data) {
 describe_nodes <- function(.data){
   nd <- mode_nodes(.data)
   nn <- mode_names(.data)
-  if(is.null(nn)) nn <- "nodes"
-  nn <- ifelse(nd==1, singularize(nn), pluralize(nn))
+  # A network that names its modes gives one name for each count. Where it
+  # names fewer or more than it counts, no name can be matched to a count
+  # with confidence, so every mode is described by the general word instead.
+  if(is.null(nn) || length(nn) != length(nd)) nn <- rep("nodes", length(nd))
+  # `ifelse()` returns as many values as its first argument holds, so it
+  # would report only the first name where there are three or more modes.
+  nn <- vapply(seq_along(nd),
+               function(i) if(nd[i] == 1) singularize(nn[i]) else
+                 pluralize(nn[i]),
+               character(1))
   node_name <- paste(nd, nn)
   phrase(node_name)
 }

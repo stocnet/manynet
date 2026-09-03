@@ -4,17 +4,36 @@
 #' @description
 #'   These functions wrap `{cli}` functions and elements
 #'   to build an attractive command line interface (CLI).
+#'   They divide into those that change what a function does
+#'   and those that only report what it did.
 #'   
-#'   - `snet_info()` for general information messages.
-#'   - `snet_minor_info()` for minor information messages.
-#'   - `snet_warn()` for warning messages.
-#'   - `snet_abort()` for error messages.
-#'   - `snet_success()` for success messages.
-#'   - `snet_prompt()` for prompts to the user.
-#'   - `snet_unavailable()` for features that are not yet available.
+#'   A call that changes control flow always fires,
+#'   whatever the verbosity, because silencing it would let the code it guards
+#'   run on and return a wrong answer instead of an explanation:
 #'   
-#'   If you wish to receive fewer messages in the console,
-#'   run `options(snet_verbosity = 'quiet')`.
+#'   - `snet_abort()` for an error the user has to fix.
+#'   - `snet_unavailable()` for a feature that is not yet available.
+#'   - `snet_warn()` for a result the user should not trust without reading,
+#'   such as a value that is dropped or a name that does not match.
+#'   
+#'   A call that only reports is silenced under the default verbosity:
+#'   
+#'   - `snet_info()` for what a function chose on the user's behalf.
+#'   - `snet_success()` for the completion of a long task.
+#'   - `snet_minor_info()` for detail that is useful only while debugging.
+#'   - `snet_progress_step()` and the other `snet_progress_*()` functions
+#'   for a progress bar.
+#'   
+#'   `snet_prompt()` asks the user something, so it always shows.
+#' @section Verbosity:
+#'   The `snet_verbosity` option takes three levels:
+#'   
+#'   - `'quiet'`, the default, reports nothing that is not an error,
+#'   a warning, or a prompt.
+#'   - `'normal'` adds `snet_info()` and `snet_success()`.
+#'   - `'verbose'` adds `snet_minor_info()` and the progress bars.
+#'   
+#'   Set one with, for example, `options(snet_verbosity = 'verbose')`.
 #' @param ... One or more character strings.
 #'   For most of these functions, if multiple strings are passed these will be
 #'   pasted together.
@@ -23,25 +42,37 @@
 #' @name interface
 NULL
 
+# The three verbosity levels, in order, so that a level can be compared with
+# the level a message needs. An unrecognised value reads as 'normal', which is
+# what every value other than 'quiet' meant before the levels were named.
+.snet_levels <- c("quiet", "normal", "verbose")
+
+.snet_verbose <- function(level = "normal"){
+  set <- match(getOption("snet_verbosity", default = "quiet"), .snet_levels)
+  if(is.na(set)) set <- 2L
+  set >= match(level, .snet_levels)
+}
+
 #' @rdname interface
 #' @export
 snet_info <- function(..., .envir = parent.frame()){
-  if(getOption("snet_verbosity", default = "quiet")!="quiet")
+  if(.snet_verbose("normal"))
     cli::cli_alert_info(paste(...), .envir = .envir)
 }
 
 #' @rdname interface
 #' @export
 snet_minor_info <- function(..., .envir = parent.frame()){
-  if(getOption("snet_verbosity", default = "quiet")!="quiet")
+  if(.snet_verbose("verbose"))
     cli::cli_alert_info(cli::col_grey(paste(...)), .envir = .envir)
 }
 
 #' @rdname interface
 #' @export
 snet_warn <- function(..., .envir = parent.frame()){
-  if(getOption("snet_verbosity", default = "quiet")!="quiet")
-    cli::cli_alert_warning(paste(...), .envir = .envir)
+  # A warning tells the user not to trust a result, so it raises a condition
+  # they can catch or escalate, and it is not silenced by the verbosity.
+  cli::cli_warn(paste(...), .envir = .envir)
 }
 
 #' @rdname interface
@@ -54,27 +85,30 @@ snet_abort <- function(..., .envir = parent.frame()){
 #' @rdname interface
 #' @export
 snet_success <- function(..., .envir = parent.frame()){
-  if(getOption("snet_verbosity", default = "quiet")!="quiet")
+  if(.snet_verbose("normal"))
     cli::cli_alert_success(paste(...), .envir = .envir)
 }
 
 #' @rdname interface
 #' @export
 snet_prompt <- function(..., .envir = parent.frame()){
-  # if(getOption("snet_verbosity", default = "quiet")!="quiet")
-    cli::cli_text(cli::style_italic(paste(...)), 
-                   .envir = .envir)
+  cli::cli_text(cli::style_italic(paste(...)), 
+                 .envir = .envir)
 }
 
 #' @rdname interface
 #' @export
 snet_unavailable <- function(..., .envir = parent.frame()){
-  if(getOption("snet_verbosity", default = "quiet")!="quiet")
-    cli::cli_abort(paste(..., 
-                         "If you are interested in this feature,",
-                         "please vote for it or raise it as an issue at", 
-                         "{.url https://github.com/stocnet/manynet/issues}."), 
-                   .envir = .envir)
+  # The guard has to abort whatever the verbosity, or the code it guards runs
+  # on and returns a wrong answer. Only the invitation depends on the level.
+  msg <- paste(...)
+  if(!nzchar(msg)) msg <- "That is not yet available."
+  if(.snet_verbose("normal"))
+    msg <- paste(msg,
+                 "If you are interested in this feature,",
+                 "please vote for it or raise it as an issue at", 
+                 "{.url https://github.com/stocnet/manynet/issues}.")
+  cli::cli_abort(msg, .envir = .envir)
 }
 
 # Progress ####
@@ -89,8 +123,9 @@ snet_unavailable <- function(..., .envir = parent.frame()){
 #'   - `snet_progress_seq()` for progress along a sequence.
 #'   - `snet_progress_nodes()` for progress along the nodes of a network.
 #'   
-#'   If you wish to receive fewer messages in the console,
-#'   run `options(snet_verbosity = 'quiet')`.
+#'   A progress bar reports what a function did and not what it decided,
+#'   so it shows only where `options(snet_verbosity = 'verbose')`.
+#'   See the verbosity section of [interface].
 #' @inheritParams interface
 #' @template param_data
 #' @name progress
@@ -99,21 +134,21 @@ NULL
 #' @rdname progress
 #' @export
 snet_progress_step <- function(..., .envir = parent.frame()){
-  if(getOption("snet_verbosity", default = "quiet")!="quiet")
+  if(.snet_verbose("verbose"))
     cli::cli_progress_step(..., .envir = .envir)
 }
 
 #' @rdname progress
 #' @export
 snet_progress_along <- function(..., .envir = parent.frame()){
-  if(getOption("snet_verbosity", default = "quiet")!="quiet")
+  if(.snet_verbose("verbose"))
     cli::cli_progress_along(..., .envir = .envir)
 }
 
 #' @rdname progress
 #' @export
 snet_progress_seq <- function(..., .envir = parent.frame()){
-  if(getOption("snet_verbosity", default = "quiet")!="quiet")
+  if(.snet_verbose("verbose"))
     cli::cli_progress_along(seq.int(...), .envir = .envir, 
                             total = ..., clear = TRUE)
 }
@@ -121,7 +156,7 @@ snet_progress_seq <- function(..., .envir = parent.frame()){
 #' @rdname progress
 #' @export
 snet_progress_nodes <- function(..., .envir = parent.frame()){
-  if(getOption("snet_verbosity", default = "quiet")!="quiet" && interactive()){
+  if(.snet_verbose("verbose") && interactive()){
     cli::cli_progress_along(seq.int(net_nodes(...)), .envir = .envir, 
                             total = ..., clear = TRUE)
   } else seq.int(net_nodes(...))

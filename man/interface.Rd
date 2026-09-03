@@ -36,16 +36,40 @@ pasted together.}
 \description{
 These functions wrap \code{{cli}} functions and elements
 to build an attractive command line interface (CLI).
+They divide into those that change what a function does
+and those that only report what it did.
+
+A call that changes control flow always fires,
+whatever the verbosity, because silencing it would let the code it guards
+run on and return a wrong answer instead of an explanation:
 \itemize{
-\item \code{snet_info()} for general information messages.
-\item \code{snet_minor_info()} for minor information messages.
-\item \code{snet_warn()} for warning messages.
-\item \code{snet_abort()} for error messages.
-\item \code{snet_success()} for success messages.
-\item \code{snet_prompt()} for prompts to the user.
-\item \code{snet_unavailable()} for features that are not yet available.
+\item \code{snet_abort()} for an error the user has to fix.
+\item \code{snet_unavailable()} for a feature that is not yet available.
+\item \code{snet_warn()} for a result the user should not trust without reading,
+such as a value that is dropped or a name that does not match.
 }
 
-If you wish to receive fewer messages in the console,
-run \code{options(snet_verbosity = 'quiet')}.
+A call that only reports is silenced under the default verbosity:
+\itemize{
+\item \code{snet_info()} for what a function chose on the user's behalf.
+\item \code{snet_success()} for the completion of a long task.
+\item \code{snet_minor_info()} for detail that is useful only while debugging.
+\item \code{snet_progress_step()} and the other \verb{snet_progress_*()} functions
+for a progress bar.
 }
+
+\code{snet_prompt()} asks the user something, so it always shows.
+}
+\section{Verbosity}{
+
+The \code{snet_verbosity} option takes three levels:
+\itemize{
+\item \code{'quiet'}, the default, reports nothing that is not an error,
+a warning, or a prompt.
+\item \code{'normal'} adds \code{snet_info()} and \code{snet_success()}.
+\item \code{'verbose'} adds \code{snet_minor_info()} and the progress bars.
+}
+
+Set one with, for example, \code{options(snet_verbosity = 'verbose')}.
+}
+

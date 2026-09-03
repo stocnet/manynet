@@ -6,6 +6,7 @@
 \alias{mode_names}
 \alias{net_node_attributes}
 \alias{layer_names}
+\alias{layer_is_directed}
 \alias{net_tie_attributes}
 \title{Describing network names}
 \usage{
@@ -16,6 +17,8 @@ mode_names(.data)
 net_node_attributes(.data)
 
 layer_names(.data)
+
+layer_is_directed(.data, layer = NULL)
 
 net_tie_attributes(.data)
 }
@@ -31,6 +34,11 @@ net_tie_attributes(.data)
 }}
 
 \item{prefix}{An optional string to be added before the name of the network.}
+
+\item{layer}{An optional character string naming one of the layers,
+one of those returned by \code{layer_names()}.
+Where a layer is named, a single value is returned for that layer;
+otherwise a value is returned for every layer, named by layer.}
 }
 \value{
 \verb{net_*()} functions always relate to the overall graph or network,
@@ -47,16 +55,28 @@ if they have been defined.
 \item \code{net_node_attributes()} returns a vector of nodal attributes in a network.
 \item \code{layer_names()} returns a vector of the names of the layers in a network,
 if they have been defined.
+\item \code{layer_is_directed()} returns whether each layer of a network is
+directed, named by layer.
 \item \code{net_tie_attributes()} returns a vector of tie attributes in a network.
 }
 
 These functions are also often used as helpers within other functions.
+}
+\details{
+A network can be directed in one layer and undirected in another,
+as a network of interstate trade and of state membership in
+intergovernmental organisations is.
+\code{is_directed()} marks such a network TRUE, since it holds arcs,
+and \code{layer_is_directed()} says which of its layers those arcs are in.
+Where a network records nothing about a layer,
+the network's own direction is reported for it.
 }
 \examples{
 net_name(ison_southern_women)
   mode_names(ison_algebra)
   net_node_attributes(fict_lotr)
   layer_names(ison_algebra)
+  layer_is_directed(ison_algebra)
   net_tie_attributes(ison_algebra)
 }
 \concept{attributes}

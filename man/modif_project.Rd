@@ -190,8 +190,8 @@ Below are the currently implemented S3 methods:
 \if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default igraph matrix network stocnet tbl_graph
 to_hypergraph                  *      *                      *          
 to_linegraph                   *      *                                 
-to_mode1               *       *      *      *       *                 *
-to_mode2               *       *      *      *       *                 *
+to_mode1               *       *      *      *       *       *         *
+to_mode2               *       *      *      *       *       *         *
 }\if{html}{\out{</div>}}
 }
 \section{Comparison of two-mode projection methods}{

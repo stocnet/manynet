@@ -23,8 +23,8 @@
 #' @return `net_*()` functions always relate to the overall graph or network,
 #'   usually returning a scalar.
 #'   `mode_nodes()` returns an integer of the number of nodes in a one-mode network,
-#'   or two integers representing the number of nodes in each nodeset
-#'   in the case of a two-mode network.
+#'   or one integer per mode (in `mode_names()` order) in the case of a
+#'   two-mode, three-mode, or other multimodal network.
 #'   `layer_ties()` returns an integer of the number of ties in a single-layer
 #'   network, or one integer per layer (in `layer_names()` order)
 #'   in the case of a multiplex network.
@@ -96,6 +96,11 @@ net_modes.stocnet <- function(.data){
 
 #' @export
 net_modes.igraph <- function(.data){
+  # `to_multilevel()` records the modes in a 'lvl' attribute and deletes
+  # 'type', so a network converted that way, which may hold more than two
+  # modes, is counted by its levels instead.
+  if("lvl" %in% igraph::vertex_attr_names(.data))
+    return(length(unique(igraph::vertex_attr(.data, "lvl"))))
   if(is_twomode(.data)) 2L else 1L
 }
 
@@ -276,6 +281,10 @@ mode_nodes.igraph <- function(.data){
   if(is_twomode(.data)){
     c(sum(!igraph::V(.data)$type),
       sum(igraph::V(.data)$type))
+  } else if("lvl" %in% igraph::vertex_attr_names(.data)){
+    # A 'lvl' attribute can name more than the two modes a 'type' attribute
+    # can, so each of its levels is counted here.
+    .count_modes(igraph::vertex_attr(.data, "lvl"), mode_names(.data))
   } else {
     igraph::vcount(.data)
   }
@@ -295,9 +304,26 @@ mode_nodes.network <- function(.data){
 
 #' @export
 mode_nodes.stocnet <- function(.data){
-  if(is_twomode(.data)){
-    out <- tabulate(match(.data$nodes$mode, unique(.data$nodes$mode)))
+  # A 'stocnet' holds its modes in the 'mode' variable of its nodes table,
+  # which can name three or more modes, so every mode is counted and not
+  # only the two a two-mode network holds.
+  if(net_modes(.data) > 1){
+    .count_modes(.data$nodes$mode, mode_names(.data))
   } else net_nodes(.data)
+}
+
+# The number of nodes in each mode, given the mode of each node.
+# The counts are returned in the order `mode_names()` names the modes,
+# so that each count is reported under its own name.
+.count_modes <- function(modes, nms = NULL){
+  lvls <- unique(modes)
+  # A mode recorded as a number, such as the 'lvl' attribute holds, is
+  # ordered by its value, since the names are given in that order. A mode
+  # recorded by its name is matched to the names where every name matches,
+  # and is otherwise ordered by where it first appears.
+  if(!is.character(lvls)) lvls <- sort(lvls) else
+    if(!is.null(nms) && setequal(nms, lvls)) lvls <- nms
+  as.integer(tabulate(match(modes, lvls), nbins = length(lvls)))
 }
 
 #' @rdname measure_dims
@@ -317,6 +343,8 @@ net_dims <- mode_nodes
 #'   - `net_node_attributes()` returns a vector of nodal attributes in a network.
 #'   - `layer_names()` returns a vector of the names of the layers in a network,
 #'   if they have been defined.
+#'   - `layer_is_directed()` returns whether each layer of a network is
+#'   directed, named by layer.
 #'   - `net_tie_attributes()` returns a vector of tie attributes in a network.
 #'   
 #'   These functions are also often used as helpers within other functions.
@@ -460,6 +488,53 @@ layer_names.igraph <- function(.data){
 #' @export
 layer_names.stocnet <- function(.data){
   .data$info$layers %||% unique(.data$ties[["layer"]])
+}
+
+#' @rdname member_names
+#' @param layer An optional character string naming one of the layers,
+#'   one of those returned by `layer_names()`.
+#'   Where a layer is named, a single value is returned for that layer;
+#'   otherwise a value is returned for every layer, named by layer.
+#' @details
+#'   A network can be directed in one layer and undirected in another,
+#'   as a network of interstate trade and of state membership in
+#'   intergovernmental organisations is.
+#'   `is_directed()` marks such a network TRUE, since it holds arcs,
+#'   and `layer_is_directed()` says which of its layers those arcs are in.
+#'   Where a network records nothing about a layer,
+#'   the network's own direction is reported for it.
+#' @examples
+#'   layer_is_directed(ison_algebra)
+#' @export
+layer_is_directed <- function(.data, layer = NULL) UseMethod("layer_is_directed")
+
+#' @export
+layer_is_directed.default <- function(.data, layer = NULL){
+  layer_is_directed(as_igraph(.data), layer = layer)
+}
+
+#' @export
+layer_is_directed.igraph <- function(.data, layer = NULL){
+  .layers_directed(igraph::graph_attr(.data, "directed"), .data, layer)
+}
+
+#' @export
+layer_is_directed.stocnet <- function(.data, layer = NULL){
+  .layers_directed(.data$info$directed, .data, layer)
+}
+
+# A network records the direction of each of its layers in a logical vector
+# named by layer. Where it records none, or none for the layer asked about,
+# the direction of the network as a whole is the best answer available.
+.layers_directed <- function(directed, .data, layer = NULL){
+  if(is.null(names(directed))) directed <- NULL
+  known <- function(l) if(!is.null(directed) && !is.na(l) &&
+                          l %in% names(directed))
+    unname(directed[[l]]) else is_directed(.data)
+  if(!is.null(layer)) return(vapply(layer, known, logical(1), USE.NAMES = FALSE))
+  layers <- layer_names(.data)
+  if(is.null(layers) || length(layers) == 0) return(is_directed(.data))
+  stats::setNames(vapply(layers, known, logical(1), USE.NAMES = FALSE), layers)
 }
 
 #' @rdname member_names

@@ -92,6 +92,24 @@ delete_nodes.network <- function(.data, nodes){
   as_network(igraph::delete_vertices(as_igraph(.data), v = nodes))
 }
 
+#' @export
+delete_nodes.stocnet <- function(.data, nodes){
+  # A stocnet holds its changes and its missings in tables of node indices,
+  # which the igraph route carries across unrenumbered because they travel as
+  # graph attributes. `keep_nodes()` renumbers every component together.
+  keep_nodes(.data, .nodes_kept(.data, nodes))
+}
+
+# The nodes a call names, as the indices of the nodes it leaves behind. A call
+# can name them by index, by label, or by a logical mark of which to drop.
+.nodes_kept <- function(.data, nodes){
+  all <- seq_nodes(.data)
+  dropped <- if(is.logical(nodes)) all[nodes] else
+    if(is.character(nodes)) match(nodes, node_labels(.data)) else
+      as.integer(nodes)
+  setdiff(all, dropped[!is.na(dropped)])
+}
+
 #' @rdname manip_nodes_num
 #' @importFrom tidygraph node_is_isolated
 #' @importFrom dplyr filter
@@ -269,6 +287,17 @@ keep_nodes <- function(.data, kept){
     out_changes <- .data$changes
   }
 
+  # The missings list dyads, so dropping nodes drops the dyads either of whose
+  # ends is gone, and renumbers the rest, exactly as it does for the ties.
+  if(!is.null(.data$missings) && nrow(.data$missings) > 0){
+    out_missings <- dplyr::filter(.data$missings, from %in% kept, to %in% kept) |>
+      dplyr::mutate(from = match(from, kept),
+                    to = match(to, kept))
+    if(nrow(out_missings) == 0) out_missings <- NULL
+  } else {
+    out_missings <- .data$missings
+  }
+
   # Dropping nodes can drop the last tie of a layer, and the information on
   # that layer goes with it.
   out_info <- if(!is.null(out_ties) && "layer" %in% names(out_ties)){
@@ -277,7 +306,7 @@ keep_nodes <- function(.data, kept){
   } else .data$info
 
   make_stocnet(nodes = out_nodes, ties = out_ties, changes = out_changes,
-               globals = .data$globals, missings = .data$missings, info = out_info)
+               globals = .data$globals, missings = out_missings, info = out_info)
 }
 
 #' @rdname manip_nodes_num

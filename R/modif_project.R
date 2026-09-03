@@ -177,6 +177,20 @@ to_mode1 <- function(.data, similarity = c("count", "jaccard", "rand", "pearson"
   UseMethod("to_mode1")
 }
 
+# A projection keeps one mode and discards the other, so a change recorded
+# about a node of the discarded mode describes a node the result does not have.
+# The projection keeps the nodes it retains in their original order, so the new
+# index of a kept node is its rank among them. Without this the changes still
+# name the old indices, which `validate_stocnet()` then rejects.
+.project_changes <- function(.data, kept){
+  if(is.null(.data$changes) || nrow(.data$changes) == 0) return(.data)
+  out <- .data
+  out$changes <- dplyr::filter(.data$changes, node %in% kept) |>
+    dplyr::mutate(node = match(node, kept))
+  if(nrow(out$changes) == 0) out$changes <- NULL
+  out
+}
+
 #' @export
 to_mode1.default <- function(.data, 
                              similarity = c("count", "jaccard", "rand", "pearson", "yule",
@@ -186,6 +200,22 @@ to_mode1.default <- function(.data,
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
                                  "hamming", "cosine", "spearman", "kendall")){
   as_input(.data, to_mode1, similarity = similarity)
+}
+
+#' @export
+to_mode1.stocnet <- function(.data, 
+                             similarity = c("count", "jaccard", "rand", "pearson", "yule",
+                                 "match", "overlap", "crossmin", "maxcrossmin",
+                                 "sqdiff", "covariance", "bonacich", "ochiai",
+                                 "ochiai2", "czekanowski", "sokalsneath",
+                                 "hamann", "rogerstanimoto", "euclidean", "manhattan",
+                                 "hamming", "cosine", "spearman", "kendall")){
+  similarity <- match.arg(similarity)
+  # The tidygraph method is called directly rather than through `as_input()`,
+  # which would pick this method again and recurse.
+  out <- to_mode1(as_tidygraph(.project_changes(.data, which(!node_is_mode(.data)))),
+                  similarity = similarity)
+  as_stocnet(out)
 }
 
 #' @export
@@ -290,6 +320,22 @@ to_mode2.default <- function(.data,
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
                                  "hamming", "cosine", "spearman", "kendall")){
   as_input(.data, to_mode2, similarity = similarity)
+}
+
+#' @export
+to_mode2.stocnet <- function(.data, 
+                             similarity = c("count", "jaccard", "rand", "pearson", "yule",
+                                 "match", "overlap", "crossmin", "maxcrossmin",
+                                 "sqdiff", "covariance", "bonacich", "ochiai",
+                                 "ochiai2", "czekanowski", "sokalsneath",
+                                 "hamann", "rogerstanimoto", "euclidean", "manhattan",
+                                 "hamming", "cosine", "spearman", "kendall")){
+  similarity <- match.arg(similarity)
+  # The tidygraph method is called directly rather than through `as_input()`,
+  # which would pick this method again and recurse.
+  out <- to_mode2(as_tidygraph(.project_changes(.data, which(node_is_mode(.data)))),
+                  similarity = similarity)
+  as_stocnet(out)
 }
 
 #' @export

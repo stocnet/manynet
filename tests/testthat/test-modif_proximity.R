@@ -149,15 +149,11 @@ test_that("to_proximity shares to_mode1()'s measures and conventions", {
   expect_equal(rk(to_proximity(bin, "hamming", dyad = "include")),
                rk(to_proximity(bin, "rand", dyad = "include")))
   # a valued network is dichotomised for the binary-only measures. snet_warn()
-  # emits a cli alert, which is a message rather than a warning, and cli alerts
-  # are silenced unless manynet is set to be verbose
-  op <- options(snet_verbosity = "verbose")
-  on.exit(options(op), add = TRUE)
   # both the pairwise and the vectorised path say so
-  expect_message(to_proximity(prox_mat * 2, "jaccard"), "binary")
-  expect_message(to_proximity(prox_mat * 2, "jaccard", dyad = "include"),
+  expect_warning(to_proximity(prox_mat * 2, "jaccard"), "binary")
+  expect_warning(to_proximity(prox_mat * 2, "jaccard", dyad = "include"),
                  "binary")
-  expect_equal(suppressMessages(to_proximity(prox_mat * 2, "jaccard")),
+  expect_equal(suppressWarnings(to_proximity(prox_mat * 2, "jaccard")),
                to_proximity(prox_mat, "jaccard"))
   # the result is square, symmetric, and has a zeroed diagonal
   out <- to_proximity(prox_mat, "pearson")

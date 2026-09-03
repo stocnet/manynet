@@ -306,9 +306,24 @@ as_igraph.stocnet <- function(.data, twomode = FALSE) {
     if(is_labelled(.data))
       vertices <- vertices |> dplyr::mutate(name = label) |>
         dplyr::select(name, dplyr::everything(), -label)
+    # igraph records two modes in a logical 'type' attribute, which its
+    # bipartite functions require, and three or more in the 'lvl' attribute
+    # that `to_multilevel()` writes and `as_stocnet()` maps back to 'mode'.
+    # A bare 'mode' column would survive coercion as an ordinary attribute
+    # that no reader looks for, so it is translated either way.
     if(is_twomode(.data))
       vertices <- vertices |> dplyr::mutate(type = mode == unique(mode)[2]) |>
         dplyr::select(dplyr::any_of("name"), dplyr::everything(), -mode)
+    else if(net_modes(.data) > 2){
+      # `mode_names()` is read here rather than inside `mutate()`, where dplyr
+      # masks '.data' with its own pronoun. `as_stocnet()` sorts the levels it
+      # finds and reads their names back out of info, so the level of a mode is
+      # its position in that same order.
+      lvls <- mode_names(.data) %||% unique(vertices$mode)
+      vertices <- vertices |>
+        dplyr::mutate(lvl = match(mode, lvls)) |>
+        dplyr::select(dplyr::any_of("name"), dplyr::everything(), -mode)
+    }
     if(is_labelled(.data)){
       out <- igraph::graph_from_data_frame(as_edgelist(.data),
                                            directed = directed,
@@ -330,7 +345,10 @@ as_igraph.stocnet <- function(.data, twomode = FALSE) {
     }
     
   }
-  if(is_twomode(.data))
+  # A two-mode network holds one tie per dyad, unless it also ties within a
+  # level, in which case those ties can be directed and each arc is its own
+  # row. Collapsing then points both arcs of a dyad at the same pair of nodes.
+  if(is_twomode(.data) && !is_directed(.data))
     out <- to_undirected(out)
   if(!is.null(as_infolist(.data)) && length(as_infolist(.data)) > 0)
     igraph::graph_attr(out) <- as_infolist(.data)
@@ -1863,7 +1881,8 @@ as_diffnet.diff_model <- function(.data,
       out$nodes <- node_labels(as_igraph(.data))[out$nodes]
     toa <- stats::setNames(out$t, out$nodes)
     if(is_dynamic(.data)){
-      snet_unavailable()
+      snet_unavailable("Coercing a dynamic network to a diffnet is not yet",
+                       "available.")
       # netdiffuseR::igraph_to_diffnet(graph.list = to_waves(.data))
     } else {
       graph <- as_tidygraph(.data) |> mutate(toa = as.numeric(toa)) |> as_igraph()

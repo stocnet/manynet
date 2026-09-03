@@ -10,28 +10,34 @@
 #> participation ties
 #> 
 #> -- Nodes
-#> # A tibble: 32 x 4
-#>   type  name      Surname    Title
-#>   <lgl> <chr>     <chr>      <chr>
-#> 1 FALSE Evelyn    Jefferson  Mrs  
-#> 2 FALSE Laura     Mandeville Miss 
-#> 3 FALSE Theresa   Anderson   Miss 
-#> 4 FALSE Brenda    Rogers     Miss 
-#> 5 FALSE Charlotte McDowd     Miss 
-#> 6 FALSE Frances   Anderson   Miss 
-#> # i 26 more rows
+#> # A tibble: 32 x 5
+#>   name    Surname    Title active type 
+#>   <chr>   <chr>      <chr> <lgl>  <lgl>
+#> 1 Evelyn  Jefferson  Mrs   TRUE   FALSE
+#> 2 Laura   Mandeville Miss  TRUE   FALSE
+#> 3 Theresa Anderson   Miss  TRUE   FALSE
+#> 4 Brenda  Rogers     Miss  TRUE   FALSE
+#> # i 28 more rows
+#> 
+#> -- Changes
+#> # A tibble: 14 x 4
+#>   time        node var    value
+#>   <date[1d]> <int> <chr>  <lgl>
+#> 1 1936-02-23    29 active TRUE 
+#> 2 1936-02-25    23 active TRUE 
+#> 3 1936-03-02    20 active TRUE 
+#> 4 1936-03-15    25 active TRUE 
+#> # i 10 more rows
 #> 
 #> -- Ties
-#> # A tibble: 89 x 3
-#>    from    to date      
-#>   <int> <int> <date>    
-#> 1    14    29 1936-02-23
-#> 2    15    29 1936-02-23
-#> 3    17    29 1936-02-23
-#> 4    18    29 1936-02-23
-#> 5     1    23 1936-02-25
-#> 6     2    23 1936-02-25
-#> # i 83 more rows
+#> # A tibble: 89 x 2
+#>    from    to
+#>   <int> <int>
+#> 1    14    29
+#> 2    15    29
+#> 3    17    29
+#> 4    18    29
+#> # i 85 more rows
 #> 
 }\if{html}{\out{</div>}}
 }
@@ -46,8 +52,13 @@ as reported in the \emph{Old City Herald} in 1936.
 By convention, the nodes are named by the women's first names
 and the code numbers of the events,
 but the women's surnames and titles (Miss, Mrs.) are recorded here too.
-The events' dates are recorded in place of the Surname,
-and these dates are also offered as a tie attribute.
+The events' dates are recorded in place of the Surname.
+A date describes the event and not the attendance,
+so each event enters the network on the date it is held,
+which the changes component records.
+\code{is_changing()} therefore marks this network TRUE,
+and \code{to_time()} returns the events held up to a given moment,
+without the women who attended no event by then.
 }
 \references{
 Davis, Allison, Burleigh B. Gardner, and Mary R. Gardner. 1941.
