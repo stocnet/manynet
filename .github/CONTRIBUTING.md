@@ -110,7 +110,13 @@ they need.
 
 ## Style
 
-In terms of style, we are aiming for pleasant predictability in terms of user experience.
+In terms of style, we are aiming for:
+
+- "declarative simplicity". Functions should not have many arguments,
+as this requires that the user read the documentation carefully to understand
+what all of the options imply.
+Functions should be named after what they do, not their (often insider) reference to their progenitor.
+- "pleasant predictability" in terms of user experience.
 To that end, we have a regular syntax that users can rely on producing expected effects.
 Functions in the same family (`as_*()`, `is_*()`, `create_*()`, etc.) should share
 argument order and naming, so that behaviour is guessable across the family.
