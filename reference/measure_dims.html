@@ -33,7 +33,7 @@ These functions are also often used as helpers within other functions."><meta pr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.2</span>
       </span>
     </div>
 
@@ -161,8 +161,8 @@ See the Time section of <code><a href="modif_scope.html">to_time()</a></code>.</
     <p><code>net_*()</code> functions always relate to the overall graph or network,
 usually returning a scalar.
 <code>mode_nodes()</code> returns an integer of the number of nodes in a one-mode network,
-or two integers representing the number of nodes in each nodeset
-in the case of a two-mode network.
+or one integer per mode (in <code><a href="member_names.html">mode_names()</a></code> order) in the case of a
+two-mode, three-mode, or other multimodal network.
 <code>layer_ties()</code> returns an integer of the number of ties in a single-layer
 network, or one integer per layer (in <code><a href="member_names.html">layer_names()</a></code> order)
 in the case of a multiplex network.</p>

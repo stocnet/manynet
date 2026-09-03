@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.2</span>
       </span>
     </div>
 
@@ -138,8 +138,10 @@
 </div>
 <div class="section level2">
 <h2 id="style">Style<a class="anchor" aria-label="anchor" href="#style"></a></h2>
-<p>In terms of style, we are aiming for pleasant predictability in terms of user experience. To that end, we have a regular syntax that users can rely on producing expected effects. Functions in the same family (<code>as_*()</code>, <code>is_*()</code>, <code>create_*()</code>, etc.) should share argument order and naming, so that behaviour is guessable across the family.</p>
-<div class="section level3">
+<p>In terms of style, we are aiming for:</p>
+<ul><li>“declarative simplicity”. Functions should not have many arguments, as this requires that the user read the documentation carefully to understand what all of the options imply. Functions should be named after what they do, not their (often insider) reference to their progenitor.</li>
+<li>“pleasant predictability” in terms of user experience. To that end, we have a regular syntax that users can rely on producing expected effects. Functions in the same family (<code>as_*()</code>, <code>is_*()</code>, <code>create_*()</code>, etc.) should share argument order and naming, so that behaviour is guessable across the family.</li>
+</ul><div class="section level3">
 <h3 id="common-commands">Common commands<a class="anchor" aria-label="anchor" href="#common-commands"></a></h3>
 <p>This is a standard R package developed with <code>devtools</code>/<code>roxygen2</code>. Run these from an R console with the working directory set to the package root (or via <code>Rscript -e</code>).</p>
 <ul><li>Install dependencies / load for development: <code><a href="https://devtools.r-lib.org/reference/load_all.html" class="external-link">devtools::load_all()</a></code>
@@ -287,6 +289,7 @@
 <li>
 <code>Split ...</code> — one function or file divided into several</li>
 </ul><p>Any of these verbs can also lead a sub-bullet.</p>
+<p>Name a function by the generic, e.g. <code><a href="reference/measure_dims.html">net_modes()</a></code>, where the change reaches every class it dispatches on. Where it reaches only one method, spell that method out in full, e.g. <code>net_modes.igraph()</code>, so that a reader knows which classes the change applies to.</p>
 <p>Keep every bullet to one line of fewer than 81 characters ideally (a few more or less is fine). If a bullet wraps, it holds too much: shorten it, or split it into a lead bullet and sub-bullets. Each bullet stands on its own, and states what changed, not why or how unless there is space for context. Explanation belongs in the function documentation or the vignettes.</p>
 <p>Where several bullets describe parallel changes, reuse the sentence structure, so that a reader sees the parallelism at a glance. Use one word for one thing throughout a version’s entries, rather than varying the wording for effect.</p>
 <p>If a cited GitHub issue was <strong>not</strong> authored by @jhollway, thank the author with an <code>@</code>-tag in the bullet. Cluster related changes (e.g. several fixes to the same function, or sub-points of one feature) as indented sub-bullets under a lead bullet, to improve readability. Where several changes concern one function, lead with an <code>Improved ...</code> bullet that names the function, and put the individual <code>Fixed ...</code>/<code>Added ...</code> points beneath it, so the cluster groups by function rather than by change type. Under an <code>Improved ...</code> lead bullet, do not name the function again in the sub-bullets, since the lead bullet already carries it. Sub-bullets indent by two spaces, and nest at most one level further (four spaces). A sub-bullet does not need a verb: it can state the consequence, the previous behaviour, or an example call. The more entries a version holds, the more this structure matters, so group first and only then write the bullets.</p>

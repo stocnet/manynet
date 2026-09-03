@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.2</span>
       </span>
     </div>
 
@@ -89,7 +89,73 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="2.3.1" id="manynet-231">manynet 2.3.1<a class="anchor" aria-label="anchor" href="#manynet-231"></a></h2>
+<h2 class="page-header" data-toc-text="2.3.2" id="manynet-232">manynet 2.3.2<a class="anchor" aria-label="anchor" href="#manynet-232"></a></h2>
+<div class="section level3">
+<h3 id="package-2-3-2">Package<a class="anchor" aria-label="anchor" href="#package-2-3-2"></a></h3>
+<ul><li>Added three <code>snet_verbosity</code> levels, ‘quiet’, ‘normal’, and ‘verbose’
+<ul><li>
+<code><a href="../reference/interface.html">snet_info()</a></code> and <code><a href="../reference/interface.html">snet_success()</a></code> report from ‘normal’</li>
+<li>
+<code><a href="../reference/interface.html">snet_minor_info()</a></code> and the <code>snet_progress_*()</code> functions report from ‘verbose’</li>
+</ul></li>
+<li>Improved <code><a href="../reference/interface.html">snet_warn()</a></code> and <code><a href="../reference/interface.html">snet_unavailable()</a></code> so that neither is silenced (closed <a href="https://github.com/stocnet/manynet/issues/169" class="external-link">#169</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="classes-2-3-2">Classes<a class="anchor" aria-label="anchor" href="#classes-2-3-2"></a></h3>
+<ul><li>Improved <code><a href="../reference/class_describe.html">describe_nodes()</a></code> on networks of three or more modes (closed <a href="https://github.com/stocnet/manynet/issues/174" class="external-link">#174</a>)</li>
+<li>Fixed <code>keep_nodes()</code> to drop and reindex <code>$missings</code> (closed <a href="https://github.com/stocnet/manynet/issues/173" class="external-link">#173</a>)
+<ul><li>
+<code>reserved_cols()</code> now names every out-of-range id, instead of erroring</li>
+</ul></li>
+<li>Improved <code><a href="../reference/make_stocnet.html">validate_stocnet()</a></code> to read a node ‘id’ as an id and not a label</li>
+<li>Improved <code><a href="../reference/make_stocnet.html">validate_stocnet()</a></code> to read a tie ‘date’ as another name for a time</li>
+</ul></div>
+<div class="section level3">
+<h3 id="coercion-2-3-2">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-3-2"></a></h3>
+<ul><li>Fixed <code>as_igraph.stocnet()</code> on multimodal and multilevel networks (closed <a href="https://github.com/stocnet/manynet/issues/170" class="external-link">#170</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="manipulating-2-3-2">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-2-3-2"></a></h3>
+<ul><li>Added <code>delete_nodes.stocnet()</code>, which reindexes every component it keeps
+<ul><li>Deleting nodes used to leave the changes naming nodes that were gone</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-2-3-2">Modifying<a class="anchor" aria-label="anchor" href="#modifying-2-3-2"></a></h3>
+<ul><li>Added <code>to_mode1.stocnet()</code> and <code>to_mode2.stocnet()</code>, which prune the changes
+<ul><li>A projection discards a mode, so a change about it describes no node</li>
+</ul></li>
+<li>Added <code>keep = "both"</code> to <code><a href="../reference/modif_weight.html">to_unsigned()</a></code>, which keeps every tie but not its sign</li>
+<li>Fixed <code>to_unsigned.data.frame()</code> erroring on a signed edgelist
+<ul><li>now drops the ties of the other sign, as the other methods do</li>
+<li>now reads signs held as negative weights as well as in a ‘sign’ column</li>
+</ul></li>
+<li>Fixed <code>to_unsigned.network()</code> ignoring its <code>keep</code> argument</li>
+<li>Fixed <code><a href="../reference/modif_plexity.html">to_layer()</a></code> pointing arcs at the wrong nodes (closed <a href="https://github.com/stocnet/manynet/issues/170" class="external-link">#170</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="marking-2-3-2">Marking<a class="anchor" aria-label="anchor" href="#marking-2-3-2"></a></h3>
+<ul><li>Improved <code><a href="../reference/mark_format_tie.html">is_directed()</a></code> on a network tied within a level as well as between</li>
+<li>Fixed <code>is_multilevel.igraph()</code> looping through <code><a href="../reference/measure_attributes_ties.html">tie_is_twomode()</a></code>
+</li>
+<li>Added <code><a href="../reference/member_names.html">layer_is_directed()</a></code>, reporting each layer of a network (closed <a href="https://github.com/stocnet/manynet/issues/171" class="external-link">#171</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="measuring-2-3-2">Measuring<a class="anchor" aria-label="anchor" href="#measuring-2-3-2"></a></h3>
+<ul><li>Fixed <code><a href="../reference/measure_dims.html">mode_nodes()</a></code> to count the nodes in each of three or more modes</li>
+<li>Fixed <code>net_modes.igraph()</code> to count the levels an igraph ‘lvl’ attribute records</li>
+</ul></div>
+<div class="section level3">
+<h3 id="data-2-3-2">Data<a class="anchor" aria-label="anchor" href="#data-2-3-2"></a></h3>
+<ul><li>Improved <code>ison_southern_women</code> to record when each of its events is held
+<ul><li>
+<code><a href="../reference/mark_format_change.html">is_changing()</a></code> now marks it TRUE, as each event enters on its own date</li>
+<li>The dates move from a tie attribute to the changes, where they describe the event</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.1" id="manynet-231">manynet 2.3.1<small>2026-08-28</small><a class="anchor" aria-label="anchor" href="#manynet-231"></a></h2>
 <div class="section level3">
 <h3 id="marking-2-3-1">Marking<a class="anchor" aria-label="anchor" href="#marking-2-3-1"></a></h3>
 <ul><li>Fixed <code><a href="../reference/mark_format_change.html">is_longitudinal()</a></code> marking a network whose ties carry no moments</li>

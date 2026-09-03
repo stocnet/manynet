@@ -6,6 +6,8 @@ if they have been defined.
 net_node_attributes() returns a vector of nodal attributes in a network.
 layer_names() returns a vector of the names of the layers in a network,
 if they have been defined.
+layer_is_directed() returns whether each layer of a network is
+directed, named by layer.
 net_tie_attributes() returns a vector of tie attributes in a network.
 
 
@@ -27,7 +29,7 @@ These functions are also often used as helpers within other functions."><meta pr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.2</span>
       </span>
     </div>
 
@@ -106,6 +108,8 @@ if they have been defined.</p></li>
 <li><p><code>net_node_attributes()</code> returns a vector of nodal attributes in a network.</p></li>
 <li><p><code>layer_names()</code> returns a vector of the names of the layers in a network,
 if they have been defined.</p></li>
+<li><p><code>layer_is_directed()</code> returns whether each layer of a network is
+directed, named by layer.</p></li>
 <li><p><code>net_tie_attributes()</code> returns a vector of tie attributes in a network.</p></li>
 </ul><p>These functions are also often used as helpers within other functions.</p>
     </div>
@@ -118,6 +122,8 @@ if they have been defined.</p></li>
 <span><span class="fu">net_node_attributes</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">layer_names</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">layer_is_directed</span><span class="op">(</span><span class="va">.data</span>, layer <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">net_tie_attributes</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -139,6 +145,13 @@ if they have been defined.</p></li>
 <dt id="arg-prefix">prefix<a class="anchor" aria-label="anchor" href="#arg-prefix"></a></dt>
 <dd><p>An optional string to be added before the name of the network.</p></dd>
 
+
+<dt id="arg-layer">layer<a class="anchor" aria-label="anchor" href="#arg-layer"></a></dt>
+<dd><p>An optional character string naming one of the layers,
+one of those returned by <code>layer_names()</code>.
+Where a layer is named, a single value is returned for that layer;
+otherwise a value is returned for every layer, named by layer.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -146,6 +159,16 @@ if they have been defined.</p></li>
 usually returning a scalar.
 <code>net_*_attributes()</code> returns a string vector with the names
 of all node or tie attributes in the network.</p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>A network can be directed in one layer and undirected in another,
+as a network of interstate trade and of state membership in
+intergovernmental organisations is.
+<code><a href="mark_format_tie.html">is_directed()</a></code> marks such a network TRUE, since it holds arcs,
+and <code>layer_is_directed()</code> says which of its layers those arcs are in.
+Where a network records nothing about a layer,
+the network's own direction is reported for it.</p>
     </div>
 
     <div id="ref-examples">
@@ -158,6 +181,9 @@ of all node or tie attributes in the network.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "name" "Race"</span>
 <span class="r-in"><span>  <span class="fu">layer_names</span><span class="op">(</span><span class="va">ison_algebra</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "social"  "tasks"   "friends"</span>
+<span class="r-in"><span>  <span class="fu">layer_is_directed</span><span class="op">(</span><span class="va">ison_algebra</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  social   tasks friends </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    TRUE    TRUE    TRUE </span>
 <span class="r-in"><span>  <span class="fu">net_tie_attributes</span><span class="op">(</span><span class="va">ison_algebra</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "type"   "weight"</span>
 </code></pre></div>
