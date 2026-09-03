@@ -1,3 +1,9 @@
+# manynet 2.3.3
+
+## Tutorials
+
+- Fixed error in packaged data multichoice question
+
 # manynet 2.3.2
 
 ## Package
@@ -5,41 +11,39 @@
 - Added three `snet_verbosity` levels, 'quiet', 'normal', and 'verbose'
   - `snet_info()` and `snet_success()` report from 'normal'
   - `snet_minor_info()` and the `snet_progress_*()` functions report from 'verbose'
-- Improved `snet_warn()` and `snet_unavailable()` so that neither is silenced (closed #169)
+- Improved `snet_warn()` and `snet_unavailable()` so that neither is silenced (closes #169)
 
 ## Classes
 
-- Improved `describe_nodes()` on networks of three or more modes (closed #174)
-- Fixed `keep_nodes()` to drop and reindex `$missings` (closed #173)
+- Improved `describe_nodes()` on networks of three or more modes (closes #174)
+- Fixed `keep_nodes()` to drop and reindex `$missings` (closes #173)
   - `reserved_cols()` now names every out-of-range id, instead of erroring
 - Improved `validate_stocnet()` to read a node 'id' as an id and not a label
 - Improved `validate_stocnet()` to read a tie 'date' as another name for a time
 
 ## Coercion
 
-- Fixed `as_igraph.stocnet()` on multimodal and multilevel networks (closed #170)
+- Fixed `as_igraph.stocnet()` on multimodal and multilevel networks (closes #170)
 
 ## Manipulating
 
-- Added `delete_nodes.stocnet()`, which reindexes every component it keeps
-  - Deleting nodes used to leave the changes naming nodes that were gone
+- Added `delete_nodes.stocnet()` to reindex every component, including changes
 
 ## Modifying
 
-- Added `to_mode1.stocnet()` and `to_mode2.stocnet()`, which prune the changes
-  - A projection discards a mode, so a change about it describes no node
+- Added `to_mode1.stocnet()` and `to_mode2.stocnet()` to carry changes
 - Added `keep = "both"` to `to_unsigned()`, which keeps every tie but not its sign
 - Fixed `to_unsigned.data.frame()` erroring on a signed edgelist
   - now drops the ties of the other sign, as the other methods do
   - now reads signs held as negative weights as well as in a 'sign' column
 - Fixed `to_unsigned.network()` ignoring its `keep` argument
-- Fixed `to_layer()` pointing arcs at the wrong nodes (closed #170)
+- Fixed `to_layer()` pointing arcs at the wrong nodes (closes #170)
 
 ## Marking
 
 - Improved `is_directed()` on a network tied within a level as well as between
 - Fixed `is_multilevel.igraph()` looping through `tie_is_twomode()`
-- Added `layer_is_directed()`, reporting each layer of a network (closed #171)
+- Added `layer_is_directed()`, reporting each layer of a network (closes #171)
 
 ## Measuring
 
@@ -48,9 +52,7 @@
 
 ## Data
 
-- Improved `ison_southern_women` to record when each of its events is held
-  - `is_changing()` now marks it TRUE, as each event enters on its own date
-  - The dates move from a tie attribute to the changes, where they describe the event
+- Corrected `ison_southern_women` to be changing by event dates
 
 # manynet 2.3.1
 

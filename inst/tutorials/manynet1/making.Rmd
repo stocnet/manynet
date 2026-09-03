@@ -241,17 +241,17 @@ table_data() |> dplyr::filter(twomode)
 ```{r twomode-question, echo = FALSE, purl=FALSE}
 tdat <- table_data()
 n2m <- sum(tdat$twomode)
-question("How many two-mode networks are available in the manynet and migraph packages together? (Hint: count the rows of the filtered table, or note the dimensions that tibbles print above the table.)",
+question("How many two-mode networks are available in the manynet and migraph packages together? (Hint: count the rows reported for the filtered table.)",
   answer(as.character(n2m),
          correct = TRUE,
          message = paste("The filtered table has", n2m, "rows, one per two-mode dataset.")),
   answer(as.character(nrow(tdat)),
-         message = paste("This is the total number of datasets across the two packages;",
+         message = paste("This is the total number of datasets across the packages;",
                          "only some of them are two-mode.")),
   answer(as.character(sum(!tdat$twomode)),
          message = "This is the number of datasets that are _not_ two-mode."),
-  answer(as.character(sum(tdat$directed)),
-         message = "This is the number of _directed_ datasets, not two-mode ones."),
+  answer("10",
+         message = "This is just the number of rows displayed by default."),
   random_answer_order = TRUE,
   allow_retry = TRUE
 )
