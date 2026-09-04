@@ -772,6 +772,7 @@ as_network.igraph <- function(.data,
   out <- as_network(as_matrix(.data))
   out <- set_network_node_attributes(out, attr)
   out <- set_network_tie_attributes(out, .data)
+  out <- set_network_info(out, igraph::graph_attr(as_igraph(.data)))
   out
 }
 
@@ -785,6 +786,7 @@ as_network.tbl_graph <- function(.data,
   out <- as_network(as_matrix(.data))
   out <- set_network_node_attributes(out, attr)
   out <- set_network_tie_attributes(out, as_igraph(.data))
+  out <- set_network_info(out, igraph::graph_attr(as_igraph(.data)))
   out
 }
 
@@ -799,6 +801,25 @@ set_network_node_attributes <- function(out, attr) {
 
 # Since networks are constructed from a sociomatrix, which only carries the
 # weight, any other tie attributes are copied across dyad by dyad.
+# What a network knows about itself as a whole, carried onto a 'network'
+# object. 'network' requires its own attributes of these names to be single
+# values describing the whole network, so an info entry of the same name is
+# dropped rather than merged: a per-layer 'directed' vector, for example, would
+# otherwise replace the scalar and break every 'network' method that reads it.
+# That vector is carried in an attribute of its own instead, which
+# `as_stocnet.network()` reads back as 'directed'. Without it the round trip
+# could not tell an undirected layer from a directed one whose ties happen to
+# be reciprocated.
+set_network_info <- function(out, info) {
+  if (is.null(info) || length(info) == 0) return(out)
+  if (!is.null(info$directed) && !is.null(names(info$directed)))
+    out <- network::set.network.attribute(out, "layer_directed", info$directed)
+  info <- info[setdiff(names(info), c("n", "mnext", "directed", "hyper",
+                                      "loops", "multiple", "bipartite"))]
+  if (length(info) > 0) out$gal <- utils::modifyList(out$gal, info)
+  out
+}
+
 set_network_tie_attributes <- function(out, .data) {
   attrs <- setdiff(igraph::edge_attr_names(.data), c("weight", "na"))
   if (length(attrs) == 0) return(out)
@@ -896,17 +917,7 @@ as_network.stocnet <- function(.data, twomode = FALSE) {
   # network, so an info entry of the same name is dropped rather than merged.
   # A per-layer 'directed' vector, for example, would otherwise replace the
   # scalar set above and break every 'network' method that reads it.
-  info <- as_infolist(.data)
-  # A 'network' object has no place for per-layer directedness, so the vector
-  # is carried in an attribute of its own, which `as_stocnet.network()` reads
-  # back as 'directed'. Without it the round trip could not tell an undirected
-  # layer from a directed one whose ties happen to be reciprocated.
-  if (!is.null(info$directed) && !is.null(names(info$directed)))
-    out <- network::set.network.attribute(out, "layer_directed", info$directed)
-  info <- info[setdiff(names(info), c("n", "mnext", "directed", "hyper",
-                                      "loops", "multiple", "bipartite"))]
-  if (!is.null(info) && length(info) > 0)
-    out$gal <- utils::modifyList(out$gal, info)
+  out <- set_network_info(out, as_infolist(.data))
   if(!is.null(as_changelist(.data)) && length(as_changelist(.data)) > 0)
     out <- network::set.network.attribute(out, "changes", as_changelist(.data))
   if(!is.null(as_globallist(.data)) && length(as_globallist(.data)) > 0)

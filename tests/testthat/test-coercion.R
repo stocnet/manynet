@@ -519,3 +519,18 @@ test_that("a network of three modes keeps them through igraph", {
   expect_true(is_multilevel(ig))
   expect_equal(as_stocnet(ig)$nodes$mode, net$nodes$mode)
 })
+
+test_that("coercing to a network keeps what the network knows about itself", {
+  sw <- as_stocnet(ison_southern_women)
+  direct <- as_network(sw)
+  # the graph attributes used to be dropped on the way through igraph
+  expect_equal(sort(network::list.network.attributes(as_network(as_igraph(sw)))),
+               sort(network::list.network.attributes(direct)))
+  expect_equal(sort(network::list.network.attributes(as_network(as_tidygraph(sw)))),
+               sort(network::list.network.attributes(direct)))
+  # and the names 'network' reserves for itself are not overwritten by them
+  via <- as_network(as_igraph(sw))
+  for (f in c("n", "mnext", "directed", "bipartite", "hyper", "loops", "multiple"))
+    expect_equal(network::get.network.attribute(via, f),
+                 network::get.network.attribute(direct, f))
+})
