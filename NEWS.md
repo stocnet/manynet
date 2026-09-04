@@ -1,5 +1,39 @@
 # manynet 2.3.3
 
+## Package
+
+- Added a fourth `snet_verbosity` level, 'debug', so each level has one job
+  - 'normal' reports what a function chose, 'verbose' that it is running
+  - `snet_minor_info()` moves to 'debug', so an interactive session is quieter
+
+## Classes
+
+- Improved `add_info.stocnet()` to check and conform the names it is given
+  - Naming one nodeset of a two-mode network now aborts, as for an igraph
+  - 'nodes' and 'ties' set the reserved 'modes' and 'layers'
+  - An unrecognised field is kept, but warned about
+
+## Coercion
+
+- Fixed `as_network()` losing the graph attributes on the way through igraph
+
+## Making
+
+- Fixed `generate_configuration()` reading the modes of a 'stocnet'
+
+## Manipulating
+
+- Improved `add_node_attribute()` to take a vector as long as any one mode
+  - Reads `mode_nodes()`, so it serves three or more modes and not only two
+
+## Marking
+
+- Fixed `is_multilevel.igraph()` marking a network that has no ties within a level
+
+## Modifying
+
+- Fixed `to_labelled()` storing labels that are not character
+
 ## Tutorials
 
 - Fixed error in packaged data multichoice question
