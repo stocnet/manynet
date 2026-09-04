@@ -63,7 +63,7 @@ test_that("reciprocity reduces to density where the two proportions agree", {
   # density does not, so the two rules must draw at the same probability
   pres <- dplyr::tibble(from = c(1L, 2L, 3L, 4L), to = c(2L, 1L, 4L, 3L))
   miss <- dplyr::tibble(from = c(1L, 3L), to = c(3L, 1L))
-  probs <- manynet:::.probs_reciprocity(pres, miss, dyads = 20, density = 0.2)
+  probs <- .probs_reciprocity(pres, miss, dyads = 20, density = 0.2)
   expect_length(probs, 2)
   expect_true(all(probs >= 0 & probs <= 1))
   # with no observed tie either way between 1 and 3, both draws fall back to
@@ -230,10 +230,10 @@ test_that("the statistics exclude the diagonal", {
   n <- nrow(missTest)
   offdiag <- missTest
   diag(offdiag) <- NA
-  expect_equal(manynet:::.miss_average(missTest), mean(offdiag, na.rm = TRUE))
-  expect_false(isTRUE(all.equal(manynet:::.miss_average(missTest),
+  expect_equal(.miss_average(missTest), mean(offdiag, na.rm = TRUE))
+  expect_false(isTRUE(all.equal(.miss_average(missTest),
                                 mean(missTest, na.rm = TRUE))))
-  expect_equal(manynet:::.miss_statistic(missTest, "median"),
+  expect_equal(.miss_statistic(missTest, "median"),
                stats::median(offdiag, na.rm = TRUE))
 })
 

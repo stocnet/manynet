@@ -122,7 +122,7 @@ test_that("describe_transformations() lists them in the order applied", {
 
 test_that("node_measure class prints and summarises", {
   net <- ison_adolescents
-  m <- manynet:::make_node_measure(stats::rnorm(8), net)
+  m <- make_node_measure(stats::rnorm(8), net)
   expect_s3_class(m, "node_measure")
   expect_no_error(expect_prints(m, "node_measure"))
   s <- summary(m)
@@ -130,20 +130,20 @@ test_that("node_measure class prints and summarises", {
   s2 <- summary(m, membership = rep(c("A", "B"), 4))
   expect_setequal(names(s2), c("A", "B"))
   # two-mode variant prints per mode
-  m2 <- manynet:::make_node_measure(
+  m2 <- make_node_measure(
     stats::rnorm(as.numeric(net_nodes(ison_southern_women))),
     ison_southern_women)
   expect_no_error(expect_prints(m2, "node_measure twomode"))
 })
 
 test_that("tie_measure class prints", {
-  m <- manynet:::make_tie_measure(stats::rnorm(10), ison_adolescents)
+  m <- make_tie_measure(stats::rnorm(10), ison_adolescents)
   expect_s3_class(m, "tie_measure")
   expect_no_error(expect_prints(m, "tie_measure"))
 })
 
 test_that("network_measure class prints", {
-  m <- manynet:::make_network_measure(0.42, ison_adolescents,
+  m <- make_network_measure(0.42, ison_adolescents,
                                       "net_thing(ison_adolescents)")
   expect_s3_class(m, "network_measure")
   expect_no_error(expect_prints(m, "network_measure"))
@@ -153,7 +153,7 @@ test_that("measure classes print interpretive metadata when present", {
   net <- ison_adolescents
   # measures made without the metadata print exactly as before:
   # no header line, no NULLs, no blank first line
-  bare <- manynet:::make_node_measure(stats::rnorm(8), net)
+  bare <- make_node_measure(stats::rnorm(8), net)
   expect_true(is.na(measure_header_of(bare)))
 
   # a measure rescaled in no way is given its range alone
@@ -199,7 +199,7 @@ test_that("measure classes print interpretive metadata when present", {
   expect_identical(measure_header_of(ranged), "# (0, 1]")
 
   # two-mode node measures print one header, not one per mode
-  twomode <- manynet:::make_node_measure(
+  twomode <- make_node_measure(
     stats::rnorm(as.numeric(net_nodes(ison_southern_women))),
     ison_southern_women)
   attr(twomode, "measure") <- "degree"
@@ -207,13 +207,13 @@ test_that("measure classes print interpretive metadata when present", {
   expect_length(grep("^# Degree", out), 1)
 
   # tie and network measures carry the same header
-  tm <- manynet:::make_tie_measure(stats::rnorm(10), net)
+  tm <- make_tie_measure(stats::rnorm(10), net)
   expect_true(is.na(measure_header_of(tm)))
   attr(tm, "measure") <- "edge betweenness"
   attr(tm, "range") <- c(0, 1)
   expect_identical(measure_header_of(tm), "# Edge betweenness [0, 1]")
 
-  nm <- manynet:::make_network_measure(0.42, net, "net_thing(net)")
+  nm <- make_network_measure(0.42, net, "net_thing(net)")
   expect_true(is.na(measure_header_of(nm)))
   attr(nm, "measure") <- "degree centralization"
   attr(nm, "normalization") <- "normalised"
@@ -228,22 +228,22 @@ test_that("measure classes print interpretive metadata when present", {
 
 test_that("node_mark and tie_mark classes print", {
   net <- ison_adolescents
-  nm <- manynet:::make_node_mark(stats::runif(8) > 0.5, net)
+  nm <- make_node_mark(stats::runif(8) > 0.5, net)
   expect_no_error(expect_prints(nm, "node_mark"))
-  tm <- manynet:::make_tie_mark(stats::runif(10) > 0.5, net)
+  tm <- make_tie_mark(stats::runif(10) > 0.5, net)
   expect_no_error(expect_prints(tm, "tie_mark"))
 })
 
 test_that("node_member class prints and summarises", {
   net <- ison_adolescents
-  mb <- manynet:::make_node_member(rep(c(1, 2), 4), net)
+  mb <- make_node_member(rep(c(1, 2), 4), net)
   expect_no_error(expect_prints(mb, "node_member"))
   expect_no_error(capture.output(summary(mb)))
 })
 
 test_that("tie_member class prints and summarises (#168)", {
   net <- ison_adolescents
-  mb <- manynet:::make_tie_member(rep(c(1, 2), 5), net)
+  mb <- make_tie_member(rep(c(1, 2), 5), net)
   expect_s3_class(mb, "tie_member")
   # a tie is named by the pair of nodes it joins
   expect_equal(unname(head(names(mb), 2)), c("Betty-Sue", "Sue-Alice"))
@@ -254,8 +254,8 @@ test_that("tie_member class prints and summarises (#168)", {
   expect_match(paste(summ, collapse = "\n"), "Betty-Sue")
   # a directed network names the pair with an arrow, and an unlabelled one
   # names each end by its place in the network
-  dir <- manynet:::make_tie_member(c(1, 1, 2, 2), to_directed(create_ring(4)))
-  expect_true(all(grepl("^[0-9]+->[0-9]+$", names(dir))))
+  arrows <- make_tie_member(c(1, 1, 2, 2), to_directed(create_ring(4)))
+  expect_true(all(grepl("^[0-9]+->[0-9]+$", names(arrows))))
   # an object made another way holds no names, and lists the ties by place
   bare <- structure(c("A", "B", "A"), class = c("tie_member", "character"))
   expect_match(paste(cli::ansi_strip(capture.output(summary(bare))),

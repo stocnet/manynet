@@ -26,10 +26,10 @@ test_that("to_correlation is unchanged by delegating to to_proximity", {
   dimnames(dir) <- dimnames(und) <- dimnames(cpx) <-
     list(LETTERS[1:n], LETTERS[1:n])
   # each fixture takes a different branch, so all four are exercised
-  expect_equal(manynet:::.cor_method(und), "diag")
-  expect_equal(manynet:::.cor_method(dir), "recip")
-  expect_equal(manynet:::.cor_method(cpx), "complex")
-  expect_equal(manynet:::.cor_method(matrix(1, n, 7)), "all")
+  expect_equal(.cor_method(und), "diag")
+  expect_equal(.cor_method(dir), "recip")
+  expect_equal(.cor_method(cpx), "complex")
+  expect_equal(.cor_method(matrix(1, n, 7)), "all")
   for(M in list(und, dir, cpx)) expect_equal(to_correlation(M, "diag"), legacy(M))
   expect_true(all(diag(to_correlation(und)) == 1))
 })
