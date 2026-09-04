@@ -187,10 +187,12 @@ add_info.stocnet <- function(.data, ...){
   info
 }
 
-# The fields a stocnet reserves, as `validate_info()` lists them, together with
-# those that describe how a network was collected. An entry outside this list
-# is kept, since a network may record more than the class reserves, but the
-# user is told in case the name is a slip.
+# The fields a stocnet recognises. Some of them, such as 'modes' and 'update',
+# `validate_info()` also checks the class and the values of. The others, such
+# as those that describe how a network was collected, are recognised here but
+# not checked there, so this list is longer than that one. An entry outside
+# this list is kept, since a network may record more than the class
+# recognises, but the user is told in case the name is a slip.
 .stocnet_info_fields <- c("name", "modes", "layers", "directed", "observation",
                           "update", "sender", "receiver", "focal", "centered",
                           "source", "method", "location", "date", "boundary",

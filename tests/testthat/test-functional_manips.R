@@ -198,7 +198,9 @@ test_that("add_info() names nodesets and tie types where well-formed", {
   expect_error(add_info(ison_southern_women, nodes = "women"),
                "both nodesets")
   # unrecognised fields warn (silenced under quiet verbosity) but don't fail
-  expect_no_error(add_info(ison_adolescents, nonsense = "field"))
+  expect_warning(out <- add_info(ison_adolescents, nonsense = "field"),
+                 "not recognised fields")
+  expect_true(is_manynet(out))
 })
 
 test_that("add_info() and mutate_info() also work on stocnet objects", {

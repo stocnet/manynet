@@ -1,6 +1,14 @@
 options(manynet_verbosity = "quiet")
 options(snet_verbosity = "quiet")
 
+# Muffle the warnings of one expression, but not its errors or its skips.
+# A test that reads a warning states it with `expect_warning()` instead, so
+# that a warning the suite prints is one no test expected.
+quietly <- function(expr) {
+  withCallingHandlers(expr,
+                      warning = function(w) invokeRestart("muffleWarning"))
+}
+
 expect_values <- function(object, ref, toler = 3) {
   # 1. Capture object and label
   # act <- quasi_label(rlang::enquo(object), arg = "object")

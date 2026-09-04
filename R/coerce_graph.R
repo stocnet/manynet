@@ -1313,7 +1313,12 @@ as_siena.stocnet <- function(.data, twomode = FALSE) {
     }
   }
   # Change variables: behavioural dependents, or varying covariates ----
-  chvars <- setdiff(unique(as.character(x$changes$var)), "active")
+  # A change of 'active' composes the node set, and a change of 'na' records
+  # that a node did not answer, which `.join_missing_ties()` already writes
+  # into the dependent network as missing cells. Neither is a covariate, and
+  # the nodal columns of the same two names are passed over below for the
+  # same reason.
+  chvars <- setdiff(unique(as.character(x$changes$var)), c("active", "na"))
   for (V in chvars) {
     ns <- ns_of(V, set_names[1])
     rows <- .siena_mode_rows(nodes, ns[1], set_names)

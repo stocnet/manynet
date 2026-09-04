@@ -362,7 +362,8 @@ test_that("a stocnet holds six components, of which every table is plural", {
                                        to = c("B", "C", "C"),
                                        na = c(TRUE, FALSE, FALSE)))
   expect_equal(nrow(sn$missings), 1)
-  expect_null(sn$nodes$na)
+  # a missing tie is not a node's non-response, so the nodes gain no 'na'
+  expect_false("na" %in% names(sn$nodes))
   expect_equal(nrow(as_missinglist(sn)), 1)
   # and takes node labels, which are indexed as the ties are
   sn2 <- make_stocnet(nodes = data.frame(label = LETTERS[1:4]),

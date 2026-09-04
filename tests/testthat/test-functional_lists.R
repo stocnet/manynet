@@ -37,7 +37,7 @@ for (fn in list_funs) {
   test_that(paste0(fn, "() works across object classes"), {
     versions <- class_versions(canonical_net)
     for (cl in names(versions)) {
-      out <- tryCatch(f(versions[[cl]]), error = function(e) e)
+      out <- quietly(tryCatch(f(versions[[cl]]), error = function(e) e))
       if (inherits(out, "error")) {
         skip(paste0("AUDIT [", fn, " x ", cl, "]: ",
                     conditionMessage(out)))
