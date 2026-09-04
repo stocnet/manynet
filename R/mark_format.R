@@ -108,12 +108,13 @@ is_multilevel.default <- function(.data) {
 
 #' @export
 is_multilevel.igraph <- function(.data) {
-  # `to_multilevel()` records levels in a 'lvl' attribute and deletes 'type',
-  # so a network that has already been converted is no longer two-mode and
-  # has to be recognised by its levels instead.
-  if ("lvl" %in% igraph::vertex_attr_names(.data))
-    return(length(unique(igraph::vertex_attr(.data, "lvl"))) > 1)
-  if (!is_twomode(.data)) return(FALSE)
+  # A network records its levels in a 'type' attribute, or in the 'lvl' one
+  # that `to_multilevel()` writes, which can name more than two. Either way it
+  # is the ties that decide, so the levels are only read here and tested below.
+  atts <- igraph::vertex_attr_names(.data)
+  modes <- if ("lvl" %in% atts) igraph::vertex_attr(.data, "lvl") else
+    if ("type" %in% atts) igraph::vertex_attr(.data, "type") else NULL
+  if (is.null(modes) || length(unique(modes)) < 2) return(FALSE)
   # Levels have to be tied both within and between to interlock: a two-mode
   # network whose ties all run between the modes, as `ison_southern_women`'s
   # do, is not multilevel, and neither is one whose ties all fall within them,
@@ -123,9 +124,8 @@ is_multilevel.igraph <- function(.data) {
   if (net_ties(.data) == 0) return(FALSE)
   # `tie_is_twomode()` would name its result through `make_tie_mark()`, which
   # asks `is_directed()`, which asks this function: the same loop that
-  # `node_is_mode()` notes. The modes of the two ends of each tie are read
+  # `node_is_mode()` notes. The levels of the two ends of each tie are read
   # directly instead, as `is_multilevel.stocnet()` reads them.
-  modes <- igraph::vertex_attr(.data, "type")
   el <- igraph::as_edgelist(.data, names = FALSE)
   between <- modes[el[, 1]] != modes[el[, 2]]
   any(between) && any(!between)
