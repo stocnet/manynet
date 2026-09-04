@@ -168,3 +168,32 @@ test_that("as_network() keeps a single node attribute per node", {
   expect_equal(network::get.vertex.attribute(out, "group"),
                rep(c("A", "B"), 4))
 })
+
+test_that("add_node_attribute takes a vector as long as one mode", {
+  sw <- as_stocnet(ison_southern_women)
+  # 18 women and 14 events: a vector as long as either mode lands on that mode
+  women <- as.numeric(node_attribute(
+    add_node_attribute(sw, "Age", rep(25, 18)), "Age"))
+  expect_equal(women[1], 25)
+  expect_true(all(is.na(women[19:32])))
+  events <- as.numeric(node_attribute(
+    add_node_attribute(sw, "Cost", rep(9, 14)), "Cost"))
+  expect_true(all(is.na(events[1:18])))
+  expect_equal(events[19], 9)
+  # a length matching neither mode nor the network is still an error
+  expect_error(add_node_attribute(sw, "X", rep(1, 7)), "as long as")
+})
+
+test_that("add_node_attribute takes a mode-length vector above two modes", {
+  # `infer_dims()`, which the igraph method reads, counts only two modes
+  three <- make_stocnet(
+    info = list(modes = c("A", "B", "C")),
+    nodes = dplyr::tibble(label = c("a", "b", "x", "y", "z"),
+                          mode = c("A", "A", "B", "C", "C")),
+    ties = dplyr::tibble(from = c(1L, 1L, 3L), to = c(2L, 3L, 4L)))
+  # mode B alone has one node, so a vector of one lands on it
+  out <- add_node_attribute(three, "size", 7)
+  expect_equal(as.numeric(node_attribute(out, "size")), c(NA, NA, 7, NA, NA))
+  # a length two modes share is ambiguous, so it is an error rather than a guess
+  expect_error(add_node_attribute(three, "pair", c(1, 2)), "as long as")
+})

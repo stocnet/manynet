@@ -426,10 +426,25 @@ add_node_attribute.stocnet <- function(.data, attr_name, vector){
   out <- .data
   if(is.null(out$nodes)) out$nodes <- dplyr::tibble(.rows = net_nodes(.data))
   if(length(vector) != nrow(out$nodes))
-    snet_abort(paste("The vector must be as long as the network has nodes:",
-                     "{nrow(out$nodes)}, not {length(vector)}."))
+    vector <- .pad_to_modes(vector, .data)
   out$nodes[[attr_name]] <- vector
   out
+}
+
+# An attribute of one mode, such as an attribute of the events of a two-mode
+# network, is as long as that mode and not as long as the network. The values
+# are padded with NA on either side so that they land on the nodes they
+# describe. `mode_nodes()` is read rather than `infer_dims()` because it counts
+# three or more modes, where `infer_dims()` coerces to igraph and counts two.
+.pad_to_modes <- function(vector, .data){
+  sizes <- mode_nodes(.data)
+  hits <- which(length(vector) == sizes)
+  if(net_modes(.data) < 2 || length(hits) != 1)
+    snet_abort(paste("The vector must be as long as the network has nodes:",
+                     "{net_nodes(.data)}, not {length(vector)}."))
+  before <- sum(sizes[seq_len(hits - 1)])
+  after <- sum(sizes) - before - length(vector)
+  c(rep(NA, before), vector, rep(NA, after))
 }
 
 #' @rdname manip_nodes_attr
