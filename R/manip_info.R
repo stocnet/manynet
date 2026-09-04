@@ -160,6 +160,10 @@ add_info.stocnet <- function(.data, ...){
   if(length(dots) == 0){
     return(.check_info(.data, optional = optional))
   }
+  dots <- .conform_info_names(dots)
+  .warn_unrecognised_info(names(dots))
+  .check_mode_names(.data, dots$modes)
+  .check_layer_names(.data, dots$layers)
   for(item in names(dots)){
     # "transformations" merges rather than replaces, as in the igraph method,
     # so that successive transformations leave a trail
@@ -169,6 +173,54 @@ add_info.stocnet <- function(.data, ...){
     } else .data$info[[item]] <- dots[[item]]
   }
   .data
+}
+
+# 'nodes' and 'ties' were the names an mnet gave the mode and layer names,
+# before 'modes' and 'layers' were reserved for them, so a call written for
+# either class sets the same field. `as_stocnet.igraph()` maps them the same
+# way on the way in.
+.conform_info_names <- function(info){
+  for(pair in list(c("nodes", "modes"), c("ties", "layers"))){
+    if(pair[1] %in% names(info) && !pair[2] %in% names(info))
+      names(info)[names(info) == pair[1]] <- pair[2]
+  }
+  info
+}
+
+# The fields a stocnet recognises. Some of them, such as 'modes' and 'update',
+# `validate_info()` also checks the class and the values of. The others, such
+# as those that describe how a network was collected, are recognised here but
+# not checked there, so this list is longer than that one. An entry outside
+# this list is kept, since a network may record more than the class
+# recognises, but the user is told in case the name is a slip.
+.stocnet_info_fields <- c("name", "modes", "layers", "directed", "observation",
+                          "update", "sender", "receiver", "focal", "centered",
+                          "source", "method", "location", "date", "boundary",
+                          "doi", "system", "max_degree", "min_degree",
+                          "transformations")
+
+.warn_unrecognised_info <- function(given){
+  unrecog <- setdiff(given, .stocnet_info_fields)
+  if(length(unrecog) > 0) snet_warn("{unrecog} are not recognised fields.")
+}
+
+# A two-mode network has two nodesets to name, and a multiplex network one name
+# for each layer. Naming fewer would leave the network describing itself
+# wrongly, which `validate_stocnet()` would then reject.
+.check_mode_names <- function(.data, modes){
+  if(is.null(modes)) return(invisible(NULL))
+  n <- net_modes(.data)
+  if(n < 2 || length(modes) == n) return(invisible(NULL))
+  # the two-mode wording matches the igraph method's, so that a caller reads
+  # the same sentence whichever class it holds the network in
+  if(n == 2) snet_abort("Please name both nodesets in a two-mode network.")
+  snet_abort("Please name all {n} nodesets in this network.")
+}
+
+.check_layer_names <- function(.data, layers){
+  if(is.null(layers)) return(invisible(NULL))
+  if(is_multiplex(.data) && length(layers) != net_layers(.data))
+    snet_abort("Please name all types of tie in a multiplex network.")
 }
 
 #' @rdname manip_info

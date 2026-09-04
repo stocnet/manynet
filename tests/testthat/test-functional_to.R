@@ -126,8 +126,8 @@ for (fn in setdiff(to_funs, names(to_argmakers))) {
                    cnet, " network"), {
     outs <- list()
     for (cl in names(canonical_classes)) {
-      outs[[cl]] <- tryCatch(f(canonical_classes[[cl]]),
-                             error = function(e) e)
+      outs[[cl]] <- quietly(tryCatch(f(canonical_classes[[cl]]),
+                                     error = function(e) e))
     }
     errs <- names(outs)[vapply(outs, inherits, logical(1), "error")]
     if (length(errs) == length(outs)) {

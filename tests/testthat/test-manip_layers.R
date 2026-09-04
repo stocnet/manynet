@@ -134,8 +134,8 @@ test_that("to_flat does not treat a missing tie as untied", {
   miss[1, 2] <- NA
   # a missing weight does not survive coercion to a graph, so the layers are
   # combined as the matrices they are
-  expect_true(is.na(manynet:::.combine_matrices(miss, comb_b, "sum")[1, 2]))
-  expect_true(is.na(manynet:::.combine_matrices(miss, comb_b, "max")[1, 2]))
+  expect_true(is.na(.combine_matrices(miss, comb_b, "sum")[1, 2]))
+  expect_true(is.na(.combine_matrices(miss, comb_b, "max")[1, 2]))
 })
 
 # Undirected layers of a directed network ------------------------------------

@@ -312,10 +312,10 @@ mode_nodes.stocnet <- function(.data){
   } else net_nodes(.data)
 }
 
-# The number of nodes in each mode, given the mode of each node.
-# The counts are returned in the order `mode_names()` names the modes,
-# so that each count is reported under its own name.
-.count_modes <- function(modes, nms = NULL){
+# The modes in the order `mode_names()` names them, given the mode of each
+# node. `.count_modes()` and `.mode_index()` both read this order, so that a
+# count and a position report the same mode.
+.mode_levels <- function(modes, nms = NULL){
   lvls <- unique(modes)
   # A mode recorded as a number, such as the 'lvl' attribute holds, is
   # ordered by its value, since the names are given in that order. A mode
@@ -323,7 +323,22 @@ mode_nodes.stocnet <- function(.data){
   # and is otherwise ordered by where it first appears.
   if(!is.character(lvls)) lvls <- sort(lvls) else
     if(!is.null(nms) && setequal(nms, lvls)) lvls <- nms
+  lvls
+}
+
+# The number of nodes in each mode, given the mode of each node.
+# The counts are returned in the order `mode_names()` names the modes,
+# so that each count is reported under its own name.
+.count_modes <- function(modes, nms = NULL){
+  lvls <- .mode_levels(modes, nms)
   as.integer(tabulate(match(modes, lvls), nbins = length(lvls)))
+}
+
+# The mode of each node, as a position in the order `mode_names()` names the
+# modes. The modes of a 'stocnet' are a variable of its nodes table, so the
+# nodes of one mode do not have to be next to one another.
+.mode_index <- function(modes, nms = NULL){
+  match(modes, .mode_levels(modes, nms))
 }
 
 #' @rdname measure_dims

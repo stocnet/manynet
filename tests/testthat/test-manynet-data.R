@@ -73,15 +73,15 @@ test_that("describe_network reports a multilevel network as multilevel", {
 })
 
 test_that("layers are levels only where each layer holds one position", {
-  expect_true(manynet:::.layers_are_levels(fict_marvel))
-  expect_true(manynet:::.layers_are_levels(as_igraph(fict_marvel)))
-  expect_false(manynet:::.layers_are_levels(fict_actually))
+  expect_true(.layers_are_levels(fict_marvel))
+  expect_true(.layers_are_levels(as_igraph(fict_marvel)))
+  expect_false(.layers_are_levels(fict_actually))
   # A network that is not multilevel has no levels for its layers to be.
-  expect_false(manynet:::.layers_are_levels(ison_monks))
-  expect_false(manynet:::.layers_are_levels(ison_southern_women))
-  expect_false(manynet:::.layers_are_levels(ison_adolescents))
+  expect_false(.layers_are_levels(ison_monks))
+  expect_false(.layers_are_levels(ison_southern_women))
+  expect_false(.layers_are_levels(ison_adolescents))
   # Each of fict_marvel's ties sits within the characters or between levels.
-  expect_setequal(manynet:::.tie_positions(fict_marvel),
+  expect_setequal(.tie_positions(fict_marvel),
                   c("characters", "between"))
-  expect_null(manynet:::.tie_positions(ison_adolescents))
+  expect_null(.tie_positions(ison_adolescents))
 })

@@ -29,6 +29,13 @@ test_that("the verbosity levels order the reports", {
   expect_message(snet_success("done"), "done")
   expect_silent(snet_minor_info("a detail"))
 
+  # a progress bar reassures that a long task is running
   options(snet_verbosity = "verbose")
+  expect_message(snet_info("chose a default"), "default")
+  expect_silent(snet_minor_info("a detail"))
+
+  # bookkeeping is exhaustive, so it waits for the level that asks for it
+  options(snet_verbosity = "debug")
   expect_message(snet_minor_info("a detail"), "detail")
+  expect_message(snet_info("chose a default"), "default")
 })

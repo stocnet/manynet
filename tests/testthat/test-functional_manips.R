@@ -198,7 +198,9 @@ test_that("add_info() names nodesets and tie types where well-formed", {
   expect_error(add_info(ison_southern_women, nodes = "women"),
                "both nodesets")
   # unrecognised fields warn (silenced under quiet verbosity) but don't fail
-  expect_no_error(add_info(ison_adolescents, nonsense = "field"))
+  expect_warning(out <- add_info(ison_adolescents, nonsense = "field"),
+                 "not recognised fields")
+  expect_true(is_manynet(out))
 })
 
 test_that("add_info() and mutate_info() also work on stocnet objects", {
@@ -208,4 +210,16 @@ test_that("add_info() and mutate_info() also work on stocnet objects", {
   out2 <- run_or_skip(mutate_info(out, name = "Adols2"),
                       "mutate_info", "stocnet")
   expect_identical(out2$info$name, "Adols2")
+})
+
+test_that("add_info.stocnet checks and conforms the names it is given", {
+  sw <- as_stocnet(ison_southern_women)
+  # a two-mode network has two nodesets to name, as the igraph method requires
+  expect_error(add_info(sw, nodes = "women"), "both nodesets")
+  # 'nodes' was the mnet name for the modes, so it sets the reserved field
+  two <- add_info(sw, nodes = c("work events", "social events"))
+  expect_equal(mode_names(two), c("work events", "social events"))
+  expect_equal(two$info$modes, c("work events", "social events"))
+  # a name the class does not reserve is kept, but the user is told
+  expect_warning(add_info(sw, nonsense = 1), "not recognised")
 })

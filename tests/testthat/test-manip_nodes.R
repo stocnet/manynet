@@ -37,13 +37,13 @@ test_that("delete_isolates works over a list of waves", {
 test_that("delete_isolates.stocnet reindexes ties and changes", {
   # Node 1 is untied, so every from/to index should shift down by one
   sn <- make_stocnet(
-    nodes = tibble::tibble(name = c("A", "B", "C", "D")),
+    nodes = tibble::tibble(label = c("A", "B", "C", "D")),
     ties = tibble::tibble(from = c(2L, 3L), to = c(3L, 4L)),
     changes = tibble::tibble(node = c(2L, 4L), time = c(1L, 2L),
-                             var = "name", value = c("B", "D"))
+                             var = "label", value = c("B", "D"))
   )
   out <- delete_isolates(sn)
-  expect_equal(out$nodes$name, c("B", "C", "D"))
+  expect_equal(out$nodes$label, c("B", "C", "D"))
   expect_equal(out$ties$from, c(1, 2))
   expect_equal(out$ties$to, c(2, 3))
   expect_equal(out$changes$node, c(1, 3))
@@ -70,14 +70,14 @@ test_that("delete_incomplete.tbl_graph removes nodes with missing values", {
 
 test_that("delete_incomplete.stocnet reindexes ties and changes", {
   sn <- make_stocnet(
-    nodes = tibble::tibble(name = c("A", "B", "C", "D"),
+    nodes = tibble::tibble(label = c("A", "B", "C", "D"),
                            group = c(NA, "x", "y", "z")),
     ties = tibble::tibble(from = c(1L, 2L, 3L), to = c(2L, 3L, 4L)),
     changes = tibble::tibble(node = c(1L, 4L), time = c(1L, 2L),
                              var = "group", value = c("q", "z"))
   )
   out <- delete_incomplete(sn)
-  expect_equal(out$nodes$name, c("B", "C", "D"))
+  expect_equal(out$nodes$label, c("B", "C", "D"))
   # the tie from the dropped node 1 goes with it, the rest shift down
   expect_equal(out$ties$from, c(1, 2))
   expect_equal(out$ties$to, c(2, 3))
@@ -180,4 +180,19 @@ test_that("validate_stocnet names every out-of-range id (#173)", {
   sn$missings <- tibble::tibble(from = c(20L, 30L), to = c(1L, 2L))
   # two unmatched ids used to make the message builder itself error
   expect_error(validate_stocnet(sn), "20 and 30")
+})
+
+test_that("a one-mode attribute lands on its own nodes when the modes interleave", {
+  nodes <- tibble::tibble(label = c("a", "X", "b", "Y", "c"),
+                          mode = c("person", "event", "person", "event", "person"))
+  ties <- tibble::tibble(from = c(1L, 3L), to = c(2L, 4L))
+  sn <- make_stocnet(nodes = nodes, ties = ties)
+  expect_equal(mode_nodes(sn), c(3L, 2L))
+  # the values of the second mode go to the rows of the second mode
+  out <- add_node_attribute(sn, "size", c(10, 20))
+  expect_equal(out$nodes$size, c(NA, 10, NA, 20, NA))
+  # and the values of the first mode to the rows of the first
+  out <- add_node_attribute(sn, "age", c(1, 2, 3))
+  expect_equal(out$nodes$age, c(1, NA, 2, NA, 3))
+  expect_error(add_node_attribute(sn, "bad", c(1, 2, 3, 4)), "5, not 4")
 })

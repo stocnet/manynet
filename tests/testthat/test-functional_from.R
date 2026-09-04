@@ -127,7 +127,9 @@ test_that("from_layers() renames clashing layer names", {
   sn2 <- as_stocnet(ison_adolescents)
   sn1$ties$layer <- "friends"
   sn2$ties$layer <- "friends"
-  out <- run_or_skip(from_layers(a = sn1, b = sn2), "from_layers", "layer clash")
+  expect_warning(from_layers(a = sn1, b = sn2), "renamed to b.friends")
+  out <- run_or_skip(from_layers(a = sn1, b = sn2), "from_layers",
+                     "layer clash")
   expect_length(unique(out$ties$layer), 2)
   expect_true("friends" %in% out$ties$layer)
 })
@@ -137,6 +139,8 @@ test_that("from_layers() merges node tables by label, coalescing attributes", {
                                        rep("red", 8)))
   sn2 <- as_stocnet(add_node_attribute(ison_adolescents, "colour",
                                        rep("blue", 8)))
+  expect_warning(from_layers(a = sn1, b = sn2),
+                 "Conflicting values for node attribute 'colour'")
   out <- run_or_skip(from_layers(a = sn1, b = sn2), "from_layers",
                      "attribute conflict")
   # conflicting values keep the first network's values
@@ -164,6 +168,7 @@ test_that("from_layers() adds unlabelled nodes rather than guessing labels", {
 test_that("from_layers() carries changes tables through the merge", {
   sn1 <- as_stocnet(fict_starwars)
   sn2 <- as_stocnet(delete_changes(fict_starwars))
+  expect_warning(from_layers(a = sn1, b = sn2), "renamed to b.interaction")
   out <- run_or_skip(from_layers(a = sn1, b = sn2), "from_layers", "changes")
   expect_s3_class(out, "stocnet")
   expect_false(is.null(out$changes))
@@ -174,7 +179,10 @@ test_that("from_layers() warns about conflicting dates and DOIs it resolves", {
                   doi = "10.1/first")
   sn2 <- add_info(as_stocnet(create_star(8)), date = "1999",
                   doi = "10.1/second")
-  expect_warning(out <- from_layers(a = sn1, b = sn2), "different 'date'")
+  # both fields conflict, so both are warned about
+  expect_warning(expect_warning(out <- from_layers(a = sn1, b = sn2),
+                                "different 'date'"),
+                 "different 'doi'")
   out <- suppressWarnings(from_layers(a = sn1, b = sn2))
   expect_identical(out$info$date, "1999")
   expect_identical(out$info$doi, "10.1/first")

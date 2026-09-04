@@ -75,7 +75,7 @@ for (fn in setdiff(is_funs, names(mark_class_patterns))) {
   f <- get(fn, envir = asNamespace("manynet"))
   test_that(paste0(fn, "() agrees across object classes"), {
     outs <- lapply(mark_classes, function(x) {
-      tryCatch(f(x), error = function(e) e)
+      quietly(tryCatch(f(x), error = function(e) e))
     })
     errs <- names(outs)[vapply(outs, inherits, logical(1), "error")]
     ok <- outs[setdiff(names(outs), errs)]

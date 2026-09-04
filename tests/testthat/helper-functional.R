@@ -20,15 +20,23 @@ alive_functions <- function(pattern) {
 }
 
 # Evaluate expr; on error, skip with a structured, greppable audit message.
+# The sweep asks whether a function runs and what it returns, and makes no
+# claim about the warnings it gives. Sweeping every function over every
+# fixture meets many warnings that are correct, such as a scaling function
+# meeting an isolate, or a delete function meeting a class that holds no
+# nodal attributes. They are muffled here, so that a warning the suite prints
+# is one a test did not expect. A test that reads a warning states it with
+# `expect_warning()` instead.
 run_or_skip <- function(expr, fn, fixture) {
-  tryCatch(
+  quietly(tryCatch(
     expr,
     error = function(e) {
       testthat::skip(paste0("AUDIT [", fn, " x ", fixture, "]: ",
                             conditionMessage(e)))
     }
-  )
+  ))
 }
+
 
 # Standard grid of fixture networks covering the main formats manynet
 # functions are expected to handle. All are tidygraph/mnet objects;

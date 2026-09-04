@@ -53,21 +53,27 @@ A call that only reports is silenced under the default verbosity:
 \itemize{
 \item \code{snet_info()} for what a function chose on the user's behalf.
 \item \code{snet_success()} for the completion of a long task.
-\item \code{snet_minor_info()} for detail that is useful only while debugging.
 \item \code{snet_progress_step()} and the other \verb{snet_progress_*()} functions
 for a progress bar.
+\item \code{snet_minor_info()} for the bookkeeping a function did on the way,
+such as which column it renamed.
 }
 
 \code{snet_prompt()} asks the user something, so it always shows.
 }
 \section{Verbosity}{
 
-The \code{snet_verbosity} option takes three levels:
+The \code{snet_verbosity} option takes four levels, each adding one thing to
+the one before it:
 \itemize{
 \item \code{'quiet'}, the default, reports nothing that is not an error,
 a warning, or a prompt.
-\item \code{'normal'} adds \code{snet_info()} and \code{snet_success()}.
-\item \code{'verbose'} adds \code{snet_minor_info()} and the progress bars.
+\item \code{'normal'} adds \code{snet_info()} and \code{snet_success()},
+so that a user learns what a function chose on their behalf.
+\item \code{'verbose'} adds the progress bars,
+which reassure a user that a long task is running.
+\item \code{'debug'} adds \code{snet_minor_info()},
+which reports exhaustively what a function did on the way.
 }
 
 Set one with, for example, \code{options(snet_verbosity = 'verbose')}.

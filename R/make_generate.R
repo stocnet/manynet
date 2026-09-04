@@ -134,7 +134,9 @@ generate_configuration <- function(.data){
   method1 <- "configuration"
   method2 <- "fast.heur.simple"
   if(is_twomode(.data)){
-    modes <- node_attribute(.data, "type")
+    # 'type' is how an igraph marks the modes; a stocnet marks them in 'mode',
+    # so the mark is asked for rather than the attribute that holds it.
+    modes <- node_is_mode(.data)
     degs <- .node_deg(.data)
     outs <- ifelse(!modes,c(degs),rep(0,length(degs)))
     ins <- ifelse(modes,c(degs),rep(0,length(degs)))
