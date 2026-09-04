@@ -8,6 +8,7 @@
 
 ## Classes
 
+- Added `print()` and `summary()` methods for a 'tie_member' class (closes #168)
 - Improved `add_info.stocnet()` to check and conform the names it is given
   - Naming one nodeset of a two-mode network now aborts, as for an igraph
   - 'nodes' and 'ties' set the reserved 'modes' and 'layers'
@@ -16,6 +17,7 @@
 ## Coercion
 
 - Fixed `as_network()` losing the graph attributes on the way through igraph
+- Fixed `as_siena()` rendering a node's non-response as a changing covariate
 
 ## Making
 

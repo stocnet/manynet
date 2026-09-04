@@ -241,6 +241,28 @@ test_that("node_member class prints and summarises", {
   expect_no_error(capture.output(summary(mb)))
 })
 
+test_that("tie_member class prints and summarises (#168)", {
+  net <- ison_adolescents
+  mb <- manynet:::make_tie_member(rep(c(1, 2), 5), net)
+  expect_s3_class(mb, "tie_member")
+  # a tie is named by the pair of nodes it joins
+  expect_equal(unname(head(names(mb), 2)), c("Betty-Sue", "Sue-Alice"))
+  out <- cli::ansi_strip(expect_prints(mb, "tie_member"))
+  expect_match(out[1], "^2 groups")
+  summ <- cli::ansi_strip(capture.output(summary(mb)))
+  expect_match(paste(summ, collapse = "\n"), "Class A:")
+  expect_match(paste(summ, collapse = "\n"), "Betty-Sue")
+  # a directed network names the pair with an arrow, and an unlabelled one
+  # names each end by its place in the network
+  dir <- manynet:::make_tie_member(c(1, 1, 2, 2), to_directed(create_ring(4)))
+  expect_true(all(grepl("^[0-9]+->[0-9]+$", names(dir))))
+  # an object made another way holds no names, and lists the ties by place
+  bare <- structure(c("A", "B", "A"), class = c("tie_member", "character"))
+  expect_match(paste(cli::ansi_strip(capture.output(summary(bare))),
+                     collapse = "\n"),
+               "Class A:  1, 3")
+})
+
 test_that("diff_model prints and summarises", {
   set.seed(1234)
   d <- suppressWarnings(play_diffusion(create_ring(8), seeds = 1, steps = 5,
