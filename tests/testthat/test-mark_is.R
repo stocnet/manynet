@@ -13,11 +13,11 @@ test_that("is_multilevel distinguishes interlocking from plain two-mode networks
   expect_false(is_multilevel(irps_revere))
   # One-mode networks are never multilevel.
   expect_false(is_multilevel(ison_adolescents))
-  # to_multilevel() records levels in 'lvl' and deletes 'type', so an igraph
-  # is no longer two-mode and has to be recognised by its levels instead.
+  # to_multilevel() records levels in 'lvl' beside 'type', so the network
+  # stays two-mode: it has two nodesets, tied both within and between.
   # fict_marvel is a stocnet, which holds its levels in 'mode' either way,
   # so the igraph behaviour is tested on a coerced copy.
-  expect_false(is_twomode(to_multilevel(as_igraph(fict_marvel))))
+  expect_true(is_twomode(to_multilevel(as_igraph(fict_marvel))))
   expect_true(is_multilevel(to_multilevel(as_igraph(fict_marvel))))
   # A two-mode network without any ties cannot have ties within a mode.
   expect_false(is_multilevel(create_empty(c(3,3))))

@@ -143,8 +143,16 @@ test_that("as_network converts correctly",{
   expect_s3_class(as_network(mat1), "network")
   expect_s3_class(as_network(ison_southern_women), "network")
   expect_equal(as_network(as_network(data2)), as_network(data2))
-  expect_equal(as_network(as_igraph(ison_southern_women)),
-               as_network(ison_southern_women))
+  # The two routes build the edge list in different orders, which a 'network'
+  # object records but which says nothing about the network, so what the two
+  # agree on is compared rather than the objects themselves.
+  via <- as_network(as_igraph(ison_southern_women))
+  direct <- as_network(ison_southern_women)
+  expect_equal(as_matrix(via), as_matrix(direct))
+  expect_equal(sort(network::list.network.attributes(via)),
+               sort(network::list.network.attributes(direct)))
+  expect_equal(sort(network::list.vertex.attributes(via)),
+               sort(network::list.vertex.attributes(direct)))
   expect_equal(igraph::vcount(as_igraph(as_network(dplyr::as_tibble(data2)))),
                igraph::vcount(as_igraph(as_network(data2))))
   expect_equal(is_directed(ison_southern_women),

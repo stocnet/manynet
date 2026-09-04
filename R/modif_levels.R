@@ -112,8 +112,12 @@ to_multilevel.tbl_graph <- function(.data) {
 #' @export
 to_multilevel.igraph <- function(.data) {
   if(is_twomode(.data)){
+    # 'type' is kept alongside 'lvl'. A multilevel network is still two-mode:
+    # it has two nodesets, and ties both within and between them, which is what
+    # `is_multilevel()` reads and what `fict_marvel` records. Deleting 'type'
+    # would unmark the modes, contradicting that mark, and would lose the mode
+    # names on a round trip, since `as_stocnet()` reads them against 'type'.
     igraph::V(.data)$lvl <- ifelse(igraph::V(.data)$type, 2, 1)
-    .data <- igraph::delete_vertex_attr(.data, "type")
   }
   .data
 }

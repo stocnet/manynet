@@ -278,13 +278,15 @@ mode_nodes.matrix <- function(.data){
 
 #' @export
 mode_nodes.igraph <- function(.data){
-  if(is_twomode(.data)){
+  # A 'lvl' attribute can name more than the two modes a 'type' attribute can,
+  # so it is read first where a network carries both, as `net_modes.igraph()`
+  # reads it. `to_multilevel()` writes 'lvl' beside 'type' rather than instead
+  # of it, so both are there whenever the levels have been written.
+  if("lvl" %in% igraph::vertex_attr_names(.data)){
+    .count_modes(igraph::vertex_attr(.data, "lvl"), mode_names(.data))
+  } else if(is_twomode(.data)){
     c(sum(!igraph::V(.data)$type),
       sum(igraph::V(.data)$type))
-  } else if("lvl" %in% igraph::vertex_attr_names(.data)){
-    # A 'lvl' attribute can name more than the two modes a 'type' attribute
-    # can, so each of its levels is counted here.
-    .count_modes(igraph::vertex_attr(.data, "lvl"), mode_names(.data))
   } else {
     igraph::vcount(.data)
   }
