@@ -20,18 +20,24 @@
 #'   
 #'   - `snet_info()` for what a function chose on the user's behalf.
 #'   - `snet_success()` for the completion of a long task.
-#'   - `snet_minor_info()` for detail that is useful only while debugging.
 #'   - `snet_progress_step()` and the other `snet_progress_*()` functions
 #'   for a progress bar.
+#'   - `snet_minor_info()` for the bookkeeping a function did on the way,
+#'   such as which column it renamed.
 #'   
 #'   `snet_prompt()` asks the user something, so it always shows.
 #' @section Verbosity:
-#'   The `snet_verbosity` option takes three levels:
+#'   The `snet_verbosity` option takes four levels, each adding one thing to
+#'   the one before it:
 #'   
 #'   - `'quiet'`, the default, reports nothing that is not an error,
 #'   a warning, or a prompt.
-#'   - `'normal'` adds `snet_info()` and `snet_success()`.
-#'   - `'verbose'` adds `snet_minor_info()` and the progress bars.
+#'   - `'normal'` adds `snet_info()` and `snet_success()`,
+#'   so that a user learns what a function chose on their behalf.
+#'   - `'verbose'` adds the progress bars,
+#'   which reassure a user that a long task is running.
+#'   - `'debug'` adds `snet_minor_info()`,
+#'   which reports exhaustively what a function did on the way.
 #'   
 #'   Set one with, for example, `options(snet_verbosity = 'verbose')`.
 #' @param ... One or more character strings.
@@ -42,10 +48,10 @@
 #' @name interface
 NULL
 
-# The three verbosity levels, in order, so that a level can be compared with
-# the level a message needs. An unrecognised value reads as 'normal', which is
+# The verbosity levels, in order, so that a level can be compared with the
+# level a message needs. An unrecognised value reads as 'normal', which is
 # what every value other than 'quiet' meant before the levels were named.
-.snet_levels <- c("quiet", "normal", "verbose")
+.snet_levels <- c("quiet", "normal", "verbose", "debug")
 
 .snet_verbose <- function(level = "normal"){
   set <- match(getOption("snet_verbosity", default = "quiet"), .snet_levels)
@@ -63,7 +69,7 @@ snet_info <- function(..., .envir = parent.frame()){
 #' @rdname interface
 #' @export
 snet_minor_info <- function(..., .envir = parent.frame()){
-  if(.snet_verbose("verbose"))
+  if(.snet_verbose("debug"))
     cli::cli_alert_info(cli::col_grey(paste(...)), .envir = .envir)
 }
 
@@ -123,8 +129,8 @@ snet_unavailable <- function(..., .envir = parent.frame()){
 #'   - `snet_progress_seq()` for progress along a sequence.
 #'   - `snet_progress_nodes()` for progress along the nodes of a network.
 #'   
-#'   A progress bar reports what a function did and not what it decided,
-#'   so it shows only where `options(snet_verbosity = 'verbose')`.
+#'   A progress bar reassures a user that a long task is running,
+#'   so it shows from `options(snet_verbosity = 'verbose')` upwards.
 #'   See the verbosity section of [interface].
 #' @inheritParams interface
 #' @template param_data

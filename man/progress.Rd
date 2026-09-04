@@ -50,7 +50,7 @@ to build an attractive command line interface (CLI).
 \item \code{snet_progress_nodes()} for progress along the nodes of a network.
 }
 
-A progress bar reports what a function did and not what it decided,
-so it shows only where \code{options(snet_verbosity = 'verbose')}.
+A progress bar reassures a user that a long task is running,
+so it shows from \code{options(snet_verbosity = 'verbose')} upwards.
 See the verbosity section of \link{interface}.
 }
