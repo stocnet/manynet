@@ -209,3 +209,15 @@ test_that("add_info() and mutate_info() also work on stocnet objects", {
                       "mutate_info", "stocnet")
   expect_identical(out2$info$name, "Adols2")
 })
+
+test_that("add_info.stocnet checks and conforms the names it is given", {
+  sw <- as_stocnet(ison_southern_women)
+  # a two-mode network has two nodesets to name, as the igraph method requires
+  expect_error(add_info(sw, nodes = "women"), "name all 2 nodesets")
+  # 'nodes' was the mnet name for the modes, so it sets the reserved field
+  two <- add_info(sw, nodes = c("work events", "social events"))
+  expect_equal(mode_names(two), c("work events", "social events"))
+  expect_equal(two$info$modes, c("work events", "social events"))
+  # a name the class does not reserve is kept, but the user is told
+  expect_warning(add_info(sw, nonsense = 1), "not recognised")
+})

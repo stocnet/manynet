@@ -761,3 +761,13 @@ test_that("to_backbone reports what would otherwise pass unnoticed", {
   expect_true(any(grepl("retains no tie",
     capture_warnings(to_backbone(ison_karateka, filter = "disparity")))))
 })
+
+test_that("to_mode resolves a mode by name on a stocnet", {
+  sw <- as_stocnet(ison_southern_women)
+  two <- add_info(sw, nodes = c("work events", "social events"))
+  # the word that tells the modes apart reaches one of them
+  expect_equal(as_matrix(to_mode(two, "work")), as_matrix(to_mode1(sw)))
+  expect_equal(as_matrix(to_mode(two, "social")), as_matrix(to_mode2(sw)))
+  # and one that does not is an error, as it is for an igraph
+  expect_error(to_mode(two, "events"), "more than one mode")
+})
