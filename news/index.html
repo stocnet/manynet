@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.3</span>
       </span>
     </div>
 
@@ -89,6 +89,53 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.3" id="manynet-233">manynet 2.3.3<a class="anchor" aria-label="anchor" href="#manynet-233"></a></h2>
+<div class="section level3">
+<h3 id="package-2-3-3">Package<a class="anchor" aria-label="anchor" href="#package-2-3-3"></a></h3>
+<ul><li>Added a fourth <code>snet_verbosity</code> level, ‘debug’, so each level has one job
+<ul><li>‘normal’ reports what a function chose, ‘verbose’ that it is running</li>
+<li>
+<code><a href="../reference/interface.html">snet_minor_info()</a></code> moves to ‘debug’, so an interactive session is quieter</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="classes-2-3-3">Classes<a class="anchor" aria-label="anchor" href="#classes-2-3-3"></a></h3>
+<ul><li>Added <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> and <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> methods for a ‘tie_member’ class (closes <a href="https://github.com/stocnet/manynet/issues/168" class="external-link">#168</a>)</li>
+<li>Improved <code>add_info.stocnet()</code> to check and conform the names it is given
+<ul><li>Naming one nodeset of a two-mode network now aborts, as for an igraph</li>
+<li>‘nodes’ and ‘ties’ set the reserved ‘modes’ and ‘layers’</li>
+<li>An unrecognised field is kept, but warned about</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="coercion-2-3-3">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-3-3"></a></h3>
+<ul><li>Fixed <code><a href="../reference/coerce_graph.html">as_network()</a></code> losing the graph attributes on the way through igraph</li>
+<li>Fixed <code><a href="../reference/coerce_graph.html">as_siena()</a></code> rendering a node’s non-response as a changing covariate</li>
+</ul></div>
+<div class="section level3">
+<h3 id="making-2-3-3">Making<a class="anchor" aria-label="anchor" href="#making-2-3-3"></a></h3>
+<ul><li>Fixed <code><a href="../reference/make_random.html">generate_configuration()</a></code> reading the modes of a ‘stocnet’</li>
+</ul></div>
+<div class="section level3">
+<h3 id="manipulating-2-3-3">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-2-3-3"></a></h3>
+<ul><li>Improved <code><a href="../reference/manip_nodes_attr.html">add_node_attribute()</a></code> to take a vector as long as any one mode
+<ul><li>Reads <code><a href="../reference/measure_dims.html">mode_nodes()</a></code>, so it serves three or more modes and not only two</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="marking-2-3-3">Marking<a class="anchor" aria-label="anchor" href="#marking-2-3-3"></a></h3>
+<ul><li>Fixed <code>is_multilevel.igraph()</code> marking a network that has no ties within a level</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-2-3-3">Modifying<a class="anchor" aria-label="anchor" href="#modifying-2-3-3"></a></h3>
+<ul><li>Fixed <code><a href="../reference/modif_labels.html">to_labelled()</a></code> storing labels that are not character</li>
+</ul></div>
+<div class="section level3">
+<h3 id="tutorials-2-3-3">Tutorials<a class="anchor" aria-label="anchor" href="#tutorials-2-3-3"></a></h3>
+<ul><li>Fixed error in packaged data multichoice question</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="2.3.2" id="manynet-232">manynet 2.3.2<a class="anchor" aria-label="anchor" href="#manynet-232"></a></h2>
 <div class="section level3">
 <h3 id="package-2-3-2">Package<a class="anchor" aria-label="anchor" href="#package-2-3-2"></a></h3>
@@ -98,12 +145,12 @@
 <li>
 <code><a href="../reference/interface.html">snet_minor_info()</a></code> and the <code>snet_progress_*()</code> functions report from ‘verbose’</li>
 </ul></li>
-<li>Improved <code><a href="../reference/interface.html">snet_warn()</a></code> and <code><a href="../reference/interface.html">snet_unavailable()</a></code> so that neither is silenced (closed <a href="https://github.com/stocnet/manynet/issues/169" class="external-link">#169</a>)</li>
+<li>Improved <code><a href="../reference/interface.html">snet_warn()</a></code> and <code><a href="../reference/interface.html">snet_unavailable()</a></code> so that neither is silenced (closes <a href="https://github.com/stocnet/manynet/issues/169" class="external-link">#169</a>)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="classes-2-3-2">Classes<a class="anchor" aria-label="anchor" href="#classes-2-3-2"></a></h3>
-<ul><li>Improved <code><a href="../reference/class_describe.html">describe_nodes()</a></code> on networks of three or more modes (closed <a href="https://github.com/stocnet/manynet/issues/174" class="external-link">#174</a>)</li>
-<li>Fixed <code>keep_nodes()</code> to drop and reindex <code>$missings</code> (closed <a href="https://github.com/stocnet/manynet/issues/173" class="external-link">#173</a>)
+<ul><li>Improved <code><a href="../reference/class_describe.html">describe_nodes()</a></code> on networks of three or more modes (closes <a href="https://github.com/stocnet/manynet/issues/174" class="external-link">#174</a>)</li>
+<li>Fixed <code>keep_nodes()</code> to drop and reindex <code>$missings</code> (closes <a href="https://github.com/stocnet/manynet/issues/173" class="external-link">#173</a>)
 <ul><li>
 <code>reserved_cols()</code> now names every out-of-range id, instead of erroring</li>
 </ul></li>
@@ -112,33 +159,29 @@
 </ul></div>
 <div class="section level3">
 <h3 id="coercion-2-3-2">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-3-2"></a></h3>
-<ul><li>Fixed <code>as_igraph.stocnet()</code> on multimodal and multilevel networks (closed <a href="https://github.com/stocnet/manynet/issues/170" class="external-link">#170</a>)</li>
+<ul><li>Fixed <code>as_igraph.stocnet()</code> on multimodal and multilevel networks (closes <a href="https://github.com/stocnet/manynet/issues/170" class="external-link">#170</a>)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="manipulating-2-3-2">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-2-3-2"></a></h3>
-<ul><li>Added <code>delete_nodes.stocnet()</code>, which reindexes every component it keeps
-<ul><li>Deleting nodes used to leave the changes naming nodes that were gone</li>
-</ul></li>
+<ul><li>Added <code>delete_nodes.stocnet()</code> to reindex every component, including changes</li>
 </ul></div>
 <div class="section level3">
 <h3 id="modifying-2-3-2">Modifying<a class="anchor" aria-label="anchor" href="#modifying-2-3-2"></a></h3>
-<ul><li>Added <code>to_mode1.stocnet()</code> and <code>to_mode2.stocnet()</code>, which prune the changes
-<ul><li>A projection discards a mode, so a change about it describes no node</li>
-</ul></li>
+<ul><li>Added <code>to_mode1.stocnet()</code> and <code>to_mode2.stocnet()</code> to carry changes</li>
 <li>Added <code>keep = "both"</code> to <code><a href="../reference/modif_weight.html">to_unsigned()</a></code>, which keeps every tie but not its sign</li>
 <li>Fixed <code>to_unsigned.data.frame()</code> erroring on a signed edgelist
 <ul><li>now drops the ties of the other sign, as the other methods do</li>
 <li>now reads signs held as negative weights as well as in a ‘sign’ column</li>
 </ul></li>
 <li>Fixed <code>to_unsigned.network()</code> ignoring its <code>keep</code> argument</li>
-<li>Fixed <code><a href="../reference/modif_plexity.html">to_layer()</a></code> pointing arcs at the wrong nodes (closed <a href="https://github.com/stocnet/manynet/issues/170" class="external-link">#170</a>)</li>
+<li>Fixed <code><a href="../reference/modif_plexity.html">to_layer()</a></code> pointing arcs at the wrong nodes (closes <a href="https://github.com/stocnet/manynet/issues/170" class="external-link">#170</a>)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="marking-2-3-2">Marking<a class="anchor" aria-label="anchor" href="#marking-2-3-2"></a></h3>
 <ul><li>Improved <code><a href="../reference/mark_format_tie.html">is_directed()</a></code> on a network tied within a level as well as between</li>
 <li>Fixed <code>is_multilevel.igraph()</code> looping through <code><a href="../reference/measure_attributes_ties.html">tie_is_twomode()</a></code>
 </li>
-<li>Added <code><a href="../reference/member_names.html">layer_is_directed()</a></code>, reporting each layer of a network (closed <a href="https://github.com/stocnet/manynet/issues/171" class="external-link">#171</a>)</li>
+<li>Added <code><a href="../reference/member_names.html">layer_is_directed()</a></code>, reporting each layer of a network (closes <a href="https://github.com/stocnet/manynet/issues/171" class="external-link">#171</a>)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="measuring-2-3-2">Measuring<a class="anchor" aria-label="anchor" href="#measuring-2-3-2"></a></h3>
@@ -147,11 +190,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="data-2-3-2">Data<a class="anchor" aria-label="anchor" href="#data-2-3-2"></a></h3>
-<ul><li>Improved <code>ison_southern_women</code> to record when each of its events is held
-<ul><li>
-<code><a href="../reference/mark_format_change.html">is_changing()</a></code> now marks it TRUE, as each event enters on its own date</li>
-<li>The dates move from a tie attribute to the changes, where they describe the event</li>
-</ul></li>
+<ul><li>Corrected <code>ison_southern_women</code> to be changing by event dates</li>
 </ul></div>
 </div>
     <div class="section level2">

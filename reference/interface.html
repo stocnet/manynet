@@ -15,9 +15,10 @@ such as a value that is dropped or a name that does not match.
 A call that only reports is silenced under the default verbosity:
 snet_info() for what a function chose on the user's behalf.
 snet_success() for the completion of a long task.
-snet_minor_info() for detail that is useful only while debugging.
 snet_progress_step() and the other snet_progress_*() functions
 for a progress bar.
+snet_minor_info() for the bookkeeping a function did on the way,
+such as which column it renamed.
 
 
 snet_prompt() asks the user something, so it always shows."><meta property="og:image" content="https://stocnet.github.io/manynet/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -38,7 +39,7 @@ snet_prompt() asks the user something, so it always shows."><meta property="og:i
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.3</span>
       </span>
     </div>
 
@@ -123,9 +124,10 @@ run on and return a wrong answer instead of an explanation:</p><ul><li><p><code>
 such as a value that is dropped or a name that does not match.</p></li>
 </ul><p>A call that only reports is silenced under the default verbosity:</p><ul><li><p><code>snet_info()</code> for what a function chose on the user's behalf.</p></li>
 <li><p><code>snet_success()</code> for the completion of a long task.</p></li>
-<li><p><code>snet_minor_info()</code> for detail that is useful only while debugging.</p></li>
 <li><p><code><a href="progress.html">snet_progress_step()</a></code> and the other <code>snet_progress_*()</code> functions
 for a progress bar.</p></li>
+<li><p><code>snet_minor_info()</code> for the bookkeeping a function did on the way,
+such as which column it renamed.</p></li>
 </ul><p><code>snet_prompt()</code> asks the user something, so it always shows.</p>
     </div>
 
@@ -164,10 +166,15 @@ pasted together.</p></dd>
     <h2>Verbosity</h2>
 
 
-<p>The <code>snet_verbosity</code> option takes three levels:</p><ul><li><p><code>'quiet'</code>, the default, reports nothing that is not an error,
+<p>The <code>snet_verbosity</code> option takes four levels, each adding one thing to
+the one before it:</p><ul><li><p><code>'quiet'</code>, the default, reports nothing that is not an error,
 a warning, or a prompt.</p></li>
-<li><p><code>'normal'</code> adds <code>snet_info()</code> and <code>snet_success()</code>.</p></li>
-<li><p><code>'verbose'</code> adds <code>snet_minor_info()</code> and the progress bars.</p></li>
+<li><p><code>'normal'</code> adds <code>snet_info()</code> and <code>snet_success()</code>,
+so that a user learns what a function chose on their behalf.</p></li>
+<li><p><code>'verbose'</code> adds the progress bars,
+which reassure a user that a long task is running.</p></li>
+<li><p><code>'debug'</code> adds <code>snet_minor_info()</code>,
+which reports exhaustively what a function did on the way.</p></li>
 </ul><p>Set one with, for example, <code>options(snet_verbosity = 'verbose')</code>.</p>
     </div>
 
