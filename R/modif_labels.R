@@ -41,7 +41,9 @@ to_labelled.default <- function(.data, names = NULL){
 #' @export
 to_labelled.tbl_graph <- function(.data, names = NULL) {
   if (!is.null(names)) {
-    out <- .data |> mutate(name = names)
+    # A label is a name, so it is held as a character vector in every class.
+    # A stocnet reserves 'label' for one, which `validate_stocnet()` enforces.
+    out <- .data |> mutate(name = as.character(names))
   } else {
     n <- net_nodes(.data)
     out <- .data |>
@@ -53,7 +55,7 @@ to_labelled.tbl_graph <- function(.data, names = NULL) {
 #' @export
 to_labelled.igraph <- function(.data, names = NULL) {
   if (!is.null(names)) {
-    igraph::V(.data)$name  <- names
+    igraph::V(.data)$name  <- as.character(names)
   } else {
     igraph::V(.data)$name  <- .get_babynames(net_nodes(.data))
   }
