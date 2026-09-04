@@ -207,8 +207,12 @@ add_info.stocnet <- function(.data, ...){
 # wrongly, which `validate_stocnet()` would then reject.
 .check_mode_names <- function(.data, modes){
   if(is.null(modes)) return(invisible(NULL))
-  if(net_modes(.data) > 1 && length(modes) != net_modes(.data))
-    snet_abort("Please name all {net_modes(.data)} nodesets in this network.")
+  n <- net_modes(.data)
+  if(n < 2 || length(modes) == n) return(invisible(NULL))
+  # the two-mode wording matches the igraph method's, so that a caller reads
+  # the same sentence whichever class it holds the network in
+  if(n == 2) snet_abort("Please name both nodesets in a two-mode network.")
+  snet_abort("Please name all {n} nodesets in this network.")
 }
 
 .check_layer_names <- function(.data, layers){
