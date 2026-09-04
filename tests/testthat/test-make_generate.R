@@ -54,3 +54,11 @@ test_that("generate_islands works", {
 test_that("generate_citations works", {
   expect_s3_class(generate_citations(ison_adolescents), "igraph")
 })
+
+test_that("generate_configuration reads the modes of a stocnet", {
+  # a stocnet marks its modes in 'mode', where an igraph uses 'type'
+  sw <- as_stocnet(ison_southern_women)
+  out <- generate_configuration(sw)
+  expect_true(is_twomode(out))
+  expect_equal(as.numeric(net_nodes(out)), as.numeric(net_nodes(sw)))
+})
