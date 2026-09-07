@@ -48,20 +48,30 @@ By default 1.
 See \code{igraph::sample_forestfire()}.}
 
 \item{their_out}{Probability of tieing to a contact's outgoing ties.
-By default 0.}
+By default 0.
+In a two-mode network, this is instead the probability of burning across
+each two-path, and so of closing a four-cycle.}
 
 \item{their_in}{Probability of tieing to a contact's incoming ties.
-By default 1.}
+By default 1.
+This is a factor on \code{their_out} rather than a probability in its own
+right, so \code{their_out = 0} gives a tree whatever \code{their_in} is set to.
+In a two-mode network, \code{their_out * their_in} is instead the probability
+that a newly burned node re-ignites and spreads the fire further.}
 
 \item{islands}{Number of islands or communities to create.
 By default 2.
-See \code{igraph::sample_islands()} for more.}
+See \code{igraph::sample_islands()} for more.
+In a two-mode network, each mode is cut into this many blocks,
+and a node of each mode that share a block are tied with probability \code{p}.}
 
 \item{bridges}{Number of bridges between islands/communities.
 By default 1.}
 
 \item{ties}{Number of ties to add per new node.
-By default a uniform random sample from 1 to 4 new ties.}
+By default a uniform random sample from 1 to 4 new ties.
+In a two-mode network, each new node of the first mode ties to this many
+nodes of the second mode, chosen by how recently each was last tied to.}
 
 \item{agebins}{Number of aging bins.
 By default either \eqn{\frac{n}{10}} or 1,
@@ -103,14 +113,26 @@ and the second integer indicates the number of nodes in the second mode.
 As an alternative, an existing network can be provided to \code{n}
 and the number of modes, nodes, and directedness will be inferred.
 }
+\details{
+In a one-mode network, each burn step is a single hop, so each tie the
+fire creates closes a triangle.
+A tie in a two-mode network crosses modes, so the shortest closure there
+is the four-cycle rather than the triangle.
+In a two-mode network each burn step is therefore a two-path hop across
+the other mode, and each tie the fire creates closes a four-cycle.
+Both modes grow over the course of the simulation.
+}
 \examples{
 generate_smallworld(12, 0.025)
 generate_smallworld(12, 0.25)
 generate_scalefree(12, 0.25)
 generate_scalefree(12, 1.25)
 generate_fire(10)
+generate_fire(c(10, 6))
 generate_islands(10)
+generate_islands(c(10, 6))
 generate_citations(10)
+generate_citations(c(10, 6))
 }
 \references{
 \subsection{On small-world networks}{

@@ -1,3 +1,14 @@
+# manynet 2.3.4
+
+## Making
+
+- Fixed `generate_islands()` deriving `p` from a two-mode network with a one-mode dyad count
+- Added two-mode support to the last three `generate_*()` functions (closes #150)
+  - `generate_fire()` burns along two-paths, closing four-cycles instead of triangles
+  - `generate_islands()` builds a bipartite blockmodel with a planted diagonal
+  - `generate_citations()` keeps its recency mechanism, but the target crosses the mode divide, 
+  and both modes grow so that the concentration turns over
+
 # manynet 2.3.3
 
 ## Package
