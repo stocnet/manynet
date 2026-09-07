@@ -11,6 +11,10 @@
   - `generate_citations()` keeps its recency mechanism, but the target crosses the mode divide, 
   and both modes grow so that the concentration turns over
 
+## Manipulating
+
+- Improved `to_time()` to scope globals as it already scoped ties, changes, and missings
+
 ## Modifying
 
 - Added `to_positive()` to shortcut keeping just the positive ties of a signed network (closes #176)
