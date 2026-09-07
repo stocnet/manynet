@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.4</span>
       </span>
     </div>
 
@@ -88,6 +88,49 @@
       <small>Source: <a href="https://github.com/stocnet/manynet/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.4" id="manynet-234">manynet 2.3.4<a class="anchor" aria-label="anchor" href="#manynet-234"></a></h2>
+<div class="section level3">
+<h3 id="making-2-3-4">Making<a class="anchor" aria-label="anchor" href="#making-2-3-4"></a></h3>
+<ul><li>Fixed a couple of <code><a href="../reference/make_stochastic.html">generate_islands()</a></code> errors
+<ul><li>Fixed to grow bridges as <code>choose(islands, 2)</code> and not as <code>islands</code>
+</li>
+<li>Fixed deriving <code>p</code> from a two-mode network with a one-mode dyad count</li>
+</ul></li>
+<li>Added two-mode support to the last three <code>generate_*()</code> functions (closes <a href="https://github.com/stocnet/manynet/issues/150" class="external-link">#150</a>)
+<ul><li>
+<code><a href="../reference/make_stochastic.html">generate_fire()</a></code> burns along two-paths, closing four-cycles instead of triangles</li>
+<li>
+<code><a href="../reference/make_stochastic.html">generate_islands()</a></code> builds a bipartite blockmodel with a planted diagonal</li>
+<li>
+<code><a href="../reference/make_stochastic.html">generate_citations()</a></code> keeps its recency mechanism, but the target crosses the mode divide, and both modes grow so that the concentration turns over</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="manipulating-2-3-4">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-2-3-4"></a></h3>
+<ul><li>Fixed <code>bind_changes.igraph()</code> replacing the changelog instead of appending</li>
+<li>Added remaining row-wise verbs for the globals component (closes <a href="https://github.com/stocnet/manynet/issues/149" class="external-link">#149</a>)
+<ul><li>Added <code><a href="../reference/manip_globals.html">bind_globals()</a></code>
+</li>
+<li>Added <code><a href="../reference/manip_globals.html">filter_globals()</a></code>
+</li>
+<li>Added <code><a href="../reference/manip_globals.html">arrange_globals()</a></code>
+</li>
+<li>Added <code><a href="../reference/manip_globals.html">delete_globals()</a></code>
+</li>
+<li>Added <code><a href="../reference/manip_globals.html">mutate_globals()</a></code> to alter table columns</li>
+</ul></li>
+<li>Improved <code><a href="../reference/modif_scope.html">to_time()</a></code> to scope globals as it already scoped ties, changes, and missings</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-2-3-4">Modifying<a class="anchor" aria-label="anchor" href="#modifying-2-3-4"></a></h3>
+<ul><li>Added <code><a href="../reference/modif_weight.html">to_positive()</a></code> to shortcut keeping just the positive ties of a signed network (closes <a href="https://github.com/stocnet/manynet/issues/176" class="external-link">#176</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="marking-2-3-4">Marking<a class="anchor" aria-label="anchor" href="#marking-2-3-4"></a></h3>
+<ul><li>Fixed <code><a href="../reference/mark_format_tie.html">is_signed()</a></code> to check for a ‘sign’ column or a negative ‘weight’ column</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.3.3" id="manynet-233">manynet 2.3.3<a class="anchor" aria-label="anchor" href="#manynet-233"></a></h2>
 <div class="section level3">
