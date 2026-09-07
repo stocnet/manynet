@@ -2,7 +2,9 @@
 
 ## Making
 
-- Fixed `generate_islands()` deriving `p` from a two-mode network with a one-mode dyad count
+- Fixed a couple of `generate_islands()` errors
+  - Fixed to grow bridges as `choose(islands, 2)` and not as `islands`
+  - Fixed deriving `p` from a two-mode network with a one-mode dyad count
 - Added two-mode support to the last three `generate_*()` functions (closes #150)
   - `generate_fire()` burns along two-paths, closing four-cycles instead of triangles
   - `generate_islands()` builds a bipartite blockmodel with a planted diagonal

@@ -68,6 +68,19 @@ test_that("generate_islands works", {
   expect_true(is_twomode(generate_islands(ison_southern_women)))
 })
 
+test_that("generate_islands adds a bridge for each pair of islands", {
+  # both branches tie each pair of islands, so the count of bridge ties grows
+  # as `choose(islands, 2)`, not as `islands`. The `p` inference subtracts it.
+  for(k in c(2, 3, 4, 6)){
+    onemode <- igraph::sample_islands(islands.n = k, islands.size = 10,
+                                      islands.pin = 0, n.inter = 1)
+    expect_equal(igraph::ecount(onemode), choose(k, 2))
+    twomode <- generate_islands(c(10 * k, 10 * k), islands = k, p = 0,
+                                bridges = 1)
+    expect_equal(as.numeric(net_ties(twomode)), choose(k, 2))
+  }
+})
+
 test_that("generate_citations works", {
   expect_s3_class(generate_citations(ison_adolescents), "igraph")
   cites <- generate_citations(c(20, 10))

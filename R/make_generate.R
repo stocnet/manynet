@@ -437,7 +437,10 @@ generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1,
                              directed = FALSE){
   directed <- infer_directed(n, directed)
   if(is_manynet(n)){
-    extra_ties <- ifelse(islands > 2, islands * bridges, bridges)
+    # both `igraph::sample_islands()` and `.islands_twomode()` add `bridges`
+    # ties for each pair of islands, so the count of the pairs is what the
+    # aimed tie count subtracts
+    extra_ties <- choose(islands, 2) * bridges
     aimed_ties <- net_ties(n) - extra_ties
     if(is_twomode(n)){
       # a two-mode island has m1 * m2 possible ties, not m * (m-1) / 2
