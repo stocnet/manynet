@@ -5,6 +5,10 @@
 \alias{mutate_globals}
 \alias{rename_globals}
 \alias{select_globals}
+\alias{bind_globals}
+\alias{filter_globals}
+\alias{arrange_globals}
+\alias{delete_globals}
 \title{Manipulating global attributes}
 \usage{
 mutate_globals(.data, ...)
@@ -12,6 +16,14 @@ mutate_globals(.data, ...)
 rename_globals(.data, ...)
 
 select_globals(.data, ...)
+
+bind_globals(.data, globals)
+
+filter_globals(.data, ...)
+
+arrange_globals(.data, ...)
+
+delete_globals(.data)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -25,6 +37,11 @@ select_globals(.data, ...)
 }}
 
 \item{...}{Additional parameters and arguments passed on internally.}
+
+\item{globals}{A data frame of global variables to bind on.
+It should hold a column \code{var} naming the variable,
+a column \code{value} holding its value,
+and, where the variable changes over time, a column \code{time}.}
 }
 \value{
 A data object of the same class as the function was given.
@@ -34,9 +51,16 @@ These functions offer ways to manipulate network-level data constants
 or variables that are not tied to a particular node or tie.
 They include:
 \itemize{
-\item \code{mutate_globals()} adds a table of global variables to the network.
+\item \code{bind_globals()} adds rows of global variables to the network.
+\item \code{mutate_globals()} changes the columns of the global variables table.
+Where the network holds no global variables yet, it creates the table.
+Where it holds one already, it changes that table's columns rather than
+adding to it, so use \code{bind_globals()} to add another global variable.
 \item \code{rename_globals()} renames columns in the global variables table.
 \item \code{select_globals()} selects columns in the global variables table.
+\item \code{filter_globals()} subsets rows of the global variables table.
+\item \code{arrange_globals()} orders rows of the global variables table.
+\item \code{delete_globals()} drops the global variables table from the network.
 }
 
 It expects three columns for
@@ -62,6 +86,11 @@ If no method is available for any class, an error will be thrown.
 \examples{
 as_stocnet(ison_algebra) |> 
    mutate_globals(time = 2, var = "active", value = FALSE)
+as_stocnet(ison_algebra) |>
+   bind_globals(data.frame(time = 1:2, var = "budget", value = c(10, 20)))
+as_stocnet(ison_algebra) |>
+   bind_globals(data.frame(time = 1:2, var = "budget", value = c(10, 20))) |>
+   filter_globals(time == 1)
 }
 \seealso{
 \code{\link[=to_time]{to_time()}}

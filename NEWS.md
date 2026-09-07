@@ -14,6 +14,12 @@
 ## Manipulating
 
 - Fixed `bind_changes.igraph()` replacing the changelog instead of appending
+- Added remaining row-wise verbs for the globals component (closes #149)
+  - Added `bind_globals()`
+  - Added `filter_globals()`
+  - Added `arrange_globals()`
+  - Added `delete_globals()`
+  - Added `mutate_globals()` to alter table columns
 - Improved `to_time()` to scope globals as it already scoped ties, changes, and missings
 
 ## Modifying
