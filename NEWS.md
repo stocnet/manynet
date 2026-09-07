@@ -13,6 +13,7 @@
 
 ## Manipulating
 
+- Fixed `bind_changes.igraph()` replacing the changelog instead of appending
 - Improved `to_time()` to scope globals as it already scoped ties, changes, and missings
 
 ## Modifying

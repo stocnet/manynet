@@ -99,7 +99,10 @@ bind_changes.tbl_graph <- function(.data, changes, var, ...){
 #' @export
 bind_changes.igraph <- function(.data, changes, var, ...){
   out <- .data
-  if(length(names(changes)) == 4){
+  # Only a changelog of the standard four columns is bound onto an existing
+  # changelog. The composition branch below builds its own from scratch.
+  append <- length(names(changes)) == 4
+  if(append){
     
     if("active" %in% changes[,3] && !("active" %in% net_node_attributes(.data))){
       out <- .infer_active(out, changes)
@@ -144,6 +147,16 @@ bind_changes.igraph <- function(.data, changes, var, ...){
       dplyr::filter(wave != 1)
   }
   
+  # Bound onto any existing changelog, as `bind_changes.stocnet()` does, so
+  # that a second call adds to the changelog rather than replacing it.
+  # `.align_change_values()` reconciles a 'value' column of a differing type.
+  old <- igraph::graph_attr(out)$changes
+  if(append && !is.null(old) && setequal(names(old), names(changes))){
+    binding <- .align_change_values(dplyr::as_tibble(old),
+                                    dplyr::as_tibble(changes))
+    changes <- dplyr::bind_rows(binding$old, binding$new) |>
+      dplyr::arrange(time, node)
+  }
   igraph::graph_attr(out)$changes <- changes
   out
 }
