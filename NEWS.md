@@ -9,6 +9,14 @@
   - `generate_citations()` keeps its recency mechanism, but the target crosses the mode divide, 
   and both modes grow so that the concentration turns over
 
+## Modifying
+
+- Added `to_positive()` to shortcut keeping just the positive ties of a signed network (closes #176)
+
+## Marking
+
+- Fixed `is_signed()` to check for a 'sign' column or a negative 'weight' column
+
 # manynet 2.3.3
 
 ## Package

@@ -433,8 +433,12 @@ is_signed.default <- function(.data) {
 
 #' @export
 is_signed.data.frame <- function(.data) {
-  if(ncol(.data) <= 2) FALSE else 
-    any(.data[,3] < 0)
+  # signs are held either in a 'sign' column or as negative weights, which is
+  # what `to_unsigned.data.frame()` reads. A third column is not a sign just
+  # because it sits in the third position.
+  # a tibble warns where `$` names a column it does not have, so `[[` is used
+  if(!is.null(.data[["sign"]])) return(TRUE)
+  !is.null(.data[["weight"]]) && any(.data[["weight"]] < 0, na.rm = TRUE)
 }
 
 #' @export

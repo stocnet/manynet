@@ -8,6 +8,11 @@
 #'   - `to_unsigned()` reformats signed network data to unsigned network data,
 #'   keeping just the "positive" or the "negative" ties, or "both",
 #'   which keeps every tie but replaces its sign with its magnitude.
+#'   - `to_positive()` keeps just the positive ties of a signed network,
+#'   and returns an unsigned network unaltered.
+#'   It is a guard for the functions that cannot read a negative tie,
+#'   such as the path-based measures, for which a negative tie is hostility
+#'   rather than a channel.
 #'   - `to_normalised()` rescales tie weights relative to the other ties of the
 #'   same node, so that a value reads as a share rather than a count.
 #' 
@@ -93,13 +98,9 @@ to_unsigned.data.frame <- function(.data,
 to_unsigned.tbl_graph <- function(.data, 
                                   keep = c("positive", "negative", "both")){
   keep <- match.arg(keep)
-  out <- to_unsigned(as_igraph(.data), keep = keep)
-  dropped <- switch(keep, positive = "negative ties",
-                    negative = "positive ties", both = "no ties")
-  # 'both' excludes no tie, so this records nothing. Taking the magnitude of a
-  # weight is not an exclusion, and none of the transformation items names it,
-  # so it goes unrecorded until one does.
-  as_tidygraph(out) |> .record_exclusion(.data, dropped, "ties")
+  # the igraph method records the exclusion, and the record survives coercion,
+  # so nothing is recorded a second time here
+  as_tidygraph(to_unsigned(as_igraph(.data), keep = keep))
 }
 
 #' @export
@@ -148,7 +149,15 @@ to_unsigned.igraph <- function(.data,
         igraph::delete_edge_attr(out, "weight") else
           igraph::set_edge_attr(out, "weight", value = wts)
     }
-    out
+    dropped <- switch(keep, positive = "negative ties",
+                      negative = "positive ties", both = "no ties")
+    # 'both' excludes no tie, so this records nothing. Taking the magnitude of a
+    # weight is not an exclusion, and none of the transformation items names it,
+    # so it goes unrecorded until one does.
+    out <- .record_exclusion(out, .data, dropped, "ties")
+    # `add_info()` returns a tbl_graph, so the class is restored here.
+    # These functions return the class they are given.
+    as_igraph(out)
   } else .data
 }
 
@@ -157,6 +166,17 @@ to_unsigned.network <- function(.data,
                                 keep = c("positive", "negative", "both")){
   keep <- match.arg(keep)
   as_network(to_unsigned(as_igraph(.data), keep = keep))
+}
+
+#' @rdname modif_weight
+#' @examples
+#' to_positive(marvel)
+#' @export
+to_positive <- function(.data){
+  # A guard rather than a new operation, so it neither warns nor reports.
+  # `to_unsigned()` records the exclusion, which is where a user reads off
+  # which ties a measure ran over.
+  if(is_signed(.data)) to_unsigned(.data, keep = "positive") else .data
 }
 
 #' @rdname modif_weight
