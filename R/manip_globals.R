@@ -5,9 +5,16 @@
 #'   or variables that are not tied to a particular node or tie.
 #'   They include:
 #'   
-#'   - `mutate_globals()` adds a table of global variables to the network.
+#'   - `bind_globals()` adds rows of global variables to the network.
+#'   - `mutate_globals()` changes the columns of the global variables table.
+#'   Where the network holds no global variables yet, it creates the table.
+#'   Where it holds one already, it changes that table's columns rather than
+#'   adding to it, so use `bind_globals()` to add another global variable.
 #'   - `rename_globals()` renames columns in the global variables table.
 #'   - `select_globals()` selects columns in the global variables table.
+#'   - `filter_globals()` subsets rows of the global variables table.
+#'   - `arrange_globals()` orders rows of the global variables table.
+#'   - `delete_globals()` drops the global variables table from the network.
 #'   
 #'   It expects three columns for  
 #'   the variable to which the change applies, which should be called 'var', 
@@ -118,3 +125,111 @@ select_globals.stocnet <- function(.data, ...){
   out
 }
 
+
+#' @rdname manip_globals
+#' @param globals A data frame of global variables to bind on.
+#'   It should hold a column `var` naming the variable,
+#'   a column `value` holding its value,
+#'   and, where the variable changes over time, a column `time`.
+#' @examples
+#' as_stocnet(ison_algebra) |>
+#'    bind_globals(data.frame(time = 1:2, var = "budget", value = c(10, 20)))
+#' @export
+bind_globals <- function(.data, globals) UseMethod("bind_globals")
+
+#' @export
+bind_globals.default <- function(.data, globals){
+  as_input(.data, bind_globals, globals = globals)
+}
+
+#' @export
+bind_globals.data.frame <- function(.data, globals){
+  # The column names are brought to the stocnet conventions first, so that a
+  # table that names its time column 'wave' binds onto one that names it 'time'.
+  globals <- rename_globals.data.frame(dplyr::as_tibble(globals))
+  if(is.null(.data) || nrow(.data) == 0) return(globals)
+  out <- dplyr::bind_rows(dplyr::as_tibble(.data), globals)
+  if("time" %in% names(out)) out <- dplyr::arrange(out, time, var) else
+    out <- dplyr::arrange(out, var)
+  out
+}
+
+#' @export
+bind_globals.stocnet <- function(.data, globals){
+  out <- .data
+  out$globals <- bind_globals.data.frame(out$globals, globals)
+  validate_stocnet(out)
+}
+
+#' @rdname manip_globals
+#' @template param_dots
+#' @examples
+#' as_stocnet(ison_algebra) |>
+#'    bind_globals(data.frame(time = 1:2, var = "budget", value = c(10, 20))) |>
+#'    filter_globals(time == 1)
+#' @export
+filter_globals <- function(.data, ...) UseMethod("filter_globals")
+
+#' @export
+filter_globals.default <- function(.data, ...){
+  as_input(.data, filter_globals, ...)
+}
+
+#' @export
+filter_globals.data.frame <- function(.data, ...){
+  # Globals hold no 'node' column, so no label masking is needed here,
+  # which is what `filter_changes()` has to do.
+  if(is.null(.data)) return(.data)
+  dplyr::filter(.data, ...)
+}
+
+#' @export
+filter_globals.stocnet <- function(.data, ...){
+  out <- .data
+  out$globals <- filter_globals.data.frame(out$globals, ...)
+  out
+}
+
+#' @rdname manip_globals
+#' @export
+arrange_globals <- function(.data, ...) UseMethod("arrange_globals")
+
+#' @export
+arrange_globals.default <- function(.data, ...){
+  as_input(.data, arrange_globals, ...)
+}
+
+#' @export
+arrange_globals.data.frame <- function(.data, ...){
+  if(is.null(.data)) return(.data)
+  dplyr::arrange(.data, ...)
+}
+
+#' @export
+arrange_globals.stocnet <- function(.data, ...){
+  out <- .data
+  out$globals <- arrange_globals.data.frame(out$globals, ...)
+  out
+}
+
+#' @rdname manip_globals
+#' @export
+delete_globals <- function(.data) UseMethod("delete_globals")
+
+#' @export
+delete_globals.default <- function(.data){
+  as_input(.data, delete_globals)
+}
+
+#' @export
+delete_globals.igraph <- function(.data){
+  if(!"globals" %in% igraph::graph_attr_names(.data)) return(.data)
+  igraph::delete_graph_attr(.data, "globals")
+}
+
+#' @export
+delete_globals.stocnet <- function(.data){
+  out <- .data
+  out$globals <- NULL
+  out
+}

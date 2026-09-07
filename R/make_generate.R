@@ -378,10 +378,24 @@ generate_scalefree <- function(n, p = 1, directed = FALSE) {
 #'   nodes in the network.
 #'   By default 1.
 #'   See `igraph::sample_forestfire()`.
+#' @details
+#'   In a one-mode network, each burn step is a single hop, so each tie the
+#'   fire creates closes a triangle.
+#'   A tie in a two-mode network crosses modes, so the shortest closure there
+#'   is the four-cycle rather than the triangle.
+#'   In a two-mode network each burn step is therefore a two-path hop across
+#'   the other mode, and each tie the fire creates closes a four-cycle.
+#'   Both modes grow over the course of the simulation.
 #' @param their_out Probability of tieing to a contact's outgoing ties.
 #'   By default 0.
+#'   In a two-mode network, this is instead the probability of burning across
+#'   each two-path, and so of closing a four-cycle.
 #' @param their_in Probability of tieing to a contact's incoming ties.
 #'   By default 1.
+#'   This is a factor on `their_out` rather than a probability in its own
+#'   right, so `their_out = 0` gives a tree whatever `their_in` is set to.
+#'   In a two-mode network, `their_out * their_in` is instead the probability
+#'   that a newly burned node re-ignites and spreads the fire further.
 #' @importFrom igraph sample_forestfire
 #' @references
 #' ## On the forest-fire model
@@ -391,12 +405,13 @@ generate_scalefree <- function(n, p = 1, directed = FALSE) {
 #' \doi{10.1145/1217299.1217301}
 #' @examples
 #' generate_fire(10)
+#' generate_fire(c(10, 6))
 #' @export
 generate_fire <- function(n, contacts = 1, their_out = 0, their_in = 1, directed = FALSE){
   directed <- infer_directed(n, directed)
   n <- infer_n(n)
   if(length(n)==2){
-    snet_abort("There is currently no forest fire model implemented for two-mode networks.")
+    out <- .fire_twomode(n, contacts, their_out, their_in)
   } else {
     out <- igraph::sample_forestfire(n, 
                                      fw.prob = their_out, bw.factor = their_in,
@@ -409,26 +424,41 @@ generate_fire <- function(n, contacts = 1, their_out = 0, their_in = 1, directed
 #' @param islands Number of islands or communities to create.
 #'   By default 2.
 #'   See `igraph::sample_islands()` for more.
+#'   In a two-mode network, each mode is cut into this many blocks,
+#'   and a node of each mode that share a block are tied with probability `p`.
 #' @param bridges Number of bridges between islands/communities.
 #'   By default 1.
 #' @importFrom igraph sample_islands
 #' @examples
 #' generate_islands(10)
+#' generate_islands(c(10, 6))
 #' @export
 generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1, 
                              directed = FALSE){
   directed <- infer_directed(n, directed)
   if(is_manynet(n)){
-    m <- net_nodes(n)
-    extra_ties <- ifelse(islands > 2, islands * bridges, bridges)
+    # both `igraph::sample_islands()` and `.islands_twomode()` add `bridges`
+    # ties for each pair of islands, so the count of the pairs is what the
+    # aimed tie count subtracts
+    extra_ties <- choose(islands, 2) * bridges
     aimed_ties <- net_ties(n) - extra_ties
-    m <- mean(c(table(cut(seq.int(m), islands, labels = FALSE))))
-    p <-  (aimed_ties/islands) / ifelse(directed, m*(m-1), (m*(m-1))/2)
+    if(is_twomode(n)){
+      # a two-mode island has m1 * m2 possible ties, not m * (m-1) / 2
+      dims <- infer_dims(n)
+      m1 <- mean(c(table(cut(seq.int(dims[1]), islands, labels = FALSE))))
+      m2 <- mean(c(table(cut(seq.int(dims[2]), islands, labels = FALSE))))
+      p <- (aimed_ties/islands) / (m1*m2)
+    } else {
+      m <- net_nodes(n)
+      m <- mean(c(table(cut(seq.int(m), islands, labels = FALSE))))
+      p <-  (aimed_ties/islands) / ifelse(directed, m*(m-1), (m*(m-1))/2)
+    }
     if(p > 1) p <- 1
+    if(p < 0) p <- 0
   } 
   n <- infer_n(n)
   if(length(n)==2){
-    snet_abort("There is currently no island model implemented for two-mode networks.")
+    out <- .islands_twomode(n, islands, p, bridges)
   } else {
     out <- igraph::sample_islands(islands.n = islands,
                                   islands.size = ceiling(n/islands),
@@ -487,6 +517,8 @@ generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1,
 #' @rdname make_stochastic 
 #' @param ties Number of ties to add per new node.
 #'   By default a uniform random sample from 1 to 4 new ties.
+#'   In a two-mode network, each new node of the first mode ties to this many
+#'   nodes of the second mode, chosen by how recently each was last tied to.
 #' @param agebins Number of aging bins.
 #'   By default either \eqn{\frac{n}{10}} or 1,
 #'   whichever is the larger.
@@ -494,15 +526,134 @@ generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1,
 #' @importFrom igraph sample_last_cit
 #' @examples
 #' generate_citations(10)
+#' generate_citations(c(10, 6))
 #' @export
 generate_citations <- function(n, ties = sample(1:4,1), agebins = max(1, n/10), directed = FALSE){
   directed <- infer_directed(n, directed)
   n <- infer_n(n)
-  if(length(n)>1){
-    snet_abort("There is currently no citation model implemented for two-mode networks.")
-  }
   stopifnot(is.scalar(ties))
-  out <- igraph::sample_last_cit(n, edges = ties, agebins = agebins, directed = directed)
+  if(length(n)>1){
+    out <- .citations_twomode(n, ties, agebins)
+  } else {
+    out <- igraph::sample_last_cit(n, edges = ties, agebins = agebins,
+                                   directed = directed)
+  }
   as_tidygraph(out)
 }
 
+
+# Two-mode helpers ####
+
+# Returns the arrival order of nodes as a vector of mode indices,
+# with exactly `n[1]` entries of 1 and `n[2]` entries of 2,
+# interleaved in the ratio n[1]:n[2] so that both modes grow together.
+.interleave_modes <- function(n) {
+  t1 <- (seq_len(n[1]) - 0.5) / n[1]
+  t2 <- (seq_len(n[2]) - 0.5) / n[2]
+  c(rep(1L, n[1]), rep(2L, n[2]))[order(c(t1, t2))]
+}
+
+# A two-mode forest fire.
+# In one mode a burn step is a single hop, so each new tie closes a triangle.
+# A tie in a two-mode network crosses modes, so the shortest closure is the
+# four-cycle. One burn step is therefore a 2-path hop across the other mode:
+# from a burned node `e`, to a partner `a` of `e`, to another node `f` of `a`.
+# Tieing the new node `v` to `f` closes the four-cycle v-e-a-f-v.
+# As in one mode, `their_out` is the burn probability and `their_in` is a
+# factor on it, so the defaults give the same minimal fire in both cases.
+# `their_out` is the probability of burning across each two-path,
+# and so of closing a four-cycle.
+# `their_out * their_in` is the probability that a newly burned node
+# re-ignites, which spreads the fire beyond the immediate closure.
+.fire_twomode <- function(n, contacts, their_out, their_in) {
+  g <- matrix(0, n[1], n[2])
+  arrivals <- .interleave_modes(n)
+  act <- c(0, 0)
+  for (k in seq_along(arrivals)) {
+    m <- arrivals[k]
+    act[m] <- act[m] + 1
+    v <- act[m]
+    if (act[1] == 0 || act[2] == 0) next
+    sub <- g[seq_len(act[1]), seq_len(act[2]), drop = FALSE]
+    if (sum(sub) == 0) { # seed the first tie
+      if (m == 1) g[v, 1] <- 1 else g[1, v] <- 1
+      next
+    }
+    # ambassadors are drawn from the opposite mode, among those already tied
+    cand <- if (m == 1) which(colSums(sub) > 0) else which(rowSums(sub) > 0)
+    burnt <- cand[sample.int(length(cand), min(contacts, length(cand)))]
+    queue <- burnt
+    while (length(queue) > 0) {
+      e <- queue[1]
+      queue <- queue[-1]
+      # the partners of `e`, which are in the same mode as `v`
+      mem <- if (m == 1) which(sub[, e] > 0) else which(sub[e, ] > 0)
+      if (length(mem) == 0) next
+      # the nodes those partners reach, which are in the opposite mode to `v`
+      reach <- if (m == 1) which(colSums(sub[mem, , drop = FALSE]) > 0) else
+        which(rowSums(sub[, mem, drop = FALSE]) > 0)
+      reach <- setdiff(reach, burnt)
+      if (length(reach) == 0) next
+      lit <- reach[stats::runif(length(reach)) < their_out]
+      if (length(lit) == 0) next
+      burnt <- c(burnt, lit)
+      queue <- c(queue, lit[stats::runif(length(lit)) < their_out * their_in])
+    }
+    if (m == 1) g[v, burnt] <- 1 else g[burnt, v] <- 1
+  }
+  as_igraph(g, twomode = TRUE)
+}
+
+# A two-mode islands model, that is, a bipartite blockmodel with a planted
+# diagonal. Each mode is cut into `islands` blocks. A node of the first mode
+# and a node of the second mode that share a block are tied with probability
+# `p`. Each pair of blocks is then joined by `bridges` further ties.
+.islands_twomode <- function(n, islands, p, bridges) {
+  b1 <- cut(seq_len(n[1]), islands, labels = FALSE)
+  b2 <- cut(seq_len(n[2]), islands, labels = FALSE)
+  g <- matrix(0, n[1], n[2])
+  same <- outer(b1, b2, "==")
+  g[same] <- stats::rbinom(sum(same), 1, p)
+  if (bridges > 0 && islands > 1) {
+    for (i in seq_len(islands - 1)) for (j in seq(i + 1, islands)) {
+      cells <- which(outer(b1 == i, b2 == j, "&") |
+                       outer(b1 == j, b2 == i, "&"))
+      if (length(cells) == 0) next
+      g[cells[sample.int(length(cells), min(bridges, length(cells)))]] <- 1
+    }
+  }
+  as_igraph(g, twomode = TRUE)
+}
+
+# A two-mode citation model.
+# `igraph::sample_last_cit()` is a recency model: a new node cites old nodes
+# with a probability that depends on how long ago each was last cited.
+# Here the mechanism is kept but the target crosses the mode divide.
+# A new node of the first mode ties to `ties` nodes of the second mode,
+# each chosen by how recently that node was last tied to.
+# Because both modes grow, new second-mode nodes keep entering in the freshest
+# bin, so the concentration of ties turns over instead of locking in.
+.citations_twomode <- function(n, ties, agebins) {
+  agebins <- max(1, round(agebins))
+  pref <- seq_len(agebins + 1)^-3
+  g <- matrix(0, n[1], n[2])
+  arrivals <- .interleave_modes(n)
+  last_used <- rep(NA_integer_, n[2])
+  act <- c(0, 0)
+  for (k in seq_along(arrivals)) {
+    m <- arrivals[k]
+    act[m] <- act[m] + 1
+    if (m == 2) {
+      last_used[act[2]] <- k # a new node enters in the freshest bin
+      next
+    }
+    if (act[2] == 0) next
+    cols <- seq_len(act[2])
+    prob <- pref[pmin(k - last_used[cols], agebins) + 1]
+    chosen <- cols[sample.int(length(cols), min(ties, length(cols)),
+                              prob = prob)]
+    g[act[1], chosen] <- 1
+    last_used[chosen] <- k
+  }
+  as_igraph(g, twomode = TRUE)
+}

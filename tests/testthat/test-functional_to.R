@@ -28,6 +28,7 @@ to_invariants <- list(
   to_weighted   = function(o) is_weighted(o),
   to_signed     = function(o) is_signed(o),
   to_unsigned   = function(o) !is_signed(o),
+  to_positive   = function(o) !is_signed(o),
   to_named      = function(o) is_labelled(o),
   to_labelled   = function(o) is_labelled(o),
   to_unnamed    = function(o) !is_labelled(o),

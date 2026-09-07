@@ -200,7 +200,9 @@ to_wave <- to_time
     snet_abort(paste("Please supply a {.arg time} to scope to,",
                      "or use {.fn to_times} for one network per moment."))
   rule <- .time_rule(.data)
-  if(rule == "none") return(.data)
+  # The globals are scoped whatever the ties do, since a global variable
+  # records its own moments and does not read them off the ties.
+  if(rule == "none") return(.scope_globals(.data, time))
   out <- .apply_changes_at(.data, time)
   at <- .clamp_time(.data, time, rule)
   out <- switch(rule,
@@ -209,9 +211,29 @@ to_wave <- to_time
                 replace = .stamped_at(out, at))
   # the nodes and the ties are dropped by two different criteria, so each
   # is recorded on its own rather than summed into one figure
+  out <- .scope_globals(out, time)
   out |>
     .record_exclusion(.data, paste("not present at time", time), "nodes") |>
     .record_exclusion(.data, paste("not tied at time", time), "ties")
+}
+
+# The globals may record a value for each moment, the same way the ties record
+# the moments they were observed at, so a network scoped to one moment carries
+# that moment's globals alone. A globals table with no 'time' column holds a
+# constant, which every moment shares, so it is left as it is.
+.scope_globals <- function(out, time){
+  globals <- as_globallist(out)
+  if(is.null(globals) || !"time" %in% names(globals)) return(out)
+  globals <- globals[globals$time == time, , drop = FALSE]
+  # A component that holds nothing is NULL rather than an empty table, as it
+  # is everywhere else a network's components are built.
+  globals <- if(!nrow(globals)) NULL else {
+    globals$time <- NULL
+    globals
+  }
+  if(inherits(out, "stocnet")) out$globals <- globals else
+    igraph::graph_attr(out, "globals") <- globals
+  out
 }
 
 # The nodes as they stood at a moment: the changes recorded up to then applied,

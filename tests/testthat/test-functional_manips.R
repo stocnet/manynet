@@ -156,6 +156,27 @@ test_that("rename_changes() renames changelog columns", {
   expect_true(is_acceptable_output(out))
 })
 
+test_that("bind_changes() adds to the changelog rather than replacing it", {
+  mk <- function() create_filled(4) |>
+    mutate_nodes(name = LETTERS[1:4], status = c(TRUE, FALSE, FALSE, FALSE))
+  c1 <- data.frame(time = 2, node = "B", var = "status", value = TRUE)
+  c2 <- data.frame(time = 3, node = "C", var = "status", value = TRUE)
+  for(x in list(as_igraph(mk()), as_tidygraph(mk()), as_stocnet(mk()))){
+    out <- bind_changes(bind_changes(x, c1), c2)
+    expect_equal(nrow(as_changelist(out)), 2)
+  }
+  # `.align_change_values()` reconciles a 'value' column of a differing type
+  c3 <- data.frame(time = 4, node = "D", var = "status", value = "maybe")
+  out <- bind_changes(bind_changes(as_igraph(mk()), c1), c3)
+  expect_equal(nrow(as_changelist(out)), 2)
+  expect_type(as_changelist(out)$value, "character")
+  # a composition table builds its own changelog, so that branch still replaces
+  comp <- data.frame(node = 1:4, begin = c(1, 1, 2, 3), end = c(4, 4, 4, 4))
+  y <- bind_changes(as_igraph(create_filled(4)), comp)
+  expect_true("active" %in% net_node_attributes(y))
+  expect_equal(nrow(igraph::graph_attr(y)$changes), 6)
+})
+
 # Verbs manipulating global variables and network info ------------------------
 
 test_that("mutate_globals(), rename_globals() and select_globals() work", {
@@ -169,6 +190,56 @@ test_that("mutate_globals(), rename_globals() and select_globals() work", {
   expect_true("when" %in% names(sn2$globals))
   sn3 <- run_or_skip(select_globals(sn), "select_globals", "stocnet")
   expect_true(all(names(sn3$globals) %in% c("var", "time", "value")))
+})
+
+test_that("bind_globals() adds rows where mutate_globals() changes columns", {
+  gl <- data.frame(time = 1:2, var = "budget", value = c(10, 20))
+  sn <- run_or_skip(bind_globals(as_stocnet(ison_algebra), gl),
+                    "bind_globals", "stocnet")
+  expect_equal(nrow(sn$globals), 2)
+  # a second bind adds to the table, where a second mutate changes its columns
+  expect_equal(nrow(bind_globals(sn, data.frame(time = 3, var = "staff",
+                                                value = 4))$globals), 3)
+  m <- mutate_globals(as_stocnet(ison_algebra), time = 1, var = "a",
+                      value = TRUE)
+  expect_equal(nrow(mutate_globals(m, time = 2, var = "b",
+                                   value = FALSE)$globals), 1)
+  # the column names are brought to the stocnet conventions on the way in
+  expect_setequal(names(bind_globals(as_stocnet(ison_algebra),
+                                     data.frame(wave = 1, variable = "a",
+                                                weight = 0))$globals),
+                  c("time", "var", "value"))
+})
+
+test_that("filter_globals(), arrange_globals() and delete_globals() work", {
+  gl <- data.frame(time = 1:2, var = "budget", value = c(10, 20))
+  sn <- bind_globals(as_stocnet(ison_algebra), gl)
+  out <- run_or_skip(filter_globals(sn, time == 1), "filter_globals", "stocnet")
+  expect_equal(nrow(out$globals), 1)
+  expect_equal(out$globals$value, 10)
+  out <- run_or_skip(arrange_globals(sn, dplyr::desc(time)),
+                     "arrange_globals", "stocnet")
+  expect_equal(out$globals$time, c(2L, 1L))
+  out <- run_or_skip(delete_globals(sn), "delete_globals", "stocnet")
+  expect_null(out$globals)
+  expect_s3_class(validate_stocnet(out), "stocnet")
+})
+
+test_that("to_time() scopes the globals to the moment asked for", {
+  gl <- data.frame(time = 1:2, var = "budget", value = c(10, 20))
+  sn <- bind_globals(as_stocnet(ison_algebra), gl)
+  out <- to_time(sn, 1)
+  expect_equal(nrow(out$globals), 1)
+  expect_equal(out$globals$value, 10)
+  # the time column goes, as it does for the ties and the missings
+  expect_false("time" %in% names(out$globals))
+  # a component that holds nothing is NULL, not an empty table
+  expect_null(to_time(sn, 9)$globals)
+  # a globals table with no time column holds a constant, shared by every
+  # moment, so it is left alone
+  const <- bind_globals(as_stocnet(ison_algebra),
+                        data.frame(var = "k", value = 1))
+  expect_equal(nrow(to_time(const, 1)$globals), 1)
 })
 
 test_that("rename_globals() renames aliases to stocnet conventions", {

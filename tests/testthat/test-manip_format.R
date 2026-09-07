@@ -132,6 +132,50 @@ test_that("to_unsigned.network keeps the sign it is asked for", {
   expect_equal(as.numeric(net_ties(to_unsigned(n, "negative"))), 4)
 })
 
+test_that("to_unsigned records the exclusion for every class that holds info", {
+  ring <- to_signed(create_ring(8), mark = rep(c(TRUE, FALSE), 4))
+  for(x in list(ring, as_igraph(ring), as_tidygraph(ring), as_network(ring))){
+    entry <- as_infolist(to_unsigned(x, "positive"))$transformations$exclusion
+    expect_true(any(grepl("negative ties", entry)))
+    # the record is written once, not once for each class it passes through
+    expect_equal(sum(grepl("negative ties", entry)), 1)
+  }
+  # 'both' excludes no tie, so it records nothing
+  expect_false(any(grepl("ties",
+    as_infolist(to_unsigned(ring, "both"))$transformations$exclusion)))
+})
+
+test_that("to_positive keeps the positive ties and leaves the rest alone", {
+  ring <- to_signed(create_ring(8), mark = rep(c(TRUE, FALSE), 4))
+  for(x in list(ring, as_igraph(ring), as_tidygraph(ring), as_network(ring))){
+    out <- to_positive(x)
+    expect_false(is_signed(out))
+    expect_equal(class(out), class(x))
+    expect_equal(as.numeric(net_ties(out)), 4)
+    expect_true(any(grepl("negative ties",
+      as_infolist(out)$transformations$exclusion)))
+  }
+  # a guard is a no-op on an unsigned network
+  unsigned <- to_unsigned(ring, "positive")
+  expect_identical(to_positive(unsigned), unsigned)
+  expect_identical(to_positive(ison_southern_women), ison_southern_women)
+  # an edgelist keeps its rows, not its sign column
+  el <- data.frame(from = c("a","b","c"), to = c("b","c","a"),
+                   sign = c(1,-1,1))
+  expect_equal(nrow(to_positive(el)), 2)
+  expect_false("sign" %in% names(to_positive(el)))
+})
+
+test_that("is_signed.data.frame reads a sign column or a negative weight", {
+  expect_true(is_signed(data.frame(from = 1:2, to = 2:3, sign = c(1,-1))))
+  expect_true(is_signed(data.frame(from = 1:2, to = 2:3, weight = c(1,-1))))
+  expect_false(is_signed(data.frame(from = 1:2, to = 2:3, weight = c(1,2))))
+  # a third column is not a sign just because it sits in the third position
+  expect_false(is_signed(data.frame(from = 1:2, to = 2:3,
+                                    year = c(-1990, 2000))))
+  expect_false(is_signed(data.frame(from = 1:2, to = 2:3)))
+})
+
 test_that("to_named relabels an unlabelled network, or with names given", {
   expect_true(is_labelled(to_named(to_unnamed(ison_southern_women))))
   expect_true(is_labelled(to_named(ison_southern_women,

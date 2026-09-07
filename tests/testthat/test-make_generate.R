@@ -45,14 +45,57 @@ test_that("generate_man works without a dyad census", {
 
 test_that("generate_fire works", {
   expect_s3_class(generate_fire(ison_adolescents), "igraph")
+  fire <- generate_fire(c(20, 10))
+  expect_true(is_twomode(fire))
+  expect_equal(as.numeric(net_nodes(fire)), 30)
+  expect_true(is_twomode(generate_fire(ison_southern_women)))
+  # `their_out` is the burn probability, so raising it spreads the fire
+  expect_gt(mean(replicate(10, net_ties(generate_fire(c(20, 10),
+                                                      their_out = 0.5)))),
+            mean(replicate(10, net_ties(generate_fire(c(20, 10))))))
 })
 
 test_that("generate_islands works", {
   expect_s3_class(generate_islands(ison_adolescents), "igraph")
+  isles <- generate_islands(c(40, 20), islands = 4)
+  expect_true(is_twomode(isles))
+  expect_equal(as.numeric(net_nodes(isles)), 60)
+  # the diagonal blocks must be much denser than the off-diagonal blocks
+  mat <- as_matrix(isles)
+  same <- outer(cut(seq_len(40), 4, labels = FALSE),
+                cut(seq_len(20), 4, labels = FALSE), "==")
+  expect_gt(mean(mat[same]), mean(mat[!same]) + 0.2)
+  expect_true(is_twomode(generate_islands(ison_southern_women)))
+})
+
+test_that("generate_islands adds a bridge for each pair of islands", {
+  # both branches tie each pair of islands, so the count of bridge ties grows
+  # as `choose(islands, 2)`, not as `islands`. The `p` inference subtracts it.
+  for(k in c(2, 3, 4, 6)){
+    onemode <- igraph::sample_islands(islands.n = k, islands.size = 10,
+                                      islands.pin = 0, n.inter = 1)
+    expect_equal(igraph::ecount(onemode), choose(k, 2))
+    twomode <- generate_islands(c(10 * k, 10 * k), islands = k, p = 0,
+                                bridges = 1)
+    expect_equal(as.numeric(net_ties(twomode)), choose(k, 2))
+  }
 })
 
 test_that("generate_citations works", {
   expect_s3_class(generate_citations(ison_adolescents), "igraph")
+  cites <- generate_citations(c(20, 10))
+  expect_true(is_twomode(cites))
+  expect_equal(as.numeric(net_nodes(cites)), 30)
+  expect_true(is_twomode(generate_citations(ison_southern_women)))
+  # recency concentrates ties on some second-mode nodes more than chance does
+  gini <- function(x) {
+    x <- sort(x)
+    sum((2 * seq_along(x) - length(x) - 1) * x) / (length(x) * sum(x))
+  }
+  expect_gt(mean(replicate(10, gini(colSums(
+    as_matrix(generate_citations(c(200, 40), ties = 2)))))),
+    mean(replicate(10, gini(colSums(
+      matrix(stats::rbinom(200 * 40, 1, 2/40), 200, 40))))))
 })
 
 test_that("generate_configuration reads the modes of a stocnet", {

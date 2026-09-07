@@ -3,6 +3,7 @@
 \name{modif_weight}
 \alias{modif_weight}
 \alias{to_unsigned}
+\alias{to_positive}
 \alias{to_unweighted}
 \alias{to_signed}
 \alias{to_weighted}
@@ -11,6 +12,8 @@
 \title{Modifying tie weight formats}
 \usage{
 to_unsigned(.data, keep = c("positive", "negative", "both"))
+
+to_positive(.data)
 
 to_unweighted(.data, threshold = 1)
 
@@ -98,6 +101,11 @@ data, with all tie weights removed.
 \item \code{to_unsigned()} reformats signed network data to unsigned network data,
 keeping just the "positive" or the "negative" ties, or "both",
 which keeps every tie but replaces its sign with its magnitude.
+\item \code{to_positive()} keeps just the positive ties of a signed network,
+and returns an unsigned network unaltered.
+It is a guard for the functions that cannot read a negative tie,
+such as the path-based measures, for which a negative tie is hostility
+rather than a channel.
 \item \code{to_normalised()} rescales tie weights relative to the other ties of the
 same node, so that a value reads as a share rather than a count.
 }
@@ -136,6 +144,7 @@ split into two, and the network is returned directed.
 marvel <- to_uniplex(fict_marvel, "relationship")
 to_unsigned(marvel, "positive")
 to_unsigned(marvel, "both")
+to_positive(marvel)
 to_normalised(ison_networkers, rule = "sum", across = "rows")
 }
 \seealso{

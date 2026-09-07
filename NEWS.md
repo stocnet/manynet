@@ -1,3 +1,35 @@
+# manynet 2.3.4
+
+## Making
+
+- Fixed a couple of `generate_islands()` errors
+  - Fixed to grow bridges as `choose(islands, 2)` and not as `islands`
+  - Fixed deriving `p` from a two-mode network with a one-mode dyad count
+- Added two-mode support to the last three `generate_*()` functions (closes #150)
+  - `generate_fire()` burns along two-paths, closing four-cycles instead of triangles
+  - `generate_islands()` builds a bipartite blockmodel with a planted diagonal
+  - `generate_citations()` keeps its recency mechanism, but the target crosses the mode divide, 
+  and both modes grow so that the concentration turns over
+
+## Manipulating
+
+- Fixed `bind_changes.igraph()` replacing the changelog instead of appending
+- Added remaining row-wise verbs for the globals component (closes #149)
+  - Added `bind_globals()`
+  - Added `filter_globals()`
+  - Added `arrange_globals()`
+  - Added `delete_globals()`
+  - Added `mutate_globals()` to alter table columns
+- Improved `to_time()` to scope globals as it already scoped ties, changes, and missings
+
+## Modifying
+
+- Added `to_positive()` to shortcut keeping just the positive ties of a signed network (closes #176)
+
+## Marking
+
+- Fixed `is_signed()` to check for a 'sign' column or a negative 'weight' column
+
 # manynet 2.3.3
 
 ## Package
