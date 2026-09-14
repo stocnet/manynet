@@ -137,13 +137,14 @@ test_that("to_proximity's across argument selects the profile compared", {
 test_that("to_proximity shares to_mode1()'s measures and conventions", {
   expect_setequal(eval(formals(to_proximity)$similarity),
                   eval(formals(to_mode1)$similarity))
-  # cosine reduces to ochiai wherever ochiai is defined. Node C sends no ties,
-  # so ochiai divides by zero there, whereas cosine reports no similarity
+  # cosine reduces to ochiai for binary data. Node C sends no ties, so ochiai
+  # divides by zero there, which is reported as no similarity, as cosine has it
   bin <- prox_mat
   cos <- to_proximity(bin, "cosine", dyad = "include")
   och <- to_proximity(bin, "ochiai", dyad = "include")
-  expect_equal(unname(cos)[!is.nan(och)], unname(och)[!is.nan(och)])
-  expect_true(all(cos[3, ] == 0) && all(is.nan(och[3, -3])))
+  expect_equal(cos, och)
+  expect_true(all(cos[3, ] == 0))
+  expect_false(anyNA(to_proximity(bin, "overlap", dyad = "include")))
   # hamming ranks dyads as rand does, stating disagreement as a count
   rk <- function(x) rank(x[lower.tri(x)])
   expect_equal(rk(to_proximity(bin, "hamming", dyad = "include")),
@@ -162,6 +163,46 @@ test_that("to_proximity shares to_mode1()'s measures and conventions", {
   expect_true(all(diag(out) == 0))
 })
 
-test_that("to_proximity turns two-mode networks away", {
-  expect_error(to_proximity(ison_southern_women), "one-mode")
+test_that("to_proximity compares a two-mode network as the projections do", {
+  sw <- as_matrix(ison_southern_women)
+  expect_equal(to_proximity(sw, "jaccard"), to_mode1(sw, "jaccard"))
+  expect_equal(to_proximity(sw, "pearson", across = "columns"),
+               to_mode2(sw, "pearson"))
+  expect_equal(as_matrix(to_proximity(ison_southern_women, "ruzicka")),
+               as_matrix(to_mode1(ison_southern_women, "ruzicka")))
+  expect_equal(as_matrix(to_proximity(as_tidygraph(ison_southern_women),
+                                      "overlap", across = "columns")),
+               as_matrix(to_mode2(as_tidygraph(ison_southern_women), "overlap")))
+  sn <- as_stocnet(ison_southern_women)
+  expect_equal(to_proximity(sn, "cosine"), to_mode1(sn, "cosine"))
+  # "include" is accepted, since it names what is done anyway
+  expect_equal(to_proximity(sw, "count", dyad = "include"), to_mode1(sw))
+  expect_error(to_proximity(sw, dyad = "exclude"), "dyad")
+  expect_error(to_proximity(sw, across = "both"), "columns")
+})
+
+test_that("to_proximity compares a profile matrix, such as a census", {
+  # a node with no ties to any motif gives no missing values
+  census <- matrix(c(1,2,3,1,2, 1,0,6,1,1, 0,0,0,0,0), 3, byrow = TRUE,
+                   dimnames = list(c("a","b","c"), paste0("m", 1:5)))
+  expect_equal(to_proximity(census, "crossmin")["a","b"], 6)
+  expect_equal(to_proximity(census, "ruzicka")["a","b"], 0.5)
+  expect_equal(to_proximity(census, "overlap")["a","b"], 2/3)
+  expect_false(anyNA(suppressWarnings(to_proximity(census, "pearson"))))
+  # a square census with no dimnames reads as one-mode, unless "include" says
+  # its cells are all to be compared where they lie
+  sq <- unname(census[, 1:3])
+  crossprod_sq <- sq %*% t(sq); diag(crossprod_sq) <- 0
+  expect_equal(unname(to_proximity(sq, "count", dyad = "include")),
+               crossprod_sq)
+  expect_false(isTRUE(all.equal(unname(to_proximity(sq, "count")),
+                                crossprod_sq)))
+})
+
+test_that("overlap and ruzicka reduce to their binary counterparts", {
+  sw <- as_matrix(ison_southern_women)
+  expect_equal(to_mode1(sw, "ruzicka"), to_mode1(sw, "jaccard"))
+  R <- rowSums(sw)
+  expect_equal(to_mode1(sw, "overlap"),
+               {o <- (sw %*% t(sw))/outer(R, R, pmin); diag(o) <- 0; o})
 })

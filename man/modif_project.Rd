@@ -14,7 +14,7 @@ to_mode1(
   similarity = c("count", "jaccard", "rand", "pearson", "yule", "match", "overlap",
     "crossmin", "maxcrossmin", "sqdiff", "covariance", "bonacich", "ochiai", "ochiai2",
     "czekanowski", "sokalsneath", "hamann", "rogerstanimoto", "euclidean", "manhattan",
-    "hamming", "cosine", "spearman", "kendall")
+    "hamming", "cosine", "spearman", "kendall", "ruzicka")
 )
 
 to_mode2(
@@ -22,7 +22,7 @@ to_mode2(
   similarity = c("count", "jaccard", "rand", "pearson", "yule", "match", "overlap",
     "crossmin", "maxcrossmin", "sqdiff", "covariance", "bonacich", "ochiai", "ochiai2",
     "czekanowski", "sokalsneath", "hamann", "rogerstanimoto", "euclidean", "manhattan",
-    "hamming", "cosine", "spearman", "kendall")
+    "hamming", "cosine", "spearman", "kendall", "ruzicka")
 )
 
 to_mode(
@@ -31,7 +31,7 @@ to_mode(
   similarity = c("count", "jaccard", "rand", "pearson", "yule", "match", "overlap",
     "crossmin", "maxcrossmin", "sqdiff", "covariance", "bonacich", "ochiai", "ochiai2",
     "czekanowski", "sokalsneath", "hamann", "rogerstanimoto", "euclidean", "manhattan",
-    "hamming", "cosine", "spearman", "kendall")
+    "hamming", "cosine", "spearman", "kendall", "ruzicka")
 )
 
 to_linegraph(.data)
@@ -70,13 +70,20 @@ value, joint absences included. For binary data this is "rand" multiplied
 by the number of nodes in the other mode, but for valued data it is the
 more general measure, since it registers agreement at any tie strength.
 Use it where the level of involvement is meaningful in itself.
-\item "overlap" divides the count by the smaller of the two nodes' total tie
-strength, the Szymkiewicz-Simpson coefficient. Use it where one node is
-much more active than the other, and the less active node's rarity should
-not depress the score.
 \item "crossmin" sums the smaller of each pair of tie strengths.
 Interpret it as the capacity two nodes could jointly bring to bear.
 For binary data it reduces to "count".
+\item "overlap" divides "crossmin" by the smaller of the two nodes' total tie
+strength, the Szymkiewicz-Simpson or overlap coefficient, and so lies in
+\eqn{[0,1]} for non-negative data. Use it where one node is much more
+active than the other, and the less active node's rarity should not
+depress the score. For binary data it is the count over the smaller
+degree. xUCINET keeps that count for valued data too, where it can
+exceed 1 and is no longer the coefficient.
+\item "ruzicka" divides "crossmin" by the two nodes' combined tie strength
+less that shared, Ruzicka's weighted Jaccard coefficient, and so also
+lies in \eqn{[0,1]}. For binary data it is "jaccard", so use it where
+"jaccard" is wanted but the tie strengths should be kept.
 \item "maxcrossmin" takes the largest such minimum rather than their sum,
 so that a single strong shared affiliation stands for the pair.
 For binary data it collapses to an indicator of any shared affiliation,
@@ -118,7 +125,8 @@ one is, and \eqn{d} for those in which neither is:
 double-weights co-presence; and "sokalsneath" is \eqn{a/(a+2(b+c))},
 which instead double-weights mismatch. Use these where joint
 non-participation says nothing, as in a sparse affiliation network with
-many events.
+many events. For valued data, "ruzicka" is the counterpart of "jaccard"
+that keeps the tie strengths.
 \item Sensitive to matching, counting joint absence as evidence: "rand",
 the Simple Matching Coefficient, is \eqn{(a+d)/(a+b+c+d)}; "hamann" is
 \eqn{((a+d)-(b+c))/(a+b+c+d)}, the same quantity rescaled onto
@@ -207,7 +215,7 @@ to_mode2               *       *      *      *       *       *         *
     \tab Binary (unweighted) output \tab yes \tab yes (\code{multiplicity = FALSE}) \tab threshold manually \cr
     \tab Jaccard normalisation \tab yes \tab no \tab code manually \cr
     \tab Cosine normalisation \tab yes \tab no \tab code manually \cr
-    \tab Other similarity measures \tab 24 in all, see \code{similarity} \tab no \tab code manually \cr
+    \tab Other similarity measures \tab 25 in all, see \code{similarity} \tab no \tab code manually \cr
    \strong{Attributes} \tab Retains node attributes \tab yes \tab yes \tab no — lost in matrix round-trip \cr
     \tab Retains edge attributes \tab weight only \tab weight only \tab no \cr
     \tab Removes self-loops automatically \tab yes \tab yes \tab \code{diag(P) <- 0} manually \cr

@@ -8,6 +8,8 @@
 #'
 #'   - `to_proximity()` compares each pair of nodes on their ties,
 #'   using any of the measures that `to_mode1()` offers.
+#'   Given a two-mode network, or a node-by-feature profile matrix such as a
+#'   motif census, it compares the rows or the columns as they lie.
 #'   - `to_correlation()` performs a Pearson pairwise correlation,
 #'   choosing how to treat the diagonal and the reciprocal ties from the
 #'   network's format.
@@ -17,7 +19,8 @@
 #'   Where `to_mode1()` compares nodes on their affiliations to a second mode,
 #'   these functions compare nodes on their ties to one another.
 #'   The two share one measure vocabulary and differ only in the profile
-#'   compared.
+#'   compared. For a two-mode network there is no difference, and
+#'   `to_proximity()` returns what `to_mode1()` or `to_mode2()` would.
 #' @details
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
@@ -58,6 +61,12 @@ NULL
 #'
 #'   By default the appropriate treatment is chosen from the network's format,
 #'   as described above.
+#'
+#'   A two-mode network has no dyad of this kind, so only `NULL` or "include"
+#'   is accepted for one. Pass "include" for a profile matrix whose rows are
+#'   nodes and whose columns are something else, such as a motif census.
+#'   A square census with no dimnames otherwise reads as a one-mode network,
+#'   and would have its cells dropped as if they were ties.
 #' @seealso [to_mode1()], which applies the same measures to a two-mode
 #'   network, comparing nodes on their affiliations rather than on their ties.
 #' @references
@@ -69,10 +78,18 @@ NULL
 #' @examples
 #' to_proximity(ison_algebra, "pearson")
 #' to_proximity(ison_adolescents, "jaccard")
+#' to_proximity(ison_southern_women, "ruzicka", across = "columns")
 #' @export
 to_proximity <- function(.data, similarity = .proj_measures,
                          across = c("rows", "columns", "both"),
-                         dyad = NULL) UseMethod("to_proximity")
+                         dyad = NULL){
+  # a two-mode network's profile is its biadjacency matrix, so there is no
+  # dyad to treat and its nodes are compared as the projections compare them
+  if(is_twomode(.data))
+    return(.proximity_twomode(.data, match.arg(similarity),
+                              match.arg(across), dyad))
+  UseMethod("to_proximity")
+}
 
 #' @export
 to_proximity.default <- function(.data, similarity = .proj_measures,
@@ -80,6 +97,16 @@ to_proximity.default <- function(.data, similarity = .proj_measures,
                                  dyad = NULL){
   as_input(.data, to_proximity, similarity = similarity,
            across = across, dyad = dyad)
+}
+
+#' @export
+to_proximity.stocnet <- function(.data, similarity = .proj_measures,
+                                 across = c("rows", "columns", "both"),
+                                 dyad = NULL){
+  # The tidygraph method is called directly rather than through `as_input()`,
+  # as `to_mode1.stocnet()` does.
+  as_stocnet(to_proximity(as_tidygraph(.data), match.arg(similarity),
+                          match.arg(across), dyad))
 }
 
 #' @export
@@ -136,20 +163,43 @@ to_proximity.data.frame <- function(.data, similarity = .proj_measures,
 # Compares each pair of nodes on the profile named by `across`, treating the
 # cells of the pair's own dyad as `dyad` directs.
 .proximity <- function(A, similarity, across, dyad){
+  # a two-mode network never reaches here, since the generic sends it to
+  # `.proximity_twomode()`
   A <- as_matrix(A)
-  if(is_twomode(A))
-    snet_abort(paste0("{.fn to_proximity} compares the nodes of a one-mode ",
-                      "network on their ties to one another. ",
-                      "Use {.fn to_mode1} or {.fn to_mode2} to compare the ",
-                      "nodes of a two-mode network on their affiliations."))
   dyad <- if(is.null(dyad)) .infer_dyad(A) else
     match.arg(dyad, c("exclude", "reciprocal", "complex", "include"))
   n <- nrow(A)
   # each block of the profile matrix keeps node j in column j, so that the
   # dyad's cells stay findable by index however many blocks there are
   P <- switch(across, rows = A, columns = t(A), both = cbind(A, t(A)))
-  if(dyad == "include") return(.project(P, similarity))
+  if(dyad == "include") return(.zero_missing(.project(P, similarity)))
   .pairwise_project(P, similarity, dyad, n)
+}
+
+# A two-mode network is compared on its biadjacency matrix as it lies, which
+# is what the projections already do, so they are reused for every class.
+.proximity_twomode <- function(.data, similarity, across, dyad){
+  if(!is.null(dyad) &&
+     match.arg(dyad, c("exclude", "reciprocal", "complex", "include")) != "include")
+    snet_abort(paste0("A two-mode network has no dyad within which cells ",
+                      "could be dropped or swapped, so {.arg dyad} can only ",
+                      "be {.val include} or left as {.code NULL} here."))
+  if(across == "both")
+    snet_abort(paste0("The rows and columns of a two-mode network are ",
+                      "different nodes, so they cannot be compared together. ",
+                      "Use {.val rows} or {.val columns} instead."))
+  out <- switch(across,
+                rows = to_mode1(.data, similarity),
+                columns = to_mode2(.data, similarity))
+  if(is.matrix(out)) .zero_missing(out) else out
+}
+
+# A node with no ties leaves some measures dividing by zero. It is reported
+# as no more similar to another node than any other, as the pairwise walk
+# already reports it.
+.zero_missing <- function(out){
+  out[is.na(out)] <- 0
+  out
 }
 
 # Mirrors the default that `to_correlation()` has always taken, so that the
@@ -166,7 +216,7 @@ to_proximity.data.frame <- function(.data, similarity = .proj_measures,
   if(similarity %in% .proj_binary && any(P != 0 & P != 1, na.rm = TRUE)){
     snet_warn(paste0("The {.val {similarity}} measure is defined for binary ",
                      "data only, so tie values have been dichotomised at 0. ",
-                     "Consider {.val count}, {.val crossmin}, or ",
+                     "Consider {.val ruzicka}, {.val crossmin}, or ",
                      "{.val overlap} to retain them."))
     P <- (P > 0) * 1
   }

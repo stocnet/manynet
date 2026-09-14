@@ -1,3 +1,15 @@
+# manynet 2.3.5
+
+## Modifying
+
+- Improved `to_proximity()` to compare two-mode networks and profile matrices, such as a motif census (see stocnet/netrics#29)
+  - Two-mode input of any class returns what `to_mode1()` (`across = "rows"`) or `to_mode2()` (`across = "columns"`) would
+  - `dyad = "include"` compares a square profile matrix as it lies, rather than as a one-mode network
+  - Added `to_proximity.stocnet()` S3 method
+  - Missing values from a node with no ties are now reported as 0 on every path, as the pairwise path already did
+  - Added "ruzicka" similarity measure, the weighted Jaccard coefficient
+  - Fixed "overlap" similarity to be Szymkiewicz-Simpson coefficient for valued data too
+
 # manynet 2.3.4
 
 ## Making

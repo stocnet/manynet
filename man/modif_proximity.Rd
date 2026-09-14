@@ -50,13 +50,20 @@ value, joint absences included. For binary data this is "rand" multiplied
 by the number of nodes in the other mode, but for valued data it is the
 more general measure, since it registers agreement at any tie strength.
 Use it where the level of involvement is meaningful in itself.
-\item "overlap" divides the count by the smaller of the two nodes' total tie
-strength, the Szymkiewicz-Simpson coefficient. Use it where one node is
-much more active than the other, and the less active node's rarity should
-not depress the score.
 \item "crossmin" sums the smaller of each pair of tie strengths.
 Interpret it as the capacity two nodes could jointly bring to bear.
 For binary data it reduces to "count".
+\item "overlap" divides "crossmin" by the smaller of the two nodes' total tie
+strength, the Szymkiewicz-Simpson or overlap coefficient, and so lies in
+\eqn{[0,1]} for non-negative data. Use it where one node is much more
+active than the other, and the less active node's rarity should not
+depress the score. For binary data it is the count over the smaller
+degree. xUCINET keeps that count for valued data too, where it can
+exceed 1 and is no longer the coefficient.
+\item "ruzicka" divides "crossmin" by the two nodes' combined tie strength
+less that shared, Ruzicka's weighted Jaccard coefficient, and so also
+lies in \eqn{[0,1]}. For binary data it is "jaccard", so use it where
+"jaccard" is wanted but the tie strengths should be kept.
 \item "maxcrossmin" takes the largest such minimum rather than their sum,
 so that a single strong shared affiliation stands for the pair.
 For binary data it collapses to an indicator of any shared affiliation,
@@ -98,7 +105,8 @@ one is, and \eqn{d} for those in which neither is:
 double-weights co-presence; and "sokalsneath" is \eqn{a/(a+2(b+c))},
 which instead double-weights mismatch. Use these where joint
 non-participation says nothing, as in a sparse affiliation network with
-many events.
+many events. For valued data, "ruzicka" is the counterpart of "jaccard"
+that keeps the tie strengths.
 \item Sensitive to matching, counting joint absence as evidence: "rand",
 the Simple Matching Coefficient, is \eqn{(a+d)/(a+b+c+d)}; "hamann" is
 \eqn{((a+d)-(b+c))/(a+b+c+d)}, the same quantity rescaled onto
@@ -166,7 +174,13 @@ It is also the quickest, since it needs no pairwise walk.
 }
 
 By default the appropriate treatment is chosen from the network's format,
-as described above.}
+as described above.
+
+A two-mode network has no dyad of this kind, so only \code{NULL} or "include"
+is accepted for one. Pass "include" for a profile matrix whose rows are
+nodes and whose columns are something else, such as a motif census.
+A square census with no dimnames otherwise reads as a one-mode network,
+and would have its cells dropped as if they were ties.}
 
 \item{method}{How the diagonal and the reciprocal ties are treated.
 "all" includes all information, "diag" excludes the diagonal (self-ties),
@@ -192,6 +206,8 @@ the nodes of a one-mode network are:
 \itemize{
 \item \code{to_proximity()} compares each pair of nodes on their ties,
 using any of the measures that \code{to_mode1()} offers.
+Given a two-mode network, or a node-by-feature profile matrix such as a
+motif census, it compares the rows or the columns as they lie.
 \item \code{to_correlation()} performs a Pearson pairwise correlation,
 choosing how to treat the diagonal and the reciprocal ties from the
 network's format.
@@ -202,16 +218,17 @@ matrix.
 Where \code{to_mode1()} compares nodes on their affiliations to a second mode,
 these functions compare nodes on their ties to one another.
 The two share one measure vocabulary and differ only in the profile
-compared.
+compared. For a two-mode network there is no difference, and
+\code{to_proximity()} returns what \code{to_mode1()} or \code{to_mode2()} would.
 }
 \details{
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{               data.frame default igraph matrix network tbl_graph
-to_correlation                  *             *                 *
-to_cosine                       *             *                  
-to_proximity            *       *      *      *       *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{               data.frame default igraph matrix network stocnet tbl_graph
+to_correlation                  *             *                         *
+to_cosine                       *             *                          
+to_proximity            *       *      *      *       *       *         *
 }\if{html}{\out{</div>}}
 }
 \section{Node correlation}{
@@ -238,6 +255,7 @@ second mode.
 \examples{
 to_proximity(ison_algebra, "pearson")
 to_proximity(ison_adolescents, "jaccard")
+to_proximity(ison_southern_women, "ruzicka", across = "columns")
 }
 \references{
 \subsection{On structural equivalence}{
