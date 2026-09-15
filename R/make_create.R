@@ -720,6 +720,7 @@ create_cycle <- function(n, directed = FALSE){
 #'   create_wheel(c(4,6))
 #' @export
 create_wheel <- function(n, directed = FALSE) {
+  directed <- infer_directed(n, directed)
   n <- infer_n(n)
   if (length(n) == 1) {
     if (n < 4) {
@@ -732,8 +733,7 @@ create_wheel <- function(n, directed = FALSE) {
     # Connect center to each rim node
     center_edges <- cbind(center_node, rim_nodes)
     edges <- rbind(rim_cycle, center_edges)
-    g <- igraph::graph_from_edgelist(edges, directed = directed)
-    g
+    out <- igraph::graph_from_edgelist(edges, directed = directed)
   } else if (length(n) == 2) {
     a <- n[1]
     b <- n[2]
@@ -755,11 +755,12 @@ create_wheel <- function(n, directed = FALSE) {
     rim <- vapply(seq_len(m), function(i)
       c(i + 1, a + i, a + i, if(i < m) i + 2 else 2), numeric(4))
     spokes <- rbind(1, a + seq_len(m))
-    igraph::make_empty_graph(n = a + b, directed = TRUE) |>
+    out <- igraph::make_empty_graph(n = a + b, directed = FALSE) |>
       igraph::add_edges(c(as.vector(rim), as.vector(spokes))) |>
-      igraph::set_vertex_attr("type", value = rep(c(FALSE, TRUE), c(a, b))) |>
-      as_tidygraph() |> to_undirected()
+      igraph::set_vertex_attr("type", value = rep(c(FALSE, TRUE), c(a, b)))
   } else snet_abort("Argument 'n' must be a scalar or vector of length 2.")
+  as_tidygraph(out) |>
+    add_info(name = "Wheel network")
 }
 
 # #' @rdname create

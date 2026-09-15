@@ -427,6 +427,12 @@ add_node_attribute.stocnet <- function(.data, attr_name, vector){
   if(is.null(out$nodes)) out$nodes <- dplyr::tibble(.rows = net_nodes(.data))
   if(length(vector) != nrow(out$nodes))
     vector <- .pad_to_modes(vector, .data)
+  # A stocnet holds node names in its reserved 'label' column, which is where
+  # `as_stocnet()` puts the 'name' of other classes, so a 'name' goes there too.
+  if(identical(attr_name, "name")) {
+    attr_name <- "label"
+    vector <- as.character(vector)
+  }
   out$nodes[[attr_name]] <- vector
   out
 }

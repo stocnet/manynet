@@ -98,6 +98,9 @@ test_that("create_cycle adds surplus two-mode nodes as isolates", {
 test_that("create_wheel works", {
   expect_values(net_ties(create_wheel(5)), 8)
   expect_values(net_ties(create_wheel(c(5,5))), 12)
+  expect_s3_class(create_wheel(6), "mnet")
+  expect_s3_class(create_wheel(c(4,6)), "mnet")
+  expect_true(is_directed(create_wheel(6, directed = TRUE)))
 })
 
 test_that("create_wheel adds surplus two-mode nodes as isolates", {

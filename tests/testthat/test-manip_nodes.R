@@ -196,3 +196,10 @@ test_that("a one-mode attribute lands on its own nodes when the modes interleave
   expect_equal(out$nodes$age, c(1, NA, 2, NA, 3))
   expect_error(add_node_attribute(sn, "bad", c(1, 2, 3, 4)), "5, not 4")
 })
+
+test_that("a name added to a stocnet becomes its label", {
+  out <- add_node_attribute(as_stocnet(create_ring(5)), "name", LETTERS[1:5])
+  expect_equal(out$nodes$label, LETTERS[1:5])
+  expect_false("name" %in% names(out$nodes))
+  expect_equal(node_names(as_igraph(out)), LETTERS[1:5])
+})

@@ -8,6 +8,12 @@
   - Added `width` argument to set the number of nodes in each blade
   - Where the nodes cannot form equal blades, the largest windmill is created and the surplus nodes are added as isolates, with a message, rather than a complete network (one-mode) or an error (two-mode)
   - Fixed two-mode windmills to mark the first mode as `type = FALSE`
+- Improved `create_wheel()` to return an `mnet` with network information, rather than an `igraph`, for one-mode networks too
+  - Fixed `create_wheel()` to take its directedness from a network passed to `n`
+
+## Manipulating
+
+- Fixed `add_node_attribute()` on a `stocnet` to put a "name" attribute in the reserved "label" column, so that the network can still be coerced to other classes
 
 ## Modifying
 
