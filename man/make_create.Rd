@@ -93,7 +93,7 @@ By default a \code{tbl_graph} object is returned,
 but this can be coerced into other types of objects
 using \code{as_edgelist()}, \code{as_matrix()},
 \code{as_tidygraph()}, or \code{as_network()}.
-\code{create_windmill()} returns a \code{stocnet} object.
+\code{create_wheel()} and \code{create_windmill()} return a \code{stocnet} object.
 
 By default, all networks are created as undirected.
 This can be overruled with the argument \code{directed = TRUE}.
