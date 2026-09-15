@@ -1,5 +1,14 @@
 # manynet 2.3.5
 
+## Making
+
+- Improved `create_windmill()` to follow the other `create_*()` functions
+  - Now returns a `stocnet` with network information, rather than an `igraph`
+  - Added `directed` argument; arcs run out from the hub, and from lower to higher index within blades
+  - Added `width` argument to set the number of nodes in each blade
+  - Where the nodes cannot form equal blades, the largest windmill is created and the surplus nodes are added as isolates, with a message, rather than a complete network (one-mode) or an error (two-mode)
+  - Fixed two-mode windmills to mark the first mode as `type = FALSE`
+
 ## Modifying
 
 - Improved `to_proximity()` to compare two-mode networks and profile matrices, such as a motif census (see stocnet/netrics#29)

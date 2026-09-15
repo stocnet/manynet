@@ -56,6 +56,29 @@ test_that("create_degree can infer the degree sequence from a network", {
 test_that("create_windmill works", {
   expect_values(net_ties(create_windmill(5)), 6)
   expect_values(net_ties(create_windmill(c(5,8))), 16)
+  expect_s3_class(create_windmill(7), "stocnet")
+  expect_s3_class(create_windmill(c(4,6)), "stocnet")
+})
+
+test_that("create_windmill adds surplus nodes as isolates", {
+  out <- create_windmill(6)
+  expect_values(net_nodes(out), 6)
+  expect_values(net_ties(out), 6)
+  expect_values(sum(igraph::degree(as_igraph(out)) == 0), 1)
+  out <- create_windmill(c(6,4))
+  expect_equal(net_dims(out), c(6,4))
+  expect_values(net_ties(out), 8)
+  expect_values(sum(igraph::degree(as_igraph(out)) == 0), 1)
+})
+
+test_that("create_windmill takes blade width and direction", {
+  expect_values(net_ties(create_windmill(7, width = 3)), 12)
+  expect_error(create_windmill(7, width = 10), "at most 6")
+  out <- create_windmill(7, directed = TRUE)
+  expect_true(is_directed(out))
+  expect_values(net_ties(out), 9)
+  expect_true(igraph::is_dag(as_igraph(out)))
+  expect_false(any(igraph::V(as_igraph(create_windmill(c(4,6))))$type[1:4]))
 })
 
 test_that("create_cycle works", {

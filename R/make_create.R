@@ -137,6 +137,10 @@ create_explicit <- function(...){
 #'   a single closed chain.
 #'   - `create_wheel()` creates a network in which a single dominant node
 #'   is tied to all the nodes in a cycle.
+#'   - `create_windmill()` creates a network in which several cliques,
+#'   or blades, share a single hub node.
+#'   Unless a blade `width` is given, the number of blades is balanced
+#'   against their size.
 #'
 #'   Some of these structures are constrained in two-mode networks.
 #'   Since ties in two-mode networks can only run between the modes,
@@ -145,9 +149,13 @@ create_explicit <- function(...){
 #'   Similarly, the rim of a two-mode wheel alternates between the modes,
 #'   and its hub, drawn from the first mode, can only be tied to the
 #'   second mode's rim nodes.
+#'   The hub of a two-mode windmill is also drawn from the first mode,
+#'   and is tied to every blade node in the second mode,
+#'   while each other first-mode node is tied to its own blade.
 #'   Where `n` is larger than such a structure can accommodate,
 #'   the largest such structure is created and the surplus nodes are
 #'   added as isolates, with a message.
+#'   This is also the case for windmills whose blades cannot be equally sized.
 #'
 #'   These functions can create either one-mode or two-mode networks.
 #'   To create a one-mode network, pass the main argument `n` a single integer,
@@ -174,7 +182,8 @@ create_explicit <- function(...){
 #'   If the opposite direction is desired, 
 #'   use `to_redirected()` on the output of these functions.
 #' @param width Integer specifying the width of the ring,
-#'   breadth of the branches, or maximum extent of the neighbourbood.
+#'   breadth of the branches, number of nodes in each blade of a windmill,
+#'   or maximum extent of the neighbourbood.
 #' @param membership A vector of partition membership as integers.
 #'   If left as `NULL` (the default), nodes in each mode will be
 #'   assigned to two, equally sized partitions.
@@ -182,6 +191,7 @@ create_explicit <- function(...){
 #'   but this can be coerced into other types of objects
 #'   using `as_edgelist()`, `as_matrix()`,
 #'   `as_tidygraph()`, or `as_network()`.
+#'   `create_windmill()` returns a `stocnet` object.
 #'   
 #'   By default, all networks are created as undirected.
 #'   This can be overruled with the argument `directed = TRUE`.
@@ -568,96 +578,88 @@ create_core <- function(n, directed = FALSE, mark = NULL) {
 
 #' @rdname make_create
 #' @examples
-#'   create_windmill(6)
+#'   create_windmill(7)
+#'   create_windmill(7, width = 2)
+#'   create_windmill(c(4,6))
 #' @export
-create_windmill <- function(n) {
-  total_nodes <- infer_n(n)
-  
-  if (length(total_nodes) == 1) {
-
-    if (total_nodes < 3) {
+create_windmill <- function(n, directed = FALSE, width = NULL) {
+  directed <- infer_directed(n, directed)
+  n <- infer_n(n)
+  if (length(n) == 1) {
+    if (n < 3) {
       snet_abort("At least 3 nodes required to form a windmill graph.")
     }
-    
-    # Find all valid (k, n) pairs
-    valid_pairs <- list()
-    for (k in 1:(total_nodes - 2)) {
-      n_candidate <- (total_nodes - 1) / k + 1
-      if (n_candidate == floor(n_candidate) && n_candidate >= 2) {
-        valid_pairs[[length(valid_pairs) + 1]] <- list(k = k, n = as.integer(n_candidate))
+    # Each blade is a clique of `w` nodes that, together with the hub, form
+    # a complete subgraph; `k` blades share the hub.
+    m <- n - 1
+    if (!is.null(width)) {
+      w <- width
+      k <- m %/% w
+      if (k < 1) snet_abort("`width` can be at most {m} for a windmill of {n} nodes.")
+    } else {
+      pairs <- expand.grid(k = 2:max(2, m %/% 2), w = 2:max(2, m %/% 2))
+      pairs <- pairs[pairs$k * pairs$w <= m, ]
+      if (nrow(pairs) == 0) {
+        k <- 1
+        w <- m
+      } else {
+        # Use as many nodes as possible, then balance blade count against
+        # the size of the clique each blade forms with the hub.
+        pairs <- pairs[order(-pairs$k * pairs$w,
+                             abs(pairs$k - (pairs$w + 1))), ]
+        k <- pairs$k[1]
+        w <- pairs$w[1]
       }
     }
-    
-    if (length(valid_pairs) == 0) {
-      snet_abort("No valid (k, n) pair found for a windmill graph with given number of nodes.")
+    out <- matrix(0, n, n)
+    out[1, 2:(1 + k*w)] <- out[2:(1 + k*w), 1] <- 1
+    for (i in seq_len(k)) {
+      blade <- (2 + (i - 1)*w):(1 + i*w)
+      out[blade, blade] <- 1
     }
-    
-    # Choose the pair with minimal |k - n|
-    best_pair <- valid_pairs[[which.min(sapply(valid_pairs, function(p) abs(p$k - p$n)))]]
-    k <- best_pair$k
-    n <- best_pair$n
-    snet_info("Using k = {k} groups of n = {n} nodes (including universal node)")
-    
-    total_nodes <- 1 + k * (n - 1)
-    g <- igraph::make_empty_graph(n = total_nodes, directed = FALSE)
-    
-    universal_node <- 1
-    current_node <- 2
-    
-    for (i in 1:k) {
-      group_nodes <- current_node:(current_node + n - 2)
-      
-      group_edges <- utils::combn(group_nodes, 2, simplify = FALSE)
-      universal_edges <- lapply(group_nodes, function(x) c(universal_node, x))
-      
-      g <- igraph::add_edges(g, unlist(c(group_edges, universal_edges), recursive = FALSE))
-      current_node <- current_node + n - 1
+    diag(out) <- 0
+    if (directed) out[lower.tri(out)] <- 0
+    extra <- m - k*w
+    if (extra > 0) {
+      snet_info("Windmills require the nodes other than the hub to divide",
+                "evenly into blades, so a windmill of {1 + k*w} nodes has been created",
+                "and the remaining {extra} node{?s} added as isolate{?s}.")
     }
-    
-    g
-    
-  } else if (length(total_nodes) == 2) {
-
-    a <- total_nodes[1]  # Mode A
-    b <- total_nodes[2]  # Mode B
-    
+    out <- igraph::graph_from_adjacency_matrix(out, ifelse(directed, "directed",
+                                                           "undirected"))
+  } else if (length(n) == 2) {
+    a <- n[1]
+    b <- n[2]
     if (a < 2 || b < 1) {
-      snet_abort("Need at least 2 Mode A nodes and 1 Mode B node.")
+      snet_abort("Two-mode windmills require at least two nodes in the first mode",
+                 "and one node in the second mode.")
     }
-    
-    k <- a - 1  # Number of blades/groups
-    if (b %% k != 0) {
-      snet_abort("Mode B nodes must divide evenly across Mode A groups (excluding universal node).")
+    # The hub, drawn from the first mode, is tied to every blade node in the
+    # second mode, and each other first-mode node to its own blade of `w`.
+    if (!is.null(width)) {
+      w <- width
+      k <- min(a - 1, b %/% w)
+      if (k < 1) snet_abort("`width` can be at most {b} for a second mode of {b} nodes.")
+    } else {
+      ks <- seq_len(min(a - 1, b))
+      used <- ks + ks * (b %/% ks)
+      k <- max(ks[used == max(used)])
+      w <- b %/% k
     }
-    
-    group_size <- b / k
-    mode_A_nodes <- 1:a
-    mode_B_nodes <- (a + 1):(a + b)
-    
-    edges <- list()
-    current_B <- a + 1
-    
-    for (i in 1:k) {
-      group_B_nodes <- current_B:(current_B + group_size - 1)
-      
-      for (b_node in group_B_nodes) {
-        # Connect to universal node (Mode A node 1)
-        edges[[length(edges) + 1]] <- c(1, b_node)
-        # Connect to group-specific Mode A node
-        edges[[length(edges) + 1]] <- c(i + 1, b_node)
-      }
-      
-      current_B <- current_B + group_size
+    extra <- (a - 1 - k) + (b - k*w)
+    if (extra > 0) {
+      snet_info("Two-mode windmills require the second mode to divide evenly",
+                "across the first mode's blades, so a windmill of {1 + k + k*w} nodes",
+                "has been created and the remaining {extra} node{?s} added as isolate{?s}.")
     }
-    
-    g <- igraph::make_empty_graph(n = a + b, directed = FALSE)
-    g <- igraph::add_edges(g, unlist(edges))
-    g <- igraph::set_vertex_attr(g, "type", value = c(rep(TRUE, a), rep(FALSE, b)))  # Bipartite flag
-    
-    g
-    
-  } else snet_abort("Sorry, that's not possible.")
-  
+    blades <- rep(seq_len(k), each = w)
+    edges <- rbind(1, a + seq_along(blades), blades + 1, a + seq_along(blades))
+    out <- igraph::make_empty_graph(n = a + b, directed = FALSE) |>
+      igraph::add_edges(as.vector(edges)) |>
+      igraph::set_vertex_attr("type", value = rep(c(FALSE, TRUE), c(a, b)))
+  } else snet_abort("Argument 'n' must be a scalar or vector of length 2.")
+  as_stocnet(out) |>
+    add_info(name = "Windmill network")
 }
 
 #' @rdname make_create
