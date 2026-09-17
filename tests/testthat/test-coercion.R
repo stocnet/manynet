@@ -651,3 +651,19 @@ test_that("a multilevel network keeps its within-mode reports in an array", {
 test_that("an array of more than three dimensions is refused", {
   expect_error(as_stocnet(array(0, dim = c(2, 2, 2, 2))), "4 dimensions")
 })
+
+test_that("an array in which nobody reported a tie stays an array of reports", {
+  nodes <- c("A", "B", "C")
+  empty <- array(0, dim = c(3, 3, 3), dimnames = list(nodes, nodes, nodes))
+  css <- as_stocnet(empty, attribute = "by")
+  expect_true(is_cognitive(css))
+  expect_equal(as_matrix(css), empty)
+  gossip <- as_stocnet(empty, attribute = "about")
+  expect_true(is_gossip(gossip))
+  expect_equal(as_matrix(gossip), empty)
+})
+
+test_that("a reporter column that names nobody is not read as a weight", {
+  expect_equal(as_matrix(data.frame(from = 1, to = 2, by = NA)),
+               as_matrix(data.frame(from = 1, to = 2)))
+})

@@ -585,6 +585,10 @@ as_matrix <- function(.data,
 #' @export
 as_matrix.data.frame <- function(.data,
                                  twomode = NULL) {
+  # A reporter or target column that names nobody says nothing about the
+  # ties, and must not be read below as their weights.
+  for(col in intersect(c("by", "about"), names(.data)))
+    if(!.holds_node(.data[[col]])) .data[[col]] <- NULL
   third <- .third_node_col(.data)
   if (!is.na(third)) return(.third_node_array(.data, third))
   if ("tbl_df" %in% class(.data)) .data <- as.data.frame(.data)

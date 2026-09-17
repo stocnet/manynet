@@ -734,8 +734,13 @@ is_egocentric.array <- function(.data) FALSE
 #' @export
 is_egocentric.stocnet <- function(.data) {
   ties <- .data$ties
-  !is.null(ties[["by"]]) &&
-    .reports_egocentric(ties$from, ties$to, ties$by, .data$info$observation)
+  observation <- .data$info$observation
+  # As for `is_cognitive()`, where no ego named a tie only the design says
+  # that the network was collected as reports.
+  if(!.holds_node(ties[["by"]]))
+    return(!is.null(ties) && "by" %in% names(ties) &&
+             "egocentric" %in% observation)
+  .reports_egocentric(ties$from, ties$to, ties$by, observation)
 }
 
 #' @rdname mark_format_cognitive
@@ -771,7 +776,12 @@ is_gossip.array <- function(.data) FALSE
 
 #' @export
 is_gossip.stocnet <- function(.data) {
-  .holds_node(.data$ties[["about"]])
+  ties <- .data$ties
+  # Gossip has no design to record in the network's information, so a table
+  # of no ties that still keeps the column is read as gossip about nobody.
+  # A column of nothing but NA among other ties still names no target.
+  .holds_node(ties[["about"]]) ||
+    (!is.null(ties) && nrow(ties) == 0 && "about" %in% names(ties))
 }
 
 # Whether a column of ties names any node. A column of nothing but NA names

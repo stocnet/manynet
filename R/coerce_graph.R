@@ -1226,6 +1226,11 @@ as_stocnet.array <- function(.data, twomode = FALSE, ...,
     if(all(ties$value[!ties$na] == 1)) ties$value <- NULL else
       names(ties)[names(ties) == "value"] <- "weight"
     if(!any(ties$na)) ties$na <- NULL
+  } else if(attribute %in% c("by", "about")){
+    # An array in which nobody reported a tie is still reports, so the column
+    # that says so is kept, even without a row to hold a value in it.
+    ties <- dplyr::tibble(from = integer(0), to = integer(0))
+    ties[[attribute]] <- integer(0)
   } else ties <- NULL
   info <- list(directed = directed)
   if(attribute == "by") info$observation <- "cognitive"

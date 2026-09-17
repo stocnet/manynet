@@ -237,3 +237,13 @@ test_that("tie_is_parallel does not count reports by two reporters as parallel",
   twice <- bind_ties(css, data.frame(from = "A", to = "B", by = "C"))
   expect_equal(sum(tie_is_parallel(twice)), 2)
 })
+
+test_that("bind_ties refuses a reporter label on a network without labels", {
+  unlabelled <- make_stocnet(ties = data.frame(from = 1:2, to = 2:3, by = 1L),
+                             nodes = dplyr::tibble(.rows = 3))
+  expect_error(bind_ties(unlabelled, data.frame(from = 1, to = 3, by = "E")),
+               "without node labels")
+  # an index is still accepted
+  expect_equal(nrow(bind_ties(unlabelled,
+                              data.frame(from = 1, to = 3, by = 2L))$ties), 3)
+})

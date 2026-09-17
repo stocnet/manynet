@@ -285,6 +285,10 @@ bind_ties.stocnet <- function(.data, ...){
   }
   # The reporter and the target of a tie are matched the same way.
   for(col in intersect(c("by", "about"), names(toAdd))){
+    if(is.character(toAdd[[col]]) && any(!is.na(toAdd[[col]])) &&
+       is.null(out$nodes[["label"]]))
+      snet_abort(paste("Cannot match labelled ties to a network",
+                       "without node labels."))
     if(is.character(toAdd[[col]]) && !is.null(out$nodes[["label"]])){
       idx <- match(toAdd[[col]], out$nodes$label)
       if(any(!is.na(toAdd[[col]]) & is.na(idx)))

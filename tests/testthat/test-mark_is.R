@@ -171,3 +171,12 @@ test_that("is_egocentric reads the design, or failing that the reports", {
   expect_false(is_cognitive(none))
   expect_false(is_egocentric(none))
 })
+
+test_that("is_egocentric reads the design where no ego named a tie", {
+  none <- make_stocnet(ties = data.frame(from = 1L, to = 2L, by = NA_integer_),
+                       nodes = dplyr::tibble(.rows = 3))
+  expect_true(is_egocentric(mutate_info(none, observation = "egocentric")))
+  expect_false(is_cognitive(mutate_info(none, observation = "egocentric")))
+  expect_true(is_cognitive(mutate_info(none, observation = "cognitive")))
+  expect_false(is_egocentric(mutate_info(none, observation = "cognitive")))
+})

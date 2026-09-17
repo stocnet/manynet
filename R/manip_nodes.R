@@ -338,8 +338,12 @@ arrange_nodes.stocnet <- function(.data, ...){
     out_changes <- .data$changes
   }
   
+  # The missing ties name nodes too, and the globals name none, but both are
+  # kept, as `keep_nodes()` keeps them.
+  out_missings <- .remap_tie_nodes(.data$missings, old_to_new)
   make_stocnet(nodes = out_nodes, ties = out_ties, 
-               changes = out_changes, info = .data$info)
+               changes = out_changes, globals = .data$globals,
+               missings = out_missings, info = .data$info)
 }
 
 # Manipulating nodes attributes ####

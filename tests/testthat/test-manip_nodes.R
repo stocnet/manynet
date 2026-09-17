@@ -215,3 +215,13 @@ test_that("deleting and arranging nodes keeps each report with its reporter", {
   gossip <- as_stocnet(arr, attribute = "about")
   expect_equal(as_matrix(delete_nodes(gossip, "B")), arr[-2, -2, -2])
 })
+
+test_that("arranging nodes keeps the ties recorded as missing", {
+  arr <- css_array()
+  arr["C", "A", "B"] <- NA
+  css <- as_stocnet(arr, attribute = "by")
+  expect_equal(nrow(css$missings), 1)
+  arranged <- arrange_nodes(css, dplyr::desc(label))
+  expect_equal(nrow(arranged$missings), 1)
+  expect_equal(as_matrix(arranged), arr[4:1, 4:1, 4:1])
+})
