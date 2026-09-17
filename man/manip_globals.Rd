@@ -72,10 +72,14 @@ and the new value to be applied, which should be called 'value'.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods for these functions:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{               data.frame default stocnet
-mutate_globals                  *       *
-rename_globals          *       *       *
-select_globals          *       *       *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{                data.frame default igraph stocnet
+arrange_globals          *       *              *
+bind_globals             *       *              *
+delete_globals                   *      *       *
+filter_globals           *       *              *
+mutate_globals                   *              *
+rename_globals           *       *              *
+select_globals           *       *              *
 }\if{html}{\out{</div>}}
 
 If a method is not available for a particular class, but a default method is,

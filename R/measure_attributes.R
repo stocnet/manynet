@@ -203,6 +203,8 @@ tie_is_twomode <- function(.data){
 #'   Ties of different types are likewise not parallel.
 #'   Several types of tie between a pair of nodes is what `is_multiplex()`
 #'   marks; `tie_is_parallel()` marks several ties of one type.
+#'   Nor are reports of a tie by two reporters in a cognitive social structure,
+#'   or gossip about two different targets, since each is a record of its own.
 #'   
 #'   Every tie in such a bundle is marked, and not just the repetitions,
 #'   so `sum(tie_is_parallel(ison_koenigsberg))` counts four of the seven
@@ -246,6 +248,8 @@ tie_is_backbone <- function(.data, filter = NULL, threshold = NULL,
     layer <- intersect(c("layer", "type"), atts)[1]
     if(!is.na(layer))
       dyad <- paste(dyad, as.character(tie_attribute(.data, layer)))
+    for(col in intersect(c("by", "about"), atts))
+      dyad <- paste(dyad, as.character(tie_attribute(.data, col)))
     return(.parallel_spells(.data, dyad))
   }
   key <- paste(dyad, .parallel_strata(.data))
@@ -266,6 +270,10 @@ tie_is_backbone <- function(.data, filter = NULL, threshold = NULL,
   layer <- intersect(c("layer", "type"), atts)[1]
   if(!is.na(layer))
     strata <- c(strata, list(as.character(tie_attribute(.data, layer))))
+  # Reports of one tie by two reporters, or two pieces of gossip about different
+  # nodes, are two records and not one tie repeated.
+  for(col in intersect(c("by", "about"), atts))
+    strata <- c(strata, list(as.character(tie_attribute(.data, col))))
   if(!length(strata)) return(rep("", net_ties(.data)))
   do.call(paste, strata)
 }

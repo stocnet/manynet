@@ -120,6 +120,88 @@ to_undirected.igraph <- function(.data,
   }
 }
 
+# A network whose ties name a reporter or a target holds one network for each
+# of them, so a tie is reconciled only with the tie running the other way in
+# the same report, about the same target, in the same layer and
+# wave. igraph knows none of these, and would reconcile a tie in one report
+# with its reverse in another.
+#' @export
+to_undirected.stocnet <- function(.data,
+                                  rule = c("collapse","min","max","mean","sum","product")) {
+  rule <- match.arg(rule)
+  ties <- .data$ties
+  if(!.holds_node(ties[["by"]]) && !.holds_node(ties[["about"]]))
+    return(as_stocnet(to_undirected(as_tidygraph(.data), rule = rule)))
+  # A multilevel network can hold directed ties within a mode, so only a
+  # network that is two-mode and nothing more has no direction to remove.
+  if(!is_directed(.data) || (is_twomode(.data) && !is_multilevel(.data)))
+    return(.data)
+  groups <- intersect(c("layer", "time", "by", "about"), names(ties))
+  valued <- "weight" %in% names(ties)
+  value <- if(valued) ties$weight else rep(1, nrow(ties))
+  # A layer already held as undirected holds one row per dyad, which is not a
+  # tie in one direction only, so its rows are kept as they are, as loops are.
+  if("layer" %in% names(ties)){
+    layers <- unique(as.character(ties$layer))
+    undirected <- layers[!vapply(layers, function(l) layer_is_directed(.data, l),
+                                 logical(1))]
+    settled <- as.character(ties$layer) %in% undirected
+  } else settled <- rep(FALSE, nrow(ties))
+  loops <- ties$from == ties$to | settled
+  key <- do.call(paste, c(list(pmin(ties$from, ties$to), pmax(ties$from, ties$to)),
+                          lapply(groups, function(g) as.character(ties[[g]])),
+                          list(sep = "\r")))
+  keys <- unique(key[!loops])
+  # the value held in one direction of each pair, and zero where it holds none
+  direction <- function(sel){
+    out <- rep(0, length(keys))
+    if(any(sel)){
+      sums <- rowsum(value[sel], key[sel], reorder = FALSE)
+      out[match(rownames(sums), keys)] <- sums[, 1]
+    }
+    out
+  }
+  ahead <- direction(!loops & ties$from < ties$to)
+  behind <- direction(!loops & ties$from > ties$to)
+  combined <- switch(rule,
+                     "collapse" = ,
+                     "sum"      = ahead + behind,
+                     "min"      = pmin(ahead, behind),
+                     "max"      = pmax(ahead, behind),
+                     "mean"     = (ahead + behind)/2,
+                     "product"  = ahead * behind)
+  present <- function(x) is.na(x) | x != 0
+  connected <- sum(present(ahead) | present(behind))
+  asymmetric <- sum(xor(present(ahead), present(behind)))
+  first <- match(keys, key)
+  out <- ties[first, , drop = FALSE]
+  out[c("from", "to")] <- list(pmin(out$from, out$to), pmax(out$from, out$to))
+  # An unvalued network stays unvalued, except where averaging the two
+  # directions gives a half, as it does for a matrix.
+  if(valued || rule == "mean"){
+    out$weight <- combined
+    ties$weight <- value
+  }
+  keep <- present(combined)
+  order_kept <- order(c(first[keep], which(loops)))
+  out <- dplyr::bind_rows(out[keep, , drop = FALSE],
+                          ties[loops, , drop = FALSE])[order_kept, , drop = FALSE]
+  info <- .data$info
+  # A rule such as "min" can leave a layer without any tie, and a layer
+  # without ties is no longer a layer of the network.
+  if("layer" %in% names(out))
+    info <- .prune_layer_info(info, unique(as.character(out$layer)))
+  info$directed <- if(is.null(names(info$directed))) FALSE else
+    stats::setNames(rep(FALSE, length(info$directed)), names(info$directed))
+  entry <- if(connected == 0) rule else
+    paste0(rule, " (", round(asymmetric / connected * 100),
+           "% of connected dyads non-reciprocal)")
+  make_stocnet(info = info, nodes = .data$nodes, ties = out,
+               changes = .data$changes, globals = .data$globals,
+               missings = .data$missings) |>
+    .record_transformation("symmetrisation", entry)
+}
+
 #' @export
 to_undirected.tbl_graph <- function(.data,
                                     rule = c("collapse","min","max","mean","sum","product")) {

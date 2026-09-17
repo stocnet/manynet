@@ -40,7 +40,8 @@ a network of the same dimensions will be created.
 \item{directed}{Whether to generate network as directed. By default FALSE.}
 
 \item{width}{Integer specifying the width of the ring,
-breadth of the branches, or maximum extent of the neighbourbood.}
+breadth of the branches, number of nodes in each blade of a windmill,
+or maximum extent of the neighbourbood.}
 
 \item{contacts}{Number of contacts or ambassadors chosen from among existing
 nodes in the network.

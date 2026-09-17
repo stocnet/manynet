@@ -189,7 +189,13 @@ Conventions to preserve when writing or editing functions:
   and are stored as *integer indices* into `nodes`, not labels — `make_stocnet()`
   matches labels to indices on construction. Reserved columns are `layer` (multiplex),
   `weight` (negative weights mean a signed network, a missing weight a tie of unknown
-  value), `time` (longitudinal), and `by` (triadic/tertius ties).
+  value), `time` (longitudinal), `by` (the node that reported a tie, as in
+  a cognitive social structure or an egocentric network), and `about` (the node a tie
+  is about, as in gossip). `by` and `about` are integer indices into `nodes` too, and
+  may hold `NA` for a layer that no node reported or that is about no node. Anything
+  that renumbers or drops nodes must renumber them as well: use `.tie_node_cols` and
+  `.remap_tie_nodes()` (see [R/class_stocnet.R](../R/class_stocnet.R)) rather than
+  remapping `from` and `to` by hand. A broker ("tertius") is neither.
   Every row is a tie: the ties a network records as *missing* are held elsewhere (below).
   `make_stocnet()` does accept an `na` column marking which rows are missing ties, since
   that is how the data often arrives, but it splits those rows out rather than storing

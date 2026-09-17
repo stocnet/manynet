@@ -236,3 +236,17 @@ check_tute_functions <- function(path, skip = "ergm\\("){
     )
   }
 }
+
+# A small cognitive social structure: four reports of the ties among
+# four nodes, as an array of senders, receivers, and reporters. Every reporter
+# reports A->B, only A and B report B->A, only C reports C->D, and B and D
+# report D->A, so the reports agree on some ties and not on others.
+css_array <- function(){
+  nodes <- c("A", "B", "C", "D")
+  out <- array(0, dim = c(4, 4, 4), dimnames = list(nodes, nodes, nodes))
+  out["A", "B", ] <- 1
+  out["B", "A", c("A", "B")] <- 1
+  out["C", "D", "C"] <- 1
+  out["D", "A", c("B", "D")] <- 1
+  out
+}

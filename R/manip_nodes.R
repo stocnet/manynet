@@ -272,13 +272,10 @@ keep_nodes <- function(.data, kept){
 
   out_nodes <- .data$nodes[kept, , drop = FALSE]
 
-  if(!is.null(.data$ties) && nrow(.data$ties) > 0){
-    out_ties <- dplyr::filter(.data$ties, from %in% kept, to %in% kept) |>
-      dplyr::mutate(from = match(from, kept),
-                    to = match(to, kept))
-  } else {
-    out_ties <- .data$ties
-  }
+  # A tie is dropped where its ends are gone, and so is a report by a reporter
+  # who is gone or a report about a node that is gone.
+  map <- match(seq_len(nrow(.data$nodes)), kept)
+  out_ties <- .remap_tie_nodes(.data$ties, map)
 
   if(!is.null(.data$changes) && nrow(.data$changes) > 0){
     out_changes <- dplyr::filter(.data$changes, node %in% kept) |>
@@ -290,9 +287,7 @@ keep_nodes <- function(.data, kept){
   # The missings list dyads, so dropping nodes drops the dyads either of whose
   # ends is gone, and renumbers the rest, exactly as it does for the ties.
   if(!is.null(.data$missings) && nrow(.data$missings) > 0){
-    out_missings <- dplyr::filter(.data$missings, from %in% kept, to %in% kept) |>
-      dplyr::mutate(from = match(from, kept),
-                    to = match(to, kept))
+    out_missings <- .remap_tie_nodes(.data$missings, map)
     if(nrow(out_missings) == 0) out_missings <- NULL
   } else {
     out_missings <- .data$missings
@@ -334,13 +329,7 @@ arrange_nodes.stocnet <- function(.data, ...){
   
   out_nodes <- dplyr::select(arranged, -.orig_row)
   
-  if(!is.null(.data$ties) && nrow(.data$ties) > 0){
-    out_ties <- .data$ties |> 
-      dplyr::mutate(from = old_to_new[from],
-                    to = old_to_new[to])
-  } else {
-    out_ties <- .data$ties
-  }
+  out_ties <- .remap_tie_nodes(.data$ties, old_to_new)
   
   if(!is.null(.data$changes) && nrow(.data$changes) > 0){
     out_changes <- .data$changes |> 
@@ -349,8 +338,12 @@ arrange_nodes.stocnet <- function(.data, ...){
     out_changes <- .data$changes
   }
   
+  # The missing ties name nodes too, and the globals name none, but both are
+  # kept, as `keep_nodes()` keeps them.
+  out_missings <- .remap_tie_nodes(.data$missings, old_to_new)
   make_stocnet(nodes = out_nodes, ties = out_ties, 
-               changes = out_changes, info = .data$info)
+               changes = out_changes, globals = .data$globals,
+               missings = out_missings, info = .data$info)
 }
 
 # Manipulating nodes attributes ####
@@ -427,6 +420,12 @@ add_node_attribute.stocnet <- function(.data, attr_name, vector){
   if(is.null(out$nodes)) out$nodes <- dplyr::tibble(.rows = net_nodes(.data))
   if(length(vector) != nrow(out$nodes))
     vector <- .pad_to_modes(vector, .data)
+  # A stocnet holds node names in its reserved 'label' column, which is where
+  # `as_stocnet()` puts the 'name' of other classes, so a 'name' goes there too.
+  if(identical(attr_name, "name")) {
+    attr_name <- "label"
+    vector <- as.character(vector)
+  }
   out$nodes[[attr_name]] <- vector
   out
 }

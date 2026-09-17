@@ -127,3 +127,65 @@ test_that("layer_is_directed reports each layer of a mixed network", {
   # where a network records nothing per layer, it reports its own direction
   expect_equal(unname(layer_is_directed(ison_adolescents)), FALSE)
 })
+
+test_that("is_cognitive, is_egocentric, and is_gossip tell third nodes apart", {
+  css <- as_stocnet(css_array(), attribute = "by")
+  gossip <- as_stocnet(css_array(), attribute = "about")
+  expect_true(is_cognitive(css))
+  expect_false(is_egocentric(css))
+  expect_false(is_gossip(css))
+  expect_true(is_gossip(gossip))
+  expect_false(is_cognitive(gossip))
+  # every class that holds the third node marks it the same way
+  for(net in list(as_igraph(css), as_tidygraph(css), as_network(css),
+                  as_edgelist(css))){
+    expect_true(is_cognitive(net))
+    expect_false(is_egocentric(net))
+  }
+  expect_true(is_gossip(as_igraph(gossip)))
+  # a reporter is not a layer, so a cognitive social structure is not multiplex
+  expect_false(is_multiplex(css))
+  expect_false(is_multiplex(as_igraph(css)))
+  # an array can hold one reporter for each node, but cannot say it does
+  expect_true(is_cognitive(css_array()))
+  expect_false(is_gossip(css_array()))
+  expect_false(is_cognitive(as_matrix(ison_adolescents)))
+  expect_false(is_cognitive(ison_adolescents))
+})
+
+test_that("is_egocentric reads the design, or failing that the reports", {
+  ego <- make_stocnet(nodes = data.frame(label = c("e1", "a", "b", "e2", "c")),
+                      ties = data.frame(from = c("e1", "e1", "e2"),
+                                        to = c("a", "b", "c"),
+                                        by = c("e1", "e1", "e2")))
+  # the two egos' reports share no node
+  expect_true(is_egocentric(ego))
+  expect_false(is_cognitive(ego))
+  # the network's own information outranks the reports
+  expect_true(is_cognitive(mutate_info(ego, observation = "cognitive")))
+  expect_true(is_egocentric(mutate_info(as_stocnet(css_array(), attribute = "by"),
+                                        observation = "egocentric")))
+  # a column that names no node marks nothing
+  none <- make_stocnet(ties = data.frame(from = 1:2, to = 2:3, by = NA),
+                       nodes = dplyr::tibble(.rows = 3))
+  expect_false(is_cognitive(none))
+  expect_false(is_egocentric(none))
+})
+
+test_that("is_egocentric reads the design where no ego named a tie", {
+  none <- make_stocnet(ties = data.frame(from = 1L, to = 2L, by = NA_integer_),
+                       nodes = dplyr::tibble(.rows = 3))
+  expect_true(is_egocentric(mutate_info(none, observation = "egocentric")))
+  expect_false(is_cognitive(mutate_info(none, observation = "egocentric")))
+  expect_true(is_cognitive(mutate_info(none, observation = "cognitive")))
+  expect_false(is_egocentric(mutate_info(none, observation = "cognitive")))
+})
+
+test_that("is_cognitive marks an array only where its slices can be nodes", {
+  expect_true(is_cognitive(array(0, dim = c(3, 3, 3))))
+  # a square array read as two-mode has a slice for each node of both modes
+  expect_true(is_cognitive(array(0, dim = c(3, 3, 6))))
+  # a rectangular array is two-mode, so needs a slice for every node
+  expect_false(is_cognitive(array(0, dim = c(2, 3, 2))))
+  expect_true(is_cognitive(array(0, dim = c(2, 3, 5))))
+})

@@ -34,7 +34,7 @@ create_degree(n, outdegree = NULL, indegree = NULL)
 
 create_core(n, directed = FALSE, mark = NULL)
 
-create_windmill(n)
+create_windmill(n, directed = FALSE, width = NULL)
 
 create_cycle(n, directed = FALSE)
 
@@ -57,7 +57,8 @@ If the opposite direction is desired,
 use \code{to_redirected()} on the output of these functions.}
 
 \item{width}{Integer specifying the width of the ring,
-breadth of the branches, or maximum extent of the neighbourbood.}
+breadth of the branches, number of nodes in each blade of a windmill,
+or maximum extent of the neighbourbood.}
 
 \item{...}{Additional arguments passed on to \code{igraph::make_ring()}.}
 
@@ -92,6 +93,7 @@ By default a \code{tbl_graph} object is returned,
 but this can be coerced into other types of objects
 using \code{as_edgelist()}, \code{as_matrix()},
 \code{as_tidygraph()}, or \code{as_network()}.
+\code{create_windmill()} returns a \code{stocnet} object.
 
 By default, all networks are created as undirected.
 This can be overruled with the argument \code{directed = TRUE}.
@@ -119,6 +121,10 @@ which can also be used to create k-regular networks.
 a single closed chain.
 \item \code{create_wheel()} creates a network in which a single dominant node
 is tied to all the nodes in a cycle.
+\item \code{create_windmill()} creates a network in which several cliques,
+or blades, share a single hub node.
+Unless a blade \code{width} is given, the number of blades is balanced
+against their size.
 }
 
 Some of these structures are constrained in two-mode networks.
@@ -128,9 +134,13 @@ as twice the number of nodes in the smaller mode.
 Similarly, the rim of a two-mode wheel alternates between the modes,
 and its hub, drawn from the first mode, can only be tied to the
 second mode's rim nodes.
+The hub of a two-mode windmill is also drawn from the first mode,
+and is tied to every blade node in the second mode,
+while each other first-mode node is tied to its own blade.
 Where \code{n} is larger than such a structure can accommodate,
 the largest such structure is created and the surplus nodes are
 added as isolates, with a message.
+This is also the case for windmills whose blades cannot be equally sized.
 
 These functions can create either one-mode or two-mode networks.
 To create a one-mode network, pass the main argument \code{n} a single integer,
@@ -174,7 +184,9 @@ create_degree(10, outdegree = rep(1:5, 2))
 create_degree(10)
 create_degree(c(6,4))
 create_core(6)
-  create_windmill(6)
+  create_windmill(7)
+  create_windmill(7, width = 2)
+  create_windmill(c(4,6))
   create_cycle(6)
   create_cycle(c(4,6))
   create_wheel(6)

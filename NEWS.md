@@ -1,3 +1,57 @@
+# manynet 2.3.5
+
+## Making
+
+- Improved `create_windmill()` to follow the other `create_*()` functions
+  - Now returns a `stocnet` with network information, rather than an `igraph`
+  - Added `directed` argument; arcs run out from the hub, and from lower to higher index within blades
+  - Added `width` argument to set the number of nodes in each blade
+  - Where the nodes cannot form equal blades, the largest windmill is created and the surplus nodes are added as isolates, with a message, rather than a complete network (one-mode) or an error (two-mode)
+  - Fixed two-mode windmills to mark the first mode as `type = FALSE`
+- Improved `create_wheel()` to return with network information
+  - Fixed `create_wheel()` to take its directedness from a network passed to `n`
+- Fixed `read_graphml()` to record Network Canvas exports as egocentric
+
+## Classes
+
+- Improved ternary network (cognitive, egocentric, or gossip) support in `stocnet` objects
+  - Reserved `$about` for gossip networks' targets, and `$by` for the reporter
+  - Non-respondent reporters now miss their whole report
+  - Printing now names cognitive, egocentric, and gossip networks
+
+## Coercion
+
+- Improved `as_matrix()` on cognitive and gossip networks
+  - Every node now takes a row, a column, and a slice, in node order
+  - Missing ties now hold `NA`, and each layer gives an array of its own
+- Fixed how `as_edgelist()` treats cognitive and gossip networks
+  - No longer renames `by` and `about` to `from` and `to` or `weight`
+- Added `as_stocnet.array()` for arrays of layers, waves, reporters, or targets
+
+## Manipulating
+
+- Fixed `add_node_attribute.stocnet()` to relabel "name" to "label" column
+- Fixed `delete_nodes()` and `arrange_nodes()` to renumber `by` and `about`
+- Fixed `bind_ties()` to match `by` and `about` labels to the nodes
+
+## Modifying
+
+- Improved `to_proximity()` to compare two-mode networks and profile matrices, such as a motif census (see stocnet/netrics#29)
+  - Two-mode input of any class returns what `to_mode1()` (`across = "rows"`) or `to_mode2()` (`across = "columns"`) would
+  - `dyad = "include"` compares a square profile matrix as it lies, rather than as a one-mode network
+  - Added `to_proximity.stocnet()` S3 method
+  - Missing values from a node with no ties are now reported as 0 on every path, as the pairwise path already did
+  - Added "ruzicka" similarity measure, the weighted Jaccard coefficient
+  - Fixed "overlap" similarity to be Szymkiewicz-Simpson coefficient for valued data too
+- Added `to_undirected.stocnet()`, which also undirects within each cognitive social structure report
+
+## Marking
+
+- Fixed incorrect marking by `is_cognitive.network()` and `is_cognitive.array()` of egocentric data
+- Added `is_egocentric()` for egos that report on alters of their own
+- Added `is_gossip()` for networks whose ties name the node they are about
+- Fixed `tie_is_parallel()` counting reports by two reporters as parallel
+
 # manynet 2.3.4
 
 ## Making

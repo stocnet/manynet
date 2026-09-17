@@ -38,7 +38,7 @@
 #' | | Binary (unweighted) output | yes | yes (`multiplicity = FALSE`) | threshold manually |
 #' | | Jaccard normalisation | yes | no | code manually |
 #' | | Cosine normalisation | yes | no | code manually |
-#' | | Other similarity measures | 24 in all, see `similarity` | no | code manually |
+#' | | Other similarity measures | 25 in all, see `similarity` | no | code manually |
 #' | **Attributes** | Retains node attributes | yes | yes | no — lost in matrix round-trip |
 #' | | Retains edge attributes | weight only | weight only | no |
 #' | | Removes self-loops automatically | yes | yes | `diag(P) <- 0` manually |
@@ -73,13 +73,20 @@ NULL
 #'   by the number of nodes in the other mode, but for valued data it is the
 #'   more general measure, since it registers agreement at any tie strength.
 #'   Use it where the level of involvement is meaningful in itself.
-#'   - "overlap" divides the count by the smaller of the two nodes' total tie
-#'   strength, the Szymkiewicz-Simpson coefficient. Use it where one node is
-#'   much more active than the other, and the less active node's rarity should
-#'   not depress the score.
 #'   - "crossmin" sums the smaller of each pair of tie strengths.
 #'   Interpret it as the capacity two nodes could jointly bring to bear.
 #'   For binary data it reduces to "count".
+#'   - "overlap" divides "crossmin" by the smaller of the two nodes' total tie
+#'   strength, the Szymkiewicz-Simpson or overlap coefficient, and so lies in
+#'   \eqn{[0,1]} for non-negative data. Use it where one node is much more
+#'   active than the other, and the less active node's rarity should not
+#'   depress the score. For binary data it is the count over the smaller
+#'   degree. xUCINET keeps that count for valued data too, where it can
+#'   exceed 1 and is no longer the coefficient.
+#'   - "ruzicka" divides "crossmin" by the two nodes' combined tie strength
+#'   less than shared, Ruzicka's weighted Jaccard coefficient, and so also
+#'   lies in \eqn{[0,1]}. For binary data it is "jaccard", so use it where
+#'   "jaccard" is wanted but the tie strengths should be kept.
 #'   - "maxcrossmin" takes the largest such minimum rather than their sum,
 #'   so that a single strong shared affiliation stands for the pair.
 #'   For binary data it collapses to an indicator of any shared affiliation,
@@ -120,7 +127,8 @@ NULL
 #'   double-weights co-presence; and "sokalsneath" is \eqn{a/(a+2(b+c))},
 #'   which instead double-weights mismatch. Use these where joint
 #'   non-participation says nothing, as in a sparse affiliation network with
-#'   many events.
+#'   many events. For valued data, "ruzicka" is the counterpart of "jaccard"
+#'   that keeps the tie strengths.
 #'   - Sensitive to matching, counting joint absence as evidence: "rand",
 #'   the Simple Matching Coefficient, is \eqn{(a+d)/(a+b+c+d)}; "hamann" is
 #'   \eqn{((a+d)-(b+c))/(a+b+c+d)}, the same quantity rescaled onto
@@ -171,7 +179,7 @@ to_mode1 <- function(.data, similarity = c("count", "jaccard", "rand", "pearson"
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
   # projecting a network that is already one-mode is a no-op
   if(!is_twomode(.data)) return(.data)
   UseMethod("to_mode1")
@@ -198,7 +206,7 @@ to_mode1.default <- function(.data,
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall")){
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")){
   as_input(.data, to_mode1, similarity = similarity)
 }
 
@@ -209,7 +217,7 @@ to_mode1.stocnet <- function(.data,
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall")){
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")){
   similarity <- match.arg(similarity)
   # The tidygraph method is called directly rather than through `as_input()`,
   # which would pick this method again and recurse.
@@ -224,7 +232,7 @@ to_mode1.matrix <- function(.data, similarity = c("count", "jaccard", "rand", "p
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
   # the rows are already the mode being projected
   .project(.data, match.arg(similarity))
 }
@@ -235,7 +243,7 @@ to_mode1.igraph <- function(.data, similarity = c("count", "jaccard", "rand", "p
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
   similarity <- match.arg(similarity)
   if(similarity == "count") igraph::bipartite_projection(.data)$proj1 else {
     if(!is_labelled(.data)){
@@ -259,7 +267,7 @@ to_mode1.tbl_graph <- function(.data, similarity = c("count", "jaccard", "rand",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
   similarity <- match.arg(similarity)
   out <- as_tidygraph(to_mode1(as_igraph(.data), similarity = similarity))
   if(similarity %in% .proj_signed){
@@ -284,7 +292,7 @@ to_mode1.network <- function(.data, similarity = c("count", "jaccard", "rand", "
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
  as_network(to_mode1(as_tidygraph(.data), similarity)) 
 }
 
@@ -294,7 +302,7 @@ to_mode1.data.frame <- function(.data, similarity = c("count", "jaccard", "rand"
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
   as_edgelist(to_mode1(as_tidygraph(.data), similarity)) 
 }
 
@@ -305,7 +313,7 @@ to_mode2 <- function(.data, similarity = c("count", "jaccard", "rand", "pearson"
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
   # projecting a network that is already one-mode is a no-op
   if(!is_twomode(.data)) return(.data)
   UseMethod("to_mode2")
@@ -318,7 +326,7 @@ to_mode2.default <- function(.data,
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall")){
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")){
   as_input(.data, to_mode2, similarity = similarity)
 }
 
@@ -329,7 +337,7 @@ to_mode2.stocnet <- function(.data,
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall")){
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")){
   similarity <- match.arg(similarity)
   # The tidygraph method is called directly rather than through `as_input()`,
   # which would pick this method again and recurse.
@@ -344,7 +352,7 @@ to_mode2.matrix <- function(.data, similarity = c("count", "jaccard", "rand", "p
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
   # transposed so that the columns become the rows being projected
   .project(t(.data), match.arg(similarity))
 }
@@ -355,7 +363,7 @@ to_mode2.igraph <- function(.data, similarity = c("count", "jaccard", "rand", "p
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
   similarity <- match.arg(similarity)
   if(similarity == "count") igraph::bipartite_projection(.data)$proj2 else {
     if(!is_labelled(.data)){
@@ -379,7 +387,7 @@ to_mode2.tbl_graph <- function(.data, similarity = c("count", "jaccard", "rand",
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
   similarity <- match.arg(similarity)
   out <- as_tidygraph(to_mode2(as_igraph(.data), similarity = similarity))
   if(similarity %in% .proj_signed){
@@ -404,7 +412,7 @@ to_mode2.network <- function(.data, similarity = c("count", "jaccard", "rand", "
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
   as_network(to_mode2(as_tidygraph(.data), similarity)) 
 }
 
@@ -414,7 +422,7 @@ to_mode2.data.frame <- function(.data, similarity = c("count", "jaccard", "rand"
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
   as_edgelist(to_mode2(as_tidygraph(.data), similarity))
 }
 
@@ -446,7 +454,7 @@ to_mode <- function(.data, mode = 1,
                                  "sqdiff", "covariance", "bonacich", "ochiai",
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
-                                 "hamming", "cosine", "spearman", "kendall")) {
+                                 "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
   # a network of three or more modes would otherwise fall through the one-mode
   # no-op below and be returned unchanged, since it is not two-mode either
   if(net_modes(.data) > 2)
@@ -642,7 +650,7 @@ to_hypergraph.stocnet <- function(.data) {
                     "covariance","bonacich","ochiai","ochiai2",
                     "czekanowski","sokalsneath","hamann","rogerstanimoto",
                     "euclidean","manhattan","hamming","cosine",
-                    "spearman","kendall")
+                    "spearman","kendall","ruzicka")
 
 # Those that can return a negative value, and so need the projection's ties
 # labelled with a sign as well as a weight.
@@ -704,7 +712,7 @@ to_hypergraph.stocnet <- function(.data) {
   if(similarity %in% .proj_binary && any(X != 0 & X != 1, na.rm = TRUE)){
     snet_warn(paste0("The {.val {similarity}} measure is defined for binary ",
                      "data only, so tie values have been dichotomised at 0. ",
-                     "Consider {.val count}, {.val crossmin}, or ",
+                     "Consider {.val ruzicka}, {.val crossmin}, or ",
                      "{.val overlap} to retain them."))
     X <- (X > 0) * 1
   }
@@ -736,14 +744,20 @@ to_hypergraph.stocnet <- function(.data) {
                   len[len == 0] <- 1
                   (X %*% t(X))/outer(len, len)
                 },
-                # xUCINET documents this denominator as the sum of the pairwise
-                # minima but computes the smaller of the two row totals, which
-                # is the Szymkiewicz-Simpson coefficient; the code is followed
-                # here, since the documented version returns 1 throughout for
-                # binary data
+                # the Szymkiewicz-Simpson coefficient: the shared tie strength
+                # over the smaller of the two row totals. xUCINET takes the
+                # cross-product as the numerator, which agrees for binary data,
+                # but for valued data exceeds 1 and is no longer the coefficient
                 "overlap" = {
                   R <- rowSums(X)
-                  (X %*% t(X))/outer(R, R, pmin)
+                  .proj_crossmin(X)/outer(R, R, pmin)
+                },
+                # Ruzicka's weighted Jaccard: the shared tie strength over the
+                # combined tie strength, which for binary data is "jaccard"
+                "ruzicka" = {
+                  R <- rowSums(X)
+                  cm <- .proj_crossmin(X)
+                  cm/(outer(R, R, "+") - cm)
                 },
                 # the remaining measures are all functions of the counts
                 {

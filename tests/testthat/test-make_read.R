@@ -39,7 +39,12 @@ test_that("read_graphml reads all graphs and all key scopes", {
 test_that("read_graphml records Network Canvas egos as reporters", {
   skip_if_not_installed("xml2")
   nc <- read_graphml(testthat::test_path("sheets", "networkcanvas.graphml"))
-  expect_true(is_cognitive(nc))
+  # each ego names alters of its own, which is egocentric and not cognitive
+  expect_true(is_egocentric(nc))
+  expect_false(is_cognitive(nc))
+  expect_equal(as_infolist(nc)$observation, "egocentric")
+  # and without that information, the egos' reports share no nodes
+  expect_true(is_egocentric(mutate_info(nc, observation = NULL)))
   egos <- which(node_attribute(nc, "ego"))
   expect_length(egos, 2)
   expect_true(all(tie_attribute(nc, "by") %in% egos))

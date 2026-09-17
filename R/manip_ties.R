@@ -283,6 +283,22 @@ bind_ties.stocnet <- function(.data, ...){
     toAdd$from <- new_from
     toAdd$to   <- new_to
   }
+  # The reporter and the target of a tie are matched the same way.
+  for(col in intersect(c("by", "about"), names(toAdd))){
+    if(is.character(toAdd[[col]]) && any(!is.na(toAdd[[col]])) &&
+       is.null(out$nodes[["label"]]))
+      snet_abort(paste("Cannot match labelled ties to a network",
+                       "without node labels."))
+    if(is.character(toAdd[[col]]) && !is.null(out$nodes[["label"]])){
+      idx <- match(toAdd[[col]], out$nodes$label)
+      if(any(!is.na(toAdd[[col]]) & is.na(idx)))
+        snet_warn(paste("Some labels in the data to bind do not match node",
+                        "labels in '.data'; these ties will have a missing",
+                        "'{col}'."))
+      toAdd[[col]] <- idx
+    }
+    toAdd[[col]] <- as.integer(toAdd[[col]])
+  }
   toAdd$from <- as.integer(toAdd$from)
   toAdd$to   <- as.integer(toAdd$to)
   

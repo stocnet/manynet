@@ -224,3 +224,21 @@ test_that("to_layer keeps the endpoints of each arc (#170)", {
   expect_equal(mat["a", "b"], 5)
   expect_equal(mat["b", "a"], 9)
 })
+
+test_that("from_layers renumbers and names the ties each layer misses", {
+  one <- make_stocnet(nodes = data.frame(label = c("a", "b", "c")),
+                      ties = data.frame(from = "a", to = "b"),
+                      info = list(directed = TRUE))
+  two <- make_stocnet(nodes = data.frame(label = c("c", "b", "a")),
+                      ties = data.frame(from = "c", to = "a", by = "b"),
+                      info = list(directed = TRUE))
+  # c -> b, as a reported it, is missing from the second network
+  two$missings <- dplyr::tibble(from = 1L, to = 2L, by = 3L)
+  merged <- from_layers(one = one, two = two)
+  missing <- as_missinglist(merged)
+  labels <- merged$nodes$label
+  expect_equal(labels[missing$from], "c")
+  expect_equal(labels[missing$to], "b")
+  expect_equal(labels[missing$by], "a")
+  expect_equal(missing$layer, "two")
+})

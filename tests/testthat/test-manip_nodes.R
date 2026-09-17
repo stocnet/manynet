@@ -196,3 +196,32 @@ test_that("a one-mode attribute lands on its own nodes when the modes interleave
   expect_equal(out$nodes$age, c(1, NA, 2, NA, 3))
   expect_error(add_node_attribute(sn, "bad", c(1, 2, 3, 4)), "5, not 4")
 })
+
+test_that("a name added to a stocnet becomes its label", {
+  out <- add_node_attribute(as_stocnet(create_ring(5)), "name", LETTERS[1:5])
+  expect_equal(out$nodes$label, LETTERS[1:5])
+  expect_false("name" %in% names(out$nodes))
+  expect_equal(node_names(as_igraph(out)), LETTERS[1:5])
+})
+
+test_that("deleting and arranging nodes keeps each report with its reporter", {
+  arr <- css_array()
+  css <- as_stocnet(arr, attribute = "by")
+  # A is gone, and so are the reports A made and the ties to and from A
+  expect_equal(as_matrix(delete_nodes(css, "A")), arr[-1, -1, -1])
+  expect_equal(as_matrix(filter_nodes(css, label != "C")), arr[-3, -3, -3])
+  expect_equal(as_matrix(arrange_nodes(css, dplyr::desc(label))), arr[4:1, 4:1, 4:1])
+  # the node a piece of gossip is about is renumbered too
+  gossip <- as_stocnet(arr, attribute = "about")
+  expect_equal(as_matrix(delete_nodes(gossip, "B")), arr[-2, -2, -2])
+})
+
+test_that("arranging nodes keeps the ties recorded as missing", {
+  arr <- css_array()
+  arr["C", "A", "B"] <- NA
+  css <- as_stocnet(arr, attribute = "by")
+  expect_equal(nrow(css$missings), 1)
+  arranged <- arrange_nodes(css, dplyr::desc(label))
+  expect_equal(nrow(arranged$missings), 1)
+  expect_equal(as_matrix(arranged), arr[4:1, 4:1, 4:1])
+})

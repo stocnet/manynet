@@ -98,7 +98,7 @@ to_acyclic                       *      *                      *         *
 to_directed                      *      *                                 
 to_reciprocated                  *      *      *                          
 to_redirected            *       *      *      *                          
-to_undirected            *       *      *      *       *                 *
+to_undirected            *       *      *      *       *       *         *
 }\if{html}{\out{</div>}}
 }
 \examples{

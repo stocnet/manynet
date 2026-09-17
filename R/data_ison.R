@@ -414,7 +414,7 @@
 #' @name ison_hightech
 #' @usage data(ison_hightech)
 #' @references
-#'   Krackhardt, David. 1987. "Cognitive social structures". _Social Networks_ 9: 104-134.
+#'   Krackhardt, David. 1987. "Cognitive social structures". _Social Networks_ 9(2): 109-134.
 #' @format
 #'   ```{r, echo = FALSE}
 #'   ison_hightech

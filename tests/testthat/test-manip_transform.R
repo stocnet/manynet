@@ -778,3 +778,64 @@ test_that("to_mode resolves a mode by name on a stocnet", {
   # and one that does not is an error, as it is for an igraph
   expect_error(to_mode(two, "events"), "more than one mode")
 })
+
+test_that("to_undirected reconciles a tie only within one report", {
+  arr <- css_array()
+  css <- as_stocnet(arr, attribute = "by")
+  reverse <- aperm(arr, c(2, 1, 3))
+  und <- to_undirected(css)
+  expect_false(is_directed(und))
+  expect_true(is_cognitive(und))
+  expect_type(und$ties$by, "integer")
+  expect_equal(as_matrix(und), pmax(arr, reverse))
+  expect_equal(as_matrix(to_undirected(css, rule = "min")), pmin(arr, reverse))
+  expect_equal(as_matrix(to_undirected(css, rule = "mean")), (arr + reverse)/2)
+  # the share of dyads it reconciled is taken within each report
+  expect_match(as_infolist(und)$transformations$symmetrisation,
+               "% of connected dyads non-reciprocal")
+  # a network without reporters takes the path it always did
+  expect_equal(as_matrix(to_undirected(as_stocnet(ison_networkers))),
+               as_matrix(to_undirected(ison_networkers)))
+})
+
+test_that("to_undirected removes direction within the modes of a multilevel network", {
+  ml <- make_stocnet(
+    nodes = data.frame(label = c("p", "q", "x"),
+                       mode = c("people", "people", "events")),
+    ties = data.frame(from = c("p", "q", "p"), to = c("q", "p", "x"),
+                      by = c("p", "p", "q")),
+    info = list(directed = TRUE, modes = c("people", "events")))
+  und <- to_undirected(ml)
+  expect_false(is_directed(und))
+  # p's report of p->q and of q->p is now one tie
+  expect_equal(nrow(und$ties), 2)
+})
+
+test_that("to_undirected keeps a layer that is already undirected", {
+  mixed <- make_stocnet(
+    nodes = data.frame(label = c("a", "b", "c")),
+    ties = data.frame(from = c("a", "a", "b", "b"), to = c("b", "b", "c", "a"),
+                      by = "a",
+                      layer = c("friend", "advice", "advice", "advice")),
+    info = list(layers = c("friend", "advice"),
+                directed = c(friend = FALSE, advice = TRUE)))
+  for(rule in c("min", "product", "collapse")){
+    und <- to_undirected(mixed, rule = rule)
+    expect_equal(sum(und$ties$layer == "friend"), 1, label = rule)
+  }
+  mean <- to_undirected(mixed, rule = "mean")
+  expect_equal(mean$ties$weight[mean$ties$layer == "friend"], 1)
+  # only the reciprocated dyad of the directed layer is left under "min"
+  expect_equal(sum(to_undirected(mixed, rule = "min")$ties$layer == "advice"), 1)
+})
+
+test_that("to_undirected drops a layer that a rule leaves without ties", {
+  one_way <- make_stocnet(
+    nodes = data.frame(label = c("a", "b")),
+    ties = data.frame(from = c("a", "b"), to = c("b", "a"), by = "a",
+                      layer = c("one", "two")),
+    info = list(layers = c("one", "two"), directed = TRUE))
+  und <- to_undirected(one_way, rule = "min")
+  expect_equal(nrow(und$ties), 0)
+  expect_null(und$info$layers)
+})

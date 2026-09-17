@@ -84,10 +84,13 @@
   empty <- dplyr::tibble(from = integer(0), to = integer(0),
                          layer = character(0), time = numeric(0))
   if(is.null(.data$nodes) && is.null(.data$ties)) return(empty)
+  # A network without nodes has no tie it could have missed.
+  if(as.numeric(net_nodes(.data)) == 0) return(empty)
   times <- .stocnet_times(.data)
   na_state <- .node_state(.data, "na", times, default = FALSE)
   act_state <- .node_state(.data, "active", times, default = TRUE)
   occasions <- .stocnet_occasions(.data)
+  egocentric <- is_egocentric(.data)
   rows <- lapply(seq_len(nrow(occasions)), function(o){
     layer <- occasions$layer[[o]]; time <- occasions$time[[o]]
     at <- if(is.na(time)) 1L else match(time, times)
@@ -97,11 +100,23 @@
     absent <- .layer_absent(.data, absent, layer, time)
     if(!length(absent)) return(NULL)
     directed <- layer_is_directed(.data, layer)
+    # The design can differ from layer to layer, so it is read for this one.
+    ego <- .occasion_egocentric(.data, layer, egocentric)
+    reported <- !ego && .occasion_reported(.data, layer, time)
     pairs <- lapply(absent, function(node){
+      # A node that did not report missed the whole network it was asked
+      # about, and not only the ties it would itself have sent.
+      if(reported)
+        return(.unreported_report(.data, node, act_state[, at], layer, time,
+                                  directed))
       alters <- .stocnet_alters(.data, node, act_state[, at])
       if(!length(alters)) return(NULL)
-      dplyr::tibble(from = as.integer(node), to = as.integer(alters),
-                    layer = layer, time = time)
+      out <- dplyr::tibble(from = as.integer(node), to = as.integer(alters),
+                           layer = layer, time = time)
+      # An ego's missing ties are missing from its own report, so they name it
+      # as their reporter, as the ties it did report would.
+      if(ego) out$by <- as.integer(node)
+      out
     })
     out <- dplyr::bind_rows(pairs)
     # An undirected layer holds one row per dyad, so its missing ties do too.
@@ -112,7 +127,8 @@
   out <- dplyr::bind_rows(rows)
   out <- dplyr::bind_rows(out, .missing_registry(.data))
   if(!nrow(out)) return(empty)
-  out <- out[!duplicated(out[c("from", "to", "layer", "time")]), , drop = FALSE]
+  out <- out[!duplicated(out[intersect(c("from", "to", "layer", "time", "by", "about"),
+                                       names(out))]), , drop = FALSE]
   # An observed tie is not a missing one, whatever the records imply.
   out[!.tie_key(out) %in% .tie_key(.data$ties), , drop = FALSE]
 }
@@ -129,6 +145,72 @@
   setdiff(absent, named)
 }
 
+# Whether the ties recorded at an occasion name who reported them. Where the
+# occasion holds no ties at all, as where no reporter named any, the ties
+# cannot say, and the network's 'observation' information says instead.
+.occasion_reported <- function(.data, layer, time){
+  ties <- .data$ties
+  n <- if(is.null(ties)) 0L else nrow(ties)
+  occasion <- dplyr::tibble(
+    layer = if(is.null(ties[["layer"]])) NA_character_ else as.character(ties$layer),
+    time = if(is.null(ties[["time"]])) NA else ties$time,
+    .rows = n)
+  held <- .same_occasion(occasion, layer, time)
+  if(any(held)){
+    if(.holds_node(ties[["by"]][held])) return(TRUE)
+    # Ties that name no reporter are not reports, as in a layer taken from
+    # records beside the reports, unless the design names this very layer as
+    # reports. A design given for the network as a whole does not, since that
+    # is how a network of reports and records together is described.
+    observation <- .data$info$observation
+    return(!is.null(names(observation)) && !is.na(layer) &&
+             identical(unname(observation[layer]), "cognitive"))
+  }
+  .observed_as(.data, layer) == "cognitive"
+}
+
+# Whether the reports of a layer come from egos. A design named for the layer
+# decides this. Otherwise `network` gives the answer for the network as a
+# whole, which its own design or, failing that, the shape of its reports gives.
+.occasion_egocentric <- function(.data, layer, network){
+  observation <- .data$info$observation
+  if(!is.null(names(observation)) && !is.na(layer) &&
+     layer %in% names(observation))
+    return(identical(unname(observation[[layer]]), "egocentric"))
+  network
+}
+
+# How a layer was observed, as the network's 'observation' information says,
+# whether it gives one design for the network or one for each layer.
+.observed_as <- function(.data, layer){
+  obs <- .data$info$observation
+  if(is.null(obs)) return("")
+  if(is.null(names(obs))) return(as.character(obs[1]))
+  if(!is.na(layer) && layer %in% names(obs)) return(as.character(obs[[layer]]))
+  ""
+}
+
+# The report a reporter was asked for: every dyad among the nodes in the
+# network at that occasion, between the two modes where it is two-mode, and
+# once for each dyad where the layer is undirected.
+.unreported_report <- function(.data, reporter, active, layer, time, directed){
+  nodes <- which(active)
+  # A multilevel network ties nodes within a mode too, so every pair is asked
+  # about, as in a one-mode network.
+  if(is_twomode(.data) && !is_multilevel(.data)){
+    modes <- .data$nodes$mode
+    senders <- nodes[modes[nodes] == modes[1]]
+    pairs <- expand.grid(from = senders, to = setdiff(nodes, senders))
+  } else {
+    pairs <- expand.grid(from = nodes, to = nodes)
+    pairs <- pairs[if(directed) pairs$from != pairs$to else
+      pairs$from < pairs$to, , drop = FALSE]
+  }
+  if(!nrow(pairs)) return(NULL)
+  dplyr::tibble(from = as.integer(pairs$from), to = as.integer(pairs$to),
+                layer = layer, time = time, by = as.integer(reporter))
+}
+
 # The registry of missing ties that no node's nonresponse implies.
 .missing_registry <- function(.data){
   reg <- .data$missings
@@ -136,20 +218,25 @@
   reg <- dplyr::as_tibble(reg)
   if(is.null(reg[["layer"]])) reg$layer <- NA_character_
   if(is.null(reg[["time"]])) reg$time <- NA
-  reg[c("from", "to", "layer", "time")]
+  reg[intersect(c("from", "to", "layer", "time", "by", "about"), names(reg))]
 }
 
 # Keys for matching ties, one respecting direction and one disregarding it.
+# Two reports of a tie are two ties, as is gossip about two targets.
 .tie_key <- function(ties){
   if(is.null(ties) || !nrow(ties)) return(character(0))
   layer <- if(is.null(ties[["layer"]])) NA_character_ else as.character(ties$layer)
   time <- if(is.null(ties[["time"]])) NA else ties$time
-  paste(ties$from, ties$to, layer, time, sep = "\r")
+  by <- if(is.null(ties[["by"]])) NA else ties$by
+  about <- if(is.null(ties[["about"]])) NA else ties$about
+  paste(ties$from, ties$to, layer, time, by, about, sep = "\r")
 }
 
 .undirected_key <- function(ties){
   lo <- pmin(ties$from, ties$to); hi <- pmax(ties$from, ties$to)
-  paste(lo, hi, ties$layer, ties$time, sep = "\r")
+  by <- if(is.null(ties[["by"]])) NA else ties$by
+  about <- if(is.null(ties[["about"]])) NA else ties$about
+  paste(lo, hi, ties$layer, ties$time, by, about, sep = "\r")
 }
 
 # The reverse: nonresponse records from a list of missing ties. Any node whose
@@ -166,6 +253,7 @@
   times <- .stocnet_times(x)
   act_state <- .node_state(x, "active", times, default = TRUE)
   occasions <- unique(missing[c("layer", "time")])
+  egocentric <- is_egocentric(x)
   found <- list()
   for(o in seq_len(nrow(occasions))){
     layer <- occasions$layer[[o]]; time <- occasions$time[[o]]
@@ -173,13 +261,36 @@
     if(is.na(at)) at <- 1L
     sub <- missing[.same_occasion(missing, layer, time), , drop = FALSE]
     directed <- layer_is_directed(x, layer)
+    # Where the missing ties name their reporters, a node that did not report
+    # is one whose whole report is missing. The missing ties are read here and
+    # not the ties, since where no reporter named a tie there are none to read.
+    if(!.occasion_egocentric(x, layer, egocentric) &&
+       .holds_node(sub[["by"]])){
+      # Once the report is held as the node's nonresponse, nothing in the ties
+      # may say that the network names its reporters, so the design says so.
+      if(!nzchar(.observed_as(x, layer)) && is.null(names(x$info$observation)))
+        x$info$observation <- "cognitive"
+      dyad <- function(tab) if(directed) paste(tab$from, tab$to) else
+        paste(pmin(tab$from, tab$to), pmax(tab$from, tab$to))
+      for(node in unique(stats::na.omit(sub$by))){
+        asked <- .unreported_report(x, node, act_state[, at], layer, time,
+                                    directed)
+        held <- sub[!is.na(sub$by) & sub$by == node, , drop = FALSE]
+        if(!is.null(asked) && setequal(dyad(asked), dyad(held)))
+          found[[length(found)+1]] <- dplyr::tibble(node = as.integer(node),
+                                                    layer = layer, time = time,
+                                                    reported = TRUE)
+      }
+      next
+    }
     for(node in unique(c(sub$from, if(!directed) sub$to))){
       alters <- .stocnet_alters(x, node, act_state[, at])
       held <- if(directed) sub$to[sub$from == node] else
         c(sub$to[sub$from == node], sub$from[sub$to == node])
       if(length(alters) && setequal(alters, held))
         found[[length(found)+1]] <- dplyr::tibble(node = as.integer(node),
-                                                  layer = layer, time = time)
+                                                  layer = layer, time = time,
+                                                  reported = FALSE)
     }
   }
   found <- dplyr::bind_rows(found)
@@ -202,6 +313,11 @@
   covered <- rep(FALSE, nrow(missing))
   for(r in seq_len(nrow(found))){
     same <- .same_occasion(missing, found$layer[[r]], found$time[[r]])
+    if(found$reported[[r]]){
+      covered <- covered | (same & !is.na(missing$by) &
+                              missing$by == found$node[[r]])
+      next
+    }
     directed <- layer_is_directed(x, found$layer[[r]])
     covered <- covered | (same & (missing$from == found$node[[r]] |
                                     (!directed & missing$to == found$node[[r]])))
@@ -253,6 +369,8 @@
   out <- dplyr::as_tibble(missing)
   if(all(is.na(out$layer))) out$layer <- NULL
   if(all(is.na(out$time))) out$time <- NULL
+  for(col in c("by", "about"))
+    if(!is.null(out[[col]]) && all(is.na(out[[col]]))) out[[col]] <- NULL
   out
 }
 
