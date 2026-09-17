@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.5</span>
       </span>
     </div>
 
@@ -89,7 +89,74 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="2.3.4" id="manynet-234">manynet 2.3.4<a class="anchor" aria-label="anchor" href="#manynet-234"></a></h2>
+<h2 class="page-header" data-toc-text="2.3.5" id="manynet-235">manynet 2.3.5<a class="anchor" aria-label="anchor" href="#manynet-235"></a></h2>
+<div class="section level3">
+<h3 id="making-2-3-5">Making<a class="anchor" aria-label="anchor" href="#making-2-3-5"></a></h3>
+<ul><li>Improved <code><a href="../reference/make_create.html">create_windmill()</a></code> to follow the other <code>create_*()</code> functions
+<ul><li>Now returns a <code>stocnet</code> with network information, rather than an <code>igraph</code>
+</li>
+<li>Added <code>directed</code> argument; arcs run out from the hub, and from lower to higher index within blades</li>
+<li>Added <code>width</code> argument to set the number of nodes in each blade</li>
+<li>Where the nodes cannot form equal blades, the largest windmill is created and the surplus nodes are added as isolates, with a message, rather than a complete network (one-mode) or an error (two-mode)</li>
+<li>Fixed two-mode windmills to mark the first mode as <code>type = FALSE</code>
+</li>
+</ul></li>
+<li>Improved <code><a href="../reference/make_create.html">create_wheel()</a></code> to return with network information
+<ul><li>Fixed <code><a href="../reference/make_create.html">create_wheel()</a></code> to take its directedness from a network passed to <code>n</code>
+</li>
+</ul></li>
+<li>Fixed <code><a href="../reference/make_read.html">read_graphml()</a></code> to record Network Canvas exports as egocentric</li>
+</ul></div>
+<div class="section level3">
+<h3 id="classes-2-3-5">Classes<a class="anchor" aria-label="anchor" href="#classes-2-3-5"></a></h3>
+<ul><li>Improved ternary network (cognitive, egocentric, or gossip) support in <code>stocnet</code> objects
+<ul><li>Reserved <code>$about</code> for gossip networks’ targets, and <code>$by</code> for the reporter</li>
+<li>Non-respondent reporters now miss their whole report</li>
+<li>Printing now names cognitive, egocentric, and gossip networks</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="coercion-2-3-5">Coercion<a class="anchor" aria-label="anchor" href="#coercion-2-3-5"></a></h3>
+<ul><li>Improved <code><a href="../reference/coerce_list.html">as_matrix()</a></code> on cognitive and gossip networks
+<ul><li>Every node now takes a row, a column, and a slice, in node order</li>
+<li>Missing ties now hold <code>NA</code>, and each layer gives an array of its own</li>
+</ul></li>
+<li>Fixed how <code><a href="../reference/coerce_list.html">as_edgelist()</a></code> treats cognitive and gossip networks
+<ul><li>No longer renames <code>by</code> and <code>about</code> to <code>from</code> and <code>to</code> or <code>weight</code>
+</li>
+</ul></li>
+<li>Added <code><a href="../reference/coerce_graph.html">as_stocnet.array()</a></code> for arrays of layers, waves, reporters, or targets</li>
+</ul></div>
+<div class="section level3">
+<h3 id="manipulating-2-3-5">Manipulating<a class="anchor" aria-label="anchor" href="#manipulating-2-3-5"></a></h3>
+<ul><li>Fixed <code>add_node_attribute.stocnet()</code> to relabel “name” to “label” column</li>
+<li>Fixed <code><a href="../reference/manip_nodes_num.html">delete_nodes()</a></code> and <code><a href="../reference/manip_nodes_num.html">arrange_nodes()</a></code> to renumber <code>by</code> and <code>about</code>
+</li>
+<li>Fixed <code><a href="../reference/manip_ties_num.html">bind_ties()</a></code> to match <code>by</code> and <code>about</code> labels to the nodes</li>
+</ul></div>
+<div class="section level3">
+<h3 id="modifying-2-3-5">Modifying<a class="anchor" aria-label="anchor" href="#modifying-2-3-5"></a></h3>
+<ul><li>Improved <code><a href="../reference/modif_proximity.html">to_proximity()</a></code> to compare two-mode networks and profile matrices, such as a motif census (see stocnet/netrics#29)
+<ul><li>Two-mode input of any class returns what <code><a href="../reference/modif_project.html">to_mode1()</a></code> (<code>across = "rows"</code>) or <code><a href="../reference/modif_project.html">to_mode2()</a></code> (<code>across = "columns"</code>) would</li>
+<li>
+<code>dyad = "include"</code> compares a square profile matrix as it lies, rather than as a one-mode network</li>
+<li>Added <code>to_proximity.stocnet()</code> S3 method</li>
+<li>Missing values from a node with no ties are now reported as 0 on every path, as the pairwise path already did</li>
+<li>Added “ruzicka” similarity measure, the weighted Jaccard coefficient</li>
+<li>Fixed “overlap” similarity to be Szymkiewicz-Simpson coefficient for valued data too</li>
+</ul></li>
+<li>Added <code>to_undirected.stocnet()</code>, which also undirects within each cognitive social structure report</li>
+</ul></div>
+<div class="section level3">
+<h3 id="marking-2-3-5">Marking<a class="anchor" aria-label="anchor" href="#marking-2-3-5"></a></h3>
+<ul><li>Fixed incorrect marking by <code>is_cognitive.network()</code> and <code>is_cognitive.array()</code> of egocentric data</li>
+<li>Added <code><a href="../reference/mark_format_cognitive.html">is_egocentric()</a></code> for egos that report on alters of their own</li>
+<li>Added <code><a href="../reference/mark_format_cognitive.html">is_gossip()</a></code> for networks whose ties name the node they are about</li>
+<li>Fixed <code><a href="../reference/measure_attributes_ties.html">tie_is_parallel()</a></code> counting reports by two reporters as parallel</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.4" id="manynet-234">manynet 2.3.4<small>2026-09-10</small><a class="anchor" aria-label="anchor" href="#manynet-234"></a></h2>
 <div class="section level3">
 <h3 id="making-2-3-4">Making<a class="anchor" aria-label="anchor" href="#making-2-3-4"></a></h3>
 <ul><li>Fixed a couple of <code><a href="../reference/make_stochastic.html">generate_islands()</a></code> errors

@@ -31,7 +31,7 @@ but also network modelling."><meta property="og:image" content="https://stocnet.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.5</span>
       </span>
     </div>
 
@@ -309,6 +309,8 @@ Inactive nodes are not in the network, so cannot hold incoming nor outgoing ties
 despite being in the network.
 Non-responsive nodes are in the network, so can hold incoming ties,
 but cannot report outgoing ties.
+Where a layer's ties name who reported them,
+a non-responsive node instead missed its whole report of that layer.
 See <code><a href="coerce_list.html">as_missinglist()</a></code>.</p></li>
 </ul></div>
     <div id="changes">
@@ -342,6 +344,17 @@ A change that names no layer applies to every layer.</p></li>
 <p>There are several required names for the columns of the ties component of a stocnet object (if one is included).</p><ul><li><p>'from' must be an integer vector of the nodes sending each tie</p></li>
 <li><p>'to' must be an integer vector of the nodes receiving each tie</p></li>
 </ul><p>There are also several reserved names for the columns of the ties component of a stocnet object.</p><ul><li><p>'layer' should be a character vector of the layer of each tie in a multiplex or multilayer network</p></li>
+<li><p>'by' should be an integer vector of the node that reported
+each tie, as in a cognitive social structure or an egocentric network.</p></li>
+<li><p>'about' should be an integer vector of the node each tie is about,
+as where a sender tells a receiver about a target.
+Like 'from' and 'to', these two are always held as indices into the
+nodes, never as labels.
+<code>make_stocnet()</code> converts labels given for any of the four into those
+indices, and coercion to a labelled class converts them back.
+Either may be <code>NA</code>, for a layer that no node reported or that is about
+no node.
+See the Third nodes section.</p></li>
 <li><p>'weight' should be a numeric vector of the weights of the ties in a weighted network
 If the weight vector includes also negative values, then the network is a signed network,
 and the sign of the tie can be determined from the weight.
@@ -372,6 +385,29 @@ which each global attribute is updated.
 Globals are carried forward the way changes are: a value holds from the
 moment it is recorded at until another value states otherwise.</p></li>
 </ul></div>
+    <div id="third-nodes">
+    <h2>Third nodes</h2>
+
+
+<p>Some designs record a third node for each tie, as well as the two nodes
+it runs between.
+A cognitive social structure (Krackhardt 1987) asks each respondent about
+every pair of nodes in one roster, and so records each tie once for each
+node that reported it, in the 'by' column.
+An egocentric design also records the ego that reported each tie in 'by',
+but each ego names alters of its own.
+Gossip records the node that a tie is about in the 'about' column.
+<code><a href="mark_format_cognitive.html">is_cognitive()</a></code>, <code><a href="mark_format_cognitive.html">is_egocentric()</a></code>, and <code><a href="mark_format_cognitive.html">is_gossip()</a></code> mark these,
+and the 'observation' information tells the first two apart.</p>
+<p>Each report is a network of its own, so reports of one tie by
+two reporters are two records and not parallel ties.
+<code><a href="coerce_list.html">as_matrix()</a></code> returns such a network as a three-dimensional array of
+senders, receivers, and reporters (or targets),
+and <code><a href="coerce_graph.html">as_stocnet()</a></code> reads one back, once told what the third dimension
+holds.
+Functions that renumber or delete nodes renumber these columns too,
+and drop the reports of a deleted reporter.</p>
+    </div>
     <div id="missings">
     <h2>Missings</h2>
 

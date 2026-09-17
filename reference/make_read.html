@@ -33,7 +33,7 @@ read_gexf() imports GEXF files, such as those exported by Gephi.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.5</span>
       </span>
     </div>
 
@@ -181,7 +181,7 @@ such as Network Canvas, where ego is otherwise only recorded at the level
 of the network. By default TRUE.
 Where ego is added, ties from ego to each of its alters are also added,
 and every tie gains a 'by' column identifying the ego that reported it,
-which makes the network a cognitive social structure (see <code><a href="mark_format_cognitive.html">is_cognitive()</a></code>).</p></dd>
+which makes the network an egocentric network (see <code><a href="mark_format_cognitive.html">is_egocentric()</a></code>).</p></dd>
 
 </dl></div>
     <div id="value">
@@ -224,7 +224,9 @@ Since ego is recorded at the level of the graph rather than as a node,
 and ego-alter ties are left implicit,
 ego is added as a node with ties to each of its alters,
 and every tie records the ego that reported it in a 'by' column,
-making the result a cognitive social structure (see <code><a href="mark_format_cognitive.html">is_cognitive()</a></code>).
+making the result an egocentric network (see <code><a href="mark_format_cognitive.html">is_egocentric()</a></code>).
+It is not a cognitive social structure, since each ego reports on alters
+of its own rather than on one roster of nodes (see <code><a href="mark_format_cognitive.html">is_cognitive()</a></code>).
 Use <code>ego = FALSE</code> to keep just the alters and the ties between them.
 Note that node types are reported in a character 'nodeset' column rather
 than a logical 'type' column, because ego networks are not two-mode:

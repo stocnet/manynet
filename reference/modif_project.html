@@ -30,7 +30,7 @@ where ties can connect more than two nodes.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">manynet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.5</span>
       </span>
     </div>
 
@@ -122,7 +122,7 @@ where ties can connect more than two nodes.</p></li>
 <span>  similarity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"count"</span>, <span class="st">"jaccard"</span>, <span class="st">"rand"</span>, <span class="st">"pearson"</span>, <span class="st">"yule"</span>, <span class="st">"match"</span>, <span class="st">"overlap"</span>,</span>
 <span>    <span class="st">"crossmin"</span>, <span class="st">"maxcrossmin"</span>, <span class="st">"sqdiff"</span>, <span class="st">"covariance"</span>, <span class="st">"bonacich"</span>, <span class="st">"ochiai"</span>, <span class="st">"ochiai2"</span>,</span>
 <span>    <span class="st">"czekanowski"</span>, <span class="st">"sokalsneath"</span>, <span class="st">"hamann"</span>, <span class="st">"rogerstanimoto"</span>, <span class="st">"euclidean"</span>, <span class="st">"manhattan"</span>,</span>
-<span>    <span class="st">"hamming"</span>, <span class="st">"cosine"</span>, <span class="st">"spearman"</span>, <span class="st">"kendall"</span><span class="op">)</span></span>
+<span>    <span class="st">"hamming"</span>, <span class="st">"cosine"</span>, <span class="st">"spearman"</span>, <span class="st">"kendall"</span>, <span class="st">"ruzicka"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">to_mode2</span><span class="op">(</span></span>
@@ -130,7 +130,7 @@ where ties can connect more than two nodes.</p></li>
 <span>  similarity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"count"</span>, <span class="st">"jaccard"</span>, <span class="st">"rand"</span>, <span class="st">"pearson"</span>, <span class="st">"yule"</span>, <span class="st">"match"</span>, <span class="st">"overlap"</span>,</span>
 <span>    <span class="st">"crossmin"</span>, <span class="st">"maxcrossmin"</span>, <span class="st">"sqdiff"</span>, <span class="st">"covariance"</span>, <span class="st">"bonacich"</span>, <span class="st">"ochiai"</span>, <span class="st">"ochiai2"</span>,</span>
 <span>    <span class="st">"czekanowski"</span>, <span class="st">"sokalsneath"</span>, <span class="st">"hamann"</span>, <span class="st">"rogerstanimoto"</span>, <span class="st">"euclidean"</span>, <span class="st">"manhattan"</span>,</span>
-<span>    <span class="st">"hamming"</span>, <span class="st">"cosine"</span>, <span class="st">"spearman"</span>, <span class="st">"kendall"</span><span class="op">)</span></span>
+<span>    <span class="st">"hamming"</span>, <span class="st">"cosine"</span>, <span class="st">"spearman"</span>, <span class="st">"kendall"</span>, <span class="st">"ruzicka"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">to_mode</span><span class="op">(</span></span>
@@ -139,7 +139,7 @@ where ties can connect more than two nodes.</p></li>
 <span>  similarity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"count"</span>, <span class="st">"jaccard"</span>, <span class="st">"rand"</span>, <span class="st">"pearson"</span>, <span class="st">"yule"</span>, <span class="st">"match"</span>, <span class="st">"overlap"</span>,</span>
 <span>    <span class="st">"crossmin"</span>, <span class="st">"maxcrossmin"</span>, <span class="st">"sqdiff"</span>, <span class="st">"covariance"</span>, <span class="st">"bonacich"</span>, <span class="st">"ochiai"</span>, <span class="st">"ochiai2"</span>,</span>
 <span>    <span class="st">"czekanowski"</span>, <span class="st">"sokalsneath"</span>, <span class="st">"hamann"</span>, <span class="st">"rogerstanimoto"</span>, <span class="st">"euclidean"</span>, <span class="st">"manhattan"</span>,</span>
-<span>    <span class="st">"hamming"</span>, <span class="st">"cosine"</span>, <span class="st">"spearman"</span>, <span class="st">"kendall"</span><span class="op">)</span></span>
+<span>    <span class="st">"hamming"</span>, <span class="st">"cosine"</span>, <span class="st">"spearman"</span>, <span class="st">"kendall"</span>, <span class="st">"ruzicka"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">to_linegraph</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span>
@@ -179,13 +179,20 @@ value, joint absences included. For binary data this is "rand" multiplied
 by the number of nodes in the other mode, but for valued data it is the
 more general measure, since it registers agreement at any tie strength.
 Use it where the level of involvement is meaningful in itself.</p></li>
-<li><p>"overlap" divides the count by the smaller of the two nodes' total tie
-strength, the Szymkiewicz-Simpson coefficient. Use it where one node is
-much more active than the other, and the less active node's rarity should
-not depress the score.</p></li>
 <li><p>"crossmin" sums the smaller of each pair of tie strengths.
 Interpret it as the capacity two nodes could jointly bring to bear.
 For binary data it reduces to "count".</p></li>
+<li><p>"overlap" divides "crossmin" by the smaller of the two nodes' total tie
+strength, the Szymkiewicz-Simpson or overlap coefficient, and so lies in
+\([0,1]\) for non-negative data. Use it where one node is much more
+active than the other, and the less active node's rarity should not
+depress the score. For binary data it is the count over the smaller
+degree. xUCINET keeps that count for valued data too, where it can
+exceed 1 and is no longer the coefficient.</p></li>
+<li><p>"ruzicka" divides "crossmin" by the two nodes' combined tie strength
+less than shared, Ruzicka's weighted Jaccard coefficient, and so also
+lies in \([0,1]\). For binary data it is "jaccard", so use it where
+"jaccard" is wanted but the tie strengths should be kept.</p></li>
 <li><p>"maxcrossmin" takes the largest such minimum rather than their sum,
 so that a single strong shared affiliation stands for the pair.
 For binary data it collapses to an indicator of any shared affiliation,
@@ -223,7 +230,8 @@ one is, and \(d\) for those in which neither is:</p><ul><li><p>Sensitive to co-p
 double-weights co-presence; and "sokalsneath" is \(a/(a+2(b+c))\),
 which instead double-weights mismatch. Use these where joint
 non-participation says nothing, as in a sparse affiliation network with
-many events.</p></li>
+many events. For valued data, "ruzicka" is the counterpart of "jaccard"
+that keeps the tie strengths.</p></li>
 <li><p>Sensitive to matching, counting joint absence as evidence: "rand",
 the Simple Matching Coefficient, is \((a+d)/(a+b+c+d)\); "hamann" is
 \(((a+d)-(b+c))/(a+b+c+d)\), the same quantity rescaled onto
@@ -287,7 +295,7 @@ Below are the currently implemented S3 methods:</p>
     <div id="comparison-of-two-mode-projection-methods">
     <h2>Comparison of two-mode projection methods</h2>
 
-<table class="table table"><tr><td>Category</td><td>Feature</td><td><code>manynet::to_mode1()</code>/<code>to_mode2()</code></td><td><code><a href="https://r.igraph.org/reference/bipartite_projection.html" class="external-link">igraph::bipartite_projection()</a></code></td><td><code>network</code>/<code>sna</code> manual</td></tr><tr><td><strong>Input</strong></td><td>Dedicated function</td><td>yes</td><td>yes</td><td>no</td></tr><tr><td></td><td>Accepted input classes</td><td>igraph, network, tidygraph, matrix, edgelist</td><td>igraph only</td><td>any (manual extraction)</td></tr><tr><td></td><td>Detects mode membership from</td><td><code>mode</code> node attribute</td><td><code>type</code> vertex attribute</td><td><code>bipartite</code> network attr (positional)</td></tr><tr><td><strong>Projection</strong></td><td>Returns both projections at once</td><td>no — one per call</td><td>yes — list of two</td><td>two manual calls</td></tr><tr><td></td><td>Projects mode 1 (actors)</td><td><code>to_mode1()</code></td><td><code>which = "true"</code></td><td><code>A %*% t(A)</code></td></tr><tr><td></td><td>Projects mode 2 (events)</td><td><code>to_mode2()</code></td><td><code>which = "false"</code></td><td><code>t(A) %*% A</code></td></tr><tr><td><strong>Weights</strong></td><td>Raw co-membership counts</td><td>yes</td><td>yes (<code>multiplicity = TRUE</code>)</td><td>yes</td></tr><tr><td></td><td>Binary (unweighted) output</td><td>yes</td><td>yes (<code>multiplicity = FALSE</code>)</td><td>threshold manually</td></tr><tr><td></td><td>Jaccard normalisation</td><td>yes</td><td>no</td><td>code manually</td></tr><tr><td></td><td>Cosine normalisation</td><td>yes</td><td>no</td><td>code manually</td></tr><tr><td></td><td>Other similarity measures</td><td>24 in all, see <code>similarity</code></td><td>no</td><td>code manually</td></tr><tr><td><strong>Attributes</strong></td><td>Retains node attributes</td><td>yes</td><td>yes</td><td>no — lost in matrix round-trip</td></tr><tr><td></td><td>Retains edge attributes</td><td>weight only</td><td>weight only</td><td>no</td></tr><tr><td></td><td>Removes self-loops automatically</td><td>yes</td><td>yes</td><td><code>diag(P) &lt;- 0</code> manually</td></tr><tr><td><strong>Output</strong></td><td>Output class matches input</td><td>yes</td><td>no</td><td>no</td></tr><tr><td></td><td>Directed projection support</td><td>limited</td><td>no — undirected only</td><td>yes — asymmetric matrix</td></tr><tr><td><strong>Usability</strong></td><td>Lines of code (basic case)</td><td>1</td><td>1</td><td>4–6</td></tr><tr><td></td><td>Lines of code (Jaccard weights)</td><td>1</td><td>~8 manual</td><td>~8 manual</td></tr><tr><td></td><td>Pipe-friendly</td><td>yes</td><td>with wrappers</td><td>no</td></tr></table></div>
+<table class="table table"><tr><td>Category</td><td>Feature</td><td><code>manynet::to_mode1()</code>/<code>to_mode2()</code></td><td><code><a href="https://r.igraph.org/reference/bipartite_projection.html" class="external-link">igraph::bipartite_projection()</a></code></td><td><code>network</code>/<code>sna</code> manual</td></tr><tr><td><strong>Input</strong></td><td>Dedicated function</td><td>yes</td><td>yes</td><td>no</td></tr><tr><td></td><td>Accepted input classes</td><td>igraph, network, tidygraph, matrix, edgelist</td><td>igraph only</td><td>any (manual extraction)</td></tr><tr><td></td><td>Detects mode membership from</td><td><code>mode</code> node attribute</td><td><code>type</code> vertex attribute</td><td><code>bipartite</code> network attr (positional)</td></tr><tr><td><strong>Projection</strong></td><td>Returns both projections at once</td><td>no — one per call</td><td>yes — list of two</td><td>two manual calls</td></tr><tr><td></td><td>Projects mode 1 (actors)</td><td><code>to_mode1()</code></td><td><code>which = "true"</code></td><td><code>A %*% t(A)</code></td></tr><tr><td></td><td>Projects mode 2 (events)</td><td><code>to_mode2()</code></td><td><code>which = "false"</code></td><td><code>t(A) %*% A</code></td></tr><tr><td><strong>Weights</strong></td><td>Raw co-membership counts</td><td>yes</td><td>yes (<code>multiplicity = TRUE</code>)</td><td>yes</td></tr><tr><td></td><td>Binary (unweighted) output</td><td>yes</td><td>yes (<code>multiplicity = FALSE</code>)</td><td>threshold manually</td></tr><tr><td></td><td>Jaccard normalisation</td><td>yes</td><td>no</td><td>code manually</td></tr><tr><td></td><td>Cosine normalisation</td><td>yes</td><td>no</td><td>code manually</td></tr><tr><td></td><td>Other similarity measures</td><td>25 in all, see <code>similarity</code></td><td>no</td><td>code manually</td></tr><tr><td><strong>Attributes</strong></td><td>Retains node attributes</td><td>yes</td><td>yes</td><td>no — lost in matrix round-trip</td></tr><tr><td></td><td>Retains edge attributes</td><td>weight only</td><td>weight only</td><td>no</td></tr><tr><td></td><td>Removes self-loops automatically</td><td>yes</td><td>yes</td><td><code>diag(P) &lt;- 0</code> manually</td></tr><tr><td><strong>Output</strong></td><td>Output class matches input</td><td>yes</td><td>no</td><td>no</td></tr><tr><td></td><td>Directed projection support</td><td>limited</td><td>no — undirected only</td><td>yes — asymmetric matrix</td></tr><tr><td><strong>Usability</strong></td><td>Lines of code (basic case)</td><td>1</td><td>1</td><td>4–6</td></tr><tr><td></td><td>Lines of code (Jaccard weights)</td><td>1</td><td>~8 manual</td><td>~8 manual</td></tr><tr><td></td><td>Pipe-friendly</td><td>yes</td><td>with wrappers</td><td>no</td></tr></table></div>
     <div id="hypergraphs">
     <h2>Hypergraphs</h2>
 
@@ -493,9 +501,9 @@ matrix without projecting it.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 62 more rows</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu">to_linegraph</span><span class="op">(</span><span class="va">ison_adolescents</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH a267b4c UN-- 10 20 -- Line graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 4b51f68 UN-- 10 20 -- Line graph</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: name (g/c), name (v/c)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from a267b4c (vertex names):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 4b51f68 (vertex names):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] Betty-Sue --Sue-Alice  Sue-Alice --Alice-Jane Betty-Sue --Sue-Dale  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [4] Sue-Alice --Sue-Dale   Sue-Dale  --Alice-Dale Sue-Alice --Alice-Dale</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [7] Alice-Jane--Alice-Dale Sue-Dale  --Jane-Dale  Alice-Dale--Jane-Dale </span>
