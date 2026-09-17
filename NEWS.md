@@ -24,6 +24,9 @@
   - Missing values from a node with no ties are now reported as 0 on every path, as the pairwise path already did
   - Added "ruzicka" similarity measure, the weighted Jaccard coefficient
   - Fixed "overlap" similarity to be Szymkiewicz-Simpson coefficient for valued data too
+- Added `to_undirected.stocnet()`, which also undirects within each cognitive social structure report
+
+
 
 # manynet 2.3.4
 
