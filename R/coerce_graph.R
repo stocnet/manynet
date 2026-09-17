@@ -1215,12 +1215,17 @@ as_stocnet.array <- function(.data, twomode = FALSE, ...,
                   "layer" = if(is.null(slices)) as.character(seq_len(d[3])) else slices)
   if(anyNA(third))
     snet_abort("The slices {slices[is.na(third)]} do not name nodes of the network.")
-  directed <- !twomode && !all(vapply(seq_len(d[3]), function(k)
-    isSymmetric(unname(.data[, , k])), logical(1)))
+  symmetric <- vapply(seq_len(d[3]), function(k)
+    isSymmetric(unname(.data[, , k])), logical(1))
+  # Layers are different relations, so each is as directed as its own slice.
+  # Otherwise the slices hold one relation, which is directed wherever any of
+  # them is.
+  directed <- if(attribute == "layer") !twomode & !symmetric else
+    rep(!twomode && !all(symmetric), d[3])
   ties <- dplyr::bind_rows(lapply(seq_len(d[3]), function(k){
     slice <- .data[, , k]
     # An undirected slice holds each tie once, on its dyad.
-    if(!twomode && !directed) slice[lower.tri(slice)] <- 0
+    if(!twomode && !directed[k]) slice[lower.tri(slice)] <- 0
     idx <- which(is.na(slice) | slice != 0, arr.ind = TRUE)
     if(!nrow(idx)) return(NULL)
     dplyr::tibble(from = as.integer(idx[, 1]),
@@ -1242,7 +1247,8 @@ as_stocnet.array <- function(.data, twomode = FALSE, ...,
     ties <- dplyr::tibble(from = integer(0), to = integer(0))
     ties[[attribute]] <- integer(0)
   } else ties <- NULL
-  info <- list(directed = directed)
+  info <- list(directed = if(attribute == "layer")
+    stats::setNames(directed, third) else directed[1])
   if(attribute == "by") info$observation <- "cognitive"
   if(attribute == "layer") info$layers <- unique(third)
   make_stocnet(info = info, nodes = nodes, ties = ties)

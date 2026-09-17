@@ -180,3 +180,12 @@ test_that("is_egocentric reads the design where no ego named a tie", {
   expect_true(is_cognitive(mutate_info(none, observation = "cognitive")))
   expect_false(is_egocentric(mutate_info(none, observation = "cognitive")))
 })
+
+test_that("is_cognitive marks an array only where its slices can be nodes", {
+  expect_true(is_cognitive(array(0, dim = c(3, 3, 3))))
+  # a square array read as two-mode has a slice for each node of both modes
+  expect_true(is_cognitive(array(0, dim = c(3, 3, 6))))
+  # a rectangular array is two-mode, so needs a slice for every node
+  expect_false(is_cognitive(array(0, dim = c(2, 3, 2))))
+  expect_true(is_cognitive(array(0, dim = c(2, 3, 5))))
+})

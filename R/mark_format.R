@@ -682,7 +682,11 @@ is_cognitive.network <- function(.data) {
 #' @export
 is_cognitive.array <- function(.data) {
   d <- dim(.data)
-  length(d) == 3 && d[3] %in% unique(c(d[1], d[1] + d[2]))
+  # A square array may be one-mode, with a slice for each of its nodes, or
+  # two-mode, with a slice for each node of both modes. A rectangular array
+  # is two-mode, as `as_stocnet()` reads it.
+  length(d) == 3 &&
+    d[3] %in% if(d[1] == d[2]) c(d[1], 2 * d[1]) else d[1] + d[2]
 }
 
 #' @export

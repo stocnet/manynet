@@ -109,8 +109,12 @@
                                   directed))
       alters <- .stocnet_alters(.data, node, act_state[, at])
       if(!length(alters)) return(NULL)
-      dplyr::tibble(from = as.integer(node), to = as.integer(alters),
-                    layer = layer, time = time)
+      out <- dplyr::tibble(from = as.integer(node), to = as.integer(alters),
+                           layer = layer, time = time)
+      # An ego's missing ties are missing from its own report, so they name it
+      # as their reporter, as the ties it did report would.
+      if(egocentric) out$by <- as.integer(node)
+      out
     })
     out <- dplyr::bind_rows(pairs)
     # An undirected layer holds one row per dyad, so its missing ties do too.
@@ -150,7 +154,16 @@
     time = if(is.null(ties[["time"]])) NA else ties$time,
     .rows = n)
   held <- .same_occasion(occasion, layer, time)
-  if(any(held)) return(.holds_node(ties[["by"]][held]))
+  if(any(held)){
+    if(.holds_node(ties[["by"]][held])) return(TRUE)
+    # Ties that name no reporter are not reports, as in a layer taken from
+    # records beside the reports, unless the design names this very layer as
+    # reports. A design given for the network as a whole does not, since that
+    # is how a network of reports and records together is described.
+    observation <- .data$info$observation
+    return(!is.null(names(observation)) && !is.na(layer) &&
+             identical(unname(observation[layer]), "cognitive"))
+  }
   .observed_as(.data, layer) == "cognitive"
 }
 

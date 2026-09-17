@@ -685,3 +685,58 @@ test_that("a network without nodes gives an empty array", {
   expect_equal(dim(as_matrix(empty)), c(0, 0, 0))
   expect_null(as_missinglist(empty))
 })
+
+test_that("a silent ego misses its own report", {
+  ego <- make_stocnet(
+    nodes = data.frame(label = c("e1", "a", "b", "e2", "c"),
+                       na = c(FALSE, FALSE, FALSE, TRUE, FALSE)),
+    ties = data.frame(from = c("e1", "e1"), to = c("a", "b"),
+                      by = c("e1", "e1")),
+    info = list(observation = "egocentric", directed = TRUE))
+  expect_true(all(as_missinglist(ego)$by == 4))
+  arr <- as_matrix(ego)
+  expect_true(all(is.na(arr["e2", c("e1", "a", "b", "c"), "e2"])))
+  expect_equal(as_stocnet(as_igraph(ego))$nodes$na, ego$nodes$na)
+})
+
+test_that("an array of layers keeps the direction of each layer", {
+  nodes <- c("a", "b", "c")
+  layered <- array(0, dim = c(3, 3, 2),
+                   dimnames = list(nodes, nodes, c("sym", "asym")))
+  layered["a", "b", "sym"] <- layered["b", "a", "sym"] <- 1
+  layered["a", "c", "asym"] <- 1
+  multi <- as_stocnet(layered, attribute = "layer")
+  expect_equal(multi$info$directed, c(sym = FALSE, asym = TRUE))
+  expect_equal(sum(multi$ties$layer == "sym"), 1)
+  for(layer in c("sym", "asym"))
+    expect_equal(as_matrix(to_uniplex(multi, layer)), layered[, , layer])
+})
+
+test_that("a reporter column survives other names for the ends", {
+  el <- data.frame(sender = "A", receiver = "B", by = "C")
+  expect_named(as_edgelist(el), c("from", "to", "by"))
+  css <- make_stocnet(nodes = data.frame(label = c("A", "B", "C")),
+                      ties = data.frame(from = "A", to = "C", by = "B"))
+  bound <- bind_ties(css, el)
+  expect_setequal(bound$ties$by, c(2L, 3L))
+  expect_false("weight" %in% names(bound$ties))
+})
+
+test_that("a layer of records is a report only where the design names it", {
+  mixed <- make_stocnet(
+    nodes = data.frame(label = c("a", "b", "c"), na = c(FALSE, FALSE, TRUE)),
+    ties = data.frame(from = c("a", "a"), to = c("b", "b"), by = c("a", NA),
+                      layer = c("advice", "reports")),
+    info = list(layers = c("advice", "reports"), directed = TRUE,
+                observation = "cognitive"))
+  # a design for the whole network leaves the records as records
+  missing <- as_missinglist(mixed)
+  expect_true(all(is.na(missing$by[missing$layer == "reports"])))
+  expect_true(all(missing$from[missing$layer == "reports"] == 3))
+  # a design that names the layer makes its missing ties a whole report
+  named <- mutate_info(mixed, observation = c(advice = "cognitive",
+                                              reports = "cognitive"))
+  missing <- as_missinglist(named)
+  expect_equal(sum(missing$layer == "reports"), 6)
+  expect_true(all(missing$by[missing$layer == "reports"] == 3))
+})
