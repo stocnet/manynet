@@ -740,3 +740,24 @@ test_that("a layer of records is a report only where the design names it", {
   expect_equal(sum(missing$layer == "reports"), 6)
   expect_true(all(missing$by[missing$layer == "reports"] == 3))
 })
+
+test_that("each layer's own design decides what a silent node misses", {
+  mixed <- make_stocnet(
+    nodes = data.frame(label = c("e1", "a", "e2", "b"),
+                       na = c(FALSE, FALSE, TRUE, FALSE)),
+    ties = data.frame(from = c("e1", "e1", "a"), to = c("a", "e2", "b"),
+                      by = "e1", layer = c("names", "advice", "advice")),
+    info = list(layers = c("names", "advice"), directed = TRUE,
+                observation = c(names = "egocentric", advice = "cognitive")))
+  missing <- as_missinglist(mixed)
+  # the silent ego misses its own ties in the egocentric layer
+  names <- missing[missing$layer == "names", ]
+  expect_equal(nrow(names), 3)
+  expect_true(all(names$from == 3 & names$by == 3))
+  # and its whole report in the cognitive layer
+  expect_equal(sum(missing$layer == "advice"), 12)
+  back <- as_stocnet(as_igraph(mixed))
+  expect_equal(back$nodes$na, mixed$nodes$na)
+  expect_null(back$missings)
+  expect_equal(nrow(as_missinglist(back)), nrow(missing))
+})

@@ -100,7 +100,9 @@
     absent <- .layer_absent(.data, absent, layer, time)
     if(!length(absent)) return(NULL)
     directed <- layer_is_directed(.data, layer)
-    reported <- !egocentric && .occasion_reported(.data, layer, time)
+    # The design can differ from layer to layer, so it is read for this one.
+    ego <- .occasion_egocentric(.data, layer, egocentric)
+    reported <- !ego && .occasion_reported(.data, layer, time)
     pairs <- lapply(absent, function(node){
       # A node that did not report missed the whole network it was asked
       # about, and not only the ties it would itself have sent.
@@ -113,7 +115,7 @@
                            layer = layer, time = time)
       # An ego's missing ties are missing from its own report, so they name it
       # as their reporter, as the ties it did report would.
-      if(egocentric) out$by <- as.integer(node)
+      if(ego) out$by <- as.integer(node)
       out
     })
     out <- dplyr::bind_rows(pairs)
@@ -165,6 +167,17 @@
              identical(unname(observation[layer]), "cognitive"))
   }
   .observed_as(.data, layer) == "cognitive"
+}
+
+# Whether the reports of a layer come from egos. A design named for the layer
+# decides this. Otherwise `network` gives the answer for the network as a
+# whole, which its own design or, failing that, the shape of its reports gives.
+.occasion_egocentric <- function(.data, layer, network){
+  observation <- .data$info$observation
+  if(!is.null(names(observation)) && !is.na(layer) &&
+     layer %in% names(observation))
+    return(identical(unname(observation[[layer]]), "egocentric"))
+  network
 }
 
 # How a layer was observed, as the network's 'observation' information says,
@@ -251,7 +264,8 @@
     # Where the missing ties name their reporters, a node that did not report
     # is one whose whole report is missing. The missing ties are read here and
     # not the ties, since where no reporter named a tie there are none to read.
-    if(!egocentric && .holds_node(sub[["by"]])){
+    if(!.occasion_egocentric(x, layer, egocentric) &&
+       .holds_node(sub[["by"]])){
       # Once the report is held as the node's nonresponse, nothing in the ties
       # may say that the network names its reporters, so the design says so.
       if(!nzchar(.observed_as(x, layer)) && is.null(names(x$info$observation)))
