@@ -126,6 +126,8 @@ nodes are parallel.
 Ties of different types are likewise not parallel.
 Several types of tie between a pair of nodes is what \code{is_multiplex()}
 marks; \code{tie_is_parallel()} marks several ties of one type.
+Nor are reports of a tie by two reporters in a cognitive social structure,
+or gossip about two different targets, since each is a record of its own.
 
 Every tie in such a bundle is marked, and not just the repetitions,
 so \code{sum(tie_is_parallel(ison_koenigsberg))} counts four of the seven

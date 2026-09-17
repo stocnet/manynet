@@ -26,7 +26,12 @@
   - Fixed "overlap" similarity to be Szymkiewicz-Simpson coefficient for valued data too
 - Added `to_undirected.stocnet()`, which also undirects within each cognitive social structure report
 
+## Marking
 
+- Fixed incorrect marking by `is_cognitive.network()` and `is_cognitive.array()` of egocentric data
+- Added `is_egocentric()` for egos that report on alters of their own
+- Added `is_gossip()` for networks whose ties name the node they are about
+- Fixed `tie_is_parallel()` counting reports by two reporters as parallel
 
 # manynet 2.3.4
 

@@ -59,6 +59,6 @@ with the CEO alone in A
 }
 }
 \references{
-Krackhardt, David. 1987. "Cognitive social structures". \emph{Social Networks} 9: 104-134.
+Krackhardt, David. 1987. "Cognitive social structures". \emph{Social Networks} 9(2): 109-134.
 }
 \keyword{datasets}

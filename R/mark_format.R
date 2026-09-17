@@ -541,7 +541,7 @@ is_multiplex.matrix <- function(.data) {
   FALSE
 }
 
-reserved_tie_attr <- c("wave","panel","sign","weight","date","begin","end",
+reserved_tie_attr <- c("wave","panel","sign","weight","date","begin","end","by","about",
                        "name","default","increment","time")
 
 #' @export
@@ -596,12 +596,47 @@ is_uniplex.igraph <- function(.data) {
 #' Marking networks cognitive formats
 #' @name mark_format_cognitive
 #' @description
-#'   These functions implement logical tests for various network properties.
+#'   These functions implement logical tests for networks whose ties name a
+#'   third node as well as the two nodes each tie runs between.
 #'   All `is_*()` functions return a logical scalar (TRUE or FALSE).
 #'   
-#'   - `is_cognitive()` marks networks TRUE if they are cognitive social structures,
-#'   i.e. where the edgelist contains a 'by' column indicating who reported/recorded
-#'   each tie, in addition to the 'from' and 'to' columns.
+#'   - `is_cognitive()` marks networks TRUE if they are cognitive social
+#'   structures, i.e. where the edgelist contains a 'by' column naming the
+#'   node that reported each tie, and all of them report on one roster
+#'   of nodes.
+#'   - `is_egocentric()` marks networks TRUE if the edgelist contains a 'by'
+#'   column naming the ego that reported each tie, but each ego reports on
+#'   alters of its own.
+#'   - `is_gossip()` marks networks TRUE if the edgelist contains an 'about'
+#'   column naming the node each tie is about, as where a sender tells a
+#'   receiver about a target.
+#' @details
+#'   A cognitive social structure (Krackhardt 1987) asks each respondent about
+#'   every pair of nodes in one roster, so each report is a network
+#'   of the same nodes.
+#'   An egocentric design instead asks each ego to name alters of its own,
+#'   as a name generator does, so the egos' reports share no nodes.
+#'   Both record the reporter in a 'by' column.
+#'   They are told apart by the network's 'observation' information,
+#'   "cognitive" or "egocentric", and where that is not given,
+#'   by whether any two reports share a node.
+#'   Note that `is_egonet()` marks something else: a list of networks,
+#'   each of one ego and its ties.
+#'   
+#'   A 'by' or 'about' column that holds only `NA` names no node,
+#'   so a network whose other layers hold one is not marked.
+#'   
+#'   A three-dimensional array cannot say what its third dimension holds,
+#'   which may be reporters, targets, waves, or layers.
+#'   `is_cognitive()` marks an array TRUE where that dimension could hold one
+#'   reporter for each node, and `is_egocentric()` and `is_gossip()` do not
+#'   mark arrays.
+#'   `as_stocnet()` asks which of these an array holds.
+#' @references
+#'   Krackhardt, David. 1987.
+#'   "Cognitive social structures".
+#'   _Social Networks_ 9(2): 109-134.
+#'   \doi{10.1016/0378-8733(87)90009-8}
 #' @template param_data
 #' @family marks
 NULL
@@ -619,27 +654,143 @@ is_cognitive.default <- function(.data) {
 
 #' @export
 is_cognitive.data.frame <- function(.data) {
-  all(c("from", "to", "by") %in% names(.data))
+  all(c("from", "to", "by") %in% names(.data)) &&
+    .holds_node(.data$by) &&
+    !.reports_egocentric(.data$from, .data$to, .data$by)
 }
 
+# This is checked on every coercion to a matrix, so the attribute is looked for
+# before anything is coerced.
 #' @export
 is_cognitive.igraph <- function(.data) {
-  "by" %in% igraph::edge_attr_names(.data)
+  if(!"by" %in% igraph::edge_attr_names(.data)) return(FALSE)
+  by <- igraph::edge_attr(.data, "by")
+  if(!.holds_node(by)) return(FALSE)
+  el <- igraph::as_edgelist(.data, names = FALSE)
+  !.reports_egocentric(el[, 1], el[, 2], by, as_infolist(.data)$observation)
 }
 
 #' @export
 is_cognitive.network <- function(.data) {
-  "by" %in% network::list.edge.attributes(.data)
+  # a network object keeps its tie attributes on the way to a stocnet, and not
+  # on the way to an igraph
+  "by" %in% network::list.edge.attributes(.data) &&
+    is_cognitive(as_stocnet(.data))
 }
 
+# A matrix is an array of two dimensions, so it is marked here too.
 #' @export
-is_cognitive.matrix <- function(.data) {
-  length(dim(.data)) == 3
+is_cognitive.array <- function(.data) {
+  d <- dim(.data)
+  length(d) == 3 && d[3] %in% unique(c(d[1], d[1] + d[2]))
 }
 
 #' @export
 is_cognitive.stocnet <- function(.data) {
-  "by" %in% names(.data$ties)
+  ties <- .data$ties
+  .holds_node(ties[["by"]]) &&
+    !.reports_egocentric(ties$from, ties$to, ties$by, .data$info$observation)
+}
+
+#' @rdname mark_format_cognitive
+#' @examples
+#' is_egocentric(create_filled(3))
+#' @export
+is_egocentric <- function(.data) UseMethod("is_egocentric")
+
+#' @export
+is_egocentric.default <- function(.data) {
+  is_egocentric.igraph(as_igraph(.data))
+}
+
+#' @export
+is_egocentric.data.frame <- function(.data) {
+  all(c("from", "to", "by") %in% names(.data)) &&
+    .reports_egocentric(.data$from, .data$to, .data$by)
+}
+
+#' @export
+is_egocentric.igraph <- function(.data) {
+  if(!"by" %in% igraph::edge_attr_names(.data)) return(FALSE)
+  el <- igraph::as_edgelist(.data, names = FALSE)
+  .reports_egocentric(el[, 1], el[, 2], igraph::edge_attr(.data, "by"),
+                      as_infolist(.data)$observation)
+}
+
+#' @export
+is_egocentric.network <- function(.data) {
+  "by" %in% network::list.edge.attributes(.data) &&
+    is_egocentric(as_stocnet(.data))
+}
+
+#' @export
+is_egocentric.array <- function(.data) FALSE
+
+#' @export
+is_egocentric.stocnet <- function(.data) {
+  ties <- .data$ties
+  !is.null(ties[["by"]]) &&
+    .reports_egocentric(ties$from, ties$to, ties$by, .data$info$observation)
+}
+
+#' @rdname mark_format_cognitive
+#' @examples
+#' is_gossip(create_filled(3))
+#' @export
+is_gossip <- function(.data) UseMethod("is_gossip")
+
+#' @export
+is_gossip.default <- function(.data) {
+  is_gossip.igraph(as_igraph(.data))
+}
+
+#' @export
+is_gossip.data.frame <- function(.data) {
+  all(c("from", "to", "about") %in% names(.data)) && .holds_node(.data$about)
+}
+
+#' @export
+is_gossip.igraph <- function(.data) {
+  "about" %in% igraph::edge_attr_names(.data) &&
+    .holds_node(igraph::edge_attr(.data, "about"))
+}
+
+#' @export
+is_gossip.network <- function(.data) {
+  "about" %in% network::list.edge.attributes(.data) &&
+    .holds_node(network::get.edge.attribute(.data, "about"))
+}
+
+#' @export
+is_gossip.array <- function(.data) FALSE
+
+#' @export
+is_gossip.stocnet <- function(.data) {
+  .holds_node(.data$ties[["about"]])
+}
+
+# Whether a column of ties names any node. A column of nothing but NA names
+# none, as where only the layers that were not observed are left.
+.holds_node <- function(values) {
+  !is.null(values) && length(values) > 0 && any(!is.na(values))
+}
+
+# Whether the reporters of a network's ties are egos rather tha reporters of
+# one roster. The network's 'observation' information says so where it is
+# given. Otherwise each ego names alters of its own, so no two egos' reports
+# share a node, whereas reporters of one roster report on the same nodes.
+.reports_egocentric <- function(from, to, by, observation = NULL) {
+  if(!.holds_node(by)) return(FALSE)
+  observation <- observation[!is.na(observation)]
+  if("cognitive" %in% observation) return(FALSE)
+  if("egocentric" %in% observation) return(TRUE)
+  keep <- !is.na(by)
+  by <- as.character(by[keep])
+  reports <- split(c(as.character(from[keep]), as.character(to[keep])),
+                   c(by, by))
+  # A single report shares nodes with no other, which says nothing either way.
+  if(length(reports) < 2) return(FALSE)
+  !anyDuplicated(unlist(lapply(reports, unique), use.names = FALSE))
 }
 
 # Helper functions ----
