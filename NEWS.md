@@ -10,6 +10,7 @@
   - Fixed two-mode windmills to mark the first mode as `type = FALSE`
 - Improved `create_wheel()` to return with network information
   - Fixed `create_wheel()` to take its directedness from a network passed to `n`
+- Fixed `read_graphml()` to record Network Canvas exports as egocentric
 
 ## Classes
 

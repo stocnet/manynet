@@ -470,7 +470,11 @@ read_graphml <- function(file = file.choose(), ego = TRUE) {
   # and the network is coerced once here, at the boundary of the function.
   if(netcanvas) {
     snet_minor_info("Reading {length(parsed)} Network Canvas session{?s}.")
-    as_stocnet(.netcanvas_build(parsed, key_map = key_map, ego = ego))
+    out <- as_stocnet(.netcanvas_build(parsed, key_map = key_map, ego = ego))
+    # Each ego names alters of its own, which is an egocentric design and not
+    # a cognitive social structure, however the reporters are recorded.
+    if(ego) out <- mutate_info(out, observation = "egocentric")
+    out
   } else as_stocnet(.graphml_build(parsed))
 }
 
