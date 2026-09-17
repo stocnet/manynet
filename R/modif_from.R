@@ -445,10 +445,7 @@ from_ties <- from_layers
 
 # Apply a from-old-to-new node index map to ties$from/to and changes$node
 .apply_reindex <- function(net, new_idx){
-  if(!is.null(net$ties)){
-    net$ties$from <- new_idx[net$ties$from]
-    net$ties$to   <- new_idx[net$ties$to]
-  }
+  if(!is.null(net$ties)) net$ties <- .remap_tie_nodes(net$ties, new_idx)
   if(!is.null(net$changes)){
     net$changes$node <- new_idx[net$changes$node]
   }

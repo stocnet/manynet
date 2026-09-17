@@ -228,3 +228,12 @@ test_that("a mark inside filter_ties reads the filtered network", {
   })
   expect_equal(seen, as.integer(net_ties(wave1)))
 })
+
+test_that("tie_is_parallel does not count reports by two reporters as parallel", {
+  css <- as_stocnet(css_array(), attribute = "by")
+  expect_false(any(tie_is_parallel(css)))
+  expect_false(any(tie_is_parallel(as_igraph(css))))
+  # the same report made twice by one reporter is parallel
+  twice <- bind_ties(css, data.frame(from = "A", to = "B", by = "C"))
+  expect_equal(sum(tie_is_parallel(twice)), 2)
+})

@@ -665,7 +665,7 @@ net_tie_missing.stocnet <- function(.data){
 # Structural or bookkeeping tie attributes that do not count as substantive
 # attributes. A weight is not among them, since a weight of `NA` marks a tie
 # whose value is not known and so an incomplete tie.
-manynet_reserved_tie_attributes <- c("from", "to", "by", "time", "wave",
+manynet_reserved_tie_attributes <- c("from", "to", "by", "about", "time", "wave",
                                      "begin", "end", "layer", "na")
 
 # A network's tie attributes, without the columns that are bookkeeping rather

@@ -30,7 +30,9 @@
 
 ## Manipulating
 
-- Fixed `add_node_attribute()` on a `stocnet` to put a "name" attribute in the reserved "label" column, so that the network can still be coerced to other classes
+- Fixed `add_node_attribute.stocnet()` to relabel "name" to "label" column
+- Fixed `delete_nodes()` and `arrange_nodes()` to renumber `by` and `about`
+- Fixed `bind_ties()` to match `by` and `about` labels to the nodes
 
 ## Modifying
 

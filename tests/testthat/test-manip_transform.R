@@ -778,3 +778,22 @@ test_that("to_mode resolves a mode by name on a stocnet", {
   # and one that does not is an error, as it is for an igraph
   expect_error(to_mode(two, "events"), "more than one mode")
 })
+
+test_that("to_undirected reconciles a tie only within one report", {
+  arr <- css_array()
+  css <- as_stocnet(arr, attribute = "by")
+  reverse <- aperm(arr, c(2, 1, 3))
+  und <- to_undirected(css)
+  expect_false(is_directed(und))
+  expect_true(is_cognitive(und))
+  expect_type(und$ties$by, "integer")
+  expect_equal(as_matrix(und), pmax(arr, reverse))
+  expect_equal(as_matrix(to_undirected(css, rule = "min")), pmin(arr, reverse))
+  expect_equal(as_matrix(to_undirected(css, rule = "mean")), (arr + reverse)/2)
+  # the share of dyads it reconciled is taken within each report
+  expect_match(as_infolist(und)$transformations$symmetrisation,
+               "% of connected dyads non-reciprocal")
+  # a network without reporters takes the path it always did
+  expect_equal(as_matrix(to_undirected(as_stocnet(ison_networkers))),
+               as_matrix(to_undirected(ison_networkers)))
+})
