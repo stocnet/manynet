@@ -1174,7 +1174,9 @@ as_stocnet.array <- function(.data, twomode = FALSE, ...,
                              attribute = c("time", "by", "about", "layer")) {
   d <- dim(.data)
   if(length(d) != 3)
-    snet_abort("Only arrays of two or three dimensions can be coerced to a network.")
+    # a two-dimensional array is a matrix, and is read by the matrix method
+    snet_abort("A network can be read from a matrix or a three-dimensional",
+               "array, but not from an array of {length(d)} dimensions.")
   twomode <- isTRUE(twomode) || d[1] != d[2]
   n <- if(twomode) d[1] + d[2] else d[1]
   if(missing(attribute)){

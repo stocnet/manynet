@@ -137,15 +137,29 @@
   setdiff(absent, named)
 }
 
-# Whether the ties recorded at an occasion name who reported them.
+# Whether the ties recorded at an occasion name who reported them. Where the
+# occasion holds no ties at all, as where no reporter named any, the ties
+# cannot say, and the network's 'observation' information says instead.
 .occasion_reported <- function(.data, layer, time){
   ties <- .data$ties
-  if(!.holds_node(ties[["by"]])) return(FALSE)
+  n <- if(is.null(ties)) 0L else nrow(ties)
   occasion <- dplyr::tibble(
     layer = if(is.null(ties[["layer"]])) NA_character_ else as.character(ties$layer),
     time = if(is.null(ties[["time"]])) NA else ties$time,
-    .rows = nrow(ties))
-  .holds_node(ties$by[.same_occasion(occasion, layer, time)])
+    .rows = n)
+  held <- .same_occasion(occasion, layer, time)
+  if(any(held)) return(.holds_node(ties[["by"]][held]))
+  .observed_as(.data, layer) == "cognitive"
+}
+
+# How a layer was observed, as the network's 'observation' information says,
+# whether it gives one design for the network or one for each layer.
+.observed_as <- function(.data, layer){
+  obs <- .data$info$observation
+  if(is.null(obs)) return("")
+  if(is.null(names(obs))) return(as.character(obs[1]))
+  if(!is.na(layer) && layer %in% names(obs)) return(as.character(obs[[layer]]))
+  ""
 }
 
 # The report a reporter was asked for: every dyad among the nodes in the
@@ -153,7 +167,9 @@
 # once for each dyad where the layer is undirected.
 .unreported_report <- function(.data, reporter, active, layer, time, directed){
   nodes <- which(active)
-  if(is_twomode(.data)){
+  # A multilevel network ties nodes within a mode too, so every pair is asked
+  # about, as in a one-mode network.
+  if(is_twomode(.data) && !is_multilevel(.data)){
     modes <- .data$nodes$mode
     senders <- nodes[modes[nodes] == modes[1]]
     pairs <- expand.grid(from = senders, to = setdiff(nodes, senders))
@@ -217,10 +233,14 @@
     if(is.na(at)) at <- 1L
     sub <- missing[.same_occasion(missing, layer, time), , drop = FALSE]
     directed <- layer_is_directed(x, layer)
-    # Where the ties name their reporters, a node that did not report is one
-    # whose whole report is missing.
-    if(!egocentric && .occasion_reported(x, layer, time) &&
-       .holds_node(sub[["by"]])){
+    # Where the missing ties name their reporters, a node that did not report
+    # is one whose whole report is missing. The missing ties are read here and
+    # not the ties, since where no reporter named a tie there are none to read.
+    if(!egocentric && .holds_node(sub[["by"]])){
+      # Once the report is held as the node's nonresponse, nothing in the ties
+      # may say that the network names its reporters, so the design says so.
+      if(!nzchar(.observed_as(x, layer)) && is.null(names(x$info$observation)))
+        x$info$observation <- "cognitive"
       dyad <- function(tab) if(directed) paste(tab$from, tab$to) else
         paste(pmin(tab$from, tab$to), pmax(tab$from, tab$to))
       for(node in unique(stats::na.omit(sub$by))){

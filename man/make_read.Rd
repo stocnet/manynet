@@ -58,7 +58,7 @@ such as Network Canvas, where ego is otherwise only recorded at the level
 of the network. By default TRUE.
 Where ego is added, ties from ego to each of its alters are also added,
 and every tie gains a 'by' column identifying the ego that reported it,
-which makes the network a cognitive social structure (see \code{\link[=is_cognitive]{is_cognitive()}}).}
+which makes the network an egocentric network (see \code{\link[=is_egocentric]{is_egocentric()}}).}
 }
 \value{
 \code{read_edgelist()} and \code{read_nodelist()} import a list rather than a
@@ -125,7 +125,9 @@ Since ego is recorded at the level of the graph rather than as a node,
 and ego-alter ties are left implicit,
 ego is added as a node with ties to each of its alters,
 and every tie records the ego that reported it in a 'by' column,
-making the result a cognitive social structure (see \code{\link[=is_cognitive]{is_cognitive()}}).
+making the result an egocentric network (see \code{\link[=is_egocentric]{is_egocentric()}}).
+It is not a cognitive social structure, since each ego reports on alters
+of its own rather than on one roster of nodes (see \code{\link[=is_cognitive]{is_cognitive()}}).
 Use \code{ego = FALSE} to keep just the alters and the ties between them.
 Note that node types are reported in a character 'nodeset' column rather
 than a logical 'type' column, because ego networks are not two-mode:

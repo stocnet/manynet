@@ -688,8 +688,13 @@ is_cognitive.array <- function(.data) {
 #' @export
 is_cognitive.stocnet <- function(.data) {
   ties <- .data$ties
-  .holds_node(ties[["by"]]) &&
-    !.reports_egocentric(ties$from, ties$to, ties$by, .data$info$observation)
+  observation <- .data$info$observation
+  # Where no reporter named a tie, the column holds no value, and only the
+  # design says that the network was collected as reports.
+  if(!.holds_node(ties[["by"]]))
+    return(!is.null(ties) && "by" %in% names(ties) &&
+             "cognitive" %in% observation)
+  !.reports_egocentric(ties$from, ties$to, ties$by, observation)
 }
 
 #' @rdname mark_format_cognitive
@@ -775,7 +780,7 @@ is_gossip.stocnet <- function(.data) {
   !is.null(values) && length(values) > 0 && any(!is.na(values))
 }
 
-# Whether the reporters of a network's ties are egos rather tha reporters of
+# Whether the reporters of a network's ties are egos rather than respondents to
 # one roster. The network's 'observation' information says so where it is
 # given. Otherwise each ego names alters of its own, so no two egos' reports
 # share a node, whereas reporters of one roster report on the same nodes.

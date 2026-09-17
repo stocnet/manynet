@@ -523,7 +523,9 @@ as_matrix <- function(.data,
 .third_node_array <- function(.data, col = "by"){
   net <- as_stocnet(.data)
   ties <- net$ties
-  if(!.holds_node(ties[[col]]))
+  # A cognitive social structure in which no reporter named a tie holds the
+  # column without any value, so the column is what is required.
+  if(is.null(ties) || !col %in% names(ties))
     snet_abort("Expected a network naming a node in a '{col}' column of its ties.")
   layers <- if(!is.null(ties[["layer"]])) unique(as.character(ties$layer)) else NULL
   if(length(layers) > 1){
@@ -537,7 +539,10 @@ as_matrix <- function(.data,
   n <- nrow(net$nodes) %||%
     max(c(ties$from, ties$to, ties[[col]]), na.rm = TRUE)
   labels <- net$nodes[["label"]]
-  if(is_twomode(net)){
+  # A multilevel network ties nodes within a mode too, so it takes every node
+  # on both of the first two dimensions, as a one-mode network does.
+  bipartite <- is_twomode(net) && !is_multilevel(net)
+  if(bipartite){
     modes <- as.character(net$nodes$mode)
     rows <- which(modes == modes[1])
     cols <- setdiff(seq_len(n), rows)
@@ -545,7 +550,7 @@ as_matrix <- function(.data,
   out <- array(0, dim = c(length(rows), length(cols), n),
                dimnames = if(is.null(labels)) NULL else
                  list(labels[rows], labels[cols], labels))
-  undirected <- !is_directed(net) && !is_twomode(net)
+  undirected <- !is_directed(net) && !bipartite
   cells <- function(tab){
     idx <- cbind(match(tab$from, rows), match(tab$to, cols), tab[[col]])
     if(undirected) idx <- rbind(idx, idx[idx[, 1] != idx[, 2], c(2, 1, 3),

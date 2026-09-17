@@ -206,3 +206,14 @@ test_that("overlap and ruzicka reduce to their binary counterparts", {
   expect_equal(to_mode1(sw, "overlap"),
                {o <- (sw %*% t(sw))/outer(R, R, pmin); diag(o) <- 0; o})
 })
+
+test_that("a node with no ties is as dissimilar in every class", {
+  sw <- add_nodes(ison_southern_women, 1, list(name = "Nobody", type = FALSE))
+  ref <- to_proximity(as_matrix(sw), similarity = "ochiai")
+  expect_false(anyNA(ref))
+  for(cl in c("tidygraph", "igraph", "stocnet", "network")){
+    out <- to_proximity(get(paste0("as_", cl))(sw), similarity = "ochiai")
+    expect_false(anyNA(as_matrix(out)), label = cl)
+    expect_equal(unname(as_matrix(out)), unname(ref), label = cl)
+  }
+})

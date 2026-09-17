@@ -70,7 +70,9 @@
 #'   and ego-alter ties are left implicit,
 #'   ego is added as a node with ties to each of its alters,
 #'   and every tie records the ego that reported it in a 'by' column,
-#'   making the result a cognitive social structure (see [is_cognitive()]).
+#'   making the result an egocentric network (see [is_egocentric()]).
+#'   It is not a cognitive social structure, since each ego reports on alters
+#'   of its own rather than on one roster of nodes (see [is_cognitive()]).
 #'   Use `ego = FALSE` to keep just the alters and the ties between them.
 #'   Note that node types are reported in a character 'nodeset' column rather
 #'   than a logical 'type' column, because ego networks are not two-mode:
@@ -449,7 +451,7 @@ read_dynetml <- function(file = file.choose()) {
 #'   of the network. By default TRUE.
 #'   Where ego is added, ties from ego to each of its alters are also added,
 #'   and every tie gains a 'by' column identifying the ego that reported it,
-#'   which makes the network a cognitive social structure (see [is_cognitive()]).
+#'   which makes the network an egocentric network (see [is_egocentric()]).
 #' @importFrom igraph set_graph_attr
 #' @export
 read_graphml <- function(file = file.choose(), ego = TRUE) {
@@ -631,7 +633,7 @@ read_graphml <- function(file = file.choose(), ego = TRUE) {
 # as <data> on the graph itself, and ego-alter ties are left implicit.
 # Since every tie in a session was reported by that session's ego, the sessions
 # can be combined into one network in which the reporter of each tie is
-# recorded in a 'by' column, i.e. a cognitive social structure.
+# recorded in a 'by' column, i.e. an egocentric network.
 .netcanvas_build <- function(parsed, key_map, ego = TRUE) {
   sessions <- lapply(seq_along(parsed), function(i)
     .netcanvas_session(parsed[[i]], i, ego))

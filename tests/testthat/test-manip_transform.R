@@ -797,3 +797,16 @@ test_that("to_undirected reconciles a tie only within one report", {
   expect_equal(as_matrix(to_undirected(as_stocnet(ison_networkers))),
                as_matrix(to_undirected(ison_networkers)))
 })
+
+test_that("to_undirected removes direction within the modes of a multilevel network", {
+  ml <- make_stocnet(
+    nodes = data.frame(label = c("p", "q", "x"),
+                       mode = c("people", "people", "events")),
+    ties = data.frame(from = c("p", "q", "p"), to = c("q", "p", "x"),
+                      by = c("p", "p", "q")),
+    info = list(directed = TRUE, modes = c("people", "events")))
+  und <- to_undirected(ml)
+  expect_false(is_directed(und))
+  # p's report of p->q and of q->p is now one tie
+  expect_equal(nrow(und$ties), 2)
+})

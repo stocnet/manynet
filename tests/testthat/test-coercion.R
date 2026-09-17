@@ -619,3 +619,35 @@ test_that("the validator reserves 'about' and no longer offers 'by' to brokers",
   expect_error(make_stocnet(ties = cbind(ties, about = 7L),
                             nodes = dplyr::tibble(.rows = 3)), "about")
 })
+
+test_that("a silent reporter is found even where nobody reported a tie", {
+  nodes <- c("A", "B", "C")
+  arr <- array(0, dim = c(3, 3, 3), dimnames = list(nodes, nodes, nodes))
+  arr[, , "B"] <- NA
+  diag(arr[, , "B"]) <- 0
+  css <- as_stocnet(arr, attribute = "by")
+  # only B did not report, and not every node whose ties are missing
+  expect_equal(css$nodes$na, c(FALSE, TRUE, FALSE))
+  expect_null(css$missings)
+  expect_true(is_cognitive(css))
+  expect_true(all(as_missinglist(css)$by == 2))
+  expect_equal(as_matrix(css), arr)
+})
+
+test_that("a multilevel network keeps its within-mode reports in an array", {
+  ml <- make_stocnet(
+    nodes = data.frame(label = c("p", "q", "x"),
+                       mode = c("people", "people", "events")),
+    ties = data.frame(from = c("p", "q", "p"), to = c("q", "p", "x"),
+                      by = c("p", "p", "q")),
+    info = list(directed = TRUE, modes = c("people", "events")))
+  expect_true(is_multilevel(ml))
+  arr <- as_matrix(ml)
+  expect_equal(dim(arr), c(3, 3, 3))
+  expect_equal(sum(arr), 3)
+  expect_equal(arr["q", "p", "p"], 1)
+})
+
+test_that("an array of more than three dimensions is refused", {
+  expect_error(as_stocnet(array(0, dim = c(2, 2, 2, 2))), "4 dimensions")
+})

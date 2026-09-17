@@ -188,10 +188,37 @@ to_proximity.data.frame <- function(.data, similarity = .proj_measures,
     snet_abort(paste0("The rows and columns of a two-mode network are ",
                       "different nodes, so they cannot be compared together. ",
                       "Use {.val rows} or {.val columns} instead."))
+  # A stocnet reads a tie of missing value as a tie it did not observe, and a
+  # network object drops the value, so both are compared as a tidygraph, where
+  # an undefined value can still be told apart and dropped, and converted back.
+  # As `to_mode1.stocnet()` and `to_mode2.stocnet()` do, a stocnet's changes
+  # are kept only for the nodes of the mode being compared.
+  if(inherits(.data, "stocnet")){
+    kept <- if(across == "rows") which(!node_is_mode(.data)) else
+      which(node_is_mode(.data))
+    return(as_stocnet(.proximity_twomode(
+      as_tidygraph(.project_changes(.data, kept)), similarity, across, dyad)))
+  }
+  if(inherits(.data, "network"))
+    return(as_network(.proximity_twomode(as_tidygraph(.data), similarity,
+                                         across, dyad)))
   out <- switch(across,
                 rows = to_mode1(.data, similarity),
                 columns = to_mode2(.data, similarity))
-  if(is.matrix(out)) .zero_missing(out) else out
+  if(is.matrix(out)) .zero_missing(out) else .drop_undefined_ties(out)
+}
+
+# The same for a projected network: a similarity of zero is no tie, so a tie
+# whose similarity is undefined is dropped rather than kept without a value.
+.drop_undefined_ties <- function(out){
+  if(is.data.frame(out)){
+    if(!"weight" %in% names(out)) return(out)
+    return(out[!is.na(out$weight), , drop = FALSE])
+  }
+  if(!inherits(out, "igraph")) return(out)
+  value <- igraph::edge_attr(out, "weight")
+  if(is.null(value) || !anyNA(value)) return(out)
+  delete_ties(out, which(is.na(value)))
 }
 
 # A node with no ties leaves some measures dividing by zero. It is reported

@@ -132,7 +132,10 @@ to_undirected.stocnet <- function(.data,
   ties <- .data$ties
   if(!.holds_node(ties[["by"]]) && !.holds_node(ties[["about"]]))
     return(as_stocnet(to_undirected(as_tidygraph(.data), rule = rule)))
-  if(!is_directed(.data) || is_twomode(.data)) return(.data)
+  # A multilevel network can hold directed ties within a mode, so only a
+  # network that is two-mode and nothing more has no direction to remove.
+  if(!is_directed(.data) || (is_twomode(.data) && !is_multilevel(.data)))
+    return(.data)
   groups <- intersect(c("layer", "time", "by", "about"), names(ties))
   valued <- "weight" %in% names(ties)
   value <- if(valued) ties$weight else rep(1, nrow(ties))
