@@ -12,9 +12,15 @@
 #'   - `as_infolist()` coerces the object into a list of network-level information, 
 #'   such as the names of the nodes and ties, if not given in the nodelist or edgelist.
 #'   - `as_matrix()` coerces the object into an adjacency (one-mode/unipartite) or incidence (two-mode/bipartite) matrix.
-#'   If the network is a cognitive social structure (i.e. the edgelist contains a 'by' column
-#'   indicating who reported/recorded each tie), `as_matrix()` returns a three-dimensional array
-#'   instead, with dimensions for senders, receivers, and reporters.
+#'   If the network is a cognitive social structure or an egocentric network
+#'   (i.e. the edgelist contains a 'by' column naming who reported each tie),
+#'   or a gossip network (with an 'about' column naming whom each tie is about),
+#'   `as_matrix()` returns a three-dimensional array instead,
+#'   with dimensions for senders, receivers, and reporters (or targets).
+#'   Every node takes a row, a column, and a slice, in the order of the nodes,
+#'   and a tie recorded as missing holds `NA`.
+#'   Where such a network has several layers, a list of one array for each
+#'   layer is returned.
 #'   Where a network holds parallel ties, i.e. where `tie_is_parallel()` is TRUE
 #'   for any tie, the cells of the matrix report how many ties join each pair
 #'   of nodes, and so may be greater than one even where the network is
@@ -233,9 +239,13 @@ as_edgelist.data.frame <- function(.data, twomode = FALSE) {
   if (ncol(.data) == 2 && any(names(.data) != c("from", "to"))) {
     names(.data) <- c("from", "to")
     .data
-  } else if(ncol(.data) == 3 && 
+  } else if(ncol(.data) == 3 &&
             (any(names(.data) != c("from", "to", "weight")) |
-            any(names(.data) != c("from", "to", "sign")))) {
+            any(names(.data) != c("from", "to", "sign"))) &&
+            # a third column naming the reporter or target of each tie is not
+            # a weight
+            !(identical(names(.data)[1:2], c("from", "to")) &&
+              names(.data)[3] %in% c("by", "about"))) {
     names(.data) <- c("from", "to", "weight")
     .data
   } else .data
@@ -259,10 +269,9 @@ as_edgelist.stocnet <- function(.data, twomode = NULL) {
   # once per dyad is reciprocated here. This also serves `as_igraph.stocnet()`
   # and, through it, every other class coerced to via igraph.
   out <- .reciprocate_layers(.data)
-  if(is_labelled(.data)){
-    out$from <- .data$nodes$label[out$from]
-    out$to <- .data$nodes$label[out$to]
-  }
+  # The reporter and the target of a tie are nodes too, so they are named
+  # the way its ends are.
+  if(is_labelled(.data)) out <- .label_tie_nodes(out, .data$nodes$label)
   if(ncol(out)==0) NULL else out
 }
 
@@ -492,41 +501,78 @@ as_missinglist.default <- function(.data) {
 as_matrix <- function(.data,
                       twomode = NULL) UseMethod("as_matrix")
 
-# Helper to convert cognitive social structure edgelist to 3D array
-.cognitive_to_array <- function(.data, twomode = NULL) {
-  if (is.data.frame(.data) && all(c("from", "to", "by") %in% names(.data))) {
-    el <- .data
-  } else {
-    el <- as_edgelist(.data)
-  }
-  if (!"by" %in% names(el)) {
-    stop("Expected a cognitive social structure with a 'by' column in the edgelist.")
-  }
-  reporters <- sort(unique(el$by))
-  from_nodes <- sort(unique(as.character(el$from)))
-  to_nodes <- sort(unique(as.character(el$to)))
-  # Determine if twomode
-  twomode_net <- if (!is.null(twomode)) twomode else is_twomode(.data)
-  if (twomode_net) {
-    row_nodes <- from_nodes
-    col_nodes <- to_nodes
-  } else {
-    all_nodes <- sort(unique(c(from_nodes, to_nodes)))
-    row_nodes <- all_nodes
-    col_nodes <- all_nodes
-  }
-  # Create 3D array: rows x cols x reporters
+# Which tie column, if any, a network names a third node in: 'by' for the
+# reporter of each tie, whether a reporter or an ego, and 'about' for its
+# target. A matrix gains a third dimension for it.
+.third_node_col <- function(.data){
+  held <- c(by = is_cognitive(.data) || is_egocentric(.data),
+            about = is_gossip(.data))
+  if(all(held))
+    snet_abort("This network names both the reporter and the target of its",
+               "ties, which a three-dimensional array cannot hold together.",
+               "Please drop one of the 'by' and 'about' columns first.")
+  names(held)[held][1]
+}
 
-  out <- array(0L, dim = c(length(row_nodes), length(col_nodes), 
-                           length(reporters)),
-               dimnames = list(row_nodes, col_nodes, reporters))
-  # Fill in the array
-  el_from <- as.character(el$from)
-  el_to <- as.character(el$to)
-  el_by <- as.character(el$by)
-  el_val <- if ("weight" %in% names(el)) el$weight else rep(1L, nrow(el))
-  for (i in seq_len(nrow(el))) {
-    out[el_from[i], el_to[i], el_by[i]] <- el_val[i]
+# A network whose ties name a third node, as a three-dimensional array of
+# senders, receivers, and that node. Every node takes its row, column, and
+# slice in the order of the nodelist, so that isolates, and reporters who
+# reported nothing, keep theirs. A tie recorded as missing holds NA.
+# Each layer is a separate array, since one array holds one relation, and a
+# layer whose ties name no third node gives an ordinary matrix.
+.third_node_array <- function(.data, col = "by"){
+  net <- as_stocnet(.data)
+  ties <- net$ties
+  if(!.holds_node(ties[[col]]))
+    snet_abort("Expected a network naming a node in a '{col}' column of its ties.")
+  layers <- if(!is.null(ties[["layer"]])) unique(as.character(ties$layer)) else NULL
+  if(length(layers) > 1){
+    out <- lapply(layers, function(layer){
+      sub <- to_uniplex(net, layer)
+      if(.holds_node(sub$ties[[col]])) .third_node_array(sub, col) else
+        as_matrix(sub)
+    })
+    return(stats::setNames(out, layers))
+  }
+  n <- nrow(net$nodes) %||%
+    max(c(ties$from, ties$to, ties[[col]]), na.rm = TRUE)
+  labels <- net$nodes[["label"]]
+  if(is_twomode(net)){
+    modes <- as.character(net$nodes$mode)
+    rows <- which(modes == modes[1])
+    cols <- setdiff(seq_len(n), rows)
+  } else rows <- cols <- seq_len(n)
+  out <- array(0, dim = c(length(rows), length(cols), n),
+               dimnames = if(is.null(labels)) NULL else
+                 list(labels[rows], labels[cols], labels))
+  undirected <- !is_directed(net) && !is_twomode(net)
+  cells <- function(tab){
+    idx <- cbind(match(tab$from, rows), match(tab$to, cols), tab[[col]])
+    if(undirected) idx <- rbind(idx, idx[idx[, 1] != idx[, 2], c(2, 1, 3),
+                                         drop = FALSE])
+    idx[stats::complete.cases(idx), , drop = FALSE]
+  }
+  ties <- ties[!is.na(ties[[col]]), , drop = FALSE]
+  if(nrow(ties)){
+    ties$value <- if("weight" %in% names(ties)) ties$weight else 1
+    if(undirected){
+      rev <- ties[ties$from != ties$to, , drop = FALSE]
+      rev[c("from", "to")] <- rev[c("to", "from")]
+      ties <- rbind(ties, rev)
+    }
+    idx <- cbind(match(ties$from, rows), match(ties$to, cols), ties[[col]])
+    keep <- stats::complete.cases(idx)
+    idx <- idx[keep, , drop = FALSE]
+    # Parallel records of one tie are counted, as `as_matrix()` counts them in
+    # a matrix of two dimensions.
+    key <- paste(idx[, 1], idx[, 2], idx[, 3])
+    sums <- rowsum(ties$value[keep], key, reorder = FALSE)
+    out[idx[!duplicated(key), , drop = FALSE]] <- sums[, 1]
+  }
+  missing <- as_missinglist(net)
+  if(!is.null(missing) && !is.null(missing[[col]])){
+    missing <- missing[!is.na(missing[[col]]), , drop = FALSE]
+    if(nrow(missing)) out[cells(missing)] <- NA
   }
   out
 }

@@ -82,9 +82,15 @@ as missing, as a tibble.
 \item \code{as_infolist()} coerces the object into a list of network-level information,
 such as the names of the nodes and ties, if not given in the nodelist or edgelist.
 \item \code{as_matrix()} coerces the object into an adjacency (one-mode/unipartite) or incidence (two-mode/bipartite) matrix.
-If the network is a cognitive social structure (i.e. the edgelist contains a 'by' column
-indicating who reported/recorded each tie), \code{as_matrix()} returns a three-dimensional array
-instead, with dimensions for senders, receivers, and reporters.
+If the network is a cognitive social structure or an egocentric network
+(i.e. the edgelist contains a 'by' column naming who reported each tie),
+or a gossip network (with an 'about' column naming whom each tie is about),
+\code{as_matrix()} returns a three-dimensional array instead,
+with dimensions for senders, receivers, and reporters (or targets).
+Every node takes a row, a column, and a slice, in the order of the nodes,
+and a tie recorded as missing holds \code{NA}.
+Where such a network has several layers, a list of one array for each
+layer is returned.
 Where a network holds parallel ties, i.e. where \code{tie_is_parallel()} is TRUE
 for any tie, the cells of the matrix report how many ties join each pair
 of nodes, and so may be greater than one even where the network is

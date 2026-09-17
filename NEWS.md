@@ -23,6 +23,8 @@
 - Improved `as_matrix()` on cognitive and gossip networks
   - Every node now takes a row, a column, and a slice, in node order
   - Missing ties now hold `NA`, and each layer gives an array of its own
+- Fixed how `as_edgelist()` treats cognitive and gossip networks
+  - No longer renames `by` and `about` to `from` and `to` or `weight`
 
 ## Manipulating
 
