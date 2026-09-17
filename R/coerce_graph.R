@@ -226,10 +226,9 @@ as_igraph.network <- function(.data,
   if(is.null(out) || !nrow(out)) return(NULL)
   if(all(is.na(out$layer))) out$layer <- NULL
   if(all(is.na(out$time))) out$time <- NULL
-  if(is_labelled(.data)){
-    out$from <- .data$nodes$label[out$from]
-    out$to <- .data$nodes$label[out$to]
-  }
+  for(col in c("by", "about"))
+    if(!is.null(out[[col]]) && all(is.na(out[[col]]))) out[[col]] <- NULL
+  if(is_labelled(.data)) out <- .label_tie_nodes(out, .data$nodes$label)
   out
 }
 
@@ -238,12 +237,7 @@ as_igraph.network <- function(.data,
 .missing_in <- function(missing, nodes){
   if(is.null(missing) || !nrow(missing)) return(NULL)
   missing <- dplyr::as_tibble(missing)
-  if(!is.numeric(missing$from) && !is.null(nodes[["label"]])){
-    missing$from <- match(as.character(missing$from), nodes$label)
-    missing$to <- match(as.character(missing$to), nodes$label)
-  }
-  missing$from <- as.integer(missing$from)
-  missing$to <- as.integer(missing$to)
+  missing <- .index_tie_nodes(missing, nodes[["label"]])
   missing[!is.na(missing$from) & !is.na(missing$to), , drop = FALSE]
 }
 
@@ -285,7 +279,9 @@ as_igraph.network <- function(.data,
     from <- pmin(ties$from, ties$to)
     to <- pmax(ties$from, ties$to)
   }
-  extra <- lapply(intersect(c("layer", "time"), names(ties)),
+  # Two reports of one tie are two ties, as are two pieces of gossip
+  # about different nodes, so 'by' and 'about' distinguish ties too.
+  extra <- lapply(intersect(c("layer", "time", "by", "about"), names(ties)),
                   function(col) as.character(ties[[col]]))
   do.call(paste, c(list(from, to), extra, list(sep = "\r")))
 }
@@ -972,15 +968,15 @@ as_network.networkDynamic <- function(.data, twomode = FALSE) {
 #' @rdname coerce_graph
 #' @export
 as_stocnet <- function(.data,
-                    twomode = FALSE) UseMethod("as_stocnet")
+                    twomode = FALSE, ...) UseMethod("as_stocnet")
 
 #' @export
-as_stocnet.stocnet <- function(.data, twomode = FALSE) {
+as_stocnet.stocnet <- function(.data, twomode = FALSE, ...) {
   .data
 }
 
 #' @export
-as_stocnet.data.frame <- function(.data, twomode = FALSE) {
+as_stocnet.data.frame <- function(.data, twomode = FALSE, ...) {
   out <- .data
   # make sure that the data frame has the right columns, rename them if necessary,
   # and then reorder them if necessary
@@ -1010,9 +1006,12 @@ as_stocnet.data.frame <- function(.data, twomode = FALSE) {
   }
   out <- out |> dplyr::select(from, to, dplyr::everything())
   if(!is.numeric(out$from) || !is.numeric(out$to)){
-   nodes <- unique(c(out$from, out$to))
-   out <- out |> dplyr::mutate(from = match(from, nodes),
-                              to = match(to, nodes))
+   # A reporter or a target need not be the end of any tie, so they are
+   # nodes too and are added after the ends.
+   cols <- intersect(.tie_node_cols, names(out))
+   nodes <- unique(unlist(lapply(cols, function(col) as.character(out[[col]]))))
+   nodes <- nodes[!is.na(nodes)]
+   out <- .index_tie_nodes(out, nodes)
    out <- make_stocnet(ties = out, nodes = data.frame(label = nodes))
   } else out <- make_stocnet(ties = out)
   if("increment" %in% colnames(.data)) out <- out |> 
@@ -1023,7 +1022,7 @@ as_stocnet.data.frame <- function(.data, twomode = FALSE) {
 }
 
 #' @export
-as_stocnet.igraph <- function(.data, twomode = FALSE) {
+as_stocnet.igraph <- function(.data, twomode = FALSE, ...) {
   info <- as_infolist(.data)
   nodes <- as_nodelist(.data)
   changes <- as_changelist(.data)
@@ -1036,13 +1035,11 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
     nodes <- dplyr::tibble(.rows = igraph::vcount(.data))
 
   if(is_labelled(.data)){
-    ties$from <- match(ties$from, nodes$name)
-    ties$to <- match(ties$to, nodes$name)
+    ties <- .index_tie_nodes(ties, nodes$name)
     nodes$label <- nodes$name
     nodes$name <- NULL
   } else {
-    ties$from <- as.integer(ties$from)
-    ties$to <- as.integer(ties$to)
+    ties <- .index_tie_nodes(ties, NULL)
   }
   # 'nodes' and 'ties' were the names an mnet gave the mode and layer names,
   # before 'modes' and 'layers' were reserved for them, so a network coerced
@@ -1155,13 +1152,88 @@ as_stocnet.igraph <- function(.data, twomode = FALSE) {
 
 #' @export
 as_stocnet.matrix <- function(.data,
-                           twomode = FALSE) {
- as_stocnet(as_tidygraph(.data, twomode = twomode)) 
+                           twomode = FALSE, ...) {
+ as_stocnet(as_tidygraph(.data, twomode = twomode))
+}
+
+#' @rdname coerce_graph
+#' @param attribute For a three-dimensional array, what its third dimension
+#'   holds, which becomes a column of the ties:
+#'   "time" for the waves of a panel,
+#'   "by" for the reporters of a cognitive social structure,
+#'   "about" for the targets of gossip,
+#'   or "layer" for the layers of a multiplex network.
+#'   An array cannot say which of these it holds.
+#'   Where its third dimension is as long as the network has nodes,
+#'   it could hold any of them, so this must be given.
+#'   Otherwise it cannot hold reporters or targets, and "time" is assumed.
+#' @param ... Further arguments passed to or from other methods,
+#'   such as `attribute` for an array.
+#' @export
+as_stocnet.array <- function(.data, twomode = FALSE, ...,
+                             attribute = c("time", "by", "about", "layer")) {
+  d <- dim(.data)
+  if(length(d) != 3)
+    snet_abort("Only arrays of two or three dimensions can be coerced to a network.")
+  twomode <- isTRUE(twomode) || d[1] != d[2]
+  n <- if(twomode) d[1] + d[2] else d[1]
+  if(missing(attribute)){
+    if(d[3] == n)
+      snet_abort("The third dimension of this array has one slice for each",
+                 "node, so it could hold reporters, targets, waves, or layers.",
+                 "Please say which with {.arg attribute},",
+                 "e.g. {.code attribute = \"by\"}.")
+    attribute <- "time"
+  }
+  attribute <- match.arg(attribute)
+  if(attribute %in% c("by", "about") && d[3] != n)
+    snet_abort("'{attribute}' needs one slice for each of the {n} nodes,",
+               "but this array has {d[3]}.")
+  # The nodes are read from the first slice, as a matrix of them would be.
+  nodes <- as_stocnet(.data[, , 1], twomode = twomode)$nodes
+  labels <- nodes[["label"]]
+  slices <- dimnames(.data)[[3]]
+  third <- switch(attribute,
+                  "by" = ,
+                  "about" = if(is.null(slices) || is.null(labels))
+                    seq_len(d[3]) else match(slices, labels),
+                  "time" = if(is.null(slices)) seq_len(d[3]) else
+                    if(!anyNA(suppressWarnings(as.numeric(slices))))
+                      as.numeric(slices) else slices,
+                  "layer" = if(is.null(slices)) as.character(seq_len(d[3])) else slices)
+  if(anyNA(third))
+    snet_abort("The slices {slices[is.na(third)]} do not name nodes of the network.")
+  directed <- !twomode && !all(vapply(seq_len(d[3]), function(k)
+    isSymmetric(unname(.data[, , k])), logical(1)))
+  ties <- dplyr::bind_rows(lapply(seq_len(d[3]), function(k){
+    slice <- .data[, , k]
+    # An undirected slice holds each tie once, on its dyad.
+    if(!twomode && !directed) slice[lower.tri(slice)] <- 0
+    idx <- which(is.na(slice) | slice != 0, arr.ind = TRUE)
+    if(!nrow(idx)) return(NULL)
+    dplyr::tibble(from = as.integer(idx[, 1]),
+                  to = as.integer(idx[, 2] + if(twomode) d[1] else 0L),
+                  value = slice[idx], slice = k)
+  }))
+  if(nrow(ties)){
+    ties[[attribute]] <- third[ties$slice]
+    ties$slice <- NULL
+    # A missing cell records a tie that was not observed, which is split
+    # from the ties by `make_stocnet()`.
+    ties$na <- is.na(ties$value)
+    if(all(ties$value[!ties$na] == 1)) ties$value <- NULL else
+      names(ties)[names(ties) == "value"] <- "weight"
+    if(!any(ties$na)) ties$na <- NULL
+  } else ties <- NULL
+  info <- list(directed = directed)
+  if(attribute == "by") info$observation <- "cognitive"
+  if(attribute == "layer") info$layers <- unique(third)
+  make_stocnet(info = info, nodes = nodes, ties = ties)
 }
   
 #' @export
 as_stocnet.network <- function(.data,
-                           twomode = FALSE) {
+                           twomode = FALSE, ...) {
   # Read edges together with all their attributes in a single, aligned pass so
   # that tie attributes (e.g. layer, time, weight) stay matched to their edges.
   edf <- network::as.data.frame.network(.data, unit = "edges", na.rm = FALSE)
@@ -1363,7 +1435,7 @@ as_siena.stocnet <- function(.data, twomode = FALSE) {
 # stocnet from sienadata ####
 
 #' @export
-as_stocnet.sienadata <- function(.data, twomode = FALSE) {
+as_stocnet.sienadata <- function(.data, twomode = FALSE, ...) {
   thisRequires("RSiena")
   sd <- .data
   W <- sd$observations

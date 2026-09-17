@@ -535,3 +535,87 @@ test_that("coercing to a network keeps what the network knows about itself", {
     expect_equal(network::get.network.attribute(via, f),
                  network::get.network.attribute(direct, f))
 })
+
+test_that("a cognitive social structure coerces to an array of every node", {
+  arr <- css_array()
+  css <- as_stocnet(arr, attribute = "by")
+  expect_equal(as_matrix(css), arr)
+  # the reporters are named in every class
+  expect_setequal(as_edgelist(css)$by, c("A", "B", "C", "D"))
+  for(net in list(as_igraph(css), as_tidygraph(css), as_network(css)))
+    expect_equal(as_matrix(net), arr)
+  expect_equal(as_stocnet(as_igraph(css))$ties, css$ties)
+  # an isolate, and a reporter with an empty report, keep their place
+  more <- add_nodes(css, 1, list(name = "E"))
+  expect_equal(dim(as_matrix(more)), c(5, 5, 5))
+  expect_equal(sum(as_matrix(more)[, , "E"]), 0)
+  # reporters given as labels are matched to the nodes
+  labelled <- make_stocnet(nodes = data.frame(label = c("A", "B", "C")),
+                           ties = data.frame(from = "A", to = "B", by = "C"))
+  expect_equal(labelled$ties$by, 3L)
+  expect_error(make_stocnet(nodes = data.frame(label = c("A", "B")),
+                            ties = data.frame(from = "A", to = "B", by = "Z")),
+               "do not match")
+  # an edgelist of reporters keeps them as reporters, and not as weights
+  el <- data.frame(from = "A", to = "B", by = "C")
+  expect_named(as_edgelist(el), c("from", "to", "by"))
+})
+
+test_that("an array coerces to a stocnet once it says what its slices hold", {
+  arr <- css_array()
+  expect_error(as_stocnet(arr), "attribute")
+  expect_equal(as_matrix(as_stocnet(arr, attribute = "by")), arr)
+  expect_equal(as_matrix(as_stocnet(arr, attribute = "about")), arr)
+  expect_error(as_stocnet(arr[, , 1:3], attribute = "by"), "one slice for each")
+  # waves are assumed where the slices cannot be one for each node
+  waves <- arr[, , 1:3]
+  dimnames(waves)[[3]] <- c("1", "2", "3")
+  panel <- as_stocnet(waves)
+  expect_equal(sort(unique(panel$ties$time)), c(1, 2, 3))
+  expect_true(all(vapply(1:3, function(w)
+    all(as_matrix(to_time(panel, w)) == waves[, , w]), logical(1))))
+  layered <- waves
+  dimnames(layered)[[3]] <- c("x", "y", "z")
+  multi <- as_stocnet(layered, attribute = "layer")
+  expect_equal(multi$info$layers, c("x", "y", "z"))
+  for(layer in c("x", "y", "z"))
+    expect_equal(as_matrix(to_uniplex(multi, layer)), layered[, , layer])
+})
+
+test_that("a node that did not report misses its whole report", {
+  arr <- css_array()
+  arr[, , "C"] <- NA
+  diag(arr[, , "C"]) <- 0
+  css <- as_stocnet(arr, attribute = "by")
+  expect_equal(css$nodes$na, c(FALSE, FALSE, TRUE, FALSE))
+  expect_null(css$missings)
+  missing <- as_missinglist(css)
+  expect_equal(nrow(missing), 12)
+  expect_true(all(missing$by == 3))
+  expect_equal(as_matrix(css), arr)
+  # the record survives a round trip through a class that lists each tie
+  expect_equal(as_stocnet(as_igraph(css))$nodes$na, css$nodes$na)
+  expect_equal(as_matrix(as_igraph(css)), arr)
+})
+
+test_that("a stocnet describes the third node its ties name", {
+  css <- as_stocnet(css_array(), attribute = "by")
+  expect_match(describe_network(css), "cognitive social structure$")
+  expect_match(describe_ties(css), "from 4 reporters$")
+  gossip <- as_stocnet(css_array(), attribute = "about")
+  expect_match(describe_network(gossip), "gossip network$")
+  expect_match(describe_ties(gossip), "about 4 targets$")
+  expect_equal(describe_network(ison_adolescents), "A labelled, undirected network")
+})
+
+test_that("the validator reserves 'about' and no longer offers 'by' to brokers", {
+  ties <- data.frame(from = 1:2, to = 2:3)
+  expect_warning(make_stocnet(ties = cbind(ties, observer = 1L),
+                              nodes = dplyr::tibble(.rows = 3)), "by")
+  expect_warning(make_stocnet(ties = cbind(ties, referent = 1L),
+                              nodes = dplyr::tibble(.rows = 3)), "about")
+  expect_no_warning(make_stocnet(ties = cbind(ties, tertius = 1L),
+                                 nodes = dplyr::tibble(.rows = 3)))
+  expect_error(make_stocnet(ties = cbind(ties, about = 7L),
+                            nodes = dplyr::tibble(.rows = 3)), "about")
+})

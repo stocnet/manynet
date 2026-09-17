@@ -25,6 +25,7 @@
   - Missing ties now hold `NA`, and each layer gives an array of its own
 - Fixed how `as_edgelist()` treats cognitive and gossip networks
   - No longer renames `by` and `about` to `from` and `to` or `weight`
+- Added `as_stocnet.array()` for arrays of layers, waves, reporters, or targets
 
 ## Manipulating
 

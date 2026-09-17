@@ -6,6 +6,7 @@
 \alias{as_tidygraph}
 \alias{as_network}
 \alias{as_stocnet}
+\alias{as_stocnet.array}
 \alias{as_siena}
 \alias{as_graphAM}
 \alias{as_diffusion}
@@ -18,7 +19,14 @@ as_tidygraph(.data, twomode = FALSE)
 
 as_network(.data, twomode = FALSE)
 
-as_stocnet(.data, twomode = FALSE)
+as_stocnet(.data, twomode = FALSE, ...)
+
+\method{as_stocnet}{array}(
+  .data,
+  twomode = FALSE,
+  ...,
+  attribute = c("time", "by", "about", "layer")
+)
 
 as_siena(.data, twomode = FALSE)
 
@@ -44,6 +52,20 @@ distinguishing incidence (two-mode/bipartite) from
 adjacency (one-mode/unipartite) networks.
 By default FALSE.}
 
+\item{...}{Further arguments passed to or from other methods,
+such as \code{attribute} for an array.}
+
+\item{attribute}{For a three-dimensional array, what its third dimension
+holds, which becomes a column of the ties:
+"time" for the waves of a panel,
+"by" for the reporters of a cognitive social structure,
+"about" for the targets of gossip,
+or "layer" for the layers of a multiplex network.
+An array cannot say which of these it holds.
+Where its third dimension is as long as the network has nodes,
+it could hold any of them, so this must be given.
+Otherwise it cannot hold reporters or targets, and "time" is assumed.}
+
 \item{events}{A table (data frame or tibble) of diffusion events
 with columns \code{t} indicating the time (typically an integer) of the event,
 \code{nodes} indicating the number or name of the node involved in the event,
@@ -53,33 +75,33 @@ and \code{event}, which can take on the values "I" for an infection event,
 \value{
 The currently implemented coercions or translations are:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{             data.frame default diff_model diffnet igraph list matrix mnet
-as_diffnet                               *                                
-as_diffusion                             *       *      *                *
-as_graphAM                    *                                     *     
-as_igraph             *                  *       *      *           *     
-as_network            *                          *      *           *     
-as_siena                      *                                           
-as_stocnet            *                                 *           *     
-as_tidygraph          *                  *       *      *    *      *     
-             network network.goldfish networkDynamic siena sienadata stocnet
-as_diffnet                                                                  
-as_diffusion                                                                
-as_graphAM                                                                  
-as_igraph          *                *              *     *         *       *
-as_network         *                *              *     *         *       *
-as_siena                                                                   *
-as_stocnet         *                                               *       *
-as_tidygraph       *                *              *     *         *       *
-             tbl_graph
-as_diffnet            
-as_diffusion          
-as_graphAM            
-as_igraph            *
-as_network           *
-as_siena              
-as_stocnet            
-as_tidygraph         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{             array data.frame default diff_model diffnet igraph list matrix
+as_diffnet                                     *                           
+as_diffusion                                   *       *      *            
+as_graphAM                          *                                     *
+as_igraph                   *                  *       *      *           *
+as_network                  *                          *      *           *
+as_siena                            *                                      
+as_stocnet       *          *                                 *           *
+as_tidygraph                *                  *       *      *    *      *
+             mnet network network.goldfish networkDynamic siena sienadata
+as_diffnet                                                               
+as_diffusion    *                                                        
+as_graphAM                                                               
+as_igraph               *                *              *     *         *
+as_network              *                *              *     *         *
+as_siena                                                                 
+as_stocnet              *                                               *
+as_tidygraph            *                *              *     *         *
+             stocnet tbl_graph
+as_diffnet                    
+as_diffusion                  
+as_graphAM                    
+as_igraph          *         *
+as_network         *         *
+as_siena           *          
+as_stocnet         *          
+as_tidygraph       *         *
 }\if{html}{\out{</div>}}
 
 \code{as_diffusion()} and \code{play_diffusion()} return a 'diff_model' object
