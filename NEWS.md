@@ -8,8 +8,15 @@
   - Added `width` argument to set the number of nodes in each blade
   - Where the nodes cannot form equal blades, the largest windmill is created and the surplus nodes are added as isolates, with a message, rather than a complete network (one-mode) or an error (two-mode)
   - Fixed two-mode windmills to mark the first mode as `type = FALSE`
-- Improved `create_wheel()` to return an `mnet` with network information, rather than an `igraph`, for one-mode networks too
+- Improved `create_wheel()` to return with network information
   - Fixed `create_wheel()` to take its directedness from a network passed to `n`
+
+## Classes
+
+- Improved ternary network (cognitive, egocentric, or gossip) support in `stocnet` objects
+  - Reserved `$about` for gossip networks' targets, and `$by` for the reporter
+  - Non-respondent reporters now miss their whole report
+  - Printing now names cognitive, egocentric, and gossip networks
 
 ## Manipulating
 

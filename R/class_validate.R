@@ -37,9 +37,16 @@ validate_ties <- function(.data){
   reserved_cols(.data, "ties", "to", "integer", 
            aka = c("target", "receiver", "alter"),
            pool = seq_nodes(.data))
-  reserved_cols(.data, "ties", "by", "integer", 
-                aka = c("tertius", "third", "about", "referent", "regarding"),
-                pool = seq_nodes(.data))
+  # 'by' names the node that reported a tie, as in a cognitive social
+  # structure, and 'about' the node a tie is about, as in gossip. Either may be
+  # NA, for a layer that no node reported or that is about no node.
+  # A broker, or 'tertius', sits between the ends of a tie and is neither.
+  reserved_cols(.data, "ties", "by", "integer",
+                aka = c("observer", "perceiver", "reporter"),
+                pool = c(seq_nodes(.data), NA))
+  reserved_cols(.data, "ties", "about", "integer",
+                aka = c("referent", "regarding", "subject"),
+                pool = c(seq_nodes(.data), NA))
   reserved_cols(.data, "ties", "weight", 
                 class = c("numeric","integer"), 
            aka = c("value", "strength", "val", "sign"))
@@ -120,6 +127,10 @@ validate_missings <- function(.data){
   reserved_cols(.data, "missings", "to", "integer",
                 aka = c("target", "receiver", "alter"),
                 pool = seq_nodes(.data))
+  reserved_cols(.data, "missings", "by", "integer",
+                pool = c(seq_nodes(.data), NA))
+  reserved_cols(.data, "missings", "about", "integer",
+                pool = c(seq_nodes(.data), NA))
   reserved_cols(.data, "missings", "layer", "character",
                 aka = c("type", "plex", "tie"))
   reserved_cols(.data, "missings", "time",

@@ -39,10 +39,35 @@ describe_network <- function(.data) {
          # multilevel already says that it is not one-mode, and says more
          # besides: that its levels are tied within as well as between.
          ifelse(is_multilevel(.data), "multilevel",
-                ifelse(is_twomode(.data), "two-mode", 
+                ifelse(is_twomode(.data), "two-mode",
                        ifelse(is_directed(.data), "directed", "undirected"))),
-         " network"
+         .network_noun(.data)
   )
+}
+
+# What kind of network a network is, where its ties name a third node.
+# A cognitive social structure is several reports of one network rather than
+# one network, so it is named as such.
+.network_noun <- function(.data){
+  if(is_cognitive(.data)) " cognitive social structure" else
+    if(is_egocentric(.data)) " egocentric network" else
+      if(is_gossip(.data)) " gossip network" else " network"
+}
+
+# Who reported the ties, and whom they are about, where the ties say.
+.third_node_phrase <- function(.data){
+  count <- function(col) length(unique(stats::na.omit(tie_attribute(.data, col))))
+  out <- ""
+  if(is_cognitive(.data) || is_egocentric(.data)){
+    k <- count("by")
+    noun <- if(is_egocentric(.data)) "ego" else "reporter"
+    out <- paste0(out, " from ", k, " ", if(k == 1) noun else paste0(noun, "s"))
+  }
+  if(is_gossip(.data)){
+    k <- count("about")
+    out <- paste0(out, " about ", k, " ", if(k == 1) "target" else "targets")
+  }
+  out
 }
 
 # The level each tie occupies: "between", where its ends are in different
@@ -113,7 +138,8 @@ describe_ties <- function(.data){
   # Parallel ties are reported as a count and not as a property of the network,
   # since a network holds them without every tie in it running parallel.
   npar <- sum(tie_is_parallel(.data))
-  parallel <- if(npar) paste0(" (", npar, " parallel)") else ""
+  parallel <- paste0(if(npar) paste0(" (", npar, " parallel)") else "",
+                     .third_node_phrase(.data))
   if(!is.null(layer_names(.data))){
     # Where a network records the directedness of each layer, an undirected
     # layer of an otherwise directed network holds ties rather than arcs.

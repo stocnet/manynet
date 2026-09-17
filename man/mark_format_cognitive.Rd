@@ -3,9 +3,15 @@
 \name{mark_format_cognitive}
 \alias{mark_format_cognitive}
 \alias{is_cognitive}
+\alias{is_egocentric}
+\alias{is_gossip}
 \title{Marking networks cognitive formats}
 \usage{
 is_cognitive(.data)
+
+is_egocentric(.data)
+
+is_gossip(.data)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -19,16 +25,55 @@ is_cognitive(.data)
 }}
 }
 \description{
-These functions implement logical tests for various network properties.
+These functions implement logical tests for networks whose ties name a
+third node as well as the two nodes each tie runs between.
 All \verb{is_*()} functions return a logical scalar (TRUE or FALSE).
 \itemize{
-\item \code{is_cognitive()} marks networks TRUE if they are cognitive social structures,
-i.e. where the edgelist contains a 'by' column indicating who reported/recorded
-each tie, in addition to the 'from' and 'to' columns.
+\item \code{is_cognitive()} marks networks TRUE if they are cognitive social
+structures, i.e. where the edgelist contains a 'by' column naming the
+node that reported each tie, and all of them report on one roster
+of nodes.
+\item \code{is_egocentric()} marks networks TRUE if the edgelist contains a 'by'
+column naming the ego that reported each tie, but each ego reports on
+alters of its own.
+\item \code{is_gossip()} marks networks TRUE if the edgelist contains an 'about'
+column naming the node each tie is about, as where a sender tells a
+receiver about a target.
 }
+}
+\details{
+A cognitive social structure (Krackhardt 1987) asks each respondent about
+every pair of nodes in one roster, so each report is a network
+of the same nodes.
+An egocentric design instead asks each ego to name alters of its own,
+as a name generator does, so the egos' reports share no nodes.
+Both record the reporter in a 'by' column.
+They are told apart by the network's 'observation' information,
+"cognitive" or "egocentric", and where that is not given,
+by whether any two reports share a node.
+Note that \code{is_egonet()} marks something else: a list of networks,
+each of one ego and its ties.
+
+A 'by' or 'about' column that holds only \code{NA} names no node,
+so a network whose other layers hold one is not marked.
+
+A three-dimensional array cannot say what its third dimension holds,
+which may be reporters, targets, waves, or layers.
+\code{is_cognitive()} marks an array TRUE where that dimension could hold one
+reporter for each node, and \code{is_egocentric()} and \code{is_gossip()} do not
+mark arrays.
+\code{as_stocnet()} asks which of these an array holds.
 }
 \examples{
 is_cognitive(create_filled(3))
+is_egocentric(create_filled(3))
+is_gossip(create_filled(3))
+}
+\references{
+Krackhardt, David. 1987.
+"Cognitive social structures".
+\emph{Social Networks} 9(2): 109-134.
+\doi{10.1016/0378-8733(87)90009-8}
 }
 \seealso{
 Other marks:

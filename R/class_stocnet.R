@@ -95,8 +95,10 @@
 #'   Inactive nodes are not in the network, so cannot hold incoming nor outgoing ties.
 #'   - 'na' should be a logical vector indicating which nodes were non-responsive,
 #'   despite being in the network.
-#'   Non-responsive nodes are in the network, so can hold incoming ties, 
+#'   Non-responsive nodes are in the network, so can hold incoming ties,
 #'   but cannot report outgoing ties.
+#'   Where a layer's ties name who reported them,
+#'   a non-responsive node instead missed its whole report of that layer.
 #'   See [as_missinglist()].
 #' @section Changes:
 #'   There are several required names for the columns of the changes component of a stocnet object (if one is included).
@@ -129,6 +131,17 @@
 #'   
 #'   There are also several reserved names for the columns of the ties component of a stocnet object.
 #'   - 'layer' should be a character vector of the layer of each tie in a multiplex or multilayer network
+#'   - 'by' should be an integer vector of the node that reported
+#'   each tie, as in a cognitive social structure or an egocentric network.
+#'   - 'about' should be an integer vector of the node each tie is about,
+#'   as where a sender tells a receiver about a target.
+#'   Like 'from' and 'to', these two are always held as indices into the
+#'   nodes, never as labels.
+#'   `make_stocnet()` converts labels given for any of the four into those
+#'   indices, and coercion to a labelled class converts them back.
+#'   Either may be `NA`, for a layer that no node reported or that is about
+#'   no node.
+#'   See the Third nodes section.
 #'   - 'weight' should be a numeric vector of the weights of the ties in a weighted network
 #'   If the weight vector includes also negative values, then the network is a signed network, 
 #'   and the sign of the tie can be determined from the weight.
@@ -156,6 +169,26 @@
 #'   which each global attribute is updated.
 #'   Globals are carried forward the way changes are: a value holds from the
 #'   moment it is recorded at until another value states otherwise.
+#' @section Third nodes:
+#'   Some designs record a third node for each tie, as well as the two nodes
+#'   it runs between.
+#'   A cognitive social structure (Krackhardt 1987) asks each respondent about
+#'   every pair of nodes in one roster, and so records each tie once for each
+#'   node that reported it, in the 'by' column.
+#'   An egocentric design also records the ego that reported each tie in 'by',
+#'   but each ego names alters of its own.
+#'   Gossip records the node that a tie is about in the 'about' column.
+#'   `is_cognitive()`, `is_egocentric()`, and `is_gossip()` mark these,
+#'   and the 'observation' information tells the first two apart.
+#'
+#'   Each report is a network of its own, so reports of one tie by
+#'   two reporters are two records and not parallel ties.
+#'   `as_matrix()` returns such a network as a three-dimensional array of
+#'   senders, receivers, and reporters (or targets),
+#'   and `as_stocnet()` reads one back, once told what the third dimension
+#'   holds.
+#'   Functions that renumber or delete nodes renumber these columns too,
+#'   and drop the reports of a deleted reporter.
 #' @section Missings:
 #'   The missings component lists the ties the network could have observed and
 #'   did not, one row each, where these are not already implied by an inactive
@@ -269,30 +302,74 @@ make_stocnet <- function(info = NULL, nodes = NULL, ties = NULL,
   validate_stocnet(out)
 }
 
+# The tie columns that name nodes, each held as an index into the nodelist:
+# the two ends of a tie, the node that observed it ('by'), and the node it is
+# about ('about'). Whatever renumbers the nodes renumbers all of these, since
+# an index into a nodelist that has changed points at the wrong node.
+.tie_node_cols <- c("from", "to", "by", "about")
+
 # The ties and the missings both list dyads, so both are indexed the same way.
+# 'by' and 'about' may hold NA, for a layer that no node reported or that is
+# about no node, so only a label that is given and not found is an error.
 index_ties <- function(.data, component = "ties"){
   out <- .data
   dyads <- out[[component]]
   if (is.null(dyads) || nrow(dyads) == 0) return(out)
-  if(!is.null(out$nodes) && "label" %in% names(out$nodes) &&
-     is.character(dyads$from) && is.character(dyads$to) &&
-     is.character(out$nodes$label)){
-    dyads <- dyads |>
-      dplyr::mutate(from = match(from, out$nodes$label),
-                    to = match(to, out$nodes$label))
-    if(anyNA(c(dyads$from, dyads$to))){
-      missing_nodes <- unique(c(.data[[component]]$from[is.na(dyads$from)],
-                                .data[[component]]$to[is.na(dyads$to)]))
-      snet_abort("Tie labels {missing_nodes} do not match existing node labels.")
+  labels <- out$nodes[["label"]]
+  missing_nodes <- character(0)
+  for(col in intersect(.tie_node_cols, names(dyads))){
+    x <- dyads[[col]]
+    if(is.character(x) && is.character(labels)){
+      idx <- match(x, labels)
+      missing_nodes <- c(missing_nodes, x[!is.na(x) & is.na(idx)])
+      x <- idx
     }
+    if(is.numeric(x) || all(is.na(x))) x <- as.integer(x)
+    dyads[[col]] <- x
   }
-  if(is.numeric(dyads$from) || is.numeric(dyads$to)){
-    dyads <- dyads |>
-      dplyr::mutate(from = as.integer(from),
-                    to = as.integer(to))
+  if(length(missing_nodes)){
+    missing_nodes <- unique(missing_nodes)
+    snet_abort("Tie labels {missing_nodes} do not match existing node labels.")
   }
   out[[component]] <- dyads
   out
+}
+
+# Renumber the node columns of a table of ties, where `map[old]` gives each old
+# index its new one and NA where that node is gone. A tie is dropped where any
+# node it names is gone, since a tie cannot run from, be observed by, or be
+# about a node that is no longer in the network.
+.remap_tie_nodes <- function(ties, map){
+  if(is.null(ties) || nrow(ties) == 0) return(ties)
+  keep <- rep(TRUE, nrow(ties))
+  for(col in intersect(.tie_node_cols, names(ties))){
+    old <- ties[[col]]
+    new <- map[old]
+    keep <- keep & (is.na(old) | !is.na(new))
+    ties[[col]] <- as.integer(new)
+  }
+  ties[keep, , drop = FALSE]
+}
+
+# The node columns of a table of ties given as labels, for the classes that
+# name their nodes.
+.label_tie_nodes <- function(ties, labels){
+  for(col in intersect(.tie_node_cols, names(ties)))
+    ties[[col]] <- labels[ties[[col]]]
+  ties
+}
+
+# The reverse: node columns given as labels matched to indices again. A column
+# that already holds indices is kept as it is.
+.index_tie_nodes <- function(ties, labels){
+  for(col in intersect(.tie_node_cols, names(ties))){
+    x <- ties[[col]]
+    if(is.factor(x)) x <- as.character(x)
+    # Without labels, a node given as text is an index written as text.
+    ties[[col]] <- if(is.character(x) && !is.null(labels))
+      match(x, labels) else as.integer(x)
+  }
+  ties
 }
 
 index_changes <- function(.data){

@@ -194,6 +194,8 @@ Inactive nodes are not in the network, so cannot hold incoming nor outgoing ties
 despite being in the network.
 Non-responsive nodes are in the network, so can hold incoming ties,
 but cannot report outgoing ties.
+Where a layer's ties name who reported them,
+a non-responsive node instead missed its whole report of that layer.
 See \code{\link[=as_missinglist]{as_missinglist()}}.
 }
 }
@@ -240,6 +242,17 @@ There are several required names for the columns of the ties component of a stoc
 There are also several reserved names for the columns of the ties component of a stocnet object.
 \itemize{
 \item 'layer' should be a character vector of the layer of each tie in a multiplex or multilayer network
+\item 'by' should be an integer vector of the node that reported
+each tie, as in a cognitive social structure or an egocentric network.
+\item 'about' should be an integer vector of the node each tie is about,
+as where a sender tells a receiver about a target.
+Like 'from' and 'to', these two are always held as indices into the
+nodes, never as labels.
+\code{make_stocnet()} converts labels given for any of the four into those
+indices, and coercion to a labelled class converts them back.
+Either may be \code{NA}, for a layer that no node reported or that is about
+no node.
+See the Third nodes section.
 \item 'weight' should be a numeric vector of the weights of the ties in a weighted network
 If the weight vector includes also negative values, then the network is a signed network,
 and the sign of the tie can be determined from the weight.
@@ -273,6 +286,29 @@ which each global attribute is updated.
 Globals are carried forward the way changes are: a value holds from the
 moment it is recorded at until another value states otherwise.
 }
+}
+
+\section{Third nodes}{
+
+Some designs record a third node for each tie, as well as the two nodes
+it runs between.
+A cognitive social structure (Krackhardt 1987) asks each respondent about
+every pair of nodes in one roster, and so records each tie once for each
+node that reported it, in the 'by' column.
+An egocentric design also records the ego that reported each tie in 'by',
+but each ego names alters of its own.
+Gossip records the node that a tie is about in the 'about' column.
+\code{is_cognitive()}, \code{is_egocentric()}, and \code{is_gossip()} mark these,
+and the 'observation' information tells the first two apart.
+
+Each report is a network of its own, so reports of one tie by
+two reporters are two records and not parallel ties.
+\code{as_matrix()} returns such a network as a three-dimensional array of
+senders, receivers, and reporters (or targets),
+and \code{as_stocnet()} reads one back, once told what the third dimension
+holds.
+Functions that renumber or delete nodes renumber these columns too,
+and drop the reports of a deleted reporter.
 }
 
 \section{Missings}{
