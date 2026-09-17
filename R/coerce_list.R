@@ -534,7 +534,8 @@ as_matrix <- function(.data,
 #' @export
 as_matrix.data.frame <- function(.data,
                                  twomode = NULL) {
-  if (is_cognitive(.data)) return(.cognitive_to_array(.data, twomode = twomode))
+  third <- .third_node_col(.data)
+  if (!is.na(third)) return(.third_node_array(.data, third))
   if ("tbl_df" %in% class(.data)) .data <- as.data.frame(.data)
   # A third column of nothing but ones and zeroes is not a weight, but where
   # any of its values are missing it still has to be read, since a tie recorded
@@ -640,7 +641,8 @@ as_matrix.matrix <- function(.data,
 #' @export
 as_matrix.igraph <- function(.data,
                              twomode = NULL) {
-  if (is_cognitive(.data)) return(.cognitive_to_array(.data, twomode = twomode))
+  third <- .third_node_col(.data)
+  if (!is.na(third)) return(.third_node_array(.data, third))
   if ((!is.null(twomode) && twomode) |
       (is.null(twomode) & is_twomode(.data) & !is_multiplex(.data))) {
     if (is_weighted(.data) | is_signed(.data) | .holds_missing_ties(.data)) {
@@ -675,14 +677,16 @@ as_matrix.igraph <- function(.data,
 #' @export
 as_matrix.tbl_graph <- function(.data,
                                 twomode = NULL) {
-  if (is_cognitive(.data)) return(.cognitive_to_array(.data, twomode = twomode))
+  third <- .third_node_col(.data)
+  if (!is.na(third)) return(.third_node_array(.data, third))
   as_matrix(as_igraph(.data), twomode = twomode)
 }
 
 #' @export
 as_matrix.network <- function(.data,
                               twomode = NULL) {
-  if (is_cognitive(.data)) return(.cognitive_to_array(.data, twomode = twomode))
+  third <- .third_node_col(.data)
+  if (!is.na(third)) return(.third_node_array(.data, third))
   if (network::is.bipartite(.data)) {
     if ("weight" %in% network::list.edge.attributes(.data)) {
       out <- network::as.matrix.network(.data,
@@ -759,7 +763,8 @@ as_matrix.diff_model <- function(.data,
 #' @export
 as_matrix.stocnet <- function(.data,
                                  twomode = FALSE) {
-  if (is_cognitive(.data)) return(.cognitive_to_array(.data, twomode = twomode))
+  third <- .third_node_col(.data)
+  if (!is.na(third)) return(.third_node_array(.data, third))
   as_matrix(as_igraph(.data, twomode = twomode))
 }
 

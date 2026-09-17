@@ -18,6 +18,12 @@
   - Non-respondent reporters now miss their whole report
   - Printing now names cognitive, egocentric, and gossip networks
 
+## Coercion
+
+- Improved `as_matrix()` on cognitive and gossip networks
+  - Every node now takes a row, a column, and a slice, in node order
+  - Missing ties now hold `NA`, and each layer gives an array of its own
+
 ## Manipulating
 
 - Fixed `add_node_attribute()` on a `stocnet` to put a "name" attribute in the reserved "label" column, so that the network can still be coerced to other classes
