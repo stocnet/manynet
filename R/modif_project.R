@@ -84,7 +84,7 @@ NULL
 #'   degree. xUCINET keeps that count for valued data too, where it can
 #'   exceed 1 and is no longer the coefficient.
 #'   - "ruzicka" divides "crossmin" by the two nodes' combined tie strength
-#'   less that shared, Ruzicka's weighted Jaccard coefficient, and so also
+#'   less than shared, Ruzicka's weighted Jaccard coefficient, and so also
 #'   lies in \eqn{[0,1]}. For binary data it is "jaccard", so use it where
 #'   "jaccard" is wanted but the tie strengths should be kept.
 #'   - "maxcrossmin" takes the largest such minimum rather than their sum,

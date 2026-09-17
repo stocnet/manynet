@@ -1013,7 +1013,17 @@ as_stocnet.data.frame <- function(.data, twomode = FALSE, ...) {
    nodes <- nodes[!is.na(nodes)]
    out <- .index_tie_nodes(out, nodes)
    out <- make_stocnet(ties = out, nodes = data.frame(label = nodes))
-  } else out <- make_stocnet(ties = out)
+  } else {
+    # A reporter or a target may be numbered beyond the ends of every tie,
+    # and is a node of the network all the same, so the nodes are counted
+    # there too. Otherwise the ends alone say how many nodes there are.
+    ends <- max(c(0, out$from, out$to), na.rm = TRUE)
+    named <- unlist(lapply(intersect(c("by", "about"), names(out)),
+                           function(col) out[[col]]))
+    n <- max(c(ends, named), na.rm = TRUE)
+    out <- make_stocnet(ties = out,
+                        nodes = if(n > ends) dplyr::tibble(.rows = n) else NULL)
+  }
   if("increment" %in% colnames(.data)) out <- out |> 
     mutate_info(update = "increment")
   if("replace" %in% colnames(.data)) out <- out |> 

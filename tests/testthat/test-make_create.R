@@ -166,3 +166,11 @@ test_that("explicit creation works", {
   expect_s3_class(create_explicit(A -+ B, B -+ C, A +-+ C, D, as = "tidygraph"),
                   "tbl_graph")
 })
+
+test_that("create_windmill refuses a blade width that is not a whole number", {
+  for(width in list(0, NA, 2.5, "2", c(2, 3))){
+    expect_error(create_windmill(7, width = width), "whole number")
+    expect_error(create_windmill(c(3, 6), width = width), "whole number")
+  }
+  expect_equal(as.numeric(net_nodes(create_windmill(c(3, 6), width = 2))), 9)
+})

@@ -367,6 +367,12 @@ from_ties <- from_layers
       net$ties$layer[is.na(net$ties$layer)] <- layers
     }
   }
+  # A tie missing from a network is missing from its layer, once that network
+  # is one layer of several.
+  if(!is.null(net$missings) && nrow(net$missings) && length(layers) == 1){
+    if(!"layer" %in% names(net$missings)) net$missings$layer <- layers else
+      net$missings$layer[is.na(net$missings$layer)] <- layers
+  }
   
   if(length(layers) == 1){
     for(field in c("directed", "observation", "update")){
@@ -446,6 +452,8 @@ from_ties <- from_layers
 # Apply a from-old-to-new node index map to ties$from/to and changes$node
 .apply_reindex <- function(net, new_idx){
   if(!is.null(net$ties)) net$ties <- .remap_tie_nodes(net$ties, new_idx)
+  if(!is.null(net$missings))
+    net$missings <- .remap_tie_nodes(net$missings, new_idx)
   if(!is.null(net$changes)){
     net$changes$node <- new_idx[net$changes$node]
   }

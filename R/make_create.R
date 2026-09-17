@@ -585,6 +585,11 @@ create_core <- function(n, directed = FALSE, mark = NULL) {
 create_windmill <- function(n, directed = FALSE, width = NULL) {
   directed <- infer_directed(n, directed)
   n <- infer_n(n)
+  # A blade holds a whole number of nodes, and at least one.
+  if (!is.null(width) &&
+      (!is.numeric(width) || length(width) != 1 || is.na(width) ||
+       width < 1 || width != round(width)))
+    snet_abort("`width` must be a single whole number of at least 1.")
   if (length(n) == 1) {
     if (n < 3) {
       snet_abort("At least 3 nodes required to form a windmill graph.")

@@ -537,7 +537,7 @@ as_matrix <- function(.data,
     return(stats::setNames(out, layers))
   }
   n <- nrow(net$nodes) %||%
-    max(c(ties$from, ties$to, ties[[col]]), na.rm = TRUE)
+    max(c(0, ties$from, ties$to, ties[[col]]), na.rm = TRUE)
   labels <- net$nodes[["label"]]
   # A multilevel network ties nodes within a mode too, so it takes every node
   # on both of the first two dimensions, as a one-mode network does.

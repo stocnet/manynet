@@ -84,6 +84,8 @@
   empty <- dplyr::tibble(from = integer(0), to = integer(0),
                          layer = character(0), time = numeric(0))
   if(is.null(.data$nodes) && is.null(.data$ties)) return(empty)
+  # A network without nodes has no tie it could have missed.
+  if(as.numeric(net_nodes(.data)) == 0) return(empty)
   times <- .stocnet_times(.data)
   na_state <- .node_state(.data, "na", times, default = FALSE)
   act_state <- .node_state(.data, "active", times, default = TRUE)

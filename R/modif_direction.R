@@ -139,7 +139,15 @@ to_undirected.stocnet <- function(.data,
   groups <- intersect(c("layer", "time", "by", "about"), names(ties))
   valued <- "weight" %in% names(ties)
   value <- if(valued) ties$weight else rep(1, nrow(ties))
-  loops <- ties$from == ties$to
+  # A layer already held as undirected holds one row per dyad, which is not a
+  # tie in one direction only, so its rows are kept as they are, as loops are.
+  if("layer" %in% names(ties)){
+    layers <- unique(as.character(ties$layer))
+    undirected <- layers[!vapply(layers, function(l) layer_is_directed(.data, l),
+                                 logical(1))]
+    settled <- as.character(ties$layer) %in% undirected
+  } else settled <- rep(FALSE, nrow(ties))
+  loops <- ties$from == ties$to | settled
   key <- do.call(paste, c(list(pmin(ties$from, ties$to), pmax(ties$from, ties$to)),
                           lapply(groups, function(g) as.character(ties[[g]])),
                           list(sep = "\r")))
@@ -179,6 +187,10 @@ to_undirected.stocnet <- function(.data,
   out <- dplyr::bind_rows(out[keep, , drop = FALSE],
                           ties[loops, , drop = FALSE])[order_kept, , drop = FALSE]
   info <- .data$info
+  # A rule such as "min" can leave a layer without any tie, and a layer
+  # without ties is no longer a layer of the network.
+  if("layer" %in% names(out))
+    info <- .prune_layer_info(info, unique(as.character(out$layer)))
   info$directed <- if(is.null(names(info$directed))) FALSE else
     stats::setNames(rep(FALSE, length(info$directed)), names(info$directed))
   entry <- if(connected == 0) rule else

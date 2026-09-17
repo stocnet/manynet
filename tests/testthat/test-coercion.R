@@ -667,3 +667,21 @@ test_that("a reporter column that names nobody is not read as a weight", {
   expect_equal(as_matrix(data.frame(from = 1, to = 2, by = NA)),
                as_matrix(data.frame(from = 1, to = 2)))
 })
+
+test_that("an edgelist of indices counts its reporters and targets as nodes", {
+  css <- as_stocnet(data.frame(from = 1, to = 2, by = 3))
+  expect_equal(as.numeric(net_nodes(css)), 3)
+  expect_true(is_cognitive(css))
+  gossip <- as_stocnet(data.frame(from = 1, to = 2, about = 3))
+  expect_equal(as.numeric(net_nodes(gossip)), 3)
+  # an edgelist without them is read as it always was
+  expect_null(as_stocnet(data.frame(from = 1:2, to = 2:3))$nodes)
+})
+
+test_that("a network without nodes gives an empty array", {
+  empty <- make_stocnet(ties = dplyr::tibble(from = integer(0), to = integer(0),
+                                             by = integer(0)),
+                        info = list(observation = "cognitive"))
+  expect_equal(dim(as_matrix(empty)), c(0, 0, 0))
+  expect_null(as_missinglist(empty))
+})
