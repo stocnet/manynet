@@ -1204,8 +1204,10 @@ as_stocnet.array <- function(.data, twomode = FALSE, ...,
   if(attribute %in% c("by", "about") && d[3] != n)
     snet_abort("'{attribute}' needs one slice for each of the {n} nodes,",
                "but this array has {d[3]}.")
-  # The nodes are read from the first slice, as a matrix of them would be.
+  # The nodes are read from the first slice, as a matrix of them would be,
+  # without what that slice alone records about who did not report.
   nodes <- as_stocnet(.data[, , 1], twomode = twomode)$nodes
+  if(!is.null(nodes)) nodes$na <- NULL
   labels <- nodes[["label"]]
   slices <- dimnames(.data)[[3]]
   third <- switch(attribute,
@@ -1225,36 +1227,37 @@ as_stocnet.array <- function(.data, twomode = FALSE, ...,
   # them is.
   directed <- if(attribute == "layer") !twomode & !symmetric else
     rep(!twomode && !all(symmetric), d[3])
-  ties <- dplyr::bind_rows(lapply(seq_len(d[3]), function(k){
+  # Whether the ties carry values is decided for the array as a whole, so that
+  # the slices that hold only ones do not read as ties of unknown value.
+  cells <- .data[!is.na(.data)]
+  valued <- any(cells != 0 & cells != 1)
+  # Each slice is a network of its own, and they are joined as the matching
+  # `from_*()` function joins a list of them, so that the two agree.
+  nets <- lapply(seq_len(d[3]), function(k){
     slice <- .data[, , k]
     # An undirected slice holds each tie once, on its dyad.
     if(!twomode && !directed[k]) slice[lower.tri(slice)] <- 0
     idx <- which(is.na(slice) | slice != 0, arr.ind = TRUE)
-    if(!nrow(idx)) return(NULL)
-    dplyr::tibble(from = as.integer(idx[, 1]),
-                  to = as.integer(idx[, 2] + if(twomode) d[1] else 0L),
-                  value = slice[idx], slice = k)
-  }))
-  if(nrow(ties)){
-    ties[[attribute]] <- third[ties$slice]
-    ties$slice <- NULL
+    ties <- dplyr::tibble(from = as.integer(idx[, 1]),
+                          to = as.integer(idx[, 2] + if(twomode) d[1] else 0L))
+    if(valued) ties$weight <- slice[idx]
     # A missing cell records a tie that was not observed, which is split
     # from the ties by `make_stocnet()`.
-    ties$na <- is.na(ties$value)
-    if(all(ties$value[!ties$na] == 1)) ties$value <- NULL else
-      names(ties)[names(ties) == "value"] <- "weight"
-    if(!any(ties$na)) ties$na <- NULL
-  } else if(attribute %in% c("by", "about")){
-    # An array in which nobody reported a tie is still reports, so the column
-    # that says so is kept, even without a row to hold a value in it.
-    ties <- dplyr::tibble(from = integer(0), to = integer(0))
-    ties[[attribute]] <- integer(0)
-  } else ties <- NULL
-  info <- list(directed = if(attribute == "layer")
-    stats::setNames(directed, third) else directed[1])
-  if(attribute == "by") info$observation <- "cognitive"
-  if(attribute == "layer") info$layers <- unique(third)
-  make_stocnet(info = info, nodes = nodes, ties = ties)
+    if(anyNA(slice[idx])) ties$na <- is.na(slice[idx])
+    make_stocnet(info = list(directed = directed[k]), nodes = nodes,
+                 ties = ties)
+  })
+  names(nets) <- if(attribute %in% c("by", "about") && !is.null(labels))
+    labels[third] else as.character(third)
+  switch(attribute,
+         "time" = from_times(nets),
+         "by" = from_reporters(nets),
+         "about" = .join_third(nets, "about"),
+         "layer" = if(length(nets) == 1)
+           mutate_info(mutate_ties(nets[[1]], layer = third[1]),
+                       layers = third[1],
+                       directed = stats::setNames(directed[1], third[1])) else
+             from_layers(nets))
 }
   
 #' @export

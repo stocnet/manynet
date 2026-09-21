@@ -2,8 +2,12 @@
 
 ## Making
 
-- Improved `create_wheel()` to return a `stocnet` with network information, rather than an `mnet`
-  - A signed wheel now carries its signs as the signs of its tie weights, so it needs a 'netrics' version whose path and community functions read signed weights
+- Improved `create_wheel()` to return a `stocnet` with network information
+  - A signed wheel now carries signs, so it needs a 'netrics' version whose path and community functions read signed weights
+
+## Coercion
+
+- Improved `as_stocnet.array()` to join `from_times()`, `from_layers()`, or `from_reporters()` slices
 
 ## Modifying
 

@@ -769,3 +769,22 @@ test_that("each layer's own design decides what a silent node misses", {
   expect_null(back$missings)
   expect_equal(nrow(as_missinglist(back)), nrow(missing))
 })
+
+test_that("from_reporters joins reports as the array route reads them", {
+  arr <- css_array()
+  reports <- lapply(seq_len(4), function(o) as_stocnet(arr[, , o]))
+  names(reports) <- dimnames(arr)[[3]]
+  css <- from_reporters(reports)
+  expect_true(is_cognitive(css))
+  # reports built on their own may be undirected, but the join is directed
+  expect_equal(as_matrix(css), arr)
+  direct <- as_stocnet(arr, attribute = "by")
+  sorted <- function(x) x$ties[do.call(order, x$ties), ]
+  expect_equal(sorted(css), sorted(direct), ignore_attr = TRUE)
+  expect_equal(css$nodes, direct$nodes)
+  # each class of report is joined into that class
+  expect_s3_class(from_reporters(lapply(reports, as_igraph)), "igraph")
+  expect_equal(from_reporters(lapply(setNames(seq_len(4), dimnames(arr)[[3]]),
+                                     function(o) arr[, , o])), arr)
+  expect_error(from_reporters(list(Z = reports[[1]])), "do not name nodes")
+})
