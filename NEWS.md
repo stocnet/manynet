@@ -1,3 +1,16 @@
+# manynet 2.4.0
+
+## Modifying
+
+- Improved `to_multilevel.igraph()` to keep the network two-mode
+  - Writes 'lvl' beside 'type' rather than instead of it, so the modes stay named
+  - Breaks a caller that relied on it to square the matrix, so it waits for 2.4
+
+## Data
+
+- Improved `ison_southern_women` into a 'stocnet', which holds more of what it
+  knows about itself: how it was collected, where, when, and by what boundary
+
 # manynet 2.3.5
 
 ## Making

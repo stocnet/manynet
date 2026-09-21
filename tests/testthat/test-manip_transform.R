@@ -228,7 +228,8 @@ test_that("to_subgraph works", {
 })
 
 test_that("to anti works", {
-  expect_length(to_anti(ison_southern_women), 32)
+  # `length()` counts a stocnet's components, so the node count is asked for
+  expect_equal(net_nodes(to_anti(ison_southern_women)), 32)
   expect_length(to_anti(as_igraph(ison_southern_women)), 32)
 })
 

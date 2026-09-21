@@ -184,9 +184,23 @@ test_that("to_named relabels an unlabelled network, or with names given", {
 
 test_that("multilevel works", {
   expect_true(is_twomode(ison_southern_women))
-  expect_false(is_twomode(to_multilevel(ison_southern_women)))
-  expect_false(is_twomode(to_multilevel(as_igraph(ison_southern_women))))
+  # A multilevel network is still two-mode: it has two nodesets, and ties both
+  # within and between them. So `to_multilevel()` leaves the modes marked,
+  # whichever class holds them.
+  expect_true(is_twomode(to_multilevel(ison_southern_women)))
+  expect_true(is_twomode(to_multilevel(as_igraph(ison_southern_women))))
+  expect_true(is_twomode(to_multilevel(as_stocnet(ison_southern_women))))
+  # A matrix has nowhere to record its modes, so a multilevel one is square
+  # and reads as one-mode. This is the one class that cannot keep them.
   expect_false(is_twomode(to_multilevel(as_matrix(ison_southern_women))))
+  # The levels are written for `{graphlayouts}`, beside the modes and not
+  # instead of them, so the mode names survive a round trip.
+  ml <- to_multilevel(as_igraph(ison_southern_women))
+  expect_true(all(c("type", "lvl") %in% igraph::vertex_attr_names(ml)))
+  expect_equal(mode_names(as_stocnet(ml)), mode_names(ison_southern_women))
+  # It is the ties that decide whether levels interlock, not the attribute
+  expect_false(is_multilevel(ml))
+  expect_true(is_multilevel(to_multilevel(as_igraph(fict_marvel))))
 })
 
 # Symmetrisation ####

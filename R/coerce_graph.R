@@ -1063,6 +1063,9 @@ as_stocnet.igraph <- function(.data, twomode = FALSE, ...) {
       nodes$mode <- as.character(nodes$type)
     }
     nodes$type <- NULL
+    # `to_multilevel()` writes 'lvl' beside 'type'. Where 'type' has named the
+    # modes, the level numbers say the same thing less well, so they go.
+    nodes$lvl <- NULL
   } else if(!is.null(nodes) && "lvl" %in% names(nodes)){
     # `to_multilevel.igraph()` records the levels of a network in a 'lvl'
     # attribute, since an igraph 'type' attribute forbids ties within a mode.

@@ -25,8 +25,10 @@ test_that("node_attribute works", {
 })
 
 test_that("node_mode works", {
+  # `length()` counts a stocnet's components, so the node count is asked for
   expect_equal(as.logical(node_is_mode(ison_southern_women)[1]),
-               as.logical(!node_is_mode(ison_southern_women)[length(ison_southern_women)]))
+               as.logical(!node_is_mode(ison_southern_women)[
+                 net_nodes(ison_southern_women)]))
   expect_s3_class(node_is_mode(ison_southern_women), c("node mark", "logical"))
 })
 

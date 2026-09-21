@@ -122,3 +122,30 @@ usethis::use_data(ison_koenigsberg, overwrite = TRUE, compress = "bzip2")
 usethis::use_data(irps_blogs, overwrite = TRUE, compress = "bzip2")
 usethis::use_data(irps_nuclear, overwrite = TRUE, compress = "bzip2")
 usethis::use_data(fict_marvel, overwrite = TRUE, compress = "bzip2")
+
+# Davis, Gardner and Gardner read the women's attendance off the society
+# columns of the 'Old City Herald' over nine months of 1936. 'Old City' is the
+# book's pseudonym for Natchez, Mississippi. Fourteen dated events and eighteen
+# named women are a fixed list rather than a sample, so the boundary is a
+# roster, and fourteen dated occurrences are a stream of events rather than a
+# few re-observations of one network.
+# The date belongs to the event and not to the attendance: every tie to an
+# event carries the same date, and no woman carries one of her own. Each event
+# therefore enters the network on the date it is held, which the changes
+# component records, and `is_changing()` marks the network rather than
+# `is_dynamic()`. There is no 'update' to declare, since no tie is ever
+# restated.
+ison_southern_women <- as_stocnet(manynet::ison_southern_women) |>
+  conform_names() |>
+  add_info(observation = "event",
+           directed = FALSE,
+           sender = "women", receiver = "social events",
+           source = "Empirical", method = "Archival", boundary = "roster",
+           location = "Natchez, Mississippi, United States",
+           date = 1936)
+# 'year' was the mnet field for when a network was collected, before 'date'
+# was reserved for it. It held the year of publication rather than of
+# collection; the events themselves ran from February to November 1936.
+ison_southern_women$info$year <- NULL
+
+usethis::use_data(ison_southern_women, overwrite = TRUE, compress = "bzip2")
