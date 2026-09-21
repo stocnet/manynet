@@ -67,6 +67,13 @@ it is important to select this branch when pushing.
 ### Branching and CI
 
 - `main` is the release branch; `develop` is the working branch (clone/work on `develop`).
+- `breaking` runs alongside `develop` and holds the changes for the next minor release.
+  Put a change on `breaking`, not `develop`, where it would break a released
+  downstream package (`{netrics}`, `{autograph}`, `{migraph}`), e.g. a change
+  to the class or contents of shipped data or to what a function returns.
+  Record it under the `# manynet <next minor>` heading in `NEWS.md`.
+  Bug fixes and other non-breaking changes still go on `develop`,
+  which is merged into `breaking` regularly to keep the two in step.
 - PRs into `main` trigger [prchecks.yml](workflows/prchecks.yml): R CMD check
   (macOS/Windows/Linux), binary build, codecov, lintr, spell check, a reverse-dependency
   check, a check that the tutorial articles are in sync with the tutorials,
