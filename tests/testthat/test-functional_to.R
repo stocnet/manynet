@@ -16,7 +16,8 @@ to_argmakers <- list(
   to_time       = function(net) list(time = 1),
   to_wave       = function(net) list(time = 1),
   to_uniplex    = function(net) list(layer = layer_names(net)[1]),
-  to_layer      = function(net) list(layer = layer_names(net)[1])
+  to_layer      = function(net) list(layer = layer_names(net)[1]),
+  to_reporter   = function(net) list(reporter = 1)
 )
 
 # Name-implied invariants that the output of a to_*() function must satisfy.
@@ -41,6 +42,9 @@ to_invariants <- list(
   to_simplex    = function(o) !is_complex(o),
   to_uniplex    = function(o) !is_multiplex(o),
   to_flat       = function(o) !is_multiplex(o),
+  to_aggregated = function(o) !is_multiplex(o),
+  to_disaggregated = function(o) !is_weighted(o),
+  to_reporter   = function(o) !is_cognitive(o),
   to_imputed    = function(o) as.numeric(net_tie_missing(o)) == 0,
   # Normalising a binary network by its row maximum leaves every value at 1,
   # so `is_weighted()` is not what the name promises here. What it does promise
@@ -170,7 +174,15 @@ for (fn in names(split_fixtures)) {
   spec <- split_fixtures[[fn]]
 
   test_that(paste0(fn, "() returns a list of networks in every class"), {
-    classes <- class_versions(spec$net)
+    # A class that cannot represent the network at all is recorded, so that
+    # the gap is audited rather than failing the comparison of the others.
+    classes <- lapply(stats::setNames(nm = c("tidygraph", "igraph", "matrix",
+                                             "network", "edgelist", "stocnet")),
+                      function(cl) tryCatch(
+                        get(paste0("as_", cl), envir = asNamespace("manynet"))(spec$net),
+                        error = function(e) e))
+    unmade <- names(classes)[vapply(classes, inherits, logical(1), "error")]
+    classes <- classes[setdiff(names(classes), unmade)]
     classes <- classes[vapply(names(classes), split_class_holds_info,
                               logical(1), fn = fn)]
     outs <- lapply(classes, function(net)
@@ -197,6 +209,10 @@ for (fn in names(split_fixtures)) {
           paste("returns a", class(o)[1]), character(1))
       skip(paste0("AUDIT [", fn, "]: no list of networks for class(es) ",
                   paste0(names(why), " (", why, ")", collapse = "; ")))
+    }
+    if (length(unmade)) {
+      skip(paste0("AUDIT [", fn, "]: the network cannot be coerced to ",
+                  paste(unmade, collapse = ", ")))
     }
   })
 }

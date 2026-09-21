@@ -375,3 +375,58 @@ test_that("the splitting stocnet methods record without a round trip", {
   expect_equal(c(net_nodes(to_components(g)[[1]])),
                c(net_nodes(to_components(fict_greys)[[1]])))
 })
+
+test_that("joining matrices gives one matrix for parts and an array for stacks", {
+  mat <- as_matrix(ison_adolescents)
+  egos <- from_egos(to_egos(mat))
+  expect_true(is.matrix(egos))
+  expect_equal(dim(egos), c(8, 8))
+  stacked <- from_times(list(`1` = mat, `2` = t(mat)))
+  expect_equal(dim(stacked), c(8, 8, 2))
+  expect_equal(dimnames(stacked)[[3]], c("1", "2"))
+  expect_equal(stacked[, , 2], t(mat))
+  # named matrices of different nodes are aligned on their names
+  small <- mat[1:4, 1:4]
+  aligned <- from_layers(all = mat, some = small)
+  expect_equal(dim(aligned), c(8, 8, 2))
+  expect_equal(aligned[rownames(small), colnames(small), "some"], small)
+})
+
+test_that("to_reporters splits a cognitive social structure into its reports", {
+  css <- as_stocnet(css_array(), attribute = "by")
+  reports <- to_reporters(css)
+  expect_equal(names(reports), LETTERS[1:4])
+  expect_null(reports$B$ties$by)
+  expect_false(is_cognitive(reports$B))
+  expect_equal(as_matrix(reports$B), css_array()[, , "B"])
+  expect_equal(as_matrix(to_reporter(css, "B")), css_array()[, , "B"])
+  expect_equal(as_matrix(to_reporter(css, 2)), css_array()[, , "B"])
+  expect_error(to_reporter(css, "Z"), "no node")
+  expect_s3_class(to_reporters(as_tidygraph(css))[[1]], "tbl_graph")
+})
+
+test_that("from_reporters reverses to_reporters, nonresponse and all", {
+  reports <- css_array()
+  reports[, , "C"] <- NA
+  css <- as_stocnet(reports, attribute = "by")
+  split <- to_reporters(css)
+  expect_gt(nrow(as_missinglist(split$C)), 0)
+  expect_null(as_missinglist(split$A))
+  back <- from_reporters(split)
+  sorted <- function(x) x[do.call(order, x), ]
+  expect_equal(sorted(back$ties), sorted(css$ties))
+  expect_equal(sorted(as_missinglist(back)), sorted(as_missinglist(css)))
+  expect_true(is_cognitive(back))
+})
+
+test_that("to_reporters treats a network without reports as one view", {
+  expect_length(suppressMessages(to_reporters(ison_adolescents)), 1)
+  expect_equal(suppressMessages(to_reporter(as_stocnet(ison_adolescents), 1)),
+               as_stocnet(ison_adolescents))
+})
+
+test_that("the reporter functions read an array's third dimension as reporters", {
+  expect_equal(to_reporters(css_array())$C, css_array()[, , "C"])
+  expect_equal(to_reporter(css_array(), "D"), css_array()[, , "D"])
+  expect_equal(to_aggregated(css_array(), "by", "sum")["A", "B"], 4)
+})

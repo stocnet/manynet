@@ -5,6 +5,7 @@
 \alias{to_egos}
 \alias{to_subgraphs}
 \alias{to_layers}
+\alias{to_reporters}
 \alias{to_components}
 \alias{to_waves}
 \alias{to_times}
@@ -16,6 +17,8 @@ to_egos(.data, max_dist = 1, min_dist = 0, direction = c("out", "in"))
 to_subgraphs(.data, attribute)
 
 to_layers(.data)
+
+to_reporters(.data)
 
 to_components(.data, connectivity = c("weak", "strong"))
 
@@ -88,6 +91,10 @@ attribute.
 \item \code{to_layers()} splits a multiplex network into its layers,
 i.e. a list of uniplex networks, one per tie type.
 Use \code{to_uniplex()}, or its alias \code{to_layer()}, to retain just one of them.
+\item \code{to_reporters()} splits a cognitive social structure into the report
+of each of its reporters, one network per reporter.
+Use \code{to_reporter()} to retain just one of them,
+and \code{from_reporters()} to join them again.
 \item \code{to_components()} splits a network into its components,
 ordered from the largest to the smallest.
 Use \code{to_component()} to retain just one of them.
@@ -104,18 +111,20 @@ it had accumulated to at each of the given time slice(s).
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default diff_model igraph matrix network stocnet
-to_components          *       *                 *      *       *       *
-to_egos                *       *                 *      *       *       *
-to_layers              *       *                 *              *        
-to_slices                      *                 *                       
-to_subgraphs                   *                 *              *       *
-to_times                       *                 *                      *
-to_waves               *       *          *      *                       
+\if{html}{\out{<div class="sourceCode">}}\preformatted{              array data.frame default diff_model igraph matrix network stocnet
+to_components                *       *                 *      *       *       *
+to_egos                      *       *                 *      *       *       *
+to_layers                    *       *                 *              *        
+to_reporters      *                  *                                        *
+to_slices                            *                 *                       
+to_subgraphs                         *                 *              *       *
+to_times                             *                 *                      *
+to_waves                     *       *          *      *                       
               tbl_graph
 to_components         *
 to_egos               *
 to_layers             *
+to_reporters           
 to_slices             *
 to_subgraphs          *
 to_times              *
@@ -142,6 +151,21 @@ Where a network holds no tie types it is already uniplex,
 and a list of length one is returned.
 }
 
+\section{\code{to_reporters()}}{
+
+Every node of a cognitive social structure is a reporter,
+so the list holds one network for each node, named by its label,
+including the reports of nodes that reported no ties.
+A reporter that did not report at all gives a network whose ties are
+all missing.
+Ties that no node reported, such as a layer taken from records,
+belong to no report and are left out.
+A network that names no reporter is returned as a list of length one,
+as \code{to_layers()} returns a network that holds no layers.
+Egocentric data cannot be split this way, since each ego reports on its
+own alters; see \code{to_egos()}.
+}
+
 \examples{
   to_egos(ison_adolescents)
   # graphs(to_egos(ison_adolescents,2))
@@ -152,6 +176,8 @@ ison_adolescents |>
 as_tidygraph(create_filled(5)) |>
   mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) |>
   to_layers()
+to_reporters(as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)),
+                        attribute = "by"))
   to_components(to_uniplex(fict_marvel, "relationship"))
   # Strong decomposition of a directed network returns many small components,
   # ordered here from largest to smallest, so just the largest is shown:
@@ -170,7 +196,8 @@ ison_adolescents |>
 Other modifications:
 \code{\link{modif_backbone}},
 \code{\link{modif_direction}},
-\code{\link{modif_from}},
+\code{\link{modif_from_parts}},
+\code{\link{modif_from_ternary}},
 \code{\link{modif_labels}},
 \code{\link{modif_levels}},
 \code{\link{modif_miss}},

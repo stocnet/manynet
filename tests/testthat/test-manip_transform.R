@@ -840,3 +840,18 @@ test_that("to_undirected drops a layer that a rule leaves without ties", {
   expect_equal(nrow(und$ties), 0)
   expect_null(und$info$layers)
 })
+
+test_that("to_simplex removes loops and keeps parallel ties in every class", {
+  # a tie from 1 to 2 recorded twice, and a loop on 2
+  net <- make_stocnet(ties = data.frame(from = c(1L, 1L, 2L), to = c(2L, 2L, 2L)),
+                      nodes = dplyr::tibble(.rows = 2),
+                      info = list(directed = TRUE))
+  for(cl in c("stocnet", "tidygraph", "igraph")){
+    out <- to_simplex(get(paste0("as_", cl))(net))
+    expect_false(is_complex(out), label = cl)
+    expect_equal(as.numeric(net_ties(out)), 2, label = cl)
+  }
+  mat <- to_simplex(as_matrix(net))
+  expect_equal(unname(mat), matrix(c(0, 0, 2, 0), 2, 2))
+  expect_match(as_infolist(to_simplex(net))$transformations$exclusion, "loop")
+})

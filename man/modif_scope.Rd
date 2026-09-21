@@ -5,6 +5,7 @@
 \alias{to_ego}
 \alias{to_time}
 \alias{to_wave}
+\alias{to_reporter}
 \alias{to_component}
 \alias{to_giant}
 \alias{to_subgraph}
@@ -16,6 +17,8 @@ to_ego(.data, node, max_dist = 1, min_dist = 0, direction = c("out", "in"))
 to_time(.data, time = NULL)
 
 to_wave(.data, time = NULL)
+
+to_reporter(.data, reporter)
 
 to_component(.data, component = 1, connectivity = c("weak", "strong"))
 
@@ -54,6 +57,9 @@ By default "all".}
 A moment beyond the last one the network records reverts to the last,
 except in an interval network, which is defined between the moments it
 records as well as at them.}
+
+\item{reporter}{Label or index of the node whose report on the network
+is to be retained, in a cognitive social structure.}
 
 \item{component}{Which component to retain.
 By default 1, i.e. the largest (giant) component,
@@ -107,6 +113,9 @@ moment, in whichever of the ways set out in the Time section it records
 time. \code{to_wave()} is an alias, using the wave-based vocabulary of
 \code{net_waves()} and \code{to_waves()}. For one network per moment, see
 \code{\link[=to_times]{to_times()}}.
+\item \code{to_reporter()} scopes a cognitive social structure to the report of
+one of its reporters. For one network per reporter, see
+\code{\link[=to_reporters]{to_reporters()}}.
 \item \code{to_subgraph()} scopes a network into a subgraph by filtering on some node-related logical statement.
 \item \code{to_blockmodel()} reduces a network to the ties between the blocks of a
 given partition membership vector.
@@ -116,13 +125,14 @@ given partition membership vector.
 Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default igraph matrix network stocnet tbl_graph
-to_blockmodel          *       *      *      *       *                 *
-to_component           *       *      *      *       *       *         *
-to_ego                         *      *                      *         *
-to_egos                *       *      *      *       *       *         *
-to_subgraph            *       *      *      *       *       *         *
-to_subgraphs                   *      *              *       *         *
+\if{html}{\out{<div class="sourceCode">}}\preformatted{              array data.frame default igraph matrix network stocnet tbl_graph
+to_blockmodel                *       *      *      *       *                 *
+to_component                 *       *      *      *       *       *         *
+to_ego                               *      *                      *         *
+to_egos                      *       *      *      *       *       *         *
+to_reporter       *                  *                             *          
+to_subgraph                  *       *      *      *       *       *         *
+to_subgraphs                         *      *              *       *         *
 }\if{html}{\out{</div>}}
 }
 \section{Time}{
@@ -183,6 +193,8 @@ in \code{{netrics}}.
   to_time(irps_wwi, 1901)
   # The state an event network had accumulated to by a given day:
   to_time(irps_nuclear, as.Date("2011-04-01"))
+css <- as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)), attribute = "by")
+to_reporter(css, 2)
   to_component(fict_greys, 2)
   to_component(fict_greys, "Miranda Bailey")
   to_giant(fict_greys)
@@ -194,7 +206,8 @@ many moments there are to ask for.
 Other modifications:
 \code{\link{modif_backbone}},
 \code{\link{modif_direction}},
-\code{\link{modif_from}},
+\code{\link{modif_from_parts}},
+\code{\link{modif_from_ternary}},
 \code{\link{modif_labels}},
 \code{\link{modif_levels}},
 \code{\link{modif_miss}},

@@ -294,6 +294,17 @@
     }
   }
   found <- dplyr::bind_rows(found)
+  # A node that reported at no moment is held in the nodes, which say nothing
+  # of layers. So a node silent in some layers and not others, with no moment
+  # to log a change at, is not a nonresponse record but stays in the registry.
+  if(nrow(found) && any(is.na(found$time))){
+    layers <- unique(.stocnet_occasions(x)$layer)
+    untimed <- is.na(found$time)
+    whole <- vapply(seq_len(nrow(found)), function(r)
+      !untimed[r] || setequal(found$layer[untimed & found$node == found$node[r]],
+                              layers), logical(1))
+    found <- found[whole, , drop = FALSE]
+  }
   if(nrow(found)){
     keep <- !.node_covered(missing, found, x)
     missing <- missing[keep, , drop = FALSE]

@@ -19,10 +19,12 @@
 
 ## Modifying
 
+- Fixed `to_simplex()` to remove only loops and keeps parallel ties
 - Improved every `from_*()` function to return the class of its inputs
   - Partial `from_egos()` and `from_subgraphs()` returns a combined matrix
   - Ternary `from_times()`, `from_layers()`, etc returns an array
 - Added `from_reporters()` to join each reporter's network into one structure
+- Added `to_reporter()` and `to_reporters()` to split a CSS into one or each reporter's report
 - Added `to_aggregated()` to combine ties over layers, reporters, targets, or moments, 
   dyad by dyad, according to a `rule` (Krackhardt 1987)
   - `over = NULL` combines parallel ties, which `to_simplex()` no longer does
@@ -34,6 +36,8 @@
 - Improved `to_multilevel.igraph()` to keep the network two-mode
   - Writes 'lvl' beside 'type' rather than instead of it, so modes stay named
   - Breaks a caller that relied on it to square the matrix, so it waits for 2.4
+- Split `from_*()` documentation into joining subgraphs and joining along a third dimension 
+  (a moment, a layer, or a reporter)
 
 ## Marking
 

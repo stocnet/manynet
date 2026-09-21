@@ -4,7 +4,9 @@ comb_a <- matrix(c(0, 3, 1, 3, 0, 0, 1, 0, 0), 3, 3,
                  dimnames = list(LETTERS[1:3], LETTERS[1:3]))
 comb_b <- matrix(c(0, 2, 0, 2, 0, 4, 0, 4, 0), 3, 3,
                  dimnames = list(LETTERS[1:3], LETTERS[1:3]))
-comb <- from_layers(a = comb_a, b = comb_b)
+# the matrices are layered as networks, since a list of matrices is stacked
+# into an array instead
+comb <- from_layers(a = as_tidygraph(comb_a), b = as_tidygraph(comb_b))
 
 # from_layers() ---------------------------------------------------------------
 
@@ -48,7 +50,8 @@ test_that("from_layers does not make an undirected network directed", {
   # make a tie recorded as A-B differ from the same tie recorded as B-A
   expect_false(is_directed(comb))
   shuffled <- comb_b[c(3, 1, 2), c(3, 1, 2)]
-  expect_equal(as_matrix(to_flat(from_layers(a = comb_a, b = shuffled), "sum")),
+  expect_equal(as_matrix(to_flat(from_layers(a = as_tidygraph(comb_a),
+                                              b = as_tidygraph(shuffled)), "sum")),
                as_matrix(to_flat(comb, "sum")))
 })
 
@@ -68,8 +71,8 @@ test_that("to_flat reconciles tie values as each rule promises", {
 
 test_that("to_flat matches nodes by name and over the union of node sets", {
   smaller <- comb_b[1:2, 1:2]
-  out <- suppressMessages(as_matrix(to_flat(from_layers(a = comb_a,
-                                                        b = smaller), "sum")))
+  out <- suppressMessages(as_matrix(to_flat(from_layers(
+    a = as_tidygraph(comb_a), b = as_tidygraph(smaller)), "sum")))
   expect_equal(dim(out), c(3L, 3L))
   # nodes absent from the second network keep the first network's values
   expect_equal(out[1, 3], comb_a[1, 3])
@@ -241,4 +244,151 @@ test_that("from_layers renumbers and names the ties each layer misses", {
   expect_equal(labels[missing$to], "b")
   expect_equal(labels[missing$by], "a")
   expect_equal(missing$layer, "two")
+})
+
+test_that("from_layers keeps a node's nonresponse to the layer it missed", {
+  answered <- make_stocnet(nodes = data.frame(label = c("a", "b", "c")),
+                           ties = data.frame(from = c("a", "c"), to = c("b", "a")),
+                           info = list(directed = TRUE))
+  silent <- make_stocnet(nodes = data.frame(label = c("a", "b", "c"),
+                                            na = c(FALSE, FALSE, TRUE)),
+                         ties = data.frame(from = "a", to = "b"),
+                         info = list(directed = TRUE))
+  merged <- from_layers(first = answered, second = silent)
+  missing <- as_missinglist(merged)
+  expect_true(all(missing$layer == "second"))
+  expect_true(all(merged$nodes$label[missing$from] == "c"))
+})
+
+# to_aggregated() -------------------------------------------------------------
+
+test_that("to_flat is to_aggregated over layers", {
+  expect_equal(as_matrix(to_flat(comb, "sum")),
+               as_matrix(to_aggregated(comb, rule = "sum")))
+  expect_equal(as_matrix(to_flat(ison_lawfirm, rule = "mean")),
+               as_matrix(to_aggregated(ison_lawfirm, "layer", "mean")))
+})
+
+test_that("to_aggregated pools reports as each rule promises", {
+  css <- as_stocnet(css_array(), attribute = "by")
+  # A->B is reported by all four reporters, B->A and D->A by two, C->D by one
+  expect_equal(as_matrix(to_aggregated(css, "by", "mean")),
+               matrix(c(0, .5, 0, .5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, .25, 0),
+                      4, 4, dimnames = list(LETTERS[1:4], LETTERS[1:4])))
+  expect_equal(as_matrix(to_aggregated(css, "by", "sum"))["A", "B"], 4)
+  expect_equal(as_matrix(to_aggregated(css, "by", "min"))["B", "A"], 0)
+  expect_equal(as_matrix(to_aggregated(css, "by", "max"))["C", "D"], 1)
+  out <- to_aggregated(css, "by", "mean")
+  expect_false(is_cognitive(out))
+  expect_null(out$ties$by)
+  expect_equal(as_infolist(out)$transformations$aggregation,
+               "reporters (mean)")
+})
+
+test_that("to_aggregated gives the locally aggregated structures", {
+  css <- as_stocnet(css_array(), attribute = "by")
+  mat <- function(...) as_matrix(to_aggregated(css, "by", ...))
+  # the intersection keeps a tie that both of its ends report
+  expect_equal(mat("min", "both")["B", "A"], 1)
+  expect_equal(mat("min", "both")["D", "A"], 0)
+  # the union keeps a tie that either of its ends reports
+  expect_equal(mat("max", "both")["D", "A"], 1)
+  expect_equal(mat("max", "both")["C", "D"], 1)
+  # the sender's and the receiver's reports
+  expect_equal(mat("max", "sender")["C", "D"], 1)
+  expect_equal(mat("max", "receiver")["C", "D"], 0)
+  expect_equal(mat("max", "receiver")["B", "A"], 1)
+  expect_error(to_aggregated(to_undirected(css), "by", "max", "sender"),
+               "both")
+  expect_error(to_aggregated(css, "time", "max", "both"), "reporters")
+})
+
+test_that("to_aggregated leaves a silent reporter out of the pool", {
+  reports <- css_array()
+  reports[, , "C"] <- NA
+  css <- as_stocnet(reports, attribute = "by")
+  out <- as_matrix(to_aggregated(css, "by", "mean"))
+  expect_equal(out["B", "A"], 2/3)
+  expect_equal(out["C", "D"], 0)
+  expect_false(anyNA(out[-3, -3]))
+})
+
+test_that("to_aggregated combines parallel ties only where over is NULL", {
+  merged <- to_aggregated(ison_koenigsberg, over = NULL, rule = "sum")
+  expect_equal(as.numeric(net_ties(merged)), 5)
+  expect_false(any(tie_is_parallel(merged)))
+  expect_equal(sort(merged$ties$weight), c(1, 1, 1, 2, 2))
+  expect_equal(as_infolist(merged)$transformations$aggregation,
+               "parallel ties (sum)")
+  # a network without parallel ties has nothing to combine
+  expect_equal(to_aggregated(merged, over = NULL), merged)
+})
+
+test_that("to_aggregated combines the moments of a panel", {
+  out <- to_aggregated(ison_monks, "time", "max")
+  expect_null(out$ties$time)
+  expect_lte(as.numeric(net_ties(out)), as.numeric(net_ties(ison_monks)))
+  expect_equal(as_infolist(out)$transformations$aggregation, "moments (max)")
+})
+
+test_that("to_aggregated returns the class it was given", {
+  css <- as_stocnet(css_array(), attribute = "by")
+  expect_s3_class(to_aggregated(as_tidygraph(css), "by"), "tbl_graph")
+  expect_true(inherits(to_aggregated(as_igraph(css), "by"), "igraph"))
+  expect_error(to_aggregated(css, "reporter"), "over")
+})
+
+# to_disaggregated() ----------------------------------------------------------
+
+test_that("to_disaggregated reverses a summed aggregation of parallel ties", {
+  merged <- to_aggregated(ison_koenigsberg, over = NULL, rule = "sum")
+  split <- to_disaggregated(merged)
+  expect_equal(as.numeric(net_ties(split)), 7)
+  expect_false(is_weighted(split))
+  expect_equal(to_aggregated(split, over = NULL, rule = "sum")$ties,
+               merged$ties)
+  expect_true(inherits(to_disaggregated(as_igraph(merged)), "igraph"))
+  expect_error(to_disaggregated(mutate_ties(merged, weight = weight / 2)),
+               "whole numbers")
+  expect_equal(suppressMessages(to_disaggregated(as_matrix(merged))),
+               as_matrix(merged))
+})
+
+test_that("to_disaggregated keeps the sign of a negative weight", {
+  signed <- make_stocnet(nodes = data.frame(label = c("a", "b", "c")),
+                         ties = data.frame(from = c("a", "b"), to = c("b", "c"),
+                                           weight = c(-2, 3)))
+  split <- to_disaggregated(signed)
+  expect_equal(sort(split$ties$weight), c(-1, -1, 1, 1, 1))
+  expect_equal(sort(to_aggregated(split, over = NULL, rule = "sum")$ties$weight),
+               c(-2, 3))
+})
+
+test_that("from_layers keeps the designs that only some layers declare", {
+  css <- as_stocnet(css_array(), attribute = "by")
+  plain <- as_stocnet(add_node_attribute(create_ring(4), "name", LETTERS[1:4]))
+  joined <- from_layers(reports = css, ring = plain)
+  expect_equal(joined$info$observation, c(reports = "cognitive"))
+  expect_true(is_cognitive(joined))
+})
+
+test_that("from_layers keeps the node attributes of unlabelled stocnets", {
+  net <- as_stocnet(create_ring(4)) |>
+    add_node_attribute("age", c(30, 40, 50, 60))
+  joined <- from_layers(a = net, b = net)
+  expect_equal(joined$nodes$age, c(30, 40, 50, 60))
+})
+
+test_that("to_aggregated keeps ties that no node reported as they are", {
+  expect_true(is_cognitive(ison_hightech))
+  for (rule in c("mean", "max")) {
+    out <- to_aggregated(ison_hightech, over = "by", rule = rule)
+    expect_equal(sort(out$info$layers), c("advice", "friends", "reports"))
+    expect_equal(as_matrix(to_layer(out, "reports")),
+                 as_matrix(to_layer(ison_hightech, "reports")))
+  }
+  own <- to_aggregated(ison_hightech, over = "by", reporters = "sender")
+  expect_false(is_cognitive(own))
+  expect_equal(as.numeric(net_ties(to_layer(own, "advice"))), 190)
+  expect_equal(as.numeric(net_ties(to_layer(own, "friends"))), 102)
 })

@@ -10,6 +10,10 @@
 #'   - `to_layers()` splits a multiplex network into its layers,
 #'   i.e. a list of uniplex networks, one per tie type.
 #'   Use `to_uniplex()`, or its alias `to_layer()`, to retain just one of them.
+#'   - `to_reporters()` splits a cognitive social structure into the report
+#'   of each of its reporters, one network per reporter.
+#'   Use `to_reporter()` to retain just one of them,
+#'   and `from_reporters()` to join them again.
 #'   - `to_components()` splits a network into its components,
 #'   ordered from the largest to the smallest.
 #'   Use `to_component()` to retain just one of them.
@@ -25,7 +29,7 @@
 #'   Below are the currently implemented S3 methods:
 #'  
 #'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("to_.*(components|subgraphs|egos|waves|slices|times|layers)"))
+#'   available_methods(collect_functions("to_.*(components|subgraphs|egos|waves|slices|times|layers|reporters)"))
 #'   ```
 #' @template param_data
 #' @template param_dir
@@ -228,6 +232,106 @@ to_layers.network <- function(.data){
 #' @export
 to_layers.data.frame <- function(.data){
   lapply(to_layers(as_tidygraph(.data)), as_edgelist)
+}
+
+#' @rdname modif_split
+#' @section `to_reporters()`:
+#'   Every node of a cognitive social structure is a reporter,
+#'   so the list holds one network for each node, named by its label,
+#'   including the reports of nodes that reported no ties.
+#'   A reporter that did not report at all gives a network whose ties are
+#'   all missing.
+#'   Ties that no node reported, such as a layer taken from records,
+#'   belong to no report and are left out.
+#'   A network that names no reporter is returned as a list of length one,
+#'   as `to_layers()` returns a network that holds no layers.
+#'   Egocentric data cannot be split this way, since each ego reports on its
+#'   own alters; see `to_egos()`.
+#' @examples
+#' to_reporters(as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)),
+#'                         attribute = "by"))
+#' @export
+to_reporters <- function(.data) UseMethod("to_reporters")
+
+#' @export
+to_reporters.default <- function(.data){
+  lapply(to_reporters.stocnet(as_stocnet(.data)), .as_class_of, .data)
+}
+
+#' @export
+to_reporters.array <- function(.data){
+  # The third dimension of an array could hold anything, but this function
+  # takes it to hold reporters, as its name says.
+  lapply(to_reporters.stocnet(as_stocnet(.data, attribute = "by")), as_matrix)
+}
+
+#' @export
+to_reporters.stocnet <- function(.data){
+  # A network that names no reporter is one view already, as a network that
+  # holds no layers is one layer already for `to_layers()`.
+  if(!.names_reporters(.data)){
+    snet_info("This network names no reporter for its ties, so is one view.")
+    return(stats::setNames(list(.data), "ties"))
+  }
+  .check_reports(.data)
+  n <- as.numeric(net_nodes(.data))
+  out <- lapply(seq_len(n), function(r) .reporter_slice(.data, r))
+  names(out) <- .node_names_or_positions(.data)
+  out
+}
+
+.names_reporters <- function(.data){
+  !is.null(.data$ties) && "by" %in% names(.data$ties) &&
+    any(!is.na(.data$ties$by))
+}
+
+# A cognitive social structure's reports can be taken apart. An egocentric
+# network's reports cannot, since they are not views of one network.
+.check_reports <- function(.data){
+  if(is_egocentric(.data))
+    snet_abort(paste("The egos of egocentric data each report on their own",
+                     "alters, so their reports are not views of one network.",
+                     "Please use {.fn to_egos} instead."))
+  invisible(.data)
+}
+
+.node_names_or_positions <- function(.data){
+  labels <- .data$nodes[["label"]]
+  if(is.null(labels)) as.character(seq_len(as.numeric(net_nodes(.data)))) else
+    as.character(labels)
+}
+
+# One reporter's view of the network: the ties it reported, and the ties it
+# was asked about but did not report on, as missing ties.
+.reporter_slice <- function(.data, r){
+  ties <- .data$ties
+  mine <- ties[ties$by %in% r, setdiff(names(ties), "by"), drop = FALSE]
+  missing <- as_missinglist(.data)
+  if(!is.null(missing) && "by" %in% names(missing)){
+    missing <- missing[missing$by %in% r, setdiff(names(missing), "by"),
+                       drop = FALSE]
+    if(nrow(missing)){
+      missing <- .tidy_registry(missing)
+      missing$na <- TRUE
+      mine <- dplyr::bind_rows(mine, missing)
+    }
+  }
+  info <- .drop_cognitive(.data$info)
+  info$transformations <- NULL
+  net <- .clear_missing(.data)
+  out <- make_stocnet(info = info, nodes = net$nodes, ties = mine,
+                      changes = net$changes, globals = net$globals)
+  out$info$transformations <- .data$info$transformations
+  label <- .node_names_or_positions(.data)[r]
+  .record_exclusion(out, .data, paste("not reported by", label), "ties")
+}
+
+# A network that is no longer a set of reports is no longer cognitive.
+.drop_cognitive <- function(info){
+  if(is.null(info$observation)) return(info)
+  info$observation[info$observation == "cognitive"] <- "cross-sectional"
+  if(all(info$observation == "cross-sectional")) info$observation <- NULL
+  info
 }
 
 #' @rdname modif_split
