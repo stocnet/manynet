@@ -1163,6 +1163,47 @@ as_stocnet.igraph <- function(.data, twomode = FALSE, ...) {
   out
 }
 
+#' @rdname coerce_graph
+#' @param compare For a node measure or a node membership, how the values of
+#'   two nodes are compared to give the tie between them;
+#'   see `as_matrix()`.
+#'   Comparing by "same" or "absdiff" gives an undirected network,
+#'   and comparing by "diff", "sender", or "receiver" a directed one.
+#'   A comparison of zero is no tie.
+#' @export
+as_stocnet.node_measure <- function(.data, twomode = FALSE,
+                                    compare = c("absdiff", "diff", "sender",
+                                                "receiver"), ...) {
+  compare <- match.arg(compare)
+  .stocnet_from_comparison(as_matrix(.data, compare = compare),
+                           directed = compare != "absdiff")
+}
+
+#' @export
+as_stocnet.node_member <- function(.data, twomode = FALSE,
+                                   compare = "same", ...) {
+  .stocnet_from_comparison(as_matrix(.data, twomode = twomode,
+                                     compare = compare),
+                           directed = FALSE)
+}
+
+# A matrix of comparisons is symmetric for some comparisons and not for
+# others, but which it is follows from the comparison and not from the values:
+# the values of every node can happen to be equal.
+.stocnet_from_comparison <- function(mat, directed){
+  out <- as_stocnet(mat)
+  if(directed && !isTRUE(any(out$info$directed))){
+    ties <- out$ties
+    if(!is.null(ties) && nrow(ties) && !is_twomode(out)){
+      back <- ties[ties$from != ties$to, , drop = FALSE]
+      back[c("from", "to")] <- back[c("to", "from")]
+      out$ties <- dplyr::bind_rows(ties, back)
+    }
+    out$info$directed <- TRUE
+  }
+  out
+}
+
 #' @export
 as_stocnet.matrix <- function(.data,
                            twomode = FALSE, ...) {
