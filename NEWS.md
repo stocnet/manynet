@@ -23,6 +23,10 @@
   - Writes 'lvl' beside 'type' rather than instead of it, so the modes stay named
   - Breaks a caller that relied on it to square the matrix, so it waits for 2.4
 
+## Marking
+
+- Fixed `is_directed()` to mark a directed two-mode network TRUE (closes #157)
+
 ## Data
 
 - Improved `ison_southern_women` into a 'stocnet', which holds more of what it

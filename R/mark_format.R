@@ -383,27 +383,22 @@ is_directed.data.frame <- function(.data) {
       .infer_net_reciprocity(.data) == 1)
 }
 
-# A single bipartite relation runs between the modes and has no direction to
-# report, but a multilevel network also ties within a level, and those ties can
-# be directed. Such a network is therefore exempt from the two-mode rule, and
-# is marked by whatever its underlying object or its info records.
-.twomode_undirected <- function(.data) {
-  is_twomode(.data) && !is_multilevel(.data)
-}
-
+# A two-mode network is marked by what its object or its info records, as a
+# one-mode network is. Its ties can run one way, from a speaker to the concept
+# they claim, for example, and the classes that can hold that say so.
 #' @export
 is_directed.igraph <- function(.data) {
-  if(.twomode_undirected(.data)) FALSE else igraph::is_directed(.data)
+  igraph::is_directed(.data)
 }
 
 #' @export
 is_directed.stocnet <- function(.data) {
-  if(.twomode_undirected(.data)) FALSE else any(.data$info$directed)
+  any(.data$info$directed)
 }
 
 #' @export
 is_directed.tbl_graph <- function(.data) {
-  if(.twomode_undirected(.data)) FALSE else igraph::is_directed(.data)
+  igraph::is_directed(.data)
 }
 
 #' @export
@@ -413,6 +408,8 @@ is_directed.network <- function(.data) {
 
 #' @export
 is_directed.matrix <- function(.data) {
+  # A two-mode matrix has one cell for each pair of nodes across the modes,
+  # and so no cell in which the other direction could be recorded.
   if(is_twomode(.data)) FALSE else !isSymmetric(.data)
 }
 
