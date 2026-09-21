@@ -191,7 +191,7 @@ create_explicit <- function(...){
 #'   but this can be coerced into other types of objects
 #'   using `as_edgelist()`, `as_matrix()`,
 #'   `as_tidygraph()`, or `as_network()`.
-#'   `create_windmill()` returns a `stocnet` object.
+#'   `create_wheel()` and `create_windmill()` return a `stocnet` object.
 #'   
 #'   By default, all networks are created as undirected.
 #'   This can be overruled with the argument `directed = TRUE`.
@@ -764,7 +764,7 @@ create_wheel <- function(n, directed = FALSE) {
       igraph::add_edges(c(as.vector(rim), as.vector(spokes))) |>
       igraph::set_vertex_attr("type", value = rep(c(FALSE, TRUE), c(a, b)))
   } else snet_abort("Argument 'n' must be a scalar or vector of length 2.")
-  as_tidygraph(out) |>
+  as_stocnet(out) |>
     add_info(name = "Wheel network")
 }
 

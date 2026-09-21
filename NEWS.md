@@ -1,5 +1,10 @@
 # manynet 2.4.0
 
+## Making
+
+- Improved `create_wheel()` to return a `stocnet` with network information, rather than an `mnet`
+  - A signed wheel now carries its signs as the signs of its tie weights, so it needs a 'netrics' version whose path and community functions read signed weights
+
 ## Modifying
 
 - Improved `to_multilevel.igraph()` to keep the network two-mode
