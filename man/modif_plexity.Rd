@@ -6,7 +6,9 @@
 \alias{to_simplex}
 \alias{to_uniplex}
 \alias{to_layer}
+\alias{to_aggregated}
 \alias{to_flat}
+\alias{to_disaggregated}
 \title{Modifying network complexity}
 \usage{
 to_anti(.data)
@@ -17,7 +19,20 @@ to_uniplex(.data, layer, tie)
 
 to_layer(.data, layer, tie)
 
-to_flat(.data, rule = c("max", "min", "mean", "sum", "product"))
+to_aggregated(
+  .data,
+  over = "layer",
+  rule = c("max", "min", "mean", "sum", "product"),
+  reporters = c("all", "sender", "receiver", "both")
+)
+
+to_flat(
+  .data,
+  rule = c("max", "min", "mean", "sum", "product"),
+  over = "layer"
+)
+
+to_disaggregated(.data)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -38,6 +53,24 @@ and is returned unchanged.}
 
 \item{tie}{Deprecated name for \code{layer}, retained for one version.}
 
+\item{over}{The tie column over which ties are combined, one of
+the columns that \code{as_stocnet()} takes from the third dimension of an
+array:
+\itemize{
+\item "layer" (the default) combines the layers of a multiplex network,
+\item "by" combines the reports of the reporters in a cognitive social
+structure,
+\item "about" combines the gossip about each target,
+\item "time" combines the moments of a longitudinal network.
+}
+
+\code{NULL} combines only parallel ties, the ties that \code{tie_is_parallel()}
+marks. \code{to_disaggregated()} reverses this where \code{rule = "sum"}.
+
+Each tie counts by its weight, or by its sign where it has no weight,
+and otherwise as 1. Signed values can cancel one another out,
+and a combined value of zero is no tie.}
+
 \item{rule}{How the networks' tie values are reconciled into a single value
 per dyad. A dyad tied in only one of the networks counts as untied in the
 others, which is what makes rules such as "min" and "product" meaningful.
@@ -57,6 +90,16 @@ network records one, and strong ties are rewarded disproportionately.
 Missing values propagate rather than being ignored, so that a dyad
 unobserved in any of the networks is unobserved in the result.
 Use \code{impute_ties()} first to state a different assumption.}
+
+\item{reporters}{Which reports are combined where \code{over = "by"}:
+\itemize{
+\item "all" (the default) combines the reports of every reporter.
+\item "sender" takes, for the tie from i to j, the report of i.
+\item "receiver" takes, for the tie from i to j, the report of j.
+\item "both" combines the reports of i and j by the \code{rule}.
+With \code{rule = "min"} this is the intersection locally aggregated structure
+of Krackhardt (1987), and with \code{rule = "max"} it is the union one.
+}}
 }
 \value{
 An object of the same class as the function was given,
@@ -69,14 +112,22 @@ These functions reformat manynet-consistent data.
 \item \code{to_anti()} reformats network data into its complement, where only ties \emph{not} present in the original network
 are included in the new network.
 \item \code{to_simplex()} reformats complex network data, containing loops, to simplex network data, without any loops.
+Parallel ties are kept, since a second tie between two nodes is not a
+loop; \code{tie_is_parallel()} marks them.
 \item \code{to_uniplex()} reformats multiplex network data to a single type of tie.
 \code{to_layer()} is an alias, using the layer-based vocabulary of
 \code{layer_names()}, \code{net_layers()}, and \code{to_layers()}.
 Use \code{to_layers()} to split a network into all of its layers at once.
-\item \code{to_flat()} reduces multiplex network data to a single relation by
-combining the values of all its layers, dyad by dyad, according to a rule.
+\item \code{to_aggregated()} combines the ties of a network that differ only in
+one tie column, dyad by dyad, according to a rule:
+its layers, the reports of its reporters, the gossip about each target,
+or its moments. It can also combine parallel ties.
 Where \code{to_uniplex()} selects one layer and discards the rest,
-\code{to_flat()} retains what every layer records.
+\code{to_aggregated()} retains what every layer records.
+\code{to_flat()} is an alias that combines layers, and takes the \code{rule} as
+its second argument.
+\item \code{to_disaggregated()} turns tie weights back into that many parallel
+ties, reversing \code{to_aggregated(over = NULL, rule = "sum")}.
 }
 
 If the format condition is not met,
@@ -96,25 +147,65 @@ Below are the currently implemented S3 methods:
 for generic 'to_uniplex'
 Warning in utils::.S3methods(f): generic function 'to_layer' dispatches methods
 for generic 'to_uniplex'
-           data.frame default igraph matrix stocnet tbl_graph
-to_anti             *       *      *      *                 *
-to_flat                     *                               *
-to_simplex          *       *      *      *       *         *
-to_uniplex                  2                               2
+                 array data.frame default igraph matrix stocnet tbl_graph
+to_aggregated        *                  *                     *         *
+to_anti                         *       *      *      *                 *
+to_disaggregated                        *             *       *          
+to_simplex                      *       *      *      *       *         *
+to_uniplex                              2                               2
 }\if{html}{\out{</div>}}
 }
+\section{Aggregating reports}{
+
+Over reporters, "max" gives a tie where any reporter reports one,
+"min" where all of them do, "mean" the share of the reporters that do,
+and "sum" how many of them do.
+A consensus structure is therefore
+\code{to_aggregated(.data, over = "by", rule = "mean")} followed by
+\code{to_unweighted(threshold = 0.5)}.
+A reporter that did not report is left out of the reports that are
+combined, rather than making every tie missing, and a tie is missing
+only where none of the reporters it is pooled over reported it.
+Egocentric data has no roster that all the egos report on,
+so its reports cannot be combined.
+}
+
+\section{Disaggregating}{
+
+\code{to_disaggregated()} turns each tie of weight w into w parallel ties,
+and so reverses \code{to_aggregated(over = NULL, rule = "sum")}.
+No other aggregation can be reversed, since the values it combined are
+not kept; \code{to_layers()}, \code{to_reporters()}, and \code{to_times()} split a
+network into its parts without losing them.
+The weights must be whole numbers.
+A negative weight becomes that many negative ties, held as weights of -1,
+which is how a signed network holds its signs.
+A matrix cannot hold parallel ties, so it is returned as it is.
+}
+
 \examples{
 to_anti(ison_southern_women)
 as_tidygraph(create_filled(5)) |>
   mutate_ties(type = sample(c("friend", "enemy"), 10, replace = TRUE)) |>
   to_uniplex("friend")
-to_flat(ison_florentine, rule = "sum")
+to_aggregated(ison_florentine, rule = "sum")
+to_disaggregated(to_aggregated(ison_koenigsberg, over = NULL, rule = "sum"))
+}
+\references{
+\subsection{On aggregating cognitive social structures}{
+
+Krackhardt, David. 1987.
+"Cognitive social structures".
+\emph{Social Networks}, 9(2): 109-134.
+\doi{10.1016/0378-8733(87)90009-8}
+}
 }
 \seealso{
 Other modifications:
 \code{\link{modif_backbone}},
 \code{\link{modif_direction}},
-\code{\link{modif_from}},
+\code{\link{modif_from_parts}},
+\code{\link{modif_from_ternary}},
 \code{\link{modif_labels}},
 \code{\link{modif_levels}},
 \code{\link{modif_miss}},

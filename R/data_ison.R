@@ -397,9 +397,19 @@
 #'   on the west coast of the United States.
 #'   Three types of ties were collected:
 #'   
-#'   - _friends_: managers' answers to the question "Who is your friend?"
-#'   - _advice_: managers' answers to the question "To whom do you go to for advice?"
+#'   - _advice_: every manager's answers to the question
+#'   "Who would this person go to for help or advice at work?",
+#'   asked about each of the 21 managers in turn
+#'   - _friends_: every manager's answers to the question
+#'   "Who would this person consider to be a friend?",
+#'   again asked about each of the 21 managers
 #'   - _reports_: "To whom do you report?" based on company reports
+#'   
+#'   The advice and friendship layers are therefore cognitive social
+#'   structures: each manager reports on every tie among all 21 managers,
+#'   and each tie names the manager who reported it in its 'by' column.
+#'   The reports layer is taken from company records, so its ties name no
+#'   reporter.
 #'   
 #'   The data is anonymised, but four nodal attributes are included:
 #'   
@@ -409,12 +419,39 @@
 #'   where 3 = CEO, 2 = Vice President, and 1 = manager
 #'   - _dept_: one of four departments, B, C, D, E,
 #'   with the CEO alone in A
+#' @details
+#'   Most measures pool every report as a tie of its own, so a tie reported
+#'   by all 21 managers counts 21 times.
+#'   Use `to_reporter()` for one manager's view of the network,
+#'   or `to_aggregated(over = "by")` to combine the views.
+#'   Each manager's own report on their own ties,
+#'   `to_aggregated(ison_hightech, over = "by", reporters = "sender")`,
+#'   gives the network that earlier versions of this dataset held,
+#'   and that is often distributed as the high-tech managers network.
+#'   
+#'   The friendship reports come from `cssTools::highTechManagers`
+#'   (Yenigun, Ertan, and Siciliano 2016).
+#'   That dataset replaces manager 17's report on their own friendships,
+#'   which it describes as naming every other manager,
+#'   with the reports of the other managers about manager 17.
+#'   Here that row is instead taken from the friendship network of the earlier
+#'   versions, in which manager 17 names 18 of the other 20 managers.
+#'   The advice reports come from the transcription of the appendix of
+#'   Krackhardt (1987) by Izabel Aguiar.
+#' @source
+#'   Aguiar, Izabel. 2022. "Krackhardt's Cognitive Social Structures".
+#'   \url{https://github.com/izabelaguiar/krackhardt}
+#'   
+#'   Yenigun, Deniz, Gunes Ertan, and Michael Siciliano. 2016.
+#'   _cssTools: Cognitive Social Structure Tools_. R package version 1.0.
+#'   \doi{10.32614/CRAN.package.cssTools}
 #' @docType data
 #' @keywords datasets
 #' @name ison_hightech
 #' @usage data(ison_hightech)
 #' @references
 #'   Krackhardt, David. 1987. "Cognitive social structures". _Social Networks_ 9(2): 109-134.
+#'   \doi{10.1016/0378-8733(87)90009-8}
 #' @format
 #'   ```{r, echo = FALSE}
 #'   ison_hightech

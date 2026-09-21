@@ -65,6 +65,10 @@ Functions that split a network return a list of such objects.
 These functions reformat manynet-consistent data.
 \itemize{
 \item \code{to_directed()} reformats undirected network data to a directed network.
+In a one-mode network each tie is given a direction at random.
+In a two-mode network every tie runs from the first mode to the second,
+which \code{to_redirected()} reverses.
+A two-mode matrix cannot record direction, so it stays as it is.
 \item \code{to_undirected()} reformats directed network data to an undirected network,
 so that any pair of nodes with at least one directed edge will be
 connected by an undirected edge in the new network.
@@ -114,7 +118,8 @@ Other ties:
 
 Other modifications:
 \code{\link{modif_backbone}},
-\code{\link{modif_from}},
+\code{\link{modif_from_parts}},
+\code{\link{modif_from_ternary}},
 \code{\link{modif_labels}},
 \code{\link{modif_levels}},
 \code{\link{modif_miss}},

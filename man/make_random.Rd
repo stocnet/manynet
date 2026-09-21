@@ -87,7 +87,9 @@ This can be overruled with the argument \code{directed = TRUE}.
 This will return a directed network in which the arcs are
 out-facing or equivalent.
 This direction can be swapped using \code{to_redirected()}.
-In two-mode networks, the directed argument is ignored.
+In two-mode networks, \code{generate_random(directed = TRUE)} points every
+tie from the first mode to the second, and the other functions ignore
+the directed argument.
 }
 \description{
 These functions are similar to the \verb{create_*} functions,

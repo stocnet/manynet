@@ -50,8 +50,8 @@
 #'   - "projection" (4.3), which `to_mode1()` and `to_mode2()` set.
 #'   - "exclusion" (4.4), which the functions that drop nodes or ties set,
 #'   such as `delete_isolates()`, `to_component()`, and `to_uniplex()`.
-#'   - "aggregation" (4.5), which `to_flat()`, `join_ties()`,
-#'   and `to_blockmodel()` set.
+#'   - "aggregation" (4.5), which `to_aggregated()`, `to_flat()`,
+#'   `join_ties()`, and `to_blockmodel()` set.
 #'   - "imputation" (4.6), which `impute_ties()` and `impute_nodes()` set.
 #'
 #'   One further name, "normalisation", records what `to_normalised()` does.
@@ -59,6 +59,8 @@
 #'   dichotomises them (4.2 ends in an unweighted network)
 #'   nor aggregates them (4.5 combines what was separate),
 #'   but it changes the analytic network and so is recorded too.
+#'   Nor do they name "disaggregation", which `to_disaggregated()` sets
+#'   where it turns tie weights back into that many parallel ties.
 #'
 #'   A name that is absent means that transformation was not applied,
 #'   so `"symmetrisation" %in% names(as_infolist(.data)$transformations)`
@@ -264,7 +266,8 @@ grand_transformations <- c("symmetrisation", "dichotomisation", "projection",
 # network, nor an aggregation, which combines what was separate. So it is
 # recorded under a name of its own, kept apart from the six so that the GRAND
 # vector stays a faithful list of the guidelines' items.
-manynet_transformations <- c(grand_transformations, "normalisation")
+manynet_transformations <- c(grand_transformations, "normalisation",
+                             "disaggregation")
 
 # Merges new entries into the transformations already recorded. An element
 # accumulates rather than replaces, so a network transformed twice in the same

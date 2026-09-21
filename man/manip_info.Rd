@@ -92,8 +92,8 @@ It holds a named list, one element for each of them:
 \item "projection" (4.3), which \code{to_mode1()} and \code{to_mode2()} set.
 \item "exclusion" (4.4), which the functions that drop nodes or ties set,
 such as \code{delete_isolates()}, \code{to_component()}, and \code{to_uniplex()}.
-\item "aggregation" (4.5), which \code{to_flat()}, \code{join_ties()},
-and \code{to_blockmodel()} set.
+\item "aggregation" (4.5), which \code{to_aggregated()}, \code{to_flat()},
+\code{join_ties()}, and \code{to_blockmodel()} set.
 \item "imputation" (4.6), which \code{impute_ties()} and \code{impute_nodes()} set.
 }
 
@@ -102,6 +102,8 @@ The guidelines do not name it, since rescaling tie values neither
 dichotomises them (4.2 ends in an unweighted network)
 nor aggregates them (4.5 combines what was separate),
 but it changes the analytic network and so is recorded too.
+Nor do they name "disaggregation", which \code{to_disaggregated()} sets
+where it turns tie weights back into that many parallel ties.
 
 A name that is absent means that transformation was not applied,
 so \code{"symmetrisation" \%in\% names(as_infolist(.data)$transformations)}

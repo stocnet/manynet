@@ -37,7 +37,9 @@
 #'   This will return a directed network in which the arcs are
 #'   out-facing or equivalent.
 #'   This direction can be swapped using `to_redirected()`.
-#'   In two-mode networks, the directed argument is ignored.
+#'   In two-mode networks, `generate_random(directed = TRUE)` points every
+#'   tie from the first mode to the second, and the other functions ignore
+#'   the directed argument.
 NULL
 
 #' @rdname make_random 

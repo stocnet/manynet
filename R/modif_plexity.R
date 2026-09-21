@@ -8,14 +8,22 @@
 #'   - `to_anti()` reformats network data into its complement, where only ties _not_ present in the original network
 #'   are included in the new network.
 #'   - `to_simplex()` reformats complex network data, containing loops, to simplex network data, without any loops.
+#'   Parallel ties are kept, since a second tie between two nodes is not a
+#'   loop; `tie_is_parallel()` marks them.
 #'   - `to_uniplex()` reformats multiplex network data to a single type of tie.
 #'   `to_layer()` is an alias, using the layer-based vocabulary of
 #'   `layer_names()`, `net_layers()`, and `to_layers()`.
 #'   Use `to_layers()` to split a network into all of its layers at once.
-#'   - `to_flat()` reduces multiplex network data to a single relation by
-#'   combining the values of all its layers, dyad by dyad, according to a rule.
+#'   - `to_aggregated()` combines the ties of a network that differ only in
+#'   one tie column, dyad by dyad, according to a rule:
+#'   its layers, the reports of its reporters, the gossip about each target,
+#'   or its moments. It can also combine parallel ties.
 #'   Where `to_uniplex()` selects one layer and discards the rest,
-#'   `to_flat()` retains what every layer records.
+#'   `to_aggregated()` retains what every layer records.
+#'   `to_flat()` is an alias that combines layers, and takes the `rule` as
+#'   its second argument.
+#'   - `to_disaggregated()` turns tie weights back into that many parallel
+#'   ties, reversing `to_aggregated(over = NULL, rule = "sum")`.
 #' 
 #'   If the format condition is not met,
 #'   for example `to_undirected()` is used on a network that is already undirected,
@@ -30,7 +38,7 @@
 #'   Below are the currently implemented S3 methods:
 #'  
 #'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("to_.*(anti|plex|layer$|flat$)"))
+#'   available_methods(collect_functions("to_.*(anti|plex|layer$|flat$|aggregated$)"))
 #'   ```
 #' @template param_data
 #' @template fam_modif
@@ -90,21 +98,18 @@ to_simplex.default <- function(.data) {
 
 #' @export
 to_simplex.igraph <- function(.data) {
-  igraph::simplify(.data)
+  # Only the loops are removed. A second tie between two nodes is not a loop,
+  # and may be a second record, a second observation, or a second report.
+  igraph::simplify(.data, remove.multiple = FALSE, remove.loops = TRUE)
 }
 
 #' @export
 to_simplex.stocnet <- function(.data) {
   if(is.null(.data$ties) || nrow(.data$ties) == 0) return(.data)
   ties <- .data$ties
-  # A stocnet holds its layers and its waves in the ties table, so a second
-  # tie between a dyad is only a repetition where those agree too. This is
-  # narrower than igraph's `simplify()`, which has no such columns to consult.
-  key <- ties[intersect(c("from", "to", "layer", "type", "wave", "time"),
-                        names(ties))]
-  keep <- ties$from != ties$to & !duplicated(key)
-  keep_ties(.data, which(keep)) |>
-    .record_exclusion(.data, "loops and multiple ties", "ties")
+  # Only the loops are removed, as in every other method.
+  keep_ties(.data, which(ties$from != ties$to)) |>
+    .record_exclusion(.data, "loops", "ties")
 }
 
 #' @export
@@ -113,7 +118,7 @@ to_simplex.tbl_graph <- function(.data) {
   # `.record_transformation()` returns a 'tbl_graph', which would change what
   # the igraph method gives back to the methods that delegate to it
   as_tidygraph(to_simplex(as_igraph(.data))) |>
-    .record_exclusion(.data, "loops and multiple ties", "ties")
+    .record_exclusion(.data, "loops", "ties")
 }
 
 #' @export
@@ -244,24 +249,96 @@ to_uniplex.tbl_graph <- function(.data, layer, tie){
 to_layer <- to_uniplex
 
 #' @rdname modif_plexity
+#' @param over The tie column over which ties are combined, one of
+#'   the columns that `as_stocnet()` takes from the third dimension of an
+#'   array:
+#'   - "layer" (the default) combines the layers of a multiplex network,
+#'   - "by" combines the reports of the reporters in a cognitive social
+#'   structure,
+#'   - "about" combines the gossip about each target,
+#'   - "time" combines the moments of a longitudinal network.
+#'
+#'   `NULL` combines only parallel ties, the ties that `tie_is_parallel()`
+#'   marks. `to_disaggregated()` reverses this where `rule = "sum"`.
+#'
+#'   Each tie counts by its weight, or by its sign where it has no weight,
+#'   and otherwise as 1. Signed values can cancel one another out,
+#'   and a combined value of zero is no tie.
 #' @template param_rule
+#' @param reporters Which reports are combined where `over = "by"`:
+#'   - "all" (the default) combines the reports of every reporter.
+#'   - "sender" takes, for the tie from i to j, the report of i.
+#'   - "receiver" takes, for the tie from i to j, the report of j.
+#'   - "both" combines the reports of i and j by the `rule`.
+#'   With `rule = "min"` this is the intersection locally aggregated structure
+#'   of Krackhardt (1987), and with `rule = "max"` it is the union one.
+#' @section Aggregating reports:
+#'   Over reporters, "max" gives a tie where any reporter reports one,
+#'   "min" where all of them do, "mean" the share of the reporters that do,
+#'   and "sum" how many of them do.
+#'   A consensus structure is therefore
+#'   `to_aggregated(.data, over = "by", rule = "mean")` followed by
+#'   `to_unweighted(threshold = 0.5)`.
+#'   A reporter that did not report is left out of the reports that are
+#'   combined, rather than making every tie missing, and a tie is missing
+#'   only where none of the reporters it is pooled over reported it.
+#'   Egocentric data has no roster that all the egos report on,
+#'   so its reports cannot be combined.
+#' @references
+#' ## On aggregating cognitive social structures
+#'   Krackhardt, David. 1987.
+#'   "Cognitive social structures".
+#'   _Social Networks_, 9(2): 109-134.
+#'   \doi{10.1016/0378-8733(87)90009-8}
 #' @examples
-#' to_flat(ison_florentine, rule = "sum")
+#' to_aggregated(ison_florentine, rule = "sum")
 #' @export
-to_flat <- function(.data, rule = c("max","min","mean","sum",
-                                    "product")) UseMethod("to_flat")
+to_aggregated <- function(.data, over = "layer",
+                          rule = c("max","min","mean","sum","product"),
+                          reporters = c("all","sender","receiver","both"))
+  UseMethod("to_aggregated")
 
 #' @export
-to_flat.default <- function(.data, rule = c("max","min","mean","sum",
-                                            "product")) {
+to_aggregated.default <- function(.data, over = "layer",
+                                  rule = c("max","min","mean","sum","product"),
+                                  reporters = c("all","sender","receiver","both")) {
   rule <- match.arg(rule)
-  as_input(.data, to_flat, rule = rule)
+  reporters <- match.arg(reporters)
+  .check_over(over)
+  # Layers are combined as `to_flat()` combined them before there was anything
+  # else to combine over, which goes through a tbl_graph. The other columns
+  # are held most plainly in a stocnet's ties.
+  out <- if(identical(over, "layer"))
+    to_aggregated.tbl_graph(as_tidygraph(.data), over, rule, reporters) else
+      to_aggregated.stocnet(as_stocnet(.data), over, rule, reporters)
+  .as_class_of(out, .data)
 }
 
 #' @export
-to_flat.tbl_graph <- function(.data, rule = c("max","min","mean","sum",
-                                              "product")) {
+to_aggregated.array <- function(.data, over = "layer",
+                                rule = c("max","min","mean","sum","product"),
+                                reporters = c("all","sender","receiver","both")) {
   rule <- match.arg(rule)
+  reporters <- match.arg(reporters)
+  .check_over(over)
+  # An array holds one value for each cell, so no parallel ties, and what its
+  # third dimension holds is what `over` says it holds.
+  if(is.null(over))
+    snet_abort("An array holds no parallel ties to combine.")
+  as_matrix(to_aggregated(as_stocnet(.data, attribute = over), over, rule,
+                          reporters))
+}
+
+#' @export
+to_aggregated.tbl_graph <- function(.data, over = "layer",
+                                    rule = c("max","min","mean","sum","product"),
+                                    reporters = c("all","sender","receiver","both")) {
+  rule <- match.arg(rule)
+  reporters <- match.arg(reporters)
+  .check_over(over)
+  if(!identical(over, "layer"))
+    return(as_tidygraph(to_aggregated.stocnet(as_stocnet(.data), over, rule,
+                                              reporters)))
   layers <- to_layers(.data)
   if(length(layers) > 1) return(.combine_networks(layers, rule))
   # `join_ties()` marks each network's ties in a column of its own rather than
@@ -271,6 +348,86 @@ to_flat.tbl_graph <- function(.data, rule = c("max","min","mean","sum",
   if(length(marks) > 1) return(.combine_marks(.data, marks, rule))
   # a network holding no tie types is already flat; `to_layers()` says so
   .data
+}
+
+#' @export
+to_aggregated.stocnet <- function(.data, over = "layer",
+                                  rule = c("max","min","mean","sum","product"),
+                                  reporters = c("all","sender","receiver","both")) {
+  rule <- match.arg(rule)
+  reporters <- match.arg(reporters)
+  .check_over(over)
+  if(identical(over, "layer"))
+    return(as_stocnet(to_aggregated.tbl_graph(as_tidygraph(.data), over, rule,
+                                              reporters)))
+  .aggregate_ties(.data, over, rule, reporters)
+}
+
+#' @rdname modif_plexity
+#' @export
+to_flat <- function(.data, rule = c("max","min","mean","sum","product"),
+                    over = "layer") {
+  # `to_flat()` took the rule as its second argument before it could combine
+  # over anything but layers, so it keeps it there.
+  to_aggregated(.data, over = over, rule = match.arg(rule))
+}
+
+#' @rdname modif_plexity
+#' @section Disaggregating:
+#'   `to_disaggregated()` turns each tie of weight w into w parallel ties,
+#'   and so reverses `to_aggregated(over = NULL, rule = "sum")`.
+#'   No other aggregation can be reversed, since the values it combined are
+#'   not kept; `to_layers()`, `to_reporters()`, and `to_times()` split a
+#'   network into its parts without losing them.
+#'   The weights must be whole numbers.
+#'   A negative weight becomes that many negative ties, held as weights of -1,
+#'   which is how a signed network holds its signs.
+#'   A matrix cannot hold parallel ties, so it is returned as it is.
+#' @examples
+#' to_disaggregated(to_aggregated(ison_koenigsberg, over = NULL, rule = "sum"))
+#' @export
+to_disaggregated <- function(.data) UseMethod("to_disaggregated")
+
+#' @export
+to_disaggregated.default <- function(.data) {
+  .as_class_of(to_disaggregated.stocnet(as_stocnet(.data)), .data)
+}
+
+#' @export
+to_disaggregated.matrix <- function(.data) {
+  snet_info("A matrix cannot hold parallel ties, so it is returned as it is.")
+  .data
+}
+
+#' @export
+to_disaggregated.stocnet <- function(.data) {
+  ties <- .data$ties
+  if(is.null(ties) || !"weight" %in% names(ties)){
+    snet_info("This network has no weights to disaggregate.")
+    return(.data)
+  }
+  w <- ties$weight
+  if(anyNA(w) || any(w != round(w)))
+    snet_abort(paste("Only weights that are whole numbers",
+                     "can be disaggregated into that many parallel ties."))
+  out <- .data
+  out$ties <- ties[rep(seq_len(nrow(ties)), times = abs(w)), , drop = FALSE]
+  # A signed network holds its signs as weights of -1 and 1, so a weight of
+  # -2 is two negative ties, which a sum of the parallel ties gives back.
+  if(any(w < 0)) out$ties$weight <- sign(out$ties$weight) else
+    out$ties$weight <- NULL
+  .record_transformation(out, "disaggregation",
+                         paste0("weights as parallel ties (",
+                                sum(abs(w)) - sum(w != 0), " added)"))
+}
+
+.check_over <- function(over){
+  if(!is.null(over) &&
+     !(length(over) == 1 && over %in% c("layer", "by", "about", "time")))
+    snet_abort(paste("{.arg over} must be one of {.val layer}, {.val by},",
+                     "{.val about}, or {.val time}, or {.code NULL} to combine",
+                     "parallel ties only."))
+  invisible(over)
 }
 
 # Combining ####
@@ -359,4 +516,183 @@ to_flat.tbl_graph <- function(.data, rule = c("max","min","mean","sum",
   out <- matrix(0, length(rn), length(cn), dimnames = list(rn, cn))
   out[rownames(x), colnames(x)] <- x
   out
+}
+
+# Aggregating ####
+
+# Combines the ties of a stocnet over one of its tie columns, or, where `over`
+# is NULL, combines its parallel ties. Each tie is a value in one slice (one
+# report, one target, one moment), and the ties that share every other column
+# are pooled. A slice that holds no tie for a dyad counts as a zero there, so
+# that "min" and "mean" mean what they say: all the slices, and the share of
+# them.
+.aggregate_ties <- function(.data, over, rule, reporters){
+  if(identical(over, "by") && is_egocentric(.data))
+    snet_abort(paste("The egos of egocentric data each report on their own",
+                     "alters, so there is no roster over which their reports",
+                     "could be combined."))
+  if(!is.null(over) && identical(over, "time") &&
+     !identical(.time_rule(.data), "replace"))
+    .data <- .restate_moments(.data)
+  ties <- .data$ties
+  if(!is.null(over) && (is.null(ties) || !over %in% names(ties))){
+    snet_info("This network has no {.val {over}} column, so there is nothing",
+              "to combine over.")
+    return(.data)
+  }
+  if(!identical(reporters, "all") && !identical(over, "by"))
+    snet_abort("{.arg reporters} only applies where {.code over = \"by\"}.")
+  directed <- is_directed(.data)
+  if(reporters %in% c("sender", "receiver") && !directed)
+    snet_abort(paste("An undirected tie has no sender or receiver,",
+                     "so please use {.code reporters = \"both\"}."))
+  missing <- as_missinglist(.data)
+  rows <- .value_rows(ties, missing)
+  if(is.null(over) && !any(duplicated(.pool_key(rows, .third_cols(rows),
+                                                directed)))){
+    snet_info("This network has no parallel ties, so there is nothing to",
+              "combine.")
+    return(.data)
+  }
+  keep <- setdiff(.third_cols(rows), over)
+  # A tie that names no reporter, or no target, is not one report among
+  # several, such as a layer taken from records, so it is kept as it is
+  # rather than pooled with the reports.
+  if(!is.null(over) && over %in% c("by", "about")){
+    unpooled <- rows[is.na(rows[[over]]), , drop = FALSE]
+    rows <- rows[!is.na(rows[[over]]), , drop = FALSE]
+  } else unpooled <- rows[0, , drop = FALSE]
+  # The reports a tie is pooled over: every reporter, or the reporters that
+  # are one of its two ends.
+  if(identical(over, "by") && reporters != "all"){
+    pick <- switch(reporters,
+                   sender = rows$by == rows$from,
+                   receiver = rows$by == rows$to,
+                   both = rows$by == rows$from | rows$by == rows$to)
+    rows <- rows[pick %in% TRUE, , drop = FALSE]
+  }
+  slices <- if(is.null(over)) NULL else
+    if(over %in% c("by", "about")) seq_len(as.numeric(net_nodes(.data))) else
+      sort(unique(rows[[over]]))
+  key <- .pool_key(rows, keep, directed)
+  groups <- split(seq_len(nrow(rows)), factor(key, levels = unique(key)))
+  first <- vapply(groups, `[`, integer(1), 1)
+  value <- vapply(groups, function(i){
+    v <- rows$value[i]
+    if(is.null(over)) return(.pool(v, rule))
+    held <- rows[[over]][i]
+    # A reporter that did not report is left out of the pool rather than
+    # making the pooled tie missing, since the other reports still stand.
+    # Elsewhere a missing value stays missing, as it does between layers.
+    if(identical(over, "by")){
+      gone <- is.na(v)
+      silent <- setdiff(.pooled_over(rows[i[1], ], reporters, slices), held)
+      if(all(gone) && !length(silent)) return(NA_real_)
+      return(.pool(c(v[!gone], rep(0, length(silent))), rule))
+    }
+    .pool(c(v, rep(0, length(setdiff(slices, held)))), rule)
+  }, numeric(1))
+  out <- rows[first, c("from", "to", keep), drop = FALSE]
+  out$weight <- unname(value)
+  unpooled <- unpooled[, c("from", "to", keep, "value"), drop = FALSE]
+  names(unpooled)[names(unpooled) == "value"] <- "weight"
+  out <- dplyr::bind_rows(out, unpooled)
+  out <- out[is.na(out$weight) | out$weight != 0, , drop = FALSE]
+  out$na <- is.na(out$weight)
+  # Values of nothing but ones record no more than the ties themselves do.
+  if(all(out$weight[!out$na] == 1)) out$weight <- NULL
+  if(!any(out$na)) out$na <- NULL
+  info <- .data$info
+  info$transformations <- NULL
+  if(identical(over, "by")) info <- .drop_cognitive(info)
+  if(identical(over, "time")) info$update <- NULL
+  # A layer whose every tie was combined away is no longer in the network.
+  if("layer" %in% names(out) && !is.null(info$layers))
+    info <- .prune_layer_info(info, intersect(info$layers, unique(out$layer)))
+  net <- .clear_missing(.data)
+  res <- make_stocnet(info = info, nodes = net$nodes, ties = out,
+                      changes = if(identical(over, "time")) NULL else
+                        net$changes,
+                      globals = net$globals)
+  res$info$transformations <- .data$info$transformations
+  .record_transformation(res, "aggregation", .aggregation_entry(over, rule,
+                                                               reporters))
+}
+
+# Each tie as a value: its weight, its sign where it has no weight, and 1
+# otherwise. A missing tie is a missing value.
+.value_rows <- function(ties, missing){
+  ties <- if(is.null(ties)) dplyr::tibble(from = integer(0), to = integer(0)) else
+    ties
+  ties$value <- if("weight" %in% names(ties)) as.numeric(ties$weight) else
+    if("sign" %in% names(ties)) as.numeric(ties$sign) else
+      rep(1, nrow(ties))
+  cols <- c("from", "to", .third_cols(ties), "value")
+  ties <- ties[, cols, drop = FALSE]
+  if(!is.null(missing) && nrow(missing)){
+    missing <- missing[, intersect(names(missing), cols), drop = FALSE]
+    missing$value <- NA_real_
+    ties <- dplyr::bind_rows(ties, missing)
+  }
+  ties
+}
+
+.third_cols <- function(ties) intersect(c("layer", "by", "about", "time"),
+                                        names(ties))
+
+# The string that names which ties are pooled together: the two ends, in a
+# fixed order where the network is undirected, and each column kept.
+.pool_key <- function(rows, keep, directed){
+  from <- rows$from
+  to <- rows$to
+  if(!directed){
+    lo <- pmin(from, to)
+    to <- pmax(from, to)
+    from <- lo
+  }
+  parts <- c(list(from, to), lapply(keep, function(col) as.character(rows[[col]])))
+  do.call(paste, c(parts, sep = "\r"))
+}
+
+# The reporters whose reports on a tie are pooled.
+.pooled_over <- function(row, reporters, slices){
+  switch(reporters,
+         all = slices,
+         sender = row$from,
+         receiver = row$to,
+         both = unique(c(row$from, row$to)))
+}
+
+.pool <- function(v, rule){
+  if(!length(v)) return(0)
+  switch(rule,
+         max = max(v),
+         min = min(v),
+         mean = mean(v),
+         sum = sum(v),
+         product = prod(v))
+}
+
+.aggregation_entry <- function(over, rule, reporters){
+  what <- if(is.null(over)) "parallel ties" else
+    switch(over, layer = "layers", about = "targets", time = "moments",
+           by = switch(reporters,
+                       all = "reporters",
+                       sender = "senders' reports",
+                       receiver = "receivers' reports",
+                       both = "locally aggregated reports"))
+  paste0(what, " (", rule, ")")
+}
+
+# A network whose moments are deltas or intervals is restated as a panel,
+# each moment holding the ties as they stood then, so that its moments can be
+# combined as the waves of a panel are.
+.restate_moments <- function(.data){
+  moments <- to_times(.data)
+  sizes <- vapply(moments, function(x) as.numeric(net_nodes(x)), numeric(1))
+  if(any(sizes != as.numeric(net_nodes(.data))))
+    snet_abort(paste("The nodes of this network change over time, so its",
+                     "moments cannot yet be combined. Please use",
+                     "{.fn to_times} to take them one by one."))
+  from_times(moments)
 }

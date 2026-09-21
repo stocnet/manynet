@@ -95,8 +95,7 @@ again, so all of them are supported.
 
 Each filter is applied to the ties as the network holds them. Where a
 network holds parallel ties, each is filtered on its own rather than as
-the bundle they make together, so use \code{to_simplex()} first where that is
-not wanted.
+the bundle they make together.
 
 Only closed-form filters are offered here. For the backbone models that
 resample a null distribution, such as the stochastic and fixed degree
@@ -172,7 +171,8 @@ Other ties:
 
 Other modifications:
 \code{\link{modif_direction}},
-\code{\link{modif_from}},
+\code{\link{modif_from_parts}},
+\code{\link{modif_from_ternary}},
 \code{\link{modif_labels}},
 \code{\link{modif_levels}},
 \code{\link{modif_miss}},

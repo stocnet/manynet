@@ -19,8 +19,16 @@
 
 ## Modifying
 
+- Added `to_aggregated()` to combine ties over layers, reporters, targets, or moments, 
+  dyad by dyad, according to a `rule` (Krackhardt 1987)
+  - `over = NULL` combines parallel ties, which `to_simplex()` no longer does
+  - `reporters` gives sender's, receiver's, or locally aggregated reports of a CSS
+  - `to_flat()` is now an alias that combines layers
+- Added `to_disaggregated()` to turn tie weights into that many parallel ties
+  - Reverses `to_aggregated(over = NULL, rule = "sum")`
+- Improved `to_directed()` to direct two-mode ties from the first mode to the second (closes #157)
 - Improved `to_multilevel.igraph()` to keep the network two-mode
-  - Writes 'lvl' beside 'type' rather than instead of it, so the modes stay named
+  - Writes 'lvl' beside 'type' rather than instead of it, so modes stay named
   - Breaks a caller that relied on it to square the matrix, so it waits for 2.4
 
 ## Marking
