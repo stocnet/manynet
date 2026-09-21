@@ -7,7 +7,7 @@
 \alias{is_hypergraph}
 \alias{is_labelled}
 \alias{is_attributed}
-\alias{is_egonet}
+\alias{is_egolist}
 \title{Marking networks nodal formats}
 \usage{
 is_twomode(.data)
@@ -20,7 +20,7 @@ is_labelled(.data)
 
 is_attributed(.data)
 
-is_egonet(.data)
+is_egolist(.data)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -44,8 +44,9 @@ of nodes that are tied both within and between levels.
 for the nodes.
 \item \code{is_attributed()} marks networks TRUE if there are other nodal attributes
 than 'names' or 'type'.
-\item \code{is_egonet()} marks networks TRUE if it is a list of networks where each
-network contains only one node and its ties.
+\item \code{is_egolist()} marks TRUE a list of networks, one for each node of a
+network, as \code{to_egos()} returns. Unlike the other marks here, it marks a
+list and not a network, so a single network is always FALSE.
 }
 }
 \details{
@@ -54,13 +55,13 @@ Below are the currently implemented S3 methods for these functions:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{              data.frame default igraph list matrix network numeric stocnet
 is_attributed                  *                                           
-is_egonet                      *                                           
+is_egolist                     *                                           
 is_labelled            *       *      *    *      *       *               *
 is_multilevel                  *      *    *                              *
 is_twomode             *       *      *    *      *       *       *       *
               tbl_graph
 is_attributed          
-is_egonet              
+is_egolist             
 is_labelled           *
 is_multilevel         *
 is_twomode            *
@@ -86,7 +87,7 @@ is_multilevel(ison_southern_women)
 is_hypergraph(create_empty(3))
 is_labelled(create_empty(3))
 is_attributed(ison_algebra)
-is_egonet(fict_starwars)
+is_egolist(to_egos(ison_adolescents))
 }
 \seealso{
 Other marks:

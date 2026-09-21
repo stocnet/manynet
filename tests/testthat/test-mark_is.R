@@ -189,3 +189,22 @@ test_that("is_cognitive marks an array only where its slices can be nodes", {
   expect_false(is_cognitive(array(0, dim = c(2, 3, 2))))
   expect_true(is_cognitive(array(0, dim = c(2, 3, 5))))
 })
+
+test_that("is_egolist marks a list of networks and not a network", {
+  egos <- to_egos(ison_adolescents)
+  expect_true(is_egolist(egos))
+  # a single network is not a list of them, whatever it was collected by
+  expect_false(is_egolist(ison_adolescents))
+  # the list has to hold one network for each node
+  expect_false(is_egolist(egos[1:3]))
+  # the old name still works, for one release
+  expect_warning(expect_true(is_egonet(egos)), "is_egolist")
+})
+
+test_that("is_disaggregated marks networks holding parallel ties", {
+  expect_true(is_disaggregated(ison_koenigsberg))
+  expect_true(is_disaggregated(irps_nuclear))
+  expect_false(is_disaggregated(ison_adolescents))
+  expect_false(is_disaggregated(to_aggregated(ison_koenigsberg, over = NULL)))
+  expect_false(is_disaggregated(as_matrix(ison_koenigsberg)))
+})

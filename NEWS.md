@@ -33,6 +33,8 @@
 
 ## Marking
 
+- Renamed `is_egonet()` to `is_egolist()`, since it marks a list of networks
+  - `is_egocentric()` marks the networks that a name generator collects
 - Added `is_disaggregated()` to mark networks that hold parallel ties
 - Fixed `is_directed()` to mark a directed two-mode network TRUE (closes #157)
 
