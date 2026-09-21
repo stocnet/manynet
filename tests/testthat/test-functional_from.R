@@ -27,7 +27,8 @@ pair_fixture_makers <- list(
   from_slices    = function() mutate_ties(ison_adolescents,
                                           time = seq_len(10) %% 3 + 1),
   from_subgraphs = function() add_node_attribute(ison_adolescents, "group",
-                                                 rep(c("A", "B"), 4))
+                                                 rep(c("A", "B"), 4)),
+  from_reporters = function() func_fixtures$cognitive
 )
 
 # Required arguments for the to_*() half of a pair
@@ -75,6 +76,48 @@ for (fn in from_funs) {
     }
     succeed()
   })
+}
+
+# 1b. Each join returns the class it was given ------------------------------
+# A list of networks of one class is joined into a network of that class.
+# A list of matrices is the one exception, since a matrix cannot hold a third
+# dimension: the parts of one network give one matrix, and networks stacked
+# along time, layers, or reporters give a three-dimensional array.
+
+part_joins <- c("from_subgraphs", "from_egos")
+join_classes <- c("stocnet", "tidygraph", "igraph", "network", "matrix")
+
+for (fn in from_funs) {
+  to_fn <- sub("^from_", "to_", fn)
+  for (cl in join_classes) {
+    test_that(paste0(fn, "() returns the class of its ", cl, " inputs"), {
+      if (!to_fn %in% collect_functions("^to_")) {
+        skip(paste0("AUDIT [", fn, "]: no ", to_fn,
+                    "() counterpart is exported"))
+      }
+      maker <- pair_fixture_makers[[fn]]
+      if (is.null(maker)) maker <- pair_fixture_makers$default
+      net <- run_or_skip(get(paste0("as_", cl))(maker()),
+                         paste0("as_", cl), fn)
+      targs <- if (to_fn %in% names(pair_to_argmakers)) {
+        pair_to_argmakers[[to_fn]](net)
+      } else list()
+      f_to <- get(to_fn, envir = asNamespace("manynet"))
+      f_from <- get(fn, envir = asNamespace("manynet"))
+      pieces <- run_or_skip(do.call(f_to, c(list(net), targs)), to_fn, cl)
+      if (!is.list(pieces) || is_manynet(pieces) || !length(pieces)) {
+        skip(paste0("AUDIT [", to_fn, " x ", cl, "]: does not split into a ",
+                    "list of networks"))
+      }
+      out <- run_or_skip(f_from(pieces), fn, cl)
+      if (cl == "matrix") {
+        expect_length(dim(out), if (fn %in% part_joins) 2 else 3)
+      } else {
+        expect_true(inherits(out, if (cl == "tidygraph") "tbl_graph" else cl),
+                    label = paste0(fn, " x ", cl))
+      }
+    })
+  }
 }
 
 test_that("from_waves() and from_slices() insist on a list of networks", {

@@ -1,31 +1,34 @@
-#' Joining lists of networks, graphs, and matrices
-#' @name modif_from
+# Joining parts ####
+
+#' Joining parts of a network
+#' @name modif_from_parts
 #' @description
-#'   These functions offer tools for joining lists of manynet-consistent objects
-#'   (matrices, igraph, tidygraph, or network objects) into a single object.
-#'   Each reverses one of the `to_*s()` functions that splits a network apart.
+#'   These functions join a list of networks that are each a part of one
+#'   network, holding some of its nodes and the ties among them,
+#'   back into that one network.
+#'   Each reverses one of the `to_*s()` functions that splits a network into
+#'   parts.
 #'
-#'   - `from_subgraphs()` modifies a list of subgraphs into a single tidygraph.
-#'   - `from_egos()` modifies a list of ego networks into a whole tidygraph
-#'   - `from_times()` modifies a list of the network at each moment, as
-#'   `to_times()` returns, back into one network that records time.
-#'   This is where new work on rejoining a network over time belongs;
-#'   `from_waves()` and `from_slices()` are the older, form-specific spellings.
-#'   - `from_waves()` modifies a list of network waves into a longitudinal tidygraph.
-#'   - `from_slices()` modifies a list of time slices of a network into
-#'   a dynamic tidygraph.
-#'   - `from_layers()` modifies several networks over the same nodes into one
-#'   multiplex network, keeping each as its own layer.
-#'   `from_ties()` is an alias.
-#'   Where `to_layers()` splits a multiplex network into its layers,
-#'   `from_layers()` reassembles them.
-#'   To combine the networks' tie values into a single value per dyad instead,
-#'   use `to_flat()` on the result, or `join_ties()` for two networks.
-#' @param netlist A list of network, igraph, tidygraph, matrix, or edgelist objects.
+#'   - `from_subgraphs()` joins a list of subgraphs, as `to_subgraphs()`
+#'   returns, into one network.
+#'   - `from_egos()` joins a list of ego networks, as `to_egos()` returns,
+#'   into one whole network.
+#'
+#'   A node or a tie that more than one part holds is held once in the result.
+#'
+#'   Every function here returns the class of the networks in the list:
+#'   a 'stocnet' from 'stocnet's, a 'tbl_graph' from 'tbl_graph's,
+#'   an 'igraph' from 'igraph's, a 'network' from 'network's,
+#'   and a single matrix from matrices, since the parts are all of one network.
+#'
+#'   To stack networks that each hold the same nodes, one for each moment,
+#'   layer, or reporter, see [from_times()] and the other functions there.
+#' @param netlist A list of network, igraph, tidygraph, matrix, or edgelist
+#'   objects.
 #' @template fam_modif
 NULL
 
-#' @rdname modif_from
+#' @rdname modif_from_parts
 #' @importFrom igraph graph_from_data_frame as_data_frame set_vertex_attr
 #' @examples
 #' ison_adolescents |>
@@ -47,10 +50,10 @@ from_subgraphs <- function(netlist) {
   }
   orig <- object2 <- NULL
   out <- select_ties(out, -c(orig, object2))
-  as_tidygraph(out)
+  .as_class_of(as_tidygraph(out), netlist[[1]])
 }
 
-#' @rdname modif_from
+#' @rdname modif_from_parts
 #' @importFrom igraph graph_from_data_frame as_data_frame
 #' @importFrom dplyr distinct
 #' @examples
@@ -67,10 +70,60 @@ from_egos <- function(netlist) {
   for (i in seq_along(ann)[-1]){
     out <- rbind(out, igraph::as_data_frame(ann[[i]]))
   }
-  as_tidygraph(igraph::graph_from_data_frame(dplyr::distinct(out)))
+  out <- as_tidygraph(igraph::graph_from_data_frame(dplyr::distinct(out)))
+  .as_class_of(out, netlist[[1]])
 }
 
-#' @rdname modif_from 
+# Joining along a third dimension ####
+
+#' Joining networks along a third dimension
+#' @name modif_from_ternary
+#' @description
+#'   These functions join a list of networks that each hold the same nodes,
+#'   one network for each moment, layer, or reporter, into one network.
+#'   Each tie then records the network it came from in one of its columns:
+#'   `time` for a moment, `layer` for a layer, and `by` for a reporter.
+#'   Each reverses one of the `to_*s()` functions that splits a network along
+#'   such a dimension.
+#'
+#'   - `from_times()` joins a list of the network at each moment, as
+#'   `to_times()` returns, back into one network that records time.
+#'   This is where new work on rejoining a network over time belongs;
+#'   `from_waves()` and `from_slices()` are the older, form-specific spellings.
+#'   - `from_waves()` joins a list of network waves into a longitudinal network.
+#'   - `from_slices()` joins a list of time slices of a network into
+#'   a dynamic network.
+#'   - `from_layers()` joins several networks over the same nodes into one
+#'   multiplex network, keeping each as its own layer.
+#'   `from_ties()` is an alias.
+#'   Where `to_layers()` splits a multiplex network into its layers,
+#'   `from_layers()` reassembles them.
+#'   To combine the networks' tie values into a single value per dyad instead,
+#'   use `to_aggregated()` on the result, or `join_ties()` for two networks.
+#'   - `from_reporters()` joins a list of the networks that each reporter
+#'   reported, named after the reporters, into one cognitive social
+#'   structure (see [is_cognitive()]).
+#'
+#'   Every function here returns the class of the networks in the list:
+#'   a 'stocnet' from 'stocnet's, a 'tbl_graph' from 'tbl_graph's,
+#'   an 'igraph' from 'igraph's, a 'network' from 'network's.
+#'   A list of matrices gives a three-dimensional array, with one slice for
+#'   each matrix, named after the list, since a matrix has no column in which
+#'   to record the moment, layer, or reporter of a tie.
+#'   `as_stocnet()` reads such an array back, once told what its slices hold.
+#'
+#'   A tie that a network records as missing stays missing from that network
+#'   alone, so a node that did not report at one moment, or in one layer, is
+#'   recorded as not reporting there and nowhere else.
+#'
+#'   To join networks that are each a part of one network, holding some of its
+#'   nodes, see [from_subgraphs()] and [from_egos()].
+#' @param netlist A list of network, igraph, tidygraph, matrix, or edgelist
+#'   objects, over the same nodes.
+#' @template fam_modif
+NULL
+
+#' @rdname modif_from_ternary
 #' @importFrom igraph graph_from_data_frame as_data_frame
 #' @examples
 #' ison_adolescents |>
@@ -82,8 +135,9 @@ from_waves <- function(netlist) {
   if (!is.list(netlist[1])) {
     snet_abort("Please declare a list of waves.")
   }
+  if (.all_matrices(netlist)) return(.stack_matrices(netlist))
   ann <- lapply(netlist, as_igraph)
-  .rebind_netlist(ann)
+  .as_class_of(.rebind_netlist(ann), netlist[[1]])
 }
 
 # Reassemble a list of igraphs into one network, keeping isolates and node
@@ -104,7 +158,7 @@ from_waves <- function(netlist) {
   }
 }
 
-#' @rdname modif_from 
+#' @rdname modif_from_ternary 
 #' @param remove.duplicates Should duplicates be removed?
 #' By default FALSE.
 #' If TRUE, duplicated edges are removed.
@@ -119,14 +173,16 @@ from_waves <- function(netlist) {
 #' @export
 from_slices <- function(netlist, remove.duplicates = FALSE) {
   if (is.list(netlist[1])) {
+    if (.all_matrices(netlist)) return(.stack_matrices(netlist))
     ann <- lapply(netlist, as_igraph)
-    .rebind_netlist(ann, distinct_ties = remove.duplicates)
+    .as_class_of(.rebind_netlist(ann, distinct_ties = remove.duplicates),
+                 netlist[[1]])
   } else {
     message("Only one slice is available, cannot be joined.")
   }
 }
 
-#' @rdname modif_from
+#' @rdname modif_from_ternary
 #' @details
 #'   `from_times()` rejoins what [to_times()] returns, stamping each network's
 #'   ties with the moment it names before binding them, and so inverts it for
@@ -139,6 +195,7 @@ from_slices <- function(netlist, remove.duplicates = FALSE) {
 from_times <- function(netlist) {
   if(!is.list(netlist) || !length(netlist))
     snet_abort("Please declare a list of networks, as {.fn to_times} returns.")
+  if(.all_matrices(netlist)) return(.stack_matrices(netlist))
   intervals <- any(c("begin", "beg", "start") %in%
                      net_tie_attributes(netlist[[1]]))
   if(intervals) return(from_slices(netlist, remove.duplicates = TRUE))
@@ -147,26 +204,14 @@ from_times <- function(netlist) {
   # The names are the moments as characters, and a moment counted or dated is
   # not a character, so they are read back as what they were written from.
   moments <- utils::type.convert(moments, as.is = TRUE)
+  if(all(vapply(netlist, function(x) inherits(x, "stocnet"), logical(1))))
+    return(.join_stocnets(netlist, "time", moments))
   stamped <- Map(function(net, at) mutate_ties(net, time = at),
                  netlist, moments)
-  if(all(vapply(netlist, function(x) inherits(x, "stocnet"), logical(1))))
-    return(.rebind_stocnets(stamped))
-  .rebind_netlist(lapply(stamped, as_igraph))
+  .as_class_of(.rebind_netlist(lapply(stamped, as_igraph)), netlist[[1]])
 }
 
-# Rejoins a list of stocnets over the same nodes into one, binding the tie
-# tables and keeping what the first of them knows about the network, since
-# each was scoped from the same network and so knows the same things.
-.rebind_stocnets <- function(netlist){
-  out <- netlist[[1]]
-  out$ties <- dplyr::bind_rows(lapply(netlist, function(x) x$ties))
-  out$missings <- dplyr::bind_rows(lapply(netlist, function(x) x$missings))
-  if(!nrow(out$missings)) out$missings <- NULL
-  out$info$transformations <- NULL
-  out
-}
-
-#' @rdname modif_from
+#' @rdname modif_from_ternary
 #' @param ... Two or more networks over the same nodes to be merged,
 #'   or a single list of such networks, such as that returned by `to_layers()`.
 #'   Nodes are matched by name where the networks are labelled,
@@ -182,18 +227,177 @@ from_layers <- function(..., layer_names){
   netlist <- .splice_netlist(...)
   if(length(netlist) == 0)
     snet_abort("Please give two or more networks to merge.")
+  if(!missing(layer_names) && !is.null(layer_names))
+    names(netlist) <- layer_names
+  if(.all_matrices(netlist)) return(.stack_matrices(netlist))
   # a network split into layers may hold just one, and reassembling one
   # network is that network
   if(length(netlist) == 1) return(netlist[[1]])
   layer_names <- if(missing(layer_names)) NULL else layer_names
   if(inherits(netlist[[1]], "stocnet"))
     .stack_layers_stocnet(netlist, layer_names)
-  else .stack_layers_tbl(netlist, layer_names)
+  else .as_class_of(.stack_layers_tbl(netlist, layer_names), netlist[[1]])
 }
 
-#' @rdname modif_from
+#' @rdname modif_from_ternary
 #' @export
 from_ties <- from_layers
+
+#' @rdname modif_from_ternary
+#' @details
+#'   `from_reporters()` takes the reporter of each network from the names of
+#'   the list, which may be the labels of the nodes or their positions.
+#'   Where the list is not named, the networks are taken to be the reports of
+#'   the first nodes, in order.
+#' @examples
+#' reports <- list(A = create_ring(4), B = create_star(4))
+#' from_reporters(lapply(reports, add_node_attribute, "name", LETTERS[1:4]))
+#' @export
+from_reporters <- function(netlist) {
+  if(!is.list(netlist) || !length(netlist) || is_manynet(netlist))
+    snet_abort("Please declare a list of networks, one for each reporter.")
+  if(.all_matrices(netlist)) return(.stack_matrices(netlist))
+  .as_class_of(.join_third(netlist, "by"), netlist[[1]])
+}
+
+# Helpers for joining ####
+
+# A stocnet whose nonresponse records are replaced by the missing ties they
+# imply, listed in its missings, so that they can be joined with the missing
+# ties of other networks and recompressed for the joined network.
+.explicit_missing <- function(net){
+  missing <- as_missinglist(net)
+  net <- .clear_missing(net)
+  net$missings <- if(!is.null(missing) && nrow(missing))
+    .tidy_registry(missing) else NULL
+  net
+}
+
+# The class a list of networks came in, which a join gives back.
+.as_class_of <- function(out, template){
+  cls <- setdiff(class(template), c("mnet", "tbl_df", "tbl"))[1]
+  switch(cls,
+         stocnet = as_stocnet(out),
+         tbl_graph = as_tidygraph(out),
+         igraph = as_igraph(out),
+         network = as_network(out),
+         matrix = as_matrix(out),
+         # an array's third dimension is what was split or combined, so what
+         # is left of it is a matrix
+         array = as_matrix(out),
+         data.frame = as_edgelist(out),
+         out)
+}
+
+.all_matrices <- function(netlist){
+  length(netlist) > 0 &&
+    all(vapply(netlist, function(x) is.matrix(x) && !is.data.frame(x),
+               logical(1)))
+}
+
+# A list of matrices stacked into an array, one slice for each, named after
+# the list. Matrices of different nodes are first aligned on their names.
+.stack_matrices <- function(netlist){
+  mats <- lapply(netlist, as.matrix)
+  first <- mats[[1]]
+  same <- all(vapply(mats, function(m) identical(dim(m), dim(first)) &&
+                       identical(dimnames(m), dimnames(first)), logical(1)))
+  if(!same){
+    named <- all(vapply(mats, function(m)
+      !is.null(rownames(m)) && !is.null(colnames(m)), logical(1)))
+    if(!named)
+      snet_abort("Matrices without names can only be stacked where they are",
+                 "all the same size.")
+    rows <- unique(unlist(lapply(mats, rownames)))
+    cols <- unique(unlist(lapply(mats, colnames)))
+    square <- all(vapply(mats, function(m)
+      identical(rownames(m), colnames(m)), logical(1)))
+    if(square) rows <- cols <- unique(c(rows, cols))
+    mats <- lapply(mats, function(m){
+      out <- matrix(0, length(rows), length(cols),
+                    dimnames = list(rows, cols))
+      out[rownames(m), colnames(m)] <- m
+      out
+    })
+    first <- mats[[1]]
+  }
+  slices <- names(netlist)
+  dimnames <- if(is.null(dimnames(first)) && is.null(slices)) NULL else
+    list(rownames(first), colnames(first), slices)
+  array(unlist(mats), dim = c(nrow(first), ncol(first), length(mats)),
+        dimnames = dimnames)
+}
+
+# Joins a list of stocnets over the same nodes into one, recording which of
+# them each tie came from in the column `col`. The ties each network records
+# as missing come along too, marked as such, so that `make_stocnet()` records
+# a node that did not report in one of them for that one alone.
+.join_stocnets <- function(netlist, col, values){
+  first <- .clear_missing(netlist[[1]])
+  # The networks record one relation, which is directed wherever any of them
+  # is, so the ties of an undirected one are then held in both directions.
+  each <- vapply(netlist, is_directed, logical(1))
+  directed <- any(each)
+  bothways <- function(tab){
+    if(!nrow(tab)) return(tab)
+    rev <- tab[tab$from != tab$to, , drop = FALSE]
+    rev[c("from", "to")] <- rev[c("to", "from")]
+    dplyr::bind_rows(tab, rev)
+  }
+  rows <- Map(function(net, value){
+    ties <- net$ties
+    if(is.null(ties)) ties <- dplyr::tibble(from = integer(0), to = integer(0))
+    missing <- as_missinglist(net)
+    if(!is.null(missing) && nrow(missing)){
+      missing <- .tidy_registry(missing)
+      missing$na <- TRUE
+      ties <- dplyr::bind_rows(ties, missing)
+    }
+    if(directed && !is_directed(net) && !is_twomode(net)) ties <- bothways(ties)
+    ties[[col]] <- rep(value, nrow(ties))
+    ties
+  }, netlist, values)
+  ties <- dplyr::bind_rows(rows)
+  # A join of networks without ties still records what joins them.
+  if(!nrow(ties)){
+    ties <- dplyr::tibble(from = integer(0), to = integer(0))
+    ties[[col]] <- values[0]
+  }
+  info <- first$info
+  info$transformations <- NULL
+  # Where the networks agree, the first one's record of direction, which may
+  # be one for each layer, stands for them all.
+  if(!all(each == directed)) info$directed <- directed
+  make_stocnet(info = info, nodes = first$nodes, ties = ties,
+               changes = first$changes, globals = first$globals)
+}
+
+# Joins a list of networks, each the report of one reporter ('by') or each
+# about one target ('about'), into one stocnet naming that node in `col`.
+.join_third <- function(netlist, col){
+  nets <- lapply(netlist, as_stocnet)
+  labels <- nets[[1]]$nodes[["label"]]
+  values <- .third_node_index(names(netlist), labels, length(nets))
+  out <- .join_stocnets(nets, col, values)
+  if(col == "by" && is.null(out$info$observation))
+    out$info$observation <- "cognitive"
+  out
+}
+
+# The node each network of a list names, from the names of the list: labels
+# where the nodes have them and the names match, and positions otherwise.
+.third_node_index <- function(names, labels, n){
+  if(is.null(names)) return(seq_len(n))
+  if(!is.null(labels)){
+    idx <- match(names, labels)
+    if(!anyNA(idx)) return(idx)
+  }
+  idx <- suppressWarnings(as.integer(names))
+  if(anyNA(idx))
+    snet_abort("The names {names[is.na(idx)]} do not name nodes of the",
+               "networks.")
+  idx
+}
 
 # Networks may be given one by one or as a single list, as `to_layers()` and
 # the other splitting functions return one. A network is not itself spliced,
@@ -274,7 +478,9 @@ from_ties <- from_layers
   ## 2. Resolve layer names per network, only renaming on clashes ----------
   seen_layers <- character(0)
   for(i in seq_along(netlist)){
-    net <- netlist[[i]]
+    # A node that did not report in one network did not report in that layer
+    # alone, so its missing ties are listed before the node tables are merged.
+    net <- .explicit_missing(netlist[[i]])
     layers_i <- .get_layers(net, layer_names[i])
     clash <- intersect(layers_i, seen_layers)
     if(length(clash)){
@@ -305,7 +511,8 @@ from_ties <- from_layers
     net <- netlist[[i]]
     blocks <- .get_blocks(net)
     res <- .match_anon_blocks(blocks, merged_nodes)
-    merged_nodes <- res$merged_nodes
+    merged_nodes <- .carry_node_attributes(res$merged_nodes, net$nodes,
+                                           res$new_idx)
     netlist[[i]] <- .apply_reindex(net, res$new_idx)
   }
   
@@ -483,6 +690,22 @@ from_ties <- from_layers
 # Match each unlabelled block to an existing label==NA pool in merged_nodes,
 # primarily by size; 'mode' is used only to disambiguate when there are
 # multiple same-sized candidates, and to fill in unknown mode info.
+# An unlabelled network is matched to the merged nodes by position, which
+# gives each of its nodes a row there but not the attributes it holds. Those
+# are carried to the rows they were matched to, where a row does not already
+# hold a value for them.
+.carry_node_attributes <- function(merged_nodes, nodes, idx){
+  if(is.null(merged_nodes) || is.null(nodes)) return(merged_nodes)
+  for(col in setdiff(names(nodes), c("label", "mode"))){
+    value <- nodes[[col]]
+    if(!col %in% names(merged_nodes))
+      merged_nodes[[col]] <- value[rep(NA_integer_, nrow(merged_nodes))]
+    held <- merged_nodes[[col]][idx]
+    merged_nodes[[col]][idx] <- ifelse(is.na(held), value, held)
+  }
+  merged_nodes
+}
+
 .match_anon_blocks <- function(blocks, merged_nodes){
   sizes <- vapply(blocks, function(b) b$size, numeric(1))
   offsets <- cumsum(c(0, sizes))
@@ -578,8 +801,12 @@ from_ties <- from_layers
     }
   }
   if(all(is.na(directed_vec)))    directed_vec    <- NULL
-  if(all(is.na(observation_vec))) observation_vec <- NULL
-  if(all(is.na(update_vec)))      update_vec      <- NULL
+  # A layer that declared no design is left undeclared, rather than given one
+  # it did not state, while the layers that declared theirs keep them.
+  observation_vec <- observation_vec[!is.na(observation_vec)]
+  if(!length(observation_vec)) observation_vec <- NULL
+  update_vec <- update_vec[!is.na(update_vec)]
+  if(!length(update_vec)) update_vec <- NULL
   
   focals <- unlist(lapply(netlist, function(x) x$info$focal))
   focal <- if(length(focals) >= 1) focals[1] else NULL

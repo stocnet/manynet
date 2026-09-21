@@ -273,7 +273,8 @@ network, comparing nodes on their affiliations rather than on their ties.
 Other modifications:
 \code{\link{modif_backbone}},
 \code{\link{modif_direction}},
-\code{\link{modif_from}},
+\code{\link{modif_from_parts}},
+\code{\link{modif_from_ternary}},
 \code{\link{modif_labels}},
 \code{\link{modif_levels}},
 \code{\link{modif_miss}},

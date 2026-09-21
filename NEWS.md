@@ -19,6 +19,10 @@
 
 ## Modifying
 
+- Improved every `from_*()` function to return the class of its inputs
+  - Partial `from_egos()` and `from_subgraphs()` returns a combined matrix
+  - Ternary `from_times()`, `from_layers()`, etc returns an array
+- Added `from_reporters()` to join each reporter's network into one structure
 - Added `to_aggregated()` to combine ties over layers, reporters, targets, or moments, 
   dyad by dyad, according to a `rule` (Krackhardt 1987)
   - `over = NULL` combines parallel ties, which `to_simplex()` no longer does

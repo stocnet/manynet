@@ -172,6 +172,7 @@
 \alias{na_to_mean}
 \alias{gather_changes}
 \alias{apply_changes}
+\alias{is_egonet}
 \title{Functions that have been renamed, superseded, moved, or are no longer working}
 \usage{
 pkg_data(pkg = "manynet")
@@ -513,6 +514,8 @@ na_to_mean(.data)
 gather_changes(.data, time)
 
 apply_changes(.data, time)
+
+is_egonet(.data)
 }
 \arguments{
 \item{.data}{A manynet-consistent network.}
@@ -869,6 +872,8 @@ wherever possible and update your scripts accordingly.
 \item \code{gather_changes()}: Deprecated on 2026-08-20.
 
 \item \code{apply_changes()}: Deprecated on 2026-08-20.
+
+\item \code{is_egonet()}: Deprecated on 2026-09-21.
 
 }}
 \keyword{internal}
