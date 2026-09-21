@@ -572,6 +572,19 @@ is_multiplex.data.frame <- function(.data) {
 }
 
 #' @rdname mark_format_tie
+#' @examples
+#' is_disaggregated(ison_koenigsberg)
+#' @export
+is_disaggregated <- function(.data) UseMethod("is_disaggregated")
+
+#' @export
+is_disaggregated.default <- function(.data) {
+  # A matrix holds one value for each dyad, and so no parallel ties.
+  if(is.matrix(.data)) return(FALSE)
+  any(.parallel_ties(.data))
+}
+
+#' @rdname mark_format_tie
 #' @importFrom igraph is_simple
 #' @examples
 #' is_uniplex(create_star(3))

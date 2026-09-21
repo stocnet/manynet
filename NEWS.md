@@ -25,6 +25,7 @@
 
 ## Marking
 
+- Added `is_disaggregated()` to mark networks that hold parallel ties
 - Fixed `is_directed()` to mark a directed two-mode network TRUE (closes #157)
 
 ## Data
