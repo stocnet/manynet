@@ -15,6 +15,7 @@
   - `compare=` takes "absdiff", "diff", "sender", or "receiver" for a measure
   - `compare=` takes "same" for a membership
   - `twomode=TRUE` turns a membership into an affiliation matrix
+- Improved `as_network()` to keep the direction of a two-mode network (closes #157)
 
 ## Modifying
 

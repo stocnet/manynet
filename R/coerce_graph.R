@@ -138,6 +138,10 @@ as_igraph.network <- function(.data,
   # attribute rather than edges, as igraph can mark no edge as missing.
   if (!is.null(as_missinglist(.data)))
     return(as_igraph(as_stocnet(.data), twomode = twomode))
+  # A biadjacency matrix cannot carry direction, so a directed two-mode
+  # network is read from its ties too.
+  if (network::is.bipartite(.data) && isTRUE(.data$gal$directed))
+    return(as_igraph(as_stocnet(.data), twomode = twomode))
   # Extract node attributes
   attr <- names(.data[[3]][[1]])
   # Convert to igraph
@@ -758,9 +762,18 @@ as_network.matrix <- function(.data,
                       names.eval  = ifelse(valued, "weight", NULL))
 }
 
+# A sociomatrix holds one value for each dyad, so it cannot carry the
+# direction of a two-mode network, nor the reporter or target of each tie.
+# Those networks are built from their ties instead, as a stocnet is.
+.network_via_ties <- function(.data){
+  (is_twomode(.data) && igraph::is_directed(.data)) ||
+    any(c("by", "about") %in% igraph::edge_attr_names(.data))
+}
+
 #' @export
 as_network.igraph <- function(.data,
                               twomode = FALSE) {
+  if(.network_via_ties(.data)) return(as_network.stocnet(as_stocnet(.data)))
   name <- type <- NULL
   attr <- as.data.frame(igraph::vertex_attr(.data))
   if ("name" %in% colnames(attr)) attr <- subset(attr, select = c(-name))
@@ -775,6 +788,7 @@ as_network.igraph <- function(.data,
 #' @export
 as_network.tbl_graph <- function(.data,
                                  twomode = FALSE) {
+  if(.network_via_ties(.data)) return(as_network.stocnet(as_stocnet(.data)))
   nodes <- name <- type <- NULL
   attr <- as.data.frame(activate(.data, nodes))[-1]
   if ("name" %in% colnames(attr)) attr <- subset(attr, select = c(-name))
