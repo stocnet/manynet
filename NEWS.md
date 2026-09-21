@@ -30,8 +30,11 @@
 
 ## Data
 
-- Improved `ison_southern_women` into a 'stocnet', which holds more of what it
-  knows about itself: how it was collected, where, when, and by what boundary
+- Converted `ison_southern_women` into a 'stocnet'
+- Rebuilt `ison_hightech` as a cognitive social structure
+  - Advice and friendship layers hold all 21 managers' reports
+  - `to_aggregated(over = "by", reporters = "sender")` returns previous network
+- Fixed `ison_laterals` to be undirected
 
 # manynet 2.3.5
 
