@@ -365,26 +365,32 @@ create_tree <- function(n,
 
 #' @rdname make_create 
 #' @section Lattice graphs:
-#'   `create_lattice()` creates both two-dimensional grid and triangular
-#'   lattices with as even dimensions as possible.
-#'   When the `width` parameter is set to 4, nodes cannot have (in or out)
-#'   degrees larger than 4.
-#'   This creates regular square grid lattices where possible.
+#'   `create_lattice()` creates two-dimensional lattices
+#'   with as even dimensions as possible.
+#'   The `width` parameter sets the maximum (in or out) degree of any node:
+#'
+#'   - `width = 4` creates a square grid lattice.
 #'   Such a network is bipartite, that is partitionable into two types that are
 #'   not adjacent to any of their own type.
+#'   - `width = 6` creates a triangular grid lattice,
+#'   a square grid with one diagonal across each square.
+#'   - `width = 8` creates a King's move lattice,
+#'   a square grid with both diagonals across each square.
+#'   - `width = 12` creates a lattice where each node is tied to every node
+#'   within two steps on the square grid.
+#'
 #'   If the number of nodes is a prime number, it will only return a chain
 #'   (a single dimensional lattice).
 #'
-#'   A `width` parameter of 8 creates a network where the maximum degree of any
-#'   nodes is 8.
-#'   This can create a triangular mesh lattice or a Queen's move lattice,
-#'   depending on the dimensions.
-#'   A `width` parameter of 12 creates a network where the maximum degree of
-#'   any nodes is 12.
-#'   Prime numbers of nodes will return a chain.
+#'   When `n` is a vector of two equal integers, `create_lattice()` creates
+#'   a two-mode honeycomb (hexagonal) lattice,
+#'   in which each node is tied to at most three nodes of the other mode.
+#'   Where the number of nodes allows, no node hangs from a single tie.
 #' @importFrom igraph make_lattice
 #' @examples
 #' create_lattice(12, width = 4)
+#' create_lattice(12, width = 6)
+#' create_lattice(c(6,6))
 #' @export
 create_lattice <- function(n,
                            directed = FALSE,
@@ -392,11 +398,12 @@ create_lattice <- function(n,
   directed <- infer_directed(n, directed)
   n <- infer_n(n)
   if (length(n) == 1) {
-    divs <- divisors(n)
-    if ((length(divs) %% 2) == 0) {
-      dims <- c(divs[length(divs) / 2], divs[length(divs) / 2 + 1])
-    } else dims <- c(stats::median(divs), stats::median(divs))
-    if (width == 8) {
+    dims <- lattice_dims(n)
+    if (width == 6) {
+      as_tidygraph(igraph::make_graph(t(grid_ties(dims, diagonal = TRUE)),
+                                      n = n, directed = directed)) |>
+        add_info(name = "Lattice network")
+    } else if (width == 8) {
       nei1.5 <- as_matrix(igraph::make_lattice(dims, nei = 2, 
                                                directed = directed))
       for (i in 1:(prod(dims)-2)) {
@@ -414,26 +421,61 @@ create_lattice <- function(n,
     } else if (width == 4) {
       as_tidygraph(igraph::make_lattice(dims, nei = 1, directed = directed)) |> 
         add_info(name = "Lattice network")
-    } else snet_abort("`max_neighbourhood` expected to be 4, 8, or 12")
+    } else snet_abort("`width` expected to be 4, 6, 8, or 12")
   } else {
-    divs1 <- divisors(n[1])
-    divs2 <- divisors(n[2])
-    # divs1 <- divs1[-c(1, length(divs1))]
-    # divs2 <- divs2[-c(1, length(divs2))]
-    divs1 <- intersect(divs1, divs2)
-    divs2 <- intersect(divs2, divs1)
-    # divs1 <- intersect(divs1, c(divs2+1, divs2-1))
-    # divs2 <- intersect(divs2, c(divs1+1, divs1-1))
-    mat <- matrix(0, n[1], n[2])
-    diag(mat) <- 1
-    w <- roll_over(mat)
-    mat <- mat + w
-    mat[lower.tri(mat)] <- 0
-    out <- mat[rowSums(mat) ==2,]
-    out <- do.call(rbind, replicate(nrow(mat)/nrow(out), out, simplify=FALSE))
-    as_tidygraph(out) |> 
+    if (n[1] != n[2])
+      snet_abort("A two-mode (honeycomb) lattice needs two modes of the same size,",
+                 "not {n[1]} and {n[2]} nodes.")
+    dims <- honeycomb_dims(sum(n))
+    # A honeycomb as a brick wall: all ties along the first dimension,
+    # and ties along the second only where the row and column sum is even
+    ties <- grid_ties(dims)
+    rowcol <- cbind((seq_len(sum(n)) - 1) %% dims[1] + 1,
+                    (seq_len(sum(n)) - 1) %/% dims[1] + 1)
+    across <- ties[,2] - ties[,1] == dims[1]
+    ties <- ties[!across | rowSums(rowcol[ties[,1], , drop = FALSE]) %% 2 == 0, ,
+                 drop = FALSE]
+    # The checkerboard colour of each node gives its mode
+    mode1 <- which(rowSums(rowcol) %% 2 == 0)
+    mode2 <- which(rowSums(rowcol) %% 2 == 1)
+    swap <- ties[,1] %in% mode2
+    ties[swap,] <- ties[swap, 2:1]
+    out <- matrix(0, n[1], n[2])
+    out[cbind(match(ties[,1], mode1), match(ties[,2], mode2))] <- 1
+    as_tidygraph(out, twomode = TRUE) |>
       add_info(name = "Lattice network")
   }
+}
+
+# Dimensions of a grid of n nodes that are as even as possible
+lattice_dims <- function(n) {
+  divs <- divisors(n)
+  if ((length(divs) %% 2) == 0) {
+    c(divs[length(divs) / 2], divs[length(divs) / 2 + 1])
+  } else c(stats::median(divs), stats::median(divs))
+}
+
+# Dimensions of a brick wall of n nodes.
+# Chains of odd length, in an even number, leave no corner hanging;
+# otherwise the most even dimensions are used
+honeycomb_dims <- function(n) {
+  divs <- divisors(n)
+  odd <- divs[divs %% 2 == 1 & (n / divs) %% 2 == 0 & divs > 1]
+  if (length(odd) == 0) return(lattice_dims(n))
+  r <- odd[which.min(abs(log(odd / (n / odd))))]
+  c(r, n / r)
+}
+
+# Edgelist of a grid with the node order of igraph::make_lattice(),
+# optionally with one diagonal in each square to make triangles
+grid_ties <- function(dims, diagonal = FALSE) {
+  r <- dims[1]
+  id <- matrix(seq_len(prod(dims)), nrow = r)
+  ties <- rbind(cbind(c(id[-r, ]), c(id[-1, ])),
+                cbind(c(id[, -ncol(id)]), c(id[, -1])))
+  if (diagonal && r > 1 && ncol(id) > 1)
+    ties <- rbind(ties, cbind(c(id[-r, -ncol(id)]), c(id[-1, -1])))
+  ties
 }
 
 # #' @describeIn create Creates a honeycomb-style, isometric, or triangular

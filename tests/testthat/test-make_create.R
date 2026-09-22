@@ -134,6 +134,26 @@ test_that("create lattice works", {
   expect_equal(igraph::vcount(create_lattice(5)), 5)
   expect_false(is_directed(create_lattice(6)))
   expect_true(is_directed(create_lattice(6, directed = TRUE)))
+  square <- as_igraph(create_lattice(16, width = 4))
+  expect_equal(max(igraph::degree(square)), 4)
+  expect_true(igraph::bipartite_mapping(square)$res)
+  triangle <- as_igraph(create_lattice(20, width = 6))
+  expect_equal(max(igraph::degree(triangle)), 6)
+  expect_equal(igraph::ecount(triangle), 3*4*5 - 2*4 - 2*5 + 1)
+  expect_equal(igraph::girth(triangle)$girth, 3)
+  expect_true(is_directed(create_lattice(20, width = 6, directed = TRUE)))
+  expect_error(create_lattice(20, width = 5), "width")
+})
+
+test_that("create lattice makes a two-mode honeycomb", {
+  honey <- create_lattice(c(6,6))
+  expect_true(is_twomode(honey))
+  expect_equal(net_dims(honey), c(6,6))
+  expect_equal(max(igraph::degree(as_igraph(honey))), 3)
+  expect_equal(min(igraph::degree(as_igraph(honey))), 2)
+  expect_equal(igraph::girth(as_igraph(honey))$girth, 6)
+  expect_true(igraph::is_connected(as_igraph(create_lattice(c(15,15)))))
+  expect_error(create_lattice(c(4,6)), "same size")
 })
 
 test_that("component creation works", {

@@ -153,23 +153,28 @@ and the number of modes, nodes, and directedness will be inferred.
 }
 \section{Lattice graphs}{
 
-\code{create_lattice()} creates both two-dimensional grid and triangular
-lattices with as even dimensions as possible.
-When the \code{width} parameter is set to 4, nodes cannot have (in or out)
-degrees larger than 4.
-This creates regular square grid lattices where possible.
+\code{create_lattice()} creates two-dimensional lattices
+with as even dimensions as possible.
+The \code{width} parameter sets the maximum (in or out) degree of any node:
+\itemize{
+\item \code{width = 4} creates a square grid lattice.
 Such a network is bipartite, that is partitionable into two types that are
 not adjacent to any of their own type.
+\item \code{width = 6} creates a triangular grid lattice,
+a square grid with one diagonal across each square.
+\item \code{width = 8} creates a King's move lattice,
+a square grid with both diagonals across each square.
+\item \code{width = 12} creates a lattice where each node is tied to every node
+within two steps on the square grid.
+}
+
 If the number of nodes is a prime number, it will only return a chain
 (a single dimensional lattice).
 
-A \code{width} parameter of 8 creates a network where the maximum degree of any
-nodes is 8.
-This can create a triangular mesh lattice or a Queen's move lattice,
-depending on the dimensions.
-A \code{width} parameter of 12 creates a network where the maximum degree of
-any nodes is 12.
-Prime numbers of nodes will return a chain.
+When \code{n} is a vector of two equal integers, \code{create_lattice()} creates
+a two-mode honeycomb (hexagonal) lattice,
+in which each node is tied to at most three nodes of the other mode.
+Where the number of nodes allows, no node hangs from a single tie.
 }
 
 \examples{
@@ -179,6 +184,8 @@ create_ring(8, width = 2)
 create_star(12)
 create_tree(c(7,8))
 create_lattice(12, width = 4)
+create_lattice(12, width = 6)
+create_lattice(c(6,6))
 create_components(10, membership = c(1,1,1,2,2,2,3,3,3,3))
 create_degree(10, outdegree = rep(1:5, 2))
 create_degree(10)

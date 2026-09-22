@@ -13,6 +13,9 @@ generate_funs <- alive_functions("^generate_")
 # Functions whose first argument is data, not a size
 make_data_first <- c("create_explicit", "generate_configuration")
 
+# Functions whose two-mode `n` must have modes of equal size (still 10 nodes)
+make_twomode_n <- list(create_lattice = c(5, 5))
+
 for (fn in c(create_funs, generate_funs)) {
   if (fn %in% make_data_first) next
   f <- get(fn, envir = asNamespace("manynet"))
@@ -35,7 +38,8 @@ for (fn in c(create_funs, generate_funs)) {
 
   test_that(paste0(fn, "() creates a two-mode network of the right size"), {
     set.seed(1234)
-    out <- run_or_skip(f(c(4, 6)), fn, "twomode n = c(4,6)")
+    n2 <- if (fn %in% names(make_twomode_n)) make_twomode_n[[fn]] else c(4, 6)
+    out <- run_or_skip(f(n2), fn, paste0("twomode n = c(", toString(n2), ")"))
     if (is.null(out) || !is_manynet(out) || !is_twomode(out) ||
         as.numeric(net_nodes(out)) != 10) {
       skip(paste0("AUDIT [", fn, "]: does not (yet) support two-mode `n`"))

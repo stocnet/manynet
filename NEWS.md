@@ -4,6 +4,9 @@
 
 - Improved `create_wheel()` to return a `stocnet` with network information
   - A signed wheel now carries signs, so it needs a 'netrics' version whose path and community functions read signed weights
+- Improved `create_lattice()` 
+  - Creates triangular grid lattices with `width = 6`, fixing documentation
+  - Creates honeycomb lattices with equal modes, e.g. `n = c(6,6)`
 
 ## Coercion
 
