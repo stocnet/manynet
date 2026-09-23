@@ -80,6 +80,7 @@ By the end of this tutorial, you should be able to:
 - [ ] &nbsp; Find and load the network datasets bundled in a package
 - [ ] &nbsp; Read a network's printout and describe its size and type
 - [ ] &nbsp; Coerce networks between classes with the `as_*()` functions
+- [ ] &nbsp; Ask other researchers for network data they have not published
 - [ ] &nbsp; Import network data from edgelists, nodelists, and other file formats
 - [ ] &nbsp; Export a network to work with it outside R
 
@@ -641,6 +642,7 @@ a specific format.
 
 <span class="page-toc">On this page:
 <span class="page-toc-link" onclick="document.getElementById('section-external-finding-data').scrollIntoView({behavior:'auto',block:'start'});">Finding data</span> ·
+<span class="page-toc-link" onclick="document.getElementById('section-asking-for-data').scrollIntoView({behavior:'auto',block:'start'});">Asking for data</span> ·
 <span class="page-toc-link" onclick="document.getElementById('section-importing-edgelists').scrollIntoView({behavior:'auto',block:'start'});">Importing edgelists</span> ·
 <span class="page-toc-link" onclick="document.getElementById('section-exporting-edgelists').scrollIntoView({behavior:'auto',block:'start'});">Exporting edgelists</span> ·
 <span class="page-toc-link" onclick="document.getElementById('section-importing-other-formats').scrollIntoView({behavior:'auto',block:'start'});">Importing other formats</span></span>
@@ -667,6 +669,65 @@ others rely on open standards,
 and still others keep data in a very standard edgelist (and perhaps nodelist) format
 in .csv files or similar.
 Fortunately, `{manynet}` has functions to help with importing data from such formats too.
+
+### Asking for data {#asking-for-data}
+
+Not all network data is online, though.
+A great deal of it sits on researchers' own computers,
+collected for a particular study and never deposited in a repository.
+If you come across a paper that analyses a network you would like to work with,
+it is usually worth asking the authors for it.
+Christian Kreibich's [guide to asking for datasets](https://medium.com/@ckreibich/how-to-ask-for-datasets-d5ef791cb38c)
+offers some good advice, adapted here for network data:
+
+- **Don't be shy.** Most researchers are glad that someone wants to use their data,
+  and a polite request never hurts, even to a well-known name.
+- **Make your purpose clear.** Explain what you plan to do with the data
+  and how you intend to publish the results.
+  Nobody wants to hand a hard-won dataset to someone unlikely to use it,
+  whereas a clear project, or even an offer to collaborate, makes the request interesting.
+- **Do your homework, and be concrete.** Name the exact paper, table, or figure,
+  rather than "your recent paper".
+  For network data, say which network you mean:
+  which nodes and ties, which wave or year, whether it is one-mode or two-mode,
+  and whether you also need the nodal attributes.
+  It also helps to ask for the codebook or questionnaire,
+  since how the ties were elicited
+  (e.g. from a roster or by free recall, with or without a cap on nominations)
+  shapes what the network can tell you.
+- **Make your affiliation clear.** Write from your institutional email address,
+  and say which group you belong to and, if you are a student, who your supervisor is.
+- **Find the right point of contact.** Start with the corresponding or first author,
+  and write to one person at a time rather than to every author in parallel.
+- **Be respectful if the answer is no.** Network data is often particularly sensitive:
+  a tie describes at least two people, only one of whom may have reported it,
+  and a node's position in the network can identify them even once names are removed.
+  The authors may want to share but be unable to, for legal or ethical reasons.
+- **Be responsible with what you receive.** Do not try to de-anonymise the data,
+  and do not pass it on without explicit permission;
+  send anyone who asks you for it back to the original authors.
+  If you think you have found an error in the data, check carefully and tell the authors first.
+- **Be grateful.** Acknowledge and cite the people who shared the data
+  in anything you publish, and send them a copy of your results.
+
+```{r asking-question, echo = FALSE, purl=FALSE}
+question("A classmate asks you for a copy of a network dataset that a researcher emailed you for your thesis. What should you do?",
+  answer("Refer them to the researcher who shared it",
+         correct = TRUE,
+         message = "Correct: unless you have explicit permission to re-share it, the data remains the original authors' to share."),
+  answer("Send them a copy, since it is for research too",
+         message = "The researcher shared the data with you, for your project. Passing it on could break the terms under which the data was collected."),
+  answer("Send them a copy with the node names removed",
+         message = "Removing names does not anonymise a network: nodes can often be re-identified from their position in the structure. And the data is still not yours to share."),
+  answer("Upload it to a public repository so that everyone can use it",
+         message = "That would share it with everyone, not just your classmate, and without the authors' or the respondents' consent."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+)
+```
+
+Whether you download it from a repository or receive it by email,
+the next step is to get the data into R.
 
 ### Importing edgelists
 

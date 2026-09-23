@@ -60,6 +60,10 @@
   - `to_aggregated(over = "by", reporters = "sender")` returns previous network
 - Fixed `ison_laterals` to be undirected
 
+## Tutorials
+
+- Added "Asking for data" section to the "Making" tutorial
+
 # manynet 2.3.5
 
 ## Making
