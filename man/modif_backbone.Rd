@@ -170,6 +170,7 @@ Other ties:
 \code{\link{modif_weight}}
 
 Other modifications:
+\code{\link{modif_concepts}},
 \code{\link{modif_direction}},
 \code{\link{modif_from_parts}},
 \code{\link{modif_from_ternary}},

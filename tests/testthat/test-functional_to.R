@@ -54,7 +54,9 @@ to_invariants <- list(
   to_normalised = function(o) all(is.finite(tie_weights(o)) |
                                     is.na(tie_weights(o))),
   to_normalized = function(o) all(is.finite(tie_weights(o)) |
-                                    is.na(tie_weights(o)))
+                                    is.na(tie_weights(o))),
+  # A concept lattice points each concept at those directly beneath it.
+  to_concepts   = function(o) is_directed(o) && is_acyclic(o)
 )
 
 .required_args <- function(fn) {

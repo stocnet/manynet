@@ -117,6 +117,7 @@ from_reporters(lapply(reports, add_node_attribute, "name", LETTERS[1:4]))
 \seealso{
 Other modifications:
 \code{\link{modif_backbone}},
+\code{\link{modif_concepts}},
 \code{\link{modif_direction}},
 \code{\link{modif_from_parts}},
 \code{\link{modif_labels}},

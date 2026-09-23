@@ -16,7 +16,6 @@
 #'   where the ties become nodes and incident nodes become their ties.
 #'   - `to_hypergraph()` projects one-mode or two-mode network data into hypergraph data, 
 #'   where ties can connect more than two nodes.
-# #'   - `to_galois()` projects a network to its Galois derivation.
 #' @details
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
@@ -49,6 +48,7 @@
 #' | | Pipe-friendly | yes | with wrappers | no |
 #' @template param_data
 #' @template fam_modif
+#' @family projections
 NULL
 
 #' @rdname modif_project
@@ -581,21 +581,155 @@ to_hypergraph.stocnet <- function(.data) {
 }
 
 
+# Concept lattices ####
 
-# #' @rdname manip_project
-# #' @section Galois lattices: 
-# #'   Note that the output from `to_galois()` is very busy at the moment.
-# #' @export
-# to_galois <- function(.data) {
-#   x <- as_matrix(.data)
-#   thisRequires("multiplex")
-#   out <- multiplex::galois(x, labeling = "reduced")
-#   out <- multiplex::partial.order(out, type = "galois")
-#   class(out) <- c("matrix", class(out))
-#   rownames(out)[!startsWith(rownames(out), "{")] <- ""
-#   colnames(out)[!startsWith(colnames(out), "{")] <- ""
-#   out
-# }
+#' Modifying networks into concept lattices
+#' @name modif_concepts
+#' @description
+#'   `to_concepts()` projects a network into its concept lattice,
+#'   also known as its Galois lattice.
+#'   Each node of the lattice is a concept:
+#'   a set of nodes together with the set of affiliations they all share,
+#'   where neither set can grow without the other shrinking.
+#'   Each tie points from a concept to a concept directly beneath it,
+#'   one that holds fewer nodes but more shared affiliations.
+#' @details
+#'   Not all functions have methods available for all object classes.
+#'   Below are the currently implemented S3 methods:
+#'
+#'   ```{r, echo = FALSE, comment=""}
+#'   available_methods("to_concepts")
+#'   ```
+#'
+#'   In a two-mode network, the first node set (e.g. the rows) supplies the
+#'   concepts' members, their _extent_,
+#'   and the second node set (e.g. the columns) their shared affiliations,
+#'   their _intent_.
+#'   The lattice is read from top to bottom.
+#'   The concept at the top holds every node of the first set,
+#'   and those affiliations, if any, that all of them share.
+#'   The concept at the bottom holds every affiliation,
+#'   and those nodes, if any, that have all of them.
+#'   Moving down the lattice, each concept holds fewer nodes,
+#'   who share more affiliations.
+#'   Two nodes are in a concept together exactly where they share every one of
+#'   its affiliations, and so the lattice records every membership of the
+#'   original network.
+#'
+#'   A one-mode network is treated as the incidence of its nodes on their
+#'   out-neighbours.
+#'   Each concept is then a set of nodes together with every node
+#'   that all of them send ties to,
+#'   a maximal biclique of senders and receivers.
+#'
+#'   A valued or signed network is dichotomised first,
+#'   so that every positive value counts as a tie,
+#'   with a warning.
+#' @section Labels:
+#'   Each concept is named with a "reduced" label,
+#'   listing only those nodes and affiliations that first appear at it.
+#'   A node of the first set is named at the lowest concept whose extent
+#'   holds it, and it is in the extent of every concept above that one too.
+#'   An affiliation, written in braces, is named at the highest concept whose
+#'   intent holds it, and it is in the intent of every concept below that one.
+#'   A concept at which nothing first appears is named "C" and its position,
+#'   counting from the top.
+#'   Each label thus appears exactly once,
+#'   and the full sets are kept in the `extent` and `intent` node attributes,
+#'   with their sizes in `extent_size` and `intent_size`.
+#' @section Projection without loss:
+#'   Projecting a two-mode network with `to_mode1()` or `to_mode2()` records
+#'   how much two nodes share,
+#'   but not what they share or with whom else they share it.
+#'   The concept lattice keeps both.
+#'   Freeman and White (1993) propose it for this reason,
+#'   and Freeman (2003) uses it to find the groups among the Southern Women.
+#'   It grows quickly with the density of the network, however,
+#'   and a lattice of more than a few dozen concepts is hard to read.
+#'   Where a network has more than 1000 concepts,
+#'   the function warns about this.
+#' @template param_data
+#' @template fam_modif
+#' @family projections
+#' @concept Galois lattice
+#' @concept concept lattice
+#' @concept formal concept analysis
+#' @references
+#' ## On Galois lattices
+#'   Freeman, Linton C., and Douglas R. White. 1993.
+#'   "Using Galois lattices to represent network data".
+#'   _Sociological Methodology_ 23: 127-145.
+#'   \doi{10.2307/271008}
+#'
+#'   Freeman, Linton C. 2003.
+#'   "Finding social groups: A meta-analysis of the southern women data".
+#'   In _Dynamic Social Network Modeling and Analysis_, 39-97.
+#'   Washington, DC: The National Academies Press.
+#'
+#' ## On formal concept analysis
+#'   Wille, Rudolf. 1982.
+#'   "Restructuring lattice theory: An approach based on hierarchies of concepts".
+#'   In _Ordered Sets_, 445-470. Dordrecht: Reidel.
+#'   \doi{10.1007/978-94-009-7798-3_15}
+#'
+#'   Ganter, Bernhard, and Rudolf Wille. 1999.
+#'   _Formal Concept Analysis: Mathematical Foundations_.
+#'   Berlin: Springer.
+#'   \doi{10.1007/978-3-642-59830-2}
+#' @examples
+#' to_concepts(ison_southern_women)
+#' # autograph::graphr(to_concepts(ison_southern_women), "layered")
+#' @export
+to_concepts <- function(.data) UseMethod("to_concepts")
+
+#' @export
+to_concepts.default <- function(.data){
+  as_input(.data, to_concepts)
+}
+
+#' @export
+to_concepts.tbl_graph <- function(.data){
+  lat <- .concept_lattice(.data)
+  nodes <- dplyr::tibble(name = lat$names,
+                         extent = lat$extent,
+                         intent = lat$intent,
+                         extent_size = lengths(lat$extent),
+                         intent_size = lengths(lat$intent))
+  out <- tidygraph::tbl_graph(nodes = nodes, edges = lat$ties, directed = TRUE)
+  if(!is.null(net_name(.data))) out <- out |>
+      add_info(name = net_name(.data, prefix = "Concept lattice of"))
+  out |> add_info(nodes = "concepts") |>
+    .record_transformation("projection", "concept lattice")
+}
+
+#' @export
+to_concepts.igraph <- function(.data){
+  as_igraph(to_concepts(as_tidygraph(.data)))
+}
+
+#' @export
+to_concepts.stocnet <- function(.data){
+  as_stocnet(to_concepts(as_tidygraph(.data)))
+}
+
+#' @export
+to_concepts.network <- function(.data){
+  as_network(to_concepts(as_tidygraph(.data)))
+}
+
+#' @export
+to_concepts.data.frame <- function(.data){
+  as_edgelist(to_concepts(as_tidygraph(.data)))
+}
+
+#' @export
+to_concepts.matrix <- function(.data){
+  lat <- .concept_lattice(.data)
+  out <- matrix(0, length(lat$names), length(lat$names),
+                dimnames = list(lat$names, lat$names))
+  out[as.matrix(lat$ties)] <- 1
+  out
+}
 
 
 # Helper functions ------------------
@@ -780,5 +914,117 @@ to_hypergraph.stocnet <- function(.data) {
                 })
   dimnames(out) <- list(rownames(X), rownames(X))
   diag(out) <- 0
+  out
+}
+
+# Enumerates the concepts of a network and the covering relation among them,
+# for `to_concepts()`. The concepts are returned from the top down: by extent
+# size, largest first, and then by intent size, smallest first.
+.concept_lattice <- function(.data){
+  X <- as_matrix(.data)
+  # a cognitive social structure is a matrix for each reporter
+  if(length(dim(X)) != 2)
+    snet_abort("{.fn to_concepts} needs a single network,",
+               "but this one holds a report from each of several reporters.",
+               "Select one report with {.fn to_reporter},",
+               "or combine them with {.fn to_aggregated}, first.")
+  if(is_twomode(.data)){
+    rows <- rownames(X) %||% as.character(seq_len(nrow(X)))
+    cols <- colnames(X) %||% as.character(nrow(X) + seq_len(ncol(X)))
+  } else {
+    snet_info("This network is one-mode, so each concept is a set of nodes",
+              "together with the nodes that all of them send ties to.")
+    rows <- rownames(X) %||% as.character(seq_len(nrow(X)))
+    cols <- colnames(X) %||% rows
+  }
+  if(any(is.na(X) | (X != 0 & X != 1)))
+    snet_warn(paste0("A concept lattice is defined for binary data only, ",
+                     "so tie values have been dichotomised at 0, ",
+                     "with missing values counted as absent."))
+  X <- !is.na(X) & X > 0
+  I <- .concept_intents(X)
+  # An object holds every attribute of a concept's intent exactly where the
+  # number of those attributes it holds is the size of the intent.
+  E <- (X * 1) %*% t(I * 1) == 
+    matrix(rowSums(I), nrow(X), nrow(I), byrow = TRUE)
+  ord <- order(-colSums(E), rowSums(I))
+  I <- I[ord, , drop = FALSE]
+  E <- E[, ord, drop = FALSE]
+  if(nrow(I) > 1000)
+    snet_warn("This network has {nrow(I)} concepts,",
+              "which will be hard to read as a lattice.")
+  list(names = .concept_labels(X, E, I, rows, cols),
+       extent = lapply(seq_len(ncol(E)), function(k) rows[E[, k]]),
+       intent = lapply(seq_len(nrow(I)), function(k) cols[I[k, ]]),
+       ties = .concept_covers(X, E, I))
+}
+
+# Every intent of a binary incidence matrix is an intersection of some of its
+# rows, or else the set of all attributes, which is the intent of the empty
+# extent. Adding the rows one at a time, and intersecting each with every
+# intent found so far, therefore finds them all (Norris 1978).
+.concept_intents <- function(X){
+  I <- matrix(TRUE, 1, ncol(X))
+  for(i in seq_len(nrow(X))){
+    new <- I & matrix(X[i, ], nrow(I), ncol(X), byrow = TRUE)
+    I <- unique(rbind(I, new))
+  }
+  I
+}
+
+# Keys each column of the logical matrix `M`, read as a set of its rows, so
+# that two columns share a key exactly where they hold the same set. Given `Y`
+# too, it keys the intersection of every column of `M` with every column of
+# `Y`, as a matrix product, in the column-major order of an
+# `ncol(M)` by `ncol(Y)` matrix. Each run of 30 rows is coded as the integer
+# its bits spell, which a double holds exactly.
+.set_keys <- function(M, Y = NULL){
+  runs <- split(seq_len(nrow(M)), (seq_len(nrow(M)) - 1) %/% 30)
+  codes <- lapply(runs, function(r){
+    bits <- M[r, , drop = FALSE] * 2^(seq_along(r) - 1)
+    code <- if(is.null(Y)) colSums(bits) else
+      crossprod(bits, Y[r, , drop = FALSE] * 1)
+    as.integer(code)
+  })
+  if(!length(codes)) return(rep("", ncol(M) * (if(is.null(Y)) 1 else ncol(Y))))
+  do.call(paste, c(unname(codes), sep = "."))
+}
+
+# The ties from each concept to those directly beneath it (Lindig 2000).
+# Removing one more attribute j from a concept's extent A gives A and j's
+# extent in common, which is itself the extent of some concept d beneath it.
+# That d is directly beneath exactly where every attribute d adds to the
+# concept's intent leads to it, so the count of attributes leading to d is
+# the difference in the two intents' sizes. This takes one matrix product
+# rather than comparing every pair of concepts.
+.concept_covers <- function(X, E, I){
+  k <- ncol(E)
+  d <- match(.set_keys(E, X), .set_keys(E))
+  free <- !as.vector(I)
+  pairs <- (rep(seq_len(k), ncol(X))[free] - 1) * k + d[free]
+  runs <- rle(sort(pairs))
+  from <- (runs$values - 1) %/% k + 1
+  to <- (runs$values - 1) %% k + 1
+  size <- rowSums(I)
+  keep <- runs$lengths == size[to] - size[from]
+  data.frame(from = from[keep], to = to[keep])
+}
+
+# The reduced labels: each object at the lowest concept whose extent holds it,
+# which is the concept whose intent is that object's row, and each attribute,
+# in braces, at the highest concept whose intent holds it, which is the concept
+# whose extent is that attribute's column.
+.concept_labels <- function(X, E, I, rows, cols){
+  at_obj <- match(.set_keys(t(X)), .set_keys(t(I)))
+  at_att <- match(.set_keys(X), .set_keys(E))
+  out <- vapply(seq_len(nrow(I)), function(k){
+    obj <- rows[at_obj == k]
+    att <- cols[at_att == k]
+    paste(c(if(length(obj)) paste(obj, collapse = ", "),
+            if(length(att)) paste0("{", paste(att, collapse = ", "), "}")),
+          collapse = " ")
+  }, character(1))
+  empty <- out == ""
+  out[empty] <- paste0("C", which(empty))
   out
 }

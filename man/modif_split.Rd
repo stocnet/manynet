@@ -195,6 +195,7 @@ ison_adolescents |>
 \seealso{
 Other modifications:
 \code{\link{modif_backbone}},
+\code{\link{modif_concepts}},
 \code{\link{modif_direction}},
 \code{\link{modif_from_parts}},
 \code{\link{modif_from_ternary}},

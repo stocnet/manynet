@@ -124,6 +124,7 @@ Krause, Robert, Mark Huisman, Christian Steglich, and Tom A.B. Snijders. 2020.
 \seealso{
 Other modifications:
 \code{\link{modif_backbone}},
+\code{\link{modif_concepts}},
 \code{\link{modif_direction}},
 \code{\link{modif_from_parts}},
 \code{\link{modif_from_ternary}},

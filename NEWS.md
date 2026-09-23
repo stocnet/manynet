@@ -19,9 +19,12 @@
   - `compare=` takes "same" for a membership
   - `twomode=TRUE` turns a membership into an affiliation matrix
 - Improved `as_network()` to keep the direction of a two-mode network (closes #157)
+- Fixed `as_network.stocnet()` to count the modes of a stocnet listed out of order
 
 ## Modifying
 
+- Added `to_concepts()` for projecting a network into its concept (Galois) lattice
+  - Reinstates `to_galois()` without a dependency on 'multiplex', and faster
 - Fixed `to_simplex()` to remove only loops and keeps parallel ties
 - Improved every `from_*()` function to return the class of its inputs
   - Partial `from_egos()` and `from_subgraphs()` returns a combined matrix

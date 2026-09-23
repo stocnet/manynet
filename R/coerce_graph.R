@@ -865,6 +865,12 @@ as_network.data.frame <- function(.data,
 
 #' @export
 as_network.stocnet <- function(.data, twomode = FALSE) {
+  # 'network' counts the first 'bipartite' nodes as the first mode, but a
+  # stocnet need not list its modes in that order: `add_nodes()` puts a node
+  # of the first mode after the second, for example. So the nodes are sorted
+  # by mode first, which renumbers their ties, missing ties, and changes too.
+  second <- if (is_twomode(.data)) as.logical(node_is_mode(.data)) else NULL
+  if (is.unsorted(second)) .data <- arrange_nodes(.data, !!second)
   # Networks are constructed directly from the node and tie tables so that
   # multiple edges (multiplex/multi-wave) and their tie attributes (e.g. layer,
   # time, weight) are retained rather than collapsed into a sociomatrix.
@@ -883,12 +889,12 @@ as_network.stocnet <- function(.data, twomode = FALSE) {
     ties <- dplyr::bind_rows(dplyr::mutate(ties, na = FALSE), missing)
   }
   # For two-mode networks the 'bipartite' count is the number of first-mode
-  # nodes. manynet orders nodes first-mode-first, with ties running from the
+  # nodes, which the sorting above has put first, with ties running from the
   # first mode ('from') to the second ('to'), matching network's convention.
   bipartite <- FALSE
   skip_cols <- "na"
   if (is_twomode(.data)) {
-    bipartite <- sum(nodes$mode == unique(nodes$mode)[1])
+    bipartite <- sum(!second)
     # 'mode' is implied by the bipartite structure, so it is not stored as a
     # vertex attribute (it is reconstructed on the way back).
     skip_cols <- c(skip_cols, "mode")

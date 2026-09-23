@@ -901,3 +901,12 @@ test_that("the comparisons agree with the matrices that migraph builds", {
   cols <- matrix(office, n, n, byrow = TRUE)
   expect_equal(unname(as_matrix(g))[off], ((rows == cols) * 1)[off])
 })
+
+test_that("as_network() counts the modes of a stocnet listed out of order", {
+  # `add_nodes()` puts a node of the first mode after the second mode
+  sw <- add_nodes(ison_southern_women, 1, list(name = "Nobody", type = FALSE))
+  nw <- as_network(sw)
+  expect_equal(network::get.network.attribute(nw, "bipartite"), 19)
+  expect_equal(as_matrix(nw), as_matrix(sw))
+  expect_equal(net_ties(as_stocnet(nw)), net_ties(sw))
+})

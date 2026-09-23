@@ -47,7 +47,8 @@
 #'
 #'   - "symmetrisation" (GRAND 4.1), which `to_undirected()` sets.
 #'   - "dichotomisation" (4.2), which `to_unweighted()` sets.
-#'   - "projection" (4.3), which `to_mode1()` and `to_mode2()` set.
+#'   - "projection" (4.3), which `to_mode1()`, `to_mode2()`, and
+#'   `to_concepts()` set.
 #'   - "exclusion" (4.4), which the functions that drop nodes or ties set,
 #'   such as `delete_isolates()`, `to_component()`, and `to_uniplex()`.
 #'   - "aggregation" (4.5), which `to_aggregated()`, `to_flat()`,

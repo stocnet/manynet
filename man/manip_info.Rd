@@ -89,7 +89,8 @@ It holds a named list, one element for each of them:
 \itemize{
 \item "symmetrisation" (GRAND 4.1), which \code{to_undirected()} sets.
 \item "dichotomisation" (4.2), which \code{to_unweighted()} sets.
-\item "projection" (4.3), which \code{to_mode1()} and \code{to_mode2()} set.
+\item "projection" (4.3), which \code{to_mode1()}, \code{to_mode2()}, and
+\code{to_concepts()} set.
 \item "exclusion" (4.4), which the functions that drop nodes or ties set,
 such as \code{delete_isolates()}, \code{to_component()}, and \code{to_uniplex()}.
 \item "aggregation" (4.5), which \code{to_aggregated()}, \code{to_flat()},
