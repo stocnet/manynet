@@ -19,6 +19,10 @@
 #'   for example `to_onemode()` is used on a network that is already one-mode,
 #'   the network data is returned unaltered.
 #'   No warning is given so that these functions can be used to ensure conformance.
+#'
+#'   Note that a multilevel network is still two-mode, so `as_matrix()` returns
+#'   its incidence matrix. For the square matrix of both modes,
+#'   use `to_onemode()` or `as_matrix(.data, twomode = FALSE)`.
 #'   
 #'   Unlike the `as_*()` group of functions,
 #'   these functions always return the same class as they are given,

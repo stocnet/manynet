@@ -910,3 +910,19 @@ test_that("as_network() counts the modes of a stocnet listed out of order", {
   expect_equal(as_matrix(nw), as_matrix(sw))
   expect_equal(net_ties(as_stocnet(nw)), net_ties(sw))
 })
+
+test_that("as_matrix() squares a two-mode 'stocnet' where asked", {
+  sw <- ison_southern_women
+  n <- net_nodes(sw)
+  # The default still reads the modes from the network itself
+  expect_equal(dim(as_matrix(sw)), c(18, 14))
+  expect_equal(dim(as_matrix(sw, twomode = TRUE)), c(18, 14))
+  # `twomode = FALSE` asks for both modes in one square matrix,
+  # as it does for an igraph, where `to_multilevel()` keeps the modes marked
+  square <- as_matrix(sw, twomode = FALSE)
+  expect_equal(dim(square), c(n, n))
+  expect_equal(square, as_matrix(as_igraph(sw), twomode = FALSE))
+  # A one-mode network is square either way
+  expect_equal(dim(as_matrix(ison_adolescents, twomode = FALSE)),
+               dim(as_matrix(ison_adolescents)))
+})

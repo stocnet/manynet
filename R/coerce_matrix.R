@@ -374,10 +374,15 @@ as_matrix.diff_model <- function(.data,
 
 #' @export
 as_matrix.stocnet <- function(.data,
-                              twomode = FALSE, ...) {
+                              twomode = NULL, ...) {
   third <- .third_node_col(.data)
   if (!is.na(third)) return(.third_node_array(.data, third))
-  as_matrix(as_igraph(.data, twomode = twomode))
+  # `twomode` describes the matrix and not the igraph, which records the modes
+  # in 'type' either way and which `as_igraph.stocnet()` ignores it for.
+  # Handing it to `as_matrix()` instead lets `twomode = FALSE` ask a two-mode
+  # 'stocnet' for the square matrix of both modes, as it asks an igraph, where
+  # before such a network always returned its incidence matrix.
+  as_matrix(as_igraph(.data), twomode = twomode)
 }
 
 
