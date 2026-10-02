@@ -775,6 +775,7 @@ export(from_times)
 export(from_waves)
 export(gather_changes)
 export(generate_citations)
+export(generate_communities)
 export(generate_configuration)
 export(generate_fire)
 export(generate_islands)
@@ -1186,6 +1187,7 @@ importFrom(igraph,
   is_connected,
   is_dag,
   is_directed,
+  is_graphical,
   is_igraph,
   is_named,
   is_simple,

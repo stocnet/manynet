@@ -2,6 +2,14 @@
 
 ## Making
 
+- Added `generate_communities()` for generating unequal communities among nodes of unequal degree
+  - Follows the Lancichinetti-Fortunato-Radicchi benchmark for community detection
+  - `mixing=` sets the share of each node's ties that go to other communities
+  - Records the community of each node in the node attribute "community"
+- Improved `generate_islands()` to record the island of each node in the node attribute "community"
+- Split the `generate_*()` documentation by how the networks are generated
+  - `generate_scalefree()`, `generate_fire()`, and `generate_citations()` are now documented under `?make_growth`
+  - `generate_smallworld()`, `generate_islands()`, and `generate_communities()` are now documented under `?make_groups`
 - Improved `create_wheel()` to return a `stocnet` with network information
   - A signed wheel now carries signs, so it needs a 'netrics' version whose path and community functions read signed weights
 - Improved `create_lattice()` 

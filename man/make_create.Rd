@@ -206,11 +206,12 @@ Other makes:
 \code{\link{make_collect}},
 \code{\link{make_ego}},
 \code{\link{make_explicit}},
+\code{\link{make_groups}},
+\code{\link{make_growth}},
 \code{\link{make_learning}},
 \code{\link{make_play}},
 \code{\link{make_random}},
 \code{\link{make_read}},
-\code{\link{make_stochastic}},
 \code{\link{make_write}}
 }
 \concept{makes}

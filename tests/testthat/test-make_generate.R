@@ -81,6 +81,62 @@ test_that("generate_islands adds a bridge for each pair of islands", {
   }
 })
 
+test_that("generate_islands records the island of each node", {
+  set.seed(1234)
+  onemode <- generate_islands(12, islands = 3)
+  expect_equal(c(table(node_attribute(onemode, "community"))),
+               c(4, 4, 4), ignore_attr = TRUE)
+  # surplus nodes are deleted, so the attribute must shrink with the network
+  expect_length(node_attribute(generate_islands(10, islands = 3), "community"),
+                10)
+  twomode <- generate_islands(c(40, 20), islands = 4)
+  expect_equal(c(table(node_attribute(twomode, "community"))),
+               rep(15, 4), ignore_attr = TRUE)
+})
+
+test_that("generate_communities plants communities of unequal size", {
+  set.seed(1234)
+  out <- generate_communities(1000, degree = 15, max_degree = 50,
+                              community = c(20, 50), mixing = 0.1)
+  memb <- node_attribute(out, "community")
+  degs <- igraph::degree(as_igraph(out))
+  ties <- igraph::as_edgelist(as_igraph(out), names = FALSE)
+  expect_true(igraph::is_simple(as_igraph(out)))
+  expect_false(is_directed(out))
+  expect_equal(mean(degs), 15, tolerance = 0.1)
+  expect_lte(max(degs), 50)
+  expect_true(all(table(memb) >= 20 & table(memb) <= 50))
+  expect_gt(length(unique(table(memb))), 1)
+  # the share of ties between communities is the mixing asked for
+  expect_equal(mean(memb[ties[, 1]] != memb[ties[, 2]]), 0.1,
+               tolerance = 0.1)
+})
+
+test_that("generate_communities are harder to tell apart with more mixing", {
+  set.seed(1234)
+  between <- vapply(c(0, 0.3, 0.6), function(mu) {
+    out <- generate_communities(500, mixing = mu)
+    memb <- node_attribute(out, "community")
+    ties <- igraph::as_edgelist(as_igraph(out), names = FALSE)
+    mean(memb[ties[, 1]] != memb[ties[, 2]])
+  }, numeric(1))
+  expect_equal(between[1], 0)
+  expect_true(all(diff(between) > 0.2))
+})
+
+test_that("generate_communities works on small networks and checks arguments", {
+  set.seed(1234)
+  # degree sequences that no simple network has must not stall the function
+  for (n in c(3, 4, 5, 6, 7, 10)) for (i in 1:20)
+    expect_equal(as.numeric(net_nodes(generate_communities(n))), n)
+  expect_error(generate_communities(c(4, 6)), "one-mode")
+  expect_error(generate_communities(2), "At least 3")
+  expect_error(generate_communities(50, mixing = 2), "mixing")
+  expect_error(generate_communities(50, degree = 10, max_degree = 5),
+               "max_degree")
+  expect_error(generate_communities(50, community = c(30, 10)), "community")
+})
+
 test_that("generate_citations works", {
   expect_s3_class(generate_citations(ison_adolescents), "igraph")
   cites <- generate_citations(c(20, 10))
