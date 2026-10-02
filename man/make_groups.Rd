@@ -53,10 +53,17 @@ and a node of each mode that share a block are tied with probability \code{p}.}
 By default 1.}
 
 \item{degree}{The mean degree of the nodes.
-By default 10, or less in a network too small for that.}
+By default 10, or less in a network too small for that.
+In a two-mode network, this is the mean degree of the nodes of the
+first mode.
+The mean degree of the second mode follows from it,
+since both modes have the same ties: it is \code{degree * n[1] / n[2]}.}
 
 \item{max_degree}{The maximum degree of the nodes.
-By default three times \code{degree}, or \code{n - 1} if that is smaller.}
+By default three times \code{degree}, or \code{n - 1} if that is smaller.
+In a two-mode network, this can be one number for each mode,
+and is by default three times the mean degree of the mode,
+or the number of nodes in the other mode if that is smaller.}
 
 \item{mixing}{The share of each node's ties that go to nodes in other
 communities, from 0 to 1.
@@ -67,11 +74,14 @@ A share above 0.5 gives communities with more ties out than in.}
 \item{community}{A vector of the minimum and the maximum community size.
 By default \code{c(degree + 1, max_degree + 1)},
 so that a node of any degree can find all the ties it keeps within its
-community.}
+community.
+In a two-mode network, a community has nodes of both modes,
+and these are the sizes of the two modes together.}
 
 \item{degree_exp}{The exponent of the power law from which the degrees
 are drawn.
-By default 2.}
+By default 2.
+In a two-mode network, this can be one number for each mode.}
 
 \item{community_exp}{The exponent of the power law from which the community
 sizes are drawn.
@@ -109,8 +119,7 @@ and record the group of each node in the node attribute \code{community}.
 \code{generate_smallworld()} plants local clusters around a ring instead,
 so its nodes do not belong to discrete groups.
 
-\code{generate_smallworld()} and \code{generate_islands()} can create either
-one-mode or two-mode networks.
+These functions can create either one-mode or two-mode networks.
 To create a one-mode network, pass the main argument \code{n} a single integer,
 indicating the number of nodes in the network.
 To create a two-mode network, pass \code{n} a vector of \emph{two} integers,
@@ -118,7 +127,7 @@ where the first integer indicates the number of nodes in the first mode,
 and the second integer indicates the number of nodes in the second mode.
 As an alternative, an existing network can be provided to \code{n}
 and the number of modes, nodes, and directedness will be inferred.
-\code{generate_communities()} creates only one-mode, undirected networks.
+\code{generate_communities()} creates only undirected networks.
 }
 \details{
 \code{generate_communities()} follows the benchmark of Lancichinetti,
@@ -136,6 +145,19 @@ ties are dropped or sent elsewhere, so the realised degrees and mixing
 can differ a little from those asked for.
 They differ most in small networks and where there are few communities.
 
+The benchmark is defined for one-mode networks.
+For a two-mode network, \code{generate_communities()} extends it by analogy,
+in the same way that \code{generate_islands()} does for islands.
+Each community has nodes of both modes,
+in the proportion of the two modes in the network as a whole,
+and each mode draws its degrees from a power law of its own.
+A node then keeps a share \code{1 - mixing} of its ties for the nodes of the
+other mode in its community.
+The two modes must keep the same number of ties in each community,
+and the ties that one mode has too many of there are dropped,
+so the realised degrees are a little lower than those asked for where
+\code{mixing} is low.
+
 \code{generate_islands()} is a simpler model of the same kind:
 its islands are all the same size, the ties in each island are random,
 and each pair of islands is joined by a fixed number of bridges.
@@ -147,6 +169,7 @@ generate_islands(10)
 generate_islands(c(10, 6))
 generate_communities(50)
 generate_communities(50, mixing = 0.4)
+generate_communities(c(60, 40))
 }
 \references{
 \subsection{On small-world networks}{

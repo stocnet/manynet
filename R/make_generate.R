@@ -444,8 +444,7 @@ generate_citations <- function(n, ties = sample(1:4,1), agebins = max(1, n/10), 
 #'   `generate_smallworld()` plants local clusters around a ring instead,
 #'   so its nodes do not belong to discrete groups.
 #'
-#'   `generate_smallworld()` and `generate_islands()` can create either 
-#'   one-mode or two-mode networks.
+#'   These functions can create either one-mode or two-mode networks.
 #'   To create a one-mode network, pass the main argument `n` a single integer,
 #'   indicating the number of nodes in the network.
 #'   To create a two-mode network, pass `n` a vector of \emph{two} integers,
@@ -453,7 +452,7 @@ generate_citations <- function(n, ties = sample(1:4,1), agebins = max(1, n/10), 
 #'   and the second integer indicates the number of nodes in the second mode.
 #'   As an alternative, an existing network can be provided to `n`
 #'   and the number of modes, nodes, and directedness will be inferred.
-#'   `generate_communities()` creates only one-mode, undirected networks.
+#'   `generate_communities()` creates only undirected networks.
 #' @name make_groups
 #' @family makes
 #' @inheritParams make_create
@@ -605,8 +604,15 @@ generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1,
 #' @rdname make_groups
 #' @param degree The mean degree of the nodes.
 #'   By default 10, or less in a network too small for that.
+#'   In a two-mode network, this is the mean degree of the nodes of the
+#'   first mode.
+#'   The mean degree of the second mode follows from it,
+#'   since both modes have the same ties: it is `degree * n[1] / n[2]`.
 #' @param max_degree The maximum degree of the nodes.
 #'   By default three times `degree`, or `n - 1` if that is smaller.
+#'   In a two-mode network, this can be one number for each mode,
+#'   and is by default three times the mean degree of the mode,
+#'   or the number of nodes in the other mode if that is smaller.
 #' @param mixing The share of each node's ties that go to nodes in other
 #'   communities, from 0 to 1.
 #'   By default 0.1.
@@ -616,9 +622,12 @@ generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1,
 #'   By default `c(degree + 1, max_degree + 1)`,
 #'   so that a node of any degree can find all the ties it keeps within its
 #'   community.
+#'   In a two-mode network, a community has nodes of both modes,
+#'   and these are the sizes of the two modes together.
 #' @param degree_exp The exponent of the power law from which the degrees
 #'   are drawn.
 #'   By default 2.
+#'   In a two-mode network, this can be one number for each mode.
 #' @param community_exp The exponent of the power law from which the community
 #'   sizes are drawn.
 #'   By default 1.
@@ -638,6 +647,19 @@ generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1,
 #'   can differ a little from those asked for.
 #'   They differ most in small networks and where there are few communities.
 #'
+#'   The benchmark is defined for one-mode networks.
+#'   For a two-mode network, `generate_communities()` extends it by analogy,
+#'   in the same way that `generate_islands()` does for islands.
+#'   Each community has nodes of both modes,
+#'   in the proportion of the two modes in the network as a whole,
+#'   and each mode draws its degrees from a power law of its own.
+#'   A node then keeps a share `1 - mixing` of its ties for the nodes of the
+#'   other mode in its community.
+#'   The two modes must keep the same number of ties in each community,
+#'   and the ties that one mode has too many of there are dropped,
+#'   so the realised degrees are a little lower than those asked for where
+#'   `mixing` is low.
+#'
 #'   `generate_islands()` is a simpler model of the same kind:
 #'   its islands are all the same size, the ties in each island are random,
 #'   and each pair of islands is joined by a fixed number of bridges.
@@ -651,22 +673,31 @@ generate_islands <- function(n, islands = 2, p = 0.5, bridges = 1,
 #' @examples
 #' generate_communities(50)
 #' generate_communities(50, mixing = 0.4)
+#' generate_communities(c(60, 40))
 #' @export
 generate_communities <- function(n, degree = NULL, max_degree = NULL,
                                  mixing = 0.1, community = NULL,
                                  degree_exp = 2, community_exp = 1) {
   n <- infer_n(n)
-  if (length(n) > 1)
-    snet_abort("`generate_communities()` creates only one-mode networks.")
-  if (n < 3) snet_abort("At least 3 nodes required to form communities.")
   if (!is.numeric(mixing) || length(mixing) != 1 || is.na(mixing) ||
       mixing < 0 || mixing > 1)
     snet_abort("`mixing` must be a single number from 0 to 1.")
+  if (!is.null(community) && 
+      (!is.numeric(community) || length(community) != 2 || anyNA(community) ||
+       any(community != round(community)) || community[1] < 2 ||
+       community[1] > community[2]))
+    snet_abort(paste("`community` must be a vector of two whole numbers,",
+                     "the minimum (at least 2) and the maximum community size."))
+  if (!is.null(degree) && 
+      (!is.numeric(degree) || length(degree) != 1 || is.na(degree) ||
+       degree < 1))
+    snet_abort("`degree` must be a single number of at least 1.")
+  if (length(n) == 2) 
+    return(.communities_twomode(n, degree, max_degree, mixing, community,
+                                degree_exp, community_exp))
+  if (n < 3) snet_abort("At least 3 nodes required to form communities.")
   if (is.null(degree)) degree <- min(10, max(1, floor((n - 1) / 2)))
   if (is.null(max_degree)) max_degree <- min(n - 1, ceiling(3 * degree))
-  if (!is.numeric(degree) || length(degree) != 1 || is.na(degree) ||
-      degree < 1)
-    snet_abort("`degree` must be a single number of at least 1.")
   if (!is.numeric(max_degree) || length(max_degree) != 1 ||
       is.na(max_degree) || max_degree != round(max_degree) ||
       max_degree < degree || max_degree > n - 1)
@@ -674,11 +705,6 @@ generate_communities <- function(n, degree = NULL, max_degree = NULL,
                      "least `degree` and less than the number of nodes."))
   if (is.null(community))
     community <- c(ceiling(degree) + 1, max_degree + 1)
-  if (!is.numeric(community) || length(community) != 2 || anyNA(community) ||
-      any(community != round(community)) || community[1] < 2 ||
-      community[1] > community[2])
-    snet_abort(paste("`community` must be a vector of two whole numbers,",
-                     "the minimum (at least 2) and the maximum community size."))
   community <- pmin(community, n)
   
   degs <- .powerlaw_degrees(n, degree, max_degree, degree_exp)
@@ -703,10 +729,8 @@ generate_communities <- function(n, degree = NULL, max_degree = NULL,
   sent <- c(tapply(outs, memb, sum))
   over <- which(sent > sum(sent) - sent)
   if (length(over) == 1) {
-    members <- which(memb == over)
-    stubs <- rep(members, outs[members])
-    kept <- tabulate(stubs[sample.int(length(stubs), 
-                                      2 * sent[over] - sum(sent))], n)
+    kept <- .draw_ties(ifelse(memb == over, outs, 0), 
+                       2 * sent[over] - sum(sent))
     outs <- outs - kept
     ins <- pmin(ins + kept, sizes[memb] - 1)
   }
@@ -731,6 +755,13 @@ generate_communities <- function(n, degree = NULL, max_degree = NULL,
 .rpowerlaw <- function(n, lo, hi, exponent) {
   ks <- seq.int(lo, hi)
   ks[sample.int(length(ks), n, replace = TRUE, prob = ks^-exponent)]
+}
+
+# Draws `k` of the ties that the nodes have between them at random,
+# and returns how many of each node's ties were drawn.
+.draw_ties <- function(degs, k) {
+  ties <- rep(seq_along(degs), degs)
+  tabulate(ties[sample.int(length(ties), k)], length(degs))
 }
 
 # Draws degrees from a power law that is truncated above at `max_degree`.
@@ -779,14 +810,17 @@ generate_communities <- function(n, degree = NULL, max_degree = NULL,
 # communities with room in proportion to that room.
 # A node that no community with room is large enough for joins the largest one
 # with room, and the ties it cannot keep there are sent out instead.
-.assign_communities <- function(ins, sizes) {
+# `limit` is the most ties a node can keep in each community: all its other 
+# members in a one-mode network, and its members of the other mode in a 
+# two-mode network, where `sizes` counts only those of the node's own mode.
+.assign_communities <- function(ins, sizes, limit = sizes - 1) {
   room <- sizes
   memb <- integer(length(ins))
   for (i in order(ins, decreasing = TRUE)) {
-    fits <- which(room > 0 & sizes > ins[i])
+    fits <- which(room > 0 & limit >= ins[i])
     if (length(fits) == 0) {
       fits <- which(room > 0)
-      fits <- fits[sizes[fits] == max(sizes[fits])]
+      fits <- fits[limit[fits] == max(limit[fits])]
     }
     pick <- fits[sample.int(length(fits), 1, prob = room[fits])]
     memb[i] <- pick
@@ -799,7 +833,11 @@ generate_communities <- function(n, degree = NULL, max_degree = NULL,
 # Degrees that no simple network has are first lowered, from the highest
 # degrees down, until one does. Only degrees above zero are lowered, 
 # and no ties is a network every node can have, so this always ends.
-.sample_simple <- function(degs) {
+# With `indegs`, the network is two-mode: `degs` are the degrees of the first
+# mode and `indegs` those of the second, and each tie is returned as a node
+# of the first mode and a node of the second, each numbered within its mode.
+.sample_simple <- function(degs, indegs = NULL) {
+  if (!is.null(indegs)) return(.sample_simple_twomode(degs, indegs))
   if (sum(degs) %% 2 == 1) {
     top <- which.max(degs)
     degs[top] <- degs[top] - 1
@@ -815,6 +853,36 @@ generate_communities <- function(n, degree = NULL, max_degree = NULL,
                       names = FALSE)
 }
 
+.sample_simple_twomode <- function(degs, indegs) {
+  # the modes have the same ties, so the mode with more loses the difference
+  # from its highest degrees
+  while (sum(degs) != sum(indegs)) {
+    if (sum(degs) > sum(indegs)) {
+      top <- which.max(degs)
+      degs[top] <- degs[top] - 1
+    } else {
+      top <- which.max(indegs)
+      indegs[top] <- indegs[top] - 1
+    }
+  }
+  n1 <- length(degs)
+  outs <- c(degs, rep(0, length(indegs)))
+  ins <- c(rep(0, n1), indegs)
+  while (!igraph::is_graphical(outs, ins)) {
+    outs[which.max(outs)] <- max(outs) - 1
+    ins[which.max(ins)] <- max(ins) - 1
+  }
+  if (sum(outs) == 0) return(matrix(integer(0), 0, 2))
+  # Every tie runs from a node with only ties out to a node with only ties
+  # in, and so from the first mode to the second. Switching ties is slower
+  # than matching them at random ("fast.heur.simple"), but that starts again
+  # whenever it cannot place a tie, and does not end where ties are dense.
+  el <- igraph::as_edgelist(igraph::sample_degseq(outs, ins,
+                                                  method = "edge.switching.simple"),
+                            names = FALSE)
+  cbind(el[, 1], el[, 2] - n1)
+}
+
 # Moves ties that fell within a community to between communities.
 # Each such tie swaps an end with another tie chosen at random,
 # where neither new tie is within a community or already there.
@@ -822,19 +890,20 @@ generate_communities <- function(n, degree = NULL, max_degree = NULL,
 # passes are returned as they are, since there are then too few ties
 # elsewhere to swap with, as where one community sends out more ties than
 # all the others together.
-.separate_ties <- function(el, memb) {
+# In a two-mode network the first node of each tie is of the first mode,
+# so the ties swap only their second nodes and each still joins the two modes.
+.separate_ties <- function(el, memb, twomode = FALSE) {
   n <- length(memb)
   key <- function(a, b) pmin(a, b) * (n + 1) + pmax(a, b)
   keys <- key(el[, 1], el[, 2])
   inside <- which(memb[el[, 1]] == memb[el[, 2]])
-  found <- length(inside)
   passes <- 0
   while (length(inside) > 0 && passes < 50) {
     for (i in inside) {
       j <- sample.int(nrow(el), 1)
       a <- el[i, 1]
       b <- el[i, 2]
-      other <- if (stats::runif(1) < 0.5) el[j, 1:2] else el[j, 2:1]
+      other <- if (twomode || stats::runif(1) < 0.5) el[j, 1:2] else el[j, 2:1]
       if (memb[a] == memb[other[2]] || memb[other[1]] == memb[b] ||
           key(a, other[2]) %in% keys || key(other[1], b) %in% keys) next
       el[i, ] <- c(a, other[2])
@@ -934,6 +1003,154 @@ generate_communities <- function(n, degree = NULL, max_degree = NULL,
   }
   igraph::set_vertex_attr(as_igraph(g, twomode = TRUE), "community",
                           value = c(b1, b2))
+}
+
+# A two-mode communities model.
+# The benchmark this extends is defined for one-mode networks.
+# Here a community has nodes of both modes, as an island does in
+# `.islands_twomode()`, and a tie within a community joins a node of each
+# mode. Three things then change from the one-mode model:
+# - each mode draws its own degrees, and since both modes have the same ties,
+#   the mean degree of the second mode follows from that of the first;
+# - a node can keep no more ties in its community than the community has
+#   nodes of the other mode;
+# - the ties that the two modes keep in a community must be the same in 
+#   number. Each community holds the modes in the proportion that the network
+#   does, so they are the same in expectation, and only the difference that
+#   chance leaves is sent out of the community instead.
+.communities_twomode <- function(n, degree, max_degree, mixing, community,
+                                 degree_exp, community_exp) {
+  other <- rev(n)
+  if (is.null(degree)) degree <- min(10, max(1, floor(n[2] / 2)))
+  if (degree > n[2])
+    snet_abort(paste("`degree` cannot be more than the number of nodes in",
+                     "the second mode."))
+  degree <- c(degree, degree * n[1] / n[2])
+  if (is.null(max_degree)) max_degree <- pmin(other, ceiling(3 * degree))
+  if (!is.numeric(max_degree) || !length(max_degree) %in% 1:2 ||
+      anyNA(max_degree) || any(max_degree != round(max_degree)))
+    snet_abort(paste("`max_degree` must be a whole number, or a whole number",
+                     "for each mode."))
+  max_degree <- rep_len(max_degree, 2)
+  if (any(max_degree < degree) || any(max_degree > other))
+    snet_abort(paste("`max_degree` must be at least the mean degree of each",
+                     "mode ({round(degree, 1)}) and no more than the number",
+                     "of nodes in the other mode ({other})."))
+  degree_exp <- rep_len(degree_exp, 2)
+  # A community must be large enough for its nodes of each mode to keep
+  # their ties there, and there can be no more communities than there are
+  # nodes in the smaller mode, since each has nodes of both.
+  fewest <- ceiling(sum(n) / min(n))
+  if (is.null(community)) {
+    community <- c(max(ceiling(degree[1] * sum(n) / n[2]), fewest, 2),
+                   ceiling(max(max_degree * sum(n) / other)))
+    community[2] <- max(community)
+  }
+  if (community[1] < fewest)
+    snet_abort(paste("The minimum of `community` must be at least {fewest},",
+                     "so that each community has nodes of both modes."))
+  community <- pmin(community, sum(n))
+  
+  degs <- lapply(1:2, function(m) 
+    .powerlaw_degrees(n[m], degree[m], max_degree[m], degree_exp[m]))
+  # both modes have the same ties, so the mode with more loses some at random
+  more <- which.max(vapply(degs, sum, numeric(1)))
+  degs[[more]] <- degs[[more]] - 
+    .draw_ties(degs[[more]], sum(degs[[more]]) - sum(degs[[3 - more]]))
+  sizes <- .powerlaw_sizes(sum(n), community[1], community[2], community_exp)
+  parts <- .split_sizes(sizes, n[1])
+  parts <- list(parts, sizes - parts)
+  
+  outs <- lapply(degs, function(d) {
+    out <- d * mixing
+    floor(out) + (stats::runif(length(d)) < out - floor(out))
+  })
+  memb <- lapply(1:2, function(m) 
+    .assign_communities(degs[[m]] - outs[[m]], parts[[m]], 
+                        limit = parts[[3 - m]]))
+  ins <- vector("list", 2)
+  for (m in 1:2) {
+    # nodes are listed community by community within each mode
+    degs[[m]] <- degs[[m]][order(memb[[m]])]
+    outs[[m]] <- outs[[m]][order(memb[[m]])]
+    memb[[m]] <- sort(memb[[m]])
+    inside <- parts[[3 - m]][memb[[m]]]
+    outs[[m]] <- pmin(outs[[m]], other[m] - inside)
+    ins[[m]] <- pmin(degs[[m]] - outs[[m]], inside)
+    outs[[m]] <- pmin(degs[[m]] - ins[[m]], other[m] - inside)
+  }
+  # The two modes must keep the same number of ties in a community.
+  # The mode that keeps fewer there keeps some of the ties it sent out, and
+  # the mode that keeps more sends as many out, so that neither the degrees
+  # nor the mixing change. Where the first has too few ties sent out for
+  # that, the second drops the ties that are left over.
+  for (k in seq_along(sizes)) {
+    members <- list(which(memb[[1]] == k), which(memb[[2]] == k))
+    kept <- c(sum(ins[[1]][members[[1]]]), sum(ins[[2]][members[[2]]]))
+    m <- which.max(kept)
+    less <- members[[3 - m]]
+    more <- members[[m]]
+    room <- pmin(outs[[3 - m]][less], parts[[m]][k] - ins[[3 - m]][less])
+    moved <- .draw_ties(room, min((kept[m] - kept[3 - m]) %/% 2, sum(room)))
+    ins[[3 - m]][less] <- ins[[3 - m]][less] + moved
+    outs[[3 - m]][less] <- outs[[3 - m]][less] - moved
+    lost <- .draw_ties(ins[[m]][more], kept[m] - kept[3 - m] - sum(moved))
+    ins[[m]][more] <- ins[[m]][more] - lost
+    room <- other[m] - parts[[3 - m]][k] - outs[[m]][more]
+    sent <- .draw_ties(pmin(lost, room), min(sum(moved), sum(pmin(lost, room))))
+    outs[[m]][more] <- outs[[m]][more] + sent
+  }
+  # One mode of a community cannot send out more ties than the other mode
+  # of all the other communities sends out to meet them, which is most
+  # likely where there are only a few communities. 
+  # The ties it sends out beyond that are dropped.
+  for (m in 1:2) {
+    sent <- lapply(1:2, function(m) tabulate(rep(memb[[m]], outs[[m]]), 
+                                             length(sizes)))
+    for (k in which(sent[[m]] > sum(sent[[3 - m]]) - sent[[3 - m]]))
+      outs[[m]] <- outs[[m]] - 
+        .draw_ties(ifelse(memb[[m]] == k, outs[[m]], 0),
+                   sent[[m]][k] - sum(sent[[3 - m]]) + sent[[3 - m]][k])
+  }
+  # the ties dropped leave one mode with more ties to send out than the other
+  m <- which.max(vapply(outs, sum, numeric(1)))
+  outs[[m]] <- outs[[m]] - 
+    .draw_ties(outs[[m]], sum(outs[[m]]) - sum(outs[[3 - m]]))
+  
+  within <- lapply(seq_along(sizes), function(k) {
+    members <- list(which(memb[[1]] == k), which(memb[[2]] == k))
+    el <- .sample_simple(ins[[1]][members[[1]]], ins[[2]][members[[2]]])
+    cbind(members[[1]][el[, 1]], members[[2]][el[, 2]])
+  })
+  between <- .sample_simple(outs[[1]], outs[[2]])
+  ties <- rbind(do.call(rbind, within), between)
+  # the second mode is numbered after the first, as in the network
+  ties[, 2] <- ties[, 2] + n[1]
+  placed <- seq_len(nrow(ties)) > nrow(ties) - nrow(between)
+  ties[placed, ] <- .separate_ties(ties[placed, , drop = FALSE], 
+                                   unlist(memb), twomode = TRUE)
+  out <- igraph::make_bipartite_graph(rep(c(FALSE, TRUE), n), c(t(ties)))
+  # a tie that could not be moved out of a community may repeat one within it
+  out <- igraph::simplify(out)
+  out <- igraph::set_vertex_attr(out, "community", value = unlist(memb))
+  as_tidygraph(out) |> 
+    add_info(name = "Communities network")
+}
+
+# Divides each community between the two modes in the proportion that the
+# network holds them, with at least one node of each mode in each community.
+# `n1` is the number of nodes in the first mode, and the number of each
+# community's nodes that are of the first mode is returned.
+# The nodes that rounding leaves over go where it took the most.
+.split_sizes <- function(sizes, n1) {
+  share <- sizes * n1 / sum(sizes)
+  part <- pmin(pmax(floor(share), 1), sizes - 1)
+  while ((left <- n1 - sum(part)) != 0) {
+    free <- if (left > 0) which(part < sizes - 1) else which(part > 1)
+    pick <- free[which.max(sign(left) * (share - part)[free])]
+    part[pick] <- part[pick] + sign(left)
+  }
+  part
 }
 
 # A two-mode citation model.

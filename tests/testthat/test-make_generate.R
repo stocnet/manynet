@@ -129,12 +129,56 @@ test_that("generate_communities works on small networks and checks arguments", {
   # degree sequences that no simple network has must not stall the function
   for (n in c(3, 4, 5, 6, 7, 10)) for (i in 1:20)
     expect_equal(as.numeric(net_nodes(generate_communities(n))), n)
-  expect_error(generate_communities(c(4, 6)), "one-mode")
   expect_error(generate_communities(2), "At least 3")
   expect_error(generate_communities(50, mixing = 2), "mixing")
   expect_error(generate_communities(50, degree = 10, max_degree = 5),
                "max_degree")
   expect_error(generate_communities(50, community = c(30, 10)), "community")
+})
+
+test_that("generate_communities plants communities in two-mode networks", {
+  set.seed(1234)
+  out <- generate_communities(c(600, 400), degree = 10, mixing = 0.1)
+  expect_true(is_twomode(out))
+  expect_equal(as.numeric(net_dims(out)), c(600, 400))
+  ig <- as_igraph(out)
+  memb <- node_attribute(out, "community")
+  modes <- igraph::V(ig)$type
+  degs <- igraph::degree(ig)
+  ties <- igraph::as_edgelist(ig, names = FALSE)
+  expect_true(igraph::is_simple(ig))
+  expect_true(all(modes[ties[, 1]] != modes[ties[, 2]]))
+  # both modes have the same ties, so the second mode's degree follows
+  expect_equal(mean(degs[!modes]), 10, tolerance = 0.1)
+  expect_equal(mean(degs[modes]), 15, tolerance = 0.1)
+  # every community has nodes of both modes
+  expect_true(all(table(memb, modes) > 0))
+  expect_gt(length(unique(memb)), 5)
+  expect_equal(mean(memb[ties[, 1]] != memb[ties[, 2]]), 0.1,
+               tolerance = 0.1)
+  more <- generate_communities(c(600, 400), degree = 10, mixing = 0.6)
+  memb <- node_attribute(more, "community")
+  ties <- igraph::as_edgelist(as_igraph(more), names = FALSE)
+  expect_equal(mean(memb[ties[, 1]] != memb[ties[, 2]]), 0.6,
+               tolerance = 0.1)
+})
+
+test_that("generate_communities works on small two-mode networks", {
+  set.seed(1234)
+  # dense ties must not stall the function, whatever the shape of the network
+  for (n in list(c(1, 1), c(2, 2), c(4, 6), c(3, 10), c(10, 3), c(20, 20)))
+    for (mu in c(0, 0.5, 1)) for (i in 1:5) {
+      out <- suppressWarnings(generate_communities(n, mixing = mu))
+      expect_equal(as.numeric(net_dims(out)), n)
+      expect_true(all(table(node_attribute(out, "community"),
+                            igraph::V(as_igraph(out))$type) > 0))
+    }
+  expect_equal(as.numeric(net_dims(generate_communities(ison_southern_women))),
+               c(18, 14))
+  expect_error(generate_communities(c(10, 10), degree = 20), "second mode")
+  expect_error(generate_communities(c(10, 10), max_degree = 50), "max_degree")
+  expect_error(generate_communities(c(3, 100), community = c(5, 20)),
+               "both modes")
 })
 
 test_that("generate_citations works", {

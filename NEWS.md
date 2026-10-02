@@ -4,6 +4,7 @@
 
 - Added `generate_communities()` for generating unequal communities among nodes of unequal degree
   - Follows the Lancichinetti-Fortunato-Radicchi benchmark for community detection
+  - For two-mode networks, it generates an analogous benchmark
   - `mixing=` sets the share of each node's ties that go to other communities
   - Records the community of each node in the node attribute "community"
 - Improved `generate_islands()` to record the island of each node in the node attribute "community"
