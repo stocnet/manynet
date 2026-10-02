@@ -116,6 +116,7 @@ collect_pkg()
 Other makes:
 \code{\link{make_create}},
 \code{\link{make_ego}},
+\code{\link{make_emails}},
 \code{\link{make_explicit}},
 \code{\link{make_groups}},
 \code{\link{make_growth}},

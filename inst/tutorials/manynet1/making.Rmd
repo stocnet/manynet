@@ -726,6 +726,17 @@ question("A classmate asks you for a copy of a network dataset that a researcher
 )
 ```
 
+::: {.callout}
+<span class="callout-label">**Going further**:</span> 
+Some network data you already hold yourself.
+Your own mailbox, for instance, records who wrote to whom and when.
+Export it to file from your email client (as an 'mbox' file, say),
+and `collect_emails()` will read the headers of each message,
+though never its subject or body,
+into a network of the addresses that wrote to one another.
+The same care applies, though: your correspondents did not ask to be data.
+:::
+
 Whether you download it from a repository or receive it by email,
 the next step is to get the data into R.
 
@@ -883,6 +894,7 @@ Along the way, you have learned to use these functions:
 | `table_data()` | lists a package's network datasets and their features |
 | `create_explicit()` | build a small network by hand from a formula of named ties |
 | `collect_ego()` | gather an ego network interactively at the console |
+| `collect_emails()` | gather a network of who writes to whom from an exported mailbox |
 | `net_nodes()`, `net_ties()`, `mode_nodes()` | count a network's nodes, ties, and nodes per mode |
 | `node_labels()`, `net_node_attributes()` | list node names and nodal attributes |
 | `is_twomode()`, `is_directed()`, `is_labelled()`, ... | TRUE/FALSE checks of network properties |

@@ -2,6 +2,11 @@
 
 ## Making
 
+- Added `collect_emails()` for collecting an email network from an exported mailbox
+  - Reads the headers of 'mbox' files, '.eml' files, and 'Maildir' folders
+  - Returns a dynamic, directed `stocnet` in which each tie is stamped with when its message was sent
+  - `ego=` names the owner of the mailbox, who is otherwise inferred
+  - `twomode = TRUE` instead returns addresses by messages
 - Added `generate_communities()` for generating unequal communities among nodes of unequal degree
   - Follows the Lancichinetti-Fortunato-Radicchi benchmark for community detection
   - For two-mode networks, it generates an analogous benchmark
