@@ -12,7 +12,8 @@
 #'   given degree distribution.
 #'   - `generate_man()` generates a random network conditional on the dyad census
 #'   of Mutual, Asymmetric, and Null dyads, respectively.
-#'   - `generate_utilities()` generates a random utility matrix.
+#'   - `generate_utilities()` generates the utility that each node finds in
+#'   each other node, as a signed and weighted network.
 #'
 #'   These functions can create either one-mode or two-mode networks.
 #'   To create a one-mode network, pass the main argument `n` a single integer,
@@ -40,6 +41,11 @@
 #'   In two-mode networks, `generate_random(directed = TRUE)` points every
 #'   tie from the first mode to the second, and the other functions ignore
 #'   the directed argument.
+#'   
+#'   `generate_utilities()` returns a `stocnet` object instead,
+#'   which is always directed where it is one-mode,
+#'   since what one node finds in another need not be what the other finds
+#'   in it.
 NULL
 
 #' @rdname make_random 
@@ -243,36 +249,129 @@ generate_man <- function(n, man = NULL){
 }
 
 #' @rdname make_random 
-#' @param steps Number of simulation steps to run.
-#'   By default 1: a single, one-shot simulation.
-#'   If more than 1, further iterations will update the utilities
-#'   depending on the values of the volatility and threshold parameters.
-#' @param volatility How much change there is between steps.
-#'   Only if volatility is more than 1 do further simulation steps make sense.
-#'   This is passed on to `stats::rnorm` as the `sd` or standard deviation
-#'   parameter.
-#' @param threshold This parameter can be used to mute or disregard stepwise
-#'   changes in utility that are minor.
-#'   The default 0 will recognise all changes in utility, 
-#'   but raising the threshold will mute any changes less than this threshold.
+#' @param form How the utilities are distributed between -1 and 1.
+#'   - "normal" (the default) draws them from a normal distribution around 0,
+#'   so that most nodes are close to indifferent about most others
+#'   and only a few are much liked or much disliked.
+#'   - "uniform" draws every utility between -1 and 1 as likely as any other.
+#'   - "relative" draws them from a normal distribution and then divides each 
+#'   node's utilities by the largest of them, whether liked or disliked,
+#'   so that each node's utilities are relative to the node it feels most
+#'   strongly about.
+#' @param threshold How far a utility must be from 0 to be a tie, from 0 to 1.
+#'   A utility above `threshold` is a positive tie,
+#'   a utility below `-threshold` is a negative tie,
+#'   and a node is indifferent to those between the two, which are not ties.
+#'   By default 0, so that every utility is a tie.
+#' @param steps Number of moments at which to return the utilities.
+#'   By default 1.
+#'   If more than 1, the utilities change from each moment to the next
+#'   by as much as `volatility` allows,
+#'   and a longitudinal network with a wave for each moment is returned.
+#' @param volatility How much the utilities change between moments.
+#'   At each step a new set of utilities is drawn as `form` describes,
+#'   multiplied by `volatility`, and added to those there are.
+#'   By default 0.1, so that a utility changes by a tenth of a new draw.
+#' @param inertia The share of utilities that keep their value at each step,
+#'   from 0 to 1.
+#'   These are the utilities that would have changed the least,
+#'   so that with some inertia utilities stay as they are until a change large
+#'   enough comes along, rather than all drifting a little at every step.
+#'   By default 0, so that every utility changes at every step.
+#' @details
+#'   A utility is how much a node gains or loses from a tie to another node,
+#'   from -1 for the most it could lose to 1 for the most it could gain.
+#'   `generate_utilities()` returns these as the weights of a signed network.
+#'   In a one-mode network every node has a utility for every other node.
+#'   In a two-mode network each node of the first mode has a utility for 
+#'   each node of the second mode.
+#'   
+#'   Utilities say what ties nodes would like, not what ties there are,
+#'   so they can serve as the basis for a model of how ties come about.
+#'   The examples show two such models.
+#'   Where a node can tie to another without its consent,
+#'   the ties are the positive utilities.
+#'   Where a tie needs the consent of both nodes,
+#'   the ties are those where the lower of the two utilities is positive.
+#'   
+#'   Where there is more than one step, 
+#'   `threshold` applies to the utilities at each moment,
+#'   so a tie can come and go as a utility crosses it.
+#'   A utility cannot rise above 1 or fall below -1, 
+#'   and one that a change would take further stays at that limit
+#'   until a change brings it back.
+#'   Over many steps the utilities therefore spread out towards the limits,
+#'   and more of them are far enough from 0 to be ties than at the start.
+#' @examples
+#' (utils <- generate_utilities(6))
+#' generate_utilities(6, threshold = 0.25)
+#' generate_utilities(c(4, 6), form = "uniform")
+#' generate_utilities(6, steps = 3)
+#' generate_utilities(6, steps = 3, volatility = 0.5, inertia = 0.8)
+#' # the ties that one node wants
+#' to_unsigned(utils, keep = "positive")
+#' # the ties that both nodes want
+#' to_unsigned(to_undirected(utils, rule = "min"), keep = "positive")
 #' @export
-generate_utilities <- function(n, steps = 1, volatility = 0, threshold = 0){
+generate_utilities <- function(n, form = c("normal", "uniform", "relative"),
+                               threshold = 0, steps = 1, volatility = 0.1,
+                               inertia = 0){
+  form <- match.arg(form)
+  if (!is.numeric(threshold) || length(threshold) != 1 || is.na(threshold) ||
+      threshold < 0 || threshold > 1)
+    snet_abort("`threshold` must be a single number from 0 to 1.")
+  if (!is.numeric(steps) || length(steps) != 1 || is.na(steps) ||
+      steps < 1 || steps != round(steps))
+    snet_abort("`steps` must be a single whole number of at least 1.")
+  if (!is.numeric(volatility) || length(volatility) != 1 || 
+      is.na(volatility) || volatility < 0)
+    snet_abort("`volatility` must be a single number of at least 0.")
+  if (!is.numeric(inertia) || length(inertia) != 1 || is.na(inertia) ||
+      inertia < 0 || inertia > 1)
+    snet_abort("`inertia` must be a single number from 0 to 1.")
+  labels <- if (is_manynet(n) && is_labelled(n)) node_names(n)
+  n <- infer_n(n)
+  twomode <- length(n) == 2
+  dims <- if (twomode) n else c(n, n)
+  if (!is.null(labels))
+    labels <- if (twomode) list(labels[seq_len(n[1])], labels[-seq_len(n[1])]) else
+      list(labels, labels)
   
-  utilities <- matrix(stats::rnorm(n*n, 0, 1), n, n) 
-  diag(utilities) <- 0
-  utilities <- utilities / rowSums(utilities)
-  
-  if(steps > 1 && volatility > 0){
-    iter <- 1
-    while (iter < steps){
-      utility_update <- matrix(stats::rnorm(n*n, 0, volatility), n, n)
-      diag(utility_update) <- 0
-      utility_update[abs(utility_update) < threshold] <- 0
-      utilities <- utilities + utility_update
-      iter <- iter + 1
-    }
+  draw <- function() {
+    out <- switch(form,
+                  uniform = stats::runif(prod(dims), -1, 1),
+                  normal = stats::rnorm(prod(dims), 0, 1/3),
+                  relative = stats::rnorm(prod(dims)))
+    out <- matrix(out, dims[1], dims[2], dimnames = labels)
+    # a node has no utility for a tie to itself
+    if (!twomode) diag(out) <- 0
+    if (form == "relative") 
+      out <- out / pmax(apply(abs(out), 1, max), .Machine$double.eps)
+    pmax(pmin(out, 1), -1)
   }
-  as_igraph(utilities)
+  utilities <- draw()
+  # the utilities a node is indifferent to are not ties
+  as_ties <- function(utilities) {
+    utilities[abs(utilities) <= threshold] <- 0
+    as_stocnet(utilities, twomode = twomode)
+  }
+  if (steps == 1) 
+    return(as_ties(utilities) |> add_info(name = "Utilities network"))
+  
+  waves <- vector("list", steps)
+  waves[[1]] <- as_ties(utilities)
+  for (step in seq_len(steps)[-1]) {
+    # the utilities change, and not only those far enough from 0 to be ties
+    change <- draw() * volatility
+    # the smallest changes are those that inertia holds back
+    pairs <- if (twomode) rep(TRUE, prod(dims)) else c(row(change) != col(change))
+    held <- rank(abs(change[pairs]), ties.method = "first") <= 
+      round(inertia * sum(pairs))
+    change[pairs][held] <- 0
+    utilities <- pmax(pmin(utilities + change, 1), -1)
+    waves[[step]] <- as_ties(utilities)
+  }
+  from_times(waves) |> add_info(name = "Utilities network")
 }
 
 # Growth ####

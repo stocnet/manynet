@@ -13,6 +13,14 @@
   - `mixing=` sets the share of each node's ties that go to other communities
   - Records the community of each node in the node attribute "community"
 - Improved `generate_islands()` to record the island of each node in the node attribute "community"
+- Improved `generate_utilities()` to return utilities between -1 and 1 as a signed, weighted 'stocnet'
+  - Fixed utilities far outside -1 and 1 where a node's utilities summed to near 0
+  - `form=` takes "normal", "uniform", or "relative" for how the utilities are distributed
+  - `threshold=` now leaves out the utilities a node is indifferent to, rather than muting small changes between steps
+  - `steps=` now returns a longitudinal network with a wave for each step
+  - `volatility=` now scales a new draw of utilities that each step adds, by default 0.1
+  - `inertia=` sets the share of utilities that keep their value at each step
+  - Takes two-mode sizes and existing networks as `n`
 - Split the `generate_*()` documentation by how the networks are generated
   - `generate_scalefree()`, `generate_fire()`, and `generate_citations()` are now documented under `?make_growth`
   - `generate_smallworld()`, `generate_islands()`, and `generate_communities()` are now documented under `?make_groups`

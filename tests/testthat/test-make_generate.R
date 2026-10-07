@@ -12,6 +12,113 @@ test_that("random creation works", {
   expect_true(is_twomode(generate_random(ison_southern_women, 0.4)))
 })
 
+test_that("generate_utilities keeps utilities between -1 and 1", {
+  set.seed(1234)
+  for (form in c("normal", "uniform", "relative")) {
+    out <- generate_utilities(10, form = form)
+    expect_s3_class(out, "stocnet")
+    expect_true(is_directed(out))
+    expect_true(is_signed(out))
+    expect_true(is_weighted(out))
+    # a node has no utility for itself, and one for every other node
+    expect_true(all(diag(as_matrix(out)) == 0))
+    expect_equal(as.numeric(net_ties(out)), 90)
+    weights <- unlist(lapply(1:20, function(i)
+      tie_weights(generate_utilities(10, form = form))))
+    expect_true(all(abs(weights) <= 1))
+    expect_true(any(weights < 0) && any(weights > 0))
+  }
+  # each node's strongest utility is the measure of its others
+  relative <- abs(as_matrix(generate_utilities(10, form = "relative")))
+  expect_equal(apply(relative, 1, max), rep(1, 10), ignore_attr = TRUE)
+})
+
+test_that("generate_utilities leaves out utilities within the threshold", {
+  set.seed(1234)
+  all <- generate_utilities(20)
+  some <- generate_utilities(20, threshold = 0.5)
+  expect_lt(as.numeric(net_ties(some)), as.numeric(net_ties(all)))
+  expect_true(all(abs(tie_weights(some)) > 0.5))
+  expect_true(any(tie_weights(some) < 0) && any(tie_weights(some) > 0))
+  expect_equal(as.numeric(net_ties(generate_utilities(6, threshold = 1))), 0)
+  expect_error(generate_utilities(6, threshold = 2), "threshold")
+  expect_error(generate_utilities(6, steps = 0), "steps")
+  expect_error(generate_utilities(6, volatility = -1), "volatility")
+})
+
+test_that("generate_utilities takes two-mode sizes and networks", {
+  set.seed(1234)
+  twomode <- generate_utilities(c(4, 6))
+  expect_true(is_twomode(twomode))
+  expect_equal(as.numeric(net_dims(twomode)), c(4, 6))
+  expect_equal(as.numeric(net_ties(twomode)), 24)
+  expect_equal(node_names(generate_utilities(ison_adolescents)),
+               node_names(ison_adolescents))
+  women <- generate_utilities(ison_southern_women)
+  expect_true(is_twomode(women))
+  expect_equal(node_names(women), node_names(ison_southern_women))
+})
+
+test_that("generate_utilities returns a wave for each step", {
+  set.seed(1234)
+  out <- generate_utilities(6, steps = 5, volatility = 0.2)
+  expect_s3_class(out, "stocnet")
+  expect_true(is_longitudinal(out))
+  expect_equal(as.numeric(net_nodes(out)), 6)
+  waves <- lapply(to_waves(out), as_matrix)
+  expect_length(waves, 5)
+  expect_false(isTRUE(all.equal(waves[[1]], waves[[5]])))
+  expect_true(all(abs(unlist(waves)) <= 1))
+  # without volatility the utilities do not change
+  still <- lapply(to_waves(generate_utilities(6, steps = 3, volatility = 0)),
+                  as_matrix)
+  expect_equal(still[[1]], still[[3]], ignore_attr = TRUE)
+  expect_true(is_twomode(generate_utilities(c(4, 6), steps = 3)))
+  # a step adds a new draw, scaled by the volatility, to the utilities
+  moved <- lapply(to_waves(generate_utilities(10, form = "uniform", steps = 2,
+                                              volatility = 0.5)), as_matrix)
+  expect_true(all(abs(moved[[2]] - moved[[1]]) <= 0.5 + 1e-8))
+  expect_gt(max(abs(moved[[2]] - moved[[1]])), 0.3)
+})
+
+test_that("generate_utilities holds utilities back with inertia", {
+  set.seed(1234)
+  changed <- function(inertia) {
+    waves <- lapply(to_waves(generate_utilities(10, steps = 2,
+                                                inertia = inertia)), as_matrix)
+    sum(waves[[1]] != waves[[2]])
+  }
+  expect_equal(changed(0), 90)
+  expect_equal(changed(0.8), 18)
+  expect_equal(changed(1), 0)
+  # the utilities held back are those that would have changed the least
+  set.seed(1234)
+  free <- lapply(to_waves(generate_utilities(10, steps = 2)), as_matrix)
+  set.seed(1234)
+  held <- lapply(to_waves(generate_utilities(10, steps = 2, inertia = 0.8)),
+                 as_matrix)
+  moves <- abs(free[[2]] - free[[1]])
+  expect_true(min(moves[held[[2]] != held[[1]]]) >=
+                max(moves[held[[2]] == held[[1]]]))
+  expect_error(generate_utilities(6, inertia = 2), "inertia")
+  expect_equal(c(table(tie_attribute(generate_utilities(c(4, 6), steps = 3,
+                                                        inertia = 0.5),
+                                     "time"))), rep(24, 3), ignore_attr = TRUE)
+})
+
+test_that("generate_utilities can be read as the ties nodes want", {
+  set.seed(1234)
+  out <- generate_utilities(8)
+  wanted <- to_unsigned(out, keep = "positive")
+  expect_false(is_signed(wanted))
+  expect_equal(as.numeric(net_ties(wanted)), sum(tie_weights(out) > 0))
+  agreed <- to_unsigned(to_undirected(out, rule = "min"), keep = "positive")
+  expect_false(is_directed(agreed))
+  mat <- as_matrix(out)
+  expect_equal(as.numeric(net_ties(agreed)),
+               sum((mat > 0 & t(mat) > 0)[upper.tri(mat)]))
+})
+
 test_that("generate_smallworld() works", {
   expect_s3_class(generate_smallworld(12, 0.025), "igraph")
   expect_equal(igraph::vcount(generate_smallworld(12, 0.025)), 12)

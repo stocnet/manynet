@@ -14,7 +14,14 @@ generate_configuration(.data)
 
 generate_man(n, man = NULL)
 
-generate_utilities(n, steps = 1, volatility = 0, threshold = 0)
+generate_utilities(
+  n,
+  form = c("normal", "uniform", "relative"),
+  threshold = 0,
+  steps = 1,
+  volatility = 0.1,
+  inertia = 0
+)
 }
 \arguments{
 \item{n}{Given:
@@ -61,20 +68,41 @@ Since ties in two-mode networks are undirected,
 both mutual and asymmetric dyads are realised as a tie,
 so only their sum is consequential there.}
 
-\item{steps}{Number of simulation steps to run.
-By default 1: a single, one-shot simulation.
-If more than 1, further iterations will update the utilities
-depending on the values of the volatility and threshold parameters.}
+\item{form}{How the utilities are distributed between -1 and 1.
+\itemize{
+\item "normal" (the default) draws them from a normal distribution around 0,
+so that most nodes are close to indifferent about most others
+and only a few are much liked or much disliked.
+\item "uniform" draws every utility between -1 and 1 as likely as any other.
+\item "relative" draws them from a normal distribution and then divides each
+node's utilities by the largest of them, whether liked or disliked,
+so that each node's utilities are relative to the node it feels most
+strongly about.
+}}
 
-\item{volatility}{How much change there is between steps.
-Only if volatility is more than 1 do further simulation steps make sense.
-This is passed on to \code{stats::rnorm} as the \code{sd} or standard deviation
-parameter.}
+\item{threshold}{How far a utility must be from 0 to be a tie, from 0 to 1.
+A utility above \code{threshold} is a positive tie,
+a utility below \code{-threshold} is a negative tie,
+and a node is indifferent to those between the two, which are not ties.
+By default 0, so that every utility is a tie.}
 
-\item{threshold}{This parameter can be used to mute or disregard stepwise
-changes in utility that are minor.
-The default 0 will recognise all changes in utility,
-but raising the threshold will mute any changes less than this threshold.}
+\item{steps}{Number of moments at which to return the utilities.
+By default 1.
+If more than 1, the utilities change from each moment to the next
+by as much as \code{volatility} allows,
+and a longitudinal network with a wave for each moment is returned.}
+
+\item{volatility}{How much the utilities change between moments.
+At each step a new set of utilities is drawn as \code{form} describes,
+multiplied by \code{volatility}, and added to those there are.
+By default 0.1, so that a utility changes by a tenth of a new draw.}
+
+\item{inertia}{The share of utilities that keep their value at each step,
+from 0 to 1.
+These are the utilities that would have changed the least,
+so that with some inertia utilities stay as they are until a change large
+enough comes along, rather than all drifting a little at every step.
+By default 0, so that every utility changes at every step.}
 }
 \value{
 By default a \code{tbl_graph} object is returned,
@@ -90,6 +118,11 @@ This direction can be swapped using \code{to_redirected()}.
 In two-mode networks, \code{generate_random(directed = TRUE)} points every
 tie from the first mode to the second, and the other functions ignore
 the directed argument.
+
+\code{generate_utilities()} returns a \code{stocnet} object instead,
+which is always directed where it is one-mode,
+since what one node finds in another need not be what the other finds
+in it.
 }
 \description{
 These functions are similar to the \verb{create_*} functions,
@@ -102,7 +135,8 @@ for exploring or testing network properties.
 given degree distribution.
 \item \code{generate_man()} generates a random network conditional on the dyad census
 of Mutual, Asymmetric, and Null dyads, respectively.
-\item \code{generate_utilities()} generates a random utility matrix.
+\item \code{generate_utilities()} generates the utility that each node finds in
+each other node, as a signed and weighted network.
 }
 
 These functions can create either one-mode or two-mode networks.
@@ -114,11 +148,45 @@ and the second integer indicates the number of nodes in the second mode.
 As an alternative, an existing network can be provided to \code{n}
 and the number of modes, nodes, and directedness will be inferred.
 }
+\details{
+A utility is how much a node gains or loses from a tie to another node,
+from -1 for the most it could lose to 1 for the most it could gain.
+\code{generate_utilities()} returns these as the weights of a signed network.
+In a one-mode network every node has a utility for every other node.
+In a two-mode network each node of the first mode has a utility for
+each node of the second mode.
+
+Utilities say what ties nodes would like, not what ties there are,
+so they can serve as the basis for a model of how ties come about.
+The examples show two such models.
+Where a node can tie to another without its consent,
+the ties are the positive utilities.
+Where a tie needs the consent of both nodes,
+the ties are those where the lower of the two utilities is positive.
+
+Where there is more than one step,
+\code{threshold} applies to the utilities at each moment,
+so a tie can come and go as a utility crosses it.
+A utility cannot rise above 1 or fall below -1,
+and one that a change would take further stays at that limit
+until a change brings it back.
+Over many steps the utilities therefore spread out towards the limits,
+and more of them are far enough from 0 to be ties than at the start.
+}
 \examples{
 generate_random(12, 0.4)
 # generate_random(c(6, 6), 0.4)
 generate_man(6)
 generate_man(c(4, 6))
+(utils <- generate_utilities(6))
+generate_utilities(6, threshold = 0.25)
+generate_utilities(c(4, 6), form = "uniform")
+generate_utilities(6, steps = 3)
+generate_utilities(6, steps = 3, volatility = 0.5, inertia = 0.8)
+# the ties that one node wants
+to_unsigned(utils, keep = "positive")
+# the ties that both nodes want
+to_unsigned(to_undirected(utils, rule = "min"), keep = "positive")
 }
 \references{
 \subsection{On random networks}{
