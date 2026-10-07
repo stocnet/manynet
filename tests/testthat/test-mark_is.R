@@ -212,3 +212,9 @@ test_that("is_disaggregated marks networks holding parallel ties", {
   expect_false(is_disaggregated(to_aggregated(ison_koenigsberg, over = NULL)))
   expect_false(is_disaggregated(as_matrix(ison_koenigsberg)))
 })
+
+test_that("tie_is_twomode marks the ties of a stocnet that join the two modes", {
+  expect_equal(sum(tie_is_twomode(fict_actually)),
+               sum(tie_attribute(fict_actually, "layer") == "appearance"))
+  expect_false(any(tie_is_twomode(ison_karateka)))
+})

@@ -190,7 +190,7 @@ layer_ties.stocnet <- function(.data){
 # Counts ties per layer, aligned to `lnames`.
 # Only subdivides by the `type`/`layer` values when these correspond one-to-one
 # with the layer names; otherwise (e.g. a single curated layer name grouping
-# finer tie types, as in `fict_thrones`) returns the total tie count.
+# finer tie types) returns the total tie count.
 .layer_ties <- function(lnames, types, nt){
   if(is.null(lnames) || is.null(types)) return(as.integer(nt))
   utypes <- unique(types)

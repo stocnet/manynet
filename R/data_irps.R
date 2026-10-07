@@ -10,10 +10,15 @@
 #'   as well as the Pentagon and a location in Somerset County, Pennsylvania.
 #'   
 #'   The hijackers were members of al-Qaeda.
-#'   Valdis Krebs collected further information from newspapers on the
-#'   broader network of associates of these hijackers,
+#'   Valdis Krebs collected further information on the
+#'   broader network of associates of these hijackers
+#'   from what major newspapers,
+#'   such as the New York Times, the Wall Street Journal, the Washington Post,
+#'   and the Los Angeles Times, reported in the weeks after the attacks,
 #'   reflecting on the challenges of collecting this information even
 #'   after the fact.
+#'   He began with the 19 hijackers,
+#'   and added an associate or a relationship as it was reported.
 #'   
 #'   The data includes two types of ties:
 #'   "trust"ed prior contacts among the hijackers,
@@ -375,6 +380,10 @@
 #' @description
 #'   This network records the evolution of the major relationship changes
 #'   between the protagonists of World War I (WWI) from 1872 to 1907.
+#'   Each tie carries the year in which a relationship began and the year in
+#'   which it ended, and the relationships that still held in 1907 are run on
+#'   to the end of the war in 1918.
+#'   A friendly relationship has a weight of 1 and an unfriendly one of -1.
 #'   It is incomplete both in terms of (eventual) parties to the war as well
 #'   as some other relations, but gives a good overview of the main alliances
 #'   and enmities.

@@ -230,7 +230,21 @@
 #'
 #' @description
 #'   These data contain the frequent associations between the 62 dolphins of a
-#'   pod of dolphins living off Doubtful Sound, New Zealand.
+#'   community of bottlenose dolphins living in Doubtful Sound, New Zealand.
+#'   The network was constructed from systematic boat surveys of the fjord
+#'   over seven years, from November 1994 to November 2001.
+#'   Each time a school of dolphins was encountered,
+#'   its adult members were photographed and identified by the natural
+#'   markings on their dorsal fins, which gave the composition of 1,292 schools.
+#'   How closely two dolphins associated was measured by a half-weight index,
+#'   and compared to the index expected when the members of the schools are
+#'   permuted at random.
+#'   A tie joins a pair of 'preferred companions':
+#'   two dolphins that were seen in the same school
+#'   more often than expected by chance.
+#'   Lusseau (2003) reports 64 adult individuals;
+#'   the 62 here are those of the network that Lusseau and Newman (2004)
+#'   share, with the same 159 ties.
 #'   Additional information can be found in the literature cited below.
 #' @docType data
 #' @keywords datasets
@@ -245,6 +259,10 @@
 #'   _Proc. R. Soc. London B_ 270(S): S186-S188.
 #'   \doi{10.1098/rsbl.2003.0057}
 #'   
+#'   Lusseau, David, and Mark E. J. Newman. 2004.
+#'   "Identifying the role that animals play in their social networks".
+#'   _Proc. R. Soc. London B_ 271(S6).
+#'   \doi{10.1098/rsbl.2004.0225}
 #'   Lusseau, David. 2007. 
 #'   "Evidence for social role in a dolphin social network". 
 #'   _Evolutionary Ecology_ 21: 357–366. 
@@ -264,8 +282,12 @@
 #'   Emotions are highly interconnected, and one emotion often follows another.
 #'   This network describes the transitions between 18 different emotions as 
 #'   experienced in everyday life.
-#'   The data is collected from 11,000 participants who completed daily 
+#'   The data is collected from more than 11,000 participants,
+#'   who used a francophone smartphone application to complete short
 #'   questionnaires on the emotions they felt at a given moment.
+#'   They were asked about nine positive emotions
+#'   (alertness, amusement, awe, gratitude, hope, joy, love, pride, and
+#'   satisfaction) and nine negative emotions.
 #'   While Trampe et al. (2015) created and analysed an undirected network 
 #'   in their paper, the directed network constructed by Will Hipson 
 #'   is shared here.
@@ -507,12 +529,17 @@
 #' One-mode karateka network (Zachary 1977)
 #'
 #' @description
-#'   The network was observed in a university Karate club in 1977.
+#'   The network was observed in a university karate club over three years,
+#'   from 1970 to 1972, and published in 1977.
 #'   The network describes association patterns among 34 members
 #'   and maps out allegiance patterns between members and either Mr. Hi,
-#'   the instructor, or the John A. the club president
+#'   the instructor, or John A., the club president,
 #'   after an argument about hiking the price for lessons.
-#'   The allegiance of each node is listed in the `obc` argument
+#'   The club had near 60 members at the time.
+#'   The 34 in the network are those who met other members outside the club's
+#'   classes and meetings, and the 'weight' of a tie is the number of contexts
+#'   outside the club in which the two members met.
+#'   The allegiance of each node is listed in the 'allegiance' node attribute,
 #'   which takes the value 1 if the individual sided with Mr. Hi after the fight
 #'   and 2 if the individual sided with John A.
 #' @docType data

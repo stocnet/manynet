@@ -5,13 +5,13 @@
 \alias{irps_911}
 \title{One-mode multiplex network of relationships between 9/11 hijackers (Krebs 2002)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # 911 Terrorist network -----------------------------------------------------
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # 9/11 hijackers and their associates ---------------------------------------
 #> # A labelled, complex, multiplex, undirected network of 60 terrorists and 126
 #> association ties and 27 trust ties
 #> 
 #> -- Nodes
 #> # A tibble: 60 x 3
-#>   name              hijacker target      
+#>   label             hijacker target      
 #>   <chr>             <lgl>    <chr>       
 #> 1 Majed Moqed       TRUE     Pentagon    
 #> 2 Khalid Al Mihdhar TRUE     Pentagon    
@@ -23,7 +23,7 @@
 #> 
 #> -- Ties
 #> # A tibble: 153 x 3
-#>    from    to type       
+#>    from    to layer      
 #>   <int> <int> <chr>      
 #> 1     1     3 association
 #> 2     1     3 trust      
@@ -46,10 +46,15 @@ locations: New York's World Trade Center (North and South buildings),
 as well as the Pentagon and a location in Somerset County, Pennsylvania.
 
 The hijackers were members of al-Qaeda.
-Valdis Krebs collected further information from newspapers on the
-broader network of associates of these hijackers,
+Valdis Krebs collected further information on the
+broader network of associates of these hijackers
+from what major newspapers,
+such as the New York Times, the Wall Street Journal, the Washington Post,
+and the Los Angeles Times, reported in the weeks after the attacks,
 reflecting on the challenges of collecting this information even
 after the fact.
+He began with the 19 hijackers,
+and added an associate or a relationship as it was reported.
 
 The data includes two types of ties:
 "trust"ed prior contacts among the hijackers,

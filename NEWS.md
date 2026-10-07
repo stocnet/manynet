@@ -89,11 +89,20 @@
 
 ## Data
 
-- Converted `ison_southern_women` into a 'stocnet'
+- Converted twelve networks into 'stocnet' objects, 
+  with how, where, and when each was collected recorded in their information
+  - `ison_southern_women`, `ison_dolphins`, `ison_emotions`, `ison_judo_moves`, and `ison_karateka`
+  - `fict_actually`, `fict_friends`, `fict_greys`, and `fict_thrones`
+  - `irps_911`, `irps_books`, and `irps_wwi`
+  - The tie attribute "type" of the multiplex networks among them is now "layer"
 - Rebuilt `ison_hightech` as a cognitive social structure
   - Advice and friendship layers hold all 21 managers' reports
   - `to_aggregated(over = "by", reporters = "sender")` returns previous network
 - Fixed `ison_laterals` to be undirected
+- Improved the documentation of these networks from their sources
+  - Fixed `ison_karateka` to say that the club was observed from 1970 to 1972, 
+    and that allegiances are in the "allegiance" node attribute
+  - Fixed `fict_friends` to no longer describe a "wave" tie attribute that it does not hold
 
 ## Tutorials
 

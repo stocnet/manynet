@@ -222,14 +222,13 @@ test_that("to_times slices an interval (begin/end) network at each change", {
   expect_type(sl, "list")
   expect_length(sl, length(changes))
   expect_equal(names(sl), as.character(changes))
-  expect_s3_class(sl[[1]], "tbl_graph")
+  expect_s3_class(sl[[1]], "stocnet")
   # Half-open [begin, end): a tie active at 1904 is one begun by then, not ended.
   expect_true(all(tie_attribute(sl[["1904"]], "begin") <= 1904))
   expect_true(all(tie_attribute(sl[["1904"]], "end") > 1904))
   # Supplying a single time returns one snapshot of the ties active then.
   one <- to_time(irps_wwi, 1901)
-  expect_s3_class(one, "tbl_graph")
-  expect_false(is.list(one) && !is_graph(one))
+  expect_s3_class(one, "stocnet")
   expect_equal(as.numeric(net_ties(one)),
                sum(tie_attribute(irps_wwi, "begin") <= 1901 &
                      tie_attribute(irps_wwi, "end") > 1901))

@@ -6,26 +6,26 @@
 \title{Multilevel network of Love Actually characters, their relationships, and
 their scene appearances (Robinson 2015)}
 \format{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Love actually interactions ------------------------------------------------
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # Love Actually -------------------------------------------------------------
 #> # A labelled, multiplex, multilevel network of 20 characters and 76 scenes and
 #> 7 romance ties, 162 appearance ties, 7 friendship ties, 10 professional ties,
 #> and 3 family ties
 #> 
 #> -- Nodes
 #> # A tibble: 96 x 6
-#>   type  name    Actor          Gender Nationality Occupation        
-#>   <lgl> <chr>   <chr>          <chr>  <chr>       <chr>             
-#> 1 FALSE Aurelia Lúcia Moniz    Female Portuguese  Assistant         
-#> 2 FALSE Billy   Bill Nighy     Male   British     Singer            
-#> 3 FALSE Colin   Kris Marshall  Male   British     Travels to America
-#> 4 FALSE Daniel  Liam Neeson    Male   British     Widower           
-#> 5 FALSE Harry   Alan Rickman   Male   British     Agency Director   
-#> 6 FALSE John    Martin Freeman Male   British     Nude stand-in     
+#>   label   mode       Actor          Gender Nationality Occupation        
+#>   <chr>   <chr>      <chr>          <chr>  <chr>       <chr>             
+#> 1 Aurelia characters Lúcia Moniz    Female Portuguese  Assistant         
+#> 2 Billy   characters Bill Nighy     Male   British     Singer            
+#> 3 Colin   characters Kris Marshall  Male   British     Travels to America
+#> 4 Daniel  characters Liam Neeson    Male   British     Widower           
+#> 5 Harry   characters Alan Rickman   Male   British     Agency Director   
+#> 6 John    characters Martin Freeman Male   British     Nude stand-in     
 #> # i 90 more rows
 #> 
 #> -- Ties
 #> # A tibble: 189 x 3
-#>    from    to type      
+#>    from    to layer     
 #>   <int> <int> <chr>     
 #> 1     1     7 romance   
 #> 2     1    51 appearance
@@ -50,6 +50,7 @@ including "romantic", "family", "friendship", and "professional" ties.
 These were added by Korakot Janteerasakul from the following source:
 \url{https://en.wikipedia.org/wiki/Love_Actually#/media/File:Love_Actually_(2003)_Interconnections.svg}.
 
+No tie is directed.
 Unlike \code{fict_marvel}, the layers here are not simply the levels: four of
 the five run within the characters, so the network is multiplex as well
 as multilevel, and \code{describe_network()} reports both.

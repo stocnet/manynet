@@ -11,7 +11,7 @@
 #> 
 #> -- Nodes
 #> # A tibble: 62 x 1
-#>   name      
+#>   label     
 #>   <chr>     
 #> 1 Beak      
 #> 2 Beescratch
@@ -40,7 +40,21 @@ data(ison_dolphins)
 }
 \description{
 These data contain the frequent associations between the 62 dolphins of a
-pod of dolphins living off Doubtful Sound, New Zealand.
+community of bottlenose dolphins living in Doubtful Sound, New Zealand.
+The network was constructed from systematic boat surveys of the fjord
+over seven years, from November 1994 to November 2001.
+Each time a school of dolphins was encountered,
+its adult members were photographed and identified by the natural
+markings on their dorsal fins, which gave the composition of 1,292 schools.
+How closely two dolphins associated was measured by a half-weight index,
+and compared to the index expected when the members of the schools are
+permuted at random.
+A tie joins a pair of 'preferred companions':
+two dolphins that were seen in the same school
+more often than expected by chance.
+Lusseau (2003) reports 64 adult individuals;
+the 62 here are those of the network that Lusseau and Newman (2004)
+share, with the same 159 ties.
 Additional information can be found in the literature cited below.
 }
 \references{
@@ -53,6 +67,10 @@ Lusseau, David. 2003.
 \emph{Proc. R. Soc. London B} 270(S): S186-S188.
 \doi{10.1098/rsbl.2003.0057}
 
+Lusseau, David, and Mark E. J. Newman. 2004.
+"Identifying the role that animals play in their social networks".
+\emph{Proc. R. Soc. London B} 271(S6).
+\doi{10.1098/rsbl.2004.0225}
 Lusseau, David. 2007.
 "Evidence for social role in a dolphin social network".
 \emph{Evolutionary Ecology} 21: 357–366.
