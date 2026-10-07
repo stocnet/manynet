@@ -26,6 +26,7 @@
   - `generate_smallworld()`, `generate_islands()`, and `generate_communities()` are now documented under `?make_groups`
 - Improved `create_wheel()` to return a `stocnet` with network information
   - A signed wheel now carries signs, so it needs a 'netrics' version whose path and community functions read signed weights
+- Fixed `play_diffusion()` to play on 'stocnet' objects, including the package's own data (closes #172)
 - Improved `create_lattice()` 
   - Creates triangular grid lattices with `width = 6`, fixing documentation
   - Creates honeycomb lattices with equal modes, e.g. `n = c(6,6)`
@@ -43,6 +44,12 @@
 - Improved `as_matrix.stocnet()` to pass `twomode=` on to the matrix
 - Improved `as_network()` to keep the direction of a two-mode network (closes #157)
 - Fixed `as_network.stocnet()` to count the modes of a stocnet listed out of order
+- Fixed `as_diffusion()` to report every step of a diffusion (closes #179)
+  - A diffusion that does not leave its seeds now reports the step in which they were seeded, rather than an empty report
+  - The last step of a diffusion is no longer left out
+  - Added `as_diffusion.stocnet()`
+- Fixed `as_stocnet()` to return a two-mode network for a measure or membership of a two-mode network with modes of equal size
+- Improved `as_stocnet.array()` to warn where a slice of time holds no ties, since such a moment is not recorded
 
 ## Modifying
 
@@ -72,6 +79,7 @@
 
 - Renamed `is_egonet()` to `is_egolist()`, since it marks a list of networks
   - `is_egocentric()` marks the networks that a name generator collects
+  - Fixed `is_egolist()` to mark an empty or unnamed list FALSE, rather than fail
 - Added `is_disaggregated()` to mark networks that hold parallel ties
 - Fixed `is_directed()` to mark a directed two-mode network TRUE (closes #157)
 

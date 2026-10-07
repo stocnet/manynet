@@ -591,8 +591,6 @@ to_waves.diff_model <- function(.data, attribute = "t", panels = NULL,
 
 .cumulative_ties <- function(x, attribute) {
   edges <- to <- from <- NULL
-  thisRequires("zoo")
-  thisRequires("purrr")
   ties <- data.frame()
   x <- lapply(x, as_tidygraph)
   for (k in seq_along(names(x))) {

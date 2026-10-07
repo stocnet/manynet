@@ -396,7 +396,7 @@ test_that("to_reporters splits a cognitive social structure into its reports", {
   css <- as_stocnet(css_array(), attribute = "by")
   reports <- to_reporters(css)
   expect_equal(names(reports), LETTERS[1:4])
-  expect_null(reports$B$ties$by)
+  expect_false("by" %in% names(reports$B$ties))
   expect_false(is_cognitive(reports$B))
   expect_equal(as_matrix(reports$B), css_array()[, , "B"])
   expect_equal(as_matrix(to_reporter(css, "B")), css_array()[, , "B"])

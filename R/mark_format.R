@@ -250,6 +250,10 @@ is_egolist <- function(.data) UseMethod("is_egolist")
 #' @export
 is_egolist.default <- function(.data) {
   if(!is_list(.data)) return(FALSE)
+  # A list that is empty, or that does not name each of its networks,
+  # names no egos
+  if(length(.data) == 0 || is.null(names(.data)) || anyNA(names(.data)))
+    return(FALSE)
   if(all(unique(names(.data)) != "")) {
     length(names(.data)) == length(unique(unlist(unname(lapply(.data,
                                                                manynet::node_labels))))) &

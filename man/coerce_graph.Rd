@@ -7,6 +7,7 @@
 \alias{as_network}
 \alias{as_stocnet}
 \alias{as_stocnet.node_measure}
+\alias{as_stocnet.node_member}
 \alias{as_stocnet.array}
 \alias{as_siena}
 \alias{as_graphAM}
@@ -28,6 +29,8 @@ as_stocnet(.data, twomode = FALSE, ...)
   compare = c("absdiff", "diff", "sender", "receiver"),
   ...
 )
+
+\method{as_stocnet}{node_member}(.data, twomode = FALSE, compare = "same", ...)
 
 \method{as_stocnet}{array}(
   .data,
@@ -110,7 +113,7 @@ as_stocnet              *                                            *
 as_tidygraph            *                *              *             
              node_member siena sienadata stocnet tbl_graph
 as_diffnet                                                
-as_diffusion                                              
+as_diffusion                                   *          
 as_graphAM                                                
 as_igraph                    *         *       *         *
 as_network                   *         *       *         *

@@ -197,6 +197,10 @@ test_that("is_egolist marks a list of networks and not a network", {
   expect_false(is_egolist(ison_adolescents))
   # the list has to hold one network for each node
   expect_false(is_egolist(egos[1:3]))
+  # A list that names no egos is not an egolist, rather than an error
+  expect_false(is_egolist(list()))
+  expect_false(is_egolist(unname(egos)))
+  expect_false(is_egolist(stats::setNames(egos, c(NA, names(egos)[-1]))))
   # the old name still works, for one release
   expect_warning(expect_true(is_egonet(egos)), "is_egolist")
 })

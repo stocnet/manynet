@@ -286,7 +286,7 @@ play_diffusion <- function(.data,
     make_diff_model(events, report, .data)
   } else {
     .data <- .data |> mutate_nodes(diffusion = "S")
-    changes <- data.frame(time = events$t, node = events$nodes, 
+    changes <- data.frame(time = events$t, node = as.integer(events$nodes), 
                          var = "diffusion", value = events$event)
     if(fatality > 0)
       changes <- changes |> mutate(var = ifelse(value=="D", "active", var),
@@ -648,7 +648,7 @@ play_segregation <- function(.data,
   }
   if(is.logical(mark)) mark <- which(mark)
   out <- rep(F, manynet::net_nodes(.data))
-  out[unique(setdiff(unlist(igraph::neighborhood(.data, nodes = mark)),
+  out[unique(setdiff(unlist(igraph::neighborhood(as_igraph(.data), nodes = mark)),
                      mark))] <- TRUE
   make_node_mark(out, .data)
 }

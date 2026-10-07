@@ -280,7 +280,7 @@ test_that("to_aggregated pools reports as each rule promises", {
   expect_equal(as_matrix(to_aggregated(css, "by", "max"))["C", "D"], 1)
   out <- to_aggregated(css, "by", "mean")
   expect_false(is_cognitive(out))
-  expect_null(out$ties$by)
+  expect_false("by" %in% names(out$ties))
   expect_equal(as_infolist(out)$transformations$aggregation,
                "reporters (mean)")
 })
@@ -326,7 +326,7 @@ test_that("to_aggregated combines parallel ties only where over is NULL", {
 
 test_that("to_aggregated combines the moments of a panel", {
   out <- to_aggregated(ison_monks, "time", "max")
-  expect_null(out$ties$time)
+  expect_false("time" %in% names(out$ties))
   expect_lte(as.numeric(net_ties(out)), as.numeric(net_ties(ison_monks)))
   expect_equal(as_infolist(out)$transformations$aggregation, "moments (max)")
 })

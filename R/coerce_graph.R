@@ -1196,22 +1196,34 @@ as_stocnet.node_measure <- function(.data, twomode = FALSE,
                                                 "receiver"), ...) {
   compare <- match.arg(compare)
   .stocnet_from_comparison(as_matrix(.data, compare = compare),
-                           directed = compare != "absdiff")
+                           directed = compare != "absdiff",
+                           twomode = .from_twomode(.data))
 }
 
+#' @rdname coerce_graph
 #' @export
 as_stocnet.node_member <- function(.data, twomode = FALSE,
                                    compare = "same", ...) {
   .stocnet_from_comparison(as_matrix(.data, twomode = twomode,
                                      compare = compare),
-                           directed = FALSE)
+                           directed = FALSE,
+                           twomode = isTRUE(twomode) || .from_twomode(.data))
+}
+
+# Whether a vector of node values comes from a two-mode network, in which
+# case its comparison pairs the first mode with the second.
+.from_twomode <- function(.data){
+  mode <- attr(.data, "mode")
+  !is.null(mode) && any(mode) && !all(mode)
 }
 
 # A matrix of comparisons is symmetric for some comparisons and not for
 # others, but which it is follows from the comparison and not from the values:
 # the values of every node can happen to be equal.
-.stocnet_from_comparison <- function(mat, directed){
-  out <- as_stocnet(mat)
+# Nor does being two-mode follow from the shape of the matrix: modes of equal
+# size give a square one.
+.stocnet_from_comparison <- function(mat, directed, twomode = FALSE){
+  out <- as_stocnet(mat, twomode = twomode)
   if(directed && !isTRUE(any(out$info$directed))){
     ties <- out$ties
     if(!is.null(ties) && nrow(ties) && !is_twomode(out)){
@@ -1310,6 +1322,16 @@ as_stocnet.array <- function(.data, twomode = FALSE, ...,
   })
   names(nets) <- if(attribute %in% c("by", "about") && !is.null(labels))
     labels[third] else as.character(third)
+  # The moments of a network are counted from its ties, so a slice that holds
+  # no tie leaves no moment behind it.
+  if(attribute == "time"){
+    empty <- vapply(seq_len(d[3]), function(k)
+      all(!is.na(.data[, , k]) & .data[, , k] == 0), logical(1))
+    if(any(empty))
+      snet_warn("{sum(empty)} slice{?s} of this array hold{?s/} no ties",
+                "({.val {as.character(third[empty])}}),",
+                "and a moment without ties is not recorded in the network.")
+  }
   switch(attribute,
          "time" = from_times(nets),
          "by" = from_reporters(nets),
@@ -1963,7 +1985,9 @@ as_diffusion.igraph <- function(.data, twomode = FALSE, events) {
     dplyr::reframe(I_new = sum(event == "I"),
                    E_new = sum(event == "E"),
                    R_new = sum(event == "R"))
-  report <- dplyr::tibble(t = seq_len(max(events$t)) - 1,
+  # Every step from the seeding to the last event, so that a diffusion that
+  # does not leave its seeds still reports the step in which they were seeded.
+  report <- dplyr::tibble(t = 0:max(events$t),
                           n = net_nodes(net)) |> 
     dplyr::left_join(sumchanges, by = dplyr::join_by(t))
   report[is.na(report)] <- 0
@@ -1991,6 +2015,9 @@ as_diffusion.igraph <- function(.data, twomode = FALSE, events) {
   report <- dplyr::select(report, dplyr::any_of(c("t", "n", "S", "s", "E", "E_new", "I", "I_new", "R", "R_new")))
   make_diff_model(events, report, .data)
 }
+
+#' @export
+as_diffusion.stocnet <- as_diffusion.igraph
 
 #' @export
 as_diffusion.diffnet <- function(.data, twomode = FALSE, events) {

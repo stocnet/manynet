@@ -222,8 +222,13 @@ fixture_mbox <- function(msgs = fixture_emails()) {
 fixture_eml <- function(msgs = fixture_emails()) {
   dir <- tempfile("eml")
   dir.create(dir)
-  for (i in seq_along(msgs))
-    writeLines(msgs[[i]], file.path(dir, paste0(i, ".eml")), sep = "\r\n")
+  # Written as bytes, since a text connection on Windows would turn the "\n"
+  # of each line end into "\r\n" again
+  for (i in seq_along(msgs)) {
+    con <- file(file.path(dir, paste0(i, ".eml")), open = "wb")
+    writeLines(msgs[[i]], con, sep = "\r\n")
+    close(con)
+  }
   dir
 }
 

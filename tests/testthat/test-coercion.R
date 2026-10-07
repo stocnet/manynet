@@ -660,6 +660,13 @@ test_that("an array of more than three dimensions is refused", {
   expect_error(as_stocnet(array(0, dim = c(2, 2, 2, 2))), "4 dimensions")
 })
 
+test_that("an array warns of a wave that holds no ties", {
+  # Such a wave cannot be recorded, which is said rather than hidden
+  lull <- array(0, dim = c(3, 3, 2))
+  lull[1, 2, 1] <- 1
+  expect_warning(as_stocnet(lull, attribute = "time"), "no ties")
+})
+
 test_that("an array in which nobody reported a tie stays an array of reports", {
   nodes <- c("A", "B", "C")
   empty <- array(0, dim = c(3, 3, 3), dimnames = list(nodes, nodes, nodes))
@@ -865,6 +872,14 @@ test_that("as_matrix compares the groups of a node membership", {
 test_that("comparisons of a two-mode vector pair the first mode with the second", {
   x <- make_node_measure(seq_len(32), ison_southern_women)
   expect_equal(dim(as_matrix(x, compare = "sender")), c(18, 14))
+  expect_true(is_twomode(as_stocnet(x)))
+  # Modes of equal size give a square matrix, which is two-mode all the same
+  even <- create_lattice(c(4, 4))
+  y <- make_node_measure(seq_len(8), even)
+  expect_equal(dim(as_matrix(y)), c(4, 4))
+  expect_true(is_twomode(as_stocnet(y)))
+  expect_true(is_twomode(as_stocnet(y, compare = "sender")))
+  expect_true(is_twomode(as_stocnet(make_node_member(rep(1:2, 4), even))))
 })
 
 test_that("as_stocnet gives the direction that the comparison implies", {
