@@ -51,6 +51,10 @@
 - Fixed `as_stocnet()` to return a two-mode network for a measure or membership of a two-mode network with modes of equal size
 - Improved `as_stocnet.array()` to warn where a slice of time holds no ties, since such a moment is not recorded
 
+## Manipulating
+
+- Added `mutate.stocnet()` but `mutate_nodes()` remains preferred
+
 ## Modifying
 
 - Added `to_concepts()` for projecting a network into its concept (Galois) lattice
