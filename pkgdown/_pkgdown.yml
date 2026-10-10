@@ -160,7 +160,13 @@ reference:
       Functions for modifying multimodal networks.
     contents:
       - modif_levels
+  - subtitle: "Projecting"
+    desc: |
+      Functions for projecting a two-mode network into ties among one of
+      its node sets, or into a lattice of its concepts.
+    contents:
       - modif_project
+      - modif_concepts
   - subtitle: "Converting"
     desc: |
       Functions for permuting networks or constructing a network

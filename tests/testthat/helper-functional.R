@@ -132,7 +132,8 @@ split_fixtures <- local({
                          args = list(slice = c(3, 6))),
     to_times      = list(net = add_tie_attribute(ring, "time",
                                                  rep(1:2, each = 4)),
-                         args = list())
+                         args = list()),
+    to_reporters  = list(net = func_fixtures$cognitive, args = list())
   )
 })
 

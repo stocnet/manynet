@@ -13,11 +13,11 @@ test_that("is_multilevel distinguishes interlocking from plain two-mode networks
   expect_false(is_multilevel(irps_revere))
   # One-mode networks are never multilevel.
   expect_false(is_multilevel(ison_adolescents))
-  # to_multilevel() records levels in 'lvl' and deletes 'type', so an igraph
-  # is no longer two-mode and has to be recognised by its levels instead.
+  # to_multilevel() records levels in 'lvl' beside 'type', so the network
+  # stays two-mode: it has two nodesets, tied both within and between.
   # fict_marvel is a stocnet, which holds its levels in 'mode' either way,
   # so the igraph behaviour is tested on a coerced copy.
-  expect_false(is_twomode(to_multilevel(as_igraph(fict_marvel))))
+  expect_true(is_twomode(to_multilevel(as_igraph(fict_marvel))))
   expect_true(is_multilevel(to_multilevel(as_igraph(fict_marvel))))
   # A two-mode network without any ties cannot have ties within a mode.
   expect_false(is_multilevel(create_empty(c(3,3))))
@@ -188,4 +188,33 @@ test_that("is_cognitive marks an array only where its slices can be nodes", {
   # a rectangular array is two-mode, so needs a slice for every node
   expect_false(is_cognitive(array(0, dim = c(2, 3, 2))))
   expect_true(is_cognitive(array(0, dim = c(2, 3, 5))))
+})
+
+test_that("is_egolist marks a list of networks and not a network", {
+  egos <- to_egos(ison_adolescents)
+  expect_true(is_egolist(egos))
+  # a single network is not a list of them, whatever it was collected by
+  expect_false(is_egolist(ison_adolescents))
+  # the list has to hold one network for each node
+  expect_false(is_egolist(egos[1:3]))
+  # A list that names no egos is not an egolist, rather than an error
+  expect_false(is_egolist(list()))
+  expect_false(is_egolist(unname(egos)))
+  expect_false(is_egolist(stats::setNames(egos, c(NA, names(egos)[-1]))))
+  # the old name still works, for one release
+  expect_warning(expect_true(is_egonet(egos)), "is_egolist")
+})
+
+test_that("is_disaggregated marks networks holding parallel ties", {
+  expect_true(is_disaggregated(ison_koenigsberg))
+  expect_true(is_disaggregated(irps_nuclear))
+  expect_false(is_disaggregated(ison_adolescents))
+  expect_false(is_disaggregated(to_aggregated(ison_koenigsberg, over = NULL)))
+  expect_false(is_disaggregated(as_matrix(ison_koenigsberg)))
+})
+
+test_that("tie_is_twomode marks the ties of a stocnet that join the two modes", {
+  expect_equal(sum(tie_is_twomode(fict_actually)),
+               sum(tie_attribute(fict_actually, "layer") == "appearance"))
+  expect_false(any(tie_is_twomode(ison_karateka)))
 })

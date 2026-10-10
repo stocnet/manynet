@@ -20,7 +20,7 @@ test_that("add_node_attribute works", {
   # On two mode network
   # First nodeset
   south1 <- add_node_attribute(ison_southern_women, "Age", rep(25, 18))
-  expect_equal(igraph::vertex_attr(south1, "Age"),
+  expect_equal(as.numeric(node_attribute(south1, "Age")),
                c(rep(25, 18), rep(NA, 14)))
   # Second nodeset
   south2 <- add_node_attribute(ison_southern_women, "Budget", rep(100, 14))

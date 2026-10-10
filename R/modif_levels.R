@@ -19,6 +19,10 @@
 #'   for example `to_onemode()` is used on a network that is already one-mode,
 #'   the network data is returned unaltered.
 #'   No warning is given so that these functions can be used to ensure conformance.
+#'
+#'   Note that a multilevel network is still two-mode, so `as_matrix()` returns
+#'   its incidence matrix. For the square matrix of both modes,
+#'   use `to_onemode()` or `as_matrix(.data, twomode = FALSE)`.
 #'   
 #'   Unlike the `as_*()` group of functions,
 #'   these functions always return the same class as they are given,
@@ -112,8 +116,12 @@ to_multilevel.tbl_graph <- function(.data) {
 #' @export
 to_multilevel.igraph <- function(.data) {
   if(is_twomode(.data)){
+    # 'type' is kept alongside 'lvl'. A multilevel network is still two-mode:
+    # it has two nodesets, and ties both within and between them, which is what
+    # `is_multilevel()` reads and what `fict_marvel` records. Deleting 'type'
+    # would unmark the modes, contradicting that mark, and would lose the mode
+    # names on a round trip, since `as_stocnet()` reads them against 'type'.
     igraph::V(.data)$lvl <- ifelse(igraph::V(.data)$type, 2, 1)
-    .data <- igraph::delete_vertex_attr(.data, "type")
   }
   .data
 }

@@ -5,7 +5,7 @@
 test_that("create empty graph works", {
   expect_true(is_twomode(create_empty(c(5,5))))
   expect_error(create_empty(c(5,5,5)), "single integer")
-  expect_length(create_empty(4), 4)
+  expect_equal(as.numeric(net_nodes(create_empty(4))), 4)
 })
 
 test_that("create filled graph works", {
@@ -98,8 +98,8 @@ test_that("create_cycle adds surplus two-mode nodes as isolates", {
 test_that("create_wheel works", {
   expect_values(net_ties(create_wheel(5)), 8)
   expect_values(net_ties(create_wheel(c(5,5))), 12)
-  expect_s3_class(create_wheel(6), "mnet")
-  expect_s3_class(create_wheel(c(4,6)), "mnet")
+  expect_s3_class(create_wheel(6), "stocnet")
+  expect_s3_class(create_wheel(c(4,6)), "stocnet")
   expect_true(is_directed(create_wheel(6, directed = TRUE)))
 })
 
@@ -134,6 +134,26 @@ test_that("create lattice works", {
   expect_equal(igraph::vcount(create_lattice(5)), 5)
   expect_false(is_directed(create_lattice(6)))
   expect_true(is_directed(create_lattice(6, directed = TRUE)))
+  square <- as_igraph(create_lattice(16, width = 4))
+  expect_equal(max(igraph::degree(square)), 4)
+  expect_true(igraph::bipartite_mapping(square)$res)
+  triangle <- as_igraph(create_lattice(20, width = 6))
+  expect_equal(max(igraph::degree(triangle)), 6)
+  expect_equal(igraph::ecount(triangle), 3*4*5 - 2*4 - 2*5 + 1)
+  expect_equal(igraph::girth(triangle)$girth, 3)
+  expect_true(is_directed(create_lattice(20, width = 6, directed = TRUE)))
+  expect_error(create_lattice(20, width = 5), "width")
+})
+
+test_that("create lattice makes a two-mode honeycomb", {
+  honey <- create_lattice(c(6,6))
+  expect_true(is_twomode(honey))
+  expect_equal(net_dims(honey), c(6,6))
+  expect_equal(max(igraph::degree(as_igraph(honey))), 3)
+  expect_equal(min(igraph::degree(as_igraph(honey))), 2)
+  expect_equal(igraph::girth(as_igraph(honey))$girth, 6)
+  expect_true(igraph::is_connected(as_igraph(create_lattice(c(15,15)))))
+  expect_error(create_lattice(c(4,6)), "same size")
 })
 
 test_that("component creation works", {
@@ -148,7 +168,7 @@ test_that("component creation works", {
 test_that("core-periphery creation works", {
   expect_false(is_twomode(create_core(6)))
   expect_true(is_twomode(create_core(c(6,7))))
-  expect_equal(igraph::vcount(create_core(c(10,4))), 14)
+  expect_equal(as.numeric(net_nodes(create_core(c(10,4)))), 14)
 })
 
 # test_that("nest creation works", {
@@ -160,11 +180,12 @@ test_that("core-periphery creation works", {
 test_that("explicit creation works", {
   expect_true(is_directed(create_explicit(A -+ B, B -+ C, A +-+ C, D)))
   expect_false(manynet::is_weighted(create_explicit(A -+ B, B -+ C, A +-+ C, D)))
-  expect_length(create_explicit(A -+ B, B -+ C, A +-+ C, D), 4)
-  expect_s3_class(create_explicit(A -+ B, B -+ C, A +-+ C, D, as = "igraph"),
-                  "igraph")
-  expect_s3_class(create_explicit(A -+ B, B -+ C, A +-+ C, D, as = "tidygraph"),
-                  "tbl_graph")
+  out <- create_explicit(A -+ B, B -+ C, A +-+ C, D)
+  expect_s3_class(out, "stocnet")
+  expect_equal(as.numeric(net_nodes(out)), 4)
+  expect_equal(node_names(out), LETTERS[1:4])
+  expect_equal(as.numeric(net_ties(out)), 4)
+  expect_false(is_directed(create_explicit(A -- B, B -- C)))
 })
 
 test_that("create_windmill refuses a blade width that is not a whole number", {
@@ -173,4 +194,13 @@ test_that("create_windmill refuses a blade width that is not a whole number", {
     expect_error(create_windmill(c(3, 6), width = width), "whole number")
   }
   expect_equal(as.numeric(net_nodes(create_windmill(c(3, 6), width = 2))), 9)
+})
+
+test_that("create functions can be named and then coerced", {
+  # a stocnet labels its nodes in 'label', but `mutate_nodes(name = )` is how
+  # the nodes of other classes are named, so it must work here too
+  out <- create_filled(4) |> mutate_nodes(name = LETTERS[1:4])
+  expect_equal(node_names(out), LETTERS[1:4])
+  expect_equal(igraph::V(as_igraph(out))$name, LETTERS[1:4])
+  expect_equal(node_names(as_tidygraph(out)), LETTERS[1:4])
 })

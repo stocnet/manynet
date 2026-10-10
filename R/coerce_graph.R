@@ -138,6 +138,10 @@ as_igraph.network <- function(.data,
   # attribute rather than edges, as igraph can mark no edge as missing.
   if (!is.null(as_missinglist(.data)))
     return(as_igraph(as_stocnet(.data), twomode = twomode))
+  # A biadjacency matrix cannot carry direction, so a directed two-mode
+  # network is read from its ties too.
+  if (network::is.bipartite(.data) && isTRUE(.data$gal$directed))
+    return(as_igraph(as_stocnet(.data), twomode = twomode))
   # Extract node attributes
   attr <- names(.data[[3]][[1]])
   # Convert to igraph
@@ -299,9 +303,13 @@ as_igraph.stocnet <- function(.data, twomode = FALSE) {
     out <- to_unlabelled(out)
   } else {
     vertices <- as_nodelist(.data)
-    if(is_labelled(.data))
+    # A stocnet labels its nodes in 'label', but 'name' counts as a label too
+    # (see `is_labelled()`), as where `mutate_nodes(name = )` named them.
+    if("label" %in% names(vertices)){
       vertices <- vertices |> dplyr::mutate(name = label) |>
         dplyr::select(name, dplyr::everything(), -label)
+    } else if("name" %in% names(vertices))
+      vertices <- dplyr::select(vertices, name, dplyr::everything())
     # igraph records two modes in a logical 'type' attribute, which its
     # bipartite functions require, and three or more in the 'lvl' attribute
     # that `to_multilevel()` writes and `as_stocnet()` maps back to 'mode'.
@@ -758,9 +766,18 @@ as_network.matrix <- function(.data,
                       names.eval  = ifelse(valued, "weight", NULL))
 }
 
+# A sociomatrix holds one value for each dyad, so it cannot carry the
+# direction of a two-mode network, nor the reporter or target of each tie.
+# Those networks are built from their ties instead, as a stocnet is.
+.network_via_ties <- function(.data){
+  (is_twomode(.data) && igraph::is_directed(.data)) ||
+    any(c("by", "about") %in% igraph::edge_attr_names(.data))
+}
+
 #' @export
 as_network.igraph <- function(.data,
                               twomode = FALSE) {
+  if(.network_via_ties(.data)) return(as_network.stocnet(as_stocnet(.data)))
   name <- type <- NULL
   attr <- as.data.frame(igraph::vertex_attr(.data))
   if ("name" %in% colnames(attr)) attr <- subset(attr, select = c(-name))
@@ -775,6 +792,7 @@ as_network.igraph <- function(.data,
 #' @export
 as_network.tbl_graph <- function(.data,
                                  twomode = FALSE) {
+  if(.network_via_ties(.data)) return(as_network.stocnet(as_stocnet(.data)))
   nodes <- name <- type <- NULL
   attr <- as.data.frame(activate(.data, nodes))[-1]
   if ("name" %in% colnames(attr)) attr <- subset(attr, select = c(-name))
@@ -851,6 +869,12 @@ as_network.data.frame <- function(.data,
 
 #' @export
 as_network.stocnet <- function(.data, twomode = FALSE) {
+  # 'network' counts the first 'bipartite' nodes as the first mode, but a
+  # stocnet need not list its modes in that order: `add_nodes()` puts a node
+  # of the first mode after the second, for example. So the nodes are sorted
+  # by mode first, which renumbers their ties, missing ties, and changes too.
+  second <- if (is_twomode(.data)) as.logical(node_is_mode(.data)) else NULL
+  if (is.unsorted(second)) .data <- arrange_nodes(.data, !!second)
   # Networks are constructed directly from the node and tie tables so that
   # multiple edges (multiplex/multi-wave) and their tie attributes (e.g. layer,
   # time, weight) are retained rather than collapsed into a sociomatrix.
@@ -869,12 +893,12 @@ as_network.stocnet <- function(.data, twomode = FALSE) {
     ties <- dplyr::bind_rows(dplyr::mutate(ties, na = FALSE), missing)
   }
   # For two-mode networks the 'bipartite' count is the number of first-mode
-  # nodes. manynet orders nodes first-mode-first, with ties running from the
+  # nodes, which the sorting above has put first, with ties running from the
   # first mode ('from') to the second ('to'), matching network's convention.
   bipartite <- FALSE
   skip_cols <- "na"
   if (is_twomode(.data)) {
-    bipartite <- sum(nodes$mode == unique(nodes$mode)[1])
+    bipartite <- sum(!second)
     # 'mode' is implied by the bipartite structure, so it is not stored as a
     # vertex attribute (it is reconstructed on the way back).
     skip_cols <- c(skip_cols, "mode")
@@ -1063,6 +1087,9 @@ as_stocnet.igraph <- function(.data, twomode = FALSE, ...) {
       nodes$mode <- as.character(nodes$type)
     }
     nodes$type <- NULL
+    # `to_multilevel()` writes 'lvl' beside 'type'. Where 'type' has named the
+    # modes, the level numbers say the same thing less well, so they go.
+    nodes$lvl <- NULL
   } else if(!is.null(nodes) && "lvl" %in% names(nodes)){
     # `to_multilevel.igraph()` records the levels of a network in a 'lvl'
     # attribute, since an igraph 'type' attribute forbids ties within a mode.
@@ -1160,6 +1187,59 @@ as_stocnet.igraph <- function(.data, twomode = FALSE, ...) {
   out
 }
 
+#' @rdname coerce_graph
+#' @param compare For a node measure or a node membership, how the values of
+#'   two nodes are compared to give the tie between them;
+#'   see `as_matrix()`.
+#'   Comparing by "same" or "absdiff" gives an undirected network,
+#'   and comparing by "diff", "sender", or "receiver" a directed one.
+#'   A comparison of zero is no tie.
+#' @export
+as_stocnet.node_measure <- function(.data, twomode = FALSE,
+                                    compare = c("absdiff", "diff", "sender",
+                                                "receiver"), ...) {
+  compare <- match.arg(compare)
+  .stocnet_from_comparison(as_matrix(.data, compare = compare),
+                           directed = compare != "absdiff",
+                           twomode = .from_twomode(.data))
+}
+
+#' @rdname coerce_graph
+#' @export
+as_stocnet.node_member <- function(.data, twomode = FALSE,
+                                   compare = "same", ...) {
+  .stocnet_from_comparison(as_matrix(.data, twomode = twomode,
+                                     compare = compare),
+                           directed = FALSE,
+                           twomode = isTRUE(twomode) || .from_twomode(.data))
+}
+
+# Whether a vector of node values comes from a two-mode network, in which
+# case its comparison pairs the first mode with the second.
+.from_twomode <- function(.data){
+  mode <- attr(.data, "mode")
+  !is.null(mode) && any(mode) && !all(mode)
+}
+
+# A matrix of comparisons is symmetric for some comparisons and not for
+# others, but which it is follows from the comparison and not from the values:
+# the values of every node can happen to be equal.
+# Nor does being two-mode follow from the shape of the matrix: modes of equal
+# size give a square one.
+.stocnet_from_comparison <- function(mat, directed, twomode = FALSE){
+  out <- as_stocnet(mat, twomode = twomode)
+  if(directed && !isTRUE(any(out$info$directed))){
+    ties <- out$ties
+    if(!is.null(ties) && nrow(ties) && !is_twomode(out)){
+      back <- ties[ties$from != ties$to, , drop = FALSE]
+      back[c("from", "to")] <- back[c("to", "from")]
+      out$ties <- dplyr::bind_rows(ties, back)
+    }
+    out$info$directed <- TRUE
+  }
+  out
+}
+
 #' @export
 as_stocnet.matrix <- function(.data,
                            twomode = FALSE, ...) {
@@ -1201,8 +1281,10 @@ as_stocnet.array <- function(.data, twomode = FALSE, ...,
   if(attribute %in% c("by", "about") && d[3] != n)
     snet_abort("'{attribute}' needs one slice for each of the {n} nodes,",
                "but this array has {d[3]}.")
-  # The nodes are read from the first slice, as a matrix of them would be.
+  # The nodes are read from the first slice, as a matrix of them would be,
+  # without what that slice alone records about who did not report.
   nodes <- as_stocnet(.data[, , 1], twomode = twomode)$nodes
+  if(!is.null(nodes)) nodes$na <- NULL
   labels <- nodes[["label"]]
   slices <- dimnames(.data)[[3]]
   third <- switch(attribute,
@@ -1222,36 +1304,47 @@ as_stocnet.array <- function(.data, twomode = FALSE, ...,
   # them is.
   directed <- if(attribute == "layer") !twomode & !symmetric else
     rep(!twomode && !all(symmetric), d[3])
-  ties <- dplyr::bind_rows(lapply(seq_len(d[3]), function(k){
+  # Whether the ties carry values is decided for the array as a whole, so that
+  # the slices that hold only ones do not read as ties of unknown value.
+  cells <- .data[!is.na(.data)]
+  valued <- any(cells != 0 & cells != 1)
+  # Each slice is a network of its own, and they are joined as the matching
+  # `from_*()` function joins a list of them, so that the two agree.
+  nets <- lapply(seq_len(d[3]), function(k){
     slice <- .data[, , k]
     # An undirected slice holds each tie once, on its dyad.
     if(!twomode && !directed[k]) slice[lower.tri(slice)] <- 0
     idx <- which(is.na(slice) | slice != 0, arr.ind = TRUE)
-    if(!nrow(idx)) return(NULL)
-    dplyr::tibble(from = as.integer(idx[, 1]),
-                  to = as.integer(idx[, 2] + if(twomode) d[1] else 0L),
-                  value = slice[idx], slice = k)
-  }))
-  if(nrow(ties)){
-    ties[[attribute]] <- third[ties$slice]
-    ties$slice <- NULL
+    ties <- dplyr::tibble(from = as.integer(idx[, 1]),
+                          to = as.integer(idx[, 2] + if(twomode) d[1] else 0L))
+    if(valued) ties$weight <- slice[idx]
     # A missing cell records a tie that was not observed, which is split
     # from the ties by `make_stocnet()`.
-    ties$na <- is.na(ties$value)
-    if(all(ties$value[!ties$na] == 1)) ties$value <- NULL else
-      names(ties)[names(ties) == "value"] <- "weight"
-    if(!any(ties$na)) ties$na <- NULL
-  } else if(attribute %in% c("by", "about")){
-    # An array in which nobody reported a tie is still reports, so the column
-    # that says so is kept, even without a row to hold a value in it.
-    ties <- dplyr::tibble(from = integer(0), to = integer(0))
-    ties[[attribute]] <- integer(0)
-  } else ties <- NULL
-  info <- list(directed = if(attribute == "layer")
-    stats::setNames(directed, third) else directed[1])
-  if(attribute == "by") info$observation <- "cognitive"
-  if(attribute == "layer") info$layers <- unique(third)
-  make_stocnet(info = info, nodes = nodes, ties = ties)
+    if(anyNA(slice[idx])) ties$na <- is.na(slice[idx])
+    make_stocnet(info = list(directed = directed[k]), nodes = nodes,
+                 ties = ties)
+  })
+  names(nets) <- if(attribute %in% c("by", "about") && !is.null(labels))
+    labels[third] else as.character(third)
+  # The moments of a network are counted from its ties, so a slice that holds
+  # no tie leaves no moment behind it.
+  if(attribute == "time"){
+    empty <- vapply(seq_len(d[3]), function(k)
+      all(!is.na(.data[, , k]) & .data[, , k] == 0), logical(1))
+    if(any(empty))
+      snet_warn("{sum(empty)} slice{?s} of this array hold{?s/} no ties",
+                "({.val {as.character(third[empty])}}),",
+                "and a moment without ties is not recorded in the network.")
+  }
+  switch(attribute,
+         "time" = from_times(nets),
+         "by" = from_reporters(nets),
+         "about" = .join_third(nets, "about"),
+         "layer" = if(length(nets) == 1)
+           mutate_info(mutate_ties(nets[[1]], layer = third[1]),
+                       layers = third[1],
+                       directed = stats::setNames(directed[1], third[1])) else
+             from_layers(nets))
 }
   
 #' @export
@@ -1837,7 +1930,10 @@ as_diffusion.diff_model <- function(.data, twomode = FALSE, events) {
 
 #' @export
 as_diffusion.mnet <- function(.data, twomode = FALSE, events) {
-  events <- as_changelist(.data)
+  if (missing(events)) events <- as_changelist(.data)
+  # a network can record other changes too, such as when its nodes are active
+  if ("var" %in% names(events)) 
+    events <- events[events$var == "diffusion", , drop = FALSE]
   nodes <- c(net_nodes(.data))
   sumchanges <- events |> dplyr::group_by(time) |> 
     dplyr::reframe(S_new = sum(value == "S"),
@@ -1896,8 +1992,10 @@ as_diffusion.igraph <- function(.data, twomode = FALSE, events) {
     dplyr::reframe(I_new = sum(event == "I"),
                    E_new = sum(event == "E"),
                    R_new = sum(event == "R"))
-  report <- dplyr::tibble(t = seq_len(max(events$t)) - 1,
-                          n = net_nodes(net)) |> 
+  # Every step from the seeding to the last event, so that a diffusion that
+  # does not leave its seeds still reports the step in which they were seeded.
+  report <- dplyr::tibble(t = 0:max(events$t),
+                          n = c(net_nodes(net))) |> 
     dplyr::left_join(sumchanges, by = dplyr::join_by(t))
   report[is.na(report)] <- 0
   report$R <- cumsum(report$R_new)
@@ -1924,6 +2022,11 @@ as_diffusion.igraph <- function(.data, twomode = FALSE, events) {
   report <- dplyr::select(report, dplyr::any_of(c("t", "n", "S", "s", "E", "E_new", "I", "I_new", "R", "R_new")))
   make_diff_model(events, report, .data)
 }
+
+# A diffusion is reported in the same way whatever class it was played on,
+# with a `time` column and the nodes newly susceptible in `S_new`.
+#' @export
+as_diffusion.stocnet <- as_diffusion.mnet
 
 #' @export
 as_diffusion.diffnet <- function(.data, twomode = FALSE, events) {

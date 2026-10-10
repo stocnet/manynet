@@ -296,12 +296,23 @@ to_proximity.data.frame <- function(.data, similarity = .proj_measures,
 #'   ties, and for complex networks it includes also the difference between
 #'   the self ties in each pairwise calculation.
 #'   This function runs in \eqn{O(mn^2)} complexity.
+#'   
+#'   Like the other functions here, it returns the class of object it was 
+#'   given, so that the correlations between the nodes of a network are
+#'   returned as a weighted network of the same class.
+#'   The correlations are calculated on a matrix, however, so a network is
+#'   coerced to one and the result coerced back.
+#'   Passing a matrix, e.g. `to_correlation(as_matrix(.data))`, spares both,
+#'   and returns the matrix of correlations that further calculation most
+#'   often wants.
 #' @export
 to_correlation <- function(.data, method = NULL) UseMethod("to_correlation")
 
 #' @export
 to_correlation.default <- function(.data, method = NULL){
-  as_input(.data, to_correlation, method = method)
+  # the method follows the format of the network, which a matrix of it does
+  # not always show, as where no tie of a directed network is unreciprocated
+  as_input(.data, to_correlation, method = method %||% .cor_method(.data))
 }
 
 #' @export
@@ -321,12 +332,6 @@ to_correlation.matrix <- function(.data, method = NULL){
            diag(out) <- 1
            out
          })
-}
-
-#' @export
-to_correlation.tbl_graph <- function(.data, method = NULL){
-  if(missing(.data)) {expect_nodes(); .data <- .G()} # nocov
-  to_correlation(as_matrix(.data), method)
 }
 
 .cor_method <- function(.data){

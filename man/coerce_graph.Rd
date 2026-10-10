@@ -6,6 +6,8 @@
 \alias{as_tidygraph}
 \alias{as_network}
 \alias{as_stocnet}
+\alias{as_stocnet.node_measure}
+\alias{as_stocnet.node_member}
 \alias{as_stocnet.array}
 \alias{as_siena}
 \alias{as_graphAM}
@@ -20,6 +22,15 @@ as_tidygraph(.data, twomode = FALSE)
 as_network(.data, twomode = FALSE)
 
 as_stocnet(.data, twomode = FALSE, ...)
+
+\method{as_stocnet}{node_measure}(
+  .data,
+  twomode = FALSE,
+  compare = c("absdiff", "diff", "sender", "receiver"),
+  ...
+)
+
+\method{as_stocnet}{node_member}(.data, twomode = FALSE, compare = "same", ...)
 
 \method{as_stocnet}{array}(
   .data,
@@ -55,6 +66,13 @@ By default FALSE.}
 \item{...}{Further arguments passed to or from other methods,
 such as \code{attribute} for an array.}
 
+\item{compare}{For a node measure or a node membership, how the values of
+two nodes are compared to give the tie between them;
+see \code{as_matrix()}.
+Comparing by "same" or "absdiff" gives an undirected network,
+and comparing by "diff", "sender", or "receiver" a directed one.
+A comparison of zero is no tie.}
+
 \item{attribute}{For a three-dimensional array, what its third dimension
 holds, which becomes a column of the ties:
 "time" for the waves of a panel,
@@ -84,24 +102,24 @@ as_network                  *                          *      *           *
 as_siena                            *                                      
 as_stocnet       *          *                                 *           *
 as_tidygraph                *                  *       *      *    *      *
-             mnet network network.goldfish networkDynamic siena sienadata
-as_diffnet                                                               
-as_diffusion    *                                                        
-as_graphAM                                                               
-as_igraph               *                *              *     *         *
-as_network              *                *              *     *         *
-as_siena                                                                 
-as_stocnet              *                                               *
-as_tidygraph            *                *              *     *         *
-             stocnet tbl_graph
-as_diffnet                    
-as_diffusion                  
-as_graphAM                    
-as_igraph          *         *
-as_network         *         *
-as_siena           *          
-as_stocnet         *          
-as_tidygraph       *         *
+             mnet network network.goldfish networkDynamic node_measure
+as_diffnet                                                            
+as_diffusion    *                                                     
+as_graphAM                                                            
+as_igraph               *                *              *             
+as_network              *                *              *             
+as_siena                                                              
+as_stocnet              *                                            *
+as_tidygraph            *                *              *             
+             node_member siena sienadata stocnet tbl_graph
+as_diffnet                                                
+as_diffusion                                   *          
+as_graphAM                                                
+as_igraph                    *         *       *         *
+as_network                   *         *       *         *
+as_siena                                       *          
+as_stocnet             *               *       *          
+as_tidygraph                 *         *       *         *
 }\if{html}{\out{</div>}}
 
 \code{as_diffusion()} and \code{play_diffusion()} return a 'diff_model' object
@@ -149,6 +167,7 @@ as_network(test)
 }
 \seealso{
 Other coercions:
-\code{\link{coerce_list}}
+\code{\link{coerce_list}},
+\code{\link{coerce_matrix}}
 }
 \concept{coercions}

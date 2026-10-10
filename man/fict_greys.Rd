@@ -10,7 +10,7 @@
 #> 
 #> -- Nodes
 #> # A tibble: 53 x 7
-#>   name               sex   race  birthyear position  season sign  
+#>   label              sex   race  birthyear position  season sign  
 #>   <chr>              <chr> <chr>     <dbl> <chr>      <dbl> <chr> 
 #> 1 Addison Montgomery F     White      1967 Attending      1 Libra 
 #> 2 Adele Webber       F     Black      1949 Non-Staff      2 Leo   
@@ -57,7 +57,18 @@ including nodal attributes:
 \item 'sign': character's astrological starsign, if known
 }
 
-The data is current up to (I think?) season 10?
+The characters are those that joined the show in its first ten seasons.
+A tie records that two characters had a sexual contact,
+and is neither directed nor weighted.
+}
+\references{
+Weissman, Gary.
+"Grey's Anatomy network of sexual relations".
+\url{https://gweissman.github.io/post/grey-s-anatomy-network-of-sexual-relations/}
+
+Lind, Benjamin. 2012.
+"Lessons on exponential random graph modeling from Grey's Anatomy hook-ups".
+\url{http://badhessian.org/2012/09/lessons-on-exponential-random-graph-modeling-from-greys-anatomy-hook-ups/}
 }
 \author{
 Gary Weissman and Benjamin Lind

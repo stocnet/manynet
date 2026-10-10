@@ -486,6 +486,14 @@ delete_node_attribute.tbl_graph <- function(.data, attr_name){
 #' @export
 mutate <- tidygraph::mutate
 
+# A stocnet is not a tidygraph, so the verb is given a method of its own.
+# The nodes are what it changes, as they are what a tidygraph has active
+# unless told otherwise.
+#' @exportS3Method dplyr::mutate
+mutate.stocnet <- function(.data, ...){
+  mutate_nodes(.data, ...)
+}
+
 #' @rdname manip_nodes_attr
 #' @importFrom tidygraph mutate
 #' @export
@@ -520,6 +528,10 @@ mutate_nodes.stocnet <- function(.data, ...){
     out <- .data
     out$nodes <- out$nodes |> 
       dplyr::mutate(...)
+    # A stocnet labels its nodes in 'label', where other classes use 'name',
+    # so nodes that are named as theirs are, are labelled.
+    if ("name" %in% names(out$nodes) && !"label" %in% names(out$nodes))
+      out$nodes <- dplyr::rename(out$nodes, label = "name")
     out
   })
 }

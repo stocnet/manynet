@@ -25,8 +25,10 @@ test_that("node_attribute works", {
 })
 
 test_that("node_mode works", {
+  # `length()` counts a stocnet's components, so the node count is asked for
   expect_equal(as.logical(node_is_mode(ison_southern_women)[1]),
-               as.logical(!node_is_mode(ison_southern_women)[length(ison_southern_women)]))
+               as.logical(!node_is_mode(ison_southern_women)[
+                 net_nodes(ison_southern_women)]))
   expect_s3_class(node_is_mode(ison_southern_women), c("node mark", "logical"))
 })
 
@@ -60,8 +62,9 @@ test_that("layer_ties works", {
   expect_equal(sum(lt), c(net_ties(fict_marvel)))
   expect_equal(lt[match("affiliation", layer_names(fict_marvel))], 683L)
   expect_equal(lt[match("relationship", layer_names(fict_marvel))], 558L)
-  # a curated single layer name not matching finer tie types returns the total
-  expect_equal(layer_ties(fict_thrones), c(net_ties(fict_thrones)))
+  # the layers of a network are counted from its ties
+  expect_length(layer_ties(fict_thrones), 2)
+  expect_equal(sum(layer_ties(fict_thrones)), c(net_ties(fict_thrones)))
 })
 
 test_that("net_layers and layer_ties agree across network forms", {

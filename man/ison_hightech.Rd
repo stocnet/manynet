@@ -6,8 +6,8 @@
 \title{One-mode multiplex, directed network of managers of a high-tech company (Krackhardt 1987)}
 \format{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{#> -- # High-tech company managers ------------------------------------------------
-#> # A multiplex, directed network of 21 managers and 102 friendship arcs, 190
-#> advice arcs, and 20 report arcs
+#> # A multiplex, directed cognitive social structure of 21 managers and 2735
+#> advice arcs, 790 friendship arcs, and 20 report arcs from 21 reporters
 #> 
 #> -- Nodes
 #> # A tibble: 21 x 4
@@ -22,18 +22,26 @@
 #> # i 15 more rows
 #> 
 #> -- Ties
-#> # A tibble: 312 x 3
-#>    from    to type   
-#>   <int> <int> <chr>  
-#> 1     1     2 friends
-#> 2     1     2 advice 
-#> 3     1     2 reports
-#> 4     1     4 friends
-#> 5     1     4 advice 
-#> 6     1     8 friends
-#> # i 306 more rows
+#> # A tibble: 3,545 x 4
+#>    from    to    by layer 
+#>   <int> <int> <int> <chr> 
+#> 1     2     1     1 advice
+#> 2     3     1     1 advice
+#> 3     4     1     1 advice
+#> 4     5     1     1 advice
+#> 5     6     1     1 advice
+#> 6     7     1     1 advice
+#> # i 3,539 more rows
 #> 
 }\if{html}{\out{</div>}}
+}
+\source{
+Aguiar, Izabel. 2022. "Krackhardt's Cognitive Social Structures".
+\url{https://github.com/izabelaguiar/krackhardt}
+
+Yenigun, Deniz, Gunes Ertan, and Michael Siciliano. 2016.
+\emph{cssTools: Cognitive Social Structure Tools}. R package version 1.0.
+\doi{10.32614/CRAN.package.cssTools}
 }
 \usage{
 data(ison_hightech)
@@ -43,10 +51,20 @@ data(ison_hightech)
 on the west coast of the United States.
 Three types of ties were collected:
 \itemize{
-\item \emph{friends}: managers' answers to the question "Who is your friend?"
-\item \emph{advice}: managers' answers to the question "To whom do you go to for advice?"
+\item \emph{advice}: every manager's answers to the question
+"Who would this person go to for help or advice at work?",
+asked about each of the 21 managers in turn
+\item \emph{friends}: every manager's answers to the question
+"Who would this person consider to be a friend?",
+again asked about each of the 21 managers
 \item \emph{reports}: "To whom do you report?" based on company reports
 }
+
+The advice and friendship layers are therefore cognitive social
+structures: each manager reports on every tie among all 21 managers,
+and each tie names the manager who reported it in its 'by' column.
+The reports layer is taken from company records, so its ties name no
+reporter.
 
 The data is anonymised, but four nodal attributes are included:
 \itemize{
@@ -58,7 +76,28 @@ where 3 = CEO, 2 = Vice President, and 1 = manager
 with the CEO alone in A
 }
 }
+\details{
+Most measures pool every report as a tie of its own, so a tie reported
+by all 21 managers counts 21 times.
+Use \code{to_reporter()} for one manager's view of the network,
+or \code{to_aggregated(over = "by")} to combine the views.
+Each manager's own report on their own ties,
+\code{to_aggregated(ison_hightech, over = "by", reporters = "sender")},
+gives the network that earlier versions of this dataset held,
+and that is often distributed as the high-tech managers network.
+
+The friendship reports come from \code{cssTools::highTechManagers}
+(Yenigun, Ertan, and Siciliano 2016).
+That dataset replaces manager 17's report on their own friendships,
+which it describes as naming every other manager,
+with the reports of the other managers about manager 17.
+Here that row is instead taken from the friendship network of the earlier
+versions, in which manager 17 names 18 of the other 20 managers.
+The advice reports come from the transcription of the appendix of
+Krackhardt (1987) by Izabel Aguiar.
+}
 \references{
 Krackhardt, David. 1987. "Cognitive social structures". \emph{Social Networks} 9(2): 109-134.
+\doi{10.1016/0378-8733(87)90009-8}
 }
 \keyword{datasets}

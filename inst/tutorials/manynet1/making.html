@@ -175,6 +175,8 @@ bundled in a package</label></li>
 describe its size and type</label></li>
 <li><label><input type="checkbox" />  Coerce networks between classes
 with the <code>as_*()</code> functions</label></li>
+<li><label><input type="checkbox" />  Ask other researchers for network
+data they have not published</label></li>
 <li><label><input type="checkbox" />  Import network data from
 edgelists, nodelists, and other file formats</label></li>
 <li><label><input type="checkbox" />  Export a network to work with it
@@ -365,6 +367,19 @@ data-lines="0" data-pipe="|&gt;">
 <pre class="text"><code>table_data() |&gt; dplyr::filter(twomode)</code></pre>
 <script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
 </div>
+<pre><code>## Loading required package: migraph</code></pre>
+<pre><code>## Loading required package: autograph</code></pre>
+<pre><code>## Registered S3 method overwritten by &#39;autograph&#39;:
+##   method        from  
+##   plot.sienaGOF RSiena</code></pre>
+<pre><code>## ℹ You are using autograph version 1.2.3, with theme `default`.</code></pre>
+<pre><code>## ℹ Keep a theme for later sessions with `stocnet_theme(persist = TRUE)`.</code></pre>
+<pre><code>## Loading required package: netrics</code></pre>
+<pre><code>## ℹ You are using netrics version 1.0.4.</code></pre>
+<pre><code>## ℹ Share bugs, issues, or feature requests at &lt;https://github.com/stocnet/netrics/issues&gt;.</code></pre>
+<pre><code>## Registered S3 method overwritten by &#39;migraph&#39;:
+##   method           from  
+##   summary.sienaFit RSiena</code></pre>
 <div class="panel panel-default tutorial-question-container">
 <div data-label="twomode-question" class="tutorial-question panel-body">
 <div id="twomode-question-answer_container" class="shiny-html-output"></div>
@@ -795,6 +810,8 @@ when another package expects a specific format.</p>
 <p><span class="page-toc">On this page: <span class="page-toc-link"
 onclick="document.getElementById(&#39;section-external-finding-data&#39;).scrollIntoView({behavior:&#39;auto&#39;,block:&#39;start&#39;});">Finding
 data</span> · <span class="page-toc-link"
+onclick="document.getElementById(&#39;section-asking-for-data&#39;).scrollIntoView({behavior:&#39;auto&#39;,block:&#39;start&#39;});">Asking
+for data</span> · <span class="page-toc-link"
 onclick="document.getElementById(&#39;section-importing-edgelists&#39;).scrollIntoView({behavior:&#39;auto&#39;,block:&#39;start&#39;});">Importing
 edgelists</span> · <span class="page-toc-link"
 onclick="document.getElementById(&#39;section-exporting-edgelists&#39;).scrollIntoView({behavior:&#39;auto&#39;,block:&#39;start&#39;});">Exporting
@@ -830,6 +847,64 @@ open standards, and still others keep data in a very standard edgelist
 (and perhaps nodelist) format in .csv files or similar. Fortunately,
 <code>{manynet}</code> has functions to help with importing data from
 such formats too.</p>
+</div>
+<div id="section-asking-for-data" class="section level3">
+<h3>Asking for data</h3>
+<p>Not all network data is online, though. A great deal of it sits on
+researchers’ own computers, collected for a particular study and never
+deposited in a repository. If you come across a paper that analyses a
+network you would like to work with, it is usually worth asking the
+authors for it. Christian Kreibich’s <a
+href="https://medium.com/@ckreibich/how-to-ask-for-datasets-d5ef791cb38c">guide
+to asking for datasets</a> offers some good advice, adapted here for
+network data:</p>
+<ul>
+<li><strong>Don’t be shy.</strong> Most researchers are glad that
+someone wants to use their data, and a polite request never hurts, even
+to a well-known name.</li>
+<li><strong>Make your purpose clear.</strong> Explain what you plan to
+do with the data and how you intend to publish the results. Nobody wants
+to hand a hard-won dataset to someone unlikely to use it, whereas a
+clear project, or even an offer to collaborate, makes the request
+interesting.</li>
+<li><strong>Do your homework, and be concrete.</strong> Name the exact
+paper, table, or figure, rather than “your recent paper”. For network
+data, say which network you mean: which nodes and ties, which wave or
+year, whether it is one-mode or two-mode, and whether you also need the
+nodal attributes. It also helps to ask for the codebook or
+questionnaire, since how the ties were elicited (e.g. from a roster or
+by free recall, with or without a cap on nominations) shapes what the
+network can tell you.</li>
+<li><strong>Make your affiliation clear.</strong> Write from your
+institutional email address, and say which group you belong to and, if
+you are a student, who your supervisor is.</li>
+<li><strong>Find the right point of contact.</strong> Start with the
+corresponding or first author, and write to one person at a time rather
+than to every author in parallel.</li>
+<li><strong>Be respectful if the answer is no.</strong> Network data is
+often particularly sensitive: a tie describes at least two people, only
+one of whom may have reported it, and a node’s position in the network
+can identify them even once names are removed. The authors may want to
+share but be unable to, for legal or ethical reasons.</li>
+<li><strong>Be responsible with what you receive.</strong> Do not try to
+de-anonymise the data, and do not pass it on without explicit
+permission; send anyone who asks you for it back to the original
+authors. If you think you have found an error in the data, check
+carefully and tell the authors first.</li>
+<li><strong>Be grateful.</strong> Acknowledge and cite the people who
+shared the data in anything you publish, and send them a copy of your
+results.</li>
+</ul>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="asking-question" class="tutorial-question panel-body">
+<div id="asking-question-answer_container" class="shiny-html-output"></div>
+<div id="asking-question-message_container" class="shiny-html-output"></div>
+<div id="asking-question-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+<p>Whether you download it from a repository or receive it by email, the
+next step is to get the data into R.</p>
 </div>
 <div id="section-importing-edgelists" class="section level3">
 <h3>Importing edgelists</h3>
@@ -1367,19 +1442,19 @@ learnr:::store_exercise_cache(structure(list(label = "twomode-filter", global_se
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "twomode-question", 
     question = structure("How many two-mode networks are available in the manynet and migraph packages together? (Hint: count the rows reported for the filtered table.)", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_b38018", 
+    "character")), answers = list(structure(list(id = "lnr_ans_ca51c3a", 
         option = "18", value = "18", label = structure("18", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = structure("The filtered table has 18 rows, one per two-mode dataset.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_2447f99", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_1bee745", 
         option = "57", value = "57", label = structure("57", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("This is the total number of datasets across the packages; only some of them are two-mode.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_cd24d01", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_f473480", 
         option = "39", value = "39", label = structure("39", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("This is the number of datasets that are <em>not<\u002fem> two-mode.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_f82c16e", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_5ff8ad3", 
         option = "10", value = "10", label = structure("10", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("This is just the number of rows displayed by default.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
@@ -1391,7 +1466,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "twomode-question-answer", question = "twomode-question"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 601133710.220075, options = list()), class = c("learnr_radio", 
+    seed = 1475378610.81297, options = list()), class = c("learnr_radio", 
 "tutorial_question")), session = session)
 </script>
 
@@ -1517,23 +1592,23 @@ learnr:::store_exercise_cache(structure(list(label = "calldatad", global_setup =
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "tblgraph-nodes", 
     question = structure("How many nodes does this network have?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_43e6bdd", 
+    "character")), answers = list(structure(list(id = "lnr_ans_907bdef", 
         option = "8", value = 8, label = structure("8", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = structure("Six nodes are listed plus the footer notes ‘2 more’.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_652a9af", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_8cbdc2e", 
         option = "10", value = 10, label = structure("10", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("There are 10 ties.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_a50c85f", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_a84edaf", 
         option = "1", value = 1, label = structure("1", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("There is one nodal variable (‘name’).", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_7e6d79c", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_f56d9f2", 
         option = "2", value = 2, label = structure("2", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("There are two more nodes beyond what is listed.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_e576430", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_1dcecdb", 
         option = "6", value = 6, label = structure("6", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("There are six nodes/names shown, but the info underneath says there are 2 more.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
@@ -1545,30 +1620,30 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "tblgraph-nodes-answer", question = "tblgraph-nodes"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 1227823970.42825, options = list()), class = c("learnr_radio", 
+    seed = 493070535.270396, options = list()), class = c("learnr_radio", 
 "tutorial_question")), session = session)
 </script>
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "tblgraph-ties", 
     question = structure("How many ties does this network have?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_7249444", 
+    "character")), answers = list(structure(list(id = "lnr_ans_4b53f82", 
         option = "4", value = 4, label = structure("4", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("There are four more ties beyond the six that are listed.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_ddaab80", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_fe7a5c1", 
         option = "10", value = 10, label = structure("10", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = structure("There are 10 ties: six listed plus the ‘4 more’ in the footer.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_e6bbadd", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_5293502", 
         option = "1", value = 1, label = structure("1", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("There is one network/graph.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_be742e7", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_88a1d3e", 
         option = "2", value = 2, label = structure("2", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("There are two tie variables listing the nodes the tie is sent from and to.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_c99ad69", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_f164af0", 
         option = "6", value = 6, label = structure("6", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("There are six ties shown, but the info underneath says there are 4 more.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
@@ -1580,7 +1655,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "tblgraph-ties-answer", question = "tblgraph-ties"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 802792907.12617, options = list()), class = c("learnr_radio", 
+    seed = 58666041.9726815, options = list()), class = c("learnr_radio", 
 "tutorial_question")), session = session)
 </script>
 
@@ -1588,27 +1663,27 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "tblgraph-type", 
     question = structure("What kind of network is this? Choose all that apply.", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_b1e50e5", 
+    "character")), answers = list(structure(list(id = "lnr_ans_762a82", 
         option = "Undirected", value = "Undirected", label = structure("Undirected", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = structure("Correct: the description says ‘undirected’ and the ties have no direction.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_8269f9c", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_b8382cf", 
         option = "Labelled", value = "Labelled", label = structure("Labelled", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = structure("Correct: the nodes have names, so the network is labelled.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_45bcd65", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_5f036c4", 
         option = "Two-mode", value = "Two-mode", label = structure("Two-mode", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("There is only one set of nodes here (adolescents), so it is one-mode.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_ecd355f", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_6dce0bf", 
         option = "Complex", value = "Complex", label = structure("Complex", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("A complex network would contain self-ties (loops), and none appear here.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_2ba2488", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_7424ad7", 
         option = "Signed", value = "Signed", label = structure("Signed", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("A signed network’s ties would carry a positive/negative ‘sign’ attribute.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_7590283", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_1486737", 
         option = "Weighted", value = "Weighted", label = structure("Weighted", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("A weighted network’s ties would carry a numeric ‘weight’ attribute.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
@@ -1620,7 +1695,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "tblgraph-type-answer", question = "tblgraph-type"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 51646354.9759503, options = list()), class = c("learnr_checkbox", 
+    seed = 1638111.99923719, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")), session = session)
 </script>
  
@@ -1792,24 +1867,24 @@ learnr:::store_exercise_cache(structure(list(label = "nettotbl", global_setup = 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "nettotblquest", 
     question = structure("What are there 16 of in this network?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_70d258b", 
+    "character")), answers = list(structure(list(id = "lnr_ans_120ff7e", 
         option = "Nodes", value = "Nodes", label = structure("Nodes", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = structure("The printout reports 16 nodes (the Florentine families).", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_de907ba", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_d1e8de8", 
         option = "Ties", value = "Ties", label = structure("Ties", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("The printout reports 20 ties among these families.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_c34fa73", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_9988ae5", 
         option = "Reciprocated ties", value = "Reciprocated ties", 
         label = structure("Reciprocated ties", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("This network is undirected, so reciprocation is not defined here.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_1bbf9fa", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_bbf2c94", 
         option = "Loops", value = "Loops", label = structure("Loops", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("There are no self-ties in this network.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_7c07898", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_43cae2f", 
         option = "Components", value = "Components", label = structure("Components", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("Almost all these nodes are connected in a single component.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
@@ -1821,18 +1896,58 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "nettotblquest-answer", question = "nettotblquest"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 2019721805.05949, options = list()), class = c("learnr_radio", 
+    seed = 1747775164.68613, options = list()), class = c("learnr_radio", 
 "tutorial_question")), session = session)
 </script>
 
 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "asking-question", 
+    question = structure("A classmate asks you for a copy of a network dataset that a researcher emailed you for your thesis. What should you do?", html = TRUE, class = c("html", 
+    "character")), answers = list(structure(list(id = "lnr_ans_cb163f6", 
+        option = "Refer them to the researcher who shared it", 
+        value = "Refer them to the researcher who shared it", 
+        label = structure("Refer them to the researcher who shared it", html = TRUE, class = c("html", 
+        "character")), correct = TRUE, message = structure("Correct: unless you have explicit permission to re-share it, the data remains the original authors’ to share.", html = TRUE, class = c("html", 
+        "character")), type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_dfeddb9", 
+        option = "Send them a copy, since it is for research too", 
+        value = "Send them a copy, since it is for research too", 
+        label = structure("Send them a copy, since it is for research too", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("The researcher shared the data with you, for your project. Passing it on could break the terms under which the data was collected.", html = TRUE, class = c("html", 
+        "character")), type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_400faa8", 
+        option = "Send them a copy with the node names removed", 
+        value = "Send them a copy with the node names removed", 
+        label = structure("Send them a copy with the node names removed", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("Removing names does not anonymise a network: nodes can often be re-identified from their position in the structure. And the data is still not yours to share.", html = TRUE, class = c("html", 
+        "character")), type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_f7e9994", 
+        option = "Upload it to a public repository so that everyone can use it", 
+        value = "Upload it to a public repository so that everyone can use it", 
+        label = structure("Upload it to a public repository so that everyone can use it", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("That would share it with everyone, not just your classmate, and without the authors’ or the respondents’ consent.", html = TRUE, class = c("html", 
+        "character")), type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Incorrect", html = TRUE, class = c("html", 
+    "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
+    "character")), message = NULL, post_message = NULL), ids = list(
+        answer = "asking-question-answer", question = "asking-question"), 
+    loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
+    seed = 988855952.039528, options = list()), class = c("learnr_radio", 
+"tutorial_question")), session = session)
+</script>
+ 
 <script type="application/shiny-prerendered" data-context="server">
 `tutorial-exercise-importedges-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-importedges-code-editor`)), session)
 output$`tutorial-exercise-importedges-output` <- renderUI({
   `tutorial-exercise-importedges-result`()
 })
 </script>
- 
+
+
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "importedges", global_setup = structure(c("library(learnr)", 
 "library(manynet)", "library(network)", "knitr::opts_chunk$set(echo = FALSE)"
@@ -1866,15 +1981,15 @@ learnr:::store_exercise_cache(structure(list(label = "importedges", global_setup
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
 </script>
-
-
+ 
 <script type="application/shiny-prerendered" data-context="server">
 `tutorial-exercise-exportdata-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-exportdata-code-editor`)), session)
 output$`tutorial-exercise-exportdata-output` <- renderUI({
   `tutorial-exercise-exportdata-result`()
 })
 </script>
- 
+
+
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "exportdata", global_setup = structure(c("library(learnr)", 
 "library(manynet)", "library(network)", "knitr::opts_chunk$set(echo = FALSE)"
@@ -1907,25 +2022,24 @@ learnr:::store_exercise_cache(structure(list(label = "exportdata", global_setup 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
 </script>
-
-
+ 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "formats-question", 
     question = structure("A colleague sends you a Pajek .net file. Which function imports it?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_7088f90", 
+    "character")), answers = list(structure(list(id = "lnr_ans_3b129c3", 
         option = "read_pajek()", value = "read_pajek()", label = structure("read_pajek()", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = structure("Correct: it imports .net and .paj files into a stocnet object.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_d3b9683", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_78ed3c", 
         option = "read_edgelist()", value = "read_edgelist()", 
         label = structure("read_edgelist()", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("That expects a .csv or Excel edgelist, and cannot read a .net file. <img src='https://c.tenor.com/bibDxkkQ0YAAAAAd/tenor.gif' alt='gif of man trashing own computer'/>", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_a0c52df", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_58cd9a0", 
         option = "read_ucinet()", value = "read_ucinet()", label = structure("read_ucinet()", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("That reads UCINET .##h files (and the .##d files beside them).", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_39f6544", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_94734c0", 
         option = "read_graphml()", value = "read_graphml()", 
         label = structure("read_graphml()", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("That reads .graphml files.", html = TRUE, class = c("html", 
@@ -1938,18 +2052,18 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "formats-question-answer", question = "formats-question"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 86297966.9598144, options = list()), class = c("learnr_radio", 
+    seed = 2037479509.55122, options = list()), class = c("learnr_radio", 
 "tutorial_question")), session = session)
 </script>
- 
+
+
 <script type="application/shiny-prerendered" data-context="server">
 `tutorial-exercise-readcoerce-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-readcoerce-code-editor`)), session)
 output$`tutorial-exercise-readcoerce-output` <- renderUI({
   `tutorial-exercise-readcoerce-result`()
 })
 </script>
-
-
+ 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "readcoerce", global_setup = structure(c("library(learnr)", 
 "library(manynet)", "library(network)", "knitr::opts_chunk$set(echo = FALSE)"
@@ -1985,22 +2099,23 @@ learnr:::store_exercise_cache(structure(list(label = "readcoerce", global_setup 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))
 </script>
- 
+
+
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "adols-question", 
     question = structure("Which versions are labelled?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_a674340", 
+    "character")), answers = list(structure(list(id = "lnr_ans_7243f18", 
         option = "ison_adolescents (the original)", value = "ison_adolescents (the original)", 
         label = structure("ison_adolescents (the original)", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = structure("All four are labelled: the node names survived the export to .csv and the re-import.", html = TRUE, class = c("html", 
         "character")), type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_eeb5062", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_cb29cc6", 
         option = "adolsigraph1", value = "adolsigraph1", label = structure("adolsigraph1", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_3728a6d", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_fc56409", 
         option = "adolsigraph2", value = "adolsigraph2", label = structure("adolsigraph2", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_78da8ee", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_5d6acc4", 
         option = "adolsigraph3", value = "adolsigraph3", label = structure("adolsigraph3", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
@@ -2011,7 +2126,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "adols-question-answer", question = "adols-question"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 1606095237.2521, options = list()), class = c("learnr_checkbox", 
+    seed = 2113570589.51579, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")), session = session)
 </script>
 </p>
@@ -2022,7 +2137,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
 <!--/html_preserve-->
 <!--html_preserve-->
 <script type="application/shiny-prerendered" data-context="execution_dependencies">
-{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118]}},"value":[{"type":"character","attributes":{},"value":["askpass","autograph","backports","base","bslib","cachem","checkmate","cli","coda","codetools","commonmark","compiler","crayon","datasets","DEoptimR","digest","dplyr","ergm","evaluate","farver","fastmap","fontawesome","fs","furrr","future","generics","ggforce","ggplot2","ggraph","ggrepel","globals","glue","graphics","graphlayouts","grDevices","grid","gridExtra","gtable","htmltools","htmlwidgets","httpuv","igraph","jquerylib","jsonlite","knitr","later","lattice","learnr","lifecycle","listenv","litedown","lpSolveAPI","magrittr","manynet","manypkgs","markdown","MASS","Matrix","memoise","methods","migraph","mime","netrics","network","NLP","otel","parallel","parallelly","patchwork","pdftools","pillar","pkgconfig","polyclip","promises","purrr","qpdf","R6","rbibutils","RColorBrewer","Rcpp","Rdpack","remotes","rlang","rle","rmarkdown","robustbase","rprojroot","rsconnect","rstudioapi","S7","sass","scales","shiny","slam","statnet.common","stats","stringi","stringr","tibble","tidygraph","tidyr","tidyselect","tm","tools","trust","tweenr","usethis","utf8","utils","vctrs","viridis","viridisLite","whisker","withr","xfun","xml2","xtable","yaml"]},{"type":"character","attributes":{},"value":["1.2.1","1.2.2","1.5.1","4.6.1","0.12.0","1.1.0","2.3.4","3.6.6","0.19-4.1","0.2-20","2.0.0","4.6.1","1.5.3","4.6.1","1.2-1","0.6.39","1.2.1","4.12.0","1.0.5","2.1.2","1.2.0","0.5.3","2.1.0","0.4.0","1.75.0","0.1.4","0.5.0","4.0.3","2.2.2","0.9.8","0.19.1","1.8.1","4.6.1","1.2.5","4.6.1","4.6.1","2.3.1","0.3.6","0.5.9","1.6.4","1.6.17","2.3.3","0.1.4","2.0.0","1.51","1.4.8","0.23-1","0.11.6","1.0.5","1.0.0","0.10","5.5.2.0-17.15","2.0.5","2.3.2","0.3.1","2.0","7.3-66","1.7-6","2.0.1","4.6.1","1.7.0","0.13","1.0.1","1.20.0","0.3-3","0.2.0","4.6.1","1.48.0","1.3.2","3.9.0","1.11.1","2.0.3","1.10-7","1.5.0","1.2.2","1.4.1","2.6.1","2.4.1","1.1-3","1.1.2","2.6.6","2.5.0.9000","1.3.0","0.10.0","2.31","0.99-7","2.1.1","1.11.0","0.19.0","0.2.2","0.4.10","1.4.0","1.14.0","0.1-56","4.13.0","4.6.1","1.8.9","1.6.0","3.3.1","1.3.1","1.3.2","1.2.1","0.7-18","4.6.1","0.1-9","2.0.3","3.2.1","1.2.6","4.6.1","0.7.3","0.6.5","0.4.3","0.4.1","3.0.3","0.60","1.6.0","1.8-8","2.3.12"]}]}]}
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119]}},"value":[{"type":"character","attributes":{},"value":["askpass","autograph","backports","base","bslib","cachem","checkmate","cli","coda","codetools","commonmark","compiler","crayon","datasets","DEoptimR","digest","dplyr","ergm","evaluate","farver","fastmap","fontawesome","fs","furrr","future","generics","ggforce","ggplot2","ggraph","ggrepel","globals","glue","graphics","graphlayouts","grDevices","grid","gridExtra","gtable","htmltools","htmlwidgets","httpuv","igraph","jquerylib","jsonlite","knitr","later","lattice","learnr","lifecycle","listenv","litedown","lpSolveAPI","magrittr","manynet","manypkgs","markdown","MASS","Matrix","memoise","methods","migraph","mime","netrics","network","NLP","otel","parallel","parallelly","patchwork","pdftools","pillar","pkgconfig","polyclip","promises","purrr","qpdf","R6","rbibutils","RColorBrewer","Rcpp","Rdpack","remotes","rlang","rle","rmarkdown","robustbase","rprojroot","rsconnect","RSiena","rstudioapi","S7","sass","scales","shiny","slam","statnet.common","stats","stringi","stringr","tibble","tidygraph","tidyr","tidyselect","tm","tools","trust","tweenr","usethis","utf8","utils","vctrs","viridis","viridisLite","whisker","withr","xfun","xml2","xtable","yaml"]},{"type":"character","attributes":{},"value":["1.2.1","1.2.3","1.5.1","4.6.1","0.12.0","1.1.0","2.3.4","3.6.6","0.19-4.1","0.2-20","2.0.0","4.6.1","1.5.3","4.6.1","1.2-1","0.6.39","1.2.1","4.12.0","1.0.5","2.1.2","1.2.0","0.5.3","2.1.0","0.4.0","1.75.0","0.1.4","0.5.0","4.0.3","2.2.2","0.9.8","0.19.1","1.8.1","4.6.1","1.2.5","4.6.1","4.6.1","2.3.1","0.3.6","0.5.9","1.6.4","1.6.17","2.3.3","0.1.4","2.0.0","1.51","1.4.8","0.23-1","0.11.6","1.0.5","1.0.0","0.10","5.5.2.0-17.15","2.0.5","2.4.0","0.3.1","2.0","7.3-66","1.7-6","2.0.1","4.6.1","1.7.2","0.13","1.0.4","1.20.0","0.3-3","0.2.0","4.6.1","1.48.0","1.3.2","3.9.0","1.11.1","2.0.3","1.10-7","1.5.0","1.2.2","1.4.1","2.6.1","2.4.1","1.1-3","1.1.2","2.6.6","2.5.0.9000","1.3.0","0.10.0","2.31","0.99-7","2.1.1","1.11.0","1.6.6","0.19.0","0.2.2","0.4.10","1.4.0","1.14.0","0.1-56","4.13.0","4.6.1","1.8.9","1.6.0","3.3.1","1.3.1","1.3.2","1.2.1","0.7-18","4.6.1","0.1-9","2.0.3","3.2.1","1.2.6","4.6.1","0.7.3","0.6.5","0.4.3","0.4.1","3.0.3","0.60","1.6.0","1.8-8","2.3.12"]}]}]}
 </script>
 <!--/html_preserve-->
 </div>

@@ -11,7 +11,14 @@ create_funs <- setdiff(alive_functions("^create_"), "create_motifs")
 generate_funs <- alive_functions("^generate_")
 
 # Functions whose first argument is data, not a size
-make_data_first <- c("create_explicit", "generate_configuration")
+make_data_first <- c("create_explicit")
+
+# Functions that are directed unless told or shown otherwise: a utility has a
+# direction, and the default dyad census has asymmetric dyads
+make_directed_first <- c("generate_man", "generate_utilities")
+
+# Functions whose two-mode `n` must have modes of equal size (still 10 nodes)
+make_twomode_n <- list(create_lattice = c(5, 5))
 
 for (fn in c(create_funs, generate_funs)) {
   if (fn %in% make_data_first) next
@@ -35,7 +42,8 @@ for (fn in c(create_funs, generate_funs)) {
 
   test_that(paste0(fn, "() creates a two-mode network of the right size"), {
     set.seed(1234)
-    out <- run_or_skip(f(c(4, 6)), fn, "twomode n = c(4,6)")
+    n2 <- if (fn %in% names(make_twomode_n)) make_twomode_n[[fn]] else c(4, 6)
+    out <- run_or_skip(f(n2), fn, paste0("twomode n = c(", toString(n2), ")"))
     if (is.null(out) || !is_manynet(out) || !is_twomode(out) ||
         as.numeric(net_nodes(out)) != 10) {
       skip(paste0("AUDIT [", fn, "]: does not (yet) support two-mode `n`"))
@@ -52,9 +60,18 @@ for (fn in c(create_funs, generate_funs)) {
       }
       expect_true(is_directed(out))
       set.seed(1234)
-      expect_false(is_directed(f(6)))
+      expect_equal(is_directed(f(6)), fn %in% make_directed_first)
+      set.seed(1234)
+      expect_false(is_directed(f(6, directed = FALSE)))
     })
   }
+
+  test_that(paste0(fn, "() leads with the arguments the family shares"), {
+    # `n`, then `p`, then `directed`, then `width`, wherever a function has them
+    shared <- intersect(c("n", "p", "directed", "width"), names(formals(f)))
+    expect_identical(names(formals(f))[seq_along(shared)], shared,
+                     label = paste0("Leading arguments of ", fn, "()"))
+  })
 
   test_that(paste0(fn, "() can take another network as n"), {
     set.seed(1234)
@@ -82,6 +99,25 @@ test_that("generate_configuration() reproduces a degree sequence", {
   expect_equal(as.numeric(net_nodes(out)),
                as.numeric(net_nodes(ison_adolescents)))
 })
+
+# The functions that the released versions of the packages built on this one
+# can take a stocnet from. The others return one once those packages can.
+make_stocnet_later <- c("create_lattice", "create_ring",
+                        "generate_random", "generate_scalefree",
+                        "generate_smallworld")
+
+for (fn in setdiff(c(create_funs, generate_funs),
+                   c(make_stocnet_later, make_data_first))) {
+  test_that(paste0(fn, "() returns a named stocnet"), {
+    f <- get(fn, envir = asNamespace("manynet"))
+    set.seed(1234)
+    for (n in list(6, c(4, 6), create_empty(5))) {
+      out <- run_or_skip(f(n), fn, "stocnet")
+      expect_s3_class(out, "stocnet")
+      expect_type(as_infolist(out)$name, "character")
+    }
+  })
+}
 
 # play_*() simulations ---------------------------------------------------------
 

@@ -10,7 +10,7 @@
 #> 
 #> -- Nodes
 #> # A tibble: 33 x 1
-#>   name           
+#>   label          
 #>   <chr>          
 #> 1 Seoi.nage      
 #> 2 Seoi.otoshi    

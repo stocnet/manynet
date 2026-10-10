@@ -13,10 +13,11 @@
 #'   for the nodes.
 #'   - `is_attributed()` marks networks TRUE if there are other nodal attributes
 #'   than 'names' or 'type'.
-#'   - `is_egonet()` marks networks TRUE if it is a list of networks where each
-#'   network contains only one node and its ties.
+#'   - `is_egolist()` marks TRUE a list of networks, one for each node of a
+#'   network, as `to_egos()` returns. Unlike the other marks here, it marks a
+#'   list and not a network, so a single network is always FALSE.
 #' @template param_data
-#' @eval detail_avail("is_(twomode|multilevel|labelled|attributed|egonet)")
+#' @eval detail_avail("is_(twomode|multilevel|labelled|attributed|egolist)")
 #' @family marks
 NULL
 
@@ -242,13 +243,17 @@ is_attributed.default <- function(.data) {
 
 #' @rdname mark_format_node
 #' @examples 
-#' is_egonet(fict_starwars)
+#' is_egolist(to_egos(ison_adolescents))
 #' @export
-is_egonet <- function(.data) UseMethod("is_egonet")
+is_egolist <- function(.data) UseMethod("is_egolist")
 
 #' @export
-is_egonet.default <- function(.data) {
+is_egolist.default <- function(.data) {
   if(!is_list(.data)) return(FALSE)
+  # A list that is empty, or that does not name each of its networks,
+  # names no egos
+  if(length(.data) == 0 || is.null(names(.data)) || anyNA(names(.data)))
+    return(FALSE)
   if(all(unique(names(.data)) != "")) {
     length(names(.data)) == length(unique(unlist(unname(lapply(.data,
                                                                manynet::node_labels))))) &
@@ -274,6 +279,11 @@ is_egonet.default <- function(.data) {
 #'   these networks are marked FALSE unless the weights vary in magnitude.
 #'   - `is_directed()` marks networks TRUE if the ties specify which node
 #'   is the sender and which the receiver.
+#'   A two-mode network can be directed too, for example where its ties run
+#'   from speakers to the concepts they claim.
+#'   A two-mode matrix cannot record direction, however,
+#'   so it is always marked FALSE, and an edgelist whose two-mode ties all
+#'   run one way is marked FALSE too, since it cannot say otherwise.
 #'   - `is_labelled()` marks networks TRUE if there is a 'names' attribute
 #'   for the nodes.
 #'   - `is_attributed()` marks networks TRUE if there are other nodal attributes
@@ -288,8 +298,13 @@ is_egonet.default <- function(.data) {
 #'   of ties, such that there can be multiple ties between the same
 #'   sender and receiver.
 #'   - `is_uniplex()` marks networks TRUE if it is neither complex nor multiplex.
+#'   - `is_disaggregated()` marks networks TRUE if any of their ties are
+#'   parallel, as `tie_is_parallel()` marks them, so that
+#'   `to_aggregated(over = NULL)` can combine them.
+#'   A network marked FALSE holds no parallel ties, which does not mean that
+#'   it was aggregated.
 #' @template param_data
-#' @eval detail_avail("is_(weighted|directed|signed|complex|multiplex|uniplex)")
+#' @eval detail_avail("is_(weighted|directed|signed|complex|multiplex|uniplex|disaggregated)")
 #' @family marks
 NULL
 
@@ -383,27 +398,22 @@ is_directed.data.frame <- function(.data) {
       .infer_net_reciprocity(.data) == 1)
 }
 
-# A single bipartite relation runs between the modes and has no direction to
-# report, but a multilevel network also ties within a level, and those ties can
-# be directed. Such a network is therefore exempt from the two-mode rule, and
-# is marked by whatever its underlying object or its info records.
-.twomode_undirected <- function(.data) {
-  is_twomode(.data) && !is_multilevel(.data)
-}
-
+# A two-mode network is marked by what its object or its info records, as a
+# one-mode network is. Its ties can run one way, from a speaker to the concept
+# they claim, for example, and the classes that can hold that say so.
 #' @export
 is_directed.igraph <- function(.data) {
-  if(.twomode_undirected(.data)) FALSE else igraph::is_directed(.data)
+  igraph::is_directed(.data)
 }
 
 #' @export
 is_directed.stocnet <- function(.data) {
-  if(.twomode_undirected(.data)) FALSE else any(.data$info$directed)
+  any(.data$info$directed)
 }
 
 #' @export
 is_directed.tbl_graph <- function(.data) {
-  if(.twomode_undirected(.data)) FALSE else igraph::is_directed(.data)
+  igraph::is_directed(.data)
 }
 
 #' @export
@@ -413,6 +423,8 @@ is_directed.network <- function(.data) {
 
 #' @export
 is_directed.matrix <- function(.data) {
+  # A two-mode matrix has one cell for each pair of nodes across the modes,
+  # and so no cell in which the other direction could be recorded.
   if(is_twomode(.data)) FALSE else !isSymmetric(.data)
 }
 
@@ -575,6 +587,19 @@ is_multiplex.data.frame <- function(.data) {
 }
 
 #' @rdname mark_format_tie
+#' @examples
+#' is_disaggregated(ison_koenigsberg)
+#' @export
+is_disaggregated <- function(.data) UseMethod("is_disaggregated")
+
+#' @export
+is_disaggregated.default <- function(.data) {
+  # A matrix holds one value for each dyad, and so no parallel ties.
+  if(is.matrix(.data)) return(FALSE)
+  any(.parallel_ties(.data))
+}
+
+#' @rdname mark_format_tie
 #' @importFrom igraph is_simple
 #' @examples
 #' is_uniplex(create_star(3))
@@ -620,7 +645,7 @@ is_uniplex.igraph <- function(.data) {
 #'   They are told apart by the network's 'observation' information,
 #'   "cognitive" or "egocentric", and where that is not given,
 #'   by whether any two reports share a node.
-#'   Note that `is_egonet()` marks something else: a list of networks,
+#'   Note that `is_egolist()` marks something else: a list of networks,
 #'   each of one ego and its ties.
 #'   
 #'   A 'by' or 'about' column that holds only `NA` names no node,

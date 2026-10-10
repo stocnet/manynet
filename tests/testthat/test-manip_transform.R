@@ -228,7 +228,8 @@ test_that("to_subgraph works", {
 })
 
 test_that("to anti works", {
-  expect_length(to_anti(ison_southern_women), 32)
+  # `length()` counts a stocnet's components, so the node count is asked for
+  expect_equal(net_nodes(to_anti(ison_southern_women)), 32)
   expect_length(to_anti(as_igraph(ison_southern_women)), 32)
 })
 
@@ -838,4 +839,19 @@ test_that("to_undirected drops a layer that a rule leaves without ties", {
   und <- to_undirected(one_way, rule = "min")
   expect_equal(nrow(und$ties), 0)
   expect_null(und$info$layers)
+})
+
+test_that("to_simplex removes loops and keeps parallel ties in every class", {
+  # a tie from 1 to 2 recorded twice, and a loop on 2
+  net <- make_stocnet(ties = data.frame(from = c(1L, 1L, 2L), to = c(2L, 2L, 2L)),
+                      nodes = dplyr::tibble(.rows = 2),
+                      info = list(directed = TRUE))
+  for(cl in c("stocnet", "tidygraph", "igraph")){
+    out <- to_simplex(get(paste0("as_", cl))(net))
+    expect_false(is_complex(out), label = cl)
+    expect_equal(as.numeric(net_ties(out)), 2, label = cl)
+  }
+  mat <- to_simplex(as_matrix(net))
+  expect_equal(unname(mat), matrix(c(0, 0, 2, 0), 2, 2))
+  expect_match(as_infolist(to_simplex(net))$transformations$exclusion, "loop")
 })

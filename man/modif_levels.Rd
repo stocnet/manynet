@@ -51,6 +51,10 @@ for example \code{to_onemode()} is used on a network that is already one-mode,
 the network data is returned unaltered.
 No warning is given so that these functions can be used to ensure conformance.
 
+Note that a multilevel network is still two-mode, so \code{as_matrix()} returns
+its incidence matrix. For the square matrix of both modes,
+use \code{to_onemode()} or \code{as_matrix(.data, twomode = FALSE)}.
+
 Unlike the \verb{as_*()} group of functions,
 these functions always return the same class as they are given,
 only transforming these objects' properties.
@@ -68,8 +72,10 @@ to_twomode          *      *              *                 *
 \seealso{
 Other modifications:
 \code{\link{modif_backbone}},
+\code{\link{modif_concepts}},
 \code{\link{modif_direction}},
-\code{\link{modif_from}},
+\code{\link{modif_from_parts}},
+\code{\link{modif_from_ternary}},
 \code{\link{modif_labels}},
 \code{\link{modif_miss}},
 \code{\link{modif_motifs}},

@@ -11,7 +11,7 @@
 #> 
 #> -- Nodes
 #> # A tibble: 6 x 1
-#>   name 
+#>   label
 #>   <chr>
 #> 1 GBR  
 #> 2 FRA  
@@ -22,14 +22,14 @@
 #> 
 #> -- Ties
 #> # A tibble: 20 x 5
-#>    from    to  sign begin   end
-#>   <int> <int> <dbl> <dbl> <dbl>
-#> 1     1     2    -1  1872  1904
-#> 2     1     3    -1  1872  1907
-#> 3     1     4    -1  1872  1918
-#> 4     2     3    -1  1872  1890
-#> 5     2     4    -1  1872  1918
-#> 6     2     5    -1  1872  1918
+#>    from    to weight begin   end
+#>   <int> <int>  <dbl> <dbl> <dbl>
+#> 1     1     2     -1  1872  1904
+#> 2     1     3     -1  1872  1907
+#> 3     1     4     -1  1872  1918
+#> 4     2     3     -1  1872  1890
+#> 5     2     4     -1  1872  1918
+#> 6     2     5     -1  1872  1918
 #> # i 14 more rows
 #> 
 }\if{html}{\out{</div>}}
@@ -40,6 +40,10 @@ data(irps_wwi)
 \description{
 This network records the evolution of the major relationship changes
 between the protagonists of World War I (WWI) from 1872 to 1907.
+Each tie carries the year in which a relationship began and the year in
+which it ended, and the relationships that still held in 1907 are run on
+to the end of the war in 1918.
+A friendly relationship has a weight of 1 and an unfriendly one of -1.
 It is incomplete both in terms of (eventual) parties to the war as well
 as some other relations, but gives a good overview of the main alliances
 and enmities.

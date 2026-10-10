@@ -21,6 +21,9 @@
 #'   time. `to_wave()` is an alias, using the wave-based vocabulary of
 #'   `net_waves()` and `to_waves()`. For one network per moment, see
 #'   [to_times()].
+#'   - `to_reporter()` scopes a cognitive social structure to the report of
+#'   one of its reporters. For one network per reporter, see
+#'   [to_reporters()].
 #'   - `to_subgraph()` scopes a network into a subgraph by filtering on some node-related logical statement.
 #'   - `to_blockmodel()` reduces a network to the ties between the blocks of a
 #'   given partition membership vector.
@@ -29,7 +32,7 @@
 #'   Below are the currently implemented S3 methods:
 #'  
 #'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("to_.*(ego|component$|subgraph|blockmodel)"))
+#'   available_methods(collect_functions("to_.*(ego|component$|subgraph|blockmodel|reporter$)"))
 #'   ```
 #' @template param_data
 #' @template fam_modif
@@ -191,6 +194,42 @@ to_time.stocnet <- function(.data, time = NULL){
 #' @rdname modif_scope
 #' @export
 to_wave <- to_time
+
+#' @rdname modif_scope
+#' @param reporter Label or index of the node whose report on the network
+#'   is to be retained, in a cognitive social structure.
+#' @examples
+#' css <- as_stocnet(array(rbinom(27, 1, 0.5), c(3, 3, 3)), attribute = "by")
+#' to_reporter(css, 2)
+#' @export
+to_reporter <- function(.data, reporter) UseMethod("to_reporter")
+
+#' @export
+to_reporter.default <- function(.data, reporter){
+  .as_class_of(to_reporter.stocnet(as_stocnet(.data), reporter), .data)
+}
+
+#' @export
+to_reporter.array <- function(.data, reporter){
+  as_matrix(to_reporter.stocnet(as_stocnet(.data, attribute = "by"), reporter))
+}
+
+#' @export
+to_reporter.stocnet <- function(.data, reporter){
+  if(!.names_reporters(.data)){
+    snet_info("This network names no reporter for its ties, so is one view.")
+    return(.data)
+  }
+  .check_reports(.data)
+  if(missing(reporter) || length(reporter) != 1)
+    snet_abort("Please name the one node whose report is to be retained.")
+  n <- as.numeric(net_nodes(.data))
+  r <- if(is.character(reporter)) match(reporter, .data$nodes[["label"]]) else
+    as.integer(reporter)
+  if(is.na(r) || r < 1 || r > n)
+    snet_abort("There is no node {.val {reporter}} in this network.")
+  .reporter_slice(.data, r)
+}
 
 # The network as it stood at a moment, whichever way it records time.
 # The representation is tested first, since an interval tie carries its own

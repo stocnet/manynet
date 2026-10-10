@@ -174,7 +174,7 @@ tie_signs <- function(.data){
 #' @export
 tie_is_twomode <- function(.data){
   if(is_twomode(.data)){
-    el <- igraph::as_edgelist(.data, names = FALSE)
+    el <- igraph::as_edgelist(as_igraph(.data), names = FALSE)
     el[,1] <- node_is_mode(.data)[el[,1]]
     el[,2] <- node_is_mode(.data)[el[,2]]
     out <- el[,1] != el[,2]

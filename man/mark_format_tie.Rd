@@ -7,6 +7,7 @@
 \alias{is_signed}
 \alias{is_complex}
 \alias{is_multiplex}
+\alias{is_disaggregated}
 \alias{is_uniplex}
 \title{Marking networks tie formats}
 \usage{
@@ -19,6 +20,8 @@ is_signed(.data)
 is_complex(.data)
 
 is_multiplex(.data)
+
+is_disaggregated(.data)
 
 is_uniplex(.data)
 }
@@ -45,6 +48,11 @@ since such a 'weight' records only the sign of each tie,
 these networks are marked FALSE unless the weights vary in magnitude.
 \item \code{is_directed()} marks networks TRUE if the ties specify which node
 is the sender and which the receiver.
+A two-mode network can be directed too, for example where its ties run
+from speakers to the concepts they claim.
+A two-mode matrix cannot record direction, however,
+so it is always marked FALSE, and an edgelist whose two-mode ties all
+run one way is marked FALSE too, since it cannot say otherwise.
 \item \code{is_labelled()} marks networks TRUE if there is a 'names' attribute
 for the nodes.
 \item \code{is_attributed()} marks networks TRUE if there are other nodal attributes
@@ -59,6 +67,11 @@ with the sender and receiver being the same node.
 of ties, such that there can be multiple ties between the same
 sender and receiver.
 \item \code{is_uniplex()} marks networks TRUE if it is neither complex nor multiplex.
+\item \code{is_disaggregated()} marks networks TRUE if any of their ties are
+parallel, as \code{tie_is_parallel()} marks them, so that
+\code{to_aggregated(over = NULL)} can combine them.
+A network marked FALSE holds no parallel ties, which does not mean that
+it was aggregated.
 }
 }
 \details{
@@ -68,6 +81,7 @@ Below are the currently implemented S3 methods for these functions:
 \if{html}{\out{<div class="sourceCode">}}\preformatted{                  data.frame default igraph list matrix network stocnet
 is_complex                 *       *      *    *      *       *       *
 is_directed                *       *      *           *       *       *
+is_disaggregated                   *                                   
 is_multiplex               *       *      *           *       *       *
 is_signed                  *       *      *           *       *       *
 is_uniplex                         *      *                            
@@ -76,6 +90,7 @@ layer_is_directed                  *      *                           *
                   tbl_graph
 is_complex                *
 is_directed               *
+is_disaggregated           
 is_multiplex              *
 is_signed                 *
 is_uniplex                 
@@ -95,6 +110,7 @@ is_directed(create_tree(2, directed = TRUE))
 is_signed(create_lattice(3))
 is_complex(create_lattice(4))
 is_multiplex(create_filled(c(3,3)))
+is_disaggregated(ison_koenigsberg)
 is_uniplex(create_star(3))
 }
 \seealso{

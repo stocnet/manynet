@@ -111,7 +111,7 @@ create_explicit <- function(...){
   res <- igraph::make_graph(unname(ids[edges]), 
                             n = length(v), directed = directed)
   res <- igraph::set_vertex_attr(res, "name", value = v)
-  as_tidygraph(res)
+  as_stocnet(res)
 }
 
 # Defined ####
@@ -168,37 +168,13 @@ create_explicit <- function(...){
 #' @name make_create
 #' @family makes
 #' @seealso [as]
-#' @param n Given:
-#'   \itemize{
-#'   \item A single integer, e.g. `n = 10`,
-#'   a one-mode network will be created.
-#'   \item A vector of two integers, e.g. `n = c(5,10)`,
-#'   a two-mode network will be created.
-#'   \item A manynet-compatible object,
-#'   a network of the same dimensions will be created.
-#'   }
-#' @param directed Logical whether the graph should be directed.
-#'   By default `directed = FALSE`.
-#'   If the opposite direction is desired, 
-#'   use `to_redirected()` on the output of these functions.
-#' @param width Integer specifying the width of the ring,
-#'   breadth of the branches, number of nodes in each blade of a windmill,
-#'   or maximum extent of the neighbourbood.
+#' @template param_n
+#' @template param_directed
+#' @template param_width
 #' @param membership A vector of partition membership as integers.
 #'   If left as `NULL` (the default), nodes in each mode will be
 #'   assigned to two, equally sized partitions.
-#' @return By default a `tbl_graph` object is returned,
-#'   but this can be coerced into other types of objects
-#'   using `as_edgelist()`, `as_matrix()`,
-#'   `as_tidygraph()`, or `as_network()`.
-#'   `create_windmill()` returns a `stocnet` object.
-#'   
-#'   By default, all networks are created as undirected.
-#'   This can be overruled with the argument `directed = TRUE`.
-#'   This will return a directed network in which the arcs are
-#'   out-facing or equivalent.
-#'   This direction can be swapped using `to_redirected()`.
-#'   In two-mode networks, the directed argument is ignored.
+#' @template return_make
 #' @importFrom tidygraph as_tbl_graph
 #' @importFrom igraph graph_from_biadjacency_matrix
 NULL
@@ -218,7 +194,7 @@ create_empty <- function(n, directed = FALSE) {
     out <- as_igraph(out, twomode = TRUE)
   }
   if (!directed) out <- to_undirected(out)
-  as_tidygraph(out) |> 
+  as_stocnet(out) |> 
     add_info(name = "Empty network")
 }
 
@@ -238,7 +214,7 @@ create_filled <- function(n, directed = FALSE) {
     out <- matrix(1, n[1], n[2])
     out <- as_igraph(out, twomode = TRUE)
   }
-  as_tidygraph(out) |> 
+  as_stocnet(out) |> 
     add_info(name = "Filled network")
 }
 
@@ -311,7 +287,7 @@ create_star <- function(n,
     }
     out <- as_igraph(out, twomode = TRUE)
   }
-  as_tidygraph(out) |> 
+  as_stocnet(out) |> 
     add_info(name = "Star network")
 }
 
@@ -355,36 +331,44 @@ create_tree <- function(n,
       }
     }
     if(which.min(n) == 1) out <- t(out)
-    as_tidygraph(out, twomode = TRUE)
+    out <- as_stocnet(out, twomode = TRUE)
   } else {
-    as_tidygraph(igraph::make_tree(sum(n), children = width,
-                                   mode = ifelse(directed, "out",
-                                                 "undirected")))
+    out <- as_stocnet(igraph::make_tree(sum(n), children = width,
+                                        mode = ifelse(directed, "out",
+                                                      "undirected")))
   }
+  out |> 
+    add_info(name = "Tree network")
 }
 
 #' @rdname make_create 
 #' @section Lattice graphs:
-#'   `create_lattice()` creates both two-dimensional grid and triangular
-#'   lattices with as even dimensions as possible.
-#'   When the `width` parameter is set to 4, nodes cannot have (in or out)
-#'   degrees larger than 4.
-#'   This creates regular square grid lattices where possible.
+#'   `create_lattice()` creates two-dimensional lattices
+#'   with as even dimensions as possible.
+#'   The `width` parameter sets the maximum (in or out) degree of any node:
+#'
+#'   - `width = 4` creates a square grid lattice.
 #'   Such a network is bipartite, that is partitionable into two types that are
 #'   not adjacent to any of their own type.
+#'   - `width = 6` creates a triangular grid lattice,
+#'   a square grid with one diagonal across each square.
+#'   - `width = 8` creates a King's move lattice,
+#'   a square grid with both diagonals across each square.
+#'   - `width = 12` creates a lattice where each node is tied to every node
+#'   within two steps on the square grid.
+#'
 #'   If the number of nodes is a prime number, it will only return a chain
 #'   (a single dimensional lattice).
 #'
-#'   A `width` parameter of 8 creates a network where the maximum degree of any
-#'   nodes is 8.
-#'   This can create a triangular mesh lattice or a Queen's move lattice,
-#'   depending on the dimensions.
-#'   A `width` parameter of 12 creates a network where the maximum degree of
-#'   any nodes is 12.
-#'   Prime numbers of nodes will return a chain.
+#'   When `n` is a vector of two equal integers, `create_lattice()` creates
+#'   a two-mode honeycomb (hexagonal) lattice,
+#'   in which each node is tied to at most three nodes of the other mode.
+#'   Where the number of nodes allows, no node hangs from a single tie.
 #' @importFrom igraph make_lattice
 #' @examples
 #' create_lattice(12, width = 4)
+#' create_lattice(12, width = 6)
+#' create_lattice(c(6,6))
 #' @export
 create_lattice <- function(n,
                            directed = FALSE,
@@ -392,11 +376,12 @@ create_lattice <- function(n,
   directed <- infer_directed(n, directed)
   n <- infer_n(n)
   if (length(n) == 1) {
-    divs <- divisors(n)
-    if ((length(divs) %% 2) == 0) {
-      dims <- c(divs[length(divs) / 2], divs[length(divs) / 2 + 1])
-    } else dims <- c(stats::median(divs), stats::median(divs))
-    if (width == 8) {
+    dims <- lattice_dims(n)
+    if (width == 6) {
+      as_tidygraph(igraph::make_graph(t(grid_ties(dims, diagonal = TRUE)),
+                                      n = n, directed = directed)) |>
+        add_info(name = "Lattice network")
+    } else if (width == 8) {
       nei1.5 <- as_matrix(igraph::make_lattice(dims, nei = 2, 
                                                directed = directed))
       for (i in 1:(prod(dims)-2)) {
@@ -414,26 +399,61 @@ create_lattice <- function(n,
     } else if (width == 4) {
       as_tidygraph(igraph::make_lattice(dims, nei = 1, directed = directed)) |> 
         add_info(name = "Lattice network")
-    } else snet_abort("`max_neighbourhood` expected to be 4, 8, or 12")
+    } else snet_abort("`width` expected to be 4, 6, 8, or 12")
   } else {
-    divs1 <- divisors(n[1])
-    divs2 <- divisors(n[2])
-    # divs1 <- divs1[-c(1, length(divs1))]
-    # divs2 <- divs2[-c(1, length(divs2))]
-    divs1 <- intersect(divs1, divs2)
-    divs2 <- intersect(divs2, divs1)
-    # divs1 <- intersect(divs1, c(divs2+1, divs2-1))
-    # divs2 <- intersect(divs2, c(divs1+1, divs1-1))
-    mat <- matrix(0, n[1], n[2])
-    diag(mat) <- 1
-    w <- roll_over(mat)
-    mat <- mat + w
-    mat[lower.tri(mat)] <- 0
-    out <- mat[rowSums(mat) ==2,]
-    out <- do.call(rbind, replicate(nrow(mat)/nrow(out), out, simplify=FALSE))
-    as_tidygraph(out) |> 
+    if (n[1] != n[2])
+      snet_abort("A two-mode (honeycomb) lattice needs two modes of the same size,",
+                 "not {n[1]} and {n[2]} nodes.")
+    dims <- honeycomb_dims(sum(n))
+    # A honeycomb as a brick wall: all ties along the first dimension,
+    # and ties along the second only where the row and column sum is even
+    ties <- grid_ties(dims)
+    rowcol <- cbind((seq_len(sum(n)) - 1) %% dims[1] + 1,
+                    (seq_len(sum(n)) - 1) %/% dims[1] + 1)
+    across <- ties[,2] - ties[,1] == dims[1]
+    ties <- ties[!across | rowSums(rowcol[ties[,1], , drop = FALSE]) %% 2 == 0, ,
+                 drop = FALSE]
+    # The checkerboard colour of each node gives its mode
+    mode1 <- which(rowSums(rowcol) %% 2 == 0)
+    mode2 <- which(rowSums(rowcol) %% 2 == 1)
+    swap <- ties[,1] %in% mode2
+    ties[swap,] <- ties[swap, 2:1]
+    out <- matrix(0, n[1], n[2])
+    out[cbind(match(ties[,1], mode1), match(ties[,2], mode2))] <- 1
+    as_tidygraph(out, twomode = TRUE) |>
       add_info(name = "Lattice network")
   }
+}
+
+# Dimensions of a grid of n nodes that are as even as possible
+lattice_dims <- function(n) {
+  divs <- divisors(n)
+  if ((length(divs) %% 2) == 0) {
+    c(divs[length(divs) / 2], divs[length(divs) / 2 + 1])
+  } else c(stats::median(divs), stats::median(divs))
+}
+
+# Dimensions of a brick wall of n nodes.
+# Chains of odd length, in an even number, leave no corner hanging;
+# otherwise the most even dimensions are used
+honeycomb_dims <- function(n) {
+  divs <- divisors(n)
+  odd <- divs[divs %% 2 == 1 & (n / divs) %% 2 == 0 & divs > 1]
+  if (length(odd) == 0) return(lattice_dims(n))
+  r <- odd[which.min(abs(log(odd / (n / odd))))]
+  c(r, n / r)
+}
+
+# Edgelist of a grid with the node order of igraph::make_lattice(),
+# optionally with one diagonal in each square to make triangles
+grid_ties <- function(dims, diagonal = FALSE) {
+  r <- dims[1]
+  id <- matrix(seq_len(prod(dims)), nrow = r)
+  ties <- rbind(cbind(c(id[-r, ]), c(id[-1, ])),
+                cbind(c(id[, -ncol(id)]), c(id[, -1])))
+  if (diagonal && r > 1 && ncol(id) > 1)
+    ties <- rbind(ties, cbind(c(id[-r, -ncol(id)]), c(id[-1, -1])))
+  ties
 }
 
 # #' @describeIn create Creates a honeycomb-style, isometric, or triangular
@@ -496,7 +516,8 @@ create_components <- function(n, directed = FALSE, membership = NULL) {
                                        x] <- 1
     out <- as_igraph(out, twomode = TRUE)
   }
-  as_tidygraph(out)
+  as_stocnet(out) |> 
+    add_info(name = "Components network")
 }
 
 #' @rdname make_create 
@@ -547,7 +568,8 @@ create_degree <- function(n, outdegree = NULL, indegree = NULL) {
     # but the first mode is expected to be type FALSE here
     out <- igraph::set_vertex_attr(out, "type", value = !igraph::V(out)$type)
   }
-  as_tidygraph(out)
+  as_stocnet(out) |> 
+    add_info(name = "Degree sequence network")
 }
 
 #' @rdname make_create
@@ -565,15 +587,17 @@ create_core <- function(n, directed = FALSE, mark = NULL) {
     mat <- matrix(0, n[1], n[2])
     mat[mark[1:n[1]] == 1,] <- 1
     mat[, mark[(n[1] + 1):length(mark)] == 1] <- 1
-    as_tidygraph(mat, twomode = TRUE)
+    out <- as_stocnet(mat, twomode = TRUE)
   } else {
     mat <- matrix(0, n, n)
     mat[mark == 1,] <- 1
     mat[, mark == 1] <- 1
     diag(mat) <- 0
     if(directed) mat[lower.tri(mat)] <- 0
-    as_tidygraph(mat)
+    out <- as_stocnet(mat)
   }
+  out |> 
+    add_info(name = "Core-periphery network")
 }
 
 #' @rdname make_create
@@ -679,7 +703,7 @@ create_cycle <- function(n, directed = FALSE){
     # Constructed directed explicitly rather than via an edgelist: an edgelist
     # carries no directedness flag, so coercing one infers direction from
     # reciprocity, and a directed cycle has none.
-    as_tidygraph(igraph::make_ring(n_nodes, directed = TRUE))
+    igraph::make_ring(n_nodes, directed = TRUE)
   }
   
   # Helper: Create edge list for bimodal cycle
@@ -701,8 +725,7 @@ create_cycle <- function(n, directed = FALSE){
       c(i, a + i, a + i, if(i < m) i + 1 else 1), numeric(4))
     igraph::make_empty_graph(n = a + b, directed = TRUE) |>
       igraph::add_edges(as.vector(edges)) |>
-      igraph::set_vertex_attr("type", value = rep(c(FALSE, TRUE), c(a, b))) |>
-      as_tidygraph()
+      igraph::set_vertex_attr("type", value = rep(c(FALSE, TRUE), c(a, b)))
   }
   
   # Main logic
@@ -716,7 +739,8 @@ create_cycle <- function(n, directed = FALSE){
     snet_abort("Argument 'n' must be a scalar or a vector of length 2.")
   }
   if(!directed || length(n) == 2) net <- to_undirected(net)
-  net
+  as_stocnet(net) |> 
+    add_info(name = "Cycle network")
 }
 
 #' @rdname make_create
@@ -764,7 +788,7 @@ create_wheel <- function(n, directed = FALSE) {
       igraph::add_edges(c(as.vector(rim), as.vector(spokes))) |>
       igraph::set_vertex_attr("type", value = rep(c(FALSE, TRUE), c(a, b)))
   } else snet_abort("Argument 'n' must be a scalar or vector of length 2.")
-  as_tidygraph(out) |>
+  as_stocnet(out) |>
     add_info(name = "Wheel network")
 }
 
