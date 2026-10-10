@@ -34,8 +34,6 @@
 
 ## Coercion
 
-- Improved `as_stocnet.array()` to join `from_times()`, `from_layers()`, or `from_reporters()` slices
-- Added `...` to the `as_matrix()` generic, so that methods can take arguments
 - Added conversion from node_measure and node_member to matrices and stocnets (closes #161)
   - Added `as_matrix.node_measure()` and `as_matrix.node_member()`
   - Added `as_stocnet.node_measure()` and `as_stocnet.node_member()`
@@ -43,14 +41,17 @@
   - `compare=` takes "same" for a membership
   - `twomode=TRUE` turns a membership into an affiliation matrix
 - Improved `as_matrix.stocnet()` to pass `twomode=` on to the matrix
+  - Added `...` to `as_matrix()` so that methods can take arguments
 - Improved `as_network()` to keep the direction of a two-mode network (closes #157)
-- Fixed `as_network.stocnet()` to count the modes of a stocnet listed out of order
+  - Fixed `as_network.stocnet()` to count the modes of a stocnet listed out of order
 - Fixed `as_diffusion()` to report every step of a diffusion (closes #179)
   - A diffusion that does not leave its seeds now reports the step in which they were seeded, rather than an empty report
   - The last step of a diffusion is no longer left out
-  - Added `as_diffusion.stocnet()`
-- Fixed `as_stocnet()` to return a two-mode network for a measure or membership of a two-mode network with modes of equal size
-- Improved `as_stocnet.array()` to warn where a slice of time holds no ties, since such a moment is not recorded
+  - Added `as_diffusion.stocnet()`, with a `time` column and the nodes newly susceptible in `S_new`
+- Improved how `as_stocnet.array()` handles slices
+  - Joins `from_times()`, `from_layers()`, or `from_reporters()` slices
+  - Warns where a slice of time holds no ties, since such a moment is not recorded
+- Fixed `as_igraph()` to treat a 'stocnet' node attribute called "name" as its labels
 
 ## Manipulating
 

@@ -303,9 +303,13 @@ as_igraph.stocnet <- function(.data, twomode = FALSE) {
     out <- to_unlabelled(out)
   } else {
     vertices <- as_nodelist(.data)
-    if(is_labelled(.data))
+    # A stocnet labels its nodes in 'label', but 'name' counts as a label too
+    # (see `is_labelled()`), as where `mutate_nodes(name = )` named them.
+    if("label" %in% names(vertices)){
       vertices <- vertices |> dplyr::mutate(name = label) |>
         dplyr::select(name, dplyr::everything(), -label)
+    } else if("name" %in% names(vertices))
+      vertices <- dplyr::select(vertices, name, dplyr::everything())
     # igraph records two modes in a logical 'type' attribute, which its
     # bipartite functions require, and three or more in the 'lvl' attribute
     # that `to_multilevel()` writes and `as_stocnet()` maps back to 'mode'.
@@ -1926,7 +1930,10 @@ as_diffusion.diff_model <- function(.data, twomode = FALSE, events) {
 
 #' @export
 as_diffusion.mnet <- function(.data, twomode = FALSE, events) {
-  events <- as_changelist(.data)
+  if (missing(events)) events <- as_changelist(.data)
+  # a network can record other changes too, such as when its nodes are active
+  if ("var" %in% names(events)) 
+    events <- events[events$var == "diffusion", , drop = FALSE]
   nodes <- c(net_nodes(.data))
   sumchanges <- events |> dplyr::group_by(time) |> 
     dplyr::reframe(S_new = sum(value == "S"),
@@ -1988,7 +1995,7 @@ as_diffusion.igraph <- function(.data, twomode = FALSE, events) {
   # Every step from the seeding to the last event, so that a diffusion that
   # does not leave its seeds still reports the step in which they were seeded.
   report <- dplyr::tibble(t = 0:max(events$t),
-                          n = net_nodes(net)) |> 
+                          n = c(net_nodes(net))) |> 
     dplyr::left_join(sumchanges, by = dplyr::join_by(t))
   report[is.na(report)] <- 0
   report$R <- cumsum(report$R_new)
@@ -2016,8 +2023,10 @@ as_diffusion.igraph <- function(.data, twomode = FALSE, events) {
   make_diff_model(events, report, .data)
 }
 
+# A diffusion is reported in the same way whatever class it was played on,
+# with a `time` column and the nodes newly susceptible in `S_new`.
 #' @export
-as_diffusion.stocnet <- as_diffusion.igraph
+as_diffusion.stocnet <- as_diffusion.mnet
 
 #' @export
 as_diffusion.diffnet <- function(.data, twomode = FALSE, events) {
