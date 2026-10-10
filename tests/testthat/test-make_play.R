@@ -9,5 +9,5 @@ test_that("play_segregation works", {
     startValues[sample(seq_len(100), round(100*0.2))] <- NA
     latticeEg <- create_lattice(100)
     latticeEg <- add_node_attribute(latticeEg, "startValues", startValues)
-    expect_s3_class(play_segregation(latticeEg, "startValues", 0.5), "mnet")
+    expect_s3_class(play_segregation(latticeEg, "startValues", 0.5), "stocnet")
 })

@@ -130,8 +130,8 @@ test_that("tree creation works", {
 })
 
 test_that("create lattice works", {
-  expect_s3_class(create_lattice(4), "igraph")
-  expect_equal(igraph::vcount(create_lattice(5)), 5)
+  expect_s3_class(create_lattice(4), "stocnet")
+  expect_equal(as.numeric(net_nodes(create_lattice(5))), 5)
   expect_false(is_directed(create_lattice(6)))
   expect_true(is_directed(create_lattice(6, directed = TRUE)))
   square <- as_igraph(create_lattice(16, width = 4))

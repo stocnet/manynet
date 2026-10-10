@@ -2,6 +2,10 @@
 
 ## Making
 
+- Changed `create_ring()`, `create_lattice()`, `generate_random()`, `generate_smallworld()`, and `generate_scalefree()` to return a named 'stocnet', as the other `create_*()` and `generate_*()` functions do
+  - This waits for releases of 'netrics', 'autograph', and 'migraph' that can take a 'stocnet' from them
+  - 'netrics' tests call 'igraph' functions on `create_ring()` directly, and its examples and the 'migraph' tutorial `plot()` a diffusion played on one of these networks, for which the released 'autograph' has no method
+  - `migraph::test_fit()` reads a `t` column from `as_diffusion()`, which a 'stocnet' reports as `time`
 - Fixed `create_core()` to read `TRUE` in a logical `mark=` as a node of the core, where it was read as a node of the periphery
   - `net_by_core()` in 'netrics' passes such a mark, and so now fits a network to the core that was asked for, which changes its results
   - This waits for a 'netrics' release whose tests do not hold the former results

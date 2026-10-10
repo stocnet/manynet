@@ -8,7 +8,7 @@ test_that("random creation works", {
   expect_false(isTRUE(all.equal(generate_random(c(2,4),0.3), generate_random(c(2,4),0.3))))
   expect_error(generate_random(c(1,2,3)), "must be of length")
   # Bipartite graph
-  expect_s3_class(generate_random(ison_southern_women, 0.4), "igraph")
+  expect_s3_class(generate_random(ison_southern_women, 0.4), "stocnet")
   expect_true(is_twomode(generate_random(ison_southern_women, 0.4)))
 })
 
@@ -138,14 +138,14 @@ test_that("generate_utilities can be read as the ties nodes want", {
 })
 
 test_that("generate_smallworld() works", {
-  expect_s3_class(generate_smallworld(12, 0.025), "igraph")
-  expect_equal(igraph::vcount(generate_smallworld(12, 0.025)), 12)
-  expect_s3_class(generate_smallworld(c(6,6), 0.025), "igraph")
+  expect_s3_class(generate_smallworld(12, 0.025), "stocnet")
+  expect_equal(as.numeric(net_nodes(generate_smallworld(12, 0.025))), 12)
+  expect_true(is_twomode(generate_smallworld(c(6,6), 0.025)))
 })
 
 test_that("generate_scalefree() works", {
-  expect_s3_class(generate_scalefree(12, 0.025), "igraph")
-  expect_s3_class(generate_scalefree(c(6,6), 0.025), "igraph")
+  expect_s3_class(generate_scalefree(12, 0.025), "stocnet")
+  expect_true(is_twomode(generate_scalefree(c(6,6), 0.025)))
 })
 
 test_that("generate_configuration works", {

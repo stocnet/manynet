@@ -263,7 +263,7 @@ create_ring <- function(n, directed = FALSE, width = 1, ...) {
     mat[mat > 1] <- 1
     out <- as_igraph(mat, twomode = TRUE)
   }
-  as_tidygraph(out) |> 
+  as_stocnet(out) |> 
     add_info(name = "Ring network")
 }
 
@@ -378,7 +378,7 @@ create_lattice <- function(n,
   if (length(n) == 1) {
     dims <- lattice_dims(n)
     if (width == 6) {
-      as_tidygraph(igraph::make_graph(t(grid_ties(dims, diagonal = TRUE)),
+      as_stocnet(igraph::make_graph(t(grid_ties(dims, diagonal = TRUE)),
                                       n = n, directed = directed)) |>
         add_info(name = "Lattice network")
     } else if (width == 8) {
@@ -391,13 +391,13 @@ create_lattice <- function(n,
       }
       if (!directed)
         nei1.5[lower.tri(nei1.5)] <- t(nei1.5)[lower.tri(nei1.5)]
-      as_tidygraph(nei1.5) |> 
+      as_stocnet(nei1.5) |> 
         add_info(name = "Lattice network")
     } else if (width == 12) {
-      as_tidygraph(igraph::make_lattice(dims, nei = 2, directed = directed)) |> 
+      as_stocnet(igraph::make_lattice(dims, nei = 2, directed = directed)) |> 
         add_info(name = "Lattice network")
     } else if (width == 4) {
-      as_tidygraph(igraph::make_lattice(dims, nei = 1, directed = directed)) |> 
+      as_stocnet(igraph::make_lattice(dims, nei = 1, directed = directed)) |> 
         add_info(name = "Lattice network")
     } else snet_abort("`width` expected to be 4, 6, 8, or 12")
   } else {
@@ -420,7 +420,7 @@ create_lattice <- function(n,
     ties[swap,] <- ties[swap, 2:1]
     out <- matrix(0, n[1], n[2])
     out[cbind(match(ties[,1], mode1), match(ties[,2], mode2))] <- 1
-    as_tidygraph(out, twomode = TRUE) |>
+    as_stocnet(out, twomode = TRUE) |>
       add_info(name = "Lattice network")
   }
 }

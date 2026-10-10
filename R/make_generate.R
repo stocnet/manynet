@@ -136,7 +136,8 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
   } else {
     snet_abort("`n` must be of length=1 for a one-mode network or length=2 for a two-mode network.")
   }
-  g
+  as_stocnet(g) |> 
+    add_info(name = "Random network")
 }
 
 #' @rdname make_random 
@@ -522,7 +523,8 @@ generate_scalefree <- function(n, p = 1, directed = FALSE) {
   } else {
     g <- igraph::sample_pa(n, power = p, directed = directed)
   }
-  g
+  as_stocnet(g) |> 
+    add_info(name = "Scale-free network")
 }
 
 #' @rdname make_growth 
@@ -725,14 +727,15 @@ generate_smallworld <- function(n, p = 0.05, directed = FALSE, width = 2) {
   directed <- infer_directed(n, directed)
   n <- infer_n(n)
   if(length(n) > 1){
-    g <- create_ring(n, width = width, directed = directed)
+    g <- as_igraph(create_ring(n, width = width, directed = directed))
     g <- igraph::rewire(g, igraph::each_edge(p = p))
   } else {
     g <- igraph::sample_smallworld(dim = 1, size = n, 
                                    nei = width, p = p)
     if(directed) g <- to_acyclic(g)
   }
-  g
+  as_stocnet(g) |> 
+    add_info(name = "Small-world network")
 }
 
 #' @rdname make_groups 
