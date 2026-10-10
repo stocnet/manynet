@@ -51,14 +51,18 @@ a two-mode network will be created.
 a network of the same dimensions will be created.
 }}
 
-\item{directed}{Logical whether the graph should be directed.
-By default \code{directed = FALSE}.
+\item{directed}{Logical whether the network should be directed.
+By default \code{directed = FALSE},
+but for the functions that the usage above shows another default for.
+A network given as \code{n} sets the direction instead.
 If the opposite direction is desired,
-use \code{to_redirected()} on the output of these functions.}
+use \code{to_redirected()} on the output of these functions.
+In two-mode networks, the directed argument is ignored.}
 
 \item{width}{Integer specifying the width of the ring,
 breadth of the branches, number of nodes in each blade of a windmill,
-or maximum extent of the neighbourbood.}
+maximum extent of the neighbourbood,
+or number of ties that bridge each pair of islands.}
 
 \item{...}{Additional arguments passed on to \code{igraph::make_ring()}.}
 
@@ -89,13 +93,17 @@ Otherwise it is filled in from the outdegree as described above.}
 This can be created by, among other things, any \verb{node_is_*()} function.}
 }
 \value{
-By default a \code{tbl_graph} object is returned,
-but this can be coerced into other types of objects
+A \code{stocnet} object is returned,
+which can be coerced into other types of objects
 using \code{as_edgelist()}, \code{as_matrix()},
-\code{as_tidygraph()}, or \code{as_network()}.
-\code{create_wheel()} and \code{create_windmill()} return a \code{stocnet} object.
+\code{as_tidygraph()}, \code{as_igraph()}, or \code{as_network()}.
+\code{create_ring()}, \code{create_lattice()},
+\code{generate_random()}, \code{generate_smallworld()}, and
+\code{generate_scalefree()} return a \code{tbl_graph} or \code{igraph} object for now,
+since the released versions of the packages built on this one expect
+one from them.
 
-By default, all networks are created as undirected.
+By default, most networks are created as undirected.
 This can be overruled with the argument \code{directed = TRUE}.
 This will return a directed network in which the arcs are
 out-facing or equivalent.

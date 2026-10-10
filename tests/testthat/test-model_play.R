@@ -17,7 +17,7 @@ test_that("play_diffusion plays on a stocnet", {
   played <- play_diffusion(irps_tribes, seeds = 1)
   expect_s3_class(played, "stocnet")
   report <- as_diffusion(played)
-  expect_equal(report$t[1], 0)
+  expect_equal(report$time[1], 0)
   expect_equal(report$I[1], 1)
 })
 
@@ -31,4 +31,19 @@ test_that("as_diffusion reports every step, also where nothing spreads", {
   ring <- as_diffusion(play_diffusion(create_ring(8), seeds = 1))
   expect_equal(ring$I[nrow(ring)], 8)
   expect_equal(sum(ring$I_new), 8)
+})
+
+test_that("as_diffusion reports a diffusion alike whatever it was played on", {
+  ring <- create_ring(8)
+  set.seed(1234)
+  graph <- as_diffusion(play_diffusion(ring, seeds = 1, recovery = 0.2))
+  set.seed(1234)
+  stoc <- as_diffusion(play_diffusion(as_stocnet(ring), seeds = 1,
+                                      recovery = 0.2))
+  expect_named(stoc, names(graph))
+  expect_true(all(c("time", "S_new") %in% names(stoc)))
+  expect_equal(as.data.frame(stoc), as.data.frame(graph), ignore_attr = TRUE)
+  # other changes that a network records are not read as a diffusion
+  expect_true("time" %in% names(as_diffusion(play_diffusion(create_filled(5),
+                                                            seeds = 1))))
 })

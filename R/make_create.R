@@ -111,7 +111,7 @@ create_explicit <- function(...){
   res <- igraph::make_graph(unname(ids[edges]), 
                             n = length(v), directed = directed)
   res <- igraph::set_vertex_attr(res, "name", value = v)
-  as_tidygraph(res)
+  as_stocnet(res)
 }
 
 # Defined ####
@@ -168,37 +168,13 @@ create_explicit <- function(...){
 #' @name make_create
 #' @family makes
 #' @seealso [as]
-#' @param n Given:
-#'   \itemize{
-#'   \item A single integer, e.g. `n = 10`,
-#'   a one-mode network will be created.
-#'   \item A vector of two integers, e.g. `n = c(5,10)`,
-#'   a two-mode network will be created.
-#'   \item A manynet-compatible object,
-#'   a network of the same dimensions will be created.
-#'   }
-#' @param directed Logical whether the graph should be directed.
-#'   By default `directed = FALSE`.
-#'   If the opposite direction is desired, 
-#'   use `to_redirected()` on the output of these functions.
-#' @param width Integer specifying the width of the ring,
-#'   breadth of the branches, number of nodes in each blade of a windmill,
-#'   or maximum extent of the neighbourbood.
+#' @template param_n
+#' @template param_directed
+#' @template param_width
 #' @param membership A vector of partition membership as integers.
 #'   If left as `NULL` (the default), nodes in each mode will be
 #'   assigned to two, equally sized partitions.
-#' @return By default a `tbl_graph` object is returned,
-#'   but this can be coerced into other types of objects
-#'   using `as_edgelist()`, `as_matrix()`,
-#'   `as_tidygraph()`, or `as_network()`.
-#'   `create_wheel()` and `create_windmill()` return a `stocnet` object.
-#'   
-#'   By default, all networks are created as undirected.
-#'   This can be overruled with the argument `directed = TRUE`.
-#'   This will return a directed network in which the arcs are
-#'   out-facing or equivalent.
-#'   This direction can be swapped using `to_redirected()`.
-#'   In two-mode networks, the directed argument is ignored.
+#' @template return_make
 #' @importFrom tidygraph as_tbl_graph
 #' @importFrom igraph graph_from_biadjacency_matrix
 NULL
@@ -218,7 +194,7 @@ create_empty <- function(n, directed = FALSE) {
     out <- as_igraph(out, twomode = TRUE)
   }
   if (!directed) out <- to_undirected(out)
-  as_tidygraph(out) |> 
+  as_stocnet(out) |> 
     add_info(name = "Empty network")
 }
 
@@ -238,7 +214,7 @@ create_filled <- function(n, directed = FALSE) {
     out <- matrix(1, n[1], n[2])
     out <- as_igraph(out, twomode = TRUE)
   }
-  as_tidygraph(out) |> 
+  as_stocnet(out) |> 
     add_info(name = "Filled network")
 }
 
@@ -311,7 +287,7 @@ create_star <- function(n,
     }
     out <- as_igraph(out, twomode = TRUE)
   }
-  as_tidygraph(out) |> 
+  as_stocnet(out) |> 
     add_info(name = "Star network")
 }
 
@@ -355,12 +331,14 @@ create_tree <- function(n,
       }
     }
     if(which.min(n) == 1) out <- t(out)
-    as_tidygraph(out, twomode = TRUE)
+    out <- as_stocnet(out, twomode = TRUE)
   } else {
-    as_tidygraph(igraph::make_tree(sum(n), children = width,
-                                   mode = ifelse(directed, "out",
-                                                 "undirected")))
+    out <- as_stocnet(igraph::make_tree(sum(n), children = width,
+                                        mode = ifelse(directed, "out",
+                                                      "undirected")))
   }
+  out |> 
+    add_info(name = "Tree network")
 }
 
 #' @rdname make_create 
@@ -538,7 +516,8 @@ create_components <- function(n, directed = FALSE, membership = NULL) {
                                        x] <- 1
     out <- as_igraph(out, twomode = TRUE)
   }
-  as_tidygraph(out)
+  as_stocnet(out) |> 
+    add_info(name = "Components network")
 }
 
 #' @rdname make_create 
@@ -589,7 +568,8 @@ create_degree <- function(n, outdegree = NULL, indegree = NULL) {
     # but the first mode is expected to be type FALSE here
     out <- igraph::set_vertex_attr(out, "type", value = !igraph::V(out)$type)
   }
-  as_tidygraph(out)
+  as_stocnet(out) |> 
+    add_info(name = "Degree sequence network")
 }
 
 #' @rdname make_create
@@ -607,15 +587,17 @@ create_core <- function(n, directed = FALSE, mark = NULL) {
     mat <- matrix(0, n[1], n[2])
     mat[mark[1:n[1]] == 1,] <- 1
     mat[, mark[(n[1] + 1):length(mark)] == 1] <- 1
-    as_tidygraph(mat, twomode = TRUE)
+    out <- as_stocnet(mat, twomode = TRUE)
   } else {
     mat <- matrix(0, n, n)
     mat[mark == 1,] <- 1
     mat[, mark == 1] <- 1
     diag(mat) <- 0
     if(directed) mat[lower.tri(mat)] <- 0
-    as_tidygraph(mat)
+    out <- as_stocnet(mat)
   }
+  out |> 
+    add_info(name = "Core-periphery network")
 }
 
 #' @rdname make_create
@@ -721,7 +703,7 @@ create_cycle <- function(n, directed = FALSE){
     # Constructed directed explicitly rather than via an edgelist: an edgelist
     # carries no directedness flag, so coercing one infers direction from
     # reciprocity, and a directed cycle has none.
-    as_tidygraph(igraph::make_ring(n_nodes, directed = TRUE))
+    igraph::make_ring(n_nodes, directed = TRUE)
   }
   
   # Helper: Create edge list for bimodal cycle
@@ -743,8 +725,7 @@ create_cycle <- function(n, directed = FALSE){
       c(i, a + i, a + i, if(i < m) i + 1 else 1), numeric(4))
     igraph::make_empty_graph(n = a + b, directed = TRUE) |>
       igraph::add_edges(as.vector(edges)) |>
-      igraph::set_vertex_attr("type", value = rep(c(FALSE, TRUE), c(a, b))) |>
-      as_tidygraph()
+      igraph::set_vertex_attr("type", value = rep(c(FALSE, TRUE), c(a, b)))
   }
   
   # Main logic
@@ -758,7 +739,8 @@ create_cycle <- function(n, directed = FALSE){
     snet_abort("Argument 'n' must be a scalar or a vector of length 2.")
   }
   if(!directed || length(n) == 2) net <- to_undirected(net)
-  net
+  as_stocnet(net) |> 
+    add_info(name = "Cycle network")
 }
 
 #' @rdname make_create

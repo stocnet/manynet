@@ -2,6 +2,7 @@
 
 ## Making
 
+- Improved most `create_*()` and `generate_*()` functions to return a named 'stocnet'
 - Added `collect_emails()` for collecting an email network from an exported mailbox
   - Reads the headers of 'mbox' files, '.eml' files, and 'Maildir' folders
   - Returns a dynamic, directed `stocnet` in which each tie is stamped with when its message was sent

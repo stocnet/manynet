@@ -5,7 +5,7 @@
 test_that("create empty graph works", {
   expect_true(is_twomode(create_empty(c(5,5))))
   expect_error(create_empty(c(5,5,5)), "single integer")
-  expect_length(create_empty(4), 4)
+  expect_equal(as.numeric(net_nodes(create_empty(4))), 4)
 })
 
 test_that("create filled graph works", {
@@ -168,7 +168,7 @@ test_that("component creation works", {
 test_that("core-periphery creation works", {
   expect_false(is_twomode(create_core(6)))
   expect_true(is_twomode(create_core(c(6,7))))
-  expect_equal(igraph::vcount(create_core(c(10,4))), 14)
+  expect_equal(as.numeric(net_nodes(create_core(c(10,4)))), 14)
 })
 
 # test_that("nest creation works", {
@@ -180,11 +180,12 @@ test_that("core-periphery creation works", {
 test_that("explicit creation works", {
   expect_true(is_directed(create_explicit(A -+ B, B -+ C, A +-+ C, D)))
   expect_false(manynet::is_weighted(create_explicit(A -+ B, B -+ C, A +-+ C, D)))
-  expect_length(create_explicit(A -+ B, B -+ C, A +-+ C, D), 4)
-  expect_s3_class(create_explicit(A -+ B, B -+ C, A +-+ C, D, as = "igraph"),
-                  "igraph")
-  expect_s3_class(create_explicit(A -+ B, B -+ C, A +-+ C, D, as = "tidygraph"),
-                  "tbl_graph")
+  out <- create_explicit(A -+ B, B -+ C, A +-+ C, D)
+  expect_s3_class(out, "stocnet")
+  expect_equal(as.numeric(net_nodes(out)), 4)
+  expect_equal(node_names(out), LETTERS[1:4])
+  expect_equal(as.numeric(net_ties(out)), 4)
+  expect_false(is_directed(create_explicit(A -- B, B -- C)))
 })
 
 test_that("create_windmill refuses a blade width that is not a whole number", {
@@ -193,4 +194,13 @@ test_that("create_windmill refuses a blade width that is not a whole number", {
     expect_error(create_windmill(c(3, 6), width = width), "whole number")
   }
   expect_equal(as.numeric(net_nodes(create_windmill(c(3, 6), width = 2))), 9)
+})
+
+test_that("create functions can be named and then coerced", {
+  # a stocnet labels its nodes in 'label', but `mutate_nodes(name = )` is how
+  # the nodes of other classes are named, so it must work here too
+  out <- create_filled(4) |> mutate_nodes(name = LETTERS[1:4])
+  expect_equal(node_names(out), LETTERS[1:4])
+  expect_equal(igraph::V(as_igraph(out))$name, LETTERS[1:4])
+  expect_equal(node_names(as_tidygraph(out)), LETTERS[1:4])
 })
