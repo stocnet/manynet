@@ -57,12 +57,19 @@
 
 ## Modifying
 
-- Added `to_concepts()` for projecting a network into its concept (Galois) lattice
-  - Reinstates `to_galois()` without a dependency on 'multiplex', and faster
-- Fixed `to_simplex()` to remove only loops and keeps parallel ties
 - Improved every `from_*()` function to return the class of its inputs
   - Partial `from_egos()` and `from_subgraphs()` returns a combined matrix
   - Ternary `from_times()`, `from_layers()`, etc returns an array
+- Improved `to_directed()` to direct two-mode ties from the first mode to the second (closes #157)
+- Improved `to_multilevel.igraph()` to keep the network two-mode
+  - Writes 'lvl' beside 'type' rather than instead of it, so modes stay named
+  - Breaks a caller that relied on it to square the matrix, so it waits for 2.4
+- Split `from_*()` documentation into joining subgraphs and joining along a third dimension 
+  (a moment, a layer, or a reporter)
+- Fixed `to_simplex()` to remove only loops and keeps parallel ties
+- Fixed `to_correlation()` to return the class of object it was given
+- Added `to_concepts()` for projecting a network into its concept (Galois) lattice
+  - Reinstates `to_galois()` without a dependency on 'multiplex', and faster
 - Added `from_reporters()` to join each reporter's network into one structure
 - Added `to_reporter()` and `to_reporters()` to split a CSS into one or each reporter's report
 - Added `to_aggregated()` to combine ties over layers, reporters, targets, or moments, 
@@ -72,12 +79,6 @@
   - `to_flat()` is now an alias that combines layers
 - Added `to_disaggregated()` to turn tie weights into that many parallel ties
   - Reverses `to_aggregated(over = NULL, rule = "sum")`
-- Improved `to_directed()` to direct two-mode ties from the first mode to the second (closes #157)
-- Improved `to_multilevel.igraph()` to keep the network two-mode
-  - Writes 'lvl' beside 'type' rather than instead of it, so modes stay named
-  - Breaks a caller that relied on it to square the matrix, so it waits for 2.4
-- Split `from_*()` documentation into joining subgraphs and joining along a third dimension 
-  (a moment, a layer, or a reporter)
 
 ## Marking
 

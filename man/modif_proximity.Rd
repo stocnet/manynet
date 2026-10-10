@@ -226,7 +226,7 @@ Not all functions have methods available for all object classes.
 Below are the currently implemented S3 methods:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{               data.frame default igraph matrix network stocnet tbl_graph
-to_correlation                  *             *                         *
+to_correlation                  *             *                          
 to_cosine                       *             *                          
 to_proximity            *       *      *      *       *       *         *
 }\if{html}{\out{</div>}}
@@ -241,6 +241,15 @@ reciprocated network it includes the difference between reciprocated
 ties, and for complex networks it includes also the difference between
 the self ties in each pairwise calculation.
 This function runs in \eqn{O(mn^2)} complexity.
+
+Like the other functions here, it returns the class of object it was
+given, so that the correlations between the nodes of a network are
+returned as a weighted network of the same class.
+The correlations are calculated on a matrix, however, so a network is
+coerced to one and the result coerced back.
+Passing a matrix, e.g. \code{to_correlation(as_matrix(.data))}, spares both,
+and returns the matrix of correlations that further calculation most
+often wants.
 }
 
 \section{Node cosine}{
