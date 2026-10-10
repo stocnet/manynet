@@ -263,6 +263,11 @@ bind_changes.stocnet <- function(.data, changes, var, ...){
   
   ## 3. Reindex node labels onto .data's existing node indexing ----------------
   changes <- .match_node_labels(out$nodes, changes, "node")
+  # A stocnet indexes its nodes by integer, but an index typed as a number,
+  # as `c(1, 2, 3)` is, is a double, and is the same index all the same.
+  if(is.double(changes$node) && 
+     all(changes$node == round(changes$node), na.rm = TRUE))
+    changes$node <- as.integer(changes$node)
   
   ## 4. Reorder to (time, node, var, value) and validate column names ----------
   changes <- changes |> dplyr::select(time, node, var, value)

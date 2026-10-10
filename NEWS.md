@@ -77,6 +77,7 @@
 
 ## Manipulating
 
+- Fixed `bind_changes.stocnet()` to take node indices typed as numbers
 - Added `mutate.stocnet()` but `mutate_nodes()` remains preferred
 
 ## Modifying
