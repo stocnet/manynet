@@ -954,11 +954,8 @@ generate_communities <- function(n, p = 0.1, directed = FALSE, groups = NULL,
 #'   core is tied to.
 #'   With three, the core can be less than complete and the periphery less
 #'   than empty, as Borgatti and Everett (2000) describe of observed networks.
-#'   `mark` says which nodes are in the core, with `TRUE` for a node of the
-#'   core, and by default they are the first half of the nodes, or of each
-#'   mode.
-#'   Note that `create_core()` for now reads a logical `mark` the other way
-#'   round, with `TRUE` for a node of the periphery.
+#'   `mark` says which nodes are in the core, as for `create_core()`,
+#'   and by default they are the first half of the nodes, or of each mode.
 #' @references
 #' ## On cores and peripheries
 #' Borgatti, Stephen P., and Martin G. Everett. 2000.
@@ -975,9 +972,8 @@ generate_core <- function(n, p = 0.5, directed = FALSE, mark = NULL) {
   n <- infer_n(n)
   if (length(mark) != sum(n))
     snet_abort("`mark` must say for each of the {sum(n)} nodes whether it is in the core.")
-  # As in `create_core()`, the core is the first of two groups where the
-  # nodes are not marked as in it or out of it. `create_core()` reads a
-  # logical mark the other way round until that can change with 'netrics'.
+  # as in `create_core()`, the core is the first of two groups where the
+  # nodes are not marked as in it or out of it
   core <- if (is.logical(mark)) as.logical(mark) else 
     as.numeric(as.factor(mark)) == 1
   if (!is.numeric(p) || !length(p) %in% c(1, 3) || anyNA(p) ||

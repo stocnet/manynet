@@ -1,3 +1,11 @@
+# manynet 2.4.1
+
+## Making
+
+- Fixed `create_core()` to read `TRUE` in a logical `mark=` as a node of the core, where it was read as a node of the periphery
+  - `net_by_core()` in 'netrics' passes such a mark, and so now fits a network to the core that was asked for, which changes its results
+  - This waits for a 'netrics' release whose tests do not hold the former results
+
 # manynet 2.4.0
 
 ## Package

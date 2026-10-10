@@ -165,6 +165,23 @@ test_that("component creation works", {
   expect_error(create_components(c(5,5,5)), "single integer")
 })
 
+test_that("create_core reads a logical mark as the nodes of the core", {
+  # the nodes marked TRUE are the core, which ties to every other node
+  mark <- c(TRUE, TRUE, FALSE, FALSE, FALSE, FALSE)
+  expect_equal(rowSums(as_matrix(create_core(6, mark = mark))),
+               c(5, 5, 2, 2, 2, 2), ignore_attr = TRUE)
+  # as `generate_core()` reads it, so that the two agree where nothing is
+  # left to chance
+  expect_equal(as_matrix(create_core(6, mark = mark)),
+               as_matrix(generate_core(6, p = 1, mark = mark)))
+  twomode <- as_matrix(create_core(c(2, 3), mark = c(TRUE, FALSE,
+                                                     TRUE, FALSE, FALSE)))
+  expect_equal(twomode, matrix(c(1, 1, 1, 0, 1, 0), 2, 3), ignore_attr = TRUE)
+  # the default, and a mark of two groups, are read as they were
+  expect_equal(as_matrix(create_core(6, mark = c(1, 1, 1, 2, 2, 2))),
+               as_matrix(create_core(6)))
+})
+
 test_that("core-periphery creation works", {
   expect_false(is_twomode(create_core(6)))
   expect_true(is_twomode(create_core(c(6,7))))

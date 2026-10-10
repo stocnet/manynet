@@ -573,15 +573,20 @@ create_degree <- function(n, outdegree = NULL, indegree = NULL) {
 }
 
 #' @rdname make_create
-#' @param mark A logical vector the length of the nodes in the network.
+#' @param mark A logical vector the length of the nodes in the network,
+#'   in which `TRUE` marks the nodes that are in the core.
 #'   This can be created by, among other things, any `node_is_*()` function.
+#'   By default the first half of the nodes, or of each mode, are in the core.
 #' @examples
 #' create_core(6)
 #' @export
 create_core <- function(n, directed = FALSE, mark = NULL) {
   directed <- infer_directed(n, directed)
   mark <- infer_membership(n, mark)
-  if(!is.numeric(mark)) mark <- as.numeric(as.factor(mark))
+  # A logical mark says which nodes are in the core, and so in the first of
+  # the two groups that the nodes are otherwise in.
+  mark <- if(is.logical(mark)) 2 - as.logical(mark) else
+    if(!is.numeric(mark)) as.numeric(as.factor(mark)) else mark
   n <- infer_n(n)
   if (length(n) > 1) {
     mat <- matrix(0, n[1], n[2])
