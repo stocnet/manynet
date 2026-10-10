@@ -5,21 +5,25 @@
 \alias{generate_smallworld}
 \alias{generate_islands}
 \alias{generate_communities}
+\alias{generate_core}
 \title{Making networks with groups}
 \usage{
 generate_smallworld(n, p = 0.05, directed = FALSE, width = 2)
 
-generate_islands(n, islands = 2, p = 0.5, bridges = 1, directed = FALSE)
+generate_islands(n, p = 0.5, directed = FALSE, width = 1, groups = 2, ...)
 
 generate_communities(
   n,
+  p = 0.1,
+  directed = FALSE,
+  groups = NULL,
   degree = NULL,
   max_degree = NULL,
-  mixing = 0.1,
-  community = NULL,
   degree_exp = 2,
   community_exp = 1
 )
+
+generate_core(n, p = 0.5, directed = FALSE, mark = NULL)
 }
 \arguments{
 \item{n}{Given:
@@ -32,32 +36,49 @@ a two-mode network will be created.
 a network of the same dimensions will be created.
 }}
 
-\item{p}{For \code{generate_smallworld()}, the probability that each tie of the
-ring is rewired, by default 0.05.
-For \code{generate_islands()}, the probability of a tie between two nodes of
-the same island, by default 0.5.}
+\item{p}{The main probability of the model,
+which is what makes a network of it more or less random.
+It always follows \code{n}, and what it is the probability of depends on
+the model.
+For \code{generate_smallworld()}, it is the probability that each tie of the ring is rewired, by default 0.05. For \code{generate_islands()}, it is the probability of a tie between two nodes of the same island, by default 0.5. For \code{generate_communities()}, it is the probability that a tie of a node leads out of its community, known as the mixing parameter, by default 0.1: a low value gives communities that are easy to tell apart, and a value above 0.5 gives communities with more ties out than in. For \code{generate_core()}, it is the probability of a tie between a node of the core and a node of the periphery, by default 0.5, or a vector of three: the probabilities of a tie within the core, between the two, and within the periphery.}
 
-\item{directed}{Whether to generate network as directed. By default FALSE.}
+\item{directed}{Logical whether the network should be directed.
+By default \code{directed = FALSE},
+but for the functions that the usage above shows another default for.
+A network given as \code{n} sets the direction instead.
+If the opposite direction is desired,
+use \code{to_redirected()} on the output of these functions.
+In two-mode networks, the directed argument is ignored.}
 
 \item{width}{Integer specifying the width of the ring,
 breadth of the branches, number of nodes in each blade of a windmill,
-or maximum extent of the neighbourbood.}
+maximum extent of the neighbourbood,
+or number of ties that bridge each pair of islands.}
 
-\item{islands}{Number of islands to create.
-By default 2.
-See \code{igraph::sample_islands()} for more.
-In a two-mode network, each mode is cut into this many blocks,
-and a node of each mode that share a block are tied with probability \code{p}.}
+\item{groups}{How the nodes are divided into groups, in one of three ways:
+\itemize{
+\item A single integer, e.g. \code{groups = 3}, is the number of groups,
+which are then as equal in size as they can be.
+\item A vector of integers that sum to the number of nodes,
+e.g. \code{groups = c(10, 20, 30)} for 60 nodes, is the size of each group.
+\item Any other two integers, e.g. \code{groups = c(10, 30)}, are the
+smallest and the largest that a group can be,
+and the sizes of the groups are drawn at random from between them.
+}
+Two integers that sum to the number of nodes are read as two sizes,
+and not as the smallest and the largest.
+In a two-mode network, a group has nodes of both modes,
+in the proportion of the two modes in the network as a whole,
+and its size is the size of the two together.
+The group of each node is recorded in the node attribute \code{community}.
+For \code{generate_islands()}, by default 2, and sizes between a smallest and a largest are all as likely as one another. For \code{generate_communities()}, by default the smallest and the largest are \code{degree + 1} and \code{max_degree + 1}, so that a node of any degree can find all the ties it keeps within its community, and sizes between them are drawn from a power law.}
 
-\item{bridges}{Number of bridges between each pair of islands.
-By default 1.}
+\item{...}{Arguments under the names they had in earlier versions,
+which still work: \code{islands} for \code{groups} and \code{bridges} for \code{width} in
+\code{generate_islands()}.}
 
-\item{degree}{The mean degree of the nodes.
-By default 10, or less in a network too small for that.
-In a two-mode network, this is the mean degree of the nodes of the
-first mode.
-The mean degree of the second mode follows from it,
-since both modes have the same ties: it is \code{degree * n[1] / n[2]}.}
+\item{degree}{The number of ties that a node sends.
+For \code{generate_communities()}, this is the mean over the nodes, by default 10, or less in a network too small for that. In a directed network, it is the mean number of ties that a node sends, which is also the mean number that a node receives. In a two-mode network, it is the mean degree of the nodes of the first mode, and the mean degree of the second mode follows from it, since both modes have the same ties: it is \code{degree * n[1] / n[2]}.}
 
 \item{max_degree}{The maximum degree of the nodes.
 By default three times \code{degree}, or \code{n - 1} if that is smaller.
@@ -65,35 +86,31 @@ In a two-mode network, this can be one number for each mode,
 and is by default three times the mean degree of the mode,
 or the number of nodes in the other mode if that is smaller.}
 
-\item{mixing}{The share of each node's ties that go to nodes in other
-communities, from 0 to 1.
-By default 0.1.
-A low share gives communities that are easy to tell apart.
-A share above 0.5 gives communities with more ties out than in.}
-
-\item{community}{A vector of the minimum and the maximum community size.
-By default \code{c(degree + 1, max_degree + 1)},
-so that a node of any degree can find all the ties it keeps within its
-community.
-In a two-mode network, a community has nodes of both modes,
-and these are the sizes of the two modes together.}
-
 \item{degree_exp}{The exponent of the power law from which the degrees
 are drawn.
 By default 2.
-In a two-mode network, this can be one number for each mode.}
+In a two-mode or directed network, this can be one number for each
+mode, or for the ties sent and the ties received.}
 
 \item{community_exp}{The exponent of the power law from which the community
 sizes are drawn.
 By default 1.}
+
+\item{mark}{A logical vector the length of the nodes in the network.
+This can be created by, among other things, any \verb{node_is_*()} function.}
 }
 \value{
-By default a \code{tbl_graph} object is returned,
-but this can be coerced into other types of objects
+A \code{stocnet} object is returned,
+which can be coerced into other types of objects
 using \code{as_edgelist()}, \code{as_matrix()},
-\code{as_tidygraph()}, or \code{as_network()}.
+\code{as_tidygraph()}, \code{as_igraph()}, or \code{as_network()}.
+\code{create_ring()}, \code{create_lattice()},
+\code{generate_random()}, \code{generate_smallworld()}, and
+\code{generate_scalefree()} return a \code{tbl_graph} or \code{igraph} object for now,
+since the released versions of the packages built on this one expect
+one from them.
 
-By default, all networks are created as undirected.
+By default, most networks are created as undirected.
 This can be overruled with the argument \code{directed = TRUE}.
 This will return a directed network in which the arcs are
 out-facing or equivalent.
@@ -112,10 +129,14 @@ to which some random noise is then added.
 \item \code{generate_islands()} generates an islands model.
 \item \code{generate_communities()} generates communities of unequal size
 among nodes of unequal degree.
+\item \code{generate_core()} generates a core and a periphery,
+as the random counterpart of \code{create_core()}.
 }
 
 \code{generate_islands()} and \code{generate_communities()} plant discrete groups,
 and record the group of each node in the node attribute \code{community}.
+\code{generate_core()} plants two, and records whether each node is in the
+core in the node attribute \code{core}.
 \code{generate_smallworld()} plants local clusters around a ring instead,
 so its nodes do not belong to discrete groups.
 
@@ -127,15 +148,22 @@ where the first integer indicates the number of nodes in the first mode,
 and the second integer indicates the number of nodes in the second mode.
 As an alternative, an existing network can be provided to \code{n}
 and the number of modes, nodes, and directedness will be inferred.
-\code{generate_communities()} creates only undirected networks.
 }
 \details{
+In \code{generate_islands()}, the nodes of an island are tied to one another
+with probability \code{p}, and \code{width} further ties bridge each pair of
+islands.
+In a two-mode network, a node of each mode that share an island are tied
+with probability \code{p}.
+Where a network is given as \code{n}, \code{p} is instead inferred from it,
+so that as many ties are expected as that network has.
+
 \code{generate_communities()} follows the benchmark of Lancichinetti,
 Fortunato, and Radicchi (2008).
 Degrees and community sizes are each drawn from a power law,
 so that there are a few large hubs and a few large communities,
 as in many observed networks.
-Each node then keeps a share \code{1 - mixing} of its ties within its
+Each node then keeps a share \code{1 - p} of its ties within its
 community and sends the remaining share to nodes in other communities.
 Ties within and between communities are drawn at random from all the
 simple networks with those degrees.
@@ -151,25 +179,51 @@ in the same way that \code{generate_islands()} does for islands.
 Each community has nodes of both modes,
 in the proportion of the two modes in the network as a whole,
 and each mode draws its degrees from a power law of its own.
-A node then keeps a share \code{1 - mixing} of its ties for the nodes of the
+A node then keeps a share \code{1 - p} of its ties for the nodes of the
 other mode in its community.
 The two modes must keep the same number of ties in each community,
 and the ties that one mode has too many of there are dropped,
 so the realised degrees are a little lower than those asked for where
-\code{mixing} is low.
+\code{p} is low.
+
+A directed network is treated in the same way,
+with the ties that a node sends and the ties that it receives in place
+of the two modes.
+Each node draws both from a power law,
+and keeps a share \code{1 - p} of each within its one community.
+Lancichinetti and Fortunato (2009) define a directed benchmark too,
+from which this differs in how the two are drawn and reconciled,
+so it should not be taken for theirs.
 
 \code{generate_islands()} is a simpler model of the same kind:
-its islands are all the same size, the ties in each island are random,
-and each pair of islands is joined by a fixed number of bridges.
+the ties in each island are random, rather than following from degrees
+that differ, and each pair of islands is joined by a fixed number of
+bridges, rather than by a share of each node's ties.
+
+In \code{generate_core()}, with a single \code{p} every pair of nodes in the core
+is tied and no pair in the periphery is, as in \code{create_core()},
+and what is random is which nodes of the periphery each node of the
+core is tied to.
+With three, the core can be less than complete and the periphery less
+than empty, as Borgatti and Everett (2000) describe of observed networks.
+\code{mark} says which nodes are in the core, with \code{TRUE} for a node of the
+core, and by default they are the first half of the nodes, or of each
+mode.
+Note that \code{create_core()} for now reads a logical \code{mark} the other way
+round, with \code{TRUE} for a node of the periphery.
 }
 \examples{
 generate_smallworld(12, 0.025)
 generate_smallworld(12, 0.25)
 generate_islands(10)
+generate_islands(12, groups = c(3, 4, 5), width = 2)
 generate_islands(c(10, 6))
 generate_communities(50)
-generate_communities(50, mixing = 0.4)
+generate_communities(50, p = 0.4)
+generate_communities(50, directed = TRUE, groups = 3)
 generate_communities(c(60, 40))
+generate_core(12)
+generate_core(12, p = c(0.8, 0.3, 0.1))
 }
 \references{
 \subsection{On small-world networks}{
@@ -186,6 +240,20 @@ Lancichinetti, Andrea, Santo Fortunato, and Filippo Radicchi. 2008.
 “Benchmark Graphs for Testing Community Detection Algorithms.”
 \emph{Physical Review E} 78(4):046110.
 \doi{10.1103/PhysRevE.78.046110}
+
+Lancichinetti, Andrea, and Santo Fortunato. 2009.
+“Benchmarks for Testing Community Detection Algorithms on Directed and
+Weighted Graphs with Overlapping Communities.”
+\emph{Physical Review E} 80(1):016118.
+\doi{10.1103/PhysRevE.80.016118}
+}
+
+\subsection{On cores and peripheries}{
+
+Borgatti, Stephen P., and Martin G. Everett. 2000.
+“Models of Core/Periphery Structures.”
+\emph{Social Networks} 21(4):375–95.
+\doi{10.1016/S0378-8733(99)00019-2}
 }
 }
 \seealso{

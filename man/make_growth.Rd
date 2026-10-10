@@ -9,13 +9,15 @@
 \usage{
 generate_scalefree(n, p = 1, directed = FALSE)
 
-generate_fire(n, contacts = 1, their_out = 0, their_in = 1, directed = FALSE)
+generate_fire(n, p = 0, directed = FALSE, contacts = 1, their_in = 1, ...)
 
 generate_citations(
   n,
-  ties = sample(1:4, 1),
+  p = 1,
+  directed = FALSE,
+  degree = sample(1:4, 1),
   agebins = max(1, n/10),
-  directed = FALSE
+  ...
 )
 }
 \arguments{
@@ -29,31 +31,38 @@ a two-mode network will be created.
 a network of the same dimensions will be created.
 }}
 
-\item{p}{Power of the preferential attachment, default is 1.}
+\item{p}{The main probability of the model,
+which is what makes a network of it more or less random.
+It always follows \code{n}, and what it is the probability of depends on
+the model.
+For \code{generate_scalefree()}, it is the power of the preferential attachment, by default 1. For \code{generate_fire()}, it is the probability that the fire burns along each tie that a contact sends, and so that the new node ties to the node at its other end, by default 0. In a two-mode network, it is instead the probability of burning across each two-path, and so of closing a four-cycle. For \code{generate_citations()}, it is the probability that a node chooses each node that it cites at random, by default 1, where it otherwise cites the node that came most recently, so that 0 returns the same network every time.}
 
-\item{directed}{Whether to generate network as directed. By default FALSE.}
+\item{directed}{Logical whether the network should be directed.
+By default \code{directed = FALSE},
+but for the functions that the usage above shows another default for.
+A network given as \code{n} sets the direction instead.
+If the opposite direction is desired,
+use \code{to_redirected()} on the output of these functions.
+In two-mode networks, the directed argument is ignored.}
 
 \item{contacts}{Number of contacts or ambassadors chosen from among existing
 nodes in the network.
 By default 1.
 See \code{igraph::sample_forestfire()}.}
 
-\item{their_out}{Probability of tieing to a contact's outgoing ties.
-By default 0.
-In a two-mode network, this is instead the probability of burning across
-each two-path, and so of closing a four-cycle.}
-
 \item{their_in}{Probability of tieing to a contact's incoming ties.
 By default 1.
-This is a factor on \code{their_out} rather than a probability in its own
-right, so \code{their_out = 0} gives a tree whatever \code{their_in} is set to.
-In a two-mode network, \code{their_out * their_in} is instead the probability
+This is a factor on \code{p} rather than a probability in its own
+right, so \code{p = 0} gives a tree whatever \code{their_in} is set to.
+In a two-mode network, \code{p * their_in} is instead the probability
 that a newly burned node re-ignites and spreads the fire further.}
 
-\item{ties}{Number of ties to add per new node.
-By default a uniform random sample from 1 to 4 new ties.
-In a two-mode network, each new node of the first mode ties to this many
-nodes of the second mode, chosen by how recently each was last tied to.}
+\item{...}{Arguments under the names they had in earlier versions,
+which still work: \code{their_out} for \code{p} in \code{generate_fire()},
+and \code{ties} for \code{degree} in \code{generate_citations()}.}
+
+\item{degree}{The number of ties that a node sends.
+For \code{generate_citations()}, this is how many of the nodes before it each new node cites, by default a random number from 1 to 4. \code{Inf} has each node cite every node before it. In a two-mode network, each new node of the first mode ties to this many nodes of the second mode.}
 
 \item{agebins}{Number of aging bins.
 By default either \eqn{\frac{n}{10}} or 1,
@@ -61,12 +70,17 @@ whichever is the larger.
 See \code{igraphr::sample_last_cit()} for more.}
 }
 \value{
-By default a \code{tbl_graph} object is returned,
-but this can be coerced into other types of objects
+A \code{stocnet} object is returned,
+which can be coerced into other types of objects
 using \code{as_edgelist()}, \code{as_matrix()},
-\code{as_tidygraph()}, or \code{as_network()}.
+\code{as_tidygraph()}, \code{as_igraph()}, or \code{as_network()}.
+\code{create_ring()}, \code{create_lattice()},
+\code{generate_random()}, \code{generate_smallworld()}, and
+\code{generate_scalefree()} return a \code{tbl_graph} or \code{igraph} object for now,
+since the released versions of the packages built on this one expect
+one from them.
 
-By default, all networks are created as undirected.
+By default, most networks are created as undirected.
 This can be overruled with the argument \code{directed = TRUE}.
 This will return a directed network in which the arcs are
 out-facing or equivalent.
@@ -84,7 +98,8 @@ The functions differ in how a new node chooses whom to tie to.
 \itemize{
 \item \code{generate_scalefree()} generates a scale-free structure via preferential attachment at some probability.
 \item \code{generate_fire()} generates a forest fire model.
-\item \code{generate_citations()} generates a citations model.
+\item \code{generate_citations()} generates a citations model,
+in which each new node cites some of the nodes before it.
 }
 
 These functions can create either one-mode or two-mode networks.
@@ -104,13 +119,25 @@ is the four-cycle rather than the triangle.
 In a two-mode network each burn step is therefore a two-path hop across
 the other mode, and each tie the fire creates closes a four-cycle.
 Both modes grow over the course of the simulation.
+
+In \code{generate_citations()}, a node that chooses at random whom to cite
+prefers the nodes that were cited most recently.
+With \code{p = 0} nothing is left to chance, and each node cites the \code{degree}
+nodes that arrived just before it.
+With \code{degree = Inf} as well, each node cites every node before it,
+which in a directed network is the complete citation network
+that \code{tidygraph::create_citation()} returns.
+With \code{p = 1} a node can cite another more than once.
 }
 \examples{
 generate_scalefree(12, 0.25)
 generate_scalefree(12, 1.25)
 generate_fire(10)
+generate_fire(10, p = 0.3)
 generate_fire(c(10, 6))
 generate_citations(10)
+generate_citations(10, p = 0.5, directed = TRUE, degree = 3)
+generate_citations(10, p = 0, directed = TRUE, degree = Inf)
 generate_citations(c(10, 6))
 }
 \references{

@@ -528,6 +528,10 @@ mutate_nodes.stocnet <- function(.data, ...){
     out <- .data
     out$nodes <- out$nodes |> 
       dplyr::mutate(...)
+    # A stocnet labels its nodes in 'label', where other classes use 'name',
+    # so nodes that are named as theirs are, are labelled.
+    if ("name" %in% names(out$nodes) && !"label" %in% names(out$nodes))
+      out$nodes <- dplyr::rename(out$nodes, label = "name")
     out
   })
 }

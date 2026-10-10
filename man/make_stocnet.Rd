@@ -329,6 +329,32 @@ this component is usually NULL.
 non-responsive nodes imply, which is nearly always the larger part.
 }
 
+\section{Size and speed}{
+
+A 'stocnet' object is usually smaller in memory than the same network
+as an 'igraph' or 'tbl_graph' object.
+A network of a thousand nodes and four thousand ties takes about half
+the memory as a 'stocnet', whether it is sparse or dense, directed or
+not, and about four fifths where its nodes are named and carry
+attributes, since names and attributes take the same room in any class.
+Only a very small network, or one with no ties at all, is a little
+larger as a 'stocnet', since the list has a few kilobytes of its own.
+A matrix is by far the largest for any network that is not both small
+and dense, since it has a cell for every pair of nodes.
+
+What a 'stocnet' saves in memory it can cost in time,
+where a function works on another class.
+Many functions here, and in the packages that build on this one,
+calculate on an 'igraph' object or on a matrix,
+and coerce a 'stocnet' to one first,
+which takes a few milliseconds for a network of a thousand nodes.
+That is not noticeable in a single call,
+but adds up where a function is called many thousands of times,
+as in a simulation.
+There it is quicker to coerce once, with \code{as_igraph()} or \code{as_matrix()},
+and to pass the result to the functions inside the loop.
+}
+
 \section{Printing}{
 
 When printed, 'stocnet' objects will print to the console any information

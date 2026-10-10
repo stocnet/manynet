@@ -779,6 +779,7 @@ export(gather_changes)
 export(generate_citations)
 export(generate_communities)
 export(generate_configuration)
+export(generate_core)
 export(generate_fire)
 export(generate_islands)
 export(generate_man)
@@ -1207,7 +1208,6 @@ importFrom(igraph,
   reverse_edges,
   sample_degseq,
   sample_forestfire,
-  sample_islands,
   sample_last_cit,
   sample_pa,
   sample_smallworld,

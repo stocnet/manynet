@@ -10,14 +10,21 @@
 \usage{
 generate_random(n, p = 0.5, directed = FALSE, with_attr = TRUE)
 
-generate_configuration(.data)
+generate_configuration(
+  n,
+  p = 1,
+  directed = FALSE,
+  outdegree = NULL,
+  indegree = NULL
+)
 
-generate_man(n, man = NULL)
+generate_man(n, p = NULL, directed = NULL, ...)
 
 generate_utilities(
   n,
+  p = 1,
+  directed = TRUE,
   form = c("normal", "uniform", "relative"),
-  threshold = 0,
   steps = 1,
   volatility = 0.1,
   inertia = 0
@@ -34,39 +41,45 @@ a two-mode network will be created.
 a network of the same dimensions will be created.
 }}
 
-\item{p}{Proportion of possible ties in the network that are realised or,
-if integer greater than 1, the number of ties in the network.}
+\item{p}{The main probability of the model,
+which is what makes a network of it more or less random.
+It always follows \code{n}, and what it is the probability of depends on
+the model.
+For \code{generate_random()}, it is the proportion of possible ties in the network that are realised or, if an integer greater than 1, the number of ties in the network, by default 0.5. For \code{generate_configuration()}, it is the share of the ties that are switched with one another, by default 1, so that 0 returns the network as it was. For \code{generate_man()}, it is a vector of three: the proportions of Mutual, Asymmetric, and Null dyads, which is inferred from \code{n} if that is a network and is otherwise \code{c(0.25, 0.5, 0.25)}. For \code{generate_utilities()}, it is the share of the utilities that are ties, by default 1.}
 
-\item{directed}{Whether to generate network as directed. By default FALSE.}
+\item{directed}{Logical whether the network should be directed.
+By default \code{directed = FALSE},
+but for the functions that the usage above shows another default for.
+A network given as \code{n} sets the direction instead.
+If the opposite direction is desired,
+use \code{to_redirected()} on the output of these functions.
+In two-mode networks, the directed argument is ignored.}
 
 \item{with_attr}{Logical whether any attributes of the object
 should be retained.
 By default TRUE.}
 
-\item{.data}{An object of a \code{{manynet}}-consistent class:
-\itemize{
-\item adjacency or incidence \code{matrix} from \code{{base}} R
-\item edgelist \code{data.frame} from \code{{base}} R or \code{tbl/tbl_df} from \code{{tibble}}
-\item stocnet \code{stocnet}, from the \code{{manynet}} package
-\item igraph \code{igraph}, from the \code{{igraph}} package
-\item network \code{network}, from the \code{{network}} package
-\item tidygraph \code{tbl_graph}, from the \code{{tidygraph}} package
-}}
+\item{outdegree}{Numeric scalar or vector indicating the
+desired outdegree distribution.
+Note that a scalar (single number) will result in a k-regular graph.
+By default NULL.
+If \code{n} is an existing network object and the outdegree is not specified,
+then the outdegree distribution will be inferred from that of the network.
+If only the indegree is specified, then in one-mode networks the outdegree
+will mirror it, and in two-mode networks the same number of ties will be
+spread as evenly as possible across the nodes in the first mode.
+If neither is specified, the sparsest connected structure is created:
+a cycle in one-mode networks, and in two-mode networks one in which the
+larger mode is 1-regular.}
 
-\item{man}{Vector of Mutual, Asymmetric, and Null dyads, respectively.
-These are treated as proportions, e.g. \code{c(0.25, 0.5, 0.25)};
-counts such as \code{c(10,0,20)} are read as relative weights and normalised,
-so the dyad census is reproduced in expectation rather than exactly.
-Is inferred from \code{n} if it is an existing network object,
-and otherwise defaults to \code{c(0.25, 0.5, 0.25)},
-which is the dyad distribution of a random (Erdős-Rényi) digraph
-in which each arc is present with probability 0.5.
+\item{indegree}{Numeric vector indicating the desired indegree distribution.
+By default NULL but not required unless a directed network is desired.
+If \code{n} is an existing directed network object and the indegree is not specified,
+then the indegree distribution will be inferred from that of the network.
+Otherwise it is filled in from the outdegree as described above.}
 
-For two-mode networks, \code{man} is conditioned on the dyads between
-the modes.
-Since ties in two-mode networks are undirected,
-both mutual and asymmetric dyads are realised as a tie,
-so only their sum is consequential there.}
+\item{...}{Arguments under the names they had in earlier versions,
+which still work: \code{man} for \code{p} in \code{generate_man()}.}
 
 \item{form}{How the utilities are distributed between -1 and 1.
 \itemize{
@@ -79,12 +92,6 @@ node's utilities by the largest of them, whether liked or disliked,
 so that each node's utilities are relative to the node it feels most
 strongly about.
 }}
-
-\item{threshold}{How far a utility must be from 0 to be a tie, from 0 to 1.
-A utility above \code{threshold} is a positive tie,
-a utility below \code{-threshold} is a negative tie,
-and a node is indifferent to those between the two, which are not ties.
-By default 0, so that every utility is a tie.}
 
 \item{steps}{Number of moments at which to return the utilities.
 By default 1.
@@ -105,24 +112,22 @@ enough comes along, rather than all drifting a little at every step.
 By default 0, so that every utility changes at every step.}
 }
 \value{
-By default a \code{tbl_graph} object is returned,
-but this can be coerced into other types of objects
+A \code{stocnet} object is returned,
+which can be coerced into other types of objects
 using \code{as_edgelist()}, \code{as_matrix()},
-\code{as_tidygraph()}, or \code{as_network()}.
+\code{as_tidygraph()}, \code{as_igraph()}, or \code{as_network()}.
+\code{create_ring()}, \code{create_lattice()},
+\code{generate_random()}, \code{generate_smallworld()}, and
+\code{generate_scalefree()} return a \code{tbl_graph} or \code{igraph} object for now,
+since the released versions of the packages built on this one expect
+one from them.
 
-By default, all networks are created as undirected.
+By default, most networks are created as undirected.
 This can be overruled with the argument \code{directed = TRUE}.
 This will return a directed network in which the arcs are
 out-facing or equivalent.
 This direction can be swapped using \code{to_redirected()}.
-In two-mode networks, \code{generate_random(directed = TRUE)} points every
-tie from the first mode to the second, and the other functions ignore
-the directed argument.
-
-\code{generate_utilities()} returns a \code{stocnet} object instead,
-which is always directed where it is one-mode,
-since what one node finds in another need not be what the other finds
-in it.
+In two-mode networks, the directed argument is ignored.
 }
 \description{
 These functions are similar to the \verb{create_*} functions,
@@ -132,7 +137,7 @@ for exploring or testing network properties.
 \itemize{
 \item \code{generate_random()} generates a random network with ties appearing at some probability.
 \item \code{generate_configuration()} generates a random network consistent with a
-given degree distribution.
+given degree distribution, as the random counterpart of \code{create_degree()}.
 \item \code{generate_man()} generates a random network conditional on the dyad census
 of Mutual, Asymmetric, and Null dyads, respectively.
 \item \code{generate_utilities()} generates the utility that each node finds in
@@ -149,6 +154,29 @@ As an alternative, an existing network can be provided to \code{n}
 and the number of modes, nodes, and directedness will be inferred.
 }
 \details{
+\code{generate_configuration()} keeps the degree of every node and is random
+in which nodes are tied.
+The degrees are those of the network given as \code{n},
+or those given as \code{outdegree} and \code{indegree}, as for \code{create_degree()}.
+It then switches the ends of pairs of ties, which changes who is tied to
+whom but not how many ties anyone has.
+With \code{p = 1}, the default, a network is drawn anew from those degrees.
+With a lower \code{p} only that share of the ties are switched,
+so that the result is in part the network it started from.
+
+For \code{generate_man()}, counts such as \code{p = c(10, 0, 20)} are read as
+relative weights and normalised,
+so the dyad census is reproduced in expectation rather than exactly.
+The default is the dyad distribution of a random (Erdős-Rényi) digraph
+in which each arc is present with probability 0.5.
+The network is directed unless there are no asymmetric dyads,
+as with \code{p = c(0.1, 0, 0.1)}, since it then has no direction to speak of.
+\code{directed} overrules this either way, and where an undirected network
+is asked for from asymmetric dyads, a dyad is tied where it would have
+been mutual or asymmetric.
+The same holds for two-mode networks, whose ties are undirected,
+so only the sum of the mutual and asymmetric dyads is consequential there.
+
 A utility is how much a node gains or loses from a tie to another node,
 from -1 for the most it could lose to 1 for the most it could gain.
 \code{generate_utilities()} returns these as the weights of a signed network.
@@ -164,9 +192,15 @@ the ties are the positive utilities.
 Where a tie needs the consent of both nodes,
 the ties are those where the lower of the two utilities is positive.
 
+With \code{p} below 1, a node is indifferent to the utilities closest to 0,
+and only the share \code{p} of them that are furthest from 0 are ties,
+whether positive or negative.
+With \code{directed = FALSE}, the two nodes of a pair find the same in each
+other, and the network is undirected.
+
 Where there is more than one step,
-\code{threshold} applies to the utilities at each moment,
-so a tie can come and go as a utility crosses it.
+how far from 0 a utility must be to be a tie is set at the first moment
+and kept, so a tie can come and go as a utility crosses it.
 A utility cannot rise above 1 or fall below -1,
 and one that a change would take further stays at that limit
 until a change brings it back.
@@ -176,10 +210,14 @@ and more of them are far enough from 0 to be ties than at the start.
 \examples{
 generate_random(12, 0.4)
 # generate_random(c(6, 6), 0.4)
+generate_configuration(12, outdegree = 3)
+generate_configuration(create_core(12), p = 0.25)
 generate_man(6)
+generate_man(6, p = c(0.3, 0, 0.7))
 generate_man(c(4, 6))
 (utils <- generate_utilities(6))
-generate_utilities(6, threshold = 0.25)
+generate_utilities(6, p = 0.25)
+generate_utilities(6, directed = FALSE)
 generate_utilities(c(4, 6), form = "uniform")
 generate_utilities(6, steps = 3)
 generate_utilities(6, steps = 3, volatility = 0.5, inertia = 0.8)
