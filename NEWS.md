@@ -1,5 +1,9 @@
 # manynet 2.4.0
 
+## Package
+
+- Added design principles to the README and the contributing guide
+
 ## Making
 
 - Improved most `create_*()` and `generate_*()` functions to return a named 'stocnet'

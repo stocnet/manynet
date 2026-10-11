@@ -115,18 +115,95 @@ are analytic, and belong in `{netrics}`,
 which calls into this package's `to_*()` functions for the profile arithmetic
 they need.
 
-## Style
+## Design principles
 
-In terms of style, we are aiming for:
+All `stocnet` packages aim for the same three things:
+declarative simplicity, pleasant predictability, and graceful inclusivity.
+The principles are shared across the packages;
+the rules and examples below are those of `{manynet}`.
 
-- "declarative simplicity". Functions should not have many arguments,
-as this requires that the user read the documentation carefully to understand
-what all of the options imply.
-Functions should be named after what they do, not their (often insider) reference to their progenitor.
-- "pleasant predictability" in terms of user experience.
-To that end, we have a regular syntax that users can rely on producing expected effects.
-Functions in the same family (`as_*()`, `is_*()`, `create_*()`, etc.) should share
-argument order and naming, so that behaviour is guessable across the family.
+### Declarative simplicity
+
+Functions should do one clearly named thing with few arguments.
+This helps users orient themselves in the package and develop expectations
+that are not tied to having to read deep into the documentation.
+
+- **Function names describe actions.**
+  A function is named after what it does or the mechanism it follows,
+  not its progenitors, any abbreviations or model acronyms,
+  and the originating authors are credited in its documentation.
+  Example: `generate_smallworld()` and `generate_scalefree()`
+  rather than names built on Watts and Strogatz or Barabási and Albert.
+- **Features are detected, not declared.**
+  A function finds out whether a network is directed, weighted, signed, or two-mode,
+  and adjusts, so the user does not (need to) supply an argument for it.
+  Example: `is_twomode()` and `is_directed()` are called inside most `to_*()` functions,
+  and branch how the function handles the data.
+  Functions use as much data as they are given, so if there is a weighted version,
+  then this will be detected and used unless declared otherwise.
+- **Few arguments per function.**
+  Every argument is something the user must read about before they can trust the result.
+  Arguments that state detected features are unnecessary, for example.
+  Where a variant relies on network features (above),
+  the result can be changed by explicitly changing the type of network it is:
+  e.g. `to_undirected()`, `to_unweighted()`, or `to_unsigned()`.
+  Where a variant only adjusts the same operation, keep it as an argument
+  and reuse the name the package already has for that idea,
+  e.g. `similarity` in `to_mode1()`, or `rule`, or `connectivity`.
+- **Scope is signalled by prefix/suffix/infix and shared across all data classes.**
+  The prefix says which level of the network a function describes or changes.
+  Example: `mutate_nodes()` and `mutate_ties()` say which table they change.
+
+### Pleasant predictability
+
+Users should be able to guess a function's behaviour from its family.
+
+- **Families share a verb prefix.**
+  Each prefix implies a type of operation and a type of return value:
+  `read_*()` and `write_*()` import and export, `collect_*()` gathers a network from a source,
+  `as_*()` converts class, `to_*()` transforms within class, and `is_*()` returns a single logical.
+  See [File organization](#file-organization-file-naming--function-family) for the full set.
+- **Deterministic and stochastic generation are separated.**
+  `create_*()` always yields the same network, 
+  `generate_*()` draws a random one, and `play_*()` simulates a process on one.
+- **Arguments follow a consistent order.**
+  Where a function takes a network, it comes first, as `.data`.
+  The making functions take `n` first, then `p`, `directed`, and `width`,
+  wherever a function has them.
+  Example: `create_ring(n, directed, width)` and `generate_random(n, p, directed)`.
+  Document shared arguments once, as a `man-roxygen/param_*.R` template.
+- **Outputs match the prefix and the input.**
+  A `to_*()` function returns the class it was given,
+  so that it can be dropped into an existing workflow.
+
+### Graceful inclusivity
+
+Functions should accept whatever network users bring and return something they can use.
+
+- **Inputs span all common classes.**
+  Functions accept matrices, edgelists, and `igraph`, `network`, `tidygraph`,
+  `stocnet`, and `siena` objects, and each class has its `as_*()` function
+  for when another package requires it.
+  Conversion is lossless wherever the target class can hold the information.
+- **Only truly unsupported cases fail.**
+  A function with nothing to do returns its input rather than an error,
+  which leaves users fewer failures to worry about and means they can use
+  coercions as guarantees.
+  Example: `to_undirected()` on an undirected network and `to_mode1()` on a one-mode
+  network both return the network as it was.
+  Where a function really cannot proceed, the error says why,
+  and where possible suggests a conversion that would make it work
+  (see [Console messaging](#console-messaging)).
+- **Key steps are reported.**
+  Functions say what they did, 
+  such as a defaulted argument or an attribute tidied to `stocnet` conventions,
+  at the verbosity the user has chosen.
+- **Networks describe themselves.**
+  A `stocnet` object records its metadata, including its name, source, DOI, date,
+  and how it has been transformed since it was collected,
+  and prints a description built from this rather than a dump of its contents.
+  Example: `describe_transformations(to_undirected(ison_southern_women))`.
+  The record of transformations follows section 4 of the GRAND guidelines.
 
 ### Common commands
 
