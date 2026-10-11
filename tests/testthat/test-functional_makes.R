@@ -11,7 +11,7 @@ create_funs <- setdiff(alive_functions("^create_"), "create_motifs")
 generate_funs <- alive_functions("^generate_")
 
 # Functions whose first argument is data, not a size
-make_data_first <- c("create_explicit")
+make_data_first <- "create_explicit"
 
 # Functions that are directed unless told or shown otherwise: a utility has a
 # direction, and the default dyad census has asymmetric dyads
