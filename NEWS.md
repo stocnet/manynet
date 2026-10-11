@@ -58,6 +58,10 @@
   - Creates triangular grid lattices with `width = 6`, fixing documentation
   - Creates honeycomb lattices with equal modes, e.g. `n = c(6,6)`
 
+## Classes
+
+- Documented how the size and speed of a 'stocnet' compare with those of an 'igraph' object and a matrix, see `?make_stocnet`
+
 ## Coercion
 
 - Added conversion from node_measure and node_member to matrices and stocnets (closes #161)
