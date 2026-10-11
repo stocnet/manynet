@@ -64,6 +64,7 @@
 
 ## Coercion
 
+- Fixed `as_nodelist()` to return `NULL` for a 'stocnet' whose nodes have neither labels nor attributes
 - Added conversion from node_measure and node_member to matrices and stocnets (closes #161)
   - Added `as_matrix.node_measure()` and `as_matrix.node_member()`
   - Added `as_stocnet.node_measure()` and `as_stocnet.node_member()`

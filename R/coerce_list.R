@@ -67,7 +67,11 @@ as_nodelist.igraph <- function(.data) {
 
 #' @export
 as_nodelist.stocnet <- function(.data) {
-  .data$nodes
+  # A stocnet records how many nodes it has in a table of that many rows, even
+  # where the nodes have neither labels nor attributes to fill its columns.
+  # There is then nothing to list, as for other classes, and the table itself
+  # is read from `.data$nodes` where the number of nodes is what is wanted.
+  if(is.null(.data$nodes) || ncol(.data$nodes) == 0) NULL else .data$nodes
 }
 
 #' @export
