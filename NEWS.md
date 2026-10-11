@@ -91,6 +91,11 @@
 
 ## Modifying
 
+- Fixed `from_layers()` to stack a 'stocnet' as it does other classes
+  - Networks of different classes can be stacked, and are returned in the class of the first
+  - Unlabelled networks of different sizes are stacked as sets of different nodes, with a message that says so, where other classes stopped
+- Improved `to_mode()` to take a mode as `FALSE` or `TRUE`, as the modes of an unnamed two-mode network are marked
+  - Fixed `to_mode()` to report that the modes of a 'stocnet' are not named, where it offered "FALSE" and "TRUE" as their names
 - Improved every `from_*()` function to return the class of its inputs
   - Partial `from_egos()` and `from_subgraphs()` returns a combined matrix
   - Ternary `from_times()`, `from_layers()`, etc returns an array
@@ -114,6 +119,10 @@
 - Added `to_disaggregated()` to turn tie weights into that many parallel ties
   - Reverses `to_aggregated(over = NULL, rule = "sum")`
 - Fixed `to_named()` to give every node a name of its own in networks of more than 26 nodes
+
+## Describing
+
+- Fixed `net_tie_attributes()` to leave out "from" and "to" for a 'stocnet', which say where a tie is and are not attributes of it
 
 ## Marking
 

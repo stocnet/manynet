@@ -153,8 +153,10 @@ as a count rather than as a proportion of agreement.
 }}
 
 \item{mode}{Which mode to project the network to,
-either as an index, 1 or 2, or as the name of the mode.
+as an index, 1 or 2, as \code{FALSE} or \code{TRUE}, or as the name of the mode.
 Mode 1 is the first node set, e.g. the rows, and is the default.
+\code{FALSE} is the first mode and \code{TRUE} the second,
+as the modes of an unnamed two-mode network are marked.
 
 A name is matched against the names of the modes,
 which \code{mode_names()} returns and \code{add_info()} sets.

@@ -190,8 +190,25 @@ test_that("to_mode reports an unusable mode",{
   expect_error(to_mode(ison_southern_women, 3), "must be 1 or 2")
   expect_error(to_mode(ison_southern_women, c(1,2)), "must be 1 or 2")
   expect_error(to_mode(ison_southern_women, "cats"), "must be an index")
-  # the modes of this network are not named, so only an index will do
-  expect_error(to_mode(create_ring(c(5,3)), "events"), "not named")
+  # the modes of this network are not named, so only an index will do,
+  # whichever class it is
+  unnamed <- create_ring(c(5,3))
+  for(net in list(unnamed, as_stocnet(unnamed), as_igraph(unnamed))){
+    expect_error(to_mode(net, "events"), "not named")
+    expect_error(to_mode(net, "events"), "FALSE or TRUE")
+    expect_error(to_mode(net, 3), "must be 1 or 2")
+  }
+})
+
+test_that("to_mode takes a mode as FALSE or TRUE", {
+  # as the modes of an unnamed two-mode network are marked
+  unnamed <- create_ring(c(5,3))
+  for(net in list(unnamed, as_stocnet(unnamed), ison_southern_women)){
+    expect_equal(as_matrix(to_mode(net, FALSE)), as_matrix(to_mode(net, 1)))
+    expect_equal(as_matrix(to_mode(net, TRUE)), as_matrix(to_mode(net, 2)))
+  }
+  expect_error(to_mode(unnamed, c(TRUE, FALSE)), "single")
+  expect_error(to_mode(unnamed, NA), "single")
 })
 
 test_that("to_mode reports a name matching both modes",{

@@ -40,9 +40,32 @@ test_that("from_layers matches unlabelled networks of equal size by position", {
   named <- from_layers(friends = ison_adolescents, ring = create_ring(8))
   expect_true(is_labelled(named))
   expect_equal(as.numeric(net_nodes(named)), 8)
-  # but nodes cannot be matched at all where the networks differ in size
-  expect_error(from_layers(a = create_ring(8), b = create_star(6)),
-               "same size")
+  # Unlabelled networks that differ in size cannot be matched node for node,
+  # so they are sets of different nodes, which the user is told.
+  # The report is one that is only made where reports are asked for.
+  op <- options(snet_verbosity = "normal")
+  on.exit(options(op))
+  for(nets in list(list(a = create_ring(8), b = as_tidygraph(create_star(6))),
+                   list(a = as_stocnet(create_ring(8)), b = create_star(6)))){
+    expect_message(apart <- from_layers(nets), "added as new nodes")
+    expect_s3_class(apart, class(nets[[1]])[1])
+    expect_equal(as.numeric(net_nodes(apart)), 14)
+    expect_equal(as.numeric(net_ties(apart)), 8 + 5)
+  }
+})
+
+test_that("from_layers stacks a stocnet as it does other classes", {
+  ring <- create_ring(8)
+  star <- as_tidygraph(create_star(8))
+  # the networks can be of different classes, and the first decides the class
+  for(first in list(as_stocnet(ring), ring, as_igraph(ring)))
+    for(second in list(as_stocnet(star), star, as_igraph(star),
+                       as_matrix(star))){
+      out <- from_layers(ring = first, star = second)
+      expect_s3_class(out, class(first)[1])
+      expect_equal(as.numeric(net_nodes(out)), 8)
+      expect_equal(as.numeric(net_ties(out)), 8 + 7)
+    }
 })
 
 test_that("from_layers does not make an undirected network directed", {

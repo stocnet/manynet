@@ -428,8 +428,10 @@ to_mode2.data.frame <- function(.data, similarity = c("count", "jaccard", "rand"
 
 #' @rdname modif_project
 #' @param mode Which mode to project the network to,
-#'   either as an index, 1 or 2, or as the name of the mode.
+#'   as an index, 1 or 2, as `FALSE` or `TRUE`, or as the name of the mode.
 #'   Mode 1 is the first node set, e.g. the rows, and is the default.
+#'   `FALSE` is the first mode and `TRUE` the second,
+#'   as the modes of an unnamed two-mode network are marked.
 #'
 #'   A name is matched against the names of the modes,
 #'   which `mode_names()` returns and `add_info()` sets.
@@ -741,18 +743,25 @@ to_concepts.matrix <- function(.data){
   # stated in terms of the network rather than as a literal 1 or 2, so that a
   # third mode needs no change here once `to_mode()` can project one
   nmodes <- net_modes(.data)
+  # A logical picks out a mode as the 'type' of an igraph does, FALSE for the
+  # first and TRUE for the second, and so only where there are two.
+  forms <- if(nmodes == 2) "{.or {seq_len(nmodes)}}, FALSE or TRUE," else
+    "{.or {seq_len(nmodes)}},"
+  if(is.logical(mode) && nmodes == 2 && length(mode) == 1 && !is.na(mode))
+    return(as.integer(mode) + 1L)
   if(is.numeric(mode)){
     if(length(mode) != 1 || is.na(mode) || !mode %in% seq_len(nmodes))
-      snet_abort("{.arg mode} must be {.or {seq_len(nmodes)}},",
-                 "or the name of a mode.")
+      snet_abort("{.arg mode} must be", forms, "or the name of a mode.")
     return(as.integer(mode))
   }
   if(!is.character(mode) || length(mode) != 1)
-    snet_abort("{.arg mode} must be a single index or a single mode name.")
+    snet_abort("{.arg mode} must be a single index,", forms,
+               "or a single mode name.")
   nms <- mode_names(.data)
-  if(length(nms) != nmodes)
+  # a stocnet records two modes without names as "FALSE" and "TRUE"
+  if(length(nms) != nmodes || setequal(nms, c("FALSE", "TRUE")))
     snet_abort("The modes of this network are not named.",
-               "Please select a mode by index, {.or {seq_len(nmodes)}},",
+               "Please select a mode by index,", forms,
                "or name the modes with {.fun add_info}.")
   matches <- which(vapply(nms, .mode_matches, logical(1), query = mode))
   # a word can name more than one mode, as "events" does where the modes are
@@ -762,7 +771,7 @@ to_concepts.matrix <- function(.data){
                "{phrase(nms[matches])}.",
                "Please give a name that tells them apart, or an index.")
   if(length(matches) == 0)
-    snet_abort("{.arg mode} must be an index,",
+    snet_abort("{.arg mode} must be an index,", forms,
                "or match {.or {nms}}.")
   as.integer(matches)
 }

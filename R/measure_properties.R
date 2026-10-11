@@ -573,7 +573,10 @@ net_tie_attributes.igraph <- function(.data){
 
 #' @export
 net_tie_attributes.stocnet <- function(.data){
-  names(.data$ties)
+  # 'from' and 'to' say which nodes a tie is between, and are not attributes
+  # of it. The other reserved columns, such as 'weight' and 'time', are
+  # attributes that the tie has, and are reported as for other classes.
+  setdiff(names(.data$ties), c("from", "to"))
 }
 
 #' @export

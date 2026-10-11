@@ -234,8 +234,10 @@ from_layers <- function(..., layer_names){
   # network is that network
   if(length(netlist) == 1) return(netlist[[1]])
   layer_names <- if(missing(layer_names)) NULL else layer_names
+  # The networks can be of different classes, and are stacked as, and
+  # returned in, the class of the first of them.
   if(inherits(netlist[[1]], "stocnet"))
-    .stack_layers_stocnet(netlist, layer_names)
+    .stack_layers_stocnet(lapply(netlist, as_stocnet), layer_names)
   else .as_class_of(.stack_layers_tbl(netlist, layer_names), netlist[[1]])
 }
 
@@ -410,6 +412,11 @@ from_reporters <- function(netlist) {
 }
 
 .stack_layers_tbl <- function(netlist, layer_names){
+  # Unlabelled networks of different sizes cannot be matched node for node,
+  # and so hold different sets of nodes, which is how a stocnet stacks them.
+  sizes <- vapply(netlist, function(x) as.numeric(net_nodes(x)), numeric(1))
+  if(!all(vapply(netlist, is_labelled, logical(1))) && length(unique(sizes)) > 1)
+    return(.stack_layers_stocnet(lapply(netlist, as_stocnet), layer_names))
   netlist <- lapply(netlist, as_tidygraph)
   labelled <- vapply(netlist, is_labelled, logical(1))
   # layers are stacked by joining the networks' node tables, which needs a
@@ -690,6 +697,9 @@ from_reporters <- function(netlist) {
 # Match each unlabelled block to an existing label==NA pool in merged_nodes,
 # primarily by size; 'mode' is used only to disambiguate when there are
 # multiple same-sized candidates, and to fill in unknown mode info.
+# A block that matches no such pool is a set of nodes not met before, and is
+# added as one, which the user is told. It is not matched to labelled nodes,
+# since that would be to guess which of them it is.
 # An unlabelled network is matched to the merged nodes by position, which
 # gives each of its nodes a row there but not the attributes it holds. Those
 # are carried to the rows they were matched to, where a row does not already
@@ -754,6 +764,10 @@ from_reporters <- function(netlist) {
         snet_warn(paste0("Multiple possible matches found for an unlabelled ",
                          "block of ", b$size, " nodes; adding as new nodes ",
                          "rather than guessing."))
+      else if(!is.null(merged_nodes) && nrow(merged_nodes) > 0)
+        snet_info(paste0("A set of ", b$size, " unlabelled nodes matches no ",
+                         "set of nodes of that size, so they were added as ",
+                         "new nodes. Label the nodes to match them by name."))
       add <- dplyr::tibble(label = rep(NA_character_, b$size))
       if(!is.na(b$mode)) add$mode <- b$mode
       merged_nodes <- if(is.null(merged_nodes)) add else 

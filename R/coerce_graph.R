@@ -298,11 +298,11 @@ as_igraph.stocnet <- function(.data, twomode = FALSE) {
   # Note that the nodes are counted by their rows and not by their columns,
   # since a table of rows without columns is how a stocnet records the size of
   # a network whose nodes have no attributes, isolates included.
-  if(is.null(as_nodelist(.data)) || nrow(as_nodelist(.data)) == 0){
+  if(is.null(.data$nodes) || nrow(.data$nodes) == 0){
     out <- igraph::graph_from_data_frame(as_edgelist(.data), directed = directed)
     out <- to_unlabelled(out)
   } else {
-    vertices <- as_nodelist(.data)
+    vertices <- .data$nodes
     # A stocnet labels its nodes in 'label', but 'name' counts as a label too
     # (see `is_labelled()`), as where `mutate_nodes(name = )` named them.
     if("label" %in% names(vertices)){

@@ -683,7 +683,7 @@ join_nodes.stocnet <- function(.data, object2, .by = NULL,
                                  join_type = c("full","left", "right", "inner")){
   join_type <- match.arg(join_type)
   out <- .data
-  if(inherits(object2, "stocnet")) nodelist <- as_nodelist(object2) else
+  if(inherits(object2, "stocnet")) nodelist <- object2$nodes else
     nodelist <- object2
   if(is.null(.data$nodes) && net_nodes(.data) == nrow(nodelist)) 
     return(make_stocnet(info = .data$info, nodes = nodelist, ties = .data$ties, 
