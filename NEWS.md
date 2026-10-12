@@ -3,6 +3,10 @@
 ## Package
 
 - Added design principles to the README and the contributing guide
+- Updated the contributing guide to agree with the package, and reordered it
+  - Added a table of contents that says when to read each section
+  - Added sections on datasets, deprecation, checking downstream packages, and releasing
+  - Fixed what it says of the verbosity, the reserved `info` fields, and two-mode networks
 
 ## Making
 

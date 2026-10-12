@@ -8,25 +8,45 @@ Please note that the `manynet` project is released with a
 [Contributor Code of Conduct](CODE_OF_CONDUCT.md). 
 By contributing to this project, you agree to abide by its terms.
 
-## Git
+## Contents
 
-`stocnet` projects are maintained using the git version control system.
-A plain-English introduction to git can be found [here](https://blog.red-badger.com/2016/11/29/gitgithub-in-plain-english).
-I recommend you read this before continuing. 
-A more recent motivation can be found [here](https://www.r-bloggers.com/2024/04/git-gud-version-control-best-practices/).
-It will explain the basics of git version control, committing and repos, pulling and pushing,
-branching and merging.
+Each entry says when to read the section.
+Update this list whenever a heading below is added, renamed, or moved.
 
-Using git from the command line on your lap- or desktop can be intimidating,
-but I recommend [Fork](https://git-fork.com) software for Mac and Windows.
-This allows mostly visual management of commits, diffs, branches, etc.
-There are various other git software packages available, but this one is fairly fully featured.
+- [Identifying issues](#identifying-issues): before you report a bug or ask for a feature
+- [Package architecture](#package-architecture)
+  - [Project overview](#project-overview): to decide whether a function belongs here
+    or in `{netrics}`, `{autograph}`, or `{migraph}`
+- [Design principles](#design-principles)
+  - [Declarative simplicity](#declarative-simplicity): before you name a function or an argument
+  - [Pleasant predictability](#pleasant-predictability): before you choose a prefix,
+    an argument order, or what a function returns
+  - [Graceful inclusivity](#graceful-inclusivity): before you decide what a function accepts,
+    and when it fails
+- [Developing](#developing)
+  - [Common commands](#common-commands): to load, document, test, or check the package
+  - [File organization](#file-organization-file-naming--function-family): to find a function,
+    or the file for a new one
+  - [The `stocnet` object model](#the-stocnet-object-model): before you read or write the
+    components of a `stocnet`, or its missing data
+  - [Two-mode networks](#two-mode-networks): before you handle modes or their direction
+  - [Console messaging](#console-messaging): before you write an error, a warning, or a message
+  - [Tests](#tests): before you add a test, or when one is skipped with `AUDIT`
+  - [Datasets](#datasets): before you add, convert, or document a dataset
+  - [Deprecation](#deprecation): before you rename, move, or remove a function or an argument
+- [Documenting](#documenting)
+  - [README and Website](#readme-and-website): before you edit the README, a tutorial,
+    or the website index, and whenever you export a function
+  - [`NEWS.md` conventions](#newsmd-conventions): before you write a `NEWS.md` entry
+    or a commit message
+- [Releasing](#releasing)
+  - [Branching and CI](#branching-and-ci): to choose a branch, or to read a failed check
+  - [Checking downstream packages](#checking-downstream-packages): before you change shipped data,
+    a class, or what a function returns
+  - [Releasing to CRAN](#releasing-to-cran): before a submission to CRAN
+- [Git for new contributors](#git-for-new-contributors): if git is new to you
 
-The GitHub page allows to access the issues assigned to you and check the commits.
-You can also access the documents in the repository, 
-although this won't be necessary after you have cloned it on your computer via Fork.
-
-### Identifying issues
+## Identifying issues
 
 Please use the issues tracker on GitHub to identify any function-related issues.
 You can use these issues to track progress on the issue and 
@@ -34,52 +54,6 @@ to comment or continue a conversation on that issue.
 The most useful issues are ones that precisely identify an error,
 or propose a test that should pass but instead fails.
 Examples for documentation are also most welcome.
-
-### Cloning
-
-Once you have downloaded Fork, the first thing you have to do is to 
-clone the remote repository on your computer. 
-Before cloning, you will be able to choose on which `branch` you want to work: 
-develop or main. 
-
-### Pull 
-
-This command allows you to `pull` changes from the remote repository to your local repository in Fork.
-Make sure you do that before starting working on your files so you have the newest versions. 
-When pulling, make sure you choose main or develop, 
-depending on the branch you decided to work with. 
-Once you pulled, you have now all the new commits and files and 
-you can start working on your assigned tasks.
-Note that you can access and open the files either from the Finder or from Fork. 
-Some documents might be stored using Large File Storage (LFS) to save space on the repository. 
-
-### Commit and Push
-
-Once you have made modifications on a file and saved them, it will appear in your `commit` window. 
-Here you can control one last time your file, write the commit message with the 
-issue reference (see below) and commit. 
-Once your commit is ready, you can `push` it to the remote repository.
-Note that you can click the "push immediately" box in the commit window 
-if you don't want to do it in two steps. 
-If you are working on a separate branch, 
-it is important to select this branch when pushing.
-
-### Branching and CI
-
-- `main` is the release branch; `develop` is the working branch (clone/work on `develop`).
-- `breaking` runs alongside `develop` and holds the changes for the next minor release.
-  Put a change on `breaking`, not `develop`, where it would break a released
-  downstream package (`{netrics}`, `{autograph}`, `{migraph}`), e.g. a change
-  to the class or contents of shipped data or to what a function returns.
-  Record it under the `# manynet <next minor>` heading in `NEWS.md`.
-  Bug fixes and other non-breaking changes still go on `develop`,
-  which is merged into `breaking` regularly to keep the two in step.
-- PRs into `main` trigger [prchecks.yml](workflows/prchecks.yml): R CMD check
-  (macOS/Windows/Linux), binary build, codecov, lintr, spell check, a reverse-dependency
-  check, a check that the tutorial articles are in sync with the tutorials,
-  and PR metadata checks (DESCRIPTION version bump, PR title/description conventions).
-- Merges/pushes to `main` trigger [pushrelease.yml](workflows/pushrelease.yml):
-  check, auto-bump version tag, GitHub release with binaries, then pkgdown site deploy.
 
 ## Package architecture
 
@@ -121,7 +95,6 @@ All `stocnet` packages aim for the same three things:
 declarative simplicity, pleasant predictability, and graceful inclusivity.
 The principles are shared across the packages;
 the rules and examples below are those of `{manynet}`.
-
 ### Declarative simplicity
 
 Functions should do one clearly named thing with few arguments.
@@ -150,6 +123,18 @@ that are not tied to having to read deep into the documentation.
   Where a variant only adjusts the same operation, keep it as an argument
   and reuse the name the package already has for that idea,
   e.g. `similarity` in `to_mode1()`, or `rule`, or `connectivity`.
+- **One word means one thing.**
+  The vocabulary is small on purpose, so some words are reserved.
+  An argument that selects how a function decides something is `rule`, not `method`,
+  which already means an S3 method and a statistical method.
+  "mode" means the mode of a two-mode or multimodal network,
+  so the most frequent value is `"modal"`,
+  and the weak or strong components of a network are chosen with `connectivity`.
+  Functions that assert or count connectedness default to `"strong"`
+  (e.g. `is_connected()`), and functions that scope or split a network to `"weak"`
+  (e.g. `to_giant()`, `to_components()`).
+  Before adding an option, look for an existing signature that carries the same idea,
+  and reuse its name and, where possible, its values.
 - **Scope is signalled by prefix/suffix/infix and shared across all data classes.**
   The prefix says which level of the network a function describes or changes.
   Example: `mutate_nodes()` and `mutate_ties()` say which table they change.
@@ -171,7 +156,10 @@ Users should be able to guess a function's behaviour from its family.
   The making functions take `n` first, then `p`, `directed`, and `width`,
   wherever a function has them.
   Example: `create_ring(n, directed, width)` and `generate_random(n, p, directed)`.
-  Document shared arguments once, as a `man-roxygen/param_*.R` template.
+  Document shared arguments once, as a `man-roxygen/param_*.R` template
+  (e.g. `param_n`, `param_p`, `param_directed`, `param_width`, `param_groups`,
+  `param_degree`, and `return_make` for what the making functions return),
+  with the detail of a page given by `@templateVar`.
 - **Outputs match the prefix and the input.**
   A `to_*()` function returns the class it was given,
   so that it can be dropped into an existing workflow.
@@ -205,6 +193,8 @@ Functions should accept whatever network users bring and return something they c
   Example: `describe_transformations(to_undirected(ison_southern_women))`.
   The record of transformations follows section 4 of the GRAND guidelines.
 
+## Developing
+
 ### Common commands
 
 This is a standard R package developed with `devtools`/`roxygen2`.
@@ -224,6 +214,10 @@ Run these from an R console with the working directory set to the package root
 
 There is no non-R build system — no package.json/Makefile.
 
+Run R in a UTF-8 locale, e.g. `LANG=en_US.UTF-8 Rscript -e "devtools::document()"`.
+Under the C locale, `devtools::document()` writes byte escapes into `man/`
+in place of quotation marks and accented letters, and tibbles print differently.
+
 Some files are generated rather than edited directly — `README.md`, the tutorial
 articles in `vignettes/articles/`, and the cheatsheet.
 See [README and Website](#readme-and-website) below for which source each is built from.
@@ -235,12 +229,13 @@ not by data structure. When looking for a function, search by what it *does*:
 
 | Prefix | Contains |
 |---|---|
-| `make_*.R` | creating/reading/generating networks: `create_*()` (deterministic structures), `generate_*()` (stochastic mechanisms), `read_*()`/`write_*()` (import/export), `play_*()` (diffusion/learning simulations), `data_*`/`manynet-data.R` (bundled datasets: `ison_*` classic/instructional, `fict_*` fictional, `irps_*` international-relations) |
+| `make_*.R` | creating/reading/generating networks: `create_*()` (deterministic structures), `generate_*()` (stochastic mechanisms), `read_*()`/`write_*()` (import/export), `collect_*()` (gathering a network from a source, `make_collect.R`), `play_*()` (diffusion/learning simulations) |
+| `data_*.R` | documentation of the bundled datasets: `ison_*` classic/instructional, `fict_*` fictional, `irps_*` international-relations (see [Datasets](#datasets)) |
 | `coerce_graph.R`, `coerce_list.R`, `coerce_matrix.R` | the `as_*()` translation layer between representations (`as_igraph()`, `as_tidygraph()`, `as_network()`, `as_matrix()`, `as_edgelist()`, `as_siena()`, `as_diffnet()`, …), implemented as S3 methods dispatching on input class |
 | `class_*.R` | the network classes themselves (`class_stocnet.R`: `make_stocnet()`, `print.stocnet()`, the info/nodes/ties/changes/global data model; `class_networks.R`: the legacy `mnet` class, `print.mnet`, `$`/`$<-` accessors), related result classes (`class_measures.R`, `class_members.R`, `class_motifs.R`, `class_models.R`), the `snet_*()` CLI layer (`class_interface.R`), input validation (`class_validate.R`: `validate_stocnet()` and its component validators), and the `describe_*()` helpers behind the print methods (`class_describe.R`) |
 | `manip_*.R` | dplyr-style verbs for manipulating nodes/ties/attributes (`manip_nodes.R`, `manip_ties.R`, `manip_globals.R`, `manip_info.R`, `manip_changes.R`) |
 | `mark_*.R` | logical/predicate functions returning `TRUE`/`FALSE` or marks about a network, e.g. the `is_*()` family (`mark_classes.R`, `mark_features.R`, `mark_format.R`, `mark_changes.R`) |
-| `modif_*.R` | structural transformations/reformatting: direction, weighting, projection, splitting/joining, path/level operations, missing data (`modif_direction.R`, `modif_project.R`, `modif_split.R`, `modif_miss.R`, …) |
+| `modif_*.R` | structural transformations/reformatting: direction, weighting, projection, splitting (`to_*()`, `modif_split.R`) and joining (`from_*()`, `modif_from.R`), path/level operations, missing data (`modif_direction.R`, `modif_project.R`, `modif_miss.R`, …) |
 | `measure_*.R` | descriptive/attribute measures (`measure_attributes.R`, `measure_properties.R`); heavier network-analytic measures live in `{netrics}` |
 | `reexports_classes.R` | re-exports of classes/generics from `{igraph}`/`{tidygraph}`/`{network}` so users need not load those packages directly |
 | `manynet-utils.R`, `manynet-glossary.R`, `manynet-defunct.R` | shared internal helpers, the `gloss()`/glossary system used in tutorials and docs, and defunct-function shims |
@@ -261,12 +256,21 @@ This is what allows multimodal, multiplex, longitudinal/dynamic and modelling-or
 networks (e.g. round-tripping `{RSiena}` `sienadata` objects) to live in one object.
 Conventions to preserve when writing or editing functions:
 
-- `info`: a list of network-level metadata. Reserved elements include `name`, `modes`,
-  `layers`, `directed` (logical, optionally named per layer), `focal` (dependent
-  variables), `centered`, `siena` (RSiena-specific metadata), plus provenance fields
-  `doi`, `date`, `location`, and `source`. Per-layer entries are named after a layer and
-  may carry `sender`, `recipient`, and `update`. Several of these follow the GRAND
-  project's FAIR-aligned metadata standards.
+- `info`: a list of network-level metadata. The reserved elements are listed in
+  `.stocnet_info_fields` (see [R/manip_info.R](../R/manip_info.R)), and include
+  `name`, `modes`, `layers`, `directed` (logical, optionally named per layer),
+  `sender` and `receiver` (the modes a two-mode layer runs from and to),
+  `observation` (`"cross-sectional"`, `"panel"`, `"event"`, `"egocentric"`, or
+  `"cognitive"`, optionally named per layer), `update` (`"replace"` or `"increment"`:
+  how a record of a tie relates to the one before it),
+  `focal` (dependent variables), `centered`,
+  the provenance fields `source`, `method`, `boundary`, `location`, `date`, and `doi`,
+  and `transformations`, the record of what has been done to the network since it was
+  collected. `siena` holds metadata specific to `{RSiena}`. The provenance fields and the transformations follow the GRAND
+  project's FAIR-aligned metadata standards. See `?add_info` for the values each takes,
+  and [Datasets](#datasets) for which to complete.
+  A `time` column alone does not make a panel: `update` decides whether the moments
+  of a network are the waves of a panel or a stream of events.
 - `nodes`: one row per node. The label column is `label` (not `name`); reserved columns
   are `mode` (multimodal/two-mode), `active`/`present` (changing networks), and `na`.
 - `ties`: one row per tie. `from` and `to` are required (even for undirected networks)
@@ -328,8 +332,13 @@ changes stored as a graph attribute — is being progressively deprecated in fav
 
 Many `create_*()`/`generate_*()` functions take an `n` argument that can be a single
 integer (one-mode network) or a length-2 integer vector (two-mode network, the sizes of
-each mode). Coercion functions detect and handle two-mode structure via the `twomode`
-argument and the `type` vertex attribute.
+each mode).
+A `stocnet` holds the mode of each node in `nodes$mode` and names the modes in
+`info$modes`; the logical `type` vertex attribute is how `{igraph}` and `{tidygraph}`
+hold it, and the coercion functions translate between the two,
+detecting two-mode structure or taking it from the `twomode` argument.
+A two-mode network can be directed: `info$sender` and `info$receiver` say which mode
+its ties run from and to, and `is_directed()` reports what the object holds.
 
 ### Console messaging
 
@@ -340,19 +349,32 @@ rather than base `message()`/`stop()`/`warning()` or `{cli}` calls directly:
 | Wrapper | Use for |
 |---|---|
 | `snet_abort()` | errors: the function cannot proceed |
-| `snet_warn()` | the function proceeds, but the user should know something |
+| `snet_warn()` | the function proceeds, but the user should not trust the result without knowing something; raises a real warning condition |
 | `snet_info()` | notable information about what was done, e.g. a defaulted argument |
 | `snet_minor_info()` | incidental detail, e.g. tidying node attributes to `stocnet` conventions |
 | `snet_success()` | confirmation that a requested operation completed |
 | `snet_prompt()` | interactive questions to the user |
-| `snet_unavailable()` | not-yet-implemented features |
+| `snet_unavailable()` | not-yet-implemented features; aborts, as `snet_abort()` does |
 | `snet_progress_step()`, `snet_progress_along()`, `snet_progress_seq()`, `snet_progress_nodes()` | progress reporting in longer-running loops |
 
-Every wrapper except `snet_abort()` (and `snet_prompt()`) is silenced by
-`options(snet_verbosity = "quiet")`, which is the *default* —
-so informational output must never be load-bearing,
-and errors must carry everything the user needs to act.
+One rule decides what the verbosity silences:
+a call that changes control flow or tells the user not to trust a result always fires,
+and a call that only reports is silenced.
+So `snet_abort()`, `snet_unavailable()`, `snet_warn()`, and `snet_prompt()` fire
+whatever the verbosity, and the rest depend on `options(snet_verbosity = )`,
+which takes one of four levels:
+
+| Level | Adds |
+|---|---|
+| `"quiet"` (the *default*) | nothing |
+| `"normal"` | `snet_info()`, `snet_success()` |
+| `"verbose"` | `snet_progress_*()` |
+| `"debug"` | `snet_minor_info()` |
+
 Users opt in with e.g. `options(snet_verbosity = "verbose")`.
+Informational output must therefore never be load-bearing,
+and errors and warnings must carry everything the user needs to act.
+In tests, expect a `snet_warn()` with `expect_warning()`, not `expect_message()`.
 
 These wrappers pass their input to `{cli}`, so:
 
@@ -376,9 +398,12 @@ over "invalid input".
 This package uses the `testthat` package for testing functions.
 Please see the [testthat website](https://testthat.r-lib.org) for more details.
 
-Tests in `tests/testthat/` mirror the `R/` files (e.g. `test-make_create.R`,
-`test-manip_split.R`), alongside `test-functional_*.R` harnesses that sweep whole
+Tests in `tests/testthat/` mostly mirror the `R/` files (e.g. `test-make_create.R`,
+`test-modif_project.R`), alongside `test-functional_*.R` harnesses that sweep whole
 function families.
+Some test files keep an older name than the file they test:
+`test-manip_split.R` tests `R/modif_split.R`, `test-model_play.R` tests `R/make_play.R`,
+and `test-coercion.R` tests all three `R/coerce_*.R` files.
 `tests/testthat/helper-manynet.R` defines the shared fixtures and helpers used across
 tests, and `tests/testthat/helper-functional.R` the family-sweeping machinery.
 Test fixtures (Pajek, UCINET, GraphML, xlsx, etc.) live under `tests/testthat/sheets/`.
@@ -386,6 +411,70 @@ Test fixtures (Pajek, UCINET, GraphML, xlsx, etc.) live under `tests/testthat/sh
 `testthat` edition 3 with parallel execution is configured in `DESCRIPTION`
 (`Config/testthat/parallel: true`);
 `Config/testthat/start-first` prioritises `tutorials_manynet, mark_is`.
+
+The harnesses find the exported functions of a family by their prefix
+(`alive_functions()`, which leaves out defunct shims),
+and run each across a grid of fixtures (`func_fixtures`: directed, two-mode, weighted,
+signed, multiplex, longitudinal, …) and classes.
+A new exported function is therefore tested without a new test:
+that it takes `.data` first, has a default method, returns what its name implies,
+and agrees across classes.
+A combination that does not conform is skipped rather than failed,
+with a message of the form `AUDIT [fn x fixture]: ...`,
+so search the test output for `AUDIT` to find gaps in an implementation.
+Where a function needs further arguments to run, add an entry to `to_argmakers` or
+`meas_argmakers`; where a `to_*()` function implies a property of its result,
+add one to `to_invariants`. Extend these maps rather than writing a one-off test.
+
+### Datasets
+
+The bundled datasets are built by scripts in `data-raw/`,
+saved with `usethis::use_data(<name>, overwrite = TRUE, compress = "bzip2")`,
+and documented in `R/data_ison.R`, `R/data_fict.R`, or `R/data_irps.R`.
+[data-raw/stocnet_conversion.R](../data-raw/stocnet_conversion.R) is the worked example.
+
+- **A new dataset is a `stocnet` object.**
+  Some older datasets are still `mnet` objects, or lists of them,
+  because a released downstream package relies on their class or attribute names;
+  see issues #185 and #186 for which, and for what each waits on.
+- **Record how the network was collected in `info`,** with `add_info()`:
+  `name`, `modes`, `layers`, and `directed` (named per layer where the layers differ);
+  `observation`, and `update` where the ties hold moments;
+  `sender` and `receiver` for a two-mode layer;
+  and the provenance fields `source`, `method`, `boundary`, `location`, `date`, and `doi`.
+  `date` is when the data was collected or what it describes, not when it was published.
+- **Take these details from the publication, not from memory,**
+  and say in a comment in the script where each comes from.
+  Where the source does not give a detail, leave the field out rather than guess.
+- **Keep what the data holds.**
+  A conversion must not change the number of nodes or ties,
+  or how the network marks (`is_directed()`, `is_twomode()`, `is_signed()`, …).
+- **Document what a user cannot read off the object:**
+  who collected it, how, where and when, what a tie and its weight mean,
+  and the references, with a `\doi{}` where there is one.
+  The `@format` block prints the object itself, so it needs no description by hand.
+- A change to the class or contents of a shipped dataset can break a downstream package,
+  so check them first (see [Checking downstream packages](#checking-downstream-packages)).
+
+### Deprecation
+
+A function that is renamed, superseded, or moved keeps working under its old name
+for a time, through a shim in [R/manynet-defunct.R](../R/manynet-defunct.R):
+
+- Document the shim with `#' @describeIn defunct Deprecated on <date>.` and export it.
+- For a rename, call `.Deprecated("<new>", package = "manynet", old = "<old>")`
+  and then the new function, so that the old name still returns a result.
+- For a function moved to another package, call `fn_moved()`,
+  which tells the user where it went and how to install that package.
+- A renamed *argument* keeps working under its former name through `...`
+  and `.former_args()` (see [R/make_generate.R](../R/make_generate.R)).
+- Record the change as `Renamed ... to ...` or `Moved ...` in `NEWS.md`.
+
+Older shims are cleared at a minor release.
+The functional test harnesses leave shims out, so they need no tests of their own
+beyond one that the old name warns and still works.
+
+## Documenting
 
 ### README and Website
 
@@ -448,7 +537,9 @@ Keep the two distinct, as the website does.
 Start each bullet with a verb matching the change type:
 
 - `Added ...` — new functionality
-- `Fixed ...` — bug fixes; if it relates to a GitHub issue, suffix with `(closed #123)`
+- `Fixed ...` — bug fixes; if it relates to a GitHub issue, suffix with `(closes #123)`.
+  Note that GitHub closes the issue only where the same phrase is in a commit message
+  or the pull request description
 - `Renamed ... to ...` — function or data name migrations
 - `Improved ...` — functional updates to existing behaviour
 - `Updated ...` — documentation changes
@@ -490,3 +581,89 @@ behaviour, or an example call.
 The more entries a version holds, the more this structure matters,
 so group first and only then write the bullets.
 
+## Releasing
+
+### Branching and CI
+
+- `main` is the release branch; `develop` is the working branch (clone/work on `develop`).
+- `breaking` runs alongside `develop` and holds the changes that must wait.
+  Put a change on `breaking`, not `develop`, where it would break a *released*
+  downstream package (`{netrics}`, `{autograph}`, `{migraph}`), e.g. a change
+  to the class or contents of shipped data or to what a function returns.
+  Record it under the heading for the version it waits for in `NEWS.md` on `breaking`,
+  which is the first patch or minor release after the downstream packages can take it,
+  and say there which release of which package it waits for.
+  Bug fixes and other non-breaking changes still go on `develop`,
+  which is merged into `breaking` regularly to keep the two in step.
+- PRs into `main` trigger [prchecks.yml](workflows/prchecks.yml): R CMD check
+  (macOS/Windows/Linux), binary build, codecov, lintr, spell check, a reverse-dependency
+  check, a check that the tutorial articles are in sync with the tutorials,
+  and PR metadata checks (DESCRIPTION version bump, PR title/description conventions).
+- Merges/pushes to `main` trigger [pushrelease.yml](workflows/pushrelease.yml):
+  check, auto-bump version tag, GitHub release with binaries, then pkgdown site deploy.
+
+### Checking downstream packages
+
+`{manynet}` is the data layer under `{netrics}`, `{autograph}`, and `{migraph}`,
+so a change here can strand their users until their own next release.
+Before committing a change to shipped data, to a class, or to what a function returns:
+
+1. Build the package from a clean copy and install it into a separate library:
+   `R CMD INSTALL --library=<lib> manynet_<version>.tar.gz`.
+2. Run the test suite of each downstream package against that library, e.g.
+   `R_LIBS=<lib> Rscript -e "devtools::test('<path to netrics>', stop_on_failure = FALSE)"`,
+   and their examples and tutorials, since those are checked on CRAN too.
+3. Compare against the same run on an unchanged `develop`,
+   so that a failure that was already there is not taken for a new one.
+4. Read the backtraces rather than the counts.
+   A failure inside a downstream package's own `R/` code is a real break:
+   the change waits on `breaking` until that package is fixed and released.
+   A failure in its `tests/` is usually an expectation to update there.
+
+The `Reverse dependencies` job in [prchecks.yml](workflows/prchecks.yml) only checks
+that the CRAN releases still find every `{manynet}` object they use.
+It does not run their tests or examples, so it does not replace this check.
+
+### Releasing to CRAN
+
+Once the pull request into `main` passes its checks:
+
+1. Check that the `Version` in `DESCRIPTION` equals the newest heading in `NEWS.md`,
+   and that every bullet under it describes something a user can see.
+2. Build a tarball from a clean copy of the repository and run
+   `R CMD check --as-cran --run-donttest` on it. Read every note.
+3. Check the *CRAN releases* of all reverse dependencies against the new build:
+   download the source tarballs of `{netrics}`, `{autograph}`, `{migraph}`, and
+   `{goldfish}`, and run `R CMD check` on each with the new `{manynet}` first in the
+   library path. CRAN runs the same check, and a failure there stops the submission.
+4. Where a downstream package had to change to work with this release,
+   its own release must be on CRAN first, and must require the `{manynet}` version
+   it needs (`manynet (>= x.y.z)`), so that CRAN never pairs it with an older one.
+5. Write `cran-comments.md` from the results of these checks, not from the last release:
+   the environments that were really tested, the counts of errors, warnings, and notes,
+   the full text of each note with a sentence on why it is acceptable,
+   and the result for each reverse dependency.
+6. CRAN notes a package with more than six releases in the past 180 days
+   ("Number of updates in past 6 months"). Count the releases on CRAN and in its
+   archive before submitting, and say why the release cannot wait if the note will occur.
+7. Submit with `devtools::submit_cran()`, and tag the release only once CRAN has
+   accepted it, since the version may have to move if CRAN asks for changes.
+
+## Git for new contributors
+
+`stocnet` projects are maintained using the git version control system.
+A plain-English introduction to git can be found [here](https://blog.red-badger.com/2016/11/29/gitgithub-in-plain-english),
+and a more recent motivation [here](https://www.r-bloggers.com/2024/04/git-gud-version-control-best-practices/).
+They explain the basics of git version control: committing and repos, pulling and pushing,
+branching and merging.
+
+Using git from the command line can be intimidating,
+so I recommend [Fork](https://git-fork.com) software for Mac and Windows,
+which allows mostly visual management of commits, diffs, and branches.
+
+- **Clone** the remote repository to your computer, and work on the `develop` branch.
+- **Pull** before you start working, so that you have the newest commits and files.
+- **Commit** once you have saved a change: check the diff one last time,
+  and write a commit message in the form of a `NEWS.md` bullet (see above),
+  with the issue it relates to.
+- **Push** the commit to the remote repository, making sure the branch is the one you worked on.
