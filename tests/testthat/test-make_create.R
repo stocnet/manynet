@@ -21,6 +21,12 @@ test_that("ring creation works", {
                matrix(c(1,0,0,0,1,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1),5,5))
   expect_equal(unname(as_matrix(create_ring(c(5,5), width = 2))), 
                matrix(c(1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,0,1,1,1,0,0,0,1,1,1),5,5))
+  # a wider ring ties each node to its next neighbours too, without a warning
+  expect_no_warning(wide <- create_ring(6, width = 2))
+  expect_false(is_directed(wide))
+  expect_equal(unname(rowSums(as_matrix(wide))), rep(4, 6))
+  expect_no_warning(arcs <- create_ring(6, directed = TRUE, width = 2))
+  expect_equal(unname(rowSums(as_matrix(arcs))), rep(2, 6))
   expect_error(create_ring(c(5,5,5)), "single integer")
 })
 

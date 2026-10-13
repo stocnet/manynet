@@ -237,9 +237,12 @@ create_ring <- function(n, directed = FALSE, width = 1, ...) {
       }
       diag(out) <- 0
       out[out > 1] <- 1
+      # Rolling the ring over ties each node to the next but one in one
+      # direction only, so the matrix is not symmetric. "max" ties two nodes
+      # where either cell does, which "undirected" did before igraph 1.6.0.
       out <- igraph::graph_from_adjacency_matrix(out, ifelse(directed,
                                                              "directed",
-                                                             "undirected"))
+                                                             "max"))
     }
   } else if (length(n) == 2) {
     mat <- matrix(0, n[1], n[2])

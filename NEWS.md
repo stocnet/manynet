@@ -68,10 +68,11 @@
   - The arguments these functions share are now documented from one template each
 - Improved `create_wheel()` to return a `stocnet` with network information
   - A signed wheel now carries signs, so it needs a 'netrics' version whose path and community functions read signed weights
-- Fixed `play_diffusion()` to play on 'stocnet' objects, including the package's own data (closes #172)
 - Improved `create_lattice()` 
   - Creates triangular grid lattices with `width = 6`, fixing documentation
   - Creates honeycomb lattices with equal modes, e.g. `n = c(6,6)`
+- Fixed `create_ring()` to give no warning from `{igraph}` where `width=` is more than 1
+- Fixed `play_diffusion()` to play on 'stocnet' objects, including the package's own data (closes #172)
 
 ## Classes
 
