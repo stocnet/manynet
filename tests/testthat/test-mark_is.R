@@ -230,4 +230,11 @@ test_that("is_spatial marks a network whose nodes have positions", {
   expect_false(is_spatial(mutate_nodes(ring, x = 1:4)))
   expect_false(is_spatial(mutate_nodes(ring, x = letters[1:4], y = 4:1)))
   expect_false(is_spatial(as_matrix(ring)))
+  # a height is part of a position under any of its names, but is not required
+  high <- mutate_nodes(ring, lat = 1:4, lon = 4:1, elevation = c(5, 6, 7, 8))
+  expect_equal(manynet:::.node_coordinates(high)$z, c(5, 6, 7, 8),
+               ignore_attr = TRUE)
+  expect_null(manynet:::.node_coordinates(mutate_nodes(ring, x = 1:4, y = 4:1))$z)
+  expect_null(manynet:::.node_coordinates(
+    mutate_nodes(ring, x = 1:4, y = 4:1, alt = letters[1:4]))$z)
 })

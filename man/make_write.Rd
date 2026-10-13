@@ -107,6 +107,9 @@ and so are written as positions in the network.
 with each node as a point and each tie as a line between two nodes,
 and with their attributes as the properties of those features.
 Since a network does not hold the shape of a tie, each line is straight.
+A height the nodes have, as 'z', 'elevation', 'altitude', or 'alt',
+is written as the third coordinate of their positions,
+and so is read back as 'z'.
 The direction of a tie is not written.
 }
 \seealso{

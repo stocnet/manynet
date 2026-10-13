@@ -457,5 +457,10 @@ test_that("write_geojson and read_geojson are compatible", {
   back <- read_geojson(file)
   expect_equal(back$nodes$x, c(6.1, 6.6, 8.5, 7.4))
   expect_equal(nrow(back$ties), 4)
+  # a height is written as the third coordinate, whatever it is called
+  write_geojson(mutate_nodes(globe, altitude = c(375, 495, 408, 540)), file)
+  back <- read_geojson(file)
+  expect_equal(back$nodes$z, c(375, 495, 408, 540))
+  expect_false("altitude" %in% names(back$nodes))
   expect_error(write_geojson(create_ring(5), file), "spatial")
 })

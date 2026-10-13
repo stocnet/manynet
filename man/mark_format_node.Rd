@@ -50,6 +50,9 @@ than 'names' or 'type'.
 \item \code{is_spatial()} marks networks TRUE if the nodes have positions,
 that is a pair of numeric nodal attributes called 'x' and 'y',
 or 'lat' and 'lon' ('long', 'lng'), or 'latitude' and 'longitude'.
+A position may also have a height,
+called 'z', 'elevation', 'altitude', or 'alt',
+though it takes no height to be spatial.
 Note that this is all a network records of a position,
 so a network read with the positions of a layout,
 such as one exported from Gephi, is marked spatial too.

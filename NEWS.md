@@ -147,6 +147,7 @@
   - Fixed `is_egolist()` to mark an empty or unnamed list FALSE, rather than fail
 - Added `is_disaggregated()` to mark networks that hold parallel ties
 - Added `is_spatial()` to mark networks whose nodes have positions, as 'x' and 'y' or 'lat' and 'lon'
+  - A height is read from 'z', 'elevation', 'altitude', or 'alt', which `write_geojson()` writes as the third coordinate
 - Fixed `is_directed()` to mark a directed two-mode network TRUE (closes #157)
 
 ## Data

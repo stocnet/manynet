@@ -16,6 +16,9 @@
 #'   - `is_spatial()` marks networks TRUE if the nodes have positions,
 #'   that is a pair of numeric nodal attributes called 'x' and 'y',
 #'   or 'lat' and 'lon' ('long', 'lng'), or 'latitude' and 'longitude'.
+#'   A position may also have a height,
+#'   called 'z', 'elevation', 'altitude', or 'alt',
+#'   though it takes no height to be spatial.
 #'   Note that this is all a network records of a position,
 #'   so a network read with the positions of a layout,
 #'   such as one exported from Gephi, is marked spatial too.
@@ -262,7 +265,8 @@ is_spatial.default <- function(.data) {
 # The positions of the nodes, or NULL where the nodes have none.
 # A position is a pair of numeric nodal attributes, named as a plane names them
 # ('x' and 'y') or as a globe does ('lon' and 'lat'), which `geographic` tells
-# apart. Both `is_spatial()` and `write_geojson()` read positions from here,
+# apart. A height may accompany either, as 'z' or under one of its other names.
+# Both `is_spatial()` and `write_geojson()` read positions from here,
 # so that a network marked spatial is one that can be written as such.
 .node_coordinates <- function(.data) {
   attrs <- net_node_attributes(.data)
@@ -281,9 +285,10 @@ is_spatial.default <- function(.data) {
     x <- numbers(vars[1])
     y <- numbers(vars[2])
     if(is.null(x) || is.null(y)) next
-    z <- numbers(find("z"))
+    height <- find(c("z", "elevation", "altitude", "alt"))
+    z <- numbers(height)
     return(list(x = x, y = y, z = z, geographic = pair$geographic,
-                vars = c(vars, if(!is.null(z)) find("z"))))
+                vars = c(vars, if(!is.null(z)) height)))
   }
   NULL
 }
