@@ -9,8 +9,8 @@ formats <- formats[!grepl("^graph$", formats)]
 
 for(fm in formats) {
   test_that(paste("read and write", fm, "are compatible"), {
-    skip_if(grepl("nodelist|pajek|gdf|dynetml", fm),
-            message = "nodelist and pajek read/write not tested yet; gdf and dynetml require node ids, so unlabelled networks gain names on round-trip")
+    skip_if(grepl("nodelist|pajek|gdf|dynetml|geojson", fm),
+            message = "nodelist and pajek read/write not tested yet; gdf and dynetml require node ids, so unlabelled networks gain names on round-trip; geojson requires node positions")
     skip_if_not_installed("readxl")
     file <-  tempfile() # Create file
     write_funs[[paste0("write_", fm)]](create_ring(5), filename = file)
@@ -373,3 +373,78 @@ test_that("write_gexf writes a colour it cannot resolve as an attribute", {
 #   #              as.matrix(out))
 #   # on.exit(unlink(file)) # Unlink file
 # })
+
+test_that("read_geojson reads lines as ties between their ends", {
+  skip_if_not_installed("jsonlite")
+  file <- testthat::test_path("sheets", "roads.geojson")
+  # the polygon is neither a line nor a point
+  expect_warning(roads <- read_geojson(file, junctions = FALSE), "Dropped 1")
+  expect_s3_class(roads, "stocnet")
+  expect_true(is_spatial(roads))
+  expect_false(is_directed(roads))
+  # each part of a 'MultiLineString' is a tie of its own
+  expect_equal(nrow(roads$ties), 8)
+  expect_equal(nrow(roads$nodes), 11)
+  expect_equal(roads$ties$length[1:3], c(7, 3, 3))
+  expect_equal(roads$info$crs, "urn:ogc:def:crs:EPSG::3395")
+  # a point describes the node at its position, or else is an isolate
+  expect_equal(roads$nodes$place[1:3], c("Roma", "Ostia", "Capreae"))
+  expect_false(3 %in% c(roads$ties$from, roads$ties$to))
+  expect_equal(roads$nodes$z[1], 10)
+})
+
+test_that("read_geojson joins ties at nodes where nothing else meets", {
+  skip_if_not_installed("jsonlite")
+  file <- testthat::test_path("sheets", "roads.geojson")
+  roads <- suppressWarnings(read_geojson(file))
+  expect_equal(nrow(roads$ties), 5)
+  expect_equal(nrow(roads$nodes), 8)
+  expect_equal(roads$ties$segments, c(3, 2, 1, 1, 1))
+  expect_equal(roads$ties$length[1], 13)
+  # what the segments share is kept, and what they do not is listed
+  expect_equal(roads$ties$kind[1], "main")
+  expect_equal(roads$ties$road[1], "Via Prima; Via Secunda")
+  # numeric attributes are averaged along the length of the tie
+  expect_equal(roads$ties$slope[1], (1 * 7 + 3 * 3 + 5 * 3) / 13)
+  expect_true(is.na(roads$ties$slope[3]))
+  # Ostia is where a line was divided, but a point describes it
+  expect_true("Ostia" %in% roads$nodes$place)
+  # a tolerance joins ends that only nearly meet
+  near <- suppressWarnings(read_geojson(file, tolerance = 1))
+  expect_equal(nrow(near$ties), 4)
+  expect_equal(near$ties$segments[2], 3)
+})
+
+test_that("read_geojson requires lines", {
+  skip_if_not_installed("jsonlite")
+  file <- tempfile(fileext = ".geojson")
+  on.exit(unlink(file))
+  writeLines('{"type": "Point", "coordinates": [0, 0]}', file)
+  expect_error(read_geojson(file), "No lines")
+  # without a coordinate reference system, lengths are in metres on the globe
+  writeLines('{"type": "LineString", "coordinates": [[0, 0], [0, 1]]}', file)
+  expect_equal(read_geojson(file)$ties$length, 111195, tolerance = 1e-4)
+})
+
+test_that("write_geojson and read_geojson are compatible", {
+  skip_if_not_installed("jsonlite")
+  file <- tempfile(fileext = ".geojson")
+  on.exit(unlink(file))
+  for(junctions in c(TRUE, FALSE)) {
+    roads <- suppressWarnings(read_geojson(
+      testthat::test_path("sheets", "roads.geojson"), junctions = junctions))
+    write_geojson(roads, file)
+    # every node is written as a point, so none is joined across on return
+    back <- read_geojson(file, junctions = junctions)
+    expect_equal(back$nodes, roads$nodes)
+    expect_equal(back$ties, roads$ties)
+    expect_equal(back$info, roads$info)
+  }
+  globe <- mutate_nodes(create_ring(4), lat = c(46.2, 46.5, 47.4, 46.9),
+                        long = c(6.1, 6.6, 8.5, 7.4))
+  write_geojson(globe, file)
+  back <- read_geojson(file)
+  expect_equal(back$nodes$x, c(6.1, 6.6, 8.5, 7.4))
+  expect_equal(nrow(back$ties), 4)
+  expect_error(write_geojson(create_ring(5), file), "spatial")
+})

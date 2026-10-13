@@ -15,6 +15,12 @@
   - `generate_citations()` now takes `degree=` for `ties=`
   - `generate_man()` now takes `p=` for `man=`
   - The former names still work
+- Added `read_geojson()` for reading the lines of a GeoJSON file, such as roads or rivers, as a spatial network
+  - Each line is a tie between its two ends, with the positions of the nodes as 'x', 'y', and 'z'
+  - Ties get a 'length' measured along the line, and points in the file describe the nodes at their positions
+  - `junctions = TRUE` joins the ties that meet at a node where nothing else does
+  - `tolerance=` sets how far apart two ends can be and still be the same node
+- Added `write_geojson()` for writing a spatial network as points and the straight lines between them
 - Added `collect_emails()` for collecting an email network from an exported mailbox
   - Reads the headers of 'mbox' files, '.eml' files, and 'Maildir' folders
   - Returns a dynamic, directed `stocnet` in which each tie is stamped with when its message was sent
@@ -139,6 +145,7 @@
   - `is_egocentric()` marks the networks that a name generator collects
   - Fixed `is_egolist()` to mark an empty or unnamed list FALSE, rather than fail
 - Added `is_disaggregated()` to mark networks that hold parallel ties
+- Added `is_spatial()` to mark networks whose nodes have positions, as 'x' and 'y' or 'lat' and 'lon'
 - Fixed `is_directed()` to mark a directed two-mode network TRUE (closes #157)
 
 ## Data

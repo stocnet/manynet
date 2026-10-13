@@ -12,6 +12,7 @@
 \alias{write_gdf}
 \alias{write_gexf}
 \alias{write_dynetml}
+\alias{write_geojson}
 \title{Making networks to external files}
 \source{
 \code{write_ucinet()} kindly supplied by Christian Steglich,
@@ -37,6 +38,8 @@ write_gdf(.data, filename, ...)
 write_gexf(.data, filename, ...)
 
 write_dynetml(.data, filename, ...)
+
+write_geojson(.data, filename, ...)
 }
 \arguments{
 \item{.data}{An object of a \code{{manynet}}-consistent class:
@@ -80,6 +83,8 @@ file formats:
 \item \code{write_gml()} exports GML files.
 \item \code{write_gdf()} exports GDF files.
 \item \code{write_gexf()} exports GEXF files, for example for use in Gephi.
+\item \code{write_geojson()} exports a spatial network as a GeoJSON file,
+for example for use in a geographic information system.
 }
 }
 \details{
@@ -97,6 +102,12 @@ A colour named some other way, such as "red",
 is written as an ordinary attribute, which reads back unchanged.
 Node names are written as labels, since node ids are required by the format
 and so are written as positions in the network.
+
+\code{write_geojson()} writes a spatial network (see \code{\link[=is_spatial]{is_spatial()}}),
+with each node as a point and each tie as a line between two nodes,
+and with their attributes as the properties of those features.
+Since a network does not hold the shape of a tie, each line is straight.
+The direction of a tie is not written.
 }
 \seealso{
 \link{as}

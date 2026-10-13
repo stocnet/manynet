@@ -1,0 +1,18 @@
+{
+"type": "FeatureCollection",
+"name": "roads",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::3395" } },
+"features": [
+{ "type": "Feature", "properties": { "road": "Via Prima", "kind": "main", "slope": 1.0 }, "geometry": { "type": "LineString", "coordinates": [ [ 0, 0, 10 ], [ 3, 0, 10 ], [ 3, 4, 20 ] ] } },
+{ "type": "Feature", "properties": { "road": "Via Prima", "kind": "main", "slope": 3.0 }, "geometry": { "type": "LineString", "coordinates": [ [ 3, 4, 20 ], [ 3, 7, 30 ] ] } },
+{ "type": "Feature", "properties": { "road": "Via Secunda", "kind": "main", "slope": 5.0 }, "geometry": { "type": "LineString", "coordinates": [ [ 3, 7, 30 ], [ 3, 10, 40 ] ] } },
+{ "type": "Feature", "properties": { "road": "Via Tertia", "kind": "minor", "slope": 2.0 }, "geometry": { "type": "LineString", "coordinates": [ [ 3, 10, 40 ], [ 9, 10, 40 ] ] } },
+{ "type": "Feature", "properties": { "road": "Via Quarta", "kind": "minor", "slope": null }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 3, 10, 40 ], [ 3, 15, 50 ] ], [ [ 3, 15, 50 ], [ 7, 15, 50 ] ] ] } },
+{ "type": "Feature", "properties": { "road": "Via Quinta", "kind": "minor", "slope": 0.0 }, "geometry": { "type": "LineString", "coordinates": [ [ 9, 10, 40 ], [ 9.4, 12, 40 ] ] } },
+{ "type": "Feature", "properties": { "road": "Via Sexta", "kind": "minor", "slope": 0.0 }, "geometry": { "type": "LineString", "coordinates": [ [ 9, 12, 40 ], [ 9, 20, 40 ] ] } },
+{ "type": "Feature", "properties": { "place": "Roma" }, "geometry": { "type": "Point", "coordinates": [ 0, 0, 10 ] } },
+{ "type": "Feature", "properties": { "place": "Ostia" }, "geometry": { "type": "Point", "coordinates": [ 3, 15, 50 ] } },
+{ "type": "Feature", "properties": { "place": "Capreae" }, "geometry": { "type": "Point", "coordinates": [ 20, 20, 0 ] } },
+{ "type": "Feature", "properties": { "place": "Latium" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 0, 0 ], [ 10, 0 ], [ 10, 10 ], [ 0, 0 ] ] ] } }
+]
+}

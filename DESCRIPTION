@@ -22,6 +22,7 @@ Imports:
     pillar,
     tidygraph
 Suggests:
+    jsonlite,
     methods,
     readxl,
     RSiena,

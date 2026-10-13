@@ -218,3 +218,16 @@ test_that("tie_is_twomode marks the ties of a stocnet that join the two modes", 
                sum(tie_attribute(fict_actually, "layer") == "appearance"))
   expect_false(any(tie_is_twomode(ison_karateka)))
 })
+
+test_that("is_spatial marks a network whose nodes have positions", {
+  ring <- create_ring(4)
+  expect_false(is_spatial(ring))
+  expect_true(is_spatial(mutate_nodes(ring, x = 1:4, y = 4:1)))
+  expect_true(is_spatial(mutate_nodes(ring, lat = 1:4, lon = 4:1)))
+  expect_true(is_spatial(mutate_nodes(ring, Latitude = 1:4, Longitude = 4:1)))
+  expect_true(is_spatial(as_igraph(mutate_nodes(ring, lat = 1:4, long = 4:1))))
+  # a position takes both coordinates, and they must be numbers
+  expect_false(is_spatial(mutate_nodes(ring, x = 1:4)))
+  expect_false(is_spatial(mutate_nodes(ring, x = letters[1:4], y = 4:1)))
+  expect_false(is_spatial(as_matrix(ring)))
+})

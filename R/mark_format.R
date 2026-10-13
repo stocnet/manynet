@@ -13,11 +13,17 @@
 #'   for the nodes.
 #'   - `is_attributed()` marks networks TRUE if there are other nodal attributes
 #'   than 'names' or 'type'.
+#'   - `is_spatial()` marks networks TRUE if the nodes have positions,
+#'   that is a pair of numeric nodal attributes called 'x' and 'y',
+#'   or 'lat' and 'lon' ('long', 'lng'), or 'latitude' and 'longitude'.
+#'   Note that this is all a network records of a position,
+#'   so a network read with the positions of a layout,
+#'   such as one exported from Gephi, is marked spatial too.
 #'   - `is_egolist()` marks TRUE a list of networks, one for each node of a
 #'   network, as `to_egos()` returns. Unlike the other marks here, it marks a
 #'   list and not a network, so a single network is always FALSE.
 #' @template param_data
-#' @eval detail_avail("is_(twomode|multilevel|labelled|attributed|egolist)")
+#' @eval detail_avail("is_(twomode|multilevel|labelled|attributed|spatial|egolist)")
 #' @family marks
 NULL
 
@@ -239,6 +245,47 @@ is_attributed <- function(.data) UseMethod("is_attributed")
 is_attributed.default <- function(.data) {
   length(setdiff(net_node_attributes(.data),
                  manynet_reserved_node_attributes))!=0
+}
+
+#' @rdname mark_format_node
+#' @examples
+#' is_spatial(ison_algebra)
+#' is_spatial(mutate_nodes(create_ring(4), x = c(0, 1, 1, 0), y = c(0, 0, 1, 1)))
+#' @export
+is_spatial <- function(.data) UseMethod("is_spatial")
+
+#' @export
+is_spatial.default <- function(.data) {
+  !is.null(.node_coordinates(.data))
+}
+
+# The positions of the nodes, or NULL where the nodes have none.
+# A position is a pair of numeric nodal attributes, named as a plane names them
+# ('x' and 'y') or as a globe does ('lon' and 'lat'), which `geographic` tells
+# apart. Both `is_spatial()` and `write_geojson()` read positions from here,
+# so that a network marked spatial is one that can be written as such.
+.node_coordinates <- function(.data) {
+  attrs <- net_node_attributes(.data)
+  if(length(attrs) == 0) return(NULL)
+  find <- function(aka) attrs[tolower(attrs) %in% aka][1]
+  numbers <- function(var) {
+    if(is.na(var)) return(NULL)
+    val <- node_attribute(.data, var)
+    if(is.numeric(val)) val else NULL
+  }
+  pairs <- list(list(x = "x", y = "y", geographic = FALSE),
+                list(x = c("lon", "long", "lng", "longitude"),
+                     y = c("lat", "latitude"), geographic = TRUE))
+  for(pair in pairs) {
+    vars <- c(find(pair$x), find(pair$y))
+    x <- numbers(vars[1])
+    y <- numbers(vars[2])
+    if(is.null(x) || is.null(y)) next
+    z <- numbers(find("z"))
+    return(list(x = x, y = y, z = z, geographic = pair$geographic,
+                vars = c(vars, if(!is.null(z)) find("z"))))
+  }
+  NULL
 }
 
 #' @rdname mark_format_node
