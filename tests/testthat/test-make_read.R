@@ -386,7 +386,7 @@ test_that("read_geojson reads lines as ties between their ends", {
   expect_equal(nrow(roads$ties), 8)
   expect_equal(nrow(roads$nodes), 11)
   expect_equal(roads$ties$length[1:3], c(7, 3, 3))
-  expect_equal(roads$info$crs, "urn:ogc:def:crs:EPSG::3395")
+  expect_equal(roads$info$crs, "urn:ogc:def:crs:EPSG::32633")
   # a point describes the node at its position, or else is an isolate
   expect_equal(roads$nodes$place[1:3], c("Roma", "Ostia", "Capreae"))
   expect_false(3 %in% c(roads$ties$from, roads$ties$to))
@@ -423,6 +423,17 @@ test_that("read_geojson requires lines", {
   expect_error(read_geojson(file), "No lines")
   # without a coordinate reference system, lengths are in metres on the globe
   writeLines('{"type": "LineString", "coordinates": [[0, 0], [0, 1]]}', file)
+  expect_equal(read_geojson(file)$ties$length, 111195, tolerance = 1e-4)
+  # nor are lengths left as a Mercator projection stretches them
+  line <- function(crs, y) paste0(
+    '{"type": "FeatureCollection", "crs": {"type": "name", "properties": ',
+    '{"name": "urn:ogc:def:crs:EPSG::', crs, '"}}, "features": [{"type": ',
+    '"Feature", "properties": null, "geometry": {"type": "LineString", ',
+    '"coordinates": [[0, ', y[1], '], [0, ', y[2], ']]}}]}')
+  # northings of 60 and 61 degrees north in each projection
+  writeLines(line(3857, c(8399737.89, 8625823.20)), file)
+  expect_equal(read_geojson(file)$ties$length, 111195, tolerance = 1e-4)
+  writeLines(line(3395, c(8362698.55, 8588415.03)), file)
   expect_equal(read_geojson(file)$ties$length, 111195, tolerance = 1e-4)
 })
 

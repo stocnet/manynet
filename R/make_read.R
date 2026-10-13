@@ -104,6 +104,7 @@
 #'   together with a 'length' that is measured along the line,
 #'   unless the file gives the lines a 'length' of its own:
 #'   in metres where the coordinates are longitudes and latitudes,
+#'   or those of a Mercator projection (EPSG:3395 or EPSG:3857),
 #'   and otherwise in the units of the coordinates.
 #'   The shape of the line itself is not retained.
 #'   Any points in the file describe the nodes at their positions,
@@ -1685,8 +1686,12 @@ read_geojson <- function(file = file.choose(), junctions = TRUE,
 
   # A file that declares no coordinate reference system holds longitudes and
   # latitudes, as does one that declares the system that names those.
+  # The Mercator projections stretch distances the further they are from the
+  # equator, so their lengths are measured on the globe too.
   crs <- gj$crs$properties$name
-  geographic <- is.null(crs) || grepl("CRS84|EPSG:+4326", crs)
+  system <- if(is.null(crs) || grepl("CRS84|EPSG:+4326$", crs)) "globe" else
+    if(grepl("EPSG:+3395$", crs)) "mercator" else
+      if(grepl("EPSG:+(3857|900913)$", crs)) "webmercator" else "plane"
 
   # The nodes are the points and the two ends of every line. Points come first
   # so that a file of points and the lines between them, such as
@@ -1728,7 +1733,7 @@ read_geojson <- function(file = file.choose(), junctions = TRUE,
   # which a file that draws its lines straight could not otherwise return
   if(!is.numeric(ties[["length"]]))
     ties$length <- vapply(lines$coords, .geojson_length, numeric(1),
-                          geographic = geographic)
+                          system = system)
   if(junctions) {
     joined <- .geojson_join(nodes, ties, protect = unique(placed))
     nodes <- joined$nodes
@@ -1789,11 +1794,26 @@ read_geojson <- function(file = file.choose(), junctions = TRUE,
 }
 
 # The length of a line: along the plane in the units of its coordinates,
-# or in metres along the great circles between longitudes and latitudes.
-.geojson_length <- function(m, geographic) {
-  if(!geographic) return(sum(sqrt(diff(m[,1])^2 + diff(m[,2])^2)))
-  lon <- m[,1] * pi / 180
-  lat <- m[,2] * pi / 180
+# or in metres along the great circles between longitudes and latitudes,
+# which the coordinates of a Mercator projection are first returned to.
+.geojson_length <- function(m, system) {
+  if(system == "plane") return(sum(sqrt(diff(m[,1])^2 + diff(m[,2])^2)))
+  if(system == "globe") {
+    lon <- m[,1] * pi / 180
+    lat <- m[,2] * pi / 180
+  } else {
+    # the equatorial radius of the WGS 84 ellipsoid, which both projections use
+    lon <- m[,1] / 6378137
+    scaled <- exp(-m[,2] / 6378137)
+    lat <- pi / 2 - 2 * atan(scaled)
+    # World Mercator projects from the ellipsoid, and so has no closed inverse
+    if(system == "mercator") {
+      ecc <- 0.0818191908426215
+      for(i in 1:6)
+        lat <- pi / 2 - 2 * atan(scaled * ((1 - ecc * sin(lat)) /
+                                             (1 + ecc * sin(lat)))^(ecc / 2))
+    }
+  }
   a <- sin(diff(lat) / 2)^2 +
     cos(lat[-length(lat)]) * cos(lat[-1]) * sin(diff(lon) / 2)^2
   sum(2 * 6371008.8 * asin(pmin(1, sqrt(a))))

@@ -173,6 +173,7 @@ The properties of a line become the attributes of its tie,
 together with a 'length' that is measured along the line,
 unless the file gives the lines a 'length' of its own:
 in metres where the coordinates are longitudes and latitudes,
+or those of a Mercator projection (EPSG:3395 or EPSG:3857),
 and otherwise in the units of the coordinates.
 The shape of the line itself is not retained.
 Any points in the file describe the nodes at their positions,

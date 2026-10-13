@@ -17,7 +17,8 @@
   - The former names still work
 - Added `read_geojson()` for reading the lines of a GeoJSON file, such as roads or rivers, as a spatial network
   - Each line is a tie between its two ends, with the positions of the nodes as 'x', 'y', and 'z'
-  - Ties get a 'length' measured along the line, and points in the file describe the nodes at their positions
+  - Ties get a 'length' measured along the line, in metres for longitudes and latitudes and for Mercator projections
+  - Points in the file describe the nodes at their positions
   - `junctions = TRUE` joins the ties that meet at a node where nothing else does
   - `tolerance=` sets how far apart two ends can be and still be the same node
 - Added `write_geojson()` for writing a spatial network as points and the straight lines between them
