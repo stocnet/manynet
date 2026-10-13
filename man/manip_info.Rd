@@ -30,6 +30,8 @@ net_attributes(.data)
 \item "modes" is the name(s) of the nodeset(s)
 \item "layers" is the name(s) of the tie type(s)
 \item "directed" is a logical vector indicating whether each layer is directed
+\item "signed" is a logical vector indicating whether each layer is signed,
+which \code{to_signed()} sets and \code{to_unsigned()} removes
 \item "source" is the source of the network ("empirical" or "synthetic")
 \item "method" is the method of data collection or model used
 (e.g. "survey", "interview","sensor","observation","archival", or "simulation")

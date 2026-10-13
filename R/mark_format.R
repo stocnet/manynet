@@ -461,6 +461,10 @@ is_signed.matrix <- function(.data) {
 #' @export
 is_signed.igraph <- function(.data) {
   if("sign" %in% igraph::edge_attr_names(.data)) return(TRUE)
+  # a network coerced from a 'stocnet' carries the record that it is signed,
+  # which says so even where no tie happens to be negative
+  if("signed" %in% igraph::graph_attr_names(.data) &&
+     isTRUE(any(igraph::graph_attr(.data, "signed")))) return(TRUE)
   # a signed network can also be held as negative weights, as it is in
   # 'stocnet' objects, so that coercion from one does not lose the sign
   "weight" %in% igraph::edge_attr_names(.data) &&
@@ -470,6 +474,9 @@ is_signed.igraph <- function(.data) {
 #' @export
 is_signed.stocnet <- function(.data) {
   if("sign" %in% net_tie_attributes(.data)) return(TRUE)
+  # the signs are held as the signs of the weights, so `info$signed` records
+  # that a network is signed where none of its ties happens to be negative
+  if(isTRUE(any(.data$info$signed))) return(TRUE)
   "weight" %in% net_tie_attributes(.data) &&
     any(.data$ties$weight < 0, na.rm = TRUE)
 }
@@ -482,6 +489,8 @@ is_signed.tbl_graph <- function(.data) {
 #' @export
 is_signed.network <- function(.data) {
   if("sign" %in% network::list.edge.attributes(.data)) return(TRUE)
+  # a network coerced from a 'stocnet' carries the record that it is signed
+  if(isTRUE(any(.data$gal$signed))) return(TRUE)
   "weight" %in% network::list.edge.attributes(.data) &&
     any(unlist(network::get.edge.attribute(.data, "weight")) < 0, na.rm = TRUE)
 }

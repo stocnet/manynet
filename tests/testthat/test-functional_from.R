@@ -223,9 +223,10 @@ test_that("from_layers() warns about conflicting dates and DOIs it resolves", {
   sn2 <- add_info(as_stocnet(create_star(8)), date = "1999",
                   doi = "10.1/second")
   # both fields conflict, so both are warned about
-  expect_warning(expect_warning(out <- from_layers(a = sn1, b = sn2),
-                                "different 'date'"),
-                 "different 'doi'")
+  # the star is unlabelled, so its nodes are added as new nodes, with a warning
+  expect_warning(expect_warning(expect_warning(
+    out <- from_layers(a = sn1, b = sn2), "different 'date'"),
+    "different 'doi'"), "added as new nodes")
   out <- suppressWarnings(from_layers(a = sn1, b = sn2))
   expect_identical(out$info$date, "1999")
   expect_identical(out$info$doi, "10.1/first")

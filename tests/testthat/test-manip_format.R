@@ -286,3 +286,29 @@ test_that("to_unweighted records the threshold and the ties it deleted", {
   # a matrix has nowhere to hold information about itself
   expect_true(is.matrix(to_unweighted(as_matrix(w), threshold = 5)))
 })
+
+test_that("a network signed with only positive ties is still signed", {
+  # A stocnet holds the sign of a tie as the sign of its weight, so that the
+  # network is signed is recorded in its info, and carried to other classes.
+  ring <- create_ring(8)
+  for(x in list(as_stocnet(ring), as_tidygraph(ring), as_igraph(ring),
+                as_network(ring))){
+    pos <- to_signed(x, mark = rep(TRUE, 8))
+    expect_s3_class(pos, class(x)[1])
+    expect_true(is_signed(pos))
+    expect_false(is_weighted(pos))
+    expect_true(all(tie_signs(pos) == 1))
+    expect_true(is_signed(as_stocnet(pos)))
+    expect_true(as_stocnet(pos)$info$signed)
+    expect_true(is_signed(as_igraph(as_stocnet(pos))))
+    expect_true(is_signed(as_network(as_stocnet(pos))))
+    expect_false(is_signed(to_unsigned(pos)))
+    expect_false(is_signed(to_unsigned(as_igraph(as_stocnet(pos)))))
+  }
+  expect_null(to_unsigned(to_signed(as_stocnet(ring), rep(TRUE, 8)))$info$signed)
+  expect_false(is_signed(as_stocnet(ring)))
+  # a weighted network keeps the magnitude of its weights
+  wtd <- to_signed(mutate_ties(as_stocnet(ring), weight = 1:8),
+                   mark = rep(c(TRUE, FALSE), 4))
+  expect_equal(wtd$ties$weight, c(1, -2, 3, -4, 5, -6, 7, -8))
+})

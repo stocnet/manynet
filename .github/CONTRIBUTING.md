@@ -259,6 +259,8 @@ Conventions to preserve when writing or editing functions:
 - `info`: a list of network-level metadata. The reserved elements are listed in
   `.stocnet_info_fields` (see [R/manip_info.R](../R/manip_info.R)), and include
   `name`, `modes`, `layers`, `directed` (logical, optionally named per layer),
+  `signed` (logical, optionally named per layer: the sign of a tie is the sign of its
+  weight, so this says a network is signed where no tie is negative),
   `sender` and `receiver` (the modes a two-mode layer runs from and to),
   `observation` (`"cross-sectional"`, `"panel"`, `"event"`, `"egocentric"`, or
   `"cognitive"`, optionally named per layer), `update` (`"replace"` or `"increment"`:

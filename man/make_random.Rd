@@ -3,12 +3,15 @@
 \name{make_random}
 \alias{make_random}
 \alias{generate_random}
+\alias{generate_degree}
 \alias{generate_configuration}
 \alias{generate_man}
 \alias{generate_utilities}
 \title{Making unconditional and conditional random networks}
 \usage{
 generate_random(n, p = 0.5, directed = FALSE, with_attr = TRUE)
+
+generate_degree(n, p = 1, directed = FALSE, outdegree = NULL, indegree = NULL)
 
 generate_configuration(
   n,
@@ -45,7 +48,7 @@ a network of the same dimensions will be created.
 which is what makes a network of it more or less random.
 It always follows \code{n}, and what it is the probability of depends on
 the model.
-For \code{generate_random()}, it is the proportion of possible ties in the network that are realised or, if an integer greater than 1, the number of ties in the network, by default 0.5. For \code{generate_configuration()}, it is the share of the ties that are switched with one another, by default 1, so that 0 returns the network as it was. For \code{generate_man()}, it is a vector of three: the proportions of Mutual, Asymmetric, and Null dyads, which is inferred from \code{n} if that is a network and is otherwise \code{c(0.25, 0.5, 0.25)}. For \code{generate_utilities()}, it is the share of the utilities that are ties, by default 1.}
+For \code{generate_random()}, it is the proportion of possible ties in the network that are realised or, if an integer greater than 1, the number of ties in the network, by default 0.5. For \code{generate_degree()}, it is the share of the ties that are switched with one another, by default 1, so that 0 returns the network as it was. For \code{generate_man()}, it is a vector of three: the proportions of Mutual, Asymmetric, and Null dyads, which is inferred from \code{n} if that is a network and is otherwise \code{c(0.25, 0.5, 0.25)}. For \code{generate_utilities()}, it is the share of the utilities that are ties, by default 1.}
 
 \item{directed}{Logical whether the network should be directed.
 By default \code{directed = FALSE},
@@ -136,8 +139,10 @@ They are particularly useful for creating a distribution of networks
 for exploring or testing network properties.
 \itemize{
 \item \code{generate_random()} generates a random network with ties appearing at some probability.
-\item \code{generate_configuration()} generates a random network consistent with a
+\item \code{generate_degree()} generates a random network consistent with a
 given degree distribution, as the random counterpart of \code{create_degree()}.
+\code{generate_configuration()} is an alias, since this is the configuration
+model.
 \item \code{generate_man()} generates a random network conditional on the dyad census
 of Mutual, Asymmetric, and Null dyads, respectively.
 \item \code{generate_utilities()} generates the utility that each node finds in
@@ -154,7 +159,7 @@ As an alternative, an existing network can be provided to \code{n}
 and the number of modes, nodes, and directedness will be inferred.
 }
 \details{
-\code{generate_configuration()} keeps the degree of every node and is random
+\code{generate_degree()} keeps the degree of every node and is random
 in which nodes are tied.
 The degrees are those of the network given as \code{n},
 or those given as \code{outdegree} and \code{indegree}, as for \code{create_degree()}.
@@ -210,8 +215,8 @@ and more of them are far enough from 0 to be ties than at the start.
 \examples{
 generate_random(12, 0.4)
 # generate_random(c(6, 6), 0.4)
-generate_configuration(12, outdegree = 3)
-generate_configuration(create_core(12), p = 0.25)
+generate_degree(12, outdegree = 3)
+generate_degree(create_core(12), p = 0.25)
 generate_man(6)
 generate_man(6, p = c(0.3, 0, 0.7))
 generate_man(c(4, 6))

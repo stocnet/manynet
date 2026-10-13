@@ -215,7 +215,9 @@ from_times <- function(netlist) {
 #' @param ... Two or more networks over the same nodes to be merged,
 #'   or a single list of such networks, such as that returned by `to_layers()`.
 #'   Nodes are matched by name where the networks are labelled,
-#'   and by position where they are not and are the same size.
+#'   and by position where none of them is and they are the same size.
+#'   Unlabelled nodes are otherwise added as new nodes, with a warning,
+#'   since which of the other nodes they are would be a guess.
 #' @param layer_names A character vector of names for the different network objects,
 #'   if not already named within the list.
 #' @examples
@@ -412,17 +414,19 @@ from_reporters <- function(netlist) {
 }
 
 .stack_layers_tbl <- function(netlist, layer_names){
-  # Unlabelled networks of different sizes cannot be matched node for node,
-  # and so hold different sets of nodes, which is how a stocnet stacks them.
+  # Unlabelled networks can only be matched node for node with other
+  # unlabelled networks of the same size. Next to a labelled network, or to a
+  # network of another size, they hold different sets of nodes, since which
+  # labelled node each would be is a guess. This is how a stocnet stacks them.
   sizes <- vapply(netlist, function(x) as.numeric(net_nodes(x)), numeric(1))
-  if(!all(vapply(netlist, is_labelled, logical(1))) && length(unique(sizes)) > 1)
+  labelled <- vapply(netlist, is_labelled, logical(1))
+  if(!all(labelled) && (any(labelled) || length(unique(sizes)) > 1))
     return(.stack_layers_stocnet(lapply(netlist, as_stocnet), layer_names))
   netlist <- lapply(netlist, as_tidygraph)
-  labelled <- vapply(netlist, is_labelled, logical(1))
   # layers are stacked by joining the networks' node tables, which needs a
   # name to join on. Unlabelled networks are named by position first, and
-  # unlabelled again afterwards where none of them was labelled to begin with.
-  if(!all(labelled)) netlist <- .name_by_position(netlist, labelled)
+  # unlabelled again afterwards.
+  if(!any(labelled)) netlist <- .name_by_position(netlist)
   if(is.null(names(netlist))){
     if(!is.null(layer_names)){
       names(netlist) <- layer_names
@@ -450,22 +454,13 @@ from_reporters <- function(netlist) {
   as_tidygraph(out)
 }
 
-# Gives the unlabelled networks a name for each node so that the node tables
-# can be joined. Where one of the networks is labelled, its names are used,
-# since the nodes are the same nodes in the same order; where none is, the
-# positions themselves are the names, and are removed again afterwards.
-.name_by_position <- function(netlist, labelled){
-  sizes <- vapply(netlist, function(x) igraph::vcount(as_igraph(x)), numeric(1))
-  if(length(unique(sizes)) > 1)
-    snet_abort(paste0("Layering matches the networks' nodes by name, or by ",
-                      "position where they are unlabelled, so please label ",
-                      "them first with {.fn to_labelled} or give networks of ",
-                      "the same size."))
-  labels <- if(any(labelled)) node_names(netlist[[which(labelled)[1]]]) else
-    as.character(seq_len(sizes[1]))
-  netlist[!labelled] <- lapply(netlist[!labelled], function(x)
+# Gives unlabelled networks of one size a name for each node so that the node
+# tables can be joined. The positions themselves are the names, and are
+# removed again afterwards.
+.name_by_position <- function(netlist){
+  labels <- as.character(seq_len(igraph::vcount(as_igraph(netlist[[1]]))))
+  lapply(netlist, function(x)
     as_tidygraph(igraph::set_vertex_attr(as_igraph(x), "name", value = labels)))
-  netlist
 }
 
 .stack_layers_stocnet <- function(netlist, layer_names){
@@ -765,7 +760,7 @@ from_reporters <- function(netlist) {
                          "block of ", b$size, " nodes; adding as new nodes ",
                          "rather than guessing."))
       else if(!is.null(merged_nodes) && nrow(merged_nodes) > 0)
-        snet_info(paste0("A set of ", b$size, " unlabelled nodes matches no ",
+        snet_warn(paste0("A set of ", b$size, " unlabelled nodes matches no ",
                          "set of nodes of that size, so they were added as ",
                          "new nodes. Label the nodes to match them by name."))
       add <- dplyr::tibble(label = rep(NA_character_, b$size))

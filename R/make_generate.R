@@ -8,8 +8,10 @@
 #'   for exploring or testing network properties.
 #'   
 #'   - `generate_random()` generates a random network with ties appearing at some probability.
-#'   - `generate_configuration()` generates a random network consistent with a
+#'   - `generate_degree()` generates a random network consistent with a
 #'   given degree distribution, as the random counterpart of `create_degree()`.
+#'   `generate_configuration()` is an alias, since this is the configuration
+#'   model.
 #'   - `generate_man()` generates a random network conditional on the dyad census
 #'   of Mutual, Asymmetric, and Null dyads, respectively.
 #'   - `generate_utilities()` generates the utility that each node finds in
@@ -28,12 +30,12 @@
 #' @inheritParams make_create
 #' @inheritParams mark_is
 #' @template param_n
-#' @templateVar p_detail For `generate_random()`, it is the proportion of possible ties in the network that are realised or, if an integer greater than 1, the number of ties in the network, by default 0.5. For `generate_configuration()`, it is the share of the ties that are switched with one another, by default 1, so that 0 returns the network as it was. For `generate_man()`, it is a vector of three: the proportions of Mutual, Asymmetric, and Null dyads, which is inferred from `n` if that is a network and is otherwise `c(0.25, 0.5, 0.25)`. For `generate_utilities()`, it is the share of the utilities that are ties, by default 1.
+#' @templateVar p_detail For `generate_random()`, it is the proportion of possible ties in the network that are realised or, if an integer greater than 1, the number of ties in the network, by default 0.5. For `generate_degree()`, it is the share of the ties that are switched with one another, by default 1, so that 0 returns the network as it was. For `generate_man()`, it is a vector of three: the proportions of Mutual, Asymmetric, and Null dyads, which is inferred from `n` if that is a network and is otherwise `c(0.25, 0.5, 0.25)`. For `generate_utilities()`, it is the share of the utilities that are ties, by default 1.
 #' @template param_p
 #' @template param_directed
 #' @template return_make
 #' @details
-#'   `generate_configuration()` keeps the degree of every node and is random
+#'   `generate_degree()` keeps the degree of every node and is random
 #'   in which nodes are tied.
 #'   The degrees are those of the network given as `n`,
 #'   or those given as `outdegree` and `indegree`, as for `create_degree()`.
@@ -147,11 +149,11 @@ generate_random <- function(n, p = 0.5, directed = FALSE, with_attr = TRUE) {
 #' _European Journal of Combinatorics_ 1: 311-316.
 #' @importFrom igraph sample_degseq
 #' @examples
-#' generate_configuration(12, outdegree = 3)
-#' generate_configuration(create_core(12), p = 0.25)
+#' generate_degree(12, outdegree = 3)
+#' generate_degree(create_core(12), p = 0.25)
 #' @export
-generate_configuration <- function(n, p = 1, directed = FALSE,
-                                   outdegree = NULL, indegree = NULL){
+generate_degree <- function(n, p = 1, directed = FALSE,
+                            outdegree = NULL, indegree = NULL){
   if (!is.numeric(p) || length(p) != 1 || is.na(p) || p < 0 || p > 1)
     snet_abort("`p` must be a single number from 0 to 1.")
   # The network to start from has the degrees to keep: the network given, or
@@ -208,6 +210,17 @@ generate_configuration <- function(n, p = 1, directed = FALSE,
   }
   as_stocnet(out) |> 
     add_info(name = "Configuration network")
+}
+
+#' @rdname make_random
+#' @export
+generate_configuration <- function(n, p = 1, directed = FALSE,
+                                   outdegree = NULL, indegree = NULL){
+  # `generate_degree()` was called `generate_configuration()` until 2.4.0,
+  # after the model rather than after what it keeps. The former name still
+  # works, so that 'migraph' and 'netrics' can move to the new one in time.
+  generate_degree(n, p = p, directed = directed,
+                  outdegree = outdegree, indegree = indegree)
 }
 
 # Switches the second nodes of pairs of two-mode ties, so that every node 

@@ -91,10 +91,10 @@ test_that("create_explicit() builds a network from formula ties", {
   expect_equal(as.numeric(net_ties(out)), 3)
 })
 
-test_that("generate_configuration() reproduces a degree sequence", {
+test_that("generate_degree() reproduces a degree sequence", {
   set.seed(1234)
-  out <- run_or_skip(generate_configuration(ison_adolescents),
-                     "generate_configuration", "labelled")
+  out <- run_or_skip(generate_degree(ison_adolescents),
+                     "generate_degree", "labelled")
   expect_true(is_manynet(out))
   expect_equal(as.numeric(net_nodes(out)),
                as.numeric(net_nodes(ison_adolescents)))

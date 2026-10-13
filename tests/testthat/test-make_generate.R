@@ -148,17 +148,17 @@ test_that("generate_scalefree() works", {
   expect_s3_class(generate_scalefree(c(6,6), 0.025), "igraph")
 })
 
-test_that("generate_configuration works", {
-  expect_s3_class(generate_configuration(ison_adolescents), "stocnet")
-  expect_true(is_twomode(generate_configuration(ison_southern_women)))
+test_that("generate_degree works", {
+  expect_s3_class(generate_degree(ison_adolescents), "stocnet")
+  expect_true(is_twomode(generate_degree(ison_southern_women)))
 })
 
-test_that("generate_configuration keeps degrees however many ties it switches", {
+test_that("generate_degree keeps degrees however many ties it switches", {
   set.seed(1234)
   degs <- function(x, mode = "all") igraph::degree(as_igraph(x), mode = mode)
   start <- as_matrix(to_unnamed(ison_adolescents))
   kept <- vapply(c(0, 0.5, 1), function(p) {
-    out <- generate_configuration(ison_adolescents, p = p)
+    out <- generate_degree(ison_adolescents, p = p)
     expect_equal(sort(degs(out)), sort(degs(ison_adolescents)),
                  ignore_attr = TRUE)
     sum(as_matrix(out) * start) / 2
@@ -168,7 +168,7 @@ test_that("generate_configuration keeps degrees however many ties it switches", 
   expect_lt(kept[3], kept[1])
   women <- as_matrix(ison_southern_women)
   kept <- vapply(c(0, 0.5, 1), function(p) {
-    out <- generate_configuration(ison_southern_women, p = p)
+    out <- generate_degree(ison_southern_women, p = p)
     expect_true(is_twomode(out))
     expect_equal(sort(degs(out)), sort(degs(ison_southern_women)),
                  ignore_attr = TRUE)
@@ -176,20 +176,30 @@ test_that("generate_configuration keeps degrees however many ties it switches", 
   }, numeric(1))
   expect_equal(kept[1], sum(women))
   expect_true(all(diff(kept) < 0))
-  expect_error(generate_configuration(10, p = 2), "`p`")
+  expect_error(generate_degree(10, p = 2), "`p`")
 })
 
-test_that("generate_configuration takes the degrees create_degree does", {
+test_that("generate_degree takes the degrees create_degree does", {
   set.seed(1234)
   degs <- function(x, mode = "all") igraph::degree(as_igraph(x), mode = mode)
-  expect_equal(unique(degs(generate_configuration(20, outdegree = 4))), 4)
+  expect_equal(unique(degs(generate_degree(20, outdegree = 4))), 4)
   # without a switch it is the network that create_degree() makes
-  expect_equal(as_matrix(generate_configuration(20, p = 0, outdegree = 4)),
+  expect_equal(as_matrix(generate_degree(20, p = 0, outdegree = 4)),
                as_matrix(create_degree(20, 4)))
-  directed <- generate_configuration(20, directed = TRUE, outdegree = 3)
+  directed <- generate_degree(20, directed = TRUE, outdegree = 3)
   expect_true(is_directed(directed))
   expect_equal(unique(degs(directed, "out")), 3)
-  expect_equal(as.numeric(net_dims(generate_configuration(c(4, 6)))), c(4, 6))
+  expect_equal(as.numeric(net_dims(generate_degree(c(4, 6)))), c(4, 6))
+})
+
+test_that("generate_configuration() still works as an alias", {
+  set.seed(1234)
+  from_alias <- generate_configuration(20, outdegree = 4)
+  set.seed(1234)
+  from_new <- generate_degree(20, outdegree = 4)
+  expect_equal(as_matrix(from_alias), as_matrix(from_new))
+  # the alias is silent, so that 'migraph' and 'netrics' keep passing checks
+  expect_silent(generate_configuration(20, p = 0, outdegree = 4))
 })
 
 test_that("generate_man works", {
@@ -549,10 +559,10 @@ test_that("to_named gives every node a name of its own", {
     expect_equal(anyDuplicated(node_names(to_named(create_empty(n)))), 0)
 })
 
-test_that("generate_configuration reads the modes of a stocnet", {
+test_that("generate_degree reads the modes of a stocnet", {
   # a stocnet marks its modes in 'mode', where an igraph uses 'type'
   sw <- as_stocnet(ison_southern_women)
-  out <- generate_configuration(sw)
+  out <- generate_degree(sw)
   expect_true(is_twomode(out))
   expect_equal(as.numeric(net_nodes(out)), as.numeric(net_nodes(sw)))
 })

@@ -20,6 +20,8 @@
 #'   - "modes" is the name(s) of the nodeset(s)
 #'   - "layers" is the name(s) of the tie type(s)
 #'   - "directed" is a logical vector indicating whether each layer is directed
+#'   - "signed" is a logical vector indicating whether each layer is signed,
+#'   which `to_signed()` sets and `to_unsigned()` removes
 #'   - "source" is the source of the network ("empirical" or "synthetic")
 #'   - "method" is the method of data collection or model used
 #'   (e.g. "survey", "interview","sensor","observation","archival", or "simulation")
@@ -196,7 +198,8 @@ add_info.stocnet <- function(.data, ...){
 # not checked there, so this list is longer than that one. An entry outside
 # this list is kept, since a network may record more than the class
 # recognises, but the user is told in case the name is a slip.
-.stocnet_info_fields <- c("name", "modes", "layers", "directed", "observation",
+.stocnet_info_fields <- c("name", "modes", "layers", "directed", "signed",
+                          "observation",
                           "update", "sender", "receiver", "focal", "centered",
                           "source", "method", "location", "date", "boundary",
                           "doi", "system", "max_degree", "min_degree",
@@ -517,7 +520,7 @@ snet_menu <- function(choices, title) utils::menu(choices = choices, title = tit
   dropped <- setdiff(info$layers, layers)
   if(length(dropped) == 0) return(info)
   info$layers <- if(length(layers) > 0) layers else NULL
-  for(field in c("directed", "observation", "update")){
+  for(field in c("directed", "signed", "observation", "update")){
     vals <- info[[field]]
     if(is.null(vals) || is.null(names(vals))) next
     keep <- intersect(names(vals), layers)

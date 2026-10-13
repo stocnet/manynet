@@ -38,6 +38,12 @@
 #'   directed layer, and coercion back collapses them again.
 #'   This keeps the degree of a node in an undirected layer the same in every
 #'   class, and makes the round trip lossless.
+#'   - 'signed' should be a logical indicating whether the network is signed.
+#'   If there are multiple layers, this can be a named logical vector that says
+#'   which layers are signed, where the names correspond to the layer names.
+#'   Since the sign of a tie is held as the sign of its weight,
+#'   this records that a network is signed where none of its ties is negative.
+#'   A network with any negative weight is signed whether or not this is given.
 #'   - 'focal' should be a character vector indicating which variables are
 #'   dependent (endogenous). These may be tie layers (dependent networks) and/or
 #'   nodal variables recorded in the changes component (dependent behaviours),

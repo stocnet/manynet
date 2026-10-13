@@ -33,7 +33,9 @@ If TRUE, duplicated edges are removed.}
 \item{...}{Two or more networks over the same nodes to be merged,
 or a single list of such networks, such as that returned by \code{to_layers()}.
 Nodes are matched by name where the networks are labelled,
-and by position where they are not and are the same size.}
+and by position where none of them is and they are the same size.
+Unlabelled nodes are otherwise added as new nodes, with a warning,
+since which of the other nodes they are would be a guess.}
 
 \item{layer_names}{A character vector of names for the different network objects,
 if not already named within the list.}

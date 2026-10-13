@@ -36,18 +36,30 @@ test_that("from_layers matches unlabelled networks of equal size by position", {
   expect_equal(as.numeric(net_ties(out)),
                as.numeric(net_ties(create_ring(8))) +
                  as.numeric(net_ties(create_star(8))))
-  # an unlabelled network takes the labelled network's names, node for node
-  named <- from_layers(friends = ison_adolescents, ring = create_ring(8))
-  expect_true(is_labelled(named))
-  expect_equal(as.numeric(net_nodes(named)), 8)
-  # Unlabelled networks that differ in size cannot be matched node for node,
-  # so they are sets of different nodes, which the user is told.
-  # The report is one that is only made where reports are asked for.
-  op <- options(snet_verbosity = "normal")
-  on.exit(options(op))
+  # Which labelled node an unlabelled node would be is a guess, so next to a
+  # labelled network the unlabelled nodes are other nodes, in every class,
+  # which the user is warned of.
+  for(nets in list(
+    list(friends = as_tidygraph(ison_adolescents),
+         ring = as_tidygraph(create_ring(8))),
+    list(friends = as_stocnet(ison_adolescents),
+         ring = as_stocnet(create_ring(8))))){
+    expect_warning(named <- from_layers(nets), "added as new nodes")
+    expect_s3_class(named, class(nets[[1]])[1])
+    expect_equal(as.numeric(net_nodes(named)), 16)
+    expect_equal(sum(is.na(node_names(named))), 8)
+    # a network with only some of its nodes labelled keeps its ties in place
+    # through coercion
+    expect_equal(as_matrix(as_stocnet(as_igraph(named))) |> unname(),
+                 as_matrix(as_stocnet(named)) |> unname())
+    expect_equal(as.numeric(net_ties(named)),
+                 as.numeric(net_ties(ison_adolescents)) + 8)
+  }
+  # Unlabelled networks that differ in size cannot be matched node for node
+  # either, so they too are sets of different nodes.
   for(nets in list(list(a = create_ring(8), b = as_tidygraph(create_star(6))),
                    list(a = as_stocnet(create_ring(8)), b = create_star(6)))){
-    expect_message(apart <- from_layers(nets), "added as new nodes")
+    expect_warning(apart <- from_layers(nets), "added as new nodes")
     expect_s3_class(apart, class(nets[[1]])[1])
     expect_equal(as.numeric(net_nodes(apart)), 14)
     expect_equal(as.numeric(net_ties(apart)), 8 + 5)

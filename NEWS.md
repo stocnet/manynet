@@ -3,10 +3,7 @@
 ## Package
 
 - Added design principles to the README and the contributing guide
-- Updated the contributing guide to agree with the package, and reordered it
-  - Added a table of contents that says when to read each section
-  - Added sections on datasets, deprecation, checking downstream packages, and releasing
-  - Fixed what it says of the verbosity, the reserved `info` fields, and two-mode networks
+- Updated the contributing guide with table of contents and to agree with the package
 
 ## Making
 
@@ -38,7 +35,10 @@
   - `groups=` takes the number of islands, the smallest and largest they can be, or the size of each
   - Fixed islands of unequal size where the nodes do not divide equally: 10 nodes in 3 islands are now 4, 3, and 3, where they were 4, 4, and 2
   - Records the island of each node in the node attribute "community"
-- Improved `generate_configuration()` to be the random counterpart of `create_degree()`
+- Renamed `generate_configuration()` to `generate_degree()`, after the degrees it keeps rather than after the model
+  - `generate_configuration()` still works as a silent alias, so that calls and downstream packages keep working
+  - The networks it returns are still named "Configuration network"
+- Improved `generate_degree()` to be the random counterpart of `create_degree()`
   - Takes a number of nodes as `n`, with `outdegree=` and `indegree=`, as well as a network
   - `p=` sets the share of ties that are switched, so that a network can be randomised in part
 - Improved `generate_man()` to generate undirected networks, where there are no asymmetric dyads or `directed = FALSE`
@@ -65,10 +65,12 @@
 ## Classes
 
 - Documented how the size and speed of a 'stocnet' compare with those of an 'igraph' object and a matrix, see `?make_stocnet`
+- Added `signed` to the reserved names of `info`, which records that a network is signed where none of its ties is negative
 
 ## Coercion
 
 - Fixed `as_nodelist()` to return `NULL` for a 'stocnet' whose nodes have neither labels nor attributes
+- Fixed `as_igraph()` and `as_stocnet()` to coerce a network in which only some nodes are labelled, where a 'stocnet' could not be coerced and the ties of an 'igraph' object lost their place
 - Added conversion from node_measure and node_member to matrices and stocnets (closes #161)
   - Added `as_matrix.node_measure()` and `as_matrix.node_member()`
   - Added `as_stocnet.node_measure()` and `as_stocnet.node_member()`
@@ -97,7 +99,9 @@
 
 - Fixed `from_layers()` to stack a 'stocnet' as it does other classes
   - Networks of different classes can be stacked, and are returned in the class of the first
-  - Unlabelled networks of different sizes are stacked as sets of different nodes, with a message that says so, where other classes stopped
+  - Unlabelled networks of different sizes are stacked as sets of different nodes, with a warning that says so, where other classes stopped
+  - Unlabelled nodes are added to the nodes of a labelled network as new nodes in every class, with the same warning, where other classes took the labels by position
+- Added `to_signed()` method for a 'stocnet', which keeps the magnitude of the weights
 - Improved `to_mode()` to take a mode as `FALSE` or `TRUE`, as the modes of an unnamed two-mode network are marked
   - Fixed `to_mode()` to report that the modes of a 'stocnet' are not named, where it offered "FALSE" and "TRUE" as their names
 - Improved every `from_*()` function to return the class of its inputs
@@ -130,6 +134,7 @@
 
 ## Marking
 
+- Fixed `is_signed()` to mark a network signed with `to_signed()` TRUE in every class where all its ties are positive
 - Renamed `is_egonet()` to `is_egolist()`, since it marks a list of networks
   - `is_egocentric()` marks the networks that a name generator collects
   - Fixed `is_egolist()` to mark an empty or unnamed list FALSE, rather than fail

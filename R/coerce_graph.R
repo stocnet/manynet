@@ -328,7 +328,11 @@ as_igraph.stocnet <- function(.data, twomode = FALSE) {
         dplyr::mutate(lvl = match(mode, lvls)) |>
         dplyr::select(dplyr::any_of("name"), dplyr::everything(), -mode)
     }
-    if(is_labelled(.data)){
+    # Where only some of the nodes are labelled, as where `from_layers()` adds
+    # unlabelled nodes to labelled ones, the labels cannot tell the nodes
+    # apart, so the network is built by position and labelled afterwards.
+    partial <- is_labelled(.data) && anyNA(vertices$name)
+    if(is_labelled(.data) && !partial){
       out <- igraph::graph_from_data_frame(as_edgelist(.data),
                                            directed = directed,
                                            vertices = vertices)
@@ -342,10 +346,12 @@ as_igraph.stocnet <- function(.data, twomode = FALSE) {
       vertices <- dplyr::mutate(vertices,
                                 name = as.character(seq_len(nrow(vertices))))
       vertices <- dplyr::select(vertices, name, dplyr::everything())
-      out <- igraph::graph_from_data_frame(as_edgelist(.data),
-                                           directed = directed,
+      labels <- if(partial) .data$nodes$label %||% .data$nodes$name
+      ties <- if(partial) .reciprocate_layers(.data) else as_edgelist(.data)
+      out <- igraph::graph_from_data_frame(ties, directed = directed,
                                            vertices = vertices)
       out <- to_unlabelled(out)
+      if(partial) out <- igraph::set_vertex_attr(out, "name", value = labels)
     }
     
   }
@@ -1062,6 +1068,9 @@ as_stocnet.igraph <- function(.data, twomode = FALSE, ...) {
   changes <- as_changelist(.data)
   ties <- as_edgelist(.data)
   globals <- as_globallist(.data)
+  # A stocnet holds the sign of a tie as the sign of its weight, so that the
+  # network is signed is recorded, or it is lost where no tie is negative.
+  if("sign" %in% igraph::edge_attr_names(.data)) info$signed <- TRUE
   # A network whose nodes have neither names nor attributes has no nodelist,
   # and its isolates appear in no tie, so its size is recorded as a table of
   # rows without columns rather than lost.
@@ -1069,6 +1078,13 @@ as_stocnet.igraph <- function(.data, twomode = FALSE, ...) {
     nodes <- dplyr::tibble(.rows = igraph::vcount(.data))
 
   if(is_labelled(.data)){
+    # Where only some of the nodes are labelled, a label cannot say which
+    # node a tie is to, so the ends of the ties are read by position.
+    if(anyNA(nodes$name) && !is.null(ties)){
+      ends <- igraph::as_edgelist(as_igraph(.data), names = FALSE)
+      ties$from <- as.integer(ends[, 1])
+      ties$to <- as.integer(ends[, 2])
+    }
     ties <- .index_tie_nodes(ties, nodes$name)
     nodes$label <- nodes$name
     nodes$name <- NULL
@@ -1387,6 +1403,8 @@ as_stocnet.network <- function(.data,
   # As for igraph, an undirected layer reciprocated on the way out is
   # collapsed again here, so that the round trip is lossless.
   collapsed <- .collapse_layers(ties, .data$gal$layer_directed, is_directed(.data))
+  # see `as_stocnet.igraph()` for why this is recorded
+  if("sign" %in% network::list.edge.attributes(.data)) info$signed <- TRUE
   if(is.null(collapsed)) info$directed <- is_directed(.data) else {
     ties <- collapsed$ties
     info$directed <- collapsed$directed
