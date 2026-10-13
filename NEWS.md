@@ -7,6 +7,22 @@
 
 ## Making
 
+- Added `read_geojson()` for reading the lines of a GeoJSON file, such as roads or rivers, as a spatial network
+  - Each line is a tie between its two ends, with the positions of the nodes as 'x', 'y', and 'z'
+  - Ties get a 'length' measured along the line, in metres for longitudes and latitudes and for Mercator projections
+  - Points in the file describe the nodes at their positions
+  - `junctions = TRUE` joins the ties that meet at a node where nothing else does
+  - `tolerance=` sets how far apart two ends can be and still be the same node
+- Added `write_geojson()` for writing a spatial network as points and the straight lines between them
+- Added `read_hif()` and `write_hif()` for the Hypergraph Interchange Format
+  - Reads the weights and attributes of nodes, of hyperedges, and of each node's membership of a hyperedge
+  - Reads a directed hyperedge's 'tail' as its 'from' side and its 'head' as its 'to' side
+  - Writes a non-hypergraph with each tie as a hyperedge of its two nodes
+- Added `collect_emails()` for collecting an email network from an exported mailbox
+  - Reads the headers of 'mbox' files, '.eml' files, and 'Maildir' folders
+  - Returns a dynamic, directed `stocnet` in which each tie is stamped with when its message was sent
+  - `ego=` names the owner of the mailbox, who is otherwise inferred
+  - `twomode = TRUE` instead returns addresses by messages
 - Improved most `create_*()` and `generate_*()` functions to return a named 'stocnet'
 - Improved `generate_*()` functions to share one order of arguments: `n`, then `p`, then `directed`, then `width`, wherever a function has them
   - This is a breaking change for calls that pass the arguments of `generate_islands()`, `generate_fire()`, or `generate_citations()` by position
@@ -15,18 +31,6 @@
   - `generate_citations()` now takes `degree=` for `ties=`
   - `generate_man()` now takes `p=` for `man=`
   - The former names still work
-- Added `read_geojson()` for reading the lines of a GeoJSON file, such as roads or rivers, as a spatial network
-  - Each line is a tie between its two ends, with the positions of the nodes as 'x', 'y', and 'z'
-  - Ties get a 'length' measured along the line, in metres for longitudes and latitudes and for Mercator projections
-  - Points in the file describe the nodes at their positions
-  - `junctions = TRUE` joins the ties that meet at a node where nothing else does
-  - `tolerance=` sets how far apart two ends can be and still be the same node
-- Added `write_geojson()` for writing a spatial network as points and the straight lines between them
-- Added `collect_emails()` for collecting an email network from an exported mailbox
-  - Reads the headers of 'mbox' files, '.eml' files, and 'Maildir' folders
-  - Returns a dynamic, directed `stocnet` in which each tie is stamped with when its message was sent
-  - `ego=` names the owner of the mailbox, who is otherwise inferred
-  - `twomode = TRUE` instead returns addresses by messages
 - Added `generate_communities()` for generating unequal communities among nodes of unequal degree
   - Follows the Lancichinetti-Fortunato-Radicchi benchmark for community detection
   - For two-mode and directed networks, it generates an analogous benchmark

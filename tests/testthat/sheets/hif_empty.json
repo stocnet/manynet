@@ -1,0 +1,10 @@
+{
+  "network-type": "asc",
+  "incidences": [
+    {"edge": "e1", "node": "n1"},
+    {"edge": "e1", "node": "n2"},
+    {"edge": "e1", "node": "n1"}
+  ],
+  "nodes": [{"node": "n1"}, {"node": "n1"}, {"node": "n3"}],
+  "edges": [{"edge": "e1"}, {"edge": "e1"}, {"edge": "e2"}]
+}

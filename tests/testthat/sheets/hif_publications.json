@@ -1,0 +1,19 @@
+{
+  "network-type": "undirected",
+  "metadata": {
+    "title": "HIF publications dataset",
+    "collection-date": "2025-07-04",
+    "doi": "10.5281/zenodo.15802760"
+  },
+  "incidences": [
+    {"edge": 10, "node": 20, "weight": 2},
+    {"edge": 30, "node": 20, "weight": 3}
+  ],
+  "nodes": [
+    {"node": 20, "attrs": {"institutions": ["PNNL", "UVA"]}}
+  ],
+  "edges": [
+    {"edge": 10, "attrs": {"source": "Arxiv", "tags": ["Machine Learning", "Artificial Intelligence"]}},
+    {"edge": 30, "attrs": {"source": "DBLP", "tags": ["Hypergraph"]}}
+  ]
+}

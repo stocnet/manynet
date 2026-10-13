@@ -13,6 +13,7 @@
 \alias{read_gdf}
 \alias{read_gexf}
 \alias{read_geojson}
+\alias{read_hif}
 \title{Making networks from external files}
 \source{
 \code{read_ucinet()} kindly supplied by Christian Steglich,
@@ -40,6 +41,8 @@ read_gdf(file = file.choose())
 read_gexf(file = file.choose())
 
 read_geojson(file = file.choose(), junctions = TRUE, tolerance = 0)
+
+read_hif(file = file.choose())
 }
 \arguments{
 \item{file}{A character string with the system path to the file to import.
@@ -104,6 +107,7 @@ including those exported by Network Canvas.
 \item \code{read_gml()} imports GML files.
 \item \code{read_gdf()} imports GDF files.
 \item \code{read_gexf()} imports GEXF files, such as those exported by Gephi.
+\item \code{read_hif()} imports Hypergraph Interchange Format (HIF) files.
 \item \code{read_geojson()} imports the lines of a GeoJSON file,
 such as roads, rivers, or routes, as a spatial network.
 }
@@ -163,6 +167,22 @@ which makes the result a dynamic network (see \code{\link[=is_dynamic]{is_dynami
 Where a directed network contains ties declared undirected or mutual,
 those ties are reciprocated, since a network is directed or not as a whole.
 
+\code{read_hif()} reads a file in the Hypergraph Interchange Format
+(Coll et al. 2025), a JSON format that hypergraph libraries such as
+HyperNetX, XGI, Hypergraphx, and SimpleHypergraphs.jl share.
+It returns a 'stocnet' object that holds each hyperedge as a tie among
+its nodes (see the Hypergraphs section of \code{\link[=make_stocnet]{make_stocnet()}}).
+The weights and attributes of the nodes and of the hyperedges become
+their attributes,
+and those of each node's membership of a hyperedge are kept with it,
+as is the side of a directed hyperedge that the node is on:
+its 'tail' is read as 'from' and its 'head' as 'to'.
+The metadata become the information about the network,
+and a file that says it holds an abstract simplicial complex
+is marked as one.
+An attribute that holds more than a single value is kept as the JSON
+that records it.
+
 \code{read_geojson()} reads each line in the file as a tie between its two ends,
 and each place where the ends of lines meet as a node.
 The positions of the nodes are held as 'x' and 'y' node attributes,
@@ -191,6 +211,13 @@ Where its segments differ on any other attribute,
 each of their values is given, separated by semi-colons.
 Lines that share the same two ends are kept as separate ties,
 since they are different routes between the same places.
+}
+\references{
+Coll, Martín, Cliff A. Joslyn, Nicholas W. Landry, Quintino Francesco Lotito,
+Audun Myers, Joshua Pickard, Brenda Praggastis, and Przemysław Szufel. 2025.
+"HIF: The hypergraph interchange format for higher-order networks".
+\emph{Network Science} 13: e21.
+\doi{10.1017/nws.2025.10018}
 }
 \seealso{
 \link{as}

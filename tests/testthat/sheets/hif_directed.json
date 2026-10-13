@@ -1,0 +1,21 @@
+{
+  "network-type": "directed",
+  "metadata": {"title": "Reactions"},
+  "incidences": [
+    {"edge": "r1", "node": "A", "direction": "tail", "weight": 2},
+    {"edge": "r1", "node": "B", "direction": "tail", "weight": 1},
+    {"edge": "r1", "node": "C", "direction": "head", "weight": 1, "attrs": {"role": "product"}},
+    {"edge": "r2", "node": "C", "direction": "tail", "weight": 1},
+    {"edge": "r2", "node": "D", "direction": "head", "weight": 3}
+  ],
+  "nodes": [
+    {"node": "A", "weight": 1.5, "attrs": {"kind": "acid"}},
+    {"node": "B"},
+    {"node": "C"},
+    {"node": "D", "attrs": {"kind": "salt"}}
+  ],
+  "edges": [
+    {"edge": "r1", "weight": 0.5, "attrs": {"rate": "fast"}},
+    {"edge": "r2"}
+  ]
+}
