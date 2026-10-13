@@ -103,6 +103,8 @@
 
 ## Manipulating
 
+- Fixed `delete_nodes()` and `delete_isolates()` to keep a hyperedge with the members that remain
+- Fixed `delete_ties()` and `add_tie_attribute()` to count the ties of a hypergraph as its hyperedges
 - Fixed `bind_changes.stocnet()` to take node indices typed as numbers
 - Added `mutate.stocnet()` but `mutate_nodes()` remains preferred
 

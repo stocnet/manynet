@@ -151,7 +151,7 @@ delete_isolates.list <- function(.data) {
 delete_isolates.stocnet <- function(.data) {
   if(is.null(.data$nodes) || nrow(.data$nodes) == 0) return(.data)
   # A node tied at any wave is not an isolate, so changes count as well as ties
-  tied <- c(.data$ties$from, .data$ties$to)
+  tied <- c(.data$ties$from, .data$ties$to, unlist(.data$ties[["with"]]))
   if(!is.null(.data$changes) && nrow(.data$changes) > 0)
     tied <- c(tied, .data$changes$node)
   kept <- which(seq_len(nrow(.data$nodes)) %in% tied)
@@ -269,6 +269,10 @@ filter_nodes.stocnet <- function(.data, ..., .by = NULL){
 # so that every caller that drops nodes reindexes the same way.
 keep_nodes <- function(.data, kept){
   if(is.null(.data$nodes) || nrow(.data$nodes) == 0) return(.data)
+  # Where the nodes to keep were found in another class, which holds each
+  # hyperedge of a hypergraph as a node after the nodes themselves, those
+  # that point beyond the nodes are hyperedges and not nodes to keep.
+  kept <- kept[kept <= nrow(.data$nodes)]
 
   out_nodes <- .data$nodes[kept, , drop = FALSE]
 

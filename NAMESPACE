@@ -1025,6 +1025,7 @@ export(read_geojson)
 export(read_gexf)
 export(read_gml)
 export(read_graphml)
+export(read_hif)
 export(read_matrix)
 export(read_nodelist)
 export(read_pajek)
@@ -1136,6 +1137,7 @@ export(write_geojson)
 export(write_gexf)
 export(write_gml)
 export(write_graphml)
+export(write_hif)
 export(write_matrix)
 export(write_nodelist)
 export(write_pajek)
@@ -1208,7 +1210,6 @@ importFrom(igraph,
   make_star,
   make_tree,
   max_bipartite_match,
-  maximal.cliques,
   realize_bipartite_degseq,
   realize_degseq,
   reverse_edges,
