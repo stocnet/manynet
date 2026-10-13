@@ -108,7 +108,8 @@ to_simplex.stocnet <- function(.data) {
   if(is.null(.data$ties) || nrow(.data$ties) == 0) return(.data)
   ties <- .data$ties
   # Only the loops are removed, as in every other method.
-  keep_ties(.data, which(ties$from != ties$to)) |>
+  # a hyperedge names no node in either column, and is no loop
+  keep_ties(.data, which(is.na(ties$from) | ties$from != ties$to)) |>
     .record_exclusion(.data, "loops", "ties")
 }
 

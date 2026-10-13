@@ -12,6 +12,9 @@
 #'   but rather simply removes the distinction between the two modes.
 #'   - `to_twomode()` reformats one-mode network data into two-mode network data, 
 #'   using a mark to distinguish the two sets of nodes.
+#'   It also reformats a hypergraph into a two-mode network,
+#'   in which each hyperedge is a node of the second mode,
+#'   and for this needs no mark.
 #'   - `to_multilevel()` reformats two-mode network data into multimodal network data, 
 #'   which allows for more levels and ties within modes.
 #' 
@@ -83,7 +86,23 @@ to_twomode.default <- function(.data, mark){
 }
 
 #' @export
+to_twomode.stocnet <- function(.data, mark){
+  # A hypergraph needs no mark: its nodes are one mode and its hyperedges
+  # become the other.
+  if(missing(mark) && is_hypergraph(.data)){
+    out <- .hyper_to_twomode(.data)
+    out$info$simplicial <- NULL
+    return(validate_stocnet(out))
+  }
+  as_stocnet(to_twomode(as_igraph(.data), mark))
+}
+
+#' @export
 to_twomode.igraph <- function(.data, mark){
+  # An 'igraph' holds a hypergraph as a two-mode network already, so all that
+  # tells the two apart is the mark that it is one.
+  if(missing(mark) && is_hypergraph(.data))
+    return(igraph::delete_graph_attr(.data, "hyper"))
   igraph::V(.data)$type <- mark
   to_undirected(.data)
 }

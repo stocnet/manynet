@@ -89,7 +89,9 @@ to_ego.stocnet <- function(.data, node, max_dist = 1, min_dist = 0,
 # from a nodelist rather than from a graph.
 .to_ego_ids <- function(.data, node, max_dist, min_dist, direction){
   direction <- match.arg(direction, c("out","in"))
-  if(is_twomode(.data)) max_dist <- max_dist*2
+  # A step from a node to another through a hyperedge is two steps where the
+  # hyperedge is a node itself, as a step through the other mode is.
+  if(is_twomode(.data) || is_hypergraph(.data)) max_dist <- max_dist*2
   sort(as.integer(igraph::ego(as_igraph(.data), order = max_dist,
                               nodes = node, mindist = min_dist,
                               mode = direction)[[1]]))

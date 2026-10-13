@@ -182,6 +182,10 @@ to_mode1 <- function(.data, similarity = c("count", "jaccard", "rand", "pearson"
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
                                  "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
+  # a hypergraph is projected through its hyperedges, as a two-mode network
+  # is through the nodes of its other mode
+  if(inherits(.data, "stocnet") && is_hypergraph(.data))
+    return(to_mode1(.hyper_to_twomode(.data), similarity))
   # projecting a network that is already one-mode is a no-op
   if(!is_twomode(.data)) return(.data)
   UseMethod("to_mode1")
@@ -316,6 +320,10 @@ to_mode2 <- function(.data, similarity = c("count", "jaccard", "rand", "pearson"
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
                                  "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
+  # a hypergraph is projected through its hyperedges, as a two-mode network
+  # is through the nodes of its other mode
+  if(inherits(.data, "stocnet") && is_hypergraph(.data))
+    return(to_mode2(.hyper_to_twomode(.data), similarity))
   # projecting a network that is already one-mode is a no-op
   if(!is_twomode(.data)) return(.data)
   UseMethod("to_mode2")
@@ -459,6 +467,10 @@ to_mode <- function(.data, mode = 1,
                                  "ochiai2", "czekanowski", "sokalsneath",
                                  "hamann", "rogerstanimoto", "euclidean", "manhattan",
                                  "hamming", "cosine", "spearman", "kendall", "ruzicka")) {
+  # a hypergraph is projected through its hyperedges, which are its second
+  # mode here, so that either can be named or numbered as a mode can
+  if(inherits(.data, "stocnet") && is_hypergraph(.data))
+    .data <- .hyper_to_twomode(.data)
   # a network of three or more modes would otherwise fall through the one-mode
   # no-op below and be returned unchanged, since it is not two-mode either
   if(net_modes(.data) > 2)

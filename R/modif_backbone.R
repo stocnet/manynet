@@ -137,6 +137,7 @@ to_backbone.default <- function(.data, filter = NULL, threshold = NULL,
 #' @export
 to_backbone.stocnet <- function(.data, filter = NULL, threshold = NULL,
                                 endpoints = c("either", "both")){
+  .needs_dyads(.data, "to_backbone")
   spec <- .backbone_spec(.data, filter, threshold)
   keep <- .backbone_keep(.data, spec, endpoints)
   out <- keep_ties(.data, which(keep))

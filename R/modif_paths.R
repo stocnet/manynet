@@ -10,12 +10,13 @@
 #'   - `to_tree()` returns the spanning tree in some network data or, 
 #'   if the data is unconnected, a forest of spanning trees.
 #'   - `to_dominating()` returns the dominating tree of the network.
+#'   - `to_path()` returns only the ties on the shortest paths between two nodes.
 #' @details
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
 #'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("to_.*(match|mentor|tree|dominat)"))
+#'   available_methods(collect_functions("to_.*(match|mentor|tree|dominat|path)"))
 #'   ```
 #' @template param_data
 #' @template fam_modif
@@ -323,3 +324,102 @@ to_dominating.igraph <- function(.data, from, direction = c("out","in")) {
   direction <- match.arg(direction)
   igraph::dominator_tree(.data, root = from, mode = direction)$domtree
 }
+
+#' @rdname modif_paths
+#' @section Paths:
+#'   This function returns a network of all the nodes, with only the ties
+#'   that lie on a shortest path from one node to another.
+#'   Where several paths are equally short, the ties of all of them are kept,
+#'   and where no path joins the two nodes, no tie is.
+#'   A path is as long as the number of ties in it, whatever their weights.
+#'
+#'   In a hypergraph, a path runs from node to node through the hyperedges
+#'   that they share, with no node or hyperedge visited twice (Berge 1973).
+#'   Its length is the number of hyperedges in it,
+#'   and the hyperedges on the shortest such paths are the ties returned.
+#' @references
+#' ## On paths in hypergraphs
+#' Berge, Claude. 1973.
+#' _Graphs and Hypergraphs_. North-Holland.
+#' @param to The index or name of the node at which the path should end.
+#' @examples
+#' to_path(ison_adolescents, "Betty", "Alice")
+#' @export
+to_path <- function(.data, from, to) UseMethod("to_path")
+
+#' @export
+to_path.default <- function(.data, from, to){
+  as_input(.data, to_path, from = from, to = to)
+}
+
+#' @export
+to_path.igraph <- function(.data, from, to) {
+  ends <- .path_ends(.data, from, to)
+  on <- .on_shortest_paths(.data, ends[1], ends[2])
+  out <- igraph::delete_edges(.data, which(!on$ties))
+  .record_exclusion(out, .data, "not on a shortest path", "ties")
+}
+
+#' @export
+to_path.tbl_graph <- function(.data, from, to) {
+  as_tidygraph(to_path(as_igraph(.data), from, to))
+}
+
+#' @export
+to_path.stocnet <- function(.data, from, to) {
+  if(!is_hypergraph(.data))
+    return(as_stocnet(to_path(as_igraph(.data), from, to)))
+  # A path through a hypergraph is a path through its nodes and hyperedges in
+  # turn, so the hyperedges on a shortest one are found where each hyperedge is
+  # a node itself. The nodes keep their positions there.
+  ends <- .path_ends(.data, from, to)
+  graph <- as_igraph(.hyper_to_twomode(.data))
+  on <- .on_shortest_paths(graph, ends[1], ends[2])
+  hyper <- .hyper_rows(.data$ties)
+  kept <- rep(FALSE, nrow(.data$ties))
+  kept[hyper] <- on$nodes[net_nodes(.data) + seq_len(sum(hyper))]
+  # a dyad of a network that also has hyperedges is on a path as any tie is
+  dyads <- .data$ties[!hyper, , drop = FALSE]
+  kept[!hyper] <- on$out[dyads$from] + 1 + on$back[dyads$to] == on$length |
+    (!is_directed(.data) &
+       on$out[dyads$to] + 1 + on$back[dyads$from] == on$length)
+  out <- .data
+  out$ties <- out$ties[kept, , drop = FALSE]
+  .record_exclusion(out, .data, "not on a shortest path", "ties")
+}
+
+# The two ends of a path as positions among the nodes, however they are named.
+.path_ends <- function(.data, from, to){
+  if(missing(from) || missing(to))
+    snet_abort("{.fun to_path} needs the nodes that the paths run",
+               "{.arg from} and {.arg to}.")
+  find <- function(node, arg){
+    if(length(node) != 1)
+      snet_abort("{.arg {arg}} must be one node, as an index or a name.")
+    out <- if(is.character(node)) match(node, node_labels(.data)) else
+      as.integer(node)
+    if(is.na(out) || out < 1 || out > as.numeric(net_nodes(.data)))
+      snet_abort("{.arg {arg}} is {.val {node}}, which is not a node of this",
+                 "network.")
+    out
+  }
+  c(find(from, "from"), find(to, "to"))
+}
+
+# Which ties and which nodes lie on a shortest path between two nodes. A tie
+# does where the distance to its start, the tie itself, and the distance from
+# its end add up to the distance between the two nodes.
+.on_shortest_paths <- function(graph, from, to){
+  out <- igraph::distances(graph, v = from, mode = "out", weights = NA)[1, ]
+  back <- igraph::distances(graph, v = to, mode = "in", weights = NA)[1, ]
+  length <- out[to]
+  ends <- igraph::as_edgelist(graph, names = FALSE)
+  # with no path between them, no tie can add up to the distance
+  if(!is.finite(length)) length <- -1
+  ties <- out[ends[, 1]] + 1 + back[ends[, 2]] == length
+  if(!igraph::is_directed(graph))
+    ties <- ties | out[ends[, 2]] + 1 + back[ends[, 1]] == length
+  list(ties = unname(ties), nodes = unname(out + back == length),
+       out = unname(out), back = unname(back), length = unname(length))
+}
+

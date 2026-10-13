@@ -433,6 +433,7 @@ to_normalised.stocnet <- function(.data, rule = c("max", "mean", "sum"),
                                   across = c("both", "rows", "columns")){
   rule <- match.arg(rule)
   across <- match.arg(across)
+  .needs_dyads(.data, "to_normalised")
   out <- .data
   if(.normalise_splits(.data, across)){
     snet_info("Rescaling {across} gives each direction of a tie its own value,",
