@@ -14,7 +14,7 @@
 #'   of the second node set's (e.g. columns) joint affiliations to nodes in the first node set (rows).
 #'   - `to_linegraph()` projects a network to its line graph,
 #'   where the ties become nodes and incident nodes become their ties.
-#'   - `to_hypergraph()` projects one-mode or two-mode network data into hypergraph data, 
+#'   - `to_hypergraph()` reformats one-mode or two-mode network data as hypergraph data,
 #'   where ties can connect more than two nodes.
 #' @details
 #'   Not all functions have methods available for all object classes.
@@ -510,24 +510,35 @@ to_linegraph.igraph <- function(.data){
 
 #' @rdname modif_project
 #' @section Hypergraphs: 
-#'   This function projects one-mode or two-mode network data into hypergraph data,
-#'   where ties can connect more than two nodes.
-#'   The projection differs depending on whether the network is one-mode or two-mode,
-#'   and the output can differ by class of the input/output data.
+#'   A hypergraph is a network in which a tie, a hyperedge, can connect any
+#'   number of nodes, such as the people at a meeting or the authors of a paper.
+#'   `to_hypergraph()` reformats one-mode or two-mode network data as
+#'   hypergraph data and returns the class it was given.
+#'   Nothing is lost either way.
 #'   
-#'   For two-mode networks, the hyperedges are the nodes of the second mode, 
-#'   and the nodes of the first mode are connected to them if they share a tie.
-#'   In a 'stocnet' object, the hyperedges are stored in the `ties` data frame, 
-#'   with the `from` column containing a list of nodes connected to each hyperedge.
-#'   This is thus a compact representation of the hypergraph.
-#'   igraph-like objects do not have a native representation of hyperedges, 
-#'   so the output is a two-mode graph where the hyperedges are represented 
-#'   as nodes of the second mode.
+#'   For two-mode networks, each node of the second mode becomes a hyperedge
+#'   that connects the nodes of the first mode tied to it.
+#'   The attributes of the second-mode nodes become attributes of the
+#'   hyperedges, and the attributes of the ties,
+#'   such as their weights, become attributes of each node's membership.
+#'   `to_twomode()` returns the two-mode network.
 #'   
-#'   For one-mode networks, the hyperedges are the maximal cliques of the network. 
-#'   Again, while 'stocnet' objects can store the hyperedges in a compact form,
-#'   igraph-like objects represent them as nodes of the second mode in a two-mode graph.
+#'   For one-mode networks, each tie becomes a hyperedge of its two nodes,
+#'   and keeps its attributes.
+#'   Where the ties are directed, the hyperedges are too:
+#'   the sender is on the 'from' side and the receiver on the 'to' side.
+#'   `to_mode()` returns the one-mode network.
 #'   
+#'   A 'stocnet' object holds each hyperedge as one row of its ties,
+#'   which lists the hyperedge's members in a `with` column
+#'   (see the Hypergraphs section of [make_stocnet()]).
+#'   Other classes have no hyperedges of their own,
+#'   so they hold each hyperedge as a node of a second mode,
+#'   and mark that they do so, so that [is_hypergraph()] recognises them and
+#'   coercion back to a 'stocnet' object returns the hyperedges.
+#'   A 'network' object is the exception, since `{network}` has hyperedges.
+#' @examples
+#' to_hypergraph(ison_southern_women)
 #' @export
 to_hypergraph <- function(.data) UseMethod("to_hypergraph")
 
@@ -538,24 +549,62 @@ to_hypergraph.default <- function(.data){
 
 #' @export
 to_hypergraph.igraph <- function(.data){
+  if(is_hypergraph(.data)) return(.data)
+  as_igraph(to_hypergraph(as_stocnet(.data)))
+}
+
+#' @export
+to_hypergraph.tbl_graph <- function(.data){
+  if(is_hypergraph(.data)) return(.data)
+  as_tidygraph(to_hypergraph(as_stocnet(.data)))
+}
+
+#' @export
+to_hypergraph.network <- function(.data){
+  if(is_hypergraph(.data)) return(.data)
+  as_network(to_hypergraph(as_stocnet(.data)))
+}
+
+#' @export
+to_hypergraph.stocnet <- function(.data) {
+  if(is_hypergraph(.data)) return(.data)
+  if(net_modes(.data) > 2)
+    snet_abort("{.fun to_hypergraph} takes the nodes of the second of two",
+               "modes as hyperedges, but this network has",
+               "{net_modes(.data)} modes: {phrase(mode_names(.data))}.")
+  if(is_twomode(.data))
+    return(.twomode_to_hyper(.data, as.logical(node_is_mode(.data))))
+  .dyads_to_hyper(.data)
+}
+
+# Every tie of a network as a hyperedge: of its two nodes where it is a dyad,
+# and as it is where it is a hyperedge already.
+.dyads_to_hyper <- function(.data){
   out <- .data
-  if(!is_twomode(.data)){
-    # Directions are ignored for maximal clique calculations anyway, but
-    # converting explicitly avoids both the igraph warning and a segfault in
-    # igraph 2.3.3 when max_cliques() is called on a directed graph after
-    # any_multiple() (see https://github.com/igraph/rigraph):
-    # any_multiple(g); max_cliques(g) # crashes with C stack overflow
-    cl <- igraph::max_cliques(igraph::as_undirected(out, mode = "collapse"))
-    if(is_labelled(.data)){
-      lst <- stats::setNames(lapply(cl, names), LETTERS[seq_along(cl)])
-    } else {
-      lst <- stats::setNames(lapply(cl, as.integer), LETTERS[seq_along(cl)])
-    }
-    incidence <- data.frame(from = utils::stack(lst)$values,
-                            to   = utils::stack(lst)$ind)
-    out <- igraph::graph_from_data_frame(incidence, directed = FALSE)
+  ties <- out$ties
+  if(is.null(ties)) ties <- dplyr::tibble(from = integer(0), to = integer(0))
+  hyper <- .hyper_rows(ties)
+  if(!"with" %in% names(ties)) ties$with <- vector("list", nrow(ties))
+  # a loop ties one node, so its hyperedge has the one member
+  ties$with[!hyper] <- Map(function(f, t) unique(c(f, t)),
+                           ties$from[!hyper], ties$to[!hyper])
+  # The dyads have sides where they are directed, which the hyperedges of
+  # the network can only then have too.
+  if(is_directed(.data) && (!any(hyper) || "with_direction" %in% names(ties))){
+    if(!"with_direction" %in% names(ties))
+      ties$with_direction <- vector("list", nrow(ties))
+    ties$with_direction[!hyper] <- lapply(ties$with[!hyper], function(x)
+      c("from", "to")[seq_along(x)])
   }
-  out
+  for(col in setdiff(.with_cols(ties), "with_direction"))
+    ties[[col]][!hyper] <- lapply(ties$with[!hyper], function(x)
+      rep(NA, length(x)))
+  ties$from <- ties$to <- NA_integer_
+  out$ties <- dplyr::select(ties, "from", "to", "with", dplyr::everything())
+  if("missings" %in% names(out)) out["missings"] <- list(NULL)
+  validate_stocnet(out)
+}
+
 }
 
 #' @importFrom igraph maximal.cliques
@@ -578,8 +627,209 @@ to_hypergraph.stocnet <- function(.data) {
       dplyr::mutate(from = lapply(cliques, function(x) as.integer(x)),
                     to = LETTERS[seq_along(cliques)]) |> 
       dplyr::select(from, to, dplyr::everything())
+
+# Incidence ####
+
+# A hypergraph can also be held as a two-mode network, in which each hyperedge
+# is a node of a further mode and each membership a tie to it. This is how the
+# classes without hyperedges of their own hold one, and what the projections
+# and matrices of a hypergraph are calculated from. The hyperedges follow the
+# nodes, so no node changes its index, and the two functions below undo each
+# other.
+.hyper_to_twomode <- function(.data){
+  ties <- .data$ties
+  hyper <- .hyper_rows(ties)
+  hy <- ties[hyper, , drop = FALSE]
+  wcols <- .with_cols(ties)
+  n <- net_nodes(.data)
+  m <- nrow(hy)
+  sizes <- lengths(hy$with)
+  directed <- .hyper_directed(.data)
+  actors <- .data$nodes
+  if(is.null(actors)) actors <- dplyr::tibble(.rows = n)
+  he_mode <- .data$info$hyperedges %||% "hyperedges"
+  actor_modes <- if("mode" %in% names(actors)) mode_names(.data) else
+    .data$info$modes[1] %||% "nodes"
+  if(he_mode %in% actor_modes)
+    snet_abort("The hyperedges are named {.val {he_mode}}, as a mode of the",
+               "nodes is. Rename one with {.fun add_info}.")
+  if(!"mode" %in% names(actors)) actors$mode <- rep(actor_modes[1], n)
+  # the hyperedges as nodes, with what each holds as their attributes
+  hedges <- hy[setdiff(names(hy), c("from", "to", "with", wcols))]
+  if("label" %in% names(actors)){
+    if(!"label" %in% names(hedges)) hedges$label <- paste0("h", seq_len(m))
+    if(any(hedges$label %in% actors$label)){
+      snet_warn("Some hyperedges are labelled as nodes are, so they were",
+                "renamed to tell them apart.")
+      hedges$label <- make.unique(c(actors$label, hedges$label))[n + seq_len(m)]
+    }
+  } else if("label" %in% names(hedges))
+    names(hedges)[names(hedges) == "label"] <- "hyperedge"
+  hedges$mode <- rep(he_mode, m)
+  nodes <- .bind_parts(actors, hedges)
+  nodes <- dplyr::select(nodes, dplyr::any_of(c("label", "mode")),
+                         dplyr::everything())
+  # the memberships as ties, with what each holds as their attributes
+  inc <- dplyr::tibble(from = as.integer(unlist(hy$with)),
+                       to = n + rep(seq_len(m), sizes))
+  for(col in wcols) inc[[sub("^with_", "", col)]] <- unlist(hy[[col]])
+  if("layer" %in% names(hy)) inc$layer <- rep(hy$layer, sizes)
+  if(directed){
+    back <- inc$direction %in% "to"
+    inc[back, c("from", "to")] <- inc[back, c("to", "from")]
+    inc$direction <- NULL
+  }
+  # the dyads, less the columns that only the hyperedges had values in
+  dyads <- ties[!hyper, setdiff(names(ties), c("with", wcols)), drop = FALSE]
+  dyads <- dyads[!vapply(dyads, function(x) all(is.na(x)), logical(1)) |
+                   names(dyads) %in% c("from", "to")]
+  out <- .data
+  out$nodes <- nodes
+  out$ties <- if(nrow(dyads)) .bind_parts(dyads, inc) else inc
+  out$info$modes <- c(actor_modes, he_mode)
+  out$info$hyperedges <- NULL
+  if(length(actor_modes) == 1 && !directed && !nrow(dyads)){
+    out$info$sender <- actor_modes
+    out$info$receiver <- he_mode
   }
   out
+}
+
+# Bind the rows of two tables whose columns of the same name may differ in
+# class, as where the nodes and the hyperedges both have a 'time'.
+.bind_parts <- function(x, y){
+  for(col in intersect(names(x), names(y))){
+    if(is.list(x[[col]]) || is.list(y[[col]])) next
+    if(identical(class(x[[col]]), class(y[[col]]))) next
+    if(is.numeric(x[[col]]) && is.numeric(y[[col]])) next
+    x[[col]] <- as.character(x[[col]])
+    y[[col]] <- as.character(y[[col]])
+  }
+  dplyr::bind_rows(x, y)
+}
+
+# The reverse: the nodes marked in `is_he` become hyperedges of the nodes they
+# are tied to, and take their attributes with them. A tie between two of the
+# other nodes stays the dyad it is.
+.twomode_to_hyper <- function(.data, is_he){
+  nodes <- .data$nodes
+  ties <- .data$ties
+  if(is.null(ties)) ties <- dplyr::tibble(from = integer(0), to = integer(0))
+  # a node that is marked as neither, such as one added since, is a node
+  is_he <- is_he %in% TRUE
+  he_idx <- which(is_he)
+  m <- length(he_idx)
+  # with no node to take as a hyperedge, the network is as it should be
+  if(m == 0) return(.data)
+  map <- cumsum(!is_he)
+  map[is_he] <- NA_integer_
+  from_he <- ties$from %in% he_idx
+  to_he <- ties$to %in% he_idx
+  if(any(from_he & to_he))
+    snet_abort("A hyperedge cannot be a member of a hyperedge, but some ties",
+               "run between two nodes of the mode to take as hyperedges.")
+  touch <- from_he | to_he
+  inc <- ties[touch, , drop = FALSE]
+  # The hyperedges have sides where the layers they are in are directed. A
+  # layer of dyads may be directed without the hyperedges being so.
+  directed <- .data$info$directed
+  directed <- if(!is.null(names(directed)) && "layer" %in% names(inc))
+    isTRUE(any(directed[unique(inc$layer)])) else isTRUE(any(directed))
+  sent <- !from_he[touch]
+  he <- ifelse(sent, inc$to, inc$from)
+  member <- map[ifelse(sent, inc$from, inc$to)]
+  side <- ifelse(sent, "from", "to")
+  # a node is a member of a hyperedge once, or once on each side of it
+  first <- !duplicated(paste(he, member, if(directed) side))
+  inc <- inc[first, , drop = FALSE]
+  f <- factor(he[first], levels = he_idx)
+  parts <- function(x) unname(split(x, f))
+  # the hyperedges, with the attributes their nodes held
+  hedges <- nodes[is_he, setdiff(names(nodes), "mode"), drop = FALSE]
+  hedges <- hedges[!vapply(hedges, function(x) all(is.na(x)), logical(1))]
+  if(!"label" %in% names(hedges) && "hyperedge" %in% names(hedges))
+    names(hedges)[names(hedges) == "hyperedge"] <- "label"
+  hy <- dplyr::tibble(from = rep(NA_integer_, m), to = NA_integer_,
+                      with = parts(as.integer(member[first])))
+  layered <- "layer" %in% names(inc)
+  if(layered && !"layer" %in% names(hedges))
+    hedges$layer <- vapply(parts(inc$layer), function(x)
+      if(length(x)) x[1] else NA_character_, character(1))
+  hy <- dplyr::bind_cols(hy, hedges[setdiff(names(hedges), names(hy))])
+  for(col in setdiff(names(inc), c("from", "to", "layer"))){
+    if(all(is.na(inc[[col]]))) next
+    hy[[paste0("with_", col)]] <- parts(inc[[col]])
+  }
+  if(directed) hy$with_direction <- parts(side[first])
+  dyads <- ties[!touch, , drop = FALSE]
+  dyads$from <- as.integer(map[dyads$from])
+  dyads$to <- as.integer(map[dyads$to])
+  dyads <- dyads[!vapply(dyads, function(x) all(is.na(x)), logical(1)) |
+                   names(dyads) %in% c("from", "to")]
+  # the nodes that remain, less the attributes only the hyperedges had
+  actors <- nodes[!is_he, , drop = FALSE]
+  if(m > 0){
+    theirs <- vapply(actors, function(x) all(is.na(x)), logical(1)) &
+      names(actors) %in% c(names(hedges), "hyperedge")
+    actors <- actors[!theirs]
+  }
+  out <- .data
+  info <- out$info
+  # The name of the mode that the hyperedges were. A class that marks the
+  # modes and does not name them leaves their names in the info, in order.
+  marks <- unique(nodes[["mode"]])
+  he_mode <- unique(nodes[["mode"]][is_he])
+  actor_modes <- unique(actors[["mode"]])
+  named <- !is.null(info$modes)
+  if(named && length(info$modes) == length(marks) &&
+     !all(marks %in% info$modes))
+    he_mode <- info$modes[if(is.logical(marks)) he_mode + 1 else
+      match(he_mode, marks)]
+  if(length(actor_modes) <= 1) actors$mode <- NULL
+  # What the hyperedges are called is kept beside what the nodes are called.
+  # 'nodes' and 'hyperedges' are what they are called where they have no name.
+  info$hyperedges <- NULL
+  if(named){
+    at <- match("modes", names(info))
+    left <- setdiff(info$modes, c(he_mode, "nodes"))
+    called <- if(length(he_mode) == 1 && he_mode != "hyperedges")
+      list(hyperedges = he_mode)
+    info <- c(info[seq_len(at - 1)], if(length(left)) list(modes = left),
+              called, info[-seq_len(at)])
+  }
+  if(any(c(info$sender, info$receiver) %in% he_mode))
+    info$sender <- info$receiver <- NULL
+  out$info <- info
+  out$nodes <- actors
+  out$ties <- if(nrow(dyads)) dplyr::bind_rows(dyads, hy) else hy
+  out$ties <- dplyr::select(out$ties, "from", "to", "with",
+                            dplyr::everything())
+  # A change to a node that is now a hyperedge has no node to apply to. Where
+  # the changes say when each such node became active, and nothing else of
+  # them, that is the moment of the hyperedge, as for the dates of events.
+  if(!is.null(out$changes) && nrow(out$changes)){
+    theirs <- out$changes$node %in% he_idx
+    moved <- out$changes[theirs, , drop = FALSE]
+    if(nrow(moved)){
+      begun <- all(moved$var == "active") && !anyDuplicated(moved$node) &&
+        all(vapply(moved$value, isTRUE, logical(1))) &&
+        !"time" %in% names(out$ties)
+      if(begun){
+        # indexed rather than combined, so that a date stays a date
+        time <- moved$time[c(rep(NA_integer_, nrow(dyads)),
+                             match(he_idx, moved$node))]
+        dim(time) <- NULL
+        out$ties$time <- time
+      } else snet_warn("The changes recorded about the nodes that are now",
+                       "hyperedges were dropped, since a hyperedge is a tie.")
+    }
+    changes <- out$changes[!theirs, , drop = FALSE]
+    changes$node <- as.integer(map[changes$node])
+    out["changes"] <- list(if(nrow(changes)) changes)
+  }
+  if(!is.null(out$missings))
+    out["missings"] <- list(.remap_tie_nodes(out$missings, map))
+  validate_stocnet(out)
 }
 
 

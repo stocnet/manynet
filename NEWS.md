@@ -125,6 +125,13 @@
 
 ## Modifying
 
+- Improved `to_hypergraph()` to reformat a network as a hypergraph that every other function can read
+  - This is a breaking change: a 'stocnet' now lists the members of a hyperedge in `with`, not `from`
+  - The nodes of the second mode become hyperedges and no longer stay among the nodes
+  - Keeps the attributes of those nodes, and of the ties, which were dropped
+  - Reads the moments at which those nodes became active as the times of the hyperedges
+  - Each tie of a one-mode network now becomes a hyperedge of its two nodes, with a side each where it is directed
+  - Fixed the 'igraph', 'tbl_graph', and 'network' methods to return what `is_hypergraph()` marks TRUE
 - Fixed `from_layers()` to stack a 'stocnet' as it does other classes
   - Networks of different classes can be stacked, and are returned in the class of the first
   - Unlabelled networks of different sizes are stacked as sets of different nodes, with a warning that says so, where other classes stopped
