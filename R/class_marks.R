@@ -28,6 +28,16 @@ make_tie_mark <- function(out, .data) {
       to <- .data$nodes$label[to]
     }
     names(out) <- paste0(from, if(is_directed(.data)) "->" else "-", to)
+    # A hyperedge joins no pair of nodes, so it is named by its label, or by
+    # all of the nodes it joins where it has none.
+    hyper <- .hyper_rows(.data$ties)
+    if(any(hyper)){
+      labels <- if(is_labelled(.data)) .data$nodes$label else
+        seq_len(net_nodes(.data))
+      names(out)[hyper] <- .data$ties[["label"]][hyper] %||%
+        vapply(.data$ties$with[hyper], function(x)
+          paste0("{", paste(labels[x], collapse = ","), "}"), character(1))
+    }
     return(out)
   }
   if(is_labelled(.data)){

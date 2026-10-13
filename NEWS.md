@@ -75,11 +75,26 @@
 
 ## Classes
 
+- Added hyperedges to 'stocnet' objects, as ties among any number of nodes, see `?make_stocnet`
+  - A hyperedge is one row of the ties, with its members in `with` and `NA` in `from` and `to`
+  - `with_weight`, `with_direction`, and other `with_` columns hold a value for each member
+  - `info$hyperedges` names what the hyperedges are, and `info$simplicial` marks a simplicial complex
+  - A network can hold ties between two nodes in some layers and hyperedges in others
+  - `print()` and `describe_ties()` report the hyperedges and how many nodes they tie
 - Documented how the size and speed of a 'stocnet' compare with those of an 'igraph' object and a matrix, see `?make_stocnet`
 - Added `signed` to the reserved names of `info`, which records that a network is signed where none of its ties is negative
 
 ## Coercion
 
+- Added `as_hypergraph()` and `as_stocnet.hypergraph()` to coerce to and from 'hypergraph' objects of `{HyperG}`
+  - Neither needs `{HyperG}` to be installed
+- Improved `as_igraph()` and `as_tidygraph()` to hold each hyperedge as a node of a second mode
+  - A `hyper` graph attribute marks the result, and `as_stocnet()` returns the hyperedges from it
+- Improved `as_network()` to hold hyperedges as `{network}` does, and `as_stocnet()` to read them
+  - A hyperedge with no members, or none on one side, is kept as a network attribute, with a warning
+- Improved `as_matrix()` to return the incidence matrix of a hypergraph, of nodes by hyperedges
+  - Holds the weight of each membership, negative on the 'from' side of a directed hyperedge
+- Improved `as_edgelist()` to list the memberships of the nodes of a hypergraph in its hyperedges
 - Fixed `as_nodelist()` to return `NULL` for a 'stocnet' whose nodes have neither labels nor attributes
 - Fixed `as_igraph()` and `as_stocnet()` to coerce a network in which only some nodes are labelled, where a 'stocnet' could not be coerced and the ties of an 'igraph' object lost their place
 - Added conversion from node_measure and node_member to matrices and stocnets (closes #161)

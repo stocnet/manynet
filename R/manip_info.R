@@ -200,6 +200,7 @@ add_info.stocnet <- function(.data, ...){
 # recognises, but the user is told in case the name is a slip.
 .stocnet_info_fields <- c("name", "modes", "layers", "directed", "signed",
                           "observation",
+                          "hyperedges", "simplicial",
                           "update", "sender", "receiver", "focal", "centered",
                           "source", "method", "location", "date", "boundary",
                           "doi", "system", "max_degree", "min_degree",

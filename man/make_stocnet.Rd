@@ -280,6 +280,59 @@ How a network records time in its ties, and what each of these columns
 therefore means, is set out in the Time section of \code{\link[=to_time]{to_time()}}.
 }
 
+\section{Hypergraphs}{
+
+A hyperedge is a tie among any number of nodes, such as the people at a
+meeting, the authors of a paper, or the reactants and products of a
+reaction.
+A 'stocnet' object holds each hyperedge as one row of its ties,
+so that a hyperedge has a weight, a layer, a moment, and any other
+attribute in the same columns as a tie between two nodes has.
+\itemize{
+\item 'with' should be a list of integer vectors, each the nodes that are the
+members of a hyperedge.
+A hyperedge names no node in 'from' or 'to', which are \code{NA} on its row,
+and a tie between two nodes holds \code{NULL} in 'with'.
+\code{make_stocnet()} converts labels given in 'with' into indices,
+and adds 'from' and 'to' where the ties give only 'with'.
+A hyperedge may have a single member, or none.
+\item 'label' should be a character vector naming each hyperedge.
+\item 'weight' is the weight of the hyperedge as a whole.
+\item Any column whose name begins 'with_' should be a list that holds a
+value for each member of each hyperedge, in the order 'with' lists them.
+'with_weight' is the weight of each node's membership,
+and 'with_direction' says whether each member is on the 'from' or on the
+'to' side of a hyperedge that has two sides,
+as the senders and the receivers of a message have.
+The hyperedges are directed where the network is.
+}
+
+Two elements of the info describe the hyperedges.
+\itemize{
+\item 'hyperedges' should be a character string naming what the hyperedges
+are, as 'modes' names what the nodes are.
+\item 'simplicial' should be \code{TRUE} where the hyperedges are the largest
+faces of a simplicial complex,
+in which every subset of a hyperedge is a hyperedge too.
+Only the largest faces are held.
+}
+
+A network may hold ties between two nodes in some layers and hyperedges
+in others, so long as each layer holds one or the other.
+
+Other classes have no hyperedges of their own.
+\code{as_igraph()} and \code{as_tidygraph()} return a two-mode network in which
+each hyperedge is a node of the second mode,
+marked so that \code{is_hypergraph()} recognises it and \code{as_stocnet()} returns
+the hyperedges.
+\code{as_network()} returns a 'network' object that holds the hyperedges as
+\code{{network}} does, and \code{as_matrix()} the incidence matrix of nodes by
+hyperedges.
+See \code{\link[=to_hypergraph]{to_hypergraph()}}, \code{\link[=to_simplicial]{to_simplicial()}}, and \code{\link[=read_hif]{read_hif()}} for how to make
+or read a hypergraph, and \code{\link[=to_twomode]{to_twomode()}} and \code{\link[=to_mode]{to_mode()}} for how to hold
+or project one as a network of ties between two nodes.
+}
+
 \section{Globals}{
 
 There are several required names for the columns of the globals component of a stocnet object (if one is included).

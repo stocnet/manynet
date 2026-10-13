@@ -286,6 +286,15 @@ Conventions to preserve when writing or editing functions:
   that renumbers or drops nodes must renumber them as well: use `.tie_node_cols` and
   `.remap_tie_nodes()` (see [R/class_stocnet.R](../R/class_stocnet.R)) rather than
   remapping `from` and `to` by hand. A broker ("tertius") is neither.
+  A *hyperedge*, a tie among any number of nodes, is one row too: it lists its members
+  in the list column `with`, also as indices into `nodes`, and holds `NA` in `from` and
+  `to`, while a tie between two nodes holds `NULL` in `with`. A list column whose name
+  begins `with_` holds a value for each member, in the same order (`with_weight`,
+  `with_direction`). A layer holds dyads or hyperedges, never both, and `info$hyperedges`
+  names what the hyperedges are. Code that reads `from` and `to` therefore keeps their
+  type, but meets `NA`: use `.hyper_rows()` to tell the two kinds of row apart,
+  `.hyper_to_twomode()` for the incidence form that other classes hold a hypergraph in,
+  and `.needs_dyads()` where a function cannot take hyperedges.
   Every row is a tie: the ties a network records as *missing* are held elsewhere (below).
   `make_stocnet()` does accept an `na` column marking which rows are missing ties, since
   that is how the data often arrives, but it splits those rows out rather than storing

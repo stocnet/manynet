@@ -189,6 +189,7 @@ as_edgelist.tbl_graph <- function(.data, twomode = FALSE) {
 
 #' @export
 as_edgelist.network <- function(.data, twomode = FALSE) {
+  if (network::is.hyper(.data)) return(as_edgelist(as_stocnet(.data)))
   out <- network::as.edgelist(.data)
   edges <- as.data.frame(out)
   if (is_twomode(.data)) {
@@ -252,6 +253,9 @@ as_edgelist.siena <- function(.data, twomode = NULL) {
 
 #' @export
 as_edgelist.stocnet <- function(.data, twomode = NULL) {
+  # An edgelist has two columns of nodes, so a hypergraph is listed as the
+  # memberships of its nodes in its hyperedges, one row for each.
+  if(is_hypergraph(.data)) return(as_edgelist(.hyper_to_twomode(.data)))
   # An edgelist lists arcs where the network is directed, so any layer held
   # once per dyad is reciprocated here. This also serves `as_igraph.stocnet()`
   # and, through it, every other class coerced to via igraph.

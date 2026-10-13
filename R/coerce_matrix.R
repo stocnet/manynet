@@ -297,6 +297,9 @@ as_matrix.tbl_graph <- function(.data,
 #' @export
 as_matrix.network <- function(.data,
                               twomode = NULL, ...) {
+  # `{network}` holds hyperedges but returns no matrix of them
+  if (network::is.hyper(.data))
+    return(as_matrix(as_stocnet(.data), twomode = twomode))
   third <- .third_node_col(.data)
   if (!is.na(third)) return(.third_node_array(.data, third))
   if (network::is.bipartite(.data)) {
@@ -377,6 +380,10 @@ as_matrix.stocnet <- function(.data,
                               twomode = NULL, ...) {
   third <- .third_node_col(.data)
   if (!is.na(third)) return(.third_node_array(.data, third))
+  # The matrix of a hypergraph is its incidence matrix, of nodes by
+  # hyperedges, unless the square matrix of both is asked for.
+  if (!isFALSE(twomode) && all(.hyper_rows(.data$ties)) &&
+      is_hypergraph(.data)) return(.hyper_incidence(.data))
   # `twomode` describes the matrix and not the igraph, which records the modes
   # in 'type' either way and which `as_igraph.stocnet()` ignores it for.
   # Handing it to `as_matrix()` instead lets `twomode = FALSE` ask a two-mode
@@ -385,6 +392,24 @@ as_matrix.stocnet <- function(.data,
   as_matrix(as_igraph(.data), twomode = twomode)
 }
 
+# The incidence matrix of a hypergraph: a row for each node, a column for each
+# hyperedge, and a value where the node is a member of the hyperedge. That
+# value is the weight of the membership where there is one, and is negative
+# on the 'from' side of a hyperedge that has a direction.
+.hyper_incidence <- function(.data){
+  ties <- .data$ties
+  m <- nrow(ties)
+  mat <- matrix(0, net_nodes(.data), m)
+  value <- if("with_weight" %in% names(ties)) unlist(ties$with_weight) else
+    rep(1, sum(lengths(ties$with)))
+  if(.hyper_directed(.data))
+    value <- ifelse(unlist(ties$with_direction) == "from", -value, value)
+  mat[cbind(unlist(ties$with), rep(seq_len(m), lengths(ties$with)))] <- value
+  if(is_labelled(.data))
+    dimnames(mat) <- list(.data$nodes$label,
+                          ties[["label"]] %||% paste0("h", seq_len(m)))
+  mat
+}
 
 # Node vectors ####
 
