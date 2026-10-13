@@ -16,12 +16,14 @@
 #'   where the ties become nodes and incident nodes become their ties.
 #'   - `to_hypergraph()` reformats one-mode or two-mode network data as hypergraph data,
 #'   where ties can connect more than two nodes.
+#'   - `to_simplicial()` projects network data into a simplicial complex,
+#'   such as the maximal cliques of a one-mode network.
 #' @details
 #'   Not all functions have methods available for all object classes.
 #'   Below are the currently implemented S3 methods:
 #'  
 #'   ```{r, echo = FALSE, comment=""}
-#'   available_methods(collect_functions("to_.*(mode[0-9]|linegraph|hypergraph)"))
+#'   available_methods(collect_functions("to_.*(mode[0-9]|linegraph|hypergraph|simplicial)"))
 #'   ```
 #' @section Comparison of two-mode projection methods:
 #'
@@ -605,28 +607,82 @@ to_hypergraph.stocnet <- function(.data) {
   validate_stocnet(out)
 }
 
+#' @rdname modif_project
+#' @section Simplicial complexes:
+#'   A simplicial complex is a hypergraph in which every subset of a hyperedge
+#'   is a hyperedge too, so that it is described in full by its largest
+#'   hyperedges, or faces.
+#'   `to_simplicial()` projects network data into the largest faces of a
+#'   simplicial complex, and marks the result as one.
+#'
+#'   For one-mode networks, the faces are the maximal cliques of the network,
+#'   since every subset of a clique is a clique.
+#'   The direction, weights, and other attributes of the ties are not carried.
+#'   `to_mode()` returns the one-mode network that the cliques cover.
+#'
+#'   For two-mode networks and hypergraphs, the faces are the hyperedges that
+#'   are not a subset of another hyperedge.
+#' @examples
+#' to_simplicial(ison_adolescents)
+#' @export
+to_simplicial <- function(.data) UseMethod("to_simplicial")
+
+#' @export
+to_simplicial.default <- function(.data){
+  as_input(.data, to_simplicial)
 }
 
-#' @importFrom igraph maximal.cliques
 #' @export
-to_hypergraph.stocnet <- function(.data) {
-  
+to_simplicial.igraph <- function(.data){
+  as_igraph(to_simplicial(as_stocnet(.data)))
+}
+
+#' @export
+to_simplicial.tbl_graph <- function(.data){
+  as_tidygraph(to_simplicial(as_stocnet(.data)))
+}
+
+#' @export
+to_simplicial.network <- function(.data){
+  as_network(to_simplicial(as_stocnet(.data)))
+}
+
+#' @export
+to_simplicial.stocnet <- function(.data) {
+  if(is_twomode(.data) || is_hypergraph(.data)){
+    out <- .dyads_to_hyper(to_hypergraph(.data))
+    faces <- lapply(out$ties$with, function(x) sort(unique(x)))
+    sizes <- lengths(faces)
+    # a face is kept unless a larger one, or an earlier one of the same
+    # nodes, holds all of its nodes
+    within <- vapply(seq_along(faces), function(i)
+      any(vapply(seq_along(faces), function(j)
+        j != i && (sizes[j] > sizes[i] || (sizes[j] == sizes[i] && j < i)) &&
+          all(faces[[i]] %in% faces[[j]]), logical(1))), logical(1))
+    largest <- keep_ties(out, which(!within))
+    largest$info$simplicial <- TRUE
+    return(.record_exclusion(largest, out, "faces of a larger hyperedge",
+                             "ties"))
+  }
+  # as_undirected() avoids both an igraph warning, since directions are ignored
+  # in finding maximal cliques anyway, and a segfault in igraph 2.3.3 when
+  # max_cliques() is called on a directed graph after any_multiple()
+  cliques <- igraph::max_cliques(
+    igraph::as_undirected(as_igraph(.data), mode = "collapse"))
   out <- .data
-  if (is_twomode(.data)) {
-    # Each 'to' node becomes a hyperedge
-    out$ties <- out$ties  |> 
-      dplyr::distinct(from, to) |> 
-      dplyr::group_by(to) |> 
-      dplyr::summarise(from = list(unique(from)), .groups = "drop") |> 
-      dplyr::select(from, to, dplyr::everything())
-  } else {
-    # as_undirected() avoids an igraph 2.3.3 segfault; see to_hypergraph.igraph()
-    cliques <- igraph::max_cliques(
-      igraph::as_undirected(as_igraph(.data), mode = "collapse"))
-    out$ties <- out$ties |> 
-      dplyr::mutate(from = lapply(cliques, function(x) as.integer(x)),
-                    to = LETTERS[seq_along(cliques)]) |> 
-      dplyr::select(from, to, dplyr::everything())
+  out$ties <- dplyr::tibble(from = NA_integer_, to = NA_integer_,
+                            with = lapply(cliques,
+                                          function(x) sort(as.integer(x))),
+                            label = paste0("h", seq_along(cliques)))
+  if("missings" %in% names(out)) out["missings"] <- list(NULL)
+  # The cliques are of the network as a whole, so they belong to no layer and
+  # have no direction, sign, or moment of their own.
+  out$info[c("layers", "signed", "update", "observation", "focal")] <- NULL
+  out$info$directed <- FALSE
+  out$info$simplicial <- TRUE
+  out <- validate_stocnet(out)
+  .record_transformation(out, "projection", "maximal cliques as hyperedges")
+}
 
 # Incidence ####
 

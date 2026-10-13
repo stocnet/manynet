@@ -132,6 +132,9 @@
   - Reads the moments at which those nodes became active as the times of the hyperedges
   - Each tie of a one-mode network now becomes a hyperedge of its two nodes, with a side each where it is directed
   - Fixed the 'igraph', 'tbl_graph', and 'network' methods to return what `is_hypergraph()` marks TRUE
+- Added `to_simplicial()` to project a network into the largest faces of a simplicial complex
+  - Takes the maximal cliques of a one-mode network, which `to_hypergraph()` no longer does
+  - Keeps the hyperedges of a hypergraph that are not within another hyperedge
 - Fixed `from_layers()` to stack a 'stocnet' as it does other classes
   - Networks of different classes can be stacked, and are returned in the class of the first
   - Unlabelled networks of different sizes are stacked as sets of different nodes, with a warning that says so, where other classes stopped
