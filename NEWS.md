@@ -143,10 +143,13 @@
 
 ## Describing
 
-- Fixed `net_tie_attributes()` to leave out "from" and "to" for a 'stocnet', which say where a tie is and are not attributes of it
+- Fixed `net_tie_attributes()` to leave out "from" and "to" for a 'stocnet'
+- Fixed `node_labels()`, `tie_weights()`, and `tie_signs()` to describe nodes and hyperedges of a hypergraph
 
 ## Marking
 
+- Improved `is_hypergraph()` to mark hypergraphs TRUE in the 'igraph', 'tbl_graph', and 'network' classes
+- Fixed `is_complex()`, `is_weighted()`, and `tie_is_parallel()` for a hypergraph
 - Fixed `is_signed()` to mark a network signed with `to_signed()` TRUE in every class where all its ties are positive
 - Renamed `is_egonet()` to `is_egolist()`, since it marks a list of networks
   - `is_egocentric()` marks the networks that a name generator collects

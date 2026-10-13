@@ -9,8 +9,8 @@ formats <- formats[!grepl("^graph$", formats)]
 
 for(fm in formats) {
   test_that(paste("read and write", fm, "are compatible"), {
-    skip_if(grepl("nodelist|pajek|gdf|dynetml|geojson", fm),
-            message = "nodelist and pajek read/write not tested yet; gdf and dynetml require node ids, so unlabelled networks gain names on round-trip; geojson requires node positions")
+    skip_if(grepl("nodelist|pajek|gdf|dynetml|geojson|hif", fm),
+            message = "nodelist and pajek read/write not tested yet; gdf and dynetml require node ids, so unlabelled networks gain names on round-trip; geojson requires node positions; hif reads each tie back as a hyperedge (see test-hypergraph.R)")
     skip_if_not_installed("readxl")
     file <-  tempfile() # Create file
     write_funs[[paste0("write_", fm)]](create_ring(5), filename = file)

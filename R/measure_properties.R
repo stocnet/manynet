@@ -45,8 +45,9 @@ net_nodes.default <- function(.data){
 
 #' @export
 net_nodes.stocnet <- function(.data){
-  dplyr::coalesce(nrow(.data$nodes),
-                  length(unique(c(.data$ties$from, .data$ties$to))))
+  # a hyperedge names its nodes in 'with', and none in 'from' or 'to'
+  ends <- c(.data$ties$from, .data$ties$to, unlist(.data$ties[["with"]]))
+  dplyr::coalesce(nrow(.data$nodes), length(unique(ends[!is.na(ends)])))
 }
 
 #' @export

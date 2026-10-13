@@ -45,11 +45,21 @@ node_attribute.network <- function(.data, attr_name){
   network::get.vertex.attribute(.data, attr_name)
 }
 
+# Whether a network is of the one class that has hyperedges of its own, and
+# has some. Every other class holds a hyperedge as a node of a second mode.
+.holds_hyperedges <- function(.data){
+  inherits(.data, "stocnet") && is_hypergraph(.data)
+}
+
 #' @rdname measure_attributes_nodes
 #' @examples
 #' node_labels(ison_southern_women)
 #' @export
 node_labels <- function(.data){
+  # Another class holds each hyperedge of a hypergraph as a node, so the
+  # labels of a 'stocnet' that has hyperedges are read from its own nodes.
+  if(.holds_hyperedges(.data) && is_labelled(.data))
+    return(.data$nodes$label)
   if(is_labelled(.data)){
     igraph::vertex_attr(as_igraph(.data), "name")
   } else {
@@ -147,6 +157,10 @@ tie_attribute.network <- function(.data, attr_name){
 #' tie_weights(to_mode1(ison_southern_women))
 #' @export
 tie_weights <- function(.data){
+  # the weight of a hyperedge is its own, and not that of its memberships
+  if(.holds_hyperedges(.data))
+    return(make_tie_measure(.data$ties[["weight"]] %||%
+                              rep(1, nrow(.data$ties)), .data))
   .data <- as_igraph(.data)
   out <- igraph::edge_attr(.data, "weight")
   if(is.null(out)) out <- rep(1, net_ties(.data))
@@ -158,6 +172,9 @@ tie_weights <- function(.data){
 #' tie_signs(to_uniplex(fict_marvel,"relationship"))
 #' @export
 tie_signs <- function(.data){
+  if(.holds_hyperedges(.data))
+    return(make_tie_measure(sign(.data$ties[["weight"]] %||%
+                                   rep(1, nrow(.data$ties))), .data))
   .data <- as_igraph(.data)
   out <- igraph::edge_attr(.data, "sign")
   # signs can also be held as negative weights, as they are in 'stocnet'
@@ -230,6 +247,7 @@ tie_is_parallel <- function(.data){
 #' @export
 tie_is_backbone <- function(.data, filter = NULL, threshold = NULL,
                             endpoints = c("either", "both")){
+  .needs_dyads(.data, "tie_is_backbone")
   spec <- .backbone_spec(.data, filter, threshold)
   make_tie_mark(.backbone_keep(.data, spec, endpoints), .data)
 }
@@ -295,8 +313,20 @@ tie_is_backbone <- function(.data, filter = NULL, threshold = NULL,
     from <- as.character(el[,1])
     to <- as.character(el[,2])
   }
-  if(is_directed(.data)) paste(from, to) else
+  out <- if(is_directed(.data)) paste(from, to) else
     paste(pmin(from, to), pmax(from, to))
+  # A hyperedge is identified by all of its members, and by the side each is
+  # on where it has sides, so two hyperedges of the same nodes are parallel.
+  if(inherits(.data, "stocnet") && is_hypergraph(.data)){
+    hyper <- .hyper_rows(.data$ties)
+    sides <- .data$ties[["with_direction"]]
+    out[hyper] <- vapply(which(hyper), function(i){
+      x <- .data$ties$with[[i]]
+      if(!is.null(sides)) x <- paste(x, sides[[i]])
+      paste(c("with", sort(x)), collapse = " ")
+    }, character(1))
+  }
+  out
 }
 
 # Which ties overlap another tie on the same pair of nodes. Two intervals

@@ -12,6 +12,7 @@ to_argmakers <- list(
                     length.out = as.numeric(net_nodes(net)))),
   to_dominating = function(net) list(from = 1),
   to_ego        = function(net) list(node = 1),
+  to_path      = function(net) list(from = 1, to = 2),
   to_subgraphs  = function(net) list(attribute = "group"),
   to_time       = function(net) list(time = 1),
   to_wave       = function(net) list(time = 1),

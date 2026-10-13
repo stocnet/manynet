@@ -23,7 +23,10 @@ for (fn in list_funs) {
           expect_equal(nrow(out), as.numeric(net_nodes(net)))
         }
         if (fn == "as_edgelist" && is.data.frame(out)) {
-          expect_equal(nrow(out), as.numeric(net_ties(net)))
+          # the edgelist of a hypergraph lists the memberships of its nodes in
+          # its hyperedges, since a hyperedge has no two ends to list
+          if (!is_hypergraph(net))
+            expect_equal(nrow(out), as.numeric(net_ties(net)))
           expect_identical(names(out)[1:2], c("from", "to"))
         }
       }

@@ -58,6 +58,10 @@ func_fixtures <- local({
     # work rather than passed a network that is already simple.
     complex      = fict_lotr,
     longitudinal = fict_starwars,
+    # A hypergraph, whose ties are among any number of nodes. As a tidygraph
+    # it holds each hyperedge as a node of a second mode, and as a stocnet as
+    # one tie, so that every function meets both.
+    hypergraph   = to_hypergraph(ison_southern_women),
     # A cognitive social structure, whose ties name the node that reported
     # them, so that every function meets reports of one tie by several
     # reporters and not only ties. It is built here rather than from

@@ -9,6 +9,8 @@
 #'   - `is_twomode()` marks networks TRUE if they contain two sets of nodes.
 #'   - `is_multilevel()` marks networks TRUE if they contain two or more levels
 #'   of nodes that are tied both within and between levels.
+#'   - `is_hypergraph()` marks networks TRUE if they hold hyperedges,
+#'   which are ties among any number of nodes.
 #'   - `is_labelled()` marks networks TRUE if there is a 'names' attribute
 #'   for the nodes.
 #'   - `is_attributed()` marks networks TRUE if there are other nodal attributes
@@ -183,8 +185,27 @@ is_hypergraph.default <- function(.data) {
 
 #' @export
 is_hypergraph.stocnet <- function(.data) {
-  is.list(.data$ties$from)
+  any(.hyper_rows(.data$ties))
 }
+
+# Other classes have no hyperedges of their own. An 'igraph' holds each as a
+# node of a second mode, and says that it has done so in a 'hyper' attribute,
+# which is what tells a hypergraph from any other two-mode network.
+#' @export
+is_hypergraph.igraph <- function(.data) {
+  isTRUE(igraph::graph_attr(.data)[["hyper"]])
+}
+
+#' @export
+is_hypergraph.network <- function(.data) {
+  network::is.hyper(.data)
+}
+
+#' @export
+is_hypergraph.matrix <- function(.data) FALSE
+
+#' @export
+is_hypergraph.data.frame <- function(.data) FALSE
 
 #' @rdname mark_format_node
 #' @importFrom igraph is_named
@@ -404,6 +425,9 @@ is_weighted.tbl_graph <- function(.data) {
 
 #' @export
 is_weighted.stocnet <- function(.data) {
+  # a hypergraph is weighted too where the memberships of its hyperedges are
+  if("with_weight" %in% names(.data$ties) &&
+     !.holds_only_binary(unlist(.data$ties$with_weight))) return(TRUE)
   "weight" %in% names(.data$ties) &&
     !.holds_only_binary(.data$ties$weight) &&
     !.holds_only_signs(.data$ties$weight, "sign" %in% names(.data$ties))
@@ -582,7 +606,9 @@ is_complex.data.frame <- function(.data) {
 #' @export
 is_complex.stocnet <- function(.data) {
   # a stocnet keeps its ties in `.data$ties`, not at the top level
-  if(is.null(.data$ties)) FALSE else any(.data$ties$from == .data$ties$to)
+  # a hyperedge names no node in either column, and cannot be a loop
+  if(is.null(.data$ties)) FALSE else
+    any(.data$ties$from == .data$ties$to, na.rm = TRUE)
 }
 
 #' @export

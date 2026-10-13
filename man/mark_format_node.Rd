@@ -43,6 +43,8 @@ All \verb{is_*()} functions return a logical scalar (TRUE or FALSE).
 \item \code{is_twomode()} marks networks TRUE if they contain two sets of nodes.
 \item \code{is_multilevel()} marks networks TRUE if they contain two or more levels
 of nodes that are tied both within and between levels.
+\item \code{is_hypergraph()} marks networks TRUE if they hold hyperedges,
+which are ties among any number of nodes.
 \item \code{is_labelled()} marks networks TRUE if there is a 'names' attribute
 for the nodes.
 \item \code{is_attributed()} marks networks TRUE if there are other nodal attributes
